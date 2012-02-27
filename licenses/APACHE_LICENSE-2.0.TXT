@@ -1,0 +1,220 @@
+bplist00�_WebMainResource�	
+_WebResourceData_WebResourceMIMEType^WebResourceURL_WebResourceFrameName_WebResourceTextEncodingNameO\<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1038.36">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Courier; min-height: 14.0px}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Courier}
+  </style>
+</head>
+<body>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">                                 </span>Apache License</p>
+<p class="p2"><span class="Apple-converted-space">                           </span>Version 2.0, January 2004</p>
+<p class="p2"><span class="Apple-converted-space">                        </span>http://www.apache.org/licenses/</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>1. Definitions.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>"License" shall mean the terms and conditions for use, reproduction,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>and distribution as defined by Sections 1 through 9 of this document.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>"Licensor" shall mean the copyright owner or entity authorized by</p>
+<p class="p2"><span class="Apple-converted-space">      </span>the copyright owner that is granting the License.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>"Legal Entity" shall mean the union of the acting entity and all</p>
+<p class="p2"><span class="Apple-converted-space">      </span>other entities that control, are controlled by, or are under common</p>
+<p class="p2"><span class="Apple-converted-space">      </span>control with that entity. For the purposes of this definition,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>"control" means (i) the power, direct or indirect, to cause the</p>
+<p class="p2"><span class="Apple-converted-space">      </span>direction or management of such entity, whether by contract or</p>
+<p class="p2"><span class="Apple-converted-space">      </span>otherwise, or (ii) ownership of fifty percent (50%) or more of the</p>
+<p class="p2"><span class="Apple-converted-space">      </span>outstanding shares, or (iii) beneficial ownership of such entity.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>"You" (or "Your") shall mean an individual or Legal Entity</p>
+<p class="p2"><span class="Apple-converted-space">      </span>exercising permissions granted by this License.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>"Source" form shall mean the preferred form for making modifications,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>including but not limited to software source code, documentation</p>
+<p class="p2"><span class="Apple-converted-space">      </span>source, and configuration files.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>"Object" form shall mean any form resulting from mechanical</p>
+<p class="p2"><span class="Apple-converted-space">      </span>transformation or translation of a Source form, including but</p>
+<p class="p2"><span class="Apple-converted-space">      </span>not limited to compiled object code, generated documentation,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>and conversions to other media types.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>"Work" shall mean the work of authorship, whether in Source or</p>
+<p class="p2"><span class="Apple-converted-space">      </span>Object form, made available under the License, as indicated by a</p>
+<p class="p2"><span class="Apple-converted-space">      </span>copyright notice that is included in or attached to the work</p>
+<p class="p2"><span class="Apple-converted-space">      </span>(an example is provided in the Appendix below).</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>"Derivative Works" shall mean any work, whether in Source or Object</p>
+<p class="p2"><span class="Apple-converted-space">      </span>form, that is based on (or derived from) the Work and for which the</p>
+<p class="p2"><span class="Apple-converted-space">      </span>editorial revisions, annotations, elaborations, or other modifications</p>
+<p class="p2"><span class="Apple-converted-space">      </span>represent, as a whole, an original work of authorship. For the purposes</p>
+<p class="p2"><span class="Apple-converted-space">      </span>of this License, Derivative Works shall not include works that remain</p>
+<p class="p2"><span class="Apple-converted-space">      </span>separable from, or merely link (or bind by name) to the interfaces of,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>the Work and Derivative Works thereof.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>"Contribution" shall mean any work of authorship, including</p>
+<p class="p2"><span class="Apple-converted-space">      </span>the original version of the Work and any modifications or additions</p>
+<p class="p2"><span class="Apple-converted-space">      </span>to that Work or Derivative Works thereof, that is intentionally</p>
+<p class="p2"><span class="Apple-converted-space">      </span>submitted to Licensor for inclusion in the Work by the copyright owner</p>
+<p class="p2"><span class="Apple-converted-space">      </span>or by an individual or Legal Entity authorized to submit on behalf of</p>
+<p class="p2"><span class="Apple-converted-space">      </span>the copyright owner. For the purposes of this definition, "submitted"</p>
+<p class="p2"><span class="Apple-converted-space">      </span>means any form of electronic, verbal, or written communication sent</p>
+<p class="p2"><span class="Apple-converted-space">      </span>to the Licensor or its representatives, including but not limited to</p>
+<p class="p2"><span class="Apple-converted-space">      </span>communication on electronic mailing lists, source code control systems,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>and issue tracking systems that are managed by, or on behalf of, the</p>
+<p class="p2"><span class="Apple-converted-space">      </span>Licensor for the purpose of discussing and improving the Work, but</p>
+<p class="p2"><span class="Apple-converted-space">      </span>excluding communication that is conspicuously marked or otherwise</p>
+<p class="p2"><span class="Apple-converted-space">      </span>designated in writing by the copyright owner as "Not a Contribution."</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>"Contributor" shall mean Licensor and any individual or Legal Entity</p>
+<p class="p2"><span class="Apple-converted-space">      </span>on behalf of whom a Contribution has been received by Licensor and</p>
+<p class="p2"><span class="Apple-converted-space">      </span>subsequently incorporated within the Work.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>2. Grant of Copyright License. Subject to the terms and conditions of</p>
+<p class="p2"><span class="Apple-converted-space">      </span>this License, each Contributor hereby grants to You a perpetual,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>worldwide, non-exclusive, no-charge, royalty-free, irrevocable</p>
+<p class="p2"><span class="Apple-converted-space">      </span>copyright license to reproduce, prepare Derivative Works of,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>publicly display, publicly perform, sublicense, and distribute the</p>
+<p class="p2"><span class="Apple-converted-space">      </span>Work and such Derivative Works in Source or Object form.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>3. Grant of Patent License. Subject to the terms and conditions of</p>
+<p class="p2"><span class="Apple-converted-space">      </span>this License, each Contributor hereby grants to You a perpetual,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>worldwide, non-exclusive, no-charge, royalty-free, irrevocable</p>
+<p class="p2"><span class="Apple-converted-space">      </span>(except as stated in this section) patent license to make, have made,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>use, offer to sell, sell, import, and otherwise transfer the Work,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>where such license applies only to those patent claims licensable</p>
+<p class="p2"><span class="Apple-converted-space">      </span>by such Contributor that are necessarily infringed by their</p>
+<p class="p2"><span class="Apple-converted-space">      </span>Contribution(s) alone or by combination of their Contribution(s)</p>
+<p class="p2"><span class="Apple-converted-space">      </span>with the Work to which such Contribution(s) was submitted. If You</p>
+<p class="p2"><span class="Apple-converted-space">      </span>institute patent litigation against any entity (including a</p>
+<p class="p2"><span class="Apple-converted-space">      </span>cross-claim or counterclaim in a lawsuit) alleging that the Work</p>
+<p class="p2"><span class="Apple-converted-space">      </span>or a Contribution incorporated within the Work constitutes direct</p>
+<p class="p2"><span class="Apple-converted-space">      </span>or contributory patent infringement, then any patent licenses</p>
+<p class="p2"><span class="Apple-converted-space">      </span>granted to You under this License for that Work shall terminate</p>
+<p class="p2"><span class="Apple-converted-space">      </span>as of the date such litigation is filed.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>4. Redistribution. You may reproduce and distribute copies of the</p>
+<p class="p2"><span class="Apple-converted-space">      </span>Work or Derivative Works thereof in any medium, with or without</p>
+<p class="p2"><span class="Apple-converted-space">      </span>modifications, and in Source or Object form, provided that You</p>
+<p class="p2"><span class="Apple-converted-space">      </span>meet the following conditions:</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>(a) You must give any other recipients of the Work or</p>
+<p class="p2"><span class="Apple-converted-space">          </span>Derivative Works a copy of this License; and</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>(b) You must cause any modified files to carry prominent notices</p>
+<p class="p2"><span class="Apple-converted-space">          </span>stating that You changed the files; and</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>(c) You must retain, in the Source form of any Derivative Works</p>
+<p class="p2"><span class="Apple-converted-space">          </span>that You distribute, all copyright, patent, trademark, and</p>
+<p class="p2"><span class="Apple-converted-space">          </span>attribution notices from the Source form of the Work,</p>
+<p class="p2"><span class="Apple-converted-space">          </span>excluding those notices that do not pertain to any part of</p>
+<p class="p2"><span class="Apple-converted-space">          </span>the Derivative Works; and</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>(d) If the Work includes a "NOTICE" text file as part of its</p>
+<p class="p2"><span class="Apple-converted-space">          </span>distribution, then any Derivative Works that You distribute must</p>
+<p class="p2"><span class="Apple-converted-space">          </span>include a readable copy of the attribution notices contained</p>
+<p class="p2"><span class="Apple-converted-space">          </span>within such NOTICE file, excluding those notices that do not</p>
+<p class="p2"><span class="Apple-converted-space">          </span>pertain to any part of the Derivative Works, in at least one</p>
+<p class="p2"><span class="Apple-converted-space">          </span>of the following places: within a NOTICE text file distributed</p>
+<p class="p2"><span class="Apple-converted-space">          </span>as part of the Derivative Works; within the Source form or</p>
+<p class="p2"><span class="Apple-converted-space">          </span>documentation, if provided along with the Derivative Works; or,</p>
+<p class="p2"><span class="Apple-converted-space">          </span>within a display generated by the Derivative Works, if and</p>
+<p class="p2"><span class="Apple-converted-space">          </span>wherever such third-party notices normally appear. The contents</p>
+<p class="p2"><span class="Apple-converted-space">          </span>of the NOTICE file are for informational purposes only and</p>
+<p class="p2"><span class="Apple-converted-space">          </span>do not modify the License. You may add Your own attribution</p>
+<p class="p2"><span class="Apple-converted-space">          </span>notices within Derivative Works that You distribute, alongside</p>
+<p class="p2"><span class="Apple-converted-space">          </span>or as an addendum to the NOTICE text from the Work, provided</p>
+<p class="p2"><span class="Apple-converted-space">          </span>that such additional attribution notices cannot be construed</p>
+<p class="p2"><span class="Apple-converted-space">          </span>as modifying the License.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>You may add Your own copyright statement to Your modifications and</p>
+<p class="p2"><span class="Apple-converted-space">      </span>may provide additional or different license terms and conditions</p>
+<p class="p2"><span class="Apple-converted-space">      </span>for use, reproduction, or distribution of Your modifications, or</p>
+<p class="p2"><span class="Apple-converted-space">      </span>for any such Derivative Works as a whole, provided Your use,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>reproduction, and distribution of the Work otherwise complies with</p>
+<p class="p2"><span class="Apple-converted-space">      </span>the conditions stated in this License.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>5. Submission of Contributions. Unless You explicitly state otherwise,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>any Contribution intentionally submitted for inclusion in the Work</p>
+<p class="p2"><span class="Apple-converted-space">      </span>by You to the Licensor shall be under the terms and conditions of</p>
+<p class="p2"><span class="Apple-converted-space">      </span>this License, without any additional terms or conditions.</p>
+<p class="p2"><span class="Apple-converted-space">      </span>Notwithstanding the above, nothing herein shall supersede or modify</p>
+<p class="p2"><span class="Apple-converted-space">      </span>the terms of any separate license agreement you may have executed</p>
+<p class="p2"><span class="Apple-converted-space">      </span>with Licensor regarding such Contributions.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>6. Trademarks. This License does not grant permission to use the trade</p>
+<p class="p2"><span class="Apple-converted-space">      </span>names, trademarks, service marks, or product names of the Licensor,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>except as required for reasonable and customary use in describing the</p>
+<p class="p2"><span class="Apple-converted-space">      </span>origin of the Work and reproducing the content of the NOTICE file.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>7. Disclaimer of Warranty. Unless required by applicable law or</p>
+<p class="p2"><span class="Apple-converted-space">      </span>agreed to in writing, Licensor provides the Work (and each</p>
+<p class="p2"><span class="Apple-converted-space">      </span>Contributor provides its Contributions) on an "AS IS" BASIS,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or</p>
+<p class="p2"><span class="Apple-converted-space">      </span>implied, including, without limitation, any warranties or conditions</p>
+<p class="p2"><span class="Apple-converted-space">      </span>of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A</p>
+<p class="p2"><span class="Apple-converted-space">      </span>PARTICULAR PURPOSE. You are solely responsible for determining the</p>
+<p class="p2"><span class="Apple-converted-space">      </span>appropriateness of using or redistributing the Work and assume any</p>
+<p class="p2"><span class="Apple-converted-space">      </span>risks associated with Your exercise of permissions under this License.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>8. Limitation of Liability. In no event and under no legal theory,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>whether in tort (including negligence), contract, or otherwise,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>unless required by applicable law (such as deliberate and grossly</p>
+<p class="p2"><span class="Apple-converted-space">      </span>negligent acts) or agreed to in writing, shall any Contributor be</p>
+<p class="p2"><span class="Apple-converted-space">      </span>liable to You for damages, including any direct, indirect, special,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>incidental, or consequential damages of any character arising as a</p>
+<p class="p2"><span class="Apple-converted-space">      </span>result of this License or out of the use or inability to use the</p>
+<p class="p2"><span class="Apple-converted-space">      </span>Work (including but not limited to damages for loss of goodwill,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>work stoppage, computer failure or malfunction, or any and all</p>
+<p class="p2"><span class="Apple-converted-space">      </span>other commercial damages or losses), even if such Contributor</p>
+<p class="p2"><span class="Apple-converted-space">      </span>has been advised of the possibility of such damages.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>9. Accepting Warranty or Additional Liability. While redistributing</p>
+<p class="p2"><span class="Apple-converted-space">      </span>the Work or Derivative Works thereof, You may choose to offer,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>and charge a fee for, acceptance of support, warranty, indemnity,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>or other liability obligations and/or rights consistent with this</p>
+<p class="p2"><span class="Apple-converted-space">      </span>License. However, in accepting such obligations, You may act only</p>
+<p class="p2"><span class="Apple-converted-space">      </span>on Your own behalf and on Your sole responsibility, not on behalf</p>
+<p class="p2"><span class="Apple-converted-space">      </span>of any other Contributor, and only if You agree to indemnify,</p>
+<p class="p2"><span class="Apple-converted-space">      </span>defend, and hold each Contributor harmless for any liability</p>
+<p class="p2"><span class="Apple-converted-space">      </span>incurred by, or claims asserted against, such Contributor by reason</p>
+<p class="p2"><span class="Apple-converted-space">      </span>of your accepting any such warranty or additional liability.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>END OF TERMS AND CONDITIONS</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>APPENDIX: How to apply the Apache License to your work.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">      </span>To apply the Apache License to your work, attach the following</p>
+<p class="p2"><span class="Apple-converted-space">      </span>boilerplate notice, with the fields enclosed by brackets "[]"</p>
+<p class="p2"><span class="Apple-converted-space">      </span>replaced with your own identifying information. (Don't include</p>
+<p class="p2"><span class="Apple-converted-space">      </span>the brackets!)<span class="Apple-converted-space">  </span>The text should be enclosed in the appropriate</p>
+<p class="p2"><span class="Apple-converted-space">      </span>comment syntax for the file format. We also recommend that a</p>
+<p class="p2"><span class="Apple-converted-space">      </span>file or class name and description of purpose be included on the</p>
+<p class="p2"><span class="Apple-converted-space">      </span>same "printed page" as the copyright notice for easier</p>
+<p class="p2"><span class="Apple-converted-space">      </span>identification within third-party archives.</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>Copyright [yyyy] [name of copyright owner]</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>Licensed under the Apache License, Version 2.0 (the "License");</p>
+<p class="p2"><span class="Apple-converted-space">   </span>you may not use this file except in compliance with the License.</p>
+<p class="p2"><span class="Apple-converted-space">   </span>You may obtain a copy of the License at</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">       </span>http://www.apache.org/licenses/LICENSE-2.0</p>
+<p class="p1"><br></p>
+<p class="p2"><span class="Apple-converted-space">   </span>Unless required by applicable law or agreed to in writing, software</p>
+<p class="p2"><span class="Apple-converted-space">   </span>distributed under the License is distributed on an "AS IS" BASIS,</p>
+<p class="p2"><span class="Apple-converted-space">   </span>WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</p>
+<p class="p2"><span class="Apple-converted-space">   </span>See the License for the specific language governing permissions and</p>
+<p class="p2"><span class="Apple-converted-space">   </span>limitations under the License.</p>
+</body>
+</html>
+Ytext/html_file:///index.htmlPUutf-8    ( : P _ v �\�\�\�\�                           \�

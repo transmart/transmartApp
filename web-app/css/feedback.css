@@ -1,0 +1,6 @@
+div.body { padding-top:20px; }
+h1 { font-weight:bold; font-size:10pt; padding-bottom:10px; }
+th { font-weight:bold; padding:5px 5px 0 5px }
+td { padding:5px 5px 5px 5px; }
+.prop { width: 10%; text-align:right; }
+.name { width: 90%; }

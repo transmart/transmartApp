@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>compareStepSelectPathwaysRBM</title>	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <link rel="stylesheet" type="text/css" href="css/datasetExplorer.css">
+    <style>
+   		p { width:430px; }
+        .ext-ie .x-form-text {position:static !important;}
+  	</style>
+  </head>
+  
+  <body>
+  <div style="background:#eee;height:100%;padding:5px; font:11px tahoma, arial, helvetica, sans-serif;">
+  	<div id="divallanalytesRBM" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Please, select:<br>
+  		<input type=radio name="rbfilter" VALUE="ALL" onClick="flipAll();">ALL Analytes<BR>  	    		
+  		<input type=radio name="rbfilter" VALUE="FILTER" onClick="searchPathwayRBM.disabled=false" CHECKED>Filter by gene/pathway:
+  		<input type="text"  size="80" name="searchPathwayRBM" id="searchPathwayRBM" autocomplete="off" />
+  	</div>
+  	<div id="divnclustersRBM" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Select the number of Clusters:<br>
+  		<input type="text"  size="3" id="nClustersRBM" />
+  	</div>
+  </div>
+
+  <script type="text/javascript">
+  	createPathwaySearchBoxRBM(pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData', 430);  	
+  	if (GLOBAL.HeatmapType != 'KMeans') {
+		document.getElementById("divnclustersRBM").style.display = "none";
+  	}
+  	
+  	function flipAll()	{
+  		searchPathwayRBM.value = '';
+  		searchPathwayRBM.disabled = true;  	
+  	}
+  	
+  </script>
+  </body>
+</html>
