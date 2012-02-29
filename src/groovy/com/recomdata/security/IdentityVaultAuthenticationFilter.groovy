@@ -118,16 +118,16 @@ class IdentityVaultAuthenticationFilter extends GenericFilterBean	{
 				https://transmartqa.jnj.com = Staging/QA
 				https://transmart.jnj.com = Production
 			*/
-			String userPass = "sa-TransMartProd:H1tTh3R0ad";  // assume it's production			
+			String userPass = "sa";  // assume it's production			
 			if (target.indexOf("transmartdev") > 0)    {
-				userPass = "sa-TransMartDev:H1tTh3R0ad";  // use development
+				userPass = "sa";  // use development
 				log.info("We are authenticating in the development environment")				
 			} else if (target.indexOf("transmartqa") > 0)  {
-				userPass = "sa-TransMartQA:H1tTh3R0ad";   // use staging/qa
+				userPass = "sa";   // use staging/qa
 				log.info("We are authenticating in the staging environment")
 			}
 			
-			URL soapURL = new URL("https://login.psso.its.jnj.com/nidp/saml/soap");
+			URL soapURL = new URL("");
 			URLConnection conn = soapURL.openConnection();
 			HttpURLConnection httpConn = (HttpURLConnection) conn;
 

@@ -180,7 +180,7 @@
 					    items: [new Ext.Panel({						    
 					        region: "north",
 						    autoHeight: true,
-						    tbar: createUtilitiesMenu(helpURL, contact, appTitle, buildVer, 'utilities-div'), 
+						    tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'utilities-div'), 
 						    contentEl: "header-div"				
 						}),
 			            new Ext.Panel({

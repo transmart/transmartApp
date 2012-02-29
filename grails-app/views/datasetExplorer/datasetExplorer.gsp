@@ -126,7 +126,8 @@
 	  ContactUs: '${grailsApplication.config.com.recomdata.searchtool.contactUs}',
 	  AppTitle: '${grailsApplication.config.com.recomdata.searchtool.appTitle}',
       BuildVersion: 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
-	  AnalysisRun: false
+	  AnalysisRun: false,
+	  basePath: pageInfo.basePath
 	};
 	// initialize browser version variables; see http://www.quirksmode.org/js/detect.html
 	BrowserDetect.init();

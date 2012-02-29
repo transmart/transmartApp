@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,14 +16,14 @@
  * 
  *
  ******************************************************************/
- /**
+/**
  * $Id: LoginController.groovy 11850 2012-01-24 16:41:12Z jliu $
  * @author $Author: jliu $
  * @version $Revision: 11850 $
  */
 
 import grails.converters.JSON
- 
+
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 import org.springframework.security.authentication.AccountExpiredException
@@ -33,26 +33,29 @@ import org.springframework.security.authentication.LockedException
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.core.userdetails.UserDetails
 
 /**
  * Login Controller
  */
 class LoginController {
-	
+
 	/**
 	 * Dependency injection for the authenticationTrustResolver.
 	 */
 	def authenticationTrustResolver
 
-    /**
-     * Dependency injection for the springSecurityService.
+	/**
+	 * Dependency injection for the springSecurityService.
 	 */
-    def springSecurityService
+	def springSecurityService
 
-    /**
+	def userDetailsService
+
+	/**
 	 * Default action; redirects to 'defaultTargetUrl' if logged in, /login/auth otherwise.
 	 */
-    def index = {
+	def index = {
 		if (springSecurityService.isLoggedIn()) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		}
@@ -60,94 +63,121 @@ class LoginController {
 			redirect action: auth, params: params
 		}
 	}
+
+	def forceAuth = {
+			session.invalidate();
+			render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
+	}
 	
 	/**
 	 * Show the login page.
 	 */
 	def auth = {
 		nocache response
-		
+
 		if (springSecurityService.isLoggedIn()) {
+			log.info("auth:"+springSecurityService.getAuthentication())
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
-			String ivUrl = grailsApplication.config.com.recomdata.searchtool.identityVaultURL			
+			String ivUrl = grailsApplication.config.com.recomdata.searchtool.identityVaultURL
 			boolean ivLogin = ivUrl.length() > 5
-			log.info("Identity Vault login set? : " + ivLogin)			
+			log.info("Identity Vault login set? : " + ivLogin)
+
+			def guestAutoLogin = grailsApplication.config.com.recomdata.guestAutoLogin;
+			boolean guestLoginEnabled = ('true'==guestAutoLogin)
+			log.info("enabled guest login")
+			log.info("requet:"+request.getQueryString())
 			boolean forcedFormLogin = request.getQueryString() != null
-			log.info("User is forcing the form login? : " + forcedFormLogin)		
-			if (!ivLogin || forcedFormLogin) {
+			log.info("User is forcing the form login? : " + forcedFormLogin)
+			if (!ivLogin){
+				// if enabled guest and not forced login
+				if(guestLoginEnabled && !forcedFormLogin){
+					log.info("proceeding with auto guest login")
+					def guestuser = grailsApplication.config.com.recomdata.guestUserName;
+
+					UserDetails ud = userDetailsService.loadUserByUsername(guestuser)
+					if(ud!=null){
+						log.debug("We have found user: ${ud.username}")
+						springSecurityService.reauthenticate(ud.username)
+						redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
+					}else{
+						log.info("can not find the user:"+guestuser);
+					}
+				}
+				// all others go into the form login
 				log.info("Proceeding with form login")
 				render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
-			} else {
+			}
+			else {
 				log.info("Proceeding with Identity Vault login")
 				redirect(url: ivUrl)
 			}
 		}
 	}
-		
+
 	/**
 	 * Show denied page.
 	 */
 	def denied = {
 		if (springSecurityService.isLoggedIn() &&
-				authenticationTrustResolver.isRememberMe(SCH.context?.authentication)) {
+		authenticationTrustResolver.isRememberMe(SCH.context?.authentication)) {
 			// have cookie but the page is guarded with IS_AUTHENTICATED_FULLY
 			redirect action: full, params: params
 		}
 	}
-	
+
 	/**
 	 * Login page for users with a remember-me cookie but accessing a IS_AUTHENTICATED_FULLY page.
 	 */
 	def full = {
 		render view: 'auth', params: params,
-			model: [hasCookie: authenticationTrustResolver.isRememberMe(SCH.context?.authentication),
+				model: [hasCookie: authenticationTrustResolver.isRememberMe(SCH.context?.authentication),
 					postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
 	}
-	
+
 	/**
 	 * Callback after a failed login. Redirects to the auth page with a warning message.
 	 */
-    def authfail = {
+	def authfail = {
 		def username = session[UsernamePasswordAuthenticationFilter.SPRING_SECURITY_LAST_USERNAME_KEY]
-	    String msg = ''
-	    def exception = session[AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY]
-	    if (exception) {
+		String msg = ''
+		def exception = session[AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY]
+		if (exception) {
 			if (exception instanceof AccountExpiredException) {
 				msg = SpringSecurityUtils.securityConfig.errors.login.expired
 				new AccessLog(username: username, event:"Account Expired",
-					eventmessage: msg,
-					accesstime:new Date()).save()
+						eventmessage: msg,
+						accesstime:new Date()).save()
 			}
 			else if (exception instanceof CredentialsExpiredException) {
 				msg = SpringSecurityUtils.securityConfig.errors.login.passwordExpired
 				new AccessLog(username: username, event:"Password Expired",
-					eventmessage: msg,
-					accesstime:new Date()).save()
+						eventmessage: msg,
+						accesstime:new Date()).save()
 			}
-		    else if (exception instanceof DisabledException) {
+			else if (exception instanceof DisabledException) {
 				msg = SpringSecurityUtils.securityConfig.errors.login.disabled
 				new AccessLog(username: username, event:"Login Disabled",
-					eventmessage: msg,
-					accesstime:new Date()).save()
+						eventmessage: msg,
+						accesstime:new Date()).save()
 			}
 			else if (exception instanceof LockedException) {
 				msg = SpringSecurityUtils.securityConfig.errors.login.locked
 				new AccessLog(username: username, event:"Login Locked",
-					eventmessage: msg,
-					accesstime:new Date()).save()
-		   	}
-		    else {
+						eventmessage: msg,
+						accesstime:new Date()).save()
+			}
+			else {
 				msg = SpringSecurityUtils.securityConfig.errors.login.fail
 				new AccessLog(username: username, event:"Login Failed",
-					eventmessage: msg,
-					accesstime:new Date()).save()
- 		    }
- 	    } 
-	    flash.message = msg
-	    redirect action: auth, params: params
-    }
-	
+						eventmessage: msg,
+						accesstime:new Date()).save()
+			}
+		}
+		flash.message = msg
+		redirect action: auth, params: params
+	}
+
 	/** cache controls */
 	private void nocache(response) {
 		response.setHeader('Cache-Control', 'no-cache') // HTTP 1.1

@@ -17,7 +17,7 @@
  *
  ******************************************************************/
 // Creates the Utilities Menu to use on all of the five main screens
-function createUtilitiesMenu(helpURL, contact, appTitle, buildVer, css)
+function createUtilitiesMenu(helpURL, contact, appTitle, basePath, buildVer, css)
 {
 	var gpl3LicenseInfo = '<h1>' + appTitle + ' License Information</h1>' +
     	'Copyright (C) 2011<br/><br/>' +    	
@@ -55,12 +55,24 @@ function createUtilitiesMenu(helpURL, contact, appTitle, buildVer, css)
 	        text : 'About',
 	        handler : function()
 	        {
-	        	Ext.Msg.alert(appTitle, buildVer); 
+	        	//Ext.Msg.alert(appTitle, gpl3LicenseInfo); 
+	        	Ext.Msg.show(
+	        		{title:appTitle,
+	        		msg: gpl3LicenseInfo,
+	        		buttons:Ext.Msg.OK,
+	        		minWidth:420}
+	        	);
+	        	
 	        }
 	    },'-',{
-	        text : 'Logout',
-	        href : '/transmart/logout'
-	    }]
+	        text : 'Login',
+	        href : basePath+'/login/forceAuth'
+	    },
+	    '-',{
+        text : 'Logout',
+        href : basePath+'/logout'
+    }
+	    ]
 	});
 	                                  
 	var utilTbar = new Ext.Toolbar(

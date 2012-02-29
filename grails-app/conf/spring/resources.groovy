@@ -37,4 +37,13 @@ beans = {
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 	redirectStrategy(DefaultRedirectStrategy)
 	
+	/*guestAuthenticationFilter(com.recomdata.security.GuestAuthenticationFilter)	{
+		authenticationManager = ref('authenticationManager')
+		springSecurityService = ref('springSecurityService')
+		userDetailsService = ref('userDetailsService')
+		filterProcessesUrl = '/guestauthfilter'
+		redirectStrategy = ref('redirectStrategy')
+	}
+ */
+	
 }

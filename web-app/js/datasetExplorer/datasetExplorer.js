@@ -105,7 +105,7 @@ Ext.onReady(function()
 					region : 'north',
 					split : false,
 					border : true,
-					tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle, GLOBAL.BuildVersion, 'utilities-div'),
+					tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle, GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
 					contentEl: "header-div"
 				}
 		);
