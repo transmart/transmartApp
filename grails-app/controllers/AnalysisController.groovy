@@ -1204,7 +1204,12 @@ def ajaxGetPathwaySearchBoxData = {
 }
 
 def gplogin = {
+	def gpEnabled = grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled;
+	if('true'==gpEnabled){
 	return [userName : springSecurityService.getPrincipal().username]
+	}else{
+		render(view:'nogp')
+	}
 }
 
 	protected String getGenePatternFileDirName() {

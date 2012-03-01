@@ -100,7 +100,8 @@
 	  CurrentGenes: '',
 	  CurrentChroms: '',
 	  CurrentDataType: '',
-	  GPURL: '${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}',
+	 // GPURL: '${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}',
+	  GPURL:'',
 	  HeatmapType: 'Compare',
 	  IsAdmin: ${admin},
 	  Tokens: "${tokens}",
@@ -143,8 +144,16 @@
 <h3 id="test">Loading....</h3>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
-	<IFRAME src="${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}/gp/logout" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
-	<IFRAME src="${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}/gp/logout" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
+	
+	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled}">
+	<g:set var="gplogout" value="${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}/gp/logout"/>
+	</g:if>
+	<g:else>
+	<g:set var="gplogout" value=""/>	
+	</g:else>
+	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
+	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
+	
 	<span id="visualizerSpan0"></span> <!-- place applet tag here -->
 	<span id="visualizerSpan1"></span> <!-- place applet tag here -->
 <!-- ************************************** -->
