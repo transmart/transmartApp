@@ -33,7 +33,7 @@
                     items:[new Ext.Panel({                          
                        region: "center",
                        autoScroll: true,  
-                       tbar: createUtilitiesMenu(helpURL, contact, appTitle,${request.getContextPath()}, buildVer, 'gs-utilities-div'),                      
+                       tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'gs-utilities-div'),                      
                        contentEl: "page"
                     })]
                   });
