@@ -538,12 +538,12 @@ class SolrService {
 					   //For each category item we add something to the filter
 					   solrQuery += category.key.toString() + ":\"" + categoryValue + "\""
 					   
-				   }
-			   }
+				   }		   
 			   
 			   //Now that we have one category in the set, we need to add an AND in the future.
 			   doWeNeedAnd = true
-		   }		   
+		    }	
+		   }	   
 	   }
 		   
 	   //Close the solrQuery.
