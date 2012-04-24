@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import org.jfree.util.Log;
 
 import groovyx.net.http.HTTPBuilder
@@ -169,7 +171,7 @@ class SolrService {
 		{
 			solrQuery = generateSolrQueryFromJson(JSONObject)
 		}
-	
+		println(solrQuery)
 		//Get the max rows and URL from the config file.
 		String solrMaxRows = grailsApplication.config.com.recomdata.solr.maxRows
 		String solrServerUrl = grailsApplication.config.com.recomdata.solr.baseURL
@@ -538,12 +540,12 @@ class SolrService {
 					   //For each category item we add something to the filter
 					   solrQuery += category.key.toString() + ":\"" + categoryValue + "\""
 					   
-				   }		   
-			   
-			   //Now that we have one category in the set, we need to add an AND in the future.
-			   doWeNeedAnd = true
-		    }	
-		   }	   
+				   }
+				   
+				   //Now that we have one category in the set, we need to add an AND in the future.
+				   doWeNeedAnd = true
+			   }
+		   }		   
 	   }
 		   
 	   //Close the solrQuery.

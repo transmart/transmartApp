@@ -5,7 +5,7 @@ The files in this folder are located in the following location on the Cloud:
 
 For example:
 
-https://dev/transmart/PDF/ExternalLinks/DataLoadContacts.txt
+https://transmartdev.jnj.com/transmart/PDF/ExternalLinks/DataLoadContacts.txt
 
 
 

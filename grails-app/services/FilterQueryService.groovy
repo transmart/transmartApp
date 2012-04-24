@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import bio.BioAssayAnalysis
 import bio.Disease
 import bio.Compound
@@ -27,9 +29,9 @@ import bio.BioAssayAnalysisData
 import com.recomdata.search.query.AssayAnalysisDataQuery
 
 /**
- * $Id: FilterQueryService.groovy 11850 2012-01-24 16:41:12Z jliu $
- * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * $Id: FilterQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  */
 
 class FilterQueryService {

@@ -31,9 +31,9 @@
                    var viewport = new Ext.Viewport({
                     layout: "border",
                     items:[new Ext.Panel({                          
-                       region: "center",
-                       autoScroll: true,  
-                       tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'gs-utilities-div'),                      
+                       region: "center",  
+                       tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'gs-utilities-div'),  
+                       autoScroll:true,                    
                        contentEl: "page"
                     })]
                   });

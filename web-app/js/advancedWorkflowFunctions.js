@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 /*
  * This file contains the methods responsible for handling some of the initial advanced workflow functionality.
  
@@ -57,6 +59,7 @@ function validateHeatmap()
 		return;
 	}
 
+	//genePatternReplacement();
 	//Send a request to generate the heatmapdata that we use to populate the dropdowns in the popup.
 	Ext.Ajax.request(
 			{
@@ -99,37 +102,12 @@ function validateHeatMapsSample(completedFunction)
 	var DataSetList = [];
 	var DataTypeList = [];
 	
-	//We will assume that any subset that has entries in the DataSetList has data.
-	var subsetsWithData = 0;
-	
 	//Loop through each subset and get a distinct list of DataSets and DataTypes.
 	for (subset in jsonDataToPass)
 	{
-		//Loop through each set of records.
-		for(record in jsonDataToPass[subset].Records)
-		{
-			//Add this dataset and datatype to our list.
-			if(jsonDataToPass[subset].Records[record].DataSet)
-			{
-				//Increment our subset counter.
-				subsetsWithData +=1;
-				
-				//Loop through the list of datasets and add each to the list we distinct later.
-				for(i=0;i < jsonDataToPass[subset].Records[record].DataSet.size();i++)
-				{
-					DataSetList.push(jsonDataToPass[subset].Records[record].DataSet[i].toString());
-				}
-			}
-			
-			if(jsonDataToPass[subset].Records[record].DataType)
-			{
-				//Loop through the list of data types and add each to the list we distinct later.
-				for(i=0;i < jsonDataToPass[subset].Records[record].DataType.size();i++)
-				{
-					DataTypeList.push(jsonDataToPass[subset].Records[record].DataType[i].toString());
-				}			
-			}
-		}
+		//Add this dataset and datatype to our list.
+		if(jsonDataToPass[subset].DataSet)DataSetList.push(jsonDataToPass[subset].DataSet.toString());
+		if(jsonDataToPass[subset].DataType)DataTypeList.push(jsonDataToPass[subset].DataType.toString());
 	}
 	
 	//Distinct our arrays.
@@ -162,13 +140,6 @@ function validateHeatMapsSample(completedFunction)
  	}		
 	*/
 	
-	//Comparative Marker Selection needs two subets to function, if we are doing that analysis and we didn't find exactly two subsets with data alert the user.
-	if(GLOBAL.HeatmapType == 'Select' && subsetsWithData != 2)
-	{
- 		Ext.Msg.alert('Comparative Marker Selection','Comparative marker selection requires two non-empty subsets.');
-	 	return false;	
-	}
-	
 	//Pass the selected rows off to the sampleExplorer controller.
 	Ext.Ajax.request(
 			{
@@ -185,7 +156,7 @@ function validateHeatMapsSample(completedFunction)
 					validateheatmapComplete(result,completedFunction);
 				}
 			}
-	);
+	); 
 
 }
 
@@ -231,7 +202,7 @@ function finalAdvancedMenuValidationSample()
 	
 	Ext.Ajax.request(
 			{						
-				url: pageInfo.basePath+"/genePattern/createnewjob",
+				url: pageInfo.basePath+"/asyncJob/createnewjob",
 				method: 'POST',
 				success: function(result, request)
 				{
@@ -254,7 +225,7 @@ function finalAdvancedMenuValidationSample()
 					Ext.Msg.alert('Status', 'Unable to create the heatmap job.');
 				},
 				timeout: '1800000',
-				params: {analysis:  GLOBAL.HeatmapType}
+				params: {jobType:  GLOBAL.HeatmapType}
 			})
 }
 
@@ -318,7 +289,7 @@ function finalAdvancedMenuValidation()
 		
 		//Fire off the ajax call to start the job.
 		Ext.Ajax.request({						
-			url: pageInfo.basePath+"/genePattern/createnewjob",
+			url: pageInfo.basePath+"/asyncJob/createnewjob",
 			method: 'POST',
 			success: function(result, request)
 			{
@@ -342,7 +313,7 @@ function finalAdvancedMenuValidation()
 				Ext.Msg.alert('Status', 'Unable to create the heatmap job.');
 			},
 			timeout: '1800000',
-			params: {analysis:  GLOBAL.HeatmapType}
+			params: {jobType:  GLOBAL.HeatmapType}
 		});					
 				
 	}else{
@@ -361,8 +332,9 @@ function finalAdvancedMenuValidation()
 
 
 function runVisualizerFromSpan(viewerURL, altviewerURL) {
-	genePatternLogin();
+	//genePatternLogin();
 
+	//genePatternReplacement();
 	Ext.Ajax.request(
 	{
 		url: viewerURL,
@@ -413,6 +385,7 @@ function runAppletFromSpan(result, spanId) {
 	}
 }
 
+//TODO-PLUGIN:This should be part of the plugin
 function RunHeatMapSample(result, sampleIdList, pathway, datatype, analysis,
 		resulttype, nclusters, timepoints1, timepoints2, sample1,
 		sample2, rbmPanels1, rbmPanels2)	
@@ -420,6 +393,7 @@ function RunHeatMapSample(result, sampleIdList, pathway, datatype, analysis,
 	var jobNameInfo = Ext.util.JSON.decode(result.responseText);					 
 	var jobName = jobNameInfo.jobName;
 	
+	genePatternReplacement();
 	showJobStatusWindow(result);	
 	genePatternLogin();
 
@@ -508,11 +482,7 @@ function showGeneSelection()
 	}
 	else
 	{
-		//If we come from the sample side we handle the code a little different.
-		if(GLOBAL.Explorer != "SAMPLE")
-		{		
-			resetCohortInfoValues();
-		}
+		resetCohortInfoValues();
     }
 	
 	//Show the window we just created.

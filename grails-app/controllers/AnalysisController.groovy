@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import grails.converters.*
 
 import java.io.File
@@ -43,9 +45,9 @@ import com.recomdata.genepattern.WorkflowStatus
 import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 
 /**
- * $Id: AnalysisController.groovy 7917 2011-04-01 21:47:17Z dliu $
- * @author $Author: dliu $
- * @version $Revision: 7917 $
+ * $Id: AnalysisController.groovy 11302 2011-12-23 02:59:44Z mkapoor $
+ * @author $Author: mkapoor $
+ * @version $Revision: 11302 $
  *
  */
 class AnalysisController {
@@ -92,6 +94,8 @@ class AnalysisController {
 		def ci1 = new CohortInformation();
 		def ci2 = new CohortInformation();
 		
+		def markerType = ""
+		
 		if (resultInstanceID1 != null) {
 			subjectIds1 = i2b2HelperService.getSubjectsAsList(resultInstanceID1);
 			concepts1=i2b2HelperService.getConceptsAsList(resultInstanceID1);
@@ -99,6 +103,7 @@ class AnalysisController {
 			i2b2HelperService.fillCohortInformation(subjectIds1, concepts1, ci1, CohortInformation.TRIALS_TYPE);
 			i2b2HelperService.fillDefaultGplInHeatMapValidator(hv1, ci1, concepts1)
 			i2b2HelperService.fillDefaultRbmpanelInHeatMapValidator(hv1, ci1, concepts1)
+			markerType=i2b2HelperService.getMarkerTypeFromConceptCd(concepts1[0])
 		}
 		
 		if (resultInstanceID2 != null) {
@@ -161,7 +166,8 @@ class AnalysisController {
 			defaultRbmpanelLabels:[
 				hv1.getAll('rbmpanelsLabels'),
 				hv2.getAll('rbmpanelsLabels')
-			]];
+			],
+			markerType:markerType];
 		//log.debug(result as JSON);
 		render result as JSON;
 	}
@@ -365,46 +371,38 @@ def showSNPViewerSample = {
 		String genes = request.getParameter("genes");
 		String geneAndIdListStr = request.getParameter("geneAndIdList");
 		String snps = request.getParameter("snps");
-
-		def sampleIdList = request.getParameter("sampleIdList");
+		//The JSON we received should be [1:[category:[]]]
+		def subsetListJSON = request.JSON.SearchJSON
+	
+		//We need to get an ID list per subset. Build the subset from the JSON Data.
+		def subsetList = solrService.buildSubsetList(subsetListJSON)
 		
-		//The sampleIdList will look like {"SampleIdList":{"subset1":["Sample1"],"subset2":[],"subset3":[]}}
-		def sampleIdListJSONTemp = JSON.parse(sampleIdList);
-		
-		//JSON maps are unordered, and actually get parsed into a groovy object that is the reverse of what was in JSON. We want to pass in a hashmap which will preserve the order we set.
-		def sampleIdListMap = [:]
-		
-		for(i in 1..sampleIdListJSONTemp.size())
-		{
-			sampleIdListMap["$i"] = sampleIdListJSONTemp["$i"].toArray()
-		}
-			
 		//Change the chroms text if the param was empty.
 		if (chroms == null || chroms.trim().length() == 0) chroms = "ALL";
 		
 		//Log the access to this action.
-		def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-ShowSNPViewer", eventmessage:"Sample Explorer", accesstime:new java.util.Date())
+		def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-ShowSNPViewer", eventmessage:"RID1:"+resultInstanceID1+" RID2:"+resultInstanceID2, accesstime:new java.util.Date())
 		al.save()
 		
 		//Gather subjects from Sample IDs.
 		//Form a list of lists of longs. We will convert the outside list to an array in a later method.
-		List<List <Long>> patientNumList = new ArrayList<List <Long>>();
+		List<List <Long>> patientNumList
 		
 		//We will use this to determine if our queries return ANY patients.
 		boolean foundPatients = false;
 		
 		//For each subset get a list of subjects.
-		sampleIdListMap.each
+		subsetList.each
 		{
 			subsetItem ->
 			
-			def subsetSampleList = (ArrayList) subsetItem.value
+			def subsetSampleList = subsetItem.value
 
 			//Don't add a subset if there are no items in the subset.
 			if(subsetSampleList.size() > 0)
 			{
 				//Add the list to the list of lists.
-				List <Long> tempPatientList = i2b2HelperService.getSubjectsFromSNPTable(subsetSampleList)
+				List <Long> tempPatientList = i2b2HelperService.getSubjectsAsListFromSampleLong(subsetSampleList)
 				
 				//If we found patients, add them to the list and set our boolean to indicate we found some.
 				if(tempPatientList.size() > 0) 
@@ -598,6 +596,7 @@ def showIgv = {
 			}
 		}
 		catch (Exception e) {
+			log.error(e.getMessage(), e);
 			result.put("error", e.getMessage());
 			return;
 		}
@@ -609,6 +608,7 @@ def showIgv = {
 			jresult = genePatternService.igvViewer(igvFiles, null, null, userName);
 		}
 		catch (WebServiceException e) {
+			log.error(e.getMessage(),e);
 			result.put("error", "WebServiceException: " + e.getMessage());
 			return;
 		}
@@ -657,44 +657,38 @@ def showIgvSample = {
 		String geneAndIdListStr = request.getParameter("geneAndIdList");
 		String snps = request.getParameter("snps");
 
-		def sampleIdList = request.getParameter("sampleIdList");
-		
-		//The sampleIdList will look like {"SampleIdList":{"subset1":["Sample1"],"subset2":[],"subset3":[]}}
-		def sampleIdListJSONTemp = JSON.parse(sampleIdList);
-		
-		//JSON maps are unordered, and actually get parsed into a groovy object that is the reverse of what was in JSON. We want to pass in a hashmap which will preserve the order we set.
-		def sampleIdListMap = [:]
-		
-		for(i in 1..sampleIdListJSONTemp.size())
-		{
-			sampleIdListMap["$i"] = sampleIdListJSONTemp["$i"].toArray()
-		}
+		//The JSON we received should be [1:[category:[]]]
+		def subsetListJSON = request.JSON.SearchJSON
+
+		//We need to get an ID list per subset. Build the subset from the JSON Data.
+		def subsetList = solrService.buildSubsetList(subsetListJSON)
 
 		String chroms = request.getParameter("chroms");
 		if (chroms == null || chroms.trim().length() == 0) chroms = "ALL";
 		
-		//def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-ShowIgv", eventmessage:"RID1:"+resultInstanceID1+" RID2:"+resultInstanceID2, accesstime:new java.util.Date())
-		//al.save()
+		def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-ShowIgv", eventmessage:"RID1:"+resultInstanceID1+" RID2:"+resultInstanceID2, accesstime:new java.util.Date())
+		al.save()
 		
-				//Gather subjects from Sample IDs.
+		//Gather subjects from Sample IDs.
 		//Form a list of lists of longs. We will convert the outside list to an array in a later method.
-		List<List <Long>> patientNumList = new ArrayList<List <Long>>();
+		List<List <Long>> patientNumList
 		
 		//We will use this to determine if our queries return ANY patients.
 		boolean foundPatients = false;
+		boolean foundSNPData = false;
 		
 		//For each subset get a list of subjects.
-		sampleIdListMap.each
+		subsetList.each
 		{
 			subsetItem ->
 			
-			def subsetSampleList = (ArrayList) subsetItem.value
+			def subsetSampleList = subsetItem.value
 
 			//Don't add a subset if there are no items in the subset.
 			if(subsetSampleList.size() > 0)
 			{
 				//Add the list to the list of lists.
-				List <Long> tempPatientList = i2b2HelperService.getSubjectsFromSNPTable(subsetSampleList)
+				List <Long> tempPatientList = i2b2HelperService.getSubjectsAsListFromSampleLong(subsetSampleList)
 				
 				//If we found patients, add them to the list and set our boolean to indicate we found some.
 				if(tempPatientList.size() > 0) 
@@ -703,16 +697,27 @@ def showIgvSample = {
 					patientNumList.add(tempPatientList);
 				}
 				
+				//TODO: This needs to be a string.
+				List<Long> idList = i2b2HelperService.getSNPDatasetIdList(tempPatientList);
+				if (idList != null && idList.size() > 0) foundSNPData = true;
+						
 			}
 		}
-		
+
+		//If we didn't find SNP data, add an error message to the results.
+		if (!foundSNPData) {
+			result.put("error", "No SNP dataset was selected");
+			return;
+		}
+	
 		//If we didn't find any patients, send a message to the output stream.
-		if (!foundPatients) 
+		if (!foundPatients)
 		{
 			result.put("error", "No subject was selected");
 			response.outputStream << result.toString();
 			return;
 		}
+
 		
 		boolean isByPatient = true;
 		List<Long> geneSearchIdList = new ArrayList<Long>();
@@ -876,7 +881,7 @@ def showPlink = {
 		plinkService.getSnpDataBySujectChromosome(subjectIds1, chroms, pedFile, conceptCodeList1, "1");
 		plinkService.getSnpDataBySujectChromosome(subjectIds2, chroms, pedFile, conceptCodeList2, "2");
 		
-		JobResult[] jresult;
+		/*JobResult[] jresult;
 		
 		try {
 			String userName = springSecurityService.getPrincipal().username;
@@ -885,17 +890,17 @@ def showPlink = {
 		catch (WebServiceException e) {
 			result.put("error", "WebServiceException: " + e.getMessage());
 			return;
-		}
+		}*/
 		
 		String viewerURL;
 		String altviewerURL;
 		
 		try {
-			result.put("jobNumber", jresult[1].getJobNumber());
+			/*result.put("jobNumber", jresult[1].getJobNumber());
 			viewerURL = grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL +
 						"/gp/jobResults/" +
 						jresult[1].getJobNumber() +
-						"?openVisualizers=true";
+						"?openVisualizers=true";*/
 			log.debug("URL for viewer: " + viewerURL)
 			result.put("viewerURL", viewerURL);
 			
@@ -969,21 +974,21 @@ def showHaploviewGeneSelector= {
 //Use the search JSON to get the list of samples. Find the Genes associated with those samples.
 def showHaploviewGeneSelectorSample= {
 	
-	def sampleIdList = request.getParameter("sampleIdList");
+	//We need to first retrieve the list of Sample ID's for the dataset we have selected.
+	//Grab the URL of the solr server.
+	String solrURL = grailsApplication.config.com.recomdata.solr.baseURL
+	//Grab the string for the maximum number of result rows to return.
+	String solrMaxRows = grailsApplication.config.com.recomdata.solr.maxRows
+
+	//Get the list of Sample ID's based on the criteria in the JSON object.
+	//We need to get an ID list per subset. The JSON we received should be [1:[category:[]]]
+	def subsetList = request.JSON.SearchJSON
 	
-	//The sampleIdList will look like {"SampleIdList":{"subset1":["Sample1"],"subset2":[],"subset3":[]}}
-	def sampleIdListJSONTemp = JSON.parse(sampleIdList);
-	
-	//JSON maps are unordered, and actually get parsed into a groovy object that is the reverse of what was in JSON. We want to pass in a hashmap which will preserve the order we set.
-	def sampleIdListMap = [:]
-	
-	for(i in 1..sampleIdListJSONTemp.size())
-	{
-		sampleIdListMap["$i"] = sampleIdListJSONTemp["$i"].toArray()
-	}
+	//Build the subset from the JSON Data.
+	def result = solrService.buildSubsetList(solrURL,solrMaxRows,subsetList)
 	
 	//We use this map to get a list of distinct genes.	
-	def genes = analysisService.getGenesForHaploviewFromSampleId(sampleIdListMap)
+	def genes = analysisService.getGenesForHaploviewFromSampleId(result)
 	
 	//Sort the list of genes.
 	genes=genes.keySet();
@@ -1019,18 +1024,18 @@ def showSNPViewerSelection = {
 //Get the data for the display elements in the SNP selection window.
 def showSNPViewerSelectionSample = {
 	
-	def sampleIdList = request.getParameter("sampleIdList");
+	//We need to first retrieve the list of Sample ID's for the dataset we have selected.
+	//Grab the URL of the solr server.
+	String solrURL = grailsApplication.config.com.recomdata.solr.baseURL
+	//Grab the string for the maximum number of result rows to return.
+	String solrMaxRows = grailsApplication.config.com.recomdata.solr.maxRows
+
+	//Get the list of Sample ID's based on the criteria in the JSON object.
+	//We need to get an ID list per subset. The JSON we received should be [1:[category:[]]]
+	def subsetList = request.JSON.SearchJSON
 	
-	//The sampleIdList will look like {"SampleIdList":{"subset1":["Sample1"],"subset2":[],"subset3":[]}}
-	def sampleIdListJSONTemp = JSON.parse(sampleIdList);
-	
-	//JSON maps are unordered, and actually get parsed into a groovy object that is the reverse of what was in JSON. We want to pass in a hashmap which will preserve the order we set.
-	def sampleIdListMap = [:]
-	
-	for(i in 1..sampleIdListJSONTemp.size())
-	{
-		sampleIdListMap["$i"] = sampleIdListJSONTemp["$i"].toArray()
-	}
+	//Build the subset from the JSON Data.
+	def result = solrService.buildSubsetList(solrURL,solrMaxRows,subsetList)
 
 	//We need to show the users a count of how many datasets exist for each subset. As we gather the lists, stash the count in a hashmap.
 	def datasetCount = [:]
@@ -1039,24 +1044,27 @@ def showSNPViewerSelectionSample = {
 	int datasetCounter = 0;
 	
 	//For each subset we need to get a list of the Dataset Ids.
-	sampleIdListMap.each
+	result.each
 	{
 		subsetItem ->
 		
-		def subsetSampleList = (String[])subsetItem.value
+		def subsetSampleList = subsetItem.value
 		
 		//Verify we have samples in this subset.
 		if(subsetSampleList.size() > 0)
 		{
 		
-			//Use the list of samples to get the dataset ID List.
-			List<Long> idList = i2b2HelperService.getSNPDatasetIdListSample(subsetSampleList);
+			//Get the list of subjects from the subject sample mapping table based on Sample_ID
+			String subjectIds = i2b2HelperServer.getSubjectsAsListFromSample(subsetItem.value)
+			
+			//Use the list of subjects to get the dataset ID List.
+			List<Long> idList = i2b2HelperService.getSNPDatasetIdList(subjectIds);
 			
 			//Make sure we retrieved Data Set Ids.
 			if(idList != null)
 			{
 				//Put the count of dataset items in the hashmap.
-				datasetCount[subsetItem.key] = idList.size();
+				datasetCount[subseyItem.key] = idList.size();
 				
 				//Add the number of datasets to our total counter.
 				datasetCounter += idList.size()
@@ -1100,61 +1108,6 @@ def showIgvSelection = {
 	[chroms: chroms, snpDatasetNum_1: snpDatasetNum_1, snpDatasetNum_2: snpDatasetNum_2, warningMsg: warningMsg, chromDefault: 'ALL'];
 }
 
-def showIgvSelectionSample = {
-	def sampleIdList = request.getParameter("sampleIdList");
-	
-	//The sampleIdList will look like {"SampleIdList":{"subset1":["Sample1"],"subset2":[],"subset3":[]}}
-	def sampleIdListJSONTemp = JSON.parse(sampleIdList);
-	
-	//JSON maps are unordered, and actually get parsed into a groovy object that is the reverse of what was in JSON. We want to pass in a hashmap which will preserve the order we set.
-	def sampleIdListMap = [:]
-	
-	for(i in 1..sampleIdListJSONTemp.size())
-	{
-		sampleIdListMap["$i"] = sampleIdListJSONTemp["$i"].toArray()
-	}
-	
-	//We need to show the users a count of how many datasets exist for each subset. As we gather the lists, stash the count in a hashmap.
-	def datasetCount = [:]
-	
-	//Keep track of the total number of datasets so we can warn the user if > 10 datasets are available.
-	int datasetCounter = 0;
-	
-	//For each subset we need to get a list of the Dataset Ids.
-	sampleIdListMap.each
-	{
-		subsetItem ->
-		
-		def subsetSampleList = (String[]) subsetItem.value
-		
-		//Verify we have samples in this subset.
-		if(subsetSampleList.size() > 0)
-		{
-		
-			//Use the list of samples to get the dataset ID List.
-			List<Long> idList = i2b2HelperService.getSNPDatasetIdListSample(subsetSampleList);
-			
-			//Make sure we retrieved Data Set Ids.
-			if(idList != null)
-			{
-				//Put the count of dataset items in the hashmap.
-				datasetCount[subsetItem.key] = idList.size();
-				
-				//Add the number of datasets to our total counter.
-				datasetCounter += idList.size()
-			}
-		}
-	}
-	
-	//Warn the user if there are over 10 SNP Datasets selected.
-	String warningMsg = null;
-	if (datasetCounter > 10) {
-		warningMsg = "Note: The performance may be slow with more than 10 SNP datasets. Please consider displaying individual chromosomes.";
-	}
-	
-	def chroms = ['ALL','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y'];
-	[chroms: chroms, snpDatasets : datasetCount, warningMsg: warningMsg, chromDefault: 'ALL'];
-}
 
 def showPlinkSelection = {
 	String resultInstanceID1 = request.getParameter("result_instance_id1");
@@ -1204,13 +1157,15 @@ def ajaxGetPathwaySearchBoxData = {
 }
 
 def gplogin = {
-	def gpEnabled = grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled;
-	if('true'==gpEnabled){
-	return [userName : springSecurityService.getPrincipal().username]
-	}else{
-		render(view:'nogp')
-	}
+	def gpEnabled = grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern;
+  if('true'==gpEnabled){
+ return [userName : springSecurityService.getPrincipal().username]
+  }else{
+  render(view:'nogp')
+
+  }
 }
+	
 
 	protected String getGenePatternFileDirName() {
 		String fileDirName = grailsApplication.config.com.recomdata.analysis.genepattern.file.dir;

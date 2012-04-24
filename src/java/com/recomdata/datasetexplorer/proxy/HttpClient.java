@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,9 +16,11 @@
  * 
  *
  ******************************************************************/
+
+
 /* Copyright 2007 Sun Microsystems, Inc.  All rights reserved.  You may not modify, use, reproduce, or distribute this software except in compliance with the terms of the License at: 
  http://developer.sun.com/berkeley_license.html
- $Id: HttpClient.java,v 1.2 2007/09/26 17:21:42 gmurray71 Exp $ 
+ $Id: HttpClient.java 11083 2011-12-09 06:05:13Z jliu $ 
 */
 package com.recomdata.datasetexplorer.proxy;
 
@@ -203,6 +205,9 @@ public class HttpClient {
      * @return InputStream input stream from URLConnection
      */
     public InputStream doPost(String postData, String contentType) {
+    	
+    //	System.out.println("postdata:"+postData);
+   // 	System.out.println("ct:"+contentType);
         this.urlConnection.setDoOutput(true);     
         if (contentType != null) this.urlConnection.setRequestProperty( "Content-type", contentType );
                

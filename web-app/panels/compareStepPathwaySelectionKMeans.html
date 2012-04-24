@@ -14,17 +14,14 @@
     <script type="text/javascript">
   function setValueMethodChanged(value)
   {
-  if(value=="RBM")
-      {document.getElementById("divpathway").style.visibility="hidden";
-       }
-  if(value=="Clinical")
-      {
-      document.getElementById("divpathway").style.visibility="hidden";
-      }
-  if(value=="Microarray")
-  	{
-  	 document.getElementById("divpathway").style.visibility="visible";
-  	}
+	  if(value=="RBM" || value=="Clinical" || value=="Microarray")
+	  {
+		  if (document.getElementById("divpathway")) {
+			  document.getElementById("divpathway").style.visibility="hidden";
+		  } else if (document.getElementById("divpathway1")) {
+			  document.getElementById("divpathway1").style.visibility="hidden";
+		  }
+	  }
   }
   </script>
   </head>

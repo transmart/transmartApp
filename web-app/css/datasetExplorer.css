@@ -123,7 +123,10 @@ a.toplink1:hover{
 .summarybutton{
 	background-image:url(../images/summary.png ) !important;
 	}
-
+.hleaficon
+	{
+	background-image:url(../images/dna_icon.png ) !important;
+	}
 .valueicon{
 	background-image:url(../images/numeric.gif ) !important;
 	}
@@ -134,6 +137,14 @@ a.toplink1:hover{
 .savebutton{
 	background-image:url(../images/disk.png ) !important;
 	}	
+	
+.jleafclass 
+	a span {
+
+    color: #33cc33;
+    padding: 1px 3px 1px 2px;
+    text-decoration: none;
+	}
 	
 .gbhblank{
 border-top:1px solid #c9d7f1;
@@ -231,45 +242,41 @@ div.analysistitle {
 
 
 .contextHelpBtn {
-	background-image:url(../images/help/helpbutton.jpg ) !important;
+	background-image:url(../images/help/helpicon_gray.jpg ) !important;
 	color:#ff0000;	
 }
 	
 .x-tool-sampleExplorerHelpButton {
-	background-image:url(../images/help/helpbutton.jpg ) !important;
+	background-image:url(../images/help/helpicon_gray.jpg ) !important;
 	color:#ff0000;	
 }
 
-table.AnalysisResults {
-		font: 12px tahoma,arial,helvetica,sans-serif;
-		border-width: 1px;
-		border-style: solid;
-		border-color: gray;
-		background-color: white;
-		border-collapse:collapse;
-		font-weight: bold;
-	}
-
-table.AnalysisResults td {
-		border-width: 1px;
-		border-style: solid;
-		border-color: gray;
-		background-color: white;
-		padding:10px; 	
-	}
-
-table.AnalysisResults td.blankCell{
-		border: 0px;
-	}
-
-.utilities-div {
-    position:fixed;
-    width:80px;
-    top:0;
-    right:0;
-    z-index:100;
+table.detail {
+    border-collapse:collapse;
+    width: 100%;
+    border:1px solid #ccc;
+     font: 10px verdana, arial, helvetica, sans-serif;
 }
 
+table.detail td {
+	 font: 10px verdana, arial, helvetica, sans-serif;
+     padding: 5px 3px;
+     text-align: left;
+     vertical-align: top;
+     border-bottom:1px solid #ccc;
+}
+
+table.detail td.name {
+	font-weight:bold;
+	background-color:#fff;
+}
+
+table.detail td.value {
+background-color:#bbb;
+}
+
+td.prop, td.name {line-height: normal;}
+
 table.AnalysisResults {
 		font: 12px tahoma,arial,helvetica,sans-serif;
 		border-width: 1px;
@@ -284,7 +291,8 @@ table.AnalysisResults td {
 		border-style: solid;
 		border-color: gray;
 		background-color: white;
-		padding:10px; 	
+		padding:10px;
+		white-space: nowrap;		
 	}
 
 table.AnalysisResults th {
@@ -295,11 +303,58 @@ table.AnalysisResults th {
 		border-color: gray;		
 		padding:10px;
 		text-align:left;
+		white-space: nowrap;
 	}
 
 table.AnalysisResults td.blankCell{
 		border: 0px;
 	}
+
+
+
+/* --------------------------------------------- */
+/* Analysis Results with sorting functionality. */
+table.tablesorterAnalysisResults {
+	font-family:arial;
+	background-color: #CDCDCD;
+	margin:10px 0pt 15px;
+	font-size: 8pt;
+	text-align: left;
+}
+table.tablesorterAnalysisResults thead tr th, table.tablesorter tfoot tr th {
+	background-color: #e6EEEE;
+	border: 1px solid #FFF;
+	font-size: 8pt;
+	padding: 4px;
+	white-space: nowrap;	
+}
+table.tablesorterAnalysisResults thead tr .header {
+	background-image: (../images/bg.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+	white-space: nowrap;	
+}
+table.tablesorterAnalysisResults tbody td {
+	color: #3D3D3D;
+	padding: 4px;
+	background-color: #FFF;
+	vertical-align: top;
+	white-space: nowrap;	
+}
+table.tablesorterAnalysisResults tbody tr.odd td {
+	background-color:#F0F0F6;
+}
+table.tablesorterAnalysisResults thead tr .headerSortUp {
+	background-image: url(../images/asc.gif);
+}
+table.tablesorterAnalysisResults thead tr .headerSortDown {
+	background-image: url(../images/desc.gif);
+}
+table.tablesorterAnalysisResults thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+background-color: #8dbdd8;
+}
+/* --------------------------------------------- */
 
 span.AnalysisHeader {
 		font: 14px tahoma,arial,helvetica,sans-serif;
@@ -309,3 +364,64 @@ a.AnalysisLink {
 		font: 14px tahoma,arial,helvetica,sans-serif;
 		font-weight:bold;
 	}
+	
+.utilities-div {
+    position:fixed;
+    width:80px;
+    top:0;
+    right:0;
+    z-index:100;
+}	
+		
+@page { 
+size: letter landscape;
+margin: 0.25in; 
+-fs-flow-top: "header";
+-fs-flow-bottom: "footer";
+-fs-flow-left: "left";
+-fs-flow-right: "right";
+border: 0px;
+padding: 1em;
+}
+
+#header {
+font: bold serif;
+position: absolute; top: 0; left: 0; 
+-fs-move-to-flow: "header";
+}
+
+#footer {
+font-size: 90%; font-style: italic; 
+position: absolute; top: 0; left: 0;
+-fs-move-to-flow: "footer";
+}
+
+
+#pagenumber:before {
+content: counter(page); 
+}
+
+#pagecount:before {
+content: counter(pages);  
+}
+
+.dialog-modal {
+	font: 11px arial,tahoma,helvetica,sans-serif;
+	font-weight:normal;
+}
+
+#mask{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    display: none;
+    z-index: 9999;
+}
+
+.x-tool-help {
+	background-image: url("../images/help/tool-sprites-rdc.gif");
+    background-position: 0 -300px;
+}

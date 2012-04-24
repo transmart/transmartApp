@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,11 +16,13 @@
  * 
  *
  ******************************************************************/
+
+
 function getJobsData(tab)
 {
 	jobsstore = new Ext.data.JsonStore(
 			{
-   				url : pageInfo.basePath+'/genePattern/getjobs',
+   				url : pageInfo.basePath+'/asyncJob/getjobs',
    				root : 'jobs',
    				totalProperty : 'totalCount',
    				fields : ['name', 'status', 'runTime', 'startDate', 'viewerURL', 'altViewerURL']
@@ -75,7 +77,7 @@ function jobsstoreLoaded()
 							runVisualizerFromSpan(viewerURL, altViewerURL);
 						} else	{
 							Ext.Ajax.request({						
-								url: pageInfo.basePath+"/genePattern/getjobresults",
+								url: pageInfo.basePath+"/asyncJob/getjobresults",
 								method: 'POST',
 								success: function(result, request){
 									var jobResultsInfo = Ext.util.JSON.decode(result.responseText);					 
@@ -164,7 +166,7 @@ function showJobStatusWindow(result)	{
 		        	  }
 		          }],
 	   autoLoad: {
-		   url: pageInfo.basePath+'/genePattern/showJobStatus',
+		   url: pageInfo.basePath+'/asyncJob/showJobStatus',
 		   scripts: true,
 		   nocache:true,
 		   discardUrl:true,
@@ -179,7 +181,7 @@ function showJobStatusWindow(result)	{
 function cancelJob(jobName)	{
 	Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/genePattern/canceljob",
+				url : pageInfo.basePath+"/asyncJob/canceljob",
 				method : 'POST',
 				timeout : '300000',
 				params: {jobName: jobName}
@@ -213,7 +215,7 @@ function checkJobStatus(jobName)	{
 		secCount=secCount+3; // 3 seconds
 		Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/genePattern/checkJobStatus",
+				url : pageInfo.basePath+"/asyncJob/checkJobStatus",
 				method : 'POST',
 				success : function(result, request)
 				{
@@ -332,144 +334,3 @@ function checkJobStatus(jobName)	{
 	Ext.TaskMgr.start(checkTask);
 }
 
-function showWorkflowStatusWindow()
-{	
-	wfsWindow = new Ext.Window({
-		id: 'showWorkflowStatus',
-		title: 'Workflow Status',
-		layout:'fit',
-		width:300,
-		height:300,
-		closable: false,
-		plain: true,
-		modal: true,
-		border:false,
-		//autoScroll: true,
-		buttons: [
-		         {
-		        	  text: 'Cancel Job',
-		        	  handler: function(){
-		        	  runner.stopAll();
-		        	  terminateWorkflow();
-		        	  wfsWindow.close();}
-		          }],
-		          resizable: false,
-		          autoLoad:
-		          {
-					url: pageInfo.basePath+'/genePattern/showWorkflowStatus',
-					scripts: true,
-					nocache:true,
-					discardUrl:true,
-					method:'POST'
-		          }
-	});
-	//  }
-	wfsWindow.show(viewport);
-	
-	var updateStatus = function(){
-		Ext.Ajax.request(
-				{
-					url : pageInfo.basePath+"/genePattern/checkWorkflowStatus",
-					method : 'POST',
-					success : function(result, request)
-					{
-						//alert(result);
-						workflowStatusUpdate(result);
-					}
-				,
-				failure : function(result, request)
-				{
-					//alert(result);
-					//saveComparisonComplete(result);
-				}
-				,
-				timeout : '300000'
-				}
-		);
-  	} 
-  	
-  	var task = {
-  	    run: updateStatus,
-  	    interval: 3000 //3 second
-  	}
- 
-  	runner.start(task);
-
-}
-
-function workflowStatusUpdate(result){
-	var response=eval("(" + result.responseText + ")");	
-	var inserthtml = response.statusHTML;
-	var divele = Ext.fly("divwfstatus");
-	if(divele!=null){
-		divele.update(inserthtml);
-	}
-	var status = response.wfstatus;
-	if(status =='completed'){
-		runner.stopAll();		
-		if(divele!=null){
-			divele.update("");
-		}		
-		if(wfsWindow!=null){
-			wfsWindow.close();
-			wfsWindow =null;
-		}		
-		//var rpCount = response.rpCount;
-		//if(rpCount<=1){}
-		// only show it once
-		showWorkflowResult(result);
-	} 
-}
-
-function terminateWorkflow(){
-	Ext.Ajax.request(
-			{
-				url : pageInfo.basePath+"/genePattern/cancelJob",
-				method : 'POST',
-				success : function(result, request)
-				{
-					
-				}
-			,
-			failure : function(result, request)
-			{
-				//alert(result);
-				//saveComparisonComplete(result);
-			}
-			,
-			timeout : '300000'
-			}
-	);
-}
-
-function showWorkflowResult(result)
-{
-	var response=eval("(" + result.responseText + ")");
-	var jobNumber = response.jobNumber;
-	var viewerURL = response.viewerURL;
-	var altviewerURL = response.altviewerURL;
-	var gctURL = response.gctURL;
-	var cdtURL = response.cdtURL;
-	var gtrURL = response.gtrURL;
-	var atrURL = response.atrURL;
-	var error = response.error;
-	var snpGeneAnnotationPage = response.snpGeneAnnotationPage;
-
-	//Ext.MessageBox.hide();
-
-	if (error != undefined) {
-		alert(error);
-	} 
-	else {
-		if (snpGeneAnnotationPage != undefined && snpGeneAnnotationPage.length != 0) {
-			showSnpGeneAnnotationPage(snpGeneAnnotationPage);
-		}
-		runVisualizerFromSpan(viewerURL, altviewerURL);
-	}
-}
-
-function showSnpGeneAnnotationPage(snpGeneAnnotationPage) {
-	var resultWin = window.open('', 'Snp_Gene_Annotation_' + (new Date()).getTime(), 
-		'width=600,height=800,scrollbars=yes,resizable=yes,location=no,toolbar=no,status=no,menubar=no,directories=no');
-	resultWin.document.write(snpGeneAnnotationPage);
-}

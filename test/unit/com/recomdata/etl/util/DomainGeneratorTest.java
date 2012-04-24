@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,8 +16,10 @@
  * 
  *
  ******************************************************************/
+
+
 /**
- * $Id: DomainGeneratorTest.java 11850 2012-01-24 16:41:12Z jliu $
+ * $Id: DomainGeneratorTest.java 9178 2011-08-24 13:50:06Z mmcduffie $
  */
 package com.recomdata.etl.util;
 
@@ -27,8 +29,8 @@ import com.recomdata.etl.db.MssqlConnectImpl;
 /**
  * Unit test of DomainGenerator class
  *
- * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  */
 public class DomainGeneratorTest extends GroovyTestCase {
 	/**

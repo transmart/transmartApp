@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,12 +16,9 @@
  * 
  *
  ******************************************************************/
-/**
-* $Id: ComparisonController.groovy 11850 2012-01-24 16:41:12Z jliu $
-* @author $Author: jliu $
-* @version $Revision: 11850 $
-*
-*/
+
+
+
 import grails.converters.*
 import org.json.*;
 import i2b2.Comparison;

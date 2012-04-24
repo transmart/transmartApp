@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
 /**
-* $Id: $
-* @author $Author: $
-* @version $Revision: $
+* $Id: AuthUserDetailsService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+* @author $Author: mmcduffie $
+* @version $Revision: 9178 $
 */
 package com.recomdata.security
 
@@ -28,7 +30,6 @@ import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUserDetailsService
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import org.springframework.security.authentication.DisabledException
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -74,21 +75,19 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 	/**
 	 * This is used by the Identity Vault authentication process
 	 * 
-	 * @param wwid - The id from the Identity Vault
+	 * @param wwid - The ID from the Identity Vault
 	 * 
-	 * @return the valid UserDetails (enabled user) for the given WWID or a DisabledException is thrown
+	 * @return the valid UserDetails for the given WWID or a WWIDNotFoundException is thrown
 	 */
-	UserDetails loadUserByWWID(String wwid) throws DisabledException	{
+	UserDetails loadUserByWWID(String wwid) throws WWIDNotFoundException	{
 		log.info "Attempting to find user for WWID: $wwid"
 		log.debug "Use withTransaction to avoid lazy loading initialization error when accessing the authorities collection"
 		Class<?> User = application.getDomainClass(conf.userLookup.userDomainClassName).clazz
 		User.withTransaction { status ->
 			def user = User.findById(wwid)
-			if (!user) { 
-				throw new DisabledException("User not found for WWID: $wwid")
-			}
-			if (!user.enabled)	{
-				throw new DisabledException("User with WWID: $wwid is not enabled for tranSMART")
+			if (!user) {
+				log.warn "User not found for WWID: $wwid"
+				throw new WWIDNotFoundException('User not found', wwid)
 			}
 			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
 			

@@ -1,4 +1,4 @@
-tranSMART Ð translational medicine data mart
+tranSMART - translational medicine data mart
  
 Copyright 2008-2011 Janssen Research & Development, LLC.
  

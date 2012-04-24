@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.genesignature
 
 import bio.BioAssayAnalysisData
@@ -24,9 +26,9 @@ import org.apache.log4j.Logger
 
 /**
  * manager class for TEA scoring logic
- * $Id: TEAScoreManager.groovy 1455 2009-06-02 21:44:49Z jspencer $
- *@author $Author: jspencer $
- *@version $Revision: 1 $
+ * $Id: TEAScoreManager.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ *@author $Author: mmcduffie $
+ *@version $Revision: 9178 $
  **/
 public class TEAScoreManager {
 

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,8 +16,10 @@
  * 
  *
  ******************************************************************/
+
+
 /**
- * $Id: DomainGenerator.java 11850 2012-01-24 16:41:12Z jliu $
+ * $Id: DomainGenerator.java 9178 2011-08-24 13:50:06Z mmcduffie $
  */
 package com.recomdata.etl.util;
 
@@ -36,8 +38,8 @@ import com.recomdata.etl.db.OracleConnectImpl;
 /**
  * Creates the domain class based on given table schema
  *
- * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  */
 public class DomainGenerator {
 
@@ -113,8 +115,7 @@ public class DomainGenerator {
 		Statement st = null;
 		ResultSet rs = null;
 		try {
-			//			connect = OracleConnectImpl.createJJHost2BioMartwz2Connect();
-			connect = OracleConnectImpl.createJJHost2SearchAppConnect();
+			connect = OracleConnectImpl.createHost2SearchAppConnect();
 
 
 
@@ -303,7 +304,6 @@ public class DomainGenerator {
 					try {
 						f.close();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 

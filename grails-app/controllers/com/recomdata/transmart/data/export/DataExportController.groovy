@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,7 +16,11 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.transmart.data.export
+
+import org.json.JSONObject;
 
 import com.recomdata.transmart.domain.i2b2.AsyncJob;
 
@@ -34,26 +38,30 @@ class DataExportController {
 		render exportService.getMetaData(params)
 	}
 	
-	def getJobs = {		
-		def result = exportService.getExportJobs(springSecurityService.getPrincipal().username)
-		
+	def downloadFileExists = {
+		def InputStream inputStream = exportService.downloadFile(params);
 		response.setContentType("text/json")
+		JSONObject result = new JSONObject()
+		
+		if(null != inputStream){
+			result.put("fileStatus", true)
+		} else {
+		   	result.put("fileStatus", false)
+			result.put("message", "Download failed as file could not be found on the server")
+	    }
 		response.outputStream << result.toString()
 	}
 	
 	def downloadFile = {
-		def fileDoc = exportService.downloadFile(params);
+		def InputStream inputStream = exportService.downloadFile(params);
 		
-		if(fileDoc && fileDoc.exists()){
-			// force download
-			def fileName = fileDoc.name
-			
-			response.setContentType "application/octet-stream"
-			response.setHeader "Content-disposition", "attachment;filename=${fileName}"
-			response.outputStream << fileDoc.newInputStream()
-			response.outputStream.flush()
-			return true;
-	   }
+		def fileName = params.jobname + ".zip"
+		response.setContentType "application/octet-stream"
+		response.setHeader "Content-disposition", "attachment;filename=${fileName}"
+		response.outputStream << inputStream
+		response.outputStream.flush()
+		inputStream.close();
+		return true;
 	}
 	
 	/**

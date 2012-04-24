@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.transmart.data.export
 
 import java.util.HashMap
@@ -31,7 +33,7 @@ class I2b2ExportHelperService {
 def  findStudyAccessions( result_instance_ids){
 		def rids = []
 		for(r in result_instance_ids){
-			if(r?.trim().length()>0 ){
+			if(r?.trim()?.length()>0 ){
 				rids.add(r);
 			}
 		}

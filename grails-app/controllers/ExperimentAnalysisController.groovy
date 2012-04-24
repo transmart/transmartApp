@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
 /**
- * $Id: ExperimentAnalysisController.groovy 11850 2012-01-24 16:41:12Z jliu $
- * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * $Id: ExperimentAnalysisController.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 10098 $
  */
 
 import com.recomdata.util.DomainObjectExcelHelper;

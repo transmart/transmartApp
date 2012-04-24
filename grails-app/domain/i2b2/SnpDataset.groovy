@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package i2b2
 
 class SnpDataset {
@@ -25,7 +27,7 @@ class SnpDataset {
 	Long id;
 	String datasetName;
 	
-	/* conceptId is like "12211", stored in table "de_subject_snp_dataset", column "concept_cd", 
+	/* conceptId is like "1222211", stored in table "de_subject_snp_dataset", column "concept_cd", 
 	 * mapped to "concept_cd" in table "patient_dimension". 
 	 * The conceptName is the display name, like "Normal Blood Lymphocyte", stored in name_char in table "patient_dimension" */
 	String conceptId;

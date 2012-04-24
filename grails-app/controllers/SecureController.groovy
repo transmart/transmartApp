@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,13 @@
  * 
  *
  ******************************************************************/
+
+
+
  /**
-  * $Id: SecureController.groovy 11850 2012-01-24 16:41:12Z jliu $
-  * @author $Author: jliu $
-  * @version $Revision: 11850 $
+  * $Id: SecureController.groovy 10133 2011-10-20 21:34:43Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 10133 $
   */
 
 class SecureController {

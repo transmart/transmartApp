@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
 /**
- * $Id: TrialController.groovy 11850 2012-01-24 16:41:12Z jliu $
+ * $Id: TrialController.groovy 10280 2011-10-29 03:00:52Z jliu $
  * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * @version $Revision: 10280 $
  */
 import com.recomdata.util.DomainObjectExcelHelper;
 import grails.converters.*
@@ -49,11 +51,11 @@ class TrialController {
 		def studyDesigns=filterQueryService.studyDesignFilter("Clinical Trial");
 
 		render(template:'trialFilter', model:[studyPlatform:contentType,
-		diseases:diseases,
-		compounds:compounds,
-		phases:phases,
-		studyTypes:studyTypes,
-		studyDesigns:studyDesigns])
+					diseases:diseases,
+					compounds:compounds,
+					phases:phases,
+					studyTypes:studyTypes,
+					studyDesigns:studyDesigns])
 	}
 
 	def filterTrial = {
@@ -71,7 +73,6 @@ class TrialController {
 		} else {
 			// session.searchFilter.trialFilter.selectedtrials.add("-1")
 
-			// JNJ-1049:
 			// selecting no trials does not make sense since the result is always nothing!
 			// In this case, assume the previous search trials will be used (usually this happens when user clicks filter button
 			// before the tree has populated with trials)
@@ -102,7 +103,7 @@ class TrialController {
 		def sResult = new SearchResult()
 		def max = grailsApplication.config.com.recomdata.search.paginate.max
 		def paramMap =searchService.createPagingParamMap(params,max,0)
-		sResult.trialCount = trialQueryService.countTrial(session.searchFilter)		
+		sResult.trialCount = trialQueryService.countTrial(session.searchFilter)
 		//sResult.result=trialQueryService.queryTrial(false, session.searchFilter, paramMap)
 		//sResult.trialCount =clinicalTrialAnalysisTEAService.countAnalysis(session.searchFilter)
 		sResult.result=clinicalTrialAnalysisTEAService.queryExpAnalysis(session.searchFilter, paramMap)
@@ -126,24 +127,39 @@ class TrialController {
 	def trialDetailByTrialNumber = {
 		def trialNumber = params['id'].toUpperCase()
 		def conceptType = params['conceptType']
-		def exp = Experiment.findByAccession(trialNumber);
+		def istrial = true;
+		def exp = ClinicalTrial.findByTrialNumber(trialNumber);
+		if(exp==null){
+			exp = Experiment.findByAccession(trialNumber);
+			istrial = false;
+		}
+		log.info("test encode:"+URLEncoder.encode("https://sss.ss/ge/pub/220202"));
+		
 		def skid  = null;
 		def sk = SearchKeyword.findByKeyword(trialNumber);
 		if(sk!=null){
 			skid=sk.id
 		}
 		if(exp!=null)	{
-		    if (conceptType!='Public Studies') {
-		        log.info "Rendering clinical trial detail..."
-		        exp =ClinicalTrial.findByTrialNumber(trialNumber);
-		        render(template:'clinicaltrialdetail', model:[clinicalTrial:exp, searchId:skid])
-		    } else {
-		        log.info "Rendering experiment detail..."
-		        render(template:'/experiment/expDetail', model:[experimentInstance:exp, searchId:skid])
-		    }
+
+			if(istrial){
+				def trialview = grailsApplication.config.com.recomdata?.view?.studyview?:"_clinicaltrialdetail";
+
+				if(trialview.startsWith("_")){
+					render(template:trialview.substring(1), model:[clinicalTrial:exp, searchId:skid])
+				}else{
+					render(view:trialview, model:[clinicalTrial:exp, searchId:skid])
+				}
+
+			}else {
+
+				render(template:'/experiment/expDetail', model:[experimentInstance:exp, searchId:skid])
+			}
+
+
 		} else	{
-		    log.warn "Experiment is null, indicating that to the user..."
-		    render(view:'/experiment/noresults')
+			log.warn "Experiment is null, indicating that to the user..."
+			render(view:'/experiment/noresults')
 		}
 	}
 
@@ -166,7 +182,7 @@ class TrialController {
 		log.info selectedTrials
 		boolean rootcheck = true;
 		if(filtercheck)
-		rootcheck = selectedTrials.contains("EmptyTrial")
+			rootcheck = selectedTrials.contains("EmptyTrial")
 		def ctriallist =[]
 		for(trial in triallist){
 			boolean c = true;
@@ -192,13 +208,15 @@ class TrialController {
 		}
 		session.searchFilter.trialFilter.newFilter = false;
 
-		def trials =[[text:'All Trials',
-		id:'EmptyTrial',
-		leaf:false,
-		uiProvider:'Ext.tree.CheckboxUI',
-		checked:rootcheck,
-		qtip:'All trials',
-		children:ctriallist]]
+		def trials =[
+			[text:'All Trials',
+				id:'EmptyTrial',
+				leaf:false,
+				uiProvider:'Ext.tree.CheckboxUI',
+				checked:rootcheck,
+				qtip:'All trials',
+				children:ctriallist]
+		]
 		def v = trials as JSON
 		render (v)
 	}
@@ -233,25 +251,25 @@ class TrialController {
 	}
 
 	def downloadStudy = {
-	    log.info("Downloading the Trial Study view");
+		log.info("Downloading the Trial Study view");
 		def sResult = new SearchResult()
 		def trialRS = null
 		def trialMap = [:]
 
 		sResult.result=trialQueryService.queryTrial(false, session.searchFilter, null)
 		sResult.result.expAnalysisResults.each()	{
-		    trialRS = trialQueryService.queryTrialAnalysis(it.trial.id, session.searchFilter)
-		    trialMap.put(it.trial, trialRS.analysisResultList)
+			trialRS = trialQueryService.queryTrialAnalysis(it.trial.id, session.searchFilter)
+			trialMap.put(it.trial, trialRS.analysisResultList)
 		}
 
-	    DomainObjectExcelHelper.downloadToExcel(response, "trialstudyviewexport.xls", analysisDataExportService.createExcelTrialStudyView(sResult, trialMap));
+		DomainObjectExcelHelper.downloadToExcel(response, "trialstudyviewexport.xls", analysisDataExportService.createExcelTrialStudyView(sResult, trialMap));
 	}
 
 	def downloadAnalysisTEA = {
-	    log.info("Downloading the Trial TEA Analysis view");
-	    def sResult = new SearchResult()
+		log.info("Downloading the Trial TEA Analysis view");
+		def sResult = new SearchResult()
 
-        sResult.result=clinicalTrialAnalysisTEAService.queryExpAnalysis(session.searchFilter, null)
-        DomainObjectExcelHelper.downloadToExcel(response, "trialteaviewexport.xls", analysisDataExportService.createExcelTrialTEAView(sResult));
+		sResult.result=clinicalTrialAnalysisTEAService.queryExpAnalysis(session.searchFilter, null)
+		DomainObjectExcelHelper.downloadToExcel(response, "trialteaviewexport.xls", analysisDataExportService.createExcelTrialTEAView(sResult));
 	}
 }

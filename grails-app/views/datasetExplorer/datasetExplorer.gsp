@@ -21,6 +21,13 @@
 <g:javascript library="prototype" />
 <script type="text/javascript"
 	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
+	
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
+  
+<script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script> 
+
 <script type="text/javascript"
 	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 <script type="text/javascript"
@@ -31,6 +38,8 @@
 	src="${resource(dir:'js/datasetExplorer', file: 'requests.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js/datasetExplorer', file: 'ext-i2b2.js')}"></script>
+<script type="text/javascript"
+	src="${resource(dir:'js/datasetExplorer', file: 'workflowStatus.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js', file:'myJobs.js')}"></script>
 
 <script type="text/javascript"
@@ -41,27 +50,38 @@
 <script type="text/javascript">
 	google.load("visualization", "1", {});
 </script>
- <script type="text/javascript"	src="${resource(dir:'js', file:'bioheatmap.js')}"></script>-->
+ <script type="text/javascript"
+	src="${resource(dir:'js', file:'bioheatmap.js')}"></script>-->
 	
 	<!-- Include Ext stylesheets here: -->
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'ext-all.css')}">
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
+	<!-- Include JQuery stylesheets here: -->
+	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">
+	
+	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
+	
+
+ 
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
 	
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/plugin', file:'SurvivalAnalysis.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/plugin', file:'LineGraph.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/plugin', file:'CorrelationAnalysis.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/plugin', file:'ScatterPlot.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'dataAssociation.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+	
+	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
+		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+		
+	<!-- Combo-handled YUI JS files: --> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script> 
+	<style>
+		.ui-progressbar-value { background-image: url(images/pbar-ani.gif); }
+	</style> 
 </head>
 
 <body>
- 
+
 <script type="text/javascript">
+	var $j = jQuery.noConflict();
 	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
 	//set ajax to 600*1000 milliseconds
@@ -73,6 +93,9 @@
 	var pageInfo = {
 		basePath :"${request.getContextPath()}"
 	}
+	
+    var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+	 
 	/******************************************************************************/
 	//Global Variables
 	GLOBAL = {
@@ -97,11 +120,12 @@
 	  CurrentComparisonName:' ',
 	  CurrentSubsetIDs: new Array(),
 	  CurrentPathway: '',
+	  CurrentPathwayName: '',
 	  CurrentGenes: '',
 	  CurrentChroms: '',
 	  CurrentDataType: '',
-	 // GPURL: '${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}',
-	  GPURL:'',
+	  GPURL: '${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}',
+	  EnableGP:'${grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}',
 	  HeatmapType: 'Compare',
 	  IsAdmin: ${admin},
 	  Tokens: "${tokens}",
@@ -128,7 +152,11 @@
 	  AppTitle: '${grailsApplication.config.com.recomdata.searchtool.appTitle}',
       BuildVersion: 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
 	  AnalysisRun: false,
-	  basePath: pageInfo.basePath
+	  Analysis: 'Advanced',
+	  HighDimDataType: '',
+	  SNPType: '',
+	  basePath: pageInfo.basePath,
+	  hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}'
 	};
 	// initialize browser version variables; see http://www.quirksmode.org/js/detect.html
 	BrowserDetect.init();
@@ -144,8 +172,7 @@
 <h3 id="test">Loading....</h3>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
-	
-	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled}">
+	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}">
 	<g:set var="gplogout" value="${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}/gp/logout"/>
 	</g:if>
 	<g:else>
@@ -153,7 +180,7 @@
 	</g:else>
 	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
 	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
-	
+		
 	<span id="visualizerSpan0"></span> <!-- place applet tag here -->
 	<span id="visualizerSpan1"></span> <!-- place applet tag here -->
 <!-- ************************************** -->

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,16 +16,18 @@
  * 
  *
  ******************************************************************/
+
+
 /**
-* $Id: JobResultsService.groovy 11850 2012-01-24 16:41:12Z jliu $
+* $Id: JobResultsService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
 */
 package com.recomdata.asynchronous
 
 /**
 * JobResultsService handles the management of the asynchronous job results
 *
-* @author $Author: jliu $
-* @version $Revision: 11850 $
+* @author $Author: mmcduffie $
+* @version $Revision: 9178 $
 */
 class JobResultsService {
 

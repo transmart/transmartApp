@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,24 +16,25 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.asynchronous
 
 import com.recomdata.transmart.data.export.exception.DataNotFoundException;
 
 import java.io.File;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.recomdata.gex.GexDao
 import com.recomdata.i2b2.I2b2DAO;
-//import com.recomdata.snp.SnpDao;
+import com.recomdata.snp.SnpData;
+import com.recomdata.transmart.data.export.util.FTPUtil;
 import com.recomdata.transmart.data.export.util.SftpClient;
 import com.recomdata.transmart.data.export.util.ZipUtil
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-
-import org.genepattern.webservice.JobResult
-import org.genepattern.webservice.WebServiceException
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
@@ -42,11 +43,13 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
 
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.*;
+import org.rosuda.Rserve.*;
 
 import com.recomdata.dataexport.dao.StudyDao;
 
 /**
  * This class will encompass the job scheduled by Quartz. When the execute method is called we will travel down a list of predefined methods to prep data
+ * 
  * @author MMcDuffie
  *
  */
@@ -55,13 +58,10 @@ class GenericJobService implements Job {
 	def ctx = AH.application.mainContext
 	def springSecurityService = ctx.springSecurityService
 	def jobResultsService = ctx.jobResultsService
-	
-	def static final String SFTP_REMOTE_DIR_PATH = CH.config.com.recomdata.transmart.data.export.sftp.remote.dir.path;
-	def static final String SFTP_SERVER = CH.config.com.recomdata.transmart.data.export.sftp.server;
-	def static final String SFTP_SERVER_PORT = CH.config.com.recomdata.transmart.data.export.sftp.serverport;
-	def static final String SFTP_USER_NAME = CH.config.com.recomdata.transmart.data.export.sftp.username;
-	def static final String SFTP_PASSPHRASE = CH.config.com.recomdata.transmart.data.export.sftp.passphrase;
-	def static final String SFTP_PRKEY_FILE = CH.config.com.recomdata.transmart.data.export.sftp.private.keyfile;
+	def i2b2HelperService = ctx.i2b2HelperService
+	def i2b2ExportHelperService = ctx.i2b2ExportHelperService
+	def snpDataService = ctx.snpDataService
+	def dataExportService = ctx.dataExportService
 	
 	def static final String tempFolderDirectory = CH.config.com.recomdata.plugins.tempFolderDirectory
 	
@@ -114,7 +114,7 @@ class GenericJobService implements Job {
 			jobInfoFile.append("\t${_key} -> ${jobDataMap[_key]}" + System.getProperty("line.separator"))
 		}
 		
-		JobResult[] jresult
+		//JobResult[] jresult
 		String sResult
 		try	{
 			//TODO: Possibly abstract this our so the Quartz job doesn't have all this nonsense.
@@ -137,19 +137,28 @@ class GenericJobService implements Job {
 			
 		} catch(DataNotFoundException dnfe){
 			log.error("DAO exception thrown executing job: " + dnfe.getMessage(), dnfe)
-			jobResultsService[jobName]["Exception"] = "There was an error gathering your data. Please contact an administrator."
+			jobResultsService[jobName]["Exception"] = dnfe.getMessage()
 			return
-		}catch(WebServiceException wse)	{
+		/*}catch(WebServiceException wse)	{
 			log.error("WebServiceException thrown executing job: " + wse.getMessage(), wse)
 			jobResultsService[jobName]["Exception"] = "There was an error running your job. Please contact an administrator."
-			return
+			return*/
 		} catch(RserveException rse)	{
 			log.error("RserveException thrown executing job: " + rse.getMessage(), rse)
 			jobResultsService[jobName]["Exception"] = "There was an error running the R script for your job. Please contact an administrator."
 			return
 		} catch(Exception e)	{
 			log.error("Exception thrown executing job: " + e.getMessage(), e)
-			jobResultsService[jobName]["Exception"] = "There was an error running your job. Please contact an administrator."
+			def errorMsg = null
+			if (e instanceof UndeclaredThrowableException) {
+				errorMsg = ((UndeclaredThrowableException)e)?.getUndeclaredThrowable().message
+			} else {
+				errorMsg = e?.message
+			}
+			if (!errorMsg?.trim()) {
+				errorMsg = "There was an error running your job \'${jobName}\'. Please contact an administrator."
+			}
+			jobResultsService[jobName]["Exception"] = errorMsg
 			return
 		}
 		
@@ -157,93 +166,23 @@ class GenericJobService implements Job {
 		updateStatus(jobName, "Completed")
 	}
 	
+	private boolean isStudySelected(int studyCnt, List checkboxList) {
+		boolean studySelected = false
+		for (checkbox in checkboxList) {
+			if (StringUtils.contains(checkbox, "subset"+studyCnt)) { 
+				studySelected = true
+				break
+			}
+		}
+		return studySelected
+	}
+	
 	//This method assumes we have 
 	private void getData() throws Exception
 	{
-		//Get the data based on the job configuration.
-		def retrievalTypes = jobDataMap.get("datatypes")
-		def dataTypesMap = CH.config.com.recomdata.transmart.data.export.dataTypesMap
-		def snpFilesMap = [:]
-
-		//This is a list of concept codes that we use to filter the result instance id results.
-		String[] conceptCodeList = jobDataMap.get("concept_cds");
-		//Make this blank instead of null if we don't find it.
-		if(conceptCodeList == null)	conceptCodeList = []
-		log.info("retrievalTypes:"+retrievalTypes);
-		println("retrievalTypes:"+retrievalTypes);
+		jobDataMap.put('jobTmpDirectory', jobTmpDirectory)
 		
-		//log.info("retrieved study data")
-		
-		//In order to run the DAOs we need a few variables.
-		//This is a hashmap that looks like ["subset1":12333,"subset2":204814]. We use it to pass the subsets to our DAO.
-		HashMap result_instance_ids = jobDataMap.get("result_instance_ids")
-		def studies = (new StudyDao()).getStudies(result_instance_ids)
-				
-		def pivotDataValueDef = jobDataMap.get("pivotData")
-				
-		//Pull the data pivot parameter out of the data map.
-		boolean pivotData = true
-		
-		if(pivotDataValueDef==false) 
-		{
-			pivotData = false
-		}
-		
-		boolean dataFound = false
-		for (study in studies) {
-			File studyDir = new File(jobTmpDirectory, study)
-			studyDir.mkdir()
-			//We assume that we get back a list of data types that we need to call the DAO objects to retrieve.
-			for(retrievalType in retrievalTypes)
-			{
-				String[] dataTypeFileType = StringUtils.split(retrievalType, ".")
-				
-				String dataType;
-				if (dataTypeFileType.size() == 1) {
-					dataType= retrievalType
-				}
-				String fileType;
-				if (dataTypeFileType.size() > 1) {
-					dataType = dataTypeFileType[0].trim().replace(" ","")
-					fileType = dataTypeFileType[1].trim().replace(" ","")
-				}
-				if(null == dataTypesMap.get(dataType)) 
-					return;
-				
-				//For this current data type we call the DAO.
-				switch (dataType)
-				{
-					case "STUDY":
-						StudyDao studyDao = new StudyDao();
-						studyDao.getData(studyDir, "experimentalDesign.txt", jobDataMap.get("jobName"), jobDataMap.get("studyAccessions"));
-						log.info("retrieved study data")
-						break;
-					case "MRNA":
-						GexDao gexDao = new GexDao()
-						gexDao.getData(study, studyDir, "mRNA.trans", jobDataMap.get("jobName"), result_instance_ids, false, null, null, null, fileType)
-						break
-					case "CLINICAL":
-						//Moved the code to create Clinical-data after the process for MRNA and SNP is executed
-						break
-					case "SNP":
-						//SnpDao snpDao = new SnpDao();
-						//snpFilesMap = snpDao.getData("snp.trans", jobDataMap.get("jobName"), result_instance_ids)
-						break
-				}
-			}
-			
-			//Reason for moving here: We'll get the map of SNP files from SnpDao to be output into Clinical file
-			I2b2DAO i2b2Dao = new I2b2DAO()
-			//Call the object that is going to create our temporary data file.
-			i2b2Dao.getData(study, studyDir, "clinical.i2b2trans", jobDataMap.get("jobName"), jobDataMap.get("result_instance_ids"), conceptCodeList, retrievalTypes, pivotData)
-			dataFound = i2b2Dao.wasDataFound()
-		}
-		//if i2b2Dao was not able to find data for any of the studies associated with the result instance ids, throw an exception.
-		//Currently if we have data for atleast one study, we are good.
-		if(!dataFound){
-			throw new DataNotFoundException()
-		}
-
+		dataExportService.exportData(jobDataMap)
 	}
 	
 	private void runConversions()
@@ -280,18 +219,34 @@ class GenericJobService implements Job {
 				case "bundle":
 				
 					/** Access the ZipUtil in a static way */
-					String zipFileLoc = System.getProperty("java.io.tmpdir") + "jobs" + File.separator
+				
+					String zipFileLoc = (new File(jobTmpDirectory))?.getParent() + File.separator;
 					finalOutputFile = ZipUtil.zipFolder(jobTmpDirectory, zipFileLoc + jobDataMap.get("jobName") + ".zip")
 					try {
-						SftpClient sftpClient = new SftpClient(SFTP_SERVER, SFTP_USER_NAME,
-								SFTP_PRKEY_FILE, Integer.parseInt(SFTP_SERVER_PORT),
-								SFTP_PASSPHRASE);
-						sftpClient.changeDirectory(SFTP_REMOTE_DIR_PATH);
-						sftpClient.putFile(finalOutputFile);
-			
-						sftpClient.close();
+						File outputFile = new File(zipFileLoc+finalOutputFile);
+						if (outputFile.isFile()) {
+							String remoteFilePath = FTPUtil.uploadFile(true, outputFile);
+							if (StringUtils.isNotEmpty(remoteFilePath)) {
+								//Since File has been uploaded to the FTP server, we can delete the 
+								//ZIP file and the folder which has been zipped
+								
+								//Delete the output Folder
+								String outputFolder = null;
+								int index = outputFile.name.lastIndexOf('.');
+								if (index > 0 && index <= outputFile.name.length() - 2 ) {
+									outputFolder = outputFile.name.substring(0, index);
+								}
+								File outputDir = new File(zipFileLoc+outputFolder)
+								if (outputDir.isDirectory()) {
+									outputDir.deleteDir()
+								}
+								
+								//Delete the ZIP file 
+								outputFile.delete();
+							}
+						}
 					} catch (Exception e) {
-						//log.error("Failed to SFTP PUT the ZIP file");
+						println("Failed to FTP PUT the ZIP file");
 					}
 					break
 				case "R":
@@ -321,14 +276,16 @@ class GenericJobService implements Job {
 					def jobName = jobDetail.getName()
 					
 					//Add the result file link to the job.
+					jobResultsService[jobName]['resultType'] = "DataExport"
 					jobResultsService[jobName]["ViewerURL"] = finalOutputFile
-					
+					break;
 				case "GSP":
 					//Gather the jobs name.
 					def jobName = jobDetail.getName()
 				
 					//Add the link to the output URL to the jobs object. We get the base URL from the job parameters.
 					jobResultsService[jobName]["ViewerURL"] = currentStep.value + "?jobName=" + jobName
+					break;
 			}
 		}
 
@@ -338,8 +295,7 @@ class GenericJobService implements Job {
 	{
 		
 		//We need to get the study ID for this study so we can know the path to the clinical output file.
-		HashMap result_instance_ids = jobDataMap.get("result_instance_ids")
-		def studies = (new StudyDao()).getStudies(result_instance_ids)
+		def studies = jobDataMap.get("studyAccessions")
 		
 		//String representing rOutput Directory.
 		String rOutputDirectory = jobTmpWorkingDirectory
@@ -368,7 +324,7 @@ class GenericJobService implements Job {
 			String reformattedCommand = currentCommand.replace("\\","\\\\")
 			
 			//Replace the working directory flag if it exists in the string.
-			reformattedCommand = reformattedCommand.replace("||TEMPFOLDERDIRECTORY||", jobTmpDirectory + studies[0] + File.separator.replace("\\","\\\\"))
+			reformattedCommand = reformattedCommand.replace("||TEMPFOLDERDIRECTORY||", jobTmpDirectory + "subset1_" + studies[0] + File.separator.replace("\\","\\\\"))
 			
 			//We need to loop through the variable map and do string replacements on the R command.
 			jobDataMap.get("variableMap").each
@@ -395,7 +351,34 @@ class GenericJobService implements Job {
 			println("Attempting following R Command : " + reformattedCommand)
 			
 			//Run the R command against our server.
-			x = c.eval(reformattedCommand);
+			//x = c.eval(reformattedCommand);
+			
+			REXP r = c.parseAndEval("try("+reformattedCommand+",silent=TRUE)");
+			
+			if (r.inherits("try-error")) 
+			{
+				//Grab the error R gave us.
+				String rError = r.asString()
+				
+				//This is the error we will eventually throw.
+				RserveException newError = null
+				
+				//If it is a friendly error, use that, otherwise throw the default message.
+				if(rError ==~ /.*\|\|FRIENDLY\|\|.*/)
+				{
+					rError = rError.replaceFirst(/.*\|\|FRIENDLY\|\|/,"")
+					newError = new RserveException(c,rError);
+				}
+				else
+				{
+					log.error("RserveException thrown executing job: " + rError)
+					newError = new RserveException(c,"There was an error running the R script for your job. Please contact an administrator.");
+				}
+				
+				throw newError;
+				
+			}
+			
 		}
 	
 	}

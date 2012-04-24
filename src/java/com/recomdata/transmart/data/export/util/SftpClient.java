@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,11 +16,25 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.transmart.data.export.util;
 
-import com.jcraft.jsch.*;
-import java.io.*;
-import java.util.StringTokenizer;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.UserInfo;
 
 public class SftpClient {
 	/**
@@ -41,7 +55,7 @@ public class SftpClient {
 	/***
 	 * This is the port we conduct our FTP session over.
 	 */
-	private int 	_SFTPPort;
+	private String 	_SFTPPort;
 	
 	/**
 	 * Object representing our FTP Session.
@@ -56,6 +70,7 @@ public class SftpClient {
 	/**
 	 * If the private key file is password protected, this is the password.
 	 */
+	@SuppressWarnings("unused")
 	private String _passPhrase;
 	
 	/**
@@ -77,7 +92,7 @@ public class SftpClient {
 	 * @param SFTPPassPhrase Password for private key file (NOT USED CURRENTLY)
 	 * @throws Exception
 	 */
-	public SftpClient(String SFTPServer, String SFTPUser, String SFTPKey,int SFTPPort, String SFTPPassPhrase) throws Exception
+	public SftpClient(String SFTPServer, String SFTPUser, String SFTPKey,String SFTPPort, String SFTPPassPhrase) throws Exception
 	{
 		//Initialize class members.
 		_SFTPServer = SFTPServer;
@@ -106,14 +121,20 @@ public class SftpClient {
 		
 		//Add our private key file with no pass to the JSch object.
 		try {
-			_jsch.addIdentity(_SFTPKey, new byte[0]);
+			if (StringUtils.isNotEmpty(_SFTPKey)) {
+				_jsch.addIdentity(_SFTPKey, new byte[0]);
+			}
 		} catch(JSchException jse){
 			throw new Exception("Failed to add JSch identity!",jse);
 		}
 
 		//Set the session information (User, Server, port)
 		try{
-			_session = _jsch.getSession(_SFTPUser, _SFTPServer, _SFTPPort);
+			if (StringUtils.isNotEmpty(_SFTPPort) && NumberUtils.isNumber(_SFTPPort)) {
+				_session = _jsch.getSession(_SFTPUser, _SFTPServer, Integer.parseInt(_SFTPPort));
+			} else {
+				_session = _jsch.getSession(_SFTPUser, _SFTPServer);
+			}
 		} catch(JSchException jse){
 			throw new Exception("Failed to create JSch session!",jse);
 		}
@@ -259,18 +280,18 @@ public class SftpClient {
 	public static void main(String[] args) {
 		//File outputFile = new File("./latestGet.log");
 		try {
-			SftpClient sftpClient = new SftpClient("factbookdev", "SvcCOPSSH", "C:/Users/smunikuntla/Downloads/SaiMunikuntla12.ppk", 22, "");
+			SftpClient sftpClient = new SftpClient("factbookdev", "SvcCOPSSH", "C:/Users/smunikuntla/Downloads/SaiMunikuntla12.ppk", "22", "");
 			sftpClient.putFile(new File("C:/Users/smunikuntla/Downloads/camelinaction-src.zip"));
 			//sftpClient.getFile("server1.log", outputFile);
 			
 			File jobZipFile = null;
 			File tempFile = null;
 			
-			StringTokenizer st = new StringTokenizer("ftp://SvcCOPSSH:@factbookdev:22/camelinaction-src.zip", "/");
+			/*StringTokenizer st = new StringTokenizer("ftp://SvcCOPSSH:@factbookdev:22/camelinaction-src.zip", "/");
 			String token = null;
 			while (st.hasMoreTokens()) {
 				token = st.nextToken();
-			}
+			}*/
 			tempFile = new File("ftp://SvcCOPSSH:@factbookdev:22/camelinaction-src.zip");
 			jobZipFile = new File(tempFile.getName());
 			
@@ -278,7 +299,6 @@ public class SftpClient {
 			
 			sftpClient.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

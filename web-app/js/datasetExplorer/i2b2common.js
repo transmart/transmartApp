@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,13 +16,15 @@
  * 
  *
  ******************************************************************/
+
+
 STATE = {
 		Dragging: false,
 		Target: null,
 		QueryRequestCounter: 0
 }
 
-function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value)
+function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType)
 {
 	this.name=name;
 	this.key=key;
@@ -34,6 +36,7 @@ function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalu
 	this.normalunits=normalunits;
 	this.oktousevalues=oktousevalues;
 	this.value=value;
+	this.nodeType = nodeType
 }
 
 function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
@@ -87,8 +90,13 @@ function convertNodeToConcept(node)
 	var comment=node.attributes.comment;
 	var normalunits=node.attributes.normalunits;
 	var oktousevalues=node.attributes.oktousevalues;
+	
+	//Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
+	var nodeType = node.attributes.iconCls
+	
 	if(oktousevalues=="Y"){value.mode="numeric";} //default to numeric
-	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value);
+	
+	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType);
 	return myConcept;
 }
 function createPanelItemNew(panel, concept)
@@ -110,6 +118,7 @@ function createPanelItemNew(panel, concept)
 	li.setAttribute('setvaluelowvalue',concept.value.lowvalue);
 	li.setAttribute('setvalueunits',concept.value.units);
 	li.setAttribute('oktousevalues',concept.oktousevalues);
+	li.setAttribute('setnodetype',concept.nodeType);
 	li.className="conceptUnselected";
 	
 	//Create a shortname
@@ -595,7 +604,7 @@ function createNClustersBox(){
   	}
 }
 
-function createPathwaySearchBox(){
+function createPathwaySearchBox(searchInputEltName, divName){
   	var ajaxurl;
   	var ds;
   	var resultTpl;
@@ -641,7 +650,7 @@ function createPathwaySearchBox(){
 		
 		// Custom rendering Template
 	    resultTpl = new Ext.XTemplate(
-	        	'<tpl for=".">',
+	        '<tpl for=".">',
 	    		'<div class="search-item">',
 	    			'<p>',
 	    				'<span class="category-{display:lowercase}">{display}&gt;{source}</span>&nbsp;',
@@ -667,26 +676,28 @@ function createPathwaySearchBox(){
         mode:'remote',
         tpl: resultTpl,
         minChars:1,
-        applyTo: 'searchPathway',
+        applyTo: searchInputEltName,
         //renderTo: 'search',
         itemSelector: 'div.search-item',
         onSelect: function(record){ // override default onSelect to do redirect
          	//alert(record.data.naturalid);
          	//compareStepPathwaySelection.hide();
-             var sp=Ext.get("searchPathway");
+             var sp=Ext.get(searchInputEltName);
              if (GLOBAL.searchType==='native'){
 	             sp.dom.value=record.data.name;
 	             GLOBAL.CurrentPathway=record.data.uid;
+	             GLOBAL.CurrentPathwayName=record.data.name;
     		}else{
 	             sp.dom.value=record.data.keyword;
 	             GLOBAL.CurrentPathway=record.data.id;
+	             GLOBAL.CurrentPathwayName=record.data.keyword;
     		}
              search.collapse();
              //compareSubsets(); 	
         }
     });
     search.on('focus', function(){
-    								var sp=Ext.get("searchPathway");
+    								var sp=Ext.get(searchInputEltName);
     								sp.dom.value="";	
     								}, this);
 
@@ -695,7 +706,7 @@ function createPathwaySearchBox(){
   		GLOBAL.CurrentPathway = '';
   		
   		//Remove the pathway box.
-		document.getElementById("divpathway").style.display = "none";
+		document.getElementById(divName).style.display = "none";
   	}
 }
 
@@ -892,8 +903,9 @@ function createPathwaySearchBoxRBM(ajaxurl, boxwidth){
     return search;
 }
 
-function createPlatformSearchBox(applyToDivIdx){
-	var applyToDivId='platforms'+applyToDivIdx;
+function createPlatformSearchBox(subsetId, applyToDivIdx){
+	var applyToDivIdPrefix = 'platforms'; 
+	var applyToDivId = applyToDivIdPrefix + applyToDivIdx;
 	var ajaxurl;
 	var ds;
 	var resultTpl;
@@ -911,7 +923,7 @@ function createPlatformSearchBox(applyToDivIdx){
 			),
 			listeners : {
         		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 1, TRIAL : GLOBAL.DefaultCohortInfo.trials[applyToDivIdx-1]};
+            		search.baseParams = {INFO_TYPE: 1, TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
        			}
 			}
 		});
@@ -922,39 +934,52 @@ function createPlatformSearchBox(applyToDivIdx){
 	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{platformLabel}</b></p>',
 	        '</div></tpl>'
 	    );
-	var onSelectFn=function(record){
+	    
+	var onSelectFn=function(record)
+	{
 		var sp=Ext.get(applyToDivId);
         sp.dom.value=record.data.platformLabel;
-        GLOBAL.CurrentPlatforms[applyToDivIdx-1]=record.data.platform;
+        GLOBAL.CurrentPlatforms[subsetId-1]=record.data.platform;
         
 	    var fields=['gpl'+applyToDivIdx, 'sample'+applyToDivIdx, 'tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx, 'rbmpanel'+applyToDivIdx];
 	    var globalValues=[GLOBAL.CurrentGpls, GLOBAL.CurrentSamples, GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints, GLOBAL.CurrentRbmpanels];
+	    
         clearSelectionsOnSelect(fields, globalValues, applyToDivIdx);
         
 		var ele=Ext.get('divsample'+applyToDivIdx);
 		var eleGpl=Ext.get('divgpl'+applyToDivIdx);
 		var eleTissue=Ext.get('divtissue'+applyToDivIdx);
 		var eleRbmpanel=Ext.get('divrbmpanel'+applyToDivIdx);
-		if(GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='MRNA_AFFYMETRIX'){
+		
+		if((GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='MRNA_AFFYMETRIX') || (GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='SNP'))
+		{
 			ele.dom.style.display='';
 			eleGpl.dom.style.display='';
 			eleTissue.dom.style.display='';
 			eleRbmpanel.dom.style.display='none';
-		}else{
+		}
+		else
+		{
 			ele.dom.style.display='none';
 			eleGpl.dom.style.display='none';
 			eleTissue.dom.style.display='none';
 			eleRbmpanel.dom.style.display='';
 		}
        
+		//Toggle the High Dimensional Data elements after reseting the High Dim variable.
+		if(GLOBAL.CurrentPlatforms[subsetId-1] == "SNP") GLOBAL.HighDimDataType = 'SNP'
+		if(GLOBAL.CurrentPlatforms[subsetId-1] == "MRNA_AFFYMETRIX") GLOBAL.HighDimDataType = 'Gene Expression'
+
+		toggleDataAssociationFields();
+		
 		this.collapse();
 		
 		if (!((!GLOBAL.CurrentPlatforms[0]) || (!GLOBAL.CurrentPlatforms[1]) || (GLOBAL.CurrentPlatforms[0]==GLOBAL.CurrentPlatforms[1]))){
 			alert('Platforms do not match');
 		}
 	}
-	GLOBAL.CurrentPlatforms[applyToDivIdx-1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[applyToDivIdx-1];
-	    createGenericSearchBox(applyToDivId, ds, resultTpl, 200, 'remote', onSelectFn, 'platform', GLOBAL.DefaultCohortInfo.defaultPlatformLabels[applyToDivIdx-1]);
+	GLOBAL.CurrentPlatforms[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[subsetId-1];
+	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'platform', GLOBAL.DefaultCohortInfo.defaultPlatformLabels[subsetId-1]);
 }
 
 /**
@@ -967,24 +992,44 @@ function createPlatformSearchBox(applyToDivIdx){
  * @param globalValues
  * @return
  */
-function createOnMultiSelectFn(applyToDivIdPrefix, applyToDivIdx, globalArray, fields, globalValues){
-	var onSelectFn = function(record){
+function createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, globalArray, fields, globalValues){
+	//This is the function that gets created on select.
+	var onSelectFn = function(record)
+	{
+		//Form the name of the div.
 		var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+		
+		//Get the div object.
 		var sp=Ext.get(applyToDivId);
-		var completeSelection = globalArray[applyToDivIdx-1];
+		
+		//This is an array of values.
+		var completeSelection = globalArray[subsetId-1];
+		
+		//This is the divs current value.
 		var completeDisplaySelection = sp.dom.value;
+		
+		//This is the record we selected (Value).
 		var selectedValue = record.data[applyToDivIdPrefix];
+		
+		//This is the display value of the selected item.
 		var selectedDisplayValue = record.data[applyToDivIdPrefix+'Label'];
-		if (completeSelection.indexOf(selectedValue)==-1){
 			
-			for (var i=0;i<this.innerList.dom.childNodes.length; i++){
-			  	if (this.store.data.items[i].id==selectedValue){
+		//If we selected an item that isn't already in the global list, add it. Otherwise we remove that item.
+		if (completeSelection.indexOf(selectedValue)==-1)
+		{
+			//Mark the item as selected or not using the background color.
+			for (var i=0;i<this.innerList.dom.childNodes.length; i++)
+			{
+			  	if (this.store.data.items[i].id==selectedValue)
+			  	{
 			       	this.innerList.dom.childNodes[i].style.background='#DFE8F6';
 			       	break;
 			    }
 			}
 			
-	    	if (completeSelection==''){
+			//As we select items we add them to the value/display strings.
+	    	if (completeSelection=='')
+	    	{
 	    		completeSelection=selectedValue;
 	    		completeDisplaySelection=selectedDisplayValue;
 	    	}else{
@@ -994,6 +1039,7 @@ function createOnMultiSelectFn(applyToDivIdPrefix, applyToDivIdx, globalArray, f
 	    	
 		}else{
 			
+			//Remove the item if we are deselecting it.
 			for (var i=0;i<this.innerList.dom.childNodes.length; i++){
 			  	if (this.store.data.items[i].id==selectedValue){
 			       	this.innerList.dom.childNodes[i].style.background='00000';
@@ -1013,10 +1059,11 @@ function createOnMultiSelectFn(applyToDivIdPrefix, applyToDivIdx, globalArray, f
 			}
 			
 		}
-		sp.dom.value=completeDisplaySelection;
-		globalArray[applyToDivIdx-1]=completeSelection;
 		
-		clearSelectionsOnSelect(fields, globalValues, applyToDivIdx);
+		sp.dom.value=completeDisplaySelection;
+		globalArray[subsetId-1]=completeSelection;		
+		
+		clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx);
 	}
 	return onSelectFn;
 }
@@ -1028,22 +1075,24 @@ function createOnMultiSelectFn(applyToDivIdPrefix, applyToDivIdx, globalArray, f
  * @param applyToDivIdx
  * @return
  */
-function clearSelectionsOnSelect(fields, globalValues, applyToDivIdx){
+function clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx){
 	for (var i=0;i<fields.length;i++){
 	    sp=Ext.get(fields[i]);
 	    sp.dom.value='ALL';
-	    globalValues[i][applyToDivIdx-1]='';
+	    globalValues[i][subsetId-1]='';
 	}
 }
 
 /**
- * Displays calling fields only if the selected platform is MRNA or null.
+ * Displays calling fields only if the selected platform is MRNA,SNP or null.
  * @param applyToDivId
  * @param applyToDivIdx
  * @return
  */
-function displayConditionally(applyToDivId, applyToDivIdx){
-	if(GLOBAL.CurrentPlatforms[applyToDivIdx-1]!='MRNA_AFFYMETRIX' && GLOBAL.CurrentPlatforms[applyToDivIdx-1]!=null){
+function displayConditionally(applyToDivId, subsetId)
+{
+	if(GLOBAL.CurrentPlatforms[subsetId-1]!='MRNA_AFFYMETRIX' && GLOBAL.CurrentPlatforms[subsetId-1]!='SNP' && GLOBAL.CurrentPlatforms[subsetId-1]!=null)
+	{
 		var ele=Ext.get('div'+applyToDivId);
 		ele.dom.style.display='none';
 	}
@@ -1055,14 +1104,14 @@ function displayConditionally(applyToDivId, applyToDivIdx){
  * @param applyToDivIdx
  * @return
  */
-function displayWhenRBM(applyToDivId, applyToDivIdx){
-	if(GLOBAL.CurrentPlatforms[applyToDivIdx-1]!='RBM'){
+function displayWhenRBM(applyToDivId, subsetId){
+	if(GLOBAL.CurrentPlatforms[subsetId-1]!='RBM'){
 		var ele=Ext.get('div'+applyToDivId);
 		ele.dom.style.display='none';
 	}
 }
 
-function createGplSearchBox(applyToDivIdx){
+function createGplSearchBox(subsetId, applyToDivIdx){
 	var applyToDivIdPrefix='gpl';
 	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
 	var ajaxurl;
@@ -1082,7 +1131,7 @@ function createGplSearchBox(applyToDivIdx){
 			),
 			listeners : {
         		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 5, PLATFORM : GLOBAL.CurrentPlatforms[applyToDivIdx-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[applyToDivIdx-1]};
+            		search.baseParams = {INFO_TYPE: 5, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
        			}
 			}
 		});
@@ -1097,16 +1146,16 @@ function createGplSearchBox(applyToDivIdx){
 	    //create onSelect handlers.
 	    var fields=['sample'+applyToDivIdx, 'tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx];
 	    var globalValues=[GLOBAL.CurrentSamples, GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentGpls, fields, globalValues);
+	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentGpls, fields, globalValues);
 	    
 		GLOBAL.CurrentGpls[applyToDivIdx-1]=GLOBAL.DefaultCohortInfo.defaultGpls[applyToDivIdx-1];
-	    createGenericSearchBox(applyToDivId, ds, resultTpl, 200, 'remote', onSelectFn, 'gpl', GLOBAL.DefaultCohortInfo.defaultGplLabels[applyToDivIdx-1]);
+	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'gpl', GLOBAL.DefaultCohortInfo.defaultGplLabels[subsetId-1]);
 	    
 	   	//Display this select box only if Platform is MRNA or unselected.
-	    displayConditionally(applyToDivId, applyToDivIdx);
+	    displayConditionally(applyToDivId, subsetId);
 }
 
-function createRbmPanelSearchBox(applyToDivIdx){
+function createRbmPanelSearchBox(subsetId, applyToDivIdx){
 	var applyToDivIdPrefix='rbmpanel';
 	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
 	var ajaxurl;
@@ -1126,7 +1175,7 @@ function createRbmPanelSearchBox(applyToDivIdx){
 			),
 			listeners : {
         		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 7, PLATFORM : GLOBAL.CurrentPlatforms[applyToDivIdx-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[applyToDivIdx-1]};
+            		search.baseParams = {INFO_TYPE: 7, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
        			}
 			}
 		});
@@ -1141,16 +1190,17 @@ function createRbmPanelSearchBox(applyToDivIdx){
 	    //create onSelect handlers.
 	    var fields=['timepoint'+applyToDivIdx];
 	    var globalValues=[GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentRbmpanels, fields, globalValues);
+	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentRbmpanels, fields, globalValues);
 	    
-		GLOBAL.CurrentRbmpanels[applyToDivIdx-1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[applyToDivIdx-1];
-	    createGenericSearchBox(applyToDivId, ds, resultTpl, 200, 'remote', onSelectFn, 'rbmpanel', GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[applyToDivIdx-1]);
+		GLOBAL.CurrentRbmpanels[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[subsetId-1];
+	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'rbmpanel', GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[subsetId-1]);
 
 	   	//Display this select box only if Platform is RBM.
-	    displayWhenRBM(applyToDivId, applyToDivIdx);
+	    displayWhenRBM(applyToDivId, subsetId);
 }
 
-function createTimePointsSearchBox(applyToDivIdx){
+function createTimePointsSearchBox(subsetId, applyToDivIdx){
+	
 	var applyToDivIdPrefix='timepoint';
 	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
 	var ajaxurl;
@@ -1170,8 +1220,8 @@ function createTimePointsSearchBox(applyToDivIdx){
 			),
 			listeners : {
         		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 3, PLATFORM : GLOBAL.CurrentPlatforms[applyToDivIdx-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[applyToDivIdx-1],
-            		SAMPLES: GLOBAL.CurrentSamples[applyToDivIdx-1], GPL: GLOBAL.CurrentGpls[applyToDivIdx-1], TISSUE: GLOBAL.CurrentTissues[applyToDivIdx-1], RBMPANEL: GLOBAL.CurrentRbmpanels[applyToDivIdx-1]};
+            		search.baseParams = {INFO_TYPE: 3, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1],
+            		SAMPLES: GLOBAL.CurrentSamples[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], TISSUE: GLOBAL.CurrentTissues[subsetId-1], RBMPANEL: GLOBAL.CurrentRbmpanels[subsetId-1]};
        			}
 			}
 		});
@@ -1186,13 +1236,13 @@ function createTimePointsSearchBox(applyToDivIdx){
 	    //create onSelect handlers.
 	    var fields=[];
 	    var globalValues=[];
-	    var onSelectFn = createOnMultiSelectFn(applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTimepoints, fields, globalValues);
+	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTimepoints, fields, globalValues);
 	    
-		GLOBAL.CurrentTimepoints[applyToDivIdx-1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[applyToDivIdx-1];
-	    createGenericSearchBox(applyToDivId, ds, resultTpl, 200, 'remote', onSelectFn, 'timepoint', GLOBAL.DefaultCohortInfo.defaultTimepointLabels[applyToDivIdx-1]);
+		GLOBAL.CurrentTimepoints[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[subsetId-1];
+	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'timepoint', GLOBAL.DefaultCohortInfo.defaultTimepointLabels[subsetId-1]);
 }
 
-function createSamplesSearchBox(applyToDivIdx){
+function createSamplesSearchBox(subsetId, applyToDivIdx){
 	var applyToDivIdPrefix='sample';
 	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
 	var ajaxurl;
@@ -1212,7 +1262,7 @@ function createSamplesSearchBox(applyToDivIdx){
 			),
 			listeners : {
         		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 4, PLATFORM : GLOBAL.CurrentPlatforms[applyToDivIdx-1], GPL: GLOBAL.CurrentGpls[applyToDivIdx-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[applyToDivIdx-1]};
+            		search.baseParams = {INFO_TYPE: 4, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
        			}
 			}
 		});
@@ -1226,16 +1276,16 @@ function createSamplesSearchBox(applyToDivIdx){
 	    //create onSelect handlers.
 	    var fields=['tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx];
 	    var globalValues=[GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentSamples, fields, globalValues);
+	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentSamples, fields, globalValues);
 		
-		GLOBAL.CurrentSamples[applyToDivIdx-1]=GLOBAL.DefaultCohortInfo.defaultSamples[applyToDivIdx-1];
-	    createGenericSearchBox(applyToDivId, ds, resultTpl, 200, 'remote', onSelectFn, 'sample', GLOBAL.DefaultCohortInfo.defaultSampleLabels[applyToDivIdx-1]);
+		GLOBAL.CurrentSamples[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultSamples[subsetId-1];
+	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'sample', GLOBAL.DefaultCohortInfo.defaultSampleLabels[subsetId-1]);
 	    
 	   	//Display this select box only if Platform is MRNA or unselected.
-	    displayConditionally(applyToDivId, applyToDivIdx);
+	    displayConditionally(applyToDivId, subsetId);
 }
 
-function createTissueSearchBox(applyToDivIdx){
+function createTissueSearchBox(subsetId, applyToDivIdx){
 	var applyToDivIdPrefix='tissue';
 	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
 	var ajaxurl;
@@ -1255,8 +1305,8 @@ function createTissueSearchBox(applyToDivIdx){
 			),
 			listeners : {
         		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 6, PLATFORM : GLOBAL.CurrentPlatforms[applyToDivIdx-1], GPL: GLOBAL.CurrentGpls[applyToDivIdx-1], 
-            				SAMPLE: GLOBAL.CurrentSamples[applyToDivIdx-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[applyToDivIdx-1]};
+            		search.baseParams = {INFO_TYPE: 6, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], 
+            				SAMPLE: GLOBAL.CurrentSamples[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
        			}
 			}
 		});
@@ -1270,18 +1320,18 @@ function createTissueSearchBox(applyToDivIdx){
 	    //create onSelect handlers.
 	    var fields=['timepoint'+applyToDivIdx];
 	    var globalValues=[GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTissues, fields, globalValues);
+	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTissues, fields, globalValues);
 	    
-		GLOBAL.CurrentTissues[applyToDivIdx-1]=GLOBAL.DefaultCohortInfo.defaultTissues[applyToDivIdx-1];
-	    createGenericSearchBox(applyToDivId, ds, resultTpl, 200, 'remote', onSelectFn, 'tissue', GLOBAL.DefaultCohortInfo.defaultTissueLabels[applyToDivIdx-1]);
+		GLOBAL.CurrentTissues[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultTissues[subsetId-1];
+	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'tissue', GLOBAL.DefaultCohortInfo.defaultTissueLabels[subsetId-1]);
 	    
 	   	//Display this select box only if Platform is MRNA or unselected.
-	    displayConditionally(applyToDivId, applyToDivIdx);
+	    displayConditionally(applyToDivId, subsetId);
 }
 
-Ext.ux.JnJComboBox = Ext.extend(Ext.form.ComboBox, {
+Ext.ux.TransmartComboBox = Ext.extend(Ext.form.ComboBox, {
 	onLoad:function(){
-		Ext.ux.JnJComboBox.superclass.onLoad.call(this);
+		Ext.ux.TransmartComboBox.superclass.onLoad.call(this);
 	    var completeSelection ='';
 	    if(this.name.indexOf('timepoint')>-1){
 	    	completeSelection=GLOBAL.CurrentTimepoints[this.name.substring(this.name.length-1)-1];
@@ -1311,14 +1361,14 @@ Ext.ux.JnJComboBox = Ext.extend(Ext.form.ComboBox, {
 	    }
 	}
 });
-Ext.reg("jnjcombobox", Ext.ux.JnJComboBox);
+Ext.reg("transmartcombobox", Ext.ux.TransmartComboBox);
 
 
-function createGenericSearchBox(applyToDivId, ds, resultTpl, boxwidth, mode_in, onSelectFn, displayField_in, value_in){
+function createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, boxwidth, mode_in, onSelectFn, displayField_in, value_in){
 	
 		if(!value_in || value_in=="") value_in = "ALL"
 	
-	    var search = new Ext.ux.JnJComboBox({
+	    var search = new Ext.ux.TransmartComboBox({
         store: ds,
         displayField:displayField_in,
         typeAhead: true,
@@ -1329,11 +1379,11 @@ function createGenericSearchBox(applyToDivId, ds, resultTpl, boxwidth, mode_in, 
         valueField:'naturalid',
         hideTrigger:false,
         allowBlank:true,
-        name:applyToDivId,
+        name:applyToDivIdPrefix + subsetId, // Only here we add subsetId as postfix, instead of applyToDivIdx
         mode:mode_in,
         tpl: resultTpl,
         minChars:0,
-        applyTo: applyToDivId,
+        applyTo: applyToDivIdPrefix + applyToDivIdx,
         itemSelector: 'div.search-item',
         onSelect: onSelectFn,
         editable: false,
@@ -1356,24 +1406,23 @@ function AlertSpecialKey(event, field){
 		}
 		return true;
 	}
-
-
-
+	
 function showCompareStepPathwaySelection()
 {
-if(!this.compareStepPathwaySelection)
-{
-	compareStepPathwaySelection = new Ext.Window({
+	if(!this.compareStepPathwaySelection)
+	{
+		compareStepPathwaySelection = new Ext.Window({
                 id: 'compareStepPathwaySelectionWindow',
                 title: 'Compare Subsets-Pathway Selection',
             	layout:'fit',
                 width:450,
+                // height:250,
                 autoHeight: true,
                 closable: false,
                 plain: true,
                 modal: true,
                 border:false,
-                y:100,
+                //autoScroll: true,
                 buttons: [
                 		{
                             id: 'compareStepPathwaySelectionOKButton',
@@ -1386,41 +1435,45 @@ if(!this.compareStepPathwaySelection)
 				   					finalAdvancedMenuValidationSample();
 				   					return;
 			   					}
-				   				
 				   				finalAdvancedMenuValidation();
 
                             }
-                        }
-                        ,{
+                        },
+                		{
+                            id: 'dataAssociationApplyButton',
+                            text: 'Apply Selections',
+                            handler: function(){       
+			   					applyToForm();
+			   					return;
+			   				}
+                        },
+                        {
                             text: 'Cancel',
                             handler: function() {
                             	compareStepPathwaySelection.hide();
                             }
                          }],
-                resizable: false,
-                autoLoad:
-            {
-               url: pageInfo.basePath+'/panels/compareStepPathwaySelection.html',
-               scripts: true,
-               	nocache:true, 
-			discardUrl:true,
-			method:'POST'
-            },
-	        tools:[{
-				id:'help',
-				qtip:'Click for context sensitive help',
-			    handler: function(event, toolEl, panel){
-			    	D2H_ShowHelp(advancedWorkflowContextHelpId, helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-			    }
-	        }]
+	            resizable: false,
+	            autoLoad:
+	            {
+	            	url: pageInfo.basePath+'/panels/compareStepPathwaySelection.html',
+	            	scripts: true,
+	               	nocache:true, 
+	               	discardUrl:true,
+	               	method:'POST',
+	               	callback: toggleDataAssociationFields
+	            },
+		        tools:[{
+					id:'help',
+					qtip:'Click for context sensitive help',
+				    handler: function(event, toolEl, panel){
+				    	D2H_ShowHelp('1126', helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+				    }
+		        }]
             });
         }else{
-        	//DSE needs to reset some stuff if we are running two analysis in a row. SE can proceed.
-        	if(GLOBAL.Explorer == "SAMPLE")
-			{
-				return;
-			}
-			resetCohortInfoValues();
+        	resetCohortInfoValues();
+        	toggleDataAssociationFields();
         }
 
 		compareStepPathwaySelection.show(viewport); 
@@ -1431,6 +1484,12 @@ if(!this.compareStepPathwaySelection)
 				document.getElementById("divnclusters").style.display = "";
 			} else {
 				document.getElementById("divnclusters").style.display = "none";
+			}
+		} else if (document.getElementById("divnclusters1") != null) {
+			if (GLOBAL.HeatmapType == 'KMeans') {
+				document.getElementById("divnclusters1").style.display = "";
+			} else {
+				document.getElementById("divnclusters1").style.display = "none";
 			}
 		}
 		
@@ -1446,45 +1505,83 @@ if(!this.compareStepPathwaySelection)
 			} else {
 				document.getElementById("divpathway").style.display = "";
 			}
+		} else if (document.getElementById("divpathway1") != null) {
+			if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') {
+				document.getElementById("divpathway1").style.display = "none";
+			} else {
+				document.getElementById("divpathway1").style.display = "";
+			}
 		}
 }
 
+//this function has been modified to accomodate the fields in the new panel for data-export
+//There should be a better way of doing this instead of adding code for new fields like below ... what if there are new panels with similar fields :( 
 function resetCohortInfoValues(){
-	Ext.get('platforms1').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
-	Ext.get('platforms2').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
+	if (Ext.get('platforms1') && Ext.get('platforms2')) { 
+		Ext.get('platforms1').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
+		Ext.get('platforms2').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
+	} else if (Ext.get('platforms3') && Ext.get('platforms4')) { 
+		Ext.get('platforms3').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
+		Ext.get('platforms4').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
+	}
 	GLOBAL.CurrentPlatforms[0]=GLOBAL.DefaultCohortInfo.defaultPlatforms[0];
 	GLOBAL.CurrentPlatforms[1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[1];
-	
-	Ext.get('timepoint1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
-	Ext.get('timepoint2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
+
+	if (Ext.get('timepoint1') && Ext.get('timepoint2')) {
+		Ext.get('timepoint1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
+		Ext.get('timepoint2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
+	} else if (Ext.get('timepoint3') && Ext.get('timepoint4')) {
+		Ext.get('timepoint3').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
+		Ext.get('timepoint4').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
+	}
 	GLOBAL.CurrentTimepoints[0]=GLOBAL.DefaultCohortInfo.defaultTimepoints[0];
 	GLOBAL.CurrentTimepoints[1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[1];
 	
-	Ext.get('sample1').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
-	Ext.get('sample2').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
+	if (Ext.get('sample1') && Ext.get('sample2')) {
+		Ext.get('sample1').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
+		Ext.get('sample2').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
+	} else if (Ext.get('sample3') && Ext.get('sample4')) {
+		Ext.get('sample3').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
+		Ext.get('sample4').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
+	}
 	GLOBAL.CurrentSamples[0]=GLOBAL.DefaultCohortInfo.defaultSamples[0];
 	GLOBAL.CurrentSamples[1]=GLOBAL.DefaultCohortInfo.defaultSamples[1];
 	
-	Ext.get('gpl1').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
-	Ext.get('gpl2').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
+	if (Ext.get('gpl1') && Ext.get('gpl2')) {
+		Ext.get('gpl1').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
+		Ext.get('gpl2').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
+	} else if (Ext.get('gpl3') && Ext.get('gpl4')) {
+		Ext.get('gpl3').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
+		Ext.get('gpl4').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
+	}
 	GLOBAL.CurrentGpls[0]=GLOBAL.DefaultCohortInfo.defaultGpls[0];
 	GLOBAL.CurrentGpls[1]=GLOBAL.DefaultCohortInfo.defaultGpls[1];
 	
-	Ext.get('tissue1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
-	Ext.get('tissue2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
+	if (Ext.get('tissue1') && Ext.get('tissue2')) {
+		Ext.get('tissue1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
+		Ext.get('tissue2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
+	} else if (Ext.get('tissue3') && Ext.get('tissue4')) {
+		Ext.get('tissue3').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
+		Ext.get('tissue4').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
+	}
 	GLOBAL.CurrentTissues[0]=GLOBAL.DefaultCohortInfo.defaultTissues[0];
 	GLOBAL.CurrentTissues[1]=GLOBAL.DefaultCohortInfo.defaultTissues[1];
 	
-	Ext.get('rbmpanel1').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
-	Ext.get('rbmpanel2').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
+	if (Ext.get('rbmpanel1') && Ext.get('rbmpanel2')) {
+		Ext.get('rbmpanel1').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
+		Ext.get('rbmpanel2').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
+	} else if (Ext.get('rbmpanel3') && Ext.get('rbmpanel4')) {
+		Ext.get('rbmpanel3').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
+		Ext.get('rbmpanel4').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
+	}
 	GLOBAL.CurrentRbmpanels[0]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[0];
 	GLOBAL.CurrentRbmpanels[1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[1];
 	
-	var ele=Ext.get('divsample1');
-	var eleGpl=Ext.get('divgpl1');
-	var eleTissue=Ext.get('divtissue1');
-	var eleRbmpanel=Ext.get('divrbmpanel1')
-	if(GLOBAL.CurrentPlatforms[0]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[0]==null){
+	var ele=(Ext.get('divsample1')) ? Ext.get('divsample1') : Ext.get('divsample3');
+	var eleGpl=(Ext.get('divgpl1')) ? Ext.get('divgpl1') : Ext.get('divgpl3');
+	var eleTissue=(Ext.get('divtissue1')) ? Ext.get('divtissue1') : Ext.get('divtissue3');
+	var eleRbmpanel=(Ext.get('divrbmpanel1')) ? Ext.get('divrbmpanel1') : Ext.get('divrbmpanel3')
+	if(GLOBAL.CurrentPlatforms[0]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[0]=='SNP' || GLOBAL.CurrentPlatforms[0]==null){
 		ele.dom.style.display='';
 		eleGpl.dom.style.display='';
 		eleTissue.dom.style.display='';
@@ -1495,10 +1592,10 @@ function resetCohortInfoValues(){
 		eleTissue.dom.style.display='none';
 		eleRbmpanel.dom.style.display='';
 	}
-	ele=Ext.get('divsample2');
-	eleGpl=Ext.get('divgpl2');
-	eleTissue=Ext.get('divtissue2');
-	eleRbmpanel=Ext.get('divrbmpanel2')
+	ele=(Ext.get('divsample2')) ? Ext.get('divsample2') : Ext.get('divsample4');
+	eleGpl=(Ext.get('divgpl2')) ? Ext.get('divgpl2') : Ext.get('divgpl4');
+	eleTissue=(Ext.get('divtissue2')) ? Ext.get('divtissue2') : Ext.get('divtissue4');
+	eleRbmpanel=(Ext.get('divrbmpanel2')) ? Ext.get('divrbmpanel2') : Ext.get('divrbmpanel4')
 	if(GLOBAL.CurrentPlatforms[1]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[1]==null){
 		ele.dom.style.display='';
 		eleGpl.dom.style.display='';
@@ -1510,6 +1607,11 @@ function resetCohortInfoValues(){
 		eleTissue.dom.style.display='none';
 		eleRbmpanel.dom.style.display='';
 	}
+	
+	//Clear out the pathway/aggregation input.
+	document.getElementById("probesAggregation").checked=false;
+	document.getElementById("searchPathway").value = "";
+	
 }
 
 function showCompareStepPathwaySelectionRBM()
@@ -1521,12 +1623,13 @@ if(!this.compareStepPathwaySelectionRBM)
                 title: 'Compare Subsets-Pathway Selection for RBM Platform',
             	layout:'fit',
                 width:450,
+                // height:250,
                 autoHeight: true,
                 closable: false,
                 plain: true,
                 modal: true,
                 border:false,
-                y:100,
+                //autoScroll: true,
                 buttons: [
                 		{
                             id: 'compareStepPathwaySelectionOKButtonRBM',
@@ -1618,7 +1721,7 @@ if(invert==1)
 	}
 else
 	{
-	panel=panel+"(";
+	panel=panel+"<b>(</b>";
 	}
 for(var i=0;i<qd.childNodes.length;i++)
 {
@@ -1789,44 +1892,59 @@ window.location.href=pageInfo.basePath;
 function getTreeNodeFromXMLNode(concept)
 {
 		var Tree = Ext.tree;
- 		var level=null;
- 		var name=null;
- 		var tablename=null;
- 		var tooltip=null;
- 		var tooltipnode=null;
- 		var key=null;
- 		var dimcode=null;
- 		var newnode=null;
- 		var leaf=false;
- 		var draggable=true;
- 		var comment=null;
- 		var normalunits=null;
-	    level=concept.selectSingleNode('level').firstChild.nodeValue;
-	    key=concept.selectSingleNode('key').firstChild.nodeValue;
-	    name=concept.selectSingleNode('name').firstChild.nodeValue; 
-	    tooltipnode=concept.selectSingleNode('tooltip')
-	    tooltip=tooltipnode==undefined?"":tooltipnode.firstChild.nodeValue;
-	    dimcode=concept.selectSingleNode('dimcode').firstChild.nodeValue;
-	    visualattributes=concept.selectSingleNode('visualattributes').firstChild.nodeValue;
-	    tablename=concept.selectSingleNode('tablename').firstChild.nodeValue;
-	    var commentnode=concept.selectSingleNode('comment');
-	   	comment=getValue(commentnode, "");
-	   	//comment=(commentnode!=null&&commentnode.firstChild!=null)?commentnode.firstChild.nodeValue:"";
-	   	var normalunitsnode=concept.selectSingleNode('.//metadataxml/ValueMetadata/UnitValues/NormalUnits');
-	   	//normalunits=normalunitsnode==undefined?"":normalunitsnode.firstChild.nodeValue;
-	    normalunits=getValue(normalunitsnode, "");
-	    var oktousevaluesnode=concept.selectSingleNode('.//metadataxml/ValueMetadata/Oktousevalues');
-	   // var oktousevalues=(oktousevaluesnode==null && oktousevaluesnode.firstChild!=null)?"N":oktousevaluesnode.firstChild.nodeValue;   
-	   // var oktousevalues=getFirstChildValue(oktousevalues);
-	   var oktousevalues=getValue(oktousevaluesnode, "N");
-	    var iconCls=null;
-	    if(oktousevalues!="N"){
+		
+ 		var level				=	null;
+ 		var name				=	null;
+ 		var tablename			=	null;
+ 		var tooltip				=	null;
+ 		var tooltipnode			=	null;
+ 		var key					=	null;
+ 		var dimcode				=	null;
+ 		var newnode				=	null;
+ 		var leaf				=	false;
+ 		var draggable			=	true;
+ 		var comment				=	null;
+ 		var normalunits			=	null;
+ 		var commentnode			=	null;
+ 		var normalunitsnode 	= 	null;
+ 		var oktousevaluesnode	= 	null;
+ 		var oktousevalues		=	null;
+ 			
+	    level				=	concept.selectSingleNode('level').firstChild.nodeValue;
+	    key					=	concept.selectSingleNode('key').firstChild.nodeValue;
+	    name				=	concept.selectSingleNode('name').firstChild.nodeValue; 
+	    tooltipnode			=	concept.selectSingleNode('tooltip')
+	    tooltip				=	tooltipnode == undefined ? "" : tooltipnode.firstChild.nodeValue;
+	    dimcode				=	concept.selectSingleNode('dimcode').firstChild.nodeValue;
+	    visualattributes	=	concept.selectSingleNode('visualattributes').firstChild.nodeValue;
+	    tablename			=	concept.selectSingleNode('tablename').firstChild.nodeValue;
+	    commentnode			=	concept.selectSingleNode('comment');
+	   	normalunitsnode		=	concept.selectSingleNode('.//metadataxml/ValueMetadata/UnitValues/NormalUnits');
+	    normalunits			=	getValue(normalunitsnode, "");
+	   	comment				=	getValue(commentnode, "");	    
+	    oktousevaluesnode	=	concept.selectSingleNode('.//metadataxml/ValueMetadata/Oktousevalues');
+	    oktousevalues		=	getValue(oktousevaluesnode, "N");
+	    
+	    //We need to replace the < signs with &lt;
+	    name = name.replace(/</gi,"&lt;");
+	    
+	    var iconCls	=	null;
+	    var cls		=	null;
+	    var tcls 	=	null;
+	    
+	    if(oktousevalues!="N")
+	    {
 	    	iconCls="valueicon";
-	    	//oktousevalues="N";
-	    }    
+	    }
+	    
 	    //get type of node
 	    nodetype=visualattributes.substr(0,1);
 	    nodestatus=visualattributes.substr(1,1); //A=active I=inactive H=hidden	    
+	    if(visualattributes.length>2 && visualattributes.substr(2,1)!=' ')
+	    	{
+	    	iconCls=visualattributes.substr(2,1).toLowerCase()+"leaficon";
+	    	tcls=visualattributes.substr(2,1).toLowerCase()+"leafclass";
+	    	}
 	    if(nodetype=='F') //folder-dragable
 	    {
 	    leaf=false;
@@ -1857,6 +1975,7 @@ function getTreeNodeFromXMLNode(concept)
         comment: comment,
         qtip: tooltip,
    		iconCls:iconCls,
+   		cls: tcls,
         /*qtipCfg:{
         		 text:tooltip,
       			 autoHide:true

@@ -104,6 +104,23 @@
 	  	</tr>
 	  	<tr>
 	  		<td colspan="2">
+			  	<div id="divSNPType" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Select SNP Type:<br>
+			  		<select id="SNPType">
+			  			<option value="Genotype">Genotype(categorical)</option>
+			  			<option value="CNV">CopyNumber(continuous)</option>			  			
+			  		</select>
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+	  		<td colspan="2">
+			  	<div id="divProbesAggregation" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Aggregate Probes?<br>
+			  		<input type="checkbox"  size="20" id="probesAggregation"/>
+			  	</div>
+			</td>
+	  	</tr>	  	
+	  	<tr>
+	  		<td colspan="2">
 			  	<div id="divnclusters" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Select the number of Clusters:<br>
 			  		<input type="text"  size="3" id="nClusters" />
 			  	</div>
@@ -114,19 +131,19 @@
 
   <script type="text/javascript">
   	createNClustersBox();
-  	createPathwaySearchBox();
-  	createPlatformSearchBox(1);
-  	createPlatformSearchBox(2);
-  	createTimePointsSearchBox(1);
-  	createTimePointsSearchBox(2);
-  	createTissueSearchBox(1);
-  	createTissueSearchBox(2);
-  	createSamplesSearchBox(1);
-  	createSamplesSearchBox(2);
-  	createGplSearchBox(1);
-  	createGplSearchBox(2);
-  	createRbmPanelSearchBox(1);
-  	createRbmPanelSearchBox(2);
+  	createPathwaySearchBox('searchPathway', 'divpathway');
+  	createPlatformSearchBox(1, 1);
+  	createPlatformSearchBox(2, 2);
+  	createTimePointsSearchBox(1, 1);
+  	createTimePointsSearchBox(2, 2);
+  	createTissueSearchBox(1, 1);
+  	createTissueSearchBox(2, 2);
+  	createSamplesSearchBox(1, 1);
+  	createSamplesSearchBox(2, 2);
+  	createGplSearchBox(1, 1);
+  	createGplSearchBox(2, 2);
+  	createRbmPanelSearchBox(1, 1);
+  	createRbmPanelSearchBox(2, 2);
   </script><br/><br/>
   </body>
 </html>

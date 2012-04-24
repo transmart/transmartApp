@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import com.recomdata.transmart.domain.i2b2.AsyncJob
 import org.json.JSONObject
 
@@ -23,7 +25,7 @@ class GenericJobController {
 
 	def springSecurityService
 	def jobResultsService
-	def jobStatusService
+	def asyncJobService
 	
 	/**
 	 * Method that will create the new asynchronous job name
@@ -44,7 +46,7 @@ class GenericJobController {
 		newJob.save() 
 		
 		jobResultsService[jobName] = [:]
-		jobStatusService.updateStatus(jobName, jobStatus)
+		asyncJobService.updateStatus(jobName, jobStatus)
 		
 		log.debug("Sending ${jobName} back to the client")		
 		JSONObject result = new JSONObject()

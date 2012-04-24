@@ -1,3 +1,23 @@
+/*************************************************************************
+ * tranSMART - translational medicine data mart
+ * 
+ * Copyright 2008-2012 Janssen Research & Development, LLC.
+ * 
+ * This product includes software developed at Janssen Research & Development, LLC.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+ * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
+ * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
+ * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ *
+ ******************************************************************/
+
+
 //////////////////////////////////////////////////////////////////
 //This file holds the javascript functions required to get user input for running IGV, and actually submit the job.
 //
@@ -5,8 +25,8 @@
 //
 ////////////////////////////////////////////////////////////////
 function showGwasSelection() {
-	
-	var win = new Ext.Window({
+	genePatternReplacement();
+	/*var win = new Ext.Window({
 		id: 'showGwasSelection',
 		title: 'Genome-Wide Association Study',
 		layout:'fit',
@@ -49,12 +69,12 @@ function showGwasSelection() {
 		          }],
 		resizable: false,
 		autoLoad: {
-			url: pageInfo.basePath+'/genePattern/showGwasSelectionSample',
+			url: pageInfo.basePath+'/genePattern/showGwasSelection',
 			scripts: true,
 			nocache:true,
 			discardUrl:true,
 			method:'POST',
-			params: {sampleIdList: Ext.encode(GLOBAL.DefaultCohortInfo.SampleIdList)}
+			params: {SearchJson: GLOBAL.DefaultCohortInfo.SampleIdList}
 		},
 		tools:[{
 			id:'help',
@@ -66,44 +86,54 @@ function showGwasSelection() {
 		}]
 	});
 	//  }
-	win.show(viewport);
+	win.show(viewport);*/
 }
 
+//TODO-PLUGIN:This should be part of the plugin
 /** 
  * Function to run the GWAS asynchronously
  */
 function showGwas() {	
 
 	Ext.Ajax.request({						
-		url: pageInfo.basePath+"/genePattern/createnewjob",
+		url: pageInfo.basePath+"/asyncJob/createnewjob",
 		method: 'POST',
 		success: function(result, request){
-			runGwas(result);
+			runGwas(result, 
+					GLOBAL.CurrentSubsetIDs[1], 
+					GLOBAL.CurrentSubsetIDs[2],
+					getQuerySummary(1), 
+					getQuerySummary(2));
 		},
 		failure: function(result, request){
 			Ext.Msg.alert('Status', 'Unable to create the heatmap job.');
 		},
 		timeout: '1800000',
-		params: {analysis:  "GWAS"}
+		params: {jobType:  "GWAS"}
 	});
 }
 
 // After we get a job created by GPController, we run GWAS
-function runGwas(result)	{
+function runGwas(result, result_instance_id1, result_instance_id2,
+		querySummary1, querySummary2)	{
 	var jobNameInfo = Ext.util.JSON.decode(result.responseText);					 
 	var jobName = jobNameInfo.jobName;
 
-	showJobStatusWindow(result);	
+	genePatternReplacement();
+	/*showJobStatusWindow(result);	
 
 	Ext.Ajax.request(
 	{						
-		url: pageInfo.basePath+"/genePattern/runGwasSample",
+		url: pageInfo.basePath+"/genePattern/runGwas",
 		method: 'POST',
 		timeout: '1800000',
-		params: {sampleIdList: Ext.encode(GLOBAL.DefaultCohortInfo.SampleIdList),
+		params: {result_instance_id1: result_instance_id1,
+			result_instance_id2:  result_instance_id2,
+			querySummary1: querySummary1,
+			querySummary2: querySummary2,
 			chroms: GLOBAL.CurrentChroms,
 			jobName: jobName
 		}
 	});
-	checkJobStatus(jobName);
+	checkJobStatus(jobName);*/
 }

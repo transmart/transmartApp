@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,13 +16,15 @@
  * 
  *
  ******************************************************************/
+
+
 import bio.BioMarker
 import bio.BioAssayAnalysisData
 
 /**
- * @author $Author: jliu $
- * @version $Revision: 11850 $
- * $Id: AssayAnalysisValue.groovy 11850 2012-01-24 16:41:12Z jliu $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
+ * $Id: AssayAnalysisValue.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  *
  */
 public class AssayAnalysisValue implements Comparable {

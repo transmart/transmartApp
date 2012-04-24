@@ -56,10 +56,10 @@
 					</td>
 
 					<td width="10%" align="right">&nbsp;
-					<!--  
+					<!-- 
 					<sec:ifNotGranted roles="ROLE_PUBLIC_USER">
 					<g:link class="normal" action="downloadanalysisgpe" id="${analysis.id}">
-						<img alt="download analysis" src="${resource(dir:'images',file:'impex.png')}" />Pathway Studio</g:link>
+															<img alt="download analysis" src="${resource(dir:'images',file:'impex.png')}" />Pathway Studio</g:link>
 					</sec:ifNotGranted>
 					-->
 					</td>
@@ -113,7 +113,17 @@
 							</g:each>
 						</g:if>
 
-						<g:set var="genes" value="${ar.getGeneNames()}"/>						
+						<g:set var="genes" value="${ar.getGeneNames()}"/>
+						<sec:ifNotGranted roles="ROLE_PUBLIC_USER">
+						<g:if test="${genes!=null && genes.length()>0}">
+							&nbsp;&nbsp;&nbsp;
+							<a style="font-weight:bold;" onclick="popupWindow('http://servername/cgi-bin/chip/pathways.cgi?db=KEGG,GeneGO,GeneGODIS,IPA&symbol=${genes.toString().replace(' ', '')}','pictorsearch');">
+							Search All with Pictor
+							<img class="ExternalLink" src="${resource(dir:'images',file:'linkext7.gif')}" />
+							</a>
+						</g:if>
+						</sec:ifNotGranted>
+
 					</td>
 				</tr>
 				</g:if>

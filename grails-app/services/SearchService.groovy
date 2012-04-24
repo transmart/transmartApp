@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,13 +16,14 @@
  * 
  *
  ******************************************************************/
+
+
 import groovy.time.*
 
 /**
-  * $Id: SearchService.groovy 11850 2012-01-24 16:41:12Z jliu $
-  * 
-  * @author $Author: jliu $
-  * @version $Revision: 11850 $
+  * $Id: SearchService.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 10098 $
   *
   */
 public class SearchService{
@@ -42,7 +43,21 @@ public class SearchService{
 			return TimeCategory.minus(new Date(), start)
 		}
 			
-		def duration = benchmark {sResult.experimentCount = experimentAnalysisQueryService.countExperiment(searchFilter)}
+		def duration = benchmark {sResult.litJubOncAltCount = literatureQueryService.litJubOncAltCount(searchFilter)}
+		log.info("Literature Oncology Alteration Count Duration: ${duration}")
+		duration = benchmark {sResult.litJubOncInhCount = literatureQueryService.litJubOncInhCount(searchFilter)} 
+		log.info("Literature Oncology Inhibitor Count Duration: ${duration}")
+		duration = benchmark {sResult.litJubOncIntCount = literatureQueryService.litJubOncIntCount(searchFilter)}
+		log.info("Literature Oncology Interaction Count Duration: ${duration}")
+		duration = benchmark {sResult.litJubAsthmaAltCount = literatureQueryService.litJubAsthmaAltCount(searchFilter)}
+		log.info("Literature Asthma Alteration Count Duration: ${duration}")
+		duration = benchmark {sResult.litJubAsthmaInhCount = literatureQueryService.litJubAsthmaInhCount(searchFilter)}
+		log.info("Literature Asthma Inhibitor Count Duration: ${duration}")
+		duration = benchmark {sResult.litJubAsthmaIntCount = literatureQueryService.litJubAsthmaIntCount(searchFilter)}
+		log.info("Literature Asthma Interaction Count Duration: ${duration}")
+		duration = benchmark {sResult.litJubAsthmaPECount = literatureQueryService.litJubAsthmaPECount(searchFilter)}
+		log.info("Literature Asthma Protein Effect Count Duration: ${duration}")
+		duration = benchmark {sResult.experimentCount = experimentAnalysisQueryService.countExperiment(searchFilter)}
 		log.info("Expression Analysis Count Duration: ${duration}")
 		duration = benchmark {sResult.trialCount = trialQueryService.countAnalysis(searchFilter)}
 		log.info("Trial Count Duration: ${duration}")

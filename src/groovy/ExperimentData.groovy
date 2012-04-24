@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import com.recomdata.export.GenePatternFiles
 
 import grails.converters.JSON
@@ -1157,7 +1159,7 @@ public class ExperimentData
 	  groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 	  
 	  //Build the query to get the trial names.
-	  StringBuilder trialQ = new StringBuilder("select distinct s.trial_name from sample_categories s ");
+	  StringBuilder trialQ = new StringBuilder("select distinct s.trial_name from i2b2DemoData.sample_categories s ");
 	  trialQ.append(" where s.SAMPLE_ID in (").append(quoteCSV(ids)).append(")");
 	  
 	  //Log the trial query.

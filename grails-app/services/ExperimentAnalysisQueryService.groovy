@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import bio.BioMarker
 import bio.Compound
 import bio.Disease
@@ -27,9 +29,9 @@ import com.recomdata.search.query.Query
 
 import com.recomdata.util.ElapseTimer;
 /**
- * $Id: ExperimentAnalysisQueryService.groovy 11850 2012-01-24 16:41:12Z jliu $
- * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * $Id: ExperimentAnalysisQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  * todo -- make a super class for experimentanalysisqueryservice and trialqueryservice
  */
 class ExperimentAnalysisQueryService {
@@ -407,7 +409,7 @@ class ExperimentAnalysisQueryService {
 			def StringBuilder s = new StringBuilder();
 			def symbol = query.mainTableAlias+".preferredPvalue"
 			s.append(" (").append(symbol).append(" <= ").append(expfilter.pValue).append( ")")
-			// .append(" OR ").append(symbol).append(" IS NULL)"); JNJ-970
+			// .append(" OR ").append(symbol).append(" IS NULL)"); 
 			query.addCondition(s.toString())
 		}
 	}

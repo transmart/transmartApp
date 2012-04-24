@@ -1,5 +1,4 @@
 <!-- loading image -->
-<!-- 
 <g:waitIndicator divId="jubresult_loading" />
 
 <div id="jubresult" style="display: block;">
@@ -82,12 +81,12 @@
 									<g:set var="descr" value="${jubData.reference.referenceTitle}"/>
 									<b>${(descr?.length() > 180) ? descr.substring(0, 180)+"..." : descr}</b>
 								</g:if>
-									
+									<!-- TODO? geneProteinVariant: Inhibitor Studies -->
 								</a>
 							</div>
 						</td>
 						<td width="15%" align="right">
-							
+							<!-- TODO: Add link to associated articles -->
 							<g:if test="${jubData.files.size() > 0}">
 								<g:each in="${jubData.files}" status="fileCount" var="file">
 									<g:if test="${fileCount > 0}">, </g:if>
@@ -169,4 +168,3 @@
 	</table>
 </g:else>
 </div>
--->

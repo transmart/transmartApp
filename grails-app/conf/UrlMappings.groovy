@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
  /**
-  * $Id: UrlMappings.groovy 11850 2012-01-24 16:41:12Z jliu $
-  * @author $Author: jliu $
-  * @version $Revision: 11850 $
+  * $Id: UrlMappings.groovy 9587 2011-09-23 19:08:56Z smunikuntla $
+  * @author $Author: smunikuntla $
+  * @version $Revision: 9587 $
   */
 class UrlMappings {
     static mappings = {
@@ -30,5 +32,7 @@ class UrlMappings {
 	  }
       "/"(controller:'userLanding', action:'index')
 	  "500"(view:'/error')
+	  "/transmart/dataExport/getJobs"(controller:"dataExport", action:"getJobs")
+	  //"/transmart/exportData"(controller:"dataExport", action:"processExport")
 	}
 }

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -17,15 +17,17 @@
  *
  ******************************************************************/
 
+
+
 package  com.recomdata.search.query
 
 import GlobalFilter
 
 
 /**
- * @author $Author: jliu $
+ * @author $Author: mmcduffie $
  * $Id $
- * $Revision: 11850 $
+ * $Revision: 9178 $
  *
  */
 public class AssayStatsExpMarkerQuery extends AssayAnalysisDataQuery{

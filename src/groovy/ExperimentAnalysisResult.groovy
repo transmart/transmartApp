@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,11 +16,13 @@
  * 
  *
  ******************************************************************/
+
+
 import com.recomdata.tea.TEABaseResult
 
 /**
- * @author $Author: jliu $
- * $Id: ExperimentAnalysisResult.groovy 11850 2012-01-24 16:41:12Z jliu $
+ * @author $Author: mmcduffie $
+ * $Id: ExperimentAnalysisResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @version $Reversion$
  *
  */

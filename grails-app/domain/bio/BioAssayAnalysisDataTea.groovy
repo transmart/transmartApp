@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
 /**
- * $Id: BioAssayAnalysisDataTea.groovy 11850 2012-01-24 16:41:12Z jliu $
+ * $Id: BioAssayAnalysisDataTea.groovy 11072 2011-12-08 19:03:28Z jliu $
  * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * @version $Revision: 11072 $
  */
 
 package bio
@@ -46,6 +48,7 @@ class BioAssayAnalysisDataTea implements IExcelProfile {
 		Double teaNormalizedPValue
 		String experimentType
 		BioAssayFeatureGroup featureGroup
+		Long teaRank
 		static hasMany=[markers:BioMarker]
 		static belongsTo=[BioMarker]
 
@@ -73,6 +76,7 @@ class BioAssayAnalysisDataTea implements IExcelProfile {
 		numericValueCode column:'NUMERIC_VALUE_CODE'
 		teaNormalizedPValue column:'TEA_NORMALIZED_PVALUE'
 		experimentType column:'BIO_EXPERIMENT_TYPE'
+		teaRank column:'TEA_RANK'
 		markers joinTable:[name:'BIO_DATA_OMIC_MARKER', key:'BIO_DATA_ID']
 		}
 	}
@@ -81,9 +85,9 @@ class BioAssayAnalysisDataTea implements IExcelProfile {
 	/**
 	 * get top analysis data records for the indicated analysis
 	 */
-	def static getTopAnalysisDataForAnalysis(Long analysisId, int topCount){
-		def query = "SELECT DISTINCT baad, baad_bm FROM bio.BioAssayAnalysisDataTea baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid ORDER BY ABS(baad.foldChangeRatio) desc, baad.rValue, baad.rhoValue DESC";
-		return BioAssayAnalysisDataTea.executeQuery(query, [aid:analysisId], [max:topCount]);
+	def static getTop50AnalysisDataForAnalysis(Long analysisId){
+		def query = "SELECT DISTINCT baad, baad_bm FROM bio.BioAssayAnalysisDataTea baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid and baad.teaRank<=50 ORDER BY baad.teaRank DESC";
+		return BioAssayAnalysisDataTea.executeQuery(query, [aid:analysisId], [max:50]);
 	}
 	/**
 	 * Get values to Export to Excel

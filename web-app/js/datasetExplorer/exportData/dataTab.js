@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,8 +16,10 @@
  * 
  *
  ******************************************************************/
+
+
 var exportMetadataStore;
-function getDatadata(tab)
+function getDatadata()
 {
 	exportMetadataStore = new Ext.data.JsonStore({
 		url : pageInfo.basePath+'/dataExport/getMetaData',
@@ -32,19 +34,20 @@ function getDatadata(tab)
 	});
 	
 	exportMetadataStore.on('load', exportMetadataStoreLoaded);
-	exportMetadataStore.on('loadexception', exportMetadataStoreLoadEx);
-	//exportMetadataStoreLoaded();
-}
-
-function exportMetadataStoreLoadEx() {
-	console.log('Exception while loading export meta data store');
 }
 
 function exportMetadataStoreLoaded()
 {
 	var foo = exportMetadataStore;
-	var columns = prepareColumnModel(exportMetadataStore);
-	var newStore = prepareNewStore(exportMetadataStore, columns);
+	
+	var selectedCohortData = [];
+	selectedCohortData['dataTypeId'] = '';
+	selectedCohortData['dataTypeName'] = 'Selected Cohort';
+	selectedCohortData['subset1'] = getQuerySummary(1);
+	selectedCohortData['subset2'] = getQuerySummary(2);
+	
+	var columns = prepareColumnModel(exportMetadataStore, selectedCohortData);
+	var newStore = prepareNewStore(exportMetadataStore, columns, selectedCohortData);
 	var dataExportToolbar = new Ext.Toolbar(
 		{
 			id : 'dataExportToolbar',
@@ -66,23 +69,23 @@ function exportMetadataStoreLoaded()
     	id: "dataTypesGridPanel",
 		store: newStore,
 		columns: columns,
-		title: "Instructions: Select the files that you would like to download by selecting the check-boxes and then click on Export Data button at the bottom to initiate the asynchronous job to download the data",
+		title: "Instructions: Select the check boxes to indicate the data types and file formats that are desired for export.  Then, click on the \"Export Data\" button at the bottom of the screen to initiate an asynchronous data download job.  To download your data navigate to the \"Export Jobs\" tab.",
 		viewConfig:	{
 			forceFit : true,
-			emptyText : 'No rows to display'
+			emptyText : "No rows to display"
 		}, 
 		sm : new Ext.grid.RowSelectionModel({singleSelect : true}),
-		layout : 'fit',
+		layout : "fit",
 		width : 600,
         tbar:dataExportToolbar,
         buttons: [{
-     	   id : 'dataTypesToExportRunButton',
-    	   text : 'Export Data',
+     	   id : "dataTypesToExportRunButton",
+    	   text : "Export Data",
     	   handler : function() {
     		   createDataExportJob();
     	   }
-       }],
-        buttonAlign:'center',
+        }],
+        buttonAlign:"center"
 	});
 	
     analysisDataExportPanel.add(dataTypesGridPanel);
@@ -90,7 +93,7 @@ function exportMetadataStoreLoaded()
 	analysisDataExportPanel.body.unmask();
 }
 
-function prepareColumnModel(store) {
+function prepareColumnModel(store, selectedCohortData) {
 	var columns = [];
 	var columnModelPrepared = false;
 	
@@ -108,13 +111,13 @@ function prepareColumnModel(store) {
 			this_column['header'] = row.data.subsetName1;
 			this_column['sortable'] = false;
 			columns.push(this_column);
-			
-			this_column = [];
-			this_column['name'] = row.data.subsetId2;
-			this_column['header'] = row.data.subsetName2;
-			this_column['sortable'] = false;
-			columns.push(this_column);
-			
+			if (selectedCohortData['subset2'] != null && selectedCohortData['subset2'].length > 1) {
+				this_column = [];
+				this_column['name'] = row.data.subsetId2;
+				this_column['header'] = row.data.subsetName2;
+				this_column['sortable'] = false;
+				columns.push(this_column);
+			}
 			subsetsAdded = true;
 		}
 	});
@@ -124,31 +127,65 @@ function prepareColumnModel(store) {
 
 function prepareOutString(files, subset, dataTypeId, metadataExists) {
 	var outStr = '';
+	var dataCountExists = false;
 	files.each(function (file) {
 		var dataCount = file.fileDataCount;
-		if (dataCount > 1) {
-			outStr += file.dataFormat + ' is available for ' + file.fileDataCount + ' patients';
-			outStr += '<br/> Export (' + file.fileType + ')&nbsp;&nbsp;';
-			outStr += '<input type="checkbox" name="SubsetDataTypeFileType" value="' + subset + '_';
-			outStr += dataTypeId + '_' + file.fileType + '"/><br/><br/>';
-			
-			if (metadataExists)
-				outStr += 'Metadata will be downloaded in a separate file';
+		if (dataCount >= 1) {
+			if (!dataCountExists) dataCountExists = true;
+			outStr += createSelectBoxHtml(file, subset, dataTypeId)
+		} else {
+			if (file.platforms){
+				file.platforms.each(function (platform){
+					if(platform.fileDataCount>0){
+						dataCountExists=true;
+						outStr += createSelectBoxHtml(file, subset, dataTypeId, platform)
+					}
+				});
+			}else{
+				outStr += file.dataFormat + ' is not available. ';
+				//outStr += (file.fileDataCount != null) ? file.fileDataCount : '0';
+				//outStr += ' patients were found.'
+				outStr += '<br/><br/>'
+			}
 		}
+		
 	});
 	
+	if (dataCountExists && metadataExists)
+		outStr += 'Metadata will be downloaded in a separate file.';
 	return outStr;
 }
 
-function prepareNewStore(store, columns) {
+function createSelectBoxHtml(file, subset, dataTypeId, platform){
+	outStr = '';
+	if(platform){
+		outStr += file.dataFormat + ' is available for </br/>' +platform.gplTitle +": "+ platform.fileDataCount + ' patients';
+		outStr += '<br/> Export (' + file.fileType + ')&nbsp;&nbsp;';
+		outStr += '<input type="checkbox" name="SubsetDataTypeFileType"';
+		outStr += ' value="' + subset + '_' + dataTypeId + '_' + file.fileType + '_' + platform.gplId + '"';
+		outStr += ' id="' + subset + '_' + dataTypeId + '_' + file.fileType + '_' + platform.gplId + '"';
+		outStr += ' /><br/><br/>';
+	}else{
+		outStr += file.dataFormat + ' is available for ' + file.fileDataCount + ' patients';
+		outStr += '<br/> Export (' + file.fileType + ')&nbsp;&nbsp;';
+		outStr += '<input type="checkbox" name="SubsetDataTypeFileType"';
+		outStr += ' value="' + subset + '_' + dataTypeId + '_' + file.fileType + '"';
+		outStr += ' id="' + subset + '_' + dataTypeId + '_' + file.fileType + '"';
+		outStr += ' /><br/><br/>';
+	}
+	
+	return outStr
+}
+
+function prepareNewStore(store, columns, selectedCohortData) {
+	//Remove existing check-boxes
+	var subsetDataTypeFiles = document.getElementsByName('SubsetDataTypeFileType');
+	while (subsetDataTypeFiles.length >= 1) {
+		subsetDataTypeFiles[0].parentNode.removeChild(subsetDataTypeFiles[0])
+	}
+	
 	var dataTypes;
 	var data = [];
-	
-	var selectedCohortData = [];
-	selectedCohortData['dataTypeId'] = '';
-	selectedCohortData['dataTypeName'] = 'Selected Cohort';
-	selectedCohortData['subset1'] = getQuerySummary(1);
-	selectedCohortData['subset2'] = getQuerySummary(2);
 	data.push(selectedCohortData);
 	
 	store.each(function (row) {
@@ -157,13 +194,16 @@ function prepareNewStore(store, columns) {
 		this_data['dataTypeName'] = row.data.dataTypeName;
 		var outStr = prepareOutString(row.data.subset1, row.data.subsetId1, row.data.dataTypeId, row.data.metadataExists);
 		this_data[row.data.subsetId1]= outStr;
-		outStr = prepareOutString(row.data.subset2, row.data.subsetId2, row.data.dataTypeId, row.data.metadataExists);
-		this_data[row.data.subsetId2]= outStr;
+		if (selectedCohortData['subset2'] != null && selectedCohortData['subset2'].length > 1) {
+			outStr = prepareOutString(row.data.subset2, row.data.subsetId2, row.data.dataTypeId, row.data.metadataExists);
+			this_data[row.data.subsetId2]= outStr;
+		}
 		
 		data.push(this_data);
 	});
 	
 	var myStore = new Ext.data.JsonStore({
+		id: 'metadataStore',
 		autoDestroy:true,
 		root:'subsets',
 		fields:columns,

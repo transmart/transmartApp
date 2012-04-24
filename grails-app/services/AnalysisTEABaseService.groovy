@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import bio.BioMarker
 import bio.Compound
 import bio.Disease
@@ -32,9 +34,9 @@ import com.recomdata.search.query.Query
 import com.recomdata.genesignature.TEAScoreManager
 
 /**
- * $Id: AnalysisTEABaseService.groovy 11850 2012-01-24 16:41:12Z jliu $
+ * $Id: AnalysisTEABaseService.groovy 11072 2011-12-08 19:03:28Z jliu $
  * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * @version $Revision: 11072 $
  */
 
 class AnalysisTEABaseService {
@@ -269,7 +271,7 @@ class AnalysisTEABaseService {
 				tResult.analysisResultList.add(analysisResult)
 
 				// get top 50 biomarkers
-				def bioMarkers = BioAssayAnalysisDataTea.getTopAnalysisDataForAnalysis(analysisId, 50);
+				def bioMarkers = BioAssayAnalysisDataTea.getTop50AnalysisDataForAnalysis(analysisId);
 				processAnalysisResultNoSort(bioMarkers, analysisResult)
 			}
 			tResult.analysisCount = tResult.analysisResultList.size();

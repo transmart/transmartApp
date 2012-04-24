@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import javax.servlet.ServletOutputStream
 
 import search.GeneSignature
@@ -31,8 +33,8 @@ import com.recomdata.util.DomainObjectExcelHelper
 
 /**
  * Controller class for gene signature functionality
- * @author $Author: jspencer $
- * @version $Revision: 0 $
+ * @author $Author: jliu $
+ * @version $Revision: 11258 $
  */
 class GeneSignatureController {
 
@@ -629,6 +631,30 @@ class GeneSignatureController {
 		DomainObjectExcelHelper downloadHelper = new DomainObjectExcelHelper(gs,"gene_sig_"+gs.name+".xls")
 		downloadHelper.downloadDomainObject(response)
 	 }
+	
+	/**
+	* export GMT: Gene Matrix Transposed file format (*.gmt)
+	*/
+    def downloadGMT = {
+		def fileName = null
+		// send content to response
+		ServletOutputStream os = null;
+		try {
+			def content = geneSignatureService.getGeneSigGMTContent(params.id)
+			fileName = 'gene_sig_'+content?.substring(0, content?.indexOf('\t'))?.replace('-', '')+'.gmt'
+			// setup headers for download
+			response.setContentType("application/vnd.gmt");
+			response.setCharacterEncoding("charset=utf-8");
+			response.setHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
+			response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+			response.setHeader("Pragma", "public");
+			response.setHeader("Expires", "0");
+			os = response.getOutputStream();
+			os?.write(content.bytes);
+		} finally {
+			os?.flush();
+		}
+	}
 
 	/**
 	 * show sample upload files to user
@@ -760,7 +786,8 @@ class GeneSignatureController {
 
 			// sources
 			wizard.sources = ConceptCode.findAllByCodeTypeName(SOURCE_CATEGORY, [sort:"bioConceptCode"])
-			wizard.sources.add(otherConceptItem);
+			if(otherConceptItem!=null)
+				wizard.sources.add(otherConceptItem);
 			//WizardModelDetails.addOtherItem(wizard.sources, "other")
 
 			// owners
@@ -787,7 +814,7 @@ class GeneSignatureController {
 
 			// compounds
 			wizard.compounds = Compound.findAll("from Compound c where c.brandName is not null or c.genericName is not null order by codeName");
-		
+
 			break;
 
 			case 3:

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -17,10 +17,12 @@
  *
  ******************************************************************/
 
+
+
 /**
- * @author $Author: jliu $
- * $Id: AccessLogService.groovy 11850 2012-01-24 16:41:12Z jliu $
- * $Revision: 11850 $
+ * @author $Author: mmcduffie $
+ * $Id: AccessLogService.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
+ * $Revision: 10098 $
  *
  */
 public class AccessLogService{

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.export;
 
 import java.sql.*;
@@ -101,7 +103,7 @@ public class HeatMapTable {
 		}
 
 		HeatMapRow row;
-		ArrayList<String> ids = new ArrayList();
+		ArrayList<String> ids = new ArrayList<String>();
 		for (String id : ids1.values()) {
 			ids.add(id);
 		}
@@ -147,7 +149,7 @@ public class HeatMapTable {
 			
 			// to assure that columns are returned in the right order,
 			// build a list of subject ids, then sort the list
-			ArrayList<String> ids = new ArrayList();
+			ArrayList<String> ids = new ArrayList<String>();
 			for (String id : ids1.values()) {
 				ids.add(id);
 			}

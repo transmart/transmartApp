@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,11 +16,13 @@
  * 
  *
  ******************************************************************/
+
+
 package i2b2
  /**
-  * $Id: $
-  * @author $Author: $
-  * @version $Revision: $
+  * $Id: SampleInfo.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 9178 $
   */
 
 /**

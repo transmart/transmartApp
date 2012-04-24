@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,18 +16,20 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.transmart.data.export.exception;
+
 
 public class DataNotFoundException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1268973588723740635L;
 	
-	@SuppressWarnings("unused")
-	public String getMessage(){
-		return "No data found";
+	public DataNotFoundException() { }
+	
+	public DataNotFoundException(String specificErrorMessage)
+	{
+		//this.errorMessage = specificErrorMessage;
+		super(specificErrorMessage);
 	}
-
 }

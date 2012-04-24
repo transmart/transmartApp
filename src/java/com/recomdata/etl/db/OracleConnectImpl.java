@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.etl.db;
 
 public class OracleConnectImpl implements DBConnect {
@@ -32,22 +34,10 @@ public class OracleConnectImpl implements DBConnect {
 	// on a connection.
 	private final String selectMethod = "cursor";
 
-	public static OracleConnectImpl createJJHost2I2B2Connect(){
-		return new OracleConnectImpl("jjhost2", "oracle","i2b2demodata","i2b2demodata") ;
+	public static OracleConnectImpl createHost2SearchAppConnect(){
+		return new OracleConnectImpl("host", "sid","userid","password") ;
 	}
-
-	public static OracleConnectImpl createJJHost2BioMartConnect(){
-		return new OracleConnectImpl("jjhost2", "oracle","biomart","biomart") ;
-	}
-
-	public static OracleConnectImpl createJJHost2BioMartwzConnect(){
-		return new OracleConnectImpl("jjhost2", "oracle","biomart_wz","biomart_wz") ;
-	}
-
-	public static OracleConnectImpl createJJHost2SearchAppConnect(){
-		return new OracleConnectImpl("jjhost2", "oracle","searchapp","searchapp") ;
-	}
-
+	
 	public static OracleConnectImpl createAWSDevSearchAppConnect(){
 		return new OracleConnectImpl("localhost", "DW1", "1520", "searchapp","searchapp") ;
 	}
@@ -61,10 +51,6 @@ public class OracleConnectImpl implements DBConnect {
 	}
 	public static OracleConnectImpl createLocalConnect(){
 		return new OracleConnectImpl();
-	}
-	public static OracleConnectImpl createJJHost2I2B2MetaDataConnect()
-	{
-		return new OracleConnectImpl("jjhost2", "oracle","i2b2metadata","i2b2metadata") ;
 	}
 
 	public OracleConnectImpl( String serverName,
@@ -155,7 +141,5 @@ public class OracleConnectImpl implements DBConnect {
 	}
 	public static void main(String[] args) throws Exception
 	{
-		OracleConnectImpl myDbTest = OracleConnectImpl.createJJHost2I2B2Connect();
-		myDbTest.displayDbProperties();
 	}
 }

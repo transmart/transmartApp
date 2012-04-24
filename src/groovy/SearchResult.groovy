@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
 /**
- * $Id: SearchResult.groovy 11850 2012-01-24 16:41:12Z jliu $
- * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * $Id: SearchResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  */
 class SearchResult {
 
@@ -48,7 +50,20 @@ class SearchResult {
 	def result
 	String resultType
 
-	def totalCount = {	
-		return experimentCount + trialCount + documentCount+ profileCount
+	def totalCount = {
+		return experimentCount + literatureCount() + trialCount + documentCount+ profileCount
 	}
+
+	def litJubOncCount = {
+		return litJubOncAltCount + litJubOncInhCount + litJubOncIntCount
+	}
+
+	def litJubAsthmaCount = {
+		return litJubAsthmaAltCount + litJubAsthmaInhCount + litJubAsthmaIntCount + litJubAsthmaPECount
+	}
+
+	def literatureCount = {
+		return litJubOncCount() + litJubAsthmaCount()
+	}
+
 }

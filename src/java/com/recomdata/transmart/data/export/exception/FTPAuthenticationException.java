@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 /**
  * 
  */
@@ -36,7 +38,6 @@ public class FTPAuthenticationException extends Exception {
 	 * 
 	 */
 	public FTPAuthenticationException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -44,7 +45,6 @@ public class FTPAuthenticationException extends Exception {
 	 */
 	public FTPAuthenticationException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -52,7 +52,6 @@ public class FTPAuthenticationException extends Exception {
 	 */
 	public FTPAuthenticationException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -61,7 +60,6 @@ public class FTPAuthenticationException extends Exception {
 	 */
 	public FTPAuthenticationException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

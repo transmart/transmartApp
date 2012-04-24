@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import bio.BioMarker
 import bio.Compound
 import bio.Disease
@@ -27,9 +29,9 @@ import com.recomdata.search.query.Query
 
 
 /**
- * $Id: TrialQueryService.groovy 11850 2012-01-24 16:41:12Z jliu $
- * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * $Id: TrialQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  */
 
 class TrialQueryService {
@@ -302,7 +304,7 @@ class TrialQueryService {
 			//	.append(trialfilter.foldChange)
 			//  .append(" OR baad.foldChangeRatio <= ")
 			//	.append(-trialfilter.foldChange).append(")")
-			//	.append(" OR baad.foldChangeRatio IS NULL)") // JNJ-908
+			//	.append(" OR baad.foldChangeRatio IS NULL)")
 			bFirstWhereItem = false
 			s.append("( abs(baad.foldChangeRatio) >= ").append(trialfilter.foldChange).append(" OR baad.foldChangeRatio IS NULL)")
 		}
@@ -314,7 +316,7 @@ class TrialQueryService {
 			} else {
 				s.append(" AND (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
 			}
-			//.append(" OR baad.preferredPvalue IS NULL)") // JNJ-908
+			//.append(" OR baad.preferredPvalue IS NULL)")
 		}
 		//		 rvalue on BioAssayAnalysisData
 		if(trialfilter.hasRValue()){

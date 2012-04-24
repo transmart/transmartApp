@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
 /**
-* $Id: SearchController.groovy 11850 2012-01-24 16:41:12Z jliu $
-* @author $Author: jliu $
-* @version $Revision: 11850 $
+* $Id: SearchController.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
+* @author $Author: mmcduffie $
+* @version $Revision: 10098 $
 *
 */
 
@@ -47,23 +49,8 @@ public class SearchController{
 	
 	def SEARCH_DELIMITER='SEARCHDELIMITER'
 
-	def index = {		
-		def userAgent = request.getHeader("user-agent")		
-		def pos = userAgent.indexOf("MSIE")
-		if (pos >= 0)	{
-			def browserVersion = userAgent.substring(pos + 5).trim()
-			if (browserVersion.indexOf(" ") > 0)	{
-				browserVersion = browserVersion.substring(0, browserVersion.indexOf(" "))
-			}
-			if (browserVersion.indexOf(";") > 0)	{
-				browserVersion = browserVersion.substring(0, browserVersion.indexOf(";"))
-			}
-			log.info("User is logged in with IE version ${browserVersion}")
-			if ("6.0".equals(browserVersion))	{
-				flash.message = "Unfortunately, your browser (IE6) is no longer supported, please upgrade to the latest version."
-			}
-		}
-		session.setAttribute('searchFilter', new SearchFilter())		
+	def index = {
+		session.setAttribute('searchFilter', new SearchFilter())
 	}
 
 	def list = {
@@ -264,6 +251,7 @@ public class SearchController{
 		//log.info "isTextOnly = " + filter.globalFilter.isTextOnly()
 		SearchService.doResultCount(sResult,filter)
 		filter.summaryWithLinks = createSummaryWithLinks(filter)
+		filter.createPictorTerms()
 		boolean defaultSet = false;
 
 		if (sResult.trialCount>0) {
@@ -276,8 +264,10 @@ public class SearchController{
 		else if (!defaultSet && sResult.profileCount>0) {
 			session.searchFilter.datasource="profile"
 			defaultSet = true;
-		} 
-		else if(!defaultSet && sResult.documentCount>0){
+		} else if(!defaultSet && sResult.literatureCount()>0){
+			session.searchFilter.datasource="literature"
+			defaultSet = true;
+		} else if(!defaultSet && sResult.documentCount>0){
 			session.searchFilter.datasource="document"
 			defaultSet = true;
 		} else {

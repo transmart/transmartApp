@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,8 +16,10 @@
  * 
  *
  ******************************************************************/
+
+
 /**
-* $Id: GenePatternService.groovy 11850 2012-01-24 16:41:12Z jliu $
+* $Id: GenePatternService.groovy 10246 2011-10-27 19:58:02Z mmcduffie $
 */
 package com.recomdata.asynchronous
 
@@ -50,8 +52,8 @@ import com.sun.pdfview.PDFPage
 * GenePatternService that manages the calls and jobs to the GenePattern server.
 * Implements Job as this will run asynchronously
 *
-* @author $Author: jliu $
-* @version $Revision: 11850 $
+* @author $Author: mmcduffie $
+* @version $Revision: 10246 $
 */
 class GenePatternService implements Job {
 	static scope= "session"
@@ -95,7 +97,7 @@ class GenePatternService implements Job {
 		def querySum1 = jobDataMap.get("querySum1")
 		def querySum2 = jobDataMap.get("querySum2")
 		
-		log.debug("Checking to see if the user cancelled the job")
+		//log.debug("Checking to see if the user cancelled the job")
 		if (jobResultsService[jobName]["Status"] == "Cancelled")	{
 			log.warn("${jobName} has been cancelled")
 			return
@@ -521,7 +523,7 @@ class GenePatternService implements Job {
 	 * @param resultType - applet or image
 	 */
 	public JobResult[] PCA(String userName, String jobName, File gctFile, File clsFile, String resultType) throws WebServiceException { 
-		/** Perhaps due to configuration issues of Gene Pattern server in transmartdev.jnj.com environment,
+		/** Perhaps due to configuration issues of Gene Pattern server in transmartdev environment,
 		 * The input dataset file is imported into Gene Pattern correctly through web services interface, but is save into an 
 		 * inaccessible location after use. The viewer applet needs to access the input data file, and will fail for these tasks.
 		 * The work-around is to use non-change tasks like ConvertLineEndings to put the input dataset file as a result file, and then
@@ -716,7 +718,7 @@ class GenePatternService implements Job {
 	* @param resultType - applet or image
 	*/
    public JobResult[] PCA(File gctFile, File clsFile, String resultType) throws WebServiceException {
-	   /** Perhaps due to configuration issues of Gene Pattern server in transmartdev.jnj.com environment,
+	   /** Perhaps due to configuration issues of Gene Pattern server in transmartdev environment,
 		* The input dataset file is imported into Gene Pattern correctly through web services interface, but is save into an
 		* inaccessible location after use. The viewer applet needs to access the input data file, and will fail for these tasks.
 		* The work-around is to use non-change tasks like ConvertLineEndings to put the input dataset file as a result file, and then
@@ -801,9 +803,9 @@ class GenePatternService implements Job {
    //////////////////////////////////////////////////////////////////////////////////////////
 
 	public JobResult[] snpViewer(File dataFile, File sampleFile) throws Exception { 
-		/* The file submitted through web service interface is not accessible to Java Applet-based viewer.
-		 * The work-around is to use non-change tasks like ConvertLineEndings to put the input dataset file as a result file, and then
-		 * use the URL of this result file as input file to the later tasks and viewers. */
+		// The file submitted through web service interface is not accessible to Java Applet-based viewer.
+		 // The work-around is to use non-change tasks like ConvertLineEndings to put the input dataset file as a result file, and then
+		 // use the URL of this result file as input file to the later tasks and viewers. 
 		Parameter    inputFileDataParam      = new Parameter("input.filename", dataFile);
 		Parameter[]  preProcDataParameters  = new Parameter[1];
 		preProcDataParameters[0]            = inputFileDataParam;
@@ -833,9 +835,9 @@ class GenePatternService implements Job {
 
 	public JobResult[] igvViewer(IgvFiles igvFiles, String genomeVersion, String locus, String userName) 
 			throws Exception { 
-		/* The file submitted through web service interface is not accessible to Java Applet-based viewer.
-		 * The work-around is to use non-change tasks like ConvertLineEndings to put the input dataset file as a result file, and then
-		 * use the URL of this result file as input file to the later tasks and viewers. */
+		// The file submitted through web service interface is not accessible to Java Applet-based viewer.
+		 // The work-around is to use non-change tasks like ConvertLineEndings to put the input dataset file as a result file, and then
+		 // use the URL of this result file as input file to the later tasks and viewers. 
 		String sampleFileUrl = igvFiles.getFileUrlWithSecurityToken(igvFiles.getSampleFile(), userName);
 		
 		File sessionFile = igvFiles.getSessionFile();
@@ -845,8 +847,6 @@ class GenePatternService implements Job {
 			String cnFileUrl = igvFiles.getFileUrlWithSecurityToken(cnFile, userName);
 			sessionFile << "<Resource path='" + cnFileUrl + "'/>\n";
 		}
-		// dbSNP track may have caused problem for IGV launched from within JnJ network. Leave it out for now
-		// sessionFile << "<Resource name='dbSNP 1.3.1' path='http://www.broadinstitute.org/igvdata/annotations/hg19/dbSnp/hg19_snp131.bed'/>\n";
 		sessionFile << "</Resources>\n</Session>";
 		
 		String sessionURL = getGPFileConvertUrl(sessionFile);
@@ -894,7 +894,7 @@ class GenePatternService implements Job {
 	* @param querySummary1 - Results from the first subset
 	* @param querySummary2 - Results from the second subset
 	*/
-	public String survivalAnalysis(String userName, String jobName, File dataFile, File clsFile, String imageTempPath, String imageTempDirName, String contextPath,
+public String survivalAnalysis(String userName, String jobName, File dataFile, File clsFile, String imageTempPath, String imageTempDirName, String contextPath,
 		String querySummary1, String querySummary2) throws WebServiceException {
 		 
 		if (dataFile == null)	{
@@ -1150,6 +1150,14 @@ class GenePatternService implements Job {
 	}
 	
 	/**
+	 * Some GenePattern modules cannot access GenePattern stored files, if the GenePattern server is accessed through a proxy.
+	 * Separate GenePattern server is to have more resource for demanding tasks. Same URL for GenePattern as the Transmart server is to avoid
+	 * security issue of launching Java Applet from IE.
+	 * In the case of PCA, transmart code first submit input to GenePattern server. In PCA call, the URL of the GenePattern-stored input
+	 * file is submitted as input. These input URL is from the proxy, like https://transmartdev/gp/jobResults/2374/gp_df_8595641542636053092.cvt.cls.
+	 * Inside code of PCA module cannot programmatically access this input URL through proxy. We need to manually convert this URL to the real URL
+	 * http://xxx.xxx.xxx.xxx:xxxx/gp/jobResults/2374/gp_df_8595641542636053092.cvt.cls.
+	 * 
 	 * Somehow, GenePattern server put the result file in the proxy'ed URL. In IE, the Java applet is launched to access this proxy'ed URL,
 	 * and will work correctly.
 	 * This function should NOT be used on input parameters to the Viewer modules.

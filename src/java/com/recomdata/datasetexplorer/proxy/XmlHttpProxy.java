@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,9 +16,11 @@
  * 
  *
  ******************************************************************/
+
+
 /* Copyright 2007 You may not modify, use, reproduce, or distribute this software except in compliance with the terms of the License at: 
  http://developer.sun.com/berkeley_license.html
- $Id: XmlHttpProxy.java,v 1.2 2007/09/26 17:21:42 gmurray71 Exp $ 
+ $Id: XmlHttpProxy.java 11083 2011-12-09 06:05:13Z jliu $ 
 */
 package com.recomdata.datasetexplorer.proxy;
 
@@ -174,7 +176,7 @@ public class XmlHttpProxy {
         }
         
         // post data determines whether we are going to do a get or a post
-        if (postData == null) {
+        if (postData == null ||postData.trim().length()==0) {
             in = httpclient.getInputStream();
         } else {
             in = httpclient.doPost(postData, postContentType);

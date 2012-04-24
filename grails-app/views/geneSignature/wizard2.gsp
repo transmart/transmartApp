@@ -153,7 +153,6 @@
          				  noSelection="['null':'select owner of the data']"
          				  optionValue="codeName"
          				  optionKey="id" />
-			</select>
 			</td>			
 		</tr>
 		<tr class="prop">

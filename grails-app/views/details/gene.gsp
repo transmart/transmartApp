@@ -43,14 +43,29 @@
 		                title:"Entrez Global",
 		                id:'entrezGlobal',
 		                defaultSrc: "http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=${symbol}"
-					},
+					}, /*
 				<sec:ifNotGranted roles="ROLE_PUBLIC_USER">
+					{
+		        		title:"Pictor",
+		                id:'pictor',
+		                defaultSrc:"http://servername/cgi-bin/chip/pathways.cgi?symbol=${symbol}"
+		            },
+		            {
+		        		title:"Hydra",
+		                id:'hydra',
+		                defaultSrc:"http://servername/hydra/viewer/index.cfm?hydrageneid=${hydraGeneID}"
+		            },
 					{
 		        		title:"GeneCards",
 		                id:'genecard',
 		                defaultSrc:"http://www.genecards.org/cgi-bin/carddisp.pl?gene=${symbol}"
 		            },
-			</sec:ifNotGranted>
+		            {
+		        		title:"TargetCV",
+		                id:'targetcv',
+		                defaultSrc:"http://servername/TargetCV/reports/${symbol}.htm"
+		            },
+			</sec:ifNotGranted> */
 					{
 		                title:"Google Scholar",
 		                id:'google',

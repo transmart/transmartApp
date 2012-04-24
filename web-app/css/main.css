@@ -795,12 +795,20 @@ table.jubsummary td {
     background-image:url(../images/clinicaltrials.png ) !important;
     color:#ff0000;
 }
+.pictorTab {
+    background-image:url(../images/pictor.png ) !important;
+    color:#ff0000;
+}
+
+.resnetTab {
+    background-image:url(../images/pathway.png ) !important;
+    color:#ff0000;
+}
 
 .genegoTab {
     background-image:url(../images/genego.png ) !important;
     color:#ff0000;
 }
-
 
 .expTab {
     background-image:url(../images/ebi.png ) !important;
@@ -914,7 +922,7 @@ select.jubselect {
 }
 
 .contextHelpBtn {
-	background-image:url(../images/help/helpbutton.jpg ) !important;
+	background-image:url(../images/help/helpicon_gray.jpg ) !important;
 	color:#ff0000;	
 }
 
@@ -927,6 +935,8 @@ select.jubselect {
     background-image: none !important;
     width: 0px !important;
 }
+
+
 
 /* searchresults.css */
 .CategoryDiv {border:0px;}

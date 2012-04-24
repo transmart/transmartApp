@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,9 +16,8 @@
  * 
  *
  ******************************************************************/
-/*******************************************************************************
-HELPER FUNCTIONS
-********************************************************************************/
+
+
 function getDateTime()
 {
  return "2008-01-21T18:24:59.406-05:00";
@@ -163,7 +162,8 @@ function getCategories()
     	    {
     	        url: pageInfo.basePath+"/proxy?url="+GLOBAL.ONTUrl+"getCategories",
     	        method: 'POST',
-    	        xmlData: getCategoriesRequest,                                        
+    	        xmlData: getCategoriesRequest, 
+    	        headers:{'Content-Type':'text/xml'},
     	        success: function(result, request){getCategoriesComplete(result);},
     	        failure: function(result, request){getCategoriesComplete(result);}
     	    }); 
@@ -233,9 +233,12 @@ xmlns:ns8="http://www.i2b2.org/xsd/cell/crc/psm/querydefinition/1.1/"> \
    
             
 function getCRCRequestFooter(){
-return   ' </ns4:request>\
-    	</message_body>\
-	</ns6:request>  ';
+	return   '<result_output_list> \
+    <result_output priority_index="10" name="PATIENTSET"/> \
+    </result_output_list> \
+    </ns4:request>\
+    </message_body>\
+    </ns6:request>  ';
 }    
 
 
@@ -292,6 +295,7 @@ panel=panel+"</panel>";
 return panel;
 }
                   
+
 function getCRCRequestItem(el){
 	
 	//Construct part of the XML document being sent to i2b2 services. Escape when there are < or > in the concept path.
@@ -520,6 +524,7 @@ function getQueryResultInstanceList(queryInstanceId, queryName)
     	        url: pageInfo.basePath+"/proxy?url="+GLOBAL.CRCUrl+"request",
     	        method: 'POST',
     	        scope: this,
+    	        headers:{'Content-Type':'text/xml'},
     	        xmlData: getQueryResultInstanceListRequest,                                        
     	        success: function(result, request){getQueryResultInstanceListComplete(result, queryName);},
     	        failure: function(result, request){getQueryResultInstanceListComplete(result);}

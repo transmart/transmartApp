@@ -21,9 +21,9 @@
 <sec:ifNotGranted roles="ROLE_PUBLIC_USER">
 	<table class="detail">
 	<tr>
-	<td><a style="color:blue" href="${resource(dir:'help',file:'InternalTrainingTutorials-Basic.pdf')}">Internal Basic Training Guide</a>
+	<td><a style="color:blue" href="${resource(dir:'help',file:'TransmartTrainingTutorials-Basic.pdf')}">Transmart Basic Training Guide</a>
 	</td></tr>
-	<td><a style="color:blue" href="${resource(dir:'help',file:'InternalTrainingTutorials-Advanced.pdf')}">Internal Advanced Training Guide</a>
+	<td><a style="color:blue" href="${resource(dir:'help',file:'TransmartTrainingTutorials-Advanced.pdf')}">Transmart Advanced Training Guide</a>
 	</td></tr>
 	</table>
 </sec:ifNotGranted>

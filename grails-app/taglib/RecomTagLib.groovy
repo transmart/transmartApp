@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,14 +16,16 @@
  * 
  *
  ******************************************************************/
+
+
 import java.io.File
 import com.recomdata.search.DocumentHit
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 /**
- * $Id: RecomTagLib.groovy 11850 2012-01-24 16:41:12Z jliu $
+ * $Id: RecomTagLib.groovy 10280 2011-10-29 03:00:52Z jliu $
  * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * @version $Revision: 10280 $
  */
 
 class RecomTagLib {
@@ -70,7 +72,8 @@ class RecomTagLib {
 				url = path
 				break
 			case "URL":
-				path = content.repository.location + content.location 
+				//path = content.repository.location + URLEncoder.encode(content.location)
+			path = content.repository.location+content.location
 				url = path
 				break
 			default:

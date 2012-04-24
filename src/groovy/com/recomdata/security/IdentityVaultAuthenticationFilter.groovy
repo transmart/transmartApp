@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
 /**
-* $Id: IdentityVaultAuthenticationFilter.groovy 11850 2012-01-24 16:41:12Z jliu $
-* @author $Author: jliu $
-* @version $Revision: 11850 $
+* $Id: IdentityVaultAuthenticationFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+* @author $Author: mmcduffie $
+* @version $Revision: 9178 $
 */
 package com.recomdata.security
 
@@ -113,21 +115,17 @@ class IdentityVaultAuthenticationFilter extends GenericFilterBean	{
 				log.debug("Target: ${target} ")
 			}
 			
-			/* Check the destination target to determine the correct environment
-				https://transmartdev.jnj.com = Development
-				https://transmartqa.jnj.com = Staging/QA
-				https://transmart.jnj.com = Production
-			*/
-			String userPass = "sa";  // assume it's production			
+			// Check the destination target to determine the correct environment
+			String userPass = "sa-TransMartProd:H1tTh3R0ad";  // assume it's production			
 			if (target.indexOf("transmartdev") > 0)    {
-				userPass = "sa";  // use development
+				userPass = "sa-TransMartDev:H1tTh3R0ad";  // use development
 				log.info("We are authenticating in the development environment")				
 			} else if (target.indexOf("transmartqa") > 0)  {
-				userPass = "sa";   // use staging/qa
+				userPass = "sa-TransMartQA:H1tTh3R0ad";   // use staging/qa
 				log.info("We are authenticating in the staging environment")
 			}
 			
-			URL soapURL = new URL("");
+			URL soapURL = new URL("https://servername/nidp/saml/soap");
 			URLConnection conn = soapURL.openConnection();
 			HttpURLConnection httpConn = (HttpURLConnection) conn;
 

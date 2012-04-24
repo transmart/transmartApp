@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package i2b2
 class OntNode {
 		Long hlevel
@@ -41,14 +43,15 @@ class OntNode {
 		String sourcesystemcd
 		String valuetypecd
 		String securitytoken
-		static hasMany =[tags:i2b2.OntNodeTag]
+		List tags=[]
+		static hasMany =[tags:OntNodeTag]
  static mapping = {
 	 table 'I2B2_SECURE'
 	 version false
 	 id column: 'C_FULLNAME'
 	 columns {
 		hlevel column:'C_HLEVEL'
-		/*fullname column:'C_FULLNAME'*/
+		//fullname column:'C_FULLNAME'
 		name column:'C_NAME'
 		synonymcd column:'C_SYNONYM_CD'
 		visualattributes column:'C_VISUALATTRIBUTES'
@@ -69,13 +72,13 @@ class OntNode {
 		sourcesystemcd column:'SOURCESYSTEM_CD'
 		valuetypecd column:'VALUETYPE_CD'
 		securitytoken column:'SECURE_OBJ_TOKEN'
-		tags joinTable:[name:'I2B2_TAGS', key:'PATH', column: 'TAG_ID']
-		
+		//tags joinTable:[name:'I2B2_TAGS', key:'PATH', column: 'TAG_ID']
+		tags column: 'PATH' //joinTable: false
 		}
 	}
  static constraints = {
 	hlevel(nullable:true)
-	/*fullname(nullable:false, maxSize:900)*/
+	//fullname(nullable:false, maxSize:900)
 	name(nullable:true, maxSize:2000)
 	synonymcd(nullable:true, maxSize:1)
 	visualattributes(nullable:true, maxSize:3)

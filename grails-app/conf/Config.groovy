@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -15,8 +15,10 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  *
- ******************************************************************/ 
- 
+ ******************************************************************/
+
+
+
 /**
  * Running externalized configuration
  * Assuming the following configuration files
@@ -30,6 +32,7 @@ import grails.plugins.springsecurity.SecurityConfigType
 grails.config.locations = []
 def defaultConfigFiles = [
 	"${userHome}/.grails/${appName}Config/Config.groovy",
+	"${userHome}/.grails/${appName}Config/RModulesConfig.groovy",
 	"${userHome}/.grails/${appName}Config/DataSource.groovy"
 ]
 defaultConfigFiles.each { filePath ->
@@ -110,20 +113,48 @@ com.recomdata.i2b2.sample.username = 'sample'
 com.recomdata.i2b2.sample.password = 'manager'
 //**************************
 
-com.recomdata.transmart.data.export.dataTypesMap=[
-	'CLINICAL':'Clinical & Low Dimensional Biomarker Data',
-	'MRNA':'Gene Expression Data',
-	'SNP':'SNP Data'
-];
 
 
 // max genes to display after disease search
 com.recomdata.search.gene.max=250;
 
 // set schema names for I2B2HelperService
-com.recomdata.i2b2helper.i2b2hive="i2b2"
-com.recomdata.i2b2helper.i2b2metadata="i2b2"
-com.recomdata.i2b2helper.i2b2demodata="i2b2"
+com.recomdata.i2b2helper.i2b2hive="i2b2hive"
+com.recomdata.i2b2helper.i2b2metadata="i2b2metadata"
+com.recomdata.i2b2helper.i2b2demodata="i2b2demodata"
+/*
+ * Please copy below configuration to the external config file
+// FTP server configuration
+com.recomdata.transmart.data.export.ftp.server="rdoracle02.recombinant.local"
+com.recomdata.transmart.data.export.ftp.serverport=""
+com.recomdata.transmart.data.export.ftp.username="appuser"
+com.recomdata.transmart.data.export.ftp.password="support@255"
+com.recomdata.transmart.data.export.ftp.remote.path="./transmart/exported-data/"
+
+// SFTP server configuration
+com.recomdata.transmart.data.export.sftp.server="rdoracle02.recombinant.local"
+com.recomdata.transmart.data.export.sftp.serverport=""
+com.recomdata.transmart.data.export.sftp.username="appuser"
+com.recomdata.transmart.data.export.sftp.passphrase="support@255"
+com.recomdata.transmart.data.export.sftp.private.keyfile=""
+//com.recomdata.transmart.data.export.sftp.private.keyfile="C:/Users/smunikuntla/Downloads/SaiMunikuntla12.ppk"
+// User ${sftp.username} should have write-permissions on the remote.dir.path
+// "." currently points to folder /home/${sftp.username}
+com.recomdata.transmart.data.export.sftp.remote.dir.path="."*/
+
+com.recomdata.transmart.data.export.max.export.jobs.loaded=20
+// tempFolderDirectory should be referenced by all plugins if we plan to use a common temp-dir
+com.recomdata.plugins.tempFolderDirectory='C:/Users/smunikuntla/AppData/Local/Temp/jobs'
+com.recomdata.transmart.data.export.rScriptDirectory='C:/SVN/repo1/transmart/trunk/tranSMARTApp/web-app/dataExportRScripts/'
+
+com.recomdata.transmart.data.export.dataTypesMap=[
+	'CLINICAL':'Clinical & Low Dimensional Biomarker Data', 
+	'MRNA':'Gene Expression Data', 
+	'SNP':'SNP Data',
+	'STUDY':'Study Metadata',
+	'ADDITIONAL':'Additional Data',
+	'GSEA':'Gene Set Enrichment Analysis (GSEA)'
+];
 
 // Control which gene/pathway search is used in Dataset Explorer
 // A value of "native" forces Dataset Explorer's native algorithm.
@@ -141,19 +172,18 @@ com.recomdata.analysis.survival.censorFlagList = [
 	'(PFSCENS)',
 	'(OSCENS)',
 	'(TTTCENS)',
-	'(DURTFICS)',
-	'(PFSFLG)',
-	'(OSFLG)',
-	'(PRGFLG)',
-	'(RSPFLG)'
+	'(DURTFICS)'
 ];
 
 com.recomdata.analysis.genepattern.file.dir = "genepattern"; // Relative to the app root "web-app"
 
 // Disclaimer
 StringBuilder disclaimer = new StringBuilder()
-disclaimer.append("<p>Put your disclaimer here</p>")
+disclaimer.append("<p></p>")
 com.recomdata.disclaimer=disclaimer.toString()
+
+// customization views
+com.recomdata.view.studyview='studydetail'
 com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
@@ -161,7 +191,7 @@ grails.spring.bean.packages = []
 log4j = {
 	appenders {
 		// set up a log file in the standard tomcat area; be sure to use .toString() with ${}
-		rollingFile name:'tomcatLog', file:"${appName}.log".toString(), maxFileSize:'1024KB', layout:pattern(conversionPattern: '%d [%p] (%c{5}:%M:%L) | %m%n')
+		rollingFile name:'tomcatLog', file:"${appName}.log".toString(), maxFileSize:'1024KB', layout:pattern(conversionPattern: '[%p] %d{HH:mm:ss} (%c{5}:%M:%L) | %m%n')
 		'null' name:'stacktrace'
 	}
 

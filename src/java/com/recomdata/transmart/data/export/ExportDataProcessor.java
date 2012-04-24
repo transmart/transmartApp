@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,83 +16,64 @@
  * 
  *
  ******************************************************************/
+
+
 /**
  * 
  */
 package com.recomdata.transmart.data.export;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
-import com.recomdata.transmart.data.export.util.SftpClient;
-import com.recomdata.transmart.data.export.util.ZipUtil;
+import com.recomdata.transmart.data.export.util.FTPUtil;
 
 /**
  * @author SMunikuntla
  * 
  */
-public class ExportDataProcessor implements Job {
+public class ExportDataProcessor {
 
 	private static org.apache.log4j.Logger log = Logger
 			.getLogger(ExportDataProcessor.class);
 	@SuppressWarnings("rawtypes")
 	private static final Map config = ConfigurationHolder.getFlatConfig();
 
-	private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
-	private static final String SFTP_REMOTE_DIR_PATH = (String) config
-			.get("com.recomdata.transmart.data.export.sftp.remote.dir.path");
+	private static final String TEMP_DIR = (String) config.get("com.recomdata.plugins.tempFolderDirectory");
 
-	private static final String SFTP_SERVER = (String) config
-			.get("com.recomdata.transmart.data.export.sftp.server");
-	private static final String SFTP_SERVER_PORT = (String) config
-			.get("com.recomdata.transmart.data.export.sftp.serverport");
-	private static final String SFTP_USER_NAME = (String) config
-			.get("com.recomdata.transmart.data.export.sftp.username");
-	private static final String SFTP_PASSPHRASE = (String) config
-			.get("com.recomdata.transmart.data.export.sftp.passphrase");
-	private static final String SFTP_PRKEY_FILE = (String) config
-			.get("com.recomdata.transmart.data.export.sftp.private.keyfile");
-
-	public void init() {
-	}
-
-	public File getExportJobFile(String fileToGet) {
+	public InputStream getExportJobFileStream(String fileToGet) {
+		InputStream inputStream = null;
 		File jobZipFile = null;
-		File tempFile = new File(fileToGet);
 		try {
 			if (StringUtils.isEmpty(fileToGet))
 				return null;
 
-			tempFile = new File(fileToGet);
-			log.debug("Filename :: " + tempFile.getName());
-
-			jobZipFile = new File(tempFile.getName());
-			SftpClient sftpClient = new SftpClient(SFTP_SERVER, SFTP_USER_NAME,
-					SFTP_PRKEY_FILE, Integer.parseInt(SFTP_SERVER_PORT),
-					SFTP_PASSPHRASE);
-			sftpClient.changeDirectory(SFTP_REMOTE_DIR_PATH);
-			sftpClient.getFile(jobZipFile.getName(), jobZipFile);
-
-			sftpClient.close();
+			inputStream = FTPUtil.downloadFile(true, fileToGet);
+			//If the file was not found at the FTP location try to download it from the server Temp dir
+			if (null == inputStream) {
+				String filePath = TEMP_DIR + File.separator + fileToGet;
+				jobZipFile = new File(filePath);
+				if (jobZipFile.isFile()) {
+					inputStream = new FileInputStream(jobZipFile);
+				}
+			}
 		} catch (Exception e) {
 			log.error("Failed to SFTP GET the ZIP file");
 		}
 
-		return jobZipFile;
+		return inputStream;
 	}
 
+	@SuppressWarnings("unused")
 	private String getZipFileName(String studyName) {
 		StringBuilder fileName = new StringBuilder();
 		DateFormat formatter = new SimpleDateFormat("MMddyyyyHHmmss");
@@ -102,44 +83,5 @@ public class ExportDataProcessor implements Job {
 		fileName.append(".zip");
 
 		return fileName.toString();
-	}
-
-	public void wrapUp() {
-	}
-
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
-		List<File> files = new ArrayList<File>();
-		String studyName = null;
-		File zipFile = null;
-		// TODO Run async jobs
-
-		// TODO remove the studyName initialization to export_data
-		studyName = "export_data";
-		String zipFileAbsolutePath = ZipUtil.bundleZipFile(
-				getZipFileName(studyName), files);
-		// Only after all corresponding jobs have finished executing
-
-		System.out.println("to copy file " + zipFileAbsolutePath + " to "
-				+ SFTP_REMOTE_DIR_PATH);
-		// Place bundled-file at specific location in File-system
-		// Following code-snippet uses FTP to upload file
-		/*
-		 * boolean movedFile = FTPUtil.uploadFile(true, new File(
-		 * zipFileAbsolutePath)); if (!movedFile) { // File was not successfully
-		 * moved }
-		 */
-		// Following code-snippet uses SFTP to upload file
-		try {
-			zipFile = new File(zipFileAbsolutePath);
-			SftpClient sftpClient = new SftpClient(SFTP_SERVER, SFTP_USER_NAME,
-					SFTP_PRKEY_FILE, Integer.parseInt(SFTP_SERVER_PORT),
-					SFTP_PASSPHRASE);
-			sftpClient.changeDirectory(SFTP_REMOTE_DIR_PATH);
-			sftpClient.putFile(zipFile);
-
-			sftpClient.close();
-		} catch (Exception e) {
-			log.error("Failed to SFTP PUT the ZIP file");
-		}
 	}
 }

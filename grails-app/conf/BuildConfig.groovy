@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,9 +16,15 @@
  * 
  *
  ******************************************************************/
+
+
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
+
+//grails.plugin.location.rmodules = "C:\\SVN\\repo1\\pharma\\transmart\\trunk\\plugins\\Rmodules"
+grails.plugin.location.rmodules = "/Users/jliu/SVN_HOME/repo1/GPL1.0/RModules"
+
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -47,3 +53,5 @@ grails.project.dependency.resolution = {
   
     }
 }
+
+

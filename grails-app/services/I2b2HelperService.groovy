@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import java.util.List;
 
 import java.io.BufferedWriter;
@@ -24,7 +26,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 import i2b2.SnpProbeSortedDef;
 
 /**
- * $Id: I2b2HelperService.groovy 7917 2011-04-01 21:47:17Z dliu $
+ * $Id: I2b2HelperService.groovy 11303 2011-12-23 06:05:17Z mkapoor $
  */
 import groovy.sql.*;
 import i2b2.Concept;
@@ -76,16 +78,14 @@ import oracle.jdbc.driver.OracleTypes
 
 import org.Hibernate.*;
 
-import sun.util.logging.resources.logging;
-
 import com.recomdata.db.DBHelper;
 import com.recomdata.export.*;
 
 /**
- * i2b2 helper service
+ * ResNetService that will provide an .rnef file for Jubilant data
  *
- * @author $Author: dliu $
- * @version $Revision: 7917 $
+ * @author $Author: mkapoor $
+ * @version $Revision: 11303 $
  */
 class I2b2HelperService {
 	
@@ -235,11 +235,27 @@ class I2b2HelperService {
 		int res=0;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String sqlt =
-				sql.eachRow("SELECT c_hlevel FROM i2b2 WHERE C_FULLNAME = ?", [fullname], {row ->
+				sql.eachRow("SELECT c_hlevel FROM i2b2metadata.i2b2 WHERE C_FULLNAME = ?", [fullname], {row ->
 					res=row.c_hlevel
 				})
 		log.trace("Level is:"+res);
 		return res;
+	}
+	
+	def getMarkerTypeFromConceptCd(conceptCd){
+		log.trace("Getting marker type from concept code:"+conceptCd);
+		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+		
+		def markerType = ""
+		//def rs = sql.executePreparedQuery("select dgi.marker_type from concept_dimension cd, de_gpl_info dgi where cd.name_char=dgi.title "+
+		//		"and cd.concept_cd = ?",[conceptCd])
+		sql.eachRow("select dgi.marker_type from concept_dimension cd, de_gpl_info dgi where cd.concept_path like('%'||dgi.title||'%') "+
+				"and cd.concept_cd = ?",[conceptCd], {row ->
+					markerType = row.marker_type
+		})
+		//return "Gene Expression"
+		//return "SNP"
+		return markerType
 	}
 	
 	/**
@@ -256,7 +272,7 @@ class I2b2HelperService {
 		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
 		Boolean res=false;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		sql.eachRow("SELECT C_VISUALATTRIBUTES FROM I2B2 WHERE C_FULLNAME = ?", [fullname], {row ->
+		sql.eachRow("SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_FULLNAME = ?", [fullname], {row ->
 			res=row.c_visualattributes.indexOf('L')>-1
 		})
 		return res;
@@ -434,7 +450,7 @@ class I2b2HelperService {
 		log.trace("Checking isValueConceptCode for code:"+concept_code);
 		Boolean res=false;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = "SELECT C_METADATAXML FROM I2B2 WHERE C_BASECODE = ?"
+		String sqlt = "SELECT C_METADATAXML FROM I2B2METADATA.I2B2 WHERE C_BASECODE = ?"
 		String xml="";
 		log.trace(sqlt);
 		sql.eachRow(sqlt, [concept_code], {row ->
@@ -474,10 +490,10 @@ class I2b2HelperService {
 		
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		String sqlt = """Select DISTINCT m.c_name, nvl(i.obscount,0) as obscount FROM
-		    (SELECT c_name, c_basecode FROM i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) m
+		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) m
 		    LEFT OUTER JOIN
 		    (Select c_name, count(c_basecode) as obscount FROM
-			(SELECT c_name, c_basecode FROM i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) c
+			(SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) c
 			INNER JOIN observation_fact f ON f.concept_cd=c.c_basecode
 			WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
 		    GROUP BY c_name) i
@@ -520,7 +536,7 @@ class I2b2HelperService {
 				log.debug("** IN LOOP: fullname: "+fullname);
 				groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 				String sqlt =
-						"SELECT DISTINCT c_name, c_fullname FROM i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+						"SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
 				log.trace(sqlt);
 				sql.eachRow(sqlt, [fullname+"%", i], {row ->
 					if (results.get(row[0]) == null) {
@@ -533,7 +549,7 @@ class I2b2HelperService {
 		} else {
 			int i=getLevelFromKey(concept_key)+1;
 			groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-			String sqlt = "SELECT DISTINCT c_name, c_fullname FROM i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+			String sqlt = "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
 			log.trace(sqlt);
 			sql.eachRow(sqlt, [fullname+"%", i], {row ->
 				results.put(row[0], getObservationCountForConceptForSubset("\\blah"+row[1], result_instance_id));
@@ -553,7 +569,7 @@ class I2b2HelperService {
 		ArrayList ls=new ArrayList();
 		int i=getLevelFromKey(concept_key)+1;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = "SELECT C_FULLNAME, C_METADATAXML FROM i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+		String sqlt = "SELECT C_FULLNAME, C_METADATAXML FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [fullname+"%", i], {row ->
 			String conceptkey=prefix+row.c_fullname;
 			xml=clobToString(row.c_metadataxml);
@@ -590,8 +606,8 @@ class I2b2HelperService {
 		int i=0;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String sqlt = """select count (distinct patient_num) as patcount
-		    FROM observation_fact
-		    WHERE (((concept_cd IN (select concept_cd from concept_dimension c
+		    FROM i2b2demodata.observation_fact
+		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
 		    where concept_path LIKE ?))))""";
 		sql.eachRow(sqlt, [fullname+"%"], {row ->
 			i= row[1];
@@ -608,8 +624,8 @@ class I2b2HelperService {
 		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
 		int i=0;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = """select count (*) as obscount FROM observation_fact
-		    WHERE (((concept_cd IN (select concept_cd from concept_dimension c
+		String sqlt = """select count (*) as obscount FROM i2b2demodata.observation_fact
+		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
 			where concept_path LIKE ?)))) AND PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)""";
 		sql.eachRow(sqlt, [
 			fullname+"%",
@@ -1045,7 +1061,8 @@ class I2b2HelperService {
 		StringBuilder subjectIds = new StringBuilder();
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		
-		String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id = ?";
+		String sqlt = """select distinct patient_num from qt_patient_set_collection where result_instance_id = ? 
+		AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')""";
 		log.trace("before sql call")
 		sql.eachRow(sqlt, [resultInstanceId], {row ->
 			log.trace("in iterator")
@@ -1085,7 +1102,7 @@ class I2b2HelperService {
 	   
 	   //This is the SQL statement we run.
 	   String sqlt = "select distinct PATIENT_ID from DE_SUBJECT_SAMPLE_MAPPING where SAMPLE_ID in (" + listToIN(SampleIDList) + ")";
-	   
+
 	   sql.eachRow(sqlt, [ ], {row -> subjectIds.add(row.PATIENT_ID);})
 	   
 	   return subjectIds;
@@ -1110,25 +1127,6 @@ class I2b2HelperService {
 	  return subjectIds;
   }
    
-  /**
-  * Gets a list of subjects for a list of sample ids.
-  */
- def  List<Long> getSubjectsFromSNPTable(ArrayList SampleIDList){
-	 
-	 //This is the list of patient_nums we return.
-	 List<Long> subjectIds=new ArrayList<Long>();
-	 
-	 //This is the SQL object we use to gather our data.
-	 groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-	 
-	 //This is the SQL statement we run.
-	 String sqlt = "select distinct PATIENT_NUM from de_subject_snp_dataset where DATASET_NAME in (" + listToIN(SampleIDList) + ")";
-
-	 sql.eachRow(sqlt, [ ], {row -> subjectIds.add(row.PATIENT_NUM);})
-	 
-	 return subjectIds;
- }
-  
    /**
    * Gets a list of concepts for a list of sample ids.
    */
@@ -1697,9 +1695,6 @@ class I2b2HelperService {
 				throw new Exception("Not enough data for Hierarchical Clustering Analysis.");
 		}finally{
 			gpf.closeGctFile();
-			
-			//log.debug("Cache this for export");
-			//log.debug("TODO:  Put in a check so this is only run if user has export privs...");
 			gpf.closeCSVFile();
 		}
 	}
@@ -2058,16 +2053,11 @@ class I2b2HelperService {
 	
 	List<Long> getPatientNumListFromSubjectIdStr(String subjectIdStr) {
 		if (subjectIdStr == null || subjectIdStr.length() == 0) return null;
-		
-		def idMap = [:]
 		List<Long> patientNumList = new ArrayList<Long>();
 		String[] subjectArray = subjectIdStr.split(",");
 		for (String subjectId : subjectArray) {
 			Long patientNum = new Long(subjectId.trim());
-			if(idMap[patientNum]==null || idMap.size() == 0) {
-				idMap[patientNum] = 1
-				patientNumList.add(patientNum)
-			}
+			patientNumList.add(patientNum);
 		}
 		return patientNumList;
 	}
@@ -2302,6 +2292,7 @@ class I2b2HelperService {
 	void getSnpDatasetBySubjectMap (Map<Long, SnpDataset[]> snpDatasetBySubjectMap, String subjectListStr) {
 		if (snpDatasetBySubjectMap == null || subjectListStr == null || subjectListStr.length() == 0) return;
 		
+		// The display concept name like "Normal Blood Lymphocyte" for dataset with conceptId of "1222211"
 		Map<String, String> conceptIdToDisplayNameMap = new HashMap<String, String>();
 		
 		// Get the dataset list from subject lists, and organize them in pairs for each patient.
@@ -2381,16 +2372,17 @@ class I2b2HelperService {
 		return allSnpSet;
 	}
 	
-	void getSnpSampleInfo(List<SnpDataset> datasetList, List<String> datasetNameForSNPViewerList, List<Long>[] patientNumListArray, Map<Long, SnpDataset[]> snpDatasetBySubjectMap, StringBuffer sampleInfoBuf) {
+	void getSnpSampleInfo(List<SnpDataset> datasetList, List<String> datasetNameForSNPViewerList, 
+				List<Long>[] patientNumListArray, Map<Long, SnpDataset[]> snpDatasetBySubjectMap, StringBuffer sampleInfoBuf) {
 		if (datasetList == null) throw new Exception("The datasetList is null");
 		if (patientNumListArray == null) throw new Exception("The patient number list for two subsets cannot be null");
 		if (sampleInfoBuf == null) throw new Exception("The StringBuffer for sample info text needs to instantiated");
 		// Organize the datasetList and SNPViewer dataset name List, also generate the SNPViewer sample info text in this pass
 		sampleInfoBuf.append("Array\tSample\tType\tPloidy(numeric)\tGender\tPaired");
-		for (int idxSubset = 0; idxSubset < patientNumListArray.size(); idxSubset ++) {
+		for (int idxSubset = 0; idxSubset < 2; idxSubset ++) {
 			if (patientNumListArray[idxSubset] != null) {
 				for (Long patientNum : patientNumListArray[idxSubset]) {
-					SnpDataset[] snpDatasetPair = snpDatasetBySubjectMap.get(patientNum.longValue());
+					SnpDataset[] snpDatasetPair = snpDatasetBySubjectMap.get(patientNum);
 					if (snpDatasetPair != null) {
 						String datasetNameForSNPViewer_1 = null;
 						String datasetNameForSNPViewer_2 = null;
@@ -2612,24 +2604,12 @@ class I2b2HelperService {
 		dataWriter.close();
 		
 	}
-
 	
-	ArrayList <String> getSampleType(String subjectIds ){
-		ArrayList <String> sampleType = new ArrayList()
-		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String qry = "select distinct sample_type from de_subject_snp_dataset where patient_num in (" + subjectIds + ")"
-		def rows = sql.rows(qry)
-		for(int i in 0.. rows.size()-1){
-		     def str = rows[i].sample_type
-			 sampleType.add(str)
-		}	
-		return sampleType
-	}
 	
 	
 	void getGwasDataByPatient(List<String> subjectIdList1, List<String> subjectIdList2, String chroms, GwasFiles gwasFiles) throws Exception {
 		if (gwasFiles == null) throw new Exception("The GwasFiles object is not instantiated");
-		
+
 		String subjectIds1 = "", subjectIds2 = "";
 		if (subjectIdList1 != null && subjectIdList1.size() != 0) {
 			for (String subjectId : subjectIdList1) {
@@ -2648,16 +2628,6 @@ class I2b2HelperService {
 			}
 		}
 		
-		// Get SQL query String for all the subject IDs
-		String subjectListStr = "";
-		if (subjectIds1 != null && subjectIds1.length() != 0) subjectListStr += subjectIds1;
-		if (subjectIds2 != null && subjectIds2.length() != 0) {
-			if (subjectListStr.length() != 0) subjectListStr += ", ";
-			subjectListStr += subjectIds2;
-		}
-		
-		ArrayList <String> sampleType = getSampleType(subjectListStr)
-		
 		List<Long>[] patientNumListArray = new List<Long>[2]; // For the patient numbers selected by users in subset 1 and subset 2
 		patientNumListArray[0] = getPatientNumListFromSubjectIdStr(subjectIds1);
 		patientNumListArray[1] = getPatientNumListFromSubjectIdStr(subjectIds2);
@@ -2667,122 +2637,17 @@ class I2b2HelperService {
 		patientCountList.add(new Integer(patientNumListArray[1].size()));
 				
 		List<Integer> datasetCountList = gwasFiles.datasetCountList;
-		List<String> idList1 //= getSNPDatasetIdList(subjectIds1);
-		List<String> idList2 //= getSNPDatasetIdList(subjectIds2);
-		
-		
-		if(sampleType.size()>1){	
-			idList1 = getSNPDatasetNameListBySampleType(subjectListStr, sampleType.get(0))
-			idList2 = getSNPDatasetNameListBySampleType(subjectListStr, sampleType.get(1))
-		}else{
-			idList1 = getSNPDatasetNameList(subjectIds1)
-			idList2 = getSNPDatasetNameList(subjectIds2)
-		}
-		
-		// case vs control
-		def groupingMap = [:]
-		for(int i in 0..idList1.size()-1) groupingMap[idList1[i]] = 1
-		for(int i in 0..idList2.size()-1) groupingMap[idList2[i]] = 2
-		
-		
+		List<Long> idList1 = getSNPDatasetIdList(subjectIds1);
+		List<Long> idList2 = getSNPDatasetIdList(subjectIds2);
 		datasetCountList.add(new Integer(idList1.size()));
 		datasetCountList.add(new Integer(idList2.size()));
 		
-		
-		Map<Long, SnpDataset[]> snpDatasetBySubjectMap = new HashMap<Long, SnpDataset[]>();
-		getSnpDatasetBySubjectMap(snpDatasetBySubjectMap, subjectListStr);
-		
-		Map<Long, String> patientGenderMap = new HashMap<Long, String>();
-		getPatientGenderMap(subjectListStr, patientGenderMap);
-
-		StringBuffer sampleInfoBuf = new StringBuffer();
-		List<SnpDataset> datasetList = new ArrayList<SnpDataset>();
-		List<String> datasetNameForSNPViewerList = new ArrayList<String>();
-		getSnpSampleInfo(datasetList, datasetNameForSNPViewerList, patientNumListArray, snpDatasetBySubjectMap, sampleInfoBuf);
-		
-		Map<Long, Map<String, String>> snpDataByDatasetByChrom = getSNPDataByDatasetByChrom(subjectListStr, chroms);
-
-		List<String> neededChroms = getSortedChromList(chroms);
-		gwasFiles.setChromList(neededChroms);
-		String platform = datasetList.get(0).platformName;
-		Map<String, SnpProbeSortedDef> probeDefMap = getSNPProbeDefMap(platform, chroms);
-
-		BufferedWriter mapWriter = new BufferedWriter(new FileWriter(gwasFiles.getMapFile()));
-		for (String chrom : neededChroms) {
-			SnpProbeSortedDef probeDef = probeDefMap.get(chrom);
-			StringLineReader probeReader = new StringLineReader(probeDef.snpIdDef);
-			String probeLine = probeReader.readLine();
-			while (probeLine != null && probeLine.trim().length() != 0) {
-				String[] probeValues = probeLine.split("\t");
-				String snpName = probeValues[0];
-				String chromProbe = probeValues[1];
-				String chromPosProbe = probeValues[2];
-				mapWriter.write(chromProbe + " " + snpName + " 0 " + chromPosProbe + "\n");
-				
-				probeLine = probeReader.readLine();
-			}
-		}
-		mapWriter.close();
-		
-		BufferedWriter pedWriter = new BufferedWriter(new FileWriter(gwasFiles.getPedFile()));
-		//for (int idxSet = 1; idxSet <= patientNumListArray.length; idxSet ++) {
-			List<Long> patientNumList = getPatientNumListFromSubjectIdStr(subjectListStr) //patientNumListArray[idxSet - 1];
-			for (Long patientNum : patientNumList) {
-				String gender = patientGenderMap.get(patientNum);
-				String genderStr = "other";
-				if (gender != null) {
-					if (gender.equalsIgnoreCase("M")) {
-						genderStr = "1";
-					}
-					else if (gender.equalsIgnoreCase("F")) {
-						genderStr = "2";
-					}
-				}
-				
-				SnpDataset[] snpDataArray = snpDatasetBySubjectMap.get(patientNum);
-				for (SnpDataset dataset : snpDataArray) {
-					if (dataset == null) continue;	// snpDataArray is means to contain [normal, disease]
-					pedWriter.write(dataset.datasetName + " " + dataset.datasetName + " 0 0 " + genderStr + "  " + groupingMap[dataset.datasetName]);
-					Map<String, String> dataByChromMap = snpDataByDatasetByChrom.get(dataset.id);
-					for (String chrom : neededChroms) {
-						String dataByChrom = dataByChromMap.get(chrom);
-						StringLineReader dataReader = new StringLineReader(dataByChrom);
-						String dataLine = dataReader.readLine();
-						while (dataLine != null && dataLine.trim().length() != 0) {
-							String[] dataValues = dataLine.split("\t");
-							String genotype = dataValues[1].trim();
-							String genotype_1 = genotype.substring(0,1);
-							String genotype_2 = genotype.substring(1);
-							if (genotype.equalsIgnoreCase("NC") == true) {
-								genotype_1 = "0";
-								genotype_2 = "0";
-							}
-							pedWriter.write("  " + genotype_1 + " " + genotype_2);
-							
-							dataLine = dataReader.readLine();
-						}
-					}
-					pedWriter.write("\n");
-				}
-			}
-		//}
-		pedWriter.close();
-	}
-	
-	void getGwasDataByPatientSample(List<Long>[] patientNumListArray, String chroms, GwasFiles gwasFiles) throws Exception {
-		if (gwasFiles == null) throw new Exception("The GwasFiles object is not instantiated");
-
 		// Get SQL query String for all the subject IDs
 		String subjectListStr = "";
-		
-		//Loop through the array of Lists.
-		for(int i = 0;i< patientNumListArray.length; i++)
-		{
-			//Add a comma to seperate the lists.
-			if(subjectListStr != "") subjectListStr += ","
-			
-			//This is a list of patients, add it to our string.
-			subjectListStr += patientNumListArray[i].join(",");
+		if (subjectIds1 != null && subjectIds1.length() != 0) subjectListStr += subjectIds1;
+		if (subjectIds2 != null && subjectIds2.length() != 0) {
+			if (subjectListStr.length() != 0) subjectListStr += ", ";
+			subjectListStr += subjectIds2;
 		}
 		
 		Map<Long, SnpDataset[]> snpDatasetBySubjectMap = new HashMap<Long, SnpDataset[]>();
@@ -2993,11 +2858,9 @@ class I2b2HelperService {
 		}
 		buf.append("<h3>Chromosomes:  " + chromBuf.toString() + "</p>");
 		
-		/*
 		buf.append("<h3>Data Files</h3>");
 		buf.append("<table cellpadding='2'><tr><td><a href='" + pedFileUrl + "'>PED File</a></td><td><a href='" + 
 			mapFileUrl + "'>MAP File</a></td><td><a href='" + assocFileUrl + "'>Association File</a></td></tr></table>");
-		*/
 		
 		buf.append("<h3>Most Significantly Associated Genes</h3>");
 		buf.append("<table border='1' cellpadding='2'><tr><th>Gene</th><th>Total p-Value Score</th><th>SNP (p-Value)</th></tr>");
@@ -3395,65 +3258,6 @@ class I2b2HelperService {
 		}
 		return idList;
 	}
-
-	
-	List<String> getSNPDatasetNameList(String subjectIds) throws Exception {
-		if (subjectIds == null || subjectIds.trim().length() == 0) return null;
-		List <String> datasetNameList = new ArrayList <String> ();
-		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = "SELECT dataset_name FROM de_subject_snp_dataset WHERE patient_num in (" + subjectIds + ") ";
-		sql.eachRow(sqlt) {
-			datasetNameList.add(it.dataset_name);
-		}
-		return datasetNameList;
-	}
-	
-	
-	List <String> getSNPDatasetNameListBySampleType(String subjectIds, String sampleType)
-	throws Exception {
-		if (subjectIds == null || subjectIds.trim().length() == 0) return null;
-		List <String> datasetNameList = new ArrayList<String> ();
-		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = "SELECT dataset_name FROM de_subject_snp_dataset WHERE patient_num in (" + subjectIds + ") and sample_type =?"
-		sql.eachRow(sqlt,[sampleType]) {
-			datasetNameList.add(it.dataset_name);
-		}
-		return datasetNameList;
-	}
-	
-	
-	List<Long> getSNPDatasetIdListBySampleType(String subjectIds, String sampleType) 
-	throws Exception {
-		if (subjectIds == null || subjectIds.trim().length() == 0) return null;
-		
-		List<Long> idList = null;
-		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = "SELECT subject_snp_dataset_id as id FROM de_subject_snp_dataset WHERE patient_num in (" + subjectIds + ") and sample_type =?" 
-		sql.eachRow(sqlt,[sampleType]) {row ->
-			Long id = row.id;
-			if (idList == null) {
-				idList = new ArrayList<Long>();
-			}
-			idList.add(id);
-		}
-		return idList;
-	}
-	
-	
-	List<Long> getSNPDatasetIdListSample(String[] sampleIds) throws Exception {
-		
-		List<Long> idList = null;
-		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = "SELECT subject_snp_dataset_id as id FROM de_subject_snp_dataset WHERE DATASET_NAME in (" + convertListNoMax(sampleIds,true) + ") ";
-		sql.eachRow(sqlt) {row ->
-			Long id = row.id;
-			if (idList == null) {
-				idList = new ArrayList<Long>();
-			}
-			idList.add(id);
-		}
-		return idList;
-	}
 	
 	/**
 	 * Original example data files for SNPViewer and IGV use probe name such as "SNP_A-1780419".
@@ -3596,7 +3400,7 @@ class I2b2HelperService {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		
 		//Build the query to get the trial names.
-		StringBuilder trialQ = new StringBuilder("select distinct s.trial_name from sample_categories s ");
+		StringBuilder trialQ = new StringBuilder("select distinct s.trial_name from i2b2DemoData.sample_categories s ");
 		trialQ.append(" where s.SAMPLE_ID in (").append(quoteCSV(ids)).append(")");
 		
 		//Log the trial query.
@@ -3895,12 +3699,12 @@ class I2b2HelperService {
 		sql.eachRow(sqlStr) { row ->
 			String sourceSystemCd = row.sourcesystem_cd;
 			Long patientNum = row.patient_num;
-			//if (sourceSystemCd != null && sourceSystemCd.length() != 0) {
-			//	nameList.add(prefix + sourceSystemCd);
-			//}
-			//else {
+			if (sourceSystemCd != null && sourceSystemCd.length() != 0) {
+				nameList.add(prefix + sourceSystemCd);
+			}
+			else {
 				nameList.add(prefix + patientNum.toString());
-			//}
+			}
 		}
 		return nameList;
 	}
@@ -4415,25 +4219,6 @@ class I2b2HelperService {
 		}
 		return s.toString();
 	}
-	
-	/**
-	* convert id list
-	*/
-   def convertListNoMax(idList, boolean isString) {
-	   StringBuilder s = new StringBuilder();
-	   int i = 0;
-	   for(id in idList)
-	   {
-		   if(s.length()>0){
-			   s.append(",");
-		   }
-		   if(isString){s.append("'");}
-		   s.append(id);
-		   if(isString){s.append("'");}
-	   }
-	   return s.toString();
-   }
-	
 	/**
 	 * Gets the distinct patient counts for the children of a parent concept key
 	 */
@@ -4514,7 +4299,7 @@ class I2b2HelperService {
 		ArrayList ls=new ArrayList();
 		int i=getLevelFromKey(concept_key)+1;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = "SELECT C_FULLNAME FROM i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+		String sqlt = "SELECT C_FULLNAME FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [fullname+"%", i], {row ->
 			String conceptkey=prefix+row.c_fullname;
 			ls.add(keyToPath(conceptkey));
@@ -4812,7 +4597,7 @@ class I2b2HelperService {
 		def ls=[:];
 		int i=getLevelFromKey(concept_key)+1;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2_SECURE WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [fullname+"%", i], {row ->
 			String conceptkey=prefix+row.c_fullname;
 			ls.put(keyToPath(conceptkey), row.secure_obj_token);
@@ -5003,7 +4788,7 @@ class I2b2HelperService {
 		def ls=[:];
 		//int i=getLevelFromKey(concept_key)+1;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2_SECURE WHERE c_hlevel = ? ORDER BY C_FULLNAME";
+		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [rootlevel], {row ->
 			String fullname=row.c_fullname;
 			String prefix=fullname.substring(0, fullname.indexOf("\\",2)); //get the prefix to put on to the fullname to make a key

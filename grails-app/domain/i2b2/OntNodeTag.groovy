@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,26 +16,31 @@
  * 
  *
  ******************************************************************/
+
+
 package i2b2
 class OntNodeTag {
 		Long id
-		String path
+		//String path
 		String tag
 		String tagtype
- static mapping = {
+static belongsTo=[ontnode:OntNode]
+static mapping = {
 	 table 'I2B2_TAGS'
 	 version false
 	 id column:'TAG_ID'
 	 id generator:'sequence', params:[sequence:'SEQ_I2B2_DATA_ID']		
 	 columns {
-		path column:'PATH'
+		//path column:'PATH'
 		tag column:'TAG'
 		tagtype column:'TAG_TYPE'
+		ontnode column:'PATH'
 		}
 	}
  static constraints = {
-	path(nullable:true, maxSize:400)
+	//path(nullable:true, maxSize:400)
 	tag(nullable:true, maxSize:400)
-	tagtype(nullable:true, maxSize:400, inList:["AREA", "DESEASE", "COMPOUND"] )
+	//tagtype(nullable:true, maxSize:400, inList:["AREA", "DESEASE", "COMPOUND"] )
+	tagtype(nullable:true, maxSize:400 )
 	}
 }

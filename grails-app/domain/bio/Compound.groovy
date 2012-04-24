@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,12 +16,14 @@
  * 
  *
  ******************************************************************/
+
+
 package bio
 
 class Compound {
 	Long id
 	String cntoNumber
-	String jnjNumber
+	String number
 	String casRegistry
 	String codeName
 	String genericName
@@ -39,8 +41,8 @@ class Compound {
 			return genericName;
 		if(brandName!=null)
 			return brandName;
-		if(jnjNumber!=null)
-			return jnjNumber;
+		if(number!=null)
+			return number;
 		if(cntoNumber!=null)
 			return cntoNumber;
 	}
@@ -53,7 +55,7 @@ class Compound {
 		columns {
 			id column:'BIO_COMPOUND_ID'
 			cntoNumber column:'CNTO_NUMBER'
-			jnjNumber column:'JNJ_NUMBER'
+			number column:'JNJ_NUMBER'
 			casRegistry column:'CAS_REGISTRY'
 			codeName column:'CODE_NAME'
 			genericName column:'GENERIC_NAME'
@@ -70,7 +72,7 @@ class Compound {
 	
 	static constraints = {
 		cntoNumber(nullable:true, maxSize:400)
-		jnjNumber(nullable:true, maxSize:400)
+		number(nullable:true, maxSize:400)
 		casRegistry(nullable:true, maxSize:800)
 		codeName(nullable:true, maxSize:400)
 		genericName(nullable:true, maxSize:400)

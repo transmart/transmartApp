@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 function createMainExplorerWindow() 
 {
 	centerMainPanel = new Ext.Panel({
@@ -105,7 +107,7 @@ function createCenterPanel()
 							id : 'advancedbutton',
 							text : 'Advanced Workflow',
 							iconCls : 'comparebutton',
-							hidden : true,
+							hidden :true,
 							menu : createAdvancedSubMenu(),
 							handler : function() {
 
@@ -207,14 +209,17 @@ function createCenterPanel()
 				split : true,
 				height : 500,
 				layout : 'fit',
+				hidden: GLOBAL.EnableGP!='true',
 				autoLoad : getJobsData,
 				collapsible : true						
 			}
 	);			
 	
 	resultsTabPanel.add(queryPanel);
-	resultsTabPanel.add(analysisJobsPanel);	
 	
+	if(GLOBAL.EnableGP=='true'){
+	resultsTabPanel.add(analysisJobsPanel);	
+	}
 	centerPanel = new Ext.Panel({
 		id : 'centerPanel',
 		region : 'center',

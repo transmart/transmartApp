@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
 import org.springframework.security.core.session.SessionRegistryImpl
@@ -36,14 +38,11 @@ beans = {
 	}
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 	redirectStrategy(DefaultRedirectStrategy)
-	
-	/*guestAuthenticationFilter(com.recomdata.security.GuestAuthenticationFilter)	{
+	identityVaultAuthenticationFilter(com.recomdata.security.IdentityVaultAuthenticationFilter)	{
 		authenticationManager = ref('authenticationManager')
 		springSecurityService = ref('springSecurityService')
 		userDetailsService = ref('userDetailsService')
-		filterProcessesUrl = '/guestauthfilter'
-		redirectStrategy = ref('redirectStrategy')
+		filterProcessesUrl = '/saml/sso'
+		redirectStrategy = ref('redirectStrategy')	
 	}
- */
-	
 }

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 
 import grails.converters.*
 import org.json.*;
@@ -174,4 +176,22 @@ class OntologyController {
     		}
     		log.trace(access as JSON)
     }
+	
+	def showConceptDefinition =
+	{
+		def conceptPath=i2b2HelperService.keyToPath(params.conceptKey);
+		def node=i2b2.OntNode.get(conceptPath);
+		//def testtag=new i2b2.OntNodeTag(tag:'test', tagtype:'testtype');
+		//node.addToTags(testtag);
+		//node.save();
+		def trial=node.tags.find{ w -> w.tagtype =="Trial" }
+		if(trial!=null)
+		{
+			def trialid=trial.tag;
+			chain(controller:'trial', action:'trialDetailByTrialNumber', id:trialid)
+		}
+		
+		render(template:'showDefinition', model:[tags:node.tags])
+	}
+	
 }

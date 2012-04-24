@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.genesignature;
 
 import java.lang.RuntimeException;
@@ -25,9 +27,9 @@ import java.util.Iterator;
 
 /**
  * Special exception class for invalid gene signature upload files
- * $Id: GeneSignatureService.groovy 985 2009-05-2009 09:30:46Z jspencer $
- * @author $Author: jspencer $
- * @version $Revision: 0 $
+ * $Id: FileSchemaException.java 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  */
 public class FileSchemaException extends RuntimeException {
 

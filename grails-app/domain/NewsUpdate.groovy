@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 class NewsUpdate {
 
 	Integer id
@@ -27,7 +29,7 @@ class NewsUpdate {
 	String commentField
 	
 	static mapping = {
-		table 'news_updates'
+		table 'i2b2DemoData.news_updates'
 		version false
 		id column:'newsid'
 		ranByUser column:'ranByUser'

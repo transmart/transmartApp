@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 /*
  * $Id$
  *
@@ -325,6 +327,10 @@ Ext.app.EditFiltersWindow = Ext.extend(Ext.Window, {
 
 	formatValue: function(record) {
 		var label = record.keyword;
+		
+		//Escape any single quotes that are present because we use this value in a JS call.
+		var escapedKeyword = record.keyword.replace("'","\\'");
+		
 		if (record.category == "TEXT") {
 			label = "\"" + label + "\"";
 		} else if (record.category == "PATHWAY") {
@@ -336,11 +342,11 @@ Ext.app.EditFiltersWindow = Ext.extend(Ext.Window, {
 		var html = '<nobr><span class="' + cssClass + '">' + label + '</span>';
 		if (record.category == "PATHWAY") {
 			html += '<a href="#" class="filter-item filter-item-split" onclick="' +
-				"var win=Ext.getCmp('" + this.id + "'); win.splitFilter({id:" + record.id + ",keyword:'" + record.keyword + "'});" +
+				"var win=Ext.getCmp('" + this.id + "'); win.splitFilter({id:" + record.id + ",keyword:'" + escapedKeyword + "'});" +
 				'"><img alt="split" src="../images/split.png" /></a>';
 		}
 		html += '<a href="#" class="filter-item filter-item-remove" onclick="' +
-			"var win=Ext.getCmp('" + this.id + "'); win.removeFilter({id:" + record.id + ",keyword:'" + record.keyword + "'});" +
+			"var win=Ext.getCmp('" + this.id + "'); win.removeFilter({id:" + record.id + ",keyword:'" + escapedKeyword + "'});" +
 			'"><img alt="remove" src="../images/remove.png" /></a></nobr>';
 		return html;
 	},

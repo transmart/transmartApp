@@ -39,7 +39,7 @@
 			${createPropertyTableRow(width:'20%', label:'Product Category', value:compound.productCategory)}
 			${createPropertyTableRow(width:'20%', label:'CAS Registry Number', value:compound.casRegistry)}
 			${createPropertyTableRow(width:'20%', label:'CNTO Number', value:compound.cntoNumber)}
-			${createPropertyTableRow(width:'20%', label:'Internal Number', value:compound.jnjNumber)}
+			${createPropertyTableRow(width:'20%', label:'Number', value:compound.number)}
 		</tbody>
 	</table>
 	<br />

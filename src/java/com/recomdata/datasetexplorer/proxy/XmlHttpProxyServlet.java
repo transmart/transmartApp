@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,9 +16,11 @@
  * 
  *
  ******************************************************************/
+
+
 /* Copyright 2007 You may not modify, use, reproduce, or distribute this software except in compliance with the terms of the License at: 
  http://developer.sun.com/berkeley_license.html
- $Id: XmlHttpProxyServlet.java,v 1.6 2007/11/08 03:24:23 gmurray71 Exp $ 
+ $Id: XmlHttpProxyServlet.java 9178 2011-08-24 13:50:06Z mmcduffie $ 
 */
 package com.recomdata.datasetexplorer.proxy;
 

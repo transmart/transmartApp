@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 /**
  * 
  */
@@ -26,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -46,21 +49,14 @@ public class FTPUtil {
 	
 	private static org.apache.log4j.Logger log =
             Logger.getLogger(FTPUtil.class);
-
-	private static final String FTP_SERVER = (String) ConfigurationHolder
-			.getConfig().get("com.recomdata.transmart.data.export.ftp.server");
-	private static final String FTP_SERVER_PORT = (String) ConfigurationHolder
-			.getConfig().get(
-					"com.recomdata.transmart.data.export.ftp.server.port");
-	private static final String FTP_SERVER_USER_NAME = (String) ConfigurationHolder
-			.getConfig().get(
-					"com.recomdata.transmart.data.export.ftp.server.username");
-	private static final String FTP_SERVER_PASSWORD = (String) ConfigurationHolder
-			.getConfig().get(
-					"com.recomdata.transmart.data.export.ftp.server.password");
-	private static final String FTP_SERVER_REMOTE_PATH = (String) ConfigurationHolder
-			.getConfig().get(
-					"com.recomdata.transmart.data.export.ftp.server.remote.path");
+	@SuppressWarnings("rawtypes")
+	private static final Map config = ConfigurationHolder.getFlatConfig();
+	
+	private static final String FTP_SERVER = (String) config.get("com.recomdata.transmart.data.export.ftp.server");
+	private static final String FTP_SERVER_PORT = (String) config.get("com.recomdata.transmart.data.export.ftp.serverport");
+	private static final String FTP_SERVER_USER_NAME = (String) config.get("com.recomdata.transmart.data.export.ftp.username");
+	private static final String FTP_SERVER_PASSWORD = (String) config.get("com.recomdata.transmart.data.export.ftp.password");
+	private static final String FTP_SERVER_REMOTE_PATH = (String) config.get("com.recomdata.transmart.data.export.ftp.remote.path");
 	private static FTPClient ftp;
 
 	/**
@@ -125,12 +121,14 @@ public class FTPUtil {
 	 */
 	private static void login() throws FTPAuthenticationException {
 		try {
-			if (!ftp.login(FTP_SERVER_USER_NAME, FTP_SERVER_PASSWORD)) {
-				ftp.logout();
-				throw new FTPAuthenticationException(
-						"Credentials failed to Authenticate on the FTP server");
+			if (StringUtils.isNotEmpty(FTP_SERVER_USER_NAME) && StringUtils.isNotEmpty(FTP_SERVER_PASSWORD)) {
+				if (!ftp.login(FTP_SERVER_USER_NAME, FTP_SERVER_PASSWORD)) {
+					ftp.logout();
+					throw new FTPAuthenticationException(
+							"Credentials failed to Authenticate on the FTP server");
+				}
+				System.out.println("Remote system is " + ftp.getSystemType());
 			}
-			System.out.println("Remote system is " + ftp.getSystemType());
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -141,12 +139,12 @@ public class FTPUtil {
 	 * 
 	 * @param binaryTransfer
 	 * @param localFile
-	 * @return uploadComplete
+	 * @return remote FTP location of the file
 	 */
-	public static boolean uploadFile(boolean binaryTransfer, File localFile) {
+	public static String uploadFile(boolean binaryTransfer, File localFile) {
+		String remote = null;
 		boolean uploadComplete = false;
 		try {
-			String remote = FTP_SERVER_REMOTE_PATH+localFile.getName();
 			connect();
 			login();
 
@@ -159,10 +157,40 @@ public class FTPUtil {
 
 			InputStream input = new FileInputStream(localFile);
 
-			ftp.storeFile(remote, input);
+			remote = FTP_SERVER_REMOTE_PATH + localFile.getName();
+			uploadComplete = ftp.storeFile(remote, input);
 
 			input.close();
-			uploadComplete = true;
+		} catch (InvalidFTPParamsException e) {
+			log.error("Invalid FTP Params to connect");
+		} catch (FTPAuthenticationException e) {
+			log.error(e.getMessage());
+		} catch (FileNotFoundException e) {
+			log.error("Not able to load/read the localFile");
+		} catch (IOException e) {
+			log.error("IOException during FTP upload process");
+		} finally {
+			if (!uploadComplete) remote = null;
+		}
+
+		return remote;
+	}
+	
+	public static InputStream downloadFileStream(boolean binaryTransfer, String filename, String location) {
+		InputStream inputStream = null;
+		try {
+			String remote = ((StringUtils.isNotEmpty(location)) ? location : FTP_SERVER_REMOTE_PATH)+filename;
+			connect();
+			login();
+
+			if (binaryTransfer)
+				ftp.setFileType(FTP.BINARY_FILE_TYPE);
+			// Use passive mode as default because most of us are
+			// behind firewalls these days.
+			ftp.enterLocalPassiveMode();
+			ftp.setUseEPSVwithIPv4(false);
+
+			inputStream = ftp.retrieveFileStream(remote);
 		} catch (InvalidFTPParamsException e) {
 			log.error("Invalid FTP Params to connect");
 		} catch (FTPAuthenticationException e) {
@@ -173,7 +201,33 @@ public class FTPUtil {
 			log.error("IOException during FTP upload process");
 		}
 
-		return uploadComplete;
+		return inputStream;
 	}
-
+	
+	public static InputStream downloadFile(boolean binaryTransfer, String filename) {
+		return downloadFileStream(binaryTransfer, filename, null);
+	}
+	
+	public static boolean deleteFile(String filename){
+		return deleteFile(filename, null);
+	}
+	
+	public static boolean deleteFile(String filename, String location){
+		String remote = null;
+		boolean ret=false;
+		try{
+			remote = ((StringUtils.isNotEmpty(location))? location : FTP_SERVER_REMOTE_PATH)+filename;
+			connect();
+			login();
+			
+			ret=ftp.deleteFile(remote);
+		}catch (InvalidFTPParamsException e) {
+			log.error("Invalid FTP Params to connect");
+		} catch (FTPAuthenticationException e) {
+			log.error(e.getMessage());
+		} catch (IOException e) {
+			log.error("IOException during FTP delete process for "+remote);
+		}
+		return ret;
+	}
 }

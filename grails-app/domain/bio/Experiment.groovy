@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
 /**
- * $Id: Experiment.groovy 11850 2012-01-24 16:41:12Z jliu $
+ * $Id: Experiment.groovy 10303 2011-11-01 03:27:41Z jliu $
  * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * @version $Revision: 10303 $
  */
 
 package bio
@@ -38,9 +40,14 @@ class Experiment implements IExcelProfile {
 	Date startDate
 	Date completionDate
 	String primaryInvestigator
+	String institution
+	String country
+	String bioMarkerType
+	String target
+	String accessType
 	
-	static hasMany =[compounds:Compound, diseases:Disease, files:ContentReference, uniqueIds:BioData]
-	static belongsTo=[Compound, Disease, ContentReference]
+	static hasMany =[compounds:Compound, diseases:Disease, files:ContentReference, uniqueIds:BioData, organisms:Taxonomy]
+	static belongsTo=[Compound, Disease, Taxonomy, ContentReference]
 
 	static mapping = {
 		tablePerHierarchy false
@@ -58,9 +65,15 @@ class Experiment implements IExcelProfile {
 			completionDate column:'COMPLETION_DATE'
 			overallDesign column:'OVERALL_DESIGN'
 			accession column:'ACCESSION'
+			institution column:'INSTITUTION'
+			country column:'COUNTRY'
+			accessType column:'ACCESS_TYPE'
+			target column:'TARGET'
+			bioMarkerType column:'BIOMARKER_TYPE'
 			primaryInvestigator column:'PRIMARY_INVESTIGATOR'
 			compounds joinTable:[name:'BIO_DATA_COMPOUND', key:'BIO_DATA_ID'], cache:true
 			diseases joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DATA_ID'], cache:true
+			organisms joinTable:[name:'BIO_DATA_TAXONOMY', key:'BIO_DATA_ID'],cache:true
 			files joinTable:[name:'BIO_CONTENT_REFERENCE', key:'BIO_DATA_ID', column:'BIO_CONTENT_REFERENCE_ID'],cache:true
 			uniqueIds joinTable:[name:'BIO_DATA_UID', key:'BIO_DATA_ID']
 		}
@@ -102,6 +115,20 @@ class Experiment implements IExcelProfile {
 	    }
 	    return diseaseNames.toString()
 	}
+	
+	def getOrganismNames()	{
+		StringBuilder taxNames = new StringBuilder()
+		organisms.each{
+			if (it.name != null)	{
+				if (taxNames.length() > 0)	{
+					taxNames.append("; ")
+				}
+				taxNames.append(it.name)
+			}
+		}
+		return taxNames.toString()
+	}
+	
 	
 	/**
 	 * Get values to Export to Excel

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 /**
  * @author JIsikoff
  *
@@ -40,30 +42,61 @@ class ProxyController{
 
 	def doProcess(HttpServletRequest req, HttpServletResponse res, boolean isPost) {
 
-		private  boolean allowXDomain = true;
-		private  boolean requireSession = false;
-		private  String responseContentType = "text/xml;charset=UTF-8";  //changed from text/json in jmaki source
-		private  boolean rDebug = false;
-		
-		private XmlHttpProxy xhp = new XmlHttpProxy();;
-		private ServletContext ctx;
-
-		StringBuffer bodyContent = null;
+		  boolean allowXDomain = true;
+		  boolean requireSession = false;
+		  String responseContentType = "text/xml;charset=UTF-8";  //changed from text/json in jmaki source
+		  boolean rDebug = false;
+		 XmlHttpProxy xhp = new XmlHttpProxy();;
+		 ServletContext ctx;
+		 println(this);
+		 
+		StringBuilder bodyContent = new StringBuilder();;
 		OutputStream out = null;
 		PrintWriter writer = null;
 		String serviceKey = null;
 
-		try {
+		/*try {
 			BufferedReader inp = req.getReader();
 			String line = null;
 			while ((line = inp.readLine()) != null) {
 				if (bodyContent == null) bodyContent = new StringBuffer();
 				bodyContent.append(line);
-				log.trace(line);
+				//log.trace(line);
 			}
 		} catch (Exception e) {
+			println(e)
 			log.error(e.toString())
+		}*/
+		
+		BufferedReader bufferedReader = null;
+		try {
+		  InputStream inputStream = req.getInputStream();
+		  if (inputStream != null) {
+		   bufferedReader = new BufferedReader(new InputStreamReader(
+		inputStream));
+		   char[] charBuffer = new char[128];
+		   int bytesRead = -1;
+		   while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+			bodyContent.append(charBuffer, 0, bytesRead);
+		   }
+		  } else {
+		   bodyContent.append("");
+		  }
+		} catch (IOException ex) {
+			log.error(ex);
+		 // throw ex;
+		} finally {
+		  if (bufferedReader != null) {
+		   try {
+			bufferedReader.close();
+		   } catch (IOException ex) {
+		   log.error(ex)
+			//throw ex;
+		   }
+		  }
 		}
+		
+	//	println(bodyContent.toString());
 		try {
 			String urlString = null;
 			String xslURLString = null;
@@ -149,11 +182,13 @@ class ProxyController{
 					}
 				}
 			}
+		//	println("url:"+urlString);
+		//	println("body:"+bodyContent);
 			if (!isPost) {
 				log.trace("proxying to:"+urlString);
 				xhp.doGet(urlString, out, xslInputStream, paramsMap, userName, password);
 			} else {
-				if (bodyContent == null) log.debug("XmlHttpProxyServlet attempting to post to url " + urlString + " with no body content");
+				if (bodyContent == null || bodyContent.length()==0) log.debug("XmlHttpProxyServlet attempting to post to url " + urlString + " with no body content");
 				log.trace("proxying to:"+urlString);
 				xhp.doPost(urlString, out, xslInputStream, paramsMap, bodyContent.toString(), req.getContentType(), userName, password);
 			}

@@ -1,4 +1,4 @@
-java -jar TrialDataPivoter.jar \Trials
+java -jar TrialDataPivoter.jar C:\JnjTrials
 
 
 pause

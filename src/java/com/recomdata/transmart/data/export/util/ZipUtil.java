@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 /**
  * 
  */
@@ -101,7 +103,7 @@ public class ZipUtil {
 	 * @param destZipFile
 	 * @throws Exception
 	 */
-	static public File zipFolder(String srcFolder, String destZipFile) throws Exception {
+	static public String zipFolder(String srcFolder, String destZipFile) throws Exception {
 		File zipFile = null;
 	    ZipOutputStream zip = null;
 	    FileOutputStream fileWriter = null;
@@ -118,7 +120,7 @@ public class ZipUtil {
 	    zip.flush();
 	    zip.close();
 	    
-	    return zipFile;
+	    return zipFile.getName();
 	  }
 
 	  static private void addFileToZip(String path, String srcFile, ZipOutputStream zip)

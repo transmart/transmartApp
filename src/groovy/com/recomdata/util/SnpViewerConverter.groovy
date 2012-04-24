@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -17,6 +17,8 @@
  *
  ******************************************************************/
 
+
+
 package com.recomdata.util
 
 import java.io.File;
@@ -28,13 +30,10 @@ class SnpViewerConverter {
 	private String sampleFileName = null;
 	
 	def generateSNPFile = {
- 		//String gtcFileName = """C:\\Project\\JnJ\\SNPView\\Background\\GSE19539_Result\\GSE19539_genotype_1428-4684.txt""";
 		File gtcFile = new File(gtcFileName);
 		
-		//String snpFileName = """C:\\Project\\JnJ\\SNPView\\Background\\GSE19539_Result\\GSE19539_genotype_1428-4684.snp""";
 		File snpFile = new File(snpFileName);
 		
-		//String sampleFileName = """C:\\Project\\JnJ\\SNPView\\Background\\GSE19539_Result\\GSE19539_genotype_1428-4684.text""";
 		File sampleFile = new File(sampleFileName);
 		
 		String[] colNames = null;
@@ -111,10 +110,10 @@ class SnpViewerConverter {
 	}
 	
 	def checkGTCFile = {
-		String gtcFileName = """C:\\Project\\JnJ\\SNPView\\Background\\GSE19539_Result\\GSE19539_genotype_022-201_10.txt""";
+		String gtcFileName = """C:\\Project\\Transmart\\SNPView\\Background\\GSE19539_Result\\GSE19539_genotype_022-201_10.txt""";
 		File gtcFile = new File(gtcFileName);
 
-		String gtcFileNewName = """C:\\Project\\JnJ\\SNPView\\Background\\GSE19539_Result\\GSE19539_genotype_022-201_10_new.txt""";
+		String gtcFileNewName = """C:\\Project\\Transmart\\SNPView\\Background\\GSE19539_Result\\GSE19539_genotype_022-201_10_new.txt""";
 		File gtcFileNew = new File(gtcFileNewName);
 
 		gtcFile.eachLine { line ->

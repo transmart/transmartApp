@@ -10,7 +10,7 @@
 					<td style="border-bottom:0px;">Create lists of gene names or gene symbols of interest due to <span style="text-decoration: underline;">experimental evidence</span>. 
 					                               The information about your signature<br>
 					                               will be collected in a 3 page wizard and initially created private to you. You will be able to make your signature public to<br>
-					                               the J&J community at a later time.					
+					                               the Transmart community at a later time.					
 					</td>
 				</tr>
 				<tr>

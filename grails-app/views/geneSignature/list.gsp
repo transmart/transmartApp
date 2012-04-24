@@ -55,6 +55,11 @@
 					url = "/${grailsApplication.metadata['app.name']}/geneSignature/downloadExcel/"+id+"";
 				}
 
+				// get GMT file 
+				if(action=="gmt") {
+					url = "/${grailsApplication.metadata['app.name']}/geneSignature/downloadGMT/"+id+"";
+				}
+
 				// public action
 				if(action=="public") {
 					url = "/${grailsApplication.metadata['app.name']}/geneSignature/makePublic/"+id;
@@ -65,7 +70,10 @@
 			}
 		
 		</script>
-	
+	  <script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
+        <script language="javascript">
+        	helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+        </script>
     </head>
     <body>
     <div class="body">   
@@ -76,7 +84,9 @@
     	<g:if test="${flash.message}"><div class="message">${flash.message}</div><br></g:if>
  		
 		<p style="text-align: right;"><span class="button"><g:actionSubmit class="edit" action="createWizard" value="New Signature"/></span></p>
-    	<h1>Gene Signature List</h1>
+    	<h1>Gene Signature List &nbsp;&nbsp;<a HREF="JavaScript:D2H_ShowHelp('1259',helpURL,'wndExternal',CTXT_DISPLAY_FULLHELP )">
+				<img src="${resource(dir:'images',file:'help/helpicon_white.jpg')}" alt="Help" border=0 width=18pt style="vertical-align:middle;margin-left:5pt;"/>
+			</a></h1>
 	
     	<!-- show my signatures -->   	
        	<table id="mySignatures"  class="detail" style="width: 100%">

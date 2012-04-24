@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,8 +16,10 @@
  * 
  *
  ******************************************************************/
+
+
 /*
- * $Id: DetailsController.groovy 11850 2012-01-24 16:41:12Z jliu $
+ * $Id: DetailsController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  */
 import grails.converters.JSON
 
@@ -26,8 +28,8 @@ import grails.converters.JSON
  * is a corresponsing action and view which displays a window with tabs, e.g. "gene" action and view. And then
  * if a summary is define a summary action and view, e.g. compoundSumary action and view.
  *
- * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  */
 class DetailsController {
 
@@ -59,9 +61,10 @@ class DetailsController {
 				geneId = marker.primaryExternalId;
 			}
 		}
-		
-	
-		render(view:"gene", model:[id:bioDataId, symbol:geneSymbol, geneId:geneId])
+		def hydraGeneID = detailsService.getHydraGeneID(bioDataId)
+
+	//	println("hydraGene:"+hydraGeneID)
+		render(view:"gene", model:[id:bioDataId, symbol:geneSymbol, geneId:geneId, hydraGeneID:hydraGeneID])
 	}
 
 	def pathway = {

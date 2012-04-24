@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
 /**
-* $Id: TrialFilter.groovy 11850 2012-01-24 16:41:12Z jliu $
-*@author $Author: jliu $
-*@version $Revision: 11850 $
+* $Id: TrialFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+*@author $Author: mmcduffie $
+*@version $Revision: 9178 $
 **/
 class TrialFilter {
 
@@ -27,8 +29,8 @@ class TrialFilter {
 	boolean newFilter = true;
 
 	String platform
-	//Double foldChange = 1.2 JNJ-908
-	//Double pValue = 0.05 JNJ-908
+	//Double foldChange = 1.2 
+	//Double pValue = 0.05 
 	Double foldChange
 	Double pValue
 	Double rValue

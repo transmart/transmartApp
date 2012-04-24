@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,14 +16,15 @@
  * 
  *
  ******************************************************************/
+
+
 /**
- * $Id: SearchFilter.groovy 11850 2012-01-24 16:41:12Z jliu $
- *@author $Author: jliu $
- *@version $Revision: 11850 $
+ * $Id: SearchFilter.groovy 10125 2011-10-20 19:12:48Z mmcduffie $
+ *@author $Author: mmcduffie $
+ *@version $Revision: 10125 $
  **/
 
 import grails.converters.*
-
 import org.apache.log4j.Logger
 
 class SearchFilter {
@@ -43,6 +44,7 @@ class SearchFilter {
 	ExperimentAnalysisFilter  expAnalysisFilter = new ExperimentAnalysisFilter()
 	ExpressionProfileFilter exprProfileFilter = new ExpressionProfileFilter()
 	String summaryWithLinks
+	String pictorTerms
 
 	def acttab = {
 
@@ -76,7 +78,24 @@ class SearchFilter {
 			return datasource;
 	}
 
-	
+	def createPictorTerms = {
+
+		def geneFilters = globalFilter.getGeneFilters();
+		// Get all pathway ids from globalFilter
+		def pathwayIds = globalFilter.formatIdList(globalFilter.getAllListFilters(), ",")
+		// If there are pathways, then get all genes in pathways and add them to the geneFilters (hash set)
+		if (pathwayIds.size() > 0) {
+			geneFilters.addAll(searchKeywordService.expandAllListToGenes(pathwayIds))
+		}
+
+		// Format the gene filter keywords into comma separated strings
+		if (geneFilters?.size() > 0) {
+			pictorTerms = globalFilter.formatKeywordList(geneFilters, ",", "", 1900)
+		} else {
+			pictorTerms = null
+		}
+
+	}
 
 	def marshal(){
 		def s = new StringBuilder("<SearchFilter.searchText:").append(searchText).append(">");
@@ -84,7 +103,7 @@ class SearchFilter {
 		return s.toString();
 	}
 
-	/** This method is used for the  GeneGo tabs */
+	/** This method is used for the ResNet and the GeneGo tabs */
 	def getExternalTerms() {
 	    StringBuilder s = new StringBuilder()
 

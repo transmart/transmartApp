@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,8 +16,10 @@
  * 
  *
  ******************************************************************/
+
+
 /**
-* $Id: ExcelGenerator.java 11850 2012-01-24 16:41:12Z jliu $
+* $Id: ExcelGenerator.java 9178 2011-08-24 13:50:06Z mmcduffie $
 **/
 package com.recomdata.util;
 
@@ -35,8 +37,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 
 /**
- *@author $Author: jliu $
- *@version $Revision: 11850 $
+ *@author $Author: mmcduffie $
+ *@version $Revision: 9178 $
  **/
 public class ExcelGenerator {
 

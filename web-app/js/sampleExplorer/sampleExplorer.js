@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 /* SubsetTool.js
 Jeremy M. Isikoff
 Recombinant */
@@ -115,7 +117,12 @@ function toggleMainCategorySelection(searchTerm,searchCategory)
 								  );
 	
 	//Enable the Advanced Workflow button.
+	if(GLOBAL.EnableGP=='true'){
 	Ext.getCmp('advancedbutton').setVisible(true);
+	Ext.getCmp('analysisJobsPanel').setVisible(true);
+	}
+	
+	
 	Ext.getCmp('clearsearchbutton').setVisible(true);
 	Ext.getCmp('addsubset').setVisible(true);
 
@@ -372,9 +379,6 @@ function addSubset(panelNumber)
 	//Create a list of the default columns for use in the subset grids.
 	GLOBAL["SearchJSON" + panelNumber]["GridColumnList"] = [];
 	
-	//This is our array of attribute records.
-	GLOBAL["SearchJSON" + panelNumber]["Records"] = [];
-	
 	//Split the default column list into an array.
 	var columnSplitArray = GLOBAL.columnList.split(',');
 
@@ -480,40 +484,15 @@ function addSubset(panelNumber)
 	               tooltip:'Clear Subset',
 	               handler : function()
 	        	   	{
-	            	    
-	            		//Split the default column list into an array.
-	            		var columnSplitArray = GLOBAL.columnList.split(',');	            	   
+	            	    /*
+						//Clear the search JSON.
+						GLOBAL["SearchJSON" + panelNumber] = {};
+						GLOBAL["SearchJSON" + panelNumber]["GridColumnList"] = [];	
+						GLOBAL.columnList.split(',').forEach(function(item) {GLOBAL["SearchJSON" + panelNumber]["GridColumnList"].push(item)});
+						*/
 	            	   
-	            		//Loop for each record in the records collection.
-	            		for(var j=0; j<GLOBAL["SearchJSON" + panelNumber]["Records"].length; j++)
-	            		{
-		            		//Loop over the default column array and remove that entry for the JSON object.
-		            		for(var i=0; i<columnSplitArray.length; i++)
-		            		{
-		            			delete GLOBAL["SearchJSON" + panelNumber]["Records"][j][columnSplitArray[i]];
-		            		}	
-		            		
-							//Remove the count column (It's not in the global list).
-							delete GLOBAL["SearchJSON" + panelNumber]["Records"][j]["count"];		            		
-		            		
-	            		}
-	            		
-
-						
-						//Remove the column list.
-						delete GLOBAL["SearchJSON" + panelNumber]["GridColumnList"];
-						
-						//Initialize the column list.
-						GLOBAL["SearchJSON" + panelNumber]["GridColumnList"] = [];
-						
-						//Refill column list.
-						for(var i=0; i<columnSplitArray.length; i++)
-						{
-							GLOBAL["SearchJSON" + panelNumber]["GridColumnList"].push(columnSplitArray[i]);
-						}	
-						
 						//Refresh the grid.
-						Ext.getCmp('subsetGrid' + panelNumber).getStore().reload();
+						//Ext.getCmp('subsetGrid' + panelNumber).getStore().reload();
 	        	   	}
 	       	}
 	     ],
@@ -530,7 +509,7 @@ function addSubset(panelNumber)
         			//For each record we update the search JSON here.
         			function addRow(record, index, allItems) 
         			{
-        				addRecordToJSONSearch(record,GLOBAL["SearchJSON" + panelNumber]["Records"])
+        				addRecordToJSONSearch(record,GLOBAL["SearchJSON" + panelNumber])
         		    }
         		      
         		    // Loop through the selections
@@ -543,28 +522,29 @@ function addSubset(panelNumber)
     	);	
 }
 
-//When we add a record to the JSON search object we need to add a new "Record" entry with all the attributes.
+
 function addRecordToJSONSearch(record,JSONSearch)
 {
-	//This is the new record we are adding.
-	var newRecord = {};
-	
 	//Loops through each category in our record.
 	for(var key in record.data)
 	{
     	//Make sure we have a value to add to the search category.
 		if(record.data[key] != "")
 		{
-	    	newRecord[key] = [record.data[key]]
+	    	//Initialize the array for this category if it doesn't already exists.
+	    	if(!JSONSearch[key]) JSONSearch[key] = [];	
+
+	    	//Push the term into the array for its category if it doesn't already exist.
+	    	if(!JSONSearch[key].has(record.data[key]))
+    		{
+	    		JSONSearch[key].push(record.data[key]);
+    		}
 		}
 		else
 		{
-			newRecord[key] = [];
+			JSONSearch[key] = [];
 		}
 	}
-	
-	//Add our new attribute object to the array of them.
-	JSONSearch.push(newRecord)
 }
 
 /**
@@ -606,7 +586,7 @@ function createValuesString(JSONObject)
     for(var key in JSONObject)
     {
     	//If the categories array actually has items in it, we need to add them to a string.
-    	if(JSONObject[key].length > 0 && key != 'GridColumnList') 
+    	if(JSONObject[key].length > 0) 
 		{
     		//WE need a comma if the string isn't empty.
     		if(valueString != '') valueString += ', ';
@@ -779,7 +759,7 @@ Array.prototype.unique =
 	  return false;
 	  }  
   
-function genePatternLogin() {
+/*function genePatternLogin() {
 	document.getElementById("gplogin").src = pageInfo.basePath + '/analysis/gplogin';
-}
+}*/
   

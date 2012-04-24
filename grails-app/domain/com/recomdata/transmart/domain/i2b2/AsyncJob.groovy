@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.transmart.domain.i2b2
 import java.util.Date;
 
@@ -29,10 +31,8 @@ class AsyncJob {
 	String results
 	String jobType
 	
-	public static final String DATA_ASSOCIATION_JOB_TYPE = 'DATA_ASSOCIATION'
-	
 	static mapping = {
-		table 'ASYNC_JOB'
+		table 'I2B2DEMODATA.ASYNC_JOB'
 		version false
 		jobName column:'JOB_NAME'
 		jobStatus column:'JOB_STATUS'

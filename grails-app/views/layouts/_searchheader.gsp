@@ -70,9 +70,9 @@
 
 		</td>
 		<td>
-			<%topicID="1013" %>
+			<%topicID="1005" %>
 			<a HREF='JavaScript:D2H_ShowHelp(<%=topicID%>,helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP )'>
-				<img src="${resource(dir:'images',file:'help/helpbutton.jpg')}" alt="Help" border=0 width=18pt style="margin-top:10pt;margin-bottom:10pt;margin-right:18pt;float:right"/>
+				<img src="${resource(dir:'images',file:'help/helpicon_white.jpg')}" alt="Help" border=0 width=18pt style="margin-top:10pt;margin-bottom:10pt;margin-right:18pt;"/>
 			</a>
 		</td>
 	</tr>

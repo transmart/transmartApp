@@ -1,4 +1,4 @@
-java -jar JnJFilePivot.jar pivotstart=6 columncount=1 inputfile="c:\data\input\clinical012.txt" outputfile="c:\data\output\_rbm_p.txt" nbrrows=0 skipfixedcolumns=5
+java -jar JnJFilePivot.jar pivotstart=6 columncount=1 inputfile="c:\data\input\clinical012.txt" outputfile="c:\data\output\C0168T37A_rbm_p.txt" nbrrows=0 skipfixedcolumns=5
 
 
 pause
@@ -18,4 +18,4 @@ rem maxcolumns - maximum number of data columns to be pivoted
 rem nbrrows - number of header rows (0 based)
 
 rem Example Usage
-rem java -jar JnJFilePivot.jar pivotstart=1 columncount=1 inputfile="_gene_expression.txt" outputfile="_gene_expression_p.txt"
+rem java -jar JnJFilePivot.jar pivotstart=1 columncount=1 inputfile="GSE16879_gene_expression.txt" outputfile="GSE16879_gene_expression_p.txt" 

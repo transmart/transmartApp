@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,27 +16,27 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.dataexport.dao
 
+import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.rosuda.REngine.REXP
-import org.rosuda.REngine.Rserve.RConnection
 import org.springframework.context.ApplicationContext
 
 import bio.ClinicalTrial
+import bio.Compound
 import bio.Experiment
 import bio.Taxonomy
-import bio.Compound
-import bio.Disease
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
-import org.apache.commons.logging.LogFactory;
 
 
 /**
+ * This class has been replaced with MetadataService.
  * This class will provide access to the study metadata
  */
-
+@Deprecated
 public class StudyDao
 {
 	ApplicationContext ctx = org.codehaus.groovy.grails.web.context.ServletContextHolder.getServletContext().getAttribute(org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes.APPLICATION_CONTEXT)
@@ -65,54 +65,55 @@ public class StudyDao
 		//Log the action of data access.
 		//def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"i2b2DAO - getData", eventmessage:"RID:"+result_instance_ids.toString()+" Concept:"+conceptCodeList.toString(), accesstime:new java.util.Date())
 		//al.save()
-		//TODO Get the dataTypeName from the list of DataTypeNames either from DB or from config file
-		def dataTypeName = null
-		//TODO set this to either "Raw_Files/Findings" or NULL for processed_files
-		def dataTypeFolder = null
-		def char separator = '\t'
+		
 		log.info("loading study metadata for "+studyAccessions)
-		
-		FileWriterUtil writerUtil = new FileWriterUtil(studyDir, fileName, jobName, dataTypeName, dataTypeFolder, separator)
-		writerUtil.writeLine(getStudyColumns() )
 		// try to find it by Clinical Trial 
-		
-		studyAccessions.each {
-				studyUid -> 
-				def isTrial = true;
-				// work around to fix the lazy loading issue - we don't have full transaction support there
-				 def exp = ClinicalTrial.findByTrialNumber(studyUid);
-					//def exp =	ClinicalTrial.executeQuery("SELECT DISTINCT ct FROM ${ClinicalTrial.name} ct LEFT JOIN FETCH ct.organisms LEFT JOIN FETCH ct.compounds LEFT JOIN FETCH ct.diseases WHERE ct.trialNumber=?",studyUid);
-				//	def exp =	ClinicalTrial.find(" FROM ClinicalTrial as ct WHERE ct.trialNumber = :uid",[uid:studyUid]);
-				//	def exp =	ClinicalTrial.executeQuery("SELECT DISTINCT ct.trialNumber, ct.organisms, ct.compounds, ct.diseases FROM ${ClinicalTrial.name} ct LEFT JOIN FETCH ct.organisms LEFT JOIN FETCH ct.compounds LEFT JOIN FETCH ct.diseases WHERE ct.trialNumber = :uid",[uid:studyUid]);
-				
-				if(exp==null){
-						exp = Experiment.findByAccession(studyUid);
-					//	exp = Experiment.executeQuery("SELECT DISTINCT ct FROM bio.Experiment ct LEFT JOIN FETCH ct.organisms LEFT JOIN FETCH ct.compounds LEFT JOIN FETCH ct.diseases");
-						
-
-						isTrial = false;
-				}
-				def organisms = Taxonomy.findAll(new Taxonomy(experiments:[exp]))
-				def compounds = Compound.findAll(new Compound(experiments:[exp]))
+		def studiesMap = [:]
+		studyAccessions.each { studyUid -> 
+			def isTrial = true;
+			// work around to fix the lazy loading issue - we don't have full transaction support there
+			def exp = ClinicalTrial.findByTrialNumber(studyUid);
+			//def exp =	ClinicalTrial.executeQuery("SELECT DISTINCT ct FROM ${ClinicalTrial.name} ct LEFT JOIN FETCH ct.organisms LEFT JOIN FETCH ct.compounds LEFT JOIN FETCH ct.diseases WHERE ct.trialNumber=?",studyUid);
+			//def exp =	ClinicalTrial.find(" FROM ClinicalTrial as ct WHERE ct.trialNumber = :uid",[uid:studyUid]);
+			//def exp =	ClinicalTrial.executeQuery("SELECT DISTINCT ct.trialNumber, ct.organisms, ct.compounds, ct.diseases FROM ${ClinicalTrial.name} ct LEFT JOIN FETCH ct.organisms LEFT JOIN FETCH ct.compounds LEFT JOIN FETCH ct.diseases WHERE ct.trialNumber = :uid",[uid:studyUid]);
 			
-			//	exp.compounds;
-			//	exp.organisms;
-			//	exp.diseases;
-				
-				if(exp!=null){
-					writerUtil.writeLine( getStudyData(exp, organisms, compounds));
-				}
+			if(exp==null){
+				exp = Experiment.findByAccession(studyUid);
+				//exp = Experiment.executeQuery("SELECT DISTINCT ct FROM bio.Experiment ct LEFT JOIN FETCH ct.organisms LEFT JOIN FETCH ct.compounds LEFT JOIN FETCH ct.diseases");
+				isTrial = false;
+			}
+			def organisms = Taxonomy.findAll(new Taxonomy(experiments:[exp]))
+			def compounds = Compound.findAll(new Compound(experiments:[exp]))
+		
+			//exp.compounds; exp.organisms; exp.diseases;
+			
+			if(exp!=null){
+				studiesMap.put(studyUid, getStudyData(exp, organisms, compounds))
+			}
 		}
-	
-	
-	//def filePath = writerUtil.outputFile.getAbsolutePath()
-	writerUtil.finishWriting()
-	
-//	return filePath		
-
+		writeData(getStudyColumns(), studiesMap, studyDir, fileName, jobName)
 	}
 	
-	
+	private String writeData(String[] studyCols, Map studiesMap, File studyDir, String fileName, String jobName) {
+		if (!studiesMap.isEmpty()) {
+			
+			def dataTypeName = null
+			def dataTypeFolder = null
+			def char separator = '\t'
+			FileWriterUtil writerUtil = new FileWriterUtil(studyDir, fileName, jobName, dataTypeName, dataTypeFolder, separator)
+			
+			studyCols.eachWithIndex { studyCol, i ->
+				def lineVals = [];
+				lineVals.add(studyCol)
+				studiesMap.each { key, studyData ->
+					lineVals.add(studyData[i])
+				}
+				writerUtil.writeLine(lineVals as String[])
+			}
+			
+			writerUtil.finishWriting()
+		}
+	}
 	
 	protected String[] getStudyColumns(){
 		
@@ -204,30 +205,6 @@ public class StudyDao
 			}
 		}
 		return taxNames.toString()
-	}
-	
-	def getStudies(resultInstanceIds) {
-		def resultInstancesStr = ''
-		resultInstanceIds.each { key, value ->
-			if (value && value.toString().trim() != '') {
-				resultInstancesStr <<= value
-				resultInstancesStr <<= ', '
-			}
-		}
-		def values = resultInstancesStr[0..-3]
-		StringBuilder studiesSql = new StringBuilder()
-		studiesSql.append("SELECT DISTINCT ofa.modifier_cd FROM qt_patient_set_collection qt ")
-		studiesSql.append("INNER JOIN OBSERVATION_FACT ofa ON qt.PATIENT_NUM = ofa.PATIENT_NUM WHERE ")
-		studiesSql.append("qt.result_instance_id in (").append(values).append(") AND ofa.modifier_cd <> 'Across Trials'")
-		
-		//Build query to get the studies
-		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		def studies = []
-		sql.eachRow(studiesSql.toString()) { row ->
-			 studies.add(row.MODIFIER_CD)
-		}
-		
-		return studies
 	}
 	
 }

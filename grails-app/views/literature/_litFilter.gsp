@@ -1,4 +1,3 @@
-<!-- 
 <div style="border:0px;overflow:auto;width:100%;height:100%">
 <g:form controller="literature">
 <table border="0" cellspacing="0" cellpadding="0" class="jubfilter">
@@ -105,4 +104,4 @@
 	</tr>
 </table>	
 </g:form>
-</div>-->
+</div>

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 
 
 import org.jfree.util.Log;
@@ -51,6 +53,24 @@ class PlinkService {
 		return [row.platform_name, row.trial_name]
 	}
 
+	/**
+	 * Retrieve the Platform_Name and Trial_Name based on the Result_Instance_Id
+	 * 
+	 * @param resultInstanceId
+	 * @return
+	 */
+	def String [] getStudyInfoByResultInstanceId(String resultInstanceId){
+		
+		def sql = new Sql(dataSource);
+		
+		StringBuffer query = new StringBuffer("select a.platform_name, a.trial_name from DE_SUBJECT_SNP_DATASET a,");
+		query.append(" (SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ?")
+		query.append(" AND patient_num IN (SELECT patient_num FROM patient_dimension WHERE sourcesystem_cd NOT LIKE '%:S:%')) b")
+		query.append(" where rownum=1 and a.platform_name is not null and a.patient_num = b.patient_num");
+		def row = sql.firstRow(query.toString(), [resultInstanceId])
+		
+		return [row.platform_name, row.trial_name]
+	}
 	
 	/**
 	 *  Create a *.map file for PLINK

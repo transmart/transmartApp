@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,14 +16,16 @@
  * 
  *
  ******************************************************************/
+
+
 /**
  * stores results for expression profile 
  */
 
  /**
-  * $Id: ExprProfileFilterResult.groovy 985 2009-04-24 04:51:46Z jspencer $
-  * @author $Author: jspencer $
-  * @version $Revision: 001 $
+  * $Id: ExpressionProfileResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 9178 $
   */
 public class ExpressionProfileResult {
 

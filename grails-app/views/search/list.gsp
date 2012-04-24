@@ -26,6 +26,7 @@
 	    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'editfilterswindow.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+		
 		<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -51,7 +52,6 @@
 				<sec:ifNotGranted roles="ROLE_PUBLIC_USER">
 				     hideInternal:false,
 				</sec:ifNotGranted>
-
 				trial: {
 				    count: "${searchresult.trialCount}",
 				    analysisCount: "${searchresult.analysisCount}",
@@ -71,25 +71,57 @@
 				    count: "${searchresult.profileCount}",
 				    resultsUrl: "${createLink(controller:'expressionProfile', action:'datasourceResult')}"
 				},
-
+			    jubilant: {
+				    activeCard: 0,
+				    resultsUrl: "${createLink(controller:'literature', action:'datasourceJubilant')}",
+				    filterUrl: "${createLink(controller:'literature', action:'showJubFilter')}",
+				    count: "${searchresult.literatureCount()}",
+				    litJubOncAltCount: "${searchresult.litJubOncAltCount}",
+				    litJubOncIntCount: "${searchresult.litJubOncIntCount}",
+				    litJubAsthmaIntCount: "${searchresult.litJubAsthmaIntCount}",
+				    jubOncologyAlterationUrl: "${createLink(controller:'literature', action:'datasourceJubOncologyAlteration')}",
+				    jubOncologyInhibitorUrl: "${createLink(controller:'literature', action:'datasourceJubOncologyInhibitor')}",
+				    jubOncologyInteractionUrl: "${createLink(controller:'literature', action:'datasourceJubOncologyInteraction')}"
+			    },
 			    doc: {
 				    count: "${searchresult.documentCount}",
 				    resultsUrl: "${createLink(controller:'document', action:'datasourceDocument')}",
 				    filterUrl: "${createLink(controller:'document', action:'showDocumentFilter')}"
 			    },
 
+			    pictor: {
+			   		<g:if test="${session.searchFilter.pictorTerms != null}">
+						resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pictorURL}" + "&symbol=${session.searchFilter.pictorTerms}"
+	    			</g:if>
+					<g:else>
+	                	resultsUrl: "${createLink(controller:'search',action:'noResult')}"
+					</g:else>
+			    },
+
+			    resnet: {
+			   		resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pathwayStudioURL}" + "/app/op?.name=comprehensiveSearch&query=${session.searchFilter.getExternalTerms()}",
+			   		credentials: "ID/Password=Pathway Studio ID/Password"
+			    },
+			    genego: {
+					resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.genegoURL}" + "/cgi/search/ez.cgi?submitted=1&name=${session.searchFilter.getExternalTerms()}",
+					credentials: "User name/Password= Your GeneGo Metacore user name/password"
+			    },
 			    trialFilterUrl: "${createLink(controller:'trial',action:'trialFilterJSON')}",
-			    heatmapUrl: "${createLink(controller:'heatmap',action:'initheatmap')}",
+			    jubSummaryUrl: "${createLink(controller:'literature',action:'jubSummaryJSON')}",
+				heatmapUrl: "${createLink(controller:'heatmap',action:'initheatmap')}",
+				downloadJubSummaryUrl: "${createLink(controller:'literature',action:'downloadJubData')}",
+				downloadResNetUrl: "${createLink(controller:'literature',action:'downloadresnet')}",
 				downloadTrialStudyUrl: "${createLink(controller:'trial', action:'downloadStudy')}",
 				downloadTrialAnalysisUrl: "${createLink(controller:'trial', action:'downloadAnalysisTEA')}",
 				downloadEaUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysis')}",
 				downloadEaTEAUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysisTEA')}"
-			};
+				};
 
 			Ext.onReady(function(){
 			    try {
-			        document.execCommand("BackgroundImageCache", false, true);
+			    document.execCommand("BackgroundImageCache", false, true);
 			    } catch(err) {}
+
 
 				var picklist = new Ext.app.PickList({
 					id: "categories",
@@ -159,12 +191,28 @@
 
 				// build search tabs and toolbar
 				var tabpanel = createMainTabPanel();
-				if (pageData.hideInternal == true)  {
+				var hideInternalTabs = "${grailsApplication.config.com.recomdata.searchtool.hideInternalTabs}";
+				
+				if ((pageData.hideInternal == true) || hideInternalTabs=="true")  {
 				    tabpanel.remove(Ext.getCmp("tab1"));
 				    tabpanel.remove(Ext.getCmp("tab3"));
-				
+				    tabpanel.remove(Ext.getCmp("tab4"));
+				    tabpanel.remove(Ext.getCmp("tab5"));
+					tabpanel.remove(Ext.getCmp("tab6"));
+				    tabpanel.remove(Ext.getCmp("tab7"));
+				    //tabpanel.remove(Ext.getCmp("tab8"));
+				    //tabpanel.remove(Ext.getCmp("tab9"));
 				} else  {
-						       
+					// All tabs should show only if the external configuration is correct
+					if ("${grailsApplication.config.com.recomdata.searchtool.pictorURL}" == "")    {
+						tabpanel.remove(Ext.getCmp("tab6"));
+					}
+				    if ("${grailsApplication.config.com.recomdata.searchtool.pathwayStudioURL}" == "")  {
+					    tabpanel.remove(Ext.getCmp("tab7"));
+				    }
+				    if ("${grailsApplication.config.com.recomdata.searchtool.genegoURL}" == "") {
+				        tabpanel.remove(Ext.getCmp("tab8"));
+					}				       
 				}
 				
 			    // set active tab
@@ -179,7 +227,7 @@
 					    layout: "border",
 					    items: [new Ext.Panel({						    
 					        region: "north",
-						    autoHeight: true,
+						   // autoHeight: true,
 						    tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'utilities-div'), 
 						    contentEl: "header-div"				
 						}),
@@ -191,6 +239,7 @@
 			         ]
 				});
 			});
+
 
 			var delayedTask = new Ext.util.DelayedTask();
 
@@ -216,7 +265,26 @@
 			}
 
 			function getActiveTab(sourceName){
-			var tab = 0;
+
+				var hideInternalTabs = "${grailsApplication.config.com.recomdata.searchtool.hideInternalTabs}";
+					
+				var tab = 0;
+				if ((pageData.hideInternal == true) || hideInternalTabs=="true")  {
+					/*if(sourceName=="trial")
+						tab =-1;
+					else if(sourceName=="pretrial")
+						tab = 0;
+					else if(sourceName =="profile")
+						tab = 0;
+					else if(sourceName =="jubilant")
+						tab = 0;
+					else if(sourceName =="doc")
+						tab =0;
+					else
+						tab =0; */
+					tab = 0;
+				}else{
+		
 			// normal tab
 				if(sourceName=="trial")
 					tab =0;
@@ -224,24 +292,16 @@
 					tab = 1;
 				else if(sourceName =="profile")
 					tab = 2;
+				else if(sourceName =="jubilant")
+					tab = 3;
 				else if(sourceName =="doc")
-					tab =3;
+					tab =4;
 				else
 					tab =5;
-				// outside user tab
-				<sec:ifAnyGranted roles="ROLE_PUBLIC_USER">
-				if(sourceName=="trial")
-					tab =-1;
-				else if(sourceName=="pretrial")
-					tab = 0;
-				else if(sourceName =="profile")
-					tab = 1;			
-				else if(sourceName =="doc")
-					tab =3;
-				else
-					tab =0;
-				</sec:ifAnyGranted>
+				
+				}
 				return tab;
+				
 			}
 
 			</script>
@@ -252,9 +312,14 @@
 	    <script language="javascript">
 	    	helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 	    </script>
+	    <sec:ifAnyGranted roles="ROLE_ADMIN">
+			<script language="javascript">
+				helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+			</script>
+		</sec:ifAnyGranted>
 		<!-- ************************************** --> 
 	</head>
-	<body>
+<body>
 		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
 			<g:render template="/layouts/commonheader" model="['app':'search']" />
 			<g:render template="/layouts/searchheader" model="['app':'search']" />

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.etl.util;
 
 import java.io.BufferedReader;
@@ -50,12 +52,12 @@ public class TableColumnMessageGenerator {
 				try {
 					reader.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void columnMessage() {
 		File mapfile = new File("C:\\temp\\JubilantColumnMapping.txt");
 		BufferedReader reader = null;

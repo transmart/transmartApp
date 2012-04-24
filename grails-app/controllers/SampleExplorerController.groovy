@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,9 @@
  * 
  *
  ******************************************************************/
+
+
+import com.recomdata.snp.SnpData
 import grails.converters.JSON
 
 
@@ -260,6 +263,15 @@ class SampleExplorerController {
 		sampleIdList["SampleIdList"] = result;
 		
 		render sampleIdList as JSON;
+	}
+	
+	def snpDataService
+	
+	def testSNPData =
+	{
+		SnpData snpData = new SnpData()
+		
+		snpDataService.getSnpDataByResultInstanceAndGene("15804","GSE14860","GENE:662",null,snpData,"C:\\SVN\\repo1\\sanofi\\trunk\\biomart\\web-app\\plugins\\ANOVA\\test.txt",true,true)
 	}
 	
 	

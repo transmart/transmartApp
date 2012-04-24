@@ -50,7 +50,7 @@
 <table style="width:auto; border:0px; text-align:center; margin:auto;" align="center">
 	<tr>
   		<td style="text-align:center;vertical-align:middle;margin-left:-40px;">
-			<img src="${resource(dir:'images',file:grailsApplication.config.com.recomdata.searchtool.largeLogo)}" alt="Johnson&Johnson" />
+			<img src="${resource(dir:'images',file:grailsApplication.config.com.recomdata.searchtool.largeLogo)}" alt="Transmart" />
 		</td>
 	 </tr>
 	<tr><td>&nbsp;</td></tr>
@@ -107,7 +107,7 @@
 										</tr>
 									<tr>
 										<td colspan="2" style="font-size:10px;">
-											Not a user? Contact <a href="mailto::${grailsApplication.config.com.recomdata.administrator}" target="_blank" style="text-decoration:underline;color:#0000FF">administrator</a> to request an account
+											Not a user? Contact <a href="mailto:${grailsApplication.config.com.recomdata.administrator}" target="_blank" style="text-decoration:underline;color:#0000FF">administrator</a> to request an account
 										</td>
 									</tr>
 

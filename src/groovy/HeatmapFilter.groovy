@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -17,11 +17,13 @@
  *
  ******************************************************************/
 
+
+
 import search.SearchKeyword
 /**
- * @author $Author: jliu $
- * $Id: HeatmapFilter.groovy 11850 2012-01-24 16:41:12Z jliu $
- * @version $Revision: 11850 $
+ * @author $Author: mmcduffie $
+ * $Id: HeatmapFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @version $Revision: 9178 $
  *
  */
 public class HeatmapFilter{

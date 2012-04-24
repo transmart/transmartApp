@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 function createMainTabPanel() {
 
     // create toolbar
@@ -37,7 +39,7 @@ function createSearchTabs(toolbar) {
         activeTab: pageData.activeTab,
         autoScroll: true,
         //region: "center",
-        items: [
+        items: [ 
             {
                 id: "tab1",
                 iconCls: "clinicalTrialgovTab",
@@ -73,7 +75,7 @@ function createSearchTabs(toolbar) {
                         }
                     }
                 ]
-            },
+            }, 
             {
                 id: "tab2",
                 iconCls: "expTab",
@@ -111,7 +113,56 @@ function createSearchTabs(toolbar) {
                         }
                     }
                 ]
-             },
+             } ,             
+             {
+                id: "tab3",
+                iconCls: "profTab",
+                title: "mRNA Profiles (" + pageData.profile.count + ")",
+                listeners: {activate: activateTab},
+                layout: "card",
+                activeItem: 0,
+                items: [
+                    {
+                        id: "profile-results-panel",
+                        autoLoad: {
+                            url: pageData.profile.resultsUrl,
+                            nocache: true,
+                            discardUrl: true,
+                            method: "POST"
+                        }
+                    }
+                ]
+            },
+            {
+                id: "tab4",
+                iconCls: "jubTab",
+                title: "Literature (" + pageData.jubilant.count + ")",
+                listeners: {activate: activateTab},
+                layout: "card",
+                //layoutConfig: { deferredRender: true },
+                activeItem: 0,
+                items: [
+                    {
+                        id: "jubilant-results-panel",
+                        autoLoad: {
+                            url: pageData.jubilant.resultsUrl,
+                            nocache: true,
+                            discardUrl: true,
+                            method: "POST"
+                        }
+                    }, {
+                        id: "jubilant-filter-panel",
+                        autoLoad: {
+                            url: pageData.jubilant.filterUrl,
+                            nocache: true,
+                            discardUrl: true,
+                            method: "POST"
+                        }
+                    }, {
+                        id: "jubilant-summary-panel"
+                    }
+                ]
+            },
             {
                 id:"tab5",
                 iconCls: "docTab",
@@ -141,7 +192,41 @@ function createSearchTabs(toolbar) {
                         }
                     }
                 ]
+            },
+            {
+                id: "tab6",
+                iconCls: "pictorTab",
+                title: "Pictor",
+                listeners: {activate: activateTab},
+                xtype: "iframepanel",
+                closable: false,
+                loadMask: true,
+                defaultSrc: pageData.pictor.resultsUrl
+            },
+            {
+                id: "tab7",
+                iconCls: "resnetTab",
+                title: "ResNet",
+                listeners: {activate: activateTab},
+                xtype: "iframepanel",
+                closable: false,
+                loadMask: true,
+                defaultSrc: pageData.resnet.resultsUrl,
+                tabTip: pageData.resnet.credentials
+            } 
+            , 
+            {
+                id: "tab8",
+                iconCls: "genegoTab",
+                title: "GeneGo",
+                listeners: {activate: activateTab},
+                xtype: "iframepanel",
+                closable: false,
+                loadMask: true,
+                defaultSrc: pageData.genego.resultsUrl,
+                tabTip: pageData.genego.credentials
             }
+            
         ]
     });
     return tabpanel;
@@ -206,6 +291,13 @@ function createMainToolbar() {
                iconCls: "exportSummaryBtn"
            },
            {
+               id: "exportresnet-button",
+               text: "Export to ResNet",
+               handler: exportResNet,
+               cls: "x-btn-text-icon",
+               iconCls: "exportResNetBtn"               
+           },
+           {
 				id:'contextHelp-button',
 			    handler: function(event, toolEl, panel){
 			    	D2H_ShowHelp(filterContextHelpId,helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
@@ -240,7 +332,8 @@ function activateTab(tab) {
             setButtonVisibility("studyview", false);
         }
         setButtonVisibility("exportsummary", true);
-         
+        setButtonVisibility("exportresnet", false);
+        
         var contextHelpVisibility = false;
         if(pageData.trial.analysisCount>0 || pageData.trial.count>0){
         	contextHelpVisibility = true
@@ -267,38 +360,92 @@ function activateTab(tab) {
         setButtonVisibility("summary", false);
         setButtonVisibility("heatmap", false);
         setButtonVisibility("exportsummary", true);
-         setButtonVisibility("contextHelp", true);
+        setButtonVisibility("exportresnet", false);
+        setButtonVisibility("contextHelp", true);
         
         var contextHelpVisibility = false;
         if(pageData.pretrial.mRNAAnalysisCount>0 || pageData.pretrial.count>0){
         	contextHelpVisibility = true
         }
         setButtonVisibility("contextHelp", contextHelpVisibility);
-        filterContextHelpId = (pageData.pretrial.mRNAAnalysisCount>0) ? "1034" : "1035";
+        filterContextHelpId = (pageData.pretrial.mRNAAnalysisCount>0) ? "1023" : "1023";
         break;
     case "tab3":
         setButtonVisibility("filters", false);
         setButtonVisibility("summary", false);
         setButtonVisibility("heatmap", false);
         setButtonVisibility("exportsummary", false);
+        setButtonVisibility("exportresnet", false);
         setButtonVisibility("studyview", false)
         setButtonVisibility("tea",false);
         setButtonVisibility("contextHelp", true);
         filterContextHelpId="1040";
         break;
     case "tab4":
+        setButtonVisibility("filters", true);
+        setButtonVisibility("summary", pageData.jubilant.litJubOncAltCount > 0);
+        setButtonVisibility("heatmap", false);
+        if (pageData.jubilant.count < 1) 	{
+        	setButtonVisibility("exportsummary", false);
+        } else	{
+        	setButtonVisibility("exportsummary", true);
+        }
+        if (pageData.hideInternal==true || pageData.jubilant.count < 1)  {
+        	setButtonVisibility("exportresnet", false);
+        } else	{
+        	setButtonVisibility("exportresnet", true);
+        }
+        setButtonVisibility("studyview", false)
+        setButtonVisibility("tea",false);
+        setButtonVisibility("contextHelp", true);
+        filterContextHelpId="1042";
         break;
     case "tab5":
         setButtonVisibility("filters", true);
         setButtonVisibility("summary", false);
         setButtonVisibility("heatmap", false);
         setButtonVisibility("exportsummary", false);
+        setButtonVisibility("exportresnet", false);
         setButtonVisibility("studyview", false)
         setButtonVisibility("tea",false);
         setButtonVisibility("contextHelp", true);
         filterContextHelpId="1047";
         break;
-  
+    case "tab6":
+        setButtonVisibility("filters", false);
+        setButtonVisibility("summary", false);
+        setButtonVisibility("heatmap", false);
+        setButtonVisibility("exportsummary", false);
+        setButtonVisibility("exportresnet", false);
+        setButtonVisibility("studyview", false)
+        setButtonVisibility("tea",false);
+        if (pageData.pictor.resultsUrl.length > 1980) {
+            window.alert("Note: The length of the URL for the Pictor query has exceeded the maximum supported by Internet Explorer and some genes may have been excluded from the query.");
+        }
+        setButtonVisibility("contextHelp", false);
+        break;
+
+    case "tab7":
+        setButtonVisibility("filters", false);
+        setButtonVisibility("summary", false);
+        setButtonVisibility("heatmap", false);
+        setButtonVisibility("exportsummary", false);
+        setButtonVisibility("exportresnet", false);
+        setButtonVisibility("studyview", false)
+        setButtonVisibility("tea",false);
+        setButtonVisibility("contextHelp", false);
+        break;
+
+    case "tab8":
+        setButtonVisibility("filters", false);
+        setButtonVisibility("summary", false);
+        setButtonVisibility("heatmap", false);
+        setButtonVisibility("exportsummary", false);
+        setButtonVisibility("exportresnet", false);
+        setButtonVisibility("studyview", false)
+        setButtonVisibility("tea",false);
+        setButtonVisibility("contextHelp", false);
+        break;
     }
 }
 
@@ -353,6 +500,26 @@ function showContextSpecificHelp(activetab, button){
     	}
     break;
     case "tab4":
+    	switch(button.id){
+    	case "filters-show-button":
+			filterContextHelpId = "1043";
+			contextHelpButton.setVisible(true);
+		break;
+    	case "filters-hide-button":
+    		filterContextHelpId = "1042";
+			contextHelpButton.setVisible(true);
+		break;
+    	case "summary-show-button":
+			filterContextHelpId = "1319";
+			contextHelpButton.setVisible(true);
+		break;
+		case "summary-hide-button":
+			filterContextHelpId = "1042";
+			contextHelpButton.setVisible(true);
+		break;
+		default:
+			contextHelpButton.setVisible(false);
+    	}
     break;
     case "tab5":
     	switch(button.id){
@@ -393,7 +560,21 @@ function showFilters(button) {
     	if (activetab.id == "tab1" || activetab.id == "tab2")	{
     	//	var exportSummaryButton = Ext.getCmp( "exportsummary-button");
     	//	exportSummaryButton.setVisible(showFiltersButton.hidden);
-    	} 
+    	} else if(activetab.id == "tab4") {
+            var showSummaryButton = Ext.getCmp("summary-show-button");
+            var hideSummaryButton = Ext.getCmp( "summary-hide-button");
+            var exportSummaryButton = Ext.getCmp( "exportsummary-button");
+            var exportResnetButton = Ext.getCmp( "exportresnet-button");
+            showSummaryButton.setVisible(showFiltersButton.hidden);
+            exportSummaryButton.setVisible(showFiltersButton.hidden);
+            if (pageData.jubilant.litJubOncIntCount > 0 || pageData.jubilant.litJubAsthmaCount > 0)	{
+        		exportResnetButton.setVisible(showFiltersButton.hidden);
+        	} else	{
+        		exportResnetButton.setVisible(false);
+        	}
+
+            hideSummaryButton.setVisible(false);
+        }
         showFiltersButton.setVisible(showFiltersButton.hidden);
     }
     if (hideFiltersButton != null) {
@@ -409,6 +590,22 @@ function showSummary(button) {
     var layout = activetab.getLayout();
     var activeitem = layout.activeItem;
     if (activeitem.id.indexOf("-results-") > -1) {
+        if (activetab.id == "tab4") {
+            var sum;
+            if (Ext.getCmp("jubilant-summary-gridpanel") == null) {
+                sum = createJubSummary();
+            } else {
+                sum = Ext.getCmp("jubilant-summary-gridpanel");
+            }
+//            var datatype = getResultType();
+//            var titles = {
+//                "JUBILANT_ONCOLOGY_ALTERATION":"Jubilant Oncology Alteration Summary",
+//                "JUBILANT_ONCOLOGY_INHIBITOR":"Jubilant Oncology Inhibitor Summary",
+//                "JUBILANT_ONCOLOGY_INTERACTION":"Jubilant Oncology Interaction Summary"
+//            };
+            sum.setTitle("Jubilant Oncology Alteration Summary");
+            sum.getStore().load({params: {offset:0, max:20}});
+        }
         layout.setActiveItem(2);
     } else {
         layout.setActiveItem(0);
@@ -484,10 +681,15 @@ function exportSummary(button) {
     		window.location = pageData.downloadEaUrl;
     	}
     	break;
-    
+    case "tab4":
+    	window.location = pageData.downloadJubSummaryUrl;
+    	break;
     }
 }
 
+function exportResNet(button) {
+    window.location = pageData.downloadResNetUrl;
+}
 
 function createJubSummary() {
 
@@ -560,6 +762,12 @@ function createJubSummary() {
     return grid;
 }
 
+function selectJubilantPanel(index) {
+    var tabpanel = Ext.getCmp("tab-panel");
+    var activetab = tabpanel.getActiveTab();
+    var layout = activetab.getLayout();
+    layout.setActiveItem(index);
+}
 
 function onItemCheck(item, checked){
     ;

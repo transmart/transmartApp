@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
  /**
-  * $Id: BootStrap.groovy 11850 2012-01-24 16:41:12Z jliu $
-  * @author $Author: jliu $
-  * @version $Revision: 11850 $
+  * $Id: BootStrap.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 9178 $
   */
 
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
@@ -38,8 +40,8 @@ class BootStrap {
 		securityContextPersistenceFilter.forceEagerSessionCreation = true
 		
 		SpringSecurityUtils.clientRegisterFilter('concurrentSessionFilter', SecurityFilterPosition.CONCURRENT_SESSION_FILTER)
-		/*SpringSecurityUtils.clientRegisterFilter('guestAuthenticationFilter', SecurityFilterPosition.PRE_AUTH_FILTER.order + 10) */
-		 }
+	//	SpringSecurityUtils.clientRegisterFilter('identityVaultAuthenticationFilter', SecurityFilterPosition.PRE_AUTH_FILTER.order + 10)
+    }
     def destroy = {
     }
 }

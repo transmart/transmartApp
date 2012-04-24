@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 //////////////////////////////////////////////////////////////////
 //This file holds the javascript functions required to get user input for running IGV, and actually submit the job.
 //
@@ -69,12 +71,12 @@ function showIgvSelection()
 		          }],
 		resizable: false,
 		autoLoad: {
-			url: pageInfo.basePath+'/analysis/showIgvSelectionSample',
+			url: pageInfo.basePath+'/analysis/showIgvSelection',
 			scripts: true,
 			nocache:true,
 			discardUrl:true,
 			method:'POST',
-			params: {sampleIdList: Ext.encode(GLOBAL.DefaultCohortInfo.SampleIdList)}
+			params: {SearchJson: GLOBAL.DefaultCohortInfo.SampleIdList}
 		},
 		tools:[{
 			id:'help',
@@ -92,7 +94,7 @@ function getIgv()
 {
 
 	// before Ajax call, log into genepattern:
-	genePatternLogin();
+	//genePatternLogin();
 	
 	var selectedGenesElt = Ext.get("selectedGenesIgv");
 	var selectedGenesEltValue = selectedGenesElt.dom.value;
@@ -120,8 +122,8 @@ function getIgv()
 	{
 		selectedSNPsStr = selectedSNPsEltValue;
 	}
-	
-	Ext.Ajax.request(
+	genePatternReplacement();
+	/*Ext.Ajax.request(
 	{
 		url: pageInfo.basePath+"/analysis/showIgvSample",
 		method: 'POST',
@@ -132,12 +134,12 @@ function getIgv()
 			//getSNPViewerComplete(result);
 		},
 		timeout: '1800000',
-		params: { sampleIdList: Ext.encode(GLOBAL.DefaultCohortInfo.SampleIdList),
+		params: { SearchJson: GLOBAL.DefaultCohortInfo.SampleIdList,
 			chroms: GLOBAL.CurrentChroms,
 			genes: selectedGeneStr,
 			geneAndIdList: geneAndIdListStr,
 			snps: selectedSNPsStr}
 	});
 	
-	showWorkflowStatusWindow();
+	showWorkflowStatusWindow();*/
 }

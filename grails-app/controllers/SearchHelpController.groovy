@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import search.SearchKeyword
 import search.GeneSignature
 import bio.Experiment
@@ -23,9 +25,9 @@ import bio.Compound
 import bio.Disease
 
 /**
- *$Id: SearchHelpController.groovy 11850 2012-01-24 16:41:12Z jliu $
- *@author $Author: jliu $
- *$Revision: 11850 $
+ *$Id: SearchHelpController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ *@author $Author: mmcduffie $
+ *$Revision: 9178 $
  */
 
 public class SearchHelpController{
@@ -38,6 +40,25 @@ public class SearchHelpController{
 
 	}
 
+//	def listAllPathways = {
+//
+//		def map = [:]
+//		def results = SearchKeyword.findAllByDataCategory("PATHWAY",[sort:"keyword", cache:'read-only'])
+//			SearchKeyword.executeQuery("SELECT s FROM SearchKeyword s WHERE s.dataCategory='PATHWAY' ORDER BY s.keyword")
+//		for (keyword in results) {
+//			if (map.containsKey(keyword.dataSource)) {
+//				map[keyword.dataSource].add(keyword)
+//			} else {
+//				def list = []
+//				list.add(keyword)
+//				map[keyword.dataSource] = list
+//			}
+//		}
+//		List sources = []
+//		sources.addAll(map.keySet());
+//
+//		render(view:'pathwayhelp', model:[pathways:map, sources:sources])
+//	}
 
 	def loadPathways = {
 

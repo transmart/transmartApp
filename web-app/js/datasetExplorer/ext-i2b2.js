@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,15 +16,15 @@
  * 
  *
  ******************************************************************/
+
+
+
 Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
 requestData : function(node, callback){
         if(this.fireEvent("beforeload", this, node, callback) !== false){
         var getChildrenRequest=getONTRequestHeader()+'<ns4:get_children blob="true" max="1000" synonyms="false" hiddens="false">';
-        var nodeId = node.id;
-        nodeId = nodeId.replace(/</g, "&lt;");
-        nodeId = nodeId.replace(/>/g, "&gt;");
-        getChildrenRequest=getChildrenRequest+"<parent>"+nodeId+"</parent></ns4:getchildren>"+getONTRequestFooter();
+        getChildrenRequest=getChildrenRequest+"<parent>"+node.id+"</parent></ns4:getchildren>"+getONTRequestFooter();
         
             this.transId = Ext.Ajax.request({
                 url: pageInfo.basePath+"/proxy?url="+GLOBAL.ONTUrl+"getChildren",

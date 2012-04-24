@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 import org.springframework.web.multipart.MultipartFile;
 import search.GeneSignatureItem;
 import search.GeneSignatureFileSchema;
@@ -33,9 +35,9 @@ import org.hibernate.*;
 
 /**
  * Service class for Gene Signature functionality
- * $Id: GeneSignatureService.groovy 985 2009-05-12 11:15:46Z jspencer $
- * @author $Author: jspencer $
- * @version $Revision: 0 $
+ * $Id: GeneSignatureService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  */
 public class GeneSignatureService {
 
@@ -49,7 +51,7 @@ public class GeneSignatureService {
 
 	// service injections
 	def searchKeywordService
-	def sessionAuthService
+	def springSecurityService
 	def sessionFactory
 
 	/**
@@ -139,7 +141,7 @@ public class GeneSignatureService {
 		def origFile = file.getOriginalFilename()
 
 		// metric type
-		println("\nINFO: Parsing: " + file.originalFilename + " for organism: "+organism+" [Type: "+metricType+"]")	
+		log.debug("\nINFO: Parsing: " + file.originalFilename + " for organism: "+organism+" [Type: "+metricType+"]")	
 
 		try {
 			// establish a reader
@@ -204,25 +206,25 @@ public class GeneSignatureService {
 					
 				} else if(fileSchemaName.toUpperCase() =~ /PROBESET /){	
 					// geneSymbol ==> probeset id
-					marker = lookupProbesetBioAssociations(geneSymbol, organism)
+					marker = lookupProbesetBioAssociations(geneSymbol)
 				
-					if(marker==null || marker.size()==0) {
+					if(marker==null || marker.isEmpty()) {
 						println("WARN: invalid probe set id: "+ geneSymbol)
 						invalidSymbols.add(geneSymbol);
 						continue;
 					}
 					
-					def probesetId = marker.getAt(0)[0];
-					def bioMarkerId = marker.getAt(0)[1];
-					def uniqueId = marker.getAt(0)[2];
-					println(">> Probeset lookup: 1) probeset id: "+probesetId + " bio_marker_id: " + bioMarkerId)
+					//def probesetId = marker.getAt(0);
+					def probesetId = marker.getAt(0);
+				//	def bioMarkerId = marker.getAt(1);
+					println(">> Probeset lookup: 1) probeset id: "+probesetId )
 					
 					// create item instance if this probeset exists in bio_assay_feature_group table, otherwise do nothing 
-					//if(BioAssayFeatureGroup.read(probesetId)){						
-						GeneSignatureItem item = new GeneSignatureItem(bioMarker: BioMarker.read(bioMarkerId), 
-								bioDataUniqueId: uniqueId,, probeset: BioAssayFeatureGroup.read(probesetId), foldChgMetric: foldChg);
+					def ba = bio.BioAssayFeatureGroup.read(probesetId);
+					if(ba!=null){						
+						GeneSignatureItem item = new GeneSignatureItem(probeset: ba, foldChgMetric: foldChg);
 						gsItems.add(item);
-					//}
+					}
 				}else{	
 					marker = null
 				}			
@@ -283,7 +285,7 @@ public class GeneSignatureService {
 
 		// load fresh gs and modify
 		gs = GeneSignature.get(gs.id)
-		gs.modifiedByAuthUser = sessionAuthService.authUser()
+		gs.modifiedByAuthUser = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 		gs.lastUpdated = new Date()
 		gs.validate()
 		def saved = gs
@@ -354,7 +356,7 @@ public class GeneSignatureService {
 		if(invalidSymbols.size()>0) FileSchemaException.ThrowInvalidGenesFileSchemaException(invalidSymbols);
 
 		// modify gs and add new items
-		gs.modifiedByAuthUser = sessionAuthService.authUser()
+		gs.modifiedByAuthUser = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 		gs.lastUpdated = new Date()
 
 		// add new items
@@ -517,35 +519,29 @@ public class GeneSignatureService {
 	/**
 	 * match up the uploaded probeset id with our internal bio_assay_feature_group & bio_data_uid tables
 	 */
-	def lookupProbesetBioAssociations(String probeset, String organism) {
+	def lookupProbesetBioAssociations(String probeset) {
 		def query = new Query(mainTableAlias:"bf");
+		
 		query.addTable("bio.BioAssayFeatureGroup bf")
-		query.addTable("bio.BioAssayDataAnnotation ba")	
-		query.addTable("bio.BioData bd")
-		query.addCondition("bf.id=ba.probeset.id")		
-		query.addCondition("bd.id=ba.bioMarker.id")
 		query.addCondition("bf.type='PROBESET'")
-		query.addCondition("ba.bioMarker.organism='" + organism.toUpperCase() + "'")
-		query.addCondition("UPPER(bf.name) ='" + probeset.toUpperCase() + "'")
+		query.addCondition("upper(bf.name) ='" + probeset.toUpperCase() + "'")
 		query.addSelect("bf.id")
-		query.addSelect("ba.bioMarker.id")
-		query.addSelect("bd.uniqueId")
 
 		def qBuf = query.generateSQL();
-		//log.debug "Lookup query: "+qBuf
+		
+		//log.debug("Lookup query: "+qBuf)
 
-		def markers = BioAssayFeatureGroup.executeQuery(qBuf);
+		
+		def marker = bio.BioAssayFeatureGroup.executeQuery(qBuf).asList();
 		
 		// if not existed, add it and then retrieve it
-		/*  JNJ-204
 		if(!markers) {
 			def probe = new BioAssayFeatureGroup(name: probeset, type: "PROBESET")
 			def p = probe.save(flush: true)
 			markers = BioAssayFeatureGroup.executeQuery(qBuf);
 		}
-		*/
 		
-		return markers;
+		return marker;
 	}
 	
 	/**
@@ -614,6 +610,24 @@ public class GeneSignatureService {
 
 		}
 		return countMap
+	}
+	
+	def getGeneSigGMTContent(geneSigId) {
+		// get domain object
+		def gs = GeneSignature.get(geneSigId)
+		
+		//write gene-sig items into the GMT file
+		def sbuf = new StringBuilder()
+		sbuf.append((gs?.name) ? gs?.name : '').append('\t')
+		sbuf.append((gs?.description) ? gs?.description : '').append('\t')
+		
+		for (geneSigItem in gs.geneSigItems) {
+			sbuf.append((geneSigItem?.bioMarker?.name) ? geneSigItem?.bioMarker?.name : '').append('\t')
+		}
+		
+		sbuf.append('\n')
+		
+		return sbuf.toString()
 	}
 
 }

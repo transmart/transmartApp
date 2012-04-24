@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 //////////////////////////////////////////////////////////////////
 //This file holds the javascript functions required to get user input for the Haploview, and actually submit the job.
 //
@@ -75,12 +77,12 @@ function showHaploviewGeneSelection()
 		          resizable: false,
 		          autoLoad:
 		          {
-		        	  url: pageInfo.basePath+'/analysis/showHaploviewGeneSelectorSample',
+		        	  url: pageInfo.basePath+'/analysis/getGenesForHaploviewFromSampleId',
 		        	  scripts: true,
 		        	  nocache:true,
 		        	  discardUrl:true,
 		        	  method:'POST',
-		        	  params: {sampleIdList: Ext.encode(GLOBAL.DefaultCohortInfo.SampleIdList)}
+		        	  params: {SearchJSON:buildSubsetJSON()}
 		          },
 		          tools:[{
 		        	  id:'help',
@@ -98,29 +100,30 @@ function showHaploviewGeneSelection()
 function getHaploview()
 {
 	Ext.Ajax.request({						
-		url: pageInfo.basePath+"/genePattern/createnewjob",
+		url: pageInfo.basePath+"/asyncJob/createnewjob",
 		method: 'POST',
 		success: function(result, request)
 		{
-			RunHaploViewer(result, GLOBAL.CurrentGenes);
+			RunHaploViewer(result, GLOBAL.DefaultCohortInfo.SampleIdList, GLOBAL.CurrentGenes);
 		},
 		failure: function(result, request)
 		{
 			Ext.Msg.alert('Status', 'Unable to create the heatmap job.');
 		},
 		timeout: '1800000',
-		params: {analysis:  "Haplo"}
+		params: {jobType:  "Haplo"}
 	});	
 }
 
 //This runs the Haploview job.
-function RunHaploViewer(result, genes)
+function RunHaploViewer(result, SampleIdList, genes)
 {
 	//Get the job information returned from the web service call that created the job.
 	var jobNameInfo = Ext.util.JSON.decode(result.responseText);					 
 	var jobName = jobNameInfo.jobName;
 
-	//Show the window that displays the steps in the workflow.
+	genePatternReplacement();
+	/*//Show the window that displays the steps in the workflow.
 	showJobStatusWindow(result);	
 	
 	//Log into GenePattern
@@ -132,12 +135,12 @@ function RunHaploViewer(result, genes)
 				url: pageInfo.basePath+"/genePattern/runhaploviewersample",
 				method: 'POST',
 				timeout: '1800000',
-				params: {sampleIdList: Ext.encode(GLOBAL.DefaultCohortInfo.SampleIdList),
+				params: {sampleIdList: SampleIdList,
 					genes: genes,
 					jobName: jobName
 				}
 			});
 	
 	//Start the status polling.
-	checkJobStatus(jobName);
+	checkJobStatus(jobName);*/
 }  

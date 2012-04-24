@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,10 +16,12 @@
  * 
  *
  ******************************************************************/
+
+
 /**
- * $Id: GenePatternFiles.java 3848 2010-03-13 22:39:51Z jboles $
- * @author $Author: jboles $
- * @version $Revision: 3848 $
+ * $Id: GwasFiles.java 10098 2011-10-19 18:39:32Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 10098 $
  *
  */
 package com.recomdata.export;

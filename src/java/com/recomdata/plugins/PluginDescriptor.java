@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.plugins;
 
 import java.util.HashMap;
@@ -78,11 +80,11 @@ public class PluginDescriptor {
 	/**
 	 * List of data types this plugin utilizes.
 	 */
-	private List<String> dataTypes;
-	public List<String> getDataTypes() {
+	private HashMap<String,List<String>> dataTypes;
+	public HashMap<String,List<String>> getDataTypes() {
 		return dataTypes;
 	}
-	public void setDataTypes(List<String> dataTypes) {
+	public void setDataTypes(HashMap<String,List<String>> dataTypes) {
 		this.dataTypes = dataTypes;
 	}	
 	
@@ -121,6 +123,18 @@ public class PluginDescriptor {
 		this.variableMapping = variableMapping;
 	}		
 	
+	/**
+	 * Map of data types to the names of the HTML inputs. We will evaluate the key to see if it is true, if it is, then we add the value to the list of data files to retrieve.
+	 */
+	private HashMap<String,String> dataFileInputMapping;
+	
+	public HashMap<String,String> getDataFileInputMapping() {
+		return dataFileInputMapping;
+	}
+	public void setDataFileInputMapping(HashMap<String,String> dataFileInputMapping) {
+		this.dataFileInputMapping = dataFileInputMapping;
+	}		
+		
 	/**
 	 * This is a flag that tells us whether to pivot the clinical data or not.
 	 */

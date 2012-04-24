@@ -30,6 +30,11 @@
     <script language="javascript">
     	helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
     </script>
+    <sec:ifAnyGranted roles="ROLE_ADMIN">
+			<script language="javascript">
+				helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+			</script>
+	</sec:ifAnyGranted>
 	<!-- ************************************** -->
 
 	<script type="text/javascript">
@@ -48,12 +53,12 @@
 					region: 'center',
 			        defaults: { autoScroll: true, closable: false, loadMask: true },
 			        defaultType: 'iframepanel', // tabs use ManagedIFrame to display encapsulated web pages.
-			        items:[
+			        items:[/*
 						{
 			                title:"Clinical Trial",
 			                id:'trial',
 			                defaultSrc: {url: '${createLink(controller:'searchHelp',action:'listAllTrials')}',nocache:true, discardUrl:true,method:'POST'}
-						},
+						}, */
 						{
 							title:"Compound",
 			                id:'compound',

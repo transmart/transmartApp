@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,8 +16,11 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.transmart.data.export
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.grails.commons.ApplicationHolder;
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 import org.json.JSONArray
@@ -28,13 +31,14 @@ import org.quartz.SimpleTrigger;
 
 import com.recomdata.transmart.data.export.ExportDataProcessor
 import com.recomdata.transmart.domain.i2b2.AsyncJob;
-//import com.recomdata.transmart.domain.searchapp.AccessLog
+import com.recomdata.transmart.domain.searchapp.AccessLog
 import com.recomdata.transmart.validate.RequestValidator;
 import com.recomdata.asynchronous.GenericJobService;
 
 class ExportService {
 
     static transactional = true
+	def geneExpressionDataService
 	def i2b2HelperService
 	def i2b2ExportHelperService
 	def dataCountService
@@ -43,23 +47,43 @@ class ExportService {
 	def quartzScheduler
 	def config = ConfigurationHolder.config
 
+	def Map createJSONFileObject(fileType, dataFormat, fileDataCount, gplId, gplTitle) {
+		def file = [:]
+		if(dataFormat!=null){
+			file['dataFormat'] = dataFormat
+		}
+		if(fileType!=null){
+			file['fileType'] = fileType
+		}
+		if(fileDataCount!=null){
+			file['fileDataCount'] = fileDataCount
+		}
+		if(gplId!=null){
+			file['gplId']=gplId
+		}
+		if(gplTitle!=null){
+			file['gplTitle']=gplTitle
+		}
+		return file
+	}
+	
 	def getMetaData(params) {
 		def dataTypesMap = config.com.recomdata.transmart.data.export.dataTypesMap
 		
 		//The result instance id's are stored queries which we can use to get information from the i2b2 schema.
 		def rID1 = RequestValidator.nullCheck(params.result_instance_id1)
 		def rID2 = RequestValidator.nullCheck(params.result_instance_id2)
+		def rIDs = null
+		if (rID1 && rID1?.trim() != '' && rID2 && rID2?.trim() != '') rIDs = rID1 + ',' + rID2
+		else if (rID1 && rID1?.trim() != '') rIDs = rID1
+		else if (rID2 && rID2?.trim() != '') rIDs = rID2
+		
 		def subsetLen = (rID1 && rID2) ? 2 : (rID1 || rID2) ? 1 : 0
 		log.debug('rID1 :: ' + rID1 + ' :: rID2 :: ' + rID2)
-		
-		//Get the subject ID's from our result instance IDs.
-		def subjectIds1 = i2b2HelperService.getSubjects(rID1)
-		def subjectIds2 = i2b2HelperService.getSubjects(rID2)
-		log.debug('subjectIds1 :: ' + subjectIds1 + ' :: subjectIds2 :: ' + subjectIds2)
-		
+				
 		//Retrieve the counts for each subset. We get back a map that looks like ['RBM':2,'MRNA':30]
-		def subset1CountMap = dataCountService.getDataCounts(subjectIds1)
-		def subset2CountMap = dataCountService.getDataCounts(subjectIds2)
+		def subset1CountMap = dataCountService.getDataCounts(rID1, rIDs)
+		def subset2CountMap = dataCountService.getDataCounts(rID2, rIDs)
 		log.debug('subset1CountMap :: ' + subset1CountMap + ' :: subset2CountMap :: ' + subset2CountMap)
 		
 		//This is the map we render to JSON.
@@ -81,93 +105,57 @@ class ExportService {
 			//TODO replace 2 with subsetLen
 			for (i in 1..2) {
 				JSONArray files = new JSONArray();
-				def file = [:]
-				file['fileType'] = '.TXT'
-				file['dataFormat'] = ((key == 'CLINICAL') ? '' : (file['fileType'] == '.TXT') ? 'Processed ' : 'Raw ') + 'Data'
-				file['fileDataCount'] = finalMap["subset${i}"][key]
-				if (null != finalMap["subset${i}"][key] && finalMap["subset${i}"][key] > 0)
-					dataTypeHasCounts = true;
-				files.put(file);
 				
-				//Uncomment the following code-snippet once the .CEL file location has been identified
-				if (key == 'MRNA' || key == 'SNP') {
-					file = [:]
-					file['dataFormat'] = 'Raw Data'
-					file['fileType'] = '.CEL'
-					file['fileDataCount'] = finalMap["subset${i}"][key+'_CEL']
-					files.put(file);
+				if (key == 'CLINICAL') {
+					files.put(createJSONFileObject('.TXT', 'Data', finalMap["subset${i}"][key], null, null))
+				} else if (key == 'MRNA') {
+					def countsMap = createCountsMap('.TXT', 'Processed Data', finalMap, key, i)
+					dataTypeHasCounts=dataTypeHasCounts||countsMap.get('dataTypeHasCounts')
+					files.put(countsMap)
+					files.put(createJSONFileObject('.CEL', 'Raw Data', finalMap["subset${i}"][key+'_CEL'], null, null))
+				} else if (key == 'SNP') {
+					files.put(createJSONFileObject('.PED, .MAP & .CNV', 'Processed Data', finalMap["subset${i}"][key], null, null))
+					files.put(createJSONFileObject('.CEL', 'Raw Data', finalMap["subset${i}"][key+'_CEL'], null, null))
+				} else if (key == 'ADDITIONAL') {
+					files.put(createJSONFileObject('', 'Additional Data', finalMap["subset${i}"][key], null, null))
+				} else if (key == 'GSEA') {
+					if (i==1) {
+						def countsMap = createCountsMap('.GCT & .CLS', 'Processed Data (for both subsets)',finalMap, key, i)
+						dataTypeHasCounts=dataTypeHasCounts||countsMap.get('dataTypeHasCounts')
+						files.put(countsMap)
+					}
 				}
+				if (!(['MRNA', 'GSEA'].contains(key)) && (null != finalMap["subset${i}"][key] && finalMap["subset${i}"][key] > 0))
+					dataTypeHasCounts = true;
+				
 				dataType['metadataExists'] = true
 				dataType['subsetId'+i] = "subset"+i
 				dataType['subsetName'+i] = "Subset "+i
 				dataType['subset'+i] = files
 			}
-			if (dataTypeHasCounts)
-			rows.put(dataType)
+			if (dataTypeHasCounts) rows.put(dataType)
 		}
-		/*JSONObject result = new JSONObject()
-		JSONArray rows = new JSONArray();
-		def i = 1;
-		while (i < 3) {
-			def row = [:]
-			row['subset'] = 'Subset ' + i;
-			
-			JSONArray dataTypes = new JSONArray();
-			dataTypesMap.each { key, value ->
-				def dataType = [:]
-				dataType['dataTypeId'] = key
-				dataType['dataTypeName'] = value
-				
-				JSONArray files = new JSONArray();
-				def file = [:]
-				file['fileType'] = '.TXT'
-				file['dataFormat'] = ((key == 'CLINICAL') ? '' : (file['fileType'] == '.TXT') ? 'Intensity ' : 'Raw ') + 'Data' 
-				file['fileDataCount'] = finalMap["subset${i}"][key]
-				files.put(file);*/
-				
-				//Uncomment the following code-snippet once the .CEL file location has been identified 
-				/*file = [:]
-				file['dataFormat'] = 'Raw Data'
-				file['fileType'] = '.CEL'
-				file['fileDataCount'] = i * 87
-				files.put(file);*/
-				
-				/*dataType['files'] = files
-				dataTypes.put(dataType)
-			}
-			
-			row['dataTypes'] = dataTypes
-			rows.put(row)
-			++i
-		}*/
-		
-		//Use this block when we move to ExtJS 3.3.1, we are currently using version 2.2
-		/*def j = 1
-		while (j < 3) {
-			def i = 1
-			while (i < 4) {
-				def row = [:]
-				row['subset'] = 'Subset ' + j
-				row['dataTypeId'] = (i == 1) ? 'ClinicalData' : (i==2) ? 'GeneExprData' : 'SNPData'
-				row['dataTypeName'] = (i == 1) ? 'Clinical & Low Dimensional Biomarker Data' : (i==2) ? 'Gene Expression Data' : 'SNP Data'
-				def k = 1
-				while (k < 3) {
-					row['fileType'+k] = (k == 1) ? '.TXT' : '.CEL'
-					row[row['dataTypeId'] + '_' + row['fileType'+k] + '_fileType'] = (k == 1) ? '.TXT' : '.CEL'
-					row[row['dataTypeId'] + '_' + row['fileType'+k] + '_dataFormat'] = (k == 1) ? 'Intensity Data' : 'Raw Data'
-					row[row['dataTypeId'] + '_' + row['fileType'+k] + '_fileDataCount'] = (k == 1) ? 87*k : 89*k
-					++k
-				}
-				row[row['dataTypeId'] + '_fileCount'] = k - 1
-				++i
-				rows.put(row)
-			}
-			++j
-		}*/
+
 		result.put("success", true)
 		result.put('exportMetaData', rows)
 		
 		return result
+	}
+	
+	def createCountsMap(fileType, dataFormat, finalMap, key, subsetIdx){
+		def dataTypeHasCounts = false
+		def countsMap = createJSONFileObject(fileType, dataFormat, null, null, null)
+		def platforms = new JSONArray()
+		finalMap["subset${subsetIdx}"][key].each {gplId, count->
+			if(count>0){
+				platforms.put(createJSONFileObject(null, null,
+													count, gplId, geneExpressionDataService.getGplTitle(gplId)))
+			}
+			dataTypeHasCounts = (dataTypeHasCounts||(count>0))
+		}
+		countsMap.put('platforms',platforms)
+		countsMap.put('dataTypeHasCounts', dataTypeHasCounts)
+		return countsMap
 	}
 	
 	def createExportDataAsyncJob(params, userName) {
@@ -198,11 +186,93 @@ class ExportService {
 		return result
 	}
 	
+	def private Map getSubsetSelectedFilesMap(checkboxList) {
+		def subsetSelectedFilesMap = [:]
+		def selectedCheckboxList = []
+		//If only one was checked, we need to add that one to an array list.
+		if(checkboxList instanceof String)
+		{
+			def tempArray = []
+			tempArray.add(checkboxList)
+			selectedCheckboxList = tempArray
+		} else {
+			selectedCheckboxList = checkboxList
+		}
+		
+		//Remove duplicates. duplicates are coming in from the UI, better handle it here
+		//The same issue is handled in the UI now so the following code may not be necessary
+		def tempArray = [] as Set
+		tempArray.addAll(selectedCheckboxList)
+		selectedCheckboxList = tempArray.toList()
+		
+		//Prepare a map like ['subset1'
+		selectedCheckboxList.each { checkboxItem ->
+			//Split the item by "_" to get the different attributes.
+			String[] checkboxItemArray = checkboxItem.split("_")
+			String currentSubset = null
+			if (checkboxItemArray.size() > 0) {
+				//The first item is the subset name.
+				currentSubset = checkboxItemArray[0].trim().replace(" ","")
+				if (null == subsetSelectedFilesMap.get(currentSubset)) subsetSelectedFilesMap.put(currentSubset, ["STUDY"])
+			}
+			
+			if (checkboxItemArray.size() > 1) {
+				//Second item is the data type.
+				String currentDataType = checkboxItemArray[1].trim()
+				if (checkboxItemArray.size()>3) {
+					def jobDataType = currentDataType+checkboxItemArray[2].trim()
+					if (!subsetSelectedFilesMap.get(currentSubset)?.contains(jobDataType)) {
+						subsetSelectedFilesMap.get(currentSubset).push(jobDataType)
+					}
+				} else if (checkboxItemArray.size()>2) {
+					subsetSelectedFilesMap.get(currentSubset)?.push(currentDataType+checkboxItemArray[2].trim())
+				} else {
+					subsetSelectedFilesMap.get(currentSubset)?.push(currentDataType)
+				}
+			}
+		}
+		
+		return subsetSelectedFilesMap
+	}
+	
+	def getsubsetSelectedPlatformsByFiles(checkboxList){
+		def subsetSelectedPlatformsByFiles=[:]
+		//Split the list on commas first, each box is seperated by ",".
+		checkboxList.each {checkboxItem ->
+			//Split the item by "_" to get the different attributes.
+			String[] checkboxItemArray = StringUtils.split(checkboxItem, "_")
+			
+			//The first item is the subset name.
+			def currentSubset = checkboxItemArray[0].trim().replace(" ","")
+			
+			//Fourth item is the selected (gpl) platform
+			if(checkboxItemArray.size()>3){
+				def fileName = checkboxItemArray[1].trim()+checkboxItemArray[2].trim()
+				def platform = checkboxItemArray[3].trim()
+				if(subsetSelectedPlatformsByFiles.containsKey(currentSubset)){
+					if(subsetSelectedPlatformsByFiles.get(currentSubset).containsKey(fileName)){
+						def platformFilesList = subsetSelectedPlatformsByFiles.get(currentSubset).get(fileName)
+						platformFilesList.push(platform)
+					}else{
+						subsetSelectedPlatformsByFiles.get(currentSubset).put(fileName,[platform])
+					}
+				}else{
+					def platformsMap = new HashMap()
+					platformsMap.put(fileName,[platform])
+					subsetSelectedPlatformsByFiles.put(currentSubset,platformsMap)
+				}
+			}
+		}
+		return subsetSelectedPlatformsByFiles
+	}
+	
 	def private createExportDataJob(userName, params, statusList) {
 		//Put together a hashmap with an entry for each file type we need to output.
 		def fileTypeMap = [:]
 		
-		def jobDataTypes = ["STUDY"]; // default is always study metadata
+		//def jobDataTypes = ["STUDY"]; // default is always study metadata
+		
+		def selectedPlatformsByDataType
 		
 		//We need a sub hash for each subset.
 		def resultInstanceIdHashMap = [:]
@@ -213,46 +283,22 @@ class ExportService {
 		//Loop through the values for each selected checkbox.
 		def checkboxList = params.selectedSubsetDataTypeFiles
 		
-	//	println("checkboxList:"+checkboxList);
-		
-				//If only one was checked, we need to add that one to an array list.
 		if(checkboxList instanceof String)
 		{
 			def tempArray = []
-			tempArray.add(checkboxList)
+			if (checkboxList && !checkboxList?.trim().equals("")) tempArray.add(checkboxList)
 			checkboxList = tempArray
 		}
 		
-		//Split the list on commas first, each box is seperated by ",".
-		checkboxList.each
-		{
-			checkboxItem ->
-			
-			//Split the item by "_" to get the different attributes.
-			String[] checkboxItemArray = checkboxItem.split("_")
-			
-			//The first item is the subset name.
-			String currentSubset = checkboxItemArray[0].trim().replace(" ","")
-			
-			if(checkboxItemArray.size()>1) {
-				//Second item is the data type.
-				String currentDataType = checkboxItemArray[1].trim()
-				if (checkboxItemArray.size()>2) {
-					jobDataTypes.push(currentDataType+checkboxItemArray[2].trim())
-				} else {
-					jobDataTypes.push(currentDataType)
-				}
-				//For this data type we add the subset hashmap.
-				fileTypeMap[currentDataType] = resultInstanceIdHashMap
-			}
-		}
-				
 		def jdm = new JobDataMap()
 		jdm.put("analysis", params.analysis)
 		jdm.put("userName", userName)
 		jdm.put("jobName", params.jobName)
 		jdm.put("result_instance_ids",resultInstanceIdHashMap);
-		jdm.put("datatypes", jobDataTypes);
+		//jdm.put("datatypes", jobDataTypes);
+		jdm.put("subsetSelectedPlatformsByFiles", getsubsetSelectedPlatformsByFiles(checkboxList))
+		jdm.put("checkboxList", checkboxList);
+		jdm.put("subsetSelectedFilesMap", getSubsetSelectedFilesMap(params.selectedSubsetDataTypeFiles))
 		jdm.put("resulttype", "DataExport")
 		jdm.put("studyAccessions", i2b2ExportHelperService.findStudyAccessions(resultInstanceIdHashMap.values()) )
 		
@@ -272,7 +318,7 @@ class ExportService {
 		if (jobStatusService.updateStatus(params.jobName, statusList[2]))	{
 			return
 		}
-		def trigger = new SimpleTrigger("triggerNow", params.analysis)
+		def trigger = new SimpleTrigger("triggerNow"+Math.random(), params.analysis)
 		quartzScheduler.scheduleJob(jobDetail, trigger)
 	}
 	
@@ -342,6 +388,6 @@ class ExportService {
 		def job = AsyncJob.findByJobName(jobName)
 		def exportDataProcessor = new ExportDataProcessor()
 		
-		return exportDataProcessor.getExportJobFile(job.viewerURL)
+		return exportDataProcessor.getExportJobFileStream(job.viewerURL)
 	}
 }

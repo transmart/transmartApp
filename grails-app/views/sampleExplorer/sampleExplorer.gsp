@@ -91,15 +91,15 @@
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
 
-<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled}">
+<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}">
 	<g:set var="gplogout" value="${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}/gp/logout"/>
 	</g:if>
 	<g:else>
 	<g:set var="gplogout" value=""/>	
-	</g:else>
+	</g:else>	
 	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
 	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
-
+		
 	<span id="visualizerSpan0"></span> <!-- place applet tag here -->
 	<span id="visualizerSpan1"></span> <!-- place applet tag here -->
 

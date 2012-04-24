@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.etl.util;
 
 import java.io.BufferedReader;
@@ -80,7 +82,7 @@ public class DemoGeneExprDataParser {
 					System.out.println(colMap);
 					writer.write("Subject");
 					writer.write("\t");
-					Iterator key = colMap.keySet().iterator();
+					Iterator<String> key = colMap.keySet().iterator();
 					while (key.hasNext()) {
 						writer.write(key.next().toString());
 						writer.write("\t");
@@ -93,7 +95,7 @@ public class DemoGeneExprDataParser {
 					int uplimit = 1;
 					String cSubject = null;
 					String cRef = null;
-					Iterator subjectIt = subjectMap.keySet().iterator();
+					Iterator<String> subjectIt = subjectMap.keySet().iterator();
 					cSubject = subjectIt.next().toString();
 					cRef = tokens[0];
 					uplimit = subjectMap.get(cSubject);
@@ -148,7 +150,6 @@ public class DemoGeneExprDataParser {
 				try {
 					reader.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,31 +16,22 @@
  * 
  *
  ******************************************************************/
+
+
 /**
- * $Id: GenePatternFiles.java 7329 2011-02-19 03:34:11Z jliu $
- * @author $Author: jliu $
- * @version $Revision: 7329 $
+ * $Id: GenePatternFiles.java 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  *
  */
 package com.recomdata.export;
-
-import grails.converters.JSON;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 class GenePatternFiles {
 	
@@ -111,89 +102,6 @@ class GenePatternFiles {
 		fos.close();		
 	}
 
-	//The CLS file has 
-	//[number of samples] [space] [number of classes] [space] 1
-	//# [names of classes]
-	//subsetsMap looks like {"1":["Sample1"],"2":[],"3":[]}
-	public void writeClsFileManySubsets(LinkedHashMap<String,Object[]> subsetsMap) throws java.io.IOException, JSONException 
-	{
-		//Open our file and printing streams.
-		FileOutputStream fos = new FileOutputStream(this.clsfile);
-		PrintStream ps = new PrintStream(fos);
-
-		//We need to create a header line.
-		StringBuilder firstLine = new StringBuilder();
-		
-		//This is the second line that will have a number sign then the name of the classes (S1 S2 S3...etc)
-		StringBuilder secondLine = new StringBuilder();
-		
-		//This is the third line which maps samples to groups.
-		StringBuilder thirdLine = new StringBuilder();
-		
-		//This is the number of samples.
-		int numberOfSamples = 0;
-		
-		//This is the number of groups.
-		int numberOfGroups = 0;
-		
-		//This is the names of the groups in a string.
-		StringBuilder groupNames = new StringBuilder();
-		
-		//Get the key set of linkedHashMap
-        Set<String> keySet = subsetsMap.keySet();
-        
-        //Get Iterator of keySet
-        Iterator<String> iterator = keySet.iterator();
-     
-        while(iterator.hasNext())
-        {
-            String key = iterator.next();
-            
-            //Add the current subset number to the group name.
-			groupNames.append("S" + key + " ");            
-            
-            //Get the array of sample ids.
-            Object[] subsetMap = subsetsMap.get(key);
-            
-			//We need to convert the subset number to an integer, so that we can subtract 1. The cls file used a 0 based system.
-			Integer subsetNumber = Integer.parseInt(key);            
-            
-			//Loop through the Samples in our subset.
-			//For each of the subjects in the subset we associate them with a group by writing a number to the file.
-			for (int j = 0; j < subsetMap.length; ++j)
-			{
-				//Add a line that indicates which group this sample is in. The group number is subset number - 1.
-				thirdLine.append(Integer.toString(subsetNumber-1) + " ");
-				
-				//Increment the number of samples.
-				numberOfSamples += 1;
-			}            
-            
-        }
-		
-		//Add the number of samples to the header line.
-		firstLine.append(Integer.toString(numberOfSamples) + " ");
-		
-		//Add the number of classes to the header line.
-		firstLine.append(Integer.toString(numberOfGroups) + " ");
-		
-		//Add a hard coded 1 to header line.
-		firstLine.append("1");
-		
-		//This is hard coded on the second line.
-		secondLine.append("# ");
-		
-		//Add the group names to the second line.
-		secondLine.append(groupNames.toString());
-		
-		//Write the lines to the files.
-		ps.println(firstLine.toString().trim());
-		ps.println(secondLine.toString().trim());
-		ps.println(thirdLine.toString().trim());
-			
-		fos.close();		
-	}	
-	
 	public void writeGctFile(HeatMapTable table, Boolean addMeans) throws java.io.IOException {
 		FileOutputStream fos = new FileOutputStream(this.gctfile);
 		PrintStream ps = new PrintStream(fos, true);

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,6 +16,8 @@
  * 
  *
  ******************************************************************/
+
+
 package com.recomdata.asynchronous
 
 import org.codehaus.groovy.grails.commons.ApplicationHolder;
@@ -47,7 +49,7 @@ class JobStatusService {
 	   def jobNameArray = jobName.split("-")
 	   def jobID = jobNameArray[2]
 	   
-	   log.debug("Checking to see if the user cancelled the job")
+	   //log.debug("Checking to see if the user cancelled the job")
 	   if (jobResultsService[jobName]["Status"] == "Cancelled")	{
 		   log.warn("${jobName} has been cancelled")
 		   retValue = true
@@ -61,12 +63,12 @@ class JobStatusService {
 		   def asyncJob = AsyncJob.get(jobID)
 		   
 		   TimeDuration td = TimeCategory.minus(new Date(), asyncJob.lastRunOn)
-		   log.debug("Job has been running for ${td}}")
+		   //log.debug("Job has been running for ${td}}")
 		   asyncJob.runTime = td
 		   asyncJob.jobStatus = status
-		   if (viewerURL) asyncJob.viewerURL = viewerURL
-		   if (altViewerURL) asyncJob.altViewerURL = altViewerURL
-		   if (results) asyncJob.results = results
+		   if (viewerURL && viewerURL != '') asyncJob.viewerURL = viewerURL
+		   if (altViewerURL && altViewerURL != '' && asyncJob.altViewerURL != null) asyncJob.altViewerURL = altViewerURL
+		   if (results && results != '') asyncJob.results = results
 		   
 		   //We need to flush so that the value doesn't overwrite cancelled when the controller finishes.
 		   asyncJob.save(flush:true)

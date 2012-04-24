@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
+
 
 import com.recomdata.export.GenePatternFiles;
 
@@ -26,7 +26,7 @@ import groovy.time.*
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
 
-import org.genepattern.webservice.JobResult
+//import org.genepattern.webservice.JobResult
 import org.json.*
 import org.quartz.JobDataMap
 import org.quartz.JobDetail
@@ -35,7 +35,7 @@ import org.quartz.SimpleTrigger
 
 import search.SearchKeyword
 
-import com.rdc.jnj.snp.haploview.PEDFormat
+import com.rdc.snp.haploview.PEDFormat
 
 import com.recomdata.export.GwasFiles;
 import com.recomdata.export.GenePatternFiles
@@ -51,149 +51,11 @@ class GenePatternController {
 	def springSecurityService
 	def i2b2HelperService
 	def jobResultsService
+	def asyncJobService
 	def dataSource
 	
 	static String GENE_PATTERN_WHITE_SPACE_DEFAULT = "0";
 	static String GENE_PATTERN_WHITE_SPACE_EMPTY = "";
-	
-	/**
-	* Method that will create the get the list of jobs to show in the jobs tab
-	*/
-	def getjobs = {		
-		JSONObject result = new JSONObject()
-		JSONArray rows = new JSONArray()
-		
-		def userName = springSecurityService.getPrincipal().username
-		
-		def jobResults = AsyncJob.findAllByJobNameLikeAndLastRunOnGreaterThanEquals("${userName}%", new Date()-7, [sort:"id", order:"desc"])
-		def m = [:]
-		for (jobResult in jobResults)	{
-			if(jobResult.jobType==AsyncJob.DATA_ASSOCIATION_JOB_TYPE){
-				continue;
-			}
-			m = [:]
-			m["name"] = jobResult.jobName
-			m["status"] = jobResult.jobStatus
-			m["runTime"] = jobResult.runTime
-			m["startDate"] = jobResult.lastRunOn
-			m["viewerURL"] = jobResult.viewerURL
-			m["altViewerURL"] = jobResult.altViewerURL
-			rows.put(m)
-		}	
-		
-		result.put("success", true)
-		result.put("totalCount", jobResults.size())		
-		result.put("jobs", rows)				
-		
-		response.setContentType("text/json")
-		response.outputStream << result.toString()
-	}
-	
-	/**
-	 * Called to retrieve the job results (HTML) stored in the JOB_RESULTS field for Haploview and Survival Analysis
-	 */
-	def getjobresults = {
-		JSONObject result = new JSONObject()
-				
-		def jobName = request.getParameter("jobname")
-		def jobResults = AsyncJob.findByJobName("${jobName}").results
-		
-		result.put("jobResults", jobResults)
-		response.setContentType("text/json")
-		response.outputStream << result.toString()
-	}
-	
-	/**
-	 * Method that will create the new asynchronous job name
-	 * Current methodology is username-jobtype-ID from sequence generator
-	 */
-	def createnewjob = {
-		def userName = springSecurityService.getPrincipal().username
-		def analysis = request.getParameter("analysis")
-		def jobStatus = "Started"
-		
-		def newJob = new AsyncJob(lastRunOn:new Date())
-		newJob.save()
-		
-		def jobName = userName + "-" + analysis + "-" + newJob.id
-		newJob.jobName = jobName 
-		newJob.jobStatus = jobStatus
-		newJob.save() 
-		
-		jobResultsService[jobName] = [:]
-		updateStatus(jobName, jobStatus)
-		
-		log.debug("Sending ${jobName} back to the client")		
-		JSONObject result = new JSONObject()
-		result.put("jobName", jobName)
-		result.put("jobStatus", jobStatus)
-		response.setContentType("text/json")
-		response.outputStream << result.toString()		
-	}
-	
-	/**
-	 * Method called that will cancel a running job
-	 */
-	def canceljob = {
-		def jobStatus = "Cancelled"
-		def jobName = request.getParameter("jobName")
-		def group = "heatmaps"
-		
-		log.debug("Attempting to delete ${jobName} from the Quartz scheduler")
-		def result = quartzScheduler.deleteJob(jobName, group)		
-		log.debug("Deletion attempt successful? ${result}")
-		
-		updateStatus(jobName, jobStatus)
-						
-		JSONObject jsonResult = new JSONObject()
-		jsonResult.put("jobName", jobName)
-		response.setContentType("text/json")
-		response.outputStream << jsonResult.toString()		
-	}
-	
-	/**
-	 * Helper to update the status of the job and log it
-	 *
-	 * @param jobName - the unique job name
-	 * @param status - the new status
-	 * @param viewerURL - optional, store the viewer URL if the job is completed
-	 * @param altViewerURL - optional, store the alternate viewer URL for CMS heatmaps
-	 * @param results - optional, store the results from survival analysis, haploview, etc.
-	 * 
-	 * @return true if the job was cancelled
-	 */
-    def updateStatus(jobName, status, viewerURL = null, altViewerURL = null, results = null)	{
-		def retValue = false   // true if the job was cancelled
-		def jobNameArray = jobName.split("-")
-		def jobID = jobNameArray[2]
-		
-		//log.debug("Checking to see if the user cancelled the job")
-		if (jobResultsService[jobName]["Status"] == "Cancelled")	{
-			//log.warn("${jobName} has been cancelled")
-			retValue = true
-		} else	{	   
-			jobResultsService[jobName]["Status"] = status
-		}
-
-		//If the job isn't already cancelled, update the job info.
-		if(!retValue)
-		{
-			def asyncJob = AsyncJob.get(jobID)
-			
-			TimeDuration td = TimeCategory.minus(new Date(), asyncJob.lastRunOn)
-			//log.debug("Job has been running for ${td}}")
-			asyncJob.runTime = td
-			asyncJob.jobStatus = status
-			asyncJob.viewerURL = viewerURL			
-			asyncJob.altViewerURL = altViewerURL
-			asyncJob.results = results
-			
-			//We need to flush so that the value doesn't overwrite cancelled when the controller finishes.  
-			asyncJob.save(flush:true)
-		}
-		
-		return retValue
-	}
 
 	/**
 	 * Method that is called asynchronously from the datasetExplorer Javascript
@@ -269,7 +131,7 @@ class GenePatternController {
 		jobResultsService[jobName]["StatusList"] = statusList
 		
 		//This updates the status and checks to see if the job has been cancelled.
-		if (updateStatus(jobName, statusList[0])){return}
+		if (asyncJobService.updateStatus(jobName, statusList[0])){return}
 		
 		//Create the object which represents the gene pattern files we use to run the job.
 		GenePatternFiles gpf = new GenePatternFiles()		
@@ -297,7 +159,7 @@ class GenePatternController {
 		} 
 		
 		//This updates the status and checks to see if the job has been canceled.
-		if (updateStatus(jobName, statusList[1])){return}
+		if (asyncJobService.updateStatus(jobName, statusList[1])){return}
 		
 		//Create stringwriters which we use for writing the query definition to the debug log.
 		StringWriter def1 = new StringWriter()
@@ -314,7 +176,7 @@ class GenePatternController {
 		}
 
 		//This updates the status and checks to see if the job has been canceled.
-		if (updateStatus(jobName, statusList[2])){return}
+		if (asyncJobService.updateStatus(jobName, statusList[2])){return}
 		
 		//Get the subject IDs from the result instance id.
 		def subjectIds1 = i2b2HelperService.getSubjects(rID1)
@@ -328,7 +190,7 @@ class GenePatternController {
 		}	
 		
 		//This updates the status and checks to see if the job has been canceled.
-		if (updateStatus(jobName, statusList[3])){return}
+		if (asyncJobService.updateStatus(jobName, statusList[3])){return}
 		
 		//Get the concept codes based on the result instance id.
 		def concepts1=i2b2HelperService.getConcepts(rID1)
@@ -347,7 +209,7 @@ class GenePatternController {
 		boolean rawdata = analysis == "Select"
 				
 		//This updates the status and checks to see if the job has been canceled.
-		if (updateStatus(jobName, statusList[4])){return}
+		if (asyncJobService.updateStatus(jobName, statusList[4])){return}
 		try {
 			i2b2HelperService.getHeatMapData(pathway_name, subjectIds1, subjectIds2,
 				concepts1, concepts2, timepoints1, timepoints2, sample1, sample2,
@@ -381,11 +243,13 @@ class GenePatternController {
 		def jobDetail = new JobDetail(jobName, group, genePatternService.getClass())
 		jobDetail.setJobDataMap(jdm)
 
-		if (updateStatus(jobName, statusList[5]))	{
+		if (asyncJobService.updateStatus(jobName, statusList[5]))	{
 			return
 		}
 		def trigger = new SimpleTrigger("triggerNow", group)
 		quartzScheduler.scheduleJob(jobDetail, trigger)
+		////println "WIP: Gene Pattern replacement"
+	  // log.debug('WIP: Gene Pattern replacement')
 		
 		JSONObject jsonResult = new JSONObject()
 		jsonResult.put("jobName", jobName)
@@ -404,15 +268,8 @@ class GenePatternController {
 	   def sampleIdList = request.getParameter("sampleIdList");
 	   
 	   //The sampleIdList will look like {"SampleIdList":{"subset1":["Sample1"],"subset2":[],"subset3":[]}}
-	   def sampleIdListJSONTemp = JSON.parse(sampleIdList);
-	   //JSON maps are unordered, and actually get parsed into a groovy object that is the reverse of what was in JSON. We want to pass in a hashmap which will preserve the order we set.
-	   def sampleIdListJSON = [:]
+	   def sampleIdListJSON = JSON.parse(sampleIdList);
 	   
-	   for(i in 1..sampleIdListJSONTemp.size())
-	   {
-		   sampleIdListJSON["$i"] = sampleIdListJSONTemp["$i"].toArray()
-	   }
-	   	   
 	   def analysis = request.getParameter("analysis")
 	   def datatype = request.getParameter("datatype")
 	   def pathway_name = request.getParameter("pathway_name");
@@ -449,7 +306,7 @@ class GenePatternController {
 	   jobResultsService[jobName]["StatusList"] = statusList
 	   
 	   //This updates the status and checks to see if the job has been canceled.
-	   if (updateStatus(jobName, statusList[0])){return}
+	   if (asyncJobService.updateStatus(jobName, statusList[0])){return}
 	   
 	   //Set a flag based on the type of analysis we are doing.
 	   boolean fixlast = analysis == "Compare"
@@ -479,12 +336,12 @@ class GenePatternController {
 	   experimentData.pathwayName = pathway_name;
 	   
 	   //
-	   if (updateStatus(jobName, statusList[1])){return}
+	   if (asyncJobService.updateStatus(jobName, statusList[1])){return}
 	   
 	   experimentData.getHeatMapDataSample();
 	   
 	   //
-	   if (updateStatus(jobName, statusList[2])){return}
+	   if (asyncJobService.updateStatus(jobName, statusList[2])){return}
 	   
 	   experimentData.writeGpFiles();
 
@@ -511,10 +368,12 @@ class GenePatternController {
 	   jobDetail.setJobDataMap(jdm)
 
 	   //
-	   if (updateStatus(jobName, statusList[3])){return}
+	   if (asyncJobService.updateStatus(jobName, statusList[3])){return}
 	   
 	   def trigger = new SimpleTrigger("triggerNow", group)
 	   quartzScheduler.scheduleJob(jobDetail, trigger)
+	//   println "WIP: Gene Pattern replacement"
+	  // log.debug('WIP: Gene Pattern replacement')
 
 	   //We feed some text we got back from the job call back to the browser.
 	   JSONObject jsonResult = new JSONObject()
@@ -546,7 +405,7 @@ class GenePatternController {
 		
 		jobResultsService[jobName]["StatusList"] = statusList
 		
-		updateStatus(jobName, statusList[0])
+		asyncJobService.updateStatus(jobName, statusList[0])
 		
 		SurvivalAnalysisFiles saFiles = new SurvivalAnalysisFiles()
 		
@@ -564,7 +423,7 @@ class GenePatternController {
 		def ci1 = new CohortInformation();
 		def ci2 = new CohortInformation();
 		
-		updateStatus(jobName, statusList[1])
+		asyncJobService.updateStatus(jobName, statusList[1])
 		if (rID1 != null) {
 			subjectIds1 = i2b2HelperService.getSubjectsAsList(rID1)
 			concepts1=i2b2HelperService.getConceptsAsList(rID1)
@@ -579,7 +438,7 @@ class GenePatternController {
 			i2b2HelperService.fillCohortInformation(subjectIds2, concepts2, ci2, CohortInformation.TRIALS_TYPE)
 		}
 		
-		updateStatus(jobName, statusList[2])
+		asyncJobService.updateStatus(jobName, statusList[2])
 		try	{
 			i2b2HelperService.getSurvivalAnalysisData(concepts1, concepts2, subjectIds1, subjectIds2, saFiles)
 		} catch (Exception e) {
@@ -608,18 +467,17 @@ class GenePatternController {
 		jdm.put("querySum1", qS1)
 		jdm.put("querySum2", qS2)
 		
-		
-		
 		jdm.put("userName", userName)
 		
 		def group = "heatmaps"
 		def jobDetail = new JobDetail(jobName, group, genePatternService.getClass())
 		jobDetail.setJobDataMap(jdm)
 
-		updateStatus(jobName, statusList[3])
+		asyncJobService.updateStatus(jobName, statusList[3])
 		def trigger = new SimpleTrigger("triggerNow", group)
 		quartzScheduler.scheduleJob(jobDetail, trigger)
-		
+		//println "WIP: Gene Pattern replacement"
+		//log.debug('WIP: Gene Pattern replacement')
 		JSONObject jsonResult = new JSONObject()
 		jsonResult.put("jobName", jobName)
 		response.setContentType("text/json")
@@ -655,7 +513,7 @@ class GenePatternController {
 	    									   
 	    jobResultsService[jobName]["StatusList"] = statusList
 	   
-	    updateStatus(jobName, statusList[0])
+	    asyncJobService.updateStatus(jobName, statusList[0])
 	   
 		def userName = springSecurityService.getPrincipal().username
 	    def al = new AccessLog(username:userName, event:"Haploview Job: ${jobName}",
@@ -672,12 +530,12 @@ class GenePatternController {
 		try	{										
 			con=dataSource.getConnection()			
 			if (rID1 != null)	{
-				updateStatus(jobName, statusList[statusIndex])
+				asyncJobService.updateStatus(jobName, statusList[statusIndex])
 				sb.append(createHaploView(rID1, genes, con))
 				statusIndex += 1
 			}			
 			if (rID2 != null)	{
-				updateStatus(jobName, statusList[statusIndex])
+				asyncJobService.updateStatus(jobName, statusList[statusIndex])
 				sb.append(createHaploView(rID2, genes, con))
 			}
 		} catch (Exception e)	{
@@ -733,7 +591,7 @@ class GenePatternController {
 	   jobResultsService[jobName]["StatusList"] = statusList
 	  
 	   //Update to our initial status.
-	   updateStatus(jobName, statusList[0])
+	   asyncJobService.updateStatus(jobName, statusList[0])
 	  
 	   //Log the action firing in our access log.
 	   def userName = springSecurityService.getPrincipal().username
@@ -765,7 +623,7 @@ class GenePatternController {
 			   if(subsetSampleList.size() > 0)
 			   {
 				   //Make a note of which subset we are working on.
-				   updateStatus(jobName, statusList[statusIndex])
+				   asyncJobService.updateStatus(jobName, statusList[statusIndex])
 				   
 				   //Attach data from creating the haploview for our subset.
 				   sb.append(createHaploViewSample(subsetSampleList, genes, con))
@@ -910,62 +768,6 @@ class GenePatternController {
 		[chroms: chroms, snpDatasetNum_1: snpDatasetNum_1, snpDatasetNum_2: snpDatasetNum_2, warningMsg: warningMsg, chromDefault: 'ALL'];
 	}
 
-	def showGwasSelectionSample = {
-		def sampleIdList = request.getParameter("sampleIdList");
-		
-		//The sampleIdList will look like {"SampleIdList":{"subset1":["Sample1"],"subset2":[],"subset3":[]}}
-		def sampleIdListJSONTemp = JSON.parse(sampleIdList);
-		
-		//JSON maps are unordered, and actually get parsed into a groovy object that is the reverse of what was in JSON. We want to pass in a hashmap which will preserve the order we set.
-		def sampleIdListMap = [:]
-		
-		for(i in 1..sampleIdListJSONTemp.size())
-		{
-			sampleIdListMap["$i"] = sampleIdListJSONTemp["$i"].toArray()
-		}
-		
-		//We need to show the users a count of how many datasets exist for each subset. As we gather the lists, stash the count in a hashmap.
-		def datasetCount = [:]
-		
-		//Keep track of the total number of datasets so we can warn the user if > 10 datasets are available.
-		int datasetCounter = 0;
-		
-		//For each subset we need to get a list of the Dataset Ids.
-		sampleIdListMap.each
-		{
-			subsetItem ->
-			
-			def subsetSampleList = (String[]) subsetItem.value
-			
-			//Verify we have samples in this subset.
-			if(subsetSampleList.size() > 0)
-			{
-			
-				//Use the list of samples to get the dataset ID List.
-				List<Long> idList = i2b2HelperService.getSNPDatasetIdListSample(subsetSampleList);
-				
-				//Make sure we retrieved Data Set Ids.
-				if(idList != null)
-				{
-					//Put the count of dataset items in the hashmap.
-					datasetCount[subsetItem.key] = idList.size();
-					
-					//Add the number of datasets to our total counter.
-					datasetCounter += idList.size()
-				}
-			}
-		}
-		
-		//Warn the user if there are over 10 SNP Datasets selected.
-		String warningMsg = null;
-		if (datasetCounter > 10) {
-			warningMsg = "Note: The performance may be slow with more than 10 SNP datasets. Please consider displaying individual chromosomes.";
-		}
-		
-		def chroms = ['ALL','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','X','Y'];
-		[chroms: chroms, snpDatasets : datasetCount, warningMsg: warningMsg, chromDefault: 'ALL'];
-	}
-	
 	/**
 	 * Method that will run a survival analysis and is called asynchronously from the datasetexplorer
 	 */
@@ -988,7 +790,7 @@ class GenePatternController {
 		
 		jobResultsService[jobName]["StatusList"] = statusList
 		
-		updateStatus(jobName, statusList[0])
+		asyncJobService.updateStatus(jobName, statusList[0])
 			
 		def userName = springSecurityService.getPrincipal().username
 		def al = new AccessLog(username:userName, event:"Survival Analysis, Job: ${jobName}",
@@ -1000,7 +802,7 @@ class GenePatternController {
 		List<String> concepts1;
 		List<String> concepts2;
 
-		updateStatus(jobName, statusList[1])
+		asyncJobService.updateStatus(jobName, statusList[1])
 		if (rID1 != null) {
 			subjectIds1 = i2b2HelperService.getSubjectsAsList(rID1)
 			concepts1=i2b2HelperService.getConceptsAsList(rID1)
@@ -1011,10 +813,10 @@ class GenePatternController {
 			concepts2=i2b2HelperService.getConceptsAsList(rID2)
 		}
 		
-		updateStatus(jobName, statusList[2]) 	
-		//GwasFiles gwasFiles = new GwasFiles(getGenePatternFileDirName(),
-		//	createLink(controller:'analysis', action:'getGenePatternFile', absolute:true))
-		GwasFiles gwasFiles = new GwasFiles(getGenePatternFileDirName(), getGenePatternFileUrl())
+		asyncJobService.updateStatus(jobName, statusList[2])
+		
+		GwasFiles gwasFiles = new GwasFiles(getGenePatternFileDirName(),
+			createLink(controller:'analysis', action:'getGenePatternFile', absolute:true))
 		String chroms = request.getParameter("chroms");
 		try	{
 			i2b2HelperService.getGwasDataByPatient(subjectIds1, subjectIds2, chroms, gwasFiles);
@@ -1044,9 +846,11 @@ class GenePatternController {
 		def jobDetail = new JobDetail(jobName, group, genePatternService.getClass())
 		jobDetail.setJobDataMap(jdm)
 
-		updateStatus(jobName, statusList[3])
+		asyncJobService.updateStatus(jobName, statusList[3])
 		def trigger = new SimpleTrigger("triggerNow", group)
 		quartzScheduler.scheduleJob(jobDetail, trigger)
+		//println "WIP: Gene Pattern replacement"
+		//log.debug('WIP: Gene Pattern replacement')
 		
 		JSONObject jsonResult = new JSONObject()
 		jsonResult.put("jobName", jobName)
@@ -1054,130 +858,12 @@ class GenePatternController {
 		response.outputStream << jsonResult.toString()
 	}
 	
-	/**
-	* Method that will run a GWAS from sample based data.
-	*/
-   def runGwasSample = 	{
-	   if (log.isDebugEnabled())	{
-		  request.getParameterMap().keySet().each{_key ->
-			  log.debug("${_key} -> ${request.getParameter(_key)}")
-		  }
-	   }
-	   		def jobName = request.getParameter("jobName");
-			String chroms = request.getParameter("chroms");
-			
-			
-		def sampleIdList = request.getParameter("sampleIdList");
-		
-		//The sampleIdList will look like {"SampleIdList":{"subset1":["Sample1"],"subset2":[],"subset3":[]}}
-		def sampleIdListJSONTemp = JSON.parse(sampleIdList);
-		
-		//JSON maps are unordered, and actually get parsed into a groovy object that is the reverse of what was in JSON. We want to pass in a hashmap which will preserve the order we set.
-		def sampleIdListMap = [:]
-		
-		for(i in 1..sampleIdListJSONTemp.size())
-		{
-			sampleIdListMap["$i"] = sampleIdListJSONTemp["$i"].toArray()
-		}
-		
-		//Gather subjects from Sample IDs.
-		//Form a list of lists of longs. We will convert the outside list to an array in a later method.
-		List<List <Long>> patientNumList = new ArrayList<List <Long>>();
-		
-		//We will use this to determine if our queries return ANY patients.
-		boolean foundPatients = false;
-		
-		//For each subset get a list of subjects.
-		sampleIdListMap.each
-		{
-			subsetItem ->
-			
-			def subsetSampleList = (ArrayList) subsetItem.value
-
-			//Don't add a subset if there are no items in the subset.
-			if(subsetSampleList.size() > 0)
-			{
-				//Add the list to the list of lists.
-				List <Long> tempPatientList = i2b2HelperService.getSubjectsFromSNPTable(subsetSampleList)
-				
-				//If we found patients, add them to the list and set our boolean to indicate we found some.
-				if(tempPatientList.size() > 0)
-				{
-					patientNumList.add(tempPatientList);
-				}
-				
-			}
-		}
-			
-	   def statusList = ["Validating Parameters", "Obtaining SNP data", "Triggering PLINK job", "Running PLINK"]
-	   
-	   jobResultsService[jobName]["StatusList"] = statusList
-	   
-	   updateStatus(jobName, statusList[0])
-			   
-	   List<String> subjectIds1;
-	   List<String> subjectIds2;
-	   List<String> concepts1;
-	   List<String> concepts2;
-	   
-	   updateStatus(jobName, statusList[1])
-	   
-	   GwasFiles gwasFiles = new GwasFiles(getGenePatternFileDirName(), getGenePatternFileUrl())
-	   
-	   	   try	{
-		   i2b2HelperService.getGwasDataByPatientSample(patientNumList as List<Long>[], chroms, gwasFiles);
-	   } catch (Exception e) {
-		   def error = e.getMessage()
-		   log.error("Exception: ${error}", e)
-		   jobResultsService[jobName]["Status"] = "Error"
-		   jobResultsService[jobName]["Exception"] = error
-		   return
-	   }
-	   
-	   log.debug("Checking to see if the user cancelled the job prior to running it")
-	   if (jobResultsService[jobName]["Status"] == "Cancelled")	{
-		   log.warn("${jobName} has been cancelled")
-		   return
-	   }
-	   
-	   def jdm = new JobDataMap()
-	   jdm.put("analysis", "GWAS");
-	   jdm.put("gwasFiles", gwasFiles);
-	   
-	   def userName = springSecurityService.getPrincipal().username
-	   jdm.put("userName", userName)
-	   
-	   def group = "heatmaps"
-	   def jobDetail = new JobDetail(jobName, group, genePatternService.getClass())
-	   jobDetail.setJobDataMap(jdm)
-
-	   updateStatus(jobName, statusList[3])
-	   def trigger = new SimpleTrigger("triggerNow", group)
-	   quartzScheduler.scheduleJob(jobDetail, trigger)
-	   
-	   JSONObject jsonResult = new JSONObject()
-	   jsonResult.put("jobName", jobName)
-	   response.setContentType("text/json")
-	   response.outputStream << jsonResult.toString()
-   }
-	
 	protected String getGenePatternFileDirName() {
 		String fileDirName = grailsApplication.config.com.recomdata.analysis.genepattern.file.dir;
 		String webRootName = servletContext.getRealPath("/");
 		if (webRootName.endsWith(File.separator) == false)
 			webRootName += File.separator;
 		return webRootName + fileDirName;
-	}
-		
-	
-	protected String getGenePatternFileUrl() {
-		String hostUrl = grailsApplication.config.grails.serverURL;
-		if (hostUrl.endsWith("/") == false)
-			hostUrl += "/";
-		String contextStr = servletContext.getContextPath();
-		if (contextStr.startsWith("/"))
-			contextStr = contextStr.substring(1);
-		return hostUrl + contextStr + "/analysis/getGenePatternFile";
 	}
 	
 	/** 
@@ -1219,64 +905,6 @@ class GenePatternController {
 		}
 		return pathway_name
 	}
-
-	/**
-	 * Repeatedly called by datasetExplorer.js to get the job status and results 
-	 */
-	def checkJobStatus = {
-		JSONObject result = new JSONObject()		
-		def jobName = request.getParameter("jobName")
-		def jobNameArray = jobName.split("-")
-		def jobType = jobNameArray[1]
-		def jobStatus = jobResultsService[jobName]["Status"]
-		def statusIndex = null
-		if (jobResultsService[jobName]["StatusList"] != null)	{
-			statusIndex = jobResultsService[jobName]["StatusList"].indexOf(jobStatus)
-		}		
-		def jobException = jobResultsService[jobName]["Exception"]
-		def viewerURL = jobResultsService[jobName]["ViewerURL"]
-		def altViewerURL = jobResultsService[jobName]["AltViewerURL"]
-		def jobResults = jobResultsService[jobName]["Results"]		
-		def errorType = ""
-		if (viewerURL != null)	{
-			log.debug("${viewerURL} is being sent to the client")
-			result.put("jobViewerURL", viewerURL)
-			if (altViewerURL != null)	{
-				log.debug("${altViewerURL} for Comparative Marker Selection")
-				result.put("jobAltViewerURL", altViewerURL)
-			}
-			jobStatus = "Completed"			
-		} else if (jobResults != null)	{
-			result.put("jobResults", jobResults)
-			result.put("resultType", jobType)
-			jobStatus = "Completed"			
-		} else if (jobException != null)	{
-			log.warn("An exception was thrown, passing this back to the user")
-			log.warn(jobException)
-			result.put("jobException", jobException)
-			jobStatus = "Error"
-			errorType = "data"
-		}
-		if (statusIndex != null)	{
-			def statusHtml = g.render(template:"jobStatusList", model:[jobStatuses:jobResultsService[jobName]["StatusList"], statusIndex:statusIndex]).toString();
-			result.put("jobStatusHTML", statusHtml);
-		}
-		
-		updateStatus(jobName, jobStatus, viewerURL, altViewerURL, jobResults)		
-		
-		//log.debug("Returning status: ${jobStatus} for ${jobName}")		
-		result.put("jobStatus", jobStatus)
-		result.put("errorType", errorType)		
-		response.setContentType("text/json")
-		response.outputStream << result.toString()				
-	}
-	
-	/** 
-	 * Shows the job status window
-	 */
-	def showJobStatus ={
-		render (view:"workflowStatus")
-	}	
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// These are for the synchronous operation - soon to be replaced

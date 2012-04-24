@@ -37,8 +37,8 @@
 					<g:if test="${c.brandName?.length() > 0}">
 						, ${c.brandName}
 					</g:if>
-					<g:if test="${c.jnjNumber?.length() > 0 && c.jnjNumber != k.keyword}">
-						, ${c.jnjNumber}
+					<g:if test="${c.number?.length() > 0 && c.number != k.keyword}">
+						, ${c.number}
 					</g:if>
 					<g:if test="${c.mechanism?.length() > 0}">
 						- ${c.mechanism}

@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,7 +16,9 @@
  * 
  *
  ******************************************************************/
-
+/* SubsetTool.js
+Jeremy M. Isikoff
+Recombinant */
 String.prototype.trim = function() {
 	return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
@@ -47,6 +49,63 @@ function dataSelectionCheckboxChanged(ctl)
 	}
 }
 
+function setDataAssociationAvailableFlag(el, success, response, options) {
+	
+	if (!success) {
+		var dataAssociationPanel = Ext.getCmp('dataAssociationPanel');
+		var resultsTabPanel = Ext.getCmp('resultsTabPanel');
+		resultsTabPanel.remove(dataAssociationPanel);
+		resultsTabPanel.doLayout();
+	} else {
+		Ext.Ajax.request(
+		{
+			url : pageInfo.basePath+"/dataAssociation/loadScripts",
+				method : 'GET',
+				timeout: '600000',
+				params :  Ext.urlEncode({}),
+				success : function(result, request)
+				{
+					var exp = result.responseText.evalJSON();
+					if (exp.success && exp.files.length > 0)	{
+						/*for (var i = 0; i < exp.files.length; i++) {
+							var file = exp.files[i]
+							if (file.type == 'script') {
+								
+							}
+						}*/
+						loadScripts(exp.files);
+					}
+				},
+				failure : function(result, request)
+				{
+					alert("Unable to process the export: " + result.responseText);
+				}
+		});
+	}
+}
+
+function loadScripts(scripts) {
+	var handlerData = {
+	//data you wish to pass to your success or failure
+	//handlers.
+	};
+	 
+	var filesArr = []
+	for (var i = 0; i < scripts.length; i++) {
+		var file = scripts[i];
+		filesArr.push(file.path);
+	}
+	YAHOO.util.Get.script(filesArr, {
+		onSuccess: function(o) {
+			//alert("JavaScripts loaded");
+		},
+		onFailure: function(o) {
+			alert("Failed to load Javascript files");
+		},
+		data:      handlerData
+	});
+}
+
 Ext.Panel.prototype.setBody = function(html)
 {
 	var el = this.getEl();
@@ -71,18 +130,28 @@ Ext.onReady(function()
 	// this overrides the above
 	Ext.Updater.defaults.timeout = 1800000;
 
+
 	// create the main regions of the screen
 	westPanel = new Ext.Panel(
 			{
 				id : 'westPanel',
 				region : 'west',
-				width : 400,
+				width : 330,
 				minwidth : 200,
 				split : true,
 				border : true,
 				layout : 'border'
 			}
 	);
+
+	/* eastPanel = new Ext.Panel({
+   id : 'eastPanel',
+   region : 'east',
+   width : 330,
+   minwidth : 200,
+   split : true,
+   border : true,
+   layout : 'border'}); */
 	
 	if(GLOBAL.Config != "jj")
 	{
@@ -103,9 +172,10 @@ Ext.onReady(function()
 				{
 					id : 'northPanel',
 					region : 'north',
+					height : 30,
 					split : false,
 					border : true,
-					tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle, GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
+					tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle,GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
 					contentEl: "header-div"
 				}
 		);
@@ -165,6 +235,7 @@ Ext.onReady(function()
 					items : [
 					         {
 					        	 text : 'Heatmap',
+					        	 disabled : true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
 					        	 handler : function()
 					        	 {
@@ -177,6 +248,7 @@ Ext.onReady(function()
 					         ,
 					         {
 					        	 text : 'Hierarchical Clustering',
+					        	 disabled : true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
 					        	 handler : function()
 					        	 {
@@ -189,6 +261,7 @@ Ext.onReady(function()
 					         ,
 					         {
 					        	 text : 'K-Means Clustering',
+					        	 disabled : true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
 					        	 handler : function()
 					        	 {
@@ -201,6 +274,7 @@ Ext.onReady(function()
 					         ,
 					         {
 					        	 text : 'Comparative Marker Selection (Heatmap)',
+					        	 disabled : true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
 					        	 handler : function()
 					        	 {
@@ -215,6 +289,7 @@ Ext.onReady(function()
 					         ,					         
 					         {
 					        	 text : 'Principal Component Analysis',
+					        	 disabled : true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
 					        	 handler : function()
 					        	 {
@@ -267,6 +342,7 @@ Ext.onReady(function()
 					        ,
 					        {
 					        	 text : 'SNPViewer',
+					        	 disabled : true,
 					        	 handler : function()	{
 					        	 	if(isSubsetEmpty(1) && isSubsetEmpty(2))
 					        	 	{
@@ -288,6 +364,7 @@ Ext.onReady(function()
 					        ,
 					        {
 					        	 text : 'Integrative Genome Viewer',
+					        	 disabled : true,
 					        	 handler : function()	{
 					        	 	if(isSubsetEmpty(1) && isSubsetEmpty(2))
 					        	 	{
@@ -306,9 +383,10 @@ Ext.onReady(function()
 					        	},
 					        	disabled : GLOBAL.GPURL == ""
 					        }
-					        , /*
+					        ,
 					        {
 					        	 text : 'PLINK',
+					        	 disabled : true,
 					        	 handler : function()	{
 					        	 	if(isSubsetEmpty(1) && isSubsetEmpty(2))
 					        	 	{
@@ -325,7 +403,7 @@ Ext.onReady(function()
 					        	 	}
 					        	 	return;
 					        	}
-					        }, */
+					        },
 					        {
 					        	 text : 'Genome-Wide Association Study',
 					        	 handler : function()	{
@@ -384,13 +462,14 @@ Ext.onReady(function()
 								}
 							}
 					),
+					
 					new Ext.Toolbar.Separator(),
 					new Ext.Toolbar.Button(
 							{
 								id : 'advancedbutton',
 								text : 'Advanced',
 								iconCls : 'comparebutton',
-								disabled : false,
+								hidden : GLOBAL.EnableGP!='true',
 								menu : advmenu,
 								handler : function()
 								{
@@ -399,6 +478,7 @@ Ext.onReady(function()
 								}
 							}
 					),
+					
 					new Ext.Toolbar.Separator(),
 					new Ext.Toolbar.Button(
 							{
@@ -532,11 +612,18 @@ Ext.onReady(function()
 						scripts : true,
 						nocache : true,
 						discardUrl : true,
-						method : 'POST'
+						method : 'POST'//,
+						//callback: loadOntPanel
 					},
 					collapsible : true,
 					titleCollapse : false,
 					animCollapse : false,
+			        listeners :
+					{
+						activate : function() {
+							GLOBAL.Analysis="Advanced";
+						}
+					},
 					bbar: new Ext.StatusBar({
 						// Status bar to show the progress of generating heatmap and other advanced workflows
 				        id: 'asyncjob-statusbar',
@@ -648,37 +735,109 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
-				
-		dataAssociationPanel = new Ext.Panel(
+		analysisDataExportPanel = new Ext.Panel(
 				{
-					id : 'dataAssociationPanel',
-					title : 'Data Association',
+					id : 'analysisDataExportPanel',
+					title : 'Data Export',
 					region : 'center',
 					split : true,
 					height : 90,
 					layout : 'fit',
+					//autoLoad : getDatadata,
+					listeners :
+					{
+						activate : function(p) {
+							GLOBAL.CurrentSubsetIDs[1] = null;
+							GLOBAL.CurrentSubsetIDs[2] = null;
+							p.body.mask("Loading...", 'x-mask-loading');
+							runAllQueries(getDatadata, p);
+			        	 	return;
+						},
+						deactivate: function(){
+							//resultsTabPanel.tools.help.dom.style.display="none";
+						}
+					},
+					collapsible : true						
+				}
+		);
+		
+		dataAssociationPanel = new Ext.Panel(
+				{
+					id : 'dataAssociationPanel',
+					title : 'Advanced Workflow',
+					region : 'center',
+					split : true,
+					height : 90,
+					layout : 'fit',
+					tbar : new Ext.Toolbar({
+						id : 'advancedWorkflowToolbar',
+						title : 'Advanced Workflow actions',
+						items : []
+						}),
 					autoScroll : true,
 					autoLoad:
 			        {
 			        	url : pageInfo.basePath+'/dataAssociation/defaultPage',
-			           	method:'POST'
+			           	method:'POST',
+			           	callback: setDataAssociationAvailableFlag,
+			           	evalScripts:true
 			        },
+			        /*buttons: [{
+						text:'Run Job',
+						handler: function()	{
+							var analysis = Ext.get('analysis');
+							if (analysis != undefined) {
+								var selectedAnalysis = analysis.dom.value;
+								if (selectedAnalysis != '') {
+									selectedAnalysis = selectedAnalysis.charAt(0).toUpperCase()+selectedAnalysis.substring(1);
+									eval("submit"+selectedAnalysis+"Job(this.form)");
+								} else {
+									Ext.Msg.alert('Analysis required!!!', 'Please select an Analysis from the \'Analysis\' menu.')
+								}
+							}
+						}      	
+			        }],
+			        buttonAlign:'center',*/
 			        listeners :
 					{
-						activate : function() {
+			        	activate : function() {
+							GLOBAL.Analysis="dataAssociation";
 							renderCohortSummary();
+							//Ext.getCmp('dataAssociationBodyPanel').focus()
 						}
 					},
 					collapsible : true
 				}
 		);
 		
-		
+		analysisExportJobsPanel = new Ext.Panel(
+				{
+					id : 'analysisExportJobsPanel',
+					title : 'Export Jobs',
+					region : 'center',
+					split : true,
+					height : 90,
+					layout : 'fit',
+					//autoLoad : getExportJobs,
+					listeners :
+					{
+						activate : function(p) {
+							getExportJobs(p)
+						},
+						deactivate: function(){
+							//resultsTabPanel.tools.help.dom.style.display="none";
+						}
+					},
+					collapsible : true						
+				}
+		);
 		resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
 		resultsTabPanel.add(analysisJobsPanel);
+		resultsTabPanel.add(analysisDataExportPanel);
+		resultsTabPanel.add(analysisExportJobsPanel);
 		
 		southCenterPanel = new Ext.Panel(
 				{
@@ -783,7 +942,7 @@ Ext.onReady(function()
 
 
 		/*southCenterPanel.add(resultsTabPanel);
-   centerPanel.add(queryPanel);*/
+         centerPanel.add(queryPanel);*/
 
 		/**********new prototype*********/
 
@@ -795,7 +954,9 @@ Ext.onReady(function()
 
 		// centerPanel.add(analysisPanel);
 		// centerPanel.add(resultsTabPanel);
+		
 		westPanel.add(createOntPanel());
+		//setTimeout("loadOntPanel()", 3000);
 		// westPanel.add(prevTree);
 		// eastPanel.add(exportPanel);
 		centerMainPanel.add(westPanel);
@@ -1120,7 +1281,7 @@ function createOntPanel()
 //		******************************************************************************
 		var showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
-			Ext.get('advancedbutton').dom.style.display='';
+			//Ext.get('advancedbutton').dom.style.display='';
 		}
 		ontFilterPanel = new Ext.Panel(
 				{
@@ -1588,14 +1749,17 @@ function getCategoriesComplete(ontresponse){
 	ontTabPanel.add(ontFilterPanel);
 	ontFilterTree.dragZone.addToGroup("analysis");
 	getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
-	getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
+	if(GLOBAL.hideAcrossTrialsPanel!='true'){
+		getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
+		}
 	setActiveTab();
 }
 
 function setActiveTab(){
-	var activeTab='ontFilterPanel';
+	//var activeTab='ontFilterPanel';
+	var activeTab='navigateTermsPanel';
 	if (GLOBAL.PathToExpand!==''){
-		if (GLOBAL.PathToExpand.indexOf('Across Trials')>-1){
+		if ((GLOBAL.PathToExpand.indexOf('Across Trials')>-1)&&(GLOBAL.hideAcrossTrialsPanel!='true')){
 			activeTab='crossTrialsPanel';
 		}else{
 			activeTab='navigateTermsPanel';
@@ -1681,13 +1845,13 @@ function getSubCategories(id_in, title_in, ontresponse)
 	if (id_in==='crossTrialsPanel'){
 		showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
-			Ext.get('advancedbutton').dom.style.display='none';
+			//Ext.get('advancedbutton').dom.style.display='none';
 		}
 		treeRoot = createTree('include', ontresponse);
 	}else{
 		showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
-			Ext.get('advancedbutton').dom.style.display='';
+			//Ext.get('advancedbutton').dom.style.display='';
 		}
 		treeRoot = createTree('exclude', ontresponse);
 	}
@@ -1927,9 +2091,6 @@ function getPreviousQueryFromIDComplete(subset, result)
 			var level = item.selectSingleNode("hlevel").firstChild.nodeValue;
 			var name = getValue(item.selectSingleNode("item_name"),"");
 			var key = item.selectSingleNode("item_key").firstChild.nodeValue;
-			var dimcode = key.slice(2);
-			var idx = dimcode.indexOf('\\');
-			dimcode = dimcode.slice(idx);
 			var tooltip = getValue(item.selectSingleNode("tooltip"),"");
 			var itemclass = item.selectSingleNode("class").firstChild.nodeValue;
 			//createPanelItem(panelnumber, level, name, key, tooltip, '', '', '');
@@ -1963,7 +2124,7 @@ function getPreviousQueryFromIDComplete(subset, result)
 			var highlowselect="";
 			if(mode=="highlow"){highlowselect=numvalue;}
 			var units=getValue(item.selectSingleNode("constrain_by_value/value_unit_of_measure"),"");
-			//var dimcode="";
+			var dimcode="";
 			var comment="";
 			var normalunits=units;
 
@@ -2129,18 +2290,20 @@ function showConceptInfoDialog(conceptKey, conceptid, conceptcomment)
 				}
 		);
 	}
-	var conceptKeySplits = conceptKey.split('\\');
-	var conceptType = (conceptKeySplits[1]=='')?conceptKeySplits[2]:conceptKeySplits[1];
+	//var conceptKeySplits = conceptKey.split('\\');
+	//var conceptType = (conceptKeySplits[1]=='')?conceptKeySplits[2]:conceptKeySplits[1];
 
 	conceptinfowin.show(viewport);
 	conceptinfowin.header.update("Show Concept Definition-" + conceptid);
 	Ext.get(conceptinfowin.body.id).update(conceptcomment);
-	var begin=conceptcomment.indexOf("trial:");
-	if(begin==0)
-	{
+	//var begin=conceptcomment.indexOf("trial:");
+	//if(begin==0)
+	//{
 		conceptinfowin.load({
-			url: pageInfo.basePath+"/trial/trialDetailByTrialNumber",
-			params: {id: conceptcomment.substring(6,conceptcomment.length), conceptType: conceptType}, // or a URL encoded string
+			//url: pageInfo.basePath+"/trial/trialDetailByTrialNumber",
+			url: pageInfo.basePath+"/ontology/showConceptDefinition",
+			//params: {id: conceptcomment.substring(6,conceptcomment.length), conceptType: conceptType}, // or a URL encoded string
+			params: {conceptKey:conceptKey}, // or a URL encoded string		
 			//callback: yourFunction,
 			//scope: yourObject, // optional scope for the callback
 			discardUrl: true,
@@ -2149,7 +2312,7 @@ function showConceptInfoDialog(conceptKey, conceptid, conceptcomment)
 			timeout: 30000,
 			scripts: false
 		});
-	}
+	//}
 
 }
 
@@ -2934,7 +3097,7 @@ function showSurvivalAnalysis() {
 	}
 	
 	Ext.Ajax.request({						
-		url: pageInfo.basePath+"/genePattern/createnewjob",
+		url: pageInfo.basePath+"/asyncJob/createnewjob",
 		method: 'POST',
 		success: function(result, request){
 			RunSurvivalAnalysis(result, GLOBAL.CurrentSubsetIDs[1], GLOBAL.CurrentSubsetIDs[2],
@@ -2944,8 +3107,12 @@ function showSurvivalAnalysis() {
 			Ext.Msg.alert('Status', 'Unable to create the heatmap job.');
 		},
 		timeout: '1800000',
-		params: {analysis:  "Survival"}
+		params: {jobType:  "Survival"}
 	});
+}
+
+function genePatternReplacement() {
+	Ext.Msg.alert('Work In Progress', 'Gene Pattern replacement')
 }
 
 //Once, we get a job created by GPController, we run the survival analysis
@@ -2954,6 +3121,7 @@ function RunSurvivalAnalysis(result, result_instance_id1, result_instance_id2,
 	var jobNameInfo = Ext.util.JSON.decode(result.responseText);					 
 	var jobName = jobNameInfo.jobName;
 
+	genePatternReplacement();
 	showJobStatusWindow(result);	
 	document.getElementById("gplogin").src = pageInfo.basePath + '/analysis/gplogin';   // log into GenePattern
 	Ext.Ajax.request(
@@ -2980,6 +3148,7 @@ function showSNPViewerSelection() {
 		return;
 	}
 
+	//genePatternReplacement();
 	var win = new Ext.Window({
 		id: 'showSNPViewerSelection',
 		title: 'SNPViewer',
@@ -3060,7 +3229,7 @@ function getSNPViewer() {
 	if (selectedSNPsElt && selectedSNPsEltValue.length != 0) {
 		selectedSNPsStr = selectedSNPsEltValue;
 	}
-	
+	//genePatternReplacement();
 	Ext.Ajax.request(
 	{
 		url: pageInfo.basePath+"/analysis/showSNPViewer",
@@ -3092,8 +3261,9 @@ function showIgvSelection() {
 		return;
 	}
 
+	//genePatternReplacement();
 	var win = new Ext.Window({
-		id: 'showIgvSelection',
+	id: 'showIgvSelection',
 		title: 'IGV',
 		layout:'fit',
 		width:600,
@@ -3173,6 +3343,7 @@ function getIgv() {
 		selectedSNPsStr = selectedSNPsEltValue;
 	}
 	
+	//genePatternReplacement();
 	Ext.Ajax.request(
 	{
 		url: pageInfo.basePath+"/analysis/showIgv",
@@ -3205,6 +3376,7 @@ function showPlinkSelection() {
 		return;
 	}
 
+	//genePatternReplacement();
 	var win = new Ext.Window({
 		id: 'showPlinkSelection',
 		title: 'PLINK',
@@ -3266,7 +3438,7 @@ function showPlinkSelection() {
 function getPlink() {
 
 	// before Ajax call, log into genepattern:
-	genePatternLogin();
+	//genePatternLogin();
 	
 	/*
 	var selectedGenesElt = Ext.get("selectedGenesPlink");
@@ -3293,7 +3465,8 @@ function getPlink() {
 	}
 	*/
 	
-	Ext.Ajax.request(
+	//genePatternReplacement();
+	/*Ext.Ajax.request(
 	{
 		url: pageInfo.basePath+"/analysis/showPlink",
 		method: 'POST',
@@ -3313,7 +3486,7 @@ function getPlink() {
 			}
 	});
 	
-	showWorkflowStatusWindow();
+	showWorkflowStatusWindow();*/
 }
 
 function showGwasSelection() {
@@ -3325,6 +3498,7 @@ function showGwasSelection() {
 		return;
 	}
 
+	//genePatternReplacement();
 	var win = new Ext.Window({
 		id: 'showGwasSelection',
 		title: 'Genome-Wide Association Study',
@@ -3392,8 +3566,9 @@ function showGwas() {
 		return;
 	}
 	
-	Ext.Ajax.request({						
-		url: pageInfo.basePath+"/genePattern/createnewjob",
+	genePatternReplacement();
+	/*Ext.Ajax.request({						
+		url: pageInfo.basePath+"/asyncJob/createnewjob",
 		method: 'POST',
 		success: function(result, request){
 			runGwas(result, GLOBAL.CurrentSubsetIDs[1], GLOBAL.CurrentSubsetIDs[2],
@@ -3403,8 +3578,8 @@ function showGwas() {
 			Ext.Msg.alert('Status', 'Unable to create the heatmap job.');
 		},
 		timeout: '1800000',
-		params: {analysis:  "GWAS"}
-	});
+		params: {jobType:  "GWAS"}
+	});*/
 }
 
 // After we get a job created by GPController, we run GWAS
@@ -3413,7 +3588,8 @@ function runGwas(result, result_instance_id1, result_instance_id2,
 	var jobNameInfo = Ext.util.JSON.decode(result.responseText);					 
 	var jobName = jobNameInfo.jobName;
 
-	showJobStatusWindow(result);	
+	genePatternReplacement();
+	/*showJobStatusWindow(result);	
 
 	Ext.Ajax.request(
 	{						
@@ -3428,7 +3604,7 @@ function runGwas(result, result_instance_id1, result_instance_id2,
 			jobName: jobName
 		}
 	});
-	checkJobStatus(jobName);
+	checkJobStatus(jobName);*/
 }
 
 function validateheatmapComplete(result)
@@ -3436,6 +3612,7 @@ function validateheatmapComplete(result)
 	var mobj=result.responseText.evalJSON();
 	GLOBAL.DefaultCohortInfo=mobj;
 
+	//genePatternReplacement();
 	showCompareStepPathwaySelection();
 
 }
@@ -3611,6 +3788,7 @@ function RunHeatMap(result, setid1, setid2, pathway, datatype, analysis,
 	var jobNameInfo = Ext.util.JSON.decode(result.responseText);					 
 	var jobName = jobNameInfo.jobName;
 
+	//genePatternReplacement();
 	showJobStatusWindow(result);	
 	genePatternLogin();
 	Ext.Ajax.request(
@@ -3657,7 +3835,6 @@ function showGwasWindow(results)	{
 function showHaploViewWindow(results)	{
 	var win = new Ext.Window({
 		id: 'showHaploView',
-		autoScroll: true,
 		title: 'Haploview',
 		layout:'fit',
 		width:800,
@@ -4058,7 +4235,7 @@ function watchForSymbol(options)
 function getHaploview()
 {
 	Ext.Ajax.request({						
-		url: pageInfo.basePath+"/genePattern/createnewjob",
+		url: pageInfo.basePath+"/asyncJob/createnewjob",
 		method: 'POST',
 		success: function(result, request){
 			RunHaploViewer(result, GLOBAL.CurrentSubsetIDs[1], GLOBAL.CurrentSubsetIDs[2], GLOBAL.CurrentGenes);
@@ -4067,7 +4244,7 @@ function getHaploview()
 			Ext.Msg.alert('Status', 'Unable to create the heatmap job.');
 		},
 		timeout: '1800000',
-		params: {analysis:  "Haplo"}
+		params: {jobType:  "Haplo"}
 	});	
 }
 
@@ -4076,6 +4253,7 @@ function RunHaploViewer(result, result_instance_id1, result_instance_id2, genes)
 	var jobNameInfo = Ext.util.JSON.decode(result.responseText);					 
 	var jobName = jobNameInfo.jobName;
 
+	//genePatternReplacement();
 	showJobStatusWindow(result);	
 	document.getElementById("gplogin").src = pageInfo.basePath + '/analysis/gplogin';   // log into GenePattern
 	Ext.Ajax.request(
@@ -4165,8 +4343,9 @@ function searchByTagComplete(response)
 
 function showHaploviewGeneSelection()
 {
+	//genePatternReplacement();
 	//if(!this.compareStepPathwaySelection)
-//	{
+	//{
 	var win = new Ext.Window({
 		id: 'showHaploviewGeneSelection',
 		title: 'Haploview-Gene Selection',
@@ -4230,9 +4409,142 @@ function genePatternLogin() {
 	document.getElementById("gplogin").src = pageInfo.basePath + '/analysis/gplogin';
 }
 
+function showWorkflowStatusWindow()
+{	
+	wfsWindow = new Ext.Window({
+		id: 'showWorkflowStatus',
+		title: 'Workflow Status',
+		layout:'fit',
+		width:300,
+		height:300,
+		closable: false,
+		plain: true,
+		modal: true,
+		border:false,
+		//autoScroll: true,
+		buttons: [
+		         {
+		        	  text: 'Cancel Job',
+		        	  handler: function(){
+		        	  runner.stopAll();
+		        	  terminateWorkflow();
+		        	  wfsWindow.close();}
+		          }],
+		          resizable: false,
+		          autoLoad:
+		          {
+					url: pageInfo.basePath+'/asyncJob/showWorkflowStatus',
+					scripts: true,
+					nocache:true,
+					discardUrl:true,
+					method:'POST'
+		          }
+	});
+	//  }
+	wfsWindow.show(viewport);
+	
+	var updateStatus = function(){
+		Ext.Ajax.request(
+				{
+					url : pageInfo.basePath+"/asyncJob/checkWorkflowStatus",
+					method : 'POST',
+					success : function(result, request)
+					{
+						//alert(result);
+						workflowStatusUpdate(result);
+					}
+				,
+				failure : function(result, request)
+				{
+					//alert(result);
+					//saveComparisonComplete(result);
+				}
+				,
+				timeout : '300000'
+				}
+		);
+  	} 
+  	
+  	var task = {
+  	    run: updateStatus,
+  	    interval: 4000 //4 second
+  	}
+ 
+  	runner.start(task);
+  	
 
 
+}
 
+function terminateWorkflow(){
+	Ext.Ajax.request(
+			{
+				url : pageInfo.basePath+"/asyncJob/cancelJob",
+				method : 'POST',
+				success : function(result, request)
+				{
+					
+				}
+			,
+			failure : function(result, request)
+			{
+				//alert(result);
+				//saveComparisonComplete(result);
+			}
+			,
+			timeout : '300000'
+			}
+	);
+}
+function workflowStatusUpdate(result){
+	var response=eval("(" + result.responseText + ")");	
+	var inserthtml = response.statusHTML;
+	var divele = Ext.fly("divwfstatus");
+	if(divele!=null){
+		divele.update(inserthtml);
+	}
+	var status = response.wfstatus;
+	if(status =='completed'){
+		runner.stopAll();		
+		if(divele!=null){
+			divele.update("");
+		}		
+		if(wfsWindow!=null){
+			wfsWindow.close();
+			wfsWindow =null;
+		}		
+		//var rpCount = response.rpCount;
+		//if(rpCount<=1){}
+		// only show it once
+		showWorkflowResult(result);
+	} 
+}
+
+function showWorkflowResult(result)
+{
+	var response=eval("(" + result.responseText + ")");
+	var jobNumber = response.jobNumber;
+	var viewerURL = response.viewerURL;
+	var altviewerURL = response.altviewerURL;
+	var gctURL = response.gctURL;
+	var cdtURL = response.cdtURL;
+	var gtrURL = response.gtrURL;
+	var atrURL = response.atrURL;
+	var error = response.error;
+	var snpGeneAnnotationPage = response.snpGeneAnnotationPage;
+
+	//Ext.MessageBox.hide();
+
+	if (error != undefined) {
+		alert(error);
+	} 
+	else {
+		if (snpGeneAnnotationPage != undefined && snpGeneAnnotationPage.length != 0) {
+			showSnpGeneAnnotationPage(snpGeneAnnotationPage);
+		}
+		runVisualizerFromSpan(viewerURL, altviewerURL);
+	}
+}
 
 function showSnpGeneAnnotationPage(snpGeneAnnotationPage) {
 	var resultWin = window.open('', 'Snp_Gene_Annotation_' + (new Date()).getTime(), 
@@ -4303,7 +4615,7 @@ function saveComparisonComplete(result)
 	saveComparisonWindow.show(viewport);	
 }
 
-function ontFilterLoaded()
+function ontFilterLoaded(el, success, response, options)
 {
 	if(GLOBAL.preloadStudy != "")
 		{

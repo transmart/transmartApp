@@ -1,5 +1,5 @@
 /*************************************************************************
-  * tranSMART - translational medicine data mart
+ * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
  * 
@@ -16,8 +16,10 @@
  * 
  *
  ******************************************************************/
+
+
 /**
-* $Id: DocumentHit.java 11850 2012-01-24 16:41:12Z jliu $
+* $Id: DocumentHit.java 9178 2011-08-24 13:50:06Z mmcduffie $
 **/
 package com.recomdata.search;
 
@@ -32,8 +34,8 @@ import org.apache.lucene.search.highlight.*;
 /**
  * This object holds information about a document found during a search of a Lucene index.
  * 
- * @author $Author: jliu $
- * @version $Revision: 11850 $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  **/
 public class DocumentHit {
 	private Document doc = null;
