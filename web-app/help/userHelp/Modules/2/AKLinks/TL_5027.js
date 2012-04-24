@@ -1,0 +1,1 @@
+d2hStoreMenuItems("TL_5027", [["../../Modules/4/Documents/internetexplorersecuritywarning.htm", "right", "Internet Explorer Security Warning"]]);

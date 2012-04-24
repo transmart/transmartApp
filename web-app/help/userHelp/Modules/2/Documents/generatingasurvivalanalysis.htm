@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="us-ascii"?><html><head><script language="JavaScript" type="text/JavaScript" src="..\TransformFiles\BuiltIn\Scripts\d2hXmlInt.js"> </script><link href="..\TransformFiles\BuiltIn\StyleSheets\d2hXmlInt.css" type="text/css" rel="stylesheet" /><title>Generating a Survival Analysis</title><meta content="text/html; charset=us-ascii" http-equiv="Content-Type" /><link rel="stylesheet" type="text/css" href="../Theme/nav.css" /><link rel="stylesheet" type="text/css" href="../Theme/popupmenu.css" /><link rel="stylesheet" type="text/css" href="../Theme/lf.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/doc2help.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/tranSMART_UserGuide.css" /><script type="text/javascript">
+//<![CDATA[
+
+
+
+var _needIndentation = false;
+
+
+
+
+//]]></script><script language="JavaScript" src="../linker.js" type="text/JavaScript"></script><script language="JavaScript" src="../special.js" type="text/JavaScript"></script><script language="JavaScript" src="../common.js" type="text/JavaScript"></script><meta name="Generator" content="ComponentOne Doc-To-Help v.2011.1.0.614" /><meta name="D2HTheme" content="(Default) v.146" /></head><body style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #535353; MARGIN: 7px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; OVERFLOW: hidden; PADDING-TOP: 0px" onload="d2hOnLoadToolbar(event);" relpart="../"><img id="d2ht_expandAllImage" style="display:none; height:0; width:0;" src="..\TransformFiles\BuiltIn\Icons\expall.gif" alt="ExpandAll image" title="ExpandAll image" /><img id="d2ht_collapseAllImage" style="display:none; height:0; width:0;" src="..\TransformFiles\BuiltIn\Icons\collall.gif" alt="CollapseAll image" title="CollapseAll image" /><img id="d2ht_expandImage" style="display:none; height:0; width:0;" src="..\TransformFiles\BuiltIn\Icons\expand_all.gif" alt="Expand image" title="Expand image" /><img id="d2ht_collapseImage" style="display:none; height:0; width:0;" src="..\TransformFiles\BuiltIn\Icons\collapse_all.gif" alt="Collapse image" title="Collapse image" /><script language="javascript" type="text/javascript">
+//<![CDATA[
+
+
+
+d2hTopicPreOpen();
+
+
+
+d2hTrySyncTOC();
+
+
+
+
+
+
+
+var prev = true;
+
+
+
+
+
+var next = true;
+
+
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers(prev, next);
+
+d2hAdjustTopicBorders(document);    
+
+
+
+if (typeof d2hLoadWindows != "undefined")
+
+    d2hLoadWindows();
+
+if (typeof d2hLoadNavUrls != "undefined")
+
+    d2hLoadNavUrls();
+
+
+
+
+//]]></script><div style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: white; MARGIN: 0px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; HEIGHT: 100%; OVERFLOW: auto; PADDING-TOP: 0px" id="D2HTopicOuterBody" class="d2h_outer_topic"><div id="nsbanner" class="d2hNavigatorTopic"><div style="PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px" id="TitleRow" class="d2h_main_titlerow"><div style="DISPLAY: none"><a id="D2HPreviousAnchor" href="multidimensionalprojections.htm"></a><a id="D2HNextAnchor" href="hazardratioandrelativerisk.htm"></a></div></div><script language="javascript" type="text/javascript">
+//<![CDATA[
+
+if (typeof d2hProcessTopicNavForCSH != "undefined")
+
+    d2hProcessTopicNavForCSH();
+
+
+//]]></script></div><div style="PADDING-BOTTOM: 10px; PADDING-LEFT: 22px; PADDING-RIGHT: 10px; HEIGHT: 100%; PADDING-TOP: 5px" id="nstext" class="d2h_main_nstext" valign="bottom"><div id="d2h_breadcrumbs" class="d2h_breadcrumbs"><span class="d2h_breadcrumbsLabel"><b><span style="COLOR: #000080">User's 
+Guide</span></b>&#160;&#160;</span><a class="d2h_breadcrumbsNormal" href="chapter3datasetexplorer.htm">Chapter 3: Dataset Explorer</a></div><div class="d2ht_header"><table class="d2ht_headerTable"><tr><td><span onclick="d2ht_ExpandCollapseAll(document.getElementById('d2ht_toggleAllImage'))" style="cursor:default;" onkeypress="d2ht_ExpandCollapseAllCheckKey(document.getElementById('d2ht_toggleAllImage'), event)" tabindex="0"><img id="d2ht_toggleAllImage" class="d2ht_toggleAll" src="..\TransformFiles\BuiltIn\Icons\expall.gif" alt="CollapseAll image" title="CollapseAll image" /><label id="d2ht_collapseAllLabel" for="document.getElementById('d2ht_toggleAllImage')" style="display: none;">Collapse All</label><label id="d2ht_expandAllLabel" for="document.getElementById('d2ht_toggleAllImage')" style="display: none;">Expand All</label></span></td></tr></table></div><h2><a name="_Toc297057915" id="_Toc297057915">Generating a Survival Analysis</a></h2><p style="MARGIN-RIGHT: -18pt" class="MsoNormal">Dataset Explorer allows you to 
+generate a time-to-event analysis &#8211; that is, a relationship between one or more 
+predictive variables and the survival times of individuals in two groups of 
+cohorts. </p><p style="MARGIN-RIGHT: -18pt" class="MsoNormal">You may run multiple 
+visualizations in the background while continuing to use Dataset Explorer. For 
+more information on running visualizations in the background, see <span class="xRef"><a href="asynchronousoperations.htm"><span class="xRef">Asynchronous 
+Operations</span></a></span>.</p><p style="MARGIN: 0pt -18pt 8pt 0pt" class="MsoNormal"><span style="LETTER-SPACING: -0.15pt">To generate a survival analysis, you must 
+introduce the following datasets into each group:</span></p><p style="MARGIN-BOTTOM: 8pt; tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
+</span>The observed survival times of the individuals in each group.</p><p style="MARGIN-BOTTOM: 8pt; tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
+</span>At least one variable (such as different medications or different genetic 
+attributes) that distinguishes the two groups.</p><p style="MARGIN-BOTTOM: 8pt; tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
+</span>The specific event (death) being tracked for the individuals in the 
+study, and optionally, any censoring factors that occurred before the event took 
+place.&#160; </p><p class="MsoNormalIndent">A censoring factor might be the withdrawal of an 
+individual from the study, or the conclusion of the study before the event 
+occurred for a given individual.</p><p class="Note"><b><span style="COLOR: #1f497d">Note:</span></b><span style="COLOR: black">&#160; In Dataset Explorer survival analysis datasets, the 
+event is always death.&#160; Subjects who are censored are not included in the 
+death count.</span></p><p style="MARGIN-RIGHT: -12pt" class="MsoNormal">Dataset Explorer&#8217;s survival 
+analysis functionality is based on the Cox regression model.</p><p style="tab-stops: 0pt" class="ListNumStart">To generate a survival 
+analysis:</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">1.&#160; Run tranSMART, then click the <span class="Bold">Dataset Explorer</span> tab.</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">2.&#160; Select the study of interest.</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">3.&#160; Define the cohorts for the survival analysis, being 
+sure to include the required datasets indicated above.</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">4.&#160; Click <span class="Bold">Advanced &gt; Survival 
+Analysis</span>.</p><p class="C1SectionCollapsed"><span onclick="d2ht_ExpandCollapse(d2ht_toggleTitle0)" style="cursor:default;" onkeypress="d2ht_ExpandCollapseCheckKey(d2ht_toggleTitle0, event)" tabindex="0"><img id="d2ht_toggleTitle0" onload="d2ht_OnLoadImage(event)" class="d2ht_toggle" name="d2ht_toggleSwitch" src="..\TransformFiles\BuiltIn\Icons\collapse_all.gif" d2ht_state="c" />Example</span></p><div id="d2ht_toggleSection0" class="d2ht_section" style=""><p style="tab-stops: 0pt" class="ListNumStartBlank">&#160;</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber"><span style="LETTER-SPACING: -0.1pt">1.&#160; </span><span style="LETTER-SPACING: -0.3pt">In Dataset Explorer, open public study <span class="Bold">Wang_TransBIG_BreastCancer_GSE7390</span></span><span style="LETTER-SPACING: -0.1pt">.</span></p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">2.&#160; Open the node <span class="Bold">Clinical</span><span class="Bold">Data</span>.</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">3.&#160; <a name="_Ref273970583" id="_Ref273970583">Open the following nested 
+nodes in the following order:</a></p><p class="MsoListNumber2">a.&#160; Clinical Data</p><p class="MsoListNumber2">b.&#160; Overall Survival in Days</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">4.&#160; <a name="_Ref275244800" id="_Ref275244800">Drag the time-to-event 
+dataset <span class="Bold">Overall Survival in days (OS)</span> into Subset 
+1.</a></p><p class="MsoNormalIndent">Don&#8217;t drag the folder into the subset box &#8211; just the 
+dataset inside the folder.</p><p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">5.&#160; <a name="_Ref275521238" id="_Ref275521238">In the Set Value dialog, 
+select <span class="Bold">No Value</span>, then click <span class="Bold">OK</span>:</a></p><p class="MsoNormalIndent"><img border="0" src="../ImagesExt/image17_149.jpg" alt="" /></p><p class="MsoNormalIndent">Specifying a value limits the values in the 
+dataset.&#160; By not specifying a value, the entire time-to-event dataset is 
+used.</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">6.&#160; Repeat step <a href="generatingasurvivalanalysis.htm#_Ref275244800">4</a> and step <a href="generatingasurvivalanalysis.htm#_Ref275521238">5</a> for Subset 2.</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">7.&#160; In the same <span class="Bold">Clinical Data</span> 
+node, drag the <span class="Bold">Censored (OSCENS)</span> folder into empty boxes 
+in Subset 1 and Subset 2.</p><p class="MsoNormalIndent">The contents of the <span class="Bold">Censored 
+(OSCENS)</span> folder are <span class="Bold">No</span> and <span class="Bold">Yes</span>.&#160; This concept introduces the <span class="Bold">Event</span> and <span class="Bold">Censored</span> datasets into the 
+analysis.</p><p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">8.&#160; Open the following nested nodes in the following 
+order:</p><p class="MsoListNumber2">a.&#160; Subjects</p><p class="MsoListNumber2">b.&#160; Medical History</p><p class="MsoListNumber2">c.&#160; Estrogen Receptor Status</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">9.&#160; Drag <span class="Bold">Estrogen Receptor 
+Negative</span> into an empty box in Subset 1.</p><p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">10. Drag <span class="Bold">Estrogen Receptor Positive</span> 
+into an empty box in Subset 2.</p><p class="MsoNormalIndent">The subset boxes are now defined as follows:</p><p class="MsoNormalIndent"><img border="0" src="../ImagesExt/image17_150.jpg" alt="" /></p><p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">11. Click the <span class="Bold">Advanced</span> tab, then 
+click <span class="Bold">Survival Analysis</span>.</p><p style="PAGE-BREAK-AFTER: avoid" class="MsoNormalIndent">The analysis includes 
+the following Kaplan-Meier curves:</p><p class="NormalIndent2"><img border="0" src="../ImagesExt/image17_151.jpg" alt="" /></p><p class="NormalIndent2">In the figure, the x-axis represents survival time in 
+days, and the y-axis represents the percentage of subjects who were still alive 
+at a given point in time during the study.</p><p class="NormalIndent2">Note the hashmarks in the plot lines.&#160; These 
+represent censored data &#8211; for example, subjects who dropped out of the study 
+before the event (death) occurred.</p><hr size="1" noshade="" /><p class="RelatedHead"></p><p style="FONT-FAMILY: arial; COLOR: #000080">Related Topics</p><p></p><p class="MsoNormal"><a style="TEXT-DECORATION: none" href="hazardratioandrelativerisk.htm"><img border="0" alt="" align="absMiddle" src="../button.gif" />Hazard Ratio and Relative 
+Risk</a></p></div></div></div></body></html>

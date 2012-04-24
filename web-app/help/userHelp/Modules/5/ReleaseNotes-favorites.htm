@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+        <link rel="stylesheet" href="Theme/favorites.css" type="text/css">
+        <script language="JavaScript" src="linker.js"></script>
+        <script language="JavaScript" src="special.js"></script>
+        <script language="JavaScript" src="common.js"></script>
+        <script language="JavaScript" src="navmanager.js"></script>
+        <script language="JavaScript">
+    var rowCount = 0;
+    function d2hGetFavoritesRemove()
+    {
+        return "Delete";
+    }
+    
+    function d2hFavLoad(evt)
+    {
+        var mainLayout = d2hGetMainLayoutWnd(window);
+        if (!mainLayout)
+            return;
+        if (!mainLayout.g_Manager)
+            mainLayout.g_Manager = new Object();
+        if (!mainLayout.g_Manager.Favorites)
+        {
+            mainLayout.g_Manager.Favorites = new d2hFavorites(d2hGetProjectID());
+            mainLayout.g_Manager.Favorites.Window = window;
+            mainLayout.g_Manager.Favorites.Load(d2hFavoritesAdd);
+        }
+        else
+        {
+            mainLayout.g_Manager.Favorites.Window = window;
+            if (!mainLayout.g_Manager.Favorites.HasProjectID())
+            {
+                mainLayout.g_Manager.Favorites.SetProjectID(d2hGetProjectID());
+                mainLayout.g_Manager.Favorites.Load(d2hFavoritesAdd);
+            }
+            else
+                mainLayout.g_Manager.Favorites.Populate(d2hFavoritesAdd);
+        }
+        var selItem = mainLayout.g_Manager.Favorites.GetLastAddedItem();
+        if (selItem && selItem.RowId)
+            d2hSelectRow(selItem);
+    }
+    
+    function d2hFavoritesAdd(item)
+    {
+        rowCount ++;
+        var table = getElemById(document, "d2hFavoritesList");
+        var row = item.CreateRow(document, rowCount, "right");
+        if (table.tbody)
+            table.tbody.appendChild(row);
+        else
+            table.appendChild(row);
+    }
+    
+    function d2hSelectRow(item)
+    {
+        if (!item || !item.RowId)
+            return;
+        var a = getElemById(document, "atr_" + item.RowId);
+        document.location.hash = a.id;
+    }
+    
+    function d2hRemoveElem(elem)
+    {
+        if (typeof elem.removeNode != "undefined")
+             elem.removeNode(true);
+        else
+        {
+            var parent = d2hGetParentElement(elem);
+            parent.removeChild(elem);
+        }
+    }
+    function d2hFavoriteRemove(rowId)
+    {
+        var row = getElemById(document, rowId);
+        var a = getElemById(document, "a" + rowId);
+        var ref = d2hGetAttribute(a, "href");
+        d2hRemoveElem(row);
+        var mainLayout = d2hGetMainLayoutWnd(window);
+        if (mainLayout)
+            mainLayout.g_Manager.Favorites.Remove(ref);
+    }
+        </script>
+    </head>
+    <body id="D2HFavorites" class="D2HFavorites" onload="d2hMaybeCorrectDivWidth(null, 'D2HFavoritesInside');d2hRemoveRightBorder();d2hFavLoad(event)">
+    <input type="hidden" name="curSel" id="curSel">
+    <div class="D2HFavorites">
+    <div id="D2HFavoritesInside" class="D2HFavoritesInside">
+    <table border="0" cellpadding="0" cellspacing="0" style="WIDTH:100%">
+        
+        
+        
+        <tbody id="d2hFavoritesList"></tbody>
+        </table>
+    </div>
+    </div>
+    </body>
+</html>

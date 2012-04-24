@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Documentation of Rules for Selecting OmicSoft Data to Load</TITLE>
+<META content="text/html; charset=us-ascii" http-equiv=Content-Type><LINK 
+rel=stylesheet type=text/css href="../Theme/nav.css"><LINK rel=stylesheet 
+type=text/css href="../Theme/popupmenu.css"><LINK rel=stylesheet type=text/css 
+href="../Theme/lf.css"><LINK rel=stylesheet type=text/css 
+href="../LinksExt/doc2help.css"><LINK rel=stylesheet type=text/css 
+href="../LinksExt/tranSMART_RN.css">
+<SCRIPT type=text/javascript>
+
+
+
+var _needIndentation = false;
+
+
+
+</SCRIPT>
+
+<SCRIPT language=JavaScript src="../linker.js">
+
+</SCRIPT>
+
+<SCRIPT language=JavaScript src="../special.js">
+
+</SCRIPT>
+
+<SCRIPT language=JavaScript src="../common.js">
+
+</SCRIPT>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2010.3.0.555">
+<meta name="D2HTheme" content="(Default) v.139">
+</HEAD>
+<BODY 
+style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #535353; MARGIN: 7px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; OVERFLOW: hidden; PADDING-TOP: 0px" 
+onload=d2hOnLoadToolbar(event); relPart="../">
+<SCRIPT language=javascript>
+
+
+
+d2hTopicPreOpen();
+
+
+
+d2hTrySyncTOC();
+
+
+
+
+
+
+
+var prev = true;
+
+
+
+
+
+var next = true;
+
+
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers(prev, next);
+
+d2hAdjustTopicBorders(document);    
+
+
+
+if (typeof d2hLoadWindows != "undefined")
+
+    d2hLoadWindows();
+
+if (typeof d2hLoadNavUrls != "undefined")
+
+    d2hLoadNavUrls();
+
+
+
+</SCRIPT>
+
+<DIV 
+style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: white; MARGIN: 0px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; HEIGHT: 100%; OVERFLOW: auto; PADDING-TOP: 0px" 
+id=D2HTopicOuterBody class=d2h_outer_topic>
+<DIV id=nsbanner class=d2hNavigatorTopic>
+<DIV 
+style="PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px" 
+id=TitleRow class=d2h_main_titlerow>
+<DIV style="DISPLAY: none"><A id=D2HPreviousAnchor 
+href="exportofoncologyinhibitordatatopathwaystudio.htm"></A><A id=D2HNextAnchor 
+href="trialsandstudiesindatasetexplorer.htm"></A></DIV></DIV>
+<SCRIPT language=javascript>
+
+if (typeof d2hProcessTopicNavForCSH != "undefined")
+
+    d2hProcessTopicNavForCSH();
+
+</SCRIPT>
+</DIV>
+<DIV 
+style="PADDING-BOTTOM: 10px; PADDING-LEFT: 22px; PADDING-RIGHT: 10px; HEIGHT: 100%; PADDING-TOP: 5px" 
+id=nstext class=d2h_main_nstext valign="bottom">
+<DIV id=d2h_breadcrumbs class=d2h_breadcrumbs><SPAN 
+class=d2h_breadcrumbsLabel><B><SPAN style="COLOR: #000080">Release 
+Notes</SPAN></B>&nbsp;&nbsp;</SPAN><A class=d2h_breadcrumbsNormal 
+href="transmartreleasenotes.htm">tranSMART Release Notes</A><SPAN 
+class=d2h_breadcrumbsLinkSeparator> &gt; </SPAN><SPAN 
+class=d2h_breadcrumbsContentsOnly>New Features in This Release</SPAN></DIV>
+<H4><A name=_Toc274897664>Documentation of Rules for Selecting OmicSoft Data to 
+Load</A></H4>
+<P style="PAGE-BREAK-AFTER: avoid; MARGIN-RIGHT: -36pt" class=MsoNormal>The 
+following rules determine whether OmicSoft data is loaded into tranSMART 
+databases.&nbsp; These rules are now defined in Appendix B of the <SPAN 
+class=Italic>tranSMART User&#8217;s Guide</SPAN>:</P>
+<P style="PAGE-BREAK-AFTER: avoid" class=MsoNormal><SPAN class=Bold>Rules for 
+loading data into table BIO_ASSAY_ANALYSIS_DATA</SPAN></P>
+<P style="PAGE-BREAK-AFTER: avoid" class=MsoNormal>Load the data if one of the 
+following two criteria is satisfied:</P>
+<P 
+style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" 
+class=MsoListBullet><SPAN 
+style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&nbsp;&nbsp;&nbsp; 
+</SPAN>fold_change_ratio is &gt;= 1.0 OR &lt;=-1.0 </P>
+<P style="PAGE-BREAK-AFTER: avoid" class=MsoNormalIndent>AND</P>
+<P class=MsoNormalIndent>preferred_pvalue is null OR &lt;= 0.1</P>
+<P style="tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" 
+class=MsoListBullet><SPAN 
+style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&nbsp;&nbsp;&nbsp; 
+</SPAN>fold_change_ratio is null</P>
+<P class=MsoNormalIndent>AND</P>
+<P style="PAGE-BREAK-AFTER: avoid" class=MsoNormalIndent>At least one of the 
+following values is not null:</P>
+<P style="MARGIN-BOTTOM: 4.8pt; tab-stops: 36.0pt 54.0pt 108.0pt" 
+class=MsoListBullet2><SPAN 
+style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&nbsp;&nbsp;&nbsp; 
+</SPAN>r_value</P>
+<P style="MARGIN-BOTTOM: 4.8pt" class=NormalIndent2>Pearson product-moment 
+correlation coefficient.</P>
+<P style="MARGIN-BOTTOM: 4.8pt; tab-stops: 36.0pt 54.0pt 108.0pt" 
+class=MsoListBullet2><SPAN 
+style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&nbsp;&nbsp;&nbsp; 
+</SPAN>rho_value</P>
+<P style="MARGIN-BOTTOM: 4.8pt" class=NormalIndent2>Spearman rank correlation 
+coefficient</P>
+<P style="MARGIN-BOTTOM: 4.8pt; tab-stops: 36.0pt 54.0pt 108.0pt" 
+class=MsoListBullet2><SPAN 
+style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&nbsp;&nbsp;&nbsp; 
+</SPAN>cut_value</P>
+<P style="tab-stops: 36.0pt 54.0pt 108.0pt" class=MsoListBullet2><SPAN 
+style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&nbsp;&nbsp;&nbsp; 
+</SPAN>results_value</P>
+<P class=MsoNormal><SPAN class=Bold>Rules for loading data into table 
+BIO_ASSAY_ANALYSIS_DATA_TEA</SPAN></P>
+<P class=MsoNormal>Load the data if:</P>
+<P class=CodeLine>TEA_NORMALIZED_PVALUE &lt;= 0.05</P></DIV></DIV></BODY></HTML>

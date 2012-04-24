@@ -1,0 +1,83 @@
+﻿/* Formats the Collapse All/Expand All images. */
+img.d2ht_toggleAll
+{
+	margin-left: 0;
+	vertical-align: middle;
+}
+
+/* Formats the expand/collapse images for all collapsible regions. */
+img.d2ht_toggle
+{
+	border: 0;
+	margin-right: 5;
+}
+
+/* Applies to the entire non-scrolling header region. */
+div.d2ht_header
+{
+	padding-top:	0;
+	padding-bottom:	0;
+	padding-left:	0;
+	padding-right:	0;
+	width:	100%;
+}
+
+/* Applies to the table in the non-scrolling header region. Text in this table 
+includes Collapse All/Expand All. */
+div.d2ht_header table.d2ht_headerTable
+{
+	border-style: solid;
+	border-width: 0;
+	text-align: left;
+	padding-left: 0;
+	width:	100%;
+	border-collapse: collapse;		
+}
+
+/* Applies to cells in table in the non-scrolling header region. */
+div.d2ht_header table.d2ht_headerTable td
+{
+    font-family: Verdana;
+    font-style: normal;
+    font-size: 6.75pt;
+    font-weight: normal;
+    text-decoration: none;
+    color: Black;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-left: 0;
+	padding-top: 2;
+	padding-bottom: 2;	
+	padding-right: 20;
+	border-style: solid;
+	border-width: 0;	
+}
+
+/********************************************************************************************************************
+	Collapsible Section Structure
+
+	<p>
+		<span onclick="d2ht_ExpandCollapse(toggleTitlexxx)">	// Defines the onclick procedure for the expand/collapse section
+			<img id="d2ht_toggleTitlexxx">					// Expand/collapse image
+			</img>
+		</span>
+	</p>
+
+	<div id="d2ht_toggleSectionxxx" class="d2ht_section">			// The body of the collapsible section; hidden by default
+	</div>
+
+
+	The d2ht_ExpandCollapse() function is responsible for toggling the expand/collapse image, and for
+	displaying/hiding the body of the collapsible section.
+********************************************************************************************************************/
+
+/* Applies to the body of a collapsible section */
+div.d2ht_section
+{
+	margin-left:0;
+	padding-top:	2;
+	padding-bottom:	2;
+	padding-left:	16;
+	padding-right:	15;
+	width:	100%;
+}

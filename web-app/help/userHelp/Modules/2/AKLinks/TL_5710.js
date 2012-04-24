@@ -1,0 +1,1 @@
+d2hStoreMenuItems("TL_5710", [["../../Modules/5/Documents/trialsandstudiesindatasetexplorer.htm", "right", "Trials and Studies in Dataset Explorer"]]);

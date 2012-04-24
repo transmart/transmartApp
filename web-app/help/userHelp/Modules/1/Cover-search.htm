@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+        <title>Search</title>
+	    <script language="javascript" src="common.js"></script>
+	    <script language="javascript" src="platform.js"></script>
+		<script language="javascript">
+	    function OnFrameLoad()
+	    {
+		    var frm = getElemById(document, "searchlist");
+		    if (frm)
+
+			frm.src = "Cover-searchlist.htm";
+
+		}
+		</script>
+	</head>
+    <frameset onload="OnFrameLoad()" id="searchlayout" rows="47, 100%" framespacing='0' frameborder='0'>
+        <frame id="textprovider" name="textprovider" title="Search lookup pane" src="Cover-searchlookup.htm" noresize='yes' scrolling='no'>
+        <frame id="searchlist" name="searchlist" title="Search result list" src="_d2hblank.htm">
+        <noframes>
+            <h2>Your browser does not support frames</h2><a href="Cover-toc.htm">Click here</a> to continue.
+        </noframes>
+    </frameset>
+</html>

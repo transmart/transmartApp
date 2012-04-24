@@ -167,5 +167,5 @@ function d2hGetEMailSubjectTemplate()
 
 function d2hGetProjectID()
 {
-    return "{77AF395F-5579-4D30-AED7-D3FB934AAC6E}";
+    return "{AD822349-E171-4BD3-A63C-0BCDE53D7D47}";
 }

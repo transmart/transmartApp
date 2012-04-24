@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<html><head><title>Step 1. Adding the Genes to a Text File</title>
+<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" /><link rel="stylesheet" type="text/css" href="../Theme/nav.css" /><link rel="stylesheet" type="text/css" href="../Theme/popupmenu.css" /><link rel="stylesheet" type="text/css" href="../Theme/lf.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/doc2help.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/tranSMART_UserGuide.css" />
+<script type="text/javascript">
+//<![CDATA[
+
+
+
+var _needIndentation = false;
+
+
+
+
+//]]></script>
+
+<script language="JavaScript" src="../linker.js" type="text/JavaScript"></script>
+
+<script language="JavaScript" src="../special.js" type="text/JavaScript"></script>
+
+<script language="JavaScript" src="../common.js" type="text/JavaScript"></script>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2011.1.0.614" />
+<meta name="D2HTheme" content="(Default) v.146" />
+</head>
+<body style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #535353; MARGIN: 7px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; OVERFLOW: hidden; PADDING-TOP: 0px" onload="d2hOnLoadToolbar(event);" relpart="../">
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+
+
+d2hTopicPreOpen();
+
+
+
+d2hTrySyncTOC();
+
+
+
+
+
+
+
+var prev = true;
+
+
+
+
+
+var next = true;
+
+
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers(prev, next);
+
+d2hAdjustTopicBorders(document);    
+
+
+
+if (typeof d2hLoadWindows != "undefined")
+
+    d2hLoadWindows();
+
+if (typeof d2hLoadNavUrls != "undefined")
+
+    d2hLoadNavUrls();
+
+
+
+
+//]]></script>
+
+<div style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: white; MARGIN: 0px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; HEIGHT: 100%; OVERFLOW: auto; PADDING-TOP: 0px" id="D2HTopicOuterBody" class="d2h_outer_topic">
+<div id="nsbanner" class="d2hNavigatorTopic">
+<div style="PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px" id="TitleRow" class="d2h_main_titlerow">
+<div style="DISPLAY: none"><a id="D2HPreviousAnchor" href="creatingagenesignature.htm"></a><a id="D2HNextAnchor" href="usingtransmarttoselectgenes.htm"></a></div></div>
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+if (typeof d2hProcessTopicNavForCSH != "undefined")
+
+    d2hProcessTopicNavForCSH();
+
+
+//]]></script>
+</div>
+<div style="PADDING-BOTTOM: 10px; PADDING-LEFT: 22px; PADDING-RIGHT: 10px; HEIGHT: 100%; PADDING-TOP: 5px" id="nstext" class="d2h_main_nstext" valign="bottom">
+<div id="d2h_breadcrumbs" class="d2h_breadcrumbs"><span class="d2h_breadcrumbsLabel"><b><span style="COLOR: #000080">User's 
+Guide</span></b>&#160;&#160;</span><a class="d2h_breadcrumbsNormal" href="chapter5genesignaturesandgenelists.htm">Chapter 5: Gene Signatures and 
+Gene Lists</a><span class="d2h_breadcrumbsLinkSeparator"> &gt; </span><a class="d2h_breadcrumbsNormal" href="creatingagenesignature.htm">Creating a Gene 
+Signature</a></div>
+<h3><a name="_Toc297057942" id="_Toc297057942"></a><a name="_Ref240168517" id="_Ref240168517">Step 1. Adding the Genes to 
+a Text File</a></h3>
+<p class="MsoNormal">The gene signature wizard expects to import the genes for the 
+gene signature from a tab-separated text file.&#160; The file must contain one, 
+and possibly two, columns of information:</p>
+<p style="tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
+</span>First column &#8211; A list of gene symbols or probe set IDs.</p>
+<p style="tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
+</span>Optional second column &#8211; The fold change ratios associated with the gene 
+symbols or probe set IDs.</p>
+<p class="MsoNormalIndent">The fold change ratios can be either <span class="Bold">actual values</span> (for example, 12.8 or -12.8) or one of the 
+following <span class="Bold">composite values:</span><span class="Bold"><span style="FONT-WEIGHT: normal"></span></span></p>
+<p class="MsoListBullet2"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&#160;&#160;&#160; 
+</span><span class="Bold">-1</span>.&#160; All down-regulated gene 
+expressions.</p>
+<p class="MsoListBullet2"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&#160;&#160;&#160; 
+</span><span class="Bold">1</span>.&#160; All up-regulated gene expressions.</p>
+<p class="MsoListBullet2"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&#160;&#160;&#160; 
+</span><span class="Bold">0</span>.&#160; No change.</p>
+<p style="PAGE-BREAK-AFTER: avoid" class="MsoNormal">The following table shows the 
+different ways you can specify the genes for your gene signature:</p>
+<table style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BORDER-COLLAPSE: collapse; BORDER-TOP: medium none; BORDER-RIGHT: medium none" class="tranSMARTTable" border="1" cellspacing="0" cellpadding="0">
+  <thead>
+  <tr>
+    <td style="BORDER-BOTTOM: windowtext 2.25pt double; BORDER-LEFT: windowtext 1.5pt solid; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 113.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: windowtext 1.5pt solid; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" width="151">
+      <p class="TableHeading0">Contents of File<span style="COLOR: windowtext; FONT-SIZE: 10pt"></span></p></td>
+    <td style="BORDER-BOTTOM: windowtext 2.25pt double; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 162pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: windowtext 1.5pt solid; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" width="216">
+      <p class="TableHeading0">Format<span style="COLOR: windowtext; FONT-SIZE: 10pt"></span></p></td>
+    <td style="BORDER-BOTTOM: windowtext 2.25pt double; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 167.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: windowtext 1.5pt solid; BORDER-RIGHT: windowtext 1.5pt solid; PADDING-TOP: 3pt" width="223">
+      <p class="TableHeading0">Examples<span style="COLOR: windowtext; FONT-SIZE: 10pt"></span></p></td></tr></thead>
+  <tbody>
+  <tr style="PAGE-BREAK-INSIDE: avoid">
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: windowtext 1.5pt solid; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 113.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="151">
+      <p style="PAGE-BREAK-AFTER: avoid" class="TableText0">Gene symbols only<span style="FONT-SIZE: 10pt"></span></p></td>
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 162pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="216">
+      <p style="PAGE-BREAK-AFTER: avoid" class="TableText0"><span class="Italic">GeneSymbol</span></p></td>
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 167.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: windowtext 1.5pt solid; PADDING-TOP: 3pt" valign="top" width="223">
+      <p style="MARGIN: 6pt 0pt 0pt; tab-stops: 45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt" class="MsoNormal"><span style="FONT-FAMILY: 'Courier New'; FONT-SIZE: 9pt">TCN1</span></p>
+      <p style="MARGIN: 6pt 0pt 0pt; tab-stops: 45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt" class="MsoNormal"><span style="FONT-FAMILY: 'Courier New'; FONT-SIZE: 9pt">IL1RN</span></p>
+      <p style="MARGIN: 6pt 0pt 0pt; tab-stops: 45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt" class="MsoNormal"><span style="FONT-FAMILY: 'Courier New'; FONT-SIZE: 9pt">KIAA1199</span></p>
+      <p style="MARGIN: 6pt 0pt 0pt; tab-stops: 45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt" class="MsoNormal"><span style="FONT-FAMILY: 'Courier New'; FONT-SIZE: 9pt">G0S2</span></p></td></tr>
+  <tr style="PAGE-BREAK-INSIDE: avoid">
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: windowtext 1.5pt solid; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 113.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="151">
+      <p style="PAGE-BREAK-AFTER: avoid" class="TableText0">Gene symbols, 
+      <br />actual fold change<span style="FONT-SIZE: 10pt"></span></p></td>
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 162pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="216">
+      <p style="PAGE-BREAK-AFTER: avoid" class="TableText0"><span class="Italic">GeneSymbol</span>&lt;tab&gt;<span class="Italic">ActualFC</span><span style="FONT-SIZE: 10pt"></span></p></td>
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 167.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: windowtext 1.5pt solid; PADDING-TOP: 3pt" valign="top" width="223"><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">CXCL5&#160; -19.19385797</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">IL8RB&#160; -18.21493625</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">FPR1&#160;&#160; -17.6056338</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">FCGR3A -15.69858713</span></pre></td></tr>
+  <tr style="PAGE-BREAK-INSIDE: avoid">
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: windowtext 1.5pt solid; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 113.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="151">
+      <p class="TableText0">Gene symbols, composite fold change<span style="FONT-SIZE: 10pt"></span></p></td>
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 162pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="216">
+      <p class="TableText0"><span class="Italic">GeneSymbol</span>&lt;tab&gt;<span class="Italic">CompositeFC</span><span style="FONT-SIZE: 10pt"></span></p></td>
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 167.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: windowtext 1.5pt solid; PADDING-TOP: 3pt" valign="top" width="223"><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">CXCL5&#160; -1</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">IL8RB&#160; -1</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">MMP3&#160;&#160; 0</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">SOD2&#160;&#160; 1</span></pre></td></tr>
+  <tr style="PAGE-BREAK-INSIDE: avoid">
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: windowtext 1.5pt solid; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 113.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="151">
+      <p class="TableText0">Probe set IDs only</p></td>
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 162pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="216">
+      <p class="TableText0"><span class="Italic">ProbesetID</span></p></td>
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 167.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: windowtext 1.5pt solid; PADDING-TOP: 3pt" valign="top" width="223"><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">224301_x_at</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">1398191_at</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">Dr.2473.1.A1_at</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">A_24_P93251</span></pre></td></tr>
+  <tr style="PAGE-BREAK-INSIDE: avoid">
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: windowtext 1.5pt solid; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 113.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="151">
+      <p class="TableText0">Probe set IDs, <br />actual fold change</p></td>
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 162pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="216">
+      <p class="TableText0"><span class="Italic">ProbesetID</span>&lt;tab&gt;<span class="Italic">ActualFC</span></p></td>
+    <td style="BORDER-BOTTOM: black 1pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 167.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: windowtext 1.5pt solid; PADDING-TOP: 3pt" valign="top" width="223"><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">224301_x_at&#160;&#160; -19.19385797</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">1398191_at -18.21493625</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">Dr.2473.1.A1_at&#160; -17.6056338</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">A_24_P93251&#160;&#160; -15.69858713</span></pre></td></tr>
+  <tr style="PAGE-BREAK-INSIDE: avoid">
+    <td style="BORDER-BOTTOM: windowtext 1.5pt solid; BORDER-LEFT: windowtext 1.5pt solid; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 113.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="151">
+      <p class="TableText0">Probe set IDs, composite fold change</p></td>
+    <td style="BORDER-BOTTOM: windowtext 1.5pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 162pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: black 1pt solid; PADDING-TOP: 3pt" valign="top" width="216">
+      <p class="TableText0"><span class="Italic">ProbesetID</span>&lt;tab&gt;<span class="Italic">CompositeFC</span></p></td>
+    <td style="BORDER-BOTTOM: windowtext 1.5pt solid; BORDER-LEFT: medium none; PADDING-BOTTOM: 3pt; PADDING-LEFT: 5.4pt; WIDTH: 167.4pt; PADDING-RIGHT: 5.4pt; BORDER-TOP: medium none; BORDER-RIGHT: windowtext 1.5pt solid; PADDING-TOP: 3pt" valign="top" width="223"><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">224301_x_at&#160;&#160; -1</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">1398191_at 0</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">Dr.2473.1.A1_at&#160; 1</span></pre><pre style="MARGIN-TOP: 6pt"><span style="FONT-SIZE: 9pt">A_24_P93251&#160;&#160; -1</span></pre></td></tr></tbody></table>
+<p class="Spacer">&#160;</p>
+<hr size="1" noshade="" />
+
+<p class="RelatedHead">
+</p><p style="FONT-FAMILY: arial; COLOR: #000080">Related Topics</p>
+<p></p>
+<p class="MsoNormal"><a style="TEXT-DECORATION: none" href="usingtransmarttoselectgenes.htm"><img border="0" alt="" align="absMiddle" src="../button.gif" />Using tranSMART to Select 
+Genes</a></p></div></div></body></html>

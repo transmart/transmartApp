@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+        <link rel="stylesheet" href="Theme/search.css" type="text/css">
+        <script language="JavaScript" src="special.js"></script>
+        <script language="JavaScript" src="common.js"></script>
+        <script language="javascript" src="c1search.js"></script>
+        <script language="JavaScript" src="platform.js"></script>
+        <script language="javascript">
+        <!--
+        function onsubmitsearch(evt)
+        {
+            var elmSearch = getElemById(document, "query");
+            if (elmSearch != null)
+            {
+                var strVal = addSpacesBetweenWords(elmSearch);
+                if (strVal.length > 0)
+                {
+                    if ("jsp" != d2hGetServerType())
+                        strVal = encodeURIComponent(strVal);
+                    var frm = getFrameByName("searchlist");
+                    if (frm != null)
+                    {
+                        var doc = getFrameDocument(frm);
+                        if (doc != null)
+                        {
+                            var loc = elmSearch.getAttribute("targetUrl");
+                            if (typeof loc == "undefined" || loc == null || loc == "")
+                            {
+                                loc = doc.location.toString();
+                                var indx = loc.indexOf('?', 0);
+                                if (indx != -1)
+                                    loc = loc.substring(0, indx);
+                                elmSearch.setAttribute("targetUrl", loc);
+                            }
+                            doc.location = loc + "?query=" + strVal;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        function CheckLoadingScript()
+        {
+            var mainWindow = d2hGetMainWindow();
+            var txt = getElemById(document, "query");
+            var btn = getElemById(document, "searchSubmit");
+            if (mainWindow.g_sAliases == null)
+            {
+                txt.readOnly=true;
+                btn.disabled = true;
+                txt.value = "Loading search engine.";
+                setTimeout("CheckLoadingScript()",500);
+            }
+            else if(txt.readOnly)
+            {
+                txt.readOnly=false;
+                btn.disabled = false;
+                txt.value = "";
+            }
+        }
+        //-->
+        </script>
+    </head>
+    <body class="lookup" language="javascript" onload="d2hRemoveRightBorder();d2hSearchLookup_onload();return CheckLoadingScript();">
+      <div class="lookup">
+          <form class="clsSearchFor" onsubmit="return onsubmitsearch(event);">
+              <table class="clsSearchFor">
+                  <tr>
+                      <td colspan="3" class="clsSearchFor" nowrap>Search for</td>
+                  </tr>
+                  <tr>
+				      <td width="100%" style="PADDING-RIGHT: 8px; PADDING-LEFT: 16px"><input type="hidden" value="" name="clickStatus" id="clickStatus"/><INPUT class="clsSearchFor" style="width: 100%;" type="text" size="20" name="query" id="query"></td>
+					  <td width="10px"><INPUT align="bottom" class="clsSearchFor" TYPE="submit" VALUE="Go" id="searchSubmit" NAME="searchSubmit"></td>
+					  <td width="8px">&nbsp;</td>
+                  </tr>
+                  <tr >
+                      <td><input id="useHighlight" type="checkbox"  checked  onclick="d2hSetLastHighlightState(this.checked);if(this.checked) d2hProcessHighlightRightFrame(); else d2hRemoveHighlightRightFrame();"/>Highlight search hits</td>
+                  </tr>
+              </table>
+          </form>
+      </div>
+    </body>
+</html>

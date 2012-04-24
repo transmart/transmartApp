@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<root>
+    <version>1</version>
+    <refs>
+        <ref type="1" name="topics.xnh" />
+        <ref type="2" name="toc.xnh" />
+        <ref type="3" name="index.xnh" />
+        <ref type="4" name="search.xnh" />
+        <ref type="5" name="terms.xnh" />
+        <ref type="6" name="aklinks.xnh" />
+    </refs>
+    <windows>
+        <window name="d2hWnd_proc" left="680" top="10" height="500" width="315" />
+    </windows>
+</root>

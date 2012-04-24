@@ -1,0 +1,1 @@
+d2hStoreMenuItems("TL_801", [["../../Modules/4/Documents/configurationtips.htm", "right", "Configuration Tips"]]);
