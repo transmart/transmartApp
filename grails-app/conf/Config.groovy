@@ -144,8 +144,8 @@ com.recomdata.transmart.data.export.sftp.remote.dir.path="."*/
 
 com.recomdata.transmart.data.export.max.export.jobs.loaded=20
 // tempFolderDirectory should be referenced by all plugins if we plan to use a common temp-dir
-com.recomdata.plugins.tempFolderDirectory='C:/Users/smunikuntla/AppData/Local/Temp/jobs'
-com.recomdata.transmart.data.export.rScriptDirectory='C:/SVN/repo1/transmart/trunk/tranSMARTApp/web-app/dataExportRScripts/'
+com.recomdata.plugins.tempFolderDirectory='/tmp'
+com.recomdata.transmart.data.export.rScriptDirectory='dataExportRScripts'
 
 com.recomdata.transmart.data.export.dataTypesMap=[
 	'CLINICAL':'Clinical & Low Dimensional Biomarker Data', 
