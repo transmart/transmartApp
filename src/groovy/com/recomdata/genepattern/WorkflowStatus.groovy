@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 package com.recomdata.genepattern
 
 import com.recomdata.genepattern.JobStatus;;

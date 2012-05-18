@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package bio;
 
 import bio.BioAssayFeatureGroup;

@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class DocumentQueryControllerTests extends GroovyTestCase {
 
     void testSomething() {

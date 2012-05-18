@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 /**
  * $Id: ExperimentAnalysisController.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
  * @author $Author: mmcduffie $
@@ -95,16 +94,19 @@ class ExperimentAnalysisController {
 		def paramMap = searchService.createPagingParamMap(params,max,0)
 
 		def sResult = new SearchResult()
-		sResult.experimentCount = experimentAnalysisQueryService.countExperiment(session.searchFilter);
-		def expAnalysisCount = experimentAnalysisQueryService.countAnalysis(session.searchFilter);
-
+	//	sResult.experimentCount = experimentAnalysisQueryService.countExperiment(session.searchFilter);
+		sResult.experimentCount = experimentAnalysisQueryService.countExperimentMV(session.searchFilter);
+		
+		def expAnalysisCount = experimentAnalysisQueryService.countAnalysisMV(session.searchFilter);
+		//def expAnalysisCount = 9;
+		
 		stimer.logElapsed("Loading Exp Analysis Counts", true);
 
-		sResult.result=experimentAnalysisQueryService.queryExperiment(false,session.searchFilter, paramMap)
+		sResult.result=experimentAnalysisQueryService.queryExperiment(session.searchFilter, paramMap)
 		sResult.result.analysisCount = expAnalysisCount;
 		sResult.result.expCount = sResult.experimentCount;
 		//	sResult.experimentCount = experimentAnalysisTEAService.countAnalysis(session.searchFilter);
-		//	sResult.result = experimentAnalysisTEAService.queryExperiment(false,session.searchFilter, paramMap)
+		//	sResult.result = experimentAnalysisTEAService.queryExperiment(session.searchFilter, paramMap)
 		render(template:'experimentResult',model:[searchresult:sResult, page:false])
 	}
 
@@ -120,10 +122,12 @@ class ExperimentAnalysisController {
 		def paramMap = searchService.createPagingParamMap(params,max,0)
 
 		def sResult = new SearchResult()
-		//sResult.result=experimentAnalysisQueryService.queryExperiment(false,session.searchFilter, paramMap)
+		//sResult.result=experimentAnalysisQueryService.queryExperiment(session.searchFilter, paramMap)
 		//sResult.experimentCount = experimentAnalysisTEAService.countAnalysis(session.searchFilter);
 
-		sResult.experimentCount = experimentAnalysisQueryService.countExperiment(session.searchFilter);
+		sResult.experimentCount = experimentAnalysisQueryService.countExperimentMV(session.searchFilter);
+		//sResult.experimentCount = experimentAnalysisQueryService.countExperiment(session.searchFilter);
+		
 		sResult.result = experimentAnalysisTEAService.queryExpAnalysis(session.searchFilter, paramMap)
 				stimer.logElapsed("Loading Exp TEA Counts", true);
 		sResult.result.expCount = sResult.experimentCount;
@@ -226,7 +230,7 @@ class ExperimentAnalysisController {
 		def analysisRS = null
 		def eaMap = [:]
 
-		sResult.result=experimentAnalysisQueryService.queryExperiment(false,session.searchFilter,null)
+		sResult.result=experimentAnalysisQueryService.queryExperiment(session.searchFilter,null)
 		sResult.result.expAnalysisResults.each()	{
 			analysisRS=experimentAnalysisQueryService.queryAnalysis(it.experiment.id, session.searchFilter)
 			eaMap.put(it.experiment, analysisRS.analysisResultList)

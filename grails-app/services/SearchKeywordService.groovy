@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import search.SearchKeyword
 import search.SearchKeywordTerm
 import search.GeneSignature

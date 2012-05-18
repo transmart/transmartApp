@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.util;
 
 import javax.sql.DataSource;

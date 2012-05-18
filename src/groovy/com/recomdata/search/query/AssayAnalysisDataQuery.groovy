@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 package  com.recomdata.search.query
 
 import GlobalFilter

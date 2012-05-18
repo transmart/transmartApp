@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package bio
 class PatientEventAttribute {
 		String bioPatientAttrCode

@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import com.recomdata.export.GenePatternFiles
 
 import grails.converters.JSON

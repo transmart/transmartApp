@@ -1,6 +1,93 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <root>
     <keywords />
-    <groups />
-    <links />
+    <groups>
+        <group name="etlguide">
+            <topics>
+                <topic url="Documents/chapter1introduction.htm" window="right" module="10"><![CDATA[Chapter 1:  Introduction]]></topic>
+            </topics>
+        </group>
+        <group name="useradmin">
+            <topics>
+                <topic url="Documents/chapter1useradministrationoverview.htm" window="right" module="2"><![CDATA[Chapter 1:  User Administration Overview]]></topic>
+            </topics>
+        </group>
+        <group name="configtipsjavasecwarn">
+            <topics>
+                <topic url="Documents/javasecuritywarnings.htm" window="right" module="5"><![CDATA[Java Security Warnings]]></topic>
+            </topics>
+        </group>
+        <group name="iesecwarn">
+            <topics>
+                <topic url="Documents/internetexplorersecuritywarning.htm" window="right" module="5"><![CDATA[Internet Explorer Security Warning]]></topic>
+            </topics>
+        </group>
+        <group name="modules">
+            <topics>
+                <topic url="Documents/trialsandstudiesindatasetexplorer.htm" window="right" module="6"><![CDATA[Trials and Studies in Dataset Explorer]]></topic>
+            </topics>
+        </group>
+        <group name="rntofaqpopupblocker">
+            <topics>
+                <topic url="Documents/canidisplayheatmapsifihavepopupblockerenabledonmybrowser1.htm" window="right" module="4"><![CDATA[Can I display heat maps if I have pop-up blocker enabled on my browser?]]></topic>
+            </topics>
+        </group>
+        <group name="popupblocker">
+            <topics>
+                <topic url="Documents/usingpopupblockerwithtransmart.htm" window="right" module="5"><![CDATA[Using Pop-Up Blocker with tranSMART]]></topic>
+            </topics>
+        </group>
+        <group name="rntoconfig">
+            <topics>
+                <topic url="Documents/configurationtips.htm" window="right" module="5"><![CDATA[Configuration Tips]]></topic>
+            </topics>
+        </group>
+        <group name="tabledefs">
+            <topics>
+                <topic url="Documents/tablesinthedatawarehouse.htm" window="right" module="10"><![CDATA[Tables in the Data Warehouse]]></topic>
+            </topics>
+        </group>
+    </groups>
+    <links>
+        <link id="1833" window="" module="2">
+            <items>
+                <item role="group" name="etlguide" />
+            </items>
+        </link>
+        <link id="5702" window="" module="3">
+            <items>
+                <item role="group" name="iesecwarn" />
+            </items>
+        </link>
+        <link id="5705" window="" module="3">
+            <items>
+                <item role="group" name="configtipsjavasecwarn" />
+            </items>
+        </link>
+        <link id="5710" window="" module="3">
+            <items>
+                <item role="group" name="modules" />
+            </items>
+        </link>
+        <link id="69" window="" module="4">
+            <items>
+                <item role="group" name="configtipsjavasecwarn" />
+            </items>
+        </link>
+        <link id="936" window="" module="6">
+            <items>
+                <item role="group" name="popupblocker" />
+            </items>
+        </link>
+        <link id="937" window="" module="6">
+            <items>
+                <item role="group" name="rntoconfig" />
+            </items>
+        </link>
+        <link id="212" window="" module="9">
+            <items>
+                <item role="group" name="tabledefs" />
+            </items>
+        </link>
+    </links>
 </root>

@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.asynchronous
 
 import org.codehaus.groovy.grails.commons.ApplicationHolder;

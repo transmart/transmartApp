@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
 import org.springframework.security.core.session.SessionRegistryImpl

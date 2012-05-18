@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class @webtest.name.caps@Test extends grails.util.WebTest {
 
     // Unlike unit tests, functional tests are often sequence dependent.

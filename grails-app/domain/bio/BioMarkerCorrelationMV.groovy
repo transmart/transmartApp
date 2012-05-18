@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package bio
 class BioMarkerCorrelationMV {
 		Long  bioMarkerId

@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class ReqconsultController {
 	
 	def defaultAction="newrequest"

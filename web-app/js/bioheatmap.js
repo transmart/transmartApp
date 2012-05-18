@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 /*
 **    Copyright (C) 2003-2008 Institute for Systems Biology
 **                            Seattle, Washington, USA.

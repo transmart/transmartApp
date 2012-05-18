@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
  
 import i2b2.SnpDataset;
 import i2b2.SnpProbeSortedDef;

@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.plugins;
 
 import java.util.HashMap;

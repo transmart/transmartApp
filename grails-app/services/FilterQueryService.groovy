@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import bio.BioAssayAnalysis
 import bio.Disease
 import bio.Compound

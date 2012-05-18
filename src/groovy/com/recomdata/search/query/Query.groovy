@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.search.query
 
 import GlobalFilter;
@@ -62,6 +61,7 @@ public class Query {
 		return createGlobalFilterCriteria(gfilter, true)
 	}
 
+
 	/**
 	 * create criteria based on globalfilter objects
 	 */
@@ -86,11 +86,32 @@ public class Query {
 		buildGlobalFilterStudyCriteria(gfilter)
 	}
 
+	def createGlobalFilterCriteriaMV(GlobalFilter gfilter){
+
+		// biomarkers
+		buildGlobalFilterBioMarkerCriteriaMV(gfilter)
+
+		// disease
+		buildGlobalFilterDiseaseCriteria(gfilter)
+		// compound
+		buildGlobalFilterCompoundCriteria(gfilter)
+		// trials
+		// by default not all query handles trials
+		buildGlobalFilterExperimentCriteria(gfilter)
+		// free text -
+		buildGlobalFilterFreeTextCriteria(gfilter)
+
+		// gene signature
+
+		// studies
+		buildGlobalFilterStudyCriteria(gfilter)
+	}
+
 	/**
 	 * default criteria builder for biomarkers
 	 */
 	def buildGlobalFilterBioMarkerCriteria(GlobalFilter gfilter,
-			boolean expandBioMarkers){
+	boolean expandBioMarkers){
 		def biomarkerFilters = gfilter.getBioMarkerFilters()
 
 		if(!biomarkerFilters.isEmpty()){
@@ -99,13 +120,24 @@ public class Query {
 			addTable("JOIN "+markerTable)
 			if(expandBioMarkers){
 				addCondition(createExpandBioMarkerCondition(markerAlias,gfilter ));
-			//	addCondition(markerAlias+".id IN ("+createExpandBioMarkerSubQuery(biomarkerFilters.getKeywordDataIdString())+") ")
+				//	addCondition(markerAlias+".id IN ("+createExpandBioMarkerSubQuery(biomarkerFilters.getKeywordDataIdString())+") ")
 
 			}else{
 				addCondition(markerAlias+".id IN ("+biomarkerFilters.getKeywordDataIdString()+") ")
 			}
 		}
 	}
+
+
+	def buildGlobalFilterBioMarkerCriteriaMV(GlobalFilter gfilter){
+
+		def biomarkerFilters = gfilter.getBioMarkerFilters()
+
+		if(!biomarkerFilters.isEmpty()){
+			addCondition(createExpandBioMarkerConditionMV(mainTableAlias, gfilter));
+		}
+	}
+
 
 	/**
 	 * create biomarker table alias
@@ -117,8 +149,8 @@ public class Query {
 	 * default criteria builder for disease
 	 */
 	def buildGlobalFilterDiseaseCriteria(GlobalFilter gfilter){
-	    if(!gfilter.getDiseaseFilters().isEmpty()){
-	    	def dAlias = mainTableAlias+"_dis"
+		if(!gfilter.getDiseaseFilters().isEmpty()){
+			def dAlias = mainTableAlias+"_dis"
 			def dtable =mainTableAlias+".diseases "+dAlias;
 			addTable("JOIN "+dtable)
 			addCondition(dAlias+".id IN ("+gfilter.getDiseaseFilters().getKeywordDataIdString()+") ")
@@ -126,37 +158,35 @@ public class Query {
 	}
 
 	def buildGlobalFilterFreeTextCriteria(GlobalFilter gfilter){
-		 if(gfilter.isTextOnly()){
-		addCondition(" 1 = 0")
-		 }
+		if(gfilter.isTextOnly()){
+			addCondition(" 1 = 0")
+		}
 	}
 
 
-		/**
-		 * default criteria builder for compound
-		 */
+	/**
+	 * default criteria builder for compound
+	 */
 
-	  def buildGlobalFilterCompoundCriteria(GlobalFilter gfilter){
-			if(!gfilter.getCompoundFilters().isEmpty()){
-				def dAlias = mainTableAlias+"_cpd"
-				def dtable =mainTableAlias+".compounds "+dAlias;
-				addTable("JOIN "+dtable)
-				addCondition(dAlias+".id IN ("+gfilter.getCompoundFilters().getKeywordDataIdString()+") ")
-			}
-	  }
+	def buildGlobalFilterCompoundCriteria(GlobalFilter gfilter){
+		if(!gfilter.getCompoundFilters().isEmpty()){
+			def dAlias = mainTableAlias+"_cpd"
+			def dtable =mainTableAlias+".compounds "+dAlias;
+			addTable("JOIN "+dtable)
+			addCondition(dAlias+".id IN ("+gfilter.getCompoundFilters().getKeywordDataIdString()+") ")
+		}
+	}
 
 	/**
 	 * default criteria builder for experiment
 	 */
-	 def buildGlobalFilterExperimentCriteria(GlobalFilter gfilter){
+	def buildGlobalFilterExperimentCriteria(GlobalFilter gfilter){
+	}
 
-	 }
-
-	 /**
-		* default criteria builder for study
-		 */
-	 def buildGlobalFilterStudyCriteria(GlobalFilter gfilter){
-
+	/**
+	 * default criteria builder for study
+	 */
+	def buildGlobalFilterStudyCriteria(GlobalFilter gfilter){
 	}
 
 	/**
@@ -172,12 +202,12 @@ public class Query {
 		// create from clause but don't put a separator if JOIN presents
 		s.append(createClause(fromClause, ", ", "JOIN"))
 		if(!whereClause.isEmpty()){
-		s.append(" WHERE ")
-		s.append(createClause(whereClause, " AND ", null))
+			s.append(" WHERE ")
+			s.append(createClause(whereClause, " AND ", null))
 		}
 		if(!groupbyClause.isEmpty()){
-		s.append(" GROUP BY ")
-		s.append(createClause(groupbyClause, ", ", null))
+			s.append(" GROUP BY ")
+			s.append(createClause(groupbyClause, ", ", null))
 		}
 		if(!orderbyClause.isEmpty()){
 			s.append(" ORDER BY ")
@@ -195,13 +225,13 @@ public class Query {
 		StringBuilder s = new StringBuilder()
 		for(sc in clause){
 			if(sc.length()>0){
-			if((ignoreSepString==null) || (ignoreSepString!=null && !sc.trim().startsWith(ignoreSepString))){
-				if(s.length()>0){
-				s.append(separator)
+				if((ignoreSepString==null) || (ignoreSepString!=null && !sc.trim().startsWith(ignoreSepString))){
+					if(s.length()>0){
+						s.append(separator)
+					}
 				}
-			}
 
-			s.append(" ").append(sc);
+				s.append(" ").append(sc);
 			}
 		}
 		return s.toString()
@@ -209,48 +239,72 @@ public class Query {
 
 	def createExpandBioMarkerSubQuery(ids){
 
-		 StringBuilder s = new StringBuilder();
-		 s.append("SELECT DISTINCT bdc.associatedBioDataId FROM bio.BioDataCorrelation bdc ");
-		 s.append(" WHERE bdc.bioDataId in (").append(ids).append(")");
+		StringBuilder s = new StringBuilder();
+		s.append("SELECT DISTINCT bdc.associatedBioDataId FROM bio.BioDataCorrelation bdc ");
+		s.append(" WHERE bdc.bioDataId in (").append(ids).append(")");
 		// s.append("SELECT DISTINCT marker.id FROM bio.BioMarker marker ")
 		// s.append(" LEFT JOIN marker.associatedCorrels marker_cor")
 		// s.append(" WHERE marker_cor.bioDataId IN (").append(ids).append(")")
-		 //s.append (" AND marker_cor.correlationDescr.correlation='PATHWAY GENE'")
-		 return s.toString()
-		}
+		//s.append (" AND marker_cor.correlationDescr.correlation='PATHWAY GENE'")
+		return s.toString()
+	}
 
 	/**
 	 * link biomarkers to those defined in the materialized views which exposes domain objects to search
 	 */
 	def createExpandBioMarkerCondition(String markerAlias, GlobalFilter gfilter){
 
-		 /*
+		/*
 		 // query to use if only using 1 MV from searchapp
 		 s.append(markerAlias).append(".id IN (")
 		 s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM search.SearchBioMarkerCorrelFastMV sbmcmv ");
 		 s.append(" WHERE sbmcmv.domainObjectId in (").append(ids).append(")");
 		 */
 
-		 // aggregate ids from both static and refresh MVs
-		 StringBuilder s = new StringBuilder();
-		 s.append("(");
-		 if(!gfilter.getGeneSigListFilters().isEmpty()){
-		 s.append(markerAlias).append(".id IN (")
-		 s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM search.SearchBioMarkerCorrelFastMV sbmcmv ");
-		 s.append(" WHERE sbmcmv.domainObjectId in (").append(gfilter.getGeneSigListFilters().getKeywordDataIdString()).append("))");
-		 }
-		 if(!gfilter.getGenePathwayFilters().isEmpty()){
-		 if(s.length()>1){
-			 s.append(" OR ");
-		 }
-		 s.append(markerAlias).append(".id IN (")
-		 s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM bio.BioMarkerCorrelationMV bmcmv ");
-		 s.append(" WHERE bmcmv.bioMarkerId in (").append(gfilter.getGenePathwayFilters().getKeywordDataIdString()).append(")) ");
-		 }
-		 s.append(")");
-		 return s.toString()
+		// aggregate ids from both static and refresh MVs
+		StringBuilder s = new StringBuilder();
+		s.append("(");
+		if(!gfilter.getGeneSigListFilters().isEmpty()){
+			s.append(markerAlias).append(".id IN (")
+			s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM search.SearchBioMarkerCorrelFastMV sbmcmv ");
+			s.append(" WHERE sbmcmv.domainObjectId in (").append(gfilter.getGeneSigListFilters().getKeywordDataIdString()).append("))");
+		}
+		if(!gfilter.getGenePathwayFilters().isEmpty()){
+			if(s.length()>1){
+				s.append(" OR ");
+			}
+			s.append(markerAlias).append(".id IN (")
+			s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM bio.BioMarkerCorrelationMV bmcmv ");
+			s.append(" WHERE bmcmv.bioMarkerId in (").append(gfilter.getGenePathwayFilters().getKeywordDataIdString()).append(")) ");
+		}
+		s.append(")");
+		return s.toString()
 	}
 
+	
+	def createExpandBioMarkerConditionMV(String markerAlias, GlobalFilter gfilter){
+
+		// aggregate ids from both static and refresh MVs
+		StringBuilder s = new StringBuilder();
+		s.append("(");
+		if(!gfilter.getGeneSigListFilters().isEmpty()){
+			s.append(markerAlias).append(".id IN (")
+			s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM search.SearchBioMarkerCorrelFastMV sbmcmv ");
+			s.append(" WHERE sbmcmv.domainObjectId in (").append(gfilter.getGeneSigListFilters().getKeywordDataIdString()).append("))");
+		}
+		if(!gfilter.getGenePathwayFilters().isEmpty()){
+			if(s.length()>1){
+				s.append(" OR ");
+			}
+			s.append(markerAlias).append(".id IN (")
+			s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM bio.BioMarkerCorrelationMV bmcmv ");
+			s.append(" WHERE bmcmv.bioMarkerId in (").append(gfilter.getGenePathwayFilters().getKeywordDataIdString()).append(")) ");
+		}
+		s.append(")");
+		return s.toString()
+	}
+
+	
 	String toString(){
 		return generateSQL();
 	}

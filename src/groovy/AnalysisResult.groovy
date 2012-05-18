@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import AssayAnalysisValue
 import bio.BioAssayAnalysis
 import bio.BioAssayAnalysisData

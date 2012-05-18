@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 /**
  * model details class for the create/edit wizard in the gene signautre module
  */

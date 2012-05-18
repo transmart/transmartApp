@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.transmart.plugin
 
 import grails.test.*

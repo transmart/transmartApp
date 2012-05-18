@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import search.SearchKeyword
 import search.GeneSignature
 import bio.Experiment

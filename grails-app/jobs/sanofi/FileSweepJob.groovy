@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package sanofi
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder as ConfigHolder;

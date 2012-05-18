@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import com.recomdata.i2b2.I2b2DAO
 
 class I2b2Controller {

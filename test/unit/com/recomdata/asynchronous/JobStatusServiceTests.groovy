@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.asynchronous
 
 import grails.test.*

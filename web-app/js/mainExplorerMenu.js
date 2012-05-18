@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 function createMainExplorerWindow() 
 {
 	centerMainPanel = new Ext.Panel({

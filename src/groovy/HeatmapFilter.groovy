@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 import search.SearchKeyword
 /**
  * @author $Author: mmcduffie $

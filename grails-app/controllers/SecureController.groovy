@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
  /**
   * $Id: SecureController.groovy 10133 2011-10-20 21:34:43Z mmcduffie $
   * @author $Author: mmcduffie $

@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package bio
 class BioAssayData {
 		Long numericValue

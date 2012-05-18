@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
  /**
  * $Id: LoginController.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
  * @author $Author: mmcduffie $
@@ -35,7 +34,6 @@ import org.springframework.security.authentication.LockedException
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.core.userdetails.UserDetails
 
 /**
  * Login Controller
@@ -51,8 +49,6 @@ class LoginController {
      * Dependency injection for the springSecurityService.
 	 */
     def springSecurityService
-	def userDetailsService
-	
 
     /**
 	 * Default action; redirects to 'defaultTargetUrl' if logged in, /login/auth otherwise.
@@ -66,59 +62,29 @@ class LoginController {
 		}
 	}
 	
-	def forceAuth = {
-		session.invalidate();
-		render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
-}
-	
 	/**
 	 * Show the login page.
 	 */
 	def auth = {
 		nocache response
-
+		
 		if (springSecurityService.isLoggedIn()) {
-			log.info("auth:"+springSecurityService.getAuthentication())
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
-			String ivUrl = grailsApplication.config.com.recomdata.searchtool.identityVaultURL
+			String ivUrl = grailsApplication.config.com.recomdata.searchtool.identityVaultURL			
 			boolean ivLogin = ivUrl.length() > 5
-			log.info("Identity Vault login set? : " + ivLogin)
-
-			def guestAutoLogin = grailsApplication.config.com.recomdata.guestAutoLogin;
-			boolean guestLoginEnabled = ('true'==guestAutoLogin)
-			log.info("enabled guest login")
-			//log.info("requet:"+request.getQueryString())
+			log.info("Identity Vault login set? : " + ivLogin)			
 			boolean forcedFormLogin = request.getQueryString() != null
-			log.info("User is forcing the form login? : " + forcedFormLogin)
-			if (!ivLogin){
-				// if enabled guest and not forced login
-				if(guestLoginEnabled && !forcedFormLogin){
-					log.info("proceeding with auto guest login")
-					def guestuser = grailsApplication.config.com.recomdata.guestUserName;
-
-					UserDetails ud = userDetailsService.loadUserByUsername(guestuser)
-					if(ud!=null){
-						log.debug("We have found user: ${ud.username}")
-						springSecurityService.reauthenticate(ud.username)
-						redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
-						//redirect uri:session.SPRING_SECURITY_SAVED_REQUEST_KEY.requestURL
-					}else{
-						log.info("can not find the user:"+guestuser);
-					}
-				}
-				// all others go into the form login
+			log.info("User is forcing the form login? : " + forcedFormLogin)		
+			if (!ivLogin || forcedFormLogin) {
 				log.info("Proceeding with form login")
 				render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
-			}
-			else {
+			} else {
 				log.info("Proceeding with Identity Vault login")
 				redirect(url: ivUrl)
 			}
 		}
 	}
-
-
 		
 	/**
 	 * Show denied page.

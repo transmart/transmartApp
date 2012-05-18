@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.genepattern
 
 class JobStatus {

@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.export;
 
 public class SurvivalData {

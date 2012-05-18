@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class TrialControllerTests extends GroovyTestCase {
 
     void testSomething() {

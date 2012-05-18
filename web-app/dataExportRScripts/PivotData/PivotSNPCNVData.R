@@ -1,4 +1,4 @@
-##########################################################################
+###########################################################################
  # tranSMART - translational medicine data mart
  # 
  # Copyright 2008-2012 Janssen Research & Development, LLC.
@@ -15,8 +15,7 @@
  # You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  # 
  #
- #########################################################################
-
+ ##########################################################################
 
 ##########################################################################
 #PivotSNPCNVData
@@ -26,52 +25,73 @@
 PivotSNPCNVData.pivot <- 
 function
 (
-subjectsStr, delimiter, filesPath
+subjectsStr, delimiter, filesPath, platformName
 )
 {
-  subjectList <- strsplit(subjectsStr, delimiter);
+  subjectList <- as.vector(unlist(strsplit(subjectsStr, delimiter)),mode="list");
   setwd(filesPath);
   
   #Initialize a vector of unique probes
   probes <- character(0)
+  finalDataExists <- FALSE
+  firstTime <- TRUE
   
   for (subject in subjectList) {
+    print("Subject :: ")
+    print(subject)
+    #When only 1 subject in list, the str
+    subject <- gsub("^\\s+|\\s+$", "",subject)
     #Read the input file.
-	  dataFile <- data.frame(read.delim(paste(subject,".CNV")))
+    try(dataFile <- data.frame(read.delim(paste(subject,".CNV", sep=""))), silent=TRUE)
+    #if (class(dataFile) == "try-error") {
+    #  print("file does not exist!!!")
+    #    print(paste(subject,".CNV", sep=""))
+    #    print(" does not exist.")
+    #} else {
+      print("file exists!!!")
+      #Split the data by the PATIENT_ID+'_'+SAMPLE.
+      splitData <- split(dataFile,paste(dataFile$PATIENT.ID,dataFile$SAMPLE, sep = '_'))
+      
+      #Create a vector of unique probes with PROBE.ID from all the files read
+      probes <- unique(c(probes, dataFile$PROBE.ID))
     
-    #Split the data by the PATIENT_ID+'_'+SAMPLE.
-    splitData <- split(dataFile,paste(dataFile$PATIENT.ID,dataFile$SAMPLE, sep = '_'))
+      #Create a matrix with unique PROBE.ID.
+      tempData <- matrix(unique(dataFile$PROBE.ID))
+      
+      #Name the column.
+      colnames(tempData) <- c("PROBE.ID")
+      
+      #Get the unique list of samples.
+      sampleList <- unique(paste(dataFile$PATIENT.ID,dataFile$SAMPLE, sep = '_'))
+      
+      #For each of the passed in (patient+sample)s, append the rows onto the end of our temp matrix.
+      for(entry in sampleList)
+    	{
+    		#For each (patient+sample) we merge the data against the PROBE.ID.
+    		tempData <- merge(tempData,splitData[[entry]][c('PROBE.ID','COPY.NUMBER')],by="PROBE.ID",all.x=TRUE)	
+    	}
+      
+      colnames(tempData) <- c("PROBE ID", paste(sampleList))
+      
+      if (firstTime) {
+        finalData <- tempData
+      } else {
+        finalData <- merge(finalData, tempData, by="PROBE ID", all.x=TRUE)
+      }
+      
+      finalDataExists <- TRUE
+      firstTime <- FALSE
     
-    #Create a vector of unique probes with PROBE.ID from all the files read
-    probes <- unique(c(probes, dataFile$PROBE.ID))
-  
-    #Create a matrix with unique PROBE.ID.
-    tempData <- matrix(unique(dataFile$PROBE.ID))
-    #Name the column.
-    colnames(tempData) <- c("PROBE.ID")
-    
-    #Get the unique list of samples.
-    sampleList <- unique(paste(dataFile$PATIENT.ID,dataFile$SAMPLE, sep = '_'))
-    
-    #For each of the passed in (patient+sample)s, append the rows onto the end of our temp matrix.
-    for(entry in sampleList)
-  	{
-  		#For each (patient+sample) we merge the data against the PROBE.ID.
-  		tempData <- merge(tempData,splitData[[entry]][c('PROBE.ID','COPY_NUMBER')],by="PROBE.ID",all.x=TRUE)	
-  	}
-    
-    colnames(tempData) <- c("PROBE_ID", paste(sampleList))
-    
-    # may need to replace merge with something else based on the real data
-    finalData <- merge(finalData, tempData, by="PROBE.ID", all.x=TRUE)
-    
-    #Remove the subject.CNV file
-    file.remove(paste(subject,".CNV"))
+      #Remove the subject.CNV file
+      file.remove(paste(subject,".CNV", sep=""))
+    #}
   }
   
   #We need MASS to dump the matrix to a file.
   require(MASS)
   
   #Write the final data file, rename temp to something more meaningful.
-  write.matrix(finalData,"temp.CNV",sep = "\t")
+  if (finalDataExists) {
+    write.matrix(finalData,paste(platformName, ".CNV", sep=""),sep = "\t")
+  }
 }

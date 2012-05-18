@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 function getSelectedAsCommaSeparatedList(ob)
  {
  var selected = new Array();

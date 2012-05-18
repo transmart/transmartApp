@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import i2b2.SampleInfo;
 
 class SampleInfoService {

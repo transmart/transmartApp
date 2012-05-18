@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.security
 
 import grails.test.*

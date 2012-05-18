@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.transmart.data.export
 
 import org.json.JSONObject;

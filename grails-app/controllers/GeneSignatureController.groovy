@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import javax.servlet.ServletOutputStream
 
 import search.GeneSignature

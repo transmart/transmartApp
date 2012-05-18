@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class ExperimentAnalysisQueryServiceTests extends GroovyTestCase {
 
 	def experimentAnalysisQueryService

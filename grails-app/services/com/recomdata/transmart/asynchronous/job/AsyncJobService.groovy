@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.transmart.asynchronous.job
 
 import org.apache.commons.lang.StringUtils;

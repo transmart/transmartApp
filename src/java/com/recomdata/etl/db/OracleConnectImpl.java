@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.etl.db;
 
 public class OracleConnectImpl implements DBConnect {

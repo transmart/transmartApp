@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 /**
 X * $Id: ClinicalTrial.groovy 10184 2011-10-24 21:43:59Z jliu $
  * @author $Author: jliu $
@@ -25,6 +24,8 @@ X * $Id: ClinicalTrial.groovy 10184 2011-10-24 21:43:59Z jliu $
  */
 
 package bio
+
+import java.util.List;
 
 class ClinicalTrial extends Experiment {
 	String trialNumber
@@ -39,7 +40,6 @@ class ClinicalTrial extends Experiment {
 	String dosingRegimen
 	String groupAssignment
 	String typeOfControl
-	Date completionDate
 	String primaryEndPoints
 	String secondaryEndPoints
 	String inclusionCriteria
@@ -69,7 +69,6 @@ class ClinicalTrial extends Experiment {
 			dosingRegimen column:'DOSING_REGIMEN'
 			groupAssignment column:'GROUP_ASSIGNMENT'
 			typeOfControl column:'TYPE_OF_CONTROL'
-			completionDate column:'COMPLETION_DATE'
 			primaryEndPoints column:'PRIMARY_END_POINTS'
 			secondaryEndPoints column:'SECONDARY_END_POINTS'
 			inclusionCriteria type:'text', column:'INCLUSION_CRITERIA'
@@ -91,4 +90,6 @@ class ClinicalTrial extends Experiment {
 		groupAssignment, primaryEndPoints, secondaryEndPoints, routeOfAdministration, secondaryIds, subjects, maxAge, minAge,
 		numberOfPatients, numberOfSites, super.getCompoundNames(), super.getDiseaseNames()]
 	}
+	
+	
 }

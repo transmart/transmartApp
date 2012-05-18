@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 class SecureObjectAccess {
 	static transients = ['objectAccessName','principalAccessName']
 	Long id

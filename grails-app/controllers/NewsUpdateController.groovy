@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class NewsUpdateController {
 
 	def listDetailed = 

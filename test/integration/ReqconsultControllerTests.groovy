@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class ReqconsultControllerTests extends GroovyTestCase {
 
     void testSomething() {

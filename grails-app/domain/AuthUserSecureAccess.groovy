@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 class AuthUserSecureAccess {
 
 	static transients = ['objectAccessName','principalAccessName']

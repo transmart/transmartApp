@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.i2b2
 
 import com.recomdata.dataexport.util.ExportUtil;

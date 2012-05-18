@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 var BrowserDetect = {
 		// Code to detect whether IE 6 or IE 7 are being used (and thus,
 		// whether we need to display static heatmap images). Code is

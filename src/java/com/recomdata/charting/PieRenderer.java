@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.charting;
 import java.awt.Color;
 import java.io.File;

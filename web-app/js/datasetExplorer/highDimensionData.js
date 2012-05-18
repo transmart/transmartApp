@@ -16,8 +16,8 @@
  * 
  *
  ******************************************************************/
-
-/***********Start of functions to set global subset ids**************
+***********Start of functions to set global subset ids**************
+/**
  * 1. If the global subset ids are null call runAllQueries to populate them.
  * 2. Calls heatmapvalidate to get all relevant data for the high dimensional selection.
  * @param divId
@@ -43,6 +43,43 @@ function gatherHighDimensionalData(divId){
 						{
 							result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
 							result_instance_id2 : GLOBAL.CurrentSubsetIDs[2],
+							analysis            : GLOBAL.HeatmapType
+						}
+				),
+				success : function(result, request)
+				{
+					determineHighDimVariableType(result);
+					readCohortData(result,divId);
+				},
+				failure : function(result, request)
+				{
+					determineHighDimVariableType(result);
+					readCohortData(result,divId);
+				}
+			}
+	);
+}
+
+function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
+	if((!variableDivEmpty(divId) && currentSubsetId== null)){
+		runQueryForSubsetidSingleSubset(function(sId){gatherHighDimensionalDataSingleSubset(divId, sId);}, divId);
+		return;
+	}
+	if(variableDivEmpty(divId)){
+		Ext.Msg.alert("No cohort selected!", "Please select a cohort first.");
+		return;
+	}
+	//genePatternReplacement();
+	//Send a request to generate the heatmapdata that we use to populate the dropdowns in the popup.
+	Ext.Ajax.request(
+			{
+				url : pageInfo.basePath+"/analysis/heatmapvalidate",
+				method : 'POST',
+				timeout: '1800000',
+				params :  Ext.urlEncode(
+						{
+							result_instance_id1 : currentSubsetId,
+							result_instance_id2 : '',
 							analysis            : GLOBAL.HeatmapType
 						}
 				),
@@ -89,6 +126,10 @@ function readCohortData(result, divId)
 	GLOBAL.DefaultCohortInfo=mobj;
 	
 	GLOBAL.CurrentAnalysisDivId=divId;
+	
+	//Reset the pathway information.
+	GLOBAL.CurrentPathway = '';
+	GLOBAL.CurrentPathwayName = '';	
 	
 	if(GLOBAL.DefaultCohortInfo.defaultPlatforms[0]=='' || GLOBAL.DefaultCohortInfo.defaultPlatforms[0]==null){
 		Ext.Msg.alert("No High Dimensional Data!","Please select a high dimensional data node.");
@@ -187,6 +228,42 @@ function runQueryForSubsetId(subset, callback, divId)
 	}
 }
 
+function runQueryForSubsetidSingleSubset(callback, divId){
+	var query = getCRCRequestSingleSubset(divId);
+	Ext.Ajax.request(
+			{
+				url : pageInfo.basePath+"/proxy?url=" + GLOBAL.CRCUrl + "request",
+				method : 'POST',
+				xmlData : query,
+				// callback : callback,
+				success : function(result, request)
+				{
+				runQueryCompleteForSubsetId(result, callback);
+				}
+			,
+			failure : function(result, request)
+			{
+				runQueryCompleteForSubsetId(result, callback);
+			}
+			,
+			timeout : '600000'
+			}
+	);
+
+	if(GLOBAL.Debug)
+	{
+		resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
+	}
+}
+
+function runQueryCompleteForSubsetId(result, callback)
+{
+	var numOfPatientsFound = result.responseXML.selectSingleNode("//set_size").firstChild.nodeValue;
+	var patientsetid = result.responseXML.selectSingleNode("//result_instance_id").firstChild.nodeValue;
+	var currentSubsetId = patientsetid;
+	callback(currentSubsetId);
+
+}
 
 function getCRCRequest(subset, queryname, divId){
 	if(queryname=="" || queryname==undefined){
@@ -226,6 +303,35 @@ function getCRCRequest(subset, queryname, divId){
 	return query;
 }
 
+function getCRCRequestSingleSubset(divId, queryname){
+	if(queryname=="" || queryname==undefined){
+		var d=new Date();
+		queryname=GLOBAL.Username+"'s Query at "+ d.toString();
+		}
+	var query=getCRCRequestHeader()+ '<user group="'+GLOBAL.ProjectID+'" login="'+GLOBAL.Username+'">'+GLOBAL.Username+'</user>\
+	            <patient_set_limit>0</patient_set_limit>\
+	            <estimated_time>0</estimated_time>\
+	            <request_type>CRC_QRY_runQueryInstance_fromQueryDefinition</request_type>\
+	        </ns4:psmheader>\
+	        <ns4:request xsi:type="ns4:query_definition_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\
+					<query_definition>\
+	                <query_name>'+queryname+'</query_name>\
+	                <specificity_scale>0</specificity_scale>';
+	
+	for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
+	{
+	var qcd=Ext.get(divId);
+		if(qcd.dom.childNodes.length>0)
+		{
+		query=query+getCRCRequestPanel(qcd.dom, i);
+		}
+	}
+	
+	query=query+getSecurityPanel()+"</query_definition>"+getCRCRequestFooter();
+	//query=query+"</query_definition>"+getCRCRequestFooter();
+	return query;
+}
+
 //**************End of functions to set global subset ids**************
 
 function applyToForm(){
@@ -249,7 +355,7 @@ function applyToForm(){
 	window[divId+'samplesValues']		= GLOBAL.CurrentSamples;
 	window[divId+'tissuesValues']		= GLOBAL.CurrentTissues;
 	window[divId+'timepointsValues']	= GLOBAL.CurrentTimepoints;
-	window[divId+'gplValues']			= GLOBAL.CurrentGpls;	
+	window[divId+'gplValues']			= GLOBAL.CurrentGpls.toArray();	
 	
 	displayHighDimSelectionSummary(subsetCount, divId, probesAgg, snpType);
 
@@ -287,9 +393,13 @@ function displayHighDimSelectionSummary(subsetCount, divId, probesAgg, snpType){
 	
 	if(GLOBAL.HighDimDataType=="Gene Expression")
 	{
-		innerHtml += '<br><b> Aggregate Probes:</b> '+ probesAgg.checked;
+		if(isProbesAggregationSupported()){
+			innerHtml += '<br><b> Aggregate Probes:</b> '+ probesAgg.checked;
+		}
 	}else if(GLOBAL.HighDimDataType=="SNP"){
-		innerHtml += '<br><b> Aggregate Probes:</b> '+ probesAgg.checked;
+		if(isProbesAggregationSupported()){
+			innerHtml += '<br><b> Aggregate Probes:</b> '+ probesAgg.checked;
+		}
 		innerHtml += '<br><b> SNP Type:</b> '+ snpType.value;
 	}
 	
@@ -347,7 +457,9 @@ function clearHighDimDataSelections(divId){
 
 function clearSummaryDisplay(divId){
 	var domObj = document.getElementById("display"+divId);
-	domObj.innerHTML="";
+	if(domObj){
+		domObj.innerHTML="";
+	}
 }
 
 function multipleSubsets(){
@@ -382,17 +494,12 @@ function toggleDataAssociationFields(extEle){
 	
 	// toggle display of Probes aggregation checkbox
 	if (document.getElementById("divProbesAggregation") != null) {
-		if(GLOBAL.Analysis=='Advanced'){
-			document.getElementById("divProbesAggregation").style.display="none";
-		}else if(GLOBAL.Analysis=="dataAssociation"){
-			if(GLOBAL.HighDimDataType=='Gene Expression'){
-				document.getElementById("divProbesAggregation").style.display="";
-			}else if (GLOBAL.HighDimDataType=='SNP'){
-				document.getElementById("divProbesAggregation").style.display="";
-				//document.getElementById("divProbesAggregation").style.display="none";
-			}else if (GLOBAL.HighDimDataType==''){
-				document.getElementById("divProbesAggregation").style.display="none";
-			}
+		
+		document.getElementById("divProbesAggregation").style.display="none";
+
+		if(isProbesAggregationSupported()){
+			document.getElementById("divProbesAggregation").style.display="";
+			document.getElementById("divProbesAggregation").checked=false
 		}
 	}
 	
@@ -419,4 +526,201 @@ function toggleDataAssociationFields(extEle){
 		document.getElementById("compareStepPathwaySelectionOKButton").style.display="";
 		document.getElementById("dataAssociationApplyButton").style.display="none";
 	}
+}
+
+function isProbesAggregationSupported(){
+	var probesAggregationSupported = false;
+	//The checkbox is displayd only for the dataAssociation tab.
+	if(GLOBAL.Analysis=="dataAssociation"){
+		var highDimDataTypeSupported=false;
+		if(["Gene Expression", "SNP"].indexOf(GLOBAL.HighDimDataType)>-1){
+			highDimDataTypeSupported=true;
+		}
+		
+		var analysisSupported=true;
+		var currentAnalysis=(Ext.get("analysis")).dom.value;
+		if(["markerSelection", "pca"].indexOf(currentAnalysis)>-1){
+			analysisSupported=false;
+		}
+			
+		if(highDimDataTypeSupported && analysisSupported){
+			probesAggregationSupported=true; 
+		}
+	}
+	return probesAggregationSupported;
+}
+
+
+function loadHighDimensionalParameters(formParams)
+{
+	//These will tell tranSMART what data types we need to retrieve.
+	var mrnaData = false
+	var snpData = false
+
+	//Gene expression filters.
+	var fullGEXSampleType 	= "";
+	var fullGEXTissueType 	= "";
+	var fullGEXTime 		= "";
+	var fullGEXGeneList 	= "";
+	var fullGEXGPL 			= "";
+	
+	//SNP Filters.
+	var fullSNPSampleType 	= "";
+	var fullSNPTissueType 	= "";
+	var fullSNPTime 		= "";	
+	var fullSNPGeneList 	= "";
+	var fullSNPGPL 			= "";
+	
+	//Pull the individual filters from the window object.
+	var independentGeneList = window['divIndependentVariablepathway'];
+	var dependentGeneList 	= window['divDependentVariablepathway'];
+	
+	var dependentPlatform 	= window['divDependentVariableplatforms1'];
+	var independentPlatform = window['divIndependentVariableplatforms1'];
+	
+	var dependentType 		= window['divDependentVariablemarkerType'];
+	var independentType		= window['divIndependentVariablemarkerType'];
+	
+	var dependentTime		= window['divDependentVariabletimepointsValues'];
+	var independentTime		= window['divIndependentVariabletimepointsValues'];
+	
+	var dependentSample		= window['divDependentVariablesamplesValues'];
+	var independentSample	= window['divIndependentVariablesamplesValues'];
+	
+	var dependentTissue		= window['divDependentVariabletissuesValues'];
+	var independentTissue	= window['divIndependentVariabletissuesValues'];
+	
+	var dependentGPL		= window['divDependentVariablegplValues'];
+	var independentGPL		= window['divIndependentVariablegplValues'];
+	
+	if(dependentGPL) dependentGPL = dependentGPL[0];
+	if(independentGPL) independentGPL = independentGPL[0];		
+	
+	//If we are using High Dimensional data we need to create variables that represent genes from both independent and dependent selections (In the event they are both of a single high dimensional type).
+	//Check to see if the user selected GEX in the independent input.
+	if(independentType == "Gene Expression")
+	{
+		//Put the independent filters in the GEX variables.
+		fullGEXGeneList 	= String(independentGeneList);
+		fullGEXSampleType 	= String(independentSample);
+		fullGEXTissueType 	= String(independentTissue);
+		fullGEXTime			= String(independentTime);
+		fullGEXGPL 			= String(independentGPL);
+		
+		//This flag will tell us to write the GEX text file.
+		mrnaData = true;
+		
+		//Fix the platform to be something the R script expects.
+		independentType = "MRNA";		
+	}
+
+	if(dependentType == "Gene Expression")
+	{
+		//If the gene list already has items, add a comma.
+		if(fullGEXGeneList != "") 	fullGEXGeneList 	+= ","
+		if(fullGEXSampleType != "") fullGEXSampleType 	+= ","
+		if(fullGEXTissueType != "") fullGEXTissueType 	+= ","
+		if(fullGEXTime != "") 		fullGEXTime 		+= ","
+		if(fullGEXGPL != "") 		fullGEXGPL 			+= ","
+				
+		//Add the genes in the list to the full list of GEX genes.
+		fullGEXGeneList 	+= String(dependentGeneList);
+		fullGEXSampleType 	+= String(dependentSample);
+		fullGEXTissueType 	+= String(dependentTissue);
+		fullGEXTime			+= String(dependentTime);
+		fullGEXGPL 			+= String(dependentGPL);
+		
+		//This flag will tell us to write the GEX text file.		
+		mrnaData = true;
+		
+		//Fix the platform to be something the R script expects.
+		dependentType = "MRNA";	
+	}
+	
+	//Check to see if the user selected SNP in the independent input.
+	if(independentType == "SNP")
+	{
+		//The genes entered into the search box were SNP genes.
+		fullSNPGeneList 	= String(independentGeneList);
+		fullSNPSampleType 	= String(independentSample);
+		fullSNPTissueType 	= String(independentTissue);
+		fullSNPTime 		= String(independentTime);
+		fullSNPGPL 			= String(independentGPL);
+		
+		//This flag will tell us to write the SNP text file.
+		snpData = true;
+	}
+	
+	if(dependentType == "SNP")
+	{
+		//If the gene list already has items, add a comma.
+		if(fullSNPGeneList != "") 	fullSNPGeneList 	+= ","
+		if(fullSNPSampleType != "") fullSNPSampleType 	+= ","
+		if(fullSNPTissueType != "") fullSNPTissueType 	+= ","
+		if(fullSNPTime != "") 		fullSNPTime 		+= ","
+		if(fullSNPGPL != "") 		fullSNPGPL 			+= ","
+				
+		//Add the genes in the list to the full list of SNP genes.
+		fullSNPGeneList 	+= String(dependentGeneList)
+		fullSNPSampleType 	+= String(dependentSample);
+		fullSNPTissueType 	+= String(dependentTissue);
+		fullSNPTime 		+= String(dependentTime);	
+		fullSNPGPL 			+= dependentGPL;
+		
+		//This flag will tell us to write the SNP text file.		
+		snpData = true;
+	}	
+	
+	if((fullGEXGeneList == "") && (independentType == "MRNA" || dependentType == "MRNA"))
+	{
+		Ext.Msg.alert("No Genes Selected", "Please specify Genes in the Gene/Pathway Search box.")
+		return false;
+	}
+	
+	if((fullSNPGeneList == "") && (independentType == "SNP" || dependentType == "SNP"))
+	{
+		Ext.Msg.alert("No Genes Selected", "Please specify Genes in the Gene/Pathway Search box.")
+		return false;
+	}
+		
+	//If we don't have a platform, fill in Clinical.
+	if(dependentPlatform == null || dependentPlatform == "") dependentType = "CLINICAL"
+	if(independentPlatform == null || independentPlatform == "") independentType = "CLINICAL"
+	
+	formParams["divDependentVariabletimepoints"] 			= window['divDependentVariabletimepoints1'];
+	formParams["divDependentVariablesamples"] 				= window['divDependentVariablesamples1'];
+	formParams["divDependentVariablerbmPanels"]				= window['divDependentVariablerbmPanels1'];
+	formParams["divDependentVariableplatforms"]				= dependentPlatform
+	formParams["divDependentVariablegpls"]					= window['divDependentVariablegplsValue1'];
+	formParams["divDependentVariabletissues"]				= window['divDependentVariabletissues1'];
+	formParams["divDependentVariableprobesAggregation"]	 	= window['divDependentVariableprobesAggregation'];
+	formParams["divDependentVariableSNPType"]				= window['divDependentVariableSNPType'];
+	formParams["divDependentVariableType"]					= dependentType;
+	formParams["divDependentVariablePathway"]				= dependentGeneList;
+	formParams["divIndependentVariabletimepoints"]			= window['divIndependentVariabletimepoints1'];
+	formParams["divIndependentVariablesamples"]				= window['divIndependentVariablesamples1'];
+	formParams["divIndependentVariablerbmPanels"]			= window['divIndependentVariablerbmPanels1'];
+	formParams["divIndependentVariableplatforms"]			= independentPlatform;
+	formParams["divIndependentVariablegpls"]				= window['divIndependentVariablegplsValue1'];
+	formParams["divIndependentVariabletissues"]				= window['divIndependentVariabletissues1'];
+	formParams["divIndependentVariableprobesAggregation"]	= window['divIndependentVariableprobesAggregation'];
+	formParams["divIndependentVariableSNPType"]				= window['divIndependentVariableSNPType'];
+	formParams["divIndependentVariableType"]				= independentType;
+	formParams["divIndependentVariablePathway"]				= independentGeneList;
+	formParams["gexpathway"]								= fullGEXGeneList;
+	//formParams["gextime"]									= fullGEXTime;
+	//formParams["gextissue"]									= fullGEXTissueType;
+	//formParams["gexsample"]									= fullGEXSampleType;
+	formParams["snppathway"]								= fullSNPGeneList;
+	//formParams["snptime"]									= fullSNPTime;
+	//formParams["snptissue"]									= fullSNPTissueType;
+	//formParams["snpsample"]									= fullSNPSampleType;
+	formParams["divIndependentPathwayName"]					= window['divIndependentVariablepathwayName'];
+	formParams["divDependentPathwayName"]					= window['divDependentVariablepathwayName'];
+	formParams["mrnaData"]									= mrnaData;
+	formParams["snpData"]									= snpData;
+	formParams["gexgpl"]									= fullGEXGPL;
+	formParams["snpgpl"]									= fullSNPGPL;
+	
+	return true;
 }

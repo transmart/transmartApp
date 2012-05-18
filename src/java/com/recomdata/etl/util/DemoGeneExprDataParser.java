@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.etl.util;
 
 import java.io.BufferedReader;

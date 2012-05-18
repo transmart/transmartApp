@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import com.recomdata.util.ExcelSheet;
 import com.recomdata.util.ExcelGenerator;
 import javax.servlet.http.HttpServletResponse;
@@ -179,7 +178,7 @@ class AnalysisDataExportService {
 	    }
 
 		sResult.result.expAnalysisResults.each()	{
-		    values1.add(it.experiment.getValues() + [experimentOrganisms.get(it.experiment.accession)])
+		    values1.add(it.experiment.getExpValues() + [experimentOrganisms.get(it.experiment.accession)])
 		}
 
 	    sheet1 = new ExcelSheet("Experiments", headers1, values1)
@@ -219,8 +218,8 @@ class AnalysisDataExportService {
 	    log.info("Number of Experiments: " + ear.expCount)
 
 	    ear.analysisResultList.each {
-
-            values2.add([it.experiment.accession] + [it.calcDisplayTEAScore()] + it.analysis.getValues() + [it.experiment.getCompoundNames()] + [it.experiment.getDiseaseNames()] + placebm2)
+			def experiment = Experiment.get(it.experimentId)
+            values2.add([experiment.accession] + [it.calcDisplayTEAScore()] + it.analysis.getValues() + [experiment.getCompoundNames()] + [experiment.getDiseaseNames()] + placebm2)
             orgString = ""
             it.assayAnalysisValueList.each {
                 values2.add(placeh2 + it.bioMarker.getValues() + it.analysisData.getValues())
@@ -234,9 +233,9 @@ class AnalysisDataExportService {
                 }
 	        }
 
-            if (!expIDs.contains(it.experiment.id))	{
-                values1.add(it.experiment.getValues() + [orgString])
-                expIDs.add(it.experiment.id)
+            if (!expIDs.contains(experiment.id))	{
+                values1.add(experiment.getExpValues() + [orgString])
+                expIDs.add(experiment.id)
             }
 		}
 	    sheet1 = new ExcelSheet("Experiments", headers1, values1)
@@ -343,9 +342,10 @@ class AnalysisDataExportService {
 	    def trialValues = []
 
 	    ear.analysisResultList.each	{
+			def experiment = Experiment.get(it.experimentId)
             trialValues = it.experiment.getValues()
 	    	log.info("Trial Number: "+trialValues[1])
-            values2.add([trialValues[1]] + [it.calcDisplayTEAScore()] + it.analysis.getValues() + [it.experiment.getCompoundNames()] + [it.experiment.getDiseaseNames()] + placebm2)
+            values2.add([trialValues[1]] + [it.calcDisplayTEAScore()] + it.analysis.getValues() + [experiment.getCompoundNames()] + [experiment.getDiseaseNames()] + placebm2)
             orgString = ""
             it.assayAnalysisValueList.each {
                 values2.add(placeh2 + it.bioMarker.getValues() + it.analysisData.getValues())
@@ -359,9 +359,9 @@ class AnalysisDataExportService {
                 }
 	        }
 
-            if (!trialIDs.contains(it.experiment.expId))	{
+            if (!trialIDs.contains(experiment.expId))	{
 	    	    values1.add(trialValues + [orgString])
-	            trialIDs.add(it.experiment.expId)
+	            trialIDs.add(experiment.expId)
 	        }
 		}
 

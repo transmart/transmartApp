@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class CustomFilterControllerTests extends GroovyTestCase {
 
     void testSomething() {

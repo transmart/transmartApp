@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.transmart.data.export
 
 import com.recomdata.transmart.domain.i2b2.AsyncJob;

@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class FilterQueryServiceTests extends GroovyTestCase {
 
 	def filterQueryService

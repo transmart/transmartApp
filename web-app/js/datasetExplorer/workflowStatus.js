@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 var thisJobName = null;
 function setJobNameFromRun(jobNameFromRun) {
 	thisJobName = jobNameFromRun;

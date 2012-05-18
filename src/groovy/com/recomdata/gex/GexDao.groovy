@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.gex
 
 import i2b2.SampleInfo

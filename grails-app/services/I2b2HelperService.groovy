@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import java.util.List;
 
 import java.io.BufferedWriter;
@@ -650,6 +649,7 @@ class I2b2HelperService {
 		if(tablein.getColumns().size()==0)
 		{
 			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "String"));
+			tablein.putColumn("patient", new ExportColumn("patient", "Patient", "", "String"));
 			tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "String"));
 			//tablein.putColumn("BIRTH_DATE", new ExportColumn("BIRTH_DATE", "Birth Date", "", "Date"));
 			//tablein.putColumn("DEATH_DATE", new ExportColumn("DEATH_DATE", "Death Date", "", "Date"));
@@ -676,6 +676,8 @@ class I2b2HelperService {
 			else /*fill the row*/ {
 				ExportRowNew newrow=new ExportRowNew();
 				newrow.put("subject", subject);
+				def arr = row.SOURCESYSTEM_CD?.split(":")
+				newrow.put("patient", arr?.length == 2 ? arr[1] : "");
 				newrow.put("subset", subset);
 				newrow.put("TRIAL", row.TRIAL)
 				newrow.put("SEX_CD", row.SEX_CD)

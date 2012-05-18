@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import com.recomdata.gex.GexDao;
 
 class GexController {

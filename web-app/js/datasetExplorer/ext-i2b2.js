@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
 requestData : function(node, callback){

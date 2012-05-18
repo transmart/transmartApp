@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import org.jfree.util.Log;
 
 import groovyx.net.http.HTTPBuilder

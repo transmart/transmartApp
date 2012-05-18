@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.snp
 
 import com.recomdata.dataexport.util.BiomarkerDataRowProcessor
@@ -39,6 +38,7 @@ class SnpData implements BiomarkerDataRowProcessor
 		lineToWrite += "\t${row.sample}"
 		lineToWrite += "\t${row.timepoint}"
 		lineToWrite += "\t${row.tissue}"
+		lineToWrite += "\t${row.gplId}"
 		
 		//If the search keyword is not null, add it.
 		if(row.searchKeywordId != null) lineToWrite += "\t${row.searchKeywordId}"

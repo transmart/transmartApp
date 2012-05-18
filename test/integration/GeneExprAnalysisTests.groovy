@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class GeneExprAnalysisTests extends GroovyTestCase {
 
     void testSomething() {

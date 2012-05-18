@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.transmart.data.export
 
 import java.io.File
@@ -63,32 +62,56 @@ class ClinicalDataService {
 	 */
 	public boolean getData(List studyList, File studyDir, String fileName, String jobName, String resultInstanceId, 
 		String[] conceptCodeList, List retrievalTypes, boolean parPivotData, boolean parFilterHighLevelConcepts, 
-		Map snpFilesMap, String subset, Map filesDoneMap, List platformsList) 	{
+		Map snpFilesMap, String subset, Map filesDoneMap, List platformsList,String[] parentConceptCodeList, Boolean includeConceptContext) 	{
 		
 		def sqlQuery = new StringBuilder();
 		def parameterList = null;
 		
 		boolean retrievalTypeMRNAExists = retrievalTypeExists('MRNA', retrievalTypes)
 		boolean retrievalTypeSNPExists = retrievalTypeExists('SNP', retrievalTypes)
-
+		Boolean includeParentInfo = false
+		
 		if (null != resultInstanceId) {
-			//If the string isn't empty, we need a Union because we already have a subset in the query.
 			//Construct the SQL Query.
 			sqlQuery <<= "SELECT ofa.PATIENT_NUM, cd.CONCEPT_PATH, cd.CONCEPT_CD, cd.NAME_CHAR, "
 			sqlQuery <<= "case ofa.VALTYPE_CD "
 			sqlQuery <<= " WHEN 'T' THEN TVAL_CHAR "
 			sqlQuery <<= " WHEN 'N' THEN CAST(NVAL_NUM AS varchar2(30)) "
 			sqlQuery <<= "END VALUE, ? SUBSET , pd.sourcesystem_cd "
+			
+			//If we are going to union in the codes that have parent concepts, we include the parent columns here too.
+			if(parentConceptCodeList.size() > 0)
+			{
+				sqlQuery <<= ", '' AS PARENT_PATH,'' AS  PARENT_CODE "
+			}
+			
+			//If we are including the concepts context, add the columns to the statement here.
+			if(includeConceptContext)
+			{
+				sqlQuery <<= ", DC.DE_CONTEXT_NAME "
+			}
+			
 			if (retrievalTypeMRNAExists && null != filesDoneMap['MRNA.TXT'] && filesDoneMap['MRNA.TXT']) {
 				sqlQuery <<= ", ssm.assay_id, ssm.sample_type, ssm.timepoint, ssm.tissue_type "
 			}
+			
 			sqlQuery <<= "FROM qt_patient_set_collection qt "
 			sqlQuery <<= "INNER JOIN OBSERVATION_FACT ofa ON qt.PATIENT_NUM = ofa.PATIENT_NUM "
+			
+			//If we are including the concepts context, add the tables to the statement here.
+			if(includeConceptContext)
+			{
+				sqlQuery <<= " LEFT JOIN DEAPP.DE_CONCEPT_CONTEXT DCC ON DCC.CONCEPT_CD = ofa.CONCEPT_CD "
+				sqlQuery <<= " LEFT JOIN DEAPP.DE_CONTEXT DC ON DC.DE_CONTEXT_ID = DCC.DE_CONTEXT_ID "
+			}
+			
 			sqlQuery <<= "INNER JOIN CONCEPT_DIMENSION cd ON cd.CONCEPT_CD = ofa.CONCEPT_CD "
 			sqlQuery <<= "INNER JOIN PATIENT_DIMENSION pd on ofa.patient_num = pd.patient_num "
+			
 			if (retrievalTypeMRNAExists && null != filesDoneMap['MRNA.TXT'] && filesDoneMap['MRNA.TXT']) {
 				sqlQuery <<= "LEFT JOIN DE_SUBJECT_SAMPLE_MAPPING ssm ON ssm.PATIENT_ID = ofa.PATIENT_NUM  "
 			}
+			
 			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = ? AND ofa.MODIFIER_CD = ?"
 
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
@@ -103,8 +126,18 @@ class ClinicalDataService {
 			if (retrievalTypeMRNAExists && null != filesDoneMap && filesDoneMap['MRNA.TXT'] && !platformsList?.isEmpty()) {
 				sqlQuery <<= " AND ssm.GPL_ID IN (" << utilService.toListString(platformsList) << ") "
 			}
+			
 			//If we have a list of concepts, add them to the query.
 			if(conceptCodeList.size() > 0) sqlQuery <<= " AND cd.CONCEPT_CD IN (" + quoteCSV(conceptCodeList.join(",")) + ") "
+			
+			//If we have the parent codes, add the UNION to bring in the child concepts.
+			if(parentConceptCodeList.size() > 0)
+			{
+				includeParentInfo = true
+				
+				sqlQuery <<= getParentConceptUnion(parentConceptCodeList,includeConceptContext)
+			}
+			
 		}
 		
 		studyList.each { study ->
@@ -120,6 +153,21 @@ class ClinicalDataService {
 				parameterList.add(study)
 				parameterList.add(study)
 			}
+			
+			//Add the parameters for the UNION with parent codes.
+			if(parentConceptCodeList.size() > 0)
+			{
+				parameterList.add(subset)
+				parameterList.add(resultInstanceId)
+				parameterList.add(study)
+				
+				//We need to get the concept code for this path.
+				String parentConceptCode = i2b2HelperService.getConceptCodeFromKey("\\\\"+parentConceptCodeList[0].trim())
+				
+				//The only use case we are concerned about for now is the case of one parent concept.
+				parameterList.add(parentConceptCode)
+			}
+			
 			def filename = (studyList?.size() > 1) ? study+'_'+fileName : fileName
 			log.debug("Retrieving Clinical data : " + sqlQuery)
 			log.debug("Retrieving Clinical data : " + parameterList)
@@ -135,14 +183,14 @@ class ClinicalDataService {
 			}
 			else
 			{
-				writeData(sqlQuery, parameterList, studyDir, filename, jobName, retrievalTypes)
+				writeData(sqlQuery, parameterList, studyDir, filename, jobName, retrievalTypes,null,includeParentInfo,includeConceptContext)
 			}
 		}
 		
 		return dataFound
 	}
 
-	private String writeData(StringBuilder sqlQuery, List parameterList, File studyDir, String fileName, String jobName, List retrievalTypes, Map snpFilesMap = null)
+	private String writeData(StringBuilder sqlQuery, List parameterList, File studyDir, String fileName, String jobName, List retrievalTypes, Map snpFilesMap = null,Boolean includeParentInfo = false,Boolean includeConceptContext = false)
 	{
 		//TODO Get the dataTypeName from the list of DataTypeNames either from DB or from config file
 		def dataTypeName = "Clinical";
@@ -163,7 +211,7 @@ class ClinicalDataService {
 			if (rows.size() > 0) {
 				log.debug('Writing Clinical File')
 				writerUtil = new FileWriterUtil(studyDir, fileName, jobName, dataTypeName, dataTypeFolder, separator);
-				writerUtil.writeLine(getColumnNames(retrievalTypes, snpFilesMap) as String[])
+				writerUtil.writeLine(getColumnNames(retrievalTypes, snpFilesMap,includeParentInfo,includeConceptContext) as String[])
 			
 				rows.each { row ->
 					dataFound = true
@@ -219,7 +267,18 @@ class ClinicalDataService {
 							}
 						}
 					}
-		
+					
+					if(includeParentInfo)
+					{
+						values.add(row.PARENT_PATH?.toString())
+						values.add(row.PARENT_CODE?.toString())
+					}
+					
+					if(includeConceptContext)
+					{
+						values.add(row.DE_CONTEXT_NAME?.toString())
+					}
+					
 					writerUtil.writeLine(values as String[])
 				}
 			}
@@ -304,7 +363,7 @@ class ClinicalDataService {
 		return exists
 	}
 
-	def private getColumnNames(List retrievalTypes, Map snpFilesMap) {
+	def private getColumnNames(List retrievalTypes, Map snpFilesMap, Boolean includeParentInfo, Boolean includeConceptContext) {
 		def columnNames = []
 		columnNames.add("PATIENT ID")
 		columnNames.add("SUBSET")
@@ -319,10 +378,73 @@ class ClinicalDataService {
 			if (null != snpFilesMap?.get('PEDFiles')) columnNames.add("SNP PED File")
 			if (null != snpFilesMap?.get('MAPFiles')) columnNames.add("SNP MAP File")
 		}
+		
+		if (includeParentInfo) {
+			columnNames.add("PARENT_PATH")
+			columnNames.add("PARENT_CODE")
+		}
+		
+		if (includeConceptContext) {
+			columnNames.add("CONTEXT_NAME")
+		}
+		
 		return columnNames
 	}
 
 	def public boolean wasDataFound(){
 		return dataFound
 	}
+	
+	//Give a list of concept codes that represent parents to other codes, create a union statement to retrieve the children and indicate their parents.
+	private String getParentConceptUnion(String[] parentConceptCodeList, Boolean includeConceptContext)
+	{
+		def queryToReturn = new StringBuilder();
+		
+		queryToReturn <<= " UNION SELECT	ofa.PATIENT_NUM, "
+		queryToReturn <<= "			C1.CONCEPT_PATH, "
+		queryToReturn <<= "			C1.CONCEPT_CD, "
+		queryToReturn <<= "			C1.NAME_CHAR, "
+		queryToReturn <<= "			CASE ofa.VALTYPE_CD "
+		queryToReturn <<= "				WHEN 'T' THEN TVAL_CHAR "
+		queryToReturn <<= "				WHEN 'N' THEN CAST(NVAL_NUM AS VARCHAR2(30)) "
+		queryToReturn <<= "			END VALUE, ? SUBSET , pd.sourcesystem_cd, "
+		queryToReturn <<= "			C2.CONCEPT_PATH AS PARENT_PATH, "
+		queryToReturn <<= "			C2.CONCEPT_CD AS PARENT_CODE "
+		
+		//If we are including the concepts context, add the columns to the statement here.
+		if(includeConceptContext)
+		{
+			queryToReturn <<= ", DC.DE_CONTEXT_NAME "
+		}
+		
+		queryToReturn <<= "FROM	qt_patient_set_collection qt "
+		queryToReturn <<= "INNER JOIN OBSERVATION_FACT ofa ON qt.PATIENT_NUM = ofa.PATIENT_NUM  "
+
+		//If we are including the concepts context, add the columns to the statement here.
+		if(includeConceptContext)
+		{
+			queryToReturn <<= " LEFT JOIN DEAPP.DE_CONCEPT_CONTEXT DCC ON DCC.CONCEPT_CD = ofa.CONCEPT_CD "
+			queryToReturn <<= " LEFT JOIN DEAPP.DE_CONTEXT DC ON DC.DE_CONTEXT_ID = DCC.DE_CONTEXT_ID "
+		}
+				
+		queryToReturn <<= "INNER JOIN PATIENT_DIMENSION pd on ofa.patient_num = pd.patient_num "
+		queryToReturn <<= "INNER JOIN DE_XTRIAL_CHILD_MAP XMAP ON XMAP.CONCEPT_CD = ofa.CONCEPT_CD "
+		queryToReturn <<= "INNER JOIN CONCEPT_DIMENSION C1 ON C1.CONCEPT_CD = XMAP.CONCEPT_CD "
+		queryToReturn <<= "INNER JOIN CONCEPT_DIMENSION C2 ON C2.CONCEPT_CD = XMAP.PARENT_CD "
+		queryToReturn <<= "WHERE	qt.RESULT_INSTANCE_ID = ? "
+		queryToReturn <<= "AND		ofa.MODIFIER_CD = ? "
+		queryToReturn <<= "AND		ofa.CONCEPT_CD IN "
+		queryToReturn <<= "( "
+		queryToReturn <<= "		SELECT	C_BASECODE "
+		queryToReturn <<= "		FROM	I2B2 "
+		queryToReturn <<= "		WHERE	C_FULLNAME LIKE ( "
+		queryToReturn <<= "					SELECT	CONCEPT_PATH || '%' "
+		queryToReturn <<= "					FROM	CONCEPT_DIMENSION "
+		queryToReturn <<= "					WHERE	CONCEPT_CD = ?) "
+		queryToReturn <<= "		AND C_VISUALATTRIBUTES != 'FA' "
+		queryToReturn <<= ") "
+		
+	}
+	
+	
 }

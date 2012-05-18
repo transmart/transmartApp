@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.datasetexplorer.proxy;
 
 import java.security.GeneralSecurityException;

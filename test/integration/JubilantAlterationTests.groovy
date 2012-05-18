@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 class JubilantAlterationTests extends GroovyTestCase {
 
     void testSomething() {

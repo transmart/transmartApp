@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 function getExportJobs(tab)
 {
 	//TODO : point it to /asyncJob/getjobs : somehow the UI in "Export Jobs" tab seems to be not showing the list of jobs

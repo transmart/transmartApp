@@ -19,7 +19,6 @@
 
 
 
-
 import org.jfree.util.Log;
 
 import com.recomdata.export.PlinkFiles;
@@ -63,11 +62,16 @@ class PlinkService {
 		
 		def sql = new Sql(dataSource);
 		
-		StringBuffer query = new StringBuffer("select a.platform_name, a.trial_name from DE_SUBJECT_SNP_DATASET a,");
-		query.append(" (SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ?")
-		query.append(" AND patient_num IN (SELECT patient_num FROM patient_dimension WHERE sourcesystem_cd NOT LIKE '%:S:%')) b")
-		query.append(" where rownum=1 and a.platform_name is not null and a.patient_num = b.patient_num");
-		def row = sql.firstRow(query.toString(), [resultInstanceId])
+		def query = """
+						select a.platform_name, a.trial_name 
+						from DE_SUBJECT_SNP_DATASET a
+						INNER JOIN de_subject_sample_mapping c on c.omic_patient_id=a.patient_num
+						INNER JOIN (SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ? AND patient_num IN 
+						            (SELECT patient_num FROM patient_dimension WHERE sourcesystem_cd NOT LIKE '%:S:%')) b on c.patient_id=b.patient_num
+						where rownum=1 
+						and a.platform_name is not null
+					"""
+		def row = sql.firstRow(query, [resultInstanceId])
 		
 		return [row.platform_name, row.trial_name]
 	}

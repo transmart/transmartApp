@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 /**
  * $Id: TrialController.groovy 10280 2011-10-29 03:00:52Z jliu $
  * @author $Author: jliu $
@@ -133,7 +132,7 @@ class TrialController {
 			exp = Experiment.findByAccession(trialNumber);
 			istrial = false;
 		}
-		log.info("test encode:"+URLEncoder.encode("https://sss.ss/ge/pub/220202"));
+	//	log.info("test encode:"+URLEncoder.encode("https://sss.ss/ge/pub/220202"));
 		
 		def skid  = null;
 		def sk = SearchKeyword.findByKeyword(trialNumber);
@@ -144,7 +143,7 @@ class TrialController {
 
 			if(istrial){
 				def trialview = grailsApplication.config.com.recomdata?.view?.studyview?:"_clinicaltrialdetail";
-
+				
 				if(trialview.startsWith("_")){
 					render(template:trialview.substring(1), model:[clinicalTrial:exp, searchId:skid])
 				}else{

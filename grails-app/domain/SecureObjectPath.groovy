@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 class SecureObjectPath {
 		Long id
 		SecureObject secureObject

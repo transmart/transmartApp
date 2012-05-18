@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 function createMainTabPanel() {
 
     // create toolbar

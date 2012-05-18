@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 /**
  * Running externalized configuration
  * Assuming the following configuration files
@@ -183,7 +182,7 @@ disclaimer.append("<p></p>")
 com.recomdata.disclaimer=disclaimer.toString()
 
 // customization views
-com.recomdata.view.studyview='studydetail'
+com.recomdata.view.studyview='_clinicaltrialdetail'
 com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []

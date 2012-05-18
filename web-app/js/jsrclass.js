@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 // JSONscriptRequest -- a simple class for accessing Yahoo! Web Services
 // using dynamically generated script tags and JSON
 //

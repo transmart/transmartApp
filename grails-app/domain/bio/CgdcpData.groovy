@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package bio
 class CgdcpData extends Literature {
 		String evidenceCode

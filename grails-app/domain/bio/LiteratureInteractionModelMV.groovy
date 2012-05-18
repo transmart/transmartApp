@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package bio
 class LiteratureInteractionModelMV {
 	Long id

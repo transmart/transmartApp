@@ -17,7 +17,6 @@
  #
  ##########################################################################
 
-
 ###########################################################################
 #PivotClinicalData
 #Parse the i2b2 output file and create input files for Cox/Survival Curve.

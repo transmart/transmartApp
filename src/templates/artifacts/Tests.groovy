@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 @artifact.package@import grails.test.*
 
 class @artifact.name@ extends GrailsUnitTestCase {

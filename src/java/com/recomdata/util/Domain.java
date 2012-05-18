@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 /*
 Copyright (C) 2001-2004  Kyle Siegrist, Dawn Duehring
 Department of Mathematical Sciences

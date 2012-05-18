@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 class SecureAccessLevel {
 	static def OWN = "OWN"
 		Long accessLevelValue

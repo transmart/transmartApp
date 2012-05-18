@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 //////////////////////////////////////////////////////////////////
 //This file holds the javascript functions required to get user input for the Haploview, and actually submit the job.
 //

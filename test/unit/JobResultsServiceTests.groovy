@@ -19,7 +19,6 @@
 
 
 
-
 import grails.test.*
 
 class JobResultsServiceTests extends GrailsUnitTestCase {

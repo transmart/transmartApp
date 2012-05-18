@@ -19,7 +19,6 @@
 
 
 
-
 class AuthUserSecureAccessController {
 
 	def index = { redirect(action:list,params:params) }

@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import java.io.File
 import com.recomdata.search.DocumentHit
 import org.codehaus.groovy.grails.commons.ConfigurationHolder

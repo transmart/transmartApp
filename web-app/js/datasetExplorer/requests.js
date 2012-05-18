@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 function getDateTime()
 {
  return "2008-01-21T18:24:59.406-05:00";
@@ -233,12 +232,9 @@ xmlns:ns8="http://www.i2b2.org/xsd/cell/crc/psm/querydefinition/1.1/"> \
    
             
 function getCRCRequestFooter(){
-	return   '<result_output_list> \
-    <result_output priority_index="10" name="PATIENTSET"/> \
-    </result_output_list> \
-    </ns4:request>\
-    </message_body>\
-    </ns6:request>  ';
+return   ' </ns4:request>\
+    	</message_body>\
+	</ns6:request>  ';
 }    
 
 

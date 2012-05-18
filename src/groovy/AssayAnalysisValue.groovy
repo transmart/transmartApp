@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import bio.BioMarker
 import bio.BioAssayAnalysisData
 

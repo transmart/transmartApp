@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 /**
  * @author $Author: mmcduffie $
  * $Id: ExperimentAnalysisFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -42,6 +41,9 @@ public class ExperimentAnalysisFilter {
 	Double foldChange
 	Double pValue
 
+	def isUsed(){
+		return validString(species) || validString(expDesign)||validString(expType)||validString(dataSource)||bioCompoundId!=null || bioDiseaseId!=null || foldChange!=null || pValue!=null || validString(cellLine);
+	}
 	def filterFoldChange(){
 		return foldChange!=null && foldChange>0;
 	}

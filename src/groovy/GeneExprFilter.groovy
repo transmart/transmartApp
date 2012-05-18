@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 /**
 * $Id: GeneExprFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
 *@author $Author: mmcduffie $

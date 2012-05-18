@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.transmart.domain.searchapp
  /**
   * $Id: AccessLog.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.recomdata.genesignature
 
 import bio.BioAssayAnalysisData

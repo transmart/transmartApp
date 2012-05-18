@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 import search.Feedback
 
 class FeedbackController {

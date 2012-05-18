@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 //////////////////////////////////////////////////////////////////
 //This file holds the javascript functions required to get user input for running IGV, and actually submit the job.
 //

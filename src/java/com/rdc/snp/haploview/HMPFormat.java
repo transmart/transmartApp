@@ -17,7 +17,6 @@
  *
  ******************************************************************/
 
-
 package com.rdc.snp.haploview;
 
 import java.sql.ResultSet;
