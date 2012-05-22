@@ -16,6 +16,7 @@
  * 
  *
  ******************************************************************/
+  
 
 class FilterQueryServiceTests extends GroovyTestCase {
 

@@ -16,6 +16,7 @@
  * 
  *
  ******************************************************************/
+  
 
 /**
  * This class serves as a base class for representing model details information

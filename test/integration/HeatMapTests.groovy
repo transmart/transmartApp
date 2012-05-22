@@ -16,6 +16,7 @@
  * 
  *
  ******************************************************************/
+  
 
 class HeatMapTests extends GroovyTestCase {
 

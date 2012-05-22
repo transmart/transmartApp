@@ -16,6 +16,7 @@
  * 
  *
  ******************************************************************/
+  
 
 class TrialControllerTests extends GroovyTestCase {
 

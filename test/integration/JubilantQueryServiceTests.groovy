@@ -16,6 +16,7 @@
  * 
  *
  ******************************************************************/
+  
 
 class JubilantQueryServiceTests extends GroovyTestCase {
 

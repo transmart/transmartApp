@@ -16,6 +16,7 @@
  * 
  *
  ******************************************************************/
+  
 
 class JubilantControllerTests extends GroovyTestCase {
 

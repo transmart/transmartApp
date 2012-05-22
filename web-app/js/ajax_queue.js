@@ -16,6 +16,7 @@
  * 
  *
  ******************************************************************/
+  
 
 /**
  * Overwrites ext-adapter behavior for allowing queuing of AJAX requests.

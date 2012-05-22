@@ -16,6 +16,7 @@
  * 
  *
  ******************************************************************/
+  
 
 class JubilantInhibitorTests extends GroovyTestCase {
 

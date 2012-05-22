@@ -16,6 +16,7 @@
  * 
  *
  ******************************************************************/
+  
 
 // Creates the Utilities Menu to use on all of the five main screens
 function createUtilitiesMenu(helpURL, contact, appTitle, basePath, buildVer, css)
