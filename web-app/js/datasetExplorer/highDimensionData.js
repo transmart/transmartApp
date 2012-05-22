@@ -17,8 +17,8 @@
  *
  ******************************************************************/
   
-***********Start of functions to set global subset ids**************
-/**
+/***********Start of functions to set global subset ids**************
+ *
  * 1. If the global subset ids are null call runAllQueries to populate them.
  * 2. Calls heatmapvalidate to get all relevant data for the high dimensional selection.
  * @param divId
