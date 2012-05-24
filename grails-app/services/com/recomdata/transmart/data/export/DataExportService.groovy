@@ -72,7 +72,7 @@ class DataExportService {
 			if (null != selectedFilesList && !selectedFilesList.isEmpty()) {
 				//Prepare Study dir
 				def List studyList = null
-				if (null != resultInstanceIdMap[subset]) {
+				if (null != resultInstanceIdMap[subset] && !resultInstanceIdMap[subset].isEmpty()) {
 					studyList = i2b2ExportHelperService.findStudyAccessions([resultInstanceIdMap[subset]])
 					if (!studyList.isEmpty()) {
 						study = studyList.get(0)
@@ -86,7 +86,7 @@ class DataExportService {
 				boolean pivotData = new Boolean(true)
 				if(pivotDataValueDef==false) pivotData = new Boolean(false)
 				boolean writeClinicalData = false
-				if(null != resultInstanceIdMap[subset])
+				if(null != resultInstanceIdMap[subset] && !resultInstanceIdMap[subset].isEmpty())
 				{
 					// Construct a list of the URL objects we're running, submitted to the pool
 					selectedFilesList.each() { selectedFile ->
