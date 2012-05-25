@@ -233,9 +233,12 @@ xmlns:ns8="http://www.i2b2.org/xsd/cell/crc/psm/querydefinition/1.1/"> \
    
             
 function getCRCRequestFooter(){
-return   ' </ns4:request>\
-    	</message_body>\
-	</ns6:request>  ';
+return '<result_output_list>\
+			<result_output priority_index="10" name="PATIENTSET"/>\
+ 		</result_output_list>\
+ 		</ns4:request>\
+ 		</message_body>\
+ 		</ns6:request>';
 }    
 
 
