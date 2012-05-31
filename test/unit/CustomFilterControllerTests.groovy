@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 class CustomFilterControllerTests extends GroovyTestCase {
 

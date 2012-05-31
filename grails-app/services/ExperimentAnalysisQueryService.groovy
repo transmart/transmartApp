@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 import bio.BioMarker
 import bio.Compound
@@ -25,6 +25,7 @@ import bio.Experiment
 import bio.BioAssayAnalysis
 import bio.BioAssayAnalysisData
 import com.recomdata.search.query.AssayAnalysisDataQuery
+import com.recomdata.search.query.ExperimentAssayAnalysisMVQuery
 import com.recomdata.search.query.Query
 
 import com.recomdata.util.ElapseTimer;
@@ -45,7 +46,18 @@ class ExperimentAnalysisQueryService {
 			return 0
 		}
 
-		return BioAssayAnalysisData.executeQuery(createExperimentQuery("COUNT_EXP", filter))[0]
+		return BioAssayAnalysisData.executeQuery(createMVExperimentQuery("COUNT_EXP", filter))[0]
+	}
+
+	def countExperimentMV(SearchFilter filter){
+		if(filter == null || filter.globalFilter.isTextOnly()){
+			return 0
+		}
+		if(!filter.expAnalysisFilter.isUsed())
+			return bio.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_EXP", filter))[0]
+		//	elapseTimer.logElapsed("query count Experiment MV:",true)
+		else
+			return countExperiment(filter)
 	}
 
 	/**
@@ -65,28 +77,81 @@ class ExperimentAnalysisQueryService {
 		createSubFilterCriteria(filter.expAnalysisFilter,query);
 		query.addSelect("COUNT(DISTINCT baad.analysis.id) ");
 		return bio.BioAssayAnalysisDataTea.executeQuery(query.generateSQL())[0];
-
 	}
 
 	def countAnalysis(SearchFilter filter){
 		if(filter == null || filter.globalFilter.isTextOnly()) return 0;
 
-		return bio.BioAssayAnalysisData.executeQuery(createExperimentQuery("COUNT_ANALYSIS", filter))[0]
-
+		return bio.BioAssayAnalysisData.executeQuery(createMVExperimentQuery("COUNT_ANALYSIS", filter))[0]
 	}
 
+	def countAnalysisMV(SearchFilter filter){
+		if(filter == null || filter.globalFilter.isTextOnly()) return 0;
+		if(!filter.expAnalysisFilter.isUsed())
+			return bio.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_ANALYSIS", filter))[0]
+		else
+			return countAnalysis(filter)
+	}
+
+
+	def createExpAnalysisMVQuery(countType, SearchFilter filter){
+		if(filter == null || filter.globalFilter.isTextOnly()){
+			return " WHERE 1=0"
+		}
+		def gfilter = filter.globalFilter
+
+		def query =new ExperimentAssayAnalysisMVQuery(mainTableAlias:"baad")
+		query.addTable("bio.BioMarkerExpAnalysisMV baad")
+
+		query.createGlobalFilterCriteria(gfilter);
+		createSubFilterCriteria(filter.expAnalysisFilter,query);
+
+		if("COUNT_EXP".equals(countType)){
+			query.addSelect("COUNT(DISTINCT baad.experiment.id) ");
+		} else if ("COUNT_ANALYSIS".equals(countType)){
+			//query.addTable("JOIN baad.markers baad_bm")
+			query.addSelect("COUNT(DISTINCT baad.analysis.id) ");
+		} else if ("COUNT_ANALYSIS_TEA".equals(countType)){
+			//	query.addTable("JOIN baad.markers baad_bm")
+			query.addSelect("COUNT(DISTINCT baad.analysis.id) ");
+			createNPVCondition(query)
+		} else {
+			query.setDistinct=true
+			query.addSelect(" baad.experiment.id")
+			query.addSelect(" COUNT(DISTINCT baad.analysis.id)")
+			query.addGroupBy("baad.experiment.id")
+			query.addOrderBy(" COUNT(DISTINCT baad.analysis.id) DESC")
+		}
+
+		def q = query.generateSQL();
+		//	println(q)
+		return q;
+	}
 	/**
 	 * retrieve trials with criteria
 	 */
-	def queryExperiment(boolean count, SearchFilter filter, paramMap) {
+	def queryExperiment(SearchFilter filter, paramMap) {
 
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return new ExpAnalysisResultSet()
 		}
 		def time = System.currentTimeMillis();
 		def elapseTimer  = new com.recomdata.util.ElapseTimer();
-		//	println(paramMap)
-		def result =bio.BioAssayAnalysisData.executeQuery(createExperimentQuery(count, filter), paramMap==null?[:]:paramMap)
+
+		def gfilter = filter.globalFilter
+
+		def query =new ExperimentAssayAnalysisMVQuery(mainTableAlias:"baad")
+		query.addTable("bio.BioMarkerExpAnalysisMV baad")
+	
+		query.createGlobalFilterCriteria(gfilter);
+		createSubFilterCriteria(filter.expAnalysisFilter,query);
+
+			query.addSelect(" baad.experiment.id")
+			query.addSelect(" COUNT(DISTINCT baad.analysis.id)")
+			query.addGroupBy("baad.experiment.id")
+
+		def q = query.generateSQL();
+		def result =bio.BioAssayAnalysisData.executeQuery(q, paramMap==null?[:]:paramMap)
 		//println("exp query:"+(System.currentTimeMillis()-time))
 		List expResult = []
 		elapseTimer.logElapsed("query Experiment:",true)
@@ -101,9 +166,45 @@ class ExperimentAnalysisQueryService {
 		return new ExpAnalysisResultSet(expAnalysisResults:expResult,groupByExp:true)
 	}
 
-	def createExperimentQuery(countType, SearchFilter filter){
+
+	def createMVExperimentQuery(countType, SearchFilter filter){
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return " WHERE 1=0"
+		}
+		def gfilter = filter.globalFilter
+
+		def query =new AssayAnalysisDataQuery(mainTableAlias:"baad")
+		query.addTable("bio.BioMarkerExpAnalysisMV baad")
+
+		//query.createGlobalFilterCriteria(gfilter);
+		query.createGlobalFilterCriteriaMV(gfilter);
+		createSubFilterCriteria(filter.expAnalysisFilter,query);
+
+		if("COUNT_EXP".equals(countType)){
+			query.addSelect("COUNT(distinct baad.bioExperimentId) ");
+		} else if ("COUNT_ANALYSIS".equals(countType)){
+			//query.addTable("JOIN baad.markers baad_bm")
+			query.addSelect("COUNT(distinct baad.bioAssayAnalysisId) ");
+		} else if ("COUNT_ANALYSIS_TEA".equals(countType)){
+			//	query.addTable("JOIN baad.markers baad_bm")
+			query.addSelect("COUNT(DISTINCT baad.BioAssayAnalysisId) ");
+			createNPVCondition(query)
+		} else {
+			query.setDistinct=true
+			query.addSelect(" baad.experiment.id")
+			query.addSelect(" COUNT(DISTINCT baad.analysis.id)")
+			query.addGroupBy("baad.experiment.id")
+			query.addOrderBy(" COUNT(DISTINCT baad.analysis.id) DESC")
+		}
+
+		def q = query.generateSQL();
+		//	println(q)
+		return q;
+	}
+
+	def createExperimentQuery(SearchFilter filter){
+		if(filter == null || filter.globalFilter.isTextOnly()){
+			return "SELECT 0,0 FROM DURAL WHERE 1=0"
 		}
 		def gfilter = filter.globalFilter
 
@@ -113,22 +214,14 @@ class ExperimentAnalysisQueryService {
 
 		query.createGlobalFilterCriteria(gfilter);
 		createSubFilterCriteria(filter.expAnalysisFilter,query);
-
-		if("COUNT_EXP".equals(countType)){
+		if("DISTINCT".equals(countType)){
+			query.addSelect("")
+		}
+		else if("COUNT_EXP".equals(countType)){
 			query.addSelect("COUNT(DISTINCT baad.experiment.id) ");
 		} else if ("COUNT_ANALYSIS".equals(countType)){
 			//query.addTable("JOIN baad.markers baad_bm")
 			query.addSelect("COUNT(DISTINCT baad.analysis.id) ");
-		} else if ("COUNT_ANALYSIS_TEA".equals(countType)){
-		//	query.addTable("JOIN baad.markers baad_bm")
-			query.addSelect("COUNT(DISTINCT baad.analysis.id) ");
-			createNPVCondition(query)
-		} else {
-			query.setDistinct=true
-			query.addSelect(" baad.experiment.id")
-			query.addSelect(" COUNT(DISTINCT baad.analysis.id)")
-			query.addGroupBy("baad.experiment.id")
-			query.addOrderBy(" COUNT(DISTINCT baad.analysis.id) DESC")
 		}
 
 		def q = query.generateSQL();
@@ -159,10 +252,10 @@ class ExperimentAnalysisQueryService {
 		def sql = query.generateSQL();
 		def result = null;
 		def tResult = new ExperimentAnalysisResult(experiment:Experiment.get(expId))
-		 println("exe sql:"+sql)
-			def stimer = new ElapseTimer();
+		println("exe sql:"+sql)
+		def stimer = new ElapseTimer();
 
-		 if(!gfilter.getBioMarkerFilters().isEmpty()){
+		if(!gfilter.getBioMarkerFilters().isEmpty()){
 			result = bio.BioAssayAnalysisData.executeQuery(sql)
 			stimer.logElapsed("Query Analysis with biomarker ",true);
 			processAnalysisResult(result, tResult)
@@ -247,7 +340,8 @@ class ExperimentAnalysisQueryService {
 		}
 
 		def mc= [
-				compare: {a,b-> a.equals(b)? 0: (((double)a.size())/((double)a.analysis.dataCount))>(((double)b.size())/((double)b.analysis.dataCount))? -1: 1 }
+					compare: {a,b->
+						a.equals(b)? 0: (((double)a.size())/((double)a.analysis.dataCount))>(((double)b.size())/((double)b.analysis.dataCount))? -1: 1 }
 				] as Comparator
 
 		Collection allanalysis = analysisResultMap.values().sort(mc)
@@ -396,7 +490,7 @@ class ExperimentAnalysisQueryService {
 			def StringBuilder s = new StringBuilder();
 			def symbol = "abs(" + query.mainTableAlias+".foldChangeRatio)" // abs value
 			s.append (" ((").append(symbol).append(" >=").append(expfilter.foldChange).append(" )")
-			.append(" OR ").append(symbol).append(" IS NULL )");
+					.append(" OR ").append(symbol).append(" IS NULL )");
 			query.addCondition(s.toString())
 
 			//s.append (" (").append(symbol).append(" >=").append(expfilter.foldChange)
@@ -409,7 +503,7 @@ class ExperimentAnalysisQueryService {
 			def StringBuilder s = new StringBuilder();
 			def symbol = query.mainTableAlias+".preferredPvalue"
 			s.append(" (").append(symbol).append(" <= ").append(expfilter.pValue).append( ")")
-			// .append(" OR ").append(symbol).append(" IS NULL)"); 
+			// .append(" OR ").append(symbol).append(" IS NULL)");
 			query.addCondition(s.toString())
 		}
 	}

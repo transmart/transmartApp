@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 package com.recomdata.transmart.data.export
 
@@ -47,8 +47,10 @@ class DataCountService {
 		StringBuilder subjectsFromBothSubsetsQuery = new StringBuilder()
 		StringBuilder gseaQuery = new StringBuilder()
 		
-		subjectsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ?")
-		.append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')")
+		subjectsQuery.append("select omic_patient_id from de_subject_sample_mapping where patient_id in ")
+		subjectsQuery.append("(SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ?")
+		.append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%'))")
+		
 		subjectsFromBothSubsetsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id IN (")
 		.append(resultInstanceIds).append(')')
 		.append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')")
