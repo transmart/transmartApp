@@ -117,7 +117,18 @@ class DataExportService {
 								def tissueType	= jobDataMap.get("gextissue")
 								def gplString   = jobDataMap.get("gexgpl")
 								
-								gplIds 			= gplString.tokenize(",")
+								if(tissueType == ",") tissueType = ""
+								if(sampleType == ",") sampleType = ""
+								if(timepoint == ",") timepoint = ""
+								
+								if(gplIds != null)
+								{
+									gplIds 			= gplString.tokenize(",")
+								}
+								else
+								{
+									gplIds = []
+								}
 								
 								//adding String to a List to make it compatible to the type expected
 								//if gexgpl contains multiple gpl(s) as single string we need to convert that to a list 

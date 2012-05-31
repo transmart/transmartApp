@@ -420,3 +420,168 @@ function toggleDataAssociationFields(extEle){
 		document.getElementById("dataAssociationApplyButton").style.display="none";
 	}
 }
+
+function loadHighDimensionalParameters(formParams)
+{
+	//These will tell tranSMART what data types we need to retrieve.
+	var mrnaData = false
+	var snpData = false
+
+	//Gene expression filters.
+	var fullGEXSampleType 	= "";
+	var fullGEXTissueType 	= "";
+	var fullGEXTime 		= "";
+	var fullGEXGeneList 	= "";
+	
+	//SNP Filters.
+	var fullSNPSampleType 	= "";
+	var fullSNPTissueType 	= "";
+	var fullSNPTime 		= "";	
+	var fullSNPGeneList 	= "";
+	
+	//Pull the individual filters from the window object.
+	var independentGeneList = window['divIndependentVariablepathway'];
+	var dependentGeneList 	= window['divDependentVariablepathway'];
+	
+	var dependentPlatform 	= window['divDependentVariableplatforms1'];
+	var independentPlatform = window['divIndependentVariableplatforms1'];
+	
+	var dependentType 		= window['divDependentVariablemarkerType'];
+	var independentType		= window['divIndependentVariablemarkerType'];
+	
+	var dependentTime		= window['divDependentVariabletimepointsValues'];
+	var independentTime		= window['divIndependentVariabletimepointsValues'];
+	
+	var dependentSample		= window['divDependentVariablesamplesValues'];
+	var independentSample	= window['divIndependentVariablesamplesValues'];
+	
+	var dependentTissue		= window['divDependentVariabletissuesValues'];
+	var independentTissue	= window['divIndependentVariabletissuesValues'];
+	
+	
+	//If we are using High Dimensional data we need to create variables that represent genes from both independent and dependent selections (In the event they are both of a single high dimensional type).
+	//Check to see if the user selected GEX in the independent input.
+	if(independentType == "Gene Expression")
+	{
+		//Put the independent filters in the GEX variables.
+		fullGEXGeneList 	= String(independentGeneList);
+		fullGEXSampleType 	= String(independentSample);
+		fullGEXTissueType 	= String(independentTissue);
+		fullGEXTime			= String(independentTime);
+		
+		//This flag will tell us to write the GEX text file.
+		mrnaData = true;
+		
+		//Fix the platform to be something the R script expects.
+		independentType = "MRNA";		
+	}
+
+	if(dependentType == "Gene Expression")
+	{
+		//If the gene list already has items, add a comma.
+		if(fullGEXGeneList != "") 	fullGEXGeneList 	+= ","
+		if(fullGEXSampleType != "") fullGEXSampleType 	+= ","
+		if(fullGEXTissueType != "") fullGEXTissueType 	+= ","
+		if(fullGEXTime != "") 		fullGEXTime 		+= ","
+			
+		//Add the genes in the list to the full list of GEX genes.
+		fullGEXGeneList 	+= String(dependentGeneList);
+		fullGEXSampleType 	+= String(dependentSample);
+		fullGEXTissueType 	+= String(dependentTissue);
+		fullGEXTime			+= String(dependentTime);
+		
+		//This flag will tell us to write the GEX text file.		
+		mrnaData = true;
+		
+		//Fix the platform to be something the R script expects.
+		dependentType = "MRNA";	
+	}
+	
+	//Check to see if the user selected SNP in the independent input.
+	if(independentType == "SNP")
+	{
+		//The genes entered into the search box were SNP genes.
+		fullSNPGeneList 	= String(independentGeneList);
+		fullSNPSampleType 	= String(independentSample);
+		fullSNPTissueType 	= String(independentTissue);
+		fullSNPTime 		= String(independentTime);
+		
+		//This flag will tell us to write the SNP text file.
+		snpData = true;
+	}
+	
+	if(dependentType == "SNP")
+	{
+		//If the gene list already has items, add a comma.
+		if(fullSNPGeneList != "") 	fullSNPGeneList 	+= ","
+		if(fullSNPSampleType != "") fullSNPSampleType 	+= ","
+		if(fullSNPTissueType != "") fullSNPTissueType 	+= ","
+		if(fullSNPTime != "") 		fullSNPTime 		+= ","
+		
+		//Add the genes in the list to the full list of SNP genes.
+		fullSNPGeneList 	+= String(dependentGeneList)
+		fullSNPSampleType 	+= String(dependentSample);
+		fullSNPTissueType 	+= String(dependentTissue);
+		fullSNPTime 		+= String(dependentTime);	
+		
+		//This flag will tell us to write the SNP text file.		
+		snpData = true;
+	}	
+
+	
+	if((fullGEXGeneList == "") && (independentType == "MRNA" || dependentType == "MRNA"))
+	{
+		Ext.Msg.alert("No Genes Selected", "Please specify Genes in the Gene/Pathway Search box.")
+		return false;
+	}
+	
+	if((fullSNPGeneList == "") && (independentType == "SNP" || dependentType == "SNP"))
+	{
+		Ext.Msg.alert("No Genes Selected", "Please specify Genes in the Gene/Pathway Search box.")
+		return false;
+	}
+		
+	//If we don't have a platform, fill in Clinical.
+	if(dependentPlatform == null || dependentPlatform == "") dependentType = "CLINICAL"
+	if(independentPlatform == null || independentPlatform == "") independentType = "CLINICAL"
+	
+	formParams["divDependentVariabletimepoints"] 			= window['divDependentVariabletimepoints'];
+	formParams["divDependentVariablesamples"] 				= window['divDependentVariablesamples'];
+	formParams["divDependentVariablerbmPanels"]				= window['divDependentVariablerbmPanels'];
+	formParams["divDependentVariableplatforms"]				= dependentPlatform
+	formParams["divDependentVariablegpls"]					= window['divDependentVariablegpls'];
+	formParams["divDependentVariabletissues"]				= window['divDependentVariabletissues'];
+	formParams["divDependentVariableprobesAggregation"]	 	= window['divDependentVariableprobesAggregation'];
+	formParams["divDependentVariableSNPType"]				= window['divDependentVariableSNPType'];
+	formParams["divDependentVariableType"]					= dependentType;
+	formParams["divDependentVariablePathway"]				= dependentGeneList;
+	formParams["divIndependentVariabletimepoints"]			= window['divIndependentVariabletimepoints'];
+	formParams["divIndependentVariablesamples"]				= window['divIndependentVariablesamples'];
+	formParams["divIndependentVariablerbmPanels"]			= window['divIndependentVariablerbmPanels'];
+	formParams["divIndependentVariableplatforms"]			= independentPlatform;
+	formParams["divIndependentVariablegpls"]				= window['divIndependentVariablegpls'];
+	formParams["divIndependentVariabletissues"]				= window['divIndependentVariabletissues'];
+	formParams["divIndependentVariableprobesAggregation"]	= window['divIndependentVariableprobesAggregation'];
+	formParams["divIndependentVariableSNPType"]				= window['divIndependentVariableSNPType'];
+	formParams["divIndependentVariableType"]				= independentType;
+	formParams["divIndependentVariablePathway"]				= independentGeneList;
+	formParams["gexpathway"]								= fullGEXGeneList;
+	formParams["gextime"]									= fullGEXTime;
+	formParams["gexgpl"]									= "";
+	formParams["gextissue"]									= fullGEXTissueType;
+	formParams["gexsample"]									= fullGEXSampleType;
+	formParams["snppathway"]								= fullSNPGeneList;
+	formParams["snptime"]									= fullSNPTime;
+	formParams["snptissue"]									= fullSNPTissueType;
+	formParams["snpsample"]									= fullSNPSampleType;
+	formParams["divIndependentPathwayName"]					= window['divIndependentVariablepathwayName'];
+	formParams["divDependentPathwayName"]					= window['divDependentVariablepathwayName'];
+	formParams["mrnaData"]									= mrnaData;
+	formParams["snpData"]									= snpData;
+	
+	return true;
+}
+
+
+
+
