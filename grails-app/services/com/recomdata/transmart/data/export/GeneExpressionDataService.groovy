@@ -536,6 +536,7 @@ class GeneExpressionDataService {
 		// and writes to the writer
 		
 		log.info("start sample retrieving query");
+		log.debug("Sample Query : " + sampleQuery);
 		rs = stmt1.executeQuery();
 		def sttSampleStr = null;
 		
