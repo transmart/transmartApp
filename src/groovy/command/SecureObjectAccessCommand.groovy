@@ -23,6 +23,10 @@
  *
  */
 package command
+
+import grails.validation.Validateable
+
+@Validateable
 public class SecureObjectAccessCommand{
 	String[] sobjectstoadd
 	String[] sobjectstoremove

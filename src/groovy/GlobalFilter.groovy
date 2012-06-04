@@ -19,12 +19,14 @@
   
 
 import search.SearchKeyword
+import grails.validation.Validateable
 /**
  *
  * $Id: GlobalFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
+@Validateable
 public class GlobalFilter{
 
 	def CATEGORY_GENE = "GENE"
