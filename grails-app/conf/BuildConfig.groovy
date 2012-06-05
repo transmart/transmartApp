@@ -51,6 +51,15 @@ grails.project.dependency.resolution = {
 
   
     }
+
+    plugins {
+        runtime ":hibernate:$grailsVersion"
+        build ":tomcat:$grailsVersion"
+        compile ":quartz:0.4.2"
+        build ":rdc-rmodules:0.2"
+        compile ":spring-security-core:1.2.7.1"
+        build ":build-info:1.1"
+    }
 }
 
 
