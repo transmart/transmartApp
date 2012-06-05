@@ -31,9 +31,6 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
-import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
-
 
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.*;
@@ -48,16 +45,16 @@ import org.rosuda.Rserve.*;
  */
 class GenericJobService implements Job {
 
-	def ctx = AH.application.mainContext
-	def springSecurityService = ctx.springSecurityService
-	def jobResultsService = ctx.jobResultsService
-	def i2b2HelperService = ctx.i2b2HelperService
-	def i2b2ExportHelperService = ctx.i2b2ExportHelperService
-	def snpDataService = ctx.snpDataService
-	def dataExportService = ctx.dataExportService
-	def asyncJobService = ctx.asyncJobService
+	def springSecurityService 
+	def jobResultsService
+	def i2b2HelperService 
+	def i2b2ExportHelperService 
+	def snpDataService
+	def dataExportService
+	def asyncJobService	
+	def grailsApplication
 	
-	def static final String tempFolderDirectory = CH.config.com.recomdata.plugins.tempFolderDirectory
+	String tempFolderDirectory = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
 	
 	String jobTmpParentDir
 	String jobTmpDirectory
@@ -223,7 +220,12 @@ class GenericJobService implements Job {
 					try {
 						File outputFile = new File(zipFileLoc+finalOutputFile);
 						if (outputFile.isFile()) {
-							String remoteFilePath = FTPUtil.uploadFile(true, outputFile);
+							String ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
+							String ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
+							String ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
+							String ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
+							String ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
+							String remoteFilePath = FTPUtil.uploadFile(true, outputFile, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath);
 							if (StringUtils.isNotEmpty(remoteFilePath)) {
 								//Since File has been uploaded to the FTP server, we can delete the 
 								//ZIP file and the folder which has been zipped
