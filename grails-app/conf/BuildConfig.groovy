@@ -53,7 +53,7 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        runtime ":hibernate:$grailsVersion"
+        compile ":hibernate:$grailsVersion"
         build ":tomcat:$grailsVersion"
         compile ":quartz:0.4.2"
         build ":rdc-rmodules:0.2"
