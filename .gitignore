@@ -1,6 +1,6 @@
 target
 transmart.log*
 transmartApp.log*
-null.log
+null.log*
 System.out
 .classpath
