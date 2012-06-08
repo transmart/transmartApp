@@ -4,3 +4,5 @@ transmartApp.log*
 null.log*
 System.out
 .classpath
+.settings
+.project
