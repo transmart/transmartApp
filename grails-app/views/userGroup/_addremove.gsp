@@ -16,7 +16,7 @@
   
  
 -->
-
+<g:setProvider library="prototype"/>
 
                         <td> <g:select class="addremoveselect" name="userstoremove" from="${userGroupInstance?.members.sort{it.name.toUpperCase()}}" size="15" multiple="yes" optionKey="id" /></td>
 						  <td class="addremovebuttonholder">

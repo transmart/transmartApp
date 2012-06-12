@@ -16,9 +16,10 @@
   
  
 -->
+<g:setProvider library="prototype"/>
 
-              					<g:if test="${flash.message}">
-            <tr><td><div class="message">${flash.message}</div></td></tr>
+            <g:if test="${flash.message}">
+                <tr><td><div class="message">${flash.message}</div></td></tr>
             </g:if>
                         <td> <g:select class="addremoveselect" name="groupstoremove" from="${groupswithuser}" size="15" multiple="yes" optionKey="id" optionValue="name" /></td>
 						  <td class="addremovebuttonholder">
