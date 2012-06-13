@@ -161,7 +161,7 @@ disclaimer.append("<p></p>")
 com.recomdata.disclaimer=disclaimer.toString()
 
 // customization views
-com.recomdata.view.studyview='_clinicaltrialdetail'
+//com.recomdata.view.studyview='_clinicaltrialdetail'
 com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
