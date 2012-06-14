@@ -634,6 +634,7 @@ public class SearchController{
 	}
 
 	def noResult = {
+		//Comment
 		render(view:'noresult')
 	}
 }
