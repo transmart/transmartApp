@@ -48,7 +48,6 @@ class ProxyController{
 		  boolean rDebug = false;
 		 XmlHttpProxy xhp = new XmlHttpProxy();;
 		 ServletContext ctx;
-		 println(this);
 		 
 		StringBuilder bodyContent = new StringBuilder();;
 		OutputStream out = null;
