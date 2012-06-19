@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 
 /**
@@ -122,30 +122,8 @@ com.recomdata.search.gene.max=250;
 com.recomdata.i2b2helper.i2b2hive="i2b2hive"
 com.recomdata.i2b2helper.i2b2metadata="i2b2metadata"
 com.recomdata.i2b2helper.i2b2demodata="i2b2demodata"
-/*
- * Please copy below configuration to the external config file
-// FTP server configuration
-com.recomdata.transmart.data.export.ftp.server="rdoracle02.recombinant.local"
-com.recomdata.transmart.data.export.ftp.serverport=""
-com.recomdata.transmart.data.export.ftp.username="appuser"
-com.recomdata.transmart.data.export.ftp.password="support@255"
-com.recomdata.transmart.data.export.ftp.remote.path="./transmart/exported-data/"
-
-// SFTP server configuration
-com.recomdata.transmart.data.export.sftp.server="rdoracle02.recombinant.local"
-com.recomdata.transmart.data.export.sftp.serverport=""
-com.recomdata.transmart.data.export.sftp.username="appuser"
-com.recomdata.transmart.data.export.sftp.passphrase="support@255"
-com.recomdata.transmart.data.export.sftp.private.keyfile=""
-//com.recomdata.transmart.data.export.sftp.private.keyfile="C:/Users/smunikuntla/Downloads/SaiMunikuntla12.ppk"
-// User ${sftp.username} should have write-permissions on the remote.dir.path
-// "." currently points to folder /home/${sftp.username}
-com.recomdata.transmart.data.export.sftp.remote.dir.path="."*/
 
 com.recomdata.transmart.data.export.max.export.jobs.loaded=20
-// tempFolderDirectory should be referenced by all plugins if we plan to use a common temp-dir
-com.recomdata.plugins.tempFolderDirectory='C:/Users/smunikuntla/AppData/Local/Temp/jobs'
-com.recomdata.transmart.data.export.rScriptDirectory='C:/SVN/repo1/transmart/trunk/tranSMARTApp/web-app/dataExportRScripts/'
 
 com.recomdata.transmart.data.export.dataTypesMap=[
 	'CLINICAL':'Clinical & Low Dimensional Biomarker Data', 
@@ -183,7 +161,7 @@ disclaimer.append("<p></p>")
 com.recomdata.disclaimer=disclaimer.toString()
 
 // customization views
-com.recomdata.view.studyview='studydetail'
+//com.recomdata.view.studyview='_clinicaltrialdetail'
 com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []

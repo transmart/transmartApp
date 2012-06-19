@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 import com.recomdata.snp.SnpData
 import grails.converters.JSON

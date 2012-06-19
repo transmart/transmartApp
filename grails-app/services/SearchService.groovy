@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 import groovy.time.*
 
@@ -57,7 +57,7 @@ public class SearchService{
 		log.info("Literature Asthma Interaction Count Duration: ${duration}")
 		duration = benchmark {sResult.litJubAsthmaPECount = literatureQueryService.litJubAsthmaPECount(searchFilter)}
 		log.info("Literature Asthma Protein Effect Count Duration: ${duration}")
-		duration = benchmark {sResult.experimentCount = experimentAnalysisQueryService.countExperiment(searchFilter)}
+		duration = benchmark {sResult.experimentCount = experimentAnalysisQueryService.countExperimentMV(searchFilter)}
 		log.info("Expression Analysis Count Duration: ${duration}")
 		duration = benchmark {sResult.trialCount = trialQueryService.countAnalysis(searchFilter)}
 		log.info("Trial Count Duration: ${duration}")
@@ -65,7 +65,7 @@ public class SearchService{
 		log.info("Analysis count and duration: ${sResult.analysisCount} and ${duration}")
 		duration = benchmark {sResult.mRNAAnalysisCount = experimentAnalysisQueryService.countTEAAnalysis(searchFilter)}
 		log.info("mRNA Analysis count and duration: ${sResult.mRNAAnalysisCount} and ${duration}")
-		duration = benchmark {sResult.allAnalysiCount = experimentAnalysisQueryService.countAnalysis(searchFilter)}
+		duration = benchmark {sResult.allAnalysiCount = experimentAnalysisQueryService.countAnalysisMV(searchFilter)}
 		log.info("All Analysis count and duration: ${sResult.allAnalysiCount} and ${duration}")
 		duration = benchmark {sResult.documentCount = documentService.documentCount(searchFilter)}
 		log.info("Document Count Duration: ${duration}")

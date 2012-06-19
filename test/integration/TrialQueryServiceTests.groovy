@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 class TrialQueryServiceTests extends GroovyTestCase {
 

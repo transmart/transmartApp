@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 function getJobsData(tab)
 {
@@ -132,7 +132,7 @@ function jobsstoreLoaded()
 }
 
 //Called to show the new job status window
-function showJobStatusWindow(result)	{
+function showJobStatusWindow(result, messages)	{
 	var jobInfo = Ext.util.JSON.decode(result.responseText);
 	var jobName = jobInfo.jobName;
 	var sb = Ext.getCmp('asyncjob-statusbar');
@@ -155,6 +155,10 @@ function showJobStatusWindow(result)	{
 		        	  handler: function()	{		        		  
 		        		  cancelJob(jobName);
 		        		  sb.setVisible(true);
+		        		  if (messages && messages.cancelMsg) {
+			        		  Ext.Msg.alert("Job Cancelled", messages.cancelMsg);
+			        		  Ext.MessageBox.hide.defer(5000,this);
+		        		  }
 		        		  jobWindow.close();
 		        	  }
 		          },
@@ -162,6 +166,10 @@ function showJobStatusWindow(result)	{
 		        	  text: 'Run in Background',
 		        	  handler: function()	{
 		        		  sb.setVisible(true);
+		        		  if (messages && messages.backgroundMsg) {
+			        		  Ext.Msg.alert("Job processing in background", messages.backgroundMsg);
+			        		  Ext.MessageBox.hide.defer(5000,this);
+		        		  }
 		        		  jobWindow.close();
 		        	  }
 		          }],

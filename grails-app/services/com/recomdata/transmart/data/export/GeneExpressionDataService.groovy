@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 package com.recomdata.transmart.data.export
 
@@ -94,7 +94,7 @@ class GeneExpressionDataService {
 				}
 				def filename = (studyList?.size() > 1) ? study+'_'+fileName : fileName
 				//The writeData method will return a map that tells us if data was found, and the name of the file that was written.			
-				def writeDataStatusMap = writeData(resultInstanceId, sqlQuery, sampleQuery, studyDir, filename, jobName, includePathwayInfo, splitAttributeColumn)
+				def writeDataStatusMap = writeData(resultInstanceId, sqlQuery, sampleQuery, studyDir, filename, jobName, includePathwayInfo, splitAttributeColumn, gplIds)
 				
 				def outFile = writeDataStatusMap["outFile"]
 				dataFound = writeDataStatusMap["dataFound"]
@@ -179,15 +179,16 @@ class GeneExpressionDataService {
 			   b.probeset_id, 
 		   	   b.GENE_SYMBOL, 
 		   	   b.GENE_ID,
-		   	   pd.sourcesystem_cd 
+		   	   pd.sourcesystem_cd,
+		   	   ssm.gpl_id
 		   """);
 	   
 	   sTables.append("""
 	   FROM de_subject_microarray_data a
 			   INNER JOIN de_mrna_annotation b ON a.probeset_id = b.probeset_id
-			   INNER JOIN de_subject_sample_mapping ssm ON (ssm.trial_name = A.trial_name AND ssm.assay_id = A.assay_id)
-			   INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = ? AND ssm.patient_id = sc.patient_num
-	   		   INNER JOIN PATIENT_DIMENSION pd on a.patient_id = pd.patient_num
+			   INNER JOIN de_subject_sample_mapping ssm ON ssm.assay_id = A.assay_id
+			   INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = ? AND ssm.PATIENT_ID = sc.patient_num
+	   		   INNER JOIN PATIENT_DIMENSION pd on ssm.patient_id = pd.patient_num
 	   """)
 	   
 	   //If a list of genes was entered, look up the gene ids and add them to the query. If a gene signature or list was supplied then we modify the query to join on the tables that link the list to the gene ids.
@@ -208,7 +209,7 @@ class GeneExpressionDataService {
 			   INNER JOIN search_keyword sk ON sk.bio_data_id = sbm.bio_marker_id
 		   """)
 		   
-		   sTables.append(" WHERE a.trial_name = '").append(study).append("' ")
+		   sTables.append(" WHERE SSM.trial_name = '").append(study).append("' ")
 		   sTables.append(" AND sk.unique_id IN ").append(keywordTokens).append (" ");
 
 	   }
@@ -220,17 +221,17 @@ class GeneExpressionDataService {
 		   //Include the tables we join on to filter by the pathway.
 		   sTables.append("""
 		   INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = to_char(b.GENE_ID)
-		   INNER JOIN search_bio_mkr_correl_fast_mv sbm ON sbm.asso_bio_marker_id = bm.bio_marker_id
+		   INNER JOIN SEARCHAPP.SEARCH_BIO_MKR_CORREL_VIEW sbm ON sbm.asso_bio_marker_id = bm.bio_marker_id
 		   INNER JOIN search_keyword sk ON sk.bio_data_id = sbm.domain_object_id
 		   """)
 
 		   //Include the normal filter.
-		   sTables.append(" WHERE a.trial_name = '").append(study).append("' ")
+		   sTables.append(" WHERE SSM.trial_name = '").append(study).append("' ")
 		   sTables.append(" AND sk.unique_id IN ").append(convertStringToken(pathwayName)).append(" ");
 	   }
 	   else
 	   {
-		   sTables.append(" WHERE a.trial_name = '").append(study).append("' ")
+		   sTables.append(" WHERE SSM.trial_name = '").append(study).append("' ")
 	   }
 
 	   //If we have a sample type, append it to the query.
@@ -254,7 +255,7 @@ class GeneExpressionDataService {
 		   sTables.append(" AND ssm.GPL_ID IN (").append(utilService.toListString(gplIds)).append(")");
 	   }
 	   
-	   sTables.append(" ORDER BY probe_id, patient_id")
+	   sTables.append(" ORDER BY probe_id, patient_id, gpl_id")
 	   
 	   sSelect.append(sTables.toString())
 	   
@@ -460,7 +461,7 @@ class GeneExpressionDataService {
 		return s.toString();
 	}
 
-	def writeData(String resultInstanceId, String sqlQuery, String sampleQuery, File studyDir, String fileName, String jobName,includePathwayInfo,splitAttributeColumn)
+	def writeData(String resultInstanceId, String sqlQuery, String sampleQuery, File studyDir, String fileName, String jobName,includePathwayInfo,splitAttributeColumn, gplIds)
 	{
 		def filePath = null
 		def dataTypeName = "mRNA";
@@ -516,7 +517,7 @@ class GeneExpressionDataService {
 		else
 			output << "\n"
 			
-		def  sampleType, timepoint,tissueType, rawIntensityRS, zScoreRS, patientID, sourceSystemCode, assayID,GPL_ID, logIntensityRS, probeID, probesetID = null
+		def  sampleType, timepoint,tissueType, rawIntensityRS, zScoreRS, patientID, sourceSystemCode, assayID,GPL_ID, logIntensityRS, probeID, probesetID, gplID = null
 		def sample, value, zscore,  lineToWrite = null
 		Double rawIntensity = null;
 		String geneID = null;
@@ -536,6 +537,7 @@ class GeneExpressionDataService {
 		// and writes to the writer
 		
 		log.info("start sample retrieving query");
+		log.debug("Sample Query : " + sampleQuery);
 		rs = stmt1.executeQuery();
 		def sttSampleStr = null;
 		
@@ -595,6 +597,12 @@ class GeneExpressionDataService {
 		def searchKeywordIdIdx = nameIndexMap.get("SEARCH_KEYWORD_ID");
 		int flushCount = 0;
 		long recCount = 0;
+
+		//A workaround for using only GPL96 values. I don't like the way we have to hard-code GPL96 here. 		
+		def platformToUse = 'GPL96'
+		def patientProbePlatformValueMap = [:]
+		def gplIDIdx = nameIndexMap.get("GPL_ID");
+		
 		try {
 			//Iterate over the record set object.
 			while (rs.next())
@@ -610,7 +618,19 @@ class GeneExpressionDataService {
 				 logIntensityRS = rs.getString(logIntensityRSIdx);	
 				 geneID = rs.getString(geneIDIdx);
 				 geneSymbolId = rs.getString(geneSymbolIdx);
+				 
 				dataFound = true
+				
+				//To use only GPL96 when same probe present in both platforms
+				if (gplIds.size() > 1) { // when there are more than one platforms
+					gplID = rs.getString(gplIDIdx)
+					if (gplID.equals(platformToUse)) { // compared with the hard-coded value GPL96
+						patientProbePlatformValueMap.put(patientID+'_'+probeID+'_'+gplID, logIntensityRS)
+					} else {
+						def probeExistsInGPL96 = patientProbePlatformValueMap.containsKey(patientID+'_'+probeID+'_'+platformToUse)
+						if (probeExistsInGPL96) continue;// don't write the record for probe that already exists in GPL96
+					}
+				}
 				
 				// patient id
 				//writeNotEmptyString(output, patientID);
@@ -927,7 +947,7 @@ class GeneExpressionDataService {
 				  def gseaDir = (new FileWriterUtil()).createDir(currentJobDir, 'GSEA')
 						
 				  //Create the file
-				  gctFilePath = writeGCTData(sqlQuery, sampleQuery, gseaDir, fileName, jobName)
+				  gctFilePath = writeGCTData(sqlQuery, sampleQuery, gseaDir, fileName, jobName, platformsList)
 			  }
 			   
 			   if (null != gctFilePath && pivot) {
@@ -997,7 +1017,7 @@ class GeneExpressionDataService {
    def private String createGCTPathwayQuery(List studyList, String resultInstanceIds, List platformsList) {
 	   def sSelect = new StringBuilder()	   
 	   sSelect.append("""
-	   	SELECT a.PATIENT_ID, a.LOG_INTENSITY, a.RAW_INTENSITY, a.assay_id, b.probe_id, b.probeset_id, pd.sourcesystem_cd
+	   	SELECT a.PATIENT_ID, a.LOG_INTENSITY, a.RAW_INTENSITY, a.assay_id, b.probe_id, b.probeset_id, pd.sourcesystem_cd, ssm.gpl_id
 	   	FROM de_subject_microarray_data a
 		   INNER JOIN (SELECT probe_id, probeset_id, min(gene_id) gene_id
                        FROM de_mrna_annotation
@@ -1014,7 +1034,7 @@ class GeneExpressionDataService {
 	   		.append(resultInstanceIds).append(")) sc ON ssm.patient_id = sc.patient_num") 
 			.append(" WHERE ssm.trial_name IN (").append(utilService.toListString(studyList)).append(")")
 			.append(" AND ssm.gpl_id IN (").append(utilService.toListString(platformsList)).append(")")
-	   sSelect.append(" ORDER BY probe_id, patient_id")
+	   sSelect.append(" ORDER BY probe_id, patient_id, gpl_id")
 	   
 	   return sSelect.toString();
    }
@@ -1161,7 +1181,7 @@ class GeneExpressionDataService {
 	   }
    }
    
-   private String writeGCTData(String sqlQuery, String sampleQuery, File gseaDir, String fileName, String jobName)
+   private String writeGCTData(String sqlQuery, String sampleQuery, File gseaDir, String fileName, String jobName, gplIds)
    {
 	   def sttMap = getSamplesMap(sampleQuery,null,false)
 	   
@@ -1179,7 +1199,7 @@ class GeneExpressionDataService {
 	   
 	   output << "PATIENT ID\tDescription\tSAMPLE\tASSAY ID\tVALUE\tPROBE ID\tPROBESET ID\n"
 		   
-	   def  sampleType, timepoint,tissueType, rawIntensityRS, zScoreRS, patientID, sourceSystemCode, assayID, logIntensityRS, probeID, probesetID, geneSymbolRS = null
+	   def  sampleType, timepoint,tissueType, rawIntensityRS, zScoreRS, patientID, sourceSystemCode, assayID, logIntensityRS, probeID, probesetID, geneSymbolRS, gplID = null
 	   def sample, value, zscore,  lineToWrite = null
 	   Double rawIntensity = null;
 	   String geneID = null;
@@ -1207,6 +1227,12 @@ class GeneExpressionDataService {
 	   def probeIDIdx = nameIndexMap.get("PROBE_ID");
 	   def probesetIDIdx = nameIndexMap.get("PROBESET_ID");
 	   //def geneIDIdx = nameIndexMap.get("GENE_ID");
+	   
+	   //A workaround for using only GPL96 values. I don't like the way we have to hard-code GPL96 here.
+	   def platformToUse = 'GPL96'
+	   def patientProbePlatformValueMap = [:]
+	   def gplIDIdx = nameIndexMap.get("GPL_ID");
+	   
 	   int flushCount = 0;
 	   long recCount = 0;
 	   try {
@@ -1222,6 +1248,18 @@ class GeneExpressionDataService {
 			   probeID = rs.getString(probeIDIdx);
 			   probesetID = rs.getString(probesetIDIdx);
 			   //geneID = rs.getString(geneIDIdx);
+			   
+			   //To use only GPL96 when same probe present in both platforms
+			   if (gplIds.size() > 1) { // when there are more than one platforms
+				   gplID = rs.getString(gplIDIdx)
+				   if (gplID.equals(platformToUse)) { // compared with the hard-coded value GPL96
+					   patientProbePlatformValueMap.put(patientID+'_'+probeID+'_'+gplID, logIntensityRS)
+				   } else {
+					   def probeExistsInGPL96 = patientProbePlatformValueMap.containsKey(patientID+'_'+probeID+'_'+platformToUse)
+					   if (probeExistsInGPL96) continue;// don't write the record for probe that already exists in GPL96
+				   }
+			   }
+			   
 			   // patient id
 			   //writeNotEmptyString(output, patientID);
 			   writeNotEmptyString(output, utilService.getActualPatientId(sourceSystemCode))

@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 var exportMetadataStore;
 function getDatadata()
@@ -239,7 +239,11 @@ function runDataExportJob(result) {
 	var jobNameInfo = Ext.util.JSON.decode(result.responseText);					 
 	var jobName = jobNameInfo.jobName;
 
-	showJobStatusWindow(result);
+	var messages = {
+		cancelMsg: "Your Job has been cancelled.", 
+		backgroundMsg: "Your job has been put into background process. Please check the job status in the 'Export Jobs' tab."
+	}
+	showJobStatusWindow(result, messages);
 	var subsetDataTypeFiles = document.getElementsByName('SubsetDataTypeFileType');
 	var selectedSubsetDataTypeFiles = [];
 	for (var i = 0; i < subsetDataTypeFiles.length; i++) {

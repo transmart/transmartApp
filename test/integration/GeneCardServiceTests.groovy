@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 class GeneCardServiceTests extends GroovyTestCase {
 
