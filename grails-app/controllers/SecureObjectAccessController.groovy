@@ -346,10 +346,6 @@ class SecureObjectAccessController {
 			return [];//SecureObjectAccess.findAll(" FROM SecureObject s where 1=0");
 	}
 
-	def getSecureObjAccessListForPrincipal(principal) {
-		return SecureObjectAccess.findAll(" FROM SecureObjectAccess s WHERE s.principal = ? ORDER BY s.principal.name", principal)
-	}
-
 	def addAccess(principal, secobject,access){
 		def secureObjectAccessInstance = new SecureObjectAccess();
 		secureObjectAccessInstance.principal = principal;

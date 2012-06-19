@@ -36,7 +36,6 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
 import com.recomdata.transmart.data.export.exception.FTPAuthenticationException;
 import com.recomdata.transmart.data.export.exception.InvalidFTPParamsException;
@@ -50,13 +49,7 @@ public class FTPUtil {
 	private static org.apache.log4j.Logger log =
             Logger.getLogger(FTPUtil.class);
 	@SuppressWarnings("rawtypes")
-	private static final Map config = ConfigurationHolder.getFlatConfig();
 	
-	private static final String FTP_SERVER = (String) config.get("com.recomdata.transmart.data.export.ftp.server");
-	private static final String FTP_SERVER_PORT = (String) config.get("com.recomdata.transmart.data.export.ftp.serverport");
-	private static final String FTP_SERVER_USER_NAME = (String) config.get("com.recomdata.transmart.data.export.ftp.username");
-	private static final String FTP_SERVER_PASSWORD = (String) config.get("com.recomdata.transmart.data.export.ftp.password");
-	private static final String FTP_SERVER_REMOTE_PATH = (String) config.get("com.recomdata.transmart.data.export.ftp.remote.path");
 	private static FTPClient ftp;
 
 	/**
@@ -65,10 +58,10 @@ public class FTPUtil {
 	 * 
 	 * @throws InvalidFTPParamsException
 	 */
-	private static void validate() throws InvalidFTPParamsException {
-		if (StringUtils.isEmpty(FTP_SERVER)
-				|| StringUtils.isEmpty(FTP_SERVER_USER_NAME)
-				|| StringUtils.isEmpty(FTP_SERVER_PASSWORD)) {
+	private static void validate(String ftpServer, String ftpServerUserName, String ftpServerPassword) throws InvalidFTPParamsException {
+		if (StringUtils.isEmpty(ftpServer)
+				|| StringUtils.isEmpty(ftpServerUserName)
+				|| StringUtils.isEmpty(ftpServerPassword)) {
 			throw new InvalidFTPParamsException("Invalid FTP Connection Params");
 		}
 	}
@@ -79,18 +72,18 @@ public class FTPUtil {
 	 * 
 	 * @throws InvalidFTPParamsException
 	 */
-	private static void connect() throws InvalidFTPParamsException {
-		validate();
+	private static void connect(String ftpServer, String ftpServerPort, String ftpServerUserName, String ftpServerPassword) throws InvalidFTPParamsException {
+		validate(ftpServer, ftpServerUserName, ftpServerPassword);
 		ftp = new FTPClient();
 		try {
 			int reply;
-			if (NumberUtils.isNumber(FTP_SERVER_PORT)
-					&& Integer.parseInt(FTP_SERVER_PORT) > 0) {
-				ftp.connect(FTP_SERVER, Integer.parseInt(FTP_SERVER_PORT));
+			if (NumberUtils.isNumber(ftpServerPort)
+					&& Integer.parseInt(ftpServerPort) > 0) {
+				ftp.connect(ftpServer, Integer.parseInt(ftpServerPort));
 			} else {
-				ftp.connect(FTP_SERVER);
+				ftp.connect(ftpServer);
 			}
-			System.out.println("Connected to " + FTP_SERVER + " on "
+			System.out.println("Connected to " + ftpServer + " on "
 					+ ftp.getRemotePort());
 
 			// After connection attempt, you should check the reply code to
@@ -119,10 +112,10 @@ public class FTPUtil {
 	 * 
 	 * @throws FTPAuthenticationException
 	 */
-	private static void login() throws FTPAuthenticationException {
+	private static void login(String ftpServerUserName, String ftpServerPassword) throws FTPAuthenticationException {
 		try {
-			if (StringUtils.isNotEmpty(FTP_SERVER_USER_NAME) && StringUtils.isNotEmpty(FTP_SERVER_PASSWORD)) {
-				if (!ftp.login(FTP_SERVER_USER_NAME, FTP_SERVER_PASSWORD)) {
+			if (StringUtils.isNotEmpty(ftpServerUserName) && StringUtils.isNotEmpty(ftpServerPassword)) {
+				if (!ftp.login(ftpServerUserName, ftpServerPassword)) {
 					ftp.logout();
 					throw new FTPAuthenticationException(
 							"Credentials failed to Authenticate on the FTP server");
@@ -141,12 +134,12 @@ public class FTPUtil {
 	 * @param localFile
 	 * @return remote FTP location of the file
 	 */
-	public static String uploadFile(boolean binaryTransfer, File localFile) {
+	public static String uploadFile(boolean binaryTransfer, File localFile, String ftpServer, String ftpServerPort, String ftpServerUserName, String ftpServerPassword, String ftpServerRemotePath) {
 		String remote = null;
 		boolean uploadComplete = false;
 		try {
-			connect();
-			login();
+			connect(ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword);
+			login(ftpServerUserName, ftpServerPassword);
 
 			if (binaryTransfer)
 				ftp.setFileType(FTP.BINARY_FILE_TYPE);
@@ -157,7 +150,7 @@ public class FTPUtil {
 
 			InputStream input = new FileInputStream(localFile);
 
-			remote = FTP_SERVER_REMOTE_PATH + localFile.getName();
+			remote = ftpServerRemotePath + localFile.getName();
 			uploadComplete = ftp.storeFile(remote, input);
 
 			input.close();
@@ -176,12 +169,12 @@ public class FTPUtil {
 		return remote;
 	}
 	
-	public static InputStream downloadFileStream(boolean binaryTransfer, String filename, String location) {
+	public static InputStream downloadFileStream(boolean binaryTransfer, String filename, String location, String ftpServer, String ftpServerPort, String ftpServerUserName, String ftpServerPassword, String ftpServerRemotePath) {
 		InputStream inputStream = null;
 		try {
-			String remote = ((StringUtils.isNotEmpty(location)) ? location : FTP_SERVER_REMOTE_PATH)+filename;
-			connect();
-			login();
+			String remote = ((StringUtils.isNotEmpty(location)) ? location : ftpServerRemotePath)+filename;
+			connect(ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword);
+			login(ftpServerUserName, ftpServerPassword);
 
 			if (binaryTransfer)
 				ftp.setFileType(FTP.BINARY_FILE_TYPE);
@@ -204,21 +197,21 @@ public class FTPUtil {
 		return inputStream;
 	}
 	
-	public static InputStream downloadFile(boolean binaryTransfer, String filename) {
-		return downloadFileStream(binaryTransfer, filename, null);
+	public static InputStream downloadFile(boolean binaryTransfer, String filename,  String ftpServer, String ftpServerPort, String ftpServerUserName, String ftpServerPassword, String ftpServerRemotePath) {
+		return downloadFileStream(binaryTransfer, filename, null, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath);
 	}
 	
-	public static boolean deleteFile(String filename){
-		return deleteFile(filename, null);
+	public static boolean deleteFile(String filename,  String ftpServer, String ftpServerPort, String ftpServerUserName, String ftpServerPassword, String ftpServerRemotePath){
+		return deleteFile(filename, null, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath);
 	}
 	
-	public static boolean deleteFile(String filename, String location){
+	public static boolean deleteFile(String filename, String location, String ftpServer, String ftpServerPort, String ftpServerUserName, String ftpServerPassword, String ftpServerRemotePath){
 		String remote = null;
 		boolean ret=false;
 		try{
-			remote = ((StringUtils.isNotEmpty(location))? location : FTP_SERVER_REMOTE_PATH)+filename;
-			connect();
-			login();
+			remote = ((StringUtils.isNotEmpty(location))? location : ftpServerRemotePath)+filename;
+			connect(ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword);
+			login(ftpServerUserName, ftpServerPassword);
 			
 			ret=ftp.deleteFile(remote);
 		}catch (InvalidFTPParamsException e) {

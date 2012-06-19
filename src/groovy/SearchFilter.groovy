@@ -25,8 +25,10 @@
  **/
 
 import grails.converters.*
+import grails.validation.Validateable
 import org.apache.log4j.Logger
 
+@Validateable
 class SearchFilter {
 
     static Logger log = Logger.getLogger(SearchFilter.class)
