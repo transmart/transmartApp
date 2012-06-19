@@ -166,6 +166,10 @@ com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
 
+// development env log4j settings - prod should reconfigure it
+environments {
+	development {
+
 log4j = {
 	appenders {
 		// set up a log file in the standard tomcat area; be sure to use .toString() with ${}
@@ -184,4 +188,7 @@ log4j = {
 	debug tomcatLog:'grails.app.task', 'grails.app.controller', 'grails.app.service'
 	
 	// set level for my messages; this uses the root logger (and thus the tomcatLog file)
+	}
+	}
+	
 }
