@@ -169,7 +169,7 @@ grails.spring.bean.packages = []
 log4j = {
 	appenders {
 		// set up a log file in the standard tomcat area; be sure to use .toString() with ${}
-		rollingFile name:'tomcatLog', file:"${appName}.log".toString(), maxFileSize:'1024KB', layout:pattern(conversionPattern: '[%p] %d{HH:mm:ss} (%c{5}:%M:%L) | %m%n')
+		rollingFile name:'tomcatLog', file:"transmart.log".toString(), maxFileSize:'1024KB', layout:pattern(conversionPattern: '[%p] %d{HH:mm:ss} (%c{5}:%M:%L) | %m%n')
 		'null' name:'stacktrace'
 	}
 
