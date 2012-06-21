@@ -20,6 +20,8 @@
 
 import javax.servlet.ServletOutputStream
 
+import org.transmartproject.searchapp.AccessLog;
+
 import search.GeneSignature
 import search.GeneSignatureFileSchema
 import bio.BioAssayPlatform

@@ -29,6 +29,8 @@ import com.recomdata.util.*
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import org.transmartproject.searchapp.AccessLog;
+
 import com.recomdata.util.ariadne.Batch;
 
 class LiteratureController {

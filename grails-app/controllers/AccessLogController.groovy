@@ -19,6 +19,9 @@
   
 
 import java.text.*;
+
+import org.transmartproject.searchapp.AccessLog;
+
 import com.recomdata.util.ExcelSheet;
 import com.recomdata.util.ExcelGenerator;
 

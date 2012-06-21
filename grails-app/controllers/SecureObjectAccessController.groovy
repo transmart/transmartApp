@@ -17,13 +17,10 @@
  *
  ******************************************************************/
   
-
 import command.SecureObjectAccessCommand
-
 
 class SecureObjectAccessController {
 
-	def accessLogService
 	def springSecurityService
 	
 	
@@ -166,17 +163,14 @@ class SecureObjectAccessController {
 					msg.append("<User:").append(r.name).append(", Permission:").append(access.accessLevelName).append(", Study:").append( secureObjInstance.bioDataUniqueId).append(">");
 				};
 			}
-		//	println(secureObjInstance)
-		//	println(access)
-			accessLogService.adminLog(user, msg.toString())
-		def 	secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
-		def 	userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
 
-			render(template:'addremovePrincipal',model:[
-			                          		secureObjectAccessList: secureObjectAccessList,
-			                          		userwithoutaccess: userwithoutaccess
-			                          		] )
+			new AccessLog(username:user.username, event:"ADMIN",	eventmessage: msg.toString(), accesstime:new Date()).save()
+			
+			def secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
+			def userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
+			render(template:'addremovePrincipal',model:[secureObjectAccessList: secureObjectAccessList,userwithoutaccess: userwithoutaccess])
 	}
+	
 	def removePrincipalFromAccessList = {
 		
 		SecureObjectAccessCommand fl ->
@@ -203,10 +197,8 @@ class SecureObjectAccessController {
 						
 				};
 			}
-		
-		//	println(secureObjInstance)
-		//	println(access)
-			accessLogService.adminLog(user, msg.toString())
+			
+			new AccessLog(username:user.username, event:"ADMIN",	eventmessage: msg.toString(), accesstime:new Date()).save()
 			
 		def 	secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
 		def 	userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
@@ -290,7 +282,7 @@ class SecureObjectAccessController {
 				
 			};
 		}
-		accessLogService.adminLog(user, msg.toString());
+		new AccessLog(username:user.username, event:"ADMIN",	eventmessage: msg.toString(), accesstime:new Date()).save()
 		def searchtext=params.searchtext;
 		def secureObjAccessList=getSecureObjAccessListForPrincipal(principalInstance, access);
 		def objectswithoutaccess=getObjsWithoutAccessForPrincipal(principalInstance, searchtext);
@@ -318,7 +310,7 @@ class SecureObjectAccessController {
 			};
 		}
 		
-		accessLogService.adminLog(user, msg.toString());
+		new AccessLog(username:user.username, event:"ADMIN",	eventmessage: msg.toString(), accesstime:new Date()).save()
 		
 		def searchtext=params.searchtext;
 		def secureObjAccessList=getSecureObjAccessListForPrincipal(principalInstance, access);

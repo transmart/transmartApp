@@ -24,6 +24,8 @@
  * @version $Revision: 10098 $
  */
 
+import org.transmartproject.searchapp.AccessLog;
+
 import search.GeneSignature
 
 /**
