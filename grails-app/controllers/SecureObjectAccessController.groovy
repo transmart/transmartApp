@@ -18,6 +18,7 @@
  ******************************************************************/
   
 import command.SecureObjectAccessCommand
+import org.transmartproject.searchapp.AccessLog
 
 class SecureObjectAccessController {
 
