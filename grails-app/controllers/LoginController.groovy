@@ -35,6 +35,7 @@ import org.springframework.security.authentication.LockedException
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.core.userdetails.UserDetails
 
 /**
  * Login Controller
@@ -50,6 +51,7 @@ class LoginController {
      * Dependency injection for the springSecurityService.
 	 */
     def springSecurityService
+	def userDetailsService
 
     /**
 	 * Default action; redirects to 'defaultTargetUrl' if logged in, /login/auth otherwise.
@@ -62,13 +64,40 @@ class LoginController {
 			redirect action: auth, params: params
 		}
 	}
-	
+	def forceAuth = {
+		session.invalidate();
+		render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
+}
+
 	/**
 	 * Show the login page.
 	 */
 	def auth = {
 		nocache response
 		
+		def guestAutoLogin = grailsApplication.config.com.recomdata.guestAutoLogin;
+		boolean guestLoginEnabled = ('true'==guestAutoLogin)
+		log.info("enabled guest login")
+		//log.info("requet:"+request.getQueryString())
+		boolean forcedFormLogin = request.getQueryString() != null
+		log.info("User is forcing the form login? : " + forcedFormLogin)
+		
+		// if enabled guest and not forced login
+		if(guestLoginEnabled && !forcedFormLogin){
+				log.info("proceeding with auto guest login")
+				def guestuser = grailsApplication.config.com.recomdata.guestUserName;
+
+				UserDetails ud = userDetailsService.loadUserByUsername(guestuser)
+				if(ud!=null){
+					log.debug("We have found user: ${ud.username}")
+					springSecurityService.reauthenticate(ud.username)
+					redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
+					
+				}else{
+					log.info("can not find the user:"+guestuser);
+				}
+			}
+
 		if (springSecurityService.isLoggedIn()) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
