@@ -1,3 +1,4 @@
+package org.transmartproject.searchapp
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -16,49 +17,29 @@
  * 
  *
  ******************************************************************/
-  
-
-package com.recomdata.transmart.domain.searchapp
- /**
-  * $Id: AccessLog.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
-  */
-
-
 
 /**
- * user access log file
- *
+ * Request Map domain class used by Spring Security plugin to determine the security level by URL
  */
-public class AccessLog{
-
+class Requestmap {
+	String url
+	String configAttribute
 	Long id
-	String username;
-	String event;
-	String eventmessage;
-	String requestURL;
-	Date accesstime;
-
-	static mapping = {
-		table 'SEARCH_APP_ACCESS_LOG'
-	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-		version false
-		id column:'id'
-		username column:'USER_NAME'
-		event column:'EVENT'
-		eventmessage column:'EVENT_MESSAGE'
-		requestURL column:'REQUEST_URL'
-		accesstime column:'ACCESS_TIME'
+	Long version
+	static mapping ={
+		datasource 'postgresql'
+		table 'SEARCH_REQUEST_MAP'
+		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		columns {
+			id column:'ID'
+			version column:'VERSION'
+			configAttribute column:'CONFIG_ATTRIBUTE'
+			url column:'URL'
+		}
 	}
-
-
+	
 	static constraints = {
-		username(blank: false)
-		event(nullable:false)
-		eventmessage(nullable:true)
-		requestURL(nullable: true)
-		accesstime(nullable:false)
+		url(blank: false, unique: true)
+		configAttribute(blank: false)
 	}
-
 }

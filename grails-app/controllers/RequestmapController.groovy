@@ -25,6 +25,7 @@
   */
 
 import org.springframework.util.StringUtils
+import org.transmartproject.searchapp.Requestmap;
 
 /**
  * Requestmap controller.

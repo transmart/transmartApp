@@ -47,9 +47,8 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.jboss.com/maven2/"
     }
     dependencies {
-        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
-
-  
+		// specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
+		runtime 'postgresql:postgresql:9.0-801.jdbc4'
     }
 
     plugins {

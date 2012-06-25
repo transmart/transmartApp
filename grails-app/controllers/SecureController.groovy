@@ -1,3 +1,5 @@
+import org.transmartproject.searchapp.AccessLog;
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 

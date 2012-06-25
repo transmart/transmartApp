@@ -79,6 +79,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.*;
 import java.text.*;
+
+import org.transmartproject.searchapp.AccessLog;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 import javax.xml.parsers.*;
