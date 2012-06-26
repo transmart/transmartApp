@@ -1,5 +1,6 @@
 import org.springframework.dao.DataIntegrityViolationException
-import org.transmartproject.searchapp.Role;
+import org.transmartproject.searchapp.AccessLog
+import org.transmartproject.searchapp.Role
 
 /*************************************************************************
  * tranSMART - translational medicine data mart
@@ -58,18 +59,27 @@ class RoleController {
 	 * Delete an authority.
 	 */
 	def delete = {
-		def authority = Role.get(params.id)
+		def role = Role.get(params.id)
         try {
-            springSecurityService.deleteRole (authority)
+            role.delete()
             flash.message = "Role $params.id deleted."
             redirect action: list
         } catch (DataIntegrityViolationException e) {
             flash.message = "Unable to delete the role"
+            log.error(e.getLocalizedMessage(), e)
             redirect action: show, id: params.id
         } catch (MissingMethodException mme)    {
             flash.message = "Unable to delete the role"
+            log.error(mme.getLocalizedMessage(), mme)
             redirect action: show, id: params.id
         }
+        
+        def msg = "$role.authority has been deleted."
+        def authPrincipal = springSecurityService.getPrincipal()
+        flash.message = msg
+        new AccessLog(username:authPrincipal.username, event:"Role Deleted",
+            eventmessage: msg,
+            accesstime:new Date()).save()
 	}
 	
 	/**
