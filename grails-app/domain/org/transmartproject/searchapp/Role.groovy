@@ -1,3 +1,5 @@
+package org.transmartproject.searchapp
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -16,25 +18,28 @@
  * 
  *
  ******************************************************************/
-  
+class Role {
+	// role types
+	static def ADMIN_ROLE = "ROLE_ADMIN"
+	static def STUDY_OWNER_ROLE = "ROLE_STUDY_OWNER"
+	static def SPECTATOR_ROLE = "ROLE_SPECTATOR"
+	static def DS_EXPLORER_ROLE = "ROLE_DATASET_EXPLORER_ADMIN"
+	static def PUBLIC_USER_ROLE ="ROLE_PUBLIC_USER"
+	static def TRAINING_USER_ROLE ="ROLE_TRAINING_USER"
 
+	static hasMany = [people: AuthUser]
 
-class SecureAccessLevel {
-	static def OWN = "OWN"
-		Long accessLevelValue
-		Long id
-		String accessLevelName
- static mapping = {
-	 table 'SEARCH_SEC_ACCESS_LEVEL'
-	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-	 columns {
-		accessLevelValue column:'ACCESS_LEVEL_VALUE'
-		id column:'SEARCH_SEC_ACCESS_LEVEL_ID'
-		accessLevelName column:'ACCESS_LEVEL_NAME'
-		}
+	String description
+	String authority
+
+	static mapping = {
+		datasource 'postgresql'
+		table 'SEARCH_ROLE'
+		people joinTable:[name:'SEARCH_ROLE_AUTH_USER', key:'PEOPLE_ID',column:'AUTHORITIES_ID']
 	}
- static constraints = {
-	accessLevelName(nullable:true, maxSize:400)
+	
+	static constraints = {
+		authority(blank: false, unique: true)
+		description()
 	}
 }

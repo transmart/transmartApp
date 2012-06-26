@@ -1,3 +1,4 @@
+package org.transmartproject.searchapp
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -16,24 +17,42 @@
  * 
  *
  ******************************************************************/
-  
+class AuthUserSecureAccess {
+	static transients = ['objectAccessName','principalAccessName']
 
+	Long id
+	AuthUser authUser
+	SecureObject secureObject
+	SecureAccessLevel accessLevel
+	String objectAccessName
+	String principalAccessName
 
-class SecureObjectPath {
-		Long id
-		SecureObject secureObject
-		String conceptPath
- static mapping = {
-	 table 'SEARCH_SECURE_OBJECT_PATH'
-	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-	 version false
-	 columns {
-		id column:'SEARCH_SECURE_OBJ_PATH_ID'
-		secureObject column:'SEARCH_SECURE_OBJECT_ID'
-		conceptPath column:'I2B2_CONCEPT_PATH'
+	static mapping = {
+		datasource 'postgresql'
+		table 'SEARCH_AUTH_USER_SEC_ACCESS_V'
+		version false
+		// id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		columns {
+			id column:'SEARCH_AUTH_USER_SEC_ACCESS_ID'
+			authUser column:'SEARCH_AUTH_USER_ID'
+			secureObject column:'SEARCH_SECURE_OBJECT_ID'
+			accessLevel column:'SEARCH_SEC_ACCESS_LEVEL_ID'
 		}
 	}
+	
+	static constraints = {
+		authUser(nullable:true)
+	}
+	
+	public String getObjectAccessName() {
+		return secureObject.displayName+' ('+accessLevel.accessLevelName+')';
+	}
 
- static constraints = {
- }
+	public void setObjectAccessName(String s){}
+
+	public String getPrincipalAccessName() {
+		return authUser.name+' ('+accessLevel.accessLevelName+')';
+	}
+
+	public void setPrincipalAccessName(String s){}
 }

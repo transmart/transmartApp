@@ -18,6 +18,8 @@
  ******************************************************************/
   
 
+import org.transmartproject.searchapp.AuthUser;
+
 import grails.converters.*
 
 

@@ -21,6 +21,7 @@
 import javax.servlet.ServletOutputStream
 
 import org.transmartproject.searchapp.AccessLog;
+import org.transmartproject.searchapp.AuthUser;
 
 import search.GeneSignature
 import search.GeneSignatureFileSchema

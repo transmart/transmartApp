@@ -18,6 +18,10 @@
  ******************************************************************/
   
 
+import org.transmartproject.searchapp.AuthUser;
+import org.transmartproject.searchapp.Principal;
+import org.transmartproject.searchapp.UserGroup;
+
 import groovy.sql.Sql;
 import command.UserGroupCommand;
 import grails.converters.*;

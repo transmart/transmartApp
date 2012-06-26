@@ -19,6 +19,8 @@
   
 
 import org.springframework.web.multipart.MultipartFile;
+import org.transmartproject.searchapp.AuthUser;
+
 import search.GeneSignatureItem;
 import search.GeneSignatureFileSchema;
 import search.GeneSignature;

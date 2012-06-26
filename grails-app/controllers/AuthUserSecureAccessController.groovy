@@ -1,3 +1,8 @@
+import org.transmartproject.searchapp.AuthUser;
+import org.transmartproject.searchapp.AuthUserSecureAccess;
+import org.transmartproject.searchapp.Role;
+import org.transmartproject.searchapp.SecureAccessLevel;
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 

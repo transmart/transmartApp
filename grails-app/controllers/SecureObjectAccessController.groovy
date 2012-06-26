@@ -19,6 +19,12 @@
   
 import command.SecureObjectAccessCommand
 import org.transmartproject.searchapp.AccessLog
+import org.transmartproject.searchapp.AuthUser;
+import org.transmartproject.searchapp.Principal;
+import org.transmartproject.searchapp.Role;
+import org.transmartproject.searchapp.SecureAccessLevel;
+import org.transmartproject.searchapp.SecureObject;
+import org.transmartproject.searchapp.SecureObjectAccess;
 
 class SecureObjectAccessController {
 
@@ -211,20 +217,18 @@ class SecureObjectAccessController {
 	}
 
 	def manageAccess = {
-		//println(params)
-			def pid = params.currentprincipalid;
-		//println(pid)
+		def pid = params.currentprincipalid;
 		def access = SecureAccessLevel.findByAccessLevelName("VIEW");
 		def accessid = params.accesslevelid
 		if(accessid!=null){
 			access = SecureAccessLevel.get(accessid);
 		}
 		def principalInstance
-		if(pid!=null)
-		principalInstance = Principal.get(pid)
+		if (pid!=null)	{
+			principalInstance = Principal.get(pid)
+		}
 		def secureObjectAccessList=getSecureObjAccessListForPrincipal(principalInstance, access);
 		def objectswithoutaccess=getObjsWithoutAccessForPrincipal(principalInstance, '');
-
 		render(view:'manageAccess',model:[principalInstance:principalInstance,
 		accessLevelList:SecureAccessLevel.listOrderByAccessLevelValue(),
 		secureObjectAccessList: secureObjectAccessList,

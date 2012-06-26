@@ -1,3 +1,4 @@
+package org.transmartproject.searchapp
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -16,30 +17,54 @@
  * 
  *
  ******************************************************************/
-  
+class Principal {
+	static transients = ['principalNameWithType']
 
+	Long id
+	boolean enabled
+	String type
+	String name
+	String uniqueId =''
+	Date dateCreated
+	Date lastUpdated
+	String description = ''
+	String principalNameWithType
 
-class SecureObject {
-		Long id
-		Long bioDataId
-		String displayName
-		String dataType
-		String bioDataUniqueId
-		static hasMany=[conceptPaths:SecureObjectPath]
- static mapping = {
-	 table 'SEARCH_SECURE_OBJECT'
-	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-	 columns {
-		id column:'SEARCH_SECURE_OBJECT_ID'
-		bioDataId column:'BIO_DATA_ID'
-		displayName column:'DISPLAY_NAME'
-		dataType column:'DATA_TYPE'
-		bioDataUniqueId column:'BIO_DATA_UNIQUE_ID'
-	 }
+	static mapping = {
+		datasource 'postgresql'
+		table 'SEARCH_AUTH_PRINCIPAL'
+		tablePerHierarchy false
+		version false
+		id generator:'assigned'
+		columns
+		{
+			id column:'ID'
+			uniqueId column:'UNIQUE_ID'
+			name column:'NAME'
+			description column:'DESCRIPTION'
+			enabled column:'ENABLED'
+			type column:'PRINCIPAL_TYPE'
+			dateCreated column:'DATE_CREATED'
+			lastUpdated column:'LAST_UPDATED'
+		}
+
 	}
- static constraints = {
-	bioDataId(nullable:true)
-	dataType(nullable:true, maxSize:400)
+	static constraints = {
+		//enabled()
+		type(nullable:false)
+		description(nullable:true, maxSize:255)
+		uniqueId(nullable:true)
+	}
+
+	def beforeInsert = {
+		uniqueId = type+" "+id;
+	}
+
+	public String getPrincipalNameWithType(){
+		return type+' - '+name;
+	}
+
+	public void setPrincipalNameWithType(String n){
+
 	}
 }

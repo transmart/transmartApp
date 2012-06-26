@@ -34,7 +34,7 @@
  import com.recomdata.util.IDomainExcelWorkbook
  import com.recomdata.util.ExcelSheet
  import com.recomdata.util.ExcelGenerator
-
+ 
 /**
  * GeneSignature domain class
  */
@@ -65,9 +65,9 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	ConceptCode pValueCutoffConceptCode
 	String uniqueId
 	Date dateCreated
-	AuthUser createdByAuthUser
+//	AuthUser createdByAuthUser
 	Date lastUpdated
-	AuthUser modifiedByAuthUser
+//	AuthUser modifiedByAuthUser
 	String versionNumber
 	boolean publicFlag = false
 	boolean deletedFlag = false
@@ -117,9 +117,9 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 			pValueCutoffConceptCode column:'P_VALUE_CUTOFF_CONCEPT_ID'
 			uniqueId column:'UNIQUE_ID'
 			dateCreated column:'CREATE_DATE'
-			createdByAuthUser column:'CREATED_BY_AUTH_USER_ID'
+//			createdByAuthUser column:'CREATED_BY_AUTH_USER_ID'
 			lastUpdated column:'LAST_MODIFIED_DATE'
-			modifiedByAuthUser column:'MODIFIED_BY_AUTH_USER_ID'
+//			modifiedByAuthUser column:'MODIFIED_BY_AUTH_USER_ID'
 			versionNumber column:'VERSION_NUMBER'
 			publicFlag column:'PUBLIC_FLAG'
 			deletedFlag column:'DELETED_FLAG'
@@ -158,7 +158,7 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		description(nullable:true, maxSize:1000)
 		uniqueId(nullable:true, maxSize:50)
 		lastUpdated(nullable:true)
-		modifiedByAuthUser(nullable:true)
+//		modifiedByAuthUser(nullable:true)
 		versionNumber(nullable:true, maxSize:50)
 		parentGeneSignature(nullable:true)
 		sourceConceptCode(nullable:true)
@@ -274,9 +274,9 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		params.put("experimentTypeCellLine.id",experimentTypeCellLine?.id)
 		params.put("experimentTypeInVivoDescr",experimentTypeInVivoDescr)
 		params.put("experimentTypeATCCRef",experimentTypeATCCRef)
-		params.put("createdByAuthUser.id",createdByAuthUser?.id)
+//		params.put("createdByAuthUser.id",createdByAuthUser?.id)
 		params.put("dateCreated",dateCreated)
-		params.put("modifiedByAuthUser.id",modifiedByAuthUser?.id)
+//		params.put("modifiedByAuthUser.id",modifiedByAuthUser?.id)
 		params.put("lastUpdated",lastUpdated)
 		params.put("versionNumber",versionNumber)
 		return params;
@@ -323,9 +323,9 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		gs.experimentTypeCellLine= experimentTypeCellLine
 		gs.experimentTypeInVivoDescr=experimentTypeInVivoDescr
 		gs.experimentTypeATCCRef=experimentTypeATCCRef
-		gs.createdByAuthUser=createdByAuthUser
+//		gs.createdByAuthUser=createdByAuthUser
 		gs.dateCreated=dateCreated
-		gs.modifiedByAuthUser=modifiedByAuthUser
+//		gs.modifiedByAuthUser=modifiedByAuthUser
 		gs.lastUpdated=lastUpdated
 		gs.versionNumber=versionNumber
 	}
@@ -347,10 +347,10 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		values.add(["Name:",name])
 		values.add(["Description:",description])
 		values.add(["Public?:",publicFlag ? "Public":"Private"])
-		values.add(["Author:",createdByAuthUser?.userRealName])
+//		values.add(["Author:",createdByAuthUser?.userRealName])
 		values.add(["Create Date:",dateCreated])
-		values.add(["Modified By:",modifiedByAuthUser?.userRealName])
-		values.add(["Modified Date:",modifiedByAuthUser!=null ? lastUpdated : ""])
+//		values.add(["Modified By:",modifiedByAuthUser?.userRealName])
+//		values.add(["Modified Date:",modifiedByAuthUser!=null ? lastUpdated : ""])
 
 		// meta section
 		values.add([])

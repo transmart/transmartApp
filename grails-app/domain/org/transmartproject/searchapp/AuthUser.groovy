@@ -1,3 +1,4 @@
+package org.transmartproject.searchapp
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -16,29 +17,14 @@
  * 
  *
  ******************************************************************/
-  
-
- /**
-  * $Id: AuthUser.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 10098 $
-  */
-
-/**
- * User domain class.
- */
 class AuthUser extends Principal {
 	static transients = ['pass', 'accountExpired', 'accountLocked', 'passwordExpired']
 	static hasMany = [authorities: Role, groups:UserGroup]
 	static belongsTo = [Role,UserGroup]
 
-	/** Username */
 	String username
-	/** User Real Name*/
 	String userRealName
-	/** MD5 Password */
 	String passwd
-
 	String email
 	boolean emailShow
 
@@ -51,6 +37,7 @@ class AuthUser extends Principal {
 	boolean passwordExpired
 	
 	static mapping = {
+		datasource 'postgresql'
 		table 'SEARCH_AUTH_USER'
 		version false
 		columns{

@@ -1,3 +1,5 @@
+import org.transmartproject.searchapp.Role;
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -16,17 +18,6 @@
  * 
  *
  ******************************************************************/
-  
-
- /**
- * $Id: RoleController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
-
-/**
- * Authority Controller.
- */
 class RoleController {
 	
 	// the delete, save and update actions only accept POST requests
