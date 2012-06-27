@@ -153,11 +153,13 @@
         	helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
         </script>
 		<!-- ************************************** -->
+        <r:layoutResources/>
 	</head>
 	<body>
 		<div id="header-div">
 			<g:render template="/layouts/commonheader" model="['app':'search']" />
 			<g:render template="/layouts/searchheader" model="['app':'search']" />
 		</div>
+        <r:layoutResources/>
 	</body>
 </html>

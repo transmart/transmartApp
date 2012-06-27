@@ -337,6 +337,7 @@
 			</script>
 		</sec:ifAnyGranted>
 		<!-- ************************************** --> 
+        <r:layoutResources>
 	</head>
 <body>
 		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
@@ -360,5 +361,6 @@
 				<input type="hidden" name="selectedpath" value="">
 			</g:form>
 		</div>
+        <r:layoutResources>
 	</body>
 </html>
