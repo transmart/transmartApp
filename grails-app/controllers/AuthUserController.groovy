@@ -27,6 +27,7 @@
 import java.sql.BatchUpdateException
 import java.sql.SQLException
 
+import org.codehaus.groovy.grails.exceptions.InvalidPropertyException
 import org.transmartproject.searchapp.AccessLog;
 import org.transmartproject.searchapp.AuthUser;
 import org.transmartproject.searchapp.AuthUserSecureAccess;
@@ -92,7 +93,11 @@ class AuthUserController {
 				log.info("Deleting ${person.username} from secure access list")				 
 				AuthUserSecureAccess.findAllByAuthUser(person).each {it.delete()}
 				log.info("Deleting the gene signatures created by ${person.username}")
-				GeneSignature.findAllByCreatedByAuthUser(person).each {it.delete()}
+                try {
+                    GeneSignature.findAllByCreatedByAuthUser(person).each {it.delete()}
+                } catch(InvalidPropertyException ipe)   {
+                    log.warn("AuthUser properties in the GeneSignature domain need to be enabled")
+                }
 				log.info("Finally, deleting ${person.username}")															
 				person.delete()
 				def msg = "$person.userRealName has been deleted."
