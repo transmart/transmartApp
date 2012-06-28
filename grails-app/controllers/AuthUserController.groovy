@@ -24,6 +24,9 @@
  * @version $Revision: 10098 $
  */
 
+import java.sql.BatchUpdateException
+import java.sql.SQLException
+
 import org.transmartproject.searchapp.AccessLog;
 import org.transmartproject.searchapp.AuthUser;
 import org.transmartproject.searchapp.AuthUserSecureAccess;
@@ -177,17 +180,27 @@ class AuthUserController {
 		person.uniqueId = ''
 		person.name=person.userRealName;
 
-		if (person.save()) {
-			addRoles(person)
-			def msg = "User: ${person.username} for ${person.userRealName} created";
-			new AccessLog(username: person.username, event:"User Created",
-				eventmessage: msg,
-				accesstime:new Date()).save()
-			redirect action: show, id: person.id
-		}
-		else {
-			render view: 'create', model: [authorityList: Role.list(), person: person]
-		}
+        try {
+            if (person.save()) {
+                addRoles(person)
+                def msg = "User: ${person.username} for ${person.userRealName} created";
+                new AccessLog(username: person.username, event:"User Created",
+                    eventmessage: msg,
+                    accesstime:new Date()).save()
+                redirect action: show, id: person.id
+            }
+            else {
+                render view: 'create', model: [authorityList: Role.list(), person: person]
+            }            
+        } catch(BatchUpdateException bue)   {
+            flash.message = 'Cannot create user'
+            log.error(bue.getLocalizedMessage(), bue)
+            render view: 'create', model: [authorityList: Role.list(), person: person]
+        } catch(SQLException sqle)    {
+            flash.message = 'Cannot create user'            
+            log.error(sqle.getNextException().getMessage())
+            render view: 'create', model: [authorityList: Role.list(), person: person]
+        } 
 	}
 
 	private void addRoles(person) {
