@@ -18,49 +18,20 @@
  ******************************************************************/
   
 
-package bio
-class BioAssay {
-
-		Long id
-		String study
-		String protocol
-		String description
-		String sampleType
-		Experiment experiment
-		Date testDate
-		Date sampleReceiveDate
-		String requestor
-		Long assayPlatformId
-
-		String type
+package org.transmartproject.biomart
+class BioAssaySample {
+		Long bioAssayId
+		Long bioSampleId
+		Long bioClinicTrialTimepointId
  static mapping = {
-	 table 'BIO_ASSAY'
+	 table 'BIO_ASSAY_SAMPLE'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_ASSAY_SAMPLE_ID']
 	 columns {
-		id column:'BIO_ASSAY_ID'
-		study column:'STUDY'
-		protocol column:'PROTOCOL'
-		description column:'DESCRIPTION'
-		sampleType column:'SAMPLE_TYPE'
-		experiment column:'EXPERIMENT_ID'
-		testDate column:'TEST_DATE'
-		sampleReceiveDate column:'SAMPLE_RECEIVE_DATE'
-		requestor column:'REQUESTOR'
-		type column:'BIO_ASSAY_TYPE'
-		assayPlatformId:'BIO_ASY_PLATFORM_ID'
+		bioAssayId column:'BIO_ASSAY_ID'
+		bioSampleId column:'BIO_SAMPLE_ID'
+		bioClinicTrialTimepointId column:'BIO_CLINIC_TRIAL_TIMEPOINT_ID'
 		}
-	}
-
- static constraints = {
-	study(nullable:true, maxSize:400)
-	protocol(nullable:true, maxSize:400)
-	description(nullable:true, maxSize:4000)
-	sampleType(nullable:true, maxSize:400)
-	testDate(nullable:true)
-	sampleReceiveDate(nullable:true)
-	requestor(nullable:true, maxSize:400)
-	type(maxSize:400)
 	}
 
 }

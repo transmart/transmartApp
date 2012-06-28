@@ -18,49 +18,31 @@
  ******************************************************************/
   
 
-package bio
-class BioAssayDataStatistics {
+package org.transmartproject.biomart
+
+import bio.BioMarker;
+
+class BioAssayFeatureGroup {
 		Long id
-		Long sampleCount
-		Double quartile1
-		Double quartile2
-		Double quartile3
-		Double maxValue
-		Double minValue
-		Double meanValue
-		BioSample sample
-		BioAssayDataset dataset
-		Double stdDevValue
-		String featureGroupName
-		String valueNormalizeMethod
-		Experiment experiment
-		BioAssayFeatureGroup featureGroup
-		//static hasMany=[markers:BioMarker]
-		//static belongsTo=[BioMarker]
+		String name
+		String type
+		static hasMany=[markers:BioMarker]
+		static belongsTo=[BioMarker]
+
 
  static mapping = {
-	 table 'BIO_ASSAY_DATA_STATS'
+	 table 'BIO_ASSAY_FEATURE_GROUP'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_FACT_ID']
+	 cache usage:'read-only'
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_ASSAY_DATA_STATS_ID'
-		sampleCount column:'BIO_SAMPLE_COUNT'
-		quartile1 column:'QUARTILE_1'
-		quartile2 column:'QUARTILE_2'
-		quartile3 column:'QUARTILE_3'
-		maxValue column:'MAX_VALUE'
-		minValue column:'MIN_VALUE'
-		meanValue column:"MEAN_VALUE"
-		stdDevValue column:'STD_DEV_VALUE'
-		sample column:'BIO_SAMPLE_ID'
-		featureGroupName column:'FEATURE_GROUP_NAME'
-		valueNormalizeMethod column:'VALUE_NORMALIZE_METHOD'
-		experiment column:'BIO_EXPERIMENT_ID'
-		dataset column:'BIO_ASSAY_DATASET_ID'
-		featureGroup column:'BIO_ASSAY_FEATURE_GROUP_ID'
-	//	markers joinTable:[name:'BIO_DATA_OMIC_MARKER', key:'BIO_DATA_ID']
-
-		}
+		id column:'BIO_ASSAY_FEATURE_GROUP_ID'
+		name column:'FEATURE_GROUP_NAME'
+		type column:'FEATURE_GROUP_TYPE'
+		markers joinTable:[name:'BIO_ASSAY_DATA_ANNOTATION', key:'BIO_ASSAY_FEATURE_GROUP_ID']
+	 }
 	}
 
+ static constraints = {
+	}
 }

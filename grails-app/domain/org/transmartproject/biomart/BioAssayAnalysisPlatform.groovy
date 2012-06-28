@@ -18,28 +18,27 @@
  ******************************************************************/
   
 
-package bio
-class BioAssayFeatureGroup {
+package org.transmartproject.biomart
+class BioAssayAnalysisPlatform {
 		Long id
-		String name
-		String type
-		static hasMany=[markers:BioMarker]
-		static belongsTo=[BioMarker]
-
-
+		String platformName
+		String platformVersion
+		String platformDescription
  static mapping = {
-	 table 'BIO_ASSAY_FEATURE_GROUP'
+	 table 'BIO_ASY_ANALYSIS_PLTFM'
 	 version false
 	 cache usage:'read-only'
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_ASSAY_FEATURE_GROUP_ID'
-		name column:'FEATURE_GROUP_NAME'
-		type column:'FEATURE_GROUP_TYPE'
-		markers joinTable:[name:'BIO_ASSAY_DATA_ANNOTATION', key:'BIO_ASSAY_FEATURE_GROUP_ID']
-	 }
+		id column:'BIO_ASY_ANALYSIS_PLTFM_ID'
+		platformName column:'PLATFORM_NAME'
+		platformVersion column:'PLATFORM_VERSION'
+		platformDescription column:'PLATFORM_DESCRIPTION'
+		}
 	}
-
  static constraints = {
+	platformName(nullable:true, maxSize:400)
+	platformVersion(nullable:true, maxSize:400)
+	platformDescription(nullable:true, maxSize:2000)
 	}
 }

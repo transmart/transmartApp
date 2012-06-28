@@ -18,41 +18,32 @@
  ******************************************************************/
   
 
-package bio
-class BioAssayData {
-		Long numericValue
-		String textValue
-		Double floatValue
-		String featureGroupName
-		Experiment experiment
-		Long bioSampleId
-		Long bioAssayId
-		Long id
-		Double log2Value
-		Double log10Value
-		Long bioAssayDatasetId
-		static hasMany=[diseases:Disease, compounds:Compound, markers:BioMarker]
+/**
+ *
+ */
+package org.transmartproject.biomart
 
- static mapping = {
-	 table 'BIO_ASSAY_DATA'
-	 version false
-	 id column:'BIO_ASSAY_DATA_ID'
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
-	 columns {
-		numericValue column:'NUMERIC_VALUE'
-		textValue column:'TEXT_VALUE'
-		floatValue column:'FLOAT_VALUE'
-		featureGroupName column:'FEATURE_GROUP_NAME'
-		experiment column:'BIO_EXPERIMENT_ID'
-		bioSampleId column:'BIO_SAMPLE_ID'
-		bioAssayId column:'BIO_ASSAY_ID'
-		log2Value column:'LOG2_VALUE'
-		log10Value column:'LOG10_VALUE'
-		bioAssayDatasetId column:'BIO_ASSAY_DATASET_ID'
-		diseases joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DATA_ID', column:'BIO_DISEASE_ID']
-		markers joinTable:[name:'BIO_DATA_OMIC_MARKER', key:'BIO_DATA_ID', column:'BIO_MARKER_ID']
-		compounds joinTable:[name:'BIO_DATA_COMPOUND', key:'BIO_DATA_ID', column:'BIO_COMPOUND_ID']
+import bio.BioMarker;
+import bio.Experiment;
+
+
+
+/**
+ * @author JLiu
+ *
+ */
+public class BioAssayStatsExpMarker{
+
+	Experiment experiment
+	BioMarker marker
+	Long id
+	static mapping = {
+		 table 'BIO_STATS_EXP_MARKER'
+		 version false
+		 columns {
+			id column:'BIO_STATS_EXP_MARKER_ID'
+			marker column:'BIO_MARKER_ID'
+			experiment column:'BIO_EXPERIMENT_ID'
+	 }
 		}
-	}
-
 }

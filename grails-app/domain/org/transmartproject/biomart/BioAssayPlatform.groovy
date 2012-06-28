@@ -18,31 +18,38 @@
  ******************************************************************/
   
 
-package bio;
+package org.transmartproject.biomart
 
-import bio.BioAssayFeatureGroup;
-import bio.BioMarker;
+class BioAssayPlatform {
+		Long id
+		String name
+		String platformVersion
+		String description
+		String organism
+		String accession
+		String array
+		String vendor
+ 
+static mapping = {
+	 table 'BIO_ASSAY_PLATFORM'
+	 version false
+	 cache true
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 columns {
+		id column:'BIO_ASSAY_PLATFORM_ID'
+		name column:'PLATFORM_NAME'
+		platformVersion column:'PLATFORM_VERSION'
+		description column:'PLATFORM_DESCRIPTION'
+		organism column:'PLATFORM_ORGANISM'
+		accession column:'PLATFORM_ACCESSION'
+		array column:'PLATFORM_ARRAY'
+		vendor column:'PLATFORM_VENDOR'
+		}
+	}
 
-class BioAssayDataAnnotation implements Serializable {
-	
-	BioMarker bioMarker
-	BioAssayFeatureGroup probeset
-	//String dataTable
-	
-	static mapping = {
-		table 'BIO_ASSAY_DATA_ANNOTATION'
-		version false
-		id composite:['bioMarker', 'probeset']
-		
-		columns {
-			bioMarker column:'BIO_MARKER_ID'
-			probeset column:'BIO_ASSAY_FEATURE_GROUP_ID'
-			//dataTable column:'DATA_TABLE'
-		}	
-	}
-	
-	static constraints = {
-		//dataTable(nullable:true)
-	}
-	
+static constraints = {
+	name(nullable:true, maxSize:400)
+	platformVersion(nullable:true, maxSize:400)
+	description(nullable:true, maxSize:2000)
+	}		
 }

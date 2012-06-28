@@ -19,8 +19,9 @@ package org.transmart
  ******************************************************************/
   
 
+import org.transmartproject.biomart.BioAssayAnalysisData;
+
 import bio.BioMarker
-import bio.BioAssayAnalysisData
 
 /**
  * @author $Author: mmcduffie $

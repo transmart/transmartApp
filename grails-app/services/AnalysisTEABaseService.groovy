@@ -22,15 +22,15 @@ import bio.BioMarker
 import bio.Compound
 import bio.Disease
 import bio.ClinicalTrial
-import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
-import bio.BioAssayAnalysisDataTea
 import bio.Experiment
 
 import org.transmart.AnalysisResult;
 import org.transmart.AssayAnalysisValue;
 import org.transmart.ExpAnalysisResultSet;
 import org.transmart.SearchFilter;
+import org.transmartproject.biomart.BioAssayAnalysis;
+import org.transmartproject.biomart.BioAssayAnalysisData;
+import org.transmartproject.biomart.BioAssayAnalysisDataTea;
 import org.transmartproject.searchapp.SearchBioMarkerCorrelFastMV
 import bio.BioMarkerCorrelationMV
 import com.recomdata.search.query.AssayAnalysisDataQuery
@@ -55,7 +55,7 @@ class AnalysisTEABaseService {
 			return 0
 		}
 
-		return bio.BioAssayAnalysisData.executeQuery(createCountQuery(filter))[0]
+		return org.transmartproject.biomart.BioAssayAnalysisData.executeQuery(createCountQuery(filter))[0]
 	}
 
 	/**
@@ -66,7 +66,7 @@ class AnalysisTEABaseService {
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return []
 		}
-		def result = queryExpAnalysis(filter)//bio.BioAssayAnalysisData.executeQuery(createQuery(false, filter), paramMap==null?[:]:paramMap)
+		def result = queryExpAnalysis(filter)//org.transmartproject.biomart.BioAssayAnalysisData.executeQuery(createQuery(false, filter), paramMap==null?[:]:paramMap)
 
 		List trialResult = []
 		if(result!=null)
@@ -105,7 +105,7 @@ class AnalysisTEABaseService {
 		def gfilter = filter.globalFilter
 
 		def query =new AssayAnalysisDataQuery(mainTableAlias:'baad');
-		query.addTable("bio.BioAssayAnalysisData baad ");
+		query.addTable("org.transmartproject.biomart.BioAssayAnalysisData baad ");
 		query.addCondition(" baad.experiment.type='"+getExpType()+"'")
 
 		////query.addTable ("bio.ClinicalTrial ct ");
@@ -127,12 +127,12 @@ class AnalysisTEABaseService {
 
 	def createAnalysisIDSelectQuery(SearchFilter filter){
 		if(filter == null || filter.globalFilter.isTextOnly()){
-			return " SELECT -1 FROM bio.BioAssayAnalysisData baad WHERE 1 = 1 "
+			return " SELECT -1 FROM org.transmartproject.biomart.BioAssayAnalysisData baad WHERE 1 = 1 "
 		}
 		def gfilter = filter.globalFilter
 
 		def query =new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true);
-		query.addTable("bio.BioAssayAnalysisDataTea baad ");
+		query.addTable("org.transmartproject.biomart.BioAssayAnalysisDataTea baad ");
 		query.addCondition(" baad.experiment.type='"+getExpType()+"'")
 
 		query.createGlobalFilterCriteria(gfilter);
@@ -155,7 +155,7 @@ class AnalysisTEABaseService {
 
 		// get distinct analyses
 		def query = new AssayAnalysisDataTeaQuery(mainTableAlias:"baad", setDistinct:true)
-		query.addTable("bio.BioAssayAnalysisDataTea baad")
+		query.addTable("org.transmartproject.biomart.BioAssayAnalysisDataTea baad")
 		//query.addTable("JOIN baad.markers baad_bm")
 		query.addCondition(" baad.experiment.type='"+getExpType()+"'")
 		query.addCondition(" baad.analysis.teaDataCount IS NOT NULL")
@@ -168,7 +168,7 @@ class AnalysisTEABaseService {
 	//	createNPVCondition(query)
 
 		// get count
-		def result = bio.BioAssayAnalysisDataTea.executeQuery(query.generateSQL())
+		def result = org.transmartproject.biomart.BioAssayAnalysisDataTea.executeQuery(query.generateSQL())
 		log.info "anal ct result: "+result
 		if(result!=null && result.size()>0) analysisCount = result[0]
 		return analysisCount
@@ -184,7 +184,7 @@ class AnalysisTEABaseService {
 
 		if(!gfilter.getBioMarkerFilters().isEmpty()){
 			def query = new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true)
-			query.addTable("bio.BioAssayAnalysisDataTea baad")
+			query.addTable("org.transmartproject.biomart.BioAssayAnalysisDataTea baad")
 			//query.addTable("JOIN FETCH baad.analysis ")
 			query.addTable("JOIN baad.featureGroup.markers baad_bm")
 			query.addCondition(" baad.experimentType='"+getExpType()+"'")
@@ -200,7 +200,7 @@ class AnalysisTEABaseService {
 			//createNPVCondition(query)
 
 			def sql = query.generateSQL();
-			result = bio.BioAssayAnalysisDataTea.executeQuery(sql)
+			result = org.transmartproject.biomart.BioAssayAnalysisDataTea.executeQuery(sql)
 
 			// get up/down info from mv for all biomarkers
 			def biomarkerFilters = gfilter.getBioMarkerFilters()
@@ -293,7 +293,7 @@ class AnalysisTEABaseService {
 	def getAllAnalyses(SearchFilter filter){
 		// need both filters here
 		def analysisQuery = new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true)
-		analysisQuery.addTable("bio.BioAssayAnalysisDataTea baad")
+		analysisQuery.addTable("org.transmartproject.biomart.BioAssayAnalysisDataTea baad")
 		analysisQuery.addCondition(" baad.experiment.type='"+getExpType()+"'")
 		analysisQuery.addCondition(" baad.analysis.teaDataCount IS NOT NULL");
 
@@ -307,7 +307,7 @@ class AnalysisTEABaseService {
 		analysisQuery.createGlobalFilterCriteria(filter.globalFilter, true);
 		createSubFilterCriteria(filter, analysisQuery);
 
-		return bio.BioAssayAnalysisDataTea.executeQuery(analysisQuery.generateSQL())
+		return org.transmartproject.biomart.BioAssayAnalysisDataTea.executeQuery(analysisQuery.generateSQL())
 	}
 
 	/**

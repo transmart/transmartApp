@@ -23,7 +23,9 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
-package bio
+package org.transmartproject.biomart
+
+import bio.ContentReference;
 
 import com.recomdata.util.IExcelProfile
 
@@ -94,7 +96,7 @@ class BioAssayAnalysis implements IExcelProfile {
 	 * get top analysis data records for the indicated analysis
 	 */
 	def static getTopAnalysisDataForAnalysis(Long analysisId, int topCount){
-		def query = "SELECT DISTINCT baad, baad_bm FROM bio.BioAssayAnalysisData baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid ORDER BY ABS(baad.foldChangeRatio) desc, baad.rValue, baad.rhoValue DESC";
+		def query = "SELECT DISTINCT baad, baad_bm FROM org.transmartproject.biomart.BioAssayAnalysisData baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid ORDER BY ABS(baad.foldChangeRatio) desc, baad.rValue, baad.rhoValue DESC";
 		return BioAssayAnalysisData.executeQuery(query, [aid:analysisId], [max:topCount]);
 	}
 

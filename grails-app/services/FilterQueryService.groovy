@@ -18,16 +18,16 @@
  ******************************************************************/
   
 
-import bio.BioAssayAnalysis
 import bio.Disease
 import bio.Compound
 
 import org.transmart.SearchFilter;
+import org.transmartproject.biomart.BioAssayAnalysis;
+import org.transmartproject.biomart.BioAssayAnalysisData;
 import org.transmartproject.searchapp.SearchKeyword
 import bio.ClinicalTrial
 import bio.BioData
 import bio.Experiment
-import bio.BioAssayAnalysisData
 import com.recomdata.search.query.AssayAnalysisDataQuery
 
 /**
@@ -55,7 +55,7 @@ class FilterQueryService {
 
 		def query = new AssayAnalysisDataQuery(mainTableAlias:"baad",setDistinct:true)
 		def alias = query.mainTableAlias+"_dis"
-		query.addTable("bio.BioAssayAnalysisData baad");
+		query.addTable("org.transmartproject.biomart.BioAssayAnalysisData baad");
 		query.addTable("JOIN "+query.mainTableAlias+".experiment.diseases "+alias)
 		query.addSelect(alias)
 		query.addOrderBy(alias+".preferredName");
@@ -66,7 +66,7 @@ class FilterQueryService {
 	//	println(query.generateSQL());
 
 
-		return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
+		return org.transmartproject.biomart.BioAssayAnalysisData.executeQuery(query.generateSQL());
 	}
 
 //	def experimentDiseaseFilter(String experimentType){
@@ -92,7 +92,7 @@ class FilterQueryService {
 
 		def query = new AssayAnalysisDataQuery(mainTableAlias:"baad",setDistinct:true)
 		def alias = query.mainTableAlias+"_cpd"
-		query.addTable("bio.BioAssayAnalysisData baad");
+		query.addTable("org.transmartproject.biomart.BioAssayAnalysisData baad");
 		query.addTable("JOIN "+query.mainTableAlias+".experiment.compounds "+alias)
 		query.addSelect(alias)
 		query.addOrderBy(alias+".genericName");
@@ -102,7 +102,7 @@ class FilterQueryService {
 		// createSubFilterCriteria(filter.expAnalysisFilter, query);
 	//	println(query.generateSQL());
 
-		return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
+		return org.transmartproject.biomart.BioAssayAnalysisData.executeQuery(query.generateSQL());
 	}
 
 	def studyTypeFilter(){

@@ -20,9 +20,10 @@
 
 package org.transmartproject.searchapp
 
+import org.transmartproject.biomart.BioAssayFeatureGroup;
+
 import bio.BioMarker
 import bio.BioData
-import bio.BioAssayFeatureGroup;
 
 /**
  * domain class for a gene signature item
@@ -39,6 +40,7 @@ class GeneSignatureItem {
 	static belongsTo = [ geneSignature:GeneSignature ]
 
 	static mapping = {
+        datasource 'postgresql'
 		table 'SEARCH_GENE_SIGNATURE_ITEM'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']

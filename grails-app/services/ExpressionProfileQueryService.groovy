@@ -22,13 +22,13 @@ import bio.BioMarker
 import bio.Compound
 import bio.Disease
 import bio.Experiment
-import bio.BioAssayAnalysis
-import bio.BioAssayDataStatistics
 import com.recomdata.search.query.AssayStatsExpMarkerQuery
 import com.recomdata.search.query.AssayDataStatsQuery
 import com.recomdata.search.query.Query
 import org.codehaus.groovy.grails.commons.*
 import org.transmart.SearchFilter;
+import org.transmartproject.biomart.BioAssayAnalysis;
+import org.transmartproject.biomart.BioAssayDataStatistics;
 
 /**
  * $Id: ExpressionProfileQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -48,7 +48,7 @@ class ExpressionProfileQueryService {
 			return 0
 		}
 
-		return bio.BioAssayStatsExpMarker.executeQuery(createCountQuery(filter))[0]
+		return org.transmartproject.biomart.BioAssayStatsExpMarker.executeQuery(createCountQuery(filter))[0]
 	}
 
 	def createCountQuery(SearchFilter filter){
@@ -58,7 +58,7 @@ class ExpressionProfileQueryService {
 		def gfilter = filter.globalFilter
 
 		def query =new AssayStatsExpMarkerQuery(mainTableAlias:"asemq")
-		query.addTable("bio.BioAssayStatsExpMarker asemq")
+		query.addTable("org.transmartproject.biomart.BioAssayStatsExpMarker asemq")
 		query.addCondition("asemq.experiment.type='Experiment'")
 
 		query.createGlobalFilterCriteria(gfilter);
@@ -73,7 +73,7 @@ class ExpressionProfileQueryService {
 			return []
 		}
 		def query =new AssayDataStatsQuery(mainTableAlias:"bads",setDistinct:true)
-		query.addTable("bio.BioAssayDataStatistics bads")
+		query.addTable("org.transmartproject.biomart.BioAssayDataStatistics bads")
 		//query.addCondition("bads.experiment.type='Experiment'")
 		def gfilter = filter.globalFilter
 		// expand biomarkers
@@ -83,12 +83,12 @@ class ExpressionProfileQueryService {
 		query.addOrderBy("bads.experiment")
 		def q = query.generateSQL()
 		//println(q)
-		return bio.BioAssayDataStatistics.executeQuery(q)
+		return org.transmartproject.biomart.BioAssayDataStatistics.executeQuery(q)
 	}
 
 	def queryStatisticsDataExpField(SearchFilter filter){
 		def query =new AssayDataStatsQuery(mainTableAlias:"bads",setDistinct:true)
-		query.addTable("bio.BioAssayDataStatistics bads")
+		query.addTable("org.transmartproject.biomart.BioAssayDataStatistics bads")
 		//query.addCondition("bads.experiment.type='Experiment'")
 		def gfilter = filter.globalFilter
 		// expand biomarkers
@@ -100,12 +100,12 @@ class ExpressionProfileQueryService {
 		query.addOrderBy("bads.experiment.accession")
 		def q = query.generateSQL()
 		//println(q)
-		return bio.BioAssayDataStatistics.executeQuery(q, [max:500])
+		return org.transmartproject.biomart.BioAssayDataStatistics.executeQuery(q, [max:500])
 	}
 
 	def listBioMarkers(SearchFilter filter){
 		def query =new AssayStatsExpMarkerQuery(mainTableAlias:"asemq",setDistinct:true)
-		query.addTable("bio.BioAssayStatsExpMarker asemq")
+		query.addTable("org.transmartproject.biomart.BioAssayStatsExpMarker asemq")
 		query.addCondition("asemq.experiment.type='Experiment'")
 		//	query.addTable("JOIN FETCH asemq.marker asemq_bm")
 		def gfilter = filter.globalFilter
@@ -115,12 +115,12 @@ class ExpressionProfileQueryService {
 		query.addSelect("asemq.marker")
 		query.addOrderBy("asemq.marker.name")
 		def config = ConfigurationHolder.config
-		return bio.BioAssayStatsExpMarker.executeQuery(query.generateSQL(), [max:config.com.recomdata.search.gene.max])
+		return org.transmartproject.biomart.BioAssayStatsExpMarker.executeQuery(query.generateSQL(), [max:config.com.recomdata.search.gene.max])
 	}
 
 	def listDiseases(SearchFilter filter){
 		def query = new AssayDataStatsQuery(mainTableAlias:"bads",setDistinct:true)
-		query.addTable("bio.BioAssayDataStatistics bads")
+		query.addTable("org.transmartproject.biomart.BioAssayDataStatistics bads")
 		query.addCondition("bads.experiment.type='Experiment'")
 		query.addTable("JOIN bads.experiment.diseases bads_dis")
 		def gfilter = filter.globalFilter
@@ -129,7 +129,7 @@ class ExpressionProfileQueryService {
 		query.addSelect("bads_dis")
 		query.addOrderBy("bads_dis.preferredName")
 		//println(">> disease query: " + query.generateSQL())
-		return bio.BioAssayDataStatistics.executeQuery(query.generateSQL())
+		return org.transmartproject.biomart.BioAssayDataStatistics.executeQuery(query.generateSQL())
 	}
 
 	/**
@@ -137,9 +137,9 @@ class ExpressionProfileQueryService {
 	 */
 	def getProbesetsByBioMarker(BioMarker marker, Disease disease){
 		def query = "SELECT distinct bads.featureGroupName " +
-                    "FROM bio.BioAssayDataStatistics bads JOIN bads.featureGroup.markers bads_bm JOIN bads.experiment.diseases bads_dis " +
+                    "FROM org.transmartproject.biomart.BioAssayDataStatistics bads JOIN bads.featureGroup.markers bads_bm JOIN bads.experiment.diseases bads_dis " +
                     "WHERE bads_bm.id =:bmid and bads_dis.id=:disid";
-		return bio.BioAssayDataStatistics.executeQuery(query, [bmid:marker.id, disid:disease.id]);
+		return org.transmartproject.biomart.BioAssayDataStatistics.executeQuery(query, [bmid:marker.id, disid:disease.id]);
 	}
 
 	def createSubFilterCriteria(exprfilter, Query query){

@@ -26,6 +26,9 @@
  
 package bio
 
+import org.transmartproject.biomart.BioAssayAnalysisData;
+import org.transmartproject.biomart.BioAssayDataStatistics;
+
 import com.recomdata.util.IExcelProfile
 
 class BioMarker implements IExcelProfile {

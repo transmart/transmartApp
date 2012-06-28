@@ -19,16 +19,19 @@
   
 
 /**
- * $Id: BioAssayAnalysisData.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
+ * $Id: BioAssayAnalysisDataTea.groovy 11072 2011-12-08 19:03:28Z jliu $
+ * @author $Author: jliu $
+ * @version $Revision: 11072 $
  */
 
-package bio
+package org.transmartproject.biomart
+
+import bio.BioMarker;
+import bio.Experiment;
 
 import com.recomdata.util.IExcelProfile
 
-class BioAssayAnalysisData implements IExcelProfile {
+class BioAssayAnalysisDataTea implements IExcelProfile {
 		String featureGroupName
 		Experiment experiment
 		BioAssayPlatform assayPlatform
@@ -46,12 +49,14 @@ class BioAssayAnalysisData implements IExcelProfile {
 		Double numericValue
 		String numericValueCode
 		Double teaNormalizedPValue
+		String experimentType
 		BioAssayFeatureGroup featureGroup
+		Long teaRank
 		static hasMany=[markers:BioMarker]
 		static belongsTo=[BioMarker]
 
 	static mapping = {
-	 table 'BIO_ASSAY_ANALYSIS_DATA'
+	 table 'BIO_ASSAY_ANALYSIS_DATA_TEA'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
@@ -64,19 +69,29 @@ class BioAssayAnalysisData implements IExcelProfile {
 		preferredPvalue column:'PREFERRED_PVALUE'
 		rValue column:'R_VALUE'
 		rhoValue column:'RHO_VALUE'
-		featureGroup column:'BIO_ASSAY_FEATURE_GROUP_ID'
 		analysis column:'BIO_ASSAY_ANALYSIS_ID'
 		cutValue column:'CUT_VALUE'
 		resultsValue column:'RESULTS_VALUE'
+		featureGroup column:'BIO_ASSAY_FEATURE_GROUP_ID'
 		id column:'BIO_ASY_ANALYSIS_DATA_ID'
 		adjustedPValueCode column:'ADJUSTED_P_VALUE_CODE'
 		numericValue column:'NUMERIC_VALUE'
 		numericValueCode column:'NUMERIC_VALUE_CODE'
 		teaNormalizedPValue column:'TEA_NORMALIZED_PVALUE'
+		experimentType column:'BIO_EXPERIMENT_TYPE'
+		teaRank column:'TEA_RANK'
 		markers joinTable:[name:'BIO_DATA_OMIC_MARKER', key:'BIO_DATA_ID']
 		}
 	}
 
+
+	/**
+	 * get top analysis data records for the indicated analysis
+	 */
+	def static getTop50AnalysisDataForAnalysis(Long analysisId){
+		def query = "SELECT DISTINCT baad, baad_bm FROM org.transmartproject.biomart.BioAssayAnalysisDataTea baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid and baad.teaRank<=50 ORDER BY baad.teaRank DESC";
+		return BioAssayAnalysisDataTea.executeQuery(query, [aid:analysisId], [max:50]);
+	}
 	/**
 	 * Get values to Export to Excel
 	 */

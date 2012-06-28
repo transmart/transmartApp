@@ -19,6 +19,9 @@
   
 
 import org.springframework.web.multipart.MultipartFile;
+import org.transmartproject.biomart.BioAssayAnalysisData;
+import org.transmartproject.biomart.BioAssayDataAnnotation;
+import org.transmartproject.biomart.BioAssayFeatureGroup;
 import org.transmartproject.searchapp.AuthUser;
 
 import org.transmartproject.searchapp.GeneSignatureItem;
@@ -26,9 +29,6 @@ import org.transmartproject.searchapp.GeneSignatureFileSchema;
 import org.transmartproject.searchapp.GeneSignature;
 import bio.BioMarker;
 import bio.BioData;
-import bio.BioAssayAnalysisData;
-import bio.BioAssayFeatureGroup;
-import bio.BioAssayDataAnnotation;
 import com.recomdata.search.query.Query;
 import com.recomdata.genesignature.FileSchemaException;
 import com.recomdata.util.ExcelSheet
@@ -222,7 +222,7 @@ public class GeneSignatureService {
 					println(">> Probeset lookup: 1) probeset id: "+probesetId )
 					
 					// create item instance if this probeset exists in bio_assay_feature_group table, otherwise do nothing 
-					def ba = bio.BioAssayFeatureGroup.read(probesetId);
+					def ba = org.transmartproject.biomart.BioAssayFeatureGroup.read(probesetId);
 					if(ba!=null){						
 						GeneSignatureItem item = new GeneSignatureItem(probeset: ba, foldChgMetric: foldChg);
 						gsItems.add(item);
@@ -524,7 +524,7 @@ public class GeneSignatureService {
 	def lookupProbesetBioAssociations(String probeset) {
 		def query = new Query(mainTableAlias:"bf");
 		
-		query.addTable("bio.BioAssayFeatureGroup bf")
+		query.addTable("org.transmartproject.biomart.BioAssayFeatureGroup bf")
 		query.addCondition("bf.type='PROBESET'")
 		query.addCondition("upper(bf.name) ='" + probeset.toUpperCase() + "'")
 		query.addSelect("bf.id")
@@ -534,7 +534,7 @@ public class GeneSignatureService {
 		//log.debug("Lookup query: "+qBuf)
 
 		
-		def marker = bio.BioAssayFeatureGroup.executeQuery(qBuf).asList();
+		def marker = org.transmartproject.biomart.BioAssayFeatureGroup.executeQuery(qBuf).asList();
 		
 		// if not existed, add it and then retrieve it
 		if(!marker) {

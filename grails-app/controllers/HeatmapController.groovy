@@ -23,9 +23,9 @@ import com.recomdata.util.*
 import org.hibernate.*
 import org.transmart.GlobalFilter;
 import org.transmart.SearchFilter;
+import org.transmartproject.biomart.BioAssayAnalysis;
+import org.transmartproject.biomart.BioAssayAnalysisData;
 
-import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
 import bio.BioMarker
 
 /**
@@ -161,7 +161,7 @@ public class HeatmapController{
 		// for genes to be displayed in the heatmap - this is used for searchHeatmapFilter and search global filter
 		def orderedGenes = new LinkedHashSet()
 		def searchGeneIds = []
-		def searchAnalysisIds =bio.BioAssayAnalysisData.executeQuery(trialQueryService.createAnalysisIDSelectQuery(sfilter), [max:100])
+		def searchAnalysisIds =org.transmartproject.biomart.BioAssayAnalysisData.executeQuery(trialQueryService.createAnalysisIDSelectQuery(sfilter), [max:100])
 
 
 		if("topgene".equalsIgnoreCase(sfilter.heatmapFilter.heatmapfiltertype)){
@@ -280,7 +280,7 @@ public class HeatmapController{
 				analysisName = analysisNameMap.get(data.assayAnalysisId)
 				// reformat & shorten analysis name
 				if(analysisName==null){
-					analysis = bio.BioAssayAnalysis.get(data.assayAnalysisId)
+					analysis = org.transmartproject.biomart.BioAssayAnalysis.get(data.assayAnalysisId)
 					analysisName = analysis.shortDescription
 					if(analysisName == null){
 						analysisName = analysis.name

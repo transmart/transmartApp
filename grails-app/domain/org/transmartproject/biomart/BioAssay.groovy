@@ -18,38 +18,52 @@
  ******************************************************************/
   
 
-package bio
+package org.transmartproject.biomart
 
-class BioAssayPlatform {
+import bio.Experiment;
+
+class BioAssay {
+
 		Long id
-		String name
-		String platformVersion
+		String study
+		String protocol
 		String description
-		String organism
-		String accession
-		String array
-		String vendor
- 
-static mapping = {
-	 table 'BIO_ASSAY_PLATFORM'
+		String sampleType
+		Experiment experiment
+		Date testDate
+		Date sampleReceiveDate
+		String requestor
+		Long assayPlatformId
+
+		String type
+ static mapping = {
+	 table 'BIO_ASSAY'
 	 version false
-	 cache true
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_ASSAY_PLATFORM_ID'
-		name column:'PLATFORM_NAME'
-		platformVersion column:'PLATFORM_VERSION'
-		description column:'PLATFORM_DESCRIPTION'
-		organism column:'PLATFORM_ORGANISM'
-		accession column:'PLATFORM_ACCESSION'
-		array column:'PLATFORM_ARRAY'
-		vendor column:'PLATFORM_VENDOR'
+		id column:'BIO_ASSAY_ID'
+		study column:'STUDY'
+		protocol column:'PROTOCOL'
+		description column:'DESCRIPTION'
+		sampleType column:'SAMPLE_TYPE'
+		experiment column:'EXPERIMENT_ID'
+		testDate column:'TEST_DATE'
+		sampleReceiveDate column:'SAMPLE_RECEIVE_DATE'
+		requestor column:'REQUESTOR'
+		type column:'BIO_ASSAY_TYPE'
+		assayPlatformId:'BIO_ASY_PLATFORM_ID'
 		}
 	}
 
-static constraints = {
-	name(nullable:true, maxSize:400)
-	platformVersion(nullable:true, maxSize:400)
-	description(nullable:true, maxSize:2000)
-	}		
+ static constraints = {
+	study(nullable:true, maxSize:400)
+	protocol(nullable:true, maxSize:400)
+	description(nullable:true, maxSize:4000)
+	sampleType(nullable:true, maxSize:400)
+	testDate(nullable:true)
+	sampleReceiveDate(nullable:true)
+	requestor(nullable:true, maxSize:400)
+	type(maxSize:400)
+	}
+
 }

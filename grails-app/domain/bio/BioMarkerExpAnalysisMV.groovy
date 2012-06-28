@@ -21,6 +21,8 @@
 
 package bio
 
+import org.transmartproject.biomart.BioAssayAnalysis;
+
 class BioMarkerExpAnalysisMV {
 		BioMarker  marker
 		Experiment experiment

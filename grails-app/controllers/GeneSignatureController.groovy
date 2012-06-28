@@ -20,13 +20,13 @@
 
 import javax.servlet.ServletOutputStream
 
+import org.transmartproject.biomart.BioAssayPlatform;
+import org.transmartproject.biomart.CellLine;
 import org.transmartproject.searchapp.AccessLog;
 import org.transmartproject.searchapp.AuthUser;
 
 import org.transmartproject.searchapp.GeneSignature
 import org.transmartproject. searchapp.GeneSignatureFileSchema
-import bio.BioAssayPlatform
-import bio.CellLine
 import bio.Compound
 import bio.ConceptCode
 

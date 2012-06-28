@@ -26,11 +26,11 @@
 import com.recomdata.util.DomainObjectExcelHelper;
 import grails.converters.*
 import bio.ClinicalTrial
-import bio.BioAssayPlatform
-import bio.BioAssayAnalysis
 import bio.Experiment
 
 import org.transmart.SearchResult;
+import org.transmartproject.biomart.BioAssayAnalysis;
+import org.transmartproject.biomart.BioAssayPlatform;
 import org.transmartproject.searchapp.SearchKeyword
 
 class TrialController {
@@ -43,7 +43,7 @@ class TrialController {
 	def clinicalTrialAnalysisTEAService
 
 	def showTrialFilter = {
-		def contentType = BioAssayAnalysis.executeQuery("SELECT DISTINCT assayDataType FROM bio.BioAssayAnalysis WHERE assayDataType IS NOT NULL")
+		def contentType = BioAssayAnalysis.executeQuery("SELECT DISTINCT assayDataType FROM org.transmartproject.biomart.BioAssayAnalysis WHERE assayDataType IS NOT NULL")
 		if(contentType==null) contentType=[]
 
 		def diseases = filterQueryService.trialDiseaseFilter(session.searchFilter);
@@ -225,7 +225,7 @@ class TrialController {
 
 	def downloadanalysisexcel = {
 
-		def geneexpr = bio.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+		def geneexpr = org.transmartproject.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
 		def filename = geneexpr.shortDescription.replace("<", "-").replace(">", "-")
 		filename = filename.replace(":", "-").replace("\"", "-").replace("/", "-")
 		filename = filename.replace("\\", "-").replace("?", "-").replace("*", "-")
@@ -248,7 +248,7 @@ class TrialController {
 		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
 		response.setHeader("Pragma", "public");
 		response.setHeader("Expires", "0");
-		def analysis = bio.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+		def analysis = org.transmartproject.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
 		response.outputStream<<analysisDataExportService.renderAnalysisInExcel(analysis)
 	}
 

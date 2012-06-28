@@ -26,14 +26,15 @@
 
  package org.transmartproject.searchapp
 
- import bio.BioAssayPlatform
- import bio.Compound
+  import bio.Compound
  import bio.ConceptCode
- import bio.CellLine
+
+import org.transmartproject.biomart.BioAssayPlatform;
+import org.transmartproject.biomart.CellLine;
  import org.transmartproject.searchapp.SearchKeyword
  import com.recomdata.util.IDomainExcelWorkbook
  import com.recomdata.util.ExcelSheet
- import com.recomdata.util.ExcelGenerator
+import com.recomdata.util.ExcelGenerator
  
 /**
  * GeneSignature domain class
@@ -65,9 +66,9 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	ConceptCode pValueCutoffConceptCode
 	String uniqueId
 	Date dateCreated
-//	AuthUser createdByAuthUser
+	AuthUser createdByAuthUser
 	Date lastUpdated
-//	AuthUser modifiedByAuthUser
+	AuthUser modifiedByAuthUser
 	String versionNumber
 	boolean publicFlag = false
 	boolean deletedFlag = false
@@ -94,6 +95,7 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	static hasMany = [geneSigItems:GeneSignatureItem]
 
 	static mapping = {
+        datasource 'postgresql'
 		table 'SEARCH_GENE_SIGNATURE'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
@@ -117,9 +119,9 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 			pValueCutoffConceptCode column:'P_VALUE_CUTOFF_CONCEPT_ID'
 			uniqueId column:'UNIQUE_ID'
 			dateCreated column:'CREATE_DATE'
-//			createdByAuthUser column:'CREATED_BY_AUTH_USER_ID'
+			createdByAuthUser column:'CREATED_BY_AUTH_USER_ID'
 			lastUpdated column:'LAST_MODIFIED_DATE'
-//			modifiedByAuthUser column:'MODIFIED_BY_AUTH_USER_ID'
+			modifiedByAuthUser column:'MODIFIED_BY_AUTH_USER_ID'
 			versionNumber column:'VERSION_NUMBER'
 			publicFlag column:'PUBLIC_FLAG'
 			deletedFlag column:'DELETED_FLAG'

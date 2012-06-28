@@ -19,6 +19,9 @@
   
 
 package bio
+
+import org.transmartproject.biomart.CellLine;
+
 class BioSample {
 		Long id
 		String type

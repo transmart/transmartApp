@@ -23,9 +23,9 @@ import com.recomdata.util.ExcelGenerator;
 import javax.servlet.http.HttpServletResponse;
 
 import org.transmart.SearchResult;
+import org.transmartproject.biomart.BioAssayAnalysis;
+import org.transmartproject.biomart.BioAssayAnalysisData;
 
-import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
 import bio.BioMarker
 import bio.Experiment
 
@@ -37,7 +37,7 @@ import bio.Experiment
 
 class AnalysisDataExportService {
 
-	def renderAnalysisInExcel(bio.BioAssayAnalysis analysis){
+	def renderAnalysisInExcel(org.transmartproject.biomart.BioAssayAnalysis analysis){
 		def ExcelSheet sheet = null;
 		def method = analysis.analysisMethodCode
 		if("correlation".equalsIgnoreCase(method)){
@@ -53,7 +53,7 @@ class AnalysisDataExportService {
 		return gen.generateExcel([sheet]);
 	}
 
-	def renderComparisonAnalysisExcel(bio.BioAssayAnalysis analysis){
+	def renderComparisonAnalysisExcel(org.transmartproject.biomart.BioAssayAnalysis analysis){
 
 		def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g JOIN  g.featureGroup.markers markers WHERE markers.bioMarkerType='GENE' AND g.analysis.id ="+analysis.id)
 		def headers =[]
@@ -74,7 +74,7 @@ class AnalysisDataExportService {
 		return new ExcelSheet("sheet1", headers, values);
 	}
 
-	def renderCorrelationAnalysisExcel(bio.BioAssayAnalysis analysis){
+	def renderCorrelationAnalysisExcel(org.transmartproject.biomart.BioAssayAnalysis analysis){
 
 		def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g JOIN g.featureGroup.markers markers WHERE markers.bioMarkerType='GENE' AND g.analysis.id ="+analysis.id)
 		def headers=[]
@@ -95,7 +95,7 @@ class AnalysisDataExportService {
 		return new ExcelSheet("sheet1", headers, values);
 	}
 
-	def renderSpearmanAnalysisExcel(bio.BioAssayAnalysis analysis){
+	def renderSpearmanAnalysisExcel(org.transmartproject.biomart.BioAssayAnalysis analysis){
 
 		println(">> Spearman analysis query:")
 		//def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g JOIN FETCH g.markers markers WHERE markers.bioMarkerType='GENE' AND g.analysis.id ="+analysis.id)

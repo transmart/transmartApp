@@ -18,19 +18,39 @@
  ******************************************************************/
   
 
-package bio
-class BioAssaySample {
-		Long bioAssayId
-		Long bioSampleId
-		Long bioClinicTrialTimepointId
+package org.transmartproject.biomart
+class CellLine {
+		String disease
+		String primarySite
+		String metastaticSite
+		String species
+		String attcNumber
+		String cellLineName
+		Long id
+		Long bioDiseaseId
+		String origin
+		String description
+		String diseaseStage
+		String diseaseSubtype
  static mapping = {
-	 table 'BIO_ASSAY_SAMPLE'
+	 datasource 'postgresql'
+	 table 'BIO_CELL_LINE'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_ASSAY_SAMPLE_ID']
+	 cache true
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		bioAssayId column:'BIO_ASSAY_ID'
-		bioSampleId column:'BIO_SAMPLE_ID'
-		bioClinicTrialTimepointId column:'BIO_CLINIC_TRIAL_TIMEPOINT_ID'
+		disease column:'DISEASE'
+		primarySite column:'PRIMARY_SITE'
+		metastaticSite column:'METASTATIC_SITE'
+		species column:'SPECIES'
+		attcNumber column:'ATTC_NUMBER'
+		cellLineName column:'CELL_LINE_NAME'
+		id column:'BIO_CELL_LINE_ID'
+		bioDiseaseId column:'BIO_DISEASE_ID'
+		origin column:'ORIGIN'
+		description column:'DESCRIPTION'
+		diseaseStage column:'DISEASE_STAGE'
+		diseaseSubtype column:'DISEASE_SUBTYPE'
 		}
 	}
 

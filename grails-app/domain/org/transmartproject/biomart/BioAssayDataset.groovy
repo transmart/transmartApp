@@ -18,27 +18,38 @@
  ******************************************************************/
   
 
-package bio
-class BioAssayAnalysisPlatform {
+package org.transmartproject.biomart
+
+import bio.Experiment;
+
+class BioAssayDataset {
 		Long id
-		String platformName
-		String platformVersion
-		String platformDescription
+		String name
+		String description
+		String criteria
+		Date createDate
+		BioAssay bioAssay
+		Experiment experiment
+
  static mapping = {
-	 table 'BIO_ASY_ANALYSIS_PLTFM'
+	 table 'BIO_ASSAY_DATASET'
 	 version false
 	 cache usage:'read-only'
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_ASY_ANALYSIS_PLTFM_ID'
-		platformName column:'PLATFORM_NAME'
-		platformVersion column:'PLATFORM_VERSION'
-		platformDescription column:'PLATFORM_DESCRIPTION'
+		id column:'BIO_ASSAY_DATASET_ID'
+		name column:'DATASET_NAME'
+		description column:'DATASET_DESCRIPTION'
+		criteria column:'DATASET_CRITERIA'
+		createDate column:'CREATE_DATE'
+		bioAssay column:'BIO_ASSAY_ID'
+	    experiment column:'BIO_EXPERIMENT_ID'
 		}
 	}
  static constraints = {
-	platformName(nullable:true, maxSize:400)
-	platformVersion(nullable:true, maxSize:400)
-	platformDescription(nullable:true, maxSize:2000)
+	name(nullable:true, maxSize:800)
+	description(nullable:true, maxSize:2000)
+	criteria(nullable:true, maxSize:2000)
+	createDate(nullable:true)
 	}
 }
