@@ -26,7 +26,7 @@ import org.transmartproject.biomart.BioAssayAnalysis;
 import org.transmartproject.biomart.BioAssayAnalysisData;
 import org.transmartproject.searchapp.SearchKeyword
 import bio.ClinicalTrial
-import bio.BioData
+import org.transmartproject.biomart.BioData
 import bio.Experiment
 import com.recomdata.search.query.AssayAnalysisDataQuery
 
@@ -84,7 +84,7 @@ class FilterQueryService {
 	def experimentCompoundFilter(String experimentType){
 		def query = "SELECT distinct sk FROM org.transmartproject.searchapp.SearchKeyword sk, bio.Experiment exp JOIN exp.compounds cpd "+
 		" WHERE sk.bioDataId = cpd.id AND exp.type=? ORDER BY sk.keyword";
-		return search.SearchKeyword.executeQuery(query, experimentType);
+		return org.transmartproject.searchapp.SearchKeyword.executeQuery(query, experimentType);
 	}
 
 	def findExperimentCompoundFilter(SearchFilter filter, experimentType){

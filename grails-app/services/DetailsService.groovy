@@ -35,8 +35,8 @@ class DetailsService {
 
 	def getHydraGeneID(id){
 
-		def query = "SELECT DISTINCT bec.code FROM bio.BioDataExternalCode bec WHERE bec.bioDataId=? AND bec.codeType='HYDRA_GENE_ID'";
-		def result= bio.BioDataExternalCode.executeQuery(query, Long.valueOf(String.valueOf(id)));
+		def query = "SELECT DISTINCT bec.code FROM org.transmartproject.biomart.BioDataExternalCode bec WHERE bec.bioDataId=? AND bec.codeType='HYDRA_GENE_ID'";
+		def result= org.transmartproject.biomart.BioDataExternalCode.executeQuery(query, Long.valueOf(String.valueOf(id)));
 		if(result!=null &&result.size()>0 )
 			return result[0]
 		else

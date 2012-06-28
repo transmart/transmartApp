@@ -18,26 +18,31 @@
  ******************************************************************/
   
 
-package bio
-class ClinicalTrialTimePoint {
+package org.transmartproject.biomart
+class BioDataExternalCode {
 		Long id
-		String timePoint
-		String timePointCode
-		Date startDate
-		Date endDate
-		ClinicalTrial clinicalTrial
+		Long bioDataId
+		String code
+		String codeSource
+		String codeType
+		String bioDataType
  static mapping = {
-	 table 'BIO_CLINICAL_TRIAL_TIME_POINT'
+	 table 'BIO_DATA_EXT_CODE'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_CLINIC_TRIAL_TIMEPOINT_ID'
-		timePoint column:'TIME_POINT'
-		timePointCode column:'TIME_POINT_CODE'
-		startDate column:'START_DATE'
-		endDate column:'END_DATE'
-		clinicalTrial column:'BIO_EXPERIMENT_ID'
+		id column:'BIO_DATA_EXT_CODE_ID'
+		bioDataId column:'BIO_DATA_ID'
+		code column:'CODE'
+		codeSource column:'CODE_SOURCE'
+		codeType column:'CODE_TYPE'
+		bioDataType column:'BIO_DATA_TYPE'
 		}
 	}
-
+ static constraints = {
+	code(maxSize:500)
+	codeSource(nullable:true, maxSize:400)
+	codeType(nullable:true, maxSize:400)
+	bioDataType(nullable:true, maxSize:100)
+	}
 }

@@ -241,7 +241,7 @@ public class Query {
 	def createExpandBioMarkerSubQuery(ids){
 
 		StringBuilder s = new StringBuilder();
-		s.append("SELECT DISTINCT bdc.associatedBioDataId FROM bio.BioDataCorrelation bdc ");
+		s.append("SELECT DISTINCT bdc.associatedBioDataId FROM org.transmartproject.biomart.BioDataCorrelation bdc ");
 		s.append(" WHERE bdc.bioDataId in (").append(ids).append(")");
 		// s.append("SELECT DISTINCT marker.id FROM bio.BioMarker marker ")
 		// s.append(" LEFT JOIN marker.associatedCorrels marker_cor")

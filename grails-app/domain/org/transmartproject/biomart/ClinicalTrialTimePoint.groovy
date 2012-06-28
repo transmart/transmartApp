@@ -18,23 +18,25 @@
  ******************************************************************/
   
 
-package bio
-class BioDataAttribute {
+package org.transmartproject.biomart
+class ClinicalTrialTimePoint {
 		Long id
-		String propertyCode
-		String propertyValue
-		String propertyUnit
-		Long bioDataId
+		String timePoint
+		String timePointCode
+		Date startDate
+		Date endDate
+		ClinicalTrial clinicalTrial
  static mapping = {
-	 table 'BIO_DATA_ATTRIBUTE'
+	 table 'BIO_CLINICAL_TRIAL_TIME_POINT'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_DATA_ATTRIBUTE_ID'
-		propertyCode column:'PROPERTY_CODE'
-		propertyValue column:'PROPERTY_VALUE'
-		propertyUnit column:'PROPERTY_UNIT'
-		bioDataId column:'BIO_DATA_ID'
+		id column:'BIO_CLINIC_TRIAL_TIMEPOINT_ID'
+		timePoint column:'TIME_POINT'
+		timePointCode column:'TIME_POINT_CODE'
+		startDate column:'START_DATE'
+		endDate column:'END_DATE'
+		clinicalTrial column:'BIO_EXPERIMENT_ID'
 		}
 	}
 

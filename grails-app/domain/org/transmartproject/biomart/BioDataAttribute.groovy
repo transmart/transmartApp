@@ -18,22 +18,23 @@
  ******************************************************************/
   
 
-package bio
-class BioDataCorrelation {
-		Long bioDataId
-		Long associatedBioDataId
-		BioDataCorrelationDescr correlationDescr
+package org.transmartproject.biomart
+class BioDataAttribute {
 		Long id
-		static mapping = {
-	 table 'BIO_DATA_CORRELATION'
+		String propertyCode
+		String propertyValue
+		String propertyUnit
+		Long bioDataId
+ static mapping = {
+	 table 'BIO_DATA_ATTRIBUTE'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_DATA_CORREL_ID'
+		id column:'BIO_DATA_ATTRIBUTE_ID'
+		propertyCode column:'PROPERTY_CODE'
+		propertyValue column:'PROPERTY_VALUE'
+		propertyUnit column:'PROPERTY_UNIT'
 		bioDataId column:'BIO_DATA_ID'
-		associatedBioDataId column:'ASSO_BIO_DATA_ID'
-		correlationDescr column:'BIO_DATA_CORREL_DESCR_ID'
-
 		}
 	}
 

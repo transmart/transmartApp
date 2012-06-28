@@ -18,31 +18,28 @@
  ******************************************************************/
   
 
-package bio
-class BioDataExternalCode {
+package org.transmartproject.biomart
+class BioDataCorrelationDescr {
 		Long id
-		Long bioDataId
-		String code
-		String codeSource
-		String codeType
-		String bioDataType
+		String correlation
+		String description
+		String typeName
+		String status
+		String source
+		String sourceCode
  static mapping = {
-	 table 'BIO_DATA_EXT_CODE'
+	 table 'BIO_DATA_CORREL_DESCR'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_DATA_EXT_CODE_ID'
-		bioDataId column:'BIO_DATA_ID'
-		code column:'CODE'
-		codeSource column:'CODE_SOURCE'
-		codeType column:'CODE_TYPE'
-		bioDataType column:'BIO_DATA_TYPE'
+		id column:'BIO_DATA_CORREL_DESCR_ID'
+		correlation column:'CORRELATION'
+		description column:'DESCRIPTION'
+		typeName column:'TYPE_NAME'
+		status column:'STATUS'
+		source column:'SOURCE'
+		sourceCode column:'SOURCE_CODE'
 		}
 	}
- static constraints = {
-	code(maxSize:500)
-	codeSource(nullable:true, maxSize:400)
-	codeType(nullable:true, maxSize:400)
-	bioDataType(nullable:true, maxSize:100)
-	}
+
 }

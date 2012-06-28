@@ -385,13 +385,13 @@ class ExperimentAnalysisQueryService {
 	 */
 	def findExperimentDesignFilter(filter){
 
-		// def query = "SELECT DISTINCT bda.propertyValue FROM bio.BioDataAttribute bda WHERE bda.propertyCode='Experiment Design' ORDER BY bda.propertyValue";
-		// return bio.BioDataAttribute.executeQuery();
+		// def query = "SELECT DISTINCT bda.propertyValue FROM org.transmartproject.biomart.BioDataAttribute bda WHERE bda.propertyCode='Experiment Design' ORDER BY bda.propertyValue";
+		// return org.transmartproject.biomart.BioDataAttribute.executeQuery();
 		def gfilter = filter.globalFilter
 		def query = new AssayAnalysisDataQuery(mainTableAlias:"baad",setDistinct:true)
 		def alias = query.mainTableAlias+"_dis"
 		query.addTable("org.transmartproject.biomart.BioAssayAnalysisData baad");
-		query.addTable("bio.BioDataAttribute bda")
+		query.addTable("org.transmartproject.biomart.BioDataAttribute bda")
 		query.addCondition("baad.experiment.id = bda.bioDataId")
 		query.addSelect("bda.propertyValue")
 		query.addOrderBy("bda.propertyValue");
@@ -404,8 +404,8 @@ class ExperimentAnalysisQueryService {
 		return org.transmartproject.biomart.BioAssayAnalysisData.executeQuery(query.generateSQL());
 
 		/*
-		 return bio.BioDataAttribute.executeQuery("SELECT DISTINCT bda.propertyValue " +
-		 "FROM bio.BioDataAttribute bda " +
+		 return org.transmartproject.biomart.BioDataAttribute.executeQuery("SELECT DISTINCT bda.propertyValue " +
+		 "FROM org.transmartproject.biomart.BioDataAttribute bda " +
 		 "WHERE bda.propertyCode='Experiment Design' and bda.propertyValue is not null ORDER BY bda.propertyValue");
 		 */
 	}
@@ -473,7 +473,7 @@ class ExperimentAnalysisQueryService {
 		if(expfilter.filterExpDesign()){
 			def alias = query.mainTableAlias+".experiment"
 			//query.addTable(alias+" exp")
-			query.addTable("bio.BioDataAttribute bda")
+			query.addTable("org.transmartproject.biomart.BioDataAttribute bda")
 			query.addCondition(alias+".id = bda.bioDataId")
 			query.addCondition("bda.propertyValue ='"+expfilter.expDesign+"'")
 		}

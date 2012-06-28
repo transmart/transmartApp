@@ -26,6 +26,8 @@
 
 package bio
 
+import org.transmartproject.biomart.BioData;
+
 import com.recomdata.util.IExcelProfile
 
 class Experiment implements IExcelProfile {

@@ -50,7 +50,7 @@ public class HeatmapController{
 		session.searchFilter.heatmapFilter.heatmapfiltertype=params.heatmapfiltertype
 
 		if (params.id != null && params.id.length() > 0) {
-			session.searchFilter.heatmapFilter.searchTerm = search.SearchKeyword.get(Long.valueOf(params.id))
+			session.searchFilter.heatmapFilter.searchTerm = org.transmartproject.searchapp.SearchKeyword.get(Long.valueOf(params.id))
 
 		}
 		render(view:'initheatmap')

@@ -28,6 +28,7 @@ package bio
 
 import org.transmartproject.biomart.BioAssayAnalysisData;
 import org.transmartproject.biomart.BioAssayDataStatistics;
+import org.transmartproject.biomart.BioDataCorrelation;
 
 import com.recomdata.util.IExcelProfile
 

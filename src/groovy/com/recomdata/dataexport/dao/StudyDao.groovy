@@ -23,8 +23,8 @@ package com.recomdata.dataexport.dao
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.springframework.context.ApplicationContext
+import org.transmartproject.biomart.ClinicalTrial;
 
-import bio.ClinicalTrial
 import bio.Compound
 import bio.Experiment
 import bio.Taxonomy

@@ -24,9 +24,11 @@ X * $Id: ClinicalTrial.groovy 10184 2011-10-24 21:43:59Z jliu $
  * @version $Revision: 10184 $
  */
 
-package bio
+package org.transmartproject.biomart
 
 import java.util.List;
+
+import bio.Experiment;
 
 class ClinicalTrial extends Experiment {
 	String trialNumber

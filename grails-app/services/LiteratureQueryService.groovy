@@ -27,9 +27,9 @@
 import org.transmart.GlobalFilter;
 import org.transmart.LiteratureFilter;
 import org.transmart.SearchFilter;
+import org.transmartproject.biomart.BioDataExternalCode;
 
 import bio.BioMarker
-import bio.BioDataExternalCode
 import bio.Literature
 import bio.LiteratureAlterationData
 import bio.LiteratureInhibitorData

@@ -32,7 +32,7 @@ public class BioAssayAnalysisDataTests extends GroovyTestCase{
 	static transactional = false
 
 	void testAnalysisData(){
-	//def c = BioAssayAnalysisData.executeQuery("SELECT COUNT (DISTINCT baad.id) FROM org.transmartproject.biomart.BioAssayAnalysisData baad, bio.BioDataOmicFact bm,  bio.BioDataDiseaseFact bd "+
+	//def c = BioAssayAnalysisData.executeQuery("SELECT COUNT (DISTINCT baad.id) FROM org.transmartproject.biomart.BioAssayAnalysisData baad, org.transmartproject.biomart.BioDataOmicFact bm,  org.transmartproject.biomart.BioDataDiseaseFact bd "+
 //			" WHERE baad.id = bm.bioDataId AND bm.bioMarkerId = 8037275 "+
 //			" AND baad.id = bd.bioDataId AND bd.bioDiseaseId = 8021799 ")
 	def c = BioAssayAnalysisData.executeQuery("SELECT COUNT (DISTINCT baad.id) FROM org.transmartproject.biomart.BioAssayAnalysisData baad JOIN baad.markers bm JOIN baad.diseases bd "+
@@ -47,7 +47,7 @@ println(c)
 	}
 
 	void testAssayData(){
-		//def c = BioAssayAnalysisData.executeQuery("SELECT COUNT (DISTINCT baad.id) FROM org.transmartproject.biomart.BioAssayAnalysisData baad, bio.BioDataOmicFact bm,  bio.BioDataDiseaseFact bd "+
+		//def c = BioAssayAnalysisData.executeQuery("SELECT COUNT (DISTINCT baad.id) FROM org.transmartproject.biomart.BioAssayAnalysisData baad, org.transmartproject.biomart.BioDataOmicFact bm,  org.transmartproject.biomart.BioDataDiseaseFact bd "+
 //				" WHERE baad.id = bm.bioDataId AND bm.bioMarkerId = 8037275 "+
 //				" AND baad.id = bd.bioDataId AND bd.bioDiseaseId = 8021799 ")
 		def c = BioAssayData.executeQuery("SELECT COUNT (DISTINCT bad.id) FROM org.transmartproject.biomart.BioAssayData bad JOIN bad.markers bm JOIN bad.diseases bd "+
@@ -62,7 +62,7 @@ println(c)
 		}
 
 	void testLiteratureData(){
-		//def c = BioAssayAnalysisData.executeQuery("SELECT COUNT (DISTINCT baad.id) FROM org.transmartproject.biomart.BioAssayAnalysisData baad, bio.BioDataOmicFact bm,  bio.BioDataDiseaseFact bd "+
+		//def c = BioAssayAnalysisData.executeQuery("SELECT COUNT (DISTINCT baad.id) FROM org.transmartproject.biomart.BioAssayAnalysisData baad, org.transmartproject.biomart.BioDataOmicFact bm,  org.transmartproject.biomart.BioDataDiseaseFact bd "+
 //				" WHERE baad.id = bm.bioDataId AND bm.bioMarkerId = 8037275 "+
 //				" AND baad.id = bd.bioDataId AND bd.bioDiseaseId = 8021799 ")
 		def c = BioAssayData.executeQuery("SELECT COUNT (DISTINCT ldf.id) FROM bio.Literature ldf JOIN ldf.markers bm JOIN ldf.diseases bd "+

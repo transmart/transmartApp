@@ -18,28 +18,32 @@
  ******************************************************************/
   
 
-package bio
-class BioDataCorrelationDescr {
+package org.transmartproject.biomart
+class ClinicalTrialPatientGroup {
+		ClinicalTrial clinicalTrial
 		Long id
-		String correlation
+		String name
 		String description
-		String typeName
-		String status
-		String source
-		String sourceCode
+		Long numberOfPatients
+		String patientGroupTypeCode
  static mapping = {
-	 table 'BIO_DATA_CORREL_DESCR'
+	 table 'BIO_CLINICAL_TRIAL_PT_GROUP'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_DATA_CORREL_DESCR_ID'
-		correlation column:'CORRELATION'
+		clinicalTrial column:'BIO_EXPERIMENT_ID'
+		id column:'BIO_CLINICAL_TRIAL_P_GROUP_ID'
+		name column:'NAME'
 		description column:'DESCRIPTION'
-		typeName column:'TYPE_NAME'
-		status column:'STATUS'
-		source column:'SOURCE'
-		sourceCode column:'SOURCE_CODE'
+		numberOfPatients column:'NUMBER_OF_PATIENTS'
+		patientGroupTypeCode column:'PATIENT_GROUP_TYPE_CODE'
 		}
 	}
 
+		static constraints = {
+			name(nullable:true, maxSize:1020)
+			description(nullable:true, maxSize:2000)
+			numberOfPatients(nullable:true)
+			patientGroupTypeCode(nullable:true, maxSize:400)
+			}
 }

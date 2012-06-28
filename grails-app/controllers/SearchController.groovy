@@ -31,13 +31,13 @@ import org.hibernate.*
 import org.transmart.GlobalFilter;
 import org.transmart.SearchFilter;
 import org.transmart.SearchResult;
+import org.transmartproject.biomart.BioDataExternalCode;
 import org.transmartproject.searchapp.AccessLog;
 import org.transmartproject.searchapp.AuthUser;
 
 import org.transmartproject.searchapp.CustomFilter
 import org.transmartproject.searchapp.SearchKeyword
 import org.transmartproject.searchapp.SearchKeywordTerm
-import bio.BioDataExternalCode
 
 import com.recomdata.util.*
 
@@ -158,8 +158,8 @@ public class SearchController{
 		if (params.id != null && params.id.length() > 0) {
 			def keyword = getSearchKeyword(params.id)
 			genes = searchKeywordService.expandPathwayToGenes(keyword.bioDataId.toString())
-			//			def query = "select k from org.transmartproject.searchapp.SearchKeyword k, bio.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId=?"
-			//			genes = search.SearchKeyword.executeQuery(query, keyword.bioDataId)
+			//			def query = "select k from org.transmartproject.searchapp.SearchKeyword k, org.transmartproject.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId=?"
+			//			genes = org.transmartproject.searchapp.SearchKeyword.executeQuery(query, keyword.bioDataId)
 		}
 		renderSearchKeywords(genes)
 	}
@@ -211,7 +211,7 @@ public class SearchController{
 		}
 		def allSynonyms
 		if (dataIds?.size() > 0) {
-			allSynonyms = BioDataExternalCode.executeQuery("SELECT DISTINCT bdec FROM bio.BioDataExternalCode bdec WHERE bdec.bioDataId IN(:ids) AND bdec.codeType='SYNONYM'",[ids:dataIds])
+			allSynonyms = BioDataExternalCode.executeQuery("SELECT DISTINCT bdec FROM org.transmartproject.biomart.BioDataExternalCode bdec WHERE bdec.bioDataId IN(:ids) AND bdec.codeType='SYNONYM'",[ids:dataIds])
 		}
 		def synMap =[:]
 		def synList = null

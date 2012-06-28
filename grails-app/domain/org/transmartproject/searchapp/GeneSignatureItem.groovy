@@ -21,9 +21,9 @@
 package org.transmartproject.searchapp
 
 import org.transmartproject.biomart.BioAssayFeatureGroup;
+import org.transmartproject.biomart.BioData;
 
 import bio.BioMarker
-import bio.BioData
 
 /**
  * domain class for a gene signature item

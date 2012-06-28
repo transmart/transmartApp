@@ -19,7 +19,8 @@ package org.transmart
  ******************************************************************/
   
 
-import bio.ClinicalTrial
+import org.transmartproject.biomart.ClinicalTrial;
+
 import com.recomdata.tea.TEABaseResult
 
 /**

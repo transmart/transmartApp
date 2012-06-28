@@ -18,7 +18,7 @@
  ******************************************************************/
   
 
-package bio
+package org.transmartproject.biomart
 class BioData {
 		Long id
 		String uniqueId
