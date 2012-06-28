@@ -18,6 +18,9 @@
  ******************************************************************/
   
 
+import org.transmart.SearchFilter;
+import org.transmart.SearchResult;
+
 import groovy.time.*
 
 /**

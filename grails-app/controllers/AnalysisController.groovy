@@ -30,6 +30,8 @@ import javax.xml.xpath.*
 import org.genepattern.client.*
 import org.genepattern.webservice.*
 import org.json.*
+import org.transmart.CohortInformation;
+import org.transmart.HeatmapValidator;
 import org.transmartproject.searchapp.AccessLog;
 import org.w3c.dom.*
 import org.xml.sax.*

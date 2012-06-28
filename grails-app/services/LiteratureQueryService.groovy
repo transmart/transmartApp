@@ -24,6 +24,10 @@
  * @version $Revision: 9178 $
  */
 
+import org.transmart.GlobalFilter;
+import org.transmart.LiteratureFilter;
+import org.transmart.SearchFilter;
+
 import bio.BioMarker
 import bio.BioDataExternalCode
 import bio.Literature

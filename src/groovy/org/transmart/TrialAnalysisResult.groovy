@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,32 +19,40 @@
  ******************************************************************/
   
 
+import bio.ClinicalTrial
+import com.recomdata.tea.TEABaseResult
+
 /**
- * stores results for expression profile 
+ * $Id: TrialAnalysisResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  */
+public class TrialAnalysisResult extends TEABaseResult {
+    def trial
+    Long expCount
+    
+    def getProtocol() {
+    	def file = null
+    	for(cr in trial.files){
+    		if (cr.type == "Protocol") {
+    			file = cr
+    		}
+    	}
+    	return file
+    }
 
- /**
-  * $Id: ExpressionProfileResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
-  */
-public class ExpressionProfileResult {
+    def getFiles() {
+    	def files = []
+    	for (cr in trial.files) {
+    		if (cr.type != "Protocol") {
+    			files.add(cr)
+    		}
+    	}
+    	return files
+    }
 
-	// genes retrieved from a search
-	def genes = []
-	
-	// diseases retrieved from search or gene change
-	def diseases = []
-	
-	// probesets
-	def probeSets = []
-	
-	// box plot URL 
-	def graphURL = null
-	
-	// dataset items associated with box plot
-	def datasetItems = []
-	
-	 // experiment count from search
-	def profCount = 0
+    def hasResult(){
+    	return analysisCount>0;
+    }
+    
 }

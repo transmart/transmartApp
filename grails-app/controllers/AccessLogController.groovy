@@ -20,6 +20,7 @@
 
 import java.text.*;
 
+import org.transmart.AccessLogFilter;
 import org.transmartproject.searchapp.AccessLog;
 
 import com.recomdata.util.ExcelSheet;

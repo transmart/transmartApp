@@ -70,6 +70,7 @@ import java.sql.*;
 import org.jfree.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.transmart.CohortInformation;
 import org.transmartproject.searchapp.AuthUser;
 import org.transmartproject.searchapp.AuthUserSecureAccess;
 import org.transmartproject.searchapp.SecureObjectPath;

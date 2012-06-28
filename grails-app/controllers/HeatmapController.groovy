@@ -20,9 +20,10 @@
 
 import grails.converters.*
 import com.recomdata.util.*
-import SearchFilter
 import org.hibernate.*
-import GlobalFilter
+import org.transmart.GlobalFilter;
+import org.transmart.SearchFilter;
+
 import bio.BioAssayAnalysis
 import bio.BioAssayAnalysisData
 import bio.BioMarker

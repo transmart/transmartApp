@@ -24,6 +24,8 @@
  * @version $Revision: 10098 $
  */
 
+import org.transmart.SearchResult;
+
 import com.recomdata.util.DomainObjectExcelHelper;
 import com.recomdata.util.ExcelGenerator;
 import com.recomdata.util.ExcelSheet;

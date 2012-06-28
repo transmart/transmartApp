@@ -24,6 +24,8 @@
  * @version $Revision: 9178 $
  */
  
+import org.transmart.HeatmapDataValue;
+
 import bio.BioMarker
 import com.recomdata.search.query.AssayAnalysisDataQuery
 

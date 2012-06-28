@@ -42,10 +42,12 @@
  import org.jfree.chart.*;
  import org.jfree.chart.entity.*;
  import org.jfree.chart.servlet.*;
+import org.transmart.ExpressionProfileResult;
+
  import bio.BioMarker;
  import bio.Disease;
  import bio.BioAssayDataStatistics;
- import javax.servlet.ServletException;
+import javax.servlet.ServletException;
 
 public class ExpressionProfileController{
 

@@ -28,6 +28,9 @@
 import grails.converters.*
 
 import org.hibernate.*
+import org.transmart.GlobalFilter;
+import org.transmart.SearchFilter;
+import org.transmart.SearchResult;
 import org.transmartproject.searchapp.AccessLog;
 import org.transmartproject.searchapp.AuthUser;
 

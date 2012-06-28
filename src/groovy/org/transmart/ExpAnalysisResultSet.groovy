@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,40 +19,19 @@
  ******************************************************************/
   
 
-import bio.ClinicalTrial
-import com.recomdata.tea.TEABaseResult
+import bio.Experiment
 
 /**
- * $Id: TrialAnalysisResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
+ * $Id: ExpAnalysisResultSet.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @version $Reversion$
+ *
  */
-public class TrialAnalysisResult extends TEABaseResult {
-    def trial
+public class ExpAnalysisResultSet{
+
+	def expAnalysisResults =[]
+	Long analysisCount
     Long expCount
-    
-    def getProtocol() {
-    	def file = null
-    	for(cr in trial.files){
-    		if (cr.type == "Protocol") {
-    			file = cr
-    		}
-    	}
-    	return file
-    }
+	boolean groupByExp=false
 
-    def getFiles() {
-    	def files = []
-    	for (cr in trial.files) {
-    		if (cr.type != "Protocol") {
-    			files.add(cr)
-    		}
-    	}
-    	return files
-    }
-
-    def hasResult(){
-    	return analysisCount>0;
-    }
-    
 }

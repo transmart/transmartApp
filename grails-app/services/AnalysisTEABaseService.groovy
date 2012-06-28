@@ -26,6 +26,11 @@ import bio.BioAssayAnalysis
 import bio.BioAssayAnalysisData
 import bio.BioAssayAnalysisDataTea
 import bio.Experiment
+
+import org.transmart.AnalysisResult;
+import org.transmart.AssayAnalysisValue;
+import org.transmart.ExpAnalysisResultSet;
+import org.transmart.SearchFilter;
 import org.transmartproject.searchapp.SearchBioMarkerCorrelFastMV
 import bio.BioMarkerCorrelationMV
 import com.recomdata.search.query.AssayAnalysisDataQuery

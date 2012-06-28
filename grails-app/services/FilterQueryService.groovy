@@ -21,6 +21,8 @@
 import bio.BioAssayAnalysis
 import bio.Disease
 import bio.Compound
+
+import org.transmart.SearchFilter;
 import org.transmartproject.searchapp.SearchKeyword
 import bio.ClinicalTrial
 import bio.BioData

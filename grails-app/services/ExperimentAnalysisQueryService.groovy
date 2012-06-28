@@ -18,6 +18,10 @@
  ******************************************************************/
   
 
+import org.transmart.ExpAnalysisResultSet;
+import org.transmart.ExperimentAnalysisResult;
+import org.transmart.SearchFilter;
+
 import bio.BioMarker
 import bio.Compound
 import bio.Disease
@@ -27,7 +31,8 @@ import bio.BioAssayAnalysisData
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.ExperimentAssayAnalysisMVQuery
 import com.recomdata.search.query.Query
-
+import org.transmart.AnalysisResult
+import org.transmart.AssayAnalysisValue
 import com.recomdata.util.ElapseTimer;
 /**
  * $Id: ExperimentAnalysisQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

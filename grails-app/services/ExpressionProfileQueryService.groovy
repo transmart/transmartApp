@@ -28,6 +28,7 @@ import com.recomdata.search.query.AssayStatsExpMarkerQuery
 import com.recomdata.search.query.AssayDataStatsQuery
 import com.recomdata.search.query.Query
 import org.codehaus.groovy.grails.commons.*
+import org.transmart.SearchFilter;
 
 /**
  * $Id: ExpressionProfileQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

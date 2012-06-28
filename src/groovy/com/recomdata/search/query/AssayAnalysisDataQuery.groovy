@@ -21,7 +21,7 @@
 
 package  com.recomdata.search.query
 
-import GlobalFilter
+import org.transmart.GlobalFilter
 
 
 /**

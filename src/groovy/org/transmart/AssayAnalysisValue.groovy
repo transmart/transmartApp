@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,47 +19,42 @@
  ******************************************************************/
   
 
+import bio.BioMarker
+import bio.BioAssayAnalysisData
+
 /**
- * $Id: KeywordSet.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
+ * $Id: AssayAnalysisValue.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ *
  */
-public class KeywordSet extends LinkedHashSet{
+public class AssayAnalysisValue implements Comparable {
 
-	def getKeywordUniqueIds(){
-		def uidlist = []
-		for(keyword in this){
-			uidlist.add(keyword.uniqueId)
-		}
-		return uidlist
-	}
+	def analysisData
+	BioMarker bioMarker
 
-	def getKeywordDataIds(){
-		def bioids = []
-		for(keyword in this){
-			bioids.add(keyword.bioDataId)
-		}
-		return bioids
-	}
+	// indicator for the up/down regulation (i.e. gene lists and signatures). If null implies
+	// we don't care about the up/down regulation such as for a pathway
+	Double valueMetric
 
-	def getKeywordDataIdString(){
-		StringBuilder s = new StringBuilder()
+	/**
+	 * comparable interface implementation, sort on NPV
+	 */
+	public int compareTo(Object obj) {
+		// verify correct object type
+		if (!(obj instanceof AssayAnalysisValue)) return -1
 
-		for(keyword in this){
-			if(s.length()>0){
-				s.append(", ")
-			}
-			s.append(keyword.bioDataId)
-		}
-		return s.toString()
-	}
+		// compare objects
+		AssayAnalysisValue compare = (AssayAnalysisValue) obj;
+		Double thisScore = analysisData.teaNormalizedPValue
+		Double compScore = compare.analysisData.teaNormalizedPValue
 
-	def removeKeyword(keyword) {
-		for (k in this) {
-			if (k.uniqueId.equals(keyword.uniqueId)) {
-				return this.remove(k)
-			}
-		}
+		// handle invalid values
+		if(compScore==null && thisScore!=null) return 1;
+		if(thisScore==null && compScore!=null) return -1;
+		if(thisScore==null && compScore==null) return 0;
+
+		return (thisScore.compareTo(compScore))
 	}
 
 }

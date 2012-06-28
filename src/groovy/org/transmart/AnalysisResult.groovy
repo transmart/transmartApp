@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,7 +19,8 @@
  ******************************************************************/
   
 
-import AssayAnalysisValue
+import org.transmart.AssayAnalysisValue;
+
 import bio.BioAssayAnalysis
 import bio.BioAssayAnalysisData
 import com.recomdata.util.BinomialDistribution

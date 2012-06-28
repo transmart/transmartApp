@@ -18,6 +18,12 @@
  ******************************************************************/
   
 
+import org.transmart.AnalysisResult;
+import org.transmart.AssayAnalysisValue;
+import org.transmart.ExpAnalysisResultSet;
+import org.transmart.SearchFilter;
+import org.transmart.TrialAnalysisResult;
+
 import bio.BioMarker
 import bio.Compound
 import bio.Disease

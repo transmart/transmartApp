@@ -21,6 +21,9 @@
 import com.recomdata.util.ExcelSheet;
 import com.recomdata.util.ExcelGenerator;
 import javax.servlet.http.HttpServletResponse;
+
+import org.transmart.SearchResult;
+
 import bio.BioAssayAnalysis
 import bio.BioAssayAnalysisData
 import bio.BioMarker

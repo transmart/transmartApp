@@ -18,6 +18,9 @@
  ******************************************************************/
   
 
+import org.transmart.SearchFilter;
+import org.transmart.TrialAnalysisResult;
+
 import bio.BioMarker
 import bio.Compound
 import bio.Disease

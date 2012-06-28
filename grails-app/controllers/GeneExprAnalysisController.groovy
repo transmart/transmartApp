@@ -23,9 +23,9 @@
  */
 import grails.converters.*
 import com.recomdata.util.*
-import SearchFilter
 import org.hibernate.*
-import GlobalFilter
+import org.transmart.GlobalFilter;
+import org.transmart.SearchFilter;
 
 /**
  * @author $Author: mmcduffie $
