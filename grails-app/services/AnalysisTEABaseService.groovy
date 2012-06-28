@@ -208,10 +208,10 @@ class AnalysisTEABaseService {
 				// switch for gene sig or list
 				def dynamicValuesQuery
 				if(gfilter.getGeneSignatureFilters().size()>0) {
-					dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, sbmcmv.valueMetric FROM search.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in ("+mids+")";
+					dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, sbmcmv.valueMetric FROM org.transmartproject.searchapp.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in ("+mids+")";
 				} else {
 					// always up regulated for gene list
-					dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, 1 as valueMetric FROM search.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in ("+mids+")";
+					dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, 1 as valueMetric FROM org.transmartproject.searchapp.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in ("+mids+")";
 				}
 				updownResult.addAll(SearchBioMarkerCorrelFastMV.executeQuery(dynamicValuesQuery))
 				log.info "number of search app biomarkers: "+updownResult.size()

@@ -68,19 +68,19 @@ class FilterQueryService {
 	}
 
 //	def experimentDiseaseFilter(String experimentType){
-//		def query = "SELECT distinct sk FROM search.SearchKeyword sk, bio.Experiment exp JOIN exp.diseases ds "+
+//		def query = "SELECT distinct sk FROM org.transmartproject.searchapp.SearchKeyword sk, bio.Experiment exp JOIN exp.diseases ds "+
 //		" WHERE sk.bioDataId = ds.id AND exp.type=? ORDER BY sk.keyword";
-//		return search.SearchKeyword.executeQuery(query, experimentType);
+//		return org.transmartproject.searchapp.SearchKeyword.executeQuery(query, experimentType);
 //	}
 
 //	def experimentDiseaseFilterNew(String experimentType){
-//		def query = "SELECT distinct sk FROM search.SearchKeyword sk, bio.Experiment exp JOIN exp.diseases ds "+
+//		def query = "SELECT distinct sk FROM org.transmartproject.searchapp.SearchKeyword sk, bio.Experiment exp JOIN exp.diseases ds "+
 //		" WHERE sk.bioDataId = ds.id AND exp.type=? ORDER BY sk.keyword";
-//		return search.SearchKeyword.executeQuery(query, experimentType);
+//		return org.transmartproject.searchapp.SearchKeyword.executeQuery(query, experimentType);
 //}
 
 	def experimentCompoundFilter(String experimentType){
-		def query = "SELECT distinct sk FROM search.SearchKeyword sk, bio.Experiment exp JOIN exp.compounds cpd "+
+		def query = "SELECT distinct sk FROM org.transmartproject.searchapp.SearchKeyword sk, bio.Experiment exp JOIN exp.compounds cpd "+
 		" WHERE sk.bioDataId = cpd.id AND exp.type=? ORDER BY sk.keyword";
 		return search.SearchKeyword.executeQuery(query, experimentType);
 	}
