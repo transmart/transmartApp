@@ -24,6 +24,10 @@
  * @version $Revision: 10098 $
  */
 
+import java.sql.BatchUpdateException
+import java.sql.SQLException
+
+import org.codehaus.groovy.grails.exceptions.InvalidPropertyException
 import org.transmartproject.searchapp.AccessLog;
 import org.transmartproject.searchapp.AuthUser;
 import org.transmartproject.searchapp.AuthUserSecureAccess;
@@ -89,7 +93,11 @@ class AuthUserController {
 				log.info("Deleting ${person.username} from secure access list")				 
 				AuthUserSecureAccess.findAllByAuthUser(person).each {it.delete()}
 				log.info("Deleting the gene signatures created by ${person.username}")
-				GeneSignature.findAllByCreatedByAuthUser(person).each {it.delete()}
+                try {
+                    GeneSignature.findAllByCreatedByAuthUser(person).each {it.delete()}
+                } catch(InvalidPropertyException ipe)   {
+                    log.warn("AuthUser properties in the GeneSignature domain need to be enabled")
+                }
 				log.info("Finally, deleting ${person.username}")															
 				person.delete()
 				def msg = "$person.userRealName has been deleted."
@@ -177,17 +185,27 @@ class AuthUserController {
 		person.uniqueId = ''
 		person.name=person.userRealName;
 
-		if (person.save()) {
-			addRoles(person)
-			def msg = "User: ${person.username} for ${person.userRealName} created";
-			new AccessLog(username: person.username, event:"User Created",
-				eventmessage: msg,
-				accesstime:new Date()).save()
-			redirect action: show, id: person.id
-		}
-		else {
-			render view: 'create', model: [authorityList: Role.list(), person: person]
-		}
+        try {
+            if (person.save()) {
+                addRoles(person)
+                def msg = "User: ${person.username} for ${person.userRealName} created";
+                new AccessLog(username: person.username, event:"User Created",
+                    eventmessage: msg,
+                    accesstime:new Date()).save()
+                redirect action: show, id: person.id
+            }
+            else {
+                render view: 'create', model: [authorityList: Role.list(), person: person]
+            }            
+        } catch(BatchUpdateException bue)   {
+            flash.message = 'Cannot create user'
+            log.error(bue.getLocalizedMessage(), bue)
+            render view: 'create', model: [authorityList: Role.list(), person: person]
+        } catch(SQLException sqle)    {
+            flash.message = 'Cannot create user'            
+            log.error(sqle.getNextException().getMessage())
+            render view: 'create', model: [authorityList: Role.list(), person: person]
+        } 
 	}
 
 	private void addRoles(person) {

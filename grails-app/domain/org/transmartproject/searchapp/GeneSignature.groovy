@@ -61,7 +61,7 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	String normMethodOther
 	ConceptCode analysisMethodConceptCode
 	String analysisMethodOther
-	Long multipleTestingCorrection
+	boolean multipleTestingCorrection
 	ConceptCode pValueCutoffConceptCode
 	String uniqueId
 	Date dateCreated
