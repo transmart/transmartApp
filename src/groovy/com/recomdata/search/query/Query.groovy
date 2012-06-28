@@ -258,7 +258,7 @@ public class Query {
 		/*
 		 // query to use if only using 1 MV from searchapp
 		 s.append(markerAlias).append(".id IN (")
-		 s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM search.SearchBioMarkerCorrelFastMV sbmcmv ");
+		 s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM org.transmartproject.searchapp.SearchBioMarkerCorrelFastMV sbmcmv ");
 		 s.append(" WHERE sbmcmv.domainObjectId in (").append(ids).append(")");
 		 */
 
@@ -267,7 +267,7 @@ public class Query {
 		s.append("(");
 		if(!gfilter.getGeneSigListFilters().isEmpty()){
 			s.append(markerAlias).append(".id IN (")
-			s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM search.SearchBioMarkerCorrelFastMV sbmcmv ");
+			s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM org.transmartproject.searchapp.SearchBioMarkerCorrelFastMV sbmcmv ");
 			s.append(" WHERE sbmcmv.domainObjectId in (").append(gfilter.getGeneSigListFilters().getKeywordDataIdString()).append("))");
 		}
 		if(!gfilter.getGenePathwayFilters().isEmpty()){
@@ -290,7 +290,7 @@ public class Query {
 		s.append("(");
 		if(!gfilter.getGeneSigListFilters().isEmpty()){
 			s.append(markerAlias).append(".id IN (")
-			s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM search.SearchBioMarkerCorrelFastMV sbmcmv ");
+			s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM org.transmartproject.searchapp.SearchBioMarkerCorrelFastMV sbmcmv ");
 			s.append(" WHERE sbmcmv.domainObjectId in (").append(gfilter.getGeneSigListFilters().getKeywordDataIdString()).append("))");
 		}
 		if(!gfilter.getGenePathwayFilters().isEmpty()){

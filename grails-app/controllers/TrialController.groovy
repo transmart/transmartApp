@@ -175,7 +175,7 @@ class TrialController {
 		// need to mark  trial with data
 		// tmp solution
 
-		def triallist = bio.ClinicalTrial.executeQuery("SELECT b.id, b.trialNumber, b.title FROM bio.ClinicalTrial b, search.SearchKeyword s  WHERE s.bioDataId=b.id ORDER BY b.trialNumber");
+		def triallist = bio.ClinicalTrial.executeQuery("SELECT b.id, b.trialNumber, b.title FROM bio.ClinicalTrial b, org.transmartproject.searchapp.SearchKeyword s  WHERE s.bioDataId=b.id ORDER BY b.trialNumber");
 
 		//		    def triallist = bio.ClinicalTrial.listOrderByTrialNumber();
 		boolean filtercheck = !session.searchFilter.trialFilter.newFilter;
