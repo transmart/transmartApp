@@ -18,9 +18,9 @@
  ******************************************************************/
   
 
-import search.SearchKeyword
-import search.SearchKeywordTerm
-import search.GeneSignature
+import org.transmartproject.searchapp.SearchKeyword
+import org.transmartproject.searchapp.SearchKeywordTerm
+import org.transmartproject.searchapp.GeneSignature
 
 /**
  * @author $Author: mmcduffie $

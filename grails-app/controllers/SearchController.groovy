@@ -31,9 +31,9 @@ import org.hibernate.*
 import org.transmartproject.searchapp.AccessLog;
 import org.transmartproject.searchapp.AuthUser;
 
-import search.CustomFilter
-import search.SearchKeyword
-import search.SearchKeywordTerm
+import org.transmartproject.searchapp.CustomFilter
+import org.transmartproject.searchapp.SearchKeyword
+import org.transmartproject.searchapp.SearchKeywordTerm
 import bio.BioDataExternalCode
 
 import com.recomdata.util.*
@@ -436,7 +436,7 @@ public class SearchController{
 	/**
 	 * Creates link to detatils for specified filter keyword.
 	 */
-	def createSummaryFilter(search.SearchKeyword keyword){
+	def createSummaryFilter(org.transmartproject.searchapp.SearchKeyword keyword){
 
 		def link = new StringBuilder()
 		def type = keyword.dataCategory.toLowerCase()

@@ -29,7 +29,7 @@ import org.transmartproject.searchapp.AuthUser;
 import org.transmartproject.searchapp.AuthUserSecureAccess;
 import org.transmartproject.searchapp.Role;
 
-import search.GeneSignature
+import org.transmartproject.searchapp.GeneSignature
 
 /**
  * User controller.

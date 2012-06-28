@@ -21,9 +21,9 @@
 import org.springframework.web.multipart.MultipartFile;
 import org.transmartproject.searchapp.AuthUser;
 
-import search.GeneSignatureItem;
-import search.GeneSignatureFileSchema;
-import search.GeneSignature;
+import org.transmartproject.searchapp.GeneSignatureItem;
+import org.transmartproject.searchapp.GeneSignatureFileSchema;
+import org.transmartproject.searchapp.GeneSignature;
 import bio.BioMarker;
 import bio.BioData;
 import bio.BioAssayAnalysisData;

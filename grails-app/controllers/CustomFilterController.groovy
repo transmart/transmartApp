@@ -23,9 +23,9 @@
  */
 import org.transmartproject.searchapp.AuthUser;
 
-import search.SearchKeyword
-import search.CustomFilter
-import search.CustomFilterItem
+import org.transmartproject.searchapp.SearchKeyword
+import org.transmartproject.searchapp.CustomFilter
+import org.transmartproject.searchapp.CustomFilterItem
 import grails.converters.*
 
 /**

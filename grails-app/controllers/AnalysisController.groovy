@@ -34,7 +34,7 @@ import org.transmartproject.searchapp.AccessLog;
 import org.w3c.dom.*
 import org.xml.sax.*
 
-import search.SearchKeyword
+import org.transmartproject.searchapp.SearchKeyword
 
 import com.recomdata.debugging.*
 import com.recomdata.export.GenePatternFiles

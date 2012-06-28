@@ -26,7 +26,7 @@ import bio.BioAssayAnalysis
 import bio.BioAssayAnalysisData
 import bio.BioAssayAnalysisDataTea
 import bio.Experiment
-import search.SearchBioMarkerCorrelFastMV
+import org.transmartproject.searchapp.SearchBioMarkerCorrelFastMV
 import bio.BioMarkerCorrelationMV
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.AssayAnalysisDataTeaQuery

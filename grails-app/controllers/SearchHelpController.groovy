@@ -20,8 +20,8 @@
 
 import org.transmartproject.searchapp.AuthUser;
 
-import search.SearchKeyword
-import search.GeneSignature
+import org.transmartproject.searchapp.SearchKeyword
+import org.transmartproject.searchapp.GeneSignature
 import bio.Experiment
 import bio.Compound
 import bio.Disease

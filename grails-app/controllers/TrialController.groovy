@@ -29,7 +29,7 @@ import bio.ClinicalTrial
 import bio.BioAssayPlatform
 import bio.BioAssayAnalysis
 import bio.Experiment
-import search.SearchKeyword
+import org.transmartproject.searchapp.SearchKeyword
 
 class TrialController {
 
