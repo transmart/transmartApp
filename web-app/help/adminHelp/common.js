@@ -1,23 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
-
 ﻿
 // Global -----------------------
 var popupState = -1; // -1 - unknown; 0 - loading; 1 - loaded;
@@ -759,7 +739,7 @@ function dhtml_popup(evt, url)
 	// load url into frame
 	var anchorIndex = url.indexOf("#", 0);
 	setPopupState(-1, popUpShown);
-	pop.setAttribute("src", d2hGetRelativePath(document, "_d2hblank.htm"));
+	pop.setAttribute("src", d2hGetRelativePath(document, "_d2hblank" + d2hDefaultExtension));
 	pop.style.display = "block";
 	setPopupState(0, popUpShown);
 	var strUrl;
@@ -801,7 +781,7 @@ function dhtml_popup_is_open()
 
 function popDocIsLoad()
 {
-    if (window.popupState == 1 || window.g_d2hIterationCount == 10)
+    if (window.popupState == 1 || window.g_d2hIterationCount == 100)
     {
         // g_d2hIterationCount is used for Opera 8.0 and higher, where OnLoad is not fired if the window is invisible (Opera bug)
         window.g_d2hIterationCount = 0;
@@ -2446,7 +2426,12 @@ function d2hGetServerType()
 	    return platform;
 	}
 	else
-	    return "htm";
+        {
+            var ext = d2hDefaultExtension;
+            if (ext.length > 0 && ext.substring(0, 1) == ".")
+                ext = ext.substring(1);
+	    return ext;
+        }
 }
 
 function d2hGetMainThemeWnd(wnd)
@@ -2733,7 +2718,7 @@ function d2hLinkClick(evt)
 				if (isOpera())
 				{
 					var doc = getDoc(w);
-					wnd = w.open(d2hGetRelativePath(doc, "_d2hblank.htm"), target, sWndFeatures);
+					wnd = w.open(d2hGetRelativePath(doc, "_d2hblank" + d2hDefaultExtension), target, sWndFeatures);
 					wnd.location.href = href;
 				}
 				else
@@ -2798,7 +2783,8 @@ function d2hRegisterEventHandler(obj, altObj, eventName, handler)
 
 function d2hInitMainThemeHandlers(prev, next)
 {
-    if (isChrome() && window.location.protocol.toLowerCase() == "file:" && d2hGetMainWindow().g_mainLayout == undefined)
+    var wnd = d2hGetMainWindow();
+    if (isChrome() && window.location.protocol.toLowerCase() == "file:" && (wnd == null || wnd.g_mainLayout == undefined))
         alert("Due to security limitations, this version of Chrome browser does not work correctly with NetHelp stored in local files on your computer. You can use this Chrome version to view NetHelp deployed on the web without limitations, but for local files please use a different browser.");
 	d2hRegisterEventHandler(window, document.body, "onload", "d2hnsresize(event);d2hSetNavigatorState(" + prev + "," + next + ");d2hProcessTopicLinksForCSH();d2hProcessHighlight();");
 	d2hRegisterEventHandler(window, document.body, "onmousedown", "d2hpopup(event);");
@@ -3255,7 +3241,7 @@ function d2hGetSearchFrameDocument()
     else if (dhtml_popup_is_open())
         wndMain = window.parent;
     else if (window.opener)
-        wndMain = window.opener.parent;
+        wndMain = !window.opener.closed ? window.opener.parent : d2hGetMainWindow();
     else if (window.name == "textprovider")
         return document;
 
@@ -3434,13 +3420,22 @@ function d2hProcessHighlight(doc)
 
 function getWildcardRegexp(wildcard)
 {
-    wildcard = wildcard.replace(/\^/g, "\\^");
-    wildcard = wildcard.replace(/\$/g, "\\$");
-    wildcard = wildcard.replace(/\./g, "\\.");
-    wildcard = wildcard.replace(/\*/g, "[\\d\\S]*");
-    wildcard = wildcard.replace(/\?/g, ".?");
-    if (wildcard.indexOf(".?") != -1 && !isEasternLanguage(wildcard))
-        wildcard = "\\b" + wildcard + "\\b";        
+	wildcard = wildcard
+		.replace(/[-[\]{}()+.,\\^$|]/g, '\\$&')
+		.replace(/\*+/g, '\\w*')
+		.replace(/\?/g, '\\w')
+		.replace(/\s+/g, '\\s+');
+    if (wildcard === '\\w*') {
+        wildcard = '\\w+';
+    }
+    if (!isEasternLanguage(wildcard)) {
+        var l = wildcard.length,
+            startIsWordChar = /^(\w|\.|\\w)/,
+            endIsWordChar = /(\w|\.|\*|\\w\+)$/;
+        wildcard = (startIsWordChar.test(wildcard) ? '\\b' : '') + 
+            wildcard +
+            (endIsWordChar.test(wildcard) ? '\\b' : '');
+    }
     return wildcard;
 }
 
@@ -3464,11 +3459,10 @@ function d2hHighlightNode(node, request, caseSensitive, wholeWord)
                 var words = mainWindow.g_sAliases[aliasesRows[j]]
                 for (var w = 0; w < words.length; w++)
                     if (w == 0)
-                        request[i] = words[w];
+                        request[i] = getWildcardRegexp(words[w]);
                     else
-                        request[i] += "|" + words[w];
+                        request[i] += "|" + getWildcardRegexp(words[w]);
             }
-            request[i] = getWildcardRegexp("(" + request[i] + ")");
         }
         else if (mainWindow && mainWindow.isWildcard(request[i]))
         {
@@ -3484,7 +3478,7 @@ function d2hHighlightNode(node, request, caseSensitive, wholeWord)
             request[i] = getWildcardRegexp(request[i]);
     }
 
-    var regexpRequest = new RegExp(request.length > 1 ? request.join("|") : request[0], caseSensitive ? "" : "i");
+    var regexpRequest = new RegExp(request.join("|"), caseSensitive ? "" : "i");
 
     var nodeproc = function(node)
     {
@@ -3558,8 +3552,9 @@ function d2hSplitRequest(request)
         j++;
     }  
     var mainWindow = d2hGetMainWindow();    
-    var re = new RegExp("\\b(" + mainWindow.searchAnd.replace(/\|/gi,"\\|") + "|" + mainWindow.searchOr.replace(/\|/gi,"\\|") + "|" + mainWindow.searchNot.replace(/\|/gi,"\\|") + ")\\b","gi");
-    request = request.replace(re, "");
+    request = request.replace(mainWindow.searchAndInSpaces, " ")
+        .replace(mainWindow.searchOrInSpaces, " ")
+        .replace(mainWindow.searchNotInSpaces, " ");
     var words = request.split(/\s+/g);
     for (var j = 0; j < words.length; j++)
     {

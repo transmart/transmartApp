@@ -93,7 +93,7 @@
   <IncludeFilePositions d2p1:ID="5" d2p1:Name="Bottom-Left" xmlns:d2p1="http://componentone.com/Data.xsd" />
   <IncludeFilePositions d2p1:ID="6" d2p1:Name="Bottom-Center" xmlns:d2p1="http://componentone.com/Data.xsd" />
   <IncludeFilePositions d2p1:ID="7" d2p1:Name="Bottom-Right" xmlns:d2p1="http://componentone.com/Data.xsd" />
-  <Properties d2p1:Name="Version" d2p1:Value="150" xmlns:d2p1="http://componentone.com/Data.xsd" />
+  <Properties d2p1:Name="Version" d2p1:Value="153" xmlns:d2p1="http://componentone.com/Data.xsd" />
   <Strings d2p1:Name="Search\Strings" d2p1:InheritName="true" xmlns:d2p1="http://componentone.com/Data.xsd" />
   <Strings d2p1:Name="Index\Strings" d2p1:InheritName="true" xmlns:d2p1="http://componentone.com/Data.xsd" />
   <Strings d2p1:Name="Favorites\Strings" d2p1:InheritName="true" xmlns:d2p1="http://componentone.com/Data.xsd" />
