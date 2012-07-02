@@ -25,7 +25,7 @@
   */
 
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import org.transmartproject.searchapp.AccessLog;
+import org.transmart.searchapp.AccessLog;
 
 /**
  * Logout Controller just writes an entry to the log and redirects to the login page (Identity Vault or form based)

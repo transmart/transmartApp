@@ -21,7 +21,7 @@
 
 import grails.converters.*
 import org.json.*;
-import org.transmartproject.searchapp.AuthUser;
+import org.transmart.searchapp.AuthUser;
 
 import edu.mit.wi.haploview.*;
 class OntologyController {

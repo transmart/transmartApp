@@ -25,13 +25,13 @@
  */
 import com.recomdata.util.DomainObjectExcelHelper;
 import grails.converters.*
-import org.transmartproject.biomart.ClinicalTrial
-import org.transmartproject.biomart.Experiment
+import org.transmart.biomart.ClinicalTrial
+import org.transmart.biomart.Experiment
 
 import org.transmart.SearchResult;
-import org.transmartproject.biomart.BioAssayAnalysis;
-import org.transmartproject.biomart.BioAssayPlatform;
-import org.transmartproject.searchapp.SearchKeyword
+import org.transmart.biomart.BioAssayAnalysis;
+import org.transmart.biomart.BioAssayPlatform;
+import org.transmart.searchapp.SearchKeyword
 
 class TrialController {
 
@@ -43,7 +43,7 @@ class TrialController {
 	def clinicalTrialAnalysisTEAService
 
 	def showTrialFilter = {
-		def contentType = BioAssayAnalysis.executeQuery("SELECT DISTINCT assayDataType FROM org.transmartproject.biomart.BioAssayAnalysis WHERE assayDataType IS NOT NULL")
+		def contentType = BioAssayAnalysis.executeQuery("SELECT DISTINCT assayDataType FROM org.transmart.biomart.BioAssayAnalysis WHERE assayDataType IS NOT NULL")
 		if(contentType==null) contentType=[]
 
 		def diseases = filterQueryService.trialDiseaseFilter(session.searchFilter);
@@ -175,9 +175,9 @@ class TrialController {
 		// need to mark  trial with data
 		// tmp solution
 
-		def triallist = org.transmartproject.biomart.ClinicalTrial.executeQuery("SELECT b.id, b.trialNumber, b.title FROM org.transmartproject.biomart.ClinicalTrial b, org.transmartproject.searchapp.SearchKeyword s  WHERE s.bioDataId=b.id ORDER BY b.trialNumber");
+		def triallist = org.transmart.biomart.ClinicalTrial.executeQuery("SELECT b.id, b.trialNumber, b.title FROM org.transmart.biomart.ClinicalTrial b, org.transmart.searchapp.SearchKeyword s  WHERE s.bioDataId=b.id ORDER BY b.trialNumber");
 
-		//		    def triallist = org.transmartproject.biomart.ClinicalTrial.listOrderByTrialNumber();
+		//		    def triallist = org.transmart.biomart.ClinicalTrial.listOrderByTrialNumber();
 		boolean filtercheck = !session.searchFilter.trialFilter.newFilter;
 
 		Set selectedTrials = session.searchFilter.trialFilter.selectedtrials;
@@ -225,7 +225,7 @@ class TrialController {
 
 	def downloadanalysisexcel = {
 
-		def geneexpr = org.transmartproject.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+		def geneexpr = org.transmart.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
 		def filename = geneexpr.shortDescription.replace("<", "-").replace(">", "-")
 		filename = filename.replace(":", "-").replace("\"", "-").replace("/", "-")
 		filename = filename.replace("\\", "-").replace("?", "-").replace("*", "-")
@@ -248,7 +248,7 @@ class TrialController {
 		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
 		response.setHeader("Pragma", "public");
 		response.setHeader("Expires", "0");
-		def analysis = org.transmartproject.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+		def analysis = org.transmart.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
 		response.outputStream<<analysisDataExportService.renderAnalysisInExcel(analysis)
 	}
 

@@ -18,9 +18,9 @@
  ******************************************************************/
   
 
-import org.transmartproject.searchapp.SearchKeyword
-import org.transmartproject.searchapp.SearchKeywordTerm
-import org.transmartproject.searchapp.GeneSignature
+import org.transmart.searchapp.SearchKeyword
+import org.transmart.searchapp.SearchKeywordTerm
+import org.transmart.searchapp.GeneSignature
 
 /**
  * @author $Author: mmcduffie $
@@ -48,7 +48,7 @@ public class SearchKeywordService {
 		if(pathwayIds==null || pathwayIds.length()==0){
 			return []
 		}
-		def query = "select DISTINCT k from org.transmartproject.searchapp.SearchKeyword k, org.transmartproject.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
+		def query = "select DISTINCT k from org.transmart.searchapp.SearchKeyword k, org.transmart.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
 		if(max!=null)
 			return SearchKeyword.executeQuery(query, [max:max])
 		else
@@ -67,9 +67,9 @@ public class SearchKeywordService {
 		}
 		def result = [];
 		// find pathways
-		def query = "select DISTINCT k from org.transmartproject.searchapp.SearchKeyword k, org.transmartproject.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
+		def query = "select DISTINCT k from org.transmart.searchapp.SearchKeyword k, org.transmart.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
 		// find gene sigs
-		def query2 = "select DISTINCT k from org.transmartproject.searchapp.SearchKeyword k, org.transmartproject.searchapp.SearchBioMarkerCorrelFastMV c where k.bioDataId=c.assocBioMarkerId and c.domainObjectId in (" + pathwayIds + ") ORDER BY k.keyword"
+		def query2 = "select DISTINCT k from org.transmart.searchapp.SearchKeyword k, org.transmart.searchapp.SearchBioMarkerCorrelFastMV c where k.bioDataId=c.assocBioMarkerId and c.domainObjectId in (" + pathwayIds + ") ORDER BY k.keyword"
 		if(max!=null)
 			result.addAll(SearchKeyword.executeQuery(query, [max:max]))
 			if(result.size()<max){

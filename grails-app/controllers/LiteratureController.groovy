@@ -30,7 +30,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.transmart.SearchResult;
-import org.transmartproject.searchapp.AccessLog;
+import org.transmart.searchapp.AccessLog;
 
 import com.recomdata.util.ariadne.Batch;
 

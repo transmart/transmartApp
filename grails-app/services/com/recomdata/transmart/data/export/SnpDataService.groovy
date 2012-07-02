@@ -35,7 +35,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
 
-import org.transmartproject.searchapp.SearchKeyword;
+import org.transmart.searchapp.SearchKeyword;
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 

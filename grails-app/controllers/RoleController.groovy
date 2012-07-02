@@ -1,6 +1,6 @@
 import org.springframework.dao.DataIntegrityViolationException
-import org.transmartproject.searchapp.AccessLog
-import org.transmartproject.searchapp.Role
+import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.Role
 
 /*************************************************************************
  * tranSMART - translational medicine data mart

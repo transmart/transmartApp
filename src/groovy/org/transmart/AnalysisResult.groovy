@@ -20,8 +20,8 @@ package org.transmart
   
 
 import org.transmart.AssayAnalysisValue;
-import org.transmartproject.biomart.BioAssayAnalysis;
-import org.transmartproject.biomart.BioAssayAnalysisData;
+import org.transmart.biomart.BioAssayAnalysis;
+import org.transmart.biomart.BioAssayAnalysisData;
 
 import com.recomdata.util.BinomialDistribution
 
@@ -38,7 +38,7 @@ public class AnalysisResult implements Comparable {
 	boolean bSignificantTEA = false
 	int defaultTop = 5;
 
-	org.transmartproject.biomart.BioAssayAnalysis analysis
+	org.transmart.biomart.BioAssayAnalysis analysis
 	def experimentId;
 	def experimentAccession;
 	List assayAnalysisValueList =[] // collection of AssayAnalysisValue objects

@@ -18,7 +18,7 @@
  ******************************************************************/
   
 
-import org.transmartproject.searchapp.AccessLog;
+import org.transmart.searchapp.AccessLog;
 
 import com.recomdata.snp.SnpData
 import grails.converters.JSON

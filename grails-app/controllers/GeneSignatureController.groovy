@@ -20,14 +20,14 @@
 
 import javax.servlet.ServletOutputStream
 
-import org.transmartproject.biomart.BioAssayPlatform;
-import org.transmartproject.biomart.CellLine;
-import org.transmartproject.searchapp.AccessLog;
-import org.transmartproject.searchapp.AuthUser;
+import org.transmart.biomart.BioAssayPlatform;
+import org.transmart.biomart.CellLine;
+import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AuthUser;
 
-import org.transmartproject.searchapp.GeneSignature
-import org.transmartproject. searchapp.GeneSignatureFileSchema
-import org.transmartproject.biomart.Compound
+import org.transmart.searchapp.GeneSignature
+import org.transmart. searchapp.GeneSignatureFileSchema
+import org.transmart.biomart.Compound
 import bio.ConceptCode
 
 import com.recomdata.genesignature.FileSchemaException

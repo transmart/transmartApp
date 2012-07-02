@@ -18,13 +18,13 @@
  ******************************************************************/
   
 import command.SecureObjectAccessCommand
-import org.transmartproject.searchapp.AccessLog
-import org.transmartproject.searchapp.AuthUser;
-import org.transmartproject.searchapp.Principal;
-import org.transmartproject.searchapp.Role;
-import org.transmartproject.searchapp.SecureAccessLevel;
-import org.transmartproject.searchapp.SecureObject;
-import org.transmartproject.searchapp.SecureObjectAccess;
+import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.AuthUser;
+import org.transmart.searchapp.Principal;
+import org.transmart.searchapp.Role;
+import org.transmart.searchapp.SecureAccessLevel;
+import org.transmart.searchapp.SecureObject;
+import org.transmart.searchapp.SecureObjectAccess;
 
 class SecureObjectAccessController {
 

@@ -19,7 +19,7 @@ package org.transmart
  ******************************************************************/
   
 
-import org.transmartproject.searchapp.SearchKeyword
+import org.transmart.searchapp.SearchKeyword
 import grails.validation.Validateable
 /**
  *
@@ -208,7 +208,7 @@ public class GlobalFilter{
 	}
 
 
-	def addKeywordFilter(org.transmartproject.searchapp.SearchKeyword keyword){
+	def addKeywordFilter(org.transmart.searchapp.SearchKeyword keyword){
 		def klist = categoryFilterMap.get(keyword.dataCategory)
 		if(klist == null){
 			// make sure no dup
@@ -219,7 +219,7 @@ public class GlobalFilter{
 
 	}
 
-	def removeKeywordFilter(org.transmartproject.searchapp.SearchKeyword keyword) {
+	def removeKeywordFilter(org.transmart.searchapp.SearchKeyword keyword) {
 		KeywordSet set = categoryFilterMap.get(keyword.dataCategory)
 		if (set != null) {
 			set.removeKeyword(keyword)

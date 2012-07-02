@@ -21,7 +21,7 @@
 import java.text.*;
 
 import org.transmart.AccessLogFilter;
-import org.transmartproject.searchapp.AccessLog;
+import org.transmart.searchapp.AccessLog;
 
 import com.recomdata.util.ExcelSheet;
 import com.recomdata.util.ExcelGenerator;

@@ -32,11 +32,11 @@ import org.genepattern.webservice.*
 import org.json.*
 import org.transmart.CohortInformation;
 import org.transmart.HeatmapValidator;
-import org.transmartproject.searchapp.AccessLog;
+import org.transmart.searchapp.AccessLog;
 import org.w3c.dom.*
 import org.xml.sax.*
 
-import org.transmartproject.searchapp.SearchKeyword
+import org.transmart.searchapp.SearchKeyword
 
 import com.recomdata.debugging.*
 import com.recomdata.export.GenePatternFiles

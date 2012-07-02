@@ -20,7 +20,7 @@ package org.transmart
   
 
 
-import org.transmartproject.searchapp.SearchKeyword
+import org.transmart.searchapp.SearchKeyword
 /**
  * @author $Author: mmcduffie $
  * $Id: HeatmapFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

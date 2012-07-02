@@ -20,13 +20,13 @@
 
 import org.transmart.SearchFilter;
 import org.transmart.TrialAnalysisResult;
-import org.transmartproject.biomart.BioAssayAnalysis;
-import org.transmartproject.biomart.BioAssayAnalysisData;
+import org.transmart.biomart.BioAssayAnalysis;
+import org.transmart.biomart.BioAssayAnalysisData;
 
-import org.transmartproject.biomart.BioMarker
-import org.transmartproject.biomart.Compound
-import org.transmartproject.biomart.Disease
-import org.transmartproject.biomart.ClinicalTrial
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Compound
+import org.transmart.biomart.Disease
+import org.transmart.biomart.ClinicalTrial
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.Query
 
@@ -57,13 +57,13 @@ class ClinicalTrialAnalysisTEAService extends AnalysisTEABaseService {
 	 */
 	def createAnalysisIDSelectQuery(SearchFilter filter){
 		if(filter == null || filter.globalFilter.isTextOnly()){
-			return " SELECT -1 FROM org.transmartproject.biomart.BioAssayAnalysisData baad WHERE 1 = 1 "
+			return " SELECT -1 FROM org.transmart.biomart.BioAssayAnalysisData baad WHERE 1 = 1 "
 		}
 		def gfilter = filter.globalFilter
 
 		def query =new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true);
-		query.addTable("org.transmartproject.biomart.BioAssayAnalysisData baad ");
-		query.addTable ("org.transmartproject.biomart.ClinicalTrial ct ");
+		query.addTable("org.transmart.biomart.BioAssayAnalysisData baad ");
+		query.addTable ("org.transmart.biomart.ClinicalTrial ct ");
 		query.addCondition("baad.experiment.id = ct.id ")
 
 		query.createGlobalFilterCriteria(gfilter);

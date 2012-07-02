@@ -19,16 +19,16 @@
   
 
 import org.springframework.web.multipart.MultipartFile;
-import org.transmartproject.biomart.BioAssayAnalysisData;
-import org.transmartproject.biomart.BioAssayDataAnnotation;
-import org.transmartproject.biomart.BioAssayFeatureGroup;
-import org.transmartproject.searchapp.AuthUser;
+import org.transmart.biomart.BioAssayAnalysisData;
+import org.transmart.biomart.BioAssayDataAnnotation;
+import org.transmart.biomart.BioAssayFeatureGroup;
+import org.transmart.searchapp.AuthUser;
 
-import org.transmartproject.searchapp.GeneSignatureItem;
-import org.transmartproject.searchapp.GeneSignatureFileSchema;
-import org.transmartproject.searchapp.GeneSignature;
-import org.transmartproject.biomart.BioMarker;
-import org.transmartproject.biomart.BioData;
+import org.transmart.searchapp.GeneSignatureItem;
+import org.transmart.searchapp.GeneSignatureFileSchema;
+import org.transmart.searchapp.GeneSignature;
+import org.transmart.biomart.BioMarker;
+import org.transmart.biomart.BioData;
 import com.recomdata.search.query.Query;
 import com.recomdata.genesignature.FileSchemaException;
 import com.recomdata.util.ExcelSheet
@@ -222,7 +222,7 @@ public class GeneSignatureService {
 					println(">> Probeset lookup: 1) probeset id: "+probesetId )
 					
 					// create item instance if this probeset exists in bio_assay_feature_group table, otherwise do nothing 
-					def ba = org.transmartproject.biomart.BioAssayFeatureGroup.read(probesetId);
+					def ba = org.transmart.biomart.BioAssayFeatureGroup.read(probesetId);
 					if(ba!=null){						
 						GeneSignatureItem item = new GeneSignatureItem(probeset: ba, foldChgMetric: foldChg);
 						gsItems.add(item);
@@ -473,8 +473,8 @@ public class GeneSignatureService {
 	 */
 	def lookupBioAssociations(String geneSymbol, String organism) {
 		def query = new Query(mainTableAlias:"bd");
-		query.addTable("org.transmartproject.biomart.BioMarker bm")
-		query.addTable("org.transmartproject.biomart.BioData bd")
+		query.addTable("org.transmart.biomart.BioMarker bm")
+		query.addTable("org.transmart.biomart.BioData bd")
 		query.addCondition("bm.id=bd.id")
 		query.addCondition("bm.bioMarkerType='GENE'")
 		query.addCondition("bm.organism='" + organism.toUpperCase() + "'")
@@ -494,9 +494,9 @@ public class GeneSignatureService {
 
 		if(markers==null || markers.size()==0 || markers.size()>1) {
 			query = new Query(mainTableAlias:"bm");
-			query.addTable("org.transmartproject.biomart.BioDataExternalCode ext")
-			query.addTable("org.transmartproject.biomart.BioMarker bm")
-			query.addTable("org.transmartproject.biomart.BioData bd")
+			query.addTable("org.transmart.biomart.BioDataExternalCode ext")
+			query.addTable("org.transmart.biomart.BioMarker bm")
+			query.addTable("org.transmart.biomart.BioData bd")
 			query.addCondition("ext.bioDataId=bm.id")
 			query.addCondition("bm.id=bd.id")
 			query.addCondition("UPPER(ext.code) = '" + geneSymbol.toUpperCase() + "'")
@@ -524,7 +524,7 @@ public class GeneSignatureService {
 	def lookupProbesetBioAssociations(String probeset) {
 		def query = new Query(mainTableAlias:"bf");
 		
-		query.addTable("org.transmartproject.biomart.BioAssayFeatureGroup bf")
+		query.addTable("org.transmart.biomart.BioAssayFeatureGroup bf")
 		query.addCondition("bf.type='PROBESET'")
 		query.addCondition("upper(bf.name) ='" + probeset.toUpperCase() + "'")
 		query.addSelect("bf.id")
@@ -534,7 +534,7 @@ public class GeneSignatureService {
 		//log.debug("Lookup query: "+qBuf)
 
 		
-		def marker = org.transmartproject.biomart.BioAssayFeatureGroup.executeQuery(qBuf).asList();
+		def marker = org.transmart.biomart.BioAssayFeatureGroup.executeQuery(qBuf).asList();
 		
 		// if not existed, add it and then retrieve it
 		if(!marker) {

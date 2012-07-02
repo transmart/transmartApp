@@ -27,18 +27,18 @@
 import org.transmart.GlobalFilter;
 import org.transmart.LiteratureFilter;
 import org.transmart.SearchFilter;
-import org.transmartproject.biomart.BioDataExternalCode;
+import org.transmart.biomart.BioDataExternalCode;
 
-import org.transmartproject.biomart.BioMarker
-import org.transmartproject.biomart.Literature
-import org.transmartproject.biomart.LiteratureAlterationData
-import org.transmartproject.biomart.LiteratureInhibitorData
-import org.transmartproject.biomart.LiteratureInteractionData
-import org.transmartproject.biomart.LiteratureProteinEffectData
-import org.transmartproject.biomart.LiteratureSummaryData
-import org.transmartproject.biomart.LiteratureReferenceData
-import org.transmartproject.biomart.LiteratureModelData
-import org.transmartproject.biomart.LiteratureAssocMoleculeDetailsData
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Literature
+import org.transmart.biomart.LiteratureAlterationData
+import org.transmart.biomart.LiteratureInhibitorData
+import org.transmart.biomart.LiteratureInteractionData
+import org.transmart.biomart.LiteratureProteinEffectData
+import org.transmart.biomart.LiteratureSummaryData
+import org.transmart.biomart.LiteratureReferenceData
+import org.transmart.biomart.LiteratureModelData
+import org.transmart.biomart.LiteratureAssocMoleculeDetailsData
 import com.recomdata.search.query.LiteratureDataQuery
 
 class LiteratureQueryService {
@@ -124,7 +124,7 @@ class LiteratureQueryService {
 		
 		query.addSelect("count(distinct sumdata.id)")
 		query.addTable(table)
-		query.addTable("org.transmartproject.biomart.LiteratureSummaryData sumdata")
+		query.addTable("org.transmart.biomart.LiteratureSummaryData sumdata")
 		query.addCondition("sumdata.target=data.reference.component")
 		query.addCondition("sumdata.diseaseSite=data.reference.diseaseSite")
 		if (litFilter.hasAlterationType()) {
@@ -168,7 +168,7 @@ class LiteratureQueryService {
 		query.setDistinct = true
         query.addSelect("sumdata")
 		query.addTable(table)
-		query.addTable("org.transmartproject.biomart.LiteratureSummaryData sumdata")
+		query.addTable("org.transmart.biomart.LiteratureSummaryData sumdata")
 		query.addCondition("sumdata.target=data.reference.component")
 		query.addCondition("sumdata.diseaseSite=data.reference.diseaseSite")
 		if (litFilter.hasAlterationType()) {		    
@@ -395,7 +395,7 @@ class LiteratureQueryService {
 	 *************************************************************************/
 	def litJubOncIntCount(SearchFilter sfilter) {
 	    def query = new LiteratureDataQuery(mainTableAlias:"data")
-		def table = "org.transmartproject.biomart.LiteratureInteractionData data"
+		def table = "org.transmart.biomart.LiteratureInteractionData data"
 		if (sfilter.litFilter.hasExperimentalModel()) {
 			table += " LEFT OUTER JOIN data.inVivoModel invivo LEFT OUTER JOIN data.inVitroModel invitro"
 		}
@@ -406,7 +406,7 @@ class LiteratureQueryService {
 
 	def litJubOncIntData(SearchFilter sfilter, params) {
 	    def query = new LiteratureDataQuery(mainTableAlias:"data")
-		def table = "org.transmartproject.biomart.LiteratureInteractionData data"
+		def table = "org.transmart.biomart.LiteratureInteractionData data"
 		if (sfilter.litFilter.hasExperimentalModel()) {
 			table += " LEFT OUTER JOIN data.inVivoModel invivo LEFT OUTER JOIN data.inVitroModel invitro"
 		}
@@ -417,7 +417,7 @@ class LiteratureQueryService {
 
 	def litJubAsthmaIntCount(SearchFilter sfilter) {
 	    def query = new LiteratureDataQuery(mainTableAlias:"data")
-		def table = "org.transmartproject.biomart.LiteratureInteractionData data"
+		def table = "org.transmart.biomart.LiteratureInteractionData data"
 		if (sfilter.litFilter.hasExperimentalModel()) {
 			table += " LEFT OUTER JOIN data.inVivoModel invivo LEFT OUTER JOIN data.inVitroModel invitro"
 		}
@@ -428,7 +428,7 @@ class LiteratureQueryService {
 
 	def litJubAsthmaIntData(SearchFilter sfilter, params) {
 	    def query = new LiteratureDataQuery(mainTableAlias:"data")
-		def table = "org.transmartproject.biomart.LiteratureInteractionData data"
+		def table = "org.transmart.biomart.LiteratureInteractionData data"
 		if (sfilter.litFilter.hasExperimentalModel()) {
 			table += " LEFT OUTER JOIN data.inVivoModel invivo LEFT OUTER JOIN data.inVitroModel invitro"
 		}
@@ -615,7 +615,7 @@ class LiteratureQueryService {
 	}
 	
 	def diseaseList(searchFilter) {
-		//return executeJubOncologyQueryFilter("data_dis.preferredName", "org.transmartproject.biomart.Literature", searchFilter)
+		//return executeJubOncologyQueryFilter("data_dis.preferredName", "org.transmart.biomart.Literature", searchFilter)
 		def gfilter = searchFilter.globalFilter
 		if(gfilter == null || gfilter.isTextOnly()){
 			return []
@@ -624,7 +624,7 @@ class LiteratureQueryService {
 		def query = new LiteratureDataQuery(mainTableAlias:"data");
 		query.setDistinct = true
 		query.addSelect("data_dis2")
-		query.addTable("org.transmartproject.biomart.Literature data");
+		query.addTable("org.transmart.biomart.Literature data");
 		query.addTable("JOIN data.diseases data_dis2")
 		query.addOrderBy("data_dis2.preferredName")
 		query.createGlobalFilterCriteria(gfilter, true);
@@ -634,11 +634,11 @@ class LiteratureQueryService {
 	}
 	
 	def diseaseSiteList(searchFilter) {
-		return executeJubOncologyQueryFilter("reference.diseaseSite", "org.transmartproject.biomart.Literature", searchFilter)
+		return executeJubOncologyQueryFilter("reference.diseaseSite", "org.transmart.biomart.Literature", searchFilter)
 	}
 	
 	def componentList(searchFilter)	{
-	    // return executeJubOncologyQueryFilter("reference.component", "org.transmartproject.biomart.Literature", searchFilter)
+	    // return executeJubOncologyQueryFilter("reference.component", "org.transmart.biomart.Literature", searchFilter)
 	    // Need to filter and send only genes/proteins
 	    def gfilter = searchFilter.globalFilter
 		if(gfilter == null || gfilter.isTextOnly()){
@@ -649,7 +649,7 @@ class LiteratureQueryService {
 		query.setDistinct = true
 		query.addSelect("data.reference.component")
 		query.addSelect("data.reference.geneId")
-		query.addTable("org.transmartproject.biomart.Literature data")
+		query.addTable("org.transmart.biomart.Literature data")
 		query.addCondition("data.reference.geneId is not null")
 		query.addOrderBy("data.reference.component")
 		query.createGlobalFilterCriteria(gfilter);
@@ -659,39 +659,39 @@ class LiteratureQueryService {
 	}
 
 	def mutationTypeList(searchFilter) {
-		return executeJubOncologyQueryFilter("mutationType", "org.transmartproject.biomart.LiteratureAlterationData", searchFilter)
+		return executeJubOncologyQueryFilter("mutationType", "org.transmart.biomart.LiteratureAlterationData", searchFilter)
 	}
 
 	def mutationSiteList(searchFilter) {
-		return executeJubOncologyQueryFilter("mutationSites", "org.transmartproject.biomart.LiteratureAlterationData", searchFilter)
+		return executeJubOncologyQueryFilter("mutationSites", "org.transmart.biomart.LiteratureAlterationData", searchFilter)
 	}
 
 	def epigeneticTypeList(searchFilter) {
-		return executeJubOncologyQueryFilter("epigeneticType", "org.transmartproject.biomart.LiteratureAlterationData", searchFilter)
+		return executeJubOncologyQueryFilter("epigeneticType", "org.transmart.biomart.LiteratureAlterationData", searchFilter)
 	}
 
 	def epigeneticRegionList(searchFilter) {
-		return executeJubOncologyQueryFilter("epigeneticRegion", "org.transmartproject.biomart.LiteratureAlterationData", searchFilter)
+		return executeJubOncologyQueryFilter("epigeneticRegion", "org.transmart.biomart.LiteratureAlterationData", searchFilter)
 	}
 
 	def moleculeTypeList(searchFilter) {
-		return executeJubOncologyQueryFilter("reference.moleculeType", "org.transmartproject.biomart.Literature", searchFilter)
+		return executeJubOncologyQueryFilter("reference.moleculeType", "org.transmart.biomart.Literature", searchFilter)
 	}
 
 	def ptmTypeList(searchFilter) {
-		return executeJubOncologyQueryFilter("ptmType", "org.transmartproject.biomart.LiteratureAlterationData", searchFilter)
+		return executeJubOncologyQueryFilter("ptmType", "org.transmart.biomart.LiteratureAlterationData", searchFilter)
 	}
 
 	def ptmRegionList(searchFilter) {
-		return executeJubOncologyQueryFilter("ptmRegion", "org.transmartproject.biomart.LiteratureAlterationData", searchFilter)
+		return executeJubOncologyQueryFilter("ptmRegion", "org.transmart.biomart.LiteratureAlterationData", searchFilter)
 	}
 
 	def sourceList(searchFilter) {
-		return executeJubOncologyQueryFilter("sourceComponent", "org.transmartproject.biomart.LiteratureInteractionData", searchFilter)
+		return executeJubOncologyQueryFilter("sourceComponent", "org.transmart.biomart.LiteratureInteractionData", searchFilter)
 	}
 
 	def targetList(searchFilter) {
-		return executeJubOncologyQueryFilter("targetComponent", "org.transmartproject.biomart.LiteratureInteractionData", searchFilter)
+		return executeJubOncologyQueryFilter("targetComponent", "org.transmart.biomart.LiteratureInteractionData", searchFilter)
 	}
 
 	def experimentalModelList(searchFilter) {
@@ -703,8 +703,8 @@ class LiteratureQueryService {
 		def query = new LiteratureDataQuery( mainTableAlias:"data");
 		query.setDistinct = true
 		query.addSelect("mv.experimentalModel")
-		query.addTable("org.transmartproject.biomart.LiteratureInteractionData data")
-		query.addTable("org.transmartproject.biomart.LiteratureInteractionModelMV mv")
+		query.addTable("org.transmart.biomart.LiteratureInteractionData data")
+		query.addTable("org.transmart.biomart.LiteratureInteractionModelMV mv")
 		query.addCondition("data.id = mv.id")
 		query.addOrderBy("mv.experimentalModel")
 		query.createGlobalFilterCriteria(gfilter);
@@ -714,22 +714,22 @@ class LiteratureQueryService {
 	}
 
 	def mechanismList(searchFilter) {
-		return executeJubOncologyQueryFilter("mechanism", "org.transmartproject.biomart.LiteratureInteractionData", searchFilter)
+		return executeJubOncologyQueryFilter("mechanism", "org.transmart.biomart.LiteratureInteractionData", searchFilter)
 	}
 
 	def trialTypeList(searchFilter) {
-		return executeJubOncologyQueryFilter("trialType", "org.transmartproject.biomart.LiteratureInhibitorData", searchFilter)
+		return executeJubOncologyQueryFilter("trialType", "org.transmart.biomart.LiteratureInhibitorData", searchFilter)
 	}
 
 	def trialPhaseList(searchFilter) {
-		return executeJubOncologyQueryFilter("trialPhase", "org.transmartproject.biomart.LiteratureInhibitorData", searchFilter)
+		return executeJubOncologyQueryFilter("trialPhase", "org.transmart.biomart.LiteratureInhibitorData", searchFilter)
 	}
 
 	def inhibitorNameList(searchFilter){
-		return executeJubOncologyQueryFilter("inhibitor", "org.transmartproject.biomart.LiteratureInhibitorData", searchFilter)
+		return executeJubOncologyQueryFilter("inhibitor", "org.transmart.biomart.LiteratureInhibitorData", searchFilter)
 	}
 
 	def trialExperimentalModelList(searchFilter) {
-		return executeJubOncologyQueryFilter("trialExperimentalModel", "org.transmartproject.biomart.LiteratureInhibitorData", searchFilter)
+		return executeJubOncologyQueryFilter("trialExperimentalModel", "org.transmart.biomart.LiteratureInhibitorData", searchFilter)
 	}
 }

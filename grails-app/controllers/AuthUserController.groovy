@@ -28,12 +28,12 @@ import java.sql.BatchUpdateException
 import java.sql.SQLException
 
 import org.codehaus.groovy.grails.exceptions.InvalidPropertyException
-import org.transmartproject.searchapp.AccessLog;
-import org.transmartproject.searchapp.AuthUser;
-import org.transmartproject.searchapp.AuthUserSecureAccess;
-import org.transmartproject.searchapp.Role;
+import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AuthUser;
+import org.transmart.searchapp.AuthUserSecureAccess;
+import org.transmart.searchapp.Role;
 
-import org.transmartproject.searchapp.GeneSignature
+import org.transmart.searchapp.GeneSignature
 
 /**
  * User controller.

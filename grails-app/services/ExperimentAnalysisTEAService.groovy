@@ -20,13 +20,13 @@
 
 import org.transmart.ExperimentAnalysisResult;
 import org.transmart.SearchFilter;
-import org.transmartproject.biomart.BioAssayAnalysis;
-import org.transmartproject.biomart.BioAssayAnalysisData;
+import org.transmart.biomart.BioAssayAnalysis;
+import org.transmart.biomart.BioAssayAnalysisData;
 
-import org.transmartproject.biomart.BioMarker
-import org.transmartproject.biomart.Compound
-import org.transmartproject.biomart.Disease
-import org.transmartproject.biomart.Experiment
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Compound
+import org.transmart.biomart.Disease
+import org.transmart.biomart.Experiment
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.Query
 
