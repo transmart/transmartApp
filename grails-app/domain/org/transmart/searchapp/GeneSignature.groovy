@@ -66,9 +66,9 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	ConceptCode pValueCutoffConceptCode
 	String uniqueId
 	Date dateCreated
-	AuthUser createdByAuthUser
+	//AuthUser createdByAuthUser
 	Date lastUpdated
-	AuthUser modifiedByAuthUser
+	//AuthUser modifiedByAuthUser
 	String versionNumber
 	boolean publicFlag = false
 	boolean deletedFlag = false
@@ -95,7 +95,6 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	static hasMany = [geneSigItems:GeneSignatureItem]
 
 	static mapping = {
-        datasource 'postgresql'
 		table 'SEARCH_GENE_SIGNATURE'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
@@ -119,9 +118,9 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 			pValueCutoffConceptCode column:'P_VALUE_CUTOFF_CONCEPT_ID'
 			uniqueId column:'UNIQUE_ID'
 			dateCreated column:'CREATE_DATE'
-			createdByAuthUser column:'CREATED_BY_AUTH_USER_ID'
+			//createdByAuthUser column:'CREATED_BY_AUTH_USER_ID'
 			lastUpdated column:'LAST_MODIFIED_DATE'
-			modifiedByAuthUser column:'MODIFIED_BY_AUTH_USER_ID'
+			//modifiedByAuthUser column:'MODIFIED_BY_AUTH_USER_ID'
 			versionNumber column:'VERSION_NUMBER'
 			publicFlag column:'PUBLIC_FLAG'
 			deletedFlag column:'DELETED_FLAG'

@@ -33,7 +33,6 @@ class CellLine {
 		String diseaseStage
 		String diseaseSubtype
  static mapping = {
-	 datasource 'postgresql'
 	 table 'BIO_CELL_LINE'
 	 version false
 	 cache true
