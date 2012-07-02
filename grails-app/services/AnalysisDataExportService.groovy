@@ -26,8 +26,8 @@ import org.transmart.SearchResult;
 import org.transmartproject.biomart.BioAssayAnalysis;
 import org.transmartproject.biomart.BioAssayAnalysisData;
 
-import bio.BioMarker
-import bio.Experiment
+import org.transmartproject.biomart.BioMarker
+import org.transmartproject.biomart.Experiment
 
 /**
  * $Id: AnalysisDataExportService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

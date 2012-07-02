@@ -18,32 +18,38 @@
  ******************************************************************/
   
 
-package bio
-class Disease {
-		Long id
-		String disease
-		String ccsCategory
-		String icd10Code
-		String meshCode
-		String icd9Code
-		String preferredName
-		static hasMany=[experiments:Experiment,literatures:Literature]
- static mapping = {
-	 table 'BIO_DISEASE'
-	 version false
-	 cache usage:'read-only'
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
-	 columns {
-		id column:'BIO_DISEASE_ID'
-		disease column:'DISEASE'
-		ccsCategory column:'CCS_CATEGORY'
-		icd10Code column:'ICD10_CODE'
-		meshCode column:'MESH_CODE'
-		icd9Code column:'ICD9_CODE'
-		preferredName column:'PREFERED_NAME'
-		experiments joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DISEASE_ID']
-		literatures joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DISEASE_ID']
+/**
+ * $Id: LiteratureSummaryData.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
+ */
+package org.transmartproject.biomart
+class LiteratureSummaryData {
+	Long id
+	String etlId
+	String diseaseSite
+	String target
+	String variant
+	String dataType
+	String alterationType
+	String totalFrequency
+	String totalAffectedCases
+	String summary
+	static mapping = {
+		table 'BIO_LIT_SUM_DATA'
+		version false
+		id column:'BIO_LIT_SUM_DATA_ID'
+		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		columns {
+			etlId column:'ETL_ID'
+			diseaseSite column:'DISEASE_SITE'
+			target column:'TARGET'
+			variant column:'VARIANT'
+			dataType column:'DATA_TYPE'
+			alterationType column:'ALTERATION_TYPE'
+			totalFrequency column:'TOTAL_FREQUENCY'
+			totalAffectedCases column:'TOTAL_AFFECTED_CASES'
+			summary column:'SUMMARY'
 		}
 	}
-
 }

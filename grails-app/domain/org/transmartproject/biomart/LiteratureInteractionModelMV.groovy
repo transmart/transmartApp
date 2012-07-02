@@ -18,47 +18,16 @@
  ******************************************************************/
   
 
-package bio
-
-import org.transmartproject.biomart.CellLine;
-
-class BioSample {
-		Long id
-		String type
-		String characteristics
-		String sourceCode
-		Experiment experiment
-		CellLine cellLine
-		BioSubject bioSubject
-		String source
-		Long bioBankId
-		Long bioPatientEventId
-		String name
-
- static mapping = {
-	 table 'BIO_SAMPLE'
-	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
-	 columns {
-		id column:'BIO_SAMPLE_ID'
-		type column:'BIO_SAMPLE_TYPE'
-		characteristics column:'CHARACTERISTICS'
-		sourceCode column:'SOURCE_CODE'
-		experiment column:'EXPERIMENT_ID'
-		bioSubject column:'BIO_SUBJECT_ID'
-		source column:'SOURCE'
-		bioBankId column:'BIO_BANK_ID'
-		bioPatientEventId column:'BIO_PATIENT_EVENT_ID'
-		name column:'BIO_SAMPLE_NAME'
-		cellLine column:'BIO_CELL_LINE_ID'
+package org.transmartproject.biomart
+class LiteratureInteractionModelMV {
+	Long id
+	String experimentalModel
+	static mapping = {
+		table 'BIO_LIT_INT_MODEL_MV'
+		version false
+		columns {
+			id column:'BIO_LIT_INT_DATA_ID'
+			experimentalModel column:'EXPERIMENTAL_MODEL'
 		}
-	}
- static constraints = {
-	type(maxSize:400)
-	characteristics(nullable:true, maxSize:2000)
-	sourceCode(nullable:true, maxSize:400)
-	source(nullable:true, maxSize:400)
-	bioBankId(nullable:true)
-	bioPatientEventId(nullable:true)
 	}
 }

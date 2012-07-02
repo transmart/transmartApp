@@ -26,7 +26,7 @@ import org.transmart.SearchFilter;
 import org.transmartproject.biomart.BioAssayAnalysis;
 import org.transmartproject.biomart.BioAssayAnalysisData;
 
-import bio.BioMarker
+import org.transmartproject.biomart.BioMarker
 
 /**
  * $Id: HeatmapController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

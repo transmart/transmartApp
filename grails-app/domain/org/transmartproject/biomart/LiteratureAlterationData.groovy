@@ -23,7 +23,7 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
-package bio
+package org.transmartproject.biomart
 class LiteratureAlterationData extends Literature {
 	Long id
 	LiteratureReferenceData reference

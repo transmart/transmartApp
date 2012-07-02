@@ -19,36 +19,49 @@
   
 
 /**
- * $Id: Literature.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * $Id: LiteratureInteractionData.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
-package bio
-class Literature {
+package org.transmartproject.biomart
+class LiteratureInteractionData extends Literature {
 	Long id
 	LiteratureReferenceData reference
-	Long bioCurationDatasetId
-	String statement
-	String statementStatus
-	String dataType
-	static hasMany = [diseases:Disease, compounds:Compound, markers:BioMarker, files:ContentReference]
-	static belongsTo = [Disease, Compound, BioMarker, ContentReference]		
+	LiteratureModelData inVivoModel
+	LiteratureModelData inVitroModel
+	String etlId
+	String sourceComponent
+	String sourceGeneId
+	String targetComponent
+	String targetGeneId
+	String interactionMode
+	String regulation
+	String mechanism
+	String effect
+	String localization
+	String region
+	String techniques
 	static mapping = {
-		table 'BIO_DATA_LITERATURE'
-		tablePerHierarchy false
+		table 'BIO_LIT_INT_DATA'
 		version false
+		id column:'BIO_LIT_INT_DATA_ID'
 		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 		columns {
-			id column:'BIO_DATA_ID'
-			reference column: 'BIO_LIT_REF_DATA_ID'
-			bioCurationDatasetId column:'BIO_CURATION_DATASET_ID'
-			statement column:'STATEMENT'
-			statementStatus column:'STATEMENT_STATUS'
-			dataType column:'DATA_TYPE'
-			diseases joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DATA_ID']
-			markers joinTable:[name:'BIO_DATA_OMIC_MARKER', key:'BIO_DATA_ID']
-			compounds joinTable:[name:'BIO_DATA_COMPOUND', key:'BIO_DATA_ID']
-			files joinTable:[name:'BIO_CONTENT_REFERENCE', key:'BIO_DATA_ID', column:'BIO_CONTENT_REFERENCE_ID']
+			reference column:'BIO_LIT_REF_DATA_ID'
+			inVivoModel column:'IN_VIVO_MODEL_ID'
+			inVitroModel column:'IN_VITRO_MODEL_ID'
+			etlId column:'ETL_ID'
+			sourceComponent column:'SOURCE_COMPONENT'
+			sourceGeneId column:'SOURCE_GENE_ID'
+			targetComponent column:'TARGET_COMPONENT'
+			targetGeneId column:'TARGET_GENE_ID'
+			interactionMode column:'INTERACTION_MODE'
+			regulation column:'REGULATION'
+			mechanism column:'MECHANISM'
+			effect column:'EFFECT'
+			localization column:'LOCALIZATION'
+			region column:'REGION'
+			techniques column:'TECHNIQUES'
 		}
 	}
 }

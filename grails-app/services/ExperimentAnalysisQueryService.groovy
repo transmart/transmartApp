@@ -22,10 +22,10 @@ import org.transmart.ExpAnalysisResultSet;
 import org.transmart.ExperimentAnalysisResult;
 import org.transmart.SearchFilter;
 
-import bio.BioMarker
-import bio.Compound
-import bio.Disease
-import bio.Experiment
+import org.transmartproject.biomart.BioMarker
+import org.transmartproject.biomart.Compound
+import org.transmartproject.biomart.Disease
+import org.transmartproject.biomart.Experiment
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.ExperimentAssayAnalysisMVQuery
 import com.recomdata.search.query.Query
@@ -60,7 +60,7 @@ class ExperimentAnalysisQueryService {
 			return 0
 		}
 		if(!filter.expAnalysisFilter.isUsed())
-			return bio.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_EXP", filter))[0]
+			return org.transmartproject.biomart.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_EXP", filter))[0]
 		//	elapseTimer.logElapsed("query count Experiment MV:",true)
 		else
 			return countExperiment(filter)
@@ -94,7 +94,7 @@ class ExperimentAnalysisQueryService {
 	def countAnalysisMV(SearchFilter filter){
 		if(filter == null || filter.globalFilter.isTextOnly()) return 0;
 		if(!filter.expAnalysisFilter.isUsed())
-			return bio.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_ANALYSIS", filter))[0]
+			return org.transmartproject.biomart.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_ANALYSIS", filter))[0]
 		else
 			return countAnalysis(filter)
 	}
@@ -107,7 +107,7 @@ class ExperimentAnalysisQueryService {
 		def gfilter = filter.globalFilter
 
 		def query =new ExperimentAssayAnalysisMVQuery(mainTableAlias:"baad")
-		query.addTable("bio.BioMarkerExpAnalysisMV baad")
+		query.addTable("org.transmartproject.biomart.BioMarkerExpAnalysisMV baad")
 
 		query.createGlobalFilterCriteria(gfilter);
 		createSubFilterCriteria(filter.expAnalysisFilter,query);
@@ -147,7 +147,7 @@ class ExperimentAnalysisQueryService {
 		def gfilter = filter.globalFilter
 
 		def query =new ExperimentAssayAnalysisMVQuery(mainTableAlias:"baad")
-		query.addTable("bio.BioMarkerExpAnalysisMV baad")
+		query.addTable("org.transmartproject.biomart.BioMarkerExpAnalysisMV baad")
 	
 		query.createGlobalFilterCriteria(gfilter);
 		createSubFilterCriteria(filter.expAnalysisFilter,query);
@@ -167,7 +167,7 @@ class ExperimentAnalysisQueryService {
 		for(row in result){
 			//analysisCount +=row[1];
 			//expCount++;
-			expResult.add(new ExperimentAnalysisResult(experiment:bio.Experiment.get(row[0]), analysisCount:row[1], groupByExp:true))
+			expResult.add(new ExperimentAnalysisResult(experiment:org.transmartproject.biomart.Experiment.get(row[0]), analysisCount:row[1], groupByExp:true))
 		}
 		return new ExpAnalysisResultSet(expAnalysisResults:expResult,groupByExp:true)
 	}
@@ -180,7 +180,7 @@ class ExperimentAnalysisQueryService {
 		def gfilter = filter.globalFilter
 
 		def query =new AssayAnalysisDataQuery(mainTableAlias:"baad")
-		query.addTable("bio.BioMarkerExpAnalysisMV baad")
+		query.addTable("org.transmartproject.biomart.BioMarkerExpAnalysisMV baad")
 
 		//query.createGlobalFilterCriteria(gfilter);
 		query.createGlobalFilterCriteriaMV(gfilter);
@@ -334,7 +334,7 @@ class ExperimentAnalysisQueryService {
 		LinkedHashMap analysisResultMap = new LinkedHashMap()
 		for(row in result){
 			def analysisData = row[0]
-			def biomarker = row[1];//bio.BioMarker.get(row[1])
+			def biomarker = row[1];//org.transmartproject.biomart.BioMarker.get(row[1])
 			//println(biomarker)
 			def aresult =analysisResultMap.get(analysisData.analysis.id)
 			if(aresult==null){
@@ -377,7 +377,7 @@ class ExperimentAnalysisQueryService {
 	 * load experiment type filter
 	 */
 	def findExperimentTypeFilter(){
-		return bio.Experiment.executeQuery("SELECT DISTINCT exp.type FROM bio.Experiment exp WHERE exp.type IS NOT NULL");
+		return org.transmartproject.biomart.Experiment.executeQuery("SELECT DISTINCT exp.type FROM org.transmartproject.biomart.Experiment exp WHERE exp.type IS NOT NULL");
 	}
 
 	/**
@@ -487,7 +487,7 @@ class ExperimentAnalysisQueryService {
 		//	if(expfilter.filterExpType()){
 		//		def alias = query.mainTableAlias+".experiment"
 
-		//	query.addTable("bio.Experiment exp");
+		//	query.addTable("org.transmartproject.biomart.Experiment exp");
 		//		query.addCondition(alias+".type='"+expfilter.expType+"'")
 		//	}
 

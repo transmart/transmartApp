@@ -25,7 +25,7 @@
  */
 package org.transmartproject.biomart
 
-import bio.ContentReference;
+import org.transmartproject.biomart.ContentReference;
 
 import com.recomdata.util.IExcelProfile
 

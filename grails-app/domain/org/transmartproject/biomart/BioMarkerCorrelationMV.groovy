@@ -18,27 +18,22 @@
  ******************************************************************/
   
 
-package bio
-class ContentReference {
+package org.transmartproject.biomart
+
+class BioMarkerCorrelationMV {
+		Long  bioMarkerId
+		Long assoBioMarkerId
 		Long id
-		String type
-		Content content
-		Long bioDataId
- static mapping = {
-	 table 'BIO_CONTENT_REFERENCE'
+		String correlType
+		static mapping = {
+	 table 'BIO_MARKER_CORREL_MV'
 	 version false
-	cache usage:'read-only'
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_CONTENT_REFERENCE_ID'
-		type column:'CONTENT_REFERENCE_TYPE'
-		content column:'BIO_CONTENT_ID'
-		bioDataId column:'BIO_DATA_ID'
+		id column:'MV_ID'
+		bioMarkerId column:'BIO_MARKER_ID'
+		assoBioMarkerId column:'ASSO_BIO_MARKER_ID'
+		correlType column:'CORREL_TYPE'
 		}
 	}
-
-		static constraints = {
-			type(maxSize:400)
-		}
 
 }

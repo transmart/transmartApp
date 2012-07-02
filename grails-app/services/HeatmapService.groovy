@@ -26,7 +26,7 @@
  
 import org.transmart.HeatmapDataValue;
 
-import bio.BioMarker
+import org.transmartproject.biomart.BioMarker
 import com.recomdata.search.query.AssayAnalysisDataQuery
 
 public class HeatmapService {

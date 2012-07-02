@@ -23,7 +23,7 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
-package bio
+package org.transmartproject.biomart
 class LiteratureReferenceData {
 	Long id
 	String etlId

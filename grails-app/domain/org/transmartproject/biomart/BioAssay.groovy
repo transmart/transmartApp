@@ -20,7 +20,7 @@
 
 package org.transmartproject.biomart
 
-import bio.Experiment;
+import org.transmartproject.biomart.Experiment;
 
 class BioAssay {
 

@@ -18,48 +18,47 @@
  ******************************************************************/
   
 
-package bio
-class Content {
-	Long id
-	String name
-	ContentRepository repository
-	String location
-	String title
-	String contentAbstract
-	String type
+package org.transmartproject.biomart
 
-def getAbsolutePath() {
-	String root = repository.location == null ? "" : repository.location
-	String path = location == null ? "" : location
-	String file = name == null ? "" : name
-	return root + java.io.File.separator + path + java.io.File.separator + file
-}
+import org.transmartproject.biomart.CellLine;
 
-def getLocationType() {
-	return repository.locationType
-}
+class BioSample {
+		Long id
+		String type
+		String characteristics
+		String sourceCode
+		Experiment experiment
+		CellLine cellLine
+		BioSubject bioSubject
+		String source
+		Long bioBankId
+		Long bioPatientEventId
+		String name
 
-static mapping = {
- table 'BIO_CONTENT'
- version false
- cache usage:'read-only'
- id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
- columns {
-	id column:'BIO_FILE_CONTENT_ID'
-	name column:'FILE_NAME'
-	repository column:'REPOSITORY_ID'
-	location column:'LOCATION'
-	title column:'TITLE'
-	contentAbstract column:'ABSTRACT'
-	type column:'FILE_TYPE'
+ static mapping = {
+	 table 'BIO_SAMPLE'
+	 version false
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 columns {
+		id column:'BIO_SAMPLE_ID'
+		type column:'BIO_SAMPLE_TYPE'
+		characteristics column:'CHARACTERISTICS'
+		sourceCode column:'SOURCE_CODE'
+		experiment column:'EXPERIMENT_ID'
+		bioSubject column:'BIO_SUBJECT_ID'
+		source column:'SOURCE'
+		bioBankId column:'BIO_BANK_ID'
+		bioPatientEventId column:'BIO_PATIENT_EVENT_ID'
+		name column:'BIO_SAMPLE_NAME'
+		cellLine column:'BIO_CELL_LINE_ID'
+		}
 	}
-}
-static constraints = {
-name(nullable:true, maxSize:2000)
-location(nullable:true, maxSize:800)
-title(nullable:true, maxSize:2000)
-contentAbstract(nullable:true, maxSize:4000)
-type(maxSize:400)
-}
-
+ static constraints = {
+	type(maxSize:400)
+	characteristics(nullable:true, maxSize:2000)
+	sourceCode(nullable:true, maxSize:400)
+	source(nullable:true, maxSize:400)
+	bioBankId(nullable:true)
+	bioPatientEventId(nullable:true)
+	}
 }

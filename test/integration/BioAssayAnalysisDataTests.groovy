@@ -21,7 +21,7 @@
 import org.transmartproject.biomart.BioAssayAnalysisData;
 import org.transmartproject.biomart.BioAssayData;
 
-import bio.Literature
+import org.transmartproject.biomart.Literature
 
 /**
  * @author JLiu
@@ -65,7 +65,7 @@ println(c)
 		//def c = BioAssayAnalysisData.executeQuery("SELECT COUNT (DISTINCT baad.id) FROM org.transmartproject.biomart.BioAssayAnalysisData baad, org.transmartproject.biomart.BioDataOmicFact bm,  org.transmartproject.biomart.BioDataDiseaseFact bd "+
 //				" WHERE baad.id = bm.bioDataId AND bm.bioMarkerId = 8037275 "+
 //				" AND baad.id = bd.bioDataId AND bd.bioDiseaseId = 8021799 ")
-		def c = BioAssayData.executeQuery("SELECT COUNT (DISTINCT ldf.id) FROM bio.Literature ldf JOIN ldf.markers bm JOIN ldf.diseases bd "+
+		def c = BioAssayData.executeQuery("SELECT COUNT (DISTINCT ldf.id) FROM org.transmartproject.biomart.Literature ldf JOIN ldf.markers bm JOIN ldf.diseases bd "+
 				" WHERE bm.id = 8037275 "+
 				" AND bd.id = 8021799 ")
 //	def c = BioAssayAnalysisData.executeQuery("SELECT COUNT (DISTINCT baad.id) FROM org.transmartproject.biomart.BioAssayAnalysisData baad JOIN baad.markerFacts bm JOIN baad.diseaseFacts bd "+

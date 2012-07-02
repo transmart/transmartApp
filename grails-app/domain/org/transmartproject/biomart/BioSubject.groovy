@@ -18,23 +18,36 @@
  ******************************************************************/
   
 
+package org.transmartproject.biomart
 
-package bio
-
-import org.transmartproject.biomart.BioAssayAnalysis;
-
-class BioMarkerExpAnalysisMV {
-		BioMarker  marker
-		Experiment experiment
-		BioAssayAnalysis analysis
-		static mapping = {
-	 table 'BIO_MARKER_EXP_ANALYSIS_MV'
+class BioSubject {
+		Long id
+		Long siteSubjectId
+		String source
+		String sourceCode
+		String status
+		String organism
+		String type
+ static mapping = {
+	 table 'BIO_SUBJECT'
 	 version false
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'MV_ID'
-		marker column:'BIO_MARKER_ID'		
-		analysis column:'BIO_ASSAY_ANALYSIS_ID'
-		experiment column:'BIO_EXPERIMENT_ID'
+		id column:'BIO_SUBJECT_ID'
+		siteSubjectId column:'SITE_SUBJECT_ID'
+		source column:'SOURCE'
+		sourceCode column:'SOURCE_CODE'
+		status column:'STATUS'
+		organism column:'ORGANISM'
+		type column:'BIO_SUBJECT_TYPE'
 		}
+	}
+ static constraints = {
+	siteSubjectId(nullable:true)
+	source(nullable:true, maxSize:400)
+	sourceCode(nullable:true, maxSize:400)
+	status(nullable:true, maxSize:400)
+	organism(nullable:true, maxSize:400)
+	type(maxSize:400)
 	}
 }

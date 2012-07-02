@@ -20,10 +20,10 @@
 
 package org.transmartproject.biomart
 
-import bio.BioMarker;
-import bio.Compound;
-import bio.Disease;
-import bio.Experiment;
+import org.transmartproject.biomart.BioMarker;
+import org.transmartproject.biomart.Compound;
+import org.transmartproject.biomart.Disease;
+import org.transmartproject.biomart.Experiment;
 
 class BioAssayData {
 		Long numericValue

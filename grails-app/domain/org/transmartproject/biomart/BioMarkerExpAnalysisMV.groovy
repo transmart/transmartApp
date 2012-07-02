@@ -18,34 +18,23 @@
  ******************************************************************/
   
 
-package bio
-class CgdcpData extends Literature {
-		String evidenceCode
-		String negationIndicator
-		Long cellLineId
-		String nciDiseaseConceptCode
-		String nciRoleCode
-		String nciDrugConceptCode
 
- static mapping = {
-	 table 'BIO_CGDCP_DATA'
+package org.transmartproject.biomart
+
+import org.transmartproject.biomart.BioAssayAnalysis;
+
+class BioMarkerExpAnalysisMV {
+		BioMarker  marker
+		Experiment experiment
+		BioAssayAnalysis analysis
+		static mapping = {
+	 table 'BIO_MARKER_EXP_ANALYSIS_MV'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		evidenceCode column:'EVIDENCE_CODE'
-		negationIndicator column:'NEGATION_INDICATOR'
-		cellLineId column:'CELL_LINE_ID'
-		nciDiseaseConceptCode column:'NCI_DISEASE_CONCEPT_CODE'
-		nciRoleCode column:'NCI_ROLE_CODE'
-		nciDrugConceptCode column:'NCI_DRUG_CONCEPT_CODE'
+		id column:'MV_ID'
+		marker column:'BIO_MARKER_ID'		
+		analysis column:'BIO_ASSAY_ANALYSIS_ID'
+		experiment column:'BIO_EXPERIMENT_ID'
 		}
-	}
- static constraints = {
-	evidenceCode(nullable:true, maxSize:400)
-	negationIndicator(nullable:true, maxSize:1)
-	cellLineId(nullable:true)
-	nciDiseaseConceptCode(nullable:true, maxSize:400)
-	nciRoleCode(nullable:true, maxSize:400)
-	nciDrugConceptCode(nullable:true, maxSize:400)
 	}
 }

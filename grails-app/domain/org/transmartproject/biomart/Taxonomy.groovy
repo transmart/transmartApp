@@ -18,35 +18,25 @@
  ******************************************************************/
   
 
-package bio
-class BioSubject {
+package org.transmartproject.biomart
+class Taxonomy {
 		Long id
-		Long siteSubjectId
-		String source
-		String sourceCode
-		String status
-		String organism
-		String type
+		String name
+		String label
+		String ncbiTaxId
+		static hasMany=[experiments:Experiment]
  static mapping = {
-	 table 'BIO_SUBJECT'
+	 table 'BIO_TAXONOMY'
 	 version false
+	 cache usage:'read-only'
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_SUBJECT_ID'
-		siteSubjectId column:'SITE_SUBJECT_ID'
-		source column:'SOURCE'
-		sourceCode column:'SOURCE_CODE'
-		status column:'STATUS'
-		organism column:'ORGANISM'
-		type column:'BIO_SUBJECT_TYPE'
+		id column:'BIO_TAXONOMY_ID'
+		name column:'TAXON_NAME'
+		label column:'TAXON_LABEL'
+		ncbiTaxId column:'NCBI_TAX_ID'
+		experiments joinTable:[name:'BIO_DATA_TAXONOMY', key:'BIO_TAXONOMY_ID']
 		}
 	}
- static constraints = {
-	siteSubjectId(nullable:true)
-	source(nullable:true, maxSize:400)
-	sourceCode(nullable:true, maxSize:400)
-	status(nullable:true, maxSize:400)
-	organism(nullable:true, maxSize:400)
-	type(maxSize:400)
-	}
+
 }

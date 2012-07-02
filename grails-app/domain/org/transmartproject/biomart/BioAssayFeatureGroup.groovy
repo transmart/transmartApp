@@ -20,7 +20,7 @@
 
 package org.transmartproject.biomart
 
-import bio.BioMarker;
+import org.transmartproject.biomart.BioMarker;
 
 class BioAssayFeatureGroup {
 		Long id

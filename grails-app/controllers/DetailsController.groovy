@@ -43,13 +43,13 @@ class DetailsController {
 		def geneId = ""
 		if ((bioDataId == null || bioDataId.length() ==  0) && (altId != null & altId.length() > 0)) {
 			// TODO: Add type criteria
-			def result = bio.BioMarker.findByPrimaryExternalId(altId)
+			def result = org.transmartproject.biomart.BioMarker.findByPrimaryExternalId(altId)
 			if (result != null) {
 				bioDataId = result.id.toString()
 			}
 		}
 		if (bioDataId != null && bioDataId.length() > 0) {
-			def marker = bio.BioMarker.get(Long.valueOf(bioDataId))
+			def marker = org.transmartproject.biomart.BioMarker.get(Long.valueOf(bioDataId))
 		//	def searchKeyword = org.transmartproject.searchapp.SearchKeyword.findByBioDataId(Long.valueOf(bioDataId))
 		//	if (searchKeyword != null) {
 		//		geneSymbol = searchKeyword.keyword
@@ -83,7 +83,7 @@ class DetailsController {
 
 	def pathwaySummary = {
 		def bioDataId = params.id
-		def pathway = bio.BioMarker.get(Long.valueOf(bioDataId))
+		def pathway = org.transmartproject.biomart.BioMarker.get(Long.valueOf(bioDataId))
 		def genes
 		if (pathway != null) {
 			def query = "select k from org.transmartproject.searchapp.SearchKeyword k, org.transmartproject.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId=?"
@@ -106,7 +106,7 @@ class DetailsController {
 
 	def compoundSummary = {
 		def bioDataId = params.id
-		def compound = bio.Compound.get(Long.valueOf(bioDataId))
+		def compound = org.transmartproject.biomart.Compound.get(Long.valueOf(bioDataId))
 		render(view:"compoundSummary", model:[compound:compound])
 	}
 }

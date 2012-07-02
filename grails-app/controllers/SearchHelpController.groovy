@@ -22,9 +22,9 @@ import org.transmartproject.searchapp.AuthUser;
 
 import org.transmartproject.searchapp.SearchKeyword
 import org.transmartproject.searchapp.GeneSignature
-import bio.Experiment
-import bio.Compound
-import bio.Disease
+import org.transmartproject.biomart.Experiment
+import org.transmartproject.biomart.Compound
+import org.transmartproject.biomart.Disease
 
 /**
  *$Id: SearchHelpController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -100,12 +100,12 @@ public class SearchHelpController{
 	}
 
 	def listAllTrials = {
-		def all = SearchKeyword.executeQuery("SELECT s, e FROM SearchKeyword s, bio.Experiment e WHERE s.dataCategory='TRIAL' AND s.bioDataId=e.id ORDER BY s.keyword")
+		def all = SearchKeyword.executeQuery("SELECT s, e FROM SearchKeyword s, org.transmartproject.biomart.Experiment e WHERE s.dataCategory='TRIAL' AND s.bioDataId=e.id ORDER BY s.keyword")
 		render(view:'trialhelp', model:[trials:all])
 	}
 
 	def listAllDiseases = {
-		//def all = SearchKeyword.executeQuery("SELECT s, d FROM SearchKeyword s, bio.Disease d WHERE s.dataCategory='DISEASE' AND s.bioDataId=d.id ORDER BY s.keyword")
+		//def all = SearchKeyword.executeQuery("SELECT s, d FROM SearchKeyword s, org.transmartproject.biomart.Disease d WHERE s.dataCategory='DISEASE' AND s.bioDataId=d.id ORDER BY s.keyword")
 
 		def all = SearchKeyword.findAllByDataCategory("DISEASE", [sort:"keyword", cache:'read-only'])
 			//SearchKeyword.executeQuery("SELECT s FROM SearchKeyword s WHERE s.dataCategory='DISEASE' ORDER BY s.keyword")
@@ -113,7 +113,7 @@ public class SearchHelpController{
 	}
 
 	def listAllCompounds = {
-		def all = SearchKeyword.executeQuery("SELECT s, c FROM SearchKeyword s, bio.Compound c WHERE s.dataCategory='COMPOUND' AND s.bioDataId=c.id ORDER BY s.keyword")
+		def all = SearchKeyword.executeQuery("SELECT s, c FROM SearchKeyword s, org.transmartproject.biomart.Compound c WHERE s.dataCategory='COMPOUND' AND s.bioDataId=c.id ORDER BY s.keyword")
 		render(view:'compoundhelp', model:[compounds:all])
 	}
 

@@ -25,8 +25,8 @@
  */
 import com.recomdata.util.DomainObjectExcelHelper;
 import grails.converters.*
-import bio.ClinicalTrial
-import bio.Experiment
+import org.transmartproject.biomart.ClinicalTrial
+import org.transmartproject.biomart.Experiment
 
 import org.transmart.SearchResult;
 import org.transmartproject.biomart.BioAssayAnalysis;
@@ -175,9 +175,9 @@ class TrialController {
 		// need to mark  trial with data
 		// tmp solution
 
-		def triallist = bio.ClinicalTrial.executeQuery("SELECT b.id, b.trialNumber, b.title FROM bio.ClinicalTrial b, org.transmartproject.searchapp.SearchKeyword s  WHERE s.bioDataId=b.id ORDER BY b.trialNumber");
+		def triallist = org.transmartproject.biomart.ClinicalTrial.executeQuery("SELECT b.id, b.trialNumber, b.title FROM org.transmartproject.biomart.ClinicalTrial b, org.transmartproject.searchapp.SearchKeyword s  WHERE s.bioDataId=b.id ORDER BY b.trialNumber");
 
-		//		    def triallist = bio.ClinicalTrial.listOrderByTrialNumber();
+		//		    def triallist = org.transmartproject.biomart.ClinicalTrial.listOrderByTrialNumber();
 		boolean filtercheck = !session.searchFilter.trialFilter.newFilter;
 
 		Set selectedTrials = session.searchFilter.trialFilter.selectedtrials;

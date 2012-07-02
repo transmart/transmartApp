@@ -18,31 +18,48 @@
  ******************************************************************/
   
 
-package bio
-class ContentRepository {
-		Long id
-		String location
-		String activeYN
-		String repositoryType
-		String locationType
- static mapping = {
-	 table 'BIO_CONTENT_REPOSITORY'
-	 version false
-	 cache usage:'read-only'
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_CONTENT_REPOSITORY_ID']
-	 columns {
-		id column:'BIO_CONTENT_REPO_ID'
-		location column:'LOCATION'
-		activeYN column:'ACTIVE_Y_N'
-		repositoryType column:'REPOSITORY_TYPE'
-		locationType column:'LOCATION_TYPE'
-		}
-	}
+package org.transmartproject.biomart
+class Content {
+	Long id
+	String name
+	ContentRepository repository
+	String location
+	String title
+	String contentAbstract
+	String type
 
-		static constraints = {
-			location(nullable:true, maxSize:1020)
-			activeYN(nullable:true, maxSize:1)
-			repositoryType(maxSize:400)
-			locationType(nullable:true, maxSize:400)
-			}
-		}
+def getAbsolutePath() {
+	String root = repository.location == null ? "" : repository.location
+	String path = location == null ? "" : location
+	String file = name == null ? "" : name
+	return root + java.io.File.separator + path + java.io.File.separator + file
+}
+
+def getLocationType() {
+	return repository.locationType
+}
+
+static mapping = {
+ table 'BIO_CONTENT'
+ version false
+ cache usage:'read-only'
+ id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+ columns {
+	id column:'BIO_FILE_CONTENT_ID'
+	name column:'FILE_NAME'
+	repository column:'REPOSITORY_ID'
+	location column:'LOCATION'
+	title column:'TITLE'
+	contentAbstract column:'ABSTRACT'
+	type column:'FILE_TYPE'
+	}
+}
+static constraints = {
+name(nullable:true, maxSize:2000)
+location(nullable:true, maxSize:800)
+title(nullable:true, maxSize:2000)
+contentAbstract(nullable:true, maxSize:4000)
+type(maxSize:400)
+}
+
+}

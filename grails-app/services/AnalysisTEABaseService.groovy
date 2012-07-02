@@ -18,11 +18,11 @@
  ******************************************************************/
   
 
-import bio.BioMarker
-import bio.Compound
-import bio.Disease
-import bio.ClinicalTrial
-import bio.Experiment
+import org.transmartproject.biomart.BioMarker
+import org.transmartproject.biomart.Compound
+import org.transmartproject.biomart.Disease
+import org.transmartproject.biomart.ClinicalTrial
+import org.transmartproject.biomart.Experiment
 
 import org.transmart.AnalysisResult;
 import org.transmart.AssayAnalysisValue;
@@ -32,7 +32,7 @@ import org.transmartproject.biomart.BioAssayAnalysis;
 import org.transmartproject.biomart.BioAssayAnalysisData;
 import org.transmartproject.biomart.BioAssayAnalysisDataTea;
 import org.transmartproject.searchapp.SearchBioMarkerCorrelFastMV
-import bio.BioMarkerCorrelationMV
+import org.transmartproject.biomart.BioMarkerCorrelationMV
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.AssayAnalysisDataTeaQuery
 import com.recomdata.search.query.Query
@@ -108,7 +108,7 @@ class AnalysisTEABaseService {
 		query.addTable("org.transmartproject.biomart.BioAssayAnalysisData baad ");
 		query.addCondition(" baad.experiment.type='"+getExpType()+"'")
 
-		////query.addTable ("bio.ClinicalTrial ct ");
+		////query.addTable ("org.transmartproject.biomart.ClinicalTrial ct ");
 		//query.addCondition("baad.experiment.id = ct.id ")
 
 		query.createGlobalFilterCriteria(gfilter);
@@ -224,7 +224,7 @@ class AnalysisTEABaseService {
 
 			// add static biomarkers
 			// make sure no homology gene is searched
-			def bioMarkersQuery = "SELECT DISTINCT bmcmv.assoBioMarkerId as assocBioMarkerId, 0 as valueMetric FROM bio.BioMarkerCorrelationMV bmcmv WHERE bmcmv.bioMarkerId in ("+mids+") AND bmcmv.correlType <>'HOMOLOGENE_GENE'";
+			def bioMarkersQuery = "SELECT DISTINCT bmcmv.assoBioMarkerId as assocBioMarkerId, 0 as valueMetric FROM org.transmartproject.biomart.BioMarkerCorrelationMV bmcmv WHERE bmcmv.bioMarkerId in ("+mids+") AND bmcmv.correlType <>'HOMOLOGENE_GENE'";
 			def staticResult = BioMarkerCorrelationMV.executeQuery(bioMarkersQuery);
 			log.info "number of static biomarkers: "+staticResult.size()
 
@@ -333,7 +333,7 @@ class AnalysisTEABaseService {
 		// loop through data
 		for(row in result){
 			def analysisData = row[0]
-			def biomarker = row[1]; //bio.BioMarker.get(row[1])
+			def biomarker = row[1]; //org.transmartproject.biomart.BioMarker.get(row[1])
 			
 			def mvlookup = mvMap.get(biomarker.id)
 			def aid = analysisData.analysis.id;

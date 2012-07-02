@@ -18,50 +18,31 @@
  ******************************************************************/
   
 
-/**
- * $Id: LiteratureInteractionData.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
-package bio
-class LiteratureInteractionData extends Literature {
-	Long id
-	LiteratureReferenceData reference
-	LiteratureModelData inVivoModel
-	LiteratureModelData inVitroModel
-	String etlId
-	String sourceComponent
-	String sourceGeneId
-	String targetComponent
-	String targetGeneId
-	String interactionMode
-	String regulation
-	String mechanism
-	String effect
-	String localization
-	String region
-	String techniques
-	static mapping = {
-		table 'BIO_LIT_INT_DATA'
-		version false
-		id column:'BIO_LIT_INT_DATA_ID'
-		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
-		columns {
-			reference column:'BIO_LIT_REF_DATA_ID'
-			inVivoModel column:'IN_VIVO_MODEL_ID'
-			inVitroModel column:'IN_VITRO_MODEL_ID'
-			etlId column:'ETL_ID'
-			sourceComponent column:'SOURCE_COMPONENT'
-			sourceGeneId column:'SOURCE_GENE_ID'
-			targetComponent column:'TARGET_COMPONENT'
-			targetGeneId column:'TARGET_GENE_ID'
-			interactionMode column:'INTERACTION_MODE'
-			regulation column:'REGULATION'
-			mechanism column:'MECHANISM'
-			effect column:'EFFECT'
-			localization column:'LOCALIZATION'
-			region column:'REGION'
-			techniques column:'TECHNIQUES'
+package org.transmartproject.biomart
+class ContentRepository {
+		Long id
+		String location
+		String activeYN
+		String repositoryType
+		String locationType
+ static mapping = {
+	 table 'BIO_CONTENT_REPOSITORY'
+	 version false
+	 cache usage:'read-only'
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_CONTENT_REPOSITORY_ID']
+	 columns {
+		id column:'BIO_CONTENT_REPO_ID'
+		location column:'LOCATION'
+		activeYN column:'ACTIVE_Y_N'
+		repositoryType column:'REPOSITORY_TYPE'
+		locationType column:'LOCATION_TYPE'
 		}
 	}
-}
+
+		static constraints = {
+			location(nullable:true, maxSize:1020)
+			activeYN(nullable:true, maxSize:1)
+			repositoryType(maxSize:400)
+			locationType(nullable:true, maxSize:400)
+			}
+		}

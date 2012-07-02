@@ -23,10 +23,10 @@ import org.transmart.TrialAnalysisResult;
 import org.transmartproject.biomart.BioAssayAnalysis;
 import org.transmartproject.biomart.BioAssayAnalysisData;
 
-import bio.BioMarker
-import bio.Compound
-import bio.Disease
-import bio.ClinicalTrial
+import org.transmartproject.biomart.BioMarker
+import org.transmartproject.biomart.Compound
+import org.transmartproject.biomart.Disease
+import org.transmartproject.biomart.ClinicalTrial
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.Query
 
@@ -63,7 +63,7 @@ class ClinicalTrialAnalysisTEAService extends AnalysisTEABaseService {
 
 		def query =new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true);
 		query.addTable("org.transmartproject.biomart.BioAssayAnalysisData baad ");
-		query.addTable ("bio.ClinicalTrial ct ");
+		query.addTable ("org.transmartproject.biomart.ClinicalTrial ct ");
 		query.addCondition("baad.experiment.id = ct.id ")
 
 		query.createGlobalFilterCriteria(gfilter);

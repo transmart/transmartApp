@@ -24,16 +24,16 @@
  * @version $Revision: 9178 $
  */
 
- package org.transmartproject.searchapp
+package org.transmartproject.searchapp
 
-  import bio.Compound
- import bio.ConceptCode
+import org.transmartproject.biomart.Compound
+import bio.ConceptCode
 
 import org.transmartproject.biomart.BioAssayPlatform;
 import org.transmartproject.biomart.CellLine;
- import org.transmartproject.searchapp.SearchKeyword
- import com.recomdata.util.IDomainExcelWorkbook
- import com.recomdata.util.ExcelSheet
+import org.transmartproject.searchapp.SearchKeyword
+import com.recomdata.util.IDomainExcelWorkbook
+import com.recomdata.util.ExcelSheet
 import com.recomdata.util.ExcelGenerator
  
 /**

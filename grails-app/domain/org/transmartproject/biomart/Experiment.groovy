@@ -24,7 +24,7 @@
  * @version $Revision: 10303 $
  */
 
-package bio
+package org.transmartproject.biomart
 
 import org.transmartproject.biomart.BioData;
 

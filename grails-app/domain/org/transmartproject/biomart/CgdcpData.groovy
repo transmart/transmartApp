@@ -18,21 +18,34 @@
  ******************************************************************/
   
 
-package bio
-class BioMarkerCorrelationMV {
-		Long  bioMarkerId
-		Long assoBioMarkerId
-		Long id
-		String correlType
-		static mapping = {
-	 table 'BIO_MARKER_CORREL_MV'
+package org.transmartproject.biomart
+class CgdcpData extends Literature {
+		String evidenceCode
+		String negationIndicator
+		Long cellLineId
+		String nciDiseaseConceptCode
+		String nciRoleCode
+		String nciDrugConceptCode
+
+ static mapping = {
+	 table 'BIO_CGDCP_DATA'
 	 version false
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'MV_ID'
-		bioMarkerId column:'BIO_MARKER_ID'
-		assoBioMarkerId column:'ASSO_BIO_MARKER_ID'
-		correlType column:'CORREL_TYPE'
+		evidenceCode column:'EVIDENCE_CODE'
+		negationIndicator column:'NEGATION_INDICATOR'
+		cellLineId column:'CELL_LINE_ID'
+		nciDiseaseConceptCode column:'NCI_DISEASE_CONCEPT_CODE'
+		nciRoleCode column:'NCI_ROLE_CODE'
+		nciDrugConceptCode column:'NCI_DRUG_CONCEPT_CODE'
 		}
 	}
-
+ static constraints = {
+	evidenceCode(nullable:true, maxSize:400)
+	negationIndicator(nullable:true, maxSize:1)
+	cellLineId(nullable:true)
+	nciDiseaseConceptCode(nullable:true, maxSize:400)
+	nciRoleCode(nullable:true, maxSize:400)
+	nciDrugConceptCode(nullable:true, maxSize:400)
+	}
 }

@@ -18,52 +18,27 @@
  ******************************************************************/
   
 
-/**
- * $Id: LiteratureModelData.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
-package bio
-class LiteratureModelData {
-	Long id
-	String etlId
-	String modelType
-	String description
-	String stimulation
-	String controlChallenge
-	String challenge
-	String sentization
-	String zygosity
-	String experimentalModel
-	String animalWildType
-	String tissue
-	String cellType
-	String cellLine
-	String bodySubstance
-	String component
-	String geneId
-	static mapping = {
-		table 'BIO_LIT_MODEL_DATA'
-		version false
-		id column:'BIO_LIT_MODEL_DATA_ID'
-		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
-		columns {
-			etlId column:'ETL_ID'
-			modelType column:'MODEL_TYPE'
-			description column:'DESCRIPTION'
-			stimulation column:'STIMULATION'
-			controlChallenge column:'CONTROL_CHALLENGE'
-			challenge column:'CHALLENGE'
-			sentization column:'SENTIZATION'
-			zygosity column:'ZYGOSITY'
-			experimentalModel column:'EXPERIMENTAL_MODEL'
-			animalWildType column:'ANIMAL_WILD_TYPE'
-			tissue column:'TISSUE'
-			cellType column:'CELL_TYPE'
-			cellLine column:'CELL_LINE'
-			bodySubstance column:'BODY_SUBSTANCE'
-			component column:'COMPONENT'
-			geneId column:'GENE_ID'
+package org.transmartproject.biomart
+class ContentReference {
+		Long id
+		String type
+		Content content
+		Long bioDataId
+ static mapping = {
+	 table 'BIO_CONTENT_REFERENCE'
+	 version false
+	cache usage:'read-only'
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 columns {
+		id column:'BIO_CONTENT_REFERENCE_ID'
+		type column:'CONTENT_REFERENCE_TYPE'
+		content column:'BIO_CONTENT_ID'
+		bioDataId column:'BIO_DATA_ID'
 		}
 	}
+
+		static constraints = {
+			type(maxSize:400)
+		}
+
 }

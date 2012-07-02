@@ -27,7 +27,7 @@ import org.transmartproject.searchapp.AuthUser;
 import org.transmartproject.searchapp.GeneSignatureItem;
 import org.transmartproject.searchapp.GeneSignatureFileSchema;
 import org.transmartproject.searchapp.GeneSignature;
-import bio.BioMarker;
+import org.transmartproject.biomart.BioMarker;
 import org.transmartproject.biomart.BioData;
 import com.recomdata.search.query.Query;
 import com.recomdata.genesignature.FileSchemaException;
@@ -473,7 +473,7 @@ public class GeneSignatureService {
 	 */
 	def lookupBioAssociations(String geneSymbol, String organism) {
 		def query = new Query(mainTableAlias:"bd");
-		query.addTable("bio.BioMarker bm")
+		query.addTable("org.transmartproject.biomart.BioMarker bm")
 		query.addTable("org.transmartproject.biomart.BioData bd")
 		query.addCondition("bm.id=bd.id")
 		query.addCondition("bm.bioMarkerType='GENE'")
@@ -495,7 +495,7 @@ public class GeneSignatureService {
 		if(markers==null || markers.size()==0 || markers.size()>1) {
 			query = new Query(mainTableAlias:"bm");
 			query.addTable("org.transmartproject.biomart.BioDataExternalCode ext")
-			query.addTable("bio.BioMarker bm")
+			query.addTable("org.transmartproject.biomart.BioMarker bm")
 			query.addTable("org.transmartproject.biomart.BioData bd")
 			query.addCondition("ext.bioDataId=bm.id")
 			query.addCondition("bm.id=bd.id")

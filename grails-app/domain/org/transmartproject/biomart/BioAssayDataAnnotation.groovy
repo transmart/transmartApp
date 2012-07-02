@@ -22,7 +22,7 @@ package org.transmartproject.biomart;
 
 import org.transmartproject.biomart.BioAssayFeatureGroup;
 
-import bio.BioMarker;
+import org.transmartproject.biomart.BioMarker;
 
 class BioAssayDataAnnotation implements Serializable {
 	

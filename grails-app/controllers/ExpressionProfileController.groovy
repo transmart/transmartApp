@@ -45,8 +45,8 @@
 import org.transmart.ExpressionProfileResult;
 import org.transmartproject.biomart.BioAssayDataStatistics;
 
- import bio.BioMarker;
- import bio.Disease;
+ import org.transmartproject.biomart.BioMarker;
+ import org.transmartproject.biomart.Disease;
 import javax.servlet.ServletException;
 
 public class ExpressionProfileController{

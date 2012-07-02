@@ -20,8 +20,8 @@
 
 package org.transmartproject.biomart
 
-import bio.BioSample;
-import bio.Experiment;
+import org.transmartproject.biomart.BioSample;
+import org.transmartproject.biomart.Experiment;
 
 class BioAssayDataStatistics {
 		Long id

@@ -23,8 +23,8 @@
  */
 package org.transmartproject.biomart
 
-import bio.BioMarker;
-import bio.Experiment;
+import org.transmartproject.biomart.BioMarker;
+import org.transmartproject.biomart.Experiment;
 
 
 

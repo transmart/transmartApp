@@ -28,7 +28,7 @@ package org.transmartproject.biomart
 
 import java.util.List;
 
-import bio.Experiment;
+import org.transmartproject.biomart.Experiment;
 
 class ClinicalTrial extends Experiment {
 	String trialNumber

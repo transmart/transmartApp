@@ -19,7 +19,7 @@ package org.transmart
  ******************************************************************/
   
 
-import bio.Experiment
+import org.transmartproject.biomart.Experiment
 
 /**
  * @author $Author: mmcduffie $

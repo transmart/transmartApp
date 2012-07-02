@@ -19,29 +19,36 @@
   
 
 /**
- * $Id: LiteratureProteinEffectData.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * $Id: Literature.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
-package bio
-class LiteratureProteinEffectData extends Literature {
+package org.transmartproject.biomart
+class Literature {
 	Long id
 	LiteratureReferenceData reference
-	LiteratureModelData inVivoModel
-	LiteratureModelData inVitroModel
-	String etlId
-	String description
+	Long bioCurationDatasetId
+	String statement
+	String statementStatus
+	String dataType
+	static hasMany = [diseases:Disease, compounds:Compound, markers:BioMarker, files:ContentReference]
+	static belongsTo = [Disease, Compound, BioMarker, ContentReference]		
 	static mapping = {
-		table 'BIO_LIT_PE_DATA'
+		table 'BIO_DATA_LITERATURE'
+		tablePerHierarchy false
 		version false
-		id column:'BIO_LIT_PE_DATA_ID'
 		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 		columns {
-			reference column:'BIO_LIT_REF_DATA_ID'
-			inVivoModel column:'IN_VIVO_MODEL_ID'
-			inVitroModel column:'IN_VITRO_MODEL_ID'
-			etlId column:'ETL_ID'
-			description column:'DESCRIPTION'
+			id column:'BIO_DATA_ID'
+			reference column: 'BIO_LIT_REF_DATA_ID'
+			bioCurationDatasetId column:'BIO_CURATION_DATASET_ID'
+			statement column:'STATEMENT'
+			statementStatus column:'STATEMENT_STATUS'
+			dataType column:'DATA_TYPE'
+			diseases joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DATA_ID']
+			markers joinTable:[name:'BIO_DATA_OMIC_MARKER', key:'BIO_DATA_ID']
+			compounds joinTable:[name:'BIO_DATA_COMPOUND', key:'BIO_DATA_ID']
+			files joinTable:[name:'BIO_CONTENT_REFERENCE', key:'BIO_DATA_ID', column:'BIO_CONTENT_REFERENCE_ID']
 		}
 	}
 }
