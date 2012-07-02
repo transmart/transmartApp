@@ -27,7 +27,7 @@
 package org.transmart.searchapp
 
 import org.transmart.biomart.Compound
-import bio.ConceptCode
+import org.transmart.biomart.ConceptCode
 
 import org.transmart.biomart.BioAssayPlatform;
 import org.transmart.biomart.CellLine;

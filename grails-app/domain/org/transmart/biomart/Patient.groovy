@@ -18,29 +18,56 @@
  ******************************************************************/
   
 
-package bio
-class CurationDataset {
-		String curationType
-		Date createDate
-		Long creator
+package org.transmart.biomart
+class Patient {
 		Long id
-		Long bioAnalysisPlatformId
+		String firstName
+		String lastName
+		String middleName
+		Date birthDate
+		String birthDateOrig
+		String genderCode
+		String raceCode
+		String ethnicGroupCode
+		String addressZipCode
+		String countryCode
+		String informedConsentCode
+		Long bioExperimentId
+		Long bioClinicalTrialPGroupId
  static mapping = {
-	 table 'BIO_CURATION_DATASET'
+	 table 'BIO_PATIENT'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		curationType column:'BIO_CURATION_TYPE'
-		createDate column:'CREATE_DATE'
-		creator column:'CREATOR'
-		id column:'BIO_CURATION_DATASET_ID'
-		bioAnalysisPlatformId column:'BIO_ASY_ANALYSIS_PLATFORM_ID'
+		id column:'BIO_PATIENT_ID'
+		firstName column:'FIRST_NAME'
+		lastName column:'LAST_NAME'
+		middleName column:'MIDDLE_NAME'
+		birthDate column:'BIRTH_DATE'
+		birthDateOrig column:'BIRTH_DATE_ORIG'
+		genderCode column:'GENDER_CODE'
+		raceCode column:'RACE_CODE'
+		ethnicGroupCode column:'ETHNIC_GROUP_CODE'
+		addressZipCode column:'ADDRESS_ZIP_CODE'
+		countryCode column:'COUNTRY_CODE'
+		informedConsentCode column:'INFORMED_CONSENT_CODE'
+		bioExperimentId column:'BIO_EXPERIMENT_ID'
+		bioClinicalTrialPGroupId column:'BIO_CLINICAL_TRIAL_P_GROUP_ID'
 		}
 	}
  static constraints = {
-	curationType(maxSize:400)
-	createDate(nullable:true)
-	creator(nullable:true)
-
+	firstName(nullable:true, maxSize:400)
+	lastName(nullable:true, maxSize:400)
+	middleName(nullable:true, maxSize:400)
+	birthDate(nullable:true)
+	birthDateOrig(nullable:true, maxSize:400)
+	genderCode(nullable:true, maxSize:400)
+	raceCode(nullable:true, maxSize:400)
+	ethnicGroupCode(nullable:true, maxSize:400)
+	addressZipCode(nullable:true, maxSize:400)
+	countryCode(nullable:true, maxSize:400)
+	informedConsentCode(nullable:true, maxSize:400)
+	bioExperimentId(nullable:true)
+	bioClinicalTrialPGroupId(nullable:true)
 	}
 }

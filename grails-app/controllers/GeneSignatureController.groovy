@@ -28,7 +28,7 @@ import org.transmart.searchapp.AuthUser;
 import org.transmart.searchapp.GeneSignature
 import org.transmart. searchapp.GeneSignatureFileSchema
 import org.transmart.biomart.Compound
-import bio.ConceptCode
+import org.transmart.biomart.ConceptCode
 
 import com.recomdata.genesignature.FileSchemaException
 import com.recomdata.genesignature.WizardModelDetails

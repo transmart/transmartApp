@@ -18,29 +18,30 @@
  ******************************************************************/
   
 
-package bio
-class ConceptCode {
+package org.transmart.biomart
+
+class CurationDataset {
+		String curationType
+		Date createDate
+		Long creator
 		Long id
-		String bioConceptCode
-		String codeName
-		String codeDescription
-		String codeTypeName
+		Long bioAnalysisPlatformId
  static mapping = {
-	 table 'BIO_CONCEPT_CODE'
-	 cache true
+	 table 'BIO_CURATION_DATASET'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_CONCEPT_CODE_ID'
-		bioConceptCode column:'BIO_CONCEPT_CODE'
-		codeName column:'CODE_NAME'
-		codeDescription column:'CODE_DESCRIPTION'
-		codeTypeName column:'CODE_TYPE_NAME'
+		curationType column:'BIO_CURATION_TYPE'
+		createDate column:'CREATE_DATE'
+		creator column:'CREATOR'
+		id column:'BIO_CURATION_DATASET_ID'
+		bioAnalysisPlatformId column:'BIO_ASY_ANALYSIS_PLATFORM_ID'
 		}
 	}
  static constraints = {
-	bioConceptCode(nullable:true, maxSize:400)
-	codeDescription(nullable:true, maxSize:2000)
-	codeTypeName(nullable:true, maxSize:400)
+	curationType(maxSize:400)
+	createDate(nullable:true)
+	creator(nullable:true)
+
 	}
 }

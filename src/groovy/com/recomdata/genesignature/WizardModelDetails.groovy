@@ -24,7 +24,7 @@
 package com.recomdata.genesignature
 
 import com.recomdata.util.ModelDetails
-import bio.ConceptCode
+import org.transmart.biomart.ConceptCode
 import org.transmart.searchapp.GeneSignature
 
 /**

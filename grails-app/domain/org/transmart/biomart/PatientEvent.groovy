@@ -18,30 +18,33 @@
  ******************************************************************/
   
 
-package bio
-class PatientEventAttribute {
-		String bioPatientAttrCode
-		String attributeTextValue
-		String attributeNumericValue
-		Long bioClinicTrialAttributeId
-		Long bioPatientAttributeId
-		Long bioPatientEventId
+package org.transmart.biomart
+class PatientEvent {
+		Long id
+		Long bioPatientId
+		String eventCode
+		String eventTypeCode
+		Date eventDate
+		String site
+		Long bioClinicTrialTimepointId
  static mapping = {
-	 table 'BIO_PATIENT_EVENT_ATTRIBUTE'
+	 table 'BIO_PATIENT_EVENT'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_PATIENT_EVENT_ATTRIBUTE_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_PATIENT_EVENT_ID']
 	 columns {
-		bioPatientAttrCode column:'BIO_PATIENT_ATTR_CODE'
-		attributeTextValue column:'ATTRIBUTE_TEXT_VALUE'
-		attributeNumericValue column:'ATTRIBUTE_NUMERIC_VALUE'
-		bioClinicTrialAttributeId column:'BIO_CLINIC_TRIAL_ATTRIBUTE_ID'
-		bioPatientAttributeId column:'BIO_PATIENT_ATTRIBUTE_ID'
-		bioPatientEventId column:'BIO_PATIENT_EVENT_ID'
+		id column:'BIO_PATIENT_EVENT_ID'
+		bioPatientId column:'BIO_PATIENT_ID'
+		eventCode column:'EVENT_CODE'
+		eventTypeCode column:'EVENT_TYPE_CODE'
+		eventDate column:'EVENT_DATE'
+		site column:'SITE'
+		bioClinicTrialTimepointId column:'BIO_CLINIC_TRIAL_TIMEPOINT_ID'
 		}
 	}
-		 static constraints = {
-			bioPatientAttrCode(maxSize:400)
-			attributeTextValue(nullable:true, maxSize:400)
-			attributeNumericValue(nullable:true, maxSize:400)
+		static constraints = {
+			eventCode(nullable:true, maxSize:400)
+			eventTypeCode(nullable:true, maxSize:400)
+			eventDate(nullable:true)
+			site(nullable:true, maxSize:800)
 			}
 }
