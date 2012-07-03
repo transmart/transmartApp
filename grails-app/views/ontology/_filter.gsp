@@ -28,7 +28,8 @@
 					id="ontsearchterm" name="ontsearchterm" value="" size="10" /><br>
 			</td>
 			<td valign="top"><br>AND</td>
-			<td valign="top"><b>Type:</b><br> <g:select
+			<td valign="top"><b>Type:</b><br>
+			 <g:select
 					class="searchform" name="tagtype" id="tagtype" from="${tagtypes}"
 					onchange="changeType();${remoteFunction(
             controller:'ontology', 
@@ -36,7 +37,7 @@
             params: '{tagtype:this.value}', 
             update:'tagtermdiv')}"></g:select><br>
 				<div id="tagtermdiv">
-					<!-- <g:render template="depSelectTerm"  model="['tags': tags]"/>-->
+				&nbsp;
 				</div></td>
 		</tr>
 	</table>
