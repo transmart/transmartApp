@@ -18,7 +18,7 @@
 -->
 
 
-<%@ page import="org.transmartproject.searchapp.AuthUser" %>
+<%@ page import="org.transmart.searchapp.AuthUser" %>
 <g:setProvider library="prototype"/>
 <html>
     <head>

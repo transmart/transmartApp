@@ -51,7 +51,7 @@ class AccessLogController {
 	//		startdatestr="01/01/2009"
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.setTime(new Date());
-			calendar.roll(Calendar.DATE, -7);
+			calendar.add(Calendar.DATE, -7);
 			startdatestr= df1.format(calendar.getTime());
 		}
 		else if(params.startdate!=null)

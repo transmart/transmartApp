@@ -18,7 +18,7 @@
 -->
 
 
-<%@ page import="org.transmartproject.searchapp.SecureObjectAccess" %>
+<%@ page import="org.transmart.searchapp.SecureObjectAccess" %>
 <g:setProvider library="prototype"/>
 <html>
     <head>

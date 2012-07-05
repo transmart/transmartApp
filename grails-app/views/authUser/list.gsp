@@ -16,7 +16,7 @@
   
  
 -->
-<%@ page import="org.transmartproject.searchapp.AuthUser"%>
+<%@ page import="org.transmart.searchapp.AuthUser"%>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
