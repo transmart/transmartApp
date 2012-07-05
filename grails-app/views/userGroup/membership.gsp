@@ -19,7 +19,6 @@
 
 
 <%@ page import="org.transmart.searchapp.AuthUser" %>
-<g:setProvider library="prototype"/>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -29,6 +28,8 @@
    p { width:440px; }
         .ext-ie .x-form-text {position:static !important;}
   </style>
+  <g:javascript library="prototype" plugin="prototype"/>
+  <r:layoutResources/>
     </head>
     <body>
         <div class="body">
@@ -41,6 +42,9 @@
   <br><b>Search User<b></b><br>
   <input type="text"  size="80" id="searchUsers" autocomplete="off" /></div>
   <script type="text/javascript">
+  var pageInfo = {
+	        basePath :"${request.getContextPath()}"
+	    }
   createUserSearchBox2('${request.getContextPath()}/userGroup/ajaxGetUserSearchBoxData', 440);
 
   function searchgroup(){
@@ -67,5 +71,6 @@
                             </tr>
                         </tbody>
    <input type="hidden" id="currentprincipalid">
+    <r:layoutResources/>    
     </body>
 </html>
