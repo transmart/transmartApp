@@ -63,6 +63,7 @@ class LiteratureAssocMoleculeDetailsData {
 	String techniques
 	String description
 	static mapping = {
+        datasource 'postgresql'
 		table 'BIO_LIT_AMD_DATA'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']

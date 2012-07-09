@@ -31,6 +31,7 @@ class GeneSignatureFileSchema {
 	boolean supported
 	
 	static mapping = {
+        datasource 'postgresql'
 		table 'SEARCH_GENE_SIG_FILE_SCHEMA'
 		version false
 		cache usage: 'read-only'

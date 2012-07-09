@@ -34,6 +34,7 @@ class Literature {
 	static hasMany = [diseases:Disease, compounds:Compound, markers:BioMarker, files:ContentReference]
 	static belongsTo = [Disease, Compound, BioMarker, ContentReference]		
 	static mapping = {
+        datasource 'postgresql'
 		table 'BIO_DATA_LITERATURE'
 		tablePerHierarchy false
 		version false

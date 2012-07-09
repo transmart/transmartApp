@@ -103,6 +103,7 @@ class LiteratureAlterationData extends Literature {
 	String epigeneticType
 	static hasMany = [assocMoleculeDetails:LiteratureAssocMoleculeDetailsData]
 	static mapping = {
+        datasource 'postgresql'
 		table 'BIO_LIT_ALT_DATA'
 		version false
 		id column:'BIO_LIT_ALT_DATA_ID'

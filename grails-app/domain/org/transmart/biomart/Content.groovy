@@ -40,6 +40,7 @@ def getLocationType() {
 }
 
 static mapping = {
+    datasource 'postgresql'
  table 'BIO_CONTENT'
  version false
  cache usage:'read-only'

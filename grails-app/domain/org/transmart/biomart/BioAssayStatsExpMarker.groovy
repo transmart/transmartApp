@@ -26,18 +26,12 @@ package org.transmart.biomart
 import org.transmart.biomart.BioMarker;
 import org.transmart.biomart.Experiment;
 
-
-
-/**
- * @author JLiu
- *
- */
 public class BioAssayStatsExpMarker{
-
 	Experiment experiment
 	BioMarker marker
 	Long id
 	static mapping = {
+        datasource 'postgresql'
 		 table 'BIO_STATS_EXP_MARKER'
 		 version false
 		 columns {

@@ -54,6 +54,7 @@ class BioAssayAnalysisData implements IExcelProfile {
 		static belongsTo=[BioMarker]
 
 	static mapping = {
+        datasource 'postgresql'
 	 table 'BIO_ASSAY_ANALYSIS_DATA'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
