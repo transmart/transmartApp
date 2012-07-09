@@ -40,6 +40,7 @@ class BioAssayData {
 		static hasMany=[diseases:Disease, compounds:Compound, markers:BioMarker]
 
  static mapping = {
+     datasource 'postgresql'
 	 table 'BIO_ASSAY_DATA'
 	 version false
 	 id column:'BIO_ASSAY_DATA_ID'

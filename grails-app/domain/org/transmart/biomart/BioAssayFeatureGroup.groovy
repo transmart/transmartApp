@@ -31,6 +31,7 @@ class BioAssayFeatureGroup {
 
 
  static mapping = {
+     datasource 'postgresql'
 	 table 'BIO_ASSAY_FEATURE_GROUP'
 	 version false
 	 cache usage:'read-only'

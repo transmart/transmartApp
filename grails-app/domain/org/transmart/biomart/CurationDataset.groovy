@@ -27,6 +27,7 @@ class CurationDataset {
 		Long id
 		Long bioAnalysisPlatformId
  static mapping = {
+     datasource 'postgresql'
 	 table 'BIO_CURATION_DATASET'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']

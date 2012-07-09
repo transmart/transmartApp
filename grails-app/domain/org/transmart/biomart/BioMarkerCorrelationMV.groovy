@@ -26,14 +26,15 @@ class BioMarkerCorrelationMV {
 		Long id
 		String correlType
 		static mapping = {
-	 table 'BIO_MARKER_CORREL_MV'
-	 version false
-	 columns {
-		id column:'MV_ID'
-		bioMarkerId column:'BIO_MARKER_ID'
-		assoBioMarkerId column:'ASSO_BIO_MARKER_ID'
-		correlType column:'CORREL_TYPE'
-		}
-	}
+            datasource 'postgresql'
+            table 'BIO_MARKER_CORREL_MV'  
+            version false
+            columns {
+                id column:'MV_ID'
+                bioMarkerId column:'BIO_MARKER_ID'
+                assoBioMarkerId column:'ASSO_BIO_MARKER_ID'
+                correlType column:'CORREL_TYPE'
+            }
+        }
 
 }

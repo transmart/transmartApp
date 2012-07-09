@@ -27,6 +27,7 @@ class ConceptCode {
 		String codeDescription
 		String codeTypeName
  static mapping = {
+     datasource 'postgresql'
 	 table 'BIO_CONCEPT_CODE'
 	 cache true
 	 version false

@@ -27,6 +27,7 @@ class BioDataExternalCode {
 		String codeType
 		String bioDataType
  static mapping = {
+     datasource 'postgresql'
 	 table 'BIO_DATA_EXT_CODE'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']

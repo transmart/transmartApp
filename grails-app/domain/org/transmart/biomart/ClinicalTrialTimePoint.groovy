@@ -27,6 +27,7 @@ class ClinicalTrialTimePoint {
 		Date endDate
 		ClinicalTrial clinicalTrial
  static mapping = {
+     datasource 'postgresql'
 	 table 'BIO_CLINICAL_TRIAL_TIME_POINT'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']

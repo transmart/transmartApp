@@ -27,6 +27,7 @@ class PatientEventAttribute {
 		Long bioPatientAttributeId
 		Long bioPatientEventId
  static mapping = {
+     datasource 'postgresql'
 	 table 'BIO_PATIENT_EVENT_ATTRIBUTE'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_PATIENT_EVENT_ATTRIBUTE_ID']

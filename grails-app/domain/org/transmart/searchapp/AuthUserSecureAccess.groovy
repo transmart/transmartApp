@@ -31,7 +31,6 @@ class AuthUserSecureAccess {
 		datasource 'postgresql'
 		table 'SEARCH_AUTH_USER_SEC_ACCESS_V'
 		version false
-		// id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
 		columns {
 			id column:'SEARCH_AUTH_USER_SEC_ACCESS_ID'
 			authUser column:'SEARCH_AUTH_USER_ID'

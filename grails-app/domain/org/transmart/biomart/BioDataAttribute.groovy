@@ -26,6 +26,7 @@ class BioDataAttribute {
 		String propertyUnit
 		Long bioDataId
  static mapping = {
+     datasource 'postgresql'
 	 table 'BIO_DATA_ATTRIBUTE'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']

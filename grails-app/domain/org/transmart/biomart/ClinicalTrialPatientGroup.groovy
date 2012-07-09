@@ -27,6 +27,7 @@ class ClinicalTrialPatientGroup {
 		Long numberOfPatients
 		String patientGroupTypeCode
  static mapping = {
+     datasource 'postgresql'
 	 table 'BIO_CLINICAL_TRIAL_PT_GROUP'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']

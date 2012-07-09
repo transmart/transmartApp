@@ -36,8 +36,6 @@ import com.recomdata.util.DomainObjectExcelHelper
 
 /**
  * Controller class for gene signature functionality
- * @author $Author: jliu $
- * @version $Revision: 11258 $
  */
 class GeneSignatureController {
 
@@ -764,7 +762,9 @@ class GeneSignatureController {
 				break;
 
 			case 3:
-				if(params.multipleTestingCorrection==null) params.multipleTestingCorrection="";
+				if (params.multipleTestingCorrection==null) {
+                    params.multipleTestingCorrection = false
+				}
 				break;
 		}
 

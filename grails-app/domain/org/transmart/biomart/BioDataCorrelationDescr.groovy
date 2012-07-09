@@ -28,6 +28,7 @@ class BioDataCorrelationDescr {
 		String source
 		String sourceCode
  static mapping = {
+     datasource 'postgresql'
 	 table 'BIO_DATA_CORREL_DESCR'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']

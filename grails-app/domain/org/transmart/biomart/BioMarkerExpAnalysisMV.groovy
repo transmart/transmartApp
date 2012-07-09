@@ -28,13 +28,14 @@ class BioMarkerExpAnalysisMV {
 		Experiment experiment
 		BioAssayAnalysis analysis
 		static mapping = {
-	 table 'BIO_MARKER_EXP_ANALYSIS_MV'
-	 version false
-	 columns {
-		id column:'MV_ID'
-		marker column:'BIO_MARKER_ID'		
-		analysis column:'BIO_ASSAY_ANALYSIS_ID'
-		experiment column:'BIO_EXPERIMENT_ID'
-		}
-	}
+            datasource 'postgresql'
+            table 'BIO_MARKER_EXP_ANALYSIS_MV'
+            version false
+            columns {
+                id column:'MV_ID'
+                marker column:'BIO_MARKER_ID'		
+                analysis column:'BIO_ASSAY_ANALYSIS_ID'
+                experiment column:'BIO_EXPERIMENT_ID'
+            }
+        }
 }

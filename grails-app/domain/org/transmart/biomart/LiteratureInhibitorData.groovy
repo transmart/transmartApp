@@ -63,6 +63,7 @@ class LiteratureInhibitorData extends Literature {
 	String effectSd
 	String effectUnit
 	static mapping = {
+        datasource 'postgresql'
 		table 'BIO_LIT_INH_DATA'
 		version false
 		id column:'BIO_LIT_INH_DATA_ID'
