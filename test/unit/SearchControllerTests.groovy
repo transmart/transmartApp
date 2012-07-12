@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 class SearchControllerTests extends GroovyTestCase {
 

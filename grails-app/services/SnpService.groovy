@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 import i2b2.GeneWithSnp
 import i2b2.SnpDataByProbe

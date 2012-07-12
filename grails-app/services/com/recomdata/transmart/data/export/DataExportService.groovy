@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 package com.recomdata.transmart.data.export
 
@@ -72,7 +72,7 @@ class DataExportService {
 			if (null != selectedFilesList && !selectedFilesList.isEmpty()) {
 				//Prepare Study dir
 				def List studyList = null
-				if (null != resultInstanceIdMap[subset]) {
+				if (null != resultInstanceIdMap[subset] && !resultInstanceIdMap[subset].isEmpty()) {
 					studyList = i2b2ExportHelperService.findStudyAccessions([resultInstanceIdMap[subset]])
 					if (!studyList.isEmpty()) {
 						study = studyList.get(0)
@@ -86,7 +86,7 @@ class DataExportService {
 				boolean pivotData = new Boolean(true)
 				if(pivotDataValueDef==false) pivotData = new Boolean(false)
 				boolean writeClinicalData = false
-				if(null != resultInstanceIdMap[subset])
+				if(null != resultInstanceIdMap[subset] && !resultInstanceIdMap[subset].isEmpty())
 				{
 					// Construct a list of the URL objects we're running, submitted to the pool
 					selectedFilesList.each() { selectedFile ->
@@ -117,7 +117,18 @@ class DataExportService {
 								def tissueType	= jobDataMap.get("gextissue")
 								def gplString   = jobDataMap.get("gexgpl")
 								
-								gplIds 			= gplString.tokenize(",")
+								if(tissueType == ",") tissueType = ""
+								if(sampleType == ",") sampleType = ""
+								if(timepoint == ",") timepoint = ""
+								
+								if(gplIds != null)
+								{
+									gplIds 			= gplString.tokenize(",")
+								}
+								else
+								{
+									gplIds = []
+								}
 								
 								//adding String to a List to make it compatible to the type expected
 								//if gexgpl contains multiple gpl(s) as single string we need to convert that to a list 
@@ -177,19 +188,41 @@ class DataExportService {
 				}
 				
 				if (writeClinicalData) {
+					
+					//Grab the item from the data map that tells us whether we need the concept contexts.
+					Boolean includeConceptContext = jobDataMap.get("includeContexts",false);
+					
 					//This is a list of concept codes that we use to filter the result instance id results.
 					String[] conceptCodeList = jobDataMap.get("concept_cds");
+
+					//This is list of concept codes that are parents to some child concepts. We need to expand these out in the service call.
+					List parentConceptCodeList = new ArrayList()
+					
+					if(jobDataMap.get("parentNodeList",null) != null)
+					{
+						//This variable tells us which variable actually holds the parent concept code.
+						String conceptVariable = jobDataMap.get("parentNodeList")
+						
+						//Get the actual concept value from the map.
+						parentConceptCodeList.add(jobDataMap.get(conceptVariable))
+					}
+					else
+					{
+						parentConceptCodeList = []
+					}
+										
 					//Make this blank instead of null if we don't find it.
 					if(conceptCodeList == null)	conceptCodeList = []
-					
+
 					//Set the flag that tells us whether or not to exclude the high level concepts. Should this logic even be in the DAO?
 					boolean filterHighLevelConcepts = false
+					
 					if(jobDataMap.get("analysis") == "DataExport") filterHighLevelConcepts = true
 					def platformsList = subsetSelectedPlatformsByFiles?.get(subset)?.get("MRNA.TXT")
 					//Reason for moving here: We'll get the map of SNP files from SnpDao to be output into Clinical file
 					def retVal = clinicalDataService.getData(studyList, studyDir, "clinical.i2b2trans", jobDataMap.get("jobName"), 
 						resultInstanceIdMap[subset], conceptCodeList, selectedFilesList, pivotData, filterHighLevelConcepts, 
-						snpFilesMap, subset, filesDoneMap, platformsList)
+						snpFilesMap, subset, filesDoneMap, platformsList, parentConceptCodeList as String[], includeConceptContext)
 
 					if(jobDataMap.get("analysis") != "DataExport") {
 						//if i2b2Dao was not able to find data for any of the studies associated with the result instance ids, throw an exception.

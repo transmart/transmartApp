@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 /**
  * $Id: Experiment.groovy 10303 2011-11-01 03:27:41Z jliu $
@@ -133,9 +133,16 @@ class Experiment implements IExcelProfile {
 	/**
 	 * Get values to Export to Excel
 	 */
-	public List getValues() {	    
-		return [accession, type, title, description, design, status, overallDesign, startDate, completionDate, primaryInvestigator, getCompoundNames(), getDiseaseNames()]
-	}
+	public List getValues() {	
+		
+		return [accession, type, title, description, design, status, overallDesign, startDate, completionDate, primaryInvestigator,  getCompoundNames(), getDiseaseNames()]
+		}
+	
+	public List getExpValues() {
+		
+		return [accession, type, title, description, design, status, overallDesign, startDate, completionDate, primaryInvestigator,  getCompoundNames(), getDiseaseNames()]
+		}
+	
 	
 	def getUniqueId(){
 		if(uniqueIds!=null && !uniqueIds.isEmpty())
@@ -155,7 +162,7 @@ class Experiment implements IExcelProfile {
 	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("id: ").append(getExpId()).append("; type: ").append(type).append("; title: ").append(title).append("; description: ").append(description);
+		sb.append("id: ").append(getExpId()).append("; type: ").append(type).append("; title: ").append(title).append("; description: ").append(description).append("; accesion: ").append(accession);
 		return sb.toString();		
 	}
 }

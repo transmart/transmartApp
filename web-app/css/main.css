@@ -1066,9 +1066,10 @@ table.jobstatus {
 }
 
 .utilities-div {
-	position:fixed;
-	width:80px;
-	top:0;
-	right:0;
-	z-index:100;
+    position:absolute;
+    width:100px;
+    top:0;
+    right:0;
+    height:24px;
+    z-index:100;
 }

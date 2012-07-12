@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 /**
 * $Id: AuthUserDetailsService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -70,30 +70,5 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 
 	UserDetails loadUserByUsername(String username, boolean loadRoles) throws UsernameNotFoundException {
 		return loadUserByUsername(username)
-	}
-	
-	/**
-	 * This is used by the Identity Vault authentication process
-	 * 
-	 * @param wwid - The ID from the Identity Vault
-	 * 
-	 * @return the valid UserDetails for the given WWID or a WWIDNotFoundException is thrown
-	 */
-	UserDetails loadUserByWWID(String wwid) throws WWIDNotFoundException	{
-		log.info "Attempting to find user for WWID: $wwid"
-		log.debug "Use withTransaction to avoid lazy loading initialization error when accessing the authorities collection"
-		Class<?> User = application.getDomainClass(conf.userLookup.userDomainClassName).clazz
-		User.withTransaction { status ->
-			def user = User.findById(wwid)
-			if (!user) {
-				log.warn "User not found for WWID: $wwid"
-				throw new WWIDNotFoundException('User not found', wwid)
-			}
-			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
-			
-			return new AuthUserDetails(user.username, user.passwd, user.enabled,
-				!user.accountExpired, !user.passwordExpired, !user.accountLocked,
-				authorities ?: NO_ROLES, user.id, user.userRealName)
-		}		
 	}
 }

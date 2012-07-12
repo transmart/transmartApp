@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 import org.springframework.web.multipart.MultipartFile;
 import search.GeneSignatureItem;
@@ -535,10 +535,10 @@ public class GeneSignatureService {
 		def marker = bio.BioAssayFeatureGroup.executeQuery(qBuf).asList();
 		
 		// if not existed, add it and then retrieve it
-		if(!markers) {
+		if(!marker) {
 			def probe = new BioAssayFeatureGroup(name: probeset, type: "PROBESET")
 			def p = probe.save(flush: true)
-			markers = BioAssayFeatureGroup.executeQuery(qBuf);
+			marker = BioAssayFeatureGroup.executeQuery(qBuf);
 		}
 		
 		return marker;

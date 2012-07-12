@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
  /**
  * $Id: GeneSignature.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -411,14 +411,37 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		values.add(["P-value Cutoff:",pValueCutoffConceptCode?.codeName])
 		values.add(["Fold-change metric:",foldChgMetricConceptCode?.codeName])
 		values.add(["Original upload file:",uploadFile])
-
+		
 		def metaSheet = new ExcelSheet("Gene Signature Info", headers, values);
-
-		// items sheet
-		headers=["Gene Symbol","Fold Change Metric"]
+		
 		values=[]
-
-		geneSigItems.each { values.add([it.bioMarker.name, it.foldChgMetric]) }
+		
+		//This is a quick fix. These booleans will tell us whether a gene signature was entered with probes or genes. In the future we should add some indicator field to the "gene" list to say what it is made of. 
+		Boolean hasGenes = false;
+		Boolean hasProbes = false;
+		
+		geneSigItems.each 
+		{
+			if(it.bioMarker != null)
+			{
+				hasGenes = true;
+				values.add([it.bioMarker.name, it.foldChgMetric])
+			}
+			else if(it.probeset != null)
+			{
+				hasProbes = true;
+				values.add([it.probeset.name, it.foldChgMetric])
+			}
+		}
+		
+		String itemName = ""
+		
+		if(hasGenes) itemName = "Gene Symbol"
+		if(hasProbes) itemName = "Probe ID"
+		
+		// items sheet
+		headers=[itemName,"Fold Change Metric"]
+				
 		def itemsSheet = new ExcelSheet("Gene Signature Items", headers, values);
 
 		// return Excel bytes

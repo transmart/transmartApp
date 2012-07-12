@@ -21,22 +21,21 @@ function newDocContext(strTitle, strData)
     document.write(elem);
 }
 
-
 function jSearch(doc, strQuery)
 {
     display(doc, jExecQuery(doc, strQuery));
 }
 
 function Clause(str){
-    var exactPhrase = (str.indexOf(d2hQuotePrefix) == 0 && quotes[str] != null) || (str.indexOf(searchNotInSpaces + d2hQuotePrefix) == 0 && quotes[str.substring(searchNotInSpaces.length, str.length)] != null);
+    var exactPhrase = (str.indexOf(d2hQuotePrefix) == 0 && quotes[str] != null) || (str.toLowerCase().indexOf((searchNotInSpaces + d2hQuotePrefix).toLowerCase()) == 0 && quotes[str.substring(searchNotInSpaces.length, str.length)] != null);
     var parts;
     var foundNot = false;
     if (!exactPhrase)
     {        
-        parts = str.split(new RegExp(searchOrInSpaces.replace(/\|/gi,"\\|"),"gi"));
+        parts = str.split(new RegExp(searchOrInSpaces.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'), "gi"));
         if (parts.length == 1)
         {
-            parts = str.split(new RegExp(searchAndInSpaces.replace(/\|/gi,"\\|"),"gi"));            
+            parts = str.split(new RegExp(searchAndInSpaces.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'), "gi"));
             this.type = 2;
         }
         else
@@ -97,7 +96,7 @@ Clause.prototype={
             }
             else
                 this.docs = searchInIndex(this.value, this.type != 0);
-            if (this.type == 0 && !this.docs && !isEasternLanguage(this.value))
+            if (!this.docs && !isEasternLanguage(this.value)) 
             {
                 var newString = addSpace(this.value, getWords(), 0, false);
                 if (newString != this.value)
@@ -105,16 +104,18 @@ Clause.prototype={
                     var words = newString.split(" ");
                     for (var i = 0; i < words.length; i++)
                     {
-                        if (getWordIndex(g_sStopWords, words[i]) != -1)
+                        if (this.type == 0 && getWordIndex(g_sStopWords, words[i]) != -1)
                             continue;
                         var documents = searchInIndex(words[i], true);
-                        if (!documents)
+                        if (!documents) 
+                        {
+                            this.docs = null;
                             break;
+                        }
                         this.docs = !this.docs ? documents : intersect(this.docs, documents, true);
                     }
                 }
             }
-                
         }
         else
         {
@@ -128,6 +129,7 @@ Clause.prototype={
                         this.docs = !this.docs ? this.children[i].docs : intersect(this.docs, this.children[i].docs, this.type == 0);
                     else
                         this.docs = !this.docs ? this.children[i].docs : mergeDocs(this.docs, this.children[i].docs);
+
                 }
                 else if (this.type != 1 || i == 0)
                     this.docs = null;

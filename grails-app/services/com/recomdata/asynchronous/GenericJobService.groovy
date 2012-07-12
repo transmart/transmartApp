@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 package com.recomdata.asynchronous
 
@@ -24,14 +24,8 @@ import com.recomdata.transmart.data.export.exception.DataNotFoundException;
 
 import java.io.File;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.util.HashMap;
-import java.util.Map;
 
-import com.recomdata.gex.GexDao
-import com.recomdata.i2b2.I2b2DAO;
-import com.recomdata.snp.SnpData;
 import com.recomdata.transmart.data.export.util.FTPUtil;
-import com.recomdata.transmart.data.export.util.SftpClient;
 import com.recomdata.transmart.data.export.util.ZipUtil
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -45,7 +39,6 @@ import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.*;
 import org.rosuda.Rserve.*;
 
-import com.recomdata.dataexport.dao.StudyDao;
 
 /**
  * This class will encompass the job scheduled by Quartz. When the execute method is called we will travel down a list of predefined methods to prep data
@@ -62,6 +55,7 @@ class GenericJobService implements Job {
 	def i2b2ExportHelperService = ctx.i2b2ExportHelperService
 	def snpDataService = ctx.snpDataService
 	def dataExportService = ctx.dataExportService
+	def asyncJobService = ctx.asyncJobService
 	
 	def static final String tempFolderDirectory = CH.config.com.recomdata.plugins.tempFolderDirectory
 	
@@ -160,6 +154,10 @@ class GenericJobService implements Job {
 			}
 			jobResultsService[jobName]["Exception"] = errorMsg
 			return
+		} finally {
+			if (jobResultsService[jobName]["Exception"] != null) {
+				asyncJobService.updateStatus(jobName, "Error", null, null, jobResultsService[jobName]["Exception"])
+			}
 		}
 		
 		//Marking the status as complete makes the 
@@ -278,6 +276,7 @@ class GenericJobService implements Job {
 					//Add the result file link to the job.
 					jobResultsService[jobName]['resultType'] = "DataExport"
 					jobResultsService[jobName]["ViewerURL"] = finalOutputFile
+					asyncJobService.updateStatus(jobName, "Rendering Output", finalOutputFile, null, null)
 					break;
 				case "GSP":
 					//Gather the jobs name.
@@ -394,6 +393,7 @@ class GenericJobService implements Job {
    def updateStatus(jobName, status)	{
 	   jobResultsService[jobName]["Status"] = status
 	   log.debug(status)
+	   asyncJobService.updateStatus(jobName, status)
    }
    
    def boolean isJobCancelled(jobName) {

@@ -1,8 +1,12 @@
+target
+transmartApp.log
+application.properties
+System.out
 .settings
 .classpath
 .project
+null.log
+transmart.log
 target-eclipse
 .idea
 *.iml
-target
-*.log

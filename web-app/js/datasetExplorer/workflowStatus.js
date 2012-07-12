@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 var thisJobName = null;
 function setJobNameFromRun(jobNameFromRun) {
@@ -44,12 +44,13 @@ function createWorkflowStatus(parentElem, noTitleBar) {
 	var maskDiv = $j(document.createElement('div')).attr({id : 'mask'});
 	maskDiv.css('z-index', 10000);
 	$j('#dataAssociationBody').append(maskDiv);
+
 	
 	//Add new modal-dialog
 	var progressBarDiv = $j(document.createElement('div')).attr({id : 'progress-bar'});
 	var progressStatusSpan = $j(document.createElement('span')).attr({id : 'progress-status'});
 	progressStatusSpan.html('Running analysis');
-	var progressStatusImg = $j(document.createElement('img')).attr({id : 'progress-img', src : '../images/spinner.gif'});
+	var progressStatusImg = $j(document.createElement('img')).attr({id : 'progress-img'});
 	var progressTextDiv = $j(document.createElement('div')).attr({id : 'progress-text'});
 	progressTextDiv.append(progressStatusImg);
 	progressTextDiv.append(progressStatusSpan);
@@ -59,6 +60,7 @@ function createWorkflowStatus(parentElem, noTitleBar) {
 	modalDialogDiv.append(progressTextDiv);
 	
 	parentElem.append(modalDialogDiv);
+	$j("#progress-img").attr('src','../images/spinner.gif');
 	
 	$j("#mask").fadeTo(500, 0.25);
 	

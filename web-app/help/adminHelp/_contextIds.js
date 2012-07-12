@@ -6,29 +6,39 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1027"]="Documents/analysisview.htm";
 
+ g_d2hContextIds["1310"]="Documents/boxplotwithanova.htm";
+
  g_d2hContextIds["1067"]="Documents/branchesandleavesofthenavigationtree.htm";
 
  g_d2hContextIds["1016"]="Documents/browseforafiltername.htm";
 
  g_d2hContextIds["1018"]="Documents/buildingasearchstring.htm";
 
+ g_d2hContextIds["1268"]="Documents/clinicaltrialstab.htm";
+
  g_d2hContextIds["1079"]="Documents/copyingindividualchartsintheresultsanalysisview.htm";
+
+ g_d2hContextIds["1290"]="Documents/correlationanalysis.htm";
 
  g_d2hContextIds["1100"]="Documents/creatingagenesignature.htm";
 
  g_d2hContextIds["1090"]="Documents/databinning.htm";
 
+ g_d2hContextIds["1091"]="Documents/databinningusingboxp.htm";
+
  g_d2hContextIds["1092"]="Documents/databinningusingsurvivalanalysis.htm";
 
  g_d2hContextIds["1109"]="Documents/datainputstotheteaalgorithm.htm";
 
- g_d2hContextIds["1007"]="Documents/datasetexplorer.htm";
-
  g_d2hContextIds["1258"]="Documents/datasetexplorer1.htm";
+
+ g_d2hContextIds["1007"]="Documents/datasetexplorer.htm";
 
  g_d2hContextIds["1014"]="Documents/definingasearchfilter.htm";
 
  g_d2hContextIds["1076"]="Documents/definingpointsofcomparison.htm";
+
+ g_d2hContextIds["1270"]="Documents/documentstab.htm";
 
  g_d2hContextIds["1097"]="Documents/downloadrawrdata.htm";
 
@@ -42,15 +52,13 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1004"]="Documents/featureoverview.htm";
 
- g_d2hContextIds["1146"]="Documents/step2creatingthegenesignature.htm#genesigpg2.htm";
-
  g_d2hContextIds["1164"]="Documents/step2creatingthegenesignature.htm#genesigpg3.htm";
+
+ g_d2hContextIds["1275"]="Documents/step2creatingthegenesignature.htm#genesigpg.htm";
 
  g_d2hContextIds["1008"]="Documents/genesignaturewizard.htm";
 
  g_d2hContextIds["1259"]="Documents/genesignaturesandgenelists.htm";
-
- g_d2hContextIds["1501"]="Documents/genegotab.htm";
 
  g_d2hContextIds["1509"]="Documents/generatingadvancedanalyses.htm";
 
@@ -60,7 +68,11 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1074"]="Documents/generatingsummarystatistics.htm";
 
- g_d2hContextIds["1003"]="Documents/gettingstartedwithtransmart.htm";
+ g_d2hContextIds["1003"]="Documents/gettingstartedwithtr.htm";
+
+ g_d2hContextIds["1293"]="Documents/glossaryofterms1.htm";
+
+ g_d2hContextIds["1292"]="Documents/glossaryofterms.htm";
 
  g_d2hContextIds["1506"]="Documents/hierarchicalclustering.htm";
 
@@ -73,6 +85,10 @@ var g_d2hContextIds = new Array();
  g_d2hContextIds["1072"]="Documents/joiningmultiplecriteriaforasubsetdefinition.htm";
 
  g_d2hContextIds["1507"]="Documents/kmeansclustering.htm";
+
+ g_d2hContextIds["1291"]="Documents/linegraphanalysis.htm";
+
+ g_d2hContextIds["1269"]="Documents/literaturetab.htm";
 
  g_d2hContextIds["1442"]="Documents/locatethesourceofthesamplesindatasetexplorer.htm";
 
@@ -100,6 +116,8 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1514"]="Documents/othertasks.htm";
 
+ g_d2hContextIds["1276"]="Documents/othertasks1.htm";
+
  g_d2hContextIds["1061"]="Documents/overviewoftheui.htm";
 
  g_d2hContextIds["1105"]="Documents/performingactionsonotheruserssignatures.htm";
@@ -124,6 +142,8 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1299"]="Documents/rulesforloadingomicsoftdata.htm";
 
+ g_d2hContextIds["1277"]="Documents/rulesforloadingomics.htm";
+
  g_d2hContextIds["1425"]="Documents/sampleexplorer.htm";
 
  g_d2hContextIds["1437"]="Documents/sampleexplorer1.htm";
@@ -145,8 +165,6 @@ var g_d2hContextIds = new Array();
  g_d2hContextIds["1005"]="Documents/searchtool.htm";
 
  g_d2hContextIds["1257"]="Documents/searchtool1.htm";
-
- g_d2hContextIds["1502"]="Documents/securitywarning.htm";
 
  g_d2hContextIds["1438"]="Documents/selectaprimarysearchfilter.htm";
 
@@ -174,6 +192,8 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1088"]="Documents/survivalanalysis.htm";
 
+ g_d2hContextIds["1272"]="Documents/tablewithfishertesta.htm";
+
  g_d2hContextIds["1054"]="Documents/teaanalyses.htm";
 
  g_d2hContextIds["1056"]="Documents/teaindicatorsappliedtoananalysis.htm";
@@ -192,7 +212,7 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1062"]="Documents/usingdatasetexplorer.htm";
 
- g_d2hContextIds["1177"]="Documents/usingtransmarttoselectgenes.htm";
+ g_d2hContextIds["1274"]="Documents/usingtransmarttosele.htm";
 
  g_d2hContextIds["1439"]="Documents/viewandrefinesamplesearchresults.htm";
 

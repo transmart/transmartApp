@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-
+  
 
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
@@ -38,11 +38,4 @@ beans = {
 	}
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 	redirectStrategy(DefaultRedirectStrategy)
-	identityVaultAuthenticationFilter(com.recomdata.security.IdentityVaultAuthenticationFilter)	{
-		authenticationManager = ref('authenticationManager')
-		springSecurityService = ref('springSecurityService')
-		userDetailsService = ref('userDetailsService')
-		filterProcessesUrl = '/saml/sso'
-		redirectStrategy = ref('redirectStrategy')	
-	}
 }

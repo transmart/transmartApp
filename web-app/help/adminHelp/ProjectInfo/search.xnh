@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <root>
     <topics>
-        <topic url="Documents/gettingstartedwithtransmart.htm" window="right" />
+        <topic url="Documents/gettingstartedwithtr.htm" window="right" />
         <topic url="Documents/featureoverview.htm" window="right" />
         <topic url="Documents/searchtool.htm" window="right" />
         <topic url="Documents/searchresults.htm" window="right" />
@@ -23,6 +23,7 @@
         <topic url="Documents/savingasearchfilterorsearchstring.htm" window="right" />
         <topic url="Documents/editinganddeletingsavedfilters.htm" window="right" />
         <topic url="Documents/workingwithsearchresults.htm" window="right" />
+        <topic url="Documents/clinicaltrialstab.htm" window="right" />
         <topic url="Documents/mrnaanalysistab.htm" window="right" />
         <topic url="Documents/showfilters.htm" window="right" />
         <topic url="Documents/analysisview.htm" window="right" />
@@ -31,8 +32,8 @@
         <topic url="Documents/exportinformationaboutaparticularanalysis.htm" window="right" />
         <topic url="Documents/mousegenehomologyinsearchresults.htm" window="right" />
         <topic url="Documents/additionalresources.htm" window="right" />
-        <topic url="Documents/genegotab.htm" window="right" />
-        <topic url="Documents/securitywarning.htm" window="right" />
+        <topic url="Documents/literaturetab.htm" window="right" />
+        <topic url="Documents/documentstab.htm" window="right" />
         <topic url="Documents/teaanalyses.htm" window="right" />
         <topic url="Documents/teaindicatorsappliedtoindividualbiomarkers.htm" window="right" />
         <topic url="Documents/teaindicatorsappliedtoananalysis.htm" window="right" />
@@ -71,10 +72,15 @@
         <topic url="Documents/kmeansclustering.htm" window="right" />
         <topic url="Documents/markerselection.htm" window="right" />
         <topic url="Documents/generatingadvancedanalyses.htm" window="right" />
+        <topic url="Documents/boxplotwithanova.htm" window="right" />
+        <topic url="Documents/correlationanalysis.htm" window="right" />
+        <topic url="Documents/linegraphanalysis.htm" window="right" />
         <topic url="Documents/principalcomponentanalysis.htm" window="right" />
         <topic url="Documents/scatterplotwithlinearregression.htm" window="right" />
         <topic url="Documents/survivalanalysis.htm" window="right" />
+        <topic url="Documents/tablewithfishertesta.htm" window="right" />
         <topic url="Documents/databinning.htm" window="right" />
+        <topic url="Documents/databinningusingboxp.htm" window="right" />
         <topic url="Documents/databinningusingsurvivalanalysis.htm" window="right" />
         <topic url="Documents/highdimensionaldata.htm" window="right" />
         <topic url="Documents/otherfeatures.htm" window="right" />
@@ -91,17 +97,18 @@
         <topic url="Documents/genesignaturesandgenelists.htm" window="right" />
         <topic url="Documents/creatingagenesignature.htm" window="right" />
         <topic url="Documents/step1addingthegenestoatextfile.htm" window="right" />
-        <topic url="Documents/usingtransmarttoselectgenes.htm" window="right" />
+        <topic url="Documents/usingtransmarttosele.htm" window="right" />
         <topic url="Documents/step2creatingthegenesignature.htm" window="right" />
         <topic url="Documents/makinganewgenesignaturepublic.htm" window="right" />
         <topic url="Documents/performingactionsonyourgenesignatures.htm" window="right" />
         <topic url="Documents/performingactionsonotheruserssignatures.htm" window="right" />
         <topic url="Documents/viewingagenesignaturedefinition.htm" window="right" />
-        <topic url="Documents/othertasks.htm" window="right" />
+        <topic url="Documents/othertasks1.htm" window="right" />
         <topic url="Documents/howteascoresarecalculated.htm" window="right" />
         <topic url="Documents/datainputstotheteaalgorithm.htm" window="right" />
         <topic url="Documents/operations.htm" window="right" />
-        <topic url="Documents/rulesforloadingomicsoftdata.htm" window="right" />
+        <topic url="Documents/rulesforloadingomics.htm" window="right" />
+        <topic url="Documents/glossaryofterms1.htm" window="right" />
         <topic url="Documents/readthedocumentationinpdf.htm" window="right" />
     </topics>
 </root>
