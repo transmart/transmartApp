@@ -185,8 +185,8 @@ class GeneExpressionDataService {
 	   
 	   sTables.append("""
 	   FROM de_subject_microarray_data a
-			   INNER JOIN de_mrna_annotation b ON a.probeset_id = b.probeset_id
-			   INNER JOIN de_subject_sample_mapping ssm ON ssm.assay_id = A.assay_id
+			   INNER JOIN de_subject_sample_mapping ssm ON ssm.assay_id = A.assay_id 
+			   INNER JOIN de_mrna_annotation b ON a.probeset_id = b.probeset_id and ssm.gpl_id = b.gpl_id
 			   INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = ? AND ssm.PATIENT_ID = sc.patient_num
 	   		   INNER JOIN PATIENT_DIMENSION pd on ssm.patient_id = pd.patient_num
 	   """)
