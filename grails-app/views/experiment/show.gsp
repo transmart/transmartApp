@@ -18,7 +18,7 @@
 -->
 
 
-<%@ page import="bio.Experiment" %>
+<%@ page import="org.transmart.biomart.Experiment" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
