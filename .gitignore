@@ -1,3 +1,6 @@
+.classpath
+.project
+target-eclipse
 .idea
 *.iml
 target
