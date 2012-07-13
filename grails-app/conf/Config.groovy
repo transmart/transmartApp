@@ -130,8 +130,8 @@ com.recomdata.transmart.data.export.dataTypesMap=[
 	'MRNA':'Gene Expression Data', 
 	'SNP':'SNP Data',
 	'STUDY':'Study Metadata',
-	'ADDITIONAL':'Additional Data',
-	'GSEA':'Gene Set Enrichment Analysis (GSEA)'
+	'ADDITIONAL':'Additional Data'
+	//,'GSEA':'Gene Set Enrichment Analysis (GSEA)'
 ];
 
 // Control which gene/pathway search is used in Dataset Explorer
