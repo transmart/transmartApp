@@ -18,7 +18,7 @@
 -->
 
 
-<%@ page import="search.CustomFilter" %>
+<%@ page import="org.transmart.searchapp.CustomFilter" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
