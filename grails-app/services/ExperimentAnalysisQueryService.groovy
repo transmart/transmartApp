@@ -251,7 +251,7 @@ class ExperimentAnalysisQueryService {
 		// expand biomarkers
 		query.createGlobalFilterCriteria(gfilter, true);
 		createSubFilterCriteria(filter.expAnalysisFilter, query);
-		query.addOrderBy("abs(baad.foldChangeRatio) DESC ");
+		// query.addOrderBy("abs(baad.foldChangeRatio) DESC ");           
 		query.addOrderBy("baad.rValue DESC ");
 		query.addOrderBy("baad.rhoValue DESC ");
 
