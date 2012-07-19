@@ -13,8 +13,8 @@ public class RFunctionalityTests extends GroovyTestCase {
 	
 	def ctx = AH.application.mainContext
 	def config = ConfigurationHolder.config
-	String testingDirectory = config.com.recomdata.transmart.testing.integrationTestingBasePath
-	String testDataDirectory = config.com.recomdata.transmart.testing.integrationTestingDataPath
+	String testingDirectory = config.RModules.tempFolderDirectory
+	String testDataDirectory = ""
 	
 	def pluginService
 	
@@ -23,6 +23,12 @@ public class RFunctionalityTests extends GroovyTestCase {
 	 */
 	void testRConnection()
 	{
+		
+		//We need to get the path to the test data within the grails application. This is a hacky way to get it. The real way is buried deep in confusing documentation somewhere.
+		testDataDirectory = new File('.').absolutePath + "\\testData\\"
+		
+		println("Test Data Directory" + testDataDirectory)
+		
 		//**********************************
 		//Test the actual connection to the R server.
 		//Pull the configuration for the R Server IP and port.
