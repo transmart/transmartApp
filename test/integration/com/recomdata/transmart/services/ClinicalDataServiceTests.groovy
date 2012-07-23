@@ -3,10 +3,16 @@ package com.recomdata.transmart.services
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
 public class ClinicalDataServiceTests extends GroovyTestCase {
-	
-	def ClinicalDataService
+
+	def ctx = AH.application.mainContext
+	def config = ConfigurationHolder.config
+	String testingDirectory = config.RModules.tempFolderDirectory
+		
+	def postgresClinicalDataService
 	
 	/**
 	 * This method will test the Clinical Data Export functionality for a specific patient list. 
@@ -28,28 +34,34 @@ public class ClinicalDataServiceTests extends GroovyTestCase {
 		
 		//Create the file object to pass into the service. This is the directory where we write the output file.
 		def File studyDir = null
-		studyDir = new File("c:\\temp\\", "integrationTesting")
+		studyDir = new File(testingDirectory, "integrationTesting")
 		studyDir.mkdir()
 		
-		//Run the command to create the clinical data export file.
-		ClinicalDataService.getData(studyList,
-									studyDir,
-									"clinicalIntegrationText.txt",
-									"integrationTest",
-									"18886",
-									conceptCodeList,
-									["CLINICAL.TXT"],
-									false,
-									false,
-									[:],
-									"1",
-									[:],
-									[],
-									[] as String[],
-									false)
+		try
+		{
+			//Run the command to create the clinical data export file.
+			postgresClinicalDataService.getData(studyList,
+										studyDir,
+										"clinicalIntegrationText.txt",
+										"integrationTest",
+										"18886",
+										conceptCodeList,
+										["CLINICAL.TXT"],
+										false,
+										false,
+										[:],
+										"1",
+										[:],
+										[],
+										[] as String[],
+										false)
+		} catch (Exception e) {
+			println(e.message)
+			assert false;
+		}
 		
 		//This is the file that should be created when we call the ClinicalDataService.
-		File dataFile = new File("c:\\temp\\integrationTesting\\Clinical\\clinicalIntegrationText.txt")
+		File dataFile = new File(testingDirectory + "integrationTesting\\Clinical\\clinicalIntegrationText.txt")
 
 		//Check for the existence of the exported data file.
 		assert dataFile.exists()
