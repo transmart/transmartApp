@@ -77,7 +77,7 @@ class PostgresClinicalDataService {
 			sqlQuery <<= "SELECT ofa.PATIENT_NUM, cd.CONCEPT_PATH, cd.CONCEPT_CD, cd.NAME_CHAR, "
 			sqlQuery <<= "case ofa.VALTYPE_CD "
 			sqlQuery <<= " WHEN 'T' THEN TVAL_CHAR "
-			sqlQuery <<= " WHEN 'N' THEN CAST(NVAL_NUM AS varchar2(30)) "
+			sqlQuery <<= " WHEN 'N' THEN CAST(NVAL_NUM AS VARCHAR (30)) "
 			sqlQuery <<= "END AS VALUE, ? SUBSET , pd.sourcesystem_cd "
 			
 			//If we are going to union in the codes that have parent concepts, we include the parent columns here too.
@@ -146,7 +146,7 @@ class PostgresClinicalDataService {
 			//Add the name of the subset to the parameter list.
 			parameterList.add(subset)
 			//Add the value of the result instance ID to the parameter list.
-			parameterList.add(resultInstanceId)
+			parameterList.add(resultInstanceId.toInteger())
 			//Add study to the parameter list.
 			parameterList.add(study)
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
