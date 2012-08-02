@@ -24,6 +24,9 @@ import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.DefaultRedirectStrategy
 
+import com.recomdata.transmart.data.export.ClinicalDataService;
+import com.recomdata.transmart.data.export.PostgresClinicalDataService;
+
 beans = {
 	dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder){
 		dataSource = ref('dataSource')
@@ -38,4 +41,55 @@ beans = {
 	}
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 	redirectStrategy(DefaultRedirectStrategy)
+	
+	if (isOracleConfigured())
+	{
+		log.info("Oracle configured")
+		clinicalDataService(ClinicalDataService)
+	}
+	else
+	{
+		log.info("Postgres configured")
+		clinicalDataService(PostgresClinicalDataService)
+	}
+}
+
+def isOracleConfigured()
+{
+	def locations = configurationLocations()
+
+	for (loc in locations)
+	{
+		def config = openConfig(loc)
+		if (config)
+		{
+			return config.dataSource.driverClassName ==~ /.*oracle.*/
+		}
+	}
+
+	log.error("Could not find configuration files");
+	return false;
+}
+
+def configurationLocations()
+{
+	def configLocations = ["/etc/transmart", "/usr/local/transmart"]
+	def env = System.getenv()
+	def configOverride = env['TRANSMART_CONFIG']
+	def locations
+
+	return configOverride ? [configOverride] : configLocations
+}
+
+def openConfig(String dir)
+{
+	try
+	{
+		def config = new ConfigSlurper().parse(new File("${dir}/DataSource.groovy").toURL())
+		return config
+	}
+	catch (Throwable e)
+	{
+		return null
+	}
 }

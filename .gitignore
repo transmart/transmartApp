@@ -6,4 +6,6 @@ System.out
 .classpath
 .settings
 .project
-target-eclipse
+target-eclipse/
+.svn/
+tempImages/
