@@ -39,7 +39,7 @@ import com.recomdata.export.IgvFiles;
  */
 public class GetGenePatternFile extends HttpServlet {
 	
-	public static String fileDirName = "genepattern";
+	public static String fileDirName = "data";
 	
 	public void doHead(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException,IOException {

@@ -42,7 +42,9 @@ public class IgvFiles {
 	protected String fileAccessUrl;
 	
 	protected File sampleFile;
-	protected List<File> copyNumberFileList;
+	protected List<File> dataFileList;
+	protected String genomeVersion="hg19";
+	
 	protected File sessionFile;
 	
 	public IgvFiles(String gpFileDirName, String gpFileAccessUrl) throws java.io.IOException {
@@ -54,23 +56,32 @@ public class IgvFiles {
 			tmpDir.mkdir();
 		}
 		
-		copyNumberFileList = new ArrayList<File>();
+		dataFileList = new ArrayList<File>();
 	}
 	
 	public File getSampleFile() throws java.io.IOException {	
 		if (sampleFile == null)
-			sampleFile = File.createTempFile("gp_df_", ".sample.txt", tmpDir);
+			sampleFile = File.createTempFile("igv_df_", ".sample.txt", tmpDir);
 		return this.sampleFile;
 	}
 	
 	public File createCopyNumberFile() throws java.io.IOException {
 		
-		return File.createTempFile("gp_df_", ".cn", tmpDir);
+		return File.createTempFile("igv_df_", ".cn", tmpDir);
 	}
+	
+	public File createVCFFile() throws java.io.IOException {
+		return File.createTempFile("igv_vcf_", ".cvf", tmpDir);
+	}
+	
+	public void addFile(File file){
+		dataFileList.add(file);
+	}
+	
 	
 	public File getSessionFile() throws java.io.IOException {
 		if (sessionFile == null)
-			sessionFile = File.createTempFile("gp_df_", ".xml", tmpDir);
+			sessionFile = File.createTempFile("igv_df_", ".xml", tmpDir);
 		return this.sessionFile;
 	}
 	
@@ -92,6 +103,10 @@ public class IgvFiles {
 	}
 	
 	List<File> getCopyNumberFileList() {
-		return copyNumberFileList;
+		return dataFileList;
+	}
+	
+	List<File> getDataFileList() {
+		return dataFileList;
 	}
 }

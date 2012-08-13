@@ -82,7 +82,8 @@ grails.mime.types = [ html: [
 		'text/json'
 	],
 	form: 'application/x-www-form-urlencoded',
-	multipartForm: 'multipart/form-data'
+	multipartForm: 'multipart/form-data',
+	jnlp: 'application/x-java-jnlp-file'
 ]
 // The default codec used to encode data with ${}
 grails.views.default.codec="none" // none, html, base64
@@ -153,7 +154,9 @@ com.recomdata.analysis.survival.censorFlagList = [
 	'(DURTFICS)'
 ];
 
-com.recomdata.analysis.genepattern.file.dir = "genepattern"; // Relative to the app root "web-app"
+com.recomdata.analysis.genepattern.file.dir = "data"; // Relative to the app root "web-app" - deprecated - replaced with data.file.dir
+
+com.recomdata.analysis.data.file.dir = "data"; // Relative to the app root "web-app"
 
 // Disclaimer
 StringBuilder disclaimer = new StringBuilder()
