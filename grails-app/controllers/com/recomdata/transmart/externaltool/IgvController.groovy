@@ -35,12 +35,16 @@ class IgvController {
 		def webRootDir = servletContext.getRealPath ("/")
 		
 		// get data first
-		String newIGVLink = new ApplicationTagLib().createLink(controller:'analysis', action:'getGenePatternFile', absolute:true)
-		
+		//String newIGVLink = new ApplicationTagLib().createLink(controller:'analysis', action:'getGenePatternFile', absolute:true)
+		String fileDirName = grailsApplication.config.com.recomdata.analysis.data.file.dir;
+		if(fileDirName == null)
+		fileDirName = "data";
+		String newIGVLink = new ApplicationTagLib().createLink(controller:fileDirName, , absolute:true)
+
 		IgvFiles igvFiles = new IgvFiles(getIgvFileDirName(),newIGVLink)
 
 		// testing data
-		def f = new File (webRootDir + "/files/" + "TP53_BRCA1_SNP_20_patients.vcf")
+		def f = new File (webRootDir + "/data/" + "test.vcf")
 		igvFiles.addFile(f);
 		
 		String userName = springSecurityService.getPrincipal().username;
@@ -57,7 +61,7 @@ class IgvController {
 		
 		response.setHeader("Content-Type", "application/x-java-jnlp-file")
 		
-		println(ftext)
+		//println(ftext)
 		response.outputStream<<ftext
 		
 		//redirect(url:"http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://www.broadinstitute.org/igvdata/1KG/pilot2Bams/NA12878.SLX.bam&genome=hg18&locus=chr1:64,098,103-64,098,175")
@@ -66,8 +70,8 @@ class IgvController {
 	
 	
 	protected String getIgvFileDirName() {
-		String fileDirName = grailsApplication.config.com.recomdata.analysis.data.file.dir;;
-		String webRootName = servletContext.getRealPath("/");
+		String fileDirName = grailsApplication.config.com.recomdata.analysis.data.file.dir;
+		def webRootName = servletContext.getRealPath("/");
 		if (webRootName.endsWith(File.separator) == false)
 			webRootName += File.separator;
 		return webRootName + fileDirName;

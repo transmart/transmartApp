@@ -86,6 +86,7 @@ public class IgvFiles {
 	}
 	
 	public static String getFileSecurityHash(File file, String userName) throws Exception {
+		System.out.println("datafile length:"+file.length());
 		String hashWord = userName + Long.toString(file.length());
 		MessageDigest md5 = MessageDigest.getInstance("MD5");
 		md5.reset();
@@ -100,6 +101,10 @@ public class IgvFiles {
 		// IGV openSession routine uses the extension of a file or a URL to determine the file type. Put the file name at the end of URL.
 		return fileAccessUrl  + "?user=" + userName + 
 			"&amp;hash=" + URLEncoder.encode(hashStr, "UTF-8")+ "&amp;file=" + URLEncoder.encode(file.getName(), "UTF-8");
+	}
+	
+	public String getFileUrl(File file) throws Exception{
+		return fileAccessUrl+"/"+URLEncoder.encode(file.getName(), "UTF-8");
 	}
 	
 	List<File> getCopyNumberFileList() {

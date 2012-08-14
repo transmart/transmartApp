@@ -19,7 +19,7 @@
 
 <html>
     <head>
-        <title><g:layoutTitle default="" /></title>
+        <title><g:layoutTitle default=""/></title>
 		<link rel="shortcut icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">
         <link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
