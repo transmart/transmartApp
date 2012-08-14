@@ -184,12 +184,22 @@ class DataExportService {
 								additionalDataService.downloadFiles(resultInstanceIdMap[subset], studyList, studyDir, jobDataMap.get("jobName"))
 								break;
 							case "IGV.VCF":
+							
+								def selectedGenes = jobDataMap.get("selectedGenes")
+								def chromosomes = jobDataMap.get("chroms")
+								def selectedSNPs = jobDataMap.get("selectedSNPs")
+								
+								println("VCF Parameters")
+								println("selectedGenes:" + selectedGenes)
+								println("chromosomes:" + chromosomes)
+								println("selectedSNPs:" + selectedSNPs)
+								
+								
 								//Construct the path that we create the SNP file on.
 								def IGVFolderLocation = jobTmpDirectory + File.separator + "subset1_${study}" + File.separator + "VCF" + File.separator
 
 								//igvDataService.getData();
 								break;
-
 						}
 					}
 				}
