@@ -183,6 +183,13 @@ class DataExportService {
 							case "ADDITIONAL":
 								additionalDataService.downloadFiles(resultInstanceIdMap[subset], studyList, studyDir, jobDataMap.get("jobName"))
 								break;
+							case "IGV.VCF":
+								//Construct the path that we create the SNP file on.
+								def IGVFolderLocation = jobTmpDirectory + File.separator + "subset1_${study}" + File.separator + "VCF" + File.separator
+
+								//igvDataService.getData();
+								break;
+
 						}
 					}
 				}
