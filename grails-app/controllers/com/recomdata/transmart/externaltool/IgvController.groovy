@@ -67,7 +67,28 @@ class IgvController {
 		//redirect(url:"http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://www.broadinstitute.org/igvdata/1KG/pilot2Bams/NA12878.SLX.bam&genome=hg18&locus=chr1:64,098,103-64,098,175")
 		 }
 	
-	
+	//This URL will be launched with the job ID in the query string.
+	def launchIGV = {
+		
+		def webRootDir = servletContext.getRealPath ("/")
+		
+		//Grab the job ID from the query string.
+		String jobName = params.jobName
+		
+		//Get the data file directory.
+		String fileDirName = grailsApplication.config.com.recomdata.analysis.data.file.dir;
+		
+		//Default the directory name if none exists.
+		if(fileDirName == null) fileDirName = "data";
+		
+		//Add the job name to the link for the IGV data files.
+		fileDirName += "\\" + jobName
+		
+		String newIGVLink = new ApplicationTagLib().createLink(controller:fileDirName, , absolute:true)
+		
+		IgvFiles igvFiles = new IgvFiles(getIgvFileDirName(),newIGVLink)
+		
+	}
 	
 	protected String getIgvFileDirName() {
 		String fileDirName = grailsApplication.config.com.recomdata.analysis.data.file.dir;
