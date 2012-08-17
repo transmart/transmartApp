@@ -30,10 +30,10 @@ class IgvController {
 	def springSecurityService;
 	def igvDataService
 	
-    def index = {
+    def launchJNLP = {
 		
 		def webRootDir = servletContext.getRealPath ("/")
-		
+		/*
 		// get data first
 		//String newIGVLink = new ApplicationTagLib().createLink(controller:'analysis', action:'getGenePatternFile', absolute:true)
 		String fileDirName = grailsApplication.config.com.recomdata.analysis.data.file.dir;
@@ -55,8 +55,11 @@ class IgvController {
 		
 		// create JNLP file
 		
-		def ftext= igvDataService.createJNLPasString(webRootDir, sessionfileURL);
 		
+		*/
+		def sessionFileURL = params.sessionFile;
+		log.debug(sessionFileURL)
+		def ftext= igvDataService.createJNLPasString(webRootDir, sessionFileURL);
 		
 		
 		response.setHeader("Content-Type", "application/x-java-jnlp-file")
@@ -64,8 +67,10 @@ class IgvController {
 		//println(ftext)
 		response.outputStream<<ftext
 		
-		//redirect(url:"http://www.broadinstitute.org/igv/projects/current/igv.php?sessionURL=http://www.broadinstitute.org/igvdata/1KG/pilot2Bams/NA12878.SLX.bam&genome=hg18&locus=chr1:64,098,103-64,098,175")
-		 }
+	 }
+	
+	
+	
 	
 	//This URL will be launched with the job ID in the query string.
 	def launchIGV = {
@@ -74,20 +79,39 @@ class IgvController {
 		
 		//Grab the job ID from the query string.
 		String jobName = params.jobName
+		println params;
+		 
+		// loop through and find all files
+		def resultfileDir = getIgvFileDirName()
 		
-		//Get the data file directory.
+		// get data first
 		String fileDirName = grailsApplication.config.com.recomdata.analysis.data.file.dir;
-		
-		//Default the directory name if none exists.
-		if(fileDirName == null) fileDirName = "data";
-		
-		//Add the job name to the link for the IGV data files.
-		fileDirName += "\\" + jobName
-		
+		if(fileDirName == null)
+			throw new Exception("property com.recomdata.analysis.data.file.dir is not set ")
 		String newIGVLink = new ApplicationTagLib().createLink(controller:fileDirName, , absolute:true)
-		
+			
 		IgvFiles igvFiles = new IgvFiles(getIgvFileDirName(),newIGVLink)
-		
+			
+		// find result files -might be multiple		
+		def pattern = jobName+"*.vcf"
+		def dataFiles = new FileNameFinder().getFileNames(resultfileDir, pattern);
+		dataFiles.each{
+		igvFiles.addFile(new File(it))
+		}
+
+				// testing data
+			//	def f = new File (webRootDir + "/data/" + "test.vcf")
+			//	igvFiles.addFile(f);
+				
+				String userName = springSecurityService.getPrincipal().username;
+			
+				
+				// create session file URL
+				def sessionfileURL = igvDataService.createSessionURL(igvFiles, userName)
+			
+			render(view:"launch", model:[sessionFile:sessionfileURL])
+					
+			
 	}
 	
 	protected String getIgvFileDirName() {
