@@ -30,6 +30,17 @@ import de.DeSNPInfo;
 		
 	}
 	
+	def findRefByRsId(String rsid){
+		if(rsid!=null){
+		def nrsid = rsid.trim().toLowerCase();
+		if(!nrsid.startsWith("rs"))
+			nrsid = "rs"+nrsid;
+		return DeSNPInfo.findByRsId(nrsid);
+		}
+		return null;
+		
+	}
+	
 		 
 	
  }

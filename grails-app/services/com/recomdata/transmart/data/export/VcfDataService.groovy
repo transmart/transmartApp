@@ -45,19 +45,19 @@ class VcfDataService {
 
 		def rsList = []
 		def chrList =[]
-
+		def geneNameList = [];
 		// create query to find gene to snps
-		if(selectedGenes!=null){
+		if(selectedGenes!=null&& selectedGenes.trim().length()>0){
 			// ToDo- parse gene list
 			//def geneList = parseGeneList(selectedGenes)
 		//	def geneList = parseGeneList(["BRCA1"])
 			List<Long> geneSearchIdList = new ArrayList<Long>();
-			def geneNameList = [];
+			
 			if (selectedGenes != null && selectedGenes.length() != 0) {
 				
 				geneNameList = parseGeneList(selectedGenes, null, geneSearchIdList);
-				println(selectedGenes)
-				println(geneNameList)
+				//println(selectedGenes)
+				//println(geneNameList)
 				
 			rsList.addAll(snpRefDataService.findRsIdByGeneNames(geneNameList))
 			}
@@ -65,7 +65,7 @@ class VcfDataService {
 		}
 
 		// create query to find snps
-		if(selectedSNPs!=null){
+		if(selectedSNPs!=null && selectedSNPs.trim().length()>0){
 			rsList.addAll(parseRsList(selectedSNPs))
 		}
 
@@ -122,11 +122,71 @@ class VcfDataService {
 				dsSubHeaderColMap.get(k).add(subjectPrefix+key)
 				}
 			}
-				
-		// construct VCFdata file
-			constructVCFfile(variants, datasets, dsSubjectIdxMap, dsSubHeaderColMap, outputDir, jobName,subjectPrefix)
+			
+			// construct VCFdata file
+		def vsnpset =	constructVCFfile(variants, datasets, dsSubjectIdxMap, dsSubHeaderColMap, outputDir, jobName,subjectPrefix)
+		println(vsnpset)
+		constructVCFParamFile(outputDir, geneNameList, new ArrayList(vsnpset), chrList,jobName)
+		
 
 		return true;
+	}
+	
+	def constructVCFParamFile(
+		outputDir,
+		geneNameList,
+		rsList,
+		chrList,
+		jobName){
+		// create a filter file so that we can get the right params
+		def pfile = null;
+		def pfilewriter = null;
+		try{
+			pfile= new File(outputDir+File.separator+jobName+"_vcf.params")
+			//println("writing file:"+pfile.getAbsolutePath())
+		
+			 pfilewriter = pfile.newWriter();
+		// if there is a gene use the first gene 
+		if(geneNameList!=null && !geneNameList.isEmpty()){
+			pfilewriter.writeLine("Gene="+geneNameList[0])
+			
+		}
+		if(chrList!=null && !chrList.isEmpty()){
+			pfilewriter.writeLine("Chr="+"chr"+chrList[0])
+		}
+		
+		if(rsList!=null && !rsList.isEmpty()){
+			
+			//println(rsList)
+			def nrsid = rsList[0].trim().toLowerCase();
+			if(!nrsid.startsWith("rs")){
+			nrsid = "rs"+nrsid;
+			}
+		//	println("rsid:"+nrsid)
+			def result = DeVariantSubjectDetail.executeQuery("SELECT d.chromosome, d.position FROM DeVariantSubjectDetail d WHERE d.rsID =?", nrsid)
+			def chr = null;
+			def pos = null;
+			if(result!=null){
+				chr = result[0][0];
+				pos = result[0][1];
+			
+			def spos = pos -50;
+			def epos = pos+50;
+			
+			pfilewriter.writeLine("SNP="+"chr"+chr+":"+spos+"-"+epos)
+			}
+		}
+			
+			
+		}catch(Exception e ){
+		log.error(e.getMessage(), e)
+			
+		}finally{
+		if(pfilewriter!=null){
+		pfilewriter.flush()
+		pfilewriter.close();
+		}
+		}
 	}
 
 	/**
@@ -147,6 +207,7 @@ class VcfDataService {
 		jobName,
 		subjectPrefix){
 		
+		Set vsnpSet = new HashSet();
 		// create writers, each dataset get a writer
 		def dsWriterMap =[:]
 		// each dataset has a new files
@@ -176,7 +237,10 @@ class VcfDataService {
 				
 		}
 		// loop through variant data and use the dataset writer to output data
+		
+		println("variant length:"+variants.size())
 		variants.each {
+			
 			StringBuilder variant = new StringBuilder()
 		
 			variant.append(it.chromosome).append("\t");
@@ -189,6 +253,8 @@ class VcfDataService {
 			variant.append(it.info).append("\t");
 			variant.append(it.format);
 			
+			vsnpSet.add(it.rsID);
+			
 			String value = it.variant
 			
 			// using a split to get the value in array by tab
@@ -198,7 +264,7 @@ class VcfDataService {
 		//	println(valueArray)
 			def indexList = dsSubjectIdxMap.get(it.dataset);
 			// 1 based index list
-			println(indexList)
+			
 			
 			indexList.each {
 				int idx = it-1;
@@ -225,6 +291,7 @@ class VcfDataService {
 			}
 			
 		}
+		return vsnpSet;
 		
 	}
 
@@ -240,6 +307,9 @@ class VcfDataService {
 		def vmap = [:]
 		vmap.put('ds',datasetList)
 
+	//	println("Rs:"+rsList);
+	//	println("CHR:"+chrList);
+		
 		if(!rsList.isEmpty())
 		{
 			query +=" AND dvd.rsID IN (:rsids) " // this could be an issue for more than 1000 rs ids
@@ -252,29 +322,25 @@ class VcfDataService {
 			vmap.put('chrNums', chrList)
 		}
 		query +=" ORDER BY dvd.chromosome, dvd.position"
+		
 		return DeVariantSubjectDetail.findAll(query, vmap)
 
 	}
 
-	/**
-	 * parse gene list 
-	 * @param genes
-	 * @return
-	 */
-	def parseGeneList(String genes){
-		def geneList = []
-		geneList.add(genes)
-		return geneList;
-
-	}
+	
 	/**
 	 * parse rsids
 	 * @param rsIds
 	 * @return
 	 */
 	def parseRsList(String rsIds){
+		//def rsList = []
+		String[] rsidArray = rsIds.split(",");
 		def rsList = []
-		rsList.add(rsIds)
+		for(int i = 0; i<rsidArray.length; i++){
+			rsList.add(rsidArray[i].trim())
+		}
+		
 		return rsList;
 	}
 
@@ -373,7 +439,7 @@ class VcfDataService {
 	   }*/
 	   String[] geneValues = genes.split(",");
 	   
-	   println("parse:"+geneValues)
+	 //  println("parse:"+geneValues)
 	   for (String geneStr : geneValues) {
 		   geneStr = geneStr.trim();
 		   Long geneId = geneIdMap.get(geneStr.trim());
@@ -383,6 +449,33 @@ class VcfDataService {
 		   geneNameList.add(geneStr.trim());
 	   }
 	   return geneNameList;
+   }
+   
+   def listToIN(List<String> list) {
+	   StringBuilder sb=new StringBuilder();
+	   // need to make it less than 1000! -- temp solution
+	   int i = 0;
+	   for(c in list)
+	   {
+		   //If the only thing submitted was "ALL" we return an empty string just like there was nothinbg in the box.
+		   if(c.toString()=="ALL" && list.size()==1)
+		   {
+			   break;
+		   }
+		   
+		   sb.append("'");
+		   sb.append(c.toString().replace("'","''"));
+		   sb.append("'");
+		   sb.append(",");
+		   i++;
+		   if(i>=1000){
+			   break;
+		   }
+	   }
+	   if(sb.length()>0) {
+		   sb.deleteCharAt(sb.length() - 1);//remove last comma
+	   }
+	   return sb.toString();
    }
 
 }

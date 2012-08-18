@@ -46,11 +46,15 @@ class IgvDataService {
 		
 	}
 	
-	def createSessionURL(IgvFiles igvFiles, String userName ){
+	def createSessionURL(IgvFiles igvFiles, String userName, String locus){
 	
 			
 		File sessionFile = igvFiles.getSessionFile();
-		sessionFile << "<?xml version='1.0' encoding='UTF-8' standalone='no'?>\n<Session genome='hg19' version='4'>\n<Resources>\n";
+		sessionFile << "<?xml version='1.0' encoding='UTF-8' standalone='no'?>\n<Session genome='hg19'"
+		if(locus!=null){
+		sessionFile <<" locus='"+locus+"' "
+		}
+		sessionFile<<" version='4'>\n<Resources>\n";
 		List<File> fileList = igvFiles.getDataFileList();
 		
 	/* sessionFile<<"<Resource path='http://localhost:8080/transmartApp/data/test.vcf'/>";
@@ -96,4 +100,5 @@ class IgvDataService {
 		
 		return idxFile;
 	}
+	
 }

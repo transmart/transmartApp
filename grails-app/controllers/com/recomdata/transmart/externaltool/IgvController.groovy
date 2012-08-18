@@ -57,6 +57,7 @@ class IgvController {
 		
 		
 		*/
+	
 		def sessionFileURL = params.sessionFile;
 		log.debug(sessionFileURL)
 		def ftext= igvDataService.createJNLPasString(webRootDir, sessionFileURL);
@@ -99,17 +100,56 @@ class IgvController {
 		igvFiles.addFile(new File(it))
 		}
 
-				// testing data
+		// find param files - should have one
+		def parampattern = jobName+"_vcf.params"
+		def pFiles = new FileNameFinder().getFileNames(resultfileDir, parampattern);
+		println("param files:"+pFiles)
+		def paramfile = "";
+		def locus=null;
+		def gene = null
+		def chr = null
+		def snp = null;
+		if(pFiles!=null && !pFiles.isEmpty()){
+			paramfile = pFiles[0]
+			log.debug("find paramfile:"+paramfile)
+			def f = new File(paramfile)
+			if(f.exists()){
+				f.eachLine{ line->
+					if(line.startsWith("Chr=")&& chr==null){
+						chr=line.substring(4);
+					}
+					if(line.startsWith("Gene=")&& gene==null){
+						gene = line.substring(5)
+					}
+					if(line.startsWith("SNP=")&& snp ==null){
+						snp = line.substring(4)
+					}
+				}
+			}
+			
+			// try to create locus hint for igv
+			if(snp!=null){
+				locus = snp;
+			}
+			else if (gene!=null){
+				locus = gene;
+			}else {
+				locus = chr;
+			}
+
+		}
+		
+			// testing 	data
 			//	def f = new File (webRootDir + "/data/" + "test.vcf")
 			//	igvFiles.addFile(f);
 				
-				String userName = springSecurityService.getPrincipal().username;
+		String userName = springSecurityService.getPrincipal().username;
 			
 				
 				// create session file URL
-				def sessionfileURL = igvDataService.createSessionURL(igvFiles, userName)
+		def sessionfileURL = igvDataService.createSessionURL(igvFiles, userName, locus)
 			
-			render(view:"launch", model:[sessionFile:sessionfileURL])
+		render(view:"launch", model:[sessionFile:sessionfileURL ])
 					
 			
 	}
