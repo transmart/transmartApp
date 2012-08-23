@@ -39,7 +39,7 @@ import org.transmart.searchapp.SearchKeyword;
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 
-class SnpDataService {
+class PostgresSnpDataService {
 
     boolean transactional = false
 
@@ -586,7 +586,7 @@ class SnpDataService {
 				retrievedData = true
 				
 				//This data object holds onto our values.
-				SnpDataObject snpDataObject = new SnpDataObject();
+				PostgresSnpDataObject snpDataObject = new PostgresSnpDataObject();
 				
 				//snpDataObject.patientNum = row.PATIENT_ID
 				snpDataObject.patientNum = rs?.getString("SUBJECT_ID") 
@@ -736,7 +736,7 @@ class SnpDataService {
   }
 }
 
-class SnpDataObject
+class PostgresSnpDataObject
 {
 	String patientNum
 	String probeName

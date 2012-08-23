@@ -103,7 +103,7 @@ com.recomdata.admin.paginate.max=20
 //SUBJECT Data.
 com.recomdata.i2b2.subject.domain = 'i2b2demo'
 com.recomdata.i2b2.subject.projectid = 'i2b2demo'
-com.recomdata.i2b2.subject.username = 'Demo'
+com.recomdata.i2b2.subject.username = 'i2b2'
 com.recomdata.i2b2.subject.password = 'demouser'
 
 //SAMPLE Data.
