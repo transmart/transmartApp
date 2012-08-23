@@ -54,4 +54,12 @@ class UserLandingController {
 			accesstime:new Date()).save()
 	    redirect(uri: '/logout')
 	}
+	
+	/**
+	* Returns ALIVE to ensure that the session does not timeout
+	*/
+   def checkHeartBeat = {
+	   render 'ALIVE'
+   }
+
 }
