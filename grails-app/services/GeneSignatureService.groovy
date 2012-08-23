@@ -607,7 +607,8 @@ public class GeneSignatureService {
 		//trans.commit();
 
 		}catch(Exception e){
-			trans.rollback();
+			//trans.rollback();
+            e.printStackTrace();
 		}finally{
 
 		}
