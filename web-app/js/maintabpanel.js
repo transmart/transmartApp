@@ -226,6 +226,17 @@ function createSearchTabs(toolbar) {
                 defaultSrc: pageData.genego.resultsUrl,
                 tabTip: pageData.genego.credentials
             }
+            ,
+            {
+                id: "tab18",
+                iconCls: "cortellisTab",
+                title: "Cortellis",
+                listeners: {activate: activateTab},
+                xtype: "iframepanel",
+                closable: false,
+                loadMask: true,
+                defaultSrc: pageData.cortellis.resultsUrl
+            }
             
         ]
     });
@@ -437,6 +448,17 @@ function activateTab(tab) {
         break;
 
     case "tab8":
+        setButtonVisibility("filters", false);
+        setButtonVisibility("summary", false);
+        setButtonVisibility("heatmap", false);
+        setButtonVisibility("exportsummary", false);
+        setButtonVisibility("exportresnet", false);
+        setButtonVisibility("studyview", false)
+        setButtonVisibility("tea",false);
+        setButtonVisibility("contextHelp", false);
+        break;
+
+    case "tab18":
         setButtonVisibility("filters", false);
         setButtonVisibility("summary", false);
         setButtonVisibility("heatmap", false);

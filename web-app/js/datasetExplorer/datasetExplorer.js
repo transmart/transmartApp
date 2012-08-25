@@ -388,7 +388,7 @@ Ext.onReady(function()
 					        ,
 					        {
 					        	 text : 'PLINK',
-					        	 disabled : true,
+					        	 disabled : false, // true,
 					        	 handler : function()	{
 					        	 	if(isSubsetEmpty(1) && isSubsetEmpty(2))
 					        	 	{

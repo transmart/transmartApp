@@ -133,7 +133,10 @@
 				downloadTrialStudyUrl: "${createLink(controller:'trial', action:'downloadStudy')}",
 				downloadTrialAnalysisUrl: "${createLink(controller:'trial', action:'downloadAnalysisTEA')}",
 				downloadEaUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysis')}",
-				downloadEaTEAUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysisTEA')}"
+				downloadEaTEAUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysisTEA')}",
+			    cortellis: {
+			    	resultsUrl: "${createLink(controller:'cortellis',action:'search', params:[text: session.searchFilter.getExternalTerms()])}"
+			    },
 				};
 
 			Ext.onReady(function(){
@@ -231,7 +234,10 @@
 				    }
 				    if ("${grailsApplication.config.com.recomdata.searchtool.genegoURL}" == "") {
 				        tabpanel.remove(Ext.getCmp("tab8"));
-					}				       
+					}		
+					if ("${grailsApplication.config.com.recomdata.searchtool.cortellisEnabled}" == "") {
+						tabpanel.remove(Ext.getCmp("tab18"));
+					}		       
 				}
 				
 			    // set active tab
