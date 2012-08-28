@@ -24,35 +24,35 @@
 					autoHeight: true
 		        },
 		        items: [
-					<g:if test="${res.Description}">
+					<g:if test="${res.Description.size()}">
 					{
 			            contentEl:'Description', 
 			            title: 'Description',
 			            //closable: true
 		        	},
 					</g:if>
-					<g:if test="${res.Synonyms}">
+					<g:if test="${res.Synonyms.size()}">
 					{
 			            contentEl:'Synonyms', 
 			            title: 'Synonyms',
 			            //closable: true
 		        	},
 					</g:if>
-					<g:if test="${res.Localizations}">
+					<g:if test="${res.Localizations.size()}">
 					{
 						contentEl:'Localizations',
 						title: 'Localizations',
 						//closable: true
 					},
 					</g:if>
-					<g:if test="${res.Conditions}">
+					<g:if test="${res.Conditions.size()}">
 					{
 						contentEl:'Conditions',
 						title: 'Conditions',
 						//closable: true
 					},
 					</g:if>
-					<g:if test="${res.Maps}">
+					<g:if test="${res.Maps.size()}">
 					{
 						contentEl: 'Maps',
 						title: 'MetaCore Maps',
@@ -68,12 +68,12 @@
 <h1>${res["@name"]}</h1>
 
 <div id="infoTabs">
-	<g:if test="${res.Description}">
+	<g:if test="${res.Description.size()}">
 	<div id="Description" class="x-hide-display">
 		${res.Description}
 	</div>
 	</g:if>
-	<g:if test="${res.Synonyms}">
+	<g:if test="${res.Synonyms.size()}">
 	<div id="Synonyms" class="x-hide-display">
 		<ul>
 			<g:each in="${res.Synonyms.Synonym}" var="synonym">
@@ -82,7 +82,7 @@
 		</ul>
 	</div>
 	</g:if>
-	<g:if test="${res.Localizations}">
+	<g:if test="${res.Localizations.size()}">
 	<div id="Localizations" class="x-hide-display">
 		<ul>
 			<g:each in="${res.Localizations.Localization}" var="loc">
@@ -91,7 +91,7 @@
 		</ul>
 	</g:if>
 	</div>
-	<g:if test="${res.Conditions}">
+	<g:if test="${res.Conditions.size()}">
 	<div id="Conditions" class="x-hide-display">
 		<g:set var="counter" value="${1}" />
 		<table>
@@ -107,7 +107,7 @@
 		</table>
 	</div>
 	</g:if>
-	<g:if test="${res.Maps}">
+	<g:if test="${res.Maps.size()}">
 	<div id="Maps" class="x-hide-display">
 		<ol>
 			<g:each in="${res.Maps.Map}" var="map">

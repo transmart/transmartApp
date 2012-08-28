@@ -33,13 +33,6 @@ class CortellisController {
     	//System.setProperty("javax.net.debug", "ssl")
     	
     	if (apiLogin && apiPassword) {
-/*	    	def url = new URL("https://lsapi.thomson-pharma.com/targetapi/ws/rs/targets-v1/search/target/name:${params.text}")
-			def conn = url.openConnection()
-			conn.setRequestMethod("GET")
-			conn.setRequestProperty("Accept", "application/json")
-			conn.setRequestProperty("API-Token", apiToken)
-			
-			def result = JSON.parse(new BufferedReader(new InputStreamReader(conn.getContent()))) */
 
 			def site = new HTTPBuilder("https://lsapi.thomson-pharma.com")
 			site.auth.basic apiLogin, apiPassword

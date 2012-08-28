@@ -36,7 +36,7 @@ class SearchResult {
 	int experimentCount = 0
 	int allAnalysiCount = 0
 	
-	// Cortellis tab
+	// Cortellis tab - currently not used
 	int cortellisCount = 0
 	
 	int documentCount = 0
