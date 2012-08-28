@@ -17,7 +17,7 @@
  *
  ******************************************************************/
   
-
+import bio.BioDataExternalCode
 import search.SearchKeyword
 import search.SearchKeywordTerm
 import search.GeneSignature
@@ -30,6 +30,8 @@ import search.GeneSignature
  */
 public class SearchKeywordService {
 
+	def springSecurityService
+	
 	// probably not needed but makes all methods transactional
 	static transactional = true
 
