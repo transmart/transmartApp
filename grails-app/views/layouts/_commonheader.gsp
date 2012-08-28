@@ -26,6 +26,9 @@
 	   				<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>
 
+			       	<g:if test="${'rwg'==app}"><th class="menuVisited">Faceted Search</th></g:if>
+	       			<g:else><th class="menuLink"><g:link controller="RWG">Faceted Search</g:link></th></g:else>
+
 			       	<g:if test="${'datasetExplorer'==app}"><th class="menuVisited">Dataset Explorer</th></g:if>
 	       			<g:else><th class="menuLink"><g:link controller="secure">Dataset Explorer</g:link></th></g:else>
 	       			<g:if test="${grailsApplication.config.com.recomdata.hideSampleExplorer!='true'}">
@@ -45,12 +48,14 @@
 	</tr>
 </table>
 
-
+<g:if test="${'rwg' != app}" >
 <link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 <script>jQuery.noConflict();</script> 
 
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>		
+</g:if>
+
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.idletimeout.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.idletimer.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
@@ -67,4 +72,4 @@
 		 var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
 		 addTimeoutDialog(heartbeatURL, logoutURL);
   	  });
-</script>          
+</script>

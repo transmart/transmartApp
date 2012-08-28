@@ -2678,7 +2678,6 @@ function subtractNodes(nodes1, nodes2)  {
 jQuery.ui.dynatree.nodedatadefaults["icon"] = false;
 
 
-
 jQuery(function(){
     jQuery("#filter-div").dynatree({
     	initAjax: {  url: treeURL,
