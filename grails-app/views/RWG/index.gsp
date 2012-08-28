@@ -18,19 +18,19 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"></link>
                                 
         <!-- jQuery JS libraries -->
-        <script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery-1.7.1.min.js')}"></script>   
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
 	    <script>jQuery.noConflict();</script> 
         
-        <script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery-ui-1.8.17.custom.min.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.cookie.js')}"></script>   
-        <script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.dynatree.min.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.paging.min.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.idletimeout.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.idletimer.js')}"></script>        
-		<script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.loadmask.min.js')}"></script>   
- 		<script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.ajaxmanager.js')}"></script>  
-  		<script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.numeric.js')}"></script>
-  		<script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.colorbox-min.js')}"></script>  
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.cookie.js')}"></script>   
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dynatree.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.paging.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.idletimeout.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.idletimer.js')}"></script>        
+		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.loadmask.min.js')}"></script>   
+ 		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.ajaxmanager.js')}"></script>  
+  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
+  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
   		
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  
