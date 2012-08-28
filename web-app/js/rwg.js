@@ -2477,7 +2477,7 @@ function showSearchTemplate()	{
 	var searchHTML = '';
 	var startATag = '&nbsp;<a id=\"';
 	var endATag = '\" class="term-remove" href="#" onclick="removeSearchTerm(this);">';
-	var imgTag = '<img alt="remove" src="/transmart/images/small_cross.png"/></a>&nbsp;'
+	var imgTag = '<img alt="remove" src="./../images/small_cross.png"/></a>&nbsp;'
 	var firstItem = true;
 
 	// iterate through categories array and move all the "gene" categories together at the top 
