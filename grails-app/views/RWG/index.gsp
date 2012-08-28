@@ -25,8 +25,6 @@
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.cookie.js')}"></script>   
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dynatree.min.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.paging.min.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.idletimeout.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.idletimer.js')}"></script>        
 		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.loadmask.min.js')}"></script>   
  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.ajaxmanager.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
@@ -40,8 +38,6 @@
         
         <!-- Our JS -->        
         <script type="text/javascript" src="${resource(dir:'js', file:'rwg.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
-
         
         <!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
         <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
@@ -65,13 +61,10 @@
 	        var mouse_inside_options_div = false;
 
 	        jQuery(document).ready(function() {
-	        	var logoutURL = "${createLink([controller:'logout'])}";
-		        var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
 		        
 		        addSelectCategories();
 		        addSearchAutoComplete();
 		        addToggleButton();
-		        addTimeoutDialog(heartbeatURL, logoutURL);	
 
 		        jQuery("#xtButton").colorbox({opacity:.75, inline:true, width:"95%", height:"95%"});
       
@@ -183,12 +176,6 @@
 		</div>
 		<button id="toggle-btn"></button>
 		
-		<!-- Session timeout dialog -->
-        <div id="timeout-div" title="Your session is about to expire!">
-            <p>You will be logged off in <span id="timeout-countdown"></span> seconds.</p>
-            <p>Do you want to continue your session?</p>
-        </div>
-        
 		<div id="hiddenItems" style="display:none">
 		        <!-- For image export -->
 		        <canvas id="canvas" width="1000px" height="600px"></canvas>  
