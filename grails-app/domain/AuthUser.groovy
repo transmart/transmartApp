@@ -60,7 +60,7 @@ class AuthUser extends Principal {
 			passwd column:'PASSWD'
 			email column:'EMAIL'
 		    emailShow column:'EMAIL_SHOW'
-		authorities joinTable:[name:'SEARCH_ROLE_AUTH_USER', key:'AUTHORITIES_ID', column:'PEOPLE_ID']
+		    authorities joinTable:[name:'SEARCH_ROLE_AUTH_USER', key:'AUTHORITIES_ID', column:'PEOPLE_ID']
 			groups joinTable: [name:'SEARCH_AUTH_GROUP_MEMBER', column:'AUTH_GROUP_ID', key: 'AUTH_USER_ID']
 		}
 	}
@@ -68,7 +68,6 @@ class AuthUser extends Principal {
 	static constraints = {
 		username(blank: false, unique: true)
 		userRealName(blank: false)
-		passwd(blank: false)
 		email(nullable:true, maxSize:255)
 	}
 
