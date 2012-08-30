@@ -89,7 +89,7 @@ class AuthUserController {
 				person.delete()
 				def msg = "$person.userRealName has been deleted."
 				flash.message = msg
-				new AccessLog(username: userName, event:"User Deleted",
+				new AccessLog(username: springSecurityService.getPrincipal().username, event:"User Deleted",
 					eventmessage: msg,
 					accesstime:new Date()).save()
 			}
@@ -180,7 +180,7 @@ class AuthUserController {
 		if (person.save()) {
 			addRoles(person)
 			def msg = "User: ${person.username} for ${person.userRealName} created";
-			new AccessLog(username: person.username, event:"User Created",
+			new AccessLog(username: springSecurityService.getPrincipal().username, event:"User Created",
 				eventmessage: msg,
 				accesstime:new Date()).save()
 			redirect action: show, id: person.id
