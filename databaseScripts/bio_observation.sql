@@ -34,7 +34,7 @@ monitoring
 /
 
 
-create trigger BIOMART.TRG_BIO_OBSERVATION_ID  before insert on BIOMART.BIO_OBSERVATION for each row begin
+create trigger BIOMART.TRG_BIO_OBSERVATION_ID  before insert on BIOMART.BIO_OBSERVATION for each row
 begin     if inserting then       if :NEW."BIO_OBSERVATION_ID" is null then          select SEQ_BIO_DATA_ID.nextval into :NEW."BIO_OBSERVATION_ID" from dual;
        end if;
     end if;
