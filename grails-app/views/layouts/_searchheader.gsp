@@ -100,6 +100,55 @@
 		    <g:if test="${flash.message}">
 		    	<div class="message">${flash.message}</div>
 		    </g:if>
+		    <link rel="stylesheet" href="${resource(dir:'css', file:'testingcss.css')}"></link>
+			<script src="http://www.java.com/js/deployJava.js"></script>
+		    <script>
+		    	var jq = jQuery.noConflict();
+		    
+		        // using JavaScript to get location of JNLP
+		        // file relative to HTML page
+		        var dir = location.href.substring(0,location.href.lastIndexOf('/')+1);
+		        var url = dir + "TestWS.jnlp";
+
+				url = "http://localhost:8080/transmartApp/search/testWS"
+				
+		        deployJava.createWebStartLaunchButton(url, '1.6.0');
+	
+				
+				
+				//$(document).ready(function() {
+				//    $('#table_id').dataTable();
+				//} );
+
+				jq(document).ready(function() {
+				    jq('#table_id').dataTable( {
+				        "bProcessing": true,
+				        "sAjaxSource": 'http://localhost:8080/transmartApp/search/getGwasResults'
+				    } );
+				} );				
+				
+		    </script>
+		    
+		    <br /><br /><br />
+		    
+			<table id="table_id" cellpadding="0" cellspacing="0" border="0" class="display">
+				<thead>
+					<tr>
+						<th>Probe ID</th>
+						<th>p-value</th>
+						<th>Adjusted p-value</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th>Probe ID</th>
+						<th>p-value</th>
+						<th>Adjusted p-value</th>
+					</tr>					
+				</tfoot>
+			</table>		    
 		</td>
 	</tr>
 </table>

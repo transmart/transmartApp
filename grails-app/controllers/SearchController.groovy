@@ -569,6 +569,33 @@ public class SearchController{
 
 	//}
 
+	def testWS =	{
+		def responseText = """\
+			<?xml version="1.0" encoding="UTF-8"?>
+			<jnlp spec="6.0+" codebase="http://localhost:8080/transmartApp" href="search/testWS;jsessionid=""" + session.getId() + """">
+			    <information>
+			        <title>Testing Java WS</title>
+			        <vendor>Recombinant</vendor>
+			    </information>
+			    <resources>
+			        <!-- Application Resources -->
+			        <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+                    <property name="jsessionid" value='""" + session.getId() + """'/>
+                    <property name="serviceHost" value='""" + request.getServerName() + """'/>
+			        <jar href="TestWS.jar;jsessionid=""" + session.getId() + """" main="true" />
+			    </resources>
+			    <application-desc name="Test WS" main-class="testingws.TestingWSApp" width="300" height="300">
+<argument>show</argument>
+						</application-desc>
+			    <update check="background"/>
+			</jnlp>                             
+		"""
+		
+		
+		render(text:responseText,contentType:"application/x-java-jnlp-file")
+		//render(text:responseText,contentType:"text/html")
+	}
+	
 	def formatSynonyms(synonyms){
 		if(synonyms ==null)
 			return ""
@@ -636,4 +663,23 @@ public class SearchController{
 	def noResult = {
 		render(view:'noresult')
 	}
+	
+	//Retrieve the Gwas results for the search filter. This is used to populate the result grids on the search page.
+	def getGwasResults = {
+		
+		//Initiate Data Access object to get to search.
+		def searchDAO = new SearchDAO()
+		
+		//Get the GWAS Data.
+		def gwasData = searchDAO.getGwasData()
+		
+		def returnJson = [:]
+		
+		returnJson["aaData"] = gwasData
+		
+		//Return the data in JSON format so the grid can format it.
+		render returnJson as JSON
+
+	}
+	
 }
