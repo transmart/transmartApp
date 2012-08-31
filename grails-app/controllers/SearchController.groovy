@@ -49,6 +49,10 @@ public class SearchController{
 	
 	def SEARCH_DELIMITER='SEARCHDELIMITER'
 
+	// restrict categories to those prior to the faceted search
+	def catList = "('COMPOUND', 'DISEASE', 'GENE', 'GENELIST', 'GENESIG', 'PATHWAY', 'STUDY' , 'TRIAL')"
+	
+
 	def index = {
 		session.setAttribute('searchFilter', new SearchFilter())
 	}
@@ -91,6 +95,10 @@ public class SearchController{
 				queryStr += " AND t.searchKeyword.dataCategory IN (:category) "
 				queryParams["category"] = category.toString().split(SEARCH_DELIMITER)
 			}
+			else {
+				queryStr += " AND t.searchKeyword.dataCategory in " +  catList
+			}
+
 			// this is generic way to access AuthUser
 			def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 			// permission to view search keyword (Admin gets all)
@@ -116,7 +124,12 @@ public class SearchController{
 
 	def loadCategories = {
 
-		def categories = SearchKeyword.executeQuery("select distinct k.dataCategory as value, k.displayDataCategory as label from search.SearchKeyword k order by lower(k.dataCategory)")
+		def sql = "select distinct k.dataCategory as value, k.displayDataCategory as label " + 
+                  " from search.SearchKeyword k " +
+				  " where k.dataCategory in " +
+				  catList +
+				  " order by lower(k.dataCategory)"
+		def categories = SearchKeyword.executeQuery(sql)
 		def rows = []
 		rows.add([value: "all", label:"all"])
 		for (category in categories) {
