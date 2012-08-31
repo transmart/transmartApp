@@ -60,7 +60,7 @@ class ExperimentAnalysisController {
 		//log.info "expDesigns: " + expDesigns
 
 		// no data?
-		def celllines = [] //GeneExprAnalysis.executeQuery(queryCellLines.toString(),filter.gids)
+		def celllines = [] 
 
 		// no data?
 		def expTypes=[] //experimentAnalysisQueryService.findExperimentTypeFilter()

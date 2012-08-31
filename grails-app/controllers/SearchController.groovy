@@ -57,15 +57,7 @@ public class SearchController{
 		session.setAttribute('searchFilter', new SearchFilter())
 	}
 
-	def list = {
-		if(!params.max) params.max = 20
-		//	session["opengenerifs"]=[:]
-		//	session["details"]=[:]
-		def results = GeneExprAnalysis.list( params )
-		[ geneExprAnalysisList: results,total:GeneExprAnalysis.count() ,page:true]
-	}
 
-	
 	def loadSearchAnalysis = {
 			def value = params.query.toUpperCase()
 			params.query = 'gene'+SEARCH_DELIMITER+'pathway'+SEARCH_DELIMITER+'genelist'+SEARCH_DELIMITER+'genesig:'+params.query
