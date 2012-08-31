@@ -96,5 +96,5 @@ input.dataFile, snpDataExists, multipleStudies, study
 	#Write the final data file.
 	write.matrix(finalData,filename,sep = "\t")
 
-	#file.remove(input.dataFile)
+	file.remove(input.dataFile)
 }
