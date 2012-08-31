@@ -78,20 +78,12 @@
             </div>      
         </div> 
             <script>
-            Ext.onReady(function(){
-            var startdate = new Ext.form.DateField({
-  name: 'dateField',
-  allowBlank: false,
-  format: 'm/d/Y',
-  applyTo: 'startdate'
-});
-               var enddate = new Ext.form.DateField({
-  name: 'dateField',
-  allowBlank: false,
-  format: 'm/d/Y',
-  applyTo: 'enddate'
-});   
-    });
+        	jQuery(function() {
+            	jQuery("#startdate").datepicker();
+            });
+            jQuery(function() {
+                jQuery("#enddate").datepicker();
+            });
             </script>     
     </body>
 </html>
