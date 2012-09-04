@@ -673,9 +673,15 @@ public class SearchController{
 		//Get the GWAS Data.
 		def gwasData = searchDAO.getGwasData()
 		
+		//Get the data from the index table for GWAS.
+		def gwasIndexData = bio.BioAssayAnalysisDataIdx.findAllByExt_type("GWAS")
+		
+		//
+		
 		def returnJson = [:]
 		
 		returnJson["aaData"] = gwasData
+		returnJson["aoColumns"] = gwasIndexData
 		
 		//Return the data in JSON format so the grid can format it.
 		render returnJson as JSON

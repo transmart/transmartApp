@@ -10,7 +10,16 @@ class SearchDAO {
 	
 	def getGwasData()
 	{
-		def results = bio.BioAssayAnalysisGwas.executeQuery("SELECT gwas.rsId,gwas.pValue,gwas.logPValue FROM bio.BioAssayAnalysisGwas gwas")
+		def results = bio.BioAssayAnalysisGwas.executeQuery("""
+					SELECT	gwas.rsId,
+							gwas.pValue,
+							gwas.logPValue 
+					FROM	bio.BioAssayAnalysisGwas gwas
+					
+					""")
+		//JOIN 	bio.BioAssayAnalysisDataExt analysisExt
+		
+		results = bio.BioAssayAnalysisDataExt.executeQuery("SELECT BAADE.id FROM bio.BioAssayAnalysisDataExt BAADE")
 		
 		return results
 	}
