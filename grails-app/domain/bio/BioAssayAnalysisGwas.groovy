@@ -35,6 +35,10 @@ class BioAssayAnalysisGwas implements IExcelProfile {
 	Double pValue
 	Double logPValue
 	Long etlId
+	Long id
+	BioAssayAnalysisDataExt bioAssayAnalysisDataExt
+	static hasOne = [bioAssayAnalysisDataExt:BioAssayAnalysisDataExt]
+	
 	
 	static mapping = {
 	 table name:'BIO_ASSAY_ANALYSIS_GWAS', schema:'BIOMART'
