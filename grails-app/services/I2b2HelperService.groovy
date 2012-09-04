@@ -649,16 +649,16 @@ class I2b2HelperService {
 		//if i have an empty table structure so far
 		if(tablein.getColumns().size()==0)
 		{
-			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "String"));
-			tablein.putColumn("patient", new ExportColumn("patient", "Patient", "", "String"));
-			tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "String"));
+			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
+			tablein.putColumn("patient", new ExportColumn("patient", "Patient", "", "string"));
+			tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "string"));
 			//tablein.putColumn("BIRTH_DATE", new ExportColumn("BIRTH_DATE", "Birth Date", "", "Date"));
 			//tablein.putColumn("DEATH_DATE", new ExportColumn("DEATH_DATE", "Death Date", "", "Date"));
-			tablein.putColumn("TRIAL", new ExportColumn("TRIAL", "Trial", "", "String"));
-			tablein.putColumn("SEX_CD", new ExportColumn("SEX_CD", "Sex", "", "String"));
-			tablein.putColumn("AGE_IN_YEARS_NUM", new ExportColumn("AGE_IN_YEARS_NUM", "Age", "", "Number"));
+			tablein.putColumn("TRIAL", new ExportColumn("TRIAL", "Trial", "", "string"));
+			tablein.putColumn("SEX_CD", new ExportColumn("SEX_CD", "Sex", "", "string"));
+			tablein.putColumn("AGE_IN_YEARS_NUM", new ExportColumn("AGE_IN_YEARS_NUM", "Age", "", "int"));
 			//tablein.putColumn("LANGUAGE_CD", new ExportColumn("LANGUAGE_CD", "Language", "", "String"));
-			tablein.putColumn("RACE_CD", new ExportColumn("RACE_CD", "Race", "", "String"));
+			tablein.putColumn("RACE_CD", new ExportColumn("RACE_CD", "Race", "", "string"));
 			//tablein.putColumn("MARITAL_STATUS_CD", new ExportColumn("MARITAL_STATUS_CD", "Marital Status", "", "Number"));
 			//tablein.putColumn("RELIGION_CD", new ExportColumn("RELIGION_CD", "Religion", "", "String"));
 			//tablein.putColumn("ZIP_CD", new ExportColumn("ZIP_CD", "Zipcode", "", "String"));
@@ -705,7 +705,7 @@ class I2b2HelperService {
 				tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
 			}
 			if(tablein.getColumn(columnid)==null) {
-				tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "number"));
+				tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "float", "asFloat"));
 			}
 			
 			if(isValueConceptKey(concept_key)) {
