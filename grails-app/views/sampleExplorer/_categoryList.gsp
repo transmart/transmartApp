@@ -41,7 +41,7 @@
 		</g:if>
 		<tr>
 			<td>
-				<a href="#" class="categoryLinks" onClick="toggleMainCategorySelection('${term.key}','${termName}')">${term.key} (${term.value})</a>
+				<a href="#" class="categoryLinks" onClick="toggleMainCategorySelection('${term.key.replace("'","\\'")}','${termName}')">${term.key} (${term.value})</a>
 			</td>
 		</tr>
 	</g:each>

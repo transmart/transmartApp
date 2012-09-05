@@ -42,8 +42,8 @@
 		</g:if>
 		<tr>
 			<td>
-				<g:checkBox name="${termName}_${term.key}" value="${JSONData[termName]?.contains(term.key)}" onClick="updateFilterList('${term.key.toString()}',this.checked,'${termName}');"/>
-				<a href="#" class="categoryLinks" onClick="toggleMainCategorySelection('${term.key}','${termName}')">${term.key} (${term.value})</a>
+				<input type = "checkBox" name="${termName}_${term.key}" <g:if test="${JSONData[termName]?.contains(term.key)}">checked</g:if> onClick="updateFilterList('${term.key.replace("'","\\'")}',this.checked,'${termName}');" />
+				<a href="#" class="categoryLinks" onClick="toggleMainCategorySelection('${term.key.replace("'","\\'")}','${termName}')">${term.key} (${term.value})</a>
 			</td>
 		</tr>		
 	</g:each>
