@@ -21,10 +21,14 @@ import search.SearchTaxonomy
 import search.SearchTaxonomyRels
 import search.GeneSignature
 import search.GeneSignatureItem
+import search.SavedFacetedSearch
 
 import groovy.time.TimeCategory;
 import groovy.time.TimeDuration;
 import groovyx.net.http.HTTPBuilder
+
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.springframework.context.MessageSource
 
 class RWGController {
 	def trialQueryService
@@ -878,5 +882,55 @@ class RWGController {
 	   def rwgDAO = new RWGVisualizationDAO()	   
 	   def m = rwgDAO.getLineplotData(params.id, params.probeID)
 	   render m as JSON
-   }  
+   }
+   
+   // Save the faceted search to database
+   def saveFacetedSearch = {
+	   	   
+	   def name = params.name	   
+	   def description = params.description	   
+	   def criteria = params.criteria
+	   
+	   def authPrincipal = springSecurityService.getPrincipal()
+	   def userId = authPrincipal.id   
+
+	   SavedFacetedSearch s = new SavedFacetedSearch()
+	   s.name = name
+	   s.description = description
+	   s.criteria = criteria
+	   s.userId = userId
+	   
+	   boolean successFlag
+	   def msg = ""	   
+
+	   if (s.save())  {
+		   successFlag = true
+		   
+		   msg = message(code: "search.SavedFacetedSearch.save.success")
+		   
+  	       log.info("Saved faceted search ${name} for userId ${userId}")
+	   }
+	   else {
+		   String errorString =  s.errors.toString()
+
+		   if (errorString.contains("search.SavedFacetedSearch.name.unique.error") )  {
+			   msg = message(code: "search.SavedFacetedSearch.name.unique.error")
+		   }
+		   else  {
+			   msg = message(code: "search.SavedFacetedSearch.save.failed.default")
+		   }
+		   successFlag = false
+		   
+		   log.info("Failed to save faceted search ${name} for userId ${userId}.  Error:" + errorString)
+		   
+	   }
+	   	   
+	   JSONObject ret = new JSONObject()
+	   ret.put('success', successFlag)
+	   ret.put('message', msg)
+	   
+	   response.setContentType("text/json")
+	   response.outputStream << ret?.toString()
+   }
+
 }

@@ -30,6 +30,7 @@
  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.ajaxmanager.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.json-2.3.min.js')}"></script>   
   		
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  
@@ -58,6 +59,7 @@
 	        var getHeatmapDataForExportURL = "${createLink([action:'getHeatmapDataForExport2'])}";
 	        var getBoxPlotDataURL = "${createLink([action:'getBoxPlotData'])}";
 	        var getLinePlotDataURL = "${createLink([action:'getLinePlotData'])}";	        
+	        var saveSearchURL = "${createLink([action:'saveFacetedSearch'])}";
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";	        
 	        var mouse_inside_options_div = false;
 
@@ -163,6 +165,8 @@
         <div id="title-search-div" class="ui-widget-header">
 	         <h2 style="float:left" class="title">Active Filters</h2>
 			 <h2 style="float:right; padding-right:5px;" class="title">
+			 	<a href="#" onclick="saveSearch(); return false;">Save</a>
+			 	<a href="#" onclick="loadSearch(); return false;">Load</a>
 			 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
 			 </h2> 
 		</div>

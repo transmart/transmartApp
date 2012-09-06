@@ -2559,6 +2559,59 @@ function showSearchTemplate()	{
 		firstItem = true;
 	}
 	document.getElementById('active-search-div').innerHTML = searchHTML;
+	getSearchKeywordList();
+}
+
+
+// retrieve the current list of search keyword ids
+function getSearchKeywordList()   {
+
+	var keywords = new Array();
+	
+	for (var j=0; j<currentSearchTerms.length; j++)	{
+		var fields = currentSearchTerms[j].split(":");		
+	    var keyword = fields[2];			
+		keywords.push(keyword);
+	}
+	
+	return keywords;
+}
+
+// save a faceted seach to the database
+function saveSearch()  {
+	
+	var keywords = getSearchKeywordList();
+
+	var criteriaObject = new Object({'keywordIds':keywords});
+	
+	var criteriaJSONString = jQuery.toJSON(criteriaObject); 
+	
+	rwgAJAXManager.add({
+		url:saveSearchURL,
+		data: {criteria: criteriaJSONString, name: "testname23", description:"test descriptio2"},
+		timeout:60000,
+		success: function(response) {
+            alert(response['message']);	        
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+	
+}
+
+
+function loadSearch()  {
+	clearSearch();
+	
+	var keywords = new Array();
+	keywords.push(1012);
+	keywords.push(1014);
+	
+	for (var i=0; i<keywords.length; i++)  {
+		alert(keywords[i]);
+	}
+	
 }
 
 // Clear the tree, results along with emptying the two arrays that store categories and search terms.
@@ -2595,8 +2648,6 @@ function clearSearch()	{
 	
 	showSearchTemplate();
 	showSearchResults(); //reload the full search results
-
-	
 	
 }
 
