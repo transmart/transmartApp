@@ -30,7 +30,6 @@
  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.ajaxmanager.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
-        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.json-2.3.min.js')}"></script>   
   		
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  

@@ -2581,22 +2581,25 @@ function getSearchKeywordList()   {
 function saveSearch()  {
 	
 	var keywords = getSearchKeywordList();
-
-	var criteriaObject = new Object({'keywordIds':keywords});
 	
-	var criteriaJSONString = jQuery.toJSON(criteriaObject); 
-	
-	rwgAJAXManager.add({
-		url:saveSearchURL,
-		data: {criteria: criteriaJSONString, name: "testname23", description:"test descriptio2"},
-		timeout:60000,
-		success: function(response) {
-            alert(response['message']);	        
-		},
-		error: function(xhr) {
-			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
-		}
-	});
+	//  had no luck trying to use JSON libraries for creating/parsing JSON string so just save keywords as pipe delimited string 
+	if (keywords.length>0)  {
+		var criteriaString = keywords.join("|") 
+		rwgAJAXManager.add({
+			url:saveSearchURL,
+			data: {criteria: criteriaString, name: "testname23xzqqq2", description:"test descriptio2"},
+			timeout:60000,
+			success: function(response) {
+	            alert(response['message']);	        
+			},
+			error: function(xhr) {
+				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+			}
+		});
+	}
+	else  {
+		alert("No search criteria to save!")
+	}
 	
 }
 
@@ -2619,16 +2622,40 @@ function deleteSearch()  {
 
 
 function loadSearch()  {
-	clearSearch();
+
 	
-	var keywords = new Array();
-	keywords.push(1012);
-	keywords.push(1014);
-	
-	for (var i=0; i<keywords.length; i++)  {
-		alert(keywords[i]);
-	}
-	
+	rwgAJAXManager.add({
+		url:loadSearchURL,
+		data: {id: 37},   //37
+		timeout:60000,
+		success: function(response) {
+			clearSearch();
+			
+			if (response['success'])  {
+				var searchTerms = response['searchTerms'] 
+				var count = response['count'] 
+				
+				for (i=0; i<count; i++)  {
+					// e.g. "Therapeutic Areas|THERAPEUTIC AREAS:Immunology:1004"
+					
+					var searchParam={id:searchTerms[i].id,
+							         display:searchTerms[i].displayDataCategory,
+							         keyword:searchTerms[i].keyword,
+							         category:searchTerms[i].dataCategory};
+					addSearchTerm(searchParam);
+
+				}
+					
+			}
+			else  {
+				alert('failed');  // show message from server  
+			}
+ 		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+
 }
 
 // Clear the tree, results along with emptying the two arrays that store categories and search terms.

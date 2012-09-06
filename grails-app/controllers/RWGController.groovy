@@ -6,6 +6,7 @@
 
 import org.json.*
 
+
 import bio.BioAnalysisAttribute
 import bio.ClinicalTrial
 import bio.BioMarkerCorrelationMV
@@ -978,5 +979,63 @@ class RWGController {
 	   response.outputStream << ret?.toString()	   
    }
 
+
+   // Load the saved faceted search from database
+   def loadFacetedSearch = {
+			  
+	   def id = params.id   // saved faceted search id
+	   
+	   def authPrincipal = springSecurityService.getPrincipal()
+	   def userId = authPrincipal.id
+
+	   SavedFacetedSearch s = SavedFacetedSearch.findById(id)
+	   
+	   boolean successFlag
+	   def msg = ""
+
+	   JSONObject searchTerms = new JSONObject()	   
+	   
+	   int i = 0
+	   if (s == null)  {
+		   msg = message(code: "search.SavedFacetedSearch.load.failed.notfound")
+		   successFlag = false
+	   }
+	   else   {
+		   def criteria = s.criteria
+
+		   // convert the criteria string to a list of search keyword ids		   
+           def ids = criteria.tokenize('|')		   
+
+		   ids.each {
+			   JSONObject termArray = new JSONObject()   // json object for current search term
+			   def skId = it    // search keyword id
+			
+			   // do thru an HQL query to make faster?	   
+			   SearchKeyword sk = SearchKeyword.get(skId)
+				   
+			   termArray.put("id", skId.toString())
+			   termArray.put("dataCategory", sk.dataCategory)
+			   termArray.put("displayDataCategory", sk.displayDataCategory)
+			   termArray.put("keyword", sk.keyword)
+				   
+			   searchTerms.put(i.toString(), termArray)
+			   i++
+		   }
+		   
+	       successFlag = true
+		   msg = ""
+	   }
+			  
+	   JSONObject ret = new JSONObject()
+	   ret.put('success', successFlag)
+	   ret.put('message', msg)
+	   ret.put('searchTerms', searchTerms)
+	   ret.put('count', i)
+	   
+	   response.setContentType("text/json")
+	   response.outputStream << ret?.toString()
+   }
+
+   
    
 }
