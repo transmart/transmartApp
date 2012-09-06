@@ -60,6 +60,8 @@
 	        var getBoxPlotDataURL = "${createLink([action:'getBoxPlotData'])}";
 	        var getLinePlotDataURL = "${createLink([action:'getLinePlotData'])}";	        
 	        var saveSearchURL = "${createLink([action:'saveFacetedSearch'])}";
+	        var loadSearchURL = "${createLink([action:'loadFacetedSearch'])}";
+	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";	        
 	        var mouse_inside_options_div = false;
 

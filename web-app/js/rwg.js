@@ -2577,7 +2577,7 @@ function getSearchKeywordList()   {
 	return keywords;
 }
 
-// save a faceted seach to the database
+// save a faceted search to the database
 function saveSearch()  {
 	
 	var keywords = getSearchKeywordList();
@@ -2589,6 +2589,23 @@ function saveSearch()  {
 	rwgAJAXManager.add({
 		url:saveSearchURL,
 		data: {criteria: criteriaJSONString, name: "testname23", description:"test descriptio2"},
+		timeout:60000,
+		success: function(response) {
+            alert(response['message']);	        
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+	
+}
+
+//delete a faceted search from the database
+function deleteSearch()  {
+	
+	rwgAJAXManager.add({
+		url:deleteSearchURL,
+		data: {name: "testname23"},
 		timeout:60000,
 		success: function(response) {
             alert(response['message']);	        

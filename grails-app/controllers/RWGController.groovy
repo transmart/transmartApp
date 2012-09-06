@@ -933,4 +933,50 @@ class RWGController {
 	   response.outputStream << ret?.toString()
    }
 
+   // Delete the faceted search from database
+   def deleteFacetedSearch = {
+			  
+	   def name = params.name
+	   
+	   def authPrincipal = springSecurityService.getPrincipal()
+	   def userId = authPrincipal.id
+
+	   SavedFacetedSearch s = SavedFacetedSearch.findByUserIdAndName(userId, name)
+	   
+	   boolean successFlag
+	   def msg = ""
+
+	   if (s == null)  {
+		   msg = message(code: "search.SavedFacetedSearch.delete.failed.notfound")
+		   successFlag = false
+	   }
+	   else   {
+		   s.delete()
+		   
+		   if (!s.hasErrors())  {
+			   successFlag = true
+		   
+			   msg = message(code: "search.SavedFacetedSearch.delete.success")
+		   
+			   log.info("Deleted faceted search ${name} for userId ${userId}")
+		   }
+		   else {
+			   String errorString =  s.errors.toString()
+
+			   msg = message(code: "search.SavedFacetedSearch.delete.failed.default")
+			   successFlag = false
+		   
+			   log.info("Failed to delete faceted search ${name} for userId ${userId}.  Error:" + errorString)
+		   }
+	   }
+			  
+	   JSONObject ret = new JSONObject()
+	   ret.put('success', successFlag)
+	   ret.put('message', msg)
+	   
+	   response.setContentType("text/json")
+	   response.outputStream << ret?.toString()	   
+   }
+
+   
 }
