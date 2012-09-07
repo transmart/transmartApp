@@ -937,12 +937,12 @@ class RWGController {
    // Delete the faceted search from database
    def deleteFacetedSearch = {
 			  
-	   def name = params.name
+	   def id = params.id
 	   
 	   def authPrincipal = springSecurityService.getPrincipal()
 	   def userId = authPrincipal.id
 
-	   SavedFacetedSearch s = SavedFacetedSearch.findByUserIdAndName(userId, name)
+	   SavedFacetedSearch s = SavedFacetedSearch.findByUserIdAndId(userId, id)
 	   
 	   boolean successFlag
 	   def msg = ""
@@ -959,7 +959,7 @@ class RWGController {
 		   
 			   msg = message(code: "search.SavedFacetedSearch.delete.success")
 		   
-			   log.info("Deleted faceted search ${name} for userId ${userId}")
+			   log.info("Deleted faceted search ${id} for userId ${userId}")
 		   }
 		   else {
 			   String errorString =  s.errors.toString()
@@ -967,7 +967,7 @@ class RWGController {
 			   msg = message(code: "search.SavedFacetedSearch.delete.failed.default")
 			   successFlag = false
 		   
-			   log.info("Failed to delete faceted search ${name} for userId ${userId}.  Error:" + errorString)
+			   log.info("Failed to delete faceted search ${id} for userId ${userId}.  Error:" + errorString)
 		   }
 	   }
 			  

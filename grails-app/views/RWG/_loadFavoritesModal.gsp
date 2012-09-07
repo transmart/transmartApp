@@ -9,8 +9,11 @@
 			    <tr>
 			    	<td>
 			    	    <div title="${f.description}">
-			    				<a href="#" onclick="loadSearch(${f.id}); return false;">${f.name}</a>&nbsp;   
+			    			<a href="#" onclick="loadSearch(${f.id}); return false;">${f.name}</a>
 			    	    </div>
+			    	</td>
+			    	<td>
+			    	    <a href="#" onclick="deleteSearch(${f.id}); return false;">Delete</a>
 			    	</td> 
 			    </tr>
 			</g:each>

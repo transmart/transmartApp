@@ -2638,11 +2638,11 @@ function saveSearch(keywords, name, desc)  {
 }
 
 //delete a faceted search from the database
-function deleteSearch()  {
+function deleteSearch(id)  {
 	
 	rwgAJAXManager.add({
 		url:deleteSearchURL,
-		data: {name: "testname23"},
+		data: {id: id},
 		timeout:60000,
 		success: function(response) {
             alert(response['message']);	        
