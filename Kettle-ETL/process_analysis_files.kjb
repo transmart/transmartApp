@@ -17,6 +17,11 @@
             <description/>
         </parameter>
         <parameter>
+            <name>GWAS_RECS</name>
+            <default_value>0</default_value>
+            <description/>
+        </parameter>
+        <parameter>
             <name>LOADER_PATH</name>
             <default_value>$ORACLE_HOME&#47;bin&#47;sqlldr</default_value>
             <description/>
@@ -29,6 +34,11 @@
         <parameter>
             <name>METADATA_FILE</name>
             <default_value>x</default_value>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>SORT_DIR</name>
+            <default_value>$HOME</default_value>
             <description/>
         </parameter>
     </parameters>
@@ -213,8 +223,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>413</xloc>
-      <yloc>53</yloc>
+      <xloc>517</xloc>
+      <yloc>52</yloc>
       </entry>
     <entry>
       <name>Process one analysis record</name>
@@ -243,8 +253,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>592</xloc>
-      <yloc>54</yloc>
+      <xloc>696</xloc>
+      <yloc>53</yloc>
       </entry>
     <entry>
       <name>Checks if files exist</name>
@@ -308,15 +318,6 @@
     </hop>
     <hop>
       <from>Checks if files exist</from>
-      <to>Get list of studies from metadata</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Checks if files exist</from>
       <to>Write To Log</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -327,6 +328,15 @@
     <hop>
       <from>Write To Log</from>
       <to>Abort job</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Checks if files exist</from>
+      <to>Get list of studies from metadata</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>

@@ -210,6 +210,18 @@
            </partitioning>
     <fields>
       <field>
+        <name>GWAS_RECS</name>
+        <variable>${GWAS_RECS}</variable>
+        <type>Integer</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
         <name>LOADER_PATH</name>
         <variable>${LOADER_PATH}</variable>
         <type>String</type>

@@ -225,6 +225,9 @@
             </parameter>            <parameter>            <name>ETL_ID</name>
             <stream_name>ETL_ID</stream_name>
             <value/>
+            </parameter>            <parameter>            <name>GWAS_RECS</name>
+            <stream_name>GWAS_RECS</stream_name>
+            <value/>
             </parameter>            <parameter>            <name>LOADER_PATH</name>
             <stream_name>LOADER_PATH</stream_name>
             <value/>

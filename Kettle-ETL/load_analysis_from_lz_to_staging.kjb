@@ -22,6 +22,11 @@
             <description/>
         </parameter>
         <parameter>
+            <name>GWAS_RECS</name>
+            <default_value>0</default_value>
+            <description>Process all records</description>
+        </parameter>
+        <parameter>
             <name>LOADER_PATH</name>
             <default_value>$ORACLE_HOME&#47;bin&#47;sqlldr</default_value>
             <description/>
@@ -408,6 +413,24 @@
       <xloc>764</xloc>
       <yloc>323</yloc>
       </entry>
+    <entry>
+      <name>Set status to STAGED in LZ_SRC_ANALYSIS_METADATA</name>
+      <description/>
+      <type>SQL</type>
+      <sql>update lz_src_analysis_metadata
+set status=&apos;STAGED&apos;
+where etl_id=${ETL_ID}</sql>
+      <useVariableSubstitution>T</useVariableSubstitution>
+      <sqlfromfile>F</sqlfromfile>
+      <sqlfilename/>
+      <sendOneStatement>F</sendOneStatement>
+      <connection>TM_LZ</connection>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>1168</xloc>
+      <yloc>255</yloc>
+      </entry>
   </entries>
   <hops>
     <hop>
@@ -508,6 +531,33 @@
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>load GWAS data to biomart_stage</from>
+      <to>Set status to STAGED in LZ_SRC_ANALYSIS_METADATA</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Success 2</from>
+      <to>Set status to STAGED in LZ_SRC_ANALYSIS_METADATA</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Success 3</from>
+      <to>Set status to STAGED in LZ_SRC_ANALYSIS_METADATA</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
     </hop>
   </hops>
   <notepads>
