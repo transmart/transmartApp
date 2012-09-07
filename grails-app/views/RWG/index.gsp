@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>        
         <link rel="stylesheet" href="${resource(dir:'css', file:'rwg.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/simpleModal.css')}"></link>
                                 
         <!-- jQuery JS libraries -->
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
@@ -30,6 +31,7 @@
  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.ajaxmanager.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
+  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
   		
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  
@@ -108,7 +110,16 @@
  
 	        });	
             
-        </script>           
+        </script>
+        
+                
+        <script type="text/javascript">		
+			jQuery(function ($) {
+				// Load dialog on click of Save link
+				$('#save-modal .basic').click(openSaveSearchDialog);
+			});
+		</script>
+                  
                 
     </head>
     <body>
@@ -166,12 +177,26 @@
         <div id="title-search-div" class="ui-widget-header">
 	         <h2 style="float:left" class="title">Active Filters</h2>
 			 <h2 style="float:right; padding-right:5px;" class="title">
-			 	<a href="#" onclick="saveSearch(); return false;">Save</a>
+			 	<div id='save-modal'>
+			 		<a href="#" class="basic">Save</a>
+				 </div>
 			 	<a href="#" onclick="loadSearch(); return false;">Load</a>
 			 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
 			 </h2> 
 		</div>
 
+		<!-- Save search modal content -->
+		<div id="save-modal-content" style="display:none;">
+			<h3>Save Faceted Search</h3><br/>
+			Enter Name <input type="text" id="searchName" size="50"/><br/><br/>
+			Enter Description <textarea id="searchDescription" rows="5" cols="70" ></textarea><br/>
+			<br/>
+			<a href="#" onclick="saveSearch(); return false;">Save</a>&nbsp;   
+			<a href="#" onclick="jQuery.modal.close();return false;">Cancel</a>   
+                     
+			
+		</div>
+				
 		<div id="active-search-div"></div>
 		 
 		<div id="title-filter" class="ui-widget-header">

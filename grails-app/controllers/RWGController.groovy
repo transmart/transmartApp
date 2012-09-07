@@ -904,7 +904,7 @@ class RWGController {
 	   boolean successFlag
 	   def msg = ""	   
 
-	   if (s.save())  {
+	   if (s.save()) {
 		   successFlag = true
 		   
 		   msg = message(code: "search.SavedFacetedSearch.save.success")

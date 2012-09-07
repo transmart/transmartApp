@@ -2577,20 +2577,44 @@ function getSearchKeywordList()   {
 	return keywords;
 }
 
-// save a faceted search to the database
-function saveSearch()  {
-	
+function openSaveSearchDialog()  {
+
 	var keywords = getSearchKeywordList();
-	
+
+	if (keywords.length>0)  {
+		jQuery('#save-modal-content').modal();
+	}
+	else  {
+		alert("No search criteria to save!")
+	}
+		
+
+	return false;
+
+}
+
+// save a faceted search to the database
+function saveSearch(keywords, name, desc)  {
+
+	var name = jQuery("#searchName").val();
+	var desc = jQuery("#searchDescription").val();
+	var keywords = getSearchKeywordList();
+
 	//  had no luck trying to use JSON libraries for creating/parsing JSON string so just save keywords as pipe delimited string 
 	if (keywords.length>0)  {
 		var criteriaString = keywords.join("|") 
 		rwgAJAXManager.add({
 			url:saveSearchURL,
-			data: {criteria: criteriaString, name: "testname23xzqqq2", description:"test descriptio2"},
+			data: {criteria: criteriaString, name: name, description:desc},
 			timeout:60000,
 			success: function(response) {
-	            alert(response['message']);	        
+	            alert(response['message']);	
+	            
+	            // close the dialog if success flag was true
+	            if (response['success'])  {
+	            	jQuery.modal.close();	            	
+	            }
+	            
 			},
 			error: function(xhr) {
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);

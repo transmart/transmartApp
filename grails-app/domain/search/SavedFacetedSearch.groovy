@@ -42,9 +42,9 @@ class SavedFacetedSearch {
 	 
 	 static constraints = {
 		 userId(nullable:false)
-		 name(nullable:false,maxSize:50)
-		 description(nullable:false,maxSize:1000)
-		 criteria(nullable:false,maxSize:4000)
+		 name(nullable:false,blank: false,maxSize:50)
+		 description(nullable:false,blank: false,maxSize:1000)
+		 criteria(nullable:false,blank: false,maxSize:4000)
 		 name (unique:'userId')
 	 }
 		
