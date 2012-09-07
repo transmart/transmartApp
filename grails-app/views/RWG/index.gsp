@@ -177,9 +177,9 @@
         <div id="title-search-div" class="ui-widget-header">
 	         <h2 style="float:left" class="title">Active Filters</h2>
 			 <h2 style="float:right; padding-right:5px;" class="title">
-			 	<div id='save-modal'>
+			 	<span id='save-modal'>
 			 		<a href="#" class="basic">Save</a>
-				 </div>
+				 </span>
 			 	<a href="#" onclick="loadSearch(); return false;">Load</a>
 			 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
 			 </h2> 
@@ -188,7 +188,7 @@
 		<!-- Save search modal content -->
 		<div id="save-modal-content" style="display:none;">
 			<h3>Save Faceted Search</h3><br/>
-			Enter Name <input type="text" id="searchName" size="50"/><br/><br/>
+			Enter Name <input type="text" id="searchName" size="50" maxlength="50" /><br/><br/>
 			Enter Description <textarea id="searchDescription" rows="5" cols="70" ></textarea><br/>
 			<br/>
 			<a href="#" onclick="saveSearch(); return false;">Save</a>&nbsp;   

@@ -2597,8 +2597,18 @@ function openSaveSearchDialog()  {
 function saveSearch(keywords, name, desc)  {
 
 	var name = jQuery("#searchName").val();
-	var desc = jQuery("#searchDescription").val();
+	var desc = jQuery("#searchDescription").val().substring(0, 1000);
 	var keywords = getSearchKeywordList();
+	
+	if  (!name) {
+		alert('Name is required!');
+		return false;
+	}
+
+	if (!desc) {
+		alert('Description is required!');
+		return false;
+	}
 
 	//  had no luck trying to use JSON libraries for creating/parsing JSON string so just save keywords as pipe delimited string 
 	if (keywords.length>0)  {
