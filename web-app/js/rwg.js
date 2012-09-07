@@ -2655,12 +2655,20 @@ function deleteSearch()  {
 }
 
 
-function loadSearch()  {
+function openLoadSearchDialog()  {
 
-	
+	jQuery('#load-modal-content').modal();
+
+	return false;
+
+}
+
+// load in the saved favorites with the given id
+function loadSearch(id)  {
+
 	rwgAJAXManager.add({
 		url:loadSearchURL,
-		data: {id: 37},   //37
+		data: {id: id},   
 		timeout:60000,
 		success: function(response) {
 			clearSearch();
@@ -2670,7 +2678,6 @@ function loadSearch()  {
 				var count = response['count'] 
 				
 				for (i=0; i<count; i++)  {
-					// e.g. "Therapeutic Areas|THERAPEUTIC AREAS:Immunology:1004"
 					
 					var searchParam={id:searchTerms[i].id,
 							         display:searchTerms[i].displayDataCategory,
@@ -2679,10 +2686,12 @@ function loadSearch()  {
 					addSearchTerm(searchParam);
 
 				}
+				
+            	jQuery.modal.close();	            	
 					
 			}
 			else  {
-				alert('failed');  // show message from server  
+				alert(response['message']);  // show message from server  
 			}
  		},
 		error: function(xhr) {

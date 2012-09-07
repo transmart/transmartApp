@@ -118,6 +118,10 @@
 				// Load dialog on click of Save link
 				$('#save-modal .basic').click(openSaveSearchDialog);
 			});
+			jQuery(function ($) {
+				// Load dialog on click of Load link
+				$('#load-modal .basic').click(openLoadSearchDialog);
+			});
 		</script>
                   
                 
@@ -179,24 +183,20 @@
 			 <h2 style="float:right; padding-right:5px;" class="title">
 			 	<span id='save-modal'>
 			 		<a href="#" class="basic">Save</a>
-				 </span>
-			 	<a href="#" onclick="loadSearch(); return false;">Load</a>
+				</span>&nbsp;&nbsp;
+				
+			 	<span id='load-modal'>
+				 	<a href="#"  class="basic">Load</a>
+				</span>&nbsp;&nbsp;
+				
 			 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
 			 </h2> 
 		</div>
 
-		<!-- Save search modal content -->
-		<div id="save-modal-content" style="display:none;">
-			<h3>Save Faceted Search</h3><br/>
-			Enter Name <input type="text" id="searchName" size="50" maxlength="50" /><br/><br/>
-			Enter Description <textarea id="searchDescription" rows="5" cols="70" ></textarea><br/>
-			<br/>
-			<a href="#" onclick="saveSearch(); return false;">Save</a>&nbsp;   
-			<a href="#" onclick="jQuery.modal.close();return false;">Cancel</a>   
-                     
+        <g:render template="saveFavoritesModal" />
+        
+        <g:render template="loadFavoritesModal" />
 			
-		</div>
-				
 		<div id="active-search-div"></div>
 		 
 		<div id="title-filter" class="ui-widget-header">

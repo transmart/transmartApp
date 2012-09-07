@@ -1036,6 +1036,17 @@ class RWGController {
 	   response.outputStream << ret?.toString()
    }
 
-   
+   // Load the current user's saved favorites
+   def getFavorites = {
+	   
+	   def authPrincipal = springSecurityService.getPrincipal()
+
+	   def userId = authPrincipal.id   
+	   def favorites = SavedFacetedSearch.findAllByUserId(userId, [sort:"name", order:"asc"])
+	   
+	   return favorites	   
+			  
+   }
+
    
 }
