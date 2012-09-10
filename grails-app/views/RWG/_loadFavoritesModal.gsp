@@ -11,7 +11,7 @@
 			    	    </div>
 			    	</td>
 			    	<td>
-			    	    <a href="#" onclick="deleteSearch(${f.id}); return false;">Delete</a>
+			    	    <a href="#" onclick="deleteSearch(${f.id},'${f.name}'); return false;">Delete</a>
 			    	</td> 
 			    </tr>
 			</g:each>

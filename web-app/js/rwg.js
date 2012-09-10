@@ -2638,7 +2638,10 @@ function saveSearch(keywords, name, desc)  {
 }
 
 //delete a faceted search from the database
-function deleteSearch(id)  {
+function deleteSearch(id, name)  {
+	if (!confirm('Are you sure you want to delete search "' + name + '"?'))  {
+		return false;
+	}
 	
 	rwgAJAXManager.add({
 		url:deleteSearchURL,
