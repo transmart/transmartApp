@@ -62,6 +62,7 @@
 	        var getLinePlotDataURL = "${createLink([action:'getLinePlotData'])}";	        
 	        var saveSearchURL = "${createLink([action:'saveFacetedSearch'])}";
 	        var loadSearchURL = "${createLink([action:'loadFacetedSearch'])}";
+	        var updateSearchURL = "${createLink([action:'updateFacetedSearch'])}";
 	        var renderFavoritesTemplateURL = "${createLink([action:'renderFavoritesTemplate'])}";
 	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";	        
@@ -187,7 +188,7 @@
 				</span>&nbsp;&nbsp;
 				
 			 	<span id='load-modal'>
-				 	<a href="#"  class="basic">Load</a>
+				 	<a href="#"  class="basic">Favorites</a>
 				</span>&nbsp;&nbsp;
 				
 			 	<a href="#" onclick="clearSearch(); return false;">Clear</a>

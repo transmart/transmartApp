@@ -2594,7 +2594,7 @@ function openSaveSearchDialog()  {
 }
 
 // save a faceted search to the database
-function saveSearch(keywords, name, desc)  {
+function saveSearch(keywords)  {
 
 	var name = jQuery("#searchName").val();
 	var desc = jQuery("#searchDescription").val().substring(0, 1000);
@@ -2637,6 +2637,46 @@ function saveSearch(keywords, name, desc)  {
 	
 }
 
+//update a faceted search in the database 
+function updateSearch(id)  {
+
+	var name = jQuery("#searchName_" + id).val();
+	var desc = jQuery("#searchDescription_" + id).val().substring(0, 1000);
+	
+	if  (!name) {
+		alert('Name is required!');
+		return false;
+	}
+
+	if (!desc) {
+		alert('Description is required!');
+		return false;
+	}
+
+	rwgAJAXManager.add({
+		url:updateSearchURL,
+		data: {id:id, name: name, description:desc},
+		timeout:60000,
+		success: function(response) {
+            alert(response['message']);	
+            
+            // close the dialog and update static field if success flag was true
+            if (response['success'])  {
+            	
+            	jQuery("#labelSearchName_" + id).text(name).attr('title', desc);
+            	
+            	hideEditSearchDiv(id);	            	
+            }
+            
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+	
+}
+
+
 //delete a faceted search from the database
 function deleteSearch(id, name)  {
 	if (!confirm('Are you sure you want to delete search "' + name + '"?'))  {
@@ -2660,6 +2700,18 @@ function deleteSearch(id, name)  {
 		}
 	});
 	
+}
+
+//show the edit search div for the given search id
+function showEditSearchDiv(id)  {
+				
+   	jQuery("#editSearchDiv_" + id).show();	            	
+}
+
+//hide the edit search div for the given search id
+function hideEditSearchDiv(id)  {
+				
+   	jQuery("#editSearchDiv_" + id).hide();	            	
 }
 
 

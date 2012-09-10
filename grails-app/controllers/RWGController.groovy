@@ -946,7 +946,55 @@ class RWGController {
 	   response.outputStream << ret?.toString()
    }
 
-   // Delete the faceted search from database
+   // Update the faceted search in the database
+   def updateFacetedSearch = {
+
+	   def id = params.id	   	   
+	   def name = params.name	   
+	   def description = params.description	   
+	   
+	   def authPrincipal = springSecurityService.getPrincipal()
+	   def userId = authPrincipal.id   
+
+	   SavedFacetedSearch s = SavedFacetedSearch.findByUserIdAndId(userId, id)
+	   
+	   s.name = name
+	   s.description = description
+	   
+	   boolean successFlag
+	   def msg = ""	   
+
+	   if (s.save()) {
+		   successFlag = true
+		   
+		   msg = message(code: "search.SavedFacetedSearch.save.success")
+		   
+  	       log.info("Updated faceted search ${name} for userId ${userId}")
+	   }
+	   else {
+		   String errorString =  s.errors.toString()
+
+		   if (errorString.contains("search.SavedFacetedSearch.name.unique.error") )  {
+			   msg = message(code: "search.SavedFacetedSearch.name.unique.error")
+		   }
+		   else  {
+			   msg = message(code: "search.SavedFacetedSearch.save.failed.default")
+		   }
+		   successFlag = false
+		   
+		   log.info("Failed to update faceted search ${name} for userId ${userId}.  Error:" + errorString)
+		   
+	   }
+	   	   
+	   JSONObject ret = new JSONObject()
+	   ret.put('success', successFlag)
+	   ret.put('message', msg)
+	   
+	   response.setContentType("text/json")
+	   response.outputStream << ret?.toString()
+   }
+
+      // Delete the faceted search from database
    def deleteFacetedSearch = {
 			  
 	   def id = params.id
