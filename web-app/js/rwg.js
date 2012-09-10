@@ -2645,7 +2645,12 @@ function deleteSearch(id)  {
 		data: {id: id},
 		timeout:60000,
 		success: function(response) {
-            alert(response['message']);	        
+            alert(response['message']);	 
+            
+            if (response['success'])  {
+            	jQuery("#favorites_"+id).remove();
+            }
+            
 		},
 		error: function(xhr) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
@@ -2656,9 +2661,24 @@ function deleteSearch(id)  {
 
 
 function openLoadSearchDialog()  {
-
-	jQuery('#load-modal-content').modal();
-
+	
+	var html = "";
+	
+	rwgAJAXManager.add({
+		url:renderFavoritesTemplateURL,									
+		data: {},
+		timeout:60000,
+		success: function(response) {
+		
+		    jQuery('#load-modal-content').html(response)
+		
+			jQuery('#load-modal-content').modal();
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+	
 	return false;
 
 }

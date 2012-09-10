@@ -884,7 +884,19 @@ class RWGController {
 	   def m = rwgDAO.getLineplotData(params.id, params.probeID)
 	   render m as JSON
    }
-   
+
+   // Render the template for the favorites dialog
+   def renderFavoritesTemplate = {
+	   
+	   def html
+	   
+	   def favorites = getFavorites()
+	   
+	   render(template:'loadFavoritesModal', model:[favorites:favorites]).toString()	   	   	   
+			  
+   }
+
+      
    // Save the faceted search to database
    def saveFacetedSearch = {
 	   	   
