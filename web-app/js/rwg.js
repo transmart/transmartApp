@@ -2630,11 +2630,15 @@ function saveSearch(keywords)  {
 	//  had no luck trying to use JSON libraries for creating/parsing JSON string so just save keywords as pipe delimited string 
 	if (keywords.length>0)  {
 		var criteriaString = keywords.join("|") 
+		
+    	jQuery("#save-modal-content").mask("Saving...");
+		
 		rwgAJAXManager.add({
 			url:saveSearchURL,
 			data: {criteria: criteriaString, name: name, description:desc},
 			timeout:60000,
 			success: function(response) {
+		    	jQuery("#save-modal-content").unmask();
 	            alert(response['message']);	
 	            
 	            // close the dialog if success flag was true
@@ -2644,6 +2648,7 @@ function saveSearch(keywords)  {
 	            
 			},
 			error: function(xhr) {
+		    	jQuery("#save-modal-content").unmask();
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 			}
 		});
@@ -2670,6 +2675,7 @@ function updateSearch(id)  {
 		return false;
 	}
 
+	jQuery("#load-modal-content").mask("Saving...");
 	rwgAJAXManager.add({
 		url:updateSearchURL,
 		data: {id:id, name: name, description:desc},
@@ -2677,6 +2683,7 @@ function updateSearch(id)  {
 		success: function(response) {
             alert(response['message']);	
             
+        	jQuery("#load-modal-content").unmask();
             // close the dialog and update static field if success flag was true
             if (response['success'])  {
             	
@@ -2687,6 +2694,7 @@ function updateSearch(id)  {
             
 		},
 		error: function(xhr) {
+        	jQuery("#load-modal-content").unmask();
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
 	});
@@ -2703,11 +2711,13 @@ function deleteSearch(id)  {
 		return false;
 	}
 	
+	jQuery("#load-modal-content").mask("Deleting...");
 	rwgAJAXManager.add({
 		url:deleteSearchURL,
 		data: {id: id},
 		timeout:60000,
 		success: function(response) {
+        	jQuery("#load-modal-content").unmask();
             alert(response['message']);	 
             
             if (response['success'])  {
@@ -2716,6 +2726,7 @@ function deleteSearch(id)  {
             
 		},
 		error: function(xhr) {
+        	jQuery("#load-modal-content").unmask();
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
 	});
