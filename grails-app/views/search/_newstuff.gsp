@@ -23,11 +23,19 @@
 				//    $('#table_id').dataTable();
 				//} );
 
-				jq(document).ready(function() {
-				    jq('#table_id').dataTable( {
-				        "bProcessing": true,
-				        "sAjaxSource": 'http://localhost:8080/transmartApp/search/getGwasResults'
-				    } );
+				//jq(document).ready(function() {
+				//    jq('#table_id').dataTable( {
+				//        "bProcessing": true,
+				//        "bDestroy": true,
+				//        "sAjaxSource": 'http://localhost:8080/transmartApp/search/getGwasResults'
+				//    } );
+				//} );				
+				
+				jq.ajax( {
+				    "url": 'http://localhost:8080/transmartApp/search/getGwasResults',
+				    bDestroy: true,
+				    "success": function ( json ) { jq('#table_id').dataTable( json );},
+				    "dataType": "json"
 				} );				
 				
 		    </script>
@@ -36,19 +44,9 @@
 		    
 			<table id="table_id" cellpadding="0" cellspacing="0" border="0" class="display">
 				<thead>
-					<tr>
-						<th>Probe ID</th>
-						<th>p-value</th>
-						<th>Adjusted p-value</th>
-					</tr>
 				</thead>
 				<tbody>
 				</tbody>
-				<tfoot>
-					<tr>
-						<th>Probe ID</th>
-						<th>p-value</th>
-						<th>Adjusted p-value</th>
-					</tr>					
+				<tfoot>	
 				</tfoot>
 			</table>	

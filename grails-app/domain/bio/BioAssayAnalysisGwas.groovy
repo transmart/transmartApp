@@ -36,9 +36,8 @@ class BioAssayAnalysisGwas implements IExcelProfile {
 	Double logPValue
 	Long etlId
 	Long id
-	BioAssayAnalysisDataExt bioAssayAnalysisDataExt
-	static hasOne = [bioAssayAnalysisDataExt:BioAssayAnalysisDataExt]
 	
+	static hasMany = [bioAssayAnalysisDataExts:BioAssayAnalysisDataExt]
 	
 	static mapping = {
 	 table name:'BIO_ASSAY_ANALYSIS_GWAS', schema:'BIOMART'
@@ -51,7 +50,9 @@ class BioAssayAnalysisGwas implements IExcelProfile {
 		 pValue column:'P_VALUE'
 		 logPValue column:'LOG_P_VALUE'
 		 etlId column:'ETL_ID'
+		 bioAssayAnalysisDataExts joinTable: [name: "BIO_ASY_ANALYSIS_DATA_EXT", key: 'BIO_ASY_ANALYSIS_DATA_ID', column:'BIO_ASY_ANALYSIS_DATA_EXT_ID']
 		}
+	 	
 	}
 
 	/**

@@ -33,14 +33,15 @@ class BioAssayAnalysisDataExt implements IExcelProfile {
 	Long id
 	String ext_data
 	String ext_type
-	static belongsTo = [bioAssayAnalysisGwas:BioAssayAnalysisGwas]
+	Long bioAsyAnalysisDataId
 	
 	static mapping = {
 	 table name:'BIO_ASY_ANALYSIS_DATA_EXT', schema:'BIOMART'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_ASY_ANALYSIS_DATA_ID'
+		id column:'BIO_ASY_ANALYSIS_DATA_EXT_ID'
+		bioAsyAnalysisDataId column:'BIO_ASY_ANALYSIS_DATA_ID'
 		ext_data column:'EXT_DATA'
 		ext_type column:'EXT_TYPE'
 		}

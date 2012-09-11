@@ -664,24 +664,92 @@ public class SearchController{
 		render(view:'noresult')
 	}
 	
+	def renderNewStuff = {
+		
+		
+		render(template:'newstuff')
+	}
+	
 	//Retrieve the Gwas results for the search filter. This is used to populate the result grids on the search page.
 	def getGwasResults = {
 		
-		//Initiate Data Access object to get to search.
-		def searchDAO = new SearchDAO()
+		//This will hold the index lookups for deciphering the large text meta-data field.
+		def indexMap = [:]
 		
-		//Get the GWAS Data.
-		def gwasData = searchDAO.getGwasData()
-		
-		//Get the data from the index table for GWAS.
-		def gwasIndexData = bio.BioAssayAnalysisDataIdx.findAllByExt_type("GWAS")
-		
-		//
-		
+		//This is the parent object of the data we return.
 		def returnJson = [:]
 		
-		returnJson["aaData"] = gwasData
-		returnJson["aoColumns"] = gwasIndexData
+		//Initiate Data Access object to get to search data.
+		def searchDAO = new SearchDAO()
+		
+		//This will be a list of the column names in our returned dynamic meta-data.
+		def columnNames = []
+		
+		//Get the GWAS Data.
+		//def gwasData = searchDAO.getGwasData()
+		
+		def gwasData = 		bio.BioAssayAnalysisGwas.executeQuery("""
+					SELECT	gwas.rsId,
+							gwas.pValue,
+							gwas.logPValue,
+							ext.ext_data
+					FROM	bio.BioAssayAnalysisGwas gwas
+					JOIN	gwas.bioAssayAnalysisDataExts ext
+					""",[max:100,offset:5])
+
+		def returnedGwasData = []
+		
+		//Get the data from the index table for GWAS.
+		def gwasIndexData = bio.BioAssayAnalysisDataIdx.findAllByExt_type("GWAS", [sort:"display_idx",order:"asc"])
+
+		columnNames.add(["sTitle":"Probe ID"])
+		columnNames.add(["sTitle":"p-value"])
+		columnNames.add(["sTitle":"Adjusted p-value"])
+
+		gwasIndexData.each()
+		{
+			//Put the index information into a map so we can look it up later.
+			indexMap[it.field_idx] = it.display_idx
+			
+			//We need to take the data from the index table and extract the list of column names.
+			columnNames.add(["sTitle":it.field_name])
+		}
+
+		//The returned data needs to have the large text field broken out by delimiter.
+		gwasData.each()
+		{
+			//This temporary list is used so that we return a list of lists.
+			def temporaryList = []
+			
+			//The third element is our large text field. Split it into an array.
+			def largeTextField = it[3].split(";")
+			
+			//This will be the array that is reordered according to the meta-data index table.
+			String[] newLargeTextField = new String[largeTextField.size()]
+			
+			//Loop over the elements in the index map.
+			indexMap.each()
+			{
+				//Reorder the array based on the index table.
+				newLargeTextField[it.value-1] = largeTextField[it.key-1]
+			}
+			
+			//Swap around the data types for easy array addition.
+			def finalFields = new ArrayList(Arrays.asList(newLargeTextField));
+			
+			//Add the non-dynamic meta data fields to the returned data.
+			temporaryList.add(it[0])
+			temporaryList.add(it[1])
+			temporaryList.add(it[2])
+			
+			//Add the dynamic fields to the returned data.
+			temporaryList+=finalFields
+			
+			returnedGwasData.add(temporaryList)
+		}
+		
+		returnJson["aaData"] = returnedGwasData
+		returnJson["aoColumns"] = columnNames
 		
 		//Return the data in JSON format so the grid can format it.
 		render returnJson as JSON
