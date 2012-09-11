@@ -1,12 +1,3 @@
-alter table BIOMART.BIO_ASSAY_ANALYSIS_EXT
-   drop constraint FK_BIO_ASSA_BIO_ASY_A_BIO_ASSA;
-
-alter table BIOMART.BIO_ASSAY_ANALYSIS_EXT
-   drop constraint FK_BIO_ASSA_REFERENCE_BIO_ASSA;
-
-alter table BIOMART.BIO_ASSAY_ANALYSIS_EXT
-   drop constraint FK_BIO_ASSA_REFERENCE_BIO_ASSA;
-
 drop table BIOMART.BIO_ASSAY_ANALYSIS_EXT cascade constraints;
 
 /*==============================================================*/
@@ -25,15 +16,3 @@ create table BIOMART.BIO_ASSAY_ANALYSIS_EXT
    SAMPLE_SIZE          CHAR(10),
    constraint PK_BIO_ASSAY_ANALYSIS_EXT primary key (BIO_ASSAY_ANALYSIS_ID)
 );
-
-alter table BIOMART.BIO_ASSAY_ANALYSIS_EXT
-   add constraint FK_BIO_ASSA_BIO_ASY_A_BIO_ASSA foreign key (BIO_ASSAY_ANALYSIS_ID)
-      references BIOMART.BIO_ASSAY_ANALYSIS (BIO_ASSAY_ANALYSIS_ID);
-
-alter table BIOMART.BIO_ASSAY_ANALYSIS_EXT
-   add constraint FK_BIO_ASSA_REFERENCE_BIO_ASSA foreign key (BIO_ASSAY_EXPRESSION_PLATFORM_)
-      references BIOMART.BIO_ASSAY_PLATFORM (BIO_ASSAY_PLATFORM_ID);
-
-alter table BIOMART.BIO_ASSAY_ANALYSIS_EXT
-   add constraint FK_BIO_ASSA_REFERENCE_BIO_ASSA foreign key (BIO_ASSAY_GENOTYPE_PLATFORM_ID)
-      references BIOMART.BIO_ASSAY_PLATFORM (BIO_ASSAY_PLATFORM_ID);
