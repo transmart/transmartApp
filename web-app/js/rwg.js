@@ -2678,7 +2678,10 @@ function updateSearch(id)  {
 
 
 //delete a faceted search from the database
-function deleteSearch(id, name)  {
+function deleteSearch(id)  {
+	
+	var name = jQuery("#labelSearchName_" + id).text();
+	
 	if (!confirm('Are you sure you want to delete search "' + name + '"?'))  {
 		return false;
 	}
@@ -2704,14 +2707,22 @@ function deleteSearch(id, name)  {
 
 //show the edit search div for the given search id
 function showEditSearchDiv(id)  {
-				
-   	jQuery("#editSearchDiv_" + id).show();	            	
+
+	// first hide any other edit divs that might be showing and show the static version
+   	jQuery("#favoritesTable div.editSearchDiv").hide();	            	
+   	jQuery("#favoritesTable div.staticSearchDiv").show();	            	
+	
+   	
+   	// now hide this specific static div, and show its edit div
+   	jQuery("#staticSearchDiv_" + id).hide(250);	            	
+   	jQuery("#editSearchDiv_" + id).show(250);	            	
 }
 
 //hide the edit search div for the given search id
 function hideEditSearchDiv(id)  {
 				
-   	jQuery("#editSearchDiv_" + id).hide();	            	
+   	jQuery("#editSearchDiv_" + id).hide(250);	            	
+   	jQuery("#staticSearchDiv_" + id).show(250);	            	
 }
 
 
