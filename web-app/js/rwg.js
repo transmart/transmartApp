@@ -2577,12 +2577,29 @@ function getSearchKeywordList()   {
 	return keywords;
 }
 
+function modalEffectsOpen(dialog)  {
+    dialog.overlay.fadeIn(200, function () {
+		    dialog.container.slideDown(200,   function () {dialog.data.fadeIn(200);}  );
+			  								}
+                          );
+}
+
+function modalEffectsClose(dialog)  {
+			dialog.data.fadeOut(200, function () {  
+				dialog.container.slideUp(200, function () {
+					dialog.overlay.fadeOut(200, function () {
+						jQuery.modal.close(); 
+		      });
+		    });
+		  });
+}
+
 function openSaveSearchDialog()  {
 
 	var keywords = getSearchKeywordList();
 
 	if (keywords.length>0)  {
-		jQuery('#save-modal-content').modal();
+		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose  });
 	}
 	else  {
 		alert("No search criteria to save!")
@@ -2738,7 +2755,7 @@ function openLoadSearchDialog()  {
 		
 		    jQuery('#load-modal-content').html(response)
 		
-			jQuery('#load-modal-content').modal();
+			jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose  });
 		},
 		error: function(xhr) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
