@@ -223,8 +223,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>517</xloc>
-      <yloc>52</yloc>
+      <xloc>419</xloc>
+      <yloc>56</yloc>
       </entry>
     <entry>
       <name>Process one analysis record</name>
@@ -253,8 +253,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>696</xloc>
-      <yloc>53</yloc>
+      <xloc>630</xloc>
+      <yloc>56</yloc>
       </entry>
     <entry>
       <name>Checks if files exist</name>
