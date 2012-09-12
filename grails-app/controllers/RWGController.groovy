@@ -656,7 +656,7 @@ class RWGController {
    * @return SOLR field to be used for gene searches
    */
    def setSOLRGenesField = {
-	   showSigGenesOnly = true ->
+	   boolean showSigGenesOnly = true ->
 
 	   def solrGenesField = ""  // name of SOLR search field to be used for gene queries (SIGGENE or ALLGENE)
 	   if (showSigGenesOnly)  {
