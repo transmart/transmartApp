@@ -2577,12 +2577,29 @@ function getSearchKeywordList()   {
 	return keywords;
 }
 
+function modalEffectsOpen(dialog)  {
+    dialog.overlay.fadeIn(200, function () {
+		    dialog.container.slideDown(200,   function () {dialog.data.fadeIn(200);}  );
+			  								}
+                          );
+}
+
+function modalEffectsClose(dialog)  {
+			dialog.data.fadeOut(200, function () {  
+				dialog.container.slideUp(200, function () {
+					dialog.overlay.fadeOut(200, function () {
+						jQuery.modal.close(); 
+		      });
+		    });
+		  });
+}
+
 function openSaveSearchDialog()  {
 
 	var keywords = getSearchKeywordList();
 
 	if (keywords.length>0)  {
-		jQuery('#save-modal-content').modal();
+		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose  });
 	}
 	else  {
 		alert("No search criteria to save!")
@@ -2594,7 +2611,7 @@ function openSaveSearchDialog()  {
 }
 
 // save a faceted search to the database
-function saveSearch(keywords, name, desc)  {
+function saveSearch(keywords)  {
 
 	var name = jQuery("#searchName").val();
 	var desc = jQuery("#searchDescription").val().substring(0, 1000);
@@ -2613,11 +2630,15 @@ function saveSearch(keywords, name, desc)  {
 	//  had no luck trying to use JSON libraries for creating/parsing JSON string so just save keywords as pipe delimited string 
 	if (keywords.length>0)  {
 		var criteriaString = keywords.join("|") 
+		
+    	jQuery("#save-modal-content").mask("Saving...");
+		
 		rwgAJAXManager.add({
 			url:saveSearchURL,
 			data: {criteria: criteriaString, name: name, description:desc},
 			timeout:60000,
 			success: function(response) {
+		    	jQuery("#save-modal-content").unmask();
 	            alert(response['message']);	
 	            
 	            // close the dialog if success flag was true
@@ -2627,6 +2648,7 @@ function saveSearch(keywords, name, desc)  {
 	            
 			},
 			error: function(xhr) {
+		    	jQuery("#save-modal-content").unmask();
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 			}
 		});
@@ -2637,17 +2659,42 @@ function saveSearch(keywords, name, desc)  {
 	
 }
 
-//delete a faceted search from the database
-function deleteSearch(id)  {
+//update a faceted search in the database 
+function updateSearch(id)  {
+
+	var name = jQuery("#searchName_" + id).val();
+	var desc = jQuery("#searchDescription_" + id).val().substring(0, 1000);
 	
+	if  (!name) {
+		alert('Name is required!');
+		return false;
+	}
+
+	if (!desc) {
+		alert('Description is required!');
+		return false;
+	}
+
+	jQuery("#load-modal-content").mask("Saving...");
 	rwgAJAXManager.add({
-		url:deleteSearchURL,
-		data: {id: id},
+		url:updateSearchURL,
+		data: {id:id, name: name, description:desc},
 		timeout:60000,
 		success: function(response) {
-            alert(response['message']);	        
+            alert(response['message']);	
+            
+        	jQuery("#load-modal-content").unmask();
+            // close the dialog and update static field if success flag was true
+            if (response['success'])  {
+            	
+            	jQuery("#labelSearchName_" + id).text(name).attr('title', desc);
+            	
+            	hideEditSearchDiv(id);	            	
+            }
+            
 		},
 		error: function(xhr) {
+        	jQuery("#load-modal-content").unmask();
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
 	});
@@ -2655,10 +2702,77 @@ function deleteSearch(id)  {
 }
 
 
+//delete a faceted search from the database
+function deleteSearch(id)  {
+	
+	var name = jQuery("#labelSearchName_" + id).text();
+	
+	if (!confirm('Are you sure you want to delete search "' + name + '"?'))  {
+		return false;
+	}
+	
+	jQuery("#load-modal-content").mask("Deleting...");
+	rwgAJAXManager.add({
+		url:deleteSearchURL,
+		data: {id: id},
+		timeout:60000,
+		success: function(response) {
+        	jQuery("#load-modal-content").unmask();
+            alert(response['message']);	 
+            
+            if (response['success'])  {
+            	jQuery("#favorites_"+id).remove();
+            }
+            
+		},
+		error: function(xhr) {
+        	jQuery("#load-modal-content").unmask();
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+	
+}
+
+//show the edit search div for the given search id
+function showEditSearchDiv(id)  {
+
+	// first hide any other edit divs that might be showing and show the static version
+   	jQuery("#favoritesTable div.editSearchDiv").hide();	            	
+   	jQuery("#favoritesTable div.staticSearchDiv").show();	            	
+	
+   	
+   	// now hide this specific static div, and show its edit div
+   	jQuery("#staticSearchDiv_" + id).hide(250);	            	
+   	jQuery("#editSearchDiv_" + id).show(250);	            	
+}
+
+//hide the edit search div for the given search id
+function hideEditSearchDiv(id)  {
+				
+   	jQuery("#editSearchDiv_" + id).hide(250);	            	
+   	jQuery("#staticSearchDiv_" + id).show(250);	            	
+}
+
+
 function openLoadSearchDialog()  {
-
-	jQuery('#load-modal-content').modal();
-
+	
+	var html = "";
+	
+	rwgAJAXManager.add({
+		url:renderFavoritesTemplateURL,									
+		data: {},
+		timeout:60000,
+		success: function(response) {
+		
+		    jQuery('#load-modal-content').html(response)
+		
+			jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose  });
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+	
 	return false;
 
 }

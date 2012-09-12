@@ -62,6 +62,8 @@
 	        var getLinePlotDataURL = "${createLink([action:'getLinePlotData'])}";	        
 	        var saveSearchURL = "${createLink([action:'saveFacetedSearch'])}";
 	        var loadSearchURL = "${createLink([action:'loadFacetedSearch'])}";
+	        var updateSearchURL = "${createLink([action:'updateFacetedSearch'])}";
+	        var renderFavoritesTemplateURL = "${createLink([action:'renderFavoritesTemplate'])}";
 	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";	        
 	        var mouse_inside_options_div = false;
@@ -186,7 +188,7 @@
 				</span>&nbsp;&nbsp;
 				
 			 	<span id='load-modal'>
-				 	<a href="#"  class="basic">Load</a>
+				 	<a href="#"  class="basic">Favorites</a>
 				</span>&nbsp;&nbsp;
 				
 			 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
@@ -195,7 +197,9 @@
 
         <g:render template="saveFavoritesModal" />
         
-        <g:render template="loadFavoritesModal" />
+		<div id="load-modal-content" style="display:none;">
+      		<!-- Load load favorites modal content is done via Ajax call-->
+		</div>
 			
 		<div id="active-search-div"></div>
 		 

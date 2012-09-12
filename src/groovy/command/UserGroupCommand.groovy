@@ -24,6 +24,7 @@
  */
 package command
 
+@grails.validation.Validateable
 public class UserGroupCommand{
 	String[] userstoadd
 	String[] userstoremove

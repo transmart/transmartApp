@@ -417,8 +417,8 @@ class TrialQueryService {
 			filter.add(it)
 		}
  
-		filter.add("STUDY_ID:" + trialNumber)
-		def nonfacetedQueryString = rwgController.createSOLRNonfacetedQueryString(filter)
+		filter.add("STUDY_ID:" + trialNumber) 
+		def nonfacetedQueryString = rwgController.createSOLRNonfacetedQueryString(filter.join(','))
  
 		String solrRequestUrl = rwgController.createSOLRQueryPath()
 		

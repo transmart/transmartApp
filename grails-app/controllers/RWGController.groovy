@@ -347,7 +347,8 @@ class RWGController {
     * Create the SOLR query string for the nonfaceted fields (i.e. those that are not in tree)
     * It will be of form ((<cat1>:"term1" OR <cat1>:"term2") AND ( (<cat2>:"term3") ) AND () .. )
     */
-   public String createSOLRNonfacetedQueryString(List queryParams) {
+   public String createSOLRNonfacetedQueryString(String qParams) {
+	   def queryParams = qParams.split(',')	   
 	   def nonfacetedQuery=""
 	   // loop through each regular query parameter
 	   for (qp in queryParams)  {
@@ -628,7 +629,7 @@ class RWGController {
 	   log.info("facet search: " + params)
 	   
 	   // build the SOLR query
-	   def nonfacetedQueryString = createSOLRNonfacetedQueryString(queryParams)
+	   def nonfacetedQueryString = createSOLRNonfacetedQueryString(queryParams.join(','))
 	   def facetedQueryString = createSOLRFacetedQueryString(facetQueryParams)
 	   def facetedFieldsString = createSOLRFacetedFieldsString(facetFieldsParams)
 	   
@@ -674,7 +675,7 @@ class RWGController {
    * Load the initial facet results for the tree (no filters)
    * @return JSON object containing facet counts
    */
-   def getInitialFacetResults = {List categoriesList  ->
+   private getInitialFacetResults = {List categoriesList  ->
 	   // initial state of the significant field is checked, so need to add the search field to the SOLR query to get the initial facet coutns
 	   //  and save the search term to the session variable so that is applied to the query to get the analysis list 
 	   def queryParams = ["ANY_SIGNIFICANT_GENES:1"]
@@ -687,7 +688,7 @@ class RWGController {
 	   // build the SOLR query
 	   
 	   // get the base query string (i.e. "q=(*:*)" since no filters for initial search
-	   def nonfacetedQueryString = createSOLRNonfacetedQueryString(queryParams)
+	   def nonfacetedQueryString = createSOLRNonfacetedQueryString(queryParams.join(','))
 	   def facetedQueryString = ""
 	   def facetedFieldsString = createSOLRFacetedFieldsString(categoriesList)
 
@@ -884,7 +885,19 @@ class RWGController {
 	   def m = rwgDAO.getLineplotData(params.id, params.probeID)
 	   render m as JSON
    }
-   
+
+   // Render the template for the favorites dialog
+   def renderFavoritesTemplate = {
+	   
+	   def html
+	   
+	   def favorites = getFavorites()
+	   
+	   render(template:'loadFavoritesModal', model:[favorites:favorites]).toString()	   	   	   
+			  
+   }
+
+      
    // Save the faceted search to database
    def saveFacetedSearch = {
 	   	   
@@ -934,7 +947,55 @@ class RWGController {
 	   response.outputStream << ret?.toString()
    }
 
-   // Delete the faceted search from database
+   // Update the faceted search in the database
+   def updateFacetedSearch = {
+
+	   def id = params.id	   	   
+	   def name = params.name	   
+	   def description = params.description	   
+	   
+	   def authPrincipal = springSecurityService.getPrincipal()
+	   def userId = authPrincipal.id   
+
+	   SavedFacetedSearch s = SavedFacetedSearch.findByUserIdAndId(userId, id)
+	   
+	   s.name = name
+	   s.description = description
+	   
+	   boolean successFlag
+	   def msg = ""	   
+
+	   if (s.save()) {
+		   successFlag = true
+		   
+		   msg = message(code: "search.SavedFacetedSearch.save.success")
+		   
+  	       log.info("Updated faceted search ${name} for userId ${userId}")
+	   }
+	   else {
+		   String errorString =  s.errors.toString()
+
+		   if (errorString.contains("search.SavedFacetedSearch.name.unique.error") )  {
+			   msg = message(code: "search.SavedFacetedSearch.name.unique.error")
+		   }
+		   else  {
+			   msg = message(code: "search.SavedFacetedSearch.save.failed.default")
+		   }
+		   successFlag = false
+		   
+		   log.info("Failed to update faceted search ${name} for userId ${userId}.  Error:" + errorString)
+		   
+	   }
+	   	   
+	   JSONObject ret = new JSONObject()
+	   ret.put('success', successFlag)
+	   ret.put('message', msg)
+	   
+	   response.setContentType("text/json")
+	   response.outputStream << ret?.toString()
+   }
+
+      // Delete the faceted search from database
    def deleteFacetedSearch = {
 			  
 	   def id = params.id
