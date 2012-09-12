@@ -16,12 +16,8 @@
  * 
  *
  ******************************************************************/
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> 7013d8f4116fff00a8e085b223021ab240a62150
-
+grails.serverURL="http://localhost/transmartApp"
 
 /**
  * Running externalized configuration
@@ -127,14 +123,11 @@ com.recomdata.i2b2helper.i2b2hive="i2b2hive"
 com.recomdata.i2b2helper.i2b2metadata="i2b2metadata"
 com.recomdata.i2b2helper.i2b2demodata="i2b2demodata"
 
-com.recomdata.transmart.data.export.max.export.jobs.loaded=20
-<<<<<<< HEAD
+
 // tempFolderDirectory should be referenced by all plugins if we plan to use a common temp-dir
 com.recomdata.plugins.tempFolderDirectory='/tmp'
 com.recomdata.transmart.data.export.rScriptDirectory='dataExportRScripts'
-=======
->>>>>>> 7013d8f4116fff00a8e085b223021ab240a62150
-
+com.recomdata.transmart.data.export.max.export.jobs.loaded=20
 com.recomdata.transmart.data.export.dataTypesMap=[
 	'CLINICAL':'Clinical & Low Dimensional Biomarker Data', 
 	'MRNA':'Gene Expression Data', 
@@ -175,30 +168,3 @@ com.recomdata.disclaimer=disclaimer.toString()
 com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
-
-// development env log4j settings - prod should reconfigure it
-environments {
-	development {
-
-log4j = {
-	appenders {
-		// set up a log file in the standard tomcat area; be sure to use .toString() with ${}
-		rollingFile name:'tomcatLog', file:"${appName}.log".toString(), maxFileSize:'1024KB', layout:pattern(conversionPattern: '[%p] %d{HH:mm:ss} (%c{5}:%M:%L) | %m%n')
-		'null' name:'stacktrace'
-	}
-
-	root {
-		// change the root logger to my tomcatLog file
-		info 'tomcatLog'
-		additivity = true
-	}
-
-	// example for sending stacktraces to my tomcatLog file
-	error tomcatLog:'StackTrace'
-	debug tomcatLog:'grails.app.task', 'grails.app.controller', 'grails.app.service'
-	
-	// set level for my messages; this uses the root logger (and thus the tomcatLog file)
-	}
-	}
-	
-}

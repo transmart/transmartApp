@@ -51,4 +51,6 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
     }
-} 
+}
+
+grails.plugin.location.'rdc-rmodules' = '../RModules'
