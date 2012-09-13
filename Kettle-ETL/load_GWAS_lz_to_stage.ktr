@@ -75,8 +75,8 @@ ext_data column is ordered by field_idx and then field_name if there are more
 than one field with the same field_idx.
 
 *******************************************************************************************</note>
-      <xloc>885</xloc>
-      <yloc>650</yloc>
+      <xloc>879</xloc>
+      <yloc>595</yloc>
       <width>400</width>
       <heigth>97</heigth>
       <fontname>Microsoft Sans Serif</fontname>
@@ -206,7 +206,7 @@ than one field with the same field_idx.
     </attributes>
   </connection>
   <order>
-  <hop> <from>Block this step until deletes finish</from><to>Get GWAS data</to><enabled>Y</enabled> </hop>  <hop> <from>Get BIO_ASSAY_ANALYSIS_ID</from><to>Add seq for BIO_ASY_ANALYSIS_GWAS_ID</to><enabled>Y</enabled> </hop>  <hop> <from>Get GWAS data</from><to>Get BIO_ASSAY_ANALYSIS_ID</to><enabled>Y</enabled> </hop>  <hop> <from>Get BIO_ASSAY_ANALYSIS_ID for delete</from><to>Delete BIO_ASSAY_ANALYSIS_GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Concatenate values for ext_data</from><to>Remove ` from ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Drop data with just period</from><to>Drop just decimal point</to><enabled>Y</enabled> </hop>  <hop> <from>Add seq for BIO_ASY_ANALYSIS_GWAS_ID</from><to>Convert gwas_id to number</to><enabled>Y</enabled> </hop>  <hop> <from>Convert gwas_id to number</from><to>Calculate log10 of p_value</to><enabled>Y</enabled> </hop>  <hop> <from>Convert gwas_id to number</from><to>Convert columns to rows</to><enabled>Y</enabled> </hop>  <hop> <from>Add GWAS ext_type</from><to>Lookup GWAS, FIELD_NAME in IDX</to><enabled>Y</enabled> </hop>  <hop> <from>Check load_type for GWAS</from><to>Insert to BIO_ASSAY_ANALYSIS_GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Check load_type for GWAS</from><to>Bulk Loader GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Drop data with just period</from><to>Add GWAS ext_type</to><enabled>Y</enabled> </hop>  <hop> <from>Lookup GWAS, FIELD_NAME in IDX</from><to>Sort results by gwas_id, field_idx, field_name</to><enabled>Y</enabled> </hop>  <hop> <from>Convert columns to rows</from><to>Drop data with just period</to><enabled>Y</enabled> </hop>  <hop> <from>Sort results by gwas_id, field_idx, field_name</from><to>Set column_value to ` if null</to><enabled>Y</enabled> </hop>  <hop> <from>Set column_value to ` if null</from><to>Concatenate values for ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Calculate log10 of p_value</from><to>Add EXT_DATA to data stream</to><enabled>Y</enabled> </hop>  <hop> <from>Add EXT_DATA to data stream</from><to>Check load_type for GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Remove ` from ext_data</from><to>Add EXT_DATA to data stream</to><enabled>Y</enabled> </hop>  <hop> <from>Block this step until steps finish</from><to>Output steps metrics</to><enabled>Y</enabled> </hop>  <hop> <from>Get GWAS Step</from><to>Set step_count to input records</to><enabled>Y</enabled> </hop>  <hop> <from>Get GWAS Step</from><to>Set step_count to output records</to><enabled>Y</enabled> </hop>  <hop> <from>Sort metrics by step name</from><to>Group by</to><enabled>Y</enabled> </hop>  <hop> <from>Group by</from><to>Sort metrics by step id</to><enabled>Y</enabled> </hop>  <hop> <from>Sort metrics by step id</from><to>Add step number</to><enabled>Y</enabled> </hop>  <hop> <from>Output steps metrics</from><to>Sort metrics by step name</to><enabled>Y</enabled> </hop>  <hop> <from>Add step number</from><to>Get job_id</to><enabled>Y</enabled> </hop>  <hop> <from>Get job_id</from><to>Add constants</to><enabled>Y</enabled> </hop>  <hop> <from>Add constants</from><to>Get GWAS Step</to><enabled>Y</enabled> </hop>  <hop> <from>Set step_count to input records</from><to>Add constants 2</to><enabled>Y</enabled> </hop>  <hop> <from>Set step_count to output records</from><to>Add constants 2</to><enabled>Y</enabled> </hop>  <hop> <from>Add constants 2</from><to>Call cz_write_audit</to><enabled>Y</enabled> </hop>  </order>
+  <hop> <from>Block this step until deletes finish</from><to>Get GWAS data</to><enabled>Y</enabled> </hop>  <hop> <from>Get BIO_ASSAY_ANALYSIS_ID</from><to>Add seq for BIO_ASY_ANALYSIS_GWAS_ID</to><enabled>Y</enabled> </hop>  <hop> <from>Get GWAS data</from><to>Get BIO_ASSAY_ANALYSIS_ID</to><enabled>Y</enabled> </hop>  <hop> <from>Get BIO_ASSAY_ANALYSIS_ID for delete</from><to>Delete BIO_ASSAY_ANALYSIS_GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Concatenate values for ext_data</from><to>Remove ` from ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Drop data with just period</from><to>Drop just decimal point</to><enabled>Y</enabled> </hop>  <hop> <from>Add seq for BIO_ASY_ANALYSIS_GWAS_ID</from><to>Convert gwas_id to number</to><enabled>Y</enabled> </hop>  <hop> <from>Convert gwas_id to number</from><to>Calculate log10 of p_value</to><enabled>Y</enabled> </hop>  <hop> <from>Convert gwas_id to number</from><to>Convert columns to rows</to><enabled>Y</enabled> </hop>  <hop> <from>Add GWAS ext_type</from><to>Lookup GWAS, FIELD_NAME in IDX</to><enabled>Y</enabled> </hop>  <hop> <from>Check load_type for GWAS</from><to>Insert to BIO_ASSAY_ANALYSIS_GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Check load_type for GWAS</from><to>Bulk Loader GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Drop data with just period</from><to>Add GWAS ext_type</to><enabled>Y</enabled> </hop>  <hop> <from>Lookup GWAS, FIELD_NAME in IDX</from><to>Sort results by gwas_id, field_idx, field_name</to><enabled>Y</enabled> </hop>  <hop> <from>Convert columns to rows</from><to>Drop data with just period</to><enabled>Y</enabled> </hop>  <hop> <from>Sort results by gwas_id, field_idx, field_name</from><to>Set column_value to ` if null</to><enabled>Y</enabled> </hop>  <hop> <from>Set column_value to ` if null</from><to>Concatenate values for ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Add EXT_DATA to data stream</from><to>Check load_type for GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Block this step until steps finish</from><to>Output steps metrics</to><enabled>Y</enabled> </hop>  <hop> <from>Get GWAS Step</from><to>Set step_count to input records</to><enabled>Y</enabled> </hop>  <hop> <from>Get GWAS Step</from><to>Set step_count to output records</to><enabled>Y</enabled> </hop>  <hop> <from>Sort metrics by step name</from><to>Group by</to><enabled>Y</enabled> </hop>  <hop> <from>Group by</from><to>Sort metrics by step id</to><enabled>Y</enabled> </hop>  <hop> <from>Sort metrics by step id</from><to>Add step number</to><enabled>Y</enabled> </hop>  <hop> <from>Output steps metrics</from><to>Sort metrics by step name</to><enabled>Y</enabled> </hop>  <hop> <from>Add step number</from><to>Get job_id</to><enabled>Y</enabled> </hop>  <hop> <from>Get job_id</from><to>Add constants</to><enabled>Y</enabled> </hop>  <hop> <from>Add constants</from><to>Get GWAS Step</to><enabled>Y</enabled> </hop>  <hop> <from>Set step_count to input records</from><to>Add constants 2</to><enabled>Y</enabled> </hop>  <hop> <from>Set step_count to output records</from><to>Add constants 2</to><enabled>Y</enabled> </hop>  <hop> <from>Add constants 2</from><to>Call cz_write_audit</to><enabled>Y</enabled> </hop>  <hop> <from>Remove ` from ext_data</from><to>Sort ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Sort ext_data</from><to>Add EXT_DATA to data stream</to><enabled>Y</enabled> </hop>  <hop> <from>Calculate log10 of p_value</from><to>Sort GWAS data</to><enabled>Y</enabled> </hop>  <hop> <from>Sort GWAS data</from><to>Add EXT_DATA to data stream</to><enabled>Y</enabled> </hop>  </order>
   <step>
     <name>Add EXT_DATA to data stream</name>
     <type>MergeJoin</type>
@@ -218,8 +218,8 @@ than one field with the same field_idx.
            <schema_name/>
            </partitioning>
 <join_type>INNER</join_type>
-<step1>Calculate log10 of p_value</step1>
-<step2>Remove ` from ext_data</step2>
+<step1>Sort GWAS data</step1>
+<step2>Sort ext_data</step2>
     <keys_1>
       <key>BIO_ASY_ANALYSIS_GWAS_ID</key>
     </keys_1>
@@ -228,8 +228,8 @@ than one field with the same field_idx.
     </keys_2>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>472</xloc>
-      <yloc>377</yloc>
+      <xloc>385</xloc>
+      <yloc>339</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -259,8 +259,8 @@ than one field with the same field_idx.
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1005</xloc>
-      <yloc>367</yloc>
+      <xloc>1007</xloc>
+      <yloc>330</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -309,11 +309,53 @@ than one field with the same field_idx.
         <length>-1</length>
         <precision>-1</precision>
       </field>
+      <field>
+        <name>minus_1</name>
+        <type>Number</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>-1</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>536</xloc>
       <yloc>914</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Add constants 2</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <fields>
+      <field>
+        <name>database_name</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>BIOMART_STAGE</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>556</xloc>
+      <yloc>1144</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -340,8 +382,8 @@ than one field with the same field_idx.
       <max_value>999999999</max_value>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>684</xloc>
-      <yloc>176</yloc>
+      <xloc>686</xloc>
+      <yloc>139</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -390,8 +432,8 @@ than one field with the same field_idx.
       </steps>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>98</xloc>
-      <yloc>175</yloc>
+      <xloc>100</xloc>
+      <yloc>138</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -502,8 +544,8 @@ than one field with the same field_idx.
       </mapping>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>275</xloc>
-      <yloc>474</yloc>
+      <xloc>502</xloc>
+      <yloc>497</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -535,8 +577,8 @@ var log_p_value=Math.log(P_VALUE)&#47;Math.LN10;
         <replace>N</replace>
       </field>    </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>469</xloc>
-      <yloc>275</yloc>
+      <xloc>524</xloc>
+      <yloc>238</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -625,8 +667,8 @@ var log_p_value=Math.log(P_VALUE)&#47;Math.LN10;
     </compare>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>275</xloc>
-      <yloc>377</yloc>
+      <xloc>382</xloc>
+      <yloc>427</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -673,8 +715,8 @@ var log_p_value=Math.log(P_VALUE)&#47;Math.LN10;
       </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>693</xloc>
-      <yloc>456</yloc>
+      <xloc>807</xloc>
+      <yloc>429</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -723,8 +765,8 @@ var log_p_value=Math.log(P_VALUE)&#47;Math.LN10;
         </field>      <field>        <name>GENOTYPE_COUNTS_CONTROLS</name>
         <value>GENOTYPE_COUNTS_CONTROLS</value>
         <norm>column_value</norm>
-        </field>      <field>        <name>TOTAL_GENOTYPED</name>
-        <value>TOTAL_GENOTYPED</value>
+        </field>      <field>        <name>TOTAL_NUMBER_GENOTYPED</name>
+        <value>TOTAL_NUMBER_GENOTYPED</value>
         <norm>column_value</norm>
         </field>      <field>        <name>ALLELE_1</name>
         <value>ALLELE_1</value>
@@ -744,10 +786,13 @@ var log_p_value=Math.log(P_VALUE)&#47;Math.LN10;
         </field>      <field>        <name>ETL_ID</name>
         <value>ETL_ID</value>
         <norm>column_value</norm>
+        </field>      <field>        <name>HETLSQ</name>
+        <value>HETPVAL</value>
+        <norm>column_value</norm>
         </field>      </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>856</xloc>
-      <yloc>276</yloc>
+      <xloc>858</xloc>
+      <yloc>239</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -777,8 +822,8 @@ var log_p_value=Math.log(P_VALUE)&#47;Math.LN10;
         <storage_type/>
       </meta>    </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>686</xloc>
-      <yloc>276</yloc>
+      <xloc>688</xloc>
+      <yloc>239</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -835,8 +880,8 @@ var log_p_value=Math.log(P_VALUE)&#47;Math.LN10;
     </compare>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1002</xloc>
-      <yloc>277</yloc>
+      <xloc>1004</xloc>
+      <yloc>240</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -853,8 +898,8 @@ var log_p_value=Math.log(P_VALUE)&#47;Math.LN10;
            </partitioning>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1142</xloc>
-      <yloc>277</yloc>
+      <xloc>1144</xloc>
+      <yloc>240</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -897,8 +942,8 @@ var log_p_value=Math.log(P_VALUE)&#47;Math.LN10;
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>465</xloc>
-      <yloc>176</yloc>
+      <xloc>467</xloc>
+      <yloc>139</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1005,16 +1050,17 @@ where etl_id = ${ETL_ID}
 
 
 
+
 </sql>
-    <limit>10</limit>
+    <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
     <variables_active>Y</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>244</xloc>
-      <yloc>175</yloc>
+      <xloc>246</xloc>
+      <yloc>138</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1197,8 +1243,8 @@ where etl_id = ${ETL_ID}
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>96</xloc>
-      <yloc>374</yloc>
+      <xloc>280</xloc>
+      <yloc>501</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1244,8 +1290,8 @@ where etl_id = ${ETL_ID}
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1013</xloc>
-      <yloc>458</yloc>
+      <xloc>1015</xloc>
+      <yloc>421</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1328,8 +1374,8 @@ where etl_id = ${ETL_ID}
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>687</xloc>
-      <yloc>377</yloc>
+      <xloc>800</xloc>
+      <yloc>339</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1359,8 +1405,8 @@ where etl_id = ${ETL_ID}
       </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>698</xloc>
-      <yloc>553</yloc>
+      <xloc>807</xloc>
+      <yloc>515</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1376,9 +1422,9 @@ where etl_id = ${ETL_ID}
            <schema_name/>
            </partitioning>
        <calculation><field_name>step_count</field_name>
-<calc_type>ADD</calc_type>
+<calc_type>COPY_FIELD</calc_type>
 <field_a>Lines input</field_a>
-<field_b>Lines red</field_b>
+<field_b/>
 <field_c/>
 <value_type>Number</value_type>
 <value_length>-1</value_length>
@@ -1391,8 +1437,8 @@ where etl_id = ${ETL_ID}
 </calculation>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>409</xloc>
-      <yloc>1063</yloc>
+      <xloc>407</xloc>
+      <yloc>1066</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1425,6 +1471,70 @@ where etl_id = ${ETL_ID}
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>702</xloc>
       <yloc>1052</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Sort GWAS data</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>%%java.io.tmpdir%%</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>N</unique_rows>
+    <fields>
+      <field>
+        <name>BIO_ASY_ANALYSIS_GWAS_ID</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>383</xloc>
+      <yloc>242</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Sort ext_data</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>${SORT_DIR}</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>N</unique_rows>
+    <fields>
+      <field>
+        <name>BIO_ASY_ANALYSIS_GWAS_ID</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>620</xloc>
+      <yloc>338</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1529,39 +1639,8 @@ where etl_id = ${ETL_ID}
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1015</xloc>
-      <yloc>553</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Add constants 2</name>
-    <type>Constant</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <fields>
-      <field>
-        <name>database_name</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif>BIOMART_STAGE</nullif>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
-    </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>556</xloc>
-      <yloc>1144</yloc>
+      <xloc>1017</xloc>
+      <yloc>516</yloc>
       <draw>Y</draw>
       </GUI>
     </step>

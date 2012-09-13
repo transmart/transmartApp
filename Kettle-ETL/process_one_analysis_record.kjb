@@ -328,8 +328,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>832</xloc>
-      <yloc>167</yloc>
+      <xloc>955</xloc>
+      <yloc>169</yloc>
       </entry>
     <entry>
       <name>Start audit</name>
@@ -360,8 +360,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>362</xloc>
-      <yloc>172</yloc>
+      <xloc>376</xloc>
+      <yloc>173</yloc>
       </entry>
     <entry>
       <name>Set current analysis variables</name>
@@ -392,20 +392,43 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>221</xloc>
-      <yloc>175</yloc>
+      <xloc>222</xloc>
+      <yloc>172</yloc>
+      </entry>
+    <entry>
+      <name>Load metadata to biomart</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Job.Filename.Directory}&#47;load_analysis_metadata_lz_to_biomart.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>775</xloc>
+      <yloc>173</yloc>
       </entry>
   </entries>
   <hops>
-    <hop>
-      <from>Load one analysis metadata record to LZ</from>
-      <to>Load analysis from lz to staging</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
     <hop>
       <from>Start audit</from>
       <to>Load one analysis metadata record to LZ</to>
@@ -433,14 +456,32 @@
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
     </hop>
+    <hop>
+      <from>Load one analysis metadata record to LZ</from>
+      <to>Load metadata to biomart</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Load metadata to biomart</from>
+      <to>Load analysis from lz to staging</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
   </hops>
   <notepads>
     <notepad>
       <note>NOTE:
 This is the same job that is used by the application to load the data. 
 Be VERY CAREFUL if you think your going to make changes.</note>
-      <xloc>609</xloc>
-      <yloc>236</yloc>
+      <xloc>920</xloc>
+      <yloc>240</yloc>
       <width>345</width>
       <heigth>47</heigth>
       <fontname/>
