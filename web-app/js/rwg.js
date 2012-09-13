@@ -3101,8 +3101,3 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 	});
 }
 
-function launchPie()
-{
-	jQuery('#results-div').load('getPieChart');
-	
-}

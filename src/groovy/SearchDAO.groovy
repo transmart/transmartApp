@@ -13,17 +13,19 @@ class SearchDAO {
 		def results = bio.BioAssayAnalysisGwas.executeQuery("""
 					SELECT	gwas.rsId,
 							gwas.pValue,
-							gwas.logPValue
+							gwas.logPValue,
+							ext.ext_data
 					FROM	bio.BioAssayAnalysisGwas gwas
-					""")
-		//
-		
+					JOIN	gwas.bioAssayAnalysisDataExts ext
+					""",[max:100,offset:5])
 		return results
 	}
 	
-	def getGwasColumnNames()
+	def getGwasIndexData()
 	{
+		def results = bio.BioAssayAnalysisDataIdx.findAllByExt_type("GWAS", [sort:"display_idx",order:"asc"])
 		
+		return results
 	}
 	
 	def getExtendedMetaData()

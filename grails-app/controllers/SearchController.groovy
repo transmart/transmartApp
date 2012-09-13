@@ -686,22 +686,14 @@ public class SearchController{
 		def columnNames = []
 		
 		//Get the GWAS Data.
-		//def gwasData = searchDAO.getGwasData()
-		
-		def gwasData = 		bio.BioAssayAnalysisGwas.executeQuery("""
-					SELECT	gwas.rsId,
-							gwas.pValue,
-							gwas.logPValue,
-							ext.ext_data
-					FROM	bio.BioAssayAnalysisGwas gwas
-					JOIN	gwas.bioAssayAnalysisDataExts ext
-					""",[max:100,offset:5])
+		def gwasData = searchDAO.getGwasData()
 
 		def returnedGwasData = []
 		
 		//Get the data from the index table for GWAS.
-		def gwasIndexData = bio.BioAssayAnalysisDataIdx.findAllByExt_type("GWAS", [sort:"display_idx",order:"asc"])
+		def gwasIndexData = searchDAO.getGwasIndexData()
 
+		//These columns aren't dynamic and should always be included. Might be a better way to do this than just dropping it here.
 		columnNames.add(["sTitle":"Probe ID"])
 		columnNames.add(["sTitle":"p-value"])
 		columnNames.add(["sTitle":"Adjusted p-value"])
@@ -754,6 +746,12 @@ public class SearchController{
 		//Return the data in JSON format so the grid can format it.
 		render returnJson as JSON
 
+	}
+	
+	def renderQQPlot = {
+		
+		
+		
 	}
 	
 }
