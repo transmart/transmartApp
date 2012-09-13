@@ -36,9 +36,7 @@
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/canvg.js')}"></script>  
-	
-        <g:javascript library="prototype" /> 
-        
+	        
         <!-- Our JS -->        
         <script type="text/javascript" src="${resource(dir:'js', file:'rwg.js')}"></script>
         

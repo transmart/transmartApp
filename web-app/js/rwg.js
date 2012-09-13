@@ -2017,7 +2017,7 @@ function drawHeatmap(divID, heatmapJSON, analysisID, forExport)	{
 	if(!hasPvalue){
 		w_pvalue=0;
 	}
-	var numCohorts = cohorts.size()-1;   // there is no cohort at index 0
+	var numCohorts = cohorts.length-1;   // there is no cohort at index 0
 
 	
 	// need to add a blank entry at the beginning of the arrays for use by drawCohortLegend
@@ -2027,7 +2027,7 @@ function drawHeatmap(divID, heatmapJSON, analysisID, forExport)	{
 		
 	var height;
 	if(forExport){
-		height = 4*h +h_header + (heatmapJSON.length * h) + (cohorts.size()-1)*35;
+		height = 4*h +h_header + (heatmapJSON.length * h) + (cohorts.length-1)*35;
 		cohortDescriptions=highlightCohortDescriptions(cohortDescriptions, true);
 	}else{
 		height = 4*h +h_header + (heatmapJSON.length * h);
