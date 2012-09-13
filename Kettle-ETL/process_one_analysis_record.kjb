@@ -11,6 +11,96 @@
   <modified_user>-</modified_user>
   <modified_date>2012&#47;09&#47;04 12:51:00.846</modified_date>
     <parameters>
+        <parameter>
+            <name>ANALYSIS_NAME</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>ANALYSIS_NAME_ARCHIVED</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>CELL_TYPE</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>DATA_TYPE</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>DESCRIPTION</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>EXPRESSION_PLATFORM_NAME</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>GENOME_VERSION</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>GENOTYPE_PLATFORM_NAME</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>INPUT_FILENAME</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>MeSH_ID</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>PHENOTYPES</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>POPULATION</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>PVALUE_CUTOFF</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>RESEARCH_UNIT</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>SAMPLE_SIZE</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>STATISTICAL_TEST</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>STUDY_ID</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>TISSUE</name>
+            <default_value/>
+            <description/>
+        </parameter>
     </parameters>
   <connection>
     <name>BIOMART</name>
@@ -161,8 +251,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>68</xloc>
-      <yloc>172</yloc>
+      <xloc>66</xloc>
+      <yloc>170</yloc>
       </entry>
     <entry>
       <name>Load one analysis metadata record to LZ</name>
@@ -193,7 +283,7 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>256</xloc>
+      <xloc>570</xloc>
       <yloc>172</yloc>
       </entry>
     <entry>
@@ -238,13 +328,109 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>483</xloc>
-      <yloc>171</yloc>
+      <xloc>955</xloc>
+      <yloc>169</yloc>
+      </entry>
+    <entry>
+      <name>Start audit</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Job.Filename.Directory}&#47;cz_start_audit.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>376</xloc>
+      <yloc>173</yloc>
+      </entry>
+    <entry>
+      <name>Set current analysis variables</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Job.Filename.Directory}&#47;set_current_analysis_variables.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>222</xloc>
+      <yloc>172</yloc>
+      </entry>
+    <entry>
+      <name>Load metadata to biomart</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Job.Filename.Directory}&#47;load_analysis_metadata_lz_to_biomart.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>775</xloc>
+      <yloc>173</yloc>
       </entry>
   </entries>
   <hops>
     <hop>
-      <from>START</from>
+      <from>Start audit</from>
       <to>Load one analysis metadata record to LZ</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -253,7 +439,34 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
+      <from>START</from>
+      <to>Set current analysis variables</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Set current analysis variables</from>
+      <to>Start audit</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
       <from>Load one analysis metadata record to LZ</from>
+      <to>Load metadata to biomart</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Load metadata to biomart</from>
       <to>Load analysis from lz to staging</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -267,8 +480,8 @@
       <note>NOTE:
 This is the same job that is used by the application to load the data. 
 Be VERY CAREFUL if you think your going to make changes.</note>
-      <xloc>459</xloc>
-      <yloc>242</yloc>
+      <xloc>920</xloc>
+      <yloc>240</yloc>
       <width>345</width>
       <heigth>47</heigth>
       <fontname/>
