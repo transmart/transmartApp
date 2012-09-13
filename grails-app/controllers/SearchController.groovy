@@ -239,7 +239,7 @@ public class SearchController{
 			}
 		}
 		def result = [rows:itemlist]
-		render params.callback+"("+(result as JSON)+")"
+		render params.callback+"("+ (result as JSON) +")"
 
 	}
 

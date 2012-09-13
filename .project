@@ -26,7 +26,7 @@
 		<link>
 			<name>.link_to_grails_plugins</name>
 			<type>2</type>
-			<locationURI>GRAILS_ROOT/1.3.7/projects/TranSMART/plugins</locationURI>
+			<locationURI>GRAILS_ROOT/1.3.7/projects/transmart/plugins</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
