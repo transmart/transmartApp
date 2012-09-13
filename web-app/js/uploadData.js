@@ -83,12 +83,18 @@ function acknowledgeColumn(column, requiredColumns) {
 
 function showDataUploadForm() {
 	
-	$j('#studyErrors').empty();
-	$j('#analysisNameErrors').empty();
 	//TODO Quick and nasty Javascript validation in here - move to actual validator!
+	$j('#studyErrors').empty();
+	$j('#dataTypeErrors').empty();
+	$j('#analysisNameErrors').empty();
+	
 	var errors = false;
 	if ($j('#study\\.id').val() == null || $j('#study\\.id').val() == '') {
 		$j('#studyErrors').html('<div class="fieldError">Please select a study</div>');
+		errors = true;
+	}
+	if ($j('#dataType').val() == null || $j('#dataType').val() == "null" || $j('#dataType').val() == '') {
+		$j('#dataTypeErrors').html('<div class="fieldError">Please select an analysis type</div>');
 		errors = true;
 	}
 	if ($j('#analysisName').val() == null || $j('#analysisName').val() == '') {
