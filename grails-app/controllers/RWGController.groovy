@@ -910,7 +910,6 @@ class RWGController {
    def saveFacetedSearch = {
 	   	   
 	   def name = params.name	   
-	   def description = params.description	   
 	   def criteria = params.criteria
 	   
 	   def authPrincipal = springSecurityService.getPrincipal()
@@ -918,7 +917,6 @@ class RWGController {
 
 	   SavedFacetedSearch s = new SavedFacetedSearch()
 	   s.name = name
-	   s.description = description
 	   s.criteria = criteria
 	   s.userId = userId
 	   
@@ -960,7 +958,6 @@ class RWGController {
 
 	   def id = params.id	   	   
 	   def name = params.name	   
-	   def description = params.description	   
 	   
 	   def authPrincipal = springSecurityService.getPrincipal()
 	   def userId = authPrincipal.id   
@@ -968,7 +965,6 @@ class RWGController {
 	   SavedFacetedSearch s = SavedFacetedSearch.findByUserIdAndId(userId, id)
 	   
 	   s.name = name
-	   s.description = description
 	   
 	   boolean successFlag
 	   def msg = ""	   
@@ -1111,7 +1107,7 @@ class RWGController {
 	   def authPrincipal = springSecurityService.getPrincipal()
 
 	   def userId = authPrincipal.id   
-	   def favorites = SavedFacetedSearch.findAllByUserId(userId, [sort:"name", order:"asc"])
+	   def favorites = SavedFacetedSearch.findAllByUserId(userId, [sort:"createDt", order:"desc"])
 	   
 	   return favorites	   
 			  

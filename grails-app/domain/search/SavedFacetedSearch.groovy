@@ -22,10 +22,11 @@ package search
 class SavedFacetedSearch {
 	  
   	 Long id
-	 Long userId   // would like to reference the AuthUser class, but can't because it is in default package -- for now just reference the id until we move to Grails 2
+	 Long userId   // would like to reference the AuthUser class, but can't because it is in default package -- for now just reference the id 
 	 String name
-	 String description
 	 String criteria
+	 Date createDt
+	 Date modifiedDt
 	 
 	 static mapping = {
 		 table 'SAVED_FACETED_SEARCH'
@@ -35,17 +36,19 @@ class SavedFacetedSearch {
 			id column:'SAVED_FACETED_SEARCH_ID'
 			userId column: "USER_ID"
 			name column: 'NAME'
-			description column:'DESCRIPTION'
 			criteria column:'CRITERIA'
+			createDt column:"CREATE_DT"
+			modifiedDt column:"MODIFIED_DT"
 		 }
 	 }
 	 
 	 static constraints = {
 		 userId(nullable:false)
-		 name(nullable:false,blank: false,maxSize:50)
-		 description(nullable:false,blank: false,maxSize:1000)
+		 name(nullable:false,blank: false,maxSize:100)
 		 criteria(nullable:false,blank: false,maxSize:4000)
 		 name (unique:'userId')
+		 createDt(nullable:true)
+		 modifiedDt(nullable:true)
 	 }
 		
  }

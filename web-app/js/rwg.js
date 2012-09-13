@@ -2614,16 +2614,10 @@ function openSaveSearchDialog()  {
 function saveSearch(keywords)  {
 
 	var name = jQuery("#searchName").val();
-	var desc = jQuery("#searchDescription").val().substring(0, 1000);
 	var keywords = getSearchKeywordList();
 	
 	if  (!name) {
 		alert('Name is required!');
-		return false;
-	}
-
-	if (!desc) {
-		alert('Description is required!');
 		return false;
 	}
 
@@ -2635,7 +2629,7 @@ function saveSearch(keywords)  {
 		
 		rwgAJAXManager.add({
 			url:saveSearchURL,
-			data: {criteria: criteriaString, name: name, description:desc},
+			data: {criteria: criteriaString, name: name},
 			timeout:60000,
 			success: function(response) {
 		    	jQuery("#save-modal-content").unmask();
@@ -2663,22 +2657,16 @@ function saveSearch(keywords)  {
 function updateSearch(id)  {
 
 	var name = jQuery("#searchName_" + id).val();
-	var desc = jQuery("#searchDescription_" + id).val().substring(0, 1000);
 	
 	if  (!name) {
 		alert('Name is required!');
 		return false;
 	}
 
-	if (!desc) {
-		alert('Description is required!');
-		return false;
-	}
-
 	jQuery("#load-modal-content").mask("Saving...");
 	rwgAJAXManager.add({
 		url:updateSearchURL,
-		data: {id:id, name: name, description:desc},
+		data: {id:id, name: name},
 		timeout:60000,
 		success: function(response) {
             alert(response['message']);	
@@ -2687,7 +2675,7 @@ function updateSearch(id)  {
             // close the dialog and update static field if success flag was true
             if (response['success'])  {
             	
-            	jQuery("#labelSearchName_" + id).text(name).attr('title', desc);
+            	jQuery("#labelSearchName_" + id).text(name);
             	
             	hideEditSearchDiv(id);	            	
             }
