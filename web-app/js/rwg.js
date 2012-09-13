@@ -1864,7 +1864,7 @@ function loadHeatmapData(divID, analysisID, probesPage, probesPerPage)	{
 //displays pop-up of gene with tabs to internal and external sources
 function showGeneInfo(geneID)
 {
-	var w=window.open('/transmart/details/gene/?rwg=y&altId='+geneID , 'detailsWindow', 'width=900,height=800'); 
+	var w=window.open('./../details/gene/?rwg=y&altId='+geneID , 'detailsWindow', 'width=900,height=800'); 
 	w.focus(); 
 }
 
