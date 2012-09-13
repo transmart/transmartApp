@@ -519,6 +519,10 @@ class RWGController {
 									" and gsi.bioMarker = k_gsi.bioDataId" + 
                                     " and k_gs.id = :tid ", queryParams)
 				   
+				   if (geneKeywords.size == 0)  {
+					   throw new Exception("Data error with Gene list/signature with id ${l}.  Error could be caused by an empty list, a list that does not exist, or list contains genes that are not preoperly defined.")					   
+				   }
+				   
 				   // loop through each keyword for the gene list items and add to list 
 				   geneKeywords.each {
 					   // don't add duplicates
@@ -547,6 +551,10 @@ class RWGController {
 									" and k_gene.dataCategory = 'GENE' " +
                                     " and k_pathway.id = :tid ", queryParams) 
  
+				   if (geneKeywords.size == 0)  {
+					   throw new Exception("Data error with Pathway with id ${l}.  Error could be caused by an empty pathway, a pathway that does not exist, or pathway contains genes that are not preoperly defined.")					   
+				   }
+
 				   // loop through each keyword for the gene list items and add to list 
 				   geneKeywords.each {
 					   // don't add duplicates
