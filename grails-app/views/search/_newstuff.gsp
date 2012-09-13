@@ -34,6 +34,7 @@
 				jq.ajax( {
 				    "url": 'http://localhost:8080/transmartApp/search/getGwasResults',
 				    bDestroy: true,
+				    bServerSide: true,
 				    "success": function ( json ) { jq('#table_id').dataTable( json );},
 				    "dataType": "json"
 				} );				
