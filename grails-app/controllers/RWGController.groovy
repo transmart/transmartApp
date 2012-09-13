@@ -349,27 +349,31 @@ class RWGController {
     */
    public String createSOLRNonfacetedQueryString(String qParams) {
 	   def queryParams = qParams.split(',')	   
+
 	   def nonfacetedQuery=""
+	   
 	   // loop through each regular query parameter
 	   for (qp in queryParams)  {
-		   
-    	   // each queryParam is in form cat1:term1|term2|term3
-	       String category = qp.split(":")[0]
-	       String termList = qp.split(":")[1]
-
-   		   def categoryQueryString = createCategoryQueryString(category, termList)
-		   
-		   // skip TEXT search fields (or do we need to handle them somehow)
-		   if (category =="TEXT")  {
-			   continue
-		   }
-
-		   // add category query to main nonfaceted query string using ANDs between category clauses
-		   if (nonfacetedQuery == "")  {
-			   nonfacetedQuery = categoryQueryString
-		   }
-		   else  {
-			   nonfacetedQuery = /${nonfacetedQuery} AND ${categoryQueryString}/
+	
+		   if (qp)  {
+			   // each queryParam is in form cat1:term1|term2|term3
+		       String category = qp.split(":")[0]
+		       String termList = qp.split(":")[1]
+		
+			   def categoryQueryString = createCategoryQueryString(category, termList)
+			   
+			   // skip TEXT search fields (or do we need to handle them somehow)
+			   if (category =="TEXT")  {
+				   continue
+			   }
+		
+			   // add category query to main nonfaceted query string using ANDs between category clauses
+			   if (nonfacetedQuery == "")  {
+				   nonfacetedQuery = categoryQueryString
+			   }
+			   else  {
+				   nonfacetedQuery = /${nonfacetedQuery} AND ${categoryQueryString}/
+			   }
 		   }
 	   }
 	   
