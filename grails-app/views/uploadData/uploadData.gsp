@@ -334,6 +334,20 @@
 					</tr>
 					<tr>
 						<td>
+							Model Name:
+						</td>
+						<td>
+							<g:textField name="modelName" value="${uploadDataInstance.modelName}"/>
+						</td>
+						<td>
+							Model Description:
+						</td>
+						<td>
+							<g:textField name="modelDescription" value="${uploadDataInstance.modelDescription}"/>
+						</td>
+					</tr>
+					<tr class="borderbottom">
+						<td>
 							Statistical Test:
 						</td>
 						<td>
@@ -346,7 +360,7 @@
 							<g:textField name="pValueCutoff" value="${uploadDataInstance.pValueCutoff}"/>
 						</td>
 					</tr>
-					<tr>
+					<tr class="borderbottom">
 						<td>
 							Research Unit:
 						</td>
