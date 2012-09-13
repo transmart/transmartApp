@@ -7,7 +7,7 @@
 import org.json.*
 
 import bio.BioAnalysisAttribute
-import bio.ClinicalTrial
+import bio.Experiment
 import bio.BioMarkerCorrelationMV
 
 import org.apache.commons.codec.binary.Base64
@@ -151,7 +151,8 @@ class RWGController {
 
 	  // don't add categories without children to tree
 	  if (isCategory && (children.length() == 0))  {
-		  return
+		  //Removing this for now, we won't have any children in our tree. We are doing browse popups.
+		  //return
 	  }
 	  
 	  // add children to parent map
@@ -211,6 +212,7 @@ class RWGController {
 			  categoriesList.push(catName)
 		  }
 
+		  
 		  // retrieve initial facet counts to be used in tree
 		  JSONObject initialFacetCounts = getInitialFacetResults(categoriesList)
 
@@ -228,6 +230,7 @@ class RWGController {
 			  addDynaNode(categoryNode, categories, true, categoryNode.termName, uniqueTreeId, initialFacetCounts)
 			  nodeIndex++
 		  }
+		  
 	  }
 	  else  {
 		  throw new Exception("Root node not found")
@@ -275,18 +278,22 @@ class RWGController {
 	   // loop through each regular query parameter
 	   for (ff in facetFieldsParams)  {
 		   
-		   // skip TEXT search fields (these wouldn't be in tree so throw exception since this should never happen)
-		   if (ff =="TEXT")  {
-			   throw new Exception("TEXT field encountered when creating faceted fields string")
-		   }
-	
-		   def ffClause = /facet.field=${ff}/
-		   
-		   if (facetedFields=="")  {
-			   facetedFields = /${ffClause}/			   
-		   }
-		   else  {
-			   facetedFields = /${facetedFields}&${ffClause}/
+		   //This list should be in a config, but we don't facet on some of the fields.
+		   if(ff != "REGION_OF_INTEREST")
+		   {
+			   // skip TEXT search fields (these wouldn't be in tree so throw exception since this should never happen)
+			   if (ff =="TEXT")  {
+				   throw new Exception("TEXT field encountered when creating faceted fields string")
+			   }
+		
+			   def ffClause = /facet.field=${ff}/
+			   
+			   if (facetedFields=="")  {
+				   facetedFields = /${ffClause}/			   
+			   }
+			   else  {
+				   facetedFields = /${facetedFields}&${ffClause}/
+			   }
 		   }
 		   
 	   }
@@ -570,7 +577,8 @@ class RWGController {
 	   
 	   if (genesList.size > 0)  {
 		   newGeneString = /${genesField}:${genesList.join('|')}/
-           newParams.add newGeneString
+		   //Commenting this out, we don't have to worry about signifigance just yet.
+           //newParams.add newGeneString
 	   }
 	   
 	   log.info("Gene parameter: ${newParams}")
@@ -599,6 +607,8 @@ class RWGController {
 	   
 	   // replace gene signatures or gene list terms into their list of individual genes
 	   queryParams = replaceGeneLists(queryParams, solrGenesField)	   
+	   
+	   showSigGenesOnly = false
 	   
 	   if (showSigGenesOnly)  {
 		   queryParams.add "ANY_SIGNIFICANT_GENES:1"
@@ -659,6 +669,7 @@ class RWGController {
 	   else  {
 		   solrGenesField = 'ALLGENE'
 	   }
+	   
 	   session['solrGenesField'] = solrGenesField
 
 	   return solrGenesField
@@ -672,7 +683,8 @@ class RWGController {
    def getInitialFacetResults = {List categoriesList  ->
 	   // initial state of the significant field is checked, so need to add the search field to the SOLR query to get the initial facet coutns
 	   //  and save the search term to the session variable so that is applied to the query to get the analysis list 
-	   def queryParams = ["ANY_SIGNIFICANT_GENES:1"]
+	   //def queryParams = ["ANY_SIGNIFICANT_GENES:1"]
+	   def queryParams = []
 	   session['solrSearchFilter'] = queryParams
 	   log.info("Initial facet search: " + queryParams)
 
@@ -719,7 +731,7 @@ class RWGController {
    // Load the search results for the given search terms using the new annotation tables
    // return the html string to be rendered for the results panel
    def loadSearchResults = { studyCounts, startTime ->	   
-	   def trialAnalysis = [:]						// Map of the trial objects and the number of analysis per trial
+	   def exprimentAnalysis = [:]						// Map of the trial objects and the number of analysis per trial
 	   def total = 0								// Running total of analysis to show in the top banner
 
 	   def studyWithResultsFound = false   
@@ -730,8 +742,21 @@ class RWGController {
 		   if (c > 0)  {
 			   studyWithResultsFound = true
 		   
-			   def trialNumber= studyId
+			   Long expNumber= Long.parseLong(studyId)
 
+			   def exp = Experiment.createCriteria()
+			   def experiment = exp.get	{
+				   eq("id", expNumber)
+			   }
+			   if (experiment == null)	{
+				   log.warn "Unable to find an experiment for ${expNumber}"
+			   }
+			   else  {
+				   exprimentAnalysis.put((experiment), c)
+				   total += c
+			   }
+			   
+			   /*
 			   def ct = ClinicalTrial.createCriteria()
 			   def trial = ct.get	{
 				   eq("trialNumber", trialNumber, [ignoreCase: true])
@@ -743,6 +768,7 @@ class RWGController {
 			       trialAnalysis.put((trial), c)
 			       total += c
 			   }
+			   */
 		   }
 	   }
 	   // capture html as a string that will be passed back in JSON object
@@ -750,7 +776,7 @@ class RWGController {
 	   if (!studyWithResultsFound)	{
 		   html = g.render(template:'/search/noResult').toString()
 	   } else	{
-	       html = g.render(template:'/RWG/trials',model:[trials:trialAnalysis, analysisCount:total, duration:TimeCategory.minus(new Date(), startTime)]).toString()
+	       html = g.render(template:'/RWG/experiments',model:[experiments:exprimentAnalysis, analysisCount:total, duration:TimeCategory.minus(new Date(), startTime)]).toString()
 	   }
 	   
 	   return html	   

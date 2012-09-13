@@ -138,10 +138,7 @@
 				<div class='toolbar-item'>Expand All</div>
 
 				 -->
-				<div class='toolbar-item' onclick='collapseAllAnalyses();'>Collapse All</div>
-				<div id="searchResultOptions_launchPie" class='toolbar-item' onclick='launchPie();'>
-					Launch Pie
-				</div>				
+				<div class='toolbar-item' onclick='collapseAllAnalyses();'>Collapse All</div>			
 	  			<div id="searchResultOptions_holder">
 					<div id="searchResultOptions_btn" class='toolbar-item'>
 						 Options <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
