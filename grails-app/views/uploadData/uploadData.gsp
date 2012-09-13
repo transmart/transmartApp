@@ -87,11 +87,34 @@
 			fillSelectAjax(targetField, "${createLink([action:'platformsForVendor',controller:'bioAssayPlatform'])}", {vendor:vendor});
 		}
 
+		function updateStudyTable(param) {
+			
+			$j('#studyDiv').empty().hide();
+			
+			request = $j.ajax({
+				url: '${createLink([action:'expDetail',controller:'experimentAnalysis'])}',
+				type: 'POST',
+				data: {'id': param}
+			});
+			
+			request.fail(function(jqXHR, textStatus) {
+				if (jqXHR.responseText) {
+					alert(jqXHR.responseText);
+				}
+			});
+			
+			request.done(function(msg) {
+				
+				$j('#studyDiv').html(msg).slideDown('slow');
+			});
+			
+		}
+
 		<g:if test="${study}">
-		updateStudyTable(${study.id});
+			updateStudyTable(${study.id});
 		</g:if>
 		</script>
-		<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+		<title>${grailsApplication.config.com.recomdata.dataUpload.appTitle}</title>
 		<!-- ************************************** -->
         <!-- This implements the Help functionality -->
         <script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
@@ -113,22 +136,29 @@
 					Upload Data
 				</g:else>
 			</div>
+			<div style="text-align:right">
+				<a class="button" href="mailto:noreply@recomdata.com">Email administrator</a>
+				<div class="uploadMessage">If you are unable to locate the relevant study, email the administrator by clicking the button above.</div>
+			</div>
 			    <g:if test="${flash.message}">
 	            	<div class="message">${flash.message}</div>
 	            </g:if>
 				<table class="uploadTable">
 					<tr>
 						<td width="10%">&nbsp;</td>
-						<td width="90%">&nbsp;</td>
+						<td width="90%">&nbsp;
+						</td>
 					</tr>
 					<tr>
 						<td>
 							Study:
 						</td>
 						<td>
-							<g:eachError bean="${uploadDataInstance}" field="study">
-								<div class="fieldError"><g:message error="${it}"/></div>
-							</g:eachError>
+							<div id="studyErrors">
+								<g:eachError bean="${uploadDataInstance}" field="study">
+									<div class="fieldError"><g:message error="${it}"/></div>
+								</g:eachError>
+							</div>
 							<tmpl:extSearchField fieldName="study.id" searchAction="extSearch" searchController="experiment" value="${study?.id}" label="${study?.title}"/>
 							<br/><br/>
 							<div id="studyDiv" style="height: 200px; width: 540px; overflow: auto; display: none;">&nbsp;</div>
@@ -149,9 +179,11 @@
 							Analysis Name:
 						</td>
 						<td>
-							<g:eachError bean="${uploadDataInstance}" field="analysisName">
-								<div class="fieldError"><g:message error="${it}"/></div>
-							</g:eachError>
+							<div id="analysisNameErrors">
+								<g:eachError bean="${uploadDataInstance}" field="analysisName">
+									<div class="fieldError"><g:message error="${it}"/></div>
+								</g:eachError>
+							</div>
 							<g:textField name="analysisName" style="width: 90%" value="${uploadDataInstance.analysisName}"/>
 						</td>
 					</tr>
@@ -170,6 +202,10 @@
 			</div>
 			<div id="formPage2" style="background-color: #EEE; visibility:hidden;">
 			<div class="dataFormTitle" id="dataFormTitle2">Upload Data</div>
+				<div style="text-align:right">
+					<a class="button" href="mailto:noreply@recomdata.com">Email administrator</a>
+					<div class="uploadMessage">If you are unable to locate the relevant autocomplete fields, email the administrator by clicking the button above.</div>
+				</div>
 				<table class="uploadTable">
 					<tr>
 						<td width="10%">
@@ -257,7 +293,7 @@
 							Genome Version:
 						</td>
 						<td colspan="3">
-							<g:select name="genomeVersion" from="${['HG18':'HG18','HG19':'HG19']}" optionKey="${{it.key}}" optionValue="${{it.value}}" value="${uploadDataInstance.genomeVersion}"/>
+							<g:select name="genomeVersion" noSelection="${['null':'Select...']}" from="${['HG18':'HG18','HG19':'HG19']}" optionKey="${{it.key}}" optionValue="${{it.value}}" value="${uploadDataInstance.genomeVersion}"/>
 						</td>
 					</tr>
 					<tr id="expressionPlatformRow" class="bordertop borderbottom">

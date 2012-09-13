@@ -112,3 +112,9 @@ tr.borderbottom td {
 	clear: both;
 	height: 0px;	
 }
+
+.uploadMessage {
+	font-size: 8pt;
+	font-style: italic;
+	margin-top: 6px;
+}

@@ -45,7 +45,7 @@
 	    <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
 	    <script type="text/javascript">$j = jQuery.noConflict();</script>
 	    
-		<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+		<title>${grailsApplication.config.com.recomdata.dataUpload.appTitle}</title>
 		<!-- ************************************** -->
         <!-- This implements the Help functionality -->
         <script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>

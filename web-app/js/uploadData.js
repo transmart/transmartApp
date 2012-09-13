@@ -82,6 +82,23 @@ function acknowledgeColumn(column, requiredColumns) {
 }
 
 function showDataUploadForm() {
+	
+	$j('#studyErrors').empty();
+	$j('#analysisNameErrors').empty();
+	//TODO Quick and nasty Javascript validation in here - move to actual validator!
+	var errors = false;
+	if ($j('#study\\.id').val() == null || $j('#study\\.id').val() == '') {
+		$j('#studyErrors').html('<div class="fieldError">Please select a study</div>');
+		errors = true;
+	}
+	if ($j('#analysisName').val() == null || $j('#analysisName').val() == '') {
+		$j('#analysisNameErrors').html('<div class="fieldError">Please enter an analysis name</div>');
+		errors = true;
+	}
+	if (errors) {
+		return;
+	}
+	
 	var type = $j('#dataType').val();
 	var title = $j('#dataType option:selected').text();
 	if (IS_EDIT) {
@@ -183,29 +200,6 @@ function fillSelectAjax(element, url, params) {
 			}).text(row['title']);
 			element.append(newOpt);
 		}
-	});
-	
-}
-
-function updateStudyTable(param) {
-	
-	$j('#studyDiv').empty().hide();
-	
-	request = $j.ajax({
-		url: '/transmartApp/experimentAnalysis/expDetail',
-		type: 'POST',
-		data: {'id': param}
-	});
-	
-	request.fail(function(jqXHR, textStatus) {
-		if (jqXHR.responseText) {
-			alert(jqXHR.responseText);
-		}
-	});
-	
-	request.done(function(msg) {
-		
-		$j('#studyDiv').html(msg).slideDown('slow');
 	});
 	
 }

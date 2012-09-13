@@ -180,7 +180,9 @@ class UploadDataController {
 				return;
 			}
 			finally {
-				br.close();
+				if (br) {
+					br.close();
+				}
 			}
 			
 			//If we've reached here, everything is OK - set our state to PENDING
