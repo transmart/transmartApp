@@ -35,6 +35,8 @@ class AnalysisMetadata {
 	String researchUnit
 	String sampleSize
 	String cellType
+	String modelName
+	String modelDescription
 	Double pValueCutoff
 	Date etlDate
 	Date processDate
@@ -67,6 +69,8 @@ class AnalysisMetadata {
 			filename				column:'FILENAME'
 			status					column:'STATUS'
 			processDate				column:'PROCESS_DATE'
+			modelName				column:'MODEL_NAME'
+			modelDescription		column:'MODEL_DESC'
 		}
 	}
 	
@@ -89,5 +93,7 @@ class AnalysisMetadata {
 		filename(nullable:true)
 		status(nullable:true)
 		processDate(nullable:true)
+		modelName(nullable:true)
+		modelDescription(nullable:true)
 	}
 }
