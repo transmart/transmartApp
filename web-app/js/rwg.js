@@ -2577,11 +2577,23 @@ function getSearchKeywordList()   {
 	return keywords;
 }
 
+
+// focus the first visible child element of the passed in element that is an input type
+function focusFirstInput(parent)  {		
+	var child = parent.find('input[type=text],textarea,select').filter(':visible:first'); 
+	if (child.length == 1)  {
+	    child.focus();	
+	}
+}
+
 function modalEffectsOpen(dialog)  {
+	
     dialog.overlay.fadeIn(200, function () {
-		    dialog.container.slideDown(200,   function () {dialog.data.fadeIn(200);}  );
-			  								}
+		    dialog.container.slideDown(200,   function () {dialog.data.fadeIn(200, 
+		    		                                       function() {focusFirstInput(dialog.container);}  );
+			  								              }
                           );
+                                            });
 }
 
 function modalEffectsClose(dialog)  {
@@ -2600,6 +2612,8 @@ function openSaveSearchDialog()  {
 
 	if (keywords.length>0)  {
 		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose  });
+		
+		
 	}
 	else  {
 		alert("No search criteria to save!")
@@ -2730,8 +2744,11 @@ function showEditSearchDiv(id)  {
 	
    	
    	// now hide this specific static div, and show its edit div
-   	jQuery("#staticSearchDiv_" + id).hide(250);	            	
-   	jQuery("#editSearchDiv_" + id).show(250);	            	
+   	jQuery("#staticSearchDiv_" + id).hide(250);   	   	
+   	jQuery("#editSearchDiv_" + id).show(250, function() {  		
+   															focusFirstInput(jQuery(this));
+   	                                                    } 
+   	);	            	
 }
 
 //hide the edit search div for the given search id

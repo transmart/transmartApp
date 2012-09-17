@@ -41,8 +41,8 @@
 						    	    </div>
 		
 						      		<div id="editSearchDiv_${f.id}" class="editSearchDiv">
-										Enter Name <input type="text" id="searchName_${f.id}" size="75" maxlength="100" value="${f.name}" /><br/><br/>
-										<br/>
+										Enter Name <input type="text" id="searchName_${f.id}" size="75" maxlength="100" value="${f.name}" /><br /><br />
+										<br />
 										<a href="#" onclick="updateSearch(${f.id}); return false;">Save</a>&nbsp;   
 										<a href="#" onclick="hideEditSearchDiv(${f.id}); return false;">Cancel</a>&nbsp;   
 						    	    
