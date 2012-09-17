@@ -2801,6 +2801,7 @@ function loadSearch(id)  {
 			if (response['success'])  {
 				var searchTerms = response['searchTerms'] 
 				var count = response['count'] 
+				var termsNotFound = response['termsNotFound'] 
 				
 				for (i=0; i<count; i++)  {
 					
@@ -2811,9 +2812,12 @@ function loadSearch(id)  {
 					addSearchTerm(searchParam);
 
 				}
-				
+
             	jQuery.modal.close();	            	
-					
+
+            	if (termsNotFound > 0)  {
+            		alert(termsNotFound + ' terms could not be loaded from the saved search.  Results may not be as expected.')
+            	}
 			}
 			else  {
 				alert(response['message']);  // show message from server  

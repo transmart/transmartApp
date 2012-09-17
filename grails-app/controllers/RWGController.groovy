@@ -1061,6 +1061,8 @@ class RWGController {
 	   JSONObject searchTerms = new JSONObject()	   
 	   
 	   int i = 0
+	   int termsNotFound = 0
+	   
 	   if (s == null)  {
 		   msg = message(code: "search.SavedFacetedSearch.load.failed.notfound")
 		   successFlag = false
@@ -1077,14 +1079,19 @@ class RWGController {
 			
 			   // do thru an HQL query to make faster?	   
 			   SearchKeyword sk = SearchKeyword.get(skId)
-				   
-			   termArray.put("id", skId.toString())
-			   termArray.put("dataCategory", sk.dataCategory)
-			   termArray.put("displayDataCategory", sk.displayDataCategory)
-			   termArray.put("keyword", sk.keyword)
-				   
-			   searchTerms.put(i.toString(), termArray)
-			   i++
+			   
+			   if (sk)  {
+				   termArray.put("id", skId.toString())
+				   termArray.put("dataCategory", sk.dataCategory)
+				   termArray.put("displayDataCategory", sk.displayDataCategory)
+				   termArray.put("keyword", sk.keyword)
+					   
+				   searchTerms.put(i.toString(), termArray)
+				   i++
+			   }
+			   else  {
+				   termsNotFound++
+			   }
 		   }
 		   
 	       successFlag = true
@@ -1096,6 +1103,7 @@ class RWGController {
 	   ret.put('message', msg)
 	   ret.put('searchTerms', searchTerms)
 	   ret.put('count', i)
+	   ret.put('termsNotFound', termsNotFound)
 	   
 	   response.setContentType("text/json")
 	   response.outputStream << ret?.toString()
