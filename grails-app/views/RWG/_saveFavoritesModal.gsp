@@ -6,4 +6,7 @@
 			<a href="#" onclick="saveSearch(); return false;">Save</a>&nbsp;   
 			<a href="#" onclick="jQuery.modal.close();return false;">Cancel</a>   
 			
+			<br />
+			<br />
+			
 		</div>

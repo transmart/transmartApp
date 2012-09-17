@@ -2611,7 +2611,12 @@ function openSaveSearchDialog()  {
 	var keywords = getSearchKeywordList();
 
 	if (keywords.length>0)  {
-		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose  });
+		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose,
+			onShow: function (dialog) {
+		        dialog.container.css("height", "auto");
+		    }	
+		
+		});
 		
 		
 	}
@@ -2769,9 +2774,10 @@ function openLoadSearchDialog()  {
 		timeout:60000,
 		success: function(response) {
 		
-		    jQuery('#load-modal-content').html(response)
+		    jQuery('#load-modal-content').html(response);
 		
-			jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose  });
+			jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose
+			});
 		},
 		error: function(xhr) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
