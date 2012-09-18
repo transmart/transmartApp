@@ -28,41 +28,6 @@ jQuery(document).ready(function() {
 		  .appendTo(ul);
 	};
 });
-
-/*
-Ext.onReady(function(){
-
-	var escapedFieldName = '${fieldName}'.replace(".", "\\.");
-	
-	var combo = new Ext.app.SearchComboBox({
-		id: "${fieldName}-combobox",
-		renderTo: "${fieldName}-input",
-		searchUrl: "${createLink([action:searchAction,controller:searchController])}",
-		submitFn: function(param, text) {
-			var combo = Ext.getCmp("${fieldName}-combobox");
-			combo.setRawValue('');
-			
-			$j('#' + escapedFieldName).append($j('<option></option>').val(param).text(text).attr('selected', 'selected'));
-			
-			var newTag = $j('<span/>', {
-				id: '${fieldName}-tag-' + param,
-				'class': 'tag',
-				name: param
-			}).text(text);
-			$j('#' + escapedFieldName + '-tags').append(newTag);
-		},
-		value: "",
-		width: 470,
-        onSelect: function(record) {
-			this.collapse();
-			if (record != null) {
-				this.submitFn(record.data.id, record.data.keyword);
-			}
-		}
-	});
-});
-*/
-
 </g:javascript>
 <%-- Tag box (visual display of tags) --%>
 <div id="${fieldName}-tags" class="tagBox" name="${fieldName}">
