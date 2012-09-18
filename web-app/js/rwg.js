@@ -2820,7 +2820,6 @@ jQuery(function(){
 
         },
         onSelect: function(flag, node) {
-
         	// don't allow this event to be triggered by itself; return immediately if called as a result of the event itself
         	if (!allowOnSelectEvent)  {
         		return true;
@@ -2922,6 +2921,10 @@ jQuery(function(){
             {
                 return false;// Prevent default processing
             }
+            
+            //New code to generate popup because the categories don't have children.
+            generateBrowseWindow(node.data.title)
+            
             return true;
         },
         onActivate: function(node){
@@ -2946,11 +2949,53 @@ jQuery(function(){
     	    {
     			node.data.addClass = null;
     	    }
-    	}
+    	},
+    	classNames: {connector: "dynatree-no-connector"}
     });
 });
 
+//This function will generate a window with filtering options for the faceted search. Each window will have a browse with possibly other options.
+function generateBrowseWindow(nodeClicked)
+{
+	
+	//Grab the URL from a JS object.
+	var URLtoUse = studyBrowseWindow
+	
+	jQuery('#divBrowsePopups').dialog(
+			{
+				modal: false,
+				open: function()
+				{
+					jQuery(this).load(URLtoUse)
+				},
+				height: 300,
+				width: 500,
+				title: nodeClicked,
+				show: 'fade',
+				hide: 'fade',
+				buttons: {"Select" : applyPopupFilters}
+			})
+}
 
+//After the user clicks select on the popup we need to add the search terms to the filter.
+function applyPopupFilters()
+{
+	//Loop through all the selected items.
+	jQuery("#experiments :selected").each(function(i, selected){
+	
+		//Add each item to the search parameters object.
+		var searchParam={id:selected.value,
+		        display:'Study',
+		        keyword:selected.text,
+		        category:'STUDY'};
+		
+		addSearchTerm(searchParam);
+		
+	})
+	
+	//This destroys our popup window.
+	jQuery(this).dialog("destroy")
+}
 
 // find the analysis in the array with the given id
 function getAnalysisIndex(id)  {

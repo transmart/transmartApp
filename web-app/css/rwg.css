@@ -362,15 +362,11 @@ span.dynatree-active a {
 	
 span.dynatree-folder a{
 	color:#000;
-	background-image: url(../images/down_arrow_small.png) !important;
+	background-image: url(../images/right_arrow_big.PNG) !important;
     background-position: 268px 10px;
     background-repeat: no-repeat;
     font-weight: normal !important;
 }
-
-
-
-
 
 span.dynatree-folder span.dynatree-expander {
 	display:none;

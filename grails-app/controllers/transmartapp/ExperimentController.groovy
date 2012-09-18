@@ -41,4 +41,25 @@ class ExperimentController {
 		
 		render itemlist as JSON;
 	}
+	
+	/**
+	 * This will display a list of the available studies in the system to the user. The user will only be able to select one item from the dropdown.
+	 */
+	def browseExperimentsSingleSelect = {
+		
+		def experiments = Experiment.findAll();
+		
+		render(template:'browseSingle',model:[experiments:experiments])
+	}
+	
+	/**
+	 * This will render a UI where the user can pick an experiment from a list of all the experiments in the system. Selection of multiple studies is allowed.
+	 */
+	def browseExperimentsMultiSelect = {
+		
+		def experiments = Experiment.findAll();
+		
+		render(template:'browseMulti',model:[experiments:experiments])
+	}
+	
 }
