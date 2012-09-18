@@ -138,7 +138,7 @@
 				</g:else>
 			</div>
 			<div style="text-align:right">
-				<a class="button" href="mailto:noreply@recomdata.com">Email administrator</a>
+				<a class="button" href="mailto:${grailsApplication.config.com.recomdata.dataUpload.adminEmail}">Email administrator</a>
 				<div class="uploadMessage">If you are unable to locate the relevant study, email the administrator by clicking the button above.</div>
 			</div>
 			    <g:if test="${flash.message}">
@@ -209,7 +209,7 @@
 			<div id="formPage2" style="background-color: #EEE; visibility:hidden;">
 			<div class="dataFormTitle" id="dataFormTitle2">Upload Data</div>
 				<div style="text-align:right">
-					<a class="button" href="mailto:noreply@recomdata.com">Email administrator</a>
+					<a class="button" href="mailto:${grailsApplication.config.com.recomdata.dataUpload.adminEmail}">Email administrator</a>
 					<div class="uploadMessage">If you are unable to locate the relevant autocomplete fields, email the administrator by clicking the button above.</div>
 				</div>
 				<table class="uploadTable">
@@ -218,8 +218,13 @@
 							File:
 						</td>
 						<td colspan="3">
-							<input type="file" id="file" name="file" style="border: 1px dotted #CCC" onchange="verifyHeader()"/>
-							<a class="upload" href="#" onclick="downloadTemplate();">Download Template</a>
+							<g:if test="${uploadDataInstance.status == 'ERROR' || uploadDataInstance.status == 'NEW'}">
+								<input type="file" id="file" name="file" style="border: 1px dotted #CCC" />
+								<a class="upload" href="#" onclick="downloadTemplate();">Download Template</a>
+							</g:if>
+							<g:else>
+								<i>This data set is ${uploadDataInstance.status} - the file cannot be changed.</i>
+							</g:else>
 						</td>
 					</tr>
 					<%-- Disabled instant check

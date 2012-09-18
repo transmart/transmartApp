@@ -18,27 +18,22 @@
  ******************************************************************/
   
 
-package transmartapp
+/**
+ * $Id: DetailsService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ */
+//import org.dom4j.Document;
+//import org.dom4j.Element;
+//import org.dom4j.DocumentException;
+//import org.dom4j.io.SAXReader;
 
-import bio.Disease;
-import grails.converters.JSON
+class FormLayoutService {
 
-class DiseaseController {
+	def getLayout(String key){
 
-	/**
-	 * Find the top 15 diseases with a case-insensitive LIKE
-	 */
-    def extSearch = {
-		def paramMap = params
-		def value = params.term.toUpperCase();
-		
-		def experiments = Disease.executeQuery("SELECT meshCode, disease FROM Disease d WHERE upper(d.disease) LIKE '%' || :term || '%'", [term: value], [max: 15]);
-		
-		def itemlist = [];
-		for (exp in experiments) {
-			itemlist.add([id:exp[0], keyword:exp[1], category:"DISEASE", display:"Disease"]);
+		def columns = FormLayout.createCriteria().list() {
+			eq('key', key)
+			order('sequence', 'asc')
 		}
-		
-		render itemlist as JSON;
+		return columns
 	}
 }

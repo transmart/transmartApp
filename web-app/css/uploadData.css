@@ -118,3 +118,20 @@ tr.borderbottom td {
 	font-style: italic;
 	margin-top: 6px;
 }
+
+.uploaderror {
+	font-weight: bold;
+	color: #CC0000;	
+}
+
+.uploadwindow {
+	width:40%; text-align: center; margin: auto; padding: 8px; background-color: #EEE; border: 1px solid #DDD
+}
+
+.uploadfieldtable {
+	margin: 32px;
+}
+
+.datalabel {
+	font-weight: bold;
+}

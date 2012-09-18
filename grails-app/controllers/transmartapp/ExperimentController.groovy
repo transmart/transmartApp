@@ -30,7 +30,7 @@ class ExperimentController {
 	 */
     def extSearch = {
 		def paramMap = params
-		def value = params.query.toUpperCase();
+		def value = params.term.toUpperCase();
 		
 		def experiments = Experiment.executeQuery("SELECT id, title FROM Experiment e WHERE upper(e.title) LIKE '%' || :term || '%'", [term: value], [max: 20]);
 		
@@ -39,8 +39,6 @@ class ExperimentController {
 			itemlist.add([id:exp[0], keyword:exp[1], category:"STUDY", display:"Study"]);
 		}
 		
-		def result = [rows:itemlist]
-		def json = result as JSON;
-		render (params.callback+"("+(result as JSON)+")");
+		render itemlist as JSON;
 	}
 }

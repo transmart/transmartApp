@@ -25,6 +25,8 @@ import bio.BioAssayPlatform;
 import bio.Disease;
 import bio.Experiment;
 
+import com.recomdata.upload.DataUploadResult;
+
 import com.recomdata.snp.SnpData
 import grails.converters.JSON
 
@@ -38,6 +40,7 @@ class UploadDataController {
 
 	//This server is used to access security objects.
 	def springSecurityService
+	def dataUploadService
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
 
 	def index =
@@ -137,59 +140,85 @@ class UploadDataController {
 			upload.expressionPlatformIds = "";
 		}
 		
+		def f = null;
+		def filename = null;
+		def uploadsDir = null;
+		f = request.getFile('file');
 		
-		String uploadsDir = grailsApplication.config.com.recomdata.dataUpload.uploads.dir;
-		def f = request.getFile('file');
-		upload.etlDate = new Date()
-		def filename = sdf.format(upload.etlDate) + f.getOriginalFilename()
-		upload.filename = filename
+		if (f && !f.isEmpty()) {
+			uploadsDir = grailsApplication.config.com.recomdata.dataUpload.uploads.dir;
+			
+			upload.etlDate = new Date()
+			filename = sdf.format(upload.etlDate) + f.getOriginalFilename()
+			upload.filename = filename
+		}
 		
 		if (upload.save(flush: true)) {
 			
-			//Save the uploaded file
+			//Save the uploaded file, if any
+			def result = new DataUploadResult();
 			
-			OutputStream out = null;
-			try {
-				out = new FileOutputStream(uploadsDir + "/" + filename)
-				out.write(f.getBytes())
-			}
-			catch (Exception e) {
-				upload.status = "ERROR"
-				upload.save(flush: true)
-				render(view: "complete", model: [success:false, error: "Could not write file: " + e.getMessage(), uploadDataInstance: upload]);
-				return;
-			}
-			finally {
-				if (out != null) {
-					out.close();
+			if (f && !f.isEmpty()) {
+				OutputStream out = null;
+				def fullpath = uploadsDir + "/" + filename;
+				try {
+					out = new FileOutputStream(fullpath)
+					out.write(f.getBytes())
 				}
-			}
-			
-			//Read the first line and flag this metadata with an error immediately if missing required fields
-			
-			BufferedReader br = null;
-			try {
-				br = new BufferedReader(new FileReader(f));
-				String header = br.readLine();
+				catch (Exception e) {
+					upload.status = "ERROR"
+					upload.save(flush: true)
+					render(view: "complete", model: [result: new DataUploadResult(success:false, error: "Could not write file: " + e.getMessage()), uploadDataInstance: upload]);
+					return;
+				}
+				finally {
+					if (out != null) {
+						out.close();
+					}
+				}
 				
-			}
-			catch (Exception e) {
-				upload.status = "ERROR"
+				//Read the first line and flag this metadata with an error immediately if missing required fields
+				
+				BufferedReader br = null;
+				try {
+					br = new BufferedReader(new FileReader(fullpath));
+					String header = br.readLine();
+					result = dataUploadService.verifyFields(header, upload.dataType)
+					if (!result.success) {
+						upload.status = "ERROR"
+						upload.save(flush: true)
+						render(view: "complete", model: [result: result, uploadDataInstance: upload])
+						return
+					}
+				}
+				catch (Exception e) {
+					upload.status = "ERROR"
+					upload.save(flush: true)
+					result = new DataUploadResult(success:false, error: "Could not verify file: " + e.getMessage());
+					render(view: "complete", model: [result: result, uploadDataInstance: upload]);
+					return
+				}
+				finally {
+					if (br) {
+						br.close();
+					}
+				}
+				
+				//If we've reached here, everything is OK - set our state to PENDING to be picked up by ETL
+				
+				upload.status = "PENDING"
 				upload.save(flush: true)
-				render(view: "complete", model: [success:false, error: "Could not read file: " + e.getMessage(), uploadDataInstance: upload]);
-				return;
 			}
-			finally {
-				if (br) {
-					br.close();
+			else {
+				//This file was previously uploaded with an error - flag this!
+				if (upload.status.equals("ERROR")) {
+					result.error = "The existing file for this metadata failed to upload and needs to be replaced. Please upload a new file."
 				}
 			}
 			
-			//If we've reached here, everything is OK - set our state to PENDING
-			
-			upload.status = "PENDING"
-			upload.save(flush: true)
-			render(view: "complete", model: [success:true, uploadDataInstance: upload]);
+			result.success = upload.status.equals("PENDING");
+			render(view: "complete", model: [result: result, uploadDataInstance: upload]);
+			return
 		}
 		else {
 			flash.message = "The metadata could not be saved - please correct the highlighted errors."
@@ -228,7 +257,6 @@ class UploadDataController {
 					expressionMap.put(tag, platform.vendor + ": " + tag)
 				}
 			}
-			
 			
 			model.put('tags', tagMap)
 			model.put('genotypePlatforms', genotypeMap)

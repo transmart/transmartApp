@@ -1,3 +1,5 @@
+import com.recomdata.upload.DataUploadResult;
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -16,29 +18,29 @@
  * 
  *
  ******************************************************************/
-  
 
-package transmartapp
+public class DataUploadService{
 
-import bio.Disease;
-import grails.converters.JSON
-
-class DiseaseController {
-
-	/**
-	 * Find the top 15 diseases with a case-insensitive LIKE
-	 */
-    def extSearch = {
-		def paramMap = params
-		def value = params.term.toUpperCase();
+	def verifyFields(header, uploadType) {
 		
-		def experiments = Disease.executeQuery("SELECT meshCode, disease FROM Disease d WHERE upper(d.disease) LIKE '%' || :term || '%'", [term: value], [max: 15]);
-		
-		def itemlist = [];
-		for (exp in experiments) {
-			itemlist.add([id:exp[0], keyword:exp[1], category:"DISEASE", display:"Disease"]);
+		def requiredFields = RequiredUploadField.findAllByType(uploadType)*.field
+		def providedFields = header.split(",")
+		def missingFields = []
+		for (field in requiredFields) {
+			def found = false
+			for (providedField in providedFields) {
+				if (providedField.trim().equals(field.trim())) {
+					found = true
+					break
+				}
+			}
+			if (!found) {
+				missingFields.add(field)
+			}
 		}
-		
-		render itemlist as JSON;
+		def success = (missingFields.size() == 0)
+		def result = new DataUploadResult(success: success, requiredFields: requiredFields, providedFields: providedFields, missingFields: missingFields, error: "Required fields were missing from the uploaded file.")
+		return (result);
 	}
 }
+

@@ -1,37 +1,32 @@
 <g:javascript>
-Ext.onReady(function(){	
+jQuery(document).ready(function() {	
 	
 	var escapedFieldName = '${fieldName}'.replace(".", "\\.");
-	
-	var combo = new Ext.app.SearchComboBox({
-		id: "${fieldName}-combobox",
-		renderTo: "${fieldName}-input",
-		searchUrl: "${createLink([action:searchAction,controller:searchController])}",
-		submitFn: function(param, text) {
-			var combo = Ext.getCmp("${fieldName}-combobox");
-			combo.setDisabled(true);
-			$j('#' + escapedFieldName + '-combobox').addClass('locked');
-			combo.setRawValue(text);
-			$j('#' + escapedFieldName).val(param);
-			updateStudyTable(param);
-		},
-		value: "",
-		width: 470,
-        onSelect: function(record) {
-			this.collapse();
-			if (record != null) {
-				this.submitFn(record.data.id, record.data.keyword);
-			}
+	jQuery("#" + escapedFieldName + "-input").autocomplete({
+		source: '${createLink([action:searchAction,controller:searchController])}',
+		minLength:0,
+		select: function(event, ui) {
+			var studyId = ui.item.id;
+			var studyName = ui.item.keyword;
+			jQuery("#" + escapedFieldName + "-input").val(studyName).attr('disabled', 'disabled').blur();
+			jQuery("#" + escapedFieldName).val(studyId);
+			updateStudyTable(studyId);
+			return false;
 		}
-	});
-	
-	combo.setRawValue('${label}');
-	if (combo.getRawValue() != "") {
-		combo.setDisabled(true);
-		$j('#' + escapedFieldName + '-combobox').addClass('locked');
-	}
+	}).data("autocomplete")._renderItem = function( ul, item ) {
+		return jQuery('<li></li>')		
+		  .data("item.autocomplete", item )
+		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.keyword + '</b></a>')
+		  .appendTo(ul);
+	};
 });
+
 </g:javascript>
 <g:textField name="${fieldName}" style="display: none" value="${value}"/>
-<div id="${fieldName}-input" style="float: left"></div>
+<g:if test="${label}">
+	<input id="${fieldName}-input" style="float: left; width: 600px" value="${label}" disabled="disabled"/>
+</g:if>
+<g:else>
+	<input id="${fieldName}-input" style="float: left; width: 600px"/>
+</g:else>
  <a id="${fieldName}ChangeButton" class="upload" onclick="$j('#studyDiv').empty().slideUp('slow'); changeField('${fieldName}-combobox', '${fieldName}')">Change</a>

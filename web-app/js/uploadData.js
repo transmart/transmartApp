@@ -1,11 +1,8 @@
 function changeField(field, valueField) {
 	var escapedFieldName = valueField.replace(".", "\\.");
-	
-	var combo = Ext.getCmp(field);
-	combo.setDisabled(false);
-	combo.setRawValue('');
+
 	$j('#' + escapedFieldName).val('');
-	combo.focus();
+	$j('#' + escapedFieldName + "-input").val('').removeAttr('disabled').focus();
 }
 
 function ieReadFileHeader(filename) 

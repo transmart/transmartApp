@@ -17,28 +17,23 @@
  *
  ******************************************************************/
   
+public class RequiredUploadField{
 
-package transmartapp
+	Long id
+	String type;
+	String field;
 
-import bio.Disease;
-import grails.converters.JSON
-
-class DiseaseController {
-
-	/**
-	 * Find the top 15 diseases with a case-insensitive LIKE
-	 */
-    def extSearch = {
-		def paramMap = params
-		def value = params.term.toUpperCase();
-		
-		def experiments = Disease.executeQuery("SELECT meshCode, disease FROM Disease d WHERE upper(d.disease) LIKE '%' || :term || '%'", [term: value], [max: 15]);
-		
-		def itemlist = [];
-		for (exp in experiments) {
-			itemlist.add([id:exp[0], keyword:exp[1], category:"DISEASE", display:"Disease"]);
-		}
-		
-		render itemlist as JSON;
+	static mapping = {
+		table 'CZ_REQUIRED_UPLOAD_FIELD'
+		version false
+		id column:'REQUIRED_UPLOAD_FIELD_ID'
+		type column:'TYPE'
+		field column:'FIELD'
 	}
+
+	static constraints = {
+		type(nullable:false)
+		field(nullable:false)
+	}
+
 }

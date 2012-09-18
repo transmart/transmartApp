@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat;
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -16,29 +18,21 @@
  * 
  *
  ******************************************************************/
-  
 
-package transmartapp
+class FormatTagLib {
 
-import bio.Disease;
-import grails.converters.JSON
+	def fieldDate = { attrs, body ->
 
-class DiseaseController {
-
-	/**
-	 * Find the top 15 diseases with a case-insensitive LIKE
-	 */
-    def extSearch = {
-		def paramMap = params
-		def value = params.term.toUpperCase();
+		def bean = attrs["bean"]
+		def field = attrs["field"]
+		def format = attrs["format"]
 		
-		def experiments = Disease.executeQuery("SELECT meshCode, disease FROM Disease d WHERE upper(d.disease) LIKE '%' || :term || '%'", [term: value], [max: 15]);
-		
-		def itemlist = [];
-		for (exp in experiments) {
-			itemlist.add([id:exp[0], keyword:exp[1], category:"DISEASE", display:"Disease"]);
+		def date = bean."${field}"
+		if (date) {
+			out << (new SimpleDateFormat(format).format(date))
 		}
-		
-		render itemlist as JSON;
+		else {
+			out << "None"
+		}
 	}
 }

@@ -18,27 +18,40 @@
  ******************************************************************/
   
 
-package transmartapp
+ /**
+  * $Id: AccessLog.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 10098 $
+  */
 
-import bio.Disease;
-import grails.converters.JSON
+public class FormLayout{
 
-class DiseaseController {
+	Long id
+	String key;
+	String column;
+	String displayName;
+	String dataType;
+	Integer sequence;
 
-	/**
-	 * Find the top 15 diseases with a case-insensitive LIKE
-	 */
-    def extSearch = {
-		def paramMap = params
-		def value = params.term.toUpperCase();
-		
-		def experiments = Disease.executeQuery("SELECT meshCode, disease FROM Disease d WHERE upper(d.disease) LIKE '%' || :term || '%'", [term: value], [max: 15]);
-		
-		def itemlist = [];
-		for (exp in experiments) {
-			itemlist.add([id:exp[0], keyword:exp[1], category:"DISEASE", display:"Disease"]);
-		}
-		
-		render itemlist as JSON;
+	static mapping = {
+		table 'CZ_FORM_LAYOUT'
+	 id generator:'sequence', params:[sequence:'SEQ_CZ_FORM_LAYOUT_ID']
+		version false
+		id column:'FORM_LAYOUT_ID'
+		key column:'FORM_KEY'
+		column column:'FORM_COLUMN'
+		displayName column:'DISPLAY_NAME'
+		dataType column:'DATA_TYPE'
+		sequence column:'SEQUENCE'
 	}
+
+
+	static constraints = {
+		key(nullable:false)
+		column(nullable:false)
+		displayName(nullable:true)
+		dataType(nullable: true)
+		sequence(nullable:true)
+	}
+
 }

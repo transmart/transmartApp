@@ -37,6 +37,7 @@ class ExperimentAnalysisController {
 	def analysisDataExportService
 	def searchService
 	def experimentAnalysisTEAService
+	def formLayoutService
 
 	// session attribute
 	static def TEA_PAGING_DATA = "analListPaging"
@@ -168,8 +169,10 @@ class ExperimentAnalysisController {
 		for(pf in platforms){
 			organisms.add(pf.organism)
 		}
+		
+		def formLayout = formLayoutService.getLayout('study');
 
-		render(template:'/experiment/expDetail', model:[experimentInstance:exp, expPlatforms:platforms, expOrganisms:organisms,search:1])
+		render(template:'/experiment/expDetail', model:[layout: formLayout, experimentInstance:exp, expPlatforms:platforms, expOrganisms:organisms,search:1])
 	}
 
 	def getAnalysis = {

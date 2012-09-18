@@ -27,6 +27,7 @@
 		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/ext-all.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
+		<link rel="stylesheet" href="${resource(dir:'css', file:'uploadData.css')}"></link>
 		
 	<!--[if IE 7]>
 		<style type="text/css">
@@ -60,19 +61,35 @@
 			<g:render template="/layouts/commonheader" model="['app':'uploaddata']" />
 			
 			<br/><br/>
-			<div style="width:100%; text-align: center">
-				<g:if test="${success}">
-				<div>The file was uploaded successfully and has been submitted to the queue for processing.</div>
-				<br/>
-				<a href="${createLink([action:'index',controller:'uploadData'])}">Upload another file</a>
+			<div class="uploadwindow">
+				<g:if test="${result.success == true}">
+					<div>The file was uploaded successfully and has been submitted to the queue for processing.</div>
+					<br/>
+					<a href="${createLink([action:'index',controller:'uploadData'])}">Upload another file</a>
 				</g:if>
 				<g:else>
 					<div>The metadata has been saved, but there was a problem uploading the file:</div>
-					<div>${error}</div>
+					<div class="uploaderror">${result.error}</div>
+					<g:if test="${result.requiredFields}">
+						<table class="uploadfieldtable">
+							<tr>
+								<td class="datalabel">Fields in file</td>
+								<td>${result.providedFields.join(", ")}</td>
+							</tr>
+							<tr>
+								<td class="datalabel">Required fields</td>
+								<td>${result.requiredFields.join(", ")}</td>
+							</tr>
+							<tr>
+								<td class="datalabel">Missing fields</td>
+								<td class="uploaderror">${result.missingFields.join(", ")}</td>
+							</tr>
+						</table>
+					</g:if>
 					<br/>
-					<a href="${createLink([action:'edit',controller:'uploadData',id:uploadDataInstance.id])}">Resubmit this upload</a>
+					<a href="${createLink([action:'edit',controller:'uploadData',id:uploadDataInstance.id])}">Edit/resubmit this upload</a>
 				</g:else>
-				<br/>
+				<br/><br/>
 				<a href="${createLink([action:'index',controller:'search'])}">Return to the search page</a>
 			</div>
 			

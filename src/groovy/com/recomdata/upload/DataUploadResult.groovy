@@ -18,27 +18,16 @@
  ******************************************************************/
   
 
-package transmartapp
+package com.recomdata.upload;
 
-import bio.Disease;
-import grails.converters.JSON
+import java.util.List;
 
-class DiseaseController {
+public class DataUploadResult {
 
-	/**
-	 * Find the top 15 diseases with a case-insensitive LIKE
-	 */
-    def extSearch = {
-		def paramMap = params
-		def value = params.term.toUpperCase();
-		
-		def experiments = Disease.executeQuery("SELECT meshCode, disease FROM Disease d WHERE upper(d.disease) LIKE '%' || :term || '%'", [term: value], [max: 15]);
-		
-		def itemlist = [];
-		for (exp in experiments) {
-			itemlist.add([id:exp[0], keyword:exp[1], category:"DISEASE", display:"Disease"]);
-		}
-		
-		render itemlist as JSON;
-	}
+	boolean success
+	List<String> requiredFields
+	List<String> missingFields
+	List<String> providedFields
+	String error
+
 }
