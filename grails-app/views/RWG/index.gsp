@@ -17,6 +17,8 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'rwg.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/simpleModal.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/multiselect/ui.multiselect.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/multiselect/common.css')}"></link>
                                 
         <!-- jQuery JS libraries -->
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
@@ -63,7 +65,11 @@
 	        var saveSearchURL = "${createLink([action:'saveFacetedSearch'])}";
 	        var loadSearchURL = "${createLink([action:'loadFacetedSearch'])}";
 	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
-	        var exportAsImage = "${createLink([action:'exportAsImage'])}";	        
+	        var exportAsImage = "${createLink([action:'exportAsImage'])}";
+
+			//These are the URLS for the different browse windows.
+			var studyBrowseWindow = "${createLink([controller:'experiment',action:'browseExperimentsMultiSelect'])}";
+	        	        
 	        var mouse_inside_options_div = false;
 
 	        jQuery(document).ready(function() {
@@ -77,7 +83,8 @@
 
 		    	showSearchResults(); //reload the full search results	    
 
-		    	showIEWarningMsg();
+		    	//Disabling this, we aren't using the d3js code that takes advantage of HTML5.
+		    	//showIEWarningMsg();
 
 
 		        jQuery("#searchResultOptions_btn").click(function(){
@@ -211,6 +218,11 @@
 		        <!-- For image export -->
 		        <canvas id="canvas" width="1000px" height="600px"></canvas>  
 
+		</div>
+		
+		<!--  This is the DIV we stuff the browse windows into. -->
+		<div id="divBrowsePopups" style="display: none;">
+			TESTSTUFFSTUFF
 		</div>
 		
 		<!--  Everything for the across trial function goes here and is displayed using colorbox -->

@@ -43,4 +43,16 @@ class ExperimentController {
 		def json = result as JSON;
 		render (params.callback+"("+(result as JSON)+")");
 	}
+	
+	
+	/**
+	 * This will render a UI where the user can pick an experiment from a list of all the experiments in the system.
+	 */
+	def browseExperimentsMultiSelect = {
+		
+		def experiments = Experiment.findAll();
+		
+		render(template:'browse',model:[experiments:experiments])
+	}
+	
 }
