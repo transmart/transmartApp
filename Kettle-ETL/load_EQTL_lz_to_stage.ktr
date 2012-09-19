@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>load_GWAS_lz_to_stage</name>
+    <name>load_EQTL_lz_to_stage</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -206,36 +206,9 @@ than one field with the same field_idx.
     </attributes>
   </connection>
   <order>
-  <hop> <from>Block this step until deletes finish</from><to>Get GWAS data</to><enabled>Y</enabled> </hop>  <hop> <from>Concatenate values for ext_data</from><to>Remove ` from ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Drop data with just period</from><to>Drop just decimal point</to><enabled>Y</enabled> </hop>  <hop> <from>Check load_type for GWAS</from><to>Insert to BIO_ASSAY_ANALYSIS_GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Lookup GWAS, FIELD_NAME in IDX</from><to>Sort results by gwas_id, field_idx, field_name</to><enabled>Y</enabled> </hop>  <hop> <from>Convert columns to rows</from><to>Drop data with just period</to><enabled>Y</enabled> </hop>  <hop> <from>Set column_value to ` if null</from><to>Concatenate values for ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Block this step until steps finish</from><to>Output steps metrics</to><enabled>Y</enabled> </hop>  <hop> <from>Get GWAS Step</from><to>Set step_count for input records</to><enabled>Y</enabled> </hop>  <hop> <from>Get GWAS Step</from><to>Set step_count for output records</to><enabled>Y</enabled> </hop>  <hop> <from>Sort metrics by step name</from><to>Group by</to><enabled>Y</enabled> </hop>  <hop> <from>Group by</from><to>Sort metrics by step id</to><enabled>Y</enabled> </hop>  <hop> <from>Sort metrics by step id</from><to>Add step number</to><enabled>Y</enabled> </hop>  <hop> <from>Output steps metrics</from><to>Sort metrics by step name</to><enabled>Y</enabled> </hop>  <hop> <from>Add step number</from><to>Get job_id</to><enabled>Y</enabled> </hop>  <hop> <from>Get job_id</from><to>Add constants</to><enabled>Y</enabled> </hop>  <hop> <from>Add constants</from><to>Get GWAS Step</to><enabled>Y</enabled> </hop>  <hop> <from>Sort ext_data</from><to>Add EXT_DATA to data stream</to><enabled>Y</enabled> </hop>  <hop> <from>Sort GWAS data</from><to>Add EXT_DATA to data stream</to><enabled>Y</enabled> </hop>  <hop> <from>Add seq for BIO_ASY_ANALYSIS_GWAS_ID</from><to>Convert gwas_id to number</to><enabled>Y</enabled> </hop>  <hop> <from>Sort results by gwas_id, field_idx, field_name</from><to>Set column_value to ` if null</to><enabled>Y</enabled> </hop>  <hop> <from>Remove ` from ext_data</from><to>Sort ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Get BIO_ASSAY_ANALYSIS_ID for delete</from><to>Delete BIO_ASSAY_ANALYSIS_GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Get BIO_ASSAY_ANALYSIS_ID</from><to>Add seq for BIO_ASY_ANALYSIS_GWAS_ID</to><enabled>Y</enabled> </hop>  <hop> <from>Get GWAS data</from><to>Get BIO_ASSAY_ANALYSIS_ID</to><enabled>Y</enabled> </hop>  <hop> <from>Check load_type for GWAS</from><to>Bulk Loader GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Convert gwas_id to number</from><to>Convert columns to rows</to><enabled>Y</enabled> </hop>  <hop> <from>Add GWAS ext_type</from><to>Lookup GWAS, FIELD_NAME in IDX</to><enabled>Y</enabled> </hop>  <hop> <from>Drop data with just period</from><to>Add GWAS ext_type</to><enabled>Y</enabled> </hop>  <hop> <from>Add EXT_DATA to data stream</from><to>Check load_type for GWAS</to><enabled>Y</enabled> </hop>  <hop> <from>Set step_count for output records</from><to>Skip log of 0 step_count</to><enabled>Y</enabled> </hop>  <hop> <from>Set step_count for input records</from><to>Skip log of 0 step_count</to><enabled>Y</enabled> </hop>  <hop> <from>Skip log of 0 step_count</from><to>Dummy (do nothing)</to><enabled>Y</enabled> </hop>  <hop> <from>Skip log of 0 step_count</from><to>Set database_name</to><enabled>Y</enabled> </hop>  <hop> <from>Set database_name</from><to>Call cz_write_audit</to><enabled>Y</enabled> </hop>  <hop> <from>Convert gwas_id to number</from><to>Sort GWAS data</to><enabled>Y</enabled> </hop>  </order>
+  <hop> <from>Get BIO_ASSAY_ANALYSIS_ID</from><to>Add seq for BIO_ASY_ANALYSIS_EQTL_ID</to><enabled>Y</enabled> </hop>  <hop> <from>Get EQTL data</from><to>Get BIO_ASSAY_ANALYSIS_ID</to><enabled>Y</enabled> </hop>  <hop> <from>Get BIO_ASSAY_ANALYSIS_ID for delete</from><to>Delete BIO_ASSAY_ANALYSIS_EQTL</to><enabled>Y</enabled> </hop>  <hop> <from>Concatenate values for ext_data</from><to>Remove ` from ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Drop data with just period</from><to>Drop just decimal point</to><enabled>Y</enabled> </hop>  <hop> <from>Add seq for BIO_ASY_ANALYSIS_EQTL_ID</from><to>Convert eqtl_id to number</to><enabled>Y</enabled> </hop>  <hop> <from>Convert eqtl_id to number</from><to>Convert columns to rows</to><enabled>Y</enabled> </hop>  <hop> <from>Add EQTL ext_type</from><to>Lookup EQTL, FIELD_NAME in IDX</to><enabled>Y</enabled> </hop>  <hop> <from>Check load_type for EQTL</from><to>Insert to BIO_ASSAY_ANALYSIS_EQTL</to><enabled>Y</enabled> </hop>  <hop> <from>Check load_type for EQTL</from><to>Bulk Loader EQTL</to><enabled>Y</enabled> </hop>  <hop> <from>Drop data with just period</from><to>Add EQTL ext_type</to><enabled>Y</enabled> </hop>  <hop> <from>Lookup EQTL, FIELD_NAME in IDX</from><to>Sort results by eqtl_id, field_idx, field_name</to><enabled>Y</enabled> </hop>  <hop> <from>Convert columns to rows</from><to>Drop data with just period</to><enabled>Y</enabled> </hop>  <hop> <from>Sort results by eqtl_id, field_idx, field_name</from><to>Set column_value to ` if null</to><enabled>Y</enabled> </hop>  <hop> <from>Set column_value to ` if null</from><to>Concatenate values for ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Add EXT_DATA to data stream</from><to>Check load_type for EQTL</to><enabled>Y</enabled> </hop>  <hop> <from>Block for auditing</from><to>Output steps metrics</to><enabled>Y</enabled> </hop>  <hop> <from>Get EQTL Step</from><to>Set step_count to input records</to><enabled>Y</enabled> </hop>  <hop> <from>Get EQTL Step</from><to>Set step_count to output records</to><enabled>Y</enabled> </hop>  <hop> <from>Sort metrics by step name</from><to>Group by</to><enabled>Y</enabled> </hop>  <hop> <from>Group by</from><to>Sort metrics by step id</to><enabled>Y</enabled> </hop>  <hop> <from>Sort metrics by step id</from><to>Add step number</to><enabled>Y</enabled> </hop>  <hop> <from>Add constants</from><to>Get EQTL Step</to><enabled>Y</enabled> </hop>  <hop> <from>Remove ` from ext_data</from><to>Sort ext_data</to><enabled>Y</enabled> </hop>  <hop> <from>Wait for delete</from><to>Get EQTL data</to><enabled>Y</enabled> </hop>  <hop> <from>Sort EQTL data</from><to>Add EXT_DATA to data stream</to><enabled>Y</enabled> </hop>  <hop> <from>Sort ext_data</from><to>Add EXT_DATA to data stream</to><enabled>Y</enabled> </hop>  <hop> <from>Add step number</from><to>Get job_id</to><enabled>Y</enabled> </hop>  <hop> <from>Get job_id</from><to>Add constants</to><enabled>Y</enabled> </hop>  <hop> <from>Skip log of 0 step_count</from><to>Dummy (do nothing)</to><enabled>Y</enabled> </hop>  <hop> <from>Skip log of 0 step_count</from><to>Set database_name</to><enabled>Y</enabled> </hop>  <hop> <from>Set step_count to output records</from><to>Skip log of 0 step_count</to><enabled>Y</enabled> </hop>  <hop> <from>Set step_count to input records</from><to>Skip log of 0 step_count</to><enabled>Y</enabled> </hop>  <hop> <from>Set database_name</from><to>Call cz_write_audit</to><enabled>Y</enabled> </hop>  <hop> <from>Convert eqtl_id to number</from><to>Sort EQTL data</to><enabled>Y</enabled> </hop>  <hop> <from>Output steps metrics</from><to>Sort metrics by step name</to><enabled>Y</enabled> </hop>  </order>
   <step>
-    <name>Add EXT_DATA to data stream</name>
-    <type>MergeJoin</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<join_type>INNER</join_type>
-<step1>Sort GWAS data</step1>
-<step2>Sort ext_data</step2>
-    <keys_1>
-      <key>BIO_ASY_ANALYSIS_GWAS_ID</key>
-    </keys_1>
-    <keys_2>
-      <key>BIO_ASY_ANALYSIS_GWAS_ID</key>
-    </keys_2>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>298</xloc>
-      <yloc>335</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Add GWAS ext_type</name>
+    <name>Add EQTL ext_type</name>
     <type>Constant</type>
     <description/>
     <distribute>Y</distribute>
@@ -252,15 +225,42 @@ than one field with the same field_idx.
         <currency/>
         <decimal/>
         <group/>
-        <nullif>GWAS</nullif>
+        <nullif>EQTL</nullif>
         <length>-1</length>
         <precision>-1</precision>
       </field>
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1009</xloc>
-      <yloc>333</yloc>
+      <xloc>1007</xloc>
+      <yloc>330</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Add EXT_DATA to data stream</name>
+    <type>MergeJoin</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<join_type>LEFT OUTER</join_type>
+<step1>Sort EQTL data</step1>
+<step2>Sort ext_data</step2>
+    <keys_1>
+      <key>BIO_ASY_ANALYSIS_EQTL_ID</key>
+    </keys_1>
+    <keys_2>
+      <key>BIO_ASY_ANALYSIS_EQTL_ID</key>
+    </keys_2>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>385</xloc>
+      <yloc>339</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -323,14 +323,14 @@ than one field with the same field_idx.
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>125</xloc>
-      <yloc>703</yloc>
+      <xloc>132</xloc>
+      <yloc>696</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Add seq for BIO_ASY_ANALYSIS_GWAS_ID</name>
+    <name>Add seq for BIO_ASY_ANALYSIS_EQTL_ID</name>
     <type>Sequence</type>
     <description/>
     <distribute>N</distribute>
@@ -339,7 +339,7 @@ than one field with the same field_idx.
            <method>none</method>
            <schema_name/>
            </partitioning>
-      <valuename>BIO_ASY_ANALYSIS_GWAS_ID</valuename>
+      <valuename>BIO_ASY_ANALYSIS_EQTL_ID</valuename>
       <use_database>Y</use_database>
       <connection>BIOMART</connection>
       <schema/>
@@ -351,8 +351,8 @@ than one field with the same field_idx.
       <max_value>999999999</max_value>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>686</xloc>
-      <yloc>139</yloc>
+      <xloc>724</xloc>
+      <yloc>137</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -377,14 +377,14 @@ than one field with the same field_idx.
       </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>398</xloc>
-      <yloc>705</yloc>
+      <xloc>404</xloc>
+      <yloc>691</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Block this step until deletes finish</name>
+    <name>Block for auditing</name>
     <type>BlockUntilStepsFinish</type>
     <description/>
     <distribute>Y</distribute>
@@ -395,60 +395,36 @@ than one field with the same field_idx.
            </partitioning>
     <steps>
       <step>
-        <name>Delete BIO_ASSAY_ANALYSIS_GWAS</name>
-        <CopyNr>0</CopyNr>
-        </step>
-      </steps>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>100</xloc>
-      <yloc>138</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Block this step until steps finish</name>
-    <type>BlockUntilStepsFinish</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <steps>
-      <step>
-        <name>Get GWAS data</name>
+        <name>Get EQTL data</name>
         <CopyNr>0</CopyNr>
         </step>
       <step>
-        <name>Bulk Loader GWAS</name>
+        <name>Bulk Loader EQTL</name>
         <CopyNr>0</CopyNr>
         </step>
       <step>
-        <name>Insert to BIO_ASSAY_ANALYSIS_GWAS</name>
+        <name>Insert to BIO_ASSAY_ANALYSIS_EQTL</name>
         <CopyNr>0</CopyNr>
         </step>
       <step>
-        <name>Insert to BIO_ASSAY_ANALYSIS_GWAS</name>
+        <name>Insert to BIO_ASSAY_ANALYSIS_EQTL</name>
         <CopyNr>1</CopyNr>
         </step>
       <step>
-        <name>Insert to BIO_ASSAY_ANALYSIS_GWAS</name>
+        <name>Insert to BIO_ASSAY_ANALYSIS_EQTL</name>
         <CopyNr>2</CopyNr>
         </step>
       </steps>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>112</xloc>
-      <yloc>630</yloc>
+      <xloc>109</xloc>
+      <yloc>607</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Bulk Loader GWAS</name>
+    <name>Bulk Loader EQTL</name>
     <type>OraBulkLoader</type>
     <description/>
     <distribute>Y</distribute>
@@ -463,27 +439,27 @@ than one field with the same field_idx.
     <read_size>0</read_size>
     <errors>50</errors>
     <schema/>
-    <table>BIO_ASSAY_ANALYSIS_GWAS</table>
+    <table>BIO_ASSAY_ANALYSIS_EQTL</table>
     <load_method>AUTO_END</load_method>
-    <load_action>APPEND</load_action>
+    <load_action>INSERT</load_action>
     <sqlldr>${LOADER_PATH}</sqlldr>
-    <control_file>control_GWAS_${Internal.Step.CopyNr}.cfg</control_file>
-    <data_file>${SORT_DIR}&#47;load_GWAS_${Internal.Step.CopyNr}.dat</data_file>
-    <log_file>log_GWAS_${Internal.Step.CopyNr}.log</log_file>
-    <bad_file>bad_GWAS_${Internal.Step.CopyNr}.bad</bad_file>
+    <control_file>contro_EQTL_l${Internal.Step.CopyNr}.cfg</control_file>
+    <data_file>${SORT_DIR}&#47;load_EQTL_${Internal.Step.CopyNr}.dat</data_file>
+    <log_file>log_EQTL_${Internal.Step.CopyNr}.dat</log_file>
+    <bad_file>${SORT_DIR}&#47;bad_EQTL_${Internal.Step.CopyNr}.dat</bad_file>
     <discard_file/>
-    <direct_path>N</direct_path>
-    <erase_files>N</erase_files>
+    <direct_path>Y</direct_path>
+    <erase_files>Y</erase_files>
     <encoding/>
     <dbname_override/>
     <character_set/>
-    <fail_on_warning>Y</fail_on_warning>
-    <fail_on_error>Y</fail_on_error>
+    <fail_on_warning>N</fail_on_warning>
+    <fail_on_error>N</fail_on_error>
     <parallel>N</parallel>
     <alt_rec_term/>
       <mapping>
-        <stream_name>BIO_ASY_ANALYSIS_GWAS_ID</stream_name>
-        <field_name>BIO_ASY_ANALYSIS_GWAS_ID</field_name>
+        <stream_name>BIO_ASY_ANALYSIS_EQTL_ID</stream_name>
+        <field_name>BIO_ASY_ANALYSIS_EQTL_ID</field_name>
         <date_mask/>
       </mapping>
       <mapping>
@@ -507,14 +483,19 @@ than one field with the same field_idx.
         <date_mask/>
       </mapping>
       <mapping>
-        <stream_name>ext_data</stream_name>
+        <stream_name>EXT_DATA</stream_name>
         <field_name>ext_data</field_name>
+        <date_mask/>
+      </mapping>
+      <mapping>
+        <stream_name>GENE</stream_name>
+        <field_name>GENE</field_name>
         <date_mask/>
       </mapping>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>419</xloc>
-      <yloc>506</yloc>
+      <xloc>503</xloc>
+      <yloc>503</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -575,14 +556,14 @@ than one field with the same field_idx.
     <auto_commit>Y</auto_commit>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>664</xloc>
-      <yloc>818</yloc>
+      <xloc>751</xloc>
+      <yloc>825</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Check load_type for GWAS</name>
+    <name>Check load_type for EQTL</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
@@ -591,8 +572,8 @@ than one field with the same field_idx.
            <method>none</method>
            <schema_name/>
            </partitioning>
-<send_true_to>Insert to BIO_ASSAY_ANALYSIS_GWAS</send_true_to>
-<send_false_to>Bulk Loader GWAS</send_false_to>
+<send_true_to>Insert to BIO_ASSAY_ANALYSIS_EQTL</send_true_to>
+<send_false_to>Bulk Loader EQTL</send_false_to>
     <compare>
 <condition>
  <negated>N</negated>
@@ -603,8 +584,8 @@ than one field with the same field_idx.
     </compare>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>299</xloc>
-      <yloc>434</yloc>
+      <xloc>382</xloc>
+      <yloc>427</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -629,7 +610,7 @@ than one field with the same field_idx.
       <give_back_row>N</give_back_row>
       <group>
         <field>
-          <name>BIO_ASY_ANALYSIS_GWAS_ID</name>
+          <name>BIO_ASY_ANALYSIS_EQTL_ID</name>
         </field>
         <field>
           <name>BIO_ASSAY_ANALYSIS_ID</name>
@@ -651,8 +632,8 @@ than one field with the same field_idx.
       </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>813</xloc>
-      <yloc>340</yloc>
+      <xloc>807</xloc>
+      <yloc>429</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -674,70 +655,37 @@ than one field with the same field_idx.
         </field>      <field>        <name>P_VALUE</name>
         <value>P_VALUE</value>
         <norm>column_value</norm>
-        </field>      <field>        <name>ODDS_RATIO</name>
+        </field>      <field>        <name>GENE</name>
         <value>ODDS_RATIO</value>
         <norm>column_value</norm>
-        </field>      <field>        <name>BETA</name>
+        </field>      <field>        <name>ACTS</name>
         <value>BETA</value>
         <norm>column_value</norm>
-        </field>      <field>        <name>DIRECTION_OF_EFFECT</name>
-        <value>DIRECTION_OF_EFFECT</value>
+        </field>      <field>        <name>SNP_DISTANCE</name>
+        <value>SNP_DISTANCE</value>
         <norm>column_value</norm>
-        </field>      <field>        <name>HWE_CONTROLS</name>
-        <value>HWE_CONTROLS</value>
+        </field>      <field>        <name>REFERENCE_REGION</name>
+        <value>REFERENCE_REGION</value>
         <norm>column_value</norm>
-        </field>      <field>        <name>HWE_CASES</name>
-        <value>HWE_CASES</value>
+        </field>      <field>        <name>PROBE_AMBIGUITY</name>
+        <value>PROBE_AMBIGUITY</value>
         <norm>column_value</norm>
-        </field>      <field>        <name>HWE_TOTAL_STUDIES</name>
-        <value>HWE_TOTAL_STUDIES</value>
+        </field>      <field>        <name>PROBE_IN_REPEATED_SEQ</name>
+        <value>PROBE_IN_REPEATED_SEQ</value>
         <norm>column_value</norm>
-        </field>      <field>        <name>MAF</name>
-        <value>MAF</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>GENOTYPE_COUNTS_CASES</name>
-        <value>GENOTYPE_COUNTS_CASES</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>GENOTYPE_COUNTS_CONTROLS</name>
-        <value>GENOTYPE_COUNTS_CONTROLS</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>TOTAL_GENOTYPED</name>
-        <value>TOTAL_GENOTYPED</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>ALLELE_1</name>
-        <value>ALLELE_1</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>ALLELE_2</name>
-        <value>ALLELE_2</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>GOOD_CLUSTERING</name>
-        <value>GOOD_CLUSTERING</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>EFFECT</name>
-        <value>EFFECT</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>STANDARD_ERROR</name>
-        <value>STANDARD_ERROR</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>ETL_ID</name>
-        <value>ETL_ID</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>HETLSQ</name>
-        <value>HETLSQ</value>
-        <norm>column_value</norm>
-        </field>      <field>        <name>HETPVAL</name>
-        <value>HETPVAL</value>
+        </field>      <field>        <name>SNP_PROBE_IN_GENE_PROBE</name>
+        <value>SNP_PROBE_IN_GENE_PROBE</value>
         <norm>column_value</norm>
         </field>      </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>872</xloc>
-      <yloc>237</yloc>
+      <xloc>858</xloc>
+      <yloc>239</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Convert gwas_id to number</name>
+    <name>Convert eqtl_id to number</name>
     <type>SelectValues</type>
     <description/>
     <distribute>N</distribute>
@@ -747,10 +695,10 @@ than one field with the same field_idx.
            <schema_name/>
            </partitioning>
     <fields>        <select_unspecified>N</select_unspecified>
-      <meta>        <name>BIO_ASY_ANALYSIS_GWAS_ID</name>
-        <rename>BIO_ASY_ANALYSIS_GWAS_ID</rename>
-        <type>String</type>
-        <length>-2</length>
+      <meta>        <name>BIO_ASY_ANALYSIS_EQTL_ID</name>
+        <rename>BIO_ASY_ANALYSIS_EQTL_ID</rename>
+        <type>Number</type>
+        <length>18</length>
         <precision>0</precision>
         <conversion_mask/>
         <date_format_lenient>false</date_format_lenient>
@@ -768,7 +716,7 @@ than one field with the same field_idx.
     </step>
 
   <step>
-    <name>Delete BIO_ASSAY_ANALYSIS_GWAS</name>
+    <name>Delete BIO_ASSAY_ANALYSIS_EQTL</name>
     <type>Delete</type>
     <description/>
     <distribute>Y</distribute>
@@ -781,7 +729,7 @@ than one field with the same field_idx.
     <commit>100</commit>
     <lookup>
       <schema/>
-      <table>BIO_ASSAY_ANALYSIS_GWAS</table>
+      <table>BIO_ASSAY_ANALYSIS_EQTL</table>
       <key>
         <name>d_baa_id</name>
         <field>BIO_ASSAY_ANALYSIS_ID</field>
@@ -791,8 +739,8 @@ than one field with the same field_idx.
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>336</xloc>
-      <yloc>59</yloc>
+      <xloc>455</xloc>
+      <yloc>58</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -808,7 +756,7 @@ than one field with the same field_idx.
            <schema_name/>
            </partitioning>
 <send_true_to>Drop just decimal point</send_true_to>
-<send_false_to>Add GWAS ext_type</send_false_to>
+<send_false_to>Add EQTL ext_type</send_false_to>
     <compare>
 <condition>
  <negated>N</negated>
@@ -855,8 +803,8 @@ than one field with the same field_idx.
            </partitioning>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>433</xloc>
-      <yloc>893</yloc>
+      <xloc>491</xloc>
+      <yloc>898</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -875,7 +823,7 @@ than one field with the same field_idx.
       <field>
         <name>BIO_ASSAY_ANALYSIS_ID</name>
         <variable>${BIO_ASSAY_ANALYSIS_ID}</variable>
-        <type>String</type>
+        <type>Number</type>
         <format/>
         <currency/>
         <decimal/>
@@ -899,8 +847,8 @@ than one field with the same field_idx.
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>411</xloc>
-      <yloc>134</yloc>
+      <xloc>467</xloc>
+      <yloc>139</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -919,7 +867,7 @@ than one field with the same field_idx.
       <field>
         <name>d_baa_id</name>
         <variable>${BIO_ASSAY_ANALYSIS_ID}</variable>
-        <type>String</type>
+        <type>Number</type>
         <format/>
         <currency/>
         <decimal/>
@@ -931,14 +879,14 @@ than one field with the same field_idx.
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>105</xloc>
-      <yloc>59</yloc>
+      <xloc>144</xloc>
+      <yloc>55</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Get GWAS Step</name>
+    <name>Get EQTL Step</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
@@ -947,26 +895,26 @@ than one field with the same field_idx.
            <method>none</method>
            <schema_name/>
            </partitioning>
-<send_true_to>Set step_count for input records</send_true_to>
-<send_false_to>Set step_count for output records</send_false_to>
+<send_true_to>Set step_count to input records</send_true_to>
+<send_false_to>Set step_count to output records</send_false_to>
     <compare>
 <condition>
  <negated>N</negated>
  <leftvalue>Step name</leftvalue>
  <function>=</function>
  <rightvalue/>
- <value><name>constant</name><type>String</type><text>Get GWAS Data</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
+ <value><name>constant</name><type>String</type><text>Get EQTL Data</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
     </compare>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>125</xloc>
-      <yloc>801</yloc>
+      <xloc>128</xloc>
+      <yloc>809</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Get GWAS data</name>
+    <name>Get EQTL data</name>
     <type>TableInput</type>
     <description/>
     <distribute>N</distribute>
@@ -980,24 +928,14 @@ than one field with the same field_idx.
   ETL_ID
 , RS_ID
 , P_VALUE
-, ODDS_RATIO
-, BETA
-, DIRECTION_OF_EFFECT
-, HWE_CONTROLS
-, HWE_CASES
-, HWE_TOTAL_STUDIES
-, MAF
-, GENOTYPE_COUNTS_CASES
-, GENOTYPE_COUNTS_CONTROLS
-, TOTAL_GENOTYPED
-, ALLELE_1
-, ALLELE_2
-, GOOD_CLUSTERING
-, EFFECT
-, STANDARD_ERROR
-, HETLSQ
-, HETPVAL
-FROM LZ_SRC_GWAS
+, GENE
+, ACTS
+, SNP_DISTANCE
+, REFERENCE_REGION
+, PROBE_AMBIGUITY
+, PROBE_IN_REPEATED_SEQ
+, SNP_PROBE_IN_GENE_PROBE
+FROM LZ_SRC_EQTL
 where etl_id = ${ETL_ID}
 
 
@@ -1010,8 +948,8 @@ where etl_id = ${ETL_ID}
     <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>245</xloc>
-      <yloc>136</yloc>
+      <xloc>246</xloc>
+      <yloc>138</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1078,8 +1016,8 @@ where etl_id = ${ETL_ID}
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>268</xloc>
-      <yloc>704</yloc>
+      <xloc>269</xloc>
+      <yloc>690</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1153,14 +1091,14 @@ where etl_id = ${ETL_ID}
       </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>526</xloc>
-      <yloc>630</yloc>
+      <xloc>638</xloc>
+      <yloc>609</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Insert to BIO_ASSAY_ANALYSIS_GWAS</name>
+    <name>Insert to BIO_ASSAY_ANALYSIS_EQTL</name>
     <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -1171,7 +1109,7 @@ where etl_id = ${ETL_ID}
            </partitioning>
     <connection>BIOMART_STAGE</connection>
     <schema/>
-    <table>BIO_ASSAY_ANALYSIS_GWAS</table>
+    <table>BIO_ASSAY_ANALYSIS_EQTL</table>
     <commit>1000</commit>
     <truncate>N</truncate>
     <ignore_errors>N</ignore_errors>
@@ -1192,8 +1130,8 @@ where etl_id = ${ETL_ID}
           <stream_name>BIO_ASSAY_ANALYSIS_ID</stream_name>
         </field>
         <field>
-          <column_name>BIO_ASY_ANALYSIS_GWAS_ID</column_name>
-          <stream_name>BIO_ASY_ANALYSIS_GWAS_ID</stream_name>
+          <column_name>BIO_ASY_ANALYSIS_EQTL_ID</column_name>
+          <stream_name>BIO_ASY_ANALYSIS_EQTL_ID</stream_name>
         </field>
         <field>
           <column_name>RS_ID</column_name>
@@ -1211,17 +1149,21 @@ where etl_id = ${ETL_ID}
           <column_name>EXT_DATA</column_name>
           <stream_name>ext_data</stream_name>
         </field>
+        <field>
+          <column_name>GENE</column_name>
+          <stream_name>GENE</stream_name>
+        </field>
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>192</xloc>
-      <yloc>512</yloc>
+      <xloc>280</xloc>
+      <yloc>501</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Lookup GWAS, FIELD_NAME in IDX</name>
+    <name>Lookup EQTL, FIELD_NAME in IDX</name>
     <type>DBLookup</type>
     <description/>
     <distribute>Y</distribute>
@@ -1261,8 +1203,8 @@ where etl_id = ${ETL_ID}
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1017</xloc>
-      <yloc>426</yloc>
+      <xloc>1015</xloc>
+      <yloc>421</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1279,28 +1221,33 @@ where etl_id = ${ETL_ID}
            </partitioning>
     <steps>
       <step>
-        <name>Get GWAS data</name>
+        <name>Get EQTL data</name>
         <copyNr>0</copyNr>
         <stepRequired>N</stepRequired>
         </step>
       <step>
-        <name>Bulk Loader GWAS</name>
+        <name>Bulk Loader EQTL</name>
         <copyNr>0</copyNr>
         <stepRequired>N</stepRequired>
         </step>
       <step>
-        <name>Insert to BIO_ASSAY_ANALYSIS_GWAS</name>
+        <name>Insert to BIO_ASSAY_ANALYSIS_EQTL</name>
         <copyNr>0</copyNr>
         <stepRequired>N</stepRequired>
         </step>
       <step>
-        <name>Insert to BIO_ASSAY_ANALYSIS_GWAS</name>
+        <name>Insert to BIO_ASSAY_ANALYSIS_EQTL</name>
         <copyNr>1</copyNr>
         <stepRequired>N</stepRequired>
         </step>
       <step>
-        <name>Insert to BIO_ASSAY_ANALYSIS_GWAS</name>
+        <name>Insert to BIO_ASSAY_ANALYSIS_EQTL</name>
         <copyNr>2</copyNr>
+        <stepRequired>N</stepRequired>
+        </step>
+      <step>
+        <name>Calculate log_p_value</name>
+        <copyNr>0</copyNr>
         <stepRequired>N</stepRequired>
         </step>
       </steps>
@@ -1315,8 +1262,8 @@ where etl_id = ${ETL_ID}
         <stepsecondsfield>Duration</stepsecondsfield>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>256</xloc>
-      <yloc>630</yloc>
+      <xloc>253</xloc>
+      <yloc>608</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1325,7 +1272,7 @@ where etl_id = ${ETL_ID}
     <name>Remove ` from ext_data</name>
     <type>ReplaceString</type>
     <description/>
-    <distribute>N</distribute>
+    <distribute>Y</distribute>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -1345,8 +1292,8 @@ where etl_id = ${ETL_ID}
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>659</xloc>
-      <yloc>340</yloc>
+      <xloc>800</xloc>
+      <yloc>339</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1376,8 +1323,8 @@ where etl_id = ${ETL_ID}
       </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>819</xloc>
-      <yloc>428</yloc>
+      <xloc>807</xloc>
+      <yloc>515</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1408,14 +1355,14 @@ where etl_id = ${ETL_ID}
 </calculation>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>536</xloc>
-      <yloc>817</yloc>
+      <xloc>594</xloc>
+      <yloc>822</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Set step_count for input records</name>
+    <name>Set step_count to input records</name>
     <type>Calculator</type>
     <description/>
     <distribute>Y</distribute>
@@ -1440,14 +1387,14 @@ where etl_id = ${ETL_ID}
 </calculation>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>268</xloc>
-      <yloc>873</yloc>
+      <xloc>299</xloc>
+      <yloc>903</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Set step_count for output records</name>
+    <name>Set step_count to output records</name>
     <type>Calculator</type>
     <description/>
     <distribute>Y</distribute>
@@ -1472,8 +1419,8 @@ where etl_id = ${ETL_ID}
 </calculation>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>268</xloc>
-      <yloc>776</yloc>
+      <xloc>293</xloc>
+      <yloc>773</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1500,17 +1447,17 @@ where etl_id = ${ETL_ID}
     </compare>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>383</xloc>
-      <yloc>813</yloc>
+      <xloc>441</xloc>
+      <yloc>818</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Sort GWAS data</name>
+    <name>Sort EQTL data</name>
     <type>SortRows</type>
     <description/>
-    <distribute>N</distribute>
+    <distribute>Y</distribute>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -1525,15 +1472,15 @@ where etl_id = ${ETL_ID}
       <unique_rows>N</unique_rows>
     <fields>
       <field>
-        <name>BIO_ASY_ANALYSIS_GWAS_ID</name>
+        <name>BIO_ASY_ANALYSIS_EQTL_ID</name>
         <ascending>Y</ascending>
         <case_sensitive>N</case_sensitive>
       </field>
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>296</xloc>
-      <yloc>238</yloc>
+      <xloc>383</xloc>
+      <yloc>242</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1542,7 +1489,7 @@ where etl_id = ${ETL_ID}
     <name>Sort ext_data</name>
     <type>SortRows</type>
     <description/>
-    <distribute>N</distribute>
+    <distribute>Y</distribute>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -1557,15 +1504,15 @@ where etl_id = ${ETL_ID}
       <unique_rows>N</unique_rows>
     <fields>
       <field>
-        <name>BIO_ASY_ANALYSIS_GWAS_ID</name>
+        <name>BIO_ASY_ANALYSIS_EQTL_ID</name>
         <ascending>Y</ascending>
         <case_sensitive>N</case_sensitive>
       </field>
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>522</xloc>
-      <yloc>341</yloc>
+      <xloc>620</xloc>
+      <yloc>338</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1596,8 +1543,8 @@ where etl_id = ${ETL_ID}
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>527</xloc>
-      <yloc>705</yloc>
+      <xloc>641</xloc>
+      <yloc>693</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1628,14 +1575,14 @@ where etl_id = ${ETL_ID}
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>387</xloc>
-      <yloc>630</yloc>
+      <xloc>490</xloc>
+      <yloc>610</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Sort results by gwas_id, field_idx, field_name</name>
+    <name>Sort results by eqtl_id, field_idx, field_name</name>
     <type>SortRows</type>
     <description/>
     <distribute>Y</distribute>
@@ -1653,7 +1600,7 @@ where etl_id = ${ETL_ID}
       <unique_rows>N</unique_rows>
     <fields>
       <field>
-        <name>BIO_ASY_ANALYSIS_GWAS_ID</name>
+        <name>BIO_ASY_ANALYSIS_EQTL_ID</name>
         <ascending>Y</ascending>
         <case_sensitive>N</case_sensitive>
       </field>
@@ -1670,8 +1617,32 @@ where etl_id = ${ETL_ID}
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>912</xloc>
-      <yloc>502</yloc>
+      <xloc>1017</xloc>
+      <yloc>516</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Wait for delete</name>
+    <type>BlockUntilStepsFinish</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <steps>
+      <step>
+        <name>Delete BIO_ASSAY_ANALYSIS_EQTL</name>
+        <CopyNr>0</CopyNr>
+        </step>
+      </steps>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>104</xloc>
+      <yloc>144</yloc>
       <draw>Y</draw>
       </GUI>
     </step>

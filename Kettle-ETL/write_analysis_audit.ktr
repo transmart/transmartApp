@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>set_current_analysis_variables</name>
+    <name>write_analysis_audit</name>
     <description/>
     <extended_description/>
     <trans_version/>
     <trans_type>Normal</trans_type>
+    <trans_status>0</trans_status>
     <directory>&#47;</directory>
     <parameters>
     </parameters>
@@ -178,44 +179,10 @@
     </attributes>
   </connection>
   <order>
-  <hop> <from>Get rows from result</from><to>Write to log</to><enabled>Y</enabled> </hop>  <hop> <from>Write to log</from><to>Set Variables</to><enabled>Y</enabled> </hop>  </order>
+  <hop> <from>Add constants</from><to>Set database name as study - analysis</to><enabled>Y</enabled> </hop>  <hop> <from>Set database name as study - analysis</from><to>Call cz_write_audit</to><enabled>Y</enabled> </hop>  <hop> <from>Get Variables</from><to>Add constants</to><enabled>Y</enabled> </hop>  <hop> <from>Generate single dummy row</from><to>Get Variables</to><enabled>Y</enabled> </hop>  </order>
   <step>
-    <name>Get rows from result</name>
-    <type>RowsFromResult</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <fields>      <field>        <name>STUDY_ID</name>
-        <type>String</type>
-        <length>-1</length>
-        <precision>-1</precision>
-        </field>      <field>        <name>DATA_TYPE</name>
-        <type>String</type>
-        <length>-1</length>
-        <precision>-1</precision>
-        </field>      <field>        <name>ANALYSIS_NAME</name>
-        <type>String</type>
-        <length>-1</length>
-        <precision>-1</precision>
-        </field>      <field>        <name>INPUT_FILENAME</name>
-        <type>String</type>
-        <length>-1</length>
-        <precision>-1</precision>
-        </field>      </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>176</xloc>
-      <yloc>186</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Set Variables</name>
-    <type>SetVariable</type>
+    <name>Add constants</name>
+    <type>Constant</type>
     <description/>
     <distribute>Y</distribute>
     <copies>1</copies>
@@ -225,42 +192,72 @@
            </partitioning>
     <fields>
       <field>
-        <field_name>STUDY_ID</field_name>
-        <variable_name>STUDY_ID</variable_name>
-        <variable_type>PARENT_JOB</variable_type>
-        <default_value/>
-        </field>
+        <name>step_desc</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>Starting load</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
       <field>
-        <field_name>DATA_TYPE</field_name>
-        <variable_name>DATA_TYPE</variable_name>
-        <variable_type>PARENT_JOB</variable_type>
-        <default_value/>
-        </field>
+        <name>step_status</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>Done</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
       <field>
-        <field_name>ANALYSIS_NAME</field_name>
-        <variable_name>ANALYSIS_NAME</variable_name>
-        <variable_type>PARENT_JOB</variable_type>
-        <default_value/>
-        </field>
+        <name>a_dash</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>-</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
       <field>
-        <field_name>INPUT_FILENAME</field_name>
-        <variable_name>INPUT_FILENAME</variable_name>
-        <variable_type>PARENT_JOB</variable_type>
-        <default_value/>
-        </field>
-      </fields>
-    <use_formatting>Y</use_formatting>
+        <name>step_number</name>
+        <type>Integer</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>1</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>step_count</name>
+        <type>Integer</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>0</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>390</xloc>
-      <yloc>185</yloc>
+      <xloc>397</xloc>
+      <yloc>177</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Write to log</name>
-    <type>WriteToLog</type>
+    <name>Call cz_write_audit</name>
+    <type>DBProc</type>
     <description/>
     <distribute>Y</distribute>
     <copies>1</copies>
@@ -268,27 +265,186 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-      <loglevel>log_level_basic</loglevel>
-      <displayHeader>Y</displayHeader>
-      <logmessage/>
+    <connection>TM_CZ</connection>
+    <procedure>czx_write_audit</procedure>
+    <lookup>
+      <arg>
+        <name>job_id</name>
+        <direction>IN</direction>
+        <type>Integer</type>
+      </arg>
+      <arg>
+        <name>database_name</name>
+        <direction>IN</direction>
+        <type>String</type>
+      </arg>
+      <arg>
+        <name>job_name</name>
+        <direction>IN</direction>
+        <type>String</type>
+      </arg>
+      <arg>
+        <name>step_desc</name>
+        <direction>IN</direction>
+        <type>String</type>
+      </arg>
+      <arg>
+        <name>step_count</name>
+        <direction>IN</direction>
+        <type>Integer</type>
+      </arg>
+      <arg>
+        <name>step_number</name>
+        <direction>IN</direction>
+        <type>Integer</type>
+      </arg>
+      <arg>
+        <name>step_status</name>
+        <direction>IN</direction>
+        <type>String</type>
+      </arg>
+    </lookup>
+    <result>
+      <name/>
+      <type>Integer</type>
+    </result>
+    <auto_commit>Y</auto_commit>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>780</xloc>
+      <yloc>172</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Generate single dummy row</name>
+    <type>RowGenerator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <fields>
+      <field>
+        <name>dummy</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>dummy</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+    <limit>1</limit>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>141</xloc>
+      <yloc>177</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Get Variables</name>
+    <type>GetVariable</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
     <fields>
       <field>
         <name>STUDY_ID</name>
-        </field>
-      <field>
-        <name>DATA_TYPE</name>
-        </field>
+        <variable>${STUDY_ID}</variable>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
       <field>
         <name>ANALYSIS_NAME</name>
-        </field>
+        <variable>${ANALYSIS_NAME}</variable>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
       <field>
-        <name>INPUT_FILENAME</name>
-        </field>
-      </fields>
+        <name>job_id</name>
+        <variable>${ETL_JOB_ID}</variable>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>job_name</name>
+        <variable>${ETL_JOB_NAME}</variable>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+    </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>288</xloc>
-      <yloc>183</yloc>
+      <xloc>271</xloc>
+      <yloc>178</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Set database name as study - analysis</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <calculation><field_name>database_name</field_name>
+<calc_type>ADD3</calc_type>
+<field_a>STUDY_ID</field_a>
+<field_b>a_dash</field_b>
+<field_c>ANALYSIS_NAME</field_c>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<remove>N</remove>
+<conversion_mask/>
+<decimal_symbol/>
+<grouping_symbol/>
+<currency_symbol/>
+</calculation>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>591</xloc>
+      <yloc>176</yloc>
       <draw>Y</draw>
       </GUI>
     </step>

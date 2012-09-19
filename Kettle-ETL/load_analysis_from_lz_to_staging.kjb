@@ -12,19 +12,9 @@
   <modified_date>2012&#47;09&#47;04 13:29:49.916</modified_date>
     <parameters>
         <parameter>
-            <name>DATA_TYPE</name>
-            <default_value/>
-            <description/>
-        </parameter>
-        <parameter>
             <name>ETL_ID</name>
             <default_value/>
             <description/>
-        </parameter>
-        <parameter>
-            <name>GWAS_RECS</name>
-            <default_value>0</default_value>
-            <description>Process all records</description>
         </parameter>
         <parameter>
             <name>LOADER_PATH</name>
@@ -35,6 +25,11 @@
             <name>LOAD_TYPE</name>
             <default_value>I</default_value>
             <description>I=Insert, L=Bulk Loader</description>
+        </parameter>
+        <parameter>
+            <name>SORT_DIR</name>
+            <default_value>&#47;vol2&#47;transmart&#47;ETL&#47;Kettle-tmp</default_value>
+            <description/>
         </parameter>
     </parameters>
   <connection>
@@ -186,8 +181,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>72</xloc>
-      <yloc>145</yloc>
+      <xloc>107</xloc>
+      <yloc>46</yloc>
       </entry>
     <entry>
       <name>Success</name>
@@ -196,40 +191,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>523</xloc>
-      <yloc>347</yloc>
-      </entry>
-    <entry>
-      <name>Load BIO_EXPERIMENT</name>
-      <description/>
-      <type>TRANS</type>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>${Internal.Job.Filename.Directory}&#47;load_bio_experiment.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>302</xloc>
-      <yloc>446</yloc>
+      <xloc>621</xloc>
+      <yloc>521</yloc>
       </entry>
     <entry>
       <name>GWAS Data</name>
@@ -250,8 +213,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>519</xloc>
-      <yloc>144</yloc>
+      <xloc>616</xloc>
+      <yloc>147</yloc>
       </entry>
     <entry>
       <name>load GWAS data to biomart_stage</name>
@@ -266,12 +229,12 @@
       <exec_per_row>N</exec_per_row>
       <clear_rows>N</clear_rows>
       <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
+      <set_logfile>Y</set_logfile>
+      <logfile>jean</logfile>
+      <logext>log</logext>
       <add_date>N</add_date>
       <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
+      <loglevel>Debug</loglevel>
       <cluster>N</cluster>
       <slave_server_name/>
       <set_append_logfile>N</set_append_logfile>
@@ -282,8 +245,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>965</xloc>
-      <yloc>141</yloc>
+      <xloc>957</xloc>
+      <yloc>143</yloc>
       </entry>
     <entry>
       <name>Load GWAS data to LZ</name>
@@ -314,7 +277,7 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>759</xloc>
+      <xloc>753</xloc>
       <yloc>143</yloc>
       </entry>
     <entry>
@@ -326,7 +289,7 @@
       <variablename>${DATA_TYPE}</variablename>
       <fieldtype>string</fieldtype>
       <mask/>
-      <comparevalue>eQTL</comparevalue>
+      <comparevalue>EQTL</comparevalue>
       <minvalue/>
       <maxvalue/>
       <successcondition>equal</successcondition>
@@ -336,18 +299,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>520</xloc>
-      <yloc>234</yloc>
-      </entry>
-    <entry>
-      <name>Success 2</name>
-      <description/>
-      <type>SUCCESS</type>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>762</xloc>
-      <yloc>234</yloc>
+      <xloc>618</xloc>
+      <yloc>336</yloc>
       </entry>
     <entry>
       <name>Set status to STAGED in LZ_SRC_ANALYSIS_METADATA</name>
@@ -364,8 +317,8 @@ where etl_id=${ETL_ID}</sql>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1203</xloc>
-      <yloc>285</yloc>
+      <xloc>1227</xloc>
+      <yloc>287</yloc>
       </entry>
     <entry>
       <name>End audit</name>
@@ -396,8 +349,8 @@ where etl_id=${ETL_ID}</sql>
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1208</xloc>
-      <yloc>450</yloc>
+      <xloc>1232</xloc>
+      <yloc>419</yloc>
       </entry>
     <entry>
       <name>Delete ETL_ID from LZ_SRC_GWAS</name>
@@ -413,11 +366,11 @@ where etl_id = ${ETL_ID}</sql>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1080</xloc>
-      <yloc>201</yloc>
+      <xloc>960</xloc>
+      <yloc>238</yloc>
       </entry>
     <entry>
-      <name>Simple evaluation</name>
+      <name>Have ETL_JOB_ID</name>
       <description/>
       <type>SIMPLE_EVAL</type>
       <valuetype>variable</valuetype>
@@ -435,7 +388,7 @@ where etl_id = ${ETL_ID}</sql>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>196</xloc>
+      <xloc>256</xloc>
       <yloc>146</yloc>
       </entry>
     <entry>
@@ -467,20 +420,226 @@ where etl_id = ${ETL_ID}</sql>
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>332</xloc>
-      <yloc>214</yloc>
+      <xloc>259</xloc>
+      <yloc>249</yloc>
+      </entry>
+    <entry>
+      <name>Set variables for ETL_ID</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Job.Filename.Directory}&#47;set_ETL_ID_variables.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>110</xloc>
+      <yloc>142</yloc>
+      </entry>
+    <entry>
+      <name>Load eQTL data to lz</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Job.Filename.Directory}&#47;load_EQTL_data_to_lz.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>759</xloc>
+      <yloc>341</yloc>
+      </entry>
+    <entry>
+      <name>Load eQTL data lz to stage</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Job.Filename.Directory}&#47;load_EQTL_lz_to_stage.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>965</xloc>
+      <yloc>340</yloc>
+      </entry>
+    <entry>
+      <name>Delete ETL_ID from LZ_SRC_GWAS 2</name>
+      <description/>
+      <type>SQL</type>
+      <sql>delete from lz_src_eqtl
+where etl_id = ${ETL_ID}</sql>
+      <useVariableSubstitution>T</useVariableSubstitution>
+      <sqlfromfile>F</sqlfromfile>
+      <sqlfilename/>
+      <sendOneStatement>T</sendOneStatement>
+      <connection>TM_LZ</connection>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>976</xloc>
+      <yloc>428</yloc>
+      </entry>
+    <entry>
+      <name>Calculate EQTL log_p_value</name>
+      <description/>
+      <type>SQL</type>
+      <sql>update bio_assay_analysis_eqtl
+set log_p_value=log(10,p_value)
+where bio_assay_analysis_id = ${BIO_ASSAY_ANALYSIS_ID};
+commit</sql>
+      <useVariableSubstitution>T</useVariableSubstitution>
+      <sqlfromfile>F</sqlfromfile>
+      <sqlfilename/>
+      <sendOneStatement>F</sendOneStatement>
+      <connection>BIOMART_STAGE</connection>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>759</xloc>
+      <yloc>432</yloc>
+      </entry>
+    <entry>
+      <name>Calculate GWAS log_p_value</name>
+      <description/>
+      <type>SQL</type>
+      <sql>update bio_assay_analysis_gwas
+set log_p_value=log(10,p_value)
+where bio_assay_analysis_id = ${BIO_ASSAY_ANALYSIS_ID};
+commit</sql>
+      <useVariableSubstitution>T</useVariableSubstitution>
+      <sqlfromfile>F</sqlfromfile>
+      <sqlfilename/>
+      <sendOneStatement>F</sendOneStatement>
+      <connection>BIOMART_STAGE</connection>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>747</xloc>
+      <yloc>237</yloc>
+      </entry>
+    <entry>
+      <name>Load metadata to biomart</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Job.Filename.Directory}&#47;load_analysis_metadata_lz_to_biomart.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>464</xloc>
+      <yloc>148</yloc>
+      </entry>
+    <entry>
+      <name>Start analysis audit</name>
+      <description/>
+      <type>TRANS</type>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Job.Filename.Directory}&#47;write_analysis_audit.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>466</xloc>
+      <yloc>248</yloc>
       </entry>
   </entries>
   <hops>
-    <hop>
-      <from>START</from>
-      <to>Load BIO_EXPERIMENT</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>N</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
     <hop>
       <from>Load GWAS data to LZ</from>
       <to>load GWAS data to biomart_stage</to>
@@ -509,66 +668,12 @@ where etl_id = ${ETL_ID}</sql>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>eQTL Data</from>
-      <to>Success 2</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Success 2</from>
-      <to>Set status to STAGED in LZ_SRC_ANALYSIS_METADATA</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>START</from>
-      <to>Simple evaluation</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Simple evaluation</from>
+      <from>Have ETL_JOB_ID</from>
       <to>Start Audit</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Load BIO_EXPERIMENT</from>
-      <to>GWAS Data</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>N</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Simple evaluation</from>
-      <to>GWAS Data</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Start Audit</from>
-      <to>GWAS Data</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
@@ -581,8 +686,26 @@ where etl_id = ${ETL_ID}</sql>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>load GWAS data to biomart_stage</from>
-      <to>Delete ETL_ID from LZ_SRC_GWAS</to>
+      <from>Delete ETL_ID from LZ_SRC_GWAS</from>
+      <to>Set status to STAGED in LZ_SRC_ANALYSIS_METADATA</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>N</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>eQTL Data</from>
+      <to>Success</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>eQTL Data</from>
+      <to>Load eQTL data to lz</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -590,7 +713,16 @@ where etl_id = ${ETL_ID}</sql>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Delete ETL_ID from LZ_SRC_GWAS</from>
+      <from>Load eQTL data to lz</from>
+      <to>Load eQTL data lz to stage</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Delete ETL_ID from LZ_SRC_GWAS 2</from>
       <to>Set status to STAGED in LZ_SRC_ANALYSIS_METADATA</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -599,8 +731,98 @@ where etl_id = ${ETL_ID}</sql>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>eQTL Data</from>
-      <to>Success</to>
+      <from>Load eQTL data lz to stage</from>
+      <to>Calculate EQTL log_p_value</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Calculate EQTL log_p_value</from>
+      <to>Delete ETL_ID from LZ_SRC_GWAS 2</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>load GWAS data to biomart_stage</from>
+      <to>Calculate GWAS log_p_value</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Calculate GWAS log_p_value</from>
+      <to>Delete ETL_ID from LZ_SRC_GWAS</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>N</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Load metadata to biomart</from>
+      <to>GWAS Data</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Calculate GWAS log_p_value</from>
+      <to>Set status to STAGED in LZ_SRC_ANALYSIS_METADATA</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>START</from>
+      <to>Set variables for ETL_ID</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Set variables for ETL_ID</from>
+      <to>Have ETL_JOB_ID</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Have ETL_JOB_ID</from>
+      <to>Load metadata to biomart</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Start Audit</from>
+      <to>Start analysis audit</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Start analysis audit</from>
+      <to>Load metadata to biomart</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>

@@ -252,7 +252,7 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>66</xloc>
-      <yloc>170</yloc>
+      <yloc>89</yloc>
       </entry>
     <entry>
       <name>Load one analysis metadata record to LZ</name>
@@ -283,8 +283,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>570</xloc>
-      <yloc>172</yloc>
+      <xloc>225</xloc>
+      <yloc>228</yloc>
       </entry>
     <entry>
       <name>Load analysis from lz to staging</name>
@@ -309,27 +309,15 @@
       <create_parent_folder>N</create_parent_folder>
       <pass_export>N</pass_export>
       <parameters>        <pass_all_parameters>Y</pass_all_parameters>
-            <parameter>            <name>DATA_TYPE</name>
-            <stream_name>DATA_TYPE</stream_name>
-            <value/>
-            </parameter>            <parameter>            <name>ETL_ID</name>
+            <parameter>            <name>ETL_ID</name>
             <stream_name>ETL_ID</stream_name>
-            <value/>
-            </parameter>            <parameter>            <name>GWAS_RECS</name>
-            <stream_name>GWAS_RECS</stream_name>
-            <value/>
-            </parameter>            <parameter>            <name>LOADER_PATH</name>
-            <stream_name>LOADER_PATH</stream_name>
-            <value/>
-            </parameter>            <parameter>            <name>LOAD_TYPE</name>
-            <stream_name>LOAD_TYPE</stream_name>
             <value/>
             </parameter>      </parameters>      <set_append_logfile>N</set_append_logfile>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>955</xloc>
-      <yloc>169</yloc>
+      <xloc>508</xloc>
+      <yloc>226</yloc>
       </entry>
     <entry>
       <name>Start audit</name>
@@ -360,8 +348,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>376</xloc>
-      <yloc>173</yloc>
+      <xloc>371</xloc>
+      <yloc>90</yloc>
       </entry>
     <entry>
       <name>Set current analysis variables</name>
@@ -392,16 +380,16 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>222</xloc>
-      <yloc>172</yloc>
+      <xloc>209</xloc>
+      <yloc>89</yloc>
       </entry>
     <entry>
-      <name>Load metadata to biomart</name>
+      <name>Start analysis audit</name>
       <description/>
       <type>TRANS</type>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>${Internal.Job.Filename.Directory}&#47;load_analysis_metadata_lz_to_biomart.ktr</filename>
+      <filename>${Internal.Job.Filename.Directory}&#47;write_analysis_audit.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -424,20 +412,11 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>775</xloc>
-      <yloc>173</yloc>
+      <xloc>491</xloc>
+      <yloc>89</yloc>
       </entry>
   </entries>
   <hops>
-    <hop>
-      <from>Start audit</from>
-      <to>Load one analysis metadata record to LZ</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
     <hop>
       <from>START</from>
       <to>Set current analysis variables</to>
@@ -454,11 +433,11 @@
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
+      <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Load one analysis metadata record to LZ</from>
-      <to>Load metadata to biomart</to>
+      <from>Start audit</from>
+      <to>Start analysis audit</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -466,7 +445,16 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Load metadata to biomart</from>
+      <from>Start analysis audit</from>
+      <to>Load one analysis metadata record to LZ</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Load one analysis metadata record to LZ</from>
       <to>Load analysis from lz to staging</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -480,10 +468,10 @@
       <note>NOTE:
 This is the same job that is used by the application to load the data. 
 Be VERY CAREFUL if you think your going to make changes.</note>
-      <xloc>920</xloc>
-      <yloc>240</yloc>
-      <width>345</width>
-      <heigth>47</heigth>
+      <xloc>671</xloc>
+      <yloc>324</yloc>
+      <width>408</width>
+      <heigth>55</heigth>
       <fontname/>
       <fontsize>-1</fontsize>
       <fontbold>N</fontbold>
