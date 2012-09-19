@@ -8,7 +8,7 @@ class SearchDAO {
 	
 	static Logger log = Logger.getLogger(SearchDAO.class)
 	
-	def getGwasData()
+	def getGwasData(analysisId)
 	{
 		def results = bio.BioAssayAnalysisGwas.executeQuery("""
 					SELECT	gwas.rsId,
@@ -17,7 +17,8 @@ class SearchDAO {
 							ext.ext_data
 					FROM	bio.BioAssayAnalysisGwas gwas
 					JOIN	gwas.bioAssayAnalysisDataExts ext
-					""",[max:100,offset:5])
+					WHERE	gwas.analysis.id = :parAnalaysisId
+					""",[parAnalaysisId : analysisId],[max:100,offset:5])
 		return results
 	}
 	

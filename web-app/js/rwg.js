@@ -123,7 +123,7 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 			success: function(response) {
 				jQuery(trialDetail).addClass("gtb1");
 				jQuery(trialDetail).html(response);			    
-				jQuery(trialDetail).attr('data', true);							// Add an attribute that we will use as a flag so we don't need to load the data multiple times
+				jQuery(trialDetail).attr('data', true);// Add an attribute that we will use as a flag so we don't need to load the data multiple times
 			},
 			error: function(xhr) {
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
@@ -827,6 +827,10 @@ function analysisMenuEvent(id){
 		jQuery('#heatmapExportOpts_'+analysisID).hide();
 		break;
 	
+	case 'btnResultsExport':
+		jQuery('#resultsExportOpts_'+analysisID).toggle();
+		break;		
+		
 	default:
 		
 		console.log("Invalid option: " +id);	
@@ -1774,48 +1778,37 @@ function drawBoxPlot(divId, boxPlotJSON, analysisID, forExport)	{
 }
 
 // Show the heatmap visualization 
-function showVisualization(analysisID, changedPaging)	{		
+function showVisualization(analysisID, changedPaging)	{	
+	
 	var analysisHeaderDiv = "#TrialDetail_" + analysisID + "_anchor"
-	var divID = "#analysisDiv_" + analysisID;
-	var divID2 = "analysisDiv_" + analysisID;
+	var divID = "#analysis_results_" + analysisID;
+	var divID2 = "analysis_results_" + analysisID;
 	var loadingDiv = "#analysis_holder_"+ analysisID;
 	var imgExpand = "#imgExpand_"  + analysisID;
 	var div = document.getElementById(divID);	
 	var hmFlagDiv = divID+"_state";
 	var hmFlag = jQuery(hmFlagDiv).val();
+	
 	// Check the value of the hidden field that is capturing the following "click" states
 	// 0: No heatmap loaded, hidden
 	// 1: Heatmap loaded, visible
 	// 2: Heatmap loaded, hidden
-
+	
 	// if the paging has changed, need to reload page
-	if (hmFlag != "1" || changedPaging)	{				
+	if (hmFlag != "1")	{				
 		var src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'up_arrow_small2.png');
 		jQuery(imgExpand).attr('src',src);
 		jQuery(analysisHeaderDiv).addClass("active-analysis");
+		jQuery(loadingDiv).toggle();
+		openAnalyses.push(analysisID); //store this as an open analysis
 		
+		if (hmFlag == "0")	{
 
-		
-		if(!changedPaging){
-			jQuery(loadingDiv).toggle();
-			openAnalyses.push(analysisID); //store this as an open analysis
-		}
-
-		if (hmFlag == "0" || changedPaging)	{
-			// don't re-set heap map controls if re-loading because of a change in probes per page
-			if (!changedPaging)  {
-				setVisTabs(analysisID);
-				setHeatmapControls(analysisID);
-			
-				// sync the local probes per page setting with the global one if not re-loading because of changed paging
-				probesPerPageElementGlobal = document.getElementById("probesPerPage");
-				probesPerPageElementHeatmap = document.getElementById("probesPerPage_"+analysisID);
-				probesPerPageElementHeatmap.selectedIndex = probesPerPageElementGlobal.selectedIndex;
-		    }
-
+			setVisTabs(analysisID);
 			jQuery(loadingDiv).mask("Loading...");
-			loadHeatmapPaginator(divID2, analysisID, 1);			
-		}		
+			loadAnalysisResultsGrid(analysisID);			
+		}
+		
 		jQuery(hmFlagDiv).val("1");
 	} else	{
 		var src = jQuery(imgExpand).attr('src').replace('up_arrow_small2.png', 'down_arrow_small2.png');
@@ -1830,6 +1823,22 @@ function showVisualization(analysisID, changedPaging)	{
 		
 	} 	
 	return false;
+}
+
+// This function will load the analysis data into a datagrid.
+function loadAnalysisResultsGrid(analysisID)
+{
+	jQuery.ajax( {
+	    "url": 'http://localhost:8080/transmartAppPfizer/search/getGwasResults',
+	    bDestroy: true,
+	    bServerSide: true,
+	    data: {analysisId: analysisID},
+	    "success": function ( json ) {
+	    	jQuery('#analysis_holder_' +analysisID).unmask();
+	    	jQuery('#analysis_results_table_' + analysisID).dataTable( json );
+	    	},
+	    "dataType": "json"
+	} );		
 }
 
 // Make a call to the server to load the heatmap data

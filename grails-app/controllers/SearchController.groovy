@@ -663,16 +663,10 @@ public class SearchController{
 	def noResult = {
 		render(view:'noresult')
 	}
-	
-	def renderNewStuff = {
 		
-		
-		render(template:'newstuff')
-	}
-	
 	//Retrieve the Gwas results for the search filter. This is used to populate the result grids on the search page.
 	def getGwasResults = {
-		
+
 		//This will hold the index lookups for deciphering the large text meta-data field.
 		def indexMap = [:]
 		
@@ -686,7 +680,7 @@ public class SearchController{
 		def columnNames = []
 		
 		//Get the GWAS Data.
-		def gwasData = searchDAO.getGwasData()
+		def gwasData = searchDAO.getGwasData(Long.valueOf(params.analysisId))
 
 		def returnedGwasData = []
 		
@@ -742,16 +736,9 @@ public class SearchController{
 		
 		returnJson["aaData"] = returnedGwasData
 		returnJson["aoColumns"] = columnNames
-		
+		println(returnJson)
 		//Return the data in JSON format so the grid can format it.
 		render returnJson as JSON
 
 	}
-	
-	def renderQQPlot = {
-		
-		
-		
-	}
-	
 }
