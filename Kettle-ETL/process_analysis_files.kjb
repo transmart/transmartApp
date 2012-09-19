@@ -223,8 +223,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>419</xloc>
-      <yloc>56</yloc>
+      <xloc>418</xloc>
+      <yloc>52</yloc>
       </entry>
     <entry>
       <name>Process one analysis record</name>
