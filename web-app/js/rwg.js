@@ -1837,6 +1837,9 @@ function loadAnalysisResultsGrid(analysisID)
 	    	jQuery('#analysis_holder_' +analysisID).unmask();
 	    	jQuery('#analysis_results_table_' + analysisID).dataTable( json );
 	    	},
+	    "error": function ( json ) {
+	    	jQuery('#analysis_holder_' +analysisID).unmask();
+	    },
 	    "dataType": "json"
 	} );		
 }
