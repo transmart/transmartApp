@@ -14,9 +14,8 @@ class SearchDAO {
 					SELECT	gwas.rsId,
 							gwas.pValue,
 							gwas.logPValue,
-							ext.ext_data
+							gwas.ext_data
 					FROM	bio.BioAssayAnalysisGwas gwas
-					JOIN	gwas.bioAssayAnalysisDataExts ext
 					WHERE	gwas.analysis.id = :parAnalaysisId
 					""",[parAnalaysisId : analysisId],[max:100,offset:5])
 		return results
@@ -28,15 +27,5 @@ class SearchDAO {
 		
 		return results
 	}
-	
-	def getExtendedMetaData()
-	{
-		def results = bio.BioAssayAnalysisDataExt.executeQuery("""
-					SELECT	ext.ext_data 
-					FROM	bio.BioAssayAnalysisDataExt ext			
 
-			""")	
-		
-		
-	}
 }

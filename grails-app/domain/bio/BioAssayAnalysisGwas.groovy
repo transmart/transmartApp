@@ -36,6 +36,7 @@ class BioAssayAnalysisGwas implements IExcelProfile {
 	Double logPValue
 	Long etlId
 	Long id
+	String ext_data
 	
 	static hasMany = [bioAssayAnalysisDataExts:BioAssayAnalysisDataExt]
 	
@@ -50,7 +51,7 @@ class BioAssayAnalysisGwas implements IExcelProfile {
 		 pValue column:'P_VALUE'
 		 logPValue column:'LOG_P_VALUE'
 		 etlId column:'ETL_ID'
-		 bioAssayAnalysisDataExts joinTable: [name: "BIO_ASY_ANALYSIS_DATA_EXT", key: 'BIO_ASY_ANALYSIS_DATA_ID', column:'BIO_ASY_ANALYSIS_DATA_EXT_ID']
+		 ext_data column:'EXT_DATA'
 		}
 	 	
 	}
