@@ -38,8 +38,6 @@ class BioAssayAnalysisGwas implements IExcelProfile {
 	Long id
 	String ext_data
 	
-	static hasMany = [bioAssayAnalysisDataExts:BioAssayAnalysisDataExt]
-	
 	static mapping = {
 	 table name:'BIO_ASSAY_ANALYSIS_GWAS', schema:'BIOMART'
 	 version false
