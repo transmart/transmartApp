@@ -1829,7 +1829,7 @@ function showVisualization(analysisID, changedPaging)	{
 function loadAnalysisResultsGrid(analysisID)
 {
 	jQuery.ajax( {
-	    "url": 'http://localhost:8080/transmartAppPfizer/search/getGwasResults',
+	    "url": getGWASDataURL,
 	    bDestroy: true,
 	    bServerSide: true,
 	    data: {analysisId: analysisID},

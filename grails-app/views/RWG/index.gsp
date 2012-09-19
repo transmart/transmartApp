@@ -70,7 +70,9 @@
 
 			//These are the URLS for the different browse windows.
 			var studyBrowseWindow = "${createLink([controller:'experiment',action:'browseExperimentsMultiSelect'])}";
-	        	        
+			var getGWASDataURL = "${createLink([controller:'search',action:'getGwasResults'])}";
+
+	       	
 	        var mouse_inside_options_div = false;
 
 	        jQuery(document).ready(function() {

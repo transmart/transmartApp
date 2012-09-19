@@ -736,7 +736,7 @@ public class SearchController{
 		
 		returnJson["aaData"] = returnedGwasData
 		returnJson["aoColumns"] = columnNames
-		println(returnJson)
+
 		//Return the data in JSON format so the grid can format it.
 		render returnJson as JSON
 
