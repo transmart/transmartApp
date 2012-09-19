@@ -32,8 +32,8 @@
 						    	    	<div style="float: left;width:200px;margin:10px;">
 							    				<a href="#" onclick="loadSearch(${f.id}); return false;"><span id="labelSearchName_${f.id}" >${f.name}</span></a>
 								    	</div>
-						    	    	<div style="float: left;width:30px;margin:10px;">
-								    	    	<a href="#" onclick="showEditSearchDiv(${f.id}); return false;">Edit</a>
+						    	    	<div style="float: left;width:40px;margin:10px;">
+								    	    	<a href="#" onclick="showEditSearchDiv(${f.id}); return false;">Rename</a>
 								    	</div>
 						    	    	<div style="float: left;width:30px;margin:10px;">
 								    	    	<a href="#" onclick="deleteSearch(${f.id}); return false;">Delete</a>							    	    
