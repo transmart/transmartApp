@@ -38,7 +38,7 @@ function showSearchTooltip(html, e)  {
 	
 	jQuery("#searchTooltip")
 		.css("z-index", 10000)
-		.html('<h3 class="searchTooltipTitle" >Active Filters:</h3>' + html)
+		.html('<h3 class="searchTooltipTitle" >Saved Filters:</h3>' + html)
 		.css("top",(e.pageY - xOffset) + "px")
 		.css("left",(e.pageX + yOffset) + "px")
 		.fadeIn(500)
