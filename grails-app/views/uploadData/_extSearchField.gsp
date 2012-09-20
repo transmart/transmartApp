@@ -30,3 +30,4 @@ jQuery(document).ready(function() {
 	<input id="${fieldName}-input" style="float: left; width: 600px"/>
 </g:else>
  <a id="${fieldName}ChangeButton" class="upload" onclick="$j('#studyDiv').empty().slideUp('slow'); changeField('${fieldName}-combobox', '${fieldName}')">Change</a>
+  <a style="margin-left: 32px;" id="${fieldName}BrowseButton" class="upload" onclick="generateBrowseWindow('Studies');">Browse</a>

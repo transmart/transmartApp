@@ -159,23 +159,9 @@ class UploadDataController {
 			def result = new DataUploadResult();
 			
 			if (f && !f.isEmpty()) {
-				OutputStream out = null;
-				def fullpath = uploadsDir + "/" + filename;
-				try {
-					out = new FileOutputStream(fullpath)
-					out.write(f.getBytes())
-				}
-				catch (Exception e) {
-					upload.status = "ERROR"
-					upload.save(flush: true)
-					render(view: "complete", model: [result: new DataUploadResult(success:false, error: "Could not write file: " + e.getMessage()), uploadDataInstance: upload]);
-					return;
-				}
-				finally {
-					if (out != null) {
-						out.close();
-					}
-				}
+				def fullpath = uploadsDir + "/" + filename
+				dataUploadService.writeFile(fullpath, f, upload)
+
 				
 				//Read the first line and flag this metadata with an error immediately if missing required fields
 				

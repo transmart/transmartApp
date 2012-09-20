@@ -47,7 +47,7 @@ class ExperimentController {
 	 */
 	def browseExperimentsSingleSelect = {
 		
-		def experiments = Experiment.findAll();
+		def experiments = Experiment.listOrderByTitle()
 		
 		render(template:'browseSingle',model:[experiments:experiments])
 	}
