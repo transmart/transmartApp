@@ -1,17 +1,19 @@
 <style type="text/css">
 .studyBrowseRow.selected {
-	background-color: #FFC;
+	border: 1px solid #AED0EA;
+	background-color: #D7EBF9;
 }
 
 table.studyBrowseTable {
 	border-collapse: collapse;
 }
 table.studyBrowseTable > tbody > tr {
-	font-size: 8pt;
 	cursor: pointer;
+	padding: 4px;
 }
 table.studyBrowseTable > tbody > tr > td {
-	padding: 8px 0px;
+	padding: 4px 0px;
+	font-size: 10px;
 }
 </style>
 <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/ui.multiselect.js')}"></script>
