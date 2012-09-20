@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'rwg.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/simpleModal.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'searchTooltip.css')}"></link>
                                 
         <!-- jQuery JS libraries -->
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
@@ -32,6 +33,7 @@
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
+  		<script type="text/javascript" src="${resource(dir:'js', file:'searchTooltip.js')}"></script>  
   		
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  
@@ -123,6 +125,7 @@
 				$('#load-modal .basic').click(openLoadSearchDialog);
 			});
 		</script>
+
                   
                 
     </head>
@@ -185,7 +188,7 @@
 			 		<a href="#" class="basic">Save</a>
 				</span>&nbsp;&nbsp;
 				
-			 	<span id='load-modal'>
+			 	<span id='load-modal' style="z-index:1">
 				 	<a href="#"  class="basic">Favorites</a>
 				</span>&nbsp;&nbsp;
 				

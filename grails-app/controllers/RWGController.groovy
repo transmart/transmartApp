@@ -1045,11 +1045,8 @@ class RWGController {
    }
 
 
-   // Load the saved faceted search from database
-   def loadFacetedSearch = {
-			  
-	   def id = params.id   // saved faceted search id
-	   
+   // Load the faceted search keyword from database
+   JSONObject getFacetedSearchKeywords(long id)  {
 	   def authPrincipal = springSecurityService.getPrincipal()
 	   def userId = authPrincipal.id
 
@@ -1058,7 +1055,8 @@ class RWGController {
 	   boolean successFlag
 	   def msg = ""
 
-	   JSONObject searchTerms = new JSONObject()	   
+		  
+	   JSONObject searchTerms = new JSONObject()
 	   
 	   int i = 0
 	   int termsNotFound = 0
@@ -1070,14 +1068,14 @@ class RWGController {
 	   else   {
 		   def criteria = s.criteria
 
-		   // convert the criteria string to a list of search keyword ids		   
-           def ids = criteria.tokenize('|')		   
+		   // convert the criteria string to a list of search keyword ids
+		   def ids = criteria.tokenize('|')
 
 		   ids.each {
 			   JSONObject termArray = new JSONObject()   // json object for current search term
 			   def skId = it    // search keyword id
 			
-			   // do thru an HQL query to make faster?	   
+			   // do thru an HQL query to make faster?
 			   SearchKeyword sk = SearchKeyword.get(skId)
 			   
 			   if (sk)  {
@@ -1094,7 +1092,7 @@ class RWGController {
 			   }
 		   }
 		   
-	       successFlag = true
+		   successFlag = true
 		   msg = ""
 	   }
 			  
@@ -1104,6 +1102,15 @@ class RWGController {
 	   ret.put('searchTerms', searchTerms)
 	   ret.put('count', i)
 	   ret.put('termsNotFound', termsNotFound)
+
+   }   
+   
+   // Load the saved faceted search from database (called as action from frontend)
+   def loadFacetedSearch = {
+			  
+	   def id = params.id as Long  // saved faceted search id
+	
+	   JSONObject ret = getFacetedSearchKeywords(id)    
 	   
 	   response.setContentType("text/json")
 	   response.outputStream << ret?.toString()
@@ -1116,6 +1123,15 @@ class RWGController {
 
 	   def userId = authPrincipal.id   
 	   def favorites = SavedFacetedSearch.findAllByUserId(userId, [sort:"createDt", order:"desc"])
+
+	   // add the search terms and counts as properties to each favorite 	   	   
+	   favorites.each  {
+		   def searchTerms = getFacetedSearchKeywords(it.id).get('searchTerms')		   		   
+		   def searchTermsCount = getFacetedSearchKeywords(it.id).get('count')		   	   
+		   
+		   it.metaClass.searchTerms = searchTerms
+		   it.metaClass.searchTermsCount = searchTermsCount
+	   }
 	   
 	   return favorites	   
 			  

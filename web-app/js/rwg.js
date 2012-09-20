@@ -2472,20 +2472,42 @@ function roundNumber(num, dec) {
 	return result;
 }
 
-//Main method to show the current array of search terms 
-function showSearchTemplate()	{
+//Main method to show the current array of search terms (if no args passed in, being used to populate search terms div; otherwise we're retrieving html for tooltip
+function showSearchTemplate(categories, terms)	{
+	
+	// if categories and terms not passed in, use the global arrays (this is for popuataing div); else, this is for tooltip, and we'll pass back generated
+	//   HTML
+	var tooltip;
+	if (!categories)  {
+		tooltip = false;
+		categories = currentCategories;
+		terms = currentSearchTerms;
+	}
+	else {
+		tooltip = true;
+	}
+	
 	var searchHTML = '';
-	var startATag = '&nbsp;<a id=\"';
-	var endATag = '\" class="term-remove" href="#" onclick="removeSearchTerm(this);">';
-	var imgTag = '<img alt="remove" src="./../images/small_cross.png"/></a>&nbsp;'
+	
+	var startATag = '';
+	var endATag = '';
+	var imgTag = ''
+
+	// don't include a or img tags if for tooltip
+	if (!tooltip)  {
+		startATag = '&nbsp;<a id=\"';
+		endATag = '\" class="term-remove" href="#" onclick="removeSearchTerm(this);">';
+		imgTag = '<img alt="remove" src="./../images/small_cross.png"/></a>&nbsp;'
+	}
+		
 	var firstItem = true;
 
 	// iterate through categories array and move all the "gene" categories together at the top 
 	var newCategories = new Array();
 	
 	var geneCategoriesProcessed = false;
-	for (var i=0; i<currentCategories.length; i++)	{
-		var catFields = currentCategories[i].split("|");
+	for (var i=0; i<categories.length; i++)	{
+		var catFields = categories[i].split("|");
 		var catId = catFields[1];
 		
 		// when we find a "gene" category, add it and the rest of the "gene" categories to the new array
@@ -2494,14 +2516,14 @@ function showSearchTemplate()	{
 			if (!geneCategoriesProcessed)  {
 				
 				// add first gene category to new array
-				newCategories.push(currentCategories[i]);
+				newCategories.push(categories[i]);
 
 				// look for other "gene" categories, starting at the next index value, and add each to array
-				for (var j=i+1; j<currentCategories.length; j++)	{
-					var catFields2 = currentCategories[j].split("|");
+				for (var j=i+1; j<categories.length; j++)	{
+					var catFields2 = categories[j].split("|");
 					var catId2 = catFields2[1];
 					if (isGeneCategory(catId2)) {
-						newCategories.push(currentCategories[j]);
+						newCategories.push(categories[j]);
 					}				
 				}
 				// set flag so we don't try to process again
@@ -2509,18 +2531,25 @@ function showSearchTemplate()	{
 			}
 		}
 		else  {    // not a gene catageory, add to new list
-			newCategories.push(currentCategories[i]);
+			newCategories.push(categories[i]);
 		}
 	}
 	
-	// replace old array with new array
-    currentCategories = newCategories;
+	if (!tooltip)  {
+		// replace old array with new array
+		categories = newCategories;
+	}
 	
-	for (var i=0; i<currentCategories.length; i++)	{
-		for (var j=0; j<currentSearchTerms.length; j++)	{
-			var fields = currentSearchTerms[j].split(":");
-			if (currentCategories[i] == fields[0]){
-				var tagID = currentSearchTerms[j].split(' ').join('%20');			// URL encode the spaces
+	for (var i=0; i<categories.length; i++)	{
+		for (var j=0; j<terms.length; j++)	{
+			var fields = terms[j].split(":");
+			if (categories[i] == fields[0]){
+				
+				// no tag id needed if tooltip
+				var tagID = '';
+				if (!tooltip)  {
+					tagID = terms[j].split(' ').join('%20');			// URL encode the spaces				
+				}
 				
 				if (firstItem)	{
 					var catFields = fields[0].split("|");
@@ -2532,7 +2561,7 @@ function showSearchTemplate()	{
 						var suppressAnd = false;
 						// if this is a "gene" category, check the previous category and see if it is also one
 		                if (isGeneCategory(catId))  {
-							var catFieldsPrevious = currentCategories[i-1].split("|");
+							var catFieldsPrevious = categories[i-1].split("|");
 							var catIdPrevious = catFieldsPrevious[1];
 		                	if (isGeneCategory(catIdPrevious))  {
 		                		suppressAnd = true;	
@@ -2558,8 +2587,13 @@ function showSearchTemplate()	{
 		}
 		firstItem = true;
 	}
-	document.getElementById('active-search-div').innerHTML = searchHTML;
-	getSearchKeywordList();
+	
+	if (!tooltip)  {
+		document.getElementById('active-search-div').innerHTML = searchHTML;
+	}
+	else  {		
+		return searchHTML;
+	}
 }
 
 
@@ -2604,6 +2638,9 @@ function modalEffectsClose(dialog)  {
 		      });
 		    });
 		  });
+
+		  jQuery("#searchTooltip").remove();
+			
 }
 
 function openSaveSearchDialog()  {
@@ -2829,6 +2866,9 @@ function loadSearch(id)  {
 	});
 
 }
+
+
+
 
 // Clear the tree, results along with emptying the two arrays that store categories and search terms.
 function clearSearch()	{
