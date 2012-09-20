@@ -20,14 +20,14 @@
 <g:if test="${!layout}">
 	<i>No columns have been set up for the analysis view</i>
 </g:if>
-<table class="detail" style="width: 515px;">
+<table class="columndetail" style="width: 515px;">
 	<tbody>
 		<g:each in="${layout}" var="layoutRow">
 			<%-- Special cases: only display cutoffs if this is a comparison --%>
 			<g:if test="${(!layoutRow.column.equals('pValueCutoff') && !layoutRow.column.equals('foldChangeCutoff')) || 'comparison'.equals(analysis.analysisMethodCode)}">
-				<tr class="prop">
-					<td valign="top" class="name">${layoutRow.displayName}</td>
-					<td valign="top" class="value">
+				<tr class="columnprop">
+					<td valign="top" class="columnname">${layoutRow.displayName}</td>
+					<td valign="top" class="columnvalue">
 						<g:if test="${layoutRow.dataType == 'date'}">
 							<g:fieldDate bean="${analysis}" field="${layoutRow.column}" format="yyyy-MM-dd"/>
 						</g:if>
