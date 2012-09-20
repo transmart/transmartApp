@@ -145,6 +145,7 @@ class TrialController {
 		}
 		if(exp!=null)	{
 
+			/*
 			if(istrial){
 				def trialview = grailsApplication.config.com.recomdata?.view?.studyview?:"_clinicaltrialdetail";
 				
@@ -155,9 +156,11 @@ class TrialController {
 				}
 
 			}else {
-
-				render(template:'/experiment/expDetail', model:[experimentInstance:exp, searchId:skid])
-			}
+			*/
+				//Always render trials with the experiment view - DN
+				def layout = formLayoutService.getLayout('study')
+				render(template:'/experiment/expDetail', model:[experimentInstance:exp, searchId:skid, layout: layout])
+			//}
 
 
 		} else	{
