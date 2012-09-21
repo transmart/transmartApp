@@ -34,7 +34,8 @@
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
-  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>  
+  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>
+  		<script type="text/javascript" src="${resource(dir:'js', file:'facetedSearch/facetedSearchBrowse.js')}"></script>  
   		        
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  
@@ -70,6 +71,7 @@
 
 			//These are the URLS for the different browse windows.
 			var studyBrowseWindow = "${createLink([controller:'experiment',action:'browseExperimentsMultiSelect'])}";
+			var analysisBrowseWindow = "${createLink([controller:'experimentAnalysis',action:'browseAnalysisMultiSelect'])}";
 			var getGWASDataURL = "${createLink([controller:'search',action:'getGwasResults'])}";
 
 	       	
@@ -148,7 +150,10 @@
 				<div class='toolbar-item'>Expand All</div>
 
 				 -->
-				<div class='toolbar-item' onclick='collapseAllAnalyses();'>Collapse All</div>			
+				<div class='toolbar-item' onclick='collapseAllAnalyses();'>Collapse All</div>
+				<div class='toolbar-item' onclick='alert("Functionality not yet implemented.");'>Manhattan Plot</div>
+				<div class='toolbar-item' onclick='alert("Functionality not yet implemented.");'>Select All Analyses</div>
+				<div class='toolbar-item' onclick='alert("Functionality not yet implemented.");'>Unselect All Analyses</div>
 	  			<div id="searchResultOptions_holder">
 					<div id="searchResultOptions_btn" class='toolbar-item'>
 						 Options <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
@@ -171,92 +176,91 @@
 							</li>
 						</ul>
 					</div>
-				</div>		
-		</div>
-		
-        <div id="results-div"></div>
-
-         	
-		</div>
-              
-        <div id="search-div">         
-            <select id="search-categories"></select>                          
-            <input id="search-ac"/></input>                                                          
-        </div>
-        
-        <div id="title-search-div" class="ui-widget-header">
-	         <h2 style="float:left" class="title">Active Filters</h2>
-			 <h2 style="float:right; padding-right:5px;" class="title">
-			 	<div id='save-modal'>
-			 		<a href="#" class="basic">Save</a>
-				 </div>
-			 	<a href="#" onclick="loadSearch(); return false;">Load</a>
-			 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
-			 </h2> 
-		</div>
-
-		<!-- Save search modal content -->
-		<div id="save-modal-content" style="display:none;">
-			<h3>Save Faceted Search</h3><br/>
-			Enter Name <input type="text" id="searchName" size="50"/><br/><br/>
-			Enter Description <textarea id="searchDescription" rows="5" cols="70" ></textarea><br/>
-			<br/>
-			<a href="#" onclick="saveSearch(); return false;">Save</a>&nbsp;   
-			<a href="#" onclick="jQuery.modal.close();return false;">Cancel</a>   
-                     
-			
-		</div>
-				
-		<div id="active-search-div"></div>
-		 
-		<div id="title-filter" class="ui-widget-header">
-			 <h2 style="float:left" class="title">Filter Browser</h2>			 
-		</div>
-		<div id="side-scroll">
-		        <div id="filter-div"></div>
-		</div>
-		<button id="toggle-btn"></button>
-		
-		<div id="hiddenItems" style="display:none">
-		        <!-- For image export -->
-		        <canvas id="canvas" width="1000px" height="600px"></canvas>  
-
-		</div>
-		
-		<!--  This is the DIV we stuff the browse windows into. -->
-		<div id="divBrowsePopups" style="display: none;">
-			TESTSTUFFSTUFF
-		</div>
-		
-		<!--  Everything for the across trial function goes here and is displayed using colorbox -->
-		<div style="display:none">
-			<div id="xtHolder">
-				<div id="xtTopbar">
-					<p>Cross Trial Analysis</p>
-					<ul id="xtMenu">
-						<li>Summary</li>
-						<li>Heatmap</li>
-						<li>Boxplot</li>
-					</ul>
-					<p>close</p>
-				</div>
-				<div id="xtSummary"><!-- Summary Tab Content -->
-							
-				
-				</div>
-				<div id="xtHeatmap"><!-- Heatmap Tab Content -->
-				
-				
-				</div>
-				<div id="xtBoxplot"><!-- Boxplot Tab Content -->
-				
-				
 				</div>
 			</div>
-		</div>
 		
-		       <!--  Used to measure the width of a text element (in svg plots) -->
-		       <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
+	        <div id="results-div"></div>
+	
+	         	
+			</div>
+              
+	        <div id="search-div">         
+	            <select id="search-categories"></select>                          
+	            <input id="search-ac"/></input>                                                          
+	        </div>
+        
+	        <div id="title-search-div" class="ui-widget-header">
+		         <h2 style="float:left" class="title">Active Filters</h2>
+				 <h2 style="float:right; padding-right:5px;" class="title">
+				 	<div id='save-modal'>
+				 		<a href="#" class="basic">Save</a>
+					 </div>
+				 	<a href="#" onclick="loadSearch(); return false;">Load</a>
+				 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
+				 </h2> 
+			</div>
+
+			<!-- Save search modal content -->
+			<div id="save-modal-content" style="display:none;">
+				<h3>Save Faceted Search</h3><br/>
+				Enter Name <input type="text" id="searchName" size="50"/><br/><br/>
+				Enter Description <textarea id="searchDescription" rows="5" cols="70" ></textarea><br/>
+				<br/>
+				<a href="#" onclick="saveSearch(); return false;">Save</a>&nbsp;   
+				<a href="#" onclick="jQuery.modal.close();return false;">Cancel</a>   
+	                     
+				
+			</div>
+				
+			<div id="active-search-div"></div>
+		 
+			<div id="title-filter" class="ui-widget-header">
+				 <h2 style="float:left" class="title">Filter Browser</h2>			 
+			</div>
+			<div id="side-scroll">
+			        <div id="filter-div"></div>
+			</div>
+			<button id="toggle-btn"></button>
+			
+			<div id="hiddenItems" style="display:none">
+			        <!-- For image export -->
+			        <canvas id="canvas" width="1000px" height="600px"></canvas>  
+	
+			</div>
+		
+			<!--  This is the DIV we stuff the browse windows into. -->
+			<div id="divBrowsePopups" style="display: none;">
+				
+			</div>
+			
+			<!--  Everything for the across trial function goes here and is displayed using colorbox -->
+			<div style="display:none">
+				<div id="xtHolder">
+					<div id="xtTopbar">
+						<p>Cross Trial Analysis</p>
+						<ul id="xtMenu">
+							<li>Summary</li>
+							<li>Heatmap</li>
+							<li>Boxplot</li>
+						</ul>
+						<p>close</p>
+					</div>
+					<div id="xtSummary"><!-- Summary Tab Content -->
+								
+					
+					</div>
+					<div id="xtHeatmap"><!-- Heatmap Tab Content -->
+					
+					
+					</div>
+					<div id="xtBoxplot"><!-- Boxplot Tab Content -->
+					
+					
+					</div>
+				</div>
+			</div>
+	       <!--  Used to measure the width of a text element (in svg plots) -->
+	       <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
 		
     </body>
 </html>

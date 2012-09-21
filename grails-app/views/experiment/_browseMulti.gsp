@@ -9,9 +9,9 @@
 	});
 </script>
 
-<select id="experiments" class="multiselect" multiple="multiple" name="experiments[]">
+<select id="multiselectbox" class="multiselect" multiple="multiple" name="experiments[]">
 	<g:each in="${experiments}" var="experiment">
-		<option value="${experiment.id}">${experiment.accession}</option>
+		<option value="${experiment.id}">${experiment.title}</option>
 	</g:each>
 </select>
 

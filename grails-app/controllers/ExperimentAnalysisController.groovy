@@ -249,4 +249,16 @@ class ExperimentAnalysisController {
 		sResult.result = experimentAnalysisTEAService.queryExpAnalysis(session.searchFilter, null)
 	    DomainObjectExcelHelper.downloadToExcel(response, "analysisteaviewexport.xls", analysisDataExportService.createExcelEATEAView(sResult));
 	}
+	
+	/**
+	* This will render a UI where the user can pick an experiment from a list of all the experiments in the system. Selection of multiple studies is allowed.
+	*/
+   def browseAnalysisMultiSelect = {
+	   
+	   def analyses = bio.BioAssayAnalysis.findAll();
+	   
+	   render(template:'browseMulti',model:[analyses:analyses])
+   }
+   
+	
 }

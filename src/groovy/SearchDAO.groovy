@@ -28,4 +28,25 @@ class SearchDAO {
 		return results
 	}
 
+	def getEqtlIndexData()
+	{
+		def results = bio.BioAssayAnalysisDataIdx.findAllByExt_type("EQTL", [sort:"display_idx",order:"asc"])
+		
+		return results
+	}
+	
+	def getEqtlData(analysisId)
+	{
+		def results = bio.BioAssayAnalysisGwas.executeQuery("""
+			SELECT	eqtl.rsId,
+					eqtl.pValue,
+					eqtl.logPValue,
+					eqtl.ext_data
+			FROM	bio.BioAssayAnalysisEqtl eqtl
+			WHERE	gwas.analysis.id = :parAnalaysisId
+			""",[parAnalaysisId : analysisId],[max:100,offset:5])
+		
+		return results
+	}
+	
 }

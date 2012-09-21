@@ -2966,49 +2966,6 @@ jQuery(function(){
     });
 });
 
-//This function will generate a window with filtering options for the faceted search. Each window will have a browse with possibly other options.
-function generateBrowseWindow(nodeClicked)
-{
-	
-	//Grab the URL from a JS object.
-	var URLtoUse = studyBrowseWindow
-	
-	jQuery('#divBrowsePopups').dialog(
-			{
-				modal: false,
-				open: function()
-				{
-					jQuery(this).load(URLtoUse)
-				},
-				height: 300,
-				width: 500,
-				title: nodeClicked,
-				show: 'fade',
-				hide: 'fade',
-				buttons: {"Select" : applyPopupFilters}
-			})
-}
-
-//After the user clicks select on the popup we need to add the search terms to the filter.
-function applyPopupFilters()
-{
-	//Loop through all the selected items.
-	jQuery("#experiments :selected").each(function(i, selected){
-	
-		//Add each item to the search parameters object.
-		var searchParam={id:selected.value,
-		        display:'Study',
-		        keyword:selected.text,
-		        category:'STUDY'};
-		
-		addSearchTerm(searchParam);
-		
-	})
-	
-	//This destroys our popup window.
-	jQuery(this).dialog("destroy")
-}
-
 // find the analysis in the array with the given id
 function getAnalysisIndex(id)  {
 	for (var i = 0; i < analysisProbeIds.length; i++)  {
