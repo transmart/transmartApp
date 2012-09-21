@@ -33,6 +33,7 @@ import search.SearchKeyword
 
 class TrialController {
 
+	def formLayoutService
 	def trialQueryService
 	def heatmapService
 	def filterQueryService
@@ -113,12 +114,14 @@ class TrialController {
 
 	def showAnalysis = {
 		def analysis = BioAssayAnalysis.get(params.id)
-		render(template:'analysisdetail', model:[analysis:analysis])
+		def layout = formLayoutService.getLayout('analysis')
+		render(template:'analysisdetail', model:[analysis:analysis, layout:layout])
 	}
 
 	def expDetail = {
 		def trialid = Long.valueOf(String.valueOf(params.id))
-		render(template:'clinicaltrialdetail', model:[clinicalTrial:ClinicalTrial.get(trialid), search:1])
+		def layout = formLayoutService.getLayout('study');
+		render(template:'/experiment/expDetail', model:[clinicalTrial:ClinicalTrial.get(trialid), search:1, layout:layout])
 	}
 
 	/**
@@ -142,6 +145,7 @@ class TrialController {
 		}
 		if(exp!=null)	{
 
+			/*
 			if(istrial){
 				def trialview = grailsApplication.config.com.recomdata?.view?.studyview?:"_clinicaltrialdetail";
 				
@@ -152,9 +156,11 @@ class TrialController {
 				}
 
 			}else {
-
-				render(template:'/experiment/expDetail', model:[experimentInstance:exp, searchId:skid])
-			}
+			*/
+				//Always render trials with the experiment view - DN
+				def layout = formLayoutService.getLayout('study')
+				render(template:'/experiment/expDetail', model:[experimentInstance:exp, searchId:skid, layout: layout])
+			//}
 
 
 		} else	{

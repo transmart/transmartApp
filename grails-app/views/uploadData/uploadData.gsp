@@ -48,6 +48,9 @@
 	    <script type="text/javascript">$j = jQuery.noConflict();</script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'uploadData.js')}"></script>
 		<script type="text/javascript" charset="utf-8">
+		var studyBrowseWindowUrl = '${createLink([controller: 'experiment', action: 'browseExperimentsSingleSelect'])}';
+		var studyDetailUrl = '${createLink([controller:'experimentAnalysis', action:'expDetail'])}';
+		
 		Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
 		// set ajax to 90*1000 milliseconds
@@ -88,28 +91,7 @@
 			fillSelectAjax(targetField, "${createLink([action:'platformsForVendor',controller:'bioAssayPlatform'])}", {vendor:vendor});
 		}
 
-		function updateStudyTable(param) {
-			
-			$j('#studyDiv').empty().hide();
-			
-			request = $j.ajax({
-				url: '${createLink([action:'expDetail',controller:'experimentAnalysis'])}',
-				type: 'POST',
-				data: {'id': param}
-			});
-			
-			request.fail(function(jqXHR, textStatus) {
-				if (jqXHR.responseText) {
-					alert(jqXHR.responseText);
-				}
-			});
-			
-			request.done(function(msg) {
-				
-				$j('#studyDiv').html(msg).slideDown('slow');
-			});
-			
-		}
+
 
 		<g:if test="${study}">
 			updateStudyTable(${study.id});
@@ -383,6 +365,11 @@
 			
 			<g:hiddenField name="id" value="${uploadDataInstance?.id}"/>
 			</g:uploadForm>
+		</div>
+		
+		<!-- Browse dialog -->
+		<div id="divBrowseStudies" title="Studies">
+		   	<img src="${resource(file:'ajax-loader.gif', dir:'images')}"/>
 		</div>
 
 	</body>

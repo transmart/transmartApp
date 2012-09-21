@@ -275,6 +275,28 @@ table.detail td.value {
 background-color:#bbb;
 }
 
+/* Special for tables based on formLayout templates */
+
+table.columndetail {
+    border-collapse:collapse;
+    width: 100%;
+    border:1px solid #ccc;
+     font: 10px verdana, arial, helvetica, sans-serif;
+}
+
+table.columndetail td {
+	 font: 10px verdana, arial, helvetica, sans-serif;
+     padding: 5px 3px;
+     text-align: left;
+     vertical-align: top;
+     border-bottom:1px solid #ccc;
+}
+
+table.columndetail td.columnname {
+	font-weight:bold;
+	background-color:#eee;
+}
+
 td.prop, td.name {line-height: normal;}
 
 table.AnalysisResults {

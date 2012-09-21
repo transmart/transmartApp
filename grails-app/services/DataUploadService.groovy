@@ -29,7 +29,7 @@ public class DataUploadService{
 		for (field in requiredFields) {
 			def found = false
 			for (providedField in providedFields) {
-				if (providedField.trim().equals(field.trim())) {
+				if (providedField.trim().toLowerCase().equals(field.trim().toLowerCase())) {
 					found = true
 					break
 				}
@@ -41,6 +41,41 @@ public class DataUploadService{
 		def success = (missingFields.size() == 0)
 		def result = new DataUploadResult(success: success, requiredFields: requiredFields, providedFields: providedFields, missingFields: missingFields, error: "Required fields were missing from the uploaded file.")
 		return (result);
+	}
+	
+	def writeFile(location, file, upload) {
+		//Open the given file and write it line by line to the storage location.
+		OutputStream out = null;
+		BufferedReader fr = new BufferedReader(new InputStreamReader(file.getInputStream()));
+		
+		String header = fr.readLine();
+		
+		//Verify fields and return immediately if we don't have a required one
+		def result = verifyFields(header, upload.dataType)
+		if (!result.success) {
+			return result;
+		}
+		
+		
+		try {
+			out = new FileWriter(new File(location))
+			out.write(f.getBytes())
+		}
+		catch (Exception e) {
+			upload.status = "ERROR"
+			upload.save(flush: true)
+			render(view: "complete", model: [result: new DataUploadResult(success:false, error: "Could not write file: " + e.getMessage()), uploadDataInstance: upload]);
+			return;
+		}
+		finally {
+			if (out != null) {
+				out.flush();
+				out.close();
+			}
+			if (fr != null) {
+				fr.close();
+			}
+		}
 	}
 }
 
