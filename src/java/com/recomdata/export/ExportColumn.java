@@ -20,7 +20,6 @@
 
 package com.recomdata.export;
 
-import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,7 +35,6 @@ public class ExportColumn {
 	private String label;
 	private String pattern;
 	private String type;
-	private String sortType;
 	
 	public ExportColumn(String id, String label, String pattern, String type) {
 		this.id = id;
@@ -45,19 +43,12 @@ public class ExportColumn {
 		this.type = type;
 	}
 	
-	public ExportColumn(String id, String label, String pattern, String type, String sortType) {
-		this(id, label, pattern, type);
-		this.setSortType(sortType);
-	}
-	
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject json = new JSONObject();
 		json.put("name", id);
 		json.put("header", label);
 		json.put("sortable", true);
 		json.put("width", 50);
-		json.put("type", type);
-		if (StringUtils.isNotEmpty(sortType)) json.put("sortType", sortType);
 		return json;
 	}
 
@@ -91,13 +82,5 @@ public class ExportColumn {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public String getSortType() {
-		return sortType;
-	}
-
-	public void setSortType(String sortType) {
-		this.sortType = sortType;
 	}
 }

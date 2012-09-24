@@ -705,7 +705,7 @@ class I2b2HelperService {
 				tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
 			}
 			if(tablein.getColumn(columnid)==null) {
-				tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "float", "asFloat"));
+				tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "number"));
 			}
 			
 			if(isValueConceptKey(concept_key)) {

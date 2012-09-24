@@ -4034,10 +4034,6 @@ function buildColumnModel(fields)
 		c.tooltip = f.name;
 		c.width = f.width;
 		c.sortable = f.sortable;
-		c.type = f.type;
-		if (f.sortType) {
-			c.sortType = f.sortType;
-		}
 		c.menuDisabled = false;
 		con.push(c);
 	}
