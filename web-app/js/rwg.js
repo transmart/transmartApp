@@ -332,17 +332,18 @@ function showFacetResults()	{
 	var savedSearchTermsArray;
 	var savedSearchTerms;
 	
-	if (currentSearchTerms.toString() == '')
-		{
+	if (currentSearchTerms.toString() == '')  {
 			savedSearchTermsArray = new Array();
 			savedSearchTerms = '';
 		
-		}
-	else
-		{
+	}
+	else {
 		savedSearchTerms = currentSearchTerms.toString();
-		savedSearchTermsArray = savedSearchTerms.split(",");
-		}
+
+		// JNJ-2456, copy the original array to create the saved array 
+		//savedSearchTermsArray = savedSearchTerms.split(",");
+		savedSearchTermsArray = currentSearchTerms.slice(0);
+	}
 
 
 	
