@@ -1829,7 +1829,7 @@ function showVisualization(analysisID, changedPaging)	{
 function loadAnalysisResultsGrid(analysisID)
 {
 	jQuery.ajax( {
-	    "url": getGWASDataURL,
+	    "url": getAnalysisDataURL,
 	    bDestroy: true,
 	    bServerSide: true,
 	    data: {analysisId: analysisID},

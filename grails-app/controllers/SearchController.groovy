@@ -665,8 +665,17 @@ public class SearchController{
 	}
 		
 	//Retrieve the Gwas results for the search filter. This is used to populate the result grids on the search page.
-	def getGwasResults = {
+	def getAnalysisResults = {
 
+		//We need to determine the data type of this analysis so we know where to pull the data from.
+		def currentAnalysis = bio.BioAssayAnalysis.get(params.analysisId)
+		
+		//Throw an error if we don't find the analysis for some reason.
+		if(!currentAnalysis)
+		{
+			throw new Exception("Analysis not found.")
+		}
+		
 		//This will hold the index lookups for deciphering the large text meta-data field.
 		def indexMap = [:]
 		
@@ -679,20 +688,34 @@ public class SearchController{
 		//This will be a list of the column names in our returned dynamic meta-data.
 		def columnNames = []
 		
-		//Get the GWAS Data.
-		def gwasData = searchDAO.getGwasData(Long.valueOf(params.analysisId))
-
-		def returnedGwasData = []
+		//Get the GWAS Data. Call a different class based on the data type.
+		def analysisData
 		
 		//Get the data from the index table for GWAS.
-		def gwasIndexData = searchDAO.getGwasIndexData()
-
+		def analysisIndexData
+		
+		def returnedAnalysisData = []
+		
+		switch(currentAnalysis.assayDataType)
+		{
+			case "GWAS" :
+				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId))
+				analysisIndexData = searchDAO.getGwasIndexData()
+				break;
+			case "EQTL" :
+				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId))
+				analysisIndexData = searchDAO.getEqtlIndexData()
+				break;
+			default :
+				throw new Exception("Found Not Applicable Data Type.")
+		}
+		
 		//These columns aren't dynamic and should always be included. Might be a better way to do this than just dropping it here.
 		columnNames.add(["sTitle":"Probe ID"])
 		columnNames.add(["sTitle":"p-value"])
 		columnNames.add(["sTitle":"Adjusted p-value"])
 
-		gwasIndexData.each()
+		analysisIndexData.each()
 		{
 			//Put the index information into a map so we can look it up later.
 			indexMap[it.field_idx] = it.display_idx
@@ -702,7 +725,7 @@ public class SearchController{
 		}
 
 		//The returned data needs to have the large text field broken out by delimiter.
-		gwasData.each()
+		analysisData.each()
 		{
 			//This temporary list is used so that we return a list of lists.
 			def temporaryList = []
@@ -731,10 +754,10 @@ public class SearchController{
 			//Add the dynamic fields to the returned data.
 			temporaryList+=finalFields
 			
-			returnedGwasData.add(temporaryList)
+			returnedAnalysisData.add(temporaryList)
 		}
 		
-		returnJson["aaData"] = returnedGwasData
+		returnJson["aaData"] = returnedAnalysisData
 		returnJson["aoColumns"] = columnNames
 
 		//Return the data in JSON format so the grid can format it.

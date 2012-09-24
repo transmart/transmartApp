@@ -72,7 +72,8 @@
 			//These are the URLS for the different browse windows.
 			var studyBrowseWindow = "${createLink([controller:'experiment',action:'browseExperimentsMultiSelect'])}";
 			var analysisBrowseWindow = "${createLink([controller:'experimentAnalysis',action:'browseAnalysisMultiSelect'])}";
-			var getGWASDataURL = "${createLink([controller:'search',action:'getGwasResults'])}";
+			var regionBrowseWindow = "${createLink([controller:'region',action:'getRegionFilter'])}";
+			var getAnalysisDataURL = "${createLink([controller:'search',action:'getAnalysisResults'])}";
 
 	       	
 	        var mouse_inside_options_div = false;

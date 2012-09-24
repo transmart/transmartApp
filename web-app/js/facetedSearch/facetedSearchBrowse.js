@@ -16,9 +16,13 @@ function generateBrowseWindow(nodeClicked)
 			filteringFunction = applyPopupFiltersAnalyses
 		  break;
 		case "Region of Interest":
-			URLtoUse = analysisBrowseWindow
+			URLtoUse = regionBrowseWindow
+			filteringFunction = function(){}
+			break;
 		case "Data Type":
 			URLtoUse = analysisBrowseWindow
+			filteringFunction = function(){}
+			break;
 		default:
 			alert("Failed to find applicable popup! Please contact an administrator.");
 			return false;
