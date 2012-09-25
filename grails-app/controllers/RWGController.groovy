@@ -48,7 +48,7 @@ class RWGController {
    */
    private String getSOLRCategoryName(String field)  {
 	   // set to uppercase and replace spaces with underscores
-	   return field.toUpperCase().replace(' ', '_')
+	   return field.toUpperCase().replaceAll(' ', '_')
    }	
    
    /**
@@ -84,26 +84,25 @@ class RWGController {
 		  id = 'X' + parentNode.id
 	  }
 	  parent["id"] = id
-	  
-	  // create the key that matches what we use in javascript to identify search terms
-	  // assuming for now that the category and the category display are the same (with category being all caps); may
-	  // need to break this out into separate fields	  
-	  parent["key"] = categoryName + "|" + categoryName.toUpperCase() + ":" + parentNode.termName + ":" + id	  
-	  
+	  	  
 	  // if category, then display as folder and don't show checkbox; other levels, not a folder and show checkbox
 	  parent["isFolder"] = isCategory 
 	  parent["hideCheckbox"] = isCategory
 
 	  // add custom attributes for each node 
 	  parent["isCategory"] = isCategory
-	  parent["categoryName"] = categoryName + "|" + categoryName.toUpperCase()
 
 	  // create a uniqueTreeId for each node so we can identify it from it's copies
 	  //  (id and key are not unique amongst copies)
 	  parent["uniqueTreeId"] = uniqueTreeId
 
+	  // TODO - decouple these 2 - retrieve id from searchKeyword, don't just assume it's same as display
+	  parent["categoryId"] = categoryName.toUpperCase();
+	  parent["categoryDisplay"] = categoryName;
 
-	  // Create custom attributes for the facet count for this node, and one for the initial facet
+	  parent["categorySOLR"] = getSOLRCategoryName(categoryName);
+	  
+ 	  // Create custom attributes for the facet count for this node, and one for the initial facet
 	  //   count which will be used to save the value when the tree gets cleared so we don't have to requery 
 	  // Set to -1 for category nodes
 	  if (isCategory)  {		 
@@ -1082,8 +1081,9 @@ class RWGController {
 				   termArray.put("id", skId.toString())
 				   termArray.put("dataCategory", sk.dataCategory)
 				   termArray.put("displayDataCategory", sk.displayDataCategory)
-				   termArray.put("keyword", sk.keyword)
-					   
+				   termArray.put("displayDataCategory", sk.displayDataCategory)
+				   termArray.put("categorySOLR", getSOLRCategoryName(sk.dataCategory))
+				   
 				   searchTerms.put(i.toString(), termArray)
 				   i++
 			   }
