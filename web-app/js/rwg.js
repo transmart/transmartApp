@@ -1806,7 +1806,8 @@ function showVisualization(analysisID, changedPaging)	{
 
 			setVisTabs(analysisID);
 			jQuery(loadingDiv).mask("Loading...");
-			loadAnalysisResultsGrid(analysisID);			
+			loadAnalysisResultsGrid(analysisID);
+			loadQQPlot(analysisID);
 		}
 		
 		jQuery(hmFlagDiv).val("1");
@@ -1823,6 +1824,25 @@ function showVisualization(analysisID, changedPaging)	{
 		
 	} 	
 	return false;
+}
+
+//This function will kick off the webservice that generates the QQ plot.
+function loadQQPlot(analysisID)
+{
+	jQuery.ajax( {
+	    "url": getQQPlotURL,
+	    bDestroy: true,
+	    bServerSide: true,
+	    data: {analysisId: analysisID},
+	    "success": function ( json ) {
+	    	jQuery('#analysis_holder_' +analysisID).unmask();
+	    	jQuery('#qqplot_results_' + analysisID).prepend("<img src='" + json.imageURL + "' />");
+	    	},
+	    "error": function ( json ) {
+	    	jQuery('#analysis_holder_' +analysisID).unmask();
+	    },
+	    "dataType": "json"
+	} );		
 }
 
 // This function will load the analysis data into a datagrid.

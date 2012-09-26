@@ -74,6 +74,7 @@
 			var analysisBrowseWindow = "${createLink([controller:'experimentAnalysis',action:'browseAnalysisMultiSelect'])}";
 			var regionBrowseWindow = "${createLink([controller:'region',action:'getRegionFilter'])}";
 			var getAnalysisDataURL = "${createLink([controller:'search',action:'getAnalysisResults'])}";
+			var getQQPlotURL = "${createLink([controller:'search',action:'getQQPlotImage'])}";
 
 	       	
 	        var mouse_inside_options_div = false;

@@ -35,6 +35,7 @@ import search.SearchKeywordTerm
 import bio.BioDataExternalCode
 
 import com.recomdata.util.*
+import static java.util.UUID.randomUUID;
 
 public class SearchController{
 	def sessionFactory
@@ -45,6 +46,10 @@ public class SearchController{
 	def SearchService
 	def documentService
 	def searchKeywordService
+	def RModulesFileWritingService
+	def RModulesJobProcessingService
+	def RModulesOutputRenderService
+	
 	String authKeyGG = null
 	
 	def SEARCH_DELIMITER='SEARCHDELIMITER'
@@ -664,7 +669,7 @@ public class SearchController{
 		render(view:'noresult')
 	}
 		
-	//Retrieve the Gwas results for the search filter. This is used to populate the result grids on the search page.
+	//Retrieve the results for the search filter. This is used to populate the result grids on the search page.
 	def getAnalysisResults = {
 
 		//We need to determine the data type of this analysis so we know where to pull the data from.
@@ -695,7 +700,7 @@ public class SearchController{
 		def analysisIndexData
 		
 		def returnedAnalysisData = []
-		
+				
 		switch(currentAnalysis.assayDataType)
 		{
 			case "GWAS" :
@@ -707,7 +712,7 @@ public class SearchController{
 				analysisIndexData = searchDAO.getEqtlIndexData()
 				break;
 			default :
-				throw new Exception("Found Not Applicable Data Type.")
+				throw new Exception("Not Applicable Data Type Found.")
 		}
 		
 		//These columns aren't dynamic and should always be included. Might be a better way to do this than just dropping it here.
@@ -759,9 +764,142 @@ public class SearchController{
 		
 		returnJson["aaData"] = returnedAnalysisData
 		returnJson["aoColumns"] = columnNames
-
+		
 		//Return the data in JSON format so the grid can format it.
 		render returnJson as JSON
 
 	}
+	
+	def getQQPlotImage = {
+		//We need to determine the data type of this analysis so we know where to pull the data from.
+		def currentAnalysis = bio.BioAssayAnalysis.get(params.analysisId)
+		
+		//Throw an error if we don't find the analysis for some reason.
+		if(!currentAnalysis)
+		{
+			throw new Exception("Analysis not found.")
+		}
+		
+		//This will hold the index lookups for deciphering the large text meta-data field.
+		def indexMap = [:]
+		
+		//Initiate Data Access object to get to search data.
+		def searchDAO = new SearchDAO()
+		
+		//Get the GWAS Data. Call a different class based on the data type.
+		def analysisData
+		
+		//Get the data from the index table for GWAS.
+		def analysisIndexData
+		
+		def returnedAnalysisData = []
+		def returnJSON = [:]
+		
+		switch(currentAnalysis.assayDataType)
+		{
+			case "GWAS" :
+				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId))
+				analysisIndexData = searchDAO.getGwasIndexData()
+				break;
+			case "EQTL" :
+				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId))
+				analysisIndexData = searchDAO.getEqtlIndexData()
+				break;
+			default :
+				throw new Exception("Not Applicable Data Type Found.")
+		}
+		
+		analysisIndexData.each()
+		{
+			//Put the index information into a map so we can look it up later. Only add the GOOD_CLUSTERING column.
+			if(it.field_name == "GOOD_CLUSTERING")
+			{
+				indexMap[it.field_idx] = it.display_idx
+			}
+		}
+
+		//Create an entry that represents the headers to print to the file.
+		def columnHeaderList = ["PROBEID","pvalue","good_clustering"]
+		returnedAnalysisData.add(columnHeaderList)
+		
+		//The returned data needs to have the large text field broken out by delimiter.
+		analysisData.each()
+		{
+			//This temporary list is used so that we return a list of lists.
+			def temporaryList = []
+			
+			//This will be used to fill in the data array.
+			def indexCount = 0;
+			
+			//The third element is our large text field. Split it into an array.
+			def largeTextField = it[3].split(";")
+			
+			//This will be the array that is reordered according to the meta-data index table.
+			String[] newLargeTextField = new String[indexMap.size()]
+			
+			//Loop over the elements in the index map.
+			indexMap.each()
+			{
+				//Reorder the array based on the index table.
+				newLargeTextField[indexCount] = largeTextField[it.key-1]
+				
+				indexCount++;
+			}
+			
+			//Swap around the data types for easy array addition.
+			def finalFields = new ArrayList(Arrays.asList(newLargeTextField));
+			
+			//Add the non-dynamic meta data fields to the returned data.
+			temporaryList.add(it[0])
+			temporaryList.add(it[1])
+			
+			//Add the dynamic fields to the returned data.
+			temporaryList+=finalFields
+			
+			returnedAnalysisData.add(temporaryList)
+		}
+		
+		//Get a unique key for the image file.
+		def uniqueId = randomUUID() as String
+		
+		//Create a unique name using the id.
+		def uniqueName = "GGPlot-" + uniqueId
+		
+		//Create the temporary directories for processing the image.
+		def currentTempDirectory = RModulesFileWritingService.createTemporaryDirectory(uniqueName)
+		
+		def currentWorkingDirectory =  currentTempDirectory + "\\workingDirectory\\"
+		
+		//Write the data file for generating the image.
+		def currentDataFile = RModulesFileWritingService.writeDataFile(currentWorkingDirectory, returnedAnalysisData,"QQPlot.txt")
+		
+		//Run the R script to generate the image file.
+		RModulesJobProcessingService.runRScript(currentWorkingDirectory,"/QQ/QQPlot.R","create.qq.plot('QQPlot.txt')")
+		
+		//Verify the image file exists.
+		def imagePath = currentWorkingDirectory + "\\QQPlot.png"
+		
+		if(!new File(imagePath))
+		{
+			throw new Exception("Image file creation failed!")
+		}
+		else
+		{
+			//Move the image to the web directory so we can render it.
+			def imageURL = RModulesOutputRenderService.moveImageFile(imagePath,uniqueName + ".png","QQPlots")
+			
+			returnJSON['imageURL'] = imageURL
+			
+			//Delete the working directory.
+			def directoryToDelete = new File(currentTempDirectory)
+			
+			//This isn't working. I think something is holding the directory open? We need a way to clear out the temp files.
+			directoryToDelete.deleteDir()
+			
+			//Render the image URL in a JSON object so we can reference it later.
+			render returnJSON as JSON
+		}
+
+	} 
+	
 }
