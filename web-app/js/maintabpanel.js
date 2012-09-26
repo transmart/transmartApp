@@ -37,12 +37,15 @@ function createSearchTabs(toolbar) {
         id: "tab-panel",
         tbar: toolbar,
         activeTab: pageData.activeTab,
+        // baseCls: "mainTabBase",
+        renderTo: "maintabs-div",
         autoScroll: true,
         //region: "center",
         items: [ 
             {
                 id: "tab1",
                 iconCls: "clinicalTrialgovTab",
+           //     baseCls: "mainTabBase",
                 title: "Clinical Trials (" + pageData.trial.analysisCount + ", " + pageData.trial.count + ")",
                 listeners: {activate: activateTab},
                 layout: "card",
@@ -79,6 +82,7 @@ function createSearchTabs(toolbar) {
             {
                 id: "tab2",
                 iconCls: "expTab",
+             //   baseCls: "mainTabBase",
                 title: "mRNA Analysis (" + pageData.pretrial.mRNAAnalysisCount + ", " + pageData.pretrial.count + ")",
                 listeners: {activate: activateTab},
                 layout: "card",
@@ -117,6 +121,7 @@ function createSearchTabs(toolbar) {
              {
                 id: "tab3",
                 iconCls: "profTab",
+               // baseCls: "mainTabBase",
                 title: "mRNA Profiles (" + pageData.profile.count + ")",
                 listeners: {activate: activateTab},
                 layout: "card",
@@ -136,6 +141,7 @@ function createSearchTabs(toolbar) {
             {
                 id: "tab4",
                 iconCls: "jubTab",
+             //   baseCls: "mainTabBase",
                 title: "Literature (" + pageData.jubilant.count + ")",
                 listeners: {activate: activateTab},
                 layout: "card",
@@ -166,6 +172,7 @@ function createSearchTabs(toolbar) {
             {
                 id:"tab5",
                 iconCls: "docTab",
+             //   baseCls: "mainTabBase",
                    title: "Documents (" + pageData.doc.count + ")",
                 listeners: {
                     activate: activateTab
@@ -196,6 +203,7 @@ function createSearchTabs(toolbar) {
             {
                 id: "tab6",
                 iconCls: "pictorTab",
+                baseCls: "externalTabBase",
                 title: "Pictor",
                 listeners: {activate: activateTab},
                 xtype: "iframepanel",
@@ -206,6 +214,7 @@ function createSearchTabs(toolbar) {
             {
                 id: "tab8",
                 iconCls: "genegoTab",
+                baseCls: "externalTabBase",
                 title: "GeneGo",
                 listeners: {activate: activateTab},
                 xtype: "iframepanel",

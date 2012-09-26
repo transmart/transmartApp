@@ -82,7 +82,6 @@ function createNorthPanel()
     northPanel = new Ext.Panel({
 		id : 'northPanel',
 		region : 'north',
-		tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle,GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
 		split : false,
 		border : true,
 		contentEl : "header-div"

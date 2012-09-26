@@ -44,8 +44,9 @@
 		<script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'editfilterswindow.js')}"></script>
-		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-		
+		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
+        <script>jQuery.noConflict();</script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
 		<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -223,28 +224,7 @@
 				}
 				
 			    // set active tab
-			    tabpanel.activate(getActiveTab("${session.searchFilter.acttabname()}"));
-
-	            var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-	            var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
-	            var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
-	            var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
-			    
-				var viewport = new Ext.Viewport({
-					    layout: "border",
-					    items: [new Ext.Panel({						    
-					        region: "north",
-						   // autoHeight: true,
-						    tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'utilities-div'), 
-						    contentEl: "header-div"				
-						}),
-			            new Ext.Panel({
-				            layout: "fit",
-				            region: "center",
-				            items: [ tabpanel ]
-			            })
-			         ]
-				});
+			    tabpanel.activate(getActiveTab("${session.searchFilter.acttabname()}"));			    
 			});
 
 
@@ -327,10 +307,11 @@
 		<!-- ************************************** --> 
 	</head>
 <body>
-		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
+		<div id="header-div">
 			<g:render template="/layouts/commonheader" model="['app':'search']" />
 			<g:render template="/layouts/searchheader" model="['app':'search']" />
-			<div id="summarycount-div" style="background:#dfe8f6; color:#000; padding:5px 10px 5px 10px;border-top:1px solid #36c;">
+	    </div>
+			<div id="summarycount-div" style="color:#000; padding:5px 10px 5px 10px;border-top:1px solid #36c;">
 				<span id="summarycount-span" style="font-size:13px; font-weight:bold;">
 					About ${searchresult?.totalCount()} results found
 				</span>
@@ -347,6 +328,6 @@
 			<g:form controller="geneExprAnalysis" name="globalfilter-form" id="globalfilter-form" action="doSearch">
 				<input type="hidden" name="selectedpath" value="">
 			</g:form>
-		</div>
+		<div id="maintabs-div"></div>
 	</body>
 </html>
