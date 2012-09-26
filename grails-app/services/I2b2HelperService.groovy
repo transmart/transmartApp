@@ -82,7 +82,7 @@ import com.recomdata.db.DBHelper;
 import com.recomdata.export.*;
 
 /**
- * ResNetService that will provide an .rnef file for Jubilant data
+ * i2b2HelperService
  *
  * @author $Author: mkapoor $
  * @version $Revision: 11303 $

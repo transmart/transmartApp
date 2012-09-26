@@ -29,13 +29,10 @@ import com.recomdata.util.*
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import com.recomdata.util.ariadne.Batch;
-
 class LiteratureController {
 
 	def literatureQueryService
 	def trialQueryService
-	def jubilantResNetService
 	def searchService
 	def springSecurityService
 
@@ -620,56 +617,4 @@ class LiteratureController {
 		// TODO: Display error message if there is no data.
 
 	}
-
-//	def downloadJubSummary = {
-//
-//		def cols = ["Datatype",
-//		            "Alteration Type",
-//		            "Frequency",
-//		            "Affected Cases",
-//		            "Summary",
-//		            "Target Name",
-//		            "Variant Name",
-//		            "Disease",
-//		            "Numerator",
-//		            "Denominator"]
-//		def result = createJubSummary()
-//
-//		def sheets = []
-//		sheets.add(new ExcelSheet(name:"Jubilant Summary", headers:cols, values:result.rows))
-//
-//		def gen = new ExcelGenerator()
-//		response.setHeader("Content-Type", "application/vnd.ms-excel; charset=utf-8")
-//		response.setHeader("Content-Disposition", "attachment; filename=\"jubilantsummary.xls\"")
-//		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-//		response.setHeader("Pragma", "public");
-//		response.setHeader("Expires", "0");
-//		response.outputStream << gen.generateExcel(sheets);
-//
-//	}
-
-    //	 Call the ResNetService to create the ResNet .rnef file
-    def downloadresnet = {
-		def misses = "No results found"
-	    jubilantResNetService.searchFilter = session.searchFilter
-	    JAXBContext context = JAXBContext.newInstance(Batch.class);
-	    Marshaller m = context.createMarshaller();
-	    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-	    Batch b = jubilantResNetService.createResNet()
-	    if (b != null)	{
-	        misses = "Misses: " + jubilantResNetService.misses
-	        response.setHeader("Content-Disposition", "attachment; filename=\"resnetexport.rnef\"")
-	        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-	        response.setHeader("Pragma", "public");
-	        response.setHeader("Expires", "0");
-	        m.marshal(b, response.getWriter())
-	    } else	{
-	        render(template:'noResult')
-
-	    }
-
-	    def al = new AccessLog(username: springSecurityService.getPrincipal().username,
-	            event:"Export ResNet", eventmessage:misses, accesstime:new Date())
-	    al.save();
-    }
 }

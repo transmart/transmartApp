@@ -64,7 +64,7 @@
 				//activeTab: "${session.searchFilter.acttab()}",
 				//default to 0
 				activeTab:"0" ,
-				// flag to hideInternal tabs as well as the export resnet button
+				// flag to hideInternal tabs 
 				<sec:ifAnyGranted roles="ROLE_PUBLIC_USER">
 			         hideInternal:true,
 				</sec:ifAnyGranted>
@@ -116,11 +116,6 @@
 	                	resultsUrl: "${createLink(controller:'search',action:'noResult')}"
 					</g:else>
 			    },
-
-			    resnet: {
-			   		resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pathwayStudioURL}" + "/app/op?.name=comprehensiveSearch&query=${session.searchFilter.getExternalTerms()}",
-			   		credentials: "ID/Password=Pathway Studio ID/Password"
-			    },
 			    genego: {
 					resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.genegoURL}" + "/cgi/search/ez.cgi?submitted=1&name=${session.searchFilter.getExternalTerms()}",
 					credentials: "User name/Password= Your GeneGo Metacore user name/password"
@@ -128,8 +123,7 @@
 			    trialFilterUrl: "${createLink(controller:'trial',action:'trialFilterJSON')}",
 			    jubSummaryUrl: "${createLink(controller:'literature',action:'jubSummaryJSON')}",
 				heatmapUrl: "${createLink(controller:'heatmap',action:'initheatmap')}",
-				downloadJubSummaryUrl: "${createLink(controller:'literature',action:'downloadJubData')}",
-				downloadResNetUrl: "${createLink(controller:'literature',action:'downloadresnet')}",
+				downloadJubSummaryUrl: "${createLink(controller:'literature',action:'downloadJubData')}",				
 				downloadTrialStudyUrl: "${createLink(controller:'trial', action:'downloadStudy')}",
 				downloadTrialAnalysisUrl: "${createLink(controller:'trial', action:'downloadAnalysisTEA')}",
 				downloadEaUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysis')}",
@@ -217,18 +211,12 @@
 				    tabpanel.remove(Ext.getCmp("tab3"));
 				    tabpanel.remove(Ext.getCmp("tab4"));
 				    tabpanel.remove(Ext.getCmp("tab5"));
-					tabpanel.remove(Ext.getCmp("tab6"));
-				    tabpanel.remove(Ext.getCmp("tab7"));
-				    //tabpanel.remove(Ext.getCmp("tab8"));
-				    //tabpanel.remove(Ext.getCmp("tab9"));
+				    tabpanel.remove(Ext.getCmp("tab6"));
 				} else  {
 					// All tabs should show only if the external configuration is correct
 					if ("${grailsApplication.config.com.recomdata.searchtool.pictorURL}" == "")    {
 						tabpanel.remove(Ext.getCmp("tab6"));
 					}
-				    if ("${grailsApplication.config.com.recomdata.searchtool.pathwayStudioURL}" == "")  {
-					    tabpanel.remove(Ext.getCmp("tab7"));
-				    }
 				    if ("${grailsApplication.config.com.recomdata.searchtool.genegoURL}" == "") {
 				        tabpanel.remove(Ext.getCmp("tab8"));
 					}				       

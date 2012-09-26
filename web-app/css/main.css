@@ -800,11 +800,6 @@ table.jubsummary td {
     color:#ff0000;
 }
 
-.resnetTab {
-    background-image:url(../images/pathway.png ) !important;
-    color:#ff0000;
-}
-
 .genegoTab {
     background-image:url(../images/genego.png ) !important;
     color:#ff0000;
@@ -913,11 +908,6 @@ select.jubselect {
 
 .exportSummaryBtn {
     background-image:url(../images/excel.png ) !important;
-    color:#ff0000;
-}
-
-.exportResNetBtn {
-    background-image:url(../images/download.png ) !important;
     color:#ff0000;
 }
 
