@@ -416,8 +416,11 @@ function showFacetResults()	{
 			url:facetResultsURL,
 			data:queryString,
 			success: function(response) {
-				
-
+				/*  need to compare arrays
+				    if (savedKeywords.length != activeKeywords.length)  {
+				    	return;
+				    }
+*/
 					var facetCounts = response['facetCounts'];
 					var html = response['html'];
 					
@@ -518,7 +521,7 @@ function addSearchTerm(searchTerm)	{
 	var tree = jQuery("#filter-div").dynatree("getTree");
 
 	tree.visit(  function selectNode(node) {
-		             if ((node.data.categoryId == categoryId) && (node.data.id == keywordId)) {
+		             if ( node.data.id == keywordId ) {
 		            	 node.select(true);
 		            	 node.makeVisible();
 		            	 treeUpdated = true;
@@ -561,7 +564,7 @@ function removeSearchTerm(ctrl)	{
 	var tree = jQuery("#filter-div").dynatree("getTree");
 
 	tree.visit(  function deselectNode(node) {
-                    if ((node.data.categoryId == catId)  && (node.data.id == keywordId))  {
+                    if (node.data.id == keywordId)  {
        	                node.select(false);
   	            	    treeUpdated = true;
                     }
@@ -2825,7 +2828,9 @@ function loadSearch(id)  {
 		data: {id: id},   
 		timeout:60000,
 		success: function(response) {
-			clearSearch();
+			activeCategories = new Array();
+			activeKeywords = new Array();
+			var tree = jQuery("#filter-div").dynatree("getTree");
 			
 			if (response['success'])  {
 				var searchTerms = response['searchTerms'] 
@@ -2840,9 +2845,27 @@ function loadSearch(id)  {
 							         categoryId:searchTerms[i].categoryId,
 							         categorySOLR:searchTerms[i].categorySOLR
 							         };
-					addSearchTerm(searchParam);
-
+					
+					// make sure we call addKeyword and NOT addSearchTerm (if  we call the latter then we requery SOLR every time
+					//    we add one of the saved terms back in)
+					addKeyword(searchParam, activeCategories, activeKeywords);
+					
+					// disable onSelect event for tree, so we don't trigger SOLR queries as we select items in tree)
+					allowOnSelectEvent = false;
+					tree.visit(  function selectNode(node) {
+			             if (node.data.id == searchTerms[i].id) {
+			            	 node.select(true);
+			            	 node.makeVisible();
+			             }
+		             	}
+						, false);
+					allowOnSelectEvent = true;
+					
 				}
+
+				
+				showSearchTemplate();
+				showSearchResults(); //reload the full search results
 
             	jQuery.modal.close();	            	
 
