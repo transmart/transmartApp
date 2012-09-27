@@ -121,7 +121,7 @@ public class SearchController{
 
 	def loadCategories = {
 
-		def categories = SearchKeyword.executeQuery("select distinct k.dataCategory as value, k.displayDataCategory as label from search.SearchKeyword k order by lower(k.dataCategory)")
+		def categories = SearchKeyword.executeQuery("select distinct k.dataCategory as value, k.displayDataCategory as label from search.SearchKeyword k order by k.dataCategory")
 		def rows = []
 		rows.add([value: "all", label:"all"])
 		for (category in categories) {
@@ -667,6 +667,7 @@ public class SearchController{
 
 	def noResult = {
 		render(view:'noresult')
+
 	}
 		
 	//Retrieve the results for the search filter. This is used to populate the result grids on the search page.
@@ -863,7 +864,7 @@ public class SearchController{
 		def uniqueId = randomUUID() as String
 		
 		//Create a unique name using the id.
-		def uniqueName = "GGPlot-" + uniqueId
+		def uniqueName = "QQPlot-" + uniqueId
 		
 		//Create the temporary directories for processing the image.
 		def currentTempDirectory = RModulesFileWritingService.createTemporaryDirectory(uniqueName)
