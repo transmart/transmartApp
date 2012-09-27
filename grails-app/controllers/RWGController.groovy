@@ -1126,8 +1126,10 @@ class RWGController {
 
 	   // add the search terms and counts as properties to each favorite 	   	   
 	   favorites.each  {
-		   def searchTerms = getFacetedSearchKeywords(it.id).get('searchTerms')		   		   
-		   def searchTermsCount = getFacetedSearchKeywords(it.id).get('count')		   	   
+		   
+		   def sk = getFacetedSearchKeywords(it.id)
+		   def searchTerms = sk.get('searchTerms')		   		   
+		   def searchTermsCount = sk.get('count')		   	   
 		   
 		   it.metaClass.searchTerms = searchTerms
 		   it.metaClass.searchTermsCount = searchTermsCount
