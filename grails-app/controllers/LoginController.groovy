@@ -101,6 +101,18 @@ class LoginController {
 		if (springSecurityService.isLoggedIn()) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
+			String ivUrl = grailsApplication.config.com.recomdata.searchtool.identityVaultURL
+			boolean ivLogin = ivUrl.length() > 5
+			log.info("Identity Vault login set? : " + ivLogin)
+			
+			log.info("User is forcing the form login? : " + forcedFormLogin)
+			if (!ivLogin || forcedFormLogin) {
+				log.info("Proceeding with form login")
+				render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
+			} else {
+				log.info("Proceeding with Identity Vault login")
+				redirect(url: ivUrl)
+			}
 			render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
 		}
 	}
