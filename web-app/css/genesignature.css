@@ -91,12 +91,3 @@ td {
 	color: #333;
 	padding-left: 25px;
 }
-
-.gs-utilities-div {
-    position:absolute;
-    width:100px;
-    top:0;
-    right:0;
-    height:24px;
-    z-index:100;
-}

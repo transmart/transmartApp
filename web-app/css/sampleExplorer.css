@@ -326,11 +326,3 @@ table.categoryListCheckbox {
 .x-grid3-row-over {
    	background: none repeat scroll 0 0 #0077dd !important;
 }
-
-.utilities-div {
-    position:fixed;
-    width:80px;
-    top:0;
-    right:0;
-    z-index:100;
-}

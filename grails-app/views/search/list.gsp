@@ -44,8 +44,9 @@
 		<script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'editfilterswindow.js')}"></script>
-		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-		
+		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
+        <script>jQuery.noConflict();</script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
 		<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -64,7 +65,7 @@
 				//activeTab: "${session.searchFilter.acttab()}",
 				//default to 0
 				activeTab:"0" ,
-				// flag to hideInternal tabs as well as the export resnet button
+				// flag to hideInternal tabs 
 				<sec:ifAnyGranted roles="ROLE_PUBLIC_USER">
 			         hideInternal:true,
 				</sec:ifAnyGranted>
@@ -116,11 +117,6 @@
 	                	resultsUrl: "${createLink(controller:'search',action:'noResult')}"
 					</g:else>
 			    },
-
-			    resnet: {
-			   		resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pathwayStudioURL}" + "/app/op?.name=comprehensiveSearch&query=${session.searchFilter.getExternalTerms()}",
-			   		credentials: "ID/Password=Pathway Studio ID/Password"
-			    },
 			    genego: {
 					resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.genegoURL}" + "/cgi/search/ez.cgi?submitted=1&name=${session.searchFilter.getExternalTerms()}",
 					credentials: "User name/Password= Your GeneGo Metacore user name/password"
@@ -128,8 +124,7 @@
 			    trialFilterUrl: "${createLink(controller:'trial',action:'trialFilterJSON')}",
 			    jubSummaryUrl: "${createLink(controller:'literature',action:'jubSummaryJSON')}",
 				heatmapUrl: "${createLink(controller:'heatmap',action:'initheatmap')}",
-				downloadJubSummaryUrl: "${createLink(controller:'literature',action:'downloadJubData')}",
-				downloadResNetUrl: "${createLink(controller:'literature',action:'downloadresnet')}",
+				downloadJubSummaryUrl: "${createLink(controller:'literature',action:'downloadJubData')}",				
 				downloadTrialStudyUrl: "${createLink(controller:'trial', action:'downloadStudy')}",
 				downloadTrialAnalysisUrl: "${createLink(controller:'trial', action:'downloadAnalysisTEA')}",
 				downloadEaUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysis')}",
@@ -217,46 +212,19 @@
 				    tabpanel.remove(Ext.getCmp("tab3"));
 				    tabpanel.remove(Ext.getCmp("tab4"));
 				    tabpanel.remove(Ext.getCmp("tab5"));
-					tabpanel.remove(Ext.getCmp("tab6"));
-				    tabpanel.remove(Ext.getCmp("tab7"));
-				    //tabpanel.remove(Ext.getCmp("tab8"));
-				    //tabpanel.remove(Ext.getCmp("tab9"));
+				    tabpanel.remove(Ext.getCmp("tab6"));
 				} else  {
 					// All tabs should show only if the external configuration is correct
 					if ("${grailsApplication.config.com.recomdata.searchtool.pictorURL}" == "")    {
 						tabpanel.remove(Ext.getCmp("tab6"));
 					}
-				    if ("${grailsApplication.config.com.recomdata.searchtool.pathwayStudioURL}" == "")  {
-					    tabpanel.remove(Ext.getCmp("tab7"));
-				    }
 				    if ("${grailsApplication.config.com.recomdata.searchtool.genegoURL}" == "") {
 				        tabpanel.remove(Ext.getCmp("tab8"));
 					}				       
 				}
 				
 			    // set active tab
-			    tabpanel.activate(getActiveTab("${session.searchFilter.acttabname()}"));
-
-	            var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-	            var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
-	            var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
-	            var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
-			    
-				var viewport = new Ext.Viewport({
-					    layout: "border",
-					    items: [new Ext.Panel({						    
-					        region: "north",
-						   // autoHeight: true,
-						    tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'utilities-div'), 
-						    contentEl: "header-div"				
-						}),
-			            new Ext.Panel({
-				            layout: "fit",
-				            region: "center",
-				            items: [ tabpanel ]
-			            })
-			         ]
-				});
+			    tabpanel.activate(getActiveTab("${session.searchFilter.acttabname()}"));			    
 			});
 
 
@@ -339,10 +307,11 @@
 		<!-- ************************************** --> 
 	</head>
 <body>
-		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
+		<div id="header-div">
 			<g:render template="/layouts/commonheader" model="['app':'search']" />
 			<g:render template="/layouts/searchheader" model="['app':'search']" />
-			<div id="summarycount-div" style="background:#dfe8f6; color:#000; padding:5px 10px 5px 10px;border-top:1px solid #36c;">
+	    </div>
+			<div id="summarycount-div" style="color:#000; padding:5px 10px 5px 10px;border-top:1px solid #36c;">
 				<span id="summarycount-span" style="font-size:13px; font-weight:bold;">
 					About ${searchresult?.totalCount()} results found
 				</span>
@@ -359,6 +328,6 @@
 			<g:form controller="geneExprAnalysis" name="globalfilter-form" id="globalfilter-form" action="doSearch">
 				<input type="hidden" name="selectedpath" value="">
 			</g:form>
-		</div>
+		<div id="maintabs-div"></div>
 	</body>
 </html>

@@ -133,12 +133,3 @@ width:300px;
 {
 	vertical-align:middle;
 }
-
-.admin-utilities-div {
-    position:absolute;
-    width:100px;
-    top:0;
-    right:0;
-    height:24px;
-    z-index:100;
-}
