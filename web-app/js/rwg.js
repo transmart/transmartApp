@@ -462,9 +462,15 @@ function getUniqueId()  {
 	return uniqueIdSequence
 }
 
-// add a new keyword and its categroy to global arrays activeKeywords and activeCategories
-function addActiveKeyword(searchTerm)  {
+// add a new keyword and its category to arrays passed in (global arrays activeKeywords and activeCategories if no arrays passed in) 
+function addKeyword(searchTerm, categories, keywords)  {
 
+	// we can assume if categories not supplied, that keywords not supplied either, so use global arrays for both
+	if (categories == null)  {
+		categories = activeCategories;
+		keywords = activeKeywords; 
+	}
+	
 	var categoryDisplay = searchTerm.categoryDisplay;	
 	var categoryId = searchTerm.categoryId;
 	var categorySOLR = searchTerm.categorySOLR;
@@ -481,15 +487,15 @@ function addActiveKeyword(searchTerm)  {
 	var removeAnchorId =  'removeKeyword_' + uniqueKeywordId;  // the html element identifier for the anchor tag used for removing keywords from active filter  	
 
 	// add keyword object to global array if not on there already
-	if (getActiveKeyword(keywordId) == null)  {
+	if (getKeyword(keywordId, keywords) == null)  {
 		var keywordObject = {keywordId:keywordId, keyword:keyword, categoryId:categoryId, uniqueKeywordId:uniqueKeywordId, 
 				             removeAnchorId:removeAnchorId, categorySOLR:categorySOLR};
-		activeKeywords.push(keywordObject);	
+		keywords.push(keywordObject);	
 		
 		// add category object to global array if not on there already
-		if (getActiveCategory(categoryId) == null)  {
+		if (getCategory(categoryId, categories) == null)  {
 			var categoryObject = {categoryId:categoryId, categoryDisplay:categoryDisplay, isGeneCategory:isGeneCategory};
-			activeCategories.push(categoryObject);		
+			categories.push(categoryObject);		
 		}
 	}
 }
@@ -500,7 +506,7 @@ function addSearchTerm(searchTerm)	{
 	var categoryId = searchTerm.categoryId;
 	var keywordId = searchTerm.id;
 	
-	addActiveKeyword(searchTerm);
+	addKeyword(searchTerm, activeCategories, activeKeywords);
 	
 	// clear the search text box
 	jQuery("#search-ac").val("");
@@ -530,7 +536,7 @@ function addSearchTerm(searchTerm)	{
 // Remove the search term that the user has clicked.
 function removeSearchTerm(ctrl)	{
 	
-	var keywordIndex = getActiveKeywordByRemoveAnchorId(ctrl.id); 
+	var keywordIndex = getKeywordByRemoveAnchorId(ctrl.id, activeKeywords); 
 	var keyword = activeKeywords[keywordIndex];
 	
 	var catId = keyword.categoryId;
@@ -851,7 +857,7 @@ function clearCategoryIfNoTerms(categoryId)  {
 	}
 	
 	if (!found)  {
-		var categoryIndex = getActiveCategoryIndex(categoryId);		
+		var categoryIndex = getCategoryIndex(categoryId, activeCategories);		
 		activeCategories.splice(categoryIndex, 1);
 	}
 }
@@ -860,7 +866,7 @@ function clearCategoryIfNoTerms(categoryId)  {
 //Remove the search term that the user has de-selected from filter tree.
 function removeFilterTreeSearchTerm(keywordId)	{
 	
-	var i = getActiveKeywordIndex(keywordId);
+	var i = getKeywordIndex(keywordId, activeKeywords);
 	
 	if (i != null)	{
 		var catId = activeKeywords[i].categoryId;
@@ -2474,7 +2480,7 @@ function roundNumber(num, dec) {
 }
 
 //Main method to show the current array of search terms (if no args passed in, being used to populate search terms div; otherwise we're retrieving html for tooltip
-function showSearchTemplate(categories, terms)	{
+function showSearchTemplate(categories, keywords)	{
 	
 	// if categories and terms not passed in, use the global arrays (this is for popuataing div); else, this is for tooltip, and we'll pass back generated
 	//   HTML
@@ -2831,9 +2837,9 @@ function loadSearch(id)  {
 				for (i=0; i<count; i++)  {
 					
 					var searchParam={id:searchTerms[i].id,
-							         categoryDisplay:searchTerms[i].displayDataCategory,
+							         categoryDisplay:searchTerms[i].categoryDisplay,
 							         keyword:searchTerms[i].keyword,
-							         categoryId:searchTerms[i].dataCategory,
+							         categoryId:searchTerms[i].categoryId,
 							         categorySOLR:searchTerms[i].categorySOLR
 							         };
 					addSearchTerm(searchParam);
@@ -2872,7 +2878,7 @@ function clearSearch()	{
 	
 	jQuery("#search-ac").val("");
 	
-	activeSearchTerms = new Array();
+	activeKeywords = new Array();
 	activeCategories = new Array();
 	
 	// Change the category picker back to ALL and set autocomplete to not have a category (ALL by default)
@@ -2891,7 +2897,7 @@ function clearSearch()	{
 	                                    false
 	           )
 	allowOnSelectEvent = true;
-	
+
 	showSearchTemplate();
 	showSearchResults(); //reload the full search results
 	
@@ -2938,7 +2944,7 @@ function syncNode(node)  {
 	param.keyword = node.data.termName;  // term name
 	param.id = node.data.id;             //keyword id
 	if (inSearchTerms)  {
-	    addActiveKeyword(param);
+	    addKeyword(param, activeCategories, activeKeywords);
 	}
 	else {
 		removeFilterTreeSearchTerm(node.data.id);
@@ -3143,9 +3149,9 @@ function getAnalysisIndex(id)  {
 }
 
 //find the keyword in the array with the given keyword id and return its index
-function getActiveKeywordIndex(keywordId)  {
-	for (var i = 0; i < activeKeywords.length; i++)  {
-		if (activeKeywords[i].keywordId == keywordId)  {
+function getKeywordIndex(keywordId, keywords)  {
+	for (var i = 0; i < keywords.length; i++)  {
+		if (keywords[i].keywordId == keywordId)  {
 			return i;
 		}
 	}
@@ -3154,11 +3160,11 @@ function getActiveKeywordIndex(keywordId)  {
 }
 
 //find the keyword in the array with the given keyword id and return the object
-function getActiveKeyword(keywordId)  {
-	var i = getActiveKeywordIndex(keywordId);
+function getKeyword(keywordId, keywords)  {
+	var i = getKeywordIndex(keywordId, keywords);
 	
 	if (i != null)  {
-		return activeKeywords[i];
+		return keywords[i];
 	}
 	else  {
 		return null;  // keyword not found
@@ -3166,9 +3172,9 @@ function getActiveKeyword(keywordId)  {
 }
 
 //find the keyword in the array with the given anchor id return its index in array
-function getActiveKeywordByRemoveAnchorId(anchorId)  {
-	for (var i = 0; i < activeKeywords.length; i++)  {
-		if (activeKeywords[i].removeAnchorId == anchorId )  {
+function getKeywordByRemoveAnchorId(anchorId, keywords)  {
+	for (var i = 0; i < keywords.length; i++)  {
+		if (keywords[i].removeAnchorId == anchorId )  {
 			return i;
 		}
 	}
@@ -3177,12 +3183,12 @@ function getActiveKeywordByRemoveAnchorId(anchorId)  {
 }
 
 //find the category in the array with the given category id and return the object
-function getActiveCategory(categoryId)  {
+function getCategory(categoryId, categories)  {
 
-	var i = getActiveCategoryIndex(categoryId);
+	var i = getCategoryIndex(categoryId, categories);
 	
 	if (i != null)  {
-		return activeCategories[i];
+		return categories[i];
 	}
 	else  {
 		return null;  // category not found
@@ -3190,9 +3196,9 @@ function getActiveCategory(categoryId)  {
 }
 
 //find the category in the array with the given category id and return its index
-function getActiveCategoryIndex(categoryId)  {
-	for (var i = 0; i < activeCategories.length; i++)  {
-		if (activeCategories[i].categoryId == categoryId)  {
+function getCategoryIndex(categoryId, categories)  {
+	for (var i = 0; i < categories.length; i++)  {
+		if (categories[i].categoryId == categoryId)  {
 			return i;
 		}
 	}

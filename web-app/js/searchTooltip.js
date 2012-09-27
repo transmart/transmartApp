@@ -63,26 +63,16 @@ function getSearchTooltip(id, e)  {
 				
 				// create 2 arrays that act the same as the global arrays used to populate the search terms section
 				var categories = new Array();
-				var terms = new Array();
+				var keywords = new Array();
 				
 				for (i=0; i<count; i++)  {
-					
-					// create the category and key with same format as used in global array of categories
-					var category = searchTerms[i].displayDataCategory + "|" + searchTerms[i].dataCategory;					
-					var key = category + ":" + searchTerms[i].keyword + ":" + searchTerms[i].id;
-					
-					// add values to our new arrays
-					if (terms.indexOf(key) < 0)	{
-						terms.push(key);
-						if (categories.indexOf(category) < 0)	{
-							categories.push(category);
-						}
-					} 
+
+					addKeyword(searchTerms[i], categories, keywords);
 
 				}
 				
-				// now we have 2 arrays which are setup to similate the global arrays; pass these into the function to generate the HTML for the tooltip 
-				var html =  showSearchTemplate(categories, terms);
+				// now we have 2 arrays which are setup to simulate the global arrays; pass these into the function to generate the HTML for the tooltip 
+				var html =  showSearchTemplate(categories, keywords);
 
 				// now show the tooltip
 				jQuery(document).ready(function () {

@@ -1079,9 +1079,9 @@ class RWGController {
 			   
 			   if (sk)  {
 				   termArray.put("id", skId.toString())
-				   termArray.put("dataCategory", sk.dataCategory)
-				   termArray.put("displayDataCategory", sk.displayDataCategory)
-				   termArray.put("displayDataCategory", sk.displayDataCategory)
+				   termArray.put("keyword", sk.keyword)
+				   termArray.put("categoryId", sk.dataCategory)
+				   termArray.put("categoryDisplay", sk.displayDataCategory)
 				   termArray.put("categorySOLR", getSOLRCategoryName(sk.dataCategory))
 				   
 				   searchTerms.put(i.toString(), termArray)
