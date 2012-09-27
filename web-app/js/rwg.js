@@ -2527,10 +2527,8 @@ function showSearchTemplate(categories, keywords)	{
 		}
 	}
 	
-	if (!tooltip)  {
-		// replace old array with new array
-		categories = newCategories;
-	}
+	// replace old array with new array
+	categories = newCategories;
 	
 	for (var i=0; i<categories.length; i++)	{
 		for (var j=0; j<keywords.length; j++)	{
@@ -2561,7 +2559,7 @@ function showSearchTemplate(categories, keywords)	{
 					searchHTML = searchHTML +"<span class='category_label'>" + catDisplay + "&nbsp;></span>&nbsp;";
 					firstItem = false;
 				} else	{
-					searchHTML = searchHTML + "<span class='spacer'>| </span><span class=term>";
+					searchHTML = searchHTML + "<span class='spacer'>| </span>";
 				}				
 
 				var aTag = '';
