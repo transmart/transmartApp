@@ -170,7 +170,7 @@ class RWGController {
   def getDynatree = {
   
 	  // find all relationships
-	  def rels = SearchTaxonomyRels.list()
+	  def rels = SearchTaxonomyRels.list(sort:"child.termName")
 	  
 	  // retrieve all taxonomy records (i.e. nodes in the tree)
 	  def allNodes = SearchTaxonomy.list()
