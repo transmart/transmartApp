@@ -3077,7 +3077,7 @@ jQuery(function(){
         		if (!n.data.isCategory)  {
             		// loop through every node in tree and find copies, make sure all copies are DEselected
     	            n.tree.visit(  function (node) {
-    	            	              if ((n.data.key == node.data.id) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
+    	            	              if ((n.data.id == node.data.id) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
     	            	            	  node.select(false);
     	            	              } 
     	            	           } 
