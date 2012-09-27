@@ -303,6 +303,7 @@ function updateNodeIndividualFacetCount(node, count) {
 	    node.data.facetCount = -1;
 	    node.data.title = node.data.termName;	
 	}
+	
 }
 
 
@@ -484,7 +485,7 @@ function addKeyword(searchTerm, categories, keywords)  {
 	}
 	
     var keyword = searchTerm.keyword;
-	var keywordId = searchTerm.id;
+	var keywordId = searchTerm.id.toString();
 
 	var uniqueKeywordId = getUniqueId();   // this will be used to uniquely identify the keyword/category combination
 	var removeAnchorId =  'removeKeyword_' + uniqueKeywordId;  // the html element identifier for the anchor tag used for removing keywords from active filter  	
@@ -2828,11 +2829,26 @@ function loadSearch(id)  {
 		data: {id: id},   
 		timeout:60000,
 		success: function(response) {
-			activeCategories = new Array();
-			activeKeywords = new Array();
-			var tree = jQuery("#filter-div").dynatree("getTree");
 			
 			if (response['success'])  {
+				// clear global arrays
+				activeCategories = new Array();
+				activeKeywords = new Array();
+								
+				var tree = jQuery("#filter-div").dynatree("getTree");
+
+				// clear the selected items from tree
+				// Make sure the onSelect event doesn't fire for the nodes
+				// Otherwise, the main search query is going to fire after each item is deselected, as well as facet query
+				allowOnSelectEvent = false;
+				tree.visit(function clearNode(node) {
+													 updateNodeIndividualFacetCount(node, -1);
+					                                 node.select(false);
+				                                    }, 
+				                                    false
+				           )
+				allowOnSelectEvent = true;
+
 				var searchTerms = response['searchTerms'] 
 				var count = response['count'] 
 				var termsNotFound = response['termsNotFound'] 
@@ -2850,20 +2866,18 @@ function loadSearch(id)  {
 					//    we add one of the saved terms back in)
 					addKeyword(searchParam, activeCategories, activeKeywords);
 					
-					// disable onSelect event for tree, so we don't trigger SOLR queries as we select items in tree)
-					allowOnSelectEvent = false;
+					// select the keyword in the tree
+					allowOnSelectEvent = false;    // onSelect event will cause a SOLR query call; we don't want this for each term, only at end
 					tree.visit(  function selectNode(node) {
-			             if (node.data.id == searchTerms[i].id) {
+			             if ( node.data.id == searchTerms[i].id ) {
 			            	 node.select(true);
-			            	 node.makeVisible();
 			             }
-		             	}
-						, false);
+		             }
+				   , false);
 					allowOnSelectEvent = true;
-					
-				}
 
-				
+				}
+ 
 				showSearchTemplate();
 				showSearchResults(); //reload the full search results
 
