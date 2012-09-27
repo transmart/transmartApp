@@ -868,7 +868,7 @@ public class SearchController{
 		//Create the temporary directories for processing the image.
 		def currentTempDirectory = RModulesFileWritingService.createTemporaryDirectory(uniqueName)
 		
-		def currentWorkingDirectory =  currentTempDirectory + "\\workingDirectory\\"
+		def currentWorkingDirectory =  currentTempDirectory + File.separator + "workingDirectory" + File.separator
 		
 		//Write the data file for generating the image.
 		def currentDataFile = RModulesFileWritingService.writeDataFile(currentWorkingDirectory, returnedAnalysisData,"QQPlot.txt")
@@ -877,7 +877,7 @@ public class SearchController{
 		RModulesJobProcessingService.runRScript(currentWorkingDirectory,"/QQ/QQPlot.R","create.qq.plot('QQPlot.txt')")
 		
 		//Verify the image file exists.
-		def imagePath = currentWorkingDirectory + "\\QQPlot.png"
+		def imagePath = currentWorkingDirectory + File.separator + "QQPlot.png"
 		
 		if(!new File(imagePath))
 		{
