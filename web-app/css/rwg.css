@@ -795,7 +795,7 @@ margin-left: -1px;
 
 .vis-toolBar{
 	
-	float:right;
+	/*float:right; Why?! */
 	margin-top:-1px;
 }
 
@@ -879,3 +879,61 @@ border-top: 1px solid #CCC;
 	}
 
 
+.dataTable {
+    margin: 8px 0px;
+    font-size: 8px;
+    border-right: 1px solid #DDF;  
+}
+
+.dataTable th {
+     font-weight: bold;
+     padding: 4px;
+     min-width: 80px;
+     text-align: center;
+     font-size: 10px;
+     background-color: #BFCFFD;
+     background-image: none;
+}
+
+.dataTable td {
+     padding: 5px;
+     border-left: 1px solid #DDF;
+     border-bottom: 1px solid #DDF;
+     font-size: 10px;   
+}
+
+.dataTable tr.odd {
+    background-color: #EFFFFD;
+}
+
+.dataTables_length {
+     float: left;
+     margin-right: 64px;   
+}
+
+.paginate_disabled_previous, .paginate_disabled_next {
+    border: 1px solid #CCC;
+    padding: 4px;
+    color: #CCC;
+    margin: 0px 8px;
+}
+
+.paginate_enabled_previous, .paginate_enabled_next {
+    border: 1px solid #AAF;
+    padding: 4px;
+    color: #CCC;
+    margin: 0px 8px;
+    cursor: pointer;
+}
+
+.dataTables_info {
+    float: left;
+}
+
+.dataTables_paginate {
+	min-height: 30px;	
+}
+
+.dataTables_wrapper {
+	font-size: 9pt;
+}

@@ -158,7 +158,7 @@
 									<div class="fieldError"><g:message error="${it}"/></div>
 								</g:eachError>
 							</div>
-							<g:select name="dataType" name="dataType" noSelection="${['null':'Select...']}" from="${['gwas':'GWAS','eqtl':'eQTL']}" optionKey="${{it.key}}" optionValue="${{it.value}}" value="${uploadDataInstance?.dataType}"/>
+							<g:select name="dataType" name="dataType" noSelection="${['null':'Select...']}" from="${['gwas':'GWAS','gwasm':'GWAS-M','eqtl':'eQTL']}" optionKey="${{it.key}}" optionValue="${{it.value}}" value="${uploadDataInstance?.dataType}"/>
 						</td>
 					</tr>
 				
