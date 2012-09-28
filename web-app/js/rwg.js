@@ -417,11 +417,11 @@ function showFacetResults()	{
 			url:facetResultsURL,
 			data:queryString,
 			success: function(response) {
-				/*  need to compare arrays
-				    if (savedKeywords.length != activeKeywords.length)  {
-				    	return;
+				    // make sure the active keywords haven't changed since we issued query -- if they have, don't update tree with results or results panel 
+				    if (compareKeywordArrays(savedKeywords, activeKeywords) == false)  { 
+				    	return false;
 				    }
-*/
+				
 					var facetCounts = response['facetCounts'];
 					var html = response['html'];
 					
@@ -3181,6 +3181,23 @@ function getAnalysisIndex(id)  {
 	}
 	
     return -1;  // analysis not found		
+}
+
+// compare the contents of one array of keyword objects with another; if same, return true
+function compareKeywordArrays(arr1, arr2)  {
+	if (arr1.length != arr2.length)  {
+		// lengths don't match
+		return false;
+	}
+	
+	for (var i = 0; i < arr1.length; i++)  {
+		if (arr1[i].keywordId != arr2[i].keywordId)  {
+			// one of the keywords doesn't match
+			return false;
+		}
+	}
+	
+    return true;  		
 }
 
 //find the keyword in the array with the given keyword id and return its index
