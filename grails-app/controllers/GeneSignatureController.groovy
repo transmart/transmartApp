@@ -103,14 +103,21 @@ class GeneSignatureController {
 		def pubItems = []
 
 		signatures.each {
-			if(user.id==it.createdByAuthUser.id) {
+			//if(user.id==it.createdByAuthUser.id) {
 				myItems.add(it)
-			} else {
-				pubItems.add(it)
-			}
+			//} else {
+				//pubItems.add(it)
+			//}
 		}
 
 		render(view: "list", model:[user: user, adminFlag: bAdmin, myItems: myItems, pubItems: pubItems, ctMap: ctMap])
+	}
+	
+	/**
+	 * Renders the manipulate page with d3 js visualization of gene lists.
+	 */
+	def manipulate = {
+		
 	}
 
 	/**

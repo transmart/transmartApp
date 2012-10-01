@@ -27,7 +27,13 @@
 	<g:else>
 		<title>Gene Signature Create</title>	
 	</g:else>
-
+	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
+	<script type="text/javascript" src="${resource(dir:'js/jquery', file:'jquery-1.7.1.min.js')}"></script>
+	<script>jQuery.noConflict();</script> 
+	<script type="text/javascript" src="${resource(dir:'js/jquery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>		
+	<script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.idletimeout.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.idletimer.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
 	<script type="text/javascript">
 		function validate() {
 			// list name required
@@ -67,7 +73,70 @@
 		<tr>
 		<tr class="prop">
 			<td class="name">Description</td>
-			<td class="value"><g:textArea name="description" value="${gs.description}" rows="6" cols="85" /></td>
+			<td class="value"><g:textArea name="description" value="${gs.description}" rows="6" cols="68" /></td>
+		</tr>
+		<tr class="prop">
+			<td class="name">Species</td>
+			<td class="value">			
+				<table>
+					<tr>
+						<td style="border: none; width: 50%">					
+							<g:select name="speciesConceptCode.id"
+	    				      	from="${wizard.species}"
+	    				      	value="${gs.speciesConceptCode?.id}"
+	         				  	noSelection="['null':'select relevant species']"
+	         				  	optionValue="codeName"
+	         				  	optionKey="id" 
+	         				  	onChange="javascript:speciesToggle(this);" />&nbsp;
+							<!--  toggle mouse div accordingly -->
+							<g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_1' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_2' || 
+																			gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">      				  	
+							<div id="mouse_source_div" style="display: inline;">For Mouse, enter source<g:requiredIndicator/>:						
+							</g:if>   
+							<g:else>
+							<div id="mouse_source_div" style="display: none;">For Mouse, enter source<g:requiredIndicator/>:						
+							</g:else>														
+								<g:select name="speciesMouseSrcConceptCode.id"
+		    				      	from="${wizard.mouseSources}"
+		    				      	value="${gs.speciesMouseSrcConceptCode?.id}"
+		    				      	noSelection="['null':'select source']"
+		         				  	optionValue="codeName"
+		         				  	optionKey="id" />
+							</div>
+						</td>
+					</tr>
+					<!--  toggle mouse other accordingly -->
+					<g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">      				  								
+					<tr id="mouse_other_id" style="display: block;"><td">		
+					</g:if>
+					<g:else>		
+					<tr id="mouse_other_id" style="display: none;">
+					</g:else>
+						<td style="border: none;">
+							<label>Detail for 'knockout/transgenic' or 'other' mouse strain<g:requiredIndicator/>:</label>
+							<br><g:textField name="speciesMouseDetail" value="${gs.speciesMouseDetail}" size="100%" maxlength="255" />
+						</td>
+					</tr>	
+				</table>			
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="name">Enter genes manually or copy and paste them in the box below</td>
+		</tr>
+		<tr>
+			<td colspan="2" class=""value>
+				<g:textArea name="genes" value="" rows="6" cols="85"></g:textArea>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="name">Upload a gene signature file</td>
+		</tr>
+		<tr>
+			<td colspan="2" class=""value>
+				<g:uploadForm name="geneSigUpload">
+					<input type="file" name="geneSigFile" />
+				</g:uploadForm>
+			</td>
 		</tr>
 		<g:if test="${wizard.wizardType==1}">		
 		<tr class="prop">
@@ -92,7 +161,8 @@
 	</table>
 	
 	<div class="buttons">
-		<g:actionSubmit class="next" action="${(wizard.wizardType==1 || wizard.wizardType==2) ? 'edit2' : 'create2'}" value="Meta-Data" onclick="return validate();" />
+		<g:actionSubmit class="next" action="${(wizard.wizardType==1 || wizard.wizardType==2) ? 'edit2' : 'create2'}" value="Submit" onclick="return validate();" />
+		<g:actionSubmit class="next" action="${(wizard.wizardType==1 || wizard.wizardType==2) ? 'edit2' : 'create2'}" value="Advanced" onclick="return validate();" />
 		<g:actionSubmit class="cancel" action="refreshSummary" onclick="return confirm('Are you sure you want to exit?')" value="Cancel" />
 	</div>			
 
