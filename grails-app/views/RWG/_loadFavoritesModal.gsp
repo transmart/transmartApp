@@ -29,11 +29,12 @@
 						    	    	<div style="float: left;width:100px;margin:10px;">
 							    				${f.createDt.format("MM/dd/yyyy")}
 								    	</div>
-						    	    	<div style="float: left;width:200px;margin:10px;">
-							    				<a href="#" onclick="loadSearch(${f.id}); return false;"><span id="labelSearchName_${f.id}" >${f.name}</span></a>
+						    	    	<div style="float: left;width:200px;margin:10px;" >
+							    				<a href="#" id="linkSearchName_${f.id}" class="searchTooltip" onclick="loadSearch(${f.id}); return false;"><span id="labelSearchName_${f.id}" >${f.name}</span></a>
+							    											    				
 								    	</div>
-						    	    	<div style="float: left;width:30px;margin:10px;">
-								    	    	<a href="#" onclick="showEditSearchDiv(${f.id}); return false;">Edit</a>
+						    	    	<div style="float: left;width:40px;margin:10px;">
+								    	    	<a href="#" onclick="showEditSearchDiv(${f.id}); return false;">Rename</a>
 								    	</div>
 						    	    	<div style="float: left;width:30px;margin:10px;">
 								    	    	<a href="#" onclick="deleteSearch(${f.id}); return false;">Delete</a>							    	    
@@ -54,4 +55,5 @@
 			</g:else>
 			<br />
 			<a href="#" onclick="jQuery.modal.close();return false;" class="actions" >Close</a>   
-			
+<script>	registerSearchTooltipEvents();
+</script>			

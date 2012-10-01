@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////
 // Globals
-// Store the current search terms in an array in format ("category display|category:term") where category display is the display term i.e. Gene, Disease, etc.
-var currentCategories = new Array();
-var currentSearchTerms = new Array(); 
+var activeCategories = new Array();   // array of category objects that are in active filter; order is order that arrays appear on screen
+var activeKeywords = new Array();     // array of keyword objects that are in active filter;  order is order that they appear on screen within their category
+var uniqueIdSequence = 0;             // sequence to uniquely identify keywords in a keyword object
 
 // Store the nodes that were selected before a new node was selected, so that we can compare to the nodes that are selected after.  Selecting
 //  one node in the tree can cause lots of changes in other parts of the tree (copies of this node change, children/parents change, 
@@ -217,7 +217,7 @@ function addSearchAutoComplete()	{
 		source: sourceURL,
 		minLength:0,
 		select: function(event, ui) {  
-			searchParam={id:ui.item.id,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId};
+			searchParam={id:ui.item.id,categoryDisplay:ui.item.category,keyword:ui.item.label,categoryId:ui.item.categoryId, categorySOLR:ui.item.categoryId.toString().replace(/ /g,'_')};
 			addSearchTerm(searchParam);
 			return false;
 		}
@@ -303,6 +303,7 @@ function updateNodeIndividualFacetCount(node, count) {
 	    node.data.facetCount = -1;
 	    node.data.title = node.data.termName;	
 	}
+	
 }
 
 
@@ -329,23 +330,18 @@ function clearFacetResults()	{
 //Method to load the facet results in the search tree and populate search results panel
 function showFacetResults()	{
 	
-	var savedSearchTermsArray;
-	var savedSearchTerms;
-	
-	if (currentSearchTerms.toString() == '')
-		{
-			savedSearchTermsArray = new Array();
-			savedSearchTerms = '';
-		
-		}
-	else
-		{
-		savedSearchTerms = currentSearchTerms.toString();
-		savedSearchTermsArray = savedSearchTerms.split(",");
-		}
+	var savedKeywords;
 
+    // save the search terms into a copy of the array -- we'll use this to check at the end to make sure the filters haven't changed since we originally 
+	//  submitted Ajax request to get results
+	if (activeKeywords.length == 0)  {
+			savedKeywords = new Array();
+	}
+	else {
+		// JNJ-2456, copy the original array to create the saved array 
+		savedKeywords = activeKeywords.slice(0);
+	}
 
-	
 	// Generate list of categories/terms to send to facet search
 	// create a string to send into the facet search, in form Cat1:Term1,Term2&Cat2:Term3,Term4,Term5&...
 
@@ -354,22 +350,19 @@ function showFacetResults()	{
 	var terms = new Array();         // will be an array of strings "Term1|Term2", "Term3"
 
 	// first, loop through each term and add categories and terms to respective arrays 		
-    for (var i=0; i<savedSearchTermsArray.length; i++)	{
-		var fields = savedSearchTermsArray[i].split(":");
-		// search terms are in format <Category Display>|<Category>:<Search term display>:<Search term id>
-		var termId = fields[2]; 
-		var categoryFields = fields[0].split("|");
-		var category = categoryFields[1].replace(" ", "_");   // replace any spaces with underscores (these will then match the SOLR field names) 
+    for (var i=0; i<savedKeywords.length; i++)	{
+		var keywordId = savedKeywords[i].keywordId; 
+		var categoryId = savedKeywords[i].categorySOLR; 
 		
-		var categoryIndex = categories.indexOf(category);
+		var categoryIndex = categories.indexOf(categoryId);
 
 		// if category not in array yet, add category and term to their respective array, else just append term to proper spot in its array
 		if (categoryIndex == -1)  {
-		    categories.push(category);
-		    terms.push(termId);
+		    categories.push(categoryId);
+		    terms.push(keywordId);
 		}
 		else  {
-		    terms[categoryIndex] = terms[categoryIndex] + "|" + termId; 			
+		    terms[categoryIndex] = terms[categoryIndex] + "|" + keywordId; 			
 		}
 	}
     
@@ -379,9 +372,7 @@ function showFacetResults()	{
 	var treeCategories = new Array();
 	tree.visit(  function(node) {
         if (node.data.isCategory)  {
-     	   var categoryName = node.data.categoryName.split("|");
-     	   var cat = categoryName[1].replace(" ", "_");
-     	   
+     	   var cat = node.data.categorySOLR;     	   
      	   treeCategories.push(cat);        	    
         }
       }
@@ -426,14 +417,15 @@ function showFacetResults()	{
 			url:facetResultsURL,
 			data:queryString,
 			success: function(response) {
+				    // make sure the active keywords haven't changed since we issued query -- if they have, don't update tree with results or results panel 
+				    if (compareKeywordArrays(savedKeywords, activeKeywords) == false)  { 
+				    	return false;
+				    }
 				
-
 					var facetCounts = response['facetCounts'];
 					var html = response['html'];
 					
 					// set html for results panel
-					//document.getElementById('results-div').innerHTML = html;
-					
 					jQuery('#results-div').html(html);
 					
 					if(!showHomePageFirst)
@@ -452,9 +444,8 @@ function showFacetResults()	{
 					tree.visit(  function(node) {
 						           if (!node.data.isCategory && node.data.id)  {
 						        	   var id = node.data.id.toString();
-						        	   var catFields = node.data.categoryName.split("|")
-						        	   var cat = catFields[1].replace(" ","_");
-						        	   //var catArray = response[cat];
+						        	   var cat = node.data.categorySOLR;
+
 						        	   var catArray = facetCounts[cat];
 						        	   var count = catArray[id];
 						        	   
@@ -481,21 +472,56 @@ function showFacetResults()	{
 
 }
 
+function getUniqueId()  {
+	uniqueIdSequence++;
+	return uniqueIdSequence
+}
+
+// add a new keyword and its category to arrays passed in (global arrays activeKeywords and activeCategories if no arrays passed in) 
+function addKeyword(searchTerm, categories, keywords)  {
+
+	// we can assume if categories not supplied, that keywords not supplied either, so use global arrays for both
+	if (categories == null)  {
+		categories = activeCategories;
+		keywords = activeKeywords; 
+	}
+	
+	var categoryDisplay = searchTerm.categoryDisplay;	
+	var categoryId = searchTerm.categoryId;
+	var categorySOLR = searchTerm.categorySOLR;
+	var isGeneCategory = false;
+	
+	if (checkGeneCategory(categoryId))   {
+		isGeneCategory = true;
+	}
+	
+    var keyword = searchTerm.keyword;
+	var keywordId = searchTerm.id.toString();
+
+	var uniqueKeywordId = getUniqueId();   // this will be used to uniquely identify the keyword/category combination
+	var removeAnchorId =  'removeKeyword_' + uniqueKeywordId;  // the html element identifier for the anchor tag used for removing keywords from active filter  	
+
+	// add keyword object to global array if not on there already
+	if (getKeyword(keywordId, keywords) == null)  {
+		var keywordObject = {keywordId:keywordId, keyword:keyword, categoryId:categoryId, uniqueKeywordId:uniqueKeywordId, 
+				             removeAnchorId:removeAnchorId, categorySOLR:categorySOLR};
+		keywords.push(keywordObject);	
+		
+		// add category object to global array if not on there already
+		if (getCategory(categoryId, categories) == null)  {
+			var categoryObject = {categoryId:categoryId, categoryDisplay:categoryDisplay, isGeneCategory:isGeneCategory};
+			categories.push(categoryObject);		
+		}
+	}
+}
+
 // Add the search term to the array and show it in the panel.
 function addSearchTerm(searchTerm)	{
-	var category = searchTerm.display == undefined ? "TEXT" : searchTerm.display;
 	
-	category = category + "|" + (searchTerm.category == undefined ? "TEXT" : searchTerm.category);
+	var categoryId = searchTerm.categoryId;
+	var keywordId = searchTerm.id;
 	
-	var text = searchTerm.keyword == undefined ? searchTerm : searchTerm.keyword;
-	var id = searchTerm.id == undefined ? -1 : searchTerm.id;
-	var key = category + ":" + text + ":" + id;
-	if (currentSearchTerms.indexOf(key) < 0)	{
-		currentSearchTerms.push(key);
-		if (currentCategories.indexOf(category) < 0)	{
-			currentCategories.push(category);
-		}
-	} 
+	addKeyword(searchTerm, activeCategories, activeKeywords);
 	
 	// clear the search text box
 	jQuery("#search-ac").val("");
@@ -507,7 +533,7 @@ function addSearchTerm(searchTerm)	{
 	var tree = jQuery("#filter-div").dynatree("getTree");
 
 	tree.visit(  function selectNode(node) {
-		             if (node.data.key == key)  {
+		             if ( node.data.id == keywordId ) {
 		            	 node.select(true);
 		            	 node.makeVisible();
 		            	 treeUpdated = true;
@@ -524,18 +550,19 @@ function addSearchTerm(searchTerm)	{
 
 // Remove the search term that the user has clicked.
 function removeSearchTerm(ctrl)	{
-	var currentSearchTermID = ctrl.id.replace(/\%20/g, " ");
-	var idx = currentSearchTerms.indexOf(currentSearchTermID);
-	if (idx > -1)	{
-		currentSearchTerms.splice(idx, 1);
-		
-		// check if there are any remaining terms for this category; remove category from list if none
-		var fields = currentSearchTermID.split(":");
-		var category = fields[0];
-		clearCategoryIfNoTerms(category);
-
-	}
 	
+	var keywordIndex = getKeywordByRemoveAnchorId(ctrl.id, activeKeywords); 
+	var keyword = activeKeywords[keywordIndex];
+	
+	var catId = keyword.categoryId;
+	var keywordId = keyword.keywordId;
+	
+	// remove the keyword from global array
+	activeKeywords.splice(keywordIndex, 1);
+	
+	// remove the category if there are no terms left in it
+	clearCategoryIfNoTerms(catId);
+
 	// Call back to the server to clear the search filter (session scope)
 	jQuery.ajax({
 		type:"POST",
@@ -549,7 +576,7 @@ function removeSearchTerm(ctrl)	{
 	var tree = jQuery("#filter-div").dynatree("getTree");
 
 	tree.visit(  function deselectNode(node) {
-                    if (node.data.key == currentSearchTermID)  {
+                    if (node.data.id == keywordId)  {
        	                node.select(false);
   	            	    treeUpdated = true;
                     }
@@ -562,23 +589,6 @@ function removeSearchTerm(ctrl)	{
 	  showSearchResults();
 	}
 }
-
-//Add the search term to the array that the user has added to filter tree.
-function addFilterTreeSearchTerm(searchTerm)	{
-	var category = searchTerm.display == undefined ? "TEXT" : searchTerm.display;
-	var text = searchTerm.keyword == undefined ? searchTerm : searchTerm.keyword;
-	var id = searchTerm.id == undefined ? -1 : searchTerm.id;
-	var key = category + ":" + text + ":" + id;
-	if (currentSearchTerms.indexOf(key) < 0)	{
-		currentSearchTerms.push(key);
-		if (currentCategories.indexOf(category) < 0)	{
-			currentCategories.push(category);
-		}
-	}
-
-}
-
-
 
 //export the current analysis data to a csv file
 function exportLinePlotData(analysisId, exportType)
@@ -849,35 +859,37 @@ function analysisMenuEvent(id){
 
 
 // Remove the category from current categories list if there are no terms left that belong to it
-function clearCategoryIfNoTerms(category)  {
+function clearCategoryIfNoTerms(categoryId)  {
 	
 	var found = false;
-	for (var j=0; j<currentSearchTerms.length; j++)	{
-		var fields2 = currentSearchTerms[j].split(":");
-		var category2 = fields2[0];
+	for (var j=0; j<activeKeywords.length; j++)	{
+		var categoryId2 = activeKeywords[j].categoryId;
 		
-		if (category == category2)  {
+		if (categoryId == categoryId2)  {
 			found = true; 
 			break;
 		}
 	}
 	
 	if (!found)  {
-		currentCategories.splice(currentCategories.indexOf(category), 1);
+		var categoryIndex = getCategoryIndex(categoryId, activeCategories);		
+		activeCategories.splice(categoryIndex, 1);
 	}
 }
 
 
 //Remove the search term that the user has de-selected from filter tree.
-function removeFilterTreeSearchTerm(termID)	{
-	var idx = currentSearchTerms.indexOf(termID);
-	if (idx > -1)	{
-		currentSearchTerms.splice(idx, 1);
+function removeFilterTreeSearchTerm(keywordId)	{
+	
+	var i = getKeywordIndex(keywordId, activeKeywords);
+	
+	if (i != null)	{
+		var catId = activeKeywords[i].categoryId;
+
+		activeKeywords.splice(i, 1);
 
 		// check if there are any remaining terms for this category; remove category from list if none
-		var fields = termID.split(":");
-		var category = fields[0];
-		clearCategoryIfNoTerms(category);
+		clearCategoryIfNoTerms(catId);
 	}
 	
 }
@@ -2457,7 +2469,7 @@ function goToByScroll(id){
 	jQuery('#main').animate({scrollTop: jQuery("#"+id).offset().top},'slow');
 }
 
-function isGeneCategory(catId)  {
+function checkGeneCategory(catId)  {
 	if ((catId == 'GENE') || (catId == 'PATHWAY') || (catId == 'GENELIST') || (catId == 'GENESIG')) {
 		return true;
 	}
@@ -2477,42 +2489,48 @@ String.prototype.visualLength = function(fontFamily)
 
 
 
-//Round number to given decimal place
 function roundNumber(num, dec) {
 	var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
 	return result;
 }
 
-//Main method to show the current array of search terms 
-function showSearchTemplate()	{
+//Main method to show the current array of search terms (if no args passed in, being used to populate search terms div; otherwise we're retrieving html for tooltip
+function showSearchTemplate(categories, keywords)	{
+	
+	// if categories and terms not passed in, use the global arrays (this is for popuataing div); else, this is for tooltip, and we'll pass back generated
+	//   HTML
+	var tooltip;
+	if (!categories)  {
+		tooltip = false;
+		categories = activeCategories;
+		keywords = activeKeywords;
+	}
+	else {
+		tooltip = true;
+	}
+	
 	var searchHTML = '';
-	var startATag = '&nbsp;<a id=\"';
-	var endATag = '\" class="term-remove" href="#" onclick="removeSearchTerm(this);">';
-	var imgTag = '<img alt="remove" src="./../images/small_cross.png"/></a>&nbsp;'
+	
 	var firstItem = true;
 
-	// iterate through categories array and move all the "gene" categories together at the top 
+	// iterate through categories array and move all the "gene" categories together
 	var newCategories = new Array();
 	
 	var geneCategoriesProcessed = false;
-	for (var i=0; i<currentCategories.length; i++)	{
-		var catFields = currentCategories[i].split("|");
-		var catId = catFields[1];
+	for (var i=0; i<categories.length; i++)	{
 		
 		// when we find a "gene" category, add it and the rest of the "gene" categories to the new array
-		if (isGeneCategory(catId)) {
+		if (categories[i].isGeneCategory) {
 			// first check if we've processed "gene" categories yet
 			if (!geneCategoriesProcessed)  {
 				
 				// add first gene category to new array
-				newCategories.push(currentCategories[i]);
+				newCategories.push(categories[i]);
 
 				// look for other "gene" categories, starting at the next index value, and add each to array
-				for (var j=i+1; j<currentCategories.length; j++)	{
-					var catFields2 = currentCategories[j].split("|");
-					var catId2 = catFields2[1];
-					if (isGeneCategory(catId2)) {
-						newCategories.push(currentCategories[j]);
+				for (var j=i+1; j<categories.length; j++)	{
+					if (categories[j].isGeneCategory) {
+						newCategories.push(categories[j]);
 					}				
 				}
 				// set flag so we don't try to process again
@@ -2520,32 +2538,27 @@ function showSearchTemplate()	{
 			}
 		}
 		else  {    // not a gene catageory, add to new list
-			newCategories.push(currentCategories[i]);
+			newCategories.push(categories[i]);
 		}
 	}
 	
 	// replace old array with new array
-    currentCategories = newCategories;
+	categories = newCategories;
 	
-	for (var i=0; i<currentCategories.length; i++)	{
-		for (var j=0; j<currentSearchTerms.length; j++)	{
-			var fields = currentSearchTerms[j].split(":");
-			if (currentCategories[i] == fields[0]){
-				var tagID = currentSearchTerms[j].split(' ').join('%20');			// URL encode the spaces
-				
+	for (var i=0; i<categories.length; i++)	{
+		for (var j=0; j<keywords.length; j++)	{
+			
+			if (categories[i].categoryId == keywords[j].categoryId)  {
+											
 				if (firstItem)	{
-					var catFields = fields[0].split("|");
-					var catDisplay = catFields[0];
-					var catId = catFields[1];
+					var catDisplay = categories[i].categoryDisplay;
 
 					if (i>0)	{	
 						
 						var suppressAnd = false;
 						// if this is a "gene" category, check the previous category and see if it is also one
-		                if (isGeneCategory(catId))  {
-							var catFieldsPrevious = currentCategories[i-1].split("|");
-							var catIdPrevious = catFieldsPrevious[1];
-		                	if (isGeneCategory(catIdPrevious))  {
+		                if (categories[i].isGeneCategory)  {
+		                	if (categories[i - 1].isGeneCategory)  {
 		                		suppressAnd = true;	
 		                	}
 		                } 
@@ -2558,19 +2571,38 @@ function showSearchTemplate()	{
 							searchHTML = searchHTML + "<br/>";  				                	
 		                }
 					}
-					searchHTML = searchHTML +"<span class='category_label'>" +catDisplay + "&nbsp;></span>&nbsp;<span class=term>"+ fields[1] + startATag + tagID + endATag + imgTag +"</span>";
+					searchHTML = searchHTML +"<span class='category_label'>" + catDisplay + "&nbsp;></span>&nbsp;";
 					firstItem = false;
 				} else	{
-					searchHTML = searchHTML + "<span class='spacer'>| </span><span class=term>"+ fields[1] + startATag + tagID + endATag + imgTag +"</span> ";
+					searchHTML = searchHTML + "<span class='spacer'>| </span>";
 				}				
+
+				var aTag = '';
+				var imgTag = ''
+
+				// don't include a or img tags if for tooltip
+				if (!tooltip)  {
+					aTag = '&nbsp;<a id="' + keywords[j].removeAnchorId + '" class="term-remove" href="#" onclick="removeSearchTerm(this);">' 
+ 
+					imgTag = '<img alt="remove" src="./../images/small_cross.png"/></a>&nbsp;'
+				}
+					
+				searchHTML = searchHTML + "<span class=term>"+ keywords[j].keyword + aTag + imgTag + "</span>";
 			} else	{
 				continue;												// Do the categories by row and in order
 			}
 		}
 		firstItem = true;
 	}
-	document.getElementById('active-search-div').innerHTML = searchHTML;
-	getSearchKeywordList();
+	
+	if (!tooltip)  {
+		// populate div if not tooltip
+		document.getElementById('active-search-div').innerHTML = searchHTML;
+	}
+	else  {		
+		// html for tooltip - just return the html
+		return searchHTML;
+	}
 }
 
 
@@ -2579,10 +2611,8 @@ function getSearchKeywordList()   {
 
 	var keywords = new Array();
 	
-	for (var j=0; j<currentSearchTerms.length; j++)	{
-		var fields = currentSearchTerms[j].split(":");		
-	    var keyword = fields[2];			
-		keywords.push(keyword);
+	for (var j=0; j<activeKeywords.length; j++)	{
+		keywords.push(activeKeywords[j].keywordId);
 	}
 	
 	return keywords;
@@ -2615,6 +2645,9 @@ function modalEffectsClose(dialog)  {
 		      });
 		    });
 		  });
+
+		  jQuery("#searchTooltip").remove();
+			
 }
 
 function openSaveSearchDialog()  {
@@ -2807,9 +2840,26 @@ function loadSearch(id)  {
 		data: {id: id},   
 		timeout:60000,
 		success: function(response) {
-			clearSearch();
 			
 			if (response['success'])  {
+				// clear global arrays
+				activeCategories = new Array();
+				activeKeywords = new Array();
+								
+				var tree = jQuery("#filter-div").dynatree("getTree");
+
+				// clear the selected items from tree
+				// Make sure the onSelect event doesn't fire for the nodes
+				// Otherwise, the main search query is going to fire after each item is deselected, as well as facet query
+				allowOnSelectEvent = false;
+				tree.visit(function clearNode(node) {
+													 updateNodeIndividualFacetCount(node, -1);
+					                                 node.select(false);
+				                                    }, 
+				                                    false
+				           )
+				allowOnSelectEvent = true;
+
 				var searchTerms = response['searchTerms'] 
 				var count = response['count'] 
 				var termsNotFound = response['termsNotFound'] 
@@ -2817,12 +2867,30 @@ function loadSearch(id)  {
 				for (i=0; i<count; i++)  {
 					
 					var searchParam={id:searchTerms[i].id,
-							         display:searchTerms[i].displayDataCategory,
+							         categoryDisplay:searchTerms[i].categoryDisplay,
 							         keyword:searchTerms[i].keyword,
-							         category:searchTerms[i].dataCategory};
-					addSearchTerm(searchParam);
+							         categoryId:searchTerms[i].categoryId,
+							         categorySOLR:searchTerms[i].categorySOLR
+							         };
+					
+					// make sure we call addKeyword and NOT addSearchTerm (if  we call the latter then we requery SOLR every time
+					//    we add one of the saved terms back in)
+					addKeyword(searchParam, activeCategories, activeKeywords);
+					
+					// select the keyword in the tree
+					allowOnSelectEvent = false;    // onSelect event will cause a SOLR query call; we don't want this for each term, only at end
+					tree.visit(  function selectNode(node) {
+			             if ( node.data.id == searchTerms[i].id ) {
+			            	 node.select(true);
+			             }
+		             }
+				   , false);
+					allowOnSelectEvent = true;
 
 				}
+ 
+				showSearchTemplate();
+				showSearchResults(); //reload the full search results
 
             	jQuery.modal.close();	            	
 
@@ -2841,6 +2909,9 @@ function loadSearch(id)  {
 
 }
 
+
+
+
 // Clear the tree, results along with emptying the two arrays that store categories and search terms.
 function clearSearch()	{
 	
@@ -2853,8 +2924,8 @@ function clearSearch()	{
 	
 	jQuery("#search-ac").val("");
 	
-	currentSearchTerms = new Array();
-	currentCategories = new Array();
+	activeKeywords = new Array();
+	activeCategories = new Array();
 	
 	// Change the category picker back to ALL and set autocomplete to not have a category (ALL by default)
 	document.getElementById("search-categories").selectedIndex = 0;
@@ -2872,7 +2943,7 @@ function clearSearch()	{
 	                                    false
 	           )
 	allowOnSelectEvent = true;
-	
+
 	showSearchTemplate();
 	showSearchResults(); //reload the full search results
 	
@@ -2888,7 +2959,8 @@ function syncNode(node)  {
 		return true
 	}
 
-	var categoryName = node.data.categoryName;
+	var categoryId = node.data.categoryId;
+	var categoryDisplay = node.data.categoryDisplay;
 	
 	var outerNode = node;
 	var inSearchTerms = false;
@@ -2900,7 +2972,7 @@ function syncNode(node)  {
 	//         say it shouldn't be - but making consistent for now, can reverse logic easily if needed )
 	node.tree.visit(
 			          function checkCopies (node) {
-			        	  if (outerNode.data.key == node.data.key)  {
+			        	  if (outerNode.data.id == node.data.id)  {
 			        		  // found a key that matches (i.e. is the original one or a copy)
         	        		  // a node will be in search terms if it is selected and it's parent is not
 			        		  // or if it's selected and it's parent is a category
@@ -2912,16 +2984,16 @@ function syncNode(node)  {
 			          false
 			       )
 		
-	param.display = categoryName;     // category        	
+	param.categoryId = categoryId;       // category id        	
+	param.categoryDisplay = categoryDisplay;     // category display        	
+	param.categorySOLR = node.data.categorySOLR;       // category for SOLR field        	
 	param.keyword = node.data.termName;  // term name
-	param.id = node.data.id;
+	param.id = node.data.id;             //keyword id
 	if (inSearchTerms)  {
-	    addFilterTreeSearchTerm(param);
+	    addKeyword(param, activeCategories, activeKeywords);
 	}
 	else {
-		// create string that remove fn recognizes as key
-		var termID = node.data.key;
-		removeFilterTreeSearchTerm(termID);
+		removeFilterTreeSearchTerm(node.data.id);
 	}
 	
 }
@@ -3025,7 +3097,7 @@ jQuery(function(){
         		if (!n.data.isCategory)  {
             		// loop through every node in tree and find copies, make sure all copies are selected        		
     	            n.tree.visit(  function (node) {
-      	                              if ((n.data.key == node.data.key) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
+      	                              if ((n.data.id == node.data.id) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
     	            	            	  node.select(true);
     	            	              } 
     	            	           } 
@@ -3051,7 +3123,7 @@ jQuery(function(){
         		if (!n.data.isCategory)  {
             		// loop through every node in tree and find copies, make sure all copies are DEselected
     	            n.tree.visit(  function (node) {
-    	            	              if ((n.data.key == node.data.key) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
+    	            	              if ((n.data.id == node.data.id) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
     	            	            	  node.select(false);
     	            	              } 
     	            	           } 
@@ -3120,6 +3192,81 @@ function getAnalysisIndex(id)  {
 	}
 	
     return -1;  // analysis not found		
+}
+
+// compare the contents of one array of keyword objects with another; if same, return true
+function compareKeywordArrays(arr1, arr2)  {
+	if (arr1.length != arr2.length)  {
+		// lengths don't match
+		return false;
+	}
+	
+	for (var i = 0; i < arr1.length; i++)  {
+		if (arr1[i].keywordId != arr2[i].keywordId)  {
+			// one of the keywords doesn't match
+			return false;
+		}
+	}
+	
+    return true;  		
+}
+
+//find the keyword in the array with the given keyword id and return its index
+function getKeywordIndex(keywordId, keywords)  {
+	for (var i = 0; i < keywords.length; i++)  {
+		if (keywords[i].keywordId == keywordId)  {
+			return i;
+		}
+	}
+	
+    return null;  // keyword not found		
+}
+
+//find the keyword in the array with the given keyword id and return the object
+function getKeyword(keywordId, keywords)  {
+	var i = getKeywordIndex(keywordId, keywords);
+	
+	if (i != null)  {
+		return keywords[i];
+	}
+	else  {
+		return null;  // keyword not found
+	}
+}
+
+//find the keyword in the array with the given anchor id return its index in array
+function getKeywordByRemoveAnchorId(anchorId, keywords)  {
+	for (var i = 0; i < keywords.length; i++)  {
+		if (keywords[i].removeAnchorId == anchorId )  {
+			return i;
+		}
+	}
+	
+    return null;  // keyword not found		
+}
+
+//find the category in the array with the given category id and return the object
+function getCategory(categoryId, categories)  {
+
+	var i = getCategoryIndex(categoryId, categories);
+	
+	if (i != null)  {
+		return categories[i];
+	}
+	else  {
+		return null;  // category not found
+	}
+}
+
+//find the category in the array with the given category id and return its index
+function getCategoryIndex(categoryId, categories)  {
+	for (var i = 0; i < categories.length; i++)  {
+		if (categories[i].categoryId == categoryId)  {
+			return i;
+		}
+	}
+	
+    return null;  // category not found		
 }
 
 //remove an element from an array by value, keeping all others in place

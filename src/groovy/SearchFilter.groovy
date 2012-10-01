@@ -103,7 +103,7 @@ class SearchFilter {
 		return s.toString();
 	}
 
-	/** This method is used for the ResNet and the GeneGo tabs */
+	/** This method is used for the GeneGo tab */
 	def getExternalTerms() {
 	    StringBuilder s = new StringBuilder()
 

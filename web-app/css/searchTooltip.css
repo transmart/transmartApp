@@ -1,0 +1,15 @@
+#searchTooltip{
+	position:absolute;
+	border:3px solid #333;
+	background:#f7f5d1;
+	padding:10px 10px 10px 30px;   		/* 20px on left to compensate for negative offsets used in search terms div  */	
+	color:#333;
+	display:none;
+	}	
+	
+	
+.searchTooltipTitle {
+	margin-left:-20px;
+	text-decoration:underline;
+	margin-bottom:10px;
+}	

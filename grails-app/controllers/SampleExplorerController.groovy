@@ -105,8 +105,8 @@ class SampleExplorerController {
 	 * This draws the simple HTML page that has the DIV that gets populated by the ExtJS datagrid.	
 	 */
 	def showDataSetResults =
-	{
-		render(template:"dataSetResults");
+	{		
+		render(g.render(template:"dataSetResults").toString())
 	}
 	
 	/**

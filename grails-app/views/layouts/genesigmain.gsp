@@ -31,7 +31,9 @@
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'maintabpanel.js')}"></script>		
 		<script type="text/javascript" src="${resource(dir:'js', file:'toggle.js')}"></script>
-		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>		
+		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
+        <script>jQuery.noConflict();</script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>
 		<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -41,17 +43,10 @@
             Ext.onReady(function()
 	        {
             	   Ext.QuickTips.init()
-            	   
-            	   var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-                   var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
-                   var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
-                   var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
-                   
-                   var viewport = new Ext.Viewport({
+            	   var viewport = new Ext.Viewport({
                     layout: "border",
                     items:[new Ext.Panel({                          
-                       region: "center",  
-                       tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'gs-utilities-div'),  
+                       region: "center",   
                        autoScroll:true,                    
                        contentEl: "page"
                     })]

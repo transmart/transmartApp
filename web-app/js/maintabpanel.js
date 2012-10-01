@@ -37,12 +37,15 @@ function createSearchTabs(toolbar) {
         id: "tab-panel",
         tbar: toolbar,
         activeTab: pageData.activeTab,
+        // baseCls: "mainTabBase",
+        renderTo: "maintabs-div",
         autoScroll: true,
         //region: "center",
         items: [ 
             {
                 id: "tab1",
                 iconCls: "clinicalTrialgovTab",
+           //     baseCls: "mainTabBase",
                 title: "Clinical Trials (" + pageData.trial.analysisCount + ", " + pageData.trial.count + ")",
                 listeners: {activate: activateTab},
                 layout: "card",
@@ -79,6 +82,7 @@ function createSearchTabs(toolbar) {
             {
                 id: "tab2",
                 iconCls: "expTab",
+             //   baseCls: "mainTabBase",
                 title: "mRNA Analysis (" + pageData.pretrial.mRNAAnalysisCount + ", " + pageData.pretrial.count + ")",
                 listeners: {activate: activateTab},
                 layout: "card",
@@ -117,6 +121,7 @@ function createSearchTabs(toolbar) {
              {
                 id: "tab3",
                 iconCls: "profTab",
+               // baseCls: "mainTabBase",
                 title: "mRNA Profiles (" + pageData.profile.count + ")",
                 listeners: {activate: activateTab},
                 layout: "card",
@@ -136,6 +141,7 @@ function createSearchTabs(toolbar) {
             {
                 id: "tab4",
                 iconCls: "jubTab",
+             //   baseCls: "mainTabBase",
                 title: "Literature (" + pageData.jubilant.count + ")",
                 listeners: {activate: activateTab},
                 layout: "card",
@@ -166,6 +172,7 @@ function createSearchTabs(toolbar) {
             {
                 id:"tab5",
                 iconCls: "docTab",
+             //   baseCls: "mainTabBase",
                    title: "Documents (" + pageData.doc.count + ")",
                 listeners: {
                     activate: activateTab
@@ -196,28 +203,18 @@ function createSearchTabs(toolbar) {
             {
                 id: "tab6",
                 iconCls: "pictorTab",
+                baseCls: "externalTabBase",
                 title: "Pictor",
                 listeners: {activate: activateTab},
                 xtype: "iframepanel",
                 closable: false,
                 loadMask: true,
                 defaultSrc: pageData.pictor.resultsUrl
-            },
-            {
-                id: "tab7",
-                iconCls: "resnetTab",
-                title: "ResNet",
-                listeners: {activate: activateTab},
-                xtype: "iframepanel",
-                closable: false,
-                loadMask: true,
-                defaultSrc: pageData.resnet.resultsUrl,
-                tabTip: pageData.resnet.credentials
-            } 
-            , 
+            }, 
             {
                 id: "tab8",
                 iconCls: "genegoTab",
+                baseCls: "externalTabBase",
                 title: "GeneGo",
                 listeners: {activate: activateTab},
                 xtype: "iframepanel",
@@ -291,13 +288,6 @@ function createMainToolbar() {
                iconCls: "exportSummaryBtn"
            },
            {
-               id: "exportresnet-button",
-               text: "Export to ResNet",
-               handler: exportResNet,
-               cls: "x-btn-text-icon",
-               iconCls: "exportResNetBtn"               
-           },
-           {
 				id:'contextHelp-button',
 			    handler: function(event, toolEl, panel){
 			    	D2H_ShowHelp(filterContextHelpId,helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
@@ -332,7 +322,6 @@ function activateTab(tab) {
             setButtonVisibility("studyview", false);
         }
         setButtonVisibility("exportsummary", true);
-        setButtonVisibility("exportresnet", false);
         
         var contextHelpVisibility = false;
         if(pageData.trial.analysisCount>0 || pageData.trial.count>0){
@@ -360,7 +349,6 @@ function activateTab(tab) {
         setButtonVisibility("summary", false);
         setButtonVisibility("heatmap", false);
         setButtonVisibility("exportsummary", true);
-        setButtonVisibility("exportresnet", false);
         setButtonVisibility("contextHelp", true);
         
         var contextHelpVisibility = false;
@@ -375,7 +363,6 @@ function activateTab(tab) {
         setButtonVisibility("summary", false);
         setButtonVisibility("heatmap", false);
         setButtonVisibility("exportsummary", false);
-        setButtonVisibility("exportresnet", false);
         setButtonVisibility("studyview", false)
         setButtonVisibility("tea",false);
         setButtonVisibility("contextHelp", true);
@@ -390,11 +377,6 @@ function activateTab(tab) {
         } else	{
         	setButtonVisibility("exportsummary", true);
         }
-        if (pageData.hideInternal==true || pageData.jubilant.count < 1)  {
-        	setButtonVisibility("exportresnet", false);
-        } else	{
-        	setButtonVisibility("exportresnet", true);
-        }
         setButtonVisibility("studyview", false)
         setButtonVisibility("tea",false);
         setButtonVisibility("contextHelp", true);
@@ -405,7 +387,6 @@ function activateTab(tab) {
         setButtonVisibility("summary", false);
         setButtonVisibility("heatmap", false);
         setButtonVisibility("exportsummary", false);
-        setButtonVisibility("exportresnet", false);
         setButtonVisibility("studyview", false)
         setButtonVisibility("tea",false);
         setButtonVisibility("contextHelp", true);
@@ -416,23 +397,11 @@ function activateTab(tab) {
         setButtonVisibility("summary", false);
         setButtonVisibility("heatmap", false);
         setButtonVisibility("exportsummary", false);
-        setButtonVisibility("exportresnet", false);
         setButtonVisibility("studyview", false)
         setButtonVisibility("tea",false);
         if (pageData.pictor.resultsUrl.length > 1980) {
             window.alert("Note: The length of the URL for the Pictor query has exceeded the maximum supported by Internet Explorer and some genes may have been excluded from the query.");
         }
-        setButtonVisibility("contextHelp", false);
-        break;
-
-    case "tab7":
-        setButtonVisibility("filters", false);
-        setButtonVisibility("summary", false);
-        setButtonVisibility("heatmap", false);
-        setButtonVisibility("exportsummary", false);
-        setButtonVisibility("exportresnet", false);
-        setButtonVisibility("studyview", false)
-        setButtonVisibility("tea",false);
         setButtonVisibility("contextHelp", false);
         break;
 
@@ -564,15 +533,8 @@ function showFilters(button) {
             var showSummaryButton = Ext.getCmp("summary-show-button");
             var hideSummaryButton = Ext.getCmp( "summary-hide-button");
             var exportSummaryButton = Ext.getCmp( "exportsummary-button");
-            var exportResnetButton = Ext.getCmp( "exportresnet-button");
             showSummaryButton.setVisible(showFiltersButton.hidden);
             exportSummaryButton.setVisible(showFiltersButton.hidden);
-            if (pageData.jubilant.litJubOncIntCount > 0 || pageData.jubilant.litJubAsthmaCount > 0)	{
-        		exportResnetButton.setVisible(showFiltersButton.hidden);
-        	} else	{
-        		exportResnetButton.setVisible(false);
-        	}
-
             hideSummaryButton.setVisible(false);
         }
         showFiltersButton.setVisible(showFiltersButton.hidden);
@@ -685,10 +647,6 @@ function exportSummary(button) {
     	window.location = pageData.downloadJubSummaryUrl;
     	break;
     }
-}
-
-function exportResNet(button) {
-    window.location = pageData.downloadResNetUrl;
 }
 
 function createJubSummary() {

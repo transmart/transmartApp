@@ -48,7 +48,7 @@ class RWGController {
    */
    private String getSOLRCategoryName(String field)  {
 	   // set to uppercase and replace spaces with underscores
-	   return field.toUpperCase().replace(' ', '_')
+	   return field.toUpperCase().replaceAll(' ', '_')
    }	
    
    /**
@@ -84,26 +84,25 @@ class RWGController {
 		  id = 'X' + parentNode.id
 	  }
 	  parent["id"] = id
-	  
-	  // create the key that matches what we use in javascript to identify search terms
-	  // assuming for now that the category and the category display are the same (with category being all caps); may
-	  // need to break this out into separate fields	  
-	  parent["key"] = categoryName + "|" + categoryName.toUpperCase() + ":" + parentNode.termName + ":" + id	  
-	  
+	  	  
 	  // if category, then display as folder and don't show checkbox; other levels, not a folder and show checkbox
 	  parent["isFolder"] = isCategory 
 	  parent["hideCheckbox"] = isCategory
 
 	  // add custom attributes for each node 
 	  parent["isCategory"] = isCategory
-	  parent["categoryName"] = categoryName + "|" + categoryName.toUpperCase()
 
 	  // create a uniqueTreeId for each node so we can identify it from it's copies
 	  //  (id and key are not unique amongst copies)
 	  parent["uniqueTreeId"] = uniqueTreeId
 
+	  // TODO - decouple these 2 - retrieve id from searchKeyword, don't just assume it's same as display
+	  parent["categoryId"] = categoryName.toUpperCase();
+	  parent["categoryDisplay"] = categoryName;
 
-	  // Create custom attributes for the facet count for this node, and one for the initial facet
+	  parent["categorySOLR"] = getSOLRCategoryName(categoryName);
+	  
+ 	  // Create custom attributes for the facet count for this node, and one for the initial facet
 	  //   count which will be used to save the value when the tree gets cleared so we don't have to requery 
 	  // Set to -1 for category nodes
 	  if (isCategory)  {		 
@@ -171,7 +170,7 @@ class RWGController {
   def getDynatree = {
   
 	  // find all relationships
-	  def rels = SearchTaxonomyRels.list()
+	  def rels = SearchTaxonomyRels.list(sort:"child.termName")
 	  
 	  // retrieve all taxonomy records (i.e. nodes in the tree)
 	  def allNodes = SearchTaxonomy.list()
@@ -1045,11 +1044,8 @@ class RWGController {
    }
 
 
-   // Load the saved faceted search from database
-   def loadFacetedSearch = {
-			  
-	   def id = params.id   // saved faceted search id
-	   
+   // Load the faceted search keyword from database
+   JSONObject getFacetedSearchKeywords(long id)  {
 	   def authPrincipal = springSecurityService.getPrincipal()
 	   def userId = authPrincipal.id
 
@@ -1058,7 +1054,8 @@ class RWGController {
 	   boolean successFlag
 	   def msg = ""
 
-	   JSONObject searchTerms = new JSONObject()	   
+		  
+	   JSONObject searchTerms = new JSONObject()
 	   
 	   int i = 0
 	   int termsNotFound = 0
@@ -1070,22 +1067,23 @@ class RWGController {
 	   else   {
 		   def criteria = s.criteria
 
-		   // convert the criteria string to a list of search keyword ids		   
-           def ids = criteria.tokenize('|')		   
+		   // convert the criteria string to a list of search keyword ids
+		   def ids = criteria.tokenize('|')
 
 		   ids.each {
 			   JSONObject termArray = new JSONObject()   // json object for current search term
 			   def skId = it    // search keyword id
 			
-			   // do thru an HQL query to make faster?	   
+			   // do thru an HQL query to make faster?
 			   SearchKeyword sk = SearchKeyword.get(skId)
 			   
 			   if (sk)  {
 				   termArray.put("id", skId.toString())
-				   termArray.put("dataCategory", sk.dataCategory)
-				   termArray.put("displayDataCategory", sk.displayDataCategory)
 				   termArray.put("keyword", sk.keyword)
-					   
+				   termArray.put("categoryId", sk.dataCategory)
+				   termArray.put("categoryDisplay", sk.displayDataCategory)
+				   termArray.put("categorySOLR", getSOLRCategoryName(sk.dataCategory))
+				   
 				   searchTerms.put(i.toString(), termArray)
 				   i++
 			   }
@@ -1094,7 +1092,7 @@ class RWGController {
 			   }
 		   }
 		   
-	       successFlag = true
+		   successFlag = true
 		   msg = ""
 	   }
 			  
@@ -1104,6 +1102,15 @@ class RWGController {
 	   ret.put('searchTerms', searchTerms)
 	   ret.put('count', i)
 	   ret.put('termsNotFound', termsNotFound)
+
+   }   
+   
+   // Load the saved faceted search from database (called as action from frontend)
+   def loadFacetedSearch = {
+			  
+	   def id = params.id as Long  // saved faceted search id
+	
+	   JSONObject ret = getFacetedSearchKeywords(id)    
 	   
 	   response.setContentType("text/json")
 	   response.outputStream << ret?.toString()
@@ -1116,6 +1123,17 @@ class RWGController {
 
 	   def userId = authPrincipal.id   
 	   def favorites = SavedFacetedSearch.findAllByUserId(userId, [sort:"createDt", order:"desc"])
+
+	   // add the search terms and counts as properties to each favorite 	   	   
+	   favorites.each  {
+		   
+		   def sk = getFacetedSearchKeywords(it.id)
+		   def searchTerms = sk.get('searchTerms')		   		   
+		   def searchTermsCount = sk.get('count')		   	   
+		   
+		   it.metaClass.searchTerms = searchTerms
+		   it.metaClass.searchTermsCount = searchTermsCount
+	   }
 	   
 	   return favorites	   
 			  
