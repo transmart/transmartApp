@@ -45,7 +45,14 @@
         <!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
         <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-msie.min.js')}"></script> 
-
+		
+		<!-- d3js Visualization Library -->
+		<script type="text/javascript" src="${resource(dir:'js/d3', file:'d3.v2.js')}"></script>
+       
+       	<!--Pie Chart -->
+       	<script type="text/javascript" src="${resource(dir:'js', file:'piechart.js')}"></script>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'piechart.css')}"></link>
+        
         <script type="text/javascript" charset="utf-8">        
 	        var searchResultsURL = "${createLink([action:'loadSearchResults'])}";
 	        var facetResultsURL = "${createLink([action:'getFacetResults'])}";
@@ -67,7 +74,9 @@
 	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";	        
 	        var mouse_inside_options_div = false;
-
+			var getPieChartDataURL = "${createLink([action:'getPieChartData'])}";
+			var showHomePageFirst=true;
+			
 	        jQuery(document).ready(function() {
 		        
 		        addSelectCategories();
@@ -109,6 +118,8 @@
 		             }
 
 	            });	
+
+	            launchHomePage();
  
 	        });	
             
@@ -145,7 +156,15 @@
 				<div class='toolbar-item'>Expand All</div>
 
 				 -->
+				 <div id="searchResultOptions_launchHomePage" class='toolbar-item' onclick='hideResultsPage();showHomePage();'>
+                              Home
+                        </div> 
+                 <div id="searchResultOptions_launchResultsPage" class='toolbar-item' onclick='hideHomePage();showResultsPage();'>
+                              Search Results
+                        </div>     
 				<div class='toolbar-item' onclick='collapseAllAnalyses();'>Collapse All</div>
+                               
+				
 	  			<div id="searchResultOptions_holder">
 				<div id="searchResultOptions_btn" class='toolbar-item'>
 					 Options <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
@@ -170,7 +189,7 @@
 				</div>
 			</div>			
 		</div>
-		
+		<div id="home-div"></div>
         <div id="results-div"></div>
 
          	

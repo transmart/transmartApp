@@ -1138,6 +1138,35 @@ class RWGController {
 	   return favorites	   
 			  
    }
-
+   
+   //Render the home page template
+   def getHomePage = {
+	   def ta=SearchTaxonomy.findByTermName('Therapeutic Areas') //default to ta
+	   def d=SearchTaxonomy.findByTermName('Disease') //default to disease
+	   def currentsubcategoryid;
+	   if(params.currentsubcategoryid)
+	   {
+		   currentsubcategoryid=params.currentsubcategoryid.toLong()
+	   }
+	   else
+	   {
+		   currentsubcategoryid=d.id
+	   }
+	   def rwgDAO = new RWGVisualizationDAO()
+	   def favorites = getFavorites()
+	   def categories=rwgDAO.getCategoriesWithData(ta.id, currentsubcategoryid);
+	   // def categories=rwgDAO.getSearchTaxonomyChildren(ta.id)
+	    def subcategories=rwgDAO.getSearchTaxonomyChildren(1); //TODO: is one always root?
+	   render(template:'home', model: ['categories': categories, 'subcategories': subcategories, 'currentsubcategoryid':currentsubcategoryid, 'favorites':favorites])
+ }
+ 
+   /**
+	* Returns the data for the pie chart visualizations
+	*/
+   def getPieChartData = {
+	   def rwgDAO = new RWGVisualizationDAO()
+	   def m = rwgDAO.getPieChartData(params.catid, params.ddid, params.boolean('drillback'), params.charttype)
+	   render m as JSON
+   }
    
 }

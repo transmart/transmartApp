@@ -1118,4 +1118,191 @@ class RWGVisualizationDAO {
 
 	    return normalizedValues
 	}
+	
+	/**
+	 * Get the children of a parent node 
+	 * 
+	 * 
+	 */
+	def getSearchTaxonomyChildren(parentid) {
+		
+		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+
+		String s = """select term_id, term_name from SEARCHAPP.search_taxonomy st, SEARCHAPP.search_taxonomy_rels str
+						where st.term_id=str.child_id
+						and str.parent_id=${parentid}"""
+		
+		def rows = sql.rows(s)
+		log.info("after query in getChildren")
+		// store the sql results into a map containing one map for each probe (which contains a list of genes)
+		def children=[]
+		rows.each {row->
+			def result=[:]
+			result.put('id', row.term_id)
+			result.put('name', row.term_name)	
+			children.push(result)
+		}
+		log.info(children)
+		return children
+	}	
+	
+	/**
+	 * Get the parents of a child node
+	 *
+	 *
+	 */
+	def getSearchTaxonomyParents(childid) {
+		
+		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+
+		String s = """select term_id, term_name from SEARCHAPP.search_taxonomy st, SEARCHAPP.search_taxonomy_rels str
+						where st.term_id=str.parent_id
+						and str.child_id=${childid}"""
+		
+		def rows = sql.rows(s)
+		log.info("after query in parent")
+		// store the sql results into a map containing one map for each probe (which contains a list of genes)
+		def parents=[]
+		rows.each {row->
+			def result=[:]
+			result.put('id', row.term_id)
+			result.put('name', row.term_name)
+			parents.push(result)
+		}
+		log.info(parents)
+		return parents
+	}
+	
+	/*
+	 * Get first parent from d
+	 */
+	def getFirstParentId(stid)
+	{
+		def parentid=1;
+		def parents=getSearchTaxonomyParents(stid) //go get the parents
+		if(!(parents.size()==0)) //if we found some parents
+			{
+				parentid=parents[0]["id"]
+			}
+		return parentid;
+	}
+	
+	
+	/**
+	 * Get the data for home page pie charts
+	 *
+	 *
+	 */
+	def getPieChartData(categoryid, drilldownid, drillback, charttype) {
+		def querydrilldownid=drilldownid
+		def finalDrilldownAndClause=""
+		def categoryAndClause=""
+		
+		//if we got a category id use it
+		if(categoryid)
+		{
+			categoryAndClause="and st2.term_id=${categoryid}";
+		}	
+		
+		//if its a drill up then find the parent instead
+		def parentid=getFirstParentId(drilldownid);		
+		if(drillback==true)
+		{		
+			if(parentid!=1)
+			{
+				drilldownid=parentid //if not at top then go back one
+				querydrilldownid=drilldownid
+			}
+		}
+		else
+		{
+			def children=getSearchTaxonomyChildren(drilldownid)
+			if (children.size()==0)
+			{
+			finalDrilldownAndClause=" and st.term_id=${drilldownid}"
+			querydrilldownid=parentid
+			}
+		}		
+		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+
+		String s ="""
+		select st.term_name, st.term_id, count(distinct baa.study_id) as studies, count(distinct baa.bio_assay_analysis_id) as analyses
+		from BIOMART.bio_analysis_attribute_lineage baal, bio_analysis_attribute baa, search_taxonomy_rels str, search_taxonomy st,
+		BIOMART.bio_analysis_attribute_lineage baal2, bio_analysis_attribute baa2, search_taxonomy_rels str2, search_taxonomy st2
+		where baal.ancestor_term_id=str.child_id
+		and str.parent_id=${querydrilldownid}   -- term id for Disease
+		and baa.bio_analysis_attribute_id=baal.bio_analysis_attribute_id                              
+		and str.child_id=st.term_id
+		and baal2.ancestor_term_id=str2.child_id
+		--and str2.parent_id=2   -- term id for Therapeutic Areas
+		and baa2.bio_analysis_attribute_id=baal2.bio_analysis_attribute_id                              
+		and str2.child_id=st2.term_id
+		and baa.bio_assay_analysis_id=baa2.bio_assay_analysis_id
+		${finalDrilldownAndClause}
+		${categoryAndClause}
+		group by st.term_name, st.term_id"""
+			
+		def rows = sql.rows(s)
+		log.info("after query in getPieChartData")
+		// store the sql results into a map containing one map for each probe (which contains a list of genes)
+		def chart=[:]
+		def data=[]
+		rows.each {row->
+			def result=[:]
+			result.put('id', row.term_id)
+			result.put('name', row.term_name)
+			if(charttype.toString().equalsIgnoreCase("studies"))
+			{
+			result.put('value', row.studies)
+			}
+			else
+			{
+			result.put('value', row.analyses)
+			}
+			data.push(result)
+		}
+		chart.put("ddid", drilldownid)
+		chart.put("data", data)	
+		log.info(chart)
+		return chart
+	}
+
+	
+	/*
+	* Get the categories that have data for the home page pie charts
+	*
+	*
+	*/
+   def getCategoriesWithData(catparentid, subcatid) {
+	 
+	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+
+	   String s ="""
+		select st2.term_name, st2.term_id
+		from BIOMART.bio_analysis_attribute_lineage baal, bio_analysis_attribute baa, search_taxonomy_rels str, search_taxonomy st,
+		BIOMART.bio_analysis_attribute_lineage baal2, bio_analysis_attribute baa2, search_taxonomy_rels str2, search_taxonomy st2
+		where baal.ancestor_term_id=str.child_id
+		and str.parent_id=${subcatid}   -- term id for Disease
+		and baa.bio_analysis_attribute_id=baal.bio_analysis_attribute_id                              
+		and str.child_id=st.term_id
+		and baal2.ancestor_term_id=str2.child_id
+		and str2.parent_id=${catparentid}   -- term id for Therapeutic Areas
+		and baa2.bio_analysis_attribute_id=baal2.bio_analysis_attribute_id                              
+		and str2.child_id=st2.term_id
+		and baa.bio_assay_analysis_id=baa2.bio_assay_analysis_id
+		group by st2.term_name, st2.term_id"""
+		   
+	   def rows = sql.rows(s)
+	   log.info("after query in getCategoriesWithData")
+	   // store the sql results into a map containing one map for each probe (which contains a list of genes)
+	   def categories=[]
+	   rows.each {row->
+		   def result=[:]
+		   result.put('id', row.term_id)
+		   result.put('name', row.term_name)
+		   categories.push(result)
+	   }
+	   log.info(categories)
+	   return categories
+   }	
 }

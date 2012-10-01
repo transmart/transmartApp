@@ -283,7 +283,7 @@ function showSearchResults()	{
 	
 	//all analyses will be closed when doing a new search, so clear this array
 	openAnalyses = [];
-
+	
 }
 
 // update a node's count (not including children)
@@ -427,6 +427,18 @@ function showFacetResults()	{
 					
 					// set html for results panel
 					jQuery('#results-div').html(html);
+					
+					if(!showHomePageFirst)
+				    {
+					hideHomePage();
+					showResultsPage();
+				    }
+					else
+				    {
+						hideResultsPage();
+						showHomePage();
+						showHomePageFirst=false;
+				    }
 
 					// assign counts that were returned in json object to the tree
 					tree.visit(  function(node) {
@@ -451,7 +463,6 @@ function showFacetResults()	{
 					 // redraw entire tree after counts updated
 					 tree.redraw();
 				//}
-
 			},
 			error: function(xhr) {
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
@@ -3394,4 +3405,57 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
 	});
+}
+
+function launchHomePage(currentsubcategoryid)
+{
+      
+      rwgAJAXManager.add({
+  		url:"getHomePage",									
+  		data: {currentsubcategoryid: currentsubcategoryid},
+  		timeout:60000,
+  		success: function(response) {
+  			//jQuery(div).empty();
+  		  jQuery('#home-div').html(response);
+  		  showHomePage();
+  	      hideResultsPage();
+  		}
+  	});
+      
+    
+}
+function showHomePage()
+{
+      jQuery('#home-div').show();      
+}
+function hideHomePage()
+{
+      jQuery('#home-div').hide();      
+}
+function showResultsPage()
+{
+	jQuery('#results-div').show();
+}
+function hideResultsPage()
+{
+	jQuery('#results-div').hide();
+}
+
+function getPieChartData(divid, catid, ddid, drillback, charttype, parentcolor)
+{
+	rwgAJAXManager.add({
+		url:getPieChartDataURL,									
+		data: {catid: catid, ddid: ddid, drillback: drillback, charttype: charttype},
+		timeout:60000,
+		success: function(response) {
+			jQuery("#"+divid).empty();
+			drawPieChart(divid, catid, response.ddid, response.data, charttype, parentcolor);
+		}
+	});
+}
+
+function drawPieChart(divid, data)
+{
+	
+
 }
