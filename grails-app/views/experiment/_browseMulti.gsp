@@ -5,7 +5,7 @@
 	  // choose either the full version
 	  jQuery(".multiselect").multiselect();
 	  // or disable some features
-	  jQuery(".multiselect").multiselect({sortable: false, searchable: false});
+	  //jQuery(".multiselect").multiselect({sortable: false, searchable: false});
 	});
 </script>
 

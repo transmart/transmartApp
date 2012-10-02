@@ -41,7 +41,7 @@ class UploadDataController {
 	//This server is used to access security objects.
 	def springSecurityService
 	def dataUploadService
-	static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
+	static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
 	def index =
 	{
@@ -160,16 +160,8 @@ class UploadDataController {
 			
 			if (f && !f.isEmpty()) {
 				def fullpath = uploadsDir + "/" + filename
-				dataUploadService.writeFile(fullpath, f, upload)
-
-				
-				//Read the first line and flag this metadata with an error immediately if missing required fields
-				
-				BufferedReader br = null;
 				try {
-					br = new BufferedReader(new FileReader(fullpath));
-					String header = br.readLine();
-					result = dataUploadService.verifyFields(header, upload.dataType)
+					result = dataUploadService.writeFile(fullpath, f, upload)
 					if (!result.success) {
 						upload.status = "ERROR"
 						upload.save(flush: true)
@@ -184,14 +176,8 @@ class UploadDataController {
 					render(view: "complete", model: [result: result, uploadDataInstance: upload]);
 					return
 				}
-				finally {
-					if (br) {
-						br.close();
-					}
-				}
 				
 				//If we've reached here, everything is OK - set our state to PENDING to be picked up by ETL
-				
 				upload.status = "PENDING"
 				upload.save(flush: true)
 			}
@@ -252,14 +238,23 @@ class UploadDataController {
 		}
 		
 		//Vendor names can be null - avoid adding these
-		def vendorlist = []
-		def vendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform p ORDER BY vendor")
-		for (vendor in vendors) {
-			if (vendor) {
-				vendorlist.add(vendor);
+		def expVendorlist = []
+		def snpVendorlist = []
+		def expVendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform p WHERE type='Gene Expression' ORDER BY vendor")
+		def snpVendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform p WHERE type='SNP' ORDER BY vendor")
+		
+		for (expVendor in expVendors) {
+			if (expVendor) {
+				expVendorlist.add(expVendor);
 			}
 		}
-		model.put('vendors', vendorlist)
+		for (snpVendor in snpVendors) {
+			if (snpVendor) {
+				snpVendorlist.add(snpVendor);
+			}
+		}
+		model.put('expVendors', expVendorlist)
+		model.put('snpVendors', snpVendorlist)
 	}
 	
 }

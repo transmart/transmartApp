@@ -879,6 +879,8 @@ border-top: 1px solid #CCC;
 	}
 
 
+/* Patchy fixes for JQuery UI below here */
+
 .dataTable {
     margin: 8px 0px;
     font-size: 8px;
@@ -937,3 +939,17 @@ border-top: 1px solid #CCC;
 .dataTables_wrapper {
 	font-size: 9pt;
 }
+
+/* VERY cheap fix for left/right selection box issue! */
+div.ui-multiselect div.selected {
+	float: right;	
+}
+
+div.available ul.available li {
+    white-space: nowrap;   
+}
+
+div.selected ul.selected li {
+    white-space: nowrap;   
+}
+

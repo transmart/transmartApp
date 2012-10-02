@@ -23,11 +23,7 @@ function ieReadFileHeader(filename)
     */
 }
 
-//TODO Get required columns from model
-var GWAS_COLUMNS = ['rs_id', 'p-value'];
-var EQTL_COLUMNS = ['p value', 'RS ID', 'gene'];
-var GWASM_COLUMNS = ['RS #', 'p-value'];
-
+/*
 function verifyHeader() {
 	$j('#columnsAll').html("Columns found: ");
 	$j('#columnsNotFound').empty();
@@ -68,6 +64,7 @@ function verifyHeader() {
 		}
 	}				
 }
+*/
 
 function acknowledgeColumn(column, requiredColumns) {
 	$j('#columnsAll').append(column);
@@ -80,7 +77,7 @@ function acknowledgeColumn(column, requiredColumns) {
 
 function showDataUploadForm() {
 	
-	//TODO Quick and nasty Javascript validation in here - move to actual validator!
+	//TODO Cheap Javascript validation in here - move to actual validator!
 	$j('#studyErrors').empty();
 	$j('#dataTypeErrors').empty();
 	$j('#analysisNameErrors').empty();
@@ -102,7 +99,7 @@ function showDataUploadForm() {
 		return;
 	}
 	
-	var type = $j('#dataType').val();
+	ANALYSIS_TYPE = $j('#dataType').val();
 	var title = $j('#dataType option:selected').text();
 	if (IS_EDIT) {
 		$j('#dataFormTitle2').html('Edit ' + title + ' metadata')
@@ -110,7 +107,7 @@ function showDataUploadForm() {
 	else {
 		$j('#dataFormTitle2').html('Upload ' + title + ' Data')
 	}
-	if (type == 'eqtl') {
+	if (ANALYSIS_TYPE == 'eqtl') {
 		$j('#tagsLabel').html('Disease:');
 		$j('#platformLabel').html('Genotype Platform:');
 		$j('#expressionPlatformRow').show();
@@ -123,8 +120,8 @@ function showDataUploadForm() {
 	$j('#formPage1').hide();
 
 	//Gets around oddity with Ext combo box layout on display:none divs
-	$j('#formPage2').css('visibility', 'visible');
-	$j('#formPage2').hide();
+	//$j('#formPage2').css('visibility', 'visible');
+	//$j('#formPage2').hide();
 	$j('#formPage2').show();
 }
 
@@ -135,7 +132,8 @@ function showAnalysisForm() {
 
 function removeTag(fieldName, tag) {
 	var escapedFieldName = fieldName.replace(".", "\\.");
-	$j('#' + escapedFieldName + '-tag-' + tag).remove();
+	//Attribute selector here gets around spaces in ID, which shouldn't be allowed... but is
+	$j('[id=\'' + escapedFieldName + '-tag-' + tag + "\']").remove();
 	$j('#' + escapedFieldName + ' option[value="' + tag + '"]').remove();
 }
 
@@ -151,7 +149,7 @@ function addPlatform(field) {
 	if (platformId == null || platformId == "null") { return; }
 	
 	//Stop if we already have this tag
-	var existingPlatform = $j('option[value=' + platformId + ']', selectField);
+	var existingPlatform = $j('option[value="' + platformId + '"]', selectField);
 	if (existingPlatform.length > 0) { typeField.val(null); return; }
 	
 	//Get text and value to add
@@ -252,9 +250,21 @@ function generateBrowseWindow(nodeClicked)
                   })
 }
 
-//After the user clicks select on the popup, transfer the study ID and title and update the study table
-function applyStudyBrowse()
-{
+function downloadTemplate() {
+	var type = $j('#dataType').val();
+	window.location = templateDownloadUrl + "?type=" + type;
+}
+
+function loadPlatformTypes(field, type) {
+	var targetField = $j('#' + field + 'Name');
+	var sourceField = $j('#' + field + 'Vendor');
+	var vendor = sourceField.val();
+	fillSelectAjax(targetField, platformTypesUrl, {vendor:vendor, type:type});
+}
+
+
+//After the user clicks select on the study popup, transfer the study ID and title and update the study table
+function applyStudyBrowse() {
       //Loop through all the selected items.
       jQuery(".studyBrowseRow.selected").each(function(i, selected){
     	  var studyId = $j(this).attr('name');

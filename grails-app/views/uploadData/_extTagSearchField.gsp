@@ -4,8 +4,28 @@ jQuery(document).ready(function() {
 	
 	var escapedFieldName = '${fieldName}'.replace(".", "\\.");
 	jQuery("#" + escapedFieldName + "-input").autocomplete({
-		source: '${createLink([action:searchAction,controller:searchController])}',
+		source: function( request, response ) {
+			jQuery.ajax({
+				url: '${createLink([action:searchAction,controller:searchController])}',
+				data: {
+					type: ANALYSIS_TYPE,
+					term: request.term
+				},
+				success: function( data ) {
+					response( jQuery.map( data, function(item) {
+						return {
+							category: item.category,
+							keyword: item.keyword,
+							id: item.id,
+							display: item.display
+						}
+					}));
+				}
+			});
+		},
+			
 		minLength:0,
+		
 		select: function(event, ui) {
 			var diseaseId = ui.item.id;
 			var diseaseName = ui.item.keyword;

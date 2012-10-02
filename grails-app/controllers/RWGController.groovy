@@ -392,6 +392,7 @@ class RWGController {
    */
    def executeSOLRFacetedQuery = {solrRequestUrl, solrQueryParams ->
 	   
+	   //solrQueryParams = "q=(*:*)&facet=true&rows=0&facet.field=STUDY&facet.field={!ex=STUDY_ID}STUDY_ID&fq={!tag=STUDY_ID}(STUDY_ID:\"169381\")&facet.field=ANALYSES&facet.field=REGION_OF INTEREST&facet.field=DATA_TYPE";
 	   JSONObject facetCounts = new JSONObject()
 	   
 	   def slurper = new XmlSlurper()
@@ -912,6 +913,17 @@ class RWGController {
 	   
 	   render(template:'pie')
    }
+   
+   
+   /**
+   * This will render a UI where the user can pick a data type.
+   */
+  def browseDataTypesMultiSelect = {
+	  
+	  def dataTypes = ['GWAS':'GWAS', 'eQTL':'eQTL', 'mRNAExpressionAnalysis':'mRNAExpressionAnalysis', 'Protein Expression Analysis':'Protein Expression Analysis']
+	  
+	  render(template:'dataTypesBrowseMulti',model:[dataTypes:dataTypes])
+  }
    
    
    

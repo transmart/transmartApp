@@ -29,6 +29,7 @@ class BioAssayPlatform {
 		String accession
 		String array
 		String vendor
+		String type
  
 static mapping = {
 	 table 'BIO_ASSAY_PLATFORM'
@@ -44,8 +45,9 @@ static mapping = {
 		accession column:'PLATFORM_ACCESSION'
 		array column:'PLATFORM_ARRAY'
 		vendor column:'PLATFORM_VENDOR'
-		}
+		type column:'PLATFORM_TYPE'
 	}
+}
 
 static constraints = {
 	name(nullable:true, maxSize:400)

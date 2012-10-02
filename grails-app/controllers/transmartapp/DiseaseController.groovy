@@ -21,6 +21,7 @@
 package transmartapp
 
 import bio.Disease;
+import bio.Observation;
 import grails.converters.JSON
 
 class DiseaseController {
@@ -32,11 +33,19 @@ class DiseaseController {
 		def paramMap = params
 		def value = params.term.toUpperCase();
 		
-		def experiments = Disease.executeQuery("SELECT meshCode, disease FROM Disease d WHERE upper(d.disease) LIKE '%' || :term || '%'", [term: value], [max: 15]);
+		def observations = null;
+		//eQTL requires just disease - GWAS types need diseases and observations
+		def diseases = Disease.executeQuery("SELECT meshCode, disease FROM Disease d WHERE upper(d.disease) LIKE '%' || :term || '%'", [term: value], [max: 10]);
+		if (!params.type.equals("eqtl")) {
+			observations = Observation.executeQuery("SELECT code, name FROM Observation o WHERE upper(o.name) LIKE '%' || :term || '%'", [term: value], [max: 10]);
+		}
 		
 		def itemlist = [];
-		for (exp in experiments) {
-			itemlist.add([id:exp[0], keyword:exp[1], category:"DISEASE", display:"Disease"]);
+		for (disease in diseases) {
+			itemlist.add([id:disease[0], keyword:disease[1], category:"DISEASE", display:"Disease"]);
+		}
+		for (observation in observations) {
+			itemlist.add([id:observation[0], keyword:observation[1], category:"OBSERVATION", display:"Observation"]);
 		}
 		
 		render itemlist as JSON;

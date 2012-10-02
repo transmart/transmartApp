@@ -50,6 +50,11 @@
 		<script type="text/javascript" charset="utf-8">
 		var studyBrowseWindowUrl = '${createLink([controller: 'experiment', action: 'browseExperimentsSingleSelect'])}';
 		var studyDetailUrl = '${createLink([controller:'experimentAnalysis', action:'expDetail'])}';
+		var platformTypesUrl = '${createLink([action:'platformsForVendor',controller:'bioAssayPlatform'])}';
+		var templateDownloadUrl = '${createLink([action:'template',controller:'uploadData'])}';
+
+		var IS_EDIT = ${uploadDataInstance?.id ? true : false};
+		var ANALYSIS_TYPE = null;
 		
 		Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -76,22 +81,6 @@
 			});
 			viewport.doLayout();
 		});
-
-		var IS_EDIT = ${uploadDataInstance?.id ? true : false};
-
-		function downloadTemplate() {
-			var type = $j('#dataType').val();
-			window.location = "${createLink([action:'template',controller:'uploadData'])}" + "?type=" + type;
-		}
-
-		function loadPlatformTypes(field) {
-			var targetField = $j('#' + field + 'Name');
-			var sourceField = $j('#' + field + 'Vendor');
-			var vendor = sourceField.val();
-			fillSelectAjax(targetField, "${createLink([action:'platformsForVendor',controller:'bioAssayPlatform'])}", {vendor:vendor});
-		}
-
-
 
 		<g:if test="${study}">
 			updateStudyTable(${study.id});
@@ -188,7 +177,7 @@
 					<a class="button" href="${createLink([action:'index',controller:'search'])}">Cancel</a>
 				</div>
 			</div>
-			<div id="formPage2" style="background-color: #EEE; visibility:hidden;">
+			<div id="formPage2" style="background-color: #EEE; display: none;">
 			<div class="dataFormTitle" id="dataFormTitle2">Upload Data</div>
 				<div style="text-align:right">
 					<a class="button" href="mailto:${grailsApplication.config.com.recomdata.dataUpload.adminEmail}">Email administrator</a>
@@ -266,7 +255,7 @@
 								<div style="float: left; font-style: italic; line-height: 32px; margin-right: 8px">Add new: </div>
 								<div style="float: left; margin-right: 8px">
 									<div class="textsmaller">Vendor</div>
-									<g:select style="width: 400px" name="genotypePlatformVendor" noSelection="${['null':'Select...']}" from="${vendors}" onChange="loadPlatformTypes('genotypePlatform')"/>
+									<g:select style="width: 400px" name="genotypePlatformVendor" noSelection="${['null':'Select...']}" from="${snpVendors}" onChange="loadPlatformTypes('genotypePlatform', 'SNP')"/>
 								</div>
 								<div style="float: left">
 									<div class="textsmaller">Platform</div>
@@ -304,7 +293,7 @@
 								<div style="float: left; font-style: italic; line-height: 32px; margin-right: 8px">Add new: </div>
 								<div style="float: left; margin-right: 8px">
 									<div class="textsmaller">Vendor</div>
-									<g:select style="width: 400px" name="expressionPlatformVendor" noSelection="${['null':'Select...']}" from="${vendors}" onChange="loadPlatformTypes('expressionPlatform')"/>
+									<g:select style="width: 400px" name="expressionPlatformVendor" noSelection="${['null':'Select...']}" from="${expVendors}" onChange="loadPlatformTypes('expressionPlatform', 'Gene Expression')"/>
 								</div>
 								<div style="float: left">
 									<div class="textsmaller">Platform</div>

@@ -17,11 +17,11 @@ function generateBrowseWindow(nodeClicked)
 		  break;
 		case "Region of Interest":
 			URLtoUse = regionBrowseWindow
-			filteringFunction = function(){}
+			filteringFunction = applyPopupFiltersRegions
 			break;
 		case "Data Type":
-			URLtoUse = analysisBrowseWindow
-			filteringFunction = function(){}
+			URLtoUse = dataTypeBrowseWindow
+			filteringFunction = applyPopupFiltersDataTypes
 			break;
 		default:
 			alert("Failed to find applicable popup! Please contact an administrator.");
@@ -34,10 +34,11 @@ function generateBrowseWindow(nodeClicked)
 				modal: false,
 				open: function()
 				{
-					jQuery(this).load(URLtoUse)
+					jQuery(this).empty();
+					jQuery(this).load(URLtoUse);
 				},
 				height: 300,
-				width: 500,
+				width: 800,
 				title: nodeClicked,
 				show: 'fade',
 				hide: 'fade',
@@ -55,7 +56,7 @@ function applyPopupFiltersStudy()
 		var searchParam={id:selected.value,
 		        display:'Study',
 		        keyword:selected.text,
-		        category:'STUDY'};
+		        category:'STUDY_ID'};
 		
 		addSearchTerm(searchParam);
 		
@@ -65,7 +66,6 @@ function applyPopupFiltersStudy()
 	jQuery(this).dialog("destroy")
 }
 
-//After the user clicks select on the popup we need to add the search terms to the filter.
 function applyPopupFiltersAnalyses()
 {
 	//Loop through all the selected items.
@@ -75,7 +75,45 @@ function applyPopupFiltersAnalyses()
 		var searchParam={id:selected.value,
 		        display:'Analyses',
 		        keyword:selected.text,
-		        category:'ANALYSES'};
+		        category:'ANALYSIS_ID'};
+		
+		addSearchTerm(searchParam);
+		
+	})
+	
+	//This destroys our popup window.
+	jQuery(this).dialog("destroy")
+}
+
+function applyPopupFiltersRegions()
+{
+	//Loop through all the selected items.
+	jQuery("#multiselectbox :selected").each(function(i, selected){
+	
+		//Add each item to the search parameters object.
+		var searchParam={id:selected.value,
+		        display:'Region',
+		        keyword:selected.text,
+		        category:'REGION_ID'};
+		
+		addSearchTerm(searchParam);
+		
+	})
+	
+	//This destroys our popup window.
+	jQuery(this).dialog("destroy")
+}
+
+function applyPopupFiltersDataTypes()
+{
+	//Loop through all the selected items.
+	jQuery("#multiselectbox :selected").each(function(i, selected){
+	
+		//Add each item to the search parameters object.
+		var searchParam={id:selected.value,
+		        display:'Data Types',
+		        keyword:selected.text,
+		        category:'DATA_TYPE'};
 		
 		addSearchTerm(searchParam);
 		

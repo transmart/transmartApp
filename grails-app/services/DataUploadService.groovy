@@ -1,3 +1,6 @@
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter
+
 import com.recomdata.upload.DataUploadResult;
 
 /*************************************************************************
@@ -21,15 +24,20 @@ import com.recomdata.upload.DataUploadResult;
 
 public class DataUploadService{
 
-	def verifyFields(header, uploadType) {
+	def verifyFields(providedFields, uploadType) {
 		
 		def requiredFields = RequiredUploadField.findAllByType(uploadType)*.field
-		def providedFields = header.split(",")
 		def missingFields = []
 		for (field in requiredFields) {
 			def found = false
 			for (providedField in providedFields) {
 				if (providedField.trim().toLowerCase().equals(field.trim().toLowerCase())) {
+					found = true
+					break
+				}
+				//Special case for p-value - if we have log p-value, count this as present as well
+				if(providedField.trim().toLowerCase().equals("log p-value") &&
+					field.trim().toLowerCase().equals("p-value")) {
 					found = true
 					break
 				}
@@ -44,11 +52,8 @@ public class DataUploadService{
 	}
 	
 	def writeFile(location, file, upload) {
-		//Open the given file and write it line by line to the storage location.
-		OutputStream out = null;
-		BufferedReader fr = new BufferedReader(new InputStreamReader(file.getInputStream()));
-		
-		String header = fr.readLine();
+		CSVReader csvRead = new CSVReader(new InputStreamReader(file.getInputStream()));
+		String[] header = csvRead.readNext();
 		
 		//Verify fields and return immediately if we don't have a required one
 		def result = verifyFields(header, upload.dataType)
@@ -56,10 +61,60 @@ public class DataUploadService{
 			return result;
 		}
 		
+		def headerList = header.toList();
 		
+		def pValueIndex = -1;
+		def logpValueIndex = -1;
+		def numberOfColumns = headerList.size();
+		for (int i = 0; i < headerList.size(); i++) {
+			def column = headerList[i];
+			if (column.trim().toLowerCase().equals("p-value")) {
+				pValueIndex = i;
+			}
+			else if (column.trim().toLowerCase().equals("log p-value")) {
+				logpValueIndex = i;
+			}
+		}
+		
+		//If we don't have p-value or log p-value, add this column at the end
+		if (pValueIndex < 0) {
+			pValueIndex = headerList.size();
+			headerList[headerList.size()] = "p-value";
+		}
+		else if (logpValueIndex < 0) {
+			logpValueIndex = headerList.size();
+			headerList[headerList.size()] = "log p-value";
+		}
+		
+		/* Columns are sorted - now start writing the file */
+		
+		CSVWriter csv = null;
 		try {
-			out = new FileWriter(new File(location))
-			out.write(f.getBytes())
+			csv = new CSVWriter(new FileWriter(new File(location)))
+			csv.writeNext(headerList as String[])
+			
+			//For each line, check the value and p-value - if we have one but not the other, calculate and fill it
+			String[] nextLine
+			while ((nextLine = csvRead.readNext()) != null) {
+				def columns = nextLine.toList()
+				def currentpValue = columns[pValueIndex]
+				def currentlogpValue = columns[logpValueIndex]
+				
+				if (!currentpValue && !currentlogpValue) {
+					throw new Exception("No p-value or log p-value was provided for a row.")
+				}
+				if (!currentpValue) {
+					columns[pValueIndex] = Math.power(10.0, Double.parseDouble(pValue))
+				}
+				else if (!currentlogpValue) {
+					columns[logpValueIndex] = Math.log10(Double.parseDouble(currentpValue))
+				}
+				
+				//This row is now complete - write it!
+				csv.writeNext(columns as String[])
+			}
+			
+			return result;
 		}
 		catch (Exception e) {
 			upload.status = "ERROR"
@@ -68,12 +123,12 @@ public class DataUploadService{
 			return;
 		}
 		finally {
-			if (out != null) {
-				out.flush();
-				out.close();
+			if (csvRead != null) {
+				csvRead.close();
 			}
-			if (fr != null) {
-				fr.close();
+			if (csv != null) {
+				csv.flush()
+				csv.close()
 			}
 		}
 	}
