@@ -2692,7 +2692,7 @@ function openSaveSearchDialog()  {
 	var keywords = getSearchKeywordList();
 
 	if (keywords.length>0)  {
-		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose,
+		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, position: ["25%"], onClose: modalEffectsClose,
 			onShow: function (dialog) {
 		        dialog.container.css("height", "auto");
 		    }	
@@ -2857,7 +2857,7 @@ function openLoadSearchDialog()  {
 		
 		    jQuery('#load-modal-content').html(response);
 		
-			jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose
+			jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, position: ["10%"], onClose: modalEffectsClose
 			});
 		},
 		error: function(xhr) {
