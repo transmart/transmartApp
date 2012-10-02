@@ -63,10 +63,7 @@ var cohortBGColors = new Array(
 );
 
 
-////////////////////////////////////////////////////////////////////
-// Not in the July 2012 Release
-////////////////////////////////////////////////////////////////////
-/*function updateAnalysisCount(checkedState)	{	
+function updateAnalysisCount(checkedState)	{	
 	var currentCount = jQuery("#analysisCount").val();
 	if (checkedState)	{
 		currentCount++;
@@ -83,8 +80,7 @@ var cohortBGColors = new Array(
 	jQuery("#analysisCountLabel").html(newLabel);
 	return false;
 }
-*/
-////////////////////////////////////////////////////////////////////
+
 function showDetailDialog(dataURL, dialogTitle, dialogHeight)	{
 	var height = 'auto';
 	if (typeof dialogHeight == 'number')	{

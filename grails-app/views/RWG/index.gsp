@@ -147,18 +147,16 @@
 		 
 		<div id="main">
 			<div id="menu_bar">
-			    <!-- 
+			   <div id="searchResultOptions_launchHomePage" class='toolbar-item' onclick='hideResultsPage();showHomePage();'>
+                          Home
+               </div> 
 				<div class='toolbar-item' id="xtButton" href="#xtHolder">Cross Trial Analysis</div>
 				<div id='analysisCountDiv' class='toolbar-item'>
 					<label id="analysisCountLabel">No Analysis Selected</label>
 					<input type="hidden" id="analysisCount" value="0" />
 				</div>
-				<div class='toolbar-item'>Expand All</div>
 
-				 -->
-				 <div id="searchResultOptions_launchHomePage" class='toolbar-item' onclick='hideResultsPage();showHomePage();'>
-                              Home
-                        </div> 
+
                  <div id="searchResultOptions_launchResultsPage" class='toolbar-item' onclick='hideHomePage();showResultsPage();'>
                               Search Results
                         </div>     

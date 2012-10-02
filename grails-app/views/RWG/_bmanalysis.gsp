@@ -8,9 +8,9 @@
     <div class="analysis-name">
         <table class="analysis-table">
             <tr>
-                <td style="width:20px;">
+                <td style="width:35px;">
 		          <g:form controller="RWG" name="AnalysisDetail_${analysisId}" id="AnalysisDetail_${analysisId}" action="doComparison">
-		            <!--   <input type="checkbox" name="Analysis:" + ${counter} onchange="updateAnalysisCount(this.checked);"/>   -->
+		             <input type="checkbox" name="Analysis:" + ${counter} onchange="updateAnalysisCount(this.checked);"/>
 		              <input type="hidden" id="analysisDiv_${analysisId}_state" value="0" />
 			          <a href="#" onclick="showDetailDialog('${createLink(controller:'trial', action:'showAnalysis', id:analysisId)}', '${shortDescription}');">
 	                   <img alt="Analysis" src="${resource(dir:'images',file:'analysis.png')}" style="vertical-align: top;margin-top: -2px;" /></a>                          
