@@ -135,8 +135,8 @@
 				downloadEaUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysis')}",
 				downloadEaTEAUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysisTEA')}",
 			    cortellis: {
-			    	resultsUrl: "${createLink(controller:'cortellis',action:'search', params:[text: session.searchFilter.getExternalTerms()])}"
-			    },
+			    	resultsUrl: "${createLink(controller:'cortellisSearch',action:'search', params:[text: session.searchFilter.getExternalTerms()])}"
+			    }
 				};
 
 			Ext.onReady(function(){

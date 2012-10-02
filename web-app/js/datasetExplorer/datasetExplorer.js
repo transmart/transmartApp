@@ -836,6 +836,42 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
+		
+		cortellisPanel = new Ext.Panel(
+						{
+							id : 'cortellisPanel',
+							title : 'Cortellis Analytics',
+							region : 'center',
+							split : true,
+							height : 90,
+							layout : 'fit',
+							//autoLoad : getExportJobs,
+							tbar : new Ext.Toolbar({
+								id : 'cortellisWorkflowToolbar',
+								title : 'Analysis menu',
+								items : []
+								}),
+							autoScroll : true,
+							autoLoad:
+					        {
+					        	url : pageInfo.basePath+'/cortellisAnalytics/index',
+					           	method:'GET',
+					           	// callback: setDataAssociationAvailableFlag,
+					           	evalScripts:true
+					        },
+							listeners :
+							{
+								activate : function(p) {
+									// todo
+								},
+								deactivate: function(){
+									//resultsTabPanel.tools.help.dom.style.display="none";
+								}
+							},
+							collapsible : true						
+						}
+				);
+				
 		resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
@@ -844,6 +880,9 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
+		if (GLOBAL.cortellisAnalyticsEnabled) {
+			resultsTabPanel.add(cortellisPanel);
+		}
 		
 		southCenterPanel = new Ext.Panel(
 				{

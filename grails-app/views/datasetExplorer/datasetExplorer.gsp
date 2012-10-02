@@ -175,7 +175,8 @@
 	  HighDimDataType: '',
 	  SNPType: '',
 	  basePath: pageInfo.basePath,
-	  hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}'
+	  hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
+	  cortellisAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.cortellisAnalyticsEnable}'
 	};
 	// initialize browser version variables; see http://www.quirksmode.org/js/detect.html
 	BrowserDetect.init();
