@@ -106,12 +106,16 @@ function showDetailDialog(dataURL, dialogTitle, dialogHeight)	{
 }
 
 // Open and close the analysis for a given trial
-function toggleDetailDiv(trialNumber, dataURL)	{	
+function toggleDetailDiv(trialNumber, dataURL, trialID)	{	
 	var imgExpand = "#imgExpand_"  + trialNumber;
 	var trialDetail = "#" + trialNumber + "_detail";
 	
 	// If data attribute is undefined then this is the first time opening the div, load the analysis... 
 	if (typeof jQuery(trialDetail).attr('data') == 'undefined')	{		
+		
+		//display loading message
+		jQuery('#TrialDet_'+ trialID +'_anchor').mask("Loading...");
+		
 		var src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'up_arrow_small2.png');	
 		jQuery(imgExpand).attr('src',src);
 		jQuery.ajax({	
@@ -120,6 +124,7 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 				jQuery(trialDetail).addClass("gtb1");
 				jQuery(trialDetail).html(response);			    
 				jQuery(trialDetail).attr('data', true);							// Add an attribute that we will use as a flag so we don't need to load the data multiple times
+				jQuery('#TrialDet_'+ trialID +'_anchor').unmask();
 			},
 			error: function(xhr) {
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
@@ -509,6 +514,10 @@ function addKeyword(searchTerm, categories, keywords)  {
 			categories.push(categoryObject);		
 		}
 	}
+	
+	//enable Save link
+	setSaveFilterLink('enable');
+	
 }
 
 // Add the search term to the array and show it in the panel.
@@ -518,6 +527,7 @@ function addSearchTerm(searchTerm)	{
 	var keywordId = searchTerm.id;
 	
 	addKeyword(searchTerm, activeCategories, activeKeywords);
+	
 	
 	// clear the search text box
 	jQuery("#search-ac").val("");
@@ -558,6 +568,11 @@ function removeSearchTerm(ctrl)	{
 	
 	// remove the category if there are no terms left in it
 	clearCategoryIfNoTerms(catId);
+	
+	if(activeKeywords.length == 0){
+		//disable Save link
+		setSaveFilterLink('disable');
+	}
 
 	// Call back to the server to clear the search filter (session scope)
 	jQuery.ajax({
@@ -886,6 +901,12 @@ function removeFilterTreeSearchTerm(keywordId)	{
 
 		// check if there are any remaining terms for this category; remove category from list if none
 		clearCategoryIfNoTerms(catId);
+		
+		if(activeKeywords.length == 0){
+			//disable Save link
+			setSaveFilterLink('disable');
+		}
+
 	}
 	
 }
@@ -2646,6 +2667,26 @@ function modalEffectsClose(dialog)  {
 			
 }
 
+
+//enable or disable the save filter link
+function setSaveFilterLink(state){
+	
+	if(state == 'enable'){		
+		jQuery('#save-modal').removeClass('title-link-inactive');
+		jQuery('#save-modal').addClass('title-link-active');
+		jQuery('#save-modal').click(openSaveSearchDialog);
+		
+		}
+	else if (state == 'disable'){
+
+		jQuery('#save-modal').addClass('title-link-inactive');
+		jQuery('#save-modal').removeClass('title-link-active');
+		jQuery('#save-modal').off('click');
+	}
+}
+
+
+
 function openSaveSearchDialog()  {
 
 	var keywords = getSearchKeywordList();
@@ -2917,6 +2958,9 @@ function clearSearch()	{
 	
 	openAnalyses = []; //all analyses will be closed, so clear this array
 	
+	
+	//disable Save link
+	setSaveFilterLink('disable');
 	
 	jQuery("#search-ac").val("");
 	

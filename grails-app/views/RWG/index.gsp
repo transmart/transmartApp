@@ -128,10 +128,6 @@
                 
         <script type="text/javascript">		
 			jQuery(function ($) {
-				// Load dialog on click of Save link
-				$('#save-modal .basic').click(openSaveSearchDialog);
-			});
-			jQuery(function ($) {
 				// Load dialog on click of Load link
 				$('#load-modal .basic').click(openLoadSearchDialog);
 			});
@@ -201,8 +197,8 @@
         <div id="title-search-div" class="ui-widget-header">
 	         <h2 style="float:left" class="title">Active Filters</h2>
 			 <h2 style="float:right; padding-right:5px;" class="title">
-			 	<span id='save-modal'>
-			 		<a href="#" class="basic">Save</a>
+			 	<span id='save-modal' class='title-link-inactive'>
+			 		Save
 				</span>&nbsp;&nbsp;
 				
 			 	<span id='load-modal' style="z-index:1">

@@ -95,6 +95,25 @@ top: 58px;
 	  
 		
 }
+
+
+.title-link-inactive
+{
+	color:#aaa;
+}
+
+.title-link-active
+{
+	color:#333;
+}
+
+.title-link-active:hover
+{
+	cursor:pointer;
+	text-decoration:none;
+}
+
+
 .x-panel-header
 {
 	margin:0;
