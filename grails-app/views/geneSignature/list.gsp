@@ -24,13 +24,13 @@
         <title>Gene Signature Search</title>
         <link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
         <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'jquery.dataTables.css')}">
-        <script type="text/javascript" src="${resource(dir:'js/jquery', file:'jquery-1.7.1.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 	    <script>jQuery.noConflict();</script> 
 
-		<script type="text/javascript" src="${resource(dir:'js/jquery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>		
-		<script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.idletimeout.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.idletimer.js')}"></script>
-       	<script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.dataTables.js')}"></script>
+		<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>		
+		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.idletimeout.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.idletimer.js')}"></script>
+       	<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'geneSigSearch.js')}"></script>
         
@@ -76,19 +76,16 @@
        	<table id="mySignatures"  class="detail" style="width: 100%">
        	<thead>
              <tr>	 
-             	<th style="background:white;">
-			    	<select id="geneListAction" style="font-size: 10px;" onchange="handleActionItem(this);" onclick="populateActionSelection(this);">
-						<option value="">-- Select Action --</option>							             		                    	            								
-			     	</select>
-             	</th>               
+             	<th style="background:white;"></th>               
         	 	<th>Name</th>          	   	                
         	    <th>Author</th>
         	    <th>Date Created</th>
+        	    <th>Date Modified</th>
         	    <th>Species</th>
         	    <th>Tech Platform</th>
 				<th>Tissue Type</th>           	                   	        
-        	    <th>Public</th>
-        	    <th>User Owned</th>
+        	    <th>Visibility</th>
+        	    <th>Ownership</th>
         	    <th>Gene List</th>
         	    <th># Genes</th>
         	    <th># Up-Regulated</th>
