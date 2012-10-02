@@ -73,7 +73,7 @@
 			//These are the URLS for the different browse windows.
 			var studyBrowseWindow = "${createLink([controller:'experiment',action:'browseExperimentsMultiSelect'])}";
 			var analysisBrowseWindow = "${createLink([controller:'experimentAnalysis',action:'browseAnalysisMultiSelect'])}";
-			var regionBrowseWindow = "${createLink([controller:'region',action:'getRegionFilter'])}";
+			var regionBrowseWindow = "${createLink([controller:'RWG',action:'getRegionFilter'])}";
 			var dataTypeBrowseWindow = "${createLink([controller:'RWG',action:'browseDataTypesMultiSelect'])}";
 			var getAnalysisDataURL = "${createLink([controller:'search',action:'getAnalysisResults'])}";
 			var getQQPlotURL = "${createLink([controller:'search',action:'getQQPlotImage'])}";
@@ -196,9 +196,9 @@
 	        <div id="title-search-div" class="ui-widget-header">
 		         <h2 style="float:left" class="title">Active Filters</h2>
 				 <h2 style="float:right; padding-right:5px;" class="title">
-				 	<div id='save-modal'>
+				 	<span id='save-modal'>
 				 		<a href="#" class="basic">Save</a>
-					 </div>
+					 </span>
 				 	<a href="#" onclick="loadSearch(); return false;">Load</a>
 				 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
 				 </h2> 
@@ -233,7 +233,7 @@
 			</div>
 		
 			<!--  This is the DIV we stuff the browse windows into. -->
-			<div id="divBrowsePopups" style="display: none;">
+			<div id="divBrowsePopups" style="width:800px; display: none;">
 				
 			</div>
 			

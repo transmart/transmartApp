@@ -725,8 +725,9 @@ class RWGController {
    
    // Return search keywords
    def searchAutoComplete = {
-	   def category = params.category == null ? "ALL" : params.category	   
-	   render searchKeywordService.findSearchKeywords(category, params.term) as JSON	   
+	   def category = params.category == null ? "ALL" : params.category
+	   def max = params.long('max') ?: 15
+	   render searchKeywordService.findSearchKeywords(category, params.term, max) as JSON	   
    }
         
    // Load the search results for the given search terms using the new annotation tables
@@ -920,11 +921,21 @@ class RWGController {
    */
   def browseDataTypesMultiSelect = {
 	  
-	  def dataTypes = ['GWAS':'GWAS', 'eQTL':'eQTL', 'mRNAExpressionAnalysis':'mRNAExpressionAnalysis', 'Protein Expression Analysis':'Protein Expression Analysis']
+	  def results = SearchTaxonomy.executeQuery("SELECT id, keyword FROM SearchKeyword s WHERE s.dataCategory = 'DATA_TYPE'");
+	  def dataTypes = []
+	  for (result in results) {
+		  dataTypes.add([key:result[0], value:result[1]])
+	  }
 	  
 	  render(template:'dataTypesBrowseMulti',model:[dataTypes:dataTypes])
   }
-   
+  
+  /**
+   * Renders a UI for selecting regions by gene/RSID or chromosome.
+   */
+  def getRegionFilter = {
+	  render(template:'regionFilter', model: [ranges:['+/-':'+/-','+':'+','-':'-']])
+  }
    
    
 }

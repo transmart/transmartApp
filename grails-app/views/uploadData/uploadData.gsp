@@ -131,7 +131,9 @@
 									<div class="fieldError"><g:message error="${it}"/></div>
 								</g:eachError>
 							</div>
-							<tmpl:extSearchField fieldName="study.id" searchAction="extSearch" searchController="experiment" value="${study?.id}" label="${study?.title}"/>
+							<tmpl:extSearchField width="600" fieldName="study.id" searchAction="extSearch" searchController="experiment" value="${study?.id}" label="${study?.title}"/>
+							<a id="study.idChangeButton" class="upload" onclick="$j('#studyDiv').empty().slideUp('slow'); changeField('study.id-combobox', 'study.id')">Change</a>
+							<a style="margin-left: 32px;" id="study.idBrowseButton" class="upload" onclick="generateBrowseWindow('Studies');">Browse</a>
 							<br/><br/>
 							<div id="studyDiv" style="height: 200px; width: 540px; overflow: auto; display: none;">&nbsp;</div>
 						</td>
@@ -147,7 +149,7 @@
 									<div class="fieldError"><g:message error="${it}"/></div>
 								</g:eachError>
 							</div>
-							<g:select name="dataType" name="dataType" noSelection="${['null':'Select...']}" from="${['gwas':'GWAS','gwasm':'GWAS-M','eqtl':'eQTL']}" optionKey="${{it.key}}" optionValue="${{it.value}}" value="${uploadDataInstance?.dataType}"/>
+							<g:select name="dataType" name="dataType" noSelection="${['null':'Select...']}" from="${['gwas':'GWAS','gwasm':'GWAS Metabolomics','eqtl':'eQTL']}" optionKey="${{it.key}}" optionValue="${{it.value}}" value="${uploadDataInstance?.dataType}"/>
 						</td>
 					</tr>
 				

@@ -4,24 +4,29 @@ function generateBrowseWindow(nodeClicked)
 	var URLtoUse = "";
 	var filteringFunction;
 	
+	var dialogHeight = 350;
+	var dialogWidth = 800;
+	
 	//Grab the URL from a JS variable. Different popups need different URLS. We declare these on the RWG Index page.
 	switch(nodeClicked)
 	{
 		case "Study":
-			URLtoUse = studyBrowseWindow
-			filteringFunction = applyPopupFiltersStudy
+			URLtoUse = studyBrowseWindow;
+			filteringFunction = applyPopupFiltersStudy;
 		  break;
 		case "Analyses":
-			URLtoUse = analysisBrowseWindow
-			filteringFunction = applyPopupFiltersAnalyses
+			URLtoUse = analysisBrowseWindow;
+			filteringFunction = applyPopupFiltersAnalyses;
 		  break;
 		case "Region of Interest":
-			URLtoUse = regionBrowseWindow
-			filteringFunction = applyPopupFiltersRegions
+			URLtoUse = regionBrowseWindow;
+			filteringFunction = applyPopupFiltersRegions;
+			dialogHeight = 310;
+			dialogWidth = 430;
 			break;
 		case "Data Type":
-			URLtoUse = dataTypeBrowseWindow
-			filteringFunction = applyPopupFiltersDataTypes
+			URLtoUse = dataTypeBrowseWindow;
+			filteringFunction = applyPopupFiltersDataTypes;
 			break;
 		default:
 			alert("Failed to find applicable popup! Please contact an administrator.");
@@ -29,6 +34,7 @@ function generateBrowseWindow(nodeClicked)
 	}
 	
 	//Load from the URL into a dialog window to capture the user input. We pass in a function that handles what happens after the user presses "Select".
+	jQuery('#divBrowsePopups').dialog("destroy");
 	jQuery('#divBrowsePopups').dialog(
 			{
 				modal: false,
@@ -37,11 +43,12 @@ function generateBrowseWindow(nodeClicked)
 					jQuery(this).empty();
 					jQuery(this).load(URLtoUse);
 				},
-				height: 300,
-				width: 800,
+				height: dialogHeight,
+				width: dialogWidth,
 				title: nodeClicked,
 				show: 'fade',
 				hide: 'fade',
+				resizable: false,
 				buttons: {"Select" : filteringFunction}
 			})
 }
@@ -87,18 +94,31 @@ function applyPopupFiltersAnalyses()
 
 function applyPopupFiltersRegions()
 {
-	//Loop through all the selected items.
-	jQuery("#multiselectbox :selected").each(function(i, selected){
+	//Pick out the useful fields and generate search terms
 	
-		//Add each item to the search parameters object.
-		var searchParam={id:selected.value,
-		        display:'Region',
-		        keyword:selected.text,
-		        category:'REGION_ID'};
-		
-		addSearchTerm(searchParam);
-		
-	})
+	var range = null;
+	var basePairs = null;
+	var searchString = "";
+	
+	if (jQuery('[name=\'regionFilter\'][value=\'gene\']:checked').size() > 0) {
+		//jQuery('#filterGeneId').val();
+		//range = jQuery('#filterGeneRange').val();
+		//basePairs = jQuery('#filterGeneBasePairs').val();
+		//searchString += "Gene:" + jQuery('#filterGeneId').val();
+	}
+	else if (jQuery('[name=\'regionFilter\'][value=\'chromosome\']:checked').size() > 0) {
+		//range = jQuery('#filterChromosomeRange').val();
+		//basePairs = jQuery('#filterChromosomeBasePairs').val();
+		//searchString += "Chromosome:" + jQuery('#filterChromosomeNumber').val() + "," + jQuery('#filterChromosomeUse').val();
+	}
+	//searchString += "!Range:" + range + "!BasePairs:" + basePairs;
+
+	var searchParam={id:searchString,
+	        display:'Region',
+	        keyword:searchString,
+	        category:'REGION'};
+	
+	//addSearchTerm(searchParam);
 	
 	//This destroys our popup window.
 	jQuery(this).dialog("destroy")

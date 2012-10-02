@@ -953,3 +953,11 @@ div.selected ul.selected li {
     white-space: nowrap;   
 }
 
+/* Override multiselect dimensions */
+select.multiselect {
+	width: 96%; height: 94%
+}
+
+.ui-autocomplete .ui-menu-item a {
+	font-size: 8pt;	
+}

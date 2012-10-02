@@ -59,7 +59,7 @@ public class SearchKeywordService {
 	}
 	
 	/** Searches for all keywords for a given term (like %il%) */
-	def findSearchKeywords(category, term)	{
+	def findSearchKeywords(category, term, max)	{
 		log.info "Finding matches for ${term} in ${category}"
 		
 		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
@@ -81,7 +81,7 @@ public class SearchKeywordService {
 					eq("ownerAuthUserId", user.id)
 				}
 			}
-			maxResults(20)
+			maxResults(max)
 			order("rank", "asc")
 			order("termLength", "asc")
 			order("keywordTerm", "asc")
