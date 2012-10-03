@@ -171,7 +171,6 @@ class ExperimentAnalysisController {
 		}
 		
 		def formLayout = formLayoutService.getLayout('study');
-
 		render(template:'/experiment/expDetail', model:[layout: formLayout, experimentInstance:exp, expPlatforms:platforms, expOrganisms:organisms,search:1])
 	}
 
