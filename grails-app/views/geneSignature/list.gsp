@@ -66,6 +66,7 @@
     <div class="body">   
   		<g:form frm="GenSignatureFrm" method="post">
   		<g:hiddenField name="id" value="" />
+  		<g:hiddenField name="adminFlag" value="${adminFlag?'true':'false'}"/>
 		 
 	    <!--  show message -->
     	<g:if test="${flash.message}"><div class="message">${flash.message}</div><br></g:if>

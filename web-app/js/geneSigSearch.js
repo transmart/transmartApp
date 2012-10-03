@@ -107,6 +107,9 @@ function populateActionSelection(){
 		//grabbing the public, owned and deleted flags for the selected gene list.
 		var isPublic=((jQuery("#"+selectedGeneListId+"Public").text())=="Public");
 		var isUserOwned=((jQuery("#"+selectedGeneListId+"Owned").text())=="Owned");
+		var isDeleted=((jQuery("#"+selectedGeneListId+"Deleted").val())=="Deleted");
+		var isAdmin=((jQuery("#adminFlag").val())=="true");
+		isUserOwned=(isAdmin||isUserOwned)
 		
 		//clear out options before re-adding them
 		actionList.html('');
@@ -116,7 +119,7 @@ function populateActionSelection(){
 		actionList.append(jQuery("<option>").val("clone").text("Clone"));
 
 		//Delete only if owned by user and not allready deleted
-		if(isUserOwned){
+		if(isUserOwned && !isDeleted){
 			actionList.append(jQuery("<option>").val("delete").text("Delete"));
 		}
 		//Edit if user owned
