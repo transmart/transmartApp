@@ -8,6 +8,12 @@ function initDataTables(){
 			{"bSearchable":false, "aTargets":[0,7,8,9,10,11,12]} 
 		],
 	});
+	
+	//Inserting the select action drop down into the datatables managed div DOM element
+	//Would be ideal if datatables could manage custom elements like dropdowns. Can it?
+	var selectActionHtml='<select id="geneListAction" style="font-size: 10px;" onchange="handleActionItem(this);" onclick="populateActionSelection(this);"><option value="">-- Select Action --</option></select>'
+	
+	jQuery("#mySignatures_filter").prepend(selectActionHtml)
 }
 
 function initManipulateDiv(){
@@ -99,8 +105,8 @@ function populateActionSelection(){
 		var selectedGeneListId=selectedGeneLists[0].id;
 		
 		//grabbing the public, owned and deleted flags for the selected gene list.
-		var isPublic=((jQuery("#"+selectedGeneListId+"Public").text())=="Yes");
-		var isUserOwned=((jQuery("#"+selectedGeneListId+"Owned").text())=="Yes");
+		var isPublic=((jQuery("#"+selectedGeneListId+"Public").text())=="Public");
+		var isUserOwned=((jQuery("#"+selectedGeneListId+"Owned").text())=="Owned");
 		
 		//clear out options before re-adding them
 		actionList.html('');

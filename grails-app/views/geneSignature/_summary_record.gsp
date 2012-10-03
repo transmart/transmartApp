@@ -26,12 +26,13 @@
     		<img alt="detail" style="vertical-align:middle;" src="${resource(dir:'images',file:'grid.png')}" />&nbsp;${gs.name?.encodeAsHTML()}</a></td>       		
 	<td>${gs.createdByAuthUser.userRealName?.encodeAsHTML()}</td>
 	<td><g:formatDate format="yyyy-MM-dd" date="${gs.dateCreated}" /></td>
+	<td><g:formatDate format="yyyy-MM-dd" date="${gs.lastUpdated}" /></td>
 	<td>${gs.speciesConceptCode?.codeName?.encodeAsHTML()}</td>
-	<td>${gs.techPlatform?.accession?.encodeAsHTML()}</td>
+	<td title="${gs.techPlatform?.description?.encodeAsHTML()}">${gs.techPlatform?.accession?.encodeAsHTML()}</td>
 	<td>${gs.tissueTypeConceptCode?.codeName?.encodeAsHTML()}</td>
-	<td id="${gs.id}Public"; style="text-align:center;">${gs.publicFlag ? 'Yes' : 'No'}</td>
-	<td id="${gs.id}Owned"; style="text-align:center;">${(user.id==gs.createdByAuthUser.id)?'Yes':'No'}</td>
-	<td style="text-align:center;">${(gs.foldChgMetricConceptCode.bioConceptCode=='NOT_USED') ? 'Yes' : 'No'}</td>
+	<td id="${gs.id}Public"; style="text-align:center;">${gs.publicFlag ? 'Public' : 'Private'}</td>
+	<td id="${gs.id}Owned"; style="text-align:center;">${(user.id==gs.createdByAuthUser.id)?'Owned':'Unowned'}</td>
+	<td style="text-align:center;">${(gs.foldChgMetricConceptCode.bioConceptCode=='NOT_USED') ? 'List' : 'Sig'}</td>
 	<td style="text-align:center;">${ctLkup[1]}</td>
 	<td style="text-align:center;">${ctLkup[2]}</td>
 	<td style="text-align:center;">${ctLkup[3]}</td>	
