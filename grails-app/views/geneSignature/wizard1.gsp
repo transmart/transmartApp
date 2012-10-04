@@ -28,11 +28,11 @@
 		<title>Gene Signature Create</title>	
 	</g:else>
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
-	<script type="text/javascript" src="${resource(dir:'js/jquery', file:'jquery-1.7.1.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 	<script>jQuery.noConflict();</script> 
-	<script type="text/javascript" src="${resource(dir:'js/jquery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>		
-	<script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.idletimeout.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'jquery/jquery.idletimer.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>	
+	<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.idletimeout.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.idletimer.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
 	<script type="text/javascript">
 		function validate() {
@@ -43,6 +43,27 @@
 			}
 			return true;
 		}	
+
+		function speciesToggle(selectItem) {			
+			var mouseSrc = document.getElementById('mouse_source_div')
+			var moutseOther = document.getElementById('mouse_other_id')
+			var selectVal = selectItem.value
+			var selectText = selectItem.options[selectItem.selectedIndex].text
+			
+			// toggle mouse source
+			//if(selectVal=='MOUSE_1' || selectVal=='MOUSE_2' || selectVal=='MOUSE_3' || selectVal=='MOUSE_4') 
+			if(selectText.indexOf('Mouse')!=-1)
+				mouseSrc.style.display='inline';
+			else 
+				mouseSrc.style.display='none';
+
+			// toggle mouse other
+			//if(selectVal=='MOUSE_3' || selectVal=='MOUSE_4') 
+			if(selectText=='Mouse (knockout or transgenic)' || selectText=='Mouse (other)') 				
+				moutseOther.style.display='block';
+			else 
+				moutseOther.style.display='none';					
+		}
 	</script>
 </head>
 
@@ -76,7 +97,7 @@
 			<td class="value"><g:textArea name="description" value="${gs.description}" rows="6" cols="68" /></td>
 		</tr>
 		<tr class="prop">
-			<td class="name">Species</td>
+			<td class="name">Species<g:requiredIndicator/></td>
 			<td class="value">			
 				<table>
 					<tr>
@@ -91,10 +112,10 @@
 							<!--  toggle mouse div accordingly -->
 							<g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_1' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_2' || 
 																			gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">      				  	
-							<div id="mouse_source_div" style="display: inline;">For Mouse, enter source<g:requiredIndicator/>:						
+							<div id="mouse_source_div" style="display: inline;">For Mouse, enter source<g:requiredIndicator/></div>:						
 							</g:if>   
 							<g:else>
-							<div id="mouse_source_div" style="display: none;">For Mouse, enter source<g:requiredIndicator/>:						
+							<div id="mouse_source_div" style="display: none;">For Mouse, enter source<g:requiredIndicator/></div>:						
 							</g:else>														
 								<g:select name="speciesMouseSrcConceptCode.id"
 		    				      	from="${wizard.mouseSources}"
@@ -107,7 +128,7 @@
 					</tr>
 					<!--  toggle mouse other accordingly -->
 					<g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">      				  								
-					<tr id="mouse_other_id" style="display: block;"><td">		
+					<tr id="mouse_other_id" style="display: block;">		
 					</g:if>
 					<g:else>		
 					<tr id="mouse_other_id" style="display: none;">
@@ -124,7 +145,7 @@
 			<td colspan="2" class="name">Enter genes manually or copy and paste them in the box below</td>
 		</tr>
 		<tr>
-			<td colspan="2" class=""value>
+			<td colspan="2" class="value">
 				<g:textArea name="genes" value="" rows="6" cols="85"></g:textArea>
 			</td>
 		</tr>
@@ -132,7 +153,7 @@
 			<td colspan="2" class="name">Upload a gene signature file</td>
 		</tr>
 		<tr>
-			<td colspan="2" class=""value>
+			<td colspan="2" class="value">
 				<g:uploadForm name="geneSigUpload">
 					<input type="file" name="geneSigFile" />
 				</g:uploadForm>

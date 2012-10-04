@@ -1,8 +1,8 @@
-var visualize = function(){
+var visualize = function(geneLists){
 	var w = 480,
     h = 290;
 
-	var svg = d3.select("body").append("svg:svg")
+	var svg = d3.select("#svg").append("svg:svg")
     	.attr("width", w)
     	.attr("height", h);
 	
@@ -143,9 +143,30 @@ function addCount(svg, x, y, count){
 	.text(count);
 }
 
+/**
+ * Clears out the results text box.
+ */
 function resetResults(){
-	jQuery("#results").val("");
+	jQuery("#manipulationResults").val("");
 }
-function resetOutputList(){
-	jQuery("#outputList").val("");
+
+/**
+ * Clears out the New Gene List name field
+ */
+function resetGeneListName(){
+	jQuery("#newGeneListName").val("");
+}
+
+/**
+ * Exports the Venn diagram.
+ */
+function exportSVGImage(){
+	
+}
+
+/**
+ * Saves the new list.
+ */
+function saveNewList(){
+	
 }

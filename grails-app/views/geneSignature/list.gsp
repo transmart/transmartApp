@@ -24,16 +24,19 @@
         <title>Gene Signature Search</title>
         <link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
         <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'jquery.dataTables.css')}">
+        <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"></link>
         <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 	    <script>jQuery.noConflict();</script> 
-
+		<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.colorbox-min.js')}"></script>	
 		<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>		
 		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.idletimeout.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.idletimer.js')}"></script>
        	<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'geneSigSearch.js')}"></script>
-        
+       	<script type="text/javascript" src="${resource(dir:'js/d3', file:'d3.v2.js')}"></script>
+       	<script type="text/javascript" src="${resource(dir:'js', file:'manipulateGeneSig.js')}"></script>
+		
 		<!-- override main.css -->
 		<style type="text/css">		
 			.detail td a {
@@ -55,7 +58,6 @@
 			    var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
 		        addTimeoutDialog(heartbeatURL, logoutURL);
 		        console.log("applying datatables");
-		        initManipulateDiv();
 				initDataTables();
 			});
 			
@@ -107,6 +109,27 @@
     	<p>You will be logged off in <span id="timeout-countdown"></span> seconds.</p>
         <p>Do you want to continue your session?</p>
     </div>    
-    <div id="manipulateDiv">Don't manipulate me bro!</div>
+    <div style="display:none;">
+    	<div id="manipulateDiv">
+	    	<div id="svg">
+	        </div>
+	        <br>
+	        <div style="width:480; height:240">
+	   	        <div style="text-align: right; float:left;">
+		       		<g:submitButton class="edit" onClick="exportSVGImage();" value="Export" name="Export"/>
+		        </div>
+		        <div style="text-align: right; float:right;">
+		        	<g:submitButton class="edit" onClick="resetResults();" value="Reset" name="Reset"/>
+		        </div>
+		        <br>
+		        <g:form name="newList">
+		        	<g:textArea id="manipulationResults" name="results" value="" style="height: 180; width:480; border:1px double black"/>
+		        	<br>
+		        	<g:textField name="newGeneListName" value="New Genelist Name" onClick="resetGeneListName()"/>
+		        	<g:submitButton class="edit" onClick="saveNewList();" value="Save" name="Save"/>
+		        </g:form>
+	        </div>
+    	</div>
+    </div>
 	</body>
 </html>

@@ -16,35 +16,19 @@ function initDataTables(){
 	jQuery("#mySignatures_filter").prepend(selectActionHtml)
 }
 
-function initManipulateDiv(){
-	jQuery( "#manipulateDiv" ).dialog({
-		autoOpen: false,
-		show: "blind",
-		hide: "explode"
-	});
-}
-
 function handleActionItem(actionItem) {
-	var id = selectedGeneLists[0].id;
+	var geneListsIds = new Array();
+	for(var i=0;i<selectedGeneLists.length;i++){
+		geneListsIds[i]=selectedGeneLists[i].id;
+	}
 	var action = actionItem.value;
-	var url 
+	var url; 
 	if(action=="") return false;
 	
 	if(action=="concat" || action=="union" || action=="intersect" ||action=="unique"){
-/*		jQuery("#manipulateDiv").load(
-	            "manipulate", 
-	            {}, // omit this param object to issue a GET request instead a POST request, otherwise you may provide post parameters within the object
-	            function (responseText, textStatus, XMLHttpRequest) {
-	                // remove the loading class
-	                dialog.removeClass('loading');
-	            }
-	    ).dialog('open'); */
-        var url = "manipulate";
-        var windowName = "popUp";//$(this).attr("name");
-        var windowSize = "width=520,height=600";
-
-        window.open(url, windowName, windowSize);
-		return;
+		var url = "getGenes";
+		jQuery.post(url, { geneListsIds: geneListsIds, action: action }, function(data){loadManipulateView(data);}, "json")
+        return;
 	}
 	
 	// clone existing object and bring into edit wizard
@@ -85,6 +69,18 @@ function handleActionItem(actionItem) {
 
 	// send to url
 	window.location.href=url;
+}
+
+function loadManipulateView(geneLists){
+	jQuery.colorbox({
+		innerWidth:600, 
+		innerHeight:500,
+		inline:true,
+		href:"#manipulateDiv",
+		onComplete:function(){
+			visualize(geneLists);
+			}
+	});
 }
 
 /**

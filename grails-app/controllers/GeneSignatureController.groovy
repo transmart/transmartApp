@@ -18,6 +18,8 @@
  ******************************************************************/
   
 
+import grails.converters.JSON;
+
 import javax.servlet.ServletOutputStream
 
 import search.GeneSignature
@@ -111,6 +113,17 @@ class GeneSignatureController {
 		}
 
 		render(view: "list", model:[user: user, adminFlag: bAdmin, myItems: myItems, pubItems: pubItems, ctMap: ctMap])
+	}
+	
+
+	/**
+	 * Read in gene list ids and return constituent genes.
+	 */
+	def getGenes = {
+		def result=["1111":["MIT", "HIT", "KIT", "SIT", "CIT", "DIT"]
+			,"2222":["HIT", "KIT", "CIT", "ZIT", "WIT"]
+			,"3333":["MIT", "HIT", "KIT", "SIT", "VIT", "LIT"]];
+		render result as JSON;
 	}
 	
 	/**
@@ -785,6 +798,12 @@ class GeneSignatureController {
 		switch (pageNum) {
 
 			case 1:
+			// species
+			wizard.species = ConceptCode.findAllByCodeTypeName(SPECIES_CATEGORY, [sort:"bioConceptCode"])
+			
+			// mouse sources
+			wizard.mouseSources = ConceptCode.findAllByCodeTypeName(MOUSE_SOURCE_CATEGORY, [sort:"bioConceptCode"])
+			
 			break;
 
 			case 2:
@@ -799,12 +818,6 @@ class GeneSignatureController {
 
 			// owners
 			wizard.owners = ConceptCode.findAllByCodeTypeName(OWNER_CATEGORY, [sort:"bioConceptCode"])
-
-			// species
-			wizard.species = ConceptCode.findAllByCodeTypeName(SPECIES_CATEGORY, [sort:"bioConceptCode"])
-
-			// mouse sources
-			wizard.mouseSources = ConceptCode.findAllByCodeTypeName(MOUSE_SOURCE_CATEGORY, [sort:"bioConceptCode"])
 
 			// tissue types
 			wizard.tissueTypes = ConceptCode.findAllByCodeTypeName(TISSUE_TYPE_CATEGORY, [sort:"bioConceptCode"])
