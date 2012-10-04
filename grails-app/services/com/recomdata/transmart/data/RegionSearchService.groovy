@@ -18,24 +18,56 @@
  ******************************************************************/
   
 
-package i2b2
+package com.recomdata.transmart.data
 
-class SnpInfo {
-	Long id;
-	String name;
-	String chrom;
-	Long chromPos;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+
+import search.SearchKeyword
+
+import com.recomdata.transmart.data.export.util.FileWriterUtil
+
+class RegionSearchService {
 	
-	static mapping = {
-		table 'DE_SNP_INFO'
-		version false
-		cache usage:'read-only'
+    boolean transactional = true
+
+	def dataSource
+	def grailsApplication
+	def config = ConfigurationHolder.config
+	
+	def sqlQuery = """
+	
+	SELECT max(snpinfo.chrom_pos) as high, min(snpinfo.chrom_pos) as low FROM SEARCHAPP.SEARCH_KEYWORD
+	INNER JOIN bio_marker bm ON bm.BIO_MARKER_ID = SEARCH_KEYWORD.BIO_DATA_ID
+	INNER JOIN deapp.de_snp_gene_map gmap ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID
+	INNER JOIN DEAPP.DE_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.name
+	WHERE SEARCH_KEYWORD_ID=?
+	
+	"""
+
+	def getGeneLimits(Long searchId) {
+		//Create objects we use to form JDBC connection.
+		def con, stmt, rs = null;
 		
-		columns {
-			id column: 'SNP_INFO_ID'
-			name column: 'NAME'
-			chrom column: 'CHROM'
-			chromPos column: 'CHROM_POS'
+		//Grab the connection from the grails object.
+		con = dataSource.getConnection()
+		
+		//Prepare the SQL statement.
+		stmt = con.prepareStatement(sqlQuery);
+		stmt.setLong(1, searchId);
+
+		rs = stmt.executeQuery();
+
+		try{
+			if(rs.next()){
+				def high = rs.getLong("HIGH");
+				def low = rs.getLong("LOW");
+				return [low: low, high:high]
+			}
+		}finally{
+			rs?.close();
+			stmt?.close();
+			con?.close();
 		}
 	}
+  
 }

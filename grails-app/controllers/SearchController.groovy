@@ -50,6 +50,7 @@ public class SearchController{
 	def RModulesFileWritingService
 	def RModulesJobProcessingService
 	def RModulesOutputRenderService
+	def regionSearchService
 	
 	String authKeyGG = null
 	
@@ -683,8 +684,9 @@ public class SearchController{
 			throw new Exception("Analysis not found.")
 		}
 		
-		//Get list of REGION restrictions from session
+		//Get list of REGION restrictions from session and translate to RS#
 		def regions = []
+		Set<String> searchProbes = new HashSet<String>();
 		def solrSearch = session['solrSearchFilter']
 		for (s in solrSearch) {
 			if (s.startsWith("REGION")) {
@@ -710,23 +712,60 @@ public class SearchController{
 					}
 					
 					regions.push([type: "CHROMOSOME", position: position, low: low, high: high])
-					def snps = SnpInfo.createCriteria().list() {
+					def names = SnpInfo.createCriteria().list() {
 						eq('chrom', region[1])
 						ge('chromPos', low)
 						le('chromPos', high)
 					}*.name
 				
-					def string = "blah"
+					for (name in names) {
+						String[] probes = name.split(";")
+						for (probe in probes) {
+							searchProbes.add(probe);
+						}
+					}
 				}
 				//Gene
 				else {
-					//TODO Oh dear god I have no idea
-					//Get gene ID
-					//Get range implied by gene (find lowest and highest)
-					//Add to range depending on input
+					def region = s.split(";")
+					def geneId = region[1] as long
+					def direction = region[2]
+					def range = region[3] as long
+					def limits = regionSearchService.getGeneLimits(geneId)
+					def low = limits.get('low')
+					def high = limits.get('high')
+					
+					if (direction.equals("plus")) {
+						high = high + range;
+					}
+					else if (direction.equals("minus")) {
+						low = low - range;
+					}
+					else {
+						high = high + range;
+						low = low - range;
+					}
+					
+					regions.push([type: "GENE", low: low, high: high])
+					def names = SnpInfo.createCriteria().list() {
+						ge('chromPos', low)
+						le('chromPos', high)
+					}*.name
+					
+					//FIXME Temporary patch - don't return too many! Needs to be folded into range check
+					int i = 0;
+					for (name in names) {
+						i++
+						if (i > 100) {
+							break;
+						}
+						String[] probes = name.split(";")
+						for (probe in probes) {
+							searchProbes.add(probe);
+						}
+					}
 				}
 			}
-			//We now have a set of rsIDs to restrict to - pass this to our query
 		}
 		
 		//This will hold the index lookups for deciphering the large text meta-data field.
@@ -752,11 +791,11 @@ public class SearchController{
 		switch(currentAnalysis.assayDataType)
 		{
 			case "GWAS" :
-				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId))
+				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId), searchProbes)
 				analysisIndexData = searchDAO.getGwasIndexData()
 				break;
 			case "EQTL" :
-				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId))
+				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId), searchProbes)
 				analysisIndexData = searchDAO.getEqtlIndexData()
 				break;
 			default :
