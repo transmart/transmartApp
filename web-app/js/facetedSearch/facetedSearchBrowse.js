@@ -111,7 +111,7 @@ function applyPopupFiltersRegions()
 		basePairs = jQuery('#filterChromosomeBasePairs').val();
 		searchString += "CHROMOSOME;" + jQuery('#filterChromosomeNumber').val() + ";" + jQuery('#filterChromosomeUse').val() + ";" + jQuery('#filterChromosomePosition').val();
 	}
-	if (basePairs == null) {
+	if (basePairs == null || basePairs == "") {
 		basePairs = 0;
 	}
 	searchString += ";" + range + ";" + basePairs;

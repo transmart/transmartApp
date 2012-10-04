@@ -244,11 +244,13 @@ class UploadDataController {
 		def snpVendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform p WHERE type='SNP' ORDER BY vendor")
 		
 		for (expVendor in expVendors) {
+			println(expVendor)
 			if (expVendor) {
 				expVendorlist.add(expVendor);
 			}
 		}
 		for (snpVendor in snpVendors) {
+			println(snpVendor)
 			if (snpVendor) {
 				snpVendorlist.add(snpVendor);
 			}
