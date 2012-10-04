@@ -515,8 +515,6 @@ function addKeyword(searchTerm, categories, keywords)  {
 		}
 	}
 	
-	//enable Save link
-	setSaveFilterLink('enable');
 	
 }
 
@@ -2615,6 +2613,11 @@ function showSearchTemplate(categories, keywords)	{
 	if (!tooltip)  {
 		// populate div if not tooltip
 		document.getElementById('active-search-div').innerHTML = searchHTML;
+		
+		if(keywords.length > 0){
+			//enable Save link
+			setSaveFilterLink('enable');
+		}
 	}
 	else  {		
 		// html for tooltip - just return the html
@@ -2966,7 +2969,7 @@ function loadSearch(id)  {
 function clearSearch()	{
 	
 	//remove all pending jobs from the ajax queue
-	//rwgAJAXManager.clear(true); (this was causing problems, so removing for now)
+	rwgAJAXManager.clear(true);// (this was causing problems, so removing for now)
 	
 	
 	openAnalyses = []; //all analyses will be closed, so clear this array
