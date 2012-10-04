@@ -837,41 +837,6 @@ Ext.onReady(function()
 				}
 		);
 		
-		cortellisPanel = new Ext.Panel(
-						{
-							id : 'cortellisPanel',
-							title : 'Cortellis Analytics',
-							region : 'center',
-							split : true,
-							height : 90,
-							layout : 'fit',
-							//autoLoad : getExportJobs,
-							tbar : new Ext.Toolbar({
-								id : 'cortellisWorkflowToolbar',
-								title : 'Analysis menu',
-								items : []
-								}),
-							autoScroll : true,
-							autoLoad:
-					        {
-					        	url : pageInfo.basePath+'/cortellisAnalytics/index',
-					           	method:'GET',
-					           	// callback: setDataAssociationAvailableFlag,
-					           	evalScripts:true
-					        },
-							listeners :
-							{
-								activate : function(p) {
-									// todo
-								},
-								deactivate: function(){
-									//resultsTabPanel.tools.help.dom.style.display="none";
-								}
-							},
-							collapsible : true						
-						}
-				);
-		
 		metacoreEnrichmentPanel = new Ext.Panel(
 				{
 					id : 'metacoreEnrichmentPanel',
@@ -897,7 +862,7 @@ Ext.onReady(function()
 					listeners :
 					{
 						activate : function(p) {
-							// todo
+							initMetaCoreTab();
 						},
 						deactivate: function(){
 							//resultsTabPanel.tools.help.dom.style.display="none";
@@ -915,10 +880,8 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
-		if (GLOBAL.cortellisAnalyticsEnabled) {
-			resultsTabPanel.add(cortellisPanel);
-		}
-		if (true || GLOBAL.metacoreAnalyticsEnabled) {
+		
+		if (GLOBAL.metacoreAnalyticsEnabled) {
 			resultsTabPanel.add(metacoreEnrichmentPanel);
 		}
 		

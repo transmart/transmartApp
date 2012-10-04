@@ -90,7 +90,7 @@
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 	
-	<script type="text/javascript" src="/transmart/js/metacore/metacoreEnrichment.js"></script>
+	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
 		
 	<!-- Combo-handled YUI JS files: --> 
 	<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script> 
@@ -178,7 +178,6 @@
 	  SNPType: '',
 	  basePath: pageInfo.basePath,
 	  hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
-	  cortellisAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.cortellisAnalyticsEnable}',
 	  metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
 	};
 	// initialize browser version variables; see http://www.quirksmode.org/js/detect.html

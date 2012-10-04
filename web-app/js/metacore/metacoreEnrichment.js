@@ -6,3 +6,8 @@ function registerMetaCoreEnrichmentDragAndDrop()
 	dtgI = new Ext.dd.DropTarget(independentDiv,{ddGroup : 'makeQuery'});
 	dtgI.notifyDrop = dropOntoCategorySelection;
 } 
+
+function initMetaCoreTab()
+{
+	registerMetaCoreEnrichmentDragAndDrop();
+}

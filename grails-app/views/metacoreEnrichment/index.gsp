@@ -5,7 +5,7 @@
 				<td colspan="4">
 					<span class='AnalysisHeader'>Variable Selection</span>
 					<a href='JavaScript:D2H_ShowHelp(1505,helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP )'>
-				<img src="/transmart/images/help/helpicon_white.jpg" alt="Help" border=0 width=18pt style="margin-top:1pt;margin-bottom:1pt;margin-right:18pt;float:right"/>
+				<img src="${resource(dir:'images/help', file:'helpicon_white.jpg')}" alt="Help" border=0 width=18pt style="margin-top:1pt;margin-bottom:1pt;margin-right:18pt;float:right"/>
 					</a>						
 				</td>			
 			</tr>	
@@ -50,6 +50,3 @@
 		</table>
 	</form>
 	
-	<script type="text/javascript">
-		registerMetaCoreEnrichmentDragAndDrop();
-	</script>
