@@ -25,9 +25,9 @@ function handleActionItem(actionItem) {
 	var url; 
 	if(action=="") return false;
 	
-	if(action=="concat" || action=="union" || action=="intersect" ||action=="unique"){
+	if(action=="concat" || action=="union" || action=="intersection" ||action=="unique"){
 		var url = "getGenes";
-		jQuery.post(url, { geneListsIds: geneListsIds, action: action }, function(data){loadManipulateView(data);}, "json")
+		jQuery.post(url, { geneListsIds: geneListsIds, action: action }, function(data){loadManipulateView(data, action);}, "json")
         return;
 	}
 	
@@ -71,14 +71,18 @@ function handleActionItem(actionItem) {
 	window.location.href=url;
 }
 
-function loadManipulateView(geneLists){
+/**
+ * Loads the div which displays SVG visualization 
+ * and other genelists manipulation fields using colorbox 
+ */
+function loadManipulateView(geneLists, action){
 	jQuery.colorbox({
 		innerWidth:600, 
 		innerHeight:500,
 		inline:true,
 		href:"#manipulateDiv",
 		onComplete:function(){
-			visualize(geneLists);
+			visualize(geneLists, action);
 			}
 	});
 }
@@ -136,7 +140,7 @@ function populateActionSelection(){
 		actionList.append(jQuery("<option>").val("").text("-- Select Action --"));
 		actionList.append(jQuery("<option>").val("union").text("Union"));
 		actionList.append(jQuery("<option>").val("concat").text("Concatinate"));
-		actionList.append(jQuery("<option>").val("intersect").text("Intersect"));
+		actionList.append(jQuery("<option>").val("intersection").text("Intersect"));
 		actionList.append(jQuery("<option>").val("unique").text("Make Unique"));
 	}
 

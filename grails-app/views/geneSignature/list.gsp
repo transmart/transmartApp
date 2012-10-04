@@ -36,6 +36,8 @@
         <script type="text/javascript" src="${resource(dir:'js', file:'geneSigSearch.js')}"></script>
        	<script type="text/javascript" src="${resource(dir:'js/d3', file:'d3.v2.js')}"></script>
        	<script type="text/javascript" src="${resource(dir:'js', file:'manipulateGeneSig.js')}"></script>
+       	<script type="text/javascript">JSCLASS_PATH = '../js/JS.Class/min'</script>
+       	<script type="text/javascript" src="${resource(dir:'js/JS.Class/min', file:'loader-browser.js')}"></script>
 		
 		<!-- override main.css -->
 		<style type="text/css">		
@@ -119,7 +121,7 @@
 		       		<g:submitButton class="edit" onClick="exportSVGImage();" value="Export" name="Export"/>
 		        </div>
 		        <div style="text-align: right; float:right;">
-		        	<g:submitButton class="edit" onClick="resetResults();" value="Reset" name="Reset"/>
+		        	<g:submitButton class="edit" onClick="setResults('');" value="Reset" name="Reset"/>
 		        </div>
 		        <br>
 		        <g:form name="newList">

@@ -127,13 +127,6 @@ class GeneSignatureController {
 	}
 	
 	/**
-	 * Renders the manipulate page with d3 js visualization of gene lists.
-	 */
-	def manipulate = {
-		
-	}
-
-	/**
 	 * initialize session for the create gs wizard
 	 */
 	def createWizard = {

@@ -1,6 +1,28 @@
-var visualize = function(geneLists){
-	var w = 480,
-    h = 290;
+var visualize = function(geneLists, action){
+	
+	var resultArray
+	JS.require('JS.Set', function(){
+		//Process gene lists and perform the set operation as specified by action
+		var sets = processGeneLists(geneLists);
+		
+		//Perform the specified set operation
+		resultArray = operate(sets, action);
+		
+		//Set the default value in the results text box
+		setResults(resultArray.toString());
+	});
+	
+	//Draw the venn diagram
+	draw(geneLists, action);
+
+}
+
+function draw(geneLists, action){
+	//Clear out div before drawing SVG again.
+	jQuery('#svg').empty();
+	
+	//Draw the venn diagram
+	var w = 480, h = 290;
 
 	var svg = d3.select("#svg").append("svg:svg")
     	.attr("width", w)
@@ -144,10 +166,10 @@ function addCount(svg, x, y, count){
 }
 
 /**
- * Clears out the results text box.
+ * Populates the results text box.
  */
-function resetResults(){
-	jQuery("#manipulationResults").val("");
+function setResults(results){
+	jQuery("#manipulationResults").val(results);
 }
 
 /**
@@ -169,4 +191,62 @@ function exportSVGImage(){
  */
 function saveNewList(){
 	
+}
+
+/**
+ * Uses JS.Set to create set objects 
+ * @param geneLists
+ */
+function processGeneLists(geneLists){
+	//Read ids
+	var ids = new Array();
+	var count = 0;
+	for(geneListId in geneLists){
+		ids[count++] = geneListId;
+	}
+	
+	var sets=new Object();
+	//Read genes array from json object
+	for(var i=0;i<ids.length;i++){
+		var set = new JS.Set(geneLists[ids[i]]);
+		sets[ids[i]]=set;
+	}
+
+	return sets;
+}
+
+/**
+ * Reads in an object with all sets and performs the specified action
+ * @param sets
+ * @param action
+ */
+function operate(sets, action){
+	var resultArray;
+	var resultSet;
+	var count = 0;
+	
+	if(action=='union' || action == 'intersection'){
+		for(i in sets){
+			if(count===0){
+				resultSet = sets[i]
+			}else{
+				var evalResult = "resultSet = resultSet."+action+"(sets[i]);";
+				eval(evalResult);
+			}
+			count++;
+		}
+		resultArray = resultSet.toArray();
+	}else if(action == 'concat'){
+		resultArray = new Array();
+		for(i in sets){
+			resultSet = sets[i];
+			resultArray = resultArray.concat(resultSet.toArray());
+		}
+	}else if(action == 'unique'){
+		var concatArray = operate(sets, 'concat');
+		//keep doing this.
+	}
+
+	console.log(resultArray);
+	return resultArray;
 }
