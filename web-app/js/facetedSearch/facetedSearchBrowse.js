@@ -98,23 +98,26 @@ function applyPopupFiltersRegions()
 	
 	var range = null;
 	var basePairs = null;
+	var version = null;
 	var searchString = "";
 	
 	if (jQuery('[name=\'regionFilter\'][value=\'gene\']:checked').size() > 0) {
 		var geneId = jQuery('#filterGeneId').val();
 		range = jQuery('#filterGeneRange').val();
 		basePairs = jQuery('#filterGeneBasePairs').val();
+		use = jQuery('#filterGeneUse').val();
 		searchString += "GENE;" + geneId
 	}
 	else if (jQuery('[name=\'regionFilter\'][value=\'chromosome\']:checked').size() > 0) {
 		range = jQuery('#filterChromosomeRange').val();
 		basePairs = jQuery('#filterChromosomeBasePairs').val();
+		use = jQuery('#filterChromosomeUse').val();
 		searchString += "CHROMOSOME;" + jQuery('#filterChromosomeNumber').val() + ";" + jQuery('#filterChromosomeUse').val() + ";" + jQuery('#filterChromosomePosition').val();
 	}
 	if (basePairs == null || basePairs == "") {
 		basePairs = 0;
 	}
-	searchString += ";" + range + ";" + basePairs;
+	searchString += ";" + range + ";" + basePairs + ";" + use;
 
 	var searchParam={id:searchString,
 	        display:'Region',

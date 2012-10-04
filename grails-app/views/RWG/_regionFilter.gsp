@@ -4,7 +4,8 @@
 <g:radio name="regionFilter" value="gene"/> 
 Gene/RSID: <tmpl:extSearchField width="200" fieldName="filterGeneId" searchAction="searchAutoComplete" searchController="RWG" />
 <a style="color: blue; cursor: pointer" id="filterGeneIdChangeButton" onclick="changeField('filterGeneId-combobox', 'filterGeneId')">Change</a>
-
+<br/>
+Use: <g:select name="filterGeneUse" from="${['HG19':'HG19','HG18':'HG18']}" optionKey="${{it.key}}" optionValue="${{it.value}}"/>
 <br/><br/>
 Location: 
 <g:select name="filterGeneRange" from="${ranges}" optionKey="${{it.key}}" optionValue="${{it.value}}"/> <g:textField name="filterGeneBasePairs" style="width: 50px"/> base pairs</div>
