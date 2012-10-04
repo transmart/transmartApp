@@ -2749,14 +2749,16 @@ function saveSearch(keywords)  {
 			success: function(response) {
 		    	jQuery("#save-modal-content").unmask();
 
-		    	jQuery("#modal-status-message").show().html(response['message']);
 		    	
 		    	  if (response['success'])  {
-		    		    jQuery('#save-modal-controls').fadeOut(100, function(){
-					    	jQuery('#modal-status-message').delay(1500).fadeOut(800, function() {
+		    		    jQuery('#save-modal-content-main').fadeOut(200, function(){
+		    		    	jQuery("#modal-status-message").fadeIn(250).html(response['message']);
+					    	jQuery('#modal-status-message').delay(1200).fadeOut(800, function() {
 				            	jQuery.modal.close();
 				    		  });	
 		    		    });
+		    	  	}else{
+	    		    	jQuery("#modal-status-message").fadeIn(200).html(response['message']);
 		    	  	}
 	            
 			},
