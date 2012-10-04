@@ -19,6 +19,8 @@ var analysisProbeIds = new Array();
 
 var openAnalyses = new Array(); //store the IDs of the analyses that are open
 
+var openTrials = new Array(); //store the trials that are currently expanded
+
 
 //create an ajaxmanager named rwgAJAXManager
 //this will handle all ajax calls on this page and prevent too many 
@@ -63,10 +65,7 @@ var cohortBGColors = new Array(
 );
 
 
-////////////////////////////////////////////////////////////////////
-// Not in the July 2012 Release
-////////////////////////////////////////////////////////////////////
-/*function updateAnalysisCount(checkedState)	{	
+function updateAnalysisCount(checkedState)	{	
 	var currentCount = jQuery("#analysisCount").val();
 	if (checkedState)	{
 		currentCount++;
@@ -83,8 +82,7 @@ var cohortBGColors = new Array(
 	jQuery("#analysisCountLabel").html(newLabel);
 	return false;
 }
-*/
-////////////////////////////////////////////////////////////////////
+
 function showDetailDialog(dataURL, dialogTitle, dialogHeight)	{
 	var height = 'auto';
 	if (typeof dialogHeight == 'number')	{
@@ -110,12 +108,18 @@ function showDetailDialog(dataURL, dialogTitle, dialogHeight)	{
 }
 
 // Open and close the analysis for a given trial
-function toggleDetailDiv(trialNumber, dataURL)	{	
+function toggleDetailDiv(trialNumber, dataURL, trialID)	{	
 	var imgExpand = "#imgExpand_"  + trialNumber;
 	var trialDetail = "#" + trialNumber + "_detail";
 	
 	// If data attribute is undefined then this is the first time opening the div, load the analysis... 
-	if (typeof jQuery(trialDetail).attr('data') == 'undefined')	{		
+	if (typeof jQuery(trialDetail).attr('data') == 'undefined')	{
+		
+		openTrials.push(trialNumber); //add the trial to the openTrials array
+		
+		//display loading message
+		jQuery('#TrialDet_'+ trialID +'_anchor').mask("Loading...");
+		
 		var src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'up_arrow_small2.png');	
 		jQuery(imgExpand).attr('src',src);
 		jQuery.ajax({	
@@ -124,6 +128,7 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 				jQuery(trialDetail).addClass("gtb1");
 				jQuery(trialDetail).html(response);			    
 				jQuery(trialDetail).attr('data', true);							// Add an attribute that we will use as a flag so we don't need to load the data multiple times
+				jQuery('#TrialDet_'+ trialID +'_anchor').unmask();
 			},
 			error: function(xhr) {
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
@@ -133,9 +138,11 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 		var src = jQuery(imgExpand).attr('src').replace('up_arrow_small2.png', 'down_arrow_small2.png');
 		if (jQuery(trialDetail).attr('data') == "true")	{
 			jQuery(trialDetail).attr('data',false);
+			removeByValue(openTrials,trialNumber);//remove the trial to the openTrials array
 		} else	{
 			src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'up_arrow_small2.png');
 			jQuery(trialDetail).attr('data',true);
+			openTrials.push(trialNumber); //add the trial to the openTrials array
 		}	
 		jQuery(imgExpand).attr('src',src);
 		jQuery(trialDetail).toggle();		
@@ -281,8 +288,9 @@ function showSearchResults()	{
 	// call method which retrieves facet counts and search results
 	showFacetResults();
 	
-	//all analyses will be closed when doing a new search, so clear this array
+	//all trials/analyses will be closed when doing a new search, so clear this array
 	openAnalyses = [];
+	openTrials = [];
 	
 }
 
@@ -513,6 +521,8 @@ function addKeyword(searchTerm, categories, keywords)  {
 			categories.push(categoryObject);		
 		}
 	}
+	
+	
 }
 
 // Add the search term to the array and show it in the panel.
@@ -522,6 +532,7 @@ function addSearchTerm(searchTerm)	{
 	var keywordId = searchTerm.id;
 	
 	addKeyword(searchTerm, activeCategories, activeKeywords);
+	
 	
 	// clear the search text box
 	jQuery("#search-ac").val("");
@@ -562,6 +573,11 @@ function removeSearchTerm(ctrl)	{
 	
 	// remove the category if there are no terms left in it
 	clearCategoryIfNoTerms(catId);
+	
+	if(activeKeywords.length == 0){
+		//disable Save link
+		setSaveFilterLink('disable');
+	}
 
 	// Call back to the server to clear the search filter (session scope)
 	jQuery.ajax({
@@ -890,6 +906,12 @@ function removeFilterTreeSearchTerm(keywordId)	{
 
 		// check if there are any remaining terms for this category; remove category from list if none
 		clearCategoryIfNoTerms(catId);
+		
+		if(activeKeywords.length == 0){
+			//disable Save link
+			setSaveFilterLink('disable');
+		}
+
 	}
 	
 }
@@ -1513,7 +1535,12 @@ function collapseAllAnalyses(){
 	while (openAnalyses.length>0){
 		//each time showVisualization is called, the current analysis is removed from openAnalyses
 		showVisualization(openAnalyses[0], false);
-	}	
+	}
+	
+	//close all expanded trials
+	while (openTrials.length>0){
+		toggleDetailDiv(openTrials[0], null, null); //only the trial ID must be passed in
+	}
 }
 
 function updateBoxPlot(analysisID){
@@ -2598,6 +2625,11 @@ function showSearchTemplate(categories, keywords)	{
 	if (!tooltip)  {
 		// populate div if not tooltip
 		document.getElementById('active-search-div').innerHTML = searchHTML;
+		
+		if(keywords.length > 0){
+			//enable Save link
+			setSaveFilterLink('enable');
+		}
 	}
 	else  {		
 		// html for tooltip - just return the html
@@ -2629,8 +2661,8 @@ function focusFirstInput(parent)  {
 
 function modalEffectsOpen(dialog)  {
 	
-    dialog.overlay.fadeIn(200, function () {
-		    dialog.container.slideDown(200,   function () {dialog.data.fadeIn(200, 
+    dialog.overlay.fadeIn(150, function () {
+		    dialog.container.slideDown(150,   function () {dialog.data.fadeIn(150, 
 		    		                                       function() {focusFirstInput(dialog.container);}  );
 			  								              }
                           );
@@ -2638,9 +2670,9 @@ function modalEffectsOpen(dialog)  {
 }
 
 function modalEffectsClose(dialog)  {
-			dialog.data.fadeOut(200, function () {  
-				dialog.container.slideUp(200, function () {
-					dialog.overlay.fadeOut(200, function () {
+			dialog.data.fadeOut(150, function () {  
+				dialog.container.slideUp(150, function () {
+					dialog.overlay.fadeOut(150, function () {
 						jQuery.modal.close(); 
 		      });
 		    });
@@ -2650,22 +2682,42 @@ function modalEffectsClose(dialog)  {
 			
 }
 
+
+//enable or disable the save filter link
+function setSaveFilterLink(state){
+	
+	if(state == 'enable'){		
+		jQuery('#save-modal').removeClass('title-link-inactive');
+		jQuery('#save-modal').addClass('title-link-active');
+		jQuery('#save-modal').click(openSaveSearchDialog);
+		
+		}
+	else if (state == 'disable'){
+
+		jQuery('#save-modal').addClass('title-link-inactive');
+		jQuery('#save-modal').removeClass('title-link-active');
+		jQuery('#save-modal').off('click');
+	}
+}
+
+
+
 function openSaveSearchDialog()  {
 
 	var keywords = getSearchKeywordList();
 
 	if (keywords.length>0)  {
-		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose,
+	
+		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, opacity: [70], position: ["25%"], onClose: modalEffectsClose,
 			onShow: function (dialog) {
 		        dialog.container.css("height", "auto");
 		    }	
 		
 		});
-		
-		
 	}
 	else  {
 		alert("No search criteria to save!")
+
 	}
 		
 
@@ -2680,7 +2732,7 @@ function saveSearch(keywords)  {
 	var keywords = getSearchKeywordList();
 	
 	if  (!name) {
-		alert('Name is required!');
+		jQuery("#modal-status-message").show().html("Please provide a Name to save this filter.");
 		return false;
 	}
 
@@ -2696,12 +2748,16 @@ function saveSearch(keywords)  {
 			timeout:60000,
 			success: function(response) {
 		    	jQuery("#save-modal-content").unmask();
-	            alert(response['message']);	
-	            
-	            // close the dialog if success flag was true
-	            if (response['success'])  {
-	            	jQuery.modal.close();	            	
-	            }
+
+		    	jQuery("#modal-status-message").show().html(response['message']);
+		    	
+		    	  if (response['success'])  {
+		    		    jQuery('#save-modal-controls').fadeOut(100, function(){
+					    	jQuery('#modal-status-message').delay(1500).fadeOut(800, function() {
+				            	jQuery.modal.close();
+				    		  });	
+		    		    });
+		    	  	}
 	            
 			},
 			error: function(xhr) {
@@ -2722,7 +2778,9 @@ function updateSearch(id)  {
 	var name = jQuery("#searchName_" + id).val();
 	
 	if  (!name) {
-		alert('Name is required!');
+		
+		jQuery("#modal-status-message_"+id).show('highlight').html('Pleae enter a name to save the filter.');
+    
 		return false;
 	}
 
@@ -2732,16 +2790,19 @@ function updateSearch(id)  {
 		data: {id:id, name: name},
 		timeout:60000,
 		success: function(response) {
-            alert(response['message']);	
-            
+			
         	jQuery("#load-modal-content").unmask();
             // close the dialog and update static field if success flag was true
             if (response['success'])  {
             	
             	jQuery("#labelSearchName_" + id).text(name);
+            	jQuery("#home_labelSearchName_" +id).text(name); //updates the label on the home page
             	
             	hideEditSearchDiv(id);	            	
-            }
+            }else
+            	{
+        			jQuery("#modal-status-message_"+id).show('highlight').html(response['message']);
+            	}
             
 		},
 		error: function(xhr) {
@@ -2769,12 +2830,16 @@ function deleteSearch(id)  {
 		timeout:60000,
 		success: function(response) {
         	jQuery("#load-modal-content").unmask();
-            alert(response['message']);	 
+            
             
             if (response['success'])  {
-            	jQuery("#favorites_"+id).remove();
+            	jQuery("#filter_favorites_"+id).remove();
+            	jQuery("#home_favorites_"+id).remove();
             }
-            
+            else {
+            	alert(response['message']);
+        	}
+        
 		},
 		error: function(xhr) {
         	jQuery("#load-modal-content").unmask();
@@ -2793,24 +2858,29 @@ function showEditSearchDiv(id)  {
 	
    	
    	// now hide this specific static div, and show its edit div
-   	jQuery("#staticSearchDiv_" + id).hide(250);   	   	
-   	jQuery("#editSearchDiv_" + id).show(250, function() {  		
-   															focusFirstInput(jQuery(this));
-   	                                                    } 
+   	jQuery("#staticSearchDiv_" + id).hide(200);   	   	
+   	jQuery("#editSearchDiv_" + id).show(200, function() {  		
+		   		focusFirstInput(jQuery(this));
+		   	 } 
    	);	            	
 }
 
 //hide the edit search div for the given search id
 function hideEditSearchDiv(id)  {
 				
-   	jQuery("#editSearchDiv_" + id).hide(250);	            	
-   	jQuery("#staticSearchDiv_" + id).show(250);	            	
+   	jQuery("#editSearchDiv_" + id).hide(200);	            	
+   	jQuery("#staticSearchDiv_" + id).show(200);	            	
 }
 
 
 function openLoadSearchDialog()  {
 	
 	var html = "";
+
+	
+    jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, position: ["5%"], onClose: modalEffectsClose });
+    
+    jQuery('#simplemodal-container').mask("Loading...");
 	
 	rwgAJAXManager.add({
 		url:renderFavoritesTemplateURL,									
@@ -2819,9 +2889,8 @@ function openLoadSearchDialog()  {
 		success: function(response) {
 		
 		    jQuery('#load-modal-content').html(response);
-		
-			jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, onClose: modalEffectsClose
-			});
+		    jQuery('#simplemodal-container').unmask();
+			
 		},
 		error: function(xhr) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
@@ -2916,11 +2985,14 @@ function loadSearch(id)  {
 function clearSearch()	{
 	
 	//remove all pending jobs from the ajax queue
-	//rwgAJAXManager.clear(true); (this was causing problems, so removing for now)
+	rwgAJAXManager.clear(true);// (this was causing problems, so removing for now)
 	
 	
 	openAnalyses = []; //all analyses will be closed, so clear this array
 	
+	
+	//disable Save link
+	setSaveFilterLink('disable');
 	
 	jQuery("#search-ac").val("");
 	

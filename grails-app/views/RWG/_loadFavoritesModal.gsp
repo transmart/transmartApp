@@ -5,25 +5,11 @@
 			   <br />
 			</g:if>
 			<g:else>
-    			<h2>Click on name of favorite to load the saved faceted search</h2>
-			    <table id="favoritesTable">
-			        <tr>
-			        	<td>
-					    	    <div>
-					    	    	<div style="float: left;width:100px;margin:10px;font-weight:bold">
-						    				Create Date
-							    	</div>
-					    	    	<div style="float: left;width:200px;margin:10px;font-weight:bold">
-					    	    			Name
-							    	</div>
-					    	    	<div style="float: left;width:30px;margin:10px;font-weight:bold">
-							    	    	Actions
-							    	</div>
-					    	    </div>
-			        	</td>			        	
-			        </tr>
+
+			<div id="saved-filters-holder" style="height:500px; overflow:auto;">
+			    <table>
 					<g:each in="${favorites}" var="f">					
-				        <tr id="favorites_${f.id}" >
+				        <tr id="filter_favorites_${f.id}" >
 				        	<td>
 						    	    <div id="staticSearchDiv_${f.id}" class="staticSearchDiv" >
 						    	    	<div style="float: left;width:100px;margin:10px;">
@@ -41,19 +27,24 @@
 								    	</div>
 						    	    </div>
 		
-						      		<div id="editSearchDiv_${f.id}" class="editSearchDiv">
-										Enter Name <input type="text" id="searchName_${f.id}" size="75" maxlength="100" value="${f.name}" /><br /><br />
-										<br />
+						      		<div id="editSearchDiv_${f.id}" class="editSearchDiv modal-controls">
+										<input type="text" id="searchName_${f.id}" size="75" maxlength="100" value="${f.name}" />
+										<br /><br /><br />
 										<a href="#" onclick="updateSearch(${f.id}); return false;">Save</a>&nbsp;   
 										<a href="#" onclick="hideEditSearchDiv(${f.id}); return false;">Cancel</a>&nbsp;   
-						    	    
+										<br />
+						    	    	<div id="modal-status-message_${f.id}" style="display:none; padding:5px; margin-top:15px;"></div>
 						    	    </div>
 							</td>
 						</tr>
 					</g:each>
 			    </table>
+			    </div>
 			</g:else>
 			<br />
-			<a href="#" onclick="jQuery.modal.close();return false;" class="actions" >Close</a>   
+			<span class="modal-controls">
+			<a href="#" onclick="jQuery.modal.close();return false;" class="actions" >Close</a>  
+			</span>
+			 
 <script>	registerSearchTooltipEvents();
 </script>			

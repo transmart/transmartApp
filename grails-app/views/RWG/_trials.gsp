@@ -24,7 +24,7 @@
                <g:set 
                    var="ts" value="${Calendar.instance.time.time}"                 
                 />       
-               <a href="#" onclick="javascript:toggleDetailDiv('${trialresult.key.trialNumber}', '${createLink(controller:'RWG',action:'getTrialAnalysis',params:[id:trialresult.key.id,trialNumber:trialresult.key.trialNumber,unqKey:ts])}');">
+               <a href="#" onclick="javascript:toggleDetailDiv('${trialresult.key.trialNumber}', '${createLink(controller:'RWG',action:'getTrialAnalysis',params:[id:trialresult.key.id,trialNumber:trialresult.key.trialNumber,unqKey:ts])}', '${trialresult.key.id}');">
                 <img alt="expand/collapse" id="imgExpand_${trialresult.key.trialNumber}" src="${resource(dir:'images',file:'down_arrow_small2.png')}" style="display: inline;"/>                  
                       ${trialresult.value}
                       <g:if test="${trialresult.value > 1}">analyses found</g:if>
