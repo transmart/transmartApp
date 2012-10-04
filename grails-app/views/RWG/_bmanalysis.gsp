@@ -38,7 +38,7 @@
 	       
 			<div id="results_${analysisId}">
 				<div class='vis-toolBar' >
-					<div id="btnResultsExport_${analysisId}" class='vis-toolbar-item' onclick="analysisMenuEvent(this.id);"><img alt="" src="${resource(dir:'images',file:'tiny_down_arrow.png')}" /> Export</div>
+					<div id="btnResultsExport_${analysisId}" class='vis-toolbar-item'><img alt="" src="${resource(dir:'images',file:'internal-link.gif')}" /> Export as CSV</div>
 					<div id="resultsExportOpts_${analysisId}" class='menuOptList' style="display:none;">
 						<ul>
 							<li onclick="exportResultsData('${analysisId}','data');">Export data (.csv)</li>
@@ -56,7 +56,7 @@
               
 	       <div id="qqplot_${analysisId}">
 		      <div class='vis-toolBar' >
-			     <div id="btnqqplotExport_${analysisId}" class='vis-toolbar-item' onclick="analysisMenuEvent(this.id);"><img alt="" src="${resource(dir:'images',file:'tiny_down_arrow.png')}" /> Export</div>	          	
+			     <div id="btnqqplotExport_${analysisId}" class='vis-toolbar-item' onclick=""><img alt="" src="${resource(dir:'images',file:'internal-link.gif')}" /> Export as GIF</div>	          	
 			     <div id="qqplotExportOpts_${analysisId}" class='menuOptList' style="display:none;">
 		             <ul>
 		             <li onclick="exportqqPlotData('${analysisId}','data');">Export data (.csv)</li>

@@ -196,10 +196,12 @@
 	        <div id="title-search-div" class="ui-widget-header">
 		         <h2 style="float:left" class="title">Active Filters</h2>
 				 <h2 style="float:right; padding-right:5px;" class="title">
+				 	<%-- Save/load disabled for now
+				 	
 				 	<span id='save-modal'>
 				 		<a href="#" class="basic">Save</a>
 					 </span>
-				 	<a href="#" onclick="loadSearch(); return false;">Load</a>
+				 	<a href="#" onclick="loadSearch(); return false;">Load</a>--%>
 				 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
 				 </h2> 
 			</div>

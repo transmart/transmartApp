@@ -26,4 +26,9 @@ class SnpInfo {
 	String chrom;
 	Long chromPos;
 	
+	static mapping = {
+		table 'DE_SNP_INFO'
+		version false
+		cache true
+	}
 }

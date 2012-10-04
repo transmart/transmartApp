@@ -354,6 +354,10 @@ class RWGController {
 	   // loop through each regular query parameter
 	   for (qp in queryParams)  {
 		   
+		   //Ignore REGIONs here - used later in analysis filter
+		   if (qp.startsWith("REGION")) {
+			   continue;
+		   }
     	   // each queryParam is in form cat1:term1|term2|term3
 	       String category = qp.split(":")[0]
 	       String termList = qp.split(":")[1]
@@ -619,7 +623,8 @@ class RWGController {
 	   def facetQueryParams = request.getParameterValues('fq')
 
 	   // save all the filter params to a session List variable   
-	   def sessionFilterParams = []	   
+	   def sessionFilterParams = []	  
+	    
 	   for (p in queryParams)  {
 		   sessionFilterParams.add p
 	   }	   
@@ -645,8 +650,7 @@ class RWGController {
 	   def studyCounts = facetCounts['STUDY_ID']
 	   
 	   // retrieve the html string for the results template	   
-	   def html = loadSearchResults(studyCounts, startTime)
-	   
+	   def html = loadSearchResults(studyCounts, startTime)	   
 	   // create a return json object containing both the facet counts to load into tree and html to load into results section
 	   JSONObject ret = new JSONObject()
 	   ret.put('facetCounts', facetCounts)
@@ -934,7 +938,7 @@ class RWGController {
    * Renders a UI for selecting regions by gene/RSID or chromosome.
    */
   def getRegionFilter = {
-	  render(template:'regionFilter', model: [ranges:['+/-':'+/-','+':'+','-':'-']])
+	  render(template:'regionFilter', model: [ranges:['both':'+/-','plus':'+','minus':'-']])
   }
    
    

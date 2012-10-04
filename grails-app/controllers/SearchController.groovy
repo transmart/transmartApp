@@ -25,6 +25,7 @@
 *
 */
 
+import i2b2.SnpInfo;
 import grails.converters.*
 
 import org.hibernate.*
@@ -680,6 +681,52 @@ public class SearchController{
 		if(!currentAnalysis)
 		{
 			throw new Exception("Analysis not found.")
+		}
+		
+		//Get list of REGION restrictions from session
+		def regions = []
+		def solrSearch = session['solrSearchFilter']
+		for (s in solrSearch) {
+			if (s.startsWith("REGION")) {
+				//Chromosome
+				if (s.startsWith("REGION:CHROMOSOME")) {
+					def region = s.split(";")
+					def chrom = region[1]
+					def position = region[3] as long
+					def direction = region[4]
+					def range = region[5] as long
+					def low = position
+					def high = position
+					
+					if (direction.equals("plus")) {
+						high = position + range;
+					}
+					else if (direction.equals("minus")) {
+						low = position - range;
+					}
+					else {
+						high = position + range;
+						low = position - range;
+					}
+					
+					regions.push([type: "CHROMOSOME", position: position, low: low, high: high])
+					def snps = SnpInfo.createCriteria().list() {
+						eq('chrom', region[1])
+						ge('chromPos', low)
+						le('chromPos', high)
+					}*.name
+				
+					def string = "blah"
+				}
+				//Gene
+				else {
+					//TODO Oh dear god I have no idea
+					//Get gene ID
+					//Get range implied by gene (find lowest and highest)
+					//Add to range depending on input
+				}
+			}
+			//We now have a set of rsIDs to restrict to - pass this to our query
 		}
 		
 		//This will hold the index lookups for deciphering the large text meta-data field.

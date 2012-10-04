@@ -21,7 +21,7 @@ function generateBrowseWindow(nodeClicked)
 		case "Region of Interest":
 			URLtoUse = regionBrowseWindow;
 			filteringFunction = applyPopupFiltersRegions;
-			dialogHeight = 310;
+			dialogHeight = 320;
 			dialogWidth = 430;
 			break;
 		case "Data Type":
@@ -101,24 +101,24 @@ function applyPopupFiltersRegions()
 	var searchString = "";
 	
 	if (jQuery('[name=\'regionFilter\'][value=\'gene\']:checked').size() > 0) {
-		//jQuery('#filterGeneId').val();
-		//range = jQuery('#filterGeneRange').val();
-		//basePairs = jQuery('#filterGeneBasePairs').val();
-		//searchString += "Gene:" + jQuery('#filterGeneId').val();
+		var geneId = jQuery('#filterGeneId').val();
+		range = jQuery('#filterGeneRange').val();
+		basePairs = jQuery('#filterGeneBasePairs').val();
+		searchString += "GENE;" + geneId
 	}
 	else if (jQuery('[name=\'regionFilter\'][value=\'chromosome\']:checked').size() > 0) {
-		//range = jQuery('#filterChromosomeRange').val();
-		//basePairs = jQuery('#filterChromosomeBasePairs').val();
-		//searchString += "Chromosome:" + jQuery('#filterChromosomeNumber').val() + "," + jQuery('#filterChromosomeUse').val();
+		range = jQuery('#filterChromosomeRange').val();
+		basePairs = jQuery('#filterChromosomeBasePairs').val();
+		searchString += "CHROMOSOME;" + jQuery('#filterChromosomeNumber').val() + ";" + jQuery('#filterChromosomeUse').val() + ";" + jQuery('#filterChromosomePosition').val();
 	}
-	//searchString += "!Range:" + range + "!BasePairs:" + basePairs;
+	searchString += ";" + range + ";" + basePairs;
 
 	var searchParam={id:searchString,
 	        display:'Region',
 	        keyword:searchString,
 	        category:'REGION'};
 	
-	//addSearchTerm(searchParam);
+	addSearchTerm(searchParam);
 	
 	//This destroys our popup window.
 	jQuery(this).dialog("destroy")

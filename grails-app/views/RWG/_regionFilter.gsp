@@ -16,7 +16,7 @@ Location:
 <div onclick="jQuery('[name=\'regionFilter\'][value=\'chromosome\']').attr('checked', true);">
 <g:radio name="regionFilter" value="chromosome"/> 
 Chromosome: <g:select name="filterChromosomeNumber" from="${1..23}"/> 
-Use: <g:select name="filterChromosomeUse" from="${['HG18':'HG18','HG19':'HG19']}" optionKey="${{it.key}}" optionValue="${{it.value}}"/>
+Use: <g:select name="filterChromosomeUse" from="${['HG19':'HG19','HG18':'HG18']}" optionKey="${{it.key}}" optionValue="${{it.value}}"/>
 <br/><br/>
 Position: 
 <g:textField name="filterChromosomePosition" style="width: 50px"/>

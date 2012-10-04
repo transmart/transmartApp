@@ -1,22 +1,20 @@
 package bio
 
-class ExperimentProperty {
+class AdHocProperty {
 
 	Long id
-	Experiment experiment
+	Long objectId
 	String key
 	String value
-		
-	static belongsTo = [experiment: Experiment]
 	
     static mapping = {
-		table 'BIO_EXPERIMENT_PROPERTY'
+		table 'BIO_AD_HOC_PROPERTY'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 		
 		columns {
-			id column: 'BIO_EXP_PROPERTY_ID'
-			experiment column: 'BIO_DATA_ID'
+			id column: 'AD_HOC_PROPERTY_ID'
+			objectId column: 'BIO_DATA_ID'
 			key column: 'PROPERTY_KEY'
 			value column: 'PROPERTY_VALUE'
 		}
