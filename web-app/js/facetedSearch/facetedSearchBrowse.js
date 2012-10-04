@@ -21,7 +21,7 @@ function generateBrowseWindow(nodeClicked)
 		case "Region of Interest":
 			URLtoUse = regionBrowseWindow;
 			filteringFunction = applyPopupFiltersRegions;
-			dialogHeight = 320;
+			dialogHeight = 340;
 			dialogWidth = 430;
 			break;
 		case "Data Type":
