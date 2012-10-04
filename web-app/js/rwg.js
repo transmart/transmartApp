@@ -897,7 +897,7 @@ function removeFilterTreeSearchTerm(keywordId)	{
 function updateHeatmap(analysisID){
 	
 	var divID = "analysisDiv_" + analysisID;
-	drawHeatmap(divID, jQuery('body').data(analysisID), analysisID);
+	drawHeatmapD3(divID, jQuery('body').data(analysisID), analysisID);
 	
 }
 
@@ -1865,7 +1865,8 @@ function loadHeatmapData(divID, analysisID, probesPage, probesPerPage)	{
 		success: function(response) {
 			jQuery('body').data(analysisID, response); //store the result set in case the heatmap is updated 
 			jQuery('#analysis_holder_' +analysisID).unmask(); //hide the loading msg, unblock the div
-			drawHeatmap(divID, response, analysisID);		
+			drawHeatmapD3(divID, response, analysisID);	
+			jQuery('#'+divID).show();   // why needed, not needed with old heat map?
 			jQuery('#heatmapLegend_'+analysisID).show();
 
 
@@ -1893,8 +1894,7 @@ function showGeneInfo(geneID)
 
 // Take the heatmap data in the second parameter and show it in the Protovis panel
 function drawHeatmap(divID, heatmapJSON, analysisID, forExport)	{
-	
-	
+		
 	// set up arrays to be used to populating drop down boxes for line/box plots
 	// do this first since we need this for determining max probe string length
 	var probesList = new Array() 
@@ -2367,6 +2367,7 @@ function drawHeatmap(divID, heatmapJSON, analysisID, forExport)	{
 
 	vis.root.render();					// Need root panel for the canvas call to work
 	jQuery("#heatmapLegend_" + analysisID).html(drawCohortLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles));
+	
 }
 
 // Helper function to draw the legend for the cohorts in the visualization panel

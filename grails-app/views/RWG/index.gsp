@@ -53,6 +53,9 @@
        	<script type="text/javascript" src="${resource(dir:'js', file:'piechart.js')}"></script>
         <link rel="stylesheet" href="${resource(dir:'css', file:'piechart.css')}"></link>
         
+       	<!--Heatmap (d3) -->
+       	<script type="text/javascript" src="${resource(dir:'js', file:'heatmap.js')}"></script>
+
         <script type="text/javascript" charset="utf-8">        
 	        var searchResultsURL = "${createLink([action:'loadSearchResults'])}";
 	        var facetResultsURL = "${createLink([action:'getFacetResults'])}";
@@ -120,7 +123,7 @@
 	            });	
 
 	            launchHomePage();
- 
+
 	        });	
             
         </script>
@@ -187,8 +190,10 @@
 						</li>
 					</ul>
 				</div>
-			</div>			
+			</div>		
+				
 		</div>
+		
 		<div id="home-div"></div>
         <div id="results-div"></div>
 
@@ -268,4 +273,7 @@
 		       <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
 		
     </body>
+    
+           		
+    
 </html>
