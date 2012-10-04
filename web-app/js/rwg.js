@@ -19,6 +19,8 @@ var analysisProbeIds = new Array();
 
 var openAnalyses = new Array(); //store the IDs of the analyses that are open
 
+var openTrials = new Array(); //store the trials that are currently expanded
+
 
 //create an ajaxmanager named rwgAJAXManager
 //this will handle all ajax calls on this page and prevent too many 
@@ -111,7 +113,9 @@ function toggleDetailDiv(trialNumber, dataURL, trialID)	{
 	var trialDetail = "#" + trialNumber + "_detail";
 	
 	// If data attribute is undefined then this is the first time opening the div, load the analysis... 
-	if (typeof jQuery(trialDetail).attr('data') == 'undefined')	{		
+	if (typeof jQuery(trialDetail).attr('data') == 'undefined')	{
+		
+		openTrials.push(trialNumber); //add the trial to the openTrials array
 		
 		//display loading message
 		jQuery('#TrialDet_'+ trialID +'_anchor').mask("Loading...");
@@ -134,9 +138,11 @@ function toggleDetailDiv(trialNumber, dataURL, trialID)	{
 		var src = jQuery(imgExpand).attr('src').replace('up_arrow_small2.png', 'down_arrow_small2.png');
 		if (jQuery(trialDetail).attr('data') == "true")	{
 			jQuery(trialDetail).attr('data',false);
+			removeByValue(openTrials,trialNumber);//remove the trial to the openTrials array
 		} else	{
 			src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'up_arrow_small2.png');
 			jQuery(trialDetail).attr('data',true);
+			openTrials.push(trialNumber); //add the trial to the openTrials array
 		}	
 		jQuery(imgExpand).attr('src',src);
 		jQuery(trialDetail).toggle();		
@@ -282,8 +288,9 @@ function showSearchResults()	{
 	// call method which retrieves facet counts and search results
 	showFacetResults();
 	
-	//all analyses will be closed when doing a new search, so clear this array
+	//all trials/analyses will be closed when doing a new search, so clear this array
 	openAnalyses = [];
+	openTrials = [];
 	
 }
 
@@ -1528,7 +1535,12 @@ function collapseAllAnalyses(){
 	while (openAnalyses.length>0){
 		//each time showVisualization is called, the current analysis is removed from openAnalyses
 		showVisualization(openAnalyses[0], false);
-	}	
+	}
+	
+	//close all expanded trials
+	while (openTrials.length>0){
+		toggleDetailDiv(openTrials[0], null, null); //only the trial ID must be passed in
+	}
 }
 
 function updateBoxPlot(analysisID){
@@ -2767,7 +2779,7 @@ function updateSearch(id)  {
 	
 	if  (!name) {
 		
-		jQuery("#modal-status-message").show('highlight').html('Pleae enter a name to save the filter.');
+		jQuery("#modal-status-message_"+id).show('highlight').html('Pleae enter a name to save the filter.');
     
 		return false;
 	}
@@ -2778,16 +2790,19 @@ function updateSearch(id)  {
 		data: {id:id, name: name},
 		timeout:60000,
 		success: function(response) {
-            alert(response['message']);	
-            
+			
         	jQuery("#load-modal-content").unmask();
             // close the dialog and update static field if success flag was true
             if (response['success'])  {
             	
             	jQuery("#labelSearchName_" + id).text(name);
+            	jQuery("#home_labelSearchName_" +id).text(name); //updates the label on the home page
             	
             	hideEditSearchDiv(id);	            	
-            }
+            }else
+            	{
+        			jQuery("#modal-status-message_"+id).show('highlight').html(response['message']);
+            	}
             
 		},
 		error: function(xhr) {
@@ -2819,6 +2834,7 @@ function deleteSearch(id)  {
             
             if (response['success'])  {
             	jQuery("#filter_favorites_"+id).remove();
+            	jQuery("#home_favorites_"+id).remove();
             }
             else {
             	alert(response['message']);
@@ -2842,18 +2858,18 @@ function showEditSearchDiv(id)  {
 	
    	
    	// now hide this specific static div, and show its edit div
-   	jQuery("#staticSearchDiv_" + id).hide(250);   	   	
-   	jQuery("#editSearchDiv_" + id).show(250, function() {  		
-   															focusFirstInput(jQuery(this));
-   	                                                    } 
+   	jQuery("#staticSearchDiv_" + id).hide(200);   	   	
+   	jQuery("#editSearchDiv_" + id).show(200, function() {  		
+		   		focusFirstInput(jQuery(this));
+		   	 } 
    	);	            	
 }
 
 //hide the edit search div for the given search id
 function hideEditSearchDiv(id)  {
 				
-   	jQuery("#editSearchDiv_" + id).hide(250);	            	
-   	jQuery("#staticSearchDiv_" + id).show(250);	            	
+   	jQuery("#editSearchDiv_" + id).hide(200);	            	
+   	jQuery("#staticSearchDiv_" + id).show(200);	            	
 }
 
 
