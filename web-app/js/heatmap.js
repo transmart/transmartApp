@@ -177,19 +177,33 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		w_pvalue=0;
 	}
 	var numCohorts = cohorts.length-1;   // there is no cohort at index 0
-			
-	var height;
-	if(forExport){
-		height = 4*h +h_header + (heatmapJSON.length * h) + (cohorts.length-1)*35;
-		cohortDescriptions=highlightCohortDescriptions(cohortDescriptions, true);
-	}else{
-		height = 4*h +h_header + (heatmapJSON.length * h);
-	}
 	
-	var hm = d3.select("#" + divID)
+	var heatmapHeight = 4*h +h_header + (heatmapJSON.length * h);
+	var cohortLegendHeight;
+	var cohortLegendOffset = 0;
+	var heatmapOffset = 0;
+
+	if(forExport){
+		cohortLegendHeight = (cohorts.length-1)*35;
+		cohortLegendOffset = heatmapHeight;  // heatmap on top, legend under
+	}
+	else {
+		cohortLegendHeight = 0;  // legend not drawn with svg so height is zero
+		heatmapOffset = 0;   // legend on top, heatmap under, but not drawing legend within svg object so offset is 0
+	}
+	var height = heatmapHeight + cohortLegendHeight;
+		
+	// create the main svg object
+	var svg = d3.select("#" + divID)
 		.append("svg")
 		.attr("width", w_probe + columns.length * w + w_gene + w_fold_change + w_pvalue + w_Tpvalue)
-		.attr("height", height);
+		.attr("height", height);   
+	
+	
+	var hm = svg
+		.append("g")
+		.attr("transform", "translate(" + 0 + "," + heatmapOffset + ")")
+		.attr("class", "heatmap");
 
 	var colorScale = d3.scale.linear()
 	    .domain([rangeMin, rangeMid, rangeMid, rangeMax])
@@ -251,7 +265,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		}
 	}
 
-	// position of cohosrt header group
+	// position of cohort header group
 	var xPosition = w_probe;
 	var yPosition = 2;
 	
@@ -261,7 +275,8 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 	  .attr("transform", "translate(" + xPosition + "," + yPosition + ")")
 	  ;
 	
-	var leftPosition = 0;  // relative position within cohort header group  
+	var leftPosition = 0;  // relative position within cohort header group
+	
 	for(var i=1; i<=numCohorts; i++) {		
 		var classIndex;
 		
@@ -273,14 +288,13 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		
 		// Cohort header
 		var barC = cohortHeaderGroup.append("rect")
-	    	.data([dataColor])
 			.attr("x", leftPosition)
 			.attr("y", 0)
 			.attr("width", cohortWidths[i])
 			.attr("height", h)
 			.style("stroke", strokeStyleColor)    // color of borders around rectangles
 			.style("stroke-width", 1)    // width of borders around rectangles
-		    .style('fill',function(d) {   return d;  }  )
+		    .style('fill', dataColor  )
 		    .style("shape-rendering", "crispEdges")	
 			;
 		
@@ -300,12 +314,13 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 			var headerFontSize = 16;
 		}
 		
-		// calcualte coordinates for label in center of rect -- is there an easier way to do this with D3?  
+		// calculate coordinates for label in center of rect -- is there an easier way to do this with D3?  
 		var labelX = leftPosition + cohortWidths[i]/2;
-		var labelY = h/2 + headerFontSize/2 - 1;		
+		var labelY = h/2;		
 		cohortHeaderGroup.append("text")
 			.attr("x", labelX)
 			.attr("y", labelY)
+			.attr("dy", ".35em")
  	        .attr("text-anchor", "middle")
 		    .style("fill", textStyleColor)
 		    .style("font-size", headerFontSize + "px")
@@ -316,48 +331,63 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 			
 		// determine left position for next cohort
 	    leftPosition = leftPosition + cohortWidths[i];
-	}	
-	
-	
-// TODO handle legends for export
-/*		
-    
+
+	    var boxWidth = 30;
+	    var boxHeight = 25;
+	    var boxSpacing = 5;
+
 	    
-	    //only draw the legend if the result is being exported as an image
-	    if(forExport){
-	    	
-		    //		Legend	     
-		    var legend = vis.add(pv.Bar)
-		    	.data([dataColor])
-		    	.height(25)
-		    	.top(2*h + (heatmapJSON.length * h)+h_header + i*30)
-		    	.antialias(false)
-		    	.left(0)
-		    	.strokeStyle(strokeStyleColor)
-		    	.lineWidth(1)
-		    	.width(30)
-		    	.fillStyle(function(d)	{
-		    		          return d;
-	    	                 });
+	    // exporting, need to create the legend within svg object
+	    if (forExport)  {
+	    	//GROUP FOR Cohort legend
+	    	var cohortLegendGroup = svg.append("svg:g")
+	    	  .attr("class", "cohortLegendGroup")
+	    	  .attr("transform", "translate(" + 0 + "," + cohortLegendOffset + ")")
+	    	  ;
 
-		    legend.anchor("center").add(pv.Label)
-	    	.textStyle(textStyleColor)
-	    	.font(headerfont)
-	    	.text(cohorts[i] );
-		    
-		    vis.add(pv.Label)
-		    .top(2*h + (heatmapJSON.length * h)+h_header + i*30 +20)
-		    .antialias(false)
-		    .left(35)
-	    	.textStyle(textStyleColor)
-	    	.font("12px  sans-serif")
-	    	.text(cohortDescriptions[i].replace(/_/g, ', '));   	
+	    	cohortDescriptions = highlightCohortDescriptions(cohortDescriptions, true);		    
 	    	
+		    // Cohort legend
+			cohortLegendGroup.append("rect")
+				.attr("x", 0)
+				.attr("y", (i-1)*(boxHeight + boxSpacing))
+				.attr("width", boxWidth)
+				.attr("height", boxHeight)
+				.style("stroke", strokeStyleColor)    // color of borders around rectangles
+				.style("stroke-width", 1)    // width of borders around rectangles
+			    .style('fill', dataColor)
+			    .style("shape-rendering", "crispEdges")	
+				;
+	
+			// cohort legend text inside rectangles
+			labelX = boxWidth/2;
+			labelY = (i-1)*(boxHeight + boxSpacing) + boxHeight/2;
+			cohortLegendGroup.append("text")
+				.attr("x", labelX)
+				.attr("y", labelY)
+				.attr("dy", ".35em")
+		        .attr("text-anchor", "middle")
+			    .style("fill", textStyleColor)
+			    .style("font-size", headerFontSize + "px")
+			    .style("font-family", headerFontFamily)
+		        .text(cohorts[i] )
+		        ;	
+	
+			// cohort legend text descriptions
+			labelX = boxWidth + boxSpacing;
+			
+			var desc=cohortLegendGroup
+			    .append("text")
+				.attr("x", labelX)
+				.attr("y", labelY)
+				.attr("dy", ".35em")
+		        .attr("text-anchor", "left")
+			    .style("fill", textStyleColor)
+		    	.style("font", "12px  sans-serif")
+		    	.text(cohortDescriptions[i].replace(/_/g, ', '));   	
+			;
 	    }
-
-	*/
-	
-	
+	}	
 	var yOffset = h + h_header + 4;
 	var xOffset;
 	//only do this if the data contains fold change values
@@ -479,12 +509,13 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		  //  .style("font-family", headerFontFamily)
  	    .text(function(d) {return d.text; });
 
+	// not exporting, add the html to the div for the legend
+	if (!forExport)  {
+		jQuery("#heatmapLegend_" + analysisID).html(drawCohortLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles));
+	}
 	
-/*
-	
-	jQuery("#heatmapLegend_" + analysisID).html(drawCohortLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles));
-*/	
 }
+
 
 // add one of the data columns to the heatmap (pvalue, tpvalue, or fold change)
 //  hm - heatmap 
