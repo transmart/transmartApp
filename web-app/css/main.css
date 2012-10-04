@@ -195,12 +195,12 @@ textarea {
 	height: 150px;
 	vertical-align: top;
 }
-*/
+
 
 input:focus, select:focus, textarea:focus {
     border: 1px solid #b2d1ff;
 }
-
+*/
 .body {
 	float: left;
     margin: 0 15px 10px 15px;

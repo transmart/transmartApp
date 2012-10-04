@@ -2646,8 +2646,8 @@ function focusFirstInput(parent)  {
 
 function modalEffectsOpen(dialog)  {
 	
-    dialog.overlay.fadeIn(200, function () {
-		    dialog.container.slideDown(200,   function () {dialog.data.fadeIn(200, 
+    dialog.overlay.fadeIn(150, function () {
+		    dialog.container.slideDown(150,   function () {dialog.data.fadeIn(150, 
 		    		                                       function() {focusFirstInput(dialog.container);}  );
 			  								              }
                           );
@@ -2655,9 +2655,9 @@ function modalEffectsOpen(dialog)  {
 }
 
 function modalEffectsClose(dialog)  {
-			dialog.data.fadeOut(200, function () {  
-				dialog.container.slideUp(200, function () {
-					dialog.overlay.fadeOut(200, function () {
+			dialog.data.fadeOut(150, function () {  
+				dialog.container.slideUp(150, function () {
+					dialog.overlay.fadeOut(150, function () {
 						jQuery.modal.close(); 
 		      });
 		    });
@@ -2692,17 +2692,17 @@ function openSaveSearchDialog()  {
 	var keywords = getSearchKeywordList();
 
 	if (keywords.length>0)  {
-		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, position: ["25%"], onClose: modalEffectsClose,
+	
+		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, opacity: [70], position: ["25%"], onClose: modalEffectsClose,
 			onShow: function (dialog) {
 		        dialog.container.css("height", "auto");
 		    }	
 		
 		});
-		
-		
 	}
 	else  {
 		alert("No search criteria to save!")
+
 	}
 		
 
@@ -2717,7 +2717,7 @@ function saveSearch(keywords)  {
 	var keywords = getSearchKeywordList();
 	
 	if  (!name) {
-		alert('Name is required!');
+		jQuery("#modal-status-message").show().html("Please provide a Name to save this filter.");
 		return false;
 	}
 
@@ -2733,12 +2733,16 @@ function saveSearch(keywords)  {
 			timeout:60000,
 			success: function(response) {
 		    	jQuery("#save-modal-content").unmask();
-	            alert(response['message']);	
-	            
-	            // close the dialog if success flag was true
-	            if (response['success'])  {
-	            	jQuery.modal.close();	            	
-	            }
+
+		    	jQuery("#modal-status-message").show().html(response['message']);
+		    	
+		    	  if (response['success'])  {
+		    		    jQuery('#save-modal-controls').fadeOut(100, function(){
+					    	jQuery('#modal-status-message').delay(1500).fadeOut(800, function() {
+				            	jQuery.modal.close();
+				    		  });	
+		    		    });
+		    	  	}
 	            
 			},
 			error: function(xhr) {
@@ -2759,7 +2763,9 @@ function updateSearch(id)  {
 	var name = jQuery("#searchName_" + id).val();
 	
 	if  (!name) {
-		alert('Name is required!');
+		
+		jQuery("#modal-status-message").show('highlight').html('Pleae enter a name to save the filter.');
+    
 		return false;
 	}
 
@@ -2806,12 +2812,15 @@ function deleteSearch(id)  {
 		timeout:60000,
 		success: function(response) {
         	jQuery("#load-modal-content").unmask();
-            alert(response['message']);	 
+            
             
             if (response['success'])  {
-            	jQuery("#favorites_"+id).remove();
+            	jQuery("#filter_favorites_"+id).remove();
             }
-            
+            else {
+            	alert(response['message']);
+        	}
+        
 		},
 		error: function(xhr) {
         	jQuery("#load-modal-content").unmask();
@@ -2848,6 +2857,11 @@ function hideEditSearchDiv(id)  {
 function openLoadSearchDialog()  {
 	
 	var html = "";
+
+	
+    jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, position: ["5%"], onClose: modalEffectsClose });
+    
+    jQuery('#simplemodal-container').mask("Loading...");
 	
 	rwgAJAXManager.add({
 		url:renderFavoritesTemplateURL,									
@@ -2856,9 +2870,8 @@ function openLoadSearchDialog()  {
 		success: function(response) {
 		
 		    jQuery('#load-modal-content').html(response);
-		
-			jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, position: ["10%"], onClose: modalEffectsClose
-			});
+		    jQuery('#simplemodal-container').unmask();
+			
 		},
 		error: function(xhr) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);

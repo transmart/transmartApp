@@ -12,6 +12,7 @@ body {
   height: 100%;
 }
 
+
 #side-scroll {    
   padding: 0;
   margin: 0;
@@ -110,7 +111,17 @@ top: 58px;
 .title-link-active:hover
 {
 	cursor:pointer;
-	text-decoration:none;
+	text-decoration:underline;
+}
+
+
+
+#modal-status-message
+{
+background-color: #EBEBEB;
+border: 1px solid #999;
+color: #333;
+padding: 12px;
 }
 
 

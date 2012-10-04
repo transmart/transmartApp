@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'rwg.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/simpleModal.css')}"></link>
+
         <link rel="stylesheet" href="${resource(dir:'css', file:'searchTooltip.css')}"></link>
                                 
         <!-- jQuery JS libraries -->
@@ -24,7 +25,6 @@
 	    <script>jQuery.noConflict();</script> 
         
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>
-        
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.cookie.js')}"></script>   
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dynatree.min.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.paging.min.js')}"></script>
@@ -32,8 +32,8 @@
  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.ajaxmanager.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
-  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'searchTooltip.js')}"></script>  
+  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
   		
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  
@@ -211,10 +211,7 @@
 
         <g:render template="saveFavoritesModal" />
         
-		<div id="load-modal-content" style="display:none;">
-      		<!-- Load load favorites modal content is done via Ajax call-->
-		</div>
-			
+
 		<div id="active-search-div"></div>
 		 
 		<div id="title-filter" class="ui-widget-header">
@@ -229,6 +226,10 @@
 		        <!-- For image export -->
 		        <canvas id="canvas" width="1000px" height="600px"></canvas>  
 
+		</div>
+		
+		<div id="load-modal-content" style="display:none;">
+      		<!-- Load load favorites modal content is done via Ajax call-->
 		</div>
 		
 		<!--  Everything for the across trial function goes here and is displayed using colorbox -->
@@ -256,6 +257,7 @@
 				
 				</div>
 			</div>
+			
 		</div>
 		
 		       <!--  Used to measure the width of a text element (in svg plots) -->
