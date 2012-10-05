@@ -121,7 +121,7 @@
 		       		<g:submitButton class="edit" onClick="exportSVGImage();" value="Export" name="Export"/>
 		        </div>
 		        <div style="text-align: right; float:right;">
-		        	<g:submitButton class="edit" onClick="setResults('');" value="Reset" name="Reset"/>
+		        	<g:submitButton class="edit" onClick="setResults('', true);" value="Reset" name="Reset"/>
 		        </div>
 		        <br>
 		        <g:form name="newList">
