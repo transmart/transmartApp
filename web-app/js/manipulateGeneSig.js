@@ -292,13 +292,13 @@ function draw(){
  * display counts for each area
  */
 function displayCount(svg){
-	display(svg, 150, 80, region['1'].length);
-	display(svg, 245, 80, region['2'].length);
-	display(svg, 340, 80, region['3'].length);
-	display(svg, 190, 160, region['12'].length);
-	display(svg, 245, 160, region['13'].length);
+	display(svg, 150, 80, region['1'].length);//
+	display(svg, 245, 80, region['12'].length);//
+	display(svg, 340, 80, region['2'].length);
+	display(svg, 190, 160, region['13'].length);//
+	display(svg, 245, 160, region['123'].length);
 	display(svg, 290, 160, region['23'].length);
-	display(svg, 240, 240, region['123'].length);
+	display(svg, 240, 240, region['3'].length);//
 }
 
 function display(svg, x, y, count){
