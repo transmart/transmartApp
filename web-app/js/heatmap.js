@@ -240,20 +240,24 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 	        }
 	      
 	    })
-		.append('svg:title').attr("id", "tooltiptext").text(function(d,i) {
-			var val;
-			if (d.val == undefined)  {
-				val = "null"
-			}
-			else {
-				val = d.val.toFixed(2);
-			}
-			
-			return d.cohort + ":" + d.probe + ":" + d.gene + "=" + val;
-			
-	   	})
 	    ;
-	
+
+    if (!forExport)  {
+    	hmRects.append('svg:title').text(function(d,i) {
+		var val;
+		if (d.val == undefined)  {
+			val = "null"
+		}
+		else {
+			val = d.val.toFixed(2);
+		}
+		
+		return d.cohort + ":" + d.probe + ":" + d.gene + "=" + val;
+		
+    	});
+
+    }
+    
 	// create array of cohort widths
 	var cohortWidths = new Array();
 	for(var i=1; i<=numCohorts; i++) {
@@ -302,7 +306,9 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		var cohortTooltip = cohortDescriptions[i].replace(/_/g, ', ');
 		
 		// Tooltips for cohort header rectangle
-		barC.append('svg:title').attr("id", "tooltiptext").text(cohortTooltip);		
+	    if (!forExport)  {
+	    	barC.append('svg:title').text(cohortTooltip);
+	    }
 				
 		//set the header font size depending on the cell size
 		var headerFontFamily = "sans-serif";
@@ -326,9 +332,12 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		    .style("font-size", headerFontSize + "px")
 		    .style("font-family", headerFontFamily)
  	        .text(cohorts[i] )
- 	        .append('svg:title').attr("id", "tooltiptext").text(cohortTooltip)   // tooltip for label
  	        ;	
 			
+	    if (!forExport)  {
+	    	cohortHeaderGroup.append('svg:title').text(cohortTooltip);   // tooltip for label
+	    }
+	    
 		// determine left position for next cohort
 	    leftPosition = leftPosition + cohortWidths[i];
 
@@ -437,9 +446,11 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
         ;			
 	
 	// tooltip for gene labels
-	geneGroupText.append('svg:title').attr("id", "tooltiptext").text(function(d)	{
-		return d.genelist;
-	} );
+    if (!forExport)  {
+    	geneGroupText.append('svg:title').text(function(d)	{
+    		return d.genelist;
+    	} );
+    }
 		
     // PROBE LABELS
 	xOffset = 0;
@@ -467,7 +478,9 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
         ;			
 	
 	// tooltip for probe labels
-	probeGroupText.append('svg:title').attr("id", "tooltiptext").text("View in boxplot");
+    if (!forExport)  {
+    	probeGroupText.append('svg:title').text("View in boxplot");
+    }
 
 	//GROUP FOR legend (min, max, null)
 	var legendGroup = hm.append("svg:g")
