@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'rwg.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/simpleModal.css')}"></link>
+
         <link rel="stylesheet" href="${resource(dir:'css', file:'searchTooltip.css')}"></link>
                                 
         <!-- jQuery JS libraries -->
@@ -24,7 +25,6 @@
 	    <script>jQuery.noConflict();</script> 
         
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>
-        
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.cookie.js')}"></script>   
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dynatree.min.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.paging.min.js')}"></script>
@@ -32,8 +32,8 @@
  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.ajaxmanager.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
-  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'searchTooltip.js')}"></script>  
+  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
   		
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  
@@ -53,6 +53,9 @@
        	<script type="text/javascript" src="${resource(dir:'js', file:'piechart.js')}"></script>
         <link rel="stylesheet" href="${resource(dir:'css', file:'piechart.css')}"></link>
         
+       	<!--Heatmap (d3) -->
+       	<script type="text/javascript" src="${resource(dir:'js', file:'heatmap.js')}"></script>
+
         <script type="text/javascript" charset="utf-8">        
 	        var searchResultsURL = "${createLink([action:'loadSearchResults'])}";
 	        var facetResultsURL = "${createLink([action:'getFacetResults'])}";
@@ -120,17 +123,13 @@
 	            });	
 
 	            launchHomePage();
- 
+
 	        });	
             
         </script>
         
                 
         <script type="text/javascript">		
-			jQuery(function ($) {
-				// Load dialog on click of Save link
-				$('#save-modal .basic').click(openSaveSearchDialog);
-			});
 			jQuery(function ($) {
 				// Load dialog on click of Load link
 				$('#load-modal .basic').click(openLoadSearchDialog);
@@ -147,18 +146,16 @@
 		 
 		<div id="main">
 			<div id="menu_bar">
-			    <!-- 
+			   <div id="searchResultOptions_launchHomePage" class='toolbar-item' onclick='hideResultsPage();showHomePage();'>
+                          Home
+               </div> 
 				<div class='toolbar-item' id="xtButton" href="#xtHolder">Cross Trial Analysis</div>
 				<div id='analysisCountDiv' class='toolbar-item'>
 					<label id="analysisCountLabel">No Analysis Selected</label>
 					<input type="hidden" id="analysisCount" value="0" />
 				</div>
-				<div class='toolbar-item'>Expand All</div>
 
-				 -->
-				 <div id="searchResultOptions_launchHomePage" class='toolbar-item' onclick='hideResultsPage();showHomePage();'>
-                              Home
-                        </div> 
+
                  <div id="searchResultOptions_launchResultsPage" class='toolbar-item' onclick='hideHomePage();showResultsPage();'>
                               Search Results
                         </div>     
@@ -187,8 +184,10 @@
 						</li>
 					</ul>
 				</div>
-			</div>			
+			</div>		
+				
 		</div>
+		
 		<div id="home-div"></div>
         <div id="results-div"></div>
 
@@ -203,8 +202,8 @@
         <div id="title-search-div" class="ui-widget-header">
 	         <h2 style="float:left" class="title">Active Filters</h2>
 			 <h2 style="float:right; padding-right:5px;" class="title">
-			 	<span id='save-modal'>
-			 		<a href="#" class="basic">Save</a>
+			 	<span id='save-modal' class='title-link-inactive'>
+			 		Save
 				</span>&nbsp;&nbsp;
 				
 			 	<span id='load-modal' style="z-index:1">
@@ -217,10 +216,7 @@
 
         <g:render template="saveFavoritesModal" />
         
-		<div id="load-modal-content" style="display:none;">
-      		<!-- Load load favorites modal content is done via Ajax call-->
-		</div>
-			
+
 		<div id="active-search-div"></div>
 		 
 		<div id="title-filter" class="ui-widget-header">
@@ -235,6 +231,10 @@
 		        <!-- For image export -->
 		        <canvas id="canvas" width="1000px" height="600px"></canvas>  
 
+		</div>
+		
+		<div id="load-modal-content" style="display:none;">
+      		<!-- Load load favorites modal content is done via Ajax call-->
 		</div>
 		
 		<!--  Everything for the across trial function goes here and is displayed using colorbox -->
@@ -262,10 +262,14 @@
 				
 				</div>
 			</div>
+			
 		</div>
 		
 		       <!--  Used to measure the width of a text element (in svg plots) -->
 		       <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
 		
     </body>
+    
+           		
+    
 </html>

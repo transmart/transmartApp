@@ -18,6 +18,8 @@
  ******************************************************************/
   
 
+import grails.converters.JSON;
+
 import javax.servlet.ServletOutputStream
 
 import search.GeneSignature
@@ -103,16 +105,46 @@ class GeneSignatureController {
 		def pubItems = []
 
 		signatures.each {
-			if(user.id==it.createdByAuthUser.id) {
+			//if(user.id==it.createdByAuthUser.id) {
 				myItems.add(it)
-			} else {
-				pubItems.add(it)
-			}
+			//} else {
+				//pubItems.add(it)
+			//}
 		}
 
 		render(view: "list", model:[user: user, adminFlag: bAdmin, myItems: myItems, pubItems: pubItems, ctMap: ctMap])
 	}
+	
 
+	/**
+	 * Read in gene list ids and return constituent genes.
+	 */
+	def getGenes = {
+		def geneListIdsParam = params.geneListsIds
+		def geneListIds = geneListIdsParam.split ","
+
+		Map map = new HashMap()
+		
+		for(int i = 0; i<geneListIds.length; i++){
+			def outputList = new ArrayList()
+					
+			GeneSignature geneSig = GeneSignature.get(Long.parseLong(geneListIds[i]))
+			def geneSigItems = geneSig.geneSigItems
+			
+			geneSigItems.each{geneSigItem->
+				outputList.add(geneSigItem.bioMarker.name)
+			}
+			map.put(geneListIds[i],outputList)
+		}
+		
+		render map as JSON;
+		
+		//def result=["1111":["MIT", "HIT", "KIT", "SIT", "CIT", "DIT"]
+		//	,"2222":["HIT", "KIT", "CIT", "ZIT", "WIT"]
+		//	,"3333":["MIT", "HIT", "KIT", "SIT", "VIT", "LIT"]];
+		//render result as JSON;
+	}
+	
 	/**
 	 * initialize session for the create gs wizard
 	 */
@@ -778,6 +810,12 @@ class GeneSignatureController {
 		switch (pageNum) {
 
 			case 1:
+			// species
+			wizard.species = ConceptCode.findAllByCodeTypeName(SPECIES_CATEGORY, [sort:"bioConceptCode"])
+			
+			// mouse sources
+			wizard.mouseSources = ConceptCode.findAllByCodeTypeName(MOUSE_SOURCE_CATEGORY, [sort:"bioConceptCode"])
+			
 			break;
 
 			case 2:
@@ -792,12 +830,6 @@ class GeneSignatureController {
 
 			// owners
 			wizard.owners = ConceptCode.findAllByCodeTypeName(OWNER_CATEGORY, [sort:"bioConceptCode"])
-
-			// species
-			wizard.species = ConceptCode.findAllByCodeTypeName(SPECIES_CATEGORY, [sort:"bioConceptCode"])
-
-			// mouse sources
-			wizard.mouseSources = ConceptCode.findAllByCodeTypeName(MOUSE_SOURCE_CATEGORY, [sort:"bioConceptCode"])
 
 			// tissue types
 			wizard.tissueTypes = ConceptCode.findAllByCodeTypeName(TISSUE_TYPE_CATEGORY, [sort:"bioConceptCode"])

@@ -12,6 +12,7 @@ body {
   height: 100%;
 }
 
+
 #side-scroll {    
   padding: 0;
   margin: 0;
@@ -96,6 +97,7 @@ top: 58px;
 		
 }
 
+
 .bigtitle{
 	  color:#333;
 	  padding:0;
@@ -107,6 +109,36 @@ top: 58px;
 	  
 		
 }
+
+
+.title-link-inactive
+{
+	color:#aaa;
+}
+
+.title-link-active
+{
+	color:#666;
+}
+
+.title-link-active:hover
+{
+	cursor:pointer;
+	text-decoration:underline;
+}
+
+
+
+#modal-status-message
+{
+background-color: #EBEBEB;
+border: 1px solid #999;
+color: #333;
+padding: 12px;
+}
+
+
+>>>>>>> 545704636a13e5b06d165ae4261c4647014c9559
 .x-panel-header
 {
 	margin:0;

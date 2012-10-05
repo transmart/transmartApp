@@ -32,27 +32,6 @@
 		// id prefix for ajax window
 	    var lkupWinId = null;
 	
-		function speciesToggle(selectItem) {			
-			var mouseSrc = document.getElementById('mouse_source_div')
-			var moutseOther = document.getElementById('mouse_other_id')
-			var selectVal = selectItem.value
-			var selectText = selectItem.options[selectItem.selectedIndex].text
-			
-			// toggle mouse source
-			//if(selectVal=='MOUSE_1' || selectVal=='MOUSE_2' || selectVal=='MOUSE_3' || selectVal=='MOUSE_4') 
-			if(selectText.indexOf('Mouse')!=-1)
-				mouseSrc.style.display='inline';
-			else 
-				mouseSrc.style.display='none';
-
-			// toggle mouse other
-			//if(selectVal=='MOUSE_3' || selectVal=='MOUSE_4') 
-			if(selectText=='Mouse (knockout or transgenic)' || selectText=='Mouse (other)') 				
-				moutseOther.style.display='block';
-			else 
-				moutseOther.style.display='none';					
-		}
-
 		function toggleExpType(selectItem) {
 			var toggleDiv = document.getElementById('in_vivo_id')
 			var cellLineDiv = document.getElementById('exp_cell_line_div')
@@ -218,51 +197,6 @@
 		<tr class="prop">
 			<td class="name">PMIDs (comma separated)</td>
 			<td class="value"><g:textField name="pmIds" value="${gs.pmIds}" size="67%" maxlength="255" /></td>
-		</tr>
-		<tr class="prop">
-			<td class="name">Species<g:requiredIndicator/></td>
-			<td class="value">			
-			<table>
-				<tr>
-					<td style="border: none; width: 50%">					
-						<g:select name="speciesConceptCode.id"
-    				      	from="${wizard.species}"
-    				      	value="${gs.speciesConceptCode?.id}"
-         				  	noSelection="['null':'select relevant species']"
-         				  	optionValue="codeName"
-         				  	optionKey="id" 
-         				  	onChange="javascript:speciesToggle(this);" />&nbsp;
-						<!--  toggle mouse div accordingly -->
-						<g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_1' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_2' || 
-																		gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">      				  	
-						<div id="mouse_source_div" style="display: inline;">For Mouse, enter source<g:requiredIndicator/>:						
-						</g:if>   
-						<g:else>
-						<div id="mouse_source_div" style="display: none;">For Mouse, enter source<g:requiredIndicator/>:						
-						</g:else>														
-							<g:select name="speciesMouseSrcConceptCode.id"
-	    				      	from="${wizard.mouseSources}"
-	    				      	value="${gs.speciesMouseSrcConceptCode?.id}"
-	    				      	noSelection="['null':'select source']"
-	         				  	optionValue="codeName"
-	         				  	optionKey="id" />
-						</div>
-					</td>
-				</tr>
-				<!--  toggle mouse other accordingly -->
-				<g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">      				  								
-				<tr id="mouse_other_id" style="display: block;"><td">		
-				</g:if>
-				<g:else>		
-				<tr id="mouse_other_id" style="display: none;">
-				</g:else>
-					<td style="border: none;">
-						<label>Detail for 'knockout/transgenic' or 'other' mouse strain<g:requiredIndicator/>:</label>
-						<br><g:textField name="speciesMouseDetail" value="${gs.speciesMouseDetail}" size="100%" maxlength="255" />
-					</td>
-				</tr>	
-			</table>			
-			</td>
 		</tr>
 		<tr class="prop">
 			<td class="name">Technology Platform<g:requiredIndicator/></td>
