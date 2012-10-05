@@ -322,8 +322,13 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		
 		// calculate coordinates for label in center of rect -- is there an easier way to do this with D3?  
 		var labelX = leftPosition + cohortWidths[i]/2;
-		var labelY = h/2;		
-		cohortHeaderGroup.append("text")
+		var labelY = h/2;
+		
+		if (forExport)  {
+			labelY += 3;
+		}
+		
+		var chgText = cohortHeaderGroup.append("text")
 			.attr("x", labelX)
 			.attr("y", labelY)
 			.attr("dy", ".35em")
@@ -335,7 +340,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
  	        ;	
 			
 	    if (!forExport)  {
-	    	cohortHeaderGroup.append('svg:title').text(cohortTooltip);   // tooltip for label
+	    	chgText.append('svg:title').text(cohortTooltip);   // tooltip for label
 	    }
 	    
 		// determine left position for next cohort
@@ -370,7 +375,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 	
 			// cohort legend text inside rectangles
 			labelX = boxWidth/2;
-			labelY = (i-1)*(boxHeight + boxSpacing) + boxHeight/2;
+			labelY = (i-1)*(boxHeight + boxSpacing) + boxHeight/2 + 3;
 			cohortLegendGroup.append("text")
 				.attr("x", labelX)
 				.attr("y", labelY)
@@ -389,8 +394,6 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 			    .append("text")
 				.attr("x", labelX)
 				.attr("y", labelY)
-				.attr("dy", ".35em")
-		        .attr("text-anchor", "left")
 			    .style("fill", textStyleColor)
 		    	.style("font", "12px  sans-serif")
 		    	.text(cohortDescriptions[i].replace(/_/g, ', '));   	
