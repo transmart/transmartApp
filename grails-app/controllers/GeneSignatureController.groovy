@@ -120,10 +120,29 @@ class GeneSignatureController {
 	 * Read in gene list ids and return constituent genes.
 	 */
 	def getGenes = {
-		def result=["1111":["MIT", "HIT", "KIT", "SIT", "CIT", "DIT"]
-			,"2222":["HIT", "KIT", "CIT", "ZIT", "WIT"]
-			,"3333":["MIT", "HIT", "KIT", "SIT", "VIT", "LIT"]];
-		render result as JSON;
+		def geneListIdsParam = params.geneListsIds
+		def geneListIds = geneListIdsParam.split ","
+
+		Map map = new HashMap()
+		
+		for(int i = 0; i<geneListIds.length; i++){
+			def outputList = new ArrayList()
+					
+			GeneSignature geneSig = GeneSignature.get(Long.parseLong(geneListIds[i]))
+			def geneSigItems = geneSig.geneSigItems
+			
+			geneSigItems.each{geneSigItem->
+				outputList.add(geneSigItem.bioMarker.name)
+			}
+			map.put(geneListIds[i],outputList)
+		}
+		
+		render map as JSON;
+		
+		//def result=["1111":["MIT", "HIT", "KIT", "SIT", "CIT", "DIT"]
+		//	,"2222":["HIT", "KIT", "CIT", "ZIT", "WIT"]
+		//	,"3333":["MIT", "HIT", "KIT", "SIT", "VIT", "LIT"]];
+		//render result as JSON;
 	}
 	
 	/**

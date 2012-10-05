@@ -3482,12 +3482,12 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 	});
 }
 
-function launchHomePage(currentsubcategoryid)
+function launchHomePage(currentsubcategoryid, currentcharttype, showAll)
 {
       
       rwgAJAXManager.add({
   		url:"getHomePage",									
-  		data: {currentsubcategoryid: currentsubcategoryid},
+  		data: {currentsubcategoryid: currentsubcategoryid, currentcharttype:currentcharttype, showAll:showAll},
   		timeout:60000,
   		success: function(response) {
   			//jQuery(div).empty();
@@ -3516,7 +3516,7 @@ function hideResultsPage()
 	jQuery('#results-div').hide();
 }
 
-function getPieChartData(divid, catid, ddid, drillback, charttype, parentcolor)
+function getPieChartData(divid, catid, ddid, drillback, charttype, parentcolor, ddstack)
 {
 	rwgAJAXManager.add({
 		url:getPieChartDataURL,									
@@ -3524,7 +3524,7 @@ function getPieChartData(divid, catid, ddid, drillback, charttype, parentcolor)
 		timeout:60000,
 		success: function(response) {
 			jQuery("#"+divid).empty();
-			drawPieChart(divid, catid, response.ddid, response.data, charttype, parentcolor);
+			drawPieChart(divid, catid, response.ddid, response.data, charttype, parentcolor, ddstack);
 		}
 	});
 }

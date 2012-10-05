@@ -1144,6 +1144,7 @@ class RWGController {
 	   def ta=SearchTaxonomy.findByTermName('Therapeutic Areas') //default to ta
 	   def d=SearchTaxonomy.findByTermName('Disease') //default to disease
 	   def currentsubcategoryid;
+	   def currentcharttype="studies";
 	   if(params.currentsubcategoryid)
 	   {
 		   currentsubcategoryid=params.currentsubcategoryid.toLong()
@@ -1152,12 +1153,26 @@ class RWGController {
 	   {
 		   currentsubcategoryid=d.id
 	   }
+	   if(params.currentcharttype)
+	   {
+		   currentcharttype=params.currentcharttype;
+	   }
 	   def rwgDAO = new RWGVisualizationDAO()
 	   def favorites = getFavorites()
-	   def categories=rwgDAO.getCategoriesWithData(ta.id, currentsubcategoryid);
-	   // def categories=rwgDAO.getSearchTaxonomyChildren(ta.id)
+	   def categories;
+	   def showAll=false;
+	   if(params.showAll=="true")
+	   {
+		   categories=rwgDAO.getSearchTaxonomyChildren(ta.id)
+		   showAll=true;
+	   }
+	   else
+	   {
+		  categories=rwgDAO.getCategoriesWithData(ta.id, currentsubcategoryid);
+	   }
 	    def subcategories=rwgDAO.getSearchTaxonomyChildren(1); //TODO: is one always root?
-	   render(template:'home', model: ['categories': categories, 'subcategories': subcategories, 'currentsubcategoryid':currentsubcategoryid, 'favorites':favorites])
+		def currentsubcategory=SearchTaxonomy.get(currentsubcategoryid);
+	   render(template:'home', model: ['categories': categories, 'subcategories': subcategories, 'currentsubcategoryid':currentsubcategoryid, 'currentsubcategoryname':currentsubcategory.termName, 'favorites':favorites, 'currentcharttype':currentcharttype, 'showAll':showAll])
  }
  
    /**

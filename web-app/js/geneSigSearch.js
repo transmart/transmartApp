@@ -17,9 +17,13 @@ function initDataTables(){
 }
 
 function handleActionItem(actionItem) {
-	var geneListsIds = new Array();
+	var geneListsIds = "";
 	for(var i=0;i<selectedGeneLists.length;i++){
-		geneListsIds[i]=selectedGeneLists[i].id;
+		if(geneListsIds==""){
+			geneListsIds=selectedGeneLists[i].id;
+		}else{
+			geneListsIds=geneListsIds+","+selectedGeneLists[i].id;
+		}
 	}
 	var action = actionItem.value;
 	var url; 
@@ -27,7 +31,7 @@ function handleActionItem(actionItem) {
 	
 	if(action=="concat" || action=="union" || action=="intersection" ||action=="unique"){
 		var url = "getGenes";
-		jQuery.post(url, { geneListsIds: geneListsIds, action: action }, function(data){loadManipulateView(data, action);}, "json")
+		jQuery.get(url, { geneListsIds: geneListsIds, action: action }, function(data){loadManipulateView(data, action);}, "json")
         return;
 	}
 	
@@ -141,7 +145,7 @@ function populateActionSelection(){
 		actionList.append(jQuery("<option>").val("union").text("Union"));
 		actionList.append(jQuery("<option>").val("concat").text("Concatinate"));
 		actionList.append(jQuery("<option>").val("intersection").text("Intersect"));
-		actionList.append(jQuery("<option>").val("unique").text("Make Unique"));
+		//actionList.append(jQuery("<option>").val("unique").text("Make Unique"));
 	}
 
 }
