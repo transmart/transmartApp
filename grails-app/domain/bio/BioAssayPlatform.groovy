@@ -29,7 +29,7 @@ class BioAssayPlatform {
 		String accession
 		String array
 		String vendor
-		String type
+		String platformType
  
 static mapping = {
 	 table 'BIO_ASSAY_PLATFORM'
@@ -45,7 +45,7 @@ static mapping = {
 		accession column:'PLATFORM_ACCESSION'
 		array column:'PLATFORM_ARRAY'
 		vendor column:'PLATFORM_VENDOR'
-		type column:'PLATFORM_TYPE'
+		platformType column:'PLATFORM_TYPE'
 	}
 }
 
