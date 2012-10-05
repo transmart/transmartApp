@@ -1,7 +1,7 @@
 			<h3>My Favorites</h3>
 			
 			<g:if test="${favorites.size()==0}">
-			   There are no saved searches!
+			   You have no Favorite Filters saved.
 			   <br />
 			</g:if>
 			<g:else>
