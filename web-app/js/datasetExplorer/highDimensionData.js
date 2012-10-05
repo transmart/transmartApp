@@ -520,7 +520,7 @@ function toggleDataAssociationFields(extEle){
 	}
 	
 	//display the appropriate submit button
-	if(GLOBAL.Analysis=="dataAssociation"){
+	if(GLOBAL.Analysis=="dataAssociation" || GLOBAL.Analysis=='MetaCoreEnrichment'){
 		document.getElementById("compareStepPathwaySelectionOKButton").style.display="none";
 		document.getElementById("dataAssociationApplyButton").style.display="";
 	}else if(GLOBAL.Analysis=='Advanced'){

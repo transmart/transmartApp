@@ -862,6 +862,7 @@ Ext.onReady(function()
 					listeners :
 					{
 						activate : function(p) {
+							renderCohortSummaryMetaCoreEnrichment("cohortSummaryMetaCoreEnrichment");
 							initMetaCoreTab();
 						},
 						deactivate: function(){
