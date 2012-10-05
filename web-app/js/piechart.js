@@ -17,14 +17,14 @@
  *
  ******************************************************************/
 
-function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
+function drawPieChart(divid, catid, ddid, data, charttype, parentcolor, ddstack)
 {
-	var w = 500;
+	var w = 550;
 	var h = 250;
 	var r = 60;
-	var ir = 20;
-	var textOffset = 15;
-	var tweenDuration = 250;
+	var ir = 0;
+	var textOffset = 25;
+	var tweenDuration = 150;
 	
 	//OBJECTS TO BE POPULATED WITH DATA LATER
 	var lines, valueLabels, nameLabels;
@@ -34,7 +34,7 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
 	var donut = d3.layout.pie().value(function(d){
 		 // return d.studies; //change to val later
 		return d.value;
-	});
+	}).startAngle(-Math.PI/4).endAngle(2*Math.PI-Math.PI/4);
 
 	//add the data
 	pieData = donut(data);
@@ -47,8 +47,8 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
 	    //element.value = data[index].studies;
 	    element.value=data[index].value;
 	    element.id= data[index].id;
-	    //element.startAngle=element.startAngle-Math.PI/2;
-	    //element.endAngle=element.endAngle-Math.PI/2;
+	   // element.startAngle=element.startAngle-Math.PI/2;
+	   // element.endAngle=element.endAngle-Math.PI/2;
 	    total += element.value;
 	    return (element.value > 0);
 	  }
@@ -64,7 +64,7 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
 		}
 	 else //range drill down
 		{
-			color=function(i){return d3.rgb(parentcolor).darker(1/(i+2));};
+			color=function(i){return d3.rgb(parentcolor).darker(1/(i+2)).toString();};
 		}
 	//D3 helper function to draw arcs, populates parameter "d" in path object
 	var arc = d3.svg.arc()
@@ -80,8 +80,8 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
 		 msvg.remove();
 		}
 	var vis = d3.select('#'+divid).append("svg:svg")
-	  	.attr("width", "100%")//w
-	    .attr("height", "100%")//h*/
+	  	.attr("width", w)//w
+	    .attr("height", h)//h*/
 	    .attr("id", divid+'_svg');
 
 
@@ -96,15 +96,20 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
 	  .attr("transform", "translate(" + (w/2) + "," + (h/2) + ")");
 
 	//GROUP FOR CENTER TEXT  
-	var center_group = vis.append("svg:g")
+	var crumb_group = vis.append("svg:g")
 	  .attr("class", "center_group")
-	  .attr("transform", "translate(" + (w/2) + "," + (h/2) + ")"); //was h/2
+	  .attr("transform", "translate(" + (w/2) + "," + ((h/2)-r -40)+ ")"); //was h/2
 
 	//GROUP FOR CENTER TEXT  
 	var total_group = vis.append("svg:g")
 	  .attr("class", "center_group")
-	  .attr("transform", "translate(" + (w/2) + "," + ((h/2)-r-40) + ")"); //was h/2
+	  .attr("transform", "translate(" + (w/2) + "," + ((h/2)+r+45) + ")"); //was h/2
 	
+	
+	if(fPieData.length==0)
+		{
+		total_group.attr("transform", "translate(" + (w/2) + "," + (h/2) + ")"); //was h/2
+		}
 	
 	//PLACEHOLDER GRAY CIRCLE
 	var paths = arc_group.append("svg:circle")
@@ -129,7 +134,7 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
 	  .attr("text-anchor", "middle") // text-align: right
 	  .text("Waiting...");*/
 
-	//UNITS LABEL
+	//Total LABEL
 	var totalValue = total_group.append("svg:text")
 	  .attr("class", "total")
 	  /*.attr("dy", 21)*/
@@ -147,7 +152,6 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
     });
 	
 	
-	
 	//DRAW ARC PATHS
     paths = arc_group.selectAll("path").data(fPieData);
     
@@ -157,6 +161,7 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
       .attr("stroke", "white")
       .attr("stroke-width", 0.5)
       .attr("fill", function(d, i) { return color(i); })
+      .attr("cursor", 'pointer')
       //.transition()
       	//.duration(tweenDuration)
       	//	.attrTween("d", pieTween)
@@ -201,9 +206,9 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
     valueLabels = label_group.selectAll("text.value").data(fPieData)
       .attr("dy", function(d){
         if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5 ) {
-          return 5;
+          return 0;
         } else {
-          return -7;
+          return 0;
         }
       })
       .attr("text-anchor", function(d){
@@ -220,16 +225,15 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
       });
 
     valueLabels.enter().append("svg:text")
-      .append("tspan")
       .attr("class", "value")
       .attr("transform", function(d) {
         return "translate(" + Math.cos(((d.startAngle+d.endAngle - Math.PI)/2)) * (r+textOffset) + "," + Math.sin((d.startAngle+d.endAngle - Math.PI)/2) * (r+textOffset) + ")";
       })
       .attr("dy", function(d){
         if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5 ) {
-          return 5;
+          return 0;
         } else {
-          return -7;
+          return 0;
         }
       })
       .attr("text-anchor", function(d){
@@ -251,13 +255,14 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
 
     //DRAW LABELS WITH ENTITY NAMES
     nameLabels = label_group.selectAll("text.units").data(fPieData)
-      .attr("dy", function(d){
-        if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5 ) {
-          return 5; //17
+     /* .attr("dy", function(d){
+        //if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5 ) {
+    	if((d.startAngle+d.endAngle)/2 > ((3*Math.PI/4)-(Math.PI/4)) && (d.startAngle+d.endAngle)/2 < (Math.PI*5/4-Math.PI/4 )) {
+    	  return 10; //17
         } else {
-          return -7; //5
+          return 0; //5
         }
-      })
+      })*/
      // .attr("dx", -50)
       .attr("text-anchor", function(d){
         if ((d.startAngle+d.endAngle)/2 < Math.PI ) {
@@ -269,20 +274,22 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
         return d.name;
       });
 
-      nameLabels.enter().append("svg:text")
+      nameLabels.enter()
+      .append("svg:text")
       .attr("class", "units")
-      .attr("transform", function(d) {
+      .attr("transform", function(d, i) {
         return "translate(" + Math.cos(((d.startAngle+d.endAngle - Math.PI)/2)) * (r+textOffset) + "," + Math.sin((d.startAngle+d.endAngle - Math.PI)/2) * (r+textOffset) + ")";
       })
-      .attr("dy", function(d){
-        if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5 ) {
-          return 5; //17
+      /*.attr("dy", function(d, i){
+        //if ((d.startAngle+d.endAngle)/2 > Math.PI/2 && (d.startAngle+d.endAngle)/2 < Math.PI*1.5 ) {
+        if((d.startAngle+d.endAngle)/2 > (3*Math.PI/4) && (d.startAngle+d.endAngle)/2 < (Math.PI*5/4 )) {
+    	 return (d.startAngle+d.endAngle)/10//17
         
         } else {
-          return -7; //5
+          return 0; //5
         	
         }
-      })
+      })*/
      /* .attr("text-anchor", function(d){
         if ((d.startAngle+d.endAngle)/2 < Math.PI ) {
           return "beginning";
@@ -314,8 +321,12 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
              this._listenToEvents = false;
           });
           d3.event.stopPropagation();
-          parentcolor=d3.select(this).attr("fill")
-          getPieChartData(divid, catid, d.id, false, charttype, parentcolor); //false for drillback
+          parentcolor=d3.select(this).attr("fill");
+          if(fPieData.length>1)
+        	  {
+        	  ddstack.push({ddid:d.id, ddname: d.name, color:parentcolor});
+        	  }
+          getPieChartData(divid, catid, d.id, false, charttype, parentcolor, ddstack); //false for drillback
           
         }
       })
@@ -346,7 +357,7 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
 
     //go back to parent if click somwhere else
     vis.on("click", function(d){ 
-        if(true){
+        if(false){
           //this._listenToEvents = false;
           /*
           // Reset inmediatelly
@@ -356,11 +367,57 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor)
              this._listenToEvents = false;
           });*/
           parentcolor="";
-          getPieChartData(divid, catid, ddid, true, charttype, parentcolor);
+          if(ddstack.length>1)
+        	  {
+        	  ddstack.pop();
+        	  }
+          getPieChartData(divid, catid, ddid, true, charttype, parentcolor, ddstack);
         }
       });
     
+  //BREAD CRUMBS LABEL
+    var crumbLabel = crumb_group.append("svg:text")
+	
+	  /*.attr("dy", 21)*/
+	  .attr("text-anchor", "middle") // text-align: right
+	  //.text("studies");
+	  
+	var crumbsenter = crumbLabel.selectAll("tspan").data(ddstack).enter()
+	
+	crumbsenter.append("tspan")
+		  .attr("class", "crumbs")
+	    .text(function(d, i){
+    	var t=d.ddname;
+    	/*if(i < ddstack.length-1)
+    	{
+	    t= t+"→";
+    	}*/
+    	return t;
+    }).on("click", function(d, i){ 
+        if(true){
+          //alert("d:"+d+" i:"+i);
+          if(ddstack.length>1)
+       	  {
+          for(x=0;x<(ddstack.length-1)-i; x++)
+          	{
+        	  ddstack.pop();
+          	}
+       	  }
+         getPieChartData(divid, catid, d.ddid, false, charttype, d.color, ddstack);
+        }
+       }).append("tspan")
+       .attr("class", "arrow")
+       .text(function(d, i){
+    	var t="";
+    	if(i < ddstack.length-1)
+    	{
+	    t= t+"→";
+    	}
+    	return t;});     
+       
     
+
+	
 
 //Interpolate the arcs in data space.
 function pieTween(d, i) {
