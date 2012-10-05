@@ -240,17 +240,17 @@ class UploadDataController {
 		//Vendor names can be null - avoid adding these
 		def expVendorlist = []
 		def snpVendorlist = []
-		def expVendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform p WHERE p.type='Gene Expression' ORDER BY vendor")
-		def snpVendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform p WHERE p.type='SNP' ORDER BY vendor")
-		
+		def expVendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p WHERE p.type='Gene Expression' ORDER BY p.vendor")
+		def snpVendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p WHERE p.type='SNP' ORDER BY p.vendor")
+
 		for (expVendor in expVendors) {
-			println(expVendor)
+			//println(expVendor)
 			if (expVendor) {
 				expVendorlist.add(expVendor);
 			}
 		}
 		for (snpVendor in snpVendors) {
-			println(snpVendor)
+			//println(snpVendor)
 			if (snpVendor) {
 				snpVendorlist.add(snpVendor);
 			}
