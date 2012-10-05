@@ -2,30 +2,27 @@ var visualize = function(geneLists, action){
 	
 	var resultArray
 	JS.require('JS.Set', function(){
-		//-------Operate on the incoming lists.
+		//-------Set operations on the incoming lists.
 		//Process gene lists and return a sets object with genelist id as the key and the set of genes as the value.
 		var sets = processGeneLists(geneLists);
-		
 		//Perform the specified set operation and return result set in an array.
 		resultArray = operate(sets, action);
-		
-		//Set the result as default value in the results text box
-		setResults(resultArray.toString(), true);
-		//-------Set operation done 
+		//-------Set operations done 
 		
 		//------Visualize the incoming lists.
-		initializeColorMapping();
-		
 		mapSetIndexToGeneListId(geneLists);
-		
 		//Global variable: Calculate which genes are in the 7 possible regions on the venn diagram.
 		region = calculateRegionMembers(sets);
-		
-		//Draw the venn diagram
-		draw();
+		//Map each region to the appropriate color
+		initializeColorMapping();
 		//-------Set Visualization done
+		
+		//Set the result as default value in the results text box and render the venn diagram.
+		setResults(resultArray.toString(), true);
 	});
 }
+
+//**********Visualization Set Operations Functions**********
 
 /**
  * We deal with three sets.
@@ -119,39 +116,7 @@ function calculateMiddleRegionsMembers(sets, firstSetIdx, secondSetIdx, innerSet
 }
 
 
-/**
- * Populates the results text box.
- */
-function setResults(results, initializeGlobalArray){
-	if(initializeGlobalArray){
-		//Initialize the global array that will hold a list of active region ids
-		activeRegionIds = new Array();
-		var test = d3.select("#123");
-		var i = 0;
-	}
-	jQuery("#manipulationResults").val(results);
-}
 
-/**
- * Clears out the New Gene List name field
- */
-function resetGeneListName(){
-	jQuery("#newGeneListName").val("");
-}
-
-/**
- * Exports the Venn diagram.
- */
-function exportSVGImage(){
-	
-}
-
-/**
- * Saves the new list.
- */
-function saveNewList(){
-	
-}
 
 /**
  * Uses JS.Set to create set objects 
@@ -204,6 +169,8 @@ function operate(sets, action){
 	return resultArray;
 }
 
+//**********Visualization Venn Diagram Rendering functions**********
+
 function draw(){
 	//Clear out div before drawing SVG again.
 	jQuery('#svg').empty();
@@ -244,7 +211,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "1")
     .style("fill", unselectedColorMapping["1"])
-    .on("click", mouseclick);
+    .on("click", mouseclick)
+    .append("svg:title")
+    .text(region["1"]);
 
 	svg.append("svg:rect")
 	.attr("clip-path", "url(#circle2)")
@@ -252,7 +221,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "2")
     .style("fill", unselectedColorMapping["2"])
-    .on("click", mouseclick);
+    .on("click", mouseclick)
+    .append("svg:title")
+    .text(region["2"]);
 
 	svg.append("svg:rect")
     .attr("clip-path", "url(#circle3)")
@@ -260,7 +231,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "3")
     .style("fill", unselectedColorMapping["3"])
-    .on("click", mouseclick);
+    .on("click", mouseclick)
+    .append("svg:title")
+    .text(region["3"]);
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle1)")
@@ -270,7 +243,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "12")
     .style("fill", unselectedColorMapping["12"])
-    .on("click", mouseclick);
+    .on("click", mouseclick)
+    .append("svg:title")
+    .text(region["12"]);
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle2)")
@@ -280,7 +255,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "23")
     .style("fill", unselectedColorMapping["23"])
-    .on("click", mouseclick);
+    .on("click", mouseclick)
+    .append("svg:title")
+    .text(region["23"]);
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle3)")
@@ -290,7 +267,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "13")
     .style("fill", unselectedColorMapping["13"])
-    .on("click", mouseclick);
+    .on("click", mouseclick)
+    .append("svg:title")
+    .text(region["13"]);
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle3)")
@@ -302,20 +281,31 @@ function draw(){
     .attr("height", h)
 	.attr("id", "123")
     .style("fill", unselectedColorMapping["123"])
-    .on("click", mouseclick);
+    .on("click", mouseclick)
+    .append("svg:title")
+    .text(region["123"]);
+	
+	displayCount(svg);
 }
 
 /**
- * add counts for each area
+ * display counts for each area
  */
-function addCount(){
-	addCount(svg, 150, 80, 2);
-	addCount(svg, 245, 80, 1);
-	addCount(svg, 340, 80, 1);
-	addCount(svg, 190, 160, 1);
-	addCount(svg, 245, 160, 1);
-	addCount(svg, 290, 160, 2);
-	addCount(svg, 240, 240, 1);
+function displayCount(svg){
+	display(svg, 150, 80, region['1'].length);
+	display(svg, 245, 80, region['2'].length);
+	display(svg, 340, 80, region['3'].length);
+	display(svg, 190, 160, region['12'].length);
+	display(svg, 245, 160, region['13'].length);
+	display(svg, 290, 160, region['23'].length);
+	display(svg, 240, 240, region['123'].length);
+}
+
+function display(svg, x, y, count){
+svg.append("svg:text")
+.attr("x",x)
+.attr("y",y)
+.text(count);
 }
 
 /**
@@ -363,30 +353,80 @@ function mouseclick(d, i){
 	
 }
 
-function addCount(svg, x, y, count){
-	svg.append("svg:text")
-	.attr("x",x)
-	.attr("y",y)
-	.text(count);
-}
-
+/**
+ * Maps each region to a specific color.
+ * If a region has no members it is mapped to white.
+ */
 function initializeColorMapping(){
 	selectedColorMapping = new Object();
-	selectedColorMapping["1"]="#84A3FF";
-	selectedColorMapping["2"]="#F76060";
-	selectedColorMapping["3"]="#F5F847";
-	selectedColorMapping["12"]="#F43471";
-	selectedColorMapping["13"]="#69BEC3";
-	selectedColorMapping["23"]="#FF7721";
-	selectedColorMapping["123"]="#FF1818";
 	
 	unselectedColorMapping = new Object();
-	unselectedColorMapping["1"]="#A4BAF7";
-	unselectedColorMapping["2"]="#F79797";
-	unselectedColorMapping["3"]="#F1F380";
-	unselectedColorMapping["12"]="#CE7894";
-	unselectedColorMapping["13"]="#9DB4B4";
-	unselectedColorMapping["23"]="#F09154";
-	unselectedColorMapping["123"]="#CB7575";
+	
+	selectedColorMapping = mapColor(selectedColorMapping, "1", "#84A3FF");
+	selectedColorMapping = mapColor(selectedColorMapping, "2", "#F76060");
+	selectedColorMapping = mapColor(selectedColorMapping, "3", "#F5F847");
+	selectedColorMapping = mapColor(selectedColorMapping, "12", "#F43471");
+	selectedColorMapping = mapColor(selectedColorMapping, "13", "#69BEC3");
+	selectedColorMapping = mapColor(selectedColorMapping, "23", "#FF7721");
+	selectedColorMapping = mapColor(selectedColorMapping, "123", "#FF1818");
+	
+	unselectedColorMapping = mapColor(unselectedColorMapping, "1", "#A4BAF7");
+	unselectedColorMapping = mapColor(unselectedColorMapping, "2", "#F79797");
+	unselectedColorMapping = mapColor(unselectedColorMapping, "3", "#F1F380");
+	unselectedColorMapping = mapColor(unselectedColorMapping, "12", "#CE7894");
+	unselectedColorMapping = mapColor(unselectedColorMapping, "13", "#9DB4B4");
+	unselectedColorMapping = mapColor(unselectedColorMapping, "23", "#F09154");
+	unselectedColorMapping = mapColor(unselectedColorMapping, "123", "#CB7575");
+}
+
+/**
+ * Maps the specified color to the specified region.
+ * Adds the mapping to the specified map
+ * @param region
+ * @param color
+ */
+function mapColor(map, regionId, color){
+	if(region[regionId].length>0){
+		map[regionId]=color;
+	}else{
+		map[regionId]="#FFFFFF"
+	}
+	return map;
+}
+
+
+//**********Visualization Form handling functions**********
+
+/**
+ * Populates the results text box.
+ */
+function setResults(results, initializeGlobalArray){
+	if(initializeGlobalArray){
+		//Initialize the global array that will hold a list of active region ids
+		activeRegionIds = new Array();
+		draw();
+	}
+	jQuery("#manipulationResults").val(results);
+}
+
+/**
+ * Clears out the New Gene List name field
+ */
+function resetGeneListName(){
+	jQuery("#newGeneListName").val("");
+}
+
+/**
+ * Exports the Venn diagram.
+ */
+function exportSVGImage(){
+	
+}
+
+/**
+ * Saves the new list.
+ */
+function saveNewList(){
+	
 }
 

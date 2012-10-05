@@ -117,10 +117,12 @@
 	        </div>
 	        <br>
 	        <div style="width:480; height:240">
+	   	        <%--
 	   	        <div style="text-align: right; float:left;">
 		       		<g:submitButton class="edit" onClick="exportSVGImage();" value="Export" name="Export"/>
 		        </div>
-		        <div style="text-align: right; float:right;">
+		        --%>
+		        <div style="text-align: right; float:left;">
 		        	<g:submitButton class="edit" onClick="setResults('', true);" value="Reset" name="Reset"/>
 		        </div>
 		        <br>
