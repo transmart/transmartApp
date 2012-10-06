@@ -185,7 +185,11 @@ function submitMetaCoreEnrichment(formParams) {
 	
 	// run enrichment, TODO: pass exp. data filename to the controller
 	
-	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Running Enrichment Analysis, Please Wait..."});
+	jQuery('#metacoreEnrichmentResults').hide();
+	jQuery('#enrichment tbody').empty();
+	jQuery('#scale').empty();
+	
+	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Running enrichment analysis, please wait..."});
 	spinnerMask.show();
 
 	Ext.Ajax.request({
