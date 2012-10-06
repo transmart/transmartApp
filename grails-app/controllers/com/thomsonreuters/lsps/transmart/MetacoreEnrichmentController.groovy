@@ -1,5 +1,6 @@
 package com.thomsonreuters.lsps.transmart
 
+import grails.converters.*
 
 class MetacoreEnrichmentController {
 	
@@ -18,7 +19,7 @@ class MetacoreEnrichmentController {
 		]
 		
 		// only cohort1 (first list in the first parameter is used in enrichment for now
-		render metacoreEnrichmentService.getEnrichmentByMaps([[1,2,3,4,5,6,7,8,9,10]], metacoreParams)
+		render metacoreEnrichmentService.getEnrichmentByMaps([[1,2,3,4,5,6,7,8,9,10]], metacoreParams) as JSON
 	}
 	
 }

@@ -4,7 +4,7 @@
 		class="subsettable">
 		<tbody>
 			<tr>
-				<td><span class="AnalysisHeader">Cohorts</span></td>
+				<td><span class="AnalysisHeader">Cohorts (<i>Early Alpha version</i> - only the first cohort will be used</i>)</span></td>
 				<td align="right">&nbsp;
 					<!--
 					<input type="button"
@@ -90,4 +90,16 @@
 		</tr>
 	</table>
 </form>
+
+<!--  results section -->
+<div id="metacoreEnrichmentResults" style="display: none">
+<table id="enrichment" width="100%" cellspacing="0" cellpadding="2">
+	<tr>
+		<th width="30">#</th>
+		<th>Name</th>
+		<th width="450" id="scale"></th>
+		<th width="70">pValue</th>
+	</tr>
+</table>
+</div>
 

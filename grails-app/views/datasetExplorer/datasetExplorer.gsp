@@ -83,6 +83,7 @@
 
  
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
+	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'metacore.css')}">
 	
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
@@ -90,6 +91,7 @@
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 	
+	<script type="text/javascript" src="${resource(dir:'js/raphael', file:'raphael-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
 		
 	<!-- Combo-handled YUI JS files: --> 
@@ -179,6 +181,7 @@
 	  basePath: pageInfo.basePath,
 	  hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
 	  metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
+	  metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}'
 	};
 	// initialize browser version variables; see http://www.quirksmode.org/js/detect.html
 	BrowserDetect.init();

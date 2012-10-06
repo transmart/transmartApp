@@ -1,0 +1,7 @@
+#enrichment td, th { 
+			font-family: Verdana, Helvetica, sans-serif; font-size: 11px; text-align: left;
+			padding-left: 5px;
+		 }
+#enrichment th { font-weight: bold; border-bottom: 1px solid black; }
+#enrichment table { border-collapse:collapse; }
+#enrichment tr:hover { background-color: #eeeeee; }
