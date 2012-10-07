@@ -26,8 +26,8 @@ class MetacoreEnrichmentService {
 			  if (authKey) {
 				  log.info 'MetaCore - running enrichment'
 				  site.post( path: '/api/rpc.cgi',
-					body: [ proc: 'getEnrichment', diagram_type: 'maps', limit: 5, lists_origin: 'ids', list_name: 'Cohort 1',
-					idtype: 'LOCUSLINK', includeObjectIds: 0, output: 'json', auth_key: authKey, id: cohortGeneLists[0] ]) {
+					body: [ proc: 'getEnrichment', diagram_type: 'maps', limit: 50, lists_origin: 'ids', list_name: 'Cohort 1',
+					idtype: cohortGeneLists['IdType'], includeObjectIds: 0, output: 'json', auth_key: authKey, id: cohortGeneLists['Data'][0] ]) {
 					  resp2, json2 ->
 						  
 					  if (json2?.Code == 0) 

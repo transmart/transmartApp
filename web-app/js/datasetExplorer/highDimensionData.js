@@ -72,10 +72,12 @@ function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
 	spinnerMask.show();
 	
 	if((!variableDivEmpty(divId) && currentSubsetId== null)){
+		spinnerMask.hide();
 		runQueryForSubsetidSingleSubset(function(sId){gatherHighDimensionalDataSingleSubset(divId, sId);}, divId);
 		return;
 	}
 	if(variableDivEmpty(divId)){
+		spinnerMask.hide();
 		Ext.Msg.alert("No cohort selected!", "Please select a cohort first.");
 		return;
 	}

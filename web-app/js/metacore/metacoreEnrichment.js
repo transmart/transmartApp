@@ -1,67 +1,5 @@
-// --- enrichment display ----
-	
-	BAR_MAX = 400;
-	BAR_WIDTH = 10;
-	TICKS_COUNT = 8;
-	TICK_FONT_FAMILY = 'Verdana, Helvetica, sans-serif';
-	TICK_FONT_SIZE = 10;
-	TICK_FONT_WEIGHT = 100;
-	
-	function drawScale(min, max) {
-		var R = Raphael("scale", 500, 20);
-		R.path("M0,0L400,0").attr({ stroke: "black" });
-		var tick_step = (max - min) / TICKS_COUNT;
-		var tick_width = BAR_MAX / TICKS_COUNT;
-		for (var i=0; i<TICKS_COUNT; i++) {
-			var tick_value = min + i*tick_step;
-			tick_value = tick_value.toFixed(1);
-			var tick_offset = i*tick_width;
-			R.path("M" + tick_offset + ",0v5").attr({ stroke: "black" });
-			R.text(tick_offset, 9, tick_value).attr({ 
-				'font-family': TICK_FONT_FAMILY, 'font-size': TICK_FONT_SIZE, stroke: 'white', 'stroke-width': 0,
-				'text-anchor': (i==0)?'start':'middle', 'font-weight': TICK_FONT_WEIGHT 
-			});
-		}
-		R.path("M" + BAR_MAX + ",0v5").attr({ stroke: "black" });
-		R.text(BAR_MAX, 9, max.toFixed(1)).attr({ 'font-family': TICK_FONT_FAMILY, 'font-size': TICK_FONT_SIZE, stroke: 'black', 'stroke-width': 0, 'text-anchor': 'end', 'font-weight': TICK_FONT_WEIGHT });
-		
-		R.text(BAR_MAX+5, 9, "-log(pValue)").attr({ 'font-family': TICK_FONT_FAMILY, 'font-size': TICK_FONT_SIZE, stroke: 'black', 'stroke-width': 0, 'text-anchor': 'start', 'font-weight': 'bold' });
-	}
-	
-	function drawEnrichment(data) {
-		jQuery('#metacoreEnrichmentResults').css('display', 'block'); // show results div
-		
-		// determine min/max value
-		var min = 0;
-		var max = 0;
-		
-		for (var i=0; i<data.enrichment.process.length; i++) {
-			var val = data.enrichment.process[i].exp[0].value;
-			max = Math.max(max, val);
-			min = Math.min(min, val);
-		}
-		
-		// draw enrichment
-		for (var i=0; i<data.enrichment.process.length; i++) {
-			var proc = data.enrichment.process[i];
-			var cell_id = "cell" + proc.id;
-			jQuery('#enrichment  > tbody:last').append(
-				'<tr><td>' + (i+1) + '</td><td>'
-				+ '<a href="' + GLOBAL.metacoreUrl + data.enrichment.info_url + proc.id + '">' + proc.name + '</a>' 
-				+ '</td><td id="' + cell_id 
-				+ '"</td><td>'+ proc.val.toExponential(3) 
-				+'</td></tr>'
-			);
-			var R = Raphael(cell_id, 450, 10);
-			var len = (proc.exp[0].value - min) / (max - min) * BAR_MAX;
-			R.rect(0,0,0,10).attr({ fill: "90-#ffb4bb-#ffb400:20-#ffb400:80-#ffb4bb", stroke: 'none'}).animate({ width: len }, 1000)
-			R.text(BAR_MAX+5, 5, proc.exp[0].value.toPrecision(5)).attr({ 'font-family': TICK_FONT_FAMILY, 'font-size': TICK_FONT_SIZE, stroke: 'white', 'stroke-width': 0, 'text-anchor': 'start', 'font-weight': TICK_FONT_WEIGHT });
-		}
-		
-		drawScale(min, max);
-	}
 
-// --------- form parameters ---------
+// --------- Metacore Enrichment Tab ---------
 
 // analog of registerSOMETHINGDrugAndDrop functions in /plugins/rdc-modules-0.1/js/plugin/*.* files
 function registerMetaCoreEnrichmentDragAndDrop()
@@ -77,14 +15,10 @@ function initMetaCoreTab()
 {
 	GLOBAL.Analysis = "MetaCoreEnrichment";
 	registerMetaCoreEnrichmentDragAndDrop();
-	
-	jQuery.fn.scrollView = function () {
-	    return this.each(function () {
-	        $('html, body').animate({
-	            scrollTop: $(this).offset().top
-	        }, 1000);
-	    });
-	}
+}
+
+function scrollToEnrichmentResults() {
+	jQuery('html body').animate({ scrollTop: jQuery('#enrichment').offset().top}, 1000);
 }
 
 // TODO: needs refactoring: copy of renderCohortSummary from /plugins/rdc-modules-0.1/js/dataAssociations.js accepting divId
@@ -170,6 +104,36 @@ function submitMetaCoreEnrichmentJob(form) {
 	submitMetaCoreEnrichment(formParams); // instead of submitJob(formParams);
 }
 
+function runEnrichment(preparedData) {
+// run enrichment, TODO: pass exp. data filename to the controller
+	
+	jQuery('#metacoreEnrichmentResults').hide();
+	jQuery('#enrichment tbody').empty();
+	jQuery('#scale').empty();
+	
+	var spinnerMaskEnrichment = new Ext.LoadMask(Ext.getBody(), {msg:"Running enrichment analysis, please wait..."});
+	spinnerMaskEnrichment.show();
+
+	Ext.Ajax.request({
+		url : pageInfo.basePath+'/metacoreEnrichment/runAnalysis',
+		method: 'POST',
+		timeout: '1800000',
+		params: Ext.urlEncode(preparedData),
+		success : function(response, request) {
+			spinnerMaskEnrichment.hide();
+			var data = Ext.decode(response.responseText);
+			if (data.Code == 0) {
+				drawEnrichment(data.Result[0]);
+				scrollToEnrichmentResults();
+			}
+		},
+		failure : function(response, request) {
+			spinnerMaskEnrichment.hide();
+			alert("ERROR: " + response.statusText); // TODO: process error
+		}
+	});
+}
+
 // modified version of submitJob from /plugins/rdc-modules-0.1/js/dataAssociations.js
 // it doesn't run a job, it just posts request to controller
 function submitMetaCoreEnrichment(formParams) {
@@ -181,33 +145,76 @@ function submitMetaCoreEnrichment(formParams) {
 	}
 	
 	// TODO: prepare data here, fetch filename
+	// converting form parameters to normal values (quick dirty hack)
+	for (var p in formParams) { 
+		if (p.indexOf('MetaCoreEnrichment') > 0) { 
+			var new_p = p.replace('MetaCoreEnrichment', ''); 
+			formParams[new_p] = formParams[p]; 
+			delete formParams[p]; 
+		}
+	}
 	
-	
-	// run enrichment, TODO: pass exp. data filename to the controller
-	
-	jQuery('#metacoreEnrichmentResults').hide();
-	jQuery('#enrichment tbody').empty();
-	jQuery('#scale').empty();
-	
-	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Running enrichment analysis, please wait..."});
-	spinnerMask.show();
+	formParams.result_instance_id1=GLOBAL.CurrentSubsetIDs[1];
+	formParams.result_instance_id2=GLOBAL.CurrentSubsetIDs[2];
+	formParams.analysis='heatmap'; // to fool RModulesService
 
+	
+	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Preparing data, please wait..."});
+	spinnerMask.show();
+	
+	var preparedData;
+	
 	Ext.Ajax.request({
-		url : pageInfo.basePath+'/metacoreEnrichment/runAnalysis',
+		url : pageInfo.basePath+'/metacoreEnrichment/prepareData',
 		method: 'POST',
 		timeout: '1800000',
+		params: Ext.urlEncode(formParams),
 		success : function(response, request) {
 			spinnerMask.hide();
-			var data = Ext.decode(response.responseText);
-			if (data.Code == 0) {
-				drawEnrichment(data.Result[0]);
-				jQuery('#metacoreEnrichmentResults').scrollView();
-			}
+			preparedData = Ext.decode(response.responseText);
+			runEnrichment(preparedData);
 		},
 		failure : function(response, request) {
 			spinnerMask.hide();
 			alert("ERROR: " + response.statusText); // TODO: process error
 		}
 	});
+	
 }	
+
+// ------------ Marker Selection Analysis -------------
+
+function markerSelectionRunMetacoreEnrichment() {
+	var ids = [];
+	
+	jQuery('#markerSelectionTable tbody tr').each(function() { 
+		ids.push(jQuery(jQuery(this).children('td')[1]).html()); 
+	});
+	
+	jQuery('#metacoreEnrichmentResults').hide();
+	jQuery('#enrichment tbody').empty();
+	jQuery('#scale').empty();
+	
+	var spinnerMaskEnrichment = new Ext.LoadMask(Ext.getBody(), {msg:"Running enrichment analysis, please wait..."});
+	spinnerMaskEnrichment.show();
+
+	Ext.Ajax.request({
+		url : pageInfo.basePath+'/metacoreEnrichment/runAnalysisForMarkerSelection',
+		method: 'POST',
+		timeout: '1800000',
+		params: Ext.urlEncode({'IdList': ids}),
+		success : function(response, request) {
+			spinnerMaskEnrichment.hide();
+			var data = Ext.decode(response.responseText);
+			if (data.Code == 0) {
+				drawEnrichment(data.Result[0]);
+				scrollToEnrichmentResults();
+			}
+		},
+		failure : function(response, request) {
+			spinnerMaskEnrichment.hide();
+			alert("ERROR: " + response.statusText); // TODO: process error
+		}
+	});
+}
 	
