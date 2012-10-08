@@ -170,7 +170,7 @@ function switchImage(imgToRemove, imgToAdd)	{
 
 // Method to show/hide the search/filters 
 function toggleFilters()	{
-	if (jQuery("#main").css('left') == "0px"){		
+	if (jQuery("#main").css('left') == "0px"){	
 		jQuery("#search-categories").attr('style', 'visibility:visible; display:inline');
 		jQuery("#search-ac").attr('style', 'visibility:visible; display:inline');
 		jQuery("#search-div").attr('style', 'visibility:visible; display:inline');
@@ -182,9 +182,11 @@ function toggleFilters()	{
 		jQuery("#toggle-btn").css('left', 278);
 		jQuery("#toggle-btn").css('height;', 20);
 		jQuery("#main").css('padding-left', 0);	
-		jQuery("#menu_bar").css('margin-left', -1);
 		jQuery("#toggle-btn").css('height', 20);	
+		jQuery("#menu_bar").css('left', 300);
 	} else	{
+		jQuery("#main").css('left', 0);	
+		jQuery("#main").css('padding-left', 20);	
 		jQuery("#search-categories").attr('style', 'visibility:hidden; display:none');
 		jQuery("#search-ac").attr('style', 'visibility:hidden; display:none');
 		jQuery("#search-div").attr('style', 'visibility:hidden; display:none');
@@ -192,11 +194,11 @@ function toggleFilters()	{
 		jQuery("#title-search-div").attr('style', 'visibility:hidden; display:none');
 		jQuery("#title-filter").attr('style', 'visibility:hidden; display:none');
 		jQuery("#side-scroll").attr('style', 'visibility:hidden; display:none');
-		jQuery("#main").css('left', 0);	
+
 		jQuery("#toggle-btn").css('left', 0);	
 		jQuery("#toggle-btn").css('height', '100%');	
-		jQuery("#main").css('padding-left', 20);	
-		jQuery("#menu_bar").css('margin-left', -21);	
+		jQuery("#menu_bar").css('left', 0);	
+
 	}	   
 }
 
