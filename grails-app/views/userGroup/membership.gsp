@@ -58,7 +58,7 @@
                 				<button class="" onclick="searchgroup();">Search Groups</button></td>
                      			<tr><td><b>Member of these groups</b></td><td></td><td><b>Available groups</b></td></tr>
                      			<tr id="groups">
-                                    <g:render template="addremoveg" model="['groupswithoutuser' :groupswithoutuser]" />
+                                    <g:render template="addremoveg" model="[groupswithoutuser :groupswithoutuser]" />
                                     </tr>
                                      </table>
                                 	</div>

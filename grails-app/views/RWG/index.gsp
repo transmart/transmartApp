@@ -147,7 +147,7 @@
     <body>
     	<input type="hidden" id="analysisCount" value="0" />
         <div id="header-div">        
-            <g:render template="/layouts/commonheader" model="['app':'rwg']" />
+            <g:render template="/layouts/commonheader" model="[app:rwg]" />
         </div>
 		 
 		<div id="main">

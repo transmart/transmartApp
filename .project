@@ -17,9 +17,8 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>com.springsource.sts.grails.core.nature</nature>
-		<nature>org.eclipse.jdt.groovy.core.groovyNature</nature>
 		<nature>org.grails.ide.eclipse.core.nature</nature>
+		<nature>org.eclipse.jdt.groovy.core.groovyNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
@@ -27,7 +26,7 @@
 		<link>
 			<name>.link_to_grails_plugins</name>
 			<type>2</type>
-			<locationURI>GRAILS_ROOT/2.1.0/projects/transmart/plugins</locationURI>
+			<locationURI>GRAILS_ROOT/2.1.0/projects/transmartApp/plugins</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

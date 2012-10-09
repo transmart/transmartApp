@@ -111,6 +111,19 @@ top: 58px;
 }
 
 
+.bigtitle{
+	  color:#333;
+	  padding:0;
+	  margin:0;
+	  font-size:14px;
+	  font-weight:bold;
+	  padding-left:0.5em;
+	  padding-top:0.4em;
+	  
+		
+}
+
+
 .title-link-inactive
 {
 	color:#aaa;
