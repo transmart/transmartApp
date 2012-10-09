@@ -38,7 +38,7 @@
 		<!-- ************************************** -->  
     </head>
     <body>
-		<g:render template="/layouts/commonheader" model="['app':'customfilters']" />
+		<g:render template="/layouts/commonheader" model="[app:customfilters]" />
         <div class="nav">
             <span class="menuButton"><g:link class="list" action="list">Saved Filters</g:link></span>
             <%topicID="1022" %>

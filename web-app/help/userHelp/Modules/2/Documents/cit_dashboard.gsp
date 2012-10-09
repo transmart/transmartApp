@@ -57,7 +57,7 @@
 	<table style="width: 100%;" cellpadding=0 cellspacing=0>
 		<tbody>
 		<tr>
-			<td><div id="header"><g:render template="/layouts/commonheader"	model="['app':'dashboard']" /></div></td>
+			<td><div id="header"><g:render template="/layouts/commonheader"	model="[app:dashboard]" /></div></td>
 		</tr>
 		
 		<tr>

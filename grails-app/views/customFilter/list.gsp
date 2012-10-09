@@ -37,7 +37,7 @@
 		<!-- ************************************** -->
     </head>
     <body>
-		<g:render template="/layouts/commonheader" model="['app':'customfilters']" />
+		<g:render template="/layouts/commonheader" model="[app:customfilters]" />
         <div style="padding: 20px 10px 10px 10px;">
             <%topicID="1017" %>
 			<a HREF='JavaScript:D2H_ShowHelp(<%=topicID%>,helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP )'>
