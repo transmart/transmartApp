@@ -3,14 +3,13 @@
 <g:set var="shortDescription" value="${analysis.shortDescription}" />
 <g:set var="isTimeCourse" value="${analysis.isTimeCourse}" />
 
-
 <div id="TrialDetail_${analysisId}_anchor" class="result-analysis" >
     <div class="analysis-name">
         <table class="analysis-table">
             <tr>
                 <td style="width:35px;">
 		          <g:form controller="RWG" name="AnalysisDetail_${analysisId}" id="AnalysisDetail_${analysisId}" action="doComparison">
-		             <input type="checkbox" name="Analysis:" + ${counter} onchange="updateAnalysisCount(this.checked);"/>
+		             <input type="checkbox" name="chbx_Analysis_${analysisId}" onchange="updateAnalysisCount(this.checked,'${analysis.id}','${analysis.longDescription}','${analysis.studyID}');"/>
 		              <input type="hidden" id="analysisDiv_${analysisId}_state" value="0" />
 			          <a href="#" onclick="showDetailDialog('${createLink(controller:'trial', action:'showAnalysis', id:analysisId)}', '${shortDescription}');">
 	                   <img alt="Analysis" src="${resource(dir:'images',file:'analysis.png')}" style="vertical-align: top;margin-top: -2px;" /></a>                          
@@ -169,4 +168,6 @@
 	jQuery('#boxplotRangeMin_' +${analysisId}).numeric({ negative: false }, function() { alert("No negative values"); this.value = ""; this.focus(); });
 	jQuery('#boxplotRangeMax_' +${analysisId}).numeric({ negative: false }, function() { alert("No negative values"); this.value = ""; this.focus(); });
 
+	setAnalysisCheckboxState('${analysisId}');
+	
 </script>

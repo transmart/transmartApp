@@ -21,6 +21,9 @@ var openAnalyses = new Array(); //store the IDs of the analyses that are open
 
 var openTrials = new Array(); //store the trials that are currently expanded
 
+//store the selected analyses
+var selectedAnalyses = [];
+
 
 //create an ajaxmanager named rwgAJAXManager
 //this will handle all ajax calls on this page and prevent too many 
@@ -65,22 +68,111 @@ var cohortBGColors = new Array(
 );
 
 
-function updateAnalysisCount(checkedState)	{	
-	var currentCount = jQuery("#analysisCount").val();
-	if (checkedState)	{
-		currentCount++;
-	} else	{
-		currentCount--;
-	}
+function removeSelectedAnalysis(analysisID){
+	
+
+	jQuery("#li_SelectedAnalysis_"+analysisID).fadeOut('fast');
+	
+
+	//remove from selecatedAnalyses array
+	for (var i =0; i < selectedAnalyses.length; i++)
+		   if (selectedAnalyses[i].id === analysisID) {
+			   selectedAnalyses.splice(i,1);
+		      break;
+		   }
+	
+
+	var currentCount = selectedAnalyses.length;
+	
 	jQuery("#analysisCount").val(currentCount);
 	var newLabel = currentCount + " Analyses Selected";
 	if (currentCount == 0)	{
-		newLabel = "No Analysis Selected";
+		newLabel = "0 Analyses Selected";
+	} else if (currentCount == 1)	{
+		newLabel = "1 Analysis Selected";
+	}
+	jQuery("#analysisCountLabel").html(newLabel);
+	
+
+	jQuery("input[name=chbx_Analysis_"+analysisID+"]").attr('checked', false);
+	
+
+}
+
+
+function updateAnalysisCount(checkedState, analysisID, analysisTitle, studyID)	{	
+	var currentCount = jQuery("#analysisCount").val();
+	if (checkedState)	{
+		currentCount++;
+		
+		//add item to selectedAnalyses array
+		selectedAnalyses.push({'id':analysisID, 'title':analysisTitle, 'studyID':studyID})
+		
+	} else	{
+		currentCount--;
+		
+		//remove from selecatedAnalyses array
+		for (var i =0; i < selectedAnalyses.length; i++)
+			   if (selectedAnalyses[i].id === analysisID) {
+				   selectedAnalyses.splice(i,1);
+			      break;
+			   }
+	}
+	
+	jQuery("#analysisCount").val(currentCount);
+	var newLabel = currentCount + " Analyses Selected";
+	if (currentCount == 0)	{
+		newLabel = "0 Analyses Selected";
 	} else if (currentCount == 1)	{
 		newLabel = "1 Analysis Selected";
 	}
 	jQuery("#analysisCountLabel").html(newLabel);
 	return false;
+}
+
+
+function getSelectedAnalysesList(){
+	
+	var html = "<a href='#' onclick='clearSelectedAnalyses()'>Clear All</a><br /><br />";
+	html = html +"<ul id='selectedAnalysesList'>";
+	
+	selectedAnalyses.sort(dynamicSort("studyID"));
+	
+	jQuery(selectedAnalyses).each(function(index, value){
+
+		html = html + "<li id='li_SelectedAnalysis_"+selectedAnalyses[index].id +"'>"
+		html = html + "<input type='checkbox' onchange=removeSelectedAnalysis('"+selectedAnalyses[index].id +"') name='chbx_SelectedAnalysis_" + selectedAnalyses[index].id +"' checked='	checked'>";
+		html = html + "<span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</li>';
+		
+	});
+	
+	html = html + '</ul>';
+	
+	jQuery('#selectedAnalysesExpanded').html(html);
+	
+}
+
+//set the checkbox of the analysis to checked if it exists in the selectedAnalysis array
+function setAnalysisCheckboxState(analysisID){
+	
+	//check the selectedAnalyses array for the current analysisID
+	var selected = selectedAnalyses.filter(function (analysis){
+			return analysis.id == analysisID;
+		});
+	
+	//if the analysis was found, check the checkbox
+	if(selected.length>0){
+		jQuery("input[name=chbx_Analysis_"+analysisID+"]").attr('checked', true);
+	}
+
+	
+}
+
+
+function dynamicSort(property) {
+    return function (a,b) {
+        return (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+    }
 }
 
 function showDetailDialog(dataURL, dialogTitle, dialogHeight)	{
@@ -171,6 +263,7 @@ function switchImage(imgToRemove, imgToAdd)	{
 // Method to show/hide the search/filters 
 function toggleFilters()	{
 	if (jQuery("#main").css('left') == "0px"){	
+		
 		jQuery("#search-categories").attr('style', 'visibility:visible; display:inline');
 		jQuery("#search-ac").attr('style', 'visibility:visible; display:inline');
 		jQuery("#search-div").attr('style', 'visibility:visible; display:inline');
@@ -178,15 +271,14 @@ function toggleFilters()	{
 		jQuery("#title-search-div").attr('style', 'visibility:visible; display:inline');
 		jQuery("#title-filter").attr('style', 'visibility:visible; display:inline');
 		jQuery("#side-scroll").attr('style', 'visibility:visible; display:inline');
-		jQuery("#main").css('left', 300);
+
 		jQuery("#toggle-btn").css('left', 278);
 		jQuery("#toggle-btn").css('height;', 20);
+		jQuery("#toggle-btn").css('height', 20);
 		jQuery("#main").css('padding-left', 0);	
-		jQuery("#toggle-btn").css('height', 20);	
+		jQuery("#main").css('left', 300);
 		jQuery("#menu_bar").css('left', 300);
 	} else	{
-		jQuery("#main").css('left', 0);	
-		jQuery("#main").css('padding-left', 20);	
 		jQuery("#search-categories").attr('style', 'visibility:hidden; display:none');
 		jQuery("#search-ac").attr('style', 'visibility:hidden; display:none');
 		jQuery("#search-div").attr('style', 'visibility:hidden; display:none');
@@ -194,9 +286,11 @@ function toggleFilters()	{
 		jQuery("#title-search-div").attr('style', 'visibility:hidden; display:none');
 		jQuery("#title-filter").attr('style', 'visibility:hidden; display:none');
 		jQuery("#side-scroll").attr('style', 'visibility:hidden; display:none');
-
-		jQuery("#toggle-btn").css('left', 0);	
+		
 		jQuery("#toggle-btn").css('height', '100%');	
+		jQuery("#main").css('padding-left', 20);	
+		jQuery("#main").css('left', 0);	
+		jQuery("#toggle-btn").css('left', 0);	
 		jQuery("#menu_bar").css('left', 0);	
 
 	}	   

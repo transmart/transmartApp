@@ -515,6 +515,7 @@ ul.dynatree-container li ul li{
 {
 	color: #339933;
 	 padding-left: 3px;
+	 font-weight:bold;
 }
 
 .result-analysis-label
@@ -720,10 +721,10 @@ p.legend_probe {
 	background-color:#eee;
 	border:1px solid #ccc;
 	border-top:0;
-	padding:6px;
-	width:220px;
+	padding:10px;
 	display: inline;
-	margin-top: 31px;
+	margin-top: 10px;
+	margin-left:-10px;
 	position:absolute;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 }
@@ -731,29 +732,36 @@ p.legend_probe {
 #searchResultOptions_btn{
 
 	display: inline;
+	cursor:pointer; 
+	width:55px;
+}
+#selectedAnalysesExpanded{
+	background-color: #EEE;
+	border: 1px solid #bbb;
+	border-top: 0;
+	padding: 10px;
+	display: inline;
+	margin-top: 10px;
+	margin-left: -10px;
 	position: absolute;
-		cursor:pointer; 
-		width:55px;
-}
-#searchResultOptions_btn a{
-	color:#000;
-	font-weight: normal;
-	text-decoration: none;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+	width:350px;
+	overflow-x: auto;
+	max-height: 450px;
 }
 
-#searchResultOptions_holder{
-	display:inline;
-	position:absolute;
-}
-
-#searchResultOptions ul {
+#selectedAnalysesList{
+	list-style:none;
 	
-	list-style-type: none;
 }
-
-#searchResultOptions ul li {
+#selectedAnalysesList li{
 	padding:3px;
 }
+
+#selectedAnalyses_btn {
+	display: inline;
+}
+
 
 .heatmapControls_holder
 {
@@ -823,6 +831,11 @@ background-color: #DFDFDF;
 	display: inline;
 	padding:8px;
 }
+
+.toolbar-item a{
+	font-weight:normal;
+}
+
 .toolbar-item{
 display: inline-block;
 border-right: 1px solid #CCC;
@@ -832,13 +845,10 @@ padding-right: 8px;
 margin-top: 8px;
 
 }
-.toolbar-item:hover{
+.toolbar-item:hover a{
 cursor: pointer;
-background-color: #DFDFDF;
-padding: 8px;
-margin: 0;
-border-left: 1px solid #CCC;
-margin-left: -1px;
+color:#000;
+text-decoration: none;
 }
 
 .vis-toolBar{

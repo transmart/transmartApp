@@ -77,6 +77,7 @@
 	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";	        
 	        var mouse_inside_options_div = false;
+	        var mouse_inside_analysis_div = false;
 			var getPieChartDataURL = "${createLink([action:'getPieChartData'])}";
 			var showHomePageFirst=true;
 			
@@ -94,24 +95,28 @@
 		    	showIEWarningMsg();
 
 
-		        jQuery("#searchResultOptions_btn").click(function(){
-		        	jQuery("#searchResultOptions").toggle();
-		        	});
-		        
 		        //used to hide the options div when the mouse is clicked outside of it
-
 	            jQuery('#searchResultOptions_holder').hover(function(){ 
 	            	mouse_inside_options_div=true; 
 	            }, function(){ 
 	            	mouse_inside_options_div=false; 
 	            });
 
-
+		        //used to hide the options div when the mouse is clicked outside of it
+	            jQuery('#selectedAnalyses_holder').hover(function(){ 
+	            	mouse_inside_analysis_div=true; 
+	            }, function(){ 
+	            	mouse_inside_analysis_div=false; 
+	            });
 
 	            jQuery("body").mouseup(function(){ 
-		            //top menu options
+		            //hide the options menu
 	                if(! mouse_inside_options_div ){
 		                jQuery('#searchResultOptions').hide();
+	                }
+	                //hide the selected analyses menu
+	                if(! mouse_inside_analysis_div ){
+		                jQuery('#selectedAnalysesExpanded').hide();
 	                }
 
 	                var analysisID = jQuery('body').data('heatmapControlsID');
@@ -140,35 +145,38 @@
                 
     </head>
     <body>
+    	<input type="hidden" id="analysisCount" value="0" />
         <div id="header-div">        
             <g:render template="/layouts/commonheader" model="['app':'rwg']" />
         </div>
 		 
 		<div id="main">
 			<div id="menu_bar">
-			   <div id="searchResultOptions_launchHomePage" class='toolbar-item' onclick='hideResultsPage();showHomePage();'>
-                          Home
-               </div> 
-				<div class='toolbar-item' id="xtButton" href="#xtHolder">Cross Trial Analysis</div>
-				<div id='analysisCountDiv' class='toolbar-item'>
-					<label id="analysisCountLabel">No Analysis Selected</label>
-					<input type="hidden" id="analysisCount" value="0" />
-				</div>
-
-
-                 <div id="searchResultOptions_launchResultsPage" class='toolbar-item' onclick='hideHomePage();showResultsPage();'>
-                              Search Results
-                        </div>     
-				<div class='toolbar-item' onclick='collapseAllAnalyses();'>Collapse All</div>
-                               
-				
-	  			<div id="searchResultOptions_holder">
-				<div id="searchResultOptions_btn" class='toolbar-item'>
-					 Options <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
-				</div>
-				<div id="searchResultOptions" class='auto-hide' style="display:none;">
-					<ul>
-						<li>
+			
+			<ul>
+				<li class='toolbar-item'><a href="#" onclick='hideResultsPage();showHomePage();'>Home</a></li>
+				<li class='toolbar-item'><a href="#" onclick='hideHomePage();showResultsPage();'>Search Results</a></li>
+				<li class='toolbar-item'><a href="#">Cross Trial Analysis</a></li>
+				<li class='toolbar-item'>						
+					<div id="selectedAnalyses_holder">
+						<div id='selectedAnalyses_btn'>
+							<a href="#" onclick='jQuery("#selectedAnalysesExpanded").toggle();getSelectedAnalysesList()'>
+								 <span id="analysisCountLabel">0 Analyses Selected</span>
+								 <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
+							</a>
+						</div>
+							<div id="selectedAnalysesExpanded" class='auto-hide' style="display:none;"></div>
+					</div>
+				</li>
+				<li class='toolbar-item'><a href="#" onclick='collapseAllAnalyses();'>Collapse All</a></li>
+				<li class='toolbar-item'>			
+					<div id="searchResultOptions_holder">
+						<div id="searchResultOptions_btn">
+							<a href="#" onclick='jQuery("#searchResultOptions").toggle();'>
+								Options <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
+							</a>
+						</div>
+						<div id="searchResultOptions" class='auto-hide' style="display:none;">
 							<select id="probesPerPage" onchange="showSearchResults(); ">
 							    <option value="10">10</option>
 							    <option value="20" selected="selected">20</option>
@@ -178,13 +186,30 @@
 							    <option value="200">200</option>
 							    <option value="250">250</option>
 							</select>  Probes/Page
-						</li>
-						<li>
+							<br /><br />
 							<input type="checkBox" id="cbShowSignificantResults" checked="true" onclick="showSearchResults(); ">Show only significant results</input>		
-						</li>
-					</ul>
+						</div>
+					</div>
+				</li>		
+			</ul>
+			
+			<!-- 
+				
+				<div id="selectedAnalyses_holder">
+					<div id='selectedAnalyses_btn' class='toolbar-item'>
+						
+						 <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
+					</div>
+						<div id="selectedAnalysesExpanded" class='auto-hide' style="display:none;">
+		
+							HELLO HELLO HELLO
+						
+						</div>
 				</div>
-			</div>		
+				
+			 -->
+			
+				
 				
 		</div>
 		
