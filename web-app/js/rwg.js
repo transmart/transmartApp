@@ -3101,11 +3101,33 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 	});
 }
 
+
+function openCrossTrialAnalysis()
+{
+      rwgAJAXManager.add({
+  		url:crossTrialAnalysisURL,				
+  		timeout:60000,
+  		success: function(response) {
+  		  
+  			//alert(response);
+  			jQuery('#cross-trial-div').html(response);
+  		  
+  		  hideHomePage();
+  	      hideResultsPage();
+  		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+  	});
+      
+    
+}
+
 function launchHomePage(currentsubcategoryid, currentcharttype, showAll)
 {
       
       rwgAJAXManager.add({
-  		url:"getHomePage",									
+  		url:homeURL,						
   		data: {currentsubcategoryid: currentsubcategoryid, currentcharttype:currentcharttype, showAll:showAll},
   		timeout:60000,
   		success: function(response) {

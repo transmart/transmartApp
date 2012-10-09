@@ -76,6 +76,8 @@
 	        var renderFavoritesTemplateURL = "${createLink([action:'renderFavoritesTemplate'])}";
 	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";	        
+	        var homeURL = "${createLink([action:'getHomePage'])}";	     
+	        var crossTrialAnalysisURL = "${createLink([action:'getCrossTrialAnalysis'])}";	     
 	        var mouse_inside_options_div = false;
 	        var mouse_inside_analysis_div = false;
 			var getPieChartDataURL = "${createLink([action:'getPieChartData'])}";
@@ -156,7 +158,7 @@
 			<ul>
 				<li class='toolbar-item'><a href="#" onclick='hideResultsPage();showHomePage();'>Home</a></li>
 				<li class='toolbar-item'><a href="#" onclick='hideHomePage();showResultsPage();'>Search Results</a></li>
-				<li class='toolbar-item'><a href="#">Cross Trial Analysis</a></li>
+				<li class='toolbar-item'><a href="#" onclick='openCrossTrialAnalysis();'>Cross Trial Analysis</a></li>
 				<li class='toolbar-item'>						
 					<div id="selectedAnalyses_holder">
 						<div id='selectedAnalyses_btn'>
@@ -192,29 +194,12 @@
 					</div>
 				</li>		
 			</ul>
-			
-			<!-- 
-				
-				<div id="selectedAnalyses_holder">
-					<div id='selectedAnalyses_btn' class='toolbar-item'>
-						
-						 <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
-					</div>
-						<div id="selectedAnalysesExpanded" class='auto-hide' style="display:none;">
-		
-							HELLO HELLO HELLO
-						
-						</div>
-				</div>
-				
-			 -->
-			
-				
-				
+
 		</div>
 		
 		<div id="home-div"></div>
         <div id="results-div"></div>
+        <div id="cross-trial-div"></div>
 
          	
 		</div>
@@ -262,37 +247,10 @@
       		<!-- Load load favorites modal content is done via Ajax call-->
 		</div>
 		
-		<!--  Everything for the across trial function goes here and is displayed using colorbox -->
-		<div style="display:none">
-			<div id="xtHolder">
-				<div id="xtTopbar">
-					<p>Cross Trial Analysis</p>
-					<ul id="xtMenu">
-						<li>Summary</li>
-						<li>Heatmap</li>
-						<li>Boxplot</li>
-					</ul>
-					<p>close</p>
-				</div>
-				<div id="xtSummary"><!-- Summary Tab Content -->
-							
-				
-				</div>
-				<div id="xtHeatmap"><!-- Heatmap Tab Content -->
-				
-				
-				</div>
-				<div id="xtBoxplot"><!-- Boxplot Tab Content -->
-				
-				
-				</div>
-			</div>
-			
-		</div>
-		
-		       <!--  Used to measure the width of a text element (in svg plots) -->
-		       <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
-		
+
+       <!--  Used to measure the width of a text element (in svg plots) -->
+       <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
+
     </body>
     
            		

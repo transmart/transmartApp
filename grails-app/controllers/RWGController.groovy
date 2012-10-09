@@ -1139,8 +1139,19 @@ class RWGController {
 			  
    }
    
+   def getCrossTrialAnalysis={
+	   
+	   
+	   def html
+		   html = g.render(template:'/RWG/crossTrialAnalysis').toString()
+	   
+	   render(html)
+	   
+   }
+   
    //Render the home page template
    def getHomePage = {
+	   
 	   def ta=SearchTaxonomy.findByTermName('Therapeutic Areas') //default to ta
 	   def d=SearchTaxonomy.findByTermName('Disease') //default to disease
 	   def currentsubcategoryid;
@@ -1173,6 +1184,7 @@ class RWGController {
 	    def subcategories=rwgDAO.getSearchTaxonomyChildren(1); //TODO: is one always root?
 		def currentsubcategory=SearchTaxonomy.get(currentsubcategoryid);
 	   render(template:'home', model: ['categories': categories, 'subcategories': subcategories, 'currentsubcategoryid':currentsubcategoryid, 'currentsubcategoryname':currentsubcategory.termName, 'favorites':favorites, 'currentcharttype':currentcharttype, 'showAll':showAll])
+
  }
  
    /**
