@@ -17,13 +17,13 @@
 	<div align="center" style="width:100%;margin-left:-1px;" colspan="2" class="ui-widget-header"><h1 style="padding:6px;text-align:left;vertical-align:middle;" class="bigtitle">Summary Charts</h1></div>
 	<div style="padding:5px;">
 	<br />
-Show (<g:checkBox name="showAll" id="showAll" checked="${showAll}"  onchange="launchHomePage( jQuery('#subcategoryid').val(), jQuery('#charttype').val(), this.checked )"/>&nbsp;All Areas) by
+ Show <!-- (<g:checkBox name="showAll" id="showAll" checked="${showAll}"  onchange="launchHomePage( jQuery('#subcategoryid').val(), jQuery('#charttype').val(), this.checked )"/>&nbsp;All Areas)--> by
 <g:select name="subcategoryid"
           from="${subcategories.sort({it.name})}"
           value="${currentsubcategoryid}"
           optionValue="${{it.name} }"
           optionKey="${{it.id} }"
-          onchange="launchHomePage( this.value, jQuery('#charttype').val(), jQuery('#showAll').is(':checked') )"
+          onchange="launchHomePage( this.value, jQuery('#charttype').val(), false)" 
           id="subcategoryid" /> 
      
      <br />

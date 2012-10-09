@@ -147,7 +147,8 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor, ddstack)
 
     totalValue.text(function(){
       var kb = total;
-      return kb.toFixed(0)+" "+ charttype.charAt(0).toUpperCase() + charttype.slice(1);
+      //return kb.toFixed(0)+" "+ charttype.charAt(0).toUpperCase() + charttype.slice(1);
+      return charttype.charAt(0).toUpperCase() + charttype.slice(1);
       //return bchart.label.abbreviated(totalOctets*8);
     });
 	
