@@ -97,6 +97,11 @@
 		    	showIEWarningMsg();
 
 
+
+		    	//Resize code
+				setActiveFiltersResizable();
+
+
 		        //used to hide the options div when the mouse is clicked outside of it
 	            jQuery('#searchResultOptions_holder').hover(function(){ 
 	            	mouse_inside_options_div=true; 
@@ -162,7 +167,7 @@
 				<li class='toolbar-item'>						
 					<div id="selectedAnalyses_holder">
 						<div id='selectedAnalyses_btn'>
-							<a href="#" onclick='jQuery("#selectedAnalysesExpanded").toggle();getSelectedAnalysesList()'>
+							<a href="#" onclick='getSelectedAnalysesList();'>
 								 <span id="analysisCountLabel">0 Analyses Selected</span>
 								 <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
 							</a>

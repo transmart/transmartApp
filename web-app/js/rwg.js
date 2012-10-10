@@ -35,36 +35,13 @@ var rwgAJAXManager = jQuery.manageAjax.create('rwgAJAXManager', {
 });
 
 var cohortBGColors = new Array(
-		/*
-		"#F5A9E1",  // light pink
-		"#00FFFF",  // light blue
-		"#FE9A2E",  // light orange
-		"#BDBDBD",  // light grey
-		"#2EFE2E",  // light green
-		"#FF00FF",   // pink
-		"#F3F781"  // light yellow
-	*/
-		
 		/* Pastel */
 		"#FFFFD9", //light yellow
 		"#80B1D3", //light blue
 		"#B3DE69", //moss green
 		"#D9D9D9", //grey
 		"#BC80BD", //lavender
-		"#91d4c5"  //teal
-
-		
-		/*Light yellow to green, sequential 
-		"#FFFFE5",
-		"#F7FCB9",
-		"#D9F0A3",
-		"#ADDD8E",
-		"#78C679",
-		"#41AB5D",
-		"#238443",
-		"#006837"
-		*/
-		
+		"#91d4c5"  //teal		
 );
 
 
@@ -133,7 +110,9 @@ function updateAnalysisCount(checkedState, analysisID, analysisTitle, studyID)	{
 
 function getSelectedAnalysesList(){
 	
-	var html = "<a href='#' onclick='clearSelectedAnalyses()'>Clear All</a><br /><br />";
+	jQuery("#selectedAnalysesExpanded").toggle();
+	
+	var html = "<a href='#' onclick='clearAllSelectedAnalyses()'>Clear All</a><br /><br />";
 	html = html +"<ul id='selectedAnalysesList'>";
 	
 	selectedAnalyses.sort(dynamicSort("studyID"));
@@ -149,6 +128,24 @@ function getSelectedAnalysesList(){
 	html = html + '</ul>';
 	
 	jQuery('#selectedAnalysesExpanded').html(html);
+	
+}
+
+function clearAllSelectedAnalyses(){
+	
+	for (var i =0; i < selectedAnalyses.length; i++){
+		jQuery("input[name=chbx_Analysis_"+selectedAnalyses[i].id+"]").attr('checked', false);		
+	}
+	
+	jQuery('#selectedAnalysesExpanded').html("");
+	jQuery("#analysisCount").val(0);
+	jQuery("#analysisCountLabel").html("0 Analyses Selected");
+	
+	selectedAnalyses =[];
+	
+	jQuery("#selectedAnalysesExpanded").hide();
+
+	return;
 	
 }
 
@@ -168,7 +165,7 @@ function setAnalysisCheckboxState(analysisID){
 	
 }
 
-
+//Used for sorting arrays of objects 
 function dynamicSort(property) {
     return function (a,b) {
         return (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
@@ -2244,7 +2241,15 @@ function showSearchTemplate(categories, keywords)	{
 	
 	if (!tooltip)  {
 		// populate div if not tooltip
-		document.getElementById('active-search-div').innerHTML = searchHTML;
+		
+		//changing the internal html causes problems for the resizable feature
+		//so, destry the resizeable code first, then reapply after updating the html
+		jQuery('#active-search-div').resizable("destroy");
+
+		jQuery('#active-search-div').html(searchHTML);
+		
+		setActiveFiltersResizable();
+		    	
 		
 		if(keywords.length > 0){
 			//enable Save link
@@ -2255,6 +2260,30 @@ function showSearchTemplate(categories, keywords)	{
 		// html for tooltip - just return the html
 		return searchHTML;
 	}
+}
+
+//Allows resizing the "Active Filters" div
+function setActiveFiltersResizable(){
+	
+	jQuery('#active-search-div').resizable({
+    	maxWidth:280,
+		minWidth:280,
+		handles: "s",
+        resize: function (event,ui){
+				jQuery("#title-filter").css({ top: 127 + ui.size.height +'px' });
+				jQuery("#side-scroll").css({ top: 155 + ui.size.height +'px' });
+            },
+         stop:function (event,ui){
+				
+				jQuery("#title-filter").css({ top: 127 + ui.size.height +'px' });
+				jQuery("#side-scroll").css({ top: 155 + ui.size.height +'px' });
+          }
+    });
+	
+	//fix some issues with the size to prevent scroll bars
+	jQuery('.ui-resizable-e').css({right:0});
+	jQuery('.ui-resizable-s').css({bottom:0});
+	
 }
 
 

@@ -768,7 +768,9 @@ p.legend_probe {
 	
 }
 #selectedAnalysesList li{
-	padding:3px;
+	padding: 8px;
+	border-top: 1px solid #DDD;
+	padding-right: 0;
 }
 
 #selectedAnalyses_btn {
