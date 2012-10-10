@@ -2245,7 +2245,7 @@ function showSearchTemplate(categories, keywords)	{
 		//changing the internal html causes problems for the resizable feature
 		//so, destry the resizeable code first, then reapply after updating the html
 		jQuery('#active-search-div').resizable("destroy");
-
+		
 		jQuery('#active-search-div').html(searchHTML);
 		
 		setActiveFiltersResizable();
