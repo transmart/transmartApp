@@ -678,13 +678,13 @@ function exportBoxPlotData(analysisId, exportType)
 		
 		var data = jQuery('body').data("BoxplotData:" + analysisId);
 		
-		drawBoxPlot('boxplotAnalysis_'+analysisId, data, analysisId, true);
+		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, true);
 		
 		var svgID=  "#boxplotAnalysis_"+analysisId;
 		
 		exportCanvas(svgID);		
 
-		drawBoxPlot('boxplotAnalysis_'+analysisId, data, analysisId, false);
+		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, false);
 		
 		break;
 	default:
@@ -1465,7 +1465,7 @@ function loadBoxPlotData(analysisID, probeID)	{
 		timeout:60000,
 		success: function(response) {
 			setActiveProbe(analysisID, probeID);
-			drawBoxPlot('boxplotAnalysis_'+analysisID, response, analysisID);
+			drawBoxPlotD3('boxplotAnalysis_'+analysisID, response, analysisID);
 			jQuery('#boxplotLegend_'+analysisID).show();
 			jQuery('#boxplotAnalysis_'+analysisID).show();	
 			
@@ -1551,7 +1551,7 @@ function updateBoxPlot(analysisID){
 		console.log("Error: Could not find data");
 	}else
 		{
-			drawBoxPlot('boxplotAnalysis_'+analysisID, data, analysisID);
+			drawBoxPlotD3('boxplotAnalysis_'+analysisID, data, analysisID);
 		}
 }
 

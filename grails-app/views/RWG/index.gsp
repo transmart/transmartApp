@@ -55,6 +55,10 @@
         
        	<!--Heatmap (d3) -->
        	<script type="text/javascript" src="${resource(dir:'js', file:'heatmap.js')}"></script>
+       	<!--Boxplot (d3) -->
+       	<script type="text/javascript" src="${resource(dir:'js', file:'boxplot.js')}"></script>
+       	<!--legend (d3) -->
+       	<script type="text/javascript" src="${resource(dir:'js', file:'legend.js')}"></script>
 
         <script type="text/javascript" charset="utf-8">        
 	        var searchResultsURL = "${createLink([action:'loadSearchResults'])}";

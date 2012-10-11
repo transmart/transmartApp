@@ -522,7 +522,6 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
  	    .attr("text-anchor", "start")
 		.style("fill", function(d) {return d.textColor; })
 		.style("font-size", "10px")
-		  //  .style("font-family", headerFontFamily)
  	    .text(function(d) {return d.text; });
 
 	// not exporting, add the html to the div for the legend
