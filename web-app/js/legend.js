@@ -1,7 +1,5 @@
 function drawExportLegend(svg, cohortLegendOffsetX, cohortLegendOffsetY, statMapping)  {
 
- 		var cohortLegendOffsetX = 10;
- 		var cohortLegendOffsetY = 0;
  	 	var cohortLegendGroup = svg.append("svg:g")
 	 	  .attr("class", "cohortLegendGroup")
 	 	  .attr("transform", "translate(" + cohortLegendOffsetX + "," + cohortLegendOffsetY + ")")

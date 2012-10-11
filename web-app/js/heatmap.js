@@ -346,60 +346,30 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		// determine left position for next cohort
 	    leftPosition = leftPosition + cohortWidths[i];
 
-	    var boxWidth = 30;
-	    var boxHeight = 25;
-	    var boxSpacing = 5;
+	}
 
-	    
-	    // exporting, need to create the legend within svg object
-	    if (forExport)  {
-	    	//GROUP FOR Cohort legend
-	    	var cohortLegendGroup = svg.append("svg:g")
-	    	  .attr("class", "cohortLegendGroup")
-	    	  .attr("transform", "translate(" + 0 + "," + cohortLegendOffset + ")")
-	    	  ;
+	var mapIndex = 0;
+	var cohortDescExport = highlightCohortDescriptions(cohortDescriptions, true);
+	// setup statMapping object to pass data into legend
+	var statMapping = cohorts.slice(1).map(function(i)	{
+		var id = i;
+		var styleIndex = (mapIndex + 1) % cohortBGColors.length;
+		var cohortColor = cohortBGColors[styleIndex];
+		var descExport = cohortDescExport[mapIndex+1].replace(/_/g, ', ');
+		
+		mapIndex++;
+		
+		return {
+			id:i,
+			cohortColor:cohortColor,
+			descExport:descExport,
+		};		
+	});
+	
+    if (forExport)  {
+		drawExportLegend(svg, 10, cohortLegendOffset, statMapping);
+	 }
 
-	    	cohortDescriptions = highlightCohortDescriptions(cohortDescriptions, true);		    
-	    	
-		    // Cohort legend
-			cohortLegendGroup.append("rect")
-				.attr("x", 0)
-				.attr("y", (i-1)*(boxHeight + boxSpacing))
-				.attr("width", boxWidth)
-				.attr("height", boxHeight)
-				.style("stroke", strokeStyleColor)    // color of borders around rectangles
-				.style("stroke-width", 1)    // width of borders around rectangles
-			    .style('fill', dataColor)
-			    .style("shape-rendering", "crispEdges")	
-				;
-	
-			// cohort legend text inside rectangles
-			labelX = boxWidth/2;
-			labelY = (i-1)*(boxHeight + boxSpacing) + boxHeight/2 + 3;
-			cohortLegendGroup.append("text")
-				.attr("x", labelX)
-				.attr("y", labelY)
-				.attr("dy", ".35em")
-		        .attr("text-anchor", "middle")
-			    .style("fill", textStyleColor)
-			    .style("font-size", headerFontSize + "px")
-			    .style("font-family", headerFontFamily)
-		        .text(cohorts[i] )
-		        ;	
-	
-			// cohort legend text descriptions
-			labelX = boxWidth + boxSpacing;
-			
-			var desc=cohortLegendGroup
-			    .append("text")
-				.attr("x", labelX)
-				.attr("y", labelY)
-			    .style("fill", textStyleColor)
-		    	.style("font", "12px  sans-serif")
-		    	.text(cohortDescriptions[i].replace(/_/g, ', '));   	
-			;
-	    }
-	}	
 	var yOffset = h + h_header + 4;
 	var xOffset;
 	//only do this if the data contains fold change values

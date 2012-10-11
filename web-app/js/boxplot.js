@@ -347,8 +347,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
  	  	
 
  	 if (forExport)  {
-		drawExportLegend(svg, 10, 0, statMapping)
-
+		drawExportLegend(svg, 10, 0, statMapping);
  	 }
 
 	 applyBoxplotStyles(svg);
@@ -358,9 +357,9 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
 	 cohortDesc = [''].concat(cohortDesc);
 	 cohortDisplayStyles = [''].concat(cohortDisplayStyles);
 
-	 /////////////////////////////////////////////////////////////////////////////////////////////////////////		
-	 jQuery("#boxplotLegend_" + analysisID).html(drawCohortLegend(numCohorts, cohortArray, cohortDesc, cohortDisplayStyles));
-		
+	if (!forExport)  {		
+		jQuery("#boxplotLegend_" + analysisID).html(drawCohortLegend(numCohorts, cohortArray, cohortDesc, cohortDisplayStyles));
+	}
 		
 }
 
