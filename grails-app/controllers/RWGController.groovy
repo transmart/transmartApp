@@ -6,14 +6,6 @@
 
 import org.json.*
 
-import groovy.xml.StreamingMarkupBuilder
-
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.Transformer
-import javax.xml.transform.OutputKeys
-import javax.xml.transform.stream.StreamResult
-import javax.xml.transform.stream.StreamSource
-
 import bio.BioAnalysisAttribute
 import bio.Experiment
 import bio.BioMarkerCorrelationMV
@@ -433,8 +425,8 @@ class RWGController {
 		   }
 		   
 		   if (returnAnalysisIds) {
-			   println (solrQueryParams)
-			   outputFormattedXml(xml)
+			   //println (solrQueryParams)
+			   //outputFormattedXml(xml)
 			   def analysisIds = xml.result.doc.str.findAll{it.@name == 'ANALYSIS_ID'}
 			   solrConnection.disconnect()
 			   def ids = []
@@ -477,7 +469,7 @@ class RWGController {
    
    /**
    *  pretty prints the GPathResult NodeChild
-   */
+   *
   def outputFormattedXml(node) {
 	  def xml = new StreamingMarkupBuilder().bind {
 		  mkp.declareNamespace("":node.namespaceURI())
@@ -496,6 +488,7 @@ class RWGController {
    
 	  println result.writer.toString()
   }
+  */
 
    /**
    * Create the SOLR query string for the faceted query
