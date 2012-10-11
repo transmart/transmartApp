@@ -3234,6 +3234,47 @@ function getPieChartData(divid, catid, ddid, drillback, charttype, parentcolor, 
 	});
 }
 
+
+function displaySelectedAnalysisTopGenes(){
+	
+	for (var i =0; i < selectedAnalyses.length; i++){
+		
+		getTopGenes(selectedAnalyses[i].id);
+		
+	}
+
+}
+
+
+function getTopGenes(analysisID)
+{
+	
+	var html = "";
+	
+	rwgAJAXManager.add({
+		url:getTopGenesURL,
+		data: {analysisID: analysisID},
+		timeout:60000,
+		success: function(response) {
+			
+			//alert(response[key]['bio_marker_id']);
+
+			html = "<table>";
+		    jQuery.each(response, function() {
+		        var html = "";
+		        jQuery.each(this, function(k , v) {
+		        	html += "<td>"+v+"</td>";
+		        })
+		        html += "<tr>"+tbl_row+"</tr>";                 
+		    })
+		     html += "</table>";
+		   
+		}
+	});
+	
+	return html;
+}
+
 function drawPieChart(divid, data)
 {
 	

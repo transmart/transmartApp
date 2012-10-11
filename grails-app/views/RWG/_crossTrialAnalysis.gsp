@@ -7,6 +7,8 @@
     	jQuery( "#xtSelectedAnalysesList" ).sortable();
     	jQuery( "#xtSelectedAnalysesList" ).disableSelection();
 
+    	getTopGenes('1085985068');
+
 		
 	});
 </script>
@@ -27,6 +29,8 @@
 	<h2>Selected Analyses</h2>
 	
 	<div id="xtSummary_AnalysesList"></div>
+	
+	<div id="xtTopGenes"></div>
 			
 
 </div>

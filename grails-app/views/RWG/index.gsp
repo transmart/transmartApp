@@ -81,6 +81,8 @@
 	        var mouse_inside_options_div = false;
 	        var mouse_inside_analysis_div = false;
 			var getPieChartDataURL = "${createLink([action:'getPieChartData'])}";
+			var getTopGenesURL = "${createLink([action:'getTopGenes'])}";
+			
 			var showHomePageFirst=true;
 			
 	        jQuery(document).ready(function() {

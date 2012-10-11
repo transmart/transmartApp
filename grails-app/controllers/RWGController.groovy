@@ -1196,4 +1196,16 @@ class RWGController {
 	   render m as JSON
    }
    
+   
+   
+   def getTopGenes = {
+	   def rwgDAO = new RWGVisualizationDAO()
+	   def r = rwgDAO.getTopGenesByFoldChange(params.analysisID)
+	   
+	   render r as JSON
+	   
+   }
+   
+   
+   
 }
