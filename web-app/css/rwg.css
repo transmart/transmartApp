@@ -920,12 +920,16 @@ border-top: 1px solid #CCC;
     margin: 0px 8px;
 }
 
-.paginate_enabled_previous, .paginate_enabled_next {
+.paginate_enabled_previous, .paginate_enabled_next, .linkbutton {
     border: 1px solid #AAF;
     padding: 4px;
-    color: #CCC;
+    color: #000;
     margin: 0px 8px;
     cursor: pointer;
+}
+
+.linkbutton {
+	font-size: 8pt;	
 }
 
 .dataTables_info {
@@ -960,4 +964,11 @@ select.multiselect {
 
 .ui-autocomplete .ui-menu-item a {
 	font-size: 8pt;	
+}
+
+.ajaxloading, #table-results-div.ajaxloading {
+	background-image: url('../images/loader-large.gif');
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+	min-height: 64px;
 }

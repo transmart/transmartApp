@@ -6,6 +6,14 @@
 
 import org.json.*
 
+import groovy.xml.StreamingMarkupBuilder
+
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.Transformer
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.stream.StreamSource
+
 import bio.BioAnalysisAttribute
 import bio.Experiment
 import bio.BioMarkerCorrelationMV
@@ -394,10 +402,12 @@ class RWGController {
    * @param solrQueryParams - the query string for the faceted search, to be passed into the data for the POST request
    * @return JSONObject containing the facet counts
    */
-   def executeSOLRFacetedQuery = {solrRequestUrl, solrQueryParams ->
+   def executeSOLRFacetedQuery = {solrRequestUrl, solrQueryParams, returnAnalysisIds ->
 	   
-	   //solrQueryParams = "q=(*:*)&facet=true&rows=0&facet.field=STUDY&facet.field={!ex=STUDY_ID}STUDY_ID&fq={!tag=STUDY_ID}(STUDY_ID:\"169381\")&facet.field=ANALYSES&facet.field=REGION_OF INTEREST&facet.field=DATA_TYPE";
 	   JSONObject facetCounts = new JSONObject()
+	   //solrQueryParams = "q=(*:*)"
+	   //solrQueryParams = solrQueryParams.substring(0, solrQueryParams.lastIndexOf(")")+1)
+	   //solrQueryParams += "&facet=true&rows=0&facet.field=ANALYSIS_ID"
 	   
 	   def slurper = new XmlSlurper()
 
@@ -421,8 +431,22 @@ class RWGController {
 		   solrConnection.inputStream.withStream {
 			   xml = slurper.parse(it)
 		   }
+		   
+		   if (returnAnalysisIds) {
+			   println (solrQueryParams)
+			   outputFormattedXml(xml)
+			   def analysisIds = xml.result.doc.str.findAll{it.@name == 'ANALYSIS_ID'}
+			   solrConnection.disconnect()
+			   def ids = []
+			   for (analysisId in analysisIds) {
+				   ids.push(analysisId.text() as long)
+			   }
+			   return ids
+		   }
+		   else {
 		   // retrieve all the category nodes for the facet fields (contain subnodes which have the actual counts)
-		   facetCategoryNodes = xml.lst.find{it.@name == 'facet_counts'}.lst.find{it.@name == 'facet_fields'}.lst
+			   facetCategoryNodes = xml.lst.find{it.@name == 'facet_counts'}.lst.find{it.@name == 'facet_fields'}.lst
+		   }
 	   }
 	   else {
 		   throw new Exception("SOLR Request failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
@@ -450,6 +474,28 @@ class RWGController {
 	   
 	   return facetCounts
    }
+   
+   /**
+   *  pretty prints the GPathResult NodeChild
+   */
+  def outputFormattedXml(node) {
+	  def xml = new StreamingMarkupBuilder().bind {
+		  mkp.declareNamespace("":node.namespaceURI())
+		  mkp.yield(node)
+	  }
+   
+	  def factory = TransformerFactory.newInstance()
+	  def transformer = factory.newTransformer()
+	  transformer.setOutputProperty(OutputKeys.INDENT, 'yes')
+   
+	  // figured this out by looking at Xalan's serializer.jar
+	  // org/apache/xml/serializer/output_xml.properties
+	  transformer.setOutputProperty("{http\u003a//xml.apache.org/xalan}indent-amount", "2")
+	  def result = new StreamResult(new StringWriter())
+	  transformer.transform(new StreamSource(new ByteArrayInputStream(xml.toString().bytes)), result)
+   
+	  println result.writer.toString()
+  }
 
    /**
    * Create the SOLR query string for the faceted query
@@ -589,6 +635,47 @@ class RWGController {
 	   log.info("Gene parameter: ${newParams}")
 	   return newParams
    }
+   
+   //Get analyses for current SOLR query and store them in session
+   def getFacetResultsForTable = {
+	   
+	   def queryParams = request.getParameterValues('q')
+	   
+	   //fq params are also faceted and also filtered on
+	   def facetQueryParams = request.getParameterValues('fq')
+
+	   // save all the filter params to a session List variable
+	   def sessionFilterParams = []
+		
+	   for (p in queryParams)  {
+		   sessionFilterParams.add p
+	   }
+	   for (p in facetQueryParams)  {
+		   sessionFilterParams.add p
+	   }
+	   
+	   session['solrSearchFilter'] = sessionFilterParams
+	   
+	   // ff params are faceted, but not filtered on
+	   def facetFieldsParams = request.getParameterValues('ff')
+	   
+	   log.info("facet search: " + params)
+	   
+	   // build the SOLR query
+	   def nonfacetedQueryString = "";
+	   try {
+		   nonfacetedQueryString = createSOLRNonfacetedQueryString(sessionFilterParams as List)
+	   }
+	   catch (Exception e) {
+		   e.printStackTrace()
+	   }
+	   String solrRequestUrl = createSOLRQueryPath()
+	   String solrQueryString = /${nonfacetedQueryString}/
+	   def analysisIds = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, true)
+	   
+	   session['solrAnalysisIds'] = analysisIds
+	   render(status: 200, text: analysisIds.join(","))
+   }
            
    /**
    * Load the search results for the given search terms (used for AJAX calls)
@@ -645,7 +732,7 @@ class RWGController {
 	   
 	   String solrRequestUrl = createSOLRQueryPath()
 	   String solrQueryString = createSOLRQueryString(nonfacetedQueryString, facetedQueryString, facetedFieldsString)
-       JSONObject facetCounts = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString)
+       JSONObject facetCounts = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
 
 	   def studyCounts = facetCounts['STUDY_ID']
 	   
@@ -706,7 +793,7 @@ class RWGController {
 	   String solrRequestUrl = createSOLRQueryPath()
 	   String solrQueryString = createSOLRQueryString(nonfacetedQueryString, facetedQueryString, facetedFieldsString)
 
-	   JSONObject facetCounts = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString)
+	   JSONObject facetCounts = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
 		
        return facetCounts
 	   

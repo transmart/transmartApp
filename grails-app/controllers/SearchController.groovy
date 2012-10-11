@@ -33,6 +33,8 @@ import org.hibernate.*
 import search.CustomFilter
 import search.SearchKeyword
 import search.SearchKeywordTerm
+import au.com.bytecode.opencsv.CSVWriter;
+import bio.BioAssayAnalysis;
 import bio.BioDataExternalCode
 
 import com.recomdata.util.*
@@ -674,29 +676,196 @@ public class SearchController{
 		
 	//Retrieve the results for the search filter. This is used to populate the result grids on the search page.
 	def getAnalysisResults = {
+		
+		def paramMap = params;
+		def max = params.long('filter.max')
+		def offset = params.long('filter.offset')
+		def cutoff = params.double('filter.cutoff')
+		def sortField = params.sortField
+		def order = params.order
+		def search = params.search
+		
+		def analysisId = params.long('analysisId')
+		def export = params.boolean('export')
+		
+		def filter = session['filterAnalysis' + analysisId];
+		if (filter == null) {
+			filter = [:]
+		}
+		
+		if (export) {
+			max = 1000000 //That should do it
+			offset = 0
+		}
+		else {
+			if (max != null) { filter.max = max }
+			if (!filter.max || filter.max < 10) {filter.max = 10;}
+			
+			if (offset != null) { filter.offset = offset }
+			if (!filter.offset || filter.offset < 0) {filter.offset = 0;}
+			
+			if (cutoff != null) { filter.cutoff = cutoff }
+			
+			if (sortField != null) { filter.sortField = sortField }
+			if (!filter.sortField) {filter.sortField = 'rsid';}
+			
+			if (order != null) { filter.order = order }
+			if (!filter.order) {filter.order = 'asc';}
+			
+			if (search != null) { filter.search = search }
+		}
+		
+		def analysisIds = []
+		analysisIds.push(analysisId)
+		
+		session['filterAnalysis' + analysisId] = filter;
+		
+		def regionSearchResults
+		try {
+			regionSearchResults = getRegionSearchResults(filter.max, filter.offset, filter.cutoff, filter.sortField, filter.order, filter.search, analysisIds)
+		}
+		catch (Exception e) {
+			render(text: "<pre>" + e.getMessage() + "</pre>")
+			return
+		}
+
+		//Return the data as a GRAILS template or CSV
+		if (export) {
+			exportResults(regionSearchResults.columnNames, regionSearchResults.analysisData, "analysis" + analysisId + ".csv")
+		}
+		else {
+			render(template: "analysisResults", model: [analysisData: regionSearchResults.analysisData, columnNames: regionSearchResults.columnNames, max: regionSearchResults.max, offset: regionSearchResults.offset, cutoff: cutoff, sortField: sortField, order: order, search: search, totalCount: regionSearchResults.totalCount, analysisId: analysisId, wasRegionFiltered: regionSearchResults.wasRegionFiltered])
+		}
+	}
+	
+	//Retrieve the results for all analyses currently examined.
+	def getTableResults = {
+		
+		def paramMap = params;
+		def max = params.long('max')
+		def offset = params.long('offset')
+		def cutoff = params.double('cutoff')
+		def sortField = params.sortField
+		def order = params.order
+		def search = params.search
+		
+		def analysisId = params.long('analysisId')
+		def export = params.boolean('export')
+		
+		def filter = session['filterTableView'];
+		if (filter == null) {
+			filter = [:]
+		}
+		
+		if (max != null) { filter.max = max }
+		if (!filter.max || filter.max < 10) {filter.max = 10;}
+		
+		if (offset != null) { filter.offset = offset }
+		if (!filter.offset || filter.offset < 0) {filter.offset = 0;}
+		
+		if (cutoff != null) { filter.cutoff = cutoff }
+		
+		if (sortField != null) { filter.sortField = sortField }
+		if (!filter.sortField) {filter.sortField = 'rsid';}
+		
+		if (order != null) { filter.order = order }
+		if (!filter.order) {filter.order = 'asc';}
+		
+		if (search != null) { filter.search = search }
+		
+	
+		
+		def analysisIds = session['solrAnalysisIds']
+		
+		session['filterTableView'] = filter
+		
+		if (analysisIds.size() >= 100) {
+			render(text: "<p>The table view cannot be used with more than 100 analyses (${analysisIds.size()} analyses in current search results). Narrow down your results by adding filters.</p>")
+			return
+		}
+		else if (analysisIds.size() == 0) {
+			render(text: "<p>No analyses were found for the current filter!</p>")
+			return
+		}
+		
+		//Override max and offset if we're exporting
+		def maxToUse = filter.max
+		def offsetToUse = filter.offset
+		if (export) {
+			maxToUse = 1000000
+			offsetToUse = 0
+		}
+		
+		def regionSearchResults
+		try {
+			regionSearchResults = getRegionSearchResults(maxToUse, offsetToUse, filter.cutoff, filter.sortField, filter.order, filter.search, analysisIds)
+		}
+		catch (Exception e) {
+			render(text: "<pre>" + e.getMessage() + "</pre>")
+			return
+		}
+		//Return the data as a GRAILS template or CSV
+		if (export) {
+			exportResults(regionSearchResults.columnNames, regionSearchResults.analysisData, "results.csv")
+		}
+		else {
+			render(template: "tableViewResults", model: [analysisData: regionSearchResults.analysisData, columnNames: regionSearchResults.columnNames, max: regionSearchResults.max, offset: regionSearchResults.offset, cutoff: filter.cutoff, sortField: filter.sortField, order: filter.order, search: filter.search, totalCount: regionSearchResults.totalCount, wasRegionFiltered: regionSearchResults.wasRegionFiltered])
+		}
+	}
+	
+	def exportResults(columns, rows, filename) {
+		
+		response.setHeader('Content-disposition', 'attachment; filename=' + filename)
+		response.contentType = 'text/plain'
+		
+		String lineSeparator = System.getProperty('line.separator')
+		CSVWriter csv = new CSVWriter(response.writer)
+		def headList = []
+		for (column in columns) {
+			headList.push(column.sTitle)
+		}
+		String[] head = headList
+		csv.writeNext(head)
+		
+		for (row in rows) {
+			def rowData = []
+			for (data in row) {
+				rowData.push(data)
+			}
+			String[] vals = rowData
+			csv.writeNext(vals)
+		}
+		csv.close()
+	}
+	
+	def getRegionSearchResults(Long max, Long offset, Double cutoff, String sortField, String order, String search, List analysisIds) throws Exception {
 
 		//We need to determine the data type of this analysis so we know where to pull the data from.
-		def currentAnalysis = bio.BioAssayAnalysis.get(params.analysisId)
+		//def currentAnalysis = bio.BioAssayAnalysis.get(analysisId)
 		
 		//Throw an error if we don't find the analysis for some reason.
-		if(!currentAnalysis)
-		{
-			throw new Exception("Analysis not found.")
-		}
+		//if(!currentAnalysis)
+		//{
+		//	throw new Exception("Analysis not found.")
+		//}
 		
 		//Get list of REGION restrictions from session and translate to RS#
 		def regions = []
-		Set<String> searchProbes = new HashSet<String>();
 		def solrSearch = session['solrSearchFilter']
 		for (s in solrSearch) {
 			if (s.startsWith("REGION")) {
+				//Cut off REGION:, split by pipe and interpret chromosomes and genes
+				s = s.substring(7)
+				def regionparams = s.split("\\|")
+				for (r in regionparams) {
 				//Chromosome
-				if (s.startsWith("REGION:CHROMOSOME")) {
-					def region = s.split(";")
+				if (r.startsWith("CHROMOSOME")) {
+					def region = r.split(";")
 					def chrom = region[1]
 					def position = region[3] as long
 					def direction = region[4]
 					def range = region[5] as long
+					def ver = region[6]
 					def low = position
 					def high = position
 					
@@ -711,26 +880,15 @@ public class SearchController{
 						low = position - range;
 					}
 					
-					regions.push([type: "CHROMOSOME", position: position, low: low, high: high])
-					def names = SnpInfo.createCriteria().list() {
-						eq('chrom', region[1])
-						ge('chromPos', low)
-						le('chromPos', high)
-					}*.name
-				
-					for (name in names) {
-						String[] probes = name.split(";")
-						for (probe in probes) {
-							searchProbes.add(probe);
-						}
-					}
+					regions.push([gene: null, chromosome: chrom, low: low, high: high, ver: ver])
 				}
 				//Gene
 				else {
-					def region = s.split(";")
+					def region = r.split(";")
 					def geneId = region[1] as long
 					def direction = region[2]
 					def range = region[3] as long
+					def ver = region[4]
 					def limits = regionSearchService.getGeneLimits(geneId)
 					def low = limits.get('low')
 					def high = limits.get('high')
@@ -745,28 +903,16 @@ public class SearchController{
 						high = high + range;
 						low = low - range;
 					}
-					
-					regions.push([type: "GENE", low: low, high: high])
-					def names = SnpInfo.createCriteria().list() {
-						ge('chromPos', low)
-						le('chromPos', high)
-					}*.name
-					
-					//FIXME Temporary patch - don't return too many! Needs to be folded into range check
-					int i = 0;
-					for (name in names) {
-						i++
-						if (i > 100) {
-							break;
-						}
-						String[] probes = name.split(";")
-						for (probe in probes) {
-							searchProbes.add(probe);
-						}
-					}
+					regions.push([gene: geneId, chromosome: null, low: low, high: high, ver: ver])
+				}
 				}
 			}
 		}
+		
+		//Set a flag to record that the list was filtered by region
+		def wasRegionFiltered = regions ? true : false
+		
+		def totalCount
 		
 		//This will hold the index lookups for deciphering the large text meta-data field.
 		def indexMap = [:]
@@ -787,25 +933,34 @@ public class SearchController{
 		def analysisIndexData
 		
 		def returnedAnalysisData = []
+		
+		//TODO Find out whether this is GWAS or EQTL data - prioritize GWAS for now...
+		def hasGwas = BioAssayAnalysis.createCriteria().list([max: 1]) {
+			eq('assayDataType', 'GWAS')
+			'in'('id', analysisIds)
+		}
 				
-		switch(currentAnalysis.assayDataType)
-		{
-			case "GWAS" :
-				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId), searchProbes)
-				analysisIndexData = searchDAO.getGwasIndexData()
-				break;
-			case "EQTL" :
-				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId), searchProbes)
-				analysisIndexData = searchDAO.getEqtlIndexData()
-				break;
-			default :
-				throw new Exception("Not Applicable Data Type Found.")
+		if (hasGwas) {
+			def queryResult = regionSearchService.getAnalysisData(analysisIds, regions, max, offset, cutoff, sortField, order, search, "gwas")
+			analysisData = queryResult.results
+			totalCount = queryResult.total
+			analysisIndexData = searchDAO.getGwasIndexData()
+		}
+		else {
+			def queryResult = regionSearchService.getAnalysisData(analysisIds, regions, max, offset, cutoff, sortField, order, search, "eqtl")
+			analysisData = queryResult.results
+			totalCount = queryResult.total
+			analysisIndexData = searchDAO.getEqtlIndexData()
 		}
 		
 		//These columns aren't dynamic and should always be included. Might be a better way to do this than just dropping it here.
-		columnNames.add(["sTitle":"Probe ID"])
-		columnNames.add(["sTitle":"p-value"])
-		columnNames.add(["sTitle":"Adjusted p-value"])
+		columnNames.add(["sTitle":"Analysis ID", "sortField":"analysis"])
+		columnNames.add(["sTitle":"Probe ID", "sortField":"rsid"])
+		columnNames.add(["sTitle":"p-value", "sortField":"pvalue"])
+		columnNames.add(["sTitle":"Adjusted p-value", "sortField":"logpvalue"])
+		if (!hasGwas) {
+			columnNames.add(["sTitle":"Gene", "sortField":"gene"])
+		}
 
 		analysisIndexData.each()
 		{
@@ -815,6 +970,8 @@ public class SearchController{
 			//We need to take the data from the index table and extract the list of column names.
 			columnNames.add(["sTitle":it.field_name])
 		}
+		
+
 
 		//The returned data needs to have the large text field broken out by delimiter.
 		analysisData.each()
@@ -822,8 +979,8 @@ public class SearchController{
 			//This temporary list is used so that we return a list of lists.
 			def temporaryList = []
 			
-			//The third element is our large text field. Split it into an array.
-			def largeTextField = it[3].split(";")
+			//The third element is our large text field. Split it into an array, leaving trailing empties.
+			def largeTextField = it[3].split(";", -1)
 			
 			//This will be the array that is reordered according to the meta-data index table.
 			String[] newLargeTextField = new String[largeTextField.size()]
@@ -839,9 +996,13 @@ public class SearchController{
 			def finalFields = new ArrayList(Arrays.asList(newLargeTextField));
 			
 			//Add the non-dynamic meta data fields to the returned data.
+			temporaryList.add(it[4])
 			temporaryList.add(it[0])
 			temporaryList.add(it[1])
 			temporaryList.add(it[2])
+			if (!hasGwas) {
+				temporaryList.add(it[5])
+			}
 			
 			//Add the dynamic fields to the returned data.
 			temporaryList+=finalFields
@@ -852,9 +1013,10 @@ public class SearchController{
 		returnJson["aaData"] = returnedAnalysisData
 		returnJson["aoColumns"] = columnNames
 		
+		return [analysisData: returnedAnalysisData, columnNames: columnNames, max: max, offset: offset, cutoff: cutoff, totalCount: totalCount, wasRegionFiltered: wasRegionFiltered]
+		
 		//Return the data in JSON format so the grid can format it.
-		render returnJson as JSON
-
+		//render returnJson as JSON
 	}
 	
 	def getQQPlotImage = {

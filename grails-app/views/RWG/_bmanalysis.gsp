@@ -38,7 +38,7 @@
 	       
 			<div id="results_${analysisId}">
 				<div class='vis-toolBar' >
-					<div id="btnResultsExport_${analysisId}" class='vis-toolbar-item'><img alt="" src="${resource(dir:'images',file:'internal-link.gif')}" /> Export as CSV</div>
+					<div id="btnResultsExport_${analysisId}" class='vis-toolbar-item'><a href="${createLink([controller:'search', action:'getAnalysisResults', params:[export: true, analysisId: analysisId]])}"><img alt="" src="${resource(dir:'images',file:'internal-link.gif')}" /> Export as CSV</a></div>
 					<div id="resultsExportOpts_${analysisId}" class='menuOptList' style="display:none;">
 						<ul>
 							<li onclick="exportResultsData('${analysisId}','data');">Export data (.csv)</li>
@@ -47,8 +47,8 @@
 					</div>
 					
 					<div id ="analysis_results_${analysisId}" class="heatmap_analysis" style="width:80%;margin: 0px auto;">
-						<table id="analysis_results_table_${analysisId}">
-						</table>
+						<div id="analysis_results_table_${analysisId}_wrapper" class="dataTables_wrapper" role="grid">&nbsp;
+						</div>
 					</div>
 					             
 				</div>

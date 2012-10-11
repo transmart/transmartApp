@@ -12,7 +12,7 @@ class SearchDAO {
 		getGwasData(analysisId, null)
 	}
 	
-	def getGwasData(analysisId, searchProbes)
+	def getGwasData(analysisId, ranges)
 	{
 		def queryParams = [parAnalysisId: analysisId]
 		StringBuilder qb = new StringBuilder("""
@@ -23,9 +23,8 @@ class SearchDAO {
 					FROM	bio.BioAssayAnalysisGwas gwas
 					WHERE	gwas.analysis.id = :parAnalysisId""")
 		
-		if (searchProbes) {
+		if (ranges) {
 			qb.append(" AND gwas.rsId IN (:parSearchProbes)");
-			queryParams.put("parSearchProbes", searchProbes);
 		}
 		def results = bio.BioAssayAnalysisGwas.executeQuery(qb.toString(), queryParams,[max:100])
 		return results
@@ -57,8 +56,8 @@ class SearchDAO {
 					eqtl.logPValue,
 					eqtl.ext_data
 			FROM	bio.BioAssayAnalysisEqtl eqtl
-			WHERE	gwas.analysis.id = :parAnalaysisId
-			""",[parAnalaysisId : analysisId],[max:100,offset:5])
+			WHERE	eqtl.analysis.id = :parAnalaysisId
+			""",[parAnalaysisId : analysisId],[max:100])
 		
 		return results
 	}

@@ -422,6 +422,7 @@ function showFacetResults()	{
     
    	queryString = queryString + "&showSignificantResults=" + document.getElementById('cbShowSignificantResults').checked
     
+   	//TODO Only do one of these depending on the highlighted tab
 	jQuery.ajax({
 			url:facetResultsURL,
 			data:queryString,
@@ -467,6 +468,17 @@ function showFacetResults()	{
 			}
 		});
    	
+   	jQuery.ajax({
+		url:facetTableResultsURL,
+		data:queryString,
+		success: function(response) {
+			jQuery('#table-results-div').html(response);
+			loadTableResultsGrid({'max': 100, 'offset':0, 'cutoff': 0, 'search': "", 'sortField': "", "order": "asc"});
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+   	});
 
 }
 
@@ -1845,23 +1857,40 @@ function loadQQPlot(analysisID)
 	} );		
 }
 
-// This function will load the analysis data into a datagrid.
-function loadAnalysisResultsGrid(analysisID)
+// This function will load the analysis data into a GRAILS template.
+function loadAnalysisResultsGrid(analysisID, max, offset, cutoff)
 {
+	jQuery('#analysis_results_table_' + analysisID + '_wrapper').empty().addClass('ajaxloading');
 	jQuery.ajax( {
 	    "url": getAnalysisDataURL,
 	    bDestroy: true,
 	    bServerSide: true,
-	    data: {analysisId: analysisID},
-	    "success": function ( json ) {
+	    data: {analysisId: analysisID, max: max, offset: offset, cutoff: cutoff},
+	    "success": function (jqXHR) {
 	    	jQuery('#analysis_holder_' +analysisID).unmask();
-	    	jQuery('#analysis_results_table_' + analysisID).dataTable( json );
-	    	},
-	    "error": function ( json ) {
+	    	jQuery('#analysis_results_table_' + analysisID + '_wrapper').html(jqXHR).removeClass('ajaxloading');
+	    },
+	    "error": function (jqXHR, error, e) {
 	    	jQuery('#analysis_holder_' +analysisID).unmask();
 	    },
-	    "dataType": "json"
+	    "dataType": "html"
 	} );		
+}
+
+//This function will load all filtered analysis data into a GRAILS template.
+function loadTableResultsGrid(paramMap)
+{
+	jQuery('#table-results-div').empty().addClass('ajaxloading');
+	jQuery.ajax( {
+	    "url": getTableDataURL,
+	    bDestroy: true,
+	    bServerSide: true,
+	    data: paramMap,
+	    "success": function (jqXHR) {
+	    	jQuery('#table-results-div').html(jqXHR).removeClass('ajaxloading');
+	    },
+	    "dataType": "html"
+	} );
 }
 
 // Make a call to the server to load the heatmap data
@@ -2494,7 +2523,7 @@ String.prototype.visualLength = function(fontFamily)
     ruler.style.font = fontFamily; 
     ruler.innerHTML = this; 
     return ruler.offsetWidth; 
-} 
+}
 
 
 

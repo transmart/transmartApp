@@ -51,9 +51,10 @@
         <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-msie.min.js')}"></script> 
 
-        <script type="text/javascript" charset="utf-8">        
+        <script type="text/javascript" charset="utf-8">
 	        var searchResultsURL = "${createLink([action:'loadSearchResults'])}";
 	        var facetResultsURL = "${createLink([action:'getFacetResults'])}";
+	        var facetTableResultsURL = "${createLink([action:'getFacetResultsForTable'])}";
 	        var newSearchURL = "${createLink([action:'newSearch'])}";
 	        var visualizationURL = "${createLink([action:'newVisualization'])}";
 	        var tableURL = "${createLink([action:'newTable'])}";
@@ -75,6 +76,7 @@
 			var analysisBrowseWindow = "${createLink([controller:'experimentAnalysis',action:'browseAnalysisMultiSelect'])}";
 			var regionBrowseWindow = "${createLink([controller:'RWG',action:'getRegionFilter'])}";
 			var dataTypeBrowseWindow = "${createLink([controller:'RWG',action:'browseDataTypesMultiSelect'])}";
+			var getTableDataURL = "${createLink([controller:'search',action:'getTableResults'])}";
 			var getAnalysisDataURL = "${createLink([controller:'search',action:'getAnalysisResults'])}";
 			var getQQPlotURL = "${createLink([controller:'search',action:'getQQPlotImage'])}";
 
@@ -108,8 +110,6 @@
 	            	mouse_inside_options_div=false; 
 	            });
 
-
-
 	            jQuery("body").mouseup(function(){ 
 		            //top menu options
 	                if(! mouse_inside_options_div ){
@@ -122,7 +122,17 @@
 	            		jQuery('#heatmapControls_' +analysisID).hide();
 		             }
 
-	            });	
+	            });
+
+	        	jQuery('#topTabs').tabs();	
+	        	jQuery('#topTabs').bind( "tabsshow", function(event, ui) {
+		        	var id = ui.panel.id;
+	        	    if (ui.panel.id == "results-div") {
+	        	    	
+	        	    } else if (ui.panel.id == "table-results-div")	{
+						
+	        	    }
+	        	});
  
 	        });	
             
@@ -183,90 +193,103 @@
 				</div>
 			</div>
 		
-	        <div id="results-div"></div>
+			<div id="topTabs" class="analysis-tabs">
+		       <ul>
+		          <li><a href="#results-div">Analysis View</a></li>
+		          <li><a href="#table-results-div">Table View</a></li>
+		       </ul>
+		     
+	       		<div id="results-div">
 	
 	         	
+				</div>
+				
+				<div id="table-results-div">
+					<div id="results_table_wrapper" class="dataTables_wrapper" role="grid">
+					</div>
+				</div> 
 			</div>
+		</div>
               
-	        <div id="search-div">         
-	            <select id="search-categories"></select>                          
-	            <input id="search-ac"/></input>                                                          
-	        </div>
-        
-	        <div id="title-search-div" class="ui-widget-header">
-		         <h2 style="float:left" class="title">Active Filters</h2>
-				 <h2 style="float:right; padding-right:5px;" class="title">
-				 	<%-- Save/load disabled for now
-				 	
-				 	<span id='save-modal'>
-				 		<a href="#" class="basic">Save</a>
-					 </span>
-				 	<a href="#" onclick="loadSearch(); return false;">Load</a>--%>
-				 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
-				 </h2> 
-			</div>
+        <div id="search-div">         
+            <select id="search-categories"></select>                          
+            <input id="search-ac"/></input>                                                          
+        </div>
+       
+        <div id="title-search-div" class="ui-widget-header">
+	         <h2 style="float:left" class="title">Active Filters</h2>
+			 <h2 style="float:right; padding-right:5px;" class="title">
+			 	<%-- Save/load disabled for now
+			 	
+			 	<span id='save-modal'>
+			 		<a href="#" class="basic">Save</a>
+				 </span>
+			 	<a href="#" onclick="loadSearch(); return false;">Load</a>--%>
+			 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
+			 </h2> 
+		</div>
 
-			<!-- Save search modal content -->
-			<div id="save-modal-content" style="display:none;">
-				<h3>Save Faceted Search</h3><br/>
-				Enter Name <input type="text" id="searchName" size="50"/><br/><br/>
-				Enter Description <textarea id="searchDescription" rows="5" cols="70" ></textarea><br/>
-				<br/>
-				<a href="#" onclick="saveSearch(); return false;">Save</a>&nbsp;   
-				<a href="#" onclick="jQuery.modal.close();return false;">Cancel</a>   
-	                     
-				
-			</div>
-				
-			<div id="active-search-div"></div>
-		 
-			<div id="title-filter" class="ui-widget-header">
-				 <h2 style="float:left" class="title">Filter Browser</h2>			 
-			</div>
-			<div id="side-scroll">
-			        <div id="filter-div"></div>
-			</div>
-			<button id="toggle-btn"></button>
+		<!-- Save search modal content -->
+		<div id="save-modal-content" style="display:none;">
+			<h3>Save Faceted Search</h3><br/>
+			Enter Name <input type="text" id="searchName" size="50"/><br/><br/>
+			Enter Description <textarea id="searchDescription" rows="5" cols="70" ></textarea><br/>
+			<br/>
+			<a href="#" onclick="saveSearch(); return false;">Save</a>&nbsp;   
+			<a href="#" onclick="jQuery.modal.close();return false;">Cancel</a>   
+                     
 			
-			<div id="hiddenItems" style="display:none">
-			        <!-- For image export -->
-			        <canvas id="canvas" width="1000px" height="600px"></canvas>  
-	
-			</div>
+		</div>
+			
+		<div id="active-search-div"></div>
+	 
+		<div id="title-filter" class="ui-widget-header">
+			 <h2 style="float:left" class="title">Filter Browser</h2>			 
+		</div>
+		<div id="side-scroll">
+		        <div id="filter-div"></div>
+		</div>
+		<button id="toggle-btn"></button>
 		
-			<!--  This is the DIV we stuff the browse windows into. -->
-			<div id="divBrowsePopups" style="width:800px; display: none;">
-				
-			</div>
+		<div id="hiddenItems" style="display:none">
+		        <!-- For image export -->
+		        <canvas id="canvas" width="1000px" height="600px"></canvas>  
+
+		</div>
+	
+		<!--  This is the DIV we stuff the browse windows into. -->
+		<div id="divBrowsePopups" style="width:800px; display: none;">
 			
-			<!--  Everything for the across trial function goes here and is displayed using colorbox -->
-			<div style="display:none">
-				<div id="xtHolder">
-					<div id="xtTopbar">
-						<p>Cross Trial Analysis</p>
-						<ul id="xtMenu">
-							<li>Summary</li>
-							<li>Heatmap</li>
-							<li>Boxplot</li>
-						</ul>
-						<p>close</p>
-					</div>
-					<div id="xtSummary"><!-- Summary Tab Content -->
-								
-					
-					</div>
-					<div id="xtHeatmap"><!-- Heatmap Tab Content -->
-					
-					
-					</div>
-					<div id="xtBoxplot"><!-- Boxplot Tab Content -->
-					
-					
-					</div>
+		</div>
+		
+		<!--  Everything for the across trial function goes here and is displayed using colorbox -->
+		<div style="display:none">
+			<div id="xtHolder">
+				<div id="xtTopbar">
+					<p>Cross Trial Analysis</p>
+					<ul id="xtMenu">
+						<li>Summary</li>
+						<li>Heatmap</li>
+						<li>Boxplot</li>
+					</ul>
+					<p>close</p>
+				</div>
+				<div id="xtSummary"><!-- Summary Tab Content -->
+							
+				
+				</div>
+				<div id="xtHeatmap"><!-- Heatmap Tab Content -->
+				
+				
+				</div>
+				<div id="xtBoxplot"><!-- Boxplot Tab Content -->
+				
+				
 				</div>
 			</div>
-	       <!--  Used to measure the width of a text element (in svg plots) -->
-	       <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
+		</div>
+       <!--  Used to measure the width of a text element (in svg plots) -->
+       <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
 		
     </body>
 </html>

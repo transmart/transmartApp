@@ -104,10 +104,10 @@ public class DataUploadService{
 					throw new Exception("No p-value or log p-value was provided for a row.")
 				}
 				if (!currentpValue) {
-					columns[pValueIndex] = Math.power(10.0, Double.parseDouble(pValue))
+					columns[pValueIndex] = 0 - Math.power(10.0, Double.parseDouble(pValue))
 				}
 				else if (!currentlogpValue) {
-					columns[logpValueIndex] = Math.log10(Double.parseDouble(currentpValue))
+					columns[logpValueIndex] = 0 - Math.log10(Double.parseDouble(currentpValue))
 				}
 				
 				//This row is now complete - write it!
