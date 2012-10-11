@@ -1,14 +1,32 @@
+
+<script type="text/javascript">		
+	jQuery(function ($) {
+
+		displayxtAnalysesList();
+
+    	jQuery( "#xtSelectedAnalysesList" ).sortable();
+    	jQuery( "#xtSelectedAnalysesList" ).disableSelection();
+
+		
+	});
+</script>
+
+
+
 <div id="xtHolder">
-	<div id="xtTopbar">
-		<p>Cross Trial Analysis</p>
+	<div id="xtMenuBar">
+		<h1>Cross Trial Analysis</h1>
 		<ul id="xtMenu">
 			<li>Summary</li>
 			<li>Heatmap</li>
 			<li>Boxplot</li>
 		</ul>
-		<p>close</p>
 	</div>
 	<div id="xtSummary"><!-- Summary Tab Content -->
+			
+	<h2>Selected Analyses</h2>
+	
+	<div id="xtSummary_AnalysesList"></div>
 			
 
 </div>
@@ -21,3 +39,5 @@
 	
 	</div>
 </div>
+
+

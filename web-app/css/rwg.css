@@ -951,3 +951,35 @@ border-top: 1px solid #CCC;
 		color: #ccc;
 	}
 
+/************ Cross Trial Analysis Formatting *******/
+
+#xtHolder{
+	
+	margin-left:10px;
+	
+}
+
+#xtMenuBar{
+
+}
+
+#xtMenuBar li{
+	display: inline-block;
+	padding: 10px;
+}
+
+#xtSelectedAnalysesList li {
+padding: 8px;
+border: 1px solid #DDD;
+border-collapse: collapse;
+padding-right: 0;
+margin-top: -1px;
+margin-right: 20px;
+background-color: #F3F3F3;
+list-style-type: none;
+cursor:default;
+}
+
+
+/*******End Cross Trial Analysis Formatting *********/
+

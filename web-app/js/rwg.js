@@ -131,6 +131,31 @@ function getSelectedAnalysesList(){
 	
 }
 
+
+function displayxtAnalysesList(){
+	
+	
+	var html = "<ul id='xtSelectedAnalysesList'>";
+	
+	selectedAnalyses.sort(dynamicSort("studyID"));
+	
+	jQuery(selectedAnalyses).each(function(index, value){
+
+		html = html + "<li id='li_SelectedAnalysis_"+selectedAnalyses[index].id +"'>";
+//		html = html + "<input type='checkbox' onchange=removeSelectedAnalysis('"+selectedAnalyses[index].id +"') name='chbx_SelectedAnalysis_" + selectedAnalyses[index].id +"' checked='	checked'>";
+		html = html + "<span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</li>';
+		
+	});
+	
+	html = html + '</ul>';
+	
+	jQuery('#xtSummary_AnalysesList').html(html);
+
+	
+	
+}
+
+
 function clearAllSelectedAnalyses(){
 	
 	for (var i =0; i < selectedAnalyses.length; i++){
@@ -531,8 +556,8 @@ function showFacetResults()	{
 					
 					if(!showHomePageFirst)
 				    {
-					hideHomePage();
-					showResultsPage();
+						hideHomePage();
+						showResultsPage();
 				    }
 					else
 				    {
@@ -3133,13 +3158,15 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 
 function openCrossTrialAnalysis()
 {
+	
+	  jQuery('#cross-trial-div').show();
+	
       rwgAJAXManager.add({
   		url:crossTrialAnalysisURL,				
   		timeout:60000,
   		success: function(response) {
   		  
-  			//alert(response);
-  			jQuery('#cross-trial-div').html(response);
+  		  jQuery('#cross-trial-div').html(response);
   		  
   		  hideHomePage();
   	      hideResultsPage();
@@ -3164,6 +3191,7 @@ function launchHomePage(currentsubcategoryid, currentcharttype, showAll)
   		  jQuery('#home-div').html(response);
   		  showHomePage();
   	      hideResultsPage();
+  	      hideCrossTrialAnalysis();
   		}
   	});
       
@@ -3171,19 +3199,26 @@ function launchHomePage(currentsubcategoryid, currentcharttype, showAll)
 }
 function showHomePage()
 {
-      jQuery('#home-div').show();      
+      jQuery('#home-div').show();
+      hideCrossTrialAnalysis();
+      hideResultsPage();
+}
+function showResultsPage()
+{
+	jQuery('#results-div').show();
+	 hideCrossTrialAnalysis();
+	 hideHomePage();
+}
+function hideResultsPage()
+{
+	jQuery('#results-div').hide();
 }
 function hideHomePage()
 {
       jQuery('#home-div').hide();      
 }
-function showResultsPage()
-{
-	jQuery('#results-div').show();
-}
-function hideResultsPage()
-{
-	jQuery('#results-div').hide();
+function hideCrossTrialAnalysis(){
+	jQuery('#cross-trial-div').hide();
 }
 
 function getPieChartData(divid, catid, ddid, drillback, charttype, parentcolor, ddstack)

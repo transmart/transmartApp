@@ -161,8 +161,8 @@
 			<div id="menu_bar">
 			
 			<ul>
-				<li class='toolbar-item'><a href="#" onclick='hideResultsPage();showHomePage();'>Home</a></li>
-				<li class='toolbar-item'><a href="#" onclick='hideHomePage();showResultsPage();'>Search Results</a></li>
+				<li class='toolbar-item'><a href="#" onclick='showHomePage();'>Home</a></li>
+				<li class='toolbar-item'><a href="#" onclick='showResultsPage();'>Search Results</a></li>
 				<li class='toolbar-item'><a href="#" onclick='openCrossTrialAnalysis();'>Cross Trial Analysis</a></li>
 				<li class='toolbar-item'>						
 					<div id="selectedAnalyses_holder">
