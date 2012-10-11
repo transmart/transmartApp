@@ -6,6 +6,14 @@
 
 import org.json.*
 
+import groovy.xml.StreamingMarkupBuilder
+
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.Transformer
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.stream.StreamResult
+import javax.xml.transform.stream.StreamSource
+
 import bio.BioAnalysisAttribute
 import bio.Experiment
 import bio.BioMarkerCorrelationMV
@@ -425,7 +433,7 @@ class RWGController {
 		   }
 		   
 		   if (returnAnalysisIds) {
-			   //println (solrQueryParams)
+			   println (solrQueryParams)
 			   //outputFormattedXml(xml)
 			   def analysisIds = xml.result.doc.str.findAll{it.@name == 'ANALYSIS_ID'}
 			   solrConnection.disconnect()
@@ -1005,11 +1013,15 @@ class RWGController {
    */
   def browseDataTypesMultiSelect = {
 	  
+	  /*
 	  def results = SearchTaxonomy.executeQuery("SELECT id, keyword FROM SearchKeyword s WHERE s.dataCategory = 'DATA_TYPE'");
 	  def dataTypes = []
 	  for (result in results) {
 		  dataTypes.add([key:result[0], value:result[1]])
 	  }
+	  */
+	  
+	  def dataTypes = ["GWAS":"GWAS","eQTL":"eQTL","Metabolic GWAS":"Metabolic GWAS"]
 	  
 	  render(template:'dataTypesBrowseMulti',model:[dataTypes:dataTypes])
   }
