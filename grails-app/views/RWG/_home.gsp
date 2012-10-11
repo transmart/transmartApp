@@ -1,4 +1,4 @@
-<div align="center" style="width:100%;margin-left:-1px;" colspan="2" class="ui-widget-header"><h1 style="padding:6px;text-align:left;vertical-align:middle;" class="bigtitle">My Favorites</h1></div>
+<div align="center" style="margin-left:-1px;" colspan="2" class="ui-widget-header"><h1 style="padding:6px;text-align:left;vertical-align:middle;" class="bigtitle">My Favorites</h1></div>
 	
 <div style="margin:5px;">
 <div style="padding:10px;margin:5px;">
@@ -14,7 +14,7 @@
 <!-- <div id="homegraphs" style="margin:0px;padding:0px;">-->
 	
 
-	<div align="center" style="width:100%;margin-left:-1px;" colspan="2" class="ui-widget-header"><h1 style="padding:6px;text-align:left;vertical-align:middle;" class="bigtitle">Summary Charts</h1></div>
+	<div align="center" style="margin-left:-1px;" colspan="2" class="ui-widget-header"><h1 style="padding:6px;text-align:left;vertical-align:middle;" class="bigtitle">Summary Charts</h1></div>
 	<div style="padding:5px;">
 	<br />
 Show (<g:checkBox name="showAll" id="showAll" checked="${showAll}"  onchange="launchHomePage( jQuery('#subcategoryid').val(), jQuery('#charttype').val(), this.checked )"/>&nbsp;All Areas) by
