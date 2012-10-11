@@ -796,13 +796,13 @@ function exportBoxPlotData(analysisId, exportType)
 		
 		var data = jQuery('body').data("BoxplotData:" + analysisId);
 		
-		drawBoxPlot('boxplotAnalysis_'+analysisId, data, analysisId, true);
+		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, true);
 		
 		var svgID=  "#boxplotAnalysis_"+analysisId;
 		
 		exportCanvas(svgID);		
 
-		drawBoxPlot('boxplotAnalysis_'+analysisId, data, analysisId, false);
+		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, false);
 		
 		break;
 	default:
@@ -1583,7 +1583,7 @@ function loadBoxPlotData(analysisID, probeID)	{
 		timeout:60000,
 		success: function(response) {
 			setActiveProbe(analysisID, probeID);
-			drawBoxPlot('boxplotAnalysis_'+analysisID, response, analysisID);
+			drawBoxPlotD3('boxplotAnalysis_'+analysisID, response, analysisID);
 			jQuery('#boxplotLegend_'+analysisID).show();
 			jQuery('#boxplotAnalysis_'+analysisID).show();	
 			
@@ -1669,7 +1669,7 @@ function updateBoxPlot(analysisID){
 		console.log("Error: Could not find data");
 	}else
 		{
-			drawBoxPlot('boxplotAnalysis_'+analysisID, data, analysisID);
+			drawBoxPlotD3('boxplotAnalysis_'+analysisID, data, analysisID);
 		}
 }
 
@@ -1678,268 +1678,6 @@ function getRank(P, N)	{
 	return Math.round(P/100 * N + 0.5);			// Use P/100 * N + 0.5 as denoted here: http://en.wikipedia.org/wiki/Percentile
 }
 
-// Draw the box plot
-function drawBoxPlot(divId, boxPlotJSON, analysisID, forExport)	{
-	// boxPlotJSON should be a map of cohortID:[desc:cohort description, order:display order for the cohort, data:sorted log2 intensities]
-	
-	
-	var cohortArray = new Array();   // array of cohort ids
-	var cohortDesc = new Array();    // array of cohort descriptions
-	var cohortDisplayStyles = new Array();    // array of cohort display styles (i.e. number from 0..4)
-
-	var gene_id = parseInt(boxPlotJSON['gene_id']);   // gene_id will be null if this is a protein since first char is alpha for proteins
-	
-	// loop through and get the cohort ids and description into arrays in the order they should be displayed
-	for (var key in boxPlotJSON)  {
-		// the "order" of the json objects starts with 1, so subtract 1 so it doesn't leave gap at start of array
-		var arrayIndex = boxPlotJSON[key]['order'] - 1;
-		cohortArray[arrayIndex] = key;
-		cohortDesc[arrayIndex] = boxPlotJSON[key]['desc'];
-		cohortDisplayStyles[arrayIndex] = boxPlotJSON[key]['order'] % cohortBGColors.length;		
-	}
-	
-	// Map the all four quartiles to the key (e.g. C1)
-	var statMapping = cohortArray.map(function(i)	{
-		var data = boxPlotJSON[i]['data'];
-		var cohortDisplayStyle = boxPlotJSON[i]['order'] % cohortBGColors.length;		
-		var desc = boxPlotJSON[i]['desc'].replace(/_/g, ', ');
-		var sampleCount = boxPlotJSON[i]['sampleCount'];
-		
-		return {
-			id:i,
-			cohortDisplayStyle:cohortDisplayStyle,
-			desc:desc,
-			sampleCount:sampleCount,
-			min:data[getRank(5, data.length)-1],
-			max:data[getRank(95, data.length)-1],			
-			median:data[getRank(50, data.length)-1],
-			lq:data[getRank(25, data.length)-1],
-			uq:data[getRank(75, data.length)-1]
-		};		
-	});
-	
-	
-	//if the user is setting the range manually:
-	if(jQuery('#boxplotRangeRadio_Manual_'+analysisID).is(':checked')){
-		
-		var yMin = parseFloat(jQuery('#boxplotRangeMin_'+analysisID).val());
-		var yMax = parseFloat(jQuery('#boxplotRangeMax_'+analysisID).val());
-
-		
-	}else{
-		//auto set range otherwise
-		var yMin = statMapping[0].min;
-		var yMax = statMapping[0].max;
-		for (var idx=1; idx < statMapping.length; idx++)	{	
-			yMin = statMapping[idx].min < yMin ? statMapping[idx].min : yMin;
-			yMax = statMapping[idx].max > yMax ? statMapping[idx].max : yMax;
-		}
-		
-		// Put in a rough switch so things can scale on the y axis somewhat dynamically
-		if (yMax-yMin < 2)	{
-			// round down to next 0.1
-			yMin = Math.floor((yMin-0.2) * 10) / 10 ;
-			
-			// round up to next 0.1
-			// and add another 0.01 to ensure that the highest tenths line gets included
-			yMax = Math.ceil((yMax+0.2) * 10) / 10 + 0.01;
-		} else	{
-			yMin = Math.floor(yMin);
-			yMax = Math.ceil(yMax);
-		}
-		
-		//set the manual value textboxes with the current yMin and yMax
-		jQuery('#boxplotRangeMin_'+analysisID).val(roundNumber(yMin,2));
-		jQuery('#boxplotRangeMax_'+analysisID).val(roundNumber(yMax,2));
-		
-	}
-	
-	var title = getGeneforDisplay(analysisID, getActiveProbe(analysisID));
-	
-	var w = cohortArray.length * 140;//generate the width dynamically using the cohort count	
-	var  h = 300,  
-		x = pv.Scale.ordinal(statMapping, function(e){return e.id}).splitBanded(0, w, 1/2),
-		y = pv.Scale.linear(yMin, yMax).range(0, h-15),
-		s = x.range().band / 2;
-	
-	
-	var numCohorts = cohortArray.length;
-	
-	// need to add a blank entry at the beginning of the arrays for use by drawCohortLegend
-	cohortArray = [''].concat(cohortArray);
-	cohortDesc = [''].concat(cohortDesc);
-	cohortDisplayStyles = [''].concat(cohortDisplayStyles);
-	
-	if(forExport){
-		h=320 + 30 * (cohortArray.length);
-		cohortDesc=highlightCohortDescriptions(cohortDesc, true);
-	}
-
-		var vis = new pv.Panel().canvas(document.getElementById(divId)) 	
-		.width(w)
-		.height(h)
-		.margin(55);
-
-		if (gene_id)  {
-			/* Add the title with link to gene info*/
-			vis.add(pv.Label)
-			.font("bold 16px sans-serif")
-		    .left(w/2)
-		    .bottom(300)
-		    .textStyle("#065B96")
-		    .textAlign("center")
-	    	/*Add link in title to gene info */
-		    .cursor("pointer")
-		    .event("mouseover", function(){ self.status = "Gene Information"})
-		    .event("mouseout", function(){ self.status = ""})
-		    .event("click", function(d) {self.location = "javascript:showGeneInfo('"+gene_id +"');"})
-			.events("all")   
-			.title("View gene information")
-			.text(title);
-		}
-		else {
-			/* Add the title without link to gene info*/
-			vis.add(pv.Label)
-			.font("bold 16px sans-serif")
-		    .left(w/2)
-		    .bottom(300)
-		    .textStyle("#065B96")
-		    .textAlign("center")
-			.text(title);
-			
-		}
-	
-		/* Add the y-axis rules */
-		vis.add(pv.Rule)
-		.data(y.ticks())
-		.strokeStyle("#ccc")
-		.bottom(y)
-		.anchor("left").add(pv.Label)
-		.font("14px sans-serif")
-		.text(y.tickFormat);	
-		
-		/* Add the log2 label */
-		vis.add(pv.Label)
-		.left(-40)
-		.bottom(300/2) //300 is the height of the boxplot
-		.textAlign("center")
-		.textAngle(-Math.PI / 2)
-		.font("14px sans-serif")
-	    .text("log2 intensity");
-
-		/* Add a panel for each data point */
-		var points = vis.add(pv.Panel)
-		.def("showValues", false)
-		.data(statMapping)
-		.left(function(d){return x(d.id)})
-		.width(s * 2)
-		.events("all");
-
-		/* Add the experiment id label */
-		vis.add(pv.Label)
-		.data(statMapping)
-		.left(function(d){return x(d.id) + s})
-		.bottom(-20)
-		.textAlign("center")
-		.font("14px sans-serif")
-		.events("all")
-		.title(function(d){return d.desc})
-		.text(function(d){return d.id + "(n=" + d.sampleCount + ")"});
-		
-		/*add legend if export */
-		if(forExport){
-				
-		    /*		Legend	     */
-		    var legend = vis.add(pv.Bar)
-		    	.data(statMapping)
-		    	.height(25)
-		    	.top(function(){return (this.index * 30)-20 })
-		    	.antialias(false)
-		    	.left(-30)
-		    	.strokeStyle("#000")
-		    	.lineWidth(1)
-		    	.width(30)
-		    	.fillStyle(function (d) {return cohortBGColors[d.cohortDisplayStyle]});
-
-		    legend.anchor("center").add(pv.Label)
-	    	.textStyle("#000")
-	    	.font("12px  sans-serif")
-	    	.text(function(d){return d.id} );
-		    
-		    vis.add(pv.Label)
-		    	.data(statMapping)
-		    .top(function(){return this.index * 30})
-		    .antialias(false)
-		    .left(5)
-	    	.textStyle("#000")
-	    	.font("12px  sans-serif")
-	    //	.text(function(d){return d.desc});   	
-	    	.text(function(){return cohortDesc[this.index+1].replace(/_/g, ', ')});
-		}
-		
-		
-
-		/* Add the range line */
-		points.add(pv.Rule)
-		.left(s)
-		.bottom(function(d){return y(d.min)})
-		.height(function(d){return y(d.max) - y(d.min)});
-
-		/* Add the min and max indicators */
-		var minLine = points.add(pv.Rule)
-			.data(function(d){return [d.min]})
-			.bottom(y)
-			.left(s / 2)
-			.width(s)
-			.anchor("bottom").add(pv.Label)
-			.visible(function(){return this.parent.showValues()}) 
-			.text(function(d){return d.toFixed(2)});
-		
-		var maxLine = points.add(pv.Rule)
-			.data(function(d){return [d.max]})
-			.bottom(y)
-			.left(s / 2)
-			.width(s)
-			.anchor("top").add(pv.Label)
-			.visible(function(){return this.parent.showValues()}) 
-			.text(function(d){return d.toFixed(2)});
-
-		/* Add the upper/lower quartile ranges */
-		var quartileBar = points.add(pv.Bar)
-			.fillStyle(function (d) {return cohortBGColors[d.cohortDisplayStyle]})
-			.bottom(function(d){return y(d.lq)})
-			.height(function(d){return y(d.uq) - y(d.lq)})
-			.strokeStyle("black")
-			.lineWidth(1)
-			.event("mouseover", function() {return this.parent.showValues(true)}) 
-			.event("mouseout", function() {return this.parent.showValues(false)})
-			.antialias(false);
-		
-		var lqLabel = quartileBar.add(pv.Label)
-			.visible(function(){return this.parent.showValues()})
-			.text(function(d){return d.lq.toFixed(2)})
-			.textAlign("right")
-			.textBaseline("top");
-		
-		var uqLabel = quartileBar.anchor("top").add(pv.Label)		
-			.visible(function(){return this.parent.showValues()})
-			.left(-15)
-			.text(function(d){return d.uq.toFixed(2)})
-			.textMargin(-10);
-		
-		/* Add the median line */
-		points.add(pv.Rule)
-		.bottom(function(d){ return y(d.median)})
-		.anchor("right").add(pv.Label)
-		.visible(function(){return this.parent.showValues()})
-		.text(function(d){return d.median.toFixed(2)});
-
-		vis.render();
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////		
-		jQuery("#boxplotLegend_" + analysisID).html(drawCohortLegend(numCohorts, cohortArray, cohortDesc, cohortDisplayStyles));
-		
-}
 
 // Show the heatmap visualization 
 function showVisualization(analysisID, changedPaging)	{		
