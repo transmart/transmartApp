@@ -286,3 +286,4 @@ function applyPlotStyles(svg)  {
 		.style("display", "none")
 		;
 }
+

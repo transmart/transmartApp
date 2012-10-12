@@ -495,9 +495,10 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
  	    .text(function(d) {return d.text; });
 
 	// not exporting, add the html to the div for the legend
-	if (!forExport)  {
-		jQuery("#heatmapLegend_" + analysisID).html(drawCohortLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles));
-	}
+	 if (!forExport)  {		
+		 drawScreenLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles, "heatmap", analysisID);
+  	 }
+	
 	
 }
 

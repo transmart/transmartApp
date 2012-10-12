@@ -73,3 +73,30 @@ function applyLegendStyles(svg)  {
 		;
 	
 }
+
+// draw the legend shown on screen 
+function drawScreenLegend(numCohorts, cohortArray, cohortDesc, cohortDisplayStyles, type, analysisID) {
+
+	if ((type == 'boxplot') || (type == 'lineplot'))  {
+		//need to add a blank entry at the beginning of the arrays for use by drawCohortLegend and highlightCohortDescriptions
+		cohortArray = [''].concat(cohortArray);
+		cohortDesc = [''].concat(cohortDesc);
+		cohortDisplayStyles = [''].concat(cohortDisplayStyles);
+	}
+	jQuery("#" + type + "Legend_" + analysisID).html(drawCohortLegend(numCohorts, cohortArray, cohortDesc, cohortDisplayStyles));
+}
+
+//Helper function to draw the legend for the cohorts in the visualization panel
+function drawCohortLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles)	{
+	
+	cohortDescriptions = highlightCohortDescriptions(cohortDescriptions);
+	
+	var pCohortAll = "<table class='cohort_table'>"
+	var classIndex = null;
+	var pCohort = "";
+	for(var i=1; i<=numCohorts; i++) {
+		pCohort = "<tr><td style='width:40px'><p class='cohort' style='background-color:" + cohortBGColors[cohortDisplayStyles[i]]  + "'>" +cohorts[i] +"</p></td><td><p class='cohortDesc'>"+cohortDescriptions[i].replace(/_/g, ', ')+'</p></td>';
+		pCohortAll = pCohortAll +  pCohort;
+	}
+	return pCohortAll + "</table>	";
+}

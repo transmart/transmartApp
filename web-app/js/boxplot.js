@@ -161,14 +161,9 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
 
 	 applyPlotStyles(chartObject.svg);
 
-	 // need to add a blank entry at the beginning of the arrays for use by drawCohortLegend and highlightCohortDescriptions
-	 plotData.cohortArray = [''].concat(plotData.cohortArray);
-	 plotData.cohortDesc = [''].concat(plotData.cohortDesc);
-	 plotData.cohortDisplayStyles = [''].concat(plotData.cohortDisplayStyles);
-
-	if (!forExport)  {		
-		jQuery("#boxplotLegend_" + analysisID).html(drawCohortLegend(plotData.numCohorts, plotData.cohortArray, plotData.cohortDesc, plotData.cohortDisplayStyles));
-	}
+ 	 if (!forExport)  {		
+		drawScreenLegend(plotData.numCohorts, plotData.cohortArray, plotData.cohortDesc, plotData.cohortDisplayStyles, "boxplot", analysisID);
+  	 }
 		
 }
 

@@ -1776,21 +1776,6 @@ function showGeneInfo(geneID)
 }
 
 
-// Helper function to draw the legend for the cohorts in the visualization panel
-function drawCohortLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles)	{
-	
-	cohortDescriptions = highlightCohortDescriptions(cohortDescriptions);
-	
-	var pCohortAll = "<table class='cohort_table'>"
-	var classIndex = null;
-	var pCohort = "";
-	for(var i=1; i<=numCohorts; i++) {
-		pCohort = "<tr><td style='width:40px'><p class='cohort' style='background-color:" + cohortBGColors[cohortDisplayStyles[i]]  + "'>" +cohorts[i] +"</p></td><td><p class='cohortDesc'>"+cohortDescriptions[i].replace(/_/g, ', ')+'</p></td>';
-		pCohortAll = pCohortAll +  pCohort;
-	}
-	return pCohortAll + "</table>	";
-}
-
 //Show diff between each cohort
 //returnOnlyDiff: if true, return only the different terms
 function highlightCohortDescriptions(cohortDesc, returnOnlyDiff){
