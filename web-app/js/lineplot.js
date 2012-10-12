@@ -1,24 +1,21 @@
-// Draw the box plot using D3
-function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
-	  // boxPlotJSON should be a map of cohortID:[desc:cohort description, order:display order for the cohort, data:sorted log2 intensities]
+// Draw the line plot using D3
+function drawLinePlotD3(divId, linePlotJSON, analysisID, forExport)	{
 
-	  var plotData = setupPlotData(true, boxPlotJSON, forExport, analysisID, divId);
+	var plotData = setupPlotData(false, linePlotJSON, forExport, analysisID, divId);
 	
-	  // create the plot without any lines (just title, axes, legend)
- 	  var chartObject = drawEmptyPlot(plotData, forExport, analysisID, divId);
-	  
- 	  var chart = chartObject.chart;
- 	  var x=chartObject.x;
- 	  var y=chartObject.y;
+	// create the plot without any lines (just title, axes, legend)
+	var chartObject = drawEmptyPlot(plotData, forExport, analysisID, divId);
+	
+	var chart = chartObject.chart;
+	var x=chartObject.x;	
+	var y=chartObject.y;
  	  
- 	  var wBox = chartObject.wBand * .4; 
-
- 	  
+/*	  
 	  // create group for boxPlots  
  	  var boxPlotsGroup = chart
 		.append("g")
         .attr("id", "boxplotId")
-        .attr("transform", "translate(" + chartObject.wBand/2 + ",0)")
+        .attr("transform", "translate(" + wBand/2 + ",0)")
 		.attr("class", "boxes")
 		.on("mouseover", function() {
 			   jQuery('#boxplotId text.hoverText').show();
@@ -35,7 +32,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
 
  	  var rangeLines = rangeLinesGroup
          .selectAll(".line")
-    	.data(plotData.statMapping).enter().append("line")
+    	.data(statMapping).enter().append("line")
     	.attr('x1', function(d) {return x(d.id);})
     	.attr('x2', function(d) {return x(d.id);})
     	.attr('y1', function(d) {return y(d.min);})
@@ -51,7 +48,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
 
  	  var minLines = minLinesGroup
          .selectAll(".line")
-    	.data(plotData.statMapping).enter().append("line")
+    	.data(statMapping).enter().append("line")
     	.attr('x1', function(d) {return x(d.id) - wMinMaxLines/2;})
     	.attr('x2', function(d) {return x(d.id) + wMinMaxLines/2;})
     	.attr('y1', function(d) {return y(d.min);})
@@ -61,7 +58,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
  	  // min line text for hovers
  	 var minLinesText = minLinesGroup
  	 	.selectAll(".text")
- 	 	.data(plotData.statMapping).enter().append("text")
+ 	 	.data(statMapping).enter().append("text")
  	 	.attr('x', function(d) {return x(d.id) })
  	 	.attr('y', function(d) {return y(d.min) + 1 ;})
  	 	.attr("dy", ".71em")
@@ -77,7 +74,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
 
  	  var maxLines = maxLinesGroup
          .selectAll(".line")
-    	.data(plotData.statMapping).enter().append("line")
+    	.data(statMapping).enter().append("line")
     	.attr('x1', function(d) {return x(d.id) - wMinMaxLines/2;})
     	.attr('x2', function(d) {return x(d.id) + wMinMaxLines/2;})
     	.attr('y1', function(d) {return y(d.max);})
@@ -87,7 +84,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
  	  // max line text for hovers
   	 var maxLinesText = maxLinesGroup
   	 	.selectAll(".text")
-  	 	.data(plotData.statMapping).enter().append("text")
+  	 	.data(statMapping).enter().append("text")
   	 	.attr('x', function(d) {return x(d.id) })
   	 	.attr('y', function(d) {return y(d.max) - 1 ;})
   	 	.attr('text-anchor', "middle")
@@ -98,7 +95,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
   	 // draw boxes (draw after the range lines have been drawn so that range line is behind box
 	 var boxes = boxPlotsGroup
 	    .selectAll(".rect")
-	    .data(plotData.statMapping).enter().append("svg:rect")
+	    .data(statMapping).enter().append("svg:rect")
 	    .attr('width',wBox)
 	    .attr('height',function(d){
 	    	return y(d.lq) - y(d.uq);}   // height goes down from the upper quartile
@@ -115,7 +112,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
 
 	  var medianLines = medianLinesGroup
         .selectAll(".line")
-        .data(plotData.statMapping).enter().append("line")
+        .data(statMapping).enter().append("line")
         .attr('x1', function(d) {return x(d.id) - wBox/2;})
         .attr('x2', function(d) {return x(d.id) + wBox/2;})
         .attr('y1', function(d) {return y(d.median);})
@@ -125,7 +122,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
 	  // max line text for hovers
  	 var medianLinesText = medianLinesGroup
  	 	.selectAll(".text")
- 	 	.data(plotData.statMapping).enter().append("text")
+ 	 	.data(statMapping).enter().append("text")
  	 	.attr('x', function(d) {return x(d.id) + wBox/2 + 2; })
  	 	.attr('y', function(d) {return y(d.median);})
  	 	.attr('text-anchor', "start")
@@ -138,7 +135,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
 	 // upper quartile text for hovers
  	 var uqText = boxPlotsGroup
  	 	.selectAll(".text")
- 	 	.data(plotData.statMapping).enter().append("text")
+ 	 	.data(statMapping).enter().append("text")
  	 	.attr('x', function(d) {return x(d.id) - wBox/2 - 2; })
  	 	.attr('y', function(d) {return y(d.uq);})
  	 	.attr('text-anchor', "end")
@@ -149,7 +146,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
 	 // lower quartile text for hovers
  	 var lqText = boxPlotsGroup
  	 	.selectAll(".text")
- 	 	.data(plotData.statMapping).enter().append("text")
+ 	 	.data(statMapping).enter().append("text")
  	 	.attr('x', function(d) {return x(d.id) - wBox/2 - 2; })
  	 	.attr('y', function(d) {return y(d.lq);})
  	 	.attr('text-anchor', "end")
@@ -157,7 +154,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
  	 	.attr('class', 'hoverText')
  	 	.text(function(d) {return d.lq.toFixed(2) })
 	 ; 	  
- 	  	
+ */	  	
 
 	 applyPlotStyles(chartObject.svg);
 
@@ -167,8 +164,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport)	{
 	 plotData.cohortDisplayStyles = [''].concat(plotData.cohortDisplayStyles);
 
 	if (!forExport)  {		
-		jQuery("#boxplotLegend_" + analysisID).html(drawCohortLegend(plotData.numCohorts, plotData.cohortArray, plotData.cohortDesc, plotData.cohortDisplayStyles));
+		jQuery("#lineplotLegend_" + analysisID).html(drawCohortLegend(plotData.numCohorts, plotData.cohortArray, plotData.cohortDesc, plotData.cohortDisplayStyles));
 	}
 		
 }
-

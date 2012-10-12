@@ -752,13 +752,13 @@ function exportLinePlotData(analysisId, exportType)
 		var data = jQuery('body').data("LineplotData:" + analysisId);
 
 		//redraw the plot with the legend so that it appears in the exported image
-		drawLinePlot('lineplotAnalysis_'+analysisId, data, analysisId, true);
+		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, true);
 
 		var svgID=  "#lineplotAnalysis_"+analysisId;
 		
 		exportCanvas(svgID);		
 		
-		drawLinePlot('lineplotAnalysis_'+analysisId, data, analysisId, false);
+		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, false);
 		
 		break;
 	default:
@@ -1232,7 +1232,7 @@ function loadLinePlotData(analysisID, probeID)	{
 			
 			setActiveProbe(analysisID, probeID);
 			jQuery('#analysis_holder_' +analysisID).unmask(); //hide the loading msg, unblock the div 
-			drawLinePlot('lineplotAnalysis_'+analysisID, response, analysisID);
+			drawLinePlotD3('lineplotAnalysis_'+analysisID, response, analysisID);
 			jQuery('#lineplotAnalysis_'+analysisID).show();
 			jQuery('#lineplot_'+analysisID).show();
 
@@ -1643,7 +1643,7 @@ function updateLineplot(analysisID){
 		console.log("Error: Could not find data");
 	}else
 		{
-			drawLinePlot('lineplotAnalysis_'+analysisID, data, analysisID);
+			drawLinePlotD3('lineplotAnalysis_'+analysisID, data, analysisID);
 		}
 }
 
