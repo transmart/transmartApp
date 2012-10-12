@@ -42,10 +42,6 @@
         <!-- Our JS -->        
         <script type="text/javascript" src="${resource(dir:'js', file:'rwg.js')}"></script>
         
-        <!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
-        <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-msie.min.js')}"></script> 
-		
 		<!-- d3js Visualization Library -->
 		<script type="text/javascript" src="${resource(dir:'js/d3', file:'d3.v2.js')}"></script>
        
