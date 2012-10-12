@@ -280,6 +280,17 @@ function applyPlotStyles(svg)  {
 		.style("shape-rendering", "crispEdges")
 		;
 	
+	svg.selectAll(".plot .linePlotPoints, .plot .errorBar")
+		.style("stroke", "#000000")
+		.style("shape-rendering", "crispEdges")
+	;
+
+	svg.selectAll(".plot .linePlotLines")
+		.style("stroke", "#000000")
+		.style("shape-rendering", "crispEdges")
+		.style("stroke-width", "1px")
+	;
+
 	svg.selectAll(".plot .hoverText")
 		.style("font", "10px sans-serif")
 		.style("stroke", "none")
