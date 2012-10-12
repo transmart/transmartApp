@@ -429,7 +429,7 @@ class TrialQueryService {
 		def analysisList = []
  
 		// retrieve the descriptions for each analysis
-		def results = bio.BioAssayAnalysis.executeQuery("select b.id, b.shortDescription, b.longDescription " +
+		def results = bio.BioAssayAnalysis.executeQuery("select b.id, b.shortDescription, b.longDescription, b.name " +
 			" from bio.BioAssayAnalysis b" +
 			" where b.id in (" + analysisIds.join(',') +  ") ORDER BY b.longDescription")
  
@@ -447,7 +447,7 @@ class TrialQueryService {
 			}
 			
 			// create a map for each record
-			def aMap = ['id':r[0], 'shortDescription':r[1], 'longDescription':r[2], 'isTimeCourse':isTimeCourse]
+			def aMap = ['id':r[0], 'shortDescription':r[1], 'longDescription':r[2], 'name':r[3], 'isTimeCourse':isTimeCourse]
 					   
 			analysisList.add aMap
 		}
