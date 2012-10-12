@@ -677,10 +677,11 @@ public class SearchController{
 	//Retrieve the results for the search filter. This is used to populate the result grids on the search page.
 	def getAnalysisResults = {
 		
+		//TODO Combine this and the table method, they're now near-identical
 		def paramMap = params;
-		def max = params.long('filter.max')
-		def offset = params.long('filter.offset')
-		def cutoff = params.double('filter.cutoff')
+		def max = params.long('max')
+		def offset = params.long('offset')
+		def cutoff = params.double('cutoff')
 		def sortField = params.sortField
 		def order = params.order
 		def search = params.search
@@ -692,37 +693,38 @@ public class SearchController{
 		if (filter == null) {
 			filter = [:]
 		}
+		if (max != null) { filter.max = max }
+		if (!filter.max || filter.max < 10) {filter.max = 10;}
 		
-		if (export) {
-			max = 1000000 //That should do it
-			offset = 0
-		}
-		else {
-			if (max != null) { filter.max = max }
-			if (!filter.max || filter.max < 10) {filter.max = 10;}
-			
-			if (offset != null) { filter.offset = offset }
-			if (!filter.offset || filter.offset < 0) {filter.offset = 0;}
-			
-			if (cutoff != null) { filter.cutoff = cutoff }
-			
-			if (sortField != null) { filter.sortField = sortField }
-			if (!filter.sortField) {filter.sortField = 'rsid';}
-			
-			if (order != null) { filter.order = order }
-			if (!filter.order) {filter.order = 'asc';}
-			
-			if (search != null) { filter.search = search }
-		}
+		if (offset != null) { filter.offset = offset }
+		if (!filter.offset || filter.offset < 0) {filter.offset = 0;}
+		
+		if (cutoff != null) { filter.cutoff = cutoff }
+		
+		if (sortField != null) { filter.sortField = sortField }
+		if (!filter.sortField) {filter.sortField = 'rsid';}
+		
+		if (order != null) { filter.order = order }
+		if (!filter.order) {filter.order = 'asc';}
+		
+		if (search != null) { filter.search = search }
 		
 		def analysisIds = []
 		analysisIds.push(analysisId)
 		
 		session['filterAnalysis' + analysisId] = filter;
 		
+		//Override max and offset if we're exporting
+		def maxToUse = filter.max
+		def offsetToUse = filter.offset
+		if (export) {
+			maxToUse = 1000000
+			offsetToUse = 0
+		}
+		
 		def regionSearchResults
 		try {
-			regionSearchResults = getRegionSearchResults(filter.max, filter.offset, filter.cutoff, filter.sortField, filter.order, filter.search, analysisIds)
+			regionSearchResults = getRegionSearchResults(maxToUse, offsetToUse, filter.cutoff, filter.sortField, filter.order, filter.search, analysisIds)
 		}
 		catch (Exception e) {
 			render(text: "<pre>" + e.getMessage() + "</pre>")
@@ -734,7 +736,7 @@ public class SearchController{
 			exportResults(regionSearchResults.columnNames, regionSearchResults.analysisData, "analysis" + analysisId + ".csv")
 		}
 		else {
-			render(template: "analysisResults", model: [analysisData: regionSearchResults.analysisData, columnNames: regionSearchResults.columnNames, max: regionSearchResults.max, offset: regionSearchResults.offset, cutoff: cutoff, sortField: sortField, order: order, search: search, totalCount: regionSearchResults.totalCount, analysisId: analysisId, wasRegionFiltered: regionSearchResults.wasRegionFiltered])
+			render(template: "analysisResults", model: [analysisData: regionSearchResults.analysisData, columnNames: regionSearchResults.columnNames, max: regionSearchResults.max, offset: regionSearchResults.offset, cutoff: filter.cutoff, sortField: filter.sortField, order: filter.order, search: filter.search, totalCount: regionSearchResults.totalCount, wasRegionFiltered: regionSearchResults.wasRegionFiltered, analysisId: analysisId])
 		}
 	}
 	
@@ -748,8 +750,7 @@ public class SearchController{
 		def sortField = params.sortField
 		def order = params.order
 		def search = params.search
-		
-		def analysisId = params.long('analysisId')
+
 		def export = params.boolean('export')
 		
 		def filter = session['filterTableView'];

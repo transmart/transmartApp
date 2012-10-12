@@ -670,6 +670,14 @@ class RWGController {
 	   catch (Exception e) {
 		   e.printStackTrace()
 	   }
+	   
+	   //TODO Patch job - if this is a *.* query, prevent it from running
+	   if (nonfacetedQueryString.equals("q=(*:*)")) {
+		   session['solrAnalysisIds'] = []
+		   render(status: 200, text: "NONE");
+		   return;
+	   }
+	   	   
 	   String solrRequestUrl = createSOLRQueryPath()
 	   String solrQueryString = /${nonfacetedQueryString}/
 	   def analysisIds = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, true)
@@ -869,11 +877,11 @@ class RWGController {
 	   def html
 	   if (!studyWithResultsFound)	{
 		   html = g.render(template:'/search/noResult').toString()
-	   } else	{
+	   } else {
 	       html = g.render(template:'/RWG/experiments',model:[experiments:exprimentAnalysis, analysisCount:total, duration:TimeCategory.minus(new Date(), startTime)]).toString()
 	   }
 	   
-	   return html	   
+	   return html
    }
       
    // Load the trial analysis for the given trial

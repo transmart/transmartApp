@@ -1818,7 +1818,7 @@ function showVisualization(analysisID, changedPaging)	{
 
 			setVisTabs(analysisID);
 			jQuery(loadingDiv).mask("Loading...");
-			loadAnalysisResultsGrid(analysisID);
+			loadAnalysisResultsGrid(analysisID, {'max': 10, 'offset':0, 'cutoff': 0, 'search': "", 'sortField': "", "order": "asc"});
 			loadQQPlot(analysisID);
 		}
 		
@@ -1858,14 +1858,15 @@ function loadQQPlot(analysisID)
 }
 
 // This function will load the analysis data into a GRAILS template.
-function loadAnalysisResultsGrid(analysisID, max, offset, cutoff)
+function loadAnalysisResultsGrid(analysisID, paramMap)
 {
+	paramMap.analysisId = analysisID
 	jQuery('#analysis_results_table_' + analysisID + '_wrapper').empty().addClass('ajaxloading');
 	jQuery.ajax( {
 	    "url": getAnalysisDataURL,
 	    bDestroy: true,
 	    bServerSide: true,
-	    data: {analysisId: analysisID, max: max, offset: offset, cutoff: cutoff},
+	    data: paramMap,
 	    "success": function (jqXHR) {
 	    	jQuery('#analysis_holder_' +analysisID).unmask();
 	    	jQuery('#analysis_results_table_' + analysisID + '_wrapper').html(jqXHR).removeClass('ajaxloading');
