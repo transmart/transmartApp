@@ -36,24 +36,35 @@ class WebserviceService {
 	def grailsApplication
 	def config = ConfigurationHolder.config
 	
-	def geneLimitsSqlQuery = """
+	def final geneLimitsSqlQueryByKeyword = """
 	
-SELECT max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as chrom FROM SEARCHAPP.SEARCH_KEYWORD
+	SELECT max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as chrom FROM SEARCHAPP.SEARCH_KEYWORD
 	INNER JOIN bio_marker bm ON bm.BIO_MARKER_ID = SEARCH_KEYWORD.BIO_DATA_ID
 	INNER JOIN deapp.de_snp_gene_map gmap ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID
-	INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id	
+	INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
+	WHERE KEYWORD=? 
 	"""
 	
-	def computeGeneBounds(String geneSymbol, String searchId) {
-		//Complete the query - if we have a geneSymbol, use that, otherwise use ID
-		def query = "";
-		if (geneSymbol) {
-			query = geneLimitsSqlQuery + " WHERE KEYWORD=?"
-		}
-		else {
-			query = geneLimitsSqlQuery + " WHERE PRIMARY_EXTERNAL_ID=?"
-		}
+	def final geneLimitsSqlQueryById = """
 	
+	SELECT BIO_MARKER_ID, max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as chrom, min(strand) as strand from bio_marker bm
+	INNER JOIN deapp.de_snp_gene_map gmap ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID
+	INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
+	WHERE BIO_MARKER_ID = ?
+	GROUP BY BIO_MARKER_ID
+	"""
+	
+	def final genePositionSqlQuery = """
+		SELECT DISTINCT BIO_MARKER_ID, ENTREZ_GENE_ID, BIO_MARKER_NAME, BIO_MARKER_DESCRIPTION FROM deapp.de_snp_gene_map gmap
+		INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
+		INNER JOIN BIO_MARKER bm ON bm.primary_external_id = to_char(gmap.entrez_gene_id)
+		WHERE chrom = ? AND pos >= ? AND pos <= ?
+	"""
+	
+	def computeGeneBounds(String geneSymbol, String geneSourceId) {
+		//Complete the query - if we have a geneSymbol, use that, otherwise use ID
+		def query = geneLimitsSqlQueryByKeyword;
+			
 		//Create objects we use to form JDBC connection.
 		def con, stmt, rs = null;
 		
@@ -62,12 +73,7 @@ SELECT max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as 
 		
 		//Prepare the SQL statement.
 		stmt = con.prepareStatement(query);
-		if (geneSymbol) {
-			stmt.setString(1, geneSymbol)
-		}
-		else {
-			stmt.setString(1, searchId)
-		}
+		stmt.setString(1, geneSymbol)
 		
 		rs = stmt.executeQuery();
 
@@ -76,7 +82,7 @@ SELECT max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as 
 				def high = rs.getLong("HIGH");
 				def low = rs.getLong("LOW");
 				def chrom = rs.getLong("CHROM")
-				return [low: low, high:high, chrom:chrom]
+				return [low, high, chrom]
 			}
 		}finally{
 			rs?.close();
@@ -84,5 +90,69 @@ SELECT max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as 
 			con?.close();
 		}
 	}
+	
+	def getGeneByPosition(String chromosome, Long start, Long stop) {
+		//Complete the query - if we have a geneSymbol, use that, otherwise use ID
+		def query = genePositionSqlQuery;
+		def geneQuery = geneLimitsSqlQueryById;
+			
+		//Create objects we use to form JDBC connection.
+		def con, stmt, rs = null;
+		def geneStmt, geneRs = null;
+		
+		//Grab the connection from the grails object.
+		con = dataSource.getConnection()
+		
+		//Prepare the SQL statement.
+		stmt = con.prepareStatement(query);
+		stmt.setString(1, chromosome)
+		stmt.setLong(2, start)
+		stmt.setLong(3, stop)
+		rs = stmt.executeQuery();
+
+		def results = []
+		
+		geneStmt = con.prepareStatement(geneQuery)
+		
+		try {
+			while(rs.next()) {
+				
+				def bioMarkerId = rs.getLong("BIO_MARKER_ID")
+				
+				geneStmt.setLong(1, bioMarkerId)
+				geneRs = geneStmt.executeQuery();
+				try {
+					if(geneRs.next()) {
+						results.push([
+							bioMarkerId,
+							"GRCh37",
+							rs.getString("BIO_MARKER_NAME"),
+							rs.getString("BIO_MARKER_DESCRIPTION"),
+							geneRs.getString("CHROM"),
+							geneRs.getLong("LOW"),
+							geneRs.getLong("HIGH"),
+							geneRs.getString("STRAND"),
+							0,
+							rs.getLong("ENTREZ_GENE_ID")
+						])
+					}
+				}
+				finally {
+					geneRs?.close();
+				}
+			}
+			
+			return results
+		}
+		finally {
+			rs?.close();
+			geneRs?.close();
+			stmt?.close();
+			geneStmt?.close();
+			con?.close();
+		}
+
+	}
+  
   
 }

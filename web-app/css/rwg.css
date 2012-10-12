@@ -913,7 +913,7 @@ border-top: 1px solid #CCC;
      margin-right: 64px;   
 }
 
-.paginate_disabled_previous, .paginate_disabled_next {
+a.paginate_disabled_previous, a.paginate_disabled_next {
     border: 1px solid #CCC;
     padding: 4px;
     color: #CCC;

@@ -27,17 +27,36 @@ class WebserviceController {
 	def webserviceService
 	
     def computeGeneBounds = {
-		
-		def resultMap = webserviceService.computeGeneBounds(params.geneSymbol, params.geneSourceId)
+		def results = webserviceService.computeGeneBounds(params.geneSymbol, "GRCh37")
+		renderDataSet(results)
+	}
+	
+	def getGeneByPosition = {
+		def results = webserviceService.getGeneByPosition(params.chromosome, params.long('start'), params.long('stop'))
+		renderDataSet(results)
+	}
+	
+	def getSnpSources = {
+		renderDataSet([[18,"HG18",18,"03-2006","http://www.example.com"], [19,"HG19",19,"02-2009","http://www.example.com"]])
+	}
+	
+	def getGeneSources = {
+		renderDataSet([[0,"GRCh37",0,"01-2001","http://www.example.com"]])
+	}
+	
+	def renderDataSet(results) {
 		
 		render(contentType:"text/xml",encoding:"UTF-8") {
 			rows() {
+				for (result in results) {
 				row() {
-					chromosome(resultMap.chrom)
-					start(resultMap.low)
-					stop(resultMap.high)
+					for (dat in result) {
+					data(dat)
+					}
+				}
 				}
 			}
 		}
+		
 	}
 }

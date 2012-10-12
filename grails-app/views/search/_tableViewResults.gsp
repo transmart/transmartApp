@@ -63,7 +63,14 @@
 			
 		</tbody>
 	</table>						
-	<div class="dataTables_info" id="table_results_info">Showing ${offset+1} to ${Math.min(totalCount,offset+max)} of ${totalCount} entries</div>
+	<div class="dataTables_info" id="table_results_info">
+		<g:if test="${totalCount > 0}">
+			Showing ${Math.min(offset+1, totalCount)} to ${Math.min(totalCount,offset+max)} of ${totalCount} entries
+		</g:if>
+		<g:else>
+			No entries to display
+		</g:else>
+	</div>
 	<div class="dataTables_paginate paging_two_button">
 		<g:if test="${offset > 0}">
 			<a class="paginate_enabled_previous" tabindex="0" role="button" id="table_results_previous" aria-controls="results_table" onclick="loadTableResultsGrid({offset: ${offset-max}})">Previous</a>
