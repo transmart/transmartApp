@@ -27,28 +27,18 @@ function drawLinePlotD3(divId, linePlotJSON, analysisID, forExport)	{
 		index++;
 	}
 	
-	// create an array of the lines 
-	var linesArray = new Array();
-	
-	for (var i=0; i<linePointsArray.length - 1; i++)  {
-		linesArray.push({
-			x1:x(linePointsArray[i].index),
-			x2:x(linePointsArray[i+1].index),
-			y1:y(linePointsArray[i].mean),
-			y2:y(linePointsArray[i+1].mean)
-		});
-	}
-			
-	var lines = linesGroup
-       .selectAll(".linePlotLines")
-       .data(linesArray).enter().append("line")
-       .attr('x1', function(d) {return d.x1;})
-       .attr('x2', function(d) {return d.x2 ;})
-       .attr('y1', function(d) {return d.y1;})
-       .attr('y2', function(d) {return d.y2;})
-       .attr("class", "linePlotLines");
-  	;			
-	
+    // Specify the function for generating path data             
+    var pathData = d3.svg.line()
+                    .x(function(d){return x(d.index);})
+                    .y(function(d){return y(d.mean);})
+                    .interpolate("linear"); 
+
+    // Create path
+    var path = linesGroup.append("path")
+        .attr("d", pathData(linePointsArray))
+		.attr("class", "linePlotPath")
+		;
+    
     // draw error bar
 	var errorBarsGroup = linesGroup
 		.append("g")
