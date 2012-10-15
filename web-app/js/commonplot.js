@@ -286,6 +286,7 @@ function applyPlotStyles(svg)  {
 	;
 
 	svg.selectAll(".plot .linePlotPath")
+		.style("shape-rendering", "auto")
 		.style("fill", "none")
 		.style("stroke", "black")
 		.style("stroke-width", "1px")
