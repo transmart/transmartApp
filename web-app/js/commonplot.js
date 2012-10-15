@@ -288,7 +288,7 @@ function applyPlotStyles(svg)  {
 	svg.selectAll(".plot .linePlotPath")
 		.style("fill", "none")
 		.style("stroke", "black")
-		.style("stroke-width", 2)
+		.style("stroke-width", "1px")
 	;
 
 	svg.selectAll(".plot .hoverText")
