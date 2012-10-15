@@ -26,24 +26,30 @@
 			<%-- Special cases: only display cutoffs if this is a comparison --%>
 			<g:if test="${(!layoutRow.column.equals('pValueCutoff') && !layoutRow.column.equals('foldChangeCutoff')) || 'comparison'.equals(analysis.analysisMethodCode)}">
 				<tr class="columnprop">
-					<td valign="top" class="columnname">${layoutRow.displayName}</td>
+				
+					<g:if test="${analysis.assayDataType.equals('EQTL') && layoutRow.column.equals('phenotypes')}">
+						<td valign="top" class="columnname">Diseases</td>
+					</g:if>
+					<g:else>
+						<td valign="top" class="columnname">${layoutRow.displayName}</td>
+					</g:else>
+					
 					<td valign="top" class="columnvalue">
 						<%-- Special cases --%>
 						<g:if test="${layoutRow.column.equals('study')}">
 							${study?.title}
 						</g:if>
-						<g:elseif test="${layoutRow.column.equals('diseases')}">
+						<g:elseif test="${layoutRow.column.equals('phenotypes')}">
 							<ul>
 								<g:each in="${analysis.diseases}" var="disease">
-									<li>${disease.meshCode}: ${disease.disease}</li>
+									<li>${disease.disease}</li>
 								</g:each>
-							</ul>
-						</g:elseif>
-						<g:elseif test="${layoutRow.column.equals('observations')}">
-							<ul>
-								<g:each in="${analysis.observations}" var="obs">
-									<li>${obs.code}: ${obs.name}</li>
-								</g:each>
+								<%-- If this is not EQTL, put observations here as well --%>
+								<g:if test="${!analysis.assayDataType.equals('EQTL')}">
+									<g:each in="${analysis.observations}" var="obs">
+										<li>${obs.name}</li>
+									</g:each>
+								</g:if>
 							</ul>
 						</g:elseif>
 						<g:elseif test="${layoutRow.column.equals('platforms')}">

@@ -48,17 +48,19 @@ class RegionSearchService {
 	
 	//Query with mad Oracle pagination
 	def gwasSqlQuery = """
-		select * from (select a.*, ROWNUM rnum from 
-		(SELECT gwas.bio_assay_analysis_id as analysis, gwas.rs_id as rsid, gwas.p_value as pvalue, gwas.log_p_value as logpvalue, gwas.ext_data as extdata
-		FROM biomart.Bio_Assay_Analysis_Gwas gwas 
-		LEFT JOIN deapp.de_rc_snp_info info ON gwas.rs_id = info.rs_id 
+	select a.* from
+	(SELECT gwas.bio_assay_analysis_id as analysis, gwas.rs_id as rsid, gwas.p_value as pvalue, gwas.log_p_value as logpvalue, gwas.ext_data as extdata
+	,row_number() over (order by gwas.rs_id) as row_nbr
+		   FROM biomart.Bio_Assay_Analysis_Gwas gwas
+		   LEFT JOIN deapp.de_rc_snp_info info ON gwas.rs_id = info.rs_id 
 	"""
 	
 	def eqtlSqlQuery = """
-	    select * from (select a.*, ROWNUM rnum from
-	    (SELECT eqtl.bio_assay_analysis_id as analysis, eqtl.rs_id as rsid, eqtl.p_value as pvalue, eqtl.log_p_value as logpvalue, eqtl.ext_data as extdata, eqtl.gene as gene
-	    FROM biomart.Bio_Assay_Analysis_eqtl eqtl
-	    LEFT JOIN deapp.de_rc_snp_info info ON eqtl.rs_id = info.rs_id
+	select a.* from
+	(SELECT eqtl.bio_assay_analysis_id as analysis, eqtl.rs_id as rsid, eqtl.p_value as pvalue, eqtl.log_p_value as logpvalue, eqtl.ext_data as extdata, eqtl.gene as gene
+	,row_number() over (order by eqtl.rs_id) as row_nbr
+		   FROM biomart.Bio_Assay_Analysis_eqtl eqtl
+		   LEFT JOIN deapp.de_rc_snp_info info ON eqtl.rs_id = info.rs_id 
 	"""
 	
 	def gwasSqlCountQuery = """
@@ -166,8 +168,8 @@ class RegionSearchService {
 			qb.append(")"); //Finish range selection
 		}
 		def total = 0;
-
-		def finalQuery = analysisQuery + qb.toString() + " ORDER BY ${sortField} ${order}, ${type}.rowid) a where ROWNUM <= ${limit+offset} ) where rnum >= ${offset}";
+		
+		def finalQuery = analysisQuery + qb.toString() + "ORDER BY ${sortField} ${order}) a where a.row_nbr between ${offset} and ${limit+offset}";
 		stmt = con.prepareStatement(finalQuery);
 		if (cutoff) {
 			stmt.setDouble(1, cutoff);
@@ -186,7 +188,8 @@ class RegionSearchService {
 					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getLong("analysis"), rs.getString("gene")]);
 				}
 			}
-		}finally{
+		}
+		finally{
 			rs?.close();
 			stmt?.close();
 		}
