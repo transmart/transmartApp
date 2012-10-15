@@ -17,35 +17,53 @@
  *
  ******************************************************************/
   
-
 package bio
-class Observation {
-		Long id
-		String name
-		String code
-		String description
-		Long etlId
-		String type
-		String codeSource
-		static hasMany=[experiments:Experiment,literatures:Literature,analyses:BioAssayAnalysis]
- static mapping = {
-	 table 'BIO_OBSERVATION'
-	 version false
-	 cache usage:'read-only'
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
-	 columns {
-		id column:'BIO_OBSERVATION_ID'
-		name column:'OBS_NAME'
-		code column:'OBS_CODE'
-		description column:'OBS_DESCR'
-		etlId column: 'ETL_ID'
-		type column: 'OBS_TYPE'
-		codeSource column: 'OBS_CODE_SOURCE'
-		
-		experiments joinTable:[name:'BIO_DATA_OBS', key:'BIO_OBSERVATION_ID']
-		literatures joinTable:[name:'BIO_DATA_OBS', key:'BIO_OBSERVATION_ID']
-		analyses joinTable:[name:'BIO_DATA_OBS', key:'BIO_OBSERVATION_ID']
+
+class BioAssayAnalysisExt {
+	String vendor
+	String vendorType
+	String genomeVersion
+	String tissue
+	String cellType
+	String population
+	String researchUnit
+	String sampleSize
+	String modelName
+	String modelDescription
+	
+	static belongsTo=[bioAssayAnalysis: BioAssayAnalysis]
+
+	static mapping = {
+		table 'BIO_ASSAY_ANALYSIS_EXT'
+		version false
+		cache usage:'read-only'
+		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		columns {
+			id column: 'BIO_ASSAY_ANALYSIS_EXT_ID'
+			bioAssayAnalysis: 'BIO_ASSAY_ANALYSIS_ID'
+			vendor column:'VENDOR'
+			vendorType column:'VENDOR_TYPE'
+			genomeVersion column:'GNOME_VERSION' // [sic]
+			tissue column:'TISSUE'
+			cellType column:'CELL_TYPE'
+			population column:'POPULATION'
+			researchUnit column:'RU'
+			sampleSize column:'SAMPLE_SIZE'
+			modelName column:'MODEL_NAME'
+			modelDescription column:'MODEL_DESC'
 		}
 	}
 
+	static constraints = {
+		vendor(nullable: true)
+		vendorType(nullable: true)
+		genomeVersion(nullable: true)
+		tissue(nullable: true)
+		cellType(nullable: true)
+		population(nullable: true)
+		researchUnit(nullable: true)
+		sampleSize(nullable: true)
+		modelName(nullable: true)
+		modelDescription(nullable: true)
+	}
 }

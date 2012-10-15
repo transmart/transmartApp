@@ -28,9 +28,35 @@
 				<tr class="columnprop">
 					<td valign="top" class="columnname">${layoutRow.displayName}</td>
 					<td valign="top" class="columnvalue">
-						<g:if test="${layoutRow.dataType == 'date'}">
-							<g:fieldDate bean="${analysis}" field="${layoutRow.column}" format="yyyy-MM-dd"/>
+						<%-- Special cases --%>
+						<g:if test="${layoutRow.column.equals('study')}">
+							${study?.title}
 						</g:if>
+						<g:elseif test="${layoutRow.column.equals('diseases')}">
+							<ul>
+								<g:each in="${analysis.diseases}" var="disease">
+									<li>${disease.meshCode}: ${disease.disease}</li>
+								</g:each>
+							</ul>
+						</g:elseif>
+						<g:elseif test="${layoutRow.column.equals('observations')}">
+							<ul>
+								<g:each in="${analysis.observations}" var="obs">
+									<li>${obs.code}: ${obs.name}</li>
+								</g:each>
+							</ul>
+						</g:elseif>
+						<g:elseif test="${layoutRow.column.equals('platforms')}">
+							<ul>
+								<g:each in="${analysis.platforms}" var="platform">
+									<li>${platform.vendor}: ${platform.name}</li>
+								</g:each>
+							</ul>
+						</g:elseif>
+						
+						<g:elseif test="${layoutRow.dataType == 'date'}">
+							<g:fieldDate bean="${analysis}" field="${layoutRow.column}" format="yyyy-MM-dd"/>
+						</g:elseif>
 						
 						<g:else> <%-- In all other cases, display as string --%>
 							${fieldValue(bean:analysis,field:layoutRow.column)}

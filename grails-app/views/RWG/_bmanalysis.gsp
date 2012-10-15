@@ -9,13 +9,13 @@
         <table class="analysis-table">
             <tr>
             	<td style="width:20px;">
-					<input type="checkbox"/>
+					<input type="checkbox" class="analysischeckbox" id="analysis_checkbox_${analysisId}"/>
             	</td>
                 <td style="width:20px;">
 		          <g:form controller="RWG" name="AnalysisDetail_${analysisId}" id="AnalysisDetail_${analysisId}" action="doComparison">
 		              <input type="hidden" id="analysis_results_${analysisId}_state" value="0" />
 						
-			          <a href="#" onclick="showDetailDialog('${createLink(controller:'trial', action:'showAnalysis', id:analysisId)}', '${shortDescription}');">
+			          <a href="#" onclick="showDetailDialog('${createLink(controller:'trial', action:'showAnalysis', id:analysisId)}', '${analysis.name}');">
 	                   <img alt="Analysis" src="${resource(dir:'images',file:'analysis.png')}" style="vertical-align: top;margin-top: -2px;" /></a>                          
 	              </g:form>
                 </td>

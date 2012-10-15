@@ -100,7 +100,7 @@ function showDetailDialog(dataURL, dialogTitle, dialogHeight)	{
 				title: dialogTitle,
 				height: height,
 				width: 550,
-				position: ['center', 'center']
+				position: "top"
 			})
 			.dialog('open');
 	} else	{
@@ -420,7 +420,8 @@ function showFacetResults()	{
     
     var queryString = facetSearch.join("&");
     
-   	queryString = queryString + "&showSignificantResults=" + document.getElementById('cbShowSignificantResults').checked
+    //Show significant results is disabled
+   	//queryString = queryString + "&showSignificantResults=" + document.getElementById('cbShowSignificantResults').checked
     
    	//TODO Only do one of these depending on the highlighted tab
 	jQuery.ajax({
@@ -3165,3 +3166,7 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 	});
 }
 
+//Globally prevent AJAX from being cached (mostly by IE)
+jQuery.ajaxSetup({
+	cache: false
+});

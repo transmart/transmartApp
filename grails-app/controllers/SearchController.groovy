@@ -774,8 +774,6 @@ public class SearchController{
 		
 		if (search != null) { filter.search = search }
 		
-	
-		
 		def analysisIds = session['solrAnalysisIds']
 		
 		session['filterTableView'] = filter
@@ -807,10 +805,10 @@ public class SearchController{
 		}
 		//Return the data as a GRAILS template or CSV
 		if (export) {
-			exportResults(regionSearchResults.columnNames, regionSearchResults.analysisData, "results.csv")
+			//exportResults(regionSearchResults.columnNames, regionSearchResults.analysisData, "results.csv")
 		}
 		else {
-			render(template: "tableViewResults", model: [analysisData: regionSearchResults.analysisData, columnNames: regionSearchResults.columnNames, max: regionSearchResults.max, offset: regionSearchResults.offset, cutoff: filter.cutoff, sortField: filter.sortField, order: filter.order, search: filter.search, totalCount: regionSearchResults.totalCount, wasRegionFiltered: regionSearchResults.wasRegionFiltered])
+			render(template: "gwasAndEqtlResults", model: [results: regionSearchResults, cutoff: filter.cutoff, sortField: filter.sortField, order: filter.order, search: filter.search])
 		}
 	}
 	
@@ -840,16 +838,7 @@ public class SearchController{
 	}
 	
 	def getRegionSearchResults(Long max, Long offset, Double cutoff, String sortField, String order, String search, List analysisIds) throws Exception {
-
-		//We need to determine the data type of this analysis so we know where to pull the data from.
-		//def currentAnalysis = bio.BioAssayAnalysis.get(analysisId)
-		
-		//Throw an error if we don't find the analysis for some reason.
-		//if(!currentAnalysis)
-		//{
-		//	throw new Exception("Analysis not found.")
-		//}
-		
+	
 		//Get list of REGION restrictions from session and translate to RS#
 		def regions = []
 		def solrSearch = session['solrSearchFilter']
@@ -909,57 +898,60 @@ public class SearchController{
 				}
 			}
 		}
-		
-		//Set a flag to record that the list was filtered by region
-		def wasRegionFiltered = regions ? true : false
-		
-		def totalCount
-		
-		//This will hold the index lookups for deciphering the large text meta-data field.
-		def indexMap = [:]
-		
-		//This is the parent object of the data we return.
-		def returnJson = [:]
-		
-		//Initiate Data Access object to get to search data.
-		def searchDAO = new SearchDAO()
-		
-		//This will be a list of the column names in our returned dynamic meta-data.
-		def columnNames = []
-		
-		//Get the GWAS Data. Call a different class based on the data type.
-		def analysisData
-		
-		//Get the data from the index table for GWAS.
-		def analysisIndexData
-		
-		def returnedAnalysisData = []
-		
-		//TODO Find out whether this is GWAS or EQTL data - prioritize GWAS for now...
+				
+		//Find out if we're querying for EQTL, GWAS, or both
 		def hasGwas = BioAssayAnalysis.createCriteria().list([max: 1]) {
 			eq('assayDataType', 'GWAS')
 			'in'('id', analysisIds)
 		}
+		
+		def hasEqtl = BioAssayAnalysis.createCriteria().list([max: 1]) {
+			eq('assayDataType', 'EQTL')
+			'in'('id', analysisIds)
+		}
+		
+		def gwasResult
+		def eqtlResult
 				
 		if (hasGwas) {
-			def queryResult = regionSearchService.getAnalysisData(analysisIds, regions, max, offset, cutoff, sortField, order, search, "gwas")
-			analysisData = queryResult.results
-			totalCount = queryResult.total
-			analysisIndexData = searchDAO.getGwasIndexData()
+			gwasResult = runRegionQuery(analysisIds, regions, max, offset, cutoff, sortField, order, search, "gwas")
 		}
-		else {
-			def queryResult = regionSearchService.getAnalysisData(analysisIds, regions, max, offset, cutoff, sortField, order, search, "eqtl")
-			analysisData = queryResult.results
-			totalCount = queryResult.total
+		if (hasEqtl) {
+			eqtlResult = runRegionQuery(analysisIds, regions, max, offset, cutoff, sortField, order, search, "eqtl")
+		}
+		
+		return [gwasResults: gwasResult, eqtlResults: eqtlResult]
+	}
+	
+	
+	def runRegionQuery(analysisIds, regions, max, offset, cutoff, sortField, order, search, type) {
+		
+		//This will hold the index lookups for deciphering the large text meta-data field.
+		def indexMap = [:]
+		
+		//Set a flag to record that the list was filtered by region
+		def wasRegionFiltered = regions ? true : false
+		
+		def columnNames = []
+		def searchDAO = new SearchDAO()
+		def queryResult = regionSearchService.getAnalysisData(analysisIds, regions, max, offset, cutoff, sortField, order, search, type)
+		def analysisData = queryResult.results
+		def totalCount = queryResult.total
+		def analysisIndexData
+		if (type.equals("eqtl")) {
 			analysisIndexData = searchDAO.getEqtlIndexData()
 		}
+		else {
+			analysisIndexData = searchDAO.getGwasIndexData()
+		}
+		def returnedAnalysisData = []
 		
 		//These columns aren't dynamic and should always be included. Might be a better way to do this than just dropping it here.
 		columnNames.add(["sTitle":"Analysis ID", "sortField":"analysis"])
 		columnNames.add(["sTitle":"Probe ID", "sortField":"rsid"])
 		columnNames.add(["sTitle":"p-value", "sortField":"pvalue"])
 		columnNames.add(["sTitle":"Adjusted p-value", "sortField":"logpvalue"])
-		if (!hasGwas) {
+		if (type.equals("eqtl")) {
 			columnNames.add(["sTitle":"Gene", "sortField":"gene"])
 		}
 
@@ -1001,7 +993,7 @@ public class SearchController{
 			temporaryList.add(it[0])
 			temporaryList.add(it[1])
 			temporaryList.add(it[2])
-			if (!hasGwas) {
+			if (type.equals("eqtl")) {
 				temporaryList.add(it[5])
 			}
 			
@@ -1011,14 +1003,10 @@ public class SearchController{
 			returnedAnalysisData.add(temporaryList)
 		}
 		
-		returnJson["aaData"] = returnedAnalysisData
-		returnJson["aoColumns"] = columnNames
-		
 		return [analysisData: returnedAnalysisData, columnNames: columnNames, max: max, offset: offset, cutoff: cutoff, totalCount: totalCount, wasRegionFiltered: wasRegionFiltered]
 		
-		//Return the data in JSON format so the grid can format it.
-		//render returnJson as JSON
 	}
+	
 	
 	def getQQPlotImage = {
 		//We need to determine the data type of this analysis so we know where to pull the data from.

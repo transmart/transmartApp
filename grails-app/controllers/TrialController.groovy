@@ -25,6 +25,7 @@
  */
 import com.recomdata.util.DomainObjectExcelHelper;
 import grails.converters.*
+import bio.BioAssayAnalysisData;
 import bio.ClinicalTrial
 import bio.BioAssayPlatform
 import bio.BioAssayAnalysis
@@ -114,8 +115,19 @@ class TrialController {
 
 	def showAnalysis = {
 		def analysis = BioAssayAnalysis.get(params.id)
+		//Get the first data row to find associated study
+		def study = Experiment.createCriteria().list([max: 1]) {
+			eq('accession', analysis.etlId)
+		}
+		if (study) {
+			study = study[0]
+		}
+		else {
+			study = null
+		}
+		
 		def layout = formLayoutService.getLayout('analysis')
-		render(template:'analysisdetail', model:[analysis:analysis, layout:layout])
+		render(template:'analysisdetail', model:[analysis:analysis, study:study, layout:layout])
 	}
 
 	def expDetail = {

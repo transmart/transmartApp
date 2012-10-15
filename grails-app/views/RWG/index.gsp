@@ -166,9 +166,9 @@
 				 -->
 				<div class='toolbar-item' onclick='collapseAllAnalyses();'>Collapse All</div>
 				<div class='toolbar-item' onclick='alert("Functionality not yet implemented.");'>Manhattan Plot</div>
-				<div class='toolbar-item' onclick='alert("Functionality not yet implemented.");'>Select All Analyses</div>
-				<div class='toolbar-item' onclick='alert("Functionality not yet implemented.");'>Unselect All Analyses</div>
-	  			<div id="searchResultOptions_holder">
+				<div class='toolbar-item' onclick="jQuery('.analysischeckbox').attr('checked', 'checked');">Select All Analyses</div>
+				<div class='toolbar-item' onclick="jQuery('.analysischeckbox').removeAttr('checked');">Unselect All Analyses</div>
+	  			<%-- <div id="searchResultOptions_holder">
 					<div id="searchResultOptions_btn" class='toolbar-item'>
 						 Options <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
 					</div>
@@ -190,7 +190,7 @@
 							</li>
 						</ul>
 					</div>
-				</div>
+				</div>--%>
 			</div>
 		
 			<div id="topTabs" class="analysis-tabs">

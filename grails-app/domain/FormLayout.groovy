@@ -45,7 +45,6 @@ public class FormLayout{
 		sequence column:'SEQUENCE'
 	}
 
-
 	static constraints = {
 		key(nullable:false)
 		column(nullable:false)
