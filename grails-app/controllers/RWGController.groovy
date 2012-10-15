@@ -1029,7 +1029,7 @@ class RWGController {
 	  }
 	  */
 	  
-	  def dataTypes = ["GWAS":"GWAS","eQTL":"eQTL","Metabolic GWAS":"Metabolic GWAS"]
+	  def dataTypes = ["GWAS":"GWAS","EQTL":"eQTL","Metabolic GWAS":"Metabolic GWAS"]
 	  
 	  render(template:'dataTypesBrowseMulti',model:[dataTypes:dataTypes])
   }

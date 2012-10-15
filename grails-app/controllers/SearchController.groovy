@@ -730,6 +730,14 @@ public class SearchController{
 			render(text: "<pre>" + e.getMessage() + "</pre>")
 			return
 		}
+		
+		//regionSearchResults will either contain GWAS or EQTL data. Overwrite the base object with the one that's populated
+		if (regionSearchResults.gwasResults) {
+			regionSearchResults = regionSearchResults.gwasResults
+		}
+		else {
+			regionSearchResults = regionSearchResults.eqtlResults
+		}
 
 		//Return the data as a GRAILS template or CSV
 		if (export) {
