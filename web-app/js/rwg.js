@@ -2746,9 +2746,8 @@ function addXTSearchAutoComplete()	{
 		source: sourceURL,
 		minLength:0,
 		select: function(event, ui) {  
-			searchParam={id:ui.item.id,categoryDisplay:ui.item.category,keyword:ui.item.label,categoryId:ui.item.categoryId, categorySOLR:ui.item.categoryId.toString().replace(/ /g,'_')};
 
-			alert(keyword:ui.item.label);
+			alert(ui.item.id);
 				
 			return false;
 		}
@@ -2759,15 +2758,6 @@ function addXTSearchAutoComplete()	{
 		  .appendTo(ul);
 	};	
 		
-	
-	// Add an onchange event to the select so we can set the category in the URL for the autocomplete
-/*
-	var categorySelect = document.getElementById("search-categories"); 
-	categorySelect.onchange=function()	{
-		jQuery('#xtSearch-ac').autocomplete('option', 'source', sourceURL + "?category=" + this.options[this.selectedIndex].value);
-	};
-		
-*/
 	return false;
 }
 
