@@ -41,7 +41,7 @@ function showSearchTooltip(html, e)  {
 		.html('<h3 class="searchTooltipTitle" >Saved Filters:</h3>' + html)
 		.css("top",(e.pageY - xOffset) + "px")
 		.css("left",(e.pageX + yOffset) + "px")
-		.fadeIn(500)
+		.fadeIn(200)
 		;		
 	
 }

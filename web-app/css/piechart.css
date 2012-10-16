@@ -4,7 +4,7 @@
   font: 10px sans-serif;
   height: 250px;
   text-shadow: none;
-  width: 400px;
+  width: 550px;
   magin: auto;
   /*overflow:visible;*/
 }
@@ -24,4 +24,17 @@
 .pie-chart .value{
   font-size: 10px;
   font-weight: bold;
+}
+
+.pie-chart .crumbs{
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+ /* text-decoration:underline;*/
+}
+
+.arrow {
+	text-decoration:none;
+	cursor:auto;	
+	}
 }

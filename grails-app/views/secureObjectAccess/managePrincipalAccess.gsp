@@ -68,7 +68,7 @@
                 	<table><tbody>
                      			<tr><td><b>User/Group Assigned Access</b></td><td></td><td><b>User/Group Without Access</b></td></tr>
                      			<tr id="groups">
-                                    <g:render template="addremovePrincipal" model="['userwithoutaccess' :userwithoutaccess, 'secureObjectAccessList':secureObjectAccessList" />
+                                    <g:render template="addremovePrincipal" model="[userwithoutaccess:userwithoutaccess, secureObjectAccessList:secureObjectAccessList]"/>
                                    </tr>
                         </tbody>
                     </table>

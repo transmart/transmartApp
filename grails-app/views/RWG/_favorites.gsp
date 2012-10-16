@@ -1,7 +1,7 @@
-			<h3>My Favorites</h3>
+			<!-- <h3>My Favorites</h3>-->
 			
 			<g:if test="${favorites.size()==0}">
-			   There are no saved searches!
+			   You have no Favorite Filters saved.
 			   <br />
 			</g:if>
 			<g:else>
@@ -26,9 +26,10 @@
 						    	    	<div style="float: left;width:100px;margin:5px;">
 							    				${f.createDt.format("MM/dd/yyyy")}
 								    	</div>
-						    	    	<div style="float: left;width:200px;margin:5px;">
-							    				<a href="#" onclick="loadSearch(${f.id}); return false;"><span id="home_labelSearchName_${f.id}" >${f.name}</span></a>
-						    	    </div>
+						    	    	<div style="float: left;width:200px;margin:5px;" >
+							    				<a href="#" id="linkSearchName_${f.id}" class="searchTooltip" onclick="loadSearch(${f.id}); return false;"><span id="home_labelSearchName_${f.id}" >${f.name}</span></a>
+							    											    				
+								    	</div>
 							</td>
 						</tr>
 					</g:each>
@@ -36,4 +37,5 @@
 			</g:else>
 			<br />
 		
-			
+	<script>	registerSearchTooltipEvents();
+</script>			

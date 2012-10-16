@@ -1304,5 +1304,38 @@ class RWGVisualizationDAO {
 	   }
 	   log.info(categories)
 	   return categories
-   }	
+   
+	   
+   }
+	   
+	   
+	   def getTopGenesByFoldChange(analysisID)	{
+		   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+								 
+
+	    String s ="""
+		select * from (
+					select distinct(bio_marker_id), bio_marker_name, fold_change_ratio
+					from biomart.heat_map_results
+					where bio_assay_analysis_id = ${analysisID}
+					order by abs(fold_change_ratio) desc)
+					where rownum <= 20"""
+		   
+		   log.debug("${s}")
+   
+		   def rows = sql.rows(s)
+		   
+		   def topGenes=[]
+		   rows.each {row->
+			   def result=[:]
+			   result.put('bio_marker_id', row.bio_marker_id)
+			   result.put('bio_marker_name', row.bio_marker_name)
+			   result.put('fold_change_ratio', row.fold_change_ratio)
+			   topGenes.push(result)
+		   }
+	   
+		   return  topGenes
+	   }
+   
+	  	  
 }

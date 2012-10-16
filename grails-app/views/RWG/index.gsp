@@ -42,10 +42,6 @@
         <!-- Our JS -->        
         <script type="text/javascript" src="${resource(dir:'js', file:'rwg.js')}"></script>
         
-        <!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
-        <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-msie.min.js')}"></script> 
-		
 		<!-- d3js Visualization Library -->
 		<script type="text/javascript" src="${resource(dir:'js/d3', file:'d3.v2.js')}"></script>
        
@@ -55,6 +51,14 @@
         
        	<!--Heatmap (d3) -->
        	<script type="text/javascript" src="${resource(dir:'js', file:'heatmap.js')}"></script>
+       	<!--Boxplot (d3) -->
+       	<script type="text/javascript" src="${resource(dir:'js', file:'boxplot.js')}"></script>
+       	<!--Lineplot (d3) -->
+       	<script type="text/javascript" src="${resource(dir:'js', file:'lineplot.js')}"></script>
+       	<!--legend (d3) -->
+       	<script type="text/javascript" src="${resource(dir:'js', file:'legend.js')}"></script>
+       	<!--Functions shared by both line and box plots (d3) -->
+       	<script type="text/javascript" src="${resource(dir:'js', file:'commonplot.js')}"></script>
 
         <script type="text/javascript" charset="utf-8">        
 	        var searchResultsURL = "${createLink([action:'loadSearchResults'])}";
@@ -76,8 +80,13 @@
 	        var renderFavoritesTemplateURL = "${createLink([action:'renderFavoritesTemplate'])}";
 	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";	        
+	        var homeURL = "${createLink([action:'getHomePage'])}";	     
+	        var crossTrialAnalysisURL = "${createLink([action:'getCrossTrialAnalysis'])}";	     
 	        var mouse_inside_options_div = false;
+	        var mouse_inside_analysis_div = false;
 			var getPieChartDataURL = "${createLink([action:'getPieChartData'])}";
+			var getTopGenesURL = "${createLink([action:'getTopGenes'])}";
+			
 			var showHomePageFirst=true;
 			
 	        jQuery(document).ready(function() {
@@ -94,24 +103,33 @@
 		    	showIEWarningMsg();
 
 
-		        jQuery("#searchResultOptions_btn").click(function(){
-		        	jQuery("#searchResultOptions").toggle();
-		        	});
-		        
-		        //used to hide the options div when the mouse is clicked outside of it
 
+		    	//Resize code
+				setActiveFiltersResizable();
+
+
+		        //used to hide the options div when the mouse is clicked outside of it
 	            jQuery('#searchResultOptions_holder').hover(function(){ 
 	            	mouse_inside_options_div=true; 
 	            }, function(){ 
 	            	mouse_inside_options_div=false; 
 	            });
 
-
+		        //used to hide the options div when the mouse is clicked outside of it
+	            jQuery('#selectedAnalyses_holder').hover(function(){ 
+	            	mouse_inside_analysis_div=true; 
+	            }, function(){ 
+	            	mouse_inside_analysis_div=false; 
+	            });
 
 	            jQuery("body").mouseup(function(){ 
-		            //top menu options
+		            //hide the options menu
 	                if(! mouse_inside_options_div ){
 		                jQuery('#searchResultOptions').hide();
+	                }
+	                //hide the selected analyses menu
+	                if(! mouse_inside_analysis_div ){
+		                jQuery('#selectedAnalysesExpanded').hide();
 	                }
 
 	                var analysisID = jQuery('body').data('heatmapControlsID');
@@ -140,35 +158,38 @@
                 
     </head>
     <body>
+    	<input type="hidden" id="analysisCount" value="0" />
         <div id="header-div">        
-            <g:render template="/layouts/commonheader" model="['app':'rwg']" />
+            <g:render template="/layouts/commonheader" model="[app:rwg]" />
         </div>
 		 
 		<div id="main">
 			<div id="menu_bar">
-			   <div id="searchResultOptions_launchHomePage" class='toolbar-item' onclick='hideResultsPage();showHomePage();'>
-                          Home
-               </div> 
-				<div class='toolbar-item' id="xtButton" href="#xtHolder">Cross Trial Analysis</div>
-				<div id='analysisCountDiv' class='toolbar-item'>
-					<label id="analysisCountLabel">No Analysis Selected</label>
-					<input type="hidden" id="analysisCount" value="0" />
-				</div>
-
-
-                 <div id="searchResultOptions_launchResultsPage" class='toolbar-item' onclick='hideHomePage();showResultsPage();'>
-                              Search Results
-                        </div>     
-				<div class='toolbar-item' onclick='collapseAllAnalyses();'>Collapse All</div>
-                               
-				
-	  			<div id="searchResultOptions_holder">
-				<div id="searchResultOptions_btn" class='toolbar-item'>
-					 Options <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
-				</div>
-				<div id="searchResultOptions" class='auto-hide' style="display:none;">
-					<ul>
-						<li>
+			
+			<ul>
+				<li class='toolbar-item'><a href="#" onclick='showHomePage();'>Home</a></li>
+				<li class='toolbar-item'><a href="#" onclick='showResultsPage();'>Search Results</a></li>
+				<li class='toolbar-item'><a href="#" onclick='openCrossTrialAnalysis();'>Cross Trial Analysis</a></li>
+				<li class='toolbar-item'>						
+					<div id="selectedAnalyses_holder">
+						<div id='selectedAnalyses_btn'>
+							<a href="#" onclick='getSelectedAnalysesList();'>
+								 <span id="analysisCountLabel">0 Analyses Selected</span>
+								 <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
+							</a>
+						</div>
+							<div id="selectedAnalysesExpanded" class='auto-hide' style="display:none;"></div>
+					</div>
+				</li>
+				<li class='toolbar-item'><a href="#" onclick='collapseAllAnalyses();'>Collapse All</a></li>
+				<li class='toolbar-item'>			
+					<div id="searchResultOptions_holder">
+						<div id="searchResultOptions_btn">
+							<a href="#" onclick='jQuery("#searchResultOptions").toggle();'>
+								Options <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
+							</a>
+						</div>
+						<div id="searchResultOptions" class='auto-hide' style="display:none;">
 							<select id="probesPerPage" onchange="showSearchResults(); ">
 							    <option value="10">10</option>
 							    <option value="20" selected="selected">20</option>
@@ -178,18 +199,18 @@
 							    <option value="200">200</option>
 							    <option value="250">250</option>
 							</select>  Probes/Page
-						</li>
-						<li>
+							<br /><br />
 							<input type="checkBox" id="cbShowSignificantResults" checked="true" onclick="showSearchResults(); ">Show only significant results</input>		
-						</li>
-					</ul>
-				</div>
-			</div>		
-				
+						</div>
+					</div>
+				</li>		
+			</ul>
+
 		</div>
 		
 		<div id="home-div"></div>
         <div id="results-div"></div>
+        <div id="cross-trial-div"></div>
 
          	
 		</div>
@@ -237,37 +258,10 @@
       		<!-- Load load favorites modal content is done via Ajax call-->
 		</div>
 		
-		<!--  Everything for the across trial function goes here and is displayed using colorbox -->
-		<div style="display:none">
-			<div id="xtHolder">
-				<div id="xtTopbar">
-					<p>Cross Trial Analysis</p>
-					<ul id="xtMenu">
-						<li>Summary</li>
-						<li>Heatmap</li>
-						<li>Boxplot</li>
-					</ul>
-					<p>close</p>
-				</div>
-				<div id="xtSummary"><!-- Summary Tab Content -->
-							
-				
-				</div>
-				<div id="xtHeatmap"><!-- Heatmap Tab Content -->
-				
-				
-				</div>
-				<div id="xtBoxplot"><!-- Boxplot Tab Content -->
-				
-				
-				</div>
-			</div>
-			
-		</div>
-		
-		       <!--  Used to measure the width of a text element (in svg plots) -->
-		       <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
-		
+
+       <!--  Used to measure the width of a text element (in svg plots) -->
+       <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
+
     </body>
     
            		

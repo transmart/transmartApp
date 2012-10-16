@@ -1,42 +1,59 @@
+<div align="center" style="margin-left:-1px;" colspan="2" class="ui-widget-header"><h1 style="padding:6px;text-align:left;vertical-align:middle;" class="bigtitle">My Favorites</h1></div>
+	
 <div style="margin:5px;">
-Therapeutic Areas by:
+<div style="padding:10px;margin:5px;">
+<div id="homefavorites">
+	<g:render template="/RWG/favorites"
+		model="['favorites':favorites]" />
+</div>
+</div>
+
+<br />
+
+</div>
+<!-- <div id="homegraphs" style="margin:0px;padding:0px;">-->
+	
+
+	<div align="center" style="margin-left:-1px;" colspan="2" class="ui-widget-header"><h1 style="padding:6px;text-align:left;vertical-align:middle;" class="bigtitle">Summary Charts</h1></div>
+	<div style="padding:5px;">
+	<br />
+Show (<g:checkBox name="showAll" id="showAll" checked="${showAll}"  onchange="launchHomePage( jQuery('#subcategoryid').val(), jQuery('#charttype').val(), this.checked )"/>&nbsp;All Areas) by
 <g:select name="subcategoryid"
-          from="${subcategories.sort()}"
+          from="${subcategories.sort({it.name})}"
           value="${currentsubcategoryid}"
           optionValue="${{it.name} }"
           optionKey="${{it.id} }"
-          onchange="launchHomePage( this.value )" />       
-<div id="homegraphs">
-	<table style="min-height:250px;width:800;">
+          onchange="launchHomePage( this.value, jQuery('#charttype').val(), jQuery('#showAll').is(':checked') )"
+          id="subcategoryid" /> 
+     
+     <br />
+     <br />
+    </div>
+	<table style="height:285px;width:100%;border-collapse:collapse;margin-left:-1px;">		
+	</tr>
 	<g:each in="${categories}" status="ti" var="cat">
 	<tr>
 	<td>
-	<table style="height:270px;width:810px;">
-	<tr><td align="center" colspan="2"><h2 align="center">${cat.name}</h2></td></tr>
-	<tr><td style="text-align:center;vertical-align:middle;" id="${'cat_'+cat.id+'_div_s'}" class="pie-chart"><h2>Loading...</h2>
-	</td>
-	<td style="text-align:center;vertical-align:middle;"  id="${'cat_'+cat.id+'_div_a'}" class="pie-chart"><h2>Loading...</h2>
-	</td></tr>
+	<table style="border-collapse:collapse;">
+	<tr>
+	<td align="center" style="width:100%;" colspan="2" class="ui-widget-header"><h2 style="padding:6px;text-align:left;vertical-align:middle;" class="title">${cat.name}</h2></td>
+	</tr>
+	<tr>
+	<td style="text-align:center;vertical-align:middle;" id="${'cat_'+cat.id+'_div_s'}" class="pie-chart"><h2>Loading...</h2></td>
+	<td style="text-align:center;vertical-align:middle;" id="${'cat_'+cat.id+'_div_a'}" class="pie-chart"><h2>Loading...</h2></td>
+	</tr>
 	</table>
 	</td>
 	</tr>
 	</g:each>
 	</table>
-</div>
+<!-- </div>-->
 
-<br />
-</div>
-<div style="padding:10px;margin:5px; border:1px solid grey;">
-<div id="homefavorites">
-	<g:render template="/RWG/favorites"
-		model="['favorites':favorites]" />
-</div>
 <g:each in="${categories}" status="ti" var="cat">
 <script>
 var sdiv='${"cat_"+cat.id+"_div_s"}';
 var adiv='${"cat_"+cat.id+"_div_a"}';
-getPieChartData(sdiv, ${cat.id}, ${currentsubcategoryid}, false, 'studies');
-getPieChartData(adiv, ${cat.id}, ${currentsubcategoryid}, false, 'analyses');
+getPieChartData(sdiv, ${cat.id}, ${currentsubcategoryid}, false, 'studies', null ,[{ddid:${currentsubcategoryid}, ddname:'${currentsubcategoryname}', color:null}]);
+getPieChartData(adiv, ${cat.id}, ${currentsubcategoryid}, false, 'analyses', null,[{ddid:${currentsubcategoryid}, ddname:'${currentsubcategoryname}', color:null}]);
 </script>
 </g:each>
-</div>

@@ -98,6 +98,32 @@ top: 58px;
 }
 
 
+.bigtitle{
+	  color:#333;
+	  padding:0;
+	  margin:0;
+	  font-size:14px;
+	  font-weight:bold;
+	  padding-left:0.5em;
+	  padding-top:0.4em;
+	  
+		
+}
+
+
+.bigtitle{
+	  color:#333;
+	  padding:0;
+	  margin:0;
+	  font-size:14px;
+	  font-weight:bold;
+	  padding-left:0.5em;
+	  padding-top:0.4em;
+	  
+		
+}
+
+
 .title-link-inactive
 {
 	color:#aaa;
@@ -125,6 +151,7 @@ padding: 12px;
 }
 
 
+>>>>>>> 545704636a13e5b06d165ae4261c4647014c9559
 .x-panel-header
 {
 	margin:0;
@@ -501,6 +528,7 @@ ul.dynatree-container li ul li{
 {
 	color: #339933;
 	 padding-left: 3px;
+	 font-weight:bold;
 }
 
 .result-analysis-label
@@ -706,10 +734,10 @@ p.legend_probe {
 	background-color:#eee;
 	border:1px solid #ccc;
 	border-top:0;
-	padding:6px;
-	width:220px;
+	padding:10px;
 	display: inline;
-	margin-top: 31px;
+	margin-top: 10px;
+	margin-left:-10px;
 	position:absolute;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 }
@@ -717,29 +745,38 @@ p.legend_probe {
 #searchResultOptions_btn{
 
 	display: inline;
+	cursor:pointer; 
+	width:55px;
+}
+#selectedAnalysesExpanded{
+	background-color: #EEE;
+	border: 1px solid #bbb;
+	border-top: 0;
+	padding: 10px;
+	display: inline;
+	margin-top: 10px;
+	margin-left: -10px;
 	position: absolute;
-		cursor:pointer; 
-		width:55px;
-}
-#searchResultOptions_btn a{
-	color:#000;
-	font-weight: normal;
-	text-decoration: none;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+	width:350px;
+	overflow-x: auto;
+	max-height: 450px;
 }
 
-#searchResultOptions_holder{
-	display:inline;
-	position:absolute;
-}
-
-#searchResultOptions ul {
+#selectedAnalysesList{
+	list-style:none;
 	
-	list-style-type: none;
+}
+#selectedAnalysesList li{
+	padding: 8px;
+	border-top: 1px solid #DDD;
+	padding-right: 0;
 }
 
-#searchResultOptions ul li {
-	padding:3px;
+#selectedAnalyses_btn {
+	display: inline;
 }
+
 
 .heatmapControls_holder
 {
@@ -809,6 +846,11 @@ background-color: #DFDFDF;
 	display: inline;
 	padding:8px;
 }
+
+.toolbar-item a{
+	font-weight:normal;
+}
+
 .toolbar-item{
 display: inline-block;
 border-right: 1px solid #CCC;
@@ -818,13 +860,10 @@ padding-right: 8px;
 margin-top: 8px;
 
 }
-.toolbar-item:hover{
+.toolbar-item:hover a{
 cursor: pointer;
-background-color: #DFDFDF;
-padding: 8px;
-margin: 0;
-border-left: 1px solid #CCC;
-margin-left: -1px;
+color:#000;
+text-decoration: none;
 }
 
 .vis-toolBar{
@@ -911,4 +950,36 @@ border-top: 1px solid #CCC;
 		border: 1px solid #ccc;
 		color: #ccc;
 	}
+
+/************ Cross Trial Analysis Formatting *******/
+
+#xtHolder{
+	
+	margin-left:10px;
+	
+}
+
+#xtMenuBar{
+
+}
+
+#xtMenuBar li{
+	display: inline-block;
+	padding: 10px;
+}
+
+#xtSelectedAnalysesList li {
+padding: 8px;
+border: 1px solid #DDD;
+border-collapse: collapse;
+padding-right: 0;
+margin-top: -1px;
+margin-right: 20px;
+background-color: #F3F3F3;
+list-style-type: none;
+cursor:default;
+}
+
+
+/*******End Cross Trial Analysis Formatting *********/
 

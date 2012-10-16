@@ -447,7 +447,7 @@ class TrialQueryService {
 			}
 			
 			// create a map for each record
-			def aMap = ['id':r[0], 'shortDescription':r[1], 'longDescription':r[2], 'isTimeCourse':isTimeCourse]
+			def aMap = ['id':r[0], 'shortDescription':r[1], 'longDescription':r[2], 'isTimeCourse':isTimeCourse, 'studyID':trialNumber]
 					   
 			analysisList.add aMap
 		}
