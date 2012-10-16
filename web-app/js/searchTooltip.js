@@ -2,33 +2,26 @@ var xOffset = 20;
 var yOffset = 20;		
 
 this.registerSearchTooltipEvents = function(){
-	
 	// create the method for the hover event for tooltips on the favorites for faceted searches
-	jQuery("a.searchTooltip").hover(function(e){
-
-		// extract the search id from the element id
-		var elementId = e.currentTarget.id;
-		var idPos = elementId.indexOf('_') + 1;
-		var id = elementId.substr(idPos);
-
-		// retrieve the html for the tooltip
-		var html = getSearchTooltip(id, e);
-
-		
-    },
-	function(){
-		jQuery("#searchTooltip").remove();
-    });
+	jQuery("a.searchTooltip").hoverIntent(
+		{
+			over:function(e){
 	
-	jQuery("a.searchTooltip").mousemove(function(e){
-		jQuery("#searchTooltip")
-			.css("top",(e.pageY - xOffset) + "px")
-			.css("left",(e.pageX + yOffset) + "px");
-	});			
-
-	jQuery("a.searchTooltip").click(function(e){
-		jQuery("#searchTooltip").remove();
-	});			
+				// extract the search id from the element id
+				var elementId = e.currentTarget.id;
+				var idPos = elementId.indexOf('_') + 1;
+				var id = elementId.substr(idPos);
+		
+				// retrieve the html for the tooltip
+				var html = getSearchTooltip(id, e);
+				
+			},
+			out: function(){
+				jQuery("#searchTooltip").remove();
+			},
+			interval:500
+		});
+	
 };
 
 function showSearchTooltip(html, e)  {
@@ -42,7 +35,14 @@ function showSearchTooltip(html, e)  {
 		.css("top",(e.pageY - xOffset) + "px")
 		.css("left",(e.pageX + yOffset) + "px")
 		.fadeIn(200)
-		;		
+		;
+
+	jQuery("#searchTooltip").mousemove(function(){
+		jQuery("#searchTooltip").remove();
+	}
+	);
+	
+
 	
 }
 

@@ -34,6 +34,7 @@
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'searchTooltip.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.hoverIntent.min.js')}"></script>  
   		
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  
