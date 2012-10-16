@@ -42,8 +42,6 @@ class AnalysisMetadata {
 	Date processDate
 	String filename
 	String status = "NEW"
-	
-	static hasMany = [diseases:Disease]
 
 	static mapping = {
 		table 'LZ_SRC_ANALYSIS_METADATA'

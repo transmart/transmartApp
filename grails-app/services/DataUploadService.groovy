@@ -53,7 +53,7 @@ public class DataUploadService{
 		return (result);
 	}
 	
-	def writeFile(location, file, upload) {
+	def writeFile(location, file, upload) throws Exception {
 		CSVReader csvRead = new CSVReader(new InputStreamReader(file.getInputStream()));
 		String[] header = csvRead.readNext();
 		
@@ -92,7 +92,7 @@ public class DataUploadService{
 		
 		CSVWriter csv = null;
 		try {
-			csv = new CSVWriter(new FileWriter(new File(location)))
+			csv = new CSVWriter(new FileWriter(new File(location)), '\t'.charAt(0), CSVWriter.NO_QUOTE_CHARACTER) //How to specify character in Grails...?!
 			csv.writeNext(headerList as String[])
 			
 			//For each line, check the value and p-value - if we have one but not the other, calculate and fill it
@@ -119,11 +119,13 @@ public class DataUploadService{
 			return result;
 		}
 		catch (Exception e) {
-			upload.status = "ERROR"
-			upload.save(flush: true)
-			render(view: "complete", model: [result: new DataUploadResult(success:false, error: "Could not write file: " + e.getMessage()), uploadDataInstance: upload]);
-			return;
+			throw e;
 		}
+//			upload.status = "ERROR"
+//			upload.save(flush: true)
+//			render(view: "complete", model: [result: new DataUploadResult(success:false, error: "Could not write file: " + e.getMessage()), uploadDataInstance: upload]);
+//			return;
+//		}
 		finally {
 			if (csvRead != null) {
 				csvRead.close();
