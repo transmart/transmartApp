@@ -9,10 +9,10 @@
 	</div>
 	<div class="dataTables_filter">
 		<label>P-value cutoff: 
-			<input value="${cutoff}" type="text" id="analysis_results_table_${analysisId}_cutoff">
+			<input value="${cutoff}" type="text" style="width: 50px" id="analysis_results_table_${analysisId}_cutoff">
 		</label>
 		<label>Search: 
-			<input value="${search}" type="text" id="analysis_results_table_${analysisId}_search">
+			<input value="${search}" type="text" style="width: 50px" id="analysis_results_table_${analysisId}_search">
 			<span class="linkbutton" onclick="loadAnalysisResultsGrid(${analysisId}, {cutoff: jQuery('#analysis_results_table_${analysisId}_cutoff').val(), search: jQuery('#analysis_results_table_${analysisId}_search').val()})">OK</span>
 		</label>
 	</div>

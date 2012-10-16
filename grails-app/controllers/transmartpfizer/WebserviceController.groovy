@@ -36,6 +36,33 @@ class WebserviceController {
 		renderDataSet(results)
 	}
 	
+	def getModelInfoByDataType = {
+		
+		def type = "NONE"
+		def typeId = params.long('dataType')
+		
+		switch (typeId) {
+			case 1: type = "GWAS"; break;
+			case 2: type = "EQTL"; break;
+			case 3: type = "Metabolic GWAS"; break;
+		}
+		
+		def results = webserviceService.getModelInfo(type)
+		renderDataSet(results)
+	}
+	
+	def resultDataForFilteredByModelIdGeneAndRangeRev = { //TODO Negotiate this name into something more reasonable
+		def range = params.long('range')
+		def analysisIds = params.modelId.split(",")
+		def sourceId = null
+		def geneName = params.geneName
+		
+		def geneBounds = webserviceService.computeGeneBounds(geneName, "GRCh37")
+		def results = webserviceService.getAnalysisDataBetween(analysisIds, geneBounds[0]-range, geneBounds[1]+range, geneBounds[2])
+		
+		renderDataSet(results)
+	}
+	
 	def getSnpSources = {
 		renderDataSet([[18,"HG18",18,"03-2006","http://www.example.com"], [19,"HG19",19,"02-2009","http://www.example.com"]])
 	}

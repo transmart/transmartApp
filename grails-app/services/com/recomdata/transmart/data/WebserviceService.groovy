@@ -61,6 +61,14 @@ class WebserviceService {
 		WHERE chrom = ? AND pos >= ? AND pos <= ?
 	"""
 	
+	def final modelInfoSqlQuery = """
+		SELECT baa.bio_assay_analysis_id as id, ext.model_name as modelName, baa.analysis_name as analysisName, be.title as studyName
+		FROM bio_assay_analysis baa
+		LEFT JOIN bio_assay_analysis_ext ext ON baa.bio_assay_analysis_id = ext.bio_assay_analysis_id
+		LEFT JOIN bio_experiment be ON baa.etl_id = be.accession
+		WHERE baa.bio_assay_data_type = ?
+	"""
+	
 	def computeGeneBounds(String geneSymbol, String geneSourceId) {
 		//Complete the query - if we have a geneSymbol, use that, otherwise use ID
 		def query = geneLimitsSqlQueryByKeyword;
@@ -154,5 +162,135 @@ class WebserviceService {
 
 	}
   
-  
+	def getModelInfo(String type) {
+		//Complete the query - if we have a geneSymbol, use that, otherwise use ID
+		def query = modelInfoSqlQuery;
+			
+		//Create objects we use to form JDBC connection.
+		def con, stmt, rs = null;
+		
+		//Grab the connection from the grails object.
+		con = dataSource.getConnection()
+		
+		//Prepare the SQL statement.
+		stmt = con.prepareStatement(query);
+		stmt.setString(1, type)
+		
+		rs = stmt.executeQuery();
+
+		def results = []
+		
+		try{
+			while(rs.next()){
+				def id = rs.getLong("ID");
+				def modelName = rs.getString("MODELNAME");
+				def analysisName = rs.getString("ANALYSISNAME");
+				def studyName = rs.getString("STUDYNAME");
+
+				results.push([id, modelName, analysisName, studyName])
+			}
+			return results;
+		}finally{
+			rs?.close();
+			stmt?.close();
+			con?.close();
+		}
+	}
+	
+	def final analysisDataSqlQueryGwas = """
+		SELECT gwas.rs_id as rsid, gwas.bio_asy_analysis_gwas_id as resultid, gwas.bio_assay_analysis_id as analysisid, 
+    	gwas.p_value as pvalue, gwas.log_p_value as logpvalue, be.title as studyname, baa.analysis_name as analysisname, 
+    	baa.bio_assay_data_type AS datatype, info.pos as posstart, info.chrom as chromosome
+		FROM biomart.Bio_Assay_Analysis_Gwas gwas
+		LEFT JOIN deapp.de_rc_snp_info info ON gwas.rs_id = info.rs_id
+		LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = gwas.bio_assay_analysis_id
+		LEFT JOIN biomart.bio_experiment be ON be.accession = baa.etl_id
+		WHERE (info.pos BETWEEN ? AND ?)
+		AND chrom = ?
+    	AND gwas.bio_assay_analysis_id IN (
+	"""
+	
+	def final analysisDataSqlQueryEqtl = """
+		SELECT eqtl.rs_id as rsid, eqtl.bio_asy_analysis_data_id as resultid, eqtl.bio_assay_analysis_id as analysisid,
+		eqtl.p_value as pvalue, eqtl.log_p_value as logpvalue, be.title as studyname, baa.analysis_name as analysisname,
+		baa.bio_assay_data_type AS datatype, info.pos as posstart, info.chrom as chromosome
+		FROM biomart.Bio_Assay_Analysis_eqtl eqtl
+		LEFT JOIN deapp.de_rc_snp_info info ON eqtl.rs_id = info.rs_id
+		LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = eqtl.bio_assay_analysis_id
+		LEFT JOIN biomart.bio_experiment be ON be.accession = baa.etl_id
+		WHERE (info.pos BETWEEN ? AND ?)
+		AND chrom = ?
+		AND eqtl.bio_assay_analysis_id IN (
+	"""
+	
+	def getAnalysisDataBetween(analysisIds, low, high, chrom) {
+		//Get all data for the given analysisIds that falls between the limits
+		def gwasQuery = analysisDataSqlQueryGwas;
+		def eqtlQuery = analysisDataSqlQueryEqtl;
+		gwasQuery += analysisIds.join(",") + ")"
+		eqtlQuery += analysisIds.join(",") + ")"
+			
+		def results = []
+		
+		//Create objects we use to form JDBC connection.
+		def con, stmt, rs = null;
+		
+		//Grab the connection from the grails object.
+		con = dataSource.getConnection()
+		
+		//Prepare the SQL statement.
+		stmt = con.prepareStatement(gwasQuery);
+		stmt.setLong(1, low)
+		stmt.setLong(2, high)
+		stmt.setString(3, String.valueOf(chrom))
+		
+		rs = stmt.executeQuery();
+		
+		try{
+			while(rs.next()){
+				results.push([rs.getString("rsid"),
+							  rs.getLong("resultid"),
+							  rs.getLong("analysisid"),
+							  rs.getDouble("pvalue"),
+							  rs.getDouble("logpvalue"),
+							  rs.getString("studyname"),
+							  rs.getString("analysisname"),
+							  rs.getString("datatype"),
+							  rs.getLong("posstart"),
+							  rs.getString("chromosome")])
+			}
+			return results;
+		}finally{
+			rs?.close();
+			stmt?.close();
+		}
+		
+		//And again for EQTL
+		stmt = con.prepareStatement(eqtlQuery);
+		stmt.setLong(1, low)
+		stmt.setLong(2, high)
+		stmt.setString(3, String.valueOf(chrom))
+		
+		rs = stmt.executeQuery();
+		
+		try{
+			while(rs.next()){
+				results.push([rs.getString("rsid"),
+							  rs.getLong("resultid"),
+							  rs.getLong("analysisid"),
+							  rs.getDouble("pvalue"),
+							  rs.getDouble("logpvalue"),
+							  rs.getString("studyname"),
+							  rs.getString("analysisname"),
+							  rs.getString("datatype"),
+							  rs.getLong("posstart"),
+							  rs.getString("chromosome")])
+			}
+			return results;
+		}finally{
+			rs?.close();
+			stmt?.close();
+			con?.close();
+		}
+	}
 }

@@ -846,6 +846,8 @@ public class SearchController{
 	}
 	
 	def getSearchRegions(solrSearch) {
+		def regions = []
+		
 		for (s in solrSearch) {
 			if (s.startsWith("REGION")) {
 				//Cut off REGION:, split by pipe and interpret chromosomes and genes
@@ -912,6 +914,8 @@ public class SearchController{
 				}
 			}
 		}
+		
+		return regions
 	}
 	
 	def getRegionSearchResults(Long max, Long offset, Double cutoff, String sortField, String order, String search, List analysisIds) throws Exception {
