@@ -32,7 +32,7 @@ class FileSweepJob {
    static triggers = {
 	   def startDelay = ConfigHolder.config.com.recomdata.export.jobs.sweep.startDelay
 	   def repeatInterval = ConfigHolder.config.com.recomdata.export.jobs.sweep.repeatInterval
-	   if(startDelay instanceOf String){
+	   if(startDelay instanceof String){
 		   try {
 			   startDelay = Integer.parseInt(startDelay)
 			   repeatInterval = Integer.parseInt(repeatInterval)
