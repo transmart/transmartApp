@@ -1,3 +1,5 @@
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter
 
@@ -131,6 +133,17 @@ public class DataUploadService{
 				csv.close()
 			}
 		}
+	}
+	
+	def runStaging(etlId) throws Exception {
+		
+			def etlPath = ConfigurationHolder.config.com.recomdata.dataUpload.etl.dir
+			def stageScript = ConfigurationHolder.config.com.recomdata.dataUpload.stageScript
+			ProcessBuilder pb = new ProcessBuilder(etlPath + stageScript, String.valueOf(etlId));
+			pb.directory(new File(new File(etlPath).getCanonicalPath()))
+			
+			pb.start()
+		
 	}
 }
 

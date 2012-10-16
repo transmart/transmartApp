@@ -150,7 +150,7 @@ class UploadDataController {
 			
 			upload.etlDate = new Date()
 			filename = sdf.format(upload.etlDate) + f.getOriginalFilename()
-			upload.filename = filename
+			upload.filename = uploadsDir + "/" + filename
 		}
 		
 		if (upload.save(flush: true)) {
@@ -189,13 +189,16 @@ class UploadDataController {
 			}
 			
 			result.success = upload.status.equals("PENDING");
+			
+			//If the file is now pending, start the staging process
+			if (result.success) {
+				dataUploadService.runStaging(upload.id);
+			}
 			render(view: "complete", model: [result: result, uploadDataInstance: upload]);
 			return
 		}
 		else {
 			flash.message = "The metadata could not be saved - please correct the highlighted errors."
-			
-
 			def model = [uploadDataInstance: upload]
 			addFieldData(model, upload)
 			render(view: "uploadData", model: model)
