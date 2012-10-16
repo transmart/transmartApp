@@ -34,7 +34,19 @@
 	<td id="${gs.id}Owned" style="text-align:center;">${(user.id==gs.createdByAuthUser.id)?'Owned':'Unowned'}</td>
 	<g:hiddenField name="${gs.id}Deleted" value="${gs.deletedFlag?'Deleted':'Undeleted'}"/>
 	<td style="text-align:center;">${(gs.foldChgMetricConceptCode.bioConceptCode=='NOT_USED') ? 'List' : 'Sig'}</td>
-	<td style="text-align:center;">${ctLkup[1]}</td>
-	<td style="text-align:center;">${ctLkup[2]}</td>
-	<td style="text-align:center;">${ctLkup[3]}</td>	
+	<td style="text-align:center;">
+		<g:if test="${ctLkup!=null}">
+			${ctLkup[1]}
+		</g:if>
+	</td>
+	<td style="text-align:center;">
+		<g:if test="${ctLkup!=null}">
+			${ctLkup[2]}
+		</g:if>
+	</td>
+	<td style="text-align:center;">
+		<g:if test="${ctLkup!=null}">
+			${ctLkup[3]}
+		</g:if>
+	</td>	
 </tr>		     
