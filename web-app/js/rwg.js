@@ -2716,32 +2716,62 @@ function displaySelectedAnalysisTopGenes(){
 
 function getTopGenes(analysisID)
 {
-	
-	var html = "";
-	
+
 	rwgAJAXManager.add({
 		url:getTopGenesURL,
 		data: {analysisID: analysisID},
 		timeout:60000,
-		success: function(response) {
+		success: function(data) {
 			
 			//alert(response[key]['bio_marker_id']);
-
-			html = "<table>";
-		    jQuery.each(response, function() {
-		        var html = "";
-		        jQuery.each(this, function(k , v) {
-		        	html += "<td>"+v+"</td>";
-		        })
-		        html += "<tr>"+tbl_row+"</tr>";                 
-		    })
-		     html += "</table>";
+			 var tbl_body = "<div><table style='width:230px'>";
+			 jQuery.each(data, function() {
+			        var tbl_row = "";
+			        jQuery.each(this, function(k , v) {
+			            tbl_row += "<td>"+v+"</td>";
+			        })
+			        tbl_body += "<tr>"+tbl_row+"</tr>";                 
+			    })
+			    tbl_body += '</table></div>';
+			    jQuery('#xtTopGenes').after(tbl_body);
 		   
 		}
 	});
 	
-	return html;
 }
+
+
+function addXTSearchAutoComplete()	{
+	jQuery("#xtSearch-ac").autocomplete({
+		source: sourceURL,
+		minLength:0,
+		select: function(event, ui) {  
+			searchParam={id:ui.item.id,categoryDisplay:ui.item.category,keyword:ui.item.label,categoryId:ui.item.categoryId, categorySOLR:ui.item.categoryId.toString().replace(/ /g,'_')};
+
+			alert(keyword:ui.item.label);
+				
+			return false;
+		}
+	}).data("autocomplete")._renderItem = function( ul, item ) {
+		return jQuery('<li></li>')		
+		  .data("item.autocomplete", item )
+		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b>&nbsp;' + item.synonyms + '</a>')
+		  .appendTo(ul);
+	};	
+		
+	
+	// Add an onchange event to the select so we can set the category in the URL for the autocomplete
+/*
+	var categorySelect = document.getElementById("search-categories"); 
+	categorySelect.onchange=function()	{
+		jQuery('#xtSearch-ac').autocomplete('option', 'source', sourceURL + "?category=" + this.options[this.selectedIndex].value);
+	};
+		
+*/
+	return false;
+}
+
+
 
 function drawPieChart(divid, data)
 {
