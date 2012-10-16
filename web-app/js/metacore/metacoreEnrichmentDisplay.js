@@ -7,8 +7,8 @@
 	TICK_FONT_SIZE = 10;
 	TICK_FONT_WEIGHT = 100;
 	
-	function drawScale(min, max) {
-		var R = Raphael("scale", 500, 20);
+	function drawScale(min, max, id_prefix) {
+		var R = Raphael(id_prefix + "scale", 500, 20);
 		R.path("M0,0L400,0").attr({ stroke: "black" });
 		var tick_step = (max - min) / TICKS_COUNT;
 		var tick_width = BAR_MAX / TICKS_COUNT;
@@ -28,8 +28,10 @@
 		R.text(BAR_MAX+5, 9, "-log(pValue)").attr({ 'font-family': TICK_FONT_FAMILY, 'font-size': TICK_FONT_SIZE, stroke: 'black', 'stroke-width': 0, 'text-anchor': 'start', 'font-weight': 'bold' });
 	}
 	
-	function drawEnrichment(data) {
-		jQuery('#metacoreEnrichmentResults').css('display', 'block'); // show results div
+	function drawEnrichment(data, id_prefix) {
+		id_prefix = typeof id_prefix !== 'undefined' ? id_prefix : '';
+		
+		jQuery('#' + id_prefix + 'metacoreEnrichmentResults').css('display', 'block'); // show results div
 		
 		// determine min/max value
 		var min = 0;
@@ -44,13 +46,13 @@
 		// draw enrichment
 		for (var i=0; i<data.enrichment.process.length; i++) {
 			var proc = data.enrichment.process[i];
-			var cell_id = "cell" + proc.id;
-			jQuery('#enrichment  > tbody:last').append(
+			var cell_id = id_prefix + "cell" + proc.id;
+			jQuery('#' + id_prefix + 'enrichment  > tbody:last').append(
 				'<tr><td>' + (i+1) + '</td><td>'
 				+ '<a href="' + GLOBAL.metacoreUrl + data.enrichment.info_url + proc.id + '" target="_blank">' + proc.name + '</a>' 
 				+ '</td><td id="' + cell_id 
 				+ '"</td><td>'+ proc.val.toExponential(3) 
-				+'</td></tr>'
+				+'</td><td>' + proc.exp[0].obj_cnt + '/' + proc.obj_cnt + '</td></tr>'
 			);
 			var R = Raphael(cell_id, 450, 10);
 			var len = (proc.exp[0].value - min) / (max - min) * BAR_MAX;
@@ -58,5 +60,5 @@
 			R.text(BAR_MAX+5, 5, proc.exp[0].value.toPrecision(5)).attr({ 'font-family': TICK_FONT_FAMILY, 'font-size': TICK_FONT_SIZE, stroke: 'white', 'stroke-width': 0, 'text-anchor': 'start', 'font-weight': TICK_FONT_WEIGHT });
 		}
 		
-		drawScale(min, max);
+		drawScale(min, max, id_prefix);
 	}

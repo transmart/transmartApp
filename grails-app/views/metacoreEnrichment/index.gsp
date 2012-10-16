@@ -92,5 +92,5 @@
 </form>
 
 <!--  results section -->
-<g:render template="enrichmentResult" />
+<g:render template="enrichmentResult" model="[prefix: '']"/>
 

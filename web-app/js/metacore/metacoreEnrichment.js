@@ -187,13 +187,14 @@ function submitMetaCoreEnrichment(formParams) {
 function markerSelectionRunMetacoreEnrichment() {
 	var ids = [];
 	
+	// TODO: this is potentially dangerous, need to convert to numbers before adding to list
 	jQuery('#markerSelectionTable tbody tr').each(function() { 
 		ids.push(jQuery(jQuery(this).children('td')[1]).html()); 
 	});
 	
-	jQuery('#metacoreEnrichmentResults').hide();
-	jQuery('#enrichment tbody').empty();
-	jQuery('#scale').empty();
+	jQuery('#marker_metacoreEnrichmentResults').hide();
+	jQuery('#marker_enrichment tbody').empty();
+	jQuery('#marker_scale').empty();
 	
 	var spinnerMaskEnrichment = new Ext.LoadMask(Ext.getBody(), {msg:"Running enrichment analysis, please wait..."});
 	spinnerMaskEnrichment.show();
@@ -207,7 +208,7 @@ function markerSelectionRunMetacoreEnrichment() {
 			spinnerMaskEnrichment.hide();
 			var data = Ext.decode(response.responseText);
 			if (data.Code == 0) {
-				drawEnrichment(data.Result[0]);
+				drawEnrichment(data.Result[0], 'marker_');
 				scrollToEnrichmentResults();
 			}
 		},
