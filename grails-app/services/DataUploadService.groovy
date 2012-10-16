@@ -38,8 +38,8 @@ public class DataUploadService{
 					break
 				}
 				//Special case for p-value - if we have log p-value, count this as present as well
-				if(providedField.trim().toLowerCase().equals("log p-value") &&
-					field.trim().toLowerCase().equals("p-value")) {
+				if(providedField.trim().toLowerCase().equals("log_p_value") &&
+					field.trim().toLowerCase().equals("p_value")) {
 					found = true
 					break
 				}
@@ -70,10 +70,10 @@ public class DataUploadService{
 		def numberOfColumns = headerList.size();
 		for (int i = 0; i < headerList.size(); i++) {
 			def column = headerList[i];
-			if (column.trim().toLowerCase().equals("p-value")) {
+			if (column.trim().toLowerCase().equals("p_value")) {
 				pValueIndex = i;
 			}
-			else if (column.trim().toLowerCase().equals("log p-value")) {
+			else if (column.trim().toLowerCase().equals("log_p_value")) {
 				logpValueIndex = i;
 			}
 		}
@@ -81,11 +81,11 @@ public class DataUploadService{
 		//If we don't have p-value or log p-value, add this column at the end
 		if (pValueIndex < 0) {
 			pValueIndex = headerList.size();
-			headerList[headerList.size()] = "p-value";
+			headerList[headerList.size()] = "p_value";
 		}
 		else if (logpValueIndex < 0) {
 			logpValueIndex = headerList.size();
-			headerList[headerList.size()] = "log p-value";
+			headerList[headerList.size()] = "log_p_value";
 		}
 		
 		/* Columns are sorted - now start writing the file */
@@ -103,7 +103,7 @@ public class DataUploadService{
 				def currentlogpValue = columns[logpValueIndex]
 				
 				if (!currentpValue && !currentlogpValue) {
-					throw new Exception("No p-value or log p-value was provided for a row.")
+					throw new Exception("No p_value or log_p_value was provided for a row.")
 				}
 				if (!currentpValue) {
 					columns[pValueIndex] = 0 - Math.power(10.0, Double.parseDouble(pValue))

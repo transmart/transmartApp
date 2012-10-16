@@ -845,11 +845,7 @@ public class SearchController{
 		csv.close()
 	}
 	
-	def getRegionSearchResults(Long max, Long offset, Double cutoff, String sortField, String order, String search, List analysisIds) throws Exception {
-	
-		//Get list of REGION restrictions from session and translate to RS#
-		def regions = []
-		def solrSearch = session['solrSearchFilter']
+	def getSearchRegions(solrSearch) {
 		for (s in solrSearch) {
 			if (s.startsWith("REGION")) {
 				//Cut off REGION:, split by pipe and interpret chromosomes and genes
@@ -916,7 +912,13 @@ public class SearchController{
 				}
 			}
 		}
-				
+	}
+	
+	def getRegionSearchResults(Long max, Long offset, Double cutoff, String sortField, String order, String search, List analysisIds) throws Exception {
+	
+		//Get list of REGION restrictions from session and translate to RS#
+		def regions = getSearchRegions(session['solrSearchFilter'])
+		
 		//Find out if we're querying for EQTL, GWAS, or both
 		def hasGwas = BioAssayAnalysis.createCriteria().list([max: 1]) {
 			eq('assayDataType', 'GWAS')
@@ -1114,6 +1116,8 @@ public class SearchController{
 			
 			returnedAnalysisData.add(temporaryList)
 		}
+		
+		println "QQPlot row count = " + returnedAnalysisData.size()
 		
 		//Get a unique key for the image file.
 		def uniqueId = randomUUID() as String

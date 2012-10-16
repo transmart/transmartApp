@@ -107,7 +107,7 @@ function showDataUploadForm() {
 	else {
 		$j('#dataFormTitle2').html('Upload ' + title + ' Data')
 	}
-	if (ANALYSIS_TYPE == 'eqtl') {
+	if (ANALYSIS_TYPE == 'EQTL') {
 		$j('#tagsLabel').html('Disease:');
 		$j('#platformLabel').html('Genotype Platform:');
 		$j('#expressionPlatformRow').show();
