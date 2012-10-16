@@ -905,6 +905,16 @@ public class SearchController{
 				}
 				}
 			}
+			else if (s.startsWith("GENE")) {
+				//If just plain genes, get the limits and default to HG19 as the version
+				s = s.substring(5)
+				def geneIds = s.split("\\|")
+				for (geneString in geneIds) {
+					def geneId = geneString as long
+					def limits = regionSearchService.getGeneLimits(geneId)
+					regions.push([gene: geneId, chromosome: null, low: limits.get('low'), high: limits.get('high'), ver: "19"])
+				}
+			}
 		}
 				
 		//Find out if we're querying for EQTL, GWAS, or both

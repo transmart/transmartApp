@@ -380,7 +380,7 @@ function showFacetResults()	{
 	tree.visit(  function(node) {
         if (node.data.isCategory)  {
      	   var categoryName = node.data.categoryName.split("|");
-     	   var cat = categoryName[1].replace(" ", "_");
+     	   var cat = categoryName[1].replace(/ /g, "_");
      	   
      	   treeCategories.push(cat);        	    
         }
@@ -489,7 +489,7 @@ function addSearchTerm(searchTerm)	{
 	
 	category = category + "|" + (searchTerm.category == undefined ? "TEXT" : searchTerm.category);
 	
-	var text = searchTerm.keyword == undefined ? searchTerm : searchTerm.keyword;
+	var text = (searchTerm.text == undefined ? (searchTerm.keyword == undefined ? searchTerm : searchTerm.keyword) : searchTerm.text);
 	var id = searchTerm.id == undefined ? -1 : searchTerm.id;
 	var key = category + ":" + text + ":" + id;
 	if (currentSearchTerms.indexOf(key) < 0)	{

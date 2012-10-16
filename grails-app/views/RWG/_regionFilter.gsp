@@ -20,5 +20,5 @@ Chromosome: <g:select name="filterChromosomeNumber" from="${1..23}"/>
 Use: <g:select name="filterChromosomeUse" from="${['19':'HG19','18':'HG18']}" optionKey="${{it.key}}" optionValue="${{it.value}}"/>
 <br/><br/>
 Position: 
-<g:textField name="filterChromosomePosition" style="width: 50px"/>
+<g:textField name="filterChromosomePosition" style="width: 100px"/>
 <g:select name="filterChromosomeRange" from="${ranges}" optionKey="${{it.key}}" optionValue="${{it.value}}"/> <g:textField name="filterChromosomeBasePairs" style="width: 50px"/> base pairs</div>
