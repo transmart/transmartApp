@@ -2748,3 +2748,65 @@ function drawPieChart(divid, data)
 	
 
 }
+
+
+//Load the box plot data for cross trial analysis
+function loadBoxPlotCTA(geneID)	{	
+	
+	// if geneID not passed, get first one from list 
+	
+	// retrieve list of selected analyses
+	
+	
+	alert(selectedAnalyses);
+	
+/*	jQuery('#boxplotEmpty_' +analysisID).hide(); //hide the message that tells the user to select a probe first
+	
+	if (probeID === undefined)	{
+		// We are called from the user switching probes, throw up the mask and get the probeID
+		jQuery("#analysis_holder_" + analysisID).mask(); //hide the loading screen
+		probeID = jQuery("#probeSelection_" + analysisID).find('option:selected').attr('id');
+		
+	}
+*/	
+	// retrieve the corresponding display value for the probe Id 
+	
+	/*
+    var analysisIndex = getAnalysisIndex(analysisID);
+    var probeDisplay = ""
+    var probeIds = analysisProbeIds[analysisIndex].probeIds ;
+    var maxProbeIndex = analysisProbeIds[analysisIndex].maxProbeIndex; 
+    for (var i=0; i<maxProbeIndex; i++)  {
+    	if (probeIds[i] == probeID) {
+    		probeDisplay = analysisProbeIds[analysisIndex].selectList[i];
+    		break;
+    	}
+    }
+        
+        */
+	/*
+	rwgAJAXManager.add({
+		url:getBoxPlotDataURL,
+		data: {id: analysisID, probeID: probeID},
+		timeout:60000,
+		success: function(response) {
+			setActiveProbe(analysisID, probeID);
+			drawBoxPlotD3('boxplotAnalysis_'+analysisID, response, analysisID);
+			jQuery('#boxplotLegend_'+analysisID).show();
+			jQuery('#boxplotAnalysis_'+analysisID).show();	
+			
+			jQuery('body').data("BoxplotData:" + analysisID, response); //store the response
+			
+			jQuery('body').data("activeBoxplot:" + analysisID, probeID); //store the analysis ID and probe ID of this boxplot;
+																		 //used to determine if the boxplot has already been drawn
+		
+			setBoxplotProbes(analysisID, probeID);
+			jQuery("#analysis_holder_" + analysisID).unmask(); 
+			
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	})
+	;*/
+}
