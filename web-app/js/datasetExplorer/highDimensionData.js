@@ -33,6 +33,7 @@ function gatherHighDimensionalData(divId){
 		return;
 	}
 	if(variableDivEmpty(divId)){
+		spinnerMask.hide();
 		Ext.Msg.alert("No cohort selected!", "Please select a cohort first.");
 		return;
 	}
