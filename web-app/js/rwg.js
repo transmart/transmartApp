@@ -752,13 +752,13 @@ function exportLinePlotData(analysisId, exportType)
 		var data = jQuery('body').data("LineplotData:" + analysisId);
 
 		//redraw the plot with the legend so that it appears in the exported image
-		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, true);
+		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, true, null, false);
 
 		var svgID=  "#lineplotAnalysis_"+analysisId;
 		
 		exportCanvas(svgID);		
 		
-		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, false);
+		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, false, null, false);
 		
 		break;
 	default:
@@ -796,13 +796,13 @@ function exportBoxPlotData(analysisId, exportType)
 		
 		var data = jQuery('body').data("BoxplotData:" + analysisId);
 		
-		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, true);
+		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, true, null, false);
 		
 		var svgID=  "#boxplotAnalysis_"+analysisId;
 		
 		exportCanvas(svgID);		
 
-		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, false);
+		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, false, null, false);
 		
 		break;
 	default:
@@ -1232,7 +1232,7 @@ function loadLinePlotData(analysisID, probeID)	{
 			
 			setActiveProbe(analysisID, probeID);
 			jQuery('#analysis_holder_' +analysisID).unmask(); //hide the loading msg, unblock the div 
-			drawLinePlotD3('lineplotAnalysis_'+analysisID, response, analysisID);
+			drawLinePlotD3('lineplotAnalysis_'+analysisID, response, analysisID, false, null, false);
 			jQuery('#lineplotAnalysis_'+analysisID).show();
 			jQuery('#lineplot_'+analysisID).show();
 
@@ -1328,7 +1328,7 @@ function loadBoxPlotData(analysisID, probeID)	{
 		timeout:60000,
 		success: function(response) {
 			setActiveProbe(analysisID, probeID);
-			drawBoxPlotD3('boxplotAnalysis_'+analysisID, response, analysisID);
+			drawBoxPlotD3('boxplotAnalysis_'+analysisID, response, analysisID, false, null, false);
 			jQuery('#boxplotLegend_'+analysisID).show();
 			jQuery('#boxplotAnalysis_'+analysisID).show();	
 			
@@ -1388,7 +1388,7 @@ function updateLineplot(analysisID){
 		console.log("Error: Could not find data");
 	}else
 		{
-			drawLinePlotD3('lineplotAnalysis_'+analysisID, data, analysisID);
+			drawLinePlotD3('lineplotAnalysis_'+analysisID, data, analysisID, false, null, false);
 		}
 }
 
@@ -1414,7 +1414,7 @@ function updateBoxPlot(analysisID){
 		console.log("Error: Could not find data");
 	}else
 		{
-			drawBoxPlotD3('boxplotAnalysis_'+analysisID, data, analysisID);
+			drawBoxPlotD3('boxplotAnalysis_'+analysisID, data, analysisID, false, null, false);
 		}
 }
 
@@ -2771,62 +2771,34 @@ function drawPieChart(divid, data)
 
 
 //Load the box plot data for cross trial analysis
-function loadBoxPlotCTA(geneID)	{	
+function loadBoxPlotCTA(gene_id)	{	
 	
-	// if geneID not passed, get first one from list 
-	
-	// retrieve list of selected analyses
-	
-	
-	alert(selectedAnalyses);
-	
-/*	jQuery('#boxplotEmpty_' +analysisID).hide(); //hide the message that tells the user to select a probe first
-	
-	if (probeID === undefined)	{
-		// We are called from the user switching probes, throw up the mask and get the probeID
-		jQuery("#analysis_holder_" + analysisID).mask(); //hide the loading screen
-		probeID = jQuery("#probeSelection_" + analysisID).find('option:selected').attr('id');
+	gene_id = "3576";  // hardcode for now
 		
+	var ids = "";
+	// retrieve list of selected analyses, create a pipe delimited list of analysis ids
+	for (var i=0; i<selectedAnalyses.length; i++)
+	{
+		if (ids != "")  {
+			ids += "|";
+		}
+		ids += selectedAnalyses[i].id;
 	}
-*/	
-	// retrieve the corresponding display value for the probe Id 
 	
-	/*
-    var analysisIndex = getAnalysisIndex(analysisID);
-    var probeDisplay = ""
-    var probeIds = analysisProbeIds[analysisIndex].probeIds ;
-    var maxProbeIndex = analysisProbeIds[analysisIndex].maxProbeIndex; 
-    for (var i=0; i<maxProbeIndex; i++)  {
-    	if (probeIds[i] == probeID) {
-    		probeDisplay = analysisProbeIds[analysisIndex].selectList[i];
-    		break;
-    	}
-    }
-        
-        */
-	/*
 	rwgAJAXManager.add({
-		url:getBoxPlotDataURL,
-		data: {id: analysisID, probeID: probeID},
+		url:getBoxPlotDataCTAURL,
+		data: {ids: ids, probeID: probeID},
 		timeout:60000,
 		success: function(response) {
-			setActiveProbe(analysisID, probeID);
-			drawBoxPlotD3('boxplotAnalysis_'+analysisID, response, analysisID);
-			jQuery('#boxplotLegend_'+analysisID).show();
-			jQuery('#boxplotAnalysis_'+analysisID).show();	
 			
-			jQuery('body').data("BoxplotData:" + analysisID, response); //store the response
+			jQuery('#xtBoxplot').empty();
 			
-			jQuery('body').data("activeBoxplot:" + analysisID, probeID); //store the analysis ID and probe ID of this boxplot;
-																		 //used to determine if the boxplot has already been drawn
-		
-			setBoxplotProbes(analysisID, probeID);
-			jQuery("#analysis_holder_" + analysisID).unmask(); 
 			
 		},
 		error: function(xhr) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
-	})
-	;*/
+	});
+	
+	
 }
