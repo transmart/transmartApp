@@ -1,4 +1,5 @@
 <div class="search-result-info">
+	<table><tr><td>
     Search results:&nbsp;&nbsp;${trials.size()} 
     
     <g:if test="${trials.size() == 1}">study</g:if>
@@ -10,7 +11,10 @@
     <g:else>analysis</g:else>
     
     &nbsp;in ${duration} 
-    
+    </td>
+    <td style="text-align: right"><div id="selectedAnalyses">&nbsp;</div></td>
+	</tr>
+    </table>
 </div>
 <div class="search-results-table">
     <g:each in="${trials.entrySet()}" status="ti" var="trialresult">        
@@ -24,14 +28,14 @@
                <g:set 
                    var="ts" value="${Calendar.instance.time.time}"                 
                 />       
-               <a href="#" onclick="javascript:toggleDetailDiv('${trialresult.key.trialNumber}', '${createLink(controller:'RWG',action:'getTrialAnalysis',params:[id:trialresult.key.id,trialNumber:trialresult.key.trialNumber,unqKey:ts])}');">
+               <a id="toggleDetail_${experimentresult.key.id}" href="#" onclick="javascript:toggleDetailDiv('${trialresult.key.trialNumber}', '${createLink(controller:'RWG',action:'getTrialAnalysis',params:[id:trialresult.key.id,trialNumber:trialresult.key.trialNumber,unqKey:ts])}');">
                 <img alt="expand/collapse" id="imgExpand_${trialresult.key.trialNumber}" src="${resource(dir:'images',file:'down_arrow_small2.png')}" style="display: inline;"/>                  
                       ${trialresult.value}
                       <g:if test="${trialresult.value > 1}">analyses found</g:if>
     				  <g:else>analysis found</g:else>
                </a>                                                                          
                </span>
-               <div id="${trialresult.key.trialNumber}_detail"></div>
+               <div id="${trialresult.key.trialNumber}_detail" name="${trialresult.key.trialNumber}" class="detailexpand"></div>
         </div> 
     </g:each>
 </div>

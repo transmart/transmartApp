@@ -9,7 +9,7 @@
         <table class="analysis-table">
             <tr>
             	<td style="width:20px;">
-					<input type="checkbox" class="analysischeckbox" id="analysis_checkbox_${analysisId}"/>
+					<input type="checkbox" class="analysischeckbox" id="analysis_checkbox_${analysisId}" onclick="updateSelectedAnalyses();"/>
             	</td>
                 <td style="width:20px;">
 		          <g:form controller="RWG" name="AnalysisDetail_${analysisId}" id="AnalysisDetail_${analysisId}" action="doComparison">

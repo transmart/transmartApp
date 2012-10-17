@@ -122,7 +122,8 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 			url:dataURL,			
 			success: function(response) {
 				jQuery(trialDetail).addClass("gtb1");
-				jQuery(trialDetail).html(response);			    
+				jQuery(trialDetail).html(response);
+				jQuery(trialDetail).addClass("analysesopen");
 				jQuery(trialDetail).attr('data', true);// Add an attribute that we will use as a flag so we don't need to load the data multiple times
 			},
 			error: function(xhr) {
@@ -133,9 +134,11 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 		var src = jQuery(imgExpand).attr('src').replace('up_arrow_small2.png', 'down_arrow_small2.png');
 		if (jQuery(trialDetail).attr('data') == "true")	{
 			jQuery(trialDetail).attr('data',false);
+			jQuery(trialDetail).removeClass("analysesopen");
 		} else	{
 			src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'up_arrow_small2.png');
 			jQuery(trialDetail).attr('data',true);
+			jQuery(trialDetail).addClass("analysesopen");
 		}	
 		jQuery(imgExpand).attr('src',src);
 		jQuery(trialDetail).toggle();		
@@ -1507,7 +1510,29 @@ function collapseAllAnalyses(){
 	while (openAnalyses.length>0){
 		//each time showVisualization is called, the current analysis is removed from openAnalyses
 		showVisualization(openAnalyses[0], false);
-	}	
+	}
+}
+
+function collapseAllStudies() {
+	collapseAllAnalyses();
+	//For each open study, toggleDetailDiv
+	var openstudyelements = jQuery(".analysesopen");
+	for (var i = 0; i < openstudyelements.length; i++) {
+		var studyelement = openstudyelements[i];
+		var studyId = jQuery(studyelement).attr('name');
+		toggleDetailDiv(studyId, ''); //No URL needed when collapsing
+	}
+}
+
+function expandAllStudies() {
+	//For each closed study, toggleDetailDiv
+	var closedstudyelements = jQuery(".detailexpand").not(".analysesopen");
+	for (var i = 0; i < closedstudyelements.length; i++) {
+		var studyelement = jQuery(closedstudyelements[i]);
+		var studyId = studyelement.attr('name');
+		var key = new Date().getTime(); //Key to prevent AJAX caching
+		toggleDetailDiv(studyId, getStudyAnalysesUrl + "?id=" + studyId + "&trialNumber=" + studyId + "&unqKey=" + key);
+	}
 }
 
 function updateBoxPlot(analysisID){
@@ -3154,7 +3179,7 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 	rwgAJAXManager.add({
 		url:getHeatmapNumberProbesURL,		
 		data: {id: analysisId, page:page},
-		success: function(response) {								
+		success: function(response) {
 			var maxProbeIndex = response['maxProbeIndex']
 			
 			getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, page);
@@ -3164,6 +3189,16 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
 	});
+}
+
+function updateSelectedAnalyses() {
+	var selectedboxes = jQuery(".analysischeckbox:checked");
+	if (selectedboxes.length > 0) {
+		jQuery('#selectedAnalyses').html("<b>" + selectedboxes.length + "</b> analyses selected");
+	}
+	else {
+		jQuery('#selectedAnalyses').html("&nbsp;");
+	}
 }
 
 //Globally prevent AJAX from being cached (mostly by IE)

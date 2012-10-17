@@ -888,6 +888,7 @@ public class SearchController{
 					def limits = regionSearchService.getGeneLimits(geneId)
 					def low = limits.get('low')
 					def high = limits.get('high')
+					def chrom = limits.get('chrom')
 					
 					if (direction.equals("plus")) {
 						high = high + range;
@@ -899,7 +900,7 @@ public class SearchController{
 						high = high + range;
 						low = low - range;
 					}
-					regions.push([gene: geneId, chromosome: null, low: low, high: high, ver: ver])
+					regions.push([gene: geneId, chromosome: chrom, low: low, high: high, ver: ver])
 				}
 				}
 			}

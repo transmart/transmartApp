@@ -38,7 +38,7 @@ class RegionSearchService {
 	
 	def geneLimitsSqlQuery = """
 	
-	SELECT max(snpinfo.pos) as high, min(snpinfo.pos) as low FROM SEARCHAPP.SEARCH_KEYWORD
+	SELECT max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as chrom FROM SEARCHAPP.SEARCH_KEYWORD
 	INNER JOIN bio_marker bm ON bm.BIO_MARKER_ID = SEARCH_KEYWORD.BIO_DATA_ID
 	INNER JOIN deapp.de_snp_gene_map gmap ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID
 	INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
@@ -90,7 +90,8 @@ class RegionSearchService {
 			if(rs.next()){
 				def high = rs.getLong("HIGH");
 				def low = rs.getLong("LOW");
-				return [low: low, high:high]
+				def chrom = rs.getString("CHROM");
+				return [low: low, high:high, chrom: chrom]
 			}
 		}finally{
 			rs?.close();

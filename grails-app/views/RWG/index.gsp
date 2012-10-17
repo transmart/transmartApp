@@ -71,6 +71,8 @@
 	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";
 
+	        var getStudyAnalysesUrl = "${createLink([controller:'RWG',action:'getTrialAnalysis'])}";
+        
 			//These are the URLS for the different browse windows.
 			var studyBrowseWindow = "${createLink([controller:'experiment',action:'browseExperimentsMultiSelect'])}";
 			var analysisBrowseWindow = "${createLink([controller:'experimentAnalysis',action:'browseAnalysisMultiSelect'])}";
@@ -164,10 +166,11 @@
 				<div class='toolbar-item'>Expand All</div>
 
 				 -->
-				<div class='toolbar-item' onclick='collapseAllAnalyses();'>Collapse All</div>
+				<div class='toolbar-item' onclick='collapseAllStudies();'>Collapse All Studies</div>
+				<div class='toolbar-item' onclick='expandAllStudies();'>Expand All Studies</div>
 				<div class='toolbar-item' onclick='alert("Functionality not yet implemented.");'>Manhattan Plot</div>
-				<div class='toolbar-item' onclick="jQuery('.analysischeckbox').attr('checked', 'checked');">Select All Analyses</div>
-				<div class='toolbar-item' onclick="jQuery('.analysischeckbox').removeAttr('checked');">Unselect All Analyses</div>
+				<div class='toolbar-item' onclick="jQuery('.analysesopen .analysischeckbox').attr('checked', 'checked'); updateSelectedAnalyses();">Select All Visible Analyses</div>
+				<div class='toolbar-item' onclick="jQuery('.analysesopen .analysischeckbox').removeAttr('checked'); updateSelectedAnalyses();">Unselect All Visible Analyses</div>
 	  			<%-- <div id="searchResultOptions_holder">
 					<div id="searchResultOptions_btn" class='toolbar-item'>
 						 Options <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
