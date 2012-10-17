@@ -2,12 +2,12 @@
 <script type="text/javascript">		
 	jQuery(function ($) {
 
-		displayxtAnalysesList();
+		//displayxtAnalysesList();
 
     	jQuery( "#xtSelectedAnalysesList" ).sortable();
     	jQuery( "#xtSelectedAnalysesList" ).disableSelection();
 
-    	displaySelectedAnalysisTopGenes();
+    //	displaySelectedAnalysisTopGenes();
     	addXTSearchAutoComplete();
 		
 	});

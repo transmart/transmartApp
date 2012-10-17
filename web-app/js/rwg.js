@@ -152,7 +152,6 @@ function displayxtAnalysesList(){
 	jQuery('#xtSummary_AnalysesList').html(html);
 
 	
-	
 }
 
 
@@ -2710,7 +2709,6 @@ function displaySelectedAnalysisTopGenes(){
 		getTopGenes(selectedAnalyses[i].id);
 		
 	}
-
 }
 
 
@@ -2741,6 +2739,43 @@ function getTopGenes(analysisID)
 }
 
 
+function displayXTGeneSummary(data){
+	
+	var html = "<table id='xtAnalysisSummary' class='tablesorter'> ";
+		html += "<thead><th>ID</th><th>Fold Change</th><th>p-value</th><th>Analysis Name</th></thead>";
+		html += "<tbody>";
+	
+	jQuery(selectedAnalyses).each(function(index, value){
+		
+		var result = data.filter(function(el){return el.bio_assay_analysis_id == selectedAnalyses[index].id});
+		var fold_change_ratio;
+		var preferred_pvalue;
+		
+		if(result[0] == null)
+			fold_change_ratio = '-';
+		 else 
+			 fold_change_ratio = result[0].fold_change_ratio;
+		
+		if(result[0] == null)
+			preferred_pvalue = '-';
+		 else 
+			 preferred_pvalue = result[0].preferred_pvalue;
+		
+		html += "<tr>";
+		html += "<td>" +index +'</td>';
+		html += "<td>" +fold_change_ratio +"</td>";
+		html += "<td>" +preferred_pvalue +"</td>";
+		html += "<td><span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</td>';
+		html += "</tr>";
+		
+	});
+	html += "</table>";
+	jQuery('#xtSummary_AnalysesList').html(html);
+	
+	
+	return;
+}
+
 
 function getCrossTrialBioMarkerSummary(search_keyword)
 {
@@ -2762,6 +2797,9 @@ function getCrossTrialBioMarkerSummary(search_keyword)
 		data: {analysisList: analysisList, search_keyword:search_keyword },
 		timeout:60000,
 		success: function(data) {
+			
+			displayXTGeneSummary(data);
+			
 			
 			//alert(response[key]['bio_marker_id']);
 			 var tbl_body = "<div><table style='width:230px'>";
@@ -2790,8 +2828,9 @@ function addXTSearchAutoComplete()	{
 		minLength:0,
 		select: function(event, ui) {  
 
-			//alert(ui.item.id);
-			
+			//TODO: Determine if the result is a single gene or a pathway/gene signature/etc.
+			//will display different results depending on what was selected
+						
 			getCrossTrialBioMarkerSummary(ui.item.id);
 				
 			return false;

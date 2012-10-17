@@ -1373,14 +1373,15 @@ class RWGVisualizationDAO {
 	String s ="""
 
 		select distinct bio_assay_analysis_id, bio_marker_id, bio_marker_name, 
-		probe_id, fold_change_ratio, tea_normalized_pvalue, preferred_pvalue
+		avg(fold_change_ratio) fold_change_ratio, avg(tea_normalized_pvalue) tea_normalized_pvalue, avg(preferred_pvalue) preferred_pvalue
 		from BIOMART.heat_map_results
 		where bio_marker_id in (select distinct bmv.asso_bio_marker_id
 		from BIOMART.bio_marker_correl_mv bmv
 		where bmv.bio_marker_id = (select sk.bio_data_id
 		from searchapp.search_keyword sk
 		where sk.search_keyword_id = ${search_keyword}))
-		and bio_assay_analysis_id in (${analysisList})"""
+		and bio_assay_analysis_id in (${analysisList})
+		group by bio_assay_analysis_id, bio_marker_id, bio_marker_name"""
 	   
 	   log.debug("${s}")
    
@@ -1393,7 +1394,6 @@ class RWGVisualizationDAO {
 			   result.put('bio_marker_id', row.bio_marker_id)
 			   result.put('bio_marker_name', row.bio_marker_name)
 			   
-			   result.put('probe_id', row.probe_id)
 			   result.put('fold_change_ratio', row.fold_change_ratio)
 			   result.put('tea_normalized_pvalue', row.tea_normalized_pvalue)
 			   result.put('preferred_pvalue', row.preferred_pvalue)
