@@ -1,17 +1,11 @@
 // Draw the line plot using D3
-function drawLinePlotD3(divId, linePlotJSON, analysisID, forExport, title, isCTA)	{
-
-	// if not title is passed in 
-	if (title == undefined)  {		  
-	  var probeID = getActiveProbe(analysisID);
-	  title = getGeneforDisplay(analysisID, probeID);
-	}
+function drawLinePlotD3(divId, linePlotJSON, analysisID, forExport, isCTA, selectedAnalyses)	{
 
     // boxPlotJSON should be a map of analysisId:[cohortID:[desc:cohort description, order:display order for the cohort, data:sorted log2 intensities]]	  
-	var allPlotData = setupPlotData(false, linePlotJSON, forExport, analysisID, divId, title, isCTA);
+	var allPlotData = setupPlotData(false, linePlotJSON, forExport, analysisID, divId, isCTA, selectedAnalyses);
 
 	// create the plot without any lines (just title, axes, legend)
-	drawEmptyPlots(allPlotData, forExport, divId);
+	drawEmptyPlots(allPlotData, forExport, divId, isCTA);
 	  
 	for (var key in linePlotJSON)  { 		  	
 	 	var chartObject = allPlotData[key].emptyPlotData;

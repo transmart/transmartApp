@@ -751,13 +751,13 @@ function exportLinePlotData(analysisId, exportType)
 		var data = jQuery('body').data("LineplotData:" + analysisId);
 
 		//redraw the plot with the legend so that it appears in the exported image
-		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, true, null, false);
+		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, true, false, null);
 
 		var svgID=  "#lineplotAnalysis_"+analysisId;
 		
 		exportCanvas(svgID);		
 		
-		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, false, null, false);
+		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, false, false, null);
 		
 		break;
 	default:
@@ -795,13 +795,13 @@ function exportBoxPlotData(analysisId, exportType)
 		
 		var data = jQuery('body').data("BoxplotData:" + analysisId);
 		
-		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, true, null, false);
+		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, true, false, null);
 		
 		var svgID=  "#boxplotAnalysis_"+analysisId;
 		
 		exportCanvas(svgID);		
 
-		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, false, null, false);
+		drawBoxPlotD3('boxplotAnalysis_'+analysisId, data, analysisId, false, false, null);
 		
 		break;
 	default:
@@ -1231,7 +1231,7 @@ function loadLinePlotData(analysisID, probeID)	{
 			
 			setActiveProbe(analysisID, probeID);
 			jQuery('#analysis_holder_' +analysisID).unmask(); //hide the loading msg, unblock the div 
-			drawLinePlotD3('lineplotAnalysis_'+analysisID, response, analysisID, false, null, false);
+			drawLinePlotD3('lineplotAnalysis_'+analysisID, response, analysisID, false, false, null);
 			jQuery('#lineplotAnalysis_'+analysisID).show();
 			jQuery('#lineplot_'+analysisID).show();
 
@@ -1327,7 +1327,7 @@ function loadBoxPlotData(analysisID, probeID)	{
 		timeout:60000,
 		success: function(response) {
 			setActiveProbe(analysisID, probeID);
-			drawBoxPlotD3('boxplotAnalysis_'+analysisID, response, analysisID, false, null, false);
+			drawBoxPlotD3('boxplotAnalysis_'+analysisID, response, analysisID, false, false, null);
 			jQuery('#boxplotLegend_'+analysisID).show();
 			jQuery('#boxplotAnalysis_'+analysisID).show();	
 			
@@ -1387,7 +1387,7 @@ function updateLineplot(analysisID){
 		console.log("Error: Could not find data");
 	}else
 		{
-			drawLinePlotD3('lineplotAnalysis_'+analysisID, data, analysisID, false, null, false);
+			drawLinePlotD3('lineplotAnalysis_'+analysisID, data, analysisID, false, false, null);
 		}
 }
 
@@ -1413,7 +1413,7 @@ function updateBoxPlot(analysisID){
 		console.log("Error: Could not find data");
 	}else
 		{
-			drawBoxPlotD3('boxplotAnalysis_'+analysisID, data, analysisID, false, null, false);
+			drawBoxPlotD3('boxplotAnalysis_'+analysisID, data, analysisID, false, false, null);
 		}
 }
 
@@ -2871,12 +2871,11 @@ function loadBoxPlotCTA(gene_id)	{
 	
 	rwgAJAXManager.add({
 		url:getBoxPlotDataCTAURL,
-		data: {ids: ids, probeID: probeID},
+		data: {ids: ids, geneID: gene_id},
 		timeout:60000,
 		success: function(response) {
 			
-			jQuery('#xtBoxplot').empty();
-			
+			drawBoxPlotD3('xtBoxplot', response, null, false, true, selectedAnalyses );
 			
 		},
 		error: function(xhr) {

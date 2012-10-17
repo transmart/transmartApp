@@ -1,16 +1,12 @@
 // Draw the box plot using D3
-function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, title, isCTA)	{
-	  // if not title is passed in (e.g. single box plot being drawn for non CTA, then the title will be based on active probe)
-	  if (title == undefined)  {		  
-		  var probeID = getActiveProbe(analysisID);
-	 	  title = getGeneforDisplay(analysisID, probeID);
-	  }
+function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selectedAnalyses)	{
+
 
 	  // boxPlotJSON should be a map of analysisId:[cohortID:[desc:cohort description, order:display order for the cohort, data:sorted log2 intensities]]	  
-	  var allPlotData = setupPlotData(true, boxPlotJSON, forExport, analysisID, divId, title, isCTA);
+	  var allPlotData = setupPlotData(true, boxPlotJSON, forExport, analysisID, divId, isCTA, selectedAnalyses);
 
 	  // create the plot without any lines (just title, axes, legend)
- 	  drawEmptyPlots(allPlotData, forExport, divId);
+ 	  drawEmptyPlots(allPlotData, forExport, divId, isCTA);
  	  
  	  for (var key in boxPlotJSON)  { 		  
 	 	  var chartObject = allPlotData[key].emptyPlotData;

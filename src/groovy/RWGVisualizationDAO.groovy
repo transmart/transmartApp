@@ -185,14 +185,12 @@ class RWGVisualizationDAO {
    *
    * @return a map of cohort as key and a map containing cohort desc, cohort display order, and data necessary for the graph
    **/
-  def getBoxplotOrLineplotData(analysisIds, probe_name=null, boxplot=true, gene_id=null)  {
+  def getBoxplotOrLineplotData(analysisIds, probe_name, boxplot, gene_id)  {
 	  groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-	  
-  	  if (analysisIds.class.name.toLowerCase() != "list")  {
+  	  if (analysisIds.class.name.toLowerCase() == "java.lang.string")  {
 		 // need a list for  iterating through
 	     analysisIds = [analysisIds]
 	  }
-
 	  List sqlParams = []
 	  
 	  StringBuilder s = new StringBuilder()
@@ -218,7 +216,6 @@ class RWGVisualizationDAO {
 	  s.append("""
 		   group by Bio_Assay_Analysis_Id, cohort_id, log_intensity, assay_id order by Bio_Assay_Analysis_Id, cohort_id, log_intensity
 	  """)
-	  
 	  log.info("${s}")
 	  log.info("${sqlParams}")
 	  def cohortDataMap = [:]
@@ -310,13 +307,25 @@ class RWGVisualizationDAO {
 	 * @param probe_name - bio_assay_feature_group name for the probe
 	 * @param analysisID - the analysis ID
 	 *
-	 * @return a map of cohort as key and an array of log2 intensity values and cohort information
+	 * @return a map of analysis containing a map of  cohort ids as key and an array of log2 intensity values and cohort information
 	 **/
 	def getBoxplotData(analysisId, probe_name)  {
-		return getBoxplotOrLineplotData(analysisId, probe_name, true)
+		return getBoxplotOrLineplotData(analysisId, probe_name, true, null)
 	}
 
 	/**
+	 * Method to retrieve the log2 intensity values and cohort information for a list of analyses and gene_id
+	 *
+	 * @param gene_id - id for the gene
+	 * @param analysisID - the analysis ID
+	 *
+	 * @return a map of analysis containing a map of  cohort ids as key and an array of log2 intensity values and cohort information
+	 **/
+	def getBoxplotDataCTA(analysisId, gene_id)  {
+		return getBoxplotOrLineplotData(analysisId, null, true, gene_id)
+	}
+
+		/**
 	* Calculate the statistics needed for a cohort on the line plot and create a map 
 	*
 	* @param intensityArray - list of intensity values for a cohort
@@ -344,7 +353,7 @@ class RWGVisualizationDAO {
 	* @return a map with cohort id as key, containing data map with mean log2 intensity and standard error, cohort desc, and cohort display order
 	**/
    def getLineplotData(analysisId, probe_name)  {
-	   return getBoxplotOrLineplotData(analysisId, probe_name, false)
+	   return getBoxplotOrLineplotData(analysisId, probe_name, false, null)
 	   
    }
    			
