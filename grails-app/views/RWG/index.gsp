@@ -88,6 +88,7 @@
 	        var mouse_inside_analysis_div = false;
 			var getPieChartDataURL = "${createLink([action:'getPieChartData'])}";
 			var getTopGenesURL = "${createLink([action:'getTopGenes'])}";
+			var getCrossTrialBioMarkerSummaryURL = "${createLink([action:'getCrossTrialBioMarkerSummary'])}";
 			
 			var showHomePageFirst=true;
 			
