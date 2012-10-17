@@ -758,7 +758,7 @@ function exportLinePlotData(analysisId, exportType)
 		
 		exportCanvas(svgID);		
 		
-		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, false, null, false);
+		drawLinePlotD3('lineplotAnalysis_'+analysisId, data, analysisId, false);
 		
 		break;
 	default:
@@ -1232,7 +1232,7 @@ function loadLinePlotData(analysisID, probeID)	{
 			
 			setActiveProbe(analysisID, probeID);
 			jQuery('#analysis_holder_' +analysisID).unmask(); //hide the loading msg, unblock the div 
-			drawLinePlotD3('lineplotAnalysis_'+analysisID, response, analysisID, false, null, false);
+			drawLinePlotD3('lineplotAnalysis_'+analysisID, response, analysisID);
 			jQuery('#lineplotAnalysis_'+analysisID).show();
 			jQuery('#lineplot_'+analysisID).show();
 
