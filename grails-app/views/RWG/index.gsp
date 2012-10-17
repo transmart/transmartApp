@@ -74,6 +74,7 @@
 	        var getHeatmapDataURL = "${createLink([action:'getHeatmapData'])}";
 	        var getHeatmapDataForExportURL = "${createLink([action:'getHeatmapDataForExport2'])}";
 	        var getBoxPlotDataURL = "${createLink([action:'getBoxPlotData'])}";
+            var getBoxPlotDataCTAURL = "${createLink([action:'getBoxPlotDataCTA'])}";
 	        var getLinePlotDataURL = "${createLink([action:'getLinePlotData'])}";	        
 	        var saveSearchURL = "${createLink([action:'saveFacetedSearch'])}";
 	        var loadSearchURL = "${createLink([action:'loadFacetedSearch'])}";

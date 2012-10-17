@@ -179,98 +179,128 @@ class RWGVisualizationDAO {
    /**
    * Method to retrieve the data values and cohort information for a given analysis and probe_id for use by line plot or box plot
    *
+   * @param analysisID - the analysis ID (or list of analysis IDs if for CTA) 
    * @param probe_name - bio_assay_feature_group name for the probe
-   * @param analysisID - the analysis ID
+   * @param boxplot - if true, then boxplot; else lineplot
    *
    * @return a map of cohort as key and a map containing cohort desc, cohort display order, and data necessary for the graph
    **/
-  def getBoxplotOrLineplotData(analysisId, probe_name, boxplot=true)  {
+  def getBoxplotOrLineplotData(analysisIds, probe_name=null, boxplot=true, gene_id=null)  {
 	  groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	  
+  	  if (analysisIds.class.name.toLowerCase() != "list")  {
+		 // need a list for  iterating through
+	     analysisIds = [analysisIds]
+	  }
+
+	  List sqlParams = []
+	  
 	  StringBuilder s = new StringBuilder()
 	  s.append("""
-		 Select cohort_id, log_intensity, assay_id, min(gene_id) as gene_id
+		 Select Bio_Assay_Analysis_Id, cohort_id, log_intensity, assay_id, min(gene_id) as gene_id
 		 From heat_map_results
-		 Where Bio_Assay_Analysis_Id = ?
-		 And probe_id=?
-		   group by cohort_id, log_intensity, assay_id order by cohort_id, log_intensity
 	  """)
-	  def sqlParams = [analysisId, probe_name]
+
+	  s.append(" where Bio_Assay_Analysis_Id in (") 
+	  s.append(analysisIds.join(','))
+	  s.append(")")
+	     
+      if (probe_name)  {   // regular box or line plot
+		  s.append(" and probe_id = ? " )
+		  sqlParams.push(probe_name)
+      }
+	  
+	  if (gene_id)  {  // Cross trial analysis
+		  s.append(" and gene_id = ? " )
+		  sqlParams.push(gene_id)
+	  }
+		  	  
+	  s.append("""
+		   group by Bio_Assay_Analysis_Id, cohort_id, log_intensity, assay_id order by Bio_Assay_Analysis_Id, cohort_id, log_intensity
+	  """)
+	  
 	  log.info("${s}")
 	  log.info("${sqlParams}")
 	  def cohortDataMap = [:]
 	  def cohortSampleCountMap = [:]
 	  def intensityArray = []
 	  def cohort = null
-	  def gene_id = null
-	  
-	  log.debug("Loop through and store all of the intensity values in the array and use the cohort as the key")
-	  sql.eachRow(s.toString(), sqlParams, {row->
-		  
-		  //get the gene_id just once (it will be the same for all rows)
-		  if(gene_id == null){
-			  gene_id = row.gene_id
-		  }
-		  
-		  if (cohort == null)	{
-			  cohort = row.cohort_id
-		  }
-		  if (cohort != row.cohort_id)	{
-			  
-			  // for a box plot put the array of intensity values on the data map, for a line plot put a map of calculated values (e.g. mean, std error)			  
-			  if (boxplot)  {
-				  cohortDataMap.put(cohort, intensityArray)
-			  }
-			  else {
-				  cohortDataMap.put(cohort, createLinePlotCohortMap(intensityArray))
-			  }
 
-			  cohortSampleCountMap.put(cohort, intensityArray.size())
-			  
-			  
-			  intensityArray = []
-			  cohort = row.cohort_id
+	  // execute query and save rows (since we need to do this loop through once for each analysis, we don't want to execute query each time)
+	  def results = sql.rows(s.toString(), sqlParams)
+	  def analysisMap = [:]
+	  analysisIds.each {analysisId->
+		  log.debug("Loop through and store all of the intensity values in the array and use the cohort as the key")
+		  results.each{ row->
+			  // skip the row if not for the current analysis  (need to convert to string for comparison since the row value is a Long)	  
+			  if (analysisId.toString() == row.Bio_Assay_Analysis_Id.toString()) { 
+				  //get the gene_id just once (it will be the same for all rows)
+				  if(gene_id == null){
+					  gene_id = row.gene_id
+				  }
+				  
+				  if (cohort == null)	{
+					  cohort = row.cohort_id
+				  }
+				  if (cohort != row.cohort_id)	{
+					  
+					  // for a box plot put the array of intensity values on the data map, for a line plot put a map of calculated values (e.g. mean, std error)			  
+					  if (boxplot)  {
+						  cohortDataMap.put(cohort, intensityArray)
+					  }
+					  else {
+						  cohortDataMap.put(cohort, createLinePlotCohortMap(intensityArray))
+					  }
+		
+					  cohortSampleCountMap.put(cohort, intensityArray.size())
+					  
+					  
+					  intensityArray = []
+					  cohort = row.cohort_id
+				  }
+				  intensityArray << row.log_intensity
+			  }
 		  }
-		  intensityArray << row.log_intensity
-	  })
-	  
-	 // for a box plot put the array of intensity values on the data map, for a line plot put a map of calculated values (e.g. mean, std error)
-	 if (boxplot)  {
-		 cohortDataMap.put(cohort, intensityArray)		 
-	 }
-	 else {
-		 cohortDataMap.put(cohort, createLinePlotCohortMap(intensityArray))
-	 }
-	 cohortSampleCountMap.put(cohort, intensityArray.size())
-	 
-	 def cohortMap = [:]   // this is the map containing all info needed for box plot (descriptions + order + data)
-
-	 // loop through each cohort for the analysis and create a map that contains all the info
-	 // needed for the line plot (i.e. order, desc, data)
-	 def analysisInfo = getHeatmapAnalysisInfo(analysisId)
-	  
-	 // First, retrieve all N cohorts from analysInfo map
-	 def cohorts =  analysisInfo.get("cohorts")
-			 
-	 for (cohortIndex in 1..cohorts.size())  {
-		 // find cohort with specified order
-		 def c = cohorts.find {  cohorts.get(it.key).get("order") == cohortIndex }
+		  
+		 // for a box plot put the array of intensity values on the data map, for a line plot put a map of calculated values (e.g. mean, std error)
+		 if (boxplot)  {
+			 cohortDataMap.put(cohort, intensityArray)
+		 }
+		 else {
+			 cohortDataMap.put(cohort, createLinePlotCohortMap(intensityArray))
+		 }
+		 cohortSampleCountMap.put(cohort, intensityArray.size())
+		 
+		 def cohortMap = [:]   // this is the map containing all info needed for box plot (descriptions + order + data)
+	
+		 // loop through each cohort for the analysis and create a map that contains all the info
+		 // needed for the line plot (i.e. order, desc, data)
+		 def analysisInfo = getHeatmapAnalysisInfo(analysisId)
+		  
+		 // First, retrieve all N cohorts from analysInfo map
+		 def cohorts =  analysisInfo.get("cohorts")
 				 
-		 def desc = cohorts.get(c.key).get("desc")
-		 def order = cohortIndex
-		 def data = cohortDataMap.get(c.key)		 
-		 def sampleCount = cohortSampleCountMap.get(c.key)
-		 
-		 def cMap = [:]
-		 cMap.put('order', order)
-		 cMap.put('desc', desc)
-		 cMap.put('data', data)
-		 cMap.put('sampleCount', sampleCount)
-		 
-		 cohortMap.put(c.key, cMap)
-		 
-		 cohortMap.put('gene_id', gene_id)
-	 }
-	 return cohortMap
+		 for (cohortIndex in 1..cohorts.size())  {
+			 // find cohort with specified order
+			 def c = cohorts.find {  cohorts.get(it.key).get("order") == cohortIndex }
+			 def desc = cohorts.get(c.key).get("desc")
+			 def order = cohortIndex
+			 def data = cohortDataMap.get(c.key)		 
+			 def sampleCount = cohortSampleCountMap.get(c.key)
+			 
+			 def cMap = [:]
+			 cMap.put('order', order)
+			 cMap.put('desc', desc)
+			 cMap.put('data', data)
+			 cMap.put('sampleCount', sampleCount)
+			 
+			 cohortMap.put(c.key, cMap)
+			 
+			 cohortMap.put('gene_id', gene_id)
+		 }
+		 analysisMap.put(analysisId, cohortMap)
+	  }
+	 return analysisMap
   }
 
 	

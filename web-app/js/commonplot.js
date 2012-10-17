@@ -1,148 +1,186 @@
 // create an object containing all the data needed for drawing a box or line plot and do some configuration (e.g. clear the div, set the range text boxes)
-function setupPlotData(isBoxplot, jsonData, forExport, analysisID, divId ) {
+function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, title, isCTA) {
 
 	jQuery("#" + divId).empty();	
-
-	var cohortArray = new Array();   // array of cohort ids
-	var cohortLabels = new Array();   // array of cohort labels on x axis
-	var cohortDesc = new Array();    // array of cohort descriptions
-	var cohortDisplayStyles = new Array();    // array of cohort display styles (i.e. number from 0..4)
-
-	var gene_id = parseInt(jsonData['gene_id']);   // gene_id will be null if this is a protein since first char is alpha for proteins
 	
-	// loop through and get the cohort ids and description into arrays in the order they should be displayed
-	for (var key in jsonData)  {
-		if (jsonData[key]['order'])  {   // if the object in the array doesn't have an order, not a cohort
-			// the "order" of the json objects starts with 1, so subtract 1 so it doesn't leave gap at start of array
-			var arrayIndex = jsonData[key]['order'] - 1;
-			cohortArray[arrayIndex] = key;
-			cohortDesc[arrayIndex] = jsonData[key]['desc'];
-			cohortDisplayStyles[arrayIndex] = jsonData[key]['order'] % cohortBGColors.length;
-			cohortLabels[arrayIndex] = key + "(n=" +  jsonData[key]['sampleCount'] + ")"
-		}
-	}
+    var allPlotData = {};  // contains a structure for each analysis
+    for (var analysisKey in allJsonData)  {
+    	jsonData =  allJsonData[analysisKey];
 
-	// highlight cohort descriptions expects and array starting at index 1
-	var cohortDescExport = highlightCohortDescriptions([''].concat(cohortDesc), true);
+		var cohortArray = new Array();   // array of cohort ids
+		var cohortLabels = new Array();   // array of cohort labels on x axis
+		var cohortDesc = new Array();    // array of cohort descriptions
+		var cohortDisplayStyles = new Array();    // array of cohort display styles (i.e. number from 0..4)
 	
-	var statMapping = cohortArray.map(function(i)	{
-		var data = jsonData[i]['data'];
+		var gene_id = parseInt(jsonData['gene_id']);   // gene_id will be null if this is a protein since first char is alpha for proteins
 		
-		var statObject = new Object;
-		
-		// common properties for both line and box plots
-		statObject.id = i;
-		statObject.cohortDisplayStyle = jsonData[i]['order'] % cohortBGColors.length;
-		statObject.cohortColor = cohortBGColors[statObject.cohortDisplayStyle];
-		statObject.desc = jsonData[i]['desc'].replace(/_/g, ', ');
-		statObject.descExport = cohortDescExport[jsonData[i]['order']].replace(/_/g, ', ');
-		statObject.sampleCount = jsonData[i]['sampleCount'];
-		
-		
-		// Map the all four quartiles to the key (e.g. C1)  
-		if (isBoxplot)  {			
-			statObject.min = data[getRank(5, data.length)-1],
-			statObject.max = data[getRank(95, data.length)-1],			
-			statObject.median = data[getRank(50, data.length)-1],
-			statObject.lq = data[getRank(25, data.length)-1],
-			statObject.uq = data[getRank(75, data.length)-1]
+		// loop through and get the cohort ids and description into arrays in the order they should be displayed
+		for (var key in jsonData)  {
+			if (jsonData[key] && jsonData[key]['order'])  {   // if the object in the array doesn't have an order, not a cohort
+				// the "order" of the json objects starts with 1, so subtract 1 so it doesn't leave gap at start of array
+				var arrayIndex = jsonData[key]['order'] - 1;
+				cohortArray[arrayIndex] = key;
+				cohortDesc[arrayIndex] = jsonData[key]['desc'];
+				cohortDisplayStyles[arrayIndex] = jsonData[key]['order'] % cohortBGColors.length;
+				cohortLabels[arrayIndex] = key + "(n=" +  jsonData[key]['sampleCount'] + ")"
+			}
 		}
-		else  {
-			statObject.mean = data['mean'];
-			statObject.stdError = data['stdError'];
-			statObject.min = statObject.mean - statObject.stdError;
-			statObject.max = statObject.mean + statObject.stdError;
-
-			var meanFormatted = parseFloat(statObject.mean);
-			statObject.meanFormatted = meanFormatted.toFixed(4);
+	
+		// highlight cohort descriptions expects and array starting at index 1
+		var cohortDescExport = highlightCohortDescriptions([''].concat(cohortDesc), true);
+		
+		var statMapping = cohortArray.map(function(i)	{
+			var data = jsonData[i]['data'];
 			
-			var stdErrorFormatted = parseFloat(statObject.stdError);
-			statObject.stdErrorFormatted = stdErrorFormatted.toFixed(4);
+			var statObject = new Object;
+			
+			// common properties for both line and box plots
+			statObject.id = i;
+			statObject.cohortDisplayStyle = jsonData[i]['order'] % cohortBGColors.length;
+			statObject.cohortColor = cohortBGColors[statObject.cohortDisplayStyle];
+			statObject.desc = jsonData[i]['desc'].replace(/_/g, ', ');
+			statObject.descExport = cohortDescExport[jsonData[i]['order']].replace(/_/g, ', ');
+			statObject.sampleCount = jsonData[i]['sampleCount'];
+			
+			
+			// Map the all four quartiles to the key (e.g. C1)  
+			if (isBoxplot)  {			
+				statObject.min = data[getRank(5, data.length)-1],
+				statObject.max = data[getRank(95, data.length)-1],			
+				statObject.median = data[getRank(50, data.length)-1],
+				statObject.lq = data[getRank(25, data.length)-1],
+				statObject.uq = data[getRank(75, data.length)-1]
+			}
+			else  {
+				statObject.mean = data['mean'];
+				statObject.stdError = data['stdError'];
+				statObject.min = statObject.mean - statObject.stdError;
+				statObject.max = statObject.mean + statObject.stdError;
+	
+				var meanFormatted = parseFloat(statObject.mean);
+				statObject.meanFormatted = meanFormatted.toFixed(4);
+				
+				var stdErrorFormatted = parseFloat(statObject.stdError);
+				statObject.stdErrorFormatted = stdErrorFormatted.toFixed(4);
+				
+			}
+			
+			return statObject;		
+		});
+		
+		var plotType;
+		plotType = isBoxplot?'box':'line';
+		
+		//if the user is setting the range manually (and not cross trial analysis)
+		if(!isCTA && jQuery('#' + plotType + 'plotRangeRadio_Manual_'+analysisID).is(':checked')){
+			
+			var yMin = parseFloat(jQuery('#' + plotType + 'plotRangeMin_'+analysisID).val());
+			var yMax = parseFloat(jQuery('#' + plotType + 'plotRangeMax_'+analysisID).val());
+	
+			
+		}else{
+			//auto set range otherwise
+			var yMin = statMapping[0].min;
+			var yMax = statMapping[0].max;
+			for (var idx=1; idx < statMapping.length; idx++)	{	
+				yMin = statMapping[idx].min < yMin ? statMapping[idx].min : yMin;
+				yMax = statMapping[idx].max > yMax ? statMapping[idx].max : yMax;
+			}
+			
+			// Put in a rough switch so things can scale on the y axis somewhat dynamically
+			if (yMax-yMin < 2)	{
+				// round down to next 0.1
+				yMin = Math.floor((yMin-0.2) * 10) / 10 ;
+				
+				// round up to next 0.1
+				// and add another 0.01 to ensure that the highest tenths line gets included
+				yMax = Math.ceil((yMax+0.2) * 10) / 10 + 0.01;
+			} else	{
+				yMin = Math.floor(yMin);
+				yMax = Math.ceil(yMax);
+			}
+			
+			//set the manual value textboxes with the current yMin and yMax
+			if (!isCTA)  {
+				jQuery('#' + plotType + 'plotRangeMin_'+analysisID).val(roundNumber(yMin,2));
+				jQuery('#' + plotType + 'plotRangeMax_'+analysisID).val(roundNumber(yMax,2));
+			}
 			
 		}
-		
-		return statObject;		
-	});
+				
+		var margin = 55;
 	
-	var plotType;
-	plotType = isBoxplot?'box':'line';
-	
-	//if the user is setting the range manually:
-	if(jQuery('#' + plotType + 'plotRangeRadio_Manual_'+analysisID).is(':checked')){
+		var wChart = cohortArray.length * 140;//generate the width dynamically using the cohort count	
+		var hChart = 350;
 		
-		var yMin = parseFloat(jQuery('#' + plotType + 'plotRangeMin_'+analysisID).val());
-		var yMax = parseFloat(jQuery('#' + plotType + 'plotRangeMax_'+analysisID).val());
+		var hTitle = 40;
+	
+		var wTotal = wChart + margin;
+		var hTotal = hChart + hTitle; 
+	
+		// if exporting, draw a legend; if not exporting legend is drawn outside of svg
+		var hLegend = 0;
+		if(forExport){
+			hLegend = 30 * (cohortArray.length);
+		}
+	
+		hTotal = hTotal + hLegend;
+		
+		var numCohorts = cohortArray.length;
+		
+		var dataObject = {
+				cohortArray:cohortArray, cohortLabels:cohortLabels, cohortDesc:cohortDesc, cohortDisplayStyles:cohortDisplayStyles,
+				gene_id: gene_id, cohortDescExport:cohortDescExport, statMapping:statMapping,
+				title:title, margin:margin, wChart:wChart, hChart:hChart, hTitle:hTitle,
+				wTotal:wTotal, hTotal:hTotal, hLegend:hLegend, numCohorts:numCohorts, yMin:yMin, yMax:yMax
+		};
+		
+ 	    allPlotData[analysisKey] = dataObject;		  
+    }
+	
+	return allPlotData;
 
+}
+
+// draw empty plots on a single svg element 
+function drawEmptyPlots(allPlotData, forExport, divId)  {
+
+	var wTotal = 0;
+	var hTotal = 0;
+	// determine the starting coordinates for each plot, and figure out the total height and width for drawing them all on a single SVG
+	for (var key in allPlotData)  {
+		allPlotData[key].xOffset = wTotal;
+		allPlotData[key].yOffset = hTotal;
 		
-	}else{
-		//auto set range otherwise
-		var yMin = statMapping[0].min;
-		var yMax = statMapping[0].max;
-		for (var idx=1; idx < statMapping.length; idx++)	{	
-			yMin = statMapping[idx].min < yMin ? statMapping[idx].min : yMin;
-			yMax = statMapping[idx].max > yMax ? statMapping[idx].max : yMax;
-		}
+		var w = allPlotData[key].wTotal;
+		var h = allPlotData[key].hTotal;
 		
-		// Put in a rough switch so things can scale on the y axis somewhat dynamically
-		if (yMax-yMin < 2)	{
-			// round down to next 0.1
-			yMin = Math.floor((yMin-0.2) * 10) / 10 ;
-			
-			// round up to next 0.1
-			// and add another 0.01 to ensure that the highest tenths line gets included
-			yMax = Math.ceil((yMax+0.2) * 10) / 10 + 0.01;
-		} else	{
-			yMin = Math.floor(yMin);
-			yMax = Math.ceil(yMax);
-		}
-		
-		//set the manual value textboxes with the current yMin and yMax
-		jQuery('#' + plotType + 'plotRangeMin_'+analysisID).val(roundNumber(yMin,2));
-		jQuery('#' + plotType + 'plotRangeMax_'+analysisID).val(roundNumber(yMax,2));
-		
+		hTotal = h;
+		wTotal  = wTotal + w;		
 	}
 	
-	var title = getGeneforDisplay(analysisID, getActiveProbe(analysisID));
-	
-	var margin = 55;
+	var root = d3.select("#" + divId)
+		.append("svg")
+		.attr("width", wTotal)
+		.attr("height", hTotal);
 
-	var wChart = cohortArray.length * 140;//generate the width dynamically using the cohort count	
-	var hChart = 350;
-	
-	var hTitle = 40;
-
-	var wTotal = wChart + margin;
-	var hTotal = hChart + hTitle; 
-
-	// if exporting, draw a legend; if not exporting legend is drawn outside of svg
-	var hLegend = 0;
-	if(forExport){
-		hLegend = 30 * (cohortArray.length);
-	}
-
-	hTotal = hTotal + hLegend;
-	
-	var numCohorts = cohortArray.length;
-	
-	var dataObject = {
-			cohortArray:cohortArray, cohortLabels:cohortLabels, cohortDesc:cohortDesc, cohortDisplayStyles:cohortDisplayStyles,
-			gene_id: gene_id, cohortDescExport:cohortDescExport, statMapping:statMapping,
-			title:title, margin:margin, wChart:wChart, hChart:hChart, hTitle:hTitle,
-			wTotal:wTotal, hTotal:hTotal, hLegend:hLegend, numCohorts:numCohorts, yMin:yMin, yMax:yMax
-	};
-	
-	return dataObject;
-
+	// draw each empty plot (and save the return value to the data structure
+	for (var key in allPlotData)  {
+		var ep = drawEmptyPlot(root, allPlotData[key], forExport, key);
+		
+		allPlotData[key].emptyPlotData = ep;
+		
+	}	
 }
 
 // draw the basic line or box plot without any lines or boxes -- just title, axes, legend
 // return an object the root svg tag, chart svg tag, the width of each band on chart, and the x and y axis domains 
-function drawEmptyPlot(plotData, forExport, analysisID, divId) {
-
-	var svg = d3.select("#" + divId)
-		.append("svg")
+function drawEmptyPlot(root, plotData, forExport, analysisID) {
+	var svg = root.append("g")
 		.attr("width", plotData.wTotal)
-		.attr("height", plotData.hTotal);
+		.attr("height", plotData.hTotal)
+		.attr("transform", "translate(" + plotData.xOffset + "," + plotData.yOffset + ")")
+		;
 
 	var bp = svg
 		.append("g")
