@@ -28,6 +28,7 @@ class CustomFilterItem {
 	String bioDataType
 	static belongsTo = [customFilter: CustomFilter]
 	static mapping = {
+		datasource 'postgresql'
 		table 'SEARCH_CUSTOM_FILTER_ITEM'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']

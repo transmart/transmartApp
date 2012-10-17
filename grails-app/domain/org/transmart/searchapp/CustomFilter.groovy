@@ -32,6 +32,7 @@ class CustomFilter {
 	static hasMany = [items:CustomFilterItem]
 	static transients = [ "summary" ]
 	static mapping = {
+		datasource 'postgresql'
 		table 'SEARCH_CUSTOM_FILTER'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
