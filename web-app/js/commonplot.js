@@ -1,14 +1,25 @@
 // create an object containing all the data needed for drawing a box or line plot and do some configuration (e.g. clear the div, set the range text boxes)
-function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, title, isCTA) {
+function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isCTA, selectedAnalyses) {
 
 	jQuery("#" + divId).empty();
-	
-	if (isCTA)  {
-		
-	}
-	
-    var allPlotData = {};  // contains a structure for each analysis
+			
+	var allPlotData = {};  // contains a structure for each analysis
+	var analysisIndex = 0;
     for (var analysisKey in allJsonData)  {
+    	
+    	analysisIndex++;
+    	var title;
+    	var titleTooltip;
+    	if (isCTA)  {
+    	    title = analysisIndex;
+    	    titleTooltip = selectedAnalyses[analysisIndex - 1].title;
+    	}  
+    	else  {    		
+  		    var probeID = getActiveProbe(analysisID);
+	 	    title = getGeneforDisplay(analysisID, probeID);
+	 	    titleTooltip = "View gene information";
+    	}    	
+
     	jsonData =  allJsonData[analysisKey];
 
 		var cohortArray = new Array();   // array of cohort ids
@@ -135,7 +146,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, tit
 		var dataObject = {
 				cohortArray:cohortArray, cohortLabels:cohortLabels, cohortDesc:cohortDesc, cohortDisplayStyles:cohortDisplayStyles,
 				gene_id: gene_id, cohortDescExport:cohortDescExport, statMapping:statMapping,
-				title:title, margin:margin, wChart:wChart, hChart:hChart, hTitle:hTitle,
+				title:title, titleTooltip:titleTooltip, margin:margin, wChart:wChart, hChart:hChart, hTitle:hTitle,
 				wTotal:wTotal, hTotal:hTotal, hLegend:hLegend, numCohorts:numCohorts, yMin:yMin, yMax:yMax
 		};
 		
@@ -147,7 +158,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, tit
 }
 
 // draw empty plots on a single svg element 
-function drawEmptyPlots(allPlotData, forExport, divId)  {
+function drawEmptyPlots(allPlotData, forExport, divId, isCTA)  {
 
 	var wTotal = 0;
 	var hTotal = 0;
@@ -170,7 +181,7 @@ function drawEmptyPlots(allPlotData, forExport, divId)  {
 
 	// draw each empty plot (and save the return value to the data structure
 	for (var key in allPlotData)  {
-		var ep = drawEmptyPlot(root, allPlotData[key], forExport);
+		var ep = drawEmptyPlot(root, allPlotData[key], forExport, isCTA);
 		
 		allPlotData[key].emptyPlotData = ep;
 		
@@ -179,7 +190,7 @@ function drawEmptyPlots(allPlotData, forExport, divId)  {
 
 // draw the basic line or box plot without any lines or boxes -- just title, axes, legend
 // return an object the root svg tag, chart svg tag, the width of each band on chart, and the x and y axis domains 
-function drawEmptyPlot(root, plotData, forExport) {
+function drawEmptyPlot(root, plotData, forExport, isCTA) {
 	var svg = root.append("g")
 		.attr("width", plotData.wTotal)
 		.attr("height", plotData.hTotal)
@@ -197,8 +208,19 @@ function drawEmptyPlot(root, plotData, forExport) {
 		yTitle = 20;
 	}
 	
-	var titleText = bp.append("a")
-	    	.attr("xlink:href", function(d) {return "javascript:showGeneInfo('"+plotData.gene_id +"');"})
+	var nextTag;
+
+	// create a link to show gene information if not on CTA
+	if (!isCTA && plotData.gene_id)  {
+		nextTag = bp.append("a")
+    		.attr("xlink:href", function(d) {return "javascript:showGeneInfo('"+plotData.gene_id +"');"});
+	}
+	else  {
+		nextTag = bp;
+		
+	}
+	
+	var titleText = nextTag
 	        .append("text")
 	        .attr("x", plotData.margin + plotData.wChart/2)
 	        .attr("y", yTitle )
@@ -208,9 +230,12 @@ function drawEmptyPlot(root, plotData, forExport) {
 	        .text(plotData.title)
 	        ;
 	    
-	if (plotData.gene_id && !forExport)  {			
-	    	//Add tooltip for title 
-			titleText.append('svg:title').text("View gene information");
+	if (( (!isCTA && plotData.gene_id) || (isCTA) ) && !forExport)  {			
+	    	//Add tooltip for title, if:
+		    // not for export AND  one of these conditions:
+			//     a.  is a cross trial analysis
+			//     b.  not a CTA and gene id is defined
+			titleText.append('svg:title').text(plotData.titleTooltip);
 	}
 		
 	

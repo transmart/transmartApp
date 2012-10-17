@@ -187,7 +187,6 @@ class RWGVisualizationDAO {
    **/
   def getBoxplotOrLineplotData(analysisIds, probe_name, boxplot, gene_id)  {
 	  groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-	  println "probe_name:" + probe_name
   	  if (analysisIds.class.name.toLowerCase() == "java.lang.string")  {
 		 // need a list for  iterating through
 	     analysisIds = [analysisIds]
@@ -217,7 +216,6 @@ class RWGVisualizationDAO {
 	  s.append("""
 		   group by Bio_Assay_Analysis_Id, cohort_id, log_intensity, assay_id order by Bio_Assay_Analysis_Id, cohort_id, log_intensity
 	  """)
-	  println		s
 	  log.info("${s}")
 	  log.info("${sqlParams}")
 	  def cohortDataMap = [:]
