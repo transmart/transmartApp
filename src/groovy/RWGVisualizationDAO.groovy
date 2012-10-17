@@ -1307,21 +1307,21 @@ class RWGVisualizationDAO {
    
 	   
    }
-	   
-	   
-	   def getTopGenesByFoldChange(analysisID)	{
-		   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-								 
+   
+   
+   def getTopGenesByFoldChange(analysisID)	{
+	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+							 
 
-	    String s ="""
-		select * from (
-					select distinct(bio_marker_id), bio_marker_name, fold_change_ratio
-					from biomart.heat_map_results
-					where bio_assay_analysis_id = ${analysisID}
-					order by abs(fold_change_ratio) desc)
-					where rownum <= 20"""
-		   
-		   log.debug("${s}")
+    String s ="""
+	select * from (
+				select distinct(bio_marker_id), bio_marker_name, fold_change_ratio
+				from biomart.heat_map_results
+				where bio_assay_analysis_id = ${analysisID}
+				order by abs(fold_change_ratio) desc)
+				where rownum <= 20"""
+	   
+	   log.debug("${s}")
    
 		   def rows = sql.rows(s)
 		   
@@ -1329,13 +1329,51 @@ class RWGVisualizationDAO {
 		   rows.each {row->
 			   def result=[:]
 			   result.put('bio_marker_id', row.bio_marker_id)
-			   result.put('bio_marker_name', row.bio_marker_name)
-			   result.put('fold_change_ratio', row.fold_change_ratio)
-			   topGenes.push(result)
-		   }
-	   
-		   return  topGenes
+		   result.put('bio_marker_name', row.bio_marker_name)
+		   result.put('fold_change_ratio', row.fold_change_ratio)
+		   topGenes.push(result)
 	   }
+   
+	   return  topGenes
+   }
+
+   def getCrossTrialBioMarkerSummary(search_keyword, analysisList)	{
+	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+							 
+	String s ="""
+
+		select distinct bio_assay_analysis_id, bio_marker_id, bio_marker_name, 
+		probe_id, fold_change_ratio, tea_normalized_pvalue, preferred_pvalue
+		from BIOMART.heat_map_results
+		where bio_marker_id in (select distinct bmv.asso_bio_marker_id
+		from BIOMART.bio_marker_correl_mv bmv
+		where bmv.bio_marker_id = (select sk.bio_data_id
+		from searchapp.search_keyword sk
+		where sk.search_keyword_id = ${search_keyword}))
+		and bio_assay_analysis_id in (${analysisList})"""
+	   
+	   log.debug("${s}")
+   
+		   def rows = sql.rows(s)
+		   
+		   def resultSet=[]
+		   rows.each {row->
+			   def result=[:]
+			   result.put('bio_assay_analysis_id', row.bio_assay_analysis_id)
+			   result.put('bio_marker_id', row.bio_marker_id)
+			   result.put('bio_marker_name', row.bio_marker_name)
+			   
+			   result.put('probe_id', row.probe_id)
+			   result.put('fold_change_ratio', row.fold_change_ratio)
+			   result.put('tea_normalized_pvalue', row.tea_normalized_pvalue)
+			   result.put('preferred_pvalue', row.preferred_pvalue)
+		   resultSet.push(result)
+	   }
+   
+	   return  resultSet
+   }
+   	   
+	   
    
 	  	  
 }

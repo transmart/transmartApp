@@ -35,6 +35,8 @@
 	</div>
 	
 	<div id="xtTopGenes"></div>
+	
+	<div id="xtBioMarkerSummary"></div>
 			
 
 </div>
