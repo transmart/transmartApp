@@ -885,6 +885,21 @@ class RWGController {
    }
    
    /**
+    * Returns the data for the box plot visualization for Cross Trial Analysis
+    */
+   def getBoxPlotDataCTA = {	   
+	   def rwgDAO = new RWGVisualizationDAO()
+	 
+	   def returnMap = [:]  
+	   params.ids.split(/\|/).each {		   
+		   println it
+		   def data  = rwgDAO.getBoxplotData(it, params.probeID)
+		   returnMap.put(it, data)
+	   }
+	   render returnMap as JSON
+   }
+
+   /**
     * Returns the data for the line plot visualization
     */
    def getLinePlotData = {	   
