@@ -2741,13 +2741,58 @@ function getTopGenes(analysisID)
 }
 
 
+
+function getCrossTrialBioMarkerSummary(search_keyword)
+{
+	
+	var analysisList = '';
+	
+	for (var i =0; i < selectedAnalyses.length; i++){
+		
+		analysisList += selectedAnalyses[i].id;
+		
+		if (selectedAnalyses.length-1 > i){
+			analysisList += ',';
+		}
+		
+	}
+
+	rwgAJAXManager.add({
+		url:getCrossTrialBioMarkerSummaryURL,
+		data: {analysisList: analysisList, search_keyword:search_keyword },
+		timeout:60000,
+		success: function(data) {
+			
+			//alert(response[key]['bio_marker_id']);
+			 var tbl_body = "<div><table style='width:230px'>";
+			 jQuery.each(data, function() {
+			        var tbl_row = "";
+			        jQuery.each(this, function(k , v) {
+			            tbl_row += "<td>"+v+"</td>";
+			        })
+			        tbl_body += "<tr>"+tbl_row+"</tr>";                 
+			    })
+			    tbl_body += '</table></div>';
+			    jQuery('#xtBioMarkerSummary').after(tbl_body);
+		   
+		}
+	});
+	
+}
+
+
+
+
+
 function addXTSearchAutoComplete()	{
 	jQuery("#xtSearch-ac").autocomplete({
 		source: sourceURL,
 		minLength:0,
 		select: function(event, ui) {  
 
-			alert(ui.item.id);
+			//alert(ui.item.id);
+			
+			getCrossTrialBioMarkerSummary(ui.item.id);
 				
 			return false;
 		}
