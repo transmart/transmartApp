@@ -1,7 +1,11 @@
 // create an object containing all the data needed for drawing a box or line plot and do some configuration (e.g. clear the div, set the range text boxes)
 function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, title, isCTA) {
 
-	jQuery("#" + divId).empty();	
+	jQuery("#" + divId).empty();
+	
+	if (isCTA)  {
+		
+	}
 	
     var allPlotData = {};  // contains a structure for each analysis
     for (var analysisKey in allJsonData)  {
@@ -150,7 +154,7 @@ function drawEmptyPlots(allPlotData, forExport, divId)  {
 	// determine the starting coordinates for each plot, and figure out the total height and width for drawing them all on a single SVG
 	for (var key in allPlotData)  {
 		allPlotData[key].xOffset = wTotal;
-		allPlotData[key].yOffset = hTotal;
+		allPlotData[key].yOffset = 0;
 		
 		var w = allPlotData[key].wTotal;
 		var h = allPlotData[key].hTotal;
@@ -166,7 +170,7 @@ function drawEmptyPlots(allPlotData, forExport, divId)  {
 
 	// draw each empty plot (and save the return value to the data structure
 	for (var key in allPlotData)  {
-		var ep = drawEmptyPlot(root, allPlotData[key], forExport, key);
+		var ep = drawEmptyPlot(root, allPlotData[key], forExport);
 		
 		allPlotData[key].emptyPlotData = ep;
 		
@@ -175,7 +179,7 @@ function drawEmptyPlots(allPlotData, forExport, divId)  {
 
 // draw the basic line or box plot without any lines or boxes -- just title, axes, legend
 // return an object the root svg tag, chart svg tag, the width of each band on chart, and the x and y axis domains 
-function drawEmptyPlot(root, plotData, forExport, analysisID) {
+function drawEmptyPlot(root, plotData, forExport) {
 	var svg = root.append("g")
 		.attr("width", plotData.wTotal)
 		.attr("height", plotData.hTotal)

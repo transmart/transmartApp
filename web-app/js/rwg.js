@@ -2832,12 +2832,13 @@ function loadBoxPlotCTA(gene_id)	{
 	
 	rwgAJAXManager.add({
 		url:getBoxPlotDataCTAURL,
-		data: {ids: ids, probeID: probeID},
+		data: {ids: ids, geneID: gene_id},
 		timeout:60000,
 		success: function(response) {
 			
 			jQuery('#xtBoxplot').empty();
-			
+
+			drawBoxPlotD3('xtBoxplot', response, null, false, "testtitle", true);
 			
 		},
 		error: function(xhr) {

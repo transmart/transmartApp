@@ -21,7 +21,7 @@
 		<ul id="xtMenu">
 			<li>Summary</li>
 			<li>Heatmap</li>
-			<li>Boxplot</li>
+			<li><a href="#" onclick="javascript:loadBoxPlotCTA();">Boxplot</a></li>
 		</ul>
 	</div>
 	<div id="xtSummary"><!-- Summary Tab Content -->
