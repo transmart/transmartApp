@@ -52,7 +52,6 @@ class UploadDataController {
 		
 		def model = [uploadDataInstance: new AnalysisMetadata()]
 		addFieldData(model, null)
-		//TODO Retrieve the lists needed for selects
 		render(view: "uploadData", model:model)
 	}
 	
@@ -102,14 +101,14 @@ class UploadDataController {
 		}
 		bindData(upload, params)
 		
-		//Handle special cases where comma-separated lists must be saved
+		//Handle special cases where separated lists must be saved
 		
 		if (params.tags) {
 			if (params.tags instanceof String) {
 				upload.phenotypeIds = params.tags
 			}
 			else {
-				upload.phenotypeIds = params.tags.join(",")
+				upload.phenotypeIds = params.tags.join(";")
 			}
 		}
 		else {
@@ -121,7 +120,7 @@ class UploadDataController {
 				upload.genotypePlatformIds = params.genotypePlatform
 			}
 			else {
-				upload.genotypePlatformIds = params.genotypePlatform.join(",")
+				upload.genotypePlatformIds = params.genotypePlatform.join(";")
 			}
 		}
 		else {
@@ -133,7 +132,7 @@ class UploadDataController {
 				upload.expressionPlatformIds = params.expressionPlatform
 			}
 			else {
-				upload.expressionPlatformIds = params.expressionPlatform.join(",")
+				upload.expressionPlatformIds = params.expressionPlatform.join(";")
 			}
 		}
 		else {
@@ -212,23 +211,24 @@ class UploadDataController {
 		
 		if (upload) {
 			if (upload.phenotypeIds) {
-				for (tag in upload.phenotypeIds.split(",")) {
-					def disease = Disease.findByMeshCode(tag)
+				for (tag in upload.phenotypeIds.split(";")) {
+					def meshCode = tag.split(":")[1]
+					def disease = Disease.findByMeshCode(meshCode)
 					tagMap.put(tag, disease.disease)
 				}
 			}
 			
 			//Platform ID display and ID are both codes
 			if (upload.genotypePlatformIds) {
-				for (tag in upload.genotypePlatformIds.split(",")) {
-					def platform = BioAssayPlatform.findByName(tag)
+				for (tag in upload.genotypePlatformIds.split(";")) {
+					def platform = BioAssayPlatform.findByAccession(tag)
 					genotypeMap.put(tag, platform.vendor + ": " + tag)
 				}
 			}
 			
 			if (upload.expressionPlatformIds) {
-				for (tag in upload.expressionPlatformIds.split(",")) {
-					def platform = BioAssayPlatform.findByName(tag)
+				for (tag in upload.expressionPlatformIds.split(";")) {
+					def platform = BioAssayPlatform.findByAccession(tag)
 					expressionMap.put(tag, platform.vendor + ": " + tag)
 				}
 			}

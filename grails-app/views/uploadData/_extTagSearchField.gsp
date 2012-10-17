@@ -16,6 +16,7 @@ jQuery(document).ready(function() {
 						return {
 							category: item.category,
 							keyword: item.keyword,
+							sourceAndCode: item.sourceAndCode,
 							id: item.id,
 							display: item.display
 						}
@@ -27,14 +28,14 @@ jQuery(document).ready(function() {
 		minLength:0,
 		
 		select: function(event, ui) {
-			var diseaseId = ui.item.id;
+			var sourceAndCode = ui.item.sourceAndCode;
 			var diseaseName = ui.item.keyword;
 			jQuery("#" + escapedFieldName + "-input").val('').focus();
-			$j('#' + escapedFieldName).append($j('<option></option>').val(diseaseId).text(diseaseName).attr('selected', 'selected'));
+			$j('#' + escapedFieldName).append($j('<option></option>').val(sourceAndCode).text(diseaseName).attr('selected', 'selected'));
 			var newTag = $j('<span/>', {
-				id: '${fieldName}-tag-' + diseaseId,
+				id: '${fieldName}-tag-' + sourceAndCode,
 				'class': 'tag',
-				name: diseaseId
+				name: sourceAndCode
 			}).text(diseaseName);
 			$j('#' + escapedFieldName + '-tags').append(newTag);
 			newTag.hide().fadeIn('slow');

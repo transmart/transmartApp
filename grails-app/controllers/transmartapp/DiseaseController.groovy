@@ -37,15 +37,15 @@ class DiseaseController {
 		//eQTL requires just disease - GWAS types need diseases and observations
 		def diseases = Disease.executeQuery("SELECT meshCode, disease FROM Disease d WHERE upper(d.disease) LIKE '%' || :term || '%'", [term: value], [max: 10]);
 		if (!params.type.equals("eqtl")) {
-			observations = Observation.executeQuery("SELECT code, name FROM Observation o WHERE upper(o.name) LIKE '%' || :term || '%'", [term: value], [max: 10]);
+			observations = Observation.executeQuery("SELECT code, name, codeSource FROM Observation o WHERE upper(o.name) LIKE '%' || :term || '%'", [term: value], [max: 10]);
 		}
 		
 		def itemlist = [];
 		for (disease in diseases) {
-			itemlist.add([id:disease[0], keyword:disease[1], category:"DISEASE", display:"Disease"]);
+			itemlist.add([id:disease[0], keyword:disease[1], sourceAndCode:"MESH:"+disease[0], category:"DISEASE", display:"Disease"]);
 		}
 		for (observation in observations) {
-			itemlist.add([id:observation[0], keyword:observation[1], category:"OBSERVATION", display:"Observation"]);
+			itemlist.add([id:observation[0], keyword:observation[1], sourceAndCode:observation[2] + ":" + observation[0], category:"OBSERVATION", display:"Observation"]);
 		}
 		
 		render itemlist as JSON;

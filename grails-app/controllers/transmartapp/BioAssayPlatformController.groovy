@@ -29,10 +29,10 @@ class BioAssayPlatformController {
 		
 		def platforms;
 		if (params.type) {
-			platforms = BioAssayPlatform.executeQuery("SELECT id, name FROM BioAssayPlatform p WHERE p.vendor = :term AND p.type = :type", [term: params.vendor, type: params.type]);
+			platforms = BioAssayPlatform.executeQuery("SELECT id, accession FROM BioAssayPlatform p WHERE p.vendor = :term AND p.platformType = :type", [term: params.vendor, type: params.type]);
 		}
 		else {
-			platforms = BioAssayPlatform.executeQuery("SELECT id, name FROM BioAssayPlatform p WHERE p.vendor = :term", [term: params.vendor]);
+			platforms = BioAssayPlatform.executeQuery("SELECT id, accession FROM BioAssayPlatform p WHERE p.vendor = :term", [term: params.vendor]);
 		}
 		
 		def itemlist = [];
