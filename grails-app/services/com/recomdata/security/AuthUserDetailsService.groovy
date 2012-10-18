@@ -30,6 +30,7 @@ import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUserDetailsService
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -71,4 +72,31 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 	UserDetails loadUserByUsername(String username, boolean loadRoles) throws UsernameNotFoundException {
 		return loadUserByUsername(username)
 	}
+	
+	/**
+	 * This is used by the Identity Vault authentication process
+	 *
+	 * @param wwid - The JNJ WWID from the Identity Vault
+	 *
+	 * @return the valid UserDetails (enabled user) for the given WWID or a DisabledException is thrown
+	 */
+	UserDetails loadUserByWWID(String wwid) throws DisabledException	{
+		log.info "Attempting to find user for WWID: $wwid"
+		log.debug "Use withTransaction to avoid lazy loading initialization error when accessing the authorities collection"
+		Class<?> User = application.getDomainClass(conf.userLookup.userDomainClassName).clazz
+		User.withTransaction { status ->
+			def user = User.findById(wwid)
+			if (!user) {
+				throw new DisabledException("User not found for WWID: $wwid")
+			}
+			if (!user.enabled)	{
+				throw new DisabledException("User with WWID: $wwid is not enabled for tranSMART")
+			}
+			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
+			
+			return new AuthUserDetails(user.username, user.passwd, user.enabled,
+				!user.accountExpired, !user.passwordExpired, !user.accountLocked,
+				authorities ?: NO_ROLES, user.id, user.userRealName)
+		}
+	}	
 }

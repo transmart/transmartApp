@@ -101,7 +101,17 @@ class LoginController {
 		if (springSecurityService.isLoggedIn()) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
-			render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
+			/* For our IAPP purposes, disallow the ability for the user to force the form login.
+			 * The ability to use either the Identity Vault or the form login will only
+			 * be set at the instance level through the identityVaultURL setting in the external configuration file.
+			 */
+			String ivUrl = grailsApplication.config.com.recomdata.searchtool.identityVaultURL
+			if (ivUrl.length() > 5) {
+				log.info("Proceeding with Identity Vault login")
+				redirect(url: ivUrl)
+			} else  {
+				render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
+			}			
 		}
 	}
 		
