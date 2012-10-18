@@ -1,5 +1,5 @@
-// fimd the index of the analysis with the given key
-function getAnalysisIndex(selectedAnalyses, analysisKey)  {
+// fimd the index of the analysis with the given key in the selected analysis array
+function getSelectedAnalysisIndex(selectedAnalyses, analysisKey)  {
 	for (var i=0; i<selectedAnalyses.length; i++)  {
 		if (selectedAnalyses[i].id == analysisKey)  {
 			return i;
@@ -22,7 +22,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
     for (var analysisKey in allJsonData)  {
     	
     	if (isCTA)  {
-    		analysisIndex =  getAnalysisIndex(selectedAnalyses, analysisKey);	
+    		analysisIndex =  getSelectedAnalysisIndex(selectedAnalyses, analysisKey);	
     	}
     	
     	orderedAnalysisKeys[analysisIndex] = analysisKey;
