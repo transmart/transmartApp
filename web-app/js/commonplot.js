@@ -175,13 +175,15 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 			}
 			
 		}
-				
-		var margin = 55;
-	
-		var wChart = cohortArray.length * 140;//generate the width dynamically using the cohort count	
-		var hChart = 350;
+
+		var scale = isCTA ? 0.75 : 1.0;
 		
-		var hTitle = 40;
+		var margin = 55 * scale;
+	
+		var wChart = cohortArray.length * 140 * scale;//generate the width dynamically using the cohort count	
+		var hChart = 350 * scale;
+		
+		var hTitle = 40 * scale;
 	
 		var wTotal = wChart + margin;
 		var hTotal = hChart + hTitle; 
@@ -189,7 +191,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 		// if exporting, draw a legend; if not exporting legend is drawn outside of svg
 		var hLegend = 0;
 		if(forExport){
-			hLegend = 30 * (cohortArray.length);
+			hLegend = 30 * (cohortArray.length) * scale;
 		}
 	
 		hTotal = hTotal + hLegend;
