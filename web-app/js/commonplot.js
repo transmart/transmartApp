@@ -31,7 +31,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
     	var titleTooltip;
     	if (isCTA)  {
     	    title = analysisIndex + 1;
-    	    titleTooltip = selectedAnalyses[analysisIndex].title;
+    	    titleTooltip = selectedAnalyses[analysisIndex].title.replace(/_/g, ', ');
     	}  
     	else  {    		
   		    var probeID = getActiveProbe(analysisID);
