@@ -47,7 +47,8 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	    	.attr('x2', function(d) {return x(d.id);})
 	    	.attr('y1', function(d) {return y(d.min);})
 	    	.attr('y2', function(d) {return y(d.max);})
-	    	.attr("class", "rangeLines");
+	    	.attr("class", "rangeLines")
+	    	.style("display", function (d) {if (!d.anyData) return "none"})
 	    	;
 		  
 	 	 var wMinMaxLines = wBox/2;
@@ -63,6 +64,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	    	.attr('x2', function(d) {return x(d.id) + wMinMaxLines/2;})
 	    	.attr('y1', function(d) {return y(d.min);})
 	    	.attr('y2', function(d) {return y(d.min);})
+	    	.style("display", function (d) {if (!d.anyData) return "none"})
 	    	;
 	
 	 	  // min line text for hovers
@@ -74,7 +76,8 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	 	 	.attr("dy", ".71em")
 	 	 	.attr('text-anchor', "middle")
 	 	 	.attr('class', 'hoverText')
-	 	 	.text(function(d) {return d.min.toFixed(2) })
+	 	 	.text(function(d) {return d.anyData?d.min.toFixed(2):"" })
+	    	.style("display", function (d) {if (!d.anyData) return "none"})
 		; 	  
 	 	  
 		  // draw max lines
@@ -89,6 +92,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	    	.attr('x2', function(d) {return x(d.id) + wMinMaxLines/2;})
 	    	.attr('y1', function(d) {return y(d.max);})
 	    	.attr('y2', function(d) {return y(d.max);})
+	    	.style("display", function (d) {if (!d.anyData) return "none"})
 	    	;
 	
 	 	  // max line text for hovers
@@ -99,7 +103,8 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	  	 	.attr('y', function(d) {return y(d.max) - 1 ;})
 	  	 	.attr('text-anchor', "middle")
 	  	 	.attr('class', 'hoverText')
-	  	 	.text(function(d) {return d.max.toFixed(2) })
+	  	 	.text(function(d) {return d.anyData?d.max.toFixed(2):"" })
+	    	.style("display", function (d) {if (!d.anyData) return "none"})
 	 	 ; 	  
 	
 	  	 // draw boxes (draw after the range lines have been drawn so that range line is behind box
@@ -113,6 +118,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 		    .attr('x',  function(d){return (x(d.id) -  wBox/2);  } )	    
 		    .attr('y', function(d){return y(d.uq)})   // start at upper
 		    .style('fill', function (d) {return cohortBGColors[d.cohortDisplayStyle]})
+	    	.style("display", function (d) {if (!d.anyData) return "none"})
 		    ;	 	 
 		 
 	      // draw median lines
@@ -127,6 +133,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	        .attr('x2', function(d) {return x(d.id) + wBox/2;})
 	        .attr('y1', function(d) {return y(d.median);})
 	        .attr('y2', function(d) {return y(d.median);})
+	    	.style("display", function (d) {if (!d.anyData) return "none"})
 	   	;
 	
 		  // max line text for hovers
@@ -138,7 +145,8 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	 	 	.attr('text-anchor', "start")
 	 	 	.attr('dy', '.35em')
 	 	 	.attr('class', 'hoverText')
-	 	 	.text(function(d) {return d.median.toFixed(2) })
+	 	 	.text(function(d) {return d.anyData?d.median.toFixed(2):"" })
+	    	.style("display", function (d) {if (!d.anyData) return "none"})
 		 ; 	  
 		 
 	 	 
@@ -150,7 +158,8 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	 	 	.attr('y', function(d) {return y(d.uq);})
 	 	 	.attr('text-anchor', "end")
 	 	 	.attr('class', 'hoverText')
-	 	 	.text(function(d) {return d.uq.toFixed(2) })
+	 	 	.text(function(d) {return d.anyData?d.uq.toFixed(2):"" })
+	    	.style("display", function (d) {if (!d.anyData) return "none"})
 		 ; 	  
 	
 		 // lower quartile text for hovers
@@ -162,7 +171,8 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	 	 	.attr('text-anchor', "end")
 	 	 	.attr('dy', '.71em')
 	 	 	.attr('class', 'hoverText')
-	 	 	.text(function(d) {return d.lq.toFixed(2) })
+	 	 	.text(function(d) {return d.anyData?d.lq.toFixed(2):"" })
+	    	.style("display", function (d) {if (!d.anyData) return "none"})
 		 ; 	  
 	 	  	
 		 applyPlotStyles(chartObject.svg);

@@ -91,18 +91,39 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 			
 			
 			// Map the all four quartiles to the key (e.g. C1)  
-			if (isBoxplot)  {			
-				statObject.min = data[getRank(5, data.length)-1],
-				statObject.max = data[getRank(95, data.length)-1],			
-				statObject.median = data[getRank(50, data.length)-1],
-				statObject.lq = data[getRank(25, data.length)-1],
-				statObject.uq = data[getRank(75, data.length)-1]
+			if (isBoxplot)  {	
+				if (data)  {
+					statObject.anyData = true,
+					statObject.min = data[getRank(5, data.length)-1],
+					statObject.max = data[getRank(95, data.length)-1],			
+					statObject.median = data[getRank(50, data.length)-1],
+					statObject.lq = data[getRank(25, data.length)-1],
+					statObject.uq = data[getRank(75, data.length)-1]					
+				}
+				else  {					
+					statObject.anyData = false,
+					statObject.min = 0,
+					statObject.max = 0,			
+					statObject.median = 0,
+					statObject.lq = 0,
+					statObject.uq = 0					
+				}
 			}
 			else  {
-				statObject.mean = data['mean'];
-				statObject.stdError = data['stdError'];
-				statObject.min = statObject.mean - statObject.stdError;
-				statObject.max = statObject.mean + statObject.stdError;
+				if (data)  {
+					statObject.anyData = true,
+					statObject.mean = data['mean'];
+					statObject.stdError = data['stdError'];
+					statObject.min = statObject.mean - statObject.stdError;
+					statObject.max = statObject.mean + statObject.stdError;
+				}
+				else {
+					statObject.anyData = false,
+					statObject.mean = 0;
+					statObject.stdError = 0;
+					statObject.min = 0;
+					statObject.max = 0;					
+				}
 	
 				var meanFormatted = parseFloat(statObject.mean);
 				statObject.meanFormatted = meanFormatted.toFixed(4);
