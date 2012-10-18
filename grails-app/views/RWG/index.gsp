@@ -82,6 +82,7 @@
 			var getAnalysisDataURL = "${createLink([controller:'search',action:'getAnalysisResults'])}";
 			var getQQPlotURL = "${createLink([controller:'search',action:'getQQPlotImage'])}";
 
+			var webStartURL = "${createLink([controller:'search',action:'webStartPlotter'])}";
 	       	
 	        var mouse_inside_options_div = false;
 
@@ -168,7 +169,7 @@
 				 -->
 				<div class='toolbar-item' onclick='collapseAllStudies();'>Collapse All Studies</div>
 				<div class='toolbar-item' onclick='expandAllStudies();'>Expand All Studies</div>
-				<div class='toolbar-item' onclick='alert("Functionality not yet implemented.");'>Manhattan Plot</div>
+				<div class='toolbar-item' onclick='startPlotter();'>Manhattan Plot</div>
 				<div class='toolbar-item' onclick="jQuery('.analysesopen .analysischeckbox').attr('checked', 'checked'); updateSelectedAnalyses();">Select All Visible Analyses</div>
 				<div class='toolbar-item' onclick="jQuery('.analysesopen .analysischeckbox').removeAttr('checked'); updateSelectedAnalyses();">Unselect All Visible Analyses</div>
 	  			<%-- <div id="searchResultOptions_holder">

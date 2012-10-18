@@ -3201,6 +3201,21 @@ function updateSelectedAnalyses() {
 	}
 }
 
+function startPlotter() {
+	var selectedboxes = jQuery(".analysischeckbox:checked");
+	if (selectedboxes.length == 0) {
+		alert("No analyses are selected! Please select analyses to plot.");
+	}
+	else {
+		var analysisIds = "";
+		analysisIds += jQuery(selectedboxes[0]).attr('name');
+		for (var i = 1; i < selectedboxes.length; i++) {
+			analysisIds += "," + jQuery(selectedboxes[i]).attr('name');
+		}
+		window.location = webStartURL + "?analysisIds=" + analysisIds;
+	}
+}
+
 //Globally prevent AJAX from being cached (mostly by IE)
 jQuery.ajaxSetup({
 	cache: false

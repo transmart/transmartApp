@@ -578,10 +578,22 @@ public class SearchController{
 
 	//}
 
-	def testWS =	{
+	def webStartPlotter = {
+		
+		def codebase = grailsApplication.config.com.recomdata.rwg.webstart.codebase
+		def href = grailsApplication.config.com.recomdata.rwg.webstart.href
+		def jar = grailsApplication.config.com.recomdata.rwg.webstart.jar
+		def mainClass = grailsApplication.config.com.recomdata.rwg.webstart.mainClass
+		def analysisIds = params.analysisIds
+		def regions = getSearchRegions(session['solrSearchFilter'])
+		def regionStrings = []
+		for (region in regions) {
+			regionStrings += region.low + "," + region.high + "," + region.chromosome
+		}
+		
 		def responseText = """\
 			<?xml version="1.0" encoding="UTF-8"?>
-			<jnlp spec="6.0+" codebase="http://localhost:8080/transmartApp" href="search/testWS;jsessionid=""" + session.getId() + """">
+			<jnlp spec="6.0+" codebase="${codebase}" href="search/webStartPlotter;jsessionid=""" + session.getId() + """">
 			    <information>
 			        <title>Testing Java WS</title>
 			        <vendor>Recombinant</vendor>
@@ -591,10 +603,15 @@ public class SearchController{
 			        <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
                     <property name="jsessionid" value='""" + session.getId() + """'/>
                     <property name="serviceHost" value='""" + request.getServerName() + """'/>
-			        <jar href="TestWS.jar;jsessionid=""" + session.getId() + """" main="true" />
+			        <jar href="${jar};jsessionid=""" + session.getId() + """" main="true" />
 			    </resources>
-			    <application-desc name="Test WS" main-class="testingws.TestingWSApp" width="300" height="300">
-<argument>show</argument>
+					    <application-desc name="Test WS" main-class="${mainClass}" width="300" height="300">
+					"""
+
+					responseText += '<argument>' + analysisIds + '</argument>\n'
+					if(regionStrings) { responseText += '<argument>' + regionStrings.join(";") + '</argument>\n' }
+		responseText +=	"""
+
 						</application-desc>
 			    <update check="background"/>
 			</jnlp>                             
@@ -718,7 +735,7 @@ public class SearchController{
 		def maxToUse = filter.max
 		def offsetToUse = filter.offset
 		if (export) {
-			maxToUse = 1000000
+			maxToUse = 10000000
 			offsetToUse = 0
 		}
 		
@@ -799,7 +816,7 @@ public class SearchController{
 		def maxToUse = filter.max
 		def offsetToUse = filter.offset
 		if (export) {
-			maxToUse = 1000000
+			maxToUse = 10000000
 			offsetToUse = 0
 		}
 		
@@ -911,7 +928,7 @@ public class SearchController{
 				for (geneString in geneIds) {
 					def geneId = geneString as long
 					def limits = regionSearchService.getGeneLimits(geneId)
-					regions.push([gene: geneId, chromosome: null, low: limits.get('low'), high: limits.get('high'), ver: "19"])
+					regions.push([gene: geneId, chromosome: limits.get('chrom'), low: limits.get('low'), high: limits.get('high'), ver: "19"])
 				}
 			}
 		}
@@ -921,7 +938,7 @@ public class SearchController{
 	
 	def getRegionSearchResults(Long max, Long offset, Double cutoff, String sortField, String order, String search, List analysisIds) throws Exception {
 	
-		//Get list of REGION restrictions from session and translate to RS#
+		//Get list of REGION restrictions from session and translate to regions
 		def regions = getSearchRegions(session['solrSearchFilter'])
 		
 		//Find out if we're querying for EQTL, GWAS, or both
@@ -1058,14 +1075,18 @@ public class SearchController{
 		def returnedAnalysisData = []
 		def returnJSON = [:]
 		
+		//Get list of REGION restrictions from session and translate to regions
+		def regions = getSearchRegions(session['solrSearchFilter'])
+		def analysisIds = [currentAnalysis.id]
+		
 		switch(currentAnalysis.assayDataType)
 		{
 			case "GWAS" :
-				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId))
+				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 10000000, 0, 0, "rsid", "asc", "", "gwas").results
 				analysisIndexData = searchDAO.getGwasIndexData()
 				break;
 			case "EQTL" :
-				analysisData = searchDAO.getGwasData(Long.valueOf(params.analysisId))
+				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 10000000, 0, 0, "rsid", "asc", "", "eqtl").results
 				analysisIndexData = searchDAO.getEqtlIndexData()
 				break;
 			default :
@@ -1095,7 +1116,7 @@ public class SearchController{
 			def indexCount = 0;
 			
 			//The third element is our large text field. Split it into an array.
-			def largeTextField = it[3].split(";")
+			def largeTextField = it[3].split(";", -1)
 			
 			//This will be the array that is reordered according to the meta-data index table.
 			String[] newLargeTextField = new String[indexMap.size()]
@@ -1123,6 +1144,9 @@ public class SearchController{
 		}
 		
 		println "QQPlot row count = " + returnedAnalysisData.size()
+		for (int i = 0; i < returnedAnalysisData.size() && i < 10; i++) {
+			println returnedAnalysisData[i]
+		}
 		
 		//Get a unique key for the image file.
 		def uniqueId = randomUUID() as String
