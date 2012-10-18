@@ -196,7 +196,9 @@ class RWGVisualizationDAO {
 	  
 	  StringBuilder s = new StringBuilder()
 	  s.append("""
-		 Select Bio_Assay_Analysis_Id, cohort_id, log_intensity, assay_id, min(gene_id) as gene_id
+     Select a.Bio_Assay_Analysis_Id, a.cohort_id, a.assay_id, a.gene_id, avg(a.log_intensity) log_intensity from (
+ 
+		 Select Bio_Assay_Analysis_Id, probe_id, cohort_id, log_intensity, assay_id, min(gene_id) as gene_id
 		 From heat_map_results
 	  """)
 
@@ -215,7 +217,11 @@ class RWGVisualizationDAO {
 	  }
 		  	  
 	  s.append("""
-		   group by Bio_Assay_Analysis_Id, cohort_id, log_intensity, assay_id order by Bio_Assay_Analysis_Id, cohort_id, log_intensity
+		   group by Bio_Assay_Analysis_Id, probe_id, cohort_id, log_intensity, assay_id 
+	  		order by Bio_Assay_Analysis_Id, probe_id, cohort_id, log_intensity
+           )  a
+	  group by a.Bio_Assay_Analysis_Id, a.cohort_id,  a.assay_id, a.gene_id 
+	  order by a.Bio_Assay_Analysis_Id, a.cohort_id, avg(a.log_intensity)
 	  """)
 	  log.info("${s}")
 	  log.info("${sqlParams}")
