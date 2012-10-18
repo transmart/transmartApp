@@ -185,14 +185,12 @@ class RWGVisualizationDAO {
    *
    * @return a map of cohort as key and a map containing cohort desc, cohort display order, and data necessary for the graph
    **/
-  def getBoxplotOrLineplotData(analysisIds, probe_name=null, boxplot=true, gene_id=null)  {
+  def getBoxplotOrLineplotData(analysisIds, probe_name, boxplot, gene_id)  {
 	  groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-	  
-  	  if (analysisIds.class.name.toLowerCase() != "list")  {
+  	  if (analysisIds.class.name.toLowerCase() == "java.lang.string")  {
 		 // need a list for  iterating through
 	     analysisIds = [analysisIds]
 	  }
-
 	  List sqlParams = []
 	  
 	  StringBuilder s = new StringBuilder()
@@ -218,7 +216,6 @@ class RWGVisualizationDAO {
 	  s.append("""
 		   group by Bio_Assay_Analysis_Id, cohort_id, log_intensity, assay_id order by Bio_Assay_Analysis_Id, cohort_id, log_intensity
 	  """)
-	  
 	  log.info("${s}")
 	  log.info("${sqlParams}")
 	  def cohortDataMap = [:]
@@ -310,13 +307,25 @@ class RWGVisualizationDAO {
 	 * @param probe_name - bio_assay_feature_group name for the probe
 	 * @param analysisID - the analysis ID
 	 *
-	 * @return a map of cohort as key and an array of log2 intensity values and cohort information
+	 * @return a map of analysis containing a map of  cohort ids as key and an array of log2 intensity values and cohort information
 	 **/
 	def getBoxplotData(analysisId, probe_name)  {
-		return getBoxplotOrLineplotData(analysisId, probe_name, true)
+		return getBoxplotOrLineplotData(analysisId, probe_name, true, null)
 	}
 
 	/**
+	 * Method to retrieve the log2 intensity values and cohort information for a list of analyses and gene_id
+	 *
+	 * @param gene_id - id for the gene
+	 * @param analysisID - the analysis ID
+	 *
+	 * @return a map of analysis containing a map of  cohort ids as key and an array of log2 intensity values and cohort information
+	 **/
+	def getBoxplotDataCTA(analysisId, gene_id)  {
+		return getBoxplotOrLineplotData(analysisId, null, true, gene_id)
+	}
+
+		/**
 	* Calculate the statistics needed for a cohort on the line plot and create a map 
 	*
 	* @param intensityArray - list of intensity values for a cohort
@@ -344,7 +353,7 @@ class RWGVisualizationDAO {
 	* @return a map with cohort id as key, containing data map with mean log2 intensity and standard error, cohort desc, and cohort display order
 	**/
    def getLineplotData(analysisId, probe_name)  {
-	   return getBoxplotOrLineplotData(analysisId, probe_name, false)
+	   return getBoxplotOrLineplotData(analysisId, probe_name, false, null)
 	   
    }
    			
@@ -1373,14 +1382,15 @@ class RWGVisualizationDAO {
 	String s ="""
 
 		select distinct bio_assay_analysis_id, bio_marker_id, bio_marker_name, 
-		probe_id, fold_change_ratio, tea_normalized_pvalue, preferred_pvalue
+		avg(fold_change_ratio) fold_change_ratio, avg(tea_normalized_pvalue) tea_normalized_pvalue, avg(preferred_pvalue) preferred_pvalue
 		from BIOMART.heat_map_results
 		where bio_marker_id in (select distinct bmv.asso_bio_marker_id
 		from BIOMART.bio_marker_correl_mv bmv
 		where bmv.bio_marker_id = (select sk.bio_data_id
 		from searchapp.search_keyword sk
 		where sk.search_keyword_id = ${search_keyword}))
-		and bio_assay_analysis_id in (${analysisList})"""
+		and bio_assay_analysis_id in (${analysisList})
+		group by bio_assay_analysis_id, bio_marker_id, bio_marker_name"""
 	   
 	   log.debug("${s}")
    
@@ -1393,7 +1403,6 @@ class RWGVisualizationDAO {
 			   result.put('bio_marker_id', row.bio_marker_id)
 			   result.put('bio_marker_name', row.bio_marker_name)
 			   
-			   result.put('probe_id', row.probe_id)
 			   result.put('fold_change_ratio', row.fold_change_ratio)
 			   result.put('tea_normalized_pvalue', row.tea_normalized_pvalue)
 			   result.put('preferred_pvalue', row.preferred_pvalue)
