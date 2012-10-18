@@ -40,7 +40,7 @@ class BootStrap {
 		securityContextPersistenceFilter.forceEagerSessionCreation = true
 		
 		SpringSecurityUtils.clientRegisterFilter('concurrentSessionFilter', SecurityFilterPosition.CONCURRENT_SESSION_FILTER)
-	//	SpringSecurityUtils.clientRegisterFilter('identityVaultAuthenticationFilter', SecurityFilterPosition.PRE_AUTH_FILTER.order + 10)
+		SpringSecurityUtils.clientRegisterFilter('identityVaultAuthenticationFilter', SecurityFilterPosition.PRE_AUTH_FILTER.order + 10)
     }
     def destroy = {
     }
