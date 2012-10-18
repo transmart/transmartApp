@@ -1,3 +1,6 @@
+/**
+ * Entry function into the manipulate view scripts.
+ */
 var visualize = function(geneLists, action){
 	
 	var resultArray
@@ -9,6 +12,9 @@ var visualize = function(geneLists, action){
 		resultArray = operate(sets, action);
 		//-------Set operations done 
 		
+		//Set the result as default value in the results text box.
+		populateResults(resultArray.toString());
+		
 		//------Visualize the incoming lists.
 		mapSetIndexToGeneListId(geneLists);
 		//Global variable: Calculate which genes are in the 7 possible regions on the venn diagram.
@@ -17,8 +23,8 @@ var visualize = function(geneLists, action){
 		initializeColorMapping();
 		//-------Set Visualization done
 		
-		//Set the result as default value in the results text box and render the venn diagram.
-		setResults(resultArray.toString(), true);
+		//Render the venn diagram.
+		draw();
 	});
 }
 
@@ -51,9 +57,8 @@ function calculateRegionMembers(sets){
 	region['3']=calculateOuterRegionsMembers(sets, 3, 1, 2);
 	
 	//Region 123
-	var innerRegionArray = operate(sets, "intersection")
-	region['123']=innerRegionArray;
-	var innerRegionSet = new JS.Set(innerRegionArray);
+	region['123']=calculateInnerRegionMembers(sets);
+	var innerRegionSet = new JS.Set(region['123']);
 	
 	//Region 12
 	region['12']=calculateMiddleRegionsMembers(sets, 1, 2, innerRegionSet);
@@ -69,6 +74,10 @@ function calculateRegionMembers(sets){
 
 function calculateOuterRegionsMembers(sets, primaryIdx, firstSubIdx, secondSubIdx){
 	var primarySet = sets[setIndex[primaryIdx]];
+	//Return a blank array if the primary set is undefined .Happens when we are dealing with just 2 sets.
+	if(!primarySet){
+		return [];
+	}
 	var firstSubSet = sets[setIndex[firstSubIdx]];
 	var secondSubSet = sets[setIndex[secondSubIdx]];
 	
@@ -103,6 +112,11 @@ function calculateMiddleRegionsMembers(sets, firstSetIdx, secondSetIdx, innerSet
 	var firstSet = sets[setIndex[firstSetIdx]];
 	var secondSet = sets[setIndex[secondSetIdx]];
 	
+	//Return a blank array when either of the sets are undefined. Happens when we are dealing with just 2 sets.
+	if(!firstSet||!secondSet){
+		return [];
+	}
+	
 	//Intersect first and second set
 	var subset = new Object();
 	subset[setIndex[firstSetIdx]]=firstSet;
@@ -110,12 +124,17 @@ function calculateMiddleRegionsMembers(sets, firstSetIdx, secondSetIdx, innerSet
 	var aSet = operate(subset, "intersection");
 	aSet = new JS.Set(aSet);
 	
-	//Remove intersection of all three sets from the above intersection
 	var cSet = aSet.difference(innerSet);
 	return cSet.toArray();
 }
 
-
+function calculateInnerRegionMembers(sets){
+	if(setIndex[3]){
+		return operate(sets, "intersection");
+	}else{
+		return [];
+	}
+}
 
 
 /**
@@ -135,6 +154,7 @@ function processGeneLists(geneLists){
 
 /**
  * Reads in an object with all sets and performs the specified action
+ * No limit on number of elements in a set.
  * @param sets
  * @param action
  */
@@ -170,8 +190,14 @@ function operate(sets, action){
 }
 
 //**********Visualization Venn Diagram Rendering functions**********
-
+/**
+ * Initialize the global array that will hold a list of active region ids
+ * Draw the venn diagram.
+ */
 function draw(){
+	//Initialize the global array that will hold a list of active region ids
+	activeRegionIds = new Array();
+	
 	//Clear out div before drawing SVG again.
 	jQuery('#svg').empty();
 	
@@ -335,7 +361,7 @@ function mouseclick(d, i){
 	}
 	
 	//Clear out the results text area
-	setResults('', false);
+	populateResults('');
 	
 	//Recreate the selection and put it in the test area
 	var results = '';
@@ -349,7 +375,7 @@ function mouseclick(d, i){
 			}
 		}
 	}
-	setResults(results, false);
+	populateResults(results);
 	
 }
 
@@ -394,19 +420,24 @@ function mapColor(map, regionId, color){
 	return map;
 }
 
-
 //**********Visualization Form handling functions**********
 
 /**
  * Populates the results text box.
  */
-function setResults(results, initializeGlobalArray){
-	if(initializeGlobalArray){
-		//Initialize the global array that will hold a list of active region ids
-		activeRegionIds = new Array();
-		draw();
-	}
+function populateResults(results){
 	jQuery("#manipulationResults").val(results);
+}
+
+/**
+ * Handle the reset button click event on the manipulate view.
+ * Clear out the text area
+ * Clear out selections
+ * Redraw venn diagram
+ */
+function resetVisualization(){
+	populateResults('');
+	draw();
 }
 
 /**

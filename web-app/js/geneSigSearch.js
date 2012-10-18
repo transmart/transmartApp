@@ -1,5 +1,9 @@
 var geneListsTable;
 var selectedGeneLists;
+
+/**
+ * Entry function into the gene lists list view.
+ */
 function initDataTables(){
 	geneListsTable = jQuery("#mySignatures").dataTable({
 	  	 "sPaginationType": "full_numbers",
@@ -11,7 +15,7 @@ function initDataTables(){
 	
 	//Inserting the select action drop down into the datatables managed div DOM element
 	//Would be ideal if datatables could manage custom elements like dropdowns. Can it?
-	var selectActionHtml='<select id="geneListAction" style="font-size: 10px;" onchange="handleActionItem(this);" onclick="populateActionSelection(this);"><option value="">-- Select Action --</option></select>'
+	var selectActionHtml='<select id="geneListAction" style="font-size: 10px;" onchange="handleActionItem(this);" onmousedown="populateActionSelection(this);"><option value="">-- Select Action --</option></select>'
 	
 	jQuery("#mySignatures_filter").prepend(selectActionHtml)
 }
@@ -98,7 +102,7 @@ function loadManipulateView(geneLists, action){
  * If multiple gene lists are selected
  * 		Add gene lists manipulation options 
  */
-function populateActionSelection(){
+function populateActionSelection(dropdown){
 	selectedGeneLists = geneListsTable.$('.geneList:checked');
 	
 	//grab the action dropdown list.
