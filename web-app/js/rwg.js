@@ -116,11 +116,12 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 	
 	// If data attribute is undefined then this is the first time opening the div, load the analysis... 
 	if (typeof jQuery(trialDetail).attr('data') == 'undefined')	{		
-		var src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'up_arrow_small2.png');	
+		var src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'ajax-loader-flat.gif');	
 		jQuery(imgExpand).attr('src',src);
 		jQuery.ajax({	
 			url:dataURL,			
 			success: function(response) {
+				jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'up_arrow_small2.png'));
 				jQuery(trialDetail).addClass("gtb1");
 				jQuery(trialDetail).html(response);
 				jQuery(trialDetail).addClass("analysesopen");

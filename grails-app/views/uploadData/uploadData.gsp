@@ -198,6 +198,8 @@
 							<g:else>
 								<i>This data set is ${uploadDataInstance.status} - the file cannot be changed.</i>
 							</g:else>
+							<br/>
+							<i>Upload should be a tab-delimited plain text file</i>
 						</td>
 					</tr>
 					<%-- Disabled instant check

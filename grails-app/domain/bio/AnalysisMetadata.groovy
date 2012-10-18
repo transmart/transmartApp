@@ -76,7 +76,7 @@ class AnalysisMetadata {
 	
 	static constraints = {
 		dataType(nullable:true)
-		analysisName(maxSize:50)
+		analysisName(unique: true, maxSize:50)
 		description(nullable:true, maxSize:4000)
 		phenotypeIds(nullable:true)
 		population(nullable:true)

@@ -23,8 +23,8 @@
 			<!-- menu links -->
 			<table class="menuDetail" style="width: auto;">
 		    	<tr>
-	   				<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
-		   			<g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>
+	   				<%--<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
+		   			<g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>--%>
 
 			       	<g:if test="${'rwg'==app}"><th class="menuVisited">Faceted Search</th></g:if>
 	       			<g:else><th class="menuLink"><g:link controller="RWG">Faceted Search</g:link></th></g:else>

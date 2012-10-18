@@ -80,7 +80,7 @@ class UploadDataController {
 			return
 		}
 		
-		def filename = type + "-template.csv"
+		def filename = type + "-template.txt"
 		def templateFile = new File(templatesDir + "/" + filename)
 		def template = templateFile.getBytes()
 		response.setContentType("text/plain")
@@ -198,6 +198,7 @@ class UploadDataController {
 		}
 		else {
 			flash.message = "The metadata could not be saved - please correct the highlighted errors."
+			def errors = upload.errors
 			def model = [uploadDataInstance: upload]
 			addFieldData(model, upload)
 			render(view: "uploadData", model: model)

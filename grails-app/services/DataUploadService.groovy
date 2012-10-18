@@ -54,7 +54,7 @@ public class DataUploadService{
 	}
 	
 	def writeFile(location, file, upload) throws Exception {
-		CSVReader csvRead = new CSVReader(new InputStreamReader(file.getInputStream()));
+		CSVReader csvRead = new CSVReader(new InputStreamReader(file.getInputStream()), '\t'.charAt(0), CSVWriter.NO_QUOTE_CHARACTER);
 		String[] header = csvRead.readNext();
 		
 		//Verify fields and return immediately if we don't have a required one
