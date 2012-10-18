@@ -2902,7 +2902,10 @@ function addXTSearchAutoComplete()	{
 			//will display different results depending on what was selected
 						
 			getCrossTrialBioMarkerSummary(ui.item.id);
-				
+
+			var keywordId = ui.item.id;
+			loadBoxPlotCTA(keywordId);
+			
 			return false;
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
@@ -2924,11 +2927,9 @@ function drawPieChart(divid, data)
 }
 
 
-//Load the box plot data for cross trial analysis
-function loadBoxPlotCTA(gene_id)	{	
+//Load the box plot data for cross trial analysis (the keywordId must represent a gene)
+function loadBoxPlotCTA(keywordId)	{	
 	
-	gene_id = "3576";  // hardcode for now
-		
 	var ids = "";
 	// retrieve list of selected analyses, create a pipe delimited list of analysis ids
 	for (var i=0; i<selectedAnalyses.length; i++)
@@ -2941,11 +2942,11 @@ function loadBoxPlotCTA(gene_id)	{
 	
 	rwgAJAXManager.add({
 		url:getBoxPlotDataCTAURL,
-		data: {ids: ids, geneID: gene_id},
+		data: {ids: ids, keywordId: keywordId},
 		timeout:60000,
 		success: function(response) {
 			
-			drawBoxPlotD3('xtBoxplot', response, null, false, true, selectedAnalyses );
+			drawBoxPlotD3('xtBoxplot', response, null, false, true, selectedAnalyses);
 			
 		},
 		error: function(xhr) {

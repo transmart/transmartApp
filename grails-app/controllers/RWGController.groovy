@@ -890,15 +890,8 @@ class RWGController {
    def getBoxPlotDataCTA = {	   
 	   def rwgDAO = new RWGVisualizationDAO()
 	 
-	   def m = rwgDAO.getBoxplotDataCTA(params.ids.split(/\|/), params.geneID)
+	   def m = rwgDAO.getBoxplotDataCTA(params.ids.split(/\|/), params.keywordId)
 
-/*	   	   def returnMap = [:]  
-	   params.ids.split(/\|/).each {		   
-		   println it
-		   def data  = rwgDAO.getBoxplotData(it, params.geneID)
-		   returnMap.put(it, data)
-	   }*/
-	   println m
 	   render m as JSON
    }
 

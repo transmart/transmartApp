@@ -1,3 +1,14 @@
+// fimd the index of the analysis with the given key
+function getAnalysisIndex(selectedAnalyses, analysisKey)  {
+	for (var i=0; i<selectedAnalyses.length; i++)  {
+		if (selectedAnalyses[i].id == analysisKey)  {
+			return i;
+		}
+	}
+	
+	return false;
+}
+
 // create an object containing all the data needed for drawing a box or line plot and do some configuration (e.g. clear the div, set the range text boxes)
 function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isCTA, selectedAnalyses) {
 
@@ -5,14 +16,22 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 			
 	var allPlotData = {};  // contains a structure for each analysis
 	var analysisIndex = 0;
+
+	var orderedAnalysisKeys = new Array;
+	
     for (var analysisKey in allJsonData)  {
     	
-    	analysisIndex++;
+    	if (isCTA)  {
+    		analysisIndex =  getAnalysisIndex(selectedAnalyses, analysisKey);	
+    	}
+    	
+    	orderedAnalysisKeys[analysisIndex] = analysisKey;
+    	
     	var title;
     	var titleTooltip;
     	if (isCTA)  {
-    	    title = analysisIndex;
-    	    titleTooltip = selectedAnalyses[analysisIndex - 1].title;
+    	    title = analysisIndex + 1;
+    	    titleTooltip = selectedAnalyses[analysisIndex].title;
     	}  
     	else  {    		
   		    var probeID = getActiveProbe(analysisID);
@@ -37,7 +56,20 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 				cohortArray[arrayIndex] = key;
 				cohortDesc[arrayIndex] = jsonData[key]['desc'];
 				cohortDisplayStyles[arrayIndex] = jsonData[key]['order'] % cohortBGColors.length;
-				cohortLabels[arrayIndex] = key + "(n=" +  jsonData[key]['sampleCount'] + ")"
+				
+				var lbl;
+				if (isCTA)  {  // cohort labels for CTA are 1A, 1B, ..., 1n, 2A,...2n, ...)
+					var charCodeA = "A".charCodeAt(0);
+					lbl = title + String.fromCharCode(charCodeA + arrayIndex);
+				}
+				else  {
+					lbl = key;
+				}
+					
+				
+				cohortLabels[arrayIndex] = lbl + "(n=" +  jsonData[key]['sampleCount'] + ")";
+				
+				
 			}
 		}
 	
@@ -59,18 +91,39 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 			
 			
 			// Map the all four quartiles to the key (e.g. C1)  
-			if (isBoxplot)  {			
-				statObject.min = data[getRank(5, data.length)-1],
-				statObject.max = data[getRank(95, data.length)-1],			
-				statObject.median = data[getRank(50, data.length)-1],
-				statObject.lq = data[getRank(25, data.length)-1],
-				statObject.uq = data[getRank(75, data.length)-1]
+			if (isBoxplot)  {	
+				if (data)  {
+					statObject.anyData = true,
+					statObject.min = data[getRank(5, data.length)-1],
+					statObject.max = data[getRank(95, data.length)-1],			
+					statObject.median = data[getRank(50, data.length)-1],
+					statObject.lq = data[getRank(25, data.length)-1],
+					statObject.uq = data[getRank(75, data.length)-1]					
+				}
+				else  {					
+					statObject.anyData = false,
+					statObject.min = 0,
+					statObject.max = 0,			
+					statObject.median = 0,
+					statObject.lq = 0,
+					statObject.uq = 0					
+				}
 			}
 			else  {
-				statObject.mean = data['mean'];
-				statObject.stdError = data['stdError'];
-				statObject.min = statObject.mean - statObject.stdError;
-				statObject.max = statObject.mean + statObject.stdError;
+				if (data)  {
+					statObject.anyData = true,
+					statObject.mean = data['mean'];
+					statObject.stdError = data['stdError'];
+					statObject.min = statObject.mean - statObject.stdError;
+					statObject.max = statObject.mean + statObject.stdError;
+				}
+				else {
+					statObject.anyData = false,
+					statObject.mean = 0;
+					statObject.stdError = 0;
+					statObject.min = 0;
+					statObject.max = 0;					
+				}
 	
 				var meanFormatted = parseFloat(statObject.mean);
 				statObject.meanFormatted = meanFormatted.toFixed(4);
@@ -122,13 +175,15 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 			}
 			
 		}
-				
-		var margin = 55;
-	
-		var wChart = cohortArray.length * 140;//generate the width dynamically using the cohort count	
-		var hChart = 350;
+
+		var scale = isCTA ? 0.75 : 1.0;
 		
-		var hTitle = 40;
+		var margin = 55 * scale;
+	
+		var wChart = cohortArray.length * 140 * scale;//generate the width dynamically using the cohort count	
+		var hChart = 350 * scale;
+		
+		var hTitle = 40 * scale;
 	
 		var wTotal = wChart + margin;
 		var hTotal = hChart + hTitle; 
@@ -136,13 +191,13 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 		// if exporting, draw a legend; if not exporting legend is drawn outside of svg
 		var hLegend = 0;
 		if(forExport){
-			hLegend = 30 * (cohortArray.length);
+			hLegend = 30 * (cohortArray.length) * scale;
 		}
 	
 		hTotal = hTotal + hLegend;
 		
 		var numCohorts = cohortArray.length;
-		
+
 		var dataObject = {
 				cohortArray:cohortArray, cohortLabels:cohortLabels, cohortDesc:cohortDesc, cohortDisplayStyles:cohortDisplayStyles,
 				gene_id: gene_id, cohortDescExport:cohortDescExport, statMapping:statMapping,
@@ -152,7 +207,9 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 		
  	    allPlotData[analysisKey] = dataObject;		  
     }
-	
+
+    allPlotData.orderedAnalysisKeys = orderedAnalysisKeys;
+    
 	return allPlotData;
 
 }
@@ -163,7 +220,10 @@ function drawEmptyPlots(allPlotData, forExport, divId, isCTA)  {
 	var wTotal = 0;
 	var hTotal = 0;
 	// determine the starting coordinates for each plot, and figure out the total height and width for drawing them all on a single SVG
-	for (var key in allPlotData)  {
+	for (var i=0; i<allPlotData.orderedAnalysisKeys.length; i++)  {
+		
+		var key = allPlotData.orderedAnalysisKeys[i];
+		
 		allPlotData[key].xOffset = wTotal;
 		allPlotData[key].yOffset = 0;
 		
@@ -179,8 +239,10 @@ function drawEmptyPlots(allPlotData, forExport, divId, isCTA)  {
 		.attr("width", wTotal)
 		.attr("height", hTotal);
 
-	// draw each empty plot (and save the return value to the data structure
-	for (var key in allPlotData)  {
+	// draw each empty plot (and save the return value to the data structure)
+	for (var i=0; i<allPlotData.orderedAnalysisKeys.length; i++)  {		
+		var key = allPlotData.orderedAnalysisKeys[i];
+		
 		var ep = drawEmptyPlot(root, allPlotData[key], forExport, isCTA);
 		
 		allPlotData[key].emptyPlotData = ep;

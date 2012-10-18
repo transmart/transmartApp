@@ -123,7 +123,7 @@
 		        </div>
 		        --%>
 		        <div style="text-align: right; float:left;">
-		        	<g:submitButton class="edit" onClick="setResults('', true);" value="Reset" name="Reset"/>
+		        	<g:submitButton class="edit" onClick="resetVisualization()" value="Reset" name="Reset"/>
 		        </div>
 		        <br>
 		        <g:form name="newList">

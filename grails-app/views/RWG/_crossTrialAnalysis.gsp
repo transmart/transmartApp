@@ -23,7 +23,7 @@
 		<ul id="xtMenu">
 			<li>Summary</li>
 			<li>Heatmap</li>
-			<li><a href="#" onclick="javascript:loadBoxPlotCTA();">Boxplot</a></li>
+			<li><a href="#" onclick="javascript:jQuery('#xtBoxplot').show();">Boxplot</a></li>
 		</ul>
 	</div>
 	
@@ -53,7 +53,7 @@
 
 
 </div>
-<div id="xtBoxplot"><!-- Boxplot Tab Content -->
+<div id="xtBoxplot" style="display:none"><!-- Boxplot Tab Content -->
 	
 	
 	</div>

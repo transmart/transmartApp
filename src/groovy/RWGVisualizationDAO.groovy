@@ -182,10 +182,11 @@ class RWGVisualizationDAO {
    * @param analysisID - the analysis ID (or list of analysis IDs if for CTA) 
    * @param probe_name - bio_assay_feature_group name for the probe
    * @param boxplot - if true, then boxplot; else lineplot
+   * @param keywordId - keyword if for a gene (i.e. for Cross Trial Analysis)
    *
    * @return a map of cohort as key and a map containing cohort desc, cohort display order, and data necessary for the graph
    **/
-  def getBoxplotOrLineplotData(analysisIds, probe_name, boxplot, gene_id)  {
+  def getBoxplotOrLineplotData(analysisIds, probe_name, boxplot, keywordId)  {
 	  groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
   	  if (analysisIds.class.name.toLowerCase() == "java.lang.string")  {
 		 // need a list for  iterating through
@@ -208,9 +209,9 @@ class RWGVisualizationDAO {
 		  sqlParams.push(probe_name)
       }
 	  
-	  if (gene_id)  {  // Cross trial analysis
-		  s.append(" and gene_id = ? " )
-		  sqlParams.push(gene_id)
+	  if (keywordId)  {  // Cross trial analysis gene id
+		  s.append(" and search_keyword_id = ? " )
+		  sqlParams.push(keywordId)
 	  }
 		  	  
 	  s.append("""
@@ -222,7 +223,8 @@ class RWGVisualizationDAO {
 	  def cohortSampleCountMap = [:]
 	  def intensityArray = []
 	  def cohort = null
-
+      def gene_id 
+	  
 	  // execute query and save rows (since we need to do this loop through once for each analysis, we don't want to execute query each time)
 	  def results = sql.rows(s.toString(), sqlParams)
 	  def analysisMap = [:]
@@ -316,13 +318,13 @@ class RWGVisualizationDAO {
 	/**
 	 * Method to retrieve the log2 intensity values and cohort information for a list of analyses and gene_id
 	 *
-	 * @param gene_id - id for the gene
+	 * @param keywordId - keyword id for the gene
 	 * @param analysisID - the analysis ID
 	 *
 	 * @return a map of analysis containing a map of  cohort ids as key and an array of log2 intensity values and cohort information
 	 **/
-	def getBoxplotDataCTA(analysisId, gene_id)  {
-		return getBoxplotOrLineplotData(analysisId, null, true, gene_id)
+	def getBoxplotDataCTA(analysisId, keywordId)  {
+		return getBoxplotOrLineplotData(analysisId, null, true, keywordId)
 	}
 
 		/**
