@@ -2799,7 +2799,7 @@ function createCrossTrialSummaryChart(data){
         width = (data.length * 50)- margin.left - margin.right,
         height = 150- margin.top - margin.bottom;
 
-    var y0 = Math.max(-d3.min(data), d3.max(data));
+    var y0 = Math.max(Math.max(-d3.min(data), d3.max(data)),1.5);
 
     var y = d3.scale.linear()
         .domain([-y0, y0])
@@ -2825,13 +2825,23 @@ function createCrossTrialSummaryChart(data){
         .data(data)
       .enter().append("rect")
         .attr("class", function(d) { return d < 0 ? "bar negative" : "bar positive"; })
-        
         .attr("x", function(d,i) { return x(i); })
         .attr("y", function(d,i) { console.log('d='+d+' | y(d)='+y(d)); return y(Math.max(0, d)); })
         .attr("height", function(d) { return Math.abs(y(0) - y(0-d)); })
-        
         .attr("width", x.rangeBand());
 
+   //add the data labels (IDs) for each analysis bar 
+    svg.selectAll("text")
+	    .data(data)
+	    .enter()
+	    .append("text")
+	    .text(function(d,i) {return i;})
+	    .attr("x", function(d,i) { return x(i)+10; })
+	    .attr("y", function(d) { return d < 0 ? height/2-5 : height/2+10; })
+	    .attr("font-family", "sans-serif")
+	    .attr("font-size", "10px")
+	    .attr("fill", "black");
+	    
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
