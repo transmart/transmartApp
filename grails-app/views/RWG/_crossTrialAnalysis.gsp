@@ -9,6 +9,8 @@
 
     //	displaySelectedAnalysisTopGenes();
     	addXTSearchAutoComplete();
+
+
 		
 	});
 </script>
@@ -24,16 +26,23 @@
 			<li><a href="#" onclick="javascript:loadBoxPlotCTA();">Boxplot</a></li>
 		</ul>
 	</div>
-	<div id="xtSummary"><!-- Summary Tab Content -->
-			
-	<h2>Selected Analyses</h2>
 	
-	<div id="xtSummary_AnalysesList"></div>
-	
+		
 	<div id ="xtSearch">
 		<input id="xtSearch-ac"/></input> 
 	</div>
 	
+	
+	<div id="xtSummary"><!-- Summary Tab Content -->
+	
+	<div id="xtSummaryChart"></div>
+			
+	<h2>Selected Analyses</h2>
+	
+	
+	
+	<div id="xtSummary_AnalysesList"></div>
+
 	<div id="xtTopGenes"></div>
 	
 	<div id="xtBioMarkerSummary"></div>
