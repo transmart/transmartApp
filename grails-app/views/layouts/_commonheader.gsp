@@ -27,8 +27,10 @@
         <g:if test="${'datasetExplorer'==app}"><li class="active">Dataset Explorer</li></g:if>
         <g:else><li><a href="${createLink([controller:'secure'])}">Dataset Explorer</a></li></g:else>    
         
-        <g:if test="${'sampleexplorer'==app}"><li class="active">Sample Explorer</li></g:if>
-        <g:else><li><a href="${createLink([controller:'sampleExplorer'])}">Sample Explorer</a></li></g:else>
+        <g:if test="${grailsApplication.config.com.recomdata.hideSampleExplorer!='true'}">
+          <g:if test="${'sampleexplorer'==app}"><li class="active">Sample Explorer</li></g:if>
+          <g:else><li><a href="${createLink([controller:'sampleExplorer'])}">Sample Explorer</a></li></g:else>
+        </g:if>
             
         <g:if test="${'genesignature'==app}"><li class="active">Gene Signature/Lists</li></g:if>
         <g:else><li><a href="${createLink([controller:'geneSignature'])}">Gene Signature/Lists</a></li></g:else>
