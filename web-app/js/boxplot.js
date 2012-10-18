@@ -8,9 +8,11 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	  // create the plot without any lines (just title, axes, legend)
  	  drawEmptyPlots(allPlotData, forExport, divId, isCTA);
  	  
- 	  for (var key in boxPlotJSON)  { 		  
-	 	  var chartObject = allPlotData[key].emptyPlotData;
-	 	  var plotData = allPlotData[key];
+ 	  for (var i=0; i<allPlotData.orderedAnalysisKeys.length; i++)  { 			
+ 		  var analysisKey = allPlotData.orderedAnalysisKeys[i];
+ 		  
+	 	  var chartObject = allPlotData[analysisKey].emptyPlotData;
+	 	  var plotData = allPlotData[analysisKey];
 
 	 	  var chart = chartObject.chart;
 	 	  var x=chartObject.x;
