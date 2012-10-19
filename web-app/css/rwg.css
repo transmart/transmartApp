@@ -987,6 +987,18 @@ cursor:default;
 
 
 /*** Boxplot ***/
+
+.xtBarPlotGeneTitle{
+	font-size:11px;
+	font-face:sans-serif;
+	font-weight:bold;
+}
+
+.y-label{
+    
+  font: 9px sans-serif;
+}
+
 .bar.positive {
   fill: steelblue;
 }

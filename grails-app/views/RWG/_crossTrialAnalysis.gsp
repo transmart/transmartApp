@@ -10,7 +10,6 @@
     //	displaySelectedAnalysisTopGenes();
     	addXTSearchAutoComplete();
 
-
 		
 	});
 </script>
@@ -38,7 +37,6 @@
 	<div id="xtSummaryChart"></div>
 			
 	<h2>Selected Analyses</h2>
-	
 	
 	
 	<div id="xtSummary_AnalysesList"></div>

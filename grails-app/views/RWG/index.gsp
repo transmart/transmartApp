@@ -98,9 +98,6 @@
 		        addSearchAutoComplete();
 		        addToggleButton();
 
-		        jQuery("#xtButton").colorbox({opacity:.75, inline:true, width:"95%", height:"95%"});
-      
-
 		    	showSearchResults(); //reload the full search results	    
 
 		    	showIEWarningMsg();

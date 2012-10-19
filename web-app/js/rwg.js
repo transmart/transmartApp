@@ -2626,24 +2626,26 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 function openCrossTrialAnalysis()
 {
 	
+	  hideHomePage();
+      hideResultsPage();
 	  jQuery('#cross-trial-div').show();
-	
-      rwgAJAXManager.add({
-  		url:crossTrialAnalysisURL,				
-  		timeout:60000,
-  		success: function(response) {
-  		  
-  		  jQuery('#cross-trial-div').html(response);
-  		  
-  		  hideHomePage();
-  	      hideResultsPage();
-  		},
-		error: function(xhr) {
-			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
-		}
-  	});
-      
-    
+	  
+	  //check if cross trial has been loaded already
+	  if(jQuery('#cross-trial-div').html() == ""){
+
+	      rwgAJAXManager.add({
+	    		url:crossTrialAnalysisURL,				
+	    		timeout:60000,
+	    		success: function(response) {
+	    		  
+	    		  jQuery('#cross-trial-div').html(response);
+	    		  
+	    		},
+	  		error: function(xhr) {
+	  			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+	  		}
+	    	});
+	  }
 }
 
 function launchHomePage(currentsubcategoryid, currentcharttype, showAll)
@@ -2741,7 +2743,8 @@ function getTopGenes(analysisID)
 
 function displayXTGeneSummary(data){
 	
-	var dataset = [];
+	var foldchangeDataset = [];
+	var pvalueDataset =[];
 	
 	
 	var html = "<table id='xtAnalysisSummary' class='tablesorter'> ";
@@ -2758,17 +2761,22 @@ function displayXTGeneSummary(data){
 		
 		if(result[0] == null){
 			fold_change_ratio = '-';
-			dataset[index] = 0;
+			foldchangeDataset[index] = 0;
 		}
 		 else {
 			 fold_change_ratio = result[0].fold_change_ratio;
-			 dataset[index] = fold_change_ratio;
+			 foldchangeDataset[index] = fold_change_ratio;
 		 }
 		
-		if(result[0] == null)
+		if(result[0] == null){
 			preferred_pvalue = '-';
-		 else 
+			pvalueDataset[index]=0;
+		}
+		 else {
 			 preferred_pvalue = result[0].preferred_pvalue;
+			 if(preferred_pvalue<.0001){preferred_pvalue=0.0001};
+			 pvalueDataset[index]= -1 * (Math.log(preferred_pvalue) / Math.log(10)); //calculate the -log10(p-value)
+		 }
 		
 		html += "<tr>";
 		html += "<td>" +index +'</td>';
@@ -2780,7 +2788,7 @@ function displayXTGeneSummary(data){
 	});
 	html += "</table>";
 	jQuery('#xtSummary_AnalysesList').html(html);
-	createCrossTrialSummaryChart(dataset);
+	createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, data[0].bio_marker_name);
 	
 	
 	return;
@@ -2790,13 +2798,134 @@ function displayXTGeneSummary(data){
 
 
 
-function createCrossTrialSummaryChart(data){
+function createCrossTrialSummaryChart(data, pdata, geneName){
+	
+
+    var margin = {top: 30, right: 40, bottom: 10, left: 60},
+        width = (data.length * 60)- margin.left - margin.right,
+        height = 150- margin.top - margin.bottom;
+
+    var y0 = Math.max(Math.max(-d3.min(data), d3.max(data)),1.5);
+
+    var y2max = Math.max(d3.max(pdata),1.5);
+    
+    var y = d3.scale.linear()
+        .domain([-y0, y0])
+        .range([height,0])
+        .nice();
+
+    var y2 = d3.scale.linear()
+        .domain([0, y2max])
+        .range([height/2,0])
+        .nice();
+
+    var x = d3.scale.ordinal()
+        .domain(d3.range(data.length))
+        .rangeRoundBands([0, width], .2);
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left");
+
+    var yAxis2 = d3.svg.axis()
+        .scale(y2)
+        .ticks(5)
+        .orient("right");
+    
+    
+    
+    var svg = d3.select("#xtSummaryChart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.selectAll(".bar")
+        .data(data)
+      .enter().append("rect")
+        .attr("class", function(d) { return d < 0 ? "bar negative" : "bar positive"; })
+        .attr("x", function(d,i) { return x(i); })
+        .attr("y", function(d,i) { return y(Math.max(0, d)); })
+        .attr("height", function(d) { return Math.abs(y(0) - y(0-d)); })
+        .attr("width", x.rangeBand());
+
+
+    svg.selectAll(".bar2")
+        .data(pdata)
+        .enter().append("rect")
+       // .attr("class", function(d) { return d < 0 ? "bar negative" : "bar positive"; })
+        .attr("x", function(d,i) { return x(i)+10; })
+        .attr("y", function(d,i) { return y2(Math.max(0, d)); })
+        .attr("height", function(d) { return Math.abs(y2(0) - y2(0-d)); })
+        .attr("width", 5);
+
+
+
+svg.selectAll("text")
+       .data(data)
+       .enter()
+       .append("text")
+       .text(function(d,i) {return i;})
+       .attr("x", function(d,i) { return x(i)+11; })
+      // .attr("y", function(d,i) { return y(Math.max(0, d)); })
+      // .attr("y", function(d) { return d < 0 ? height/2-5 : height/2+10; })
+       .attr("y", function(d) { return height })
+       .attr("font-family", "sans-serif")
+       .attr("font-size", "10px")
+       .attr("fill", "black");
+
+
+		// add Title
+		svg.append("svg:text")
+		  .attr("x", 8)
+		  .attr("y", -5)
+		  .attr("class","xtBarPlotGeneTitle")
+		  .text(geneName);
+
+        // y1 legend
+        svg.append("text")
+            .attr("class", "y-label")
+            .attr("text-anchor", "end")
+            .attr("y", -30)
+            .attr("x",-height/4)
+            .attr("transform", "rotate(-90)")
+            .text("fold change");
+        // y2 legend
+        svg.append("text")
+            .attr("class", "y-label")
+            .attr("text-anchor", "end")
+            .attr("y", width+35)
+            .attr("x", 0)
+            .attr("transform", "rotate(-90)")
+            .text("-log10(p-value)");
+
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" +(width) +",0)")
+        .call(yAxis2);
+
+    svg.append("g")
+        .attr("class", "x axis")
+      .append("line")
+        .attr("y1", y(0))
+        .attr("y2", y(0))
+        .attr("x1", 0)
+        .attr("x2", width);
 	
 	
-  //  var data = [2, 1.4, -1.4, 2.4, -0.5, 7];
+	
+	
+	
+	
+	/*
 
     var margin = {top: 30, right: 10, bottom: 10, left: 50},
-        width = (data.length * 50)- margin.left - margin.right,
+        width = Math.max(110,(data.length * 50)- margin.left - margin.right),
         height = 150- margin.top - margin.bottom;
 
     var y0 = Math.max(Math.max(-d3.min(data), d3.max(data)),1.5);
@@ -2812,6 +2941,7 @@ function createCrossTrialSummaryChart(data){
 
     var yAxis = d3.svg.axis()
         .scale(y)
+         .ticks(7)
         .orient("left");
     
     
@@ -2826,7 +2956,7 @@ function createCrossTrialSummaryChart(data){
       .enter().append("rect")
         .attr("class", function(d) { return d < 0 ? "bar negative" : "bar positive"; })
         .attr("x", function(d,i) { return x(i); })
-        .attr("y", function(d,i) { console.log('d='+d+' | y(d)='+y(d)); return y(Math.max(0, d)); })
+        .attr("y", function(d,i) { return y(Math.max(0, d)); })
         .attr("height", function(d) { return Math.abs(y(0) - y(0-d)); })
         .attr("width", x.rangeBand());
 
@@ -2841,11 +2971,21 @@ function createCrossTrialSummaryChart(data){
 	    .attr("font-family", "sans-serif")
 	    .attr("font-size", "10px")
 	    .attr("fill", "black");
+    
+    // add Title
+    svg.append("svg:text")
+      .attr("x", 8)
+      .attr("y", 0)
+      .attr("class","xtBarPlotGeneTitle")
+      .text(geneName);
+
 	    
+    //add y-axis
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
 
+    //add x-axis
     svg.append("g")
         .attr("class", "x axis")
       .append("line")
@@ -2853,6 +2993,8 @@ function createCrossTrialSummaryChart(data){
         .attr("y2", y(0))
         .attr("x1", 0)
         .attr("x2", width);
+        
+        */
 
 }
 
