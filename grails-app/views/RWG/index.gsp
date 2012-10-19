@@ -61,6 +61,10 @@
        	<!--Functions shared by both line and box plots (d3) -->
        	<script type="text/javascript" src="${resource(dir:'js', file:'commonplot.js')}"></script>
 
+        <!--textFlow add in -->
+        <script type="text/javascript" src="${resource(dir:'js', file:'textFlow/helper_functions.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'textFlow/textFlow.js')}"></script>
+
         <script type="text/javascript" charset="utf-8">        
 	        var searchResultsURL = "${createLink([action:'loadSearchResults'])}";
 	        var facetResultsURL = "${createLink([action:'getFacetResults'])}";
@@ -261,7 +265,7 @@
 
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
-
+       <div id="testTitleDiv">         
     </body>
     
            		
