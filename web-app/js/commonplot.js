@@ -103,7 +103,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 				else  {					
 					statObject.anyData = false,
 					statObject.min = 0,
-					statObject.max = 0,			
+					statObject.max = 10,			
 					statObject.median = 0,
 					statObject.lq = 0,
 					statObject.uq = 0					
@@ -122,7 +122,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 					statObject.mean = 0;
 					statObject.stdError = 0;
 					statObject.min = 0;
-					statObject.max = 0;					
+					statObject.max = 10;					
 				}
 	
 				var meanFormatted = parseFloat(statObject.mean);
@@ -426,5 +426,10 @@ function applyPlotStyles(svg)  {
 		.style("stroke", "none")
 		.style("display", "none")
 		;
+	
+	svg.selectAll(".plot .noDataText")
+		.style("font", "10px sans-serif")
+		.style("stroke", "none")
+	;
 }
 
