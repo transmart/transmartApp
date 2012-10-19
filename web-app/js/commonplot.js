@@ -66,12 +66,12 @@ function getSelectedAnalysisIndex(selectedAnalyses, analysisKey)  {
 function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isCTA, selectedAnalyses) {
 
 	jQuery("#" + divId).empty();
-	jQuery("#" + divId).show();  // show first so title height can be calculated correctly
 	var allPlotData = {};  // contains a structure for each analysis
 	var analysisIndex = 0;
 
 	var orderedAnalysisKeys = new Array;
 
+	// TO save the state so that we can restore it to what it was
 	// first determine the titles because resulting height affects all of the other data
 	var allTitles = {}   // contains a structure for each title 
 	var maxHTitle = 0;

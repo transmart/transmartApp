@@ -1,7 +1,10 @@
 // Draw the line plot using D3
 function drawLinePlotD3(divId, linePlotJSON, analysisID, forExport, isCTA, selectedAnalyses)	{
 
-    // boxPlotJSON should be a map of analysisId:[cohortID:[desc:cohort description, order:display order for the cohort, data:sorted log2 intensities]]	  
+	var savedDisplayStyle = jQuery("#" + divId).css('display');
+	jQuery("#" + divId).show();  // show first so title height can be calculated correctly
+
+	// boxPlotJSON should be a map of analysisId:[cohortID:[desc:cohort description, order:display order for the cohort, data:sorted log2 intensities]]	  
 	var allPlotData = setupPlotData(false, linePlotJSON, forExport, analysisID, divId, isCTA, selectedAnalyses);
 
 	// create the plot without any lines (just title, axes, legend)
@@ -115,4 +118,5 @@ function drawLinePlotD3(divId, linePlotJSON, analysisID, forExport, isCTA, selec
 			drawScreenLegend(plotData.numCohorts, plotData.cohortArray, plotData.cohortDesc, plotData.cohortDisplayStyles, "lineplot", analysisID);
 	  	 }
 	}	
+	 jQuery("#" + divId).css('display', savedDisplayStyle);
 }

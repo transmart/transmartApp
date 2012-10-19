@@ -1,5 +1,7 @@
 // Draw the box plot using D3
 function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selectedAnalyses)	{
+	  var savedDisplayStyle = jQuery("#" + divId).css('display');
+	  jQuery("#" + divId).show();  // show first so title height can be calculated correctly
 
 
 	  // boxPlotJSON should be a map of analysisId:[cohortID:[desc:cohort description, order:display order for the cohort, data:sorted log2 intensities]]	  
@@ -193,7 +195,11 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	 	 if (!forExport)  {		
 			drawScreenLegend(plotData.numCohorts, plotData.cohortArray, plotData.cohortDesc, plotData.cohortDisplayStyles, "boxplot", analysisID);
 	  	 }
+	 	 
+	 	 
   }
+ 	  
+ 	 jQuery("#" + divId).css('display', savedDisplayStyle);
 		
 }
 
