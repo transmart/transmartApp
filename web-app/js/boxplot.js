@@ -175,7 +175,20 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	    	.style("display", function (d) {if (!d.anyData) return "none"})
 		 ; 	  
 	 	  	
-		 applyPlotStyles(chartObject.svg);
+		 // "No data" text 
+	 	 var noDataText = boxPlotsGroup
+	 	 	.selectAll(".noDataText")
+	 	 	.data(plotData.statMapping).enter().append("text")
+	 	 	.attr('x', function(d) {return x(d.id); })
+	 	 	.attr('y', function(d) {return y(d.max/2);})
+	 	 	.attr('text-anchor', "middle")
+	 	 	.attr('dy', '.35em')
+	 	 	.attr('class', 'noDataText')
+	 	 	.text(function(d) {return d.anyData?"":"No Data" })
+	    	.style("display", function (d) {return d.anyData?"none":"block" })
+		 ; 	  
+
+	 	 applyPlotStyles(chartObject.svg);
 	
 	 	 if (!forExport)  {		
 			drawScreenLegend(plotData.numCohorts, plotData.cohortArray, plotData.cohortDesc, plotData.cohortDisplayStyles, "boxplot", analysisID);
