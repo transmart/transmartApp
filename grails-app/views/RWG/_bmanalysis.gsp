@@ -56,13 +56,11 @@
               
 	       <div id="qqplot_${analysisId}">
 		      <div class='vis-toolBar' >
-			     <div id="btnqqplotExport_${analysisId}" class='vis-toolbar-item' onclick=""><img alt="" src="${resource(dir:'images',file:'internal-link.gif')}" /> Export as GIF</div>	          	
-			     <div id="qqplotExportOpts_${analysisId}" class='menuOptList' style="display:none;">
-		             <ul>
-		             <li onclick="exportqqPlotData('${analysisId}','data');">Export data (.csv)</li>
-		             <li onclick="exportqqPlotData('${analysisId}','image');">Export image (.png)</li>
-		             </ul>
-		         </div>
+			     <div id="btnqqplotExport_${analysisId}" class='vis-toolbar-item' onclick="">
+			     	<a href="" target="_blank" id="qqplot_export_${analysisId}">
+			     		<img alt="" src="${resource(dir:'images',file:'internal-link.gif')}" /> Export as PNG
+			     	</a>
+			     </div>
 		         
 		         <div id ="qqplot_results_${analysisId}" class="heatmap_analysis"></div>
 		         

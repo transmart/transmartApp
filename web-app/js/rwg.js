@@ -1876,6 +1876,7 @@ function loadQQPlot(analysisID)
 	    "success": function ( json ) {
 	    	jQuery('#analysis_holder_' +analysisID).unmask();
 	    	jQuery('#qqplot_results_' + analysisID).prepend("<img src='" + json.imageURL + "' />");
+	    	jQuery('#qqplot_export_' + analysisID).attr('href', json.imageURL);
 	    	},
 	    "error": function ( json ) {
 	    	jQuery('#analysis_holder_' +analysisID).unmask();

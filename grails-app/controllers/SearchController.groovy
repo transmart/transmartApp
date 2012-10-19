@@ -1051,6 +1051,7 @@ public class SearchController{
 	
 	
 	def getQQPlotImage = {
+		
 		//We need to determine the data type of this analysis so we know where to pull the data from.
 		def currentAnalysis = bio.BioAssayAnalysis.get(params.analysisId)
 		
