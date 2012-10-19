@@ -139,13 +139,15 @@ function removeTag(fieldName, tag) {
 
 function addPlatform(field) {
 	//Gather the relevant elements
-	var typeField = $j('#' + field + 'Name');
+	var typeFieldName = '#' + field + 'Name';
+	var typeField = $j(typeFieldName);
 	var vendorField = $j('#' + field + 'Vendor');
 	var selectField = $j('#' + field);
 	var tagDiv = $j('#' + field + '-tags');
 
 	//If we have a non-null platform ID, prepare to add it
 	var platformId = typeField.val();
+	var platformName = $j(typeFieldName + " option:selected").text()
 	if (platformId == null || platformId == "null") { return; }
 	
 	//Stop if we already have this tag
@@ -154,7 +156,7 @@ function addPlatform(field) {
 	
 	//Get text and value to add
 	var valueToAdd = platformId;
-	var textToAdd = vendorField.val() + ": " + platformId;
+	var textToAdd = vendorField.val() + ": " + platformName;
 
 	//Now add to the hidden select
 	selectField.append($j('<option></option>').val(valueToAdd).text(textToAdd).attr('selected', 'selected'));
@@ -197,7 +199,7 @@ function fillSelectAjax(element, url, params) {
 		for (var i = 0; i < rows.length; i++) {
 			var row = msg['rows'][i];
 			newOpt = $j('<option/>', {
-				value: row['title'] //Using platform name as the identifier!
+				value: row['accession'] //Using platform accession as the identifier!
 			}).text(row['title']);
 			element.append(newOpt);
 		}
