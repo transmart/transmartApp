@@ -830,7 +830,12 @@ public class SearchController{
 		}
 		//Return the data as a GRAILS template or CSV
 		if (export) {
-			//exportResults(regionSearchResults.columnNames, regionSearchResults.analysisData, "results.csv")
+			if (params.type?.equals('GWAS')) {
+				exportResults(regionSearchResults.gwasResults.columnNames, regionSearchResults.gwasResults.analysisData, "results.csv")
+			}
+			else {
+				exportResults(regionSearchResults.eqtlResults.columnNames, regionSearchResults.eqtlResults.analysisData, "results.csv")
+			}
 		}
 		else {
 			render(template: "gwasAndEqtlResults", model: [results: regionSearchResults, cutoff: filter.cutoff, sortField: filter.sortField, order: filter.order, search: filter.search])

@@ -1,24 +1,26 @@
 
 	<div class='vis-toolBar' >
-		<div id="btnResultsExport" class='vis-toolbar-item'><a href="${createLink([controller:'search', action:'getTableResults', params:[export: true]])}"><img alt="" src="${resource(dir:'images',file:'internal-link.gif')}" /> Export as CSV</a></div>
+		<div id="btnResultsExport" class='vis-toolbar-item'><a href="${createLink([controller:'search', action:'getTableResults', params:[export: true, type: type]])}"><img alt="" src="${resource(dir:'images',file:'internal-link.gif')}" /> Export as CSV</a></div>
 	</div>
 	<g:if test="${wasRegionFiltered}">
 		<i>These results have been filtered according to gene/chromosome region criteria.</i><br/><br/>
 	</g:if>
 	<div id="table_results_length_div" class="dataTables_length">
 		<label>Show 
-			<g:select size="1" from="${['100':'100','150':'150','200':'200','500':'500']}" optionKey="${{it.key}}" optionValue="${{it.value}}" id="table_results_length" onselect="loadTableResultsGrid({max: jQuery(this).val()})" value="${max}"/> entries
+			<g:select size="1" from="${['100':'100','150':'150','200':'200','500':'500']}" optionKey="${{it.key}}" optionValue="${{it.value}}" id="table_results_length" onselect="loadTableResultsGrid({max: jQuery(this).val()})" value="${max}"/> ${type} results
 		</label>	
 	</div>
-	<div class="dataTables_filter">
-		<label>P-value cutoff: 
-			<input value="${cutoff}" type="text" style="width: 50px" id="table_results_cutoff">
-		</label>
-		<label>Search: 
-			<input value="${search}" type="text" style="width: 50px" id="table_results_search">
-			<span class="linkbutton" onclick="loadTableResultsGrid({cutoff: jQuery('#table_results_cutoff').val(), search: jQuery('#table_results_search').val()})">OK</span>
-		</label>
-	</div>
+	<g:if test="${showSearch}">
+		<div class="dataTables_filter">
+			<label>P-value cutoff: 
+				<input value="${cutoff}" type="text" style="width: 50px" id="table_results_cutoff">
+			</label>
+			<label>Search: 
+				<input value="${search}" type="text" style="width: 50px" id="table_results_search">
+				<span class="linkbutton" onclick="loadTableResultsGrid({cutoff: jQuery('#table_results_cutoff').val(), search: jQuery('#table_results_search').val()})">OK</span>
+			</label>
+		</div>
+	</g:if>
 	<table id="table_results" class="dataTable">
 		<thead>
 			<tr role="row">
