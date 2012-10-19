@@ -188,7 +188,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	    	.style("display", function (d) {return d.anyData?"none":"block" })
 		 ; 	  
 
-	 	 applyPlotStyles(chartObject.svg);
+	 	 applyPlotStyles(chartObject.svg, isCTA);
 	
 	 	 if (!forExport)  {		
 			drawScreenLegend(plotData.numCohorts, plotData.cohortArray, plotData.cohortDesc, plotData.cohortDisplayStyles, "boxplot", analysisID);

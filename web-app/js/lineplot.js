@@ -109,7 +109,7 @@ function drawLinePlotD3(divId, linePlotJSON, analysisID, forExport, isCTA, selec
 		     	;		  
 		 }
 		
-		 applyPlotStyles(chartObject.svg);
+		 applyPlotStyles(chartObject.svg, isCTA);
 	
 		 if (!forExport)  {		
 			drawScreenLegend(plotData.numCohorts, plotData.cohortArray, plotData.cohortDesc, plotData.cohortDisplayStyles, "lineplot", analysisID);

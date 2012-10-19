@@ -1,3 +1,56 @@
+var cohortWidth = 140;
+var chartMargin = 55;
+var titleMargin = 5;
+var uniqueDivID = 0;
+var titleFontSize = 16;
+var titleFontSizeCTA = 10;
+
+function getScale(isCTA)  {
+	return isCTA ? 0.75 : 1.0;
+}
+
+// retrieve the number of cohorts for a given analysis
+function getCohortCount(jsonData)  {
+	
+	var cohortCount = 0;
+
+	for (var key in jsonData)  {
+		if (jsonData[key] && jsonData[key]['order'])  {   // if the object in the array doesn't have an order, not a cohort
+			cohortCount++;
+		}
+	}
+
+	return cohortCount;
+}
+
+function getTitleHeight(title, w, isCTA)  {
+
+	jQuery("#testTitleDiv").empty();
+	
+	var titleSVG = d3.select("#testTitleDiv")
+		.append("svg")
+		.append("text")
+		.attr("id", "testTitleHeight")
+		.attr("x", 0)
+		.attr("y", 0 )
+		.attr("text-anchor", "middle")
+		.style("font", getTitleFont(isCTA));
+	
+	var textNode = document.getElementById("testTitleHeight");
+	
+	//var dy = textFlow(myText,textToAppend,maxWidth,x,ddy,justified);
+	var dy = textFlow(title,
+			textNode,
+			w,
+			0,
+			getTitleFontSize(isCTA),
+			false);
+	
+	jQuery("#testTitleDiv").empty();
+
+	return dy;
+}
+
 // fimd the index of the analysis with the given key in the selected analysis array
 function getSelectedAnalysisIndex(selectedAnalyses, analysisKey)  {
 	for (var i=0; i<selectedAnalyses.length; i++)  {
@@ -13,12 +66,44 @@ function getSelectedAnalysisIndex(selectedAnalyses, analysisKey)  {
 function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isCTA, selectedAnalyses) {
 
 	jQuery("#" + divId).empty();
-			
+	jQuery("#" + divId).show();  // show first so title height can be calculated correctly
 	var allPlotData = {};  // contains a structure for each analysis
 	var analysisIndex = 0;
 
 	var orderedAnalysisKeys = new Array;
-	
+
+	// first determine the titles because resulting height affects all of the other data
+	var allTitles = {}   // contains a structure for each title 
+	var maxHTitle = 0;
+    for (var analysisKey in allJsonData)  {
+    	var title;
+    	var titleTooltip;
+    	if (isCTA)  {
+    		analysisIndex =  getSelectedAnalysisIndex(selectedAnalyses, analysisKey);	
+    		title = selectedAnalyses[analysisIndex].title.replace(/_/g, ', ');
+    	    titleTooltip = selectedAnalyses[analysisIndex].title.replace(/_/g, ', ');
+    	}  else  {
+    		var probeID = getActiveProbe(analysisID);
+	 	    title = getGeneforDisplay(analysisID, probeID); 
+	 	    titleTooltip = "View gene information";
+    	}
+    	
+    	cohortCount =  getCohortCount(allJsonData[analysisKey]);
+    	
+    	var w = (cohortCount * cohortWidth + chartMargin) * getScale(isCTA); 
+    		
+		// do a test draw of the title so we can determine its size (don't scale title -- if scale is significantly different adjust font sizes to accomodate)
+		var hTitle = getTitleHeight(title, w - titleMargin*2, isCTA) + getTitleFontSize(isCTA) * 2;
+		
+		if (hTitle > maxHTitle)  {
+			maxHTitle = hTitle;
+		}
+    	
+    	allTitles[analysisKey] =  {title:title, titleTooltip:titleTooltip, hTitle:hTitle} ;
+    	
+    }
+    
+	analysisIndex = 0;
     for (var analysisKey in allJsonData)  {
     	
     	if (isCTA)  {
@@ -27,18 +112,9 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
     	
     	orderedAnalysisKeys[analysisIndex] = analysisKey;
     	
-    	var title;
-    	var titleTooltip;
-    	if (isCTA)  {
-    	    title = analysisIndex + 1;
-    	    titleTooltip = selectedAnalyses[analysisIndex].title.replace(/_/g, ', ');
-    	}  
-    	else  {    		
-  		    var probeID = getActiveProbe(analysisID);
-	 	    title = getGeneforDisplay(analysisID, probeID);
-	 	    titleTooltip = "View gene information";
-    	}    	
-
+    	var title =allTitles[analysisKey].title;
+    	var titleTooltip =allTitles[analysisKey].titleTooltip;
+    		
     	jsonData =  allJsonData[analysisKey];
 
 		var cohortArray = new Array();   // array of cohort ids
@@ -60,7 +136,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 				var lbl;
 				if (isCTA)  {  // cohort labels for CTA are 1A, 1B, ..., 1n, 2A,...2n, ...)
 					var charCodeA = "A".charCodeAt(0);
-					lbl = title + String.fromCharCode(charCodeA + arrayIndex);
+					lbl = analysisIndex + String.fromCharCode(charCodeA + arrayIndex);
 				}
 				else  {
 					lbl = key;
@@ -176,15 +252,15 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 			
 		}
 
-		var scale = isCTA ? 0.75 : 1.0;
+		var scale = getScale(isCTA);
 		
-		var margin = 55 * scale;
+		var margin = chartMargin * scale;
 	
-		var wChart = cohortArray.length * 140 * scale;//generate the width dynamically using the cohort count	
+		var wChart = cohortArray.length * cohortWidth * scale;//generate the width dynamically using the cohort count	
 		var hChart = 350 * scale;
 		
-		var hTitle = 40 * scale;
-	
+		var hTitle = maxHTitle;
+
 		var wTotal = wChart + margin;
 		var hTotal = hChart + hTitle; 
 	
@@ -202,13 +278,15 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 				cohortArray:cohortArray, cohortLabels:cohortLabels, cohortDesc:cohortDesc, cohortDisplayStyles:cohortDisplayStyles,
 				gene_id: gene_id, cohortDescExport:cohortDescExport, statMapping:statMapping,
 				title:title, titleTooltip:titleTooltip, margin:margin, wChart:wChart, hChart:hChart, hTitle:hTitle,
-				wTotal:wTotal, hTotal:hTotal, hLegend:hLegend, numCohorts:numCohorts, yMin:yMin, yMax:yMax
+				wTotal:wTotal, hTotal:hTotal, hLegend:hLegend, numCohorts:numCohorts, yMin:yMin, yMax:yMax,
+				analysisIndex:analysisIndex
 		};
 		
  	    allPlotData[analysisKey] = dataObject;		  
     }
 
     allPlotData.orderedAnalysisKeys = orderedAnalysisKeys;
+    allPlotData.maxHTitle = maxHTitle;
     
 	return allPlotData;
 
@@ -223,7 +301,7 @@ function drawEmptyPlots(allPlotData, forExport, divId, isCTA)  {
 	for (var i=0; i<allPlotData.orderedAnalysisKeys.length; i++)  {
 		
 		var key = allPlotData.orderedAnalysisKeys[i];
-		
+
 		allPlotData[key].xOffset = wTotal;
 		allPlotData[key].yOffset = 0;
 		
@@ -265,7 +343,7 @@ function drawEmptyPlot(root, plotData, forExport, isCTA) {
 		.attr("class", "plot")
 		;
 	
-	var yTitle = 2;
+	var yTitle = 15;
 	if (forExport)  {
 		yTitle = 20;
 	}
@@ -282,16 +360,25 @@ function drawEmptyPlot(root, plotData, forExport, isCTA) {
 		
 	}
 	
+	var analysisTitleId = "analysisTitle" + uniqueDivID++ ;
 	var titleText = nextTag
 	        .append("text")
+	        .attr("id", analysisTitleId)
 	        .attr("x", plotData.margin + plotData.wChart/2)
 	        .attr("y", yTitle )
-	        .attr("dy", ".71em")
 	        .attr("class", "title")
 	        .attr("text-anchor", "middle")
-	        .text(plotData.title)
+	        .style("font", getTitleFont(isCTA))   // need to apply style here when drawn so that textFlow draws correctly 
 	        ;
-	    
+	
+	var textNode = document.getElementById(analysisTitleId);
+	var dy = textFlow(plotData.title,
+			textNode,
+			plotData.wTotal - titleMargin*2,
+			plotData.wTotal/2 + titleMargin,
+			getTitleFontSize(isCTA),
+			false);	    
+	
 	if (( (!isCTA && plotData.gene_id) || (isCTA) ) && !forExport)  {			
 	    	//Add tooltip for title, if:
 		    // not for export AND  one of these conditions:
@@ -300,7 +387,6 @@ function drawEmptyPlot(root, plotData, forExport, isCTA) {
 			titleText.append('svg:title').text(plotData.titleTooltip);
 	}
 		
-	
 	var chart = bp.append("g")
 		.attr("transform", "translate(" + plotData.margin + "," +  plotData.hTitle + ")")
 		.attr("class", "plot");
@@ -353,7 +439,7 @@ function drawEmptyPlot(root, plotData, forExport, isCTA) {
   // Y axis label
   bp.append("text")
     .attr("text-anchor", "middle")
-    .attr("transform", "translate(" + 10 + "," + (plotData.hChart/2) + ") rotate(-90)")  // note: space between translate/rotate clauses - if not there, export has a problems
+    .attr("transform", "translate(" + 10 + "," + (plotData.hTitle + (plotData.hChart)/2 ) + ") rotate(-90)")  // note: space between translate/rotate clauses - if not there, export has a problems
     .text("log2 intensity");
 		 
   var wBand = x.rangeBand();
@@ -366,7 +452,27 @@ function drawEmptyPlot(root, plotData, forExport, isCTA) {
   return {svg:svg, chart:chart, wBand:wBand, x:x, y:y};
 }
 
-function applyPlotStyles(svg)  {
+function getTitleFont(isCTA)  {
+	
+	if (isCTA)  {
+		return "bold " + titleFontSizeCTA + "px sans-serif";
+	}
+	else  {		
+		return "bold " + titleFontSize + "px sans-serif";
+	}
+}
+
+function getTitleFontSize(isCTA)  {
+	
+	if (isCTA)  {
+		return titleFontSizeCTA;
+	}
+	else  {		
+		return titleFontSize;
+	}
+}
+
+function applyPlotStyles(svg, isCTA)  {
 	// note: export doesn't recognize classes/styles in CSS file, need to apply directly to objects
 	svg.selectAll(".plot")
 		.style("font", "14px sans-serif")
@@ -374,7 +480,7 @@ function applyPlotStyles(svg)  {
 	
 	svg.selectAll(".plot .title")
 		.style("fill", "#065B96")
-		.style("font", "bold 16px sans-serif")
+		.style("font", getTitleFont(isCTA))
 		;
 
 	svg.selectAll(".plot .plotLines")
