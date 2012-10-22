@@ -33,7 +33,7 @@ function drawExportLegend(svg, cohortLegendOffsetX, cohortLegendOffsetY, statMap
 			.attr("dy", ".35em")
 	        .attr("text-anchor", "middle")
 			.attr('class', 'legendCohortId')
-	        .text(function (d, i) { return d.id; } )
+	        .text(function (d, i) { return d.cohortDisplayId ? d.cohortDisplayId : d.id; } )
 	        ;	
 		
 		// cohort legend text descriptions

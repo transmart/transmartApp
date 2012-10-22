@@ -192,7 +192,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 
 	 	 applyPlotStyles(chartObject.svg, isCTA);
 	
-	 	 if (!forExport)  {		
+	 	 if (!forExport && !isCTA)  {		
 			drawScreenLegend(plotData.numCohorts, plotData.cohortArray, plotData.cohortDesc, plotData.cohortDisplayStyles, "boxplot", analysisID);
 	  	 }
 	 	 
