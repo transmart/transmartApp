@@ -17,14 +17,16 @@ var visualize = function(geneLists, action){
 		
 		//------Visualize the incoming lists.
 		mapSetIndexToGeneListId(geneLists);
-		//Global variable: Calculate which genes are in the 7 possible regions on the venn diagram.
-		region = calculateRegionMembers(sets);
+		//Calculate which genes are in the 7 possible regions on the venn diagram.
+		var region = calculateRegionMembers(sets);
+		//Figure out the titles (tooltips) for each of the 7 possible regions on the venn diagram.
+		var regionTitles = calculateRegionTitles(region);
 		//Map each region to the appropriate color
-		initializeColorMapping();
+		initializeColorMapping(region);
 		//-------Set Visualization done
 		
 		//Render the venn diagram.
-		draw();
+		draw(region, regionTitles);
 	});
 }
 
@@ -37,7 +39,7 @@ var visualize = function(geneLists, action){
  * the gene list id it represents. 
  */
 function mapSetIndexToGeneListId(geneLists){
-	//Global array setIndex
+	//Global variable: array setIndex
 	setIndex = new Array();
 	var count = 1;
 	for(geneListId in geneLists){
@@ -70,6 +72,20 @@ function calculateRegionMembers(sets){
 	region['23']=calculateMiddleRegionsMembers(sets, 2, 3, innerRegionSet);
 	
 	return region;
+}
+
+/**
+ * Goes through all 7 regions and picks the first 5 (if applicable) elements to show as title (tooltip on mouse hover)
+ */
+function calculateRegionTitles(region){
+	var regionTitles = new Object();
+	var regionIds = ['1', '2', '3', '12', '13', '23', '123'];
+	
+	['1', '2', '3', '12', '13', '23', '123'].forEach(function(regionId){
+		regionTitles[regionId]==region[regionId].slice(0,5);
+	});
+	
+	return regionTitles;
 }
 
 function calculateOuterRegionsMembers(sets, primaryIdx, firstSubIdx, secondSubIdx){
@@ -194,8 +210,8 @@ function operate(sets, action){
  * Initialize the global array that will hold a list of active region ids
  * Draw the venn diagram.
  */
-function draw(){
-	//Initialize the global array that will hold a list of active region ids
+function draw(region, regionTitles){
+	//Global variable: Initialize the global array that will hold a list of active region ids
 	activeRegionIds = new Array();
 	
 	//Clear out div before drawing SVG again.
@@ -237,9 +253,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "1")
     .style("fill", unselectedColorMapping["1"])
-    .on("click", mouseclick)
+    .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(region["1"]);
+    .text(regionTitles["1"]);
 
 	svg.append("svg:rect")
 	.attr("clip-path", "url(#circle2)")
@@ -247,9 +263,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "2")
     .style("fill", unselectedColorMapping["2"])
-    .on("click", mouseclick)
+    .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(region["2"]);
+    .text(regionTitles["2"]);
 
 	svg.append("svg:rect")
     .attr("clip-path", "url(#circle3)")
@@ -257,9 +273,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "3")
     .style("fill", unselectedColorMapping["3"])
-    .on("click", mouseclick)
+    .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(region["3"]);
+    .text(regionTitles["3"]);
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle1)")
@@ -269,9 +285,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "12")
     .style("fill", unselectedColorMapping["12"])
-    .on("click", mouseclick)
+    .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(region["12"]);
+    .text(regionTitles["12"]);
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle2)")
@@ -281,9 +297,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "23")
     .style("fill", unselectedColorMapping["23"])
-    .on("click", mouseclick)
+    .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(region["23"]);
+    .text(regionTitles["23"]);
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle3)")
@@ -293,9 +309,9 @@ function draw(){
     .attr("height", h)
     .attr("id", "13")
     .style("fill", unselectedColorMapping["13"])
-    .on("click", mouseclick)
+    .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(region["13"]);
+    .text(regionTitles["13"]);
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle3)")
@@ -307,17 +323,17 @@ function draw(){
     .attr("height", h)
 	.attr("id", "123")
     .style("fill", unselectedColorMapping["123"])
-    .on("click", mouseclick)
+    .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(region["123"]);
+    .text(regionTitles["123"]);
 	
-	displayCount(svg);
+	displayCount(region, svg);
 }
 
 /**
  * display counts for each area
  */
-function displayCount(svg){
+function displayCount(region, svg){
 	display(svg, 150, 80, region['1'].length);//
 	display(svg, 245, 80, region['12'].length);//
 	display(svg, 340, 80, region['2'].length);
@@ -348,16 +364,16 @@ function addLabel(){
  * @param d
  * @param i
  */
-function mouseclick(d, i){
+function mouseclick(region, clickedRegion){
 	//Add or remove the region id from the active ids array
-	var index = activeRegionIds.indexOf(this.id);
+	var index = activeRegionIds.indexOf(clickedRegion.id);
 	//Add if doesn't allready exist
 	if(index<0){
-		activeRegionIds.push(this.id);
-		this.style.fill= selectedColorMapping[this.id];
+		activeRegionIds.push(clickedRegion.id);
+		clickedRegion.style.fill= selectedColorMapping[clickedRegion.id];
 	}else{//Remove if it does exist
 		activeRegionIds.splice(index,1);
-		this.style.fill= unselectedColorMapping[this.id];
+		clickedRegion.style.fill= unselectedColorMapping[clickedRegion.id];
 	}
 	
 	//Clear out the results text area
@@ -383,26 +399,26 @@ function mouseclick(d, i){
  * Maps each region to a specific color.
  * If a region has no members it is mapped to white.
  */
-function initializeColorMapping(){
+function initializeColorMapping(region){
 	selectedColorMapping = new Object();
 	
 	unselectedColorMapping = new Object();
 	
-	selectedColorMapping = mapColor(selectedColorMapping, "1", "#84A3FF");
-	selectedColorMapping = mapColor(selectedColorMapping, "2", "#F76060");
-	selectedColorMapping = mapColor(selectedColorMapping, "3", "#F5F847");
-	selectedColorMapping = mapColor(selectedColorMapping, "12", "#F43471");
-	selectedColorMapping = mapColor(selectedColorMapping, "13", "#69BEC3");
-	selectedColorMapping = mapColor(selectedColorMapping, "23", "#FF7721");
-	selectedColorMapping = mapColor(selectedColorMapping, "123", "#FF1818");
+	selectedColorMapping = mapColor(region, selectedColorMapping, "1", "#84A3FF");
+	selectedColorMapping = mapColor(region, selectedColorMapping, "2", "#F76060");
+	selectedColorMapping = mapColor(region, selectedColorMapping, "3", "#F5F847");
+	selectedColorMapping = mapColor(region, selectedColorMapping, "12", "#F43471");
+	selectedColorMapping = mapColor(region, selectedColorMapping, "13", "#69BEC3");
+	selectedColorMapping = mapColor(region, selectedColorMapping, "23", "#FF7721");
+	selectedColorMapping = mapColor(region, selectedColorMapping, "123", "#FF1818");
 	
-	unselectedColorMapping = mapColor(unselectedColorMapping, "1", "#A4BAF7");
-	unselectedColorMapping = mapColor(unselectedColorMapping, "2", "#F79797");
-	unselectedColorMapping = mapColor(unselectedColorMapping, "3", "#F1F380");
-	unselectedColorMapping = mapColor(unselectedColorMapping, "12", "#CE7894");
-	unselectedColorMapping = mapColor(unselectedColorMapping, "13", "#9DB4B4");
-	unselectedColorMapping = mapColor(unselectedColorMapping, "23", "#F09154");
-	unselectedColorMapping = mapColor(unselectedColorMapping, "123", "#CB7575");
+	unselectedColorMapping = mapColor(region, unselectedColorMapping, "1", "#A4BAF7");
+	unselectedColorMapping = mapColor(region, unselectedColorMapping, "2", "#F79797");
+	unselectedColorMapping = mapColor(region, unselectedColorMapping, "3", "#F1F380");
+	unselectedColorMapping = mapColor(region, unselectedColorMapping, "12", "#CE7894");
+	unselectedColorMapping = mapColor(region, unselectedColorMapping, "13", "#9DB4B4");
+	unselectedColorMapping = mapColor(region, unselectedColorMapping, "23", "#F09154");
+	unselectedColorMapping = mapColor(region, unselectedColorMapping, "123", "#CB7575");
 }
 
 /**
@@ -411,11 +427,11 @@ function initializeColorMapping(){
  * @param region
  * @param color
  */
-function mapColor(map, regionId, color){
+function mapColor(region, map, regionId, color){
 	if(region[regionId].length>0){
 		map[regionId]=color;
 	}else{
-		map[regionId]="#FFFFFF"
+		map[regionId]="#CCCCCC"
 	}
 	return map;
 }
