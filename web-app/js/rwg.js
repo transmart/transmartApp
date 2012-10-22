@@ -3219,7 +3219,7 @@ function startPlotter() {
 		var geneSource = jQuery('#plotGeneSource').val();
 		var pvalueCutoff = jQuery('#plotPvalueCutoff').val();
 		
-		window.location = webStartURL + "?analysisIds=" + analysisIds + "&snpSource=" + snpSource + "&geneSource=" + geneSource + "&pvalueCutoff=" + pvalueCutoff;
+		window.location = webStartURL + "?analysisIds=" + analysisIds + "&snpSource=" + snpSource + "&geneSource=GRCh37&pvalueCutoff=" + pvalueCutoff;
 		jQuery('#divPlotOptions').dialog("destroy");
 	}
 }

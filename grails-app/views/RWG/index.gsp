@@ -273,19 +273,19 @@
 					<td class="columnname">SNP Annotation Source</td>
 					<td>
 						<select id="plotSnpSource" style="width: 220px">
-							<option id="19">HG19</option>
-							<option id="18">HG18</option>
+							<option value="19">Human Genome 19</option>
+							<option value="18">Human Genome 18</option>
 						</select>
 					</td>
 				</tr>
-				<tr>
+				<%--<tr>
 					<td class="columnname">Gene Annotation Source</td>
 					<td>
 						<select id="plotGeneSource" style="width: 220px">
 							<option id="GRCh37">Human Gene data from NCBI</option>
 						</select>
 					</td>
-				</tr>
+				</tr>--%>
 				<tr>
 					<td class="columnname">P-value cutoff</td>
 					<td>

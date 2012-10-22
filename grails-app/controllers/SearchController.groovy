@@ -595,7 +595,7 @@ public class SearchController{
 		}
 		def regions = regionStrings.join(";")
 		//Set defaults - JNLP does not take blank arguments
-		if (!regions) { regions = "null" }
+		if (!regions) { regions = "0" }
 		if (!pvalueCutoff) { pvalueCutoff = 0 }
 		
 		def responseText = """\
