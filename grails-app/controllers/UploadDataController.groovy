@@ -191,7 +191,12 @@ class UploadDataController {
 			
 			//If the file is now pending, start the staging process
 			if (result.success) {
-				dataUploadService.runStaging(upload.id);
+				try {
+					dataUploadService.runStaging(upload.id);
+				}
+				catch (Exception e) {
+					log.error(e.getMessage(), e)
+				}
 			}
 			render(view: "complete", model: [result: result, uploadDataInstance: upload]);
 			return

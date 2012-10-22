@@ -169,7 +169,7 @@
 				 -->
 				<div class='toolbar-item' onclick='collapseAllStudies();'>Collapse All Studies</div>
 				<div class='toolbar-item' onclick='expandAllStudies();'>Expand All Studies</div>
-				<div class='toolbar-item' onclick='startPlotter();'>Manhattan Plot</div>
+				<div class='toolbar-item' onclick='openPlotOptions();'>Manhattan Plot</div>
 				<div class='toolbar-item' onclick="jQuery('.analysesopen .analysischeckbox').attr('checked', 'checked'); updateSelectedAnalyses();">Select All Visible Analyses</div>
 				<div class='toolbar-item' onclick="jQuery('.analysesopen .analysischeckbox').removeAttr('checked'); updateSelectedAnalyses();">Unselect All Visible Analyses</div>
 	  			<%-- <div id="searchResultOptions_holder">
@@ -264,6 +264,35 @@
 		<!--  This is the DIV we stuff the browse windows into. -->
 		<div id="divBrowsePopups" style="width:800px; display: none;">
 			
+		</div>
+		
+		<!--  Another DIV for the manhattan plot options. -->
+		<div id="divPlotOptions" style="width:300px; display: none;">
+			<table class="columndetail">
+				<tr>
+					<td class="columnname">SNP Annotation Source</td>
+					<td>
+						<select id="plotSnpSource" style="width: 220px">
+							<option id="19">HG19</option>
+							<option id="18">HG18</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="columnname">Gene Annotation Source</td>
+					<td>
+						<select id="plotGeneSource" style="width: 220px">
+							<option id="GRCh37">Human Gene data from NCBI</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="columnname">P-value cutoff</td>
+					<td>
+						<input id="plotPvalueCutoff" style="width: 210px">
+					</td>
+				</tr>
+			</table>
 		</div>
 		
 		<!--  Everything for the across trial function goes here and is displayed using colorbox -->

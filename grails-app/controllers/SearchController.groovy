@@ -585,11 +585,18 @@ public class SearchController{
 		def jar = grailsApplication.config.com.recomdata.rwg.webstart.jar
 		def mainClass = grailsApplication.config.com.recomdata.rwg.webstart.mainClass
 		def analysisIds = params.analysisIds
-		def regions = getSearchRegions(session['solrSearchFilter'])
+		def geneSource = params.geneSource
+		def snpSource = params.snpSource
+		def pvalueCutoff = params.pvalueCutoff
+		def searchRegions = getSearchRegions(session['solrSearchFilter'])
 		def regionStrings = []
-		for (region in regions) {
+		for (region in searchRegions) {
 			regionStrings += region.low + "," + region.high + "," + region.chromosome
 		}
+		def regions = regionStrings.join(";")
+		//Set defaults - JNLP does not take blank arguments
+		if (!regions) { regions = "null" }
+		if (!pvalueCutoff) { pvalueCutoff = 0 }
 		
 		def responseText = """\
 			<?xml version="1.0" encoding="UTF-8"?>
@@ -609,7 +616,10 @@ public class SearchController{
 					"""
 
 					responseText += '<argument>' + analysisIds + '</argument>\n'
-					if(regionStrings) { responseText += '<argument>' + regionStrings.join(";") + '</argument>\n' }
+					responseText += '<argument>' + regions + '</argument>\n'
+					responseText += '<argument>' + geneSource + '</argument>\n'
+					responseText += '<argument>' + snpSource + '</argument>\n'
+					responseText += '<argument>' + pvalueCutoff + '</argument>\n'
 		responseText +=	"""
 
 						</application-desc>

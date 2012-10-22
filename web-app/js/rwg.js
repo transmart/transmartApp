@@ -3214,7 +3214,34 @@ function startPlotter() {
 		for (var i = 1; i < selectedboxes.length; i++) {
 			analysisIds += "," + jQuery(selectedboxes[i]).attr('name');
 		}
-		window.location = webStartURL + "?analysisIds=" + analysisIds;
+		
+		var snpSource = jQuery('#plotSnpSource').val();
+		var geneSource = jQuery('#plotGeneSource').val();
+		var pvalueCutoff = jQuery('#plotPvalueCutoff').val();
+		
+		window.location = webStartURL + "?analysisIds=" + analysisIds + "&snpSource=" + snpSource + "&geneSource=" + geneSource + "&pvalueCutoff=" + pvalueCutoff;
+		jQuery('#divPlotOptions').dialog("destroy");
+	}
+}
+
+function openPlotOptions() {
+	var selectedboxes = jQuery(".analysischeckbox:checked");
+	if (selectedboxes.length == 0) {
+		alert("No analyses are selected! Please select analyses to plot.");
+	}
+	else {
+		jQuery('#divPlotOptions').dialog("destroy");
+		jQuery('#divPlotOptions').dialog(
+			{
+				modal: false,
+				height: 250,
+				width: 400,
+				title: "Manhattan Plot Options",
+				show: 'fade',
+				hide: 'fade',
+				resizable: false,
+				buttons: {"Plot" : startPlotter}
+			})
 	}
 }
 

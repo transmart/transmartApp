@@ -36,21 +36,21 @@ function generateBrowseWindow(nodeClicked)
 	//Load from the URL into a dialog window to capture the user input. We pass in a function that handles what happens after the user presses "Select".
 	jQuery('#divBrowsePopups').dialog("destroy");
 	jQuery('#divBrowsePopups').dialog(
+		{
+			modal: false,
+			open: function()
 			{
-				modal: false,
-				open: function()
-				{
-					jQuery(this).empty();
-					jQuery(this).load(URLtoUse);
-				},
-				height: dialogHeight,
-				width: dialogWidth,
-				title: nodeClicked,
-				show: 'fade',
-				hide: 'fade',
-				resizable: false,
-				buttons: {"Select" : filteringFunction}
-			})
+				jQuery(this).empty();
+				jQuery(this).load(URLtoUse);
+			},
+			height: dialogHeight,
+			width: dialogWidth,
+			title: nodeClicked,
+			show: 'fade',
+			hide: 'fade',
+			resizable: false,
+			buttons: {"Select" : filteringFunction}
+		})
 }
 
 //After the user clicks select on the popup we need to add the search terms to the filter.
