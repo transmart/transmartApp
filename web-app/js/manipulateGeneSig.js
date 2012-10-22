@@ -79,10 +79,9 @@ function calculateRegionMembers(sets){
  */
 function calculateRegionTitles(region){
 	var regionTitles = new Object();
-	var regionIds = ['1', '2', '3', '12', '13', '23', '123'];
 	
 	['1', '2', '3', '12', '13', '23', '123'].forEach(function(regionId){
-		regionTitles[regionId]==region[regionId].slice(0,5);
+		regionTitles[regionId]=region[regionId].slice(0,5);
 	});
 	
 	return regionTitles;
@@ -452,8 +451,15 @@ function populateResults(results){
  * Redraw venn diagram
  */
 function resetVisualization(){
+	//Clear out text area
 	populateResults('');
-	draw();
+	//Clear out the global variable that keeps track of currently selected(active) regions 
+	activeRegionIds = new Array();
+	//Remove any highlighting from the venn diagram 
+	['1', '2', '3', '12', '13', '23', '123'].forEach(function(regionId){
+		var currentRegion = document.getElementById(regionId);
+		currentRegion.style.fill= unselectedColorMapping[regionId];
+	});
 }
 
 /**
