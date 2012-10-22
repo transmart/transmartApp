@@ -3,7 +3,8 @@ var chartMargin = 55;
 var titleMargin = 5;
 var uniqueDivID = 0;
 var titleFontSize = 16;
-var titleFontSizeCTA = 10;
+var titleFontSizeCTA = 10; 
+var spaceBetweenPlots = 10;   // spacing between plots for CTA
 
 function getScale(isCTA)  {
 	return isCTA ? 0.75 : 1.0;
@@ -309,7 +310,7 @@ function drawEmptyPlots(allPlotData, forExport, divId, isCTA)  {
 		var h = allPlotData[key].hTotal;
 		
 		hTotal = h;
-		wTotal  = wTotal + w;		
+		wTotal  = wTotal + w + spaceBetweenPlots;		
 	}
 	
 	var root = d3.select("#" + divId)
