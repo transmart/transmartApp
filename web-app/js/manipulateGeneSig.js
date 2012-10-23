@@ -1,7 +1,7 @@
 /**
  * Entry function into the manipulate view scripts.
  */
-var visualize = function(geneLists, action){
+var visualize = function(geneLists, action, labels){
 	
 	var resultArray
 	JS.require('JS.Set', function(){
@@ -26,7 +26,7 @@ var visualize = function(geneLists, action){
 		//-------Set Visualization done
 		
 		//Render the venn diagram.
-		draw(region, regionTitles);
+		draw(region, regionTitles, labels);
 	});
 }
 
@@ -209,7 +209,7 @@ function operate(sets, action){
  * Initialize the global array that will hold a list of active region ids
  * Draw the venn diagram.
  */
-function draw(region, regionTitles){
+function draw(region, regionTitles, labels){
 	//Global variable: Initialize the global array that will hold a list of active region ids
 	activeRegionIds = new Array();
 	
@@ -254,7 +254,7 @@ function draw(region, regionTitles){
     .style("fill", unselectedColorMapping["1"])
     .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(regionTitles["1"]);
+    .text(labels[setIndex[1]]+": "+regionTitles["1"]);
 
 	svg.append("svg:rect")
 	.attr("clip-path", "url(#circle2)")
@@ -264,7 +264,7 @@ function draw(region, regionTitles){
     .style("fill", unselectedColorMapping["2"])
     .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(regionTitles["2"]);
+    .text(labels[setIndex[2]]+": "+regionTitles["2"]);
 
 	svg.append("svg:rect")
     .attr("clip-path", "url(#circle3)")
@@ -274,7 +274,7 @@ function draw(region, regionTitles){
     .style("fill", unselectedColorMapping["3"])
     .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(regionTitles["3"]);
+    .text(labels[setIndex[3]]+": "+regionTitles["3"]);
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle1)")
@@ -327,6 +327,8 @@ function draw(region, regionTitles){
     .text(regionTitles["123"]);
 	
 	displayCount(region, svg);
+	
+	//displayLabels(labels, svg);
 }
 
 /**
@@ -340,6 +342,16 @@ function displayCount(region, svg){
 	display(svg, 245, 160, region['123'].length);
 	display(svg, 290, 160, region['23'].length);
 	display(svg, 240, 240, region['3'].length);//
+}
+
+/**
+ * Display labels for each set
+ * @param labels
+ */
+function displayLabels(labels, svg){
+	display(svg, 50, 80, labels[setIndex[1]]);
+	display(svg, 400, 80, labels[setIndex[2]]);
+	display(svg, 225, 280, labels[setIndex[3]]);
 }
 
 function display(svg, x, y, count){

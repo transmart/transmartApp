@@ -629,5 +629,26 @@ public class GeneSignatureService {
 		
 		return sbuf.toString()
 	}
+	
+	def getGeneListItems(geneListIdsParam){
+		def geneListIds = geneListIdsParam.split ","
+		
+		Map map = new HashMap()
+				
+		for(int i = 0; i<geneListIds.length; i++){
+			def outputList = new ArrayList()
+							
+			GeneSignature geneSig = GeneSignature.get(Long.parseLong(geneListIds[i]))
+			def geneSigItems = geneSig.geneSigItems
+					
+			geneSigItems.each{geneSigItem->
+				outputList.add(geneSigItem.bioMarker.name)
+			}
+					
+			def geneSigLabel = geneSig.name
+			map.put(geneListIds[i],[outputList, geneSigLabel])
+		}
+		return map
+	}
 
 }

@@ -15,9 +15,9 @@ function initDataTables(){
 	
 	//Inserting the select action drop down into the datatables managed div DOM element
 	//Would be ideal if datatables could manage custom elements like dropdowns. Can it?
-	var selectActionHtml='<select id="geneListAction" style="font-size: 10px;" onchange="handleActionItem(this);" onmousedown="populateActionSelection(this);"><option value="">-- Select Action --</option></select>'
+	var selectActionHtml='<select id="geneListAction" style="font-size: 10px;" onchange="handleActionItem(this);" onclick="populateActionSelection(this);"><option value="">-- Select Action --</option></select>';
 	
-	jQuery("#mySignatures_filter").prepend(selectActionHtml)
+	jQuery("#mySignatures_filter").prepend(selectActionHtml);
 }
 
 function handleActionItem(actionItem) {
@@ -83,16 +83,42 @@ function handleActionItem(actionItem) {
  * Loads the div which displays SVG visualization 
  * and other genelists manipulation fields using colorbox 
  */
-function loadManipulateView(geneLists, action){
+function loadManipulateView(data, action){
 	jQuery.colorbox({
 		innerWidth:600, 
 		innerHeight:500,
 		inline:true,
 		href:"#manipulateDiv",
 		onComplete:function(){
-			visualize(geneLists, action);
+			var geneLists = extractLists(data);
+			var labels = extractGeneListLabels(data);
+			visualize(geneLists, action, labels);
 			}
 	});
+}
+
+/**
+ * 
+ * @param data
+ */
+function extractLists(data){
+	var geneLists=new Object();
+	for(geneListId in data){
+		geneLists[geneListId]=data[geneListId][0];
+	}
+	return geneLists
+}
+
+/**
+ * 
+ * @param data
+ */
+function extractGeneListLabels(data){
+	var labels=new Object();
+	for(geneListId in data){
+		labels[geneListId]=data[geneListId][1];
+	}
+	return labels
 }
 
 /**
