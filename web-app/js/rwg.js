@@ -221,7 +221,7 @@ function addSearchAutoComplete()	{
 		source: sourceURL,
 		minLength:0,
 		select: function(event, ui) {  
-			searchParam={id:ui.item.label,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId}; //Using label as identifier!
+			searchParam={id:ui.item.id,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId};
 			addSearchTerm(searchParam);
 			return false;
 		}
@@ -344,8 +344,8 @@ function showFacetResults()	{
 		}
 	else
 		{
-		savedSearchTerms = currentSearchTerms.toString();
-		savedSearchTermsArray = savedSearchTerms.split(",");
+		savedSearchTerms = currentSearchTerms.join(",,,");
+		savedSearchTermsArray = savedSearchTerms.split(",,,");
 		}
 
 

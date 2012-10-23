@@ -105,10 +105,20 @@ public class SearchKeywordService {
 				dupeList << dupeKey
 			}
 			///////////////////////////////////////////////////////////////////////////////////
+			
 			m.put("label", sk.searchKeyword.keyword)
-			m.put("id", , sk.searchKeyword.id)
 			m.put("category", sk.searchKeyword.displayDataCategory)
-			m.put("categoryId", sk.searchKeyword.dataCategory)
+			
+			
+			//Further hack: Alter fields depending on the category
+			if (sk.searchKeyword.dataCategory.equals("DISEASE") || sk.searchKeyword.dataCategory.equals("OBSERVATION")) {
+				m.put("categoryId", sk.searchKeyword.dataCategory)
+				m.put("id", sk.searchKeyword.keyword)
+			}
+			else {
+				m.put("categoryId", sk.searchKeyword.dataCategory)
+				m.put("id", sk.searchKeyword.id)
+			}
 			if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0)	{
 				def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
 				def synList = new StringBuilder()
