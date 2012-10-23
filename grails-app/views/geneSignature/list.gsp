@@ -90,7 +90,7 @@
         	    <th>Tech Platform</th>
 				<th>Tissue Type</th>           	                   	        
         	    <th>Visibility</th>
-        	    <th>Ownership</th>
+        	    <th>Owner</th>
         	    <th>Gene List</th>
         	    <th># Genes</th>
         	    <th># Up-Regulated</th>

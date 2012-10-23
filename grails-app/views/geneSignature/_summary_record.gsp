@@ -31,7 +31,7 @@
 	<td title="${gs.techPlatform?.description?.encodeAsHTML()}">${gs.techPlatform?.accession?.encodeAsHTML()}</td>
 	<td>${gs.tissueTypeConceptCode?.codeName?.encodeAsHTML()}</td>
 	<td id="${gs.id}Public" style="text-align:center;">${gs.publicFlag ? 'Public' : 'Private'}</td>
-	<td id="${gs.id}Owned" style="text-align:center;">${(user.id==gs.createdByAuthUser.id)?'Owned':'Unowned'}</td>
+	<td id="${gs.id}Owned" style="text-align:center;">${gs.createdByAuthUser.username}</td>
 	<g:hiddenField name="${gs.id}Deleted" value="${gs.deletedFlag?'Deleted':'Undeleted'}"/>
 	<td style="text-align:center;">${(gs.foldChgMetricConceptCode.bioConceptCode=='NOT_USED') ? 'List' : 'Sig'}</td>
 	<td style="text-align:center;">
