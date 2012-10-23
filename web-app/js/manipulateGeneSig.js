@@ -82,6 +82,9 @@ function calculateRegionTitles(region){
 	
 	['1', '2', '3', '12', '13', '23', '123'].forEach(function(regionId){
 		regionTitles[regionId]=region[regionId].slice(0,5);
+		if(region[regionId].length>5){
+			regionTitles[regionId]+="..."
+		}
 	});
 	
 	return regionTitles;
@@ -254,7 +257,7 @@ function draw(region, regionTitles, labels){
     .style("fill", unselectedColorMapping["1"])
     .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(labels[setIndex[1]]+": "+regionTitles["1"]);
+    .text(regionTitles["1"]);
 
 	svg.append("svg:rect")
 	.attr("clip-path", "url(#circle2)")
@@ -264,7 +267,7 @@ function draw(region, regionTitles, labels){
     .style("fill", unselectedColorMapping["2"])
     .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(labels[setIndex[2]]+": "+regionTitles["2"]);
+    .text(regionTitles["2"]);
 
 	svg.append("svg:rect")
     .attr("clip-path", "url(#circle3)")
@@ -274,7 +277,7 @@ function draw(region, regionTitles, labels){
     .style("fill", unselectedColorMapping["3"])
     .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
-    .text(labels[setIndex[3]]+": "+regionTitles["3"]);
+    .text(regionTitles["3"]);
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle1)")
@@ -328,7 +331,9 @@ function draw(region, regionTitles, labels){
 	
 	displayCount(region, svg);
 	
-	//displayLabels(labels, svg);
+	displayLabels(svg);
+	
+	displayLegend(labels);
 }
 
 /**
@@ -348,10 +353,20 @@ function displayCount(region, svg){
  * Display labels for each set
  * @param labels
  */
-function displayLabels(labels, svg){
-	display(svg, 50, 80, labels[setIndex[1]]);
-	display(svg, 400, 80, labels[setIndex[2]]);
-	display(svg, 225, 280, labels[setIndex[3]]);
+function displayLabels(svg){
+	display(svg, 50, 80, "Gene Sig 1");
+	display(svg, 390, 80, "Gene Sig 2");
+	display(svg, 215, 280, "Gene Sig 3");
+}
+
+/**
+ * Dispalys the legend table
+ * @param labels
+ */
+function displayLegend(labels){
+	jQuery("#geneSig1Name").text(labels[setIndex[1]]);
+	jQuery("#geneSig2Name").text(labels[setIndex[2]]);
+	jQuery("#geneSig3Name").text(labels[setIndex[3]]);
 }
 
 function display(svg, x, y, count){
