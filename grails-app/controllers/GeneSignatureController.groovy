@@ -383,10 +383,10 @@ class GeneSignatureController {
 
 		} catch (FileSchemaException fse) {
 			flash.message = fse.getMessage()
-			render(view: "wizard3", model:[wizard: wizard])
+			render(view: "wizard1", model:[wizard: wizard])
 		} catch (RuntimeException re) {
 			flash.message = "Runtime exception "+re.getClass().getName()+":<br>"+re.getMessage()
-			render(view: "wizard3", model:[wizard: wizard])
+			render(view: "wizard1", model:[wizard: wizard])
 		}
 	}
 
@@ -802,6 +802,22 @@ class GeneSignatureController {
 			// mouse sources
 			wizard.mouseSources = ConceptCode.findAllByCodeTypeName(MOUSE_SOURCE_CATEGORY, [sort:"bioConceptCode"])
 			
+			// technology platforms
+			def platforms = BioAssayPlatform.findAll("from BioAssayPlatform as p where p.vendor is not null order by p.vendor, p.array");
+			BioAssayPlatform other = new BioAssayPlatform();
+			other.accession="other"
+			//platforms.add(other);
+			wizard.platforms = platforms;
+			
+			// file schemas
+			wizard.schemas = GeneSignatureFileSchema.findAllBySupported(true, [sort:"name"])
+
+			// p value cutoffs
+			wizard.pValCutoffs = ConceptCode.findAllByCodeTypeName(P_VAL_CUTOFF_CATEGORY, [sort:"bioConceptCode"])
+
+			// fold change metrics
+			wizard.foldChgMetrics = ConceptCode.findAllByCodeTypeName(FOLD_CHG_METRIC_CATEGORY, [sort:"bioConceptCode"])
+			
 			break;
 
 			case 2:
@@ -822,13 +838,6 @@ class GeneSignatureController {
 
 			// experiment types
 			wizard.expTypes = ConceptCode.findAllByCodeTypeName(EXP_TYPE_CATEGORY, [sort:"bioConceptCode"])
-
-			// technology platforms
-			def platforms = BioAssayPlatform.findAll("from BioAssayPlatform as p where p.vendor is not null order by p.vendor, p.array");
-			BioAssayPlatform other = new BioAssayPlatform();
-			other.accession="other"
-			//platforms.add(other);
-			wizard.platforms = platforms;
 
 			// compounds
 			wizard.compounds = Compound.findAll("from Compound c where c.brandName is not null or c.genericName is not null order by codeName");
@@ -851,14 +860,6 @@ class GeneSignatureController {
 			wizard.analysisMethods = ConceptCode.findAllByCodeTypeName(ANALYSIS_METHOD_CATEGORY, [sort:"bioConceptCode"])
 			wizard.analysisMethods.add(otherConceptItem);
 
-			// file schemas
-			wizard.schemas = GeneSignatureFileSchema.findAllBySupported(true, [sort:"name"])
-
-			// p value cutoffs
-			wizard.pValCutoffs = ConceptCode.findAllByCodeTypeName(P_VAL_CUTOFF_CATEGORY, [sort:"bioConceptCode"])
-
-			// fold change metrics
-			wizard.foldChgMetrics = ConceptCode.findAllByCodeTypeName(FOLD_CHG_METRIC_CATEGORY, [sort:"bioConceptCode"])
 			break;
 
 			default:

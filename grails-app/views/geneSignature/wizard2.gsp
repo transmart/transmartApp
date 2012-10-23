@@ -52,21 +52,7 @@
 		}
 
 		function validate() {
-			var errorMsg = "";
-			var formName = "geneSignatureFrm";
-			
-			//species required
-			var species = document.forms[formName].elements['speciesConceptCode.id'];	
-			if(species.value=="null") errorMsg = "\n- Please select a relevant species";
-
-			//tech platform required
-			var techPlat = document.forms[formName].elements['techPlatform.id'];
-			if(techPlat.value=="null") errorMsg = errorMsg + "\n- Please select a technology platform";
-					
-			if(errorMsg=="") return true;
-
-			alert("Please correct the following errors:\n" + errorMsg);
-			return false;
+			return true;
 		}
 
 		// show cell line lookup dialog
@@ -198,21 +184,6 @@
 			<td class="name">PMIDs (comma separated)</td>
 			<td class="value"><g:textField name="pmIds" value="${gs.pmIds}" size="67%" maxlength="255" /></td>
 		</tr>
-		<tr class="prop">
-			<td class="name">Technology Platform<g:requiredIndicator/></td>
-			<td class="value">			
-				<g:select name="techPlatform.id"
-    				      from="${wizard.platforms}"
-    				      value="${gs.techPlatform?.id}"
-         				  noSelection="['null':'select tech platform']"
-         				  optionValue="${{it?.vendor + ' - ' + it?.array + ' [' + it?.accession + ']'}}"
-         				  optionKey="id"
-         				  onChange="javascript: toggleOtherDiv(this, 'platform_other_div');" />
-				<div id="platform_other_div" style="display: none;">				
-					<label>please provide 'other' accession #<g:requiredIndicator/>:</label>
-					<br><input type="text" name="techPlatformOther" size="100%" />
-				</div>	
-		</tr>		
 		<tr class="prop">
 			<td class="name">Tissue Type</td>
 			<td class="value">
