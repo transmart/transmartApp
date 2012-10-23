@@ -20,6 +20,7 @@ function drawBoxPlotD3(divId, boxPlotJSON, analysisID, forExport, isCTA, selecte
 	 	  var x=chartObject.x;
 	 	  var y=chartObject.y;	 	  
 	 	  
+	 	  
 	 	  var wBox = chartObject.wBand * .4; 
 	
 	 	  
