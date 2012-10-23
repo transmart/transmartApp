@@ -20,40 +20,43 @@
 		<thead>
 			<tr role="row">
 				<g:each in="${columnNames}" var="col">
-					<g:if test="${col.sortField}">
-						<%-- If this is sorted, give link to asc/desc (opposite current order) --%>
-						<g:if test="${col.sortField.equals(sortField)}">
-							<g:if test="${order.equals('desc')}">
-								<th "class="sorting" tabindex="0" rowspan="1" colspan="1" style="width: 100px; cursor: pointer;" onclick="loadAnalysisResultsGrid(${analysisId}, {sortField: '${col.sortField}', order: 'asc'})">
-									${col.sTitle} <img src="${resource([file:'desc.gif', dir:'images'])}"/>
-								</th>
+					<g:unless test="${col.sTitle == 'Analysis'}"> <%-- Skip analysis column for analysis results - there can be only one --%>
+						<g:if test="${col.sortField}">
+							<%-- If this is sorted, give link to asc/desc (opposite current order) --%>
+							<g:if test="${col.sortField.equals(sortField)}">
+								<g:if test="${order.equals('desc')}">
+									<th "class="sorting" tabindex="0" rowspan="1" colspan="1" style="width: 100px; cursor: pointer;" onclick="loadAnalysisResultsGrid(${analysisId}, {sortField: '${col.sortField}', order: 'asc'})">
+										${col.sTitle} <img src="${resource([file:'desc.gif', dir:'images'])}"/>
+									</th>
+								</g:if>
+								<g:else>
+									<th "class="sorting" tabindex="0" rowspan="1" colspan="1" style="width: 100px; cursor: pointer;" onclick="loadAnalysisResultsGrid(${analysisId}, {sortField: '${col.sortField}', order: 'desc'})">
+										${col.sTitle} <img src="${resource([file:'asc.gif', dir:'images'])}"/>
+									</th>
+								</g:else>
 							</g:if>
+							<%-- Otherwise just provide asc link --%>
 							<g:else>
-								<th "class="sorting" tabindex="0" rowspan="1" colspan="1" style="width: 100px; cursor: pointer;" onclick="loadAnalysisResultsGrid(${analysisId}, {sortField: '${col.sortField}', order: 'desc'})">
-									${col.sTitle} <img src="${resource([file:'asc.gif', dir:'images'])}"/>
+								<th "class="sorting" tabindex="0" rowspan="1" colspan="1" style="width: 100px; cursor: pointer;" onclick="loadAnalysisResultsGrid(${analysisId}, {sortField: '${col.sortField}', order: 'asc'})">
+									${col.sTitle}
 								</th>
 							</g:else>
 						</g:if>
-						<%-- Otherwise just provide asc link --%>
 						<g:else>
-							<th "class="sorting" tabindex="0" rowspan="1" colspan="1" style="width: 100px; cursor: pointer;" onclick="loadAnalysisResultsGrid(${analysisId}, {sortField: '${col.sortField}', order: 'asc'})">
-								${col.sTitle}
-							</th>
+							<th class="sorting" tabindex="0" rowspan="1" colspan="1" style="width: 100px; ">${col.sTitle}</th>
 						</g:else>
-					</g:if>
-					<g:else>
-						<th class="sorting" tabindex="0" rowspan="1" colspan="1" style="width: 100px; ">${col.sTitle}</th>
-					</g:else>
+					</g:unless>
 				</g:each>
 			</tr>
 		</thead>
 		<tbody role="alert" aria-live="polite" aria-relevant="all">
 			
 				<g:each in="${analysisData}" var="row" status="i">
-				
 					<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-					<g:each in="${row}" var="data">
-						<td class="">${data}</td>
+					<g:each in="${row}" var="data" status="colNum">
+						<g:unless test="${colNum == 0}"> <%-- Skip analysis name --%>
+							<td class="">${data}</td>
+						</g:unless>
 					</g:each>
 					</tr>
 				</g:each>

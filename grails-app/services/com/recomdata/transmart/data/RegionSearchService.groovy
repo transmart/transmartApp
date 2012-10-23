@@ -49,27 +49,33 @@ class RegionSearchService {
 	//Query with mad Oracle pagination
 	def gwasSqlQuery = """
 	select a.* from
-	(SELECT gwas.bio_assay_analysis_id as analysis, gwas.rs_id as rsid, gwas.p_value as pvalue, gwas.log_p_value as logpvalue, gwas.ext_data as extdata
+	(SELECT baa.analysis_name as analysis, gwas.rs_id as rsid, gwas.p_value as pvalue, gwas.log_p_value as logpvalue, gwas.ext_data as extdata
 	,row_number() over (order by gwas.rs_id) as row_nbr
 		   FROM biomart.Bio_Assay_Analysis_Gwas gwas
+		   LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = gwas.bio_assay_analysis_id
 		   LEFT JOIN deapp.de_rc_snp_info info ON gwas.rs_id = info.rs_id 
 	"""
 	
 	def eqtlSqlQuery = """
 	select a.* from
-	(SELECT eqtl.bio_assay_analysis_id as analysis, eqtl.rs_id as rsid, eqtl.p_value as pvalue, eqtl.log_p_value as logpvalue, eqtl.ext_data as extdata, eqtl.gene as gene
+	(SELECT baa.analysis_name as analysis, eqtl.rs_id as rsid, eqtl.p_value as pvalue, eqtl.log_p_value as logpvalue, eqtl.ext_data as extdata, eqtl.gene as gene
 	,row_number() over (order by eqtl.rs_id) as row_nbr
 		   FROM biomart.Bio_Assay_Analysis_eqtl eqtl
+		   LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = eqtl.bio_assay_analysis_id
 		   LEFT JOIN deapp.de_rc_snp_info info ON eqtl.rs_id = info.rs_id 
 	"""
 	
 	def gwasSqlCountQuery = """
-		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Gwas gwas LEFT JOIN deapp.de_rc_snp_info info ON gwas.rs_id = info.rs_id 
+		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Gwas gwas 
+		LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = gwas.bio_assay_analysis_id
+		LEFT JOIN deapp.de_rc_snp_info info ON gwas.rs_id = info.rs_id 
 		
 	"""
 	
 	def eqtlSqlCountQuery = """
-	    SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Eqtl eqtl LEFT JOIN deapp.de_rc_snp_info info ON eqtl.rs_id = info.rs_id
+	    SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Eqtl eqtl
+	    LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = eqtl.bio_assay_analysis_id
+	    LEFT JOIN deapp.de_rc_snp_info info ON eqtl.rs_id = info.rs_id
 	
     """
 	
@@ -122,7 +128,7 @@ class RegionSearchService {
 
 		//Add analysis IDs
 		if (analysisIds) {
-			qb.append("WHERE BIO_ASSAY_ANALYSIS_ID IN (" + analysisIds[0]);
+			qb.append("WHERE baa.BIO_ASSAY_ANALYSIS_ID IN (" + analysisIds[0]);
 			for (int i = 1; i < analysisIds.size(); i++) {
 				qb.append(", " + analysisIds[i]);
 			}
@@ -170,7 +176,7 @@ class RegionSearchService {
 		}
 		def total = 0;
 		
-		def finalQuery = analysisQuery + qb.toString() + "ORDER BY ${sortField} ${order}) a where a.row_nbr between ${offset} and ${limit+offset}";
+		def finalQuery = analysisQuery + qb.toString() + "ORDER BY ${sortField} ${order}) a where a.row_nbr between ${offset+1} and ${limit+offset}";
 		stmt = con.prepareStatement(finalQuery);
 		if (cutoff) {
 			stmt.setDouble(1, cutoff);
@@ -183,10 +189,10 @@ class RegionSearchService {
 		try{
 			while(rs.next()){
 				if ((type.equals("gwas"))) {
-					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getLong("analysis")]);
+					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis")]);
 				}
 				else {
-					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getLong("analysis"), rs.getString("gene")]);
+					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis"), rs.getString("gene")]);
 				}
 			}
 		}

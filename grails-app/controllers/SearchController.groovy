@@ -1004,7 +1004,7 @@ public class SearchController{
 		def returnedAnalysisData = []
 		
 		//These columns aren't dynamic and should always be included. Might be a better way to do this than just dropping it here.
-		columnNames.add(["sTitle":"Analysis ID", "sortField":"analysis"])
+		columnNames.add(["sTitle":"Analysis", "sortField":"analysis"])
 		columnNames.add(["sTitle":"Probe ID", "sortField":"rsid"])
 		columnNames.add(["sTitle":"p-value", "sortField":"pvalue"])
 		columnNames.add(["sTitle":"Adjusted p-value", "sortField":"logpvalue"])

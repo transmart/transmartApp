@@ -67,7 +67,7 @@ public class SearchKeywordService {
 		def c = SearchKeywordTerm.createCriteria()
 		def results = c.list 	{
 			if (term.size() > 0)	{
-				ilike("keywordTerm", '%' + term + '%')
+				like("keywordTerm", '%' + term.toUpperCase() + '%')
 			}
 			if ("ALL".compareToIgnoreCase(category) != 0)	{
 				searchKeyword	{

@@ -152,61 +152,60 @@ class UploadDataController {
 			upload.filename = uploadsDir + "/" + filename
 		}
 		
-		if (upload.save(flush: true)) {
-			
-			//Save the uploaded file, if any
-			def result = new DataUploadResult();
-			
-			if (f && !f.isEmpty()) {
-				def fullpath = uploadsDir + "/" + filename
-				try {
-					result = dataUploadService.writeFile(fullpath, f, upload)
-					if (!result.success) {
-						upload.status = "ERROR"
-						upload.save(flush: true)
-						render(view: "complete", model: [result: result, uploadDataInstance: upload])
-						return
-					}
-				}
-				catch (Exception e) {
+		//Save the uploaded file, if any
+		def result = new DataUploadResult();
+		
+		if (f && !f.isEmpty()) {
+			def fullpath = uploadsDir + "/" + filename
+			try {
+				result = dataUploadService.writeFile(fullpath, f, upload)
+				if (!result.success) {
 					upload.status = "ERROR"
 					upload.save(flush: true)
-					result = new DataUploadResult(success:false, error: "Could not verify file: " + e.getMessage());
-					render(view: "complete", model: [result: result, uploadDataInstance: upload]);
+					render(view: "complete", model: [result: result, uploadDataInstance: upload])
 					return
 				}
-				
-				//If we've reached here, everything is OK - set our state to PENDING to be picked up by ETL
-				upload.status = "PENDING"
+			}
+			catch (Exception e) {
+				upload.status = "ERROR"
 				upload.save(flush: true)
-			}
-			else {
-				//This file was previously uploaded with an error - flag this!
-				if (upload.status.equals("ERROR")) {
-					result.error = "The existing file for this metadata failed to upload and needs to be replaced. Please upload a new file."
-				}
+				result = new DataUploadResult(success:false, error: "Could not verify file: " + e.getMessage());
+				render(view: "complete", model: [result: result, uploadDataInstance: upload]);
+				return
 			}
 			
-			result.success = upload.status.equals("PENDING");
-			
-			//If the file is now pending, start the staging process
-			if (result.success) {
-				try {
-					dataUploadService.runStaging(upload.id);
-				}
-				catch (Exception e) {
-					log.error(e.getMessage(), e)
-				}
-			}
-			render(view: "complete", model: [result: result, uploadDataInstance: upload]);
-			return
+			//If we've reached here, everything is OK - set our state to PENDING to be picked up by ETL
+			upload.status = "PENDING"
+			upload.save(flush: true)
 		}
 		else {
+			//This file was previously uploaded with an error - flag this!
+			if (upload.status.equals("ERROR")) {
+				result.error = "The existing file for this metadata failed to upload and needs to be replaced. Please upload a new file."
+			}
+		}
+		
+		result.success = upload.status.equals("PENDING");
+		
+		//If the file is now pending, start the staging process
+		if (result.success) {
+			try {
+				dataUploadService.runStaging(upload.id);
+			}
+			catch (Exception e) {
+				log.error(e.getMessage(), e)
+			}
+		}
+		
+		if (upload.errors) {
 			flash.message = "The metadata could not be saved - please correct the highlighted errors."
 			def errors = upload.errors
 			def model = [uploadDataInstance: upload]
 			addFieldData(model, upload)
 			render(view: "uploadData", model: model)
+		}
+		else {
+			render(view: "complete", model: [result: result, uploadDataInstance: upload]);
 		}
 	}
 	
