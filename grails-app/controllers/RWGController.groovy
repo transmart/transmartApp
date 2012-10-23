@@ -404,6 +404,8 @@ class RWGController {
    */
    def executeSOLRFacetedQuery = {solrRequestUrl, solrQueryParams, returnAnalysisIds ->
 	   
+	   println (solrQueryParams)
+	   
 	   JSONObject facetCounts = new JSONObject()
 	   //solrQueryParams = "q=(*:*)"
 	   //solrQueryParams = solrQueryParams.substring(0, solrQueryParams.lastIndexOf(")")+1)
@@ -433,7 +435,7 @@ class RWGController {
 		   }
 		   
 		   if (returnAnalysisIds) {
-			   println (solrQueryParams)
+			   
 			   //outputFormattedXml(xml)
 			   def analysisIds = xml.result.doc.str.findAll{it.@name == 'ANALYSIS_ID'}
 			   solrConnection.disconnect()

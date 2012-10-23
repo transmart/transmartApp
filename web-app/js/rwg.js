@@ -221,7 +221,7 @@ function addSearchAutoComplete()	{
 		source: sourceURL,
 		minLength:0,
 		select: function(event, ui) {  
-			searchParam={id:ui.item.id,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId};
+			searchParam={id:ui.item.label,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId}; //Using label as identifier!
 			addSearchTerm(searchParam);
 			return false;
 		}
@@ -2611,6 +2611,7 @@ function showSearchTemplate()	{
 			var fields = currentSearchTerms[j].split(":");
 			if (currentCategories[i] == fields[0]){
 				var tagID = currentSearchTerms[j].split(' ').join('%20');			// URL encode the spaces
+				var tagID = currentSearchTerms[j].split(',').join('%44');			// And the commas
 				
 				if (firstItem)	{
 					var catFields = fields[0].split("|");
@@ -3241,7 +3242,7 @@ function openPlotOptions() {
 				hide: 'fade',
 				resizable: false,
 				buttons: {"Plot" : startPlotter}
-			})
+			});
 	}
 }
 
