@@ -146,6 +146,74 @@
 		</tr>
 	</table>
 	<br>
+	<p style="font-weight: bold;">Version Information</p>	
+	<table class="detail">
+		<tr class="prop">
+			<td class="name">Version</td>
+			<td class="value">
+				<g:textField name="version" value="" />
+			</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">Data Source</td>
+			<td class="value">
+				<g:textField name="dataSource" value="" />
+			</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">QC performed</td>
+			<td class="value"><g:checkBox name="qcPerformed" value="" />
+		</tr>
+	</table>
+	<br>
+	<p style="font-weight: bold;">Custom fields</p>	
+	<table class="detail">
+		<tr class="prop">
+			<th>Name</th>
+			<th>Value</th>
+		</tr>
+		<tr class="prop">
+			<td class="name">
+				<g:textField name="customName1" value="" />
+			</td>
+			<td class="value">
+				<g:textField name="customValue1" value="" />
+			</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">
+				<g:textField name="customName2" value="" />
+			</td>
+			<td class="value">
+				<g:textField name="customValue2" value="" />
+			</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">
+				<g:textField name="customName3" value="" />
+			</td>
+			<td class="value">
+				<g:textField name="customValue3" value="" />
+			</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">
+				<g:textField name="customName4" value="" />
+			</td>
+			<td class="value">
+				<g:textField name="customValue4" value="" />
+			</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">
+				<g:textField name="customName5" value="" />
+			</td>
+			<td class="value">
+				<g:textField name="customValue5" value="" />
+			</td>
+		</tr>
+	</table>
+	<br>
 
 	<div class="buttons">
 		<g:actionSubmit class="previous" action="${(wizard.wizardType==1 || wizard.wizardType==2) ? 'edit2' : 'create2'}" value="Meta-Data" />
