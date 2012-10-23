@@ -120,6 +120,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 
 		var cohortArray = new Array();   // array of cohort ids
 		var cohortLabels = new Array();   // array of cohort labels on x axis
+		var cohortDisplayIds = new Array();   // array of cohort ids for legend
 		var cohortDesc = new Array();    // array of cohort descriptions
 		var cohortDisplayStyles = new Array();    // array of cohort display styles (i.e. number from 0..4)
 	
@@ -137,13 +138,13 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 				var lbl;
 				if (isCTA)  {  // cohort labels for CTA are 1A, 1B, ..., 1n, 2A,...2n, ...)
 					var charCodeA = "A".charCodeAt(0);
-					lbl = analysisIndex + String.fromCharCode(charCodeA + arrayIndex);
+					lbl = (analysisIndex + 1) + String.fromCharCode(charCodeA + arrayIndex);
 				}
 				else  {
 					lbl = key;
 				}
 					
-				
+				cohortDisplayIds[arrayIndex] = lbl;
 				cohortLabels[arrayIndex] = lbl + "(n=" +  jsonData[key]['sampleCount'] + ")";
 				
 				
@@ -165,7 +166,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 			statObject.desc = jsonData[i]['desc'].replace(/_/g, ', ');
 			statObject.descExport = cohortDescExport[jsonData[i]['order']].replace(/_/g, ', ');
 			statObject.sampleCount = jsonData[i]['sampleCount'];
-			
+			statObject.cohortDisplayId = cohortDisplayIds[jsonData[i]['order'] - 1];
 			
 			// Map the all four quartiles to the key (e.g. C1)  
 			if (isBoxplot)  {	
@@ -265,10 +266,10 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 		var wTotal = wChart + margin;
 		var hTotal = hChart + hTitle; 
 	
-		// if exporting, draw a legend; if not exporting legend is drawn outside of svg
+		// if exporting (or for CTA), draw a legend; if not exporting legend is drawn outside of svg
 		var hLegend = 0;
-		if(forExport){
-			hLegend = 30 * (cohortArray.length) * scale;
+		if(forExport || isCTA){
+			hLegend = 30 * (cohortArray.length) * scale + 10;
 		}
 	
 		hTotal = hTotal + hLegend;
@@ -338,9 +339,11 @@ function drawEmptyPlot(root, plotData, forExport, isCTA) {
 		.attr("transform", "translate(" + plotData.xOffset + "," + plotData.yOffset + ")")
 		;
 
+	var bpYOffset = isCTA ? 0 : plotData.hLegend;  // legend goes after plot if CTA
+	
 	var bp = svg
 		.append("g")
-		.attr("transform", "translate(0," + plotData.hLegend + ")")
+		.attr("transform", "translate(0," + bpYOffset + ")")
 		.attr("class", "plot")
 		;
 	
@@ -445,8 +448,9 @@ function drawEmptyPlot(root, plotData, forExport, isCTA) {
 		 
   var wBand = x.rangeBand();
 
-  if (forExport)  {
-	  drawExportLegend(svg, 10, 0, plotData.statMapping);
+  if (forExport || isCTA)  {
+	  var legendYOffset = isCTA ? plotData.hChart + plotData.hTitle : 0;  // legend goes after plot if CTA
+	  drawExportLegend(svg, 10, legendYOffset, plotData.statMapping);
   }
 
 
