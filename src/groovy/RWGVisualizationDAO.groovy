@@ -173,13 +173,51 @@ class RWGVisualizationDAO {
 	   }
 	   return returnMap
    }
-	
-	
+	  
+   /**
+   * Method to retrieve the probe id with max pvalue/fold change for a given list of analyses and search keyword (i.e. gene)
+   *
+   * @param analysisIds - the list of analysis IDs  
+   * @param keywordId - keyword id for a gene 
+   *
+   * @return a map containing the analysis id as key and probe id as value 
+   **/
+  def getProbeIdsForAnalyses(analysisIds, keywordId)  {
+	  groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	  StringBuilder s = new StringBuilder()
+	  List sqlParams = []
+	  s.append("""
+	     select distinct bio_assay_analysis_id, probe_id, preferred_pvalue, abs(fold_change_ratio)
+		  from heat_map_results
+		   where search_keyword_id=?
+	  """)
+	  s.append(" and Bio_Assay_Analysis_Id in (")
+	  s.append(analysisIds.join(','))
+	  s.append(") order by preferred_pvalue asc, abs(fold_change_ratio) desc ")
+
+	  sqlParams.push(keywordId)
+	  // retrieve results	  
+	  def results = sql.rows(s.toString(), sqlParams)
+
+	  def returnMap = [:]
+	  // loop through and determine probe id  with highest pvalue/fold change 	(since they are ordered desc it will be the first one encountered for the analysis) 
+	  results.each{ row->
+		  def aId = row.bio_assay_analysis_id.toString()
+		  
+		  // if analysis not in map yet, add it
+		  if (!returnMap.get(aId))  {
+			  def pId = row.probe_id
+			  returnMap.put(aId, pId)
+		  }
+	  }
+	  
+	  return returnMap
+   }
 
    /**
    * Method to retrieve the data values and cohort information for a given analysis and probe_id for use by line plot or box plot
    *
-   * @param analysisID - the analysis ID (or list of analysis IDs if for CTA) 
+   * @param analysisIds - the analysis ID (or list of analysis IDs if for CTA) 
    * @param probe_name - bio_assay_feature_group name for the probe
    * @param boxplot - if true, then boxplot; else lineplot
    * @param keywordId - keyword if for a gene (i.e. for Cross Trial Analysis)
@@ -196,32 +234,42 @@ class RWGVisualizationDAO {
 	  
 	  StringBuilder s = new StringBuilder()
 	  s.append("""
-     Select a.Bio_Assay_Analysis_Id, a.cohort_id, a.assay_id, a.gene_id, avg(a.log_intensity) log_intensity from (
- 
-		 Select Bio_Assay_Analysis_Id, probe_id, cohort_id, log_intensity, assay_id, min(gene_id) as gene_id
-		 From heat_map_results
+		 Select h.Bio_Assay_Analysis_Id, h.probe_id, h.cohort_id, h.log_intensity, h.assay_id, min(h.gene_id) as gene_id
+		 From heat_map_results h 
 	  """)
 
-	  s.append(" where Bio_Assay_Analysis_Id in (") 
-	  s.append(analysisIds.join(','))
+	  def probeMap = [:]
+      if (probe_name)  {   // regular box or line plot, create a map with just one value
+		  probeMap.put(analysisIds[0], probe_name)
+	  }
+	  else  {              // CTA 
+		  probeMap = getProbeIdsForAnalyses(analysisIds, keywordId)
+	  }
+
+	  def whereAdded = false
+	  probeMap.each {
+		  def sqlClause = /(h.Bio_Assay_Analysis_Id=${it.key} AND h.probe_id='${it.value}')/
+		  if (!whereAdded)  {
+			  s.append(" where (")
+			  whereAdded = true
+		  }
+		  else  {
+			  s.append(" or ")
+		  }
+		  s.append(sqlClause)
+	  }
 	  s.append(")")
-	     
-      if (probe_name)  {   // regular box or line plot
-		  s.append(" and probe_id = ? " )
-		  sqlParams.push(probe_name)
-      }
 	  
-	  if (keywordId)  {  // Cross trial analysis gene id
-		  s.append(" and search_keyword_id = ? " )
+  	  if (keywordId)   {   // cross trial analysis, add query to get the probe id with the max preferred p-value
+		  
+		  s.append(" and h.search_keyword_id=?")	  
 		  sqlParams.push(keywordId)
+		  
 	  }
 		  	  
 	  s.append("""
-		   group by Bio_Assay_Analysis_Id, probe_id, cohort_id, log_intensity, assay_id 
-	  		order by Bio_Assay_Analysis_Id, probe_id, cohort_id, log_intensity
-           )  a
-	  group by a.Bio_Assay_Analysis_Id, a.cohort_id,  a.assay_id, a.gene_id 
-	  order by a.Bio_Assay_Analysis_Id, a.cohort_id, avg(a.log_intensity)
+		   group by h.Bio_Assay_Analysis_Id, h.probe_id, h.cohort_id, h.log_intensity, h.assay_id 
+	  		order by h.Bio_Assay_Analysis_Id, h.probe_id, h.cohort_id, h.log_intensity
 	  """)
 	  log.info("${s}")
 	  log.info("${sqlParams}")
