@@ -181,13 +181,13 @@ class ExperimentAnalysisQueryService {
 		createSubFilterCriteria(filter.expAnalysisFilter,query);
 
 		if("COUNT_EXP".equals(countType)){
-			query.addSelect("COUNT(distinct baad.bioExperimentId) ");
+			query.addSelect("COUNT(distinct baad.experiment.id) ");
 		} else if ("COUNT_ANALYSIS".equals(countType)){
 			//query.addTable("JOIN baad.markers baad_bm")
-			query.addSelect("COUNT(distinct baad.bioAssayAnalysisId) ");
+			query.addSelect("COUNT(distinct baad.analysis.id) ");
 		} else if ("COUNT_ANALYSIS_TEA".equals(countType)){
 			//	query.addTable("JOIN baad.markers baad_bm")
-			query.addSelect("COUNT(DISTINCT baad.BioAssayAnalysisId) ");
+			query.addSelect("COUNT(DISTINCT baad.analysis.id) ");
 			createNPVCondition(query)
 		} else {
 			query.setDistinct=true
@@ -475,7 +475,8 @@ class ExperimentAnalysisQueryService {
 		if(expfilter.filterSpecies()){
 			//	def alias = query.mainTableAlias+".assayPlatform.organism"
 			//query.addTable(alias+" exp")
-			query.addCondition(query.mainTableAlias+".assayPlatform.organism ='"+expfilter.species+"'")
+			query.addTable("bio.BioAssayAnalysisData baad_platform")
+			query.addCondition(" baad_platform.assayPlatform.organism ='"+expfilter.species+"'")
 		}
 		// type
 		//	if(expfilter.filterExpType()){
@@ -488,7 +489,8 @@ class ExperimentAnalysisQueryService {
 		// fold change on BioAssayAnalysisData
 		if(expfilter.filterFoldChange()){
 			def StringBuilder s = new StringBuilder();
-			def symbol = "abs(" + query.mainTableAlias+".foldChangeRatio)" // abs value
+			query.addTable("bio.BioAssayAnalysisData baad_foldChange")
+			def symbol = "abs(baad_foldChange.foldChangeRatio)" // abs value
 			s.append (" ((").append(symbol).append(" >=").append(expfilter.foldChange).append(" )")
 					.append(" OR ").append(symbol).append(" IS NULL )");
 			query.addCondition(s.toString())
@@ -501,7 +503,8 @@ class ExperimentAnalysisQueryService {
 		// pvalue on BioAssayAnalysisData
 		if(expfilter.filterPValue()){
 			def StringBuilder s = new StringBuilder();
-			def symbol = query.mainTableAlias+".preferredPvalue"
+			query.addTable("bio.BioAssayAnalysisData baad_pValue")
+			def symbol = "baad_pValue.preferredPvalue"
 			s.append(" (").append(symbol).append(" <= ").append(expfilter.pValue).append( ")")
 			// .append(" OR ").append(symbol).append(" IS NULL)");
 			query.addCondition(s.toString())

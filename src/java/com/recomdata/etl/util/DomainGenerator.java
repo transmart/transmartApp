@@ -59,15 +59,20 @@ public class DomainGenerator {
 
 
 		try {
-			connect =new MssqlConnectImpl("phcma182","rdc_DM", "sa","recomadmin");
+			//connect =new MssqlConnectImpl("ph","rdc_DM", "sa","e");
+			connect = new OracleConnectImpl("rd","orcl","dep","dep");
 				//MssqlConnectImpl.createLocalConnect();
 		//	generateDomain(connect, 
 		//			"dm_patient_sat_summary", "PatientSatisfactionSummary", "dm");
 		//	generateDomain(connect, 
 		//			"dm_patient_sat_details", "PatientSatisfactionDetail", "dm");
 
+		//	generateDomain(connect, 
+		//			"DE_RC_SNP_INFO", "DeSNPInfo", "de");
 			generateDomain(connect, 
-					"dm_pqri_cpt2_provider_sum", "PqriProviderCPT2ReportSummary", "dm");
+					"DE_SUBJECT_SAMPLE_MAPPING", "DeSubjectSampleMap", "de");
+			generateDomain(connect, 
+					"QT_PATIENT_SET_COLLECTION", "QtPatientSet", "i2b2");
 
 		}
 		finally {

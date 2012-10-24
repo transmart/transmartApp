@@ -39,7 +39,7 @@ import com.recomdata.export.IgvFiles;
  */
 public class GetGenePatternFile extends HttpServlet {
 	
-	public static String fileDirName = "genepattern";
+	public static String fileDirName = "data";
 	
 	public void doHead(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException,IOException {
@@ -61,6 +61,7 @@ public class GetGenePatternFile extends HttpServlet {
 			String userName = request.getParameter("user");
 			String secureHash = request.getParameter("hash");	// hash is the 
 			
+			System.out.println("filename:"+fileName+":userName:"+userName);
 			File file = new File(getGenePatternFileDirName(request) + File.separator + fileName);
 			Long fileLength = new Long(file.length());
 			
@@ -76,6 +77,7 @@ public class GetGenePatternFile extends HttpServlet {
 		
 			
 			String hashStr = IgvFiles.getFileSecurityHash(file, userName);
+			System.out.println("newhash:"+hashStr+" oldhash:"+secureHash);
 			if (hashStr.equals(secureHash) == false) {
 				throw new ServletException("The user name and security hash does not match those for the file " + fileName);
 			}
