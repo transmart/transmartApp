@@ -2800,14 +2800,16 @@ function displayXTGeneSummary(data){
 
 function createCrossTrialSummaryChart(data, pdata, geneName){
 	
+	
 
-    var margin = {top: 30, right: 40, bottom: 10, left: 60},
-        width = (data.length * 60)- margin.left - margin.right,
+    var margin = {top: 30, right: 40, bottom: 10, left: 50},
+        bar_width = 30,
+        width = ((data.length) * (bar_width + 10)),
         height = 150- margin.top - margin.bottom;
 
-    var y0 = Math.max(Math.max(-d3.min(data), d3.max(data)),1.5);
+    var y0 = Math.max(Math.max(-d3.min(data), d3.max(data)),5);
 
-    var y2max = Math.max(d3.max(pdata),1.5);
+    var y2max = Math.max(d3.max(pdata),3);
     
     var y = d3.scale.linear()
         .domain([-y0, y0])
@@ -2819,20 +2821,16 @@ function createCrossTrialSummaryChart(data, pdata, geneName){
         .range([height/2,0])
         .nice();
 
-    var x = d3.scale.ordinal()
-        .domain(d3.range(data.length))
-        .rangeRoundBands([0, width], .2);
 
     var yAxis = d3.svg.axis()
         .scale(y)
+        .ticks(5)
         .orient("left");
 
     var yAxis2 = d3.svg.axis()
         .scale(y2)
-        .ticks(5)
+        .ticks(4)	
         .orient("right");
-    
-    
     
     var svg = d3.select("#xtSummaryChart").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -2844,20 +2842,21 @@ function createCrossTrialSummaryChart(data, pdata, geneName){
         .data(data)
       .enter().append("rect")
         .attr("class", function(d) { return d < 0 ? "bar negative" : "bar positive"; })
-        .attr("x", function(d,i) { return x(i); })
+                        //5 is the left padding, 10 is the padding between each bar
+        .attr("x", function(d,i) { return 5 + i * (bar_width+10); })
         .attr("y", function(d,i) { return y(Math.max(0, d)); })
         .attr("height", function(d) { return Math.abs(y(0) - y(0-d)); })
-        .attr("width", x.rangeBand());
+        .attr("width", bar_width);
 
 
     svg.selectAll(".bar2")
         .data(pdata)
         .enter().append("rect")
        // .attr("class", function(d) { return d < 0 ? "bar negative" : "bar positive"; })
-        .attr("x", function(d,i) { return x(i)+10; })
+        .attr("x", function(d,i) { return bar_width/2 +2 + i * (bar_width+10); })
         .attr("y", function(d,i) { return y2(Math.max(0, d)); })
         .attr("height", function(d) { return Math.abs(y2(0) - y2(0-d)); })
-        .attr("width", 5);
+        .attr("width", 4);
 
 
 
@@ -2866,21 +2865,21 @@ svg.selectAll("text")
        .enter()
        .append("text")
        .text(function(d,i) {return i;})
-       .attr("x", function(d,i) { return x(i)+11; })
+       .attr("x", function(d,i) { return bar_width/2 +2 + i * (bar_width+10); })
       // .attr("y", function(d,i) { return y(Math.max(0, d)); })
       // .attr("y", function(d) { return d < 0 ? height/2-5 : height/2+10; })
-       .attr("y", function(d) { return height })
+       .attr("y", function(d) { return height +10 })
        .attr("font-family", "sans-serif")
        .attr("font-size", "10px")
        .attr("fill", "black");
 
 
-		// add Title
-		svg.append("svg:text")
-		  .attr("x", 8)
-		  .attr("y", -5)
-		  .attr("class","xtBarPlotGeneTitle")
-		  .text(geneName);
+        // add Title
+        svg.append("svg:text")
+          .attr("x", 8)
+          .attr("y", -5)
+          .attr("class","xtBarPlotGeneTitle")
+          .text(geneName);
 
         // y1 legend
         svg.append("text")
@@ -2916,10 +2915,7 @@ svg.selectAll("text")
         .attr("y2", y(0))
         .attr("x1", 0)
         .attr("x2", width);
-	
-	
-	
-	
+    
 	
 	
 	/*
