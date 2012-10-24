@@ -182,6 +182,7 @@ public class FileWriterUtil {
 		writer.writeNext(lineValues);
 	}
 	
+
 	/**
 	 * Closes the writer
 	 */
