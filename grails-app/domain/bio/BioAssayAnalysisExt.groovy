@@ -43,11 +43,11 @@ class BioAssayAnalysisExt {
 			bioAssayAnalysis: 'BIO_ASSAY_ANALYSIS_ID'
 			vendor column:'VENDOR'
 			vendorType column:'VENDOR_TYPE'
-			genomeVersion column:'GNOME_VERSION' // [sic]
+			genomeVersion column:'GENOME_VERSION'
 			tissue column:'TISSUE'
 			cellType column:'CELL_TYPE'
 			population column:'POPULATION'
-			researchUnit column:'RU'
+			researchUnit column:'RESEARCH_UNIT'
 			sampleSize column:'SAMPLE_SIZE'
 			modelName column:'MODEL_NAME'
 			modelDescription column:'MODEL_DESC'

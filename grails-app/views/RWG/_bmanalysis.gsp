@@ -33,7 +33,7 @@
 	   <div id="visTabs_${analysisId}" class="analysis-tabs">
 	       <ul>
 	          <li><a href="#results_${analysisId}">Analysis Results</a></li>
-	          <li><a href="#qqplot_${analysisId}">QQ Plot</a></li>
+	          <li><a href="#qqplot_${analysisId}" onclick="loadQQPlot('${analysisId}');">QQ Plot</a></li>
 	       </ul>
 	       
 			<div id="results_${analysisId}">

@@ -49,35 +49,29 @@ class RegionSearchService {
 	//Query with mad Oracle pagination
 	def gwasSqlQuery = """
 	select a.* from
-	(SELECT baa.analysis_name as analysis, gwas.rs_id as rsid, gwas.p_value as pvalue, gwas.log_p_value as logpvalue, gwas.ext_data as extdata
-	,row_number() over (order by gwas.rs_id) as row_nbr
-		   FROM biomart.Bio_Assay_Analysis_Gwas gwas
-		   LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = gwas.bio_assay_analysis_id
-		   LEFT JOIN deapp.de_rc_snp_info info ON gwas.rs_id = info.rs_id 
+	(SELECT baa.analysis_name as analysis, data.rs_id as rsid, data.p_value as pvalue, data.log_p_value as logpvalue, data.ext_data as extdata
+	,row_number() over (order by ?) as row_nbr
+		   FROM biomart.Bio_Assay_Analysis_Gwas data
+		   LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = data.bio_assay_analysis_id 
 	"""
 	
 	def eqtlSqlQuery = """
 	select a.* from
-	(SELECT baa.analysis_name as analysis, eqtl.rs_id as rsid, eqtl.p_value as pvalue, eqtl.log_p_value as logpvalue, eqtl.ext_data as extdata, eqtl.gene as gene
-	,row_number() over (order by eqtl.rs_id) as row_nbr
-		   FROM biomart.Bio_Assay_Analysis_eqtl eqtl
-		   LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = eqtl.bio_assay_analysis_id
-		   LEFT JOIN deapp.de_rc_snp_info info ON eqtl.rs_id = info.rs_id 
+	(SELECT baa.analysis_name as analysis, data.rs_id as rsid, data.p_value as pvalue, data.log_p_value as logpvalue, data.ext_data as extdata, data.gene as gene
+	,row_number() over (order by ?) as row_nbr
+		   FROM biomart.Bio_Assay_Analysis_eqtl data
+		   LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = data.bio_assay_analysis_id 
 	"""
 	
 	def gwasSqlCountQuery = """
-		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Gwas gwas 
-		LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = gwas.bio_assay_analysis_id
-		LEFT JOIN deapp.de_rc_snp_info info ON gwas.rs_id = info.rs_id 
-		
+		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Gwas data 
 	"""
 	
 	def eqtlSqlCountQuery = """
-	    SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Eqtl eqtl
-	    LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = eqtl.bio_assay_analysis_id
-	    LEFT JOIN deapp.de_rc_snp_info info ON eqtl.rs_id = info.rs_id
-	
+	    SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Eqtl data 	
     """
+	
+	def infoJoinClause = " LEFT JOIN deapp.de_rc_snp_info info ON data.rs_id = info.rs_id "
 	
 	def getGeneLimits(Long searchId) {
 		//Create objects we use to form JDBC connection.
@@ -125,10 +119,16 @@ class RegionSearchService {
 		else {
 			throw new Exception("Unrecognized data type")
 		}
+		
+		//If we have ranges, we need another JOIN
+		if (ranges) {
+			analysisQuery += infoJoinClause;
+			countQuery += infoJoinClause;
+		}
 
 		//Add analysis IDs
 		if (analysisIds) {
-			qb.append("WHERE baa.BIO_ASSAY_ANALYSIS_ID IN (" + analysisIds[0]);
+			qb.append(" WHERE data.BIO_ASSAY_ANALYSIS_ID IN (" + analysisIds[0]);
 			for (int i = 1; i < analysisIds.size(); i++) {
 				qb.append(", " + analysisIds[i]);
 			}
@@ -144,10 +144,10 @@ class RegionSearchService {
 			qb.append(" AND p_value <= ?");
 		}
 		if (search) {
-			qb.append(" AND (${type}.rs_id LIKE '%${search}%'")
-			qb.append(" OR ${type}.ext_data LIKE '%${search}%'")
+			qb.append(" AND (data.rs_id LIKE '%${search}%'")
+			qb.append(" OR data.ext_data LIKE '%${search}%'")
 			if (type.equals("eqtl")) {
-				qb.append(" OR ${type}.gene LIKE '%${search}%'")
+				qb.append(" OR data.gene LIKE '%${search}%'")
 			}
 			qb.append(") ")
 		}
@@ -176,10 +176,15 @@ class RegionSearchService {
 		}
 		def total = 0;
 		
-		def finalQuery = analysisQuery + qb.toString() + "ORDER BY ${sortField} ${order}) a where a.row_nbr between ${offset+1} and ${limit+offset}";
+		def finalQuery = analysisQuery + qb.toString() + "ORDER BY ${sortField} ${order}) a";
+		if (limit > 0) {
+			finalQuery += " where a.row_nbr between ${offset+1} and ${limit+offset}";
+		}
 		stmt = con.prepareStatement(finalQuery);
+		
+		stmt.setString(1, sortField)
 		if (cutoff) {
-			stmt.setDouble(1, cutoff);
+			stmt.setDouble(2, cutoff);
 		}
 
 		println("Executing: " + finalQuery)

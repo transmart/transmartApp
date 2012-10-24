@@ -26,7 +26,7 @@ class AnalysisMetadata {
 	String analysisName
 	String description
 	String phenotypeIds
-	Long population
+	String population
 	String tissue
 	String genomeVersion
 	String genotypePlatformIds

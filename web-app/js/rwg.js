@@ -1846,7 +1846,6 @@ function showVisualization(analysisID, changedPaging)	{
 			setVisTabs(analysisID);
 			jQuery(loadingDiv).mask("Loading...");
 			loadAnalysisResultsGrid(analysisID, {'max': 10, 'offset':0, 'cutoff': 0, 'search': "", 'sortField': "", "order": "asc"});
-			loadQQPlot(analysisID);
 		}
 		
 		jQuery(hmFlagDiv).val("1");
@@ -1868,6 +1867,7 @@ function showVisualization(analysisID, changedPaging)	{
 //This function will kick off the webservice that generates the QQ plot.
 function loadQQPlot(analysisID)
 {
+	jQuery('#qqplot_results_' +analysisID).empty().addClass('ajaxloading');
 	jQuery.ajax( {
 	    "url": getQQPlotURL,
 	    bDestroy: true,
@@ -1875,10 +1875,11 @@ function loadQQPlot(analysisID)
 	    data: {analysisId: analysisID},
 	    "success": function ( json ) {
 	    	jQuery('#analysis_holder_' +analysisID).unmask();
-	    	jQuery('#qqplot_results_' + analysisID).prepend("<img src='" + json.imageURL + "' />");
+	    	jQuery('#qqplot_results_' + analysisID).prepend("<img src='" + json.imageURL + "' />").removeClass('ajaxloading');
 	    	jQuery('#qqplot_export_' + analysisID).attr('href', json.imageURL);
 	    	},
 	    "error": function ( json ) {
+	    	jQuery('#qqplot_results_' + analysisID).prepend(json).removeClass('ajaxloading');
 	    	jQuery('#analysis_holder_' +analysisID).unmask();
 	    },
 	    "dataType": "json"
@@ -1900,6 +1901,7 @@ function loadAnalysisResultsGrid(analysisID, paramMap)
 	    	jQuery('#analysis_results_table_' + analysisID + '_wrapper').html(jqXHR).removeClass('ajaxloading');
 	    },
 	    "error": function (jqXHR, error, e) {
+	    	jQuery('#analysis_results_table_' + analysisID + '_wrapper').html(error).removeClass('ajaxloading');
 	    	jQuery('#analysis_holder_' +analysisID).unmask();
 	    },
 	    "dataType": "html"

@@ -16,10 +16,10 @@
 	</div>
 </g:if>
 <g:elseif test="${results.gwasResults}">
-		<tmpl:tableViewResults showSearch="true" analysisData="${results.gwasResults.analysisData}" columnNames="${results.gwasResults.columnNames}" max="${results.gwasResults.max}" offset="${results.gwasResults.offset}" totalCount="${results.gwasResults.totalCount}" wasRegionFiltered="${results.gwasResults.wasRegionFiltered}" cutoff="${cutoff}" sortField="${sortField}" order="${order}" search="${search}"/>
+		<tmpl:tableViewResults type="GWAS" showSearch="true" analysisData="${results.gwasResults.analysisData}" columnNames="${results.gwasResults.columnNames}" max="${results.gwasResults.max}" offset="${results.gwasResults.offset}" totalCount="${results.gwasResults.totalCount}" wasRegionFiltered="${results.gwasResults.wasRegionFiltered}" cutoff="${cutoff}" sortField="${sortField}" order="${order}" search="${search}"/>
 </g:elseif>
 <g:elseif test="${results.eqtlResults}">
-		<tmpl:tableViewResults showSearch="true" analysisData="${results.eqtlResults.analysisData}" columnNames="${results.eqtlResults.columnNames}" max="${results.eqtlResults.max}" offset="${results.eqtlResults.offset}" totalCount="${results.eqtlResults.totalCount}" wasRegionFiltered="${results.eqtlResults.wasRegionFiltered}" cutoff="${cutoff}" sortField="${sortField}" order="${order}" search="${search}"/>
+		<tmpl:tableViewResults type="eQTL" showSearch="true" analysisData="${results.eqtlResults.analysisData}" columnNames="${results.eqtlResults.columnNames}" max="${results.eqtlResults.max}" offset="${results.eqtlResults.offset}" totalCount="${results.eqtlResults.totalCount}" wasRegionFiltered="${results.eqtlResults.wasRegionFiltered}" cutoff="${cutoff}" sortField="${sortField}" order="${order}" search="${search}"/>
 </g:elseif>
 <g:else>
 	No data was found for this search!

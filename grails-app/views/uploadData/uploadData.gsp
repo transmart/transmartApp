@@ -352,7 +352,7 @@
 				<div class="buttonbar">
 					<a class="button" onclick="showAnalysisForm()">Back</a>
 					<g:actionSubmit class="upload" value="Upload" action="upload"/>
-					<a class="button" href="${createLink([action:'index',controller:'search'])}">Cancel</a>
+					<a class="button" href="${createLink([action:'index',controller:'RWG'])}">Cancel</a>
 				</div>
 			</div>
 			

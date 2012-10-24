@@ -745,7 +745,7 @@ public class SearchController{
 		def maxToUse = filter.max
 		def offsetToUse = filter.offset
 		if (export) {
-			maxToUse = 10000000
+			maxToUse = 0
 			offsetToUse = 0
 		}
 		
@@ -826,7 +826,7 @@ public class SearchController{
 		def maxToUse = filter.max
 		def offsetToUse = filter.offset
 		if (export) {
-			maxToUse = 10000000
+			maxToUse = 0
 			offsetToUse = 0
 		}
 		
@@ -1004,12 +1004,12 @@ public class SearchController{
 		def returnedAnalysisData = []
 		
 		//These columns aren't dynamic and should always be included. Might be a better way to do this than just dropping it here.
-		columnNames.add(["sTitle":"Analysis", "sortField":"analysis"])
-		columnNames.add(["sTitle":"Probe ID", "sortField":"rsid"])
-		columnNames.add(["sTitle":"p-value", "sortField":"pvalue"])
-		columnNames.add(["sTitle":"Adjusted p-value", "sortField":"logpvalue"])
+		columnNames.add(["sTitle":"Analysis", "sortField":"baa.analysis_name"])
+		columnNames.add(["sTitle":"Probe ID", "sortField":"data.rs_id"])
+		columnNames.add(["sTitle":"p-value", "sortField":"data.p_value"])
+		columnNames.add(["sTitle":"Adjusted p-value", "sortField":"data.log_p_value"])
 		if (type.equals("eqtl")) {
-			columnNames.add(["sTitle":"Gene", "sortField":"gene"])
+			columnNames.add(["sTitle":"Gene", "sortField":"data.gene"])
 		}
 
 		analysisIndexData.each()
@@ -1098,11 +1098,11 @@ public class SearchController{
 		switch(currentAnalysis.assayDataType)
 		{
 			case "GWAS" :
-				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 10000000, 0, 0, "rsid", "asc", "", "gwas").results
+				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, 0, "rsid", "asc", "", "gwas").results
 				analysisIndexData = searchDAO.getGwasIndexData()
 				break;
 			case "EQTL" :
-				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 10000000, 0, 0, "rsid", "asc", "", "eqtl").results
+				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, 0, "rsid", "asc", "", "eqtl").results
 				analysisIndexData = searchDAO.getEqtlIndexData()
 				break;
 			default :
