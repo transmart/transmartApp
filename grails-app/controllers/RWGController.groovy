@@ -642,7 +642,7 @@ class RWGController {
    //Get analyses for current SOLR query and store them in session
    def getFacetResultsForTable = {
 	   
-	   def queryParams = request.getParameterValues('q')
+	   def queryParams = request.getParameterValues('q') as List
 	   
 	   //fq params are also faceted and also filtered on
 	   def facetQueryParams = request.getParameterValues('fq')
@@ -656,6 +656,7 @@ class RWGController {
 	   for (p in facetQueryParams)  {
 		   sessionFilterParams.add p
 	   }
+	   session['solrSearchFilter'] = sessionFilterParams
 	   
 	   def solrGenesField = setSOLRGenesField(false)
 	   //queryParams = replaceGeneLists(queryParams, solrGenesField)

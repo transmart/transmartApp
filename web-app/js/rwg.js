@@ -274,16 +274,29 @@ function showIEWarningMsg(){
 	
 // Method to load the search results in the search results panel and facet counts into tree
 // This occurs whenever a user add/removes a search term
-function showSearchResults()	{
+function showSearchResults(tabToShow)	{
 
 	// clear stored probe Ids for each analysis
 	analysisProbeIds = new Array();  
 	
 	// clear stored analysis results
-	jQuery('body').removeData();	
+	jQuery('body').removeData();
+	
+	jQuery('#results-div').empty();
+	jQuery('#table-results-div').empty();
+	
+	// work out which tab is open and needs updating, if we don't have a specific one
+	if (tabToShow == null) {
+		if (jQuery('#analysisViewTab.ui-state-active').size() > 0) {
+			tabToShow = 'analysis'
+		}
+		else {
+			tabToShow = 'table'
+		}
+	}
 	
 	// call method which retrieves facet counts and search results
-	showFacetResults();
+	showFacetResults(tabToShow);
 	
 	//all analyses will be closed when doing a new search, so clear this array
 	openAnalyses = [];
@@ -331,7 +344,7 @@ function clearFacetResults()	{
 
 
 //Method to load the facet results in the search tree and populate search results panel
-function showFacetResults()	{
+function showFacetResults(tabToShow)	{
 	
 	var savedSearchTermsArray;
 	var savedSearchTerms;
@@ -427,8 +440,9 @@ function showFacetResults()	{
     //Show significant results is disabled
    	//queryString = queryString + "&showSignificantResults=" + document.getElementById('cbShowSignificantResults').checked
     
-   	//TODO Only do one of these depending on the highlighted tab
-	jQuery.ajax({
+   	//Only do one of these depending on the highlighted tab. If the table results div is hidden, do the tree view
+    if (tabToShow == "analysis") {
+    	jQuery.ajax({
 			url:facetResultsURL,
 			data:queryString,
 			success: function(response) {
@@ -472,19 +486,20 @@ function showFacetResults()	{
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 			}
 		});
-   	
-   	jQuery.ajax({
-		url:facetTableResultsURL,
-		data:queryString,
-		success: function(response) {
-			jQuery('#table-results-div').html(response);
-			loadTableResultsGrid({'max': 100, 'offset':0, 'cutoff': 0, 'search': "", 'sortField': "", "order": "asc"});
-		},
-		error: function(xhr) {
-			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
-		}
-   	});
-
+    }
+    else {
+	   	jQuery.ajax({
+			url:facetTableResultsURL,
+			data:queryString,
+			success: function(response) {
+				jQuery('#table-results-div').html(response);
+				loadTableResultsGrid({'max': 100, 'offset':0, 'cutoff': 0, 'search': "", 'sortField': "", "order": "asc"});
+			},
+			error: function(xhr) {
+				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+			}
+	   	});
+    }
 }
 
 // Add the search term to the array and show it in the panel.

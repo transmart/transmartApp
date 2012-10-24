@@ -95,7 +95,7 @@
 		        jQuery("#xtButton").colorbox({opacity:.75, inline:true, width:"95%", height:"95%"});
       
 
-		    	showSearchResults(); //reload the full search results	    
+		    	showSearchResults('analysis'); //reload the full search results for the analysis/study view
 
 		    	//Disabling this, we aren't using the d3js code that takes advantage of HTML5.
 		    	//showIEWarningMsg();
@@ -199,8 +199,8 @@
 		
 			<div id="topTabs" class="analysis-tabs">
 		       <ul>
-		          <li><a href="#results-div">Analysis View</a></li>
-		          <li><a href="#table-results-div">Table View</a></li>
+		          <li id="analysisViewTab"><a href="#results-div" onclick="showSearchResults('analysis')">Analysis View</a></li>
+		          <li id="tableViewTab"><a href="#table-results-div" onclick="showSearchResults('table')">Table View</a></li>
 		       </ul>
 		     
 	       		<div id="results-div">
