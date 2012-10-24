@@ -280,10 +280,11 @@ class RWGVisualizationDAO {
       def gene_id 
 	  
 	  // execute query and save rows (since we need to do this loop through once for each analysis, we don't want to execute query each time)
-	  def results = sql.rows(s.toString(), sqlParams)
+	  def results = whereAdded?sql.rows(s.toString(), sqlParams) : null;
 	  def analysisMap = [:]
 	  analysisIds.each {analysisId->
 		  log.debug("Loop through and store all of the intensity values in the array and use the cohort as the key")
+		  
 		  results.each{ row->
 			  // skip the row if not for the current analysis  (need to convert to string for comparison since the row value is a Long)	  
 			  if (analysisId.toString() == row.Bio_Assay_Analysis_Id.toString()) { 
