@@ -59,8 +59,8 @@ public class DomainGenerator {
 
 
 		try {
-			//connect =new MssqlConnectImpl("phcma182","rdc_DM", "sa","recomadmin");
-			connect = new OracleConnectImpl("rdoracle02.recombinant.local","orcl","deapp","deapp");
+			//connect =new MssqlConnectImpl("ph","rdc_DM", "sa","e");
+			connect = new OracleConnectImpl("rd","orcl","dep","dep");
 				//MssqlConnectImpl.createLocalConnect();
 		//	generateDomain(connect, 
 		//			"dm_patient_sat_summary", "PatientSatisfactionSummary", "dm");
