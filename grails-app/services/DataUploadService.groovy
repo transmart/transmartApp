@@ -106,7 +106,7 @@ public class DataUploadService{
 					throw new Exception("No p_value or log_p_value was provided for a row.")
 				}
 				if (!currentpValue) {
-					columns[pValueIndex] = 0 - Math.power(10.0, Double.parseDouble(pValue))
+					columns[pValueIndex] = 0 - Math.power(10.0, Double.parseDouble(currentlogpValue))
 				}
 				else if (!currentlogpValue) {
 					columns[logpValueIndex] = 0 - Math.log10(Double.parseDouble(currentpValue))

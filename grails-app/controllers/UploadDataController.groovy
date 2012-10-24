@@ -197,7 +197,7 @@ class UploadDataController {
 			}
 		}
 		
-		if (upload.errors) {
+		if (upload.hasErrors()) {
 			flash.message = "The metadata could not be saved - please correct the highlighted errors."
 			def errors = upload.errors
 			def model = [uploadDataInstance: upload]
