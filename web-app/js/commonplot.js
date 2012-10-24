@@ -265,7 +265,9 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 		var wChart = cohortArray.length * cohortWidth * scale;//generate the width dynamically using the cohort count	
 		var hChart = 350 * scale;
 		
-		var hTitle = maxHTitle;
+    	var hTitle = maxHTitle;    // the space needed for title area 
+    	var hTitleText = allTitles[analysisKey].hTitle;   // the actual height of the text of the title
+		var titleYOffset = (maxHTitle - hTitleText)/2;  // used for centering the title vertically  
 
 		var wTotal = wChart + margin;
 		var hTotal = hChart + hTitle; 
@@ -283,7 +285,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 		var dataObject = {
 				cohortArray:cohortArray, cohortLabels:cohortLabels, cohortDesc:cohortDesc, cohortDisplayStyles:cohortDisplayStyles,
 				gene_id: gene_id, probeName:probeName, cohortDescExport:cohortDescExport, statMapping:statMapping,
-				title:title, titleTooltip:titleTooltip, margin:margin, wChart:wChart, hChart:hChart, hTitle:hTitle,
+				title:title, titleTooltip:titleTooltip, margin:margin, wChart:wChart, hChart:hChart, hTitle:hTitle, hTitleText:hTitleText, titleYOffset:titleYOffset,
 				wTotal:wTotal, hTotal:hTotal, hLegend:hLegend, numCohorts:numCohorts, yMin:yMin, yMax:yMax,
 				analysisIndex:analysisIndex
 		};
@@ -373,7 +375,7 @@ function drawEmptyPlot(root, plotData, forExport, isCTA) {
 	        .append("text")
 	        .attr("id", analysisTitleId)
 	        .attr("x", plotData.margin + plotData.wChart/2)
-	        .attr("y", yTitle )
+	        .attr("y", yTitle + plotData.titleYOffset )
 	        .attr("class", "title")
 	        .attr("text-anchor", "middle")
 	        .style("font", getTitleFont(isCTA))   // need to apply style here when drawn so that textFlow draws correctly 
@@ -387,9 +389,9 @@ function drawEmptyPlot(root, plotData, forExport, isCTA) {
 			getTitleFontSize(isCTA),
 			false);	    
 	
-	if (( (!isCTA && plotData.gene_id) || (isCTA) ) && !forExport)  {			
+	if (( (!isCTA && plotData.gene_id) || (isCTA) ) && !forExport && plotData.titleTooltip!="")  {			
 	    	//Add tooltip for title, if:
-		    // not for export AND  one of these conditions:
+		    // not for export, tooltip text is non-empty, AND  one of these conditions:
 			//     a.  is a cross trial analysis
 			//     b.  not a CTA and gene id is defined
 			titleText.append('svg:title').text(plotData.titleTooltip);
