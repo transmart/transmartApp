@@ -72,17 +72,19 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 
 	var orderedAnalysisKeys = new Array;
 
-	// TO save the state so that we can restore it to what it was
 	// first determine the titles because resulting height affects all of the other data
 	var allTitles = {}   // contains a structure for each title 
 	var maxHTitle = 0;
     for (var analysisKey in allJsonData)  {
+    	
+        var probeName = allJsonData[analysisKey]['probeName'];		
+
     	var title;
     	var titleTooltip;
     	if (isCTA)  {
     		analysisIndex =  getSelectedAnalysisIndex(selectedAnalyses, analysisKey);	
-    		title = selectedAnalyses[analysisIndex].title.replace(/_/g, ', ');
-    	    titleTooltip = selectedAnalyses[analysisIndex].title.replace(/_/g, ', ');
+    		title = selectedAnalyses[analysisIndex].title.replace(/_/g, ', ') + " (" + probeName + ")";
+    	    titleTooltip = "";
     	}  else  {
     		var probeID = getActiveProbe(analysisID);
 	 	    title = getGeneforDisplay(analysisID, probeID); 
@@ -125,7 +127,6 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 		var cohortDisplayStyles = new Array();    // array of cohort display styles (i.e. number from 0..4)
 	
 		var gene_id = parseInt(jsonData['gene_id']);   // gene_id will be null if this is a protein since first char is alpha for proteins
-		
 		// loop through and get the cohort ids and description into arrays in the order they should be displayed
 		for (var key in jsonData)  {
 			if (jsonData[key] && jsonData[key]['order'])  {   // if the object in the array doesn't have an order, not a cohort
@@ -278,7 +279,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 
 		var dataObject = {
 				cohortArray:cohortArray, cohortLabels:cohortLabels, cohortDesc:cohortDesc, cohortDisplayStyles:cohortDisplayStyles,
-				gene_id: gene_id, cohortDescExport:cohortDescExport, statMapping:statMapping,
+				gene_id: gene_id, probeName:probeName, cohortDescExport:cohortDescExport, statMapping:statMapping,
 				title:title, titleTooltip:titleTooltip, margin:margin, wChart:wChart, hChart:hChart, hTitle:hTitle,
 				wTotal:wTotal, hTotal:hTotal, hLegend:hLegend, numCohorts:numCohorts, yMin:yMin, yMax:yMax,
 				analysisIndex:analysisIndex

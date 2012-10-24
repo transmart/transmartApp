@@ -329,7 +329,6 @@ class RWGVisualizationDAO {
 		 // loop through each cohort for the analysis and create a map that contains all the info
 		 // needed for the line plot (i.e. order, desc, data)
 		 def analysisInfo = getHeatmapAnalysisInfo(analysisId)
-		  
 		 // First, retrieve all N cohorts from analysInfo map
 		 def cohorts =  analysisInfo.get("cohorts")
 				 
@@ -349,8 +348,9 @@ class RWGVisualizationDAO {
 			 
 			 cohortMap.put(c.key, cMap)
 			 
-			 cohortMap.put('gene_id', gene_id)
 		 }
+		 cohortMap.put("probeName", probeMap.get(analysisId))
+		 cohortMap.put('gene_id', gene_id)
 		 analysisMap.put(analysisId, cohortMap)
 	  }
 	 return analysisMap
