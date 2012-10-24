@@ -530,7 +530,7 @@ function addSearchTerm(searchTerm)	{
 
 // Remove the search term that the user has clicked.
 function removeSearchTerm(ctrl)	{
-	var currentSearchTermID = ctrl.id.replace(/\%20/g, " ");
+	var currentSearchTermID = ctrl.id.replace(/\%20/g, " ").replace(/\%44/g, ",");
 	var idx = currentSearchTerms.indexOf(currentSearchTermID);
 	if (idx > -1)	{
 		currentSearchTerms.splice(idx, 1);

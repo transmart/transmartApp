@@ -657,7 +657,8 @@ class RWGController {
 		   sessionFilterParams.add p
 	   }
 	   
-	   session['solrSearchFilter'] = sessionFilterParams
+	   def solrGenesField = setSOLRGenesField(false)
+	   //queryParams = replaceGeneLists(queryParams, solrGenesField)
 	   
 	   // ff params are faceted, but not filtered on
 	   def facetFieldsParams = request.getParameterValues('ff')
@@ -703,13 +704,14 @@ class RWGController {
 	   }
 
 	   // q params are filtered on but not faceted
-       def queryParams = request.getParameterValues('q')
+       def queryParams = request.getParameterValues('q') as List
 	   
 	   // get name of SOLR search field to be used for gene queries (SIGGENE or ALLGENE) and set session var
 	   def solrGenesField = setSOLRGenesField(showSigGenesOnly)  
 	   
 	   // replace gene signatures or gene list terms into their list of individual genes
-	   queryParams = replaceGeneLists(queryParams, solrGenesField)	   
+	   // No longer done - significance is not done in SOLR
+	   //queryParams = replaceGeneLists(queryParams, solrGenesField)	   
 	   
 	   showSigGenesOnly = false
 	   
