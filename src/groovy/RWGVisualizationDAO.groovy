@@ -273,11 +273,6 @@ class RWGVisualizationDAO {
 	  """)
 	  log.info("${s}")
 	  log.info("${sqlParams}")
-	  def cohortDataMap = [:]
-	  def cohortSampleCountMap = [:]
-	  def intensityArray = []
-	  def cohort = null
-      def gene_id 
 	  
 	  // execute query and save rows (since we need to do this loop through once for each analysis, we don't want to execute query each time)
 	  def results = whereAdded?sql.rows(s.toString(), sqlParams) : null;
@@ -285,6 +280,11 @@ class RWGVisualizationDAO {
 	  analysisIds.each {analysisId->
 		  log.debug("Loop through and store all of the intensity values in the array and use the cohort as the key")
 		  
+	      def gene_id 
+		  def intensityArray = []
+		  def cohort = null
+		  def cohortDataMap = [:]
+		  def cohortSampleCountMap = [:]
 		  results.each{ row->
 			  // skip the row if not for the current analysis  (need to convert to string for comparison since the row value is a Long)	  
 			  if (analysisId.toString() == row.Bio_Assay_Analysis_Id.toString()) { 
@@ -308,14 +308,12 @@ class RWGVisualizationDAO {
 		
 					  cohortSampleCountMap.put(cohort, intensityArray.size())
 					  
-					  
 					  intensityArray = []
 					  cohort = row.cohort_id
 				  }
 				  intensityArray << row.log_intensity
 			  }
 		  }
-		  
 		 // for a box plot put the array of intensity values on the data map, for a line plot put a map of calculated values (e.g. mean, std error)
 		 if (boxplot)  {
 			 cohortDataMap.put(cohort, intensityArray)
