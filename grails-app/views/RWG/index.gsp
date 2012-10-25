@@ -37,6 +37,7 @@
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'facetedSearch/facetedSearchBrowse.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/ui.multiselect.js')}"></script>  
+  		  
   		        
   		<!--  SVG Export -->
   		<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  
@@ -46,6 +47,7 @@
         
         <!-- Our JS -->        
         <script type="text/javascript" src="${resource(dir:'js', file:'rwg.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'maintabpanel.js')}"></script>
         
         <!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
         <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
@@ -153,7 +155,7 @@
     </head>
     <body>
         <div id="header-div">        
-            <g:render template="/layouts/commonheader" model="['app':'rwg']" />
+            <g:render template="/layouts/commonheader" model="['app':'rwg', 'utilitiesMenu':'true']" />
         </div>
 		 
 		<div id="main">

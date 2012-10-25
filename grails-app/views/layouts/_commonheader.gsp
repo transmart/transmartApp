@@ -45,9 +45,12 @@
 	   					<g:if test="${'accesslog'==app}"><th class="menuVisited">Admin</th></g:if>
 		   				<g:else><th class="menuLink"><g:link controller="accessLog">Admin</g:link></th></g:else>
 		       		</sec:ifAnyGranted>
-		       	<tr>
+		       	</tr>
 		 	</table>
-		</th> 		 
+		</th>
+		<g:if test="${utilitiesMenu}">
+			<tmpl:/layouts/utilitiesMenu />
+		</g:if>
 	</tr>
 </table>
 
