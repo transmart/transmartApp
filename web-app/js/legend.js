@@ -1,13 +1,45 @@
-function drawExportLegend(svg, cohortLegendOffsetX, cohortLegendOffsetY, statMapping)  {
+var svgLegend = {
+		boxWidth : 30,
+		boxHeight : 25,
+		boxSpacing : 5,
+		margin : 5,
+		fontSize : 12,
+		fontSizeCTA : 10 		
+}
+
+function getLegendFont(isCTA)  {
+	
+	if (isCTA)  {
+		return svgLegend.fontSizeCTA + "px sans-serif";
+	}
+	else  {		
+		return svgLegend.fontSize + "px sans-serif";
+	}
+}
+
+function getLegendFontSize(isCTA)  {
+	
+	if (isCTA)  {
+		return svgLegend.fontSizeCTA;
+	}
+	else  {		
+		return svgLegend.fontSize;
+	}
+}
+
+
+function drawSVGLegend(svg, cohortLegendOffsetX, cohortLegendOffsetY, statMapping, isCTA, forExport)  {
 
  	 	var cohortLegendGroup = svg.append("svg:g")
 	 	  .attr("class", "cohortLegendGroup")
 	 	  .attr("transform", "translate(" + cohortLegendOffsetX + "," + cohortLegendOffsetY + ")")
 	 	  ;
 
-	    var boxWidth = 30;
-	    var boxHeight = 25;
-	    var boxSpacing = 5;
+	    var boxWidth = svgLegend.boxWidth;
+	    
+	    var boxHeight = svgLegend.boxHeight;
+	    
+	    var boxSpacing = svgLegend.boxSpacing;
 
 	    // Cohort legend
 		cohortLegendGroup.selectAll(".legendRect")
@@ -15,7 +47,7 @@ function drawExportLegend(svg, cohortLegendOffsetX, cohortLegendOffsetY, statMap
 		    .enter()
 			.append("rect")
 			.attr("x", 0)
-			.attr("y", function (d, i) { return i * (boxHeight + boxSpacing)})
+			.attr("y", function (d, i) { return d.yDescExport})
 			.attr("width", boxWidth)
 			.attr("height", boxHeight)
 			.attr('class', 'legendRect')
@@ -29,7 +61,7 @@ function drawExportLegend(svg, cohortLegendOffsetX, cohortLegendOffsetY, statMap
 			.enter()
 			.append("text")
 			.attr("x", boxWidth/2)
-			.attr("y", function (d, i) { return (i)*(boxHeight + boxSpacing) + boxHeight/2 + 3})
+			.attr("y", function (d, i) { return d.yDescExport + boxHeight/2 + 3})
 			.attr("dy", ".35em")
 	        .attr("text-anchor", "middle")
 			.attr('class', 'legendCohortId')
@@ -39,21 +71,41 @@ function drawExportLegend(svg, cohortLegendOffsetX, cohortLegendOffsetY, statMap
 		// cohort legend text descriptions
 		labelX = boxWidth + boxSpacing;
 		
-		var desc=cohortLegendGroup.selectAll(".legendCohortDesc")
-			.data(statMapping)
-			.enter()
-		    .append("text")
-			.attr("x", boxWidth + boxSpacing)
-			.attr("y", function (d, i) { return (i)*(boxHeight + boxSpacing) + boxHeight/2 + 3})
-			.attr('class', 'legendCohortDesc')
-	    	.text(function (d, i) { return d.descExport;});   	
-		;
+		var legendFont =  getLegendFont(isCTA);
+		var legendFontSize = getLegendFontSize(isCTA);
 		
-		applyLegendStyles(cohortLegendGroup);
+		// loop through each cohort and draw the description
+		for (var i=0; i<statMapping.length; i++)  {
+			var divId = "cohortLegendDescription" + uniqueDivID++;
+			
+			var cohortText = cohortLegendGroup.append("text")
+		        .attr("id", divId)
+				.attr("x", boxWidth + boxSpacing)
+				.attr("y", function () { return statMapping[i].yDescExport + legendFontSize;})
+				.attr('class', 'legendCohortDesc')
+		        .attr("text-anchor", "start")
+		        .style("font", legendFont);   // need to apply style here when drawn so that textFlow draws correctly 
+
+			var textNode = document.getElementById(divId);
+			var dy = textFlow(statMapping[i].descExport,
+				textNode,
+				statMapping[i].wDescExportText,
+				boxWidth + boxSpacing,
+				legendFontSize,
+				false);
+			
+			if (!forExport)  {
+				cohortText.append('svg:title').text(statMapping[i].desc);
+			}
+
+		
+		}
+		
+		applyLegendStyles(cohortLegendGroup, isCTA);
 }
 
 
-function applyLegendStyles(svg)  {
+function applyLegendStyles(svg, isCTA)  {
 	// note: export doesn't recognize classes/styles in CSS file, need to apply directly to objects
 	svg.selectAll(".legendRect")
 		.style("stroke", "#000")    // color of borders around rectangles
@@ -69,7 +121,7 @@ function applyLegendStyles(svg)  {
 
 	svg.selectAll(".legendCohortDesc")
 	    .style("fill", "#000")
-    	.style("font", "12px  sans-serif")
+    	.style("font", getLegendFont(isCTA))
 		;
 	
 }
@@ -99,4 +151,39 @@ function drawCohortLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplay
 		pCohortAll = pCohortAll +  pCohort;
 	}
 	return pCohortAll + "</table>	";
+}
+
+// set information needed for drawing legend, e.g. height of each cohort, total height; return the height of the legend 
+function getLegendInfo(cohortDescExport, statMapping, wTotal, hCohortDescExport, isCTA)  {
+	var hLegend = 0;
+	
+	// retrieve the height that the cohort descriptions will be when drawn in svg with textFlow()
+	var legendFont = getLegendFont(isCTA);
+	var legendFontSize = getLegendFontSize(isCTA);
+	var wLegendText = wTotal - svgLegend.boxWidth - svgLegend.margin*2;
+	
+	var svgLegendHeight = svgLegend.margin;
+	for (var i=1; i<cohortDescExport.length; i++)  {   
+		 statMapping[i - 1].yDescExport = svgLegendHeight;
+		 statMapping[i - 1].wDescExportText = wLegendText;
+
+		 legendCohortDesc = cohortDescExport[i];
+		 var hText = getTextFlowHeight(legendCohortDesc, wLegendText, legendFont, legendFontSize) + legendFontSize;
+		 
+		 // height of cohort is greater of the box height or the height of the text
+		 hCohortDescExport[i] = (hText > svgLegend.boxHeight ? hText :  svgLegend.boxHeight) + svgLegend.boxSpacing;
+
+		 statMapping[i - 1].hDescExport = hCohortDescExport[i];
+
+		 if (i > 1)   {  // add spacer if not on 1st one 
+			 svgLegendHeight += svgLegend.boxSpacing;					 
+		 }
+		 
+		 svgLegendHeight += hCohortDescExport[i];
+
+	}
+	svgLegendHeight += svgLegend.margin;
+						
+	hLegend = svgLegendHeight;   // don't scale legend height since size is dependent on size of text inside
+	return hLegend;
 }

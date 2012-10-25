@@ -24,30 +24,30 @@ function getCohortCount(jsonData)  {
 	return cohortCount;
 }
 
-function getTitleHeight(title, w, isCTA)  {
+function getTextFlowHeight(text, w, font, fontSize)  {
 
-	jQuery("#testTitleDiv").empty();
+	jQuery("#testTextHeightDiv").empty();
 	
-	var titleSVG = d3.select("#testTitleDiv")
+	var titleSVG = d3.select("#testTextHeightDiv")
 		.append("svg")
 		.append("text")
-		.attr("id", "testTitleHeight")
+		.attr("id", "testTextHeight")
 		.attr("x", 0)
 		.attr("y", 0 )
 		.attr("text-anchor", "middle")
-		.style("font", getTitleFont(isCTA));
+		.style("font", font);
 	
-	var textNode = document.getElementById("testTitleHeight");
+	var textNode = document.getElementById("testTextHeight");
 	
-	//var dy = textFlow(myText,textToAppend,maxWidth,x,ddy,justified);
-	var dy = textFlow(title,
+	// textFlow(myText,textToAppend,maxWidth,x,ddy,justified);
+	var dy = textFlow(text,
 			textNode,
 			w,
 			0,
-			getTitleFontSize(isCTA),
+			fontSize,
 			false);
 	
-	jQuery("#testTitleDiv").empty();
+	jQuery("#testTextHeightDiv").empty();
 
 	return dy;
 }
@@ -99,7 +99,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
     	var w = (cohortCount * cohortWidth + chartMargin) * getScale(isCTA); 
     		
 		// do a test draw of the title so we can determine its size (don't scale title -- if scale is significantly different adjust font sizes to accomodate)
-		var hTitle = getTitleHeight(title, w - titleMargin*2, isCTA) + getTitleFontSize(isCTA) * 2;
+		var hTitle = getTextFlowHeight(title, w - titleMargin*2, getTitleFont(isCTA), getTitleFontSize(isCTA)) + getTitleFontSize(isCTA) * 2;
 		
 		if (hTitle > maxHTitle)  {
 			maxHTitle = hTitle;
@@ -110,6 +110,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
     }
     
 	analysisIndex = 0;
+	var maxHLegend = 0;
     for (var analysisKey in allJsonData)  {
     	
     	if (isCTA)  {
@@ -168,7 +169,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 			statObject.cohortDisplayStyle = jsonData[i]['order'] % cohortBGColors.length;
 			statObject.cohortColor = cohortBGColors[statObject.cohortDisplayStyle];
 			statObject.desc = jsonData[i]['desc'].replace(/_/g, ', ');
-			statObject.descExport = cohortDescExport[jsonData[i]['order']].replace(/_/g, ', ');
+			statObject.descExport = cohortDescExport[jsonData[i]['order']].replace(/_/g, ', ');   // descExport is used for export and for the CTA plots
 			statObject.sampleCount = jsonData[i]['sampleCount'];
 			statObject.cohortDisplayId = cohortDisplayIds[jsonData[i]['order'] - 1];
 			
@@ -271,30 +272,38 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 
 		var wTotal = wChart + margin;
 		var hTotal = hChart + hTitle; 
-	
+
+		var hCohortDescExport = new Array;
+		
 		// if exporting (or for CTA), draw a legend; if not exporting legend is drawn outside of svg
 		var hLegend = 0;
-		if(forExport || isCTA){
-			hLegend = 30 * (cohortArray.length) * scale + 10;
+		if(forExport || isCTA){			
+			hLegend = getLegendInfo(cohortDescExport, statMapping, wTotal, hCohortDescExport, isCTA);
 		}
 	
 		hTotal = hTotal + hLegend;
 		
 		var numCohorts = cohortArray.length;
-
+		
 		var dataObject = {
 				cohortArray:cohortArray, cohortLabels:cohortLabels, cohortDesc:cohortDesc, cohortDisplayStyles:cohortDisplayStyles,
-				gene_id: gene_id, probeName:probeName, cohortDescExport:cohortDescExport, statMapping:statMapping,
+				gene_id: gene_id, probeName:probeName, cohortDescExport:cohortDescExport, hCohortDescExport:hCohortDescExport, statMapping:statMapping,
 				title:title, titleTooltip:titleTooltip, margin:margin, wChart:wChart, hChart:hChart, hTitle:hTitle, hTitleText:hTitleText, titleYOffset:titleYOffset,
 				wTotal:wTotal, hTotal:hTotal, hLegend:hLegend, numCohorts:numCohorts, yMin:yMin, yMax:yMax,
 				analysisIndex:analysisIndex
 		};
 		
- 	    allPlotData[analysisKey] = dataObject;		  
+ 	    allPlotData[analysisKey] = dataObject;
+ 	    
+		if (hLegend > maxHLegend) {
+			maxHLegend = hLegend;
+		}
+
     }
 
     allPlotData.orderedAnalysisKeys = orderedAnalysisKeys;
     allPlotData.maxHTitle = maxHTitle;
+    allPlotData.maxHLegend = maxHLegend;
     
 	return allPlotData;
 
@@ -316,7 +325,11 @@ function drawEmptyPlots(allPlotData, forExport, divId, isCTA)  {
 		var w = allPlotData[key].wTotal;
 		var h = allPlotData[key].hTotal;
 		
-		hTotal = h;
+		// use plot with max height as basis
+		if (h>hTotal)  {
+			hTotal = h;			
+		}
+		
 		wTotal  = wTotal + w + spaceBetweenPlots;		
 	}
 	
@@ -456,7 +469,7 @@ function drawEmptyPlot(root, plotData, forExport, isCTA) {
 
   if (forExport || isCTA)  {
 	  var legendYOffset = isCTA ? plotData.hChart + plotData.hTitle : 0;  // legend goes after plot if CTA
-	  drawExportLegend(svg, 10, legendYOffset, plotData.statMapping);
+	  drawSVGLegend(svg, 10, legendYOffset, plotData.statMapping, isCTA, forExport);
   }
 
 
