@@ -21,8 +21,11 @@ var openAnalyses = new Array(); //store the IDs of the analyses that are open
 
 var openTrials = new Array(); //store the trials that are currently expanded
 
-//store the selected analyses
+//cross trial analysis selected analyses
 var selectedAnalyses = [];
+
+//cross trial analysis selected keywords
+var xtSelectedKeywords = [];
 
 
 //create an ajaxmanager named rwgAJAXManager
@@ -2741,7 +2744,7 @@ function getTopGenes(analysisID)
 }
 
 
-function displayXTGeneSummary(data){
+function displayXTGeneSummary(data, keyword_id){
 	
 	var foldchangeDataset = [];
 	var pvalueDataset =[];
@@ -2788,7 +2791,7 @@ function displayXTGeneSummary(data){
 	});
 	html += "</table>";
 	jQuery('#xtSummary_AnalysesList').html(html);
-	createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, data[0].bio_marker_name);
+	createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, keyword_id);
 	
 	
 	return;
@@ -2798,8 +2801,17 @@ function displayXTGeneSummary(data){
 
 
 
-function createCrossTrialSummaryChart(data, pdata, geneName){
+function createCrossTrialSummaryChart(data, pdata, keyword_id){
 	
+	
+	var keywordObject = xtSelectedKeywords.filter(function(el){return el.id == keyword_id});
+	
+	var geneName = keywordObject[0].termName;
+	var geneID = keywordObject[0].id;
+	var divID = "xtSummaryChart_" +geneID;
+	
+	//html for button to close the graph
+	var closeHTML = "<a href='#' class='xtChartClostbtn' id='" +divID  +"_CloseBtn' onclick=\"jQuery('#" +divID +"').fadeOut(200, function() { jQuery('#" +divID +"').remove(); });   \">x</a>";
 	
 
     var margin = {top: 30, right: 40, bottom: 10, left: 50},
@@ -2832,9 +2844,24 @@ function createCrossTrialSummaryChart(data, pdata, geneName){
         .ticks(4)	
         .orient("right");
     
-    var svg = d3.select("#xtSummaryChart").append("svg")
+    
+    //create div to hold svg chart
+    jQuery("#xtSummaryChartArea").append("<div id='"+divID +"' class='xtSummaryChart'>" +closeHTML +"</div>");
+    
+    //only show the close btn on hover
+    jQuery('#'+divID).hover(
+    		  function () {
+    			 jQuery('#' +divID  +'_CloseBtn').show();
+    		  },
+    		  function () {
+    			 jQuery('#' +divID  +'_CloseBtn').hide();
+    		  }
+    		);
+    
+    var svg = d3.select('#'+divID).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+        .attr("class", 'xtSVGSummaryChart')
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -2916,86 +2943,10 @@ svg.selectAll("text")
         .attr("x1", 0)
         .attr("x2", width);
     
-	
-	
-	/*
-
-    var margin = {top: 30, right: 10, bottom: 10, left: 50},
-        width = Math.max(110,(data.length * 50)- margin.left - margin.right),
-        height = 150- margin.top - margin.bottom;
-
-    var y0 = Math.max(Math.max(-d3.min(data), d3.max(data)),1.5);
-
-    var y = d3.scale.linear()
-        .domain([-y0, y0])
-        .range([height,0])
-        .nice();
-
-    var x = d3.scale.ordinal()
-        .domain(d3.range(data.length))
-        .rangeRoundBands([0, width], .2);
-
-    var yAxis = d3.svg.axis()
-        .scale(y)
-         .ticks(7)
-        .orient("left");
-    
-    
-    var svg = d3.select("#xtSummaryChart").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    svg.selectAll(".bar")
-        .data(data)
-      .enter().append("rect")
-        .attr("class", function(d) { return d < 0 ? "bar negative" : "bar positive"; })
-        .attr("x", function(d,i) { return x(i); })
-        .attr("y", function(d,i) { return y(Math.max(0, d)); })
-        .attr("height", function(d) { return Math.abs(y(0) - y(0-d)); })
-        .attr("width", x.rangeBand());
-
-   //add the data labels (IDs) for each analysis bar 
-    svg.selectAll("text")
-	    .data(data)
-	    .enter()
-	    .append("text")
-	    .text(function(d,i) {return i;})
-	    .attr("x", function(d,i) { return x(i)+10; })
-	    .attr("y", function(d) { return d < 0 ? height/2-5 : height/2+10; })
-	    .attr("font-family", "sans-serif")
-	    .attr("font-size", "10px")
-	    .attr("fill", "black");
-    
-    // add Title
-    svg.append("svg:text")
-      .attr("x", 8)
-      .attr("y", 0)
-      .attr("class","xtBarPlotGeneTitle")
-      .text(geneName);
-
-	    
-    //add y-axis
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
-
-    //add x-axis
-    svg.append("g")
-        .attr("class", "x axis")
-      .append("line")
-        .attr("y1", y(0))
-        .attr("y2", y(0))
-        .attr("x1", 0)
-        .attr("x2", width);
-        
-        */
-
 }
 
 
-function getCrossTrialBioMarkerSummary(search_keyword)
+function getCrossTrialBioMarkerSummary(search_keyword_id)
 {
 	
 	var analysisList = '';
@@ -3012,14 +2963,12 @@ function getCrossTrialBioMarkerSummary(search_keyword)
 
 	rwgAJAXManager.add({
 		url:getCrossTrialBioMarkerSummaryURL,
-		data: {analysisList: analysisList, search_keyword:search_keyword },
+		data: {analysisList: analysisList, search_keyword:search_keyword_id },
 		timeout:60000,
 		success: function(data) {
 			
-			displayXTGeneSummary(data);
+			displayXTGeneSummary(data, search_keyword_id);
 			
-			
-			//alert(response[key]['bio_marker_id']);
 			 var tbl_body = "<div><table style='width:230px'>";
 			 jQuery.each(data, function() {
 			        var tbl_row = "";
@@ -3049,10 +2998,19 @@ function addXTSearchAutoComplete()	{
 			//TODO: Determine if the result is a single gene or a pathway/gene signature/etc.
 			//will display different results depending on what was selected
 						
-			getCrossTrialBioMarkerSummary(ui.item.id);
-
+			
 			var keywordId = ui.item.id;
+			var searchTerm = ui.item.label;
+			
+			xtSelectedKeywords.push({id: keywordId, termName: searchTerm });
+			
+			getCrossTrialBioMarkerSummary(keywordId);
+
 			loadBoxPlotCTA(keywordId);
+			
+			// clear the search text box
+			jQuery("#xtSearch-ac").val("");
+			
 			
 			return false;
 		}

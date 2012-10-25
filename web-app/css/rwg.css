@@ -986,7 +986,30 @@ cursor:default;
 
 
 
-/*** Boxplot ***/
+/*** XT Summary Bar Plots ***/
+
+
+.xtChartClostbtn{
+position:absolute;
+padding: 2px;
+display:none; /* only displayed on hover */
+}	
+
+.xtSummaryChart{
+	display: inline-block;
+	padding: 5px;
+	margin: 5px;
+	background-color:#fff;
+}
+
+.xtSVGSummaryChart{
+	background-color:#fff;
+}
+
+.xtSummaryChart:hover{
+
+box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+}
 
 .xtBarPlotGeneTitle{
 	font-size:11px;

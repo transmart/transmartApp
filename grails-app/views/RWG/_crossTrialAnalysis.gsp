@@ -7,6 +7,9 @@
     	jQuery( "#xtSelectedAnalysesList" ).sortable();
     	jQuery( "#xtSelectedAnalysesList" ).disableSelection();
 
+    	jQuery('#xtSummaryChartArea').sortable();
+    	
+
     //	displaySelectedAnalysisTopGenes();
     	addXTSearchAutoComplete();
 
@@ -34,7 +37,7 @@
 	
 	<div id="xtSummary"><!-- Summary Tab Content -->
 	
-	<div id="xtSummaryChart"></div>
+	<div id="xtSummaryChartArea"></div>
 			
 	<h2>Selected Analyses</h2>
 	
