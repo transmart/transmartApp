@@ -110,7 +110,7 @@ function updateAnalysisCount(checkedState, analysisID, analysisTitle, studyID)	{
 	return false;
 }
 
-
+//this function used in the toolbar to display the selected list
 function getSelectedAnalysesList(){
 	
 	jQuery("#selectedAnalysesExpanded").toggle();
@@ -134,28 +134,6 @@ function getSelectedAnalysesList(){
 	
 }
 
-
-function displayxtAnalysesList(){
-	
-	
-	var html = "<ul id='xtSelectedAnalysesList'>";
-	
-	selectedAnalyses.sort(dynamicSort("studyID"));
-	
-	jQuery(selectedAnalyses).each(function(index, value){
-
-		html = html + "<li id='li_SelectedAnalysis_"+selectedAnalyses[index].id +"'>";
-//		html = html + "<input type='checkbox' onchange=removeSelectedAnalysis('"+selectedAnalyses[index].id +"') name='chbx_SelectedAnalysis_" + selectedAnalyses[index].id +"' checked='	checked'>";
-		html = html + "<span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</li>';
-		
-	});
-	
-	html = html + '</ul>';
-	
-	jQuery('#xtSummary_AnalysesList').html(html);
-
-	
-}
 
 
 function clearAllSelectedAnalyses(){
@@ -2750,13 +2728,7 @@ function displayXTGeneSummary(data, keyword_id){
 	var pvalueDataset =[];
 	
 	
-	var html = "<table id='xtAnalysisSummary' class='tablesorter'> ";
-		html += "<thead><th>ID</th><th>Fold Change</th><th>p-value</th><th>Analysis Name</th></thead>";
-		html += "<tbody>";
-		
-	
 	jQuery(selectedAnalyses).each(function(index, value){
-		
 		
 		var result = data.filter(function(el){return el.bio_assay_analysis_id == selectedAnalyses[index].id});
 		var fold_change_ratio;
@@ -2777,26 +2749,40 @@ function displayXTGeneSummary(data, keyword_id){
 		}
 		 else {
 			 preferred_pvalue = result[0].preferred_pvalue;
-			 if(preferred_pvalue<.0001){preferred_pvalue=0.0001};
+			 if(preferred_pvalue<.00001){preferred_pvalue=0.00001};
 			 pvalueDataset[index]= -1 * (Math.log(preferred_pvalue) / Math.log(10)); //calculate the -log10(p-value)
 		 }
 		
-		html += "<tr>";
-		html += "<td>" +index +'</td>';
-		html += "<td>" +fold_change_ratio +"</td>";
-		html += "<td>" +preferred_pvalue +"</td>";
-		html += "<td><span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</td>';
-		html += "</tr>";
-		
 	});
-	html += "</table>";
-	jQuery('#xtSummary_AnalysesList').html(html);
+
+	
 	createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, keyword_id);
 	
 	
 	return;
 }
 
+//used on the cross trial analysis page to display the summary
+function displayxtAnalysesList(){
+	
+	
+	var html = "<ul id='xtSelectedAnalysesList'>";
+	
+	selectedAnalyses.sort(dynamicSort("studyID"));
+	
+	jQuery(selectedAnalyses).each(function(index, value){
+
+		html = html + "<li id='li_SelectedAnalysis_"+selectedAnalyses[index].id +"'>";
+		html = html + "<strong>" +index  +"</strong> <span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</li>';
+		
+	});
+	
+	html = html + '</ul>';
+	
+	jQuery('#xtSummary_AnalysesList').html(html);
+
+	
+}
 
 
 
@@ -2966,6 +2952,9 @@ function getCrossTrialBioMarkerSummary(search_keyword_id)
 		data: {analysisList: analysisList, search_keyword:search_keyword_id },
 		timeout:60000,
 		success: function(data) {
+			
+			//store the response
+			jQuery('body').data("xtBioMarkerSummaryData:" + search_keyword_id, data); 
 			
 			displayXTGeneSummary(data, search_keyword_id);
 			

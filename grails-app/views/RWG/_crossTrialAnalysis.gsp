@@ -2,7 +2,7 @@
 <script type="text/javascript">		
 	jQuery(function ($) {
 
-		//displayxtAnalysesList();
+		displayxtAnalysesList();
 
     	jQuery( "#xtSelectedAnalysesList" ).sortable();
     	jQuery( "#xtSelectedAnalysesList" ).disableSelection();
@@ -31,7 +31,7 @@
 	
 		
 	<div id ="xtSearch">
-		<input id="xtSearch-ac"/></input> 
+		Search for gene, pathway, or gene signature: <input id="xtSearch-ac"/></input> 
 	</div>
 	
 	
