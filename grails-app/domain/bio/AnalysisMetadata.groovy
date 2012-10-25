@@ -21,7 +21,7 @@ package bio
 
 class AnalysisMetadata {
 	Long id
-	Experiment study
+	String study
 	String dataType
 	String analysisName
 	String description

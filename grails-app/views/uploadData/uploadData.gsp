@@ -83,7 +83,7 @@
 		});
 
 		<g:if test="${study}">
-			updateStudyTable(${study.id});
+			updateStudyTable('${study.accession}');
 		</g:if>
 		</script>
 		<title>${grailsApplication.config.com.recomdata.dataUpload.appTitle}</title>
@@ -131,9 +131,9 @@
 									<div class="fieldError"><g:message error="${it}"/></div>
 								</g:eachError>
 							</div>
-							<tmpl:extSearchField width="600" fieldName="study.id" searchAction="extSearch" searchController="experiment" value="${study?.id}" label="${study?.title}"/>
-							<a id="study.idChangeButton" class="upload" onclick="$j('#studyDiv').empty().slideUp('slow'); changeField('study.id-combobox', 'study.id')">Change</a>
-							<a style="margin-left: 32px;" id="study.idBrowseButton" class="upload" onclick="generateBrowseWindow('Studies');">Browse</a>
+							<tmpl:extSearchField width="600" fieldName="study" searchAction="extSearch" searchController="experiment" value="${study?.accession}" label="${study?.title}"/>
+							<a id="studyChangeButton" class="upload" onclick="$j('#studyDiv').empty().slideUp('slow'); changeField('study-combobox', 'study')">Change</a>
+							<a style="margin-left: 32px;" id="studyBrowseButton" class="upload" onclick="generateBrowseWindow('Studies');">Browse</a>
 							<br/><br/>
 							<div id="studyDiv" style="height: 200px; width: 540px; overflow: auto; display: none;">&nbsp;</div>
 						</td>

@@ -30,7 +30,7 @@ $j(document).ready(function(){
 <table class="studyBrowseTable"><thead><tr><th>Accession</th><th>Name</th></tr></thead>
 	<tbody>
 	<g:each in="${experiments}" var="experiment">
-		<tr class="studyBrowseRow" name="${experiment.id}"><td>${experiment.accession}</td><td id="studyBrowseName${experiment.id}">${experiment.title}</td></tr>
+		<tr class="studyBrowseRow" name="${experiment.accession}"><td>${experiment.accession}</td><td id="studyBrowseName${experiment.accession}">${experiment.title}</td></tr>
 	</g:each>
 	</tbody>
 </table>

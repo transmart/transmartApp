@@ -242,7 +242,7 @@ class UploadDataController {
 			model.put('genotypePlatforms', genotypeMap)
 			model.put('expressionPlatforms', expressionMap)
 			
-			model.put('study', Experiment.get(upload.study?.id))
+			model.put('study', Experiment.findByAccession(upload.study))
 		}
 		
 		//Vendor names can be null - avoid adding these

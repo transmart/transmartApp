@@ -83,7 +83,7 @@ function showDataUploadForm() {
 	$j('#analysisNameErrors').empty();
 	
 	var errors = false;
-	if ($j('#study\\.id').val() == null || $j('#study\\.id').val() == '') {
+	if ($j('#study').val() == null || $j('#study').val() == '') {
 		$j('#studyErrors').html('<div class="fieldError">Please select a study</div>');
 		errors = true;
 	}
@@ -214,7 +214,7 @@ function updateStudyTable(param) {
 	request = $j.ajax({
 		url: studyDetailUrl,
 		type: 'POST',
-		data: {'id': param}
+		data: {'accession': param}
 	});
 	
 	request.fail(function(jqXHR, textStatus) {
@@ -271,8 +271,8 @@ function applyStudyBrowse() {
       jQuery(".studyBrowseRow.selected").each(function(i, selected){
     	  var studyId = $j(this).attr('name');
     	  var studyName = $j('#studyBrowseName' + studyId).text();
-    	  $j('#study\\.id-input').val(studyName).attr('disabled', 'disabled');
-    	  $j('#study\\.id').val(studyId);
+    	  $j('#study-input').val(studyName).attr('disabled', 'disabled');
+    	  $j('#study').val(studyId);
           updateStudyTable(studyId);
       })
       

@@ -32,7 +32,7 @@ class ExperimentController {
 		def paramMap = params
 		def value = params.term.toUpperCase();
 		
-		def experiments = Experiment.executeQuery("SELECT id, title FROM Experiment e WHERE upper(e.title) LIKE '%' || :term || '%'", [term: value], [max: 20]);
+		def experiments = Experiment.executeQuery("SELECT accession, title FROM Experiment e WHERE upper(e.title) LIKE '%' || :term || '%'", [term: value], [max: 20]);
 		
 		def itemlist = [];
 		for (exp in experiments) {
