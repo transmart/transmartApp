@@ -158,7 +158,7 @@ function setupPlotData(isBoxplot, allJsonData, forExport, analysisID, divId, isC
 	
 		// highlight cohort descriptions expects and array starting at index 1
 		var cohortDescExport = highlightCohortDescriptions([''].concat(cohortDesc), true);
-		
+
 		var statMapping = cohortArray.map(function(i)	{
 			var data = jsonData[i]['data'];
 			
@@ -563,3 +563,10 @@ function applyPlotStyles(svg, isCTA)  {
 	;
 }
 
+//export the current analysis data to a csv file
+function exportBoxPlotCTAImage()
+{	
+		var svgID=  "#xtBoxplot"
+		
+		exportCanvas(svgID);					
+}

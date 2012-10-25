@@ -821,6 +821,10 @@ function exportCanvas(svgID){
 		svgData = svgData.replace(/(<a xlink(.*?)>|<\/a>)/g, "");
 	}
 	
+	if(svgData.indexOf("<title>")>-1){
+		svgData = svgData.replace(/(<title(.*?)<\/title>)/g, "");
+	}
+
 	canvg('canvas', svgData, { ignoreMouse: true, ignoreAnimation: true }) ;
 	
 	var imageData =  document.getElementById('canvas').toDataURL();

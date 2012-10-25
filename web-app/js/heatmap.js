@@ -1,6 +1,9 @@
 // Take the heatmap data in the second parameter and draw the D3 heatmap
 function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 	jQuery("#" + divID).empty();
+    var savedDisplayStyle = jQuery("#" + divID).css('display');
+	jQuery("#" + divID).show();  // show first so title height can be calculated correctly
+
 	
 	// set up arrays to be used to populating drop down boxes for line/box plots
 	// do this first since we need this for determining max probe string length
@@ -185,6 +188,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 
 	var mapIndex = 0;
 	var cohortDescExport = highlightCohortDescriptions(cohortDescriptions, true);
+	
 	// setup statMapping object to pass data into legend
 	var statMapping = cohorts.slice(1).map(function(i)	{
 		var id = i;
@@ -502,6 +506,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		 drawScreenLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles, "heatmap", analysisID);
   	 }
 	
+ 	 jQuery("#" + divID).css('display', savedDisplayStyle);
 	
 }
 
