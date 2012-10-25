@@ -55,9 +55,13 @@
 
 </div>
 <div id="xtBoxplot" style="display:none"><!-- Boxplot Tab Content -->
+</div>
+<div id="exportBoxplot">
+    <a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Boxplot Image</a>
+</div>    
+    
+
 	
-	
-	</div>
 </div>
 
 

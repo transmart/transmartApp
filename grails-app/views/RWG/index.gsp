@@ -265,7 +265,7 @@
 
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
-       <div id="testTitleDiv">         
+       <div id="testTextHeightDiv" />         
     </body>
     
            		

@@ -1,6 +1,9 @@
 // Take the heatmap data in the second parameter and draw the D3 heatmap
 function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 	jQuery("#" + divID).empty();
+    var savedDisplayStyle = jQuery("#" + divID).css('display');
+	jQuery("#" + divID).show();  // show first so title height can be calculated correctly
+
 	
 	// set up arrays to be used to populating drop down boxes for line/box plots
 	// do this first since we need this for determining max probe string length
@@ -183,8 +186,29 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 	var cohortLegendOffset = 0;
 	var heatmapOffset = 0;
 
+	var mapIndex = 0;
+	var cohortDescExport = highlightCohortDescriptions(cohortDescriptions, true);
+	
+	// setup statMapping object to pass data into legend
+	var statMapping = cohorts.slice(1).map(function(i)	{
+		var id = i;
+		var styleIndex = (mapIndex + 1) % cohortBGColors.length;
+		var cohortColor = cohortBGColors[styleIndex];
+		var descExport = cohortDescExport[mapIndex+1].replace(/_/g, ', ');
+		
+		mapIndex++;
+		
+		return {
+			id:i,
+			cohortColor:cohortColor,
+			descExport:descExport,
+		};		
+	});
+	
+	var hCohortDescExport = new Array;		
+	
 	if(forExport){
-		cohortLegendHeight = (cohorts.length-1)*35;
+    	cohortLegendHeight = getLegendInfo(cohortDescExport, statMapping, wTotal, hCohortDescExport, false);    	
 		cohortLegendOffset = heatmapHeight;  // heatmap on top, legend under
 	}
 	else {
@@ -193,10 +217,11 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 	}
 	var height = heatmapHeight + cohortLegendHeight;
 		
+	var wTotal = w_probe + columns.length * w + w_gene + w_fold_change + w_pvalue + w_Tpvalue;
 	// create the main svg object
 	var svg = d3.select("#" + divID)
 		.append("svg")
-		.attr("width", w_probe + columns.length * w + w_gene + w_fold_change + w_pvalue + w_Tpvalue)
+		.attr("width", wTotal)
 		.attr("height", height);   
 	
 	
@@ -348,27 +373,9 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 
 	}
 
-	var mapIndex = 0;
-	var cohortDescExport = highlightCohortDescriptions(cohortDescriptions, true);
-	// setup statMapping object to pass data into legend
-	var statMapping = cohorts.slice(1).map(function(i)	{
-		var id = i;
-		var styleIndex = (mapIndex + 1) % cohortBGColors.length;
-		var cohortColor = cohortBGColors[styleIndex];
-		var descExport = cohortDescExport[mapIndex+1].replace(/_/g, ', ');
-		
-		mapIndex++;
-		
-		return {
-			id:i,
-			cohortColor:cohortColor,
-			descExport:descExport,
-		};		
-	});
-	
     if (forExport)  {
-		drawExportLegend(svg, 10, cohortLegendOffset, statMapping);
-	 }
+		drawSVGLegend(svg, 10, cohortLegendOffset, statMapping, false, forExport);
+    }
 
 	var yOffset = h + h_header + 4;
 	var xOffset;
@@ -499,6 +506,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		 drawScreenLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles, "heatmap", analysisID);
   	 }
 	
+ 	 jQuery("#" + divID).css('display', savedDisplayStyle);
 	
 }
 
