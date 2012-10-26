@@ -25,7 +25,6 @@
 		<ul id="xtMenu">
 			<li>Summary</li>
 			<li>Heatmap</li>
-			<li><a href="#" onclick="javascript:jQuery('#xtBoxplot').show();">Boxplot</a></li>
 		</ul>
 	</div>
 	
@@ -50,12 +49,11 @@
 			
 
 </div>
-<div id="xtHeatmap"><!-- Heatmap Tab Content -->
+<div id="xtHeatmap"><!-- Heatmap Tab Content --></div>
 
+<!-- Boxplot Tab Content -->
+<div id="xtBoxplot" style="display:none"></div>
 
-</div>
-<div id="xtBoxplot" style="display:none"><!-- Boxplot Tab Content -->
-</div>
 <div id="exportBoxplot">
     <a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Boxplot Image</a>
 </div>    

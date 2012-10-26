@@ -61,7 +61,6 @@ function removeSelectedAnalysis(analysisID){
 		      break;
 		   }
 	
-
 	var currentCount = selectedAnalyses.length;
 	
 	jQuery("#analysisCount").val(currentCount);
@@ -75,6 +74,8 @@ function removeSelectedAnalysis(analysisID){
 	
 
 	jQuery("input[name=chbx_Analysis_"+analysisID+"]").attr('checked', false);
+	
+	displayxtAnalysesList();
 	
 
 }
@@ -107,6 +108,9 @@ function updateAnalysisCount(checkedState, analysisID, analysisTitle, studyID)	{
 		newLabel = "1 Analysis Selected";
 	}
 	jQuery("#analysisCountLabel").html(newLabel);
+	
+	displayxtAnalysesList();
+	
 	return false;
 }
 
@@ -2001,6 +2005,7 @@ function hideEditSearchDiv(id)  {
 }
 
 
+
 function openLoadSearchDialog()  {
 	
 	var html = "";
@@ -2803,6 +2808,7 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id){
 	//html for button to close the graph
 	var closeHTML = "<a href='#' class='xtChartClostbtn' id='" +divID  +"_CloseBtn' onclick=\"jQuery('#" +divID +"').fadeOut(200, function() { jQuery('#" +divID +"').remove(); });   \">x</a>";
 	
+	var openBoxplotLinkHTML = "<a href='#' class='xtBoxplotbtn' id='" +divID  +"_BoxplotBtn' onclick=\"openXtBoxplot('"+keyword_id +"', '" +geneName +"')\">view boxplot</a>";
 
     var margin = {top: 30, right: 40, bottom: 10, left: 50},
         bar_width = 30,
@@ -2836,15 +2842,17 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id){
     
     
     //create div to hold svg chart
-    jQuery("#xtSummaryChartArea").append("<div id='"+divID +"' class='xtSummaryChart'>" +closeHTML +"</div>");
+    jQuery("#xtSummaryChartArea").append("<div id='"+divID +"' class='xtSummaryChart'></div>");
     
     //only show the close btn on hover
     jQuery('#'+divID).hover(
     		  function () {
     			 jQuery('#' +divID  +'_CloseBtn').show();
+    			 jQuery('#' +divID  +'_BoxplotBtn').show();
     		  },
     		  function () {
     			 jQuery('#' +divID  +'_CloseBtn').hide();
+    			 jQuery('#' +divID  +'_BoxplotBtn').hide();
     		  }
     		);
     
@@ -2933,8 +2941,18 @@ svg.selectAll("text")
         .attr("x1", 0)
         .attr("x2", width);
     
+    
+    //add some buttons
+    jQuery('#'+divID).append(closeHTML +"<span style='display:block'>"+openBoxplotLinkHTML+"</span>");
+    
 }
 
+/*
+jQuery.ui.dialog.prototype._makeDraggable = function() { 
+    this.uiDialog.draggable({
+        containment: false
+    });
+};*/
 
 function getCrossTrialBioMarkerSummary(search_keyword_id)
 {
@@ -3024,6 +3042,36 @@ function drawPieChart(divid, data)
 	
 
 }
+
+
+function openXtBoxplot(keywordId, geneName){
+	
+	/* 
+	
+	jQuery('#xtBoxplot').modal({onOpen: modalEffectsOpen, opacity: [70], onClose: modalEffectsClose,
+		onShow: function (dialog) {
+	        dialog.container.css("height", "auto");
+	        dialog.container.css("width", "80%");
+	        dialog.container.css("left", "10%");
+	        dialog.container.css("top", "10%");
+	    }	
+	
+	});
+	
+	*/
+	
+	jQuery('#xtBoxplot').dialog({ width: 700, title: geneName });
+    
+  //  jQuery('#simplemodal-container').mask("Loading...");
+    
+    loadBoxPlotCTA(keywordId);
+    
+    return;
+
+	
+}
+
+
 
 
 //Load the box plot data for cross trial analysis (the keywordId must represent a gene)
