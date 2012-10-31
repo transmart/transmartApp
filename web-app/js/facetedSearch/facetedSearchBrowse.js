@@ -40,8 +40,10 @@ function generateBrowseWindow(nodeClicked)
 			modal: false,
 			open: function()
 			{
-				jQuery(this).empty();
-				jQuery(this).load(URLtoUse);
+				jQuery(this).empty().addClass('ajaxloading');
+				jQuery(this).load(URLtoUse, function() {
+					jQuery(this).removeClass('ajaxloading');
+				});
 			},
 			height: dialogHeight,
 			width: dialogWidth,

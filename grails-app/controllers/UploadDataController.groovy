@@ -176,7 +176,6 @@ class UploadDataController {
 			
 			//If we've reached here, everything is OK - set our state to PENDING to be picked up by ETL
 			upload.status = "PENDING"
-			upload.save(flush: true)
 		}
 		else {
 			//This file was previously uploaded with an error - flag this!
@@ -185,6 +184,7 @@ class UploadDataController {
 			}
 		}
 		
+		upload.save(flush: true)
 		result.success = upload.status.equals("PENDING");
 		
 		//If the file is now pending, start the staging process

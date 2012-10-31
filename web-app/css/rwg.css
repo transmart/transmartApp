@@ -967,7 +967,7 @@ select.multiselect {
 }
 
 .ajaxloading, #table-results-div.ajaxloading {
-	background-image: url('../images/loader-large.gif');
+	background-image: url('../images/loader-large.gif') !important;
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
 	min-height: 64px;
