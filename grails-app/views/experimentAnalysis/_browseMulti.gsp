@@ -11,7 +11,7 @@
 
 <select id="multiselectbox" class="multiselect" multiple="multiple" name="analyses[]">
 	<g:each in="${analyses}" var="analysis">
-		<option value="${analysis.id}">${analysis.name}</option>
+		<option value="${analysis[0]}">${analysis[1]}</option>
 	</g:each>
 </select>
 
