@@ -958,7 +958,10 @@ public class SearchController{
 		
 		//Find out if we're querying for EQTL, GWAS, or both
 		def hasGwas = BioAssayAnalysis.createCriteria().list([max: 1]) {
-			eq('assayDataType', 'GWAS')
+			or {
+				eq('assayDataType', 'GWAS')
+				eq('assayDataType', 'Metabolic GWAS')
+			}
 			'in'('id', analysisIds)
 		}
 		
