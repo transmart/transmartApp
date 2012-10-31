@@ -24,6 +24,7 @@ import bio.AnalysisMetadata;
 import bio.BioAssayPlatform;
 import bio.Disease;
 import bio.Experiment;
+import bio.Observation;
 
 import com.recomdata.upload.DataUploadResult;
 
@@ -219,7 +220,13 @@ class UploadDataController {
 				for (tag in upload.phenotypeIds.split(";")) {
 					def meshCode = tag.split(":")[1]
 					def disease = Disease.findByMeshCode(meshCode)
-					tagMap.put(tag, disease.disease)
+					def observation = Observation.findByCode(meshCode)
+					if (disease) {
+						tagMap.put(tag, disease.disease)
+					}
+					if (observation) {
+						tagMap.put(tag, observation.name)
+					}
 				}
 			}
 			
