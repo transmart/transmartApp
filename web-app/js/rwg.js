@@ -2980,6 +2980,8 @@ function getCrossTrialBioMarkerSummary(search_keyword_id)
 			
 			displayXTGeneSummary(data, search_keyword_id);
 			
+			/* Debugging: Display the results in a table */
+			/*
 			 var tbl_body = "<div><table style='width:230px'>";
 			 jQuery.each(data, function() {
 			        var tbl_row = "";
@@ -2990,6 +2992,7 @@ function getCrossTrialBioMarkerSummary(search_keyword_id)
 			    })
 			    tbl_body += '</table></div>';
 			    jQuery('#xtBioMarkerSummary').after(tbl_body);
+			 */
 		   
 		}
 	});

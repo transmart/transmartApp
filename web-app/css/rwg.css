@@ -981,6 +981,14 @@ cursor:default;
 }
 
 
+/* Add additional formatting to the jquery ui dialog
+box to help it stand out more */
+.ui-dialog {
+border: 1px solid #CCC;
+box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+}
+
+
 /*******End Cross Trial Analysis Formatting *********/
 
 
