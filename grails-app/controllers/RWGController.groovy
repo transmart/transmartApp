@@ -480,6 +480,7 @@ class RWGController {
 	   return solrRequestUrl
    }
 
+   
    /**
    * Replace any gene lists or signatures in the query parameters with a list of individual genes
    * @param params list of query params
@@ -901,6 +902,39 @@ class RWGController {
    def getLinePlotData = {	   
 	   def rwgDAO = new RWGVisualizationDAO()	   
 	   def m = rwgDAO.getLineplotData(params.id, params.probeID)
+	   render m as JSON
+   }
+
+   /**
+	* Returns the data for the heatmap visualization for Cross Trial Analysis
+	* 
+	* @param params.analysisIds: list of analysis ids
+	* @param params.category: either PATHWAY, GENELIST, or GENESIG  
+	* @param params.searchKeywordId: search keyword id of the pathway, genelist or gene signature
+	* 
+	*/
+   def getHeatmapDataCTA = {
+	   def rwgDAO = new RWGVisualizationDAO()
+	   
+	   // take the pathway or gene list/sig, and convert to pipe delimited list of gene ids (search keyword ids)
+	   // reuse the existing method we had for passing params into SOLR query - requires that we have a list with the 
+	   // category followed by colon followed by list of pipe delimited terms - so for our purposes we will have one 
+	   // category in list (i.e. GENELIST or GENESIG or PATHWAY) with one term in the pipe delimited terms; 
+	   // e.g. ["GENELIST:1693394"]
+	   def queryParams = []
+//	   queryParams.push("GENELIST:1693394")
+	   queryParams.push(/${params.category}:${params.searchKeywordId}/)
+	     
+	   // replace gene signatures or gene list terms into their list of individual genes
+	   // list coming back will be in form of [":GENE1|GENE2|..."]  where GENE1 is a search keyword id representing a gene
+	   queryParams = replaceGeneLists(queryParams, "")
+	   
+	   // take the first/only item from list and get rid of the leading colon to give us just a string containing a pipe
+	   // delimited list of gene search keyword ids	   
+	   def genesList = queryParams[0].replace(":", "")	   
+
+	   def m = rwgDAO.getHeatmapDataCTA(params.analysisIds.split(/\|/), genesList)
+
 	   render m as JSON
    }
 

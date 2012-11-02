@@ -3015,12 +3015,24 @@ function addXTSearchAutoComplete()	{
 			
 			var keywordId = ui.item.id;
 			var searchTerm = ui.item.label;
+			var categoryId = ui.item.categoryId;
 			
-			xtSelectedKeywords.push({id: keywordId, termName: searchTerm });
+			xtSelectedKeywords.push({id: keywordId, termName: searchTerm, categoryId: categoryId });
 			
 			getCrossTrialBioMarkerSummary(keywordId);
 
-			loadBoxPlotCTA(keywordId);
+			switch (categoryId)  {
+				case "GENE": 
+					loadBoxPlotCTA(keywordId);
+					break;
+				case "GENELIST": 
+				case "GENESIG": 
+				case "PATHWAY":
+					loadHeatmapCTA(categoryId, keywordId)
+					break;
+				default:  
+					alert("Invalid category!");
+			}
 			
 			// clear the search text box
 			jQuery("#xtSearch-ac").val("");
@@ -3044,6 +3056,41 @@ function drawPieChart(divid, data)
 {
 	
 
+}
+
+
+//Load the heatmap data for cross trial analysis 
+// category: either GENELIST, GENESIG, or PATHWAY
+// searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
+function loadHeatmapCTA(category, searchKeywordId)	{	
+	
+	var analysisIds = "";
+	// retrieve list of selected analyses, create a pipe delimited list of analysis ids
+	for (var i=0; i<selectedAnalyses.length; i++)
+	{
+		if (analysisIds != "")  {
+			analysisIds += "|";
+		}
+		analysisIds += selectedAnalyses[i].id;
+	}
+	
+	rwgAJAXManager.add({
+		url:getHeatmapDataCTAURL,
+		data: {analysisIds: analysisIds, category: category, searchKeywordId: searchKeywordId},
+		timeout:60000,
+		success: function(response) {
+
+			alert("data returned");
+//			alert(response.toString());
+//			drawBoxPlotD3('xtBoxplot', response, null, false, true, selectedAnalyses);
+			
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+	
+	
 }
 
 

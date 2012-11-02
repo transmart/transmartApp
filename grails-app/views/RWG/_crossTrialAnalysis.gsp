@@ -57,7 +57,6 @@
 <div id="exportBoxplot">
     <a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Boxplot Image</a>
 </div>    
-    
 
 	
 </div>

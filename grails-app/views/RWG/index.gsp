@@ -93,6 +93,7 @@
 			var getPieChartDataURL = "${createLink([action:'getPieChartData'])}";
 			var getTopGenesURL = "${createLink([action:'getTopGenes'])}";
 			var getCrossTrialBioMarkerSummaryURL = "${createLink([action:'getCrossTrialBioMarkerSummary'])}";
+	        var getHeatmapDataCTAURL = "${createLink([action:'getHeatmapDataCTA'])}";
 			
 			var showHomePageFirst=true;
 			
