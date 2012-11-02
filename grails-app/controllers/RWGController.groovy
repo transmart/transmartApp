@@ -922,7 +922,7 @@ class RWGController {
 	   // category in list (i.e. GENELIST or GENESIG or PATHWAY) with one term in the pipe delimited terms; 
 	   // e.g. ["GENELIST:1693394"]
 	   def queryParams = []
-//	   queryParams.push("GENELIST:1693394")
+
 	   queryParams.push(/${params.category}:${params.searchKeywordId}/)
 	     
 	   // replace gene signatures or gene list terms into their list of individual genes
@@ -933,9 +933,53 @@ class RWGController {
 	   // delimited list of gene search keyword ids	   
 	   def genesList = queryParams[0].replace(":", "")	   
 
-	   def m = rwgDAO.getHeatmapDataCTA(params.analysisIds.split(/\|/), genesList)
+	   def analysisIdsList = params.analysisIds.split(/\|/)
+	   def analysisData = rwgDAO.getHeatmapDataCTA(analysisIdsList, genesList)
 
-	   render m as JSON
+	   def geneNamesList = []
+	   // loop through all the analysis and retrieve the union of all gene names that will be displayed
+	   analysisData.each{ 
+		      aKey, geneMap -> 
+			  
+			  geneMap.each{
+				  geneName, geneInfo ->
+				  
+				  geneNamesList.add(geneName)			  
+			  }			  
+	   }
+	   	   
+	   geneNamesList = geneNamesList.unique().sort()
+	   
+	   // create a matrix of values that will be used in heatmap.  This will be a map of rows (keyed on order); each row will also contain a map
+	   // e.g.   [
+	   //          0:  [geneName:"genename1", data:[0:[probeId:"p1", fc:1.1, pValue:0.5], 1:[...], 2:[]....  ] ],
+	   //          1:  [geneName:"genename2", data:[0:[....], 1:[.....], 2:[....]  ] ],
+	   //
+	   //        ]
+	   
+	   def matrix = [:]
+	   int rowIndex = 0; 
+	   geneNamesList.each{  geneName ->
+		   
+		   def row = [:]
+		   row.put("geneName", geneName)		   
+		   
+		   // now add a data map which contains one column for each analysis in list of analysis Ids passed in
+		   def colIndex = 0;
+		   def data = [:]
+		   analysisIdsList.each { analysisId ->
+			   data.put(colIndex, analysisData?.get(analysisId)?.get(geneName))
+			   
+			   colIndex++;
+		   }
+		   
+		   row.put("data", data)
+		   
+		   matrix.put(rowIndex, row)
+		   rowIndex++;
+	   }
+	   
+	   render matrix as JSON
    }
 
    // Render the template for the favorites dialog
