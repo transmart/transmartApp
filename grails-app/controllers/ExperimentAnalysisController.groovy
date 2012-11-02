@@ -262,7 +262,7 @@ class ExperimentAnalysisController {
 	*/
    def browseAnalysisMultiSelect = {
 	   
-	   def analyses = bio.BioAssayAnalysis.executeQuery("select id, name from BioAssayAnalysis b");
+	   def analyses = bio.BioAssayAnalysis.executeQuery("select id, name from BioAssayAnalysis b order by b.name");
 	   
 	   render(template:'browseMulti',model:[analyses:analyses])
    }

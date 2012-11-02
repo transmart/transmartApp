@@ -57,7 +57,7 @@ class ExperimentController {
 	 */
 	def browseExperimentsMultiSelect = {
 		
-		def experiments = Experiment.findAll();
+		def experiments = Experiment.listOrderByTitle()
 		
 		render(template:'browseMulti',model:[experiments:experiments])
 	}
