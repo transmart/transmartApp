@@ -886,54 +886,61 @@ public class SearchController{
 				s = s.substring(7)
 				def regionparams = s.split("\\|")
 				for (r in regionparams) {
-				//Chromosome
-				if (r.startsWith("CHROMOSOME")) {
-					def region = r.split(";")
-					def chrom = region[1]
-					def position = region[3] as long
-					def direction = region[4]
-					def range = region[5] as long
-					def ver = region[6]
-					def low = position
-					def high = position
-					
-					if (direction.equals("plus")) {
-						high = position + range;
+					//Chromosome
+					if (r.startsWith("CHROMOSOME")) {
+						def region = r.split(";")
+						def chrom = region[1]
+						def position = region[3] as long
+						def direction = region[4]
+						def range = region[5] as long
+						def ver = region[6]
+						def low = position
+						def high = position
+						
+						if (direction.equals("plus")) {
+							high = position + range;
+						}
+						else if (direction.equals("minus")) {
+							low = position - range;
+						}
+						else {
+							high = position + range;
+							low = position - range;
+						}
+						
+						regions.push([gene: null, chromosome: chrom, low: low, high: high, ver: ver])
 					}
-					else if (direction.equals("minus")) {
-						low = position - range;
-					}
+					//Gene
 					else {
-						high = position + range;
-						low = position - range;
+						def region = r.split(";")
+						def geneId = region[1] as long
+						def direction = region[2]
+						def range = region[3] as long
+						def ver = region[4]
+						def searchKeyword = SearchKeyword.get(geneId)
+						def limits
+						if (searchKeyword.dataCategory.equals("GENE")) {
+							limits = regionSearchService.getGeneLimits(geneId, ver)
+						}
+						else if (searchKeyword.dataCategory.equals("SNP")) {
+							limits = regionSearchService.getSnpLimits(geneId, ver)
+						}
+						def low = limits.get('low')
+						def high = limits.get('high')
+						def chrom = limits.get('chrom')
+						
+						if (direction.equals("plus")) {
+							high = high + range;
+						}
+						else if (direction.equals("minus")) {
+							low = low - range;
+						}
+						else {
+							high = high + range;
+							low = low - range;
+						}
+						regions.push([gene: geneId, chromosome: chrom, low: low, high: high, ver: ver])
 					}
-					
-					regions.push([gene: null, chromosome: chrom, low: low, high: high, ver: ver])
-				}
-				//Gene
-				else {
-					def region = r.split(";")
-					def geneId = region[1] as long
-					def direction = region[2]
-					def range = region[3] as long
-					def ver = region[4]
-					def limits = regionSearchService.getGeneLimits(geneId)
-					def low = limits.get('low')
-					def high = limits.get('high')
-					def chrom = limits.get('chrom')
-					
-					if (direction.equals("plus")) {
-						high = high + range;
-					}
-					else if (direction.equals("minus")) {
-						low = low - range;
-					}
-					else {
-						high = high + range;
-						low = low - range;
-					}
-					regions.push([gene: geneId, chromosome: chrom, low: low, high: high, ver: ver])
-				}
 				}
 			}
 			else if (s.startsWith("GENE")) {
@@ -942,8 +949,17 @@ public class SearchController{
 				def geneIds = s.split("\\|")
 				for (geneString in geneIds) {
 					def geneId = geneString as long
-					def limits = regionSearchService.getGeneLimits(geneId)
+					def limits = regionSearchService.getGeneLimits(geneId, '19')
 					regions.push([gene: geneId, chromosome: limits.get('chrom'), low: limits.get('low'), high: limits.get('high'), ver: "19"])
+				}
+			}
+			else if (s.startsWith("SNP")) {
+				//If plain SNPs, as above (default to HG19)
+				s = s.substring(4)
+				def rsIds = s.split("\\|")
+				for (rsId in rsIds) {
+					def limits = regionSearchService.getSnpLimits(rsId as long, '19')
+					regions.push([gene: rsId, chromosome: limits.get('chrom'), low: limits.get('low'), high: limits.get('high'), ver: "19"])
 				}
 			}
 		}
@@ -1073,6 +1089,12 @@ public class SearchController{
 		//We need to determine the data type of this analysis so we know where to pull the data from.
 		def currentAnalysis = bio.BioAssayAnalysis.get(params.analysisId)
 		
+		def pvalueCutoff = params.pvalueCutoff as double
+		def search = params.search
+		
+		if (!pvalueCutoff) {pvalueCutoff = 0}
+		if (!search) {search = ""}
+		
 		//Throw an error if we don't find the analysis for some reason.
 		if(!currentAnalysis)
 		{
@@ -1101,11 +1123,12 @@ public class SearchController{
 		switch(currentAnalysis.assayDataType)
 		{
 			case "GWAS" :
-				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, 0, "rsid", "asc", "", "gwas").results
+			case "Metabolic GWAS" :
+				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, pvalueCutoff, "rsid", "asc", search, "gwas").results
 				analysisIndexData = searchDAO.getGwasIndexData()
 				break;
 			case "EQTL" :
-				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, 0, "rsid", "asc", "", "eqtl").results
+				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, pvalueCutoff, "rsid", "asc", search, "eqtl").results
 				analysisIndexData = searchDAO.getEqtlIndexData()
 				break;
 			default :
@@ -1163,9 +1186,9 @@ public class SearchController{
 		}
 		
 		println "QQPlot row count = " + returnedAnalysisData.size()
-		for (int i = 0; i < returnedAnalysisData.size() && i < 10; i++) {
-			println returnedAnalysisData[i]
-		}
+//		for (int i = 0; i < returnedAnalysisData.size() && i < 10; i++) {
+//			println returnedAnalysisData[i]
+//		}
 		
 		//Get a unique key for the image file.
 		def uniqueId = randomUUID() as String

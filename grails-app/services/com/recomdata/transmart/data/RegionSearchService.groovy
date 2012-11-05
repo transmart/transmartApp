@@ -42,7 +42,15 @@ class RegionSearchService {
 	INNER JOIN bio_marker bm ON bm.BIO_MARKER_ID = SEARCH_KEYWORD.BIO_DATA_ID
 	INNER JOIN deapp.de_snp_gene_map gmap ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID
 	INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
-	WHERE SEARCH_KEYWORD_ID=?
+	WHERE SEARCH_KEYWORD_ID=? AND snpinfo.hg_version = ?
+	
+	"""
+	
+	def snpLimitsSqlQuery = """
+	
+	SELECT max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as chrom FROM SEARCHAPP.SEARCH_KEYWORD sk
+	INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON sk.keyword = snpinfo.rs_id
+	WHERE SEARCH_KEYWORD_ID=? AND snpinfo.hg_version = ?
 	
 	"""
 	
@@ -73,7 +81,7 @@ class RegionSearchService {
 	
 	def infoJoinClause = " LEFT JOIN deapp.de_rc_snp_info info ON data.rs_id = info.rs_id "
 	
-	def getGeneLimits(Long searchId) {
+	def getGeneLimits(Long searchId, String ver) {
 		//Create objects we use to form JDBC connection.
 		def con, stmt, rs = null;
 		
@@ -83,6 +91,35 @@ class RegionSearchService {
 		//Prepare the SQL statement.
 		stmt = con.prepareStatement(geneLimitsSqlQuery);
 		stmt.setLong(1, searchId);
+		stmt.setString(2, ver);
+
+		rs = stmt.executeQuery();
+
+		try{
+			if(rs.next()){
+				def high = rs.getLong("HIGH");
+				def low = rs.getLong("LOW");
+				def chrom = rs.getString("CHROM");
+				return [low: low, high:high, chrom: chrom]
+			}
+		}finally{
+			rs?.close();
+			stmt?.close();
+			con?.close();
+		}
+	}
+	
+	def getSnpLimits(Long searchId, String ver) {
+		//Create objects we use to form JDBC connection.
+		def con, stmt, rs = null;
+		
+		//Grab the connection from the grails object.
+		con = dataSource.getConnection()
+		
+		//Prepare the SQL statement.
+		stmt = con.prepareStatement(snpLimitsSqlQuery);
+		stmt.setLong(1, searchId);
+		stmt.setString(2, ver);
 
 		rs = stmt.executeQuery();
 

@@ -69,11 +69,22 @@ public class SearchKeywordService {
 			if (term.size() > 0)	{
 				like("keywordTerm", '%' + term.toUpperCase() + '%')
 			}
-			if ("ALL".compareToIgnoreCase(category) != 0)	{
+			
+			//TODO Special case for gene or SNP - rework to support multiple categories!
+			if ("GENE_OR_SNP".equals(category))	{
+				searchKeyword	{
+					or {
+						eq("dataCategory", "GENE", [ignoreCase: true])
+						eq("dataCategory", "SNP", [ignoreCase: true])
+					}
+				}
+			}
+			else if ("ALL".compareToIgnoreCase(category) != 0)	{
 				searchKeyword	{
 					eq("dataCategory", category, [ignoreCase: true])
 				}
 			}
+
 			if (!user.isAdmin())	{
 				log.info("User is not an admin so filter out gene lists or signatures that are not public")
 				or	{

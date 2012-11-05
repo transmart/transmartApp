@@ -1887,7 +1887,7 @@ function loadQQPlot(analysisID)
 	    "url": getQQPlotURL,
 	    bDestroy: true,
 	    bServerSide: true,
-	    data: {analysisId: analysisID},
+	    data: {analysisId: analysisID, pvalueCutoff: jQuery('#analysis_results_table_' + analysisID + '_cutoff').val(), search: jQuery('#analysis_results_table_' + analysisID + '_search').val()},
 	    "success": function ( json ) {
 	    	jQuery('#analysis_holder_' +analysisID).unmask();
 	    	jQuery('#qqplot_results_' + analysisID).prepend("<img src='" + json.imageURL + "' />").removeClass('ajaxloading');

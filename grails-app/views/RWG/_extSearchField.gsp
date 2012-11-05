@@ -3,7 +3,7 @@ jQuery(document).ready(function() {
 	
 	var escapedFieldName = '${fieldName}'.replace(".", "\\.");
 	jQuery("#" + escapedFieldName + "-input").autocomplete({
-		source: '${createLink([action:searchAction,controller:searchController,params:[category:'GENE']])}',
+		source: '${createLink([action:searchAction,controller:searchController,params:[category:'GENE_OR_SNP']])}',
 		minLength:0,
 		select: function(event, ui) {
 			var id = ui.item.id;
