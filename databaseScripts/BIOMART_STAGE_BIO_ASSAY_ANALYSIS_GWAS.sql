@@ -1,0 +1,27 @@
+--------------------------------------------------------
+--  File created - Thursday-October-25-2012   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Table BIO_ASSAY_ANALYSIS_GWAS
+--------------------------------------------------------
+
+  CREATE TABLE "BIOMART_STAGE"."BIO_ASSAY_ANALYSIS_GWAS" 
+   (	"BIO_ASY_ANALYSIS_GWAS_ID" NUMBER(18,0), 
+	"BIO_ASSAY_ANALYSIS_ID" NUMBER(18,0), 
+	"RS_ID" NVARCHAR2(50), 
+	"P_VALUE_CHAR" VARCHAR2(100 BYTE), 
+	"ETL_ID" NUMBER(18,0), 
+	"EXT_DATA" VARCHAR2(4000 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS NOLOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "BIOMART" ;
+--------------------------------------------------------
+--  Constraints for Table BIO_ASSAY_ANALYSIS_GWAS
+--------------------------------------------------------
+
+  ALTER TABLE "BIOMART_STAGE"."BIO_ASSAY_ANALYSIS_GWAS" MODIFY ("BIO_ASY_ANALYSIS_GWAS_ID" NOT NULL ENABLE);
+ 
+  ALTER TABLE "BIOMART_STAGE"."BIO_ASSAY_ANALYSIS_GWAS" MODIFY ("BIO_ASSAY_ANALYSIS_ID" NOT NULL ENABLE);
+

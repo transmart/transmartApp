@@ -1,0 +1,19 @@
+--------------------------------------------------------
+--  File created - Thursday-October-25-2012   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Table LZ_SRC_STUDY_METADATA_AD_HOC
+--------------------------------------------------------
+
+  CREATE TABLE "TM_LZ"."LZ_SRC_STUDY_METADATA_AD_HOC" 
+   (	"STUDY_ID" VARCHAR2(100 BYTE), 
+	"AD_HOC_PROPERTY_KEY" VARCHAR2(500 BYTE), 
+	"AD_HOC_PROPERTY_VALUE" VARCHAR2(4000 BYTE), 
+	"UPLOAD_DATE" TIMESTAMP (6)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS NOLOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "TRANSMART" ;
+
+
