@@ -47,7 +47,7 @@ class ExperimentController {
 	 */
 	def browseExperimentsSingleSelect = {
 		
-		def experiments = Experiment.listOrderByTitle()
+		def experiments = getSortedList()
 		
 		render(template:'browseSingle',model:[experiments:experiments])
 	}
@@ -57,9 +57,19 @@ class ExperimentController {
 	 */
 	def browseExperimentsMultiSelect = {
 		
-		def experiments = Experiment.listOrderByTitle()
+		def experiments = getSortedList()
 		
 		render(template:'browseMulti',model:[experiments:experiments])
+	}
+	
+	def getSortedList() {
+		def experiments = Experiment.listOrderByTitle()
+		
+		experiments.sort({a, b ->
+			return a.title.trim().compareToIgnoreCase(b.title.trim());
+		})
+		
+		return experiments
 	}
 	
 }
