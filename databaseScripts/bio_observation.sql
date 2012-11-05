@@ -1,42 +1,58 @@
-drop trigger BIOMART.TRG_BIO_OBSERVATION_ID
-/
+--------------------------------------------------------
+--  File created - Thursday-October-25-2012   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Table BIO_OBSERVATION
+--------------------------------------------------------
 
-alter table BIOMART.BIO_DATA_OBSERVATION
-   drop constraint FK_BIO_DATA_REFERENCE_BIO_OBSE
-/
+  CREATE TABLE "BIOMART"."BIO_OBSERVATION" 
+   (	"BIO_OBSERVATION_ID" NUMBER(18,0), 
+	"OBS_NAME" NVARCHAR2(200), 
+	"OBS_CODE" NVARCHAR2(50), 
+	"OBS_DESCR" NVARCHAR2(1000), 
+	"OBS_TYPE" NVARCHAR2(20), 
+	"OBS_CODE_SOURCE" NVARCHAR2(20), 
+	"ETL_ID" VARCHAR2(50 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS NOLOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "BIOMART" ;
+--------------------------------------------------------
+--  DDL for Index OBSERVATIONDIM_PK
+--------------------------------------------------------
 
-drop table BIOMART.BIO_OBSERVATION cascade constraints
-/
+  CREATE UNIQUE INDEX "BIOMART"."OBSERVATIONDIM_PK" ON "BIOMART"."BIO_OBSERVATION" ("BIO_OBSERVATION_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 NOLOGGING COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "BIOMART" ;
+--------------------------------------------------------
+--  Constraints for Table BIO_OBSERVATION
+--------------------------------------------------------
 
-/*==============================================================*/
-/* Table: BIO_OBSERVATION                                       */
-/*==============================================================*/
-create table BIOMART.BIO_OBSERVATION 
-(
-   BIO_OBSERVATION_ID   NUMBER(18)           not null,
-   VALUE                NVARCHAR2(510)       not null,
-   VOCAB                NVARCHAR2(510),
-   VOCAB_CODE           NVARCHAR2(510),
-   ETL_ID               VARCHAR2(50),
-   constraint OBSERVATIONDIM_PK primary key (BIO_OBSERVATION_ID)
-)
-initrans 1
-storage
-(
-    initial 576K
-    minextents 1
-    maxextents unlimited
-)
-tablespace BIOMART
-nologging
-monitoring
- noparallel
-/
+  ALTER TABLE "BIOMART"."BIO_OBSERVATION" ADD CONSTRAINT "OBSERVATIONDIM_PK" PRIMARY KEY ("BIO_OBSERVATION_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 NOLOGGING COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "BIOMART"  ENABLE;
+ 
+  ALTER TABLE "BIOMART"."BIO_OBSERVATION" MODIFY ("OBS_NAME" NOT NULL ENABLE);
 
+--------------------------------------------------------
+--  DDL for Trigger TRG_BIO_OBSERVATION_ID
+--------------------------------------------------------
 
-create trigger BIOMART.TRG_BIO_OBSERVATION_ID  before insert on BIOMART.BIO_OBSERVATION for each row
-begin     if inserting then       if :NEW."BIO_OBSERVATION_ID" is null then          select SEQ_BIO_DATA_ID.nextval into :NEW."BIO_OBSERVATION_ID" from dual;
-       end if;
-    end if;
- end;
+  CREATE OR REPLACE TRIGGER "BIOMART"."TRG_BIO_OBSERVATION_ID" 
+before insert on BIO_OBSERVATION
+for each row
+begin
+  if inserting then
+     if :NEW.BIO_OBSERVATION_ID is null then
+        select SEQ_BIO_DATA_ID.nextval into :NEW.BIO_OBSERVATION_ID from dual;
+     end if;
+  end if;
+end;
+
 /
+ALTER TRIGGER "BIOMART"."TRG_BIO_OBSERVATION_ID" ENABLE;

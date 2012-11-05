@@ -1,90 +1,33 @@
-alter table BIOMART.BIO_DATA_OBSERVATION
-   drop constraint FK_BIO_DATA_REFERENCE_BIO_ASSA;
+--------------------------------------------------------
+--  File created - Thursday-October-25-2012   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Table BIO_DATA_OBSERVATION
+--------------------------------------------------------
 
-alter table BIOMART.BIO_DATA_OBSERVATION
-   drop constraint FK_BIO_DATA_REFERENCE_BIO_OBSE;
+  CREATE TABLE "BIOMART"."BIO_DATA_OBSERVATION" 
+   (	"BIO_DATA_ID" NUMBER(18,0), 
+	"BIO_OBSERVATION_ID" NUMBER(18,0), 
+	"ETL_SOURCE" VARCHAR2(100 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS NOLOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "BIOMART" ;
+--------------------------------------------------------
+--  DDL for Index BIO_DATA_OBSERVATION_PK
+--------------------------------------------------------
 
-drop index BIOMART.BIO_DT_DIS_DID_IDX2;
+  CREATE UNIQUE INDEX "BIOMART"."BIO_DATA_OBSERVATION_PK" ON "BIOMART"."BIO_DATA_OBSERVATION" ("BIO_DATA_ID", "BIO_OBSERVATION_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 NOLOGGING COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "INDX" ;
+--------------------------------------------------------
+--  Constraints for Table BIO_DATA_OBSERVATION
+--------------------------------------------------------
 
-drop index BIOMART.BIO_DD_IDX3;
+  ALTER TABLE "BIOMART"."BIO_DATA_OBSERVATION" MODIFY ("BIO_DATA_ID" NOT NULL ENABLE);
+ 
+  ALTER TABLE "BIOMART"."BIO_DATA_OBSERVATION" MODIFY ("BIO_OBSERVATION_ID" NOT NULL ENABLE);
 
-drop table BIOMART.BIO_DATA_OBSERVATION cascade constraints;
-
-/*==============================================================*/
-/* Table: BIO_DATA_OBSERVATION                                  */
-/*==============================================================*/
-create table BIOMART.BIO_DATA_OBSERVATION 
-(
-   BIO_DATA_ID          NUMBER(18)           not null,
-   BIO_OBSERVATION_ID   NUMBER(18)           not null,
-   ETL_SOURCE           VARCHAR2(100),
-   constraint BIO_DATA_OBSERVATION_PK primary key (BIO_DATA_ID, BIO_OBSERVATION_ID)
-         using index
-       pctfree 10
-       initrans 2
-       storage
-       (
-           initial 64K
-           minextents 1
-           maxextents unlimited
-       )
-       tablespace INDX
-        nologging
-)
-initrans 1
-storage
-(
-    initial 64K
-    minextents 1
-    maxextents unlimited
-)
-tablespace BIOMART
-nologging
-monitoring
- noparallel;
-
-/*==============================================================*/
-/* Index: BIO_DD_IDX3                                           */
-/*==============================================================*/
-create index BIOMART.BIO_DD_IDX3 on BIOMART.BIO_DATA_OBSERVATION (
-   BIO_OBSERVATION_ID ASC
-)
-pctfree 10
-initrans 2
-storage
-(
-    initial 64K
-    minextents 1
-    maxextents unlimited
-    buffer_pool default
-)
-tablespace INDX
-nologging
- parallel 4;
-
-/*==============================================================*/
-/* Index: BIO_DT_DIS_DID_IDX2                                   */
-/*==============================================================*/
-create index BIOMART.BIO_DT_DIS_DID_IDX2 on BIOMART.BIO_DATA_OBSERVATION (
-   BIO_DATA_ID ASC
-)
-pctfree 10
-initrans 2
-storage
-(
-    initial 64K
-    minextents 1
-    maxextents unlimited
-    buffer_pool default
-)
-tablespace INDX
-nologging
- parallel 4;
-
-alter table BIOMART.BIO_DATA_OBSERVATION
-   add constraint FK_BIO_DATA_REFERENCE_BIO_ASSA foreign key (BIO_DATA_ID)
-      references BIOMART.BIO_ASSAY_ANALYSIS (BIO_ASSAY_ANALYSIS_ID);
-
-alter table BIOMART.BIO_DATA_OBSERVATION
-   add constraint FK_BIO_DATA_REFERENCE_BIO_OBSE foreign key (BIO_OBSERVATION_ID)
-      references BIOMART.BIO_OBSERVATION (BIO_OBSERVATION_ID);
