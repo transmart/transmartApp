@@ -3080,7 +3080,10 @@ function loadHeatmapCTA(category, searchKeywordId)	{
 		timeout:60000,
 		success: function(response) {
 
-			alert("data returned");
+			
+			drawHeatmapCTA('xtHeatmap', response, selectedAnalyses);
+			
+//			alert("data returned");
 //			alert(response.toString());
 //			drawBoxPlotD3('xtBoxplot', response, null, false, true, selectedAnalyses);
 			

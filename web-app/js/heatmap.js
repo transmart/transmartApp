@@ -1,3 +1,6 @@
+var uniqueHeatmapId = 0;
+var hmTooltips = new Array;
+
 // Take the heatmap data in the second parameter and draw the D3 heatmap
 function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 	jQuery("#" + divID).empty();
@@ -553,4 +556,433 @@ function addDataColumn(hm, xOffset, yOffset, width, data, header, groupName, h) 
 		    .style("font", "bold 11px sans-serif")
 	        .text(header)
 	        ;	
+}
+
+
+//Take the heatmap data in the second parameter and draw the D3 heatmap for Cross Trial Analysis
+//  (i.e. Genes down left, analysis on top, fold change in box)
+function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
+	jQuery("#" + divID).empty();
+    var savedDisplayStyle = jQuery("#" + divID).css('display');
+	jQuery("#" + divID).show();  // show first so title height can be calculated correctly
+	
+	hmTooltips = new Array;
+	
+	//var cellSize = parseInt(jQuery(cellID).slider( "option", "value" ));
+	var cellSize = 15;
+	var wCell = cellSize, hCell = cellSize;		// Cell dimensions
+	
+	var hHeader = 20;
+	
+	var numAnalyses = analyses.length;
+	
+	var numGenes = 0;
+
+	var maxGeneWidth = 0;
+
+	var heatmapRows = new Array; 
+	
+	var maxFoldChange = 0;
+	var minFoldChange = 0;
+	// iterate thru genes to get count and find out the widest when displayed; also convert object to an array of rows
+	//  for consumption by svg objects
+	for (rowIndex in heatmapJSON)  {
+		var geneName = heatmapJSON[rowIndex].geneName;
+		var wGene = geneName.visualLength("10px Verdana, Tahoma, Arial");
+	    maxGeneWidth = (wGene > maxGeneWidth) ? wGene : maxGeneWidth;	
+
+	    // also convert data object to an array
+	    var dataArray = new Array();
+	    for (colIndex in heatmapJSON[rowIndex].data)  {
+	    	dataArray[colIndex] =  heatmapJSON[rowIndex].data[colIndex];
+	    	var fc = dataArray[colIndex].foldChange;
+	    	if (fc)  {
+	    		minFoldChange = (fc<minFoldChange) ? fc : minFoldChange;
+	    		maxFoldChange = (fc>maxFoldChange) ? fc : maxFoldChange;
+	    	}
+	    }
+	    
+	    var rowData = {geneName: heatmapJSON[rowIndex].geneName, data:dataArray}
+	    heatmapRows[rowIndex] =  rowData;
+	    
+		numGenes++;
+	}
+	
+	var heatmapHeight = hHeader + (numGenes * hCell);
+	var analysisLegendHeight;
+	var analysLegendOffset = heatmapHeight;
+	var heatmapOffset = 0;
+
+	var minWidth = 200;
+	var wTotal = maxGeneWidth + numAnalyses*wCell + 6;
+	if (wTotal < minWidth)  {
+		wTotal = minWidth;
+	}
+	
+	// retrieve info needed for legend
+	var legendInfo = getAnalysisLegendInfo(analyses, wTotal);
+	var hLegend = legendInfo.hLegend;
+	var analyisInfo = legendInfo.analysisInfo;
+	
+	var height = heatmapHeight + hLegend;
+
+	// create the main svg object
+	var svg = d3.select("#" + divID)
+		.append("svg")
+		.attr("width", wTotal)	
+		.attr("height", height);   
+	
+	
+	var hm = svg
+		.append("g")
+		.attr("transform", "translate(" + 0 + "," + heatmapOffset + ")")
+		.attr("class", "heatmap");
+
+	
+	// hardcode for now, do we want to use sliders?  do we need to normalize values?
+	var rangeMax = maxFoldChange;
+	var rangeMin = minFoldChange;
+	var rangeMid = (rangeMax + rangeMin)/2;
+	
+	var colorScale = d3.scale.linear()
+	    .domain([rangeMin, rangeMid, rangeMid, rangeMax])
+	    .range(["#4400BE", "#D7D5FF","#ffe2f2", "#D70C00"]);
+
+		
+    //generate the heatmap
+    var hmRow = hm.selectAll(".heatmap")
+      .data(heatmapRows)
+      .enter().append("g");    
+    
+    var hmRects = hmRow
+	    .selectAll(".rect")
+	    .data(function(d) {
+	      return d.data;
+	    }).enter().append("svg:rect")
+	    .attr('width', wCell)
+	    .attr('height',hCell)
+	    .attr("class", "heatmapTooltip")
+	    .attr("id", function(d) {
+	    	var id = "hmCell" + uniqueHeatmapId++;   // id here will match id in tooltip array
+	    	var geneName = heatmapJSON[d.y].geneName;
+	    	
+	    	var fc;
+			if (d.foldChange == undefined)  {
+				fc = "null"
+			}
+			else {
+				fc = d.foldChange.toFixed(2);
+			}
+			
+	    	var tooltip = 
+	    				   "<table style='td{padding:5px}'>" +
+	    				   "<tr><td  width='100px'><b>Analysis</b></td><td>" + analyses[d.x].title + "</td></tr>" +
+	    				   "<tr><td><b>Probe</b></td><td>" + d.probeId + "</td></tr>" +
+	    				   "<tr><td><b>Gene</b></td><td>" + geneName  + "</td></tr>" +
+	    				   "<tr><td><b>Fold Change</b></td><td>" + fc  + "</td></tr>" +
+	    				   "<tr><td><b>Preferred pvalue</b></td><td>" + d.preferredPValue  + "</td></tr>" +
+	    				   "</table>";
+	    	
+	    	hmTooltips[id] = tooltip;
+	    	return id;
+	    })
+	    .attr('x', function(d) {
+	    	return maxGeneWidth + d.x * wCell;
+	    })
+	    .attr('y', function(d) {
+	    	return hCell + d.y * hCell + hHeader;
+	    })
+	    .style("stroke", "#333333")    // color of borders around rectangles
+	    .style("stroke-width", 1)    // width of borders around rectangles
+	    .style("shape-rendering", "crispEdges")
+	    .style('fill',function(d) {
+	    	
+	        if (d.foldChange == null)  {        	
+	        	return "#FFFF00";
+	        } 	
+	        else  {
+	        	return colorScale(d.foldChange);
+	        }
+	      
+	    })
+	    ;
+
+	registerHeatmapTooltipEvents();
+				
+	//GROUP FOR Column headers
+	var headerGroup = hm.append("svg:g")
+	  .attr("class", "columnHeader")
+	  .attr("transform", "translate(" + maxGeneWidth + "," + hHeader + ")")
+	  ;
+	
+    // Show the gene labels
+	var headerGroupText = headerGroup.selectAll("text")
+		.data(analyses)
+		.enter().append("text")
+		.attr("x",function(d, i)	{
+			return (i * wCell + wCell/2 ); 
+		    })
+		.attr("y", 0)
+		.attr("text-anchor", "middle")
+	    .style("font", "10px Verdana, Tahoma, Arial")
+		.text(function(d, i)	{
+			return i + 1;
+		} )		
+        ;			
+	
+	headerGroupText.append('svg:title').text(function(d)	{
+		return d.title;
+	} );
+	
+/*    
+	// position of cohort header group
+	var xPosition = w_probe;
+	var yPosition = 2;
+	
+	//GROUP FOR Cohort headers
+	var cohortHeaderGroup = hm.append("svg:g")
+	  .attr("class", "cohortHeader")
+	  .attr("transform", "translate(" + xPosition + "," + yPosition + ")")
+	  ;
+	
+	var leftPosition = 0;  // relative position within cohort header group
+	
+	for(var i=1; i<=numCohorts; i++) {		
+		var classIndex;
+		
+		cohortDisplayStyles[i] = i % cohortBGColors.length;
+
+		var dataColor = cohortBGColors[i % cohortBGColors.length];
+		var strokeStyleColor = "#000";
+		var textStyleColor = "#000";
+		
+		// Cohort header
+		var barC = cohortHeaderGroup.append("rect")
+			.attr("x", leftPosition)
+			.attr("y", 0)
+			.attr("width", cohortWidths[i])
+			.attr("height", h)
+			.style("stroke", strokeStyleColor)    // color of borders around rectangles
+			.style("stroke-width", 1)    // width of borders around rectangles
+		    .style('fill', dataColor  )
+		    .style("shape-rendering", "crispEdges")	
+			;
+		
+		// this tooltip needs to be added both to rectangle and the label so it doesn't disappear when you mouse over the label
+		var cohortTooltip = cohortDescriptions[i].replace(/_/g, ', ');
+		
+		// Tooltips for cohort header rectangle
+	    if (!forExport)  {
+	    	barC.append('svg:title').text(cohortTooltip);
+	    }
+				
+		//set the header font size depending on the cell size
+		var headerFontFamily = "sans-serif";
+		var headerFontSize = 12;
+
+		if(cellSize < 12){
+			var headerFontSize = 8;
+		}else if (cellSize>19){
+			var headerFontSize = 16;
+		}
+		
+		// calculate coordinates for label in center of rect -- is there an easier way to do this with D3?  
+		var labelX = leftPosition + cohortWidths[i]/2;
+		var labelY = h/2;
+		
+		if (forExport)  {
+			labelY += 3;
+		}
+		
+		var chgText = cohortHeaderGroup.append("text")
+			.attr("x", labelX)
+			.attr("y", labelY)
+			.attr("dy", ".35em")
+ 	        .attr("text-anchor", "middle")
+		    .style("fill", textStyleColor)
+		    .style("font-size", headerFontSize + "px")
+		    .style("font-family", headerFontFamily)
+ 	        .text(cohorts[i] )
+ 	        ;	
+			
+	    if (!forExport)  {
+	    	chgText.append('svg:title').text(cohortTooltip);   // tooltip for label
+	    }
+	    
+		// determine left position for next cohort
+	    leftPosition = leftPosition + cohortWidths[i];
+
+	}
+
+    if (forExport)  {
+		drawSVGLegend(svg, 10, cohortLegendOffset, statMapping, false, forExport);
+    }
+
+	var yOffset = h + h_header + 4;
+	var xOffset;
+	//only do this if the data contains fold change values
+	if(hasFoldChange)  {
+		xOffset = w_probe + columns.length * w + w_gene;
+		addDataColumn(hm, xOffset, yOffset, w_fold_change, foldChange, "Fold change", "foldChangeGroup", h);
+	}
+
+	
+	//only do this if the data contains TP values
+	if(hasTPvalue)  {
+		xOffset = w_probe + columns.length * w + w_gene + w_fold_change;
+		addDataColumn(hm, xOffset, yOffset, w_Tpvalue, tpValues, "TEA p-value", "tpValueGroup", h);		
+	}
+
+	
+	//only do this if the data contains TP values
+	if(hasPvalue)  {
+		xOffset = w_probe + (columns.length * w) + w_gene + w_fold_change +w_Tpvalue;
+		addDataColumn(hm, xOffset, yOffset, w_pvalue, preferredPValues, "p-value", "ppValueGroup", h);		
+	}
+
+	
+	// GENE LABELS
+	xOffset = w_probe + columns.length * w + 2;
+	var geneGroup = hm.append("svg:g")
+	  .attr("class", "geneGroup")
+	  .attr("transform", "translate(" + xOffset + "," + yOffset + ")")
+	  ;
+	
+    // Show the gene labels
+	var geneGroupText = geneGroup.selectAll("a")
+		.data(geneLabels)
+		.enter().append("a")
+		.attr("xlink:href", function(d) {return "javascript:showGeneInfo('"+d.geneId +"');"})
+		.append("text")
+		.attr("x", 0)
+		.attr("y",function(d, i)	{
+			return (i * (h) + h / 2); 
+		    })
+		.attr("width", w_gene)
+		.attr("text-anchor", "start")
+	    .style("font", "10px Verdana, Tahoma, Arial")
+		.text(function(d)	{
+			return d.gene;
+		} )		
+        ;			
+	
+	// tooltip for gene labels
+    if (!forExport)  {
+    	geneGroupText.append('svg:title').text(function(d)	{
+    		return d.genelist;
+    	} );
+    }
+		
+    // PROBE LABELS
+	xOffset = 0;
+	var probeGroup = hm.append("svg:g")
+	  .attr("class", "probeGroup")
+	  .attr("transform", "translate(" + xOffset + "," + yOffset + ")")
+	  ;
+	
+    // Show the probe labels
+	var probeGroupText = probeGroup.selectAll("a")
+		.data(probesList)
+		.enter().append("a")
+		.attr("xlink:href", function(d) {return "javascript:openBoxPlotFromHeatmap(" +analysisID +", '" + d +"');"})
+		.append("text")
+		.attr("x", 0)
+		.attr("y",function(d, i)	{
+			return (i * (h) + h / 2); 
+		    })
+		.attr("width", w_probe)
+		.attr("text-anchor", "start")
+	    .style("font", "10px Verdana, Tahoma, Arial")
+		.text(function(d)	{
+			return d;
+		} )		
+        ;			
+	
+	// tooltip for probe labels
+    if (!forExport)  {
+    	probeGroupText.append('svg:title').text("View in boxplot");
+    }
+
+	//GROUP FOR legend (min, max, null)
+	var legendGroup = hm.append("svg:g")
+	  .attr("class", "legendGroup")
+	  .attr("transform", "translate(" + w_probe + "," + (2*h + (heatmapJSON.length * h) + h_header) + ")")
+	  ;
+	
+	var legendBars = new Array();
+	legendBars.push({bgColor:"#4400BE", textColor:"white", text:"min: "+Math.round((rangeMin)*100)/100});
+	legendBars.push({bgColor:"#D70C00", textColor:"white", text:"max: " + Math.round((rangeMax)*100)/100});
+	//draw legend for null values only if they exist in the current heatmap
+	if(hasNullValues){
+		legendBars.push({bgColor:"#FFFF00", textColor:"black", text:"null"});
+	}
+		
+	var barWidth = 55;
+	var barHeight = 15;
+	var barSpacing = 30;
+	// legend labels
+	var barLegends = legendGroup.selectAll("rect")
+		 .data(legendBars)
+		 .enter().append("rect")
+		.attr("x", function(d, i) {return i*(barWidth + barSpacing); })
+		.attr("y", 0)
+		.attr("width", barWidth)
+		.attr("height", barHeight)
+	    .style('fill', function(d) {return d.bgColor; })
+		;
+
+
+	var barLegends = legendGroup.selectAll("text")
+		.data(legendBars)
+		.enter().append("text")
+		.attr("x", function(d, i) {return i*(barWidth + barSpacing) + 2; })
+		.attr("y", barHeight - 3)
+ 	    .attr("text-anchor", "start")
+		.style("fill", function(d) {return d.textColor; })
+		.style("font-size", "10px")
+ 	    .text(function(d) {return d.text; });
+
+	// not exporting, add the html to the div for the legend
+	 if (!forExport)  {		
+		 drawScreenLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles, "heatmap", analysisID);
+  	 }
+	*/
+ 	 jQuery("#" + divID).css('display', savedDisplayStyle);
+	
+}
+
+this.registerHeatmapTooltipEvents = function(){
+	// create the method for the hover event for tooltips on the favorites for faceted searches
+	jQuery("rect.heatmapTooltip").hoverIntent(
+		{
+			over:function(e){
+				//var elementId = e.currentTarget.id;
+				showHeatmapTooltip(e);
+			},
+			out: function(){
+				jQuery("#heatmapTooltip").remove();
+			},
+			interval:500
+		});
+	
+};
+
+function showHeatmapTooltip(e)  {
+
+	var xOffset = 20;
+	var yOffset = 20;		
+	
+	// create the div tag which will hold tooltip
+	jQuery("body").append("<div id='heatmapTooltip'></div>");
+	
+	var tooltip = hmTooltips[e.currentTarget.id];
+	
+	jQuery("#heatmapTooltip")
+		.css("z-index", 10000)
+		.html(tooltip)
+		.css("left",(e.pageX + yOffset) + "px")
+		.css("top",(e.pageY - xOffset) + "px")
+		.fadeIn(200)
+		;
+	
 }

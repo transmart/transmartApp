@@ -1489,7 +1489,7 @@ def getHeatmapDataCTA  = {analysisIds, keywordIds ->
 			fold_change_ratio
 		  from heat_map_results
 		   where Bio_Assay_Analysis_Id in ("""
-    )
+    ) 
 
 	s.append(analysisIds.join(','))
 	s.append(") ")
@@ -1510,7 +1510,7 @@ def getHeatmapDataCTA  = {analysisIds, keywordIds ->
 			aMap = [:]
 			returnMap.put(aId, aMap)
 		}  
-
+			
 		def geneName = row.bio_marker_name
 		// if gene name not mapped yet for analysis, then add it with fold change and probe used
 		//   (if there, skip it since it's not most significant probe)

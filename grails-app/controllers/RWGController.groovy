@@ -935,7 +935,7 @@ class RWGController {
 
 	   def analysisIdsList = params.analysisIds.split(/\|/)
 	   def analysisData = rwgDAO.getHeatmapDataCTA(analysisIdsList, genesList)
-
+println analysisData
 	   def geneNamesList = []
 	   // loop through all the analysis and retrieve the union of all gene names that will be displayed
 	   analysisData.each{ 
@@ -952,7 +952,7 @@ class RWGController {
 	   
 	   // create a matrix of values that will be used in heatmap.  This will be a map of rows (keyed on order); each row will also contain a map
 	   // e.g.   [
-	   //          0:  [geneName:"genename1", data:[0:[probeId:"p1", fc:1.1, pValue:0.5], 1:[...], 2:[]....  ] ],
+	   //          0:  [geneName:"genename1", data:[0:[probeId:"p1", fc:1.1, pValue:0.5, x:0, y:0], 1:[...], 2:[]....  ] ],
 	   //          1:  [geneName:"genename2", data:[0:[....], 1:[.....], 2:[....]  ] ],
 	   //
 	   //        ]
@@ -968,7 +968,16 @@ class RWGController {
 		   def colIndex = 0;
 		   def data = [:]
 		   analysisIdsList.each { analysisId ->
-			   data.put(colIndex, analysisData?.get(analysisId)?.get(geneName))
+			   
+			   def cellData = analysisData?.get(analysisId)?.get(geneName)
+			   
+			   if (!cellData)  {
+				   cellData = [:]
+			   }
+			   cellData.put("x", colIndex)
+			   cellData.put("y", rowIndex)
+			   
+			   data.put(colIndex, cellData)
 			   
 			   colIndex++;
 		   }
