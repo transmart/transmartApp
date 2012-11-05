@@ -31,6 +31,8 @@ import grails.converters.*
 import org.hibernate.*
 
 import search.CustomFilter
+import search.GeneSignature;
+import search.GeneSignatureItem;
 import search.SearchKeyword
 import search.SearchKeywordTerm
 import au.com.bytecode.opencsv.CSVWriter;
@@ -940,6 +942,24 @@ public class SearchController{
 							low = low - range;
 						}
 						regions.push([gene: geneId, chromosome: chrom, low: low, high: high, ver: ver])
+					}
+				}
+			}
+			else if (s.startsWith("GENESIG")) {
+				//Expand regions to genes and get their limits
+				s = s.substring(8)
+				def sigIds = s.split("\\|")
+				for (sigId in sigIds) {
+					def sigSearchKeyword = SearchKeyword.get(sigId as long)
+					def sigItems = GeneSignatureItem.createCriteria().list() {
+						eq('geneSignature', GeneSignature.get(sigSearchKeyword.bioDataId))
+						like('bioDataUniqueId', 'GENE%')
+					}
+					for (sigItem in sigItems) {
+						def searchGene = SearchKeyword.findByUniqueId(sigItem.bioDataUniqueId)
+						def geneId = searchGene.id
+						def limits = regionSearchService.getGeneLimits(geneId, '19')
+						regions.push([gene: geneId, chromosome: limits.get('chrom'), low: limits.get('low'), high: limits.get('high'), ver: "19"])
 					}
 				}
 			}
