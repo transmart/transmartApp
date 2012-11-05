@@ -1,26 +1,64 @@
-drop table BIOMART.BIO_ASSAY_ANALYSIS_EQTL cascade constraints;
+--------------------------------------------------------
+--  File created - Thursday-October-25-2012   
+--------------------------------------------------------
+--------------------------------------------------------
+--  DDL for Table BIO_ASSAY_ANALYSIS_EQTL
+--------------------------------------------------------
 
-/*==============================================================*/
-/* Table: BIO_ASSAY_ANALYSIS_EQTL                               */
-/*==============================================================*/
-create table BIOMART.BIO_ASSAY_ANALYSIS_EQTL 
-(
-   BIO_ASY_ANALYSIS_DATA_ID NUMBER(22)           not null,
-   BIO_ASSAY_ANALYSIS_ID NUMBER(22),
-   RS_ID                NVARCHAR2(50),
-   GENE                 CHAR(10),
-   P_VALUE              NUMBER(18,5),
-   CIS_TRANS            CHAR(10),
-   DISTANCE_FROM_GENE   CHAR(10),
-   ETL_ID               NVARCHAR2(100),
-   constraint PK_BIO_ASSAY_ANALYSIS_EQTL primary key (BIO_ASY_ANALYSIS_DATA_ID)
-);
+  CREATE TABLE "BIOMART"."BIO_ASSAY_ANALYSIS_EQTL" 
+   (	"BIO_ASY_ANALYSIS_EQTL_ID" NUMBER(22,0), 
+	"BIO_ASSAY_ANALYSIS_ID" NUMBER(22,0), 
+	"RS_ID" NVARCHAR2(50), 
+	"GENE" VARCHAR2(50 BYTE), 
+	"P_VALUE_CHAR" VARCHAR2(100 BYTE), 
+	"P_VALUE" BINARY_DOUBLE, 
+	"LOG_P_VALUE" BINARY_DOUBLE, 
+	"CIS_TRANS" VARCHAR2(10 BYTE), 
+	"DISTANCE_FROM_GENE" VARCHAR2(10 BYTE), 
+	"ETL_ID" NUMBER(18,0), 
+	"EXT_DATA" VARCHAR2(4000 BYTE)
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS NOLOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "BIOMART" ;
+--------------------------------------------------------
+--  DDL for Index BIO_ASSAY_ANALYSIS_EQTL_IDX1
+--------------------------------------------------------
 
-create trigger BIOMART.TRG_BIO_ASY_ANALYSIS_EQTL_ID  before insert on BIOMART.BIO_ASSAY_ANALYSIS_EQTL for each row
+  CREATE INDEX "BIOMART"."BIO_ASSAY_ANALYSIS_EQTL_IDX1" ON "BIOMART"."BIO_ASSAY_ANALYSIS_EQTL" ("BIO_ASSAY_ANALYSIS_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 NOLOGGING COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "INDX" ;
+--------------------------------------------------------
+--  DDL for Index BIO_ASSAY_ANALYSIS_EQTL_PK
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "BIOMART"."BIO_ASSAY_ANALYSIS_EQTL_PK" ON "BIOMART"."BIO_ASSAY_ANALYSIS_EQTL" ("BIO_ASY_ANALYSIS_EQTL_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 NOLOGGING COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "INDX" ;
+--------------------------------------------------------
+--  Constraints for Table BIO_ASSAY_ANALYSIS_EQTL
+--------------------------------------------------------
+
+  ALTER TABLE "BIOMART"."BIO_ASSAY_ANALYSIS_EQTL" MODIFY ("BIO_ASY_ANALYSIS_EQTL_ID" NOT NULL ENABLE);
+ 
+  ALTER TABLE "BIOMART"."BIO_ASSAY_ANALYSIS_EQTL" MODIFY ("BIO_ASSAY_ANALYSIS_ID" NOT NULL ENABLE);
+
+--------------------------------------------------------
+--  DDL for Trigger TRG_BIO_ASY_ANALYSIS_EQTL_ID
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "BIOMART"."TRG_BIO_ASY_ANALYSIS_EQTL_ID" before insert on BIOMART.BIO_ASSAY_ANALYSIS_EQTL for each row
 begin     
   if inserting then       
-    if :NEW."BIO_ASY_ANALYSIS_DATA_ID" is null then          
-      select SEQ_BIO_DATA_ID.nextval into :NEW."BIO_ASY_ANALYSIS_DATA_ID" from dual;
+    if :NEW."BIO_ASY_ANALYSIS_EQTL_ID" is null then          
+      select SEQ_BIO_DATA_ID.nextval into :NEW."BIO_ASY_ANALYSIS_EQTL_ID" from dual;
     end if;
   end if;
 end;
+/
+ALTER TRIGGER "BIOMART"."TRG_BIO_ASY_ANALYSIS_EQTL_ID" ENABLE;
