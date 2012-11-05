@@ -42,7 +42,7 @@ class WebserviceService {
 	INNER JOIN bio_marker bm ON bm.BIO_MARKER_ID = SEARCH_KEYWORD.BIO_DATA_ID
 	INNER JOIN deapp.de_snp_gene_map gmap ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID
 	INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
-	WHERE KEYWORD=? 
+	WHERE KEYWORD=? AND snpinfo.hg_version = '19'
 	"""
 	
 	def final geneLimitsSqlQueryById = """
@@ -50,7 +50,7 @@ class WebserviceService {
 	SELECT BIO_MARKER_ID, max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as chrom from bio_marker bm
 	INNER JOIN deapp.de_snp_gene_map gmap ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID
 	INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
-	WHERE BIO_MARKER_ID = ?
+	WHERE BIO_MARKER_ID = ? AND snpinfo.hg_version = '19'
 	GROUP BY BIO_MARKER_ID
 	"""
 	

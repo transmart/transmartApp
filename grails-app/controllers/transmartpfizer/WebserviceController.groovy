@@ -58,6 +58,8 @@ class WebserviceController {
 		def geneName = params.geneName
 		
 		def geneBounds = webserviceService.computeGeneBounds(geneName, "GRCh37")
+		def low = geneBounds[0]
+		def high = geneBounds[1]
 		def results = webserviceService.getAnalysisDataBetween(analysisIds, geneBounds[0]-range, geneBounds[1]+range, geneBounds[2])
 		
 		renderDataSet(results)
