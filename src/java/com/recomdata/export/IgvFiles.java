@@ -42,7 +42,9 @@ public class IgvFiles {
 	protected String fileAccessUrl;
 	
 	protected File sampleFile;
-	protected List<File> copyNumberFileList;
+	protected List<File> dataFileList;
+	protected String genomeVersion="hg19";
+	
 	protected File sessionFile;
 	
 	public IgvFiles(String gpFileDirName, String gpFileAccessUrl) throws java.io.IOException {
@@ -54,27 +56,37 @@ public class IgvFiles {
 			tmpDir.mkdir();
 		}
 		
-		copyNumberFileList = new ArrayList<File>();
+		dataFileList = new ArrayList<File>();
 	}
 	
 	public File getSampleFile() throws java.io.IOException {	
 		if (sampleFile == null)
-			sampleFile = File.createTempFile("gp_df_", ".sample.txt", tmpDir);
+			sampleFile = File.createTempFile("igv_df_", ".sample.txt", tmpDir);
 		return this.sampleFile;
 	}
 	
 	public File createCopyNumberFile() throws java.io.IOException {
 		
-		return File.createTempFile("gp_df_", ".cn", tmpDir);
+		return File.createTempFile("igv_df_", ".cn", tmpDir);
 	}
+	
+	public File createVCFFile() throws java.io.IOException {
+		return File.createTempFile("igv_vcf_", ".cvf", tmpDir);
+	}
+	
+	public void addFile(File file){
+		dataFileList.add(file);
+	}
+	
 	
 	public File getSessionFile() throws java.io.IOException {
 		if (sessionFile == null)
-			sessionFile = File.createTempFile("gp_df_", ".xml", tmpDir);
+			sessionFile = File.createTempFile("igv_df_", ".xml", tmpDir);
 		return this.sessionFile;
 	}
 	
 	public static String getFileSecurityHash(File file, String userName) throws Exception {
+		System.out.println("datafile length:"+file.length());
 		String hashWord = userName + Long.toString(file.length());
 		MessageDigest md5 = MessageDigest.getInstance("MD5");
 		md5.reset();
@@ -91,7 +103,15 @@ public class IgvFiles {
 			"&amp;hash=" + URLEncoder.encode(hashStr, "UTF-8")+ "&amp;file=" + URLEncoder.encode(file.getName(), "UTF-8");
 	}
 	
+	public String getFileUrl(File file) throws Exception{
+		return fileAccessUrl+"/"+URLEncoder.encode(file.getName(), "UTF-8");
+	}
+	
 	List<File> getCopyNumberFileList() {
-		return copyNumberFileList;
+		return dataFileList;
+	}
+	
+	List<File> getDataFileList() {
+		return dataFileList;
 	}
 }

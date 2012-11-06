@@ -1,23 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
-
 // global members
 var _d2hSecondaryWindowsByTopics = null;
 function d2hInitSecondaryWindows()
@@ -41,22 +21,21 @@ function newDocContext(strTitle, strData)
     document.write(elem);
 }
 
-
 function jSearch(doc, strQuery)
 {
     display(doc, jExecQuery(doc, strQuery));
 }
 
 function Clause(str){
-    var exactPhrase = (str.indexOf(d2hQuotePrefix) == 0 && quotes[str] != null) || (str.indexOf(searchNotInSpaces + d2hQuotePrefix) == 0 && quotes[str.substring(searchNotInSpaces.length, str.length)] != null);
+    var exactPhrase = (str.indexOf(d2hQuotePrefix) == 0 && quotes[str] != null) || (str.toLowerCase().indexOf((searchNotInSpaces + d2hQuotePrefix).toLowerCase()) == 0 && quotes[str.substring(searchNotInSpaces.length, str.length)] != null);
     var parts;
     var foundNot = false;
     if (!exactPhrase)
     {        
-        parts = str.split(new RegExp(searchOrInSpaces.replace(/\|/gi,"\\|"),"gi"));
+        parts = str.split(new RegExp(searchOrInSpaces.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'), "gi"));
         if (parts.length == 1)
         {
-            parts = str.split(new RegExp(searchAndInSpaces.replace(/\|/gi,"\\|"),"gi"));            
+            parts = str.split(new RegExp(searchAndInSpaces.replace(/[-[\]{}()*+?.,\\^$|]/g, '\\$&'), "gi"));
             this.type = 2;
         }
         else
@@ -117,7 +96,7 @@ Clause.prototype={
             }
             else
                 this.docs = searchInIndex(this.value, this.type != 0);
-            if (this.type == 0 && !this.docs && !isEasternLanguage(this.value))
+            if (!this.docs && !isEasternLanguage(this.value)) 
             {
                 var newString = addSpace(this.value, getWords(), 0, false);
                 if (newString != this.value)
@@ -125,16 +104,18 @@ Clause.prototype={
                     var words = newString.split(" ");
                     for (var i = 0; i < words.length; i++)
                     {
-                        if (getWordIndex(g_sStopWords, words[i]) != -1)
+                        if (this.type == 0 && getWordIndex(g_sStopWords, words[i]) != -1)
                             continue;
                         var documents = searchInIndex(words[i], true);
-                        if (!documents)
+                        if (!documents) 
+                        {
+                            this.docs = null;
                             break;
+                        }
                         this.docs = !this.docs ? documents : intersect(this.docs, documents, true);
                     }
                 }
             }
-                
         }
         else
         {
@@ -148,6 +129,7 @@ Clause.prototype={
                         this.docs = !this.docs ? this.children[i].docs : intersect(this.docs, this.children[i].docs, this.type == 0);
                     else
                         this.docs = !this.docs ? this.children[i].docs : mergeDocs(this.docs, this.children[i].docs);
+
                 }
                 else if (this.type != 1 || i == 0)
                     this.docs = null;

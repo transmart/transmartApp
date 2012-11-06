@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <html><head><title>Rules for Building a Search String</title>
-<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" /><link rel="stylesheet" type="text/css" href="../Theme/nav.css" /><link rel="stylesheet" type="text/css" href="../Theme/popupmenu.css" /><link rel="stylesheet" type="text/css" href="../Theme/lf.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/doc2help.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/GPL_1.0_tranSMART_User_Guide.css" />
+<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" /><link rel="stylesheet" type="text/css" href="../Theme/nav.css" /><link rel="stylesheet" type="text/css" href="../Theme/popupmenu.css" /><link rel="stylesheet" type="text/css" href="../Theme/lf.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/d2hTarget.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/OpenSource_tranSMART_User_Guide.css" />
 <script type="text/javascript">
 //<![CDATA[
 
@@ -19,8 +19,8 @@ var _needIndentation = false;
 
 <script language="JavaScript" src="../common.js" type="text/JavaScript"></script>
 
-<meta name="Generator" content="ComponentOne Doc-To-Help v.2011.1.0.624" />
-<meta name="D2HTheme" content="(Default) v.150" />
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2012.1.0.688" />
+<meta name="D2HTheme" content="(Default) v.153" />
 </head>
 <body style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #535353; MARGIN: 7px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; OVERFLOW: hidden; PADDING-TOP: 0px" onload="d2hOnLoadToolbar(event);" relpart="../">
 <script language="javascript" type="text/javascript">
@@ -99,8 +99,7 @@ building a multi-filter search string:</p>
 joined by the logical operator <span class="CodeText">OR</span>.</p>
 <p class="MsoNormalIndent">For example, if you add the filters <span class="CodeText">Diseases&gt; Melanoma</span> and <span class="CodeText">Diseases&gt; Melanoma</span><span style="FONT-FAMILY: 'Courier New'">, </span><span class="CodeText">Experimental</span> to a search string, the search engine 
 evaluates them as in the following expression:</p>
-<p style="MARGIN-LEFT: 18pt" class="CodeLine">(Diseases&gt; Melanoma OR 
-Diseases&gt; Melanoma, Experimental)</p>
+<p style="MARGIN-LEFT: 18pt" class="CodeLine">(<span style="COLOR: #cc0099">Diseases&gt; Melanoma </span><b>OR</b> <span style="COLOR: #cc0099">Diseases&gt; Melanoma, Experimental</span>)</p>
 <p style="MARGIN-LEFT: 18pt" class="CodeLine">&#160;</p>
 <p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
 </span>Filters within different filter categories are joined by the logical 
@@ -108,9 +107,8 @@ operator <span class="CodeText">AND</span>.</p>
 <p class="MsoNormalIndent">For example, if you add the filters <span style="FONT-FAMILY: 'Courier New'">Diseases&gt; Anemia</span>, <span style="FONT-FAMILY: 'Courier New'">Diseases&gt; Anemia, Hemolytic</span>, and 
 <span style="FONT-FAMILY: 'Courier New'">Gene&gt; HBB</span> to a search string, 
 the search engine evaluates them as in the following expression:</p>
-<p style="MARGIN-LEFT: 18pt" class="CodeLine">(Diseases&gt; Anemia OR Diseases&gt; 
-Anemia, Hemolytic) AND Gene&gt; HBB</p>
+<p style="MARGIN-LEFT: 18pt" class="CodeLine">(<span style="COLOR: #cc0099">Diseases&gt; Anemia</span> <b>OR</b> <span style="COLOR: #cc0099">Diseases&gt; Anemia, Hemolytic</span>) <b>AND</b> <span style="COLOR: #006600">Gene&gt; HBB</span></p>
 <p style="MARGIN-LEFT: 18pt" class="CodeLine">&#160;</p>
 <p style="tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
 </span>Filters that are not among the pre-defined filters are assigned to the 
-filter category <b>Text&gt;</b>.</p></div></div></body></html>
+filter category <b><span style="COLOR: #cccc00">Text&gt;</span></b>.</p><span id="related-topics"></span></div></div></body></html>

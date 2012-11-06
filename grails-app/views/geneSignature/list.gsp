@@ -45,7 +45,7 @@
 				
 				// clone existing object and bring into edit wizard
 				if(action=="clone") {
-					url = "/${grailsApplication.metadata['app.name']}/geneSignature/cloneWizard/"+id+"";
+					url = "${createLink(action: 'cloneWizard')}/"+id+"";
 				}
 				
 				// set delete flag
@@ -53,7 +53,7 @@
 					var del=confirm("Are you sure you want to delete?")
 
 					if(del) {
-						url="/${grailsApplication.metadata['app.name']}/geneSignature/delete/"+id;
+						url="${createLink(action: 'delete')}/"+id;
 						window.location.href=url;
 					} else {
 						return false;
@@ -62,26 +62,26 @@
 
 				// edit wizard
 				if(action=="edit") {
-					url = "/${grailsApplication.metadata['app.name']}/geneSignature/editWizard/"+id+"";
+					url = "${createLink(action: 'editWizard')}/"+id+"";
 				}				
 
 				if(action=="showEditItems") {
-					url = "/${grailsApplication.metadata['app.name']}/geneSignature/showEditItems/"+id+"";
+					url = "${createLink(action: 'showEditItems')}/"+id+"";
 				}
 				
 				// export to Excel 
 				if(action=="export") {
-					url = "/${grailsApplication.metadata['app.name']}/geneSignature/downloadExcel/"+id+"";
+					url = "${createLink(action: 'downloadExcel')}/"+id+"";
 				}
 
 				// get GMT file 
 				if(action=="gmt") {
-					url = "/${grailsApplication.metadata['app.name']}/geneSignature/downloadGMT/"+id+"";
+					url = "${createLink(action: 'downloadGMT')}/"+id+"";
 				}
 
 				// public action
 				if(action=="public") {
-					url = "/${grailsApplication.metadata['app.name']}/geneSignature/makePublic/"+id;
+					url = "${createLink(action: 'makePublic')}/"+id;
 				}
 
 				// send to url

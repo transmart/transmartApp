@@ -40,6 +40,7 @@ class DataExportService {
 	def snpDataService
 	def geneExpressionDataService
 	def additionalDataService
+	def vcfDataService
 	
 	@Transactional(readOnly = true)
     def exportData(jobDataMap) {
@@ -52,6 +53,7 @@ class DataExportService {
 		def resultInstanceIdMap = jobDataMap.get("result_instance_ids")
 		def subsetSelectedFilesMap = jobDataMap.get("subsetSelectedFilesMap")
 		def subsetSelectedPlatformsByFiles = jobDataMap.get("subsetSelectedPlatformsByFiles")
+		def mergeSubSet = jobDataMap.get("mergeSubset")
 		//Hard-coded subsets to count 2
 		def subsets = ['subset1', 'subset2']
 		def study = null
@@ -72,7 +74,7 @@ class DataExportService {
 			if (null != selectedFilesList && !selectedFilesList.isEmpty()) {
 				//Prepare Study dir
 				def List studyList = null
-				if (null != resultInstanceIdMap[subset]) {
+				if (null != resultInstanceIdMap[subset] && !resultInstanceIdMap[subset].isEmpty()) {
 					studyList = i2b2ExportHelperService.findStudyAccessions([resultInstanceIdMap[subset]])
 					if (!studyList.isEmpty()) {
 						study = studyList.get(0)
@@ -86,7 +88,7 @@ class DataExportService {
 				boolean pivotData = new Boolean(true)
 				if(pivotDataValueDef==false) pivotData = new Boolean(false)
 				boolean writeClinicalData = false
-				if(null != resultInstanceIdMap[subset])
+				if(null != resultInstanceIdMap[subset] && !resultInstanceIdMap[subset].isEmpty())
 				{
 					// Construct a list of the URL objects we're running, submitted to the pool
 					selectedFilesList.each() { selectedFile ->
@@ -117,7 +119,18 @@ class DataExportService {
 								def tissueType	= jobDataMap.get("gextissue")
 								def gplString   = jobDataMap.get("gexgpl")
 								
-								gplIds 			= gplString.tokenize(",")
+								if(tissueType == ",") tissueType = ""
+								if(sampleType == ",") sampleType = ""
+								if(timepoint == ",") timepoint = ""
+								
+								if(gplIds != null)
+								{
+									gplIds 			= gplString.tokenize(",")
+								}
+								else
+								{
+									gplIds = []
+								}
 								
 								//adding String to a List to make it compatible to the type expected
 								//if gexgpl contains multiple gpl(s) as single string we need to convert that to a list 
@@ -172,6 +185,33 @@ class DataExportService {
 							case "ADDITIONAL":
 								additionalDataService.downloadFiles(resultInstanceIdMap[subset], studyList, studyDir, jobDataMap.get("jobName"))
 								break;
+							case "IGV.VCF":
+							
+								def selectedGenes = jobDataMap.get("selectedGenes")
+								def chromosomes = jobDataMap.get("chroms")
+								def selectedSNPs = jobDataMap.get("selectedSNPs")
+								
+								println("VCF Parameters")
+								println("selectedGenes:" + selectedGenes)
+								println("chromosomes:" + chromosomes)
+								println("selectedSNPs:" + selectedSNPs)
+								
+								
+								
+								//def IGVFolderLocation = jobTmpDirectory + File.separator + "subset1_${study}" + File.separator + "VCF" + File.separator
+										
+								// 
+							//	def outputDir = "/users/jliu/tmp"
+								def outputDir = grailsApplication.config.com.recomdata.analysis.data.file.dir;
+							def webRootName = jobDataMap.get("appRealPath");
+								if (webRootName.endsWith(File.separator) == false)
+									webRootName += File.separator;
+								outputDir =  webRootName + outputDir;
+								def prefix = "S1"
+								if('subset2'==subset)
+									prefix = "S2"
+								vcfDataService.getDataAsFile(outputDir, jobDataMap.get("jobName"), null, resultInstanceIdMap[subset], selectedSNPs, selectedGenes, chromosomes, prefix);
+							break;
 						}
 					}
 				}
@@ -225,5 +265,7 @@ class DataExportService {
 		} catch (Exception e) {
 			throw new Exception(e.message ? e.message : (e.cause?.message ? e.cause?.message : ''), e)
 		}
+		
     }
+		
 }

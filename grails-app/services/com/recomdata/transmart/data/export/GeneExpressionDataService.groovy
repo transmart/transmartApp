@@ -65,7 +65,7 @@ class GeneExpressionDataService {
 	{
 		
 		//This tells us whether we need to include the pathway information or not.
-		Boolean includePathwayInfo = false
+		private Boolean includePathwayInfo = false
 		
 		//This tells us whether we found data when we call the "Write Data" method.
 		boolean dataFound = false
@@ -185,8 +185,8 @@ class GeneExpressionDataService {
 	   
 	   sTables.append("""
 	   FROM de_subject_microarray_data a
-			   INNER JOIN de_mrna_annotation b ON a.probeset_id = b.probeset_id
-			   INNER JOIN de_subject_sample_mapping ssm ON ssm.assay_id = A.assay_id
+			   INNER JOIN de_subject_sample_mapping ssm ON ssm.assay_id = A.assay_id 
+			   INNER JOIN de_mrna_annotation b ON a.probeset_id = b.probeset_id and ssm.gpl_id = b.gpl_id
 			   INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = ? AND ssm.PATIENT_ID = sc.patient_num
 	   		   INNER JOIN PATIENT_DIMENSION pd on ssm.patient_id = pd.patient_num
 	   """)
@@ -537,6 +537,7 @@ class GeneExpressionDataService {
 		// and writes to the writer
 		
 		log.info("start sample retrieving query");
+		log.debug("Sample Query : " + sampleQuery);
 		rs = stmt1.executeQuery();
 		def sttSampleStr = null;
 		
@@ -803,7 +804,7 @@ class GeneExpressionDataService {
 	def downloadCELFiles(String resultInstanceId, studyList, File studyDir, String jobName, String pathway, String timepoint, String sampleTypes, String tissueTypes) {
 		groovy.sql.Sql sql = null
 
-		Map sampleCdsMap = null
+		private Map sampleCdsMap = null
 		
 		try {
 			//Get the subjects for this result instance id.

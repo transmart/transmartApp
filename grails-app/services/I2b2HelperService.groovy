@@ -122,6 +122,7 @@ class I2b2HelperService {
 		return returnvalues;
 	}
 	
+	
 	/**
 	 * Converts a concept key to a path
 	 */

@@ -82,7 +82,8 @@ grails.mime.types = [ html: [
 		'text/json'
 	],
 	form: 'application/x-www-form-urlencoded',
-	multipartForm: 'multipart/form-data'
+	multipartForm: 'multipart/form-data',
+	jnlp: 'application/x-java-jnlp-file'
 ]
 // The default codec used to encode data with ${}
 grails.views.default.codec="none" // none, html, base64
@@ -130,8 +131,8 @@ com.recomdata.transmart.data.export.dataTypesMap=[
 	'MRNA':'Gene Expression Data', 
 	'SNP':'SNP Data',
 	'STUDY':'Study Metadata',
-	'ADDITIONAL':'Additional Data',
-	'GSEA':'Gene Set Enrichment Analysis (GSEA)'
+	'ADDITIONAL':'Additional Data'
+	//,'GSEA':'Gene Set Enrichment Analysis (GSEA)'
 ];
 
 // Control which gene/pathway search is used in Dataset Explorer
@@ -153,7 +154,9 @@ com.recomdata.analysis.survival.censorFlagList = [
 	'(DURTFICS)'
 ];
 
-com.recomdata.analysis.genepattern.file.dir = "genepattern"; // Relative to the app root "web-app"
+com.recomdata.analysis.genepattern.file.dir = "data"; // Relative to the app root "web-app" - deprecated - replaced with data.file.dir
+
+com.recomdata.analysis.data.file.dir = "data"; // Relative to the app root "web-app"
 
 // Disclaimer
 StringBuilder disclaimer = new StringBuilder()
@@ -161,27 +164,32 @@ disclaimer.append("<p></p>")
 com.recomdata.disclaimer=disclaimer.toString()
 
 // customization views
-com.recomdata.view.studyview='_clinicaltrialdetail'
+//com.recomdata.view.studyview='_clinicaltrialdetail'
 com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
 
-log4j = {
-	appenders {
-		// set up a log file in the standard tomcat area; be sure to use .toString() with ${}
-		rollingFile name:'tomcatLog', file:"transmart.log".toString(), maxFileSize:'1024KB', layout:pattern(conversionPattern: '[%p] %d{HH:mm:ss} (%c{5}:%M:%L) | %m%n')
-		'null' name:'stacktrace'
+// development env log4j settings - prod should reconfigure it
+environments {
+	development {
+			log4j = {
+				appenders {
+					// set up a log file in the standard tomcat area; be sure to use .toString() with ${}
+					rollingFile name:'tomcatLog', file:"transmart.log".toString(), maxFileSize:'1024KB', layout:pattern(conversionPattern: '[%p] %d{HH:mm:ss} (%c{5}:%M:%L) | %m%n')
+					'null' name:'stacktrace'
+				}
+			
+				root {
+					// change the root logger to my tomcatLog file
+					info 'tomcatLog'
+					additivity = true
+				}
+			
+				// example for sending stacktraces to my tomcatLog file
+				error tomcatLog:'StackTrace'
+				debug tomcatLog:'grails.app.task', 'grails.app.controller', 'grails.app.service'
+				
+				// set level for my messages; this uses the root logger (and thus the tomcatLog file)
+			}
 	}
-
-	root {
-		// change the root logger to my tomcatLog file
-		info 'tomcatLog'
-		additivity = true
-	}
-
-	// example for sending stacktraces to my tomcatLog file
-	error tomcatLog:'StackTrace'
-	debug tomcatLog:'grails.app.task', 'grails.app.controller', 'grails.app.service'
-	
-	// set level for my messages; this uses the root logger (and thus the tomcatLog file)
 }

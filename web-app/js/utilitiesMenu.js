@@ -22,7 +22,7 @@
 function createUtilitiesMenu(helpURL, contact, appTitle, basePath, buildVer, css)
 {
 	var gpl3LicenseInfo = '<h1>' + appTitle + ' License Information</h1>' +
-    	'Copyright (C) 2011<br/><br/>' +    	
+    	'Copyright (C) 2008-2012<br/><br/>' +    	
     	'This program is free software: you can redistribute it and/or modify<br/>' +
     	'it under the terms of the GNU General Public License as published by<br/>' +
     	'the Free Software Foundation, either version 3 of the License, or<br/>' +
@@ -56,6 +56,9 @@ function createUtilitiesMenu(helpURL, contact, appTitle, basePath, buildVer, css
 	        {
 	        	Ext.Msg.alert(appTitle, buildVer); 
 	        }
+	    },'-',{
+	        text : 'Login',
+	        href : basePath+'/login/forceAuth'
 	    },'-',{
 	        text : 'Log Out',
 	        href : basePath+'/logout'

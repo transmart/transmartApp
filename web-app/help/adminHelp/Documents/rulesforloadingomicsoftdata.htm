@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <html><head><title>Rules for Loading OmicSoft Data</title>
-<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" /><link rel="stylesheet" type="text/css" href="../Theme/nav.css" /><link rel="stylesheet" type="text/css" href="../Theme/popupmenu.css" /><link rel="stylesheet" type="text/css" href="../Theme/lf.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/doc2help.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/GPL_1.0_tranSMART_User_Guide.css" />
+<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" /><link rel="stylesheet" type="text/css" href="../Theme/nav.css" /><link rel="stylesheet" type="text/css" href="../Theme/popupmenu.css" /><link rel="stylesheet" type="text/css" href="../Theme/lf.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/d2hTarget.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/OpenSource_tranSMART_User_Guide.css" />
 <script type="text/javascript">
 //<![CDATA[
 
@@ -19,8 +19,8 @@ var _needIndentation = false;
 
 <script language="JavaScript" src="../common.js" type="text/JavaScript"></script>
 
-<meta name="Generator" content="ComponentOne Doc-To-Help v.2011.1.0.624" />
-<meta name="D2HTheme" content="(Default) v.150" />
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2012.1.0.688" />
+<meta name="D2HTheme" content="(Default) v.153" />
 </head>
 <body style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #535353; MARGIN: 7px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; OVERFLOW: hidden; PADDING-TOP: 0px" onload="d2hOnLoadToolbar(event);" relpart="../">
 <script language="javascript" type="text/javascript">
@@ -74,7 +74,7 @@ if (typeof d2hLoadNavUrls != "undefined")
 <div style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: white; MARGIN: 0px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; HEIGHT: 100%; OVERFLOW: auto; PADDING-TOP: 0px" id="D2HTopicOuterBody" class="d2h_outer_topic">
 <div id="nsbanner" class="d2hNavigatorTopic">
 <div style="PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px" id="TitleRow" class="d2h_main_titlerow">
-<div style="DISPLAY: none"><a id="D2HPreviousAnchor" href="operations.htm"></a><a id="D2HNextAnchor" href="readthedocumentationinpdf.htm"></a></div></div>
+<div style="DISPLAY: none"><a id="D2HPreviousAnchor" href="operations.htm"></a><a id="D2HNextAnchor" href="rulesforloadingomics.htm"></a></div></div>
 <script language="javascript" type="text/javascript">
 //<![CDATA[
 
@@ -86,41 +86,11 @@ if (typeof d2hProcessTopicNavForCSH != "undefined")
 //]]></script>
 </div>
 <div style="PADDING-BOTTOM: 10px; PADDING-LEFT: 22px; PADDING-RIGHT: 10px; HEIGHT: 100%; PADDING-TOP: 5px" id="nstext" class="d2h_main_nstext" valign="bottom">
-<h1><a name="_Toc322517881" id="_Toc322517881"></a><a name="_Toc296428488" id="_Toc296428488"></a>Rules for Loading 
-OmicSoft Data</h1>
-<p style="MARGIN-RIGHT: -36pt" class="MsoNormal">The following rules determine 
-whether OmicSoft data is loaded into tranSMART databases:</p>
-<p class="MsoNormal"><span class="Bold">Rules for loading data into table 
-BIO_ASSAY_ANALYSIS_DATA</span></p>
-<p class="MsoNormal">Load the data if one of the following two criteria is 
-satisfied:</p>
-<p style="tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
-</span>fold_change_ratio is &gt;= 1.0 OR &lt;=-1.0 </p>
-<p class="MsoNormalIndent">AND</p>
-<p class="MsoNormalIndent">preferred_pvalue is null OR &lt;= 0.1</p>
-<p style="tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
-</span>fold_change_ratio is null</p>
-<p class="MsoNormalIndent">AND</p>
-<p class="MsoNormalIndent">At least one of the following values is not null:</p>
-<p style="MARGIN-BOTTOM: 4.8pt" class="MsoListBullet2"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&#160;&#160;&#160; 
-</span>r_value</p>
-<p style="MARGIN-BOTTOM: 4.8pt" class="NormalIndent2">Pearson product-moment 
-correlation coefficient.</p>
-<p style="MARGIN-BOTTOM: 4.8pt" class="MsoListBullet2"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&#160;&#160;&#160; 
-</span>rho_value</p>
-<p style="MARGIN-BOTTOM: 4.8pt" class="NormalIndent2">Spearman rank correlation 
-coefficient</p>
-<p style="MARGIN-BOTTOM: 4.8pt" class="MsoListBullet2"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&#160;&#160;&#160; 
-</span>cut_value</p>
-<p class="MsoListBullet2"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; FONT-SIZE: 11pt; TOP: -1.5pt">&#9633;&#160;&#160;&#160; 
-</span>results_value</p>
-<p class="MsoNormal"><span class="Bold">Rules for loading data into table 
-BIO_ASSAY_ANALYSIS_DATA_TEA</span></p>
-<p class="MsoNormal">Load the data if:</p>
-<p class="CodeLine">TEA_NORMALIZED_PVALUE &lt;= 0.05</p>
-<p style="MARGIN-TOP: 9pt" class="MsoNormal">For information about the TEA 
-algorithm, see <span class="xRef"><a href="howteascoresarecalculated.htm"><span class="xRef">Appendix A:&#160; How TEA Scores Are 
-Calculated</span></a></span>.</p>
-<p class="MsoNormal">&#160;</p>
-<p style="LINE-HEIGHT: 115%; MARGIN-BOTTOM: 10pt; tab-stops: 36.0pt" class="MsoNormal">&#160;</p>
-<p class="MsoNormal">&#160;</p></div></div></body></html>
+<h1><a name="_Toc328749585" id="_Toc328749585"></a><a name="_Toc322517881" id="_Toc322517881"></a><a name="_Toc296428488" id="_Toc296428488"></a>Rules for Loading OmicSoft Data</h1>
+<hr size="1" noshade="" />
+
+<p class="RelatedHead">
+</p><p style="FONT-FAMILY: arial; COLOR: #000080">Related Topics</p>
+<p></p><span id="related-topics">
+<p class="MsoNormal"><a style="TEXT-DECORATION: none" href="rulesforloadingomics.htm"><img border="0" alt="" align="absMiddle" src="../button.gif" />Rules for Loading OmicSoft 
+Data</a></p></span></div></div></body></html>

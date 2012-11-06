@@ -63,7 +63,7 @@ class OntologyController {
     		log.trace("searching for:"+searchtags+" of type"+tagsearchtype+"with searchterm:"+searchterm)
 			def myCount  =0;
 			def allSystemCds = []
-			def searchtermWild = '%'+searchterm+'%';
+			def searchtermWild = '%'+searchterm.toLowerCase()+'%';
 			def visualAttrHiddenWild = '%H%';
 			
 			if(searchterm==null){// if there is no search term just do exact match
@@ -116,16 +116,16 @@ class OntologyController {
 			// this is not a generic solution - 
 			// if tag type is all then do a name like search
 			if(tagsearchtype=='ALL'){
-				myCount = i2b2.OntNode.executeQuery("SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE o.name like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'")[0]
+				myCount = i2b2.OntNode.executeQuery("SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'")[0]
 				
-				myNodes = i2b2.OntNode.executeQuery("SELECT o from i2b2.OntNode o WHERE o.name like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [max:100])
+				myNodes = i2b2.OntNode.executeQuery("SELECT o from i2b2.OntNode o WHERE lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [max:100])
   
 			}else{
 			 allSystemCds = i2b2.OntNode.executeQuery("SELECT DISTINCT o.sourcesystemcd FROM i2b2.OntNode o JOIN o.tags t WHERE t.tag IN (:tagArg) AND t.tagtype =:tagTypeArg",[tagArg:searchtags, tagTypeArg:tagsearchtype], [max:800])
 			 	
-			  myCount = i2b2.OntNode.executeQuery("SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND o.name like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [scdArg:allSystemCds])[0]
+			  myCount = i2b2.OntNode.executeQuery("SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [scdArg:allSystemCds])[0]
 			  
-			  myNodes = i2b2.OntNode.executeQuery("SELECT o from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND o.name like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [scdArg:allSystemCds], [max:100])
+			  myNodes = i2b2.OntNode.executeQuery("SELECT o from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [scdArg:allSystemCds], [max:100])
 			}
 			 }
 			

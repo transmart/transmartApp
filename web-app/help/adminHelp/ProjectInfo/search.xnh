@@ -1,583 +1,114 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <root>
     <topics>
-        <topic url="Documents/transmartonlinehelp.htm" window="right" module="1" />
-        <topic url="Documents/chapter1useradministrationoverview.htm" window="right" module="2" />
-        <topic url="Documents/administratorprivileges.htm" window="right" module="2" />
-        <topic url="Documents/theadministratorsconsole.htm" window="right" module="2" />
-        <topic url="Documents/tasksintheadministratorsconsole.htm" window="right" module="2" />
-        <topic url="Documents/chapter2managingtransmartusers.htm" window="right" module="2" />
-        <topic url="Documents/prerequisitesfornewtransmartaccounts.htm" window="right" module="2" />
-        <topic url="Documents/understandinguserrolesandaccessrights.htm" window="right" module="2" />
-        <topic url="Documents/userroles.htm" window="right" module="2" />
-        <topic url="Documents/accessrightstodatasetexplorerstudies.htm" window="right" module="2" />
-        <topic url="Documents/creatingauseraccount.htm" window="right" module="2" />
-        <topic url="Documents/editingordeletingauseraccount.htm" window="right" module="2" />
-        <topic url="Documents/chapter3managingtransmartroles.htm" window="right" module="2" />
-        <topic url="Documents/understandingroleurlmappings.htm" window="right" module="2" />
-        <topic url="Documents/defaultroleurlmappings.htm" window="right" module="2" />
-        <topic url="Documents/creatingarole.htm" window="right" module="2" />
-        <topic url="Documents/addingaroletoanexistingrequestmap.htm" window="right" module="2" />
-        <topic url="Documents/creatinganewrequestmap.htm" window="right" module="2" />
-        <topic url="Documents/assigningaroletoauser.htm" window="right" module="2" />
-        <topic url="Documents/editingordeletingarole.htm" window="right" module="2" />
-        <topic url="Documents/editingordeletingarequestmap.htm" window="right" module="2" />
-        <topic url="Documents/accessingtheadministratorsconsole1.htm" window="right" module="2" />
-        <topic url="Documents/partialadministratorrights.htm" window="right" module="2" />
-        <topic url="Documents/chapter4managingsecurityfordatasetexplorerstudies.htm" window="right" module="2" />
-        <topic url="Documents/managingsecureobjects.htm" window="right" module="2" />
-        <topic url="Documents/definingasecureobject.htm" window="right" module="2" />
-        <topic url="Documents/editingordeletingasecureobject.htm" window="right" module="2" />
-        <topic url="Documents/managinggroups.htm" window="right" module="2" />
-        <topic url="Documents/creatingagroup.htm" window="right" module="2" />
-        <topic url="Documents/managingagroupsusers.htm" window="right" module="2" />
-        <topic url="Documents/editingordeletingagroup.htm" window="right" module="2" />
-        <topic url="Documents/managingaccessprivileges.htm" window="right" module="2" />
-        <topic url="Documents/accesslevels.htm" window="right" module="2" />
-        <topic url="Documents/managingaccessprivilegesforauserorgroup.htm" window="right" module="2" />
-        <topic url="Documents/managingaccessprivilegesforastudy.htm" window="right" module="2" />
-        <topic url="Documents/chapter5viewingthetransmartaccesslog.htm" window="right" module="2" />
-        <topic url="Documents/displayingtheaccesslog.htm" window="right" module="2" />
-        <topic url="Documents/exportingtheaccesslogtoaspreadsheet.htm" window="right" module="2" />
-        <topic url="Documents/specifyingthetimeframefortheaccesslog.htm" window="right" module="2" />
-        <topic url="Documents/chapter1gettingstartedwithtransmart.htm" window="right" module="3" />
-        <topic url="Documents/featureoverview.htm" window="right" module="3" />
-        <topic url="Documents/searchtool.htm" window="right" module="3" />
-        <topic url="Documents/searchresults.htm" window="right" module="3" />
-        <topic url="Documents/datasetexplorer.htm" window="right" module="3" />
-        <topic url="Documents/sampleexplorer.htm" window="right" module="3" />
-        <topic url="Documents/genesignaturewizard.htm" window="right" module="3" />
-        <topic url="Documents/loggingin.htm" window="right" module="3" />
-        <topic url="Documents/tools.htm" window="right" module="3" />
-        <topic url="Documents/openingaparticulartoolatlogin.htm" window="right" module="3" />
-        <topic url="Documents/chapter2searchtool.htm" window="right" module="3" />
-        <topic url="Documents/searchtasks.htm" window="right" module="3" />
-        <topic url="Documents/definingasearchfilter.htm" window="right" module="3" />
-        <topic url="Documents/typethefiltername.htm" window="right" module="3" />
-        <topic url="Documents/browseforafiltername.htm" window="right" module="3" />
-        <topic url="Documents/useasavedsearchfilter.htm" window="right" module="3" />
-        <topic url="Documents/buildingasearchstring.htm" window="right" module="3" />
-        <topic url="Documents/rulesforbuildingasearchstring.htm" window="right" module="3" />
-        <topic url="Documents/instructionsforbuildingasearchstring.htm" window="right" module="3" />
-        <topic url="Documents/savingasearchfilterorsearchstring.htm" window="right" module="3" />
-        <topic url="Documents/editinganddeletingsavedfilters.htm" window="right" module="3" />
-        <topic url="Documents/workingwithsearchresults.htm" window="right" module="3" />
-        <topic url="Documents/clinicaltrialstab.htm" window="right" module="3" />
-        <topic url="Documents/showfilters.htm" window="right" module="3" />
-        <topic url="Documents/heatmap.htm" window="right" module="3" />
-        <topic url="Documents/operationsyoucanperforminheatmapview1.htm" window="right" module="3" />
-        <topic url="Documents/analysisview.htm" window="right" module="3" />
-        <topic url="Documents/studyview.htm" window="right" module="3" />
-        <topic url="Documents/exportresultsinanalysisvieworstudyview.htm" window="right" module="3" />
-        <topic url="Documents/exportinformationaboutaparticularanalysis.htm" window="right" module="3" />
-        <topic url="Documents/additionalresources.htm" window="right" module="3" />
-        <topic url="Documents/mrnaanalysistab.htm" window="right" module="3" />
-        <topic url="Documents/showfilters1.htm" window="right" module="3" />
-        <topic url="Documents/analysisview1.htm" window="right" module="3" />
-        <topic url="Documents/studyview1.htm" window="right" module="3" />
-        <topic url="Documents/exportresultsinanalysisvieworstudyview1.htm" window="right" module="3" />
-        <topic url="Documents/exportinformationaboutaparticularanalysis1.htm" window="right" module="3" />
-        <topic url="Documents/mousegenehomologyinsearchresults.htm" window="right" module="3" />
-        <topic url="Documents/additionalresources1.htm" window="right" module="3" />
-        <topic url="Documents/mrnaprofilestab.htm" window="right" module="3" />
-        <topic url="Documents/additionalinformationaboutastudy.htm" window="right" module="3" />
-        <topic url="Documents/literaturetab.htm" window="right" module="3" />
-        <topic url="Documents/showfilters2.htm" window="right" module="3" />
-        <topic url="Documents/theresultsview1.htm" window="right" module="3" />
-        <topic url="Documents/summaryview1.htm" window="right" module="3" />
-        <topic url="Documents/exportresults.htm" window="right" module="3" />
-        <topic url="Documents/exportresnet.htm" window="right" module="3" />
-        <topic url="Documents/additionalresources2.htm" window="right" module="3" />
-        <topic url="Documents/documentstab.htm" window="right" module="3" />
-        <topic url="Documents/sortorderofresults.htm" window="right" module="3" />
-        <topic url="Documents/showfilters3.htm" window="right" module="3" />
-        <topic url="Documents/openadocument.htm" window="right" module="3" />
-        <topic url="Documents/pictortab.htm" window="right" module="3" />
-        <topic url="Documents/resnettab.htm" window="right" module="3" />
-        <topic url="Documents/genegotab.htm" window="right" module="3" />
-        <topic url="Documents/securitywarningwhenselectingpictorresnetorgenego.htm" window="right" module="3" />
-        <topic url="Documents/teaanalyses.htm" window="right" module="3" />
-        <topic url="Documents/teaindicatorsappliedtoindividualbiomarkers.htm" window="right" module="3" />
-        <topic url="Documents/teaindicatorsappliedtoananalysis.htm" window="right" module="3" />
-        <topic url="Documents/whattheteascoremeans.htm" window="right" module="3" />
-        <topic url="Documents/whatcoantiregulationandupdownregulationmean.htm" window="right" module="3" />
-        <topic url="Documents/teaindicatorsappliedtoanindividualgene.htm" window="right" module="3" />
-        <topic url="Documents/chapter3datasetexplorer.htm" window="right" module="3" />
-        <topic url="Documents/overviewoftheui.htm" window="right" module="3" />
-        <topic url="Documents/usingdatasetexplorer.htm" window="right" module="3" />
-        <topic url="Documents/publicandprivatestudies.htm" window="right" module="3" />
-        <topic url="Documents/selectingthestudy.htm" window="right" module="3" />
-        <topic url="Documents/searchbysubjecttab.htm" window="right" module="3" />
-        <topic url="Documents/selectingandopeningastudyinasearchresult.htm" window="right" module="3" />
-        <topic url="Documents/navigatetermstab.htm" window="right" module="3" />
-        <topic url="Documents/branchesandleavesofthenavigationtree.htm" window="right" module="3" />
-        <topic url="Documents/populatingthestudygroups.htm" window="right" module="3" />
-        <topic url="Documents/selectingcriteriaforthestudygroups.htm" window="right" module="3" />
-        <topic url="Documents/visualaidstohelpyouselectthecriteria.htm" window="right" module="3" />
-        <topic url="Documents/specifyinganumericvalue1.htm" window="right" module="3" />
-        <topic url="Documents/viewingthenumericvaluesassociatedwithaconcept.htm" window="right" module="3" />
-        <topic url="Documents/savingcomparisondefinitions.htm" window="right" module="3" />
-        <topic url="Documents/observedscoreandzscore.htm" window="right" module="3" />
-        <topic url="Documents/joiningmultiplecriteriaforasubsetdefinition.htm" window="right" module="3" />
-        <topic url="Documents/modifyingordeletingcriteria.htm" window="right" module="3" />
-        <topic url="Documents/generatingsummarystatistics.htm" window="right" module="3" />
-        <topic url="Documents/significancetests.htm" window="right" module="3" />
-        <topic url="Documents/definingpointsofcomparison.htm" window="right" module="3" />
-        <topic url="Documents/resultsofacomparison.htm" window="right" module="3" />
-        <topic url="Documents/printingorsavingthecontentsoftheresultsanalysisview.htm" window="right" module="3" />
-        <topic url="Documents/copyingindividualchartsintheresultsanalysisview.htm" window="right" module="3" />
-        <topic url="Documents/generatingheatmaps.htm" window="right" module="3" />
-        <topic url="Documents/typesofheatmaps.htm" window="right" module="3" />
-        <topic url="Documents/examples.htm" window="right" module="3" />
-        <topic url="Documents/thecomparativemarkerselectionviewer.htm" window="right" module="3" />
-        <topic url="Documents/interactiveheatmaps.htm" window="right" module="3" />
-        <topic url="Documents/requirementsforgeneratingheatmaps.htm" window="right" module="3" />
-        <topic url="Documents/providingheatmapparametersinthesubsetboxes.htm" window="right" module="3" />
-        <topic url="Documents/providingheatmapparametersinthecomparesubsetspathwayselectiondialog.htm" window="right" module="3" />
-        <topic url="Documents/instructionsforgeneratingheatmaps.htm" window="right" module="3" />
-        <topic url="Documents/heatmapsbasedonrbmdata.htm" window="right" module="3" />
-        <topic url="Documents/heatmapsbasedongeneexpressiondata.htm" window="right" module="3" />
-        <topic url="Documents/heatmapsbasedonproteomicsdata.htm" window="right" module="3" />
-        <topic url="Documents/example1.htm" window="right" module="3" />
-        <topic url="Documents/exportheatmapdatapoints.htm" window="right" module="3" />
-        <topic url="Documents/generatingaprincipalcomponentanalysis.htm" window="right" module="3" />
-        <topic url="Documents/multidimensionalprojections.htm" window="right" module="3" />
-        <topic url="Documents/generatingasurvivalanalysis.htm" window="right" module="3" />
-        <topic url="Documents/hazardratioandrelativerisk.htm" window="right" module="3" />
-        <topic url="Documents/generatingahaploview.htm" window="right" module="3" />
-        <topic url="Documents/runningthesnpviewer.htm" window="right" module="3" />
-        <topic url="Documents/examples1.htm" window="right" module="3" />
-        <topic url="Documents/viewingsnpdata.htm" window="right" module="3" />
-        <topic url="Documents/runningtheintegratedgenomicsviewer.htm" window="right" module="3" />
-        <topic url="Documents/examples2.htm" window="right" module="3" />
-        <topic url="Documents/viewingigvdata.htm" window="right" module="3" />
-        <topic url="Documents/changethedefaultdisplay.htm" window="right" module="3" />
-        <topic url="Documents/hypothesistestingacrossmultiplestudies.htm" window="right" module="3" />
-        <topic url="Documents/acrosstrialscomparisonsofclinicaldata.htm" window="right" module="3" />
-        <topic url="Documents/acrosstrialscomparisonsofrbmdata.htm" window="right" module="3" />
-        <topic url="Documents/viewingastudy.htm" window="right" module="3" />
-        <topic url="Documents/asynchronousoperations.htm" window="right" module="3" />
-        <topic url="Documents/jobstab.htm" window="right" module="3" />
-        <topic url="Documents/viewingaloggedjob.htm" window="right" module="3" />
-        <topic url="Documents/chapter4sampleexplorer.htm" window="right" module="3" />
-        <topic url="Documents/selectaprimarysearchfilter.htm" window="right" module="3" />
-        <topic url="Documents/viewandrefinesamplesearchresults.htm" window="right" module="3" />
-        <topic url="Documents/selectandremovesearchfilters.htm" window="right" module="3" />
-        <topic url="Documents/findsamplesinthebiobank.htm" window="right" module="3" />
-        <topic url="Documents/locatethesourceofthesamplesindatasetexplorer.htm" window="right" module="3" />
-        <topic url="Documents/displaysampledatainaheatmap.htm" window="right" module="3" />
-        <topic url="Documents/managethesamplesearchresultlist.htm" window="right" module="3" />
-        <topic url="Documents/chapter5genesignaturesandgenelists.htm" window="right" module="3" />
-        <topic url="Documents/creatingagenesignature.htm" window="right" module="3" />
-        <topic url="Documents/step1addingthegenestoatextfile.htm" window="right" module="3" />
-        <topic url="Documents/usingtransmarttoselectgenes.htm" window="right" module="3" />
-        <topic url="Documents/step2creatingthegenesignature.htm" window="right" module="3" />
-        <topic url="Documents/makinganewgenesignaturepublic.htm" window="right" module="3" />
-        <topic url="Documents/performingactionsonyourgenesignatures.htm" window="right" module="3" />
-        <topic url="Documents/performingactionsonotheruserssignatures.htm" window="right" module="3" />
-        <topic url="Documents/viewingagenesignaturedefinition.htm" window="right" module="3" />
-        <topic url="Documents/othertasks.htm" window="right" module="3" />
-        <topic url="Documents/appendixahowteascoresarecalculated.htm" window="right" module="3" />
-        <topic url="Documents/datainputstotheteaalgorithm.htm" window="right" module="3" />
-        <topic url="Documents/operations.htm" window="right" module="3" />
-        <topic url="Documents/rulesforloadingomicsoftdata.htm" window="right" module="3" />
-        <topic url="Documents/aresearchescasesensitive1.htm" window="right" module="4" />
-        <topic url="Documents/canisearchforagenealias1.htm" window="right" module="4" />
-        <topic url="Documents/caniusewildcardsinmysearches1.htm" window="right" module="4" />
-        <topic url="Documents/whatistheautocompletefeature1.htm" window="right" module="4" />
-        <topic url="Documents/whyamionlyseeingsearchresultsonthedocumentstab1.htm" window="right" module="4" />
-        <topic url="Documents/whataresearchcategories1.htm" window="right" module="4" />
-        <topic url="Documents/canibrowsethroughalistofsearchterms1.htm" window="right" module="4" />
-        <topic url="Documents/canicreateasearchquerywithmultiplecriteria1.htm" window="right" module="4" />
-        <topic url="Documents/canisaveasearchquery1.htm" window="right" module="4" />
-        <topic url="Documents/afterirunasearchcanifurtherrefinethesearchresults1.htm" window="right" module="4" />
-        <topic url="Documents/whatdothenumbersonthetabsintheresultswindowrepresent1.htm" window="right" module="4" />
-        <topic url="Documents/whatdoallofthegreenarrowsrepresent1.htm" window="right" module="4" />
-        <topic url="Documents/caniremovesomeofapathwaysgenesfromthesearchfilter1.htm" window="right" module="4" />
-        <topic url="Documents/howcaniopenadetailsboxforanitemsuchasaclinicaltrial1.htm" window="right" module="4" />
-        <topic url="Documents/howcaniprintthecontentsofadetailsboxorexportthecontentstoexcel1.htm" window="right" module="4" />
-        <topic url="Documents/caniexportstatisticsandmeasurementsfromaclinicaltrialorexperiment1.htm" window="right" module="4" />
-        <topic url="Documents/whatdoestheheatmapshowme1.htm" window="right" module="4" />
-        <topic url="Documents/aretheredifferentkindsofheatmaps1.htm" window="right" module="4" />
-        <topic url="Documents/canidisplayheatmapsifihavepopupblockerenabledonmybrowser1.htm" window="right" module="4" />
-        <topic url="Documents/whatistheteaalgorithm1.htm" window="right" module="4" />
-        <topic url="Documents/whatisjubilantdata1.htm" window="right" module="4" />
-        <topic url="Documents/whatdoidoifigetajavasecuritywarning1.htm" window="right" module="4" />
-        <topic url="Documents/indatasetexplorercanisearchforastudyaccordingtomyareaofinterest1.htm" window="right" module="4" />
-        <topic url="Documents/indatasetexplorerwhydosomeoftheelementsintheontologynavigationpanehavelettericonswhileothershavenumericicons1.htm" window="right" module="4" />
-        <topic url="Documents/whyisthistrialfoldergrayedout1.htm" window="right" module="4" />
-        <topic url="Documents/howdoigainaccesstoadditionalclinicalstudies1.htm" window="right" module="4" />
-        <topic url="Documents/howdoideterminethestudyownerofagivenclinicalstudy1.htm" window="right" module="4" />
-        <topic url="Documents/whatdoidoificantfindthedataimlookingfor1.htm" window="right" module="4" />
-        <topic url="Documents/whatdoidoifihaveasuggestiontoimprovetransmartorfindabug1.htm" window="right" module="4" />
-        <topic url="Documents/configurationtips.htm" window="right" module="5" />
-        <topic url="Documents/ie8compatibilityview.htm" window="right" module="5" />
-        <topic url="Documents/disablingtheloginpromptfortrustedsites.htm" window="right" module="5" />
-        <topic url="Documents/usingpopupblockerwithtransmart.htm" window="right" module="5" />
-        <topic url="Documents/internetexplorersecuritywarning.htm" window="right" module="5" />
-        <topic url="Documents/thesecuritywarningwithieversionsbeforeie8.htm" window="right" module="5" />
-        <topic url="Documents/disablingthesecuritywarning.htm" window="right" module="5" />
-        <topic url="Documents/minimumjavaversion.htm" window="right" module="5" />
-        <topic url="Documents/javasecuritywarnings.htm" window="right" module="5" />
-        <topic url="Documents/mixedcodesecuritywarning.htm" window="right" module="5" />
-        <topic url="Documents/unverifiabledigitalsignalwarning.htm" window="right" module="5" />
-        <topic url="Documents/performancetips.htm" window="right" module="5" />
-        <topic url="Documents/clearingthetempfolder.htm" window="right" module="5" />
-        <topic url="Documents/clearingthejavacache.htm" window="right" module="5" />
-        <topic url="Documents/transmartreleasenotes.htm" window="right" module="6" />
-        <topic url="Documents/prerequisites.htm" window="right" module="6" />
-        <topic url="Documents/sampleexplorer.htm" window="right" module="6" />
-        <topic url="Documents/snpviewerenhancements.htm" window="right" module="6" />
-        <topic url="Documents/integratedgenomicsviewer.htm" window="right" module="6" />
-        <topic url="Documents/asynchronousoperations.htm" window="right" module="6" />
-        <topic url="Documents/enhancednamingconventions.htm" window="right" module="6" />
-        <topic url="Documents/performanceenhancements.htm" window="right" module="6" />
-        <topic url="Documents/trialsandstudiesindatasetexplorer.htm" window="right" module="6" />
-        <topic url="Documents/johnsonjohnsonclinicaltrialsintransmartsearch.htm" window="right" module="6" />
-        <topic url="Documents/resolveddefects.htm" window="right" module="6" />
-        <topic url="Documents/knowndefects.htm" window="right" module="6" />
-        <topic url="Documents/transmartpdfdocuments.htm" window="right" module="7" />
-        <topic url="Documents/datawarehouseserver.htm" window="right" module="8" />
-        <topic url="Documents/schemas.htm" window="right" module="8" />
-        <topic url="Documents/tables.htm" window="right" module="8" />
-        <topic url="Documents/coredatawarehouse.htm" window="right" module="8" />
-        <topic url="Documents/datamartfortransmartsearch.htm" window="right" module="8" />
-        <topic url="Documents/datamartfortransmartdatasetexplorer.htm" window="right" module="8" />
-        <topic url="Documents/i2b2metadataandi2b2demodataschemas.htm" window="right" module="8" />
-        <topic url="Documents/deappschema.htm" window="right" module="8" />
-        <topic url="Documents/chapter2samplesqlqueries.htm" window="right" module="8" />
-        <topic url="Documents/exportmicroarraydata.htm" window="right" module="8" />
-        <topic url="Documents/retrieveprobesetswithsignificantteascores.htm" window="right" module="8" />
-        <topic url="Documents/retrieveattributesforpatientsinastudy.htm" window="right" module="8" />
-        <topic url="Documents/appendixaschemadiagrams.htm" window="right" module="8" />
-        <topic url="Documents/coredatawarehouse1.htm" window="right" module="8" />
-        <topic url="Documents/datamartfortransmartsearch1.htm" window="right" module="8" />
-        <topic url="Documents/i2b2metadataandi2b2demodata.htm" window="right" module="8" />
-        <topic url="Documents/deapp.htm" window="right" module="8" />
-        <topic url="Documents/frontendapplications.htm" window="right" module="9" />
-        <topic url="Documents/presentationlayer.htm" window="right" module="9" />
-        <topic url="Documents/applicationlayer.htm" window="right" module="9" />
-        <topic url="Documents/searchtool.htm" window="right" module="9" />
-        <topic url="Documents/datasetexploreri2b2hive.htm" window="right" module="9" />
-        <topic url="Documents/datapersistencelayer.htm" window="right" module="9" />
-        <topic url="Documents/illustrationofthearchitecture.htm" window="right" module="9" />
-        <topic url="Documents/datawarehouse.htm" window="right" module="9" />
-        <topic url="Documents/developmentenvironmentapplicationserver.htm" window="right" module="9" />
-        <topic url="Documents/applicationurls.htm" window="right" module="9" />
-        <topic url="Documents/serverinformation.htm" window="right" module="9" />
-        <topic url="Documents/users.htm" window="right" module="9" />
-        <topic url="Documents/installedsoftware.htm" window="right" module="9" />
-        <topic url="Documents/apacheserver.htm" window="right" module="9" />
-        <topic url="Documents/tomcatserver.htm" window="right" module="9" />
-        <topic url="Documents/developmentenvironmentdatabaseserver.htm" window="right" module="9" />
-        <topic url="Documents/serverinformation1.htm" window="right" module="9" />
-        <topic url="Documents/users1.htm" window="right" module="9" />
-        <topic url="Documents/oracletablespaces.htm" window="right" module="9" />
-        <topic url="Documents/oracledatabaseusers.htm" window="right" module="9" />
-        <topic url="Documents/installedsoftwareunderusrlocal.htm" window="right" module="9" />
-        <topic url="Documents/backup.htm" window="right" module="9" />
-        <topic url="Documents/oracleoptimizations.htm" window="right" module="9" />
-        <topic url="Documents/tablespaceanddirectorydetails.htm" window="right" module="9" />
-        <topic url="Documents/stagingqadatabaseandapplicationserver.htm" window="right" module="9" />
-        <topic url="Documents/serverinformation9.htm" window="right" module="9" />
-        <topic url="Documents/backup5.htm" window="right" module="9" />
-        <topic url="Documents/apacheserver2.htm" window="right" module="9" />
-        <topic url="Documents/tomcatserver2.htm" window="right" module="9" />
-        <topic url="Documents/productionenvironmentapplicationserver.htm" window="right" module="9" />
-        <topic url="Documents/serverinformation4.htm" window="right" module="9" />
-        <topic url="Documents/users3.htm" window="right" module="9" />
-        <topic url="Documents/installedsoftware2.htm" window="right" module="9" />
-        <topic url="Documents/backup2.htm" window="right" module="9" />
-        <topic url="Documents/productionenvironmentdatabaseserver.htm" window="right" module="9" />
-        <topic url="Documents/serverinformation5.htm" window="right" module="9" />
-        <topic url="Documents/users4.htm" window="right" module="9" />
-        <topic url="Documents/oracledatabaseusers1.htm" window="right" module="9" />
-        <topic url="Documents/installedsoftware3.htm" window="right" module="9" />
-        <topic url="Documents/backup3.htm" window="right" module="9" />
-        <topic url="Documents/trainingapplicationserver.htm" window="right" module="9" />
-        <topic url="Documents/serverinformation6.htm" window="right" module="9" />
-        <topic url="Documents/trainingdatabaseserver.htm" window="right" module="9" />
-        <topic url="Documents/serverinformation7.htm" window="right" module="9" />
-        <topic url="Documents/proxyandbackupserver.htm" window="right" module="9" />
-        <topic url="Documents/serverinformation8.htm" window="right" module="9" />
-        <topic url="Documents/users5.htm" window="right" module="9" />
-        <topic url="Documents/oracledatabaseusers2.htm" window="right" module="9" />
-        <topic url="Documents/installedsoftware4.htm" window="right" module="9" />
-        <topic url="Documents/backup4.htm" window="right" module="9" />
-        <topic url="Documents/theeroom.htm" window="right" module="9" />
-        <topic url="Documents/eroomspecifications.htm" window="right" module="9" />
-        <topic url="Documents/chapter2oracleoperations.htm" window="right" module="9" />
-        <topic url="Documents/configuration.htm" window="right" module="9" />
-        <topic url="Documents/performancepacksetup.htm" window="right" module="9" />
-        <topic url="Documents/rmanbackupconfiguration.htm" window="right" module="9" />
-        <topic url="Documents/schemadeploymentbetweenservers.htm" window="right" module="9" />
-        <topic url="Documents/step1generateapairofkeys.htm" window="right" module="9" />
-        <topic url="Documents/step2configuresshkeybasedauthentication.htm" window="right" module="9" />
-        <topic url="Documents/step3installperlmodules.htm" window="right" module="9" />
-        <topic url="Documents/step4createoracledirectoriesforexportandimport.htm" window="right" module="9" />
-        <topic url="Documents/step5exportdatafromthedevelopmentserver.htm" window="right" module="9" />
-        <topic url="Documents/step6moveexportedfilesfromthesourceservertothetarget.htm" window="right" module="9" />
-        <topic url="Documents/step7prepareforschemaimport.htm" window="right" module="9" />
-        <topic url="Documents/step8importsourceschemasintothetargetdatabase.htm" window="right" module="9" />
-        <topic url="Documents/step9deploymenterrorprevention.htm" window="right" module="9" />
-        <topic url="Documents/futureenhancements.htm" window="right" module="9" />
-        <topic url="Documents/scriptstofacilitatethedeploymentprocess.htm" window="right" module="9" />
-        <topic url="Documents/schemaandtableexport.htm" window="right" module="9" />
-        <topic url="Documents/importingthedata.htm" window="right" module="9" />
-        <topic url="Documents/additionalinformation.htm" window="right" module="9" />
-        <topic url="Documents/chapter3amazonwebservicesoperations.htm" window="right" module="9" />
-        <topic url="Documents/filetransferusingwinscp.htm" window="right" module="9" />
-        <topic url="Documents/creatingaselfsignedsslcertificateforapache.htm" window="right" module="9" />
-        <topic url="Documents/shuttingdownandstartinguptheoracledatabaseserver.htm" window="right" module="9" />
-        <topic url="Documents/resettingyourvncpassword.htm" window="right" module="9" />
-        <topic url="Documents/resettingyourlinuxpassword.htm" window="right" module="9" />
-        <topic url="Documents/settinguptheproductiondatabaseserver.htm" window="right" module="9" />
-        <topic url="Documents/installingrpms.htm" window="right" module="9" />
-        <topic url="Documents/configuringsqldeveloper.htm" window="right" module="9" />
-        <topic url="Documents/step1linuxgroupusercreation.htm" window="right" module="9" />
-        <topic url="Documents/step2setuptheaccounttoallowvncvieweraccess.htm" window="right" module="9" />
-        <topic url="Documents/additionalinformation1.htm" window="right" module="9" />
-        <topic url="Documents/anoteonusingtoadonthecloud.htm" window="right" module="9" />
-        <topic url="Documents/oraclecredentials.htm" window="right" module="9" />
-        <topic url="Documents/credentialsforotherdatasources.htm" window="right" module="9" />
-        <topic url="Documents/jnjapplicationsecuritygroup.htm" window="right" module="9" />
-        <topic url="Documents/jnjcommonsecuritygroup.htm" window="right" module="9" />
-        <topic url="Documents/jnjintegrationsecuritygroup.htm" window="right" module="9" />
-        <topic url="Documents/jnjstagingdbsecuritygroup.htm" window="right" module="9" />
-        <topic url="Documents/jnjwarehousedbsecuritygroup.htm" window="right" module="9" />
-        <topic url="Documents/transmartipaddresswhitelist.htm" window="right" module="9" />
-        <topic url="Documents/highlevelviewofsystemandsecurity.htm" window="right" module="9" />
-        <topic url="Documents/deploymenttotheproductionserver.htm" window="right" module="9" />
-        <topic url="Documents/applicationdeploymenttoproductionserver.htm" window="right" module="9" />
-        <topic url="Documents/databasedeploymenttoproductionserver.htm" window="right" module="9" />
-        <topic url="Documents/taganewreleaseinsvn.htm" window="right" module="9" />
-        <topic url="Documents/createareleasenote.htm" window="right" module="9" />
-        <topic url="Documents/deploymenttothepublictrainingserver.htm" window="right" module="9" />
-        <topic url="Documents/deploymenturls.htm" window="right" module="9" />
-        <topic url="Documents/applicationdeploymenttothetrainingserver.htm" window="right" module="9" />
-        <topic url="Documents/databasedeploymenttothetrainingserver.htm" window="right" module="9" />
-        <topic url="Documents/sourcecontrolsvn.htm" window="right" module="9" />
-        <topic url="Documents/eclipse.htm" window="right" module="9" />
-        <topic url="Documents/eclipseplugins.htm" window="right" module="9" />
-        <topic url="Documents/grails.htm" window="right" module="9" />
-        <topic url="Documents/oraclesqldeveloper.htm" window="right" module="9" />
-        <topic url="Documents/indexertool.htm" window="right" module="9" />
-        <topic url="Documents/buildingindexer.htm" window="right" module="9" />
-        <topic url="Documents/usage.htm" window="right" module="9" />
-        <topic url="Documents/buildingrepositoryindexes.htm" window="right" module="9" />
-        <topic url="Documents/testinganindex.htm" window="right" module="9" />
-        <topic url="Documents/buildingthemasterindex.htm" window="right" module="9" />
-        <topic url="Documents/danafarbergcoddataset.htm" window="right" module="9" />
-        <topic url="Documents/oracleusers.htm" window="right" module="9" />
-        <topic url="Documents/tablespaces.htm" window="right" module="9" />
-        <topic url="Documents/oracledirectory.htm" window="right" module="9" />
-        <topic url="Documents/danafarbergcoddatasetsloaded.htm" window="right" module="9" />
-        <topic url="Documents/datasetexplorerdevelopmentenvironmentsetup.htm" window="right" module="9" />
-        <topic url="Documents/databasenames.htm" window="right" module="9" />
-        <topic url="Documents/tableviewandprocedurenames.htm" window="right" module="9" />
-        <topic url="Documents/columnnames.htm" window="right" module="9" />
-        <topic url="Documents/indexnames.htm" window="right" module="9" />
-        <topic url="Documents/scriptheaders.htm" window="right" module="9" />
-        <topic url="Documents/domainclasses.htm" window="right" module="9" />
-        <topic url="Documents/controllersandviews.htm" window="right" module="9" />
-        <topic url="Documents/services.htm" window="right" module="9" />
-        <topic url="Documents/datastructures.htm" window="right" module="9" />
-        <topic url="Documents/packages.htm" window="right" module="9" />
-        <topic url="Documents/datatypes.htm" window="right" module="9" />
-        <topic url="Documents/variables.htm" window="right" module="9" />
-        <topic url="Documents/constants.htm" window="right" module="9" />
-        <topic url="Documents/methods.htm" window="right" module="9" />
-        <topic url="Documents/abbreviationsandacronyms.htm" window="right" module="9" />
-        <topic url="Documents/genericvariables.htm" window="right" module="9" />
-        <topic url="Documents/objectsnamesandmethodnames.htm" window="right" module="9" />
-        <topic url="Documents/getandsetprefixes.htm" window="right" module="9" />
-        <topic url="Documents/isprefix.htm" window="right" module="9" />
-        <topic url="Documents/theinitializeprefix.htm" window="right" module="9" />
-        <topic url="Documents/objectcollections.htm" window="right" module="9" />
-        <topic url="Documents/iteratorvariables.htm" window="right" module="9" />
-        <topic url="Documents/complemententities.htm" window="right" module="9" />
-        <topic url="Documents/avoidabbreviationsinnames.htm" window="right" module="9" />
-        <topic url="Documents/avoidnegatedbooleanvariablenames.htm" window="right" module="9" />
-        <topic url="Documents/relatedconstants.htm" window="right" module="9" />
-        <topic url="Documents/exceptionclasses.htm" window="right" module="9" />
-        <topic url="Documents/defaultinterfaceimplementations.htm" window="right" module="9" />
-        <topic url="Documents/singletonclasses.htm" window="right" module="9" />
-        <topic url="Documents/factoryclasses.htm" window="right" module="9" />
-        <topic url="Documents/functionsandprocedures.htm" window="right" module="9" />
-        <topic url="Documents/classes.htm" window="right" module="9" />
-        <topic url="Documents/filecontent.htm" window="right" module="9" />
-        <topic url="Documents/avoidspecialcharacters.htm" window="right" module="9" />
-        <topic url="Documents/breaklonglinesconsistently.htm" window="right" module="9" />
-        <topic url="Documents/package.htm" window="right" module="9" />
-        <topic url="Documents/import.htm" window="right" module="9" />
-        <topic url="Documents/explicitlylistimportedclasses.htm" window="right" module="9" />
-        <topic url="Documents/classandinterfacedeclarations.htm" window="right" module="9" />
-        <topic url="Documents/orderofmethodmodifiers.htm" window="right" module="9" />
-        <topic url="Documents/maketypeconversionsexplicitly.htm" window="right" module="9" />
-        <topic url="Documents/variableinitialization.htm" window="right" module="9" />
-        <topic url="Documents/uniquevariablemeanings.htm" window="right" module="9" />
-        <topic url="Documents/neverdeclareclassvariablesaspublic.htm" window="right" module="9" />
-        <topic url="Documents/arraydeclarations.htm" window="right" module="9" />
-        <topic url="Documents/variablescope.htm" window="right" module="9" />
-        <topic url="Documents/forconstruction.htm" window="right" module="9" />
-        <topic url="Documents/initializationofloopvariables.htm" window="right" module="9" />
-        <topic url="Documents/avoiddowhileloops.htm" window="right" module="9" />
-        <topic url="Documents/avoidusingbreakandcontinueinloops.htm" window="right" module="9" />
-        <topic url="Documents/avoidcomplexconditionalexpressions.htm" window="right" module="9" />
-        <topic url="Documents/exceptionsinifelsestatements.htm" window="right" module="9" />
-        <topic url="Documents/conditionalsonseparatelines.htm" window="right" module="9" />
-        <topic url="Documents/avoidexecutablestatementsinconditionals.htm" window="right" module="9" />
-        <topic url="Documents/avoidmagicnumbers.htm" window="right" module="9" />
-        <topic url="Documents/floatingpointconstants.htm" window="right" module="9" />
-        <topic url="Documents/referencingstatusvariablesandmethods.htm" window="right" module="9" />
-        <topic url="Documents/layoutandcomments.htm" window="right" module="9" />
-        <topic url="Documents/indentation.htm" window="right" module="9" />
-        <topic url="Documents/blocklayout.htm" window="right" module="9" />
-        <topic url="Documents/classandinterfacedeclarations1.htm" window="right" module="9" />
-        <topic url="Documents/methoddefinitions.htm" window="right" module="9" />
-        <topic url="Documents/ifelsestatements.htm" window="right" module="9" />
-        <topic url="Documents/forstatements.htm" window="right" module="9" />
-        <topic url="Documents/emptyforstatements.htm" window="right" module="9" />
-        <topic url="Documents/whilestatements.htm" window="right" module="9" />
-        <topic url="Documents/dowhilestatements.htm" window="right" module="9" />
-        <topic url="Documents/switchstatements.htm" window="right" module="9" />
-        <topic url="Documents/trycatchstatements.htm" window="right" module="9" />
-        <topic url="Documents/usebracketswithsinglestatementifelsefororwhile.htm" window="right" module="9" />
-        <topic url="Documents/whitespace.htm" window="right" module="9" />
-        <topic url="Documents/logicalunitsinablock.htm" window="right" module="9" />
-        <topic url="Documents/dontsubstitutecommentsforclearcode.htm" window="right" module="9" />
-        <topic url="Documents/javadoccomments.htm" window="right" module="9" />
-        <topic url="Documents/useaspaceafterthecommentidentifier.htm" window="right" module="9" />
-        <topic url="Documents/usefornonjavadoccomments.htm" window="right" module="9" />
-        <topic url="Documents/indentcommentsrelativetothecode.htm" window="right" module="9" />
-        <topic url="Documents/commentsforanonymouscollectionvariables.htm" window="right" module="9" />
-        <topic url="Documents/commentsforpublicclassesandpublicprotectedfunctions.htm" window="right" module="9" />
-        <topic url="Documents/objectbaseclassdiagram.htm" window="right" module="9" />
-        <topic url="Documents/step1datapreprocessing.htm" window="right" module="9" />
-        <topic url="Documents/step2zscorecalculation.htm" window="right" module="9" />
-        <topic url="Documents/step3datapostprocessing.htm" window="right" module="9" />
-        <topic url="Documents/samplezscorecalculationscripts.htm" window="right" module="9" />
-        <topic url="Documents/storedprocedurestoretrievezscoreforheatmaps.htm" window="right" module="9" />
-        <topic url="Documents/creatingschemaobjects.htm" window="right" module="9" />
-        <topic url="Documents/populatingthedatabase.htm" window="right" module="9" />
-        <topic url="Documents/postloaddatabaseoptimization.htm" window="right" module="9" />
-        <topic url="Documents/genepatternserverinstallation.htm" window="right" module="9" />
-        <topic url="Documents/onunix.htm" window="right" module="9" />
-        <topic url="Documents/onwindows.htm" window="right" module="9" />
-        <topic url="Documents/usefullinks.htm" window="right" module="9" />
-        <topic url="Documents/semanticbrowser.htm" window="right" module="9" />
-        <topic url="Documents/javaframeworkforsemanticqueries.htm" window="right" module="9" />
-        <topic url="Documents/projectmanagementtoolatjj.htm" window="right" module="9" />
-        <topic url="Documents/rembrandt.htm" window="right" module="9" />
-        <topic url="Documents/resnetserverdatabase.htm" window="right" module="9" />
-        <topic url="Documents/pictor.htm" window="right" module="9" />
-        <topic url="Documents/chipmicroarrayanalysispipeline.htm" window="right" module="9" />
-        <topic url="Documents/omnivizversion601.htm" window="right" module="9" />
-        <topic url="Documents/ingenuity.htm" window="right" module="9" />
-        <topic url="Documents/sassoftware.htm" window="right" module="9" />
-        <topic url="Documents/chapter1introduction.htm" window="right" module="10" />
-        <topic url="Documents/etlanalystscontacts.htm" window="right" module="10" />
-        <topic url="Documents/transmartdatawarehouse.htm" window="right" module="10" />
-        <topic url="Documents/transmarttopography.htm" window="right" module="10" />
-        <topic url="Documents/datawarehouseschemas.htm" window="right" module="10" />
-        <topic url="Documents/toolsandrequirements.htm" window="right" module="10" />
-        <topic url="Documents/onetimesetup.htm" window="right" module="10" />
-        <topic url="Documents/step1setupatunneltoadatabaseserver.htm" window="right" module="10" />
-        <topic url="Documents/step2establishaconnectiontothedatabasesonaserver.htm" window="right" module="10" />
-        <topic url="Documents/openinganestablishedconnection.htm" window="right" module="10" />
-        <topic url="Documents/chapter2responsibilitiesandworkflow.htm" window="right" module="10" />
-        <topic url="Documents/datawarehousezonesandenvironments.htm" window="right" module="10" />
-        <topic url="Documents/workflow.htm" window="right" module="10" />
-        <topic url="Documents/thereferenceandcontrolcurationzones.htm" window="right" module="10" />
-        <topic url="Documents/referencezone.htm" window="right" module="10" />
-        <topic url="Documents/controlcurationzone.htm" window="right" module="10" />
-        <topic url="Documents/workflowillustration.htm" window="right" module="10" />
-        <topic url="Documents/tablesinthedatawarehouse.htm" window="right" module="10" />
-        <topic url="Documents/coredatawarehouse.htm" window="right" module="10" />
-        <topic url="Documents/datamartfortransmartsearch.htm" window="right" module="10" />
-        <topic url="Documents/datamartfortransmartdatasetexplorer.htm" window="right" module="10" />
-        <topic url="Documents/i2b2metadataandi2b2demodataschemas.htm" window="right" module="10" />
-        <topic url="Documents/deappschema.htm" window="right" module="10" />
-        <topic url="Documents/categoriesandsourcesofdata.htm" window="right" module="10" />
-        <topic url="Documents/coordinationwiththeapplicationdevelopers.htm" window="right" module="10" />
-        <topic url="Documents/chapter3loadingdataforsearches.htm" window="right" module="10" />
-        <topic url="Documents/loadingdataforclinicaltrialmrnaanalysisandmrnaprofilesearches.htm" window="right" module="10" />
-        <topic url="Documents/loadingmetadata.htm" window="right" module="10" />
-        <topic url="Documents/sourcesofdata.htm" window="right" module="10" />
-        <topic url="Documents/tasks.htm" window="right" module="10" />
-        <topic url="Documents/scripts.htm" window="right" module="10" />
-        <topic url="Documents/tables.htm" window="right" module="10" />
-        <topic url="Documents/loadinganalyzeddata.htm" window="right" module="10" />
-        <topic url="Documents/sourcesofdata1.htm" window="right" module="10" />
-        <topic url="Documents/tasks1.htm" window="right" module="10" />
-        <topic url="Documents/scripts1.htm" window="right" module="10" />
-        <topic url="Documents/tables1.htm" window="right" module="10" />
-        <topic url="Documents/loadingprofiledata.htm" window="right" module="10" />
-        <topic url="Documents/sourcesofdata2.htm" window="right" module="10" />
-        <topic url="Documents/tasks2.htm" window="right" module="10" />
-        <topic url="Documents/scripts2.htm" window="right" module="10" />
-        <topic url="Documents/tables2.htm" window="right" module="10" />
-        <topic url="Documents/loadingbiomarkerdata.htm" window="right" module="10" />
-        <topic url="Documents/sourcesofdata3.htm" window="right" module="10" />
-        <topic url="Documents/tasks3.htm" window="right" module="10" />
-        <topic url="Documents/scripts3.htm" window="right" module="10" />
-        <topic url="Documents/tables3.htm" window="right" module="10" />
-        <topic url="Documents/loadingreferencedata.htm" window="right" module="10" />
-        <topic url="Documents/sourcesofdata4.htm" window="right" module="10" />
-        <topic url="Documents/tasks4.htm" window="right" module="10" />
-        <topic url="Documents/scripts4.htm" window="right" module="10" />
-        <topic url="Documents/tables4.htm" window="right" module="10" />
-        <topic url="Documents/loadingdataforcuratedliteraturesearches.htm" window="right" module="10" />
-        <topic url="Documents/workflowforloadingdatafromcuratedliterature.htm" window="right" module="10" />
-        <topic url="Documents/samplescripts.htm" window="right" module="10" />
-        <topic url="Documents/loadingdatafordocumentrepositorysearches.htm" window="right" module="10" />
-        <topic url="Documents/indexingthedocumentsintherepositories.htm" window="right" module="10" />
-        <topic url="Documents/buildingtheindexertool.htm" window="right" module="10" />
-        <topic url="Documents/usage.htm" window="right" module="10" />
-        <topic url="Documents/buildingrepositoryindexes.htm" window="right" module="10" />
-        <topic url="Documents/testinganindex.htm" window="right" module="10" />
-        <topic url="Documents/buildingthemasterindex.htm" window="right" module="10" />
-        <topic url="Documents/loadingcelllinedataforgenesignatures.htm" window="right" module="10" />
-        <topic url="Documents/loadingadescriptionofaclinicaltrial.htm" window="right" module="10" />
-        <topic url="Documents/creatingsynonyms.htm" window="right" module="10" />
-        <topic url="Documents/chapter4loadingdatafordatasetexplorer.htm" window="right" module="10" />
-        <topic url="Documents/namingconventions.htm" window="right" module="10" />
-        <topic url="Documents/loadingclinicaltrials.htm" window="right" module="10" />
-        <topic url="Documents/rawdatafiles.htm" window="right" module="10" />
-        <topic url="Documents/tablestructureforcategorydata.htm" window="right" module="10" />
-        <topic url="Documents/tablestructurefortimepointmeasurementdata.htm" window="right" module="10" />
-        <topic url="Documents/workflowsummary.htm" window="right" module="10" />
-        <topic url="Documents/sqlforloadingclinicaltrials.htm" window="right" module="10" />
-        <topic url="Documents/navigationtreestructure.htm" window="right" module="10" />
-        <topic url="Documents/rulesforeditingthenavigationtree.htm" window="right" module="10" />
-        <topic url="Documents/loadingpublicstudiesandinternalstudies.htm" window="right" module="10" />
-        <topic url="Documents/loadingrbmdata.htm" window="right" module="10" />
-        <topic url="Documents/workflowsummary1.htm" window="right" module="10" />
-        <topic url="Documents/illustrationoftherbmdataloadingworkflow.htm" window="right" module="10" />
-        <topic url="Documents/loadingmrnaaffymetrixdata.htm" window="right" module="10" />
-        <topic url="Documents/workflowsummary2.htm" window="right" module="10" />
-        <topic url="Documents/loadingsnpdata.htm" window="right" module="10" />
-        <topic url="Documents/step1prepareandannotatethesnpdata.htm" window="right" module="10" />
-        <topic url="Documents/step2transformandloadthesnpdata.htm" window="right" module="10" />
-        <topic url="Documents/step3loadthesnpdataintohaploviewdata.htm" window="right" module="10" />
-        <topic url="Documents/addingsecurityforastudy.htm" window="right" module="10" />
-        <topic url="Documents/viewingauditanderrorlogs.htm" window="right" module="10" />
-        <topic url="Documents/troubleshooting.htm" window="right" module="10" />
-        <topic url="Documents/chapter5dataqualityassurance.htm" window="right" module="10" />
-        <topic url="Documents/qaconsiderations.htm" window="right" module="10" />
-        <topic url="Documents/sampletestharness.htm" window="right" module="10" />
-        <topic url="Documents/tables5.htm" window="right" module="10" />
-        <topic url="Documents/storedprocedures.htm" window="right" module="10" />
-        <topic url="Documents/exectestrun.htm" window="right" module="10" />
-        <topic url="Documents/exectest.htm" window="right" module="10" />
-        <topic url="Documents/processflow.htm" window="right" module="10" />
-        <topic url="Documents/1runthetest.htm" window="right" module="10" />
-        <topic url="Documents/2prepareforthenexttestrun.htm" window="right" module="10" />
-        <topic url="Documents/sampletestspreadsheet.htm" window="right" module="10" />
-        <topic url="Documents/appendixadatawarehouseschemas.htm" window="right" module="10" />
-        <topic url="Documents/coredatawarehouse1.htm" window="right" module="10" />
-        <topic url="Documents/datamartfortransmartsearch1.htm" window="right" module="10" />
-        <topic url="Documents/i2b2metadataandi2b2demodata.htm" window="right" module="10" />
-        <topic url="Documents/deapp.htm" window="right" module="10" />
+        <topic url="Documents/gettingstartedwithtr.htm" window="right" />
+        <topic url="Documents/featureoverview.htm" window="right" />
+        <topic url="Documents/searchtool.htm" window="right" />
+        <topic url="Documents/searchresults.htm" window="right" />
+        <topic url="Documents/datasetexplorer.htm" window="right" />
+        <topic url="Documents/sampleexplorer.htm" window="right" />
+        <topic url="Documents/genesignaturewizard.htm" window="right" />
+        <topic url="Documents/loggingin.htm" window="right" />
+        <topic url="Documents/tools.htm" window="right" />
+        <topic url="Documents/openingaparticulartoolatlogin.htm" window="right" />
+        <topic url="Documents/searchtool1.htm" window="right" />
+        <topic url="Documents/searchtasks.htm" window="right" />
+        <topic url="Documents/definingasearchfilter.htm" window="right" />
+        <topic url="Documents/typethefiltername.htm" window="right" />
+        <topic url="Documents/browseforafiltername.htm" window="right" />
+        <topic url="Documents/useasavedsearchfilter.htm" window="right" />
+        <topic url="Documents/buildingasearchstring.htm" window="right" />
+        <topic url="Documents/rulesforbuildingasearchstring.htm" window="right" />
+        <topic url="Documents/instructionsforbuildingasearchstring.htm" window="right" />
+        <topic url="Documents/savingasearchfilterorsearchstring.htm" window="right" />
+        <topic url="Documents/editinganddeletingsavedfilters.htm" window="right" />
+        <topic url="Documents/workingwithsearchresults.htm" window="right" />
+        <topic url="Documents/clinicaltrialstab.htm" window="right" />
+        <topic url="Documents/mrnaanalysistab.htm" window="right" />
+        <topic url="Documents/showfilters.htm" window="right" />
+        <topic url="Documents/analysisview.htm" window="right" />
+        <topic url="Documents/studyview.htm" window="right" />
+        <topic url="Documents/exportresultsinanalysisvieworstudyview.htm" window="right" />
+        <topic url="Documents/exportinformationaboutaparticularanalysis.htm" window="right" />
+        <topic url="Documents/mousegenehomologyinsearchresults.htm" window="right" />
+        <topic url="Documents/additionalresources.htm" window="right" />
+        <topic url="Documents/literaturetab.htm" window="right" />
+        <topic url="Documents/documentstab.htm" window="right" />
+        <topic url="Documents/teaanalyses.htm" window="right" />
+        <topic url="Documents/teaindicatorsappliedtoindividualbiomarkers.htm" window="right" />
+        <topic url="Documents/teaindicatorsappliedtoananalysis.htm" window="right" />
+        <topic url="Documents/whattheteascoremeans.htm" window="right" />
+        <topic url="Documents/whatcoantiregulationandupdownregulationmean.htm" window="right" />
+        <topic url="Documents/teaindicatorsappliedtoanindividualgene.htm" window="right" />
+        <topic url="Documents/datasetexplorer1.htm" window="right" />
+        <topic url="Documents/overviewoftheui.htm" window="right" />
+        <topic url="Documents/usingdatasetexplorer.htm" window="right" />
+        <topic url="Documents/publicandprivatestudies.htm" window="right" />
+        <topic url="Documents/selectingthestudy.htm" window="right" />
+        <topic url="Documents/searchbysubjecttab.htm" window="right" />
+        <topic url="Documents/selectingandopeningastudyinasearchresult.htm" window="right" />
+        <topic url="Documents/navigatetermstab.htm" window="right" />
+        <topic url="Documents/branchesandleavesofthenavigationtree.htm" window="right" />
+        <topic url="Documents/populatingthestudygroups.htm" window="right" />
+        <topic url="Documents/selectingcriteriaforthestudygroups.htm" window="right" />
+        <topic url="Documents/visualaidstohelpyouselectthecriteria.htm" window="right" />
+        <topic url="Documents/specifyinganumericvalue.htm" window="right" />
+        <topic url="Documents/viewingthenumericvaluesassociatedwithaconcept.htm" window="right" />
+        <topic url="Documents/savingcomparisondefinitions.htm" window="right" />
+        <topic url="Documents/joiningmultiplecriteriaforasubsetdefinition.htm" window="right" />
+        <topic url="Documents/modifyingordeletingcriteria.htm" window="right" />
+        <topic url="Documents/generatingsummarystatistics.htm" window="right" />
+        <topic url="Documents/significancetests.htm" window="right" />
+        <topic url="Documents/definingpointsofcomparison.htm" window="right" />
+        <topic url="Documents/resultsofacomparison.htm" window="right" />
+        <topic url="Documents/printingorsavingthecontentsoftheresultsanalysisview.htm" window="right" />
+        <topic url="Documents/copyingindividualchartsintheresultsanalysisview.htm" window="right" />
+        <topic url="Documents/viewingastudy.htm" window="right" />
+        <topic url="Documents/exportingdatasetexplorerfindings.htm" window="right" />
+        <topic url="Documents/generatingadvancedanalysesandvisualizations.htm" window="right" />
+        <topic url="Documents/generatingheatmaps.htm" window="right" />
+        <topic url="Documents/standardheatmap.htm" window="right" />
+        <topic url="Documents/hierarchicalclustering.htm" window="right" />
+        <topic url="Documents/kmeansclustering.htm" window="right" />
+        <topic url="Documents/markerselection.htm" window="right" />
+        <topic url="Documents/generatingadvancedanalyses.htm" window="right" />
+        <topic url="Documents/boxplotwithanova.htm" window="right" />
+        <topic url="Documents/correlationanalysis.htm" window="right" />
+        <topic url="Documents/linegraphanalysis.htm" window="right" />
+        <topic url="Documents/principalcomponentanalysis.htm" window="right" />
+        <topic url="Documents/scatterplotwithlinearregression.htm" window="right" />
+        <topic url="Documents/survivalanalysis.htm" window="right" />
+        <topic url="Documents/tablewithfishertesta.htm" window="right" />
+        <topic url="Documents/databinning.htm" window="right" />
+        <topic url="Documents/databinningusingboxp.htm" window="right" />
+        <topic url="Documents/databinningusingsurvivalanalysis.htm" window="right" />
+        <topic url="Documents/highdimensionaldata.htm" window="right" />
+        <topic url="Documents/otherfeatures.htm" window="right" />
+        <topic url="Documents/savetopdf.htm" window="right" />
+        <topic url="Documents/downloadrawrdata.htm" window="right" />
+        <topic url="Documents/thejobstab.htm" window="right" />
+        <topic url="Documents/viewingaloggedjob.htm" window="right" />
+        <topic url="Documents/sampleexplorer1.htm" window="right" />
+        <topic url="Documents/selectaprimarysearchfilter.htm" window="right" />
+        <topic url="Documents/viewandrefinesamplesearchresults.htm" window="right" />
+        <topic url="Documents/selectandremovesearchfilters.htm" window="right" />
+        <topic url="Documents/locatethesourceofthesamplesindatasetexplorer.htm" window="right" />
+        <topic url="Documents/managethesamplesearchresultlist.htm" window="right" />
+        <topic url="Documents/genesignaturesandgenelists.htm" window="right" />
+        <topic url="Documents/creatingagenesignature.htm" window="right" />
+        <topic url="Documents/step1addingthegenestoatextfile.htm" window="right" />
+        <topic url="Documents/usingtransmarttosele.htm" window="right" />
+        <topic url="Documents/step2creatingthegenesignature.htm" window="right" />
+        <topic url="Documents/makinganewgenesignaturepublic.htm" window="right" />
+        <topic url="Documents/performingactionsonyourgenesignatures.htm" window="right" />
+        <topic url="Documents/performingactionsonotheruserssignatures.htm" window="right" />
+        <topic url="Documents/viewingagenesignaturedefinition.htm" window="right" />
+        <topic url="Documents/othertasks1.htm" window="right" />
+        <topic url="Documents/howteascoresarecalculated.htm" window="right" />
+        <topic url="Documents/datainputstotheteaalgorithm.htm" window="right" />
+        <topic url="Documents/operations.htm" window="right" />
+        <topic url="Documents/rulesforloadingomics.htm" window="right" />
+        <topic url="Documents/glossaryofterms1.htm" window="right" />
+        <topic url="Documents/readthedocumentationinpdf.htm" window="right" />
     </topics>
 </root>

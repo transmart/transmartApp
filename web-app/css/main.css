@@ -846,6 +846,10 @@ select.jubselect {
 	background-image:url(../images/folder-minus.gif);
 }
 
+.feedbackbutton {
+	background-image:url(../images/feedback.png) !important;
+}
+
 /* ExtJS customizations */
 
 .ext-ie .x-form-text {
@@ -922,10 +926,17 @@ select.jubselect {
 	color:#ff0000;	
 }
 
+.feedbackBtn {
+    background-image:url(../images/feedback.png ) !important;
+    color:#ff0000;
+}
+
 .blankNode {
     background-image: none !important;
     width: 0px !important;
 }
+
+
 
 /* searchresults.css */
 .CategoryDiv {border:0px;}
@@ -1055,9 +1066,10 @@ table.jobstatus {
 }
 
 .utilities-div {
-	position:fixed;
-	width:80px;
-	top:0;
-	right:0;
-	z-index:100;
+    position:absolute;
+    width:100px;
+    top:0;
+    right:0;
+    height:24px;
+    z-index:100;
 }

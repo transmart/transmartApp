@@ -1,23 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
-
 
 var MAIN_HELP_PAGE = "default.htm";
 var g_d2hContextIds = new Array();
@@ -25,10 +5,6 @@ var g_d2hContextIds = new Array();
  g_d2hContextIds["1031"]="Documents/additionalresources.htm";
 
  g_d2hContextIds["1027"]="Documents/analysisview.htm";
-
- g_d2hContextIds["1261"]="Documents/appendixahowteascoresarecalculated.htm";
-
- g_d2hContextIds["1299"]="Documents/appendixbrulesforloadingomicsoftdata.htm";
 
  g_d2hContextIds["1310"]="Documents/boxplotwithanova.htm";
 
@@ -38,35 +14,23 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1018"]="Documents/buildingasearchstring.htm";
 
- g_d2hContextIds["1455"]="Documents/changethedefaultdisplay.htm";
-
- g_d2hContextIds["1256"]="Documents/chapter1gettingstartedwithtransmart.htm";
-
- g_d2hContextIds["1257"]="Documents/chapter2searchtool.htm";
-
- g_d2hContextIds["1258"]="Documents/chapter3datasetexplorer.htm";
-
- g_d2hContextIds["1437"]="Documents/chapter4sampleexplorer.htm";
-
- g_d2hContextIds["1259"]="Documents/chapter5genesignaturesandgenelists.htm";
-
- g_d2hContextIds["1446"]="Documents/chapter6othertasks.htm";
+ g_d2hContextIds["1268"]="Documents/clinicaltrialstab.htm";
 
  g_d2hContextIds["1079"]="Documents/copyingindividualchartsintheresultsanalysisview.htm";
 
- g_d2hContextIds["1100"]="Documents/creatingagenesignature.htm";
+ g_d2hContextIds["1290"]="Documents/correlationanalysis.htm";
 
- g_d2hContextIds["1315"]="Documents/dataassociationfeatures.htm";
+ g_d2hContextIds["1100"]="Documents/creatingagenesignature.htm";
 
  g_d2hContextIds["1090"]="Documents/databinning.htm";
 
- g_d2hContextIds["1093"]="Documents/databinningusingatablewithfishertestanalysis.htm";
-
- g_d2hContextIds["1091"]="Documents/databinningusingboxplotwithanova.htm";
+ g_d2hContextIds["1091"]="Documents/databinningusingboxp.htm";
 
  g_d2hContextIds["1092"]="Documents/databinningusingsurvivalanalysis.htm";
 
  g_d2hContextIds["1109"]="Documents/datainputstotheteaalgorithm.htm";
+
+ g_d2hContextIds["1258"]="Documents/datasetexplorer1.htm";
 
  g_d2hContextIds["1007"]="Documents/datasetexplorer.htm";
 
@@ -74,13 +38,11 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1076"]="Documents/definingpointsofcomparison.htm";
 
- g_d2hContextIds["1097"]="Documents/downloadtor.htm";
+ g_d2hContextIds["1270"]="Documents/documentstab.htm";
+
+ g_d2hContextIds["1097"]="Documents/downloadrawrdata.htm";
 
  g_d2hContextIds["1022"]="Documents/editinganddeletingsavedfilters.htm";
-
- g_d2hContextIds["1082"]="Documents/examples.htm";
-
- g_d2hContextIds["1089"]="Documents/exportheatmapdatapoints.htm";
 
  g_d2hContextIds["1030"]="Documents/exportinformationaboutaparticularanalysis.htm";
 
@@ -90,33 +52,43 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1004"]="Documents/featureoverview.htm";
 
- g_d2hContextIds["1146"]="Documents/step2creatingthegenesignature.htm#genesigpg2.htm";
-
  g_d2hContextIds["1164"]="Documents/step2creatingthegenesignature.htm#genesigpg3.htm";
+
+ g_d2hContextIds["1275"]="Documents/step2creatingthegenesignature.htm#genesigpg.htm";
 
  g_d2hContextIds["1008"]="Documents/genesignaturewizard.htm";
 
- g_d2hContextIds["1174"]="Documents/generatingahaploview.htm";
+ g_d2hContextIds["1259"]="Documents/genesignaturesandgenelists.htm";
 
- g_d2hContextIds["1172"]="Documents/generatingaprincipalcomponentanalysis.htm";
+ g_d2hContextIds["1509"]="Documents/generatingadvancedanalyses.htm";
 
- g_d2hContextIds["1080"]="Documents/generatingheatmaps.htm";
+ g_d2hContextIds["1503"]="Documents/generatingadvancedanalysesandvisualizations.htm";
+
+ g_d2hContextIds["1504"]="Documents/generatingheatmaps.htm";
 
  g_d2hContextIds["1074"]="Documents/generatingsummarystatistics.htm";
 
- g_d2hContextIds["1242"]="Documents/heatmapsbasedongeneexpressiondata.htm";
+ g_d2hContextIds["1003"]="Documents/gettingstartedwithtr.htm";
 
- g_d2hContextIds["1087"]="Documents/heatmapsbasedonrbmdata.htm";
+ g_d2hContextIds["1293"]="Documents/glossaryofterms1.htm";
 
- g_d2hContextIds["1126"]="Documents/highdimensionaldata1.htm";
+ g_d2hContextIds["1292"]="Documents/glossaryofterms.htm";
+
+ g_d2hContextIds["1506"]="Documents/hierarchicalclustering.htm";
+
+ g_d2hContextIds["1126"]="Documents/highdimensionaldata.htm";
+
+ g_d2hContextIds["1261"]="Documents/howteascoresarecalculated.htm";
 
  g_d2hContextIds["1020"]="Documents/instructionsforbuildingasearchstring.htm";
 
- g_d2hContextIds["1086"]="Documents/instructionsforgeneratingheatmaps.htm";
-
- g_d2hContextIds["1084"]="Documents/interactiveheatmaps.htm";
-
  g_d2hContextIds["1072"]="Documents/joiningmultiplecriteriaforasubsetdefinition.htm";
+
+ g_d2hContextIds["1507"]="Documents/kmeansclustering.htm";
+
+ g_d2hContextIds["1291"]="Documents/linegraphanalysis.htm";
+
+ g_d2hContextIds["1269"]="Documents/literaturetab.htm";
 
  g_d2hContextIds["1442"]="Documents/locatethesourceofthesamplesindatasetexplorer.htm";
 
@@ -126,13 +98,13 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1444"]="Documents/managethesamplesearchresultlist.htm";
 
+ g_d2hContextIds["1508"]="Documents/markerselection.htm";
+
  g_d2hContextIds["1073"]="Documents/modifyingordeletingcriteria.htm";
 
  g_d2hContextIds["1038"]="Documents/mousegenehomologyinsearchresults.htm";
 
  g_d2hContextIds["1032"]="Documents/mrnaanalysistab.htm";
-
- g_d2hContextIds["1173"]="Documents/multidimensionalprojections.htm";
 
  g_d2hContextIds["1066"]="Documents/navigatetermstab.htm";
 
@@ -142,6 +114,10 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1313"]="Documents/otherfeatures.htm";
 
+ g_d2hContextIds["1514"]="Documents/othertasks.htm";
+
+ g_d2hContextIds["1276"]="Documents/othertasks1.htm";
+
  g_d2hContextIds["1061"]="Documents/overviewoftheui.htm";
 
  g_d2hContextIds["1105"]="Documents/performingactionsonotheruserssignatures.htm";
@@ -150,15 +126,13 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1068"]="Documents/populatingthestudygroups.htm";
 
+ g_d2hContextIds["1511"]="Documents/principalcomponentanalysis.htm";
+
  g_d2hContextIds["1078"]="Documents/printingorsavingthecontentsoftheresultsanalysisview.htm";
-
- g_d2hContextIds["1170"]="Documents/providingheatmapparametersinthecomparesubsetspathwayselectiondialog.htm";
-
- g_d2hContextIds["1169"]="Documents/providingheatmapparametersinthesubsetboxes.htm";
 
  g_d2hContextIds["1063"]="Documents/publicandprivatestudies.htm";
 
- g_d2hContextIds["1085"]="Documents/requirementsforgeneratingheatmaps.htm";
+ g_d2hContextIds["1000"]="Documents/readthedocumentationinpdf.htm";
 
  g_d2hContextIds["1111"]="Documents/result.htm";
 
@@ -166,19 +140,21 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1019"]="Documents/rulesforbuildingasearchstring.htm";
 
- g_d2hContextIds["1427"]="Documents/runningtheintegratedgenomicsviewer.htm";
+ g_d2hContextIds["1299"]="Documents/rulesforloadingomicsoftdata.htm";
 
- g_d2hContextIds["1360"]="Documents/runningthesnpviewer.htm";
+ g_d2hContextIds["1277"]="Documents/rulesforloadingomics.htm";
 
  g_d2hContextIds["1425"]="Documents/sampleexplorer.htm";
 
- g_d2hContextIds["1127"]="Documents/savetopdf.htm";
+ g_d2hContextIds["1437"]="Documents/sampleexplorer1.htm";
+
+ g_d2hContextIds["1314"]="Documents/savetopdf.htm";
 
  g_d2hContextIds["1021"]="Documents/savingasearchfilterorsearchstring.htm";
 
  g_d2hContextIds["1474"]="Documents/savingcomparisondefinitions.htm";
 
- g_d2hContextIds["1316"]="Documents/scatterplotwithlinearregression.htm";
+ g_d2hContextIds["1512"]="Documents/scatterplotwithlinearregression.htm";
 
  g_d2hContextIds["1065"]="Documents/searchbysubjecttab.htm";
 
@@ -187,6 +163,8 @@ var g_d2hContextIds = new Array();
  g_d2hContextIds["1013"]="Documents/searchtasks.htm";
 
  g_d2hContextIds["1005"]="Documents/searchtool.htm";
+
+ g_d2hContextIds["1257"]="Documents/searchtool1.htm";
 
  g_d2hContextIds["1438"]="Documents/selectaprimarysearchfilter.htm";
 
@@ -204,6 +182,8 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1239"]="Documents/specifyinganumericvalue.htm";
 
+ g_d2hContextIds["1505"]="Documents/standardheatmap.htm";
+
  g_d2hContextIds["1101"]="Documents/step1addingthegenestoatextfile.htm";
 
  g_d2hContextIds["1102"]="Documents/step2creatingthegenesignature.htm";
@@ -212,7 +192,7 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1088"]="Documents/survivalanalysis.htm";
 
- g_d2hContextIds["1317"]="Documents/tablewithfishertest.htm";
+ g_d2hContextIds["1272"]="Documents/tablewithfishertesta.htm";
 
  g_d2hContextIds["1054"]="Documents/teaanalyses.htm";
 
@@ -222,21 +202,17 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1055"]="Documents/teaindicatorsappliedtoindividualbiomarkers.htm";
 
- g_d2hContextIds["1083"]="Documents/thecomparativemarkerselectionviewer.htm";
-
  g_d2hContextIds["1456"]="Documents/thejobstab.htm";
 
  g_d2hContextIds["1010"]="Documents/tools.htm";
 
  g_d2hContextIds["1015"]="Documents/typethefiltername.htm";
 
- g_d2hContextIds["1081"]="Documents/typesofheatmaps.htm";
-
  g_d2hContextIds["1017"]="Documents/useasavedsearchfilter.htm";
 
  g_d2hContextIds["1062"]="Documents/usingdatasetexplorer.htm";
 
- g_d2hContextIds["1177"]="Documents/usingtransmarttoselectgenes.htm";
+ g_d2hContextIds["1274"]="Documents/usingtransmarttosele.htm";
 
  g_d2hContextIds["1439"]="Documents/viewandrefinesamplesearchresults.htm";
 
@@ -245,10 +221,6 @@ var g_d2hContextIds = new Array();
  g_d2hContextIds["1476"]="Documents/viewingaloggedjob.htm";
 
  g_d2hContextIds["1098"]="Documents/viewingastudy.htm";
-
- g_d2hContextIds["1429"]="Documents/viewingigvdata.htm";
-
- g_d2hContextIds["1426"]="Documents/viewingsnpdata.htm";
 
  g_d2hContextIds["1420"]="Documents/viewingthenumericvaluesassociatedwithaconcept.htm";
 

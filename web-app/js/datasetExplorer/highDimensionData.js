@@ -16,25 +16,30 @@
  * 
  *
  ******************************************************************/
-  
-/***********Start of functions to set global subset ids**************
- *
+
+//**************Start of functions to set global subset ids**************
+/**
  * 1. If the global subset ids are null call runAllQueries to populate them.
  * 2. Calls heatmapvalidate to get all relevant data for the high dimensional selection.
  * @param divId
  */
 function gatherHighDimensionalData(divId){
+	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
+	spinnerMask.show();
+	
 	if(!variableDivEmpty(divId)
 			&& ((GLOBAL.CurrentSubsetIDs[1]	== null) ||	(multipleSubsets() && GLOBAL.CurrentSubsetIDs[2]== null))){
 		runAllQueriesForSubsetId(function(){gatherHighDimensionalData(divId);}, divId);
 		return;
 	}
 	if(variableDivEmpty(divId)){
+		spinnerMask.hide();
 		Ext.Msg.alert("No cohort selected!", "Please select a cohort first.");
 		return;
 	}
 	//genePatternReplacement();
 	//Send a request to generate the heatmapdata that we use to populate the dropdowns in the popup.
+	
 	Ext.Ajax.request(
 			{
 				url : pageInfo.basePath+"/analysis/heatmapvalidate",
@@ -49,11 +54,13 @@ function gatherHighDimensionalData(divId){
 				),
 				success : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				},
 				failure : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				}
@@ -62,16 +69,22 @@ function gatherHighDimensionalData(divId){
 }
 
 function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
+	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
+	spinnerMask.show();
+	
 	if((!variableDivEmpty(divId) && currentSubsetId== null)){
+		spinnerMask.hide();
 		runQueryForSubsetidSingleSubset(function(sId){gatherHighDimensionalDataSingleSubset(divId, sId);}, divId);
 		return;
 	}
 	if(variableDivEmpty(divId)){
+		spinnerMask.hide();
 		Ext.Msg.alert("No cohort selected!", "Please select a cohort first.");
 		return;
 	}
 	//genePatternReplacement();
 	//Send a request to generate the heatmapdata that we use to populate the dropdowns in the popup.
+	
 	Ext.Ajax.request(
 			{
 				url : pageInfo.basePath+"/analysis/heatmapvalidate",
@@ -86,11 +99,13 @@ function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
 				),
 				success : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				},
 				failure : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				}
@@ -281,13 +296,11 @@ function getCRCRequest(subset, queryname, divId){
 	                <query_name>'+queryname+'</query_name>\
 	                <specificity_scale>0</specificity_scale>';
 	
-	for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
+	var qcd=Ext.get(divId);
+	
+	if(qcd.dom.childNodes.length>0)
 	{
-		var qcd=Ext.get(divId);
-		if(qcd.dom.childNodes.length>0)
-		{
-		query=query+getCRCRequestPanel(qcd.dom, i);
-		}
+		query=query+getCRCRequestPanel(qcd.dom, 1);
 	}
 	
 	for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
@@ -319,13 +332,11 @@ function getCRCRequestSingleSubset(divId, queryname){
 	                <query_name>'+queryname+'</query_name>\
 	                <specificity_scale>0</specificity_scale>';
 	
-	for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
-	{
 	var qcd=Ext.get(divId);
-		if(qcd.dom.childNodes.length>0)
-		{
-		query=query+getCRCRequestPanel(qcd.dom, i);
-		}
+	
+	if(qcd.dom.childNodes.length>0)
+	{
+		query=query+getCRCRequestPanel(qcd.dom, 1);
 	}
 	
 	query=query+getSecurityPanel()+"</query_definition>"+getCRCRequestFooter();
@@ -520,7 +531,7 @@ function toggleDataAssociationFields(extEle){
 	}
 	
 	//display the appropriate submit button
-	if(GLOBAL.Analysis=="dataAssociation"){
+	if(GLOBAL.Analysis=="dataAssociation" || GLOBAL.Analysis=='MetaCoreEnrichment'){
 		document.getElementById("compareStepPathwaySelectionOKButton").style.display="none";
 		document.getElementById("dataAssociationApplyButton").style.display="";
 	}else if(GLOBAL.Analysis=='Advanced'){

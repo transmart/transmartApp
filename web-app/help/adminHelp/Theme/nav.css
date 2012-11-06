@@ -99,7 +99,7 @@ a:hover.D2HLogoSelected, a:hover.D2HLogoUnselected, span.D2HLogoRollover
 a.D2HCaptionSelected, span.D2HCaptionSelected
 { font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: normal; text-decoration: none; color: Black }
 a.D2HCaptionUnselected, span.D2HCaptionUnselected
-{ font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: bold; text-decoration: none; color: White }
+{ font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: bold; text-decoration: none; color: White; white-space: nowrap }
 a:hover.D2HCaptionSelected, a:hover.D2HCaptionUnselected, span.D2HCaptionRollover
 { font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: bold; text-decoration: none; color: White }
 
