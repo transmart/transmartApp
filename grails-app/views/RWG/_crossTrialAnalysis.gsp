@@ -49,17 +49,20 @@
 			
 
 </div>
-<div id="xtHeatmap"><!-- Heatmap Tab Content --></div>
-
 <!-- Boxplot Tab Content -->
 <div id="xtBoxplot" style="display:none"></div>
+
+<!-- Heatmap Tab Content -->
+<div id="xtHeatmap">Heatmap</div>
+
 
 <div id="exportBoxplot">
     <a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Boxplot Image</a>
 </div>    
-    
 
 	
 </div>
+
+
 
 

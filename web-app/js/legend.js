@@ -4,8 +4,15 @@ var svgLegend = {
 		boxSpacing : 5,
 		margin : 5,
 		fontSize : 12,
-		fontSizeCTA : 10 		
+		fontSizeCTA : 10
 }
+
+var svgAnalyisLegend = {
+		fontSize: 12,
+		fontStyle: "sans-serif",
+		spacing: 5,
+		margin: 5
+}		
 
 function getLegendFont(isCTA)  {
 	
@@ -186,4 +193,43 @@ function getLegendInfo(cohortDescExport, statMapping, wTotal, hCohortDescExport,
 						
 	hLegend = svgLegendHeight;   // don't scale legend height since size is dependent on size of text inside
 	return hLegend;
+}
+
+
+//set information needed for drawing analysis legend, e.g. height of each analysis, total height; return the height of the legend 
+function getAnalysisLegendInfo(analyses, wTotal)  {
+	var hLegend = 0;
+	
+	// retrieve the height that the analysis descriptions will be when drawn in svg with textFlow()
+	var legendFontStyle = svgAnalyisLegend.fontStyle;
+	var legendFontSize = svgAnalyisLegend.fontSize;
+	var legendFont = legendFontSize + "px, " + legendFontStyle;
+	var wLegendText = wTotal - svgAnalyisLegend.margin*2;
+	
+	var analysisInfo = new Array;
+	
+	var svgLegendHeight = svgAnalyisLegend.margin;
+	for (var i=0; i<analyses.length; i++)  {
+		var info = {}
+		 info.y = svgLegendHeight;
+		 info.w = wLegendText;
+
+		 var hText = getTextFlowHeight(analyses[i].title, wLegendText, legendFont, legendFontSize) + legendFontSize;
+		 
+		 // height of analysis is greater of the font height or the total height of the text
+		 info.h = (hText > legendFontSize ? hText :  legendFontSize) + svgAnalyisLegend.spacing;
+
+		 if (i > 1)   {  // add spacer if not on 1st one 
+			 svgLegendHeight += svgAnalyisLegend.spacing;					 
+		 }
+		 
+		 svgLegendHeight += info.h;
+		 
+		 analysisInfo[i] = info
+
+	}
+	svgLegendHeight += svgAnalyisLegend.margin;
+						
+	hLegend = svgLegendHeight;  
+	return {hLegend:hLegend, analysisInfo:analysisInfo};
 }

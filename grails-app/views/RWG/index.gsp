@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/simpleModal.css')}"></link>
 
         <link rel="stylesheet" href="${resource(dir:'css', file:'searchTooltip.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'heatmapTooltip.css')}"></link>
                                 
         <!-- jQuery JS libraries -->
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
@@ -93,6 +94,7 @@
 			var getPieChartDataURL = "${createLink([action:'getPieChartData'])}";
 			var getTopGenesURL = "${createLink([action:'getTopGenes'])}";
 			var getCrossTrialBioMarkerSummaryURL = "${createLink([action:'getCrossTrialBioMarkerSummary'])}";
+	        var getHeatmapDataCTAURL = "${createLink([action:'getHeatmapDataCTA'])}";
 			
 			var showHomePageFirst=true;
 			
