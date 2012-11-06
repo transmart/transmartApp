@@ -1,5 +1,10 @@
 var uniqueHeatmapId = 0;
 var hmTooltips = new Array;
+var ctaHeaderFontFamily = "Verdana, Tahoma, Arial";
+var ctaHeaderFontSize = 10;
+var ctaGeneLabelFontFamily = "Verdana, Tahoma, Arial";
+var ctaGeneLabelFontSize = 10;
+var ctaGeneLabelFontWeight = "normal";
 
 // Take the heatmap data in the second parameter and draw the D3 heatmap
 function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
@@ -580,7 +585,8 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 
 	var maxGeneWidth = 0;
 
-	var heatmapRows = new Array; 
+	var heatmapRows = new Array;
+	var genesArray = new Array;
 	
 	var maxFoldChange = 0;
 	var minFoldChange = 0;
@@ -588,7 +594,8 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	//  for consumption by svg objects
 	for (rowIndex in heatmapJSON)  {
 		var geneName = heatmapJSON[rowIndex].geneName;
-		var wGene = geneName.visualLength("10px Verdana, Tahoma, Arial");
+		var geneId = heatmapJSON[rowIndex].geneId;
+		var wGene = geneName.visualLength(ctaGeneLabelFontWeight + " " + ctaGeneLabelFontSize + "px " + ctaGeneLabelFontFamily);
 	    maxGeneWidth = (wGene > maxGeneWidth) ? wGene : maxGeneWidth;	
 
 	    // also convert data object to an array
@@ -602,7 +609,8 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    	}
 	    }
 	    
-	    var rowData = {geneName: heatmapJSON[rowIndex].geneName, data:dataArray}
+	    var rowData = {geneId: geneName, geneId: geneName, data:dataArray}
+	    genesArray[rowIndex] = {geneName:geneName, geneId:geneId};
 	    heatmapRows[rowIndex] =  rowData;
 	    
 		numGenes++;
@@ -638,15 +646,17 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		.attr("transform", "translate(" + 0 + "," + heatmapOffset + ")")
 		.attr("class", "heatmap");
 
+	// use same colors between the 2 range max/min values
+	var rangeMax = 2.5;
+	var rangeMax2 = 10000;
+	var rangeMin = -2.5;
+	var rangeMin2 = -10000;
 	
-	// hardcode for now, do we want to use sliders?  do we need to normalize values?
-	var rangeMax = maxFoldChange;
-	var rangeMin = minFoldChange;
 	var rangeMid = (rangeMax + rangeMin)/2;
 	
 	var colorScale = d3.scale.linear()
-	    .domain([rangeMin, rangeMid, rangeMid, rangeMax])
-	    .range(["#4400BE", "#D7D5FF","#ffe2f2", "#D70C00"]);
+	    .domain([rangeMin2, rangeMin, rangeMid, rangeMid, rangeMax, rangeMax2])
+	    .range(["#4400BE", "#4400BE", "#D7D5FF","#ffe2f2", "#D70C00", "#D70C00"]);
 
 		
     //generate the heatmap
@@ -674,13 +684,26 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 				fc = d.foldChange.toFixed(2);
 			}
 			
-	    	var tooltip = 
+			var pvalue;
+			if (d.preferredPValue == undefined)  {
+				pvalue = "null"
+			}
+			else {
+				if (d.preferredPValue == 0)   {
+					pvalue = "< 0.00001";
+				}
+				else {					
+					pvalue = d.preferredPValue;
+				}
+			}
+
+			var tooltip = 
 	    				   "<table style='td{padding:5px}'>" +
 	    				   "<tr><td  width='100px'><b>Analysis</b></td><td>" + analyses[d.x].title + "</td></tr>" +
 	    				   "<tr><td><b>Probe</b></td><td>" + d.probeId + "</td></tr>" +
 	    				   "<tr><td><b>Gene</b></td><td>" + geneName  + "</td></tr>" +
 	    				   "<tr><td><b>Fold Change</b></td><td>" + fc  + "</td></tr>" +
-	    				   "<tr><td><b>Preferred pvalue</b></td><td>" + d.preferredPValue  + "</td></tr>" +
+	    				   "<tr><td><b>Preferred pvalue</b></td><td>" + pvalue  + "</td></tr>" +
 	    				   "</table>";
 	    	
 	    	hmTooltips[id] = tooltip;
@@ -690,7 +713,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    	return maxGeneWidth + d.x * wCell;
 	    })
 	    .attr('y', function(d) {
-	    	return hCell + d.y * hCell + hHeader;
+	    	return d.y * hCell + hHeader;
 	    })
 	    .style("stroke", "#333333")    // color of borders around rectangles
 	    .style("stroke-width", 1)    // width of borders around rectangles
@@ -722,9 +745,10 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		.attr("x",function(d, i)	{
 			return (i * wCell + wCell/2 ); 
 		    })
-		.attr("y", 0)
+		.attr("y", -2)
 		.attr("text-anchor", "middle")
-	    .style("font", "10px Verdana, Tahoma, Arial")
+	    .style("font-size", ctaHeaderFontSize + "px")
+   	    .style("font-family", ctaHeaderFontFamily)
 		.text(function(d, i)	{
 			return i + 1;
 		} )		
@@ -733,86 +757,37 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	headerGroupText.append('svg:title').text(function(d)	{
 		return d.title;
 	} );
+
 	
-/*    
-	// position of cohort header group
-	var xPosition = w_probe;
-	var yPosition = 2;
-	
-	//GROUP FOR Cohort headers
-	var cohortHeaderGroup = hm.append("svg:g")
-	  .attr("class", "cohortHeader")
-	  .attr("transform", "translate(" + xPosition + "," + yPosition + ")")
+    // GENE LABELS
+	xOffset = 0;
+	var geneGroup = hm.append("svg:g")
+	  .attr("class", "geneGroup")
+	  .attr("transform", "translate(" + 0 + "," + hHeader + ")")
 	  ;
 	
-	var leftPosition = 0;  // relative position within cohort header group
+    // Show the gene labels
+	var geneGroupText = geneGroup.selectAll("a")
+		.data(genesArray)
+		.enter().append("a")
+		.attr("xlink:href", function(d) {return "javascript:showGeneInfo('" + d.geneId + "');"})
+		.append("text")
+		.attr("x", 0)
+		.attr("y",function(d, i)	{
+			return (i + 1) * hCell; 
+		    })
+		.attr("width", maxGeneWidth)
+		.attr("text-anchor", "start")
+	    .style("font-size", ctaGeneLabelFontSize + "px")
+	    .style("font-family", ctaGeneLabelFontFamily)	    
+	    .style("font-weight", ctaGeneLabelFontWeight)	    
+		.text(function(d)	{
+			return d.geneName;
+		} )		
+        ;			
 	
-	for(var i=1; i<=numCohorts; i++) {		
-		var classIndex;
-		
-		cohortDisplayStyles[i] = i % cohortBGColors.length;
-
-		var dataColor = cohortBGColors[i % cohortBGColors.length];
-		var strokeStyleColor = "#000";
-		var textStyleColor = "#000";
-		
-		// Cohort header
-		var barC = cohortHeaderGroup.append("rect")
-			.attr("x", leftPosition)
-			.attr("y", 0)
-			.attr("width", cohortWidths[i])
-			.attr("height", h)
-			.style("stroke", strokeStyleColor)    // color of borders around rectangles
-			.style("stroke-width", 1)    // width of borders around rectangles
-		    .style('fill', dataColor  )
-		    .style("shape-rendering", "crispEdges")	
-			;
-		
-		// this tooltip needs to be added both to rectangle and the label so it doesn't disappear when you mouse over the label
-		var cohortTooltip = cohortDescriptions[i].replace(/_/g, ', ');
-		
-		// Tooltips for cohort header rectangle
-	    if (!forExport)  {
-	    	barC.append('svg:title').text(cohortTooltip);
-	    }
-				
-		//set the header font size depending on the cell size
-		var headerFontFamily = "sans-serif";
-		var headerFontSize = 12;
-
-		if(cellSize < 12){
-			var headerFontSize = 8;
-		}else if (cellSize>19){
-			var headerFontSize = 16;
-		}
-		
-		// calculate coordinates for label in center of rect -- is there an easier way to do this with D3?  
-		var labelX = leftPosition + cohortWidths[i]/2;
-		var labelY = h/2;
-		
-		if (forExport)  {
-			labelY += 3;
-		}
-		
-		var chgText = cohortHeaderGroup.append("text")
-			.attr("x", labelX)
-			.attr("y", labelY)
-			.attr("dy", ".35em")
- 	        .attr("text-anchor", "middle")
-		    .style("fill", textStyleColor)
-		    .style("font-size", headerFontSize + "px")
-		    .style("font-family", headerFontFamily)
- 	        .text(cohorts[i] )
- 	        ;	
-			
-	    if (!forExport)  {
-	    	chgText.append('svg:title').text(cohortTooltip);   // tooltip for label
-	    }
-	    
-		// determine left position for next cohort
-	    leftPosition = leftPosition + cohortWidths[i];
-
-	}
+	
+/*    
 
     if (forExport)  {
 		drawSVGLegend(svg, 10, cohortLegendOffset, statMapping, false, forExport);
@@ -962,7 +937,7 @@ this.registerHeatmapTooltipEvents = function(){
 			out: function(){
 				jQuery("#heatmapTooltip").remove();
 			},
-			interval:500
+			interval:200
 		});
 	
 };

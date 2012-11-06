@@ -934,21 +934,11 @@ class RWGController {
 	   def genesList = queryParams[0].replace(":", "")	   
 
 	   def analysisIdsList = params.analysisIds.split(/\|/)
-	   def analysisData = rwgDAO.getHeatmapDataCTA(analysisIdsList, genesList)
-println analysisData
-	   def geneNamesList = []
-	   // loop through all the analysis and retrieve the union of all gene names that will be displayed
-	   analysisData.each{ 
-		      aKey, geneMap -> 
-			  
-			  geneMap.each{
-				  geneName, geneInfo ->
-				  
-				  geneNamesList.add(geneName)			  
-			  }			  
-	   }
-	   	   
-	   geneNamesList = geneNamesList.unique().sort()
+	   def returnData = rwgDAO.getHeatmapDataCTA(analysisIdsList, genesList)
+	   
+	   def analysisData = returnData.get("analysisInfo")
+	   def geneIdsList = returnData.get("geneIds")
+	   def geneNamesList = returnData.get("geneNames")
 	   
 	   // create a matrix of values that will be used in heatmap.  This will be a map of rows (keyed on order); each row will also contain a map
 	   // e.g.   [
@@ -959,17 +949,18 @@ println analysisData
 	   
 	   def matrix = [:]
 	   int rowIndex = 0; 
-	   geneNamesList.each{  geneName ->
+	   geneIdsList.each{  geneId ->
 		   
 		   def row = [:]
-		   row.put("geneName", geneName)		   
+		   row.put("geneId", geneId)		   
+		   row.put("geneName", geneNamesList[rowIndex])
 		   
 		   // now add a data map which contains one column for each analysis in list of analysis Ids passed in
 		   def colIndex = 0;
 		   def data = [:]
 		   analysisIdsList.each { analysisId ->
 			   
-			   def cellData = analysisData?.get(analysisId)?.get(geneName)
+			   def cellData = analysisData?.get(analysisId)?.get(geneId)
 			   
 			   if (!cellData)  {
 				   cellData = [:]
