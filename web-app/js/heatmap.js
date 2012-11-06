@@ -756,7 +756,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    .attr("id", function(d, i) {
 	    	var id = "hmHeader" + uniqueHeatmapId++;   // id here will match id in tooltip array
 			var tooltip = 
-	    				   "<table style='td{padding:5px}'>" +
+	    				   "<table>" +
 	    				   "<tr><td width='100px'><b>Index</b></td><td>" + (i + 1) + "</td></tr>" +
 	    				   "<tr><td><b>Study</b></td><td>" + d.studyID + "</td></tr>" +
 	    				   "<tr><td ><b>Analysis</b></td><td>" + d.title + "</td></tr>" 
@@ -770,13 +770,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		.text(function(d, i)	{
 			return i + 1;
 		} )		
-        ;			
-	
-
-/*	headerGroupText.append('svg:title').text(function(d)	{
-			return d.titleDisplay;
-		} );
-*/
+        ;				
 	
     // GENE LABELS
 	xOffset = 0;
@@ -805,145 +799,10 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		} )		
         ;			
 	
-	registerHeatmapTooltipEvents();
+	 registerHeatmapTooltipEvents();
 	
-	drawCTAAnalysisLegend(svg, 0, analysisLegendOffset, analysisInfo);
+	 drawCTAAnalysisLegend(svg, 0, analysisLegendOffset, analysisInfo);
 	
-/*    
-
-    if (forExport)  {
-		drawSVGLegend(svg, 10, cohortLegendOffset, statMapping, false, forExport);
-    }
-
-	var yOffset = h + h_header + 4;
-	var xOffset;
-	//only do this if the data contains fold change values
-	if(hasFoldChange)  {
-		xOffset = w_probe + columns.length * w + w_gene;
-		addDataColumn(hm, xOffset, yOffset, w_fold_change, foldChange, "Fold change", "foldChangeGroup", h);
-	}
-
-	
-	//only do this if the data contains TP values
-	if(hasTPvalue)  {
-		xOffset = w_probe + columns.length * w + w_gene + w_fold_change;
-		addDataColumn(hm, xOffset, yOffset, w_Tpvalue, tpValues, "TEA p-value", "tpValueGroup", h);		
-	}
-
-	
-	//only do this if the data contains TP values
-	if(hasPvalue)  {
-		xOffset = w_probe + (columns.length * w) + w_gene + w_fold_change +w_Tpvalue;
-		addDataColumn(hm, xOffset, yOffset, w_pvalue, preferredPValues, "p-value", "ppValueGroup", h);		
-	}
-
-	
-	// GENE LABELS
-	xOffset = w_probe + columns.length * w + 2;
-	var geneGroup = hm.append("svg:g")
-	  .attr("class", "geneGroup")
-	  .attr("transform", "translate(" + xOffset + "," + yOffset + ")")
-	  ;
-	
-    // Show the gene labels
-	var geneGroupText = geneGroup.selectAll("a")
-		.data(geneLabels)
-		.enter().append("a")
-		.attr("xlink:href", function(d) {return "javascript:showGeneInfo('"+d.geneId +"');"})
-		.append("text")
-		.attr("x", 0)
-		.attr("y",function(d, i)	{
-			return (i * (h) + h / 2); 
-		    })
-		.attr("width", w_gene)
-		.attr("text-anchor", "start")
-	    .style("font", "10px Verdana, Tahoma, Arial")
-		.text(function(d)	{
-			return d.gene;
-		} )		
-        ;			
-	
-	// tooltip for gene labels
-    if (!forExport)  {
-    	geneGroupText.append('svg:title').text(function(d)	{
-    		return d.genelist;
-    	} );
-    }
-		
-    // PROBE LABELS
-	xOffset = 0;
-	var probeGroup = hm.append("svg:g")
-	  .attr("class", "probeGroup")
-	  .attr("transform", "translate(" + xOffset + "," + yOffset + ")")
-	  ;
-	
-    // Show the probe labels
-	var probeGroupText = probeGroup.selectAll("a")
-		.data(probesList)
-		.enter().append("a")
-		.attr("xlink:href", function(d) {return "javascript:openBoxPlotFromHeatmap(" +analysisID +", '" + d +"');"})
-		.append("text")
-		.attr("x", 0)
-		.attr("y",function(d, i)	{
-			return (i * (h) + h / 2); 
-		    })
-		.attr("width", w_probe)
-		.attr("text-anchor", "start")
-	    .style("font", "10px Verdana, Tahoma, Arial")
-		.text(function(d)	{
-			return d;
-		} )		
-        ;			
-	
-	// tooltip for probe labels
-    if (!forExport)  {
-    	probeGroupText.append('svg:title').text("View in boxplot");
-    }
-
-	//GROUP FOR legend (min, max, null)
-	var legendGroup = hm.append("svg:g")
-	  .attr("class", "legendGroup")
-	  .attr("transform", "translate(" + w_probe + "," + (2*h + (heatmapJSON.length * h) + h_header) + ")")
-	  ;
-	
-	var legendBars = new Array();
-	legendBars.push({bgColor:"#4400BE", textColor:"white", text:"min: "+Math.round((rangeMin)*100)/100});
-	legendBars.push({bgColor:"#D70C00", textColor:"white", text:"max: " + Math.round((rangeMax)*100)/100});
-	//draw legend for null values only if they exist in the current heatmap
-	if(hasNullValues){
-		legendBars.push({bgColor:"#FFFF00", textColor:"black", text:"null"});
-	}
-		
-	var barWidth = 55;
-	var barHeight = 15;
-	var barSpacing = 30;
-	// legend labels
-	var barLegends = legendGroup.selectAll("rect")
-		 .data(legendBars)
-		 .enter().append("rect")
-		.attr("x", function(d, i) {return i*(barWidth + barSpacing); })
-		.attr("y", 0)
-		.attr("width", barWidth)
-		.attr("height", barHeight)
-	    .style('fill', function(d) {return d.bgColor; })
-		;
-
-
-	var barLegends = legendGroup.selectAll("text")
-		.data(legendBars)
-		.enter().append("text")
-		.attr("x", function(d, i) {return i*(barWidth + barSpacing) + 2; })
-		.attr("y", barHeight - 3)
- 	    .attr("text-anchor", "start")
-		.style("fill", function(d) {return d.textColor; })
-		.style("font-size", "10px")
- 	    .text(function(d) {return d.text; });
-
-	// not exporting, add the html to the div for the legend
-	 if (!forExport)  {		
-		 drawScreenLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles, "heatmap", analysisID);
-  	 }
-	*/
  	 jQuery("#" + divID).css('display', savedDisplayStyle);
 	
 }
