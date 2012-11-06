@@ -1485,45 +1485,74 @@ def getHeatmapDataCTA  = {analysisIds, keywordIds ->
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
 	s.append("""
-	     select distinct bio_assay_analysis_id, bio_marker_name, probe_id, preferred_pvalue, abs(fold_change_ratio),
+	     select distinct bio_assay_analysis_id, bio_marker_name, probe_id, gene_id, preferred_pvalue, abs(fold_change_ratio),
 			fold_change_ratio
 		  from heat_map_results
 		   where Bio_Assay_Analysis_Id in ("""
     ) 
 
 	s.append(analysisIds.join(','))
-	s.append(") ")
+	s.append(") ")  
 	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
 	s.append(" order by bio_assay_analysis_id, bio_marker_name, preferred_pvalue asc, abs(fold_change_ratio) desc ")
 
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
+	def analysisMap = [:]
 	def returnMap = [:]
+	def geneIdsList = []
+	def geneNamesList = []
+
 	// loop through and determine probe id  with highest pvalue/fold change 	(since they are ordered desc it will be the first one encountered for the analysis/gene)
 	results.each{ row->
 		def aId = row.bio_assay_analysis_id.toString()
 		
 		// get map for this analysis
-		def aMap = returnMap.get(aId)
+		def aMap = analysisMap.get(aId)
 		// if analysis not in map yet, add it
 		if (!aMap)  {
 			aMap = [:]
-			returnMap.put(aId, aMap)
+			analysisMap.put(aId, aMap)
 		}  
 			
 		def geneName = row.bio_marker_name
-		// if gene name not mapped yet for analysis, then add it with fold change and probe used
+		def geneId = row.gene_id
+		// if gene not mapped yet for analysis, then add it with fold change and probe used
 		//   (if there, skip it since it's not most significant probe)
-        if (!aMap.get(geneName))  {
+        if (!aMap.get(geneId))  {
 			def geneMap = [:]
 			geneMap.put("probeId", row.probe_id)
 			geneMap.put("foldChange", row.fold_change_ratio)
 			geneMap.put("preferredPValue", row.preferred_pvalue)
 			
-			aMap.put(geneName, geneMap)
+			aMap.put(geneId, geneMap)
 		}
+		
+		// also create lists containing the list of unique, sorted gene ids and names
+		// not in list yet, add it
+		if (geneIdsList.indexOf(geneId) == -1)
+		{				  
+			  // find location to insert this item based on the gene name alphabetically
+			  def insertLocation = 0;
+			  while (insertLocation<geneNamesList.size())  {
+				  
+				  if (geneName > geneNamesList[insertLocation])  {
+					  insertLocation++;
+				  } 
+				  else  {
+				  		break;
+				  }
+			  }
+			  geneIdsList.add(insertLocation, geneId)			  
+			  geneNamesList.add(insertLocation, geneName)
+		}			  
 			
 	}
+	
+	returnMap.put("analysisInfo", analysisMap)
+	returnMap.put("geneIds", geneIdsList)
+	returnMap.put("geneNames", geneNamesList)
+	
 	return returnMap
  }
 
