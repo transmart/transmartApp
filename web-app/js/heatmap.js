@@ -622,8 +622,8 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    
 		numGenes++;
 	}
-	
-	var heatmapHeight = hHeader + (numGenes * hCell) + 10;
+
+	var heatmapHeight = hHeader + (numGenes * hCell) + 15;
 	var analysisLegendHeight;
 	var analysisLegendOffset = heatmapHeight;
 	var heatmapOffset = 0;
@@ -670,7 +670,14 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    .domain([rangeMin2, rangeMin, rangeMid, rangeMid, rangeMax, rangeMax2])
 	    .range(["#4400BE", "#4400BE", "#D7D5FF","#ffe2f2", "#D70C00", "#D70C00"]);
 
-		
+	if (numGenes == 0)  {
+	    var hmNoData = hm.append("text")
+		.attr("x", 0)
+		.attr("y", hHeader + 15)
+		.attr("text-anchor", "start")
+		.text("No data")		
+	}
+	
     //generate the heatmap
     var hmRow = hm.selectAll(".heatmap")
       .data(heatmapRows)
