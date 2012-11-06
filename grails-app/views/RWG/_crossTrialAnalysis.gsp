@@ -60,6 +60,9 @@
     <a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Boxplot Image</a>
 </div>    
 
+<div id="exportCTAHeatmap">
+    <a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a>
+</div>    
 	
 </div>
 

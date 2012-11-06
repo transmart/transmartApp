@@ -5,6 +5,8 @@ var ctaHeaderFontSize = 10;
 var ctaGeneLabelFontFamily = "Verdana, Tahoma, Arial";
 var ctaGeneLabelFontSize = 10;
 var ctaGeneLabelFontWeight = "normal";
+var ctaHeatmapHeightWithoutLegend;
+var ctaHeatmapHeightWithLegend;
 
 // Take the heatmap data in the second parameter and draw the D3 heatmap
 function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
@@ -621,7 +623,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		numGenes++;
 	}
 	
-	var heatmapHeight = hHeader + (numGenes * hCell);
+	var heatmapHeight = hHeader + (numGenes * hCell) + 10;
 	var analysisLegendHeight;
 	var analysisLegendOffset = heatmapHeight;
 	var heatmapOffset = 0;
@@ -637,7 +639,12 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	var hLegend = legendInfo.hLegend;
 	var analysisInfo = legendInfo.analysisInfo;
 	
-	var height = heatmapHeight + hLegend;
+	// save the height with and without legend so we can increase size for export/decrease when export done
+	ctaHeatmapHeightWithLegend = heatmapHeight + hLegend;
+	ctaHeatmapHeightWithoutLegend = heatmapHeight;
+
+	// draw the heatmap including legend, but truncate so that only heatmap shows
+	var height = ctaHeatmapHeightWithoutLegend;
 
 	// create the main svg object
 	var svg = d3.select("#" + divID)
@@ -801,6 +808,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	
 	 registerHeatmapTooltipEvents();
 	
+	 // draw the legend whether exporting or not -- will be hidden by truncation if not exporting
 	 drawCTAAnalysisLegend(svg, 0, analysisLegendOffset, analysisInfo);
 	
  	 jQuery("#" + divID).css('display', savedDisplayStyle);
@@ -841,4 +849,21 @@ function showHeatmapTooltip(e)  {
 		.fadeIn(200)
 		;
 	
+}
+
+//export the cta heatmap 
+function exportHeatmapCTAImage()
+{	
+		var svgID=  "#xtHeatmap";
+		
+		d3.select(svgID)
+			.selectAll("svg")
+			.attr("height", ctaHeatmapHeightWithLegend);   
+		
+		exportCanvas(svgID);
+		
+		d3.select(svgID)
+			.selectAll("svg")
+			.attr("height", ctaHeatmapHeightWithoutLegend);   
+
 }

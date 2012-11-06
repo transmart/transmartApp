@@ -239,17 +239,10 @@ function getAnalysisLegendInfo(analyses, wTotal)  {
 function drawCTAAnalysisLegend(svg, analysisLegendOffsetX, analysisLegendOffsetY, analysisInfo)  {
 
 	var analysisLegendGroup = svg.append("svg:g")
+	  .attr("id", "ctaHeatmapLegend")
  	  .attr("class", "analysisLegendGroup")
  	  .attr("transform", "translate(" + analysisLegendOffsetX + "," + analysisLegendOffsetY + ")")
  	  ;
-/*
-    var svgAnalyisLegend = {
-    		fontSize: 12,
-    		fontStyle: "sans-serif",
-    		spacing: 5,
-    		margin: 5
-    }		
-*/
 	
 	var legendFont =  svgAnalyisLegend.fontSize + "px " + svgAnalyisLegend.fontStyle;
 	var legendFontSize = svgAnalyisLegend.fontSize;

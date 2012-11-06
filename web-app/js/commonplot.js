@@ -563,7 +563,7 @@ function applyPlotStyles(svg, isCTA)  {
 	;
 }
 
-//export the current analysis data to a csv file
+//export the CTA boxplot
 function exportBoxPlotCTAImage()
 {	
 		var svgID=  "#xtBoxplot"
