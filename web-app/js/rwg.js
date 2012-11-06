@@ -2815,7 +2815,7 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id){
         width = ((data.length) * (bar_width + 10)),
         height = 150- margin.top - margin.bottom;
 
-    var y0 = Math.max(Math.max(-d3.min(data), d3.max(data)),5);
+    var y0 = Math.max(Math.max(-d3.min(data), d3.max(data)),3);
 
     var y2max = Math.max(d3.max(pdata),3);
     
