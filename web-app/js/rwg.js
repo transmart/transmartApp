@@ -50,28 +50,16 @@ var cohortBGColors = new Array(
 
 function removeSelectedAnalysis(analysisID){
 	
-
 	jQuery("#li_SelectedAnalysis_"+analysisID).fadeOut('fast');
 	
 
 	//remove from selecatedAnalyses array
-	for (var i =0; i < selectedAnalyses.length; i++)
-		   if (selectedAnalyses[i].id === analysisID) {
-			   selectedAnalyses.splice(i,1);
-		      break;
-		   }
+	removeXTAnalysisFromArray(analysisID);
 	
 	var currentCount = selectedAnalyses.length;
 	
-	jQuery("#analysisCount").val(currentCount);
-	var newLabel = currentCount + " Analyses Selected";
-	if (currentCount == 0)	{
-		newLabel = "0 Analyses Selected";
-	} else if (currentCount == 1)	{
-		newLabel = "1 Analysis Selected";
-	}
+	var newLabel = "(" +currentCount + ")";
 	jQuery("#analysisCountLabel").html(newLabel);
-	
 
 	jQuery("input[name=chbx_Analysis_"+analysisID+"]").attr('checked', false);
 	
@@ -80,38 +68,58 @@ function removeSelectedAnalysis(analysisID){
 
 }
 
+//remove the the XT Analysis from array selectedAnalyses
+function removeXTAnalysisFromArray(analysisID){
+	
+	for (var i =0; i < selectedAnalyses.length; i++)
+		   if (selectedAnalyses[i].id === analysisID) {
+			   selectedAnalyses.splice(i,1);
+		      break;
+		   }
+
+	//update the cookie
+	jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
+	
+	return;
+	
+}
+
+function addXTAnalysisToArray(analysisID, analysisTitle, studyID){
+	
+	//add item to selectedAnalyses array
+	selectedAnalyses.push({'id':analysisID, 'title':analysisTitle, 'studyID':studyID});
+	
+	//update the cookie
+	jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
+	
+	return;
+}
+
 
 function updateAnalysisCount(checkedState, analysisID, analysisTitle, studyID)	{	
-	var currentCount = jQuery("#analysisCount").val();
+
+	var currentCount = selectedAnalyses.length;
+	
 	if (checkedState)	{
 		currentCount++;
 		
-		//add item to selectedAnalyses array
-		selectedAnalyses.push({'id':analysisID, 'title':analysisTitle, 'studyID':studyID})
+		//Add analysis to array
+		addXTAnalysisToArray(analysisID, analysisTitle, studyID);
 		
 	} else	{
 		currentCount--;
 		
 		//remove from selecatedAnalyses array
-		for (var i =0; i < selectedAnalyses.length; i++)
-			   if (selectedAnalyses[i].id === analysisID) {
-				   selectedAnalyses.splice(i,1);
-			      break;
-			   }
+		removeXTAnalysisFromArray(analysisID);
 	}
 	
-	jQuery("#analysisCount").val(currentCount);
-	var newLabel = currentCount + " Analyses Selected";
-	if (currentCount == 0)	{
-		newLabel = "0 Analyses Selected";
-	} else if (currentCount == 1)	{
-		newLabel = "1 Analysis Selected";
-	}
+	var newLabel = "(" +currentCount + ")";
+
 	jQuery("#analysisCountLabel").html(newLabel);
 	
 	displayxtAnalysesList();
 	
-	return false;
+	return;
 }
 
 //this function used in the toolbar to display the selected list
@@ -147,8 +155,7 @@ function clearAllSelectedAnalyses(){
 	}
 	
 	jQuery('#selectedAnalysesExpanded').html("");
-	jQuery("#analysisCount").val(0);
-	jQuery("#analysisCountLabel").html("0 Analyses Selected");
+	jQuery("#analysisCountLabel").html("(0) ");
 	
 	selectedAnalyses =[];
 	
@@ -3113,7 +3120,10 @@ function openXtBoxplot(keywordId, geneName){
 	
 	*/
 	
-	jQuery('#xtBoxplot').dialog({ width: 700, title: geneName });
+	//find width of window, multiply by % to get dialog width
+	var wWidth = jQuery(window).width() * 0.8;
+	
+	jQuery('#xtBoxplot').dialog({ width: wWidth, title: geneName });
     
   //  jQuery('#simplemodal-container').mask("Loading...");
     

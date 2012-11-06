@@ -853,14 +853,15 @@ background-color: #DFDFDF;
 
 .toolbar-item{
 display: inline-block;
-border-right: 1px solid #CCC;
+border-right: 1px dotted #CCC;
 font-size: 11px;
 padding-left: 8px;
 padding-right: 8px;
-margin-top: 8px;
+padding-top: 8px;
+padding-bottom: 9px;
 
 }
-.toolbar-item:hover a{
+.toolbar-item a:hover{
 cursor: pointer;
 color:#000;
 text-decoration: none;

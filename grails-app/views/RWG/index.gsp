@@ -99,6 +99,17 @@
 			var showHomePageFirst=true;
 			
 	        jQuery(document).ready(function() {
+
+	        	//set cookie
+	        	if (jQuery.cookie('selectedAnalyses') == null){
+	        		jQuery.cookie('selectedAnalyses', '');
+	        	}
+		        else{
+	        		selectedAnalyses = jQuery.parseJSON(jQuery.cookie("selectedAnalyses"));
+	        		//update the header with the number of Analyses
+	        		jQuery("#analysisCountLabel").html("(" +selectedAnalyses.length + ")");
+	        	}
+
 		        
 		        addSelectCategories();
 		        addSearchAutoComplete();
@@ -164,7 +175,6 @@
                 
     </head>
     <body>
-    	<input type="hidden" id="analysisCount" value="0" />
         <div id="header-div">        
             <g:render template="/layouts/commonheader" model="[app:rwg]" />
         </div>
@@ -175,12 +185,13 @@
 			<ul>
 				<li class='toolbar-item'><a href="#" onclick='showHomePage();'>Home</a></li>
 				<li class='toolbar-item'><a href="#" onclick='showResultsPage();'>Search Results</a></li>
-				<li class='toolbar-item'><a href="#" onclick='openCrossTrialAnalysis();'>Cross Trial Analysis</a></li>
-				<li class='toolbar-item'>						
-					<div id="selectedAnalyses_holder">
+				<li class='toolbar-item'><a href="#" onclick='openCrossTrialAnalysis();'>Cross Trial Analysis</a>
+				<span style="color: #999;"> | </span>
+									
+					<div id="selectedAnalyses_holder" style='display: inline-block'>
 						<div id='selectedAnalyses_btn'>
 							<a href="#" onclick='getSelectedAnalysesList();'>
-								 <span id="analysisCountLabel">0 Analyses Selected</span>
+								 <span id="analysisCountLabel">(0)</span>
 								 <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
 							</a>
 						</div>
