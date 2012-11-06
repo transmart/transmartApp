@@ -3006,10 +3006,6 @@ function getCrossTrialBioMarkerSummary(search_keyword_id)
 	
 }
 
-
-
-
-
 function addXTSearchAutoComplete()	{
 	jQuery("#xtSearch-ac").autocomplete({
 		source: sourceURL,
@@ -3035,7 +3031,8 @@ function addXTSearchAutoComplete()	{
 				case "GENELIST": 
 				case "GENESIG": 
 				case "PATHWAY":
-					loadHeatmapCTA(categoryId, keywordId)
+					loadHeatmapCTAPaginator(categoryId, keywordId, 1);
+					loadHeatmapCTA(categoryId, keywordId);   // need to call this from within method in prev line
 					break;
 				default:  
 					alert("Invalid category!");
@@ -3086,22 +3083,44 @@ function loadHeatmapCTA(category, searchKeywordId)	{
 		data: {analysisIds: analysisIds, category: category, searchKeywordId: searchKeywordId},
 		timeout:60000,
 		success: function(response) {
-
 			
 			drawHeatmapCTA('xtHeatmap', response, selectedAnalyses);
-			
-//			alert("data returned");
-//			alert(response.toString());
-//			drawBoxPlotD3('xtBoxplot', response, null, false, true, selectedAnalyses);
-			
+						
 		},
 		error: function(xhr) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
 	});
-	
-	
+		
 }
+
+function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
+
+	var analysisIds = "";
+	// retrieve list of selected analyses, create a pipe delimited list of analysis ids
+	for (var i=0; i<selectedAnalyses.length; i++)
+	{
+		if (analysisIds != "")  {
+			analysisIds += "|";
+		}
+		analysisIds += selectedAnalyses[i].id;
+	}
+		
+	rwgAJAXManager.add({
+		url:getHeatmapCTANumberGenesURL,		
+		data: {analysisIds: analysisIds, category: category, searchKeywordId: searchKeywordId, page:page},
+		success: function(response) {								
+			var maxGeneIndex = response['maxGeneIndex']
+			
+//			getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, page);
+	
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+}
+
 
 
 function openXtBoxplot(keywordId, geneName){

@@ -874,3 +874,5 @@ function exportHeatmapCTAImage()
 			.attr("height", ctaHeatmapHeightWithoutLegend);   
 
 }
+
+
