@@ -54,11 +54,21 @@ class WebserviceService {
 	GROUP BY BIO_MARKER_ID
 	"""
 	
+	def final geneLimitsSqlQueryByEntrez = """
+
+		SELECT BIO_MARKER_ID, max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as chrom from deapp.de_snp_gene_map gmap
+		INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
+	    INNER JOIN BIO_MARKER bm ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID AND bm.PRIMARY_SOURCE_CODE = 'Entrez'
+		WHERE gmap.entrez_gene_id = ? AND snpinfo.hg_version = '19'
+	    GROUP BY BIO_MARKER_ID
+	
+	"""
+	
 	def final genePositionSqlQuery = """
 		SELECT DISTINCT BIO_MARKER_ID, ENTREZ_GENE_ID, BIO_MARKER_NAME, BIO_MARKER_DESCRIPTION FROM deapp.de_snp_gene_map gmap
 		INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
 		INNER JOIN BIO_MARKER bm ON bm.primary_external_id = to_char(gmap.entrez_gene_id)
-		WHERE chrom = ? AND pos >= ? AND pos <= ?
+		WHERE chrom = ? AND pos >= ? AND pos <= ? AND HG_VERSION = '19'
 	"""
 	
 	def final modelInfoSqlQuery = """
@@ -102,7 +112,7 @@ class WebserviceService {
 	def getGeneByPosition(String chromosome, Long start, Long stop) {
 		//Complete the query - if we have a geneSymbol, use that, otherwise use ID
 		def query = genePositionSqlQuery;
-		def geneQuery = geneLimitsSqlQueryById;
+		def geneQuery = geneLimitsSqlQueryByEntrez;
 			
 		//Create objects we use to form JDBC connection.
 		def con, stmt, rs = null;
@@ -125,14 +135,14 @@ class WebserviceService {
 		try {
 			while(rs.next()) {
 				
-				def bioMarkerId = rs.getLong("BIO_MARKER_ID")
+				def entrezGeneId = rs.getLong("ENTREZ_GENE_ID")
 				
-				geneStmt.setLong(1, bioMarkerId)
+				geneStmt.setString(1, entrezGeneId.toString())
 				geneRs = geneStmt.executeQuery();
 				try {
 					if(geneRs.next()) {
 						results.push([
-							bioMarkerId,
+							rs.getString("BIO_MARKER_ID"),
 							"GRCh37",
 							rs.getString("BIO_MARKER_NAME"),
 							rs.getString("BIO_MARKER_DESCRIPTION"),
