@@ -213,8 +213,9 @@ function getAnalysisLegendInfo(analyses, wTotal)  {
 		var info = {}
 		 info.y = svgLegendHeight;
 		 info.w = wLegendText;
+		 info.title = analyses[i].titleDisplay;
 
-		 var hText = getTextFlowHeight(analyses[i].title, wLegendText, legendFont, legendFontSize) + legendFontSize;
+		 var hText = getTextFlowHeight(info.title, wLegendText, legendFont, legendFontSize) + legendFontSize;
 		 
 		 // height of analysis is greater of the font height or the total height of the text
 		 info.h = (hText > legendFontSize ? hText :  legendFontSize) + svgAnalyisLegend.spacing;
@@ -232,4 +233,46 @@ function getAnalysisLegendInfo(analyses, wTotal)  {
 						
 	hLegend = svgLegendHeight;  
 	return {hLegend:hLegend, analysisInfo:analysisInfo};
+}
+
+
+function drawCTAAnalysisLegend(svg, analysisLegendOffsetX, analysisLegendOffsetY, analysisInfo)  {
+
+	var analysisLegendGroup = svg.append("svg:g")
+ 	  .attr("class", "analysisLegendGroup")
+ 	  .attr("transform", "translate(" + analysisLegendOffsetX + "," + analysisLegendOffsetY + ")")
+ 	  ;
+/*
+    var svgAnalyisLegend = {
+    		fontSize: 12,
+    		fontStyle: "sans-serif",
+    		spacing: 5,
+    		margin: 5
+    }		
+*/
+	
+	var legendFont =  svgAnalyisLegend.fontSize + "px " + svgAnalyisLegend.fontStyle;
+	var legendFontSize = svgAnalyisLegend.fontSize;
+	
+	// loop through each analysis and draw the description
+	for (var i=0; i<analysisInfo.length; i++)  {
+		var divId = "analysisLegendDescription" + uniqueDivID++;
+		
+		var analysisText = analysisLegendGroup.append("text")
+	        .attr("id", divId)
+			.attr("x", svgAnalyisLegend.margin)
+			.attr("y", function () { return analysisInfo[i].y + legendFontSize;})
+			.attr('class', 'legendAnalysisDesc')
+	        .attr("text-anchor", "start")
+	        .style("font", legendFont);   // need to apply style here when drawn so that textFlow draws correctly 
+
+		var textNode = document.getElementById(divId);
+		var dy = textFlow(analysisInfo[i].title,
+			textNode,
+			analysisInfo[i].w,
+			0,
+			legendFontSize,
+			false);
+			
+	}	
 }

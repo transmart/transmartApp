@@ -573,6 +573,11 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	
 	hmTooltips = new Array;
 	
+	for (var i=0; i<analyses.length; i++)  {
+		analyses[i].title = analyses[i].title.replace(/_/g,', ') 		
+		analyses[i].titleDisplay = (i + 1) + " - " + analyses[i].studyID + " : " + analyses[i].title; 		
+	}
+	
 	//var cellSize = parseInt(jQuery(cellID).slider( "option", "value" ));
 	var cellSize = 15;
 	var wCell = cellSize, hCell = cellSize;		// Cell dimensions
@@ -618,10 +623,10 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	
 	var heatmapHeight = hHeader + (numGenes * hCell);
 	var analysisLegendHeight;
-	var analysLegendOffset = heatmapHeight;
+	var analysisLegendOffset = heatmapHeight;
 	var heatmapOffset = 0;
 
-	var minWidth = 200;
+	var minWidth = 500;
 	var wTotal = maxGeneWidth + numAnalyses*wCell + 6;
 	if (wTotal < minWidth)  {
 		wTotal = minWidth;
@@ -630,7 +635,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	// retrieve info needed for legend
 	var legendInfo = getAnalysisLegendInfo(analyses, wTotal);
 	var hLegend = legendInfo.hLegend;
-	var analyisInfo = legendInfo.analysisInfo;
+	var analysisInfo = legendInfo.analysisInfo;
 	
 	var height = heatmapHeight + hLegend;
 
@@ -699,7 +704,9 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 
 			var tooltip = 
 	    				   "<table style='td{padding:5px}'>" +
-	    				   "<tr><td  width='100px'><b>Analysis</b></td><td>" + analyses[d.x].title + "</td></tr>" +
+	    				   "<tr><td width='100px'><b>Index</b></td><td>" + (d.x + 1) + "</td></tr>" +
+	    				   "<tr><td><b>Study</b></td><td>" + analyses[d.x].studyID + "</td></tr>" +
+	    				   "<tr><td ><b>Analysis</b></td><td>" + analyses[d.x].title + "</td></tr>" +
 	    				   "<tr><td><b>Probe</b></td><td>" + d.probeId + "</td></tr>" +
 	    				   "<tr><td><b>Gene</b></td><td>" + geneName  + "</td></tr>" +
 	    				   "<tr><td><b>Fold Change</b></td><td>" + fc  + "</td></tr>" +
@@ -730,8 +737,6 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    })
 	    ;
 
-	registerHeatmapTooltipEvents();
-				
 	//GROUP FOR Column headers
 	var headerGroup = hm.append("svg:g")
 	  .attr("class", "columnHeader")
@@ -747,6 +752,19 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		    })
 		.attr("y", -2)
 		.attr("text-anchor", "middle")
+	    .attr("class", "heatmapTooltip")
+	    .attr("id", function(d, i) {
+	    	var id = "hmHeader" + uniqueHeatmapId++;   // id here will match id in tooltip array
+			var tooltip = 
+	    				   "<table style='td{padding:5px}'>" +
+	    				   "<tr><td width='100px'><b>Index</b></td><td>" + (i + 1) + "</td></tr>" +
+	    				   "<tr><td><b>Study</b></td><td>" + d.studyID + "</td></tr>" +
+	    				   "<tr><td ><b>Analysis</b></td><td>" + d.title + "</td></tr>" 
+	    				   "</table>";
+	    	
+	    	hmTooltips[id] = tooltip;
+	    	return id;
+	    })		
 	    .style("font-size", ctaHeaderFontSize + "px")
    	    .style("font-family", ctaHeaderFontFamily)
 		.text(function(d, i)	{
@@ -754,10 +772,11 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		} )		
         ;			
 	
-	headerGroupText.append('svg:title').text(function(d)	{
-		return d.title;
-	} );
 
+/*	headerGroupText.append('svg:title').text(function(d)	{
+			return d.titleDisplay;
+		} );
+*/
 	
     // GENE LABELS
 	xOffset = 0;
@@ -786,6 +805,9 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		} )		
         ;			
 	
+	registerHeatmapTooltipEvents();
+	
+	drawCTAAnalysisLegend(svg, 0, analysisLegendOffset, analysisInfo);
 	
 /*    
 
@@ -928,7 +950,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 
 this.registerHeatmapTooltipEvents = function(){
 	// create the method for the hover event for tooltips on the favorites for faceted searches
-	jQuery("rect.heatmapTooltip").hoverIntent(
+	jQuery(".heatmapTooltip").hoverIntent(
 		{
 			over:function(e){
 				//var elementId = e.currentTarget.id;
