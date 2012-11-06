@@ -646,15 +646,17 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		.attr("transform", "translate(" + 0 + "," + heatmapOffset + ")")
 		.attr("class", "heatmap");
 
+	// use same colors between the 2 range max/min values
+	var rangeMax = 2.5;
+	var rangeMax2 = 10000;
+	var rangeMin = -2.5;
+	var rangeMin2 = -10000;
 	
-	// hardcode for now, do we want to use sliders?  do we need to normalize values?
-	var rangeMax = maxFoldChange;
-	var rangeMin = minFoldChange;
 	var rangeMid = (rangeMax + rangeMin)/2;
 	
 	var colorScale = d3.scale.linear()
-	    .domain([rangeMin, rangeMid, rangeMid, rangeMax])
-	    .range(["#4400BE", "#D7D5FF","#ffe2f2", "#D70C00"]);
+	    .domain([rangeMin2, rangeMin, rangeMid, rangeMid, rangeMax, rangeMax2])
+	    .range(["#4400BE", "#4400BE", "#D7D5FF","#ffe2f2", "#D70C00", "#D70C00"]);
 
 		
     //generate the heatmap
