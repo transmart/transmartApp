@@ -3004,7 +3004,7 @@ function addXTSearchAutoComplete()	{
 			switch (categoryId)  {
 				case "GENE": 
 					getCrossTrialGeneSummary(keywordId);
-					loadBoxPlotCTA(keywordId);
+					//loadBoxPlotCTA(keywordId);
 					break;
 				case "GENELIST": 
 				case "GENESIG": 
@@ -3052,6 +3052,8 @@ function loadHeatmapCTA(analysisIds, bmIds)	{
 		data: {analysisIds: analysisIds, bmIds: bmIdsPiped},
 		timeout:60000,
 		success: function(response) {
+			
+			jQuery('#xtHeatmap').unmask(); //hide the loading msg, unblock the div
 			
 			drawHeatmapCTA('xtHeatmap', response, selectedAnalyses);
 						
@@ -3171,9 +3173,7 @@ function openXtBoxplot(keywordId, geneName){
 	//find width of window, multiply by % to get dialog width
 	var wWidth = jQuery(window).width() * 0.8;
 	
-	jQuery('#xtBoxplot').dialog({ width: wWidth, title: geneName });
-    
-  //  jQuery('#simplemodal-container').mask("Loading...");
+	jQuery('#xtBoxplotWrapper').dialog({ width: wWidth, title: geneName });
     
     loadBoxPlotCTA(keywordId);
     
@@ -3197,7 +3197,8 @@ function loadBoxPlotCTA(keywordId)	{
 		}
 		ids += selectedAnalyses[i].id;
 	}
-	
+    jQuery('#xtBoxplotWrapper').mask("Loading...");
+
 	rwgAJAXManager.add({
 		url:getBoxPlotDataCTAURL,
 		data: {ids: ids, keywordId: keywordId},
@@ -3205,6 +3206,8 @@ function loadBoxPlotCTA(keywordId)	{
 		success: function(response) {
 			
 			drawBoxPlotD3('xtBoxplot', response, null, false, true, selectedAnalyses);
+		    jQuery('#xtBoxplotWrapper').unmask();
+
 			
 		},
 		error: function(xhr) {

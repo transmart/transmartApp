@@ -50,21 +50,24 @@
 
 </div>
 <!-- Boxplot Tab Content -->
-<div id="xtBoxplot" style="display:none"></div>
+<div id="xtBoxplotWrapper" style="display:none">
+	<div id="xtBoxplot"></div>
+	<div id="exportBoxplot">
+    	<a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Boxplot Image</a>
+	</div>    
+</div>
+
 
 <!-- Heatmap Tab Content -->
-<div id="xtHeatmap">Heatmap</div>
+<div id="xtHeatmap"></div>
 
-<div id="xtHeatmapPaginator" class="pagination">
+<div id="xtHeatmapPaginator" class="pagination" style="text-align:left">
 </div>    
 
 <div id="exportCTAHeatmap">
     <a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a>
 </div>    
 
-<div id="exportBoxplot">
-    <a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Boxplot Image</a>
-</div>    
 
 	
 </div>
