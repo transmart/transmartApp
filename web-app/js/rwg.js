@@ -68,6 +68,22 @@ function removeSelectedAnalysis(analysisID){
 
 }
 
+//When the user adds or removes an analyses from the Selected Analyses list,
+//we need to check if there are summary stats or heatmaps already display
+//If so, give option to refresh or clear the view
+function refreshCrossTrialMsg(){
+	
+	//if there are already selected keywords, then these need
+	//to be refreshed or removed
+	if(xtSelectedKeywords.length>0){
+		
+		//TODO: Display msg to user with option to refresh or clear
+		
+	}
+	
+}
+
+
 //remove the the XT Analysis from array selectedAnalyses
 function removeXTAnalysisFromArray(analysisID){
 	
@@ -155,11 +171,18 @@ function clearAllSelectedAnalyses(){
 	}
 	
 	jQuery('#selectedAnalysesExpanded').html("");
-	jQuery("#analysisCountLabel").html("(0) ");
+	jQuery("#analysisCountLabel").html("(0)");
 	
 	selectedAnalyses =[];
 	
+	//update cookie
+	jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
+	
+	//Hide menu
 	jQuery("#selectedAnalysesExpanded").hide();
+	
+	//update the display list
+	displayxtAnalysesList();
 
 	return;
 	
@@ -2688,45 +2711,6 @@ function getTopGenes(analysisID)
 }
 
 
-function displayXTGeneSummary(data, keyword_id){
-	
-	var foldchangeDataset = [];
-	var pvalueDataset =[];
-	
-	
-	jQuery(selectedAnalyses).each(function(index, value){
-		
-		var result = data.filter(function(el){return el.bio_assay_analysis_id == selectedAnalyses[index].id});
-		var fold_change_ratio;
-		var preferred_pvalue;
-		
-		if(result[0] == null){
-			fold_change_ratio = '-';
-			foldchangeDataset[index] = 0;
-		}
-		 else {
-			 fold_change_ratio = result[0].fold_change_ratio;
-			 foldchangeDataset[index] = fold_change_ratio;
-		 }
-		
-		if(result[0] == null){
-			preferred_pvalue = '-';
-			pvalueDataset[index]=0;
-		}
-		 else {
-			 preferred_pvalue = result[0].preferred_pvalue;
-			 if(preferred_pvalue<.00001){preferred_pvalue=0.00001};
-			 pvalueDataset[index]= -1 * (Math.log(preferred_pvalue) / Math.log(10)); //calculate the -log10(p-value)
-		 }
-		
-	});
-
-	
-	createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, keyword_id);
-	
-	
-	return;
-}
 
 //used on the cross trial analysis page to display the summary
 function displayxtAnalysesList(){
@@ -2753,7 +2737,7 @@ function displayxtAnalysesList(){
 
 
 
-function createCrossTrialSummaryChart(data, pdata, keyword_id){
+function createCrossTrialSummaryChart(data, pdata, keyword_id, placeholder){
 	
 	
 	var keywordObject = xtSelectedKeywords.filter(function(el){return el.id == keyword_id});
@@ -2798,8 +2782,12 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id){
         .orient("right");
     
     
+    //remove the div if it already exists:
+    jQuery('#'+divID).remove();
+    
     //create div to hold svg chart
     jQuery("#xtSummaryChartArea").append("<div id='"+divID +"' class='xtSummaryChart'></div>");
+    
     
     //only show the close btn on hover
     jQuery('#'+divID).hover(
@@ -2827,7 +2815,7 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id){
                         //5 is the left padding, 10 is the padding between each bar
         .attr("x", function(d,i) { return 5 + i * (bar_width+10); })
         .attr("y", function(d,i) { return y(Math.max(0, d)); })
-        .attr("height", function(d) { return Math.abs(y(0) - y(0-d)); })
+        .attr("height", function(d) { return Math.abs(y(0) - y(0-d));})
         .attr("width", bar_width);
 
 
@@ -2902,6 +2890,15 @@ svg.selectAll("text")
     //add some buttons
     jQuery('#'+divID).append(closeHTML +"<span style='display:block'>"+openBoxplotLinkHTML+"</span>");
     
+    //if placeholder is true, then we are drawing the graph with no data simply to use as a placeholder
+    if(placeholder){
+    	jQuery('#'+divID).mask("Loading...");//add loading screen
+    }else
+	{
+    	jQuery('#'+divID).unmask();//remove loading screen
+	}
+    
+    
 }
 
 /*
@@ -2911,12 +2908,22 @@ jQuery.ui.dialog.prototype._makeDraggable = function() {
     });
 };*/
 
-function getCrossTrialBioMarkerSummary(search_keyword_id)
+function getCrossTrialGeneSummary(search_keyword_id)
 {
+	
+	var foldchangeDataset = [];
+	var pvalueDataset =[];
+	
 	
 	var analysisList = '';
 	
+	
+	//Convert the selected analysis array into a list
 	for (var i =0; i < selectedAnalyses.length; i++){
+		
+		//add place holder data so that when the chart is drawn without data, it is the correct size
+		foldchangeDataset.push('');
+		pvalueDataset.push('');
 		
 		analysisList += selectedAnalyses[i].id;
 		
@@ -2925,6 +2932,9 @@ function getCrossTrialBioMarkerSummary(search_keyword_id)
 		}
 		
 	}
+	
+	//do this first, without data, to create loading place holder while getting data
+	createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, search_keyword_id, true);
 
 	rwgAJAXManager.add({
 		url:getCrossTrialBioMarkerSummaryURL,
@@ -2935,21 +2945,39 @@ function getCrossTrialBioMarkerSummary(search_keyword_id)
 			//store the response
 			jQuery('body').data("xtBioMarkerSummaryData:" + search_keyword_id, data); 
 			
-			displayXTGeneSummary(data, search_keyword_id);
 			
-			/* Debugging: Display the results in a table */
-			/*
-			 var tbl_body = "<div><table style='width:230px'>";
-			 jQuery.each(data, function() {
-			        var tbl_row = "";
-			        jQuery.each(this, function(k , v) {
-			            tbl_row += "<td>"+v+"</td>";
-			        })
-			        tbl_body += "<tr>"+tbl_row+"</tr>";                 
-			    })
-			    tbl_body += '</table></div>';
-			    jQuery('#xtBioMarkerSummary').after(tbl_body);
-			 */
+			//prepare the data into arrays before creating chart
+			jQuery(selectedAnalyses).each(function(index, value){
+				
+				var result = data.filter(function(el){return el.bio_assay_analysis_id == selectedAnalyses[index].id});
+				var fold_change_ratio;
+				var preferred_pvalue;
+				
+				if(result[0] == null){
+					fold_change_ratio = '';
+					foldchangeDataset[index] = fold_change_ratio;
+				}
+				 else {
+					 fold_change_ratio = result[0].fold_change_ratio;
+					 foldchangeDataset[index] = fold_change_ratio;
+				 }
+				
+				if(result[0] == null){
+					preferred_pvalue = '';
+					pvalueDataset[index]=preferred_pvalue;
+				}
+				 else {
+					 preferred_pvalue = result[0].preferred_pvalue;
+					 if(preferred_pvalue<.00001){preferred_pvalue=0.00001};
+					 pvalueDataset[index]= -1 * (Math.log(preferred_pvalue) / Math.log(10)); //calculate the -log10(p-value)
+				 }
+				
+			});
+			
+
+			//Draw chart
+			createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, search_keyword_id, false);
+			
 		   
 		}
 	});
@@ -2972,10 +3000,10 @@ function addXTSearchAutoComplete()	{
 			
 			xtSelectedKeywords.push({id: keywordId, termName: searchTerm, categoryId: categoryId });
 			
-			getCrossTrialBioMarkerSummary(keywordId);
 
 			switch (categoryId)  {
 				case "GENE": 
+					getCrossTrialGeneSummary(keywordId);
 					loadBoxPlotCTA(keywordId);
 					break;
 				case "GENELIST": 
