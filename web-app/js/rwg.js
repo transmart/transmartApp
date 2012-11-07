@@ -3042,14 +3042,14 @@ function drawPieChart(divid, data)
 
 //Load the heatmap data for cross trial analysis 
 // analysisIds: pipe delimited list of analysis ids
-// genes: list of gene ids for page to be loaded
+// genes: list of bm ids for page to be loaded
 // searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
-function loadHeatmapCTA(analysisIds, geneIds)	{	
+function loadHeatmapCTA(analysisIds, bmIds)	{	
 		
-	var geneIdsPiped = geneIds.join('|');
+	var bmIdsPiped = bmIds.join('|');
 	rwgAJAXManager.add({
 		url:getHeatmapDataCTAURL,
-		data: {analysisIds: analysisIds, geneIds: geneIdsPiped},
+		data: {analysisIds: analysisIds, bmIds: bmIdsPiped},
 		timeout:60000,
 		success: function(response) {
 			
@@ -3080,9 +3080,9 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 		data: {analysisIds: analysisIds, category: category, searchKeywordId: searchKeywordId, page:page},
 		success: function(response) {								
 			var maxGeneIndex = response['maxGeneIndex'];
-			var geneIds = response['geneIdsWithData'].split('|');
+			var bmIds = response['bmIdsWithData'].split('|');
 			
-			getHeatmapPaginatorCTA("xtHeatmapPaginator", analysisIds, category, searchKeywordId, maxGeneIndex, geneIds);
+			getHeatmapPaginatorCTA("xtHeatmapPaginator", analysisIds, category, searchKeywordId, maxGeneIndex, bmIds);
 	
 		},
 		error: function(xhr) {
@@ -3091,7 +3091,7 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 	});
 }
 
-function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, maxGeneIndex, geneIds) {
+function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, maxGeneIndex, bmIds) {
 	var element = jQuery("#" + divID);
 	var numberOfGenesPerPage = 20;
 	
@@ -3117,9 +3117,9 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, m
 	}
 	
 	// now loop through genes with data and push onto the appropriate page
-	for (var i=0; i<geneIds.length; i++)  {
+	for (var i=0; i<bmIds.length; i++)  {
 		var p = Math.floor(i / numberOfGenesPerPage);
-		pagesArray[p].push(geneIds[i]);
+		pagesArray[p].push(bmIds[i]);
 	}
 
 	// save the page information so can be used for later page loads

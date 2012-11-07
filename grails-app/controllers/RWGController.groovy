@@ -907,24 +907,24 @@ class RWGController {
 	* Returns the data for the heatmap visualization for Cross Trial Analysis
 	* 
 	* @param params.analysisIds: list of analysis ids
-	* @param params.category: either PATHWAY, GENELIST, or GENESIG  
-	* @param params.searchKeywordId: search keyword id of the pathway, genelist or gene signature
+	* @param params.bmIds: list of bio marker ids representing genes  
 	* 
 	*/
    def getHeatmapDataCTA = {
 	   def rwgDAO = new RWGVisualizationDAO()
 	   
 	   
-	   // geneIdsListIn should match geneIdsListOut with the way the data flow currently works (i.e.
+	   // bioMarkerIdsListIn should match bioMarkerIdsListOut with the way the data flow currently works (i.e.
 	   //   we've already determined the list of genes with data to be shown on current page so we already know
 	   //   what the output list is, however leaving this as 2 separate lists in case we need to change flow)
 	   def analysisIdsList = params.analysisIds.split(/\|/)
-	   def genesIdsListIn = params.geneIds
+	   def bioMarkerIdsListIn = params.bmIds
 	   
-	   def returnData = rwgDAO.getHeatmapDataCTA(analysisIdsList, genesIdsListIn)
+	   def returnData = rwgDAO.getHeatmapDataCTA(analysisIdsList, bioMarkerIdsListIn)
 	   
 	   def analysisData = returnData.get("analysisInfo")
-	   def geneIdsListOut = returnData.get("geneIds")
+	   def bioMarkerIdsListOut = returnData.get("bioMarkerIds")
+	   def geneIdsList = returnData.get("geneIds")
 	   def geneNamesList = returnData.get("geneNames")
 	   
 	   // create a matrix of values that will be used in heatmap.  This will be a map of rows (keyed on order); each row will also contain a map
@@ -936,18 +936,19 @@ class RWGController {
 	   
 	   def matrix = [:]
 	   int rowIndex = 0; 
-	   geneIdsListOut.each{  geneId ->
+	   bioMarkerIdsListOut.each{  bmId ->
 		   
 		   def row = [:]
-		   row.put("geneId", geneId)		   
+		   row.put("bmId", bmId)		   
 		   row.put("geneName", geneNamesList[rowIndex])
+		   row.put("geneId", geneIdsList[rowIndex])
 		   
 		   // now add a data map which contains one column for each analysis in list of analysis Ids passed in
 		   def colIndex = 0;
 		   def data = [:]
 		   analysisIdsList.each { analysisId ->
 			   
-			   def cellData = analysisData?.get(analysisId)?.get(geneId)
+			   def cellData = analysisData?.get(analysisId)?.get(bmId)
 			   
 			   if (!cellData)  {
 				   cellData = [:]
@@ -1001,12 +1002,12 @@ class RWGController {
 
 	   def analysisIdsList = params.analysisIds.split(/\|/)
 	   
-	   def geneIdsWithData = rwgDAO.getHeatmapGenesCTA(analysisIdsList, genesList)	   
-	   def maxGeneIndex = geneIdsWithData.size()
+	   def bmIdsWithData = rwgDAO.getHeatmapGenesCTA(analysisIdsList, genesList)	   
+	   def maxGeneIndex = bmIdsWithData.size()
 	      
 	   JSONObject ret = new JSONObject()
 	   ret.put('maxGeneIndex', maxGeneIndex)
-	   ret.put('geneIdsWithData', geneIdsWithData.join('|'))
+	   ret.put('bmIdsWithData', bmIdsWithData.join('|'))
 	   
 	   response.setContentType("text/json")
 	   response.outputStream << ret?.toString()
