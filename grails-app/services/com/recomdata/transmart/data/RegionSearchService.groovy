@@ -46,6 +46,14 @@ class RegionSearchService {
 	
 	"""
 	
+	def genesForSnpQuery = """
+	
+	SELECT DISTINCT(BIO_MARKER_NAME) FROM DE_SNP_GENE_MAP
+	INNER JOIN BIO_MARKER ON PRIMARY_SOURCE_CODE = 'Entrez' AND PRIMARY_EXTERNAL_ID = ENTREZ_GENE_ID
+	WHERE SNP_NAME = ?
+	
+	"""
+	
 	def snpLimitsSqlQuery = """
 	
 	SELECT max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as chrom FROM SEARCHAPP.SEARCH_KEYWORD sk
@@ -107,6 +115,33 @@ class RegionSearchService {
 			stmt?.close();
 			con?.close();
 		}
+	}
+	
+	def getGenesForSnp(String snp) {
+		//Create objects we use to form JDBC connection.
+		def con, stmt, rs = null;
+		
+		//Grab the connection from the grails object.
+		con = dataSource.getConnection()
+		
+		//Prepare the SQL statement.
+		stmt = con.prepareStatement(genesForSnpQuery);
+		stmt.setString(1, snp);
+
+		rs = stmt.executeQuery();
+
+		def results = []
+		try{
+			while(rs.next()){
+				results.push(rs.getString("BIO_MARKER_NAME"))
+			}
+		}finally{
+			rs?.close();
+			stmt?.close();
+			con?.close();
+		}
+		
+		return results;
 	}
 	
 	def getSnpLimits(Long searchId, String ver) {

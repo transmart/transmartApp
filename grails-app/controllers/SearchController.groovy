@@ -590,10 +590,10 @@ public class SearchController{
 		def geneSource = params.geneSource
 		def snpSource = params.snpSource
 		def pvalueCutoff = params.pvalueCutoff
-		def searchRegions = getSearchRegions(session['solrSearchFilter'])
+		def searchRegions = getWebserviceCriteria(session['solrSearchFilter'])
 		def regionStrings = []
 		for (region in searchRegions) {
-			regionStrings += region.low + "," + region.high + "," + region.chromosome
+			regionStrings += region[0] + "," + region[1]
 		}
 		def regions = regionStrings.join(";")
 		//Set defaults - JNLP does not take blank arguments
@@ -985,6 +985,87 @@ public class SearchController{
 		}
 		
 		return regions
+	}
+	
+	def getWebserviceCriteria(solrSearch) {
+		def genes = []
+		
+		for (s in solrSearch) {
+			if (s.startsWith("REGION")) {
+				//Cut off REGION:, split by pipe and interpret chromosomes and genes
+				s = s.substring(7)
+				def regionparams = s.split("\\|")
+				for (r in regionparams) {
+					//Chromosome
+					if (r.startsWith("CHROMOSOME")) {
+						//Do nothing for now
+					}
+					//Gene
+					else {
+						def region = r.split(";")
+						def geneId = region[1] as long
+						def direction = region[2]
+						def range = region[3] as long
+						def ver = region[4]
+						def searchKeyword = SearchKeyword.get(geneId)
+						def limits
+						if (searchKeyword.dataCategory.equals("GENE")) {
+							genes.push([searchKeyword.keyword, range])
+						}
+						else if (searchKeyword.dataCategory.equals("SNP")) {
+							//Get the genes associated with this SNP
+							def snpGenes = regionSearchService.getGenesForSnp(searchKeyword.keyword)
+							//Push each gene and the radius
+							for (snpGene in snpGenes) {
+								genes.push([snpGene, range])
+							}
+						}
+						
+					}
+				}
+			}
+			else if (s.startsWith("GENESIG")) {
+				//Expand regions to genes and get their limits
+				s = s.substring(8)
+				def sigIds = s.split("\\|")
+				for (sigId in sigIds) {
+					def sigSearchKeyword = SearchKeyword.get(sigId as long)
+					def sigItems = GeneSignatureItem.createCriteria().list() {
+						eq('geneSignature', GeneSignature.get(sigSearchKeyword.bioDataId))
+						like('bioDataUniqueId', 'GENE%')
+					}
+					for (sigItem in sigItems) {
+						def searchGene = SearchKeyword.findByUniqueId(sigItem.bioDataUniqueId)
+						def geneId = searchGene.id
+						genes.push([searchGene.keyword, 0]);
+					}
+				}
+			}
+			else if (s.startsWith("GENE")) {
+				s = s.substring(5)
+				def geneIds = s.split("\\|")
+				for (geneString in geneIds) {
+					def geneId = geneString as long
+					def searchKeyword = SearchKeyword.get(geneId)
+					genes.push([searchKeyword.keyword, 0])
+				}
+			}
+			else if (s.startsWith("SNP")) {
+				//If plain SNPs, as above (default to HG19)
+				s = s.substring(4)
+				def rsIds = s.split("\\|")
+				for (rsId in rsIds) {
+					//Get the genes associated with this SNP
+					def snpGenes = regionSearchService.getGenesForSnp(searchKeyword.keyword)
+					//Push each gene and the radius
+					for (snpGene in snpGenes) {
+						genes.push([snpGene, range])
+					}
+				}
+			}
+		}
+		
+		return genes
 	}
 	
 	def getRegionSearchResults(Long max, Long offset, Double cutoff, String sortField, String order, String search, List analysisIds) throws Exception {

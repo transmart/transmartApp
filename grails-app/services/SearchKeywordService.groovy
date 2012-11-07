@@ -81,7 +81,7 @@ public class SearchKeywordService {
 			}
 			else if ("ALL".compareToIgnoreCase(category) != 0)	{
 				searchKeyword	{
-					eq("dataCategory", category, [ignoreCase: true])
+					eq("dataCategory", category)
 				}
 			}
 
