@@ -95,7 +95,8 @@
 			var getTopGenesURL = "${createLink([action:'getTopGenes'])}";
 			var getCrossTrialBioMarkerSummaryURL = "${createLink([action:'getCrossTrialBioMarkerSummary'])}";
 	        var getHeatmapDataCTAURL = "${createLink([action:'getHeatmapDataCTA'])}";
-			
+	        var getHeatmapCTANumberGenesURL = "${createLink([action:'getHeatmapCTANumberGenes'])}";
+	        			
 			var showHomePageFirst=true;
 			
 	        jQuery(document).ready(function() {

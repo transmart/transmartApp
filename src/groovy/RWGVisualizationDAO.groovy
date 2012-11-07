@@ -1556,5 +1556,42 @@ def getHeatmapDataCTA  = {analysisIds, keywordIds ->
 	return returnMap
  }
 
+
+
+
+/**
+ * Method to retrieve the number of unique gene ids with data for a given list of analysis ids and gene ids
+ *
+ * @param analysisIds - the list of analysis IDs
+ * @param keywordIds - pipe delimited string of keyword ids for genes
+ *
+ * @return a map containing the analysis id as key and a map for each gene with gene name as key
+ *         gene map contains probeId, pvalue, and fold change
+ **/
+def getHeatmapNumberGenesCTA  = {analysisIds, keywordIds ->
+	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	StringBuilder s = new StringBuilder()
+	List sqlParams = []
+	s.append("""
+	     select count(distinct gene_id) gene_count
+		  from heat_map_results
+		   where Bio_Assay_Analysis_Id in ("""
+	)
+
+	s.append(analysisIds.join(','))
+	s.append(") ")
+	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
+
+	// retrieve results
+	def results = sql.rows(s.toString(), sqlParams)
+	def numberGenes;
 	
+	// loop through and determine probe id  with highest pvalue/fold change 	(since they are ordered desc it will be the first one encountered for the analysis/gene)
+	results.each{ row->
+		numberGenes = row.gene_count
+	}
+	
+	return numberGenes
+ }
+
 }

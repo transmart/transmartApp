@@ -857,8 +857,6 @@ class RWGController {
 	   	   	   
    }
    
-   
-   
    def exportAsImage = {
 	   
 	   def imagedata = params.imgData
@@ -942,7 +940,7 @@ class RWGController {
 	   
 	   // create a matrix of values that will be used in heatmap.  This will be a map of rows (keyed on order); each row will also contain a map
 	   // e.g.   [
-	   //          0:  [geneName:"genename1", data:[0:[probeId:"p1", fc:1.1, pValue:0.5, x:0, y:0], 1:[...], 2:[]....  ] ],
+	   //          0:  [geneId:geneId1, geneName:"genename1", data:[0:[probeId:"p1", fc:1.1, pValue:0.5, x:0, y:0], 1:[...], 2:[]....  ] ],
 	   //          1:  [geneName:"genename2", data:[0:[....], 1:[.....], 2:[....]  ] ],
 	   //
 	   //        ]
@@ -982,6 +980,47 @@ class RWGController {
 	   render matrix as JSON
    }
 
+   
+   
+   /**
+	* Method to get the number of genes for the CTA heatmap for the given filters
+	* 
+	* @param params.analysisIds: list of analysis ids
+	* @param params.category: either PATHWAY, GENELIST, or GENESIG  
+	* @param params.searchKeywordId: search keyword id of the pathway, genelist or gene signature
+	* 
+	*/
+   def getHeatmapCTANumberGenes = {
+	   def rwgDAO = new RWGVisualizationDAO()
+
+	   // take the pathway or gene list/sig, and convert to pipe delimited list of gene ids (search keyword ids)
+	   // reuse the existing method we had for passing params into SOLR query - requires that we have a list with the
+	   // category followed by colon followed by list of pipe delimited terms - so for our purposes we will have one
+	   // category in list (i.e. GENELIST or GENESIG or PATHWAY) with one term in the pipe delimited terms;
+	   // e.g. ["GENELIST:1693394"]
+	   def queryParams = []
+
+	   queryParams.push(/${params.category}:${params.searchKeywordId}/)
+		 
+	   // replace gene signatures or gene list terms into their list of individual genes
+	   // list coming back will be in form of [":GENE1|GENE2|..."]  where GENE1 is a search keyword id representing a gene
+	   queryParams = replaceGeneLists(queryParams, "")
+	   
+	   // take the first/only item from list and get rid of the leading colon to give us just a string containing a pipe
+	   // delimited list of gene search keyword ids
+	   def genesList = queryParams[0].replace(":", "")
+
+	   def analysisIdsList = params.analysisIds.split(/\|/)
+	   def maxGeneIndex = rwgDAO.getHeatmapNumberGenesCTA(analysisIdsList, genesList)
+	      
+	   JSONObject ret = new JSONObject()
+	   ret.put('maxGeneIndex', maxGeneIndex)
+	   
+	   response.setContentType("text/json")
+	   response.outputStream << ret?.toString()
+					 
+   }
+   
    // Render the template for the favorites dialog
    def renderFavoritesTemplate = {
 	   
