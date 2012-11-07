@@ -220,8 +220,13 @@ function addSearchAutoComplete()	{
 	jQuery("#search-ac").autocomplete({
 		source: sourceURL,
 		minLength:0,
-		select: function(event, ui) {  
-			searchParam={id:ui.item.id,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId};
+		select: function(event, ui) { 
+			if (ui.item.categoryId == 'DATA_TYPE') {
+				searchParam={id:ui.item.label, display: 'Data Types', keyword:ui.item.label,category:ui.item.categoryId};
+			}
+			else {
+				searchParam={id:ui.item.id,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId};
+			}
 			addSearchTerm(searchParam);
 			return false;
 		}
