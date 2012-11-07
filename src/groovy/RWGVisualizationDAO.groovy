@@ -1485,7 +1485,7 @@ def getHeatmapDataCTA  = {analysisIds, bmIds ->
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
 	s.append("""
-	     select distinct bio_assay_analysis_id, bio_marker_name, bio_marker_id, probe_id, gene_id, preferred_pvalue, abs(fold_change_ratio),
+	     select distinct bio_assay_analysis_id, upper(bio_marker_name) bio_marker_name, bio_marker_id, probe_id, gene_id, preferred_pvalue, abs(fold_change_ratio),
 			fold_change_ratio
 		  from heat_map_results
 		   where Bio_Assay_Analysis_Id in ("""
@@ -1494,7 +1494,7 @@ def getHeatmapDataCTA  = {analysisIds, bmIds ->
 	s.append(analysisIds.join(','))
 	s.append(") ")  
 	s.append(convertPipeDelimitedStringToInClause(bmIds, "bio_marker_id"))
-	s.append(" order by bio_assay_analysis_id, bio_marker_name, preferred_pvalue asc, abs(fold_change_ratio) desc ")
+	s.append(" order by bio_assay_analysis_id, upper(bio_marker_name), preferred_pvalue asc, abs(fold_change_ratio) desc ")
 
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
@@ -1557,6 +1557,8 @@ def getHeatmapDataCTA  = {analysisIds, bmIds ->
 	returnMap.put("geneIds", geneIdsList)
 	returnMap.put("geneNames", geneNamesList)
 	
+	println returnMap 
+	
 	return returnMap
  }
 
@@ -1575,7 +1577,7 @@ def getHeatmapGenesCTA  = {analysisIds, keywordIds ->
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
 	s.append("""
-	     select distinct bio_marker_id, bio_marker_name gene_name
+	     select distinct bio_marker_id, upper(bio_marker_name) gene_name
 		  from heat_map_results
 		   where Bio_Assay_Analysis_Id in ("""
 	)
@@ -1584,7 +1586,7 @@ def getHeatmapGenesCTA  = {analysisIds, keywordIds ->
 	s.append(") ")
 	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
 
-	s.append(" order by bio_marker_name asc")
+	s.append(" order by upper(bio_marker_name) asc")
 	
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
