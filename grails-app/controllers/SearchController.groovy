@@ -823,6 +823,10 @@ public class SearchController{
 			render(text: "<p>No analyses were found for the current filter!</p>")
 			return
 		}
+		else if (analysisIds[0] == -1) {
+			render(text: "<p>The current search does not filter on any analyses. Select a study or set of analyses to display.</p>")
+			return
+		}
 		
 		//Override max and offset if we're exporting
 		def maxToUse = filter.max
@@ -1128,6 +1132,10 @@ public class SearchController{
 		columnNames.add(["sTitle":"Probe ID", "sortField":"data.rs_id"])
 		columnNames.add(["sTitle":"p-value", "sortField":"data.p_value"])
 		columnNames.add(["sTitle":"Adjusted p-value", "sortField":"data.log_p_value"])
+		columnNames.add(["sTitle":"RS Gene", "sortField":"bm.bio_marker_name"])
+		columnNames.add(["sTitle":"Chromosome", "sortField":"info.chrom"])
+		columnNames.add(["sTitle":"Position", "sortField":"info.pos"])
+		
 		if (type.equals("eqtl")) {
 			columnNames.add(["sTitle":"Gene", "sortField":"data.gene"])
 		}
@@ -1170,8 +1178,11 @@ public class SearchController{
 			temporaryList.add(it[0])
 			temporaryList.add(it[1])
 			temporaryList.add(it[2])
+			temporaryList.add(it[5])
+			temporaryList.add(it[6])
+			temporaryList.add(it[7])
 			if (type.equals("eqtl")) {
-				temporaryList.add(it[5])
+				temporaryList.add(it[8])
 			}
 			
 			//Add the dynamic fields to the returned data.

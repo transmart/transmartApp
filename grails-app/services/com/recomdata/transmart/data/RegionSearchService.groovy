@@ -65,7 +65,7 @@ class RegionSearchService {
 	//Query with mad Oracle pagination
 	def gwasSqlQuery = """
 	select a.* from
-	(SELECT baa.analysis_name as analysis, data.rs_id as rsid, data.p_value as pvalue, data.log_p_value as logpvalue, data.ext_data as extdata
+	(SELECT baa.analysis_name as analysis, info.chrom as chrom, info.pos as pos, bm.bio_marker_name as rsgene, data.rs_id as rsid, data.p_value as pvalue, data.log_p_value as logpvalue, data.ext_data as extdata
 	,row_number() over (order by ?) as row_nbr
 		   FROM biomart.Bio_Assay_Analysis_Gwas data
 		   LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = data.bio_assay_analysis_id 
@@ -73,7 +73,7 @@ class RegionSearchService {
 	
 	def eqtlSqlQuery = """
 	select a.* from
-	(SELECT baa.analysis_name as analysis, data.rs_id as rsid, data.p_value as pvalue, data.log_p_value as logpvalue, data.ext_data as extdata, data.gene as gene
+	(SELECT baa.analysis_name as analysis, info.chrom as chrom, info.pos as pos, bm.bio_marker_name as rsgene, data.rs_id as rsid, data.p_value as pvalue, data.log_p_value as logpvalue, data.ext_data as extdata, data.gene as gene
 	,row_number() over (order by ?) as row_nbr
 		   FROM biomart.Bio_Assay_Analysis_eqtl data
 		   LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = data.bio_assay_analysis_id 
@@ -87,7 +87,13 @@ class RegionSearchService {
 	    SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Eqtl data 	
     """
 	
-	def infoJoinClause = " LEFT JOIN deapp.de_rc_snp_info info ON data.rs_id = info.rs_id "
+	def infoJoinClause = """
+	
+	 LEFT JOIN deapp.de_rc_snp_info info ON data.rs_id = info.rs_id
+	 LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
+	 LEFT JOIN biomart.bio_marker bm ON bm.primary_external_id = gmap.entrez_gene_id AND bm.primary_source_code = 'Entrez'
+	
+	"""
 	
 	def getGeneLimits(Long searchId, String ver) {
 		//Create objects we use to form JDBC connection.
@@ -193,10 +199,11 @@ class RegionSearchService {
 		}
 		
 		//If we have ranges, we need another JOIN
-		if (ranges) {
+		//Always activate this, for SNP gene and position
+		//if (ranges) {
 			analysisQuery += infoJoinClause;
 			countQuery += infoJoinClause;
-		}
+		//}
 
 		//Add analysis IDs
 		if (analysisIds) {
@@ -209,6 +216,11 @@ class RegionSearchService {
 		else {
 			//Quick way to avoid WHERE/AND confusion
 			qb.append("WHERE 1=1 ");
+		}
+		
+		if (!ranges) {
+			//If no ranges, force HG19
+			qb.append(" AND hg_version='19'")
 		}
 
 		
@@ -248,7 +260,7 @@ class RegionSearchService {
 		}
 		def total = 0;
 		
-		def finalQuery = analysisQuery + qb.toString() + "ORDER BY ${sortField} ${order}) a";
+		def finalQuery = analysisQuery + qb.toString() + " ORDER BY ${sortField} ${order}) a";
 		if (limit > 0) {
 			finalQuery += " where a.row_nbr between ${offset+1} and ${limit+offset}";
 		}
@@ -266,10 +278,10 @@ class RegionSearchService {
 		try{
 			while(rs.next()){
 				if ((type.equals("gwas"))) {
-					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis")]);
+					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis"), rs.getString("rsgene"), rs.getString("chrom"), rs.getLong("pos")]);
 				}
 				else {
-					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis"), rs.getString("gene")]);
+					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis"), rs.getString("rsgene"), rs.getString("chrom"), rs.getLong("pos"), rs.getString("gene")]);
 				}
 			}
 		}

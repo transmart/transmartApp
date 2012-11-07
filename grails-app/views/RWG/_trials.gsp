@@ -18,8 +18,9 @@
 </div>
 <div class="search-results-table">
     <g:each in="${trials.entrySet()}" status="ti" var="trialresult">        
-        <div class="${ (ti % 2) == 0 ? 'result-trial-odd' : 'result-trial-even'}" id="TrialDet_${trialresult.key.id}_anchor">                            
-            <a href="#" onclick="javascript:showDetailDialog('${createLink(controller:'trial',action:'expDetail',id:trialresult.key.id)}', '${trialresult.key.trialNumber}: ${trialresult.key.title.encodeAsHTML()}', 600);">
+        <div class="${ (ti % 2) == 0 ? 'result-trial-odd' : 'result-trial-even'}" id="TrialDet_${trialresult.key.id}_anchor">   
+        	<g:set var="safeTitle">${trialresult.key.title.replace("'", "\\'")}</g:set>                         
+            <a href="#" onclick="javascript:showDetailDialog('${createLink(controller:'trial',action:'expDetail',id:trialresult.key.id)}', '${trialresult.key.trialNumber}: ${safeTitle}', 600);">
                <span style="display:block; float:left;">
                    <img alt="" src="${resource(dir:'images',file:'view_detailed.png')}" />
                </span>

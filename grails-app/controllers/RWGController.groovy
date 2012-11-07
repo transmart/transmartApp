@@ -675,9 +675,9 @@ class RWGController {
 		   e.printStackTrace()
 	   }
 	   
-	   //TODO Patch job - if this is a *.* query, prevent it from running
+	   //TODO Patch job - if this is a *.* query, prevent it from running with a sentinel value
 	   if (nonfacetedQueryString.equals("q=(*:*)")) {
-		   session['solrAnalysisIds'] = []
+		   session['solrAnalysisIds'] = [-1]
 		   render(status: 200, text: "NONE");
 		   return;
 	   }
