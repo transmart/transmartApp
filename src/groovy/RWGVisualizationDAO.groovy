@@ -1475,12 +1475,12 @@ class RWGVisualizationDAO {
  *   determine the fold change  
  *
  * @param analysisIds - the list of analysis IDs
- * @param keywordIds - pipe delimited string of keyword ids for genes
+ * @param geneIds - pipe delimited list of ids for genes
  *
  * @return a map containing the analysis id as key and a map for each gene with gene name as key
  *         gene map contains probeId, pvalue, and fold change
  **/
-def getHeatmapDataCTA  = {analysisIds, keywordIds ->
+def getHeatmapDataCTA  = {analysisIds, geneIds ->
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
@@ -1493,7 +1493,7 @@ def getHeatmapDataCTA  = {analysisIds, keywordIds ->
 
 	s.append(analysisIds.join(','))
 	s.append(") ")  
-	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
+	s.append(convertPipeDelimitedStringToInClause(geneIds, "gene_id"))
 	s.append(" order by bio_assay_analysis_id, bio_marker_name, preferred_pvalue asc, abs(fold_change_ratio) desc ")
 
 	// retrieve results
@@ -1558,22 +1558,20 @@ def getHeatmapDataCTA  = {analysisIds, keywordIds ->
 
 
 
-
 /**
- * Method to retrieve the number of unique gene ids with data for a given list of analysis ids and gene ids
+ * Method to retrieve the list of unique gene ids with data for a given list of analysis ids and gene ids
  *
  * @param analysisIds - the list of analysis IDs
  * @param keywordIds - pipe delimited string of keyword ids for genes
  *
- * @return a map containing the analysis id as key and a map for each gene with gene name as key
- *         gene map contains probeId, pvalue, and fold change
+ * @return a map containing the gene count and the list of gene ids
  **/
-def getHeatmapNumberGenesCTA  = {analysisIds, keywordIds ->
+def getHeatmapGenesCTA  = {analysisIds, keywordIds ->
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
 	s.append("""
-	     select count(distinct gene_id) gene_count
+	     select distinct gene_id, bio_marker_name gene_name
 		  from heat_map_results
 		   where Bio_Assay_Analysis_Id in ("""
 	)
@@ -1582,16 +1580,18 @@ def getHeatmapNumberGenesCTA  = {analysisIds, keywordIds ->
 	s.append(") ")
 	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
 
+	s.append(" order by bio_marker_name asc")
+	
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
-	def numberGenes;
-	
+	def geneIds = [];
+		
 	// loop through and determine probe id  with highest pvalue/fold change 	(since they are ordered desc it will be the first one encountered for the analysis/gene)
 	results.each{ row->
-		numberGenes = row.gene_count
+		geneIds.add(row.gene_id)
 	}
 	
-	return numberGenes
+	return geneIds
  }
 
 }

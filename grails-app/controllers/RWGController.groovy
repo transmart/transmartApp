@@ -914,28 +914,17 @@ class RWGController {
    def getHeatmapDataCTA = {
 	   def rwgDAO = new RWGVisualizationDAO()
 	   
-	   // take the pathway or gene list/sig, and convert to pipe delimited list of gene ids (search keyword ids)
-	   // reuse the existing method we had for passing params into SOLR query - requires that we have a list with the 
-	   // category followed by colon followed by list of pipe delimited terms - so for our purposes we will have one 
-	   // category in list (i.e. GENELIST or GENESIG or PATHWAY) with one term in the pipe delimited terms; 
-	   // e.g. ["GENELIST:1693394"]
-	   def queryParams = []
-
-	   queryParams.push(/${params.category}:${params.searchKeywordId}/)
-	     
-	   // replace gene signatures or gene list terms into their list of individual genes
-	   // list coming back will be in form of [":GENE1|GENE2|..."]  where GENE1 is a search keyword id representing a gene
-	   queryParams = replaceGeneLists(queryParams, "")
 	   
-	   // take the first/only item from list and get rid of the leading colon to give us just a string containing a pipe
-	   // delimited list of gene search keyword ids	   
-	   def genesList = queryParams[0].replace(":", "")	   
-
+	   // geneIdsListIn should match geneIdsListOut with the way the data flow currently works (i.e.
+	   //   we've already determined the list of genes with data to be shown on current page so we already know
+	   //   what the output list is, however leaving this as 2 separate lists in case we need to change flow)
 	   def analysisIdsList = params.analysisIds.split(/\|/)
-	   def returnData = rwgDAO.getHeatmapDataCTA(analysisIdsList, genesList)
+	   def genesIdsListIn = params.geneIds
+	   
+	   def returnData = rwgDAO.getHeatmapDataCTA(analysisIdsList, genesIdsListIn)
 	   
 	   def analysisData = returnData.get("analysisInfo")
-	   def geneIdsList = returnData.get("geneIds")
+	   def geneIdsListOut = returnData.get("geneIds")
 	   def geneNamesList = returnData.get("geneNames")
 	   
 	   // create a matrix of values that will be used in heatmap.  This will be a map of rows (keyed on order); each row will also contain a map
@@ -947,7 +936,7 @@ class RWGController {
 	   
 	   def matrix = [:]
 	   int rowIndex = 0; 
-	   geneIdsList.each{  geneId ->
+	   geneIdsListOut.each{  geneId ->
 		   
 		   def row = [:]
 		   row.put("geneId", geneId)		   
@@ -983,14 +972,14 @@ class RWGController {
    
    
    /**
-	* Method to get the number of genes for the CTA heatmap for the given filters
+	* Method to get the count and list of genes with data for the CTA heatmap for the given filters
 	* 
 	* @param params.analysisIds: list of analysis ids
 	* @param params.category: either PATHWAY, GENELIST, or GENESIG  
 	* @param params.searchKeywordId: search keyword id of the pathway, genelist or gene signature
 	* 
 	*/
-   def getHeatmapCTANumberGenes = {
+   def getHeatmapCTAGenes = {
 	   def rwgDAO = new RWGVisualizationDAO()
 
 	   // take the pathway or gene list/sig, and convert to pipe delimited list of gene ids (search keyword ids)
@@ -1011,10 +1000,13 @@ class RWGController {
 	   def genesList = queryParams[0].replace(":", "")
 
 	   def analysisIdsList = params.analysisIds.split(/\|/)
-	   def maxGeneIndex = rwgDAO.getHeatmapNumberGenesCTA(analysisIdsList, genesList)
+	   
+	   def geneIdsWithData = rwgDAO.getHeatmapGenesCTA(analysisIdsList, genesList)	   
+	   def maxGeneIndex = geneIdsWithData.size()
 	      
 	   JSONObject ret = new JSONObject()
 	   ret.put('maxGeneIndex', maxGeneIndex)
+	   ret.put('geneIdsWithData', geneIdsWithData.join('|'))
 	   
 	   response.setContentType("text/json")
 	   response.outputStream << ret?.toString()
