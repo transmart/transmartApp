@@ -67,7 +67,7 @@ public class SearchKeywordService {
 		def c = SearchKeywordTerm.createCriteria()
 		def results = c.list 	{
 			if (term.size() > 0)	{
-				like("keywordTerm", '%' + term.toUpperCase() + '%')
+				like("keywordTerm", term.toUpperCase() + '%')
 			}
 			
 			//TODO Special case for gene or SNP - rework to support multiple categories!
