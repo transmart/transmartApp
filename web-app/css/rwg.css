@@ -488,7 +488,6 @@ ul.dynatree-container li ul li{
     margin-bottom: 5px;
     padding-bottom: 5px;
     padding-left: 10px;
-    padding-top: 5px;
     
 }
 
@@ -963,6 +962,30 @@ border-top: 1px solid #CCC;
 	
 	margin-left:10px;
 	
+}
+
+#xtSearch{
+	background-color: #F8F8F8;
+	padding: 10px;
+	margin-right: 10px;
+	border-top: 1px solid #CCC;
+	border-bottom: 1px solid #CCC;
+}
+
+#xtMsgBox{
+	padding: 10px;
+	border: 1px solid #CCC;
+	background-color: #EFEFEF;
+	margin: auto;
+	margin-top: 10px;
+	width: 50%;
+}
+#xtMsgBox .btn{
+	color: #1B74B3;
+	background-color: white;
+	border: 1px solid #999;
+	padding: 7px;
+	display: inline-block;
 }
 
 #xtMenuBar{

@@ -184,9 +184,9 @@
 			<div id="menu_bar">
 			
 			<ul>
-				<li class='toolbar-item'><a href="#" onclick='showHomePage();'>Home</a></li>
-				<li class='toolbar-item'><a href="#" onclick='showResultsPage();'>Search Results</a></li>
-				<li class='toolbar-item'><a href="#" onclick='openCrossTrialAnalysis();'>Cross Trial Analysis</a>
+				<li class='toolbar-item'><a href="#" onclick='showHomePage();'><img style='vertical-align:top;' src="${resource(dir:'images/fc_menu',file:'menu_icon_home_bw.png')}"> Home</a></li>
+				<li class='toolbar-item'><a href="#" onclick='showResultsPage();'><img style='vertical-align:top' src="${resource(dir:'images/fc_menu',file:'menu_icon_search_bw.png')}"> Search Results</a></li>
+				<li class='toolbar-item'><a href="#" onclick='showCrossTrialAnalysis();'><img style='vertical-align:top' src="${resource(dir:'images/fc_menu',file:'menu_icon_crosstrial_bw.png')}"> Cross Trial Analysis</a>
 				<span style="color: #999;"> | </span>
 									
 					<div id="selectedAnalyses_holder" style='display: inline-block'>
@@ -199,8 +199,8 @@
 							<div id="selectedAnalysesExpanded" class='auto-hide' style="display:none;"></div>
 					</div>
 				</li>
-				<li class='toolbar-item'><a href="#" onclick='collapseAllAnalyses();'>Collapse All</a></li>
-				<li class='toolbar-item'>			
+				<li class='toolbar-item' id='toolbar-collapse_all' style='display:none;'><a href="#" onclick='collapseAllAnalyses();'>Collapse All</a></li>
+				<li class='toolbar-item' id='toolbar-options'  style='display:none;'>			
 					<div id="searchResultOptions_holder">
 						<div id="searchResultOptions_btn">
 							<a href="#" onclick='jQuery("#searchResultOptions").toggle();'>

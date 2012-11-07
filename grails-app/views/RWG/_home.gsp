@@ -1,6 +1,10 @@
-<div align="center" style="margin-left:-1px;" colspan="2" class="ui-widget-header"><h1 style="padding:6px;text-align:left;vertical-align:middle;" class="bigtitle">My Favorites</h1></div>
+
 	
-<div style="margin:5px;">
+<div style="margin-left:10px;">
+
+<h1>Faceted Search Home</h1>
+
+
 <div style="padding:10px;margin:5px;">
 <div id="homefavorites">
 	<g:render template="/RWG/favorites"
