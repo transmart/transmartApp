@@ -65,7 +65,6 @@ function removeSelectedAnalysis(analysisID){
 	
 	displayxtAnalysesList();
 	
-
 }
 
 //When the user adds or removes an analyses from the Selected Analyses list,
@@ -77,7 +76,8 @@ function refreshCrossTrialMsg(){
 	//to be refreshed or removed
 	if(xtSelectedKeywords.length>0){
 		
-		//TODO: Display msg to user with option to refresh or clear
+		//Display msg to user with option to refresh or clear
+		jQuery("#xtMsgBox").fadeIn();
 		
 	}
 	
@@ -96,6 +96,8 @@ function removeXTAnalysisFromArray(analysisID){
 	//update the cookie
 	jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
 	
+	refreshCrossTrialMsg()
+	
 	return;
 	
 }
@@ -107,6 +109,8 @@ function addXTAnalysisToArray(analysisID, analysisTitle, studyID){
 	
 	//update the cookie
 	jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
+	
+	refreshCrossTrialMsg()
 	
 	return;
 }
@@ -183,6 +187,9 @@ function clearAllSelectedAnalyses(){
 	
 	//update the display list
 	displayxtAnalysesList();
+	
+	//also clear the search terms
+	clearAllXTSearchTerms();	
 
 	return;
 	
@@ -313,7 +320,7 @@ function toggleFilters()	{
 		jQuery("#toggle-btn").css('height', 20);
 		jQuery("#main").css('padding-left', 0);	
 		jQuery("#main").css('left', 300);
-		jQuery("#menu_bar").css('left', 300);
+		jQuery("#menu_bar").css('left', 301);
 	} else	{
 		jQuery("#search-categories").attr('style', 'visibility:hidden; display:none');
 		jQuery("#search-ac").attr('style', 'visibility:hidden; display:none');
@@ -872,7 +879,7 @@ function exportHeatmapData(analysisId, exportType)
 	
     jQuery('#heatmapExportOpts_'+analysisId).hide(); //hide the menu box
 
-    jQuery("#analysis_holder_" + analysisId).mask();
+    jQuery("#analysis_holder_" + analysisId).mask("Loading...");
 	
 	switch(exportType)
 	{
@@ -1131,6 +1138,8 @@ function setVisTabs(analysisID){
 	});
 }
 
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Box or Line Plot Visualization Methods
 // Show, Load Data and Draw
@@ -1228,7 +1237,7 @@ function loadLinePlotData(analysisID, probeID)	{
 	
 	if (probeID === undefined)	{
 		// We are called from the user switching probes, throw up the mask and get the probeID
-		jQuery("#analysis_holder_" + analysisID).mask(); //hide the loading screen
+		jQuery("#analysis_holder_" + analysisID).mask("Loading..."); 
 		probeID = jQuery("#probeSelectionLineplot_" + analysisID).find('option:selected').attr('id');
 		
 	}
@@ -1320,7 +1329,7 @@ function loadBoxPlotData(analysisID, probeID)	{
 	
 	if (probeID === undefined)	{
 		// We are called from the user switching probes, throw up the mask and get the probeID
-		jQuery("#analysis_holder_" + analysisID).mask(); //hide the loading screen
+		jQuery("#analysis_holder_" + analysisID).mask("Loading..."); 
 		probeID = jQuery("#probeSelection_" + analysisID).find('option:selected').attr('id');
 		
 	}
@@ -2148,8 +2157,7 @@ function loadSearch(id)  {
 function clearSearch()	{
 	
 	//remove all pending jobs from the ajax queue
-	rwgAJAXManager.clear(true);// (this was causing problems, so removing for now)
-	
+	rwgAJAXManager.clear(true);
 	
 	openAnalyses = []; //all analyses will be closed, so clear this array
 	
@@ -2515,6 +2523,7 @@ function removeByValue(arr, val) {
 }
 
 
+
 function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex) {
 	probesPerPageElement = document.getElementById("probesPerPage_" + analysisId);
 	numberOfProbesPerPage = probesPerPageElement.options[probesPerPageElement.selectedIndex].value;
@@ -2573,6 +2582,7 @@ function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex) {
 	
 }
 
+
 function loadHeatmapPaginator(divID, analysisId, page) {
 
 	var analysisIndex = getAnalysisIndex(analysisId);
@@ -2593,8 +2603,11 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 }
 
 
-function openCrossTrialAnalysis()
+function showCrossTrialAnalysis()
 {
+	//hide the unused menu options
+	jQuery("#toolbar-collapse_all").hide();
+	jQuery("#toolbar-options").hide();
 	
 	  hideHomePage();
       hideResultsPage();
@@ -2638,12 +2651,21 @@ function launchHomePage(currentsubcategoryid, currentcharttype, showAll)
 }
 function showHomePage()
 {
+	//hide the unused menu options
+	jQuery("#toolbar-collapse_all").hide();
+	jQuery("#toolbar-options").hide();
+	
       jQuery('#home-div').show();
       hideCrossTrialAnalysis();
       hideResultsPage();
 }
 function showResultsPage()
 {
+	
+	//show the extra menu options
+	jQuery("#toolbar-collapse_all").show();
+	jQuery("#toolbar-options").show();
+	
 	jQuery('#results-div').show();
 	 hideCrossTrialAnalysis();
 	 hideHomePage();
@@ -2711,6 +2733,56 @@ function getTopGenes(analysisID)
 }
 
 
+function updateCrossTrialGeneCharts(){
+	
+	jQuery('#xtMsgBox').fadeOut(200);
+	
+	//clear div
+	jQuery('#xtSummaryChartArea').html('');
+	
+	jQuery(xtSelectedKeywords).each(function (index, value){
+		
+		if(xtSelectedKeywords[index].categoryId == 'GENE'){
+			
+			getCrossTrialGeneSummary(xtSelectedKeywords[index].id);
+		}
+		
+	});
+	
+}
+
+
+function closeXTGeneChart(divID, geneID){
+	
+	jQuery('#' +divID).fadeOut(200, function() { 
+		jQuery('#' +divID).remove(); 
+		
+	});
+	
+	//loop through the array, find the gene ID to be removed, and remove it from the array
+	for (var i =0; i < xtSelectedKeywords.length; i++){
+	   if (xtSelectedKeywords[i].id === geneID) {
+		   xtSelectedKeywords.splice(i,1);
+	      break;
+	   }
+	}
+	
+	
+}
+
+function clearAllXTSearchTerms(){
+	
+	//Clear the html div of existing charts
+	jQuery('#xtSummaryChartArea').html('');
+	
+	//reset the array
+	xtSelectedKeywords = [];
+	
+	//remove the message box
+	jQuery('#xtMsgBox').fadeOut(200);
+	
+}
+
 
 //used on the cross trial analysis page to display the summary
 function displayxtAnalysesList(){
@@ -2747,7 +2819,7 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id, placeholder){
 	var divID = "xtSummaryChart_" +geneID;
 	
 	//html for button to close the graph
-	var closeHTML = "<a href='#' class='xtChartClostbtn' id='" +divID  +"_CloseBtn' onclick=\"jQuery('#" +divID +"').fadeOut(200, function() { jQuery('#" +divID +"').remove(); });   \">x</a>";
+	var closeHTML = "<a href='#' class='xtChartClostbtn' id='" +divID  +"_CloseBtn' onclick=\"closeXTGeneChart('" +divID +"'," +geneID +")\">x</a>";
 	
 	var openBoxplotLinkHTML = "<a href='#' class='xtBoxplotbtn' id='" +divID  +"_BoxplotBtn' onclick=\"openXtBoxplot('"+keyword_id +"', '" +geneName +"')\">view boxplot</a>";
 
@@ -2786,7 +2858,7 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id, placeholder){
     jQuery('#'+divID).remove();
     
     //create div to hold svg chart
-    jQuery("#xtSummaryChartArea").append("<div id='"+divID +"' class='xtSummaryChart'></div>");
+    jQuery("#xtSummaryChartArea").prepend("<div id='"+divID +"' class='xtSummaryChart'></div>");
     
     
     //only show the close btn on hover
@@ -3004,12 +3076,16 @@ function addXTSearchAutoComplete()	{
 			switch (categoryId)  {
 				case "GENE": 
 					getCrossTrialGeneSummary(keywordId);
-					//loadBoxPlotCTA(keywordId);
+					
+					jQuery('#xtMenuBar').tabs('select', 'xtSummaryChartArea'); // switch to chart tab
+
+					
 					break;
 				case "GENELIST": 
 				case "GENESIG": 
 				case "PATHWAY":
 					loadHeatmapCTAPaginator(categoryId, keywordId, 1);
+					jQuery('#xtMenuBar').tabs('select', 'xtHeatmapTab'); // switch to heatmap tab
 					break;
 				default:  
 					alert("Invalid category!");
@@ -3040,10 +3116,14 @@ function drawPieChart(divid, data)
 }
 
 
+
+
+
+
 //Load the heatmap data for cross trial analysis 
-// analysisIds: pipe delimited list of analysis ids
-// genes: list of bm ids for page to be loaded
-// searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
+//analysisIds: pipe delimited list of analysis ids
+//genes: list of bm ids for page to be loaded
+//searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
 function loadHeatmapCTA(analysisIds, bmIds)	{	
 		
 	var bmIdsPiped = bmIds.join('|');
@@ -3137,22 +3217,23 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, m
 
 	element.paging(numberOfPages, { 
 	    perpage:1, 
-        format:"[<(qq -) ncnnn (- pp)>]",
-        onSelect: function (page) { 
-        	jQuery("#xtHeatmap").mask("Loading...");
+      format:"[<(qq -) ncnnn (- pp)>]",
+      onSelect: function (page) { 
+      	jQuery("#xtHeatmap").mask("Loading...");
 
-        	var pages = jQuery.data(element, "pages");
-        	var genes = pages[page - 1];
-        	//loadHeatmapData(divID, analysisId, page, numberOfGenesPerPage);
+      	var pages = jQuery.data(element, "pages");
+      	var genes = pages[page - 1];
+      	//loadHeatmapData(divID, analysisId, page, numberOfGenesPerPage);
 			loadHeatmapCTA(analysisIds, genes);   
 
-        	jQuery.data(element, "currentPage", page);
-                                    
-        }, 
-        onFormat: formatPaginator
-    }); 	
+      	jQuery.data(element, "currentPage", page);
+                                  
+      }, 
+      onFormat: formatPaginator
+  }); 	
 	
 }
+
 
 function openXtBoxplot(keywordId, geneName){
 	
@@ -3173,8 +3254,9 @@ function openXtBoxplot(keywordId, geneName){
 	//find width of window, multiply by % to get dialog width
 	var wWidth = jQuery(window).width() * 0.8;
 	
-	jQuery('#xtBoxplotWrapper').dialog({ width: wWidth, title: geneName });
+	jQuery('#xtBoxplotHolder').dialog({ width: wWidth, title: geneName });
     
+
     loadBoxPlotCTA(keywordId);
     
     return;
@@ -3217,6 +3299,7 @@ function loadBoxPlotCTA(keywordId)	{
 	
 	
 }
+
 
 
 

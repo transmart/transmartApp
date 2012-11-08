@@ -659,9 +659,9 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		.attr("class", "heatmap");
 
 	// use same colors between the 2 range max/min values
-	var rangeMax = 2.5;
+	var rangeMax = 3.5;
 	var rangeMax2 = 10000;
-	var rangeMin = -2.5;
+	var rangeMin = -3.5;
 	var rangeMin2 = -10000;
 	
 	var rangeMid = (rangeMax + rangeMin)/2;

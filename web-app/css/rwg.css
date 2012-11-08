@@ -488,7 +488,6 @@ ul.dynatree-container li ul li{
     margin-bottom: 5px;
     padding-bottom: 5px;
     padding-left: 10px;
-    padding-top: 5px;
     
 }
 
@@ -962,17 +961,34 @@ border-top: 1px solid #CCC;
 #xtHolder{
 	
 	margin-left:10px;
+	margin-right:10px;
 	
 }
 
-#xtMenuBar{
-
-}
-
-#xtMenuBar li{
-	display: inline-block;
+#xtSearch{
+	background-color: #F8F8F8;
 	padding: 10px;
+	border-top: 1px solid #CCC;
+	border-bottom: 1px solid #CCC;
 }
+
+#xtMsgBox{
+	padding: 10px;
+	border: 1px solid #CCC;
+	background-color: #FFFCE5;
+	margin: auto;
+	margin-top: 10px;
+	width: 350px;
+}
+#xtMsgBox .btn{
+	color: #1B74B3;
+	background-color: white;
+	border: 1px solid #999;
+	padding: 7px;
+	display: inline-block;
+}
+
+
 
 #xtSelectedAnalysesList li {
 padding: 8px;
@@ -980,7 +996,6 @@ border: 1px solid #DDD;
 border-collapse: collapse;
 padding-right: 0;
 margin-top: -1px;
-margin-right: 20px;
 background-color: #F3F3F3;
 list-style-type: none;
 cursor:default;
@@ -1046,11 +1061,11 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 }
 
 .bar.positive {
-  fill: steelblue;
+  fill: brown;
 }
 
 .bar.negative {
-  fill: brown;
+  fill: steelblue;
 }
 
 .axis text {

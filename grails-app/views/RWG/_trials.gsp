@@ -1,15 +1,10 @@
 <div class="search-result-info">
-    Search results:&nbsp;&nbsp;${trials.size()} 
+    <h1>Search Results</h1>${trials.size()} 
     
-    <g:if test="${trials.size() == 1}">study</g:if>
-    <g:else>studies</g:else>
-    
-    with ${analysisCount}&nbsp;
-     
+    <g:if test="${trials.size() == 1}">study </g:if>
+    <g:else>studies </g:else>with ${analysisCount}
     <g:if test="${analysisCount > 1}">analyses</g:if>
-    <g:else>analysis</g:else>
-    
-    &nbsp;in ${duration} 
+    <g:else>analysis</g:else> in ${duration} 
     
 </div>
 <div class="search-results-table">
