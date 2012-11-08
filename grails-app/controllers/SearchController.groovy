@@ -629,10 +629,10 @@ public class SearchController{
 							    <j2se version="1.6+" java-vm-args="-Xmx800m"/>
 							    
 							    <jar href="./lib/BioServicesClient.jar"/>  
+							    <jar href="./lib/BioServicesUtil.jar"/>  
 							    <jar href="./lib/commons-beanutils-1.8.3.jar"/>  
 							    <jar href="./lib/commons-beanutils-bean-collections-1.8.3.jar"/>  
 							    <jar href="./lib/commons-beanutils-core-1.8.3.jar"/>  
-							    <jar href="./lib/BioServicesUtil.jar"/>  
 							    <jar href="./lib/commons-codec-1.6.jar"/>  
 							    <jar href="./lib/commons-digester3-3.2.jar"/>  
 							    <jar href="./lib/commons-lang3-3.1.jar"/>  
@@ -643,7 +643,6 @@ public class SearchController{
 							    <jar href="./lib/jersey-core-1.4.jar"/>  
 							    <jar href="./lib/jgoodies-common-1.3.1.jar"/>  
 							    <jar href="./lib/jgoodies-looks-2.5.1.jar"/>  
-							    <jar href="./lib/jnlp.jar"/>  
 							    <jar href="./lib/log4j-1.2.17.jar"/>
 							    <jar href="./lib/TDBApi.jar"/>  
 							    <jar href="${jar};jsessionid=""" + session.getId() + """" main="true" />
@@ -655,10 +654,9 @@ public class SearchController{
 							  <application-desc main-class="com.pfizer.mrbt.genomics.Driver"> 
 								<argument>""" + analysisIds + """</argument>
 								<argument>""" + regions + """</argument>
-								<argument>""" + geneSource + """</argument>
+								<argument>0</argument>
 								<argument>""" + snpSource + """</argument>
 								<argument>""" + pvalueCutoff + """</argument>
-								<argument>-services=transmart</argument>
 							  </application-desc>
 								
 							</jnlp>                           
