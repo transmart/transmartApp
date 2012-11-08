@@ -3122,11 +3122,21 @@ function drawPieChart(divid, data)
 
 //Load the heatmap data for cross trial analysis 
 //analysisIds: pipe delimited list of analysis ids
-//genes: list of bm ids for page to be loaded
+//rows: list of bm ids and associated info for page to be loaded
 //searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
-function loadHeatmapCTA(analysisIds, bmIds)	{	
+function loadHeatmapCTA(analysisIds, rows)	{	
 		
+	var bmIds = new Array;
+	// loop through each of the rows and retrieve the bm ids from all of them
+	for (var r=0; r<rows.length; r++)  {
+		var row = rows[r];
+		for (bm in row)  {
+			bmIds.push(bm);
+		}
+	}
+	
 	var bmIdsPiped = bmIds.join('|');
+	
 	rwgAJAXManager.add({
 		url:getHeatmapDataCTAURL,
 		data: {analysisIds: analysisIds, bmIds: bmIdsPiped},
@@ -3135,7 +3145,9 @@ function loadHeatmapCTA(analysisIds, bmIds)	{
 			
 			jQuery('#xtHeatmap').unmask(); //hide the loading msg, unblock the div
 			
-			drawHeatmapCTA('xtHeatmap', response, selectedAnalyses);
+			// response is the data for the heat map with fold change
+			// rows contains the metadata needed for each row such as gene name, biomarker id, organisms
+			drawHeatmapCTA('xtHeatmap', response, selectedAnalyses, rows);
 						
 		},
 		error: function(xhr) {
@@ -3161,10 +3173,9 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 		url:getHeatmapCTAGenesURL,		
 		data: {analysisIds: analysisIds, category: category, searchKeywordId: searchKeywordId, page:page},
 		success: function(response) {								
-			var maxGeneIndex = response['maxGeneIndex'];
-			var bmIds = response['bmIdsWithData'].split('|');
+			var bmRows = response['bmRows'];
 			
-			getHeatmapPaginatorCTA("xtHeatmapPaginator", analysisIds, category, searchKeywordId, maxGeneIndex, bmIds);
+			getHeatmapPaginatorCTA("xtHeatmapPaginator", analysisIds, category, searchKeywordId, bmRows);
 	
 		},
 		error: function(xhr) {
@@ -3173,19 +3184,24 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 	});
 }
 
-function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, maxGeneIndex, bmIds) {
+function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, bmRows) {
 	var element = jQuery("#" + divID);
-	var numberOfGenesPerPage = 20;
+	var numberOfRowsPerPage = 20;
+	
+	var numberRows = 0;
+	for (var r in bmRows)  {
+		numberRows++;
+	}
 	
 	// get number of extra genes on last page (will be 0 if last page is full)
-	var numberGenesLastPage = maxGeneIndex % numberOfGenesPerPage;
+	var numberRowsLastPage = numberRows % numberOfRowsPerPage;
 	
 	// find number of full pages
-	var numberOfFullPages = Math.floor(maxGeneIndex / numberOfGenesPerPage);
+	var numberOfFullPages = Math.floor(numberRows / numberOfRowsPerPage);
 	
 	// find number of pages - equal to number of full pages if none left over after full pages
 	var numberOfPages = numberOfFullPages;        	        	
-	if (numberGenesLastPage > 0)  {
+	if (numberRowsLastPage > 0)  {
 		numberOfPages = numberOfPages + 1;
 	}
 	
@@ -3199,9 +3215,13 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, m
 	}
 	
 	// now loop through genes with data and push onto the appropriate page
-	for (var i=0; i<bmIds.length; i++)  {
-		var p = Math.floor(i / numberOfGenesPerPage);
-		pagesArray[p].push(bmIds[i]);
+	var i = 0;
+	for (var r in bmRows)  {
+		var p = Math.floor(i / numberOfRowsPerPage);
+		
+		pagesArray[p].push(bmRows[i]);
+		
+		i++;
 	}
 
 	// save the page information so can be used for later page loads
@@ -3222,9 +3242,9 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, m
       	jQuery("#xtHeatmap").mask("Loading...");
 
       	var pages = jQuery.data(element, "pages");
-      	var genes = pages[page - 1];
+      	var rows = pages[page - 1];
       	//loadHeatmapData(divID, analysisId, page, numberOfGenesPerPage);
-			loadHeatmapCTA(analysisIds, genes);   
+			loadHeatmapCTA(analysisIds, rows);   
 
       	jQuery.data(element, "currentPage", page);
                                   

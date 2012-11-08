@@ -907,67 +907,43 @@ class RWGController {
 	* Returns the data for the heatmap visualization for Cross Trial Analysis
 	* 
 	* @param params.analysisIds: list of analysis ids
-	* @param params.bmIds: list of bio marker ids representing genes  
+	* @param params.bmIds: pipe delimited list of bio marker ids representing genes  
 	* 
 	*/
    def getHeatmapDataCTA = {
 	   def rwgDAO = new RWGVisualizationDAO()
-	   
-	   
-	   // bioMarkerIdsListIn should match bioMarkerIdsListOut with the way the data flow currently works (i.e.
-	   //   we've already determined the list of genes with data to be shown on current page so we already know
-	   //   what the output list is, however leaving this as 2 separate lists in case we need to change flow)
+	   	   
 	   def analysisIdsList = params.analysisIds.split(/\|/)
-	   def bioMarkerIdsListIn = params.bmIds
+	   def bioMarkerIdsListPiped = params.bmIds
+	   def bioMarkerIdsList = bioMarkerIdsListPiped.split(/\|/)
 	   
-	   def returnData = rwgDAO.getHeatmapDataCTA(analysisIdsList, bioMarkerIdsListIn)
+	   def returnData = rwgDAO.getHeatmapDataCTA(analysisIdsList, bioMarkerIdsListPiped)
 	   
 	   def analysisData = returnData.get("analysisInfo")
-	   def bioMarkerIdsListOut = returnData.get("bioMarkerIds")
-	   def geneIdsList = returnData.get("geneIds")
-	   def geneNamesList = returnData.get("geneNames")
 	   
-	   // create a matrix of values that will be used in heatmap.  This will be a map of rows (keyed on order); each row will also contain a map
-	   // e.g.   [
-	   //          0:  [geneId:geneId1, geneName:"genename1", data:[0:[probeId:"p1", fc:1.1, pValue:0.5, x:0, y:0], 1:[...], 2:[]....  ] ],
-	   //          1:  [geneName:"genename2", data:[0:[....], 1:[.....], 2:[....]  ] ],
-	   //
-	   //        ]
+	   // create a matrix of values that will be used in heatmap.  This will be a map of result data; each row will be keyed by bm Id and contain this data for each analysis:
+	   //   probeId, fold change, pvalue
+	   // e.g [bmId1:[aId1:[probe:probe1,fc:fc1,pvalue:pvalue1], aid2:[], ...], bmId2:[....]]
 	   
-	   def matrix = [:]
-	   int rowIndex = 0; 
-	   bioMarkerIdsListOut.each{  bmId ->
-		   
-		   def row = [:]
-		   row.put("bmId", bmId)		   
-		   row.put("geneName", geneNamesList[rowIndex])
-		   row.put("geneId", geneIdsList[rowIndex])
-		   
+	   def bmData = [:]
+	   bioMarkerIdsList.each{  bmId ->
+
 		   // now add a data map which contains one column for each analysis in list of analysis Ids passed in
-		   def colIndex = 0;
 		   def data = [:]
 		   analysisIdsList.each { analysisId ->
+			   def cellData = analysisData?.get(analysisId.toString())?.get(bmId.toString())
 			   
-			   def cellData = analysisData?.get(analysisId)?.get(bmId)
-			   
-			   if (!cellData)  {
-				   cellData = [:]
+			   if (cellData)  {
+				   data.put(analysisId, cellData)
 			   }
-			   cellData.put("x", colIndex)
-			   cellData.put("y", rowIndex)
 			   
-			   data.put(colIndex, cellData)
-			   
-			   colIndex++;
 		   }
 		   
-		   row.put("data", data)
-		   
-		   matrix.put(rowIndex, row)
-		   rowIndex++;
+		   bmData.put(bmId.toString(), data)
 	   }
-	   
-	   render matrix as JSON
+println bmData
+println analysisIdsList
+	   render bmData as JSON
    }
 
    public void getAssociations(bmId, bmAssociations, associationList)  {
@@ -1025,17 +1001,13 @@ class RWGController {
 	   def analysisIdsList = params.analysisIds.split(/\|/)
 	   
 	   def bmData = rwgDAO.getHeatmapGenesCTA(analysisIdsList, genesList)
-	   println bmData
 	   
 	   def bmIdsWithData = bmData.get('bmIds')	   	   
-	   def maxGeneIndex = bmIdsWithData.size()
 	   def bmInfoMap = bmData.get('bmInfo')
 	   
-	   JSONObject ret = new JSONObject()
-	   ret.put('maxGeneIndex', maxGeneIndex)
+	   def ret = [:]
 	   
 	   def bmIdsWithDataPiped = bmIdsWithData.join('|')
-	   ret.put('bmIdsWithData', bmIdsWithDataPiped)
 	   
 	   // the list of genes contains one row for each unique biomarker id;  some of these may be associated with each 
 	   // other, meaning they need to be displayed together; so, let's figure out the associated genes and
@@ -1056,13 +1028,12 @@ class RWGController {
 	   def bmRows = [:]
 	   
 	   // create a new row object for each set of associated genes
+	   def rowIndex = 0;
 	   bmIdsWithData.eachWithIndex {  bmId, index ->
 		   if (!bmProcessed[index])  {
 		   	   def associationList = []		   
 			   getAssociations(bmId.toString(), bmAssociations, associationList)
 			   
-			   println "association list for ${bmId}" + associationList
-		   
 			   def bmRow = [:]
 			   // create a new row
 			   associationList.each {id->				   
@@ -1077,16 +1048,16 @@ class RWGController {
 				   bmProcessed[i] = true
 	
 			   }
-			   bmRows.put(index, bmRow)
+			   
+			   bmRows.put(rowIndex, bmRow)
+			   
+			   rowIndex++
 			   		   
 		   }
 	   }
-       println bmRows
-	   
 	   ret.put("bmRows", bmRows)
 	   
-	   response.setContentType("text/json")
-	   response.outputStream << ret?.toString()
+	   render ret as JSON	   
 					 
    }
    

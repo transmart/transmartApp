@@ -568,10 +568,59 @@ function addDataColumn(hm, xOffset, yOffset, width, data, header, groupName, h) 
 
 //Take the heatmap data in the second parameter and draw the D3 heatmap for Cross Trial Analysis
 //  (i.e. Genes down left, analysis on top, fold change in box)
-function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
+// hmData comes in form of [bmId1:[aId1:[probeId:p1,foldChange:fc1,preferredPValue:pv1], [..more probe/fc data], [...next analsysis for bm]], bmId2:[], ...]
+// rows is an array containing one entry for each row; each row contains one object for each biomarker in that row; each biomarker object contains geneName,organism, primaryExternalId
+//    e.g. Array[0] = [bmId1:[geneName:"", organism:"", primaryExternalId:""], bmid2:[....], ...]
+//         Array[1] = [bmId3:[geneName:"", organism:"", primaryExternalId:""], bmid4:[....], ...]
+function drawHeatmapCTA(divID, hmData, analyses, rows)	{
 	jQuery("#" + divID).empty();
     var savedDisplayStyle = jQuery("#" + divID).css('display');
 	jQuery("#" + divID).show();  // show first so title height can be calculated correctly
+	
+	var mergedData = new Array;
+	
+	// merge the 2 sets of data to create a matrix of data that contains the necessary data for each row in form
+	// Array[rowIndex1] = [colIndex1:[geneName, organism, primaryExternalId, fc, pvalue], colIndex2:[....], coldIndex3:[...]]
+	for (var r=0; r<rows.length; r++)  {
+		var colData = new Array
+		for (var c=0; c<analyses.length; c++)  {
+			
+			var analysisId = analyses[c].id;
+			
+			// loop thru each biomarker in row, and find which has data for this analyses and put into merged array
+			var data;
+			var row = rows[r];
+
+			var geneName = null; 
+			var organism = null;
+			var geneId = null;
+			var probeId = null;
+			var fc = null;
+			var pvalue = null;
+
+			for (var bm in row)  {
+				 
+				// look for data in the hmData array
+				data = hmData[bm][analysisId];
+				if (data)  {
+					geneName =  row[bm].geneName; 
+					organism = row[bm].organism;
+					geneId = row[bm].primaryExternalId;
+					probeId = data.probeId;
+					fc = data.foldChange;
+					pvalue = data.preferredPValue;
+
+				    break;  // found data, we can stop looking now for a biomarker for data for this analysis and just move on to next analysis							
+				}  
+
+			}
+			colData[c] = {geneName:geneName, organism:organism, geneId:geneId, probeId:probeId, fc:fc, pvalue:pvalue, x:c, y:r};
+
+			 				
+		}
+		mergedData[r] = colData;		
+	}
+	
 	
 	hmTooltips = new Array;
 	
@@ -580,7 +629,6 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 		analyses[i].titleDisplay = (i + 1) + " - " + analyses[i].studyID + " : " + analyses[i].title; 		
 	}
 	
-	//var cellSize = parseInt(jQuery(cellID).slider( "option", "value" ));
 	var cellSize = 15;
 	var wCell = cellSize, hCell = cellSize;		// Cell dimensions
 	
@@ -597,33 +645,29 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	
 	var maxFoldChange = 0;
 	var minFoldChange = 0;
-	// iterate thru genes to get count and find out the widest when displayed; also convert object to an array of rows
-	//  for consumption by svg objects
-	for (rowIndex in heatmapJSON)  {
-		var geneName = heatmapJSON[rowIndex].geneName;
-		var geneId = heatmapJSON[rowIndex].geneId;
+
+	var numRows = rows.length;
+	var geneLabels = new Array;
+	// iterate thru rows and create the gene labels that will go on the left of the graph 
+	//  (for now take the first we come across, do we want to prioritize and use human if available or some other criteria to determine the one shown)
+	for (var r=0; r<rows.length; r++)  {
+		var row = rows[r];
+		
+		var geneName; 
+		var geneId;
+		for (var bm in row)  {
+			geneName =  row[bm].geneName; 
+			geneId = row[bm].primaryExternalId;
+		    break;  
+		}
+  	    geneLabels[r] = {geneName:geneName, geneId:geneId};
+		
 		var wGene = geneName.visualLength(ctaGeneLabelFontWeight + " " + ctaGeneLabelFontSize + "px " + ctaGeneLabelFontFamily);
 	    maxGeneWidth = (wGene > maxGeneWidth) ? wGene : maxGeneWidth;	
 
-	    // also convert data object to an array
-	    var dataArray = new Array();
-	    for (colIndex in heatmapJSON[rowIndex].data)  {
-	    	dataArray[colIndex] =  heatmapJSON[rowIndex].data[colIndex];
-	    	var fc = dataArray[colIndex].foldChange;
-	    	if (fc)  {
-	    		minFoldChange = (fc<minFoldChange) ? fc : minFoldChange;
-	    		maxFoldChange = (fc>maxFoldChange) ? fc : maxFoldChange;
-	    	}
-	    }
-	    
-	    var rowData = {geneId: geneName, geneId: geneName, data:dataArray}
-	    genesArray[rowIndex] = {geneName:geneName, geneId:geneId};
-	    heatmapRows[rowIndex] =  rowData;
-	    
-		numGenes++;
 	}
 
-	var heatmapHeight = hHeader + (numGenes * hCell) + 15;
+	var heatmapHeight = hHeader + (numRows * hCell) + 15;
 	var analysisLegendHeight;
 	var analysisLegendOffset = heatmapHeight;
 	var heatmapOffset = 0;
@@ -670,7 +714,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    .domain([rangeMin2, rangeMin, rangeMid, rangeMid, rangeMax, rangeMax2])
 	    .range(["#4400BE", "#4400BE", "#D7D5FF","#ffe2f2", "#D70C00", "#D70C00"]);
 
-	if (numGenes == 0)  {
+	if (numRows == 0)  {
 	    var hmNoData = hm.append("text")
 		.attr("x", 0)
 		.attr("y", hHeader + 15)
@@ -680,39 +724,39 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	
     //generate the heatmap
     var hmRow = hm.selectAll(".heatmap")
-      .data(heatmapRows)
+      .data(mergedData)
       .enter().append("g");    
     
     var hmRects = hmRow
 	    .selectAll(".rect")
 	    .data(function(d) {
-	      return d.data;
+	      return d;
 	    }).enter().append("svg:rect")
 	    .attr('width', wCell)
 	    .attr('height',hCell)
 	    .attr("class", "heatmapTooltip")
 	    .attr("id", function(d) {
 	    	var id = "hmCell" + uniqueHeatmapId++;   // id here will match id in tooltip array
-	    	var geneName = heatmapJSON[d.y].geneName;
+	    	var geneName = d.geneName;
 	    	
 	    	var fc;
-			if (d.foldChange == undefined)  {
+			if (d.fc == undefined)  {
 				fc = "null"
 			}
 			else {
-				fc = d.foldChange.toFixed(2);
+				fc = d.fc.toFixed(2);
 			}
 			
 			var pvalue;
-			if (d.preferredPValue == undefined)  {
+			if (d.pvalue == undefined)  {
 				pvalue = "null"
 			}
 			else {
-				if (d.preferredPValue == 0)   {
+				if (d.pvalue == 0)   {
 					pvalue = "< 0.00001";
 				}
 				else {					
-					pvalue = d.preferredPValue;
+					pvalue = d.pvalue;
 				}
 			}
 
@@ -723,6 +767,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    				   "<tr><td ><b>Analysis</b></td><td>" + analyses[d.x].title + "</td></tr>" +
 	    				   "<tr><td><b>Probe</b></td><td>" + d.probeId + "</td></tr>" +
 	    				   "<tr><td><b>Gene</b></td><td>" + geneName  + "</td></tr>" +
+	    				   "<tr><td><b>Organism</b></td><td>" + d.organism + "</td></tr>" +
 	    				   "<tr><td><b>Fold Change</b></td><td>" + fc  + "</td></tr>" +
 	    				   "<tr><td><b>Preferred pvalue</b></td><td>" + pvalue  + "</td></tr>" +
 	    				   "</table>";
@@ -741,11 +786,11 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    .style("shape-rendering", "crispEdges")
 	    .style('fill',function(d) {
 	    	
-	        if (d.foldChange == null)  {        	
+	        if (d.fc == null)  {        	
 	        	return "#FFFF00";
 	        } 	
 	        else  {
-	        	return colorScale(d.foldChange);
+	        	return colorScale(d.fc);
 	        }
 	      
 	    })
@@ -795,7 +840,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	
     // Show the gene labels
 	var geneGroupText = geneGroup.selectAll("a")
-		.data(genesArray)
+		.data(geneLabels)
 		.enter().append("a")
 		.attr("xlink:href", function(d) {return "javascript:showGeneInfo('" + d.geneId + "');"})
 		.append("text")

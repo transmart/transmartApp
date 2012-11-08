@@ -1500,9 +1500,6 @@ def getHeatmapDataCTA  = {analysisIds, bmIds ->
 	def results = sql.rows(s.toString(), sqlParams)
 	def analysisMap = [:]
 	def returnMap = [:]
-	def bioMarkerIdsList = []
-	def geneIdsList = []
-	def geneNamesList = []
 
 	// loop through and determine probe id  with highest pvalue/fold change 	(since they are ordered desc it will be the first one encountered for the analysis/gene)
 	results.each{ row->
@@ -1516,9 +1513,7 @@ def getHeatmapDataCTA  = {analysisIds, bmIds ->
 			analysisMap.put(aId, aMap)
 		}  
 			
-		def geneName = row.bio_marker_name
-		def geneId = row.gene_id
-		def bioMarkerId = row.bio_marker_id
+		def bioMarkerId = row.bio_marker_id.toString()
 		// if gene not mapped yet for analysis, then add it with fold change and probe used
 		//   (if there, skip it since it's not most significant probe)
         if (!aMap.get(bioMarkerId))  {
@@ -1528,34 +1523,10 @@ def getHeatmapDataCTA  = {analysisIds, bmIds ->
 			geneMap.put("preferredPValue", row.preferred_pvalue)
 			
 			aMap.put(bioMarkerId, geneMap)
-		}
-		
-		// also create lists containing the list of unique, sorted biomarker ids and names
-		// not in list yet, add it
-		if (bioMarkerIdsList.indexOf(bioMarkerId) == -1)
-		{				  
-			  // find location to insert this item based on the gene name alphabetically
-			  def insertLocation = 0;
-			  while (insertLocation<geneNamesList.size())  {
-				  
-				  if (geneName > geneNamesList[insertLocation])  {
-					  insertLocation++;
-				  } 
-				  else  {
-				  		break;
-				  }
-			  }
-			  geneIdsList.add(insertLocation, geneId)			  
-			  geneNamesList.add(insertLocation, geneName)
-			  bioMarkerIdsList.add(insertLocation, bioMarkerId)
-		}			  
-			
+		}					
 	}
 	
 	returnMap.put("analysisInfo", analysisMap)
-	returnMap.put("bioMarkerIds", bioMarkerIdsList)
-	returnMap.put("geneIds", geneIdsList)
-	returnMap.put("geneNames", geneNamesList)
 	
 	return returnMap
  }
@@ -1587,7 +1558,7 @@ def getHeatmapGenesCTA  = {analysisIds, keywordIds ->
 	s.append(") ")
 	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
 
-	s.append(" order by organism, upper(b.bio_marker_name) asc")
+	s.append(" order by upper(b.bio_marker_name) asc")
 	
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
