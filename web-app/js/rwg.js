@@ -1135,6 +1135,8 @@ function setVisTabs(analysisID){
 	});
 }
 
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Box or Line Plot Visualization Methods
 // Show, Load Data and Draw
@@ -2724,6 +2726,25 @@ function getTopGenes(analysisID)
 			    jQuery('#xtTopGenes').after(tbl_body);
 		   
 		}
+	});
+	
+}
+
+
+function updateCrossTrialGeneCharts(){
+	
+	jQuery('#xtMsgBox').fadeOut(200);
+	
+	//clear div
+	jQuery('#xtSummaryChartArea').html('');
+	
+	jQuery(xtSelectedKeywords).each(function (index, value){
+		
+		if(xtSelectedKeywords[index].categoryId == 'GENE'){
+			
+			getCrossTrialGeneSummary(xtSelectedKeywords[index].id);
+		}
+		
 	});
 	
 }

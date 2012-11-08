@@ -988,14 +988,7 @@ border-top: 1px solid #CCC;
 	display: inline-block;
 }
 
-#xtMenuBar{
 
-}
-
-#xtMenuBar li{
-	display: inline-block;
-	padding: 10px;
-}
 
 #xtSelectedAnalysesList li {
 padding: 8px;
