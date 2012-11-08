@@ -645,7 +645,7 @@ public class SearchController{
 							    <jar href="./lib/jgoodies-looks-2.5.1.jar"/>  
 							    <jar href="./lib/log4j-1.2.17.jar"/>
 							    <jar href="./lib/TDBApi.jar"/>  
-							    <jar href="${jar};jsessionid=""" + session.getId() + """" main="true" />
+							    <jar href="${jar}"/>
 							    
 							    <property name="jsessionid" value='""" + session.getId() + """'/>
                                 <property name="serviceHost" value='""" + request.getServerName() + """'/>
