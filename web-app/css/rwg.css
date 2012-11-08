@@ -970,6 +970,7 @@ border-top: 1px solid #CCC;
 	padding: 10px;
 	border-top: 1px solid #CCC;
 	border-bottom: 1px solid #CCC;
+	margin-bottom: 10px;
 }
 
 #xtMsgBox{
@@ -1078,8 +1079,34 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
   stroke: #000;
   shape-rendering: crispEdges;
 }
+/*** End bar charts ***/
 
 
-/*** boxplot ***/
 
+/*** Home Screen ***/
+
+.home-content-box{
+width: 45%;
+border: 1px solid #CCC;
+padding: 0px 10px 10px 10px;
+background: #F8F8F8;
+border-left: 0;
+display: inline-block;
+border-right: 0;
+vertical-align: top;
+min-height: 200px;
+min-width:250px;
+}
+
+#favoritesTable td{
+	padding:4px;
+}
+
+#favoritesTable th{
+	background:none;
+	border-bottom:1px dotted #ccc;
+}
+
+
+/*** End Home Screen ***/
 
