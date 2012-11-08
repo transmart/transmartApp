@@ -141,7 +141,7 @@ function populateActionSelection(dropdown){
 		
 		//grabbing the public, owned and deleted flags for the selected gene list.
 		var isPublic=((jQuery("#"+selectedGeneListId+"Public").text())=="Public");
-		var isUserOwned=((jQuery("#"+selectedGeneListId+"Owned").text())=="Owned");
+		var isUserOwned=((jQuery("#"+selectedGeneListId+"Owned").val())=="Owned");
 		var isDeleted=((jQuery("#"+selectedGeneListId+"Deleted").val())=="Deleted");
 		var isAdmin=((jQuery("#adminFlag").val())=="true");
 		isUserOwned=(isAdmin||isUserOwned)
