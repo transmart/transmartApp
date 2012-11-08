@@ -2572,57 +2572,29 @@ function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex) {
         	jQuery('body').data("currentPage:" + analysisId, page);
                                     
         }, 
-        onFormat: function(type) {      
-      
-                switch (type) {      
-                case 'block':      
-                    	if (!this.active)      
-                    		return '<span class="disabled">' + this.value + '</span>';      
-                    	else if (this.value != this.page)      
-                        return '<em><a href="#' + this.value + '">' + this.value + '</a></em>';      
-                    	return '<span class="current">' + this.value + '</span>';      
-                case 'left':      
-                case 'right':      
-      
-                        if (!this.active)      
-                                return '';      
-                        else       
-                                return '<em><a href="#' + this.value + '">' + this.value + '</a></em>';      
-      
-                case 'next':      
-      
-                        if (this.active) {      
-                                return '<a href="#' + this.value + '" class="next">Next &raquo;</a>';      
-                        }      
-                        return '<span class="disabled">Next &raquo;</span>';      
-      
-                case 'prev':      
-      
-                        if (this.active) {      
-                                return '<a href="#' + this.value + '" class="prev">&laquo; Previous</a>';      
-                        }      
-                        return '<span class="disabled">&laquo; Previous</span>';      
-      
-                case 'first':      
-      
-                        if (this.active) {      
-                                return '<a href="#' + this.value + '" class="first">|&lsaquo;</a>';      
-                        }      
-                        return '<span class="disabled">|&lsaquo;</span>';      
-      
-                case 'last':      
-      
-                        if (this.active) {      
-                                return '<a href="#' + this.value + '" class="prev">&rsaquo;|</a>';      
-                        }      
-                        return '<span class="disabled">&rsaquo;|</span>';      
-      
-                case 'fill':      
-                        if (this.active) {      
-                                return "...";      
-                        }      
-                }      
-        }
+        onFormat: formatPaginator
+    }); 	
+	
+}
+
+function loadHeatmapPaginator(divID, analysisId, page) {
+
+	var analysisIndex = getAnalysisIndex(analysisId);
+		
+	rwgAJAXManager.add({
+		url:getHeatmapNumberProbesURL,		
+		data: {id: analysisId, page:page},
+		success: function(response) {								
+			var maxProbeIndex = response['maxProbeIndex']
+			
+			getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, page);
+	
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+        onFormat: formatPaginator
     }); 	
 	
 }
@@ -2647,7 +2619,7 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 }
 
 
-function showCrossTrialAnalysis()
+function openCrossTrialAnalysis()
 {
 	//hide the unused menu options
 	jQuery("#toolbar-collapse_all").hide();
@@ -3070,13 +3042,12 @@ function addXTSearchAutoComplete()	{
 			switch (categoryId)  {
 				case "GENE": 
 					getCrossTrialGeneSummary(keywordId);
-					loadBoxPlotCTA(keywordId);
+					//loadBoxPlotCTA(keywordId);
 					break;
 				case "GENELIST": 
 				case "GENESIG": 
 				case "PATHWAY":
 					loadHeatmapCTAPaginator(categoryId, keywordId, 1);
-					loadHeatmapCTA(categoryId, keywordId);   // need to call this from within method in prev line
 					break;
 				default:  
 					alert("Invalid category!");
@@ -3108,25 +3079,19 @@ function drawPieChart(divid, data)
 
 
 //Load the heatmap data for cross trial analysis 
-// category: either GENELIST, GENESIG, or PATHWAY
+// analysisIds: pipe delimited list of analysis ids
+// genes: list of bm ids for page to be loaded
 // searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
-function loadHeatmapCTA(category, searchKeywordId)	{	
-	
-	var analysisIds = "";
-	// retrieve list of selected analyses, create a pipe delimited list of analysis ids
-	for (var i=0; i<selectedAnalyses.length; i++)
-	{
-		if (analysisIds != "")  {
-			analysisIds += "|";
-		}
-		analysisIds += selectedAnalyses[i].id;
-	}
-	
+function loadHeatmapCTA(analysisIds, bmIds)	{	
+		
+	var bmIdsPiped = bmIds.join('|');
 	rwgAJAXManager.add({
 		url:getHeatmapDataCTAURL,
-		data: {analysisIds: analysisIds, category: category, searchKeywordId: searchKeywordId},
+		data: {analysisIds: analysisIds, bmIds: bmIdsPiped},
 		timeout:60000,
 		success: function(response) {
+			
+			jQuery('#xtHeatmap').unmask(); //hide the loading msg, unblock the div
 			
 			drawHeatmapCTA('xtHeatmap', response, selectedAnalyses);
 						
@@ -3151,12 +3116,13 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 	}
 		
 	rwgAJAXManager.add({
-		url:getHeatmapCTANumberGenesURL,		
+		url:getHeatmapCTAGenesURL,		
 		data: {analysisIds: analysisIds, category: category, searchKeywordId: searchKeywordId, page:page},
 		success: function(response) {								
-			var maxGeneIndex = response['maxGeneIndex']
+			var maxGeneIndex = response['maxGeneIndex'];
+			var bmIds = response['bmIdsWithData'].split('|');
 			
-//			getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, page);
+			getHeatmapPaginatorCTA("xtHeatmapPaginator", analysisIds, category, searchKeywordId, maxGeneIndex, bmIds);
 	
 		},
 		error: function(xhr) {
@@ -3165,6 +3131,66 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 	});
 }
 
+function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, maxGeneIndex, bmIds) {
+	var element = jQuery("#" + divID);
+	var numberOfGenesPerPage = 20;
+	
+	// get number of extra genes on last page (will be 0 if last page is full)
+	var numberGenesLastPage = maxGeneIndex % numberOfGenesPerPage;
+	
+	// find number of full pages
+	var numberOfFullPages = Math.floor(maxGeneIndex / numberOfGenesPerPage);
+	
+	// find number of pages - equal to number of full pages if none left over after full pages
+	var numberOfPages = numberOfFullPages;        	        	
+	if (numberGenesLastPage > 0)  {
+		numberOfPages = numberOfPages + 1;
+	}
+	
+	// create an array of pages (each array will contain an array of genes on that page)
+	var pagesArray = new Array;
+	
+	// first create an empty array for each page
+	for (var i=1; i<=numberOfPages; i++)  {
+		var genesArray = new Array;
+		pagesArray.push(genesArray)
+	}
+	
+	// now loop through genes with data and push onto the appropriate page
+	for (var i=0; i<bmIds.length; i++)  {
+		var p = Math.floor(i / numberOfGenesPerPage);
+		pagesArray[p].push(bmIds[i]);
+	}
+
+	// save the page information so can be used for later page loads
+	jQuery.data(element, "pages", pagesArray);
+	
+	//if there is only 1 page, just hide the paging control since it's not needed
+	if(numberOfPages==1){
+		element.hide();
+	}
+	else  {
+		element.show();
+	}
+
+	element.paging(numberOfPages, { 
+	    perpage:1, 
+        format:"[<(qq -) ncnnn (- pp)>]",
+        onSelect: function (page) { 
+        	jQuery("#xtHeatmap").mask("Loading...");
+
+        	var pages = jQuery.data(element, "pages");
+        	var genes = pages[page - 1];
+        	//loadHeatmapData(divID, analysisId, page, numberOfGenesPerPage);
+			loadHeatmapCTA(analysisIds, genes);   
+
+        	jQuery.data(element, "currentPage", page);
+                                    
+        }, 
+        onFormat: formatPaginator
+    }); 	
+	
+}
 
 
 function openXtBoxplot(keywordId, geneName){
@@ -3188,8 +3214,7 @@ function openXtBoxplot(keywordId, geneName){
 	
 	jQuery('#xtBoxplotHolder').dialog({ width: wWidth, title: geneName });
     
-  //  jQuery('#simplemodal-container').mask("Loading...");
-    
+
     loadBoxPlotCTA(keywordId);
     
     return;
@@ -3212,7 +3237,8 @@ function loadBoxPlotCTA(keywordId)	{
 		}
 		ids += selectedAnalyses[i].id;
 	}
-	
+    jQuery('#xtBoxplotWrapper').mask("Loading...");
+
 	rwgAJAXManager.add({
 		url:getBoxPlotDataCTAURL,
 		data: {ids: ids, keywordId: keywordId},
@@ -3220,6 +3246,8 @@ function loadBoxPlotCTA(keywordId)	{
 		success: function(response) {
 			
 			drawBoxPlotD3('xtBoxplot', response, null, false, true, selectedAnalyses);
+		    jQuery('#xtBoxplotWrapper').unmask();
+
 			
 		},
 		error: function(xhr) {
@@ -3228,4 +3256,58 @@ function loadBoxPlotCTA(keywordId)	{
 	});
 	
 	
+}
+
+
+
+function formatPaginator(type) {      
+    
+    switch (type) {      
+    case 'block':      
+        	if (!this.active)      
+        		return '<span class="disabled">' + this.value + '</span>';      
+        	else if (this.value != this.page)      
+            return '<em><a href="#' + this.value + '">' + this.value + '</a></em>';      
+        	return '<span class="current">' + this.value + '</span>';      
+    case 'left':      
+    case 'right':      
+
+            if (!this.active)      
+                    return '';      
+            else       
+                    return '<em><a href="#' + this.value + '">' + this.value + '</a></em>';      
+
+    case 'next':      
+
+            if (this.active) {      
+                    return '<a href="#' + this.value + '" class="next">Next &raquo;</a>';      
+            }      
+            return '<span class="disabled">Next &raquo;</span>';      
+
+    case 'prev':      
+
+            if (this.active) {      
+                    return '<a href="#' + this.value + '" class="prev">&laquo; Previous</a>';      
+            }      
+            return '<span class="disabled">&laquo; Previous</span>';      
+
+    case 'first':      
+
+            if (this.active) {      
+                    return '<a href="#' + this.value + '" class="first">|&lsaquo;</a>';      
+            }      
+            return '<span class="disabled">|&lsaquo;</span>';      
+
+    case 'last':      
+
+            if (this.active) {      
+                    return '<a href="#' + this.value + '" class="prev">&rsaquo;|</a>';      
+            }      
+            return '<span class="disabled">&rsaquo;|</span>';      
+
+    case 'fill':      
+            if (this.active) {      
+                    return "...";      
+            }      
+    }      
 }
