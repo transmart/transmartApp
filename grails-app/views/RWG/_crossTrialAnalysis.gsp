@@ -17,8 +17,6 @@
 	});
 </script>
 
-
-
 <div id="xtHolder">
 	<h1>Cross Trial Analysis</h1>
 
@@ -55,6 +53,14 @@
 
 </div>
 
+<!-- Boxplot Tab Content -->
+<div id="xtBoxplotWrapper" style="display:none">
+	<div id="xtBoxplot"></div>
+	<div id="exportBoxplot">
+    	<a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Boxplot Image</a>
+	</div>    
+</div>
+
 
 
 <!-- Heatmap Tab Content -->
@@ -68,11 +74,17 @@
 <div id ="xtBoxplotHolder" style="display:none">
 	<div id="xtBoxplot"></div>
 	<a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Box Plot as an Image</a>
+<div id="xtHeatmapPaginator" class="pagination" style="text-align:left">
+</div>    
+
+<div id="exportCTAHeatmap">
+    <a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a>
+</div>    
+
+
+	
 </div>
 
-
   </div>
-
-
 
 
