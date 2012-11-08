@@ -600,34 +600,96 @@ public class SearchController{
 		if (!regions) { regions = "0" }
 		if (!pvalueCutoff) { pvalueCutoff = 0 }
 		
-		def responseText = """\
-			<?xml version="1.0" encoding="UTF-8"?>
-			<jnlp spec="6.0+" codebase="${codebase}" href="search/webStartPlotter;jsessionid=""" + session.getId() + """">
-			    <information>
-			        <title>Testing Java WS</title>
-			        <vendor>Recombinant</vendor>
-			    </information>
-			    <resources>
-			        <!-- Application Resources -->
-			        <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-                    <property name="jsessionid" value='""" + session.getId() + """'/>
-                    <property name="serviceHost" value='""" + request.getServerName() + """'/>
-			        <jar href="${jar};jsessionid=""" + session.getId() + """" main="true" />
-			    </resources>
-					    <application-desc name="Test WS" main-class="${mainClass}" width="300" height="300">
-					"""
-
-					responseText += '<argument>' + analysisIds + '</argument>\n'
-					responseText += '<argument>' + regions + '</argument>\n'
-					responseText += '<argument>' + geneSource + '</argument>\n'
-					responseText += '<argument>' + snpSource + '</argument>\n'
-					responseText += '<argument>' + pvalueCutoff + '</argument>\n'
-		responseText +=	"""
-
-						</application-desc>
-			    <update check="background"/>
-			</jnlp>                             
+		def responseText = """<?xml version="1.0" encoding="utf-8"?> 
+							<jnlp 
+							  spec="1.0+" 
+							  codebase="${codebase}" 
+							  href="/transmartPfizer/search/webStartPlotter;jsessionid=""" + session.getId() + """"> 
+							  <information> 
+							    <title>GWAVA Gene Wide Association Visual Analyzer with search set</title> 
+							    <vendor>Pfizer Inc</vendor> 
+							    <homepage href="./index.html"/> 
+							    <description>Tool for Manhattan plot visualization of GWAS data.</description> 
+							    <description kind="short">GWAVA gene wide association visual analysis</description> 
+							    <shortcut>
+							      <desktop/>
+							      <menu submenu="GWAVA Transmart"/>
+							    </shortcut>
+							    <icon href="./images/guava_16.jpg"/> 
+							    <icon href="./images/guava_24.jpg"/> 
+							    <icon href="./images/guava_48.jpg"/> 
+							    <icon kind="splash" href="./images/gwava_splash2.jpg"/>
+							    <offline-allowed/> 
+							  </information> 
+							  <security> 
+							      <all-permissions/> 
+							  </security> 
+							  <update check="always"/>
+							  <resources> 
+							    <j2se version="1.6+" java-vm-args="-Xmx800m"/>
+							    
+							    <jar href="./lib/BioServicesClient.jar"/>  
+							    <jar href="./lib/commons-beanutils-1.8.3.jar"/>  
+							    <jar href="./lib/commons-beanutils-bean-collections-1.8.3.jar"/>  
+							    <jar href="./lib/commons-beanutils-core-1.8.3.jar"/>  
+							    <jar href="./lib/BioServicesUtil.jar"/>  
+							    <jar href="./lib/commons-codec-1.6.jar"/>  
+							    <jar href="./lib/commons-digester3-3.2.jar"/>  
+							    <jar href="./lib/commons-lang3-3.1.jar"/>  
+							    <jar href="./lib/commons-logging-1.1.1.jar"/>  
+							    <jar href="./lib/httpclient-4.0.jar"/>  
+							    <jar href="./lib/httpcore-4.2.1.jar"/>  
+							    <jar href="./lib/jersey-client-1.4.jar"/>  
+							    <jar href="./lib/jersey-core-1.4.jar"/>  
+							    <jar href="./lib/jgoodies-common-1.3.1.jar"/>  
+							    <jar href="./lib/jgoodies-looks-2.5.1.jar"/>  
+							    <jar href="./lib/jnlp.jar"/>  
+							    <jar href="./lib/log4j-1.2.17.jar"/>
+							    <jar href="./lib/TDBApi.jar"/>  
+							    <jar href="${jar};jsessionid=""" + session.getId() + """" main="true" />
+							    
+							    <property name="jsessionid" value='""" + session.getId() + """'/>
+                                <property name="serviceHost" value='""" + request.getServerName() + """'/>
+                                <property name="sun.java2d.noddraw" value="true"/>
+							  </resources> 
+							  <application-desc main-class="com.pfizer.mrbt.genomics.Driver"> 
+								<argument>""" + analysisIds + """</argument>
+								<argument>""" + regions + """</argument>
+								<argument>""" + geneSource + """</argument>
+								<argument>""" + snpSource + """</argument>
+								<argument>""" + pvalueCutoff + """</argument>
+								<argument>-services=transmart</argument>
+							  </application-desc>
+								
+							</jnlp>                           
 		"""
+								
+//		<?xml version="1.0" encoding="UTF-8"?>
+//		<jnlp spec="6.0+" codebase="${codebase}" href="search/webStartPlotter;jsessionid=""" + session.getId() + """">
+//			<information>
+//				<title>Testing Java WS</title>
+//				<vendor>Recombinant</vendor>
+//			</information>
+//			<resources>
+//				<!-- Application Resources -->
+//				<j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+//				<property name="jsessionid" value='""" + session.getId() + """'/>
+//				<property name="serviceHost" value='""" + request.getServerName() + """'/>
+//				<jar href="${jar};jsessionid=""" + session.getId() + """" main="true" />
+//			</resources>
+//					<application-desc name="Test WS" main-class="${mainClass}" width="300" height="300">
+//				"""
+//
+//				responseText += '<argument>' + analysisIds + '</argument>\n'
+//				responseText += '<argument>' + regions + '</argument>\n'
+//				responseText += '<argument>' + geneSource + '</argument>\n'
+//				responseText += '<argument>' + snpSource + '</argument>\n'
+//				responseText += '<argument>' + pvalueCutoff + '</argument>\n'
+//	responseText +=	"""
+//
+//					</application-desc>
+//			<update check="background"/>
+//		</jnlp>
 		
 		
 		render(text:responseText,contentType:"application/x-java-jnlp-file")
