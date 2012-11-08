@@ -187,6 +187,9 @@ function clearAllSelectedAnalyses(){
 	
 	//update the display list
 	displayxtAnalysesList();
+	
+	//also clear the search terms
+	clearAllXTSearchTerms();	
 
 	return;
 	
@@ -317,7 +320,7 @@ function toggleFilters()	{
 		jQuery("#toggle-btn").css('height', 20);
 		jQuery("#main").css('padding-left', 0);	
 		jQuery("#main").css('left', 300);
-		jQuery("#menu_bar").css('left', 300);
+		jQuery("#menu_bar").css('left', 301);
 	} else	{
 		jQuery("#search-categories").attr('style', 'visibility:hidden; display:none');
 		jQuery("#search-ac").attr('style', 'visibility:hidden; display:none');
@@ -2154,8 +2157,7 @@ function loadSearch(id)  {
 function clearSearch()	{
 	
 	//remove all pending jobs from the ajax queue
-	rwgAJAXManager.clear(true);// (this was causing problems, so removing for now)
-	
+	rwgAJAXManager.clear(true);
 	
 	openAnalyses = []; //all analyses will be closed, so clear this array
 	
@@ -2750,6 +2752,37 @@ function updateCrossTrialGeneCharts(){
 }
 
 
+function closeXTGeneChart(divID, geneID){
+	
+	jQuery('#' +divID).fadeOut(200, function() { 
+		jQuery('#' +divID).remove(); 
+		
+	});
+	
+	//loop through the array, find the gene ID to be removed, and remove it from the array
+	for (var i =0; i < xtSelectedKeywords.length; i++){
+	   if (xtSelectedKeywords[i].id === geneID) {
+		   xtSelectedKeywords.splice(i,1);
+	      break;
+	   }
+	}
+	
+	
+}
+
+function clearAllXTSearchTerms(){
+	
+	//Clear the html div of existing charts
+	jQuery('#xtSummaryChartArea').html('');
+	
+	//reset the array
+	xtSelectedKeywords = [];
+	
+	//remove the message box
+	jQuery('#xtMsgBox').fadeOut(200);
+	
+}
+
 
 //used on the cross trial analysis page to display the summary
 function displayxtAnalysesList(){
@@ -2786,7 +2819,7 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id, placeholder){
 	var divID = "xtSummaryChart_" +geneID;
 	
 	//html for button to close the graph
-	var closeHTML = "<a href='#' class='xtChartClostbtn' id='" +divID  +"_CloseBtn' onclick=\"jQuery('#" +divID +"').fadeOut(200, function() { jQuery('#" +divID +"').remove(); });   \">x</a>";
+	var closeHTML = "<a href='#' class='xtChartClostbtn' id='" +divID  +"_CloseBtn' onclick=\"closeXTGeneChart('" +divID +"'," +geneID +")\">x</a>";
 	
 	var openBoxplotLinkHTML = "<a href='#' class='xtBoxplotbtn' id='" +divID  +"_BoxplotBtn' onclick=\"openXtBoxplot('"+keyword_id +"', '" +geneName +"')\">view boxplot</a>";
 
@@ -3043,12 +3076,16 @@ function addXTSearchAutoComplete()	{
 			switch (categoryId)  {
 				case "GENE": 
 					getCrossTrialGeneSummary(keywordId);
-					//loadBoxPlotCTA(keywordId);
+					
+					jQuery('#xtMenuBar').tabs('select', 'xtSummaryChartArea'); // switch to chart tab
+
+					
 					break;
 				case "GENELIST": 
 				case "GENESIG": 
 				case "PATHWAY":
 					loadHeatmapCTAPaginator(categoryId, keywordId, 1);
+					jQuery('#xtMenuBar').tabs('select', 'xtHeatmapTab'); // switch to heatmap tab
 					break;
 				default:  
 					alert("Invalid category!");

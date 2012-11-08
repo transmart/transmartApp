@@ -10,7 +10,7 @@
     	jQuery('#xtSummaryChartArea').sortable();
     	
 
-    //	displaySelectedAnalysisTopGenes();
+    	displaySelectedAnalysisTopGenes();
     	addXTSearchAutoComplete();
 
     		var tabID = "#xtMenuBar";
@@ -29,6 +29,13 @@
 		Search for gene, pathway, or gene signature: <input id="xtSearch-ac"/></input> 
 	</div>
 	
+	<div id="xtMsgBox" style="display:none">
+		<p style="text-align:center; margin-bottom:8px">The analysis selection has changed</p>
+		<p style="text-align:center"><a href="#" onclick="updateCrossTrialGeneCharts();" class=btn>Redraw charts</a>
+		<a href="#" onclick="clearAllXTSearchTerms();" class="btn">Clear all</a></p>
+	</div>
+	
+	
 	<div id="xtMenuBar" class="analysis-tabs">
 		<ul>
 			<li><a href="#xtSummary">Summary Table</a></li>
@@ -37,7 +44,11 @@
 		</ul>
 		
 		<!-- Summary Table -->
-		<div id="xtSummary">... Summary table ... ... Summary table ... ... Summary table ... ... Summary table ... ... Summary table ... </div>		
+		<div id="xtSummary">
+		
+			<div id="xtTopGenes"></div>
+		
+		</div>		
 		
 		<!--  Gene Charts Tab -->
 		<div id="xtSummaryChartArea"></div>
@@ -51,34 +62,20 @@
 		
 	</div>
 	
-	<div id="xtMsgBox" style="display:none">
-		<p style="text-align:center; margin-bottom:8px">The analysis selection has changed</p>
-		<p style="text-align:center"><a href="#" onclick="updateCrossTrialGeneCharts();" class=btn>Redraw charts</a>
-		<a href="#" class="btn">Clear all</a></p>
-	</div>
-	
 	
 			
 	<h2>Selected Analyses</h2>
 	
 	<div id="xtSummary_AnalysesList"></div>
-
-	<div id="xtTopGenes"></div>
 	
 
 </div>
 
 
 	
-	<!-- Boxplot Content -->
-	<div id ="xtBoxplotHolder" style="display:none">
-		<div id="xtBoxplot"></div>
-		<a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Box Plot as an Image</a>
-	</div>    
-	
-	<div id="exportCTAHeatmap">
-	    <a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a>
-	</div>    
+<!-- Boxplot Content - dialog -->
+<div id ="xtBoxplotHolder" style="display:none">
+	<div id="xtBoxplot"></div>
+	<a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Box Plot as an Image</a>
+</div>    
 
-
-</div>

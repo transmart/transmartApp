@@ -961,13 +961,13 @@ border-top: 1px solid #CCC;
 #xtHolder{
 	
 	margin-left:10px;
+	margin-right:10px;
 	
 }
 
 #xtSearch{
 	background-color: #F8F8F8;
 	padding: 10px;
-	margin-right: 10px;
 	border-top: 1px solid #CCC;
 	border-bottom: 1px solid #CCC;
 }
@@ -975,10 +975,10 @@ border-top: 1px solid #CCC;
 #xtMsgBox{
 	padding: 10px;
 	border: 1px solid #CCC;
-	background-color: #EFEFEF;
+	background-color: #FFFCE5;
 	margin: auto;
 	margin-top: 10px;
-	width: 50%;
+	width: 350px;
 }
 #xtMsgBox .btn{
 	color: #1B74B3;
@@ -996,7 +996,6 @@ border: 1px solid #DDD;
 border-collapse: collapse;
 padding-right: 0;
 margin-top: -1px;
-margin-right: 20px;
 background-color: #F3F3F3;
 list-style-type: none;
 cursor:default;
@@ -1062,11 +1061,11 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 }
 
 .bar.positive {
-  fill: steelblue;
+  fill: brown;
 }
 
 .bar.negative {
-  fill: brown;
+  fill: steelblue;
 }
 
 .axis text {

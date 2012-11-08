@@ -5,7 +5,7 @@
 			   <br />
 			</g:if>
 			<g:else>
-    			<h2>Click on name of favorite to load the saved faceted search</h2>
+    			<h2>Load Saved Filter</h2>
 			    <table id="favoritesTable">
 			        <tr>
 			        	<td>
@@ -14,7 +14,7 @@
 						    				Create Date
 							    	</div>
 					    	    	<div style="float: left;width:200px;margin:5px;font-weight:bold">
-					    	    			Name
+					    	    			Filter Name
 							    	</div>
 					    	    </div>
 			        	</td>			        	
