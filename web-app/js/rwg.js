@@ -2519,6 +2519,7 @@ function removeByValue(arr, val) {
 }
 
 
+
 function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex) {
 	probesPerPageElement = document.getElementById("probesPerPage_" + analysisId);
 	numberOfProbesPerPage = probesPerPageElement.options[probesPerPageElement.selectedIndex].value;
@@ -2576,7 +2577,6 @@ function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex) {
     }); 	
 	
 }
-
 function loadHeatmapPaginator(divID, analysisId, page) {
 
 	var analysisIndex = getAnalysisIndex(analysisId);
@@ -2595,6 +2595,8 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 		}
 	});
         onFormat: formatPaginator
+=======
+>>>>>>> refs/remotes/origin/master
     }); 	
 	
 }
@@ -3191,7 +3193,38 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, m
     }); 	
 	
 }
+=======
+>>>>>>> refs/remotes/origin/master
 
+	// save the page information so can be used for later page loads
+	jQuery.data(element, "pages", pagesArray);
+	
+	//if there is only 1 page, just hide the paging control since it's not needed
+	if(numberOfPages==1){
+		element.hide();
+	}
+	else  {
+		element.show();
+	}
+
+	element.paging(numberOfPages, { 
+	    perpage:1, 
+        format:"[<(qq -) ncnnn (- pp)>]",
+        onSelect: function (page) { 
+        	jQuery("#xtHeatmap").mask("Loading...");
+
+        	var pages = jQuery.data(element, "pages");
+        	var genes = pages[page - 1];
+        	//loadHeatmapData(divID, analysisId, page, numberOfGenesPerPage);
+			loadHeatmapCTA(analysisIds, genes);   
+
+        	jQuery.data(element, "currentPage", page);
+                                    
+        }, 
+        onFormat: formatPaginator
+    }); 	
+	
+}
 
 function openXtBoxplot(keywordId, geneName){
 	
@@ -3257,6 +3290,7 @@ function loadBoxPlotCTA(keywordId)	{
 	
 	
 }
+
 
 
 

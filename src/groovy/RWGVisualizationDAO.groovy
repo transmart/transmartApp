@@ -1475,17 +1475,17 @@ class RWGVisualizationDAO {
  *   determine the fold change  
  *
  * @param analysisIds - the list of analysis IDs
- * @param keywordIds - pipe delimited string of keyword ids for genes
+ * @param bmIds - pipe delimited list of biomarker ids for genes
  *
- * @return a map containing the analysis id as key and a map for each gene with gene name as key
+ * @return a map containing the analysis id as key and a map for each gene with biomarker id for gene as key
  *         gene map contains probeId, pvalue, and fold change
  **/
-def getHeatmapDataCTA  = {analysisIds, keywordIds ->
+def getHeatmapDataCTA  = {analysisIds, bmIds ->
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
 	s.append("""
-	     select distinct bio_assay_analysis_id, bio_marker_name, probe_id, gene_id, preferred_pvalue, abs(fold_change_ratio),
+	     select distinct bio_assay_analysis_id, upper(bio_marker_name) bio_marker_name, bio_marker_id, probe_id, gene_id, preferred_pvalue, abs(fold_change_ratio),
 			fold_change_ratio
 		  from heat_map_results
 		   where Bio_Assay_Analysis_Id in ("""
@@ -1493,13 +1493,14 @@ def getHeatmapDataCTA  = {analysisIds, keywordIds ->
 
 	s.append(analysisIds.join(','))
 	s.append(") ")  
-	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
-	s.append(" order by bio_assay_analysis_id, bio_marker_name, preferred_pvalue asc, abs(fold_change_ratio) desc ")
+	s.append(convertPipeDelimitedStringToInClause(bmIds, "bio_marker_id"))
+	s.append(" order by bio_assay_analysis_id, upper(bio_marker_name), preferred_pvalue asc, abs(fold_change_ratio) desc ")
 
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
 	def analysisMap = [:]
 	def returnMap = [:]
+	def bioMarkerIdsList = []
 	def geneIdsList = []
 	def geneNamesList = []
 
@@ -1517,20 +1518,21 @@ def getHeatmapDataCTA  = {analysisIds, keywordIds ->
 			
 		def geneName = row.bio_marker_name
 		def geneId = row.gene_id
+		def bioMarkerId = row.bio_marker_id
 		// if gene not mapped yet for analysis, then add it with fold change and probe used
 		//   (if there, skip it since it's not most significant probe)
-        if (!aMap.get(geneId))  {
+        if (!aMap.get(bioMarkerId))  {
 			def geneMap = [:]
 			geneMap.put("probeId", row.probe_id)
 			geneMap.put("foldChange", row.fold_change_ratio)
 			geneMap.put("preferredPValue", row.preferred_pvalue)
 			
-			aMap.put(geneId, geneMap)
+			aMap.put(bioMarkerId, geneMap)
 		}
 		
-		// also create lists containing the list of unique, sorted gene ids and names
+		// also create lists containing the list of unique, sorted biomarker ids and names
 		// not in list yet, add it
-		if (geneIdsList.indexOf(geneId) == -1)
+		if (bioMarkerIdsList.indexOf(bioMarkerId) == -1)
 		{				  
 			  // find location to insert this item based on the gene name alphabetically
 			  def insertLocation = 0;
@@ -1545,35 +1547,37 @@ def getHeatmapDataCTA  = {analysisIds, keywordIds ->
 			  }
 			  geneIdsList.add(insertLocation, geneId)			  
 			  geneNamesList.add(insertLocation, geneName)
+			  bioMarkerIdsList.add(insertLocation, bioMarkerId)
 		}			  
 			
 	}
 	
 	returnMap.put("analysisInfo", analysisMap)
+	returnMap.put("bioMarkerIds", bioMarkerIdsList)
 	returnMap.put("geneIds", geneIdsList)
 	returnMap.put("geneNames", geneNamesList)
+	
+	println returnMap 
 	
 	return returnMap
  }
 
 
 
-
 /**
- * Method to retrieve the number of unique gene ids with data for a given list of analysis ids and gene ids
+ * Method to retrieve the list of unique gene ids with data for a given list of analysis ids and gene ids
  *
  * @param analysisIds - the list of analysis IDs
  * @param keywordIds - pipe delimited string of keyword ids for genes
  *
- * @return a map containing the analysis id as key and a map for each gene with gene name as key
- *         gene map contains probeId, pvalue, and fold change
+ * @return a map containing the gene count and the list of gene ids
  **/
-def getHeatmapNumberGenesCTA  = {analysisIds, keywordIds ->
+def getHeatmapGenesCTA  = {analysisIds, keywordIds ->
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
 	s.append("""
-	     select count(distinct gene_id) gene_count
+	     select distinct bio_marker_id, upper(bio_marker_name) gene_name
 		  from heat_map_results
 		   where Bio_Assay_Analysis_Id in ("""
 	)
@@ -1582,16 +1586,18 @@ def getHeatmapNumberGenesCTA  = {analysisIds, keywordIds ->
 	s.append(") ")
 	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
 
+	s.append(" order by upper(bio_marker_name) asc")
+	
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
-	def numberGenes;
-	
+	def bmIds = [];
+		
 	// loop through and determine probe id  with highest pvalue/fold change 	(since they are ordered desc it will be the first one encountered for the analysis/gene)
 	results.each{ row->
-		numberGenes = row.gene_count
+		bmIds.add(row.bio_marker_id)
 	}
 	
-	return numberGenes
+	return bmIds
  }
 
 }

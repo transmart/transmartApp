@@ -54,21 +54,11 @@
 </div>
 
 <!-- Boxplot Tab Content -->
-<div id="xtBoxplotWrapper" style="display:none">
-	<div id="xtBoxplot"></div>
-	<div id="exportBoxplot">
-    	<a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Boxplot Image</a>
-	</div>    
-</div>
 
-
-
-<!-- Heatmap Tab Content -->
 <div id ="xtHeatmapTab">
 	<div id="xtHeatmap"></div>
 	<a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a>
 </div>
-
 
 <!-- Boxplot Content -->
 <div id ="xtBoxplotHolder" style="display:none">
