@@ -1557,47 +1557,97 @@ def getHeatmapDataCTA  = {analysisIds, bmIds ->
 	returnMap.put("geneIds", geneIdsList)
 	returnMap.put("geneNames", geneNamesList)
 	
-	println returnMap 
-	
 	return returnMap
  }
 
 
 
 /**
- * Method to retrieve the list of unique gene ids with data for a given list of analysis ids and gene ids
+ * Method to retrieve the list of unique genes with data for a given list of analysis ids and biomarker ids
  *
  * @param analysisIds - the list of analysis IDs
  * @param keywordIds - pipe delimited string of keyword ids for genes
  *
- * @return a map containing the gene count and the list of gene ids
+ * @return a map containing an ordered list of bio marker ids with data and a map containing information about each gene keyed by biomarker id
+ * 
  **/
 def getHeatmapGenesCTA  = {analysisIds, keywordIds ->
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
 	s.append("""
-	     select distinct bio_marker_id, upper(bio_marker_name) gene_name
-		  from heat_map_results
-		   where Bio_Assay_Analysis_Id in ("""
+	     select distinct b.bio_marker_id, b.bio_marker_name, upper(b.bio_marker_name),
+		  		b.organism, b.primary_external_id
+		  from heat_map_results h, bio_marker b
+		   where h.bio_marker_id=b.bio_marker_id and
+			Bio_Assay_Analysis_Id in ("""
 	)
 
 	s.append(analysisIds.join(','))
 	s.append(") ")
 	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
 
-	s.append(" order by upper(bio_marker_name) asc")
+	s.append(" order by organism, upper(b.bio_marker_name) asc")
 	
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
 	def bmIds = [];
 		
-	// loop through and determine probe id  with highest pvalue/fold change 	(since they are ordered desc it will be the first one encountered for the analysis/gene)
+	def bmInfo = [:]
 	results.each{ row->
-		bmIds.add(row.bio_marker_id)
+		// add to ordered unique list of ids
+	   bmIds.add(row.bio_marker_id.toString())
+
+	   def bmMap = [:]
+	   bmMap.put("geneName", row.bio_marker_name.toString())
+	   bmMap.put("primaryExternalId", row.primary_external_id.toString())
+	   bmMap.put("organism", row.organism.toString())
+	   
+	   // add to info map
+	   bmInfo.put(row.bio_marker_id.toString(), bmMap)
 	}
 	
-	return bmIds
+	def returnMap = [:]
+	returnMap.put("bmIds", bmIds)
+	returnMap.put("bmInfo", bmInfo)
+	
+	return returnMap
  }
+/**
+ * Method to retrieve associations between genes in a given list of biomarker ids
+ *
+ * @param bmIds - the pipe delimited list of bm IDs
+ *
+ * @return result set containing gene associations  
+ **/
+
+def getGeneAssociations  = {bmIds ->
+	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	StringBuilder s = new StringBuilder()
+	List sqlParams = []
+	s.append("""
+		select bio_marker_id, asso_bio_marker_id
+		from Bio_Marker_Correl_MV
+		where correl_type in ('HOMOLOGENE_GENE') """
+	)
+
+	s.append(convertPipeDelimitedStringToInClause(bmIds, "bio_marker_id"))
+	s.append(convertPipeDelimitedStringToInClause(bmIds, "asso_bio_marker_id"))
+	
+	// retrieve results
+	def results = sql.rows(s.toString(), sqlParams)
+	
+	def returnList = []
+	results.each {row->
+		def m = [:]
+		m.put("bmId", row.bio_marker_id)
+		m.put("assoId", row.asso_bio_marker_id)
+		
+		returnList.add(m)
+	}
+	
+	return returnList
+}	
+
 
 }

@@ -970,7 +970,29 @@ class RWGController {
 	   render matrix as JSON
    }
 
-   
+   public void getAssociations(bmId, bmAssociations, associationList)  {
+	   
+	   // is id on list yet -- if not add it
+	   if (associationList.indexOf(bmId) == -1)  {
+		   associationList.add(bmId)
+		   bmAssociations.each {row->
+			   def id = row.bmId.toString()
+			   def assoId = row.assoId.toString()
+			   
+			   // this bm has an associated id, add the asso id and any others associated recursively		   		   		   
+			   if (bmId == id)  {
+				   getAssociations(assoId, bmAssociations, associationList)
+			   }
+			   // this bm is an associated id, add the one it is associated to and any others associated recursively		   		   		   
+			   if (bmId == assoId)  {
+				   getAssociations(id, bmAssociations, associationList)
+			   }
+		   }
+	   }  
+
+
+   }
+
    
    /**
 	* Method to get the count and list of genes with data for the CTA heatmap for the given filters
@@ -982,7 +1004,7 @@ class RWGController {
 	*/
    def getHeatmapCTAGenes = {
 	   def rwgDAO = new RWGVisualizationDAO()
-
+	   
 	   // take the pathway or gene list/sig, and convert to pipe delimited list of gene ids (search keyword ids)
 	   // reuse the existing method we had for passing params into SOLR query - requires that we have a list with the
 	   // category followed by colon followed by list of pipe delimited terms - so for our purposes we will have one
@@ -1002,12 +1024,66 @@ class RWGController {
 
 	   def analysisIdsList = params.analysisIds.split(/\|/)
 	   
-	   def bmIdsWithData = rwgDAO.getHeatmapGenesCTA(analysisIdsList, genesList)	   
+	   def bmData = rwgDAO.getHeatmapGenesCTA(analysisIdsList, genesList)
+	   println bmData
+	   
+	   def bmIdsWithData = bmData.get('bmIds')	   	   
 	   def maxGeneIndex = bmIdsWithData.size()
-	      
+	   def bmInfoMap = bmData.get('bmInfo')
+	   
 	   JSONObject ret = new JSONObject()
 	   ret.put('maxGeneIndex', maxGeneIndex)
-	   ret.put('bmIdsWithData', bmIdsWithData.join('|'))
+	   
+	   def bmIdsWithDataPiped = bmIdsWithData.join('|')
+	   ret.put('bmIdsWithData', bmIdsWithDataPiped)
+	   
+	   // the list of genes contains one row for each unique biomarker id;  some of these may be associated with each 
+	   // other, meaning they need to be displayed together; so, let's figure out the associated genes and
+	   // create a list containing one list per row - the row list will have all the associated biomarker ids (along
+	   //  with display info such as gene name and species) for a single display row
+	   // first retrieve the association info for each 
+	   def bmAssociations = rwgDAO.getGeneAssociations(bmIdsWithDataPiped)
+	   
+	   def groups = []
+	   def groupId = 0
+
+	   // create a corresponding array of flags - will be used for processing the associations, creation of rows
+	   def bmProcessed = []
+	   bmIdsWithData.each {  
+		   bmProcessed.add(false)
+	   }
+	   
+	   def bmRows = [:]
+	   
+	   // create a new row object for each set of associated genes
+	   bmIdsWithData.eachWithIndex {  bmId, index ->
+		   if (!bmProcessed[index])  {
+		   	   def associationList = []		   
+			   getAssociations(bmId.toString(), bmAssociations, associationList)
+			   
+			   println "association list for ${bmId}" + associationList
+		   
+			   def bmRow = [:]
+			   // create a new row
+			   associationList.each {id->				   
+				   //   get the information for this biomarker 
+				   def bmInfo = bmInfoMap.get(id.toString())
+				   bmRow.put(id, bmInfo)
+				   
+				   // find the index of this bm in the other list
+				   def i = bmIdsWithData.indexOf(id)
+				   
+				   // mark it as processed since it's been processed and shouldn't be added to any other row
+				   bmProcessed[i] = true
+	
+			   }
+			   bmRows.put(index, bmRow)
+			   		   
+		   }
+	   }
+       println bmRows
+	   
+	   ret.put("bmRows", bmRows)
 	   
 	   response.setContentType("text/json")
 	   response.outputStream << ret?.toString()
