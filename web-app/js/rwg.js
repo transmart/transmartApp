@@ -2577,29 +2577,7 @@ function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex) {
     }); 	
 	
 }
-function loadHeatmapPaginator(divID, analysisId, page) {
 
-	var analysisIndex = getAnalysisIndex(analysisId);
-		
-	rwgAJAXManager.add({
-		url:getHeatmapNumberProbesURL,		
-		data: {id: analysisId, page:page},
-		success: function(response) {								
-			var maxProbeIndex = response['maxProbeIndex']
-			
-			getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, page);
-	
-		},
-		error: function(xhr) {
-			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
-		}
-	});
-        onFormat: formatPaginator
-=======
->>>>>>> refs/remotes/origin/master
-    }); 	
-	
-}
 
 function loadHeatmapPaginator(divID, analysisId, page) {
 
@@ -2621,7 +2599,7 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 }
 
 
-function openCrossTrialAnalysis()
+function showCrossTrialAnalysis()
 {
 	//hide the unused menu options
 	jQuery("#toolbar-collapse_all").hide();
@@ -3080,10 +3058,14 @@ function drawPieChart(divid, data)
 }
 
 
+
+
+
+
 //Load the heatmap data for cross trial analysis 
-// analysisIds: pipe delimited list of analysis ids
-// genes: list of bm ids for page to be loaded
-// searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
+//analysisIds: pipe delimited list of analysis ids
+//genes: list of bm ids for page to be loaded
+//searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
 function loadHeatmapCTA(analysisIds, bmIds)	{	
 		
 	var bmIdsPiped = bmIds.join('|');
@@ -3177,54 +3159,23 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, m
 
 	element.paging(numberOfPages, { 
 	    perpage:1, 
-        format:"[<(qq -) ncnnn (- pp)>]",
-        onSelect: function (page) { 
-        	jQuery("#xtHeatmap").mask("Loading...");
+      format:"[<(qq -) ncnnn (- pp)>]",
+      onSelect: function (page) { 
+      	jQuery("#xtHeatmap").mask("Loading...");
 
-        	var pages = jQuery.data(element, "pages");
-        	var genes = pages[page - 1];
-        	//loadHeatmapData(divID, analysisId, page, numberOfGenesPerPage);
+      	var pages = jQuery.data(element, "pages");
+      	var genes = pages[page - 1];
+      	//loadHeatmapData(divID, analysisId, page, numberOfGenesPerPage);
 			loadHeatmapCTA(analysisIds, genes);   
 
-        	jQuery.data(element, "currentPage", page);
-                                    
-        }, 
-        onFormat: formatPaginator
-    }); 	
+      	jQuery.data(element, "currentPage", page);
+                                  
+      }, 
+      onFormat: formatPaginator
+  }); 	
 	
 }
-=======
->>>>>>> refs/remotes/origin/master
 
-	// save the page information so can be used for later page loads
-	jQuery.data(element, "pages", pagesArray);
-	
-	//if there is only 1 page, just hide the paging control since it's not needed
-	if(numberOfPages==1){
-		element.hide();
-	}
-	else  {
-		element.show();
-	}
-
-	element.paging(numberOfPages, { 
-	    perpage:1, 
-        format:"[<(qq -) ncnnn (- pp)>]",
-        onSelect: function (page) { 
-        	jQuery("#xtHeatmap").mask("Loading...");
-
-        	var pages = jQuery.data(element, "pages");
-        	var genes = pages[page - 1];
-        	//loadHeatmapData(divID, analysisId, page, numberOfGenesPerPage);
-			loadHeatmapCTA(analysisIds, genes);   
-
-        	jQuery.data(element, "currentPage", page);
-                                    
-        }, 
-        onFormat: formatPaginator
-    }); 	
-	
-}
 
 function openXtBoxplot(keywordId, geneName){
 	

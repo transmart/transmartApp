@@ -107,8 +107,17 @@
 	        	}
 		        else{
 	        		selectedAnalyses = jQuery.parseJSON(jQuery.cookie("selectedAnalyses"));
-	        		//update the header with the number of Analyses
-	        		jQuery("#analysisCountLabel").html("(" +selectedAnalyses.length + ")");
+
+	        		if(selectedAnalyses==null){
+	        			selectedAnalyses = [];
+		        		}
+
+	        		if(selectedAnalyses==null){
+	        			jQuery("#analysisCountLabel").html("(0)");
+		        	}else{
+				        //update the header with the number of Analyses
+			        	jQuery("#analysisCountLabel").html("(" +selectedAnalyses.length + ")");
+			        }
 	        	}
 
 		        

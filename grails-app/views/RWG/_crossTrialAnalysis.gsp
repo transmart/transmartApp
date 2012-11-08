@@ -64,7 +64,7 @@
 <div id ="xtBoxplotHolder" style="display:none">
 	<div id="xtBoxplot"></div>
 	<a href="#" onclick="javascript:exportBoxPlotCTAImage();">Export Box Plot as an Image</a>
-<div id="xtHeatmapPaginator" class="pagination" style="text-align:left">
+	<div id="xtHeatmapPaginator" class="pagination" style="text-align:left">
 </div>    
 
 <div id="exportCTAHeatmap">
