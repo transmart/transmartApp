@@ -449,7 +449,7 @@ Ext.onReady(function()
 								}
 							}
 					),
-
+/*
 					new Ext.Toolbar.Separator(),
 					new Ext.Toolbar.Button(
 							{
@@ -558,6 +558,7 @@ Ext.onReady(function()
 								}
 							}
 					),
+*/
 					new Ext.Toolbar.Separator(),
 					new Ext.Toolbar.Button(
 							{
