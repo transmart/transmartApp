@@ -4,7 +4,7 @@
    <br />
 </g:if>
 <g:else>
- 	<h2>Load Saved Filter</h2>
+ 	<h2>Saved Filters</h2>
     <table id="favoritesTable">
         <tr>
         	<th style="width:100px">Create Date</th>

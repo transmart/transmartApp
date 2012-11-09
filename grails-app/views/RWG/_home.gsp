@@ -8,7 +8,7 @@
 	</div>
 
 	<div id="savedCrossTrialAnalysis" class='home-content-box'>
-	<h2>Load Saved Cross Trial Analysis</h2>
+	<h2>Saved Cross Trial Analyses</h2>
 		<p>You have no Cross Trial Analyses saved</p>
 	</div>
 

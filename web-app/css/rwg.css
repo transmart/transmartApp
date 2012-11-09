@@ -1098,13 +1098,22 @@ min-height: 200px;
 min-width:250px;
 }
 
-#favoritesTable td{
-	padding:4px;
+#favoritesTable{
+	border-collapse: collapse;
+	border: 1px solid #888;
+}
+
+#favoritesTable td, th{
+	padding: 5px;
+	border: 1px dotted #AAA;
+	background-color: white;
+	font-weight: normal;
 }
 
 #favoritesTable th{
-	background:none;
-	border-bottom:1px dotted #ccc;
+	background: #555;
+	color: white;
+	font-weight: normal;
 }
 
 
