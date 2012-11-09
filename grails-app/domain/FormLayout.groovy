@@ -18,40 +18,39 @@
  ******************************************************************/
   
 
+ /**
+  * $Id: AccessLog.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 10098 $
+  */
 
-/**
- * Central landing zone controller for post login events
- * 
- * $Id: UserLandingController.groovy 10133 2011-10-20 21:34:43Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 10133 $
- */
-class UserLandingController {
-	/**
-	 * Dependency injection for the springSecurityService.
-	 */
-    def springSecurityService
-	
-	   def index = {
-            new AccessLog(username: springSecurityService.getPrincipal().username, event:"Login",
-                  eventmessage: request.getHeader("user-agent"),
-                  accesstime:new Date()).save()
-                  def skip_disclaimer = grailsApplication.config.com.recomdata?.skipdisclaimer?:false;
-                  if(skip_disclaimer){
-                        redirect(uri:'/RWG');     
-                  }else{
-                  redirect(uri: '/userLanding/disclaimer.gsp')
-                  }
-      }
-	def agree = {
-		new AccessLog(username: springSecurityService.getPrincipal().username, event:"Disclaimer accepted",
-			accesstime:new Date()).save()				
-		redirect(uri: '/RWG')
+public class FormLayout{
+
+	Long id
+	String key;
+	String column;
+	String displayName;
+	String dataType;
+	Integer sequence;
+
+	static mapping = {
+		table 'CZ_FORM_LAYOUT'
+	 id generator:'sequence', params:[sequence:'SEQ_CZ_FORM_LAYOUT_ID']
+		version false
+		id column:'FORM_LAYOUT_ID'
+		key column:'FORM_KEY'
+		column column:'FORM_COLUMN'
+		displayName column:'DISPLAY_NAME'
+		dataType column:'DATA_TYPE'
+		sequence column:'SEQUENCE'
 	}
-	
-	def disagree = {
-		new AccessLog(username: springSecurityService.getPrincipal().username, event:"Disclaimer not accepted",			
-			accesstime:new Date()).save()
-	    redirect(uri: '/logout')
+
+	static constraints = {
+		key(nullable:false)
+		column(nullable:false)
+		displayName(nullable:true)
+		dataType(nullable: true)
+		sequence(nullable:true)
 	}
+
 }

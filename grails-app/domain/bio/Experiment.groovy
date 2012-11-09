@@ -46,8 +46,10 @@ class Experiment implements IExcelProfile {
 	String target
 	String accessType
 	
-	static hasMany =[compounds:Compound, diseases:Disease, files:ContentReference, uniqueIds:BioData, organisms:Taxonomy]
+	static hasMany =[compounds:Compound, diseases:Disease, files:ContentReference, uniqueIds:BioData, organisms:Taxonomy, adHocProperties: AdHocProperty]
 	static belongsTo=[Compound, Disease, Taxonomy, ContentReference]
+	
+	static transients = ['adHocPropertyMap']
 
 	static mapping = {
 		tablePerHierarchy false
@@ -74,8 +76,10 @@ class Experiment implements IExcelProfile {
 			compounds joinTable:[name:'BIO_DATA_COMPOUND', key:'BIO_DATA_ID'], cache:true
 			diseases joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DATA_ID'], cache:true
 			organisms joinTable:[name:'BIO_DATA_TAXONOMY', key:'BIO_DATA_ID'],cache:true
+			adHocProperties joinTable:[name:'BIO_AD_HOC_PROPERTY', key: 'BIO_DATA_ID'], cache: true
 			files joinTable:[name:'BIO_CONTENT_REFERENCE', key:'BIO_DATA_ID', column:'BIO_CONTENT_REFERENCE_ID'],cache:true
 			uniqueIds joinTable:[name:'BIO_DATA_UID', key:'BIO_DATA_ID']
+			
 		}
 	}
 	
@@ -148,6 +152,14 @@ class Experiment implements IExcelProfile {
 		if(uniqueIds!=null && !uniqueIds.isEmpty())
 			return uniqueIds.iterator().next();
 		return null;
+	}
+	
+	def getAdHocPropertyMap() {
+		def map = [:]
+		for (prop in this.adHocProperties) {
+			map.put(prop.key, prop.value)
+		}
+		return map
 	}
 	
 	/**

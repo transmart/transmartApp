@@ -18,40 +18,22 @@
  ******************************************************************/
   
 
-
 /**
- * Central landing zone controller for post login events
- * 
- * $Id: UserLandingController.groovy 10133 2011-10-20 21:34:43Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 10133 $
+ * $Id: DetailsService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  */
-class UserLandingController {
-	/**
-	 * Dependency injection for the springSecurityService.
-	 */
-    def springSecurityService
-	
-	   def index = {
-            new AccessLog(username: springSecurityService.getPrincipal().username, event:"Login",
-                  eventmessage: request.getHeader("user-agent"),
-                  accesstime:new Date()).save()
-                  def skip_disclaimer = grailsApplication.config.com.recomdata?.skipdisclaimer?:false;
-                  if(skip_disclaimer){
-                        redirect(uri:'/RWG');     
-                  }else{
-                  redirect(uri: '/userLanding/disclaimer.gsp')
-                  }
-      }
-	def agree = {
-		new AccessLog(username: springSecurityService.getPrincipal().username, event:"Disclaimer accepted",
-			accesstime:new Date()).save()				
-		redirect(uri: '/RWG')
-	}
-	
-	def disagree = {
-		new AccessLog(username: springSecurityService.getPrincipal().username, event:"Disclaimer not accepted",			
-			accesstime:new Date()).save()
-	    redirect(uri: '/logout')
+//import org.dom4j.Document;
+//import org.dom4j.Element;
+//import org.dom4j.DocumentException;
+//import org.dom4j.io.SAXReader;
+
+class FormLayoutService {
+
+	def getLayout(String key){
+
+		def columns = FormLayout.createCriteria().list() {
+			eq('key', key)
+			order('sequence', 'asc')
+		}
+		return columns
 	}
 }
