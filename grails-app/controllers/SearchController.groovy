@@ -603,8 +603,7 @@ public class SearchController{
 		def responseText = """<?xml version="1.0" encoding="utf-8"?> 
 							<jnlp 
 							  spec="1.0+" 
-							  codebase="${codebase}" 
-							  href="/transmartPfizer/search/webStartPlotter;jsessionid=""" + session.getId() + """"> 
+							  codebase="${codebase}"> 
 							  <information> 
 							    <title>GWAVA Gene Wide Association Visual Analyzer with search set</title> 
 							    <vendor>Pfizer Inc</vendor> 
@@ -624,7 +623,7 @@ public class SearchController{
 							  <security> 
 							      <all-permissions/> 
 							  </security> 
-							  <update check="always"/>
+							  <update check="background"/>
 							  <resources> 
 							    <j2se version="1.6+" java-vm-args="-Xmx800m"/>
 							    
