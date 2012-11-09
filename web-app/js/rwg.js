@@ -3127,6 +3127,11 @@ function drawPieChart(divid, data)
 function loadHeatmapCTA(analysisIds, rows)	{	
 		
 	var bmIds = new Array;
+	if (!rows)  {
+		drawHeatmapCTA('xtHeatmap', null, selectedAnalyses, []);
+		return;
+	}
+	
 	// loop through each of the rows and retrieve the bm ids from all of them
 	for (var r=0; r<rows.length; r++)  {
 		var row = rows[r];
@@ -3243,6 +3248,7 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, b
 
       	var pages = jQuery.data(element, "pages");
       	var rows = pages[page - 1];
+      	
       	//loadHeatmapData(divID, analysisId, page, numberOfGenesPerPage);
 			loadHeatmapCTA(analysisIds, rows);   
 

@@ -941,8 +941,6 @@ class RWGController {
 		   
 		   bmData.put(bmId.toString(), data)
 	   }
-println bmData
-println analysisIdsList
 	   render bmData as JSON
    }
 
@@ -981,26 +979,9 @@ println analysisIdsList
    def getHeatmapCTAGenes = {
 	   def rwgDAO = new RWGVisualizationDAO()
 	   
-	   // take the pathway or gene list/sig, and convert to pipe delimited list of gene ids (search keyword ids)
-	   // reuse the existing method we had for passing params into SOLR query - requires that we have a list with the
-	   // category followed by colon followed by list of pipe delimited terms - so for our purposes we will have one
-	   // category in list (i.e. GENELIST or GENESIG or PATHWAY) with one term in the pipe delimited terms;
-	   // e.g. ["GENELIST:1693394"]
-	   def queryParams = []
-
-	   queryParams.push(/${params.category}:${params.searchKeywordId}/)
-		 
-	   // replace gene signatures or gene list terms into their list of individual genes
-	   // list coming back will be in form of [":GENE1|GENE2|..."]  where GENE1 is a search keyword id representing a gene
-	   queryParams = replaceGeneLists(queryParams, "")
-	   
-	   // take the first/only item from list and get rid of the leading colon to give us just a string containing a pipe
-	   // delimited list of gene search keyword ids
-	   def genesList = queryParams[0].replace(":", "")
-
 	   def analysisIdsList = params.analysisIds.split(/\|/)
-	   
-	   def bmData = rwgDAO.getHeatmapGenesCTA(analysisIdsList, genesList)
+
+	   def bmData = rwgDAO.getHeatmapGenesCTA(analysisIdsList, params.category, params.searchKeywordId)
 	   
 	   def bmIdsWithData = bmData.get('bmIds')	   	   
 	   def bmInfoMap = bmData.get('bmInfo')
@@ -1016,9 +997,6 @@ println analysisIdsList
 	   // first retrieve the association info for each 
 	   def bmAssociations = rwgDAO.getGeneAssociations(bmIdsWithDataPiped)
 	   
-	   def groups = []
-	   def groupId = 0
-
 	   // create a corresponding array of flags - will be used for processing the associations, creation of rows
 	   def bmProcessed = []
 	   bmIdsWithData.each {  

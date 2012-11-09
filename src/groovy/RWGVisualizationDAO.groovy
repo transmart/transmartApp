@@ -1537,26 +1537,44 @@ def getHeatmapDataCTA  = {analysisIds, bmIds ->
  * Method to retrieve the list of unique genes with data for a given list of analysis ids and biomarker ids
  *
  * @param analysisIds - the list of analysis IDs
- * @param keywordIds - pipe delimited string of keyword ids for genes
+ * @param category - the category of the search keyword id passed in (GENELIST, GENESIG, or PATHWAY)
+ * @param keywordId - the keywpord for a gene lsit, gene sig, or pathway
  *
  * @return a map containing an ordered list of bio marker ids with data and a map containing information about each gene keyed by biomarker id
  * 
  **/
-def getHeatmapGenesCTA  = {analysisIds, keywordIds ->
+def getHeatmapGenesCTA  = {analysisIds, category, keywordId ->
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
+	
+	// determine which view we will join to for the list of genes 
+	def viewName;
+	def viewGeneColName;
+	def viewListColName;
+	if (category == 'PATHWAY')  {
+		viewName = 'pathway_genes'
+		viewGeneColName = 'gene_keyword_id'
+		viewListColName = 'pathway_keyword_id'
+	}
+	else  {		
+		viewName = 'listsig_genes'
+		viewGeneColName = 'gene_keyword_id'
+		viewListColName = 'list_keyword_id'
+	}
+	
 	s.append("""
 	     select distinct b.bio_marker_id, b.bio_marker_name, upper(b.bio_marker_name),
 		  		b.organism, b.primary_external_id
-		  from heat_map_results h, bio_marker b
-		   where h.bio_marker_id=b.bio_marker_id and
-			Bio_Assay_Analysis_Id in ("""
+		  from heat_map_results h, bio_marker b, ${viewName} v
+		   where h.bio_marker_id=b.bio_marker_id 
+           and h.search_keyword_id=v.${viewGeneColName}
+           and v.${viewListColName}=?
+		   and Bio_Assay_Analysis_Id in ("""
 	)
-
+	sqlParams.add(keywordId)
 	s.append(analysisIds.join(','))
 	s.append(") ")
-	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
 
 	s.append(" order by upper(b.bio_marker_name) asc")
 	
@@ -1593,6 +1611,11 @@ def getHeatmapGenesCTA  = {analysisIds, keywordIds ->
  **/
 
 def getGeneAssociations  = {bmIds ->
+	
+	if (bmIds.size() == 0)  {
+		return []
+	}   
+	
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
