@@ -1627,7 +1627,7 @@ def getGeneAssociations  = {bmIds ->
 
 	s.append(convertPipeDelimitedStringToInClause(bmIds, "bio_marker_id"))
 	s.append(convertPipeDelimitedStringToInClause(bmIds, "asso_bio_marker_id"))
-	
+
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
 	

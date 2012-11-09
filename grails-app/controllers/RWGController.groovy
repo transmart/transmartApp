@@ -944,26 +944,25 @@ class RWGController {
 	   render bmData as JSON
    }
 
-   public void getAssociations(bmId, bmAssociations, associationList)  {
+   // function that takes a map of every biomarker with data (each with a list of associated ids including itself),
+   //  and condenses all associated genes into a single list,
+   //  e.g. 1 associated to 2,3; 2 associated to 4; 4 associated to 5 will return [1,2,3,4,5]
+   
+   public void getAssociations(bmId, bmAssociationsMap, associationList)  {
 	   
 	   // is id on list yet -- if not add it
 	   if (associationList.indexOf(bmId) == -1)  {
 		   associationList.add(bmId)
-		   bmAssociations.each {row->
-			   def id = row.bmId.toString()
-			   def assoId = row.assoId.toString()
-			   
-			   // this bm has an associated id, add the asso id and any others associated recursively		   		   		   
-			   if (bmId == id)  {
-				   getAssociations(assoId, bmAssociations, associationList)
-			   }
-			   // this bm is an associated id, add the one it is associated to and any others associated recursively		   		   		   
-			   if (bmId == assoId)  {
-				   getAssociations(id, bmAssociations, associationList)
-			   }
+		   def id = bmId
+		   
+		   // get the list of associations for the current biomarker 
+		   def associations = bmAssociationsMap.get(id)
+		   
+		   // add each asso id and any others associated recursively		   		   		   
+		   associations.each  {assoId->
+				   getAssociations(assoId, bmAssociationsMap, associationList)
 		   }
-	   }  
-
+	   }
 
    }
 
@@ -996,7 +995,6 @@ class RWGController {
 	   //  with display info such as gene name and species) for a single display row
 	   // first retrieve the association info for each 
 	   def bmAssociations = rwgDAO.getGeneAssociations(bmIdsWithDataPiped)
-	   
 	   // create a corresponding array of flags - will be used for processing the associations, creation of rows
 	   def bmProcessed = []
 	   bmIdsWithData.each {  
@@ -1004,14 +1002,40 @@ class RWGController {
 	   }
 	   
 	   def bmRows = [:]
+
+	   // create a map that has one entry for every biomarker in the association list (either id or associated id), 
+       // which contains its list of direct associations
+	   def bmAssociationsMap = [:]
+	   bmAssociations.each {row->
+		   def id = row.bmId.toString()
+		   def assoId = row.assoId.toString()
+
+		   def m1 = bmAssociationsMap.get(id)  // get the list for the current id
+		   def m2 = bmAssociationsMap.get(assoId)  // get the list for the current associated id
+
+		   // no map for main id, create a blank list and add to its map		   
+		   if (!m1)  {
+			   m1 = []
+			   bmAssociationsMap.put(id, m1)
+		   } 
+		   // add the associated id to the list
+		   m1.add(assoId)
+		   
+		   // no map for assoc id,  create a blank list and add to its map		   
+		   if (!m2)  {
+			   m2 = []
+			   bmAssociationsMap.put(assoId, m2)
+		   } 
+		   // add the main id to the list
+		   m2.add(id)
+	   }
 	   
 	   // create a new row object for each set of associated genes
 	   def rowIndex = 0;
 	   bmIdsWithData.eachWithIndex {  bmId, index ->
 		   if (!bmProcessed[index])  {
 		   	   def associationList = []		   
-			   getAssociations(bmId.toString(), bmAssociations, associationList)
-			   
+			   getAssociations(bmId.toString(), bmAssociationsMap, associationList)
 			   def bmRow = [:]
 			   // create a new row
 			   associationList.each {id->				   
@@ -1033,6 +1057,7 @@ class RWGController {
 			   		   
 		   }
 	   }
+
 	   ret.put("bmRows", bmRows)
 	   
 	   render ret as JSON	   
