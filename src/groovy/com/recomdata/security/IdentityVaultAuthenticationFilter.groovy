@@ -88,25 +88,10 @@ class IdentityVaultAuthenticationFilter extends GenericFilterBean	{
 				log.debug("Attempting to authenticate the user with the Identity Vault")
 			}						
 
-			def artifact = request.getParameter("SAMLart")			
-			def target = request.getParameter("TARGET")
-			if (log.isDebugEnabled())	{
-				log.debug("SAML artifact: ${artifact}")
-				log.debug("Target: ${target} ")
-			}
-			
-			/* Check the destination target to determine the correct environment
-				https://transmartdev.jnj.com = Development
-				https://transmartqa.jnj.com = Staging/QA
-				https://transmart.jnj.com = Production
-			*/
-			String userPass = "sa-TransMartProd:H1tTh3R0ad";  // assume it's production			
-			if (target.indexOf("transmartdev") > 0)    {
-				userPass = "sa-TransMartDev:H1tTh3R0ad";  // use development
-				log.info("We are authenticating in the development environment")				
-			} else if (target.indexOf("transmartqa") > 0)  {
-				userPass = "sa-TransMartQA:H1tTh3R0ad";   // use staging/qa
-				log.info("We are authenticating in the staging environment")
+			def artifact = request.getParameter("SAMLart")						
+			def userPass = CH.config.com.recomdata.searchtool.identityVaultCredentials
+			if (userPass == null || userPass.length() < 1)	{
+				log.error("Identity Vault credentials are not set in the external configuration file, unable to login")				
 			}
 			
 			URL soapURL = new URL("https://login.psso.its.jnj.com/nidp/saml/soap");
