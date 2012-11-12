@@ -140,6 +140,10 @@
 	        	    }
 	        	});
 
+	        	jQuery('#sidebartoggle').click(function() {
+					toggleSidebar();
+		        });
+
 	        	jQuery('#table-results-div').append(
 	        		jQuery("<iframe></iframe>")
 	        			.attr("id", "datasetExplorer")
@@ -157,15 +161,38 @@
 			});
 
 			function resizeAccordion() {
-	        	jQuery('#main').width(jQuery(window).width()-310);
+				
+				var windowHeight = jQuery(window).height();
+				var sidebarIsVisible = (jQuery('#sidebar:visible').size() > 0);
+				if (!sidebarIsVisible) {
+		        	jQuery('#main').css('width', '100%');
+				}
+				else {
+					jQuery('#main').width(jQuery(window).width()-310);
+				}
 	        	jQuery('#sidebar').height(jQuery(window).height()-30);
 				var ypos = jQuery('#sidebar-accordion').offset()['top'];
-	        	var windowHeight = jQuery(window).height();
+	        	
 	        	var targetHeight = windowHeight - ypos - 90;
 	        	jQuery('#filter-browser').height(targetHeight);
 	        	jQuery('#metadata-viewer').height(targetHeight);
 
 	        	jQuery('#datasetExplorer').height(windowHeight - 70);
+			}
+
+			function toggleSidebar() {
+				var sidebarIsVisible = (jQuery('#sidebar:visible').size() > 0);
+				if (sidebarIsVisible) {
+					jQuery('#sidebar').fadeOut(resizeAccordion);
+					var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-right', '-left');
+					jQuery('#sidebartoggle').css('background-image', bgimg);
+				}
+				else {
+					jQuery('#sidebar').fadeIn();
+					resizeAccordion(); //Not a callback here - resize as soon as it starts appearing.
+					var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-left', '-right');
+					jQuery('#sidebartoggle').css('background-image', bgimg);
+				}
 			}
 
 			
@@ -346,7 +373,9 @@
 		</div>
 		
 		<div id="logocutout">
-		<img src="${resource(dir:'images', file:'logo.png')}"</div>
+			<img src="${resource(dir:'images', file:'logo.png')}"/>
+		</div>
+		<div id="sidebartoggle">&nbsp;</div>
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
 	

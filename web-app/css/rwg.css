@@ -29,7 +29,7 @@ body {
 }
 
 #box-search {
-	margin-top: 16px;
+	margin-top: 24px;
 	border-radius: 8px;
 	border: #0000FF;
 	width: 290px;
@@ -1075,6 +1075,17 @@ select.multiselect {
 	top: 0px;
 	left: 0px;
 	z-index: 999;
+}
+
+#sidebartoggle {
+	position:absolute;
+	right:0px;
+	top: 29px;
+	z-index: 999;
+	background-image: url('../images/righttab-right.png');
+	width: 22px;
+	height: 22px;
+	cursor: pointer;
 }
 
 #table-results-div {
