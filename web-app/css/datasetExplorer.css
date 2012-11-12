@@ -476,3 +476,7 @@ li.x-tab-strip-active {
 	background-image: none;
 	border: none;	
 }
+
+.x-panel-body {
+	border: none;
+}

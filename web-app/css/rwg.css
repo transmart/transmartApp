@@ -34,6 +34,7 @@ body {
 	border: #0000FF;
 	width: 290px;
 	margin-right: 10px;
+	box-shadow: #888 11px 11px 8px -7px;
 }
 
 #active-search-div
@@ -458,7 +459,7 @@ ul.dynatree-container li ul li{
 	background-color:#F4F4F4;
 	border-radius: 8px;
 	margin-bottom: 16px;
-	box-shadow: 11px 9px 10px -4px #888;
+	box-shadow: #888 11px 11px 8px -7px;
 	border: 1px solid #BBB;
 }
 .result-trial-even
@@ -999,7 +1000,8 @@ select.multiselect {
 #sidebar-accordion .ui-accordion-header {
 	color: #333;
 	font-size: 11px;
-	border-radius: 0px;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
 	height: 22px;
 	font: 11px 'Helvetica',arial,clean,sans-serif;
 	padding-top: 0.5em;
@@ -1007,18 +1009,21 @@ select.multiselect {
 	border: 1px solid #AED0EA;
 	font-weight: bold;
 	background: #DEEDF7 url('jquery/cupertino/images/ui-bg_highlight-soft_100_deedf7_1x100.png') 50% 50% repeat-x;
+	border-top: 1px solid #AAE;
+	border-left: 1px solid #AAE;
+	border-right: 1px solid #AAE;
 }
 
-#metadata-viewer {
+#filter-browser, #metadata-viewer {
 	background: #FFFFFF;
-	font-size: 11px;	
+	font-size: 11px;
 	padding: 1em;
-}
-
-#filter-browser {
-	background: #FFFFFF;
-	font-size: 12px;
-	padding: 1em;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	border-left: 1px solid #AAE;
+	border-right: 1px solid #AAE;
+	border-bottom: 1px solid #AAE;
+	box-shadow: #888 11px 11px 8px -7px;
 }
 
 .filtertitle {
@@ -1062,6 +1067,7 @@ select.multiselect {
 	border: none;
 	height: 400px;
 	width: 100%;
+	border-bottom-right-radius: 16px;
 }
 
 #logocutout {
