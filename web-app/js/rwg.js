@@ -3118,24 +3118,11 @@ function drawPieChart(divid, data)
 
 //Load the heatmap data for cross trial analysis 
 //analysisIds: pipe delimited list of analysis ids
+//category: GENELIST, GENESIG, or PATHWAY
 //searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
+//startRank: first index on the page to be retrieved
+//endRank: last index on the page to be retrieved
 function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank)	{	 
-/*	var bmIds = new Array;
-	if (!rows)  {
-		drawHeatmapCTA('xtHeatmap', null, selectedAnalyses, []);
-		return;
-	}
-	
-	// loop through each of the rows and retrieve the bm ids from all of them
-	for (var r=0; r<rows.length; r++)  {
-		var row = rows[r];
-		for (bm in row)  {
-			bmIds.push(bm);
-		}
-	}
-	
-	var bmIdsPiped = bmIds.join('|');
-	*/analysisIds, category, searchKeywordId, startRank, endRank
 	rwgAJAXManager.add({
 		url:getHeatmapCTARowsURL,
 		data: {analysisIds: analysisIds, category:category, searchKeywordId:searchKeywordId, 
@@ -3219,7 +3206,12 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
       		endRank = numberRows
       	}
       	
-		loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank);   
+      	if (numberRows == 0)  {
+      		drawHeatmapCTA('xtHeatmap', null, selectedAnalyses);  // draw blank heatmap      		
+      	}
+      	else  {      		
+    		loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank);   
+      	}
 
                                   
       }, 
