@@ -127,7 +127,7 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 	if (typeof jQuery(trialDetail).attr('data') == 'undefined')	{		
 		var src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'ajax-loader-flat.gif');	
 		jQuery(imgExpand).attr('src',src);
-		jQuery.ajax({	
+		jQuery.ajax({
 			url:dataURL,			
 			success: function(response) {
 				jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'up_arrow_small2.png'));
@@ -229,7 +229,7 @@ function addSearchAutoComplete()	{
 	jQuery("#search-ac").autocomplete({
 		position:{my:"right top",at:"right bottom",collision:"none"},
 		source: sourceURL,
-		minLength:0,
+		minLength:1,
 		select: function(event, ui) {  
 			searchParam={id:ui.item.id,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId};
 			addSearchTerm(searchParam);
@@ -3228,7 +3228,7 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 function updateSelectedAnalyses() {
 	var selectedboxes = jQuery(".analysischeckbox:checked");
 	if (selectedboxes.length > 0) {
-		jQuery('#selectedAnalyses').html("<b>" + selectedboxes.length + "</b> analyses selected");
+		jQuery('#selectedAnalyses').html("<b>(" + selectedboxes.length + "</b> analyses selected)");
 	}
 	else {
 		jQuery('#selectedAnalyses').html("&nbsp;");
@@ -3312,6 +3312,18 @@ jQuery(document).ready(function() {
 		}
 	});
 });
+
+//function loadDatasetExplorer() {
+//	jQuery.ajax({
+//		url:'/transmartApp/datasetExplorer',			
+//		success: function(response) {
+//			jQuery('#table-results-div').html(response);
+//		},
+//		error: function(xhr) {
+//			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+//		}
+//	});
+//}
 
 //Globally prevent AJAX from being cached (mostly by IE)
 jQuery.ajaxSetup({

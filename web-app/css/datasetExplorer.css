@@ -426,3 +426,53 @@ content: counter(pages);
 	background-image: url("../images/help/tool-sprites-rdc.gif");
     background-position: 0 -300px;
 }
+
+/* Overrides for ext CSS */
+
+ul.x-tab-strip-top {
+	padding: 0;
+	background: none;
+	background-color: #FFF;
+	
+}
+
+.x-tab-strip-top a.x-tab-right {
+	background: none;
+	background-image: none;
+}
+
+.x-tab-strip-top em.x-tab-left {
+	background: none;
+	background-image: none;
+}
+
+.x-tab-strip-top .x-tab-strip-inner {
+	background: none;
+	background-image: none;
+}
+
+li.x-tab-strip-active {
+	background-image: url('../images/uiTabsArrow.png');
+	background-repeat: no-repeat;
+	background-position: 50% 10px;
+	height: 22px;
+}
+
+.x-tab-strip-active span.x-tab-strip-text {
+	color: #1B74B3;
+}
+
+.x-tab-strip span.x-tab-strip-text {
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	font-size: 8pt;
+}
+
+.x-tab-strip-top .x-tab-strip-active .x-tab-right {
+	margin-bottom: 0px;	
+}
+
+.x-tab-panel-header, .x-tab-panel-footer {
+	background: none;
+	background-image: none;
+	border: none;	
+}

@@ -138,7 +138,7 @@ Ext.onReady(function()
 			{
 				id : 'westPanel',
 				region : 'west',
-				width : 330,
+				width : 280,
 				minwidth : 200,
 				split : true,
 				border : true,
@@ -155,33 +155,33 @@ Ext.onReady(function()
    border : true,
    layout : 'border'}); */
 	
-	if(GLOBAL.Config != "jj")
-	{
-		northPanel = new Ext.Panel(
-				{
-					id : 'northPanel',
-					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif"></img></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
-					region : 'north',
-					height : 45,
-					split : false,
-					border : true
-				}
-		);
-	}
-	else
-	{
-		northPanel = new Ext.Panel(
-				{
-					id : 'northPanel',
-					region : 'north',
-					height : 30,
-					split : false,
-					border : true,
-					tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle,GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
-					contentEl: "header-div"
-				}
-		);
-	}
+//	if(GLOBAL.Config != "jj")
+//	{
+//		northPanel = new Ext.Panel(
+//				{
+//					id : 'northPanel',
+//					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif"></img></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
+//					region : 'north',
+//					height : 45,
+//					split : false,
+//					border : true
+//				}
+//		);
+//	}
+//	else
+//	{
+//		northPanel = new Ext.Panel(
+//				{
+//					id : 'northPanel',
+//					region : 'north',
+//					height : 30,
+//					split : false,
+//					border : true,
+//					tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle,GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
+//					contentEl: "header-div"
+//				}
+//		);
+//	}
 	qphtml = "<div style='margin: 10px'>Query Criteria<br /><select size='8' id='queryCriteriaSelect1' style='width:400px; height:250px;'></select><br />\
 		< button onclick = 'resetQuery()' > Reset < / button > < br / > < div id = 'queryCriteriaDiv1' style = 'font:11pt;width:200px; height:250px; white-space:nowrap;overflow:auto;border:1px solid black' > < / div > < / div > "
 
@@ -433,133 +433,7 @@ Ext.onReady(function()
 				{
 					id : 'maintoolbar',
 					title : 'maintoolbar',
-					items : [new Ext.Toolbar.Button(
-							{
-								id : 'generatesubsetsbutton',
-								text : 'Generate Summary Statistics',
-								iconCls : 'runbutton',
-								disabled : false,
-								handler : function()
-								{
-								// alert('generate');
-								GLOBAL.CurrentSubsetIDs[1] = null;
-								GLOBAL.CurrentSubsetIDs[2] = null;
-								runAllQueries(getSummaryStatistics);
-
-								}
-							}
-					),
-/*
-					new Ext.Toolbar.Separator(),
-					new Ext.Toolbar.Button(
-							{
-								id : 'showquerysummarybutton',
-								text : 'Summary',
-								iconCls : 'summarybutton',
-								disabled : false,
-								handler : function()
-								{
-								// alert('clear');
-								showQuerySummaryWindow();
-								}
-							}
-					),
-					
-					new Ext.Toolbar.Separator(),
-					new Ext.Toolbar.Button(
-							{
-								id : 'advancedbutton',
-								text : 'Advanced',
-								iconCls : 'comparebutton',
-								hidden : GLOBAL.EnableGP!='true',
-								menu : advmenu,
-								handler : function()
-								{
-								// alert('compare');
-								// showCompareStepPathwaySelection();
-								}
-							}
-					),
-					
-					new Ext.Toolbar.Separator(),
-					new Ext.Toolbar.Button(
-							{
-								id : 'clearsubsetsbutton',
-								text : 'Clear',
-								iconCls : 'clearbutton',
-								disabled : false,
-								handler : function()
-								{
-								if(confirm("Are you sure you want to clear your current analysis?"))
-									{
-										clearAnalysisPanel();
-										resetQuery();
-										clearDataAssociation();									
-									}
-								// clearGrid(); blah
-								}
-							}
-					),
-					new Ext.Toolbar.Separator(),
-					new Ext.Toolbar.Button(
-							{
-								id : 'savecomparsionbutton',
-								text : 'Save',
-								iconCls : 'savebutton',
-								disabled : false,
-								handler : function()
-								{
-								if(isSubsetEmpty(1) && isSubsetEmpty(2))
-								{
-									alert('Empty subsets found, need at least 1 valid subset to save a comparsion');
-									return;
-								}
-								if((GLOBAL.CurrentSubsetIDs[1] == null && ! isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && ! isSubsetEmpty(2)))
-								{
-									runAllQueries(function()
-											{
-										saveComparison();});
-								}
-								else
-								{
-									saveComparison();
-								}
-								return;
-								}
-							}
-					),
-					'->',
-					new Ext.Toolbar.Separator(),
-					new Ext.Toolbar.Button({
-						id : 'exportbutton',
-						text : 'Export',
-						iconCls : 'exportbutton',
-						disabled : false,
-						menu : expmenu,
-						handler : function(){
-						// alert('export');
-						// showExportStepSplitTimeSeries();
-						// if((typeof(grid)!='undefined') && (grid!=null)){exportGrid();}
-						// else {alert("Nothing to export");}
-					}}),
-					new Ext.Toolbar.Separator(),
-					new Ext.Toolbar.Button(
-							{
-								id : 'printanalysisbutton',
-								text : 'Print',
-								iconCls : 'printbutton',
-								disabled : false,
-								handler : function()
-								{
-								// alert('print');
-								// analysisPanel.iframe.print();
-								var text = getAnalysisPanelContent();
-								printPreview(text);
-								}
-							}
-					),
-*/
-					new Ext.Toolbar.Separator(),
+					items : [
 					new Ext.Toolbar.Button(
 							{
 								id : 'dataExplorerHelpButton',
@@ -597,7 +471,7 @@ Ext.onReady(function()
 					split : true,
 					border : true,
 					layout : 'fit',
-					tbar:tb2
+					//tbar:tb2
 				}
 		);
 
@@ -698,12 +572,17 @@ Ext.onReady(function()
 		analysisPanel = new Ext.Panel(
 				{
 					id : 'analysisPanel',
-					title : 'Results/Analysis',
+					title : 'Summary Statistics',
 					region : 'center',
 					fitToFrame : true,
 					listeners :
 					{
-					activate : activateTab,
+					activate : function() {
+						GLOBAL.CurrentSubsetIDs[1] = null;
+						GLOBAL.CurrentSubsetIDs[2] = null;
+						runAllQueries(getSummaryStatistics);
+						activateTab;
+					},
 					deactivate: function(){
 						resultsTabPanel.tools.help.dom.style.display="none";
 					}
@@ -838,9 +717,10 @@ Ext.onReady(function()
 				}
 		);
 		resultsTabPanel.add(queryPanel);
-		resultsTabPanel.add(dataAssociationPanel);
+		
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
+		resultsTabPanel.add(dataAssociationPanel);
 		//Commented out the Jobs panel to hide as it isn't used without Gene Pattern
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
@@ -972,7 +852,7 @@ Ext.onReady(function()
 		viewport = new Ext.Viewport(
 				{
 					layout : 'border',
-					items : [centerMainPanel, northPanel]
+					items : [centerMainPanel]
 				}
 		);
 
@@ -1171,19 +1051,9 @@ function createOntPanel()
 			,
 			collapsible : false,
 			height : 300,
-			width : 300,
+			width : 250,
 			deferredRender : false,
-			split : true,
-	        tools:[
-	               {
-		        		id:'help',
-		        		qtip:'Click for context sensitive help',
-			        	handler: function(event, toolEl, panel)
-					    {
-					    	D2H_ShowHelp("1064", helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-					    }
-	        		}
-	        ]
+			split : true
 			}
 	);
 
@@ -1211,7 +1081,7 @@ function createOntPanel()
 				id : 'searchByNamePanel',
 				region : 'center',
 				height : 500,
-				width : 300,
+				width : 250,
 				border : true,
 				bodyStyle : 'background:lightgrey;',
 				layout : 'border',
@@ -1292,11 +1162,11 @@ function createOntPanel()
 		}
 		ontFilterPanel = new Ext.Panel(
 				{
-					title : 'Search by Subject',
+					title : 'Search',
 					id : 'ontFilterPanel',
 					region : 'center',
 					height : 500,
-					width : 300,
+					width : 250,
 					border : true,
 					bodyStyle : 'background:lightgrey;',
 					onShow : showFn,
@@ -1917,7 +1787,7 @@ function getSubCategories(id_in, title_in, ontresponse)
 			}
 	);
 	ontTree.setRootNode(treeRoot);
-	ontTree.add(toolbar);
+	//ontTree.add(toolbar);
 	ontTabPanel.add(ontTree);
 	/*if(GLOBAL.IsAdmin)
    {
@@ -4036,7 +3906,7 @@ function getSummaryStatisticsComplete(result, request)
 	resultsTabPanel.setActiveTab('analysisPanel');
 	updateAnalysisPanel(result.responseText, false);
 	getSummaryGridData();
-	getExportButtonSecurity();
+	//getExportButtonSecurity();
 }
 
 

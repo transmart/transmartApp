@@ -85,6 +85,7 @@
 			var getQQPlotURL = "${createLink([controller:'search',action:'getQQPlotImage'])}";
 
 			var webStartURL = "${createLink([controller:'search',action:'webStartPlotter'])}";
+			var datasetExplorerURL = "${createLink([controller:'datasetExplorer'])}";
 	       	
 	        var mouse_inside_options_div = false;
 
@@ -139,7 +140,14 @@
 	        	    }
 	        	});
 
-	        	// Adjust height of the accordion manually...
+	        	jQuery('#table-results-div').append(
+	        		jQuery("<iframe></iframe>")
+	        			.attr("id", "datasetExplorer")
+	        			.attr("name", "datasetExplorer")
+	        			.attr("src", datasetExplorerURL)
+	    	    );
+	        	
+
 	        	jQuery('#sidebar-accordion').accordion({heightStyle: "fill", icons: { 'header': 'suppressicon', 'headerSelected': 'suppressicon' }});
 	        	resizeAccordion();
 	        });
@@ -153,10 +161,14 @@
 	        	jQuery('#sidebar').height(jQuery(window).height()-30);
 				var ypos = jQuery('#sidebar-accordion').offset()['top'];
 	        	var windowHeight = jQuery(window).height();
-	        	var targetHeight = windowHeight - ypos - 110;
+	        	var targetHeight = windowHeight - ypos - 90;
 	        	jQuery('#filter-browser').height(targetHeight);
 	        	jQuery('#metadata-viewer').height(targetHeight);
+
+	        	jQuery('#datasetExplorer').height(windowHeight - 70);
 			}
+
+			
             
         </script>
         
@@ -178,8 +190,8 @@
 		<div id="main">
 			<div id="topTabs" class="analysis-tabs">
 		       <ul>
-		          <li id="analysisViewTab"><a href="#results-div" onclick="showSearchResults('study')">Study View</a></li>
-		          <li id="tableViewTab"><a href="#table-results-div" onclick="showSearchResults('subject')">Subject View</a></li>
+		          <li id="analysisViewTab"><a href="#results-div" onclick="return false;">Study View</a></li>
+		          <li id="tableViewTab"><a href="#table-results-div" onclick="return false;">Subject View</a></li>
 		       </ul>
 		     
 	       		<div id="results-div">
@@ -188,8 +200,7 @@
 				</div>
 				
 				<div id="table-results-div">
-					<div id="results_table_wrapper" class="dataTables_wrapper" role="grid">
-					</div>
+					
 				</div> 
 			</div>
 		</div>

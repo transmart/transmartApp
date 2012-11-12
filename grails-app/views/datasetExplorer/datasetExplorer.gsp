@@ -76,47 +76,21 @@
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'ext-all.css')}">
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
 	<!-- Include JQuery stylesheets here: -->
-	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">
+	<%--<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">--%>
 	
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 	
 
  
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
+	<script type="text/javascript">
+	/******************************************************************************/
+	//Global Variables
 	
-	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
-	
-	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
-		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-		
-	<!-- Combo-handled YUI JS files: --> 
-	<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script> 
-	<style>
-		.ui-progressbar-value { background-image: url(images/pbar-ani.gif); }
-	</style> 
-</head>
-
-<body>
-
-<script type="text/javascript">
-	var $j = jQuery.noConflict();
-	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
-
-	//set ajax to 600*1000 milliseconds
-	Ext.Ajax.timeout = 1800000;
-
-	// this overrides the above
-	Ext.Updater.defaults.timeout = 1800000;
-
 	var pageInfo = {
 		basePath :"${request.getContextPath()}"
 	}
 	
-    var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-	 
-	/******************************************************************************/
-	//Global Variables
 	GLOBAL = {
 	  Version : '1.0',
 	  Domain: '${i2b2Domain}',
@@ -184,9 +158,36 @@
 	    if(BrowserDetect.version < 7) {
 			GLOBAL.resulttype = 'image';
 		}
-	}
+	}	
+	</script>
+	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
+	
+	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
+		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+		
+	<!-- Combo-handled YUI JS files: --> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script> 
+	<style>
+		.ui-progressbar-value { background-image: url(images/pbar-ani.gif); }
+	</style> 
+</head>
+
+<body>
+
+<script type="text/javascript">
+	var $j = jQuery.noConflict();
+	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
+
+	//set ajax to 600*1000 milliseconds
+	Ext.Ajax.timeout = 1800000;
+
+	// this overrides the above
+	Ext.Updater.defaults.timeout = 1800000;
+	
+    var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 </script>
-<div id="header-div"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>
+<%--<div id="header-div" style="display: none;"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>--%>
 <div id="main"></div>
 <h3 id="test">Loading....</h3>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>

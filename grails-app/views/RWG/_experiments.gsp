@@ -1,5 +1,4 @@
 <div class="search-result-info">
-	<table><tr><td>
     Search results:&nbsp;&nbsp;${experiments.size()} 
     
     <g:if test="${experiments.size() == 1}">study</g:if>
@@ -11,11 +10,10 @@
     <g:else>analysis</g:else>
     
     &nbsp;in ${duration} 
-    </td>
-    <td style="text-align: right"><div id="selectedAnalyses">&nbsp;</div></td>
-	</tr>
-    </table>
+    
+    <span id="selectedAnalyses">&nbsp;</span>
 </div>
+<div class="breaker">&nbsp;</div>
 <div class="search-results-table">
     <g:each in="${experiments.entrySet()}" status="ti" var="experimentresult">        
         <div class="${ (ti % 2) == 0 ? 'result-trial-odd' : 'result-trial-even'}" id="TrialDet_${experimentresult.key.id}_anchor">
