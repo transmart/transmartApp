@@ -95,7 +95,8 @@
 			var getTopGenesURL = "${createLink([action:'getTopGenes'])}";
 			var getCrossTrialBioMarkerSummaryURL = "${createLink([action:'getCrossTrialBioMarkerSummary'])}";
 	        var getHeatmapDataCTAURL = "${createLink([action:'getHeatmapDataCTA'])}";
-	        var getHeatmapCTAGenesURL = "${createLink([action:'getHeatmapCTAGenes'])}";
+	        var getHeatmapCTARowCountURL = "${createLink([action:'getHeatmapCTARowCount'])}";
+	        var getHeatmapCTARowsURL = "${createLink([action:'getHeatmapCTARows'])}";
 	        			
 			var showHomePageFirst=true;
 			

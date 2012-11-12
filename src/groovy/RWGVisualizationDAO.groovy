@@ -1475,31 +1475,30 @@ class RWGVisualizationDAO {
  *   determine the fold change  
  *
  * @param analysisIds - the list of analysis IDs
- * @param bmIds - pipe delimited list of biomarker ids for genes
+ * @param searchKeywordIds - list of search keyword ids for genes
  *
- * @return a map containing the analysis id as key and a map for each gene with biomarker id for gene as key
- *         gene map contains probeId, pvalue, and fold change
+ * @return a map containing the analysis id as key and a map for each gene with search keyword id for gene as key
+ *         gene map contains biomarker name, probeId, pvalue, and fold change, and gene id, organism
  **/
-def getHeatmapDataCTA  = {analysisIds, bmIds ->
+def getHeatmapDataCTA  = {analysisIds, searchKeywordIds ->
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
 	s.append("""
-	     select distinct bio_assay_analysis_id, upper(bio_marker_name) bio_marker_name, bio_marker_id, probe_id, gene_id, preferred_pvalue, abs(fold_change_ratio),
-			fold_change_ratio
-		  from heat_map_results
+	     select distinct bio_assay_analysis_id, search_keyword_id, bio_marker_name, probe_id, preferred_pvalue,
+            abs(fold_change), fold_change, organism
+		  from cta_results
 		   where Bio_Assay_Analysis_Id in ("""
     ) 
 
 	s.append(analysisIds.join(','))
 	s.append(") ")  
-	s.append(convertPipeDelimitedStringToInClause(bmIds, "bio_marker_id"))
-	s.append(" order by bio_assay_analysis_id, upper(bio_marker_name), preferred_pvalue asc, abs(fold_change_ratio) desc ")
+	s.append(" and search_keyword_id in (" + searchKeywordIds.join(",")+" )")
+	s.append(" order by bio_assay_analysis_id, search_keyword_id, preferred_pvalue asc, abs(fold_change) desc ")
 
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
 	def analysisMap = [:]
-	def returnMap = [:]
 
 	// loop through and determine probe id  with highest pvalue/fold change 	(since they are ordered desc it will be the first one encountered for the analysis/gene)
 	results.each{ row->
@@ -1513,25 +1512,142 @@ def getHeatmapDataCTA  = {analysisIds, bmIds ->
 			analysisMap.put(aId, aMap)
 		}  
 			
-		def bioMarkerId = row.bio_marker_id.toString()
+		def searchKeywordId = row.search_keyword_id.toString()
 		// if gene not mapped yet for analysis, then add it with fold change and probe used
 		//   (if there, skip it since it's not most significant probe)
-        if (!aMap.get(bioMarkerId))  {
+        if (!aMap.get(searchKeywordId))  {
 			def geneMap = [:]
 			geneMap.put("probeId", row.probe_id)
-			geneMap.put("foldChange", row.fold_change_ratio)
+			geneMap.put("foldChange", row.fold_change)
 			geneMap.put("preferredPValue", row.preferred_pvalue)
+			geneMap.put("bioMarkerName", row.bio_marker_name)
+			geneMap.put("organism", row.organism)
 			
-			aMap.put(bioMarkerId, geneMap)
+			aMap.put(searchKeywordId, geneMap)
 		}					
 	}
 	
-	returnMap.put("analysisInfo", analysisMap)
-	
-	return returnMap
+	return analysisMap
  }
 
 
+/**
+ * Build the SQL statement shared by the CTA heatmap queries (this will be wrapped in other queries to obtain
+ *   either the total count of rows or row information for a subset of pages) 
+ *
+ * @param analysisIds - the list of analysis IDs
+ * @param category - the category of the search keyword id passed in (GENELIST, GENESIG, or PATHWAY)
+ * @param keywordId - the keywpord for a gene lsit, gene sig, or pathway
+ *
+ * @return sql statement
+ *
+ **/
+def getCTAResultsSQL  = {analysisIds, category, keywordId ->
+	String s=""	
+	// determine which view we will join to for the list of genes
+	def viewName;
+	def viewGeneColName;
+	def viewListColName;
+	if (category == 'PATHWAY')  {
+		viewName = 'pathway_genes'
+		viewListColName = 'pathway_keyword_id'
+	}
+	else  {
+		viewName = 'listsig_genes'
+		viewListColName = 'list_keyword_id'
+	}
+	
+	s = """
+			select distinct c.search_keyword_id, c.keyword, min(c.gene_id) gene_id
+			from cta_results c, ${viewName} v
+			where c.search_keyword_id=v.gene_keyword_id
+			and v.${viewListColName}=?
+	 	    and Bio_Assay_Analysis_Id in ("""
+	
+	s += analysisIds.join(',')
+	s += ") group by search_keyword_id, keyword order by keyword "
+	return s
+}
+
+/**
+ * Method to retrieve the number rows for the heatmap CTA, i.e. unique genes with data for a given list of analysis ids and list/sig/pathway 
+ *
+ * @param analysisIds - the list of analysis IDs
+ * @param category - the category of the search keyword id passed in (GENELIST, GENESIG, or PATHWAY)
+ * @param keywordId - the keywpord for a gene lsit, gene sig, or pathway
+ *
+ * @return a count of the number of rows, i.e. unique genes (associated genes count as a single gene)
+ *
+ **/
+def getHeatmapRowCountCTA  = {analysisIds, category, keywordId ->
+	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	StringBuilder s = new StringBuilder()
+	List sqlParams = []
+
+	s.append("select count(1) numrows from (")
+	s.append(getCTAResultsSQL(analysisIds, category, keywordId))
+	sqlParams.add(keywordId)
+	s.append(") ")
+
+	// retrieve results
+	def results = sql.rows(s.toString(), sqlParams)
+	
+	def rowCount
+	results.each{ row->
+	   	
+	   // add to info map
+	   rowCount = row.numRows
+	}
+	
+	return rowCount
+ }
+
+
+/**
+ * Method to retrieve the rows for a certain page of the heatmap CTA 
+ *
+ * @param analysisIds - the list of analysis IDs
+ * @param category - the category of the search keyword id passed in (GENELIST, GENESIG, or PATHWAY)
+ * @param keywordId - the keywpord for a gene lsit, gene sig, or pathway
+ * @param startRank - the index of the first row to return
+ * @param endRank - the index of the last row to return
+ *
+ * @return a map containing information about the rows on that page, e.g. keyword, biomarker info
+ *
+ **/
+def getHeatmapRowsCTA  = {analysisIds, category, keywordId, startRank, endRank ->
+	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	StringBuilder s = new StringBuilder()
+	List sqlParams = []
+
+	s.append("""select search_keyword_id, keyword, gene_id, rank from (
+					select search_keyword_id, keyword, gene_id, rownum rank from (
+			""")
+	s.append(getCTAResultsSQL(analysisIds, category, keywordId))
+	sqlParams.add(keywordId)
+	s.append(") )")
+    s.append("where rank between ? and ? order by rank")
+	sqlParams.add(startRank)
+	sqlParams.add(endRank)
+
+	// retrieve results
+	def results = sql.rows(s.toString(), sqlParams)
+	
+	def rowCount
+	def rows = [:]
+	results.each{ row->
+  	    // create info map for row
+	   	def rowInfo = [:]
+		def rank = row.rank
+		rowInfo.put("searchKeywordId", row.search_keyword_id)
+		rowInfo.put("keyword", row.keyword)
+		rowInfo.put("geneId", row.gene_id)
+	  
+        rows.put(rank, rowInfo)	   
+	}
+	
+	return rows
+ }
 
 /**
  * Method to retrieve the list of unique genes with data for a given list of analysis ids and biomarker ids

@@ -3116,17 +3116,11 @@ function drawPieChart(divid, data)
 }
 
 
-
-
-
-
 //Load the heatmap data for cross trial analysis 
 //analysisIds: pipe delimited list of analysis ids
-//rows: list of bm ids and associated info for page to be loaded
 //searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
-function loadHeatmapCTA(analysisIds, rows)	{	
-		
-	var bmIds = new Array;
+function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank)	{	 
+/*	var bmIds = new Array;
 	if (!rows)  {
 		drawHeatmapCTA('xtHeatmap', null, selectedAnalyses, []);
 		return;
@@ -3141,18 +3135,17 @@ function loadHeatmapCTA(analysisIds, rows)	{
 	}
 	
 	var bmIdsPiped = bmIds.join('|');
-	
+	*/analysisIds, category, searchKeywordId, startRank, endRank
 	rwgAJAXManager.add({
-		url:getHeatmapDataCTAURL,
-		data: {analysisIds: analysisIds, bmIds: bmIdsPiped},
+		url:getHeatmapCTARowsURL,
+		data: {analysisIds: analysisIds, category:category, searchKeywordId:searchKeywordId, 
+			   startRank:startRank, endRank:endRank},
 		timeout:60000,
 		success: function(response) {
 			
 			jQuery('#xtHeatmap').unmask(); //hide the loading msg, unblock the div
 			
-			// response is the data for the heat map with fold change
-			// rows contains the metadata needed for each row such as gene name, biomarker id, organisms
-			drawHeatmapCTA('xtHeatmap', response, selectedAnalyses, rows);
+			drawHeatmapCTA('xtHeatmap', response['rows'], selectedAnalyses);
 						
 		},
 		error: function(xhr) {
@@ -3175,12 +3168,12 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 	}
 		
 	rwgAJAXManager.add({
-		url:getHeatmapCTAGenesURL,		
+		url:getHeatmapCTARowCountURL,		
 		data: {analysisIds: analysisIds, category: category, searchKeywordId: searchKeywordId, page:page},
 		success: function(response) {								
-			var bmRows = response['bmRows'];
+			var numRows = response['totalCount'];
 			
-			getHeatmapPaginatorCTA("xtHeatmapPaginator", analysisIds, category, searchKeywordId, bmRows);
+			getHeatmapPaginatorCTA("xtHeatmapPaginator", analysisIds, category, searchKeywordId, numRows);
 	
 		},
 		error: function(xhr) {
@@ -3189,15 +3182,10 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 	});
 }
 
-function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, bmRows) {
+function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, numberRows) {
 	var element = jQuery("#" + divID);
 	var numberOfRowsPerPage = 20;
-	
-	var numberRows = 0;
-	for (var r in bmRows)  {
-		numberRows++;
-	}
-	
+		
 	// get number of extra genes on last page (will be 0 if last page is full)
 	var numberRowsLastPage = numberRows % numberOfRowsPerPage;
 	
@@ -3209,28 +3197,6 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, b
 	if (numberRowsLastPage > 0)  {
 		numberOfPages = numberOfPages + 1;
 	}
-	
-	// create an array of pages (each array will contain an array of genes on that page)
-	var pagesArray = new Array;
-	
-	// first create an empty array for each page
-	for (var i=1; i<=numberOfPages; i++)  {
-		var genesArray = new Array;
-		pagesArray.push(genesArray)
-	}
-	
-	// now loop through genes with data and push onto the appropriate page
-	var i = 0;
-	for (var r in bmRows)  {
-		var p = Math.floor(i / numberOfRowsPerPage);
-		
-		pagesArray[p].push(bmRows[i]);
-		
-		i++;
-	}
-
-	// save the page information so can be used for later page loads
-	jQuery.data(element, "pages", pagesArray);
 	
 	//if there is only 1 page, just hide the paging control since it's not needed
 	if(numberOfPages==1){
@@ -3246,13 +3212,15 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, b
       onSelect: function (page) { 
       	jQuery("#xtHeatmap").mask("Loading...");
 
-      	var pages = jQuery.data(element, "pages");
-      	var rows = pages[page - 1];
+      	var startRank = (page - 1)*numberOfRowsPerPage + 1
+      	var endRank = (page)*numberOfRowsPerPage
       	
-      	//loadHeatmapData(divID, analysisId, page, numberOfGenesPerPage);
-			loadHeatmapCTA(analysisIds, rows);   
+      	if (endRank > numberRows)  {
+      		endRank = numberRows
+      	}
+      	
+		loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank);   
 
-      	jQuery.data(element, "currentPage", page);
                                   
       }, 
       onFormat: formatPaginator

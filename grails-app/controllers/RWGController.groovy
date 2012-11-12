@@ -1064,7 +1064,92 @@ class RWGController {
 					 
    }
    
-   // Render the template for the favorites dialog
+   /**
+	* Method to total number of rows for the CTA heatmap for the given filters
+	* 
+	* @param params.analysisIds: list of analysis ids
+	* @param params.category: either PATHWAY, GENELIST, or GENESIG  
+	* @param params.searchKeywordId: search keyword id of the pathway, genelist or gene signature
+	* 
+	*/
+   def getHeatmapCTARowCount = {
+	   def rwgDAO = new RWGVisualizationDAO()
+       // Render the template for the favorites dialog
+	   
+	   def analysisIdsList = params.analysisIds.split(/\|/)
+
+	   def ret = [:]
+	   def totalCount
+	   totalCount = rwgDAO.getHeatmapRowCountCTA(analysisIdsList, params.category, params.searchKeywordId)
+	   ret.put("totalCount",  totalCount) 
+	   render ret as JSON	   
+   }
+   
+   /**
+	* Method to get the list of rows on a certain page of the CTA heatmap for the given filters
+	* 
+	* @param params.analysisIds: list of analysis ids
+	* @param params.category: either PATHWAY, GENELIST, or GENESIG  
+	* @param params.searchKeywordId: search keyword id of the pathway, genelist or gene signature
+	* @param params.startRank: start index of page to be returned
+	* @param params.endRank: end index of page to be returned
+	* 
+	*/
+   def getHeatmapCTARows = {
+	   def rwgDAO = new RWGVisualizationDAO()
+       // Render the template for the favorites dialog
+	   
+	   def analysisIdsList = params.analysisIds.split(/\|/)
+
+	   def ret = [:]
+
+	   int startRank = params.startRank.toInteger()
+	   int endRank = params.endRank.toInteger()
+	   
+	   def rows = rwgDAO.getHeatmapRowsCTA(analysisIdsList, params.category, params.searchKeywordId, startRank, endRank)
+	   println rows
+	   // loop through to get list of search keyword ids for page
+	   def searchKeywordIds = []
+	   for (def i=startRank; i<=endRank; i++)  {
+		   def kwId = rows.get(i.toBigDecimal()).get("searchKeywordId")
+		   
+		   searchKeywordIds.add(kwId)
+	   }
+
+	   def data = rwgDAO.getHeatmapDataCTA(analysisIdsList, searchKeywordIds)
+	   println data
+	   // add the data returned to the rows
+	   def r = 0
+	   for (def i=startRank; i<=endRank; i++)  {
+		   def row = rows.get(i.toBigDecimal())
+		   def kwId = row.get("searchKeywordId")
+		   
+		   def rowData = [:]
+		   def c = 0
+		   analysisIdsList.each {aId ->
+			   println aId
+			   println kwId  			   
+			   def colData = data?.get(aId.toString())?.get(kwId.toString())
+			   // no data for col, create an empty map
+			   if (!colData)  {
+				   colData = [:]
+			   }
+			   colData.put("x", c)
+			   colData.put("y", r)
+			   
+			   rowData.put(c, colData)
+			   
+			   c++
+		   }
+		   row.put("data",  rowData)
+		   r++
+	   }
+	   
+	   ret.put("rows",  rows)
+	   
+	   render ret as JSON	   
+   }
+
    def renderFavoritesTemplate = {
 	   
 	   def html

@@ -568,59 +568,36 @@ function addDataColumn(hm, xOffset, yOffset, width, data, header, groupName, h) 
 
 //Take the heatmap data in the second parameter and draw the D3 heatmap for Cross Trial Analysis
 //  (i.e. Genes down left, analysis on top, fold change in box)
-// hmData comes in form of [bmId1:[aId1:[probeId:p1,foldChange:fc1,preferredPValue:pv1], [..more probe/fc data], [...next analsysis for bm]], bmId2:[], ...]
-// rows is an array containing one entry for each row; each row contains one object for each biomarker in that row; each biomarker object contains geneName,organism, primaryExternalId
-//    e.g. Array[0] = [bmId1:[geneName:"", organism:"", primaryExternalId:""], bmid2:[....], ...]
-//         Array[1] = [bmId3:[geneName:"", organism:"", primaryExternalId:""], bmid4:[....], ...]
-function drawHeatmapCTA(divID, hmData, analyses, rows)	{
+// rows is an array containing one entry for each row of data; each row contains data for the label (search keyword) and one entry for each data
+//  col: e.g.
+//         {"1":{"searchKeywordId":1240513,"keyword":"CAMP","geneId":"820","data":{"0":{"col":0,"row":0},"1":{"probeId":"210244_at","foldChange":-2.3866,"preferredPValue":null,"bioMarkerName":"CAMP","organism":"HOMO SAPIENS","col":1,"row":0}}},
+//          "2":{"searchKeywordId":1253597,"keyword":"CCL28","geneId":"56477","data":{"0":{"col":0,"row":1},"1":{"probeId":"224027_at","foldChange":1.675,"preferredPValue":null,"bioMarkerName":"CCL28","organism":"HOMO SAPIENS","col":1,"row":1}}},
+//          "3":{"searchKeywordId":1242219,"keyword":"CXCR3","geneId":"2833","data":{"0":{"col":0,"row":2},"1":{"probeId":"207681_at","foldChange":1.747,"preferredPValue":null,"bioMarkerName":"CXCR3","organism":"HOMO SAPIENS","col":1,"row":2}}},
+//          "4":{"searchKeywordId":1241668,"keyword":"FCER1A","geneId":"2205","data":{"0":{"col":0,"row":3},"1":{"probeId":"211734_s_at","foldChange":2.186,"preferredPValue":null,"bioMarkerName":"FCER1A","organism":"HOMO SAPIENS","col":1,"row":3}}},
+//          "5":....
+function drawHeatmapCTA(divID, rows, analyses)	{
 	jQuery("#" + divID).empty();
     var savedDisplayStyle = jQuery("#" + divID).css('display');
 	jQuery("#" + divID).show();  // show first so title height can be calculated correctly
 	
-	var mergedData = new Array;
-	
-	// merge the 2 sets of data to create a matrix of data that contains the necessary data for each row in form
-	// Array[rowIndex1] = [colIndex1:[geneName, organism, primaryExternalId, fc, pvalue], colIndex2:[....], coldIndex3:[...]]
-	for (var r=0; r<rows.length; r++)  {
-		var colData = new Array
-		for (var c=0; c<analyses.length; c++)  {
-			
-			var analysisId = analyses[c].id;
-			
-			// loop thru each biomarker in row, and find which has data for this analyses and put into merged array
-			var data;
-			var row = rows[r];
-
-			var geneName = null; 
-			var organism = null;
-			var geneId = null;
-			var probeId = null;
-			var fc = null;
-			var pvalue = null;
-
-			for (var bm in row)  {
-				 
-				// look for data in the hmData array
-				data = hmData[bm][analysisId];
-				if (data)  {
-					geneName =  row[bm].geneName; 
-					organism = row[bm].organism;
-					geneId = row[bm].primaryExternalId;
-					probeId = data.probeId;
-					fc = data.foldChange;
-					pvalue = data.preferredPValue;
-
-				    break;  // found data, we can stop looking now for a biomarker for data for this analysis and just move on to next analysis							
-				}  
-
-			}
-			colData[c] = {geneName:geneName, organism:organism, geneId:geneId, probeId:probeId, fc:fc, pvalue:pvalue, x:c, y:r};
-
-			 				
+	// convert the rows to an array and the data columnd to an array for consumption by d3 
+	var rowsArray = new Array
+	var index = 0;
+	for (var r in rows)  {
+		
+		var dataCol = new Array
+		for (c in rows[r]['data'])  {
+			dataCol[c] = rows[r]['data'][c]
 		}
-		mergedData[r] = colData;		
+		
+		var searchKeywordId = rows[r]['searchKeywordId'];
+		var keyword = rows[r]['keyword'];
+		var geneId = rows[r]['geneId'];
+		
+		var row = {searchKeywordId:searchKeywordId, keyword:keyword, geneId:geneId, data:dataCol}
+		rowsArray[index] = row
+		index++;
 	}
-	
 	
 	hmTooltips = new Array;
 	
@@ -646,20 +623,17 @@ function drawHeatmapCTA(divID, hmData, analyses, rows)	{
 	var maxFoldChange = 0;
 	var minFoldChange = 0;
 
-	var numRows = rows.length;
+	var numRows = rowsArray.length;
 	var geneLabels = new Array;
 	// iterate thru rows and create the gene labels that will go on the left of the graph 
 	//  (for now take the first we come across, do we want to prioritize and use human if available or some other criteria to determine the one shown)
-	for (var r=0; r<rows.length; r++)  {
-		var row = rows[r];
+	for (var r=0; r<rowsArray.length; r++)  {
+		var row = rowsArray[r];
 		
 		var geneName; 
 		var geneId;
-		for (var bm in row)  {
-			geneName =  row[bm].geneName; 
-			geneId = row[bm].primaryExternalId;
-		    break;  
-		}
+		geneName =  row.keyword; 
+		geneId = row.geneId;
   	    geneLabels[r] = {geneName:geneName, geneId:geneId};
 		
 		var wGene = geneName.visualLength(ctaGeneLabelFontWeight + " " + ctaGeneLabelFontSize + "px " + ctaGeneLabelFontFamily);
@@ -724,39 +698,39 @@ function drawHeatmapCTA(divID, hmData, analyses, rows)	{
 	
     //generate the heatmap
     var hmRow = hm.selectAll(".heatmap")
-      .data(mergedData)
+      .data(rowsArray)
       .enter().append("g");    
     
     var hmRects = hmRow
 	    .selectAll(".rect")
 	    .data(function(d) {
-	      return d;
+	      return d['data'];
 	    }).enter().append("svg:rect")
 	    .attr('width', wCell)
 	    .attr('height',hCell)
 	    .attr("class", "heatmapTooltip")
 	    .attr("id", function(d) {
 	    	var id = "hmCell" + uniqueHeatmapId++;   // id here will match id in tooltip array
-	    	var geneName = d.geneName;
+	    	var geneName = d.bioMarkerName;
 	    	
 	    	var fc;
-			if (d.fc == undefined)  {
+			if (d.foldChange == undefined)  {
 				fc = "null"
 			}
 			else {
-				fc = d.fc.toFixed(2);
+				fc = d.foldChange.toFixed(2);
 			}
 			
 			var pvalue;
-			if (d.pvalue == undefined)  {
+			if (d.preferredPValue == undefined)  {
 				pvalue = "null"
 			}
 			else {
-				if (d.pvalue == 0)   {
+				if (d.preferredPValue == 0)   {
 					pvalue = "< 0.00001";
 				}
 				else {					
-					pvalue = d.pvalue;
+					pvalue = d.preferredPValue;
 				}
 			}
 
@@ -786,11 +760,11 @@ function drawHeatmapCTA(divID, hmData, analyses, rows)	{
 	    .style("shape-rendering", "crispEdges")
 	    .style('fill',function(d) {
 	    	
-	        if (d.fc == null)  {        	
+	        if (d.foldChange == null)  {        	
 	        	return "#FFFF00";
 	        } 	
 	        else  {
-	        	return colorScale(d.fc);
+	        	return colorScale(d.foldChange);
 	        }
 	      
 	    })
