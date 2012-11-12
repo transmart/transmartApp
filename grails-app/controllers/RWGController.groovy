@@ -242,15 +242,15 @@ class RWGController {
    }
   
    /**
-    * Create a query string for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
+    * Create a query string for the category in the form of (<cat1>:("term1" OR "term2"))
     */
    def createCategoryQueryString = {category, termList -> 
 
-       // create a query for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
+       // create a query for the category in the form of (<cat1>:("term1" OR "term2"))
        String categoryQuery = ""
        for (t in termList.tokenize("|"))  {
 	   
-	       def queryTerm = /${category}:"${t}"/
+	       def queryTerm = /"${t}"/
 	   
 	       if (categoryQuery == "")  {
 		       categoryQuery = queryTerm
@@ -261,7 +261,7 @@ class RWGController {
        }
 
 	   // enclose query clause in parens
-       categoryQuery = /(${categoryQuery})/
+       categoryQuery = /(${category}:(${categoryQuery}))/
 	   
 	   return categoryQuery
   }
@@ -402,6 +402,7 @@ class RWGController {
 	   // add params to request 	   	   
 	   def dataWriter = new OutputStreamWriter(solrConnection.outputStream)
 	   dataWriter.write(solrQueryParams)
+
 	   dataWriter.flush()
 	   dataWriter.close()
 	   

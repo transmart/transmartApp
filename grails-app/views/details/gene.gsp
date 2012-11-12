@@ -37,7 +37,12 @@
 			                title:"Entrez Gene",
 			                id:'entrezGene',
 			                timeout:180000,
-			            	defaultSrc: "http://www.ncbi.nlm.nih.gov/sites/entrez?Db=gene&Cmd=DetailsSearch&Term=${geneId}[GeneID]&doptcmdl=DocSum"
+			                <g:if test="${(geneId[0] == 'Q') || (geneId[0] == 'P')}">   // if it starts with Q or P, assume it's a protein
+			        	        defaultSrc: "http://www.ncbi.nlm.nih.gov/protein/${geneId}"
+				        	 </g:if>
+			        	     <g:else>
+			        	        defaultSrc: "http://www.ncbi.nlm.nih.gov/sites/entrez?Db=gene&Cmd=DetailsSearch&Term=${geneId}[GeneID]&doptcmdl=DocSum"
+			        	     </g:else>
 				     },
 				     
 				 <g:if test="${isRWG==false}">
