@@ -904,167 +904,6 @@ class RWGController {
    }
 
    /**
-	* Returns the data for the heatmap visualization for Cross Trial Analysis
-	* 
-	* @param params.analysisIds: list of analysis ids
-	* @param params.bmIds: pipe delimited list of bio marker ids representing genes  
-	* 
-	*/
-   def getHeatmapDataCTA = {
-	   def rwgDAO = new RWGVisualizationDAO()
-	   	   
-	   def analysisIdsList = params.analysisIds.split(/\|/)
-	   def bioMarkerIdsListPiped = params.bmIds
-	   def bioMarkerIdsList = bioMarkerIdsListPiped.split(/\|/)
-	   
-	   def returnData = rwgDAO.getHeatmapDataCTA(analysisIdsList, bioMarkerIdsListPiped)
-	   
-	   def analysisData = returnData.get("analysisInfo")
-	   
-	   // create a matrix of values that will be used in heatmap.  This will be a map of result data; each row will be keyed by bm Id and contain this data for each analysis:
-	   //   probeId, fold change, pvalue
-	   // e.g [bmId1:[aId1:[probe:probe1,fc:fc1,pvalue:pvalue1], aid2:[], ...], bmId2:[....]]
-	   
-	   def bmData = [:]
-	   bioMarkerIdsList.each{  bmId ->
-
-		   // now add a data map which contains one column for each analysis in list of analysis Ids passed in
-		   def data = [:]
-		   analysisIdsList.each { analysisId ->
-			   def cellData = analysisData?.get(analysisId.toString())?.get(bmId.toString())
-			   
-			   if (cellData)  {
-				   data.put(analysisId, cellData)
-			   }
-			   
-		   }
-		   
-		   bmData.put(bmId.toString(), data)
-	   }
-	   render bmData as JSON
-   }
-
-   // function that takes a map of every biomarker with data (each with a list of associated ids including itself),
-   //  and condenses all associated genes into a single list,
-   //  e.g. 1 associated to 2,3; 2 associated to 4; 4 associated to 5 will return [1,2,3,4,5]
-   
-   public void getAssociations(bmId, bmAssociationsMap, associationList)  {
-	   
-	   // is id on list yet -- if not add it
-	   if (associationList.indexOf(bmId) == -1)  {
-		   associationList.add(bmId)
-		   def id = bmId
-		   
-		   // get the list of associations for the current biomarker 
-		   def associations = bmAssociationsMap.get(id)
-		   
-		   // add each asso id and any others associated recursively		   		   		   
-		   associations.each  {assoId->
-				   getAssociations(assoId, bmAssociationsMap, associationList)
-		   }
-	   }
-
-   }
-
-   
-   /**
-	* Method to get the count and list of genes with data for the CTA heatmap for the given filters
-	* 
-	* @param params.analysisIds: list of analysis ids
-	* @param params.category: either PATHWAY, GENELIST, or GENESIG  
-	* @param params.searchKeywordId: search keyword id of the pathway, genelist or gene signature
-	* 
-	*/
-   def getHeatmapCTAGenes = {
-	   def rwgDAO = new RWGVisualizationDAO()
-	   
-	   def analysisIdsList = params.analysisIds.split(/\|/)
-
-	   def bmData = rwgDAO.getHeatmapGenesCTA(analysisIdsList, params.category, params.searchKeywordId)
-	   
-	   def bmIdsWithData = bmData.get('bmIds')	   	   
-	   def bmInfoMap = bmData.get('bmInfo')
-	   
-	   def ret = [:]
-	   
-	   def bmIdsWithDataPiped = bmIdsWithData.join('|')
-	   
-	   // the list of genes contains one row for each unique biomarker id;  some of these may be associated with each 
-	   // other, meaning they need to be displayed together; so, let's figure out the associated genes and
-	   // create a list containing one list per row - the row list will have all the associated biomarker ids (along
-	   //  with display info such as gene name and species) for a single display row
-	   // first retrieve the association info for each 
-	   def bmAssociations = rwgDAO.getGeneAssociations(bmIdsWithDataPiped)
-	   // create a corresponding array of flags - will be used for processing the associations, creation of rows
-	   def bmProcessed = []
-	   bmIdsWithData.each {  
-		   bmProcessed.add(false)
-	   }
-	   
-	   def bmRows = [:]
-
-	   // create a map that has one entry for every biomarker in the association list (either id or associated id), 
-       // which contains its list of direct associations
-	   def bmAssociationsMap = [:]
-	   bmAssociations.each {row->
-		   def id = row.bmId.toString()
-		   def assoId = row.assoId.toString()
-
-		   def m1 = bmAssociationsMap.get(id)  // get the list for the current id
-		   def m2 = bmAssociationsMap.get(assoId)  // get the list for the current associated id
-
-		   // no map for main id, create a blank list and add to its map		   
-		   if (!m1)  {
-			   m1 = []
-			   bmAssociationsMap.put(id, m1)
-		   } 
-		   // add the associated id to the list
-		   m1.add(assoId)
-		   
-		   // no map for assoc id,  create a blank list and add to its map		   
-		   if (!m2)  {
-			   m2 = []
-			   bmAssociationsMap.put(assoId, m2)
-		   } 
-		   // add the main id to the list
-		   m2.add(id)
-	   }
-	   
-	   // create a new row object for each set of associated genes
-	   def rowIndex = 0;
-	   bmIdsWithData.eachWithIndex {  bmId, index ->
-		   if (!bmProcessed[index])  {
-		   	   def associationList = []		   
-			   getAssociations(bmId.toString(), bmAssociationsMap, associationList)
-			   def bmRow = [:]
-			   // create a new row
-			   associationList.each {id->				   
-				   //   get the information for this biomarker 
-				   def bmInfo = bmInfoMap.get(id.toString())
-				   bmRow.put(id, bmInfo)
-				   
-				   // find the index of this bm in the other list
-				   def i = bmIdsWithData.indexOf(id)
-				   
-				   // mark it as processed since it's been processed and shouldn't be added to any other row
-				   bmProcessed[i] = true
-	
-			   }
-			   
-			   bmRows.put(rowIndex, bmRow)
-			   
-			   rowIndex++
-			   		   
-		   }
-	   }
-
-	   ret.put("bmRows", bmRows)
-	   
-	   render ret as JSON	   
-					 
-   }
-   
-   /**
 	* Method to total number of rows for the CTA heatmap for the given filters
 	* 
 	* @param params.analysisIds: list of analysis ids
@@ -1107,7 +946,7 @@ class RWGController {
 	   int endRank = params.endRank.toInteger()
 	   
 	   def rows = rwgDAO.getHeatmapRowsCTA(analysisIdsList, params.category, params.searchKeywordId, startRank, endRank)
-	   println rows
+	   
 	   // loop through to get list of search keyword ids for page
 	   def searchKeywordIds = []
 	   for (def i=startRank; i<=endRank; i++)  {
@@ -1117,7 +956,7 @@ class RWGController {
 	   }
 
 	   def data = rwgDAO.getHeatmapDataCTA(analysisIdsList, searchKeywordIds)
-	   println data
+	   
 	   // add the data returned to the rows
 	   def r = 0
 	   for (def i=startRank; i<=endRank; i++)  {
@@ -1127,8 +966,6 @@ class RWGController {
 		   def rowData = [:]
 		   def c = 0
 		   analysisIdsList.each {aId ->
-			   println aId
-			   println kwId  			   
 			   def colData = data?.get(aId.toString())?.get(kwId.toString())
 			   // no data for col, create an empty map
 			   if (!colData)  {
