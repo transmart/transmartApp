@@ -260,41 +260,24 @@
 				                                   
 				                                                               
 			        	</div>
-			        	<div class="filtertitle" name="dataLevel">Data Level</div>
+			        	
+			        	<%-- TODO Source all of this from the database... obviously --%>
+			        	<div class="filtertitle" name="dataLevel">Assay Platform</div>
 			        	<div class="filtercontent" name="dataLevel" style="display: none;">
-			        		<div class="filteritem" name="dataLevel" id="dl1">One</div>
-			        		<div class="filteritem" name="dataLevel" id="dl2">Two</div>
-			        		<div class="filteritem" name="dataLevel" id="dl3">Three</div>
-			        		<div class="filteritem" name="dataLevel" id="dl4">Four</div>
-			        		<div class="filteritem" name="dataLevel" id="dl5">Five</div>
-			        		<div class="filteritem" name="dataLevel" id="dl6">Six</div>
-			        		<div class="filteritem" name="dataLevel" id="dl7">Seven</div>
-			        		<div class="filteritem" name="dataLevel" id="dl8">Eight</div>
-			        		<div class="filteritem" name="dataLevel" id="dl9">Nine</div>
+			        		<div class="filteritem" name="dataLevel" id="dl1">IHC</div>
+			        		<div class="filteritem" name="dataLevel" id="dl2">mRNA Profiling</div>
+			        		<div class="filteritem" name="dataLevel" id="dl3">SNP Profiling</div>
+			        		<div class="filteritem" name="dataLevel" id="dl4">ELISA</div>
 			        	</div>
 			        	<div class="filtertitle" name="otherFilter">Compound</div>
 			        	<div class="filtercontent" name="otherFilter" style="display: none;">
-			        		<div class="filteritem" name="otherFilter" id="of1">One</div>
-			        		<div class="filteritem" name="otherFilter" id="of2">Two</div>
-			        		<div class="filteritem" name="otherFilter" id="of3">Three</div>
-			        		<div class="filteritem" name="otherFilter" id="of4">Four</div>
-			        		<div class="filteritem" name="otherFilter" id="of5">Five</div>
-			        		<div class="filteritem" name="otherFilter" id="of6">Six</div>
-			        		<div class="filteritem" name="otherFilter" id="of7">Seven</div>
-			        		<div class="filteritem" name="otherFilter" id="of8">Eight</div>
-			        		<div class="filteritem" name="otherFilter" id="of9">Nine</div>
+			        		<div class="filteritem" name="otherFilter" id="of1">XL147</div>
+			        		<div class="filteritem" name="otherFilter" id="of2">BSI-201</div>
 			        	</div>
-			        	<div class="filtertitle" name="assayPlatform">Assay Platform</div>
+			        	<div class="filtertitle" name="assayPlatform">Access Type</div>
 			        	<div class="filtercontent" name="assayPlatform" style="display: none;">
-			        		<div class="filteritem" name="assayPlatform" id="ap1">One</div>
-			        		<div class="filteritem" name="assayPlatform" id="ap2">Two</div>
-			        		<div class="filteritem" name="assayPlatform" id="ap3">Three</div>
-			        		<div class="filteritem" name="assayPlatform" id="ap4">Four</div>
-			        		<div class="filteritem" name="assayPlatform" id="ap5">Five</div>
-			        		<div class="filteritem" name="assayPlatform" id="ap6">Six</div>
-			        		<div class="filteritem" name="assayPlatform" id="ap7">Seven</div>
-			        		<div class="filteritem" name="assayPlatform" id="ap8">Eight</div>
-			        		<div class="filteritem" name="assayPlatform" id="ap9">Nine</div>
+			        		<div class="filteritem" name="assayPlatform" id="ap1">Proprietary</div>
+			        		<div class="filteritem" name="assayPlatform" id="ap2">Public</div>
 			        	</div>
 			        </div>
 			        <h3>Metadata Viewer</h3>

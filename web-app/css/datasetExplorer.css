@@ -109,7 +109,7 @@ a.toplink1:hover{
 }
 
 .clearbutton{
-		background-image:url(../images/clear.png ) !important;
+		background-image:url(../images/small_cross.png ) !important;
 	}
 .runbutton{
 	background-image:url(../images/runprog.png ) !important;
@@ -425,6 +425,22 @@ content: counter(pages);
 .x-tool-help {
 	background-image: url("../images/help/tool-sprites-rdc.gif");
     background-position: 0 -300px;
+}
+
+.flatbutton {
+	background-repeat: no-repeat;
+	background-position: 2px 50%;
+	font-family: Arial, sans-serif;
+	font-size: 9pt;
+	padding: 4px 4px 4px 20px;
+	border: 1px solid #CCC;
+	cursor: pointer;
+}
+
+.flatbutton:hover {
+	background: #F4F4F4;
+	background-repeat: no-repeat;
+	background-position: 2px 50%;	
 }
 
 /* Overrides for ext CSS */

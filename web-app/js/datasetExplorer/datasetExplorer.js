@@ -4501,3 +4501,12 @@ function ontFilterLoaded(el, success, response, options)
 			Ext.get("ontSearchButton").dom.click();
 		}
 }
+
+function clearQuery() {
+	if(confirm("Are you sure you want to clear your current analysis?"))
+	{
+		clearAnalysisPanel();
+		resetQuery();
+		clearDataAssociation();									
+	}
+}
