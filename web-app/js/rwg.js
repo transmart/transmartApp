@@ -2605,6 +2605,9 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 
 function showCrossTrialAnalysis()
 {
+	//reset scroll position
+	jQuery("#main").scrollTop(0);
+	
 	//hide the unused menu options
 	jQuery("#toolbar-collapse_all").hide();
 	jQuery("#toolbar-options").hide();
@@ -2651,6 +2654,9 @@ function launchHomePage(currentsubcategoryid, currentcharttype, showAll)
 }
 function showHomePage()
 {
+	//reset scroll position
+	jQuery("#main").scrollTop(0);
+	
 	//hide the unused menu options
 	jQuery("#toolbar-collapse_all").hide();
 	jQuery("#toolbar-options").hide();
@@ -2661,6 +2667,9 @@ function showHomePage()
 }
 function showResultsPage()
 {
+	
+	//reset scroll position
+	jQuery("#main").scrollTop(0);
 	
 	//show the extra menu options
 	jQuery("#toolbar-collapse_all").show();

@@ -19,7 +19,7 @@
 
 function drawPieChart(divid, catid, ddid, data, charttype, parentcolor, ddstack)
 {
-	var w = 550;
+	var w = 450;
 	var h = 250;
 	var r = 60;
 	var ir = 0;
