@@ -86,6 +86,8 @@
 
 			var webStartURL = "${createLink([controller:'search',action:'webStartPlotter'])}";
 			var datasetExplorerURL = "${createLink([controller:'datasetExplorer'])}";
+
+			var crossImageURL = "${resource([dir:'images', file:'small_cross.png'])}";
 	       	
 	        var mouse_inside_options_div = false;
 
