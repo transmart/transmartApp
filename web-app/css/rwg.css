@@ -1015,6 +1015,11 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 
 
 
+.xtHeatmap{
+	display:inline-block;
+	min-height:250px;
+}
+
 
 /*** XT Summary Bar Plots ***/
 

@@ -3131,7 +3131,12 @@ function drawPieChart(divid, data)
 //searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
 //startRank: first index on the page to be retrieved
 //endRank: last index on the page to be retrieved
-function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank)	{	 
+function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank)	{	
+	
+
+	var heatmapDiv = "xtHeatmap_" +searchKeywordId;
+	var heatmapHolderDivID = "xtHeatmapHolder_" +searchKeywordId;
+	
 	rwgAJAXManager.add({
 		url:getHeatmapCTARowsURL,
 		data: {analysisIds: analysisIds, category:category, searchKeywordId:searchKeywordId, 
@@ -3139,9 +3144,9 @@ function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRa
 		timeout:60000,
 		success: function(response) {
 			
-			jQuery('#xtHeatmap').unmask(); //hide the loading msg, unblock the div
+			jQuery('#'+heatmapHolderDivID).unmask(); //hide the loading msg, unblock the div
 			
-			drawHeatmapCTA('xtHeatmap', response['rows'], selectedAnalyses);
+			drawHeatmapCTA(heatmapDiv, response['rows'], selectedAnalyses);
 						
 		},
 		error: function(xhr) {
@@ -3152,6 +3157,20 @@ function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRa
 }
 
 function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
+	
+	//heatmapHolder div holds both the paginator and the heatmap
+	var divID = "xtHeatmapHolder_" +searchKeywordId;
+	var divPaginatorID = "xtHeatmapPaginator_"+searchKeywordId;
+	
+    //remove the div if it already exists:
+    jQuery('#'+divID).remove();
+    
+    //create div to hold svg chart
+    jQuery("#xtHeatmapTab").prepend("<div id='"+divID +"' class='xtHeatmap'></div>");
+    
+    //insert the paginator div inside the heatmapHolder div
+    jQuery("#"+divID).append("<div id='"+divPaginatorID +"' class='pagination'></div>");
+
 
 	var analysisIds = "";
 	// retrieve list of selected analyses, create a pipe delimited list of analysis ids
@@ -3169,7 +3188,7 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 		success: function(response) {								
 			var numRows = response['totalCount'];
 			
-			getHeatmapPaginatorCTA("xtHeatmapPaginator", analysisIds, category, searchKeywordId, numRows);
+			getHeatmapPaginatorCTA(divPaginatorID, analysisIds, category, searchKeywordId, numRows);
 	
 		},
 		error: function(xhr) {
@@ -3179,6 +3198,15 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 }
 
 function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, numberRows) {
+	
+	var heatmapHolderDivID = "xtHeatmapHolder_" +searchKeywordId;
+	
+	var heatmapDiv = "xtHeatmap_" +searchKeywordId;
+    
+    //create div for the heatmap
+    jQuery("#"+heatmapHolderDivID).prepend("<div id='"+heatmapDiv +"' ></div>");
+	
+	
 	var element = jQuery("#" + divID);
 	var numberOfRowsPerPage = 20;
 		
@@ -3206,7 +3234,7 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
 	    perpage:1, 
       format:"[<(qq -) ncnnn (- pp)>]",
       onSelect: function (page) { 
-      	jQuery("#xtHeatmap").mask("Loading...");
+      	jQuery("#"+heatmapHolderDivID).mask("Loading...");
 
       	var startRank = (page - 1)*numberOfRowsPerPage + 1
       	var endRank = (page)*numberOfRowsPerPage
@@ -3216,7 +3244,7 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
       	}
       	
       	if (numberRows == 0)  {
-      		drawHeatmapCTA('xtHeatmap', null, selectedAnalyses);  // draw blank heatmap      		
+      		drawHeatmapCTA(heatmapDiv, null, selectedAnalyses);  // draw blank heatmap      		
       	}
       	else  {      		
     		loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank);   

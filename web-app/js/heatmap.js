@@ -646,7 +646,7 @@ function drawHeatmapCTA(divID, rows, analyses)	{
 	var analysisLegendOffset = heatmapHeight;
 	var heatmapOffset = 0;
 
-	var minWidth = 500;
+	var minWidth = 200;
 	var wTotal = maxGeneWidth + numAnalyses*wCell + 6;
 	if (wTotal < minWidth)  {
 		wTotal = minWidth;

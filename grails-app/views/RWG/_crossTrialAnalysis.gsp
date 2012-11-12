@@ -55,9 +55,8 @@
 		
 		<!-- Heatmap Tab Content -->
 		<div id ="xtHeatmapTab">
-			<div id="xtHeatmap"></div>
-			<a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a>
-			<div id="xtHeatmapPaginator" class="pagination" style="text-align:left"></div>
+		<!-- 	<a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a> -->
+
 		</div>
 		
 	</div>
