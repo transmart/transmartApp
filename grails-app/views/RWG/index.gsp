@@ -135,9 +135,9 @@
 	        	jQuery('#topTabs').tabs();	
 	        	jQuery('#topTabs').bind( "tabsshow", function(event, ui) {
 		        	var id = ui.panel.id;
-	        	    if (ui.panel.id == "results-div") {
+	        	    if (ui.panel.id == "study-view-div") {
 	        	    	
-	        	    } else if (ui.panel.id == "table-results-div")	{
+	        	    } else if (ui.panel.id == "subject-view-div")	{
 						
 	        	    }
 	        	});
@@ -146,7 +146,7 @@
 					toggleSidebar();
 		        });
 
-	        	jQuery('#table-results-div').append(
+	        	jQuery('#subject-view-div').append(
 	        		jQuery("<iframe></iframe>")
 	        			.attr("id", "datasetExplorer")
 	        			.attr("name", "datasetExplorer")
@@ -220,7 +220,8 @@
 			<div id="topTabs" class="analysis-tabs">
 		       <ul>
 		          <li id="analysisViewTab"><a href="#results-div" onclick="return false;">Study View</a></li>
-		          <li id="tableViewTab"><a href="#table-results-div" onclick="return false;">Subject View</a></li>
+		          <li id="tableViewTab"><a href="#subject-view-div" onclick="return false;">Subject View</a></li>
+		          <li id="tableViewTab"><a href="#export-div" onclick="return false;">Export</a></li>
 		       </ul>
 		     
 	       		<div id="results-div">
@@ -228,9 +229,18 @@
 	         	
 				</div>
 				
-				<div id="table-results-div">
+				<div id="subject-view-div">
 					
-				</div> 
+				</div>
+				
+				<div id="export-div">
+				
+				</div>
+			</div>
+			
+			<div id="cartbutton">
+				<img src="${resource(dir:'images', file:'cart.png')}"/> Cart
+				<div id="cartcount">0</div>
 			</div>
 		</div>
 		

@@ -496,3 +496,13 @@ li.x-tab-strip-active {
 .x-panel-body {
 	border: none;
 }
+
+.x-tab-panel-body {
+	border: none;
+}
+
+/* Dreadful override - find out where query panel background color is actually set and replace this! */
+
+#queryPanel .x-panel-bwrap .x-panel-body {
+	background-color: white !important	
+}

@@ -10,7 +10,8 @@ body {
   margin: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../images/bgtile.png') !important
+  /*background-image: url('../images/bgtile.png') !important; */
+  background: white !important;
 }
 
 #side-scroll {    
@@ -34,7 +35,7 @@ body {
 	border: #0000FF;
 	width: 290px;
 	margin-right: 10px;
-	box-shadow: #888 11px 11px 8px -7px;
+	box-shadow: #DDD 11px 11px 8px -7px;
 }
 
 #active-search-div
@@ -63,6 +64,7 @@ body {
   bottom: 0;
   overflow: auto;
   float: left;
+  position: relative;
 }
 
 #title-search-div{
@@ -459,7 +461,7 @@ ul.dynatree-container li ul li{
 	background-color:#F4F4F4;
 	border-radius: 8px;
 	margin-bottom: 16px;
-	box-shadow: #888 11px 11px 8px -7px;
+	box-shadow: #DDD 11px 11px 8px -7px;
 	border: 1px solid #BBB;
 }
 .result-trial-even
@@ -970,7 +972,7 @@ select.multiselect {
 	font-size: 8pt;	
 }
 
-.ajaxloading, #table-results-div.ajaxloading {
+.ajaxloading {
 	background-image: url('../images/loader-large.gif') !important;
 	background-repeat: no-repeat !important;
 	background-position: 50% 50% !important;
@@ -1023,7 +1025,7 @@ select.multiselect {
 	border-left: 1px solid #AAE;
 	border-right: 1px solid #AAE;
 	border-bottom: 1px solid #AAE;
-	box-shadow: #888 11px 11px 8px -7px;
+	box-shadow: #DDD 11px 11px 8px -7px;
 }
 
 .filtertitle {
@@ -1067,7 +1069,6 @@ select.multiselect {
 	border: none;
 	height: 400px;
 	width: 100%;
-	border-bottom-right-radius: 16px;
 }
 
 #logocutout {
@@ -1075,6 +1076,29 @@ select.multiselect {
 	top: 0px;
 	left: 0px;
 	z-index: 999;
+}
+
+#cartbutton {
+	position: absolute;
+	right: 16px;
+	z-index: 999;
+	top: 5px;
+	padding: 4px;
+	background-color: #F4F4F4;
+	border: 1px solid #DDD;
+	cursor: pointer;
+	border-radius: 2px;
+}
+
+#cartcount {
+	position: absolute;
+	left: 9px;
+	top: 2px;
+	font-size: 10px;
+	font-weight: bold;
+	text-align: center;
+	width: 20px;
+	color: #00A;
 }
 
 #sidebartoggle {
@@ -1088,7 +1112,7 @@ select.multiselect {
 	cursor: pointer;
 }
 
-#table-results-div {
+#subject-view-div {
 	padding: 0;	
 }
 

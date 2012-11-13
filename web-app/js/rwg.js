@@ -293,7 +293,6 @@ function showSearchResults(tabToShow)	{
 	jQuery('body').removeData();
 	
 	jQuery('#results-div').empty();
-	jQuery('#table-results-div').empty();
 	
 	// work out which tab is open and needs updating, if we don't have a specific one
 	if (tabToShow == null) {
@@ -450,66 +449,51 @@ function showFacetResults(tabToShow)	{
     //Show significant results is disabled
    	//queryString = queryString + "&showSignificantResults=" + document.getElementById('cbShowSignificantResults').checked
     
-   	//Only do one of these depending on the highlighted tab. If the table results div is hidden, do the tree view
-    if (tabToShow == "analysis") {
-    	jQuery.ajax({
-			url:facetResultsURL,
-			data:queryString,
-			success: function(response) {
+	jQuery.ajax({
+		url:facetResultsURL,
+		data:queryString,
+		success: function(response) {
+			
+
+				var facetCounts = response['facetCounts'];
+				var html = response['html'];
 				
+				// set html for results panel
+				//document.getElementById('results-div').innerHTML = html;
+				
+				jQuery('#results-div').html(html);
 
-					var facetCounts = response['facetCounts'];
-					var html = response['html'];
-					
-					// set html for results panel
-					//document.getElementById('results-div').innerHTML = html;
-					
-					jQuery('#results-div').html(html);
+				// assign counts that were returned in json object to the tree
+				tree.visit(  function(node) {
+					           if (!node.data.isCategory && node.data.id)  {
+					        	   var id = node.data.id.toString();
+					        	   var catFields = node.data.categoryName.split("|")
+					        	   var cat = catFields[1].replace(" ","_");
+					        	   //var catArray = response[cat];
+					        	   var catArray = facetCounts[cat];
+					        	   var count = catArray[id];
+					        	   
+					        	   // no count returned for this node means it isn't in solr index because no records exist
+					        	   if (!count)  {
+					        		   count = 0;
+					        	   }
+					        	   
+					        	   updateNodeIndividualFacetCount(node, count);   
+					           }
+				             }
+			                 , false
+			               );
+									
+				 // redraw entire tree after counts updated
+				 tree.redraw();
+			//}
 
-					// assign counts that were returned in json object to the tree
-					tree.visit(  function(node) {
-						           if (!node.data.isCategory && node.data.id)  {
-						        	   var id = node.data.id.toString();
-						        	   var catFields = node.data.categoryName.split("|")
-						        	   var cat = catFields[1].replace(" ","_");
-						        	   //var catArray = response[cat];
-						        	   var catArray = facetCounts[cat];
-						        	   var count = catArray[id];
-						        	   
-						        	   // no count returned for this node means it isn't in solr index because no records exist
-						        	   if (!count)  {
-						        		   count = 0;
-						        	   }
-						        	   
-						        	   updateNodeIndividualFacetCount(node, count);   
-						           }
-					             }
-				                 , false
-				               );
-										
-					 // redraw entire tree after counts updated
-					 tree.redraw();
-				//}
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
 
-			},
-			error: function(xhr) {
-				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
-			}
-		});
-    }
-    else {
-	   	jQuery.ajax({
-			url:facetTableResultsURL,
-			data:queryString,
-			success: function(response) {
-				jQuery('#table-results-div').html(response);
-				loadTableResultsGrid({'max': 100, 'offset':0, 'cutoff': 0, 'search': "", 'sortField': "", "order": "asc"});
-			},
-			error: function(xhr) {
-				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
-			}
-	   	});
-    }
 }
 
 // Add the search term to the array and show it in the panel.
@@ -1937,22 +1921,6 @@ function loadAnalysisResultsGrid(analysisID, paramMap)
 	} );		
 }
 
-//This function will load all filtered analysis data into a GRAILS template.
-function loadTableResultsGrid(paramMap)
-{
-	jQuery('#table-results-div').empty().addClass('ajaxloading');
-	jQuery.ajax( {
-	    "url": getTableDataURL,
-	    bDestroy: true,
-	    bServerSide: true,
-	    data: paramMap,
-	    "success": function (jqXHR) {
-	    	jQuery('#table-results-div').html(jqXHR).removeClass('ajaxloading');
-	    },
-	    "dataType": "html"
-	} );
-}
-
 // Make a call to the server to load the heatmap data
 function loadHeatmapData(divID, analysisID, probesPage, probesPerPage)	{
 	
@@ -3317,7 +3285,7 @@ jQuery(document).ready(function() {
 //	jQuery.ajax({
 //		url:'/transmartApp/datasetExplorer',			
 //		success: function(response) {
-//			jQuery('#table-results-div').html(response);
+//			jQuery('#subject-view-div').html(response);
 //		},
 //		error: function(xhr) {
 //			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
