@@ -9,9 +9,8 @@
 
 	<div id="savedCrossTrialAnalysis" class='home-content-box'>
 	<h2>Saved Cross Trial Analyses</h2>
-		<p>You have no Cross Trial Analyses saved</p>
+			<p style="margin-top: 75px;text-align: center;">You have no Cross Trial Analyses saved</p>
 	</div>
-
 <br />
 
 <h1>Summary Charts</h1>

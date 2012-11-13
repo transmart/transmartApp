@@ -27,6 +27,9 @@
 
 	<div id ="xtSearch">
 		Search for gene, pathway, or gene signature: <input id="xtSearch-ac"/></input> 
+		<div style="float:right">
+			<a href="#">Save Selection</a> | <a href="#">Open Saved XT Analysis</a> | <a href="#">Clear All</a>
+		</div>
 	</div>
 	
 	<div id="xtMsgBox" style="display:none">

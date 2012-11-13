@@ -2820,6 +2820,7 @@ function displayxtAnalysesList(){
 
 function createCrossTrialSummaryChart(data, pdata, keyword_id, placeholder){
 	
+	//use jsfiddle to test: http://jsfiddle.net/HZ9dg/6/
 	
 	var keywordObject = xtSelectedKeywords.filter(function(el){return el.id == keyword_id});
 	
@@ -2909,6 +2910,14 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id, placeholder){
         .attr("height", function(d) { return Math.abs(y2(0) - y2(0-d)); })
         .attr("width", 4);
 
+    //line to show the p-value < 0.05 cut-off
+    svg.append("svg:line")
+    .attr("x1", 10)
+    .attr("y1", function() { return y2(1.3); })
+    .attr("x2", width)
+    .attr("y2", function() { return y2(1.3); })
+    .attr("class", 'pvalue-cutoff-line');
+
 
 
 svg.selectAll("text")
@@ -2923,6 +2932,12 @@ svg.selectAll("text")
        .attr("font-family", "sans-serif")
        .attr("font-size", "10px")
        .attr("fill", "black");
+
+	svg.append("line")
+		.attr("x1", 50)
+		.attr("y1", function() { return  0})
+		.attr("x2", 100)
+		.attr("y2", function() { return  2 });
 
 
         // add Title

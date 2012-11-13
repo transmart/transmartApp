@@ -1020,7 +1020,6 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	min-height:250px;
 }
 
-
 /*** XT Summary Bar Plots ***/
 
 
@@ -1048,6 +1047,7 @@ display:none; /* only displayed on hover */
 
 .xtSVGSummaryChart{
 	background-color:#fff;
+	shape-rendering: crispEdges;
 }
 
 .xtSummaryChart:hover{
@@ -1084,6 +1084,13 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
   stroke: #000;
   shape-rendering: crispEdges;
 }
+
+.pvalue-cutoff-line {
+stroke: black;
+stroke-width: 1px;
+stroke-opacity: 33%;
+	
+}
 /*** End bar charts ***/
 
 
@@ -1119,6 +1126,7 @@ min-width:250px;
 	background: #555;
 	color: white;
 	font-weight: normal;
+	padding:2px;
 }
 
 

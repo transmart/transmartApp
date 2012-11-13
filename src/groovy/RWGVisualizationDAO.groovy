@@ -1433,11 +1433,41 @@ class RWGVisualizationDAO {
 
    def getCrossTrialBioMarkerSummary(search_keyword, analysisList)	{
 	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-							 
+	   
+	   def s = "";
+	   
+	   //convert the CSV analysisList into an array of objects 
+	   def analysisObj = analysisList.split(',').collect{it as int}
+	   
+	   //loop through the array and add the select statement for each analysis
+	   analysisObj.each{
+		   
+		   s = s + """        
+			    select * from (
+			    select distinct bio_assay_analysis_id, bio_marker_id, bio_marker_name, 
+					fold_change_ratio, tea_normalized_pvalue, preferred_pvalue
+					from BIOMART.heat_map_results
+					where bio_marker_id in (select distinct bmv.asso_bio_marker_id
+					from BIOMART.bio_marker_correl_mv bmv
+					where bmv.bio_marker_id = (select sk.bio_data_id
+					from searchapp.search_keyword sk
+					where sk.search_keyword_id = ${search_keyword}))
+					and bio_assay_analysis_id = ${it}
+			    order by preferred_pvalue asc)
+			    where rownum=1"""
+		   
+		   if(it != analysisObj.last()) {
+		   		s=s+" union ";
+		   }
+		   
+	   }
+	   
+	   /*
+		//Old method for getting results below:					 
 	String s ="""
 
 		select distinct bio_assay_analysis_id, bio_marker_id, bio_marker_name, 
-		avg(fold_change_ratio) fold_change_ratio, avg(tea_normalized_pvalue) tea_normalized_pvalue, avg(preferred_pvalue) preferred_pvalue
+		max(abs(fold_change_ratio)) fold_change_ratio, min(tea_normalized_pvalue) tea_normalized_pvalue, min(preferred_pvalue) preferred_pvalue
 		from BIOMART.heat_map_results
 		where bio_marker_id in (select distinct bmv.asso_bio_marker_id
 		from BIOMART.bio_marker_correl_mv bmv
@@ -1446,6 +1476,8 @@ class RWGVisualizationDAO {
 		where sk.search_keyword_id = ${search_keyword}))
 		and bio_assay_analysis_id in (${analysisList})
 		group by bio_assay_analysis_id, bio_marker_id, bio_marker_name"""
+		
+		*/
 	   
 	   log.debug("${s}")
    
