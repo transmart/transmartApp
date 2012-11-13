@@ -2605,6 +2605,9 @@ function loadHeatmapPaginator(divID, analysisId, page) {
 
 function showCrossTrialAnalysis()
 {
+	
+	menuIconSwap("imgCTA");
+	
 	//reset scroll position
 	jQuery("#main").scrollTop(0);
 	
@@ -2654,6 +2657,8 @@ function launchHomePage(currentsubcategoryid, currentcharttype, showAll)
 }
 function showHomePage()
 {
+	menuIconSwap("imgHome");
+	
 	//reset scroll position
 	jQuery("#main").scrollTop(0);
 	
@@ -2667,6 +2672,8 @@ function showHomePage()
 }
 function showResultsPage()
 {
+	//replace image
+	menuIconSwap("imgResults");
 	
 	//reset scroll position
 	jQuery("#main").scrollTop(0);
@@ -2674,7 +2681,6 @@ function showResultsPage()
 	//show the extra menu options
 	jQuery("#toolbar-collapse_all").show();
 	jQuery("#toolbar-options").show();
-	
 	jQuery('#results-div').show();
 	 hideCrossTrialAnalysis();
 	 hideHomePage();
@@ -2689,6 +2695,42 @@ function hideHomePage()
 }
 function hideCrossTrialAnalysis(){
 	jQuery('#cross-trial-div').hide();
+}
+
+//swap out the black and white icon with the color icon
+//reset all other icons to b/w
+function menuIconSwap(current){
+	//current options: imgHome imgResults imgCTA
+	
+	//reset all icons to b/w version
+	var src = jQuery("#imgHome").attr('src').replace('menu_icon_home.png', 'menu_icon_home_bw.png');	
+	jQuery("#imgHome").attr('src',src);
+	
+	var src = jQuery("#imgResults").attr('src').replace('menu_icon_search.png', 'menu_icon_search_bw.png');	
+	jQuery("#imgResults").attr('src',src);
+	
+	var src = jQuery("#imgCTA").attr('src').replace('menu_icon_crosstrial.png', 'menu_icon_crosstrial_bw.png');	
+	jQuery("#imgCTA").attr('src',src);
+	
+	//set the current one to the color version
+	switch(current)
+	{
+	case "imgHome":
+		var src = jQuery("#imgHome").attr('src').replace('menu_icon_home_bw.png', 'menu_icon_home.png');	
+		jQuery("#imgHome").attr('src',src);
+		break;
+	case "imgResults":
+		var src = jQuery("#imgResults").attr('src').replace('menu_icon_search_bw.png', 'menu_icon_search.png');	
+		jQuery("#imgResults").attr('src',src);
+		break;
+	  break;
+	case "imgCTA":
+		var src = jQuery("#imgCTA").attr('src').replace('menu_icon_crosstrial_bw.png', 'menu_icon_crosstrial.png');	
+		jQuery("#imgCTA").attr('src',src);
+		break;
+	}
+	
+	
 }
 
 function getPieChartData(divid, catid, ddid, drillback, charttype, parentcolor, ddstack)
