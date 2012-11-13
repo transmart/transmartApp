@@ -770,6 +770,7 @@ public class SearchController{
 		def max = params.long('max')
 		def offset = params.long('offset')
 		def cutoff = params.double('cutoff')
+		if ("".equals(params.cutoff)) {cutoff = 0;} //Special case - cutoff is 0 if blank string
 		def sortField = params.sortField
 		def order = params.order
 		def search = params.search
@@ -843,6 +844,7 @@ public class SearchController{
 		def max = params.long('max')
 		def offset = params.long('offset')
 		def cutoff = params.double('cutoff')
+		if ("".equals(params.cutoff)) {cutoff = 0;} //Special case - cutoff is 0 if blank string
 		def sortField = params.sortField
 		def order = params.order
 		def search = params.search
