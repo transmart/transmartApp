@@ -194,9 +194,9 @@
 			<div id="menu_bar">
 			
 			<ul>
-				<li class='toolbar-item'><a href="#" onclick='showHomePage();'><img style='vertical-align:top;' src="${resource(dir:'images/fc_menu',file:'menu_icon_home_bw.png')}"> Home</a></li>
-				<li class='toolbar-item'><a href="#" onclick='showResultsPage();'><img style='vertical-align:top' src="${resource(dir:'images/fc_menu',file:'menu_icon_search_bw.png')}"> Search Results</a></li>
-				<li class='toolbar-item'><a href="#" onclick='showCrossTrialAnalysis();'><img style='vertical-align:top' src="${resource(dir:'images/fc_menu',file:'menu_icon_crosstrial_bw.png')}"> Cross Trial Analysis</a>
+				<li class='toolbar-item'><a href="#" onclick='showHomePage();'><img id=imgHome style='vertical-align:top;' src="${resource(dir:'images/fc_menu',file:'menu_icon_home.png')}"> Home</a></li>
+				<li class='toolbar-item'><a href="#" onclick='showResultsPage();'><img id=imgResults style='vertical-align:top' src="${resource(dir:'images/fc_menu',file:'menu_icon_search_bw.png')}"> Search Results</a></li>
+				<li class='toolbar-item'><a href="#" onclick='showCrossTrialAnalysis();'><img id=imgCTA style='vertical-align:top' src="${resource(dir:'images/fc_menu',file:'menu_icon_crosstrial_bw.png')}"> Cross Trial Analysis</a>
 				<span style="color: #999;"> | </span>
 									
 					<div id="selectedAnalyses_holder" style='display: inline-block'>
