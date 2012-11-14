@@ -599,7 +599,7 @@ function drawHeatmapCTA(divID, rows, analyses)	{
 		index++;
 	}
 	
-	hmTooltips = new Array;
+	//hmTooltips = new Array;
 	
 	for (var i=0; i<analyses.length; i++)  {
 		analyses[i].title = analyses[i].title.replace(/_/g,', ') 		
