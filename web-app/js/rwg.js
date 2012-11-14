@@ -3151,7 +3151,7 @@ function addXTSearchAutoComplete()	{
 				case "GENELIST": 
 				case "GENESIG": 
 				case "PATHWAY":
-					loadHeatmapCTAPaginator(categoryId, keywordId, 1);
+					loadHeatmapCTAPaginator(categoryId, keywordId, 1, searchTerm);
 					jQuery('#xtMenuBar').tabs('select', 'xtHeatmapTab'); // switch to heatmap tab
 					break;
 				default:  
@@ -3189,7 +3189,8 @@ function drawPieChart(divid, data)
 //searchKeywordId: the search keyword if for the gene list, gene sig, or pathway
 //startRank: first index on the page to be retrieved
 //endRank: last index on the page to be retrieved
-function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank)	{	
+//keyword: the text of the search keyword (to be used in title of heatmap)
+function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank, keyword)	{	
 	
 
 	var heatmapDiv = "xtHeatmap_" +searchKeywordId;
@@ -3204,7 +3205,7 @@ function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRa
 			
 			jQuery('#'+heatmapHolderDivID).unmask(); //hide the loading msg, unblock the div
 			
-			drawHeatmapCTA(heatmapDiv, response['rows'], selectedAnalyses);
+			drawHeatmapCTA(heatmapDiv, response['rows'], selectedAnalyses, keyword);
 						
 		},
 		error: function(xhr) {
@@ -3214,7 +3215,7 @@ function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRa
 		
 }
 
-function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
+function loadHeatmapCTAPaginator(category, searchKeywordId, page, keyword) {
 	
 	//heatmapHolder div holds both the paginator and the heatmap
 	var divID = "xtHeatmapHolder_" +searchKeywordId;
@@ -3246,7 +3247,7 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 		success: function(response) {								
 			var numRows = response['totalCount'];
 			
-			getHeatmapPaginatorCTA(divPaginatorID, analysisIds, category, searchKeywordId, numRows);
+			getHeatmapPaginatorCTA(divPaginatorID, analysisIds, category, searchKeywordId, numRows, keyword);
 	
 		},
 		error: function(xhr) {
@@ -3255,7 +3256,7 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page) {
 	});
 }
 
-function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, numberRows) {
+function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, numberRows, keyword) {
 	
 	var heatmapHolderDivID = "xtHeatmapHolder_" +searchKeywordId;
 	
@@ -3302,10 +3303,10 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
       	}
       	
       	if (numberRows == 0)  {
-      		drawHeatmapCTA(heatmapDiv, null, selectedAnalyses);  // draw blank heatmap      		
+      		drawHeatmapCTA(heatmapDiv, null, selectedAnalyses, keyword);  // draw blank heatmap      		
       	}
       	else  {      		
-    		loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank);   
+    		loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank, keyword);   
       	}
 
                                   
