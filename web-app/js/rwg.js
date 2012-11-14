@@ -85,7 +85,7 @@ var cohortBGColors = new Array(
 }
 */
 ////////////////////////////////////////////////////////////////////
-function showDetailDialog(dataURL, dialogTitle, dialogHeight)	{
+function showDetailDialog(dataURL)	{
 	
 	
 	

@@ -19,23 +19,24 @@
 <div class="search-results-table">
     <g:each in="${trials.entrySet()}" status="ti" var="trialresult">        
         <div class="${ (ti % 2) == 0 ? 'result-trial-odd' : 'result-trial-even'}" id="TrialDet_${trialresult.key.id}_anchor">                            
+            <table class="foldertitle">
+            <tr><td>
             <a href="#" onclick="javascript:showDetailDialog('${createLink(controller:'trial',action:'expDetail',id:trialresult.key.id)}', '${trialresult.key.trialNumber}: ${trialresult.key.title}', 600);">
                <span style="display:block; float:left;">
-                   <img alt="" src="${resource(dir:'images',file:'view_detailed.png')}" />
+                   <img alt="" src="${resource(dir:'images',file:'folder_doc.png')}" />
                </span>
                <span class="result-trial-name"> ${trialresult.key.trialNumber}</span></a>: ${trialresult.key.title}
                <span class="result-analysis-label">
-               <g:set 
-                   var="ts" value="${Calendar.instance.time.time}"                 
-                />       
+               <g:set var="ts" value="${Calendar.instance.time.time}"/>
                <a id="toggleDetail_${experimentresult.key.id}" href="#" onclick="javascript:toggleDetailDiv('${trialresult.key.trialNumber}', '${createLink(controller:'RWG',action:'getTrialAnalysis',params:[id:trialresult.key.id,trialNumber:trialresult.key.trialNumber,unqKey:ts])}');">
                 <img alt="expand/collapse" id="imgExpand_${trialresult.key.trialNumber}" src="${resource(dir:'images',file:'down_arrow_small2.png')}" style="display: inline;"/>                  
-                      ${trialresult.value}
-                      <g:if test="${trialresult.value > 1}">analyses found</g:if>
-    				  <g:else>analysis found</g:else>
+                      Analyses
                </a>                                                                          
                </span>
                <div id="${trialresult.key.trialNumber}_detail" name="${trialresult.key.trialNumber}" class="detailexpand"></div>
+               </td></tr>
+               </table>
+              
         </div> 
     </g:each>
 </div>

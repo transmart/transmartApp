@@ -988,6 +988,24 @@ select.multiselect {
 	padding-bottom: 4px;	
 }
 
+.foldericons {
+	text-align: right;
+}
+
+.foldericon {
+	font-size: 8pt;
+	padding: 2px 2px 2px 16px;
+	border-radius: 2px;
+	border: 1px solid #DDD;
+	cursor: pointer;
+	background-color: #FBFBFB;
+	background-repeat: no-repeat;
+	background-position: 2px 50%;
+}
+
+.foldericon.add { background-image: url('../images/internal-link.gif'); }
+.foldericon.view { background-image: url('../images/information8.png'); }
+
 /* Accordion overrides */
 
 #sidebar-accordion {
@@ -1080,7 +1098,7 @@ select.multiselect {
 
 #cartbutton {
 	position: absolute;
-	right: 16px;
+	right: 24px;
 	z-index: 999;
 	top: 5px;
 	padding: 4px;

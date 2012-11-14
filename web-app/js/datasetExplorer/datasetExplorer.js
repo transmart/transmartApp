@@ -24,6 +24,7 @@ Recombinant */
 String.prototype.trim = function() {
 	return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
+
 Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayout.Region.prototype.getCollapsedEl.createSequence(function()
 		{
 	if ((this.position == 'north' || this.position == 'south') && ! this.collapsedEl.titleEl)
@@ -470,7 +471,7 @@ Ext.onReady(function()
 					minwidth : 150,
 					split : true,
 					border : true,
-					layout : 'fit',
+					layout : 'fit'
 					//tbar:tb2
 				}
 		);

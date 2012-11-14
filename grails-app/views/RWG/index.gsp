@@ -74,8 +74,9 @@
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";
 
 	        var getStudyAnalysesUrl = "${createLink([controller:'RWG',action:'getTrialAnalysis'])}";
-        
-			//These are the URLS for the different browse windows.
+	        var experimentDataUrl = "${createLink(controller:'experimentAnalysis',action:'expDetail')}";
+
+	        //These are the URLS for the different browse windows.
 			var studyBrowseWindow = "${createLink([controller:'experiment',action:'browseExperimentsMultiSelect'])}";
 			var analysisBrowseWindow = "${createLink([controller:'experimentAnalysis',action:'browseAnalysisMultiSelect'])}";
 			var regionBrowseWindow = "${createLink([controller:'RWG',action:'getRegionFilter'])}";
@@ -152,6 +153,29 @@
 	        			.attr("name", "datasetExplorer")
 	        			.attr("src", datasetExplorerURL)
 	    	    );
+
+	    	    jQuery('body').on('mouseenter', '.folderheader', function() {
+					jQuery(this).find('.foldericonwrapper').fadeIn(250);
+		    	});
+
+	    	    jQuery('body').on('mouseleave', '.folderheader', function() {
+					jQuery(this).find('.foldericonwrapper').fadeOut(250);
+		    	});
+
+	    	    jQuery('body').on('click', '.foldericon.add', function() {
+					var count = jQuery('#cartcount').text();
+					count++;
+					jQuery('#cartcount').text(count);
+		    	});
+
+	    	    jQuery('body').on('click', '.foldericon.view', function() {
+		    	    var id = jQuery(this).closest(".folderheader").attr('name');
+	    	    	showDetailDialog(experimentDataUrl + '?id=' + id);
+		    	});
+
+	    	    jQuery('#cartbutton').click(function() {
+					jQuery('#exportViewLink').click();
+		    	});
 	        	
 
 	        	jQuery('#sidebar-accordion').accordion({heightStyle: "fill", icons: { 'header': 'suppressicon', 'headerSelected': 'suppressicon' }});
@@ -219,9 +243,9 @@
 		<div id="main">
 			<div id="topTabs" class="analysis-tabs">
 		       <ul>
-		          <li id="analysisViewTab"><a href="#results-div" onclick="return false;">Study View</a></li>
-		          <li id="tableViewTab"><a href="#subject-view-div" onclick="return false;">Subject View</a></li>
-		          <li id="tableViewTab"><a href="#export-div" onclick="return false;">Export</a></li>
+		          <li id="studyViewTab"><a href="#results-div" onclick="return false;">Study View</a></li>
+		          <li id="subjectViewTab"><a href="#subject-view-div" onclick="return false;">Subject View</a></li>
+		          <li id="exportViewTab"><a id="exportViewLink" href="#export-div" onclick="return false;">Export</a></li>
 		       </ul>
 		     
 	       		<div id="results-div">
