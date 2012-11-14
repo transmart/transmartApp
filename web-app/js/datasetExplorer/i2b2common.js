@@ -425,6 +425,7 @@ function showSetValueDialog()
 {		
 		var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
 		setvaluewin.setHeight(200); //set height back to old closed
+		setvaluewin.setPosition(100, 100);
 		Ext.get("setvaluechartsPanel1").update("");
 		Ext.get("setvaluechartsPanel2").update("");
         setvaluewin.show(viewport);

@@ -17,21 +17,24 @@
  
 -->
 
-<table class="menuDetail" width="100%" style="border-bottom: 2px solid #ddd;">
+<table class="menuDetail" width="100%" style="border-bottom: 2px solid #ddd; height: 28px">
 	<tr>
 		<th style="text-align: left;">
 			<!-- menu links -->
-			<table class="menuDetail" style="width: auto;">
+			<table class="menuDetail" style="width: auto;" align="right">
 		    	<tr>
-	   				<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
-		   			<g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>
+	   				<%--<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
+		   			<g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>--%>
 
-			       	<g:if test="${'datasetExplorer'==app}"><th class="menuVisited">Dataset Explorer</th></g:if>
+			       	<g:if test="${'rwg'==app}"><th class="menuVisited">Faceted Search</th></g:if>
+	       			<g:else><th class="menuLink"><g:link controller="RWG">Faceted Search</g:link></th></g:else>
+
+			       	<%--<g:if test="${'datasetExplorer'==app}"><th class="menuVisited">Dataset Explorer</th></g:if>
 	       			<g:else><th class="menuLink"><g:link controller="secure">Dataset Explorer</g:link></th></g:else>
 	       			<g:if test="${grailsApplication.config.com.recomdata.hideSampleExplorer!='true'}">
 	   				<g:if test="${'sampleexplorer'==app}"><th class="menuVisited">Sample Explorer</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="sampleExplorer">Sample Explorer</g:link></th></g:else>	   
-		   			 </g:if>   			
+		   			 </g:if>--%>
 	   				<g:if test="${'genesignature'==app}"><th class="menuVisited">Gene Signature/Lists</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="geneSignature">Gene Signature/Lists</g:link></th></g:else>
 		   			
@@ -39,8 +42,32 @@
 	   					<g:if test="${'accesslog'==app}"><th class="menuVisited">Admin</th></g:if>
 		   				<g:else><th class="menuLink"><g:link controller="accessLog">Admin</g:link></th></g:else>
 		       		</sec:ifAnyGranted>
-		       	<tr>
+		       	</tr>
 		 	</table>
-		</th> 		 
+		</th>
+		<g:if test="${utilitiesMenu}">
+			<tmpl:/layouts/utilitiesMenu />
+		</g:if>
 	</tr>
 </table>
+
+<g:if test="${'rwg' != app}" >
+	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
+	<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
+	<script>jQuery.noConflict();</script> 
+	
+	<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>		
+</g:if>
+
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.idletimeout.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.idletimer.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
+
+      
+<script>
+     jQuery(document).ready(function() {
+		 var logoutURL = "${createLink([controller:'logout'])}";
+		 var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
+		 //addTimeoutDialog(heartbeatURL, logoutURL);
+  	  });
+</script>
