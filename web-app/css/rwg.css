@@ -76,6 +76,13 @@ body {
   border-right: 1px solid #888;
   border-top: 1px solid #888;
 }
+#title-search-div .title {
+  color: white;
+}
+#title-search-div a {
+  color: white;
+}
+
 #title-filter{
   height:25px;
   overflow: hide;  
@@ -466,7 +473,7 @@ ul.dynatree-container li ul li{
 }
 .result-trial-even
 {
-	background-color:#F0FFEE;
+	background-color:#F8FFF4;
 }
 
 .result-trial-name
@@ -1022,7 +1029,6 @@ select.multiselect {
 }
 
 #sidebar-accordion .ui-accordion-header {
-	color: #333;
 	font-size: 11px;
 	border-top-left-radius: 8px;
 	border-top-right-radius: 8px;
@@ -1116,7 +1122,7 @@ select.multiselect {
 	font-weight: bold;
 	text-align: center;
 	width: 20px;
-	color: #00A;
+	color: #586;
 }
 
 #sidebartoggle {
