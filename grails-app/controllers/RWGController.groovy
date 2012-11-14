@@ -170,18 +170,20 @@ class RWGController {
   def getDynatree = {
 	  def cachedJson = grailsApplication.config.getProperty("dynatree")
 
+	  def rwgDAO = new RWGVisualizationDAO()
+	  
+	  // retrieve the last time data was loaded/modified in the database, and the current time in the db
+	  // this needs to be done regardless of whether we have a cached value because the current db time is needed for
+	  //   storing the new string that will be cached
+	  def dbTimes = rwgDAO.getLastDataLoadTime()
+	  def dbLastUpdateTime = dbTimes['lastUpdateTime']
+	  def dbCurrentTime = dbTimes['currentDbTime']
+	  
 	  def useCachedValue = false
-	  def dbCurrentTime
 	  if (cachedJson)  {
 		    // there is a cached dynatree json string, get when it was cached
 			def cachedTime = cachedJson['time']
 		
-			def rwgDAO = new RWGVisualizationDAO()
-			
-			// retrieve the last time data was loaded/modified in the database, and the current time in the db
-			def dbTimes = rwgDAO.getLastDataLoadTime()
-			def dbLastUpdateTime = dbTimes['lastUpdateTime']
-			dbCurrentTime = dbTimes['currentDbTime']
 			// if the cachedTime was later than the db time or the db time is not set use the cached value
 			if (!dbLastUpdateTime || (cachedTime>dbLastUpdateTime))  {
 				useCachedValue = true
