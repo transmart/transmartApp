@@ -48,9 +48,9 @@ body {
     background: #FFFFFF;
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
-	border-left: 1px solid #AAE;
-	border-right: 1px solid #AAE;
-	border-bottom: 1px solid #AAE;
+	border-left: 1px solid #888;
+	border-right: 1px solid #888;
+	border-bottom: 1px solid #888;
 }
 
 #sidebar {
@@ -72,9 +72,9 @@ body {
   overflow: hide;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  border-left: 1px solid #AAE;
-  border-right: 1px solid #AAE;
-  border-top: 1px solid #AAE;
+  border-left: 1px solid #888;
+  border-right: 1px solid #888;
+  border-top: 1px solid #888;
 }
 #title-filter{
   height:25px;
@@ -466,7 +466,7 @@ ul.dynatree-container li ul li{
 }
 .result-trial-even
 {
-	background-color:#F0F8FF;
+	background-color:#F0FFEE;
 }
 
 .result-trial-name
@@ -841,7 +841,7 @@ border-top: 1px solid #CCC;
 .analysis-tabs ul .ui-state-default { background: transparent; border: none; }
 .analysis-tabs ul .ui-state-active { background: transparent url(../images/uiTabsArrow.png) no-repeat bottom center; border: none; }
 .analysis-tabs ul .ui-state-default a { color: #c0c0c0; }
-.analysis-tabs ul .ui-state-active a { color: #1b74b3; }
+.analysis-tabs ul .ui-state-active a { color: #786; }
 /* End tab CSS */
 
 
@@ -1017,6 +1017,10 @@ select.multiselect {
 	
 }
 
+.ui-accordion .ui-accordion-header {
+	padding: 0px;	
+}
+
 #sidebar-accordion .ui-accordion-header {
 	color: #333;
 	font-size: 11px;
@@ -1025,13 +1029,9 @@ select.multiselect {
 	height: 22px;
 	font: 11px 'Helvetica',arial,clean,sans-serif;
 	padding-top: 0.5em;
-	padding-left: 0.4em;
-	border: 1px solid #AED0EA;
+	padding-left: 0.5em;
+	border: 1px solid #888;
 	font-weight: bold;
-	background: #DEEDF7 url('jquery/cupertino/images/ui-bg_highlight-soft_100_deedf7_1x100.png') 50% 50% repeat-x;
-	border-top: 1px solid #AAE;
-	border-left: 1px solid #AAE;
-	border-right: 1px solid #AAE;
 }
 
 #filter-browser, #metadata-viewer {
@@ -1040,9 +1040,9 @@ select.multiselect {
 	padding: 1em;
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
-	border-left: 1px solid #AAE;
-	border-right: 1px solid #AAE;
-	border-bottom: 1px solid #AAE;
+	border-left: 1px solid #888;
+	border-right: 1px solid #888;
+	border-bottom: 1px solid #888;
 	box-shadow: #DDD 11px 11px 8px -7px;
 }
 
