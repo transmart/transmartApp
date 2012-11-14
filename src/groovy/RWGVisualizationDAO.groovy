@@ -1681,4 +1681,31 @@ def getHeatmapRowsCTA  = {analysisIds, category, keywordId, startRank, endRank -
 	return rows
  }
 
+
+/**
+ * Method to retrieve the last data load time for faceted search
+ *
+ * @return the last data load time
+ *
+ **/
+def getLastDataLoadTime  = {
+	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	StringBuilder s = new StringBuilder()
+
+	s.append("""select max(analysis_update_date) last_update_time, sysdate current_time 
+             from bio_assay_analysis where analysis_update_date is not null""")
+
+	// retrieve results
+	def results = sql.rows(s.toString())
+	def lastUpdateTime, currentDbTime
+	results.each{ row->
+		   
+	   // add to info map
+	   lastUpdateTime = row.last_update_time
+	   currentDbTime = row.current_time
+	}
+	return ['lastUpdateTime':lastUpdateTime, 'currentDbTime':currentDbTime]
+ }
+
+
 }

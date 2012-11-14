@@ -126,7 +126,7 @@
 		        addSearchAutoComplete();
 		        addToggleButton();
 
-		    	showSearchResults(); //reload the full search results	    
+		    	showSearchResults(true); //reload the full search results, but don't populate facets on initial load since it's already been done	    
 
 		    	showIEWarningMsg();
 

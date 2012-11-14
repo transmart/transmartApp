@@ -27,7 +27,6 @@ var selectedAnalyses = [];
 //cross trial analysis selected keywords
 var xtSelectedKeywords = [];
 
-
 //create an ajaxmanager named rwgAJAXManager
 //this will handle all ajax calls on this page and prevent too many 
 //requests from hitting the server at once
@@ -416,7 +415,7 @@ function showIEWarningMsg(){
 	
 // Method to load the search results in the search results panel and facet counts into tree
 // This occurs whenever a user add/removes a search term
-function showSearchResults()	{
+function showSearchResults(initialLoad)	{
 
 	// clear stored probe Ids for each analysis
 	analysisProbeIds = new Array();  
@@ -425,7 +424,7 @@ function showSearchResults()	{
 	jQuery('body').removeData();	
 	
 	// call method which retrieves facet counts and search results
-	showFacetResults();
+	showFacetResults(initialLoad);
 	
 	//all trials/analyses will be closed when doing a new search, so clear this array
 	openAnalyses = [];
@@ -475,7 +474,7 @@ function clearFacetResults()	{
 
 
 //Method to load the facet results in the search tree and populate search results panel
-function showFacetResults()	{
+function showFacetResults(initialLoad)	{
 	
 	var savedKeywords;
 
@@ -587,28 +586,30 @@ function showFacetResults()	{
 						showHomePageFirst=false;
 				    }
 
-					// assign counts that were returned in json object to the tree
-					tree.visit(  function(node) {
-						           if (!node.data.isCategory && node.data.id)  {
-						        	   var id = node.data.id.toString();
-						        	   var cat = node.data.categorySOLR;
-
-						        	   var catArray = facetCounts[cat];
-						        	   var count = catArray[id];
-						        	   
-						        	   // no count returned for this node means it isn't in solr index because no records exist
-						        	   if (!count)  {
-						        		   count = 0;
-						        	   }
-						        	   
-						        	   updateNodeIndividualFacetCount(node, count);   
-						           }
-					             }
-				                 , false
-				               );
-										
-					 // redraw entire tree after counts updated
-					 tree.redraw();
+					if (!initialLoad)  {
+						// assign counts that were returned in json object to the tree
+						tree.visit(  function(node) {
+							           if (!node.data.isCategory && node.data.id)  {
+							        	   var id = node.data.id.toString();
+							        	   var cat = node.data.categorySOLR;
+	
+							        	   var catArray = facetCounts[cat];
+							        	   var count = catArray[id];
+							        	   
+							        	   // no count returned for this node means it isn't in solr index because no records exist
+							        	   if (!count)  {
+							        		   count = 0;
+							        	   }
+							        	   
+							        	   updateNodeIndividualFacetCount(node, count);   
+							           }
+						             }
+					                 , false
+					               );
+											
+						 // redraw entire tree after counts updated
+						 tree.redraw();
+					 }
 				//}
 			},
 			error: function(xhr) {
@@ -3392,3 +3393,4 @@ function formatPaginator(type) {
             }      
     }      
 }
+

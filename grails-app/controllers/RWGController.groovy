@@ -168,76 +168,109 @@ class RWGController {
    * Create the JSON string used as the "children" of the taxonomy DynaTree
    */
   def getDynatree = {
-  
-	  // find all relationships
-	  def rels = SearchTaxonomyRels.list(sort:"child.termName")
-	  
-	  // retrieve all taxonomy records (i.e. nodes in the tree)
-	  def allNodes = SearchTaxonomy.list()
-	  
-	  def rootNode = null
+	  def cachedJson = grailsApplication.config.getProperty("dynatree")
 
-	  // loop through every node, and link it to its parent and children to create tree
-	  for (node in allNodes) {
-		  for (rel in rels) {
-			  
-			  if (rel.parent) {   // non root node
-				  // check if relationship represents a parent rel for the current node, and if so add the
-				  // child to the node's children list
-				  if (node.id == rel.parent.id) {
-					  node.children.add(rel.child)
-				  }
+	  def useCachedValue = false
+	  def dbCurrentTime
+	  if (cachedJson)  {
+		    // there is a cached dynatree json string, get when it was cached
+			def cachedTime = cachedJson['time']
+		
+			def rwgDAO = new RWGVisualizationDAO()
+			
+			// retrieve the last time data was loaded/modified in the database, and the current time in the db
+			def dbTimes = rwgDAO.getLastDataLoadTime()
+			def dbLastUpdateTime = dbTimes['lastUpdateTime']
+			dbCurrentTime = dbTimes['currentDbTime']
+			// if the cachedTime was later than the db time or the db time is not set use the cached value
+			if (!dbLastUpdateTime || (cachedTime>dbLastUpdateTime))  {
+				useCachedValue = true
+			}
+	  }
+		
+	  def json
+	  if (useCachedValue)  {
+		json = cachedJson['json']
+	  }
+	  else {
+	  
+		  // find all relationships
+		  def rels = SearchTaxonomyRels.list(sort:"child.termName")
+		  
+		  // retrieve all taxonomy records (i.e. nodes in the tree)
+		  def allNodes = SearchTaxonomy.list()
+		  
+		  def rootNode = null
+	
+		  // loop through every node, and link it to its parent and children to create tree
+		  for (node in allNodes) {
+			  for (rel in rels) {
 				  
-				  // check if relationship represents a child rel for the current node, and if so add the
-				  // parent to the node's parent list
-				  if (node.id == rel.child.id) {
-					  node.parents.add(rel.parent)
+				  if (rel.parent) {   // non root node
+					  // check if relationship represents a parent rel for the current node, and if so add the
+					  // child to the node's children list
+					  if (node.id == rel.parent.id) {
+						  node.children.add(rel.child)
+					  }
+					  
+					  // check if relationship represents a child rel for the current node, and if so add the
+					  // parent to the node's parent list
+					  if (node.id == rel.child.id) {
+						  node.parents.add(rel.parent)
+					  }
+				  }
+				  else {    // root node found
+					  rootNode = rel.child
 				  }
 			  }
-			  else {    // root node found
-				  rootNode = rel.child
+		  }
+	
+		  JSONArray categories = new JSONArray()
+		  
+		  if (rootNode.children)  {
+			  
+			  def categoriesList = []
+			  // loop thru all children of root and create a list of categories to be used for initial facet search
+			  for (categoryNode in rootNode.children)  {
+				  String catName = categoryNode.termName
+				  
+				  // SOLR equivalent field is all uppercases with underscores instead of spaces
+				  catName = getSOLRCategoryName(catName)
+				  categoriesList.push(catName)
+			  }
+	
+			  // retrieve initial facet counts to be used in tree
+			  JSONObject initialFacetCounts = getInitialFacetResults(categoriesList)
+	
+			  // CREATE JSON ARRAY FOR TREE	  		  		  		  		  
+			  def nodeIndex = 1
+			  
+			  // loop thru all children of root and add to JSON array for categories (addNode will recursively add children)
+			  for (categoryNode in rootNode.children)  {	
+				  
+				  // give each node a unique id within tree (id and key are not necessarily unique)
+				  // the unique id will be a concatenation of the parent's unique id + the index of this child's index in children list
+				  // e.g. category nodes will be 1,2,3; their children will be 1:1, 1:2, 1:3, 2:1, ...; their children 1:1:1, 1:1:2, ...
+				  String uniqueTreeId = nodeIndex
+				  
+				  addDynaNode(categoryNode, categories, true, categoryNode.termName, uniqueTreeId, initialFacetCounts)
+				  nodeIndex++
 			  }
 		  }
-	  }
-
-	  JSONArray categories = new JSONArray()
-	  
-	  if (rootNode.children)  {
-		  
-		  def categoriesList = []
-		  // loop thru all children of root and create a list of categories to be used for initial facet search
-		  for (categoryNode in rootNode.children)  {
-			  String catName = categoryNode.termName
-			  
-			  // SOLR equivalent field is all uppercases with underscores instead of spaces
-			  catName = getSOLRCategoryName(catName)
-			  categoriesList.push(catName)
+		  else  {
+			  throw new Exception("Root node not found")
 		  }
-
-		  // retrieve initial facet counts to be used in tree
-		  JSONObject initialFacetCounts = getInitialFacetResults(categoriesList)
-
-		  // CREATE JSON ARRAY FOR TREE	  		  		  		  		  
-		  def nodeIndex = 1
+		  json = categories?.toString()
 		  
-		  // loop thru all children of root and add to JSON array for categories (addNode will recursively add children)
-		  for (categoryNode in rootNode.children)  {	
-			  
-			  // give each node a unique id within tree (id and key are not necessarily unique)
-			  // the unique id will be a concatenation of the parent's unique id + the index of this child's index in children list
-			  // e.g. category nodes will be 1,2,3; their children will be 1:1, 1:2, 1:3, 2:1, ...; their children 1:1:1, 1:1:2, ...
-			  String uniqueTreeId = nodeIndex
-			  
-			  addDynaNode(categoryNode, categories, true, categoryNode.termName, uniqueTreeId, initialFacetCounts)
-			  nodeIndex++
-		  }
-	  }
-	  else  {
-		  throw new Exception("Root node not found")
+		  cachedJson = [:]
+		  cachedJson.put('time', dbCurrentTime)   
+		  cachedJson.put('json', json)
+		  grailsApplication.config.setProperty("dynatree", cachedJson)
+		  
 	  }
 	  
 	  response.setContentType("text/json")
-	  response.outputStream << categories?.toString()
+	  response.outputStream << json
 
    }
   
