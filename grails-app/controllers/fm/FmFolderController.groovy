@@ -228,6 +228,16 @@ class FmFolderController {
 		
 		addFolder(FolderType.STUDY.name(), p, params['parentId'])
 	}
+	
+	def getAllPrograms = {
+		def folders = FmFolder.executeQuery("from FmFolder as fd where fd.folderType = 'Program' ")
+		render(template:'programs', model: [folders: folders])
+	}
+	
+	def getFoldersUnder = {
+		def folders = FmFolder.executeQuery("from FmFolder as fd where fd.folderType = 'Program'")
+		render(template:'folders', model: [folders: folders])
+	}
 
 
 	
@@ -332,11 +342,11 @@ class FmFolderController {
 	{		
 		if(parentPath == null)
 		{
-		 return FmFolderController.findAll("from FmFolder as fd where fd.folderType = :fl ", [fl: folderType])
+		 return FmFolder.executeQuery("from FmFolder as fd where fd.folderType = :fl ", [fl: folderType])
 		}
 		else
 		{
-		 return FmFolderController.findAll("from FmFolder as fd where fd.folderType = :fl and fd.folderFullName like :fn ",
+		 return FmFolder.executeQuery("from FmFolder as fd where fd.folderType = :fl and fd.folderFullName like :fn ",
 				 [fl: folderType, fn:this.folderFullName+"%"])
 		}
 	

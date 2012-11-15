@@ -17,17 +17,18 @@
  
 -->
 
-<table class="menuDetail" width="100%" style="border-bottom: 2px solid #ddd; height: 28px">
+<table class="menuDetail" width="100%" style="height: 28px;">
 	<tr>
-		<th style="text-align: left;">
+		<th class="menuBar" style="text-align: left;">
 			<!-- menu links -->
-			<table class="menuDetail" style="width: auto;" align="right">
+			<table class="menuDetail" style="width: auto;">
 		    	<tr>
+		    		<th width="150">&nbsp;</th>
 	   				<%--<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>--%>
 
-			       	<g:if test="${'rwg'==app}"><th class="menuVisited">Faceted Search</th></g:if>
-	       			<g:else><th class="menuLink"><g:link controller="RWG">Faceted Search</g:link></th></g:else>
+			       	<g:if test="${'rwg'==app}"><th class="menuVisited">Home</th></g:if>
+	       			<g:else><th class="menuLink"><g:link controller="RWG">Home</g:link></th></g:else>
 
 			       	<%--<g:if test="${'datasetExplorer'==app}"><th class="menuVisited">Dataset Explorer</th></g:if>
 	       			<g:else><th class="menuLink"><g:link controller="secure">Dataset Explorer</g:link></th></g:else>

@@ -455,37 +455,37 @@ function showFacetResults(tabToShow)	{
 		success: function(response) {
 			
 
-				var facetCounts = response['facetCounts'];
-				var html = response['html'];
+				//var facetCounts = response['facetCounts'];
+				//var html = response['html'];
 				
 				// set html for results panel
 				//document.getElementById('results-div').innerHTML = html;
 				
-				jQuery('#results-div').html(html);
+				jQuery('#results-div').html(response);
 
 				// assign counts that were returned in json object to the tree
-				tree.visit(  function(node) {
-					           if (!node.data.isCategory && node.data.id)  {
-					        	   var id = node.data.id.toString();
-					        	   var catFields = node.data.categoryName.split("|")
-					        	   var cat = catFields[1].replace(" ","_");
-					        	   //var catArray = response[cat];
-					        	   var catArray = facetCounts[cat];
-					        	   var count = catArray[id];
-					        	   
-					        	   // no count returned for this node means it isn't in solr index because no records exist
-					        	   if (!count)  {
-					        		   count = 0;
-					        	   }
-					        	   
-					        	   updateNodeIndividualFacetCount(node, count);   
-					           }
-				             }
-			                 , false
-			               );
-									
+//				tree.visit(  function(node) {
+//					           if (!node.data.isCategory && node.data.id)  {
+//					        	   var id = node.data.id.toString();
+//					        	   var catFields = node.data.categoryName.split("|")
+//					        	   var cat = catFields[1].replace(" ","_");
+//					        	   //var catArray = response[cat];
+//					        	   var catArray = facetCounts[cat];
+//					        	   var count = catArray[id];
+//					        	   
+//					        	   // no count returned for this node means it isn't in solr index because no records exist
+//					        	   if (!count)  {
+//					        		   count = 0;
+//					        	   }
+//					        	   
+//					        	   updateNodeIndividualFacetCount(node, count);   
+//					           }
+//				             }
+//			                 , false
+//			               );
+//									
 				 // redraw entire tree after counts updated
-				 tree.redraw();
+				// tree.redraw();
 			//}
 
 		},

@@ -55,7 +55,7 @@
 
         <script type="text/javascript" charset="utf-8">
 	        var searchResultsURL = "${createLink([action:'loadSearchResults'])}";
-	        var facetResultsURL = "${createLink([action:'getFacetResults'])}";
+	        var facetResultsURL = "${createLink([controller:'fmFolder', action:'getAllPrograms'])}";
 	        var facetTableResultsURL = "${createLink([action:'getFacetResultsForTable'])}";
 	        var newSearchURL = "${createLink([action:'newSearch'])}";
 	        var visualizationURL = "${createLink([action:'newVisualization'])}";
@@ -142,6 +142,7 @@
 						
 	        	    }
 	        	});
+	        	jQuery('#studyTabs').tabs();
 
 	        	jQuery('#sidebartoggle').click(function() {
 					toggleSidebar();
@@ -155,11 +156,11 @@
 	    	    );
 
 	    	    jQuery('body').on('mouseenter', '.folderheader', function() {
-					jQuery(this).find('.foldericonwrapper').fadeIn(250);
+					jQuery(this).find('.foldericonwrapper').fadeIn(150);
 		    	});
 
 	    	    jQuery('body').on('mouseleave', '.folderheader', function() {
-					jQuery(this).find('.foldericonwrapper').fadeOut(250);
+					jQuery(this).find('.foldericonwrapper').fadeOut(150);
 		    	});
 
 	    	    jQuery('body').on('click', '.foldericon.add', function() {
@@ -243,15 +244,30 @@
 		<div id="main">
 			<div id="topTabs" class="analysis-tabs">
 		       <ul>
-		          <li id="studyViewTab"><a href="#results-div" onclick="return false;">Study View</a></li>
+		          <li id="studyViewTab"><a href="#studyTabs" onclick="return false;">Study View</a></li>
 		          <li id="subjectViewTab"><a href="#subject-view-div" onclick="return false;">Subject View</a></li>
-		          <li id="exportViewTab"><a id="exportViewLink" href="#export-div" onclick="return false;">Export</a></li>
 		       </ul>
-		     
-	       		<div id="results-div">
-	
-	         	
-				</div>
+		     	
+		     	<div id="studyTabs" class="small-tabs">
+		     	
+		     	 	<div id="cartbutton">
+						<img src="${resource(dir:'images', file:'cart.png')}"/> Cart
+						<div id="cartcount">0</div>
+					</div>
+				
+			     	<ul>
+			          <li id="resultsViewTab"><a href="#results-div" onclick="return false;">View</a></li>
+			          <li id="exportViewTab"><a href="#export-div" onclick="return false;">Export</a></li>
+			     	</ul>
+			     	
+		       		<div id="results-div">
+		         	
+					</div>
+					<div id="export-div">
+		         	
+					</div>
+		     	
+		     	</div>
 				
 				<div id="subject-view-div">
 					
@@ -260,11 +276,6 @@
 				<div id="export-div">
 				
 				</div>
-			</div>
-			
-			<div id="cartbutton">
-				<img src="${resource(dir:'images', file:'cart.png')}"/> Cart
-				<div id="cartcount">0</div>
 			</div>
 		</div>
 		

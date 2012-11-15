@@ -435,6 +435,7 @@ content: counter(pages);
 	padding: 4px 4px 4px 20px;
 	border: 1px solid #CCC;
 	cursor: pointer;
+	border-radius: 2px;
 }
 
 .flatbutton:hover {

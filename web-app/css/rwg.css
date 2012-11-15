@@ -421,8 +421,7 @@ ul.dynatree-container li ul li{
 
 .search-results-table
 {
-	padding-left:10px;
-	padding-right:10px;
+	padding-left:20px;
 }
 
 .search-result-info
@@ -1080,9 +1079,27 @@ select.multiselect {
 	border:none;
 }
 
+#studyTabs {
+	padding: 0px;
+	position: relative;
+}
+
+#studyTabs ul {
+	font-size: 0.8em;	
+}
+
+#studyTabs ul li {
+	padding: 0px;
+	background-position: 50% 10px;
+}
+
+#studyTabs ul li a {
+	padding: 4px 10px;	
+	outline: none;	
+}
+
 #topTabs {
 	padding: 0px;
-
 }
 
 #topTabs ul {
@@ -1106,18 +1123,19 @@ select.multiselect {
 	position: absolute;
 	right: 24px;
 	z-index: 999;
-	top: 5px;
-	padding: 4px;
+	top: 2px;
+	padding: 0px 4px;
 	background-color: #F4F4F4;
 	border: 1px solid #DDD;
 	cursor: pointer;
 	border-radius: 2px;
+	font-size: 8pt;
 }
 
 #cartcount {
 	position: absolute;
 	left: 9px;
-	top: 2px;
+	top: 0px;
 	font-size: 10px;
 	font-weight: bold;
 	text-align: center;

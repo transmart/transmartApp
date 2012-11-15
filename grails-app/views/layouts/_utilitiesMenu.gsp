@@ -35,7 +35,14 @@
 				#utilitiesMenuList {background:transparent;border:0 none; list-style: none;}
 				#utilitiesMenu li{line-height:100%; padding: 4px; border:1px solid #f0f0f0; cursor: pointer;}
 				#utilitiesMenu li:hover {background-color: #DDDDFF; border:1px solid #718bb7}
-				#utilitiesMenuButton {background-color: #DDD; border-left: 1px solid black; cursor: pointer; padding: 6px;}
+				#utilitiesMenuButton {
+					background-color: #DDD;
+					border-bottom: 1px solid black;
+					cursor: pointer;
+					padding: 7px;
+					color: black;
+					font-size: 8pt;
+				}
 				li.utilMenuSeparator { padding: 0px; font-size: 1px; line-height: 1px;}
 				span.utilMenuSeparator {display: block;
 					font-size: 1px;
