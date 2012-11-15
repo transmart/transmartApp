@@ -3142,6 +3142,7 @@ function addXTSearchAutoComplete()	{
 
 			switch (categoryId)  {
 				case "GENE": 
+				case "PROTEIN":
 					getCrossTrialGeneSummary(keywordId);
 					
 					jQuery('#xtMenuBar').tabs('select', 'xtSummaryChartArea'); // switch to chart tab

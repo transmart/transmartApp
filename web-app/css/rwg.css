@@ -717,6 +717,7 @@ p.legend_probe {
 .boxplot_analysis{
     overflow: auto;
     width: 100%;
+    margin-top: 10px;
 }
 
 
@@ -1112,7 +1113,7 @@ min-width:250px;
 
 #favoritesTable{
 	border-collapse: collapse;
-	border: 1px solid #888;
+	border: 1px solid #d5d5d5;
 }
 
 #favoritesTable td, th{
@@ -1123,8 +1124,8 @@ min-width:250px;
 }
 
 #favoritesTable th{
-	background: #555;
-	color: white;
+	background: #E6E6E6;
+	color: #2e2e2e;
 	font-weight: normal;
 	padding:2px;
 }
