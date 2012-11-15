@@ -575,10 +575,9 @@ function addDataColumn(hm, xOffset, yOffset, width, data, header, groupName, h) 
 //          "3":{"searchKeywordId":1242219,"keyword":"CXCR3","geneId":"2833","data":{"0":{"col":0,"row":2},"1":{"probeId":"207681_at","foldChange":1.747,"preferredPValue":null,"bioMarkerName":"CXCR3","organism":"HOMO SAPIENS","col":1,"row":2}}},
 //          "4":{"searchKeywordId":1241668,"keyword":"FCER1A","geneId":"2205","data":{"0":{"col":0,"row":3},"1":{"probeId":"211734_s_at","foldChange":2.186,"preferredPValue":null,"bioMarkerName":"FCER1A","organism":"HOMO SAPIENS","col":1,"row":3}}},
 //          "5":....
-function drawHeatmapCTA(divID, rows, analyses)	{
+function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	jQuery("#" + divID).empty();
     var savedDisplayStyle = jQuery("#" + divID).css('display');
-	jQuery("#" + divID).show();  // show first so title height can be calculated correctly
 	
 	// convert the rows to an array and the data columnd to an array for consumption by d3 
 	var rowsArray = new Array
@@ -609,7 +608,7 @@ function drawHeatmapCTA(divID, rows, analyses)	{
 	var cellSize = 15;
 	var wCell = cellSize, hCell = cellSize;		// Cell dimensions
 	
-	var hHeader = 20;
+	var hHeader = 20;   // this is the header row for the heatmap
 	
 	var numAnalyses = analyses.length;
 	
@@ -641,17 +640,24 @@ function drawHeatmapCTA(divID, rows, analyses)	{
 
 	}
 
-	var heatmapHeight = hHeader + (numRows * hCell) + 15;
+	var minWidth = 200;
+	var hmWidth = Math.max(maxGeneWidth + numAnalyses*wCell + 6, 100)
+	var wTotal;
+	wTotal = Math.max(minWidth, hmWidth)
+
+	// determine the width of the title
+	var titleFontSize = 10;	
+	var titleFont = titleFontSize + "px sans-serif"; 
+	var hTitle = 25;  // leave at least enough room for at 2 lines of text
+	var actualTitleHeight = getTextFlowHeight(keywordTitle, hmWidth, titleFont, titleFontSize);
+	hTitle = Math.max(hTitle, actualTitleHeight)
+
+	var heatmapHeight = hTitle + hHeader + (numRows * hCell) + 15;
 	var analysisLegendHeight;
 	var analysisLegendOffset = heatmapHeight;
 	var heatmapOffset = 0;
-
-	var minWidth = 200;
-	var wTotal = maxGeneWidth + numAnalyses*wCell + 6;
-	if (wTotal < minWidth)  {
-		wTotal = minWidth;
-	}
 	
+		
 	// retrieve info needed for legend
 	var legendInfo = getAnalysisLegendInfo(analyses, wTotal);
 	var hLegend = legendInfo.hLegend;
@@ -691,10 +697,33 @@ function drawHeatmapCTA(divID, rows, analyses)	{
 	if (numRows == 0)  {
 	    var hmNoData = hm.append("text")
 		.attr("x", 0)
-		.attr("y", hHeader + 15)
+		.attr("y", hTitle + hHeader + 15)
 		.attr("text-anchor", "start")
 		.text("No data")		
 	}
+	
+	// the title will be centered over heatmap if possible; othwerwise start it at left and it will extend as far as it needs to
+	var titleAnchor = "middle";
+	var titleX = hmWidth/2;		
+	
+	var hmTitleId = "hmTitle" + uniqueDivID++ ;
+	
+    var hmTitle = hm.append("text")
+	    .attr("id", hmTitleId)
+		.attr("x", titleX)
+		.attr("y", titleFontSize)
+		.style("fill", "#065B96")
+	    .style("font", titleFont)
+		.attr("text-anchor", titleAnchor);		
+
+    var textNode = document.getElementById(hmTitleId);
+	var dy = textFlow(keywordTitle,
+			textNode,
+			hmWidth,
+			hmWidth/2,
+			titleFontSize,
+			false);	    
+
 	
     //generate the heatmap
     var hmRow = hm.selectAll(".heatmap")
@@ -753,7 +782,7 @@ function drawHeatmapCTA(divID, rows, analyses)	{
 	    	return maxGeneWidth + d.x * wCell;
 	    })
 	    .attr('y', function(d) {
-	    	return d.y * hCell + hHeader;
+	    	return d.y * hCell + hHeader + hTitle;
 	    })
 	    .style("stroke", "#333333")    // color of borders around rectangles
 	    .style("stroke-width", 1)    // width of borders around rectangles
@@ -773,7 +802,7 @@ function drawHeatmapCTA(divID, rows, analyses)	{
 	//GROUP FOR Column headers
 	var headerGroup = hm.append("svg:g")
 	  .attr("class", "columnHeader")
-	  .attr("transform", "translate(" + maxGeneWidth + "," + hHeader + ")")
+	  .attr("transform", "translate(" + maxGeneWidth + "," + (hHeader + hTitle) + ")")
 	  ;
 	
     // Show the gene labels
@@ -809,7 +838,7 @@ function drawHeatmapCTA(divID, rows, analyses)	{
 	xOffset = 0;
 	var geneGroup = hm.append("svg:g")
 	  .attr("class", "geneGroup")
-	  .attr("transform", "translate(" + 0 + "," + hHeader + ")")
+	  .attr("transform", "translate(" + 0 + "," + (hTitle + hHeader) + ")")
 	  ;
 	
     // Show the gene labels
@@ -881,6 +910,7 @@ function showHeatmapTooltip(e)  {
 function exportHeatmapCTAImage()
 {	
 		var svgID=  "#xtHeatmap";
+	
 		
 		d3.select(svgID)
 			.selectAll("svg")
