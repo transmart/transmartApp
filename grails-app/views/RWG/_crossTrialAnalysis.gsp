@@ -32,17 +32,18 @@
 		</div>
 	</div>
 	
-	<div id="xtMsgBox" style="display:none">
-		<p style="text-align:center; margin-bottom:8px">The analysis selection has changed</p>
-		<p style="text-align:center"><a href="#" onclick="updateCrossTrialGeneCharts();" class=btn>Redraw charts</a>
-		<a href="#" onclick="clearAllXTSearchTerms();" class="btn">Clear all</a></p>
+	<div style="width: 95%;margin: auto;position: absolute;z-index: 700;">
+		<div id="xtMsgBox" style="display:none">
+			<p style="text-align:center; margin-bottom:8px">The analysis selection has changed</p>
+			<p style="text-align:center"><a href="#" onclick="updateCrossTrialGeneCharts();" class=btn>Redraw charts</a>
+			<a href="#" onclick="clearAllXTSearchTerms();" class="btn">Clear all</a></p>
+		</div>
 	</div>
-	
 	
 	<div id="xtMenuBar" class="analysis-tabs">
 		<ul>
 			<li><a href="#xtSummary">Summary Table</a></li>
-			<li><a href="#xtSummaryChartArea">Gene Charts</a></li>
+			<li><a href="#xtGeneChartTab">Gene Charts</a></li>
 			<li><a href="#xtHeatmapTab">Heatmap</a></li>
 		</ul>
 		
@@ -54,7 +55,10 @@
 		</div>		
 		
 		<!--  Gene Charts Tab -->
-		<div id="xtSummaryChartArea"></div>
+		<div id="xtGeneChartTab">
+			<div id="xtSummaryChartArea"></div>
+			<div id="xtNoGenesMsg" class="xtInfoBox"><p>No genes are selected. Use the search box above to add genes for analysis.</p></div>
+		</div>
 		
 		<!-- Heatmap Tab Content -->
 		<div id ="xtHeatmapTab">

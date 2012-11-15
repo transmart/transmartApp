@@ -202,7 +202,7 @@
 					<div id="selectedAnalyses_holder" style='display: inline-block'>
 						<div id='selectedAnalyses_btn'>
 							<a href="#" onclick='getSelectedAnalysesList();'>
-								 <span id="analysisCountLabel">(0)</span>
+								 <span id="analysisCountLabel" style="margin-left: -4px;">(0)</span>
 								 <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
 							</a>
 						</div>

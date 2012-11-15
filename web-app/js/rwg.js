@@ -78,6 +78,9 @@ function refreshCrossTrialMsg(){
 		//Display msg to user with option to refresh or clear
 		jQuery("#xtMsgBox").fadeIn();
 		
+		//mask the tabs
+		jQuery('#xtMenuBar').mask();
+		
 	}
 	
 }
@@ -2789,14 +2792,35 @@ function updateCrossTrialGeneCharts(){
 	
 	jQuery('#xtMsgBox').fadeOut(200);
 	
-	//clear div
+	//unmaks the tabs
+	jQuery('#xtMenuBar').unmask()
+	
+	//clear gene charts
 	jQuery('#xtSummaryChartArea').html('');
+	
+	//cleart the heatmaps
+	jQuery('#xtHeatmapTab').html('');
 	
 	jQuery(xtSelectedKeywords).each(function (index, value){
 		
-		if(xtSelectedKeywords[index].categoryId == 'GENE'){
-			
-			getCrossTrialGeneSummary(xtSelectedKeywords[index].id);
+		var categoryId = xtSelectedKeywords[index].categoryId;
+		var keywordId = xtSelectedKeywords[index].id;
+		var searchTerm = xtSelectedKeywords[index].termName;
+
+		switch (categoryId)  {
+			case "GENE": 
+			case "PROTEIN":
+				getCrossTrialGeneSummary(keywordId);
+				jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
+				break;
+			case "GENELIST": 
+			case "GENESIG": 
+			case "PATHWAY":
+				loadHeatmapCTAPaginator(categoryId, keywordId, 1, searchTerm);
+				jQuery('#xtMenuBar').tabs('select', 'xtHeatmapTab'); // switch to heatmap tab
+				break;
+			default:  
+				alert("Invalid category!");
 		}
 		
 	});
@@ -2819,6 +2843,10 @@ function closeXTGeneChart(divID, geneID){
 	   }
 	}
 	
+	if(xtSelectedKeywords.length==0){
+		jQuery('#xtNoGenesMsg').fadeIn(200);
+	}
+	
 	
 }
 
@@ -2827,11 +2855,20 @@ function clearAllXTSearchTerms(){
 	//Clear the html div of existing charts
 	jQuery('#xtSummaryChartArea').html('');
 	
+	//Clear the heatmaps
+	jQuery('#xtHeatmapTab').html('');
+	
 	//reset the array
 	xtSelectedKeywords = [];
 	
 	//remove the message box
 	jQuery('#xtMsgBox').fadeOut(200);
+	
+	//remove the mask
+	jQuery('#xtMenuBar').unmask()
+	
+	//show the empty gene msg box
+	jQuery('#xtNoGenesMsg').show();
 	
 }
 
@@ -2840,18 +2877,20 @@ function clearAllXTSearchTerms(){
 function displayxtAnalysesList(){
 	
 	
-	var html = "<ul id='xtSelectedAnalysesList'>";
+	var html = "<div id='xtSelectedAnalysesListLegend'>";
 	
 	selectedAnalyses.sort(dynamicSort("studyID"));
 	
 	jQuery(selectedAnalyses).each(function(index, value){
+		
+		var num = parseInt(index) + 1;
 
-		html = html + "<li id='li_SelectedAnalysis_"+selectedAnalyses[index].id +"'>";
-		html = html + "<strong>" +index  +"</strong> <span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</li>';
+		html = html + "<div class='xtSelectedAnalysesListLegendItem' id='selectedAnalysis_"+selectedAnalyses[index].id +"'>";
+		html = html + "<span class='analysisNum'>" +num  +"</span> <span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</div>';
 		
 	});
 	
-	html = html + '</ul>';
+	html = html + '</div>';
 	
 	jQuery('#xtSummary_AnalysesList').html(html);
 
@@ -3052,9 +3091,11 @@ function getCrossTrialGeneSummary(search_keyword_id)
 	
 	var foldchangeDataset = [];
 	var pvalueDataset =[];
-	
-	
 	var analysisList = '';
+	
+	//hide the "empty" gene message
+	
+	jQuery('#xtNoGenesMsg').hide();
 	
 	
 	//Convert the selected analysis array into a list
@@ -3145,7 +3186,7 @@ function addXTSearchAutoComplete()	{
 				case "PROTEIN":
 					getCrossTrialGeneSummary(keywordId);
 					
-					jQuery('#xtMenuBar').tabs('select', 'xtSummaryChartArea'); // switch to chart tab
+					jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
 
 					
 					break;
