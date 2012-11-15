@@ -1329,17 +1329,18 @@ public class SearchController{
 		
 		//Get list of REGION restrictions from session and translate to regions
 		def regions = getSearchRegions(session['solrSearchFilter'])
+		def geneNames = getGeneNames(session['solrSearchFilter'])
 		def analysisIds = [currentAnalysis.id]
 		
 		switch(currentAnalysis.assayDataType)
 		{
 			case "GWAS" :
 			case "Metabolic GWAS" :
-				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, pvalueCutoff, "rsid", "asc", search, "gwas").results
+				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, pvalueCutoff, "null", "asc", search, "gwas", geneNames).results
 				analysisIndexData = searchDAO.getGwasIndexData()
 				break;
 			case "EQTL" :
-				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, pvalueCutoff, "rsid", "asc", search, "eqtl").results
+				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, pvalueCutoff, "null", "asc", search, "eqtl", geneNames).results
 				analysisIndexData = searchDAO.getEqtlIndexData()
 				break;
 			default :
