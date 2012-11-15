@@ -24,7 +24,9 @@ class SavedFacetedSearch {
   	 Long id
 	 Long userId   // would like to reference the AuthUser class, but can't because it is in default package -- for now just reference the id 
 	 String name
-	 String criteria
+	 String keywords
+	 String analysisIds
+	 String searchType
 	 Date createDt
 	 Date modifiedDt
 	 
@@ -36,7 +38,9 @@ class SavedFacetedSearch {
 			id column:'SAVED_FACETED_SEARCH_ID'
 			userId column: "USER_ID"
 			name column: 'NAME'
-			criteria column:'CRITERIA'
+			keywords column:'KEYWORDS'
+			analysisIds column:'ANALYSIS_IDS'
+			searchType column:"SEARCH_TYPE"
 			createDt column:"CREATE_DT"
 			modifiedDt column:"MODIFIED_DT"
 		 }
@@ -45,8 +49,10 @@ class SavedFacetedSearch {
 	 static constraints = {
 		 userId(nullable:false)
 		 name(nullable:false,blank: false,maxSize:100)
-		 criteria(nullable:false,blank: false,maxSize:4000)
+		 keywords(nullable:false,blank: false,maxSize:4000)
+		 analysisIds(nullable:true,maxSize:4000)
 		 name (unique:'userId')
+		 searchType(nullable:false)
 		 createDt(nullable:true)
 		 modifiedDt(nullable:true)
 	 }

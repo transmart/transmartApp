@@ -1908,13 +1908,13 @@ function saveSearch(keywords)  {
 
 	//  had no luck trying to use JSON libraries for creating/parsing JSON string so just save keywords as pipe delimited string 
 	if (keywords.length>0)  {
-		var criteriaString = keywords.join("|") 
+		var keywordsString = keywords.join("|") 
 		
     	jQuery("#save-modal-content").mask("Saving...");
 		
 		rwgAJAXManager.add({
 			url:saveSearchURL,
-			data: {criteria: criteriaString, name: name},
+			data: {keywords: keywordsString, name: name},
 			timeout:60000,
 			success: function(response) {
 		    	jQuery("#save-modal-content").unmask();
@@ -1939,7 +1939,7 @@ function saveSearch(keywords)  {
 		});
 	}
 	else  {
-		alert("No search criteria to save!")
+		alert("No search keywords to save!")
 	}
 	
 }
@@ -3304,6 +3304,7 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
       	}
       	
       	if (numberRows == 0)  {
+			jQuery('#'+heatmapHolderDivID).unmask(); //hide the loading msg, unblock the div
       		drawHeatmapCTA(heatmapDiv, null, selectedAnalyses, keyword);  // draw blank heatmap      		
       	}
       	else  {      		

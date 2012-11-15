@@ -1038,15 +1038,16 @@ class RWGController {
    def saveFacetedSearch = {
 	   	   
 	   def name = params.name	   
-	   def criteria = params.criteria
+	   def keywords = params.keywords
 	   
 	   def authPrincipal = springSecurityService.getPrincipal()
 	   def userId = authPrincipal.id   
 
 	   SavedFacetedSearch s = new SavedFacetedSearch()
 	   s.name = name
-	   s.criteria = criteria
+	   s.keywords = keywords
 	   s.userId = userId
+	   s.searchType = 'FACETED_SEARCH'
 	   
 	   boolean successFlag
 	   def msg = ""	   
@@ -1194,10 +1195,10 @@ class RWGController {
 		   successFlag = false
 	   }
 	   else   {
-		   def criteria = s.criteria
+		   def keywords = s.keywords
 
-		   // convert the criteria string to a list of search keyword ids
-		   def ids = criteria.tokenize('|')
+		   // convert the keywords string to a list of search keyword ids
+		   def ids = keywords.tokenize('|')
 
 		   ids.each {
 			   JSONObject termArray = new JSONObject()   // json object for current search term
