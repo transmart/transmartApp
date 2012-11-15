@@ -1823,6 +1823,30 @@ function getSearchKeywordList()   {
 	return keywords;
 }
 
+//retrieve the current list of search keyword ids for the cross trial analysis
+function getXTSearchKeywordList()   {
+
+	var keywords = new Array();
+	
+	for (var j=0; j<xtSelectedKeywords.length; j++)	{
+		keywords.push(xtSelectedKeywords[j].id);
+	}
+	
+	return keywords;
+}
+
+//retrieve the current list of analyssis ids for the cross trial analysis
+function getXTAnalysisIdList()   {
+
+	var analysisIds = new Array();
+	
+	for (var j=0; j<selectedAnalyses.length; j++)	{
+		analysisIds.push(selectedAnalyses[j].id);
+	}
+	
+	return analysisIds;
+}
+
 
 // focus the first visible child element of the passed in element that is an input type
 function focusFirstInput(parent)  {		
@@ -1862,7 +1886,7 @@ function setSaveFilterLink(state){
 	if(state == 'enable'){		
 		jQuery('#save-modal').removeClass('title-link-inactive');
 		jQuery('#save-modal').addClass('title-link-active');
-		jQuery('#save-modal').click(openSaveSearchDialog);
+		jQuery('#save-modal').unbind('click').click(function(){openSaveSearchDialog(false);});   
 		
 		}
 	else if (state == 'disable'){
@@ -1873,36 +1897,96 @@ function setSaveFilterLink(state){
 	}
 }
 
-
-
-function openSaveSearchDialog()  {
-
-	var keywords = getSearchKeywordList();
-
-	if (keywords.length>0)  {
+//enable or disable the save xt filter link
+function setSaveXTFilterLink(state){
 	
-		jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, opacity: [70], position: ["25%"], onClose: modalEffectsClose,
-			onShow: function (dialog) {
-		        dialog.container.css("height", "auto");
+	if(state == 'enable'){		
+		jQuery('#save-modal-xt').removeClass('title-link-inactive');
+		jQuery('#save-modal-xt').addClass('title-link-active');
+		jQuery('#save-modal-xt').unbind('click').click(function(){openSaveSearchDialog(true);});
+		
+		}
+	else if (state == 'disable'){
+
+		jQuery('#save-modal-xt').addClass('title-link-inactive');
+		jQuery('#save-modal-xt').removeClass('title-link-active');
+		jQuery('#save-modal-xt').off('click');
+	}
+}
+
+
+function openSaveSearchDialog(isXT)  {
+
+	var keywords;
+	var analysisIds;
+	var title;
+	var clickFunction;
+	if (!isXT)  {
+		keywords = getSearchKeywordList();
+		title = 'Save Faceted Search'
+		clickFunction = function() {
+			saveSearch('FACETED_SEARCH');};
+	}
+	else {
+		keywords = getXTSearchKeywordList();
+		analysisIds = getXTAnalysisIdList();
+		title = 'Save Cross Trial Analyses';
+		
+		if (analysisIds.length == 0)  {
+			alert('No analyses to save!')
+			return false;
+		}
+
+		clickFunction = function() {
+			saveSearch('XT');};
+		
+	}
+
+	if (keywords.length == 0)  {
+		alert('No keywords to save!')
+		return false;
+	}
+
+	jQuery('#saveModalTitle').html(title);
+	
+	// make sure we unbind any click events first, or else they keep get adding and we end up calling
+	//   the save search function multiple times
+	jQuery("#saveSearchLink").unbind('click').click(clickFunction);
+	
+	jQuery('#save-modal-content').modal({onOpen: modalEffectsOpen, opacity: [70], position: ["25%"], onClose: modalEffectsClose,
+		onShow: function (dialog) {
+        dialog.container.css("height", "auto");
 		    }	
-		
-		});
-	}
-	else  {
-		alert("No search criteria to save!")
 
-	}
-		
-
-	return false;
+	});
 
 }
 
 // save a faceted search to the database
-function saveSearch(keywords)  {
+function saveSearch(searchType, keywords, analysisIds)  {
+	
+	var keywords;
+	var analysisIds;
+	var analysisIdsString;
+	
+	if (searchType == 'XT')  {
+		
+		keywords = getXTSearchKeywordList();
+		analysisIds = getXTAnalysisIdList();
 
-	var name = jQuery("#searchName").val();
-	var keywords = getSearchKeywordList();
+		if (!analysisIds)  {
+			alert('Analysis Ids must be provided for saving a Cross Trial Search!');
+			return;
+		}
+	    analysisIdsString = analysisIds.join("|")
+	    
+	}
+	else  {
+		keywords = getSearchKeywordList();		
+	}
+		
+	var nameField = 'searchName'; 
+	var name = jQuery("#" + nameField).val();
 	
 	if  (!name) {
 		jQuery("#modal-status-message").show().html("Please provide a Name to save this filter.");
@@ -1911,13 +1995,13 @@ function saveSearch(keywords)  {
 
 	//  had no luck trying to use JSON libraries for creating/parsing JSON string so just save keywords as pipe delimited string 
 	if (keywords.length>0)  {
-		var keywordsString = keywords.join("|") 
+		var keywordsString = keywords.join("|");
 		
     	jQuery("#save-modal-content").mask("Saving...");
 		
 		rwgAJAXManager.add({
 			url:saveSearchURL,
-			data: {keywords: keywordsString, name: name},
+			data: {keywords: keywordsString, name: name, searchType:searchType, analysisIds: analysisIdsString},
 			timeout:60000,
 			success: function(response) {
 		    	jQuery("#save-modal-content").unmask();
@@ -2060,7 +2144,7 @@ function openLoadSearchDialog()  {
 	
 	rwgAJAXManager.add({
 		url:renderFavoritesTemplateURL,									
-		data: {},
+		data: {searchType:'FACETED_SEARCH'},  // make a variable so we can reuse for xt searches
 		timeout:60000,
 		success: function(response) {
 		
@@ -2818,6 +2902,9 @@ function updateCrossTrialGeneCharts(){
 			case "PATHWAY":
 				loadHeatmapCTAPaginator(categoryId, keywordId, 1, searchTerm);
 				jQuery('#xtMenuBar').tabs('select', 'xtHeatmapTab'); // switch to heatmap tab
+
+				setSaveXTFilterLink("enable");
+				
 				break;
 			default:  
 				alert("Invalid category!");
@@ -3195,6 +3282,8 @@ function addXTSearchAutoComplete()	{
 				case "PATHWAY":
 					loadHeatmapCTAPaginator(categoryId, keywordId, 1, searchTerm);
 					jQuery('#xtMenuBar').tabs('select', 'xtHeatmapTab'); // switch to heatmap tab
+					
+					setSaveXTFilterLink("enable");
 					break;
 				default:  
 					alert("Invalid category!");
