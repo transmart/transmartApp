@@ -791,7 +791,7 @@ public class SearchController{
 		if (cutoff != null) { filter.cutoff = cutoff }
 		
 		if (sortField != null) { filter.sortField = sortField }
-		if (!filter.sortField) {filter.sortField = 'rsid';}
+		if (!filter.sortField) {filter.sortField = 'data.rs_id';}
 		
 		if (order != null) { filter.order = order }
 		if (!filter.order) {filter.order = 'asc';}
@@ -865,7 +865,7 @@ public class SearchController{
 		if (cutoff != null) { filter.cutoff = cutoff }
 		
 		if (sortField != null) { filter.sortField = sortField }
-		if (!filter.sortField) {filter.sortField = 'rsid';}
+		if (!filter.sortField) {filter.sortField = 'data.rs_id';}
 		
 		if (order != null) { filter.order = order }
 		if (!filter.order) {filter.order = 'asc';}
@@ -1052,6 +1052,43 @@ public class SearchController{
 		return regions
 	}
 	
+	def getGeneNames(solrSearch) {
+		def genes = []
+		
+		for (s in solrSearch) {
+			if (s.startsWith("GENESIG")) {
+				//Expand regions to genes and get their names
+				s = s.substring(8)
+				def sigIds = s.split("\\|")
+				for (sigId in sigIds) {
+					def sigSearchKeyword = SearchKeyword.get(sigId as long)
+					def sigItems = GeneSignatureItem.createCriteria().list() {
+						eq('geneSignature', GeneSignature.get(sigSearchKeyword.bioDataId))
+						like('bioDataUniqueId', 'GENE%')
+					}
+					for (sigItem in sigItems) {
+						def searchGene = SearchKeyword.findByUniqueId(sigItem.bioDataUniqueId)
+						def geneId = searchGene.id
+						def searchKeyword = SearchKeyword.get(geneId)
+						genes.push(searchKeyword.keyword)
+					}
+				}
+			}
+			else if (s.startsWith("GENE")) {
+				//If just plain genes, get the names
+				s = s.substring(5)
+				def geneIds = s.split("\\|")
+				for (geneString in geneIds) {
+					def geneId = geneString as long
+					def searchKeyword = SearchKeyword.get(geneId)
+					genes.push(searchKeyword.keyword)
+				}
+			}
+		}
+		
+		return genes
+	}
+	
 	def getWebserviceCriteria(solrSearch) {
 		def genes = []
 		
@@ -1137,6 +1174,7 @@ public class SearchController{
 	
 		//Get list of REGION restrictions from session and translate to regions
 		def regions = getSearchRegions(session['solrSearchFilter'])
+		def geneNames = getGeneNames(session['solrSearchFilter'])
 		
 		//Find out if we're querying for EQTL, GWAS, or both
 		def hasGwas = BioAssayAnalysis.createCriteria().list([max: 1]) {
@@ -1156,17 +1194,17 @@ public class SearchController{
 		def eqtlResult
 				
 		if (hasGwas) {
-			gwasResult = runRegionQuery(analysisIds, regions, max, offset, cutoff, sortField, order, search, "gwas")
+			gwasResult = runRegionQuery(analysisIds, regions, max, offset, cutoff, sortField, order, search, "gwas", geneNames)
 		}
 		if (hasEqtl) {
-			eqtlResult = runRegionQuery(analysisIds, regions, max, offset, cutoff, sortField, order, search, "eqtl")
+			eqtlResult = runRegionQuery(analysisIds, regions, max, offset, cutoff, sortField, order, search, "eqtl", geneNames)
 		}
 		
 		return [gwasResults: gwasResult, eqtlResults: eqtlResult]
 	}
 	
 	
-	def runRegionQuery(analysisIds, regions, max, offset, cutoff, sortField, order, search, type) {
+	def runRegionQuery(analysisIds, regions, max, offset, cutoff, sortField, order, search, type, geneNames) throws Exception {
 		
 		//This will hold the index lookups for deciphering the large text meta-data field.
 		def indexMap = [:]
@@ -1176,7 +1214,7 @@ public class SearchController{
 		
 		def columnNames = []
 		def searchDAO = new SearchDAO()
-		def queryResult = regionSearchService.getAnalysisData(analysisIds, regions, max, offset, cutoff, sortField, order, search, type)
+		def queryResult = regionSearchService.getAnalysisData(analysisIds, regions, max, offset, cutoff, sortField, order, search, type, geneNames)
 		def analysisData = queryResult.results
 		def totalCount = queryResult.total
 		def analysisIndexData

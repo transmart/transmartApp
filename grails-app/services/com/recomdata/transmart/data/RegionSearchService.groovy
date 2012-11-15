@@ -64,36 +64,62 @@ class RegionSearchService {
 	
 	//Query with mad Oracle pagination
 	def gwasSqlQuery = """
-	select a.* from
-	(SELECT baa.analysis_name as analysis, info.chrom as chrom, info.pos as pos, bm.bio_marker_name as rsgene, data.rs_id as rsid, data.p_value as pvalue, data.log_p_value as logpvalue, data.ext_data as extdata
-	,row_number() over (order by ?) as row_nbr
-		   FROM biomart.Bio_Assay_Analysis_Gwas data
-		   LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = data.bio_assay_analysis_id 
+		SELECT a.*
+		  FROM (SELECT   baa.analysis_name AS analysis, info.chrom AS chrom,
+		                 info.pos AS pos, bm.bio_marker_name AS rsgene,
+		                 DATA.rs_id AS rsid, DATA.p_value AS pvalue,
+		                 DATA.log_p_value AS logpvalue, DATA.ext_data AS extdata
+		                 ,
+		                 ROW_NUMBER () OVER (ORDER BY _orderclause_) AS row_nbr
+		                 FROM biomart.bio_assay_analysis_gwas DATA
+		                 JOIN biomart.bio_assay_analysis baa ON baa.bio_assay_analysis_id = DATA.bio_assay_analysis_id
+		                 JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
+		                 LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
+		                 LEFT JOIN biomart.bio_marker bm
+		                 ON bm.primary_external_id = gmap.entrez_gene_id
+		                 AND bm.primary_source_code = 'Entrez'
+		                 WHERE 1=1
 	"""
 	
 	def eqtlSqlQuery = """
-	select a.* from
-	(SELECT baa.analysis_name as analysis, info.chrom as chrom, info.pos as pos, bm.bio_marker_name as rsgene, data.rs_id as rsid, data.p_value as pvalue, data.log_p_value as logpvalue, data.ext_data as extdata, data.gene as gene
-	,row_number() over (order by ?) as row_nbr
-		   FROM biomart.Bio_Assay_Analysis_eqtl data
-		   LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = data.bio_assay_analysis_id 
+		SELECT a.*
+		  FROM (SELECT   baa.analysis_name AS analysis, info.chrom AS chrom,
+		                 info.pos AS pos, bm.bio_marker_name AS rsgene,
+		                 DATA.rs_id AS rsid, DATA.p_value AS pvalue,
+		                 DATA.log_p_value AS logpvalue, DATA.ext_data AS extdata, DATA.gene as gene
+		                 ,
+		                 ROW_NUMBER () OVER (ORDER BY _orderclause_) AS row_nbr
+		                 FROM biomart.bio_assay_analysis_eqtl DATA
+		                 JOIN biomart.bio_assay_analysis baa ON baa.bio_assay_analysis_id = DATA.bio_assay_analysis_id
+		                 JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
+		                 LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
+		                 LEFT JOIN biomart.bio_marker bm
+		                 ON bm.primary_external_id = gmap.entrez_gene_id
+		                 AND bm.primary_source_code = 'Entrez'
+		                 WHERE 1=1
 	"""
 	
 	def gwasSqlCountQuery = """
 		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Gwas data 
+	     JOIN biomart.bio_assay_analysis baa ON baa.bio_assay_analysis_id = DATA.bio_assay_analysis_id
+	     JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
+	     LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
+	     LEFT JOIN biomart.bio_marker bm
+	     ON bm.primary_external_id = gmap.entrez_gene_id
+	     AND bm.primary_source_code = 'Entrez'
+	     WHERE 1=1
 	"""
 	
 	def eqtlSqlCountQuery = """
-	    SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Eqtl data 	
+		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Eqtl data
+	     JOIN biomart.bio_assay_analysis baa ON baa.bio_assay_analysis_id = DATA.bio_assay_analysis_id
+	     JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
+	     LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
+	     LEFT JOIN biomart.bio_marker bm
+	     ON bm.primary_external_id = gmap.entrez_gene_id
+	     AND bm.primary_source_code = 'Entrez'
+	     WHERE 1=1
     """
-	
-	def infoJoinClause = """
-	
-	 LEFT JOIN deapp.de_rc_snp_info info ON data.rs_id = info.rs_id
-	 LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
-	 LEFT JOIN biomart.bio_marker bm ON bm.primary_external_id = gmap.entrez_gene_id AND bm.primary_source_code = 'Entrez'
-	
-	"""
 	
 	def getGeneLimits(Long searchId, String ver) {
 		//Create objects we use to form JDBC connection.
@@ -178,13 +204,14 @@ class RegionSearchService {
 		}
 	}
 	
-	def getAnalysisData(analysisIds, ranges, Long limit, Long offset, Double cutoff, String sortField, String order, String search, String type) {
+	def getAnalysisData(analysisIds, ranges, Long limit, Long offset, Double cutoff, String sortField, String order, String search, String type, geneNames) {
 		
 		def con, stmt, rs = null;
 		con = dataSource.getConnection()
-		StringBuilder qb = new StringBuilder();
+		StringBuilder queryCriteria = new StringBuilder();
 		def analysisQuery
 		def countQuery
+		StringBuilder regionList = new StringBuilder();
 		
 		if (type.equals("gwas")) {
 			analysisQuery = gwasSqlQuery
@@ -198,77 +225,75 @@ class RegionSearchService {
 			throw new Exception("Unrecognized data type")
 		}
 		
-		//If we have ranges, we need another JOIN
-		//Always activate this, for SNP gene and position
-		//if (ranges) {
-			analysisQuery += infoJoinClause;
-			countQuery += infoJoinClause;
-		//}
-
-		//Add analysis IDs
-		if (analysisIds) {
-			qb.append(" WHERE data.BIO_ASSAY_ANALYSIS_ID IN (" + analysisIds[0]);
-			for (int i = 1; i < analysisIds.size(); i++) {
-				qb.append(", " + analysisIds[i]);
-			}
-			qb.append(") ")
-		}
-		else {
-			//Quick way to avoid WHERE/AND confusion
-			qb.append("WHERE 1=1 ");
-		}
+		def rangesDone = 0;
 		
 		if (!ranges) {
 			//If no ranges, force HG19
-			qb.append(" AND hg_version='19'")
+			regionList.append("hg_version='19'")
+		}
+		else {
+			for (range in ranges) {
+				if (rangesDone != 0) {
+					regionList.append(" OR ")
+				}
+				//Chromosome
+				if (range.chromosome != null) {
+					regionList.append("(info.pos >= ${range.low} AND info.pos <= ${range.high} AND info.chrom = '${range.chromosome}' AND info.hg_version = '${range.ver}')")
+				}
+				//Gene
+				else {
+					regionList.append("(info.pos >= ${range.low} AND info.pos <= ${range.high} AND info.hg_version = '${range.ver}')")
+				}
+				rangesDone++
+			}
+		}
+		
+		//Add analysis IDs
+		if (analysisIds) {
+			queryCriteria.append(" AND data.BIO_ASSAY_ANALYSIS_ID IN (" + analysisIds[0]);
+			for (int i = 1; i < analysisIds.size(); i++) {
+				queryCriteria.append(", " + analysisIds[i]);
+			}
+			queryCriteria.append(") ")
+		}
+		
+		//Add gene names
+		if (geneNames) {
+			queryCriteria.append(" AND bm.bio_marker_name IN (" + "'" + geneNames[0] + "'");
+			for (int i = 1; i < geneNames.size(); i++) {
+				queryCriteria.append(", " + "'" + geneNames[i] + "'");
+			}
+			queryCriteria.append(") ")
 		}
 
 		
 		if (cutoff) {
-			qb.append(" AND p_value <= ?");
+			queryCriteria.append(" AND p_value <= ?");
 		}
 		if (search) {
-			qb.append(" AND (data.rs_id LIKE '%${search}%'")
-			qb.append(" OR data.ext_data LIKE '%${search}%'")
+			queryCriteria.append(" AND (data.rs_id LIKE '%${search}%'")
+			queryCriteria.append(" OR data.ext_data LIKE '%${search}%'")
 			if (type.equals("eqtl")) {
-				qb.append(" OR data.gene LIKE '%${search}%'")
+				queryCriteria.append(" OR data.gene LIKE '%${search}%'")
 			}
-			qb.append(") ")
+			queryCriteria.append(") ")
 		}
-		
-		def rangesDone = 0;
-		if (ranges) {
-			for (range in ranges) {
-				if (rangesDone == 0) {
-					qb.append(" AND (")
-				}
-				else {
-					qb.append(" OR ")
-				}
-				//Chromosome
-				if (range.chromosome != null) {
-					qb.append("(info.pos >= ${range.low} AND info.pos <= ${range.high} AND info.chrom = '${range.chromosome}' AND info.hg_version = '${range.ver}')")
-				}
-				//Gene
-				else {
-					qb.append("(info.pos >= ${range.low} AND info.pos <= ${range.high} AND info.hg_version = '${range.ver}')")
-				}
-				
-				rangesDone++
-			}
-			qb.append(")"); //Finish range selection
-		}
+
 		def total = 0;
 		
-		def finalQuery = analysisQuery + qb.toString() + " ORDER BY ${sortField} ${order}) a";
+		analysisQuery = analysisQuery.replace("_regionlist_", regionList.toString())
+		analysisQuery = analysisQuery.replace("_orderclause_", sortField + " " + order)
+		countQuery = countQuery.replace("_regionlist_", regionList.toString())
+
+		def finalQuery = analysisQuery + queryCriteria.toString() + "\n) a";
 		if (limit > 0) {
 			finalQuery += " where a.row_nbr between ${offset+1} and ${limit+offset}";
 		}
 		stmt = con.prepareStatement(finalQuery);
 		
-		stmt.setString(1, sortField)
+		//stmt.setString(1, sortField)
 		if (cutoff) {
-			stmt.setDouble(2, cutoff);
+			stmt.setDouble(1, cutoff);
 		}
 
 		println("Executing: " + finalQuery)
@@ -291,7 +316,8 @@ class RegionSearchService {
 		}
 		
 		try {
-			stmt = con.prepareStatement(countQuery + qb.toString())
+			def finalCountQuery = countQuery + queryCriteria.toString();
+			stmt = con.prepareStatement(finalCountQuery)
 			if (cutoff) {
 				stmt.setDouble(1, cutoff);
 			}
