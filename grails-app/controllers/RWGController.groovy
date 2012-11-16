@@ -1027,7 +1027,7 @@ class RWGController {
 	   
 	   def html
 	   
-	   def favorites = getFavorites()
+	   def favorites = getFavorites(params.searchType)
 	   
 	   render(template:'loadFavoritesModal', model:[favorites:favorites]).toString()	   	   	   
 			  
@@ -1039,6 +1039,8 @@ class RWGController {
 	   	   
 	   def name = params.name	   
 	   def keywords = params.keywords
+	   def analysisIds = params?.analysisIds
+	   def searchType = params.searchType
 	   
 	   def authPrincipal = springSecurityService.getPrincipal()
 	   def userId = authPrincipal.id   
@@ -1046,8 +1048,9 @@ class RWGController {
 	   SavedFacetedSearch s = new SavedFacetedSearch()
 	   s.name = name
 	   s.keywords = keywords
+	   s.analysisIds = analysisIds
 	   s.userId = userId
-	   s.searchType = 'FACETED_SEARCH'
+	   s.searchType = searchType
 	   
 	   boolean successFlag
 	   def msg = ""	   
@@ -1247,12 +1250,12 @@ class RWGController {
    }
 
    // Load the current user's saved favorites
-   def getFavorites = {
+   def getFavorites = {searchType->
 	   
 	   def authPrincipal = springSecurityService.getPrincipal()
 
 	   def userId = authPrincipal.id   
-	   def favorites = SavedFacetedSearch.findAllByUserId(userId, [sort:"createDt", order:"desc"])
+	   def favorites = SavedFacetedSearch.findAllByUserIdAndSearchType(userId, searchType, [sort:"createDt", order:"desc"])
 
 	   // add the search terms and counts as properties to each favorite 	   	   
 	   favorites.each  {
