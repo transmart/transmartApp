@@ -178,7 +178,7 @@
         <script type="text/javascript">		
 			jQuery(function ($) {
 				// Load dialog on click of Load link
-				$('#load-modal .basic').click(openLoadSearchDialog);
+				$('#load-modal .basic').click(function(){openLoadSearchDialog(false);});
 			});
 		</script>
 
@@ -255,7 +255,7 @@
 			 		Save
 				</span>&nbsp;&nbsp;
 				
-			 	<span id='load-modal' style="z-index:1">
+			 	<span id='load-modal'>
 				 	<a href="#"  class="basic">Favorites</a>
 				</span>&nbsp;&nbsp;
 				

@@ -2133,10 +2133,24 @@ function hideEditSearchDiv(id)  {
 
 
 
-function openLoadSearchDialog()  {
+function openLoadSearchDialog(isXT)  {
 	
-	var html = "";
+//	var html = "";
+	var keywords;
+	var analysisIds;
+	var title;
+	var clickFunction;
+	var searchType;
+	if (!isXT)  {
+		title = 'Load Favorite';
+		searchType = 'FACETED_SEARCH';
+	}
+	else {
+		title = 'Load Cross Trial Analyses';
+		searchType = 'XT';
+	}
 
+	jQuery('#loadSearchModalTitle').html(title);
 	
     jQuery('#load-modal-content').modal({onOpen: modalEffectsOpen, position: ["5%"], onClose: modalEffectsClose });
     
@@ -2144,7 +2158,7 @@ function openLoadSearchDialog()  {
 	
 	rwgAJAXManager.add({
 		url:renderFavoritesTemplateURL,									
-		data: {searchType:'FACETED_SEARCH'},  // make a variable so we can reuse for xt searches
+		data: {searchType:searchType}, 
 		timeout:60000,
 		success: function(response) {
 		
@@ -2161,12 +2175,12 @@ function openLoadSearchDialog()  {
 
 }
 
-// load in the saved favorites with the given id
-function loadSearch(id)  {
+// load in the saved favorites (type=FACETED_SEARCH or XT) with the given id
+function loadSearch(searchType, id)  {
 
 	rwgAJAXManager.add({
 		url:loadSearchURL,
-		data: {id: id},   
+		data: {id: id, searchType:searchType},   
 		timeout:60000,
 		success: function(response) {
 			
@@ -2190,7 +2204,7 @@ function loadSearch(id)  {
 				allowOnSelectEvent = true;
 
 				var searchTerms = response['searchTerms'] 
-				var count = response['count'] 
+				var count = response['keywordCount'] 
 				var termsNotFound = response['termsNotFound'] 
 				
 				for (i=0; i<count; i++)  {

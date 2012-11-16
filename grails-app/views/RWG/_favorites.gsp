@@ -13,7 +13,7 @@
 		<g:each in="${favorites}" var="f">					
 	        <tr id="home_favorites_${f.id}" >
 	        	<td>${f.createDt.format("MM/dd/yyyy")}</td>
-				<td><a href="#" id="linkSearchName_${f.id}" class="searchTooltip" onclick="loadSearch(${f.id}); return false;">
+				<td><a href="#" id="linkSearchName_${f.id}" class="searchTooltip" onclick="loadSearch('${f.searchType}', ${f.id}); return false;">
 						<span id="home_labelSearchName_${f.id}" >${f.name}</span>
 					</a>
 				</td>
