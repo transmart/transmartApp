@@ -43,7 +43,5 @@ class FmFile {
 		sort "displayName"
 		columns { id column:'file_id' }
 	}
-	
-		
 
 }

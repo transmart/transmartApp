@@ -24,7 +24,7 @@ grails.project.test.reports.dir = "target/test-reports"
 
 //grails.plugin.location.rmodules = "C:\\SVN\\repo1\\pharma\\transmart\\trunk\\plugins\\Rmodules"
 
-//grails.project.war.file = "target/${appName}-${appVersion}.war"
+grails.project.war.file = "target/transmart.war"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {

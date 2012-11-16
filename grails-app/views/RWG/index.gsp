@@ -75,6 +75,7 @@
 
 	        var getStudyAnalysesUrl = "${createLink([controller:'RWG',action:'getTrialAnalysis'])}";
 	        var experimentDataUrl = "${createLink(controller:'experimentAnalysis',action:'expDetail')}";
+	        var fileDataUrl = "${createLink([controller:'RWG',action:'getFileDetails'])}";
 
 	        //These are the URLS for the different browse windows.
 			var studyBrowseWindow = "${createLink([controller:'experiment',action:'browseExperimentsMultiSelect'])}";
@@ -172,6 +173,11 @@
 	    	    jQuery('body').on('click', '.foldericon.view', function() {
 		    	    var id = jQuery(this).closest(".folderheader").attr('name');
 	    	    	showDetailDialog(experimentDataUrl + '?id=' + id);
+		    	});
+
+	    	    jQuery('body').on('click', '.foldericon.viewfile', function() {
+		    	    var id = jQuery(this).closest(".folderheader").attr('name');
+	    	    	showDetailDialog(fileDataUrl + '?id=' + id);
 		    	});
 
 	    	    jQuery('#cartbutton').click(function() {

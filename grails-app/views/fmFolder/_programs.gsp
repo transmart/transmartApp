@@ -3,18 +3,18 @@
 
 <div class="search-results-table">
     <g:each in="${folders}" status="ti" var="folder">        
-        <div class="${ (ti % 2) == 0 ? 'result-trial-odd' : 'result-trial-even'}" id="folder_${folder.id}_anchor">
+        <div class="${ (ti % 2) == 0 ? 'result-program-odd' : 'result-program-even'}" id="folder_${folder.id}_anchor">
             <table class="folderheader" name="${folder.id}">
             <tr>
 				<td class="foldertitle">
 					<span>
-						<a id="toggleDetail_${folder.id}" href="#" onclick="javascript:toggleDetailDiv('${folder.id}', '${createLink(controller:'fmFolder',action:'getFoldersUnder',params:[id:folder.id])}');">
-							<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'down_arrow_small2.png')}" />
+						<a id="toggleDetail_${folder.id}" href="#" onclick="javascript:toggleDetailDiv('${folder.id}', '${createLink(controller:'fmFolder',action:'getFolderContents',params:[id:folder.id])}');">
+							<img style="margin-bottom: 8px;" alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'down_arrow_small2.png')}" />
 							<img alt="" src="${resource(dir:'images',file:'folder-big-closed.png')}" />
 						</a>
 					</span>
 					<a href="#" onclick="showDetailDialog('${createLink(controller:'experimentAnalysis',action:'expDetail',id:folder.objectUid)}');">
-						<span class="result-trial-name"> ${folder.folderName}</span>
+						<span class="result-program-name"> ${folder.folderName}</span>
 					</a>
 				</td>
 	            <td class="foldericons">
