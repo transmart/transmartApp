@@ -568,23 +568,47 @@ function addDataColumn(hm, xOffset, yOffset, width, data, header, groupName, h) 
 
 //Take the heatmap data in the second parameter and draw the D3 heatmap for Cross Trial Analysis
 //  (i.e. Genes down left, analysis on top, fold change in box)
-function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
+// rows is an array containing one entry for each row of data; each row contains data for the label (search keyword) and one entry for each data
+//  col: e.g.
+//         {"1":{"searchKeywordId":1240513,"keyword":"CAMP","geneId":"820","data":{"0":{"col":0,"row":0},"1":{"probeId":"210244_at","foldChange":-2.3866,"preferredPValue":null,"bioMarkerName":"CAMP","organism":"HOMO SAPIENS","col":1,"row":0}}},
+//          "2":{"searchKeywordId":1253597,"keyword":"CCL28","geneId":"56477","data":{"0":{"col":0,"row":1},"1":{"probeId":"224027_at","foldChange":1.675,"preferredPValue":null,"bioMarkerName":"CCL28","organism":"HOMO SAPIENS","col":1,"row":1}}},
+//          "3":{"searchKeywordId":1242219,"keyword":"CXCR3","geneId":"2833","data":{"0":{"col":0,"row":2},"1":{"probeId":"207681_at","foldChange":1.747,"preferredPValue":null,"bioMarkerName":"CXCR3","organism":"HOMO SAPIENS","col":1,"row":2}}},
+//          "4":{"searchKeywordId":1241668,"keyword":"FCER1A","geneId":"2205","data":{"0":{"col":0,"row":3},"1":{"probeId":"211734_s_at","foldChange":2.186,"preferredPValue":null,"bioMarkerName":"FCER1A","organism":"HOMO SAPIENS","col":1,"row":3}}},
+//          "5":....
+function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	jQuery("#" + divID).empty();
     var savedDisplayStyle = jQuery("#" + divID).css('display');
-	jQuery("#" + divID).show();  // show first so title height can be calculated correctly
 	
-	hmTooltips = new Array;
+	// convert the rows to an array and the data columnd to an array for consumption by d3 
+	var rowsArray = new Array
+	var index = 0;
+	for (var r in rows)  {
+		
+		var dataCol = new Array
+		for (c in rows[r]['data'])  {
+			dataCol[c] = rows[r]['data'][c]
+		}
+		
+		var searchKeywordId = rows[r]['searchKeywordId'];
+		var keyword = rows[r]['keyword'];
+		var geneId = rows[r]['geneId'];
+		
+		var row = {searchKeywordId:searchKeywordId, keyword:keyword, geneId:geneId, data:dataCol}
+		rowsArray[index] = row
+		index++;
+	}
+	
+	//hmTooltips = new Array;
 	
 	for (var i=0; i<analyses.length; i++)  {
 		analyses[i].title = analyses[i].title.replace(/_/g,', ') 		
 		analyses[i].titleDisplay = (i + 1) + " - " + analyses[i].studyID + " : " + analyses[i].title; 		
 	}
 	
-	//var cellSize = parseInt(jQuery(cellID).slider( "option", "value" ));
 	var cellSize = 15;
 	var wCell = cellSize, hCell = cellSize;		// Cell dimensions
 	
-	var hHeader = 20;
+	var hHeader = 20;   // this is the header row for the heatmap
 	
 	var numAnalyses = analyses.length;
 	
@@ -597,43 +621,43 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	
 	var maxFoldChange = 0;
 	var minFoldChange = 0;
-	// iterate thru genes to get count and find out the widest when displayed; also convert object to an array of rows
-	//  for consumption by svg objects
-	for (rowIndex in heatmapJSON)  {
-		var geneName = heatmapJSON[rowIndex].geneName;
-		var geneId = heatmapJSON[rowIndex].geneId;
+
+	var numRows = rowsArray.length;
+	var geneLabels = new Array;
+	// iterate thru rows and create the gene labels that will go on the left of the graph 
+	//  (for now take the first we come across, do we want to prioritize and use human if available or some other criteria to determine the one shown)
+	for (var r=0; r<rowsArray.length; r++)  {
+		var row = rowsArray[r];
+		
+		var geneName; 
+		var geneId;
+		geneName =  row.keyword; 
+		geneId = row.geneId;
+  	    geneLabels[r] = {geneName:geneName, geneId:geneId};
+		
 		var wGene = geneName.visualLength(ctaGeneLabelFontWeight + " " + ctaGeneLabelFontSize + "px " + ctaGeneLabelFontFamily);
 	    maxGeneWidth = (wGene > maxGeneWidth) ? wGene : maxGeneWidth;	
 
-	    // also convert data object to an array
-	    var dataArray = new Array();
-	    for (colIndex in heatmapJSON[rowIndex].data)  {
-	    	dataArray[colIndex] =  heatmapJSON[rowIndex].data[colIndex];
-	    	var fc = dataArray[colIndex].foldChange;
-	    	if (fc)  {
-	    		minFoldChange = (fc<minFoldChange) ? fc : minFoldChange;
-	    		maxFoldChange = (fc>maxFoldChange) ? fc : maxFoldChange;
-	    	}
-	    }
-	    
-	    var rowData = {geneId: geneName, geneId: geneName, data:dataArray}
-	    genesArray[rowIndex] = {geneName:geneName, geneId:geneId};
-	    heatmapRows[rowIndex] =  rowData;
-	    
-		numGenes++;
 	}
 
-	var heatmapHeight = hHeader + (numGenes * hCell) + 15;
+	var minWidth = 200;
+	var hmWidth = Math.max(maxGeneWidth + numAnalyses*wCell + 6, 100)
+	var wTotal;
+	wTotal = Math.max(minWidth, hmWidth)
+
+	// determine the width of the title
+	var titleFontSize = 10;	
+	var titleFont = titleFontSize + "px sans-serif"; 
+	var hTitle = 25;  // leave at least enough room for at 2 lines of text
+	var actualTitleHeight = getTextFlowHeight(keywordTitle, hmWidth, titleFont, titleFontSize);
+	hTitle = Math.max(hTitle, actualTitleHeight)
+
+	var heatmapHeight = hTitle + hHeader + (numRows * hCell) + 15;
 	var analysisLegendHeight;
 	var analysisLegendOffset = heatmapHeight;
 	var heatmapOffset = 0;
-
-	var minWidth = 500;
-	var wTotal = maxGeneWidth + numAnalyses*wCell + 6;
-	if (wTotal < minWidth)  {
-		wTotal = minWidth;
-	}
 	
+		
 	// retrieve info needed for legend
 	var legendInfo = getAnalysisLegendInfo(analyses, wTotal);
 	var hLegend = legendInfo.hLegend;
@@ -670,30 +694,53 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    .domain([rangeMin2, rangeMin, rangeMid, rangeMid, rangeMax, rangeMax2])
 	    .range(["#4400BE", "#4400BE", "#D7D5FF","#ffe2f2", "#D70C00", "#D70C00"]);
 
-	if (numGenes == 0)  {
+	if (numRows == 0)  {
 	    var hmNoData = hm.append("text")
 		.attr("x", 0)
-		.attr("y", hHeader + 15)
+		.attr("y", hTitle + hHeader + 15)
 		.attr("text-anchor", "start")
 		.text("No data")		
 	}
 	
+	// the title will be centered over heatmap if possible; othwerwise start it at left and it will extend as far as it needs to
+	var titleAnchor = "middle";
+	var titleX = hmWidth/2;		
+	
+	var hmTitleId = "hmTitle" + uniqueDivID++ ;
+	
+    var hmTitle = hm.append("text")
+	    .attr("id", hmTitleId)
+		.attr("x", titleX)
+		.attr("y", titleFontSize)
+		.style("fill", "#065B96")
+	    .style("font", titleFont)
+		.attr("text-anchor", titleAnchor);		
+
+    var textNode = document.getElementById(hmTitleId);
+	var dy = textFlow(keywordTitle,
+			textNode,
+			hmWidth,
+			hmWidth/2,
+			titleFontSize,
+			false);	    
+
+	
     //generate the heatmap
     var hmRow = hm.selectAll(".heatmap")
-      .data(heatmapRows)
+      .data(rowsArray)
       .enter().append("g");    
     
     var hmRects = hmRow
 	    .selectAll(".rect")
 	    .data(function(d) {
-	      return d.data;
+	      return d['data'];
 	    }).enter().append("svg:rect")
 	    .attr('width', wCell)
 	    .attr('height',hCell)
 	    .attr("class", "heatmapTooltip")
 	    .attr("id", function(d) {
 	    	var id = "hmCell" + uniqueHeatmapId++;   // id here will match id in tooltip array
-	    	var geneName = heatmapJSON[d.y].geneName;
+	    	var geneName = d.bioMarkerName;
 	    	
 	    	var fc;
 			if (d.foldChange == undefined)  {
@@ -723,6 +770,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    				   "<tr><td ><b>Analysis</b></td><td>" + analyses[d.x].title + "</td></tr>" +
 	    				   "<tr><td><b>Probe</b></td><td>" + d.probeId + "</td></tr>" +
 	    				   "<tr><td><b>Gene</b></td><td>" + geneName  + "</td></tr>" +
+	    				   "<tr><td><b>Organism</b></td><td>" + d.organism + "</td></tr>" +
 	    				   "<tr><td><b>Fold Change</b></td><td>" + fc  + "</td></tr>" +
 	    				   "<tr><td><b>Preferred pvalue</b></td><td>" + pvalue  + "</td></tr>" +
 	    				   "</table>";
@@ -734,7 +782,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	    	return maxGeneWidth + d.x * wCell;
 	    })
 	    .attr('y', function(d) {
-	    	return d.y * hCell + hHeader;
+	    	return d.y * hCell + hHeader + hTitle;
 	    })
 	    .style("stroke", "#333333")    // color of borders around rectangles
 	    .style("stroke-width", 1)    // width of borders around rectangles
@@ -754,7 +802,7 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	//GROUP FOR Column headers
 	var headerGroup = hm.append("svg:g")
 	  .attr("class", "columnHeader")
-	  .attr("transform", "translate(" + maxGeneWidth + "," + hHeader + ")")
+	  .attr("transform", "translate(" + maxGeneWidth + "," + (hHeader + hTitle) + ")")
 	  ;
 	
     // Show the gene labels
@@ -790,12 +838,12 @@ function drawHeatmapCTA(divID, heatmapJSON, analyses)	{
 	xOffset = 0;
 	var geneGroup = hm.append("svg:g")
 	  .attr("class", "geneGroup")
-	  .attr("transform", "translate(" + 0 + "," + hHeader + ")")
+	  .attr("transform", "translate(" + 0 + "," + (hTitle + hHeader) + ")")
 	  ;
 	
     // Show the gene labels
 	var geneGroupText = geneGroup.selectAll("a")
-		.data(genesArray)
+		.data(geneLabels)
 		.enter().append("a")
 		.attr("xlink:href", function(d) {return "javascript:showGeneInfo('" + d.geneId + "');"})
 		.append("text")
@@ -862,6 +910,7 @@ function showHeatmapTooltip(e)  {
 function exportHeatmapCTAImage()
 {	
 		var svgID=  "#xtHeatmap";
+	
 		
 		d3.select(svgID)
 			.selectAll("svg")

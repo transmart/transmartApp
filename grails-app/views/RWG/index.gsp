@@ -95,7 +95,9 @@
 			var getTopGenesURL = "${createLink([action:'getTopGenes'])}";
 			var getCrossTrialBioMarkerSummaryURL = "${createLink([action:'getCrossTrialBioMarkerSummary'])}";
 	        var getHeatmapDataCTAURL = "${createLink([action:'getHeatmapDataCTA'])}";
-	        var getHeatmapCTAGenesURL = "${createLink([action:'getHeatmapCTAGenes'])}";
+	        var getHeatmapCTARowCountURL = "${createLink([action:'getHeatmapCTARowCount'])}";
+	        var getHeatmapCTARowsURL = "${createLink([action:'getHeatmapCTARows'])}";
+	        var getCrossTrialSummaryTableStatsURL = "${createLink([action:'getCrossTrialSummaryTableStats'])}";
 	        			
 			var showHomePageFirst=true;
 			
@@ -125,7 +127,7 @@
 		        addSearchAutoComplete();
 		        addToggleButton();
 
-		    	showSearchResults(); //reload the full search results	    
+		    	showSearchResults(true); //reload the full search results, but don't populate facets on initial load since it's already been done	    
 
 		    	showIEWarningMsg();
 
@@ -193,15 +195,15 @@
 			<div id="menu_bar">
 			
 			<ul>
-				<li class='toolbar-item'><a href="#" onclick='showHomePage();'><img style='vertical-align:top;' src="${resource(dir:'images/fc_menu',file:'menu_icon_home_bw.png')}"> Home</a></li>
-				<li class='toolbar-item'><a href="#" onclick='showResultsPage();'><img style='vertical-align:top' src="${resource(dir:'images/fc_menu',file:'menu_icon_search_bw.png')}"> Search Results</a></li>
-				<li class='toolbar-item'><a href="#" onclick='showCrossTrialAnalysis();'><img style='vertical-align:top' src="${resource(dir:'images/fc_menu',file:'menu_icon_crosstrial_bw.png')}"> Cross Trial Analysis</a>
+				<li class='toolbar-item'><a href="#" onclick='showHomePage();'><img id=imgHome style='vertical-align:top;' src="${resource(dir:'images/fc_menu',file:'menu_icon_home.png')}"> Home</a></li>
+				<li class='toolbar-item'><a href="#" onclick='showResultsPage();'><img id=imgResults style='vertical-align:top' src="${resource(dir:'images/fc_menu',file:'menu_icon_search_bw.png')}"> Search Results</a></li>
+				<li class='toolbar-item'><a href="#" onclick='showCrossTrialAnalysis();'><img id=imgCTA style='vertical-align:top' src="${resource(dir:'images/fc_menu',file:'menu_icon_crosstrial_bw.png')}"> Cross Trial Analysis</a>
 				<span style="color: #999;"> | </span>
 									
 					<div id="selectedAnalyses_holder" style='display: inline-block'>
 						<div id='selectedAnalyses_btn'>
 							<a href="#" onclick='getSelectedAnalysesList();'>
-								 <span id="analysisCountLabel">(0)</span>
+								 <span id="analysisCountLabel" style="margin-left: -4px;">(0)</span>
 								 <img alt="" style='vertical-align:middle;' src="${resource(dir:'images',file:'tiny_down_arrow.png')}" />
 							</a>
 						</div>

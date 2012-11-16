@@ -717,6 +717,7 @@ p.legend_probe {
 .boxplot_analysis{
     overflow: auto;
     width: 100%;
+    margin-top: 10px;
 }
 
 
@@ -735,8 +736,8 @@ p.legend_probe {
 	border-top:0;
 	padding:10px;
 	display: inline;
-	margin-top: 10px;
-	margin-left:-10px;
+	margin-top: 2px;
+	margin-left:-5px;
 	position:absolute;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 }
@@ -753,13 +754,14 @@ p.legend_probe {
 	border-top: 0;
 	padding: 10px;
 	display: inline;
-	margin-top: 10px;
+	margin-top: 2px;
 	margin-left: -10px;
 	position: absolute;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	width:350px;
 	overflow-x: auto;
 	max-height: 450px;
+	z-index:1000;
 }
 
 #selectedAnalysesList{
@@ -847,17 +849,20 @@ background-color: #DFDFDF;
 }
 
 .toolbar-item a{
-	font-weight:normal;
+font-weight: normal;
+padding-left: 8px;
+padding-right: 8px;
+padding-top: 8px;
+padding-bottom: 7px;
+vertical-align: middle;
+display: inline-block;
 }
 
 .toolbar-item{
 display: inline-block;
 border-right: 1px dotted #CCC;
 font-size: 11px;
-padding-left: 8px;
-padding-right: 8px;
-padding-top: 8px;
-padding-bottom: 9px;
+
 
 }
 .toolbar-item a:hover{
@@ -966,19 +971,20 @@ border-top: 1px solid #CCC;
 }
 
 #xtSearch{
-	background-color: #F8F8F8;
+	background-color: #F0F0F0;
 	padding: 10px;
 	border-top: 1px solid #CCC;
 	border-bottom: 1px solid #CCC;
+	margin-bottom: 10px;
 }
 
 #xtMsgBox{
 	padding: 10px;
-	border: 1px solid #CCC;
+	border: 1px solid #9B9B9B;
 	background-color: #FFFCE5;
 	margin: auto;
-	margin-top: 10px;
 	width: 350px;
+	margin-top: 75px;
 }
 #xtMsgBox .btn{
 	color: #1B74B3;
@@ -1010,10 +1016,53 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 }
 
 
-/*******End Cross Trial Analysis Formatting *********/
+#xtSelectedAnalysesListLegend{
+	
+	margin-bottom:20px;
+	
+}
+.xtSelectedAnalysesListLegendItem{
+	padding: 8px;
+	padding-left:0;
+	border: 1px solid #DDD;
+	background-color:#F7F7F7;
+	margin-top:-1px;
+}
 
 
 
+.xtHeatmap{
+	display:inline-block;
+	min-height:250px;
+}
+
+.xtInfoBox{
+	background-color:#F0F0F0;
+	border:1px solid #ccc;
+	border-left:0;
+	border-right:0;
+	text-align:center;
+	padding:15px;
+	margin-left:50px;
+	margin-right:50px;
+	margin-top:10px;
+	margin-bottom:20px;
+	color: #333;
+	font: 12px verdana, arial, helvetica, sans-serif;
+}
+
+
+.analysisNum{
+	
+	font-weight:bold;
+	background-color: #444;
+color: #EFEFEF;
+padding: 8px;
+margin-right: 0;
+border-radius: 4px;
+border-top-right-radius: 0;
+border-bottom-right-radius: 0;
+}
 
 /*** XT Summary Bar Plots ***/
 
@@ -1042,6 +1091,7 @@ display:none; /* only displayed on hover */
 
 .xtSVGSummaryChart{
 	background-color:#fff;
+	shape-rendering: crispEdges;
 }
 
 .xtSummaryChart:hover{
@@ -1079,7 +1129,52 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
   shape-rendering: crispEdges;
 }
 
+.pvalue-cutoff-line {
+stroke: black;
+stroke-width: 1px;
+stroke-opacity: 33%;
+	
+}
+/*** End bar charts ***/
 
-/*** boxplot ***/
 
 
+/*** Home Screen ***/
+
+.home-content-box{
+width: 45%;
+border: 1px solid #CCC;
+padding: 0px 10px 10px 10px;
+background-color: #F0F0F0;
+border-left: 0;
+display: inline-block;
+border-right: 0;
+vertical-align: top;
+min-height: 200px;
+min-width:250px;
+}
+
+#favoritesTable{
+	border-collapse: collapse;
+	border: 1px solid #d5d5d5;
+}
+
+#favoritesTable td, th{
+	padding: 5px;
+	border: 1px dotted #AAA;
+	background-color: white;
+	font-weight: normal;
+}
+
+#favoritesTable th{
+	background: #E6E6E6;
+	color: #2e2e2e;
+	font-weight: normal;
+	padding:2px;
+}
+
+
+/*** End Home Screen ***/
+
+
+/*******End Cross Trial Analysis Formatting *********/

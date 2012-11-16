@@ -1,41 +1,27 @@
-			<!-- <h3>My Favorites</h3>-->
-			
-			<g:if test="${favorites.size()==0}">
-			   You have no Favorite Filters saved.
-			   <br />
-			</g:if>
-			<g:else>
-    			<h2>Load Saved Filter</h2>
-			    <table id="favoritesTable">
-			        <tr>
-			        	<td>
-					    	    <div>
-					    	    	<div style="float: left;width:100px;margin:5px;font-weight:bold">
-						    				Create Date
-							    	</div>
-					    	    	<div style="float: left;width:200px;margin:5px;font-weight:bold">
-					    	    			Filter Name
-							    	</div>
-					    	    </div>
-			        	</td>			        	
-			        </tr>
-					<g:each in="${favorites}" var="f">					
-				        <tr id="home_favorites_${f.id}" >
-				        	<td>
-						    	    <div class="staticSearchDiv" >
-						    	    	<div style="float: left;width:100px;margin:5px;">
-							    				${f.createDt.format("MM/dd/yyyy")}
-								    	</div>
-						    	    	<div style="float: left;width:200px;margin:5px;" >
-							    				<a href="#" id="linkSearchName_${f.id}" class="searchTooltip" onclick="loadSearch(${f.id}); return false;"><span id="home_labelSearchName_${f.id}" >${f.name}</span></a>
-							    											    				
-								    	</div>
-							</td>
-						</tr>
-					</g:each>
-			    </table>
-			</g:else>
-			<br />
-		
-	<script>	registerSearchTooltipEvents();
+
+<g:if test="${favorites.size()==0}">
+   You have no Favorite Filters saved.
+   <br />
+</g:if>
+<g:else>
+ 	<h2>Saved Filters</h2>
+    <table id="favoritesTable">
+        <tr>
+        	<th style="width:100px">Create Date</th>
+        	<th>Filter Name</th>      	
+        </tr>
+		<g:each in="${favorites}" var="f">					
+	        <tr id="home_favorites_${f.id}" >
+	        	<td>${f.createDt.format("MM/dd/yyyy")}</td>
+				<td><a href="#" id="linkSearchName_${f.id}" class="searchTooltip" onclick="loadSearch(${f.id}); return false;">
+						<span id="home_labelSearchName_${f.id}" >${f.name}</span>
+					</a>
+				</td>
+			</tr>
+		</g:each>
+    </table>
+</g:else>
+
+<script>	
+	registerSearchTooltipEvents();
 </script>			

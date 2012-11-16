@@ -1433,11 +1433,41 @@ class RWGVisualizationDAO {
 
    def getCrossTrialBioMarkerSummary(search_keyword, analysisList)	{
 	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-							 
+	   
+	   def s = "";
+	   
+	   //convert the CSV analysisList into an array of objects 
+	   def analysisObj = analysisList.split(',').collect{it as int}
+	   
+	   //loop through the array and add the select statement for each analysis
+	   analysisObj.each{
+		   
+		   s = s + """        
+			    select * from (
+			    select distinct bio_assay_analysis_id, bio_marker_id, bio_marker_name, 
+					fold_change_ratio, tea_normalized_pvalue, preferred_pvalue
+					from BIOMART.heat_map_results
+					where bio_marker_id in (select distinct bmv.asso_bio_marker_id
+					from BIOMART.bio_marker_correl_mv bmv
+					where bmv.bio_marker_id = (select sk.bio_data_id
+					from searchapp.search_keyword sk
+					where sk.search_keyword_id = ${search_keyword}))
+					and bio_assay_analysis_id = ${it}
+			    order by preferred_pvalue asc)
+			    where rownum=1"""
+		   
+		   if(it != analysisObj.last()) {
+		   		s=s+" union ";
+		   }
+		   
+	   }
+	   
+	   /*
+		//Old method for getting results below:					 
 	String s ="""
 
 		select distinct bio_assay_analysis_id, bio_marker_id, bio_marker_name, 
-		avg(fold_change_ratio) fold_change_ratio, avg(tea_normalized_pvalue) tea_normalized_pvalue, avg(preferred_pvalue) preferred_pvalue
+		max(abs(fold_change_ratio)) fold_change_ratio, min(tea_normalized_pvalue) tea_normalized_pvalue, min(preferred_pvalue) preferred_pvalue
 		from BIOMART.heat_map_results
 		where bio_marker_id in (select distinct bmv.asso_bio_marker_id
 		from BIOMART.bio_marker_correl_mv bmv
@@ -1446,6 +1476,8 @@ class RWGVisualizationDAO {
 		where sk.search_keyword_id = ${search_keyword}))
 		and bio_assay_analysis_id in (${analysisList})
 		group by bio_assay_analysis_id, bio_marker_id, bio_marker_name"""
+		
+		*/
 	   
 	   log.debug("${s}")
    
@@ -1466,43 +1498,99 @@ class RWGVisualizationDAO {
    
 	   return  resultSet
    }
-   	   
-	 	 
-
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   def getCrossTrialSummaryTableStats(analysisList)	{
+	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	   
+	   def s = "";
+	   
+	   //convert the CSV analysisList into an array of objects
+	   def analysisObj = analysisList.split(',').collect{it as int}
+	   
+	   //loop through the array and add the select statement for each analysis
+	   analysisObj.each{
+		   
+		   s = s + """
+		
+		    select ${it} as bio_assay_analysis_id,
+		    (select count(distinct(bio_marker_id))
+		    from biomart.heat_map_results
+		    where  bio_assay_analysis_id =${it}
+		    and significant=1
+		    and fold_change_ratio > 0) as upreg,
+		    (select count(distinct(bio_marker_id))
+		    from biomart.heat_map_results
+		    where  bio_assay_analysis_id =${it}
+		    and significant=1
+		    and fold_change_ratio < 0) as downreg,
+		    (select count(distinct(bio_marker_id))
+		    from biomart.heat_map_results
+		    where  bio_assay_analysis_id =${it})
+		    as total
+		    from dual"""
+		   
+		   if(it != analysisObj.last()) {
+				   s=s+" union ";
+		   }
+		   
+	   }
+	   
+	   log.debug("${s}")
+   
+		   def rows = sql.rows(s)
+		   
+		   def resultSet=[]
+		   rows.each {row->
+			   def result=[:]
+			   result.put('bio_assay_analysis_id', row.bio_assay_analysis_id)
+			   result.put('upreg', row.upreg)
+			   result.put('downreg', row.downreg)
+			   result.put('total', row.total)
+		   resultSet.push(result)
+	   }
+   
+	   return  resultSet
+   }
+   
+   
 /**
  * Method to retrieve the fold change for the given list of analyses and search keyword ids (i.e. genes)
  * If a gene is in multiple probes for an analyses, the probe with the max pvalue/fold change will be used to 
  *   determine the fold change  
  *
  * @param analysisIds - the list of analysis IDs
- * @param bmIds - pipe delimited list of biomarker ids for genes
+ * @param searchKeywordIds - list of search keyword ids for genes
  *
- * @return a map containing the analysis id as key and a map for each gene with biomarker id for gene as key
- *         gene map contains probeId, pvalue, and fold change
+ * @return a map containing the analysis id as key and a map for each gene with search keyword id for gene as key
+ *         gene map contains biomarker name, probeId, pvalue, and fold change, and gene id, organism
  **/
-def getHeatmapDataCTA  = {analysisIds, bmIds ->
+def getHeatmapDataCTA  = {analysisIds, searchKeywordIds ->
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
 	s.append("""
-	     select distinct bio_assay_analysis_id, upper(bio_marker_name) bio_marker_name, bio_marker_id, probe_id, gene_id, preferred_pvalue, abs(fold_change_ratio),
-			fold_change_ratio
-		  from heat_map_results
+	     select distinct bio_assay_analysis_id, search_keyword_id, bio_marker_name, probe_id, preferred_pvalue,
+            abs(fold_change), fold_change, organism
+		  from cta_results
 		   where Bio_Assay_Analysis_Id in ("""
     ) 
 
 	s.append(analysisIds.join(','))
 	s.append(") ")  
-	s.append(convertPipeDelimitedStringToInClause(bmIds, "bio_marker_id"))
-	s.append(" order by bio_assay_analysis_id, upper(bio_marker_name), preferred_pvalue asc, abs(fold_change_ratio) desc ")
+	s.append(" and search_keyword_id in (" + searchKeywordIds.join(",")+" )")
+	s.append(" order by bio_assay_analysis_id, search_keyword_id, preferred_pvalue asc, abs(fold_change) desc ")
 
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
 	def analysisMap = [:]
-	def returnMap = [:]
-	def bioMarkerIdsList = []
-	def geneIdsList = []
-	def geneNamesList = []
 
 	// loop through and determine probe id  with highest pvalue/fold change 	(since they are ordered desc it will be the first one encountered for the analysis/gene)
 	results.each{ row->
@@ -1516,88 +1604,168 @@ def getHeatmapDataCTA  = {analysisIds, bmIds ->
 			analysisMap.put(aId, aMap)
 		}  
 			
-		def geneName = row.bio_marker_name
-		def geneId = row.gene_id
-		def bioMarkerId = row.bio_marker_id
+		def searchKeywordId = row.search_keyword_id.toString()
 		// if gene not mapped yet for analysis, then add it with fold change and probe used
 		//   (if there, skip it since it's not most significant probe)
-        if (!aMap.get(bioMarkerId))  {
+        if (!aMap.get(searchKeywordId))  {
 			def geneMap = [:]
 			geneMap.put("probeId", row.probe_id)
-			geneMap.put("foldChange", row.fold_change_ratio)
+			geneMap.put("foldChange", row.fold_change)
 			geneMap.put("preferredPValue", row.preferred_pvalue)
+			geneMap.put("bioMarkerName", row.bio_marker_name)
+			geneMap.put("organism", row.organism)
 			
-			aMap.put(bioMarkerId, geneMap)
-		}
-		
-		// also create lists containing the list of unique, sorted biomarker ids and names
-		// not in list yet, add it
-		if (bioMarkerIdsList.indexOf(bioMarkerId) == -1)
-		{				  
-			  // find location to insert this item based on the gene name alphabetically
-			  def insertLocation = 0;
-			  while (insertLocation<geneNamesList.size())  {
-				  
-				  if (geneName > geneNamesList[insertLocation])  {
-					  insertLocation++;
-				  } 
-				  else  {
-				  		break;
-				  }
-			  }
-			  geneIdsList.add(insertLocation, geneId)			  
-			  geneNamesList.add(insertLocation, geneName)
-			  bioMarkerIdsList.add(insertLocation, bioMarkerId)
-		}			  
-			
+			aMap.put(searchKeywordId, geneMap)
+		}					
 	}
 	
-	returnMap.put("analysisInfo", analysisMap)
-	returnMap.put("bioMarkerIds", bioMarkerIdsList)
-	returnMap.put("geneIds", geneIdsList)
-	returnMap.put("geneNames", geneNamesList)
-	
-	println returnMap 
-	
-	return returnMap
+	return analysisMap
  }
-
 
 
 /**
- * Method to retrieve the list of unique gene ids with data for a given list of analysis ids and gene ids
+ * Build the SQL statement shared by the CTA heatmap queries (this will be wrapped in other queries to obtain
+ *   either the total count of rows or row information for a subset of pages) 
  *
  * @param analysisIds - the list of analysis IDs
- * @param keywordIds - pipe delimited string of keyword ids for genes
+ * @param category - the category of the search keyword id passed in (GENELIST, GENESIG, or PATHWAY)
+ * @param keywordId - the keywpord for a gene lsit, gene sig, or pathway
  *
- * @return a map containing the gene count and the list of gene ids
+ * @return sql statement
+ *
  **/
-def getHeatmapGenesCTA  = {analysisIds, keywordIds ->
+def getCTAResultsSQL  = {analysisIds, category, keywordId ->
+	String s=""	
+	// determine which view we will join to for the list of genes
+	def viewName;
+	def viewGeneColName;
+	def viewListColName;
+	if (category == 'PATHWAY')  {
+		viewName = 'pathway_genes'
+		viewListColName = 'pathway_keyword_id'
+	}
+	else  {
+		viewName = 'listsig_genes'
+		viewListColName = 'list_keyword_id'
+	}
+	
+	s = """
+			select distinct c.search_keyword_id, c.keyword, min(c.gene_id) gene_id
+			from cta_results c, ${viewName} v
+			where c.search_keyword_id=v.gene_keyword_id
+			and v.${viewListColName}=?
+	 	    and Bio_Assay_Analysis_Id in ("""
+	
+	s += analysisIds.join(',')
+	s += ") group by search_keyword_id, keyword order by keyword "
+	return s
+}
+
+/**
+ * Method to retrieve the number rows for the heatmap CTA, i.e. unique genes with data for a given list of analysis ids and list/sig/pathway 
+ *
+ * @param analysisIds - the list of analysis IDs
+ * @param category - the category of the search keyword id passed in (GENELIST, GENESIG, or PATHWAY)
+ * @param keywordId - the keywpord for a gene lsit, gene sig, or pathway
+ *
+ * @return a count of the number of rows, i.e. unique genes (associated genes count as a single gene)
+ *
+ **/
+def getHeatmapRowCountCTA  = {analysisIds, category, keywordId ->
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 	List sqlParams = []
-	s.append("""
-	     select distinct bio_marker_id, upper(bio_marker_name) gene_name
-		  from heat_map_results
-		   where Bio_Assay_Analysis_Id in ("""
-	)
 
-	s.append(analysisIds.join(','))
+	s.append("select count(1) numrows from (")
+	s.append(getCTAResultsSQL(analysisIds, category, keywordId))
+	sqlParams.add(keywordId)
 	s.append(") ")
-	s.append(convertPipeDelimitedStringToInClause(keywordIds, "search_keyword_id"))
 
-	s.append(" order by upper(bio_marker_name) asc")
-	
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
-	def bmIds = [];
-		
-	// loop through and determine probe id  with highest pvalue/fold change 	(since they are ordered desc it will be the first one encountered for the analysis/gene)
+	
+	def rowCount
 	results.each{ row->
-		bmIds.add(row.bio_marker_id)
+	   	
+	   // add to info map
+	   rowCount = row.numRows
 	}
 	
-	return bmIds
+	return rowCount
  }
+
+
+/**
+ * Method to retrieve the rows for a certain page of the heatmap CTA 
+ *
+ * @param analysisIds - the list of analysis IDs
+ * @param category - the category of the search keyword id passed in (GENELIST, GENESIG, or PATHWAY)
+ * @param keywordId - the keywpord for a gene lsit, gene sig, or pathway
+ * @param startRank - the index of the first row to return
+ * @param endRank - the index of the last row to return
+ *
+ * @return a map containing information about the rows on that page, e.g. keyword, biomarker info
+ *
+ **/
+def getHeatmapRowsCTA  = {analysisIds, category, keywordId, startRank, endRank ->
+	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	StringBuilder s = new StringBuilder()
+	List sqlParams = []
+
+	s.append("""select search_keyword_id, keyword, gene_id, rank from (
+					select search_keyword_id, keyword, gene_id, rownum rank from (
+			""")
+	s.append(getCTAResultsSQL(analysisIds, category, keywordId))
+	sqlParams.add(keywordId)
+	s.append(") )")
+    s.append("where rank between ? and ? order by rank")
+	sqlParams.add(startRank)
+	sqlParams.add(endRank)
+
+	// retrieve results
+	def results = sql.rows(s.toString(), sqlParams)
+	
+	def rowCount
+	def rows = [:]
+	results.each{ row->
+  	    // create info map for row
+	   	def rowInfo = [:]
+		def rank = row.rank
+		rowInfo.put("searchKeywordId", row.search_keyword_id)
+		rowInfo.put("keyword", row.keyword)
+		rowInfo.put("geneId", row.gene_id)
+	  
+        rows.put(rank, rowInfo)	   
+	}
+	
+	return rows
+ }
+
+
+/**
+ * Method to retrieve the last data load time for faceted search
+ *
+ * @return the last data load time
+ *
+ **/
+def getLastDataLoadTime  = {
+	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	StringBuilder s = new StringBuilder()
+
+	s.append("""select max(analysis_update_date) last_update_time, sysdate current_time 
+             from bio_assay_analysis where analysis_update_date is not null""")
+
+	// retrieve results
+	def results = sql.rows(s.toString())
+	def lastUpdateTime, currentDbTime
+	results.each{ row->
+		   
+	   // add to info map
+	   lastUpdateTime = row.last_update_time
+	   currentDbTime = row.current_time
+	}
+	return ['lastUpdateTime':lastUpdateTime, 'currentDbTime':currentDbTime]
+ }
+
 
 }

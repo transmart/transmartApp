@@ -10,7 +10,10 @@
     	jQuery('#xtSummaryChartArea').sortable();
     	
 
-    	displaySelectedAnalysisTopGenes();
+    	//displaySelectedAnalysisTopGenes();
+    	
+    	getCrossTrialSummaryTableStats();
+    	
     	addXTSearchAutoComplete();
 
     		var tabID = "#xtMenuBar";
@@ -27,19 +30,23 @@
 
 	<div id ="xtSearch">
 		Search for gene, pathway, or gene signature: <input id="xtSearch-ac"/></input> 
+		<div style="float:right">
+			<span id="save-modal-xt" class='title-link-inactive'>Save Selection</span> | <a href="#">Open Saved XT Analysis</a> | <a href="#">Clear All</a>
+		</div>
 	</div>
 	
-	<div id="xtMsgBox" style="display:none">
-		<p style="text-align:center; margin-bottom:8px">The analysis selection has changed</p>
-		<p style="text-align:center"><a href="#" onclick="updateCrossTrialGeneCharts();" class=btn>Redraw charts</a>
-		<a href="#" onclick="clearAllXTSearchTerms();" class="btn">Clear all</a></p>
+	<div style="width: 95%;margin: auto;position: absolute;z-index: 700;">
+		<div id="xtMsgBox" style="display:none">
+			<p style="text-align:center; margin-bottom:8px">The analysis selection has changed</p>
+			<p style="text-align:center"><a href="#" onclick="updateCrossTrialGeneCharts();" class=btn>Redraw charts</a>
+			<a href="#" onclick="clearAllXTSearchTerms();" class="btn">Clear all</a></p>
+		</div>
 	</div>
-	
 	
 	<div id="xtMenuBar" class="analysis-tabs">
 		<ul>
 			<li><a href="#xtSummary">Summary Table</a></li>
-			<li><a href="#xtSummaryChartArea">Gene Charts</a></li>
+			<li><a href="#xtGeneChartTab">Gene Charts</a></li>
 			<li><a href="#xtHeatmapTab">Heatmap</a></li>
 		</ul>
 		
@@ -51,13 +58,15 @@
 		</div>		
 		
 		<!--  Gene Charts Tab -->
-		<div id="xtSummaryChartArea"></div>
+		<div id="xtGeneChartTab">
+			<div id="xtSummaryChartArea"></div>
+			<div id="xtNoGenesMsg" class="xtInfoBox"><p>No genes are selected. Use the search box above to add genes for analysis.</p></div>
+		</div>
 		
 		<!-- Heatmap Tab Content -->
 		<div id ="xtHeatmapTab">
-			<div id="xtHeatmap"></div>
-			<a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a>
-			<div id="xtHeatmapPaginator" class="pagination" style="text-align:left"></div>
+		<!-- 	<a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a> -->
+
 		</div>
 		
 	</div>

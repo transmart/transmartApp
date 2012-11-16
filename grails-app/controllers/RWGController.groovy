@@ -168,89 +168,124 @@ class RWGController {
    * Create the JSON string used as the "children" of the taxonomy DynaTree
    */
   def getDynatree = {
-  
-	  // find all relationships
-	  def rels = SearchTaxonomyRels.list(sort:"child.termName")
-	  
-	  // retrieve all taxonomy records (i.e. nodes in the tree)
-	  def allNodes = SearchTaxonomy.list()
-	  
-	  def rootNode = null
+	  def cachedJson = grailsApplication.config.getProperty("dynatree")
 
-	  // loop through every node, and link it to its parent and children to create tree
-	  for (node in allNodes) {
-		  for (rel in rels) {
-			  
-			  if (rel.parent) {   // non root node
-				  // check if relationship represents a parent rel for the current node, and if so add the
-				  // child to the node's children list
-				  if (node.id == rel.parent.id) {
-					  node.children.add(rel.child)
-				  }
+	  def rwgDAO = new RWGVisualizationDAO()
+	  
+	  // retrieve the last time data was loaded/modified in the database, and the current time in the db
+	  // this needs to be done regardless of whether we have a cached value because the current db time is needed for
+	  //   storing the new string that will be cached
+	  def dbTimes = rwgDAO.getLastDataLoadTime()
+	  def dbLastUpdateTime = dbTimes['lastUpdateTime']
+	  def dbCurrentTime = dbTimes['currentDbTime']
+	  
+	  def useCachedValue = false
+	  if (cachedJson)  {
+		    // there is a cached dynatree json string, get when it was cached
+			def cachedTime = cachedJson['time']
+		
+			// if the cachedTime was later than the db time or the db time is not set use the cached value
+			if (!dbLastUpdateTime || (cachedTime>dbLastUpdateTime))  {
+				useCachedValue = true
+			}
+	  }
+		
+	  def json
+	  if (useCachedValue)  {
+		json = cachedJson['json']
+	  }
+	  else {
+	  
+		  // find all relationships
+		  def rels = SearchTaxonomyRels.list(sort:"child.termName")
+		  
+		  // retrieve all taxonomy records (i.e. nodes in the tree)
+		  def allNodes = SearchTaxonomy.list()
+		  
+		  def rootNode = null
+	
+		  // loop through every node, and link it to its parent and children to create tree
+		  for (node in allNodes) {
+			  for (rel in rels) {
 				  
-				  // check if relationship represents a child rel for the current node, and if so add the
-				  // parent to the node's parent list
-				  if (node.id == rel.child.id) {
-					  node.parents.add(rel.parent)
+				  if (rel.parent) {   // non root node
+					  // check if relationship represents a parent rel for the current node, and if so add the
+					  // child to the node's children list
+					  if (node.id == rel.parent.id) {
+						  node.children.add(rel.child)
+					  }
+					  
+					  // check if relationship represents a child rel for the current node, and if so add the
+					  // parent to the node's parent list
+					  if (node.id == rel.child.id) {
+						  node.parents.add(rel.parent)
+					  }
+				  }
+				  else {    // root node found
+					  rootNode = rel.child
 				  }
 			  }
-			  else {    // root node found
-				  rootNode = rel.child
+		  }
+	
+		  JSONArray categories = new JSONArray()
+		  
+		  if (rootNode.children)  {
+			  
+			  def categoriesList = []
+			  // loop thru all children of root and create a list of categories to be used for initial facet search
+			  for (categoryNode in rootNode.children)  {
+				  String catName = categoryNode.termName
+				  
+				  // SOLR equivalent field is all uppercases with underscores instead of spaces
+				  catName = getSOLRCategoryName(catName)
+				  categoriesList.push(catName)
+			  }
+	
+			  // retrieve initial facet counts to be used in tree
+			  JSONObject initialFacetCounts = getInitialFacetResults(categoriesList)
+	
+			  // CREATE JSON ARRAY FOR TREE	  		  		  		  		  
+			  def nodeIndex = 1
+			  
+			  // loop thru all children of root and add to JSON array for categories (addNode will recursively add children)
+			  for (categoryNode in rootNode.children)  {	
+				  
+				  // give each node a unique id within tree (id and key are not necessarily unique)
+				  // the unique id will be a concatenation of the parent's unique id + the index of this child's index in children list
+				  // e.g. category nodes will be 1,2,3; their children will be 1:1, 1:2, 1:3, 2:1, ...; their children 1:1:1, 1:1:2, ...
+				  String uniqueTreeId = nodeIndex
+				  
+				  addDynaNode(categoryNode, categories, true, categoryNode.termName, uniqueTreeId, initialFacetCounts)
+				  nodeIndex++
 			  }
 		  }
-	  }
-
-	  JSONArray categories = new JSONArray()
-	  
-	  if (rootNode.children)  {
-		  
-		  def categoriesList = []
-		  // loop thru all children of root and create a list of categories to be used for initial facet search
-		  for (categoryNode in rootNode.children)  {
-			  String catName = categoryNode.termName
-			  
-			  // SOLR equivalent field is all uppercases with underscores instead of spaces
-			  catName = getSOLRCategoryName(catName)
-			  categoriesList.push(catName)
+		  else  {
+			  throw new Exception("Root node not found")
 		  }
-
-		  // retrieve initial facet counts to be used in tree
-		  JSONObject initialFacetCounts = getInitialFacetResults(categoriesList)
-
-		  // CREATE JSON ARRAY FOR TREE	  		  		  		  		  
-		  def nodeIndex = 1
+		  json = categories?.toString()
 		  
-		  // loop thru all children of root and add to JSON array for categories (addNode will recursively add children)
-		  for (categoryNode in rootNode.children)  {	
-			  
-			  // give each node a unique id within tree (id and key are not necessarily unique)
-			  // the unique id will be a concatenation of the parent's unique id + the index of this child's index in children list
-			  // e.g. category nodes will be 1,2,3; their children will be 1:1, 1:2, 1:3, 2:1, ...; their children 1:1:1, 1:1:2, ...
-			  String uniqueTreeId = nodeIndex
-			  
-			  addDynaNode(categoryNode, categories, true, categoryNode.termName, uniqueTreeId, initialFacetCounts)
-			  nodeIndex++
-		  }
-	  }
-	  else  {
-		  throw new Exception("Root node not found")
+		  cachedJson = [:]
+		  cachedJson.put('time', dbCurrentTime)   
+		  cachedJson.put('json', json)
+		  grailsApplication.config.setProperty("dynatree", cachedJson)
+		  
 	  }
 	  
 	  response.setContentType("text/json")
-	  response.outputStream << categories?.toString()
+	  response.outputStream << json
 
    }
   
    /**
-    * Create a query string for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
+    * Create a query string for the category in the form of (<cat1>:("term1" OR "term2"))
     */
    def createCategoryQueryString = {category, termList -> 
 
-       // create a query for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
+       // create a query for the category in the form of (<cat1>:("term1" OR "term2"))
        String categoryQuery = ""
        for (t in termList.tokenize("|"))  {
 	   
-	       def queryTerm = /${category}:"${t}"/
+	       def queryTerm = /"${t}"/
 	   
 	       if (categoryQuery == "")  {
 		       categoryQuery = queryTerm
@@ -261,7 +296,7 @@ class RWGController {
        }
 
 	   // enclose query clause in parens
-       categoryQuery = /(${categoryQuery})/
+       categoryQuery = /(${category}:(${categoryQuery}))/
 	   
 	   return categoryQuery
   }
@@ -402,6 +437,7 @@ class RWGController {
 	   // add params to request 	   	   
 	   def dataWriter = new OutputStreamWriter(solrConnection.outputStream)
 	   dataWriter.write(solrQueryParams)
+
 	   dataWriter.flush()
 	   dataWriter.close()
 	   
@@ -904,122 +940,94 @@ class RWGController {
    }
 
    /**
-	* Returns the data for the heatmap visualization for Cross Trial Analysis
-	* 
-	* @param params.analysisIds: list of analysis ids
-	* @param params.bmIds: list of bio marker ids representing genes  
-	* 
-	*/
-   def getHeatmapDataCTA = {
-	   def rwgDAO = new RWGVisualizationDAO()
-	   
-	   
-	   // bioMarkerIdsListIn should match bioMarkerIdsListOut with the way the data flow currently works (i.e.
-	   //   we've already determined the list of genes with data to be shown on current page so we already know
-	   //   what the output list is, however leaving this as 2 separate lists in case we need to change flow)
-	   def analysisIdsList = params.analysisIds.split(/\|/)
-	   def bioMarkerIdsListIn = params.bmIds
-	   
-	   def returnData = rwgDAO.getHeatmapDataCTA(analysisIdsList, bioMarkerIdsListIn)
-	   
-	   def analysisData = returnData.get("analysisInfo")
-	   def bioMarkerIdsListOut = returnData.get("bioMarkerIds")
-	   def geneIdsList = returnData.get("geneIds")
-	   def geneNamesList = returnData.get("geneNames")
-	   
-	   // create a matrix of values that will be used in heatmap.  This will be a map of rows (keyed on order); each row will also contain a map
-	   // e.g.   [
-	   //          0:  [geneId:geneId1, geneName:"genename1", data:[0:[probeId:"p1", fc:1.1, pValue:0.5, x:0, y:0], 1:[...], 2:[]....  ] ],
-	   //          1:  [geneName:"genename2", data:[0:[....], 1:[.....], 2:[....]  ] ],
-	   //
-	   //        ]
-	   
-	   def matrix = [:]
-	   int rowIndex = 0; 
-	   bioMarkerIdsListOut.each{  bmId ->
-		   
-		   def row = [:]
-		   row.put("bmId", bmId)		   
-		   row.put("geneName", geneNamesList[rowIndex])
-		   row.put("geneId", geneIdsList[rowIndex])
-		   
-		   // now add a data map which contains one column for each analysis in list of analysis Ids passed in
-		   def colIndex = 0;
-		   def data = [:]
-		   analysisIdsList.each { analysisId ->
-			   
-			   def cellData = analysisData?.get(analysisId)?.get(bmId)
-			   
-			   if (!cellData)  {
-				   cellData = [:]
-			   }
-			   cellData.put("x", colIndex)
-			   cellData.put("y", rowIndex)
-			   
-			   data.put(colIndex, cellData)
-			   
-			   colIndex++;
-		   }
-		   
-		   row.put("data", data)
-		   
-		   matrix.put(rowIndex, row)
-		   rowIndex++;
-	   }
-	   
-	   render matrix as JSON
-   }
-
-   
-   
-   /**
-	* Method to get the count and list of genes with data for the CTA heatmap for the given filters
+	* Method to total number of rows for the CTA heatmap for the given filters
 	* 
 	* @param params.analysisIds: list of analysis ids
 	* @param params.category: either PATHWAY, GENELIST, or GENESIG  
 	* @param params.searchKeywordId: search keyword id of the pathway, genelist or gene signature
 	* 
 	*/
-   def getHeatmapCTAGenes = {
+   def getHeatmapCTARowCount = {
 	   def rwgDAO = new RWGVisualizationDAO()
-
-	   // take the pathway or gene list/sig, and convert to pipe delimited list of gene ids (search keyword ids)
-	   // reuse the existing method we had for passing params into SOLR query - requires that we have a list with the
-	   // category followed by colon followed by list of pipe delimited terms - so for our purposes we will have one
-	   // category in list (i.e. GENELIST or GENESIG or PATHWAY) with one term in the pipe delimited terms;
-	   // e.g. ["GENELIST:1693394"]
-	   def queryParams = []
-
-	   queryParams.push(/${params.category}:${params.searchKeywordId}/)
-		 
-	   // replace gene signatures or gene list terms into their list of individual genes
-	   // list coming back will be in form of [":GENE1|GENE2|..."]  where GENE1 is a search keyword id representing a gene
-	   queryParams = replaceGeneLists(queryParams, "")
+       // Render the template for the favorites dialog
 	   
-	   // take the first/only item from list and get rid of the leading colon to give us just a string containing a pipe
-	   // delimited list of gene search keyword ids
-	   def genesList = queryParams[0].replace(":", "")
-
 	   def analysisIdsList = params.analysisIds.split(/\|/)
-	   
-	   def bmIdsWithData = rwgDAO.getHeatmapGenesCTA(analysisIdsList, genesList)	   
-	   def maxGeneIndex = bmIdsWithData.size()
-	      
-	   JSONObject ret = new JSONObject()
-	   ret.put('maxGeneIndex', maxGeneIndex)
-	   ret.put('bmIdsWithData', bmIdsWithData.join('|'))
-	   
-	   response.setContentType("text/json")
-	   response.outputStream << ret?.toString()
-					 
+
+	   def ret = [:]
+	   def totalCount
+	   totalCount = rwgDAO.getHeatmapRowCountCTA(analysisIdsList, params.category, params.searchKeywordId)
+	   ret.put("totalCount",  totalCount) 
+	   render ret as JSON	   
    }
    
-   // Render the template for the favorites dialog
+   /**
+	* Method to get the list of rows on a certain page of the CTA heatmap for the given filters
+	* 
+	* @param params.analysisIds: list of analysis ids
+	* @param params.category: either PATHWAY, GENELIST, or GENESIG  
+	* @param params.searchKeywordId: search keyword id of the pathway, genelist or gene signature
+	* @param params.startRank: start index of page to be returned
+	* @param params.endRank: end index of page to be returned
+	* 
+	*/
+   def getHeatmapCTARows = {
+	   def rwgDAO = new RWGVisualizationDAO()
+       // Render the template for the favorites dialog
+	   
+	   def analysisIdsList = params.analysisIds.split(/\|/)
+
+	   def ret = [:]
+
+	   int startRank = params.startRank.toInteger()
+	   int endRank = params.endRank.toInteger()
+	   
+	   def rows = rwgDAO.getHeatmapRowsCTA(analysisIdsList, params.category, params.searchKeywordId, startRank, endRank)
+	   
+	   // loop through to get list of search keyword ids for page
+	   def searchKeywordIds = []
+	   for (def i=startRank; i<=endRank; i++)  {
+		   def kwId = rows.get(i.toBigDecimal()).get("searchKeywordId")
+		   
+		   searchKeywordIds.add(kwId)
+	   }
+
+	   def data = rwgDAO.getHeatmapDataCTA(analysisIdsList, searchKeywordIds)
+	   
+	   // add the data returned to the rows
+	   def r = 0
+	   for (def i=startRank; i<=endRank; i++)  {
+		   def row = rows.get(i.toBigDecimal())
+		   def kwId = row.get("searchKeywordId")
+		   
+		   def rowData = [:]
+		   def c = 0
+		   analysisIdsList.each {aId ->
+			   def colData = data?.get(aId.toString())?.get(kwId.toString())
+			   // no data for col, create an empty map
+			   if (!colData)  {
+				   colData = [:]
+			   }
+			   colData.put("x", c)
+			   colData.put("y", r)
+			   
+			   rowData.put(c, colData)
+			   
+			   c++
+		   }
+		   row.put("data",  rowData)
+		   r++
+	   }
+	   
+	   ret.put("rows",  rows)
+	   
+	   render ret as JSON	   
+   }
+
    def renderFavoritesTemplate = {
 	   
 	   def html
 	   
-	   def favorites = getFavorites()
+	   def favorites = getFavorites(params.searchType)
 	   
 	   render(template:'loadFavoritesModal', model:[favorites:favorites]).toString()	   	   	   
 			  
@@ -1030,15 +1038,19 @@ class RWGController {
    def saveFacetedSearch = {
 	   	   
 	   def name = params.name	   
-	   def criteria = params.criteria
+	   def keywords = params.keywords
+	   def analysisIds = params?.analysisIds
+	   def searchType = params.searchType
 	   
 	   def authPrincipal = springSecurityService.getPrincipal()
 	   def userId = authPrincipal.id   
 
 	   SavedFacetedSearch s = new SavedFacetedSearch()
 	   s.name = name
-	   s.criteria = criteria
+	   s.keywords = keywords
+	   s.analysisIds = analysisIds
 	   s.userId = userId
+	   s.searchType = searchType
 	   
 	   boolean successFlag
 	   def msg = ""	   
@@ -1186,10 +1198,10 @@ class RWGController {
 		   successFlag = false
 	   }
 	   else   {
-		   def criteria = s.criteria
+		   def keywords = s.keywords
 
-		   // convert the criteria string to a list of search keyword ids
-		   def ids = criteria.tokenize('|')
+		   // convert the keywords string to a list of search keyword ids
+		   def ids = keywords.tokenize('|')
 
 		   ids.each {
 			   JSONObject termArray = new JSONObject()   // json object for current search term
@@ -1238,12 +1250,12 @@ class RWGController {
    }
 
    // Load the current user's saved favorites
-   def getFavorites = {
+   def getFavorites = {searchType->
 	   
 	   def authPrincipal = springSecurityService.getPrincipal()
 
 	   def userId = authPrincipal.id   
-	   def favorites = SavedFacetedSearch.findAllByUserId(userId, [sort:"createDt", order:"desc"])
+	   def favorites = SavedFacetedSearch.findAllByUserIdAndSearchType(userId, searchType, [sort:"createDt", order:"desc"])
 
 	   // add the search terms and counts as properties to each favorite 	   	   
 	   favorites.each  {
@@ -1290,7 +1302,7 @@ class RWGController {
 		   currentcharttype=params.currentcharttype;
 	   }
 	   def rwgDAO = new RWGVisualizationDAO()
-	   def favorites = getFavorites()
+	   def favorites = getFavorites('FACETED_SEARCH')
 	   def categories;
 	   def showAll=false;
 	   if(params.showAll=="true")
@@ -1326,6 +1338,15 @@ class RWGController {
 	   render r as JSON
 	   
    }
+   
+   def getCrossTrialSummaryTableStats = {
+	   def rwgDAO = new RWGVisualizationDAO()
+	   def r = rwgDAO.getCrossTrialSummaryTableStats(params.analysisList)
+	   
+	   render r as JSON
+	   
+   }
+   
    
    
    
