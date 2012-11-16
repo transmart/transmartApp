@@ -54,13 +54,15 @@
 		<div id="xtSummary">
 		
 			<div id="xtTopGenes"></div>
+			<div id="xtSummaryTable"></div>
 		
 		</div>		
 		
 		<!--  Gene Charts Tab -->
 		<div id="xtGeneChartTab">
 			<div id="xtSummaryChartArea"></div>
-			<div id="xtNoGenesMsg" class="xtInfoBox"><p>No genes are selected. Use the search box above to add genes for analysis.</p></div>
+			<div id="xtNoGenesMsg" class="xtInfoBox">
+			<p>No genes are selected.</p><br/><p> Use the search box above to add genes for analysis.</p></div>
 		</div>
 		
 		<!-- Heatmap Tab Content -->
@@ -72,10 +74,18 @@
 	</div>
 	
 	
-			
-	<h2>Selected Analyses</h2>
-	
-	<div id="xtSummary_AnalysesList"></div>
+	<div id="xtAnalysisList">
+		<h2>Selected Analyses</h2>
+		<div id="xtSummary_AnalysesList"></div>
+	</div>
+
+	<div id="xtNoAnalysesMsg" class="xtInfoBox" style="display:none">
+		<p>No analyses are selected.</p><br />
+		<p>Select analyses for comparison by using the check boxes next to each analysis in the search results,
+		or load a saved comparison.</p>
+	</div>
+
+
 	
 
 </div>

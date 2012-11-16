@@ -5,7 +5,7 @@
 </g:if>
 <g:else>
  	<h2>Saved Filters</h2>
-    <table id="favoritesTable">
+    <table id="favoritesTable" class='CTAtable'>
         <tr>
         	<th style="width:100px">Create Date</th>
         	<th>Filter Name</th>      	

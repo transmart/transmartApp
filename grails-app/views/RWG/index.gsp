@@ -171,12 +171,11 @@
 
 	            launchHomePage();
 
+	            loadCrossTrialAnalysisInitial();
+
 	        });	
+
             
-        </script>
-        
-                
-        <script type="text/javascript">		
 			jQuery(function ($) {
 				// Load dialog on click of Load link
 				$('#load-modal .basic').click(function(){openLoadSearchDialog(false);});

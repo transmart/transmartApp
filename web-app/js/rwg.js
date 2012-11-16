@@ -193,6 +193,23 @@ function clearAllSelectedAnalyses(){
 	//also clear the search terms
 	clearAllXTSearchTerms();	
 	
+	
+	//hide the elements on the main page
+	  jQuery('#xtAnalysisList').hide();
+	  jQuery('#xtMenuBar').hide();
+	  jQuery('#xtSearch-ac').prop('disabled', true);
+	  
+	  jQuery('#xtNoAnalysesMsg').show();
+
+	return;
+	
+}
+	  jQuery('#xtAnalysisList').hide();
+	  jQuery('#xtMenuBar').hide();
+	  jQuery('#xtSearch-ac').prop('disabled', true);
+	  
+	  jQuery('#xtNoAnalysesMsg').show();
+	
 	return;
 	
 }
