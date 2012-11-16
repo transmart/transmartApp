@@ -1302,7 +1302,7 @@ class RWGController {
 		   currentcharttype=params.currentcharttype;
 	   }
 	   def rwgDAO = new RWGVisualizationDAO()
-	   def favorites = getFavorites()
+	   def favorites = getFavorites('FACETED_SEARCH')
 	   def categories;
 	   def showAll=false;
 	   if(params.showAll=="true")
