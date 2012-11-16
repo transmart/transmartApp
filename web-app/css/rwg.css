@@ -1043,10 +1043,10 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	border-right:0;
 	text-align:center;
 	padding:15px;
-	margin-left:50px;
-	margin-right:50px;
-	margin-top:10px;
+	margin:auto;
+	margin-top:15px;
 	margin-bottom:20px;
+	width:460px;
 	color: #333;
 	font: 12px verdana, arial, helvetica, sans-serif;
 }
@@ -1154,19 +1154,18 @@ min-height: 200px;
 min-width:250px;
 }
 
-#favoritesTable{
+.CTAtable{
 	border-collapse: collapse;
 	border: 1px solid #d5d5d5;
 }
 
-#favoritesTable td, th{
+.CTAtable td, th{
 	padding: 5px;
 	border: 1px dotted #AAA;
-	background-color: white;
 	font-weight: normal;
 }
 
-#favoritesTable th{
+.CTAtable th{
 	background: #E6E6E6;
 	color: #2e2e2e;
 	font-weight: normal;

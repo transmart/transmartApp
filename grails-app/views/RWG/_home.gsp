@@ -11,7 +11,7 @@
 	<h2>Saved Cross Trial Analyses</h2>
 			<p style="margin-top: 75px;text-align: center;">You have no Cross Trial Analyses saved</p>
 	</div>
-<br />
+<br />	
 
 <h1>Summary Charts</h1>
 

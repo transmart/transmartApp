@@ -192,6 +192,14 @@ function clearAllSelectedAnalyses(){
 	
 	//also clear the search terms
 	clearAllXTSearchTerms();	
+	
+	
+	//hide the elements on the main page
+	  jQuery('#xtAnalysisList').hide();
+	  jQuery('#xtMenuBar').hide();
+	  jQuery('#xtSearch-ac').prop('disabled', true);
+	  
+	  jQuery('#xtNoAnalysesMsg').show();
 
 	return;
 	
@@ -2707,23 +2715,42 @@ function showCrossTrialAnalysis()
       hideResultsPage();
 	  jQuery('#cross-trial-div').show();
 	  
-	  //check if cross trial has been loaded already
-	  if(jQuery('#cross-trial-div').html() == ""){
-
-	      rwgAJAXManager.add({
-	    		url:crossTrialAnalysisURL,				
-	    		timeout:60000,
-	    		success: function(response) {
-	    		  
-	    		  jQuery('#cross-trial-div').html(response);
-	    		  
-	    		},
-	  		error: function(xhr) {
-	  			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
-	  		}
-	    	});
+	  //if no analyses are selected, disable everything
+	  if(selectedAnalyses.length ==0){
+		  
+		  jQuery('#xtAnalysisList').hide();
+		  jQuery('#xtMenuBar').hide();
+		  jQuery('#xtSearch-ac').prop('disabled', true);
+		  
+		  jQuery('#xtNoAnalysesMsg').show();
+	  
+	  }else{//otherwise, show everything
+		  
+		  jQuery('#xtAnalysisList').show();
+		  jQuery('#xtMenuBar').show();
+		  jQuery('#xtSearch-ac').prop('disabled', false);
+		  
+		  jQuery('#xtNoAnalysesMsg').hide();
 	  }
+	  
 }
+
+
+function loadCrossTrialAnalysisInitial(){
+    rwgAJAXManager.add({
+		url:crossTrialAnalysisURL,				
+		timeout:60000,
+		success: function(response) {
+		  
+		  jQuery('#cross-trial-div').html(response);
+		  
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+}
+
 
 function launchHomePage(currentsubcategoryid, currentcharttype, showAll)
 {
@@ -2849,8 +2876,6 @@ function displaySelectedAnalysisTopGenes(){
 
 function getCrossTrialSummaryTableStats()
 {
-	
-	
 	var analysisList = '';
 	
 	//Convert the selected analysis array into a list
@@ -2871,7 +2896,7 @@ function getCrossTrialSummaryTableStats()
 		success: function(data) {
 			
 			//alert(response[key]['bio_marker_id']);
-			 var tbl_body = "<div><table style='width:230px'>";
+			 var tbl_body = "<div><table style='width:500px' id='CTAsummaryTable' class='CTAtable'>";
 			 tbl_body+="<tr><th>Analysis ID</th><th>Genes Up Regulated</th><th>Genes Down Regulated</th><th>Total Genes</th></tr>";
 			
 			 jQuery.each(data, function() {
@@ -2882,7 +2907,12 @@ function getCrossTrialSummaryTableStats()
 			        tbl_body += "<tr>"+tbl_row+"</tr>";                 
 			    })
 			    tbl_body += '</table></div>';
-			    jQuery('#xtTopGenes').after(tbl_body);
+			 
+			    jQuery('#xtSummaryTable').html(tbl_body);
+			    
+			    //alternate colors
+			    jQuery('#CTAsummaryTable').find('tr:even').css({'background-color':'#efefef'})
+	              .end().find('tr:odd').css({'background-color':'#fff'});
 		   
 		}
 	});
@@ -2919,6 +2949,9 @@ function getTopGenes(analysisID)
 
 function updateCrossTrialGeneCharts(){
 	
+	//update the table
+	 getCrossTrialSummaryTableStats()
+	
 	jQuery('#xtMsgBox').fadeOut(200);
 	
 	//unmaks the tabs
@@ -2940,16 +2973,12 @@ function updateCrossTrialGeneCharts(){
 			case "GENE": 
 			case "PROTEIN":
 				getCrossTrialGeneSummary(keywordId);
-				jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
 				break;
 			case "GENELIST": 
 			case "GENESIG": 
 			case "PATHWAY":
 				loadHeatmapCTAPaginator(categoryId, keywordId, 1, searchTerm);
-				jQuery('#xtMenuBar').tabs('select', 'xtHeatmapTab'); // switch to heatmap tab
-
 				setSaveXTFilterLink("enable");
-				
 				break;
 			default:  
 				alert("Invalid category!");
