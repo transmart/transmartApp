@@ -23,14 +23,13 @@ body {
 
 #search-div{
   padding: 6px;
-  margin: 4px 0 4px 0;
+  margin: 24px 10px 4px 0;
   overflow: auto;
-  background-color: #F8F8F8;
+  background-color: #F4F4F4;
   border-radius: 8px;
 }
 
 #box-search {
-	margin-top: 24px;
 	border-radius: 8px;
 	border: #0000FF;
 	width: 290px;
@@ -1112,17 +1111,9 @@ select.multiselect {
 	width: 100%;
 }
 
-#logocutout {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	z-index: 999;
-}
-
 #cartbutton {
 	position: absolute;
 	right: 24px;
-	z-index: 999;
 	top: 2px;
 	padding: 0px 4px;
 	background-color: #F4F4F4;

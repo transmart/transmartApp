@@ -36,12 +36,9 @@
 				#utilitiesMenu li{line-height:100%; padding: 4px; border:1px solid #f0f0f0; cursor: pointer;}
 				#utilitiesMenu li:hover {background-color: #DDDDFF; border:1px solid #718bb7}
 				#utilitiesMenuButton {
-					background-color: #DDD;
-					border-bottom: 1px solid black;
 					cursor: pointer;
-					padding: 7px;
-					color: black;
-					font-size: 8pt;
+					font-weight: bold;
+					color: #EEE;
 				}
 				li.utilMenuSeparator { padding: 0px; font-size: 1px; line-height: 1px;}
 				span.utilMenuSeparator {display: block;
@@ -53,8 +50,8 @@
 					overflow: hidden;
 				}
 			</style>
-			<th style="width: 100px">
-				<div style="text-align: right"><div onclick="toggleMenu(); return false;" id="utilitiesMenuButton">Utilities</div></div>
+			<th class="menuLink" style="width: 100px; text-align: right">
+				<a href="#" onclick="toggleMenu(); return false;" id="utilitiesMenuButton">Utilities</a>
 			</th>
 			
 			<g:set var="buildNumber"><g:meta name="environment.BUILD_NUMBER"/></g:set>

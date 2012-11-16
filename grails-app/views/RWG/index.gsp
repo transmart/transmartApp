@@ -257,7 +257,7 @@
 				
 			     	<ul>
 			          <li id="resultsViewTab"><a href="#results-div" onclick="return false;">View</a></li>
-			          <li id="exportViewTab"><a href="#export-div" onclick="return false;">Export</a></li>
+			          <li id="exportViewTab"><a id="exportViewLink" href="#export-div" onclick="return false;">Export</a></li>
 			     	</ul>
 			     	
 		       		<div id="results-div">
@@ -280,6 +280,13 @@
 		</div>
 		
 		<div id="sidebar">
+		
+		    <div id="search-div">
+        		<table><tr>
+        			<td><select id="search-categories"></select></td>
+        			<td><input id="search-ac"/></input></td>
+        		</tr></table>                                            
+        	</div>
 	       
 	        <div id="box-search">
 		        <div id="title-search-div" class="ui-widget-header">
@@ -296,16 +303,7 @@
 			<div id="accordion-container" style="height: 600px">
 				<div id="sidebar-accordion">
 					<h3>Filter Browser</h3>
-			        <div id="filter-browser">
-			        	<div id="search-div">
-			        		<table><tr>
-			        			<td><select id="search-categories"></select></td>
-			        			<td><input id="search-ac"/></input></td>
-			        		</tr></table>
-				                                   
-				                                                               
-			        	</div>
-			        	
+			        <div id="filter-browser">			        	
 			        	<%-- TODO Source all of this from the database... obviously --%>
 			        	<div class="filtertitle" name="dataLevel">Assay Platform</div>
 			        	<div class="filtercontent" name="dataLevel" style="display: none;">
@@ -402,9 +400,7 @@
 			</div>
 		</div>
 		
-		<div id="logocutout">
-			<img src="${resource(dir:'images', file:'logo.png')}"/>
-		</div>
+
 		<div id="sidebartoggle">&nbsp;</div>
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 

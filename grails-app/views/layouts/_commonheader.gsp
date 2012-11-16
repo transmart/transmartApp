@@ -17,11 +17,15 @@
  
 -->
 
-<table class="menuDetail" width="100%" style="height: 28px;">
+<div id="logocutout">
+	<img src="${resource(dir:'images', file:'logo.png')}"/>
+</div>
+		
+<table class="menuDetail" width="100%" style="height: 28px; border-collapse: collapse">
 	<tr>
 		<th class="menuBar" style="text-align: left;">
 			<!-- menu links -->
-			<table class="menuDetail" style="width: auto;">
+			<table class="menuDetail" style="width: auto;" align="right">
 		    	<tr>
 		    		<th width="150">&nbsp;</th>
 	   				<%--<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
@@ -43,12 +47,12 @@
 	   					<g:if test="${'accesslog'==app}"><th class="menuVisited">Admin</th></g:if>
 		   				<g:else><th class="menuLink"><g:link controller="accessLog">Admin</g:link></th></g:else>
 		       		</sec:ifAnyGranted>
+		       		
+					<tmpl:/layouts/utilitiesMenu />
 		       	</tr>
 		 	</table>
 		</th>
-		<g:if test="${utilitiesMenu}">
-			<tmpl:/layouts/utilitiesMenu />
-		</g:if>
+
 	</tr>
 </table>
 
