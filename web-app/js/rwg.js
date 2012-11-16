@@ -192,7 +192,7 @@ function clearAllSelectedAnalyses(){
 	
 	//also clear the search terms
 	clearAllXTSearchTerms();	
-
+	
 	return;
 	
 }
@@ -1898,22 +1898,34 @@ function setSaveFilterLink(state){
 }
 
 //enable or disable the save xt filter link
-function setSaveXTFilterLink(state){
-	
-	if(state == 'enable'){		
+function setSaveXTFilterLink(){
+	if ((xtSelectedKeywords.length > 0) && (selectedAnalyses.length > 0)) {  
 		jQuery('#save-modal-xt').removeClass('title-link-inactive');
 		jQuery('#save-modal-xt').addClass('title-link-active');
 		jQuery('#save-modal-xt').unbind('click').click(function(){openSaveSearchDialog(true);});
 		
 		}
-	else if (state == 'disable'){
-
+	else {
 		jQuery('#save-modal-xt').addClass('title-link-inactive');
 		jQuery('#save-modal-xt').removeClass('title-link-active');
 		jQuery('#save-modal-xt').off('click');
+
 	}
 }
 
+//enable or disable the clear xt filter link
+function setClearXTLink(){
+	if ((xtSelectedKeywords.length > 0) && (selectedAnalyses.length > 0)) {  
+		jQuery('#clear-xt').removeClass('title-link-inactive');
+		jQuery('#clear-xt').addClass('title-link-active');
+		jQuery('#clear-xt').unbind('click').click(function(){openSaveSearchDialog(true);});
+		}
+	else {
+		jQuery('#clear-xt').addClass('title-link-inactive');
+		jQuery('#clear-xt').removeClass('title-link-active');
+		jQuery('#clear-xt').off('click');
+	}
+}
 
 function openSaveSearchDialog(isXT)  {
 
@@ -2185,61 +2197,94 @@ function loadSearch(searchType, id)  {
 		success: function(response) {
 			
 			if (response['success'])  {
-				// clear global arrays
-				activeCategories = new Array();
-				activeKeywords = new Array();
-								
-				var tree = jQuery("#filter-div").dynatree("getTree");
-
-				// clear the selected items from tree
-				// Make sure the onSelect event doesn't fire for the nodes
-				// Otherwise, the main search query is going to fire after each item is deselected, as well as facet query
-				allowOnSelectEvent = false;
-				tree.visit(function clearNode(node) {
-													 updateNodeIndividualFacetCount(node, -1);
-					                                 node.select(false);
-				                                    }, 
-				                                    false
-				           )
-				allowOnSelectEvent = true;
-
-				var searchTerms = response['searchTerms'] 
-				var count = response['keywordCount'] 
-				var termsNotFound = response['termsNotFound'] 
-				
-				for (i=0; i<count; i++)  {
-					
-					var searchParam={id:searchTerms[i].id,
-							         categoryDisplay:searchTerms[i].categoryDisplay,
-							         keyword:searchTerms[i].keyword,
-							         categoryId:searchTerms[i].categoryId,
-							         categorySOLR:searchTerms[i].categorySOLR
-							         };
-					
-					// make sure we call addKeyword and NOT addSearchTerm (if  we call the latter then we requery SOLR every time
-					//    we add one of the saved terms back in)
-					addKeyword(searchParam, activeCategories, activeKeywords);
-					
-					// select the keyword in the tree
-					allowOnSelectEvent = false;    // onSelect event will cause a SOLR query call; we don't want this for each term, only at end
-					tree.visit(  function selectNode(node) {
-			             if ( node.data.id == searchTerms[i].id ) {
-			            	 node.select(true);
-			             }
-		             }
-				   , false);
+				if (searchType=='FACETED_SEARCH') {
+					// clear global arrays
+					activeCategories = new Array();
+					activeKeywords = new Array();
+									
+					var tree = jQuery("#filter-div").dynatree("getTree");
+	
+					// clear the selected items from tree
+					// Make sure the onSelect event doesn't fire for the nodes
+					// Otherwise, the main search query is going to fire after each item is deselected, as well as facet query
+					allowOnSelectEvent = false;
+					tree.visit(function clearNode(node) {
+														 updateNodeIndividualFacetCount(node, -1);
+						                                 node.select(false);
+					                                    }, 
+					                                    false
+					           )
 					allowOnSelectEvent = true;
+	
+					var searchTerms = response['searchTerms'] 
+					var count = response['keywordCount'] 
+					var termsNotFound = response['termsNotFound'] 
+					
+					for (i=0; i<count; i++)  {
+						
+						var searchParam={id:searchTerms[i].id,
+								         categoryDisplay:searchTerms[i].categoryDisplay,
+								         keyword:searchTerms[i].keyword,
+								         categoryId:searchTerms[i].categoryId,
+								         categorySOLR:searchTerms[i].categorySOLR
+								         };
+						
+						// make sure we call addKeyword and NOT addSearchTerm (if  we call the latter then we requery SOLR every time
+						//    we add one of the saved terms back in)
+						addKeyword(searchParam, activeCategories, activeKeywords);
+						
+						// select the keyword in the tree
+						allowOnSelectEvent = false;    // onSelect event will cause a SOLR query call; we don't want this for each term, only at end
+						tree.visit(  function selectNode(node) {
+				             if ( node.data.id == searchTerms[i].id ) {
+				            	 node.select(true);
+				             }
+			             }
+					   , false);
+						allowOnSelectEvent = true;
+					}
 
+					showSearchTemplate();
+					showSearchResults(); //reload the full search results
+	
+	            	jQuery.modal.close();	            	
+	
+	            	if (termsNotFound > 0)  {
+	            		alert(termsNotFound + ' terms could not be loaded from the saved search.  Results may not be as expected.')
+	            	}
 				}
- 
-				showSearchTemplate();
-				showSearchResults(); //reload the full search results
+				else {
+					var searchTerms = response['searchTerms'] 
+					var count = response['keywordCount'] 
+					var termsNotFound = response['termsNotFound'] 
+					var analyses = response['analyses'] 
+					var analysisCount = response['analysisCount'] 
+					var analysesNotFound = response['analysesNotFound'] 
 
-            	jQuery.modal.close();	            	
-
-            	if (termsNotFound > 0)  {
-            		alert(termsNotFound + ' terms could not be loaded from the saved search.  Results may not be as expected.')
-            	}
+					xtSelectedKeywords = [];					
+					for (var kw in searchTerms)  {
+						xtSelectedKeywords.push({id: searchTerms[kw].id, 
+												termName: searchTerms[kw].keyword, 
+												categoryId: searchTerms[kw].categoryId });	
+					}
+					
+					selectedAnalyses = [];
+					for (var a in analyses)  {
+						selectedAnalyses.push({'id':analyses[a].id, 'title':analyses[a].title, 'studyID':analyses[a].studyId});
+					}
+					
+					updateCrossTrialGeneCharts();
+	            	jQuery.modal.close();	            	
+	            	
+	            	if (termsNotFound > 0)  {
+	            		alert(termsNotFound + ' terms could not be loaded from the saved XT analysis.  Results may not be as expected.')
+	            	}
+	            	if (analysesNotFound > 0)  {
+	            		alert(analysesNotFound + ' analyses could not be loaded from the saved XT analysis.  Results may not be as expected.')
+	            	}
+				}
+				jQuery("#searchTooltip").remove();
+				 
 			}
 			else  {
 				alert(response['message']);  // show message from server  
@@ -2962,15 +3007,17 @@ function updateCrossTrialGeneCharts(){
 				loadHeatmapCTAPaginator(categoryId, keywordId, 1, searchTerm);
 				jQuery('#xtMenuBar').tabs('select', 'xtHeatmapTab'); // switch to heatmap tab
 
-				setSaveXTFilterLink("enable");
-				
 				break;
 			default:  
 				alert("Invalid category!");
 		}
-		
+				
 	});
-	
+	setSaveXTFilterLink();
+	setClearXTLink();
+	//update the display list
+	displayxtAnalysesList();
+
 }
 
 
@@ -3015,6 +3062,10 @@ function clearAllXTSearchTerms(){
 	
 	//show the empty gene msg box
 	jQuery('#xtNoGenesMsg').show();
+	
+	setClearXTLink();
+	setSaveXTFilterLink();
+
 	
 }
 
@@ -3323,13 +3374,11 @@ function addXTSearchAutoComplete()	{
 			var keywordId = ui.item.id;
 			var searchTerm = ui.item.label;
 			var categoryId = ui.item.categoryId;
-			
-			xtSelectedKeywords.push({id: keywordId, termName: searchTerm, categoryId: categoryId });
-			
-
+						
 			switch (categoryId)  {
 				case "GENE": 
 				case "PROTEIN":
+					xtSelectedKeywords.push({id: keywordId, termName: searchTerm, categoryId: categoryId });
 					getCrossTrialGeneSummary(keywordId);
 					
 					jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
@@ -3341,12 +3390,16 @@ function addXTSearchAutoComplete()	{
 				case "PATHWAY":
 					loadHeatmapCTAPaginator(categoryId, keywordId, 1, searchTerm);
 					jQuery('#xtMenuBar').tabs('select', 'xtHeatmapTab'); // switch to heatmap tab
+					xtSelectedKeywords.push({id: keywordId, termName: searchTerm, categoryId: categoryId });
 					
-					setSaveXTFilterLink("enable");
 					break;
 				default:  
 					alert("Invalid category!");
 			}
+			setSaveXTFilterLink();
+			setClearXTLink();
+			
+			displayxtAnalysesList();
 			
 			// clear the search text box
 			jQuery("#xtSearch-ac").val("");

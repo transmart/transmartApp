@@ -6,7 +6,6 @@ this.registerSearchTooltipEvents = function(){
 	jQuery("a.searchTooltip").hoverIntent(
 		{
 			over:function(e){
-	
 				// extract the search id from the element id
 				var elementId = e.currentTarget.id;
 				var idPos = elementId.indexOf('_') + 1;
@@ -49,7 +48,6 @@ function showSearchTooltip(html, e)  {
 
 //retrieve the saved favorites with the given id and generate the HTML to show in the tooltip 
 function getSearchTooltip(id, e)  {
-
 	rwgAJAXManager.add({
 		url:loadSearchURL,
 		data: {id: id},   
