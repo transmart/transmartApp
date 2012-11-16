@@ -31,7 +31,7 @@ function showSearchTooltip(html, e)  {
 	
 	jQuery("#searchTooltip")
 		.css("z-index", 10000)
-		.html('<h3 class="searchTooltipTitle" >Saved Filters:</h3>' + html)
+		.html(html)
 		.css("top",(e.pageY - xOffset) + "px")
 		.css("left",(e.pageX + yOffset) + "px")
 		.fadeIn(200)
@@ -58,22 +58,41 @@ function getSearchTooltip(id, e)  {
 			
 			if (response['success'])  {
 				var searchTerms = response['searchTerms'] 
-				var count = response['count'] 
+				var analyses = response['analyses'] 
+				var keywordCount = response['keywordCount'] 
+				var analysisCount = response['analysisCount'] 
 				var termsNotFound = response['termsNotFound'] 
 				
 				// create 2 arrays that act the same as the global arrays used to populate the search terms section
 				var categories = new Array();
 				var keywords = new Array();
 				
-				for (i=0; i<count; i++)  {
+				for (var i=0; i<keywordCount; i++)  {
 
 					addKeyword(searchTerms[i], categories, keywords);
 
 				}
 				
 				// now we have 2 arrays which are setup to simulate the global arrays; pass these into the function to generate the HTML for the tooltip 
-				var html =  showSearchTemplate(categories, keywords);
-
+				var html =  '<h3 class="searchTooltipTitle" >Search Keyword(s):</h3>' + showSearchTemplate(categories, keywords);
+				
+				if (analysisCount>0)  {
+					html += '<br /></br><h3 class="searchTooltipTitle" >Analyses:</h3>';
+					for (var j=0; j<analysisCount; j++)  {
+						var analysisIndex = j + 1;
+						html += "<div class='xtSelectedAnalysesListLegendItem'>";						
+						html += "<table>";						
+						html += "<tr><td>";						
+						html += "<span class='analysisNum'>" +  analysisIndex + "</span>";
+						html += "</td><td>";
+						html += "<span class='result-trial-name'>" + analyses[j]["studyId"] + "</span>";
+						html += ": " + analyses[j]["title"];
+						html += "</td></tr></table>"
+						html += "</div>"
+						
+					}
+				}
+				
 				// now show the tooltip
 				jQuery(document).ready(function () {
 					showSearchTooltip(html, e);
