@@ -1498,9 +1498,69 @@ class RWGVisualizationDAO {
    
 	   return  resultSet
    }
-   	   
-	 	 
-
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   def getCrossTrialSummaryTableStats(analysisList)	{
+	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	   
+	   def s = "";
+	   
+	   //convert the CSV analysisList into an array of objects
+	   def analysisObj = analysisList.split(',').collect{it as int}
+	   
+	   //loop through the array and add the select statement for each analysis
+	   analysisObj.each{
+		   
+		   s = s + """
+		
+		    select ${it} as bio_assay_analysis_id,
+		    (select count(distinct(bio_marker_id))
+		    from biomart.heat_map_results
+		    where  bio_assay_analysis_id =${it}
+		    and significant=1
+		    and fold_change_ratio > 0) as upreg,
+		    (select count(distinct(bio_marker_id))
+		    from biomart.heat_map_results
+		    where  bio_assay_analysis_id =${it}
+		    and significant=1
+		    and fold_change_ratio < 0) as downreg,
+		    (select count(distinct(bio_marker_id))
+		    from biomart.heat_map_results
+		    where  bio_assay_analysis_id =${it})
+		    as total
+		    from dual"""
+		   
+		   if(it != analysisObj.last()) {
+				   s=s+" union ";
+		   }
+		   
+	   }
+	   
+	   log.debug("${s}")
+   
+		   def rows = sql.rows(s)
+		   
+		   def resultSet=[]
+		   rows.each {row->
+			   def result=[:]
+			   result.put('bio_assay_analysis_id', row.bio_assay_analysis_id)
+			   result.put('upreg', row.upreg)
+			   result.put('downreg', row.downreg)
+			   result.put('total', row.total)
+		   resultSet.push(result)
+	   }
+   
+	   return  resultSet
+   }
+   
+   
 /**
  * Method to retrieve the fold change for the given list of analyses and search keyword ids (i.e. genes)
  * If a gene is in multiple probes for an analyses, the probe with the max pvalue/fold change will be used to 

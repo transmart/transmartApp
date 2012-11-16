@@ -97,6 +97,7 @@
 	        var getHeatmapDataCTAURL = "${createLink([action:'getHeatmapDataCTA'])}";
 	        var getHeatmapCTARowCountURL = "${createLink([action:'getHeatmapCTARowCount'])}";
 	        var getHeatmapCTARowsURL = "${createLink([action:'getHeatmapCTARows'])}";
+	        var getCrossTrialSummaryTableStatsURL = "${createLink([action:'getCrossTrialSummaryTableStats'])}";
 	        			
 			var showHomePageFirst=true;
 			
