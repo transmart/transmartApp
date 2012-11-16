@@ -115,21 +115,22 @@ Ext.Ajax.request(
 function getChildConceptPatientCountsComplete(result, node)
 {
 /* eval the response and look up in loop*/
-//var childaccess=Ext.util.JSON.decode(result.responseText).accesslevels;
-//var childcounts=Ext.util.JSON.decode(result.responseText).counts;
-var mobj=result.responseText.evalJSON();
-var childaccess=mobj.accesslevels;
-var childcounts=mobj.counts;
+var childaccess=Ext.util.JSON.decode(result.responseText).accesslevels;
+var childcounts=Ext.util.JSON.decode(result.responseText).counts;
+
+//var mobj=result.responseText.evalJSON();
+//var childaccess=mobj.accesslevels;
+//var childcounts=mobj.counts;
 /*var cca=new Array();
 var size=childcounts.size();
 for(var i=0;i<size;i++)
 {
 	cca[childcounts[i].concept]=childcounts[i].count;
 }*/
-var blah=node;
+
 node.beginUpdate();
 var children=node.childNodes;
-var size2=children.size()
+var size2=children.length;
 for (var i=0;i<size2;i++)
 {
   var key=children[i].attributes.id;

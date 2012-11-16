@@ -42,7 +42,7 @@ function handleActionItem(actionItem) {
 	
 	// clone existing object and bring into edit wizard
 	if(action=="clone") {
-		url = "cloneWizard/"+id+"";
+		url = "cloneWizard/"+geneListsIds+"";
 	}
 	
 	// set delete flag
@@ -50,7 +50,7 @@ function handleActionItem(actionItem) {
 		var del=confirm("Are you sure you want to delete?")
 
 		if(del) {
-			url="delete/"+id;
+			url="delete/"+geneListsIds;
 			window.location.href=url;
 		} else {
 			return false;
@@ -59,21 +59,21 @@ function handleActionItem(actionItem) {
 
 	// edit wizard
 	if(action=="edit") {
-		url = "editWizard/"+id+"";
+		url = "editWizard/"+geneListsIds+"";
 	}				
 
 	if(action=="showEditItems") {
-		url = "showEditItems/"+id+"";
+		url = "showEditItems/"+geneListsIds+"";
 	}
 	
 	// export to Excel 
 	if(action=="export") {
-		url = "downloadExcel/"+id+"";
+		url = "downloadExcel/"+geneListsIds+"";
 	}
 
 	// public action
 	if(action=="public") {
-		url = "makePublic/"+id;
+		url = "makePublic/"+geneListsIds;
 	}
 
 	// send to url
@@ -141,7 +141,7 @@ function populateActionSelection(dropdown){
 		
 		//grabbing the public, owned and deleted flags for the selected gene list.
 		var isPublic=((jQuery("#"+selectedGeneListId+"Public").text())=="Public");
-		var isUserOwned=((jQuery("#"+selectedGeneListId+"Owned").text())=="Owned");
+		var isUserOwned=((jQuery("#"+selectedGeneListId+"Owned").val())=="Owned");
 		var isDeleted=((jQuery("#"+selectedGeneListId+"Deleted").val())=="Deleted");
 		var isAdmin=((jQuery("#adminFlag").val())=="true");
 		isUserOwned=(isAdmin||isUserOwned)

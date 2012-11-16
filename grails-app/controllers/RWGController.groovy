@@ -1178,7 +1178,7 @@ class RWGController {
 
 
    // Load the faceted search keyword from database
-   JSONObject getFacetedSearchKeywords(long id)  {
+   JSONObject getFacetedSearchKeywordsAndAnalyses(long id)  {
 	   def authPrincipal = springSecurityService.getPrincipal()
 	   def userId = authPrincipal.id
 
@@ -1189,9 +1189,12 @@ class RWGController {
 
 		  
 	   JSONObject searchTerms = new JSONObject()
+	   JSONObject analyses = new JSONObject()
 	   
-	   int i = 0
+	   int i = 0  // keyword order/count
+	   def j = 0;   // analysis order/count
 	   int termsNotFound = 0
+	   int analysesNotFound = 0
 	   
 	   if (s == null)  {
 		   msg = message(code: "search.SavedFacetedSearch.load.failed.notfound")
@@ -1224,7 +1227,44 @@ class RWGController {
 				   termsNotFound++
 			   }
 		   }
+
+		   def analysesPiped = s?.analysisIds
 		   
+		   if (analysesPiped)  {
+			   // convert the analyses string to a list of analysis ids
+			   def aIds = analysesPiped.tokenize('|')
+
+				// retrieve information for each analysis
+			   def results = bio.BioAssayAnalysis.executeQuery("select b.id, b.longDescription " +
+						  						" from bio.BioAssayAnalysis b" +
+												  " where b.id in (" + aIds.join(',') +  ") ")
+					  			   
+			   aIds.each {aId->
+ 				   JSONObject analysisArray = new JSONObject()   // json object for current analyses
+ 				   def found = false
+				   for (def r=0; r<results.size(); r++)  {
+					  def row = results[r]
+				      if (row[0].toString() == aId.toString())  {
+						  analysisArray.put('id', aId.toString())
+						  analysisArray.put('title', row[1].replace('_', ', '))
+						  
+						  def studyInfo = bio.BioAnalysisAttribute.executeQuery("select distinct studyID from BioAnalysisAttribute where bioAssayAnalysisID=?", [row[0]] )
+						  
+						  def studyId = studyInfo[0];   // assume only one row returned - if no, there is a data issue
+						  analysisArray.put('studyId', studyId)
+						  
+						  analyses.put(j.toString(), analysisArray)
+						  j++
+						  found = true
+						  break						  
+					  }    	   
+				   }
+				   if (!found)  {
+						  analysesNotFound++
+				   }
+			   }
+		   }
+		   		   
 		   successFlag = true
 		   msg = ""
 	   }
@@ -1233,17 +1273,21 @@ class RWGController {
 	   ret.put('success', successFlag)
 	   ret.put('message', msg)
 	   ret.put('searchTerms', searchTerms)
-	   ret.put('count', i)
+	   ret.put('analyses', analyses)
+	   ret.put('keywordCount', i)
+	   ret.put('analysisCount', j)
 	   ret.put('termsNotFound', termsNotFound)
-
+	   ret.put('analysesNotFound', analysesNotFound)
+	   
    }   
    
    // Load the saved faceted search from database (called as action from frontend)
    def loadFacetedSearch = {
 			  
 	   def id = params.id as Long  // saved faceted search id
-	
-	   JSONObject ret = getFacetedSearchKeywords(id)    
+	   def searchType = params.searchType
+	   
+	   JSONObject ret = getFacetedSearchKeywordsAndAnalyses(id)    
 	   
 	   response.setContentType("text/json")
 	   response.outputStream << ret?.toString()
@@ -1256,17 +1300,6 @@ class RWGController {
 
 	   def userId = authPrincipal.id   
 	   def favorites = SavedFacetedSearch.findAllByUserIdAndSearchType(userId, searchType, [sort:"createDt", order:"desc"])
-
-	   // add the search terms and counts as properties to each favorite 	   	   
-	   favorites.each  {
-		   
-		   def sk = getFacetedSearchKeywords(it.id)
-		   def searchTerms = sk.get('searchTerms')		   		   
-		   def searchTermsCount = sk.get('count')		   	   
-		   
-		   it.metaClass.searchTerms = searchTerms
-		   it.metaClass.searchTermsCount = searchTermsCount
-	   }
 	   
 	   return favorites	   
 			  

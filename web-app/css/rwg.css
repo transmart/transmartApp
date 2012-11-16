@@ -126,12 +126,12 @@ top: 58px;
 
 .title-link-inactive
 {
-	color:#aaa;
+	color:#aaa!important;
 }
 
 .title-link-active
 {
-	color:#666;
+	color:#666!important;
 }
 
 .title-link-active:hover
