@@ -10,7 +10,10 @@
     	jQuery('#xtSummaryChartArea').sortable();
     	
 
-    	displaySelectedAnalysisTopGenes();
+    	//displaySelectedAnalysisTopGenes();
+    	
+    	getCrossTrialSummaryTableStats();
+    	
     	addXTSearchAutoComplete();
 
     		var tabID = "#xtMenuBar";

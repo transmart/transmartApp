@@ -1339,6 +1339,15 @@ class RWGController {
 	   
    }
    
+   def getCrossTrialSummaryTableStats = {
+	   def rwgDAO = new RWGVisualizationDAO()
+	   def r = rwgDAO.getCrossTrialSummaryTableStats(params.analysisList)
+	   
+	   render r as JSON
+	   
+   }
+   
+   
    
    
    def getCrossTrialBioMarkerSummary = {

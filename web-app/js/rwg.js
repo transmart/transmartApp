@@ -2845,6 +2845,51 @@ function displaySelectedAnalysisTopGenes(){
 }
 
 
+
+
+function getCrossTrialSummaryTableStats()
+{
+	
+	
+	var analysisList = '';
+	
+	//Convert the selected analysis array into a list
+	for (var i =0; i < selectedAnalyses.length; i++){
+
+		analysisList += selectedAnalyses[i].id;
+		
+		if (selectedAnalyses.length-1 > i){
+			analysisList += ',';
+		}
+		
+	}
+
+	rwgAJAXManager.add({
+		url:getCrossTrialSummaryTableStatsURL,
+		data: {analysisList: analysisList},
+		timeout:60000,
+		success: function(data) {
+			
+			//alert(response[key]['bio_marker_id']);
+			 var tbl_body = "<div><table style='width:230px'>";
+			 tbl_body+="<tr><th>Analysis ID</th><th>Genes Up Regulated</th><th>Genes Down Regulated</th><th>Total Genes</th></tr>";
+			
+			 jQuery.each(data, function() {
+			        var tbl_row = "";
+			        jQuery.each(this, function(k , v) {
+			            tbl_row += "<td>"+v+"</td>";
+			        })
+			        tbl_body += "<tr>"+tbl_row+"</tr>";                 
+			    })
+			    tbl_body += '</table></div>';
+			    jQuery('#xtTopGenes').after(tbl_body);
+		   
+		}
+	});
+	
+}
+
+
 function getTopGenes(analysisID)
 {
 
