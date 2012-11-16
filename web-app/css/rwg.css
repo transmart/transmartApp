@@ -1055,10 +1055,13 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 .analysisNum{
 	
 	font-weight:bold;
-	background-color: #333;
+	background-color: #444;
 color: #EFEFEF;
 padding: 8px;
 margin-right: 0;
+border-radius: 4px;
+border-top-right-radius: 0;
+border-bottom-right-radius: 0;
 }
 
 /*** XT Summary Bar Plots ***/
