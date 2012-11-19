@@ -141,6 +141,9 @@ function updateAnalysisCount(checkedState, analysisID, analysisTitle, studyID)	{
 	
 	displayxtAnalysesList();
 	
+	setSaveXTFilterLink();
+	setClearXTLink();
+	
 	return;
 }
 
@@ -1923,7 +1926,7 @@ function setSaveXTFilterLink(){
 
 //enable or disable the clear xt filter link
 function setClearXTLink(){
-	if ((xtSelectedKeywords.length > 0) && (selectedAnalyses.length > 0)) {  
+	if ((xtSelectedKeywords.length > 0) || (selectedAnalyses.length > 0)) {  
 		jQuery('#clear-xt').removeClass('title-link-inactive');
 		jQuery('#clear-xt').addClass('title-link-active');
 		jQuery('#clear-xt').unbind('click').click(function(){openSaveSearchDialog(true);});
@@ -2281,7 +2284,15 @@ function loadSearch(searchType, id)  {
 						selectedAnalyses.push({'id':analyses[a].id, 'title':analyses[a].title, 'studyID':analyses[a].studyId});
 					}
 					
+					jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
+
+					var newLabel = "(" + selectedAnalyses.length + ")";
+					jQuery("#analysisCountLabel").html(newLabel);					
+					
 					updateCrossTrialGeneCharts();
+					
+					showCrossTrialAnalysis();
+					
 	            	jQuery.modal.close();	            	
 	            	
 	            	if (termsNotFound > 0)  {
@@ -2935,6 +2946,10 @@ function displaySelectedAnalysisTopGenes(){
 
 function getCrossTrialSummaryTableStats()
 {
+	if (selectedAnalyses.length == 0)  {
+		return;
+	}
+
 	var analysisList = '';
 	
 	//Convert the selected analysis array into a list
@@ -3037,7 +3052,6 @@ function updateCrossTrialGeneCharts(){
 			case "GENESIG": 
 			case "PATHWAY":
 				loadHeatmapCTAPaginator(categoryId, keywordId, 1, searchTerm);
-				setSaveXTFilterLink();
 				break;
 			default:  
 				alert("Invalid category!");
