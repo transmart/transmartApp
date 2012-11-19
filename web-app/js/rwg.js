@@ -155,20 +155,29 @@ function getSelectedAnalysesList(){
 	
 	jQuery("#selectedAnalysesExpanded").toggle();
 	
-	var html = "<a href='#' onclick='clearAllSelectedAnalyses()'>Clear All</a><br /><br />";
-	html = html +"<ul id='selectedAnalysesList'>";
+	var html = "";
 	
-	selectedAnalyses.sort(dynamicSort("studyID"));
-	
-	jQuery(selectedAnalyses).each(function(index, value){
-
-		html = html + "<li id='li_SelectedAnalysis_"+selectedAnalyses[index].id +"'>"
-		html = html + "<input type='checkbox' onchange=removeSelectedAnalysis('"+selectedAnalyses[index].id +"') name='chbx_SelectedAnalysis_" + selectedAnalyses[index].id +"' checked='	checked'>";
-		html = html + "<span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</li>';
+	if(selectedAnalyses.length==0){
 		
-	});
+		html = "<div style='text-align:center; padding:4px;'><p>No analyses are selected</p></div>"
+		
+	}else{
 	
-	html = html + '</ul>';
+		html += "<a href='#' onclick='clearAllSelectedAnalyses()'>Clear All</a><br />";
+		html +="<ul id='selectedAnalysesList'>";
+		
+		selectedAnalyses.sort(dynamicSort("studyID"));
+		
+		jQuery(selectedAnalyses).each(function(index, value){
+	
+			html = html + "<li id='li_SelectedAnalysis_"+selectedAnalyses[index].id +"'>"
+			html = html + "<input type='checkbox' onchange=removeSelectedAnalysis('"+selectedAnalyses[index].id +"') name='chbx_SelectedAnalysis_" + selectedAnalyses[index].id +"' checked='	checked'>";
+			html = html + "<span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</li>';
+			
+		});
+		
+		html = html + '</ul>';
+	}
 	
 	jQuery('#selectedAnalysesExpanded').html(html);
 	
