@@ -33,19 +33,19 @@ function showSearchTooltip(html, e)  {
 		.html(html)
 		.css("top",(e.pageY - xOffset) + "px")
 		.css("left",(e.pageX + yOffset) + "px")
-		.fadeIn(200)
+		.fadeIn(200, 	function()  {
+			// if the link that triggered this tooltip is not visible after the page fully fades in, remove the tooltip
+		    if (!jQuery("#" + e.currentTarget.id).is(':visible'))  {
+		        jQuery("#searchTooltip").remove();
+		    }    
+			})
 		;
-	
+		
 	jQuery("#searchTooltip").mousemove(function(){
 		jQuery("#searchTooltip").remove();
 	}
 	);
 	
-
-    if (!jQuery("#" + e.currentTarget.id).is(':visible'))  {
-        jQuery("#searchTooltip").remove();
-        //alert('caught one');
-    }    
 	
 }
 
