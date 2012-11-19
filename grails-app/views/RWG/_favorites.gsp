@@ -5,7 +5,7 @@
 </g:if>
 <g:else>
  	<h2>Saved Filters</h2>
-    <table id="favoritesTable" class='CTAtable'>
+    <table id="homefavoritesTable" class='CTAtable'>
         <tr>
         	<th style="width:100px">Create Date</th>
         	<th>Filter Name</th>      	
@@ -13,7 +13,7 @@
 		<g:each in="${favorites}" var="f">					
 	        <tr id="home_favorites_${f.id}" >
 	        	<td>${f.createDt.format("MM/dd/yyyy")}</td>
-				<td><a href="#" id="linkSearchName_${f.id}" class="searchTooltip" onclick="loadSearch('${f.searchType}', ${f.id}); return false;">
+				<td><a href="#" id="homelinkSearchName_${f.id}" class="searchTooltip" onclick="loadSearch('${f.searchType}', ${f.id}); return false;">
 						<span id="home_labelSearchName_${f.id}" >${f.name}</span>
 					</a>
 				</td>

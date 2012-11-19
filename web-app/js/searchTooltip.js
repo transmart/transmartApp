@@ -35,13 +35,17 @@ function showSearchTooltip(html, e)  {
 		.css("left",(e.pageX + yOffset) + "px")
 		.fadeIn(200)
 		;
-
+	
 	jQuery("#searchTooltip").mousemove(function(){
 		jQuery("#searchTooltip").remove();
 	}
 	);
 	
 
+    if (!jQuery("#" + e.currentTarget.id).is(':visible'))  {
+        jQuery("#searchTooltip").remove();
+        //alert('caught one');
+    }    
 	
 }
 
@@ -94,7 +98,6 @@ function getSearchTooltip(id, e)  {
 				jQuery(document).ready(function () {
 					showSearchTooltip(html, e);
 				});
-				//alert(html);
 				
 			}
 			else  {

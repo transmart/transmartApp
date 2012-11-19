@@ -2210,6 +2210,7 @@ function loadSearch(searchType, id)  {
 		data: {id: id, searchType:searchType},   
 		timeout:60000,
 		success: function(response) {
+        	jQuery.modal.close();	            	
 			
 			if (response['success'])  {
 				if (searchType=='FACETED_SEARCH') {
@@ -2261,9 +2262,7 @@ function loadSearch(searchType, id)  {
 
 					showSearchTemplate();
 					showSearchResults(); //reload the full search results
-	
-	            	jQuery.modal.close();	            	
-	
+		
 	            	if (termsNotFound > 0)  {
 	            		alert(termsNotFound + ' terms could not be loaded from the saved search.  Results may not be as expected.')
 	            	}
@@ -2297,8 +2296,6 @@ function loadSearch(searchType, id)  {
 					
 					showCrossTrialAnalysis();
 					
-	            	jQuery.modal.close();	            	
-	            	
 	            	if (termsNotFound > 0)  {
 	            		alert(termsNotFound + ' terms could not be loaded from the saved XT analysis.  Results may not be as expected.')
 	            	}
