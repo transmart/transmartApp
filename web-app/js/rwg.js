@@ -2201,6 +2201,10 @@ function openLoadSearchDialog(isXT)  {
 // load in the saved favorites (type=FACETED_SEARCH or XT) with the given id
 function loadSearch(searchType, id)  {
 
+	if (searchType=='XT')  {
+		jQuery("#cross-trial-div").mask("Loading...");
+	}
+	
 	rwgAJAXManager.add({
 		url:loadSearchURL,
 		data: {id: id, searchType:searchType},   
@@ -2308,6 +2312,9 @@ function loadSearch(searchType, id)  {
 			else  {
 				alert(response['message']);  // show message from server  
 			}
+			
+			jQuery("#cross-trial-div").unmask();
+			
  		},
 		error: function(xhr) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);

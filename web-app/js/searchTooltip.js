@@ -80,7 +80,7 @@ function getSearchTooltip(id, e)  {
 						var analysisIndex = j + 1;
 						html += "<div class='xtSelectedAnalysesListLegendItem'>";						
 						html += "<table>";						
-						html += "<tr><td>";						
+						html += "<tr><td width='15px'>";						
 						html += "<span class='analysisNum'>" +  analysisIndex + "</span>";
 						html += "</td><td>";
 						html += "<span class='result-trial-name'>" + analyses[j]["studyId"] + "</span>";
@@ -90,11 +90,11 @@ function getSearchTooltip(id, e)  {
 						
 					}
 				}
-				
 				// now show the tooltip
 				jQuery(document).ready(function () {
 					showSearchTooltip(html, e);
 				});
+				//alert(html);
 				
 			}
 			else  {
