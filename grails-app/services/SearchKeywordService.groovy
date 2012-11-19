@@ -72,17 +72,13 @@ public class SearchKeywordService {
 			
 			//TODO Special case for gene or SNP - rework to support multiple categories!
 			if ("GENE_OR_SNP".equals(category))	{
-				searchKeyword	{
-					or {
-						eq("dataCategory", "GENE", [ignoreCase: true])
-						eq("dataCategory", "SNP", [ignoreCase: true])
-					}
+				or {
+					eq("dataCategory", "GENE")
+					eq("dataCategory", "SNP")
 				}
 			}
 			else if ("ALL".compareToIgnoreCase(category) != 0)	{
-				searchKeyword	{
-					eq("dataCategory", category)
-				}
+				eq("dataCategory", category.toUpperCase())
 			}
 
 			if (!user.isAdmin())	{

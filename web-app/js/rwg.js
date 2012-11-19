@@ -219,7 +219,7 @@ function convertCategory(valueToConvert)	{
 function addSearchAutoComplete()	{
 	jQuery("#search-ac").autocomplete({
 		source: sourceURL,
-		minLength:0,
+		minLength:2,
 		select: function(event, ui) { 
 			if (ui.item.categoryId == 'DATA_TYPE') {
 				searchParam={id:ui.item.label, display: 'Data Types', keyword:ui.item.label,category:ui.item.categoryId};
@@ -1921,7 +1921,7 @@ function loadAnalysisResultsGrid(analysisID, paramMap)
 	    	jQuery('#analysis_results_table_' + analysisID + '_wrapper').html(jqXHR).removeClass('ajaxloading');
 	    },
 	    "error": function (jqXHR, error, e) {
-	    	jQuery('#analysis_results_table_' + analysisID + '_wrapper').html(error).removeClass('ajaxloading');
+	    	jQuery('#analysis_results_table_' + analysisID + '_wrapper').html(jqXHR).removeClass('ajaxloading');
 	    	jQuery('#analysis_holder_' +analysisID).unmask();
 	    },
 	    "dataType": "html"

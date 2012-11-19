@@ -820,20 +820,25 @@ public class SearchController{
 			return
 		}
 		
-		//regionSearchResults will either contain GWAS or EQTL data. Overwrite the base object with the one that's populated
-		if (regionSearchResults.gwasResults) {
-			regionSearchResults = regionSearchResults.gwasResults
+		try {
+			//regionSearchResults will either contain GWAS or EQTL data. Overwrite the base object with the one that's populated
+			if (regionSearchResults.gwasResults) {
+				regionSearchResults = regionSearchResults.gwasResults
+			}
+			else {
+				regionSearchResults = regionSearchResults.eqtlResults
+			}
+	
+			//Return the data as a GRAILS template or CSV
+			if (export) {
+				exportResults(regionSearchResults.columnNames, regionSearchResults.analysisData, "analysis" + analysisId + ".csv")
+			}
+			else {
+				render(template: "analysisResults", model: [analysisData: regionSearchResults.analysisData, columnNames: regionSearchResults.columnNames, max: regionSearchResults.max, offset: regionSearchResults.offset, cutoff: filter.cutoff, sortField: filter.sortField, order: filter.order, search: filter.search, totalCount: regionSearchResults.totalCount, wasRegionFiltered: regionSearchResults.wasRegionFiltered, analysisId: analysisId])
+			}
 		}
-		else {
-			regionSearchResults = regionSearchResults.eqtlResults
-		}
-
-		//Return the data as a GRAILS template or CSV
-		if (export) {
-			exportResults(regionSearchResults.columnNames, regionSearchResults.analysisData, "analysis" + analysisId + ".csv")
-		}
-		else {
-			render(template: "analysisResults", model: [analysisData: regionSearchResults.analysisData, columnNames: regionSearchResults.columnNames, max: regionSearchResults.max, offset: regionSearchResults.offset, cutoff: filter.cutoff, sortField: filter.sortField, order: filter.order, search: filter.search, totalCount: regionSearchResults.totalCount, wasRegionFiltered: regionSearchResults.wasRegionFiltered, analysisId: analysisId])
+		catch (Exception e) {
+			render(status: 500, text: e.getMessage())
 		}
 	}
 	

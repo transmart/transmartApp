@@ -23,6 +23,7 @@ package search
 class SearchKeywordTerm {
 		Long ownerAuthUserId
 		String keywordTerm
+		String dataCategory
 		SearchKeyword searchKeyword
 		Long rank
 		Long id
@@ -41,6 +42,7 @@ class SearchKeywordTerm {
 		rank column:'RANK'
 		id column:'SEARCH_KEYWORD_TERM_ID'
 		termLength column:'TERM_LENGTH'
+		dataCategory column:'DATA_CATEGORY'
 		}
 	}
 		

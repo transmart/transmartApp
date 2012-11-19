@@ -42,7 +42,7 @@ class WebserviceService {
 	INNER JOIN bio_marker bm ON bm.BIO_MARKER_ID = SEARCH_KEYWORD.BIO_DATA_ID
 	INNER JOIN deapp.de_snp_gene_map gmap ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID
 	INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
-	WHERE KEYWORD=? AND snpinfo.hg_version = '19'
+	WHERE KEYWORD=? AND snpinfo.hg_version = ?
 	"""
 	
 	def final geneLimitsSqlQueryById = """
@@ -50,7 +50,7 @@ class WebserviceService {
 	SELECT BIO_MARKER_ID, max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as chrom from bio_marker bm
 	INNER JOIN deapp.de_snp_gene_map gmap ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID
 	INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
-	WHERE BIO_MARKER_ID = ? AND snpinfo.hg_version = '19'
+	WHERE BIO_MARKER_ID = ? AND snpinfo.hg_version = ?
 	GROUP BY BIO_MARKER_ID
 	"""
 	
@@ -59,7 +59,7 @@ class WebserviceService {
 		SELECT BIO_MARKER_ID, max(snpinfo.pos) as high, min(snpinfo.pos) as low, min(snpinfo.chrom) as chrom from deapp.de_snp_gene_map gmap
 		INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
 	    INNER JOIN BIO_MARKER bm ON gmap.entrez_gene_id = bm.PRIMARY_EXTERNAL_ID AND bm.PRIMARY_SOURCE_CODE = 'Entrez'
-		WHERE gmap.entrez_gene_id = ? AND snpinfo.hg_version = '19'
+		WHERE gmap.entrez_gene_id = ? AND snpinfo.hg_version = ?
 	    GROUP BY BIO_MARKER_ID
 	
 	"""
@@ -68,7 +68,7 @@ class WebserviceService {
 		SELECT DISTINCT BIO_MARKER_ID, ENTREZ_GENE_ID, BIO_MARKER_NAME, BIO_MARKER_DESCRIPTION FROM deapp.de_snp_gene_map gmap
 		INNER JOIN DEAPP.DE_RC_SNP_INFO snpinfo ON gmap.snp_name = snpinfo.rs_id
 		INNER JOIN BIO_MARKER bm ON bm.primary_external_id = to_char(gmap.entrez_gene_id)
-		WHERE chrom = ? AND pos >= ? AND pos <= ? AND HG_VERSION = '19'
+		WHERE chrom = ? AND pos >= ? AND pos <= ? AND HG_VERSION = ?
 	"""
 	
 	def final modelInfoSqlQuery = """
@@ -79,8 +79,7 @@ class WebserviceService {
 		WHERE baa.bio_assay_data_type = ?
 	"""
 	
-	def computeGeneBounds(String geneSymbol, String geneSourceId) {
-		//Complete the query - if we have a geneSymbol, use that, otherwise use ID
+	def computeGeneBounds(String geneSymbol, String geneSourceId, String snpSource) {
 		def query = geneLimitsSqlQueryByKeyword;
 			
 		//Create objects we use to form JDBC connection.
@@ -92,6 +91,7 @@ class WebserviceService {
 		//Prepare the SQL statement.
 		stmt = con.prepareStatement(query);
 		stmt.setString(1, geneSymbol)
+		stmt.setString(2, snpSource)
 		
 		rs = stmt.executeQuery();
 
@@ -109,8 +109,7 @@ class WebserviceService {
 		}
 	}
 	
-	def getGeneByPosition(String chromosome, Long start, Long stop) {
-		//Complete the query - if we have a geneSymbol, use that, otherwise use ID
+	def getGeneByPosition(String chromosome, Long start, Long stop, String snpSource) {
 		def query = genePositionSqlQuery;
 		def geneQuery = geneLimitsSqlQueryByEntrez;
 			
@@ -126,6 +125,7 @@ class WebserviceService {
 		stmt.setString(1, chromosome)
 		stmt.setLong(2, start)
 		stmt.setLong(3, stop)
+		stmt.setString(4, snpSource)
 		rs = stmt.executeQuery();
 
 		def results = []
@@ -138,6 +138,7 @@ class WebserviceService {
 				def entrezGeneId = rs.getLong("ENTREZ_GENE_ID")
 				
 				geneStmt.setString(1, entrezGeneId.toString())
+				geneStmt.setString(2, snpSource)
 				geneRs = geneStmt.executeQuery();
 				try {
 					if(geneRs.next()) {
@@ -173,7 +174,6 @@ class WebserviceService {
 	}
   
 	def getModelInfo(String type) {
-		//Complete the query - if we have a geneSymbol, use that, otherwise use ID
 		def query = modelInfoSqlQuery;
 			
 		//Create objects we use to form JDBC connection.
@@ -216,7 +216,7 @@ class WebserviceService {
 		LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = gwas.bio_assay_analysis_id
 		LEFT JOIN biomart.bio_experiment be ON be.accession = baa.etl_id
 		WHERE (info.pos BETWEEN ? AND ?)
-		AND chrom = ?
+		AND chrom = ? AND info.hg_version = ?
     	AND gwas.bio_assay_analysis_id IN (
 	"""
 	
@@ -229,11 +229,11 @@ class WebserviceService {
 		LEFT JOIN biomart.Bio_Assay_Analysis baa ON baa.bio_assay_analysis_id = eqtl.bio_assay_analysis_id
 		LEFT JOIN biomart.bio_experiment be ON be.accession = baa.etl_id
 		WHERE (info.pos BETWEEN ? AND ?)
-		AND chrom = ?
+		AND chrom = ? AND info.hg_version = ?
 		AND eqtl.bio_assay_analysis_id IN (
 	"""
 	
-	def getAnalysisDataBetween(analysisIds, low, high, chrom) {
+	def getAnalysisDataBetween(analysisIds, low, high, chrom, snpSource) {
 		//Get all data for the given analysisIds that falls between the limits
 		def gwasQuery = analysisDataSqlQueryGwas;
 		def eqtlQuery = analysisDataSqlQueryEqtl;
@@ -253,6 +253,7 @@ class WebserviceService {
 		stmt.setLong(1, low)
 		stmt.setLong(2, high)
 		stmt.setString(3, String.valueOf(chrom))
+		stmt.setString(4, snpSource)
 		
 		rs = stmt.executeQuery();
 		
@@ -280,6 +281,7 @@ class WebserviceService {
 		stmt.setLong(1, low)
 		stmt.setLong(2, high)
 		stmt.setString(3, String.valueOf(chrom))
+		stmt.setString(4, snpSource)
 		
 		rs = stmt.executeQuery();
 		

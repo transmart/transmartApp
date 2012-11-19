@@ -27,12 +27,16 @@ class WebserviceController {
 	def webserviceService
 	
     def computeGeneBounds = {
-		def results = webserviceService.computeGeneBounds(params.geneSymbol, "GRCh37")
+		def snpSource = params.snpSource;
+		if (!snpSource) {snpSource = '19'}
+		def results = webserviceService.computeGeneBounds(params.geneSymbol, '0', snpSource)
 		renderDataSet(results)
 	}
 	
 	def getGeneByPosition = {
-		def results = webserviceService.getGeneByPosition(params.chromosome, params.long('start'), params.long('stop'))
+		def snpSource = params.snpSource;
+		if (!snpSource) {snpSource = '19'}
+		def results = webserviceService.getGeneByPosition(params.chromosome, params.long('start'), params.long('stop'), snpSource)
 		renderDataSet(results)
 	}
 	
@@ -52,15 +56,17 @@ class WebserviceController {
 	}
 	
 	def resultDataForFilteredByModelIdGeneAndRangeRev = { //TODO Negotiate this name into something more reasonable
+		def snpSource = params.snpSource;
+		if (!snpSource) {snpSource = '19'}
 		def range = params.long('range')
 		def analysisIds = params.modelId.split(",")
 		def sourceId = null
 		def geneName = params.geneName
 		
-		def geneBounds = webserviceService.computeGeneBounds(geneName, "GRCh37")
+		def geneBounds = webserviceService.computeGeneBounds(geneName, '0', snpSource)
 		def low = geneBounds[0]
 		def high = geneBounds[1]
-		def results = webserviceService.getAnalysisDataBetween(analysisIds, geneBounds[0]-range, geneBounds[1]+range, geneBounds[2])
+		def results = webserviceService.getAnalysisDataBetween(analysisIds, geneBounds[0]-range, geneBounds[1]+range, geneBounds[2], snpSource)
 		
 		renderDataSet(results)
 	}
