@@ -819,8 +819,27 @@ class RWGController {
    def getHeatmapData = {
 	   def rwgDAO = new RWGVisualizationDAO()
 	   def genes = null
-	   def filterTerms = session.solrSearchFilter
-	   def solrGenesField = session.solrGenesField
+	   
+	   def keywordsQueryString = params?.keywordsQueryString
+	   def isSA = params?.isSA
+			  
+	   def filterTerms;
+	   def solrGenesField;
+	   if (isSA)  {
+		   solrGenesField = 'ALLGENE';		   
+		   if (keywordsQueryString == '')  {
+			   filterTerms = []
+		   }  
+		   else  {
+			   def categories = keywordsQueryString.split('&')
+			   filterTerms = replaceGeneLists(categories, solrGenesField)			   
+		   }
+	   }
+	   else {
+		   // keywords not passed in, get from session variables
+		   filterTerms = session.solrSearchFilter
+		   solrGenesField = session.solrGenesField
+	   }
 	   
 	   boolean showSigResultsOnly = solrGenesField == 'SIGGENE' ? true : false
 	   
@@ -831,7 +850,6 @@ class RWGController {
 			   break
 		   }
 	   }
-	   
 	   def hmData = rwgDAO.getHeatmapData(params.id, genes, showSigResultsOnly,  params.probesPage, params.probesPerPage)	  
    
 	  	   
@@ -862,22 +880,29 @@ class RWGController {
 	   response.contentType = 'text/csv'
 	   response.outputStream << hmData
 	   response.outputStream.flush()
-	   
-	   
    }
    
    
    // Method to get the number of probes for the heatmap for the given filters
-   // keywords provided indicates that it is the CTA version of this heatmap (not to be confused with heatmapCTA which is entirely different) 
+   // keywordsQueryString provided indicates that it is the CTA version of this heatmap (otherwise known as the SA or Selected Analysis heatmap) 
    def getHeatmapNumberProbes = {
 	   def rwgDAO = new RWGVisualizationDAO()
 	   def genes = null
 	   
-	   def keywords = params.keywords
+	   def keywordsQueryString = params?.keywordsQueryString
+	   def isSA = params?.isSA
+	   	   
 	   def filterTerms;
 	   def solrGenesField;
-	   if (keywords)  {
-		   println keywords
+	   if (isSA)  {
+		   solrGenesField = 'ALLGENE';		   
+		   if (keywordsQueryString == '')  {
+			   filterTerms = []
+		   }  
+		   else  {
+			   def categories = keywordsQueryString.split('&')
+			   filterTerms = replaceGeneLists(categories, solrGenesField)			   
+		   }
 	   }
 	   else {
 		   // keywords not passed in, get from session variables

@@ -1539,11 +1539,11 @@ function showVisualization(analysisID, changedPaging)	{
 
 // Make a call to the server to load the heatmap data
 // keyword query string is optional, is provided for use by the heatmap shown on cta for a specific analysis
-function loadHeatmapData(divID, analysisID, probesPage, probesPerPage,  isSA, keywordQueryString)	{
+function loadHeatmapData(divID, analysisID, probesPage, probesPerPage,  isSA, keywordsQueryString)	{
 	
 	rwgAJAXManager.add({
 		url:getHeatmapDataURL,
-		data: {id: analysisID, probesPage: probesPage, probesPerPage:probesPerPage, keywordQueryString:keywordQueryString},
+		data: {id: analysisID, probesPage: probesPage, probesPerPage:probesPerPage, isSA:isSA, keywordsQueryString:keywordsQueryString},
 		timeout:60000,
 		success: function(response) {
 			if (!isSA)  {
@@ -1562,7 +1562,7 @@ function loadHeatmapData(divID, analysisID, probesPage, probesPerPage,  isSA, ke
 			}
 			else  {
 				jQuery('#analysis_holderSA_' +analysisID).unmask(); //hide the loading msg, unblock the div				
-				drawHeatmapD3(divID, response, analysisID, false, isSA, keywordQueryString);	
+				drawHeatmapD3(divID, response, analysisID, false, isSA, keywordsQueryString);	
 				jQuery('#'+divID).show();   // why needed, not needed with old heat map?
 			}
 
@@ -2871,7 +2871,7 @@ function loadHeatmapPaginator(divID, analysisId, page, isSA, keywordsQueryString
 		
 	rwgAJAXManager.add({
 		url:getHeatmapNumberProbesURL,		
-		data: {id: analysisId, page:page, keywordsQueryString:keywordsQueryString},
+		data: {id: analysisId, page:page, isSA:isSA, keywordsQueryString:keywordsQueryString},
 		success: function(response) {								
 			var maxProbeIndex = response['maxProbeIndex']
 			
