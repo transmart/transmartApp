@@ -65,43 +65,36 @@ class RegionSearchService {
 	//Query with mad Oracle pagination
 	def gwasSqlQuery = """
 		SELECT a.*
-		  FROM (SELECT   baa.analysis_name AS analysis, info.chrom AS chrom,
-		                 info.pos AS pos, bm.bio_marker_name AS rsgene,
+		  FROM (SELECT   _analysisSelect_ info.chrom AS chrom,
+		                 info.pos AS pos, gmap.gene_name AS rsgene,
 		                 DATA.rs_id AS rsid, DATA.p_value AS pvalue,
 		                 DATA.log_p_value AS logpvalue, DATA.ext_data AS extdata
 		                 ,
 		                 ROW_NUMBER () OVER (ORDER BY _orderclause_) AS row_nbr
 		                 FROM biomart.bio_assay_analysis_gwas DATA
-		                 JOIN biomart.bio_assay_analysis baa ON baa.bio_assay_analysis_id = DATA.bio_assay_analysis_id
+		                 _analysisJoin_
 		                 JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
 		                 LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
-		                 LEFT JOIN biomart.bio_marker bm
-		                 ON bm.primary_external_id = gmap.entrez_gene_id
-		                 AND bm.primary_source_code = 'Entrez'
 		                 WHERE 1=1
 	"""
 	
 	def eqtlSqlQuery = """
 		SELECT a.*
-		  FROM (SELECT   baa.analysis_name AS analysis, info.chrom AS chrom,
-		                 info.pos AS pos, bm.bio_marker_name AS rsgene,
+		  FROM (SELECT   _analysisSelect_ info.chrom AS chrom,
+		                 info.pos AS pos, gmap.gene_name AS rsgene,
 		                 DATA.rs_id AS rsid, DATA.p_value AS pvalue,
 		                 DATA.log_p_value AS logpvalue, DATA.ext_data AS extdata, DATA.gene as gene
 		                 ,
 		                 ROW_NUMBER () OVER (ORDER BY _orderclause_) AS row_nbr
 		                 FROM biomart.bio_assay_analysis_eqtl DATA
-		                 JOIN biomart.bio_assay_analysis baa ON baa.bio_assay_analysis_id = DATA.bio_assay_analysis_id
+		                 _analysisJoin_
 		                 JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
 		                 LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
-		                 LEFT JOIN biomart.bio_marker bm
-		                 ON bm.primary_external_id = gmap.entrez_gene_id
-		                 AND bm.primary_source_code = 'Entrez'
 		                 WHERE 1=1
 	"""
 	
 	def gwasSqlCountQuery = """
 		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Gwas data 
-	     JOIN biomart.bio_assay_analysis baa ON baa.bio_assay_analysis_id = DATA.bio_assay_analysis_id
 	     JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
 	     LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
 	     LEFT JOIN biomart.bio_marker bm
@@ -112,7 +105,6 @@ class RegionSearchService {
 	
 	def eqtlSqlCountQuery = """
 		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Eqtl data
-	     JOIN biomart.bio_assay_analysis baa ON baa.bio_assay_analysis_id = DATA.bio_assay_analysis_id
 	     JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
 	     LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
 	     LEFT JOIN biomart.bio_marker bm
@@ -204,7 +196,7 @@ class RegionSearchService {
 		}
 	}
 	
-	def getAnalysisData(analysisIds, ranges, Long limit, Long offset, Double cutoff, String sortField, String order, String search, String type, geneNames) {
+	def getAnalysisData(analysisIds, ranges, Long limit, Long offset, Double cutoff, String sortField, String order, String search, String type, geneNames, doCount) {
 		
 		def con, stmt, rs = null;
 		con = dataSource.getConnection()
@@ -248,6 +240,7 @@ class RegionSearchService {
 			}
 		}
 		
+		def analysisNameIncluded = false
 		//Add analysis IDs
 		if (analysisIds) {
 			queryCriteria.append(" AND data.BIO_ASSAY_ANALYSIS_ID IN (" + analysisIds[0]);
@@ -255,6 +248,16 @@ class RegionSearchService {
 				queryCriteria.append(", " + analysisIds[i]);
 			}
 			queryCriteria.append(") ")
+			//Only select the analysis name if we need to distinguish between them!
+			if (analysisIds.size > 1) {
+				analysisQuery = analysisQuery.replace("_analysisSelect_", "baa.analysis_name AS analysis, ")
+				analysisQuery = analysisQuery.replace("_analysisJoin_", " JOIN biomart.bio_assay_analysis baa ON baa.bio_assay_analysis_id = DATA.bio_assay_analysis_id ")
+				analysisNameIncluded = true
+			}
+			else {
+				analysisQuery = analysisQuery.replace("_analysisSelect_", "");
+				analysisQuery = analysisQuery.replace("_analysisJoin_", "");
+			}
 		}
 		
 		//Add gene names
@@ -279,7 +282,7 @@ class RegionSearchService {
 			queryCriteria.append(") ")
 		}
 
-		def total = 0;
+		
 		
 		analysisQuery = analysisQuery.replace("_regionlist_", regionList.toString())
 		analysisQuery = analysisQuery.replace("_orderclause_", sortField + " " + order)
@@ -287,7 +290,7 @@ class RegionSearchService {
 
 		def finalQuery = analysisQuery + queryCriteria.toString() + "\n) a";
 		if (limit > 0) {
-			finalQuery += " where a.row_nbr between ${offset+1} and ${limit+offset}";
+			finalQuery += " where a.row_nbr between ${offset+1} and ${offset+limit}"; 
 		}
 		stmt = con.prepareStatement(finalQuery);
 		
@@ -301,12 +304,24 @@ class RegionSearchService {
 
 		def results = []
 		try{
-			while(rs.next()){
-				if ((type.equals("gwas"))) {
-					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis"), rs.getString("rsgene"), rs.getString("chrom"), rs.getLong("pos")]);
+			if (analysisNameIncluded) {
+				while(rs.next()){
+					if ((type.equals("gwas"))) {
+						results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis"), rs.getString("rsgene"), rs.getString("chrom"), rs.getLong("pos")]);
+					}
+					else {
+						results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis"), rs.getString("rsgene"), rs.getString("chrom"), rs.getLong("pos"), rs.getString("gene")]);
+					}
 				}
-				else {
-					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis"), rs.getString("rsgene"), rs.getString("chrom"), rs.getLong("pos"), rs.getString("gene")]);
+			}
+			else {
+				while(rs.next()){
+					if ((type.equals("gwas"))) {
+						results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), "analysis", rs.getString("rsgene"), rs.getString("chrom"), rs.getLong("pos")]);
+					}
+					else {
+						results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), "analysis", rs.getString("rsgene"), rs.getString("chrom"), rs.getLong("pos"), rs.getString("gene")]);
+					}
 				}
 			}
 		}
@@ -315,15 +330,75 @@ class RegionSearchService {
 			stmt?.close();
 		}
 		
-		try {
-			def finalCountQuery = countQuery + queryCriteria.toString();
-			stmt = con.prepareStatement(finalCountQuery)
-			if (cutoff) {
-				stmt.setDouble(1, cutoff);
+		//Count - skip if we're not to do this (loading results from cache)
+		def total = 0;
+		if (doCount) {
+			try {
+				def finalCountQuery = countQuery + queryCriteria.toString();
+				stmt = con.prepareStatement(finalCountQuery)
+				if (cutoff) {
+					stmt.setDouble(1, cutoff);
+				}
+				rs = stmt.executeQuery();
+				if (rs.next()) {
+					total = rs.getLong("TOTAL")
+				}
 			}
+			finally {
+				rs?.close();
+				stmt?.close();
+				con?.close();
+			}
+		}
+		
+		return [results: results, total: total];
+	}
+	
+	def quickQueryGwas = """
+	
+		SELECT analysis, chrom, pos, rsgene, rsid, pvalue, logpvalue, extdata FROM biomart.BIO_ASY_ANALYSIS_GWAS_TOP50
+		WHERE analysis = ?
+		ORDER BY rnum
+	
+	"""
+	
+	def quickQueryEqtl = """
+	
+		SELECT analysis, chrom, pos, rsgene, rsid, pvalue, logpvalue, extdata, gene FROM biomart.BIO_ASY_ANALYSIS_EQTL_TOP50
+		WHERE analysis = ?
+		ORDER BY rnum
+	
+	"""
+	
+	def getQuickAnalysisDataByName(analysisName, type) {
+		
+		def con, stmt, rs = null;
+		con = dataSource.getConnection()
+		StringBuilder queryCriteria = new StringBuilder();
+		def quickQuery
+
+		if (type.equals("eqtl")) {
+			quickQuery = quickQueryEqtl
+		}
+		else {
+			quickQuery = quickQueryGwas
+		}
+		
+		def results = []
+		try {
+			stmt = con.prepareStatement(quickQuery)
+			stmt.setString(1, analysisName);
+
 			rs = stmt.executeQuery();
-			if (rs.next()) {
-				total = rs.getLong("TOTAL")
+			if (type.equals("eqtl")) {
+				while(rs.next()){
+					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), rs.getString("analysis"), rs.getString("rsgene"), rs.getString("chrom"), rs.getLong("pos")]);
+				}
+			}
+			else {
+				while(rs.next()){
+					results.push([rs.getString("rsid"), rs.getDouble("pvalue"), rs.getDouble("logpvalue"), rs.getString("extdata"), "analysis", rs.getString("rsgene"), rs.getString("chrom"), rs.getLong("pos"), rs.getString("gene")]);
+				}
 			}
 		}
 		finally {
@@ -332,7 +407,8 @@ class RegionSearchService {
 			con?.close();
 		}
 		
-		return [results: results, total: total];
+		return [results: results]
+		
 	}
   
 }

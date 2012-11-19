@@ -791,7 +791,7 @@ public class SearchController{
 		if (cutoff != null) { filter.cutoff = cutoff }
 		
 		if (sortField != null) { filter.sortField = sortField }
-		if (!filter.sortField) {filter.sortField = 'data.rs_id';}
+		if (!filter.sortField) {filter.sortField = 'null';}
 		
 		if (order != null) { filter.order = order }
 		if (!filter.order) {filter.order = 'asc';}
@@ -870,7 +870,7 @@ public class SearchController{
 		if (cutoff != null) { filter.cutoff = cutoff }
 		
 		if (sortField != null) { filter.sortField = sortField }
-		if (!filter.sortField) {filter.sortField = 'data.rs_id';}
+		if (!filter.sortField) {filter.sortField = 'null';}
 		
 		if (order != null) { filter.order = order }
 		if (!filter.order) {filter.order = 'asc';}
@@ -1217,11 +1217,53 @@ public class SearchController{
 		//Set a flag to record that the list was filtered by region
 		def wasRegionFiltered = regions ? true : false
 		
+		def queryResult
+		def analysisData = []
+		def totalCount
+
 		def columnNames = []
 		def searchDAO = new SearchDAO()
-		def queryResult = regionSearchService.getAnalysisData(analysisIds, regions, max, offset, cutoff, sortField, order, search, type, geneNames)
-		def analysisData = queryResult.results
-		def totalCount = queryResult.total
+		
+//		if (max > 0 && true) {
+//			//If everything is the same as last time except the limits, return those rows out of the cache in the session
+//			def cachedAnalysisData = session['cachedAnalysisData']
+//			def cachedCount = session['cachedCount']
+//			for (int i = offset+1; i < max+offset; i++) {
+//				analysisData.push(cachedAnalysisData[i]);
+//			}
+//			totalCount = cachedCount
+//		}
+//		else if (true) {
+//			//If the order is different, rerun the query but still use the cached count
+//			queryResult = regionSearchService.getAnalysisData(analysisIds, regions, max, offset, cutoff, sortField, order, search, type, geneNames, false)
+//			analysisData = queryResult.results
+//			totalCount = session['cachedCount']
+//			session['cachedAnalysisData'] = analysisData
+//		}
+		
+		if (!regions && analysisIds.size() == 1 && sortField.equals('null') && max > 0) {
+			//If displaying no regions and only one analysis, run the alternative query and pull back the rows for the limits
+			def analysis = BioAssayAnalysis.get(analysisIds[0])
+			def quickAnalysisData = regionSearchService.getQuickAnalysisDataByName(analysis.name, type)
+			for (int i = offset+1; i < max+offset; i++) {
+				analysisData.push(quickAnalysisData.results[i]);
+			}
+			totalCount = analysis.dataCount
+		}
+		else {
+			//Otherwise, run the query and recache the returned data
+			queryResult = regionSearchService.getAnalysisData(analysisIds, regions, max, offset, cutoff, sortField, order, search, type, geneNames, true)
+			analysisData = queryResult.results
+			totalCount = queryResult.total
+			
+			//Cache if this isn't for an export
+//			if (max > 0) {
+//				session['cachedAnalysisData'] = analysisData
+//				session['cachedCount'] = totalCount
+//			}
+		}
+		
+		
 		def analysisIndexData
 		if (type.equals("eqtl")) {
 			analysisIndexData = searchDAO.getEqtlIndexData()
@@ -1236,7 +1278,7 @@ public class SearchController{
 		columnNames.add(["sTitle":"Probe ID", "sortField":"data.rs_id"])
 		columnNames.add(["sTitle":"p-value", "sortField":"data.p_value"])
 		columnNames.add(["sTitle":"Adjusted p-value", "sortField":"data.log_p_value"])
-		columnNames.add(["sTitle":"RS Gene", "sortField":"bm.bio_marker_name"])
+		columnNames.add(["sTitle":"RS Gene", "sortField":"gmap.gene_name"])
 		columnNames.add(["sTitle":"Chromosome", "sortField":"info.chrom"])
 		columnNames.add(["sTitle":"Position", "sortField":"info.pos"])
 		
@@ -1258,41 +1300,43 @@ public class SearchController{
 		//The returned data needs to have the large text field broken out by delimiter.
 		analysisData.each()
 		{
-			//This temporary list is used so that we return a list of lists.
-			def temporaryList = []
-			
-			//The third element is our large text field. Split it into an array, leaving trailing empties.
-			def largeTextField = it[3].split(";", -1)
-			
-			//This will be the array that is reordered according to the meta-data index table.
-			String[] newLargeTextField = new String[largeTextField.size()]
-			
-			//Loop over the elements in the index map.
-			indexMap.each()
-			{
-				//Reorder the array based on the index table.
-				newLargeTextField[it.value-1] = largeTextField[it.key-1]
+			if (it != null) {
+				//This temporary list is used so that we return a list of lists.
+				def temporaryList = []
+				
+				//The third element is our large text field. Split it into an array, leaving trailing empties.
+				def largeTextField = it[3].split(";", -1)
+				
+				//This will be the array that is reordered according to the meta-data index table.
+				String[] newLargeTextField = new String[largeTextField.size()]
+				
+				//Loop over the elements in the index map.
+				indexMap.each()
+				{
+					//Reorder the array based on the index table.
+					newLargeTextField[it.value-1] = largeTextField[it.key-1]
+				}
+				
+				//Swap around the data types for easy array addition.
+				def finalFields = new ArrayList(Arrays.asList(newLargeTextField));
+				
+				//Add the non-dynamic meta data fields to the returned data.
+				temporaryList.add(it[4])
+				temporaryList.add(it[0])
+				temporaryList.add(it[1])
+				temporaryList.add(it[2])
+				temporaryList.add(it[5])
+				temporaryList.add(it[6])
+				temporaryList.add(it[7])
+				if (type.equals("eqtl")) {
+					temporaryList.add(it[8])
+				}
+				
+				//Add the dynamic fields to the returned data.
+				temporaryList+=finalFields
+				
+				returnedAnalysisData.add(temporaryList)
 			}
-			
-			//Swap around the data types for easy array addition.
-			def finalFields = new ArrayList(Arrays.asList(newLargeTextField));
-			
-			//Add the non-dynamic meta data fields to the returned data.
-			temporaryList.add(it[4])
-			temporaryList.add(it[0])
-			temporaryList.add(it[1])
-			temporaryList.add(it[2])
-			temporaryList.add(it[5])
-			temporaryList.add(it[6])
-			temporaryList.add(it[7])
-			if (type.equals("eqtl")) {
-				temporaryList.add(it[8])
-			}
-			
-			//Add the dynamic fields to the returned data.
-			temporaryList+=finalFields
-			
-			returnedAnalysisData.add(temporaryList)
 		}
 		
 		return [analysisData: returnedAnalysisData, columnNames: columnNames, max: max, offset: offset, cutoff: cutoff, totalCount: totalCount, wasRegionFiltered: wasRegionFiltered]
