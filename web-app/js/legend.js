@@ -134,7 +134,7 @@ function applyLegendStyles(svg, isCTA)  {
 }
 
 // draw the legend shown on screen 
-function drawScreenLegend(numCohorts, cohortArray, cohortDesc, cohortDisplayStyles, type, analysisID) {
+function drawScreenLegend(numCohorts, cohortArray, cohortDesc, cohortDisplayStyles, type, analysisID, isSA) {
 
 	if ((type == 'boxplot') || (type == 'lineplot'))  {
 		//need to add a blank entry at the beginning of the arrays for use by drawCohortLegend and highlightCohortDescriptions
@@ -142,7 +142,13 @@ function drawScreenLegend(numCohorts, cohortArray, cohortDesc, cohortDisplayStyl
 		cohortDesc = [''].concat(cohortDesc);
 		cohortDisplayStyles = [''].concat(cohortDisplayStyles);
 	}
-	jQuery("#" + type + "Legend_" + analysisID).html(drawCohortLegend(numCohorts, cohortArray, cohortDesc, cohortDisplayStyles));
+	
+	var saPrefix  = '';
+	if (isSA)  {
+		saPrefix  = 'sa'
+	}
+	
+	jQuery("#" + saPrefix + type + "Legend_" + analysisID).html(drawCohortLegend(numCohorts, cohortArray, cohortDesc, cohortDisplayStyles));
 }
 
 //Helper function to draw the legend for the cohorts in the visualization panel

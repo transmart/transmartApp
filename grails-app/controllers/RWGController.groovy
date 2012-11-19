@@ -868,11 +868,22 @@ class RWGController {
    
    
    // Method to get the number of probes for the heatmap for the given filters
+   // keywords provided indicates that it is the CTA version of this heatmap (not to be confused with heatmapCTA which is entirely different) 
    def getHeatmapNumberProbes = {
 	   def rwgDAO = new RWGVisualizationDAO()
 	   def genes = null
-	   def filterTerms = session.solrSearchFilter
-	   def solrGenesField = session.solrGenesField
+	   
+	   def keywords = params.keywords
+	   def filterTerms;
+	   def solrGenesField;
+	   if (keywords)  {
+		   println keywords
+	   }
+	   else {
+		   // keywords not passed in, get from session variables
+		   filterTerms = session.solrSearchFilter
+		   solrGenesField = session.solrGenesField
+	   }
 	   
 	   boolean showSigResultsOnly = solrGenesField == 'SIGGENE' ? true : false
 	   
