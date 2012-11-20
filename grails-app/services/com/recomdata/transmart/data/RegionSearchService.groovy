@@ -48,8 +48,7 @@ class RegionSearchService {
 	
 	def genesForSnpQuery = """
 	
-	SELECT DISTINCT(BIO_MARKER_NAME) FROM DE_SNP_GENE_MAP
-	INNER JOIN BIO_MARKER ON PRIMARY_SOURCE_CODE = 'Entrez' AND PRIMARY_EXTERNAL_ID = ENTREZ_GENE_ID
+	SELECT DISTINCT(GENE_NAME) FROM DE_SNP_GENE_MAP
 	WHERE SNP_NAME = ?
 	
 	"""
@@ -97,9 +96,6 @@ class RegionSearchService {
 		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Gwas data 
 	     JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
 	     LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
-	     LEFT JOIN biomart.bio_marker bm
-	     ON bm.primary_external_id = gmap.entrez_gene_id
-	     AND bm.primary_source_code = 'Entrez'
 	     WHERE 1=1
 	"""
 	
@@ -107,9 +103,6 @@ class RegionSearchService {
 		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Eqtl data
 	     JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
 	     LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
-	     LEFT JOIN biomart.bio_marker bm
-	     ON bm.primary_external_id = gmap.entrez_gene_id
-	     AND bm.primary_source_code = 'Entrez'
 	     WHERE 1=1
     """
 	
@@ -262,7 +255,7 @@ class RegionSearchService {
 		
 		//Add gene names
 		if (geneNames) {
-			queryCriteria.append(" AND bm.bio_marker_name IN (" + "'" + geneNames[0] + "'");
+			queryCriteria.append(" AND gmap.gene_name IN (" + "'" + geneNames[0] + "'");
 			for (int i = 1; i < geneNames.size(); i++) {
 				queryCriteria.append(", " + "'" + geneNames[i] + "'");
 			}
