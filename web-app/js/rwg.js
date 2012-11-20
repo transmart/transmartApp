@@ -2875,7 +2875,12 @@ function loadHeatmapPaginator(divID, analysisId, page, isSA, keywordsQueryString
 		success: function(response) {								
 			var maxProbeIndex = response['maxProbeIndex']
 			
-			getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, isSA, keywordsQueryString);
+			if (maxProbeIndex == 0)  {
+				jQuery("#" + divID).html('No Data');				
+			}
+			else {
+				getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, isSA, keywordsQueryString);
+			}
 	
 		},
 		error: function(xhr) {
