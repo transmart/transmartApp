@@ -1246,7 +1246,7 @@ public class SearchController{
 			//If displaying no regions and only one analysis, run the alternative query and pull back the rows for the limits
 			def analysis = BioAssayAnalysis.get(analysisIds[0])
 			def quickAnalysisData = regionSearchService.getQuickAnalysisDataByName(analysis.name, type)
-			for (int i = offset+1; i < max+offset; i++) {
+			for (int i = offset; i < (max+offset); i++) {
 				analysisData.push(quickAnalysisData.results[i]);
 			}
 			totalCount = analysis.dataCount
