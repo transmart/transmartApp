@@ -16,7 +16,7 @@
   
  
 -->
-<div class="body" style="clear:both; width:99%;margin-left:5px;margin-top:20px">
+<div class="body" style="clear:both; width:99%;margin-left:5px;margin-top:10px">
 <table class="searchbox"  style="border: 0px; align: left; margin: 5px 5px;">
     <tr>
         <td colspan="2">&nbsp;</td>

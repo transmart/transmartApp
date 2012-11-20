@@ -2854,40 +2854,65 @@ function toggleHeatmapSA(analysisId, page)	{
 function loadHeatmapSA(analysisId, page) {
 	// generate a keyword list that can be consumed by the server; needs to be in form:
 	// GENELIST:1|2|3&GENESIG:4|5&PATHWAY:6|7&GENE:8|9&PROTEIN:10|11
+
+	// retrieve the current state of the checkbox
+	var cbState =  jQuery("input[name=showGenes_" + analysisId + "]:checked").val();
 	
-	var params = new Array
-	var geneList = new Array
-	var geneSig = new Array
-	var pathway = new Array
-	var gene = new Array
-	var protein = new Array
+	// retrieve the old value of the checkbox
+	var oldState = jQuery("#selectedAnalysis_" + analysisId).data("cbState");
+
+	var hmLoaded = jQuery("#selectedAnalysis_" + analysisId).data("hmLoaded");
 	
-	var divID = 'heatmapSA_' + analysisId;
-	
-	// loop through each xt keyword and add to the appropriate array based on its category
-	for (var i=0; i<xtSelectedKeywords.length; i++)  {
-		var kw = xtSelectedKeywords[i];
-		switch (kw.categoryId)
-		{ 
-			case 'GENELIST':  geneList.push(kw.id); break;
-			case 'GENESIG':   geneSig.push(kw.id); break;
-			case 'PATHWAY':   pathway.push(kw.id); break;
-			case 'GENE':      gene.push(kw.id); break;
-			case 'PROTEIN':   protein.push(kw.id); break;
-		    default: alert('Invalid category: ' + kw.categoryId); return false;
-		}				
-	}
-	
-	// if a category has items, join it's items with a pipe and add to params array
-	if (geneList.length>0)  {params.push('GENELIST:' + geneList.join('|'))}
-	if (geneSig.length>0)  	{params.push('GENESIG:' + geneSig.join('|'))}
-	if (pathway.length>0)  	{params.push('PATHWAY:' + pathway.join('|'))}
-	if (gene.length>0)  	{params.push('GENE:' + gene.join('|'))}
-	if (protein.length>0)  	{params.push('PROTEIN:' + protein.join('|'))}
-	
-	var queryString = params.join('&');
-	
-	loadHeatmapPaginator(divID, analysisId, page, true, queryString);
+	// nothing changed and a heatmap is loaded, don't load anything
+    if (oldState == cbState && hmLoaded)  {
+    	return false;
+    }
+    else {
+		
+		var queryString;
+		var divID = 'heatmapSA_' + analysisId;
+		
+    	if (cbState == 'ALLSIG')  {
+    		// load with no keyword filters
+    		queryString = '';
+    	}
+    	else  {
+			var params = new Array
+			var geneList = new Array
+			var geneSig = new Array
+			var pathway = new Array
+			var gene = new Array
+			var protein = new Array
+			
+			// loop through each xt keyword and add to the appropriate array based on its category
+			for (var i=0; i<xtSelectedKeywords.length; i++)  {
+				var kw = xtSelectedKeywords[i];
+				switch (kw.categoryId)
+				{ 
+					case 'GENELIST':  geneList.push(kw.id); break;
+					case 'GENESIG':   geneSig.push(kw.id); break;
+					case 'PATHWAY':   pathway.push(kw.id); break;
+					case 'GENE':      gene.push(kw.id); break;
+					case 'PROTEIN':   protein.push(kw.id); break;
+				    default: alert('Invalid category: ' + kw.categoryId); return false;
+				}				
+			}
+			
+			// if a category has items, join it's items with a pipe and add to params array
+			if (geneList.length>0)  {params.push('GENELIST:' + geneList.join('|'))}
+			if (geneSig.length>0)  	{params.push('GENESIG:' + geneSig.join('|'))}
+			if (pathway.length>0)  	{params.push('PATHWAY:' + pathway.join('|'))}
+			if (gene.length>0)  	{params.push('GENE:' + gene.join('|'))}
+			if (protein.length>0)  	{params.push('PROTEIN:' + protein.join('|'))}
+			
+			queryString = params.join('&');
+    	}
+    	
+    	// save the new state of checkbox
+    	jQuery("#selectedAnalysis_" + analysisId).data("cbState", cbState);
+    	
+		loadHeatmapPaginator(divID, analysisId, page, true, queryString);
+    }
 }
 
 
@@ -3296,6 +3321,22 @@ function displayxtAnalysesList(){
 		html = html + "<div class='legend' id='saheatmapLegend_" + selectedAnalyses[index].id + "'></div>";
 		html = html + "<div class='heatmap-SA-Holder' id='heatmapSA_" + selectedAnalyses[index].id + "'></div>";
 		html = html + "<div class='pagination' id='sapagination_" + selectedAnalyses[index].id + "'></div>";
+		
+		var allSigChecked = '';
+		var selectedChecked = '';
+		var selectedDisabled = '';
+		if (xtSelectedKeywords.length > 0)  {
+			selectedChecked = 'checked';
+		}
+		else  {
+			allSigChecked = 'checked';
+			selectedDisabled = 'disabled'
+		}
+		
+		var onclick = "loadHeatmapSA(" +  selectedAnalyses[index].id + ", 1);" 
+		html = html + "<input onclick='" + onclick + "' type='radio' name='showGenes_" + selectedAnalyses[index].id + "' value='ALLSIG' " + allSigChecked + " /> Show All Significant Genes<br>"
+		html = html + "<input onclick='" + onclick + "' type='radio' name='showGenes_" + selectedAnalyses[index].id + "' value='SELECTED' " + selectedChecked + " " + selectedDisabled + " /> Show Selected Genes<br>"
+		
 		html = html + "</div>";
 	});
 	
@@ -3307,6 +3348,12 @@ function displayxtAnalysesList(){
 	jQuery(selectedAnalyses).each(function(index, value){
 		jQuery("#selectedAnalysis_" + selectedAnalyses[index].id).data("expanded", false);
 		jQuery("#selectedAnalysis_" + selectedAnalyses[index].id).data("hmLoaded", false);
+		
+		// retrieve the current value of check box
+		var cbState =  jQuery("input[name=showGenes_" + selectedAnalyses[index].id + "]:checked").val();
+		
+		// save the state of cb
+		jQuery("#selectedAnalysis_" + selectedAnalyses[index].id).data("cbState", cbState);
 	});
 	
 	
