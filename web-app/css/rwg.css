@@ -961,20 +961,28 @@ border-top: 1px solid #CCC;
 		color: #ccc;
 	}
 
+#saved-filters-holder th{
+	background:#F1F1F1;
+	padding: 0;
+	border: 1px solid #CCC;
+	font-weight: bold;
+}
+
 /************ Cross Trial Analysis Formatting *******/
 
 #xtHolder{
 	
 	margin-left:10px;
 	margin-right:10px;
+	margin-bottom: 30px;
 	
 }
 
 #xtSearch{
-	background-color: #F0F0F0;
+	background-color: #EFF5FA;
 	padding: 10px;
-	border-top: 1px solid #CCC;
-	border-bottom: 1px solid #CCC;
+	border-top: 1px solid #AED0EA;
+	border-bottom: 1px solid #AED0EA;
 	margin-bottom: 10px;
 }
 
@@ -994,6 +1002,11 @@ border-top: 1px solid #CCC;
 	display: inline-block;
 }
 
+#xtSummaryTable{
+	width:300px;
+	height:250px;
+}
+
 
 
 #xtSelectedAnalysesList li {
@@ -1007,6 +1020,10 @@ list-style-type: none;
 cursor:default;
 }
 
+#xtMenuBar .ui-tabs-panel {
+border: 1px solid #CCC;
+border-top: 0;
+}
 
 /* Add additional formatting to the jquery ui dialog
 box to help it stand out more */
@@ -1015,6 +1032,10 @@ border: 1px solid #CCC;
 box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 }
 
+
+#xtSearch-ac{
+	width:250px;
+}
 
 #xtSelectedAnalysesListLegend{
 	
@@ -1027,6 +1048,20 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	border: 1px solid #DDD;
 	background-color:#F7F7F7;
 	margin-top:-1px;
+	cursor:pointer
+}
+
+.xtSAHeatmapHolder{
+	display: none;
+	padding: 8px;
+	border: 1px solid #CCC;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+	margin-bottom: 10px;
+	border-top: 0;
+	padding-left: 25px;
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	padding-bottom:4px;
 }
 
 
@@ -1034,6 +1069,14 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 .xtHeatmap{
 	display:inline-block;
 	min-height:250px;
+	padding:3px;
+	background-color:#fff;
+}
+
+.xtHeatmap:hover{
+	
+box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+	
 }
 
 .xtInfoBox{
@@ -1059,9 +1102,6 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 color: #EFEFEF;
 padding: 8px;
 margin-right: 0;
-border-radius: 4px;
-border-top-right-radius: 0;
-border-bottom-right-radius: 0;
 }
 
 /*** XT Summary Bar Plots ***/

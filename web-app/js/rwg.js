@@ -76,7 +76,7 @@ function refreshCrossTrialMsg(){
 	
 	//if there are already selected keywords, then these need
 	//to be refreshed or removed
-	if(xtSelectedKeywords.length>0){
+//	if(xtSelectedKeywords.length>0){
 		
 		//Display msg to user with option to refresh or clear
 		jQuery("#xtMsgBox").fadeIn();
@@ -84,7 +84,7 @@ function refreshCrossTrialMsg(){
 		//mask the tabs
 		jQuery('#xtMenuBar').mask();
 		
-	}
+//	}
 	
 }
 
@@ -2824,13 +2824,13 @@ function toggleHeatmapSA(analysisId, page)	{
     if (expanded)  {
     	// unexpand
     	jQuery(imgExpand).attr('src', './../images/down_arrow_small2.png');
-    	jQuery("#analysis_holderSA_" + analysisId).hide();
+    	jQuery("#analysis_holderSA_" + analysisId).slideUp(200);
     	jQuery("#selectedAnalysis_" + analysisId).data("expanded", false);
     }
     else  {
     	// expand
     	jQuery(imgExpand).attr('src', './../images/up_arrow_small2.png');
-    	jQuery("#analysis_holderSA_" + analysisId).show();
+    	jQuery("#analysis_holderSA_" + analysisId).slideDown(200);
     	jQuery("#selectedAnalysis_" + analysisId).data("expanded", true);
     	
     	var hmLoaded = jQuery("#selectedAnalysis_" + analysisId).data("hmLoaded");
@@ -3097,6 +3097,10 @@ function displaySelectedAnalysisTopGenes(){
 
 function getCrossTrialSummaryTableStats()
 {
+	 jQuery('#xtSummaryTable').html('');
+	
+	 jQuery('#xtSummaryTable').mask('Loading...');
+	
 	if (selectedAnalyses.length == 0)  {
 		return;
 	}
@@ -3138,6 +3142,8 @@ function getCrossTrialSummaryTableStats()
 			    //alternate colors
 			    jQuery('#CTAsummaryTable').find('tr:even').css({'background-color':'#efefef'})
 	              .end().find('tr:odd').css({'background-color':'#fff'});
+			    
+			    jQuery('#xtSummaryTable').unmask();
 		   
 		}
 	});
@@ -3175,7 +3181,7 @@ function getTopGenes(analysisID)
 function updateCrossTrialGeneCharts(){
 	
 	//update the table
-	 getCrossTrialSummaryTableStats()
+	getCrossTrialSummaryTableStats()
 	
 	jQuery('#xtMsgBox').fadeOut(200);
 	
@@ -3282,7 +3288,7 @@ function displayxtAnalysesList(){
 		html = html + "<span class='analysisNum'>" +num  +"</span> <span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ');
 		html = html + "<img alt='expand/collapse' id='saimgExpand_" + selectedAnalyses[index].id + "' src='./../images/down_arrow_small2.png' style='vertical-align: middle; padding-left:10px; padding-right:10px;'/>";
 		html = html + '</div>';
-		html = html + "<div id='analysis_holderSA_" + selectedAnalyses[index].id + "'>"; 
+		html = html + "<div id='analysis_holderSA_" + selectedAnalyses[index].id + "' class='xtSAHeatmapHolder'>"; 
 		html = html + "<div class='legend' id='saheatmapLegend_" + selectedAnalyses[index].id + "'></div>";
 		html = html + "<div id='heatmapSA_" + selectedAnalyses[index].id + "'></div>";
 		html = html + "<div class='pagination' id='sapagination_" + selectedAnalyses[index].id + "'></div>";
