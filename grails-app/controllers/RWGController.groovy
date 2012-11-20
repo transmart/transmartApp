@@ -759,10 +759,17 @@ class RWGController {
    def getSearchCategories = {
 	   render searchKeywordService.findSearchCategories() as JSON	   
    }
+
+   // Return search keywords for cross trial
+   def searchAutoCompleteCTA = {
+	   def category = ['PATHWAY', 'GENELIST', 'GENESIG', 'GENE', 'PROTEIN']
+	   render searchKeywordService.findSearchKeywords(category, params.term) as JSON
+   }
+
    
    // Return search keywords
    def searchAutoComplete = {
-	   def category = params.category == null ? "ALL" : params.category	   
+	   def category = params.category == null ? "ALL" : params.category	  
 	   render searchKeywordService.findSearchKeywords(category, params.term) as JSON	   
    }
         

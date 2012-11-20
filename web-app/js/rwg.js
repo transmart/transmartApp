@@ -894,9 +894,6 @@ function exportCanvas(svgID){
 }
 
 
-
-
-
 //export the current analysis data to a csv file
 function exportHeatmapData(analysisId, exportType)
 {
@@ -3574,7 +3571,7 @@ function getCrossTrialGeneSummary(search_keyword_id)
 
 function addXTSearchAutoComplete()	{
 	jQuery("#xtSearch-ac").autocomplete({
-		source: sourceURL,
+		source: searchAutoCompleteCTAURL,
 		minLength:0,
 		select: function(event, ui) {  
 
