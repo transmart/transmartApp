@@ -24,6 +24,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
     var hasPvalue = false;
     var hasNullValues = false; //checks if there are null in the heatmap; null legend should only be displayed if so
 	var maxProbeLength = 0;
+	var maxGeneLength = 0;
 
     var foldChange = new Array();    
     var tpValues = new Array();    
@@ -41,6 +42,11 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
 		preferredPValues.push(ppValue);
 
 		geneLabels.push({gene:heatmapJSON[i].GENE, genelist:heatmapJSON[i].GENELIST, geneId:heatmapJSON[i].GENE_ID});
+		
+		var geneLength = heatmapJSON[i].GENE.visualLength("10px Verdana, Tahoma, Arial");
+		if ( geneLength > maxGeneLength)  {
+			maxGeneLength = geneLength;
+		}
 		
 		if (heatmapJSON[i].PROBE.visualLength("10px Verdana, Tahoma, Arial") > maxProbeLength)  {
 			//maxProbeLength = heatmapJSON[i].PROBE.length;
@@ -189,7 +195,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
 	
 	
 	// Hardcode the size of the cell and the labels
-	var w_sample = 75, w_gene = 75, h_header=6, w_fold_change = 75, w_Tpvalue =75, w_pvalue = 75;			// Label dimensions
+	var w_sample = 75, w_gene = Math.max(75, maxGeneLength + 5), h_header=6, w_fold_change = 75, w_Tpvalue =75, w_pvalue = 75;			// Label dimensions
 	var w = cellSize, h = cellSize;									    							// Cell dimensions
 	
 	if(!hasFoldChange){
