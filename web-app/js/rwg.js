@@ -2826,12 +2826,16 @@ function toggleHeatmapSA(analysisId, page)	{
     	jQuery(imgExpand).attr('src', './../images/down_arrow_small2.png');
     	jQuery("#analysis_holderSA_" + analysisId).slideUp(200);
     	jQuery("#selectedAnalysis_" + analysisId).data("expanded", false);
+    	
+    	jQuery("#selectedAnalysis_" + analysisId).removeClass("SA-item-expanded");
     }
     else  {
     	// expand
     	jQuery(imgExpand).attr('src', './../images/up_arrow_small2.png');
     	jQuery("#analysis_holderSA_" + analysisId).slideDown(200);
     	jQuery("#selectedAnalysis_" + analysisId).data("expanded", true);
+    	
+    	jQuery("#selectedAnalysis_" + analysisId).addClass("SA-item-expanded");
     	
     	var hmLoaded = jQuery("#selectedAnalysis_" + analysisId).data("hmLoaded");
     	
@@ -3285,12 +3289,12 @@ function displayxtAnalysesList(){
 		var num = parseInt(index) + 1;
 
 		html = html + "<div class='xtSelectedAnalysesListLegendItem' onclick='toggleHeatmapSA(" + selectedAnalyses[index].id + ", 1);' id='selectedAnalysis_"+selectedAnalyses[index].id +"'>";
-		html = html + "<table><tr><td><span class='analysisNum'>" +num  +"</span></td><td><span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ');
-		html = html + "</td><td><img alt='expand/collapse' id='saimgExpand_" + selectedAnalyses[index].id + "' src='./../images/down_arrow_small2.png' style='vertical-align: middle; padding-left:10px; padding-right:10px;'/></td>";
+		html = html + "<table><tr><td class='analysisNum'>" +num  +"</td><td style='padding-left:4px'><span style='padding-left:0' class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ');
+		html = html + "</td><td style='text-align:right'><img alt='expand/collapse' id='saimgExpand_" + selectedAnalyses[index].id + "' src='./../images/down_arrow_small2.png' style='vertical-align: middle; padding-left:10px; padding-right:10px;'/></td></tr>";
 		html = html + '</table></div>';
 		html = html + "<div id='analysis_holderSA_" + selectedAnalyses[index].id + "' class='xtSAHeatmapHolder'>"; 
 		html = html + "<div class='legend' id='saheatmapLegend_" + selectedAnalyses[index].id + "'></div>";
-		html = html + "<div id='heatmapSA_" + selectedAnalyses[index].id + "'></div>";
+		html = html + "<div class='heatmap-SA-Holder' id='heatmapSA_" + selectedAnalyses[index].id + "'></div>";
 		html = html + "<div class='pagination' id='sapagination_" + selectedAnalyses[index].id + "'></div>";
 		html = html + "</div>";
 	});
