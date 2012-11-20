@@ -2813,6 +2813,42 @@ function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, is
 	
 }
 
+
+//Open and close the SA heatmap for a given analysis
+function toggleHeatmapSA(analysisId, page)	{	
+	
+	var expanded = jQuery("#selectedAnalysis_" + analysisId).data("expanded");
+
+	var imgExpand = "#saimgExpand_"  + analysisId;
+
+	// when not expanded, has a down arrow
+	// when expanded has an up arrow
+	// replace with the other on toggle
+    if (expanded)  {
+    	// unexpand
+    	jQuery(imgExpand).attr('src', './../images/down_arrow_small2.png');
+    	jQuery("#analysis_holderSA_" + analysisId).hide();
+    	jQuery("#selectedAnalysis_" + analysisId).data("expanded", false);
+    }
+    else  {
+    	// expand
+    	jQuery(imgExpand).attr('src', './../images/up_arrow_small2.png');
+    	jQuery("#analysis_holderSA_" + analysisId).show();
+    	jQuery("#selectedAnalysis_" + analysisId).data("expanded", true);
+    	
+    	var hmLoaded = jQuery("#selectedAnalysis_" + analysisId).data("hmLoaded");
+    	
+    	// if we don't have a heatmap laoded yet, then load one
+    	if (!hmLoaded)  {
+    		loadHeatmapSA(analysisId, page);
+    		jQuery("#selectedAnalysis_" + analysisId).data("hmLoaded", true);
+    	}
+    	
+    }
+	return false;
+}
+
+
 // load the Selected Analyses heatmap (the one that shows underneath the analysis on the CTA page)
 function loadHeatmapSA(analysisId, page) {
 	// generate a keyword list that can be consumed by the server; needs to be in form:
@@ -3249,8 +3285,10 @@ function displayxtAnalysesList(){
 		
 		var num = parseInt(index) + 1;
 
-		html = html + "<div class='xtSelectedAnalysesListLegendItem' onclick='loadHeatmapSA(" +selectedAnalyses[index].id + ", 1);' id='selectedAnalysis_"+selectedAnalyses[index].id +"'>";
-		html = html + "<span class='analysisNum'>" +num  +"</span> <span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</div>';
+		html = html + "<div class='xtSelectedAnalysesListLegendItem' onclick='toggleHeatmapSA(" + selectedAnalyses[index].id + ", 1);' id='selectedAnalysis_"+selectedAnalyses[index].id +"'>";
+		html = html + "<span class='analysisNum'>" +num  +"</span> <span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ');
+		html = html + "<img alt='expand/collapse' id='saimgExpand_" + selectedAnalyses[index].id + "' src='./../images/down_arrow_small2.png' style='vertical-align: middle; padding-left:10px; padding-right:10px;'/>";
+		html = html + '</div>';
 		html = html + "<div id='analysis_holderSA_" + selectedAnalyses[index].id + "'>"; 
 		html = html + "<div class='legend' id='saheatmapLegend_" + selectedAnalyses[index].id + "'></div>";
 		html = html + "<div id='heatmapSA_" + selectedAnalyses[index].id + "'></div>";
@@ -3262,6 +3300,12 @@ function displayxtAnalysesList(){
 	
 	jQuery('#xtSummary_AnalysesList').html(html);
 
+	// store the state of each div 
+	jQuery(selectedAnalyses).each(function(index, value){
+		jQuery("#selectedAnalysis_" + selectedAnalyses[index].id).data("expanded", false);
+		jQuery("#selectedAnalysis_" + selectedAnalyses[index].id).data("hmLoaded", false);
+	});
+	
 	
 }
 
