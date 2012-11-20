@@ -45,11 +45,11 @@
 				<tbody>
 				<g:each in="${personList}" status="i" var="person">
 					<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-						<td>${person.id}</td>
-						<td>${person.username?.encodeAsHTML()}</td>
-						<td>${person.userRealName?.encodeAsHTML()}</td>
+						<td>${person.id}&nbsp&nbsp&nbsp&nbsp</td>
+						<td>${person.username?.encodeAsHTML()}&nbsp&nbsp&nbsp&nbsp</td>
+						<td>${person.userRealName?.encodeAsHTML()}&nbsp&nbsp&nbsp&nbsp</td>
 						<td>${person.enabled?.encodeAsHTML()}</td>
-						<td>${person.description?.encodeAsHTML()}</td>
+						<td>${person.description?.encodeAsHTML()}&nbsp&nbsp&nbsp&nbsp</td>
 						<td class="actionButtons">
 							<span class="actionButton">
 								<g:link action="show" id="${person.id}">Show</g:link>
