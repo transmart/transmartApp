@@ -72,7 +72,7 @@ function applyPopupFiltersStudy()
 	})
 	
 	//This destroys our popup window.
-	jQuery(this).dialog("destroy")
+	jQuery(this).dialog("destroy");
 }
 
 function applyPopupFiltersAnalyses()
@@ -91,6 +91,8 @@ function applyPopupFiltersAnalyses()
 	})
 	
 	//This destroys our popup window.
+	//Special for analyses - remove the large list at this stage
+	jQuery(this).children().detach().remove();
 	jQuery(this).dialog("destroy")
 }
 
@@ -139,7 +141,7 @@ function applyPopupFiltersRegions()
 	addSearchTerm(searchParam);
 	
 	//This destroys our popup window.
-	jQuery(this).dialog("destroy")
+	jQuery(this).dialog("destroy");
 }
 
 function getRangeSymbol(string) {
@@ -171,5 +173,5 @@ function applyPopupFiltersDataTypes()
 	})
 	
 	//This destroys our popup window.
-	jQuery(this).dialog("destroy")
+	jQuery(this).dialog("destroy");
 }

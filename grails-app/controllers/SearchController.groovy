@@ -660,35 +660,7 @@ public class SearchController{
 								
 							</jnlp>                           
 		"""
-								
-//		<?xml version="1.0" encoding="UTF-8"?>
-//		<jnlp spec="6.0+" codebase="${codebase}" href="search/webStartPlotter;jsessionid=""" + session.getId() + """">
-//			<information>
-//				<title>Testing Java WS</title>
-//				<vendor>Recombinant</vendor>
-//			</information>
-//			<resources>
-//				<!-- Application Resources -->
-//				<j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-//				<property name="jsessionid" value='""" + session.getId() + """'/>
-//				<property name="serviceHost" value='""" + request.getServerName() + """'/>
-//				<jar href="${jar};jsessionid=""" + session.getId() + """" main="true" />
-//			</resources>
-//					<application-desc name="Test WS" main-class="${mainClass}" width="300" height="300">
-//				"""
-//
-//				responseText += '<argument>' + analysisIds + '</argument>\n'
-//				responseText += '<argument>' + regions + '</argument>\n'
-//				responseText += '<argument>' + geneSource + '</argument>\n'
-//				responseText += '<argument>' + snpSource + '</argument>\n'
-//				responseText += '<argument>' + pvalueCutoff + '</argument>\n'
-//	responseText +=	"""
-//
-//					</application-desc>
-//			<update check="background"/>
-//		</jnlp>
-		
-		
+
 		render(text:responseText,contentType:"application/x-java-jnlp-file")
 		//render(text:responseText,contentType:"text/html")
 	}
@@ -1163,6 +1135,7 @@ public class SearchController{
 				def rsIds = s.split("\\|")
 				for (rsId in rsIds) {
 					//Get the genes associated with this SNP
+					def searchKeyword = SearchKeyword.get(rsId as long)
 					def snpGenes = regionSearchService.getGenesForSnp(searchKeyword.keyword)
 					//Push each gene and the radius
 					for (snpGene in snpGenes) {

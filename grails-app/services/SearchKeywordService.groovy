@@ -74,8 +74,11 @@ public class SearchKeywordService {
 			if ("GENE_OR_SNP".equals(category))	{
 				or {
 					eq("dataCategory", "GENE")
-					eq("dataCategory", "SNP")
+					like("keywordTerm", 'RS%')
 				}
+			}
+			else if ("SNP".equals(category)) {
+				like("keywordTerm", 'RS%')
 			}
 			else if ("ALL".compareToIgnoreCase(category) != 0)	{
 				eq("dataCategory", category.toUpperCase())
