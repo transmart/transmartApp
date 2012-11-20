@@ -389,6 +389,7 @@ class RegionSearchService {
 			stmt = con.prepareStatement(quickQuery)
 			stmt.setString(1, analysisName);
 
+			println("Running shortcut query")
 			rs = stmt.executeQuery();
 			if (type.equals("eqtl")) {
 				while(rs.next()){
@@ -407,6 +408,7 @@ class RegionSearchService {
 			con?.close();
 		}
 		
+		println("Returning " + results.size())
 		return [results: results]
 		
 	}

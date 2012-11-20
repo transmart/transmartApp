@@ -1242,6 +1242,7 @@ public class SearchController{
 //		}
 		
 		if (!regions && analysisIds.size() == 1 && sortField.equals('null') && max > 0) {
+			println("Triggering shortcut query")
 			//If displaying no regions and only one analysis, run the alternative query and pull back the rows for the limits
 			def analysis = BioAssayAnalysis.get(analysisIds[0])
 			def quickAnalysisData = regionSearchService.getQuickAnalysisDataByName(analysis.name, type)
@@ -1249,6 +1250,7 @@ public class SearchController{
 				analysisData.push(quickAnalysisData.results[i]);
 			}
 			totalCount = analysis.dataCount
+			println("Got results in a batch of " + analysisData.size())
 		}
 		else {
 			//Otherwise, run the query and recache the returned data
@@ -1295,7 +1297,7 @@ public class SearchController{
 			columnNames.add(["sTitle":it.field_name])
 		}
 		
-
+		println("About to process results")
 
 		//The returned data needs to have the large text field broken out by delimiter.
 		analysisData.each()
@@ -1338,7 +1340,7 @@ public class SearchController{
 				returnedAnalysisData.add(temporaryList)
 			}
 		}
-		
+		println("Results processed OK")
 		return [analysisData: returnedAnalysisData, columnNames: columnNames, max: max, offset: offset, cutoff: cutoff, totalCount: totalCount, wasRegionFiltered: wasRegionFiltered]
 		
 	}
