@@ -74,6 +74,7 @@
 	        var tableURL = "${createLink([action:'newTable'])}";
 	        var treeURL = "${createLink([action:'getDynatree'])}";
 	        var sourceURL = "${createLink([action:'searchAutoComplete'])}";	      
+	        var searchAutoCompleteCTAURL = "${createLink([action:'searchAutoCompleteCTA'])}";	      
 	        var getCategoriesURL = "${createLink([action:'getSearchCategories'])}";
 	        var getHeatmapNumberProbesURL = "${createLink([action:'getHeatmapNumberProbes'])}";
 	        var getHeatmapDataURL = "${createLink([action:'getHeatmapData'])}";

@@ -69,11 +69,19 @@ public class SearchKeywordService {
 			if (term.size() > 0)	{
 				ilike("keywordTerm", '%' + term + '%')
 			}
-			if ("ALL".compareToIgnoreCase(category) != 0)	{
+			if (category.class.name.toLowerCase() == 'java.util.arraylist') {
 				searchKeyword	{
-					eq("dataCategory", category, [ignoreCase: true])
+					inList("dataCategory", category)
 				}
 			}
+			else  {
+				if ("ALL".compareToIgnoreCase(category) != 0)	{
+					searchKeyword	{
+						eq("dataCategory", category, [ignoreCase: true])
+					}
+				}
+			}			
+			
 			if (!user.isAdmin())	{
 				log.info("User is not an admin so filter out gene lists or signatures that are not public")
 				or	{

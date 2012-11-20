@@ -39,27 +39,17 @@
 
 			// set ajax to 90*1000 milliseconds
 			Ext.Ajax.timeout = 180000;
-
             Ext.onReady(function()
 	        {
-            	   Ext.QuickTips.init()
-            	   var viewport = new Ext.Viewport({
-                    layout: "border",
-                    items:[new Ext.Panel({                          
-                       region: "center",   
-                       autoScroll:true,                    
-                       contentEl: "page"
-                    })]
-                  });
-                  viewport.doLayout();	                
+            	   Ext.QuickTips.init();            	  	                
 	        });
 		</script>
 		<g:layoutHead />
 	</head>
 	<body>
 		<div id="page">
-			<div id="header"><g:render template="/layouts/commonheader"	model="['app':'genesignature']" /></div>
-			<div id="app"><g:layoutBody /></div>
+			<div id="header-div"><g:render template="/layouts/commonheader"	model="['app':'genesignature']" /></div>
+			<div id="content"><g:layoutBody /></div>
 		</div>
 	</body>
 </html>

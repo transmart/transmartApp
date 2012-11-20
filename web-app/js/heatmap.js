@@ -9,7 +9,7 @@ var ctaHeatmapHeightWithoutLegend;
 var ctaHeatmapHeightWithLegend;
 
 // Take the heatmap data in the second parameter and draw the D3 heatmap
-function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
+function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQueryString)	{
 	jQuery("#" + divID).empty();
     var savedDisplayStyle = jQuery("#" + divID).css('display');
 	jQuery("#" + divID).show();  // show first so title height can be calculated correctly
@@ -24,6 +24,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
     var hasPvalue = false;
     var hasNullValues = false; //checks if there are null in the heatmap; null legend should only be displayed if so
 	var maxProbeLength = 0;
+	var maxGeneLength = 0;
 
     var foldChange = new Array();    
     var tpValues = new Array();    
@@ -41,6 +42,11 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		preferredPValues.push(ppValue);
 
 		geneLabels.push({gene:heatmapJSON[i].GENE, genelist:heatmapJSON[i].GENELIST, geneId:heatmapJSON[i].GENE_ID});
+		
+		var geneLength = heatmapJSON[i].GENE.visualLength("10px Verdana, Tahoma, Arial");
+		if ( geneLength > maxGeneLength)  {
+			maxGeneLength = geneLength;
+		}
 		
 		if (heatmapJSON[i].PROBE.visualLength("10px Verdana, Tahoma, Arial") > maxProbeLength)  {
 			//maxProbeLength = heatmapJSON[i].PROBE.length;
@@ -97,30 +103,44 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 		
 	}
 	
-    var analysisIndex = getAnalysisIndex(analysisID);
+	var analysisIndex;
+	var cellSize;
+	var w_probe;		
+	var rangeMax;
+	var rangeMin;
+	var rangeMid;
+	if (!isSA)  {		
+	    analysisIndex = getAnalysisIndex(analysisID);
 
-    analysisProbeIds[analysisIndex].probeIds = probesList;
-    analysisProbeIds[analysisIndex].selectList = selectList;
+	    analysisProbeIds[analysisIndex].probeIds = probesList;
+	    analysisProbeIds[analysisIndex].selectList = selectList;
 
-    // reset the active probe for the other plots to be the first on this page
-    setActiveProbe(analysisID, probesList[0]);
-    
-	//store the max probe length for this analysis
-	jQuery('body').data("maxProbeLength:" + analysisID, maxProbeLength);	    
-	
-	// First, we need to get the subject IDs that we will use for mapping the color range
-	// We also need the two cohort prefixes and when the cohort first subset ends as these will be used for the legend	
+	    // reset the active probe for the other plots to be the first on this page
+	    setActiveProbe(analysisID, probesList[0]);	    
+		//store the max probe length for this analysis
+		jQuery('body').data("maxProbeLength:" + analysisID, maxProbeLength);	    
 
-	var cellID = "#heatmapSlider_" +analysisID;
-	var colorSliderID = "#heatmapColorSlider_" +analysisID;
+		// First, we need to get the subject IDs that we will use for mapping the color range
+		// We also need the two cohort prefixes and when the cohort first subset ends as these will be used for the legend	
+		
+		var cellID = "#heatmapSlider_" +analysisID;
+		var colorSliderID = "#heatmapColorSlider_" +analysisID;
+		cellSize = parseInt(jQuery(cellID).slider( "option", "value" ));
+		rangeMax = parseInt(jQuery(colorSliderID).slider( "values", 1 )) /100.0;
+		rangeMin = parseInt(jQuery(colorSliderID).slider( "values", 0 )) / 100.0;
+	}
+	else  {		
+	    analysisIndex = getAnalysisIndexSA(analysisID);
+
+	    analysisProbeIdsSA[analysisIndex].probeIds = probesList;
+	    analysisProbeIdsSA[analysisIndex].selectList = selectList;
+	    cellSize = 15;
+		rangeMax = 1;
+		rangeMin = -1;
+	}
 	
-	var cellSize = parseInt(jQuery(cellID).slider( "option", "value" ));
+	var w_probe = 6 + parseInt(maxProbeLength);
 	
-	var w_probe = 6 + parseInt(jQuery('body').data("maxProbeLength:" + analysisID));
-	
-	
-	var rangeMax = parseInt(jQuery(colorSliderID).slider( "values", 1 )) /100.0;
-	var rangeMin = parseInt(jQuery(colorSliderID).slider( "values", 0 )) / 100.0;
 	var rangeMid = (rangeMax + rangeMin)/2;
 	
 	var columns = new Array();
@@ -175,7 +195,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 	
 	
 	// Hardcode the size of the cell and the labels
-	var w_sample = 75, w_gene = 75, h_header=6, w_fold_change = 75, w_Tpvalue =75, w_pvalue = 75;			// Label dimensions
+	var w_sample = 75, w_gene = Math.max(75, maxGeneLength + 5), h_header=6, w_fold_change = 75, w_Tpvalue =75, w_pvalue = 75;			// Label dimensions
 	var w = cellSize, h = cellSize;									    							// Cell dimensions
 	
 	if(!hasFoldChange){
@@ -449,12 +469,29 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 	  .attr("transform", "translate(" + xOffset + "," + yOffset + ")")
 	  ;
 	
-    // Show the probe labels
-	var probeGroupText = probeGroup.selectAll("a")
+	var probesGroupTextTags;
+	
+	// only have links if on the non SA heatmap
+	if (!isSA)  {
+		probesGroupTextTags = probeGroup.selectAll("a")
 		.data(probesList)
-		.enter().append("a")
-		.attr("xlink:href", function(d) {return "javascript:openBoxPlotFromHeatmap(" +analysisID +", '" + d +"');"})
+		.enter()
+		.append("a")
+		.attr("xlink:href", function(d) {
+				return "javascript:openBoxPlotFromHeatmap(" +analysisID +", '" + d +"');"				
+		  }
+		)
 		.append("text")
+	}  
+	else  {
+		probesGroupTextTags = probeGroup.selectAll("text")
+		.data(probesList)
+		.enter()
+		.append("text")		
+	}
+	
+    // Show the probe labels
+	var probeGroupText = probesGroupTextTags
 		.attr("x", 0)
 		.attr("y",function(d, i)	{
 			return (i * (h) + h / 2); 
@@ -468,7 +505,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
         ;			
 	
 	// tooltip for probe labels
-    if (!forExport)  {
+    if (!forExport && !isSA)  {
     	probeGroupText.append('svg:title').text("View in boxplot");
     }
 
@@ -513,7 +550,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport)	{
 
 	// not exporting, add the html to the div for the legend
 	 if (!forExport)  {		
-		 drawScreenLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles, "heatmap", analysisID);
+		 drawScreenLegend(numCohorts, cohorts, cohortDescriptions, cohortDisplayStyles, "heatmap", analysisID, isSA);
   	 }
 	
  	 jQuery("#" + divID).css('display', savedDisplayStyle);

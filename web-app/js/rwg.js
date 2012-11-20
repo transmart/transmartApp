@@ -17,6 +17,9 @@ var allowOnSelectEvent = true;
 // store probe Ids for each analysis that has been loaded
 var analysisProbeIds = new Array();
 
+//store probe Ids for each analysis that has been loaded on XT for selected analyses
+var analysisProbeIdsSA = new Array();
+
 var openAnalyses = new Array(); //store the IDs of the analyses that are open
 
 var openTrials = new Array(); //store the trials that are currently expanded
@@ -73,7 +76,7 @@ function refreshCrossTrialMsg(){
 	
 	//if there are already selected keywords, then these need
 	//to be refreshed or removed
-	if(xtSelectedKeywords.length>0){
+//	if(xtSelectedKeywords.length>0){
 		
 		//Display msg to user with option to refresh or clear
 		jQuery("#xtMsgBox").fadeIn();
@@ -81,7 +84,7 @@ function refreshCrossTrialMsg(){
 		//mask the tabs
 		jQuery('#xtMenuBar').mask();
 		
-	}
+//	}
 	
 }
 
@@ -152,20 +155,29 @@ function getSelectedAnalysesList(){
 	
 	jQuery("#selectedAnalysesExpanded").toggle();
 	
-	var html = "<a href='#' onclick='clearAllSelectedAnalyses()'>Clear All</a><br /><br />";
-	html = html +"<ul id='selectedAnalysesList'>";
+	var html = "";
 	
-	selectedAnalyses.sort(dynamicSort("studyID"));
-	
-	jQuery(selectedAnalyses).each(function(index, value){
-
-		html = html + "<li id='li_SelectedAnalysis_"+selectedAnalyses[index].id +"'>"
-		html = html + "<input type='checkbox' onchange=removeSelectedAnalysis('"+selectedAnalyses[index].id +"') name='chbx_SelectedAnalysis_" + selectedAnalyses[index].id +"' checked='	checked'>";
-		html = html + "<span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</li>';
+	if(selectedAnalyses.length==0){
 		
-	});
+		html = "<div style='text-align:center; padding:4px;'><p>No analyses are selected</p></div>"
+		
+	}else{
 	
-	html = html + '</ul>';
+		html += "<a href='#' onclick='clearAllSelectedAnalyses()'>Clear All</a><br />";
+		html +="<ul id='selectedAnalysesList'>";
+		
+		selectedAnalyses.sort(dynamicSort("studyID"));
+		
+		jQuery(selectedAnalyses).each(function(index, value){
+	
+			html = html + "<li id='li_SelectedAnalysis_"+selectedAnalyses[index].id +"'>"
+			html = html + "<input type='checkbox' onchange=removeSelectedAnalysis('"+selectedAnalyses[index].id +"') name='chbx_SelectedAnalysis_" + selectedAnalyses[index].id +"' checked='	checked'>";
+			html = html + "<span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</li>';
+			
+		});
+		
+		html = html + '</ul>';
+	}
 	
 	jQuery('#selectedAnalysesExpanded').html(html);
 	
@@ -882,9 +894,6 @@ function exportCanvas(svgID){
 }
 
 
-
-
-
 //export the current analysis data to a csv file
 function exportHeatmapData(analysisId, exportType)
 {
@@ -1077,7 +1086,7 @@ function removeFilterTreeSearchTerm(keywordId)	{
 function updateHeatmap(analysisID){
 	
 	var divID = "analysisDiv_" + analysisID;
-	drawHeatmapD3(divID, jQuery('body').data(analysisID), analysisID);
+	drawHeatmapD3(divID, jQuery('body').data(analysisID), analysisID, false);
 	
 }
 
@@ -1526,27 +1535,35 @@ function showVisualization(analysisID, changedPaging)	{
 }
 
 // Make a call to the server to load the heatmap data
-function loadHeatmapData(divID, analysisID, probesPage, probesPerPage)	{
+// keyword query string is optional, is provided for use by the heatmap shown on cta for a specific analysis
+function loadHeatmapData(divID, analysisID, probesPage, probesPerPage,  isSA, keywordsQueryString)	{
 	
 	rwgAJAXManager.add({
 		url:getHeatmapDataURL,
-		data: {id: analysisID, probesPage: probesPage, probesPerPage:probesPerPage},
+		data: {id: analysisID, probesPage: probesPage, probesPerPage:probesPerPage, isSA:isSA, keywordsQueryString:keywordsQueryString},
 		timeout:60000,
 		success: function(response) {
-			jQuery('body').data(analysisID, response); //store the result set in case the heatmap is updated 
-			jQuery('#analysis_holder_' +analysisID).unmask(); //hide the loading msg, unblock the div
-			drawHeatmapD3(divID, response, analysisID);	
-			jQuery('#'+divID).show();   // why needed, not needed with old heat map?
-			jQuery('#heatmapLegend_'+analysisID).show();
+			if (!isSA)  {
+				jQuery('body').data(analysisID, response); //store the result set in case the heatmap is updated 
+				jQuery('#analysis_holder_' +analysisID).unmask(); //hide the loading msg, unblock the div				
+				drawHeatmapD3(divID, response, analysisID, false);	
+				jQuery('#'+divID).show();   // why needed, not needed with old heat map?
+				jQuery('#heatmapLegend_'+analysisID).show();
+		        var analysisIndex = getAnalysisIndex(analysisID);
+		        var probesList = analysisProbeIds[analysisIndex].probeIds;
+		        var maxProbeIndex = analysisProbeIds[analysisIndex].maxProbeIndex;
+				
+				if(maxProbeIndex == 1){ //only one probe returned
+					loadBoxPlotData(analysisID, probesList[0]);	//preload boxplot
+				}	        
+			}
+			else  {
+				jQuery('#analysis_holderSA_' +analysisID).unmask(); //hide the loading msg, unblock the div				
+				drawHeatmapD3(divID, response, analysisID, false, isSA, keywordsQueryString);	
+				jQuery('#'+divID).show();   // why needed, not needed with old heat map?
+			}
 
 
-	        var analysisIndex = getAnalysisIndex(analysisID);
-	        var probesList = analysisProbeIds[analysisIndex].probeIds;
-	        var maxProbeIndex = analysisProbeIds[analysisIndex].maxProbeIndex;
-			
-			if(maxProbeIndex == 1){ //only one probe returned
-				loadBoxPlotData(analysisID, probesList[0]);	//preload boxplot
-			}	        
 	        
 		},
 		error: function(xhr) {
@@ -2607,6 +2624,17 @@ function getAnalysisIndex(id)  {
     return -1;  // analysis not found		
 }
 
+//find the analysis in the sa array with the given id
+function getAnalysisIndexSA(id)  {
+	for (var i = 0; i < analysisProbeIdsSA.length; i++)  {
+		if (analysisProbeIdsSA[i].analysisId == id)  {
+			return i;
+		}
+	}
+	
+    return -1;  // analysis not found		
+}
+
 // compare the contents of one array of keyword objects with another; if same, return true
 function compareKeywordArrays(arr1, arr2)  {
 	if (arr1.length != arr2.length)  {
@@ -2694,9 +2722,14 @@ function removeByValue(arr, val) {
 
 
 
-function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex) {
-	probesPerPageElement = document.getElementById("probesPerPage_" + analysisId);
-	numberOfProbesPerPage = probesPerPageElement.options[probesPerPageElement.selectedIndex].value;
+function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, isSA, keywordQueryString) {
+    if (isSA)  {
+    	numberOfProbesPerPage = 20;
+    }
+    else  {    	
+    	probesPerPageElement = document.getElementById("probesPerPage_" + analysisId);
+    	numberOfProbesPerPage = probesPerPageElement.options[probesPerPageElement.selectedIndex].value;
+    }
 	
 	// get number of extra probes on last page (will be 0 if last page is full)
 	var numberProbesLastPage = maxProbeIndex % numberOfProbesPerPage;
@@ -2710,41 +2743,66 @@ function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex) {
 		numberOfPages = numberOfPages + 1;
 	}
 	
+	var saPrefix ='';
+	if (isSA)  {
+		saPrefix ='sa';
+	}
+	
 	//if there is only 1 page, just hide the paging control since it's not needed
 	if(numberOfPages==1){
-		jQuery("#pagination_" + analysisId).hide();
+		jQuery("#" + saPrefix + "pagination_" + analysisId).hide();
 	}
 	else  {
-		jQuery("#pagination_" + analysisId).show();
+		jQuery("#" + saPrefix + "pagination_" + analysisId).show();
 	}
 	        	        	
 	// the probeIds list and selectList are initially null; will be populated when we load the heat map data
 	var analysisObject = {analysisId:analysisId, probeIds:null, selectList:null, maxProbeIndex:maxProbeIndex};
-	
+		
 	// either replace current object, or add new one if not in array yet
 	if (analysisIndex == -1)  {
-        analysisProbeIds.push(analysisObject);
+		if (isSA)  {
+	        analysisProbeIdsSA.push(analysisObject);
+		}
+		else  {			
+	        analysisProbeIds.push(analysisObject);
+		}
     } else
     {	
-        analysisProbeIds[analysisIndex] = analysisObject;
+		if (isSA)  {
+	        analysisProbeIdsSA[analysisIndex] = analysisObject;
+		}
+		else  {			
+	        analysisProbeIds[analysisIndex] = analysisObject;
+		}
     }
 
-	jQuery("#pagination_" + analysisId).paging(numberOfPages, { 
+	jQuery("#" + saPrefix + "pagination_" + analysisId).paging(numberOfPages, { 
 	    perpage:1, 
         format:"[<(qq -) ncnnn (- pp)>]",
         onSelect: function (page) { 
         	
+        	if (isSA)  {
+        		jQuery("#analysis_holderSA_" + analysisId).mask("Loading...");
+        	}
+        	else  {        		
+            	jQuery("#analysis_holder_" + analysisId).mask("Loading...");
+        	}
 
-        	jQuery("#analysis_holder_" + analysisId).mask("Loading...");
-            var analysisIndex = getAnalysisIndex(analysisId);
-
-            // make sure we are getting number of probes per page for current element
-            var probesPerPageElement = document.getElementById("probesPerPage_" + analysisId);
-        	var numberOfProbesPerPage = probesPerPageElement.options[probesPerPageElement.selectedIndex].value;
+            if (isSA)  {
+            	numberOfProbesPerPage = 20;
+            }
+            else  {
+                // make sure we are getting number of probes per page for current element
+                var probesPerPageElement = document.getElementById("probesPerPage_" + analysisId);
+            	var numberOfProbesPerPage = probesPerPageElement.options[probesPerPageElement.selectedIndex].value;            	
+            }
             
-        	loadHeatmapData(divID, analysisId, page, numberOfProbesPerPage);
+        	loadHeatmapData(divID, analysisId, page, numberOfProbesPerPage, isSA, keywordQueryString);
 
-        	jQuery('body').data("currentPage:" + analysisId, page);
+        	if (!isSA)  {
+        		jQuery('body').data("currentPage:" + analysisId, page);	
+        	}        	
                                     
         }, 
         onFormat: formatPaginator
@@ -2753,17 +2811,106 @@ function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex) {
 }
 
 
-function loadHeatmapPaginator(divID, analysisId, page) {
+//Open and close the SA heatmap for a given analysis
+function toggleHeatmapSA(analysisId, page)	{	
+	
+	var expanded = jQuery("#selectedAnalysis_" + analysisId).data("expanded");
 
-	var analysisIndex = getAnalysisIndex(analysisId);
+	var imgExpand = "#saimgExpand_"  + analysisId;
+
+	// when not expanded, has a down arrow
+	// when expanded has an up arrow
+	// replace with the other on toggle
+    if (expanded)  {
+    	// unexpand
+    	jQuery(imgExpand).attr('src', './../images/down_arrow_small2.png');
+    	jQuery("#analysis_holderSA_" + analysisId).slideUp(200);
+    	jQuery("#selectedAnalysis_" + analysisId).data("expanded", false);
+    }
+    else  {
+    	// expand
+    	jQuery(imgExpand).attr('src', './../images/up_arrow_small2.png');
+    	jQuery("#analysis_holderSA_" + analysisId).slideDown(200);
+    	jQuery("#selectedAnalysis_" + analysisId).data("expanded", true);
+    	
+    	var hmLoaded = jQuery("#selectedAnalysis_" + analysisId).data("hmLoaded");
+    	
+    	// if we don't have a heatmap laoded yet, then load one
+    	if (!hmLoaded)  {
+    		loadHeatmapSA(analysisId, page);
+    		jQuery("#selectedAnalysis_" + analysisId).data("hmLoaded", true);
+    	}
+    	
+    }
+	return false;
+}
+
+
+// load the Selected Analyses heatmap (the one that shows underneath the analysis on the CTA page)
+function loadHeatmapSA(analysisId, page) {
+	// generate a keyword list that can be consumed by the server; needs to be in form:
+	// GENELIST:1|2|3&GENESIG:4|5&PATHWAY:6|7&GENE:8|9&PROTEIN:10|11
+	
+	var params = new Array
+	var geneList = new Array
+	var geneSig = new Array
+	var pathway = new Array
+	var gene = new Array
+	var protein = new Array
+	
+	var divID = 'heatmapSA_' + analysisId;
+	
+	// loop through each xt keyword and add to the appropriate array based on its category
+	for (var i=0; i<xtSelectedKeywords.length; i++)  {
+		var kw = xtSelectedKeywords[i];
+		switch (kw.categoryId)
+		{ 
+			case 'GENELIST':  geneList.push(kw.id); break;
+			case 'GENESIG':   geneSig.push(kw.id); break;
+			case 'PATHWAY':   pathway.push(kw.id); break;
+			case 'GENE':      gene.push(kw.id); break;
+			case 'PROTEIN':   protein.push(kw.id); break;
+		    default: alert('Invalid category: ' + kw.categoryId); return false;
+		}				
+	}
+	
+	// if a category has items, join it's items with a pipe and add to params array
+	if (geneList.length>0)  {params.push('GENELIST:' + geneList.join('|'))}
+	if (geneSig.length>0)  	{params.push('GENESIG:' + geneSig.join('|'))}
+	if (pathway.length>0)  	{params.push('PATHWAY:' + pathway.join('|'))}
+	if (gene.length>0)  	{params.push('GENE:' + gene.join('|'))}
+	if (protein.length>0)  	{params.push('PROTEIN:' + protein.join('|'))}
+	
+	var queryString = params.join('&');
+	
+	loadHeatmapPaginator(divID, analysisId, page, true, queryString);
+}
+
+
+// keywords only necessary for cta version of this heatmap (session variables generated during facet results are used for standard heatmap)
+function loadHeatmapPaginator(divID, analysisId, page, isSA, keywordsQueryString) {
+
+	var analysisIndex;
+	
+	if (isSA)  {		
+		analysisIndex = getAnalysisIndexSA(analysisId);
+	}
+	else  {		
+		analysisIndex = getAnalysisIndex(analysisId);
+	}
 		
 	rwgAJAXManager.add({
 		url:getHeatmapNumberProbesURL,		
-		data: {id: analysisId, page:page},
+		data: {id: analysisId, page:page, isSA:isSA, keywordsQueryString:keywordsQueryString},
 		success: function(response) {								
 			var maxProbeIndex = response['maxProbeIndex']
 			
-			getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, page);
+			if (maxProbeIndex == 0)  {
+				jQuery("#" + divID).html('No Data');				
+			}
+			else {
+				getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, isSA, keywordsQueryString);
+			}
 	
 		},
 		error: function(xhr) {
@@ -2950,6 +3097,10 @@ function displaySelectedAnalysisTopGenes(){
 
 function getCrossTrialSummaryTableStats()
 {
+	 jQuery('#xtSummaryTable').html('');
+	
+	 jQuery('#xtSummaryTable').mask('Loading...');
+	
 	if (selectedAnalyses.length == 0)  {
 		return;
 	}
@@ -2991,6 +3142,8 @@ function getCrossTrialSummaryTableStats()
 			    //alternate colors
 			    jQuery('#CTAsummaryTable').find('tr:even').css({'background-color':'#efefef'})
 	              .end().find('tr:odd').css({'background-color':'#fff'});
+			    
+			    jQuery('#xtSummaryTable').unmask();
 		   
 		}
 	});
@@ -3028,7 +3181,7 @@ function getTopGenes(analysisID)
 function updateCrossTrialGeneCharts(){
 	
 	//update the table
-	 getCrossTrialSummaryTableStats()
+	getCrossTrialSummaryTableStats()
 	
 	jQuery('#xtMsgBox').fadeOut(200);
 	
@@ -3131,15 +3284,27 @@ function displayxtAnalysesList(){
 		
 		var num = parseInt(index) + 1;
 
-		html = html + "<div class='xtSelectedAnalysesListLegendItem' id='selectedAnalysis_"+selectedAnalyses[index].id +"'>";
-		html = html + "<span class='analysisNum'>" +num  +"</span> <span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ') +'</div>';
-		
+		html = html + "<div class='xtSelectedAnalysesListLegendItem' onclick='toggleHeatmapSA(" + selectedAnalyses[index].id + ", 1);' id='selectedAnalysis_"+selectedAnalyses[index].id +"'>";
+		html = html + "<table><tr><td><span class='analysisNum'>" +num  +"</span></td><td><span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ');
+		html = html + "</td><td><img alt='expand/collapse' id='saimgExpand_" + selectedAnalyses[index].id + "' src='./../images/down_arrow_small2.png' style='vertical-align: middle; padding-left:10px; padding-right:10px;'/></td>";
+		html = html + '</table></div>';
+		html = html + "<div id='analysis_holderSA_" + selectedAnalyses[index].id + "' class='xtSAHeatmapHolder'>"; 
+		html = html + "<div class='legend' id='saheatmapLegend_" + selectedAnalyses[index].id + "'></div>";
+		html = html + "<div id='heatmapSA_" + selectedAnalyses[index].id + "'></div>";
+		html = html + "<div class='pagination' id='sapagination_" + selectedAnalyses[index].id + "'></div>";
+		html = html + "</div>";
 	});
 	
 	html = html + '</div>';
 	
 	jQuery('#xtSummary_AnalysesList').html(html);
 
+	// store the state of each div 
+	jQuery(selectedAnalyses).each(function(index, value){
+		jQuery("#selectedAnalysis_" + selectedAnalyses[index].id).data("expanded", false);
+		jQuery("#selectedAnalysis_" + selectedAnalyses[index].id).data("hmLoaded", false);
+	});
+	
 	
 }
 
@@ -3412,7 +3577,7 @@ function getCrossTrialGeneSummary(search_keyword_id)
 
 function addXTSearchAutoComplete()	{
 	jQuery("#xtSearch-ac").autocomplete({
-		source: sourceURL,
+		source: searchAutoCompleteCTAURL,
 		minLength:0,
 		select: function(event, ui) {  
 

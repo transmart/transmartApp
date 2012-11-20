@@ -24,4 +24,6 @@
 
 <script>	
 	registerSearchTooltipEvents();
+    jQuery('#homefavoritesTable').find('tr:even').css({'background-color':'#efefef'})
+    .end().find('tr:odd').css({'background-color':'#fff'});
 </script>			

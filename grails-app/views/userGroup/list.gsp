@@ -56,18 +56,10 @@
                         <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
 
                             <td><g:link action="show" id="${userGroupInstance.id}">${fieldValue(bean:userGroupInstance, field:'id')}</g:link></td>
-
-            <td>${fieldValue(bean:userGroupInstance, field:'name')}</td>
-
-                           <td>${fieldValue(bean:userGroupInstance, field:'description')}</td>
-
+                            <td>${fieldValue(bean:userGroupInstance, field:'name')}&nbsp&nbsp&nbsp&nbsp</td>
+                            <td>${fieldValue(bean:userGroupInstance, field:'description')}&nbsp&nbsp&nbsp&nbsp</td>
                             <td>${fieldValue(bean:userGroupInstance, field:'enabled')}</td>
-
-
                             <td>${fieldValue(bean:userGroupInstance, field:'groupCategory')}</td>
-
-
-
                         </tr>
                     </g:each>
                     </tbody>
