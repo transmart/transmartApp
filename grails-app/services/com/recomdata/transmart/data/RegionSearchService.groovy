@@ -402,6 +402,9 @@ class RegionSearchService {
 				}
 			}
 		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		finally {
 			rs?.close();
 			stmt?.close();
