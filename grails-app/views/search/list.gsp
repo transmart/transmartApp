@@ -311,7 +311,7 @@
 			<g:render template="/layouts/commonheader" model="[app:search]" />
 			<g:render template="/layouts/searchheader" model="[app:search]" />
 	    </div>
-			<div id="summarycount-div" style="color:#000; padding:5px 10px 5px 10px;border-top:1px solid #36c;">
+			<div id="summarycount-div" style="color:#000; padding:75px 10px 5px 10px;border-top:1px solid #36c;">
 				<span id="summarycount-span" style="font-size:13px; font-weight:bold;">
 					About ${searchresult?.totalCount()} results found
 				</span>

@@ -1043,7 +1043,6 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	
 }
 .xtSelectedAnalysesListLegendItem{
-	padding: 8px;
 	padding-left:0;
 	border: 1px solid #DDD;
 	background-color:#F7F7F7;
@@ -1051,6 +1050,27 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	cursor:pointer
 }
 
+
+.xtSelectedAnalysesListLegendItem table{
+	border-collapse: collapse;
+}
+
+.xtSelectedAnalysesListLegendItem td{
+	vertical-align:middle;
+	line-height: 1.4em;
+	padding:6px;
+}
+
+
+.analysisNum{
+	font-weight: bold;
+	background-color: #444;
+	color: #EFEFEF;
+	padding: 8px;
+	width: 18px;
+	vertical-align: middle;
+	text-align: center;
+}
 .xtSAHeatmapHolder{
 	display: none;
 	padding: 8px;
@@ -1062,6 +1082,13 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
 	padding-bottom:4px;
+}
+
+.SA-item-expanded{
+	background-color: #DFEFFD;
+	margin-top: 6px;
+	border: 1px solid #999;
+	border-bottom: 1px solid #C9C9C9;
 }
 
 
@@ -1077,6 +1104,10 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	
 box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	
+}
+
+.heatmap-SA-Holder{
+	overflow-x:auto;
 }
 
 .xtInfoBox{
@@ -1095,14 +1126,6 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 }
 
 
-.analysisNum{
-	
-	font-weight:bold;
-	background-color: #444;
-color: #EFEFEF;
-padding: 8px;
-margin-right: 0;
-}
 
 /*** XT Summary Bar Plots ***/
 
