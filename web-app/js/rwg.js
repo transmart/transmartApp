@@ -2785,14 +2785,11 @@ function getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, is
         format:"[<(qq -) ncnnn (- pp)>]",
         onSelect: function (page) { 
         	
-        	var analysisIndex;
         	if (isSA)  {
         		jQuery("#analysis_holderSA_" + analysisId).mask("Loading...");
-            	analysisIndex = getAnalysisIndexSA(analysisId);        		
         	}
         	else  {        		
             	jQuery("#analysis_holder_" + analysisId).mask("Loading...");
-            	analysisIndex = getAnalysisIndex(analysisId);
         	}
 
             if (isSA)  {
