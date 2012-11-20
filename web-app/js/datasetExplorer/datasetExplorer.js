@@ -4075,8 +4075,7 @@ function getExportButtonSecurity()
 
 function getExportButtonSecurityComplete(result)
 {
-	var mobj=result.responseText.evalJSON();
-	var canExport=mobj.canExport;
+	var canExport = Ext.util.JSON.decode(result.responseText).canExport;
 	if(canExport || GLOBAL.IsAdmin)
 	{
 		Ext.getCmp("exportbutton").enable();
