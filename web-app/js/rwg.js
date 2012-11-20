@@ -3100,6 +3100,8 @@ function displaySelectedAnalysisTopGenes(){
 
 function getCrossTrialSummaryTableStats()
 {
+	 jQuery('#xtSummaryTable').html('');
+	
 	 jQuery('#xtSummaryTable').mask('Loading...');
 	
 	if (selectedAnalyses.length == 0)  {
@@ -3182,7 +3184,7 @@ function getTopGenes(analysisID)
 function updateCrossTrialGeneCharts(){
 	
 	//update the table
-	 getCrossTrialSummaryTableStats()
+	getCrossTrialSummaryTableStats()
 	
 	jQuery('#xtMsgBox').fadeOut(200);
 	
@@ -3289,7 +3291,7 @@ function displayxtAnalysesList(){
 		html = html + "<span class='analysisNum'>" +num  +"</span> <span class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ');
 		html = html + "<img alt='expand/collapse' id='saimgExpand_" + selectedAnalyses[index].id + "' src='./../images/down_arrow_small2.png' style='vertical-align: middle; padding-left:10px; padding-right:10px;'/>";
 		html = html + '</div>';
-		html = html + "<div id='analysis_holderSA_" + selectedAnalyses[index].id + "'>"; 
+		html = html + "<div id='analysis_holderSA_" + selectedAnalyses[index].id + "' class='xtSAHeatmapHolder'>"; 
 		html = html + "<div class='legend' id='saheatmapLegend_" + selectedAnalyses[index].id + "'></div>";
 		html = html + "<div id='heatmapSA_" + selectedAnalyses[index].id + "'></div>";
 		html = html + "<div class='pagination' id='sapagination_" + selectedAnalyses[index].id + "'></div>";
