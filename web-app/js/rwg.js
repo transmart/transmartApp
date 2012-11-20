@@ -2827,13 +2827,13 @@ function toggleHeatmapSA(analysisId, page)	{
     if (expanded)  {
     	// unexpand
     	jQuery(imgExpand).attr('src', './../images/down_arrow_small2.png');
-    	jQuery("#analysis_holderSA_" + analysisId).hide();
+    	jQuery("#analysis_holderSA_" + analysisId).slideUp(200);
     	jQuery("#selectedAnalysis_" + analysisId).data("expanded", false);
     }
     else  {
     	// expand
     	jQuery(imgExpand).attr('src', './../images/up_arrow_small2.png');
-    	jQuery("#analysis_holderSA_" + analysisId).show();
+    	jQuery("#analysis_holderSA_" + analysisId).slideDown(200);
     	jQuery("#selectedAnalysis_" + analysisId).data("expanded", true);
     	
     	var hmLoaded = jQuery("#selectedAnalysis_" + analysisId).data("hmLoaded");
