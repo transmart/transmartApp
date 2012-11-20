@@ -961,6 +961,13 @@ border-top: 1px solid #CCC;
 		color: #ccc;
 	}
 
+#saved-filters-holder th{
+	background:#F1F1F1;
+	padding: 0;
+	border: 1px solid #CCC;
+	font-weight: bold;
+}
+
 /************ Cross Trial Analysis Formatting *******/
 
 #xtHolder{
@@ -971,10 +978,10 @@ border-top: 1px solid #CCC;
 }
 
 #xtSearch{
-	background-color: #F0F0F0;
+	background-color: #EFF5FA;
 	padding: 10px;
-	border-top: 1px solid #CCC;
-	border-bottom: 1px solid #CCC;
+	border-top: 1px solid #AED0EA;
+	border-bottom: 1px solid #AED0EA;
 	margin-bottom: 10px;
 }
 
@@ -994,6 +1001,11 @@ border-top: 1px solid #CCC;
 	display: inline-block;
 }
 
+#xtSummaryTable{
+	width:300px;
+	height:250px;
+}
+
 
 
 #xtSelectedAnalysesList li {
@@ -1007,6 +1019,10 @@ list-style-type: none;
 cursor:default;
 }
 
+#xtMenuBar .ui-tabs-panel {
+border: 1px solid #CCC;
+border-top: 0;
+}
 
 /* Add additional formatting to the jquery ui dialog
 box to help it stand out more */
@@ -1015,6 +1031,10 @@ border: 1px solid #CCC;
 box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 }
 
+
+#xtSearch-ac{
+	width:250px;
+}
 
 #xtSelectedAnalysesListLegend{
 	
@@ -1034,6 +1054,14 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 .xtHeatmap{
 	display:inline-block;
 	min-height:250px;
+	padding:3px;
+	background-color:#fff;
+}
+
+.xtHeatmap:hover{
+	
+box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+	
 }
 
 .xtInfoBox{

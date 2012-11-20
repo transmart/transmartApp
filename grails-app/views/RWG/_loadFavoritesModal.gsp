@@ -8,6 +8,13 @@
 
 			<div id="saved-filters-holder" style="height:500px; overflow:auto;">
 			    <table>
+			    <tr><th>
+	    			<div class="staticSearchDiv" >
+				       	<div style="float: left;width:100px;margin:10px;">Date Created</div>
+				    	<div style="float: left;width:250px;margin:10px;" >Analysis Name</div>
+				    	<div style="float: left;width:70px;margin:10px;">Actions</div>
+		    	    </div>
+			    </th></tr>
 					<g:each in="${favorites}" var="f">					
 				        <tr id="filter_favorites_${f.id}" >
 				        	<td>
@@ -15,7 +22,7 @@
 						    	    	<div style="float: left;width:100px;margin:10px;">
 							    				${f.createDt.format("MM/dd/yyyy")}
 								    	</div>
-						    	    	<div style="float: left;width:200px;margin:10px;" >
+						    	    	<div style="float: left;width:250px;margin:10px;" >
 							    				<a href="#" id="linkSearchName_${f.id}" class="searchTooltip" onclick="loadSearch('${f.searchType}', ${f.id}); return false;"><span id="labelSearchName_${f.id}" >${f.name}</span></a>
 							    											    				
 								    	</div>

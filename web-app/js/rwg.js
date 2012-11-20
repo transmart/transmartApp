@@ -76,7 +76,7 @@ function refreshCrossTrialMsg(){
 	
 	//if there are already selected keywords, then these need
 	//to be refreshed or removed
-	if(xtSelectedKeywords.length>0){
+//	if(xtSelectedKeywords.length>0){
 		
 		//Display msg to user with option to refresh or clear
 		jQuery("#xtMsgBox").fadeIn();
@@ -84,7 +84,7 @@ function refreshCrossTrialMsg(){
 		//mask the tabs
 		jQuery('#xtMenuBar').mask();
 		
-	}
+//	}
 	
 }
 
@@ -3064,6 +3064,8 @@ function displaySelectedAnalysisTopGenes(){
 
 function getCrossTrialSummaryTableStats()
 {
+	 jQuery('#xtSummaryTable').mask('Loading...');
+	
 	if (selectedAnalyses.length == 0)  {
 		return;
 	}
@@ -3105,6 +3107,8 @@ function getCrossTrialSummaryTableStats()
 			    //alternate colors
 			    jQuery('#CTAsummaryTable').find('tr:even').css({'background-color':'#efefef'})
 	              .end().find('tr:odd').css({'background-color':'#fff'});
+			    
+			    jQuery('#xtSummaryTable').unmask();
 		   
 		}
 	});
