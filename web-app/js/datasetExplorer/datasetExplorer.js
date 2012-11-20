@@ -4324,9 +4324,8 @@ function searchByTagComplete(response)
 	var Tree = Ext.tree;
 	//ontFilterPanel.el.unmask();
 	viewport.el.unmask();
-	var robj=response.responseText.evalJSON();
-	var rtext=robj.resulttext;
-	var concepts = robj.concepts;
+	var concepts=response.concepts;
+	var rtext=response.resulttext;
 	// concept = concepts[4];
 	// test = concept.selectSingleNode('name').firstChild.nodeValue;
 	// alert(response.responseText);
