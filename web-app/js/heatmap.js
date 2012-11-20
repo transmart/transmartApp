@@ -463,12 +463,29 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
 	  .attr("transform", "translate(" + xOffset + "," + yOffset + ")")
 	  ;
 	
-    // Show the probe labels
-	var probeGroupText = probeGroup.selectAll("a")
+	var probesGroupTextTags;
+	
+	// only have links if on the non SA heatmap
+	if (!isSA)  {
+		probesGroupTextTags = probeGroup.selectAll("a")
 		.data(probesList)
-		.enter().append("a")
-		.attr("xlink:href", function(d) {return "javascript:openBoxPlotFromHeatmap(" +analysisID +", '" + d +"');"})
+		.enter()
+		.append("a")
+		.attr("xlink:href", function(d) {
+				return "javascript:openBoxPlotFromHeatmap(" +analysisID +", '" + d +"');"				
+		  }
+		)
 		.append("text")
+	}  
+	else  {
+		probesGroupTextTags = probeGroup.selectAll("text")
+		.data(probesList)
+		.enter()
+		.append("text")		
+	}
+	
+    // Show the probe labels
+	var probeGroupText = probesGroupTextTags
 		.attr("x", 0)
 		.attr("y",function(d, i)	{
 			return (i * (h) + h / 2); 
@@ -482,7 +499,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
         ;			
 	
 	// tooltip for probe labels
-    if (!forExport)  {
+    if (!forExport && !isSA)  {
     	probeGroupText.append('svg:title').text("View in boxplot");
     }
 
