@@ -1541,6 +1541,14 @@ function loginComplete(pmresponse)
 		// get the urls to the other important cells
 		GLOBAL.ONTUrl = oDomDoc.selectSingleNode("//cell_data[@id='ONT']/url").firstChild.nodeValue;
 		GLOBAL.CRCUrl = oDomDoc.selectSingleNode("//cell_data[@id='CRC']/url").firstChild.nodeValue;
+		
+		//If a proxy was used to call the PM Service, override the ONT and CRC urls by using the PM Service host.
+		//Assuming the urls are in this format: "HOST_NAME/i2b2/services/*Service/"
+		if(GLOBAL.usePMHost=="true"){
+			GLOBAL.ONTUrl = GLOBAL.PMUrl.replace("/PMService/", "/OntologyService/");
+			GLOBAL.CRCUrl = GLOBAL.PMUrl.replace("/PMService/", "/QueryToolService/");
+		}
+		
 		if(GLOBAL.Debug)
 		{
 			alert(GLOBAL.ONTUrl);
