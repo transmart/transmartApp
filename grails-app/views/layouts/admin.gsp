@@ -21,9 +21,9 @@
 	<head>
 		<title><g:layoutTitle default="" /></title>
 		<link rel="shortctu icon" href="${resource(dir:'images',file:'searchtool.ico')}">
-		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">
+		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">		
+		<link rel="stylesheet"    href="${resource(dir:'css',file:'main.css')}" />
 		<link rel="stylesheet"    href="${resource(dir:'css',file:'admin.css')}" />
-		<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
 		<link rel="stylesheet"	href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />		
 		<g:javascript library="prototype" />
@@ -51,7 +51,7 @@
 	</head>
 	<body>
 		<div id="page">
-			<div id="header"><g:render template="/layouts/commonheader"	model="[app:accesslog]" /></div>
+			<div id="header-div"><g:render template="/layouts/commonheader"	model="[app:accesslog]" /></div>
  			<div id='navbar'><g:render template="/layouts/adminnavbar" /></div>
 			<div id="content"><g:layoutBody /></div>    
 		</div>
