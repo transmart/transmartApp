@@ -1241,7 +1241,7 @@ public class SearchController{
 //			session['cachedAnalysisData'] = analysisData
 //		}
 		
-		if (!regions && analysisIds.size() == 1 && sortField.equals('null') && max > 0) {
+		if (!regions && !geneNames && analysisIds.size() == 1 && sortField.equals('null') && !cutoff && !search && max > 0) {
 			println("Triggering shortcut query")
 			//If displaying no regions and only one analysis, run the alternative query and pull back the rows for the limits
 			def analysis = BioAssayAnalysis.get(analysisIds[0])
