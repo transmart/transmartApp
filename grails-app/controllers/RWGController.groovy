@@ -824,41 +824,14 @@ class RWGController {
  
    // First iteration of the method to get the heatmap data for RWG  
    def getHeatmapData = {
+	   def r = setGenesAndSignificantFlag(params)
+	   
+	   def genes = r.get('genes')
+	   def showSigResultsOnly = r.get('showSigResultsOnly') 	   
+
 	   def rwgDAO = new RWGVisualizationDAO()
-	   def genes = null
-	   
-	   def keywordsQueryString = params?.keywordsQueryString
-	   def isSA = params?.isSA
-			  
-	   def filterTerms;
-	   def solrGenesField;
-	   if (isSA)  {
-		   solrGenesField = 'ALLGENE';		   
-		   if (keywordsQueryString == '')  {
-			   filterTerms = []
-		   }  
-		   else  {
-			   def categories = keywordsQueryString.split('&')
-			   filterTerms = replaceGeneLists(categories, solrGenesField)			   
-		   }
-	   }
-	   else {
-		   // keywords not passed in, get from session variables
-		   filterTerms = session.solrSearchFilter
-		   solrGenesField = session.solrGenesField
-	   }
-	   
-	   boolean showSigResultsOnly = solrGenesField == 'SIGGENE' ? true : false
-	   
-	   log.info("Only pass the gene filter")
-	   for (filterTerm in filterTerms)	{
-		   if (filterTerm.indexOf("${solrGenesField}:") > -1)	{
-			   genes = filterTerm.replace("${solrGenesField}:", '')
-			   break
-		   }
-	   }
 	   def hmData = rwgDAO.getHeatmapData(params.id, genes, showSigResultsOnly,  params.probesPage, params.probesPerPage)	  
-   
+  
 	  	   
 	   render hmData as JSON	   	 	
    }
@@ -889,26 +862,24 @@ class RWGController {
 	   response.outputStream.flush()
    }
    
-   
-   // Method to get the number of probes for the heatmap for the given filters
-   // keywordsQueryString provided indicates that it is the CTA version of this heatmap (otherwise known as the SA or Selected Analysis heatmap) 
-   def getHeatmapNumberProbes = {
-	   def rwgDAO = new RWGVisualizationDAO()
+   // assemble the gene list and determine the siginicance flag bases on parameters passed in 
+   def setGenesAndSignificantFlag = {params ->
 	   def genes = null
 	   
 	   def keywordsQueryString = params?.keywordsQueryString
 	   def isSA = params?.isSA
-	   	   
+			  
 	   def filterTerms;
 	   def solrGenesField;
 	   if (isSA)  {
-		   solrGenesField = 'ALLGENE';		   
 		   if (keywordsQueryString == '')  {
 			   filterTerms = []
-		   }  
+			   solrGenesField = 'SIGGENE';
+		   }
 		   else  {
 			   def categories = keywordsQueryString.split('&')
-			   filterTerms = replaceGeneLists(categories, solrGenesField)			   
+			   solrGenesField = 'ALLGENE';
+			   filterTerms = replaceGeneLists(categories, solrGenesField)
 		   }
 	   }
 	   else {
@@ -926,6 +897,25 @@ class RWGController {
 			   break
 		   }
 	   }
+	   
+	   def retMap = [:]
+	   retMap.put('genes', genes)
+	   retMap.put('showSigResultsOnly', showSigResultsOnly)
+	   
+	   return retMap
+
+   }
+   
+   // Method to get the number of probes for the heatmap for the given filters
+   // keywordsQueryString provided indicates that it is the CTA version of this heatmap (otherwise known as the SA or Selected Analysis heatmap) 
+   def getHeatmapNumberProbes = {
+
+	   def r = setGenesAndSignificantFlag(params)
+	   
+	   def genes = r.get('genes')
+	   def showSigResultsOnly = r.get('showSigResultsOnly') 	   
+	   
+	   def rwgDAO = new RWGVisualizationDAO()
 	   def maxProbeIndex = rwgDAO.getNumberProbes(params.id, genes, showSigResultsOnly)	 
 	   
 	   JSONObject ret = new JSONObject()
