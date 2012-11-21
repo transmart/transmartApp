@@ -24,12 +24,15 @@ body {
 #search-div{
   padding: 6px;
   margin: 24px 10px 4px 0;
-  overflow: auto;
-  background-color: #F4F4F4;
-  border-radius: 8px;
+  overflow: hidden;
+  position: absolute;
+  width: 300px;
+  top: -28px;
+  left: 120px;
 }
 
 #box-search {
+	margin-top: 4px;
 	border-radius: 8px;
 	border: #0000FF;
 	width: 290px;
@@ -40,7 +43,7 @@ body {
 #active-search-div
 {
 	font-size: 11px;
-    height: 96px;
+    min-height: 64px;
     margin: 0;
     overflow: auto;
     padding: 5px 0 5px 20px;
@@ -53,7 +56,8 @@ body {
 }
 
 #sidebar {
-	float: right;
+	float: left;
+	margin-left: 4px;
 }
 
 #main {
@@ -74,6 +78,7 @@ body {
   border-left: 1px solid #888;
   border-right: 1px solid #888;
   border-top: 1px solid #888;
+  position: relative;
 }
 #title-search-div .title {
   color: white;
@@ -419,7 +424,13 @@ ul.dynatree-container li ul li{
 
 .search-results-table
 {
-	padding-left:20px;
+	padding-left:15px;
+}
+
+.search-results-table a {
+	font-weight: normal;
+	font-size: 8pt;
+	font-family: Verdana, Arial, sans-serif;
 }
 
 .search-result-info
@@ -989,7 +1000,7 @@ select.multiselect {
 	background-image: url('../images/loader-large.gif') !important;
 	background-repeat: no-repeat !important;
 	background-position: 50% 50% !important;
-	min-height: 64px;
+	min-height: 128px;
 }
 
 .columnname {
@@ -1024,7 +1035,7 @@ select.multiselect {
 .foldericon.view { background-image: url('../images/information8.png'); }
 .foldericon.viewfile { background-image: url('../images/information8.png'); }
 
-/* Accordion overrides */
+/* Accordion/other UI overrides */
 
 #sidebar-accordion {
 	margin-top: 16px;
@@ -1051,10 +1062,13 @@ select.multiselect {
 	font-weight: bold;
 }
 
-#filter-browser, #metadata-viewer {
+.ui-dialog-title {
+	color: white;	
+}
+
+#results-div {
 	background: #FFFFFF;
 	font-size: 11px;
-	padding: 1em;
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 	border-left: 1px solid #888;
@@ -1072,6 +1086,11 @@ select.multiselect {
 	cursor: pointer;
 	border-top: 1px solid #EEE;
 	font-weight: bold;
+}
+
+#filter-browser {
+	font-size: 8pt;
+	font-family: Verdana, Arial, sans-serif;	
 }
 
 .filteritem {
@@ -1124,11 +1143,7 @@ select.multiselect {
 	width: 100%;
 }
 
-#cartbutton {
-	position: absolute;
-	right: 24px;
-	top: 2px;
-	padding: 0px 4px;
+.greybutton {
 	background-color: #F4F4F4;
 	border: 1px solid #DDD;
 	cursor: pointer;
@@ -1136,10 +1151,24 @@ select.multiselect {
 	font-size: 8pt;
 }
 
+#cartbutton {
+	position: absolute;
+	right: 400px;
+	top: 3px;
+	padding: 0px 4px;
+}
+
+#filterbutton {
+	position: absolute;
+	right: 40px;
+	bottom: 5px;
+	padding: 0px 4px;
+}
+
 #cartcount {
 	position: absolute;
 	left: 9px;
-	top: 0px;
+	top: -1px;
 	font-size: 10px;
 	font-weight: bold;
 	text-align: center;
@@ -1149,10 +1178,10 @@ select.multiselect {
 
 #sidebartoggle {
 	position:absolute;
-	right:0px;
+	left:0px;
 	top: 29px;
 	z-index: 999;
-	background-image: url('../images/righttab-right.png');
+	background-image: url('../images/lefttab-left.png');
 	width: 22px;
 	height: 22px;
 	cursor: pointer;
@@ -1176,7 +1205,7 @@ select.multiselect {
 }
 
 .fileicon {
-	padding: 2px 24px 0px 0px;
+	padding: 3px 24px 0px 0px;
 	background-image: url('../images/filetypes/page_white.png');
 	background-repeat: no-repeat;	
 }

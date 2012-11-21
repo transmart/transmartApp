@@ -187,12 +187,23 @@
 
 	        	jQuery('#sidebar-accordion').accordion({heightStyle: "fill", icons: { 'header': 'suppressicon', 'headerSelected': 'suppressicon' }});
 	        	resizeAccordion();
+
+	        	jQuery('#filter-browser').dialog({
+	        		autoOpen: false,
+	        		width:200,
+	        		height:400,
+	        		resizable:true,
+	        		show: 'fade',
+	        		hide: 'fade',
+	        		title: 'Filter Browser'
+		        });
 	        });
 
 	        jQuery(window).resize(function() {
 				resizeAccordion();
 			});
 
+	        <%-- TODO Accordion is no longer needed, can simplify a lot of this by just making it a normal set of divs --%>
 			function resizeAccordion() {
 				
 				var windowHeight = jQuery(window).height();
@@ -207,8 +218,7 @@
 				var ypos = jQuery('#sidebar-accordion').offset()['top'];
 	        	
 	        	var targetHeight = windowHeight - ypos - 90;
-	        	jQuery('#filter-browser').height(targetHeight);
-	        	jQuery('#metadata-viewer').height(targetHeight);
+	        	jQuery('#results-div').height(targetHeight);
 
 	        	jQuery('#datasetExplorer').height(windowHeight - 70);
 			}
@@ -217,14 +227,25 @@
 				var sidebarIsVisible = (jQuery('#sidebar:visible').size() > 0);
 				if (sidebarIsVisible) {
 					jQuery('#sidebar').fadeOut(resizeAccordion);
-					var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-right', '-left');
+					var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-left', '-right');
 					jQuery('#sidebartoggle').css('background-image', bgimg);
 				}
 				else {
 					jQuery('#sidebar').fadeIn();
 					resizeAccordion(); //Not a callback here - resize as soon as it starts appearing.
-					var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-left', '-right');
+					var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-right', '-left');
 					jQuery('#sidebartoggle').css('background-image', bgimg);
+				}
+			}
+
+			function showTab(tab) {
+				if (tab == 'browse') {
+					jQuery('#metadata-viewer').show();
+					jQuery('#subject-view-div').hide();
+				}
+				else {
+					jQuery('#metadata-viewer').hide();
+					jQuery('#subject-view-div').show();
 				}
 			}
 
@@ -246,53 +267,28 @@
         <div id="header-div">        
             <g:render template="/layouts/commonheader" model="['app':'rwg', 'utilitiesMenu':'true']" />
         </div>
-		 
-		<div id="main">
-			<div id="topTabs" class="analysis-tabs">
-		       <ul>
-		          <li id="studyViewTab"><a href="#studyTabs" onclick="return false;">Study View</a></li>
-		          <li id="subjectViewTab"><a href="#subject-view-div" onclick="return false;">Subject View</a></li>
-		       </ul>
-		     	
-		     	<div id="studyTabs" class="small-tabs">
-		     	
-		     	 	<div id="cartbutton">
-						<img src="${resource(dir:'images', file:'cart.png')}"/> Cart
-						<div id="cartcount">0</div>
-					</div>
-				
-			     	<ul>
-			          <li id="resultsViewTab"><a href="#results-div" onclick="return false;">View</a></li>
-			          <li id="exportViewTab"><a id="exportViewLink" href="#export-div" onclick="return false;">Export</a></li>
-			     	</ul>
-			     	
-		       		<div id="results-div">
-		         	
-					</div>
-					<div id="export-div">
-		         	
-					</div>
-		     	
-		     	</div>
-				
-				<div id="subject-view-div">
-					
-				</div>
-				
-				<div id="export-div">
-				
-				</div>
-			</div>
-		</div>
-		
+        
 		<div id="sidebar">
 		
-		    <div id="search-div">
-        		<table><tr>
-        			<td><select id="search-categories"></select></td>
-        			<td><input id="search-ac"/></input></td>
-        		</tr></table>                                            
-        	</div>
+			<%-- 
+				Some code that needs justification here... jQuery Tabs assumes that the tabs will be followed by a
+				collection of divs with the intended content. We want these tabs to affect a pane to the right
+				instead - so we set up an invisible div for each tab, then call a function to display the tab we
+				actually want (and to do any additional setup work).
+			 --%>
+			<div id="topTabs" class="analysis-tabs">
+		       <ul>
+		          <li id="studyViewTab"><a href="#studyFake" onclick="showTab('browse')">Browse</a></li>
+		          <li id="subjectViewTab"><a href="#subjectFake" onclick="showTab('analyze')">Analyze</a></li>
+		       </ul>
+		       
+				<div id="studyFake" style="height: 0px; padding: 0">
+				      	
+				</div>
+				<div id="subjectFake" style="height: 0px; padding: 0">
+				
+				</div>
+		    </div>
 	       
 	        <div id="box-search">
 		        <div id="title-search-div" class="ui-widget-header">
@@ -300,38 +296,21 @@
 					 <h2 style="float:right; padding-right:5px;" class="title">
 					 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
 					 </h2> 
+					 <div id="filterbutton" class="greybutton" onclick="jQuery('#filter-browser').dialog('open');">
+						<img src="${resource(dir:'images', file:'filter.png')}"/> Filter
+					 </div>
 				</div>
-				<div id="active-search-div"></div>
+				<div id="active-search-div" style="position: relative;">
+					&nbsp;
+				</div>
 			</div>
-				
-
 			
 			<div id="accordion-container" style="height: 600px">
 				<div id="sidebar-accordion">
-					<h3>Filter Browser</h3>
-			        <div id="filter-browser">			        	
-			        	<%-- TODO Source all of this from the database... obviously --%>
-			        	<div class="filtertitle" name="dataLevel">Assay Platform</div>
-			        	<div class="filtercontent" name="dataLevel" style="display: none;">
-			        		<div class="filteritem" name="dataLevel" id="dl1">IHC</div>
-			        		<div class="filteritem" name="dataLevel" id="dl2">mRNA Profiling</div>
-			        		<div class="filteritem" name="dataLevel" id="dl3">SNP Profiling</div>
-			        		<div class="filteritem" name="dataLevel" id="dl4">ELISA</div>
-			        	</div>
-			        	<div class="filtertitle" name="otherFilter">Compound</div>
-			        	<div class="filtercontent" name="otherFilter" style="display: none;">
-			        		<div class="filteritem" name="otherFilter" id="of1">XL147</div>
-			        		<div class="filteritem" name="otherFilter" id="of2">BSI-201</div>
-			        	</div>
-			        	<div class="filtertitle" name="assayPlatform">Access Type</div>
-			        	<div class="filtercontent" name="assayPlatform" style="display: none;">
-			        		<div class="filteritem" name="assayPlatform" id="ap1">Proprietary</div>
-			        		<div class="filteritem" name="assayPlatform" id="ap2">Public</div>
-			        	</div>
-			        </div>
-			        <h3>Metadata Viewer</h3>
-			        <div id="metadata-viewer">
-			        	Select a folder on the left to view its metadata.
+					
+			        <h3>Tree Browser</h3>
+			        <div id="results-div">
+			        	Results appear here
 			        </div>
 			    </div>
 		    </div>
@@ -339,6 +318,20 @@
 		    <div id="filter-div" style="display: none;"></div>
 			
 		</div>
+		 
+		<div id="main">
+		     	
+				<div id="metadata-viewer">
+					<tmpl:welcome />
+				</div>
+				<div id="subject-view-div" style="display: none;">
+				
+				</div>
+				<div id="export-div" style="display: none;">
+				
+				</div>
+		</div>
+
 		<div id="hiddenItems" style="display:none">
 		        <!-- For image export -->
 		        <canvas id="canvas" width="1000px" height="600px"></canvas>  
@@ -407,7 +400,40 @@
 		</div>
 		
 
+		<%-- Elements that are in fixed positions on the page --%>
 		<div id="sidebartoggle">&nbsp;</div>
+		<div id="search-div">
+      		<table><tr>
+      			<td><select id="search-categories"></select></td>
+      			<td><input id="search-ac"/></input></td>
+      		</tr></table>                                            
+      	</div>
+   		<div id="cartbutton" class="greybutton">
+			<img src="${resource(dir:'images', file:'cart.png')}"/> Cart
+			<div id="cartcount">0</div>
+		</div>
+      	
+        <div id="filter-browser">			        	
+        	<%-- TODO Source all of this from the database... obviously --%>
+        	<div class="filtertitle" name="ASSAY_PLATFORM">Assay Platform</div>
+        	<div class="filtercontent" name="ASSAY_PLATFORM" style="display: none;">
+        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap1">IHC</div>
+        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap2">mRNA Profiling</div>
+        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap3">SNP Profiling</div>
+        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap4">ELISA</div>
+        	</div>
+        	<div class="filtertitle" name="COMPOUND">Compound</div>
+        	<div class="filtercontent" name="COMPOUND" style="display: none;">
+        		<div class="filteritem" name="COMPOUND" id="co1">XL147</div>
+        		<div class="filteritem" name="COMPOUND" id="co2">BSI-201</div>
+        	</div>
+        	<div class="filtertitle" name="ACCESS_TYPE">Access Type</div>
+        	<div class="filtercontent" name="ACCESS_TYPE" style="display: none;">
+        		<div class="filteritem" name="ACCESS_TYPE" id="at1">Proprietary</div>
+        		<div class="filteritem" name="ACCESS_TYPE" id="at2">Public</div>
+        	</div>
+        </div>
+        	
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
 	
