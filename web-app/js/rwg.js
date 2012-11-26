@@ -2607,6 +2607,16 @@ jQuery(function(){
     	    {
     			node.data.addClass = null;
     	    }
+    		
+    		// if the string doesn't already have a break tag, add one after the 30th character
+    		if (node.data.title.length > 30 && node.data.title.indexOf('<br />') == -1)  {
+    			// find the first space character starting at 30th character
+    			var spacePos = node.data.title.indexOf(' ', 30);
+    		    		
+    			if (spacePos > -1)  {
+        			node.data.title = node.data.title.substr(0, spacePos) + '<br />' + node.data.title.substr(spacePos + 1);      				
+    			} 
+    		} 
     	}
     });
 });
