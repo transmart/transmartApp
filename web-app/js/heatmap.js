@@ -615,6 +615,7 @@ function addDataColumn(hm, xOffset, yOffset, width, data, header, groupName, h) 
 function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	jQuery("#" + divID).empty();
     var savedDisplayStyle = jQuery("#" + divID).css('display');
+    
 	
 	// convert the rows to an array and the data columnd to an array for consumption by d3 
 	var rowsArray = new Array
@@ -881,8 +882,8 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
     // Show the gene labels
 	var geneGroupText = geneGroup.selectAll("a")
 		.data(geneLabels)
-		.enter().append("a")
-		.attr("xlink:href", function(d) {return "javascript:showGeneInfo('" + d.geneId + "');"})
+		.enter().append("a")					//openGeneFromCTAheatmap(keywordId, termName, categoryId)
+		.attr("xlink:href", function(d) {return "javascript:openGeneFromCTAheatmap(" + d.geneId + ", '" +d.geneName +"', 'GENE');"})
 		.append("text")
 		.attr("x", 0)
 		.attr("y",function(d, i)	{

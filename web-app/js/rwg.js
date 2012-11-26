@@ -3251,6 +3251,30 @@ function updateCrossTrialGeneCharts(){
 
 }
 
+function closeCTAheatmap(divID, geneID){
+	
+	jQuery('#' +divID).fadeOut(200, function() { 
+		jQuery('#' +divID).remove(); 
+		
+	});
+	
+	//loop through the array, find the gene ID to be removed, and remove it from the array
+	for (var i =0; i < xtSelectedKeywords.length; i++){
+	   if (xtSelectedKeywords[i].id === geneID) {
+		   xtSelectedKeywords.splice(i,1);
+	      break;
+	   }
+	}
+	
+	
+	//might want to change this...
+	if(xtSelectedKeywords.length==0){
+		jQuery('#xtNoHeatmapsMsg').fadeIn(200);
+	}
+		
+}
+
+
 
 function closeXTGeneChart(divID, geneID){
 	
@@ -3315,7 +3339,7 @@ function displayxtAnalysesList(){
 
 		html = html + "<div class='xtSelectedAnalysesListLegendItem' onclick='toggleHeatmapSA(" + selectedAnalyses[index].id + ", 1);' id='selectedAnalysis_"+selectedAnalyses[index].id +"'>";
 		html = html + "<table><tr><td class='analysisNum'>" +num  +"</td><td style='padding-left:4px'><span style='padding-left:0' class='result-trial-name'>"+ selectedAnalyses[index].studyID +'</span>: ' +selectedAnalyses[index].title.replace(/_/g, ', ');
-		html = html + "</td><td style='text-align:right'><img alt='expand/collapse' id='saimgExpand_" + selectedAnalyses[index].id + "' src='./../images/down_arrow_small2.png' style='vertical-align: middle; padding-left:10px; padding-right:10px;'/></td></tr>";
+		html = html + "</td><td style='text-align:right'><img alt='expand/collapse' id='saimgExpand_" + selectedAnalyses[index].id + "' src='./../images/down_arrow_small2.png' style='padding-left:10px; padding-right:10px;'/></td></tr>";
 		html = html + '</table></div>';
 		html = html + "<div id='analysis_holderSA_" + selectedAnalyses[index].id + "' class='xtSAHeatmapHolder'>"; 
 		html = html + "<div class='legend' id='saheatmapLegend_" + selectedAnalyses[index].id + "'></div>";
@@ -3682,6 +3706,12 @@ function addXTSearchAutoComplete()	{
 	return false;
 }
 
+function openGeneFromCTAheatmap(keywordId, termName, categoryId){
+	xtSelectedKeywords.push({id: keywordId, termName: termName, categoryId: categoryId });
+	getCrossTrialGeneSummary(keywordId);
+	jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
+}
+
 
 
 function drawPieChart(divid, data)
@@ -3704,6 +3734,10 @@ function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRa
 	var heatmapDiv = "xtHeatmap_" +searchKeywordId;
 	var heatmapHolderDivID = "xtHeatmapHolder_" +searchKeywordId;
 	
+	//html for button to close the graph
+	var closeHTML = "<a href='#' class='xtClostbtn' id='" +searchKeywordId  +"_CTAheatmapCloseBtn' onclick=\"closeCTAheatmap('"+heatmapHolderDivID+"', '" +searchKeywordId +"')\">x</a>";
+
+	
 	rwgAJAXManager.add({
 		url:getHeatmapCTARowsURL,
 		data: {analysisIds: analysisIds, category:category, searchKeywordId:searchKeywordId, 
@@ -3714,6 +3748,10 @@ function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRa
 			jQuery('#'+heatmapHolderDivID).unmask(); //hide the loading msg, unblock the div
 			
 			drawHeatmapCTA(heatmapDiv, response['rows'], selectedAnalyses, keyword);
+			
+		    //add some buttons
+		    jQuery('#'+heatmapHolderDivID).prepend(closeHTML);
+
 						
 		},
 		error: function(xhr) {
