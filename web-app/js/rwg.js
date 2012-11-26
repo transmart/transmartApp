@@ -2003,7 +2003,7 @@ function openSaveSearchDialog(isXT)  {
 }
 
 // save a faceted search to the database
-function saveSearch(searchType, keywords, analysisIds)  {
+function saveSearch(searchType)  {
 	
 	var keywords;
 	var analysisIds;
@@ -2054,6 +2054,8 @@ function saveSearch(searchType, keywords, analysisIds)  {
 				            	jQuery.modal.close();
 				    		  });	
 		    		    });
+		    		    
+		    		    refreshHomeFavorites(searchType);
 		    	  	}else{
 	    		    	jQuery("#modal-status-message").fadeIn(200).html(response['message']);
 		    	  	}
@@ -2072,7 +2074,7 @@ function saveSearch(searchType, keywords, analysisIds)  {
 }
 
 //update a faceted search in the database 
-function updateSearch(id)  {
+function updateSearch(id, searchType)  {
 
 	var name = jQuery("#searchName_" + id).val();
 	
@@ -2095,7 +2097,8 @@ function updateSearch(id)  {
             if (response['success'])  {
             	
             	jQuery("#labelSearchName_" + id).text(name);
-            	jQuery("#home_labelSearchName_" +id).text(name); //updates the label on the home page
+
+            	refreshHomeFavorites(searchType);
             	
             	hideEditSearchDiv(id);	            	
             }else
@@ -2114,7 +2117,7 @@ function updateSearch(id)  {
 
 
 //delete a faceted search from the database
-function deleteSearch(id)  {
+function deleteSearch(id, searchType)  {
 	
 	var name = jQuery("#labelSearchName_" + id).text();
 	
@@ -2133,7 +2136,8 @@ function deleteSearch(id)  {
             
             if (response['success'])  {
             	jQuery("#filter_favorites_"+id).remove();
-            	jQuery("#home_favorites_"+id).remove();
+            	
+            	refreshHomeFavorites(searchType);
             }
             else {
             	alert(response['message']);
@@ -2204,6 +2208,38 @@ function openLoadSearchDialog(isXT)  {
 		
 		    jQuery('#load-modal-content').html(response);
 		    jQuery('#simplemodal-container').unmask();
+			
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
+	
+	return false;
+
+}
+
+function refreshHomeFavorites(searchType)  {
+	
+	var searchType;
+	var div;
+	if (searchType == 'XT')  {
+		div = 'savedCrossTrialAnalysis';
+	}
+	else {
+		div = 'homefavorites';
+	}
+    
+    jQuery('#' + div).mask("Loading...");
+	
+	rwgAJAXManager.add({
+		url:renderHomeFavoritesTemplateURL,									
+		data: {searchType:searchType}, 
+		timeout:60000,
+		success: function(response) {
+		
+		    jQuery('#' + div).html(response);
+		    jQuery('#' + div).unmask();
 			
 		},
 		error: function(xhr) {

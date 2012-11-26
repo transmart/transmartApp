@@ -30,14 +30,14 @@
 								    	    	<a href="#" onclick="showEditSearchDiv(${f.id}); return false;">Rename</a>
 								    	</div>
 						    	    	<div style="float: left;width:30px;margin:10px;">
-								    	    	<a href="#" onclick="deleteSearch(${f.id}); return false;">Delete</a>							    	    
+								    	    	<a href="#" onclick="deleteSearch(${f.id}, '${f.searchType}'); return false;">Delete</a>							    	    
 								    	</div>
 						    	    </div>
 		
 						      		<div id="editSearchDiv_${f.id}" class="editSearchDiv modal-controls">
 										<input type="text" id="searchName_${f.id}" size="75" maxlength="100" value="${f.name}" />
 										<br /><br /><br />
-										<a href="#" onclick="updateSearch(${f.id}); return false;">Save</a>&nbsp;   
+										<a href="#" onclick="updateSearch(${f.id}, '${f.searchType}'); return false;">Save</a>&nbsp;   
 										<a href="#" onclick="hideEditSearchDiv(${f.id}); return false;">Cancel</a>&nbsp;   
 										<br />
 						    	    	<div id="modal-status-message_${f.id}" style="display:none; padding:5px; margin-top:15px;"></div>
