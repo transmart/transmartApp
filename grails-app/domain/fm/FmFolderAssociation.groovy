@@ -19,50 +19,65 @@
   
 package fm
 
-
+import fm.FmFolder;
 import java.util.ArrayList;
 import java.util.List;
 import groovy.lang.Buildable;
 import groovy.lang.GroovyObject;
 import groovy.xml.StreamingMarkupBuilder;
 
-class FmFile implements Buildable{
+import org.codehaus.groovy.grails.commons.GrailsApplication
+
+import com.recomdata.util.IBioTag
+
+
+class FmFolderAssociation implements Serializable {
 	
-	Long id
-	String displayName
-	String originalName
-//	Float fileVersion
-	Long fileSize	
-	String fileType
-	String filestoreLocation
-	String filestoreName
-	String linkUrl
-	Boolean activeInd = Boolean.TRUE
+	static transients = ['bioObject']
+	
+	String objectUid
+	String objectType
+	FmFolder fmFolder
 
 	static mapping = {
-		table 'fm_file'
+		table 'fm_folder_association'
 		version false
 		cache true
-		sort "displayName"
-		columns { id column:'file_id' }
+		sort "objectUid"
+//		id composite: ["objectUid","fmFolder"]
 	}
 	
 	static constraints = {
-		displayName(maxSize:200)
-		originalName(maxSize:200)
-		filestoreLocation(nullable:true,maxSize:500)
-		filestoreName(nullable:true,maxSize:50)
+		
+		objectUid(unique: 'fmFolder')
 		
 		}
-	
-	def void build(GroovyObject builder)
-	{
-		def fmFile = {
-			
+
+	public IBioTag getBioObject() 
+	{ 
+		def clazz = lookupDomainClass()
+		if (!clazz) 
+		{
+			return null
 		}
-
-		fmFile.delegate = builder
-		fmFile()
-
+		else
+		{		
+			return clazz.getObjectUid(this.objectUid)
+		}
+		 
 	}
+	
+	protected Class lookupDomainClass() {
+		//		def conf = SpringSecurityUtils.securityConfig
+		
+				// This probably should come from the config file
+			
+				String domainClassName = this.objectType //conf.rememberMe.persistentToken.domainClassName ?: ''
+				def clazz = grailsApplication.getClassForName(domainClassName)
+				if (!clazz) {
+					log.error "Persistent token class not found: '${domainClassName}'"
+				}
+				
+				return clazz
+			}
 }
