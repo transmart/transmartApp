@@ -71,7 +71,8 @@
 		<!-- Heatmap Tab Content -->
 		<div id ="xtHeatmapTab">
 		<!-- 	<a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a> -->
-
+			<div id="xtNoHeatmapMsg" class="xtInfoBox">
+			<p>No gene signatures or pathways are selected.</p><br/><p> Use the search box above to view gene lists, gene signatures, or pathways.</p></div>
 		</div>
 		
 	</div>

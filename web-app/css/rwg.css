@@ -1219,19 +1219,19 @@ min-width:250px;
 
 .CTAtable{
 	border-collapse: collapse;
-	border: 1px solid #d5d5d5;
+	border: 1px solid #B1B1B1;
 }
 
 .CTAtable td, th{
 	padding: 5px;
-	border: 1px dotted #AAA;
+	border: 1px dotted #B1B1B1;
 	font-weight: normal;
 }
 
 .CTAtable th{
 	background: #E6E6E6;
 	color: #2e2e2e;
-	font-weight: normal;
+	font-weight: bold;
 	padding:2px;
 }
 
