@@ -671,7 +671,8 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 		var geneId;
 		geneName =  row.keyword; 
 		geneId = row.geneId;
-  	    geneLabels[r] = {geneName:geneName, geneId:geneId};
+		searchKeywordId = row.searchKeywordId;
+  	    geneLabels[r] = {geneName:geneName, geneId:geneId, searchKeywordId:searchKeywordId};
 		
 		var wGene = geneName.visualLength(ctaGeneLabelFontWeight + " " + ctaGeneLabelFontSize + "px " + ctaGeneLabelFontFamily);
 	    maxGeneWidth = (wGene > maxGeneWidth) ? wGene : maxGeneWidth;	
@@ -883,7 +884,7 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	var geneGroupText = geneGroup.selectAll("a")
 		.data(geneLabels)
 		.enter().append("a")					//openGeneFromCTAheatmap(keywordId, termName, categoryId)
-		.attr("xlink:href", function(d) {return "javascript:openGeneFromCTAheatmap(" + d.geneId + ", '" +d.geneName +"', 'GENE');"})
+		.attr("xlink:href", function(d) {return "javascript:openGeneFromCTAheatmap(" + d.searchKeywordId + ", '" +d.geneName +"', 'GENE');"})
 		.append("text")
 		.attr("x", 0)
 		.attr("y",function(d, i)	{
