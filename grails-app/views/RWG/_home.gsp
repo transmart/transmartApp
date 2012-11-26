@@ -4,12 +4,12 @@
 
 	<div id="homefavorites" class='home-content-box' style="margin-right:20px">
 		<g:render template="/RWG/favorites"
-			model="['favorites':favorites]" />
+			model="['favorites':favorites, 'title':'Saved Filters', 'id':'nonxt', 'isXT':false]" />
 	</div>
 
 	<div id="savedCrossTrialAnalysis" class='home-content-box'>
-	<h2>Saved Cross Trial Analyses</h2>
-			<p style="margin-top: 75px;text-align: center;">You have no Cross Trial Analyses saved</p>
+		<g:render template="/RWG/favorites"
+			model="['favorites':favoritesXT, 'title':'Saved Cross Trial Analyses', 'id':'xt', 'isXT':true]" />
 	</div>
 <br />	
 

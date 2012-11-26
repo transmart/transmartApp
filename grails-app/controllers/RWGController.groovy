@@ -1369,6 +1369,7 @@ class RWGController {
 	   }
 	   def rwgDAO = new RWGVisualizationDAO()
 	   def favorites = getFavorites('FACETED_SEARCH')
+	   def favoritesXT = getFavorites('XT')
 	   def categories;
 	   def showAll=false;
 	   if(params.showAll=="true")
@@ -1382,7 +1383,7 @@ class RWGController {
 	   }
 	    def subcategories=rwgDAO.getSearchTaxonomyChildren(1); //TODO: is one always root?
 		def currentsubcategory=SearchTaxonomy.get(currentsubcategoryid);
-	   render(template:'home', model: ['categories': categories, 'subcategories': subcategories, 'currentsubcategoryid':currentsubcategoryid, 'currentsubcategoryname':currentsubcategory.termName, 'favorites':favorites, 'currentcharttype':currentcharttype, 'showAll':showAll])
+	   render(template:'home', model: ['categories': categories, 'subcategories': subcategories, 'currentsubcategoryid':currentsubcategoryid, 'currentsubcategoryname':currentsubcategory.termName, 'favorites':favorites, 'favoritesXT':favoritesXT, 'currentcharttype':currentcharttype, 'showAll':showAll])
 
  }
  
