@@ -21,7 +21,7 @@
 <g:formRemote name="ontTagFilterForm" id="ontTagFilterForm"
 	url="[controller:'ontology',action:'ajaxOntTagFilter']"
 	before="if(searchByTagBefore()==false) return false;"
-	onSuccess="searchByTagComplete(e)">
+	onSuccess="searchByTagComplete(data)">
 	<table class="searchform" width="100%">
 		<tr>
 			<td valign="top"><b>Search:</b><br> <g:textField

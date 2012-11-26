@@ -2910,7 +2910,8 @@ function loadHeatmapSA(analysisId, page) {
     	
     	// save the new state of checkbox
     	jQuery("#selectedAnalysis_" + analysisId).data("cbState", cbState);
-    	
+ 
+    	jQuery("#analysis_holderSA_" + analysisId).mask('Loading...');
 		loadHeatmapPaginator(divID, analysisId, page, true, queryString);
     }
 }

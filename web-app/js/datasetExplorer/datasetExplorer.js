@@ -4015,7 +4015,7 @@ function getSummaryStatistics()
 
 function buildColumnModel(fields)
 {
-	var size = fields.size();
+	var size = fields.length;
 	var con = new Array();
 	for(var i = 0; i < size; i ++ )
 	{
@@ -4075,8 +4075,7 @@ function getExportButtonSecurity()
 
 function getExportButtonSecurityComplete(result)
 {
-	var mobj=result.responseText.evalJSON();
-	var canExport=mobj.canExport;
+	var canExport = Ext.util.JSON.decode(result.responseText).canExport;
 	if(canExport || GLOBAL.IsAdmin)
 	{
 		Ext.getCmp("exportbutton").enable();
@@ -4324,9 +4323,8 @@ function searchByTagComplete(response)
 	var Tree = Ext.tree;
 	//ontFilterPanel.el.unmask();
 	viewport.el.unmask();
-	var robj=response.responseText.evalJSON();
-	var rtext=robj.resulttext;
-	var concepts = robj.concepts;
+	var concepts=response.concepts;
+	var rtext=response.resulttext;
 	// concept = concepts[4];
 	// test = concept.selectSingleNode('name').firstChild.nodeValue;
 	// alert(response.responseText);
