@@ -24,12 +24,15 @@ body {
 #search-div{
   padding: 6px;
   margin: 24px 10px 4px 0;
-  overflow: auto;
-  background-color: #F4F4F4;
-  border-radius: 8px;
+  overflow: hidden;
+  position: absolute;
+  width: 300px;
+  top: -28px;
+  left: 120px;
 }
 
 #box-search {
+	margin-top: 4px;
 	border-radius: 8px;
 	border: #0000FF;
 	width: 290px;
@@ -40,7 +43,7 @@ body {
 #active-search-div
 {
 	font-size: 11px;
-    height: 96px;
+    min-height: 64px;
     margin: 0;
     overflow: auto;
     padding: 5px 0 5px 20px;
@@ -53,7 +56,8 @@ body {
 }
 
 #sidebar {
-	float: right;
+	float: left;
+	margin-left: 4px;
 }
 
 #main {
@@ -74,6 +78,7 @@ body {
   border-left: 1px solid #888;
   border-right: 1px solid #888;
   border-top: 1px solid #888;
+  position: relative;
 }
 #title-search-div .title {
   color: white;
@@ -89,7 +94,7 @@ body {
 
 #results-div{
 	margin-bottom:20px;
-	padding: 0px;
+	padding: 0px 8px 0px 0px;
 }
 
 
@@ -321,7 +326,6 @@ ul.dynatree-container a:focus {
     outline:none;
 }
 
-
 ul.dynatree-container li span.dynatree-active a {
 	background-color:#fff !important;
 	color:#000;
@@ -420,7 +424,13 @@ ul.dynatree-container li ul li{
 
 .search-results-table
 {
-	padding-left:20px;
+	padding-left:15px;
+}
+
+.search-results-table a {
+	font-weight: normal;
+	font-size: 8pt;
+	font-family: Verdana, Arial, sans-serif;
 }
 
 .search-result-info
@@ -460,7 +470,7 @@ ul.dynatree-container li ul li{
 	
 }
 
-.result-trial-odd, .result-trial-even
+.result-program-odd, .result-program-even
 {
 	padding:10px;
 	background-color:#F4F4F4;
@@ -469,14 +479,23 @@ ul.dynatree-container li ul li{
 	box-shadow: #DDD 11px 11px 8px -7px;
 	border: 1px solid #BBB;
 }
-.result-trial-even
+.result-program-even
 {
 	background-color:#F8FFF4;
 }
 
-.result-trial-name
+.result-program-name
 {
-	color: #339933;
+	 color: #339933;
+	 padding-left: 3px;
+	 font-size: 12pt;
+	 position: relative;
+	 top: -10px;
+}
+
+.result-folder-name
+{
+	 color: #228822;
 	 padding-left: 3px;
 }
 
@@ -981,7 +1000,7 @@ select.multiselect {
 	background-image: url('../images/loader-large.gif') !important;
 	background-repeat: no-repeat !important;
 	background-position: 50% 50% !important;
-	min-height: 64px;
+	min-height: 128px;
 }
 
 .columnname {
@@ -1008,10 +1027,15 @@ select.multiselect {
 	background-position: 2px 50%;
 }
 
+.folderheader {
+    margin: 4px 0 4px 0;
+}
+
 .foldericon.add { background-image: url('../images/internal-link.gif'); }
 .foldericon.view { background-image: url('../images/information8.png'); }
+.foldericon.viewfile { background-image: url('../images/information8.png'); }
 
-/* Accordion overrides */
+/* Accordion/other UI overrides */
 
 #sidebar-accordion {
 	margin-top: 16px;
@@ -1038,10 +1062,13 @@ select.multiselect {
 	font-weight: bold;
 }
 
-#filter-browser, #metadata-viewer {
+.ui-dialog-title {
+	color: white;	
+}
+
+#results-div {
 	background: #FFFFFF;
 	font-size: 11px;
-	padding: 1em;
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 	border-left: 1px solid #888;
@@ -1059,6 +1086,11 @@ select.multiselect {
 	cursor: pointer;
 	border-top: 1px solid #EEE;
 	font-weight: bold;
+}
+
+#filter-browser {
+	font-size: 8pt;
+	font-family: Verdana, Arial, sans-serif;	
 }
 
 .filteritem {
@@ -1111,11 +1143,7 @@ select.multiselect {
 	width: 100%;
 }
 
-#cartbutton {
-	position: absolute;
-	right: 24px;
-	top: 2px;
-	padding: 0px 4px;
+.greybutton {
 	background-color: #F4F4F4;
 	border: 1px solid #DDD;
 	cursor: pointer;
@@ -1123,10 +1151,24 @@ select.multiselect {
 	font-size: 8pt;
 }
 
+#cartbutton {
+	position: absolute;
+	right: 400px;
+	top: 3px;
+	padding: 0px 4px;
+}
+
+#filterbutton {
+	position: absolute;
+	right: 40px;
+	bottom: 5px;
+	padding: 0px 4px;
+}
+
 #cartcount {
 	position: absolute;
 	left: 9px;
-	top: 0px;
+	top: -1px;
 	font-size: 10px;
 	font-weight: bold;
 	text-align: center;
@@ -1136,10 +1178,10 @@ select.multiselect {
 
 #sidebartoggle {
 	position:absolute;
-	right:0px;
+	left:0px;
 	top: 29px;
 	z-index: 999;
-	background-image: url('../images/righttab-right.png');
+	background-image: url('../images/lefttab-left.png');
 	width: 22px;
 	height: 22px;
 	cursor: pointer;
@@ -1149,6 +1191,33 @@ select.multiselect {
 	padding: 0;	
 }
 
+.infolabel {
+	font-weight: bold;
+	font-size: 12px;
+	font-family: Verdana;	
+}
+
+.infovalue {
+	font-size: 12px;
+	font-family: Verdana;	
+	margin-left: 4px;
+	margin-bottom: 8px;
+}
+
+.fileicon {
+	padding: 3px 24px 0px 0px;
+	background-image: url('../images/filetypes/page_white.png');
+	background-repeat: no-repeat;	
+}
+
+.fileicon.csv, .fileicon.xls, .fileicon.xlsx { background-image: url('../images/filetypes/page_white_excel.png'); }
+.fileicon.doc, .fileicon.docx { background-image: url('../images/filetypes/page_white_word.png'); }
+.fileicon.txt { background-image: url('../images/filetypes/page_white_text.png'); }
+.fileicon.pdf { background-image: url('../images/filetypes/page_white_acrobat.png'); }
+.fileicon.zip { background-image: url('../images/filetypes/page_white_zip.png'); }
+.fileicon.xml, .fileicon.html { background-image: url('../images/filetypes/page_white_code.png'); }
+.fileicon.png, .fileicon.jpg, .fileicon.bmp, .fileicon.gif { background-image: url('../images/filetypes/page_white_picture.png'); }
+
 /* Special class for forcing no jQuery icon */
 .suppressicon {
 	background: none !important;
@@ -1156,4 +1225,9 @@ select.multiselect {
 
 .breaker {
 	clear: both;	
+}
+
+/* Catch-all for making IE look slightly less stupid */
+*:focus {
+	outline:none;	
 }

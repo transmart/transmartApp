@@ -27,7 +27,7 @@ grails.plugin.location.rmodules = "C:\\svn\\repo1\\pharma\\transmart\\trunk\\plu
 //grails.plugin.location.rmodules="..//Rmodules"
 
 
-//grails.project.war.file = "target/${appName}-${appVersion}.war"
+grails.project.war.file = "target/transmart.war"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {

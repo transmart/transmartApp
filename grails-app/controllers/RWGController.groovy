@@ -6,6 +6,7 @@
 
 import org.json.*
 
+import fm.FmFile;
 import groovy.xml.StreamingMarkupBuilder
 
 import javax.xml.transform.TransformerFactory
@@ -39,6 +40,7 @@ class RWGController {
 	def searchService
 	def searchKeywordService	
 	def springSecurityService
+	def formLayoutService
 	
     def index = {}
 
@@ -896,6 +898,11 @@ class RWGController {
 
 	   def analysisList = trialQueryService.querySOLRTrialAnalysis(params, session.solrSearchFilter)
 	   render(template:'/RWG/analysis', model:[aList:analysisList])
+   }
+   
+   def getFileDetails = {
+	   def layout = formLayoutService.getLayout('file')
+	   render(template:'/fmFolder/fileMetadata', model:[layout: layout, file: FmFile.get(params.id)])
    }
  
    // First iteration of the method to get the heatmap data for RWG  

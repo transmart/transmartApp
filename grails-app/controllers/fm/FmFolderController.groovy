@@ -230,13 +230,17 @@ class FmFolderController {
 	}
 	
 	def getAllPrograms = {
-		def folders = FmFolder.executeQuery("from FmFolder as fd where fd.folderType = 'Program' ")
+		def folders = FmFolder.executeQuery("from FmFolder as fd where fd.folderType = 'Program' order by folderName")
 		render(template:'programs', model: [folders: folders])
 	}
 	
-	def getFoldersUnder = {
-		def folders = FmFolder.executeQuery("from FmFolder as fd where fd.folderType = 'Program'")
-		render(template:'folders', model: [folders: folders])
+	def getFolderContents = {
+		def id = params.id
+		def parent = FmFolder.get(id)
+		
+		//Temporary stupid way to do this - get all folders at level+1 with matching path
+		def folders = FmFolder.executeQuery("from FmFolder as fd where fd.folderLevel = :level and fd.folderFullName like '" + parent.folderFullName + "%' order by folderName", [level: parent.folderLevel + 1])
+		render(template:'folders', model: [folders: folders, files: parent.fmFiles])
 	}
 
 

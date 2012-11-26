@@ -125,12 +125,12 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 	
 	// If data attribute is undefined then this is the first time opening the div, load the analysis... 
 	if (typeof jQuery(trialDetail).attr('data') == 'undefined')	{		
-		var src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'ajax-loader-flat.gif');	
+		var src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'ajax-loader-flat.gif');	
 		jQuery(imgExpand).attr('src',src);
 		jQuery.ajax({
 			url:dataURL,			
 			success: function(response) {
-				jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'up_arrow_small2.png'));
+				jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderminus.png'));
 				jQuery(trialDetail).addClass("gtb1");
 				jQuery(trialDetail).html(response);
 				jQuery(trialDetail).addClass("analysesopen");
@@ -141,12 +141,12 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 			}
 		});
 	} else	{
-		var src = jQuery(imgExpand).attr('src').replace('up_arrow_small2.png', 'down_arrow_small2.png');
+		var src = jQuery(imgExpand).attr('src').replace('folderminus.png', 'folderplus.png');
 		if (jQuery(trialDetail).attr('data') == "true")	{
 			jQuery(trialDetail).attr('data',false);
 			jQuery(trialDetail).removeClass("analysesopen");
 		} else	{
-			src = jQuery(imgExpand).attr('src').replace('down_arrow_small2.png', 'up_arrow_small2.png');
+			src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'folderminus.png');
 			jQuery(trialDetail).attr('data',true);
 			jQuery(trialDetail).addClass("analysesopen");
 		}	
@@ -439,7 +439,8 @@ function showFacetResults(tabToShow)	{
     
     //display loading message. Note: because the contents of the 'results-div' is replaced,
     //there is no need to 'unmask' the loading message
-	jQuery("#results-div").mask("Loading..."); 
+    //Removed this because it interfered with being able to scroll the tree.
+	jQuery("#results-div").empty();
     
     // add study id to list of fields to facet (so we can get count for show search results)
     facetSearch.push("ff=STUDY_ID");
