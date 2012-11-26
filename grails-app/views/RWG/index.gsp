@@ -86,6 +86,7 @@
 	        var loadSearchURL = "${createLink([action:'loadFacetedSearch'])}";
 	        var updateSearchURL = "${createLink([action:'updateFacetedSearch'])}";
 	        var renderFavoritesTemplateURL = "${createLink([action:'renderFavoritesTemplate'])}";
+	        var renderHomeFavoritesTemplateURL = "${createLink([action:'renderHomeFavoritesTemplate'])}";
 	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
 	        var exportAsImage = "${createLink([action:'exportAsImage'])}";	        
 	        var homeURL = "${createLink([action:'getHomePage'])}";	     

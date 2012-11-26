@@ -1059,10 +1059,32 @@ class RWGController {
    def renderFavoritesTemplate = {
 	   
 	   def html
-	   
+	   	   
 	   def favorites = getFavorites(params.searchType)
 	   
 	   render(template:'loadFavoritesModal', model:[favorites:favorites]).toString()	   	   	   
+			  
+   }
+   
+   def renderHomeFavoritesTemplate = {
+	   
+	   def html
+	   
+	   def favorites = getFavorites(params.searchType)
+
+	   def title, id, isXT
+	   if (params.searchType == 'XT')  {
+		   title = 'Saved Cross Trial Analyses'
+		   id =  'nonxt'
+		   isXT = true
+	   }
+	   else  {
+		   title = 'Saved Filters'
+		   id =  'nonxt'
+		   isXT = false
+	   }
+
+	   render(template:'favorites', model:[favorites:favorites, title:title, id:id, isXT:isXT]).toString()
 			  
    }
 
