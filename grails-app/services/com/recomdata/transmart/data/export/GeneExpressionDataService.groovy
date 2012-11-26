@@ -65,7 +65,7 @@ class GeneExpressionDataService {
 	{
 		
 		//This tells us whether we need to include the pathway information or not.
-		private Boolean includePathwayInfo = false
+		 Boolean includePathwayInfo = false
 		
 		//This tells us whether we found data when we call the "Write Data" method.
 		boolean dataFound = false
@@ -804,7 +804,7 @@ class GeneExpressionDataService {
 	def downloadCELFiles(String resultInstanceId, studyList, File studyDir, String jobName, String pathway, String timepoint, String sampleTypes, String tissueTypes) {
 		groovy.sql.Sql sql = null
 
-		private Map sampleCdsMap = null
+		Map sampleCdsMap = null
 		
 		try {
 			//Get the subjects for this result instance id.
