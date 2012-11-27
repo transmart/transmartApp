@@ -634,18 +634,26 @@ public class GeneSignatureService {
 		def geneListIds = geneListIdsParam.split ","
 		
 		Map map = new HashMap()
-				
+		def results = GeneSignatureItem.executeQuery("select gs.id, gs.name, gsi.bioMarker.name" +
+			                                                " from search.GeneSignature gs, search.GeneSignatureItem gsi" +
+															" where gs.id = gsi.geneSignature " +
+															" and gs.id in (" + geneListIdsParam + ")");
+
 		for(int i = 0; i<geneListIds.length; i++){
 			def outputList = new ArrayList()
-							
-			GeneSignature geneSig = GeneSignature.get(Long.parseLong(geneListIds[i]))
-			def geneSigItems = geneSig.geneSigItems
+			def geneSigLabel
+			
+			// loop thru cached result set and get items belonging to current list
+			for (r in results)  {						
+				if (r[0].toString() == geneListIds[i].toString())  {
+					// if first item for this list, also get the list name
+					if (outputList.size == 0)  {
+						geneSigLabel = r[1];
+					}
 					
-			geneSigItems.each{geneSigItem->
-				outputList.add(geneSigItem.bioMarker.name)
-			}
-					
-			def geneSigLabel = geneSig.name
+					outputList.add(r[2]);
+				}
+			}		
 			map.put(geneListIds[i],[outputList, geneSigLabel])
 		}
 		return map

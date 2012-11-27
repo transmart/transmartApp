@@ -174,7 +174,7 @@ function populateActionSelection(dropdown){
 		
 		actionList.append(jQuery("<option>").val("").text("-- Select Action --"));
 		actionList.append(jQuery("<option>").val("union").text("Union"));
-		actionList.append(jQuery("<option>").val("concat").text("Concatinate"));
+		actionList.append(jQuery("<option>").val("concat").text("Concatenate"));
 		actionList.append(jQuery("<option>").val("intersection").text("Intersect"));
 		//actionList.append(jQuery("<option>").val("unique").text("Make Unique"));
 	}
