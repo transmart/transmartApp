@@ -419,7 +419,7 @@ class GeneSignatureController {
 			// empty?
 			if(file.empty) {
 				flash.message = flash.message = "The file:'${file.getOriginalFilename()}' you uploaded is empty"
-				return render(view: "wizard3", model:[wizard: wizard])
+				return render(view: "wizard${params.page}", model:[wizard: wizard])
 			}
 
 			// check schema errors
@@ -431,7 +431,7 @@ class GeneSignatureController {
 
 			} catch (FileSchemaException e) {
 				flash.message = e.getMessage()
-				return render(view: "wizard3", model:[wizard: wizard])
+				return render(view: "wizard${params.page}", model:[wizard: wizard])
 			}
 		}
 
@@ -449,10 +449,10 @@ class GeneSignatureController {
 
 		} catch (FileSchemaException fse) {
 			flash.message = fse.getMessage()
-			render(view: "wizard3", model:[wizard: wizard])
+			render(view: "wizard${params.page}", model:[wizard: wizard])
 		} catch (RuntimeException re) {
 			flash.message = "Runtime exception "+re.getClass().getName()+":<br>"+re.getMessage()
-			render(view: "wizard3", model:[wizard: wizard])
+			render(view: "wizard${params.page}", model:[wizard: wizard])
 		}
 	}
 
