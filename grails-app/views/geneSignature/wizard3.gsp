@@ -47,6 +47,13 @@
 <div class="body">
 	<!-- initialize -->
 	<g:set var="gs" value="${wizard.geneSigInst.properties}" />
+	
+	<!--  show message -->
+    <g:if test="${flash.message}">
+    	<div class="warning">${flash.message}</div>
+    	<g:hasErrors bean="${wizard.geneSigInst}"><div class="errors"><g:renderErrors bean="${wizard.geneSigInst}" as="list" /></div></g:hasErrors>
+    	<br>
+    </g:if>	
 
 	<g:if test="${wizard.wizardType==0}"><h1>Gene Signature Create</h1></g:if>
 	<g:if test="${wizard.wizardType==1}"><h1>Gene Signature Edit: ${gs.name}</h1></g:if>
