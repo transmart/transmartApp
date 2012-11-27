@@ -44,7 +44,7 @@ public class SearchKeywordService {
 			projections {
 				distinct("dataCategory")
 			}
-			order("dataCategory", "asc")
+			//order("dataCategory", "asc")
 		}
 		
 		log.info("Categories found: " + results.size())
@@ -55,7 +55,8 @@ public class SearchKeywordService {
 			categories.add(["category":result])
 		}
 		
-		return categories
+		
+		return categories.sort()
 	}
 	
 	/** Searches for all keywords for a given term (like %il%) */
@@ -72,13 +73,15 @@ public class SearchKeywordService {
 			
 			//TODO Special case for gene or SNP - rework to support multiple categories!
 			if ("GENE_OR_SNP".equals(category))	{
-				or {
-					eq("dataCategory", "GENE")
-					like("keywordTerm", 'RS%')
-				}
+				//or {
+				//	eq("dataCategory", "GENE")
+				//	like("keywordTerm", 'RS%')
+				//}
+				'in'("dataCategory",["GENE","SNP"])
 			}
 			else if ("SNP".equals(category)) {
-				like("keywordTerm", 'RS%')
+				//like("keywordTerm", 'RS%')
+				eq("dataCategory", "SNP")
 			}
 			else if ("ALL".compareToIgnoreCase(category) != 0)	{
 				eq("dataCategory", category.toUpperCase())

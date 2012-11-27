@@ -264,11 +264,11 @@ class ExperimentAnalysisController {
 	   
 	   def analyses = bio.BioAssayAnalysis.executeQuery("select id, name from BioAssayAnalysis b order by b.name");
 	   
-	   analyses.sort({a, b ->
+	  /* analyses.sort({a, b ->
 		   def aname = a[1] ?: ""
 		   def bname = b[1] ?: ""
 		   return aname.trim().compareToIgnoreCase(bname.trim());
-	   })
+	   })*/
 	   
 	   render(template:'browseMulti',model:[analyses:analyses])
    }
