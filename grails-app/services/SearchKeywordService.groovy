@@ -17,6 +17,8 @@
  *
  ******************************************************************/
   
+import org.transmart.searchapp.AuthUser;
+
 import bio.BioDataExternalCode
 import search.SearchKeyword
 import search.SearchKeywordTerm

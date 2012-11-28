@@ -18,6 +18,13 @@
  ******************************************************************/
   
 
+import org.transmart.searchapp.AuthUser;
+import org.transmart.searchapp.Principal;
+import org.transmart.searchapp.Role;
+import org.transmart.searchapp.SecureAccessLevel;
+import org.transmart.searchapp.SecureObject;
+import org.transmart.searchapp.SecureObjectAccess;
+
 import command.SecureObjectAccessCommand
 
 

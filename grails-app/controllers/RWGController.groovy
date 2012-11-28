@@ -29,6 +29,7 @@ import groovyx.net.http.HTTPBuilder
 
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.springframework.context.MessageSource
+import org.transmart.searchapp.AccessLog;
 
 class RWGController {
 	def trialQueryService

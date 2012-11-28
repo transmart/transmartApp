@@ -30,10 +30,11 @@
  import bio.Compound
  import bio.ConceptCode
  import bio.CellLine
+import org.transmart.searchapp.AuthUser
  import search.SearchKeyword
  import com.recomdata.util.IDomainExcelWorkbook
  import com.recomdata.util.ExcelSheet
- import com.recomdata.util.ExcelGenerator
+import com.recomdata.util.ExcelGenerator
 
 /**
  * GeneSignature domain class

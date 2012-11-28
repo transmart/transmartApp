@@ -1,3 +1,4 @@
+package org.transmart.searchapp
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,47 +19,23 @@
  ******************************************************************/
   
 
-package com.recomdata.transmart.domain.searchapp
- /**
-  * $Id: AccessLog.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
-  */
 
-
-
-/**
- * user access log file
- *
- */
-public class AccessLog{
-
-	Long id
-	String username;
-	String event;
-	String eventmessage;
-	String requestURL;
-	Date accesstime;
-
-	static mapping = {
-		table 'SEARCH_APP_ACCESS_LOG'
+class SecureAccessLevel {
+	static def OWN = "OWN"
+		Long accessLevelValue
+		Long id
+		String accessLevelName
+ static mapping = {
+	 table 'SEARCH_SEC_ACCESS_LEVEL'
+	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-		version false
-		id column:'id'
-		username column:'USER_NAME'
-		event column:'EVENT'
-		eventmessage column:'EVENT_MESSAGE'
-		requestURL column:'REQUEST_URL'
-		accesstime column:'ACCESS_TIME'
+	 columns {
+		accessLevelValue column:'ACCESS_LEVEL_VALUE'
+		id column:'SEARCH_SEC_ACCESS_LEVEL_ID'
+		accessLevelName column:'ACCESS_LEVEL_NAME'
+		}
 	}
-
-
-	static constraints = {
-		username(blank: false)
-		event(nullable:false)
-		eventmessage(nullable:true)
-		requestURL(nullable: true)
-		accesstime(nullable:false)
+ static constraints = {
+	accessLevelName(nullable:true, maxSize:400)
 	}
-
 }

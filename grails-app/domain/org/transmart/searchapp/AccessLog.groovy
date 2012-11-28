@@ -1,3 +1,4 @@
+package org.transmart.searchapp
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -19,63 +20,45 @@
   
 
  /**
-  * $Id: Principal.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+  * $Id: AccessLog.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
   * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
+  * @version $Revision: 10098 $
   */
 
+
+
 /**
- * principal class.
+ * user access log file
+ *
  */
-class Principal {
-	static transients = ['principalNameWithType']
+public class AccessLog{
 
-	Long id ;
-	boolean enabled
-	String type;
-	String name;
-	String uniqueId =''
-	Date dateCreated
-	Date lastUpdated
-	/** description */
-	String description = ''
-	String principalNameWithType
-
+	Long id
+	String username;
+	String event;
+	String eventmessage;
+	String requestURL;
+	Date accesstime;
 
 	static mapping = {
-		table 'SEARCH_AUTH_PRINCIPAL'
-		tablePerHierarchy false
+		table 'SEARCH_APP_ACCESS_LOG'
+	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
 		version false
-		id generator:'assigned'
-		columns
-		{
-			id column:'ID'
-			uniqueId column:'UNIQUE_ID'
-			name column:'NAME'
-			description column:'DESCRIPTION'
-			enabled column:'ENABLED'
-			type column:'PRINCIPAL_TYPE'
-			dateCreated column:'DATE_CREATED'
-			lastUpdated column:'LAST_UPDATED'
-		}
-
+		id column:'id'
+		username column:'USER_NAME'
+		event column:'EVENT'
+		eventmessage column:'EVENT_MESSAGE'
+		requestURL column:'REQUEST_URL'
+		accesstime column:'ACCESS_TIME'
 	}
+
+
 	static constraints = {
-		//enabled()
-		type(nullable:false)
-		description(nullable:true, maxSize:255)
-		uniqueId(nullable:true)
+		username(blank: false)
+		event(nullable:false)
+		eventmessage(nullable:true)
+		requestURL(nullable: true)
+		accesstime(nullable:false)
 	}
 
-	def beforeInsert = {
-		uniqueId = type+" "+id;
-	}
-
-	public String getPrincipalNameWithType(){
-		return type+' - '+name;
-	}
-
-	public void setPrincipalNameWithType(String n){
-
-	}
 }

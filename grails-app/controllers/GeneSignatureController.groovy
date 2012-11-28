@@ -22,6 +22,9 @@ import grails.converters.JSON;
 
 import javax.servlet.ServletOutputStream
 
+import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AuthUser;
+
 import search.GeneSignature
 import search.GeneSignatureFileSchema
 import bio.BioAssayPlatform

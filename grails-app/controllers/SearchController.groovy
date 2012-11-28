@@ -28,6 +28,8 @@
 import grails.converters.*
 
 import org.hibernate.*
+import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AuthUser;
 
 import search.CustomFilter
 import search.SearchKeyword

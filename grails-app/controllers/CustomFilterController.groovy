@@ -21,6 +21,8 @@
 /*
  * $Id: CustomFilterController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  */
+import org.transmart.searchapp.AuthUser;
+
 import search.SearchKeyword
 import search.CustomFilter
 import search.CustomFilterItem

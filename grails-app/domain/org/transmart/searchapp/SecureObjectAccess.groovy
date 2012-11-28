@@ -1,3 +1,4 @@
+package org.transmart.searchapp
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,46 +19,48 @@
  ******************************************************************/
   
 
- /**
-  * $Id: AccessLog.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 10098 $
-  */
 
-
-
-/**
- * user access log file
- *
- */
-public class AccessLog{
-
+class SecureObjectAccess {
+	static transients = ['objectAccessName','principalAccessName']
 	Long id
-	String username;
-	String event;
-	String eventmessage;
-	String requestURL;
-	Date accesstime;
+		Principal principal
+		SecureObject secureObject
+		SecureAccessLevel accessLevel
 
-	static mapping = {
-		table 'SEARCH_APP_ACCESS_LOG'
+		String objectAccessName
+		String principalAccessName
+
+ static mapping = {
+	 table 'SEARCH_AUTH_SEC_OBJECT_ACCESS'
+	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-		version false
-		id column:'id'
-		username column:'USER_NAME'
-		event column:'EVENT'
-		eventmessage column:'EVENT_MESSAGE'
-		requestURL column:'REQUEST_URL'
-		accesstime column:'ACCESS_TIME'
+	 columns {
+		id column:'AUTH_SEC_OBJ_ACCESS_ID'
+		principal column:'AUTH_PRINCIPAL_ID'
+		secureObject column:'SECURE_OBJECT_ID'
+		accessLevel column:'SECURE_ACCESS_LEVEL_ID'
+		}
 	}
 
+ static constraints = {
+	//principal(nullable:true)
 
-	static constraints = {
-		username(blank: false)
-		event(nullable:false)
-		eventmessage(nullable:true)
-		requestURL(nullable: true)
-		accesstime(nullable:false)
 	}
+
+  public String toString(){
+			return objectAccessName();
+	}
+  public String getObjectAccessName() {
+			return secureObject.displayName+' ('+accessLevel.accessLevelName+')';
+		}
+  public void setObjectAccessName(String s){
+
+  }
+  public String getPrincipalAccessName() {
+		return principal.type+'-'+ principal.name+' ('+accessLevel.accessLevelName+')';
+	}
+public void setPrincipalAccessName(String s){
+
+}
 
 }

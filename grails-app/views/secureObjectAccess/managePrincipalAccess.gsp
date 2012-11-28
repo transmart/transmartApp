@@ -17,7 +17,8 @@
  
 -->
 
-
+<%@ page import="org.transmart.searchapp.SecureObject" %>
+<%@ page import="org.transmart.searchapp.SecureAccessLevel" %>
 
 <html>
     <head>

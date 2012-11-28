@@ -16,6 +16,9 @@
   
  
 -->
+<%@page import="org.transmart.searchapp.SecureObjectAccess"%>
+<%@page import="org.transmart.searchapp.AuthUserSecureAccess"%>
+
 
 <html>
 	<head>

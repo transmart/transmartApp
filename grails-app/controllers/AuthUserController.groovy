@@ -24,6 +24,11 @@
  * @version $Revision: 10098 $
  */
 
+import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AuthUser;
+import org.transmart.searchapp.AuthUserSecureAccess;
+import org.transmart.searchapp.Role;
+
 import search.GeneSignature
 
 /**

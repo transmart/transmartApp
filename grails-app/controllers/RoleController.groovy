@@ -1,3 +1,5 @@
+import org.transmart.searchapp.Role;
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
