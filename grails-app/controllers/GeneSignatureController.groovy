@@ -409,7 +409,7 @@ class GeneSignatureController {
 		// load real domain object, apply edit params from clone
 		def gsReal = GeneSignature.get(wizard.editId)
 		def origFile = gsReal.uploadFile
-		clone.copyPropertiesTo(gsReal)
+		clone.copyPropertiesTo(gsReal)		
 		gsReal.modifiedByAuthUser=user
 		gsReal.uploadFile = origFile
 
