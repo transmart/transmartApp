@@ -646,8 +646,8 @@ class RWGController {
        def queryParams = request.getParameterValues('q')
 	   
 	   // get name of SOLR search field to be used for gene queries (SIGGENE or ALLGENE) and set session var
-	   def solrGenesField = setSOLRGenesField(showSigGenesOnly)  
 	   
+	   def solrGenesField = setSOLRGenesField(showSigGenesOnly)  
 	   // replace gene signatures or gene list terms into their list of individual genes
 	   queryParams = replaceGeneLists(queryParams, solrGenesField)	   
 	   
@@ -700,9 +700,8 @@ class RWGController {
    * @param showSigGenesOnly boolean indicating whether analysis for all genes or only significant genes (default) will be shown
    * @return SOLR field to be used for gene searches
    */
-   def setSOLRGenesField = {
-	   boolean showSigGenesOnly = true ->
-
+   private String setSOLRGenesField(boolean showSigGenesOnly = true)  {
+	   
 	   def solrGenesField = ""  // name of SOLR search field to be used for gene queries (SIGGENE or ALLGENE)
 	   if (showSigGenesOnly)  {
 		   solrGenesField = 'SIGGENE'
@@ -711,7 +710,7 @@ class RWGController {
 		   solrGenesField = 'ALLGENE'
 	   }
 	   session['solrGenesField'] = solrGenesField
-
+	   
 	   return solrGenesField
    }
 
