@@ -1360,11 +1360,11 @@ public class SearchController{
 		{
 			case "GWAS" :
 			case "Metabolic GWAS" :
-				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, pvalueCutoff, "null", "asc", search, "gwas", geneNames).results
+				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, pvalueCutoff, "null", "asc", search, "gwas", geneNames,false).results
 				analysisIndexData = searchDAO.getGwasIndexData()
 				break;
 			case "EQTL" :
-				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, pvalueCutoff, "null", "asc", search, "eqtl", geneNames).results
+				analysisData = regionSearchService.getAnalysisData(analysisIds, regions, 0, 0, pvalueCutoff, "null", "asc", search, "eqtl", geneNames,false).results
 				analysisIndexData = searchDAO.getEqtlIndexData()
 				break;
 			default :
