@@ -46,7 +46,7 @@
 	alert("Please select a user/group first");
 	return false;
 	}
- ${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
+ ${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'jQuery(\'#searchtext\').serialize()+\'&id=\'+pid')};
 	return false;
   }
 
