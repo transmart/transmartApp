@@ -9,7 +9,7 @@ function initDataTables(){
 	  	 "sPaginationType": "full_numbers",
 	    "aoColumnDefs":[
 			{"bSortable":false, "aTargets":[0]},
-			{"bSearchable":false, "aTargets":[0,7,8,10,11,12]} ,
+			{"bSearchable":false, "aTargets":[0,8,10,11,12]} ,
 			{"bVisible":false, "aTargets":[9]}
 		],
 	});
