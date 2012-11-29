@@ -17,7 +17,7 @@
  
 -->
 
-
+<%@page import="org.transmart.searchapp.UserGroup"%>
 
 <html>
     <head>
@@ -66,6 +66,7 @@
                 </table>
             </div>
             <div class="paginateButtons">
+				<g:paginate total="${UserGroup.count()}" />
 
             </div>
         </div>
