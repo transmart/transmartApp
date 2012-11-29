@@ -340,17 +340,31 @@ class GeneSignatureController {
 
 		// get file
 		def file = request.getFile('uploadFile')
+		//get file contents
+		def fileContents = geneSignatureService.getFileContents(file);
+		//get file name
+		def fileName = file.getOriginalFilename()
+		
+		// get gene signature information from the textbox
+		def geneSigText = request.getParameter('genes')
+		def geneSigList = geneSignatureService.getTextBoxContents(geneSigText);
+		
+		// If there is information in the textbox, override the file contents with it.
+		if(geneSigList){
+			fileContents=geneSigList
+			fileName="uploadedFromTextBox"
+		}
 
 		// load file contents, if clone check for file presence
-		boolean bLoadFile = (wizard.wizardType==WizardModelDetails.WIZ_TYPE_CREATE) || (wizard.wizardType==WizardModelDetails.WIZ_TYPE_CLONE && file!=null && file.getOriginalFilename()!="")
-		if(!bLoadFile) file = null
+		boolean bLoadFile = (wizard.wizardType==WizardModelDetails.WIZ_TYPE_CREATE) || (wizard.wizardType==WizardModelDetails.WIZ_TYPE_CLONE && fileContents!=null && fileName!="")
+		if(!bLoadFile) fileContents = null
 		if(bLoadFile) {
-			gs.properties.uploadFile = file.getOriginalFilename()
+			gs.properties.uploadFile = fileName
 
 			// check for empty file
-			if(file.empty) {
+			if(fileContents.size()==0) {
 				flash.message = "The file:'${gs.properties.uploadFile}' you uploaded is empty"
-				return render(view: "wizard3", model:[wizard: wizard])
+				return render(view: "wizard1", model:[wizard: wizard])
 			}
 
 			// validate file format
@@ -358,7 +372,7 @@ class GeneSignatureController {
 			def schemaColCt = gs.fileSchema?.numberColumns
 
 			try {
-				geneSignatureService.verifyFileFormat(file, schemaColCt, metricType)
+				geneSignatureService.verifyFileFormat(fileName, fileContents, schemaColCt, metricType)
 			} catch (FileSchemaException e) {
 				flash.message = e.getMessage()
 				return render(view: "wizard3", model:[wizard: wizard])
@@ -374,7 +388,7 @@ class GeneSignatureController {
 
 		// good to go, call save service
 		try {
-			gs = geneSignatureService.saveWizard(gs, file)
+			gs = geneSignatureService.saveWizard(gs, fileContents, fileName)
 
 			// clean up session
 			wizard = null
@@ -415,12 +429,25 @@ class GeneSignatureController {
 
 		// refresh items if new file uploaded
 		def file = request.getFile('uploadFile')
-		log.debug " update wizard file:'"+file?.getOriginalFilename()+"'"
+		//get file contents
+		def fileContents = geneSignatureService.getFileContents(file);
+		//get file name
+		def fileName = file.getOriginalFilename()
+		// get gene signature information from the textbox
+		def geneSigText = request.getParameter('genes')
+		def geneSigList = geneSignatureService.getTextBoxContents(geneSigText);
+		// If there is information in the textbox, override the file contents with it.
+		if(geneSigList){
+			fileContents=geneSigList
+			fileName="uploadedFromTextBox"
+		}
+		
+		log.debug " update wizard file:'"+fileName+"'"
 
 		// file validation
-		if(file!=null && file.getOriginalFilename()!="") {
+		if(fileContents!=null && fileName!="") {
 			// empty?
-			if(file.empty) {
+			if(fileContents.size()==0) {
 				flash.message = flash.message = "The file:'${file.getOriginalFilename()}' you uploaded is empty"
 				return render(view: "wizard${params.page}", model:[wizard: wizard])
 			}
@@ -429,8 +456,8 @@ class GeneSignatureController {
 			def metricType = gsReal.foldChgMetricConceptCode?.bioConceptCode
 			def schemaColCt = gsReal.fileSchema?.numberColumns
 			try {
-				geneSignatureService.verifyFileFormat(file, schemaColCt, metricType)
-				gsReal.uploadFile = file.getOriginalFilename()
+				geneSignatureService.verifyFileFormat(fileName, fileContents, schemaColCt, metricType)
+				gsReal.uploadFile = fileName
 
 			} catch (FileSchemaException e) {
 				flash.message = e.getMessage()
@@ -440,7 +467,7 @@ class GeneSignatureController {
 
 		// good to go, call update service
 		try {
-			geneSignatureService.updateWizard(gsReal, file)
+			geneSignatureService.updateWizard(gsReal, fileContents, fileName)
 
 			// clean up session
 			wizard = null
