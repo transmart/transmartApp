@@ -1139,7 +1139,7 @@ public class SearchController{
 					def snpGenes = regionSearchService.getGenesForSnp(searchKeyword.keyword)
 					//Push each gene and the radius
 					for (snpGene in snpGenes) {
-						genes.push([snpGene, range])
+						genes.push([snpGene, 0])
 					}
 				}
 			}

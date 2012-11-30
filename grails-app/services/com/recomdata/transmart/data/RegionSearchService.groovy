@@ -48,7 +48,7 @@ class RegionSearchService {
 	
 	def genesForSnpQuery = """
 	
-	SELECT DISTINCT(GENE_NAME) FROM DE_SNP_GENE_MAP
+	SELECT DISTINCT(GENE_NAME) as BIO_MARKER_NAME FROM DE_SNP_GENE_MAP
 	WHERE SNP_NAME = ?
 	
 	"""
