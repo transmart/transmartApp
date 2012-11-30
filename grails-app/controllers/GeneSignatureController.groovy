@@ -395,7 +395,7 @@ class GeneSignatureController {
 				geneSignatureService.verifyFileFormat(fileName, fileContents, schemaColCt, metricType)
 			} catch (FileSchemaException e) {
 				flash.message = e.getMessage()
-				return render(view: "wizard3", model:[wizard: wizard])
+				return render(view: "wizard1", model:[wizard: wizard])
 			}
 
 		} else {
