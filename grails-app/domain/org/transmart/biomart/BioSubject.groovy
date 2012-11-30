@@ -29,7 +29,6 @@ class BioSubject {
 		String organism
 		String type
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_SUBJECT'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']

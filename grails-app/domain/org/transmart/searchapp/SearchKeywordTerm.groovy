@@ -31,7 +31,6 @@ class SearchKeywordTerm {
 		static belongsTo = [ searchKeyword:SearchKeyword ]
 		
  static mapping = {
-     datasource 'postgresql'
 	 table 'SEARCH_KEYWORD_TERM'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']

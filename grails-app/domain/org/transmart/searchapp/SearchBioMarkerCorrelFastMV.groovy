@@ -37,7 +37,6 @@ class SearchBioMarkerCorrelFastMV {
 	Long valueMetric 
 	
 	static mapping = {
-        datasource 'postgresql'
 		table 'SEARCH_BIO_MKR_CORREL_FAST_MV'
 		version false
 		columns {

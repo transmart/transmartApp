@@ -53,7 +53,6 @@ class LiteratureReferenceData {
 	String statPValue
 	String statDescription
 	static mapping = {
-        datasource 'postgresql'
 		table 'BIO_LIT_REF_DATA'
 		version false
 		id column:'BIO_LIT_REF_DATA_ID'

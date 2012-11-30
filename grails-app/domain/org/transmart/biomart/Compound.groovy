@@ -48,7 +48,6 @@ class Compound {
 	}
 	
 	static mapping = {
-        datasource 'postgresql'
 		table 'BIO_COMPOUND'
 		version false
 		cache usage:'read-only'

@@ -27,7 +27,6 @@ class Requestmap {
 	Long id
 	Long version
 	static mapping ={
-		datasource 'postgresql'
 		table 'SEARCH_REQUEST_MAP'
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
 		columns {

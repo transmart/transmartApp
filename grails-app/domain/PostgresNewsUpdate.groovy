@@ -29,7 +29,6 @@ class PostgresNewsUpdate {
 	String commentField
 	
 	static mapping = {
-		datasource 'dataSource_postgresql'
 		table 'i2b2DemoData.news_updates'
 		version false
 		id column:'newsid'

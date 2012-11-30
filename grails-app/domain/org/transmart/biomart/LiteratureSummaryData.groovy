@@ -36,7 +36,6 @@ class LiteratureSummaryData {
 	String totalAffectedCases
 	String summary
 	static mapping = {
-        datasource 'postgresql'
 		table 'BIO_LIT_SUM_DATA'
 		version false
 		id column:'BIO_LIT_SUM_DATA_ID'

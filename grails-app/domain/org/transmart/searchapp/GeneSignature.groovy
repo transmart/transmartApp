@@ -88,7 +88,6 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	static hasMany = [geneSigItems:GeneSignatureItem]
 
 	static mapping = {
-        datasource 'postgresql'
 		table 'SEARCH_GENE_SIGNATURE'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']

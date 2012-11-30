@@ -31,7 +31,6 @@ public class AccessLog {
 	Date accesstime;
 
 	static mapping = {
-		datasource 'postgresql'
 		table 'SEARCH_APP_ACCESS_LOG'        
 	    id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
 		version false

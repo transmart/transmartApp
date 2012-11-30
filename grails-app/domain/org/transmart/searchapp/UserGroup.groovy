@@ -25,7 +25,6 @@ class UserGroup extends Principal{
 	static hasMany = [members:AuthUser]
 
 	static mapping = {
-		datasource 'postgresql'
 		table 'SEARCH_AUTH_GROUP'
 		columns
 		{

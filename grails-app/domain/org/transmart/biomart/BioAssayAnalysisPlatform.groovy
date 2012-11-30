@@ -25,7 +25,6 @@ class BioAssayAnalysisPlatform {
 		String platformVersion
 		String platformDescription
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_ASY_ANALYSIS_PLTFM'
 	 version false
 	 cache usage:'read-only'

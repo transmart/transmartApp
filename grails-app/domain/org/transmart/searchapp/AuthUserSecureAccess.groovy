@@ -28,7 +28,6 @@ class AuthUserSecureAccess {
 	String principalAccessName
 
 	static mapping = {
-		datasource 'postgresql'
 		table 'SEARCH_AUTH_USER_SEC_ACCESS_V'
 		version false
 		columns {

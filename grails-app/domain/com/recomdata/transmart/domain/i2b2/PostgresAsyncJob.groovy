@@ -32,7 +32,6 @@ class PostgresAsyncJob {
 	String jobType
 	
 	static mapping = {
-		datasource 'dataSource_postgresql'
 		table 'I2B2DEMODATA.ASYNC_JOB'
 		version false
 		jobName column:'JOB_NAME'

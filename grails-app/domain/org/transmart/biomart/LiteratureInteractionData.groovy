@@ -42,7 +42,6 @@ class LiteratureInteractionData extends Literature {
 	String region
 	String techniques
 	static mapping = {
-        datasource 'postgresql'
 		table 'BIO_LIT_INT_DATA'
 		version false
 		id column:'BIO_LIT_INT_DATA_ID'

@@ -43,7 +43,6 @@ class LiteratureModelData {
 	String component
 	String geneId
 	static mapping = {
-        datasource 'postgresql'
 		table 'BIO_LIT_MODEL_DATA'
 		version false
 		id column:'BIO_LIT_MODEL_DATA_ID'

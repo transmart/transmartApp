@@ -28,7 +28,6 @@ class CgdcpData extends Literature {
 		String nciDrugConceptCode
 
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_CGDCP_DATA'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']

@@ -31,7 +31,6 @@ class Principal {
 	String principalNameWithType
 
 	static mapping = {
-		datasource 'postgresql'
 		table 'SEARCH_AUTH_PRINCIPAL'
 		tablePerHierarchy false
 		version false

@@ -52,7 +52,6 @@ class Experiment implements IExcelProfile {
 	static belongsTo=[Compound, Disease, Taxonomy, ContentReference]
 
 	static mapping = {
-        datasource 'postgresql'
 		tablePerHierarchy false
 		table 'BIO_EXPERIMENT'
 		version false

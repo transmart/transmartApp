@@ -25,7 +25,6 @@ class BioDataCorrelation {
 		BioDataCorrelationDescr correlationDescr
 		Long id
 		static mapping = {
-            datasource 'postgresql'
             table 'BIO_DATA_CORRELATION'
             version false
             id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']

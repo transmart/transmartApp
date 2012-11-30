@@ -32,7 +32,6 @@ class LiteratureProteinEffectData extends Literature {
 	String etlId
 	String description
 	static mapping = {
-        datasource 'postgresql'
 		table 'BIO_LIT_PE_DATA'
 		version false
 		id column:'BIO_LIT_PE_DATA_ID'

@@ -38,7 +38,7 @@ class PostgresClinicalDataService {
 
     boolean transactional = true
 
-    def dataSource_postgresql
+    def dataSource
 	def i2b2HelperService
 	def springSecurityService
 	def utilService
@@ -199,7 +199,7 @@ class PostgresClinicalDataService {
 		//TODO set this to either "Raw_Files/Findings" or NULL for processed_files
 		def dataTypeFolder = null;
 		//Build the query to get the clinical data.
-		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource_postgresql)
+		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		def char separator = '\t';
 		def filePath = null
 		FileWriterUtil writerUtil = null

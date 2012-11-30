@@ -32,7 +32,6 @@ class BioAssayDataset {
 		Experiment experiment
 
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_ASSAY_DATASET'
 	 version false
 	 cache usage:'read-only'

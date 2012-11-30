@@ -25,7 +25,6 @@ class BioData {
 		String type
 		static hasMany =[externalCodes: BioDataExternalCode]
  static mapping = {
-    datasource 'postgresql'
 	table 'BIO_DATA_UID'
 	 version false
 	tablePerHierarchy false

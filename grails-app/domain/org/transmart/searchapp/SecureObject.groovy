@@ -27,7 +27,6 @@ class SecureObject {
 	static hasMany=[conceptPaths:SecureObjectPath]
 	
 	static mapping = {
-		datasource 'postgresql'
 		table 'SEARCH_SECURE_OBJECT'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']

@@ -50,7 +50,6 @@ class BioAssayAnalysis implements IExcelProfile {
 	static belongsTo=[ContentReference]
 
 	static mapping = {
-        datasource 'postgresql'
 		table 'BIO_ASSAY_ANALYSIS'
 		version false
 		cache usage:'read-only'

@@ -26,7 +26,6 @@ class ContentRepository {
 		String repositoryType
 		String locationType
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_CONTENT_REPOSITORY'
 	 version false
 	 cache usage:'read-only'

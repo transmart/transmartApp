@@ -23,7 +23,6 @@ class LiteratureInteractionModelMV {
 	Long id
 	String experimentalModel
 	static mapping = {
-        datasource 'postgresql'
 		table 'BIO_LIT_INT_MODEL_MV'
 		version false
 		columns {

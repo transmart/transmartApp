@@ -24,7 +24,6 @@ class BioAssaySample {
 		Long bioSampleId
 		Long bioClinicTrialTimepointId
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_ASSAY_SAMPLE'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_ASSAY_SAMPLE_ID']

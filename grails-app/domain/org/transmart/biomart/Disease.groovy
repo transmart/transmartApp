@@ -29,7 +29,6 @@ class Disease {
 		String preferredName
 		static hasMany=[experiments:Experiment,literatures:Literature]
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_DISEASE'
 	 version false
 	 cache usage:'read-only'

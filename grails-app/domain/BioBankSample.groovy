@@ -30,7 +30,6 @@ class BioBankSample
 	Date import_date
 	
 	static mapping = {
-		datasource 'dataSource_postgresql'
 		table 'BIOMART.BIOBANK_SAMPLE'
 		version false
 		id column:'SAMPLE_TUBE_ID'

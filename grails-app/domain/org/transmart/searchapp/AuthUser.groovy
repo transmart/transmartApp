@@ -37,7 +37,6 @@ class AuthUser extends Principal {
 	boolean passwordExpired
 	
 	static mapping = {
-		datasource 'postgresql'
 		table 'SEARCH_AUTH_USER'
 		version false
 		columns{

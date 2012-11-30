@@ -26,7 +26,6 @@ class BioMarkerCorrelationMV {
 		Long id
 		String correlType
 		static mapping = {
-            datasource 'postgresql'
             table 'BIO_MARKER_CORREL_MV'  
             version false
             columns {

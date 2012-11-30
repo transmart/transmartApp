@@ -29,7 +29,6 @@ class SecureObjectAccess {
 	String principalAccessName
 
 	static mapping = {
-		datasource 'postgresql'
 		table 'SEARCH_AUTH_SEC_OBJECT_ACCESS'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']

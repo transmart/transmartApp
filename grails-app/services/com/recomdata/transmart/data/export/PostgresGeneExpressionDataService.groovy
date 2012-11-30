@@ -41,7 +41,7 @@ class PostgresGeneExpressionDataService {
 	private int flushInterval = 5000;
     boolean transactional = true
 
-	def dataSource_postgresql
+	def dataSource
 	def i2b2HelperService
 	def springSecurityService
 	def grailsApplication
@@ -297,7 +297,7 @@ class PostgresGeneExpressionDataService {
 	def String getAssayIds(String resultInstanceId, String sampleTypes, String timepoint, String tissueTypes) {
 
 		//Sql command used to retrieve Assay IDs.
-		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource_postgresql);
+		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 
 		//SQL Query string.
 		StringBuilder assayS = new StringBuilder()
@@ -360,7 +360,7 @@ class PostgresGeneExpressionDataService {
 	def String getTrialName(String ids) {
 
 		//SQL Object used to retrieve trials.
-		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource_postgresql);
+		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 
 		//Query used to get trials.
 		StringBuilder trialQ = new StringBuilder("select distinct s.trial_name from de_subject_sample_mapping s ");
@@ -472,7 +472,7 @@ class PostgresGeneExpressionDataService {
 		def con, stmt, stmt1, rs = null;
 		
 		//Grab the connection from the grails object.
-		con = dataSource_postgresql.getConnection()
+		con = dataSource.getConnection()
 		
 		//Grab the configuration that sets the fetch size.
 		def rsize = config.com.recomdata.plugins.resultSize;
@@ -793,7 +793,7 @@ class PostgresGeneExpressionDataService {
 
 	private List getCELFiles(String studyName, String sampleCd) {
 		//Build the query to get the clinical data.
-		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource_postgresql)
+		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		sqlQuery = "SELECT * FROM bio_content WHERE study_name = ? and file_name like ?"
 		def files = sql.rows(sqlQuery, [studyName, sampleCd+'%'])
 		
@@ -814,7 +814,7 @@ class PostgresGeneExpressionDataService {
 
 			//Add the subquery to the main query.
 			def sqlQuery = createDownloadCELFilesQuery(resultInstanceId, studyList, subjectIds, timepoint, sampleTypes, tissueTypes)
-			sql = new groovy.sql.Sql(dataSource_postgresql)
+			sql = new groovy.sql.Sql(dataSource)
 			def sample, mapKey, mapValue = null
 			sql.eachRow(sqlQuery, { row ->
 				
@@ -887,7 +887,7 @@ class PostgresGeneExpressionDataService {
 							            FROM qt_patient_set_collection
 							            WHERE result_instance_id = ?) sc ON ssm.patient_id = sc.patient_num
 							"""
-			groovy.sql.Sql sql = new groovy.sql.Sql(dataSource_postgresql)
+			groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 			def queryParams = []
 			queryParams.addAll(resultInstanceIdMap.values())
 			def rows = sql.rows(sqlQuery, queryParams)
@@ -1094,7 +1094,7 @@ class PostgresGeneExpressionDataService {
 	   def sttSampleStr = null;
 	   
 	   try{
-		   con = dataSource_postgresql.getConnection()
+		   con = dataSource.getConnection()
 		   // sample query
 		   stmt = con.prepareStatement(sampleQuery);
 		   if (resultInstanceId != null) stmt.setString(1, resultInstanceId);
@@ -1144,7 +1144,7 @@ class PostgresGeneExpressionDataService {
 	   def outFile, output, filePath = null
 	   try {
 		   log.info("started writing CLS file")
-		   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource_postgresql);
+		   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		   outFile = new File(gseaDir, 'GSEA.CLS');
 		   output = outFile.newWriter(true)
 		   def rows = sql.rows(sqlQuery)
@@ -1185,7 +1185,7 @@ class PostgresGeneExpressionDataService {
 	   def sttMap = getSamplesMap(sampleQuery,null,false)
 	   
 	   def con, stmt, rs = null;
-	   con = dataSource_postgresql.getConnection()
+	   con = dataSource.getConnection()
 	   stmt = con.prepareStatement(sqlQuery);
 	   stmt.setFetchSize(getStmtFetchSize())
 	   
@@ -1358,7 +1358,7 @@ class PostgresGeneExpressionDataService {
    def getGplTitle(gplId){
 	   String gplTitle=""
 	   String commandString = "SELECT TITLE FROM de_gpl_info where PLATFORM=?"
-	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource_postgresql);
+	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 	   sql.eachRow(commandString, [gplId], {row->
 		   gplTitle=row[0]
 	   })

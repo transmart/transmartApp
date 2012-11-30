@@ -32,7 +32,6 @@ class SearchKeyword {
 		static hasMany = [terms:SearchKeywordTerm]
 
  static mapping = {
-     datasource 'postgresql'
 	 table 'SEARCH_KEYWORD'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']

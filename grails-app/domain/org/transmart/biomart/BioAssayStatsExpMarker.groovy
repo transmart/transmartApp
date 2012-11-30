@@ -31,7 +31,6 @@ public class BioAssayStatsExpMarker{
 	BioMarker marker
 	Long id
 	static mapping = {
-        datasource 'postgresql'
 		 table 'BIO_STATS_EXP_MARKER'
 		 version false
 		 columns {

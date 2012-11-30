@@ -24,7 +24,6 @@ class SecureObjectPath {
 	String conceptPath
  
 	static mapping = {
-		datasource 'postgresql'
 		table 'SEARCH_SECURE_OBJECT_PATH'
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
 		version false

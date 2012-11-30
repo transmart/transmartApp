@@ -31,7 +31,6 @@ class BioAssayDataAnnotation implements Serializable {
 	//String dataTable
 	
 	static mapping = {
-        datasource 'postgresql'
 		table 'BIO_ASSAY_DATA_ANNOTATION'
 		version false
 		id composite:['bioMarker', 'probeset']

@@ -28,7 +28,6 @@ class PatientEvent {
 		String site
 		Long bioClinicTrialTimepointId
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_PATIENT_EVENT'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_PATIENT_EVENT_ID']

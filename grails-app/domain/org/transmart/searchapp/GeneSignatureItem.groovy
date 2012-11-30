@@ -40,7 +40,6 @@ class GeneSignatureItem {
 	static belongsTo = [ geneSignature:GeneSignature ]
 
 	static mapping = {
-        datasource 'postgresql'
 		table 'SEARCH_GENE_SIGNATURE_ITEM'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']

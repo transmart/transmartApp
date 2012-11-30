@@ -31,7 +31,6 @@ class BioAssayPlatform {
 		String vendor
  
 static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_ASSAY_PLATFORM'
 	 version false
 	 cache true

@@ -54,7 +54,6 @@ class BioMarker implements IExcelProfile {
 		}
 
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_MARKER'
 	 version false
 

@@ -26,7 +26,6 @@ class Taxonomy {
 		String ncbiTaxId
 		static hasMany=[experiments:Experiment]
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_TAXONOMY'
 	 version false
 	 cache usage:'read-only'

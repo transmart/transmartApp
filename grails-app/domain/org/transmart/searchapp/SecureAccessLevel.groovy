@@ -24,7 +24,6 @@ class SecureAccessLevel {
 	String accessLevelName
 	
 	static mapping = {
-		datasource 'postgresql'
 		table 'SEARCH_SEC_ACCESS_LEVEL'
 		version false
 		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']

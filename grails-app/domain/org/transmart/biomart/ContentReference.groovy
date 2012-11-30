@@ -25,7 +25,6 @@ class ContentReference {
 		Content content
 		Long bioDataId
  static mapping = {
-     datasource 'postgresql'
 	 table 'BIO_CONTENT_REFERENCE'
 	 version false
 	cache usage:'read-only'

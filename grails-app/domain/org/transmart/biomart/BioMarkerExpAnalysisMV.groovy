@@ -28,7 +28,6 @@ class BioMarkerExpAnalysisMV {
 		Experiment experiment
 		BioAssayAnalysis analysis
 		static mapping = {
-            datasource 'postgresql'
             table 'BIO_MARKER_EXP_ANALYSIS_MV'
             version false
             columns {
