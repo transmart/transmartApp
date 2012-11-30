@@ -235,7 +235,7 @@
 					</tr>
 					<tr>
 						<td colspan="2" class="value">
-							<g:textArea wrap="hard" name="genes" value="" rows="6" cols="85" onblur="toggleFileUpload();"></g:textArea>
+							<g:textArea wrap="hard" name="genes" value="" rows="6" cols="85" onblur="toggleFileUpload();" value="${wizard.geneSigText}"></g:textArea>
 						</td>
 					</tr>
 					<tr>
