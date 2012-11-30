@@ -281,6 +281,7 @@ public class SearchKeywordService {
 		SearchKeywordTerm term = new SearchKeywordTerm()
 		term.properties.keywordTerm = gs.name.toUpperCase()
 		term.properties.rank = 1
+		term.properties.dataCategory = domainKey
 		term.properties.termLength = gs.name.length()
 		if(!gs.publicFlag) term.properties.ownerAuthUserId = gs.createdByAuthUser?.id
 
