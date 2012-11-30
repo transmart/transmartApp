@@ -165,7 +165,6 @@ class GeneSignatureController {
 		def geneSigInst = GeneSignature.get(params.id)
 		def clone = geneSigInst.clone()
 		clone.modifiedByAuthUser = user
-		if(clone.experimentTypeCellLine.id==null) clone.experimentTypeCellLine=null	 // this is hack, don't know how to get around this!
 		log.debug "experimentTypeCellLine: "+clone.experimentTypeCellLine+"; null? "+(clone.experimentTypeCellLine==null)
 
 		// set onto session
@@ -195,7 +194,6 @@ class GeneSignatureController {
 		clone.lastUpdated = null;
 		clone.versionNumber = null;
 		clone.uniqueId = null;
-		if(clone.experimentTypeCellLine.id==null) clone.experimentTypeCellLine=null	 // this is hack, don't know how to get around this!
 
 		// set onto session
 		def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: clone, wizardType: WizardModelDetails.WIZ_TYPE_CLONE, cloneId: geneSigInst.id);
