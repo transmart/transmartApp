@@ -518,16 +518,59 @@ class RWGController {
    }
 
    
+   private String getGeneSignatureErrorMessage(long gsKeywordId)  {
+	   def geneSigs = GeneSignature.executeQuery("select gs.id, gs.name, gs.fileSchema.id " +
+		   " from search.SearchKeyword k_gs, search.GeneSignature gs" +
+		   " where k_gs.bioDataId = gs.id " +
+		   " and k_gs.id = ?", gsKeywordId)
+	   
+	   if (!geneSigs)  {
+		   def sk = SearchKeyword.get(gsKeywordId)
+		   
+		   if (sk) {
+			  def keyword = sk.keyword
+			  return "Keyword <${keyword}> ignored! :: Improperly defined gene signature/gene list! Unable to retrieve Gene list/signature '${keyword}' with search keyword id ${gsKeywordId}"			  
+		   } 
+		   else  {
+			  return "Keyword ignored! :: Unable to retrieve search keyword with search keyword id ${gsKeywordId}.  "
+		   }		   
+		   
+	   }
+	   
+	   // retrieve the first record returned (should only be one)
+	   def geneSig = geneSigs[0]
+	   
+	   def probeFileSchema = "3"
+	   Long geneSignatureId = geneSig[0]
+	   String geneSignatureName = geneSig[1]
+	   String geneSignatureType = geneSig[2].toString()
+	   if (geneSignatureType == probeFileSchema)  {
+		   return "Keyword <${geneSignatureName}> ignored! :: Gene list/signature with id '${geneSignatureId}' and name '${geneSignatureName}' contains probes.  This type of gene signature is not currently supported in faceted search."
+	   }
+	   
+	   def geneSigItemCount = GeneSignature.executeQuery("select count(gsi.id)  " +
+		   " from search.GeneSignatureItem gsi " +
+		   " where gsi.geneSignature.id = ?", geneSignatureId)
+
+	   if (geneSigItemCount[0].toString() == "0")  {
+		   return "Keyword <${geneSignatureName}> ignored! :: Gene list/signature with id '${geneSignatureId}' and name '${geneSignatureName}' contains zero items.  This type of gene signature is not supported in faceted search."
+	   }
+	   
+	   // don't knwo exactly what the error is
+	   return "Keyword ignored! :: Data error with Gene list/signature with search keyword id ${gsKeywordId}.  Error could be caused by a list that contains genes that are not properly defined."
+}
+   
    /**
    * Replace any gene lists or signatures in the query parameters with a list of individual genes
    * @param params list of query params
    * @param genesField SOLR search field that gene searches are executed against (i.e. ALLGENE or SIGGENE)
-   * @return string containing the new query parameters
+   * @return string containing the new query parameters or an error message 
    */
    def replaceGeneLists = {  params, genesField  ->
 	   def newParams = []
 	   def genesList = []  
 
+	   String errorMsg = ''
 	   // loop through each regular query parameter
 	   for (p in params)  {
 		   
@@ -552,8 +595,12 @@ class RWGController {
 									" and gsi.bioMarker = k_gsi.bioDataId" + 
                                     " and k_gs.id = :tid ", queryParams)
 				   
-				   if (geneKeywords.size == 0)  {
-					   throw new Exception("Data error with Gene list/signature with id ${l}.  Error could be caused by an empty list, a list that does not exist, or list contains genes that are not preoperly defined.")					   
+				   if (geneKeywords.size == 0)  {					   
+
+					   if (errorMsg != '')  {
+						   errorMsg += '\n--------------------\n'
+					   }
+					   errorMsg += getGeneSignatureErrorMessage(l)
 				   }
 				   
 				   // loop through each keyword for the gene list items and add to list 
@@ -625,7 +672,7 @@ class RWGController {
 	   }
 	   
 	   log.info("Gene parameter: ${newParams}")
-	   return newParams
+	   return ['errorMsg': errorMsg, 'newParams':newParams]
    }
            
    /**
@@ -649,7 +696,9 @@ class RWGController {
 	   
 	   def solrGenesField = setSOLRGenesField(showSigGenesOnly)  
 	   // replace gene signatures or gene list terms into their list of individual genes
-	   queryParams = replaceGeneLists(queryParams, solrGenesField)	   
+	   def result = replaceGeneLists(queryParams, solrGenesField)	 
+	   queryParams = result.get('newParams')
+	   def errorMsg = result.get('errorMsg')		   
 	   
 	   if (showSigGenesOnly)  {
 		   queryParams.add "ANY_SIGNIFICANT_GENES:1"
@@ -691,6 +740,7 @@ class RWGController {
 	   JSONObject ret = new JSONObject()
 	   ret.put('facetCounts', facetCounts)
 	   ret.put('html', html)
+	   ret.put('errorMsg', errorMsg)
        response.setContentType("text/json")
 	   response.outputStream << ret?.toString()	   
    }
@@ -827,6 +877,7 @@ class RWGController {
 	   def r = setGenesAndSignificantFlag(params)
 	   
 	   def genes = r.get('genes')
+	   def errorMsg = r.get('errorMsg')
 	   def showSigResultsOnly = r.get('showSigResultsOnly') 	   
 
 	   def rwgDAO = new RWGVisualizationDAO()
@@ -871,6 +922,7 @@ class RWGController {
 			  
 	   def filterTerms;
 	   def solrGenesField;
+	   def errorMsg = ''
 	   if (isSA)  {
 		   if (keywordsQueryString == '')  {
 			   filterTerms = []
@@ -879,7 +931,11 @@ class RWGController {
 		   else  {
 			   def categories = keywordsQueryString.split('&')
 			   solrGenesField = 'ALLGENE';
-			   filterTerms = replaceGeneLists(categories, solrGenesField)
+			   
+			   def result = replaceGeneLists(categories, solrGenesField)
+			   filterTerms = result.get('newParams')
+			   errorMsg = result.get('errorMsg')
+		
 		   }
 	   }
 	   else {
@@ -900,6 +956,7 @@ class RWGController {
 	   
 	   def retMap = [:]
 	   retMap.put('genes', genes)
+	   retMap.put('errorMsg', errorMsg)
 	   retMap.put('showSigResultsOnly', showSigResultsOnly)
 	   
 	   return retMap
@@ -913,6 +970,7 @@ class RWGController {
 	   def r = setGenesAndSignificantFlag(params)
 	   
 	   def genes = r.get('genes')
+	   def errorMsg = r.get('errorMsg')
 	   def showSigResultsOnly = r.get('showSigResultsOnly') 	   
 	   
 	   def rwgDAO = new RWGVisualizationDAO()
@@ -920,6 +978,7 @@ class RWGController {
 	   
 	   JSONObject ret = new JSONObject()
 	   ret.put('maxProbeIndex', maxProbeIndex)
+	   ret.put('errorMsg', errorMsg)
 	   
 	   response.setContentType("text/json")
 	   response.outputStream << ret?.toString()
@@ -990,6 +1049,17 @@ class RWGController {
 	   def totalCount
 	   totalCount = rwgDAO.getHeatmapRowCountCTA(analysisIdsList, params.category, params.searchKeywordId)
 	   ret.put("totalCount",  totalCount) 
+
+	   // no rows, check if becuase of invalid gene sig/list
+	   def errorMsg = ''
+	   if (totalCount == 0 )  {
+		   if ((params.category == 'GENELIST') || (params.category == 'GENESIG') )  {
+			   errorMsg = getGeneSignatureErrorMessage(params.searchKeywordId.toLong())
+		   }
+	   }
+	   
+	   ret.put('errorMsg', errorMsg)
+	   
 	   render ret as JSON	   
    }
    

@@ -596,6 +596,11 @@ function showFacetResults(initialLoad)	{
 				
 					var facetCounts = response['facetCounts'];
 					var html = response['html'];
+					var errorMsg = response['errorMsg'];
+					
+					if (errorMsg != '')  {
+						alert(errorMsg);
+					}
 					
 					// set html for results panel
 					jQuery('#results-div').html(html);
@@ -2981,6 +2986,12 @@ function loadHeatmapPaginator(divID, analysisId, page, isSA, keywordsQueryString
 		success: function(response) {								
 			var maxProbeIndex = response['maxProbeIndex']
 			
+			var errorMsg = response['errorMsg'];
+			
+			if (errorMsg != '')  {
+				alert(errorMsg);
+			}
+			
 			if (maxProbeIndex == 0)  {
 				jQuery("#" + divID).html('No Data');
 		    	jQuery("#analysis_holderSA_" + analysisId).unmask();
@@ -3841,7 +3852,14 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page, keyword) {
 		data: {analysisIds: analysisIds, category: category, searchKeywordId: searchKeywordId, page:page},
 		success: function(response) {								
 			var numRows = response['totalCount'];
+			var facetCounts = response['facetCounts'];
+			var html = response['html'];
+			var errorMsg = response['errorMsg'];
 			
+			if (errorMsg != '')  {
+				alert(errorMsg);
+			}
+
 			getHeatmapPaginatorCTA(divPaginatorID, analysisIds, category, searchKeywordId, numRows, keyword);
 	
 		},
