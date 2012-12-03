@@ -48,6 +48,21 @@
 			var species = document.forms[formName].elements['speciesConceptCode.id'];	
 			if(species.value=="null") errorMsg = errorMsg + "\n- Please select a relevant species";
 
+
+			var speciesText = species.options[species.selectedIndex].text.toUpperCase();
+
+			// if mouse, requires a source
+			if(speciesText.indexOf('Mouse'.toUpperCase()) != -1)  {
+				var speciesSource = document.forms[formName].elements['speciesMouseSrcConceptCode.id'];
+				if(speciesSource.value=="null") errorMsg = errorMsg + "\n- Please select species source";
+			}
+
+			// if mouse is knockout or transgenic or other details must be filled
+			if (speciesText == 'Mouse (knockout or transgenic)'.toUpperCase() || speciesText=='Mouse (other)'.toUpperCase() ) {
+				var speciesDetail = document.forms[formName].elements['speciesMouseDetail'];	
+				if(speciesDetail.value=="") errorMsg = errorMsg + "\n- Please enter species detail";
+			}
+				 				
 			//tech platform required
 			var techPlat = document.forms[formName].elements['techPlatform.id'];
 			if(techPlat.value=="null") errorMsg = errorMsg + "\n- Please select a technology platform";
