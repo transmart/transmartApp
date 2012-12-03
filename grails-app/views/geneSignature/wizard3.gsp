@@ -37,6 +37,39 @@
 
 		function validate() {
 
+			var errorMsg = "";
+			var formName = "geneSignatureFrm";
+			
+			//if normalization method is other, detail required
+			var normMethod = document.forms[formName].elements['normMethodConceptCode.id'];	
+			var normMethodText = normMethod.options[normMethod.selectedIndex].text.toUpperCase();
+			if(normMethodText  == 'other'.toUpperCase())  {
+				var normMethodDetail = document.forms[formName].elements['normMethodOther'];	
+				if(normMethodDetail.value=="") errorMsg = errorMsg + "\n- Please enter normalization method detail";
+			}
+
+			//if analysis info category is other, detail required
+			var analysisCat = document.forms[formName].elements['analyticCatConceptCode.id'];	
+			var analysisCatText = analysisCat.options[analysisCat.selectedIndex].text.toUpperCase();
+			if(analysisCatText  == 'other'.toUpperCase())  {
+				var analysisCatDetail = document.forms[formName].elements['analyticCatOther'];	
+				if(analysisCatDetail.value=="") errorMsg = errorMsg + "\n- Please enter Analysis Info Category detail";
+			}
+			
+			//if analysis method category is other, detail required
+			var analysisMethod = document.forms[formName].elements['analysisMethodConceptCode.id'];	
+			var analysisMethodText = analysisMethod.options[analysisMethod.selectedIndex].text.toUpperCase();
+			if(analysisMethodText  == 'other'.toUpperCase())  {
+				var analysisMethodDetail = document.forms[formName].elements['analysisMethodOther'];	
+				if(analysisMethodDetail.value=="") errorMsg = errorMsg + "\n- Please enter Analysis Info Method detail";
+			}
+
+			// if no errors, continue submission
+			if(errorMsg=="") return true;
+
+			alert("Please correct the following errors:\n" + errorMsg);
+			return false;
+			
 		}
 
 	</script>
