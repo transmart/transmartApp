@@ -352,8 +352,10 @@ class RegionSearchService {
 			queryCriteria.append(") ")
 		}
 
-		
-		
+		// handle null regionlist issue
+		if(regionList.length()==0){
+			regionList.append("1=1")
+		}
 		analysisQuery = analysisQuery.replace("_regionlist_", regionList.toString())
 		analysisQuery = analysisQuery.replace("_orderclause_", sortField + " " + order)
 		countQuery = countQuery.replace("_regionlist_", regionList.toString())
