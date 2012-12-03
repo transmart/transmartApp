@@ -77,7 +77,7 @@ class RegionSearchService {
 		                 FROM biomart.bio_assay_analysis_gwas DATA
 		                 _analysisJoin_
 		                 JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
-		                 LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
+		                 LEFT JOIN deapp.de_snp_gene_map gmap ON info.snp_info_id = gmap.snp_id
 		                 WHERE 1=1
 	"""
 	def gwasHg19SqlQuery = """
@@ -90,7 +90,7 @@ class RegionSearchService {
 					 ROW_NUMBER () OVER (ORDER BY _orderclause_) AS row_nbr
 					 FROM biomart.bio_assay_analysis_gwas DATA
 					 _analysisJoin_
-					 JOIN deapp.de_snp_info_hg19_mv info ON DATA.rs_id = info.rs_id and (_regionlist_)
+					 JOIN deapp.de_snp_info_hg19_mv info ON DATA.rs_id = info.rs_id and ( _regionlist_ )
 					 WHERE 1=1
 """
 	def eqtlSqlQuery = """
@@ -104,7 +104,7 @@ class RegionSearchService {
 		                 FROM biomart.bio_assay_analysis_eqtl DATA
 		                 _analysisJoin_
 		                 JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
-		                 LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
+		                 LEFT JOIN deapp.de_snp_gene_map gmap ON info.snp_info_id = gmap.snp_id
 		                 WHERE 1=1
 	"""
 	
@@ -125,7 +125,7 @@ class RegionSearchService {
 	def gwasSqlCountQuery = """
 		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Gwas data 
 	     JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
-	     LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
+	     LEFT JOIN deapp.de_snp_gene_map gmap ON info.snp_info_id = gmap.snp_id
 	     WHERE 1=1
 	"""
 	
@@ -137,7 +137,7 @@ class RegionSearchService {
 	def eqtlSqlCountQuery = """
 		SELECT COUNT(*) AS TOTAL FROM biomart.Bio_Assay_Analysis_Eqtl data
 	     JOIN deapp.de_rc_snp_info info ON DATA.rs_id = info.rs_id and (_regionlist_)
-	     LEFT JOIN deapp.de_snp_gene_map gmap ON gmap.snp_name = info.rs_id
+	     LEFT JOIN deapp.de_snp_gene_map gmap ON info.snp_info_id = gmap.snp_id
 	     WHERE 1=1
     """
 	def eqtlHg19SqlCountQuery = """
@@ -290,10 +290,11 @@ class RegionSearchService {
 				}
 				//Chromosome
 				if (range.chromosome != null) {
-					regionList.append("(info.pos >= ${range.low} AND info.pos <= ${range.high} AND info.chrom = '${range.chromosome}' )")
+					regionList.append("(info.pos >= ${range.low} AND info.pos <= ${range.high} AND info.chrom = '${range.chromosome}' ")
 					if(hg19only== false) {
 						regionList.append("  AND info.hg_version = '${range.ver}' ")
 					}
+					regionList.append(")");
 				}
 				//Gene
 				else {
@@ -301,6 +302,7 @@ class RegionSearchService {
 					if(hg19only== false) {
 						regionList.append("  AND info.hg_version = '${range.ver}' ")
 					}
+					regionList.append(")")
 				}
 				rangesDone++
 			}
@@ -332,7 +334,13 @@ class RegionSearchService {
 		
 		//Add gene names
 		if (geneNames) {
-			queryCriteria.append(" AND gmap.gene_name IN (" + "'" + geneNames[0] + "'");
+			// quick fix for hg19 only
+			if(hg19only){
+				queryCriteria.append(" AND info.rsgene IN (")	
+			}else{
+			queryCriteria.append(" AND gmap.gene_name IN (");
+			}
+			queryCriteria.append( "'" + geneNames[0] + "'");
 			for (int i = 1; i < geneNames.size(); i++) {
 				queryCriteria.append(", " + "'" + geneNames[i] + "'");
 			}
