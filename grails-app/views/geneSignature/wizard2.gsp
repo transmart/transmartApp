@@ -17,6 +17,7 @@
  
 -->
 
+<g:set var="gs" value="${wizard.geneSigInst.properties}" />
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -52,20 +53,44 @@
 		}
 
 		function validate() {
-			return true;
+
+			var errorMsg = "";
+			var formName = "geneSignatureFrm";
+			
+			//if source of list is other, detail required
+			var source = document.forms[formName].elements['sourceConceptCode.id'];	
+			var sourceText = source.options[source.selectedIndex].text.toUpperCase();
+			if(sourceText  == 'other'.toUpperCase())  {
+				var sourceDetail = document.forms[formName].elements['sourceOther'];	
+				if(sourceDetail.value=="") errorMsg = errorMsg + "\n- Please enter source detail";
+			}
+
+			//if experiment type is in vivo, model required
+			var expType = document.forms[formName].elements['experimentTypeConceptCode.id'];	
+			var expTypeText = expType.options[expType.selectedIndex].text.toUpperCase();
+			if(expTypeText.indexOf('in vivo'.toUpperCase()) != -1)  {
+				var experimentTypeInVivoDescr = document.forms[formName].elements['experimentTypeInVivoDescr'];	
+				if(experimentTypeInVivoDescr.value == "") errorMsg = errorMsg + "\n- Please enter model for in vivo experiment type";
+			}				 							
+				 				
+			if(expTypeText == 'Established cell line'.toUpperCase()) {
+
+				var clId = document.forms['geneSignatureFrm'].elements['experimentTypeCellLine.id'].value;
+				if(clId == "" || clId == "null") errorMsg = errorMsg + "\n- Please select a cell line";
+			}				 							
+
+			// if no errors, continue submission
+			if(errorMsg=="") return true;
+
+			alert("Please correct the following errors:\n" + errorMsg);
+			return false;
 		}
 
 		// show cell line lookup dialog
 		function showCellLineLookup() {
-			// must select a species first
-			var species = document.forms['geneSignatureFrm'].elements['speciesConceptCode.id'];	
-			if(species.value=="null") {
-				alert("Please select a species before picking a cell line!");
-				return false;
-			}
-
+		
 			// pass species filter
-			var lkupUrl = '/${grailsApplication.metadata['app.name']}/geneSignature/cellLineLookup/'+species.value;
+			var lkupUrl = '/${grailsApplication.metadata['app.name']}/geneSignature/cellLineLookup/' + "${gs.speciesConceptCode.id}";
 			//alert("url: "+lkupUrl);
 			lkupWinId = "lkup"+(new Date()).getTime();
 			showDialog(lkupWinId, { title: 'Cell Line Lookup', url: lkupUrl })
@@ -91,7 +116,6 @@
 
 <div class="body">
 	<!-- initialize -->
-	<g:set var="gs" value="${wizard.geneSigInst.properties}" />
 
 	<!--  show message -->
     <g:if test="${flash.message}">
