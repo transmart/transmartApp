@@ -1,13 +1,17 @@
-#heatmapTooltip{
+	#heatmapTooltip{
 	position:absolute;
-	border:3px solid #333;
-	background:#f7f5d1;
-	padding:5px 5px 5px 5px;   			
+	border:1px solid #bbb;
+	border-radius:3px;
+	background-color:rgba(250, 250, 250, 0.9);
+	padding:4px;		
+	box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	color:#333;
 	display:none;
+	max-width:350px;
 	}	
 	
 #heatmapTooltip td {
-	padding: 3px;
+	padding: 2px;
 	font-size:9px;
+	text-align:left;
 	}	
