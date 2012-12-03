@@ -895,10 +895,12 @@ class RWGVisualizationDAO {
 		StringBuilder s = new StringBuilder()
 		StringBuilder out = new StringBuilder()
 		
-		def cohorts =  analysisInfo.get("cohorts")
+		def studyID = analysisInfo.get("studyId")
+		log.info("Exporting data for Study ID: " + studyID)
+		out.append("Study ID, " + studyID + "\n")
 		
-		log.info("chorts="+cohorts)
-		
+		def cohorts =  analysisInfo.get("cohorts")		
+		log.info("chorts="+cohorts)		
 		out.append("Cohort ID, Cohort Description\n")
 		
 		// add the cohort keys to a list
