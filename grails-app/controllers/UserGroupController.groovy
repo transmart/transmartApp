@@ -30,7 +30,8 @@ class UserGroupController {
 	def dataSource ;
 
 
-    def index = { redirect(action:list,params:params) }
+    def index = { 
+		redirect(action:'list',params:params) }
 
     // the delete, save and update actions only accept POST requests
     def allowedMethods = [delete:'POST', save:'POST', update:'POST']
@@ -49,7 +50,7 @@ class UserGroupController {
 
         if(!userGroupInstance) {
             flash.message = "UserGroup not found with id ${params.id}"
-            redirect(action:list)
+            redirect(action:'list')
         }
         else { return [ userGroupInstance : userGroupInstance ] }
     }
@@ -59,11 +60,11 @@ class UserGroupController {
         if(userGroupInstance) {
             userGroupInstance.delete()
             flash.message = "UserGroup ${params.id} deleted"
-            redirect(action:list)
+            redirect(action:'list')
         }
         else {
             flash.message = "UserGroup not found with id ${params.id}"
-            redirect(action:list)
+            redirect(action:'list')
         }
     }
 
@@ -72,7 +73,7 @@ class UserGroupController {
 
         if(!userGroupInstance) {
             flash.message = "UserGroup not found with id ${params.id}"
-            redirect(action:list)
+            redirect(action:'list')
         }
         else {
             return [ userGroupInstance : userGroupInstance ]
@@ -85,7 +86,7 @@ class UserGroupController {
             userGroupInstance.properties = params
             if(!userGroupInstance.hasErrors() && userGroupInstance.save()) {
                 flash.message = "UserGroup ${params.id} updated"
-                redirect(action:show,id:userGroupInstance.id)
+                redirect(action:'show',id:userGroupInstance.id)
             }
             else {
                 render(view:'edit',model:[userGroupInstance:userGroupInstance])
@@ -93,7 +94,7 @@ class UserGroupController {
         }
         else {
             flash.message = "UserGroup not found with id ${params.id}"
-            redirect(action:edit,id:params.id)
+            redirect(action:'edit',id:params.id)
         }
     }
 
@@ -117,7 +118,7 @@ class UserGroupController {
 
         if(!userGroupInstance.hasErrors() && userGroupInstance.save()) {
             flash.message = "UserGroup ${userGroupInstance.id} created"
-            redirect(action:show,id:userGroupInstance.id)
+            redirect(action:'show',id:userGroupInstance.id)
         }
         else {
             render(view:'create',model:[userGroupInstance:userGroupInstance])
@@ -146,9 +147,12 @@ class UserGroupController {
     {
     	def userGroupInstance = UserGroup.get( params.id )
     	def groupid=Long.parseLong(params.id);
+		
     	def searchtext=params.searchtext;
+		
     	def users=searchForUsersNotInGroup(groupid, searchtext);
-    	render(template:'addremove',model:[userGroupInstance:userGroupInstance, usersToAdd:users])
+		
+    	render(template:'addremove',model:[userGroupInstance:userGroupInstance, usersToAdd:users]).toString()
    }
     def searchGroupsWithoutUser =
     {

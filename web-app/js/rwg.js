@@ -2982,7 +2982,9 @@ function loadHeatmapPaginator(divID, analysisId, page, isSA, keywordsQueryString
 			var maxProbeIndex = response['maxProbeIndex']
 			
 			if (maxProbeIndex == 0)  {
-				jQuery("#" + divID).html('No Data');				
+				jQuery("#" + divID).html('No Data');
+		    	jQuery("#analysis_holderSA_" + analysisId).unmask();
+
 			}
 			else {
 				getHeatmapPaginator(divID, analysisId, analysisIndex, maxProbeIndex, isSA, keywordsQueryString);
