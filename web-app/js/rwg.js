@@ -2335,9 +2335,8 @@ function loadSearch(searchType, id)  {
 
 					xtSelectedKeywords = [];					
 					for (var kw in searchTerms)  {
-						xtSelectedKeywords.push({id: searchTerms[kw].id, 
-												termName: searchTerms[kw].keyword, 
-												categoryId: searchTerms[kw].categoryId });	
+						addXTSelectedKeyword(searchTerms[kw].id, searchTerms[kw].keyword, searchTerms[kw].categoryId);
+
 					}
 					
 					selectedAnalyses = [];
@@ -3320,12 +3319,13 @@ function closeCTAheatmap(divID, geneID){
 	
 	//loop through the array, find the gene ID to be removed, and remove it from the array
 	for (var i =0; i < xtSelectedKeywords.length; i++){
-	   if (xtSelectedKeywords[i].id === geneID) {
+	   if (xtSelectedKeywords[i].id == geneID) {
 		   xtSelectedKeywords.splice(i,1);
-	      break;
 	   }
 	}
 	
+	setSaveXTFilterLink();
+	setClearXTLink();	
 	
 	//might want to change this...
 	if(xtSelectedKeywords.length==0){
@@ -3345,11 +3345,14 @@ function closeXTGeneChart(divID, geneID){
 	
 	//loop through the array, find the gene ID to be removed, and remove it from the array
 	for (var i =0; i < xtSelectedKeywords.length; i++){
-	   if (xtSelectedKeywords[i].id === geneID) {
+	   if (xtSelectedKeywords[i].id == geneID) {
 		   xtSelectedKeywords.splice(i,1);
 	      break;
 	   }
 	}
+
+	setSaveXTFilterLink();
+	setClearXTLink();		
 	
 	if(xtSelectedKeywords.length==0){
 		jQuery('#xtNoGenesMsg').fadeIn(200);
@@ -3710,6 +3713,21 @@ function getCrossTrialGeneSummary(search_keyword_id)
 	
 }
 
+function addXTSelectedKeyword(keywordId, searchTerm, categoryId) {	
+	// first check if the keyword id is already on array
+	var found = false;
+	for (var i =0; i < xtSelectedKeywords.length; i++)  {
+	   if (xtSelectedKeywords[i].id == keywordId) {
+			  found = true;
+		      break;
+	   }
+	}	 
+	if (!found)  {		
+		xtSelectedKeywords.push({id: keywordId, termName: searchTerm, categoryId: categoryId });
+	}
+	
+}
+
 function addXTSearchAutoComplete()	{
 	jQuery("#xtSearch-ac").autocomplete({
 		source: searchAutoCompleteCTAURL,
@@ -3727,7 +3745,7 @@ function addXTSearchAutoComplete()	{
 			switch (categoryId)  {
 				case "GENE": 
 				case "PROTEIN":
-					xtSelectedKeywords.push({id: keywordId, termName: searchTerm, categoryId: categoryId });
+					addXTSelectedKeyword(keywordId, searchTerm, categoryId);
 					getCrossTrialGeneSummary(keywordId);
 					
 					jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
@@ -3739,7 +3757,7 @@ function addXTSearchAutoComplete()	{
 				case "PATHWAY":
 					loadHeatmapCTAPaginator(categoryId, keywordId, 1, searchTerm);
 					jQuery('#xtMenuBar').tabs('select', 'xtHeatmapTab'); // switch to heatmap tab
-					xtSelectedKeywords.push({id: keywordId, termName: searchTerm, categoryId: categoryId });
+					addXTSelectedKeyword(keywordId, searchTerm, categoryId);
 					
 					break;
 				default:  
@@ -3767,7 +3785,7 @@ function addXTSearchAutoComplete()	{
 }
 
 function openGeneFromCTAheatmap(keywordId, termName, categoryId){
-	xtSelectedKeywords.push({id: keywordId, termName: termName, categoryId: categoryId });
+	addXTSelectedKeyword(keywordId, termName, categoryId);
 	getCrossTrialGeneSummary(keywordId);
 	jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
 }
@@ -3917,7 +3935,15 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
       	
       	if (numberRows == 0)  {
 			jQuery('#'+heatmapHolderDivID).unmask(); //hide the loading msg, unblock the div
-      		drawHeatmapCTA(heatmapDiv, null, selectedAnalyses, keyword);  // draw blank heatmap      		
+			
+			//html for button to close the graph
+			var closeHTML = "<a href='#' class='xtClostbtn' id='" +searchKeywordId  +"_CTAheatmapCloseBtn' onclick=\"closeCTAheatmap('"+heatmapHolderDivID+"', '" +searchKeywordId +"')\">x</a>";
+							    
+      		drawHeatmapCTA(heatmapDiv, null, selectedAnalyses, keyword);  // draw blank heatmap
+      		
+		    //add some buttons
+		    jQuery('#'+heatmapHolderDivID).prepend(closeHTML);
+
       	}
       	else  {      		
     		loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank, keyword);   

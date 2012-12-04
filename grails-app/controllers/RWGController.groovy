@@ -529,10 +529,10 @@ class RWGController {
 		   
 		   if (sk) {
 			  def keyword = sk.keyword
-			  return "Keyword <${keyword}> ignored! :: Improperly defined gene signature/gene list! Unable to retrieve Gene list/signature '${keyword}' with search keyword id ${gsKeywordId}"			  
+			  return "Filter term <${keyword}> ignored! :: Improperly defined gene signature/gene list! Unable to retrieve Gene list/signature '${keyword}' with search keyword id ${gsKeywordId}"			  
 		   } 
 		   else  {
-			  return "Keyword ignored! :: Unable to retrieve search keyword with search keyword id ${gsKeywordId}.  "
+			  return "Filter term ignored! :: Unable to retrieve search keyword with search keyword id ${gsKeywordId}.  "
 		   }		   
 		   
 	   }
@@ -545,7 +545,7 @@ class RWGController {
 	   String geneSignatureName = geneSig[1]
 	   String geneSignatureType = geneSig[2].toString()
 	   if (geneSignatureType == probeFileSchema)  {
-		   return "Keyword <${geneSignatureName}> ignored! :: Gene list/signature with id '${geneSignatureId}' and name '${geneSignatureName}' contains probes.  This type of gene signature is not currently supported in faceted search."
+		   return "Filter term <${geneSignatureName}> ignored! :: Gene list/signature with id '${geneSignatureId}' and name '${geneSignatureName}' contains probes.  This type of gene signature is not currently supported in faceted search."
 	   }
 	   
 	   def geneSigItemCount = GeneSignature.executeQuery("select count(gsi.id)  " +
@@ -553,11 +553,11 @@ class RWGController {
 		   " where gsi.geneSignature.id = ?", geneSignatureId)
 
 	   if (geneSigItemCount[0].toString() == "0")  {
-		   return "Keyword <${geneSignatureName}> ignored! :: Gene list/signature with id '${geneSignatureId}' and name '${geneSignatureName}' contains zero items.  This type of gene signature is not supported in faceted search."
+		   return "Filter term <${geneSignatureName}> ignored! :: Gene list/signature with id '${geneSignatureId}' and name '${geneSignatureName}' contains zero items.  This type of gene signature is not supported in faceted search."
 	   }
 	   
 	   // don't knwo exactly what the error is
-	   return "Keyword ignored! :: Data error with Gene list/signature with search keyword id ${gsKeywordId}.  Error could be caused by a list that contains genes that are not properly defined."
+	   return "Filter term ignored! :: Data error with Gene list/signature with search keyword id ${gsKeywordId}.  Error could be caused by a list that contains genes that are not properly defined."
 }
    
    /**
