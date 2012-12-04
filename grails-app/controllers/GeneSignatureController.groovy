@@ -547,6 +547,13 @@ class GeneSignatureController {
 	    	delParam.each { delItems.add(it) }
 	    }
 
+		int j = gs.geneSigItems.size()
+		
+		if(delItems.size() == j ) {
+			flash.message = "<div class='warning'>You tried to delete all items. You must leave at least one item</div>"
+			return render(view: 'edit_items', model:[gs:gs, errorFlag:true])
+		}
+		
 		// delete indicated ids
 		gs = geneSignatureService.deleteGeneSigItems(gs, delItems)
 
