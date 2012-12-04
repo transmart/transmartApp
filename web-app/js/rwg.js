@@ -86,13 +86,15 @@ var cohortBGColors = new Array(
 */
 ////////////////////////////////////////////////////////////////////
 function showDetailDialog(dataURL)	{
-	
-	
-	
+
+	jQuery('#welcome-viewer').empty();
+
 	jQuery('#metadata-viewer').empty().addClass('ajaxloading');
 	jQuery('#metadata-viewer').load(dataURL, {}, function() {
 		jQuery('#metadata-viewer').removeClass('ajaxloading');
 	});
+	
+//	jQuery('#metadata-viewer').accordion("option", "active", 1);
 	jQuery('#sidebar-accordion').accordion("option", "active", 1);
 	
 //	var height = 'auto';
@@ -115,6 +117,15 @@ function showDetailDialog(dataURL)	{
 //	} else	{
 //		jQuery(dialogDetail).dialog('isOpen') ? jQuery(dialogDetail).dialog('close') : jQuery(dialogDetail).dialog('open');		
 //	}
+	return false;
+}
+
+
+function showOverlay(overlayDiv, dataURL)	
+{
+	jQuery(overlayDiv).empty()
+	jQuery(overlayDiv).load(dataURL)	
+	jQuery('#sidebar-accordion').accordion("option", "active", 1);	
 	return false;
 }
 
@@ -2561,6 +2572,7 @@ function roundNumber(num, dec) {
 	var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
 	return result;
 }
+
 
 //Main method to show the current array of search terms 
 function showSearchTemplate()	{

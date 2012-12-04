@@ -449,8 +449,7 @@ content: counter(pages);
 ul.x-tab-strip-top {
 	padding: 0;
 	background: none;
-	background-color: #FFF;
-	
+    background-color:#FFF;
 }
 
 .x-tab-strip-top a.x-tab-right {
@@ -461,6 +460,7 @@ ul.x-tab-strip-top {
 .x-tab-strip-top em.x-tab-left {
 	background: none;
 	background-image: none;
+	
 }
 
 .x-tab-strip-top .x-tab-strip-inner {

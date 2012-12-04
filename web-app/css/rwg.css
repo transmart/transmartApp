@@ -123,6 +123,50 @@ body {
 	 width:100%;
 }
 
+.gridTitle
+{
+	color: #515BA2;
+    font-size: 120%;
+    font-weight: bold;
+    text-align: center;
+}
+
+.details-table
+{
+    border-width: 1px 1px 1px 1px;
+    border-spacing: 4px;
+    border-style: outset outset outset outset;
+    border-color: white;
+    border-collapse: collapse;
+    padding: 5px;
+    width: 800px;
+}
+
+.list-table
+{
+    border-width: 1px 1px 1px 1px;
+    border-spacing: 4px;
+    border-style: outset outset outset outset;
+    border-color: white;
+    border-collapse: collapse;
+    padding: 5px;
+    width: 1200px;
+}
+
+.details-row
+{
+	background: #e8e8e8;
+	border: 2px solid white;
+	border-spacing: 1px;
+}
+
+.file-row
+{
+ padding-top:2px
+  padding-bottom:2px;
+ 
+}
+
 .search-img {
     background-image: url(../images/search_button_up.png) !important;
 }
@@ -944,15 +988,15 @@ border-top: 1px solid #CCC;
 }
 
 a.paginate_disabled_previous, a.paginate_disabled_next {
-    border: 1px solid #CCC;
-    padding: 4px;
+   <!-- border: 1px solid #CCC; -->
+    <!--  padding: 4px; -->
     color: #CCC;
     margin: 0px 8px;
 }
 
 .paginate_enabled_previous, .paginate_enabled_next, .linkbutton {
-    border: 1px solid #AAF;
-    padding: 4px;
+<!--    border: 1px solid #AAF; -->
+  <!--    padding: 4px; -->
     color: #000;
     margin: 0px 8px;
     cursor: pointer;
@@ -1006,34 +1050,31 @@ select.multiselect {
 .columnname {
 	font-weight: bold;	
 	font-size: 8pt;
+	white-space: nowrap;
+	text-align: right;
+	padding-right: 4px;
+	border: 2px solid white;
+	
 }
 .columnvalue {
 	font-size: 8pt;
-	padding-bottom: 4px;	
+	padding-bottom: 4px;
+	padding-left: 4px;
+	border: 2px solid white;		
 }
 
 .foldericons {
 	text-align: right;
 }
 
-.foldericon {
-	font-size: 8pt;
-	padding: 2px 2px 2px 16px;
-	border-radius: 2px;
-	border: 1px solid #DDD;
-	cursor: pointer;
-	background-color: #FBFBFB;
-	background-repeat: no-repeat;
-	background-position: 2px 50%;
-}
 
 .folderheader {
     margin: 4px 0 4px 0;
 }
 
-.foldericon.add { background-image: url('../images/internal-link.gif'); }
-.foldericon.view { background-image: url('../images/information8.png'); }
-.foldericon.viewfile { background-image: url('../images/information8.png'); }
+.foldericon.add { border: none; background-color: none;  background-image: url('../images/internal-link.gif'); }
+.foldericon.view {  border: none; background-color: none; background-image: url('../images/information8.png'); }
+.foldericon.viewfile {  border: none; background-color: none; background-image: url('../images/information8.png'); }
 
 /* Accordion/other UI overrides */
 
@@ -1060,6 +1101,10 @@ select.multiselect {
 	padding-left: 0.5em;
 	border: 1px solid #888;
 	font-weight: bold;
+	background:none;
+    background-image: none;
+    background-color: #515BA2;  
+    
 }
 
 .ui-dialog-title {
@@ -1106,8 +1151,33 @@ select.multiselect {
 	background-color: #F0F0FF;	
 }
 
+table.menuDetail th.menuBar{
+    background:none;
+    background-image: none;
+    background-color: #EDEEF6;  
+}
+
+
+table.menuDetail th.menuLink a:link, th.menuLink a:visited {
+    font-size: 11px;
+    color: #515BA2; 
+}
+
+
+.header-div {
+	background:none;
+    background-image: none;
+    color: #EDEEF6;
+	background-color: #EDEEF6;  
+}
+
+
+
 .ui-widget-header {
 	border:none;
+	background:none;
+	background-image: none;
+	background-color: #515BA2;	
 }
 
 #studyTabs {
@@ -1153,7 +1223,7 @@ select.multiselect {
 
 #cartbutton {
 	position: absolute;
-	right: 400px;
+    right: 800px;
 	top: 3px;
 	padding: 0px 4px;
 }
@@ -1204,6 +1274,32 @@ select.multiselect {
 	margin-bottom: 8px;
 }
 
+.foldericon {
+    padding: 3px 24px 0px 0px;
+    background-image: url('../images/filetypes/page_white.png');
+    background-repeat: no-repeat;   
+}
+
+.foldericon {
+    font-size: 8pt;
+    padding: 2px 2px 2px 16px;
+    border-radius: 2px;
+    border: 1px solid #DDD;
+    cursor: pointer;
+    background-color: #FBFBFB;
+    background-repeat: no-repeat;
+    background-position: 2px 50%;
+}
+
+
+.foldericon.program { border: none; background-color: none; background-image: url('../images/foldertypes/program.png'); }
+.foldericon.study   { border: none; background-color: none; background-image: url('../images/foldertypes/study.png'); }
+.foldericon.studywsubject   { border: none; background-color: none; background-image: url('../images/foldertypes/studywsubject.png'); }
+.foldericon.folder  { border: none; background-color: none; background-image: url('../images/foldertypes/folder.png'); }
+.foldericon.assay   { border: none; background-color: none; background-image: url('../images/foldertypes/assay.png'); }
+.foldericon.analysis { border: none; background-color: none; background-image: url('../images/foldertypes/analysis.png'); }
+
+
 .fileicon {
 	padding: 3px 24px 0px 0px;
 	background-image: url('../images/filetypes/page_white.png');
@@ -1231,3 +1327,70 @@ select.multiselect {
 *:focus {
 	outline:none;	
 }
+
+.rdc-h2 {
+    color: #515BA2;
+    font-size: 174%;
+    margin: 20px 0;
+}
+
+.rdc-h3 {
+    color: #515BA2;
+    font-size: 152%;
+    margin: 10px 0;
+}
+
+.rdc-h4 {
+    color: #515BA2;
+    font-size: 129%;
+    margin: 10px 0;
+}
+
+
+/* hidden overlay div, display with visibility toggle (note: if you need to edit review with Jeff or Jeremy!!) */
+.overlay {
+    display: none;
+    position: absolute;
+    background-color: white;
+    padding: 4px;
+    border-top: 4px solid #6E6E6E;
+    border-bottom: 4px solid #6E6E6E;
+    border-left: 4px solid #6E6E6E;
+    border-right: 4px solid #6E6E6E;
+    max-width: 90%;
+    max-height: 90%;
+    /*width:expression(this.width > document.body.clientWidth ? "80%": "auto" );
+    height:expression(this.height > document.body.clientHeight ? "80%": "auto" );*/
+    /*overflow:visible;*/
+    z-index:2001;
+}
+
+/* hidden overlay div, display with visibility toggle (let window size to content)*/
+.overlayAutoSize {  
+    display: none;
+    position: absolute;
+    background-color: white;
+    padding: 4px;
+    border: 4px solid #6E6E6E;
+    overflow: auto; 
+    z-index:2001;
+}
+
+/* background overlay */    
+.backgroundOverlay {
+    display: none;
+    position: fixed;
+    background-color: #F2F2F2;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height:auto !important; /* real browsers */
+    height:100%; /* IE6: treaded as min-height*/
+    min-height:100%; /* real browsers */
+    z-index:1001;
+    -moz-opacity: 0.90;
+    opacity: 0.90;
+    filter: alpha(opacity=90);
+}
+
+

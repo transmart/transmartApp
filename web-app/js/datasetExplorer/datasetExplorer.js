@@ -844,11 +844,11 @@ Ext.onReady(function()
 		// centerPanel.add(analysisPanel);
 		// centerPanel.add(resultsTabPanel);
 		
-		westPanel.add(createOntPanel());
+//		westPanel.add(createOntPanel());
 		//setTimeout("loadOntPanel()", 3000);
 		// westPanel.add(prevTree);
 		// eastPanel.add(exportPanel);
-		centerMainPanel.add(westPanel);
+//		centerMainPanel.add(westPanel);
 		centerMainPanel.add(centerPanel);
 
 		viewport = new Ext.Viewport(
@@ -1041,6 +1041,7 @@ function hasMultipleTimeSeries()
 
 function createOntPanel()
 {
+	alert('hello')
 	// make tab panel, search panel, ontTree and combine them
 	ontTabPanel = new Ext.TabPanel(
 			{
