@@ -319,7 +319,7 @@ class RegionSearchService {
 			queryCriteria.append(analysisQCriteria.toString())
 			
 			//Only select the analysis name if we need to distinguish between them!
-			if (analysisIds.size > 1) {
+			if (analysisIds.size() > 1) {
 				//analysisQuery = analysisQuery.replace("_analysisSelect_", "baa.analysis_name AS analysis, ")
 				analysisQuery = analysisQuery.replace("_analysisSelect_", "DATA.bio_assay_analysis_id AS analysis_id, ")
 				//analysisQuery = analysisQuery.replace("_analysisJoin_", " JOIN biomart.bio_assay_analysis baa ON baa.bio_assay_analysis_id = DATA.bio_assay_analysis_id ")
@@ -364,8 +364,18 @@ class RegionSearchService {
 		if(regionList.length()==0){
 			regionList.append("1=1")
 		}
+		
 		analysisQuery = analysisQuery.replace("_regionlist_", regionList.toString())
-		analysisQuery = analysisQuery.replace("_orderclause_", sortField + " " + order)
+		
+		// this is really a hack
+		def sortOrder = sortField?.trim();
+		//println(sortField)
+		if(hg19only){
+		sortOrder = sortOrder.replaceAll("gmap.gene_name", "info.rsgene");
+		
+		}
+		//println("after:"+sortOrder)
+		analysisQuery = analysisQuery.replace("_orderclause_", sortOrder + " " + order)
 		countQuery = countQuery.replace("_regionlist_", regionList.toString())
 		
 		// analysis name query
@@ -377,7 +387,7 @@ class RegionSearchService {
 				stmt = con.prepareStatement(nameQuery)
 				
 				rs = stmt.executeQuery();
-				if (rs.next()) {
+				while (rs.next()) {
 					analysisNameMap.put(rs.getLong("id"), rs.getString("name"));
 				}
 			}catch(Exception e){
@@ -390,7 +400,7 @@ class RegionSearchService {
 			}
 		}
 		
-		
+		//println(analysisNameMap)
 		// data query
 		def finalQuery = analysisQuery + queryCriteria.toString() + "\n) a";
 		if (limit > 0) {
