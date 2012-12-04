@@ -8,6 +8,7 @@ import org.json.*
 
 import bio.BioAnalysisAttribute
 import bio.ClinicalTrial
+import bio.Experiment
 import bio.BioMarkerCorrelationMV
 
 import org.apache.commons.codec.binary.Base64
@@ -830,7 +831,6 @@ class RWGController {
 	   def total = 0								// Running total of analysis to show in the top banner
 
 	   def studyWithResultsFound = false   
-	   
    	   for (studyId in studyCounts.keys().sort()) {
 		   def c = studyCounts[studyId].toInteger()
 
@@ -839,15 +839,22 @@ class RWGController {
 		   
 			   def trialNumber= studyId
 
-			   def ct = ClinicalTrial.createCriteria()
-			   def trial = ct.get	{
-				   eq("trialNumber", trialNumber, [ignoreCase: true])
+			   def exp = Experiment.createCriteria()
+			   def trial = exp.get	{
+				   eq("accession", trialNumber, [ignoreCase: true])
 			   }
 			   if (trial == null)	{
 				   log.warn "Unable to find a trial for ${trialNumber}"
 			   }  
 			   else  {
-			       trialAnalysis.put((trial), c)
+				   
+				   def trialMap = [:]
+				   trialMap.put('studyId', trial.accession)
+				   trialMap.put('experimentId', trial.id)
+				   trialMap.put('title', trial.title)
+				   trialMap.put('analysisCount', c)
+				   
+			       trialAnalysis.put(trial.id, trialMap)
 			       total += c
 			   }
 		   }
