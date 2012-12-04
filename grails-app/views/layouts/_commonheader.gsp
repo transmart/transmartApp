@@ -25,14 +25,14 @@
 	<tr>
 		<th class="menuBar" style="text-align: left;">
 			<!-- menu links -->
-			<table class="menuDetail" style="width: auto;" align="right">
+			<table class="menuDetail" id="menuLinks" style="width: auto;" align="right">
 		    	<tr>
 		    		<th width="150">&nbsp;</th>
 	   				<%--<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>--%>
 
-			       	<g:if test="${'rwg'==app}"><th class="menuVisited">Home</th></g:if>
-	       			<g:else><th class="menuLink"><g:link controller="RWG">Home</g:link></th></g:else>
+			       	<g:if test="${'rwg'==app}"><g:link controller="RWG"><th class="menuVisited">Home</th></g:link></g:if>
+	       			<g:else><th class="menuLink">Home</th></g:else>
 
 			       	<%--<g:if test="${'datasetExplorer'==app}"><th class="menuVisited">Dataset Explorer</th></g:if>
 	       			<g:else><th class="menuLink"><g:link controller="secure">Dataset Explorer</g:link></th></g:else>

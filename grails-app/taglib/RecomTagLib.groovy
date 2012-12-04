@@ -329,5 +329,53 @@ class RecomTagLib {
 		out << 		"onclick=\"javascript:toggleDetail('"+divPrefix+"');\">"+label+"&nbsp;<img alt='Close' src=\"${resource(dir:'images/skin',file:'sorted_asc.gif')}\" /></a> "
 		out << "</th></tr></thead>"
 	}
+	
+	/**
+	* container for content displayed in overlay div with a title
+	*/
+   def overlayPopup = { attrs, body ->
+
+	   String width = attrs.width;
+	   String title = attrs.title;
+	   String divId = attrs.divContainerId;
+
+	   if(width!=null) {
+		   out << "<table cellspacing=0 style='width: ${width}'>"
+	   } else {
+		   out << "<table cellspacing=0>"
+	   }
+
+	   out << "<thead><tr>"
+	   out	<< "	<td style='padding: 4px; font-weight: bold; font-size: 14px; background-color: #2C5197; color: white;'>${title}</td>"
+	   out << "	<td style='padding: 4px; background-color: #2C5197; padding: 3px; text-align: right;'>"
+	   out << "		<a href='#' onclick=\"hideElement('${divId}'); hideElement('${divId}_fade'); return false;\">"
+	   out << "			<img alt='Close' style='vertical-align: middle;' border=0 src='${resource(dir:'images',file:'close.gif')}' />"
+	   out << "		</a>"
+	   out << "	</td>"
+	   out << "</tr></thead>"
+	   out << "<tbody>"
+	   out << "<tr><td colspan=2>"
+
+	   // page content
+	   out << body();
+
+	   out << "</td></tr>"
+	   out << "</tbody>"
+	   out << "</table>";
+   }
+   
+   /**
+   * create an overlay which is the target for DHTML popup windows (i.e. overlay)
+   */
+  def overlayDiv = { attrs, body ->
+	  String divId = attrs.divId;
+	  String cssClass = attrs.cssClass;
+	  if(cssClass==null) cssClass = "overlay";
+	  out << "<div id='${divId}' class='${cssClass}'>"
+	  out << "	<p>Loading data. Please wait...</p>"
+	  out << "</div>"
+	  out << "<div id='${divId}_fade' class='backgroundOverlay' />"
+  }
+
 
 }

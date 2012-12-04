@@ -17,67 +17,27 @@
  *
  ******************************************************************/
   
-package fm
 
-import fm.FmFolder;
-import java.util.ArrayList;
-import java.util.List;
-import groovy.lang.Buildable;
-import groovy.lang.GroovyObject;
-import groovy.xml.StreamingMarkupBuilder;
+package ex
 
-import org.codehaus.groovy.grails.commons.GrailsApplication
+class ExportController {
 
-import com.recomdata.util.IBioTag
-
-
-class FmFolderAssociation implements Serializable {
+    def index = { }
 	
-	static transients = ['bioObject']
-	
-	String objectUid
-	String objectType
-	FmFolder fmFolder
-
-	static mapping = {
-		table 'fm_folder_association'
-		version false
-		cache true
-		sort "objectUid"
-//		id composite: ["objectUid","fmFolder"]
+	def selection =
+	{
+		
 	}
 	
-	static constraints = {
+	def sendFiles = 
+	{
 		
-		objectUid(unique: 'fmFolder')
-		
-		}
-
-	public IBioTag getBioObject() 
-	{ 
-		def clazz = lookupDomainClass()
-		if (!clazz) 
-		{
-			return null
-		}
-		else
-		{		
-			return clazz.getObjectUid(this.objectUid)
-		}
-		 
 	}
 	
-	protected Class lookupDomainClass() {
-		//		def conf = SpringSecurityUtils.securityConfig
+	// TODO
+	// Remove all the files from the cart
+	def clear =
+	{
 		
-				// This probably should come from the config file
-			
-				String domainClassName = this.objectType //conf.rememberMe.persistentToken.domainClassName ?: ''
-				def clazz = grailsApplication.getClassForName(domainClassName)
-				if (!clazz) {
-					log.error "Persistent token class not found: '${domainClassName}'"
-				}
-				
-				return clazz
-			}
+	}
 }

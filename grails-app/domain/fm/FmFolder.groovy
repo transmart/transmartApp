@@ -25,7 +25,7 @@ import groovy.xml.StreamingMarkupBuilder
 import java.util.ArrayList;
 import java.util.List;
 import am.AmTagTemplate;
-import fm.FmFolderAssociation;
+// import fm.FmFolderAssociation;
 
 class FmFolder implements Buildable{
 	
@@ -51,7 +51,7 @@ class FmFolder implements Buildable{
 		columns { id column:'folder_id' }
 	}
 	
-	static hasOne = [fmFolderAssociation: FmFolderAssociation]	
+//	static hasOne = [fmFolderAssociation: FmFolderAssociation]	
 	static hasMany = [fmFiles: FmFile, amTagTemplates: AmTagTemplate]
 	
 	

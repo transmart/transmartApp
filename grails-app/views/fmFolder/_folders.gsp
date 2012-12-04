@@ -8,12 +8,20 @@
 					<span>
 						<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', '${createLink(controller:'fmFolder',action:'getFolderContents',params:[id:folder.id])}');">
 							<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderplus.png')}" />
-							<img alt="" src="${resource(dir:'images',file:'folder.png')}" />
+							 <!-- <img alt="" src="${resource(dir:'images',file:'folder.png')}" />-->
+						    <span class="foldericon ${folder.folderType.toLowerCase()}"></span>   
 						</a>
 					</span>
+					<g:if test="${'study'==folder.folderType.toLowerCase()}">
 					<a href="#" onclick="showDetailDialog('${createLink(controller:'experimentAnalysis',action:'expDetail',id:folder.objectUid)}');">
-						<span class="result-folder-name"> ${folder.folderName}</span>
+						<span class="result-folder-name"> ${folder.folderName}</span>						
 					</a>
+					</g:if>
+					<g:else>
+                    <a href="#" onclick="showDetailDialog('${createLink(controller:'fmFolder',action:'folderDetail',id:folder.id)}');">
+                        <span class="result-folder-name"> ${folder.folderName}</span>   
+                        </a>                    
+					</g:else>
 				</td>
 				<%--
 				<td class="foldericons">

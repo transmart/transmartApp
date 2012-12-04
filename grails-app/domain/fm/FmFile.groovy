@@ -31,12 +31,14 @@ class FmFile implements Buildable{
 	Long id
 	String displayName
 	String originalName
-//	Float fileVersion
+	String fileVersion
+	String description = "test description"
 	Long fileSize	
 	String fileType
 	String filestoreLocation
 	String filestoreName
 	String linkUrl
+	Date uploadDate = new Date()
 	Boolean activeInd = Boolean.TRUE
 
 	static mapping = {

@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/simpleModal.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/multiselect/ui.multiselect.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/multiselect/common.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/jqueryDatatable.css')}"></link>
                                 
         <!-- jQuery JS libraries -->
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
@@ -39,15 +40,23 @@
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/ui.multiselect.js')}"></script>  
   		  
   		        
+  		<!--Datatable styling and scripts-->
+        <script type="text/javascript" src="${resource(dir:'js/', file:'jquery.dataTables.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'ColVis.min.js')}"></script> 
+  		        
   		<!--  SVG Export -->
   		<%--<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  --%>
   		  
 	
         <g:javascript library="prototype" /> 
+        <script type="text/javascript">
+            var $j = jQuery.noConflict();
+        </script>
         
         <!-- Our JS -->        
         <script type="text/javascript" src="${resource(dir:'js', file:'rwg.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'maintabpanel.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'datasetExplorer.js')}"></script>
         
         <!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
         <%-- <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
@@ -99,6 +108,8 @@
 		        addSearchAutoComplete();
 		        addToggleButton();
 
+		        jQuery('#meta-').accordion(); 
+			        
 		        jQuery("#xtButton").colorbox({opacity:.75, inline:true, width:"95%", height:"95%"});
       
 
@@ -150,12 +161,38 @@
 		        });
 
 	        	jQuery('#subject-view-div').append(
-	        		jQuery("<iframe></iframe>")
-	        			.attr("id", "datasetExplorer")
-	        			.attr("name", "datasetExplorer")
-	        			.attr("src", datasetExplorerURL)
+	    		    jQuery("<iframe></iframe>") 			
+                    .attr("id", "datasetExplorer")     			
+                    .attr("name", "datasetExplorer")	        			
+                    .attr("src", datasetExplorerURL)
+	        		  //  createCenterPanel()
 	    	    );
 
+	        	
+	        //    var resize= $("#sidebar");
+	      //        var containerWidth = $("#main").width();
+	                        
+	/*                $("#sidebar").resizable({
+	                      handles: 'e',
+	                      maxWidth: 450,
+	                      minWidth: 120,
+	                });
+
+                    resize: function(event, ui){
+                        var currentWidth = ui.size.width;
+                        
+                        // this accounts for padding in the panels + 
+                        // borders, you could calculate this using jQuery
+                        var padding = 12; 
+                        
+                        // this accounts for some lag in the ui.size value, if you take this away 
+                        // you'll get some instable behaviour
+                        $(this).width(currentWidth);
+                        
+                        // set the content panel width
+                        $("#content").width(containerWidth - currentWidth - padding);            
+                    }
+	*/        	
 	    	    jQuery('body').on('mouseenter', '.folderheader', function() {
 					jQuery(this).find('.foldericonwrapper').fadeIn(150);
 		    	});
@@ -180,14 +217,14 @@
 	    	    	showDetailDialog(fileDataUrl + '?id=' + id);
 		    	});
 
-	    	    jQuery('#cartbutton').click(function() {
+	    /*	    jQuery('#cartbutton').click(function() {
 					jQuery('#exportViewLink').click();
 		    	});
-	        	
+	      */  	
 
 	        	jQuery('#sidebar-accordion').accordion({heightStyle: "fill", icons: { 'header': 'suppressicon', 'headerSelected': 'suppressicon' }});
 	        	resizeAccordion();
-
+	        	
 	        	jQuery('#filter-browser').dialog({
 	        		autoOpen: false,
 	        		width:200,
@@ -197,13 +234,52 @@
 	        		hide: 'fade',
 	        		title: 'Filter Browser'
 		        });
+
+	        	 var containerWidth = jQuery('#main').width();
+                 
+                 
+	        	jQuery('#sidebar').resizable({
+                    handles: 'e',
+                    maxWidth: 800,
+                    minWidth: 120,
+                    resize: function(event, ui){
+                        var currentWidth = ui.size.width;
+                        
+                        // this accounts for padding in the panels + 
+                        // borders, you could calculate this using jQuery
+                        var padding = 12; 
+                        
+                        // this accounts for some lag in the ui.size value, if you take this away 
+                        // you'll get some unstable behaviour
+                    //    $(this).width(currentWidth);
+                        
+                        jQuery('#box-search').width(currentWidth -20)
+                        jQuery('#sidebar-accordion').width(currentWidth -20)
+                        // jQuery('#results-div').width(currentWidth -20)
+                        // set the content panel width
+                        jQuery('#main').width(containerWidth - currentWidth - padding);            
+                    }
+              });
+
+	        	var xpos = jQuery('#menuLinks').offset()['right'];
+	        	
+	        	 jQuery('#cartbutton').css({
+	        		    "position":"absolute", 
+	        		    "top": "3px",
+	        		    "left": xpos - 20 + "px",
+	        		});
+	        		
 	        });
 
 	        jQuery(window).resize(function() {
 				resizeAccordion();
 			});
 
-	        <%-- TODO Accordion is no longer needed, can simplify a lot of this by just making it a normal set of divs --%>
+	        <%-- TODO Accordion is no longer needed, can simplify a lot of this by just making it a normal set of divs 
+	        
+	        Now that the left nav is resizable this needs to be updated - wvet
+	        
+	        --%>
 			function resizeAccordion() {
 				
 				var windowHeight = jQuery(window).height();
@@ -221,6 +297,7 @@
 	        	jQuery('#results-div').height(targetHeight);
 
 	        	jQuery('#datasetExplorer').height(windowHeight - 70);
+	        	jQuery('#welcome').height(windowHeight - 90);
 			}
 
 			function toggleSidebar() {
@@ -240,20 +317,104 @@
 
 			function showTab(tab) {
 				if (tab == 'browse') {
-					jQuery('#metadata-viewer').show();
+//					jQuery('#metadata-viewer').show();
+                    jQuery('#folder-viewer').show();
 					jQuery('#subject-view-div').hide();
 				}
 				else {
-					jQuery('#metadata-viewer').hide();
+//					jQuery('#metadata-viewer').hide();
+                    jQuery('#folder-viewer').hide();
 					jQuery('#subject-view-div').show();
 				}
 			}
 
-			
-            
-        </script>
-        
+
+    function dataTableWrapper (containerId, tableId, title)
+            {
+
+                var data;
+                var gridPanelHeaderTips;
                 
+                function setupWrapper()
+                {
+                    var gridContainer =  $j('#' + containerId);
+                    gridContainer.html('<table id=\'' + tableId + '\'></table></div>');
+                }
+
+                function overrideSort() {
+
+                    $j.fn.dataTableExt.oSort['numeric-pre']  = function(a) {
+                        
+                        var floatA = parseFloat(a);
+                        var returnValue;
+                        
+                        if (isNaN(floatA))
+                            returnValue = Number.MAX_VALUE * -1;    //Emptys will go to top for -1, bottom for +1   
+                            else
+                                returnValue = floatA;
+                        
+                            return returnValue;
+                        };
+
+                };
+
+                this.loadData = function(dataIn) {
+
+
+                    setupWrapper();
+                    
+                    data = dataIn;
+                    setupGridData(data);
+
+                    gridPanelHeaderTips = data.headerToolTips.slice(0);
+
+                    //Add the callback for when the grid is redrawn
+                    data.fnDrawCallback = function( oSettings ) {
+
+                        //Add the tooltips to the header. This must happen every redraw because the datatables code destroys the html
+                        $j(".dataTables_scrollHeadInner > table > thead > tr > th").each( function (index) {
+                            
+                            var titleAttr = $j(this).attr("title");
+                            
+                            if (titleAttr == null && gridPanelHeaderTips != null)
+                            {
+                                $j(this).attr("title", gridPanelHeaderTips[index]);            
+                            }
+                            
+                        });
+
+                    };
+
+                    $j('#' + tableId).dataTable(data);
+
+                    $j(window).bind('resize', function () {
+                        $j('#' + tableId).dataTable().fnAdjustColumnSizing()
+                      } );
+                    
+                     $j("#" + containerId + " div.gridTitle").html(title);                  
+
+                }; 
+
+                function setupGridData(data)
+                {
+                    data.bAutoWidth = true;
+                    data.bScrollAutoCss = true;
+                    data.sScrollY = 400;
+                    data.sScrollX = "100%";
+                    data.bDestroy = true;
+                    data.bProcessing = true;
+                    data.bLengthChange = false;
+                    data.bScrollCollapse = false;
+                    data.iDisplayLength = 100;
+                    data.sDom = "<\"top\"<\"gridTitle\">>rt<\"clear\">";    //This controls the grid layout and included functionality
+                }
+            }
+		
+//		var panel = createOntPanel()
+//		jQuery('#metadata-viewer').empty()
+ //           jQuery('#metadata-viewer').add(panel);
+        </script>
+          
         <script type="text/javascript">		
 			jQuery(function ($) {
 				// Load dialog on click of Save link
@@ -261,14 +422,15 @@
 			});
 		</script>
                   
-                
+       <r:layoutResources/>          
     </head>
     <body>
-        <div id="header-div">        
+    
+        <div id="header-div" class="header-div">        
             <g:render template="/layouts/commonheader" model="['app':'rwg', 'utilitiesMenu':'true']" />
         </div>
         
-		<div id="sidebar">
+		<div id="sidebar" style="border-right:3px solid;border-color:#EDEEF6">
 		
 			<%-- 
 				Some code that needs justification here... jQuery Tabs assumes that the tabs will be followed by a
@@ -282,12 +444,9 @@
 		          <li id="subjectViewTab"><a href="#subjectFake" onclick="showTab('analyze')">Analyze</a></li>
 		       </ul>
 		       
-				<div id="studyFake" style="height: 0px; padding: 0">
-				      	
-				</div>
-				<div id="subjectFake" style="height: 0px; padding: 0">
+				<div id="studyFake" style="height: 0px; padding: 0"></div>
+				<div id="subjectFake" style="height: 0px; padding: 0"></div>
 				
-				</div>
 		    </div>
 	       
 	        <div id="box-search">
@@ -307,8 +466,7 @@
 			
 			<div id="accordion-container" style="height: 600px">
 				<div id="sidebar-accordion">
-					
-			        <h3>Tree Browser</h3>
+			        <h3>Program Explorer</h3>
 			        <div id="results-div">
 			        	Results appear here
 			        </div>
@@ -319,12 +477,18 @@
 			
 		</div>
 		 
-		<div id="main">
-		     	
-				<div id="metadata-viewer">
-					<tmpl:welcome />
+		<div id="main">		     	
+                <div id="folder-viewer">
+                <div id="welcome-viewer">
+                    <tmpl:welcome />
+                </div>
+                <div id="metadata-viewer">
 				</div>
-				<div id="subject-view-div" style="display: none;">
+				<div id="subfolder-viewer">
+                </div>
+                </div>
+				
+				<div id="subject-view-div" style="display: none;" >
 				
 				</div>
 				<div id="export-div" style="display: none;">
@@ -384,21 +548,11 @@
 					</ul>
 					<p>close</p>
 				</div>
-				<div id="xtSummary"><!-- Summary Tab Content -->
-							
-				
-				</div>
-				<div id="xtHeatmap"><!-- Heatmap Tab Content -->
-				
-				
-				</div>
-				<div id="xtBoxplot"><!-- Boxplot Tab Content -->
-				
-				
-				</div>
+				<div id="xtSummary"><!-- Summary Tab Content --></div>
+				<div id="xtHeatmap"><!-- Heatmap Tab Content --></div>
+				<div id="xtBoxplot"><!-- Boxplot Tab Content --></div>
 			</div>
 		</div>
-		
 
 		<%-- Elements that are in fixed positions on the page --%>
 		<div id="sidebartoggle">&nbsp;</div>
@@ -409,7 +563,11 @@
       		</tr></table>                                            
       	</div>
    		<div id="cartbutton" class="greybutton">
-			<img src="${resource(dir:'images', file:'cart.png')}"/> Cart
+   		<g:remoteLink controller="export" action="selection" update="${overlayExportDiv}" 
+                            params="[eleId:overlayExportDiv]" 
+                            before="initLoadingDialog('${overlayExportDiv}')" onComplete="centerDialog('${overlayExportDiv}')">
+			<img src="${resource(dir:'images', file:'cart.png')}"/> Export Cart
+			</g:remoteLink>
 			<div id="cartcount">0</div>
 		</div>
       	
@@ -436,6 +594,7 @@
         	
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
-	
-    </body>
+	 <r:layoutResources/>
+	 <g:overlayDiv divId="${overlayExportDiv}" />
+	 </body>
 </html>

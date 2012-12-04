@@ -20,8 +20,14 @@
 
 package fm
 
+import bio.Experiment
+
 import fm.FmFolder;
 import fm.FmFile
+
+import com.recomdata.export.ExportColumn
+import com.recomdata.export.ExportRowNew
+import com.recomdata.export.ExportTableNew
 
 import groovy.xml.StreamingMarkupBuilder
 // import grails.web.JSONBuilder
@@ -32,6 +38,7 @@ import grails.converters.*
 
 class FmFolderController {
 
+	def formLayoutService
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def index = {
@@ -183,6 +190,15 @@ class FmFolderController {
 				
 	}
 
+	def getAssayes= {
+		
+		List<FmFolderController> folders = getFolder(FolderType.ASSAY.name(), params.parentPath)
+				// 	[fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
+		
+		render folders as XML
+				
+	}
+
 	def addProgram = {
 		def p = new FmFolder(params['fmFolder'])
 		addFolder(FolderType.PROGRAM.name(), p, null)
@@ -239,6 +255,7 @@ class FmFolderController {
 		def parent = FmFolder.get(id)
 		
 		//Temporary stupid way to do this - get all folders at level+1 with matching path
+		//David --  Feel free to think of a better way to query with the given backend model -- wvet
 		def folders = FmFolder.executeQuery("from FmFolder as fd where fd.folderLevel = :level and fd.folderFullName like '" + parent.folderFullName + "%' order by folderName", [level: parent.folderLevel + 1])
 		render(template:'folders', model: [folders: folders, files: parent.fmFiles])
 	}
@@ -342,7 +359,7 @@ class FmFolderController {
 		}
 	}
 
-	private List<FmFolderController> getFolder(String folderType, String parentPath)  
+	private List<FmFolder> getFolder(String folderType, String parentPath)  
 	{		
 		if(parentPath == null)
 		{
@@ -355,5 +372,197 @@ class FmFolderController {
 		}
 	
 	}
+	
+	
+	def folderDetail = {
+		log.info "** action: folderDetail called!"
+		def folderId = params.id
+		
+		def folder
+		def formLayout 
+		if (folderId) 
+		{
+			folder = FmFolder.get(folderId)
+			formLayout = formLayoutService.getLayout(folder.folderType.toLowerCase()); //'study');
+		}
+		
+		if(!formLayout)
+		{			
+			formLayout = formLayoutService.getProgramLayout()		
+		}
+		
+		log.info("Formlayout = " + formLayout)
+		def subFolders
+		def subFolderLayout 
+		if (folder)
+		{
+			subFolders = FmFolder.executeQuery("from FmFolder as fd where fd.folderLevel = :level and fd.folderFullName like '" + folder.folderFullName + "%' order by folderName", [level: folder.folderLevel + 1])
+			if(subFolders!=null && subFolders.size()>0)
+			{
+				log.info(subFolders)
+				def layoutType = subFolders[0].folderType
+				subFolderLayout = formLayoutService.getLayout(layoutType.toLowerCase()); //'study');
+			}
+			
+		}
+
+		log.info "folder.id = " + folder.id
+		if(folder.fmFiles){log.info("Files = " + folder.fmFiles)}
+		
+		ExportTableNew table;
+		
+		//Keep this if you want to cache the grid data
+		//ExportTableNew table=(ExportTableNew)request.getSession().getAttribute("gridtable");
+		
+		if(table==null)
+		{
+			table=new ExportTableNew();
+		}
+
+		if(subFolders!=null && subFolders.size()>0)
+		{	
+			subFolderLayout.each {
+				table.putColumn("ident", new ExportColumn(it.column, it.displayName, "", "String"));
+			}
+		}
+		ExportRowNew newrow=new ExportRowNew();
+		newrow.put("ident", "foo.id");
+		newrow.put("name", "foo.name");
+		newrow.put("description", "foo.description");
+		table.putRow("somerow", newrow);
+
+		def jSONToReturn = table.toJSON_DataTables("").toString(5);
+		
+		request.getSession().setAttribute("gridtable", table);
+
+		
+		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:folder, subFolderInstances:subFolders, subFolderLayout: subFolderLayout, jSONForGrid: jSONToReturn])
+
+	}
+
+   
+	def editMetaData = 
+	{		
+		log.info "editMetaData called"
+		log.info "params = " + params
+	
+	//	FmFolder folder = new FmFolder("My Study") 
+	// def layout = formLayoutService.getLayout(folder.folderType.toLowerCase()); //'study');
+		
+		//log.info "** action: expDetail called!"
+		def expid = params.experimentId
+		
+		def exp
+		if (expid) {
+			exp = Experiment.get(expid)
+		}
+		
+		log.info "exp.id = " + exp.id
+
+		
+		def layout = formLayoutService.getLayout('study');
+		log.error "layout = " + layout
+		
+		def folder = exp
+		log.error "folder = " + folder
+		
+		// due to 1.37 grails plugin bug, defer to view, then template
+		// render(template:'/fmFolder/editMetaData', model:[folder:folder,layout:layout]);
+		render(view: "editMetaData", model:[folder:folder,layout:layout]);
+	}
+	
+	def updateMetaData =
+	{
+		log.info "updateMetaData called"
+		
+		// TODO
+		// We need to only save the meta data of the FmFolder
+
+		def fmFolderInstance = FmFolder.get(params.id)
+		if (fmFolderInstance) {
+			fmFolderInstance.properties = params
+			if (!fmFolderInstance.hasErrors() && fmFolderInstance.save(flush: true)) {
+				redirect(action: "show", id: fmFolderInstance.id)
+			}
+			else {
+				render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
+			}
+		}
+		else {
+			redirect(action: "list")
+		}
+	}
+
+	def subFolders = 
+	{
+		ExportTableNew table;
+		
+		//Keep this if you want to cache the grid data
+		//ExportTableNew table=(ExportTableNew)request.getSession().getAttribute("gridtable");
+		
+		if(table==null)
+		{
+			table=new ExportTableNew();
+		}
+
+		table.putColumn("ident", new ExportColumn("ident", "ID", "", "String", 50));
+		table.putColumn("name", new ExportColumn("name", "Name", "", "String", 50));
+		table.putColumn("description", new ExportColumn("description", "Description", "", "String", 50));
+		
+		ExportRowNew newrow=new ExportRowNew();
+		newrow.put("ident", "foo.id");
+		newrow.put("name", "foo.name");
+		newrow.put("description", "foo.description");
+		table.putRow("somerow", newrow);
+
+		def jSONToReturn = table.toJSON_DataTables("").toString(5);
+		
+		request.getSession().setAttribute("gridtable", table);
+		
+		[jSONForGrid: jSONToReturn]
+		
+		
+		
+	}
+
+def getStudyDetails = {
+	/*
+	Study access type	yes	Internal
+	Study phase	yes	Phase II
+	Study objective	yes	Biomarker discovery
+	Study biomarker type	yes	PD biomarker, Patient selection biomarker
+	Study compound/biologics/company	yes	SAR245408 (XL147)
+	Pathology	yes	endometrial cancer
+	Study design factors	yes	treatment
+	Number of followed subjects	yes	37
+	Organism	yes	Homo sapiens
+	Study design	yes	Interventional
+	Study date	yes	2009
+*/
+	}
+
+def getAssayDetails = {
+	/*
+	Biosource	yes	Endometrial tumor
+	Measurement type	yes	Histology
+	Technology	yes	H&E
+	Vendor	yes	none
+	Platform design	yes	none
+	Biomarkers studied	yes	none
+	Type of biomarkers studied	yes	none
+	Assay description	yes	Hematoxylin and Eosin Staining of Formalin Fixed Paraffin Embedded Tissues
+	*/
+	}
+
+def getAnalysisDetails = {
+}
+
+def getFdDetails = {
+}
+
 
 }
+
+
+
+
