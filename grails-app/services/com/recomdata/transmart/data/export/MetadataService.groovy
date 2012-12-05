@@ -124,18 +124,18 @@ class MetadataService {
 		def headers1 = ["Title",
 			"Date",
 			 "Owner",
-			  "Institution",
-			   "Country", 
+			  //"Institution",
+			   //"Country", 
 			   "Description",
-			   "Access Type", 
+			   //"Access Type", 
 			   "Phase", 
 			   "Objective", 
-			   "BioMarker Type", 
+			   //"BioMarker Type", 
 			   "Compound", 
 			   "Design Factor", 
 			   "Number of Patients",
 			   "Organism",
-			    "Target/Pathways"
+			    //"Target/Pathways"
 				 ]
 		return headers1;
 	}
@@ -146,34 +146,34 @@ class MetadataService {
 			data.add(exp.title)
 			data.add(exp.completionDate)
 			data.add(exp.studyOwner)
-			data.add(exp.institution)
-			data.add(exp.country)
+			//data.add(exp.institution)
+			//data.add(exp.country)
 			data.add(exp.description)
-			data.add(exp.accessType)
+			//data.add(exp.accessType)
 			data.add(exp.studyPhase)
 			data.add(exp.design)
-			data.add(exp.bioMarkerType)
+			//data.add(exp.bioMarkerType)
 			data.add(getCompoundNames(compounds))
 			data.add(exp.overallDesign)
 			data.add(exp.numberOfPatients)
 			data.add(getOrganismNames(organisms))
-			data.add(exp.target)
+			//data.add(exp.target)
 		}else{
 			data.add(exp.title)
 			data.add(exp.completionDate)
 			data.add(exp.primaryInvestigator)
-			data.add(exp.institution)
-			data.add(exp.country)
+			//data.add(exp.institution)
+			//data.add(exp.country)
 			data.add(exp.description)
-			data.add(exp.accessType)
+			//data.add(exp.accessType)
 			data.add("")
 			data.add(exp.design)
-			data.add(exp.bioMarkerType)
+			//data.add(exp.bioMarkerType)
 			data.add(getCompoundNames(compounds))
 			data.add(exp.overallDesign)
 			data.add("")
 			data.add(getOrganismNames(organisms))
-			data.add(exp.target)
+			//data.add(exp.target)
 		}
 		
 		return data as String[]
