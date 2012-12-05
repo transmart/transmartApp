@@ -40,7 +40,7 @@ class PostgresExportService {
 	def geneExpressionDataService
 	def i2b2HelperService
 	def i2b2ExportHelperService
-	def postgresDataCountService
+	def dataCountService
 	def jobResultsService
 	def asyncJobService
 	def quartzScheduler

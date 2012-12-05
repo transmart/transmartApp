@@ -93,7 +93,7 @@ import com.recomdata.i2b2.SurvivalConcepts;
  * @author $Author: mkapoor $
  * @version $Revision: 11303 $
  */
-class I2b2HelperService {
+class PostgresI2b2HelperService {
 	
 	static String GENE_PATTERN_WHITE_SPACE_DEFAULT = "0";
 	static String GENE_PATTERN_WHITE_SPACE_EMPTY = "";

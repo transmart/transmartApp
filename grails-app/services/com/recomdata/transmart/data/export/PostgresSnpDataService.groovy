@@ -37,6 +37,7 @@ import org.rosuda.REngine.Rserve.RConnection
 
 import org.transmart.searchapp.SearchKeyword;
 
+import com.recomdata.snp.SnpDataObject;
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 
 class PostgresSnpDataService {
@@ -586,7 +587,7 @@ class PostgresSnpDataService {
 				retrievedData = true
 				
 				//This data object holds onto our values.
-				PostgresSnpDataObject snpDataObject = new PostgresSnpDataObject();
+				SnpDataObject snpDataObject = new SnpDataObject();
 				
 				//snpDataObject.patientNum = row.PATIENT_ID
 				snpDataObject.patientNum = rs?.getString("SUBJECT_ID") 
@@ -734,18 +735,4 @@ class PostgresSnpDataService {
 	  }
 	  return s.toString();
   }
-}
-
-class PostgresSnpDataObject
-{
-	String patientNum
-	String probeName
-	String genotype
-	String copyNumber
-	String geneName
-	String searchKeywordId
-	String sample
-	String timepoint
-	String tissue
-	String gplId
 }

@@ -26,6 +26,19 @@ import org.springframework.security.web.DefaultRedirectStrategy
 
 import com.recomdata.transmart.data.export.ClinicalDataService;
 import com.recomdata.transmart.data.export.PostgresClinicalDataService;
+import com.recomdata.transmart.data.export.PostgresDataCountService;
+import com.recomdata.transmart.data.export.PostgresExportService;
+import com.recomdata.transmart.data.export.PostgresGeneExpressionDataService;
+import com.recomdata.transmart.data.export.PostgresSnpDataService;
+
+import I2b2HelperService;
+import PostgresI2b2HelperService;
+
+import org.springframework.context.ApplicationContext
+import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.apache.commons.dbcp.BasicDataSource
+import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean
+import grails.spring.BeanBuilder
 
 beans = {
 	dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder){
@@ -42,16 +55,36 @@ beans = {
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 	redirectStrategy(DefaultRedirectStrategy)
 	
-	if (isOracleConfigured())
+	/*if (isOracleConfigured())
 	{
-		log.info("Oracle configured")
+		log.debug("Oracle configured")
 		clinicalDataService(ClinicalDataService)
+		i2b2HelperService(I2b2HelperService)
 	}
 	else
-	{
-		log.info("Postgres configured")
-		clinicalDataService(PostgresClinicalDataService)
-	}
+	{*/
+		log.debug("Postgres configured")
+		dataCountService(PostgresDataCountService){bean ->
+			dataSource = ref('dataSource')
+		}
+		geneExpressionDataService(PostgresGeneExpressionDataService){bean ->
+			dataSource = ref('dataSource')
+		}
+		snpDataService(PostgresSnpDataService){bean ->
+			dataSource = ref('dataSource')
+		}
+		clinicalDataService(PostgresClinicalDataService){bean ->
+			dataSource = ref('dataSource')
+		}
+		i2b2HelperService(PostgresI2b2HelperService){bean->
+			dataSource = ref('dataSource')
+			sessionFactory = ref('sessionFactory')
+		}
+		exportService(PostgresExportService){bean->
+			grailsApplication = ref('grailsApplication')
+			dataCountService = ref('dataCountService')
+		}
+	/*}*/
 }
 
 def isOracleConfigured()
@@ -73,7 +106,7 @@ def isOracleConfigured()
 
 def configurationLocations()
 {
-	def configLocations = ["/etc/transmart", "/usr/local/transmart"]
+	def configLocations = ["/etc/transmart", "/usr/local/transmart", "/home/mkapoor/.grails/transmartConfig"]
 	def env = System.getenv()
 	def configOverride = env['TRANSMART_CONFIG']
 	def locations

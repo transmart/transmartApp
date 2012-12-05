@@ -37,6 +37,7 @@ import org.rosuda.REngine.Rserve.RConnection
 
 import org.transmart.searchapp.SearchKeyword;
 
+import com.recomdata.snp.SnpDataObject;
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 
 class SnpDataService {
@@ -733,18 +734,4 @@ class SnpDataService {
 	  }
 	  return s.toString();
   }
-}
-
-class SnpDataObject
-{
-	String patientNum
-	String probeName
-	String genotype
-	String copyNumber
-	String geneName
-	String searchKeywordId
-	String sample
-	String timepoint
-	String tissue
-	String gplId
 }
