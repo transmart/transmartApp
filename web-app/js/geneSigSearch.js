@@ -16,7 +16,7 @@ function initDataTables(){
 	
 	//Inserting the select action drop down into the datatables managed div DOM element
 	//Would be ideal if datatables could manage custom elements like dropdowns. Can it?
-	var selectActionHtml='<select id="geneListAction" style="font-size: 10px;" onchange="handleActionItem(this);" onclick="populateActionSelection(this);"><option value="">-- Select Action --</option></select>';
+	var selectActionHtml='<select id="geneListAction" style="font-size: 10px;" onchange="handleActionItem(this);" onmousedown="populateActionSelection(this);"><option value="">-- Select Action --</option></select>';
 	
 	jQuery("#mySignatures_filter").prepend(selectActionHtml);
 }
@@ -177,6 +177,12 @@ function populateActionSelection(dropdown){
 		actionList.append(jQuery("<option>").val("concat").text("Concatenate"));
 		actionList.append(jQuery("<option>").val("intersection").text("Intersect"));
 		//actionList.append(jQuery("<option>").val("unique").text("Make Unique"));
+	} else if(selectedGeneLists.length==0){
+		//clear out options.
+		actionList.html('');
+		
+		//add default option back in.
+		actionList.append(jQuery("<option>").val("").text("-- Select Action --"));
 	}
 
 }
