@@ -1,5 +1,6 @@
 var geneListsTable;
 var selectedGeneLists;
+var selectedAction="";
 
 /**
  * Entry function into the gene lists list view.
@@ -16,9 +17,32 @@ function initDataTables(){
 	
 	//Inserting the select action drop down into the datatables managed div DOM element
 	//Would be ideal if datatables could manage custom elements like dropdowns. Can it?
-	var selectActionHtml='<select id="geneListAction" style="font-size: 10px;" onchange="handleActionItem(this);" onmousedown="populateActionSelection(this);"><option value="">-- Select Action --</option></select>';
+	var selectActionHtml='<select id="geneListAction" style="font-size: 10px;" onchange="handleMouseDownOnAction(this);" onmousedown="handleMouseDownOnAction(this);"><option value="">-- Select Action --</option></select>';
 	
 	jQuery("#mySignatures_filter").prepend(selectActionHtml);
+}
+
+/**
+ * On selecting a value from this dropdown
+ * 	On Firefox: onmousedown is triggered. onchange is not triggered.
+ * 		This method captures the mousedown event and if the input has changed, calls the correct function to handle that input.
+ * 	On Chrome: only the onchange event is triggered
+ * 		This method captures the change event and calls the correct function to handle the event.
+ * 
+ * On clicking on the unopened select box both browsers display the same behavior (onmousedown is triggered)
+ * @param actionItem
+ */
+function handleMouseDownOnAction(actionItem){
+	var newSelectedAction = actionItem.value;
+	if (newSelectedAction!=selectedAction){
+		selectedAction = newSelectedAction;
+		console.log("I have changed");
+		handleActionItem(actionItem);
+	}else{
+		selectedAction = "";
+		console.log("I have not changed");
+		populateActionSelection(actionItem);
+	}
 }
 
 function handleActionItem(actionItem) {
