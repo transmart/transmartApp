@@ -1,6 +1,8 @@
 
+<div style="padding:10px;padding-top:0;">
 <g:if test="${favorites.size()==0}">
-   You have no ${title}.
+	<h2 id="homeFavoritesTitle_${id}">${title}</h2>
+   <div class='center-container'><p>You have no ${title}.</p></div>
    <br />
 </g:if>
 <g:else>
@@ -34,3 +36,4 @@
     jQuery('#homefavoritesTable').find('tr:even').css({'background-color':'#efefef'})
     .end().find('tr:odd').css({'background-color':'#fff'});
 </script>			
+</div>
