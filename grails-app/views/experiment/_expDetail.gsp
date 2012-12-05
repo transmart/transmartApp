@@ -39,6 +39,16 @@ var assayCount = 3
 
 <div style="margin:10px;padding:10px;">
 <h3 class="rdc-h3">${experimentInstance?.title}</h3>
+<div style="line-height:14px;font-family:arial,​tahoma,​helvetica,​sans-serif; font-size: 12px;">
+ <g:if test="${experimentInstance?.description.length() > 325000}">
+                       ${(experimentInstance?.description).substring(0,324000)}&nbsp;&nbsp;
+                       <a href=# >...See more</a>
+                       </g:if>
+                       <g:else>
+                        ${experimentInstance?.description}
+                        </g:else></div>
+<div style="height:20px;"></div>
+
 <table class="details-table">
             <thead>
                 <tr>                
@@ -47,12 +57,13 @@ var assayCount = 3
                             params="[eleId:overlayDiv, experimentId:experimentInstance.id]" 
                             before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
                       <img align="right" src="${resource(dir:'images', file:'pencil.png')}"/></g:remoteLink>
-                      </th>
+                    </th>
                 </tr>
             </thead>
             
 	<tbody>
 		<g:each in="${layout}" status="i" var="layoutRow">
+           <g:if test="${layoutRow.display}">
 			<tr class='details-row'> <!-- class="${(i % 2) == 0 ? 'odd' : 'even'}"> -->
 				<td valign="top" align="right" class="columnname" width="20%">${layoutRow.displayName}</td>
 			
@@ -105,6 +116,7 @@ var assayCount = 3
 					</g:else>
 				</td>
 			</tr>
+			</g:if>
 		</g:each>
 	</tbody>
 	            <thead>
