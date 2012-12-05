@@ -293,8 +293,12 @@ public class GeneSignatureService {
 		log.info "associated GeneSignature id "+gs.id
 
 		// delete tagged items
+		delItems.each {
+			GeneSignatureItem gsi = GeneSignatureItem.get(it)
+			gs.geneSigItems.remove(gsi)
+		}
 		GeneSignatureItem.executeUpdate("delete GeneSignatureItem i where i.id IN ("+inClause+") and i.geneSignature.id = "+gs.id)
-
+		gs.save(flush : true)
 		// load fresh gs and modify
 		gs = GeneSignature.get(gs.id)
 		gs.modifiedByAuthUser = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
