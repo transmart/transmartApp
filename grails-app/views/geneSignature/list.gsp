@@ -59,7 +59,6 @@
 				var logoutURL = "${createLink([controller:'logout'])}";
 			    var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
 		        addTimeoutDialog(heartbeatURL, logoutURL);
-		        console.log("applying datatables");
 				initDataTables();
 			});
 			
