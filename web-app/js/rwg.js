@@ -30,6 +30,10 @@ var selectedAnalyses = [];
 //cross trial analysis selected keywords
 var xtSelectedKeywords = [];
 
+var uniqueGeneChartId = 0;   // sequence to give unique identifiers to the tooltips used in the gene chart
+var gcTooltips = new Array;  // gene chart tooltips
+
+
 //create an ajaxmanager named rwgAJAXManager
 //this will handle all ajax calls on this page and prevent too many 
 //requests from hitting the server at once
@@ -3552,8 +3556,6 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id, placeholder){
     .attr("y2", function() { return y2(1.3); })
     .attr("class", 'pvalue-cutoff-line');
 
-
-
 svg.selectAll("text")
        .data(data)
        .enter()
@@ -3565,7 +3567,21 @@ svg.selectAll("text")
        .attr("y", function(d) { return height +10 })
        .attr("font-family", "sans-serif")
        .attr("font-size", "10px")
-       .attr("fill", "black");
+       .attr("fill", "black")
+       .attr("class", "geneChartTooltip")
+	   .attr("id", function(d, i) {
+		    	var id = "gcTitle" + uniqueGeneChartId++;   // id here will match id in tooltip array
+				var tooltip = 
+		    				   "<table>" +
+		    				   "<tr><td width='100px'><b>Index</b></td><td>" + (i + 1) + "</td></tr>" +
+		    				   "<tr><td><b>Study</b></td><td>" + selectedAnalyses[i].studyID + "</td></tr>" +
+		    				   "<tr><td ><b>Analysis</b></td><td>" + selectedAnalyses[i].title + "</td></tr>" 
+		    				   "</table>";
+		    	
+		    	gcTooltips[id] = tooltip;
+		    	return id;
+	  })		
+    ;
 
 	svg.append("line")
 		.attr("x1", 50)
@@ -3628,8 +3644,46 @@ svg.selectAll("text")
     	jQuery('#'+divID).unmask();//remove loading screen
 	}
     
-    
+    registerGeneChartTooltipEvents();
+   
 }
+
+this.registerGeneChartTooltipEvents = function(){
+	// create the method for the hover event for tooltips on the favorites for faceted searches
+	jQuery(".geneChartTooltip").hoverIntent(
+		{
+			over:function(e){
+				//var elementId = e.currentTarget.id;
+				showGeneChartTooltip(e);
+			},
+			out: function(){
+				jQuery("#geneChartTooltip").remove();
+			},
+			interval:200
+		});
+	
+};
+
+function showGeneChartTooltip(e)  {
+
+	var xOffset = 20;
+	var yOffset = 20;		
+	
+	// create the div tag which will hold tooltip
+	jQuery("body").append("<div id='geneChartTooltip'></div>");
+	
+	var tooltip = gcTooltips[e.currentTarget.id];
+	
+	jQuery("#geneChartTooltip")
+		.css("z-index", 10000)
+		.html(tooltip)
+		.css("left",(e.pageX + yOffset) + "px")
+		.css("top",(e.pageY - xOffset) + "px")
+		.fadeIn(200)
+		;
+	
+}
+
 
 /*
 jQuery.ui.dialog.prototype._makeDraggable = function() { 
