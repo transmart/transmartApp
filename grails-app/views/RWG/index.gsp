@@ -239,8 +239,8 @@
 		</div>
 		
 		<div id="home-div"></div>
-        <div id="results-div"></div>
-        <div id="cross-trial-div"></div>
+        <div id="results-div" style="display:none;"></div>
+        <div id="cross-trial-div" style="display:none;"></div>
 
          	
 		</div>

@@ -1004,7 +1004,6 @@ border-top: 1px solid #CCC;
 
 #xtSummaryTable{
 	width:300px;
-	height:250px;
 }
 
 
@@ -1208,7 +1207,7 @@ stroke-opacity: 33%;
 width: 45%;
 border: 1px solid #CCC;
 padding: 0px 10px 10px 10px;
-background-color: #F0F0F0;
+background-color: #F7F7F7;
 border-left: 0;
 display: inline-block;
 border-right: 0;
@@ -1219,7 +1218,7 @@ min-width:250px;
 
 .CTAtable{
 	border-collapse: collapse;
-	border: 1px solid #B1B1B1;
+	border: 1px solid #ccc;
 }
 
 .CTAtable td, th{
@@ -1229,10 +1228,18 @@ min-width:250px;
 }
 
 .CTAtable th{
-	background: #E6E6E6;
+	background: #D1E3F0;
 	color: #2e2e2e;
 	font-weight: bold;
 	padding:2px;
+}
+
+.CTAtable .tr-even{
+	background-color:white;
+}
+
+.CTAtable .tr-odd{
+	background-color:#EFEFEF;
 }
 
 
