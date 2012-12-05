@@ -1157,15 +1157,13 @@ def ajaxGetPathwaySearchBoxData = {
 	render params.callback+"("+(result as JSON)+")"
 }
 
-def gplogin = {
-	def gpEnabled = grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern;
-  if('true'==gpEnabled){
- return [userName : springSecurityService.getPrincipal().username]
-  }else{
-  render(view:'nogp')
-
-  }
-}
+	/**
+	 * Just return the username as this should be setup in Gene Pattern
+	 * If Gene Pattern is not enabled, the menu should not show at all
+	 */
+	def gplogin = {
+		return [userName : springSecurityService.getPrincipal().username]		
+	}
 	
 
 	protected String getGenePatternFileDirName() {

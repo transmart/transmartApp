@@ -128,19 +128,21 @@ function prepareColumnModel(store, selectedCohortData) {
 function prepareOutString(files, subset, dataTypeId, metadataExists) {
 	var outStr = '';
 	var dataCountExists = false;
-	files.each(function (file) {
+	for (var i=0; i<files.length; i++)  {
+		var file = files[i];
 		var dataCount = file.fileDataCount;
 		if (dataCount >= 1) {
 			if (!dataCountExists) dataCountExists = true;
 			outStr += createSelectBoxHtml(file, subset, dataTypeId)
 		} else {
 			if (file.platforms){
-				file.platforms.each(function (platform){
+				for (var j=0; j<file.platforms.length; j++){
+					var platform = file.platforms[j];
 					if(platform.fileDataCount>0){
 						dataCountExists=true;
 						outStr += createSelectBoxHtml(file, subset, dataTypeId, platform)
 					}
-				});
+				};
 			}else{
 				outStr += file.dataFormat + ' is not available. ';
 				//outStr += (file.fileDataCount != null) ? file.fileDataCount : '0';
@@ -149,7 +151,7 @@ function prepareOutString(files, subset, dataTypeId, metadataExists) {
 			}
 		}
 		
-	});
+	};
 	
 	if (dataCountExists && metadataExists)
 		outStr += 'Metadata will be downloaded in a separate file.';
