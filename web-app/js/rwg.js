@@ -2336,6 +2336,9 @@ function loadSearch(searchType, id)  {
 					var analyses = response['analyses'] 
 					var analysisCount = response['analysisCount'] 
 					var analysesNotFound = response['analysesNotFound'] 
+					
+				    jQuery("#xtNoHeatmapsMsg").show();
+					jQuery("#xtNoGenesMsg").show();
 
 					xtSelectedKeywords = [];					
 					for (var kw in searchTerms)  {
@@ -3218,12 +3221,12 @@ function getCrossTrialSummaryTableStats()
 			
 			//alert(response[key]['bio_marker_id']);
 			 var tbl_body = "<div><table style='width:500px' id='CTAsummaryTable' class='CTAtable'>";
-			 tbl_body+="<tr><th>Analysis ID</th><th>Genes Up Regulated</th><th>Genes Down Regulated</th><th>Total Genes</th></tr>";
+			 tbl_body+="<tr><th style='text-align:center'>Analysis ID</th style='text-align:center'><th style='text-align:center'>Genes Up Regulated</th><th style='text-align:center'>Genes Down Regulated</th><th style='text-align:center'>Total Genes</th></tr>";
 			
 			 jQuery.each(data, function() {
 			        var tbl_row = "";
 			        jQuery.each(this, function(k , v) {
-			            tbl_row += "<td>"+v+"</td>";
+			            tbl_row += "<td style='text-align:center'>"+v+"</td>";
 			        })
 			        tbl_body += "<tr>"+tbl_row+"</tr>";                 
 			    })
@@ -3284,7 +3287,7 @@ function updateCrossTrialGeneCharts(){
 	jQuery('#xtSummaryChartArea').html('');
 	
 	//cleart the heatmaps
-	jQuery('#xtHeatmapTab').html('');
+	jQuery('#xtCTAHeatmapArea').html('');
 	
 	jQuery(xtSelectedKeywords).each(function (index, value){
 		
@@ -3330,9 +3333,9 @@ function closeCTAheatmap(divID, geneID){
 	
 	setSaveXTFilterLink();
 	setClearXTLink();	
+	
 
-
-	if(xtSelectedKeywords.length==0){
+	if(xtSelectedKeywords.filter(function(el){return el.categoryId != 'GENE';}).length==0){
 		jQuery('#xtNoHeatmapsMsg').fadeIn(200);
 	}
 		
@@ -3358,7 +3361,7 @@ function closeXTGeneChart(divID, geneID){
 	setSaveXTFilterLink();
 	setClearXTLink();		
 	
-	if(xtSelectedKeywords.length==0){
+	if(xtSelectedKeywords.filter(function(el){return el.categoryId == 'GENE';}).length==0){
 		jQuery('#xtNoGenesMsg').fadeIn(200);
 	}
 	
@@ -3371,7 +3374,7 @@ function clearAllXTSearchTerms(){
 	jQuery('#xtSummaryChartArea').html('');
 	
 	//Clear the heatmaps
-	jQuery('#xtHeatmapTab').html('');
+	jQuery('#xtCTAHeatmapArea').html('');
 	
 	//reset the array
 	xtSelectedKeywords = [];
@@ -3384,6 +3387,7 @@ function clearAllXTSearchTerms(){
 	
 	//show the empty gene msg box
 	jQuery('#xtNoGenesMsg').show();
+	jQuery('#xtNoHeatmapsMsg').show();
 	
 	setClearXTLink();
 	setSaveXTFilterLink();
@@ -3964,10 +3968,10 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page, keyword) {
     jQuery('#'+divID).remove();
     
     //remove the "empty" msg if it exists:
-    jQuery("#xtNoHeatmapMsg").remove();
+    jQuery("#xtNoHeatmapsMsg").fadeOut(200);
     
     //create div to hold svg chart
-    jQuery("#xtHeatmapTab").prepend("<div id='"+divID +"' class='xtHeatmap'></div>");
+    jQuery("#xtCTAHeatmapArea").prepend("<div id='"+divID +"' class='xtHeatmap'></div>");
     
     //insert the paginator div inside the heatmapHolder div
     jQuery("#"+divID).append("<div id='"+divPaginatorID +"' class='pagination'></div>");
