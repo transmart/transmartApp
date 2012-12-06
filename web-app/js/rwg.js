@@ -3806,8 +3806,16 @@ function getCrossTrialGeneSummary(search_keyword_id)
 				}
 				 else {
 					 preferred_pvalue = result[0].preferred_pvalue;
-					 if(preferred_pvalue<.00001){preferred_pvalue=0.00001};
-					 pvalueDataset[index]= -1 * (Math.log(preferred_pvalue) / Math.log(10)); //calculate the -log10(p-value)
+					 if (preferred_pvalue == null)  {
+						 preferred_pvalue = '';
+						 pvalueDataset[index] = '';
+					 }
+					 else {
+						 if(preferred_pvalue<.00001) {					 
+							 preferred_pvalue=0.00001
+						 }
+						 pvalueDataset[index]= -1 * (Math.log(preferred_pvalue) / Math.log(10)); //calculate the -log10(p-value)
+					 };
 					 pvalueOriginalDataset[index]=preferred_pvalue;
 				 }
 				
