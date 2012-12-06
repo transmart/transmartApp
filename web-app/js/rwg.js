@@ -3453,7 +3453,22 @@ function displayxtAnalysesList(){
 
 
 
-function createCrossTrialSummaryChart(data, pdata, keyword_id, placeholder){
+function createCrossTrialSummaryChart(data, pdata, pdataOriginal, keyword_id, placeholder){
+
+	// format data for use in tooltips
+	var formattedData = [];
+	for (var i=0; i<data.length; i++)  {
+		var fc = data[i];
+		var log10pv = pdata[i];
+		var pv = pdataOriginal[i];
+		
+		fc = (fc == '') ? '' : fc.toFixed(5);
+		log10pv = (log10pv == '') ? '' : log10pv.toFixed(5);
+		pv = (pv == '') ? '' : pv.toFixed(5);
+
+		formattedData[i] = {foldChange:fc, log10pvalue:log10pv, pvalue:pv}
+	}
+	
 	
 	//use jsfiddle to test: http://jsfiddle.net/HZ9dg/6/
 	
@@ -3531,12 +3546,29 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id, placeholder){
     svg.selectAll(".bar")
         .data(data)
       .enter().append("rect")
-        .attr("class", function(d) { return d < 0 ? "bar negative" : "bar positive"; })
+        .attr("class", function(d) { return d < 0 ? "geneChartTooltip bar negative" : "geneChartTooltip bar positive"; })
                         //5 is the left padding, 10 is the padding between each bar
         .attr("x", function(d,i) { return 5 + i * (bar_width+10); })
         .attr("y", function(d,i) { return y(Math.max(0, d)); })
         .attr("height", function(d) { return Math.abs(y(0) - y(0-d));})
-        .attr("width", bar_width);
+        .attr("width", bar_width)
+	    .attr("id", function(d, i) {
+		    	var id = "gcBarTooltip" + uniqueGeneChartId++;   // id here will match id in tooltip array
+				var tooltip = 
+		    				   "<table>" +
+		    				   "<tr><td width='100px'><b>Index</b></td><td>" + (i + 1) + "</td></tr>" +
+		    				   "<tr><td><b>Study</b></td><td>" + selectedAnalyses[i].studyID + "</td></tr>" +
+		    				   "<tr><td ><b>Analysis</b></td><td>" + selectedAnalyses[i].title + "</td></tr>" + 
+		    				   "<tr><td ><b>-log10(pvalue)</b></td><td>" + formattedData[i].log10pvalue + "</td></tr>"  +
+		    				   "<tr><td ><b>pvalue</b></td><td>" + formattedData[i].pvalue + "</td></tr>"  +
+		    				   "<tr><td ><b>Fold Change</b></td><td>" + formattedData[i].foldChange + "</td></tr>" 
+		    				   "</table>";
+		    	
+		    	gcTooltips[id] = tooltip;
+		    	return id;
+	  })		
+    ;
+        ;
 
 
     svg.selectAll(".bar2")
@@ -3546,7 +3578,24 @@ function createCrossTrialSummaryChart(data, pdata, keyword_id, placeholder){
         .attr("x", function(d,i) { return bar_width/2 +2 + i * (bar_width+10); })
         .attr("y", function(d,i) { return y2(Math.max(0, d)); })
         .attr("height", function(d) { return Math.abs(y2(0) - y2(0-d)); })
-        .attr("width", 4);
+        .attr("width", 4)
+        .attr("class", "geneChartTooltip")
+	    .attr("id", function(d, i) {
+		    	var id = "gcBar2Tooltip" + uniqueGeneChartId++;   // id here will match id in tooltip array
+				var tooltip = 
+		    				   "<table>" +
+		    				   "<tr><td width='100px'><b>Index</b></td><td>" + (i + 1) + "</td></tr>" +
+		    				   "<tr><td><b>Study</b></td><td>" + selectedAnalyses[i].studyID + "</td></tr>" +
+		    				   "<tr><td ><b>Analysis</b></td><td>" + selectedAnalyses[i].title + "</td></tr>" + 
+		    				   "<tr><td ><b>-log10(pvalue)</b></td><td>" + formattedData[i].log10pvalue + "</td></tr>"  +
+		    				   "<tr><td ><b>pvalue</b></td><td>" + formattedData[i].pvalue + "</td></tr>"  +
+		    				   "<tr><td ><b>Fold Change</b></td><td>" + formattedData[i].foldChange + "</td></tr>" 
+		    				   "</table>";
+		    	
+		    	gcTooltips[id] = tooltip;
+		    	return id;
+	  })		
+        ;
 
     //line to show the p-value < 0.05 cut-off
     svg.append("svg:line")
@@ -3696,7 +3745,8 @@ function getCrossTrialGeneSummary(search_keyword_id)
 {
 	
 	var foldchangeDataset = [];
-	var pvalueDataset =[];
+	var pvalueDataset =[];  // - log10 pvalue
+	var pvalueOriginalDataset =[];  // pvalues
 	var analysisList = '';
 	
 	//hide the "empty" gene message
@@ -3710,6 +3760,7 @@ function getCrossTrialGeneSummary(search_keyword_id)
 		//add place holder data so that when the chart is drawn without data, it is the correct size
 		foldchangeDataset.push('');
 		pvalueDataset.push('');
+		pvalueOriginalDataset.push('');
 		
 		analysisList += selectedAnalyses[i].id;
 		
@@ -3720,7 +3771,7 @@ function getCrossTrialGeneSummary(search_keyword_id)
 	}
 	
 	//do this first, without data, to create loading place holder while getting data
-	createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, search_keyword_id, true);
+	createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, pvalueOriginalDataset, search_keyword_id, true);
 
 	rwgAJAXManager.add({
 		url:getCrossTrialBioMarkerSummaryURL,
@@ -3751,18 +3802,20 @@ function getCrossTrialGeneSummary(search_keyword_id)
 				if(result[0] == null){
 					preferred_pvalue = '';
 					pvalueDataset[index]=preferred_pvalue;
+					pvalueOriginalDataset[index]=preferred_pvalue;
 				}
 				 else {
 					 preferred_pvalue = result[0].preferred_pvalue;
 					 if(preferred_pvalue<.00001){preferred_pvalue=0.00001};
 					 pvalueDataset[index]= -1 * (Math.log(preferred_pvalue) / Math.log(10)); //calculate the -log10(p-value)
+					 pvalueOriginalDataset[index]=preferred_pvalue;
 				 }
 				
 			});
 			
 
 			//Draw chart
-			createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, search_keyword_id, false);
+			createCrossTrialSummaryChart(foldchangeDataset,pvalueDataset, pvalueOriginalDataset, search_keyword_id, false);
 			
 		   
 		}
