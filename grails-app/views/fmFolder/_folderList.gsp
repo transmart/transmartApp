@@ -16,11 +16,6 @@
   
  
 -->
-
-<g:if test="${!layout}">
-    <i>No columns have been set up for the subfolder list</i>
-</g:if>
-
 <div class="list">
     <table class="default">
     <thead>
