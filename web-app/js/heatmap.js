@@ -857,6 +857,7 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 		    })
 		.attr("y", -2)
 		.attr("text-anchor", "middle")
+		.attr("cursor","default")
 	    .attr("class", "heatmapTooltip")
 	    .attr("id", function(d, i) {
 	    	var id = "hmHeader" + uniqueHeatmapId++;   // id here will match id in tooltip array

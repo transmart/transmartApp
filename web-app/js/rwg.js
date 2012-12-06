@@ -3617,6 +3617,7 @@ svg.selectAll("text")
        .attr("font-family", "sans-serif")
        .attr("font-size", "10px")
        .attr("fill", "black")
+       .attr("cursor","default")
        .attr("class", "geneChartTooltip")
 	   .attr("id", function(d, i) {
 		    	var id = "gcTitle" + uniqueGeneChartId++;   // id here will match id in tooltip array
