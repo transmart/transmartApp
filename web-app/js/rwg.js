@@ -3720,8 +3720,8 @@ this.registerGeneChartTooltipEvents = function(){
 
 function showGeneChartTooltip(e)  {
 
-	var xOffset = 20;
-	var yOffset = 20;		
+	var xOffset;
+	var yOffset;		
 	
 	// create the div tag which will hold tooltip
 	jQuery("body").append("<div id='geneChartTooltip'></div>");
@@ -3731,10 +3731,18 @@ function showGeneChartTooltip(e)  {
 	jQuery("#geneChartTooltip")
 		.css("z-index", 10000)
 		.html(tooltip)
-		.css("left",(e.pageX + yOffset) + "px")
-		.css("top",(e.pageY - xOffset) + "px")
 		.fadeIn(200)
 		;
+
+	var offsets = getTooltipOffset(e, "geneChartTooltip");	
+	
+	xOffset = offsets.xOffset;
+	yOffset = offsets.yOffset;
+	
+	jQuery("#geneChartTooltip")
+	.css("left",(e.pageX + xOffset) + "px")
+	.css("top",(e.pageY - yOffset) + "px")
+	;
 	
 }
 
