@@ -34,6 +34,7 @@
  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.ajaxmanager.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
+  		<script type="text/javascript" src="${resource(dir:'js', file:'commontooltip.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'searchTooltip.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.hoverIntent.min.js')}"></script>  
