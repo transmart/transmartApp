@@ -2059,7 +2059,7 @@ function saveSearch(searchType)  {
 		    	  if (response['success'])  {
 		    		    jQuery('#save-modal-content-main').fadeOut(200, function(){
 		    		    	jQuery("#modal-status-message").fadeIn(250).html(response['message']);
-					    	jQuery('#modal-status-message').delay(1200).fadeOut(800, function() {
+					    	jQuery('#modal-status-message').delay(800).fadeOut(400, function() {
 				            	jQuery.modal.close();
 				    		  });	
 		    		    });
@@ -3985,7 +3985,7 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
 
 	element.paging(numberOfPages, { 
 	    perpage:1, 
-      format:"[<(qq -) ncnnn (- pp)>]",
+      format:"[<(qq -) n (- pp)>]",
       onSelect: function (page) { 
       	jQuery("#"+heatmapHolderDivID).mask("Loading...");
 
