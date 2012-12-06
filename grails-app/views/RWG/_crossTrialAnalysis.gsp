@@ -34,7 +34,7 @@
 	<div id ="xtSearch">
 		Search for genes, pathways, or gene signatures: <input id="xtSearch-ac"/></input> 
 		<div style="float:right">
-			<a href="#" id="save-modal-xt" class='title-link-inactive'><span>Save Selection</span></a> | <a href="#" id='load-modal-xt' class='title-link-active' onclick="openLoadSearchDialog(true);"}>Load Analysis</a> | <a href="#" id="clear-xt" class='title-link-inactive' onclick="clearAllSelectedAnalyses();">Clear</a>
+			<a href="#" id="save-modal-xt" class='title-link-inactive'><span>Save Selection</span></a> | <a href="#" id='load-modal-xt' class='title-link-active' onclick="openLoadSearchDialog(true);"}>Load Analysis</a> | <a href="#" id="clear-xt" class='title-link-inactive' onclick="clearAllXTSearchTerms();">Clear</a>
 		</div>
 	</div>
 	
@@ -70,8 +70,9 @@
 		
 		<!-- Heatmap Tab Content -->
 		<div id ="xtHeatmapTab">
+			<div id="xtCTAHeatmapArea"></div>
 		<!-- 	<a href="#" onclick="javascript:exportHeatmapCTAImage();">Export Heatmap Image</a> -->
-			<div id="xtNoHeatmapMsg" class="xtInfoBox">
+			<div id="xtNoHeatmapsMsg" class="xtInfoBox">
 			<p>No gene signatures or pathways are selected.</p><br/><p> Use the search box above to view gene lists, gene signatures, or pathways.</p></div>
 		</div>
 		
