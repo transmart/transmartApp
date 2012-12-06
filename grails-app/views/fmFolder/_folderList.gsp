@@ -20,8 +20,8 @@
     <table class="default">
     <thead>
         <tr>    
-        <g:each in="${subFolderLayout}" var="layoutRow">                
-            <th>${layoutRow.displayName}</th>   
+        <g:each in="${subFolderLayout}" var="slayoutRow">                
+            <th>${slayoutRow.displayName}</th>   
         </g:each>                
         </tr>
     </thead>
