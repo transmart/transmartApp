@@ -1,5 +1,4 @@
 .pie-chart {
-  background-color: #ffffff;
   /*border: 1px solid gray;*/
   font: 10px sans-serif;
   height: 250px;
@@ -13,7 +12,7 @@
   font-weight: bold;
 }
 .pie-chart .units{
-  fill: gray;
+  fill: #555;
   font-size: 10px;
 }
 .pie-chart .label{

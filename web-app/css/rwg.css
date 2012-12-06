@@ -274,7 +274,7 @@ padding: 12px;
     position:absolute;
     height: 20px;
     left: 276px;
-    margin-top: 34px;
+    margin-top: 30px;
     width: 20px;
 }
 
@@ -1004,7 +1004,6 @@ border-top: 1px solid #CCC;
 
 #xtSummaryTable{
 	width:300px;
-	height:250px;
 }
 
 
@@ -1094,10 +1093,14 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 
 
 .xtHeatmap{
-	display:inline-block;
-	min-height:250px;
-	padding:3px;
-	background-color:#fff;
+display: inline-block;
+min-height: 250px;
+padding: 3px;
+background-color: white;
+vertical-align: top;
+border: 1px solid #EFEFEF;
+margin: 4px;
+margin-top: 0;
 }
 
 .xtHeatmap:hover{
@@ -1120,12 +1123,15 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 	margin:auto;
 	margin-top:15px;
 	margin-bottom:20px;
-	width:460px;
+	width:500px;
 	color: #333;
 	font: 12px verdana, arial, helvetica, sans-serif;
 }
 
-
+#xtBoxplotHolder{
+	background-color:#fff;
+	
+}
 
 /*** XT Summary Bar Plots ***/
 
@@ -1205,21 +1211,21 @@ stroke-opacity: 33%;
 /*** Home Screen ***/
 
 .home-content-box{
-width: 45%;
+width: 100%;
 border: 1px solid #CCC;
-padding: 0px 10px 10px 10px;
-background-color: #F0F0F0;
+padding: 0px;
+background-color: #F7F7F7;
 border-left: 0;
 display: inline-block;
 border-right: 0;
 vertical-align: top;
-min-height: 200px;
+height: 100%;
 min-width:250px;
 }
 
 .CTAtable{
 	border-collapse: collapse;
-	border: 1px solid #B1B1B1;
+	border: 1px solid #ccc;
 }
 
 .CTAtable td, th{
@@ -1229,10 +1235,45 @@ min-width:250px;
 }
 
 .CTAtable th{
-	background: #E6E6E6;
+	background: #D1E3F0;
 	color: #2e2e2e;
 	font-weight: bold;
 	padding:2px;
+}
+
+.CTAtable .tr-even{
+	background-color:white;
+}
+
+.CTAtable .tr-odd{
+	background-color:#EFEFEF;
+}
+
+
+.center-container{
+position: absolute;
+width: 45%;
+height: 100px;
+display: table;
+}
+
+.center-container p{
+display: table-cell;
+vertical-align: middle;
+text-align: center;
+font-weight:bold;
+}
+
+#summary-chart-holder{
+	border: 1px solid #D5D5D5;
+margin-bottom: 7px;
+padding-left: 10px;
+margin-right: 5px;
+border-left: 0;
+border-right: 0;
+background-color: #F7F7F7;
+overflow:auto;
+max-height:500px;
 }
 
 

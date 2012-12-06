@@ -20,6 +20,7 @@
 
         <link rel="stylesheet" href="${resource(dir:'css', file:'searchTooltip.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'heatmapTooltip.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'geneChartTooltip.css')}"></link>
                                 
         <!-- jQuery JS libraries -->
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
@@ -239,8 +240,8 @@
 		</div>
 		
 		<div id="home-div"></div>
-        <div id="results-div"></div>
-        <div id="cross-trial-div"></div>
+        <div id="results-div" style="display:none;"></div>
+        <div id="cross-trial-div" style="display:none;"></div>
 
          	
 		</div>

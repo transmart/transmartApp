@@ -685,8 +685,8 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	wTotal = Math.max(minWidth, hmWidth)
 
 	// determine the width of the title
-	var titleFontSize = 10;	
-	var titleFont = titleFontSize + "px sans-serif"; 
+	var titleFontSize = 11;	
+	var titleFont = "bold " + titleFontSize + "px sans-serif"; 
 	var hTitle = 25;  // leave at least enough room for at 2 lines of text
 	var actualTitleHeight = getTextFlowHeight(keywordTitle, hmWidth, titleFont, titleFontSize);
 	hTitle = Math.max(hTitle, actualTitleHeight)
@@ -751,7 +751,7 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	    .attr("id", hmTitleId)
 		.attr("x", titleX)
 		.attr("y", titleFontSize)
-		.style("fill", "#065B96")
+		.style("fill", "#111")
 	    .style("font", titleFont)
 		.attr("text-anchor", titleAnchor);		
 
@@ -832,7 +832,13 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	        	return "#FFFF00";
 	        } 	
 	        else  {
-	        	return colorScale(d.foldChange);
+	        	//color the scale using a combination of the p-value (-log10 transformed) and the fold change
+	        	var pvalue=d.preferredPValue;
+	        	
+	        	if(pvalue == null){pvalue=1}//for the calculation below, use 1 for the pvalue if it is null
+	        		else if(pvalue<0.00001){pvalue=0.00001;} //use .00001 as the smallest allowed p-value
+	        	
+	        	return colorScale(d.foldChange * (-Math.log(pvalue) / Math.LN10));
 	        }
 	      
 	    })
@@ -853,6 +859,7 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 		    })
 		.attr("y", -2)
 		.attr("text-anchor", "middle")
+		.attr("cursor","default")
 	    .attr("class", "heatmapTooltip")
 	    .attr("id", function(d, i) {
 	    	var id = "hmHeader" + uniqueHeatmapId++;   // id here will match id in tooltip array
