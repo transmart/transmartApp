@@ -399,14 +399,14 @@
                 {
                     data.bAutoWidth = true;
                     data.bScrollAutoCss = true;
-                    data.sScrollY = 400;
+//                    data.sScrollY = 400;
                     data.sScrollX = "100%";
                     data.bDestroy = true;
                     data.bProcessing = true;
                     data.bLengthChange = false;
                     data.bScrollCollapse = false;
                     data.iDisplayLength = 100;
-                    data.sDom = "<\"top\"<\"gridTitle\">>rt<\"clear\">";    //This controls the grid layout and included functionality
+                    data.sDom = "<\"top\"<\"gridTitle\">p>rt<\"clear\">";    //This controls the grid layout and included functionality
                 }
             }
 		

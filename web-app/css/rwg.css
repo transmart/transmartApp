@@ -956,7 +956,7 @@ border-top: 1px solid #CCC;
 /* Patchy fixes for JQuery UI below here */
 
 .dataTable {
-    margin: 8px 0px;
+    /*margin: 8px 0px;*/
     font-size: 8px;
     border-right: 1px solid #DDF;  
 }
