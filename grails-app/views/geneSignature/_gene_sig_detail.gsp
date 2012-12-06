@@ -220,23 +220,33 @@
 			<td class="value">${gs.qcPerformed}</td>
 		</tr>
 		<tr class="prop">
-			<td class="name">${gs.customName1}:</td>
+			<td class="name">
+				<g:if test="${gs.customName1==null}">Custom Field 1:</g:if>
+				<g:else>${gs.customName1}:</g:else></td>
 			<td class="value">${gs.customValue1}</td>
 		</tr>
 		<tr class="prop">
-			<td class="name">${gs.customName2}:</td>
+			<td class="name">
+				<g:if test="${gs.customName2==null}">Custom Field 2:</g:if>
+				<g:else>${gs.customName2}:</g:else></td>
 			<td class="value">${gs.customValue2}</td>
 		</tr>
 		<tr class="prop">
-			<td class="name">${gs.customName3}:</td>
+			<td class="name">
+				<g:if test="${gs.customName3==null}">Custom Field 3:</g:if>
+				<g:else>${gs.customName3}:</g:else></td>
 			<td class="value">${gs.customValue3}</td>
 		</tr>
 		<tr class="prop">
-			<td class="name">${gs.customName4}:</td>
+			<td class="name">
+				<g:if test="${gs.customName4==null}">Custom Field 4:</g:if>
+				<g:else>${gs.customName4}:</g:else></td>
 			<td class="value">${gs.customValue4}</td>
 		</tr>
 		<tr class="prop">
-			<td class="name">${gs.customName5}:</td>
+			<td class="name">
+				<g:if test="${gs.customName5==null}">Custom Field 5:</g:if>
+				<g:else>${gs.customName5}:</g:else></td>
 			<td class="value">${gs.customValue5}</td>
 		</tr>
 	</tbody>
