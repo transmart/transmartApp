@@ -399,7 +399,7 @@
                 {
                     data.bAutoWidth = true;
                     data.bScrollAutoCss = true;
-                    data.sScrollY = 400;
+//                    data.sScrollY = 400;
                     data.sScrollX = "100%";
                     data.bDestroy = true;
                     data.bProcessing = true;

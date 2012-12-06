@@ -136,11 +136,42 @@ body {
     border-width: 1px 1px 1px 1px;
     border-spacing: 4px;
     border-style: outset outset outset outset;
-    border-color: white;
+    border-color: black;
     border-collapse: collapse;
+    border-radius:8px;
+    -moz-border-radius:8px;
+    -webkit-border-radius: 8px;
     padding: 5px;
     width: 800px;
 }
+
+.details-table thead
+{ 
+	-moz-border-radius: 0 8px 0 0;
+    -webkit-border-radius: 0 8px 0 0;
+    border-radius: 0 8px 0 0;
+}
+
+.details-table th:first-child {
+    -moz-border-radius: 0 8px 0 0;
+    -webkit-border-radius: 0 8px 0 0;
+    border-radius: 0 8px 0 0;
+}
+
+.details-table th:last-child {
+    -moz-border-radius: 0 8px 0 0;
+    -webkit-border-radius: 0 8px 0 0;
+    border-radius: 0 8px 0 0;
+}
+
+.details-table th:only-child{
+    -moz-border-radius: 8px 8px 0 0;
+    -webkit-border-radius: 8px 8px 0 0;
+    border-radius: 8px 8px 0 0;
+}
+
+
+
 
 .list-table
 {
@@ -156,7 +187,7 @@ body {
 .details-row
 {
 	background: #e8e8e8;
-	border: 2px solid white;
+	border: 2px solid black;
 	border-spacing: 1px;
 }
 
@@ -956,9 +987,10 @@ border-top: 1px solid #CCC;
 /* Patchy fixes for JQuery UI below here */
 
 .dataTable {
-    margin: 8px 0px;
     font-size: 8px;
-    border-right: 1px solid #DDF;  
+    border-right: 1px solid #DDF;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
 }
 
 .dataTable th {
@@ -978,9 +1010,28 @@ border-top: 1px solid #CCC;
      font-size: 10px;   
 }
 
+.dataTable td:last-child 
+{
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
 .dataTable tr.odd {
     background-color: #EFFFFD;
 }
+
+
+.dataTable tr.odd:last-child 
+{
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.dataTable th:first-child { -moz-border-radius: 8px 0 0 0; }
+.dataTable th:last-child { -moz-border-radius: 0 8px 0 0; }
+
+.dataTable tr:last-child td:first-child { -moz-border-radius: 0 0 0 8px; }
+.dataTable tr:last-child td:last-child { -moz-border-radius: 0 0 8px 0; }
 
 .dataTables_length {
      float: left;
@@ -1154,21 +1205,22 @@ select.multiselect {
 table.menuDetail th.menuBar{
     background:none;
     background-image: none;
-    background-color: #EDEEF6;  
+    background-color: #EDEEF6;
 }
 
 
 table.menuDetail th.menuLink a:link, th.menuLink a:visited {
     font-size: 11px;
-    color: #515BA2; 
+    color: #EDEEF6;
 }
 
 
 .header-div {
 	background:none;
     background-image: none;
-    color: #EDEEF6;
-	background-color: #EDEEF6;  
+    color: #515BA2
+	background-color: #EDEEF6;
+	<!--	 #EDEEF6;-->  
 }
 
 
@@ -1346,6 +1398,15 @@ table.menuDetail th.menuLink a:link, th.menuLink a:visited {
     margin: 10px 0;
 }
 
+.top{
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    }
+
+.bottom{
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
 
 /* hidden overlay div, display with visibility toggle (note: if you need to edit review with Jeff or Jeremy!!) */
 .overlay {

@@ -49,10 +49,11 @@ var assayCount = 3
                         </g:else></div>
 <div style="height:20px;"></div>
 
+<div style="width:800px; border:2px solid #DDD; border-radius:8px;-moz-border-radius: 8px;">
 <table class="details-table">
-            <thead>
-                <tr>                
-                    <th>&nbsp;</th>
+            <thead style="border-radius:8px;-moz-border-radius: 8px;">
+                <tr style="border-radius:8px;-moz-border-radius: 8px;">   
+                    <th style="border-radius:8px;-moz-border-radius: 8px;">&nbsp;</th>
                     <th align="right"><g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
                             params="[eleId:overlayDiv, experimentId:experimentInstance.id]" 
                             before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
@@ -130,16 +131,17 @@ var assayCount = 3
             </thead>
 	
 </table>
+</div>
 <span></span>
                     
        <div style="height:20px;"></div>
-       <div style="width:1000px">
+       <div style="width:1100px">
             <div id='gridViewWrapper1'>
             </div>        
         </div>
 
        <div style="height:30px;"></div>
-       <div style="width:1000px">
+       <div style="width:1100px">
             <div id='gridViewWrapper2'>
             </div>        
         </div>
