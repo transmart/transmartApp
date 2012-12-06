@@ -121,20 +121,17 @@ function getSearchTooltip(id, e)  {
 				var html =  '<h3 class="searchTooltipTitle" >Search Keyword(s):</h3>' + showSearchTemplate(categories, keywords);
 				
 				if (analysisCount>0)  {
-					html += '<br /></br><h3 class="searchTooltipTitle" >Analyses:</h3>';
+					html += "<br /></br><h3 class='searchTooltipTitle' >Analyses:</h3> <ul class='xt-AnalysisList-tooltip'>";
 					for (var j=0; j<analysisCount; j++)  {
 						var analysisIndex = j + 1;
-						html += "<div class='xtSelectedAnalysesListLegendItem'>";						
-						html += "<table>";						
-						html += "<tr><td width='15px'>";						
-						html += "<span class='analysisNum'>" +  analysisIndex + "</span>";
-						html += "</td><td style='font-size:10px'>";
+					
+						html += "<li><span style='font-weight:bold'>" +  analysisIndex + ":</span> ";
 						html += "<span class='result-trial-name'>" + analyses[j]["studyId"] + "</span>";
 						html += ": " + analyses[j]["title"];
-						html += "</td></tr></table>"
-						html += "</div>"
+						html += "</li>"
 						
 					}
+					html +="</ul>"
 				}
 				// now show the tooltip
 				jQuery(document).ready(function () {
