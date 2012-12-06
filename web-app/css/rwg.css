@@ -274,7 +274,7 @@ padding: 12px;
     position:absolute;
     height: 20px;
     left: 276px;
-    margin-top: 34px;
+    margin-top: 30px;
     width: 20px;
 }
 
@@ -1093,10 +1093,14 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 
 
 .xtHeatmap{
-	display:inline-block;
-	min-height:250px;
-	padding:3px;
-	background-color:#fff;
+display: inline-block;
+min-height: 250px;
+padding: 3px;
+background-color: white;
+vertical-align: top;
+border: 1px solid #EFEFEF;
+margin: 4px;
+margin-top: 0;
 }
 
 .xtHeatmap:hover{
@@ -1215,7 +1219,7 @@ border-left: 0;
 display: inline-block;
 border-right: 0;
 vertical-align: top;
-min-height: 200px;
+height: 100%;
 min-width:250px;
 }
 
