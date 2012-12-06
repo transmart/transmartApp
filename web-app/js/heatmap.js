@@ -832,7 +832,11 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	        	return "#FFFF00";
 	        } 	
 	        else  {
-	        	return colorScale(d.foldChange);
+	        	//color the scale using a combination of the p-value (-log10 transformed) and the fold change
+	        	var pvalue=d.preferredPValue;
+	        	if(pvalue<0.00001){pvalue=0.00001;} //use .00001 as the smallest p-value
+	        	return colorScale(d.foldChange * (-Math.log(pvalue) / Math.LN10));
+	        	//return colorScale(d.foldChange);
 	        }
 	      
 	    })
