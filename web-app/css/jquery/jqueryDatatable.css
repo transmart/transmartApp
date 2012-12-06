@@ -41,8 +41,9 @@
 }
 
 .dataTables_paginate {
-	float: right;
-	text-align: right;
+	position:absolute;
+	top: 3px;
+	right: 25px;
 	font-weight:bold;
 	
 }
@@ -55,6 +56,7 @@
 	cursor: pointer;
 	*cursor: hand;
 	color: #111 !important;
+	padding-top: 4px !important;
 }
 .paginate_disabled_previous:hover, .paginate_enabled_previous:hover,
 .paginate_disabled_next:hover, .paginate_enabled_next:hover {
@@ -223,6 +225,7 @@ tr.even {
 	background-color: #F5F5F5;
 	border: 1px solid #CCCCCC;
 	padding: 5px;
+	position:relative;
 }
 
 .top .dataTables_info {
@@ -550,7 +553,7 @@ div.dataTables_scroll { clear: both; }
 	font: 11px arial,tahoma,helvetica,sans-serif;	
 	font-weight: bold;	
 	padding: 0;
-  border-right: 1px solid #5c7b9a;
+  border-right: 1px solid #DDDDFF;
   border-left: 0 none;
   border-top: 0 none;
   border-bottom: 0 none;
@@ -576,7 +579,7 @@ div.dataTables_scroll { clear: both; }
 
 table.dataTable thead th {
 	padding-left:5px;
-border-right: 1px solid #5c7b9a;
+border-right: 1px solid #DDDDFF;
 margin-bottom:0px;
 }
 
@@ -586,7 +589,7 @@ margin-bottom:0px;
 	padding-top:3px;
   padding-bottom:3px;
   padding-left: 2px;	
-  border-top: 1px solid #DDDDDD;
+  border-top: 1px solid #DDDDFF;
   padding-right:0px;
 }
 
@@ -600,27 +603,27 @@ margin-bottom:0px;
 
 .sorting_asc {
 	background:#5c7b9a url('../../images/sort_asc.png') no-repeat center right;
-	border-right: 1px solid #5c7b9a;
+	border-right: 1px solid #DDDDFF;
 }
 
 .sorting_desc {
 	background:#5c7b9a url('../../images/sort_desc.png') no-repeat center right;
-	border-right: 1px solid #5c7b9a;
+	border-right: 1px solid #DDDDFF;
 }
 
 .sorting {
 	background:#5c7b9a url('../../images/sort_both.png') no-repeat center right;
-	border-right: 1px solid #5c7b9a;
+	border-right: 1px solid #DDDDFF;
 }
 
 .sorting_asc_disabled {
 	background:#5c7b9a url('../../images/sort_asc_disabled.png') no-repeat center right;
-border-right: 1px solid #5c7b9a;
+border-right: 1px solid #DDDDFF;
 }
 
 .sorting_desc_disabled {
 	background:#5c7b9a url('../../images/sort_desc_disabled.png') no-repeat center right;
-border-right: 1px solid #5c7b9a;
+border-right: 1px solid #DDDDFF;
 }
 
 

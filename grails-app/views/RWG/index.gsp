@@ -406,7 +406,7 @@
                     data.bLengthChange = false;
                     data.bScrollCollapse = false;
                     data.iDisplayLength = 100;
-                    data.sDom = "<\"top\"<\"gridTitle\">>rt<\"clear\">";    //This controls the grid layout and included functionality
+                    data.sDom = "<\"top\"<\"gridTitle\">p>rt<\"clear\">";    //This controls the grid layout and included functionality
                 }
             }
 		

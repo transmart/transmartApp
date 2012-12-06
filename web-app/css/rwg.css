@@ -136,7 +136,7 @@ body {
     border-width: 1px 1px 1px 1px;
     border-spacing: 4px;
     border-style: outset outset outset outset;
-    border-color: black;
+    border-color: white;
     border-collapse: collapse;
     border-radius:8px;
     -moz-border-radius:8px;
@@ -187,7 +187,7 @@ body {
 .details-row
 {
 	background: #e8e8e8;
-	border: 2px solid black;
+	border: 2px solid white;
 	border-spacing: 1px;
 }
 
@@ -987,8 +987,9 @@ border-top: 1px solid #CCC;
 /* Patchy fixes for JQuery UI below here */
 
 .dataTable {
+    /*margin: 8px 0px;*/
     font-size: 8px;
-    border-right: 1px solid #DDF;
+    border-right: 1px solid #DDF;  
     border-radius: 8px;
     -moz-border-radius: 8px;
 }
@@ -1205,19 +1206,21 @@ select.multiselect {
 table.menuDetail th.menuBar{
     background:none;
     background-image: none;
-    background-color: #EDEEF6;
+    background-color: #EDEEF6;  
 }
 
 
 table.menuDetail th.menuLink a:link, th.menuLink a:visited {
     font-size: 11px;
-    color: #EDEEF6;
+    color: #515BA2; 
 }
 
 
 .header-div {
 	background:none;
     background-image: none;
+    color: #EDEEF6;
+	background-color: #EDEEF6;  
     color: #515BA2
 	background-color: #EDEEF6;
 	<!--	 #EDEEF6;-->  
