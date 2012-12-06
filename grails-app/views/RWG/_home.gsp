@@ -19,7 +19,7 @@
 					<table style="border-collapse:collapse;">
 					<tr>
 						<td style="width:100%;" colspan="2">
-							<h2>${cat.name}</h2>
+							<h2 style="margin-bottom: 0;">${cat.name}</h2>
 						</td>
 					</tr>
 					<tr>

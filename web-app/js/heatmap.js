@@ -834,9 +834,11 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	        else  {
 	        	//color the scale using a combination of the p-value (-log10 transformed) and the fold change
 	        	var pvalue=d.preferredPValue;
-	        	if(pvalue<0.00001){pvalue=0.00001;} //use .00001 as the smallest p-value
+	        	
+	        	if(pvalue == null){pvalue=1}//for the calculation below, use 1 for the pvalue if it is null
+	        		else if(pvalue<0.00001){pvalue=0.00001;} //use .00001 as the smallest allowed p-value
+	        	
 	        	return colorScale(d.foldChange * (-Math.log(pvalue) / Math.LN10));
-	        	//return colorScale(d.foldChange);
 	        }
 	      
 	    })
@@ -857,6 +859,7 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 		    })
 		.attr("y", -2)
 		.attr("text-anchor", "middle")
+		.attr("cursor","default")
 	    .attr("class", "heatmapTooltip")
 	    .attr("id", function(d, i) {
 	    	var id = "hmHeader" + uniqueHeatmapId++;   // id here will match id in tooltip array
