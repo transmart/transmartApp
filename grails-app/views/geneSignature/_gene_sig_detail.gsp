@@ -207,6 +207,38 @@
 			<td class="name">Original upload file:</td>
 			<td class="value">${gs.uploadFile}</td>
 		</tr>
+		<tr class="prop">
+			<td class="name">Version:</td>
+			<td class="value">${gs.versionStr}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">Data Source:</td>
+			<td class="value">${gs.dataSource}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">QC Performed:</td>
+			<td class="value">${gs.qcPerformed}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">${gs.customName1}:</td>
+			<td class="value">${gs.customValue1}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">${gs.customName2}:</td>
+			<td class="value">${gs.customValue2}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">${gs.customName3}:</td>
+			<td class="value">${gs.customValue3}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">${gs.customName4}:</td>
+			<td class="value">${gs.customValue4}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">${gs.customName5}:</td>
+			<td class="value">${gs.customValue5}</td>
+		</tr>
 	</tbody>
 </table>
 		

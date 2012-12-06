@@ -191,18 +191,18 @@
 		<tr class="prop">
 			<td class="name">Version</td>
 			<td class="value">
-				<g:textField name="version" value="" />
+				<g:textField name="versionStr" value="${gs.versionStr}" />
 			</td>
 		</tr>
 		<tr class="prop">
 			<td class="name">Data Source</td>
 			<td class="value">
-				<g:textField name="dataSource" value="" />
+				<g:textField name="dataSource" value="${gs.dataSource}" />
 			</td>
 		</tr>
 		<tr class="prop">
 			<td class="name">QC performed</td>
-			<td class="value"><g:checkBox name="qcPerformed" value="" />
+			<td class="value"><g:checkBox name="qcPerformed" value="${gs.qcPerformed}" />
 		</tr>
 	</table>
 	<br>
@@ -214,42 +214,42 @@
 		</tr>
 		<tr class="prop">
 			<td class="name">
-				<g:textField name="customName1" value="" />
+				<g:textField name="customName1" value="${gs.customName1}" />
 			</td>
 			<td class="value">
-				<g:textField name="customValue1" value="" />
+				<g:textField name="customValue1" value="${gs.customValue1}" />
 			</td>
 		</tr>
 		<tr class="prop">
 			<td class="name">
-				<g:textField name="customName2" value="" />
+				<g:textField name="customName2" value="${gs.customName2}" />
 			</td>
 			<td class="value">
-				<g:textField name="customValue2" value="" />
+				<g:textField name="customValue2" value="${gs.customValue2}" />
 			</td>
 		</tr>
 		<tr class="prop">
 			<td class="name">
-				<g:textField name="customName3" value="" />
+				<g:textField name="customName3" value="${gs.customName3}" />
 			</td>
 			<td class="value">
-				<g:textField name="customValue3" value="" />
+				<g:textField name="customValue3" value="${gs.customValue3}" />
 			</td>
 		</tr>
 		<tr class="prop">
 			<td class="name">
-				<g:textField name="customName4" value="" />
+				<g:textField name="customName4" value="${gs.customName4}" />
 			</td>
 			<td class="value">
-				<g:textField name="customValue4" value="" />
+				<g:textField name="customValue4" value="${gs.customValue4}" />
 			</td>
 		</tr>
 		<tr class="prop">
 			<td class="name">
-				<g:textField name="customName5" value="" />
+				<g:textField name="customName5" value="${gs.customName5}" />
 			</td>
 			<td class="value">
-				<g:textField name="customValue5" value="" />
+				<g:textField name="customValue5" value="${gs.customValue5}" />
 			</td>
 		</tr>
 	</table>
