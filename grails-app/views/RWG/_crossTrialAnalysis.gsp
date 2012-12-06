@@ -32,7 +32,7 @@
 	<h1>Cross Trial Analysis</h1>
 
 	<div id ="xtSearch">
-		Search for gene, pathway, or gene signature: <input id="xtSearch-ac"/></input> 
+		Search for genes, pathways, or gene signatures: <input id="xtSearch-ac"/></input> 
 		<div style="float:right">
 			<a href="#" id="save-modal-xt" class='title-link-inactive'><span>Save Selection</span></a> | <a href="#" id='load-modal-xt' class='title-link-active' onclick="openLoadSearchDialog(true);"}>Load Analysis</a> | <a href="#" id="clear-xt" class='title-link-inactive' onclick="clearAllSelectedAnalyses();">Clear</a>
 		</div>
@@ -50,7 +50,7 @@
 		<ul>
 			<li><a href="#xtSummary">Summary Table</a></li>
 			<li><a href="#xtGeneChartTab">Gene Charts</a></li>
-			<li><a href="#xtHeatmapTab">Heatmap</a></li>
+			<li><a href="#xtHeatmapTab">Heatmaps</a></li>
 		</ul>
 		
 		<!-- Summary Table -->

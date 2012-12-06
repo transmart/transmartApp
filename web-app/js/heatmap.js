@@ -685,8 +685,8 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	wTotal = Math.max(minWidth, hmWidth)
 
 	// determine the width of the title
-	var titleFontSize = 10;	
-	var titleFont = titleFontSize + "px sans-serif"; 
+	var titleFontSize = 11;	
+	var titleFont = "bold " + titleFontSize + "px sans-serif"; 
 	var hTitle = 25;  // leave at least enough room for at 2 lines of text
 	var actualTitleHeight = getTextFlowHeight(keywordTitle, hmWidth, titleFont, titleFontSize);
 	hTitle = Math.max(hTitle, actualTitleHeight)
@@ -751,7 +751,7 @@ function drawHeatmapCTA(divID, rows, analyses, keywordTitle)	{
 	    .attr("id", hmTitleId)
 		.attr("x", titleX)
 		.attr("y", titleFontSize)
-		.style("fill", "#065B96")
+		.style("fill", "#111")
 	    .style("font", titleFont)
 		.attr("text-anchor", titleAnchor);		
 

@@ -2943,7 +2943,7 @@ function loadHeatmapSA(analysisId, page) {
 				var kw = xtSelectedKeywords[i];
 				switch (kw.categoryId)
 				{ 
-					case 'GENELIST':  geneList.push(kw.id); break;
+					case 'GENELIST':  geneList.push(kw.id);  break;
 					case 'GENESIG':   geneSig.push(kw.id); break;
 					case 'PATHWAY':   pathway.push(kw.id); break;
 					case 'GENE':      gene.push(kw.id); break;
@@ -3330,8 +3330,8 @@ function closeCTAheatmap(divID, geneID){
 	
 	setSaveXTFilterLink();
 	setClearXTLink();	
-	
-	//might want to change this...
+
+
 	if(xtSelectedKeywords.length==0){
 		jQuery('#xtNoHeatmapsMsg').fadeIn(200);
 	}
@@ -3489,8 +3489,11 @@ function createCrossTrialSummaryChart(data, pdata, pdataOriginal, keyword_id, pl
         height = 150- margin.top - margin.bottom;
 
     var y0 = Math.max(Math.max(-d3.min(data), d3.max(data)),3);
-
     var y2max = Math.max(d3.max(pdata),3);
+
+    //ensure the y0 and y2max both have valid values (this is to correct in cases where the dataset is all null)
+    if(!y0>0){ y0=3;}
+    if(!y2max>0){ y2max=3;}
     
     var y = d3.scale.linear()
         .domain([-y0, y0])
@@ -3919,8 +3922,6 @@ function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRa
 	var heatmapDiv = "xtHeatmap_" +searchKeywordId;
 	var heatmapHolderDivID = "xtHeatmapHolder_" +searchKeywordId;
 	
-	//html for button to close the graph
-	var closeHTML = "<a href='#' class='xtClostbtn' id='" +searchKeywordId  +"_CTAheatmapCloseBtn' onclick=\"closeCTAheatmap('"+heatmapHolderDivID+"', '" +searchKeywordId +"')\">x</a>";
 
 	
 	rwgAJAXManager.add({
@@ -3934,9 +3935,6 @@ function loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRa
 			
 			drawHeatmapCTA(heatmapDiv, response['rows'], selectedAnalyses, keyword);
 			
-		    //add some buttons
-		    jQuery('#'+heatmapHolderDivID).prepend(closeHTML);
-
 						
 		},
 		error: function(xhr) {
@@ -3951,9 +3949,13 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page, keyword) {
 	//heatmapHolder div holds both the paginator and the heatmap
 	var divID = "xtHeatmapHolder_" +searchKeywordId;
 	var divPaginatorID = "xtHeatmapPaginator_"+searchKeywordId;
+
 	
     //remove the div if it already exists:
     jQuery('#'+divID).remove();
+    
+    //remove the "empty" msg if it exists:
+    jQuery("#xtNoHeatmapMsg").remove();
     
     //create div to hold svg chart
     jQuery("#xtHeatmapTab").prepend("<div id='"+divID +"' class='xtHeatmap'></div>");
@@ -3992,6 +3994,13 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page, keyword) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
 	});
+	
+	
+    //add some buttons
+	//html for button to close the graph
+	var closeHTML = "<a href='#' class='xtClostbtn' id='" +searchKeywordId  +"_CTAheatmapCloseBtn' onclick=\"closeCTAheatmap('"+divID+"', '" +searchKeywordId +"')\">x</a>";
+    jQuery('#'+divID).prepend(closeHTML);
+	
 }
 
 function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, numberRows, keyword) {
@@ -4001,7 +4010,7 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
 	var heatmapDiv = "xtHeatmap_" +searchKeywordId;
     
     //create div for the heatmap
-    jQuery("#"+heatmapHolderDivID).prepend("<div id='"+heatmapDiv +"' ></div>");
+    jQuery("#"+searchKeywordId+"_CTAheatmapCloseBtn").after("<div id='"+heatmapDiv +"' ></div>");
 	
 	
 	var element = jQuery("#" + divID);
