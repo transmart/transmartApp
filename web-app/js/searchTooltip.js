@@ -1,5 +1,3 @@
-var xOffset = 20;
-var yOffset = 20;		
 
 this.registerSearchTooltipEvents = function(){
 	// create the method for the hover event for tooltips on the favorites for faceted searches
@@ -25,14 +23,15 @@ this.registerSearchTooltipEvents = function(){
 
 function showSearchTooltip(html, e)  {
 
-	// create the div tag which will hold tooltip
+    var xOffset;
+    var yOffset;		
+
+    // create the div tag which will hold tooltip
 	jQuery("body").append("<div id='searchTooltip'></div>");
 		
 	jQuery("#searchTooltip")
 		.css("z-index", 10000)
 		.html(html)
-		//.css("top",(e.pageY - yOffset) + "px")
-		//.css("left",(e.pageX + xOffset) + "px")
 		.fadeIn(200, 	function()  {
 			// if the link that triggered this tooltip is not visible after the page fully fades in, remove the tooltip
 		    if (!jQuery("#" + e.currentTarget.id).is(':visible'))  {
@@ -40,43 +39,12 @@ function showSearchTooltip(html, e)  {
 		    }    
 			})
 		;
-	
-	
-	    var dw = jQuery(document).width();
-	    var dh = jQuery(document).height();
-	
-	    var w = jQuery("#searchTooltip").width() + 50;
-	    var h = jQuery("#searchTooltip").height() + 20;
 
-	    
-    	// will popup fit on right
-    	if ((e.pageX + w) < dw)  {
-    		xOffset = 50;	    
-    	}
-	    else {
-		    // will popup fit to left	    
-		    if ((e.pageX - w) > 0)  {
-		    	xOffset = -1 * w
-		    }
-	    	else {
-	    		xOffset = -1 * e.pageX;
-	    	}
-	    }
+		var offsets = getTooltipOffset(e, "searchTooltip");	
+	
+		xOffset = offsets.xOffset;
+		yOffset = offsets.yOffset;
 
-	    // will popup fit above
-	    if ((e.pageY - h) > 0)  {
-	    	yOffset = h
-	    }
-	    else {
-	    	// will popup fit below
-	    	if ((e.pageY + h) < dh)  {	    		
-	    		yOffset = 20;
-	    	}
-	    	else {
-	    		yOffset = e.pageY;
-	    	}
-	    }
-	    	
 		jQuery("#searchTooltip")
 		.css("top",(e.pageY - yOffset) + "px")
 		.css("left",(e.pageX + xOffset) + "px");

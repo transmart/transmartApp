@@ -934,21 +934,29 @@ this.registerHeatmapTooltipEvents = function(){
 
 function showHeatmapTooltip(e)  {
 
-	var xOffset = 20;
-	var yOffset = 20;		
+	var xOffset;
+	var yOffset;		
 	
 	// create the div tag which will hold tooltip
 	jQuery("body").append("<div id='heatmapTooltip'></div>");
 	
 	var tooltip = hmTooltips[e.currentTarget.id];
-	
+		
 	jQuery("#heatmapTooltip")
 		.css("z-index", 10000)
 		.html(tooltip)
-		.css("left",(e.pageX + yOffset) + "px")
-		.css("top",(e.pageY - xOffset) + "px")
 		.fadeIn(200)
 		;
+	
+	var offsets = getTooltipOffset(e, "heatmapTooltip");	
+	
+	xOffset = offsets.xOffset;
+	yOffset = offsets.yOffset;
+	
+	jQuery("#heatmapTooltip")
+	.css("left",(e.pageX + xOffset) + "px")
+	.css("top",(e.pageY - yOffset) + "px")
+	;
 	
 }
 
