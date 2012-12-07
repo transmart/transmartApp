@@ -22,10 +22,14 @@
   background-color:#242424;
   border-bottom:1px solid #aaa;
   z-index: 4000;
+  font: 12px verdana, arial, helvetica, sans-serif;
+
+  font-weight: bold;
 }
 
 #navlist {
     padding-top:0px;
+
 }
 
 #navlist ul {
@@ -48,6 +52,7 @@
     display: block;
     padding: 6px 20px;
     color:#cfcfcf;
+      text-decoration: none;
 }
 
 #navlist ul a:hover{
