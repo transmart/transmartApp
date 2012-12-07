@@ -3809,6 +3809,9 @@ function getCrossTrialGeneSummary(search_keyword_id)
 				}
 				 else {
 					 fold_change_ratio = result[0].fold_change_ratio;
+					 if (fold_change_ratio == null)  {
+						 fold_change_ratio = '';
+					 }
 					 foldchangeDataset[index] = fold_change_ratio;
 				 }
 				
