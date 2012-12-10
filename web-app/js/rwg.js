@@ -3338,6 +3338,10 @@ function closeCTAheatmap(divID, geneID){
 	if(xtSelectedKeywords.filter(function(el){return el.categoryId != 'GENE';}).length==0){
 		jQuery('#xtNoHeatmapsMsg').fadeIn(200);
 	}
+	
+	// clear out and redraw the analyses list
+	displayxtAnalysesList();	
+
 		
 }
 
@@ -3361,10 +3365,13 @@ function closeXTGeneChart(divID, geneID){
 	setSaveXTFilterLink();
 	setClearXTLink();		
 	
+	
 	if(xtSelectedKeywords.filter(function(el){return el.categoryId == 'GENE';}).length==0){
 		jQuery('#xtNoGenesMsg').fadeIn(200);
 	}
-	
+
+	// clear out and redraw the analyses list
+	displayxtAnalysesList();	
 	
 }
 
@@ -3391,6 +3398,9 @@ function clearAllXTSearchTerms(){
 	
 	setClearXTLink();
 	setSaveXTFilterLink();
+
+	// clear out and redraw the analyses list
+	displayxtAnalysesList();	
 
 	
 }
