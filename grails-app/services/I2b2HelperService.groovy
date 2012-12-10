@@ -4790,8 +4790,13 @@ class I2b2HelperService {
 		def rootlevel=-1;
 		String xml;
 		def ls=[:];
-		//int i=getLevelFromKey(concept_key)+1;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+ 		String mlevelsql = "SELECT MIN(C_HLEVEL) AS mlevel FROM i2b2metadata.i2b2_SECURE";	
+ 		sql.eachRow(mlevelsql, {row ->	
+ 		rootlevel=row.mlevel;	
+     		})
+		//int i=getLevelFromKey(concept_key)+1;
+	
 		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [rootlevel], {row ->
 			String fullname=row.c_fullname;
