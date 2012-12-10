@@ -110,6 +110,10 @@ function applyPopupFiltersRegions()
 		var geneName = jQuery('#filterGeneId-input').val();
 		range = jQuery('#filterGeneRange').val();
 		basePairs = jQuery('#filterGeneBasePairs').val();
+		if (basePairs == null || basePairs == "") {
+			basePairs = 0;
+		}
+		
 		use = jQuery('#filterGeneUse').val();
 		searchString += "GENE;" + geneId
 		
@@ -118,17 +122,25 @@ function applyPopupFiltersRegions()
 	else if (jQuery('[name=\'regionFilter\'][value=\'chromosome\']:checked').size() > 0) {
 		range = jQuery('#filterChromosomeRange').val();
 		basePairs = jQuery('#filterChromosomeBasePairs').val();
+		if (basePairs == null || basePairs == "") {
+			basePairs = 0;
+		}
+		
 		use = jQuery('#filterChromosomeUse').val();
 		var chromNum = jQuery('#filterChromosomeNumber').val();
 		var pos = jQuery('#filterChromosomePosition').val();
+		if (pos == null || pos == "") {
+			pos = 0;
+		}
 		
 		searchString += "CHROMOSOME;" + chromNum + ";" + use + ";" + pos;
 		
-		text = "HG" + use + " chromosome " + chromNum + " position " + pos + " " + getRangeSymbol(range) + " " + basePairs;
-		
-	}
-	if (basePairs == null || basePairs == "") {
-		basePairs = 0;
+		if (pos != 0 && range != 0) {
+			text = "HG" + use + " chromosome " + chromNum + " position " + pos + " " + getRangeSymbol(range) + " " + basePairs;
+		}
+		else {
+			text = "HG" + use + " chromosome " + chromNum;
+		}
 	}
 	searchString += ";" + range + ";" + basePairs + ";" + use;
 

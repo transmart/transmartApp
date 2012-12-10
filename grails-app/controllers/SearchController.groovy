@@ -623,7 +623,7 @@ public class SearchController{
 							  <security> 
 							      <all-permissions/> 
 							  </security> 
-							  <update check="background"/>
+							  <update check="always" policy="always">
 							  <resources> 
 							    <j2se version="1.6+" java-vm-args="-Xmx800m"/>
 							    
@@ -862,7 +862,7 @@ public class SearchController{
 			return
 		}
 		else if (analysisIds[0] == -1) {
-			render(text: "<p>The current search does not filter on any analyses. Select a study or set of analyses to display.</p>")
+			render(text: "<p>To use the table view, please select a study or set of analyses from the filter browser in the left pane.</p>")
 			return
 		}
 		
@@ -1252,7 +1252,7 @@ public class SearchController{
 		columnNames.add(["sTitle":"Analysis", "sortField":"baa.analysis_name"])
 		columnNames.add(["sTitle":"Probe ID", "sortField":"data.rs_id"])
 		columnNames.add(["sTitle":"p-value", "sortField":"data.p_value"])
-		columnNames.add(["sTitle":"Adjusted p-value", "sortField":"data.log_p_value"])
+		columnNames.add(["sTitle":"-log 10 p-value", "sortField":"data.log_p_value"])
 		columnNames.add(["sTitle":"RS Gene", "sortField":"gmap.gene_name"])
 		columnNames.add(["sTitle":"Chromosome", "sortField":"info.chrom"])
 		columnNames.add(["sTitle":"Position", "sortField":"info.pos"])

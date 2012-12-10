@@ -290,7 +290,13 @@ class RegionSearchService {
 				}
 				//Chromosome
 				if (range.chromosome != null) {
-					regionList.append("(info.pos >= ${range.low} AND info.pos <= ${range.high} AND info.chrom = '${range.chromosome}' ")
+					if (range.low == 0 && range.high == 0) {
+						regionList.append("(info.chrom = '${range.chromosome}' ")
+					}
+					else {
+						regionList.append("(info.pos >= ${range.low} AND info.pos <= ${range.high} AND info.chrom = '${range.chromosome}' ")
+					}
+					
 					if(hg19only== false) {
 						regionList.append("  AND info.hg_version = '${range.ver}' ")
 					}

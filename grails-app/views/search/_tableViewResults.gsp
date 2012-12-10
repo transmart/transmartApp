@@ -7,7 +7,7 @@
 	</g:if>
 	<div id="table_results_length_div" class="dataTables_length">
 		<label>Show 
-			<g:select size="1" from="${['100':'100','150':'150','200':'200','500':'500']}" optionKey="${{it.key}}" optionValue="${{it.value}}" id="table_results_length" onselect="loadTableResultsGrid({max: jQuery(this).val()})" value="${max}"/> ${type} results
+			<g:select size="1" from="${['100':'100','150':'150','200':'200','500':'500']}" optionKey="${{it.key}}" optionValue="${{it.value}}" id="table_results_length" onchange="loadTableResultsGrid({max: jQuery(this).val()})" value="${max}"/> ${type} results
 		</label>	
 	</div>
 	<g:if test="${showSearch}">

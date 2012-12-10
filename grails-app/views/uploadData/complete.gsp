@@ -63,7 +63,10 @@
 			<br/><br/>
 			<div class="uploadwindow">
 				<g:if test="${result.success == true}">
-					<div>The file was uploaded successfully and has been submitted to the queue for processing.</div>
+					<div>The file was uploaded successfully and has been submitted to the queue for processing.
+						<br/>
+						This analysis will be processed overnight and should be available by tomorrow.
+					</div>
 					<br/>
 					<a href="${createLink([action:'index',controller:'uploadData'])}">Upload another file</a>
 				</g:if>
