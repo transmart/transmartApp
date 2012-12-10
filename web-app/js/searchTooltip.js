@@ -1,5 +1,3 @@
-var xOffset = 20;
-var yOffset = 20;		
 
 this.registerSearchTooltipEvents = function(){
 	// create the method for the hover event for tooltips on the favorites for faceted searches
@@ -25,14 +23,15 @@ this.registerSearchTooltipEvents = function(){
 
 function showSearchTooltip(html, e)  {
 
-	// create the div tag which will hold tooltip
+    var xOffset;
+    var yOffset;		
+
+    // create the div tag which will hold tooltip
 	jQuery("body").append("<div id='searchTooltip'></div>");
-	
+		
 	jQuery("#searchTooltip")
 		.css("z-index", 10000)
 		.html(html)
-		.css("top",(e.pageY - xOffset) + "px")
-		.css("left",(e.pageX + yOffset) + "px")
 		.fadeIn(200, 	function()  {
 			// if the link that triggered this tooltip is not visible after the page fully fades in, remove the tooltip
 		    if (!jQuery("#" + e.currentTarget.id).is(':visible'))  {
@@ -40,6 +39,17 @@ function showSearchTooltip(html, e)  {
 		    }    
 			})
 		;
+
+		var offsets = getTooltipOffset(e, "searchTooltip");	
+	
+		xOffset = offsets.xOffset;
+		yOffset = offsets.yOffset;
+
+		jQuery("#searchTooltip")
+		.css("top",(e.pageY - yOffset) + "px")
+		.css("left",(e.pageX + xOffset) + "px");
+
+		//alert ('x:'+e.pageX + ';y:' + e.pageY + ';offsetX:' + xOffset + ';offsetY:' + yOffset);
 		
 	jQuery("#searchTooltip").mousemove(function(){
 		jQuery("#searchTooltip").remove();
@@ -79,20 +89,17 @@ function getSearchTooltip(id, e)  {
 				var html =  '<h3 class="searchTooltipTitle" >Search Keyword(s):</h3>' + showSearchTemplate(categories, keywords);
 				
 				if (analysisCount>0)  {
-					html += '<br /></br><h3 class="searchTooltipTitle" >Analyses:</h3>';
+					html += "<br /></br><h3 class='searchTooltipTitle' >Analyses:</h3> <ul class='xt-AnalysisList-tooltip'>";
 					for (var j=0; j<analysisCount; j++)  {
 						var analysisIndex = j + 1;
-						html += "<div class='xtSelectedAnalysesListLegendItem'>";						
-						html += "<table>";						
-						html += "<tr><td width='15px'>";						
-						html += "<span class='analysisNum'>" +  analysisIndex + "</span>";
-						html += "</td><td>";
+					
+						html += "<li><span style='font-weight:bold'>" +  analysisIndex + ":</span> ";
 						html += "<span class='result-trial-name'>" + analyses[j]["studyId"] + "</span>";
 						html += ": " + analyses[j]["title"];
-						html += "</td></tr></table>"
-						html += "</div>"
+						html += "</li>"
 						
 					}
+					html +="</ul>"
 				}
 				// now show the tooltip
 				jQuery(document).ready(function () {

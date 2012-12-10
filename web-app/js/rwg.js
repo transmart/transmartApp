@@ -3338,6 +3338,10 @@ function closeCTAheatmap(divID, geneID){
 	if(xtSelectedKeywords.filter(function(el){return el.categoryId != 'GENE';}).length==0){
 		jQuery('#xtNoHeatmapsMsg').fadeIn(200);
 	}
+	
+	// clear out and redraw the analyses list
+	displayxtAnalysesList();	
+
 		
 }
 
@@ -3361,10 +3365,13 @@ function closeXTGeneChart(divID, geneID){
 	setSaveXTFilterLink();
 	setClearXTLink();		
 	
+	
 	if(xtSelectedKeywords.filter(function(el){return el.categoryId == 'GENE';}).length==0){
 		jQuery('#xtNoGenesMsg').fadeIn(200);
 	}
-	
+
+	// clear out and redraw the analyses list
+	displayxtAnalysesList();	
 	
 }
 
@@ -3391,6 +3398,9 @@ function clearAllXTSearchTerms(){
 	
 	setClearXTLink();
 	setSaveXTFilterLink();
+
+	// clear out and redraw the analyses list
+	displayxtAnalysesList();	
 
 	
 }
@@ -3720,8 +3730,8 @@ this.registerGeneChartTooltipEvents = function(){
 
 function showGeneChartTooltip(e)  {
 
-	var xOffset = 20;
-	var yOffset = 20;		
+	var xOffset;
+	var yOffset;		
 	
 	// create the div tag which will hold tooltip
 	jQuery("body").append("<div id='geneChartTooltip'></div>");
@@ -3731,10 +3741,18 @@ function showGeneChartTooltip(e)  {
 	jQuery("#geneChartTooltip")
 		.css("z-index", 10000)
 		.html(tooltip)
-		.css("left",(e.pageX + yOffset) + "px")
-		.css("top",(e.pageY - xOffset) + "px")
 		.fadeIn(200)
 		;
+
+	var offsets = getTooltipOffset(e, "geneChartTooltip");	
+	
+	xOffset = offsets.xOffset;
+	yOffset = offsets.yOffset;
+	
+	jQuery("#geneChartTooltip")
+	.css("left",(e.pageX + xOffset) + "px")
+	.css("top",(e.pageY - yOffset) + "px")
+	;
 	
 }
 
@@ -3801,6 +3819,9 @@ function getCrossTrialGeneSummary(search_keyword_id)
 				}
 				 else {
 					 fold_change_ratio = result[0].fold_change_ratio;
+					 if (fold_change_ratio == null)  {
+						 fold_change_ratio = '';
+					 }
 					 foldchangeDataset[index] = fold_change_ratio;
 				 }
 				
@@ -4066,7 +4087,7 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
 			jQuery('#'+heatmapHolderDivID).unmask(); //hide the loading msg, unblock the div
 			
 			//html for button to close the graph
-			var closeHTML = "<a href='#' class='xtClostbtn' id='" +searchKeywordId  +"_CTAheatmapCloseBtn' onclick=\"closeCTAheatmap('"+heatmapHolderDivID+"', '" +searchKeywordId +"')\">x</a>";
+			//var closeHTML = "<a href='#' class='xtClostbtn' id='" +searchKeywordId  +"_CTAheatmapCloseBtn' onclick=\"closeCTAheatmap('"+heatmapHolderDivID+"', '" +searchKeywordId +"')\">x</a>";
 							    
       		drawHeatmapCTA(heatmapDiv, null, selectedAnalyses, keyword);  // draw blank heatmap
       		

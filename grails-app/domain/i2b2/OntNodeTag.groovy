@@ -24,14 +24,15 @@ class OntNodeTag {
 		//String path
 		String tag
 		String tagtype
+		OntNode ontnode
 static belongsTo=[ontnode:OntNode]
 static mapping = {
 	 table 'I2B2_TAGS'
 	 version false
-	 id column:'TAG_ID'
 	 id generator:'sequence', params:[sequence:'SEQ_I2B2_DATA_ID']		
 	 columns {
 		//path column:'PATH'
+		id column:'TAG_ID'
 		tag column:'TAG'
 		tagtype column:'TAG_TYPE'
 		ontnode column:'PATH'
