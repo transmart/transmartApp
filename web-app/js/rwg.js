@@ -4087,7 +4087,7 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
 			jQuery('#'+heatmapHolderDivID).unmask(); //hide the loading msg, unblock the div
 			
 			//html for button to close the graph
-			var closeHTML = "<a href='#' class='xtClostbtn' id='" +searchKeywordId  +"_CTAheatmapCloseBtn' onclick=\"closeCTAheatmap('"+heatmapHolderDivID+"', '" +searchKeywordId +"')\">x</a>";
+			//var closeHTML = "<a href='#' class='xtClostbtn' id='" +searchKeywordId  +"_CTAheatmapCloseBtn' onclick=\"closeCTAheatmap('"+heatmapHolderDivID+"', '" +searchKeywordId +"')\">x</a>";
 							    
       		drawHeatmapCTA(heatmapDiv, null, selectedAnalyses, keyword);  // draw blank heatmap
       		
