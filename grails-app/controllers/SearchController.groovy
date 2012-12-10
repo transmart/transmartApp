@@ -623,7 +623,7 @@ public class SearchController{
 							  <security> 
 							      <all-permissions/> 
 							  </security> 
-							  <update check="always" policy="always">
+							  <update check="always" policy="always"/>
 							  <resources> 
 							    <j2se version="1.6+" java-vm-args="-Xmx800m"/>
 							    
