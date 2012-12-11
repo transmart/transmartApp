@@ -328,6 +328,6 @@
 			<g:form controller="geneExprAnalysis" name="globalfilter-form" id="globalfilter-form" action="doSearch">
 				<input type="hidden" name="selectedpath" value="">
 			</g:form>
-		<div id="maintabs-div"></div>
+		<div id="maintabs-div" style="height:500px;overflow:auto;"></div>
 	</body>
 </html>
