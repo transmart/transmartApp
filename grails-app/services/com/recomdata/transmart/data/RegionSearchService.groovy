@@ -360,6 +360,13 @@ class RegionSearchService {
 		if (search) {
 			queryCriteria.append(" AND (data.rs_id LIKE '%${search}%'")
 			queryCriteria.append(" OR data.ext_data LIKE '%${search}%'")
+			if(hg19only){
+				queryCriteria.append(" OR info.rsgene LIKE '%${search}%'")	
+			}else{
+				queryCriteria.append(" OR gmap.gene_name LIKE '%${search}%'");
+			}
+			queryCriteria.append(" OR info.pos LIKE '%${search}%'")
+			queryCriteria.append(" OR info.chrom LIKE '%${search}%'")
 			if (type.equals("eqtl")) {
 				queryCriteria.append(" OR data.gene LIKE '%${search}%'")
 			}

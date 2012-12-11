@@ -67,12 +67,13 @@ function applyPopupFiltersStudy()
 		        keyword:selected.text,
 		        category:'STUDY_ID'};
 		
-		addSearchTerm(searchParam);
+		addSearchTerm(searchParam, true);
 		
 	})
 	
 	//This destroys our popup window.
 	jQuery(this).dialog("destroy");
+	updateSearch();
 }
 
 function applyPopupFiltersAnalyses()
@@ -86,14 +87,15 @@ function applyPopupFiltersAnalyses()
 		        keyword:selected.text,
 		        category:'ANALYSIS_ID'};
 		
-		addSearchTerm(searchParam);
+		addSearchTerm(searchParam, true);
 		
 	})
 	
 	//This destroys our popup window.
 	//Special for analyses - remove the large list at this stage
 	jQuery(this).children().detach().remove();
-	jQuery(this).dialog("destroy")
+	jQuery(this).dialog("destroy");
+	updateSearch();
 }
 
 function applyPopupFiltersRegions()
@@ -180,10 +182,11 @@ function applyPopupFiltersDataTypes()
 		        keyword:selected.text,
 		        category:'DATA_TYPE'};
 		
-		addSearchTerm(searchParam);
+		addSearchTerm(searchParam, true);
 		
 	})
 	
 	//This destroys our popup window.
 	jQuery(this).dialog("destroy");
+	updateSearch();
 }

@@ -508,7 +508,7 @@ function showFacetResults(tabToShow)	{
 }
 
 // Add the search term to the array and show it in the panel.
-function addSearchTerm(searchTerm)	{
+function addSearchTerm(searchTerm, noUpdate)	{
 	var category = searchTerm.display == undefined ? "TEXT" : searchTerm.display;
 	
 	category = category + "|" + (searchTerm.category == undefined ? "TEXT" : searchTerm.category);
@@ -542,10 +542,15 @@ function addSearchTerm(searchTerm)	{
 			   , false);
 
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
-	if (!treeUpdated) {
+	if (!treeUpdated && !noUpdate) {
       showSearchTemplate();
 	  showSearchResults();
 	}
+}
+
+function updateSearch() {
+    showSearchTemplate();
+	showSearchResults();
 }
 
 // Remove the search term that the user has clicked.
