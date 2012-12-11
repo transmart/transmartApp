@@ -1511,39 +1511,20 @@ class RWGVisualizationDAO {
    
    def getCrossTrialSummaryTableStats(analysisList)	{
 	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-	   
-	   def s = "";
-	   
-	   //convert the CSV analysisList into an array of objects
-	   def analysisObj = analysisList.split(',').collect{it as int}
-	   
-	   //loop through the array and add the select statement for each analysis
-	   analysisObj.each{
-		   
-		   s = s + """
-		
-		    select ${it} as bio_assay_analysis_id,
-		    (select count(distinct(bio_marker_id))
-		    from biomart.heat_map_results
-		    where  bio_assay_analysis_id =${it}
-		    and significant=1
-		    and fold_change_ratio > 0) as upreg,
-		    (select count(distinct(bio_marker_id))
-		    from biomart.heat_map_results
-		    where  bio_assay_analysis_id =${it}
-		    and significant=1
-		    and fold_change_ratio < 0) as downreg,
-		    (select count(distinct(bio_marker_id))
-		    from biomart.heat_map_results
-		    where  bio_assay_analysis_id =${it})
-		    as total
-		    from dual"""
-		   
-		   if(it != analysisObj.last()) {
-				   s=s+" union ";
-		   }
-		   
-	   }
+	   println analysisList
+	   String s = """
+		select  bio_assay_analysis_id, sum(upreg) count_upreg, sum(downreg) count_downreg, count(distinct  bio_marker_id) total from (         
+		select distinct  bio_assay_analysis_id, bio_marker_id, 
+		       case when (fold_change_ratio>0 and significant=1) then 1 else 0 end upreg, 
+		       case when (fold_change_ratio<0 and significant=1) then 1 else 0 end downreg
+		from (
+		select distinct bio_assay_analysis_id, bio_marker_id, significant, fold_change_ratio
+				    from biomart.heat_map_results
+				    where  bio_assay_analysis_id in (${analysisList})
+		) 
+		)        	
+		group by bio_assay_analysis_id
+	   """
 	   
 	   log.debug("${s}")
    
@@ -1553,8 +1534,8 @@ class RWGVisualizationDAO {
 		   rows.each {row->
 			   def result=[:]
 			   result.put('bio_assay_analysis_id', row.bio_assay_analysis_id)
-			   result.put('upreg', row.upreg)
-			   result.put('downreg', row.downreg)
+			   result.put('upreg', row.count_upreg)
+			   result.put('downreg', row.count_downreg)
 			   result.put('total', row.total)
 		   resultSet.push(result)
 	   }
