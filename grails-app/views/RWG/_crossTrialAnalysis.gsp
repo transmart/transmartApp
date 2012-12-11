@@ -4,16 +4,7 @@
 
 		displayxtAnalysesList();
 
-    	jQuery( "#xtSelectedAnalysesList" ).sortable();
-    	jQuery( "#xtSelectedAnalysesList" ).disableSelection();
-
     	jQuery('#xtSummaryChartArea').sortable();
-
-    	jQuery('#xtHeatmapTab').sortable();
-    	
-    	
-
-    	//displaySelectedAnalysisTopGenes();
     	
     	getCrossTrialSummaryTableStats();
     	
