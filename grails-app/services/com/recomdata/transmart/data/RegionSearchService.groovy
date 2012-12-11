@@ -469,6 +469,9 @@ class RegionSearchService {
 				if (cutoff) {
 					stmt.setDouble(1, cutoff);
 				}
+				
+				log.debug("Executing count query: " + finalQuery)
+				
 				rs = stmt.executeQuery();
 				if (rs.next()) {
 					total = rs.getLong("TOTAL")
