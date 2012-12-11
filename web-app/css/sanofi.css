@@ -1,0 +1,101 @@
+/** For CSS shared between the browse view and reskinned Dataset Explorer. **/
+
+table.menuDetail th.menuBar{
+    background:none;
+    background-image: none;
+    background-color: #EDEEF6;  
+}
+
+
+table.menuDetail th.menuLink a:link, th.menuLink a:visited {
+    font-size: 11px;
+    color: #515BA2 !important; /* Sorry */
+}
+
+/* Top level menu */
+
+.header-div {
+	background:none;
+    background-image: none;
+    color: #EDEEF6;
+	background-color: #EDEEF6;
+}
+
+#logocutout {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 999;
+}
+
+table.menuDetail {
+    padding: 0px 0px;
+    border: 0 none;
+}
+
+table.menuDetail th.menuBar {
+   	font-family: verdana, arial, helvetica, sans-serif;
+    font-size: 11px;     
+	line-height: 15px;
+    vertical-align: middle;
+    text-align: center;
+    white-space: nowrap;
+    font-weight: bold;
+    padding: 0px 0px;
+}
+
+table.menuDetail th {
+	background: transparent;	
+}
+
+table.menuDetail th.menuLink {
+	padding: 1px 15px;
+    color: #ddd;
+}
+
+table.menuDetail th.menuLink a:hover {
+    cursor: pointer;
+	font-size: 11px;    
+	text-decoration: underline;
+}
+
+table.menuDetail th.menuVisited {
+	padding: 1px 15px;
+    color: #ADAEB6;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+#search-div{
+  padding: 6px;
+  margin: 24px 10px 4px 0;
+  overflow: hidden;
+  position: absolute;
+  width: 300px;
+  top: -28px;
+  left: 120px;
+}
+
+#search-categories {
+    font-size: 10px;
+    height: 24px;
+    width: 90px;
+}
+
+#search-ac {
+    padding-top: 3px;
+    width: 135px;
+}
+
+
+
+/* end top level menu */
+
+/* Catch-all for making IE look slightly less stupid */
+*:focus {
+	outline:none;	
+}
+
+.breaker {
+	clear: both;	
+}

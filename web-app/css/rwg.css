@@ -21,16 +21,6 @@ body {
   width: 300px;     
 }
 
-#search-div{
-  padding: 6px;
-  margin: 24px 10px 4px 0;
-  overflow: hidden;
-  position: absolute;
-  width: 300px;
-  top: -28px;
-  left: 120px;
-}
-
 #box-search {
 	margin-top: 4px;
 	border-radius: 8px;
@@ -283,17 +273,6 @@ body {
 .ui-autocomplete-loading { 
 	background: white url(../images/loader-small.gif) right center no-repeat;
 	}
-
-#search-categories {
-    font-size: 10px;
-    height: 24px;
-    width: 90px;
-}
-
-#search-ac {
-    padding-top: 3px;
-    width: 135px;
-    }
 
 #toggle-btn {          
 	background-repeat:no-repeat; 
@@ -1204,31 +1183,6 @@ select.multiselect {
 	background-color: #F0F0FF;	
 }
 
-table.menuDetail th.menuBar{
-    background:none;
-    background-image: none;
-    background-color: #EDEEF6;  
-}
-
-
-table.menuDetail th.menuLink a:link, th.menuLink a:visited {
-    font-size: 11px;
-    color: #515BA2; 
-}
-
-
-.header-div {
-	background:none;
-    background-image: none;
-    color: #EDEEF6;
-	background-color: #EDEEF6;  
-    color: #515BA2
-	background-color: #EDEEF6;
-	<!--	 #EDEEF6;-->  
-}
-
-
-
 .ui-widget-header {
 	border:none;
 	background:none;
@@ -1373,15 +1327,6 @@ table.menuDetail th.menuLink a:link, th.menuLink a:visited {
 /* Special class for forcing no jQuery icon */
 .suppressicon {
 	background: none !important;
-}
-
-.breaker {
-	clear: both;	
-}
-
-/* Catch-all for making IE look slightly less stupid */
-*:focus {
-	outline:none;	
 }
 
 .rdc-h2 {

@@ -31,12 +31,12 @@
 	   				<%--<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>--%>
 
-			       	<g:if test="${'rwg'==app}"><g:link controller="RWG"><th class="menuVisited">Home</th></g:link></g:if>
-	       			<g:else><th class="menuLink">Home</th></g:else>
-
-			       	<%--<g:if test="${'datasetExplorer'==app}"><th class="menuVisited">Dataset Explorer</th></g:if>
-	       			<g:else><th class="menuLink"><g:link controller="secure">Dataset Explorer</g:link></th></g:else>
-	       			<g:if test="${grailsApplication.config.com.recomdata.hideSampleExplorer!='true'}">
+			       	<g:if test="${'rwg'==app}"><th class="menuVisited">Browse</th></g:if>
+	       			<g:else><th class="menuLink"><g:link controller="RWG">Browse</g:link></th></g:else>
+			       	<g:if test="${'datasetExplorer'==app}"><th class="menuVisited">Analyze</th></g:if>
+	       			<g:else><th class="menuLink"><g:link controller="datasetExplorer">Analyze</g:link></th></g:else>
+	       			
+	       			<%--<g:if test="${grailsApplication.config.com.recomdata.hideSampleExplorer!='true'}">
 	   				<g:if test="${'sampleexplorer'==app}"><th class="menuVisited">Sample Explorer</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="sampleExplorer">Sample Explorer</g:link></th></g:else>	   
 		   			 </g:if>--%>
@@ -56,8 +56,11 @@
 	</tr>
 </table>
 
+<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'sanofi.css')}">
+
 <g:if test="${'rwg' != app}" >
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
+	
 	<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 	<script>jQuery.noConflict();</script> 
 	

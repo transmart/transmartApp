@@ -83,6 +83,7 @@
 
  
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
+	
 	<script type="text/javascript">
 	/******************************************************************************/
 	//Global Variables
@@ -161,7 +162,9 @@
 	}	
 	</script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js', file:'sanofi.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
+	<tmpl:/RWG/urls />
 	
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
@@ -187,9 +190,15 @@
 	
     var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 </script>
-<%--<div id="header-div" style="display: none;"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>--%>
+<div id="header-div"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>
 <div id="main"></div>
-<h3 id="test">Loading....</h3>
+<h3 id="test">&nbsp;</h3>
+<div id="search-div">
+	<table><tr>
+		<td><select id="search-categories"></select></td>
+		<td><input id="search-ac"/></input></td>
+	</tr></table>                                            
+</div>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
 	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}">

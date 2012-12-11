@@ -10,54 +10,6 @@
     .queryGroupIncludeLong {text-align:left;width:230px; height:135px;padding:5px;background:white;font:8pt arial;white-space:nowrap;overflow:auto;border:1px solid black}
  	.queryGroupExclude {text-align:left;width:330px; height:35px;padding:5px;background:lightgrey;font:8pt arial;white-space:nowrap;overflow:auto;border:1px solid black}
 
-/* Top level menu */
-
-table.menuDetail {
-    padding: 0px 0px;
-    border: 0 none;
-}
-
-table.menuDetail th {
-   	font-family: verdana, arial, helvetica, sans-serif;
-    font-size: 11px;     
-	line-height: 15px;
-    vertical-align: middle;
-    text-align: center;
-    white-space: nowrap;
-    background: #fafafa url(../images/skin/shadow30.jpg);
-    font-weight: bold;
-    padding: 0px 0px;
-}
-
-table.menuDetail th.menuLink {
-	padding: 1px 15px;
-    color: #00c !important;
-    border-right: 1px solid #ccc;
-    text-decoration: none;
-}
-
-table.menuDetail th.menuLink a:link, th.menuLink a:visited {
-    color: #00c !important;
-	font-size: 11px;
-    text-decoration: none;	
-}
-
-table.menuDetail th.menuLink a:hover {
-    cursor: pointer;
-    color: #00c !important;
-	font-size: 11px;    
-	text-decoration: underline;
-}
-
-table.menuDetail th.menuVisited {
-	padding: 1px 15px;
-    color: white;    
-    background: #C8C8C8;
-    border: 1px inset gray;
-}
-
-/* end top level menu */
-
 div.topall {
 	padding-top:4px;
 	background: #fafafa url(../images/skin/shadow30.jpg);
