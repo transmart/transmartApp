@@ -879,7 +879,7 @@ class RWGVisualizationDAO {
 	 * @param showSigResultsOnly - are we showing only the significant results?
 	 * @param pageNumber - What page number are we obtaining data for?  Defaults to 1
 	 * 
-	 * @return a string containing the heatmap data, comma seperated
+	 * @return a string containing the heatmap data, comma separated
 	 */	
 	def getHeatmapDataForExport2(analysisID, probesList, genes, showSigResultsOnly, pageNumber = 1)	{
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
