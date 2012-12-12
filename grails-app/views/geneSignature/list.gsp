@@ -135,10 +135,9 @@
 		        </div>
 		        <br>
 		        <g:form name="newList">
-		        	<g:textArea id="manipulationResults" name="results" value="" style="height: 180; width:480; border:1px double black"/>
+		        	<g:textArea id="manipulationResults" name="manipulationResults" value="" style="height: 180; width:480; border:1px double black"/>
 		        	<br>
-		        	<g:textField name="newGeneListName" value="New Genelist Name" onClick="resetGeneListName()"/>
-		        	<g:submitButton class="edit" onClick="saveNewList();" value="Save" name="Save"/>
+		        	<g:actionSubmit class="edit" action="createWizard" value="Save" name="Save"/>
 		        </g:form>
 	        </div>
     	</div>

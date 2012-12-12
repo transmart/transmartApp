@@ -149,6 +149,8 @@ class GeneSignatureController {
 
 		// initialize session
 		def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: geneSigInst);
+		def manipulationResults = params['manipulationResults'];
+		newWizard.manipulatedGeneSigText=manipulationResults
 		session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
 
 		redirect(action:'create1')
@@ -251,7 +253,7 @@ class GeneSignatureController {
 
 		// load data for page 1
 		loadWizardItems(1, wizard)
-
+		
 		render(view: "wizard1", model:[wizard:wizard])
 	}
 

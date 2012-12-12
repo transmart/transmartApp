@@ -468,6 +468,14 @@ function mapColor(region, map, regionId, color){
  * Populates the results text box.
  */
 function populateResults(results){
+	var delimitingChar="\n"
+	if(results!=''){
+		var geneSigItems = results.split(",");
+		results='';
+		for(var i =0; i<geneSigItems.length; i++){
+			results = results+geneSigItems[i]+delimitingChar;
+		}
+	}
 	jQuery("#manipulationResults").val(results);
 }
 
@@ -502,11 +510,3 @@ function resetGeneListName(){
 function exportSVGImage(){
 	
 }
-
-/**
- * Saves the new list.
- */
-function saveNewList(){
-	
-}
-

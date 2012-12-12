@@ -56,6 +56,7 @@ public class WizardModelDetails extends ModelDetails{
 	def platforms
 	def compounds
 	def geneSigText
+	def manipulatedGeneSigText
 	def geneSigFile
 	
 	// domain class

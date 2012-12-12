@@ -250,7 +250,12 @@
 					</tr>
 					<tr>
 						<td colspan="2" class="value">
-							<g:textArea wrap="hard" name="genes" value="" rows="6" cols="85" onblur="toggleFileUpload();" value="${wizard.geneSigText}"></g:textArea>
+							<g:if test="${wizard.geneSigText==null}">
+								<g:textArea wrap="hard" name="genes" rows="6" cols="85" onblur="toggleFileUpload();" value="${wizard.manipulatedGeneSigText}"></g:textArea>
+							</g:if>
+							<g:else>
+								<g:textArea wrap="hard" name="genes" rows="6" cols="85" onblur="toggleFileUpload();" value="${wizard.geneSigText}"></g:textArea>
+							</g:else>
 						</td>
 					</tr>
 					<tr>
