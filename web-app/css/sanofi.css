@@ -1,5 +1,9 @@
 /** For CSS shared between the browse view and reskinned Dataset Explorer. **/
 
+body {
+	font: 13px 'Helvetica',arial,clean,sans-serif	
+}
+
 table.menuDetail th.menuBar{
     background:none;
     background-image: none;
@@ -51,6 +55,7 @@ table.menuDetail th {
 table.menuDetail th.menuLink {
 	padding: 1px 15px;
     color: #ddd;
+    border-right: none;
 }
 
 table.menuDetail th.menuLink a:hover {
@@ -64,6 +69,8 @@ table.menuDetail th.menuVisited {
     color: #ADAEB6;
     font-size: 10pt;
     font-weight: bold;
+    background: none;
+    border: none;
 }
 
 #search-div{
@@ -74,6 +81,10 @@ table.menuDetail th.menuVisited {
   width: 300px;
   top: -28px;
   left: 120px;
+}
+
+#search-div table {
+	width: 100%	
 }
 
 #search-categories {
@@ -95,8 +106,6 @@ table.menuDetail th.menuVisited {
 	margin-top: 4px;
 	border-radius: 8px;
 	border: #0000FF;
-	width: 290px;
-	margin-right: 10px;
 	box-shadow: #DDD 11px 11px 8px -7px;
 }
 
@@ -115,7 +124,7 @@ table.menuDetail th.menuVisited {
 	border-bottom: 1px solid #888;
 }
 
-#title-search-div{
+#title-search-div, #navigateTermsPanel .x-panel-header {
   height:27px;
   overflow: hide;
   border-top-left-radius: 8px;
@@ -135,6 +144,103 @@ table.menuDetail th.menuVisited {
 #title-filter{
   height:25px;
   overflow: hide;  
+}
+
+.title, #navigateTermsPanel .x-panel-header-text{
+	  color:#333;
+	  padding:0;
+	  margin:0;
+	  font-size:11px;
+	  font-weight:bold;
+	  padding-left:0.5em;
+	  padding-top:0.5em;
+}
+
+.greybutton {
+	background-color: #F4F4F4;
+	border: 1px solid #DDD;
+	cursor: pointer;
+	border-radius: 2px;
+	font-size: 8pt;
+}
+
+#filterbutton {
+	position: absolute;
+	right: 40px;
+	bottom: 5px;
+	padding: 0px 4px;
+}
+
+#cartbutton {
+	position: absolute;
+    right: 800px;
+	top: 3px;
+	padding: 0px 4px;
+}
+
+#cartcount {
+	position: absolute;
+	left: 9px;
+	top: -1px;
+	font-size: 10px;
+	font-weight: bold;
+	text-align: center;
+	width: 20px;
+	color: #586;
+}
+
+.filtertitle {
+	padding: 4px 0px 4px 24px;
+	background-color: #FFFFFF;
+	background-image: url('../images/down_arrow_small2.png');
+	background-repeat: no-repeat;
+	background-position: 8px 50%;
+	cursor: pointer;
+	border-top: 1px solid #EEE;
+	font-weight: bold;
+}
+
+#filter-browser {
+	font-size: 8pt;
+	font-family: Verdana, Arial, sans-serif;	
+}
+
+.filteritem {
+	padding: 4px 0px 4px 32px;
+	cursor: pointer;
+}
+
+.filteritem:hover,.filtertitle.hover {
+	background-color: #F4F4FF;	
+}
+
+.filteritem.selected {
+	background-color: #F0F0FF;	
+}
+
+.ui-widget-header, #navigateTermsPanel .x-panel-header {
+	border:none;
+	background:none;
+	background-image: none;
+	background-color: #515BA2;
+	font-family: 'Helvetica',arial,clean,sans-serif;
+}
+
+#navigateTermsPanel {
+	margin-top: 8px;
+	
+}
+
+#navigateTermsPanel .x-panel-header-text{
+	color: white;
+}
+
+#navigateTermsPanel .x-panel-header {
+	height: 18px;
+}
+
+#navigateTermsPanel a {
+	font-weight: normal;	
 }
 
 

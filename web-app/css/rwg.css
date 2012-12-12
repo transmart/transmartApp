@@ -44,17 +44,6 @@ body {
 
 /********* END LAYOUT *********/
 
-.title{
-	  color:#333;
-	  padding:0;
-	  margin:0;
-	  font-size:11px;
-	  font-weight:bold;
-	  padding-left:0.5em;
-	  padding-top:0.5em;
-	  
-		
-}
 .x-panel-header
 {
 	margin:0;
@@ -1108,42 +1097,6 @@ select.multiselect {
 	box-shadow: #DDD 11px 11px 8px -7px;
 }
 
-.filtertitle {
-	padding: 4px 0px 4px 24px;
-	background-color: #FFFFFF;
-	background-image: url('../images/down_arrow_small2.png');
-	background-repeat: no-repeat;
-	background-position: 8px 50%;
-	cursor: pointer;
-	border-top: 1px solid #EEE;
-	font-weight: bold;
-}
-
-#filter-browser {
-	font-size: 8pt;
-	font-family: Verdana, Arial, sans-serif;	
-}
-
-.filteritem {
-	padding: 4px 0px 4px 32px;
-	cursor: pointer;
-}
-
-.filteritem:hover,.filtertitle.hover {
-	background-color: #F4F4FF;	
-}
-
-.filteritem.selected {
-	background-color: #F0F0FF;	
-}
-
-.ui-widget-header {
-	border:none;
-	background:none;
-	background-image: none;
-	background-color: #515BA2;	
-}
-
 #studyTabs {
 	padding: 0px;
 	position: relative;
@@ -1175,39 +1128,6 @@ select.multiselect {
 	border: none;
 	height: 400px;
 	width: 100%;
-}
-
-.greybutton {
-	background-color: #F4F4F4;
-	border: 1px solid #DDD;
-	cursor: pointer;
-	border-radius: 2px;
-	font-size: 8pt;
-}
-
-#cartbutton {
-	position: absolute;
-    right: 800px;
-	top: 3px;
-	padding: 0px 4px;
-}
-
-#filterbutton {
-	position: absolute;
-	right: 40px;
-	bottom: 5px;
-	padding: 0px 4px;
-}
-
-#cartcount {
-	position: absolute;
-	left: 9px;
-	top: -1px;
-	font-size: 10px;
-	font-weight: bold;
-	text-align: center;
-	width: 20px;
-	color: #586;
 }
 
 #sidebartoggle {

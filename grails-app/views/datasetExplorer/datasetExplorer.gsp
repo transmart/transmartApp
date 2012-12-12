@@ -94,7 +94,7 @@
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 	
 
- 
+    <!--<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>    -->
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
 	
 	<script type="text/javascript">
@@ -210,7 +210,7 @@
 	<table><tr>
 		<td><select id="search-categories"></select></td>
 		<td><input id="search-ac"/></input></td>
-	</tr></table>                                            
+	</tr></table>
 </div>
 <div id="box-search">
 	<div id="title-search-div" class="ui-widget-header">

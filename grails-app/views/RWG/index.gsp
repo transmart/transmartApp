@@ -188,15 +188,12 @@
 	        		hide: 'fade',
 	        		title: 'Filter Browser'
 		        });
-
-	        	 var containerWidth = jQuery('#main').width();
-                 
                  
 	        	jQuery('#sidebar').resizable({
                     handles: 'e',
                     maxWidth: 800,
                     minWidth: 120,
-                    resize: function(event, ui){
+                    stop: function(event, ui){
                         var currentWidth = ui.size.width;
                         
                         // this accounts for padding in the panels + 
@@ -211,7 +208,7 @@
                         jQuery('#sidebar-accordion').width(currentWidth -20)
                         // jQuery('#results-div').width(currentWidth -20)
                         // set the content panel width
-                        jQuery('#main').width(containerWidth - currentWidth - padding);            
+                        jQuery('#main').width(jQuery('body').width() - currentWidth - padding);            
                     }
               });
 

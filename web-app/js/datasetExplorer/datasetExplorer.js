@@ -854,7 +854,14 @@ Ext.onReady(function()
 		viewport = new Ext.Viewport(
 				{
 					layout : 'border',
-					items : [centerMainPanel]
+					items : [centerMainPanel],
+					listeners: {
+						resize: {
+							fn: function(el) {
+								onWindowResize();
+							}
+						}
+					}
 				}
 		);
 
@@ -1055,7 +1062,7 @@ function hasMultipleTimeSeries()
 function createOntPanel()
 {
 	// make tab panel, search panel, ontTree and combine them
-	ontTabPanel = new Ext.TabPanel(
+	ontTabPanel = new Ext.Panel(
 			{
 				id : 'ontPanel',
 				region : 'center',
@@ -1641,10 +1648,10 @@ function getCategoriesComplete(ontresponse){
 //	ontTabPanel.add(ontFilterPanel);
 //	ontFilterTree.dragZone.addToGroup("analysis");
 	getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
-	if(GLOBAL.hideAcrossTrialsPanel!='true'){
-		getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
-		}
-	setActiveTab();
+//	if(GLOBAL.hideAcrossTrialsPanel!='true'){
+//		getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
+//		}
+//	setActiveTab();
 }
 
 function setActiveTab(){
