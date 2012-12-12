@@ -87,9 +87,56 @@ table.menuDetail th.menuVisited {
     width: 135px;
 }
 
-
-
 /* end top level menu */
+
+/* Sidebar */
+
+#box-search {
+	margin-top: 4px;
+	border-radius: 8px;
+	border: #0000FF;
+	width: 290px;
+	margin-right: 10px;
+	box-shadow: #DDD 11px 11px 8px -7px;
+}
+
+#active-search-div
+{
+	font-size: 11px;
+    min-height: 64px;
+    margin: 0;
+    overflow: auto;
+    padding: 5px 0 5px 20px;
+    background: #FFFFFF;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	border-left: 1px solid #888;
+	border-right: 1px solid #888;
+	border-bottom: 1px solid #888;
+}
+
+#title-search-div{
+  height:27px;
+  overflow: hide;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-left: 1px solid #888;
+  border-right: 1px solid #888;
+  border-top: 1px solid #888;
+  position: relative;
+}
+#title-search-div .title {
+  color: white;
+}
+#title-search-div a {
+  color: white;
+}
+
+#title-filter{
+  height:25px;
+  overflow: hide;  
+}
+
 
 /* Catch-all for making IE look slightly less stupid */
 *:focus {

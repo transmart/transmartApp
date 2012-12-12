@@ -58,14 +58,14 @@
 
 <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'sanofi.css')}">
 
-<g:if test="${'rwg' != app}" >
+<%--<g:if test="${'rwg' != app}" >
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
 	
 	<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 	<script>jQuery.noConflict();</script> 
 	
 	<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>		
-</g:if>
+</g:if>--%>
 
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.idletimeout.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.idletimer.js')}"></script>

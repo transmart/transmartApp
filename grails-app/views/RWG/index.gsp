@@ -55,7 +55,7 @@
         
         <!-- Our JS -->        
         <script type="text/javascript" src="${resource(dir:'js', file:'rwg.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'sanofi.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'rwgsearch.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'maintabpanel.js')}"></script>
         
         <!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->

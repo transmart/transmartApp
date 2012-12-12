@@ -999,11 +999,21 @@ Ext.onReady(function()
 		
 		/** Additional styling - alter Ext's appearance to be consistent with Browse **/
 
-		jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
+		onWindowResize();
+		
+		jQuery(window).resize(function() {
+			onWindowResize();
+		});
 		//alert(h);
 		}
 
 );
+
+function onWindowResize() {
+	jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
+	jQuery('#box-search').prependTo(jQuery('#westPanel'));
+}
+
 
 /*
 This function will make a quick call to the server to check
