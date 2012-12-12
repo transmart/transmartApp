@@ -5,13 +5,13 @@
 	    var dw = jQuery(document).width();
 	    var dh = jQuery(document).height();
 	
-	    var w = jQuery("#" + tooltipDivId).width() + 50;
-	    var h = jQuery("#" + tooltipDivId).height() + 20;
+	    var w = jQuery("#" + tooltipDivId).width() + 10;
+	    var h = jQuery("#" + tooltipDivId).height() + 10;
 
 	    
     	// will popup fit on right
     	if ((e.pageX + w) < dw)  {
-    		xOffset = 50;	    
+    		xOffset = 10;	    
     	}
 	    else {
 		    // will popup fit to left	    
@@ -30,7 +30,7 @@
 	    else {
 	    	// will popup fit below
 	    	if ((e.pageY + h) < dh)  {	    		
-	    		yOffset = 20;
+	    		yOffset = 10;
 	    	}
 	    	else {
 	    		yOffset = e.pageY;

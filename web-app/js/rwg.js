@@ -33,6 +33,8 @@ var xtSelectedKeywords = [];
 var uniqueGeneChartId = 0;   // sequence to give unique identifiers to the tooltips used in the gene chart
 var gcTooltips = new Array;  // gene chart tooltips
 
+var xtSelectionUpdated = false; //Used to detect when analyses have been added/removed from the selectedAnalysis list
+								//when set to true, the Cross Trial Analysis page will update when the tab is clicked
 
 //create an ajaxmanager named rwgAJAXManager
 //this will handle all ajax calls on this page and prevent too many 
@@ -96,6 +98,8 @@ function refreshCrossTrialMsg(){
 //remove the the XT Analysis from array selectedAnalyses
 function removeXTAnalysisFromArray(analysisID){
 	
+	xtSelectionUpdated = true; //set to true to indicate the selected analyses have changed
+	
 	for (var i =0; i < selectedAnalyses.length; i++)
 		   if (selectedAnalyses[i].id === analysisID) {
 			   selectedAnalyses.splice(i,1);
@@ -105,7 +109,10 @@ function removeXTAnalysisFromArray(analysisID){
 	//update the cookie
 	jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
 	
-	refreshCrossTrialMsg()
+	//check if the cross-trial div is currently displayed. If so, display prompt to refresh page
+	if(jQuery('#cross-trial-div').css('display') != 'none'){
+		refreshCrossTrialMsg();
+	}
 	
 	return;
 	
@@ -113,19 +120,24 @@ function removeXTAnalysisFromArray(analysisID){
 
 function addXTAnalysisToArray(analysisID, analysisTitle, studyID){
 	
+	xtSelectionUpdated = true;
+	
 	//add item to selectedAnalyses array
 	selectedAnalyses.push({'id':analysisID, 'title':analysisTitle, 'studyID':studyID});
 	
 	//update the cookie
 	jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
 	
-	refreshCrossTrialMsg()
+	//refreshCrossTrialMsg();
+	//updateCrossTrialGeneCharts();
 	
 	return;
 }
 
 
 function updateAnalysisCount(checkedState, analysisID, analysisTitle, studyID)	{	
+	
+	xtSelectionUpdated = true; //set global status to true to indicate the selection has changed
 
 	var currentCount = selectedAnalyses.length;
 	
@@ -147,7 +159,6 @@ function updateAnalysisCount(checkedState, analysisID, analysisTitle, studyID)	{
 	jQuery("#analysisCountLabel").html(newLabel);
 	
 	displayxtAnalysesList();
-	
 	setSaveXTFilterLink();
 	setClearXTLink();
 	
@@ -3018,6 +3029,10 @@ function loadHeatmapPaginator(divID, analysisId, page, isSA, keywordsQueryString
 function showCrossTrialAnalysis()
 {
 	
+	if(xtSelectionUpdated){
+		updateCrossTrialGeneCharts();
+	}
+	
 	menuIconSwap("imgCTA");
 	
 	//reset scroll position
@@ -3424,8 +3439,8 @@ function displayxtAnalysesList(){
 		html = html + '</table></div>';
 		html = html + "<div id='analysis_holderSA_" + selectedAnalyses[index].id + "' class='xtSAHeatmapHolder'>"; 
 		html = html + "<div class='legend' id='saheatmapLegend_" + selectedAnalyses[index].id + "'></div>";
-		html = html + "<div class='heatmap-SA-Holder' id='heatmapSA_" + selectedAnalyses[index].id + "'></div>";
-		html = html + "<div class='pagination' id='sapagination_" + selectedAnalyses[index].id + "'></div>";
+		
+		
 		
 		var allSigChecked = '';
 		var selectedChecked = '';
@@ -3439,15 +3454,26 @@ function displayxtAnalysesList(){
 		}
 		
 		var onclick = "loadHeatmapSA(" +  selectedAnalyses[index].id + ", 1);" 
-		html = html + "<input onclick='" + onclick + "' type='radio' name='showGenes_" + selectedAnalyses[index].id + "' value='ALLSIG' " + allSigChecked + " /> Show All Significant Genes<br>"
-		html = html + "<input onclick='" + onclick + "' type='radio' name='showGenes_" + selectedAnalyses[index].id + "' value='SELECTED' " + selectedChecked + " " + selectedDisabled + " /> Show Selected Genes<br>"
+		html += "<form><div class='xtHeatmapRadioBtns' id='HeatmapRadio_" +selectedAnalyses[index].id +"'>"
 		
-		html = html + "</div>";
+		html += "<input onclick='" + onclick + "' type='radio' id='showAllGenes_" + selectedAnalyses[index].id + "' name='showGenes_" + selectedAnalyses[index].id + "' value='ALLSIG' " + allSigChecked + " />"
+		html += "<label for='showAllGenes_" + selectedAnalyses[index].id + "'> Show All Significant Genes</label>"
+		html += "<input onclick='" + onclick + "' type='radio' id='showSelectedGenes_" + selectedAnalyses[index].id + "' name='showGenes_" + selectedAnalyses[index].id + "' value='SELECTED' " + selectedChecked + " " + selectedDisabled + " />"
+		html += "<label for='showSelectedGenes_" + selectedAnalyses[index].id + "'>Show Selected Genes</label></div>"
+					
+		html += "<div class='heatmap-SA-Holder' id='heatmapSA_" + selectedAnalyses[index].id + "'></div>";
+		html += "<div class='pagination' id='sapagination_" + selectedAnalyses[index].id + "'></div>";
+		
+		html += "</div></form>";
 	});
 	
 	html = html + '</div>';
 	
 	jQuery('#xtSummary_AnalysesList').html(html);
+	
+	
+    jQuery(".xtHeatmapRadioBtns").buttonset();
+
 
 	// store the state of each div 
 	jQuery(selectedAnalyses).each(function(index, value){
