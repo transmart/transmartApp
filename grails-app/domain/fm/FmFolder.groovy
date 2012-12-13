@@ -43,7 +43,7 @@ class FmFolder implements Buildable{
 		sort "folderName"
 		id generator: 'sequence', params:[sequence:'seq_fm_id']
 		fmFiles joinTable: [name: 'fm_folder_file_association',  key:'folder_id', column: 'file_id'], lazy: false
-		amTagTemplates joinTable: [name: 'am_template_association',  key:'object_uid', column: 'tag_template_id'], lazy: false
+		amTagTemplates joinTable: [name: 'am_tag_template_association',  key:'object_uid', column: 'tag_template_id'], lazy: false
 		columns {
 			id column:'folder_id'
 		}
