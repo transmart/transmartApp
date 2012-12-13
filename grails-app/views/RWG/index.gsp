@@ -65,22 +65,16 @@
 		<tmpl:/RWG/urls />
 		<script type="text/javascript" charset="utf-8">
 	        var mouse_inside_options_div = false;
+	        var sessionSearch = "${rwgSearchFilter}";
 
 	        jQuery(document).ready(function() {
-		        
+
 		        addToggleButton();
 
 		        jQuery('#meta-').accordion(); 
 			        
 		        jQuery("#xtButton").colorbox({opacity:.75, inline:true, width:"95%", height:"95%"});
       
-
-		    	showSearchResults('analysis'); //reload the full search results for the analysis/study view
-
-		    	//Disabling this, we aren't using the d3js code that takes advantage of HTML5.
-		    	//showIEWarningMsg();
-
-
 		        jQuery("#searchResultOptions_btn").click(function(){
 		        	jQuery("#searchResultOptions").toggle();
 		        	});
@@ -106,17 +100,6 @@
 		             }
 
 	            });
-
-	        	<%--jQuery('#topTabs').tabs();	
-	        	jQuery('#topTabs').bind( "tabsshow", function(event, ui) {
-		        	var id = ui.panel.id;
-	        	    if (ui.panel.id == "study-view-div") {
-	        	    	
-	        	    } else if (ui.panel.id == "subject-view-div")	{
-						
-	        	    }
-	        	});--%>
-	        	jQuery('#studyTabs').tabs();
 
 	        	jQuery('#sidebartoggle').click(function() {
 					toggleSidebar();
@@ -178,16 +161,6 @@
 
 	        	jQuery('#sidebar-accordion').accordion({heightStyle: "fill", icons: { 'header': 'suppressicon', 'headerSelected': 'suppressicon' }});
 	        	resizeAccordion();
-	        	
-	        	jQuery('#filter-browser').dialog({
-	        		autoOpen: false,
-	        		width:200,
-	        		height:400,
-	        		resizable:true,
-	        		show: 'fade',
-	        		hide: 'fade',
-	        		title: 'Filter Browser'
-		        });
                  
 	        	jQuery('#sidebar').resizable({
                     handles: 'e',
@@ -382,39 +355,8 @@
         </div>
         
 		<div id="sidebar" style="border-right:3px solid;border-color:#EDEEF6">
-		
-			<%-- 
-				Some code that needs justification here... jQuery Tabs assumes that the tabs will be followed by a
-				collection of divs with the intended content. We want these tabs to affect a pane to the right
-				instead - so we set up an invisible div for each tab, then call a function to display the tab we
-				actually want (and to do any additional setup work).
-			 
-			<div id="topTabs" class="analysis-tabs">
-		       <ul>
-		          <li id="studyViewTab"><a href="#studyFake" onclick="showTab('browse')">Browse</a></li>
-		          <li id="subjectViewTab"><a href="#subjectFake" onclick="showTab('analyze')">Analyze</a></li>
-		       </ul>
-		       
-				<div id="studyFake" style="height: 0px; padding: 0"></div>
-				<div id="subjectFake" style="height: 0px; padding: 0"></div>
-				
-		    </div>
-		    --%>
 	       
-	        <div id="box-search">
-		        <div id="title-search-div" class="ui-widget-header">
-			         <h2 style="float:left" class="title">Active Filters</h2>
-					 <h2 style="float:right; padding-right:5px;" class="title">
-					 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
-					 </h2> 
-					 <div id="filterbutton" class="greybutton" onclick="jQuery('#filter-browser').dialog('open');">
-						<img src="${resource(dir:'images', file:'filter.png')}"/> Filter
-					 </div>
-				</div>
-				<div id="active-search-div" style="position: relative;">
-					&nbsp;
-				</div>
-			</div>
+	        <tmpl:/rwg/boxSearch />
 			
 			<div id="accordion-container" style="height: 600px">
 				<div id="sidebar-accordion">
@@ -508,12 +450,7 @@
 
 		<%-- Elements that are in fixed positions on the page --%>
 		<div id="sidebartoggle">&nbsp;</div>
-		<div id="search-div">
-      		<table><tr>
-      			<td><select id="search-categories"></select></td>
-      			<td><input id="search-ac"/></input></td>
-      		</tr></table>                                            
-      	</div>
+		<tmpl:/rwg/searchAutocomplete />
    		<div id="cartbutton" class="greybutton">
    		<g:remoteLink controller="export" action="selection" update="${overlayExportDiv}" 
                             params="[eleId:overlayExportDiv]" 
@@ -523,26 +460,7 @@
 			<div id="cartcount">0</div>
 		</div>
       	
-        <div id="filter-browser">			        	
-        	<%-- TODO Source all of this from the database... obviously --%>
-        	<div class="filtertitle" name="ASSAY_PLATFORM">Assay Platform</div>
-        	<div class="filtercontent" name="ASSAY_PLATFORM" style="display: none;">
-        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap1">IHC</div>
-        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap2">mRNA Profiling</div>
-        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap3">SNP Profiling</div>
-        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap4">ELISA</div>
-        	</div>
-        	<div class="filtertitle" name="COMPOUND">Compound</div>
-        	<div class="filtercontent" name="COMPOUND" style="display: none;">
-        		<div class="filteritem" name="COMPOUND" id="co1">XL147</div>
-        		<div class="filteritem" name="COMPOUND" id="co2">BSI-201</div>
-        	</div>
-        	<div class="filtertitle" name="ACCESS_TYPE">Access Type</div>
-        	<div class="filtercontent" name="ACCESS_TYPE" style="display: none;">
-        		<div class="filteritem" name="ACCESS_TYPE" id="at1">Proprietary</div>
-        		<div class="filteritem" name="ACCESS_TYPE" id="at2">Public</div>
-        	</div>
-        </div>
+		<tmpl:/rwg/filterBrowser />
         	
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 

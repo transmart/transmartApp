@@ -246,6 +246,11 @@ class FmFolderController {
 	}
 	
 	def getAllPrograms = {
+		//TODO This is here temporarily as it's the method we call to get "search results" - move this to the search controller.
+		def searchString = params.searchTerms
+		def searchTerms = searchString.split(",,,")
+		session['rwgSearchFilter'] = searchTerms
+		
 		def folders = FmFolder.executeQuery("from FmFolder as fd where fd.folderType = 'Program' order by folderName")
 		render(template:'programs', model: [folders: folders])
 	}

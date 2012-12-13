@@ -1017,8 +1017,13 @@ Ext.onReady(function()
 );
 
 function onWindowResize() {
+	var windowHeight = jQuery(window).height();
+	
 	jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
 	jQuery('#box-search').prependTo(jQuery('#westPanel'));
+	
+	var boxHeight = jQuery('#box-search').height();
+	jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 100);
 }
 
 
@@ -1824,6 +1829,7 @@ function getSubCategories(id_in, title_in, ontresponse)
 
 	// ontTabPanel.add(ontSearchTermsPanel);
 	ontTabPanel.doLayout();
+	onWindowResize();
 	ontTree.dragZone.addToGroup("analysis");
 	/*if(GLOBAL.IsAdmin)
    {

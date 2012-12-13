@@ -98,12 +98,16 @@ table.menuDetail th.menuVisited {
     width: 135px;
 }
 
+.ui-autocomplete .ui-menu-item a {
+	font-size: 8pt;	
+}
+
 /* end top level menu */
 
 /* Sidebar */
 
 #box-search {
-	margin-top: 4px;
+	margin: 4px 8px 8px 8px;
 	border-radius: 8px;
 	border: #0000FF;
 	box-shadow: #DDD 11px 11px 8px -7px;
@@ -139,6 +143,59 @@ table.menuDetail th.menuVisited {
 }
 #title-search-div a {
   color: white;
+}
+
+.category_join{
+	display:block;
+	color: #5e5e5e;
+	margin:0;
+	padding:0;
+	margin-left:-1.5em;
+	margin-top:0.5em;
+	margin-bottom:0.4em;
+
+}
+
+.category_label{
+	
+	color:#868686;
+	padding-bottom: 0.2em;
+    margin-left: -10px;
+    font-weight: bold;
+    white-space:nowrap;
+}
+	
+.spacer{
+	
+	color:#868686;
+	}
+	
+	
+.h_line
+{
+	padding:0;
+	margin:0;
+	border:0;
+	font-size:1px;
+	width: 85%;
+	height:1px;
+	border-top:1px solid #e1e1e1;
+    margin-left: 5px;
+    padding-bottom: 1px;
+    display: inline-block;
+   
+}
+
+.term
+{
+		margin-top:0.3em;
+		white-space:nowrap;
+		line-height: 1.4em;
+}
+
+
+.term-remove img a:hover {
+	text-decoration:none;
 }
 
 #title-filter{
@@ -226,9 +283,13 @@ table.menuDetail th.menuVisited {
 	font-family: 'Helvetica',arial,clean,sans-serif;
 }
 
+.ui-dialog-title {
+	color: white;	
+}
+
 #navigateTermsPanel {
-	margin-top: 8px;
-	
+	margin: 8px 8px 8px 8px;
+	box-shadow: #DDD 11px 11px 8px -7px;
 }
 
 #navigateTermsPanel .x-panel-header-text{
@@ -237,6 +298,12 @@ table.menuDetail th.menuVisited {
 
 #navigateTermsPanel .x-panel-header {
 	height: 18px;
+}
+
+#navigateTermsPanel .x-panel-body {
+	border-left: 1px solid #888;
+	border-right: 1px solid #888;
+	border-bottom: 1px solid #888;	
 }
 
 #navigateTermsPanel a {

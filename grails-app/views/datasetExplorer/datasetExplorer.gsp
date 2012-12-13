@@ -192,6 +192,7 @@
 <body>
 
 <script type="text/javascript">
+	var sessionSearch = "${rwgSearchFilter}";
 	var $j = jQuery.noConflict();
 	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -206,26 +207,9 @@
 <div id="header-div"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>
 <div id="main"></div>
 <h3 id="test">&nbsp;</h3>
-<div id="search-div">
-	<table><tr>
-		<td><select id="search-categories"></select></td>
-		<td><input id="search-ac"/></input></td>
-	</tr></table>
-</div>
-<div id="box-search">
-	<div id="title-search-div" class="ui-widget-header">
-		<h2 style="float:left" class="title">Active Filters</h2>
-		<h2 style="float:right; padding-right:5px;" class="title">
-			<a href="#" onclick="clearSearch(); return false;">Clear</a>
-		</h2> 
-		<div id="filterbutton" class="greybutton" onclick="jQuery('#filter-browser').dialog('open');">
-			<img src="${resource(dir:'images', file:'filter.png')}"/> Filter
-		</div>
-	</div>
-	<div id="active-search-div" style="position: relative;">
-		&nbsp;
-	</div>
-</div>
+<tmpl:/rwg/searchAutocomplete />
+<tmpl:/rwg/boxSearch />
+<tmpl:/rwg/filterBrowser />
 <div id="filter-div" style="display: none;"></div>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />

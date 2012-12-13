@@ -2572,38 +2572,6 @@ function openPlotOptions() {
 	}
 }
 
-//Set up clicks on filter browser
-jQuery(document).ready(function() {
-	jQuery('.filtertitle').click(function () {
-		jQuery('.filtercontent[name="' + jQuery(this).attr('name') + '"]').toggle('fast');
-	});
-	
-	jQuery('.filteritem').click(function () {
-		var selecting = !jQuery(this).hasClass('selected');
-		jQuery(this).toggleClass('selected');
-		
-		var name = jQuery(this).attr('name');
-		var id = jQuery(this).attr('id');
-		var category = jQuery('.filtertitle[name="' + name + '"]').text();
-		var value = jQuery(this).text();
-		
-		//If selecting this filter, add it to the list of current filters
-		if (selecting) {
-			var searchParam={id:id,
-			        display:category,
-			        keyword:value,
-			        category:name};
-			
-			addSearchTerm(searchParam);
-		}
-		else {
-			var idString = '[id="' + category + "|" + name + ":" + value + ":" + id + '"]';
-			var element = jQuery(idString);
-			removeSearchTerm(element[0]);
-		}
-	});
-});
-
 //Globally prevent AJAX from being cached (mostly by IE)
 jQuery.ajaxSetup({
 	cache: false

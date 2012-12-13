@@ -454,6 +454,14 @@ li.x-tab-strip-active {
 	border: none;
 }
 
+#westPanel {
+	background-color: white;	
+}
+
+.x-layout-split {
+	background-color: #EDEEF6;
+}
+
 /* Dreadful override - find out where query panel background color is actually set and replace this! */
 
 #queryPanel .x-panel-bwrap .x-panel-body {

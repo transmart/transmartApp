@@ -66,7 +66,7 @@ function convertCategory(valueToConvert)	{
 }
 
 //Add the search term to the array and show it in the panel.
-function addSearchTerm(searchTerm)	{
+function addSearchTerm(searchTerm, noUpdate)	{
 	var category = searchTerm.display == undefined ? "TEXT" : searchTerm.display;
 	
 	category = category + "|" + (searchTerm.category == undefined ? "TEXT" : searchTerm.category);
@@ -100,8 +100,8 @@ function addSearchTerm(searchTerm)	{
 			   , false);
 
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
-	if (!treeUpdated) {
-      showSearchTemplate();
+	showSearchTemplate();
+	if (!treeUpdated && !noUpdate) {
 	  showSearchResults();
 	}
 }
@@ -310,11 +310,8 @@ function showFacetResults(tabToShow)	{
     		queryType = "ff";
         	facetSearch.push(queryType + "=" + treeCategories[i]);
     	}
-    }    
+    }
     
-    //display loading message. Note: because the contents of the 'results-div' is replaced,
-    //there is no need to 'unmask' the loading message
-    //Removed this because it interfered with being able to scroll the tree.
 	jQuery("#results-div").empty();
     
     // add study id to list of fields to facet (so we can get count for show search results)
@@ -327,7 +324,7 @@ function showFacetResults(tabToShow)	{
     
 	jQuery.ajax({
 		url:facetResultsURL,
-		data:queryString,
+		data: queryString + "&searchTerms=" + savedSearchTerms,
 		success: function(response) {
 			
 
@@ -523,6 +520,47 @@ function unselectFilterItem(id) {
 
 jQuery(document).ready(function() {
     
+	//Filter browser
+	jQuery('#filter-browser').dialog({
+		autoOpen: false,
+		width:200,
+		height:400,
+		position: [300, 30],
+		resizable:true,
+		show: 'fade',
+		hide: 'fade',
+		title: 'Filter Browser'
+    });
+	
+	jQuery('.filtertitle').click(function () {
+		jQuery('.filtercontent[name="' + jQuery(this).attr('name') + '"]').toggle('fast');
+	});
+	
+	jQuery('.filteritem').click(function () {
+		var selecting = !jQuery(this).hasClass('selected');
+		jQuery(this).toggleClass('selected');
+		
+		var name = jQuery(this).attr('name');
+		var id = jQuery(this).attr('id');
+		var category = jQuery('.filtertitle[name="' + name + '"]').text();
+		var value = jQuery(this).text();
+		
+		//If selecting this filter, add it to the list of current filters
+		if (selecting) {
+			var searchParam={id:id,
+			        display:category,
+			        keyword:value,
+			        category:name};
+			
+			addSearchTerm(searchParam);
+		}
+		else {
+			var idString = '[id="' + category + "|" + name + ":" + value + ":" + id + '"]';
+			var element = jQuery(idString);
+			removeSearchTerm(element[0]);
+		}
+	});
+	
     addSelectCategories();
     addSearchAutoComplete();
     
@@ -680,6 +718,24 @@ jQuery(document).ready(function() {
     	},
     	classNames: {connector: "dynatree-no-connector"}
     });
+    
+    //Trigger a search immediately
+    loadSearchFromSession();
+	showSearchResults(); //reload the full search results for the analysis/study view
+
 
 });
 
+function loadSearchFromSession() {
+	var sessionFilters = sessionSearch.split(",,,");
+	
+	for (var i = 0; i < sessionFilters.length; i++) {
+		var item = sessionFilters[i];
+		if (item != null && item != "") {
+			var itemData = item.split("|");
+			var itemSearchData = itemData[1].split(":");
+			var searchParam = {id: itemSearchData[2], display: itemData[0], category: itemSearchData[0], keyword: itemSearchData[1]};
+			addSearchTerm(searchParam, true);
+		}
+	}
+}
