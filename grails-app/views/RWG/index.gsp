@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-    <head>  
+    <head>
         <!-- Force Internet Explorer 8 to override compatibility mode -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge" >        
         
