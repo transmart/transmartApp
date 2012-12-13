@@ -87,13 +87,12 @@ class LoginController {
 		if(guestLoginEnabled && !forcedFormLogin){
 				log.info("proceeding with auto guest login")
 				def guestuser = grailsApplication.config.com.recomdata.guestUserName;
-
 				UserDetails ud = userDetailsService.loadUserByUsername(guestuser)
 				if(ud!=null){
 					log.debug("We have found user: ${ud.username}")
 					springSecurityService.reauthenticate(ud.username)
 					redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
-					
+					return
 				}else{
 					log.info("can not find the user:"+guestuser);
 				}
