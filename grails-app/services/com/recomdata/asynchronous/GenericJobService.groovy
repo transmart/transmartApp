@@ -54,7 +54,7 @@ class GenericJobService implements Job {
 	def asyncJobService	
 	def grailsApplication
 	
-	String tempFolderDirectory = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
+	String tempFolderDirectory
 	
 	String jobTmpParentDir
 	String jobTmpDirectory
@@ -87,6 +87,8 @@ class GenericJobService implements Job {
 			}
 		}
 
+		tempFolderDirectory = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
+		
 		//Initialize the jobTmpDirectory which will be used during bundling in ZipUtil
 		jobTmpDirectory = tempFolderDirectory + File.separator + "${jobName}" + File.separator
 		jobTmpDirectory = jobTmpDirectory.replace("\\","\\\\")
