@@ -310,7 +310,7 @@ class GeneSignatureController {
 	def edit2 = {
 		// get wizard
 		def wizard = session.getAttribute(WIZ_DETAILS_ATTRIBUTE)
-
+		bindGeneSigData(params, wizard.geneSigInst)
 		// save original file until final save
 		def file = request.getFile('uploadFile')
 		wizard.geneSigFile=file
