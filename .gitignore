@@ -6,5 +6,6 @@ System.out
 .settings
 .project
 target-eclipse/
+target/
 .svn/
 tempImages/
