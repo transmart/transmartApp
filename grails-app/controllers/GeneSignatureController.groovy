@@ -367,6 +367,9 @@ class GeneSignatureController {
 		if(!geneSigText){
 			geneSigText=wizard.geneSigText
 		}
+		//put the geneSigText back in the wizard for page redisplay
+		wizard.geneSigText=geneSigText
+		
 		def geneSigList = geneSignatureService.getTextBoxContents(geneSigText);
 		
 		// If there is information in the textbox, override the file contents with it.
