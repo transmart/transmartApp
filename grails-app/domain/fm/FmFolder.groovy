@@ -20,81 +20,70 @@
 
 package fm
 
-
 import groovy.xml.StreamingMarkupBuilder
 import java.util.ArrayList;
 import java.util.List;
 import am.AmTagTemplate;
-// import fm.FmFolderAssociation;
 
 class FmFolder implements Buildable{
 	
 	Long id
 	String folderName
 	String folderFullName
-	String folderTag
 	Long folderLevel
 	String objectUid
 	String folderType
-	Boolean activeInd = Boolean.TRUE
-	
-	
+	String folderTag
+	Boolean activeInd = true
 
 	static mapping = {
 		table 'fm_folder'
 		version false
 		cache true
 		sort "folderName"
+		id generator: 'sequence', params:[sequence:'seq_fm_id']
 		fmFiles joinTable: [name: 'fm_folder_file_association',  key:'folder_id', column: 'file_id'], lazy: false
 		amTagTemplates joinTable: [name: 'am_template_association',  key:'object_uid', column: 'tag_template_id'], lazy: false
-		
-		columns { id column:'folder_id' }
+		columns {
+			id column:'folder_id'
+		}
 	}
 	
-//	static hasOne = [fmFolderAssociation: FmFolderAssociation]	
 	static hasMany = [fmFiles: FmFile, amTagTemplates: AmTagTemplate]
 	
-	
-
-	
 	static constraints = {
-		folderName(maxSize:200)
-		folderFullName(maxSize:200)
+		folderName(maxSize:1000)
+		folderFullName(maxSize:1000)
 		objectUid(maxSize:300)
-		folderType(maxSize:50)
-		folderTag(nullable:true,maxSize:50)
-		}
+		folderType(maxSize:100)
+		folderTag(nullable: true, maxSize:20)
+	}
 	
 	def void build(GroovyObject builder)
 	{
-        def fmFolder = {
-             folderDefinition(id:this.id){
-				 folderName(this.folderName)
-				 folderFullName(this.folderFullName)
-				 folderLevel(this.folderLevel)
-				 folderType(this.folderType)
-				 
-				 List<FmFolder> subFolderList = FmFolder.findAll("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel = :fl",
-				 [fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
+		def fmFolder = {
+			folderDefinition(id:this.id) {
+				folderName(this.folderName)
+				folderFullName(this.folderFullName)
+				folderLevel(this.folderLevel)
+				folderType(this.folderType)
+//				String[] subFolders=folderDefinitionthis.folderFullName.split(File.pathSeparator);
+//				def folders = FolderDefinition.list()
+//				folders = FolderDefinition.findAllByFolderName(subFolders[1])
 
-				 unescaped << '<fmFolders>'
-				 subFolderList.each {
-					 
-					 	println it
-						 out << it
-				 	}
-				 unescaped << '</fmFolders>'
-/*		                 addresses {
-		                     this.addresses.each{address ->
-		                         out << address
-		                     }
-		                     *
-		                 }
-		                 */
-             }
-         }
-		
-         fmFolder.delegate = builder
-         fmFolder()
+				List<FmFolder> subFolderList = FmFolder.findAll("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel = :fl",
+					[fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
+				unescaped << '<fmFolders>'
+					subFolderList.each {
+						println it
+						out << it
+					}
+					unescaped << '</fmFolders>'
+				}
+			}
+
+		fmFolder.delegate = builder
+		fmFolder()
 	}
+	
 }
