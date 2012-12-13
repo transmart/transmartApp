@@ -83,6 +83,13 @@ beans = {
 		exportService(PostgresExportService){bean->
 			grailsApplication = ref('grailsApplication')
 			dataCountService = ref('dataCountService')
+			geneExpressionDataService = ref('geneExpressionDataService')
+			i2b2HelperService = ref('i2b2HelperService')
+			i2b2ExportHelperService = ref('i2b2ExportHelperService')
+			dataCountService = ref('dataCountService')
+			jobResultsService = ref('jobResultsService')
+			asyncJobService = ref('asyncJobService')
+			quartzScheduler = ref('quartzScheduler')
 		}
 	/*}*/
 }
