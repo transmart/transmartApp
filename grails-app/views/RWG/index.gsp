@@ -55,57 +55,19 @@
         
         <!-- Our JS -->        
         <script type="text/javascript" src="${resource(dir:'js', file:'rwg.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'rwgsearch.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'maintabpanel.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'datasetExplorer.js')}"></script>
         
         <!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
         <%-- <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-msie.min.js')}"></script> --%>
 
-        <script type="text/javascript" charset="utf-8">
-	        var searchResultsURL = "${createLink([action:'loadSearchResults'])}";
-	        var facetResultsURL = "${createLink([controller:'fmFolder', action:'getAllPrograms'])}";
-	        var facetTableResultsURL = "${createLink([action:'getFacetResultsForTable'])}";
-	        var newSearchURL = "${createLink([action:'newSearch'])}";
-	        var visualizationURL = "${createLink([action:'newVisualization'])}";
-	        var tableURL = "${createLink([action:'newTable'])}";
-	        var treeURL = "${createLink([action:'getDynatree'])}";
-	        var sourceURL = "${createLink([action:'searchAutoComplete'])}";	      
-	        var getCategoriesURL = "${createLink([action:'getSearchCategories'])}";
-	        var getHeatmapNumberProbesURL = "${createLink([action:'getHeatmapNumberProbes'])}";
-	        var getHeatmapDataURL = "${createLink([action:'getHeatmapData'])}";
-	        var getHeatmapDataForExportURL = "${createLink([action:'getHeatmapDataForExport2'])}";
-	        var getBoxPlotDataURL = "${createLink([action:'getBoxPlotData'])}";
-	        var getLinePlotDataURL = "${createLink([action:'getLinePlotData'])}";	        
-	        var saveSearchURL = "${createLink([action:'saveFacetedSearch'])}";
-	        var loadSearchURL = "${createLink([action:'loadFacetedSearch'])}";
-	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
-	        var exportAsImage = "${createLink([action:'exportAsImage'])}";
-
-	        var getStudyAnalysesUrl = "${createLink([controller:'RWG',action:'getTrialAnalysis'])}";
-	        var experimentDataUrl = "${createLink(controller:'experimentAnalysis',action:'expDetail')}";
-	        var fileDataUrl = "${createLink([controller:'RWG',action:'getFileDetails'])}";
-
-	        //These are the URLS for the different browse windows.
-			var studyBrowseWindow = "${createLink([controller:'experiment',action:'browseExperimentsMultiSelect'])}";
-			var analysisBrowseWindow = "${createLink([controller:'experimentAnalysis',action:'browseAnalysisMultiSelect'])}";
-			var regionBrowseWindow = "${createLink([controller:'RWG',action:'getRegionFilter'])}";
-			var dataTypeBrowseWindow = "${createLink([controller:'RWG',action:'browseDataTypesMultiSelect'])}";
-			var getTableDataURL = "${createLink([controller:'search',action:'getTableResults'])}";
-			var getAnalysisDataURL = "${createLink([controller:'search',action:'getAnalysisResults'])}";
-			var getQQPlotURL = "${createLink([controller:'search',action:'getQQPlotImage'])}";
-
-			var webStartURL = "${createLink([controller:'search',action:'webStartPlotter'])}";
-			var datasetExplorerURL = "${createLink([controller:'datasetExplorer'])}";
-
-			var crossImageURL = "${resource([dir:'images', file:'small_cross.png'])}";
-	       	
+		<tmpl:/RWG/urls />
+		<script type="text/javascript" charset="utf-8">
 	        var mouse_inside_options_div = false;
 
 	        jQuery(document).ready(function() {
 		        
-		        addSelectCategories();
-		        addSearchAutoComplete();
 		        addToggleButton();
 
 		        jQuery('#meta-').accordion(); 
@@ -145,7 +107,7 @@
 
 	            });
 
-	        	jQuery('#topTabs').tabs();	
+	        	<%--jQuery('#topTabs').tabs();	
 	        	jQuery('#topTabs').bind( "tabsshow", function(event, ui) {
 		        	var id = ui.panel.id;
 	        	    if (ui.panel.id == "study-view-div") {
@@ -153,20 +115,12 @@
 	        	    } else if (ui.panel.id == "subject-view-div")	{
 						
 	        	    }
-	        	});
+	        	});--%>
 	        	jQuery('#studyTabs').tabs();
 
 	        	jQuery('#sidebartoggle').click(function() {
 					toggleSidebar();
 		        });
-
-	        	jQuery('#subject-view-div').append(
-	    		    jQuery("<iframe></iframe>") 			
-                    .attr("id", "datasetExplorer")     			
-                    .attr("name", "datasetExplorer")	        			
-                    .attr("src", datasetExplorerURL)
-	        		  //  createCenterPanel()
-	    	    );
 
 	        	
 	        //    var resize= $("#sidebar");
@@ -234,15 +188,12 @@
 	        		hide: 'fade',
 	        		title: 'Filter Browser'
 		        });
-
-	        	 var containerWidth = jQuery('#main').width();
-                 
                  
 	        	jQuery('#sidebar').resizable({
                     handles: 'e',
                     maxWidth: 800,
                     minWidth: 120,
-                    resize: function(event, ui){
+                    stop: function(event, ui){
                         var currentWidth = ui.size.width;
                         
                         // this accounts for padding in the panels + 
@@ -257,7 +208,7 @@
                         jQuery('#sidebar-accordion').width(currentWidth -20)
                         // jQuery('#results-div').width(currentWidth -20)
                         // set the content panel width
-                        jQuery('#main').width(containerWidth - currentWidth - padding);            
+                        jQuery('#main').width(jQuery('body').width() - currentWidth - padding);            
                     }
               });
 
@@ -437,7 +388,7 @@
 				collection of divs with the intended content. We want these tabs to affect a pane to the right
 				instead - so we set up an invisible div for each tab, then call a function to display the tab we
 				actually want (and to do any additional setup work).
-			 --%>
+			 
 			<div id="topTabs" class="analysis-tabs">
 		       <ul>
 		          <li id="studyViewTab"><a href="#studyFake" onclick="showTab('browse')">Browse</a></li>
@@ -448,6 +399,7 @@
 				<div id="subjectFake" style="height: 0px; padding: 0"></div>
 				
 		    </div>
+		    --%>
 	       
 	        <div id="box-search">
 		        <div id="title-search-div" class="ui-widget-header">

@@ -844,17 +844,24 @@ Ext.onReady(function()
 		// centerPanel.add(analysisPanel);
 		// centerPanel.add(resultsTabPanel);
 		
-//		westPanel.add(createOntPanel());
+		westPanel.add(createOntPanel());
 		//setTimeout("loadOntPanel()", 3000);
-		// westPanel.add(prevTree);
+		//westPanel.add(prevTree);
 		// eastPanel.add(exportPanel);
-//		centerMainPanel.add(westPanel);
+		centerMainPanel.add(westPanel);
 		centerMainPanel.add(centerPanel);
 
 		viewport = new Ext.Viewport(
 				{
 					layout : 'border',
-					items : [centerMainPanel]
+					items : [centerMainPanel],
+					listeners: {
+						resize: {
+							fn: function(el) {
+								onWindowResize();
+							}
+						}
+					}
 				}
 		);
 
@@ -996,11 +1003,24 @@ Ext.onReady(function()
 
 		showLoginDialog();
 		var h=queryPanel.header;
+		
+		/** Additional styling - alter Ext's appearance to be consistent with Browse **/
+
+		onWindowResize();
+		
+		jQuery(window).resize(function() {
+			onWindowResize();
+		});
 		//alert(h);
 		}
 
-
 );
+
+function onWindowResize() {
+	jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
+	jQuery('#box-search').prependTo(jQuery('#westPanel'));
+}
+
 
 /*
 This function will make a quick call to the server to check
@@ -1041,9 +1061,8 @@ function hasMultipleTimeSeries()
 
 function createOntPanel()
 {
-	alert('hello')
 	// make tab panel, search panel, ontTree and combine them
-	ontTabPanel = new Ext.TabPanel(
+	ontTabPanel = new Ext.Panel(
 			{
 				id : 'ontPanel',
 				region : 'center',
@@ -1163,53 +1182,53 @@ function createOntPanel()
 			Ext.tree.TreePanel.superclass.onShow.call(this);
 			//Ext.get('advancedbutton').dom.style.display='';
 		}
-		ontFilterPanel = new Ext.Panel(
-				{
-					title : 'Search',
-					id : 'ontFilterPanel',
-					region : 'center',
-					height : 500,
-					width : 250,
-					border : true,
-					bodyStyle : 'background:lightgrey;',
-					onShow : showFn,
-					layout : 'border'
-						//layout: 'table',
-						//layoutConfig:{columns:1},
-						//split : true
-				}
-		);
+//		ontFilterPanel = new Ext.Panel(
+//				{
+//					title : 'Search',
+//					id : 'ontFilterPanel',
+//					region : 'center',
+//					height : 500,
+//					width : 250,
+//					border : true,
+//					bodyStyle : 'background:lightgrey;',
+//					onShow : showFn,
+//					layout : 'border'
+//						//layout: 'table',
+//						//layoutConfig:{columns:1},
+//						//split : true
+//				}
+//		);
 
-		ontFilterForm = new Ext.Panel(
-				{
-					title : 'Search',
-					id : 'ontFilterForm',
-					region : 'north',
-					bodyStyle : 'background:#eee;padding: 10px;',
-					//html : shtml,
-					height : 130,
-					border : true,
-					split : false,
-					//autoScroll: true,
-					autoLoad :
-					{
-					url : pageInfo.basePath+'/ontology/showOntTagFilter',
-					scripts : true,
-					nocache : true,
-					discardUrl : true,
-					method : 'POST',
-					callback : ontFilterLoaded
-					},
-			        tools:[{
-						id:'help',
-						qtip:'Click for context sensitive help',
-					    handler: function(event, toolEl, panel){
-					    	D2H_ShowHelp("1065",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-					    }
-			        }]
-				// collapsible: true
-				}
-		);
+//		ontFilterForm = new Ext.Panel(
+//				{
+//					title : 'Search',
+//					id : 'ontFilterForm',
+//					region : 'north',
+//					bodyStyle : 'background:#eee;padding: 10px;',
+//					//html : shtml,
+//					height : 130,
+//					border : true,
+//					split : false,
+//					//autoScroll: true,
+//					autoLoad :
+//					{
+//					url : pageInfo.basePath+'/ontology/showOntTagFilter',
+//					scripts : true,
+//					nocache : true,
+//					discardUrl : true,
+//					method : 'POST',
+//					callback : ontFilterLoaded
+//					},
+//			        tools:[{
+//						id:'help',
+//						qtip:'Click for context sensitive help',
+//					    handler: function(event, toolEl, panel){
+//					    	D2H_ShowHelp("1065",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+//					    }
+//			        }]
+//				// collapsible: true
+//				}
+//		);
 
 		// shorthand
 		var Tree = Ext.tree;
@@ -1255,8 +1274,8 @@ function createOntPanel()
 		);
 
 		ontFilterTree.setRootNode(ontFilterTreeRoot);
-		ontFilterPanel.add(ontFilterForm);
-		ontFilterPanel.add(ontFilterTree);
+//		ontFilterPanel.add(ontFilterForm);
+//		ontFilterPanel.add(ontFilterTree);
 		// ontTabPanel.add(ontSearchByCodePanel);
 
 		return ontTabPanel;
@@ -1626,13 +1645,13 @@ function getPreviousQueriesComplete(response)
 }
 
 function getCategoriesComplete(ontresponse){
-	ontTabPanel.add(ontFilterPanel);
-	ontFilterTree.dragZone.addToGroup("analysis");
+//	ontTabPanel.add(ontFilterPanel);
+//	ontFilterTree.dragZone.addToGroup("analysis");
 	getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
-	if(GLOBAL.hideAcrossTrialsPanel!='true'){
-		getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
-		}
-	setActiveTab();
+//	if(GLOBAL.hideAcrossTrialsPanel!='true'){
+//		getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
+//		}
+//	setActiveTab();
 }
 
 function setActiveTab(){
