@@ -81,6 +81,7 @@ beans = {
 			sessionFactory = ref('sessionFactory')
 		}
 		exportService(PostgresExportService){bean->
+			quartzScheduler = ref('quartzScheduler')
 			grailsApplication = ref('grailsApplication')
 			dataCountService = ref('dataCountService')
 			geneExpressionDataService = ref('geneExpressionDataService')
@@ -89,7 +90,7 @@ beans = {
 			dataCountService = ref('dataCountService')
 			jobResultsService = ref('jobResultsService')
 			asyncJobService = ref('asyncJobService')
-			quartzScheduler = ref('quartzScheduler')
+			dataExportService = ref('dataExportService')
 		}
 	/*}*/
 }

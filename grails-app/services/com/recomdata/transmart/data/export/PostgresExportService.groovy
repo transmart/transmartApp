@@ -45,6 +45,7 @@ class PostgresExportService {
 	def asyncJobService
 	def quartzScheduler
 	def grailsApplication
+	def dataExportService
 
 	def Map createJSONFileObject(fileType, dataFormat, fileDataCount, gplId, gplTitle) {
 		def file = [:]
@@ -312,8 +313,17 @@ class PostgresExportService {
 		jdm.put("renderSteps",["FILELINK":""]);
 				
 		def jobDetail = new JobDetail(params.jobName, params.analysis, GenericJobService.class)
-		jobDetail.setJobDataMap(jdm)
+		jobDetail.setJobDataMap(jdm);
+		
+		// TODO -- NEED TO BE REVIEWED (f.guitton@imperial.ac.uk)
+		
+		jobDetail.getJobDataMap().put("SGA", grailsApplication);
+		jobDetail.getJobDataMap().put("SAJS", asyncJobService);
+		jobDetail.getJobDataMap().put("SJRS", jobResultsService);
+		jobDetail.getJobDataMap().put("SDES", dataExportService);
 
+		// --
+		
 		if (asyncJobService.updateStatus(params.jobName, statusList[2]))	{
 			return
 		}

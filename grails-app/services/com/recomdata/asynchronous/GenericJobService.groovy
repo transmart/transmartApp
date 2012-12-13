@@ -22,12 +22,19 @@ package com.recomdata.asynchronous
 
 import com.recomdata.transmart.data.export.exception.DataNotFoundException;
 
+import org.quartz.Job
+import org.quartz.JobExecutionContext;
+
+
 import java.io.File;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import com.recomdata.transmart.data.export.util.FTPUtil;
 import com.recomdata.transmart.data.export.util.ZipUtil
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.RegularExpression.Context;
+
 import org.quartz.Job;
+import org.quartz.JobDataMap
 import org.quartz.JobExecutionContext;
 
 import org.apache.commons.lang.StringUtils;
@@ -44,14 +51,14 @@ import org.rosuda.Rserve.*;
  *
  */
 class GenericJobService implements Job {
-
+	
 	def springSecurityService 
-	def jobResultsService
 	def i2b2HelperService 
 	def i2b2ExportHelperService 
 	def snpDataService
 	def dataExportService
-	def asyncJobService	
+	def jobResultsService
+	def asyncJobService
 	def grailsApplication
 	
 	String tempFolderDirectory
@@ -63,22 +70,17 @@ class GenericJobService implements Job {
 	String finalOutputFile
 	
 	def jobDataMap
+	def jobName
 	
 	File jobInfoFile
 	
-	public void execute (JobExecutionContext jobExecutionContext)
+	// TODO -- NEED TO BE REVIEWED (f.guitton@imperial.ac.uk)
+	private void init ()
 	{
-		//We use the job detail class to get information about the job.
-		def jobDetail = jobExecutionContext.getJobDetail()
-		
-		//Gather the jobs name.
-		def jobName = jobDetail.getName()
-		
 		//Put an entry in our log.
 		log.info("${jobName} has been triggered to run ")
 		
 		//Get the data map which shows the attributes for our job.
-		jobDataMap = jobDetail.getJobDataMap()
 		
 		//Write our attributes to a log file.
 		if (log.isDebugEnabled())	{
@@ -86,7 +88,27 @@ class GenericJobService implements Job {
 				log.debug("\t${_key} -> ${jobDataMap[_key]}")
 			}
 		}
-
+		
+		grailsApplication = jobDataMap.get("SGA")
+		jobResultsService = jobDataMap.get("SJRS")
+		asyncJobService = jobDataMap.get("SAJS")
+		dataExportService = jobDataMap.get("SDES")
+		
+	}
+	// --
+	
+	public void execute (JobExecutionContext jobExecutionContext)
+	{
+		//We use the job detail class to get information about the job.
+		def jobDetail = jobExecutionContext.getJobDetail()
+		
+		//Gather the jobs info.
+		jobName = jobDetail.getName()
+		jobDataMap = jobDetail.getJobDataMap()
+		
+		//Initialize
+		init();
+		
 		tempFolderDirectory = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
 		
 		//Initialize the jobTmpDirectory which will be used during bundling in ZipUtil
@@ -394,7 +416,7 @@ class GenericJobService implements Job {
 	* @param status - the new status
 	* @return
 	*/
-   def updateStatus(jobName, status)	{
+   def updateStatus(jobName, status) {
 	   jobResultsService[jobName]["Status"] = status
 	   log.debug(status)
 	   asyncJobService.updateStatus(jobName, status)
