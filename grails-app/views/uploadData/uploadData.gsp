@@ -100,6 +100,11 @@
 			<g:render template="/layouts/commonheader" model="['app':'uploaddata']" />
 			<g:uploadForm name="dataUpload" action="upload" method="post">
 			<div id="formPage1" style="background-color: #EEE">
+			
+			<div style="position: absolute; top: 32px; right: 5px">
+				<tmpl:/help/helpIcon id="1331"/>
+			</div>
+			
 			<div class="dataFormTitle" id="dataFormTitle1">
 				<g:if test="${uploadDataInstance?.id ? true : false}">
 					Edit Metadata
@@ -180,6 +185,11 @@
 				</div>
 			</div>
 			<div id="formPage2" style="background-color: #EEE; display: none;">
+			
+			<div style="position: absolute; top: 32px; right: 5px">
+				<tmpl:/help/helpIcon id="1332"/>
+			</div>
+			
 			<div class="dataFormTitle" id="dataFormTitle2">Upload Data</div>
 				<div style="text-align:right">
 					<a class="button" href="mailto:${grailsApplication.config.com.recomdata.dataUpload.adminEmail}">Email administrator</a>

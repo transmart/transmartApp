@@ -36,7 +36,8 @@
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>
   		<script type="text/javascript" src="${resource(dir:'js', file:'facetedSearch/facetedSearchBrowse.js')}"></script>
-  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/ui.multiselect.js')}"></script>  
+  		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/ui.multiselect.js')}"></script>
+  		<script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>  
   		  
   		        
   		<!--  SVG Export -->
@@ -197,6 +198,9 @@
 						</ul>
 					</div>
 				</div>--%>
+						<div style="display: inline-block;">
+			<tmpl:/help/helpIcon id="1289"/>
+		</div>
 			</div>
 		
 			<div id="topTabs" class="analysis-tabs">
@@ -224,6 +228,9 @@
        
         <div id="title-search-div" class="ui-widget-header">
 	         <h2 style="float:left" class="title">Active Filters</h2>
+	         <div id="activeFilterHelp" style="float: right; margin: 2px">
+				<tmpl:/help/helpIcon id="1298"/>
+			 </div>
 			 <h2 style="float:right; padding-right:5px;" class="title">
 			 	<%-- Save/load disabled for now
 			 	
@@ -250,12 +257,18 @@
 		<div id="active-search-div"></div>
 	 
 		<div id="title-filter" class="ui-widget-header">
-			 <h2 style="float:left" class="title">Filter Browser</h2>			 
+			 <h2 style="float:left" class="title">Filter Browser</h2>		
+	         <div id="filterBrowserHelp" style="float: right; margin: 2px">
+				<tmpl:/help/helpIcon id="1297"/>
+			 </div>	 
 		</div>
 		<div id="side-scroll">
 		        <div id="filter-div"></div>
 		</div>
 		<button id="toggle-btn"></button>
+		<div id="searchHelp" style="position: absolute; top: 30px; left: 272px">
+			<tmpl:/help/helpIcon id="1296"/>
+		</div>
 		
 		<div id="hiddenItems" style="display:none">
 		        <!-- For image export -->
@@ -326,5 +339,11 @@
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
 		
+		<div id="analysisViewHelp" style="position: absolute; top: 70px; right: 10px; display: none;">
+			<tmpl:/help/helpIcon id="1190"/>
+		</div>
+		<div id="tableViewHelp" style="position: absolute; top: 70px; right: 10px; display: none;">
+			<tmpl:/help/helpIcon id="1317"/>
+		</div>
     </body>
 </html>

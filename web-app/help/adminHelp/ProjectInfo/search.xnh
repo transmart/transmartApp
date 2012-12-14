@@ -3,45 +3,30 @@
     <topics>
         <topic url="Documents/gettingstartedwithtr.htm" window="right" />
         <topic url="Documents/featureoverview.htm" window="right" />
-        <topic url="Documents/searchtool.htm" window="right" />
-        <topic url="Documents/searchresults.htm" window="right" />
+        <topic url="Documents/facetedsearch1.htm" window="right" />
         <topic url="Documents/datasetexplorer.htm" window="right" />
         <topic url="Documents/sampleexplorer.htm" window="right" />
         <topic url="Documents/genesignaturewizard.htm" window="right" />
+        <topic url="Documents/uploaddata.htm" window="right" />
         <topic url="Documents/loggingin.htm" window="right" />
         <topic url="Documents/tools.htm" window="right" />
         <topic url="Documents/openingaparticulartoolatlogin.htm" window="right" />
-        <topic url="Documents/searchtool1.htm" window="right" />
-        <topic url="Documents/searchtasks.htm" window="right" />
-        <topic url="Documents/definingasearchfilter.htm" window="right" />
-        <topic url="Documents/typethefiltername.htm" window="right" />
-        <topic url="Documents/browseforafiltername.htm" window="right" />
-        <topic url="Documents/useasavedsearchfilter.htm" window="right" />
-        <topic url="Documents/buildingasearchstring.htm" window="right" />
-        <topic url="Documents/rulesforbuildingasearchstring.htm" window="right" />
-        <topic url="Documents/instructionsforbuildingasearchstring.htm" window="right" />
-        <topic url="Documents/savingasearchfilterorsearchstring.htm" window="right" />
-        <topic url="Documents/editinganddeletingsavedfilters.htm" window="right" />
-        <topic url="Documents/workingwithsearchresults.htm" window="right" />
-        <topic url="Documents/clinicaltrialstab.htm" window="right" />
-        <topic url="Documents/mrnaanalysistab.htm" window="right" />
-        <topic url="Documents/showfilters.htm" window="right" />
+        <topic url="Documents/facetedsearch.htm" window="right" />
+        <topic url="Documents/overviewofthefaceted.htm" window="right" />
+        <topic url="Documents/definingsearchfilter.htm" window="right" />
+        <topic url="Documents/usingthefilterbrowse.htm" window="right" />
+        <topic url="Documents/regionofinterest.htm" window="right" />
+        <topic url="Documents/managingactivefilter.htm" window="right" />
+        <topic url="Documents/viewingsearchresults.htm" window="right" />
         <topic url="Documents/analysisview.htm" window="right" />
-        <topic url="Documents/studyview.htm" window="right" />
-        <topic url="Documents/exportresultsinanalysisvieworstudyview.htm" window="right" />
-        <topic url="Documents/exportinformationaboutaparticularanalysis.htm" window="right" />
-        <topic url="Documents/mousegenehomologyinsearchresults.htm" window="right" />
-        <topic url="Documents/additionalresources.htm" window="right" />
-        <topic url="Documents/literaturetab.htm" window="right" />
-        <topic url="Documents/documentstab.htm" window="right" />
-        <topic url="Documents/teaanalyses.htm" window="right" />
-        <topic url="Documents/teaindicatorsappliedtoindividualbiomarkers.htm" window="right" />
-        <topic url="Documents/teaindicatorsappliedtoananalysis.htm" window="right" />
-        <topic url="Documents/whattheteascoremeans.htm" window="right" />
-        <topic url="Documents/whatcoantiregulationandupdownregulationmean.htm" window="right" />
-        <topic url="Documents/teaindicatorsappliedtoanindividualgene.htm" window="right" />
+        <topic url="Documents/browsethestudylist.htm" window="right" />
+        <topic url="Documents/viewmetadataforanana.htm" window="right" />
+        <topic url="Documents/viewfilterandexporta.htm" window="right" />
+        <topic url="Documents/notesaboutthecontent.htm" window="right" />
+        <topic url="Documents/tableview.htm" window="right" />
+        <topic url="Documents/manhattanplot.htm" window="right" />
         <topic url="Documents/datasetexplorer1.htm" window="right" />
-        <topic url="Documents/overviewoftheui.htm" window="right" />
+        <topic url="Documents/overviewofthedataset.htm" window="right" />
         <topic url="Documents/usingdatasetexplorer.htm" window="right" />
         <topic url="Documents/publicandprivatestudies.htm" window="right" />
         <topic url="Documents/selectingthestudy.htm" window="right" />
@@ -73,8 +58,6 @@
         <topic url="Documents/markerselection.htm" window="right" />
         <topic url="Documents/generatingadvancedanalyses.htm" window="right" />
         <topic url="Documents/boxplotwithanova.htm" window="right" />
-        <topic url="Documents/correlationanalysis.htm" window="right" />
-        <topic url="Documents/linegraphanalysis.htm" window="right" />
         <topic url="Documents/principalcomponentanalysis.htm" window="right" />
         <topic url="Documents/scatterplotwithlinearregression.htm" window="right" />
         <topic url="Documents/survivalanalysis.htm" window="right" />
@@ -97,18 +80,16 @@
         <topic url="Documents/genesignaturesandgenelists.htm" window="right" />
         <topic url="Documents/creatingagenesignature.htm" window="right" />
         <topic url="Documents/step1addingthegenestoatextfile.htm" window="right" />
-        <topic url="Documents/usingtransmarttosele.htm" window="right" />
         <topic url="Documents/step2creatingthegenesignature.htm" window="right" />
         <topic url="Documents/makinganewgenesignaturepublic.htm" window="right" />
         <topic url="Documents/performingactionsonyourgenesignatures.htm" window="right" />
         <topic url="Documents/performingactionsonotheruserssignatures.htm" window="right" />
         <topic url="Documents/viewingagenesignaturedefinition.htm" window="right" />
-        <topic url="Documents/othertasks1.htm" window="right" />
-        <topic url="Documents/howteascoresarecalculated.htm" window="right" />
-        <topic url="Documents/datainputstotheteaalgorithm.htm" window="right" />
-        <topic url="Documents/operations.htm" window="right" />
-        <topic url="Documents/rulesforloadingomics.htm" window="right" />
-        <topic url="Documents/glossaryofterms1.htm" window="right" />
+        <topic url="Documents/analysisdataupload.htm" window="right" />
+        <topic url="Documents/uploadinganalysisdat.htm" window="right" />
+        <topic url="Documents/filetemplates.htm" window="right" />
+        <topic url="Documents/handlinganuploadfail.htm" window="right" />
+        <topic url="Documents/glossary1.htm" window="right" />
         <topic url="Documents/readthedocumentationinpdf.htm" window="right" />
     </topics>
 </root>

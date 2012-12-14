@@ -290,6 +290,10 @@ function showSearchResults(tabToShow)	{
 	jQuery('#results-div').empty();
 	jQuery('#table-results-div').empty();
 	
+	jQuery('#analysisViewHelp').hide();
+	jQuery('#tableViewHelp').hide();
+	jQuery('#' + tabToShow + 'ViewHelp').show();
+	
 	// work out which tab is open and needs updating, if we don't have a specific one
 	if (tabToShow == null) {
 		if (jQuery('#analysisViewTab.ui-state-active').size() > 0) {
