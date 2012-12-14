@@ -63,22 +63,53 @@ beans = {
 	}
 	else
 	{*/
+	
+		// TODO -- NEEDS TO BE REVIEWED
+	
+		utilService(com.recomdata.transmart.util.UtilService)
+		fileDownloadService(com.recomdata.transmart.util.FileDownloadService)
+		springSecurityService(grails.plugins.springsecurity.SpringSecurityService)
+		snpService(SnpService)
+		plinkService(PlinkService)
+		conceptService(ConceptService)
+		sampleInfoService(SampleInfoService)
+	
+		// --
+	
 		log.debug("Postgres configured")
+		
 		dataCountService(PostgresDataCountService){bean ->
 			dataSource = ref('dataSource')
 		}
 		geneExpressionDataService(PostgresGeneExpressionDataService){bean ->
 			dataSource = ref('dataSource')
+			grailsApplication = ref('grailsApplication')
+			i2b2HelperService = ref('i2b2HelperService')
+			springSecurityService = ref('springSecurityService')
+			fileDownloadService = ref ('fileDownloadService')
+			utilService = ref('utilService')
 		}
 		snpDataService(PostgresSnpDataService){bean ->
 			dataSource = ref('dataSource')
+			grailsApplication = ref('grailsApplication')
+			i2b2HelperService = ref('i2b2HelperService')
+			springSecurityService = ref('springSecurityService')
+			fileDownloadService = ref ('fileDownloadService')
+			utilService = ref('utilService')
+			snpService = ref('snpService')
+			plinkService = ref('plinkService')
 		}
 		clinicalDataService(PostgresClinicalDataService){bean ->
 			dataSource = ref('dataSource')
+			i2b2HelperService = ref('i2b2HelperService')
+			springSecurityService = ref('springSecurityService')
+			utilService = ref('utilService')
 		}
 		i2b2HelperService(PostgresI2b2HelperService){bean->
 			dataSource = ref('dataSource')
 			sessionFactory = ref('sessionFactory')
+			conceptService = ref('conceptService')
+			sampleInfoService = ref('conceptService')
 		}
 		exportService(PostgresExportService){bean->
 			quartzScheduler = ref('quartzScheduler')
@@ -87,7 +118,6 @@ beans = {
 			geneExpressionDataService = ref('geneExpressionDataService')
 			i2b2HelperService = ref('i2b2HelperService')
 			i2b2ExportHelperService = ref('i2b2ExportHelperService')
-			dataCountService = ref('dataCountService')
 			jobResultsService = ref('jobResultsService')
 			asyncJobService = ref('asyncJobService')
 			dataExportService = ref('dataExportService')
