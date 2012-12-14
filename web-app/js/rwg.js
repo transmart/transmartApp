@@ -3009,8 +3009,14 @@ function loadHeatmapPaginator(divID, analysisId, page, isSA, keywordsQueryString
 				alert(errorMsg);
 			}
 			
+			var saPrefix ='';
+			if (isSA)  {
+				saPrefix ='sa';
+			}
+			
 			if (maxProbeIndex == 0)  {
 				jQuery("#" + divID).html('No Data');
+				jQuery("#" + saPrefix + "pagination_" + analysisId).empty();
 		    	jQuery("#analysis_holderSA_" + analysisId).unmask();
 
 			}
