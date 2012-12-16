@@ -18,23 +18,20 @@
  ******************************************************************/
   
 
-package am
+package bio
 
+import grails.test.*
 
-class AmTagTemplate {
-	
-	Long id
-	String tagTemplateName
-	String tagTemplateType
-	String guiHandler
+class BioTagTests extends GrailsUnitTestCase {
+    protected void setUp() {
+        super.setUp()
+    }
 
-	static mapping = {
-		table 'am_tag_template'
-		version false
-		cache true
-		sort "tagTemplateName"
-		columns { id column:'tag_template_id' }
-	}
-	
-	
+    protected void tearDown() {
+        super.tearDown()
+    }
+
+    void testSomething() {
+
+    }
 }

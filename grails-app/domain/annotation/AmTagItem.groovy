@@ -18,24 +18,55 @@
  ******************************************************************/
   
 
-package bio
-class BioData {
-		Long id
-		String uniqueId
-		String type
-		static hasMany =[externalCodes: BioDataExternalCode]
+package annotation
 
-        static mapping = {
+
+class AmTagItem implements Comparable<AmTagItem>{
+	
+	Long id
+	String displayName
+	Integer displayOrder
+	String tagItemUid
+	Integer maxValues
+	String guiHandler
+	String codeTypeName
+	String tagItemType
+	String tagItemAttr
+	Boolean editable = Boolean.TRUE
+	Boolean required = Boolean.TRUE
+	Boolean activeInd = Boolean.TRUE
+	
+	static belongsTo=[amTagTemplate: AmTagTemplate]
+	
+	static mapping = {
+		table 'am_tag_item'
+		version false
+		cache true
+		sort "displayName"
+		amTagTemplate joinTable: [name: 'am_tag_template',  key:'tag_template_id', column: 'tag_item_id'], lazy: false
+		columns { id column:'tag_item_id'}
+		amTagTemplate column: 'tag_template_id' 
 		
-			table 'BIO_DATA_UID'
-			version false
-			tablePerHierarchy false
-			columns {
-				id column:'BIO_DATA_ID'
-				uniqueId column:'UNIQUE_ID'
-				type column:'BIO_DATA_TYPE'
-				externalCodes joinTable:[name:'BIO_DATA_EXT_CODE',key:'BIO_DATA_ID', column:'BIO_DATA_EXT_CODE_ID']
-			}
+	}
+
+	@Override
+	public int compareTo(AmTagItem itemIn) {
+		
+		if(itemIn.displayOrder!=null && displayOrder!=null) {
+			return displayOrder?.compareTo(itemIn.displayOrder);
+		} else {
+			return displayName?.compareTo(itemIn.displayName);
 		}
+		return 0;
+	}
+	
+	static constraints = {
+		tagItemType(maxSize:200)
+		tagItemAttr(maxSize:200)
+		displayName(maxSize:200)
+		codeTypeName(maxSize:200)
+		guiHandler(maxSize:200)
+		tagItemUid(maxSize:300)
+	}
 
 }

@@ -96,7 +96,7 @@ function showDetailDialog(dataURL)	{
 	
 //	jQuery('#metadata-viewer').accordion("option", "active", 1);
 	jQuery('#sidebar-accordion').accordion("option", "active", 1);
-	
+
 //	var height = 'auto';
 //	if (typeof dialogHeight == 'number')	{
 //		height = dialogHeight;

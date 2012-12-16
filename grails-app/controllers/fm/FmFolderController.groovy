@@ -39,6 +39,7 @@ import grails.converters.*
 class FmFolderController {
 
 	def formLayoutService
+	def amTagTemplateService
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def index = {
@@ -377,22 +378,33 @@ class FmFolderController {
 	def folderDetail = {
 		log.info "** action: folderDetail called!"
 		def folderId = params.id
-		
+			
 		def folder
-		def formLayout 
+		def bioDataObject
+		def formLayout
+		def amTagTemplate
+		 
 		if (folderId) 
 		{
 			folder = FmFolder.get(folderId)
-			formLayout = formLayoutService.getLayout(folder.folderType.toLowerCase()); //'study');
+			log.info "folder.objectUid = " + folder.objectUid
+			def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
+			log.info "folderAssociation = " + folderAssociation
+			bioDataObject =folderAssociation.getBioObject()
+			// BioDataService.getBioDataObject(folder.objectUid)
+		
+					
+			amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
+		//	formLayout = formLayoutService.getLayout(folder.folderType.toLowerCase()); //'study');
 		}
 		
 		if(!formLayout)
 		{			
-			formLayout = formLayoutService.getProgramLayout()		
+	//		formLayout = formLayoutService.getProgramLayout()		
 		}
 		
 		log.info("Formlayout = " + formLayout)
-		def subFolders
+/*		def subFolders
 		def subFolderLayout 
 		if (folder)
 		{
@@ -402,8 +414,7 @@ class FmFolderController {
 				log.info(subFolders)
 				def layoutType = subFolders[0].folderType
 				subFolderLayout = formLayoutService.getLayout(layoutType.toLowerCase()); //'study');
-			}
-			
+			}			
 		}
 
 		log.info "folder.id = " + folder.id
@@ -434,10 +445,10 @@ class FmFolderController {
 		def jSONToReturn = table.toJSON_DataTables("").toString(5);
 		
 		request.getSession().setAttribute("gridtable", table);
-
+*/		
+//		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:folder, subFolderInstances:subFolders, subFolderLayout: subFolderLayout, jSONForGrid: jSONToReturn])
+		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:bioDataObject, amTagTemplate: amTagTemplate])
 		
-		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:folder, subFolderInstances:subFolders, subFolderLayout: subFolderLayout, jSONForGrid: jSONToReturn])
-
 	}
 
    

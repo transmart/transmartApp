@@ -24,7 +24,7 @@ package fm
 import groovy.xml.StreamingMarkupBuilder
 import java.util.ArrayList;
 import java.util.List;
-import am.AmTagTemplate;
+import annotation.AmTagTemplate;
 // import fm.FmFolderAssociation;
 
 class FmFolder implements Buildable{
@@ -36,6 +36,7 @@ class FmFolder implements Buildable{
 	Long folderLevel
 	String objectUid
 	String folderType
+//	AmTagTemplate amTagTemplate
 	Boolean activeInd = Boolean.TRUE
 	
 	
@@ -46,13 +47,13 @@ class FmFolder implements Buildable{
 		cache true
 		sort "folderName"
 		fmFiles joinTable: [name: 'fm_folder_file_association',  key:'folder_id', column: 'file_id'], lazy: false
-		amTagTemplates joinTable: [name: 'am_template_association',  key:'object_uid', column: 'tag_template_id'], lazy: false
+//		amTagTemplates joinTable: [name: 'am_template_association',  key:'object_uid', column: 'tag_template_id'], lazy: false
 		
 		columns { id column:'folder_id' }
 	}
 	
 //	static hasOne = [fmFolderAssociation: FmFolderAssociation]	
-	static hasMany = [fmFiles: FmFile, amTagTemplates: AmTagTemplate]
+	static hasMany = [fmFiles: FmFile] //, amTagTemplates: AmTagTemplate]
 	
 	
 

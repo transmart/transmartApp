@@ -19,23 +19,24 @@
   
 
 package bio
-class BioData {
-		Long id
-		String uniqueId
-		String type
-		static hasMany =[externalCodes: BioDataExternalCode]
 
-        static mapping = {
-		
-			table 'BIO_DATA_UID'
-			version false
-			tablePerHierarchy false
-			columns {
-				id column:'BIO_DATA_ID'
-				uniqueId column:'UNIQUE_ID'
-				type column:'BIO_DATA_TYPE'
-				externalCodes joinTable:[name:'BIO_DATA_EXT_CODE',key:'BIO_DATA_ID', column:'BIO_DATA_EXT_CODE_ID']
-			}
+class BioDataService {
+
+    boolean transactional = true
+
+    def getBioDataObject(String uid) 
+	{
+		def bioDataObject
+		def bioData = BioData.findByUniqueId(uid)
+		log.info "bioData = " + bioData
+		if(bioData!=null)
+		{
+			Class clazz =  grailsApplication.getDomainClass().clazz
+			log.info "clazz = " + clazz
+			bioDataObject = clazz.findByObjectUid(folder.objectUid)
+			log.info "bioDataObject = " + bioDataObject
 		}
-
+		
+		return bioDataObject
+    }
 }

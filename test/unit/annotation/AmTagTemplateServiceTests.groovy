@@ -18,24 +18,20 @@
  ******************************************************************/
   
 
-package bio
-class BioData {
-		Long id
-		String uniqueId
-		String type
-		static hasMany =[externalCodes: BioDataExternalCode]
+package annotation
 
-        static mapping = {
-		
-			table 'BIO_DATA_UID'
-			version false
-			tablePerHierarchy false
-			columns {
-				id column:'BIO_DATA_ID'
-				uniqueId column:'UNIQUE_ID'
-				type column:'BIO_DATA_TYPE'
-				externalCodes joinTable:[name:'BIO_DATA_EXT_CODE',key:'BIO_DATA_ID', column:'BIO_DATA_EXT_CODE_ID']
-			}
-		}
+import grails.test.*
 
+class AmTagTemplateServiceTests extends GrailsUnitTestCase {
+    protected void setUp() {
+        super.setUp()
+    }
+
+    protected void tearDown() {
+        super.tearDown()
+    }
+
+    void testSomething() {
+
+    }
 }

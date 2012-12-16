@@ -18,24 +18,28 @@
  ******************************************************************/
   
 
-package bio
-class BioData {
-		Long id
-		String uniqueId
-		String type
-		static hasMany =[externalCodes: BioDataExternalCode]
+package annotation
 
-        static mapping = {
+class AmTagTemplateService {
+
+    boolean transactional = true
+
+    def serviceMethod() {
+
+    }
+	
+	def getTemplate(String key){
 		
-			table 'BIO_DATA_UID'
-			version false
-			tablePerHierarchy false
-			columns {
-				id column:'BIO_DATA_ID'
-				uniqueId column:'UNIQUE_ID'
-				type column:'BIO_DATA_TYPE'
-				externalCodes joinTable:[name:'BIO_DATA_EXT_CODE',key:'BIO_DATA_ID', column:'BIO_DATA_EXT_CODE_ID']
-			}
-		}
-
+		log.info "Searching amTagTemplateAssociation for " +  key
+		def amTagTemplateAssociation = AmTagTemplateAssociation.findByObjectUid(key)
+		
+		log.info "amTagTemplateAssociation = " + amTagTemplateAssociation
+		log.info "Searching amTagTemplate"
+		
+		AmTagTemplate amTagTemplate = AmTagTemplate.get(amTagTemplateAssociation.tagTemplateId)
+		log.info "amTagTemplate = " + amTagTemplate 
+		
+		return amTagTemplate
+	}
+	
 }

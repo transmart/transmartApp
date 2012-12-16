@@ -49,6 +49,8 @@ class FmFile implements Buildable{
 		columns { id column:'file_id' }
 	}
 	
+	static transients = ['description', 'uploadDate']
+	
 	static constraints = {
 		displayName(maxSize:200)
 		originalName(maxSize:200)

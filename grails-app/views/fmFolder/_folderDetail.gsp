@@ -18,59 +18,32 @@
 -->
 
 <g:set var="overlayDiv" value="metaData_div" />
-<script type="text/javascript">
-    $j(document).ready(function() 
-    {
-        var dt1 = new dataTableWrapper('gridViewWrapper1', 'gridViewTable1');
-        dt1.loadData(${jSONForGrid});
-  
-    });
-
-    $('#gridViewTable1').dataTable( {
-        "sDom": '<"toolbar">frtip'
-    } );
-    $("div.toolbar").html('<b>Custom tool bar! Text/images etc.</b>');
-
-</script>
-
-    
 
 <div style="margin:10px;padding:10px;">
-<h3 class="rdc-h3">${folderInstance?.folderName}</h3>
-<g:if test="${layout}">
+<h3 class="rdc-h3">${folderInstance?.title}</h3>
+<g:if test="${amTagTemplate}">
 <table class="details-table">
-            <thead>
-                <tr>                
-                    <th>&nbsp;</th>
-                    <th align="right"><g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
-                            params="[eleId:overlayDiv, experimentId:folderInstance.id]" 
-                            before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
-                      <img align="right" src="${resource(dir:'images', file:'pencil.png')}"/></g:remoteLink>
-                      </th>
-                </tr>
-            </thead>
-            
-    <tbody>
-        <g:each in="${layout}" status="i" var="layoutRow">
-            <tr class='details-row'> <!-- class="${(i % 2) == 0 ? 'odd' : 'even'}"> -->
-                <td valign="top" align="right" class="columnname" width="20%">${layoutRow.displayName}</td>
-                
-                                    <td valign="top" align="left" class="columnvalue" width="60%">
-                    <g:if test="${layoutRow.dataType == 'date'}">
-                    </g:if>
-                    <g:else> <%-- In all other cases, display as string --%>
-                       <g:if test="${layoutRow.column.length() > 325}">
-                       ${(layoutRow.column).substring(0,324)}&nbsp;&nbsp;
-                       <a href=# >See more</a>
-                       </g:if>
-                       <g:else>
-                        ${layoutRow.column}
-                        </g:else>
-                    </g:else>
-                </td>
-                
-            
+        <thead>
+            <tr>                
+                <th>&nbsp;</th>
+                <th align="right"><g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
+                        params="[eleId:overlayDiv, experimentId:folderInstance.id]" 
+                        before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
+                  <img align="right" src="${resource(dir:'images', file:'pencil.png')}"/></g:remoteLink>
+                </th>
             </tr>
+        </thead>
+    <tbody>
+        <g:each in="${amTagTemplate.amTagItems}" status="i" var="amTagItem">
+        <g:if test="${amTagItem.tagItemType == 'FIXED'}">
+            <tr class='details-row'> <!-- class="${(i % 2) == 0 ? 'odd' : 'even'}"> -->
+            <!-- TODO: If active -->
+                <td valign="top" align="right" class="columnname" width="20%">${amTagItem.displayName}</td>
+                <td valign="top" align="left" class="columnvalue" width="60%">
+                 ${fieldValue(bean:folderInstance,field:amTagItem.tagItemAttr.toLowerCase())}
+                </td>
+            </tr>
+         </g:if>
         </g:each>
     </tbody>    
 </table>
@@ -110,13 +83,7 @@
         </g:each>
     </tbody>    
 </table>
-        </g:if>
-        <g:else>
-       <div>
-            <div id='gridViewWrapper1'>
-            </div>        
-        </div>
-        </g:else>
+</g:if>
 
 <!--  overlay div  -->
 

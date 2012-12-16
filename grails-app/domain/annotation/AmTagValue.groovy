@@ -18,24 +18,23 @@
  ******************************************************************/
   
 
-package bio
-class BioData {
-		Long id
-		String uniqueId
-		String type
-		static hasMany =[externalCodes: BioDataExternalCode]
+package annotation
 
-        static mapping = {
+class AmTagValue {
+	
+	Long id
+	String value
 		
-			table 'BIO_DATA_UID'
-			version false
-			tablePerHierarchy false
-			columns {
-				id column:'BIO_DATA_ID'
-				uniqueId column:'UNIQUE_ID'
-				type column:'BIO_DATA_TYPE'
-				externalCodes joinTable:[name:'BIO_DATA_EXT_CODE',key:'BIO_DATA_ID', column:'BIO_DATA_EXT_CODE_ID']
-			}
-		}
+	static mapping = {
+		table 'am_tag_value'
+		version false
+		cache true
+		sort "value"
+		columns { id column:'tag_value_id' }
+	}
+
+	static constraints = {
+		value(maxSize:2000)
+	}
 
 }

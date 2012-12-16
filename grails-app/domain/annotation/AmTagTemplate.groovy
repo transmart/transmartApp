@@ -18,24 +18,34 @@
  ******************************************************************/
   
 
-package bio
-class BioData {
-		Long id
-		String uniqueId
-		String type
-		static hasMany =[externalCodes: BioDataExternalCode]
+package annotation
 
-        static mapping = {
-		
-			table 'BIO_DATA_UID'
-			version false
-			tablePerHierarchy false
-			columns {
-				id column:'BIO_DATA_ID'
-				uniqueId column:'UNIQUE_ID'
-				type column:'BIO_DATA_TYPE'
-				externalCodes joinTable:[name:'BIO_DATA_EXT_CODE',key:'BIO_DATA_ID', column:'BIO_DATA_EXT_CODE_ID']
-			}
-		}
+class AmTagTemplate {
+	
+	Long id
+	String tagTemplateName
+	String tagTemplateType
+	String tagTemplateSubtype
+	Boolean activeInd = Boolean.TRUE
+	
+	SortedSet amTagItems
 
+	static hasMany = [amTagItems: AmTagItem]//, fmFolders: FmFolder]
+	
+	static mapping = {
+		table 'am_tag_template'
+		version false
+		cache true
+		sort "tagTemplateName"
+		columns { id column:'tag_template_id' }
+//		amTagItems joinTable: [name: 'tag_template_item_def',  key:'tag_template_id', column: 'tag_item_id'], lazy: false
+//		fmFolders joinTable: [name: 'am_tag_template_association', key:'tag_template_id', column: 'object_uid'], lazy: false
+	}
+
+	
+	static constraints = {
+		tagTemplateName(maxSize:200)
+		tagTemplateType(maxSize:50)
+		tagTemplateSubtype(maxSize:50)
+	}
 }

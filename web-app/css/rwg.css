@@ -574,6 +574,11 @@ ul.dynatree-container li ul li{
 	 padding-left: 3px;
 }
 
+.result-folder-name.selected {
+    background-color: #F0F0FF;  
+}
+
+
 .result-analysis-label
 {
 	display:block;

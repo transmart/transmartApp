@@ -13,7 +13,7 @@
 						</a>
 					</span>
 					<g:if test="${'study'==folder.folderType.toLowerCase()}">
-					<a href="#" onclick="showDetailDialog('${createLink(controller:'experimentAnalysis',action:'expDetail',id:folder.objectUid)}');">
+					<a href="#" onclick="showDetailDialog('${createLink(controller:'fmFolder',action:'folderDetail',id:folder.id)}');">
 						<span class="result-folder-name"> ${folder.folderName}</span>						
 					</a>
 					</g:if>
