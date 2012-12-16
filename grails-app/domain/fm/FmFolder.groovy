@@ -25,46 +25,43 @@ import groovy.xml.StreamingMarkupBuilder
 import java.util.ArrayList;
 import java.util.List;
 import annotation.AmTagTemplate;
-// import fm.FmFolderAssociation;
 
 class FmFolder implements Buildable{
 	
 	Long id
 	String folderName
 	String folderFullName
-	String folderTag
 	Long folderLevel
 	String objectUid
 	String folderType
-//	AmTagTemplate amTagTemplate
 	Boolean activeInd = Boolean.TRUE
-	
-	
+
 
 	static mapping = {
 		table 'fm_folder'
 		version false
 		cache true
 		sort "folderName"
+		id generator: 'sequence', params:[sequence:'seq_fm_id']
 		fmFiles joinTable: [name: 'fm_folder_file_association',  key:'folder_id', column: 'file_id'], lazy: false
-//		amTagTemplates joinTable: [name: 'am_template_association',  key:'object_uid', column: 'tag_template_id'], lazy: false
-		
 		columns { id column:'folder_id' }
+	//	amTagTemplates joinTable: [name: 'am_tag_template_association',  key:'object_uid', column: 'tag_template_id'], lazy: false
+		columns {
+			id column:'folder_id'
+		}
 	}
 	
 //	static hasOne = [fmFolderAssociation: FmFolderAssociation]	
 	static hasMany = [fmFiles: FmFile] //, amTagTemplates: AmTagTemplate]
 	
 	
-
-	
 	static constraints = {
-		folderName(maxSize:200)
-		folderFullName(maxSize:200)
+		folderName(maxSize:1000)
+		folderFullName(maxSize:1000)
 		objectUid(maxSize:300)
-		folderType(maxSize:50)
-		folderTag(nullable:true,maxSize:50)
-		}
+		folderType(maxSize:100)
+		folderTag(nullable: true, maxSize:20)
+	}
 	
 	def void build(GroovyObject builder)
 	{
@@ -97,5 +94,7 @@ class FmFolder implements Buildable{
 		
          fmFolder.delegate = builder
          fmFolder()
+
 	}
+
 }

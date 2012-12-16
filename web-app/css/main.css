@@ -3,55 +3,6 @@ html * {
     /*padding: 0; SELECT NOT DISPLAYED CORRECTLY IN FIREFOX */
 }
 
-/* Top level menu */
-
-table.menuDetail {
-    padding: 0px 0px;
-    border: 0 none;
-}
-
-table.menuDetail th.menuBar {
-   	font-family: verdana, arial, helvetica, sans-serif;
-    font-size: 11px;     
-	line-height: 15px;
-    vertical-align: middle;
-    text-align: center;
-    white-space: nowrap;
-    background: #FAFAFA url('../css/jquery/ui/images/ui-bg_highlight-hard_75_535752_1x100.png');
-    background-position: 0px 64px;
-    font-weight: bold;
-    padding: 0px 0px;
-}
-
-table.menuDetail th {
-	background: transparent;	
-}
-
-table.menuDetail th.menuLink {
-	padding: 1px 15px;
-    color: #ddd;
-}
-
-table.menuDetail th.menuLink a:link, th.menuLink a:visited {
-    color: #ddd;
-	font-size: 11px;
-}
-
-table.menuDetail th.menuLink a:hover {
-    cursor: pointer;
-	font-size: 11px;    
-	text-decoration: underline;
-}
-
-table.menuDetail th.menuVisited {
-	padding: 1px 15px;
-    color: white;
-    font-size: 10pt;
-    font-weight: bold;
-}
-
-/* end top level menu */
-
 
 /* GENERAL */
 
@@ -1078,9 +1029,3 @@ table.jobstatus {
     z-index:100;
 }
 
-#logocutout {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	z-index: 999;
-}

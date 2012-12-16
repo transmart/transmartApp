@@ -19,54 +19,44 @@
   
 package fm
 
-
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-import groovy.lang.Buildable;
-import groovy.lang.GroovyObject;
-import groovy.xml.StreamingMarkupBuilder;
 
-class FmFile implements Buildable{
+class FmFile {
 	
 	Long id
 	String displayName
 	String originalName
-	String fileVersion
-	String description = "test description"
-	Long fileSize	
+	Long fileVersion = 1l
 	String fileType
+	Long fileSize
 	String filestoreLocation
 	String filestoreName
 	String linkUrl
-	Date uploadDate = new Date()
 	Boolean activeInd = Boolean.TRUE
+	Date createDate = new Date()
+	Date updateDate = new Date()
 
 	static mapping = {
 		table 'fm_file'
 		version false
 		cache true
 		sort "displayName"
+		id generator: 'sequence', params:[sequence:'seq_fm_id']
 		columns { id column:'file_id' }
 	}
 	
 	static transients = ['description', 'uploadDate']
-	
-	static constraints = {
-		displayName(maxSize:200)
-		originalName(maxSize:200)
-		filestoreLocation(nullable:true,maxSize:500)
-		filestoreName(nullable:true,maxSize:50)
-		
-		}
-	
-	def void build(GroovyObject builder)
-	{
-		def fmFile = {
-			
-		}
 
-		fmFile.delegate = builder
-		fmFile()
-
+	static contraints = {
+		displayName(maxSize:1000)
+		orginalName(maxSize:1000)
+		fileType(nullable: true, maxSize:100)
+		fileSize(nullable: true)
+		filestoreLocation(nullable: true, maxSize:1000)
+		filestoreName(nullable: true, maxSize:1000)
+		linkUrl(nullable: true, maxSize:1000)
 	}
+	
 }

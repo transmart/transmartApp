@@ -42,7 +42,16 @@ class RWGController {
 	def springSecurityService
 	def formLayoutService
 	
-    def index = {}
+    def index = {
+		def rwgSearchFilter = session['rwgSearchFilter'];
+		if (rwgSearchFilter) {
+			rwgSearchFilter = rwgSearchFilter.join(",,,")
+		}
+		else {
+			rwgSearchFilter = "";
+		}
+		return [rwgSearchFilter: rwgSearchFilter];
+	}
 
 	/**
 	 * START: Methods for the faceted search filter

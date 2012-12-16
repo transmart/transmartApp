@@ -47,6 +47,14 @@ class DatasetExplorerController {
 				}
 			}
 			
+			def rwgSearchFilter = session['rwgSearchFilter'];
+			if (rwgSearchFilter) {
+				rwgSearchFilter = rwgSearchFilter.join(",,,")
+			}
+			else {
+				rwgSearchFilter = "";
+			}
+			
 			//Grab i2b2 credentials from the config file
 			def i2b2Domain = grailsApplication.config.com.recomdata.i2b2.subject.domain
 			def i2b2ProjectID = grailsApplication.config.com.recomdata.i2b2.subject.projectid
@@ -68,6 +76,7 @@ class DatasetExplorerController {
 													i2b2Domain: i2b2Domain,
 													i2b2ProjectID: i2b2ProjectID,
 													i2b2Username: i2b2Username,
-													i2b2Password: i2b2Password]) 
+													i2b2Password: i2b2Password,
+													rwgSearchFilter: rwgSearchFilter]) 
     		}
 }
