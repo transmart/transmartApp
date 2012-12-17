@@ -156,9 +156,6 @@ function updateAnalysisCount(checkedState, analysisID, analysisTitle, studyID)	{
 
 	jQuery("#analysisCountLabel").html(newLabel);
 	
-	displayxtAnalysesList();
-	setSaveXTFilterLink();
-	setClearXTLink();
 	
 	return;
 }
@@ -2273,7 +2270,7 @@ function refreshHomeFavorites(searchType)  {
 function loadSearch(searchType, id)  {
 
 	if (searchType=='XT')  {
-		jQuery("#cross-trial-div").mask("Loading...");
+//		jQuery("#cross-trial-div").mask("Loading...");
 	}
 	
 	rwgAJAXManager.add({
@@ -2383,7 +2380,7 @@ function loadSearch(searchType, id)  {
 				alert(response['message']);  // show message from server  
 			}
 			
-			jQuery("#cross-trial-div").unmask();
+		//	jQuery("#cross-trial-div").unmask();
 			
  		},
 		error: function(xhr) {
@@ -3033,6 +3030,8 @@ function loadHeatmapPaginator(divID, analysisId, page, isSA, keywordsQueryString
 function showCrossTrialAnalysis()
 {
 	
+	
+	
 	if(xtSelectionUpdated){
 		updateCrossTrialGeneCharts();
 	}
@@ -3046,9 +3045,11 @@ function showCrossTrialAnalysis()
 	jQuery("#toolbar-collapse_all").hide();
 	jQuery("#toolbar-options").hide();
 	
-	  hideHomePage();
-      hideResultsPage();
-	  jQuery('#cross-trial-div').show();
+	hideHomePage();
+	hideResultsPage();
+	jQuery('#cross-trial-div').show();
+	
+	
 	  
 	  //if no analyses are selected, disable everything
 	  if(selectedAnalyses.length ==0){
@@ -3067,6 +3068,10 @@ function showCrossTrialAnalysis()
 		  
 		  jQuery('#xtNoAnalysesMsg').hide();
 	  }
+	
+	setSaveXTFilterLink();
+	setClearXTLink();
+	displayxtAnalysesList();
 	  
 }
 
@@ -3300,7 +3305,7 @@ function updateCrossTrialGeneCharts(){
 	jQuery('#xtMsgBox').fadeOut(200);
 	
 	//unmaks the tabs
-	jQuery('#xtMenuBar').unmask()
+//	jQuery('#xtMenuBar').unmask()
 	
 	//clear gene charts
 	jQuery('#xtSummaryChartArea').html('');
@@ -3329,10 +3334,16 @@ function updateCrossTrialGeneCharts(){
 		}
 				
 	});
-	setSaveXTFilterLink();
-	setClearXTLink();
-	//update the display list
-	displayxtAnalysesList();
+	
+	
+	//check if the cross-trial div is currently displayed. Only perform these actions if so
+	if(jQuery('#cross-trial-div').css('display') != 'none'){
+		
+		setSaveXTFilterLink();
+		setClearXTLink();
+		displayxtAnalysesList();
+	}
+
 
 }
 
@@ -3409,7 +3420,7 @@ function clearAllXTSearchTerms(){
 	jQuery('#xtMsgBox').fadeOut(200);
 	
 	//remove the mask
-	jQuery('#xtMenuBar').unmask()
+//	jQuery('#xtMenuBar').unmask()
 	
 	//show the empty gene msg box
 	jQuery('#xtNoGenesMsg').show();
