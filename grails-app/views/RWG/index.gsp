@@ -250,7 +250,6 @@
 			<br/>
 			<a href="#" onclick="saveSearch(); return false;">Save</a>&nbsp;   
 			<a href="#" onclick="jQuery.modal.close();return false;">Cancel</a>   
-                     
 			
 		</div>
 			
@@ -340,7 +339,7 @@
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
 		
 		<div id="analysisViewHelp" style="position: absolute; top: 70px; right: 10px; display: none;">
-			<tmpl:/help/helpIcon id="1190"/>
+			<tmpl:/help/helpIcon id="1358"/>
 		</div>
 		<div id="tableViewHelp" style="position: absolute; top: 70px; right: 10px; display: none;">
 			<tmpl:/help/helpIcon id="1317"/>
