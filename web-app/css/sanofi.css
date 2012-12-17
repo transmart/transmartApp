@@ -56,6 +56,11 @@ table.menuDetail th.menuLink {
 	padding: 1px 15px;
     color: #ddd;
     border-right: none;
+    font-weight: bold;
+}
+
+table.menuDetail th.menuLink a {
+	text-decoration: none;	
 }
 
 table.menuDetail th.menuLink a:hover {
@@ -107,7 +112,7 @@ table.menuDetail th.menuVisited {
 /* Sidebar */
 
 #box-search {
-	margin: 4px 8px 8px 8px;
+	margin: 26px 8px 8px 8px;
 	border-radius: 8px;
 	border: #0000FF;
 	box-shadow: #DDD 11px 11px 8px -7px;
@@ -312,6 +317,17 @@ table.menuDetail th.menuVisited {
 
 .x-layout-split {
 	z-index: 1;	
+}
+
+#sidebartoggle {
+	position:absolute;
+	left:0px;
+	top: 29px;
+	z-index: 999;
+	background-image: url('../images/lefttab-left.png');
+	width: 22px;
+	height: 22px;
+	cursor: pointer;
 }
 
 

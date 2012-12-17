@@ -8,22 +8,13 @@
 					<span>
 						<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', '${createLink(controller:'fmFolder',action:'getFolderContents',params:[id:folder.id])}');">
 							<img style="margin-bottom: 2px;" alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderplus.png')}" />
-							<!-- <img alt="" src="${resource(dir:'images',file:'folder.png')}" />  -->
 							<span class="foldericon ${folder.folderType.toLowerCase()}"></span>   
 						</a>
 					</span>
 					<a href="#" onclick="showDetailDialog('${createLink(controller:'fmFolder',action:'folderDetail',id:folder.id)}');">
-						<span class="result-folder-name"> ${folder.folderName}</span>
+						<span class="result-folder-name" title="${folder.folderName}"> ${folder.folderName}</span>
 					</a>
 				</td>
-	            <%--
-	            <td class="foldericons">
-	            	<div class="foldericonwrapper" style="display: none;">
-	            		<span class="foldericon view">View metadata</span>
-						<span class="foldericon add">Add to export</span>
-					</div>
-				</td>
-				--%>
             </tr>
             </table>
             <div id="${folder.id}_detail" name="${folder.id}" class="detailexpand"></div>

@@ -102,10 +102,6 @@
 
 	            });
 
-	        	jQuery('#sidebartoggle').click(function() {
-					toggleSidebar();
-		        });
-
 	        	
 	        //    var resize= $("#sidebar");
 	      //        var containerWidth = $("#main").width();
@@ -155,6 +151,11 @@
 	    	    	showDetailDialog(fileDataUrl + '?id=' + id);
 		    	});
 
+		    	jQuery('#results-div').on('click', '.result-folder-name', function() {
+			    	jQuery('.result-folder-name').removeClass('selected');
+					jQuery(this).addClass('selected');
+			    });
+
 	    /*	    jQuery('#cartbutton').click(function() {
 					jQuery('#exportViewLink').click();
 		    	});
@@ -162,6 +163,7 @@
 
 	        	jQuery('#sidebar-accordion').accordion({heightStyle: "fill", icons: { 'header': 'suppressicon', 'headerSelected': 'suppressicon' }});
 	        	resizeAccordion();
+	        	
                  
 	        	jQuery('#sidebar').resizable({
                     handles: 'e',
@@ -205,6 +207,7 @@
 	        Now that the left nav is resizable this needs to be updated - wvet
 	        
 	        --%>
+	        
 			function resizeAccordion() {
 				
 				var windowHeight = jQuery(window).height();
@@ -224,35 +227,6 @@
 	        	jQuery('#datasetExplorer').height(windowHeight - 70);
 	        	jQuery('#welcome').height(windowHeight - 90);
 			}
-
-			function toggleSidebar() {
-				var sidebarIsVisible = (jQuery('#sidebar:visible').size() > 0);
-				if (sidebarIsVisible) {
-					jQuery('#sidebar').fadeOut(resizeAccordion);
-					var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-left', '-right');
-					jQuery('#sidebartoggle').css('background-image', bgimg);
-				}
-				else {
-					jQuery('#sidebar').fadeIn();
-					resizeAccordion(); //Not a callback here - resize as soon as it starts appearing.
-					var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-right', '-left');
-					jQuery('#sidebartoggle').css('background-image', bgimg);
-				}
-			}
-
-			function showTab(tab) {
-				if (tab == 'browse') {
-//					jQuery('#metadata-viewer').show();
-                    jQuery('#folder-viewer').show();
-					jQuery('#subject-view-div').hide();
-				}
-				else {
-//					jQuery('#metadata-viewer').hide();
-                    jQuery('#folder-viewer').hide();
-					jQuery('#subject-view-div').show();
-				}
-			}
-
 
     function dataTableWrapper (containerId, tableId, title)
             {
@@ -355,7 +329,7 @@
             <g:render template="/layouts/commonheader" model="['app':'rwg', 'utilitiesMenu':'true']" />
         </div>
         
-		<div id="sidebar" style="border-right:3px solid;border-color:#EDEEF6">
+		<div id="sidebar" style="border-right:5px solid;border-color:#EDEEF6">
 	       
 	        <tmpl:/RWG/boxSearch />
 			

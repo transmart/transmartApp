@@ -210,6 +210,7 @@
 <tmpl:/RWG/searchAutocomplete />
 <tmpl:/RWG/boxSearch />
 <tmpl:/RWG/filterBrowser />
+<div id="sidebartoggle">&nbsp;</div>
 <div id="filter-div" style="display: none;"></div>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />

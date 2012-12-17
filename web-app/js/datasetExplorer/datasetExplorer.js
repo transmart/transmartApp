@@ -856,7 +856,7 @@ Ext.onReady(function()
 					layout : 'border',
 					items : [centerMainPanel],
 					listeners: {
-						resize: {
+						'afterLayout': {
 							fn: function(el) {
 								onWindowResize();
 							}
@@ -1003,15 +1003,6 @@ Ext.onReady(function()
 
 		showLoginDialog();
 		var h=queryPanel.header;
-		
-		/** Additional styling - alter Ext's appearance to be consistent with Browse **/
-
-		onWindowResize();
-		
-		jQuery(window).resize(function() {
-			onWindowResize();
-		});
-		//alert(h);
 		}
 
 );
@@ -1023,7 +1014,7 @@ function onWindowResize() {
 	jQuery('#box-search').prependTo(jQuery('#westPanel'));
 	
 	var boxHeight = jQuery('#box-search').height();
-	jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 100);
+	jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 110);
 }
 
 
@@ -4536,4 +4527,17 @@ function clearQuery() {
 		resetQuery();
 		clearDataAssociation();									
 	}
+}
+
+function toggleSidebar() {
+	var panel = Ext.getCmp('westPanel');
+	if (panel.hidden) {
+	    panel.hidden = false;
+	    panel.setVisible(true); 
+	}
+	else {
+	    panel.hidden = true;
+	    panel.setVisible(false); 
+	}
+	viewport.doLayout();
 }

@@ -443,7 +443,7 @@ ul.dynatree-container li ul li{
 }
 
 .result-folder-name.selected {
-    background-color: #F0F0FF;  
+    font-weight: bold; 
 }
 
 
@@ -1073,17 +1073,6 @@ select.multiselect {
 	width: 100%;
 }
 
-#sidebartoggle {
-	position:absolute;
-	left:0px;
-	top: 29px;
-	z-index: 999;
-	background-image: url('../images/lefttab-left.png');
-	width: 22px;
-	height: 22px;
-	cursor: pointer;
-}
-
 #subject-view-div {
 	padding: 0;	
 }
@@ -1099,6 +1088,10 @@ select.multiselect {
 	font-family: Verdana;	
 	margin-left: 4px;
 	margin-bottom: 8px;
+}
+
+.foldertitle {
+	white-space: nowrap;	
 }
 
 .foldericon {
