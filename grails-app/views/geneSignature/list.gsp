@@ -112,6 +112,8 @@
     </div>    
     <div style="display:none;">
     	<div id="manipulateDiv">
+    		<br>
+    		<span id="actionLabel" style="border-width: 1px; border-style: solid; font-weight:bold;"></span>
 	    	<div id="svg">
 	        </div>
 	        <br>
@@ -133,10 +135,9 @@
 		        <div style="text-align: right; float:left;">
 		        	<g:submitButton class="edit" onClick="resetVisualization()" value="Reset" name="Reset"/>
 		        </div>
-		        <br><br>
+		        <br>
 		        <div>
 			        <g:form name="newList">
-						<span id="actionLabel" style="border-width: 1px; border-style: solid; font-weight:bold;"></span>
 			        	<g:textArea id="manipulationResults" name="manipulationResults" value="" style="height: 180; width:480; border:1px double black"/>
 			        	<br>
 			        	<g:actionSubmit class="edit" action="createWizard" value="Save" name="Save"/>

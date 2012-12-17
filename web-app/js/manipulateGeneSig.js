@@ -482,10 +482,9 @@ function populateResults(results, action){
 		if(action=='concat'){
 			action = 'concatination';
 		}
-		jQuery("#actionLabel").show();
 		jQuery("#actionLabel").text(action);
 	}else{
-		jQuery("#actionLabel").hide();
+		jQuery("#actionLabel").text("custom");
 	}
 
 }
