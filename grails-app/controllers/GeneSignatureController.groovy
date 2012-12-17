@@ -263,12 +263,15 @@ class GeneSignatureController {
 
 		// save original file until final save
 		def file = request.getFile('uploadFile')
-		wizard.geneSigFile=file
+		if(file!=null){
+			wizard.geneSigFile=file
+		}
 		
 		// save text box data until final save
 		def geneSigText = request.getParameter('genes')
-		wizard.geneSigText = geneSigText
-		
+		if(geneSigText!=null){
+			wizard.geneSigText = geneSigText
+		}		
 		//bind data to model
 		bindGeneSigData(params, wizard.geneSigInst)
 
