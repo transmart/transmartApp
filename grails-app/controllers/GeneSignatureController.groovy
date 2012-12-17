@@ -670,7 +670,11 @@ class GeneSignatureController {
 		if(!bError) {
 			try {
 				geneSignatureService.addGenSigItems(gs, geneSymbols, probes, valueMetrics)
-				flash.message = "<div class='message'>"+geneSymbols.size()+ " gene signature item(s) were added to '"+gs.name+"'</div>"
+				def addedItemsSize=geneSymbols.size()
+				if(addedItemsSize==0){
+					addedItemsSize=probes.size()
+				}
+				flash.message = "<div class='message'>"+addedItemsSize+ " gene signature item(s) were added to '"+gs.name+"'</div>"
 
 			} catch (FileSchemaException fse) {
 				log.error "message>> "+fse.getMessage(), fse
