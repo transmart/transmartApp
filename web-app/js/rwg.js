@@ -120,6 +120,7 @@ function removeXTAnalysisFromArray(analysisID){
 
 function addXTAnalysisToArray(analysisID, analysisTitle, studyID){
 	
+	//set this global veriable to true so that the CTA page refreshes when viewed
 	xtSelectionUpdated = true;
 	
 	//add item to selectedAnalyses array
@@ -127,9 +128,6 @@ function addXTAnalysisToArray(analysisID, analysisTitle, studyID){
 	
 	//update the cookie
 	jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
-	
-	//refreshCrossTrialMsg();
-	//updateCrossTrialGeneCharts();
 	
 	return;
 }
@@ -3209,7 +3207,7 @@ function getCrossTrialSummaryTableStats()
 {
 	 jQuery('#xtSummaryTable').html('');
 	
-	 jQuery('#xtSummaryTable').mask('Loading...');
+	 jQuery('#xtMenuBar').mask('Loading...');
 	
 	if (selectedAnalyses.length == 0)  {
 		return;
@@ -3253,7 +3251,7 @@ function getCrossTrialSummaryTableStats()
 			    jQuery('#CTAsummaryTable').find('tr:even').css({'background-color':'#efefef'})
 	              .end().find('tr:odd').css({'background-color':'#fff'});
 			    
-			    jQuery('#xtSummaryTable').unmask();
+			    jQuery('#xtMenuBar').unmask();
 		   
 		}
 	});
@@ -4117,9 +4115,6 @@ function getHeatmapPaginatorCTA(divID, analysisIds, category, searchKeywordId, n
 							    
       		drawHeatmapCTA(heatmapDiv, null, selectedAnalyses, keyword);  // draw blank heatmap
       		
-		    //add some buttons
-		    jQuery('#'+heatmapHolderDivID).prepend(closeHTML);
-
       	}
       	else  {      		
     		loadHeatmapCTA(analysisIds, category, searchKeywordId, startRank, endRank, keyword);   
