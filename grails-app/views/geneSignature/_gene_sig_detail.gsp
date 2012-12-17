@@ -75,10 +75,10 @@
 			<td class="value">
 				<table>				
 					<tr>
-						<td style="border: none; width; 33%;">Description:</td><td style="border: none;">${gs.stimulusDescription}</td>
+						<td style="border: none; width; 33%;">Description: ${gs.stimulusDescription}</td>
 					</tr>
 					<tr>						
-						<td style="border: none; width; 33%;">Dose, units, and time:</td><td style="border: none;">${gs.stimulusDosing}</td>
+						<td style="border: none; width; 33%;">Dose, units, and time: ${gs.stimulusDosing}</td>
 					</tr>
 				</table>
 			</td>

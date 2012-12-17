@@ -263,12 +263,15 @@ class GeneSignatureController {
 
 		// save original file until final save
 		def file = request.getFile('uploadFile')
-		wizard.geneSigFile=file
+		if(file!=null){
+			wizard.geneSigFile=file
+		}
 		
 		// save text box data until final save
 		def geneSigText = request.getParameter('genes')
-		wizard.geneSigText = geneSigText
-		
+		if(geneSigText!=null){
+			wizard.geneSigText = geneSigText
+		}		
 		//bind data to model
 		bindGeneSigData(params, wizard.geneSigInst)
 
@@ -667,7 +670,11 @@ class GeneSignatureController {
 		if(!bError) {
 			try {
 				geneSignatureService.addGenSigItems(gs, geneSymbols, probes, valueMetrics)
-				flash.message = "<div class='message'>"+geneSymbols.size()+ " gene signature item(s) were added to '"+gs.name+"'</div>"
+				def addedItemsSize=geneSymbols.size()
+				if(addedItemsSize==0){
+					addedItemsSize=probes.size()
+				}
+				flash.message = "<div class='message'>"+addedItemsSize+ " gene signature item(s) were added to '"+gs.name+"'</div>"
 
 			} catch (FileSchemaException fse) {
 				log.error "message>> "+fse.getMessage(), fse

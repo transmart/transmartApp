@@ -48,21 +48,6 @@
 			var species = document.forms[formName].elements['speciesConceptCode.id'];	
 			if(species.value=="null") errorMsg = errorMsg + "\n- Please select a relevant species";
 
-
-			var speciesText = species.options[species.selectedIndex].text.toUpperCase();
-
-			// if mouse, requires a source
-			if(speciesText.indexOf('Mouse'.toUpperCase()) != -1)  {
-				var speciesSource = document.forms[formName].elements['speciesMouseSrcConceptCode.id'];
-				if(speciesSource.value=="null") errorMsg = errorMsg + "\n- Please select species source";
-			}
-
-			// if mouse is knockout or transgenic or other details must be filled
-			if (speciesText == 'Mouse (knockout or transgenic)'.toUpperCase() || speciesText=='Mouse (other)'.toUpperCase() ) {
-				var speciesDetail = document.forms[formName].elements['speciesMouseDetail'];	
-				if(speciesDetail.value=="") errorMsg = errorMsg + "\n- Please enter species detail";
-			}
-				 				
 			//tech platform required
 			var techPlat = document.forms[formName].elements['techPlatform.id'];
 			if(techPlat.value=="null") errorMsg = errorMsg + "\n- Please select a technology platform";
@@ -98,15 +83,13 @@
 			var moutseOther = document.getElementById('mouse_other_id')
 			var selectVal = selectItem.value
 			var selectText = selectItem.options[selectItem.selectedIndex].text
-			
-			// toggle mouse source
-			//if(selectVal=='MOUSE_1' || selectVal=='MOUSE_2' || selectVal=='MOUSE_3' || selectVal=='MOUSE_4') 
-			if(selectText.indexOf('Mouse')!=-1)
-				mouseSrc.style.display='inline';
-			else 
-				mouseSrc.style.display='none';
 
-			// toggle mouse other
+			if(selectText=='Human'){
+				mouseSrc.style.display='none';
+			}else{
+				mouseSrc.style.display='inline';
+			}
+			
 			//if(selectVal=='MOUSE_3' || selectVal=='MOUSE_4') 
 			if(selectText=='Mouse (knockout or transgenic)' || selectText=='Mouse (other)') 				
 				moutseOther.style.display='block';
@@ -176,14 +159,13 @@
 		         				  	optionValue="codeName"
 		         				  	optionKey="id" 
 		         				  	onChange="javascript:speciesToggle(this);" />&nbsp;
-								<!--  toggle mouse div accordingly -->
-								<g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_1' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_2' || 
-																				gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">      				  	
-								<div id="mouse_source_div" style="display: inline;">For Mouse, enter source<g:requiredIndicator/></div>:						
+		         				<!--  toggle mouse div accordingly -->
+								<g:if test="${gs.speciesConceptCode?.bioConceptCode!='HUMAN'}">      				  	
+								<div id="mouse_source_div" style="display: inline;">Source:						
 								</g:if>   
 								<g:else>
-								<div id="mouse_source_div" style="display: none;">For Mouse, enter source<g:requiredIndicator/></div>:						
-								</g:else>														
+								<div id="mouse_source_div" style="display: none;">Source:		
+								</g:else>				
 									<g:select name="speciesMouseSrcConceptCode.id"
 			    				      	from="${wizard.mouseSources}"
 			    				      	value="${gs.speciesMouseSrcConceptCode?.id}"
@@ -201,7 +183,7 @@
 						<tr id="mouse_other_id" style="display: none;">
 						</g:else>
 							<td style="border: none;">
-								<label>Detail for 'knockout/transgenic' or 'other' mouse strain<g:requiredIndicator/>:</label>
+								<label>Detail for 'knockout/transgenic' or 'other' mouse strain:</label>
 								<br><g:textField name="speciesMouseDetail" value="${gs.speciesMouseDetail}" size="100%" maxlength="255" />
 							</td>
 						</tr>	

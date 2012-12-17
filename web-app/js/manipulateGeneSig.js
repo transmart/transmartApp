@@ -13,7 +13,7 @@ var visualize = function(geneLists, action, labels){
 		//-------Set operations done 
 		
 		//Set the result as default value in the results text box.
-		populateResults(resultArray.toString());
+		populateResults(resultArray.toString(), action);
 		
 		//------Visualize the incoming lists.
 		mapSetIndexToGeneListId(geneLists);
@@ -467,7 +467,7 @@ function mapColor(region, map, regionId, color){
 /**
  * Populates the results text box.
  */
-function populateResults(results){
+function populateResults(results, action){
 	var delimitingChar="\n"
 	if(results!=''){
 		var geneSigItems = results.split(",");
@@ -477,6 +477,16 @@ function populateResults(results){
 		}
 	}
 	jQuery("#manipulationResults").val(results);
+	
+	if(action){
+		if(action=='concat'){
+			action = 'concatination';
+		}
+		jQuery("#actionLabel").text(action);
+	}else{
+		jQuery("#actionLabel").text("custom");
+	}
+
 }
 
 /**
