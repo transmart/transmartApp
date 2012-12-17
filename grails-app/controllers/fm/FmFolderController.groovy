@@ -383,6 +383,7 @@ class FmFolderController {
 	def folderDetail = {
 		log.info "** action: folderDetail called!"
 		def folderId = params.id
+		log.info("PARAMS = " + params)
 			
 		def folder
 		def bioDataObject
@@ -393,12 +394,16 @@ class FmFolderController {
 		{
 			folder = FmFolder.get(folderId)
 			log.info "folder.objectUid = " + folder.objectUid
+			
 			def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
+			
 			log.info "folderAssociation = " + folderAssociation
-			bioDataObject =folderAssociation.getBioObject()
-			// BioDataService.getBioDataObject(folder.objectUid)
-		
-					
+			
+			if(folderAssociation)
+			{
+				bioDataObject =folderAssociation.getBioObject()
+			}
+
 			amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
 		//	formLayout = formLayoutService.getLayout(folder.folderType.toLowerCase()); //'study');
 		}

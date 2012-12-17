@@ -52,7 +52,7 @@
                     
                    
 <div style="height:20px;"></div>
-<g:if test="${null!=folderInstance.fmFiles && folderInstance.fmFiles.size()>0}">   
+<g:if test="${folderInstance.hasProperty('fmFiles') && null!=folderInstance.fmFiles && folderInstance?.fmFiles.size()>0}">   
 <div style="width:900px;align:center;" ><h4 class="rdc-h4" align="center" >Associated Files</h4></div>
 <table class="list-table">
             <thead>
