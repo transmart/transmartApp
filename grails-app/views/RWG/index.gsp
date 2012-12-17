@@ -338,10 +338,10 @@
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
 		
-		<div id="analysisViewHelp" style="position: absolute; top: 70px; right: 10px; display: none;">
+		<div id="analysisViewHelp" style="position: absolute; top: 70px; right: 20px; display: none;">
 			<tmpl:/help/helpIcon id="1358"/>
 		</div>
-		<div id="tableViewHelp" style="position: absolute; top: 70px; right: 10px; display: none;">
+		<div id="tableViewHelp" style="position: absolute; top: 70px; right: 20px; display: none;">
 			<tmpl:/help/helpIcon id="1317"/>
 		</div>
     </body>
