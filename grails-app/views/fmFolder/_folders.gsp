@@ -36,30 +36,15 @@
 		<div id="${folder.id}_detail" name="${folder.id}" class="detailexpand"></div>
 	</g:each>
 	<%-- TODO This is unfinished. Don't display files here? Put them in a table in the metadata viewer --%>
-	<g:each in="${files}" status="ti" var="file">
-		<table class="folderheader" name="${file.id}" style="margin-left: 20px;">
-			<tr>
-				<td class="foldertitle">
-					<span>
-						<a id="toggleDetail_${file.id}" href="#" onclick="toggleDetailDiv('${file.id}', '${createLink(controller:'fmFolder',action:'getFolderContents',params:[id:file.id])}');">
-							<span style="padding: 0px 16px 0px 0px"></span>
-							<span class="fileicon ${file.fileType}"></span>
-						</a>
-					</span>
-					<a href="#" onclick="showDetailDialog('${createLink(controller:'RWG',action:'getFileDetails',id:file.id)}');">
-						<span class="result-file-name"> ${file.displayName}</span>
-					</a>
-				</td>
-				<%-- 
-				<td class="foldericons">
-					<div class="foldericonwrapper" style="display: none;">
-						<span class="foldericon viewfile">View file details</span>
-						<span class="foldericon add">Add to export</span>
-					</div>
-				</td>
-				--%>
-			</tr>
-		</table>
-		<div id="${file.id}_filedetail" name="${file.id}" class="detailexpand"></div>
-	</g:each>
+	<g:if test="${files.size()> 0}">
+        <table class="folderheader" style="margin-left: 20px;">
+            <tr>
+                <td class="foldertitle">
+                            <span style="padding: 0px 16px 0px 0px"></span>
+                            <span class="fileicon txt "></span>
+                    <span class="result-folder-name"><i>Documents (${files.size()})</i></span>                   
+                </td>
+            </tr>
+          </table>
+	</g:if>
 </div>

@@ -74,7 +74,6 @@
                </td> 
                <td>
                <div>
-                    <span class="foldericon view">View metadata</span>
                     <span class="foldericon add">Add to export</span>
                           </div>
                 </td>

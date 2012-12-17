@@ -42,7 +42,8 @@
   		        
   		<!--Datatable styling and scripts-->
         <script type="text/javascript" src="${resource(dir:'js/', file:'jquery.dataTables.min.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'ColVis.min.js')}"></script> 
+        <script type="text/javascript" src="${resource(dir:'js/', file:'ColVis.min.js')}"></script> 
+        <script type="text/javascript" src="${resource(dir:'js/', file:'ColReorderWithResize.js')}"></script>
   		        
   		<!--  SVG Export -->
   		<%--<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  --%>
@@ -330,7 +331,7 @@
                     data.bLengthChange = false;
                     data.bScrollCollapse = false;
                     data.iDisplayLength = 100;
-                    data.sDom = "<\"top\"<\"gridTitle\">p>rt<\"clear\">";    //This controls the grid layout and included functionality
+                    data.sDom = "<\"top\"<\"gridTitle\">p>Rrt<\"clear\">";    //This controls the grid layout and included functionality
                 }
             }
 		
