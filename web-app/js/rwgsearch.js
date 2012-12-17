@@ -519,6 +519,10 @@ function unselectFilterItem(id) {
 // ---
 
 jQuery(document).ready(function() {
+	
+	jQuery('#sidebartoggle').click(function() {
+		toggleSidebar();
+    });
     
 	//Filter browser
 	jQuery('#filter-browser').dialog({
