@@ -230,7 +230,7 @@ table.menuDetail th.menuVisited {
 
 #cartbutton {
 	position: absolute;
-    right: 800px;
+    left: 420px;
 	top: 3px;
 	padding: 0px 4px;
 }
@@ -308,6 +308,10 @@ table.menuDetail th.menuVisited {
 
 #navigateTermsPanel a {
 	font-weight: normal;	
+}
+
+.x-layout-split {
+	z-index: 1;	
 }
 
 
