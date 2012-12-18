@@ -397,13 +397,23 @@ class FmFolderController {
 			
 			def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
 			
-			log.info "folderAssociation = " + folderAssociation
 			
 			if(folderAssociation)
 			{
+				log.info "folderAssociation = " + folderAssociation
 				bioDataObject =folderAssociation.getBioObject()
 			}
+			else
+			{
+				log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
+			}
 
+			if(!bioDataObject)
+			{
+				bioDataObject = folder
+			}
+
+						
 			amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
 		//	formLayout = formLayoutService.getLayout(folder.folderType.toLowerCase()); //'study');
 		}
@@ -413,7 +423,7 @@ class FmFolderController {
 	//		formLayout = formLayoutService.getProgramLayout()		
 		}
 		
-		log.info("Formlayout = " + formLayout)
+//		log.info("Formlayout = " + formLayout)
 /*		def subFolders
 		def subFolderLayout 
 		if (folder)
@@ -457,6 +467,8 @@ class FmFolderController {
 		request.getSession().setAttribute("gridtable", table);
 */		
 //		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:folder, subFolderInstances:subFolders, subFolderLayout: subFolderLayout, jSONForGrid: jSONToReturn])
+
+		log.info(bioDataObject)
 		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:bioDataObject, amTagTemplate: amTagTemplate])
 		
 	}
