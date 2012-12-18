@@ -1234,6 +1234,7 @@ border-right: 0;
 vertical-align: top;
 height: 100%;
 min-width:250px;
+min-height: 150px;
 }
 
 .CTAtable{

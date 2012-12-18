@@ -437,7 +437,8 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
 	  .attr("transform", "translate(" + xOffset + "," + yOffset + ")")
 	  ;
 	
-    // Show the gene labels
+    // Show the gene labels with "shoGeneInfo Link"
+	if(!isSA){
 	var geneGroupText = geneGroup.selectAll("a")
 		.data(geneLabels)
 		.enter().append("a")
@@ -452,8 +453,30 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
 	    .style("font", "10px Verdana, Tahoma, Arial")
 		.text(function(d)	{
 			return d.gene;
-		} )		
-        ;			
+		} );
+	}else{
+	
+    // Show the gene labels with openGeneFromCTAheatmap link
+	var geneGroupText = geneGroup.selectAll("a")
+		.data(geneLabels)
+		.enter().append("a")
+		//.attr("xlink:href", function(d) {return "javascript:showGeneInfo('"+d.geneId +"');"})
+		.attr("xlink:href", function(d) {return "javascript:openGeneFromCTAheatmap(" + d.geneId + ", '" +d.gene +"', 'GENE');"})
+
+		.append("text")
+		.attr("x", 0)
+		.attr("y",function(d, i)	{
+			return (i * (h) + h / 2); 
+		    })
+		.attr("width", w_gene)
+		.attr("text-anchor", "start")
+	    .style("font", "10px Verdana, Tahoma, Arial")
+		.text(function(d)	{
+			return d.gene;
+		} );
+	}
+	
+	
 	
 	// tooltip for gene labels
     if (!forExport)  {
