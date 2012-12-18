@@ -168,8 +168,8 @@
 	        	jQuery('#sidebar').resizable({
                     handles: 'e',
                     maxWidth: 800,
-                    minWidth: 120,
-                    stop: function(event, ui){
+                    minWidth: 150,
+                    resize: function(event, ui){
                         var currentWidth = ui.size.width;
                         
                         // this accounts for padding in the panels + 
@@ -178,53 +178,32 @@
                         
                         // this accounts for some lag in the ui.size value, if you take this away 
                         // you'll get some unstable behaviour
-                    //    $(this).width(currentWidth);
+                        jQuery(this).width(currentWidth);
                         
-                        jQuery('#box-search').width(currentWidth -20)
-                        jQuery('#sidebar-accordion').width(currentWidth -20)
+                        jQuery('#box-search').width(currentWidth - 20)
+                        jQuery('#program-explorer').width(currentWidth - 20)
                         // jQuery('#results-div').width(currentWidth -20)
                         // set the content panel width
-                        jQuery('#main').width(jQuery('body').width() - currentWidth - padding);            
+                        //jQuery('#main').width(jQuery('body').width() - currentWidth - padding);            
                     }
               });
 
 	        	var xpos = jQuery('#menuLinks').offset()['right'];
-	        	
-	        	 jQuery('#cartbutton').css({
-	        		    "position":"absolute", 
-	        		    "top": "3px",
-	        		    "left": xpos - 20 + "px",
-	        		});
-	        		
+
 	        });
 
 	        jQuery(window).resize(function() {
 				resizeAccordion();
 			});
-
-	        <%-- TODO Accordion is no longer needed, can simplify a lot of this by just making it a normal set of divs 
-	        
-	        Now that the left nav is resizable this needs to be updated - wvet
-	        
-	        --%>
 	        
 			function resizeAccordion() {
 				
 				var windowHeight = jQuery(window).height();
-				var sidebarIsVisible = (jQuery('#sidebar:visible').size() > 0);
-				if (!sidebarIsVisible) {
-		        	jQuery('#main').css('width', '100%');
-				}
-				else {
-					jQuery('#main').width(jQuery(window).width()-310);
-				}
 	        	jQuery('#sidebar').height(jQuery(window).height()-30);
-				var ypos = jQuery('#sidebar-accordion').offset()['top'];
+				var ypos = jQuery('#program-explorer').offset()['top'];
 	        	
 	        	var targetHeight = windowHeight - ypos - 90;
 	        	jQuery('#results-div').height(targetHeight);
-
-	        	jQuery('#datasetExplorer').height(windowHeight - 70);
 	        	jQuery('#welcome').height(windowHeight - 90);
 			}
 
@@ -333,12 +312,12 @@
 	       
 	        <tmpl:/RWG/boxSearch />
 			
-			<div id="accordion-container" style="height: 600px">
-				<div id="sidebar-accordion">
-			        <h3>Program Explorer</h3>
-			        <div id="results-div">
-			        	Results appear here
-			        </div>
+				<div id="program-explorer" style="width: 290px">
+		        <div id="title-program-div" class="ui-widget-header boxtitle">
+			         <h2 style="float:left" class="title">Program Explorer</h2>
+			    </div>
+			    <div id="results-div" class="boxcontent" style="overflow: auto;">
+			      	Results appear here
 			    </div>
 		    </div>
 		    
