@@ -86,6 +86,7 @@
 
 			if(selectText=='Human'){
 				mouseSrc.style.display='none';
+				jQuery("#speciesMouseSrcConceptCode\\.id").val("null"); 
 			}else{
 				mouseSrc.style.display='inline';
 			}

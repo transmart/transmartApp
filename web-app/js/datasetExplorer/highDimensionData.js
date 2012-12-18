@@ -102,7 +102,8 @@ function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
  * Determine if we are dealing with genotype or copy number
  */
 function determineHighDimVariableType(result){
-	var mobj=result.responseText.evalJSON();
+	var mobj = Ext.util.JSON.decode(result.responseText);
+	//var mobj=result.responseText.evalJSON();
 	GLOBAL.HighDimDataType=mobj.markerType;
 }
 
@@ -114,7 +115,8 @@ function determineHighDimVariableType(result){
 function readCohortData(result, divId)
 {
 	//Get the JSON string we got from the server into a real JSON object.
-	var mobj=result.responseText.evalJSON();
+	//var mobj=result.responseText.evalJSON();
+	var mobj = Ext.util.JSON.decode(result.responseText);
 	
 	//If we failed to retrieve any test from the heatmap server call, we alert the user here. Otherwise, show the popup.
 	if(mobj.NoData && mobj.NoData == "true")
@@ -356,7 +358,7 @@ function applyToForm(){
 	window[divId+'samplesValues']		= GLOBAL.CurrentSamples;
 	window[divId+'tissuesValues']		= GLOBAL.CurrentTissues;
 	window[divId+'timepointsValues']	= GLOBAL.CurrentTimepoints;
-	window[divId+'gplValues']			= GLOBAL.CurrentGpls.toArray();	
+	window[divId+'gplValues']			= GLOBAL.CurrentGpls;	
 	
 	displayHighDimSelectionSummary(subsetCount, divId, probesAgg, snpType);
 

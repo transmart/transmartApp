@@ -480,7 +480,7 @@ function populateResults(results, action){
 	
 	if(action){
 		if(action=='concat'){
-			action = 'concatination';
+			action = 'concatenation';
 		}
 		jQuery("#actionLabel").text(action);
 	}else{

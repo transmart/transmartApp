@@ -67,7 +67,8 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
 				params :  Ext.urlEncode({}),
 				success : function(result, request)
 				{
-					var exp = result.responseText.evalJSON();
+					//var exp = result.responseText.evalJSON();
+					var exp = Ext.util.JSON.decode(result.responseText);
 					if (exp.success && exp.files.length > 0)	{
 						/*for (var i = 0; i < exp.files.length; i++) {
 							var file = exp.files[i]
