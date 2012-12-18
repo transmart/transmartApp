@@ -334,6 +334,10 @@ table.menuDetail th.menuVisited {
 	cursor: pointer;
 }
 
+.ui-autocomplete-loading { 
+	background: white url(../images/loader-small.gif) right center no-repeat;
+}
+
 
 /* Catch-all for making IE look slightly less stupid */
 *:focus {
