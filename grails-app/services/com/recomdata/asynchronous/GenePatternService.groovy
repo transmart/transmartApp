@@ -77,11 +77,6 @@ class GenePatternService implements Job {
 	    log.info("${jobName} has been triggered to run ")
 	   
 	    def jobDataMap = jobDetail.getJobDataMap()
-	    if (log.isDebugEnabled())	{
-		    jobDataMap.getKeys().each {_key ->
-		 	   log.debug("\t${_key} -> ${jobDataMap[_key]}")
-		    }
-	    } 
 	   
 		// Note: this is a superset of all parameters for all of the different analysis types.  
 		// Some will be present, others will not depending on the type of job
@@ -1082,9 +1077,9 @@ public String survivalAnalysis(String userName, String jobName, File dataFile, F
 			log.debug("GPClient is already initialized for ${userName}, returning existing client")
 			return gpClient
 		}		
-		log.debug("Starting GPClient at ${gpURL} as ${userName}")	
+		log.info("Starting GPClient at ${gpURL} as ${userName}")		
 		gpClient = new GPClient(gpURL, userName)
-		log.debug("GPClient has been initialized")
+		log.info("GPClient has been initialized")
 		return gpClient
 	}
 	
