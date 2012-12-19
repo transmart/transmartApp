@@ -19,24 +19,3 @@
   
 
 //check external configuration as described in Config.groovy
-
-/**
- * Configuration for database connection - this file will be loaded
- * by the tranSMART application when the tomcat is restarted
- */
-
-/*dataSource {
-	// pooled connection
-	pooled = true
-	// standard jdbc driver
-	driverClassName ="oracle.jdbc.driver.OracleDriver"
-	// oracle jdbc url- example here is connecting to an oracle xe instance on localhost
-        url = "jdbc:oracle:thin:@23.23.185.167:1521:pgdev"
-	// user name and password
-	username = "biomart_user"
-	password = "biomart_user"
-	// hibernate database connection dialect
-	dialect = "org.hibernate.dialect.Oracle10gDialect"
-	// enable this for SQL debugging
-        //loggingSql = true
-} */
