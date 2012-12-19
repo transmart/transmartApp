@@ -111,7 +111,7 @@ table.menuDetail th.menuVisited {
 
 /* Sidebar */
 
-#box-search {
+#box-search, #program-explorer {
 	margin: 26px 8px 8px 8px;
 	border-radius: 8px;
 	border: #0000FF;
@@ -126,14 +126,18 @@ table.menuDetail th.menuVisited {
     overflow: auto;
     padding: 5px 0 5px 20px;
     background: #FFFFFF;
+}
+
+.boxcontent {
+	position: relative;
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 	border-left: 1px solid #888;
 	border-right: 1px solid #888;
-	border-bottom: 1px solid #888;
+	border-bottom: 1px solid #888;	
 }
 
-#title-search-div, #navigateTermsPanel .x-panel-header {
+.boxtitle, #navigateTermsPanel .x-panel-header {
   height:27px;
   overflow: hide;
   border-top-left-radius: 8px;
@@ -143,10 +147,10 @@ table.menuDetail th.menuVisited {
   border-top: 1px solid #888;
   position: relative;
 }
-#title-search-div .title {
+.boxtitle .title {
   color: white;
 }
-#title-search-div a {
+.boxtitle a {
   color: white;
 }
 
@@ -328,6 +332,10 @@ table.menuDetail th.menuVisited {
 	width: 22px;
 	height: 22px;
 	cursor: pointer;
+}
+
+.ui-autocomplete-loading { 
+	background: white url(../images/loader-small.gif) right center no-repeat;
 }
 
 

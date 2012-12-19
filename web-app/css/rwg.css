@@ -159,10 +159,6 @@ body {
 	height:100% !important;
 }
 
-.ui-autocomplete-loading { 
-	background: white url(../images/loader-small.gif) right center no-repeat;
-	}
-
 #toggle-btn {          
 	background-repeat:no-repeat; 
     background-color: #EEEEEE;
@@ -1032,12 +1028,6 @@ select.multiselect {
 #results-div {
 	background: #FFFFFF;
 	font-size: 11px;
-	border-bottom-left-radius: 8px;
-	border-bottom-right-radius: 8px;
-	border-left: 1px solid #888;
-	border-right: 1px solid #888;
-	border-bottom: 1px solid #888;
-	box-shadow: #DDD 11px 11px 8px -7px;
 }
 
 #studyTabs {
@@ -1095,29 +1085,20 @@ select.multiselect {
 }
 
 .foldericon {
-    padding: 3px 24px 0px 0px;
-    background-image: url('../images/filetypes/page_white.png');
-    background-repeat: no-repeat;   
-}
-
-.foldericon {
-    font-size: 8pt;
     padding: 2px 2px 2px 16px;
-    border-radius: 2px;
-    border: 1px solid #DDD;
     cursor: pointer;
-    background-color: #FBFBFB;
     background-repeat: no-repeat;
     background-position: 2px 50%;
+    background-image: url('../images/filetypes/page_white.png');
 }
 
 
-.foldericon.program { border: none; background-color: none; background-image: url('../images/foldertypes/program.png'); }
-.foldericon.study   { border: none; background-color: none; background-image: url('../images/foldertypes/study.png'); }
-.foldericon.studywsubject   { border: none; background-color: none; background-image: url('../images/foldertypes/studywsubject.png'); }
-.foldericon.folder  { border: none; background-color: none; background-image: url('../images/foldertypes/folder.png'); }
-.foldericon.assay   { border: none; background-color: none; background-image: url('../images/foldertypes/assay.png'); }
-.foldericon.analysis { border: none; background-color: none; background-image: url('../images/foldertypes/analysis.png'); }
+.foldericon.program { background-image: url('../images/foldertypes/program.png'); }
+.foldericon.study   { background-image: url('../images/foldertypes/study.png'); }
+.foldericon.studywsubject   { background-image: url('../images/foldertypes/studywsubject.png'); }
+.foldericon.folder  { background-image: url('../images/foldertypes/folder.png'); }
+.foldericon.assay   { background-image: url('../images/foldertypes/assay.png'); }
+.foldericon.analysis { background-image: url('../images/foldertypes/analysis.png'); }
 
 
 .fileicon {
