@@ -169,27 +169,3 @@ com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
 
-// development env log4j settings - prod should reconfigure it
-environments {
-	development {
-			log4j = {
-				appenders {
-					// set up a log file in the standard tomcat area; be sure to use .toString() with ${}
-					rollingFile name:'tomcatLog', file:"transmart.log".toString(), maxFileSize:'1024KB', layout:pattern(conversionPattern: '[%p] %d{HH:mm:ss} (%c{5}:%M:%L) | %m%n')
-					'null' name:'stacktrace'
-				}
-			
-				root {
-					// change the root logger to my tomcatLog file
-					info 'tomcatLog'
-					additivity = true
-				}
-			
-				// example for sending stacktraces to my tomcatLog file
-				error tomcatLog:'StackTrace'
-				debug tomcatLog:'grails.app.task', 'grails.app.controller', 'grails.app.service'
-				
-				// set level for my messages; this uses the root logger (and thus the tomcatLog file)
-			}
-	}
-}
