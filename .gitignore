@@ -5,6 +5,8 @@ System.out
 .classpath
 .settings
 .project
+.idea
+*.iml
 target-eclipse/
 target/
 .svn/
