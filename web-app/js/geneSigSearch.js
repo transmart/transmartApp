@@ -36,11 +36,9 @@ function handleMouseDownOnAction(actionItem){
 	var newSelectedAction = actionItem.value;
 	if (newSelectedAction!=selectedAction){
 		selectedAction = newSelectedAction;
-		console.log("I have changed");
 		handleActionItem(actionItem);
 	}else{
 		selectedAction = "";
-		console.log("I have not changed");
 		populateActionSelection(actionItem);
 	}
 }
