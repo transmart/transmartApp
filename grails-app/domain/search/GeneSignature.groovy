@@ -93,6 +93,8 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	String experimentTypeATCCRef
 	
 	boolean qcPerformed = false
+	Date qcDate
+	String qcInfo
 	String dataSource
 	String versionStr
 	String customValue1
@@ -159,6 +161,8 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 			experimentTypeInVivoDescr column:'EXPERIMENT_TYPE_IN_VIVO_DESCR'
 			experimentTypeATCCRef column:'EXPERIMENT_TYPE_ATCC_REF'
 			qcPerformed column:'QC_PERFORMED'
+			qcDate column:'QC_DATE'
+			qcInfo column:'QC_INFO'
 			dataSource column:'DATA_SOURCE'
 			versionStr column:'VERSION'
 			customValue1 column:'CUSTOM_VALUE1'
@@ -208,6 +212,9 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		experimentTypeInVivoDescr(nullable:true, maxSize:255)
 		experimentTypeATCCRef(nullable:true, maxSize:255)
 		multipleTestingCorrection(nullable:true)
+		qcPerformed (nullable:true)
+		qcDate (nullable:true)
+		qcInfo (nullable:true)
 		dataSource(nullable:true, maxSize:255)
 		versionStr(nullable:true, maxSize:255)
 		customValue1(nullable:true, maxSize:255)
@@ -227,6 +234,10 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	 */
 	def beforeInsert = {
 		dateCreated = new Date()
+		
+		if(qcPerformed){
+			qcDate = new Date()
+		}
 		//uniqueId = DOMAIN_KEY+":"+id
 		//println("what is my id ?"+getId())
 	}
@@ -236,6 +247,11 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	 */
 	def beforeUpdate = {
 		lastUpdated = new Date()
+		if(qcPerformed && qcDate==null){
+			qcDate = new Date()
+		}else if(!qcPerformed){
+			qcDate = null
+		}
 		uniqueId = DOMAIN_KEY+":"+id
 	}
 
@@ -322,6 +338,8 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		params.put("versionNumber",versionNumber)
 		params.put("dataSource",dataSource)
 		params.put("qcPerformed",qcPerformed)
+		params.put("qcDate", qcDate)
+		params.put("qcInfo", qcInfo)
 		params.put("versionStr",versionStr)
 		params.put("customValue1",customValue1)
 		params.put("customName1",customName1)
@@ -384,6 +402,8 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		gs.versionNumber=versionNumber
 		gs.dataSource= dataSource
 		gs.qcPerformed=qcPerformed
+		gs.qcDate=qcDate
+		gs.qcInfo=qcInfo
 		gs.versionStr=versionStr
 		gs.customValue1=customValue1
 		gs.customName1=customName1
@@ -481,6 +501,8 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		values.add(["Version:", versionStr])
 		values.add(["Data Source:", dataSource])
 		values.add(["QC Performed", qcPerformed?"True":"False"])
+		values.add(["QC Date", qcDate!=null ? qcDate : ""])
+		values.add(["QC Detail", qcInfo!=null? qcInfo : ""])
 		values.add([customName1, customValue1])
 		values.add([customName2, customValue2])
 		values.add([customName3, customValue3])
