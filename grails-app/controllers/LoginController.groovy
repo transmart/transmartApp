@@ -79,11 +79,9 @@ class LoginController {
 		def guestAutoLogin = grailsApplication.config.com.recomdata.guestAutoLogin;
 		boolean guestLoginEnabled = ('true'==guestAutoLogin)
 		log.info("enabled guest login?: " + guestLoginEnabled);
-		//log.info("requet:"+request.getQueryString())
+		//log.info("request:"+request.getQueryString())
 		boolean forcedFormLogin = request.getQueryString() != null
 		log.info("User is forcing the form login? : " + forcedFormLogin)
-		log.info("Forcing form login for now - see JRIA")
-		forcedFormLogin = true;
 		
 		// if enabled guest and not forced login
 		if(guestLoginEnabled && !forcedFormLogin){
@@ -100,7 +98,13 @@ class LoginController {
 				}
 			}
 
-		if (springSecurityService.isLoggedIn()) {
+		// patch for null pointer exception, see JIRA: http://transmartproject.org/jira/browse/TMPSTGSQL-146
+		boolean isLoggedIn = false;
+		try {
+			isLoggedin = springSecurityService.isLoggedIn()
+		} catch (Throwable ignore){}
+		
+		if (isLoggedIn) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
 			render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
