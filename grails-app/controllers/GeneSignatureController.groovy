@@ -582,8 +582,8 @@ class GeneSignatureController {
 	 * add items to an existing gene signature
 	 */
 	 def addItems = {
-
-		def gs = GeneSignature.get(params.id)
+		def gs = GeneSignature.get(params.gsId)
+		
 		log.debug " adding items to gs: "+gs.name
 
 		// reset
