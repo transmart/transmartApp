@@ -217,7 +217,15 @@
 		</tr>
 		<tr class="prop">
 			<td class="name">QC Performed:</td>
-			<td class="value">${gs.qcPerformed}</td>
+			<td class="value">${gs.qcPerformed? 'Yes' : 'No'}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">QC Date:</td>
+			<td class="value">${gs.qcDate}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">QC Detail:</td>
+			<td class="value">${gs.qcInfo}</td>
 		</tr>
 		<tr class="prop">
 			<td class="name">
