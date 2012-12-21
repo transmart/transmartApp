@@ -109,9 +109,15 @@ function removeXTAnalysisFromArray(analysisID){
 	//update the cookie
 	jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
 	
-	//check if the cross-trial div is currently displayed. If so, display prompt to refresh page
+	//check if the cross-trial div is currently displayed. If so, display either prompt to refresh page (if any analyses
+	//   in array, or clear out everything if none are selected)
 	if(jQuery('#cross-trial-div').css('display') != 'none'){
-		refreshCrossTrialMsg();
+		if (selectedAnalyses.length == 0)  {
+			clearAllSelectedAnalyses();
+		}
+		else  {
+			refreshCrossTrialMsg();
+		}
 	}
 	
 	return;
