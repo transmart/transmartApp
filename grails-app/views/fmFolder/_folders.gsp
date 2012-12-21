@@ -16,19 +16,14 @@
 					</a>
 				</td>
 			</tr>
+			<g:if test="${files?.size()> 0}">
+	            <tr>
+	                <td class="foldertitle">
+	                    <span class="result-document-count"><i>Documents (${files.size()})</i></span>                   
+	                </td>
+	            </tr>
+            </g:if>
 		</table>
 		<div id="${folder.id}_detail" name="${folder.id}" class="detailexpand"></div>
 	</g:each>
-
-	<g:if test="${files.size()> 0}">
-        <table class="folderheader" style="margin-left: 20px;">
-            <tr>
-                <td class="foldertitle">
-                            <span style="padding: 0px 16px 0px 0px"></span>
-                            <span class="fileicon txt "></span>
-                    <span class="result-folder-name"><i>Documents (${files.size()})</i></span>                   
-                </td>
-            </tr>
-          </table>
-	</g:if>
 </div>

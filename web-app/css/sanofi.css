@@ -238,9 +238,8 @@ table.menuDetail th.menuVisited {
 }
 
 #cartbutton {
-	position: absolute;
-    left: 420px;
-	top: 3px;
+	position: relative;
+    width: 105px;
 	padding: 0px 4px;
 }
 

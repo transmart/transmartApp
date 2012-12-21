@@ -40,6 +40,8 @@ class FmFolderController {
 
 	def formLayoutService
 	def amTagTemplateService
+	def fmFolderService
+	
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def index = {
@@ -246,24 +248,11 @@ class FmFolderController {
 		addFolder(FolderType.STUDY.name(), p, params['parentId'])
 	}
 	
-	def getAllPrograms = {
-		//TODO This is here temporarily as it's the method we call to get "search results" - move this to the search controller.
-		def searchString = params.searchTerms
-		def searchTerms = searchString.split(",,,")
-		session['rwgSearchFilter'] = searchTerms
-		
-		def folders = FmFolder.executeQuery("from FmFolder as fd where fd.folderType = 'Program' order by folderName")
-		render(template:'programs', model: [folders: folders])
-	}
-	
 	def getFolderContents = {
 		def id = params.id
-		def parent = FmFolder.get(id)
+		def folderContents = fmFolderService.getFolderContents(id, session['folderSearchMap'])
 		
-		//Temporary stupid way to do this - get all folders at level+1 with matching path
-		//David --  Feel free to think of a better way to query with the given backend model -- wvet
-		def folders = FmFolder.executeQuery("from FmFolder as fd where fd.folderLevel = :level and fd.folderFullName like '" + parent.folderFullName + "%' order by folderName", [level: parent.folderLevel + 1])
-		render(template:'folders', model: [folders: folders, files: parent.fmFiles])
+		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files])
 	}
 
 
@@ -280,6 +269,7 @@ class FmFolderController {
 		{
 			def parentFolder = FmFolderController.getAt(parentId)
 			fd.folderLevel = parentFolder.folderLevel + 1
+			fd.parent = parentFolder
 		}
 		
 		if(p.save()) 

@@ -88,16 +88,16 @@ function addSearchTerm(searchTerm, noUpdate)	{
 	var treeUpdated = false
 	
 	// find all nodes in tree with this key, and select them
-	var tree = jQuery("#filter-div").dynatree("getTree");
-
-	tree.visit(  function selectNode(node) {
-		             if (node.data.key == key)  {
-		            	 node.select(true);
-		            	 node.makeVisible();
-		            	 treeUpdated = true;
-		             }
-	             }
-			   , false);
+//	var tree = jQuery("#filter-div").dynatree("getTree");
+//
+//	tree.visit(  function selectNode(node) {
+//		             if (node.data.key == key)  {
+//		            	 node.select(true);
+//		            	 node.makeVisible();
+//		            	 treeUpdated = true;
+//		             }
+//	             }
+//			   , false);
 
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
 	showSearchTemplate();
@@ -241,8 +241,8 @@ function showFacetResults(tabToShow)	{
 		}
 	else
 		{
-		savedSearchTerms = currentSearchTerms.join(",,,");
-		savedSearchTermsArray = savedSearchTerms.split(",,,");
+			savedSearchTerms = currentSearchTerms.join(",,,");
+			savedSearchTermsArray = savedSearchTerms.split(",,,");
 		}
 
 
@@ -274,20 +274,20 @@ function showFacetResults(tabToShow)	{
 		}
 	}
     
-	var tree = jQuery("#filter-div").dynatree("getTree");
-
-	// create an array of the categories that come from the tree
-	var treeCategories = new Array();
-	tree.visit(  function(node) {
-        if (node.data.isCategory)  {
-     	   var categoryName = node.data.categoryName.split("|");
-     	   var cat = categoryName[1].replace(/ /g, "_");
-     	   
-     	   treeCategories.push(cat);        	    
-        }
-      }
-      , false
-    );
+//	var tree = jQuery("#filter-div").dynatree("getTree");
+//
+//	// create an array of the categories that come from the tree
+//	var treeCategories = new Array();
+//	tree.visit(  function(node) {
+//        if (node.data.isCategory)  {
+//     	   var categoryName = node.data.categoryName.split("|");
+//     	   var cat = categoryName[1].replace(/ /g, "_");
+//     	   
+//     	   treeCategories.push(cat);        	    
+//        }
+//      }
+//      , false
+//    );
 
     // now construct the facetSearch array by concatenating the values from the cats and terms array
     for (var i=0; i<categories.length; i++)	{
@@ -295,27 +295,27 @@ function showFacetResults(tabToShow)	{
     	
     	// determine if category is part of the tree; differentiate these types of query categories
     	// from others
-    	if (treeCategories.indexOf(categories[i])>-1) {
-    		queryType = "fq";
-    	}
-    	else  {
+    	//if (treeCategories.indexOf(categories[i])>-1) {
+    	//	queryType = "fq";
+    	//}
+    	//else  {
     		queryType = "q";
-    	}
+    	//}
     	facetSearch.push(queryType + "=" + categories[i] + ":" + terms[i]);
     }
 
     // now add all tree categories that arene't being searched on to the string
-    for (var i=0; i<treeCategories.length; i++)  {
-    	if (categories.indexOf(treeCategories[i])==-1)  {
-    		queryType = "ff";
-        	facetSearch.push(queryType + "=" + treeCategories[i]);
-    	}
-    }
+//    for (var i=0; i<treeCategories.length; i++)  {
+//    	if (categories.indexOf(treeCategories[i])==-1)  {
+//    		queryType = "ff";
+//        	facetSearch.push(queryType + "=" + treeCategories[i]);
+//    	}
+//    }
     
 	jQuery("#results-div").empty();
     
     // add study id to list of fields to facet (so we can get count for show search results)
-    facetSearch.push("ff=STUDY_ID");
+    //facetSearch.push("ff=STUDY_ID");
     
     var queryString = facetSearch.join("&");
     
@@ -416,16 +416,16 @@ function removeSearchTerm(ctrl)	{
 	var treeUpdated = false
 
 	// find all nodes in tree with this key and deSelect
-	var tree = jQuery("#filter-div").dynatree("getTree");
-
-	tree.visit(  function deselectNode(node) {
-                    if (node.data.key == currentSearchTermID)  {
-       	                node.select(false);
-  	            	    treeUpdated = true;
-                    }
-                 }
-                 , false);
-	
+//	var tree = jQuery("#filter-div").dynatree("getTree");
+//
+//	tree.visit(  function deselectNode(node) {
+//                    if (node.data.key == currentSearchTermID)  {
+//       	                node.select(false);
+//  	            	    treeUpdated = true;
+//                    }
+//                 }
+//                 , false);
+//	
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
 	if (!treeUpdated) {
       showSearchTemplate();
@@ -456,18 +456,18 @@ function clearSearch()	{
 	document.getElementById("search-categories").selectedIndex = 0;
 	jQuery('#search-ac').autocomplete('option', 'source', sourceURL);
 		
-	var tree = jQuery("#filter-div").dynatree("getTree");
+	//var tree = jQuery("#filter-div").dynatree("getTree");
 	
 	// Make sure the onSelect event doesn't fire for the nodes
 	// Otherwise, the main search query is going to fire after each item is deselected, as well as facet query
-	allowOnSelectEvent = false;
-	tree.visit(function clearNode(node) {
-										 updateNodeIndividualFacetCount(node, -1);
-		                                 node.select(false);
-	                                    }, 
-	                                    false
-	           )
-	allowOnSelectEvent = true;
+//	allowOnSelectEvent = false;
+//	tree.visit(function clearNode(node) {
+//										 updateNodeIndividualFacetCount(node, -1);
+//		                                 node.select(false);
+//	                                    }, 
+//	                                    false
+//	           )
+//	allowOnSelectEvent = true;
 	
 	showSearchTemplate();
 	showSearchResults(); //reload the full search results
@@ -568,160 +568,160 @@ jQuery(document).ready(function() {
     addSelectCategories();
     addSearchAutoComplete();
     
-    jQuery("#filter-div").dynatree({
-    	initAjax: {  url: treeURL,
-    		data: { mode: "all" } 
-    	},
-    	checkbox: true,
-    	persist: false,
-    	selectMode: 3,
-    	minExpandLevel: 1,
-    	fx:{ height: "toggle", duration: 180 },
-    	autoCollapse: true,
-        onQuerySelect: function(flag, node) {   // event that is triggered prior to select actually happening on node
-        	
-        	if (!allowOnSelectEvent)  {
-        		return true;
-        	} 
-        	
-        	// before selecting node, save a copy of which nodes were selected
-        	// (note that this only gets done when select is called outside of the onSelect event since we're using the global allowOnSelectEvent flag above) 
-        	nodesBeforeSelect = node.tree.getSelectedNodes(false);
-
-        },
-        onSelect: function(flag, node) {
-        	// don't allow this event to be triggered by itself; return immediately if called as a result of the event itself
-        	if (!allowOnSelectEvent)  {
-        		return true;
-        	} 
-        	else  {
-        		allowOnSelectEvent = false;
-        	}
-        	
-        	// before re-synchronizing tree, make sure any nodes that have same key as this one have been properly
-        	// selected and deselected
-            
-        	var tree = node.tree;        	
-            var selectNode = node;   // store the node that was selected so we can reference unambiguously in tree.visit function below 
-
-        	// node is now selected, and any other changes to the tree have already happened (i.e. changes to children, parents,
-            //   cousins, second cousins, ...) so retrieve a copy of which nodes are now selected
-        	var nodesAfterSelect = node.tree.getSelectedNodes(false);
-           
-            // retrieve a list of those that are partially selected (e.g. no check box but a child or grandchild .. may be);
-            var nodesPartiallySelected = new Array();
-        	jQuery(".dynatree-partsel").each(
-        			function(){
-        		                  var node = jQuery.ui.dynatree.getNode(this);
-        		                  
-        		                  //  Selected nodes may also appear here - 
-        		                  //   make sure only those that are not selected are actually included
-        		                  //    in this list; 
-        		                  //  And don't add category nodes either
-        		                  if (!node.isSelected() && !node.data.isCategory)  {
-        		                      nodesPartiallySelected.push(node);
-        		                  }
-        		              }
-        			);
-        	
-        	
-        	
-        	// find nodes that are in After but were not in Before (i.e. Added)
-        	var nodesAdded = subtractNodes(nodesAfterSelect, nodesBeforeSelect);
-
-        	for (var i = 0; i < nodesAdded.length; i++) {
-        		var n = nodesAdded[i];
-        		// process node if it's not a category
-        		if (!n.data.isCategory)  {
-            		// loop through every node in tree and find copies, make sure all copies are selected        		
-    	            n.tree.visit(  function (node) {
-      	                              if ((n.data.key == node.data.key) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
-    	            	            	  node.select(true);
-    	            	              } 
-    	            	           } 
-    	                         , false
-    	            		     );
-                }
-        		
-        		
-        	}
-
-        	// find nodes that are in Before but were not in After (i.e. Removed)
-        	var nodesRemoved = subtractNodes(nodesBeforeSelect, nodesAfterSelect);
-        	
-        	// We need to remove partially selected nodes from removed list, since we don't want to call the select(false) method on these;
-            //   if we did, then we would trigger all children to then be deselected in copies which isn't right;  instead the state of this
-        	//   node will be controlled by actions on the children 
-        	var nodesFullyRemoved = subtractNodes(nodesRemoved, nodesPartiallySelected);
-        	
-        	for (var i = 0; i < nodesFullyRemoved.length; i++) {
-        		var n = nodesFullyRemoved[i];         		
-
-        		// process node if it's not a category
-        		if (!n.data.isCategory)  {
-            		// loop through every node in tree and find copies, make sure all copies are DEselected
-    	            n.tree.visit(  function (node) {
-    	            	              if ((n.data.key == node.data.key) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
-    	            	            	  node.select(false);
-    	            	              } 
-    	            	           } 
-    	                         , false
-    	            		     );
-                }
-        		
-        	}
-        	
-        	// reset flag to true now that we're past part that might trigger the event again	      
-    		allowOnSelectEvent = true;
-
-        	// Resynchronize entire tree when something changes
-        	// We need to do this because a select may affect other nodes than the one selected,
-        	//  but that doesn't trigger the onSelect event
-        	// Following call executes the syncNode function on all nodes in tree, except for root
-        	node.tree.visit(syncNode, false); 
-        	showSearchTemplate();
-        	showSearchResults();        	
-        },
-        onClick: function(node, event) {
-        	// if the user clicked outside the node, but in the tree, don't select/unselect the node
-        	// or if the node has a zero count and is not selected, don't allow it to be selected (but allow it to be expanded)       	
-            if( (node.getEventTargetType(event) == null) ||             	 
-           		(node.data.facetCount == 0 && !node.isSelected() && !(node.getEventTargetType(event) == 'expander'))
-              )
-            {
-                return false;// Prevent default processing
-            }
-            
-            //New code to generate popup because the categories don't have children.
-            generateBrowseWindow(node.data.title)
-            
-            return true;
-        },
-        onActivate: function(node){
-	    	if(!node.data.isCategory){
-	    		if(!node.isSelected()){
-	    			node.select(true);
-	    		}
-	    		else{
-	    			node.select(false);
-	    		}
-	    	
-	    	}
-	    	
-	    	node.deactivate();
-    	},
-    	onCustomRender: function(node) {
-    		// if not a category and count is zero, apply the custom class to node
-    		if (!node.data.isCategory && node.data.facetCount == 0)  {
-    			node.data.addClass = "zero-selected";
-    		}
-    		else
-    	    {
-    			node.data.addClass = null;
-    	    }
-    	},
-    	classNames: {connector: "dynatree-no-connector"}
-    });
+//    jQuery("#filter-div").dynatree({
+//    	initAjax: {  url: treeURL,
+//    		data: { mode: "all" } 
+//    	},
+//    	checkbox: true,
+//    	persist: false,
+//    	selectMode: 3,
+//    	minExpandLevel: 1,
+//    	fx:{ height: "toggle", duration: 180 },
+//    	autoCollapse: true,
+//        onQuerySelect: function(flag, node) {   // event that is triggered prior to select actually happening on node
+//        	
+//        	if (!allowOnSelectEvent)  {
+//        		return true;
+//        	} 
+//        	
+//        	// before selecting node, save a copy of which nodes were selected
+//        	// (note that this only gets done when select is called outside of the onSelect event since we're using the global allowOnSelectEvent flag above) 
+//        	nodesBeforeSelect = node.tree.getSelectedNodes(false);
+//
+//        },
+//        onSelect: function(flag, node) {
+//        	// don't allow this event to be triggered by itself; return immediately if called as a result of the event itself
+//        	if (!allowOnSelectEvent)  {
+//        		return true;
+//        	} 
+//        	else  {
+//        		allowOnSelectEvent = false;
+//        	}
+//        	
+//        	// before re-synchronizing tree, make sure any nodes that have same key as this one have been properly
+//        	// selected and deselected
+//            
+//        	var tree = node.tree;        	
+//            var selectNode = node;   // store the node that was selected so we can reference unambiguously in tree.visit function below 
+//
+//        	// node is now selected, and any other changes to the tree have already happened (i.e. changes to children, parents,
+//            //   cousins, second cousins, ...) so retrieve a copy of which nodes are now selected
+//        	var nodesAfterSelect = node.tree.getSelectedNodes(false);
+//           
+//            // retrieve a list of those that are partially selected (e.g. no check box but a child or grandchild .. may be);
+//            var nodesPartiallySelected = new Array();
+//        	jQuery(".dynatree-partsel").each(
+//        			function(){
+//        		                  var node = jQuery.ui.dynatree.getNode(this);
+//        		                  
+//        		                  //  Selected nodes may also appear here - 
+//        		                  //   make sure only those that are not selected are actually included
+//        		                  //    in this list; 
+//        		                  //  And don't add category nodes either
+//        		                  if (!node.isSelected() && !node.data.isCategory)  {
+//        		                      nodesPartiallySelected.push(node);
+//        		                  }
+//        		              }
+//        			);
+//        	
+//        	
+//        	
+//        	// find nodes that are in After but were not in Before (i.e. Added)
+//        	var nodesAdded = subtractNodes(nodesAfterSelect, nodesBeforeSelect);
+//
+//        	for (var i = 0; i < nodesAdded.length; i++) {
+//        		var n = nodesAdded[i];
+//        		// process node if it's not a category
+//        		if (!n.data.isCategory)  {
+//            		// loop through every node in tree and find copies, make sure all copies are selected        		
+//    	            n.tree.visit(  function (node) {
+//      	                              if ((n.data.key == node.data.key) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
+//    	            	            	  node.select(true);
+//    	            	              } 
+//    	            	           } 
+//    	                         , false
+//    	            		     );
+//                }
+//        		
+//        		
+//        	}
+//
+//        	// find nodes that are in Before but were not in After (i.e. Removed)
+//        	var nodesRemoved = subtractNodes(nodesBeforeSelect, nodesAfterSelect);
+//        	
+//        	// We need to remove partially selected nodes from removed list, since we don't want to call the select(false) method on these;
+//            //   if we did, then we would trigger all children to then be deselected in copies which isn't right;  instead the state of this
+//        	//   node will be controlled by actions on the children 
+//        	var nodesFullyRemoved = subtractNodes(nodesRemoved, nodesPartiallySelected);
+//        	
+//        	for (var i = 0; i < nodesFullyRemoved.length; i++) {
+//        		var n = nodesFullyRemoved[i];         		
+//
+//        		// process node if it's not a category
+//        		if (!n.data.isCategory)  {
+//            		// loop through every node in tree and find copies, make sure all copies are DEselected
+//    	            n.tree.visit(  function (node) {
+//    	            	              if ((n.data.key == node.data.key) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
+//    	            	            	  node.select(false);
+//    	            	              } 
+//    	            	           } 
+//    	                         , false
+//    	            		     );
+//                }
+//        		
+//        	}
+//        	
+//        	// reset flag to true now that we're past part that might trigger the event again	      
+//    		allowOnSelectEvent = true;
+//
+//        	// Resynchronize entire tree when something changes
+//        	// We need to do this because a select may affect other nodes than the one selected,
+//        	//  but that doesn't trigger the onSelect event
+//        	// Following call executes the syncNode function on all nodes in tree, except for root
+//        	node.tree.visit(syncNode, false); 
+//        	showSearchTemplate();
+//        	showSearchResults();        	
+//        },
+//        onClick: function(node, event) {
+//        	// if the user clicked outside the node, but in the tree, don't select/unselect the node
+//        	// or if the node has a zero count and is not selected, don't allow it to be selected (but allow it to be expanded)       	
+//            if( (node.getEventTargetType(event) == null) ||             	 
+//           		(node.data.facetCount == 0 && !node.isSelected() && !(node.getEventTargetType(event) == 'expander'))
+//              )
+//            {
+//                return false;// Prevent default processing
+//            }
+//            
+//            //New code to generate popup because the categories don't have children.
+//            generateBrowseWindow(node.data.title)
+//            
+//            return true;
+//        },
+//        onActivate: function(node){
+//	    	if(!node.data.isCategory){
+//	    		if(!node.isSelected()){
+//	    			node.select(true);
+//	    		}
+//	    		else{
+//	    			node.select(false);
+//	    		}
+//	    	
+//	    	}
+//	    	
+//	    	node.deactivate();
+//    	},
+//    	onCustomRender: function(node) {
+//    		// if not a category and count is zero, apply the custom class to node
+//    		if (!node.data.isCategory && node.data.facetCount == 0)  {
+//    			node.data.addClass = "zero-selected";
+//    		}
+//    		else
+//    	    {
+//    			node.data.addClass = null;
+//    	    }
+//    	},
+//    	classNames: {connector: "dynatree-no-connector"}
+//    });
     
     //Trigger a search immediately
     loadSearchFromSession();

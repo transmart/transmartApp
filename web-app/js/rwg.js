@@ -225,20 +225,20 @@ function showIEWarningMsg(){
 //Method to clear the facet results in the search tree
 function clearFacetResults()	{
 	
-	var tree = jQuery("#filter-div").dynatree("getTree");
-	
-	// clear counts from tree
-	tree.visit(  function(node) {
-		           if (!node.data.isCategory)  {
-		        	   updateNodeIndividualFacetCount(node, -1);   		        	    
-		           }
-		           
-	             }
-                 , false
-               );
-		
-	 // redraw entire tree after counts updated
-	 tree.redraw();
+//	var tree = jQuery("#filter-div").dynatree("getTree");
+//	
+//	// clear counts from tree
+//	tree.visit(  function(node) {
+//		           if (!node.data.isCategory)  {
+//		        	   updateNodeIndividualFacetCount(node, -1);   		        	    
+//		           }
+//		           
+//	             }
+//                 , false
+//               );
+//		
+//	 // redraw entire tree after counts updated
+//	 tree.redraw();
 }
 
 //Add the search term to the array that the user has added to filter tree.
@@ -2368,7 +2368,7 @@ function subtractNodes(nodes1, nodes2)  {
 	return resultNodes;
 }
 
-jQuery.ui.dynatree.nodedatadefaults["icon"] = false;
+//jQuery.ui.dynatree.nodedatadefaults["icon"] = false;
 
 
 // find the analysis in the array with the given id

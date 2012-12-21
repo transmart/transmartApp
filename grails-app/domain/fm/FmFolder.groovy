@@ -36,7 +36,6 @@ class FmFolder implements Buildable{
 	String folderType
 	Boolean activeInd = Boolean.TRUE
 
-
 	static mapping = {
 		table 'fm_folder'
 		version false
@@ -51,9 +50,8 @@ class FmFolder implements Buildable{
 		}
 	}
 	
-//	static hasOne = [fmFolderAssociation: FmFolderAssociation]	
-	static hasMany = [fmFiles: FmFile] //, amTagTemplates: AmTagTemplate]
-	
+	static belongsTo = [parent: FmFolder]	
+	static hasMany = [fmFiles: FmFile, children: FmFolder] //, amTagTemplates: AmTagTemplate]
 	
 	static constraints = {
 		folderName(maxSize:1000)
@@ -61,6 +59,7 @@ class FmFolder implements Buildable{
 		objectUid(maxSize:300)
 		folderType(maxSize:100)
 		folderTag(nullable: true, maxSize:20)
+		parent(nullable: true)
 	}
 	
 	def void build(GroovyObject builder)
