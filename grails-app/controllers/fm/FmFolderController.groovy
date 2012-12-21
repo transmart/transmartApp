@@ -22,9 +22,9 @@ package fm
 
 import bio.Experiment
 
-import fm.FmFolder;
+import fm.FmFolder
 import fm.FmFile
-
+import fm.FmFolderService
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
@@ -41,7 +41,6 @@ class FmFolderController {
 	def formLayoutService
 	def amTagTemplateService
 	def fmFolderService
-	
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def index = {
@@ -571,6 +570,11 @@ def getAnalysisDetails = {
 def getFdDetails = {
 }
 
+	def checkForNewFiles = {
+		
+		fmFolderService.checkForNewFiles();
+		
+	}
 
 }
 

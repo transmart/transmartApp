@@ -17,46 +17,21 @@
  *
  ******************************************************************/
   
-package fm
 
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
+package transmartapp
 
-class FmFile {
-	
-	Long id
-	String displayName
-	String originalName
-	Long fileVersion = 1l
-	String fileType
-	Long fileSize
-	String filestoreLocation
-	String filestoreName
-	String linkUrl
-	Boolean activeInd = Boolean.TRUE
-	Date createDate = new Date()
-	Date updateDate = new Date()
+import grails.test.*
 
-	static mapping = {
-		table 'fm_file'
-		version false
-		cache true
-		sort "displayName"
-		id generator: 'sequence', params:[sequence:'seq_fm_id']
-		columns { id column:'file_id' }
-	}
-	
-	static contraints = {
-		displayName(maxSize:1000)
-		orginalName(maxSize:1000)
-		fileType(nullable:true, maxSize:100)
-		fileSize(nullable:true)
-		filestoreLocation(nullable:true, maxSize:1000)
-		filestoreName(nullable:true, maxSize:1000)
-		linkUrl(nullable:true, maxSize:1000)
-	}
-	
-	static transients = ['description', 'uploadDate']
-	
+class FmFolderServiceTests extends GrailsUnitTestCase {
+    protected void setUp() {
+        super.setUp()
+    }
+
+    protected void tearDown() {
+        super.tearDown()
+    }
+
+    void testSomething() {
+
+    }
 }
