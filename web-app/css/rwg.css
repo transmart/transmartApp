@@ -114,7 +114,14 @@ body {
     border-color: white;
     border-collapse: collapse;
     padding: 5px;
-    width: 1200px;
+}
+
+.list-table th {
+	padding: 4px 0px 4px 0px;	
+}
+
+.list-table tfoot tr {
+	border-top: 1px solid #CCC;
 }
 
 .details-row

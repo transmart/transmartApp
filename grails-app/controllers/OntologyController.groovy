@@ -110,7 +110,7 @@ class OntologyController {
 				maxResults(100)
 			}
 			}else {
-			// if there is a serch term then use tag type to find system cd
+			// if there is a search term then use tag type to find system cd
 			// this is not a generic solution - 
 			// if tag type is all then do a name like search
 			if(tagsearchtype=='ALL'){

@@ -298,6 +298,8 @@ table.menuDetail th.menuVisited {
 #navigateTermsPanel {
 	margin: 8px 8px 8px 8px;
 	box-shadow: #DDD 11px 11px 8px -7px;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
 }
 
 #navigateTermsPanel .x-panel-header-text{
@@ -312,6 +314,8 @@ table.menuDetail th.menuVisited {
 	border-left: 1px solid #888;
 	border-right: 1px solid #888;
 	border-bottom: 1px solid #888;	
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
 }
 
 #navigateTermsPanel a {

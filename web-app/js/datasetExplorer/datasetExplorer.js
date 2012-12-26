@@ -125,6 +125,9 @@ Ext.Panel.prototype.getBody = function(html)
 
 Ext.onReady(function()
 		{
+	
+	jQuery('#box-search').show();
+	
 	Ext.QuickTips.init();
 
 	//set ajax to 600*1000 milliseconds

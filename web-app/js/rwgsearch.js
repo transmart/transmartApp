@@ -17,6 +17,8 @@ var allowOnSelectEvent = true;
 // Method to add the categories for the select box
 function addSelectCategories()	{
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All"));
+	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "DATANODE").text("Data Node"));
+	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "FREETEXT").text("Free Text"));
 	jQuery.getJSON(getCategoriesURL, function(json) {
 		for (var i=0; i<json.length; i++)	{
 			var category = json[i].category;
@@ -55,7 +57,19 @@ function addSearchAutoComplete()	{
 		if (event.which == 13)	{
 			jQuery("#search-ac").autocomplete('search');
 		}
-	});	
+	});
+	
+	jQuery('#search-ac').keypress(function(event) {
+		var category = jQuery("#search-categories").val();
+		var categoryText = jQuery('#search-categories option:selected').text();
+		if (event.which == 13 && (category == 'DATANODE' || category == 'FREETEXT')) {
+			var val = jQuery('#search-ac').val();
+			searchParam={id:val,display:categoryText,keyword:val,category:category};
+			addSearchTerm(searchParam);
+			return false;
+			jQuery('#search-ac').empty();
+		}
+	});
 	return false;
 }
 
@@ -726,7 +740,6 @@ jQuery(document).ready(function() {
     //Trigger a search immediately
     loadSearchFromSession();
 	showSearchResults(); //reload the full search results for the analysis/study view
-
 
 });
 

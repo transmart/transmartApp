@@ -72,17 +72,26 @@ ${folderInstance?.folderName}
                    
 <div style="height:20px;"></div>
 <g:if test="${folderInstance?.hasProperty('fmFiles') && null!=folderInstance?.fmFiles && folderInstance?.fmFiles.size()>0}">   
-<div style="width:900px;align:center;" ><h4 class="rdc-h4" align="center" >Associated Files</h4></div>
+<div style="align:center;" ><h4 class="rdc-h4" align="center" >Associated Files</h4></div>
 <table class="list-table">
             <thead>
                 <tr>                
                     <th>File Name</th>
                     <th>Create Date</th>
                     <th>Update Date</th>
-                    <th>Export All</th>
+                    <th>&nbsp;</th>
                 </tr>
             </thead>
-            
+		    <tfoot>
+		    	<tr>
+		    		<td colspan="3">&nbsp;</td>
+	    		   <td>
+		               <div>
+		                    <span class="foldericon add">Export all</span>
+		               </div>
+	               </td>
+		    	</tr>
+		    </tfoot>
     <tbody>
         <g:each in="${folderInstance?.fmFiles}" status="i" var="fmFile">
             <tr class="file-row">
@@ -94,14 +103,14 @@ ${folderInstance?.folderName}
                <g:formatDate format="yyyy-MM-dd" date="${fmFile.updateDate}" />
                </td> 
                <td>
-               <div>
-                    <span class="foldericon add">Add to export</span>
-                          </div>
-                </td>
+	               <div>
+	                    <span class="foldericon add">Add to export</span>
+	               </div>
+               </td>
                 
             </tr>
         </g:each>
-    </tbody>    
+    </tbody>
 </table>
 </g:if>
 

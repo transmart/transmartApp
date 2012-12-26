@@ -188,8 +188,7 @@
 <div id="header-div"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>
 <div id="main"></div>
 <h3 id="test">&nbsp;</h3>
-<tmpl:/RWG/searchAutocomplete />
-<tmpl:/RWG/boxSearch />
+<tmpl:/RWG/boxSearch hide="true"/>
 <tmpl:/RWG/filterBrowser />
 <div id="sidebartoggle">&nbsp;</div>
 <div id="filter-div" style="display: none;"></div>

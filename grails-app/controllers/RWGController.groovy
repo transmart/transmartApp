@@ -272,8 +272,13 @@ class RWGController {
        // create a query for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
        String categoryQuery = ""
        for (t in termList.tokenize("|"))  {
+		   
+		   //If searching on text, add wildcards
+		   if (category.equals("FREETEXT")) {
+			   t = "*" + t + "*";
+		   }
 	   
-	       def queryTerm = /${category}:"${t}"/
+	       def queryTerm = /${category}:${t}/
 	   
 	       if (categoryQuery == "")  {
 		       categoryQuery = queryTerm
@@ -377,10 +382,6 @@ class RWGController {
 	   // loop through each regular query parameter
 	   for (qp in queryParams)  {
 		   
-		   //Ignore REGIONs here - used later in analysis filter
-		   if (qp.startsWith("REGION") || qp.startsWith("GENE") || qp.startsWith("SNP")) {
-			   continue;
-		   }
     	   // each queryParam is in form cat1:term1|term2|term3
 	       String category = qp.split(":")[0]
 	       String termList = qp.split(":")[1]

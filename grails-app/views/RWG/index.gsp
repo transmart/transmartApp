@@ -405,7 +405,6 @@
 
 		<%-- Elements that are in fixed positions on the page --%>
 		<div id="sidebartoggle">&nbsp;</div>
-		<tmpl:/RWG/searchAutocomplete />      	
 		<tmpl:/RWG/filterBrowser />
         	
        <!--  Used to measure the width of a text element (in svg plots) -->

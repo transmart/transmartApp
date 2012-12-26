@@ -1,4 +1,7 @@
-			<div id="box-search">
+			
+			<g:if test="${hide}"><g:set var="csshide">display: none</g:set></g:if>
+			
+			<div id="box-search" style="${csshide}">
 		        <div id="title-search-div" class="ui-widget-header boxtitle">
 			         <h2 style="float:left" class="title">Active Filters</h2>
 					 <h2 style="float:right; padding-right:5px;" class="title">
