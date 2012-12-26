@@ -26,7 +26,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 	Long id
 	String displayName
 	Integer displayOrder
-	String tagItemUid
+//	String tagItemUid
 	Integer maxValues
 	String guiHandler
 	String codeTypeName
@@ -67,7 +67,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 		displayName(maxSize:200)
 		codeTypeName(maxSize:200)
 		guiHandler(maxSize:200)
-		tagItemUid(maxSize:300)
+//		tagItemUid(maxSize:300)
 	}
 
 }

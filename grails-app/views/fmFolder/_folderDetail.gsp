@@ -28,6 +28,18 @@ ${folderInstance?.title}
 ${folderInstance?.folderName}
 </g:else>
 </h3>
+<g:if test="${folderInstance?.hasProperty('description')}">
+<div style="line-height:14px;font-family:arial,​tahoma,​helvetica,​sans-serif; font-size: 12px;">
+ <g:if test="${folderInstance?.description.length() > 325000}">
+                       ${(folderInstance?.description).substring(0,324000)}&nbsp;&nbsp;
+                       <a href=# >...See more</a>
+                       </g:if>
+                       <g:else>
+                        ${folderInstance?.description}
+                        </g:else></div>
+<div style="height:20px;"></div>
+</g:if>
+
 <g:if test="${amTagTemplate && amTagTemplate.amTagItems.count()>0}">
 <table class="details-table">
         <thead>
@@ -65,8 +77,8 @@ ${folderInstance?.folderName}
             <thead>
                 <tr>                
                     <th>File Name</th>
-                    <th>File Description</th>
-                    <th>Upload Date</th>
+                    <th>Create Date</th>
+                    <th>Update Date</th>
                     <th>Export All</th>
                 </tr>
             </thead>
@@ -75,9 +87,11 @@ ${folderInstance?.folderName}
         <g:each in="${folderInstance?.fmFiles}" status="i" var="fmFile">
             <tr class="file-row">
                 <td style="padding: 3px 3px 3px 3px;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
-                <td>${fmFile.description}</td>
                <td >
-               <g:formatDate format="yyyy-MM-dd" date="${fmFile.uploadDate}" />
+               <g:formatDate format="yyyy-MM-dd" date="${fmFile.createDate}" />
+               </td> 
+               <td >
+               <g:formatDate format="yyyy-MM-dd" date="${fmFile.updateDate}" />
                </td> 
                <td>
                <div>
