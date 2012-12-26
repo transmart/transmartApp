@@ -40,7 +40,8 @@ ${folderInstance?.folderName}
 <div style="height:20px;"></div>
 </g:if>
 
-<g:if test="${amTagTemplate && amTagTemplate.amTagItems.count()>0}">
+
+<g:if test="${amTagTemplate && amTagTemplate.amTagItems.size()>0}">
 <table class="details-table">
         <thead>
             <tr>                
@@ -54,20 +55,22 @@ ${folderInstance?.folderName}
         </thead>
     <tbody>
         <g:each in="${amTagTemplate.amTagItems}" status="i" var="amTagItem">
-        <g:if test="${amTagItem.tagItemType == 'FIXED' && amTagItem.viewInGrid && folderInstance?.hasProperty(amTagItem.tagItemAttr.toLowerCase())}">
+        <g:if test="${amTagItem.tagItemType == 'FIXED' && amTagItem.viewInGrid}">
+            <g:if test="${folderInstance?.hasProperty(amTagItem.tagItemAttr)}" >
             <tr class='details-row'> <!-- class="${(i % 2) == 0 ? 'odd' : 'even'}"> -->
             <!-- TODO: If active -->
                 <td valign="top" align="right" class="columnname" width="20%">${amTagItem.displayName}</td>
                 <td valign="top" align="left" class="columnvalue" width="60%">
-                 ${fieldValue(bean:folderInstance,field:amTagItem.tagItemAttr.toLowerCase())}
+                 ${fieldValue(bean:folderInstance,field:amTagItem.tagItemAttr)}
                 </td>
             </tr>
+            </g:if>
          </g:if>
         </g:each>
     </tbody>    
 </table>
 <span></span>
-</g:if>  
+</g:if> 
                     
                    
 <div style="height:20px;"></div>
