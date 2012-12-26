@@ -23,9 +23,26 @@
 		
 <table class="menuDetail" width="100%" style="height: 28px; border-collapse: collapse">
 	<tr>
+		<th class="menuBar" style="width: 160px">
+			&nbsp;
+		</th>
+		<th class="menuBar" style="width: 120px"><select id="search-categories"></select></th>
+		<th class="menuBar" style="width: 160px"><input id="search-ac"/></input></th>
+		<th class="menuBar" style="width: 110px">
+			<g:if test="${'rwg' == app}">
+				<div id="cartbutton" class="greybutton">
+		   			<g:remoteLink controller="export" action="selection" update="${overlayExportDiv}" 
+		                            params="[eleId:overlayExportDiv]" 
+		                            before="initLoadingDialog('${overlayExportDiv}')" onComplete="centerDialog('${overlayExportDiv}')">
+					<img src="${resource(dir:'images', file:'cart.png')}"/> Export Cart
+					</g:remoteLink>
+					<div id="cartcount">0</div>
+				</div>
+			</g:if>
+		</th>
 		<th class="menuBar" style="text-align: left;">
 			<!-- menu links -->
-			<table class="menuDetail" id="menuLinks" style="width: auto;" align="right">
+			<table class="menuDetail" id="menuLinks" style="width: 1px;" align="right"> <!-- Use minimum possible width -->
 		    	<tr>
 		    		<th width="150">&nbsp;</th>
 	   				<%--<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>

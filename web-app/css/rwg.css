@@ -438,6 +438,16 @@ ul.dynatree-container li ul li{
 	 padding-left: 3px;
 }
 
+.result-document-count
+{
+	 color: #228822;
+	 padding-left: 50px;
+	 font-size: 6pt;
+	 background-image: url('../images/filetypes/txtsmall.png');
+	 background-repeat: no-repeat;
+	 background-position: 38px 50%;
+}
+
 .result-folder-name.selected {
     font-weight: bold; 
 }

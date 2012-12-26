@@ -404,16 +404,7 @@
 
 		<%-- Elements that are in fixed positions on the page --%>
 		<div id="sidebartoggle">&nbsp;</div>
-		<tmpl:/RWG/searchAutocomplete />
-   		<div id="cartbutton" class="greybutton">
-   		<g:remoteLink controller="export" action="selection" update="${overlayExportDiv}" 
-                            params="[eleId:overlayExportDiv]" 
-                            before="initLoadingDialog('${overlayExportDiv}')" onComplete="centerDialog('${overlayExportDiv}')">
-			<img src="${resource(dir:'images', file:'cart.png')}"/> Export Cart
-			</g:remoteLink>
-			<div id="cartcount">0</div>
-		</div>
-      	
+		<tmpl:/RWG/searchAutocomplete />      	
 		<tmpl:/RWG/filterBrowser />
         	
        <!--  Used to measure the width of a text element (in svg plots) -->

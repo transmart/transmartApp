@@ -1,7 +1,7 @@
 <%-- Set up URLs for AJAX --%>
 <script type="text/javascript" charset="utf-8">
 var searchResultsURL = "${createLink([controller:'RWG', action:'loadSearchResults'])}";
-var facetResultsURL = "${createLink([controller:'fmFolder', action:'getAllPrograms'])}";
+var facetResultsURL = "${createLink([controller:'RWG', action:'getFacetResults'])}";
 var facetTableResultsURL = "${createLink([controller:'RWG', action:'getFacetResultsForTable'])}";
 var newSearchURL = "${createLink([controller:'RWG', action:'newSearch'])}";
 var visualizationURL = "${createLink([controller:'RWG', action:'newVisualization'])}";

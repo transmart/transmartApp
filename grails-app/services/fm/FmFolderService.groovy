@@ -237,4 +237,29 @@ class FmFolderService {
 //	
 //	}
 	
+	def getFolderContents(id, folderMap) {
+		
+				def parent;
+				def folderLevel = 0L;
+				if (id != null) {
+					parent = FmFolder.get(id)
+					folderLevel = parent.folderLevel + 1
+				}
+				
+				def folderMask = folderMap?.get(folderLevel)
+				
+				def folders = FmFolder.createCriteria().list {
+					if (parent != null) {
+						eq('parent', parent)
+					}
+					if (folderMask) {
+						'in'('id', folderMask)
+					}
+					eq('folderLevel', folderLevel)
+					order('folderName', 'asc')
+				}
+				 
+				return [folders: folders, files: parent?.fmFiles]
+			}
+	
 }

@@ -7,6 +7,7 @@
 import org.json.*
 
 import fm.FmFile;
+import fm.FmFolder;
 import groovy.xml.StreamingMarkupBuilder
 
 import javax.xml.transform.TransformerFactory
@@ -41,6 +42,7 @@ class RWGController {
 	def searchKeywordService	
 	def springSecurityService
 	def formLayoutService
+	def fmFolderService
 	
     def index = {
 		def rwgSearchFilter = session['rwgSearchFilter'];
@@ -186,77 +188,79 @@ class RWGController {
    */
   def getDynatree = {
   
-	  // find all relationships
-	  def rels = SearchTaxonomyRels.list()
+//	  // find all relationships
+//	  def rels = SearchTaxonomyRels.list()
+//	  
+//	  // retrieve all taxonomy records (i.e. nodes in the tree)
+//	  def allNodes = SearchTaxonomy.list()
+//	  
+//	  def rootNode = null
+//
+//	  // loop through every node, and link it to its parent and children to create tree
+//	  for (node in allNodes) {
+//		  for (rel in rels) {
+//			  
+//			  if (rel.parent) {   // non root node
+//				  // check if relationship represents a parent rel for the current node, and if so add the
+//				  // child to the node's children list
+//				  if (node.id == rel.parent.id) {
+//					  node.children.add(rel.child)
+//				  }
+//				  
+//				  // check if relationship represents a child rel for the current node, and if so add the
+//				  // parent to the node's parent list
+//				  if (node.id == rel.child.id) {
+//					  node.parents.add(rel.parent)
+//				  }
+//			  }
+//			  else {    // root node found
+//				  rootNode = rel.child
+//			  }
+//		  }
+//	  }
+//
+//	  JSONArray categories = new JSONArray()
+//	  
+//	  if (rootNode.children)  {
+//		  
+//		  def categoriesList = []
+//		  // loop thru all children of root and create a list of categories to be used for initial facet search
+//		  for (categoryNode in rootNode.children)  {
+//			  String catName = categoryNode.termName
+//			  
+//			  // SOLR equivalent field is all uppercases with underscores instead of spaces
+//			  catName = getSOLRCategoryName(catName)
+//			  categoriesList.push(catName)
+//		  }
+//
+//		  
+//		  // retrieve initial facet counts to be used in tree
+//		  JSONObject initialFacetCounts = getInitialFacetResults(categoriesList)
+//
+//		  // CREATE JSON ARRAY FOR TREE	  		  		  		  		  
+//		  def nodeIndex = 1
+//		  
+//		  // loop thru all children of root and add to JSON array for categories (addNode will recursively add children)
+//		  for (categoryNode in rootNode.children)  {	
+//			  
+//			  // give each node a unique id within tree (id and key are not necessarily unique)
+//			  // the unique id will be a concatenation of the parent's unique id + the index of this child's index in children list
+//			  // e.g. category nodes will be 1,2,3; their children will be 1:1, 1:2, 1:3, 2:1, ...; their children 1:1:1, 1:1:2, ...
+//			  String uniqueTreeId = nodeIndex
+//			  
+//			  addDynaNode(categoryNode, categories, true, categoryNode.termName, uniqueTreeId, initialFacetCounts)
+//			  nodeIndex++
+//		  }
+//		  
+//	  }
+//	  else  {
+//		  throw new Exception("Root node not found")
+//	  }
+//	  
+//	  response.setContentType("text/json")
+//	  response.outputStream << categories?.toString()
 	  
-	  // retrieve all taxonomy records (i.e. nodes in the tree)
-	  def allNodes = SearchTaxonomy.list()
-	  
-	  def rootNode = null
-
-	  // loop through every node, and link it to its parent and children to create tree
-	  for (node in allNodes) {
-		  for (rel in rels) {
-			  
-			  if (rel.parent) {   // non root node
-				  // check if relationship represents a parent rel for the current node, and if so add the
-				  // child to the node's children list
-				  if (node.id == rel.parent.id) {
-					  node.children.add(rel.child)
-				  }
-				  
-				  // check if relationship represents a child rel for the current node, and if so add the
-				  // parent to the node's parent list
-				  if (node.id == rel.child.id) {
-					  node.parents.add(rel.parent)
-				  }
-			  }
-			  else {    // root node found
-				  rootNode = rel.child
-			  }
-		  }
-	  }
-
-	  JSONArray categories = new JSONArray()
-	  
-	  if (rootNode.children)  {
-		  
-		  def categoriesList = []
-		  // loop thru all children of root and create a list of categories to be used for initial facet search
-		  for (categoryNode in rootNode.children)  {
-			  String catName = categoryNode.termName
-			  
-			  // SOLR equivalent field is all uppercases with underscores instead of spaces
-			  catName = getSOLRCategoryName(catName)
-			  categoriesList.push(catName)
-		  }
-
-		  
-		  // retrieve initial facet counts to be used in tree
-		  JSONObject initialFacetCounts = getInitialFacetResults(categoriesList)
-
-		  // CREATE JSON ARRAY FOR TREE	  		  		  		  		  
-		  def nodeIndex = 1
-		  
-		  // loop thru all children of root and add to JSON array for categories (addNode will recursively add children)
-		  for (categoryNode in rootNode.children)  {	
-			  
-			  // give each node a unique id within tree (id and key are not necessarily unique)
-			  // the unique id will be a concatenation of the parent's unique id + the index of this child's index in children list
-			  // e.g. category nodes will be 1,2,3; their children will be 1:1, 1:2, 1:3, 2:1, ...; their children 1:1:1, 1:1:2, ...
-			  String uniqueTreeId = nodeIndex
-			  
-			  addDynaNode(categoryNode, categories, true, categoryNode.termName, uniqueTreeId, initialFacetCounts)
-			  nodeIndex++
-		  }
-		  
-	  }
-	  else  {
-		  throw new Exception("Root node not found")
-	  }
-	  
-	  response.setContentType("text/json")
-	  response.outputStream << categories?.toString()
+	  render("Not implemented");
 
    }
   
@@ -435,7 +439,7 @@ class RWGController {
 	   dataWriter.flush()
 	   dataWriter.close()
 	   
-	   def facetCategoryNodes   // will store the facet category nodes from the xml response in here
+	   def folderIdNodes   // will store the folder IDs
 	   
 	   // process response
 	   if (solrConnection.responseCode == solrConnection.HTTP_OK)  {
@@ -445,21 +449,13 @@ class RWGController {
 			   xml = slurper.parse(it)
 		   }
 		   
-		   if (returnAnalysisIds) {
-			   
-			   //outputFormattedXml(xml)
-			   def analysisIds = xml.result.doc.str.findAll{it.@name == 'ANALYSIS_ID'}
-			   solrConnection.disconnect()
-			   def ids = []
-			   for (analysisId in analysisIds) {
-				   ids.push(analysisId.text() as long)
-			   }
-			   return ids
+		   // retrieve all folderIds from the returned data
+		   folderIdNodes = xml.result.doc.str.findAll{it.@name == 'FOLDERID'}
+		   
+		   def result = new StreamingMarkupBuilder().bind{
+			   mkp.yield xml
 		   }
-		   else {
-		   // retrieve all the category nodes for the facet fields (contain subnodes which have the actual counts)
-			   facetCategoryNodes = xml.lst.find{it.@name == 'facet_counts'}.lst.find{it.@name == 'facet_fields'}.lst
-		   }
+		   println result
 	   }
 	   else {
 		   throw new Exception("SOLR Request failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
@@ -467,49 +463,31 @@ class RWGController {
 	   
 	   solrConnection.disconnect()
 			  
-	   // put counts for each category/term into a json string to pass back
-	   for (catNode in facetCategoryNodes) {
+	   def folderMap = [:]
+	   
+	   // Construct map of matching folders
+	   for (node in folderIdNodes) {
 		   // retrieve the category name from the xml node
-		   def catName = catNode.@name
-
-		   JSONObject catArray = new JSONObject()   // json object for current category
-			for (countNode in catNode.int) {
-				def skId = countNode.@name    // search keyword id
-				def c = countNode.text()
-				
-				// add term to category object
-				catArray.put(skId.toString(), c.toString())
+		   def folderId = node.text()
+		   println ("Got folderId: " + folderId)
+		   def folder = FmFolder.get(folderId);
+		   
+		   while (folder != null) {
+			   def currentEntry = folderMap[folder.folderLevel]
+			   if (currentEntry == null) {
+				   currentEntry = []
+			   }
+			   if (!currentEntry.contains(folder.id)) {
+				   currentEntry.push(folder.id)
+				   folderMap[folder.folderLevel] = currentEntry;
+			   }
+			   println ("Added: " + folder.folderLevel + ", " + folder.id);
+			   folder = folder.parent
 		   }
-
-			// add category array object to all objects
-			facetCounts.put(catName.toString(), catArray)
 	   }
 	   
-	   return facetCounts
+	   return folderMap
    }
-   
-   /**
-   *  pretty prints the GPathResult NodeChild
-   *
-  def outputFormattedXml(node) {
-	  def xml = new StreamingMarkupBuilder().bind {
-		  mkp.declareNamespace("":node.namespaceURI())
-		  mkp.yield(node)
-	  }
-   
-	  def factory = TransformerFactory.newInstance()
-	  def transformer = factory.newTransformer()
-	  transformer.setOutputProperty(OutputKeys.INDENT, 'yes')
-   
-	  // figured this out by looking at Xalan's serializer.jar
-	  // org/apache/xml/serializer/output_xml.properties
-	  transformer.setOutputProperty("{http\u003a//xml.apache.org/xalan}indent-amount", "2")
-	  def result = new StreamResult(new StringWriter())
-	  transformer.transform(new StreamSource(new ByteArrayInputStream(xml.toString().bytes)), result)
-   
-	  println result.writer.toString()
-  }
-  */
 
    /**
    * Create the SOLR query string for the faceted query
@@ -520,7 +498,7 @@ class RWGController {
    * @return string containing the SOLR query string
    */
    def createSOLRQueryString = {
-	   nonfacetedQueryString, facetedQueryString, facetedFieldsString, maxRows=0, facetFlag=true ->
+	   nonfacetedQueryString, facetedQueryString, facetedFieldsString, maxRows=1000, facetFlag=false ->
 	   def solrQuery = /${nonfacetedQueryString}&facet=${facetFlag}&rows=${maxRows}/
 	
 	   if (facetedQueryString != "")  {
@@ -649,57 +627,6 @@ class RWGController {
 	   log.info("Gene parameter: ${newParams}")
 	   return newParams
    }
-   
-   //Get analyses for current SOLR query and store them in session
-   def getFacetResultsForTable = {
-	   
-	   def queryParams = request.getParameterValues('q') as List
-	   
-	   //fq params are also faceted and also filtered on
-	   def facetQueryParams = request.getParameterValues('fq')
-
-	   // save all the filter params to a session List variable
-	   def sessionFilterParams = []
-		
-	   for (p in queryParams)  {
-		   sessionFilterParams.add p
-	   }
-	   for (p in facetQueryParams)  {
-		   sessionFilterParams.add p
-	   }
-	   session['solrSearchFilter'] = sessionFilterParams
-	   
-	   def solrGenesField = setSOLRGenesField(false)
-	   //queryParams = replaceGeneLists(queryParams, solrGenesField)
-	   
-	   // ff params are faceted, but not filtered on
-	   def facetFieldsParams = request.getParameterValues('ff')
-	   
-	   log.info("facet search: " + params)
-	   
-	   // build the SOLR query
-	   def nonfacetedQueryString = "";
-	   try {
-		   nonfacetedQueryString = createSOLRNonfacetedQueryString(sessionFilterParams as List)
-	   }
-	   catch (Exception e) {
-		   e.printStackTrace()
-	   }
-	   
-	   //TODO Patch job - if this is a *.* query, prevent it from running
-	   if (nonfacetedQueryString.equals("q=(*:*)")) {
-		   session['solrAnalysisIds'] = []
-		   render(status: 200, text: "NONE");
-		   return;
-	   }
-	   	   
-	   String solrRequestUrl = createSOLRQueryPath()
-	   String solrQueryString = /${nonfacetedQueryString}/
-	   def analysisIds = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, true)
-	   
-	   session['solrAnalysisIds'] = analysisIds
-	   render(status: 200, text: analysisIds.join(","))
-   }
            
    /**
    * Load the search results for the given search terms (used for AJAX calls)
@@ -708,29 +635,27 @@ class RWGController {
    def getFacetResults = {
 	   	   
 	   def startTime = new Date()								// Clock starts running now!
-	   
-	   // determine whether we have set the showAllResults param
-	   boolean showSigGenesOnly = true
-	   if (request.getParameter('showSignificantResults') && request.getParameter('showSignificantResults').toLowerCase()=='false')  {
-		   showSigGenesOnly = false
-	   }
 
+	   session['folderSearchMap'] = [:]; //Clear the folder search map
+	   
+	   //Search string is saved in session (for passing between RWG and Dataset Explorer pages)
+	   def searchString = params.searchTerms
+	   def searchTerms = searchString?.split(",,,")
+	   if (searchTerms != null && searchTerms[0] == "") {searchTerms = null;}
+	   session['rwgSearchFilter'] = searchTerms
+	   
+	   //If we have no search terms, just do a top-level search
+	   if (searchTerms == null || searchTerms.size() == 0) {
+		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null, [:]).folders])
+		   return
+	   }
+	   
 	   // q params are filtered on but not faceted
        def queryParams = request.getParameterValues('q') as List
 	   
 	   // get name of SOLR search field to be used for gene queries (SIGGENE or ALLGENE) and set session var
-	   def solrGenesField = setSOLRGenesField(showSigGenesOnly)  
-	   
-	   // replace gene signatures or gene list terms into their list of individual genes
-	   // No longer done - significance is not done in SOLR
-	   //queryParams = replaceGeneLists(queryParams, solrGenesField)	   
-	   
-	   showSigGenesOnly = false
-	   
-	   if (showSigGenesOnly)  {
-		   queryParams.add "ANY_SIGNIFICANT_GENES:1"
-	   }
-	   
+	   def solrGenesField = setSOLRGenesField()
+
 	   //fq params are also faceted and also filtered on
 	   def facetQueryParams = request.getParameterValues('fq')
 
@@ -757,18 +682,24 @@ class RWGController {
 	   
 	   String solrRequestUrl = createSOLRQueryPath()
 	   String solrQueryString = createSOLRQueryString(nonfacetedQueryString, facetedQueryString, facetedFieldsString)
-       JSONObject facetCounts = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
+       def folderMap = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
 
-	   def studyCounts = facetCounts['STUDY_ID']
+	   session['folderSearchMap'] = folderMap;
 	   
-	   // retrieve the html string for the results template	   
-	   def html = loadSearchResults(studyCounts, startTime)	   
-	   // create a return json object containing both the facet counts to load into tree and html to load into results section
-	   JSONObject ret = new JSONObject()
-	   ret.put('facetCounts', facetCounts)
-	   ret.put('html', html)
-       response.setContentType("text/json")
-	   response.outputStream << ret?.toString()	   
+	   def folderContents = fmFolderService.getFolderContents(null, session['folderSearchMap'])
+		
+		render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files])
+	   	   
+//	   def studyCounts = facetCounts['STUDY_ID']
+	   
+//	   // retrieve the html string for the results template	   
+//	   def html = loadSearchResults(studyCounts, startTime)	   
+//	   // create a return json object containing both the facet counts to load into tree and html to load into results section
+//	   JSONObject ret = new JSONObject()
+//	   ret.put('facetCounts', facetCounts)
+//	   ret.put('html', html)
+//       response.setContentType("text/json")
+//	   response.outputStream << ret?.toString()
    }
 
    /**
@@ -873,20 +804,6 @@ class RWGController {
 				   exprimentAnalysis.put((experiment), c)
 				   total += c
 			   }
-			   
-			   /*
-			   def ct = ClinicalTrial.createCriteria()
-			   def trial = ct.get	{
-				   eq("trialNumber", trialNumber, [ignoreCase: true])
-			   }
-			   if (trial == null)	{
-				   log.warn "Unable to find a trial for ${trialNumber}"
-			   }  
-			   else  {
-			       trialAnalysis.put((trial), c)
-			       total += c
-			   }
-			   */
 		   }
 	   }
 	   // capture html as a string that will be passed back in JSON object
@@ -913,154 +830,46 @@ class RWGController {
 	   def layout = formLayoutService.getLayout('file')
 	   render(template:'/fmFolder/fileMetadata', model:[layout: layout, file: FmFile.get(params.id)])
    }
- 
-   // First iteration of the method to get the heatmap data for RWG  
-//   def getHeatmapData = {
-//	   def rwgDAO = new RWGVisualizationDAO()
-//	   def genes = null
-//	   def filterTerms = session.solrSearchFilter
-//	   def solrGenesField = session.solrGenesField
-//	   
-//	   boolean showSigResultsOnly = solrGenesField == 'SIGGENE' ? true : false
-//	   
-//	   log.info("Only pass the gene filter")
-//	   for (filterTerm in filterTerms)	{
-//		   if (filterTerm.indexOf("${solrGenesField}:") > -1)	{
-//			   genes = filterTerm.replace("${solrGenesField}:", '')
-//			   break
-//		   }
-//	   }
-//	   
-//	   def hmData = rwgDAO.getHeatmapData(params.id, genes, showSigResultsOnly,  params.probesPage, params.probesPerPage)	  
-//   
-//	  	   
-//	   render hmData as JSON	   	 	
-//   }
    
+   def solrQuery = {
+	   
+   }
    
-   // First iteration of the method to get the heatmap for exporting as a csv file
-//   def getHeatmapDataForExport2 = {def rwgDAO = new RWGVisualizationDAO()
-//	   def genes = null
-//	   def filterTerms = session.solrSearchFilter
-//	   def solrGenesField = session.solrGenesField
-//	   
-//	   boolean showSigResultsOnly = solrGenesField == 'SIGGENE' ? true : false
-//	   
-//	   log.info("Only pass the gene filter")
-//	   for (filterTerm in filterTerms)	{
-//		   if (filterTerm.indexOf("${solrGenesField}:") > -1)	{
-//			   genes = filterTerm.replace("${solrGenesField}:", '')
-//			   break
-//		   }
-//	   }
-//	   
-//	   def hmData = rwgDAO.getHeatmapDataForExport2(params.id, params.probesList, genes, showSigResultsOnly,  1)
-//   
-//	   
-//	   response.setHeader("Content-Disposition", "attachment; filename=\"" +params.id +"_export.csv\"")
-//	   response.contentType = 'text/csv'
-//	   response.outputStream << hmData
-//	   response.outputStream.flush()
-//	   
-//	   
-//   }
-   
-   
-   // Method to get the number of probes for the heatmap for the given filters
-//   def getHeatmapNumberProbes = {
-//	   def rwgDAO = new RWGVisualizationDAO()
-//	   def genes = null
-//	   def filterTerms = session.solrSearchFilter
-//	   def solrGenesField = session.solrGenesField
-//	   
-//	   boolean showSigResultsOnly = solrGenesField == 'SIGGENE' ? true : false
-//	   
-//	   log.info("Only pass the gene filter")
-//	   for (filterTerm in filterTerms)	{
-//		   if (filterTerm.indexOf("${solrGenesField}:") > -1)	{
-//			   genes = filterTerm.replace("${solrGenesField}:", '')
-//			   break
-//		   }
-//	   }
-//	   def maxProbeIndex = rwgDAO.getNumberProbes(params.id, genes, showSigResultsOnly)	 
-//	   
-//	   JSONObject ret = new JSONObject()
-//	   ret.put('maxProbeIndex', maxProbeIndex)
-//	   
-//	   response.setContentType("text/json")
-//	   response.outputStream << ret?.toString()
-//	   	   	   
-//   }
-   
-   
-   
-//   def exportAsImage = {
-//	   
-//	   def imagedata = params.imgData
-//	   
-////	   imagedata.replace(' ','+')
-//	   
-////	   imagedata = Base64.decodeBase64(imagedata)
-//	   
-//	   imagedata=Base64.decodeBase64(imagedata)
-//	   
-//	   response.setHeader("Content-Disposition", "attachment; filename=\"export.png\"")
-//	   response.contentType = 'image/png'
-//	   response.outputStream << imagedata
-//	  response.outputStream.flush()
-//	   
-//   }
-//   
-//   /**
-//    * Returns the data for the box plot visualization
-//    */
-//   def getBoxPlotData = {	   
-//	   def rwgDAO = new RWGVisualizationDAO()	   
-//	   def m = rwgDAO.getBoxplotData(params.id, params.probeID)
-//	   render m as JSON
-//   }
-//   
-//   /**
-//    * Returns the data for the line plot visualization
-//    */
-//   def getLinePlotData = {	   
-//	   def rwgDAO = new RWGVisualizationDAO()	   
-//	   def m = rwgDAO.getLineplotData(params.id, params.probeID)
-//	   render m as JSON
-//   }  
-//   
-//   def getPieChart = {
-//	   
-//	   
-//	   
-//	   render(template:'pie')
-//   }
-//   
-//   
-//   /**
-//   * This will render a UI where the user can pick a data type.
-//   */
-//  def browseDataTypesMultiSelect = {
-//	  
-//	  /*
-//	  def results = SearchTaxonomy.executeQuery("SELECT id, keyword FROM SearchKeyword s WHERE s.dataCategory = 'DATA_TYPE'");
-//	  def dataTypes = []
-//	  for (result in results) {
-//		  dataTypes.add([key:result[0], value:result[1]])
-//	  }
-//	  */
-//	  
-//	  def dataTypes = ["GWAS":"GWAS","EQTL":"eQTL","Metabolic GWAS":"Metabolic GWAS"]
-//	  
-//	  render(template:'dataTypesBrowseMulti',model:[dataTypes:dataTypes])
-//  }
-//  
-//  /**
-//   * Renders a UI for selecting regions by gene/RSID or chromosome.
-//   */
-//  def getRegionFilter = {
-//	  render(template:'regionFilter', model: [ranges:['both':'+/-','plus':'+','minus':'-']])
-//  }
-//   
+   //Execute arbitrary SOLR query, because SOLR's web interface doesn't work
+   def executeSolrQuery = {
+   	   // submit request
+	   def solrRequestUrl = createSOLRQueryPath()
+	   def solrConnection = new URL(solrRequestUrl).openConnection()
+	   solrConnection.requestMethod= "POST"
+	   solrConnection.doOutput = true
+
+	   // add params to request 	   	   
+	   def dataWriter = new OutputStreamWriter(solrConnection.outputStream)
+	   dataWriter.write(params.q)
+	   dataWriter.flush()
+	   dataWriter.close()
+	   
+	   def slurper = new XmlSlurper()
+	   
+	   // process response
+	   if (solrConnection.responseCode == solrConnection.HTTP_OK)  {
+		   def xml
+		   
+		   solrConnection.inputStream.withStream {
+			   xml = slurper.parse(it)
+		   }
+
+		   def result = new StreamingMarkupBuilder().bind{
+			   mkp.yield xml
+		   }
+		   
+		   render(contentType: "application/xml", text: result);
+	   }
+	   else {
+		   render(contentType: "text/plain", text: "SOLR Request failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
+	   }
+	   
+	   solrConnection.disconnect()
+   }
    
 }
