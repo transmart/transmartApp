@@ -184,7 +184,7 @@
                         jQuery('#program-explorer').width(currentWidth - 20)
                         // jQuery('#results-div').width(currentWidth -20)
                         // set the content panel width
-                        //jQuery('#main').width(jQuery('body').width() - currentWidth - padding);            
+                        jQuery('#main').width(jQuery('body').width() - currentWidth - padding);            
                     }
               });
 
@@ -205,6 +205,7 @@
 	        	var targetHeight = windowHeight - ypos - 90;
 	        	jQuery('#results-div').height(targetHeight);
 	        	jQuery('#welcome').height(windowHeight - 90);
+	        	jQuery('#main').width(jQuery('body').width() - jQuery('#sidebar').width() - 12);
 			}
 
     function dataTableWrapper (containerId, tableId, title)
