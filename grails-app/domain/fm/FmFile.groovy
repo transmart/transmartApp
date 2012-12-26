@@ -37,6 +37,7 @@ class FmFile {
 	Boolean activeInd = Boolean.TRUE
 	Date createDate = new Date()
 	Date updateDate = new Date()
+	Long oldFileId
 
 	static mapping = {
 		table 'fm_file'

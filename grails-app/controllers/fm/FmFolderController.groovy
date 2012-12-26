@@ -386,13 +386,23 @@ class FmFolderController {
 			
 			def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
 			
-			log.info "folderAssociation = " + folderAssociation
 			
 			if(folderAssociation)
 			{
+				log.info "folderAssociation = " + folderAssociation
 				bioDataObject =folderAssociation.getBioObject()
 			}
+			else
+			{
+				log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
+			}
 
+			if(!bioDataObject)
+			{
+				bioDataObject = folder
+			}
+
+						
 			amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
 		//	formLayout = formLayoutService.getLayout(folder.folderType.toLowerCase()); //'study');
 		}
@@ -402,50 +412,8 @@ class FmFolderController {
 	//		formLayout = formLayoutService.getProgramLayout()		
 		}
 		
-		log.info("Formlayout = " + formLayout)
-/*		def subFolders
-		def subFolderLayout 
-		if (folder)
-		{
-			subFolders = FmFolder.executeQuery("from FmFolder as fd where fd.folderLevel = :level and fd.folderFullName like '" + folder.folderFullName + "%' order by folderName", [level: folder.folderLevel + 1])
-			if(subFolders!=null && subFolders.size()>0)
-			{
-				log.info(subFolders)
-				def layoutType = subFolders[0].folderType
-				subFolderLayout = formLayoutService.getLayout(layoutType.toLowerCase()); //'study');
-			}			
-		}
 
-		log.info "folder.id = " + folder.id
-		if(folder.fmFiles){log.info("Files = " + folder.fmFiles)}
-		
-		ExportTableNew table;
-		
-		//Keep this if you want to cache the grid data
-		//ExportTableNew table=(ExportTableNew)request.getSession().getAttribute("gridtable");
-		
-		if(table==null)
-		{
-			table=new ExportTableNew();
-		}
-
-		if(subFolders!=null && subFolders.size()>0)
-		{	
-			subFolderLayout.each {
-				table.putColumn("ident", new ExportColumn(it.column, it.displayName, "", "String"));
-			}
-		}
-		ExportRowNew newrow=new ExportRowNew();
-		newrow.put("ident", "foo.id");
-		newrow.put("name", "foo.name");
-		newrow.put("description", "foo.description");
-		table.putRow("somerow", newrow);
-
-		def jSONToReturn = table.toJSON_DataTables("").toString(5);
-		
-		request.getSession().setAttribute("gridtable", table);
-*/		
-//		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:folder, subFolderInstances:subFolders, subFolderLayout: subFolderLayout, jSONForGrid: jSONToReturn])
+		log.info "FolderInstance = " + bioDataObject.toString()
 		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:bioDataObject, amTagTemplate: amTagTemplate])
 		
 	}
@@ -580,4 +548,48 @@ def getFdDetails = {
 
 
 
+//		log.info("Formlayout = " + formLayout)
+/*		def subFolders
+		def subFolderLayout
+		if (folder)
+		{
+			subFolders = FmFolder.executeQuery("from FmFolder as fd where fd.folderLevel = :level and fd.folderFullName like '" + folder.folderFullName + "%' order by folderName", [level: folder.folderLevel + 1])
+			if(subFolders!=null && subFolders.size()>0)
+			{
+				log.info(subFolders)
+				def layoutType = subFolders[0].folderType
+				subFolderLayout = formLayoutService.getLayout(layoutType.toLowerCase()); //'study');
+			}
+		}
+
+		log.info "folder.id = " + folder.id
+		if(folder.fmFiles){log.info("Files = " + folder.fmFiles)}
+		
+		ExportTableNew table;
+		
+		//Keep this if you want to cache the grid data
+		//ExportTableNew table=(ExportTableNew)request.getSession().getAttribute("gridtable");
+		
+		if(table==null)
+		{
+			table=new ExportTableNew();
+		}
+
+		if(subFolders!=null && subFolders.size()>0)
+		{
+			subFolderLayout.each {
+				table.putColumn("ident", new ExportColumn(it.column, it.displayName, "", "String"));
+			}
+		}
+		ExportRowNew newrow=new ExportRowNew();
+		newrow.put("ident", "foo.id");
+		newrow.put("name", "foo.name");
+		newrow.put("description", "foo.description");
+		table.putRow("somerow", newrow);
+
+		def jSONToReturn = table.toJSON_DataTables("").toString(5);
+		
+		request.getSession().setAttribute("gridtable", table);
+*/
+//		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:folder, subFolderInstances:subFolders, subFolderLayout: subFolderLayout, jSONForGrid: jSONToReturn])
 

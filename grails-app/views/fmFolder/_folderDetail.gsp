@@ -20,14 +20,33 @@
 <g:set var="overlayDiv" value="metaData_div" />
 
 <div style="margin:10px;padding:10px;">
-<h3 class="rdc-h3">${folderInstance?.title}</h3>
-<g:if test="${amTagTemplate}">
+<h3 class="rdc-h3">
+<g:if test="${folderInstance?.hasProperty('title')}">
+${folderInstance?.title}
+</g:if>
+<g:else>
+${folderInstance?.folderName}
+</g:else>
+</h3>
+<g:if test="${folderInstance?.hasProperty('description')}">
+<div style="line-height:14px;font-family:arial,​tahoma,​helvetica,​sans-serif; font-size: 12px;">
+ <g:if test="${folderInstance?.description.length() > 325000}">
+                       ${(folderInstance?.description).substring(0,324000)}&nbsp;&nbsp;
+                       <a href=# >...See more</a>
+                       </g:if>
+                       <g:else>
+                        ${folderInstance?.description}
+                        </g:else></div>
+<div style="height:20px;"></div>
+</g:if>
+
+<g:if test="${amTagTemplate && amTagTemplate.amTagItems.count()>0}">
 <table class="details-table">
         <thead>
             <tr>                
                 <th>&nbsp;</th>
                 <th align="right"><g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
-                        params="[eleId:overlayDiv, experimentId:folderInstance.id]" 
+                        params="[eleId:overlayDiv, experimentId:folderInstance?.id]" 
                         before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
                   <img align="right" src="${resource(dir:'images', file:'pencil.png')}"/></g:remoteLink>
                 </th>
@@ -35,7 +54,7 @@
         </thead>
     <tbody>
         <g:each in="${amTagTemplate.amTagItems}" status="i" var="amTagItem">
-        <g:if test="${amTagItem.tagItemType == 'FIXED'}">
+        <g:if test="${amTagItem.tagItemType == 'FIXED' && amTagItem.viewInGrid && folderInstance?.hasProperty(amTagItem.tagItemAttr.toLowerCase())}">
             <tr class='details-row'> <!-- class="${(i % 2) == 0 ? 'odd' : 'even'}"> -->
             <!-- TODO: If active -->
                 <td valign="top" align="right" class="columnname" width="20%">${amTagItem.displayName}</td>
@@ -52,25 +71,27 @@
                     
                    
 <div style="height:20px;"></div>
-<g:if test="${folderInstance.hasProperty('fmFiles') && null!=folderInstance.fmFiles && folderInstance?.fmFiles.size()>0}">   
+<g:if test="${folderInstance?.hasProperty('fmFiles') && null!=folderInstance?.fmFiles && folderInstance?.fmFiles.size()>0}">   
 <div style="width:900px;align:center;" ><h4 class="rdc-h4" align="center" >Associated Files</h4></div>
 <table class="list-table">
             <thead>
                 <tr>                
                     <th>File Name</th>
-                    <th>File Description</th>
-                    <th>Upload Date</th>
+                    <th>Create Date</th>
+                    <th>Update Date</th>
                     <th>Export All</th>
                 </tr>
             </thead>
             
     <tbody>
-        <g:each in="${folderInstance.fmFiles}" status="i" var="fmFile">
+        <g:each in="${folderInstance?.fmFiles}" status="i" var="fmFile">
             <tr class="file-row">
                 <td style="padding: 3px 3px 3px 3px;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
-                <td>${fmFile.description}</td>
                <td >
-               <g:formatDate format="yyyy-MM-dd" date="${fmFile.uploadDate}" />
+               <g:formatDate format="yyyy-MM-dd" date="${fmFile.createDate}" />
+               </td> 
+               <td >
+               <g:formatDate format="yyyy-MM-dd" date="${fmFile.updateDate}" />
                </td> 
                <td>
                <div>
