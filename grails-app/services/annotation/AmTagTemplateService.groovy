@@ -49,7 +49,9 @@ class AmTagTemplateService {
 		{
 			log.info "Searching amTagTemplate"
 			amTagTemplate = AmTagTemplate.get(amTagTemplateAssociation.tagTemplateId)
-			log.info "amTagTemplate = " + amTagTemplate
+			log.info "amTagTemplate = " + amTagTemplate.toString()
+			log.info "amTagTemplate.tagItems = " + amTagTemplate.amTagItems
+			
 		}
 		else
 		{

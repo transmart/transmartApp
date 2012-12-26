@@ -38,7 +38,8 @@ class AmTagTemplate {
 		cache true
 		sort "tagTemplateName"
 		columns { id column:'tag_template_id' }
-//		amTagItems joinTable: [name: 'tag_template_item_def',  key:'tag_template_id', column: 'tag_item_id'], lazy: false
+//		amTagItems joinTable: [name: 'tag_template_item_def',  key:'tag_template_id', column: 'tag_item_id'], 
+		amTagItems lazy: false
 //		fmFolders joinTable: [name: 'am_tag_template_association', key:'tag_template_id', column: 'object_uid'], lazy: false
 	}
 
@@ -48,4 +49,14 @@ class AmTagTemplate {
 		tagTemplateType(maxSize:50)
 		tagTemplateSubtype(maxSize:50)
 	}
+	
+	/**
+	* override display
+	*/
+   public String toString() {
+	   StringBuffer sb = new StringBuffer();
+	   sb.append("ID: ").append(this.id).append(", Template Name: ").append(this.tagTemplateName);
+	   sb.append(", Template Type: ").append(this.tagTemplateType);
+	   return sb.toString();
+   }
 }
