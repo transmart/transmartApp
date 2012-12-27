@@ -299,7 +299,7 @@
 		</table>
 		
 		<div class="buttons">
-			<g:actionSubmit class="save" action="${(wizard.wizardType==1) ? 'update' : 'save'}" value="Save" onclick="return validate();" />
+			<g:actionSubmit class="save" action="${(wizard.wizardType==1) ? 'update' : 'save'}" value="Save and Close" onclick="return validate();" />
 			<g:actionSubmit class="next" action="${(wizard.wizardType==1 || wizard.wizardType==2) ? 'edit2' : 'create2'}" value="Advanced" onclick="return validate();" />
 			<g:actionSubmit class="cancel" action="refreshSummary" onclick="return confirm('Are you sure you want to exit?')" value="Cancel" />
 		</div>			

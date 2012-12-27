@@ -72,6 +72,15 @@
 			
 		}
 
+		function handleQcPerformed(){
+			if (jQuery("#qcPerformed").is(':checked')){
+				jQuery("#qcInfoRow").show();
+			}else{
+				jQuery("#qcInfoRow").hide();
+				jQuery("#qcInfo").val('');
+			}
+		}
+
 	</script>
 </head>
 
@@ -201,8 +210,17 @@
 			</td>
 		</tr>
 		<tr class="prop">
-			<td class="name">QC performed</td>
-			<td class="value"><g:checkBox name="qcPerformed" value="${gs.qcPerformed}" />
+			<td class="name">QC Performed</td>
+			<td class="value"><g:checkBox name="qcPerformed" value="${gs.qcPerformed}" onchange="handleQcPerformed();" />
+		</tr>
+		<g:if test="${gs.qcPerformed}">
+			<tr id="qcInfoRow" class="prop">
+		</g:if>
+		<g:else>
+			<tr id="qcInfoRow" class="prop" hidden>
+		</g:else>
+			<td class="name">QC Detail</td>
+			<td class="value"><g:textField name="qcInfo" value="${gs.qcInfo}" />
 		</tr>
 	</table>
 	<br>

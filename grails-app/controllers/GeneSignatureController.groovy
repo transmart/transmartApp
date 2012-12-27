@@ -194,6 +194,9 @@ class GeneSignatureController {
 		clone.deletedFlag = false;
 		clone.dateCreated = null;
 		clone.lastUpdated = null;
+		clone.qcDate = null;
+		clone.qcPerformed = false
+		clone.qcInfo = '';
 		clone.versionNumber = null;
 		clone.uniqueId = null;
 
@@ -314,13 +317,18 @@ class GeneSignatureController {
 		// get wizard
 		def wizard = session.getAttribute(WIZ_DETAILS_ATTRIBUTE)
 		bindGeneSigData(params, wizard.geneSigInst)
+		
 		// save original file until final save
 		def file = request.getFile('uploadFile')
-		wizard.geneSigFile=file
+		if(file!=null){
+			wizard.geneSigFile=file
+		}
 		
 		// save text box data until final save
 		def geneSigText = request.getParameter('genes')
-		wizard.geneSigText = geneSigText
+		if(geneSigText!=null){
+			wizard.geneSigText = geneSigText
+		}
 
 		// load item data
 		loadWizardItems(2, wizard)
@@ -574,8 +582,8 @@ class GeneSignatureController {
 	 * add items to an existing gene signature
 	 */
 	 def addItems = {
-
-		def gs = GeneSignature.get(params.id)
+		def gs = GeneSignature.get(params.gsId)
+		
 		log.debug " adding items to gs: "+gs.name
 
 		// reset
