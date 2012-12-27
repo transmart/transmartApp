@@ -109,7 +109,13 @@ function getSelectedAsCommaSeparatedList(ob)
              h.dom.value=record.data.uid;
              //alert(h.dom.value);
              search.collapse();
-             new Ajax.Updater({success:'permissions'}, pageInfo.basePath+'/secureObjectAccess/listAccessForPrincipal/'+record.data.uid,{asynchronous:true,evalScripts:true,parameters:$('searchtext').serialize()});
+             jQuery.ajax(	{	url:pageInfo.basePath+'/secureObjectAccess/listAccessForPrincipal/'+record.data.uid,
+            		 			asynchronous:true,
+            	 				data:{searchtext:jQuery('#searchtext').serialize()},
+            	 				success: function( returnedData ) {
+            	 					jQuery( '#permissions' ).html( returnedData );
+            	 					}            	 				
+            	 				});
              //compareSubsets();
         }
     });
@@ -176,7 +182,14 @@ function getSelectedAsCommaSeparatedList(ob)
              h.dom.value=record.data.uid;
              //alert(h.dom.value);
              search.collapse();
-             new Ajax.Updater({success:'groups'}, pageInfo.basePath+'/userGroup/searchGroupsWithoutUser/'+record.data.uid,{asynchronous:true,evalScripts:true,parameters:$('searchtext').serialize()});
+             jQuery.ajax(	{	
+		 			url:pageInfo.basePath+'/userGroup/searchGroupsWithoutUser/'+record.data.uid,
+		 			asynchronous:true,
+	 				data:{searchtext:jQuery('#searchtext').serialize()},
+	 				success: function( returnedData ) {
+	 					jQuery( '#groups' ).html( returnedData );
+	 					}
+	 				});             
              //compareSubsets();
         }
     });

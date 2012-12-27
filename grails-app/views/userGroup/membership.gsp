@@ -40,6 +40,11 @@
   <br><b>Search User<b></b><br>
   <input type="text"  size="80" id="searchUsers" autocomplete="off" /></div>
   <script type="text/javascript">
+
+	var pageInfo = {
+			basePath :"${request.getContextPath()}"
+		}
+  
   createUserSearchBox2('${request.getContextPath()}/userGroup/ajaxGetUserSearchBoxData', 440);
 
   function searchgroup(){
@@ -49,7 +54,7 @@
 	return false;
 	}
 
-	  ${remoteFunction(action:'searchGroupsWithoutUser',update:[success:'groups', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
+	  ${remoteFunction(action:'searchGroupsWithoutUser',update:[success:'groups', failure:''], params:'jQuery(\'#searchtext\').serialize()+\'&id=\'+pid')};
 	   return false;
 	  }
   </script>
