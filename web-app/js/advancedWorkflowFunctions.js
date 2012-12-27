@@ -332,20 +332,16 @@ function finalAdvancedMenuValidation()
 
 
 
-function runVisualizerFromSpan(viewerURL, altviewerURL) {
-	//genePatternLogin();
-
-	//genePatternReplacement();
+function runVisualizerFromSpan(viewerURL, altviewerURL) {	
+	genePatternLogin();	
 	Ext.Ajax.request(
 	{
 		url: viewerURL,
 		method: 'GET',
 		success: function(result, request){
-			//Ext.MessageBox.hide();
 			runAppletFromSpan(result, 'visualizerSpan0');
 		},
 		failure: function(result, request){
-			//Ext.MessageBox.hide();
 			alert('Failed in getting the content of ' + viewerURL);
 		},
 		timeout: '1800000'
@@ -353,8 +349,7 @@ function runVisualizerFromSpan(viewerURL, altviewerURL) {
 
 	if (altviewerURL == undefined || altviewerURL == "") {
 		return;
-	}
-	
+	}	
 	Ext.Ajax.request(
 	{
 		url: altviewerURL,
