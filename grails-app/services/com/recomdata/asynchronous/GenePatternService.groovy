@@ -209,12 +209,12 @@ class GenePatternService implements Job {
 	 * @return the job result from the GenePattern server
 	 */
 	private JobResult runJobNoWF(String userName, Parameter[] parameters, String analysisType) throws WebServiceException {
-		GPClient gpClient = getGPClient(userName)				
-		if (log.isDebugEnabled())	{
-			log.debug("Sending ${analysisType} job to ${gpClient.getServer()}")
-			log.debug("As user ${gpClient.getUsername()} with parameters: ")
+		GPClient gpClient = getGPClient(userName)
+		if (log.isInfoEnabled()) {
+			log.info("Sending ${analysisType} job to ${gpClient.getServer()}")
+			log.info("As user ${gpClient.getUsername()} with parameters: ")
 			for (parameter in parameters)	{
-				log.debug("\t${parameter}")
+				log.info("\t Name:${parameter.getName()}\t Value:${parameter.getValue()}\n")
 			}
 		}
 				
