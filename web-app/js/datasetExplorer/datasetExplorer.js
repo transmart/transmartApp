@@ -716,10 +716,8 @@ Ext.onReady(function()
 				height : 90
 				}
 		);
-		/*
-		 * Commented out the Jobs panel to hide as it isn't used without Gene Pattern
-		 * 
-		 * analysisJobsPanel = new Ext.Panel(
+		if (GLOBAL.EnableGP=='true')	{
+			analysisJobsPanel = new Ext.Panel(
 				{
 					id : 'analysisJobsPanel',
 					title : 'Jobs',
@@ -739,7 +737,8 @@ Ext.onReady(function()
 					},
 					collapsible : true						
 				}
-		);*/
+			);
+		}
 		analysisDataExportPanel = new Ext.Panel(
 				{
 					id : 'analysisDataExportPanel',
@@ -840,8 +839,9 @@ Ext.onReady(function()
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
-		//Commented out the Jobs panel to hide as it isn't used without Gene Pattern
-		//resultsTabPanel.add(analysisJobsPanel);
+		if (GLOBAL.EnableGP=='true')	{
+			resultsTabPanel.add(analysisJobsPanel);
+		}
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
 		
