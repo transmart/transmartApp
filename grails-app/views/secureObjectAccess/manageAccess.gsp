@@ -38,6 +38,12 @@
   <div id="divuser" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br><b>Search User/Group</b><br>
   <input type="text"  size="80" id="searchUsers" autocomplete="off" /></div>
   <script type="text/javascript">
+
+	var pageInfo = {
+			basePath :"${request.getContextPath()}"
+		}
+  
+  
   createUserSearchBox('${request.getContextPath()}/userGroup/ajaxGetUsersAndGroupsSearchBoxData', 440,'${principalInstance?.name}');
 
   function searchtrial(){
