@@ -102,7 +102,7 @@ class GenePatternService implements Job {
 		String sResult
 		try	{
 			if (analysis == "Compare") {
-				jresult = HMap(userName, jobName, gctFile, resulttype)
+				HMap(userName, jobName, gctFile)
 			} else if (analysis == "Cluster")	{
 				jresult = HCluster(userName, jobName, gctFile, resulttype)
 			} else if (analysis == "KMeans")	{						
@@ -124,7 +124,7 @@ class GenePatternService implements Job {
 			jobResultsService[jobName]["Exception"] = wse.getMessage()
 			return
 		}
-		
+		/*
 		if (analysis.equals("Survival")) {
 			def jobResults = "<html><header><title>Survival Analysis</title></header><body>" + sResult + "</body></html>"
 			jobResultsService[jobName]["Results"] = jobResults
@@ -132,18 +132,18 @@ class GenePatternService implements Job {
 		else if (analysis.equals("GWAS")) {
 			def jobResults = sResult;
 			jobResultsService[jobName]["Results"] = jobResults;
-		}	
-		else {
+		}
+		else {			
 			def viewerURL = gpURL + jresult[1].getJobNumber() + "?openVisualizers=true"
 			log.debug("URL for viewer: " + viewerURL)		
-			jobResultsService[jobName]["ViewerURL"] = viewerURL
-		
+			jobResultsService[jobName]["ViewerURL"] = viewerURL		
 			if (analysis == "Select") {
 				def altviewerURL = gpURL + jresult[2].getJobNumber() + "?openVisualizers=true"
 				log.debug("URL for second viewer: " + altviewerURL)
 				jobResultsService[jobName]["AltViewerURL"] = altviewerURL
 			}
 		}
+		*/
     }
 	
 	/**
@@ -209,12 +209,12 @@ class GenePatternService implements Job {
 	 * @return the job result from the GenePattern server
 	 */
 	private JobResult runJobNoWF(String userName, Parameter[] parameters, String analysisType) throws WebServiceException {
-		GPClient gpClient = getGPClient(userName)				
-		if (log.isDebugEnabled())	{
-			log.debug("Sending ${analysisType} job to ${gpClient.getServer()}")
-			log.debug("As user ${gpClient.getUsername()} with parameters: ")
+		GPClient gpClient = getGPClient(userName)
+		if (log.isInfoEnabled()) {
+			log.info("Sending ${analysisType} job to ${gpClient.getServer()}")
+			log.info("As user ${gpClient.getUsername()} with parameters: ")
 			for (parameter in parameters)	{
-				log.debug("\t${parameter}")
+				log.info("\t Name:${parameter.getName()}\t Value:${parameter.getValue()}\n")
 			}
 		}
 				
@@ -367,42 +367,50 @@ class GenePatternService implements Job {
 	 * @param userName - The user requesting the job
 	 * @param jobName - The name of the job given by the GP controller
 	 * @param gctFile - file with the heatmap data
-	 * @param resultType - applet or image
-	 * 
-	 * @return the JobResult array from the GenePattern server
+	 *  
+	 * @throws WebServiceException
 	 */
-	public JobResult[] HMap(String userName, String jobName, File gctFile, String resultType) throws WebServiceException { 
-		Parameter    inputFilename      = new Parameter("input.filename", gctFile)
-		Parameter[]  preProcParameters  = [inputFilename]	
+	public void HMap(String userName, String jobName, File gctFile) throws WebServiceException {
+		GPClient gpClient = getGPClient(userName)
 		
-		updateStatus(jobName, "Uploading file")
-		JobResult preprocessed = runJobNoWF(userName, preProcParameters, "ConvertLineEndings")
-
-		def gctURL = preprocessed.getURL("gct").toString()
-		
-		JobResult viewed
-
-		if (resultType == "applet") {
-			Parameter    dataset        = new Parameter("dataset", gctURL);
-			Parameter[] viewParameters  = [dataset]
-			updateStatus(jobName, "Running Heatmap Viewer")
-			viewed = runJobNoWF(userName, viewParameters, "HeatMapViewer");
-		} else {
-			log.debug("resultType = ${resultType}")
-			Parameter    inputDataset   = new Parameter("input.dataset", gctURL);
-			Parameter    columnSize 	= new Parameter("column.size", 10);
-			Parameter    rowSize 		= new Parameter("row.size", 10);
-			Parameter    rowDescs      	= new Parameter("show.row.descriptions", "yes");
-
-			Parameter[] viewParameters  = [inputDataset, columnSize, rowSize, rowDescs]
-			log.debug("Run job to load the viewer")
-			viewed = runJobNoWF(userName, viewParameters, "HeatMapImage");
+		String preprocessModule = "ConvertLineEndings" 
+		Parameter inputFilename = new Parameter("input.filename", gctFile)
+		Parameter[] inputParameters = [inputFilename]
+		if (log.isInfoEnabled()) {
+			log.info("Sending ${preprocessModule} job to ${gpClient.getServer()}")
+			log.info("As user ${gpClient.getUsername()} with parameters: ")
+			for (inputParameter in inputParameters)	{
+				log.info("\t Name:${inputParameter.getName()}\t Value:${inputParameter.getValue()}\n")
+			}
+		}		
+		updateStatus(jobName, "Uploading file")				
+		JobResult result = gpClient.runAnalysis(preprocessModule, inputParameters)
+		if (result.hasStandardError()) {
+			log.error("Result has standard error")
+			URL stderrFileURL = result.getURLForFileName("stderr.txt");
+			String stderrFile = (String) stderrFileURL.getContent();
+			log.error("${stderrFile}")
+			throw new WebServiceException("${preprocessModule} failed: ${stderrFile}")
 		}
+		if (log.isInfoEnabled())	{
+			log.info("Response: ${result}")
+			log.info("Job Number: ${result.getJobNumber()}")
+			log.info("Run on server: ${result.getServerURL()}")
+			log.info("Files:")
+			for (filename in result.getOutputFileNames())	{
+				log.info("\t${filename}")
+				log.info("\t${result.getURLForFileName(filename)}")
+			}
+		}
+		String viewerURL = result.getURL(0).toString()
 		
-		JobResult[] toReturn = [preprocessed, viewed]
-		log.debug("Returning ${preprocessed} and ${viewed}")
-						
-		return toReturn
+		Parameter    dataset        = new Parameter("dataset", viewerURL);
+		Parameter[]  dsParams       = [dataset]
+				
+		updateStatus(jobName, "Running Heatmap Viewer")		
+		jobResultsService[jobName]["ViewerURL"] = viewerURL
+		
+		gpClient.runVisualizer("HeatMapViewer", dsParams)											
 	}
 	
 	/**

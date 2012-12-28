@@ -500,7 +500,7 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		values.add(["Original upload file:",uploadFile])
 		values.add(["Version:", versionStr])
 		values.add(["Data Source:", dataSource])
-		values.add(["QC Performed", qcPerformed?"True":"False"])
+		values.add(["QC Performed", qcPerformed?"Yes":"No"])
 		values.add(["QC Date", qcDate!=null ? qcDate : ""])
 		values.add(["QC Detail", qcInfo!=null? qcInfo : ""])
 		values.add([customName1, customValue1])
