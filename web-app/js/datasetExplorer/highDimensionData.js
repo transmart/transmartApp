@@ -283,14 +283,12 @@ function getCRCRequest(subset, queryname, divId){
 	                <query_name>'+queryname+'</query_name>\
 	                <specificity_scale>0</specificity_scale>';
 	
-	for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
-	{
+
 		var qcd=Ext.get(divId);
 		if(qcd.dom.childNodes.length>0)
 		{
-		query=query+getCRCRequestPanel(qcd.dom, i);
+		query=query+getCRCRequestPanel(qcd.dom, 1);
 		}
-	}
 	
 	for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
 	{
@@ -321,14 +319,13 @@ function getCRCRequestSingleSubset(divId, queryname){
 	                <query_name>'+queryname+'</query_name>\
 	                <specificity_scale>0</specificity_scale>';
 	
-	for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
-	{
+
 	var qcd=Ext.get(divId);
-		if(qcd.dom.childNodes.length>0)
-		{
-		query=query+getCRCRequestPanel(qcd.dom, i);
-		}
+	if(qcd.dom.childNodes.length>0)
+	{
+	query=query+getCRCRequestPanel(qcd.dom, 1);
 	}
+
 	
 	query=query+getSecurityPanel()+"</query_definition>"+getCRCRequestFooter();
 	//query=query+"</query_definition>"+getCRCRequestFooter();
