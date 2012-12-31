@@ -1588,6 +1588,10 @@ function projectDialogComplete(projectid)
       alert('waiting');
       } */
 	//getPreviousQueries();
+	
+	//Now that the ont tree has been set up, call the initial search
+	showSearchResults();
+	
 	if(GLOBAL.RestoreComparison)
 	{
 		getPreviousQueryFromID(1, GLOBAL.RestoreQID1);
@@ -1726,9 +1730,6 @@ function setupOntTree(id_in, title_in) {
 	ontTabPanel.add(ontTree);
 	ontTabPanel.doLayout();
 	onWindowResize();
-	
-	//Now that the ont tree has been set up, call the initial search
-	showSearchResults();
 }
 
 /*If includeExcludeFlag is
