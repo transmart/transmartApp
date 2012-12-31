@@ -213,7 +213,7 @@ function showSearchTemplate()	{
 
 //Method to load the search results in the search results panel and facet counts into tree
 //This occurs whenever a user add/removes a search term
-function showSearchResults(tabToShow)	{
+function showSearchResults()	{
 
 	// clear stored probe Ids for each analysis
 	analysisProbeIds = new Array();  
@@ -223,18 +223,8 @@ function showSearchResults(tabToShow)	{
 	
 	jQuery('#results-div').empty();
 	
-	// work out which tab is open and needs updating, if we don't have a specific one
-	if (tabToShow == null) {
-		if (jQuery('#analysisViewTab.ui-state-active').size() > 0) {
-			tabToShow = 'analysis'
-		}
-		else {
-			tabToShow = 'table'
-		}
-	}
-	
 	// call method which retrieves facet counts and search results
-	showFacetResults(tabToShow);
+	showFacetResults();
 	
 	//all analyses will be closed when doing a new search, so clear this array
 	openAnalyses = [];
@@ -242,7 +232,7 @@ function showSearchResults(tabToShow)	{
 }
 
 //Method to load the facet results in the search tree and populate search results panel
-function showFacetResults(tabToShow)	{
+function showFacetResults()	{
 	
 	var savedSearchTermsArray;
 	var savedSearchTerms;
@@ -336,50 +326,33 @@ function showFacetResults(tabToShow)	{
     //Show significant results is disabled
    	//queryString = queryString + "&showSignificantResults=" + document.getElementById('cbShowSignificantResults').checked
     
-	jQuery.ajax({
-		url:facetResultsURL,
-		data: queryString + "&searchTerms=" + savedSearchTerms,
-		success: function(response) {
-			
-
-				//var facetCounts = response['facetCounts'];
-				//var html = response['html'];
-				
-				// set html for results panel
-				//document.getElementById('results-div').innerHTML = html;
-				
-				jQuery('#results-div').html(response);
-
-				// assign counts that were returned in json object to the tree
-//				tree.visit(  function(node) {
-//					           if (!node.data.isCategory && node.data.id)  {
-//					        	   var id = node.data.id.toString();
-//					        	   var catFields = node.data.categoryName.split("|")
-//					        	   var cat = catFields[1].replace(" ","_");
-//					        	   //var catArray = response[cat];
-//					        	   var catArray = facetCounts[cat];
-//					        	   var count = catArray[id];
-//					        	   
-//					        	   // no count returned for this node means it isn't in solr index because no records exist
-//					        	   if (!count)  {
-//					        		   count = 0;
-//					        	   }
-//					        	   
-//					        	   updateNodeIndividualFacetCount(node, count);   
-//					           }
-//				             }
-//			                 , false
-//			               );
-//									
-				 // redraw entire tree after counts updated
-				// tree.redraw();
-			//}
-
-		},
-		error: function(xhr) {
-			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
-		}
-	});
+    
+    if (searchPage == 'RWG') {
+		jQuery.ajax({
+			url:facetResultsURL,
+			data: queryString + "&searchTerms=" + savedSearchTerms + "&page=RWG",
+			success: function(response) {
+	
+					jQuery('#results-div').html(response);
+	
+			},
+			error: function(xhr) {
+				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+			}
+		});
+    }
+    else {
+		jQuery.ajax({
+			url:facetResultsURL,
+			data: queryString + "&searchTerms=" + savedSearchTerms + "&page=datasetExplorer",
+			success: function(response) {
+					searchByTagComplete(response);
+			},
+			error: function(xhr) {
+				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+			}
+		});
+    }
 
 }
 

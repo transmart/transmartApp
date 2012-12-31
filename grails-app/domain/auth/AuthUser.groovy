@@ -1,3 +1,6 @@
+package auth
+
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 

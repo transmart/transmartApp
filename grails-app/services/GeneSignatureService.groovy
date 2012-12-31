@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import search.GeneSignatureItem;
 import search.GeneSignatureFileSchema;
 import search.GeneSignature;
+import auth.AuthUser;
 import bio.BioMarker;
 import bio.BioData;
 import bio.BioAssayAnalysisData;

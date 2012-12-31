@@ -174,6 +174,7 @@
 
 <script type="text/javascript">
 	var sessionSearch = "${rwgSearchFilter}";
+	var searchPage = "datasetExplorer";
 	var $j = jQuery.noConflict();
 	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 

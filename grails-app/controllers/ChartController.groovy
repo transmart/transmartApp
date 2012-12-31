@@ -96,6 +96,9 @@ import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.IntervalXYDataset;
+
+import auth.AuthUser;
+
 import com.recomdata.charting.PieRenderer;
 import com.recomdata.export.ExportTableNew;
 import com.recomdata.statistics.StatHelper;

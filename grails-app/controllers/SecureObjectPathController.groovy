@@ -18,7 +18,7 @@
  ******************************************************************/
   
 
-
+ import auth.*;
 
 class SecureObjectPathController {
 

@@ -18,6 +18,7 @@
  ******************************************************************/
   
 
+import auth.AuthUser;
 import bio.BioDataExternalCode;
 import search.SearchKeyword
 import search.SearchKeywordTerm

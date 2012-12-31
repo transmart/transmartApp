@@ -24,6 +24,7 @@
  * @version $Revision: 10098 $
  */
 
+import auth.*;
 import search.GeneSignature
 
 /**

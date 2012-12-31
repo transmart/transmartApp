@@ -1,3 +1,5 @@
+package auth
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -19,33 +21,41 @@
   
 
  /**
-  * $Id: Requestmap.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+  * $Id: UserGroup.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
   * @author $Author: mmcduffie $
   * @version $Revision: 9178 $
   */
 
 /**
- * Request Map domain class.
+ * Group class.
  */
-class Requestmap {
+class UserGroup extends Principal{
 
-	String url
-	String configAttribute
-	Long id
-	Long version
-	static mapping ={
-		table 'SEARCH_REQUEST_MAP'
-		 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-		 columns {
-			id column:'ID'
-			version column:'VERSION'
-			configAttribute column:'CONFIG_ATTRIBUTE'
-			url column:'URL'
-			}
+	String groupCategory;
+
+	static hasMany = [members:AuthUser]
+	//static belongsTo = AuthUser
+
+
+	static mapping = {
+		table 'SEARCH_AUTH_GROUP'
+
+		columns
+		{
+			groupCategory column:'GROUP_CATEGORY'
+			members joinTable: [name: 'SEARCH_AUTH_GROUP_MEMBER', column: 'AUTH_USER_ID', key: 'AUTH_GROUP_ID' ]
+
+		}
 
 	}
+
 	static constraints = {
-		url(blank: false, unique: true)
-		configAttribute(blank: false)
+
+	}
+
+	public UserGroup(){
+		groupCategory='USER_GROUP';
+		this.type ='GROUP';
+
 	}
 }

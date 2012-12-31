@@ -21,6 +21,7 @@
 /* SubsetTool.js
 Jeremy M. Isikoff
 Recombinant */
+
 String.prototype.trim = function() {
 	return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
@@ -1584,7 +1585,7 @@ function projectDialogComplete(projectid)
       {
       alert('waiting');
       } */
-	getCategories();
+	showAnalyzeSearchResults();
 	//getPreviousQueries();
 	if(GLOBAL.RestoreComparison)
 	{
@@ -1679,7 +1680,7 @@ function createTree(includeExcludeFlag, ontresponse){
 			{
 				text : 'root',
 				draggable : false,
-				id : 'root',
+				id : 'treeRoot',
 				qtip : 'root'
 			}
 	);
@@ -1764,7 +1765,7 @@ function getSubCategories(id_in, title_in, ontresponse)
 		}
     ]);
 	
-	var ontTree = new Tree.TreePanel(
+	ontTree = new Tree.TreePanel(
 			{
 				id : id_in,
 				title : title_in,
@@ -4194,13 +4195,13 @@ function searchByTagBefore()
 			return false;
 		}
 	}
-	for(c = ontFilterTreeRoot.childNodes.length - 1;
+	for(c = treeRoot.childNodes.length - 1;
 	c >= 0;
 	c -- )
 	{
-		ontFilterTreeRoot.childNodes[c].remove();
+		treeRoot.childNodes[c].remove();
 	}
-	ontFilterTree.render();
+	ontTree.render();
 	viewport.el.mask("Searching...")
 	return true;
 }
@@ -4208,9 +4209,10 @@ function searchByTagComplete(response)
 {
 	// shorthand
 	var Tree = Ext.tree;
+	var treeRoot = ontTree.getRootNode();
 	//ontFilterPanel.el.unmask();
 	viewport.el.unmask();
-	var robj=response.responseText.evalJSON();
+	var robj=response;
 	var rtext=robj.resulttext;
 	var concepts = robj.concepts;
 	// concept = concepts[4];
@@ -4219,6 +4221,14 @@ function searchByTagComplete(response)
 	var length;
 	var leaf = false;
 	var draggable = false;
+	
+	for(c = treeRoot.childNodes.length - 1;
+	c >= 0;
+	c -- )
+	{
+		treeRoot.childNodes[c].remove();
+	}
+	
 	if(concepts != undefined)
 	{
 		if(concepts.length < GLOBAL.MaxSearchResults)
@@ -4232,11 +4242,12 @@ function searchByTagComplete(response)
 		for(var c = 0; c < length; c ++ )
 		{
 			var newnode=getTreeNodeFromJSON(concepts[c])
-			ontFilterTreeRoot.appendChild(newnode);
+			treeRoot.appendChild(newnode);
 			setTreeNodeSecurity(newnode, concepts[c].access);
 		}
-		var t=document.getElementById("searchresultstext");
-		t.innerHTML=rtext;
+		//var t=document.getElementById("searchresultstext");
+		//t.innerHTML=rtext;
+		ontTree.render();
 	}
 }
 
@@ -4543,4 +4554,8 @@ function toggleSidebar() {
 	    panel.setVisible(false); 
 	}
 	viewport.doLayout();
+}
+
+function showAnalyzeSearchResults() {
+	getCategories();
 }

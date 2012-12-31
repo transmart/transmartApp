@@ -78,8 +78,12 @@ import oracle.jdbc.driver.OracleTypes
 
 import org.Hibernate.*;
 
+import auth.AuthUser;
+
 import com.recomdata.db.DBHelper;
 import com.recomdata.export.*;
+
+import auth.*;
 
 /**
  * ResNetService that will provide an .rnef file for Jubilant data
