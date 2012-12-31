@@ -38,62 +38,14 @@ class OntologyService {
     		def myNodes;
 			
 			if(searchterms?.size() ==0) {
-				searchterm = null;
+				searchterms = null;
 			}
-    		log.trace("searching for:"+searchtags+" of type"+tagsearchtype+"with searchterms:"+searchterms.join(","))
+    		log.trace("searching for:"+searchtags+" of type"+tagsearchtype+"with searchterms:"+searchterms?.join(","))
 			def myCount  =0;
 			def allSystemCds = []
 			def visualAttrHiddenWild = '%H%';
 			
-			if(searchterms==null){// if there is no search term just do exact match
-    		def c = i2b2.OntNode.createCriteria()
-    		 myCount = c.get{
-    		    projections{
-    				countDistinct("id")
-    				and
-    			{
-    				if(searchtags!=null)
-    				{
-    					tags {
-    						and {
-    							eq('tagtype', tagsearchtype)
-    							'in'("tag", searchtags)	
-    							}
-    						}
-    				}
-					not {ilike('visualattributes', '%H%')} //h for hidden
-    			}
-    		    }
-    		}
-    		log.trace("SEARCH COUNT:"+myCount);
-			
-			def d=i2b2.OntNode.createCriteria();
-			myNodes = d.list {
-				and
-				{
-					if(searchtags!=null)
-					{
-						tags {
-							and {
-								//like('tag', '%'+tagsearchterm+'%')
-								eq('tagtype', tagsearchtype)
-								'in'("tag", searchtags)
-								}
-							}
-					}
-					if(searchterm!=null)
-					{
-						ilike('name', '%'+searchterm+'%')
-					}
-					not {ilike('visualattributes', '%H%')} //h for hidden
-				}
-				maxResults(100)
-			}
-			}else {
-			// if there is a search term then use tag type to find system cd
-			// this is not a generic solution - 
-			// if tag type is all then do a name like search
-			
+			//Build queries for search terms and accessions to include
 			def searchtermstring = ""
 			for (searchterm in searchterms) {
 				searchterm = searchterm?.trim();
@@ -105,13 +57,31 @@ class OntologyService {
 					searchtermstring += "lower(o.name) like '"+searchtermWild+"' "
 				}
 			}
+			if (!searchtermstring) {
+				searchtermstring = "2=1"; //No free-text search terms, so this section of the query is always false
+			}
+			
+			def accessionSearchString = ""
+			if (accessionsToInclude) {
+				accessionSearchString += " OR (o.hlevel = 1 AND o.sourcesystemcd IN ("
+				
+				accessionSearchString += "'" + accessionsToInclude.join("','") + "'"
+//				accessionSearchString += "'" + accessionsToInclude[0] + "'"
+//				for (def i = 1; i < accessionsToInclude.size(); i++) {
+//					accessionSearchString += ",'" + accessionsToInclude[i] + "'"
+//				}
+				
+				accessionSearchString += "))"
+			}
 			
 			if(tagsearchtype=='ALL'){
-				def countQuery = "SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE (_searchterms_) AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'"
-				def nodeQuery = "SELECT o from i2b2.OntNode o WHERE (_searchterms_) AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'"
+				def countQuery = "SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE (_searchterms_) _accessionSearch_ AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'"
+				def nodeQuery = "SELECT o from i2b2.OntNode o WHERE (_searchterms_) _accessionSearch_ AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'"
 				
-				countQuery = countQuery.replace("_searchterms_", searchtermstring)
-				nodeQuery = nodeQuery.replace("_searchterms_", searchtermstring)
+				countQuery = countQuery.replace("_searchterms_", searchtermstring).replace("_accessionSearch_", accessionSearchString)
+				nodeQuery = nodeQuery.replace("_searchterms_", searchtermstring).replace("_accessionSearch_", accessionSearchString)
+
+				println (nodeQuery)
 				
 				myCount = i2b2.OntNode.executeQuery(countQuery)[0]
 				myNodes = i2b2.OntNode.executeQuery(nodeQuery, [max:100])
@@ -129,7 +99,7 @@ class OntologyService {
 				nodeQuery = nodeQuery.replace("_searchterms_", searchtermstring)
 				myNodes = i2b2.OntNode.executeQuery(nodeQuery, [scdArg:allSystemCds], [max:100])
 			}
-			 }
+			 //}
 			
     	
     		//check the security
