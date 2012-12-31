@@ -342,16 +342,22 @@ function showFacetResults()	{
 		});
     }
     else {
-		jQuery.ajax({
-			url:facetResultsURL,
-			data: queryString + "&searchTerms=" + savedSearchTerms + "&page=datasetExplorer",
-			success: function(response) {
-					searchByTagComplete(response);
-			},
-			error: function(xhr) {
-				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
-			}
-		});
+    	//If there are no search terms, pass responsibility on to getCategories - if not, do our custom search
+    	if (savedSearchTermsArray.length == 0) {
+    		getCategories();
+    	}
+    	else {
+			jQuery.ajax({
+				url:facetResultsURL,
+				data: queryString + "&searchTerms=" + savedSearchTerms + "&page=datasetExplorer",
+				success: function(response) {
+						searchByTagComplete(response);
+				},
+				error: function(xhr) {
+					console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+				}
+			});
+    	}
     }
 
 }
@@ -710,10 +716,11 @@ jQuery(document).ready(function() {
 //    	classNames: {connector: "dynatree-no-connector"}
 //    });
     
-    //Trigger a search immediately
+    //Trigger a search immediately if RWG. Dataset Explorer does this on Ext load
     loadSearchFromSession();
-	showSearchResults(); //reload the full search results for the analysis/study view
-
+    if (searchPage == 'RWG') {
+		showSearchResults();
+	}
 });
 
 function loadSearchFromSession() {

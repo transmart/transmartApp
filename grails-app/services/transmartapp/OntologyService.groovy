@@ -99,7 +99,7 @@ class OntologyService {
 				searchterm = searchterm?.trim();
 				if (searchterm) {
 					if (!searchtermstring.equals("")) {
-						searchtermstring += "OR"
+						searchtermstring += " OR "
 					}
 					def searchtermWild = '%'+searchterm.toLowerCase()+'%';
 					searchtermstring += "lower(o.name) like '"+searchtermWild+"' "

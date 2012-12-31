@@ -1111,7 +1111,7 @@ function createOntPanel()
 			}
 	);
 
-	// make the ontSerchByNamePanel
+	// make the ontSearchByNamePanel
 	shtml='<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>\
 		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td<td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15"></input>&nbsp;</td>\
 		<td><button onclick="searchByName()">Find</button></td></tr><tr><td colspan="2">Select Ontology:<select id="searchByNameSelectOntology"></select></td></tr></table>';
@@ -1278,6 +1278,8 @@ function createOntPanel()
 //		ontFilterPanel.add(ontFilterTree);
 		// ontTabPanel.add(ontSearchByCodePanel);
 
+		setupOntTree('navigateTermsPanel', 'Navigate Terms');
+		
 		return ontTabPanel;
 }
 
@@ -1585,7 +1587,6 @@ function projectDialogComplete(projectid)
       {
       alert('waiting');
       } */
-	showAnalyzeSearchResults();
 	//getPreviousQueries();
 	if(GLOBAL.RestoreComparison)
 	{
@@ -1645,13 +1646,7 @@ function getPreviousQueriesComplete(response)
 }
 
 function getCategoriesComplete(ontresponse){
-//	ontTabPanel.add(ontFilterPanel);
-//	ontFilterTree.dragZone.addToGroup("analysis");
-	getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
-//	if(GLOBAL.hideAcrossTrialsPanel!='true'){
-//		getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
-//		}
-//	setActiveTab();
+	getSubCategories(ontresponse);
 }
 
 function setActiveTab(){
@@ -1667,105 +1662,15 @@ function setActiveTab(){
 	ontTabPanel.setActiveTab(activeTab);
 }
 
-/*If includeExcludeFlag is
- * -"include": Across Trials is the only concept included
- * -"exclude": Across Trials concept is the only concept excluded 
- */
-function createTree(includeExcludeFlag, ontresponse){
-	// shorthand
+function setupOntTree(id_in, title_in) {
+	
 	var Tree = Ext.tree;
 	
-	var concepts = ontresponse.responseXML.selectNodes('//concept');
-	var treeRoot = new Tree.TreeNode(
-			{
-				text : 'root',
-				draggable : false,
-				id : 'treeRoot',
-				qtip : 'root'
-			}
-	);
-	for(var c = 0; c < concepts.length; c ++ )
-	{
-		var level = concepts[c].selectSingleNode('level').firstChild.nodeValue;
-		var key = concepts[c].selectSingleNode('key').firstChild.nodeValue;
-		var name = concepts[c].selectSingleNode('name').firstChild.nodeValue;
-		var tooltip = concepts[c].selectSingleNode('tooltip').firstChild.nodeValue;
-		var dimcode = concepts[c].selectSingleNode('dimcode').firstChild.nodeValue;
-		
-		if(includeExcludeFlag==="include" && name!=="Across Trials") continue;
-		if(includeExcludeFlag==="exclude" && name==="Across Trials") continue;
-		// set the root node
-		var autoExpand=false;
-		if(GLOBAL.PathToExpand.indexOf(key)>-1) autoExpand=true;
-		var ontRoot = new Tree.AsyncTreeNode(
-				{
-					text : name,
-					draggable : false,
-					id : key,
-					qtip : tooltip,
-					expanded : autoExpand
-				}
-		);
-		
-		treeRoot.appendChild(ontRoot);
-		/*****************************************/
-		var fullname=key.substr(key.indexOf("\\",2), key.length);
-		var access=GLOBAL.InitialSecurity[fullname];
-
-		if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
-		{
-			//leave node unlocked must have some read access
-		}
-		else
-		{
-			//default node to locked
-			//child.setText(child.text+" <b>Locked</b>");
-			ontRoot.attributes.access='locked';
-			ontRoot.disable();
-			ontRoot.on('beforeload', function(node){alert("Access to this node has been restricted. Please contact your administrator for access."); return false});
-		}
-	}
-	return treeRoot;
-}
-
-/*
- * the id_in drives which off these tabs is created
- * 
- */
-function getSubCategories(id_in, title_in, ontresponse)
-{
-	// shorthand
-	var Tree = Ext.tree;
-
-	var treeRoot;
-	
-	var showFn;
-	
-	if (id_in==='crossTrialsPanel'){
-		showFn = function(node, e){
-			Ext.tree.TreePanel.superclass.onShow.call(this);
-			//Ext.get('advancedbutton').dom.style.display='none';
-		}
-		treeRoot = createTree('include', ontresponse);
-	}else{
-		showFn = function(node, e){
-			Ext.tree.TreePanel.superclass.onShow.call(this);
-			//Ext.get('advancedbutton').dom.style.display='';
-		}
-		treeRoot = createTree('exclude', ontresponse);
+	var showFn = function(node, e){
+		Ext.tree.TreePanel.superclass.onShow.call(this);
 	}
 	
-    var toolbar = new Ext.Toolbar([
-		{
-			id:'contextHelp-button',
-			handler: function(event, toolEl, panel){
-			   	D2H_ShowHelp((id_in=="navigateTermsPanel")?"1066":"1091",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-			},
-		    iconCls: "contextHelpBtn"  
-		}
-    ]);
-	
-	ontTree = new Tree.TreePanel(
+	var ontTree = new Tree.TreePanel(
 			{
 				id : id_in,
 				title : title_in,
@@ -1800,37 +1705,142 @@ function getSubCategories(id_in, title_in, ontresponse)
 
 			}
 	);
-
+	
+	var treeRoot = new Tree.TreeNode(
+			{
+				text : 'root',
+				draggable : false,
+				id : 'treeRoot',
+				qtip : 'root'
+			}
+	);
 
 	// add a tree sorter in folder mode
 	new Tree.TreeSorter(ontTree,
 			{
 		folderSort : true
 			}
-	);
+	);	
+	
 	ontTree.setRootNode(treeRoot);
-	//ontTree.add(toolbar);
 	ontTabPanel.add(ontTree);
-	/*if(GLOBAL.IsAdmin)
-   {
-   	ontTabPanel.add(searchByNamePanel);
-   	ontTabPanel.setActiveTab('searchByNamePanel');
-   }*/
+	ontTabPanel.doLayout();
+	onWindowResize();
+	
+	//Now that the ont tree has been set up, call the initial search
+	showSearchResults();
+}
 
+/*If includeExcludeFlag is
+ * -"include": Across Trials is the only concept included
+ * -"exclude": Across Trials concept is the only concept excluded 
+ */
+function createTree(includeExcludeFlag, ontresponse){
+	// shorthand
+	var Tree = Ext.tree;
+	var ontRoots = [];
+	
+	var concepts = ontresponse.responseXML.selectNodes('//concept');
+	var treeRoot = new Tree.TreeNode(
+			{
+				text : 'root',
+				draggable : false,
+				id : 'treeRoot',
+				qtip : 'root'
+			}
+	);
+	for(var c = 0; c < concepts.length; c ++ )
+	{
+		var level = concepts[c].selectSingleNode('level').firstChild.nodeValue;
+		var key = concepts[c].selectSingleNode('key').firstChild.nodeValue;
+		var name = concepts[c].selectSingleNode('name').firstChild.nodeValue;
+		var tooltip = concepts[c].selectSingleNode('tooltip').firstChild.nodeValue;
+		var dimcode = concepts[c].selectSingleNode('dimcode').firstChild.nodeValue;
+		
+		if(includeExcludeFlag==="include" && name!=="Across Trials") continue;
+		if(includeExcludeFlag==="exclude" && name==="Across Trials") continue;
+		// set the root node
+		var autoExpand=false;
+		if(GLOBAL.PathToExpand.indexOf(key)>-1) autoExpand=true;
+		var ontRoot = new Tree.AsyncTreeNode(
+				{
+					text : name,
+					draggable : false,
+					id : key,
+					qtip : tooltip,
+					expanded : autoExpand
+				}
+		);
+		
+		//treeRoot.appendChild(ontRoot);
+		
+		/*****************************************/
+		var fullname=key.substr(key.indexOf("\\",2), key.length);
+		var access=GLOBAL.InitialSecurity[fullname];
+
+		if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
+		{
+			//leave node unlocked must have some read access
+		}
+		else
+		{
+			//default node to locked
+			//child.setText(child.text+" <b>Locked</b>");
+			ontRoot.attributes.access='locked';
+			ontRoot.disable();
+			ontRoot.on('beforeload', function(node){alert("Access to this node has been restricted. Please contact your administrator for access."); return false});
+		}
+		
+		ontRoots.push(ontRoot);
+	}
+	return ontRoots;
+}
+
+/*
+ * the id_in drives which off these tabs is created
+ * 
+ */
+function getSubCategories(ontresponse)
+{
+	// shorthand
+	var Tree = Ext.tree;
+	
+	var showFn;
+	
+	var ontRoots = createTree('exclude', ontresponse);
+	
+    var toolbar = new Ext.Toolbar([
+		{
+			id:'contextHelp-button',
+			handler: function(event, toolEl, panel){
+			   	D2H_ShowHelp((id_in=="navigateTermsPanel")?"1066":"1091",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+			},
+		    iconCls: "contextHelpBtn"  
+		}
+    ]);
+	
+    var treeRoot = Ext.getCmp('navigateTermsPanel').getRootNode();
+	for(c = treeRoot.childNodes.length - 1; c >= 0; c -- ) {
+		treeRoot.childNodes[c].remove();
+	}
+	
+	for(var c = 0; c < ontRoots.length; c ++ )
+	{
+		var newnode=ontRoots[c];
+		treeRoot.appendChild(newnode);
+	}
+        
 	if(GLOBAL.Debug)
 	{
 		alert(ontresponse.responseText);
 	}
 
-	// ontTabPanel.add(ontSearchTermsPanel);
-	ontTabPanel.doLayout();
 	onWindowResize();
-	ontTree.dragZone.addToGroup("analysis");
+	Ext.getCmp('navigateTermsPanel').render();
 	/*if(GLOBAL.IsAdmin)
    {
    	searchByNameTree.dragZone.addToGroup("analysis");
    }*/
-	
 }
 
 function ontLoadNode(node)
@@ -4209,7 +4219,7 @@ function searchByTagComplete(response)
 {
 	// shorthand
 	var Tree = Ext.tree;
-	var treeRoot = ontTree.getRootNode();
+	var treeRoot = Ext.getCmp('navigateTermsPanel').getRootNode();
 	//ontFilterPanel.el.unmask();
 	viewport.el.unmask();
 	var robj=response;
@@ -4247,7 +4257,8 @@ function searchByTagComplete(response)
 		}
 		//var t=document.getElementById("searchresultstext");
 		//t.innerHTML=rtext;
-		ontTree.render();
+		Ext.getCmp('navigateTermsPanel').render();
+		onWindowResize();
 	}
 }
 
@@ -4554,8 +4565,4 @@ function toggleSidebar() {
 	    panel.setVisible(false); 
 	}
 	viewport.doLayout();
-}
-
-function showAnalyzeSearchResults() {
-	getCategories();
 }

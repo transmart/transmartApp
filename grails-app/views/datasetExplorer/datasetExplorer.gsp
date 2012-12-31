@@ -41,7 +41,7 @@
 <script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script> 
 
 <script type="text/javascript"
-	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+	src="${resource(dir:'js', file:'ext/ext-all-debug.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js/ext-ux', file:'miframe.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>
