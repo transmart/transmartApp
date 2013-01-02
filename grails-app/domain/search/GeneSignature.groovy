@@ -26,6 +26,7 @@
 
  package search
 
+import auth.AuthUser;
  import bio.BioAssayPlatform
  import bio.Compound
  import bio.ConceptCode
@@ -34,7 +35,6 @@
  import com.recomdata.util.IDomainExcelWorkbook
  import com.recomdata.util.ExcelSheet
  import com.recomdata.util.ExcelGenerator
-
 /**
  * GeneSignature domain class
  */

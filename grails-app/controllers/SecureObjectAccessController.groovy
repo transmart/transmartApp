@@ -18,6 +18,7 @@
  ******************************************************************/
   
 
+import auth.*;
 import command.SecureObjectAccessCommand
 
 

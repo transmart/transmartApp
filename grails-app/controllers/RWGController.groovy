@@ -43,6 +43,8 @@ class RWGController {
 	def springSecurityService
 	def formLayoutService
 	def fmFolderService
+	def ontologyService
+	def solrFacetService
 	
     def index = {
 		def rwgSearchFilter = session['rwgSearchFilter'];
@@ -187,343 +189,9 @@ class RWGController {
    * Create the JSON string used as the "children" of the taxonomy DynaTree
    */
   def getDynatree = {
-  
-//	  // find all relationships
-//	  def rels = SearchTaxonomyRels.list()
-//	  
-//	  // retrieve all taxonomy records (i.e. nodes in the tree)
-//	  def allNodes = SearchTaxonomy.list()
-//	  
-//	  def rootNode = null
-//
-//	  // loop through every node, and link it to its parent and children to create tree
-//	  for (node in allNodes) {
-//		  for (rel in rels) {
-//			  
-//			  if (rel.parent) {   // non root node
-//				  // check if relationship represents a parent rel for the current node, and if so add the
-//				  // child to the node's children list
-//				  if (node.id == rel.parent.id) {
-//					  node.children.add(rel.child)
-//				  }
-//				  
-//				  // check if relationship represents a child rel for the current node, and if so add the
-//				  // parent to the node's parent list
-//				  if (node.id == rel.child.id) {
-//					  node.parents.add(rel.parent)
-//				  }
-//			  }
-//			  else {    // root node found
-//				  rootNode = rel.child
-//			  }
-//		  }
-//	  }
-//
-//	  JSONArray categories = new JSONArray()
-//	  
-//	  if (rootNode.children)  {
-//		  
-//		  def categoriesList = []
-//		  // loop thru all children of root and create a list of categories to be used for initial facet search
-//		  for (categoryNode in rootNode.children)  {
-//			  String catName = categoryNode.termName
-//			  
-//			  // SOLR equivalent field is all uppercases with underscores instead of spaces
-//			  catName = getSOLRCategoryName(catName)
-//			  categoriesList.push(catName)
-//		  }
-//
-//		  
-//		  // retrieve initial facet counts to be used in tree
-//		  JSONObject initialFacetCounts = getInitialFacetResults(categoriesList)
-//
-//		  // CREATE JSON ARRAY FOR TREE	  		  		  		  		  
-//		  def nodeIndex = 1
-//		  
-//		  // loop thru all children of root and add to JSON array for categories (addNode will recursively add children)
-//		  for (categoryNode in rootNode.children)  {	
-//			  
-//			  // give each node a unique id within tree (id and key are not necessarily unique)
-//			  // the unique id will be a concatenation of the parent's unique id + the index of this child's index in children list
-//			  // e.g. category nodes will be 1,2,3; their children will be 1:1, 1:2, 1:3, 2:1, ...; their children 1:1:1, 1:1:2, ...
-//			  String uniqueTreeId = nodeIndex
-//			  
-//			  addDynaNode(categoryNode, categories, true, categoryNode.termName, uniqueTreeId, initialFacetCounts)
-//			  nodeIndex++
-//		  }
-//		  
-//	  }
-//	  else  {
-//		  throw new Exception("Root node not found")
-//	  }
-//	  
-//	  response.setContentType("text/json")
-//	  response.outputStream << categories?.toString()
 	  
 	  render("Not implemented");
 
-   }
-  
-   /**
-    * Create a query string for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
-    */
-   def createCategoryQueryString = {category, termList -> 
-
-       // create a query for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
-       String categoryQuery = ""
-       for (t in termList.tokenize("|"))  {
-		   
-		   //If searching on text, add wildcards
-		   if (category.equals("FREETEXT")) {
-			   t = "*" + t + "*";
-		   }
-	   
-	       def queryTerm = /${category}:${t}/
-	   
-	       if (categoryQuery == "")  {
-		       categoryQuery = queryTerm
-	       }
-	       else  {
-		       categoryQuery = /${categoryQuery} OR ${queryTerm}/
-	       }
-       }
-
-	   // enclose query clause in parens
-       categoryQuery = /(${categoryQuery})/
-	   
-	   return categoryQuery
-  }
-   
-
-   
-   /**
-   * Create the SOLR query string for the faceted fields (i.e. those that are in tree) that
-   *   are not being filtered on
-   * It will be of form facet.field=<cat1>&facet.field=<cat2>
-   */
-	def createSOLRFacetedFieldsString = {facetFieldsParams ->
-	   def facetedFields=""
-	   // loop through each regular query parameter
-	   for (ff in facetFieldsParams)  {
-		   
-		   //This list should be in a config, but we don't facet on some of the fields.
-		   if(ff != "REGION_OF_INTEREST" && ff != "GENE" && ff != "SNP")
-		   {
-			   // skip TEXT search fields (these wouldn't be in tree so throw exception since this should never happen)
-			   if (ff =="TEXT")  {
-				   throw new Exception("TEXT field encountered when creating faceted fields string")
-			   }
-		
-			   def ffClause = /facet.field=${ff}/
-			   
-			   if (facetedFields=="")  {
-				   facetedFields = /${ffClause}/			   
-			   }
-			   else  {
-				   facetedFields = /${facetedFields}&${ffClause}/
-			   }
-		   }
-		   
-	   }
-	
-	   return facetedFields
-	}
-
-   /**
-       * Create the SOLR query string for the faceted fields (i.e. those that are in tree) that are being filtered
-       * It will be of form facet=true&facet.field=(!ex=c1)<cat1>&facet.field=(!ex=c2)<cat2>&
-       *     fq={!tag=c1}(<cat1>:"term1" OR <cat1>:"term2")&.... )
-       * Each category query gets tagged in fq clauses {!tag=c1}, and then the category query is excluded
-       *   for determining the facet counts (!ex=c1) in facet.field clauses
-       */         
-   def createSOLRFacetedQueryString = {facetQueryParams ->
-	   def facetedQuery=""
-	   // loop through each regular query parameter
-	   for (qp in facetQueryParams)  {
-		   
-    	   // each queryParam is in form cat1:term1|term2|term3
-	       String category = qp.split(":")[0]
-	       String termList = qp.split(":")[1]
-		   
-		   // skip TEXT search fields (these wouldn't be in tree so throw exception since this should never happen)
-		   if (category =="TEXT")  {
-			   throw new Exception("TEXT field encountered when creating faceted search string")
-		   }
-	
-		   def categoryQueryString = createCategoryQueryString(category, termList)
-		   
-		   def categoryTag = /{!tag=${category}}/
-		   
-		   def fqClause = /fq=${categoryTag}${categoryQueryString}/
-
-		   def categoryExclusion = /{!ex=${category}}/		   
-		   def ffClause = /facet.field=${categoryExclusion}${category}/
-		   
-		   def categoryClause = /${ffClause}&${fqClause}/
-
-		   if (facetedQuery=="")  {
-			   facetedQuery = /${categoryClause}/
-		   }
-		   else  {
-		       facetedQuery = /${facetedQuery}&${categoryClause}/
-		   }
-		   
-	   }	   
-
-	   return facetedQuery
-   }
-
-   /**
-    * Create the SOLR query string for the nonfaceted fields (i.e. those that are not in tree)
-    * It will be of form ((<cat1>:"term1" OR <cat1>:"term2") AND ( (<cat2>:"term3") ) AND () .. )
-    */
-   public String createSOLRNonfacetedQueryString(List queryParams) {
-	   def nonfacetedQuery=""
-	   // loop through each regular query parameter
-	   for (qp in queryParams)  {
-		   
-    	   // each queryParam is in form cat1:term1|term2|term3
-	       String category = qp.split(":")[0]
-	       String termList = qp.split(":")[1]
-
-   		   def categoryQueryString = createCategoryQueryString(category, termList)
-		   
-		   // skip TEXT search fields (or do we need to handle them somehow)
-		   if (category =="TEXT")  {
-			   continue
-		   }
-
-		   // add category query to main nonfaceted query string using ANDs between category clauses
-		   if (nonfacetedQuery == "")  {
-			   nonfacetedQuery = categoryQueryString
-		   }
-		   else  {
-			   nonfacetedQuery = /${nonfacetedQuery} AND ${categoryQueryString}/
-		   }
-	   }
-	   
-	   // use all query if no params provided 
-	   if (nonfacetedQuery == "")  {
-		   nonfacetedQuery = "*:*"
-	   }
-
-	   nonfacetedQuery = /q=(${nonfacetedQuery})/
-	   
-       return nonfacetedQuery
-   }
-
-   /**
-   * Execute the SOLR faceted query
-   * @param solrRequestUrl - the base URL for the SOLR request
-   * @param solrQueryParams - the query string for the faceted search, to be passed into the data for the POST request
-   * @return JSONObject containing the facet counts
-   */
-   def executeSOLRFacetedQuery = {solrRequestUrl, solrQueryParams, returnAnalysisIds ->
-	   
-	   println (solrQueryParams)
-	   
-	   JSONObject facetCounts = new JSONObject()
-	   //solrQueryParams = "q=(*:*)"
-	   //solrQueryParams = solrQueryParams.substring(0, solrQueryParams.lastIndexOf(")")+1)
-	   //solrQueryParams += "&facet=true&rows=0&facet.field=ANALYSIS_ID"
-	   
-	   def slurper = new XmlSlurper()
-
-   	   // submit request
-	   def solrConnection = new URL(solrRequestUrl).openConnection()
-	   solrConnection.requestMethod= "POST"
-	   solrConnection.doOutput = true
-
-	   // add params to request 	   	   
-	   def dataWriter = new OutputStreamWriter(solrConnection.outputStream)
-	   dataWriter.write(solrQueryParams)
-	   dataWriter.flush()
-	   dataWriter.close()
-	   
-	   def folderIdNodes   // will store the folder IDs
-	   
-	   // process response
-	   if (solrConnection.responseCode == solrConnection.HTTP_OK)  {
-		   def xml
-		   
-		   solrConnection.inputStream.withStream {
-			   xml = slurper.parse(it)
-		   }
-		   
-		   // retrieve all folderIds from the returned data
-		   folderIdNodes = xml.result.doc.str.findAll{it.@name == 'FOLDERID'}
-		   
-		   def result = new StreamingMarkupBuilder().bind{
-			   mkp.yield xml
-		   }
-		   println result
-	   }
-	   else {
-		   throw new Exception("SOLR Request failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
-	   }
-	   
-	   solrConnection.disconnect()
-			  
-	   def folderMap = [:]
-	   
-	   // Construct map of matching folders
-	   for (node in folderIdNodes) {
-		   // retrieve the category name from the xml node
-		   def folderId = node.text()
-		   println ("Got folderId: " + folderId)
-		   def folder = FmFolder.get(folderId);
-		   
-		   while (folder != null) {
-			   def currentEntry = folderMap[folder.folderLevel]
-			   if (currentEntry == null) {
-				   currentEntry = []
-			   }
-			   if (!currentEntry.contains(folder.id)) {
-				   currentEntry.push(folder.id)
-				   folderMap[folder.folderLevel] = currentEntry;
-			   }
-			   println ("Added: " + folder.folderLevel + ", " + folder.id);
-			   folder = folder.parent
-		   }
-	   }
-	   
-	   return folderMap
-   }
-
-   /**
-   * Create the SOLR query string for the faceted query
-   * @param nonfacetedQueryString - the portion of the URL containing the non faceted query string
-   * @param facetedQueryString - the portion of the URL containing the faceted query string
-   * @param facetedFieldsString - the portion of the URL containing the faceted fields string
-   * @param maxRows - max number of result rows to return (default to 0
-   * @return string containing the SOLR query string
-   */
-   def createSOLRQueryString = {
-	   nonfacetedQueryString, facetedQueryString, facetedFieldsString, maxRows=1000, facetFlag=false ->
-	   def solrQuery = /${nonfacetedQueryString}&facet=${facetFlag}&rows=${maxRows}/
-	
-	   if (facetedQueryString != "")  {
-  	       solrQuery = /${solrQuery}&${facetedQueryString}/	   
-	   }
-
-	   if (facetedFieldsString != "")  {
-			 solrQuery = /${solrQuery}&${facetedFieldsString}/
-	   }
-	   return solrQuery
-   }
-
-   /**
-   * Create the base URL for the SOLR request
-   * @return string containing the base URL for the SOLR query
-   */
-   def createSOLRQueryPath = {
-	   	   
-	   String solrScheme = grailsApplication.config.com.rwg.solr.scheme
-	   String solrHost = grailsApplication.config.com.rwg.solr.host
-	   String solrPath = grailsApplication.config.com.rwg.solr.path
-	   String solrRequestUrl = new URI(solrScheme, solrHost, solrPath, "", "").toURL()
-	   
-	   return solrRequestUrl
    }
 
    /**
@@ -645,8 +313,8 @@ class RWGController {
 	   if (searchTerms != null && searchTerms[0] == "") {searchTerms = null;}
 	   session['rwgSearchFilter'] = searchTerms
 	   
-	   //If we have no search terms, just do a top-level search
-	   if (searchTerms == null || searchTerms.size() == 0) {
+	   //If we have no search terms and this is for RWG, just return the top level
+	   if ((searchTerms == null || searchTerms.size() == 0) && params.page.equals('RWG')) {
 		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null, [:]).folders])
 		   return
 	   }
@@ -676,31 +344,17 @@ class RWGController {
 	   
 	   log.info("facet search: " + params)
 	   
-	   // build the SOLR query
-	   def nonfacetedQueryString = createSOLRNonfacetedQueryString(queryParams)
-	   def facetedQueryString = createSOLRFacetedQueryString(facetQueryParams)
-	   def facetedFieldsString = createSOLRFacetedFieldsString(facetFieldsParams)
-	   
-	   String solrRequestUrl = createSOLRQueryPath()
-	   String solrQueryString = createSOLRQueryString(nonfacetedQueryString, facetedQueryString, facetedFieldsString)
-       def folderMap = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
-
-	   session['folderSearchMap'] = folderMap;
-	   
-	   def folderContents = fmFolderService.getFolderContents(null, session['folderSearchMap'])
-		
-		render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files])
-	   	   
-//	   def studyCounts = facetCounts['STUDY_ID']
-	   
-//	   // retrieve the html string for the results template	   
-//	   def html = loadSearchResults(studyCounts, startTime)	   
-//	   // create a return json object containing both the facet counts to load into tree and html to load into results section
-//	   JSONObject ret = new JSONObject()
-//	   ret.put('facetCounts', facetCounts)
-//	   ret.put('html', html)
-//       response.setContentType("text/json")
-//	   response.outputStream << ret?.toString()
+	   if (params.page.equals('RWG')) {
+		   def folderMap = solrFacetService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'foldermap')
+		   session['folderSearchMap'] = folderMap;
+		   
+		   def folderContents = fmFolderService.getFolderContents(null, session['folderSearchMap'])
+		   render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files])
+	   }
+	   else {
+		   def ontologyResult = solrFacetService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'JSON')
+		   render ontologyResult as JSON
+	   }
    }
 
    /**

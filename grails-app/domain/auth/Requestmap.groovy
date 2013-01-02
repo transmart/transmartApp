@@ -1,3 +1,4 @@
+package auth
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -19,63 +20,33 @@
   
 
  /**
-  * $Id: Principal.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+  * $Id: Requestmap.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
   * @author $Author: mmcduffie $
   * @version $Revision: 9178 $
   */
 
 /**
- * principal class.
+ * Request Map domain class.
  */
-class Principal {
-	static transients = ['principalNameWithType']
+class Requestmap {
 
-	Long id ;
-	boolean enabled
-	String type;
-	String name;
-	String uniqueId =''
-	Date dateCreated
-	Date lastUpdated
-	/** description */
-	String description = ''
-	String principalNameWithType
-
-
-	static mapping = {
-		table 'SEARCH_AUTH_PRINCIPAL'
-		tablePerHierarchy false
-		version false
-		id generator:'assigned'
-		columns
-		{
+	String url
+	String configAttribute
+	Long id
+	Long version
+	static mapping ={
+		table 'SEARCH_REQUEST_MAP'
+		 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		 columns {
 			id column:'ID'
-			uniqueId column:'UNIQUE_ID'
-			name column:'NAME'
-			description column:'DESCRIPTION'
-			enabled column:'ENABLED'
-			type column:'PRINCIPAL_TYPE'
-			dateCreated column:'DATE_CREATED'
-			lastUpdated column:'LAST_UPDATED'
-		}
+			version column:'VERSION'
+			configAttribute column:'CONFIG_ATTRIBUTE'
+			url column:'URL'
+			}
 
 	}
 	static constraints = {
-		//enabled()
-		type(nullable:false)
-		description(nullable:true, maxSize:255)
-		uniqueId(nullable:true)
-	}
-
-	def beforeInsert = {
-		uniqueId = type+" "+id;
-	}
-
-	public String getPrincipalNameWithType(){
-		return type+' - '+name;
-	}
-
-	public void setPrincipalNameWithType(String n){
-
+		url(blank: false, unique: true)
+		configAttribute(blank: false)
 	}
 }

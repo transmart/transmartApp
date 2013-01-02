@@ -22,6 +22,7 @@ import javax.servlet.ServletOutputStream
 
 import search.GeneSignature
 import search.GeneSignatureFileSchema
+import auth.AuthUser;
 import bio.BioAssayPlatform
 import bio.CellLine
 import bio.Compound

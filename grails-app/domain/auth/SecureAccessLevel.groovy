@@ -1,3 +1,4 @@
+package auth
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,34 +19,23 @@
  ******************************************************************/
   
 
- /**
-  * $Id: Requestmap.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
-  */
 
-/**
- * Request Map domain class.
- */
-class Requestmap {
-
-	String url
-	String configAttribute
-	Long id
-	Long version
-	static mapping ={
-		table 'SEARCH_REQUEST_MAP'
-		 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-		 columns {
-			id column:'ID'
-			version column:'VERSION'
-			configAttribute column:'CONFIG_ATTRIBUTE'
-			url column:'URL'
-			}
-
+class SecureAccessLevel {
+	static def OWN = "OWN"
+		Long accessLevelValue
+		Long id
+		String accessLevelName
+ static mapping = {
+	 table 'SEARCH_SEC_ACCESS_LEVEL'
+	 version false
+	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+	 columns {
+		accessLevelValue column:'ACCESS_LEVEL_VALUE'
+		id column:'SEARCH_SEC_ACCESS_LEVEL_ID'
+		accessLevelName column:'ACCESS_LEVEL_NAME'
+		}
 	}
-	static constraints = {
-		url(blank: false, unique: true)
-		configAttribute(blank: false)
+ static constraints = {
+	accessLevelName(nullable:true, maxSize:400)
 	}
 }

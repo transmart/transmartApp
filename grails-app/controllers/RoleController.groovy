@@ -24,6 +24,8 @@
  * @version $Revision: 9178 $
  */
 
+import auth.*;
+ 
 /**
  * Authority Controller.
  */

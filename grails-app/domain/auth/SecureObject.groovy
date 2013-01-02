@@ -1,3 +1,4 @@
+package auth
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -19,47 +20,27 @@
   
 
 
-class SecureObjectAccess {
-	static transients = ['objectAccessName','principalAccessName']
-	Long id
-		Principal principal
-		SecureObject secureObject
-		SecureAccessLevel accessLevel
-
-		String objectAccessName
-		String principalAccessName
-
+class SecureObject {
+		Long id
+		Long bioDataId
+		String displayName
+		String dataType
+		String bioDataUniqueId
+		static hasMany=[conceptPaths:SecureObjectPath]
  static mapping = {
-	 table 'SEARCH_AUTH_SEC_OBJECT_ACCESS'
+	 table 'SEARCH_SECURE_OBJECT'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
 	 columns {
-		id column:'AUTH_SEC_OBJ_ACCESS_ID'
-		principal column:'AUTH_PRINCIPAL_ID'
-		secureObject column:'SECURE_OBJECT_ID'
-		accessLevel column:'SECURE_ACCESS_LEVEL_ID'
-		}
+		id column:'SEARCH_SECURE_OBJECT_ID'
+		bioDataId column:'BIO_DATA_ID'
+		displayName column:'DISPLAY_NAME'
+		dataType column:'DATA_TYPE'
+		bioDataUniqueId column:'BIO_DATA_UNIQUE_ID'
+	 }
 	}
-
  static constraints = {
-	//principal(nullable:true)
-
+	bioDataId(nullable:true)
+	dataType(nullable:true, maxSize:400)
 	}
-
-  public String toString(){
-			return objectAccessName();
-	}
-  public String getObjectAccessName() {
-			return secureObject.displayName+' ('+accessLevel.accessLevelName+')';
-		}
-  public void setObjectAccessName(String s){
-
-  }
-  public String getPrincipalAccessName() {
-		return principal.type+'-'+ principal.name+' ('+accessLevel.accessLevelName+')';
-	}
-public void setPrincipalAccessName(String s){
-
-}
-
 }

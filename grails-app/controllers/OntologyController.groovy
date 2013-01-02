@@ -27,6 +27,7 @@ class OntologyController {
     def index = { }
     def i2b2HelperService
     def springSecurityService
+	def ontologyService
     
     def showOntTagFilter= {
     		def tagtypesc=[]
@@ -48,131 +49,13 @@ class OntologyController {
     
     def ajaxOntTagFilter =
     {
-    		def concepts=[];
     		log.trace("called ajaxOntTagFilter")
     		log.trace("tagterm:"+params.tagterm)
-    		def searchtags=params.tagterm;
-    		def searchterm=params.ontsearchterm;
-    		def tagsearchtype=params.tagtype;
-    		def myNodes;
-			searchterm = searchterm.trim();
-			if(searchterm.length()==0)
-				searchterm = null;
-    		log.trace("searching for:"+searchtags+" of type"+tagsearchtype+"with searchterm:"+searchterm)
-			def myCount  =0;
-			def allSystemCds = []
-			def searchtermWild = '%'+searchterm.toLowerCase()+'%';
-			def visualAttrHiddenWild = '%H%';
-			
-			if(searchterm==null){// if there is no search term just do exact match
-    		def c = i2b2.OntNode.createCriteria()
-    		 myCount = c.get{
-    		    projections{
-    				countDistinct("id")
-    				and
-    			{
-    				if(searchtags!=null)
-    				{
-    					tags {
-    						and {
-    							//like('tag', '%'+tagsearchterm+'%') 
-    							eq('tagtype', tagsearchtype)
-    							'in'("tag", searchtags)	
-    							}
-    						}
-    				}
-					not {ilike('visualattributes', '%H%')} //h for hidden
-    			}
-    		    }
-    		}
-    		log.trace("SEARCH COUNT:"+myCount);
-			
-			def d=i2b2.OntNode.createCriteria();
-			myNodes = d.list {
-				and
-				{
-					if(searchtags!=null)
-					{
-						tags {
-							and {
-								//like('tag', '%'+tagsearchterm+'%')
-								eq('tagtype', tagsearchtype)
-								'in'("tag", searchtags)
-								}
-							}
-					}
-					if(searchterm!=null)
-					{
-						ilike('name', '%'+searchterm+'%')
-					}
-					not {ilike('visualattributes', '%H%')} //h for hidden
-				}
-				maxResults(100)
-			}
-			}else {
-			// if there is a search term then use tag type to find system cd
-			// this is not a generic solution - 
-			// if tag type is all then do a name like search
-			if(tagsearchtype=='ALL'){
-				myCount = i2b2.OntNode.executeQuery("SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'")[0]
-				
-				myNodes = i2b2.OntNode.executeQuery("SELECT o from i2b2.OntNode o WHERE lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [max:100])
-  
-			}else{
-			 allSystemCds = i2b2.OntNode.executeQuery("SELECT DISTINCT o.sourcesystemcd FROM i2b2.OntNode o JOIN o.tags t WHERE t.tag IN (:tagArg) AND t.tagtype =:tagTypeArg",[tagArg:searchtags, tagTypeArg:tagsearchtype], [max:800])
-			 	
-			  myCount = i2b2.OntNode.executeQuery("SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [scdArg:allSystemCds])[0]
-			  
-			  myNodes = i2b2.OntNode.executeQuery("SELECT o from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [scdArg:allSystemCds], [max:100])
-			}
-			 }
-			
-    	
-    		//check the security
-    		def keys=[:]
-    		myNodes.each{node ->
-    		//keys.add("\\"+node.id.substring(0,node.id.indexOf("\\",2))+node.id)
-    		keys.put(node.id, node.securitytoken)
-    		log.trace(node.id+" security token:"+node.securitytoken)
-    		}
-    		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
-    		def access=i2b2HelperService.getAccess(keys, user);
-    		log.trace(access as JSON)
-    		
-    		//build the JSON for the client
-    		myNodes.each{node -> 
-    		log.trace(node.id)
-    		/*node.tags.each{
-    				tag -> 
-    				log.debug(tag.id)
-    				log.debug("FOUND A TAG************")
-    		}*/
-    		 def level=node.hlevel
-    		 def key="\\"+node.id.substring(0,node.id.indexOf("\\",2))+node.id
-    		 def name=node.name
-    		 def synonym_cd=node.synonymcd
-    		 def visualattributes=node.visualattributes
-    		 def totalnum=node.totalnum
-    		 def facttablecolumn=node.facttablecolumn
-    		 def tablename=node.tablename
-    		 def columnname=node.columnname
-    		 def columndatatype=node.columndatatype
-    		 def operator=node.operator
-    		 def dimcode=node.dimcode
-    		 def comment=node.comment
-    		 def tooltip=node.tooltip
-    		 def metadataxml=i2b2HelperService.metadataxmlToJSON(node.metadataxml)
-    		 concepts.add([level:level, key:key,  name:name, synonym_cd:synonym_cd, visualattributes:visualattributes, totalnum:totalnum, facttablecolumn:facttablecolumn, tablename:tablename, columnname:columnname, columndatatype:columndatatype, operator:operator, dimcode:dimcode, comment:comment, tooltip:tooltip, metadataxml:metadataxml, access:access[node.id]] )
-    					
-    		}
-            def resulttext;
-            if(myCount<100){resulttext="Found "+myCount+" results."}
-            else
-            {resulttext ="Returned first 100 of "+myCount+" results."}
-            
-    		def result=[concepts:concepts, resulttext:resulttext]
-    		log.trace(result as JSON)
-    		render result as JSON		
+			def tagterm = params.tagterm
+			def ontsearchterm = params.ontsearchterm
+			def tagtype = params.tagtype
+			def result = ontologyService.searchOntology(tagterm, [ontsearchterm], tagtype, 'JSON')
+			render result as JSON
     }
     
     

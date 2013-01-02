@@ -41,7 +41,7 @@
 <script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script> 
 
 <script type="text/javascript"
-	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+	src="${resource(dir:'js', file:'ext/ext-all-debug.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js/ext-ux', file:'miframe.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>
@@ -174,6 +174,7 @@
 
 <script type="text/javascript">
 	var sessionSearch = "${rwgSearchFilter}";
+	var searchPage = "datasetExplorer";
 	var $j = jQuery.noConflict();
 	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -191,6 +192,7 @@
 <tmpl:/RWG/boxSearch hide="true"/>
 <tmpl:/RWG/filterBrowser />
 <div id="sidebartoggle">&nbsp;</div>
+<div id="noAnalyzeResults" style="display: none;">No subject-level results found.<br/><g:link controller="RWG" action="index">Switch to Browse view</g:link></div>
 <div id="filter-div" style="display: none;"></div>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
