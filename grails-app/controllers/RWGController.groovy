@@ -519,7 +519,7 @@ class RWGController {
    }
 
    
-   private String getGeneSignatureErrorMessage(long gsKeywordId)  {
+   private String getGeneSignatureErrorMessage(long gsKeywordId, boolean catchUnknownError)  {
 	   def geneSigs = GeneSignature.executeQuery("select gs.id, gs.name, gs.fileSchema.id " +
 		   " from search.SearchKeyword k_gs, search.GeneSignature gs" +
 		   " where k_gs.bioDataId = gs.id " +
@@ -557,8 +557,13 @@ class RWGController {
 		   return "Filter term <${geneSignatureName}> ignored! :: Gene list/signature with id '${geneSignatureId}' and name '${geneSignatureName}' contains zero items.  This type of gene signature is not supported in faceted search."
 	   }
 	   
-	   // don't knwo exactly what the error is
-	   return "Filter term ignored! :: Data error with Gene list/signature with search keyword id ${gsKeywordId}.  Error could be caused by a list that contains genes that are not properly defined."
+	   if (catchUnknownError)  {
+		   // don't know exactly what the error is
+		   return "Filter term ignored! :: Data error with Gene list/signature with search keyword id ${gsKeywordId}.  Error could be caused by a list that contains genes that are not properly defined."	
+	   }
+	   else {
+		   return ""
+	   }
 }
    
    /**
@@ -595,13 +600,12 @@ class RWGController {
 									" and gs.id = gsi.geneSignature " +
 									" and gsi.bioMarker = k_gsi.bioDataId" + 
                                     " and k_gs.id = :tid ", queryParams)
-				   
 				   if (geneKeywords.size == 0)  {					   
 
 					   if (errorMsg != '')  {
 						   errorMsg += '\n--------------------\n'
 					   }
-					   errorMsg += getGeneSignatureErrorMessage(l)
+					   errorMsg += getGeneSignatureErrorMessage(l, true)
 				   }
 				   
 				   // loop through each keyword for the gene list items and add to list 
@@ -1057,11 +1061,14 @@ class RWGController {
 	   totalCount = rwgDAO.getHeatmapRowCountCTA(analysisIdsList, params.category, params.searchKeywordId)
 	   ret.put("totalCount",  totalCount) 
 
-	   // no rows, check if becuase of invalid gene sig/list
+	   // no rows, check if because of invalid gene sig/list
 	   def errorMsg = ''
+	   
 	   if (totalCount == 0 )  {
+		   
 		   if ((params.category == 'GENELIST') || (params.category == 'GENESIG') )  {
-			   errorMsg = getGeneSignatureErrorMessage(params.searchKeywordId.toLong())
+			   // send in false for second param (i.e. catchUnknownError) because there may not really be an error here
+			   errorMsg = getGeneSignatureErrorMessage(params.searchKeywordId.toLong(), false)
 		   }
 	   }
 	   
