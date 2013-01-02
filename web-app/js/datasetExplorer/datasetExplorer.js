@@ -1710,6 +1710,8 @@ function projectDialogComplete(projectid)
 	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
 	{
 		Ext.getCmp("exportbutton").disable();
+		Ext.getCmp("analysisDataExportPanel").disable();
+		Ext.getCmp("analysisExportJobsPanel").disable();
 	}
 }
 
@@ -4080,10 +4082,14 @@ function getExportButtonSecurityComplete(result)
 	if(canExport || GLOBAL.IsAdmin)
 	{
 		Ext.getCmp("exportbutton").enable();
+		Ext.getCmp("analysisDataExportPanel").enable();
+		Ext.getCmp("analysisExportJobsPanel").enable();		
 	}
 	else
 	{
 		Ext.getCmp("exportbutton").disable();
+		Ext.getCmp("analysisDataExportPanel").disable();
+		Ext.getCmp("analysisExportJobsPanel").disable();
 	}
 }
 
