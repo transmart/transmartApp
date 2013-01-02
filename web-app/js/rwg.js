@@ -1608,11 +1608,22 @@ function highlightCohortDescriptions(cohortDesc, returnOnlyDiff){
 	var arySplit = new Array();
 	var aryDif = new Array();
 	var aryDescNew = new Array();
+	var termCount = 0;
+	
+	//0. Perform validation to ensure that all descriptions contain the same number of terms
+	//	 If validation fails, return the cohortDesc array without formatting and exit function
+	termCount= cohortDesc[1].split('_').length;
+	for (var i=2; i<cohortDesc.length; i++){
+		if(cohortDesc[i].split('_').length != termCount){
+			return cohortDesc;
+		}
+	}
 	
 	//1. Split each cohort description into an array of terms
 	for (var i=1; i<cohortDesc.length; i++){
 		arySplit[i]= cohortDesc[i].split('_');
 	}
+	
 	
 	//2. Loop through the array and compare each term to the term in the same position of the next description
 	//	 mark which ones are same and different in aryDif
