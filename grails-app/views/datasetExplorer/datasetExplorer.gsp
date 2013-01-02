@@ -192,6 +192,7 @@
 <tmpl:/RWG/boxSearch hide="true"/>
 <tmpl:/RWG/filterBrowser />
 <div id="sidebartoggle">&nbsp;</div>
+<div id="noAnalyzeResults" style="display: none;">No subject-level results found.<br/><g:link controller="RWG" action="index">Switch to Browse view</g:link></div>
 <div id="filter-div" style="display: none;"></div>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />

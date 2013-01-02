@@ -127,8 +127,6 @@ Ext.Panel.prototype.getBody = function(html)
 Ext.onReady(function()
 		{
 	
-	jQuery('#box-search').show();
-	
 	Ext.QuickTips.init();
 
 	//set ajax to 600*1000 milliseconds
@@ -1015,7 +1013,6 @@ function onWindowResize() {
 	var windowHeight = jQuery(window).height();
 	
 	jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
-	jQuery('#box-search').prependTo(jQuery('#westPanel'));
 	
 	var boxHeight = jQuery('#box-search').height();
 	jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 110);
@@ -1589,6 +1586,9 @@ function projectDialogComplete(projectid)
       } */
 	//getPreviousQueries();
 	
+	jQuery('#box-search').prependTo(jQuery('#westPanel')).show();
+	jQuery('#noAnalyzeResults').prependTo(jQuery('#navigateTermsPanel .x-panel-body'));
+	
 	//Now that the ont tree has been set up, call the initial search
 	showSearchResults();
 	
@@ -1825,10 +1825,16 @@ function getSubCategories(ontresponse)
 		treeRoot.childNodes[c].remove();
 	}
 	
+	jQuery('#noAnalyzeResults').hide();
+	
 	for(var c = 0; c < ontRoots.length; c ++ )
 	{
 		var newnode=ontRoots[c];
 		treeRoot.appendChild(newnode);
+	}
+	
+	if (ontRoots.length == 0) { //This shouldn't happen!
+		jQuery('#noAnalyzeResults').show();
 	}
         
 	if(GLOBAL.Debug)
@@ -4240,6 +4246,8 @@ function searchByTagComplete(response)
 		treeRoot.childNodes[c].remove();
 	}
 	
+	jQuery('#noAnalyzeResults').hide();
+	
 	if(concepts != undefined)
 	{
 		if(concepts.length < GLOBAL.MaxSearchResults)
@@ -4255,6 +4263,10 @@ function searchByTagComplete(response)
 			var newnode=getTreeNodeFromJSON(concepts[c])
 			treeRoot.appendChild(newnode);
 			setTreeNodeSecurity(newnode, concepts[c].access);
+		}
+		
+		if (concepts.length == 0) {
+			jQuery('#noAnalyzeResults').show();
 		}
 		//var t=document.getElementById("searchresultstext");
 		//t.innerHTML=rtext;

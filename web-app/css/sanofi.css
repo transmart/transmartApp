@@ -341,6 +341,11 @@ table.menuDetail th.menuVisited {
 	background: white url(../images/loader-small.gif) right center no-repeat;
 }
 
+#noAnalyzeResults {
+	font-size: 8pt;
+	margin: 8px;
+}
+
 
 /* Catch-all for making IE look slightly less stupid */
 *:focus {

@@ -16,7 +16,7 @@ var allowOnSelectEvent = true;
 
 // Method to add the categories for the select box
 function addSelectCategories()	{
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All"));
+	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All Metadata"));
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "DATANODE").text("Data Node"));
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "FREETEXT").text("Free Text"));
 	jQuery.getJSON(getCategoriesURL, function(json) {
