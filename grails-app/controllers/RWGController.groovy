@@ -1109,7 +1109,6 @@ class RWGController {
 	   }
 
 	   def data = rwgDAO.getHeatmapDataCTA(analysisIdsList, searchKeywordIds)
-	   
 	   // add the data returned to the rows
 	   def r = 0
 	   for (def i=startRank; i<=endRank; i++)  {
