@@ -22,7 +22,7 @@ package transmartapp
 
 import grails.test.*
 
-class SolrServiceTests extends GrailsUnitTestCase {
+class SolrFacetServiceTests extends GrailsUnitTestCase {
     protected void setUp() {
         super.setUp()
     }

@@ -44,7 +44,7 @@ class RWGController {
 	def formLayoutService
 	def fmFolderService
 	def ontologyService
-	def solrService
+	def solrFacetService
 	
     def index = {
 		def rwgSearchFilter = session['rwgSearchFilter'];
@@ -345,14 +345,14 @@ class RWGController {
 	   log.info("facet search: " + params)
 	   
 	   if (params.page.equals('RWG')) {
-		   def folderMap = solrService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'foldermap')
+		   def folderMap = solrFacetService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'foldermap')
 		   session['folderSearchMap'] = folderMap;
 		   
 		   def folderContents = fmFolderService.getFolderContents(null, session['folderSearchMap'])
 		   render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files])
 	   }
 	   else {
-		   def ontologyResult = solrService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'JSON')
+		   def ontologyResult = solrFacetService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'JSON')
 		   render ontologyResult as JSON
 	   }
    }
