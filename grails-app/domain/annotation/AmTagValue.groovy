@@ -25,12 +25,17 @@ class AmTagValue {
 	Long id
 	String value
 		
+	static belongsTo=[amTagItem: AmTagItem]
+	
 	static mapping = {
 		table 'am_tag_value'
 		version false
 		cache true
 		sort "value"
 		columns { id column:'tag_value_id' }
+		amTagItem joinTable: [name: 'am_tag_template',  key:'tag_item_id', column: 'tag_value_id'], lazy: false
+		amTagItem column: 'tag_item_id'
+
 	}
 
 	static constraints = {

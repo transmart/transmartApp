@@ -4,8 +4,6 @@
 <g:hiddenField name="id" value="${folder?.id}" />
     
 <div style="width:800px">  
-     <div style="height:10px;"></div>
-  
     <table class="detail" height="300px">
         <tbody>
       <g:each in="${layout}" status="i" var="layoutRow">

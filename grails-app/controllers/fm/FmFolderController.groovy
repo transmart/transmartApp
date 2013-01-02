@@ -35,11 +35,13 @@ import com.recomdata.util.FolderType
 
 
 import grails.converters.*
+import annotation.AmTagItem
 
 class FmFolderController {
 
 	def formLayoutService
 	def amTagTemplateService
+	def amTagItemService
 	def fmFolderService
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
@@ -378,7 +380,7 @@ class FmFolderController {
 		def bioDataObject
 		def formLayout
 		def amTagTemplate
-		 
+		def metaDataTagItems
 		if (folderId) 
 		{
 			folder = FmFolder.get(folderId)
@@ -404,7 +406,16 @@ class FmFolderController {
 
 						
 			amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
-		//	formLayout = formLayoutService.getLayout(folder.folderType.toLowerCase()); //'study');
+			if(amTagTemplate)
+			{
+				metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+			}
+			else
+			{
+				log.error "Unable to find amTagTemplate for object Id = " + folder.objectUid
+			}
+
+			//  amTagTemplate.amTagItems
 		}
 		
 		if(!formLayout)
@@ -414,7 +425,7 @@ class FmFolderController {
 		
 
 		log.info "FolderInstance = " + bioDataObject.toString()
-		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:bioDataObject, amTagTemplate: amTagTemplate])
+		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems])
 		
 	}
 

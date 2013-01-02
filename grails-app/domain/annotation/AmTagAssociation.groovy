@@ -20,28 +20,53 @@
 
 package annotation
 
-class AmTagAssociation {
+import java.io.Serializable;
+
+
+
+class AmTagAssociation implements Serializable{
 	
-	Long id
+/*	Long id
 	String tagTemplateName
 	String tagTemplateType
 	String tagTemplateSubtype
 	Boolean activeInd = Boolean.TRUE
-
+	*/
+	
+//	AmTagItem amTagItem
+//	AmTagValue amTagValue
+	String objectType
+	String subjectUid
+	String objectUid
+	Long tagItemId
+	
+	
 	static mapping = {
 		table 'am_tag_association'
 		version false
 		cache true
 		sort "tagTemplateName"
-		columns { id column:'subject_uid' }
+		id composite: ["objectUid","subjectUid"]
+		amTagItem column: 'tag_item_id'
+
 	}
 
 	
 	static constraints = 
 	{
-		tagTemplateName(maxSize:200)
-		tagTemplateType(maxSize:50)
-		tagTemplateSubtype(maxSize:50)
 	}
-	
+
+	static AmTagAssociation get(String objectUid, String subjectUid) {
+		find 'from AmTagAssociation where objectUid=:objectUid and subjectUid=:subjectUid',
+			[objectUid: objectUid, subjectUid: subjectUid]
+	}
+
+	static boolean remove(String objectUid, String subjectUid, boolean flush = false) {
+		AmTagAssociation instance = AmTagAssociation.findByObjectUidAndSubjectUid(objectUid, subjectUid)
+		instance ? instance.delete(flush: flush) : false
+	}
+
 }
+
+
+	

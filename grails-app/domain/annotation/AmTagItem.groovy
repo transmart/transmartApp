@@ -36,8 +36,10 @@ class AmTagItem implements Comparable<AmTagItem>{
 	Boolean required = Boolean.TRUE
 	Boolean activeInd = Boolean.TRUE
 	Boolean viewInGrid = Boolean.TRUE
-	
+	AmTagAssociation amTagAssociation
 	static belongsTo=[amTagTemplate: AmTagTemplate]
+	
+//	static hasOne = [amTagAssociation: AmTagAssociation]
 	
 	static mapping = {
 		table 'am_tag_item'
@@ -46,7 +48,8 @@ class AmTagItem implements Comparable<AmTagItem>{
 		sort "displayName"
 		amTagTemplate joinTable: [name: 'am_tag_template',  key:'tag_template_id', column: 'tag_item_id'], lazy: false
 		columns { id column:'tag_item_id'}
-		amTagTemplate column: 'tag_template_id' 
+		amTagTemplate column: 'object_uid' 
+//		amTagAssociation joinTable: [name: 'am_tag_association',  key:'tag_item_id', column: 'tag_item_id'], lazy: false
 		
 	}
 
@@ -67,7 +70,18 @@ class AmTagItem implements Comparable<AmTagItem>{
 		displayName(maxSize:200)
 		codeTypeName(maxSize:200)
 		guiHandler(maxSize:200)
+		amTagAssociation(nullable:true)
 //		tagItemUid(maxSize:300)
 	}
+	
+	/**
+	* override display
+	*/
+   public String toString() {
+	   StringBuffer sb = new StringBuffer();
+	   sb.append("ID: ").append(this.id).append(", Display Name: ").append(this.displayName);
+	   sb.append(", Display Order: ").append(this.displayOrder);
+	   return sb.toString();
+   }
 
 }
