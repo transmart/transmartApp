@@ -35,7 +35,7 @@ import javax.xml.transform.OutputKeys
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
-class SolrService {
+class SolrFacetService {
 	
 	def ontologyService
 

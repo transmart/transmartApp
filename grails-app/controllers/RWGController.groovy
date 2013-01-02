@@ -44,7 +44,7 @@ class RWGController {
 	def formLayoutService
 	def fmFolderService
 	def ontologyService
-	def solrService
+	def solrFacetService
 	
     def index = {
 		def rwgSearchFilter = session['rwgSearchFilter'];
