@@ -25,15 +25,16 @@
 	<div id ="xtSearch">
 		Search for genes, pathways, or gene signatures: <input id="xtSearch-ac"/></input> 
 		<div style="float:right">
-			<a href="#" id="save-modal-xt" class='title-link-inactive'><span>Save Selection</span></a> | <a href="#" id='load-modal-xt' class='title-link-active' onclick="openLoadSearchDialog(true);"}>Load Analysis</a> | <a href="#" id="clear-xt" class='title-link-inactive' onclick="clearAllXTSearchTerms();">Clear</a>
+			<a href="#" id="save-modal-xt" class='title-link-inactive'><span>Save Selection</span></a> | <a href="#" id='load-modal-xt' class='title-link-active' onclick="openLoadSearchDialog(true);"}>Load Analysis</a> | <a href="#" id="clear-xt" class='title-link-inactive' onclick="clearAllXTSearchTerms();">Clear Terms</a>
 		</div>
 	</div>
 	
 	<div style="width: 95%;margin: auto;position: absolute;z-index: 700;">
 		<div id="xtMsgBox" style="display:none">
 			<p style="text-align:center; margin-bottom:8px">The analysis selection has changed</p>
-			<p style="text-align:center"><a href="#" onclick="updateCrossTrialGeneCharts();" class=btn>Redraw charts</a>
-			<a href="#" onclick="clearAllXTSearchTerms();" class="btn">Clear all</a></p>
+			<p style="text-align:center"><a href="#" onclick="updateCrossTrialGeneCharts();" class=btn>Refresh</a>
+			<!-- <a href="#" onclick="clearAllXTSearchTerms();" class="btn">Clear all terms</a> -->
+			</p>
 		</div>
 	</div>
 	

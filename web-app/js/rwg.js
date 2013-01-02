@@ -3437,7 +3437,7 @@ function clearAllXTSearchTerms(){
 	jQuery('#xtMsgBox').fadeOut(200);
 	
 	//remove the mask
-//	jQuery('#xtMenuBar').unmask()
+	jQuery('#xtMenuBar').unmask();
 	
 	//show the empty gene msg box
 	jQuery('#xtNoGenesMsg').show();
