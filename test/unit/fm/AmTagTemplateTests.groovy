@@ -18,55 +18,20 @@
  ******************************************************************/
   
 
-package annotation
+package fm
 
-import java.io.Serializable;
+import grails.test.*
 
+class AmTagTemplateTests extends GrailsUnitTestCase {
+    protected void setUp() {
+        super.setUp()
+    }
 
+    protected void tearDown() {
+        super.tearDown()
+    }
 
-class AmTagAssociation implements Serializable{
-	
-/*	Long id
-	String tagTemplateName
-	String tagTemplateType
-	String tagTemplateSubtype
-	Boolean activeInd = Boolean.TRUE
-	*/
-	
-//	AmTagItem amTagItem
-//	AmTagValue amTagValue
-	String objectType
-	String subjectUid
-	String objectUid
-	Long tagItemId
-	
-	
-	static mapping = {
-		table 'am_tag_association'
-		version false
-		cache true
-		sort "tagTemplateName"
-		id composite: ["objectUid","subjectUid"]
-//		amTagItem column: 'tag_item_id', insert: "false", update: "false"
+    void testSomething() {
 
-	}
-
-	
-	static constraints = 
-	{
-	}
-
-	static AmTagAssociation get(String objectUid, String subjectUid) {
-		find 'from AmTagAssociation where objectUid=:objectUid and subjectUid=:subjectUid',
-			[objectUid: objectUid, subjectUid: subjectUid]
-	}
-
-	static boolean remove(String objectUid, String subjectUid, boolean flush = false) {
-		AmTagAssociation instance = AmTagAssociation.findByObjectUidAndSubjectUid(objectUid, subjectUid)
-		instance ? instance.delete(flush: flush) : false
-	}
-
+    }
 }
-
-
-	

@@ -63,7 +63,7 @@ ${folderInstance?.folderName}
                       ${fieldValue(bean:folderInstance,field:amTagItem.tagItemAttr)}
                 </g:if>
                  <g:elseif test="${amTagItem.tagItemType == 'CUSTOM'}">
-                    ${amTagItem.amTagValue}                    
+                    TODO::custom                    
                  </g:elseif>
                  <g:elseif test="${amTagItem.tagItemType == 'PICKLIST'}">
                     TODO::picklist

@@ -36,9 +36,9 @@ class AmTagItem implements Comparable<AmTagItem>{
 	Boolean required = Boolean.TRUE
 	Boolean activeInd = Boolean.TRUE
 	Boolean viewInGrid = Boolean.TRUE
-	AmTagAssociation amTagAssociation
 	static belongsTo=[amTagTemplate: AmTagTemplate]
 	
+//	AmTagAssociation amTagAssociation
 //	static hasOne = [amTagAssociation: AmTagAssociation]
 	
 	static mapping = {
@@ -48,7 +48,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 		sort "displayName"
 		amTagTemplate joinTable: [name: 'am_tag_template',  key:'tag_template_id', column: 'tag_item_id'], lazy: false
 		columns { id column:'tag_item_id'}
-		amTagTemplate column: 'object_uid' 
+		amTagTemplate column: 'tag_template_id' 
 //		amTagAssociation joinTable: [name: 'am_tag_association',  key:'tag_item_id', column: 'tag_item_id'], lazy: false
 		
 	}
@@ -70,7 +70,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 		displayName(maxSize:200)
 		codeTypeName(maxSize:200)
 		guiHandler(maxSize:200)
-		amTagAssociation(nullable:true)
+// 	amTagAssociation(nullable:true)
 //		tagItemUid(maxSize:300)
 	}
 	
