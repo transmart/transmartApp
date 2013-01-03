@@ -89,8 +89,8 @@ ${folderInstance?.folderName}
 		    	<tr>
 		    		<td colspan="3">&nbsp;</td>
 	    		   <td>
-		               <div>
-		                    <span class="foldericon add">Export all</span>
+		               <div style="padding: 4px 0px;">
+		                    <span class="foldericon addall link">Export all</span>
 		               </div>
 	               </td>
 		    	</tr>
@@ -98,7 +98,7 @@ ${folderInstance?.folderName}
     <tbody>
         <g:each in="${folderInstance?.fmFiles}" status="i" var="fmFile">
             <tr class="file-row">
-                <td style="padding: 3px 3px 3px 3px;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
+                <td style="padding: 3px;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
                <td >
                <g:formatDate format="yyyy-MM-dd" date="${fmFile.createDate}" />
                </td> 
@@ -107,7 +107,7 @@ ${folderInstance?.folderName}
                </td> 
                <td>
 	               <div>
-	                    <span class="foldericon add">Add to export</span>
+	                    <span class="foldericon add link" name="${fmFile.id}">Add to export</span>
 	               </div>
                </td>
                 

@@ -31,12 +31,12 @@
 		<th class="menuBar" style="width: 110px">
 			<g:if test="${'rwg' == app}">
 				<div id="cartbutton" class="greybutton">
-		   			<g:remoteLink controller="export" action="selection" update="${overlayExportDiv}" 
+		   			<%-- <g:remoteLink controller="export" action="selection" update="${overlayExportDiv}" 
 		                            params="[eleId:overlayExportDiv]" 
-		                            before="initLoadingDialog('${overlayExportDiv}')" onComplete="centerDialog('${overlayExportDiv}')">
+		                            before="initLoadingDialog('${overlayExportDiv}')" onComplete="centerDialog('${overlayExportDiv}')">--%>
 					<img src="${resource(dir:'images', file:'cart.png')}"/> Export Cart
-					</g:remoteLink>
-					<div id="cartcount">0</div>
+					<%-- </g:remoteLink>--%>
+					<div id="cartcount">${exportCount ?: 0}</div>
 				</div>
 			</g:if>
 		</th>

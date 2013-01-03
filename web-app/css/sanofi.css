@@ -228,6 +228,7 @@ table.menuDetail th.menuVisited {
 	cursor: pointer;
 	border-radius: 2px;
 	font-size: 8pt;
+	padding: 2px;
 }
 
 #filterbutton {
@@ -346,10 +347,33 @@ table.menuDetail th.menuVisited {
 	margin: 8px;
 }
 
+#exportOverlay {
+	position: absolute;
+	z-index: 10000;
+	top: 10%;
+	left: 10%;
+	width: 80%;
+	height: 80%;
+	border: 8px solid #DDDEE6;
+	border-radius: 16px;
+	box-shadow: #DDD 11px 11px 8px -7px;
+	background: white;
+}
+
+.exporttable td {
+	padding: 4px;
+	border-bottom: 1px solid #DDD;	
+}
+
 
 /* Catch-all for making IE look slightly less stupid */
 *:focus {
 	outline:none;	
+}
+
+.link {
+	text-decoration: underline;
+	color: #282;	
 }
 
 .breaker {

@@ -36,4 +36,10 @@ var webStartURL = "${createLink([controller:'search',action:'webStartPlotter'])}
 var datasetExplorerURL = "${createLink([controller:'datasetExplorer'])}";
 
 var crossImageURL = "${resource([dir:'images', file:'small_cross.png'])}";
+
+var exportAddURL = "${createLink([controller:'fileExport', action:'add'])}";
+var exportRemoveURL = "${createLink([controller:'fileExport', action:'remove'])}";
+var exportViewURL = "${createLink([controller:'fileExport', action:'view'])}";
+var exportURL = "${createLink([controller:'fileExport', action:'export'])}";
+
 </script>
