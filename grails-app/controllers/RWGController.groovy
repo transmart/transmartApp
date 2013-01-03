@@ -301,6 +301,12 @@ class RWGController {
 	   log.info("Gene parameter: ${newParams}")
 	   return newParams
    }
+   
+   //Just clear the search filter and render non-null back
+   def clearSearchFilter = {
+	   session['rwgSearchFilter'] = [:];
+	   render(text: "OK")
+   }
            
    /**
    * Load the search results for the given search terms (used for AJAX calls)

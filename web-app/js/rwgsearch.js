@@ -352,6 +352,8 @@ function showFacetResults()	{
     else {
     	//If there are no search terms, pass responsibility on to getCategories - if not, do our custom search
     	if (savedSearchTermsArray.length == 0) {
+    		//Need to silently clear the search map here as well
+			jQuery.ajax({url:clearSearchFilterURL});
     		getCategories();
     	}
     	else {

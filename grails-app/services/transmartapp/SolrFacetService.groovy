@@ -133,7 +133,7 @@ class SolrFacetService {
 	   def accessions = ontologyService.searchOntology(null, dataNodeSearchTerms, 'ALL', 'accession', [])
 	   
 	   if (!accessions) {
-		   return [0:[], 1:[], 2:[], 3:[]] //No matches
+		   return [0L:[], 1L:[], 2L:[], 3L:[]] //No matches
 	   }
 	   
 	   def solrQueryString = ""
