@@ -364,6 +364,10 @@ function displayLabels(svg){
  * @param labels
  */
 function displayLegend(labels){
+	jQuery("#geneSig1Name").text("");
+	jQuery("#geneSig2Name").text("");
+	jQuery("#geneSig3Name").text("");
+	
 	jQuery("#geneSig1Name").text(labels[setIndex[1]]);
 	jQuery("#geneSig2Name").text(labels[setIndex[2]]);
 	jQuery("#geneSig3Name").text(labels[setIndex[3]]);
