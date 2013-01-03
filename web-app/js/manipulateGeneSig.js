@@ -349,9 +349,17 @@ function draw(region, regionTitles, labels){
  * display counts for each area
  */
 function displayCount(region, svg){
-	display(svg, 150, 80, region['1'].length);//
-	display(svg, 245, 80, region['12'].length);//
-	display(svg, 340, 80, region['2'].length);
+	
+	var y12 = 80;   // the y coordinate for the counts for regions 1 and 2 and their intersection
+	
+	if (!setIndex[3])  {
+		// move this down to center if there are only 2 regions
+		y12 = 120;  
+	}
+	
+	display(svg, 150, y12, region['1'].length);
+	display(svg, 245, y12, region['12'].length);
+	display(svg, 340, y12, region['2'].length);
 	
 	if (setIndex[3]) {		
 		display(svg, 190, 160, region['13'].length);//
