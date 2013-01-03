@@ -20,14 +20,34 @@
 <g:set var="overlayDiv" value="metaData_div" />
 
 <div style="margin:10px;padding:10px;">
-<h3 class="rdc-h3">
-<g:if test="${folderInstance?.hasProperty('title')}">
-${folderInstance?.title}
-</g:if>
-<g:else>
-${folderInstance?.folderName}
-</g:else>
-</h3>
+<div>
+	<div style="float: right">
+		<%-- Add buttons here depending on folder type --%>
+		
+		<sec:ifAnyGranted roles="ROLE_ADMIN">
+			<g:if test="${folderInstance.folderType == 'Program'}">
+				<span class="greybutton buttonicon addstudy">Add new study</span>
+			</g:if>
+		</sec:ifAnyGranted>
+		
+		<g:if test="${folderInstance.folderType == 'Study'}">
+			<span class="greybutton buttonicon addassay">Add new assay</span>
+			<span class="greybutton buttonicon addfolder">Add new folder</span>
+		</g:if>
+		
+		<g:if test="${folderInstance.folderType == 'Folder' || folderInstance.folderType == 'Assay' || folderInstance.folderType == 'Analysis'}">
+			<span class="greybutton buttonicon addfolder">Add new folder</span>
+		</g:if>
+	</div>
+	<h3 class="rdc-h3">
+		<g:if test="${folderInstance?.hasProperty('title')}">
+		${folderInstance?.title}
+		</g:if>
+		<g:else>
+		${folderInstance?.folderName}
+		</g:else>
+	</h3>
+</div>
 <g:if test="${folderInstance?.hasProperty('description')}">
 <div style="line-height:14px;font-family:arial,​tahoma,​helvetica,​sans-serif; font-size: 12px;">
  <g:if test="${folderInstance?.description.length() > 325000}">

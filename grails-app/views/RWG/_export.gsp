@@ -4,7 +4,7 @@
 <g:if test="${files}"><p>These are the files that have been added to the cart. Please select the files to export.</p></g:if>
 <g:else>No files have been added to the export cart.</g:else>
 
-<table style="width: 100%; table-layout: fixed" class="exporttable" id="exporttable">
+<table style="width: 100%;" class="exporttable" id="exporttable">
 	<g:each in="${files}" var="file">
 		<tr name="${file.id}">
 			<td>${file.folder}</td>

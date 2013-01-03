@@ -30,6 +30,7 @@ table.menuDetail th.menuLink a:link, th.menuLink a:visited {
 	top: 0px;
 	left: 0px;
 	z-index: 999;
+	cursor: pointer;
 }
 
 table.menuDetail {
@@ -231,6 +232,19 @@ table.menuDetail th.menuVisited {
 	padding: 2px;
 }
 
+.greybutton.buttonicon {
+	padding-left: 24px;
+	background-repeat: no-repeat;
+	background-position: 4px 50%;	
+}
+
+.greybutton.addprogram { background-image: url('../images/addprogram.png'); }
+.greybutton.addstudy { background-image: url('../images/addstudy.png'); }
+.greybutton.addassay { background-image: url('../images/addassay.png'); }
+.greybutton.addfolder { background-image: url('../images/addfolder.png'); }
+.greybutton.addanalysis { background-image: url('../images/addanalysis.png'); }
+
+
 #filterbutton {
 	position: absolute;
 	right: 40px;
@@ -358,6 +372,7 @@ table.menuDetail th.menuVisited {
 	border-radius: 16px;
 	box-shadow: #DDD 11px 11px 8px -7px;
 	background: white;
+	overflow: auto;
 }
 
 .exporttable td {

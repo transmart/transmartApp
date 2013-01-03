@@ -228,6 +228,15 @@
 					jQuery(this).addClass('selected');
 			    });
 
+	    	    jQuery('#logocutout').on('click', function() {
+	    	    	jQuery('#metadata-viewer').empty();
+
+	    	    	jQuery('#welcome-viewer').empty().addClass('ajaxloading');
+	    	    	jQuery('#welcome-viewer').load(welcomeURL, {}, function() {
+	    	    		jQuery('#welcome-viewer').removeClass('ajaxloading');
+	    	    	});
+		    	});
+
 	    	    jQuery('#cartbutton').click(function() {
 					jQuery.ajax({
 						url:exportViewURL,		

@@ -57,6 +57,10 @@ class RWGController {
 		}
 		return [rwgSearchFilter: rwgSearchFilter, exportCount: exportList?.size()];
 	}
+	
+	def ajaxWelcome = {
+		render (template: 'welcome');
+	}
 
 	/**
 	 * START: Methods for the faceted search filter
