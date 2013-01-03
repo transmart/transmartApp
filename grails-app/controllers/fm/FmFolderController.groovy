@@ -161,8 +161,9 @@ class FmFolderController {
 
 	def getPrograms = {
 
-		List<FmFolderController> folders = getFolder(FolderType.PROGRAM.name(), null)
+		//List<FmFolderController> folders = getFolder(FolderType.PROGRAM.name(), null)
 		// 	[fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
+		List<FmFolderController> folders = getFolder("Program", null)
 		
 		render folders as XML
 		
@@ -201,6 +202,13 @@ class FmFolderController {
 		
 		render folders as XML
 				
+	}
+	
+	//service to call to get all the children of a folder, regardless their type
+	//need a parameter parentId corresponding to the parent identifier
+	def getAllChildren ={
+		List<FmFolderController> children = getChildrenFolder(params.parentId)
+		render children as XML
 	}
 
 	def addProgram = {
@@ -365,11 +373,17 @@ class FmFolderController {
 		else
 		{
 		 return FmFolder.executeQuery("from FmFolder as fd where fd.folderType = :fl and fd.folderFullName like :fn ",
-				 [fl: folderType, fn:this.folderFullName+"%"])
+				 [fl: folderType, fn:parentPath+"%"])
 		}
 	
 	}
 	
+	//method which returns a list of folders which are the children of the folder of which the identifier is passed as parameter
+	private List<FmFolder> getChildrenFolder(String parentId)  
+	{		
+		def folder = FmFolder.get(parentId)
+		return FmFolder.executeQuery("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
+	}
 	
 	def folderDetail = {
 		log.info "** action: folderDetail called!"
