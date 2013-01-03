@@ -17,51 +17,43 @@
  *
  ******************************************************************/
   
-package fm
 
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
+package annotation
 
-class FmFile {
-	
-	Long id
-	String displayName
-	String originalName
-	Long fileVersion = 1l
-	String fileType
-	Long fileSize
-	String filestoreLocation
-	String filestoreName
-	String linkUrl
-	Boolean activeInd = Boolean.TRUE
-	Date createDate = new Date()
-	Date updateDate = new Date()
-	
-	static hasMany = [fmFolder: FmFolder] //Should probably only have one, but Grails doesn't allow join table on one-many
-	static belongsTo = FmFolder
-	
+class AmTagItemService {
 
-	static mapping = {
-		table 'fm_file'
-		version false
-		cache true
-		sort "displayName"
-		id generator: 'sequence', params:[sequence:'seq_fm_id']
-		fmFolder joinTable: [name: 'fm_folder_file_association',  key:'file_id', column: 'folder_id']
-		columns { id column:'file_id' }
+    boolean transactional = true
+
+    def serviceMethod() {
+
+    }
+	
+	def getDisplayItems(Long key){
+		
+		log.info "Searching amTagItems for tag template " +  key
+		
+		def amTagItems
+		
+		if(key)
+		{
+			Map<String,Object> paramMap = new HashMap<Long,Object>();
+						
+			StringBuffer sb = new StringBuffer();
+			sb.append("from AmTagItem ati where viewInGrid=1 ");
+			  sb.append(" and ati.amTagTemplate.id = :amTagTemplateId");
+			paramMap.put("amTagTemplateId", key);
+			
+			amTagItems = AmTagItem.findAll(sb.toString(), paramMap);
+			
+			log.info "amTagItems = " + amTagItems + " for key = " + key	
+		}
+		else
+		{
+			log.error "Unable to retrieve an amTagItems with a null key value"
+		}
+		
+		
+		return amTagItems
 	}
-	
-	static contraints = {
-		displayName(maxSize:1000)
-		originalName(maxSize:1000)
-		fileType(nullable:true, maxSize:100)
-		fileSize(nullable:true)
-		filestoreLocation(nullable:true, maxSize:1000)
-		filestoreName(nullable:true, maxSize:1000)
-		linkUrl(nullable:true, maxSize:1000)
-	}
-	
-	static transients = ['description', 'uploadDate']
 	
 }

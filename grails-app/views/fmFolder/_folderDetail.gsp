@@ -40,8 +40,7 @@ ${folderInstance?.folderName}
 <div style="height:20px;"></div>
 </g:if>
 
-
-<g:if test="${amTagTemplate && amTagTemplate.amTagItems.size()>0}">
+<g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
 <table class="details-table">
         <thead>
             <tr>                
@@ -54,17 +53,29 @@ ${folderInstance?.folderName}
             </tr>
         </thead>
     <tbody>
-        <g:each in="${amTagTemplate.amTagItems}" status="i" var="amTagItem">
-        <g:if test="${amTagItem.tagItemType == 'FIXED' && amTagItem.viewInGrid}">
-            <g:if test="${folderInstance?.hasProperty(amTagItem.tagItemAttr)}" >
+        <g:each in="${metaDataTagItems}" status="i" var="amTagItem">
+          <g:if test="${amTagItem.viewInGrid}">
             <tr class='details-row'> <!-- class="${(i % 2) == 0 ? 'odd' : 'even'}"> -->
             <!-- TODO: If active -->
                 <td valign="top" align="right" class="columnname" width="20%">${amTagItem.displayName}</td>
                 <td valign="top" align="left" class="columnvalue" width="60%">
-                 ${fieldValue(bean:folderInstance,field:amTagItem.tagItemAttr)}
+                <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?folderInstance?.hasProperty(amTagItem.tagItemAttr):false}" >
+                      ${fieldValue(bean:folderInstance,field:amTagItem.tagItemAttr)}
+                </g:if>
+                 <g:elseif test="${amTagItem.tagItemType == 'CUSTOM'}">
+                    TODO::custom                    
+                 </g:elseif>
+                 <g:elseif test="${amTagItem.tagItemType == 'PICKLIST'}">
+                    TODO::picklist
+                 </g:elseif>
+                 <g:elseif test="${amTagItem.tagItemType == 'BIODATA'}">
+                    TODO::biodata
+                 </g:elseif>
+                 <g:else>
+                 unknown tag item type
+                 </g:else>
                 </td>
             </tr>
-            </g:if>
          </g:if>
         </g:each>
     </tbody>    
