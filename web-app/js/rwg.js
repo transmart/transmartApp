@@ -3640,7 +3640,7 @@ function createCrossTrialSummaryChart(data, pdata, pdataOriginal, keyword_id, pl
 		    	return id;
 	  })		
     ;
-        ;
+       
 
 
     svg.selectAll(".bar2")
@@ -3754,6 +3754,47 @@ svg.selectAll("text")
         .attr("x1", 0)
         .attr("x2", width);
     
+    var noDataFontSize = 10;
+    
+    svg.selectAll(".noDataText1")
+    .data(data)
+    .enter().append("text")
+    .text("No")
+    .attr("style", function(d, i) {
+    	if (formattedData[i].pvalue == '' && formattedData[i].foldChange == '')  {
+    		return "display:inline";	
+    	}
+    	else {
+    		return "display:none";
+    	}
+    	
+   	}
+    )
+    .style("font-size", noDataFontSize)
+    .attr("x", function(d,i) { return 5 + i * (bar_width+10) + 2; })
+    .attr("y", function(d,i) { return y(0); })
+    .attr("class", "noDataText1")
+    ;
+    
+    svg.selectAll(".noDataText2")
+    .data(data)
+    .enter().append("text")
+    .text("data")
+    .attr("style", function(d, i) {
+    	if (formattedData[i].pvalue == '' && formattedData[i].foldChange == '')  {
+    		return "display:inline";	
+    	}
+    	else {
+    		return "display:none";
+    	}
+    	
+   	}
+    )
+    .style("font-size", noDataFontSize)
+    .attr("x", function(d,i) { return 5 + i * (bar_width+10); })
+    .attr("y", function(d,i) { return y(0) + 10; })
+    .attr("class", "noDataText2")
+    ;        
     
     //add some buttons
     jQuery('#'+divID).append(closeHTML +"<span style='display:block'>"+openBoxplotLinkHTML+"</span>");
@@ -3990,14 +4031,6 @@ function openGeneFromCTAheatmap(keywordId, termName, categoryId){
 	addXTSelectedKeyword(keywordId, termName, categoryId);
 	getCrossTrialGeneSummary(keywordId);
 	jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
-}
-
-
-
-function drawPieChart(divid, data)
-{
-	
-
 }
 
 
