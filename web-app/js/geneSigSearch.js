@@ -110,6 +110,7 @@ function loadManipulateView(data, action){
 	jQuery.colorbox({
 		innerWidth:600, 
 		innerHeight:500,
+		title:"Gene List Manipulation",
 		inline:true,
 		href:"#manipulateDiv",
 		onComplete:function(){
