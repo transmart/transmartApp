@@ -132,6 +132,8 @@ function addXTAnalysisToArray(analysisID, analysisTitle, studyID){
 	//add item to selectedAnalyses array
 	selectedAnalyses.push({'id':analysisID, 'title':analysisTitle, 'studyID':studyID});
 	
+	selectedAnalyses.sort(analysesSort());	
+	
 	//update the cookie
 	jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
 	
@@ -181,8 +183,6 @@ function getSelectedAnalysesList(){
 	
 		html += "<a href='#' onclick='clearAllSelectedAnalyses()'>Clear All</a><br />";
 		html +="<ul id='selectedAnalysesList'>";
-		
-		selectedAnalyses.sort(dynamicSort("studyID"));
 		
 		jQuery(selectedAnalyses).each(function(index, value){
 	
@@ -258,6 +258,17 @@ function dynamicSort(property) {
         return (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
     }
 }
+
+//Used for sorting analyses array 
+function analysesSort() {
+    return function (a,b) {
+    	var valA = a["studyID"] + ":" + a["id"];
+    	var valB = b["studyID"] + ":" + b["id"];
+    	    	
+        return (valA < valB) ? -1 : (valA > valB) ? 1 : 0;
+    }
+}
+
 
 function showDetailDialog(dataURL, dialogTitle, dialogHeight)	{
 	var height = 'auto';
@@ -2369,10 +2380,12 @@ function loadSearch(searchType, id)  {
 
 					}
 					
-					selectedAnalyses = [];
+					selectedAnalyses = []; 
 					for (var a in analyses)  {
 						selectedAnalyses.push({'id':analyses[a].id, 'title':analyses[a].title, 'studyID':analyses[a].studyId});
 					}
+					
+					selectedAnalyses.sort(analysesSort());
 					
 					jQuery.cookie('selectedAnalyses', JSON.stringify(selectedAnalyses));
 
@@ -3459,8 +3472,6 @@ function displayxtAnalysesList(){
 	
 	var html = "<div id='xtSelectedAnalysesListLegend'>";
 	
-	selectedAnalyses.sort(dynamicSort("studyID"));
-	
 	jQuery(selectedAnalyses).each(function(index, value){
 		
 		var num = parseInt(index) + 1;
@@ -4091,9 +4102,6 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page, keyword) {
 
 	var analysisIds = "";
 	
-	// sort before we create the pipe delimited list to make sure we match the list that is used for display at end
-	selectedAnalyses.sort(dynamicSort("studyID"));
-	
 	// retrieve list of selected analyses, create a pipe delimited list of analysis ids
 	for (var i=0; i<selectedAnalyses.length; i++)
 	{
@@ -4236,8 +4244,6 @@ function loadBoxPlotCTA(keywordId)	{
 	
 	var ids = "";
 	
-	// sort before we create the pipe delimited list to make sure we match the list that is used for display at end
-	selectedAnalyses.sort(dynamicSort("studyID"));
 	// retrieve list of selected analyses, create a pipe delimited list of analysis ids
 	for (var i=0; i<selectedAnalyses.length; i++)
 	{
