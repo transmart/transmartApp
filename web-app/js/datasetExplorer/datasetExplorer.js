@@ -1710,6 +1710,8 @@ function projectDialogComplete(projectid)
 	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
 	{
 		Ext.getCmp("exportbutton").disable();
+		Ext.getCmp("analysisDataExportPanel").disable();
+		Ext.getCmp("analysisExportJobsPanel").disable();
 	}
 }
 
@@ -2267,7 +2269,6 @@ function drillDown(rootNode){
 
 function showConceptInfoDialog(conceptKey, conceptid, conceptcomment)
 {
-
 	if( ! this.conceptinfowin)
 	{
 		var link = '<a href="javascript:;"  onclick="return popitup(\'http://www.google.com/search?q='+conceptid+'\')">Search for more information...</a>'
@@ -2284,14 +2285,6 @@ function showConceptInfoDialog(conceptKey, conceptid, conceptcomment)
 					border : false,
 					autoScroll: true,
 					buttons : [
-					           /* {
-            text : 'Search For More Information',
-            handler : function()
-            {
-               popitup('http://www.google.com/search?q=' + conceptid);
-            }
-         }
-         ,*/
 					           {
 					        	   text : 'Close',
 					        	   handler : function()
@@ -2304,30 +2297,26 @@ function showConceptInfoDialog(conceptKey, conceptid, conceptcomment)
 				}
 		);
 	}
-	//var conceptKeySplits = conceptKey.split('\\');
-	//var conceptType = (conceptKeySplits[1]=='')?conceptKeySplits[2]:conceptKeySplits[1];
+	var conceptKeySplits = conceptKey.split('\\');
+	var conceptType = (conceptKeySplits[1]=='')?conceptKeySplits[2]:conceptKeySplits[1];
 
 	conceptinfowin.show(viewport);
 	conceptinfowin.header.update("Show Concept Definition-" + conceptid);
 	Ext.get(conceptinfowin.body.id).update(conceptcomment);
-	//var begin=conceptcomment.indexOf("trial:");
-	//if(begin==0)
-	//{
+	var begin=conceptcomment.indexOf("trial:");
+	if(begin==0)
+	{	
 		conceptinfowin.load({
-			//url: pageInfo.basePath+"/trial/trialDetailByTrialNumber",
-			url: pageInfo.basePath+"/ontology/showConceptDefinition",
-			//params: {id: conceptcomment.substring(6,conceptcomment.length), conceptType: conceptType}, // or a URL encoded string
-			params: {conceptKey:conceptKey}, // or a URL encoded string		
-			//callback: yourFunction,
-			//scope: yourObject, // optional scope for the callback
+			url: pageInfo.basePath+"/trial/trialDetailByTrialNumber", // /ontology/showConceptDefinition",
+			//params: {conceptKey:conceptKey}, // or a URL encoded string
+			params: {id: conceptcomment.substring(6,conceptcomment.length), conceptType: conceptType}, // or a URL encoded string					
 			discardUrl: true,
 			nocache: true,
 			text: "Loading...",
 			timeout: 30000,
 			scripts: false
 		});
-	//}
-
+	}
 }
 
 function showQuerySummaryWindow(source)
@@ -4080,10 +4069,14 @@ function getExportButtonSecurityComplete(result)
 	if(canExport || GLOBAL.IsAdmin)
 	{
 		Ext.getCmp("exportbutton").enable();
+		Ext.getCmp("analysisDataExportPanel").enable();
+		Ext.getCmp("analysisExportJobsPanel").enable();		
 	}
 	else
 	{
 		Ext.getCmp("exportbutton").disable();
+		Ext.getCmp("analysisDataExportPanel").disable();
+		Ext.getCmp("analysisExportJobsPanel").disable();
 	}
 }
 

@@ -4057,6 +4057,10 @@ function loadHeatmapCTAPaginator(category, searchKeywordId, page, keyword) {
 
 
 	var analysisIds = "";
+	
+	// sort before we create the pipe delimited list to make sure we match the list that is used for display at end
+	selectedAnalyses.sort(dynamicSort("studyID"));
+	
 	// retrieve list of selected analyses, create a pipe delimited list of analysis ids
 	for (var i=0; i<selectedAnalyses.length; i++)
 	{
@@ -4198,6 +4202,9 @@ function openXtBoxplot(keywordId, geneName){
 function loadBoxPlotCTA(keywordId)	{	
 	
 	var ids = "";
+	
+	// sort before we create the pipe delimited list to make sure we match the list that is used for display at end
+	selectedAnalyses.sort(dynamicSort("studyID"));
 	// retrieve list of selected analyses, create a pipe delimited list of analysis ids
 	for (var i=0; i<selectedAnalyses.length; i++)
 	{

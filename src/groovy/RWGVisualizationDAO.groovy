@@ -1666,7 +1666,6 @@ def getHeatmapRowCountCTA  = {analysisIds, category, keywordId ->
 
 	// retrieve results
 	def results = sql.rows(s.toString(), sqlParams)
-	
 	def rowCount
 	results.each{ row->
 	   	
