@@ -123,7 +123,7 @@
 	        			<!--<tr><th colspan="2">Legend</th></tr>-->
 	        			<tr><td>Gene Sig 1</td><td id="geneSig1Name"></td></tr>
 	        			<tr><td>Gene Sig 2</td><td id="geneSig2Name"></td></tr>
-	        			<tr><td>Gene Sig 3</td><td id="geneSig3Name"></td></tr>
+	        			<tr id="geneSig3LegendRow"><td>Gene Sig 3</td><td id="geneSig3Name"></td></tr>
 	        		</table>
 	        	</div>
 	        	<br>

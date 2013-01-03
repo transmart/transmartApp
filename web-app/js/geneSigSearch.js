@@ -109,8 +109,8 @@ function handleActionItem(actionItem) {
 function loadManipulateView(data, action){
 	jQuery.colorbox({
 		innerWidth:600, 
-		innerHeight:500,
 		title:"Gene List Manipulation",
+		innerHeight:650,
 		inline:true,
 		href:"#manipulateDiv",
 		onComplete:function(){
@@ -119,6 +119,7 @@ function loadManipulateView(data, action){
 			visualize(geneLists, action, labels);
 			}
 	});
+	
 }
 
 /**
