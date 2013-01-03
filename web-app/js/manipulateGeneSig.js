@@ -242,12 +242,14 @@ function draw(region, regionTitles, labels){
     .attr("cy", 110)
     .attr("r", 90);
 
-	defs.append("svg:clipPath")
-    .attr("id", "circle3")
-    .append("svg:circle")
-    .attr("cx", 250)
-    .attr("cy", 180)
-    .attr("r", 90);
+	if (setIndex[3])  {		
+		defs.append("svg:clipPath")
+	    .attr("id", "circle3")
+	    .append("svg:circle")
+	    .attr("cx", 250)
+	    .attr("cy", 180)
+	    .attr("r", 90);
+	}
 
 	svg.append("svg:rect")
     .attr("clip-path", "url(#circle1)")
@@ -269,15 +271,17 @@ function draw(region, regionTitles, labels){
     .append("svg:title")
     .text(regionTitles["2"]);
 
-	svg.append("svg:rect")
-    .attr("clip-path", "url(#circle3)")
-    .attr("width", w)
-    .attr("height", h)
-    .attr("id", "3")
-    .style("fill", unselectedColorMapping["3"])
-    .on("click", function(){mouseclick(region, this)})
-    .append("svg:title")
-    .text(regionTitles["3"]);
+	if (setIndex[3])  {		
+		svg.append("svg:rect")
+	    .attr("clip-path", "url(#circle3)")
+	    .attr("width", w)
+	    .attr("height", h)
+	    .attr("id", "3")
+	    .style("fill", unselectedColorMapping["3"])
+	    .on("click", function(){mouseclick(region, this)})
+	    .append("svg:title")
+	    .text(regionTitles["3"]);
+	}
 
 	svg.append("svg:g")
     .attr("clip-path", "url(#circle1)")
@@ -291,44 +295,49 @@ function draw(region, regionTitles, labels){
     .append("svg:title")
     .text(regionTitles["12"]);
 
-	svg.append("svg:g")
-    .attr("clip-path", "url(#circle2)")
-    .append("svg:rect")
-    .attr("clip-path", "url(#circle3)")
-    .attr("width", w)
-    .attr("height", h)
-    .attr("id", "23")
-    .style("fill", unselectedColorMapping["23"])
-    .on("click", function(){mouseclick(region, this)})
-    .append("svg:title")
-    .text(regionTitles["23"]);
+	if (setIndex[3])  {		
+		svg.append("svg:g")
+	    .attr("clip-path", "url(#circle2)")
+	    .append("svg:rect")
+	    .attr("clip-path", "url(#circle3)")
+	    .attr("width", w)
+	    .attr("height", h)
+	    .attr("id", "23")
+	    .style("fill", unselectedColorMapping["23"])
+	    .on("click", function(){mouseclick(region, this)})
+	    .append("svg:title")
+	    .text(regionTitles["23"]);
+	}
 
-	svg.append("svg:g")
-    .attr("clip-path", "url(#circle3)")
-    .append("svg:rect")
-    .attr("clip-path", "url(#circle1)")
-    .attr("width", w)
-    .attr("height", h)
-    .attr("id", "13")
-    .style("fill", unselectedColorMapping["13"])
-    .on("click", function(){mouseclick(region, this)})
-    .append("svg:title")
-    .text(regionTitles["13"]);
-
-	svg.append("svg:g")
-    .attr("clip-path", "url(#circle3)")
-    .append("svg:g")
-    .attr("clip-path", "url(#circle2)")
-    .append("svg:rect")
-    .attr("clip-path", "url(#circle1)")
-    .attr("width", w)
-    .attr("height", h)
-	.attr("id", "123")
-    .style("fill", unselectedColorMapping["123"])
-    .on("click", function(){mouseclick(region, this)})
-    .append("svg:title")
-    .text(regionTitles["123"]);
+	if (setIndex[3])  {			
+		svg.append("svg:g")
+	    .attr("clip-path", "url(#circle3)")
+	    .append("svg:rect")
+	    .attr("clip-path", "url(#circle1)")
+	    .attr("width", w)
+	    .attr("height", h)
+	    .attr("id", "13")
+	    .style("fill", unselectedColorMapping["13"])
+	    .on("click", function(){mouseclick(region, this)})
+	    .append("svg:title")
+	    .text(regionTitles["13"]);
+	}
 	
+	if (setIndex[3])  {		
+		svg.append("svg:g")
+	    .attr("clip-path", "url(#circle3)")
+	    .append("svg:g")
+	    .attr("clip-path", "url(#circle2)")
+	    .append("svg:rect")
+	    .attr("clip-path", "url(#circle1)")
+	    .attr("width", w)
+	    .attr("height", h)
+		.attr("id", "123")
+	    .style("fill", unselectedColorMapping["123"])
+	    .on("click", function(){mouseclick(region, this)})
+	    .append("svg:title")
+	    .text(regionTitles["123"]);
+	}	
 	displayCount(region, svg);
 	
 	displayLabels(svg);
@@ -343,10 +352,13 @@ function displayCount(region, svg){
 	display(svg, 150, 80, region['1'].length);//
 	display(svg, 245, 80, region['12'].length);//
 	display(svg, 340, 80, region['2'].length);
-	display(svg, 190, 160, region['13'].length);//
-	display(svg, 245, 160, region['123'].length);
-	display(svg, 290, 160, region['23'].length);
-	display(svg, 240, 240, region['3'].length);//
+	
+	if (setIndex[3]) {		
+		display(svg, 190, 160, region['13'].length);//
+		display(svg, 245, 160, region['123'].length);
+		display(svg, 290, 160, region['23'].length);
+		display(svg, 240, 240, region['3'].length);//
+	}
 }
 
 /**
@@ -356,7 +368,9 @@ function displayCount(region, svg){
 function displayLabels(svg){
 	display(svg, 50, 80, "Gene Sig 1");
 	display(svg, 390, 80, "Gene Sig 2");
-	display(svg, 215, 280, "Gene Sig 3");
+	if (setIndex[3]) {		
+		display(svg, 215, 280, "Gene Sig 3");
+	}
 }
 
 /**
@@ -364,13 +378,23 @@ function displayLabels(svg){
  * @param labels
  */
 function displayLegend(labels){
+	
+	if (setIndex[3]) {
+		jQuery("#geneSig3LegendRow").show();	
+	}
+	else {
+		jQuery("#geneSig3LegendRow").hide();			
+	}
+
 	jQuery("#geneSig1Name").text("");
 	jQuery("#geneSig2Name").text("");
 	jQuery("#geneSig3Name").text("");
 	
 	jQuery("#geneSig1Name").text(labels[setIndex[1]]);
 	jQuery("#geneSig2Name").text(labels[setIndex[2]]);
-	jQuery("#geneSig3Name").text(labels[setIndex[3]]);
+	if (setIndex[3]) {
+		jQuery("#geneSig3Name").text(labels[setIndex[3]]);
+	}
 }
 
 function display(svg, x, y, count){
