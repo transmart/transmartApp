@@ -69,7 +69,7 @@
             <tr>                
                 <th>&nbsp;</th>
                 <th align="right"><g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
-                        params="[eleId:overlayDiv, experimentId:bioDataObject?.id]" 
+                        params="[eleId:overlayDiv, folderId:folder?.id]" 
                         before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
                   <img align="right" src="${resource(dir:'images', file:'pencil.png')}"/></g:remoteLink>
                 </th>

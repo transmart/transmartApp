@@ -16,26 +16,16 @@
  * 
  *
  ******************************************************************/
-  
-
 package fm
 
-import bio.Experiment
-
-import fm.FmFolder
-import fm.FmFile
-import fm.FmFolderService
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
-
-import groovy.xml.StreamingMarkupBuilder
-// import grails.web.JSONBuilder
-import com.recomdata.util.FolderType
-
-
 import grails.converters.*
-import annotation.AmTagItem
+import groovy.xml.StreamingMarkupBuilder
+
+
+
 
 class FmFolderController {
 
@@ -84,7 +74,7 @@ class FmFolderController {
 		def fmFolderInstance = new FmFolderController()
 		fmFolderInstance.properties = params
 
-        return [fmFolderInstance: fmFolderInstance, tenants:tenants ]
+        return [fmFolderInstance: fmFolderInstance]
     }
 
     def save = {
@@ -392,7 +382,6 @@ class FmFolderController {
 			
 		def folder
 		def bioDataObject
-		def formLayout
 		def amTagTemplate
 		def metaDataTagItems
 		if (folderId) 
@@ -402,23 +391,21 @@ class FmFolderController {
 			
 			def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
 			
-			
-			if(folderAssociation)
-			{
-				log.info "folderAssociation = " + folderAssociation
-				bioDataObject =folderAssociation.getBioObject()
-			}
-			else
-			{
-				log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
-			}
-
-			if(!bioDataObject)
-			{
-				bioDataObject = folder
-			}
-
-	//		def folderTagValues = AmTagDisplayValues.get(folder.objectUid,)
+				if(folderAssociation)
+				{
+					log.info "folderAssociation = " + folderAssociation
+					bioDataObject =folderAssociation.getBioObject()
+				}
+				else
+				{
+					log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
+				}
+	
+				if(!bioDataObject)
+				{
+					log.info "Unable to find bio data object. Setting folder to the biodata object "
+					bioDataObject = folder
+				}
 			
 			amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
 			if(amTagTemplate)
@@ -432,15 +419,9 @@ class FmFolderController {
 
 			//  amTagTemplate.amTagItems
 		}
-		
-		if(!formLayout)
-		{			
-	//		formLayout = formLayoutService.getProgramLayout()		
-		}
-		
 
 		log.info "FolderInstance = " + bioDataObject.toString()
-		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems])
+		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems])
 		
 	}
 
@@ -450,11 +431,8 @@ class FmFolderController {
 		log.info "editMetaData called"
 		log.info "params = " + params
 	
-	//	FmFolder folder = new FmFolder("My Study") 
-	// def layout = formLayoutService.getLayout(folder.folderType.toLowerCase()); //'study');
-		
 		//log.info "** action: expDetail called!"
-		def expid = params.experimentId
+/*		def expid = params.experimentId
 		
 		def exp
 		if (expid) {
@@ -470,9 +448,60 @@ class FmFolderController {
 		def folder = exp
 		log.error "folder = " + folder
 		
+*/
+			
+		//log.info "** action: expDetail called!"
+		def folderId = params.folderId
+		
+		def folder
+		def bioDataObject
+		def amTagTemplate
+		def metaDataTagItems
+		if (folderId)
+		{
+			folder = FmFolder.get(folderId)
+			if(folder)
+			{
+				log.info "folder.objectUid = " + folder.objectUid
+				def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
+				
+				if(folderAssociation)
+				{
+					log.info "folderAssociation = " + folderAssociation
+					bioDataObject =folderAssociation.getBioObject()
+				}
+				else
+				{
+					log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
+				}
+	
+				if(!bioDataObject)
+				{
+					log.info "Unable to find bio data object. Setting folder to the biodata object "
+					bioDataObject = folder
+				}
+
+	
+				amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
+				if(amTagTemplate)
+				{
+					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+				}
+				else
+				{
+					log.error "Unable to find amTagTemplate for object Id = " + folder.objectUid
+				}
+			}
+			else
+			{
+				log.error "Unable to find folder for folder Id = " + folderId				
+			}
+
+		} 
+
 		// due to 1.37 grails plugin bug, defer to view, then template
 		// render(template:'/fmFolder/editMetaData', model:[folder:folder,layout:layout]);
-		render(view: "editMetaData", model:[folder:folder,layout:layout]);
+		render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 	
 	def updateMetaData =
@@ -528,38 +557,6 @@ class FmFolderController {
 		
 		
 	}
-
-def getStudyDetails = {
-	/*
-	Study access type	yes	Internal
-	Study phase	yes	Phase II
-	Study objective	yes	Biomarker discovery
-	Study biomarker type	yes	PD biomarker, Patient selection biomarker
-	Study compound/biologics/company	yes	SAR245408 (XL147)
-	Pathology	yes	endometrial cancer
-	Study design factors	yes	treatment
-	Number of followed subjects	yes	37
-	Organism	yes	Homo sapiens
-	Study design	yes	Interventional
-	Study date	yes	2009
-*/
-	}
-
-def getAssayDetails = {
-	/*
-	Biosource	yes	Endometrial tumor
-	Measurement type	yes	Histology
-	Technology	yes	H&E
-	Vendor	yes	none
-	Platform design	yes	none
-	Biomarkers studied	yes	none
-	Type of biomarkers studied	yes	none
-	Assay description	yes	Hematoxylin and Eosin Staining of Formalin Fixed Paraffin Embedded Tissues
-	*/
-	}
-
-def getAnalysisDetails = {
-}
 
 def getFdDetails = {
 }

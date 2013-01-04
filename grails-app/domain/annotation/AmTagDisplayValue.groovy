@@ -22,7 +22,6 @@ package annotation
 
 import java.io.Serializable;
 
-import annotation.AmTagItem;
 
 class AmTagDisplayValue implements Serializable {
 
@@ -31,7 +30,7 @@ class AmTagDisplayValue implements Serializable {
 	String displayValue
 		
 	static mapping = {
-		table 'am_tags_display_mv'
+		table 'am_tag_display_mv'
 		version false
 		cache true
 		sort "value"
