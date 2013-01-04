@@ -16,26 +16,26 @@
   
  
 -->
-
+<%! import annotation.* %> 
 <g:set var="overlayDiv" value="metaData_div" />
 
 <div style="margin:10px;padding:10px;">
 <h3 class="rdc-h3">
-<g:if test="${folderInstance?.hasProperty('title')}">
-${folderInstance?.title}
+<g:if test="${bioDataObject?.hasProperty('title')}">
+${bioDataObject?.title}
 </g:if>
 <g:else>
-${folderInstance?.folderName}
+${bioDataObject?.folderName}
 </g:else>
 </h3>
-<g:if test="${folderInstance?.hasProperty('description')}">
+<g:if test="${bioDataObject?.hasProperty('description')}">
 <div style="line-height:14px;font-family:arial,​tahoma,​helvetica,​sans-serif; font-size: 12px;">
- <g:if test="${folderInstance?.description.length() > 325000}">
-                       ${(folderInstance?.description).substring(0,324000)}&nbsp;&nbsp;
+ <g:if test="${bioDataObject?.description.length() > 325000}">
+                       ${(bioDataObject?.description).substring(0,324000)}&nbsp;&nbsp;
                        <a href=# >...See more</a>
                        </g:if>
                        <g:else>
-                        ${folderInstance?.description}
+                        ${bioDataObject?.description}
                         </g:else></div>
 <div style="height:20px;"></div>
 </g:if>
@@ -46,7 +46,7 @@ ${folderInstance?.folderName}
             <tr>                
                 <th>&nbsp;</th>
                 <th align="right"><g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
-                        params="[eleId:overlayDiv, experimentId:folderInstance?.id]" 
+                        params="[eleId:overlayDiv, experimentId:bioDataObject?.id]" 
                         before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
                   <img align="right" src="${resource(dir:'images', file:'pencil.png')}"/></g:remoteLink>
                 </th>
@@ -59,20 +59,18 @@ ${folderInstance?.folderName}
             <!-- TODO: If active -->
                 <td valign="top" align="right" class="columnname" width="20%">${amTagItem.displayName}</td>
                 <td valign="top" align="left" class="columnvalue" width="60%">
-                <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?folderInstance?.hasProperty(amTagItem.tagItemAttr):false}" >
-                      ${fieldValue(bean:folderInstance,field:amTagItem.tagItemAttr)}
+                <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
+                      ${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
                 </g:if>
-                 <g:elseif test="${amTagItem.tagItemType == 'CUSTOM'}">
-                    TODO::custom                    
-                 </g:elseif>
-                 <g:elseif test="${amTagItem.tagItemType == 'PICKLIST'}">
-                    TODO::picklist
-                 </g:elseif>
-                 <g:elseif test="${amTagItem.tagItemType == 'BIODATA'}">
-                    TODO::biodata
-                 </g:elseif>
-                 <g:else>
-                 unknown tag item type
+                <g:else>
+	                <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.objectUid,amTagItem.id])}"/>
+	                <g:if test="${tagValues!=null}">
+	             	   <g:set var="counter" value="0"/>
+	             		 <g:each var="tagValue" status="k" in="${tagValues}">
+						      <g:if test="${counter==1}">, </g:if>${tagValue.displayValue}
+						      <g:set var="counter" value="${counter.toLong() + 1}"/>
+						 </g:each>
+	                 </g:if>
                  </g:else>
                 </td>
             </tr>
@@ -85,7 +83,7 @@ ${folderInstance?.folderName}
                     
                    
 <div style="height:20px;"></div>
-<g:if test="${folderInstance?.hasProperty('fmFiles') && null!=folderInstance?.fmFiles && folderInstance?.fmFiles.size()>0}">   
+<g:if test="${bioDataObject?.hasProperty('fmFiles') && null!=bioDataObject?.fmFiles && bioDataObject?.fmFiles.size()>0}">   
 <div style="align:center;" ><h4 class="rdc-h4" align="center" >Associated Files</h4></div>
 <table class="list-table">
             <thead>
@@ -107,7 +105,7 @@ ${folderInstance?.folderName}
 		    	</tr>
 		    </tfoot>
     <tbody>
-        <g:each in="${folderInstance?.fmFiles}" status="i" var="fmFile">
+        <g:each in="${bioDataObject?.fmFiles}" status="i" var="fmFile">
             <tr class="file-row">
                 <td style="padding: 3px 3px 3px 3px;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
                <td >

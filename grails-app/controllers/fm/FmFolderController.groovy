@@ -418,7 +418,8 @@ class FmFolderController {
 				bioDataObject = folder
 			}
 
-						
+	//		def folderTagValues = AmTagDisplayValues.get(folder.objectUid,)
+			
 			amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
 			if(amTagTemplate)
 			{
@@ -439,7 +440,7 @@ class FmFolderController {
 		
 
 		log.info "FolderInstance = " + bioDataObject.toString()
-		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems])
+		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems])
 		
 	}
 

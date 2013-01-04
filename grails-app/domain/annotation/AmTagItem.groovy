@@ -37,9 +37,9 @@ class AmTagItem implements Comparable<AmTagItem>{
 	Boolean activeInd = Boolean.TRUE
 	Boolean viewInGrid = Boolean.TRUE
 	static belongsTo=[amTagTemplate: AmTagTemplate]
+	 
 	
 //	AmTagAssociation amTagAssociation
-//	static hasOne = [amTagAssociation: AmTagAssociation]
 	
 	static mapping = {
 		table 'am_tag_item'
@@ -72,6 +72,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 		guiHandler(maxSize:200)
 // 	amTagAssociation(nullable:true)
 //		tagItemUid(maxSize:300)
+		amTagDisplayValue unique:true
 	}
 	
 	/**
