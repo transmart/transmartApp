@@ -17,6 +17,8 @@
  
 -->
 <%! import annotation.* %> 
+<%! import com.recomdata.util.* %> 
+
 <g:set var="overlayDiv" value="metaData_div" />
 
 <div style="margin:10px;padding:10px;">
@@ -26,17 +28,17 @@
 		<%-- Add buttons here depending on folder type --%>
 		
 		<sec:ifAnyGranted roles="ROLE_ADMIN">
-			<g:if test="${folderInstance.folderType == 'Program'}">
+			<g:if test="${folder.folderType == FolderType.PROGRAM.name()}">
 				<span class="greybutton buttonicon addstudy">Add new study</span>
 			</g:if>
 		</sec:ifAnyGranted>
 		
-		<g:if test="${folderInstance.folderType == 'Study'}">
+		<g:if test="${folder.folderType == FolderType.STUDY.name()}">
 			<span class="greybutton buttonicon addassay">Add new assay</span>
 			<span class="greybutton buttonicon addfolder">Add new folder</span>
 		</g:if>
 		
-		<g:if test="${folderInstance.folderType == 'Folder' || folderInstance.folderType == 'Assay' || folderInstance.folderType == 'Analysis'}">
+		<g:if test="${folder.folderType == FolderType.FOLDER.name() || folder.folderType == FolderType.ASSAY.name() || folder.folderType == FolderType.ANALYSIS.name()}">
 			<span class="greybutton buttonicon addfolder">Add new folder</span>
 		</g:if>
 	</div>
@@ -45,7 +47,7 @@
 		${bioDataObject?.title}
 		</g:if>
 		<g:else>
-		${folderInstance?.folderName}
+		${bioDataObject?.folderName}
 		</g:else>
 	</h3>
 </div>
@@ -82,6 +84,8 @@
                 <td valign="top" align="left" class="columnvalue" width="60%">
                 <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
                       ${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
+                </g:if>
+                <g:else>      
 	                <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.objectUid,amTagItem.id])}"/>
 	                <g:if test="${tagValues!=null}">
 	             	   <g:set var="counter" value="0"/>
