@@ -3783,14 +3783,14 @@ svg.selectAll("text")
     )
     .style("font-size", noDataFontSize)
     .attr("x", function(d,i) { return 5 + i * (bar_width+10) + 2; })
-    .attr("y", function(d,i) { return y(0); })
+    .attr("y", function(d,i) { return 42; })
     .attr("class", "noDataText1")
     ;
     
     svg.selectAll(".noDataText2")
     .data(data)
     .enter().append("text")
-    .text("data")
+    .text("Data")
     .attr("style", function(d, i) {
     	if (formattedData[i].pvalue == '' && formattedData[i].foldChange == '')  {
     		return "display:inline";	
@@ -3803,7 +3803,7 @@ svg.selectAll("text")
     )
     .style("font-size", noDataFontSize)
     .attr("x", function(d,i) { return 5 + i * (bar_width+10); })
-    .attr("y", function(d,i) { return y(0) + 10; })
+    .attr("y", function(d,i) { return 53; })
     .attr("class", "noDataText2")
     ;        
     
