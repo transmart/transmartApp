@@ -28,6 +28,11 @@ class AmTagDisplayValue implements Serializable {
 	AmTagItem amTagItem
 	String subjectUid
 	String displayValue
+	String objectType
+	String objectUid
+	Long objectId
+	
+	
 		
 	static mapping = {
 		table 'am_tag_display_mv'

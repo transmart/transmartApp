@@ -78,12 +78,13 @@ class FmFolderController {
     }
 
     def save = {
+		log.info params
         def fmFolderInstance = new FmFolderController(params)
         if (fmFolderInstance.save(flush: true)) {
             redirect(action: "show", id: fmFolderInstance.id)
         }
         else {
-            render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+//            render(view: "create", model: [fmFolderInstance: fmFolderInstance])
         }
     }
 
@@ -119,14 +120,15 @@ class FmFolderController {
 		
 		log.info params
         def fmFolderInstance = FmFolder.get(params.id)
-        if (fmFolderInstance) {
+  
+      if (fmFolderInstance) {
             fmFolderInstance.properties = params
-            if (!fmFolderInstance.hasErrors() && fmFolderInstance.save(flush: true)) {
-                redirect(action: "show", id: fmFolderInstance.id)
-            }
-            else {
-                render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
-            }
+   //         if (!fmFolderInstance.hasErrors() && fmFolderInstance.save(flush: true)) {
+     //           redirect(action: "show", id: fmFolderInstance.id)
+       //     }
+         //   else {
+           //     render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
+            //}
         }
         else {
             redirect(action: "list")
@@ -508,24 +510,56 @@ class FmFolderController {
 	{
 		log.info "updateMetaData called"
 		
-		// TODO
-		// We need to only save the meta data of the FmFolder
+		def folderId = params.id
+		def folder
+		def bioDataObject
+		if (folderId)
+		{
+			folder = FmFolder.get(folderId)
+			if(folder)
+			{
+				def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
+				if(folderAssociation)
+				{
+					log.info "folderAssociation = " + folderAssociation
+					bioDataObject =folderAssociation.getBioObject()
+				}
+				else
+				{
+					log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
+				}
+	
+				if(!bioDataObject)
+				{
+					log.info "Unable to find bio data object. Setting folder to the biodata object "
+					bioDataObject = folder
+				}
 
-		def fmFolderInstance = FmFolder.get(params.id)
-		if (fmFolderInstance) {
-			fmFolderInstance.properties = params
-			if (!fmFolderInstance.hasErrors() && fmFolderInstance.save(flush: true)) {
-				redirect(action: "show", id: fmFolderInstance.id)
+				bioDataObject.properties = params
+				if (!bioDataObject.hasErrors() && bioDataObject.save(flush: true)) {
+					log.info "Meta data saved"
+					redirect(action: "show", id: bioDataObject.id)
+				}
+				else {
+					log.info "Errors occurred saving Meta data"
+					def metaDataTagItems 
+					def amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
+					if(amTagTemplate)
+					{
+						metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+					}
+					else
+					{
+						log.error "Unable to find amTagTemplate for object Id = " + folder.objectUid
+					}
+	
+					render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+					//	render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
+				}
 			}
-			else {
-				render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
-			}
-		}
-		else {
-			redirect(action: "list")
 		}
 	}
-
+			
 	def subFolders = 
 	{
 		ExportTableNew table;
