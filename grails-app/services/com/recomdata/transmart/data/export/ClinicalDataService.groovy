@@ -113,7 +113,7 @@ class ClinicalDataService {
 				sqlQuery <<= "LEFT JOIN DE_SUBJECT_SAMPLE_MAPPING ssm ON ssm.PATIENT_ID = ofa.PATIENT_NUM  "
 			}
 			
-			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = ? AND ofa.MODIFIER_CD = ?"
+			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = ? "
 
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
 				sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT NVL(sample_type_cd,'-1') as gene_expr_concept"
