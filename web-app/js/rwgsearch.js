@@ -354,6 +354,7 @@ function showFacetResults()	{
     	if (savedSearchTermsArray.length == 0) {
     		//Need to silently clear the search map here as well
 			jQuery.ajax({url:clearSearchFilterURL});
+			GLOBAL.PathToExpand = '';
     		getCategories();
     	}
     	else {
