@@ -455,7 +455,7 @@ function showIEWarningMsg(){
 			overlayMsg = overlayMsg + "for software package #C01026EE. If you have questions, please email us at <a href='mailto:tranSMART@its.jnj.com'>tranSMART@jnj.com</a>.</p>";
 			overlayMsg = overlayMsg + "<br /><p><a href='#' onclick=\"jQuery('#IEwarningOverlayLink').colorbox.close()\">Close</a></p></div>";
 				
-		jQuery('#results-div').before(msg);
+		jQuery('#menu_bar').after(msg);
 		
 		jQuery("#IEwarningOverlayLink").colorbox({html:overlayMsg, width:"50%", height:"300px", opacity:"0.75"});
 		
@@ -3765,47 +3765,49 @@ svg.selectAll("text")
         .attr("x1", 0)
         .attr("x2", width);
     
-    var noDataFontSize = 10;
-    
-    svg.selectAll(".noDataText1")
-    .data(data)
-    .enter().append("text")
-    .text("No")
-    .attr("style", function(d, i) {
-    	if (formattedData[i].pvalue == '' && formattedData[i].foldChange == '')  {
-    		return "display:inline";	
-    	}
-    	else {
-    		return "display:none";
-    	}
-    	
-   	}
-    )
-    .style("font-size", noDataFontSize)
-    .attr("x", function(d,i) { return 5 + i * (bar_width+10) + 2; })
-    .attr("y", function(d,i) { return 42; })
-    .attr("class", "noDataText1")
-    ;
-    
-    svg.selectAll(".noDataText2")
-    .data(data)
-    .enter().append("text")
-    .text("Data")
-    .attr("style", function(d, i) {
-    	if (formattedData[i].pvalue == '' && formattedData[i].foldChange == '')  {
-    		return "display:inline";	
-    	}
-    	else {
-    		return "display:none";
-    	}
-    	
-   	}
-    )
-    .style("font-size", noDataFontSize)
-    .attr("x", function(d,i) { return 5 + i * (bar_width+10); })
-    .attr("y", function(d,i) { return 53; })
-    .attr("class", "noDataText2")
-    ;        
+    //only check for no data and display label after the data has been received
+    if(!placeholder){
+	    var noDataFontSize = 10;
+	    svg.selectAll(".noDataText1")
+	    .data(data)
+	    .enter().append("text")
+	    .text("No")
+	    .attr("style", function(d, i) {
+	    	if (formattedData[i].pvalue == '' && formattedData[i].foldChange == '')  {
+	    		return "display:inline";	
+	    	}
+	    	else {
+	    		return "display:none";
+	    	}
+	    	
+	   	}
+	    )
+	    .style("font-size", noDataFontSize)
+	    .attr("x", function(d,i) { return 5 + i * (bar_width+10) + 2; })
+	    .attr("y", function(d,i) { return 42; })
+	    .attr("class", "noDataText1")
+	    ;
+	    
+	    svg.selectAll(".noDataText2")
+	    .data(data)
+	    .enter().append("text")
+	    .text("Data")
+	    .attr("style", function(d, i) {
+	    	if (formattedData[i].pvalue == '' && formattedData[i].foldChange == '')  {
+	    		return "display:inline";	
+	    	}
+	    	else {
+	    		return "display:none";
+	    	}
+	    	
+	   	}
+	    )
+	    .style("font-size", noDataFontSize)
+	    .attr("x", function(d,i) { return 5 + i * (bar_width+10); })
+	    .attr("y", function(d,i) { return 53; })
+	    .attr("class", "noDataText2")
+	    ;        
+    }
     
     //add some buttons
     jQuery('#'+divID).append(closeHTML +"<span style='display:block'>"+openBoxplotLinkHTML+"</span>");
