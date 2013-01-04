@@ -317,6 +317,10 @@ table.menuDetail th.menuVisited {
 	border-bottom-right-radius: 8px;
 }
 
+#navigateTermsPanel .searchResultNode a {
+	font-weight: bold;	
+}
+
 #navigateTermsPanel .x-panel-header-text{
 	color: white;
 }

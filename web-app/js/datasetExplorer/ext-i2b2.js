@@ -73,7 +73,7 @@ parseXml:function (response, node) {
 	for(i=0;i<concepts.length;i++)
 	  {
    		 var c=getTreeNodeFromXMLNode(concepts[i]);
-   		 if(c.attributes.id.indexOf("SECURITY")>-1){continue;}
+   		 if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
    		 node.appendChild(c);
    	 }
 	
@@ -100,16 +100,17 @@ node.setText(node.text+" <b>("+result.responseText+")</b>");
 
 function getChildConceptPatientCounts(node)
 {
-Ext.Ajax.request(
-    	    {
+	
+var params =	Ext.urlEncode({charttype:"childconceptpatientcounts",
+		   concept_key: node.attributes.id})
+
+// Ext AJAX has intermittent failure to pass parameters when many AJAX requests are made in a short space of time - switched to jQuery here
+jQuery.ajax({
     	        url: pageInfo.basePath+"/chart/childConceptPatientCounts",
     	        method: 'POST',                                       
-    	        success: function(result, request){getChildConceptPatientCountsComplete(result, node);},
-    	        failure: function(result, request){getChildConceptPatientCountsComplete(result, node);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({charttype:"childconceptpatientcounts",
-    	        		 			   concept_key: node.attributes.id})
-    	    });   
+    	        success: function(result){getChildConceptPatientCountsComplete(result, node);},
+    	        data: {charttype: "childconceptpatientcounts", concept_key: node.attributes.id}
+			});   
 }
 
 function getChildConceptPatientCountsComplete(result, node)
@@ -117,7 +118,7 @@ function getChildConceptPatientCountsComplete(result, node)
 /* eval the response and look up in loop*/
 //var childaccess=Ext.util.JSON.decode(result.responseText).accesslevels;
 //var childcounts=Ext.util.JSON.decode(result.responseText).counts;
-var mobj=result.responseText.evalJSON();
+var mobj=result;
 var childaccess=mobj.accesslevels;
 var childcounts=mobj.counts;
 /*var cca=new Array();

@@ -1964,7 +1964,11 @@ function getTreeNodeFromXMLNode(concept)
 	    
 	    //set whether expanded or not.
 	    var autoExpand=false;
-		//var pathToExpand="\\\\Clinical Trials\\Clinical Trials\\C-2006-004\\Subjects\\Demographics\\Race\\";
+		// Crude string check to only auto-expand if this node is not an actual search result
+	    var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
+	    if (isSearchResult) {
+	    	tcls += ' searchResultNode';
+	    }
 	    if(GLOBAL.PathToExpand.indexOf(key)>-1) autoExpand=true;
 		
 	    // set the root node

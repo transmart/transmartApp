@@ -1663,7 +1663,6 @@ function setActiveTab(){
 			activeTab='navigateTermsPanel';
 		}
 	}
-	ontTabPanel.setActiveTab(activeTab);
 }
 
 function setupOntTree(id_in, title_in) {
@@ -4248,6 +4247,9 @@ function searchByTagComplete(response)
 	
 	jQuery('#noAnalyzeResults').hide();
 	
+	//Clear path to expand
+	GLOBAL.PathToExpand = '';
+	
 	if(concepts != undefined)
 	{
 		if(concepts.length < GLOBAL.MaxSearchResults)
@@ -4261,17 +4263,21 @@ function searchByTagComplete(response)
 		for(var c = 0; c < length; c ++ )
 		{
 			var newnode=getTreeNodeFromJSON(concepts[c])
-			treeRoot.appendChild(newnode);
-			setTreeNodeSecurity(newnode, concepts[c].access);
+			GLOBAL.PathToExpand += newnode.id + ",";
+			//treeRoot.appendChild(newnode);
+			//setTreeNodeSecurity(newnode, concepts[c].access);
 		}
 		
 		if (concepts.length == 0) {
 			jQuery('#noAnalyzeResults').show();
+			Ext.getCmp('navigateTermsPanel').render();
+			onWindowResize();
 		}
-		//var t=document.getElementById("searchresultstext");
-		//t.innerHTML=rtext;
-		Ext.getCmp('navigateTermsPanel').render();
-		onWindowResize();
+		else {
+			//Get the categories with the new path to expand
+			getCategories();
+		}
+		
 	}
 }
 
