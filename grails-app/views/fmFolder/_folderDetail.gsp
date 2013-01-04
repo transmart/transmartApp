@@ -20,14 +20,35 @@
 <g:set var="overlayDiv" value="metaData_div" />
 
 <div style="margin:10px;padding:10px;">
-<h3 class="rdc-h3">
-<g:if test="${bioDataObject?.hasProperty('title')}">
-${bioDataObject?.title}
-</g:if>
-<g:else>
-${bioDataObject?.folderName}
-</g:else>
-</h3>
+
+<div>
+	<div style="float: right">
+		<%-- Add buttons here depending on folder type --%>
+		
+		<sec:ifAnyGranted roles="ROLE_ADMIN">
+			<g:if test="${folderInstance.folderType == 'Program'}">
+				<span class="greybutton buttonicon addstudy">Add new study</span>
+			</g:if>
+		</sec:ifAnyGranted>
+		
+		<g:if test="${folderInstance.folderType == 'Study'}">
+			<span class="greybutton buttonicon addassay">Add new assay</span>
+			<span class="greybutton buttonicon addfolder">Add new folder</span>
+		</g:if>
+		
+		<g:if test="${folderInstance.folderType == 'Folder' || folderInstance.folderType == 'Assay' || folderInstance.folderType == 'Analysis'}">
+			<span class="greybutton buttonicon addfolder">Add new folder</span>
+		</g:if>
+	</div>
+	<h3 class="rdc-h3">
+		<g:if test="${bioDataObject?.hasProperty('title')}">
+		${bioDataObject?.title}
+		</g:if>
+		<g:else>
+		${folderInstance?.folderName}
+		</g:else>
+	</h3>
+</div>
 <g:if test="${bioDataObject?.hasProperty('description')}">
 <div style="line-height:14px;font-family:arial,​tahoma,​helvetica,​sans-serif; font-size: 12px;">
  <g:if test="${bioDataObject?.description.length() > 325000}">
@@ -61,8 +82,6 @@ ${bioDataObject?.folderName}
                 <td valign="top" align="left" class="columnvalue" width="60%">
                 <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
                       ${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
-                </g:if>
-                <g:else>
 	                <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.objectUid,amTagItem.id])}"/>
 	                <g:if test="${tagValues!=null}">
 	             	   <g:set var="counter" value="0"/>
@@ -98,8 +117,8 @@ ${bioDataObject?.folderName}
 		    	<tr>
 		    		<td colspan="3">&nbsp;</td>
 	    		   <td>
-		               <div>
-		                    <span class="foldericon add">Export all</span>
+		               <div style="padding: 4px 0px;">
+		                    <span class="foldericon addall link">Export all</span>
 		               </div>
 	               </td>
 		    	</tr>
@@ -107,7 +126,7 @@ ${bioDataObject?.folderName}
     <tbody>
         <g:each in="${bioDataObject?.fmFiles}" status="i" var="fmFile">
             <tr class="file-row">
-                <td style="padding: 3px 3px 3px 3px;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
+                <td style="padding: 3px;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
                <td >
                <g:formatDate format="yyyy-MM-dd" date="${fmFile.createDate}" />
                </td> 
@@ -116,7 +135,7 @@ ${bioDataObject?.folderName}
                </td> 
                <td>
 	               <div>
-	                    <span class="foldericon add">Add to export</span>
+	                    <span class="foldericon add link" name="${fmFile.id}">Add to export</span>
 	               </div>
                </td>
                 

@@ -18,7 +18,7 @@
 -->
 
 
-<%@ page import="AuthUser" %>
+<%@ page import="auth.AuthUser" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

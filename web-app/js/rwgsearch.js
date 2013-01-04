@@ -16,7 +16,7 @@ var allowOnSelectEvent = true;
 
 // Method to add the categories for the select box
 function addSelectCategories()	{
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All Metadata"));
+	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All"));
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "DATANODE").text("Data Node"));
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "FREETEXT").text("Free Text"));
 	jQuery.getJSON(getCategoriesURL, function(json) {
@@ -37,6 +37,13 @@ function addSearchAutoComplete()	{
 		select: function(event, ui) {  
 			searchParam={id:ui.item.id,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId};
 			addSearchTerm(searchParam);
+			
+			//If category is ALL, add this as free text as well
+			var category = jQuery("#search-categories").val();
+			if (category == 'ALL') {
+				searchParam={id:ui.item.label,display:'Free Text',keyword:ui.item.label,category:'FREETEXT'};
+				addSearchTerm(searchParam);
+			}
 			return false;
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
@@ -62,8 +69,9 @@ function addSearchAutoComplete()	{
 	jQuery('#search-ac').keypress(function(event) {
 		var category = jQuery("#search-categories").val();
 		var categoryText = jQuery('#search-categories option:selected').text();
-		if (event.which == 13 && (category == 'DATANODE' || category == 'FREETEXT')) {
+		if (event.which == 13 && (category == 'DATANODE' || category == 'FREETEXT' || category == 'ALL')) {
 			var val = jQuery('#search-ac').val();
+			if (category == 'ALL') {category = 'FREETEXT'; categoryText = 'Free Text';}
 			searchParam={id:val,display:categoryText,keyword:val,category:category};
 			addSearchTerm(searchParam);
 			return false;

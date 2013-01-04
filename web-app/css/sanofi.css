@@ -30,6 +30,7 @@ table.menuDetail th.menuLink a:link, th.menuLink a:visited {
 	top: 0px;
 	left: 0px;
 	z-index: 999;
+	cursor: pointer;
 }
 
 table.menuDetail {
@@ -228,7 +229,21 @@ table.menuDetail th.menuVisited {
 	cursor: pointer;
 	border-radius: 2px;
 	font-size: 8pt;
+	padding: 2px;
 }
+
+.greybutton.buttonicon {
+	padding-left: 24px;
+	background-repeat: no-repeat;
+	background-position: 4px 50%;	
+}
+
+.greybutton.addprogram { background-image: url('../images/addprogram.png'); }
+.greybutton.addstudy { background-image: url('../images/addstudy.png'); }
+.greybutton.addassay { background-image: url('../images/addassay.png'); }
+.greybutton.addfolder { background-image: url('../images/addfolder.png'); }
+.greybutton.addanalysis { background-image: url('../images/addanalysis.png'); }
+
 
 #filterbutton {
 	position: absolute;
@@ -346,10 +361,34 @@ table.menuDetail th.menuVisited {
 	margin: 8px;
 }
 
+#exportOverlay {
+	position: absolute;
+	z-index: 10000;
+	top: 10%;
+	left: 10%;
+	width: 80%;
+	height: 80%;
+	border: 8px solid #DDDEE6;
+	border-radius: 16px;
+	box-shadow: #DDD 11px 11px 8px -7px;
+	background: white;
+	overflow: auto;
+}
+
+.exporttable td {
+	padding: 4px;
+	border-bottom: 1px solid #DDD;	
+}
+
 
 /* Catch-all for making IE look slightly less stupid */
 *:focus {
 	outline:none;	
+}
+
+.link {
+	text-decoration: underline;
+	color: #282;	
 }
 
 .breaker {

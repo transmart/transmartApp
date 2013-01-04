@@ -2,8 +2,7 @@
 <html>
     <head>
         <!-- Force Internet Explorer 8 to override compatibility mode -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" >        
-        
+        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
         <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
         
@@ -137,9 +136,42 @@
 		    	});
 
 	    	    jQuery('body').on('click', '.foldericon.add', function() {
-					var count = jQuery('#cartcount').text();
-					count++;
-					jQuery('#cartcount').text(count);
+					var id = jQuery(this).attr('name');
+					jQuery(this).removeClass().text("Added to cart");
+					jQuery('#cartcount').hide();
+					
+					jQuery.ajax({
+						url:exportAddURL,
+						data: {id: id},			
+						success: function(response) {
+							jQuery('#cartcount').show().text(response);
+						},
+						error: function(xhr) {
+							jQuery('#cartcount').show();
+						}
+					});
+		    	});
+
+	    	    jQuery('body').on('click', '.foldericon.addall', function() {
+					var nameelements = jQuery(this).closest('table').find('.foldericon.add');
+					var ids = [];
+					for (i = 0; i < nameelements.size(); i++) {
+						ids.push(jQuery(nameelements[i]).attr('name'));
+						jQuery(nameelements[i]).removeClass().text("Added to cart");
+					}
+					
+					jQuery('#cartcount').hide();
+					
+					jQuery.ajax({
+						url:exportAddURL,
+						data: {id: ids.join(",")},			
+						success: function(response) {
+							jQuery('#cartcount').show().text(response);
+						},
+						error: function(xhr) {
+							jQuery('#cartcount').show();
+						}
+					});
 		    	});
 
 	    	    jQuery('body').on('click', '.foldericon.view', function() {
@@ -147,9 +179,48 @@
 	    	    	showDetailDialog(experimentDataUrl + '?id=' + id);
 		    	});
 
-	    	    jQuery('body').on('click', '.foldericon.viewfile', function() {
-		    	    var id = jQuery(this).closest(".folderheader").attr('name');
-	    	    	showDetailDialog(fileDataUrl + '?id=' + id);
+	    	    jQuery('body').on('click', '.greybutton.remove', function() {
+
+	    	    	var row = jQuery(this).closest("tr");
+		    	    var id = row.attr('name');
+		    	   
+		    	    jQuery('#cartcount').hide();
+		    	    
+					jQuery.ajax({
+						url:exportRemoveURL,
+						data: {id: id},			
+						success: function(response) {
+							row.remove();
+							jQuery('#cartcount').show().text(response);
+						},
+						error: function(xhr) {
+							jQuery('#cartcount').show();
+						}
+					});
+		    	});
+
+	    	    jQuery('body').on('click', '.greybutton.export', function() {
+
+	    	    	var checkboxes = jQuery('#exporttable input:checked');
+					var ids = [];
+					for (i = 0; i < checkboxes.size(); i++) {
+						ids.push(jQuery(checkboxes[i]).attr('name'));
+					}
+
+					window.location = exportURL + "?id=" + ids.join(',');
+		    	    
+		    	});
+
+	    	    jQuery('body').on('click', function(e) {
+
+	    	    	if (!jQuery(e.target).closest('#exportOverlay').length
+	    	    	    	&& !jQuery(e.target).closest('#cartbutton').length
+	    	    	    	&& jQuery(e.target).attr('id') != 'cartbutton') {
+	    	    	
+		    	    	if (jQuery('#exportOverlay').is(':visible')) {
+			    	    	jQuery('#exportOverlay').fadeOut();
+		    	    	}
+	    	    	}
 		    	});
 
 		    	jQuery('#results-div').on('click', '.result-folder-name', function() {
@@ -157,10 +228,27 @@
 					jQuery(this).addClass('selected');
 			    });
 
-	    /*	    jQuery('#cartbutton').click(function() {
-					jQuery('#exportViewLink').click();
+	    	    jQuery('#logocutout').on('click', function() {
+	    	    	jQuery('#metadata-viewer').empty();
+
+	    	    	jQuery('#welcome-viewer').empty().addClass('ajaxloading');
+	    	    	jQuery('#welcome-viewer').load(welcomeURL, {}, function() {
+	    	    		jQuery('#welcome-viewer').removeClass('ajaxloading');
+	    	    	});
 		    	});
-	      */  	
+
+	    	    jQuery('#cartbutton').click(function() {
+					jQuery.ajax({
+						url:exportViewURL,		
+						success: function(response) {
+							jQuery('#exportOverlay').html(response);
+						},
+						error: function(xhr) {
+						}
+					});
+					jQuery('#exportOverlay').fadeToggle();
+		    	});
+	       	
 
 	        	jQuery('#sidebar-accordion').accordion({heightStyle: "fill", icons: { 'header': 'suppressicon', 'headerSelected': 'suppressicon' }});
 	        	resizeAccordion();
@@ -353,6 +441,7 @@
 		</div>
 	
 		<!--  This is the DIV we stuff the browse windows into. -->
+		<div id="exportOverlay" style="display: none;">&nbsp;</div>
 		<div id="divBrowsePopups" style="width:800px; display: none;">
 			
 		</div>

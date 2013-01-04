@@ -48,13 +48,18 @@ class RWGController {
 	
     def index = {
 		def rwgSearchFilter = session['rwgSearchFilter'];
+		def exportList = session['export'];
 		if (rwgSearchFilter) {
 			rwgSearchFilter = rwgSearchFilter.join(",,,")
 		}
 		else {
 			rwgSearchFilter = "";
 		}
-		return [rwgSearchFilter: rwgSearchFilter];
+		return [rwgSearchFilter: rwgSearchFilter, exportCount: exportList?.size()];
+	}
+	
+	def ajaxWelcome = {
+		render (template: 'welcome');
 	}
 
 	/**
