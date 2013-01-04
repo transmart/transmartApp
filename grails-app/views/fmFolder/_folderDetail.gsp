@@ -28,17 +28,17 @@
 		<%-- Add buttons here depending on folder type --%>
 		
 		<sec:ifAnyGranted roles="ROLE_ADMIN">
-			<g:if test="${folder.folderType == FolderType.PROGRAM.name()}">
+			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name())}">
 				<span class="greybutton buttonicon addstudy">Add new study</span>
 			</g:if>
 		</sec:ifAnyGranted>
 		
-		<g:if test="${folder.folderType == FolderType.STUDY.name()}">
+		<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())}">
 			<span class="greybutton buttonicon addassay">Add new assay</span>
 			<span class="greybutton buttonicon addfolder">Add new folder</span>
 		</g:if>
 		
-		<g:if test="${folder.folderType == FolderType.FOLDER.name() || folder.folderType == FolderType.ASSAY.name() || folder.folderType == FolderType.ANALYSIS.name()}">
+		<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.FOLDER.name()) || folder.folderType.equalsIgnoreCase(FolderType.ASSAY.name()) || folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
 			<span class="greybutton buttonicon addfolder">Add new folder</span>
 		</g:if>
 	</div>
