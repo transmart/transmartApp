@@ -104,10 +104,14 @@ class FileExportController {
 				FmFile fmFile = FmFile.get(f)
 				File file = new File(fmFile.filestoreLocation + "/" + fmFile.filestoreName)
 				if (file.exists()) {
-					def fileEntry = new ZipEntry(fmFile.displayName)
+					String dirName = fmFile.fmFolder.folderFullName[0]
+					if (dirName.startsWith("/") || dirName.startsWith("\\")) { dirName = dirName.substring(1) } //Lose the first separator character, this would cause a blank folder name in the zip
+					def fileEntry = new ZipEntry(dirName + "/" + fmFile.displayName)
 					zipStream.putNextEntry(fileEntry)
 					file.withInputStream({is -> zipStream << is})
 					zipStream.closeEntry()
+					
+					//TODO For manifest files, add this file to a map, keyed by folder names. After adding all files, create manifest files out of folder data and place in the ZIP at the key folder name
 				}
 			}
 			

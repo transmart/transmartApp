@@ -211,6 +211,11 @@
 		    	    
 		    	});
 
+		    	jQuery('body').on('click', '.greybutton.closeexport', function() {
+		    		jQuery('#exportOverlay').fadeOut();	
+			    });
+
+	    	    //Close export overlay on click outside
 	    	    jQuery('body').on('click', function(e) {
 
 	    	    	if (!jQuery(e.target).closest('#exportOverlay').length

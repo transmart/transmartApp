@@ -1,5 +1,10 @@
 <div style="margin: 16px;">
+<div>
+<div style="float: right;">
+	<span class="greybutton buttonicon closeexport">Close</span>
+</div>
 <h3 class="rdc-h3">Export Files</h3>
+</div>
 
 <g:if test="${files}"><p>These are the files that have been added to the cart. Please select the files to export.</p></g:if>
 <g:else>No files have been added to the export cart.</g:else>

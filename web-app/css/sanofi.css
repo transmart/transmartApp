@@ -243,6 +243,7 @@ table.menuDetail th.menuVisited {
 .greybutton.addassay { background-image: url('../images/addassay.png'); }
 .greybutton.addfolder { background-image: url('../images/addfolder.png'); }
 .greybutton.addanalysis { background-image: url('../images/addanalysis.png'); }
+.greybutton.closeexport { background-image: url('../images/small_cross.png'); }
 
 
 #filterbutton {
