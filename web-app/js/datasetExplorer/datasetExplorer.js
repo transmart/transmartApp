@@ -491,10 +491,11 @@ Ext.onReady(function()
 								handler : function()
 								{
 								if(confirm("Are you sure you want to clear your current analysis?"))
-									{
+									{										
 										clearAnalysisPanel();
 										resetQuery();
-										clearDataAssociation();									
+										clearDataAssociation();
+										resetExportTabs();
 									}
 								// clearGrid(); blah
 								}
@@ -1707,6 +1708,16 @@ function projectDialogComplete(projectid)
 		getPreviousQueryFromID(1, GLOBAL.RestoreQID1);
 		getPreviousQueryFromID(2, GLOBAL.RestoreQID2);
 	}
+	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
+	{
+		Ext.getCmp("exportbutton").disable();
+		Ext.getCmp("analysisDataExportPanel").disable();
+		Ext.getCmp("analysisExportJobsPanel").disable();
+	}
+}
+
+function resetExportTabs()	
+{
 	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
 	{
 		Ext.getCmp("exportbutton").disable();

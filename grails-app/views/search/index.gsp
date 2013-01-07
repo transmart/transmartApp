@@ -133,7 +133,8 @@
 	<body>
 		<div id="header-div">
 			<g:render template="/layouts/commonheader" model="[app:search]" />
-			<g:render template="/layouts/initialsearchheader" model="[app:search]" />
 		</div>
+			<g:render template="/layouts/initialsearchheader" model="[app:search]" />
+		
 	</body>
 </html>

@@ -308,7 +308,7 @@ function activateTab(tab) {
         setButtonVisibility("filters", true);
         setButtonVisibility("summary", false);
         if(pageData.trial.count>0) {
-            setButtonVisibility("heatmap", true);
+            setButtonVisibility("heatmap", false);    // Disable the heatmap until after we refactor out prototype libraries 
             setButtonVisibility("studyview", true);
 
             if(pageData.trial.analysisCount>0) {
