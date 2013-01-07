@@ -34,33 +34,40 @@
 		</table>
 		</div>	
 	
-        <g:hasErrors bean="${dihFolderInstance}">
+        <g:hasErrors bean="${fmFolderInstance}">
         <div class="errors">
-            <g:renderErrors bean="${dihFolderInstance}" as="list" />
+            <g:renderErrors bean="${fmFolderInstance}" as="list" />
         </div>
         </g:hasErrors>
 		
 		<g:form action="save">
-                <g:hiddenField name="id" value="${dihFolderInstance?.id}" />
-                <g:hiddenField name="version" value="${dihFolderInstance?.version}" />
+                <g:hiddenField name="id" value="${fmFolderInstance?.id}" />
+                <g:hiddenField name="version" value="${fmFolderInstance?.version}" />
 			<div class="dialog">
 				<table class="detail">
 				<tbody>				
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                  <label for="name"><g:message code="dihFolderInstance.name.label" default="Name" /> <g:requiredIndicator/> :</label>
+                                  <label for="name"><g:message code="fmFolderInstance.folderName.label" default="Name" /> <g:requiredIndicator/> :</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean: dihFolderInstance, field: 'name', 'errors')}">
-                                    <g:textField size="50" name="name" value="${dihFolderInstance?.name}" />
+                                <td valign="top" class="value ${hasErrors(bean: fmFolderInstance, field: 'folderName', 'errors')}">
+                                    <g:textField size="50" name="folderName" value="${fmFolderInstance?.folderName}" />
                                 </td>
                             </tr>
-                        
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                  <label for="description"><g:message code="dihFolderInstance.description.label" default="Description" /> :</label>
+                                  <label for="name"><g:message code="fmFolderInstance.folderType.label" default="Folder Type" /> <g:requiredIndicator/> :</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean: dihFolderInstance, field: 'description', 'errors')}">
-                                     <g:textArea name="description" value="${dihFolderInstance?.description}" rows="5" cols="100"/>
+                                <td valign="top" class="value ${hasErrors(bean: fmFolderInstance, field: 'folderType', 'errors')}">
+                                    <g:select name="folderType" id="folderType" from="${com.recomdata.util.FolderType.values()}" value="${fieldValue(bean: fmFolderInstance, field: 'folderType')}" />
+                                </td>
+                            </tr>
+                           <tr class="prop">
+                                <td valign="top" class="name">
+                                  <label for="description"><g:message code="fmFolderInstance.active.label" default="Active" /> :</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean: fmFolderInstance, field: 'activeInd', 'errors')}">
+                                 <g:checkBox name="activeInd" value="${fmFolderInstance?.activeInd}" />
                                 </td>
                             </tr>
                            

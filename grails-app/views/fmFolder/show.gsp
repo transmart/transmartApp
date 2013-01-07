@@ -28,14 +28,14 @@
         <div class="body">
 	
 		<g:if test="${flash.message}"><div class="message">${flash.message}</div></g:if>
-			<g:form controller="packageVersion"> 									
+			<g:form controller="fmFolder"> 									
 
 			<table style="background-color: #E6E6E6;" class="default">
-				<caption class="note">Instructions: click the 'New' button to add a folderDefinition version
+				<caption class="note">Instructions: click the 'New' button to add a Folder
 					<span class="button" style="float:right;">			         
 					    <g:hiddenField name="id" value="${fmFolderInstance?.id}" />
 					     
-						<g:actionSubmit action="create" value="New folderDefinition version" />
+						<g:actionSubmit action="create" value="New Folder" />
 					</span>											
 				</caption>
 					
@@ -43,7 +43,7 @@
 		</g:form>
 		<div>
 		<table width="100%">
-		<tr><td><h1>FolderDefinition</h1></td><td align="right"></td></tr>
+		<tr><td><h1>Folder</h1></td><td align="right"></td></tr>
 		</table>
 		</div>	
 		
@@ -66,6 +66,18 @@
                             <td valign="top" class="name"><g:message code="fmFolderInstance.folderlevel.label" default="Folder Level" /> :</td>
                             <td valign="top" class="value" colspan=2>${fieldValue(bean: fmFolderInstance, field: "folderLevel")}</td>
                         </tr>
+
+                        <tr class="prop">
+                            <td valign="top" class="name"><g:message code="fmFolderInstance.folderType.label" default="Folder Type" /> :</td>
+                            <td valign="top" class="value" colspan=2>${fieldValue(bean: fmFolderInstance, field: "folderType")}</td>
+                        </tr>
+                        
+                        <tr class="prop">
+                            <td valign="top" class="name"><g:message code="fmFolderInstance.activeInd.label" default="Active" /> :</td>
+                            <td valign="top" class="value" colspan=2><g:checkBox name="activeInd" value="${fmFolderInstance?.activeInd}" disabled='true' />
+                        </tr>
+                                                         
+                        
 
 
                </tbody>

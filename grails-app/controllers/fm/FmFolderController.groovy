@@ -23,7 +23,7 @@ import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
 import grails.converters.*
 import groovy.xml.StreamingMarkupBuilder
-
+import com.recomdata.util.FolderType
 
 
 
@@ -71,7 +71,7 @@ class FmFolderController {
     def create = {
 		log.info "Creating == " + params
 		
-		def fmFolderInstance = new FmFolderController()
+		def fmFolderInstance = new FmFolder()
 		fmFolderInstance.properties = params
 
         return [fmFolderInstance: fmFolderInstance]
@@ -79,12 +79,12 @@ class FmFolderController {
 
     def save = {
 		log.info params
-        def fmFolderInstance = new FmFolderController(params)
+        def fmFolderInstance = new FmFolder(params)
         if (fmFolderInstance.save(flush: true)) {
             redirect(action: "show", id: fmFolderInstance.id)
         }
         else {
-//            render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+            render(view: "create", model: [fmFolderInstance: fmFolderInstance])
         }
     }
 
@@ -118,17 +118,18 @@ class FmFolderController {
 
     def update = {
 		
-		log.info params
+		log.info "UPDATING == " + params
         def fmFolderInstance = FmFolder.get(params.id)
   
       if (fmFolderInstance) {
             fmFolderInstance.properties = params
-   //         if (!fmFolderInstance.hasErrors() && fmFolderInstance.save(flush: true)) {
-     //           redirect(action: "show", id: fmFolderInstance.id)
-       //     }
-         //   else {
-           //     render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
-            //}
+			
+            if (!fmFolderInstance.hasErrors() && fmFolderInstance.save(flush: true)) {
+                redirect(action: "show", id: fmFolderInstance.id)
+            }
+            else {
+                render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
+            }
         }
         else {
             redirect(action: "list")
@@ -376,6 +377,70 @@ class FmFolderController {
 		def folder = FmFolder.get(parentId)
 		return FmFolder.executeQuery("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
 	}
+
+	//method which returns a list of folders which are the children of the folder of which the identifier is passed as parameter by folder types
+	private List<FmFolder> getChildrenFolderByType(Long parentId, String folderType)
+	{
+		def folder = FmFolder.get(parentId)
+		return FmFolder.executeQuery("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl and fd.folderType= :ft",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%", ft: folderType])
+	}
+
+	//method which returns a list of folders which are the children of the folder of which the identifier is passed as parameter
+	private List getChildrenFolderTypes(Long parentId)
+	{
+		def folder = FmFolder.get(parentId)
+		return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
+	}
+
+	private String createDataTable(layoutColumns, folders)
+	{
+/*		FormLayout				Long id
+		String key;
+				String column;
+				String displayName;
+				String dataType;
+				Integer sequence;
+				Boolean display=true;
+	*/
+		
+		if (folders == null || folders.size() < 1) return
+					
+		ExportTableNew table=new ExportTableNew();
+		
+		def dataObject = getBioDataObject(folders[0])
+		layoutColumns.each 
+		{
+			if(it.display && dataObject.hasProperty(it.column))
+			{
+				log.info ("COLUMNS == " + it.column + " " + it.displayName + " " +  it.dataType)
+				table.putColumn(it.column, new ExportColumn(it.column, it.displayName, "", it.dataType));
+			}
+			else
+			{
+				log.error("COLUMN " + it.column + " is either set not to display or is not a propery of " + dataObject)
+			}
+
+		}
+		
+		folders.each 
+		{
+			def bioDataObject = getBioDataObject(it)
+			
+				ExportRowNew newrow=new ExportRowNew();
+				layoutColumns.eachWithIndex()
+				{obj, i -> 
+					if(obj.display && bioDataObject.hasProperty(obj.column))
+					{
+						log.info("ROWS == " + obj.column + " " + bioDataObject[obj.column])
+						newrow.put(obj.column,bioDataObject[obj.column]?bioDataObject[obj.column]:'');
+					}		
+				}
+				
+				table.putRow(bioDataObject.id.toString(), newrow);
+		}
+		
+		return table.toJSON_DataTables("").toString(5);
+	}
 	
 	def folderDetail = {
 		log.info "** action: folderDetail called!"
@@ -383,74 +448,91 @@ class FmFolderController {
 		log.info("PARAMS = " + params)
 			
 		def folder
+		def subFolders
+		def subFolderLayout
 		def bioDataObject
 		def amTagTemplate
 		def metaDataTagItems
+		def jSONForGrids = []
 		if (folderId) 
 		{
 			folder = FmFolder.get(folderId)
 			log.info "folder.objectUid = " + folder.objectUid
 			
-			def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
-			
-				if(folderAssociation)
+			if(folder)
+			{
+				// If the folder is a study then get the analysis and the assay
+				if (folder.folderType.toLowerCase() == FolderType.STUDY.name().toLowerCase())
 				{
-					log.info "folderAssociation = " + folderAssociation
-					bioDataObject =folderAssociation.getBioObject()
+					def subFolderTypes = getChildrenFolderTypes(folder.id)
+					log.info "subFolderTypes = " + subFolderTypes
+					subFolderTypes.each
+					{
+						log.info "it = " + it
+						subFolders = getChildrenFolderByType(folder.id, it)
+						if(subFolders!=null && subFolders.size()>0)
+						{
+							log.info("subFolders == " + subFolders)
+								subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
+								String gridData = createDataTable(subFolderLayout,subFolders)
+								log.info gridData
+								jSONForGrids.add(gridData)
+								log.info "ADDING JSON GRID"
+						}
+					}
+				}
+						
+				bioDataObject = getBioDataObject(folder)
+				
+				amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
+				if(amTagTemplate)
+				{
+					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 				}
 				else
 				{
-					log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
+					log.error "Unable to find amTagTemplate for object Id = " + folder.objectUid
 				}
 	
-				if(!bioDataObject)
-				{
-					log.info "Unable to find bio data object. Setting folder to the biodata object "
-					bioDataObject = folder
-				}
-			
-			amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
-			if(amTagTemplate)
-			{
-				metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+				//  amTagTemplate.amTagItems
 			}
-			else
-			{
-				log.error "Unable to find amTagTemplate for object Id = " + folder.objectUid
-			}
-
-			//  amTagTemplate.amTagItems
 		}
 
 		log.info "FolderInstance = " + bioDataObject.toString()
-		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems])
+		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems, jSONForGrids: jSONForGrids])
 		
 	}
 
-   
+
+	private Object getBioDataObject(folder)
+	{
+		def bioDataObject
+		def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
+		
+		if(folderAssociation)
+		{
+			log.info "folderAssociation = " + folderAssociation
+			bioDataObject =folderAssociation.getBioObject()
+		}
+		else
+		{
+			log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
+		}
+
+		if(!bioDataObject)
+		{
+			log.info "Unable to find bio data object. Setting folder to the biodata object "
+			bioDataObject = folder
+		}
+
+		return bioDataObject
+	} 
+	  
 	def editMetaData = 
 	{		
 		log.info "editMetaData called"
 		log.info "params = " + params
 	
-		//log.info "** action: expDetail called!"
-/*		def expid = params.experimentId
-		
-		def exp
-		if (expid) {
-			exp = Experiment.get(expid)
-		}
-		
-		log.info "exp.id = " + exp.id
-
-		
-		def layout = formLayoutService.getLayout('study');
-		log.error "layout = " + layout
-		
-		def folder = exp
-		log.error "folder = " + folder
-		
-*/
 			
 		//log.info "** action: expDetail called!"
 		def folderId = params.folderId
@@ -465,25 +547,8 @@ class FmFolderController {
 			if(folder)
 			{
 				log.info "folder.objectUid = " + folder.objectUid
-				def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
-				
-				if(folderAssociation)
-				{
-					log.info "folderAssociation = " + folderAssociation
-					bioDataObject =folderAssociation.getBioObject()
-				}
-				else
-				{
-					log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
-				}
-	
-				if(!bioDataObject)
-				{
-					log.info "Unable to find bio data object. Setting folder to the biodata object "
-					bioDataObject = folder
-				}
-
-	
+				bioDataObject = getBioDataObject(folder)
+			
 				amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
 				if(amTagTemplate)
 				{
@@ -588,8 +653,6 @@ class FmFolderController {
 		
 		[jSONForGrid: jSONToReturn]
 		
-		
-		
 	}
 
 def getFdDetails = {
@@ -638,6 +701,7 @@ def getFdDetails = {
 				table.putColumn("ident", new ExportColumn(it.column, it.displayName, "", "String"));
 			}
 		}
+		
 		ExportRowNew newrow=new ExportRowNew();
 		newrow.put("ident", "foo.id");
 		newrow.put("name", "foo.name");

@@ -17,6 +17,6 @@
  *
  ******************************************************************/
 package com.recomdata.util;
-public enum FolderType {
-	PROGRAM, STUDY, FOLDER, ANALYSIS, ASSAY
+public enum TagItemType {
+	PICKLIST, FIXED, CUSTOM
 }

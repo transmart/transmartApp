@@ -16,10 +16,31 @@
   
  
 -->
-<%! import annotation.* %> 
-<%! import com.recomdata.util.* %> 
+
+<script type="text/javascript">
+var analysisCount = 1
+var assayCount = 3
+
+    $j(document).ready(function() 
+    {   
+    	   <g:each var='jSONForGrid' status="gridCounter" in="${jSONForGrids}">
+    	   		var dt${gridCounter}  = new dataTableWrapper('gridViewWrapper${gridCounter}', 'gridViewTable${gridCounter}', 'Title');
+    	   		dt${gridCounter}.loadData(${jSONForGrids[0]});
+          	</g:each>
+             
+    	
+       var dt4 = new dataTableWrapper('gridViewWrapper4', 'gridViewTable4', 'Analysis (' + analysisCount + ")");
+     //  dt4.loadData(${jSONForGrids[0]});
+       var dt5 = new dataTableWrapper('gridViewWrapper5', 'gridViewTable5', 'Assays (' + assayCount + ')');
+        
+       alert ("hello world7");
+        
+     });
+</script>
 
 <g:set var="overlayDiv" value="metaData_div" />
+<%! import annotation.* %> 
+<%! import com.recomdata.util.* %> 
 
 <div style="margin:10px;padding:10px;">
 
@@ -85,8 +106,8 @@
                 <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
                       ${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
                 </g:if>
-                <g:else>      
-	                <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.objectUid,amTagItem.id])}"/>
+                <g:else>   
+                    <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.objectUid,amTagItem.id])}"/>
 	                <g:if test="${tagValues!=null}">
 	             	   <g:set var="counter" value="0"/>
 	             		 <g:each var="tagValue" status="k" in="${tagValues}">
@@ -94,7 +115,8 @@
 						      <g:set var="counter" value="${counter.toLong() + 1}"/>
 						 </g:each>
 	                 </g:if>
-                 </g:else>
+	                 
+	                </g:else>
                 </td>
             </tr>
          </g:if>
@@ -149,6 +171,29 @@
 </table>
 </g:if>
 
+<span></span>
+                    
+       <div style="height:20px;"></div>
+      
+         <g:each var='jSONForGrid' status="divCounter" in="${jSONForGrids}">
+    	    <div style="width:1100px">
+            <div id='gridViewWrapper${divCounter}'>
+            </div>        
+	        </div>
+        
+          	</g:each>
+          	
+          	       <div style="height:20px;"></div>
+       <div style="width:1100px">
+            <div id='gridViewWrapper4'>
+            </div>        
+        </div>
+
+       <div style="height:30px;"></div>
+       <div style="width:1100px">
+            <div id='gridViewWrapper5'>
+            </div>        
+        </div>
 <!--  overlay div  -->
 
 <g:overlayDiv divId="${overlayDiv}" />

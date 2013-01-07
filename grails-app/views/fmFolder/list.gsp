@@ -31,7 +31,7 @@
 			<br/>
 		</g:if>
 		
-		<g:form controller="FmFolder"> 									
+		<g:form controller="fmFolder"> 									
 			<table style="background-color: #E6E6E6;" class="default">
 				<caption class="note">Instructions: click the 'New' button to add a Folder
 					<span class="button" style="float:right;">			              
@@ -70,7 +70,7 @@
                             <td>${fmFolderInstance.folderFullName}</td>
                             <td>${fmFolderInstance.folderLevel}</td>
                             <td>${fmFolderInstance.folderType}</td>
-                           <td>${fmFolderInstance.activeInd}</td>
+                           <td><g:checkBox name="activeInd" value="${fmFolderInstance?.activeInd}" disabled='true' /></td>
                         </tr>
                     </g:each>
                     </tbody>
