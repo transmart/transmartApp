@@ -18,7 +18,13 @@
 -->
 
 <div id="logocutout">
-	<img src="${resource(dir:'images', file:'logo.png')}"/>
+	<g:if test="${'rwg' == app}">
+		<img src="${resource(dir:'images', file:'logo.png')}"/>
+	</g:if>
+	<g:else>
+		<g:link controller="RWG" action="index"><img src="${resource(dir:'images', file:'logo.png')}"/></g:link>
+	</g:else>
+	
 </div>
 		
 <table class="menuDetail" width="100%" style="height: 28px; border-collapse: collapse">
