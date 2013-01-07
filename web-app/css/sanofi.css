@@ -245,6 +245,11 @@ table.menuDetail th.menuVisited {
 .greybutton.addanalysis { background-image: url('../images/addanalysis.png'); }
 .greybutton.closeexport { background-image: url('../images/small_cross.png'); }
 
+.greybutton.disabled {
+	cursor: normal;
+	color: #AAA;
+}
+
 
 #filterbutton {
 	position: absolute;

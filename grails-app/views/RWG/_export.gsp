@@ -13,12 +13,12 @@
 	<g:each in="${files}" var="file">
 		<tr name="${file.id}">
 			<td>${file.folder}</td>
-			<td><g:checkBox name="${file.id}" value="true"/></td>
+			<td><g:checkBox name="${file.id}" onclick="updateExportCount();" value="true"/></td>
 			<td><span class="fileicon ${file.fileType}"></span>&nbsp;${file.displayName}</td>
 			<td><span class="greybutton remove">Remove</span></td>
 		</tr>
 	</g:each>
 </table>
 <br/>
-<g:if test="${files}"><span class="greybutton export">Export selected files</span></g:if>
+<g:if test="${files}"><span id="exportbutton" class="greybutton export">Export selected files (${files.size()})</span></g:if>
 </div>

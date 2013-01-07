@@ -192,6 +192,7 @@
 						success: function(response) {
 							row.remove();
 							jQuery('#cartcount').show().text(response);
+							updateExportCount();
 						},
 						error: function(xhr) {
 							jQuery('#cartcount').show();
@@ -206,6 +207,8 @@
 					for (i = 0; i < checkboxes.size(); i++) {
 						ids.push(jQuery(checkboxes[i]).attr('name'));
 					}
+
+					if (ids.size() == 0) {return false;}
 
 					window.location = exportURL + "?id=" + ids.join(',');
 		    	    
@@ -294,12 +297,24 @@
 				
 				var windowHeight = jQuery(window).height();
 	        	jQuery('#sidebar').height(jQuery(window).height()-30);
+	        	jQuery('#main').height(jQuery(window).height()-30);
 				var ypos = jQuery('#program-explorer').offset()['top'];
 	        	
 	        	var targetHeight = windowHeight - ypos - 90;
 	        	jQuery('#results-div').height(targetHeight);
 	        	jQuery('#welcome').height(windowHeight - 90);
 	        	jQuery('#main').width(jQuery('body').width() - jQuery('#sidebar').width() - 12);
+			}
+
+			function updateExportCount() {
+				var checkboxes = jQuery('#exporttable input:checked');
+				
+				if (checkboxes.size() == 0) {
+					jQuery('#exportbutton').text('No files to export').addClass('disabled');
+				}
+				else {
+					jQuery('#exportbutton').removeClass('disabled').text('Export selected files (' + checkboxes.size() + ')');
+				}
 			}
 
     function dataTableWrapper (containerId, tableId, title)
