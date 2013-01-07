@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="us-ascii"?>
 <html><head><title>Rules for Building a Search String</title>
-<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" /><link rel="stylesheet" type="text/css" href="../Theme/nav.css" /><link rel="stylesheet" type="text/css" href="../Theme/popupmenu.css" /><link rel="stylesheet" type="text/css" href="../Theme/lf.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/d2hTarget.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/OpenSource_tranSMART_User_Guide.css" />
+<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" /><link rel="stylesheet" type="text/css" href="../Theme/nav.css" /><link rel="stylesheet" type="text/css" href="../Theme/popupmenu.css" /><link rel="stylesheet" type="text/css" href="../Theme/lf.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/d2hTarget.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/tranSMART_UserGuide.css" />
 <script type="text/javascript">
 //<![CDATA[
 
@@ -95,20 +95,23 @@ String</a></div>
 <p style="PAGE-BREAK-AFTER: avoid" class="MsoNormal">The following rules apply to 
 building a multi-filter search string:</p>
 <p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
-</span>Filters within the same filter category (such as diseases or genes) are 
-joined by the logical operator <span class="CodeText">OR</span>.</p>
+</span>Filters within the same filter category (such as compounds, diseases, and 
+genes) are joined by the logical operator <span class="CodeText">OR</span>.</p>
 <p class="MsoNormalIndent">For example, if you add the filters <span class="CodeText">Diseases&gt; Melanoma</span> and <span class="CodeText">Diseases&gt; Melanoma</span><span style="FONT-FAMILY: 'Courier New'">, </span><span class="CodeText">Experimental</span> to a search string, the search engine 
 evaluates them as in the following expression:</p>
-<p style="MARGIN-LEFT: 18pt" class="CodeLine">(<span style="COLOR: #cc0099">Diseases&gt; Melanoma </span><b>OR</b> <span style="COLOR: #cc0099">Diseases&gt; Melanoma, Experimental</span>)</p>
+<p style="MARGIN-LEFT: 18pt" class="CodeLine">(Diseases&gt; Melanoma OR 
+Diseases&gt; Melanoma, Experimental)</p>
 <p style="MARGIN-LEFT: 18pt" class="CodeLine">&#160;</p>
 <p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
 </span>Filters within different filter categories are joined by the logical 
 operator <span class="CodeText">AND</span>.</p>
-<p class="MsoNormalIndent">For example, if you add the filters <span style="FONT-FAMILY: 'Courier New'">Diseases&gt; Anemia</span>, <span style="FONT-FAMILY: 'Courier New'">Diseases&gt; Anemia, Hemolytic</span>, and 
-<span style="FONT-FAMILY: 'Courier New'">Gene&gt; HBB</span> to a search string, 
-the search engine evaluates them as in the following expression:</p>
-<p style="MARGIN-LEFT: 18pt" class="CodeLine">(<span style="COLOR: #cc0099">Diseases&gt; Anemia</span> <b>OR</b> <span style="COLOR: #cc0099">Diseases&gt; Anemia, Hemolytic</span>) <b>AND</b> <span style="COLOR: #006600">Gene&gt; HBB</span></p>
+<p class="MsoNormalIndent">For example, if you add the filters <span style="FONT-FAMILY: 'Courier New'">Diseases&gt; Melanoma</span>, <span style="FONT-FAMILY: 'Courier New'">Diseases&gt; Melanoma, Experimental</span>, 
+and <span style="FONT-FAMILY: 'Courier New'">Pathway&gt; KEGG-Melanoma</span> to 
+a search string, the search engine evaluates them as in the following 
+expression:</p>
+<p style="MARGIN-LEFT: 18pt" class="CodeLine">(Diseases&gt; Melanoma OR 
+Diseases&gt; Melanoma, Experimental) AND Pathway&gt; KEGG-Melanoma</p>
 <p style="MARGIN-LEFT: 18pt" class="CodeLine">&#160;</p>
 <p style="tab-stops: 18.0pt 36.0pt 54.0pt 90.0pt 108.0pt" class="MsoListBullet"><span style="POSITION: relative; FONT-FAMILY: 'Arial','sans-serif'; TOP: -1.5pt">&#9632;&#160;&#160;&#160; 
 </span>Filters that are not among the pre-defined filters are assigned to the 
-filter category <b><span style="COLOR: #cccc00">Text&gt;</span></b>.</p><span id="related-topics"></span></div></div></body></html>
+filter category <b>Text&gt;</b>.</p><span id="related-topics"></span></div></div></body></html>
