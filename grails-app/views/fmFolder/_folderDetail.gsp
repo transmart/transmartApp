@@ -32,9 +32,7 @@ var assayCount = 3
        var dt4 = new dataTableWrapper('gridViewWrapper4', 'gridViewTable4', 'Analysis (' + analysisCount + ")");
      //  dt4.loadData(${jSONForGrids[0]});
        var dt5 = new dataTableWrapper('gridViewWrapper5', 'gridViewTable5', 'Assays (' + assayCount + ')');
-        
-       alert ("hello world7");
-        
+                
      });
 </script>
 
