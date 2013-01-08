@@ -206,6 +206,7 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		pmIds(nullable:true, maxSize:255)
 		speciesMouseSrcConceptCode(nullable:true)
 		speciesMouseDetail(nullable:true, maxSize:255)
+		techPlatform(nullable:true)
 		tissueTypeConceptCode(nullable:true)
 		experimentTypeConceptCode(nullable:true)
 		experimentTypeCellLine(nullable:true)

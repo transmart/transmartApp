@@ -29,6 +29,8 @@ import bio.BioData;
 import bio.BioAssayAnalysisData;
 import bio.BioAssayFeatureGroup;
 import bio.BioAssayDataAnnotation;
+import bio.BioSpeciesOrganism;
+
 import com.recomdata.search.query.Query;
 import com.recomdata.genesignature.FileSchemaException;
 import com.recomdata.util.ExcelSheet
@@ -391,7 +393,10 @@ public class GeneSignatureService {
 	def saveWizard(GeneSignature gs, ArrayList fileContents, String fileName) {
 
 		def metricType = gs.foldChgMetricConceptCode?.bioConceptCode
-		def organism = gs.techPlatform?.organism
+		
+		def species = gs.speciesConceptCode.bioConceptCode
+		def organism = BioSpeciesOrganism.findBySpecies(species).organism
+		
 		def fileSchemaName = gs.fileSchema?.name
 
 		// load gs items (could be from a cloned object)
