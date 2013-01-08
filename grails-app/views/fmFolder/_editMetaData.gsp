@@ -3,7 +3,7 @@
 <%! import bio.* %>  
 <%! import com.recomdata.util.* %> 
   
-<g:form action="save">
+<g:form>
 <g:hiddenField name="id" value="${folder?.id}" />
     
 <div style="width:800px">  
@@ -22,12 +22,19 @@
 						${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
                 	</g:if>
                 	<g:else>
+	                	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
+	                		<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.objectUid,amTagItem.id])}"/>
+							<g:select from="${ConceptCode.findAll('from ConceptCode where codeTypeName=? order by codeName',[amTagItem.codeTypeName])}"	
+		                	name="amTagItem_${amTagItem.id}" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"  optionValue="codeName"  noSelection="['':'-Select One-']" />	
+						</g:if>
+	                	<g:elseif test="${amTagItem.tagItemSubtype == 'FREETEXT'}">
 	                	<g:if test="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr).length()<100}">
 							<g:textField size="100" name="${amTagItem.tagItemAttr}"  value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
 		                </g:if>
 	    	            <g:else>
 	            	         <g:textArea size="100" cols="74" rows="10" name="${amTagItem.tagItemAttr}" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}" />          
 	        	        </g:else>
+	        	        </g:elseif>
 	        	    </g:else>    
                 </g:if>
                 <g:elseif test="${amTagItem.tagItemType == 'PICKLIST'}">
@@ -68,7 +75,7 @@
 <div></div>
 <div class="buttons">
     <span class="button"><g:actionSubmit class="save" action="update" id="save" value="${message(code: 'default.button.update.label', default: 'Save')}" /></span>
-    <span class="button"><g:actionSubmit class="list" action="list"  id="cancel" value="Cancel" onclick="return confirm('Are you sure?')"/></span>              
+    <span class="button"><g:actionSubmit class="cancel" action="list"  id="cancel" value="Cancel" onclick="return confirm('Are you sure?')"/></span>              
 </div>
 </g:form>
 </g:overlayPopup>
