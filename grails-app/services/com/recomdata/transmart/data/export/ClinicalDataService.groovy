@@ -147,8 +147,7 @@ class ClinicalDataService {
 			parameterList.add(subset)
 			//Add the value of the result instance ID to the parameter list.
 			parameterList.add(resultInstanceId)
-			//Add study to the parameter list.
-			parameterList.add(study)
+
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
 				parameterList.add(study)
 				parameterList.add(study)
@@ -160,7 +159,6 @@ class ClinicalDataService {
 			{
 				parameterList.add(subset)
 				parameterList.add(resultInstanceId)
-				parameterList.add(study)
 				
 				//We need to get the concept code for this path.
 				String parentConceptCode = i2b2HelperService.getConceptCodeFromKey("\\\\"+parentConceptCodeList[0].trim())
@@ -433,7 +431,6 @@ class ClinicalDataService {
 		queryToReturn <<= "INNER JOIN CONCEPT_DIMENSION C1 ON C1.CONCEPT_CD = XMAP.CONCEPT_CD "
 		queryToReturn <<= "INNER JOIN CONCEPT_DIMENSION C2 ON C2.CONCEPT_CD = XMAP.PARENT_CD "
 		queryToReturn <<= "WHERE	qt.RESULT_INSTANCE_ID = ? "
-		queryToReturn <<= "AND		ofa.MODIFIER_CD = ? "
 		queryToReturn <<= "AND		ofa.CONCEPT_CD IN "
 		queryToReturn <<= "( "
 		queryToReturn <<= "		SELECT	C_BASECODE "
