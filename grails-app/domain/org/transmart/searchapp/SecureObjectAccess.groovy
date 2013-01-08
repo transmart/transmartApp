@@ -52,8 +52,8 @@ class SecureObjectAccess {
 	}
   public String getObjectAccessName() {
 	  		if(objectAccessName ==null){
-				  println(secureObject)
-				  println(accessLevel)
+				//  println(secureObject)
+				//  println(accessLevel)
 				  objectAccessName = secureObject?.displayName+' ('+accessLevel?.accessLevelName+')';
 	  		}
 			return objectAccessName;
