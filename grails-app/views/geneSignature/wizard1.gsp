@@ -48,10 +48,6 @@
 			var species = document.forms[formName].elements['speciesConceptCode.id'];	
 			if(species.value=="null") errorMsg = errorMsg + "\n- Please select a relevant species";
 
-			//tech platform required
-			var techPlat = document.forms[formName].elements['techPlatform.id'];
-			if(techPlat.value=="null") errorMsg = errorMsg + "\n- Please select a technology platform";
-					
 			//p-value cutoff required
 			var cutoff = document.forms[formName].elements['pValueCutoffConceptCode.id'];
 			if(cutoff.value=="null") errorMsg += "\n- Please select a p-value cutoff";
@@ -59,6 +55,12 @@
 			//file schema
 			var schema = document.forms[formName].elements['fileSchema.id'];
 			if(schema.value=="null") errorMsg = errorMsg + "\n- Please select a file schema";
+
+			//tech platform required if probesets are being uploaded.
+			if(schema.value=="3"){
+				var techPlat = document.forms[formName].elements['techPlatform.id'];
+				if(techPlat.value=="null") errorMsg = errorMsg + "\n- Please select a technology platform";
+			}
 
 			//fold change metric
 			var metricType = document.forms[formName].elements['foldChgMetricConceptCode.id'];
@@ -77,6 +79,14 @@
 			alert("Please correct the following errors:\n" + errorMsg);
 			return false;
 		}	
+
+		function togglePlatformRequiredness(fileSchema){
+			if (fileSchema.value=="3"){
+				jQuery("#platformRequiredIndicator").show();
+			}else{
+				jQuery("#platformRequiredIndicator").hide();
+			}
+		}
 
 		function speciesToggle(selectItem) {			
 			var mouseSrc = document.getElementById('mouse_source_div')
@@ -192,7 +202,12 @@
 				</td>
 			</tr>
 			<tr class="prop">
-				<td class="name">Technology Platform<g:requiredIndicator/></td>
+				<g:if test="${gs.fileSchema?.id==3}">
+					<td class="name">Technology Platform<span id="platformRequiredIndicator" style="color: red;">*</span></td>
+				</g:if>
+				<g:else>
+					<td class="name">Technology Platform<span id="platformRequiredIndicator" style="color: red; display:none">*</span></td>
+				</g:else>
 				<td class="value">			
 					<g:select name="techPlatform.id"
 	    				      from="${wizard.platforms}"
@@ -253,7 +268,7 @@
 								<tr>
 									<td style="width:25%; border: none;">File schema:</td>
 									<td style="border: none;">
-										<g:select name="fileSchema.id" from="${wizard.schemas}" value="${gs.fileSchema?.id}" optionValue="name" optionKey="id" /></td>
+										<g:select onChange="javascript:togglePlatformRequiredness(this);" name="fileSchema.id" from="${wizard.schemas}" value="${gs.fileSchema?.id}" optionValue="name" optionKey="id" /></td>
 								</tr>
 								<tr>
 									<td style="width:25%; border: none;">Fold change metric:</td>
