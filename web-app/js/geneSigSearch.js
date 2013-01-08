@@ -192,7 +192,7 @@ function populateActionSelection(dropdown){
 		if(!isPublic && isUserOwned){
 			actionList.append(jQuery("<option>").val("public").text("Make Public"));
 		}
-	}else if(selectedGeneLists.length>1){
+	}else if(selectedGeneLists.length>1 && selectedGeneLists.length<=3){
 		//clear out options before re-adding them
 		actionList.html('');
 		
@@ -201,7 +201,7 @@ function populateActionSelection(dropdown){
 		actionList.append(jQuery("<option>").val("concat").text("Concatenate"));
 		actionList.append(jQuery("<option>").val("intersection").text("Intersect"));
 		//actionList.append(jQuery("<option>").val("unique").text("Make Unique"));
-	} else if(selectedGeneLists.length==0){
+	} else if(selectedGeneLists.length==0 || selectedGeneLists.length>3){
 		//clear out options.
 		actionList.html('');
 		
