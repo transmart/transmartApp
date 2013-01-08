@@ -1031,6 +1031,8 @@ border: 1px solid #CCC;
 box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 }
 
+.truncated { display:inline-block; max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;font-size: 11px; }
+
 
 #xtSearch-ac{
 	width:200px;
@@ -1253,6 +1255,7 @@ min-height: 150px;
 	color: #2e2e2e;
 	font-weight: bold;
 	padding:2px;
+	vertical-align: middle;
 }
 
 .CTAtable .tr-even{

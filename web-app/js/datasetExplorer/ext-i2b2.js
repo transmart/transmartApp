@@ -104,8 +104,12 @@ Ext.Ajax.request(
     	    {
     	        url: pageInfo.basePath+"/chart/childConceptPatientCounts",
     	        method: 'POST',                                       
-    	        success: function(result, request){getChildConceptPatientCountsComplete(result, node);},
-    	        failure: function(result, request){getChildConceptPatientCountsComplete(result, node);},
+    	        success: function(result, request){   	        	
+    	        	getChildConceptPatientCountsComplete(result, node);
+    	        },
+    	        failure: function(result, request){    	        	
+    	        	// getChildConceptPatientCountsComplete(result, node);
+    	        },
     	        timeout: '300000',
     	        params: Ext.urlEncode({charttype:"childconceptpatientcounts",
     	        		 			   concept_key: node.attributes.id})
