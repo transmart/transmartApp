@@ -74,6 +74,8 @@ parseXml:function (response, node) {
 	  {
    		 var c=getTreeNodeFromXMLNode(concepts[i]);
    		 if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
+   		 //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
+   		 if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {continue;}
    		 node.appendChild(c);
    	 }
 	
