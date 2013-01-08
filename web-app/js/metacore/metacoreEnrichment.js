@@ -217,5 +217,159 @@ function markerSelectionRunMetacoreEnrichment() {
 			alert("ERROR: " + response.statusText); // TODO: process error
 		}
 	});
+
+}
+
+// ----------- Server settings ---------------
+
+function resetSettingsButton(mode) {
+	// if you change class/title here, don't forget to modify the _metacoreSettingsButton template
+	if (mode == 'user') {
+		jQuery('#metacoreSettingsButton').attr('class', 'metacoreSettingsUser');
+		jQuery('#metacoreSettingsButton a').attr('title', 'Using personal account');
+	}
+	else if (mode == 'system') {
+		jQuery('#metacoreSettingsButton').attr('class', 'metacoreSettingsSystem');
+		jQuery('#metacoreSettingsButton a').attr('title', 'Using company account')
+	}
+	else {
+		jQuery('#metacoreSettingsButton').attr('class', 'metacoreSettingsDemo');
+		jQuery('#metacoreSettingsButton a').attr('title', 'Using demo enrichment')
+	}
+}
+
+function saveMetacoreParams(metacoreSettingsWindow) {
+	// TODO: implement!
+	var radioSetting = jQuery('#metacoreSettingsForm input[name=accountType]:checked').val();
+	var radioSettingOriginal = jQuery('#metacoreSettingsForm input[name=accountType_original]').val();
+	
+	if (radioSetting == radioSettingOriginal && radioSetting != 'user')
+		return "cancel";
+	
+	var baseUrl = jQuery('#metacoreSettingsForm input[name=baseUrl]').val();
+	var baseUrlOriginal = jQuery('#metacoreSettingsForm input[name=baseUrl_original]').val();
+	
+	var login = jQuery('#metacoreSettingsForm input[name=login]').val();
+	var loginOriginal = jQuery('#metacoreSettingsForm input[name=login_original]').val();
+	
+	var password1 = jQuery('#metacoreSettingsForm input[name=password1]').val();
+	var password2 = jQuery('#metacoreSettingsForm input[name=password2]').val();
+	var passwordOriginal = jQuery('#metacoreSettingsForm input[name=password_original]').val();
+	
+	var saveStruct = {}
+	
+	if (radioSetting == 'system') {
+		saveStruct = { mode: 'system' };
+	}
+	else if (radioSetting == 'user') {
+		saveStruct = { mode: 'user' };
+		
+		if (baseUrl == "") return "Base URL cannot be empty!";
+		
+		if (baseUrl != baseUrlOriginal) saveStruct['baseUrl'] = baseUrl;
+		
+		if (login == "") return "Login cannot be empty!";
+		
+		if (login != loginOriginal) saveStruct['login'] = login;
+		if (password1 != passwordOriginal) 
+			if (password1 == password2) 
+				saveStruct['password'] = password1; 
+			else {
+				return "Passwords don't match";
+			}		
+	}
+	else if (radioSetting == 'demo') {
+		saveStruct = { mode: 'demo' };
+	}
+	else {
+		return "wrong mode";
+	}
+	
+	if (jQuery.isEmptyObject(saveStruct))
+		return "cancel";
+	
+	// alert(JSON.stringify(saveStruct));
+	
+	// OK, making an AJAX call to save our settings
+	
+	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Saving settings, please wait..."});
+	spinnerMask.show();
+	
+	Ext.Ajax.request({
+		url : pageInfo.basePath+'/metacoreEnrichment/saveMetacoreSettings',
+		method: 'POST',
+		timeout: '1800000',
+		params: Ext.urlEncode(saveStruct),
+		success : function(response, request) {
+			spinnerMask.hide(); 
+			var data = Ext.decode(response.responseText);
+			res = data.result;
+			
+			if (res == 'success') {
+				metacoreSettingsWindow.destroy();
+				resetSettingsButton(radioSetting);
+			}
+			else 
+				Ext.Msg.alert('Error saving settings', res);
+		},
+		failure : function(response, request) {
+			spinnerMask.hide();
+			res = response.statusText;
+			Ext.Msg.alert('Error saving settings', res);
+		}
+	});
+	
+	return "success";
+}
+
+function showMetacoreSettingsWindow() {
+	// window.open(pageInfo.basePath+'/metacoreEnrichment/serverSettingsWindow', 'MetaCore Server Settings', 'width=400, height=300');
+	if (this.metacoreSettingsWindow)
+		metacoreSettingsWindow.destroy();
+	
+	var metacoreSettingsWindow = new Ext.Window({
+        id: 'metacoreSettingsWindow',
+        title: 'MetaCore Settings',
+    	layout:'fit',
+        width:450,
+        // height:250,
+        autoHeight: true,
+        closable: false,
+        plain: true,
+        modal: true,
+        border:true,
+        //autoScroll: true,
+        buttons: [
+        		{
+                    id: 'metacoreSettingsOKButton',
+                    text: 'Save',
+                    handler: function(){       
+                    	var res = saveMetacoreParams(metacoreSettingsWindow);
+                    	
+                    	if (res == 'cancel') 
+                    		metacoreSettingsWindow.destroy();
+                    	else if (res != "success")
+                    		Ext.Msg.alert('Errors in form', res);
+                    }
+                },
+        		{
+                    text: 'Cancel',
+                    handler: function() {
+                    	metacoreSettingsWindow.destroy();
+                    }
+                 }],
+        resizable: false,
+        autoLoad:
+        {
+        	url: pageInfo.basePath+'/metacoreEnrichment/serverSettingsWindow',
+        	scripts: true,
+           	nocache:true, 
+           	discardUrl:true,
+           	method:'POST',
+           	// callback: toggleDataAssociationFields
+        }
+    });
+	
+	metacoreSettingsWindow.show(viewport);
 }
 	

@@ -85,7 +85,7 @@
 			<td><br /></td>
 		</tr>
 		<tr>
-			<td colspan="4" align="center"><input type="button" value="Run"
+			<td colspan="4" align="center"><g:metacoreSettingsButton /><input type="button" value="Run"
 				onClick="submitMetaCoreEnrichmentJob(this.form);"></input></td>
 		</tr>
 	</table>

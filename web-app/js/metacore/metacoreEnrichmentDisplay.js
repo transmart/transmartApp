@@ -49,7 +49,7 @@
 			var cell_id = id_prefix + "cell" + proc.id;
 			jQuery('#' + id_prefix + 'enrichment  > tbody:last').append(
 				'<tr><td>' + (i+1) + '</td><td>'
-				+ '<a href="' + GLOBAL.metacoreUrl + data.enrichment.info_url + proc.id + '" target="_blank">' + proc.name + '</a>' 
+				+ '<a href="' + data.enrichment.info_url + proc.id + '" target="_blank">' + proc.name + '</a>' 
 				+ '</td><td id="' + cell_id 
 				+ '"</td><td>'+ proc.val.toExponential(3) 
 				+'</td><td>' + proc.exp[0].obj_cnt + '/' + proc.obj_cnt + '</td></tr>'

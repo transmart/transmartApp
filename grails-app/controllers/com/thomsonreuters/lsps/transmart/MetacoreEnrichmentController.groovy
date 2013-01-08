@@ -13,12 +13,6 @@ class MetacoreEnrichmentController {
 	def RModulesService
 	def dataExportService
 	
-	def defaultMetacoreParams = [
-			baseUrl: grailsApplication.config.com.thomsonreuters.transmart.metacoreURL,
-			login: grailsApplication.config.com.thomsonreuters.transmart.metacoreDefaultLogin,
-			password: grailsApplication.config.com.thomsonreuters.transmart.metacoreDefaultPassword
-	]
-	
 	def index = {
 		render (view:"index", model:[])
 	}
@@ -48,8 +42,7 @@ class MetacoreEnrichmentController {
 	}
 	
 	def runAnalysis = {
-		// TODO: read metacore params
-		def metacoreParams = defaultMetacoreParams
+		def metacoreParams = metacoreEnrichmentService.getMetacoreParams()
 		
 		// only cohort1 (first list in the first parameter is used in enrichment for now
 		def fname = params['mrnaFilename']
@@ -79,8 +72,7 @@ class MetacoreEnrichmentController {
 	}
 	
 	def runAnalysisForMarkerSelection = {
-		// TODO: read metacore params
-		def metacoreParams = defaultMetacoreParams
+		def metacoreParams = metacoreEnrichmentService.getMetacoreParams()
 		
 		def cohortData = [
 			IdType: 'AFFYMETRIX',
@@ -90,6 +82,43 @@ class MetacoreEnrichmentController {
 		log.info "Running enrichment for ${params.IdList.size()} genes"
 		
 		render metacoreEnrichmentService.getEnrichmentByMaps(cohortData, metacoreParams) as JSON
+	}
+	
+	def serverSettingsWindow = {
+		def mode = metacoreEnrichmentService.metacoreSettingsMode()
+		def sysDef = metacoreEnrichmentService.systemMetacoreSettingsDefined()
+		def settings = metacoreEnrichmentService.getMetacoreParams()
+		
+		def res = (mode=='user')?settings:[baseUrl: settings?.baseUrl]
+		
+		render(view:'metacoreSettingsWindow', model: [settingsMode: mode, systemSettingsDefined: sysDef, settings: res])
+	}
+	
+	def saveMetacoreSettings = {
+		def settings = params.settings
+		
+		if (params.containsKey('mode')) {
+			log.info "MC Settings - Setting mode: ${params.mode}"
+			metacoreEnrichmentService.setMetacoreSettingsMode(params.mode)
+		}	
+		
+		if (params.containsKey('baseUrl')) {
+			log.info "MC Settings - Setting baseUrl: ${params.baseUrl}"
+			metacoreEnrichmentService.setMetacoreBaseUrl(params.baseUrl)
+		}	
+		
+		if (params.containsKey('login')) {
+			log.info "MC Settings - Setting login: ${params.login}"
+			metacoreEnrichmentService.setMetacoreLogin(params.login)
+		}
+		
+		if (params.containsKey('password')) {
+			log.info "MC Settings - Setting new password"
+			metacoreEnrichmentService.setMetacorePassword(params.password)
+		}
+		
+		def res = [ 'result': 'success']
+		render res as JSON
 	}
 	
 }
