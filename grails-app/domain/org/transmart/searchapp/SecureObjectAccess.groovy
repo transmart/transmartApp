@@ -48,10 +48,15 @@ class SecureObjectAccess {
 	}
 
   public String toString(){
-			return objectAccessName();
+			return getObjectAccessName();
 	}
   public String getObjectAccessName() {
-			return secureObject?.displayName+' ('+accessLevel?.accessLevelName+')';
+	  		if(objectAccessName ==null){
+				  println(secureObject)
+				  println(accessLevel)
+				  objectAccessName = secureObject?.displayName+' ('+accessLevel?.accessLevelName+')';
+	  		}
+			return objectAccessName;
 		}
   public void setObjectAccessName(String s){
 

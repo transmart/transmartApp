@@ -348,7 +348,7 @@ class SecureObjectAccessController {
 	def getObjsWithoutAccessForPrincipal(principal, insearchtext) {
 		def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
 		//	println(searchtext)
-		println(principal)
+		//println(principal)
 		if(principal!=null)
 			return SecureObject.findAll(" FROM SecureObject s WHERE s.dataType='BIO_CLINICAL_TRIAL' AND s.id NOT IN(SELECT so.secureObject.id FROM SecureObjectAccess so WHERE so.principal =:p ) and upper(s.displayName) like :dn ORDER BY s.displayName ",[p:principal,dn:searchtext]);
 		else
@@ -410,6 +410,9 @@ class SecureObjectAccessController {
 		def all = SecureObjectAccess.findAll(" FROM SecureObjectAccess s WHERE s.secureObject = :so AND s.accessLevel = :al ORDER BY s.principal.name", [so:secureObj,al:access]);
 		if (all ==null)
 			all = []
+		for(soa in all){
+			soa.getObjectAccessName();
+		}
 		return all;
 			}
 
