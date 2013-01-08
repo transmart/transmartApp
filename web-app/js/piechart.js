@@ -35,6 +35,33 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor, ddstack)
 		 // return d.studies; //change to val later
 		return d.value;
 	}).startAngle(-Math.PI/4).endAngle(2*Math.PI-Math.PI/4);
+	
+	
+	// Filter data
+	var dataSum =0;
+	var dataResult = [];
+	var other = {id: 999, name: "Other", value: 0};
+	jQuery.each(data, function (key, val){
+		
+		dataSum += val.value;
+	});
+	
+	jQuery.each(data, function (key, val){
+		
+		if(val.value / dataSum < .1 && data.length > 5){
+			other.value = other.value + val.value;
+			
+		}else{
+			dataResult.push(val);
+		}
+
+	});
+	
+	if(other.value>0){
+		dataResult.push(other);
+	}
+	
+	data = dataResult;
 
 	//add the data
 	pieData = donut(data);

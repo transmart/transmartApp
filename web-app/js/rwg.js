@@ -3246,9 +3246,9 @@ function displaySelectedAnalysisTopGenes(){
 
 function getCrossTrialSummaryTableStats()
 {
-	 jQuery('#xtSummaryTable').html('');
+	 jQuery('#xtSummaryTable').html('<br /><p>Summary Table Loading...</p><br /><br />');
 	
-	 jQuery('#xtMenuBar').mask('Loading...');
+	 jQuery('#xtSummaryTable').mask('Loading...');
 	
 	if (selectedAnalyses.length == 0)  {
 		return;
@@ -3273,26 +3273,37 @@ function getCrossTrialSummaryTableStats()
 		timeout:60000,
 		success: function(data) {
 			
-			//alert(response[key]['bio_marker_id']);
-			 var tbl_body = "<div><table style='width:500px' id='CTAsummaryTable' class='CTAtable'>";
-			 tbl_body+="<tr><th style='text-align:center'>Analysis ID</th style='text-align:center'><th style='text-align:center'>Genes Up Regulated</th><th style='text-align:center'>Genes Down Regulated</th><th style='text-align:center'>Total Genes</th></tr>";
+			 var tbl = "<div><table style='width:620px' id='CTAsummaryTable' class='CTAtable'>";
+			 tbl+="<tr><th style='text-align:center'>Analysis</th style='text-align:center'><th style='text-align:center'>Genes Up Regulated</th><th style='text-align:center'>Genes Down Regulated</th><th style='text-align:center'>Total Genes</th></tr>";
+
+		     var tbl_row = "";
+		     
+			jQuery.each(selectedAnalyses, function(k,v){
+				
+					var idx = k+1;
+				
+	        		var analysisResult = jQuery.grep(data, function(e){ return e.bio_assay_analysis_id == v.id; })
+	        		tbl += "<tr><td style='text-align:left'><span class=truncated title='" +v.studyID +": "+v.title +"'>";
+	        		tbl += "<span style='font-weight:bold'>"+idx +": </span>";
+	        		tbl += v.studyID +": "+v.title +"</span></td>";	
+
+	        		tbl += "<td style='text-align:center'>"+analysisResult[0].upreg+"</td>";	
+	        		tbl += "<td style='text-align:center'>"+analysisResult[0].downreg+"</td>";	
+	        		tbl += "<td style='text-align:center'>"+analysisResult[0].total+"</td>";	
+		            
+	        		tbl += "</tr>";    
+			});
 			
-			 jQuery.each(data, function() {
-			        var tbl_row = "";
-			        jQuery.each(this, function(k , v) {
-			            tbl_row += "<td style='text-align:center'>"+v+"</td>";
-			        })
-			        tbl_body += "<tr>"+tbl_row+"</tr>";                 
-			    })
-			    tbl_body += '</table></div>';
+				tbl += '</table></div>';
 			 
-			    jQuery('#xtSummaryTable').html(tbl_body);
+			    jQuery('#xtSummaryTable').html(tbl);
+			    
 			    
 			    //alternate colors
 			    jQuery('#CTAsummaryTable').find('tr:even').css({'background-color':'#efefef'})
 	              .end().find('tr:odd').css({'background-color':'#fff'});
 			    
-			    jQuery('#xtMenuBar').unmask();
+			    jQuery('#xtSummaryTable').unmask();
 		   
 		}
 	});
@@ -3332,6 +3343,7 @@ function updateCrossTrialGeneCharts(){
 	//update the table
 	getCrossTrialSummaryTableStats()
 	
+	jQuery("#xtMenuBar").unmask();
 	jQuery('#xtMsgBox').fadeOut(200);
 	
 	//unmaks the tabs
@@ -4229,6 +4241,8 @@ function openXtBoxplot(keywordId, geneName){
 	var wWidth = jQuery(window).width() * 0.8;
 	
 	jQuery('#xtBoxplotHolder').dialog({ width: wWidth, title: geneName });
+	
+	jQuery('#xtBoxplotHolder').mask("Loading...");
     
 
     loadBoxPlotCTA(keywordId);
@@ -4263,8 +4277,8 @@ function loadBoxPlotCTA(keywordId)	{
 		success: function(response) {
 			
 			drawBoxPlotD3('xtBoxplot', response, null, false, true, selectedAnalyses);
-		    jQuery('#xtBoxplotWrapper').unmask();
-
+			
+			jQuery('#xtBoxplotHolder').unmask();
 			
 		},
 		error: function(xhr) {
