@@ -51,13 +51,13 @@ class SecureObjectAccess {
 			return objectAccessName();
 	}
   public String getObjectAccessName() {
-			return secureObject.displayName+' ('+accessLevel.accessLevelName+')';
+			return secureObject?.displayName+' ('+accessLevel?.accessLevelName+')';
 		}
   public void setObjectAccessName(String s){
 
   }
   public String getPrincipalAccessName() {
-		return principal.type+'-'+ principal.name+' ('+accessLevel.accessLevelName+')';
+		return principal?.type+'-'+ principal?.name+' ('+accessLevel?.accessLevelName+')';
 	}
 public void setPrincipalAccessName(String s){
 
