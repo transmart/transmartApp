@@ -1964,7 +1964,7 @@ function getTreeNodeFromXMLNode(concept)
 	    
 	    //set whether expanded or not.
 	    var autoExpand=false;
-		// Crude string check to only auto-expand if this node is not an actual search result
+		// Crude string check to bold this node if it's appeared as an actual search result (leaf)
 	    var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
 	    if (isSearchResult) {
 	    	tcls += ' searchResultNode';

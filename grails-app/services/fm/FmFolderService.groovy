@@ -239,6 +239,7 @@ class FmFolderService {
 	
 	def getFolderContents(id, folderMap) {
 		
+				log.info "Getting folder contents for ID: " + id
 				def parent;
 				def folderLevel = 0L;
 				if (id != null) {
@@ -246,7 +247,10 @@ class FmFolderService {
 					folderLevel = parent.folderLevel + 1
 				}
 				
+				
 				def folderMask = folderMap.get(folderLevel);
+				
+				log.info "Searching at level: " + folderLevel + " with mask: " + folderMask + ", " + folderMask?.size()
 				
 				def folders = null;
 				
@@ -262,6 +266,8 @@ class FmFolderService {
 						order('folderName', 'asc')
 					}
 				}
+				
+				log.info "Found folders: " + folders?.size();
 				 
 				return [folders: folders, files: parent?.fmFiles]
 			}
