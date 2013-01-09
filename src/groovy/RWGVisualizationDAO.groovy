@@ -22,7 +22,7 @@ class RWGVisualizationDAO {
 	
 	static Logger log = Logger.getLogger(RWGVisualizationDAO.class)
 
-
+ 
 	/**
 	* Method to retrieve a list of gene names for the give probes (identified by probe name)
 	*
@@ -1455,31 +1455,17 @@ class RWGVisualizationDAO {
 					from searchapp.search_keyword sk
 					where sk.search_keyword_id = ${search_keyword}))
 					and bio_assay_analysis_id = ${it}
-			    order by preferred_pvalue asc)
+			   order by preferred_pvalue, abs(fold_change_ratio) desc)
 			    where rownum=1"""
+		   
+				println s
 		   
 		   if(it != analysisObj.last()) {
 		   		s=s+" union ";
 		   }
 		   
 	   }
-	   
-	   /*
-		//Old method for getting results below:					 
-	String s ="""
-
-		select distinct bio_assay_analysis_id, bio_marker_id, bio_marker_name, 
-		max(abs(fold_change_ratio)) fold_change_ratio, min(tea_normalized_pvalue) tea_normalized_pvalue, min(preferred_pvalue) preferred_pvalue
-		from BIOMART.heat_map_results
-		where bio_marker_id in (select distinct bmv.asso_bio_marker_id
-		from BIOMART.bio_marker_correl_mv bmv
-		where bmv.bio_marker_id = (select sk.bio_data_id
-		from searchapp.search_keyword sk
-		where sk.search_keyword_id = ${search_keyword}))
-		and bio_assay_analysis_id in (${analysisList})
-		group by bio_assay_analysis_id, bio_marker_id, bio_marker_name"""
-		
-		*/
+	    
 	   
 	   log.debug("${s}")
    
@@ -1500,12 +1486,6 @@ class RWGVisualizationDAO {
    
 	   return  resultSet
    }
-   
-   
-   
-   
-   
-   
    
    
    
@@ -1541,6 +1521,47 @@ class RWGVisualizationDAO {
 	   }
    
 	   return  resultSet
+   }
+   
+   
+   
+/**
+ * Retreive the search keyword ID from a given external biomarker id (for example, entrez)
+ *
+ * @param externalBiomarkerID  - an external biomarkder ID
+ *
+ * @return the search keyword for the given biomarkder ID
+ **/
+   def getSearchKeywordIDfromExternalID(externalBiomarkerID)	{
+	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+	   String s = """
+		select search_keyword_id
+		from searchapp.search_keyword where bio_data_id = (
+		select bio_marker_id 
+		from biomart.bio_marker 
+		where primary_external_id = '${externalBiomarkerID}')
+			   """
+			   
+	   log.debug("${s}")
+	   
+	   println s
+   
+		   def rows = sql.rows(s)
+		   
+		   def skw
+		   
+		   println rows
+		   
+		   rows.each {row->
+			   
+			   println "row.skid = " +row.search_keyword_id
+			   
+			  skw = row.search_keyword_id
+	   }
+		   
+		   println "skw = " +skw
+   
+	   return  skw
    }
    
    
@@ -1675,6 +1696,8 @@ def getHeatmapRowCountCTA  = {analysisIds, category, keywordId ->
 	
 	return rowCount
  }
+
+
 
 
 /**

@@ -4049,10 +4049,22 @@ function addXTSearchAutoComplete()	{
 	return false;
 }
 
-function openGeneFromCTAheatmap(keywordId, termName, categoryId){
-	addXTSelectedKeyword(keywordId, termName, categoryId);
-	getCrossTrialGeneSummary(keywordId);
-	jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
+function openGeneFromCTAheatmap(biomarkerID, termName, categoryId){
+
+	rwgAJAXManager.add({
+		url:getSearchKeywordIDfromExternalIDURL,
+		data: {externalID: biomarkerID},
+		timeout:60000,
+		success: function(result) {
+		
+			addXTSelectedKeyword(result, termName, categoryId);
+			getCrossTrialGeneSummary(result);
+			jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
+		}
+	});
+	
+
+
 }
 
 
