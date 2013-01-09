@@ -31,16 +31,17 @@ function createMainTabPanel() {
 
 // create search tabs with TEA
 function createSearchTabs(toolbar) {
-
-    // create search tabs
+	var x = screen.width;
+	var y = screen.height;
+	
+	// create search tabs
     var tabpanel = new Ext.TabPanel({
         id: "tab-panel",
         tbar: toolbar,
         activeTab: pageData.activeTab,
-        // baseCls: "mainTabBase",
         renderTo: "maintabs-div",
-        autoScroll: true,
-        //region: "center",
+        width: x-1,     // Subtract 1 so the scrollbar appears on screen
+        height: y-250,  // Subtract 250 for the padding and other header stuff
         items: [ 
             {
                 id: "tab1",
