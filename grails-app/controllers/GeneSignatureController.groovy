@@ -882,7 +882,8 @@ class GeneSignatureController {
 
 			case 1:
 			// species
-			wizard.species = ConceptCode.findAllByCodeTypeName(SPECIES_CATEGORY, [sort:"bioConceptCode"])
+			//wizard.species = ConceptCode.findAllByCodeTypeName(SPECIES_CATEGORY, [sort:"bioConceptCode"])
+			wizard.species = ConceptCode.findAll("from ConceptCode where codeTypeName='SPECIES' and bioConceptCode!='CYNOMOLGUS_MONKEY'");
 			
 			// mouse sources
 			wizard.mouseSources = ConceptCode.findAllByCodeTypeName(MOUSE_SOURCE_CATEGORY, [sort:"bioConceptCode"])
