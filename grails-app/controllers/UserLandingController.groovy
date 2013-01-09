@@ -34,27 +34,25 @@ class UserLandingController {
 	 */
     def springSecurityService
 	
-	   def index = {
-            new AccessLog(username: springSecurityService.getPrincipal().username, event:"Login",
-                  eventmessage: request.getHeader("user-agent"),
-                  accesstime:new Date()).save()
-                  def skip_disclaimer = grailsApplication.config.com.recomdata?.skipdisclaimer?:false;
-                  if(skip_disclaimer){
-                        redirect(uri:'/search');     
-                  }else{
-                  redirect(uri: '/userLanding/disclaimer.gsp')
-                  }
-      }
-	def agree = {
+	def index ()
+	{
+		new AccessLog(username: springSecurityService.getPrincipal().username, event:"Login",
+			eventmessage: request.getHeader("user-agent"), accesstime:new Date()).save()
+  		render(view: "/userLanding/disclaimer")
+    }
+	
+	def agree ()
+	{
 		new AccessLog(username: springSecurityService.getPrincipal().username, event:"Disclaimer accepted",
 			accesstime:new Date()).save()				
-		redirect(uri: '/search')
+		redirect(uri: "/search")
 	}
 	
-	def disagree = {
+	def disagree ()
+	{
 		new AccessLog(username: springSecurityService.getPrincipal().username, event:"Disclaimer not accepted",			
 			accesstime:new Date()).save()
-	    redirect(uri: '/logout')
+	    redirect(uri: "/logout")
 	}
 	
 	/**
@@ -63,5 +61,4 @@ class UserLandingController {
    def checkHeartBeat = {
 	   render 'ALIVE'
    }
-
 }

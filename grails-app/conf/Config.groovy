@@ -155,11 +155,6 @@ com.recomdata.analysis.survival.censorFlagList = [
 
 com.recomdata.analysis.genepattern.file.dir = "genepattern"; // Relative to the app root "web-app"
 
-// Disclaimer
-StringBuilder disclaimer = new StringBuilder()
-disclaimer.append("<p></p>")
-com.recomdata.disclaimer=disclaimer.toString()
-
 // customization views
 //com.recomdata.view.studyview='_clinicaltrialdetail'
 com.recomdata.skipdisclaimer=true
