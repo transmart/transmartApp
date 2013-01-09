@@ -139,7 +139,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
 		rangeMin = -1;
 	}
 	
-	var w_probe = 6 + parseInt(maxProbeLength);
+	var w_probe = Math.min(6 + parseInt(maxProbeLength), 140);
 	
 	var rangeMid = (rangeMax + rangeMin)/2;
 	
@@ -523,13 +523,18 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
 		.attr("text-anchor", "start")
 	    .style("font", "10px Verdana, Tahoma, Arial")
 		.text(function(d)	{
-			return d;
+			if(d.length>18){
+					return d.substr(0,15) +"...";
+				}
+				else{
+					return d;
+				}
 		} )		
         ;			
 	
 	// tooltip for probe labels
     if (!forExport && !isSA)  {
-    	probeGroupText.append('svg:title').text("View in boxplot");
+    	probeGroupText.append('svg:title').text(function(d){return d + ": View in boxplot";});
     }
 
 	//GROUP FOR legend (min, max, null)

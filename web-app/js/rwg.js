@@ -3248,7 +3248,6 @@ function getCrossTrialSummaryTableStats()
 {
 	 jQuery('#xtSummaryTable').html('<br /><p>Summary Table Loading...</p><br /><br />');
 	
-	 jQuery('#xtSummaryTable').mask('Loading...');
 	
 	if (selectedAnalyses.length == 0)  {
 		return;
@@ -3274,15 +3273,16 @@ function getCrossTrialSummaryTableStats()
 		success: function(data) {
 			
 			 var tbl = "<div><table style='width:620px' id='CTAsummaryTable' class='CTAtable'>";
-			 tbl+="<tr><th style='text-align:center'>Analysis</th style='text-align:center'><th style='text-align:center'>Genes Up Regulated</th><th style='text-align:center'>Genes Down Regulated</th><th style='text-align:center'>Total Genes</th></tr>";
-
-		     var tbl_row = "";
+			 tbl+="<tr><th style='text-align:center'>Analysis</th style='text-align:center'>" +
+			 		"<th style='text-align:center'>Genes Up Regulated</th>" +
+			 		"<th style='text-align:center'>Genes Down Regulated</th>" +
+			 		"<th style='text-align:center'>Total Genes</th></tr>";
 		     
 			jQuery.each(selectedAnalyses, function(k,v){
 				
 					var idx = k+1;
-				
-	        		var analysisResult = jQuery.grep(data, function(e){ return e.bio_assay_analysis_id == v.id; })
+	        		var analysisResult = jQuery.grep(data, function(e){ return e.bio_assay_analysis_id == v.id; });
+	        		
 	        		tbl += "<tr><td style='text-align:left'><span class=truncated title='" +v.studyID +": "+v.title +"'>";
 	        		tbl += "<span style='font-weight:bold'>"+idx +": </span>";
 	        		tbl += v.studyID +": "+v.title +"</span></td>";	
@@ -3301,10 +3301,7 @@ function getCrossTrialSummaryTableStats()
 			    
 			    //alternate colors
 			    jQuery('#CTAsummaryTable').find('tr:even').css({'background-color':'#efefef'})
-	              .end().find('tr:odd').css({'background-color':'#fff'});
-			    
-			    jQuery('#xtSummaryTable').unmask();
-		   
+	              .end().find('tr:odd').css({'background-color':'#fff'});		   
 		}
 	});
 	
