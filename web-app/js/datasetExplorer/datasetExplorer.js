@@ -88,25 +88,25 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
 }
 
 function loadScripts(scripts) {
-//	var handlerData = {
+	var handlerData = {
 	//data you wish to pass to your success or failure
 	//handlers.
-//	};
+	};
 	 
 	var filesArr = []
 	for (var i = 0; i < scripts.length; i++) {
 		var file = scripts[i];
 		filesArr.push(file.path);
 	}	
-//	YAHOO.util.Get.script(filesArr, {
-//		onSuccess: function(o) {
-//			//alert("JavaScripts loaded");
-//		},
-//		onFailure: function(o) {
-//			alert("Failed to load Javascript files");
-//		},
-//		data:      handlerData
-//	});
+	YAHOO.util.Get.script(filesArr, {
+		onSuccess: function(o) {
+			//alert("JavaScripts loaded");
+		},
+		onFailure: function(o) {
+			alert("Failed to load Javascript files");
+		},
+		data:      handlerData
+	});
 }
 
 Ext.Panel.prototype.setBody = function(html)
