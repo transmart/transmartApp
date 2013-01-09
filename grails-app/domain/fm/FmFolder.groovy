@@ -106,7 +106,7 @@ class FmFolder implements Buildable{
 	   StringBuffer sb = new StringBuffer();
 	   sb.append("ID: ").append(this.id).append(", Folder Name: ").append(this.folderName);
 	   sb.append(", Folder Full Name: ").append(this.folderFullName).append(", Folder Level: ").append(this.folderLevel);
-	   sb.append(", Folder Type: ").append(this.folderType).append(", Object UID ").append(this.objectUid);
+	   sb.append(", Folder Type: ").append(this.folderType).append(", Object UID ").append(this.objectUid).append(", Description ").append(this.description);
 	   return sb.toString();
    }
 
