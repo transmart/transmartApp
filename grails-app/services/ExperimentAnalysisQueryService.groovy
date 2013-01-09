@@ -181,13 +181,13 @@ class ExperimentAnalysisQueryService {
 		createSubFilterCriteria(filter.expAnalysisFilter,query);
 
 		if("COUNT_EXP".equals(countType)){
-			query.addSelect("COUNT(distinct baad.bioExperimentId) ");
+			query.addSelect("COUNT(distinct baad.experiment.id) ");
 		} else if ("COUNT_ANALYSIS".equals(countType)){
 			//query.addTable("JOIN baad.markers baad_bm")
-			query.addSelect("COUNT(distinct baad.bioAssayAnalysisId) ");
+			query.addSelect("COUNT(distinct baad.analysis.id) ");
 		} else if ("COUNT_ANALYSIS_TEA".equals(countType)){
 			//	query.addTable("JOIN baad.markers baad_bm")
-			query.addSelect("COUNT(DISTINCT baad.BioAssayAnalysisId) ");
+			query.addSelect("COUNT(DISTINCT baad.analysis.id) ");
 			createNPVCondition(query)
 		} else {
 			query.setDistinct=true
@@ -475,7 +475,8 @@ class ExperimentAnalysisQueryService {
 		if(expfilter.filterSpecies()){
 			//	def alias = query.mainTableAlias+".assayPlatform.organism"
 			//query.addTable(alias+" exp")
-			query.addCondition(query.mainTableAlias+".assayPlatform.organism ='"+expfilter.species+"'")
+			query.addTable("bio.BioAssayAnalysisData baad_platform")
+			query.addCondition(" baad_platform.assayPlatform.organism ='"+expfilter.species+"'")
 		}
 		// type
 		//	if(expfilter.filterExpType()){
