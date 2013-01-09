@@ -71,9 +71,9 @@ var assayCount = 3
 	</h3>
 </div>
 <g:if test="${bioDataObject?.hasProperty('description')}">
-<div style="line-height:14px;font-family:arial, €‹tahoma, €‹helvetica, €‹sans-serif; font-size: 12px;">
- <g:if test="${bioDataObject?.description.length() > 325000}">
-                       ${(bioDataObject?.description).substring(0,324000)}&nbsp;&nbsp;
+<div style="line-height:14px;font-family:arial, ï¿½ï¿½tahoma, ï¿½ï¿½helvetica, ï¿½ï¿½sans-serif; font-size: 12px;">
+ <g:if test="${bioDataObject?.description?.length() > 325000}">
+                       ${(bioDataObject?.description)?.substring(0,324000)}&nbsp;&nbsp;
                        <a href=# >...See more</a>
                        </g:if>
                        <g:else>

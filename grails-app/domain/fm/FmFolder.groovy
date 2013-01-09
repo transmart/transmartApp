@@ -35,6 +35,7 @@ class FmFolder implements Buildable{
 	String objectUid
 	String folderType
 	String folderTag
+	String description
 	Boolean activeInd = Boolean.TRUE
 
 	static mapping = {
@@ -60,6 +61,7 @@ class FmFolder implements Buildable{
 		objectUid(maxSize:300)
 		folderType(maxSize:100)
 		folderTag(nullable: true, maxSize:50)
+		description(nullable: true, maxSize: 2000)
 		parent(nullable: true)
 	}
 	
