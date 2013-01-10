@@ -102,6 +102,8 @@
 	        var getHeatmapCTARowCountURL = "${createLink([action:'getHeatmapCTARowCount'])}";
 	        var getHeatmapCTARowsURL = "${createLink([action:'getHeatmapCTARows'])}";
 	        var getCrossTrialSummaryTableStatsURL = "${createLink([action:'getCrossTrialSummaryTableStats'])}";
+			var getSearchKeywordIDfromExternalIDURL  = "${createLink([action:'getSearchKeywordIDfromExternalID'])}";
+	        
 	        			
 			var showHomePageFirst=true;
 			

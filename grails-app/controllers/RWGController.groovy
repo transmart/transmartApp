@@ -1443,6 +1443,13 @@ class RWGController {
 			  
    }
    
+   
+   
+   
+   
+   
+   
+   
    def getCrossTrialAnalysis={
 	   
 	   
@@ -1509,7 +1516,21 @@ class RWGController {
 	   
 	   render r as JSON
 	   
+   } 
+   
+   
+   def getSearchKeywordIDfromExternalID = {
+	   def rwgDAO = new RWGVisualizationDAO()
+	   def r = rwgDAO.getSearchKeywordIDfromExternalID(params.externalID)
+	   
+	 //  def map = [:]
+	 //  map.put("search_keyword", r)
+	   
+	   println "r = " +r
+	   
+	   render r
    }
+   
    
    def getCrossTrialSummaryTableStats = {
 	   def rwgDAO = new RWGVisualizationDAO()

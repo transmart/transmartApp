@@ -31,16 +31,17 @@ function createMainTabPanel() {
 
 // create search tabs with TEA
 function createSearchTabs(toolbar) {
-
-    // create search tabs
+	var x = jQuery(window).innerWidth();
+	var y = jQuery(window).innerHeight();
+	
+	// create search tabs
     var tabpanel = new Ext.TabPanel({
         id: "tab-panel",
         tbar: toolbar,
         activeTab: pageData.activeTab,
-        // baseCls: "mainTabBase",
         renderTo: "maintabs-div",
-        autoScroll: true,
-        //region: "center",
+        width: x-1,     // Subtract 1 so the scrollbar appears on screen
+        height: y-125,  // Subtract 250 for the padding and other header stuff
         items: [ 
             {
                 id: "tab1",
@@ -627,7 +628,7 @@ function exportSummary(button) {
 	var tabpanel = Ext.getCmp("tab-panel");
     var activetab = tabpanel.getActiveTab();
     var layout = activetab.getLayout();
-    var activeitem = layout.activeItem;
+    var activeitem = layout.activeItem;	
     switch (activetab.getId()) {
     case "tab1":
     	if (activeitem.id.indexOf("-tea-") > -1) {

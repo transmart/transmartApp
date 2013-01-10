@@ -300,10 +300,10 @@ Ext.onReady(function()
 					        	 	advancedWorkflowContextHelpId="1172";
 					        	 },
 					        	 disabled : GLOBAL.GPURL == ""
-					         }
+					         }					         
 					         ,
 				        	 '-'
-				        	 ,
+				        	 , /*
 					         {
 					        	 text : 'Survival Analysis',
 					        	 handler : function()
@@ -321,7 +321,7 @@ Ext.onReady(function()
 					         }
 					         ,
 				        	 '-'
-				        	 ,
+				        	 , */
 					         {
 					        	 text : 'Haploview',
 					        	 handler : function()	{
@@ -386,7 +386,7 @@ Ext.onReady(function()
 					        	disabled : GLOBAL.GPURL == ""
 					        }
 					        ,
-					        {
+					      /*  {
 					        	 text : 'PLINK',
 					        	 disabled : true,
 					        	 handler : function()	{
@@ -405,7 +405,7 @@ Ext.onReady(function()
 					        	 	}
 					        	 	return;
 					        	}
-					        },
+					        },*/
 					        {
 					        	 text : 'Genome-Wide Association Study',
 					        	 handler : function()	{
@@ -424,7 +424,8 @@ Ext.onReady(function()
 					        	 	}
 					        	 	return;
 					        	}
-					        }					   ]
+					        }	
+					        				   ]
 				}
 		);
 

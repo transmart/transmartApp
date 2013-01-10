@@ -461,7 +461,7 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
 		.data(geneLabels)
 		.enter().append("a")
 		//.attr("xlink:href", function(d) {return "javascript:showGeneInfo('"+d.geneId +"');"})
-		.attr("xlink:href", function(d) {return "javascript:openGeneFromCTAheatmap(" + d.geneId + ", '" +d.gene +"', 'GENE');"})
+		.attr("xlink:href", function(d) {return "javascript:openGeneFromAnalysisHeatmap(" + d.geneId + ", '" +d.gene +"', 'GENE');"})
 
 		.append("text")
 		.attr("x", 0)
