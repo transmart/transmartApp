@@ -1998,6 +1998,8 @@ function setClearXTLink(){
 	}
 }
 
+
+
 function openSaveSearchDialog(isXT)  {
 
 	var keywords;
@@ -4049,8 +4051,26 @@ function addXTSearchAutoComplete()	{
 	return false;
 }
 
-function openGeneFromCTAheatmap(biomarkerID, termName, categoryId){
 
+//This function is used when the user clicks on the gene name from the
+//cross trial analysis heatmap ("heatmap" tab). Note that the search keyword 
+//is passed in
+function openGeneFromCTAheatmap(searchkeyword, termName, categoryId){
+	
+		addXTSelectedKeyword(searchkeyword, termName, categoryId);
+		getCrossTrialGeneSummary(searchkeyword);
+		jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
+		
+		setSaveXTFilterLink();
+		setClearXTLink();
+}
+
+
+//This function is used when the user clicks on gene name from the heatmap
+//for a specific analysis (not the CTA heatmap). Note that the biomarkerID
+//is passed in, which is used to find the searchkeyword ID
+function openGeneFromAnalysisHeatmap(biomarkerID, termName, categoryId){
+	
 	rwgAJAXManager.add({
 		url:getSearchKeywordIDfromExternalIDURL,
 		data: {externalID: biomarkerID},
@@ -4060,12 +4080,15 @@ function openGeneFromCTAheatmap(biomarkerID, termName, categoryId){
 			addXTSelectedKeyword(result, termName, categoryId);
 			getCrossTrialGeneSummary(result);
 			jQuery('#xtMenuBar').tabs('select', 'xtGeneChartTab'); // switch to chart tab
+
+			setSaveXTFilterLink();
+			setClearXTLink();
+			
 		}
 	});
-	
-
 
 }
+
 
 
 //Load the heatmap data for cross trial analysis 
