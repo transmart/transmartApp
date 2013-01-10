@@ -430,7 +430,7 @@ class GenePatternService implements Job {
 		impParameters[3] = colMax;
 
 		updateStatus(jobName, "Imputing Missing Value KNN")
-		JobResult    imputedMissing   = runJobNoWF(userName, impParameters, "ImputeMissingValuesKNN")
+		JobResult    imputedMissing   = runJobNoWF(userName, impParameters, "ImputeMissingValues.KNN")
 		
 		Parameter    inputFilename     = new Parameter("input.file", getGenePatternRealURLBehindProxy(imputedMissing.getURL("gct").toString()));
 		Parameter    clsFilename       = new Parameter("cls.file", clsFile);
@@ -630,7 +630,7 @@ class GenePatternService implements Job {
 	   impParameters[2] = rowMax;
 	   impParameters[3] = colMax;
 
-	   JobResult    imputedMissing   = runJob(impParameters, "ImputeMissingValuesKNN")
+	   JobResult    imputedMissing   = runJob(impParameters, "ImputeMissingValues.KNN")
 	   
 	   Parameter    inputFilename     = new Parameter("input.file", getGenePatternRealURLBehindProxy(imputedMissing.getURL("gct").toString()));
 	   Parameter    clsFilename       = new Parameter("cls.file", clsFile);
