@@ -198,7 +198,7 @@ class ExperimentAnalysisQueryService {
 		}
 
 		def q = query.generateSQL();
-		//	println(q)
+		//println q
 		return q;
 	}
 
@@ -477,6 +477,7 @@ class ExperimentAnalysisQueryService {
 			//query.addTable(alias+" exp")
 			query.addTable("bio.BioAssayAnalysisData baad_platform")
 			query.addCondition(" baad_platform.assayPlatform.organism ='"+expfilter.species+"'")
+			query.addCondition(query.mainTableAlias+".experiment = baad_platform.experiment" )
 		}
 		// type
 		//	if(expfilter.filterExpType()){
