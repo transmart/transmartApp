@@ -457,7 +457,6 @@ class FmFolderController {
 		if (folderId) 
 		{
 			folder = FmFolder.get(folderId)
-			log.info "folder.objectUid = " + folder.objectUid
 			
 			if(folder)
 			{
@@ -483,15 +482,16 @@ class FmFolderController {
 				}
 						
 				bioDataObject = getBioDataObject(folder)
+				def fmData = FmData.get(folder.id)
 				
-				amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
+				amTagTemplate = amTagTemplateService.getTemplate(fmData.uniqueId)
 				if(amTagTemplate)
 				{
 					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 				}
 				else
 				{
-					log.error "Unable to find amTagTemplate for object Id = " + folder.objectUid
+					log.error "Unable to find amTagTemplate for object Id = " + fmData.uniqueId
 				}
 	
 				//  amTagTemplate.amTagItems
@@ -507,7 +507,17 @@ class FmFolderController {
 	private Object getBioDataObject(folder)
 	{
 		def bioDataObject
-		def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
+		def folderAssociation
+		def fmData = FmData.get(folder.id)
+		if(fmData)
+		{
+			folderAssociation = FmFolderAssociation.findByObjectUid(fmData.uniqueId)
+		}
+		else
+		{
+			log.error("FmDataUid record was not found for folder id = " + folder.id)
+		}
+		
 		
 		if(folderAssociation)
 		{
@@ -516,7 +526,7 @@ class FmFolderController {
 		}
 		else
 		{
-			log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
+			log.error "Unable to find folderAssociation for object Id = " + fmData.uniqueId
 		}
 
 		if(!bioDataObject)
@@ -546,7 +556,6 @@ class FmFolderController {
 			folder = FmFolder.get(folderId)
 			if(folder)
 			{
-				log.info "folder.objectUid = " + folder.objectUid
 				bioDataObject = getBioDataObject(folder)
 			
 				amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)

@@ -18,46 +18,19 @@
  ******************************************************************/
   
 
-package annotation
-
-import java.io.Serializable;
-
-
-
-class AmTagAssociation implements Serializable{
-
-	String objectType
-	String subjectUid
-	String objectUid
-	Long tagItemId
+package fm
+class FmData {
+		Long id
+		String uniqueId
+		String fmDataType
 	
-	
-	static mapping = {
-		table 'am_tag_association'
-		version false
-		cache true
-		sort "tagTemplateName"
-		id composite: ["objectUid","subjectUid"]
-//		amTagItem column: 'tag_item_id', insert: "false", update: "false"
-
-	}
-
-	
-	static constraints = 
-	{
-	}
-
-	static AmTagAssociation get(String objectUid, String subjectUid) {
-		find 'from AmTagAssociation where objectUid=:objectUid and subjectUid=:subjectUid',
-			[objectUid: objectUid, subjectUid: subjectUid]
-	}
-
-	static boolean remove(String objectUid, String subjectUid, boolean flush = false) {
-		AmTagAssociation instance = AmTagAssociation.findByObjectUidAndSubjectUid(objectUid, subjectUid)
-		instance ? instance.delete(flush: flush) : false
-	}
-
+        static mapping = {
+		
+			table 'FM_DATA_UID'
+			version false
+			columns {
+				id column:'FM_DATA_ID'
+				uniqueId column:'UNIQUE_ID'
+			}
+		}
 }
-
-
-	

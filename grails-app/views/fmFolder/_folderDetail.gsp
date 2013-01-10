@@ -87,10 +87,13 @@ var assayCount = 3
         <thead>
             <tr>                
                 <th>&nbsp;</th>
-                <th align="right"><g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
+                <th align="right">
+				<g:if test="${!folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
+	                <g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
                         params="[eleId:overlayDiv, folderId:folder?.id]" 
                         before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
                   <img align="right" src="${resource(dir:'images', file:'pencil.png')}"/></g:remoteLink>
+                </g:if>
                 </th>
             </tr>
         </thead>
