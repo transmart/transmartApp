@@ -511,7 +511,7 @@ class FmFolderController {
 		def fmData = FmData.get(folder.id)
 		if(fmData)
 		{
-			folderAssociation = FmFolderAssociation.findByObjectUid(fmData.uniqueId)
+			folderAssociation = FmFolderAssociation.findByFmFolder(folder)
 		}
 		else
 		{
@@ -526,7 +526,7 @@ class FmFolderController {
 		}
 		else
 		{
-			log.error "Unable to find folderAssociation for object Id = " + fmData.uniqueId
+			log.error "Unable to find folderAssociation for folder Id = " + folder.id
 		}
 
 		if(!bioDataObject)
@@ -558,14 +558,14 @@ class FmFolderController {
 			{
 				bioDataObject = getBioDataObject(folder)
 			
-				amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
+				amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
 				if(amTagTemplate)
 				{
 					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 				}
 				else
 				{
-					log.error "Unable to find amTagTemplate for object Id = " + folder.objectUid
+					log.error "Unable to find amTagTemplate for object Id = " + folder.getUniqueId()
 				}
 			}
 			else
@@ -592,7 +592,7 @@ class FmFolderController {
 			folder = FmFolder.get(folderId)
 			if(folder)
 			{
-				def folderAssociation = FmFolderAssociation.findByObjectUid(folder.objectUid)
+				def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
 				if(folderAssociation)
 				{
 					log.info "folderAssociation = " + folderAssociation
@@ -600,7 +600,7 @@ class FmFolderController {
 				}
 				else
 				{
-					log.error "Unable to find folderAssociation for object Id = " + folder.objectUid
+					log.error "Unable to find folderAssociation for folder Id = " + folder.id
 				}
 	
 				if(!bioDataObject)
@@ -617,14 +617,14 @@ class FmFolderController {
 				else {
 					log.info "Errors occurred saving Meta data"
 					def metaDataTagItems 
-					def amTagTemplate = amTagTemplateService.getTemplate(folder.objectUid)
+					def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
 					if(amTagTemplate)
 					{
 						metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 					}
 					else
 					{
-						log.error "Unable to find amTagTemplate for object Id = " + folder.objectUid
+						log.error "Unable to find amTagTemplate for object Id = " + folder.getUniqueId()
 					}
 	
 					render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);

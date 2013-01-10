@@ -2,7 +2,7 @@
 
 <div class="search-results-table">
 	<g:each in="${folders}" status="ti" var="folder">        
-		<table class="folderheader" name="${folder.objectUid}">
+		<table class="folderheader" name="${folder.getUniqueId()}">
 			<tr>
 				<td class="foldertitle">
 					<span>

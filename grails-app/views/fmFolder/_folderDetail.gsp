@@ -104,11 +104,11 @@ var assayCount = 3
             <!-- TODO: If active -->
                 <td valign="top" align="right" class="columnname" width="20%">${amTagItem.displayName}</td>
                 <td valign="top" align="left" class="columnvalue" width="60%">
-                <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
+                 <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
                       ${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
                 </g:if>
                 <g:else>   
-                    <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.objectUid,amTagItem.id])}"/>
+                    <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId().toString(),amTagItem.id])}"/>
 	                <g:if test="${tagValues!=null}">
 	             	   <g:set var="counter" value="0"/>
 	             		 <g:each var="tagValue" status="k" in="${tagValues}">

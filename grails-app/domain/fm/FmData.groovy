@@ -23,7 +23,7 @@ class FmData {
 		Long id
 		String uniqueId
 		String fmDataType
-	
+			
         static mapping = {
 		
 			table 'FM_DATA_UID'

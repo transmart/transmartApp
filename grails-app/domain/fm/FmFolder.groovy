@@ -32,12 +32,12 @@ class FmFolder implements Buildable{
 	String folderName
 	String folderFullName
 	Long folderLevel
-	String objectUid
 	String folderType
 	String folderTag
 	String description
 	Boolean activeInd = Boolean.TRUE
-
+	
+	
 	static mapping = {
 		table 'fm_folder'
 		version false
@@ -46,19 +46,32 @@ class FmFolder implements Buildable{
 		id generator: 'sequence', params:[sequence:'seq_fm_id']
 		fmFiles joinTable: [name: 'fm_folder_file_association',  key:'folder_id', column: 'file_id'], lazy: false
 		columns { id column:'folder_id' }
-	//	amTagTemplates joinTable: [name: 'am_tag_template_association',  key:'object_uid', column: 'tag_template_id'], lazy: false
-		columns {
-			id column:'folder_id'
-		}
+		uniqueIds joinTable:[name:'FM_DATA_UID', key:'FM_DATA_ID']
+		
+	
 	}
 	
 	static belongsTo = [parent: FmFolder]	
-	static hasMany = [fmFiles: FmFile, children: FmFolder] //, amTagTemplates: AmTagTemplate]
+	static hasMany = [fmFiles: FmFile, children: FmFolder, uniqueIds: FmData ] //, amTagTemplates: AmTagTemplate]
+	
+	def getFmData()
+	{
+		if(uniqueIds!=null && !uniqueIds.isEmpty())
+			return (uniqueIds.iterator().next());
+		return null;
+
+	}
+
+		def getUniqueId(){
+		if(uniqueIds!=null && !uniqueIds.isEmpty())
+			return (uniqueIds.iterator().next()).uniqueId;
+		return null;
+	}
+
 	
 	static constraints = {
 		folderName(maxSize:1000)
 		folderFullName(maxSize:1000)
-		objectUid(maxSize:300)
 		folderType(maxSize:100)
 		folderTag(nullable: true, maxSize:50)
 		description(nullable: true, maxSize: 2000)
@@ -106,7 +119,7 @@ class FmFolder implements Buildable{
 	   StringBuffer sb = new StringBuffer();
 	   sb.append("ID: ").append(this.id).append(", Folder Name: ").append(this.folderName);
 	   sb.append(", Folder Full Name: ").append(this.folderFullName).append(", Folder Level: ").append(this.folderLevel);
-	   sb.append(", Folder Type: ").append(this.folderType).append(", Object UID ").append(this.objectUid).append(", Description ").append(this.description);
+	   sb.append(", Folder Type: ").append(this.folderType).append(", Object UID ").append(", Description ").append(this.description);
 	   return sb.toString();
    }
 

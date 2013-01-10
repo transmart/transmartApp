@@ -33,7 +33,7 @@ class BioDataService {
 		{
 			Class clazz =  grailsApplication.getDomainClass().clazz
 			log.info "clazz = " + clazz
-			bioDataObject = clazz.findByObjectUid(folder.objectUid)
+			bioDataObject = clazz.findByObjectUid(folder.getUniqueId())
 			log.info "bioDataObject = " + bioDataObject
 		}
 		
