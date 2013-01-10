@@ -60,6 +60,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -256,6 +257,10 @@ class I2b2HelperService {
 				"and cd.concept_cd = ?",[conceptCd], {row ->
 					markerType = row.marker_type
 		})
+		
+		if(markerType==""){
+			log.error("No marker type defined for concept cd "+conceptCd+" in DE_GPL_INFO");
+		}
 		//return "Gene Expression"
 		//return "SNP"
 		return markerType
