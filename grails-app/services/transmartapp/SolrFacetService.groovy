@@ -62,7 +62,7 @@ class SolrFacetService {
 
 		   //Gather folders from i2b2 that match the free text search terms, if there are any
 		   if (dataNodeSearchTerms) {
-			   folderSearchList = addOntologyResults(folderSearchList, dataNodeSearchTerms, solrRequestUrl, "AND")
+			   folderSearchList = addOntologyResults(folderSearchList, dataNodeSearchTerms, solrRequestUrl, "OR")
 		   }
 		   
 		   return folderSearchList
@@ -121,7 +121,12 @@ class SolrFacetService {
 	   def accessions = ontologyService.searchOntology(null, dataNodeSearchTerms, 'ALL', 'accession', [])
 	   
 	   if (!accessions) {
-		   return "" //No matches
+		   if (operator.equals("AND")) {
+			   return "" //No matches
+		   }
+		   else {
+			   return folderList
+		   }
 	   }
 	   
 	   def solrQueryString = ""
