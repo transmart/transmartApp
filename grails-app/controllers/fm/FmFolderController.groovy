@@ -667,9 +667,12 @@ class FmFolderController {
 def getFdDetails = {
 }
 
-	def checkForNewFiles = {
+	/**
+	 * Calls service to import files into tranSMART filestore and index them with SOLR
+	 */
+	def importFiles = {
 		
-		fmFolderService.checkForNewFiles();
+		fmFolderService.importFiles();
 		
 	}
 
@@ -722,4 +725,3 @@ def getFdDetails = {
 		request.getSession().setAttribute("gridtable", table);
 */
 //		render(template:'/fmFolder/folderDetail', model:[layout: formLayout, folderInstance:folder, subFolderInstances:subFolders, subFolderLayout: subFolderLayout, jSONForGrid: jSONToReturn])
-
