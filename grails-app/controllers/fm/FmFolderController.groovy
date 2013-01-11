@@ -667,12 +667,9 @@ class FmFolderController {
 def getFdDetails = {
 }
 
-	/**
-	 * Calls service to import files into tranSMART filestore and index them with SOLR
-	 */
-	def importFiles = {
+	def checkForNewFiles = {
 		
-		fmFolderService.importFiles();
+		fmFolderService.checkForNewFiles();
 		
 	}
 
