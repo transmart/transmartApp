@@ -252,9 +252,12 @@ class FmFolderController {
 	
 	def getFolderContents = {
 		def id = params.id
-		def folderContents = fmFolderService.getFolderContents(id, session['folderSearchMap'])
+		def folderContents = fmFolderService.getFolderContents(id)
 		
-		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files])
+		def folderSearchList = session['folderSearchList']
+		def folderSearchString = folderSearchList ? folderSearchList.join("\\,") + "\\," : "" //Extra , - used to identify leaves
+		
+		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString])
 	}
 
 

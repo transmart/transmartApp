@@ -237,39 +237,31 @@ class FmFolderService {
 //	
 //	}
 	
-	def getFolderContents(id, folderMap) {
+	def getFolderContents(id) {
 		
-				log.info "Getting folder contents for ID: " + id
-				def parent;
-				def folderLevel = 0L;
-				if (id != null) {
-					parent = FmFolder.get(id)
-					folderLevel = parent.folderLevel + 1
+		def parent;
+		def folderLevel = 0L;
+		if (id != null) {
+			parent = FmFolder.get(id)
+			folderLevel = parent.folderLevel + 1
+		}
+		
+		def folders = null;
+		
+		//if (folderMask == null || folderMask.size() > 0) { //If we have an empty list, display no folders
+			folders = FmFolder.createCriteria().list {
+				if (parent != null) {
+					eq('parent', parent)
 				}
-				
-				
-				def folderMask = folderMap.get(folderLevel);
-				
-				log.info "Searching at level: " + folderLevel + " with mask: " + folderMask + ", " + folderMask?.size()
-				
-				def folders = null;
-				
-				if (folderMask == null || folderMask.size() > 0) { //If we have an empty list, display no folders
-					folders = FmFolder.createCriteria().list {
-						if (parent != null) {
-							eq('parent', parent)
-						}
-						if (folderMask) {
-							'in'('id', folderMask)
-						}
-						eq('folderLevel', folderLevel)
-						order('folderName', 'asc')
-					}
-				}
-				
-				log.info "Found folders: " + folders?.size();
-				 
-				return [folders: folders, files: parent?.fmFiles]
+//						if (folderMask) {
+//							'in'('id', folderMask)
+//						}
+				eq('folderLevel', folderLevel)
+				order('folderName', 'asc')
 			}
+		//}
+		 
+		return [folders: folders, files: parent?.fmFiles]
+	}
 	
 }

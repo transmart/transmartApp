@@ -390,6 +390,10 @@ table.menuDetail th.menuVisited {
 	border-bottom: 1px solid #DDD;	
 }
 
+.x-tree-node-icon.studyicon { background-image: url('../images/foldertypes/study.png'); }
+
+.x-tree-node-icon.programicon { background-image: url('../images/foldertypes/program.png'); }
+
 
 /* Catch-all for making IE look slightly less stupid */
 *:focus {

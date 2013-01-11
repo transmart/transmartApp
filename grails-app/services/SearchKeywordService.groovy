@@ -18,11 +18,12 @@
  ******************************************************************/
   
 
-import auth.AuthUser;
-import bio.BioDataExternalCode;
+import search.GeneSignature
 import search.SearchKeyword
 import search.SearchKeywordTerm
-import search.GeneSignature
+import auth.AuthUser
+import bio.BioDataExternalCode
+import bio.ConceptCode
 
 /**
  * @author $Author: mmcduffie $
@@ -57,6 +58,19 @@ public class SearchKeywordService {
 			categories.add(["category":result])
 		}
 		
+		results = ConceptCode.createCriteria().list	{
+			projections {
+				distinct("codeTypeName")
+			}
+			order("codeTypeName", "asc")
+		}
+		
+		log.info("Biodata categories found: " + results.size())
+
+		for (result in results)	{
+			categories.add(["category":result])
+		}
+		
 		return categories
 	}
 	
@@ -66,22 +80,16 @@ public class SearchKeywordService {
 		
 		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 		
+		/*
+		 * Get results from Search Keyword table
+		 */
 		def c = SearchKeywordTerm.createCriteria()
 		def results = c.list 	{
 			if (term.size() > 0)	{
 				like("keywordTerm", term.toUpperCase() + '%')
 			}
 			
-			//TODO Special case for gene or SNP - rework to support multiple categories!
-			if ("GENE_OR_SNP".equals(category))	{
-				searchKeyword	{
-					or {
-						eq("dataCategory", "GENE", [ignoreCase: true])
-						eq("dataCategory", "SNP", [ignoreCase: true])
-					}
-				}
-			}
-			else if ("ALL".compareToIgnoreCase(category) != 0)	{
+			if ("ALL".compareToIgnoreCase(category) != 0)	{
 				searchKeyword	{
 					eq("dataCategory", category)
 				}
@@ -121,17 +129,9 @@ public class SearchKeywordService {
 			
 			m.put("label", sk.searchKeyword.keyword)
 			m.put("category", sk.searchKeyword.displayDataCategory)
-			
-			
-			//Further hack: Alter fields depending on the category
-			if (sk.searchKeyword.dataCategory.equals("DISEASE") || sk.searchKeyword.dataCategory.equals("OBSERVATION")) {
-				m.put("categoryId", sk.searchKeyword.dataCategory)
-				m.put("id", sk.searchKeyword.keyword)
-			}
-			else {
-				m.put("categoryId", sk.searchKeyword.dataCategory)
-				m.put("id", sk.searchKeyword.id)
-			}
+			m.put("categoryId", sk.searchKeyword.dataCategory)
+			m.put("id", sk.searchKeyword.uniqueId)
+
 			if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0)	{
 				def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
 				def synList = new StringBuilder()
@@ -150,6 +150,34 @@ public class SearchKeywordService {
 			}
 			keywords.add(m)
 		}
+		
+		/*
+		* Get results from Bio Concept Code table
+		*/
+		results = ConceptCode.createCriteria().list {
+			if (term.size() > 0)	{
+				like("bioConceptCode", term.toUpperCase().replace(" ", "_") + '%')
+			}
+			
+			if ("ALL".compareToIgnoreCase(category) != 0)	{
+				like("codeTypeName", category + "%")
+			}
+			maxResults(max)
+			order("bioConceptCode", "asc")
+		}
+		log.info("Bio concept code keywords found: " + results.size())
+		
+		for (result in results)	{
+			def m = [:]
+			
+			m.put("label", result.codeName)
+			m.put("category", result.codeTypeName)
+			m.put("categoryId", result.codeTypeName)
+			m.put("id", result.bioDataUid.uniqueId[0])
+			
+			keywords.add(m)
+		}
+		
 		return keywords
 	 }
 

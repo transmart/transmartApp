@@ -1942,10 +1942,18 @@ function getTreeNodeFromXMLNode(concept)
 	    nodetype=visualattributes.substr(0,1);
 	    nodestatus=visualattributes.substr(1,1); //A=active I=inactive H=hidden	    
 	    if(visualattributes.length>2 && visualattributes.substr(2,1)!=' ')
-	    	{
+	    {
 	    	iconCls=visualattributes.substr(2,1).toLowerCase()+"leaficon";
 	    	tcls=visualattributes.substr(2,1).toLowerCase()+"leafclass";
-	    	}
+	    }
+	    
+	    if (level == '0') {
+	    	iconCls="programicon";
+	    }
+	    else if (level == '1') {
+	    	iconCls="studyicon";
+	    }
+	    
 	    if(nodetype=='F') //folder-dragable
 	    {
 	    leaf=false;

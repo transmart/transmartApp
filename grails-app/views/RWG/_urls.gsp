@@ -42,6 +42,8 @@ var exportRemoveURL = "${createLink([controller:'fileExport', action:'remove'])}
 var exportViewURL = "${createLink([controller:'fileExport', action:'view'])}";
 var exportURL = "${createLink([controller:'fileExport', action:'export'])}";
 
+var folderContentsURL = "${createLink([controller:'fmFolder',action:'getFolderContents'])}";
+
 var welcomeURL = "${createLink([controller:'RWG', action:'ajaxWelcome'])}";
 
 </script>

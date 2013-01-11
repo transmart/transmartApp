@@ -25,6 +25,8 @@ class ConceptCode {
 		String codeName
 		String codeDescription
 		String codeTypeName
+
+ static hasMany = [bioDataUid:BioData]
  static mapping = {
 	 table 'BIO_CONCEPT_CODE'
 	 cache true
@@ -36,7 +38,8 @@ class ConceptCode {
 		codeName column:'CODE_NAME'
 		codeDescription column:'CODE_DESCRIPTION'
 		codeTypeName column:'CODE_TYPE_NAME'
-		}
+	 }
+	 bioDataUid joinTable: [name: 'BIO_DATA_UID', key: 'BIO_DATA_ID']
 	}
  static constraints = {
 	bioConceptCode(nullable:true, maxSize:400)

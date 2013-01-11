@@ -18,7 +18,7 @@ var allowOnSelectEvent = true;
 function addSelectCategories()	{
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All"));
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "DATANODE").text("Data Node"));
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "FREETEXT").text("Free Text"));
+	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "CONTENT").text("Free Text"));
 	jQuery.getJSON(getCategoriesURL, function(json) {
 		for (var i=0; i<json.length; i++)	{
 			var category = json[i].category;
@@ -41,7 +41,7 @@ function addSearchAutoComplete()	{
 			//If category is ALL, add this as free text as well
 			var category = jQuery("#search-categories").val();
 			if (category == 'ALL') {
-				searchParam={id:ui.item.label,display:'Free Text',keyword:ui.item.label,category:'FREETEXT'};
+				searchParam={id:ui.item.label,display:'Free Text',keyword:ui.item.label,category:'CONTENT'};
 				addSearchTerm(searchParam);
 			}
 			return false;
@@ -69,9 +69,9 @@ function addSearchAutoComplete()	{
 	jQuery('#search-ac').keypress(function(event) {
 		var category = jQuery("#search-categories").val();
 		var categoryText = jQuery('#search-categories option:selected').text();
-		if (event.which == 13 && (category == 'DATANODE' || category == 'FREETEXT' || category == 'ALL')) {
+		if (event.which == 13 && (category == 'DATANODE' || category == 'CONTENT' || category == 'ALL')) {
 			var val = jQuery('#search-ac').val();
-			if (category == 'ALL') {category = 'FREETEXT'; categoryText = 'Free Text';}
+			if (category == 'ALL') {category = 'CONTENT'; categoryText = 'Free Text';}
 			searchParam={id:val,display:categoryText,keyword:val,category:category};
 			addSearchTerm(searchParam);
 			return false;
@@ -95,7 +95,7 @@ function addSearchTerm(searchTerm, noUpdate)	{
 	
 	var text = (searchTerm.text == undefined ? (searchTerm.keyword == undefined ? searchTerm : searchTerm.keyword) : searchTerm.text);
 	var id = searchTerm.id == undefined ? -1 : searchTerm.id;
-	var key = category + ":" + text + ":" + id;
+	var key = category + ";" + text + ";" + id;
 	if (currentSearchTerms.indexOf(key) < 0)	{
 		currentSearchTerms.push(key);
 		if (currentCategories.indexOf(category) < 0)	{
@@ -174,7 +174,7 @@ function showSearchTemplate()	{
 	
 	for (var i=0; i<currentCategories.length; i++)	{
 		for (var j=0; j<currentSearchTerms.length; j++)	{
-			var fields = currentSearchTerms[j].split(":");
+			var fields = currentSearchTerms[j].split(";");
 			if (currentCategories[i] == fields[0]){
 				var tagID = currentSearchTerms[j].split(' ').join('%20');			// URL encode the spaces
 				var tagID = currentSearchTerms[j].split(',').join('%44');			// And the commas
@@ -268,7 +268,7 @@ function showFacetResults()	{
 
 	// first, loop through each term and add categories and terms to respective arrays 		
     for (var i=0; i<savedSearchTermsArray.length; i++)	{
-		var fields = savedSearchTermsArray[i].split(":");
+		var fields = savedSearchTermsArray[i].split(";");
 		// search terms are in format <Category Display>|<Category>:<Search term display>:<Search term id>
 		var termId = fields[2]; 
 		var categoryFields = fields[0].split("|");
@@ -388,7 +388,7 @@ function getSearchKeywordList()   {
 	var keywords = new Array();
 	
 	for (var j=0; j<currentSearchTerms.length; j++)	{
-		var fields = currentSearchTerms[j].split(":");		
+		var fields = currentSearchTerms[j].split(";");		
 	    var keyword = fields[2];			
 		keywords.push(keyword);
 	}
@@ -404,7 +404,7 @@ function removeSearchTerm(ctrl)	{
 		currentSearchTerms.splice(idx, 1);
 		
 		// check if there are any remaining terms for this category; remove category from list if none
-		var fields = currentSearchTermID.split(":");
+		var fields = currentSearchTermID.split(";");
 		var category = fields[0];
 		clearCategoryIfNoTerms(category);
 
@@ -502,7 +502,7 @@ function clearCategoryIfNoTerms(category)  {
 	
 	var found = false;
 	for (var j=0; j<currentSearchTerms.length; j++)	{
-		var fields2 = currentSearchTerms[j].split(":");
+		var fields2 = currentSearchTerms[j].split(";");
 		var category2 = fields2[0];
 		
 		if (category == category2)  {
@@ -741,7 +741,7 @@ function loadSearchFromSession() {
 		var item = sessionFilters[i];
 		if (item != null && item != "") {
 			var itemData = item.split("|");
-			var itemSearchData = itemData[1].split(":");
+			var itemSearchData = itemData[1].split(";");
 			var searchParam = {id: itemSearchData[2], display: itemData[0], category: itemSearchData[0], keyword: itemSearchData[1]};
 			addSearchTerm(searchParam, true);
 		}

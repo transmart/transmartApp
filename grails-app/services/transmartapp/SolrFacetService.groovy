@@ -27,6 +27,7 @@ import org.json.*
 
 import fm.FmFile;
 import fm.FmFolder;
+import fm.FmFolderAssociation;
 import groovy.xml.StreamingMarkupBuilder
 
 import javax.xml.transform.TransformerFactory
@@ -56,14 +57,14 @@ class SolrFacetService {
 	   def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
 	   
 	   if(returntype.equals('foldermap')) {
-		   def folderMap = getFolderMap(xml, dataNodeSearchTerms, solrRequestUrl)
+		   def folderSearchList = getFolderList(xml, dataNodeSearchTerms, solrRequestUrl)
 
 		   //Gather folders from i2b2 that match the free text search terms, if there are any
 		   if (dataNodeSearchTerms) {
-			   folderMap = addOntologyResults(folderMap, dataNodeSearchTerms, solrRequestUrl)
+			   folderSearchList = addOntologyResults(folderSearchList, dataNodeSearchTerms, solrRequestUrl, "AND")
 		   }
 		   
-		   return folderMap
+		   return folderSearchList
 	   }
 	   else if(returntype.equals('JSON')) {
 		   def accessions = getAccessions(xml)
@@ -91,7 +92,7 @@ class SolrFacetService {
 	   return accessions
    }
    
-   def getFolderMap(xml, dataNodeSearchTerms, solrRequestUrl) {
+   def getFolderList(xml, dataNodeSearchTerms, solrRequestUrl) {
 	   
 	   // retrieve all folderIds from the returned data
 	   
@@ -100,40 +101,25 @@ class SolrFacetService {
 	   }
 	   println result
 	   
-	   def folderIdNodes = xml.result.doc.str.findAll{it.@name == 'FOLDERID'}
-			  
-	   def folderMap = [:]
+	   def folderIdNodes = xml.result.doc.str.findAll{it.@name == 'id'}
 	   
-	   // Construct map of matching folders
+	   def folderSearchList = [];
 	   for (node in folderIdNodes) {
-		   // retrieve the category name from the xml node
 		   def folderId = node.text()
-		   println ("Got folderId: " + folderId)
-		   def folder = FmFolder.get(folderId);
-		   
-		   while (folder != null) {
-			   def currentEntry = folderMap[folder.folderLevel]
-			   if (currentEntry == null) {
-				   currentEntry = []
-			   }
-			   if (!currentEntry.contains(folder.id)) {
-				   currentEntry.push(folder.id)
-				   folderMap[folder.folderLevel] = currentEntry;
-			   }
-			   println ("Added: " + folder.folderLevel + ", " + folder.id);
-			   folder = folder.parent
-		   }
+		   def folder = FmFolderAssociation.findByObjectUid(folderId)
+		   folderSearchList.push(folder.fmFolder.folderFullName)
 	   }
 	   
-	   return folderMap
+	   return folderSearchList
    }
    
-   def addOntologyResults(folderMap, dataNodeSearchTerms, solrRequestUrl) {
+   // Add ontology results to the current search
+   def addOntologyResults(folderList, dataNodeSearchTerms, solrRequestUrl, operator) {
 	   
 	   def accessions = ontologyService.searchOntology(null, dataNodeSearchTerms, 'ALL', 'accession', [])
 	   
 	   if (!accessions) {
-		   return [0L:[], 1L:[], 2L:[], 3L:[]] //No matches
+		   return "" //No matches
 	   }
 	   
 	   def solrQueryString = ""
@@ -149,35 +135,16 @@ class SolrFacetService {
 	   solrQueryString = "q=(" + solrQueryString + ")"
 	   
 	   def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
-	   def newFolderMap = getFolderMap(xml, dataNodeSearchTerms, solrRequestUrl)
+	   def newFolderList = getFolderList(xml, dataNodeSearchTerms, solrRequestUrl)
 	   
-	   //Now intersect the maps
-	   
-	   def keys = newFolderMap?.keySet()
-	   for (key in keys) {
-		   def folderList = folderMap[key]
-		   def newFolderList = newFolderMap[key]
-		   
-		   //If the original folder list is null, then no mask is in place - just use ours
-		   if (folderList == null && newFolderList?.size() > 0) {
-			   folderMap[key] = newFolderList
-			   continue
-		   }
-		   
-		   def intersection = []
-		   
-		   //Otherwise, intersect this level
-		   for (folder in newFolderList) {
-				   if (folderList.contains(folder)) {
-					   intersection.add(folder)
-				   }
-		   }
-		   
-		   folderMap[key] = intersection
-	   }
+	   //Now intersect/add to the lists
    
-   return folderMap
+	   if (operator.equals("AND")) {
+		   if (!folderList) { return newFolderList; }
+		   return folderList.intersect(newFolderList)
+	   }
 	   
+	   return folderList + newFolderList //Union
    }
    
    /**
@@ -194,7 +161,7 @@ class SolrFacetService {
 			  t = "*" + t + "*";
 		  }
 	  
-		  def queryTerm = /${category}:${t}/
+		  def queryTerm = /${category}:"${t}"/
 	  
 		  if (categoryQuery == "")  {
 			  categoryQuery = queryTerm
@@ -219,10 +186,10 @@ class SolrFacetService {
 	 for (qp in queryParams)  {
 		 
 		 // each queryParam is in form cat1:term1|term2|term3
-		 String category = qp.split(":")[0]
+		 String category = qp.split(";")[0]
 		 
 		 if (category.equals("DATANODE") || category.equals("FREETEXT")) {
-			 String termList = qp.split(":")[1]
+			 String termList = qp.split(";")[1]
 		 
 			 for (t in termList.tokenize("|"))  {
 					 datanodeterms.push(t)
@@ -278,8 +245,8 @@ class SolrFacetService {
 	  for (qp in facetQueryParams)  {
 		  
 		  // each queryParam is in form cat1:term1|term2|term3
-		  String category = qp.split(":")[0]
-		  String termList = qp.split(":")[1]
+		  String category = qp.split(";")[0]
+		  String termList = qp.split(";")[1]
 		  
 		  // skip DATANODE search fields
 		  if (category =="DATANODE")  {
@@ -319,8 +286,8 @@ class SolrFacetService {
 	  for (qp in queryParams)  {
 		  
 		  // each queryParam is in form cat1:term1|term2|term3
-		  String category = qp.split(":")[0]
-		  String termList = qp.split(":")[1]
+		  String category = ((String) qp).split(":", 2)[0]
+		  String termList = ((String) qp).split(":", 2)[1]
 
 			 def categoryQueryString = createCategoryQueryString(category, termList)
 		  

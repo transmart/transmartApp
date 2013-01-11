@@ -456,6 +456,11 @@ ul.dynatree-container li ul li{
 }
 
 .result-folder-name.selected {
+    padding: 2px;
+    background-color: #DDF;
+}
+
+.result-folder-name.searchResult {
     font-weight: bold; 
 }
 
