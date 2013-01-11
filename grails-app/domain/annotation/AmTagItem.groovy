@@ -37,6 +37,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 	Boolean required = Boolean.TRUE
 	Boolean activeInd = Boolean.TRUE
 	Boolean viewInGrid = Boolean.TRUE
+	Boolean viewInChildGrid = Boolean.TRUE
 	static belongsTo=[amTagTemplate: AmTagTemplate]
 	 
 	

@@ -24,7 +24,8 @@ import com.recomdata.export.ExportTableNew
 import grails.converters.*
 import groovy.xml.StreamingMarkupBuilder
 import com.recomdata.util.FolderType
-
+import annotation.AmTagItem
+import annotation.AmTagDisplayValue
 
 
 class FmFolderController {
@@ -392,32 +393,38 @@ class FmFolderController {
 		return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
 	}
 
-	private String createDataTable(layoutColumns, folders)
+	private String createDataTable(folders)
+	//layoutColumns, folders)
 	{
-/*		FormLayout				Long id
-		String key;
-				String column;
-				String displayName;
-				String dataType;
-				Integer sequence;
-				Boolean display=true;
-	*/
 		
 		if (folders == null || folders.size() < 1) return
 					
 		ExportTableNew table=new ExportTableNew();
 		
 		def dataObject = getBioDataObject(folders[0])
-		layoutColumns.each 
-		{
-			if(it.display && dataObject.hasProperty(it.column))
+		def childMetaDataTagItems = getMetaDataItems(folders[0])
+						
+		childMetaDataTagItems.eachWithIndex() 
+		{obj, i ->    // 
+			AmTagItem amTagItem = obj
+			if(amTagItem.viewInChildGrid) 
 			{
-				log.info ("COLUMNS == " + it.column + " " + it.displayName + " " +  it.dataType)
-				table.putColumn(it.column, new ExportColumn(it.column, it.displayName, "", it.dataType));
-			}
-			else
-			{
-				log.error("COLUMN " + it.column + " is either set not to display or is not a propery of " + dataObject)
+				if(amTagItem.tagItemType == 'FIXED'  &&  dataObject.hasProperty(amTagItem.tagItemAttr))
+				{
+					log.info ("COLUMNS == " + amTagItem.tagItemAttr + " " + amTagItem.displayName)
+					table.putColumn(amTagItem.tagItemAttr, new ExportColumn(amTagItem.tagItemAttr, amTagItem.displayName, "", 'String'));
+				}
+/*				else if(amTagItem.tagItemType == 'CUSTOM')
+				{
+					def tagValues = AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folders[0].getUniqueId(),amTagItem.id])
+					log.info ("COLUMNS == " + amTagItem.displayName)
+					table.putColumn(amTagItem.tagItemAttr, new ExportColumn(amTagItem.tagItemAttr, amTagItem.displayName, "", 'String'));
+
+				}
+	*/			else
+				{
+					log.error("COLUMN " + amTagItem.tagItemAttr + " is not a propery of " + dataObject)
+				}
 			}
 
 		}
@@ -427,13 +434,24 @@ class FmFolderController {
 			def bioDataObject = getBioDataObject(it)
 			
 				ExportRowNew newrow=new ExportRowNew();
-				layoutColumns.eachWithIndex()
+				childMetaDataTagItems.eachWithIndex()
 				{obj, i -> 
-					if(obj.display && bioDataObject.hasProperty(obj.column))
+					AmTagItem amTagItem = obj
+					
+					if(amTagItem.tagItemType == 'FIXED' && bioDataObject.hasProperty(amTagItem.tagItemAttr))
 					{
-						log.info("ROWS == " + obj.column + " " + bioDataObject[obj.column])
-						newrow.put(obj.column,bioDataObject[obj.column]?bioDataObject[obj.column]:'');
-					}		
+						log.info("ROWS == " + amTagItem.tagItemAttr + " " + bioDataObject[amTagItem.tagItemAttr])
+						newrow.put(amTagItem.tagItemAttr,bioDataObject[amTagItem.tagItemAttr]?bioDataObject[amTagItem.tagItemAttr]:'');
+					}
+		/*			else if(amTagItem.tagItemType == 'CUSTOM')
+					{
+						def tagValues = AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folders[0].getUniqueId(),amTagItem.id])
+						
+						log.info ("COLUMNS == " + amTagItem.displayName)
+						table.putColumn(amTagItem.tagItemAttr, new ExportColumn(amTagItem.tagItemAttr, amTagItem.displayName, "", 'String'));
+	
+					}
+	*/
 				}
 				
 				table.putRow(bioDataObject.id.toString(), newrow);
@@ -454,14 +472,19 @@ class FmFolderController {
 		def amTagTemplate
 		def metaDataTagItems
 		def jSONForGrids = []
+		def childMetaDataTagItems = [] 
+
 		if (folderId) 
 		{
 			folder = FmFolder.get(folderId)
 			
 			if(folder)
 			{
+				bioDataObject = getBioDataObject(folder)
+				metaDataTagItems = getMetaDataItems(folder)
+	
 				// If the folder is a study then get the analysis and the assay
-				if (folder.folderType.toLowerCase() == FolderType.STUDY.name().toLowerCase())
+				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()))
 				{
 					def subFolderTypes = getChildrenFolderTypes(folder.id)
 					log.info "subFolderTypes = " + subFolderTypes
@@ -472,29 +495,15 @@ class FmFolderController {
 						if(subFolders!=null && subFolders.size()>0)
 						{
 							log.info("subFolders == " + subFolders)
+
 								subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
-								String gridData = createDataTable(subFolderLayout,subFolders)
+								String gridData = createDataTable(subFolders)
 								log.info gridData
 								jSONForGrids.add(gridData)
 								log.info "ADDING JSON GRID"
 						}
 					}
 				}
-						
-				bioDataObject = getBioDataObject(folder)
-				def fmData = FmData.get(folder.id)
-				
-				amTagTemplate = amTagTemplateService.getTemplate(fmData.uniqueId)
-				if(amTagTemplate)
-				{
-					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-				}
-				else
-				{
-					log.error "Unable to find amTagTemplate for object Id = " + fmData.uniqueId
-				}
-	
-				//  amTagTemplate.amTagItems
 			}
 		}
 
@@ -503,21 +512,26 @@ class FmFolderController {
 		
 	}
 
+	private Object getMetaDataItems(folder)
+	{
+		def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+		def metaDataTagItems
+		if(amTagTemplate)
+		{
+			metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+		}
+		else
+		{
+			log.error "Unable to find amTagTemplate for object Id = " + folder.getUniqueId()
+		}
+		
+		return metaDataTagItems
+	}
 
 	private Object getBioDataObject(folder)
 	{
 		def bioDataObject
-		def folderAssociation
-		def fmData = FmData.get(folder.id)
-		if(fmData)
-		{
-			folderAssociation = FmFolderAssociation.findByFmFolder(folder)
-		}
-		else
-		{
-			log.error("FmDataUid record was not found for folder id = " + folder.id)
-		}
-		
+		def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
 		
 		if(folderAssociation)
 		{
@@ -557,16 +571,7 @@ class FmFolderController {
 			if(folder)
 			{
 				bioDataObject = getBioDataObject(folder)
-			
-				amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
-				if(amTagTemplate)
-				{
-					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-				}
-				else
-				{
-					log.error "Unable to find amTagTemplate for object Id = " + folder.getUniqueId()
-				}
+				metaDataTagItems = getMetaDataItems(folder)
 			}
 			else
 			{
@@ -616,17 +621,8 @@ class FmFolderController {
 				}
 				else {
 					log.info "Errors occurred saving Meta data"
-					def metaDataTagItems 
-					def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
-					if(amTagTemplate)
-					{
-						metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-					}
-					else
-					{
-						log.error "Unable to find amTagTemplate for object Id = " + folder.getUniqueId()
-					}
-	
+					def metaDataTagItems  =  getMetaDataItems(folder)
+
 					render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 					//	render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
 				}

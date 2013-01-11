@@ -65,9 +65,12 @@ var assayCount = 3
 		<g:if test="${bioDataObject?.hasProperty('title')}">
 		${bioDataObject?.title}
 		</g:if>
-		<g:else>
+		<g:elseif test="${bioDataObject?.hasProperty('folderName')}">
 		${bioDataObject?.folderName}
-		</g:else>
+		</g:elseif>
+		<g:elseif test="${folder?.hasProperty('folderName')}">
+			${folder?.folderName}
+		</g:elseif>
 	</h3>
 </div>
 <g:if test="${bioDataObject?.hasProperty('description')}">
@@ -81,6 +84,17 @@ var assayCount = 3
                         </g:else></div>
 <div style="height:20px;"></div>
 </g:if>
+<g:elseif test="${bioDataObject?.hasProperty('longDescription')}">
+<div style="line-height:14px;font-family:arial, ��tahoma, ��helvetica, ��sans-serif; font-size: 12px;">
+ <g:if test="${bioDataObject?.longDescription?.length() > 325000}">
+                       ${(bioDataObject?.longDescription)?.substring(0,324000)}&nbsp;&nbsp;
+                       <a href=# >...See more</a>
+                       </g:if>
+                       <g:else>
+                        ${bioDataObject?.longDescription}
+                        </g:else></div>
+<div style="height:20px;"></div>
+</g:elseif>
 
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
 <table class="details-table">
