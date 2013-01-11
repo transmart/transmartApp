@@ -37,7 +37,9 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor, ddstack)
 	}).startAngle(-Math.PI/4).endAngle(2*Math.PI-Math.PI/4);
 	
 	
-	// Filter data
+	// Filter data -- Below code will be used to group items with few results into 
+	//an "other" category. However, code is not complete. Need to add drill-down for other.
+	/*
 	var dataSum =0;
 	var dataResult = [];
 	var other = {id: 999, name: "Other", value: 0};
@@ -62,6 +64,7 @@ function drawPieChart(divid, catid, ddid, data, charttype, parentcolor, ddstack)
 	}
 	
 	data = dataResult;
+	*/
 
 	//add the data
 	pieData = donut(data);
