@@ -25,16 +25,7 @@ import java.io.Serializable;
 
 
 class AmTagAssociation implements Serializable{
-	
-/*	Long id
-	String tagTemplateName
-	String tagTemplateType
-	String tagTemplateSubtype
-	Boolean activeInd = Boolean.TRUE
-	*/
-	
-//	AmTagItem amTagItem
-//	AmTagValue amTagValue
+
 	String objectType
 	String subjectUid
 	String objectUid

@@ -31,6 +31,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 	String guiHandler
 	String codeTypeName
 	String tagItemType
+	String tagItemSubtype
 	String tagItemAttr
 	Boolean editable = Boolean.TRUE
 	Boolean required = Boolean.TRUE
@@ -70,7 +71,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 		displayName(maxSize:200)
 		codeTypeName(maxSize:200)
 		guiHandler(maxSize:200)
-// 	amTagAssociation(nullable:true)
+		tagItemSubtype(nullable:true)
 //		tagItemUid(maxSize:300)
 		amTagDisplayValue unique:true
 	}

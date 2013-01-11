@@ -35,7 +35,7 @@ class AmTagDisplayValue implements Serializable {
 	
 		
 	static mapping = {
-		table 'am_tag_display_mv'
+		table 'am_tag_display_vw'
 		version false
 		cache true
 		sort "value"

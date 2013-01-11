@@ -58,17 +58,53 @@ public class SearchKeywordService {
 			categories.add(["category":result])
 		}
 		
-		results = ConceptCode.createCriteria().list	{
-			projections {
-				distinct("codeTypeName")
-			}
-			order("codeTypeName", "asc")
-		}
+		return categories
+	}
+	
+	def findFilterCategories() {
 		
-		log.info("Biodata categories found: " + results.size())
+		def categories = []
+		
+		//Very, VERY hard-coded just now... configure in Config?
+		
+		def filtercats = [
+			[codeTypeName: "TYPE_OF_BM_STUDIED", category: "BIOMARKER_TYPE", displayName: "Biomarker Type"],
+			[codeTypeName: "COUNTRY", category: "COUNTRY", displayName: "Country"],
+			[codeTypeName: "INSTITUTION", category: "INSTITUTION", displayName: "Institution"],
+			[codeTypeName: "MEASUREMENT_TYPE", category: "MEASUREMENT_TYPE", displayName: "Measurement Type"],
+			[codeTypeName: "ORGANISM", category: "ORGANISM", displayName: "Organism"],
+			[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
+			[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
+			[codeTypeName: "STUDY_OBJECTIVE", category: "STUDY_OBJECTIVE", displayName: "Study Objective"],
+			[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
+			[codeTypeName: "STUDY_DESIGN", category: "STUDY_DESIGN", displayName: "Study Design"],
+			[codeTypeName: "TECHNOLOGY", category: "TECHNOLOGY", displayName: "Technology", prefix: true],
+			[codeTypeName: "THERAPEUTIC_DOMAIN", category: "THERAPEUTIC_DOMAIN", displayName: "Therapeutic Domain"],
+			[codeTypeName: "VENDOR", category: "VENDOR", displayName: "Vendor", prefix: true],
+		]
+		
+		for (filtercat in filtercats) {
+			def results 
+			
+			if (filtercat.prefix) {				
+				results = ConceptCode.createCriteria().list	{
+					like("codeTypeName", filtercat.codeTypeName + ":%")
+					order("codeTypeName", "asc")
+				}
+			}
+			else {
+				results = ConceptCode.createCriteria().list	{
+					eq("codeTypeName", filtercat.codeTypeName)
+					order("codeTypeName", "asc")
+				}
+			}
+			
+			def choices = []
+			for (result in results) {
+				choices.push([name: result.codeName, uid: result.bioDataUid.uniqueId[0]])
+			}
 
-		for (result in results)	{
-			categories.add(["category":result])
+			categories.add(["category":filtercat, "choices":choices])
 		}
 		
 		return categories

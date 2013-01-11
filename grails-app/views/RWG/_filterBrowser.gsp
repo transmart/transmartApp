@@ -1,6 +1,6 @@
-        <div id="filter-browser">			        	
+        <div id="filter-browser" class="ajaxloading">			        	
         	<%-- TODO Source all of this from the database... obviously --%>
-        	<div class="filtertitle" name="ASSAY_PLATFORM">Assay Platform</div>
+        	<%--<div class="filtertitle" name="ASSAY_PLATFORM">Assay Platform</div>
         	<div class="filtercontent" name="ASSAY_PLATFORM" style="display: none;">
         		<div class="filteritem" name="ASSAY_PLATFORM" id="ap1">IHC</div>
         		<div class="filteritem" name="ASSAY_PLATFORM" id="ap2">mRNA Profiling</div>
@@ -16,5 +16,5 @@
         	<div class="filtercontent" name="ACCESS_TYPE" style="display: none;">
         		<div class="filteritem" name="ACCESS_TYPE" id="at1">Proprietary</div>
         		<div class="filteritem" name="ACCESS_TYPE" id="at2">Public</div>
-        	</div>
+        	</div>--%>
         </div>

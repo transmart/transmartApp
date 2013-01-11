@@ -18,25 +18,19 @@
  ******************************************************************/
   
 
-package bio
-
-class BioDataService {
-
-    boolean transactional = true
-
-    def getBioDataObject(String uid) 
-	{
-		def bioDataObject
-		def bioData = BioData.findByUniqueId(uid)
-		log.info "bioData = " + bioData
-		if(bioData!=null)
-		{
-			Class clazz =  grailsApplication.getDomainClass().clazz
-			log.info "clazz = " + clazz
-			bioDataObject = clazz.findByObjectUid(folder.getUniqueId())
-			log.info "bioDataObject = " + bioDataObject
-		}
+package fm
+class FmData {
+		Long id
+		String uniqueId
+		String fmDataType
+			
+        static mapping = {
 		
-		return bioDataObject
-    }
+			table 'FM_DATA_UID'
+			version false
+			columns {
+				id column:'FM_DATA_ID'
+				uniqueId column:'UNIQUE_ID'
+			}
+		}
 }

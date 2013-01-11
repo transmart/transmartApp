@@ -21,8 +21,11 @@ package fm
 
 import javax.tools.FileObject;
 import java.io.File;
+import java.net.URL;
+import java.net.URLEncoder;
 import fm.FmFolder;
 import fm.FmFile;
+import org.apache.solr.util.SimplePostTool;
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
@@ -30,23 +33,33 @@ class FmFolderService {
 
 	boolean transactional = true;
 	def config = ConfigurationHolder.config;
-	String dropfolderPath = config.com.recomdata.foldermanager.dropfolder.toString();
-	String filestorePath = config.com.recomdata.foldermanager.filestore.toString();
+	String importDirectory = config.com.recomdata.FmFolderService.importDirectory.toString();
+	String filestoreDirectory = config.com.recomdata.FmFolderService.filestoreDirectory.toString();
+	String fileTypes = config.com.recomdata.FmFolderService.fileTypes.toString();;
+	String solrUrl = config.com.recomdata.solr.baseURL.toString() + "/update";
 	
 	/**
-	 * Checks dropfolderPath for new files and processes them into filestore.
+	 * Imports files processing them into filestore and indexing them with SOLR.
 	 *
 	 * @return
 	 */
-	def checkForNewFiles() {
-
-		if (dropfolderPath == null) {
-			log.error("Unable to check for new files. com.recomdata.foldermanager.dropfolder property has not been defined in the Config.groovy file.");
-		} else if (filestorePath == null) {
-			log.error("Unable to check for new files. com.recomdata.foldermanager.filestore property has not been defined in the Config.groovy file.");
-		} else {
-			processDirectory(new File(dropfolderPath), 0);
+	def importFiles() {
+		
+		if (importDirectory == null || filestoreDirectory == null) {
+			if (importDirectory == null) {
+				log.error("Unable to check for new files. config.com.recomdata.FmFolderService.importDirectory property has not been defined in the Config.groovy file.");
+			}
+			if (filestoreDirectory == null) {
+				log.error("Unable to check for new files. config.com.recomdata.FmFolderService.filestoreDirectory property has not been defined in the Config.groovy file.");
+			}
+			return;
 		}
+		
+		if (fileTypes == null) {
+			fileTypes = "xml,json,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log";
+		}
+		
+		processDirectory(new File(importDirectory));
 		
 	}	
 	
@@ -54,17 +67,15 @@ class FmFolderService {
 	 * Process files and sub-directories in specified directory.
 	 *
 	 * @param directory
-	 * @param level
 	 * @return
 	 */
-	def processDirectory(File directory, int level) {
+	def processDirectory(File directory) {
 
-		level++;
 		for (File file : directory.listFiles()) {
 			if (file.isDirectory()) {
-				processDirectory(file, level);
+				processDirectory(file);
 			} else {
-				processFile(file, level);
+				processFile(file);
 			}
 		}
 		
@@ -73,13 +84,16 @@ class FmFolderService {
 	}
 
 	/**
-	 * Processes a file into the filestore associating it with a folder.
+	 * Processes a file into the filestore associating it with a folder and
+	 * indexes file using SOLR
 	 *
-	 * @param file
+	 * @param file file to be proceessed
 	 * @return
 	 */
-	def processFile(File file, int level) {
+	def processFile(File file) {
 	
+		// Use file's parent directory as ID of folder which file will
+		// be associated with.
 		File directory = file.getParentFile();
 		long folderId = Long.parseLong(directory.getName(), 36);
 		def fmFolder = FmFolder.get(folderId);
@@ -88,58 +102,80 @@ class FmFolderService {
 			log.error("Folder with id " + folderId + " does not exist.")
 			return;
 		}
-		log.info("Folder = " + fmFolder.folderName + " (" + folderId + ")");
+		//log.info("Folder = " + fmFolder.folderName + " (" + folderId + ")");
 
-		// TODO: Check if duplicate and add new version of file
-
-		def fmFile = new FmFile(
-			displayName: file.getName(),
-			originalName: file.getName(),
-			fileType: getFileType(file),
-			fileSize: file.length(),
-			filestoreLocation: "",
-			filestoreName: "",
-			linkUrl: ""
-		);
-
-		if (!fmFile.save()) {
-			fmFile.errors.each {
-				log.error(it);
+		// Check if folder already contains file with same name.
+		def fmFile;
+		for (f in fmFolder.fmFiles) {
+			if (f.originalName == file.getName()) {
+				fmFile = f;
+				break;
 			}
 		}
+		// If it does, then use existing file record and increment its version.
+		// Otherwise, create a new file.
+		if (fmFile != null) {
+			fmFile.fileVersion++;
+			fmFile.fileSize = file.length();
+			fmFile.linkUrl = "";
+			log.info("File = " + file.getName() + " (" + fmFile.id + ") - Existing");
+		} else {
+			fmFile = new FmFile(
+				displayName: file.getName(),
+				originalName: file.getName(),
+				fileType: getFileType(file),
+				fileSize: file.length(),
+				filestoreLocation: "",
+				filestoreName: "",
+				linkUrl: ""
+			);
+			if (!fmFile.save()) {
+				fmFile.errors.each {
+					log.error(it);
+				}
+				return;
+			}
+			fmFile.filestoreLocation = getFilestoreLocation(fmFolder);
+			fmFolder.addToFmFiles(fmFile);
+			if (!fmFolder.save()) {
+				fmFolder.errors.each {
+					log.error(it);
+				}
+				return;
+			}
+			log.info("File = " + file.getName() + " (" + fmFile.id + ") - New");
+		}
 
-		fmFile.filestoreLocation = getFilestoreLocation(fmFolder);
 		fmFile.filestoreName = Long.toString(fmFile.id, 36).toUpperCase() + "-" + Long.toString(fmFile.fileVersion, 36).toUpperCase() + "." + fmFile.fileType;
 
 		if (!fmFile.save()) {
 			fmFile.errors.each {
 				log.error(it);
 			}
+			return;
 		 }
 
-		 fmFolder.addToFmFiles(fmFile);
-		 if (!fmFolder.save()) {
-			 fmFolder.errors.each {
-				 log.error(it);
-			 }
-		 }
-
-		log.info("File = " + file.getName() + " (" + fmFile.id + ")");
-
-		File filestoreDirectory = new File(fmFile.filestoreLocation);
-		if (!filestoreDirectory.exists()) {
-			if (!filestoreDirectory.mkdirs()) {
-				log.error("unable to create filestore " + filestoreDirectory.getPath());
+		// Use filestore directory based on file's parent study or common directory
+		// for files in folders above studies. If directory does not exist, then create it.
+		File filestoreDir = new File(filestoreDirectory + fmFile.filestoreLocation);
+		if (!filestoreDir.exists()) {
+			if (!filestoreDir.mkdirs()) {
+				log.error("unable to create filestore " + filestoreDir.getPath());
 				return;
 			}
 		}
-		File filestoreFile = new File(fmFile.filestoreLocation + file.separator + fmFile.filestoreName);
+		
+		// Move file to appropriate filestore directory.
+		File filestoreFile = new File(filestoreDirectory + fmFile.filestoreLocation + file.separator + fmFile.filestoreName);
 		if (!file.renameTo(filestoreFile)) {
 			log.error("unable to move file to " + filestoreFile.getPath());
 			return;
 		}
 
 		log.info("Moved file to " + filestoreFile.getPath());
+		
+		// Call file indexer.
+		indexFile(fmFile);
 		
 	}
 
@@ -193,8 +229,53 @@ class FmFolderService {
 			}
 		}
 
-		return filestorePath.replace("/", File.separator) + File.separator + "fs-" + filestoreLocation;
+		return File.separator + "fs-" + filestoreLocation;
 
+	}
+	
+	/**
+	 * Indexes file using SOLR.
+	 * @param fileId ID of file to be indexed
+	 * @return
+	 */
+	def indexFile(String fileId) {
+		
+		FmFile fmFile = FmFile.get(fileId);
+		if (fmFile == null) {
+			log.error("Unable to locate fmFile with id of " + fileId);
+			return;
+		}
+		indexFile(fmFile);
+				
+	}
+
+	/**
+	 * Indexes file using SOLR.
+	 * @param fmFile file to be indexed
+	 * @return
+	 */
+	def indexFile(FmFile fmFile) {
+		
+		try {
+			StringBuilder url = new StringBuilder(solrUrl);
+			// Use the file's ID as the document ID in SOLR
+			url.append("?").append("literal.id=").append(fmFile.id);
+			
+			// Use the file's name as document name is SOLR
+			url.append("&").append("literal.name=").append(URLEncoder.encode(fmFile.originalName, "UTF-8"));
+			
+			// Get path to actual file in filestore.
+			String[] args = [ filestoreDirectory + File.separator + fmFile.filestoreLocation + File.separator + fmFile.filestoreName ] as String[];
+			
+			// Use SOLR SimplePostTool to manage call to SOLR service.
+			SimplePostTool postTool = new SimplePostTool(SimplePostTool.DATA_MODE_FILES, new URL(url.toString()), true,
+				null, 0, 0, fileTypes, System.out, true, true, args);
+			
+			postTool.execute();
+		} catch (Exception ex) {
+			log.error("Exception while indexing fmFile with id of " + fmFile.id, ex);
+		}
+		
 	}
 
 //	def createFolder(String folderFullName) {

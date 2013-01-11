@@ -257,8 +257,6 @@
 					jQuery('#exportOverlay').fadeToggle();
 		    	});
 	       	
-
-	        	jQuery('#sidebar-accordion').accordion({heightStyle: "fill", icons: { 'header': 'suppressicon', 'headerSelected': 'suppressicon' }});
 	        	resizeAccordion();
 	        	
                  
@@ -304,6 +302,7 @@
 	        	jQuery('#results-div').height(targetHeight);
 	        	jQuery('#welcome').height(windowHeight - 90);
 	        	jQuery('#main').width(jQuery('body').width() - jQuery('#sidebar').width() - 12);
+	        	jQuery('#box-search').width(jQuery('#program-explorer').width());
 			}
 
 			function updateExportCount() {

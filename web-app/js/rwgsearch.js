@@ -28,6 +28,36 @@ function addSelectCategories()	{
     });
 }
 
+function addFilterCategories() {
+	jQuery.getJSON(getFilterCategoriesURL, function(json) {
+		for (var i=0; i<json.length; i++)	{
+			var category = json[i].category;
+			var choices = json[i].choices;
+			var titleDiv = jQuery("<div></div>").addClass("filtertitle").attr("name", category.category).text(category.displayName);
+			var contentDiv = jQuery("<div></div>").addClass("filtercontent").attr("name", category.category).attr("style", "display: none");
+			for (var j=0; j < choices.length; j++) {
+				var choice = choices[j];
+				
+				var newItem = jQuery("<div></div>").addClass("filteritem").attr("name", category.category).attr("id", choice.uid).text(choice.name);
+				
+				//If this has been selected, highlight it
+				var idString = '[id="' + category.displayName + "|" + category.category + ";" + choice.name + ";" + choice.uid + '"]';
+				idString = idString.replace(/,/g, "%44"); //Replace commas!
+				var element = jQuery(idString);
+				if (element.size() > 0) {
+					newItem.addClass("selected");
+				}
+
+				contentDiv.append(newItem);
+			}
+			jQuery("#filter-browser").append(titleDiv);
+			jQuery("#filter-browser").append(contentDiv);
+		}
+		
+		jQuery("#filter-browser").removeClass("ajaxloading");
+    });
+}
+
 //Method to add the autocomplete for the search keywords
 function addSearchAutoComplete()	{
 	jQuery("#search-ac").autocomplete({
@@ -40,10 +70,10 @@ function addSearchAutoComplete()	{
 			
 			//If category is ALL, add this as free text as well
 			var category = jQuery("#search-categories").val();
-			if (category == 'ALL') {
-				searchParam={id:ui.item.label,display:'Free Text',keyword:ui.item.label,category:'CONTENT'};
-				addSearchTerm(searchParam);
-			}
+//			if (category == 'ALL') {
+//				searchParam={id:ui.item.label,display:'Free Text',keyword:ui.item.label,category:'CONTENT'};
+//				addSearchTerm(searchParam);
+//			}
 			return false;
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
@@ -84,6 +114,9 @@ function addSearchAutoComplete()	{
 //Helper method to only capitalize the first letter of each word
 function convertCategory(valueToConvert)	{
 	var convertedValue = valueToConvert.toLowerCase();
+	if (convertedValue == "genesig") {
+		return "Gene List";
+	}
 	return convertedValue.slice(0,1).toUpperCase() + convertedValue.slice(1);
 }
 
@@ -517,7 +550,8 @@ function clearCategoryIfNoTerms(category)  {
 }
 
 function unselectFilterItem(id) {
-	jQuery('#' + id).removeClass('selected');
+	//Longhand as may contain : characters
+	jQuery("[id='" + id + "']").removeClass('selected');
 }
 
 // ---
@@ -531,7 +565,7 @@ jQuery(document).ready(function() {
 	//Filter browser
 	jQuery('#filter-browser').dialog({
 		autoOpen: false,
-		width:200,
+		width:300,
 		height:400,
 		position: [300, 30],
 		resizable:true,
@@ -540,11 +574,12 @@ jQuery(document).ready(function() {
 		title: 'Filter Browser'
     });
 	
-	jQuery('.filtertitle').click(function () {
+	jQuery('#filter-browser').on('click', '.filtertitle', function () {
 		jQuery('.filtercontent[name="' + jQuery(this).attr('name') + '"]').toggle('fast');
 	});
 	
-	jQuery('.filteritem').click(function () {
+	
+	jQuery('#filter-browser').on('click', '.filteritem', function () {
 		var selecting = !jQuery(this).hasClass('selected');
 		jQuery(this).toggleClass('selected');
 		
@@ -563,13 +598,15 @@ jQuery(document).ready(function() {
 			addSearchTerm(searchParam);
 		}
 		else {
-			var idString = '[id="' + category + "|" + name + ":" + value + ":" + id + '"]';
+			var idString = '[id="' + category + "|" + name + ";" + value + ";" + id + '"]';
+			idString = idString.replace(/,/g, "%44"); //Replace commas!
 			var element = jQuery(idString);
 			removeSearchTerm(element[0]);
 		}
 	});
 	
     addSelectCategories();
+    addFilterCategories();
     addSearchAutoComplete();
     
 //    jQuery("#filter-div").dynatree({

@@ -16,27 +16,23 @@
  * 
  *
  ******************************************************************/
-  
 
-package bio
+package fm
 
-class BioDataService {
+import fm.FmFolderService;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder as ConfigHolder;
 
-    boolean transactional = true
+class FmFolderJob {
 
-    def getBioDataObject(String uid) 
-	{
-		def bioDataObject
-		def bioData = BioData.findByUniqueId(uid)
-		log.info "bioData = " + bioData
-		if(bioData!=null)
-		{
-			Class clazz =  grailsApplication.getDomainClass().clazz
-			log.info "clazz = " + clazz
-			bioDataObject = clazz.findByObjectUid(folder.getUniqueId())
-			log.info "bioDataObject = " + bioDataObject
-		}
-		
-		return bioDataObject
+	def fmFolderService
+	
+	static triggers = {
+		cron name:'FmFolderJobTrigger',
+		cronExpression: ConfigHolder.config.com.recomdata.FmFolderJob.cronExpression != null ? ConfigHolder.config.com.recomdata.FmFolderJob.cronExpression : '0 0/5 * * * ?',
+		startDelay: ConfigHolder.config.com.recomdata.FmFolderJob.startDelayMs != null ? ConfigHolder.config.com.recomdata.FmFolderJob.startDelayMs : 60000
+	}
+
+    def execute() {
+        fmFolderService.importFiles();
     }
 }

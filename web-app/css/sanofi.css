@@ -198,9 +198,8 @@ table.menuDetail th.menuVisited {
 
 .term
 {
-		margin-top:0.3em;
-		white-space:nowrap;
-		line-height: 1.4em;
+	margin-top:0.3em;
+	line-height: 1.4em;
 }
 
 
@@ -394,6 +393,12 @@ table.menuDetail th.menuVisited {
 
 .x-tree-node-icon.programicon { background-image: url('../images/foldertypes/program.png'); }
 
+.ajaxloading {
+	background-image: url('../images/loader-large.gif') !important;
+	background-repeat: no-repeat !important;
+	background-position: 50% 50% !important;
+	min-height: 128px;
+}
 
 /* Catch-all for making IE look slightly less stupid */
 *:focus {

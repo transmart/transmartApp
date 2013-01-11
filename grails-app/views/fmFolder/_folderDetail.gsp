@@ -71,9 +71,9 @@ var assayCount = 3
 	</h3>
 </div>
 <g:if test="${bioDataObject?.hasProperty('description')}">
-<div style="line-height:14px;font-family:arial, €‹tahoma, €‹helvetica, €‹sans-serif; font-size: 12px;">
- <g:if test="${bioDataObject?.description.length() > 325000}">
-                       ${(bioDataObject?.description).substring(0,324000)}&nbsp;&nbsp;
+<div style="line-height:14px;font-family:arial, ï¿½ï¿½tahoma, ï¿½ï¿½helvetica, ï¿½ï¿½sans-serif; font-size: 12px;">
+ <g:if test="${bioDataObject?.description?.length() > 325000}">
+                       ${(bioDataObject?.description)?.substring(0,324000)}&nbsp;&nbsp;
                        <a href=# >...See more</a>
                        </g:if>
                        <g:else>
@@ -87,10 +87,13 @@ var assayCount = 3
         <thead>
             <tr>                
                 <th>&nbsp;</th>
-                <th align="right"><g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
+                <th align="right">
+				<g:if test="${!folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
+	                <g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
                         params="[eleId:overlayDiv, folderId:folder?.id]" 
                         before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
                   <img align="right" src="${resource(dir:'images', file:'pencil.png')}"/></g:remoteLink>
+                </g:if>
                 </th>
             </tr>
         </thead>
@@ -101,11 +104,11 @@ var assayCount = 3
             <!-- TODO: If active -->
                 <td valign="top" align="right" class="columnname" width="20%">${amTagItem.displayName}</td>
                 <td valign="top" align="left" class="columnvalue" width="60%">
-                <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
+                 <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
                       ${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
                 </g:if>
                 <g:else>   
-                    <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.objectUid,amTagItem.id])}"/>
+                    <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId().toString(),amTagItem.id])}"/>
 	                <g:if test="${tagValues!=null}">
 	             	   <g:set var="counter" value="0"/>
 	             		 <g:each var="tagValue" status="k" in="${tagValues}">

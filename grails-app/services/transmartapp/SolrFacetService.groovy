@@ -25,6 +25,7 @@ import java.util.List;
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 import org.json.*
 
+import fm.FmData;
 import fm.FmFile;
 import fm.FmFolder;
 import fm.FmFolderAssociation;
@@ -106,8 +107,9 @@ class SolrFacetService {
 	   def folderSearchList = [];
 	   for (node in folderIdNodes) {
 		   def folderId = node.text()
-		   def folder = FmFolderAssociation.findByObjectUid(folderId)
-		   folderSearchList.push(folder.fmFolder.folderFullName)
+		   def folderData = FmData.findByUniqueId(folderId)
+		   def folder = FmFolder.get(folderData.id)
+		   folderSearchList.push(folder.folderFullName)
 	   }
 	   
 	   return folderSearchList
@@ -156,12 +158,15 @@ class SolrFacetService {
 	  String categoryQuery = ""
 	  for (t in termList.tokenize("|"))  {
 		  
-		  //If searching on text, add wildcards.
-		  if (category.equals("FREETEXT")) {
+		  //If searching on text, add wildcards (instead of quote marks)
+		  if (category.equals("CONTENT")) {
 			  t = "*" + t + "*";
 		  }
+		  else {
+			  t = "\"" + t + "\"";
+		  }
 	  
-		  def queryTerm = /${category}:"${t}"/
+		  def queryTerm = /${category}:${t}/
 	  
 		  if (categoryQuery == "")  {
 			  categoryQuery = queryTerm
@@ -188,7 +193,7 @@ class SolrFacetService {
 		 // each queryParam is in form cat1:term1|term2|term3
 		 String category = qp.split(";")[0]
 		 
-		 if (category.equals("DATANODE") || category.equals("FREETEXT")) {
+		 if (category.equals("DATANODE") || category.equals("CONTENT")) {
 			 String termList = qp.split(";")[1]
 		 
 			 for (t in termList.tokenize("|"))  {

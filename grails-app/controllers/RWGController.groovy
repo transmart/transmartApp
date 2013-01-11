@@ -445,6 +445,10 @@ class RWGController {
 	   render searchKeywordService.findSearchCategories() as JSON	   
    }
    
+   def getFilterCategories = {
+	   render searchKeywordService.findFilterCategories() as JSON
+   }
+   
    // Return search keywords
    def searchAutoComplete = {
 	   def category = params.category == null ? "ALL" : params.category

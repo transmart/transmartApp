@@ -2,8 +2,8 @@
 
 <div class="search-results-table">
 	<g:each in="${folders}" status="ti" var="folder">        
-		<g:if test="${folder.folderLevel > 1 || !folderSearchString || folderSearchString?.indexOf(folder.folderFullName + '\\') > -1}">
-			<table class="folderheader" name="${folder.objectUid}">
+		<g:if test="${folder.folderLevel >= 1 || !folderSearchString || folderSearchString?.indexOf(folder.folderFullName + '\\') > -1}">
+			<table class="folderheader" name="${folder.uniqueId}">
 				
 				<tr>
 					<td class="foldertitle">
