@@ -131,7 +131,7 @@ class SolrFacetService {
 		   
 		   if (solrQueryString) {solrQueryString += " OR "; }
 		   
-		   solrQueryString += "ACCESSION:" + accession
+		   solrQueryString += "ACCESSION:\"" + accession + "\""
 	   }
 	   
 	   solrQueryString = "q=(" + solrQueryString + ")"
@@ -191,10 +191,10 @@ class SolrFacetService {
 	 for (qp in queryParams)  {
 		 
 		 // each queryParam is in form cat1:term1|term2|term3
-		 String category = qp.split(";")[0]
+		 String category = qp.split(":")[0]
 		 
 		 if (category.equals("DATANODE") || category.equals("CONTENT")) {
-			 String termList = qp.split(";")[1]
+			 String termList = qp.split(":")[1]
 		 
 			 for (t in termList.tokenize("|"))  {
 					 datanodeterms.push(t)
