@@ -531,6 +531,7 @@ Ext.onReady(function()
 							}
 					),
 					'->',
+					/*
 					new Ext.Toolbar.Separator(),
 					new Ext.Toolbar.Button({
 						id : 'exportbutton',
@@ -543,8 +544,9 @@ Ext.onReady(function()
 						// showExportStepSplitTimeSeries();
 						// if((typeof(grid)!='undefined') && (grid!=null)){exportGrid();}
 						// else {alert("Nothing to export");}
-					}}),
+					}}), 
 					new Ext.Toolbar.Separator(),
+					*/
 					new Ext.Toolbar.Button(
 							{
 								id : 'printanalysisbutton',
@@ -1711,7 +1713,7 @@ function projectDialogComplete(projectid)
 	}
 	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
 	{
-		Ext.getCmp("exportbutton").disable();
+	//	Ext.getCmp("exportbutton").disable();
 		Ext.getCmp("analysisDataExportPanel").disable();
 		Ext.getCmp("analysisExportJobsPanel").disable();
 	}
@@ -1721,7 +1723,7 @@ function resetExportTabs()
 {
 	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
 	{
-		Ext.getCmp("exportbutton").disable();
+	//	Ext.getCmp("exportbutton").disable();
 		Ext.getCmp("analysisDataExportPanel").disable();
 		Ext.getCmp("analysisExportJobsPanel").disable();
 	}
@@ -4080,13 +4082,13 @@ function getExportButtonSecurityComplete(result)
 	var canExport = Ext.util.JSON.decode(result.responseText).canExport;
 	if(canExport || GLOBAL.IsAdmin)
 	{
-		Ext.getCmp("exportbutton").enable();
+	//	Ext.getCmp("exportbutton").enable();
 		Ext.getCmp("analysisDataExportPanel").enable();
 		Ext.getCmp("analysisExportJobsPanel").enable();		
 	}
 	else
 	{
-		Ext.getCmp("exportbutton").disable();
+	//	Ext.getCmp("exportbutton").disable();
 		Ext.getCmp("analysisDataExportPanel").disable();
 		Ext.getCmp("analysisExportJobsPanel").disable();
 	}
