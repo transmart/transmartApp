@@ -41,23 +41,57 @@ class ExperimentAnalysisQueryService {
 	 * count experiment with criteria
 	 */
 	def countExperiment(SearchFilter filter){
-
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return 0
 		}
-
-		return BioAssayAnalysisData.executeQuery(createMVExperimentQuery("COUNT_EXP", filter))[0]
+		
+		////////////////////////////////////////////////////////////////////////
+		// Hack to get bind variable in the query
+		////////////////////////////////////////////////////////////////////////
+		def q = createMVExperimentQuery("COUNT_EXP", filter)
+		def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+		def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+		def bID = q.substring(fP+1, lP)     // pull out the ID
+		if (bID.isLong())	{
+			def bioID = bID.toLong()
+			def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+			log.info("Bio ID: ${bioID}")
+			log.trace("Updated Query: ${qBV}")
+			return BioAssayAnalysisData.executeQuery(qBV, [bioID])[0]
+		} else	{
+			log.warn("Parsing failed: ${bID}")
+			log.warn("Running original query")
+			return BioAssayAnalysisData.executeQuery(q)[0]
+		}
 	}
 
 	def countExperimentMV(SearchFilter filter){
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return 0
 		}
-		if(!filter.expAnalysisFilter.isUsed())
-			return bio.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_EXP", filter))[0]
-		//	elapseTimer.logElapsed("query count Experiment MV:",true)
-		else
+	
+		if(!filter.expAnalysisFilter.isUsed())	{			
+			////////////////////////////////////////////////////////////////////////
+			// Hack to get bind variable in the query
+			////////////////////////////////////////////////////////////////////////
+			def q = createExpAnalysisMVQuery("COUNT_EXP", filter)
+			def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+			def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+			def bID = q.substring(fP+1, lP)     // pull out the ID
+			if (bID.isLong())	{
+				def bioID = bID.toLong()
+				def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+				log.info("Bio ID: ${bioID}")
+				log.trace("Updated Query: ${qBV}")
+				return bio.BioMarkerExpAnalysisMV.executeQuery(qBV, [bioID])[0]
+			} else	{
+				log.warn("Parsing failed: ${bID}")
+				log.warn("Running original query")
+				return bio.BioMarkerExpAnalysisMV.executeQuery(q)[0]
+			}
+		} else	{
 			return countExperiment(filter)
+		}
 	}
 
 	/**
@@ -75,22 +109,80 @@ class ExperimentAnalysisQueryService {
 		query.addCondition(" baad.analysis.teaDataCount IS NOT NULL")
 		query.createGlobalFilterCriteria(gfilter);
 		createSubFilterCriteria(filter.expAnalysisFilter,query);
-		query.addSelect("COUNT(DISTINCT baad.analysis.id) ");
-		return bio.BioAssayAnalysisDataTea.executeQuery(query.generateSQL())[0];
+		query.addSelect("COUNT(DISTINCT baad.analysis.id) ")
+		
+		////////////////////////////////////////////////////////////////////////
+		// Hack to get bind variable in the query
+		////////////////////////////////////////////////////////////////////////
+		def q = query.generateSQL()
+		def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+		def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+		def bID = q.substring(fP+1, lP)     // pull out the ID
+		if (bID.isLong())	{		
+			def bioID = bID.toLong()
+			def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+			log.info("Bio ID: ${bioID}")
+			log.trace("Updated Query: ${qBV}")		
+			return bio.BioAssayAnalysisDataTea.executeQuery(qBV, [bioID])[0]
+		} else	{
+			log.warn("Parsing failed: ${bID}")
+			log.warn("Running original query")
+			return bio.BioAssayAnalysisDataTea.executeQuery(q)[0]
+		}
 	}
 
-	def countAnalysis(SearchFilter filter){
-		if(filter == null || filter.globalFilter.isTextOnly()) return 0;
-
-		return bio.BioAssayAnalysisData.executeQuery(createMVExperimentQuery("COUNT_ANALYSIS", filter))[0]
+	def countAnalysis(SearchFilter filter)	{
+		if (filter == null || filter.globalFilter.isTextOnly())	{
+			return 0
+		}
+		
+		////////////////////////////////////////////////////////////////////////
+		// Hack to get bind variable in the query
+		////////////////////////////////////////////////////////////////////////
+		def q = createMVExperimentQuery("COUNT_ANALYSIS", filter)
+		def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+		def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+		def bID = q.substring(fP+1, lP)     // pull out the ID
+		if (bID.isLong())	{
+			def bioID = bID.toLong()
+			def qBV = q.replace(bID, '?')       // replace the BioID with the bind variable parameter
+			log.info("Bio ID: ${bioID}")
+			log.trace("Updated Query: ${qBV}")
+			return bio.BioAssayAnalysisData.executeQuery(qBV, [bioID])[0]
+		} else	{
+			log.warn("Parsing failed: ${bID}")
+			log.warn("Running original query")
+			return bio.BioAssayAnalysisData.executeQuery(q)[0]
+		}
 	}
 
 	def countAnalysisMV(SearchFilter filter){
-		if(filter == null || filter.globalFilter.isTextOnly()) return 0;
-		if(!filter.expAnalysisFilter.isUsed())
-			return bio.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_ANALYSIS", filter))[0]
-		else
+		if (filter == null || filter.globalFilter.isTextOnly())	{
+			return 0
+		}
+		
+		if(!filter.expAnalysisFilter.isUsed())	{
+			////////////////////////////////////////////////////////////////////////
+			// Hack to get bind variable in the query
+			////////////////////////////////////////////////////////////////////////
+			def q = createExpAnalysisMVQuery("COUNT_ANALYSIS", filter)
+			def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+			def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+			def bID = q.substring(fP+1, lP)     // pull out the ID
+			if (bID.isLong())	{
+				def bioID = bID.toLong()
+				def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+				log.info("Bio ID: ${bioID}")
+				log.trace("Updated Query: ${qBV}")
+				return bio.BioMarkerExpAnalysisMV.executeQuery(qBV, [bioID])[0]
+			} else	{
+				log.warn("Parsing failed: ${bID}")
+				log.warn("Running original query")
+				return bio.BioMarkerExpAnalysisMV.executeQuery(q)[0]
+			}			
+		} else	{
 			return countAnalysis(filter)
+		}
 	}
 
 
@@ -124,7 +216,7 @@ class ExperimentAnalysisQueryService {
 		}
 
 		def q = query.generateSQL();
-		//	println(q)
+		log.trace(q)
 		return q;
 	}
 	/**

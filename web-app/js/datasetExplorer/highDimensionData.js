@@ -24,17 +24,23 @@
  * @param divId
  */
 function gatherHighDimensionalData(divId){
+	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
+	spinnerMask.show();
+	
 	if(!variableDivEmpty(divId)
 			&& ((GLOBAL.CurrentSubsetIDs[1]	== null) ||	(multipleSubsets() && GLOBAL.CurrentSubsetIDs[2]== null))){
+		spinnerMask.hide();
 		runAllQueriesForSubsetId(function(){gatherHighDimensionalData(divId);}, divId);
 		return;
 	}
 	if(variableDivEmpty(divId)){
+		spinnerMask.hide();
 		Ext.Msg.alert("No cohort selected!", "Please select a cohort first.");
 		return;
 	}
 	//genePatternReplacement();
 	//Send a request to generate the heatmapdata that we use to populate the dropdowns in the popup.
+	
 	Ext.Ajax.request(
 			{
 				url : pageInfo.basePath+"/analysis/heatmapvalidate",
@@ -49,11 +55,13 @@ function gatherHighDimensionalData(divId){
 				),
 				success : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				},
 				failure : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				}
@@ -62,16 +70,22 @@ function gatherHighDimensionalData(divId){
 }
 
 function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
+	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
+	spinnerMask.show();
+	
 	if((!variableDivEmpty(divId) && currentSubsetId== null)){
+		spinnerMask.hide();
 		runQueryForSubsetidSingleSubset(function(sId){gatherHighDimensionalDataSingleSubset(divId, sId);}, divId);
 		return;
 	}
 	if(variableDivEmpty(divId)){
+		spinnerMask.hide();
 		Ext.Msg.alert("No cohort selected!", "Please select a cohort first.");
 		return;
 	}
 	//genePatternReplacement();
 	//Send a request to generate the heatmapdata that we use to populate the dropdowns in the popup.
+	
 	Ext.Ajax.request(
 			{
 				url : pageInfo.basePath+"/analysis/heatmapvalidate",
@@ -86,11 +100,13 @@ function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
 				),
 				success : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				},
 				failure : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				}
