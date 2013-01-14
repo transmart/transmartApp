@@ -186,10 +186,20 @@ function submitMetaCoreEnrichment(formParams) {
 
 function markerSelectionRunMetacoreEnrichment() {
 	var ids = [];
+	var idType = "GENESYMBOL";
+	var idCol = 0;
 	
 	// TODO: this is potentially dangerous, need to convert to numbers before adding to list
+	var test_id = jQuery(jQuery('#markerSelectionTable tbody tr').children('td')[1]).html();
+	if (/_at$/.test(test_id)) {
+		idType = "AFFYMETRIX";
+		idCol = 1;
+	}
+	
 	jQuery('#markerSelectionTable tbody tr').each(function() { 
-		ids.push(jQuery(jQuery(this).children('td')[1]).html()); 
+		var cell = jQuery(jQuery(this).children('td')[idCol]).html();
+		if (! /^\s+$/.test(cell))
+			ids.push(cell); 
 	});
 	
 	jQuery('#marker_metacoreEnrichmentResults').hide();
@@ -203,7 +213,7 @@ function markerSelectionRunMetacoreEnrichment() {
 		url : pageInfo.basePath+'/metacoreEnrichment/runAnalysisForMarkerSelection',
 		method: 'POST',
 		timeout: '1800000',
-		params: Ext.urlEncode({'IdList': ids}),
+		params: Ext.urlEncode({'IdList': ids, 'IdType': idType}),
 		success : function(response, request) {
 			spinnerMaskEnrichment.hide();
 			var data = Ext.decode(response.responseText);
@@ -365,7 +375,7 @@ function showMetacoreSettingsWindow() {
         	scripts: true,
            	nocache:true, 
            	discardUrl:true,
-           	method:'POST',
+           	method:'POST'
            	// callback: toggleDataAssociationFields
         }
     });

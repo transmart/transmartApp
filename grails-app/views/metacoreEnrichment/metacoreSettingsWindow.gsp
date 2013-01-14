@@ -1,9 +1,9 @@
 <script language="javascript">
 	function onRadioChange() {
-		if (radioDemo.checked) {
+		if ( !(typeof radioDemo === 'undefined') && radioDemo.checked ) {
 			jQuery('#settingsTable :input').prop('disabled', true);
 		}
-		else if (radioSystem.checked){
+		else if ( !(typeof radioSystem === 'undefined') && radioSystem.checked ){
 			jQuery('#settingsTable :input').prop('disabled', true);
 		}
 		else {
@@ -19,11 +19,11 @@
 	<input type="hidden" name="password_original" value="*****"/>
 	
 	<input id="radioDemo" type="radio" name="accountType" value="demo" onChange="onRadioChange()"/> I don't have MetaCore account. 
-	Use limited enrichment instead, or you can <a href="http://ip-science.thomsonreuters.com/info/insight-free-trial/" target="_blank">try MetaCore for free</a>!
+	Run FREE enrichment on a collection of <a href="http://pathwaymaps.com/" target="_blank">publicly available maps</a> instead, or you can <a href="http://ip-science.thomsonreuters.com/info/insight-free-trial/" target="_blank">try MetaCore for free</a>!
 	<br/><br/>
 	<g:if test="${systemSettingsDefined}">
 		<input id="radioSystem" type="radio" name="accountType" value="system" onChange="onRadioChange()"/> Use company account. 
-		This account is specified in your TranSMART server settings and provides a shared environment for all users.
+		This account is specified in your TranSMART server settings and provides a shared environment for all users. You will still need to know login/password in order to open individual maps.
 		<br/><br/>
 	</g:if>
 	<input id="radioRegular" type="radio" name="accountType" value="user" onChange="onRadioChange()"/> Use my personal MetaCore account:
@@ -31,16 +31,16 @@
 	<div id="settingsTable">
 	<table>
 		<tr>
-			<td>Base URL</td><td><input type="text" name="baseUrl" size="20" value="${settings.baseUrl}"/></td>
+			<td>Base URL</td><td><input type="text" name="baseUrl" size="30" value="${settings.baseUrl?:'https://portal.genego.com'}"/></td>
 		</tr>
 		<tr>
-			<td>Username</td><td><input type="text" name="login" size="20" value="${settings.login}"/></td>
+			<td>Username</td><td><input type="text" name="login" size="30" value="${settings.login}"/></td>
 		</tr>
 		<tr>	
-			<td>Password</td><td><input type="password" name="password1" size="20" value="*****"/></td>
+			<td>Password</td><td><input type="password" name="password1" size="30" value="*****"/></td>
 		</tr>
 		<tr>	
-			<td>Confirm password</td><td><input type="password" name="password2" size="20" value="*****"/></td>
+			<td>Confirm password</td><td><input type="password" name="password2" size="30" value="*****"/></td>
 		</tr>
 	</table>
 	</div>

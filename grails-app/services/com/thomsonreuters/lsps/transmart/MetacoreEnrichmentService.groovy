@@ -103,7 +103,7 @@ class MetacoreEnrichmentService {
 		
 		if (metacoreSettingsMode() == 'demo') {
 			// demo enrichment
-			def baseUrl = grailsApplication?.config?.com?.thomsonreuters?.transmart?.demoEnrichmentURL?:'http://www.genego.com:8080'
+			def baseUrl = grailsApplication?.config?.com?.thomsonreuters?.transmart?.demoEnrichmentURL?:'http://pathwaymaps.com:7080'
 			mapBaseUrl = grailsApplication?.config?.com?.thomsonreuters?.transmart?.demoMapBaseURL?:'http://pathwaymaps.com/maps/'
 			def site = new HTTPBuilder(baseUrl)
 			if (System.properties.proxyHost && System.properties.proxyPort)

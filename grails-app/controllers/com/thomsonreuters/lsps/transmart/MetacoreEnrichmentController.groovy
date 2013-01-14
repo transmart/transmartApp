@@ -61,12 +61,12 @@ class MetacoreEnrichmentController {
 			i++
 		}
 		
-		log.info "Running enrichment for ${geneList.size()} genes"
-		
 		def cohortData = [
-			IdType: 'LOCUSLINK',
+			IdType: params.IdType?:'AFFYMETRIX',
 			Data: [geneList as List]	
 		]
+		
+		log.info "Running enrichment for ${geneList.size()} genes (IdType passed: ${params.IdType})"
 		
 		render metacoreEnrichmentService.getEnrichmentByMaps(cohortData, metacoreParams) as JSON
 	}
@@ -75,11 +75,11 @@ class MetacoreEnrichmentController {
 		def metacoreParams = metacoreEnrichmentService.getMetacoreParams()
 		
 		def cohortData = [
-			IdType: 'AFFYMETRIX',
+			IdType: params.IdType?:'AFFYMETRIX',
 			Data: [params.IdList as List]
 		]
 		
-		log.info "Running enrichment for ${params.IdList.size()} genes"
+		log.info "Running enrichment for ${params.IdList.size()} genes (IdType passed: ${params.IdType})"
 		
 		render metacoreEnrichmentService.getEnrichmentByMaps(cohortData, metacoreParams) as JSON
 	}
