@@ -242,7 +242,7 @@ table.menuDetail th.menuVisited {
 .greybutton.addassay { background-image: url('../images/addassay.png'); }
 .greybutton.addfolder { background-image: url('../images/addfolder.png'); }
 .greybutton.addanalysis { background-image: url('../images/addanalysis.png'); }
-.greybutton.closeexport { background-image: url('../images/small_cross.png'); }
+.greybutton.close { background-image: url('../images/small_cross.png'); }
 
 .greybutton.disabled {
 	cursor: normal;
@@ -283,11 +283,6 @@ table.menuDetail th.menuVisited {
 	cursor: pointer;
 	border-top: 1px solid #EEE;
 	font-weight: bold;
-}
-
-#filter-browser {
-	font-size: 8pt;
-	font-family: Verdana, Arial, sans-serif;	
 }
 
 .filteritem {
@@ -370,18 +365,30 @@ table.menuDetail th.menuVisited {
 	margin: 8px;
 }
 
-#exportOverlay {
+.overlay {
 	position: absolute;
-	z-index: 10000;
-	top: 10%;
-	left: 10%;
-	width: 80%;
-	height: 80%;
+	z-index: 10000;	
 	border: 8px solid #DDDEE6;
 	border-radius: 16px;
 	box-shadow: #DDD 11px 11px 8px -7px;
 	background: white;
 	overflow: auto;
+}
+
+#exportOverlay {
+	top: 10%;
+	left: 10%;
+	width: 80%;
+	height: 80%;
+}
+
+#filter-browser {
+	font-size: 8pt;
+	font-family: Verdana, Arial, sans-serif;
+	top: 50px;
+	left: 300px;
+	width: 300px;
+	height: 500px;
 }
 
 .exporttable td {

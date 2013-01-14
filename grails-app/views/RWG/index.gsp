@@ -214,8 +214,12 @@
 		    	    
 		    	});
 
-		    	jQuery('body').on('click', '.greybutton.closeexport', function() {
+		    	jQuery('body').on('click', '#closeexport', function() {
 		    		jQuery('#exportOverlay').fadeOut();	
+			    });
+			    
+			   jQuery('body').on('click', '#closefilter', function() {
+		    		jQuery('#filter-browser').fadeOut();	
 			    });
 
 	    	    //Close export overlay on click outside
@@ -227,6 +231,15 @@
 	    	    	
 		    	    	if (jQuery('#exportOverlay').is(':visible')) {
 			    	    	jQuery('#exportOverlay').fadeOut();
+		    	    	}
+	    	    	}
+	    	    	
+	    	    	if (!jQuery(e.target).closest('#filter-browser').length
+	    	    			&& !jQuery(e.target).closest('#filterbutton').length
+	    	    	    	&& jQuery(e.target).attr('id') != 'filter-browser') {
+	    	    	
+		    	    	if (jQuery('#filter-browser').is(':visible')) {
+			    	    	jQuery('#filter-browser').fadeOut();
 		    	    	}
 	    	    	}
 		    	});
@@ -256,6 +269,10 @@
 					});
 					jQuery('#exportOverlay').fadeToggle();
 		    	});
+		    	
+		    	jQuery('#filterbutton').click(function() {
+					jQuery('#filter-browser').fadeToggle();
+		    	});
 	       	
 	        	resizeAccordion();
 	        	
@@ -279,7 +296,8 @@
                         jQuery('#program-explorer').width(currentWidth - 20)
                         // jQuery('#results-div').width(currentWidth -20)
                         // set the content panel width
-                        jQuery('#main').width(jQuery('body').width() - currentWidth - padding);            
+                        jQuery('#main').width(jQuery('body').width() - currentWidth - padding);
+                        jQuery('#filter-browser').css('left', jQuery('#box-search').width() + 50);
                     }
               });
 
@@ -460,7 +478,7 @@
 		</div>
 	
 		<!--  This is the DIV we stuff the browse windows into. -->
-		<div id="exportOverlay" style="display: none;">&nbsp;</div>
+		<div id="exportOverlay" class="overlay" style="display: none;">&nbsp;</div>
 		<div id="divBrowsePopups" style="width:800px; display: none;">
 			
 		</div>
