@@ -109,7 +109,7 @@ var assayCount = 3
                       ${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
                 </g:if>
                 <g:else>   
-                    <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId().toString(),amTagItem.id])}"/>
+                    <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.uniqueId.toString(),amTagItem.id])}"/>
 	                <g:if test="${tagValues!=null}">
 	             	   <g:set var="counter" value="0"/>
 	             		 <g:each var="tagValue" status="k" in="${tagValues}">

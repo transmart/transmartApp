@@ -264,27 +264,31 @@ class FmFolderController {
 
 
 	
-	private void addFolder(String folderType, FmFolderController fd, long parentId)
+	private void addFolder(String folderType, FmFolder folder, long parentId)
 	{
-		fd.folderType = folderType
+		folder.folderType = folderType
 		
-		if(FolderType.PROGRAM.name() == folderType)
+		if (FolderType.PROGRAM.name() == folderType)
 		{
-			fd.folderLevel = 0			
+			folder.folderLevel = 0			
 		}
 		else
 		{
 			def parentFolder = FmFolderController.getAt(parentId)
-			fd.folderLevel = parentFolder.folderLevel + 1
-			fd.parent = parentFolder
+			folder.folderLevel = parentFolder.folderLevel + 1
+			folder.parent = parentFolder
 		}
 		
-		if(p.save()) 
+		if (folder.save(flush:true)) 
 		{
-			render p as XML
+			def data = new FmData(type:'FM_FOLDER', uniqueId:'FOL:' + folder.id);
+			data.id = folder.id;
+			data.save(flush:true);
+	
+			render folder as XML
 		}
 		else {
-			render p.errors
+			render folder.errors
 		}
 	}
 
@@ -487,16 +491,16 @@ class FmFolderController {
 				}
 						
 				bioDataObject = getBioDataObject(folder)
-				def fmData = FmData.get(folder.id)
+				//def fmData = FmData.get(folder.id)
 				
-				amTagTemplate = amTagTemplateService.getTemplate(fmData.uniqueId)
+				amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
 				if(amTagTemplate)
 				{
 					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 				}
 				else
 				{
-					log.error "Unable to find amTagTemplate for object Id = " + fmData.uniqueId
+					log.error "Unable to find amTagTemplate for object Id = " + folder.uniqueId
 				}
 	
 				//  amTagTemplate.amTagItems
@@ -563,14 +567,14 @@ class FmFolderController {
 			{
 				bioDataObject = getBioDataObject(folder)
 			
-				amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+				amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
 				if(amTagTemplate)
 				{
 					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 				}
 				else
 				{
-					log.error "Unable to find amTagTemplate for object Id = " + folder.getUniqueId()
+					log.error "Unable to find amTagTemplate for object Id = " + folder.uniqueId
 				}
 			}
 			else
@@ -658,7 +662,7 @@ class FmFolderController {
 					}
 					else
 					{
-						log.error "Unable to find amTagTemplate for object Id = " + folder.getUniqueId()
+						log.error "Unable to find amTagTemplate for object Id = " + folder.uniqueId
 					}
 	
 					render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
