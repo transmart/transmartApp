@@ -17,16 +17,13 @@
  *
  ******************************************************************/
   
-
 package fm
-
 
 import groovy.xml.StreamingMarkupBuilder
 import java.util.ArrayList;
 import java.util.List;
-import annotation.AmTagTemplate;
 
-class FmFolder implements Buildable{
+class FmFolder implements Buildable {
 	
 	Long id
 	String folderName
@@ -36,38 +33,22 @@ class FmFolder implements Buildable{
 	String folderTag
 	String description
 	Boolean activeInd = Boolean.TRUE
+	String uniqueId
 	
+	static belongsTo = [parent: FmFolder]
+	
+	static hasMany = [fmFiles: FmFile, children: FmFolder]
+	
+	static transients = ['uniqueId']
 	
 	static mapping = {
 		table 'fm_folder'
 		version false
 		cache true
 		sort "folderName"
-		id generator: 'sequence', params:[sequence:'seq_fm_id']
+		id column:'folder_id', generator: 'sequence', params:[sequence:'seq_fm_id']
 		fmFiles joinTable: [name: 'fm_folder_file_association',  key:'folder_id', column: 'file_id'], lazy: false
-		columns { id column:'folder_id' }
-		uniqueIds joinTable:[name:'FM_DATA_UID', key:'FM_DATA_ID']
-		
-	
 	}
-	
-	static belongsTo = [parent: FmFolder]	
-	static hasMany = [fmFiles: FmFile, children: FmFolder, uniqueIds: FmData ] //, amTagTemplates: AmTagTemplate]
-	
-	def getFmData()
-	{
-		if(uniqueIds!=null && !uniqueIds.isEmpty())
-			return (uniqueIds.iterator().next());
-		return null;
-
-	}
-
-		def getUniqueId(){
-		if(uniqueIds!=null && !uniqueIds.isEmpty())
-			return (uniqueIds.iterator().next()).uniqueId;
-		return null;
-	}
-
 	
 	static constraints = {
 		folderName(maxSize:1000)
@@ -77,9 +58,38 @@ class FmFolder implements Buildable{
 		description(nullable: true, maxSize: 2000)
 		parent(nullable: true)
 	}
+
+	/**
+	 * Use transient property to support unique ID for folder.
+	 * @return folder's uniqueId
+	 */
+	String getUniqueId() {
+		if (uniqueId == null) {
+			FmData data = FmData.get(id);
+			if (data != null) {
+				uniqueId = data.uniqueId
+				return data.uniqueId;
+			}
+			return null;
+		}
+		return uniqueId;
+	}
+		
+	/**
+	 * Find folder by its uniqueId
+	 * @param uniqueId
+	 * @return folder with matching uniqueId or null, if match not found.
+	 */
+	static FmFolder findByUniqueId(String uniqueId) {
+		FmFolder folder;
+		FmData data = FmData.findByUniqueId(uniqueId);
+		if (data != null) {
+			folder = FmFolder.get(data.id);
+		}
+		return folder;
+	}
 	
-	def void build(GroovyObject builder)
-	{
+	def void build(GroovyObject builder) {
         def fmFolder = {
              folderDefinition(id:this.id){
 				 folderName(this.folderName)
@@ -91,19 +101,11 @@ class FmFolder implements Buildable{
 				 [fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
 
 				 unescaped << '<fmFolders>'
-				 subFolderList.each {
-					 
+				 subFolderList.each {					 
 					 	println it
-						 out << it
+						out << it
 				 	}
 				 unescaped << '</fmFolders>'
-/*		                 addresses {
-		                     this.addresses.each{address ->
-		                         out << address
-		                     }
-		                     *
-		                 }
-		                 */
              }
          }
 		
@@ -119,7 +121,7 @@ class FmFolder implements Buildable{
 	   StringBuffer sb = new StringBuffer();
 	   sb.append("ID: ").append(this.id).append(", Folder Name: ").append(this.folderName);
 	   sb.append(", Folder Full Name: ").append(this.folderFullName).append(", Folder Level: ").append(this.folderLevel);
-	   sb.append(", Folder Type: ").append(this.folderType).append(", Object UID ").append(", Description ").append(this.description);
+	   sb.append(", Folder Type: ").append(this.folderType).append(", uniqueId: ").append(this.uniqueId).append(", Description: ").append(this.description);
 	   return sb.toString();
    }
 
