@@ -5,7 +5,7 @@
   
 <g:form name="editMetadataForm">
 <g:hiddenField name="id" value="${folder?.id}" />
-<g:set var="objectUid" value="${folder.uniqueIds.uniqueId[0]}"/>
+<g:set var="objectUid" value="${folder.uniqueId}"/>
 <div>  
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
     <table class="detail" height="300px">

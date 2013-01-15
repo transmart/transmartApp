@@ -19,6 +19,9 @@
   
 
 package bio
+
+import fm.FmFolder;
+
 class ConceptCode {
 		Long id
 		String bioConceptCode
@@ -46,4 +49,18 @@ class ConceptCode {
 	codeDescription(nullable:true, maxSize:2000)
 	codeTypeName(nullable:true, maxSize:400)
 	}
+ 
+ /**
+ * Find concept code by its uniqueId
+ * @param uniqueId
+ * @return concept code with matching uniqueId or null, if match not found.
+ */
+static ConceptCode findByUniqueId(String uniqueId) {
+	ConceptCode cc;
+	BioData bd = BioData.findByUniqueId(uniqueId);
+	if (bd != null) {
+		cc = ConceptCode.get(bd.id);
+	}
+	return cc;
+}
 }

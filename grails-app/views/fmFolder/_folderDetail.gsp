@@ -38,6 +38,8 @@ var assayCount = 3
 --%>
 <g:set var="overlayDiv" value="metaData_div" />
 <%! import annotation.* %> 
+<%! import bio.BioData %> 
+<%! import bio.ConceptCode %> 
 <%! import com.recomdata.util.* %> 
 
 <div style="margin:10px;padding:10px;">
@@ -106,7 +108,14 @@ var assayCount = 3
                 <td valign="top" align="right" class="columnname" width="20%">${amTagItem.displayName}</td>
                 <td valign="top" align="left" class="columnvalue" width="60%">
                  <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
-                      ${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
+                 	<g:set var="fieldValue" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
+                 	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
+                 		<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[fieldValue]).id}"/>
+                 		${ConceptCode.find('from ConceptCode where id=?', bioDataId).codeName}
+                 	</g:if>
+                 	<g:else>
+                 		${fieldValue}
+                 	</g:else>
                 </g:if>
                 <g:else>   
                     <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.uniqueId.toString(),amTagItem.id])}"/>
