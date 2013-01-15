@@ -17,6 +17,7 @@
  
 -->
 
+<%-- 
 <script type="text/javascript">
 var analysisCount = 1
 var assayCount = 3
@@ -30,12 +31,11 @@ var assayCount = 3
              
     	
        var dt4 = new dataTableWrapper('gridViewWrapper4', 'gridViewTable4', 'Analysis (' + analysisCount + ")");
-     //  dt4.loadData(${jSONForGrids[0]});
        var dt5 = new dataTableWrapper('gridViewWrapper5', 'gridViewTable5', 'Assays (' + assayCount + ')');
                 
      });
 </script>
-
+--%>
 <g:set var="overlayDiv" value="metaData_div" />
 <%! import annotation.* %> 
 <%! import com.recomdata.util.* %> 
@@ -89,10 +89,11 @@ var assayCount = 3
                 <th>&nbsp;</th>
                 <th align="right">
 				<g:if test="${!folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
-	                <g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
+	                <%--<g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
                         params="[eleId:overlayDiv, folderId:folder?.id]" 
-                        before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
-                  <img align="right" src="${resource(dir:'images', file:'pencil.png')}"/></g:remoteLink>
+                        before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">--%>
+                  <img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
+                  <%-- </g:remoteLink>--%>
                 </g:if>
                 </th>
             </tr>

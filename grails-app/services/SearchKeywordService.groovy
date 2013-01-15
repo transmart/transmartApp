@@ -89,13 +89,13 @@ public class SearchKeywordService {
 			if (filtercat.prefix) {				
 				results = ConceptCode.createCriteria().list	{
 					like("codeTypeName", filtercat.codeTypeName + ":%")
-					order("codeTypeName", "asc")
+					order("codeName", "asc")
 				}
 			}
 			else {
 				results = ConceptCode.createCriteria().list	{
 					eq("codeTypeName", filtercat.codeTypeName)
-					order("codeTypeName", "asc")
+					order("codeName", "asc")
 				}
 			}
 			

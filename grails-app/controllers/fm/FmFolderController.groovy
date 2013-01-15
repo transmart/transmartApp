@@ -18,6 +18,8 @@
  ******************************************************************/
 package fm
 
+import annotation.AmTagDisplayValue;
+
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
@@ -578,16 +580,17 @@ class FmFolderController {
 
 		} 
 
-		// due to 1.37 grails plugin bug, defer to view, then template
-		// render(template:'/fmFolder/editMetaData', model:[folder:folder,layout:layout]);
-		render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		render(template: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 	
 	def updateMetaData =
 	{
 		log.info "updateMetaData called"
 		
+		def paramMap = params
 		def folderId = params.id
+		def amTagTemplate
+		def metaDataTagItems
 		def folder
 		def bioDataObject
 		if (folderId)
@@ -611,16 +614,44 @@ class FmFolderController {
 					log.info "Unable to find bio data object. Setting folder to the biodata object "
 					bioDataObject = folder
 				}
-
-				bioDataObject.properties = params
+				
+				amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+				if(amTagTemplate)
+				{
+					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+				}
+				
+				//Use metaDataTagItems to update fields
+				for (tagItem in metaDataTagItems) {
+					if (tagItem.tagItemType.equals('FIXED')) {
+						def newValue = params."${tagItem.tagItemAttr}"
+						if (newValue != null) {
+							bioDataObject."${tagItem.tagItemAttr}" = newValue
+						}
+					}
+					else if (tagItem.tagItemType.equals('CUSTOM')) {
+						//Look for new value by tag item ID
+						def newValue = params."amTagItem_${tagItem.id}"
+						if (newValue != null) {
+							//TODO Update/create the tag value here!
+//							def tagValueId = AmTagDisplayValue.get(folder.getUniqueId(), tagItem.id).objectId
+//							if (displayValue) {
+//								displayValue.displayValue = newValue
+//							}
+						}
+					}
+				}
 				if (!bioDataObject.hasErrors() && bioDataObject.save(flush: true)) {
 					log.info "Meta data saved"
-					redirect(action: "show", id: bioDataObject.id)
+					def result = [id: folderId]
+					render result as JSON
+					return
 				}
 				else {
 					log.info "Errors occurred saving Meta data"
-					def metaDataTagItems 
-					def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+					def errors = bioDataObject.errors
+					
+					amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
 					if(amTagTemplate)
 					{
 						metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)

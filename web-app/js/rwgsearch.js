@@ -595,6 +595,177 @@ jQuery(document).ready(function() {
 		}
 	});
 	
+    jQuery('body').on('mouseenter', '.folderheader', function() {
+		jQuery(this).find('.foldericonwrapper').fadeIn(150);
+	});
+
+    jQuery('body').on('mouseleave', '.folderheader', function() {
+		jQuery(this).find('.foldericonwrapper').fadeOut(150);
+	});
+
+    jQuery('body').on('click', '.foldericon.add', function() {
+		var id = jQuery(this).attr('name');
+		jQuery(this).removeClass().text("Added to cart");
+		jQuery('#cartcount').hide();
+		
+		jQuery.ajax({
+			url:exportAddURL,
+			data: {id: id},			
+			success: function(response) {
+				jQuery('#cartcount').show().text(response);
+			},
+			error: function(xhr) {
+				jQuery('#cartcount').show();
+			}
+		});
+	});
+
+    jQuery('body').on('click', '.foldericon.addall', function() {
+		var nameelements = jQuery(this).closest('table').find('.foldericon.add');
+		var ids = [];
+		for (i = 0; i < nameelements.size(); i++) {
+			ids.push(jQuery(nameelements[i]).attr('name'));
+			jQuery(nameelements[i]).removeClass().text("Added to cart");
+		}
+		
+		jQuery('#cartcount').hide();
+		
+		jQuery.ajax({
+			url:exportAddURL,
+			data: {id: ids.join(",")},			
+			success: function(response) {
+				jQuery('#cartcount').show().text(response);
+			},
+			error: function(xhr) {
+				jQuery('#cartcount').show();
+			}
+		});
+	});
+
+    jQuery('body').on('click', '.foldericon.view', function() {
+	    var id = jQuery(this).closest(".folderheader").attr('name');
+    	showDetailDialog(experimentDataUrl + '?id=' + id);
+	});
+	
+	jQuery('#metadata-viewer').on('click', '.editmetadata', function() {
+
+    	var id = jQuery(this).attr('name');
+
+		jQuery('#editMetadataOverlay').fadeIn();
+		jQuery('#editMetadata').empty().addClass('ajaxloading');
+
+		jQuery.ajax({
+			url:editFolderURL,
+			data: {folderId: id},			
+			success: function(response) {
+				jQuery('#editMetadata').html(response).removeClass('ajaxloading');
+			},
+			error: function(xhr) {
+				alert(xhr);
+				jQuery('#editMetadata').html(response).removeClass('ajaxloading');
+			}
+		});
+	});
+
+    jQuery('#exportOverlay').on('click', '.greybutton.remove', function() {
+
+    	var row = jQuery(this).closest("tr");
+	    var id = row.attr('name');
+	   
+	    jQuery('#cartcount').hide();
+	    
+		jQuery.ajax({
+			url:exportRemoveURL,
+			data: {id: id},			
+			success: function(response) {
+				row.remove();
+				jQuery('#cartcount').show().text(response);
+				updateExportCount();
+			},
+			error: function(xhr) {
+				jQuery('#cartcount').show();
+			}
+		});
+	});
+
+    jQuery('#exportOverlay').on('click', '.greybutton.export', function() {
+
+    	var checkboxes = jQuery('#exporttable input:checked');
+		var ids = [];
+		for (i = 0; i < checkboxes.size(); i++) {
+			ids.push(jQuery(checkboxes[i]).attr('name'));
+		}
+
+		if (ids.size() == 0) {return false;}
+
+		window.location = exportURL + "?id=" + ids.join(',');
+	    
+	});
+
+	jQuery('body').on('click', '#closeexport', function() {
+		jQuery('#exportOverlay').fadeOut();	
+    });
+    
+   jQuery('body').on('click', '#closefilter', function() {
+		jQuery('#filter-browser').fadeOut();	
+    });
+    
+   jQuery('body').on('click', '#closeedit', function() {
+		jQuery('#editMetadataOverlay').fadeOut();	
+    });
+
+    //Close export and filter overlays on click outside
+    jQuery('body').on('click', function(e) {
+
+    	if (!jQuery(e.target).closest('#exportOverlay').length
+    	    	&& !jQuery(e.target).closest('#cartbutton').length
+    	    	&& jQuery(e.target).attr('id') != 'cartbutton') {
+    	
+	    	if (jQuery('#exportOverlay').is(':visible')) {
+    	    	jQuery('#exportOverlay').fadeOut();
+	    	}
+    	}
+    	
+    	if (!jQuery(e.target).closest('#filter-browser').length
+    			&& !jQuery(e.target).closest('#filterbutton').length
+    	    	&& jQuery(e.target).attr('id') != 'filter-browser') {
+    	
+	    	if (jQuery('#filter-browser').is(':visible')) {
+    	    	jQuery('#filter-browser').fadeOut();
+	    	}
+    	}
+	});
+
+	jQuery('#results-div').on('click', '.result-folder-name', function() {
+    	jQuery('.result-folder-name').removeClass('selected');
+		jQuery(this).addClass('selected');
+    });
+
+    jQuery('#logocutout').on('click', function() {
+    	jQuery('#metadata-viewer').empty();
+
+    	jQuery('#welcome-viewer').empty().addClass('ajaxloading');
+    	jQuery('#welcome-viewer').load(welcomeURL, {}, function() {
+    		jQuery('#welcome-viewer').removeClass('ajaxloading');
+    	});
+	});
+
+    jQuery('#cartbutton').click(function() {
+		jQuery.ajax({
+			url:exportViewURL,		
+			success: function(response) {
+				jQuery('#exportOverlay').html(response);
+			},
+			error: function(xhr) {
+			}
+		});
+		jQuery('#exportOverlay').fadeToggle();
+	});
+	
+	jQuery('#filterbutton').click(function() {
+		jQuery('#filter-browser').fadeToggle();
+	});
+	
     addSelectCategories();
     addFilterCategories();
     addSearchAutoComplete();
