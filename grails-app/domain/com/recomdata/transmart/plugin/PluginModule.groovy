@@ -33,7 +33,8 @@ class PluginModule {
 	long id
 	String name
 	String moduleName
-	Clob params
+	//Clob params
+	String params
 	String version
 	Boolean active
 	Boolean hasForm

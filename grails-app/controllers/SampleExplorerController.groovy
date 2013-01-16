@@ -18,6 +18,8 @@
  ******************************************************************/
   
 
+import org.transmart.searchapp.AccessLog;
+
 import com.recomdata.snp.SnpData
 import grails.converters.JSON
 
@@ -106,7 +108,9 @@ class SampleExplorerController {
 	 */
 	def showDataSetResults =
 	{
-		render(template:"dataSetResults");
+		// With the Grails 2.0 upgrade, the straight render does not work here.  Using the g tag to get the content and then render it
+		String content = g.render(template:"dataSetResults")
+		render content
 	}
 	
 	/**

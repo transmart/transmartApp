@@ -41,7 +41,7 @@ class RecomTagLib {
 
 		if (document != null) {
 			def repository = document.getRepository()
-			content = bio.ContentRepository.findByRepositoryType(repository)
+			content = org.transmart.biomart.ContentRepository.findByRepositoryType(repository)
 			label = document.getFileName()
 			path = content.location + "/" + document.getFilePath()
 			switch (content.getLocationType()) {

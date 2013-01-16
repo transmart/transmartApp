@@ -70,6 +70,10 @@ import java.sql.*;
 import org.jfree.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.transmart.CohortInformation;
+import org.transmart.searchapp.AuthUser;
+import org.transmart.searchapp.AuthUserSecureAccess;
+import org.transmart.searchapp.SecureObjectPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -80,6 +84,8 @@ import org.Hibernate.*;
 
 import com.recomdata.db.DBHelper;
 import com.recomdata.export.*;
+
+import com.recomdata.i2b2.SurvivalConcepts;
 
 /**
  * ResNetService that will provide an .rnef file for Jubilant data
@@ -397,7 +403,7 @@ class I2b2HelperService {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String sqlt = """select count(*) as patcount FROM (select distinct patient_num
 		        from qt_patient_set_collection
-				where result_instance_id = ?)""";
+				where result_instance_id = ?) as t""";
 		log.trace(sqlt);
 		sql.eachRow(sqlt, [result_instance_id], {row ->
 			log.trace("inrow");
@@ -434,6 +440,10 @@ class I2b2HelperService {
 	 */
 	def String clobToString(clob) {
 		if(clob==null) return "";
+        if (clob instanceof java.lang.String)
+        {
+            return clob;
+        }
 		def buffer = new byte[1000];
 		def num = 0;
 		def inStream = clob.asciiStream;
@@ -5194,8 +5204,4 @@ class I2b2HelperService {
 			return trials;
 		}
 	}
-}
-
-class SurvivalConcepts {
-	Concept conceptSurvivalTime, conceptCensoring, conceptEvent;
 }

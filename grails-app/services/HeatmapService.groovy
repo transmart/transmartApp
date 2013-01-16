@@ -24,7 +24,9 @@
  * @version $Revision: 9178 $
  */
  
-import bio.BioMarker
+import org.transmart.HeatmapDataValue;
+
+import org.transmart.biomart.BioMarker
 import com.recomdata.search.query.AssayAnalysisDataQuery
 
 public class HeatmapService {
@@ -74,7 +76,7 @@ public class HeatmapService {
 		}
 
 		def dataQuery = new AssayAnalysisDataQuery(mainTableAlias:'baad',setDistinct:true)
-		dataQuery.addTable("bio.BioAssayAnalysisData baad")
+		dataQuery.addTable("org.transmart.biomart.BioAssayAnalysisData baad")
 		dataQuery.addTable("JOIN baad.featureGroup.markers baad_bm")
 		dataQuery.addSelect("baad_bm.id, baad_bm.name, baad.analysis.id,baad.foldChangeRatio, baad.rValue, baad.rhoValue ")
 		trialQueryService.createTrialFilterCriteria(sfilter.trialFilter, dataQuery)
@@ -90,7 +92,7 @@ public class HeatmapService {
 		def tquery = dataQuery.generateSQL()
 		log.debug(tquery)
 		
-		def dataList = bio.BioAssayAnalysisData.executeQuery(tquery, ['analysisIds':searchAnalysisIds,'ids':markerList, max:2000])
+		def dataList = org.transmart.biomart.BioAssayAnalysisData.executeQuery(tquery, ['analysisIds':searchAnalysisIds,'ids':markerList, max:2000])
 		log.info("Total found: " + dataList.size())
 		
 		def dataMarkerMap = [:]
@@ -129,7 +131,7 @@ public class HeatmapService {
 	def findTopBioMarkers(sfilter, method, dataType, total,searchAnalysisIds){
 
 		def query = new AssayAnalysisDataQuery(mainTableAlias:'baad',setDistinct:true);
-		query.addTable("bio.BioAssayAnalysisData baad")
+		query.addTable("org.transmart.biomart.BioAssayAnalysisData baad")
 		query.addTable("JOIN baad.featureGroup.markers baad_bm")
 		query.addSelect("baad_bm.id")
 		query.addSelect("COUNT(DISTINCT baad.analysis.id) ")
@@ -146,7 +148,7 @@ public class HeatmapService {
 		def q = query.generateSQL()
 		log.debug(q)
 		
-		return bio.BioAssayAnalysisData.executeQuery(q, [ids:searchAnalysisIds, max:total])
+		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(q, [ids:searchAnalysisIds, max:total])
 	}
 
 	/**
@@ -155,7 +157,7 @@ public class HeatmapService {
 	def findGlobalFilterBioMarker(sfilter, method, dataType){
 
 	    def query = new AssayAnalysisDataQuery(mainTableAlias:'baad',setDistinct:true);
-		query.addTable("bio.BioAssayAnalysisData baad")
+		query.addTable("org.transmart.biomart.BioAssayAnalysisData baad")
 		query.addTable("JOIN baad.featureGroup.markers baad_bm")
 		query.addSelect("baad_bm.id")
 		query.addSelect("COUNT(DISTINCT baad.analysis.id) ")
@@ -171,7 +173,7 @@ public class HeatmapService {
 		def q = query.generateSQL()		
 		log.debug(q)
 		
-		return bio.BioAssayAnalysisData.executeQuery(q, [max:100])
+		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(q, [max:100])
 	}
 
 	/**
@@ -180,7 +182,7 @@ public class HeatmapService {
 	def findHeatmapFilterBioMarker(sfilter, method, dataType, geneIds,searchAnalysisIds){
 
 		def query = new AssayAnalysisDataQuery(mainTableAlias:'baad',setDistinct:true);
-		query.addTable("bio.BioAssayAnalysisData baad")
+		query.addTable("org.transmart.biomart.BioAssayAnalysisData baad")
 		query.addTable("JOIN baad.featureGroup.markers baad_bm")
 		query.addSelect("baad_bm.id")
 		query.addSelect("COUNT(DISTINCT baad.analysis.id)")
@@ -197,6 +199,6 @@ public class HeatmapService {
 		def q = query.generateSQL()
 		log.debug(q)
 		
-		return bio.BioAssayAnalysisData.executeQuery(q, ['ids':geneIds,'analysisIds':searchAnalysisIds,max:100])
+		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(q, ['ids':geneIds,'analysisIds':searchAnalysisIds,max:100])
 	}
 }

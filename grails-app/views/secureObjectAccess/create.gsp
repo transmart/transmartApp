@@ -16,9 +16,9 @@
   
  
 -->
-
-
-
+<%@ page import="org.transmart.searchapp.Principal"%>
+<%@ page import="org.transmart.searchapp.SecureAccessLevel"%>
+<%@ page import="org.transmart.searchapp.SecureObject"%>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

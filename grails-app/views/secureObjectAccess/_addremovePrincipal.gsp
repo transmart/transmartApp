@@ -16,7 +16,7 @@
   
  
 -->
-
+<g:setProvider library="prototype"/>
 	<g:if test="${flash.message}">
             <tr><td><div class="message">${flash.message}</div></td></tr>
             </g:if>

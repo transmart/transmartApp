@@ -24,7 +24,7 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 requestData : function(node, callback){
         if(this.fireEvent("beforeload", this, node, callback) !== false){
         var getChildrenRequest=getONTRequestHeader()+'<ns4:get_children blob="true" max="1000" synonyms="false" hiddens="false">';
-        getChildrenRequest=getChildrenRequest+"<parent>"+node.id+"</parent></ns4:getchildren>"+getONTRequestFooter();
+        getChildrenRequest=getChildrenRequest+"<parent>"+node.id+"</parent></ns4:get_children>"+getONTRequestFooter();
         
             this.transId = Ext.Ajax.request({
                 url: pageInfo.basePath+"/proxy?url="+GLOBAL.ONTUrl+"getChildren",

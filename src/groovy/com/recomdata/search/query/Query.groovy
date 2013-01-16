@@ -20,7 +20,7 @@
 
 package com.recomdata.search.query
 
-import GlobalFilter;
+import org.transmart.GlobalFilter;
 
 /**
  * $Id: Query.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -241,9 +241,9 @@ public class Query {
 	def createExpandBioMarkerSubQuery(ids){
 
 		StringBuilder s = new StringBuilder();
-		s.append("SELECT DISTINCT bdc.associatedBioDataId FROM bio.BioDataCorrelation bdc ");
+		s.append("SELECT DISTINCT bdc.associatedBioDataId FROM org.transmart.biomart.BioDataCorrelation bdc ");
 		s.append(" WHERE bdc.bioDataId in (").append(ids).append(")");
-		// s.append("SELECT DISTINCT marker.id FROM bio.BioMarker marker ")
+		// s.append("SELECT DISTINCT marker.id FROM org.transmart.biomart.BioMarker marker ")
 		// s.append(" LEFT JOIN marker.associatedCorrels marker_cor")
 		// s.append(" WHERE marker_cor.bioDataId IN (").append(ids).append(")")
 		//s.append (" AND marker_cor.correlationDescr.correlation='PATHWAY GENE'")
@@ -258,7 +258,7 @@ public class Query {
 		/*
 		 // query to use if only using 1 MV from searchapp
 		 s.append(markerAlias).append(".id IN (")
-		 s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM search.SearchBioMarkerCorrelFastMV sbmcmv ");
+		 s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM org.transmart.searchapp.SearchBioMarkerCorrelFastMV sbmcmv ");
 		 s.append(" WHERE sbmcmv.domainObjectId in (").append(ids).append(")");
 		 */
 
@@ -267,7 +267,7 @@ public class Query {
 		s.append("(");
 		if(!gfilter.getGeneSigListFilters().isEmpty()){
 			s.append(markerAlias).append(".id IN (")
-			s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM search.SearchBioMarkerCorrelFastMV sbmcmv ");
+			s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM org.transmart.searchapp.SearchBioMarkerCorrelFastMV sbmcmv ");
 			s.append(" WHERE sbmcmv.domainObjectId in (").append(gfilter.getGeneSigListFilters().getKeywordDataIdString()).append("))");
 		}
 		if(!gfilter.getGenePathwayFilters().isEmpty()){
@@ -275,7 +275,7 @@ public class Query {
 				s.append(" OR ");
 			}
 			s.append(markerAlias).append(".id IN (")
-			s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM bio.BioMarkerCorrelationMV bmcmv ");
+			s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM org.transmart.biomart.BioMarkerCorrelationMV bmcmv ");
 			s.append(" WHERE bmcmv.bioMarkerId in (").append(gfilter.getGenePathwayFilters().getKeywordDataIdString()).append(")) ");
 		}
 		s.append(")");
@@ -290,7 +290,7 @@ public class Query {
 		s.append("(");
 		if(!gfilter.getGeneSigListFilters().isEmpty()){
 			s.append(markerAlias).append(".id IN (")
-			s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM search.SearchBioMarkerCorrelFastMV sbmcmv ");
+			s.append("SELECT DISTINCT sbmcmv.assocBioMarkerId FROM org.transmart.searchapp.SearchBioMarkerCorrelFastMV sbmcmv ");
 			s.append(" WHERE sbmcmv.domainObjectId in (").append(gfilter.getGeneSigListFilters().getKeywordDataIdString()).append("))");
 		}
 		if(!gfilter.getGenePathwayFilters().isEmpty()){
@@ -298,7 +298,7 @@ public class Query {
 				s.append(" OR ");
 			}
 			s.append(markerAlias).append(".id IN (")
-			s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM bio.BioMarkerCorrelationMV bmcmv ");
+			s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM org.transmart.biomart.BioMarkerCorrelationMV bmcmv ");
 			s.append(" WHERE bmcmv.bioMarkerId in (").append(gfilter.getGenePathwayFilters().getKeywordDataIdString()).append(")) ");
 		}
 		s.append(")");

@@ -1,3 +1,7 @@
+import org.springframework.dao.DataIntegrityViolationException
+import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.Role
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -16,17 +20,6 @@
  * 
  *
  ******************************************************************/
-  
-
- /**
- * $Id: RoleController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
-
-/**
- * Authority Controller.
- */
 class RoleController {
 	
 	// the delete, save and update actions only accept POST requests
@@ -66,17 +59,27 @@ class RoleController {
 	 * Delete an authority.
 	 */
 	def delete = {
-		def authority = Role.get(params.id)
-		if (!authority) {
-			flash.message = "Role not found with id $params.id"
-			redirect action: list
-			return
-		}
-		
-		springSecurityService.deleteRole(authority)
-		
-		flash.message = "Role $params.id deleted."
-		redirect action: list
+		def role = Role.get(params.id)
+        try {
+            role.delete()
+            flash.message = "Role $params.id deleted."
+            redirect action: list
+        } catch (DataIntegrityViolationException e) {
+            flash.message = "Unable to delete the role"
+            log.error(e.getLocalizedMessage(), e)
+            redirect action: show, id: params.id
+        } catch (MissingMethodException mme)    {
+            flash.message = "Unable to delete the role"
+            log.error(mme.getLocalizedMessage(), mme)
+            redirect action: show, id: params.id
+        }
+        
+        def msg = "$role.authority has been deleted."
+        def authPrincipal = springSecurityService.getPrincipal()
+        flash.message = msg
+        new AccessLog(username:authPrincipal.username, event:"Role Deleted",
+            eventmessage: msg,
+            accesstime:new Date()).save()
 	}
 	
 	/**

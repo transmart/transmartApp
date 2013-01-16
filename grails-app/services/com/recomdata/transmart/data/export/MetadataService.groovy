@@ -28,11 +28,11 @@ import java.util.Map
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.springframework.context.ApplicationContext
+import org.transmart.biomart.ClinicalTrial;
 
-import bio.ClinicalTrial
-import bio.Compound
-import bio.Experiment
-import bio.Taxonomy
+import org.transmart.biomart.Compound
+import org.transmart.biomart.Experiment
+import org.transmart.biomart.Taxonomy
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 
@@ -78,7 +78,7 @@ class MetadataService {
 			
 			if(exp==null){
 				exp = Experiment.findByAccession(studyUid);
-				//exp = Experiment.executeQuery("SELECT DISTINCT ct FROM bio.Experiment ct LEFT JOIN FETCH ct.organisms LEFT JOIN FETCH ct.compounds LEFT JOIN FETCH ct.diseases");
+				//exp = Experiment.executeQuery("SELECT DISTINCT ct FROM org.transmart.biomart.Experiment ct LEFT JOIN FETCH ct.organisms LEFT JOIN FETCH ct.compounds LEFT JOIN FETCH ct.diseases");
 				isTrial = false;
 			}
 			def organisms = Taxonomy.findAll(new Taxonomy(experiments:[exp]))

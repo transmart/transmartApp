@@ -34,7 +34,6 @@
 		</style>
 	<![endif]-->
 
-		<g:javascript library="prototype" />
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
@@ -134,7 +133,7 @@
 				downloadTrialAnalysisUrl: "${createLink(controller:'trial', action:'downloadAnalysisTEA')}",
 				downloadEaUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysis')}",
 				downloadEaTEAUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysisTEA')}",
-			    cortellis: {
+				cortellis: {
 			    	resultsUrl: "${createLink(controller:'cortellisSearch',action:'search', params:[text: session.searchFilter.getExternalTerms()])}"
 			    }
 				};
@@ -235,9 +234,9 @@
 				    if ("${grailsApplication.config.com.recomdata.searchtool.genegoURL}" == "") {
 				        tabpanel.remove(Ext.getCmp("tab8"));
 					}		
-					if ("${grailsApplication.config.com.recomdata.searchtool.cortellisEnabled}" == "") {
+				    if ("${grailsApplication.config.com.recomdata.searchtool.cortellisEnabled}" == "") {
 						tabpanel.remove(Ext.getCmp("tab18"));
-					}		       
+					}			       
 				}
 				
 			    // set active tab
@@ -342,7 +341,9 @@
 				helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 			</script>
 		</sec:ifAnyGranted>
-		<!-- ************************************** --> 
+		<!-- ************************************** -->
+		<g:javascript library="prototype" plugin="prototype"/>
+        <r:layoutResources/> 
 	</head>
 <body>
 		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
@@ -366,5 +367,6 @@
 				<input type="hidden" name="selectedpath" value="">
 			</g:form>
 		</div>
+		<r:layoutResources/>
 	</body>
 </html>

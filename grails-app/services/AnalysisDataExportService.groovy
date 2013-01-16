@@ -21,10 +21,13 @@
 import com.recomdata.util.ExcelSheet;
 import com.recomdata.util.ExcelGenerator;
 import javax.servlet.http.HttpServletResponse;
-import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
-import bio.BioMarker
-import bio.Experiment
+
+import org.transmart.SearchResult;
+import org.transmart.biomart.BioAssayAnalysis;
+import org.transmart.biomart.BioAssayAnalysisData;
+
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Experiment
 
 /**
  * $Id: AnalysisDataExportService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -34,7 +37,7 @@ import bio.Experiment
 
 class AnalysisDataExportService {
 
-	def renderAnalysisInExcel(bio.BioAssayAnalysis analysis){
+	def renderAnalysisInExcel(org.transmart.biomart.BioAssayAnalysis analysis){
 		def ExcelSheet sheet = null;
 		def method = analysis.analysisMethodCode
 		if("correlation".equalsIgnoreCase(method)){
@@ -50,7 +53,7 @@ class AnalysisDataExportService {
 		return gen.generateExcel([sheet]);
 	}
 
-	def renderComparisonAnalysisExcel(bio.BioAssayAnalysis analysis){
+	def renderComparisonAnalysisExcel(org.transmart.biomart.BioAssayAnalysis analysis){
 
 		def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g JOIN  g.featureGroup.markers markers WHERE markers.bioMarkerType='GENE' AND g.analysis.id ="+analysis.id)
 		def headers =[]
@@ -71,7 +74,7 @@ class AnalysisDataExportService {
 		return new ExcelSheet("sheet1", headers, values);
 	}
 
-	def renderCorrelationAnalysisExcel(bio.BioAssayAnalysis analysis){
+	def renderCorrelationAnalysisExcel(org.transmart.biomart.BioAssayAnalysis analysis){
 
 		def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g JOIN g.featureGroup.markers markers WHERE markers.bioMarkerType='GENE' AND g.analysis.id ="+analysis.id)
 		def headers=[]
@@ -92,7 +95,7 @@ class AnalysisDataExportService {
 		return new ExcelSheet("sheet1", headers, values);
 	}
 
-	def renderSpearmanAnalysisExcel(bio.BioAssayAnalysis analysis){
+	def renderSpearmanAnalysisExcel(org.transmart.biomart.BioAssayAnalysis analysis){
 
 		println(">> Spearman analysis query:")
 		//def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g JOIN FETCH g.markers markers WHERE markers.bioMarkerType='GENE' AND g.analysis.id ="+analysis.id)

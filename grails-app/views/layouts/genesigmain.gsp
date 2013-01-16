@@ -26,7 +26,7 @@
 		<link rel="stylesheet"	href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
 		<link rel="stylesheet"	href="${resource(dir:'css',file:'genesignature.css')}" />		
-		<g:javascript library="prototype" />
+		<!-- <g:javascript library="prototype" />-->
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'maintabpanel.js')}"></script>		

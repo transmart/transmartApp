@@ -34,6 +34,8 @@ import groovy.xml.MarkupBuilder
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+import org.transmart.SearchResult;
+
 /**
  * ResNetService that will provide an .rnef file for Jubilant data
  * 

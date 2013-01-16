@@ -22,7 +22,6 @@ package com.recomdata.transmart.data.export
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.grails.commons.ApplicationHolder;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 import org.json.JSONArray
 import org.json.JSONObject
 import org.quartz.JobDataMap;
@@ -31,7 +30,7 @@ import org.quartz.SimpleTrigger;
 
 import com.recomdata.transmart.data.export.ExportDataProcessor
 import com.recomdata.transmart.domain.i2b2.AsyncJob;
-import com.recomdata.transmart.domain.searchapp.AccessLog
+import org.transmart.searchapp.AccessLog
 import com.recomdata.transmart.validate.RequestValidator;
 import com.recomdata.asynchronous.GenericJobService;
 
@@ -45,7 +44,7 @@ class ExportService {
 	def jobResultsService
 	def asyncJobService
 	def quartzScheduler
-	def config = ConfigurationHolder.config
+	def grailsApplication
 
 	def Map createJSONFileObject(fileType, dataFormat, fileDataCount, gplId, gplTitle) {
 		def file = [:]
@@ -68,7 +67,7 @@ class ExportService {
 	}
 	
 	def getMetaData(params) {
-		def dataTypesMap = config.com.recomdata.transmart.data.export.dataTypesMap
+		def dataTypesMap = grailsApplication.config.com.recomdata.transmart.data.export.dataTypesMap
 		
 		//The result instance id's are stored queries which we can use to get information from the i2b2 schema.
 		def rID1 = RequestValidator.nullCheck(params.result_instance_id1)
@@ -350,8 +349,7 @@ class ExportService {
 	def getExportJobs(userName) {
 		JSONObject result = new JSONObject()
 		JSONArray rows = new JSONArray()
-		def config = ConfigurationHolder.config
-		def maxJobs = config.com.recomdata.transmart.data.export.max.export.jobs.loaded
+		def maxJobs = grailsApplication.config.com.recomdata.transmart.data.export.max.export.jobs.loaded
 		
 		maxJobs = maxJobs ? maxJobs : 0
 		
@@ -388,6 +386,13 @@ class ExportService {
 		def job = AsyncJob.findByJobName(jobName)
 		def exportDataProcessor = new ExportDataProcessor()
 		
-		return exportDataProcessor.getExportJobFileStream(job.viewerURL)
+		def tempDir = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
+		def ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
+		def ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
+		def ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
+		def ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
+		def ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
+
+		return exportDataProcessor.getExportJobFileStream(job.viewerURL, tempDir, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath)
 	}
 }

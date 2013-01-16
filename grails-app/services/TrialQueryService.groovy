@@ -18,12 +18,18 @@
  ******************************************************************/
   
 
-import bio.BioMarker
-import bio.Compound
-import bio.Disease
-import bio.ClinicalTrial
-import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
+import org.transmart.AnalysisResult;
+import org.transmart.AssayAnalysisValue;
+import org.transmart.ExpAnalysisResultSet;
+import org.transmart.SearchFilter;
+import org.transmart.TrialAnalysisResult;
+import org.transmart.biomart.BioAssayAnalysis;
+import org.transmart.biomart.BioAssayAnalysisData;
+
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Compound
+import org.transmart.biomart.Disease
+import org.transmart.biomart.ClinicalTrial
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.Query
 
@@ -45,7 +51,7 @@ class TrialQueryService {
 			return 0
 		}
 
-		return bio.BioAssayAnalysisData.executeQuery(createQuery("COUNT_EXP", filter))[0]
+		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery("COUNT_EXP", filter))[0]
 	}
 
 	def countAnalysis(SearchFilter filter){
@@ -54,7 +60,7 @@ class TrialQueryService {
 			return 0
 		}
 
-		return bio.BioAssayAnalysisData.executeQuery(createQuery("COUNT_ANALYSIS", filter))[0]
+		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery("COUNT_ANALYSIS", filter))[0]
 	}
 
 	/**
@@ -65,7 +71,7 @@ class TrialQueryService {
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return []
 		}
-		def result = bio.BioAssayAnalysisData.executeQuery(createQuery("DATA", filter), paramMap==null?[:]:paramMap)
+		def result = org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery("DATA", filter), paramMap==null?[:]:paramMap)
 
 		List trialResult = []
 		//def analysisCount = 0;
@@ -73,7 +79,7 @@ class TrialQueryService {
 		for(row in result){
 			//	analysisCount +=row[1];
 			//	expCount++;
-			trialResult.add(new TrialAnalysisResult(trial:bio.ClinicalTrial.get(row[0]), analysisCount:row[1], groupByExp:true))
+			trialResult.add(new TrialAnalysisResult(trial:org.transmart.biomart.ClinicalTrial.get(row[0]), analysisCount:row[1], groupByExp:true))
 		}
 		return new ExpAnalysisResultSet(expAnalysisResults:trialResult, groupByExp:true)
 	}
@@ -88,8 +94,8 @@ class TrialQueryService {
 		def gfilter = filter.globalFilter
 
 		def query =new AssayAnalysisDataQuery(mainTableAlias:'baad');
-		query.addTable("bio.BioAssayAnalysisData baad ");
-		query.addTable ("bio.ClinicalTrial ct ");
+		query.addTable("org.transmart.biomart.BioAssayAnalysisData baad ");
+		query.addTable ("org.transmart.biomart.ClinicalTrial ct ");
 		query.addCondition("baad.experiment.id = ct.id ")
 
 		query.createGlobalFilterCriteria(gfilter);
@@ -123,13 +129,13 @@ class TrialQueryService {
 	 */
 	def createAnalysisIDSelectQuery(SearchFilter filter){
 		if(filter == null || filter.globalFilter.isTextOnly()){
-			return " SELECT -1 FROM bio.BioAssayAnalysisData baad WHERE 1 = 1 "
+			return " SELECT -1 FROM org.transmart.biomart.BioAssayAnalysisData baad WHERE 1 = 1 "
 		}
 		def gfilter = filter.globalFilter
 
 		def query =new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true);
-		query.addTable("bio.BioAssayAnalysisData baad ");
-		query.addTable ("bio.ClinicalTrial ct ");
+		query.addTable("org.transmart.biomart.BioAssayAnalysisData baad ");
+		query.addTable ("org.transmart.biomart.ClinicalTrial ct ");
 		query.addCondition("baad.experiment.id = ct.id ")
 
 		query.createGlobalFilterCriteria(gfilter);
@@ -148,7 +154,7 @@ class TrialQueryService {
 		def gfilter = filter.globalFilter
 
 		def query = new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true)
-		query.addTable("bio.BioAssayAnalysisData baad")
+		query.addTable("org.transmart.biomart.BioAssayAnalysisData baad")
 		query.addTable("JOIN baad.featureGroup.markers baad_bm")
 		query.addSelect("baad")
 		query.addSelect("baad_bm")
@@ -164,7 +170,7 @@ class TrialQueryService {
 		def tResult = new TrialAnalysisResult(trial:ClinicalTrial.get(clinicalTrialId))
 		// println("exe sql:"+sql)
 		if(!gfilter.getBioMarkerFilters().isEmpty()){
-			result =  bio.BioAssayAnalysisData.executeQuery(sql)
+			result =  org.transmart.biomart.BioAssayAnalysisData.executeQuery(sql)
 			processAnalysisResult(result, tResult)
 		}
 
@@ -176,7 +182,7 @@ class TrialQueryService {
 				def countGene = row[1]
 				//result = getTopAnalysisDataForAnalysis(analysisId, 5);
 				result = BioAssayAnalysis.getTopAnalysisDataForAnalysis(analysisId, 50);
-				def analysisResult = new AnalysisResult(analysis:bio.BioAssayAnalysis.get(analysisId),bioMarkerCount:countGene)
+				def analysisResult = new AnalysisResult(analysis:org.transmart.biomart.BioAssayAnalysis.get(analysisId),bioMarkerCount:countGene)
 				tResult.analysisResultList.add(analysisResult)
 				processAnalysisResultNoSort(result, analysisResult)
 			}
@@ -189,7 +195,7 @@ class TrialQueryService {
 		def gfilter = filter.globalFilter
 
 		def query = new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true)
-		query.addTable("bio.BioAssayAnalysisData baad")
+		query.addTable("org.transmart.biomart.BioAssayAnalysisData baad")
 		if(filter!=null)
 			query.createGlobalFilterCriteria(gfilter, true);
 		if(trialFilter!=null)
@@ -209,7 +215,7 @@ class TrialQueryService {
 		query.addCondition("baad.experiment.id ="+clinicalTrialId)
 		query.addGroupBy("baad.analysis")
 		query.addOrderBy("COUNT(DISTINCT baad_bm.id) DESC")
-		return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
+		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(query.generateSQL());
 	}
 
 	/**
@@ -235,7 +241,7 @@ class TrialQueryService {
 
 		for(row in result){
 			def analysisData = row[0]
-			def biomarker = row[1]; //bio.BioMarker.get(row[1])
+			def biomarker = row[1]; //org.transmart.biomart.BioMarker.get(row[1])
 			//println(biomarker)
 			def aresult =analysisResultMap.get(analysisData.analysis.id)
 			if(aresult==null){
@@ -276,21 +282,21 @@ class TrialQueryService {
 
 		// design
 		if(trialfilter.hasStudyDesign()){
-			query.addTable ("bio.ClinicalTrial ct ");
+			query.addTable ("org.transmart.biomart.ClinicalTrial ct ");
 			query.addCondition("baad.experiment.id = ct.id ")
 			query.addCondition("ct.design = '"+trialfilter.studyDesign+"'")
 		}
 
 		// type
 		if(trialfilter.hasStudyType()){
-			query.addTable ("bio.ClinicalTrial ct ");
+			query.addTable ("org.transmart.biomart.ClinicalTrial ct ");
 			query.addCondition("baad.experiment.id = ct.id ")
 			query.addCondition("ct.studyType = '"+trialfilter.studyType+"'")
 		}
 
 		// study phase
 		if(trialfilter.hasPhase()){
-			query.addTable("bio.ClinicalTrial ct ");
+			query.addTable("org.transmart.biomart.ClinicalTrial ct ");
 			query.addCondition("baad.experiment.id = ct.id ")
 			query.addCondition("ct.studyPhase = '"+trialfilter.phase+"'")
 		}
@@ -341,7 +347,7 @@ class TrialQueryService {
 
 		// clinical trials
 		if (trialfilter.hasSelectedTrials()) {
-			query.addTable("bio.ClinicalTrial ct ");
+			query.addTable("org.transmart.biomart.ClinicalTrial ct ");
 			query.addCondition("baad.experiment.id = ct.id ")
 			query.addCondition("ct.id in (" + trialfilter.createTrialInclause()+ ")")
 

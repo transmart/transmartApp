@@ -21,9 +21,12 @@
 /*
  * $Id: CustomFilterController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  */
-import search.SearchKeyword
-import search.CustomFilter
-import search.CustomFilterItem
+import org.transmart.GlobalFilter;
+import org.transmart.searchapp.AuthUser;
+
+import org.transmart.searchapp.SearchKeyword
+import org.transmart.searchapp.CustomFilter
+import org.transmart.searchapp.CustomFilterItem
 import grails.converters.*
 
 /**
@@ -40,7 +43,7 @@ class CustomFilterController {
 		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
         def customFilters = CustomFilter.findAllBySearchUserId(user.id)
         for (customFilter in customFilters) {
-        	def keywordMap = createKeywordMap(customFilter)
+        	def keywordMap = createKeywordMapForCustomFilter(customFilter)
         	def summary = createSummaryWithLinks(keywordMap)
         	customFilter.summary = summary
         }
@@ -72,7 +75,7 @@ class CustomFilterController {
         	flash.message = "You are not authorized to edit the custom filter with ID ${params.id}."
             redirect(action:list)
         } else {
-        	def keywordMap = createKeywordMap(customFilterInstance)
+        	def keywordMap = createKeywordMapForCustomFilter(customFilterInstance)
         	def summary = createSummaryWithLinks(keywordMap)
         	customFilterInstance.summary = summary
             return [ customFilterInstance : customFilterInstance ]
@@ -102,7 +105,7 @@ class CustomFilterController {
         def filter = new CustomFilter()
 		filter.properties.searchUserId = user.id
 		filter.properties.privateFlag = 'N'
-		def map = createKeywordMap(session.searchFilter.globalFilter)
+		def map = createKeywordMapForGlobalFilter(session.searchFilter.globalFilter)
 		filter.properties.summary = createSummaryWithLinks(map)
         return ['customFilterInstance':filter]
     }
@@ -113,7 +116,7 @@ class CustomFilterController {
 		params.privateFlag = (params?.privateFlag != "on") ? 'N' : 'Y'
         def filter = new CustomFilter(params)
 		//println(filter)
-		def map = createKeywordMap(session.searchFilter.globalFilter)
+		def map = createKeywordMapForGlobalFilter(session.searchFilter.globalFilter)
         for (key in map.keySet()) {
         	def keywords = map[(key)]
         	for (keyword in keywords) {
@@ -148,7 +151,7 @@ class CustomFilterController {
 		return false
 	}
 
-	def createKeywordMap(GlobalFilter gfilter) {
+	def createKeywordMapForGlobalFilter(GlobalFilter gfilter) {
         def map = [:]
         def list
         list = gfilter.getGeneFilters()
@@ -187,7 +190,7 @@ class CustomFilterController {
         return map
 	}
 
-	def createKeywordMap(CustomFilter filter) {
+	def createKeywordMapForCustomFilter(CustomFilter filter) {
 
 		def map = [:]
 		def uniqueIds = []

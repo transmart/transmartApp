@@ -29,7 +29,7 @@
 	<script type="text/javascript" src="${resource(dir:'js/sarissa', file:'sarissa.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/sarissa', file: 'sarissa_ieemu_xpath.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/javeline', file: 'javeline_xpath.js')}"></script>
-	<g:javascript library="prototype" />
+	<!-- <g:javascript library="prototype" /> -->
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>

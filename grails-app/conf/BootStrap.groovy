@@ -16,14 +16,7 @@
  * 
  *
  ******************************************************************/
-  
-
- /**
-  * $Id: BootStrap.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
-  */
-
+ 
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
@@ -40,7 +33,6 @@ class BootStrap {
 		securityContextPersistenceFilter.forceEagerSessionCreation = true
 		
 		SpringSecurityUtils.clientRegisterFilter('concurrentSessionFilter', SecurityFilterPosition.CONCURRENT_SESSION_FILTER)
-	//	SpringSecurityUtils.clientRegisterFilter('identityVaultAuthenticationFilter', SecurityFilterPosition.PRE_AUTH_FILTER.order + 10)
     }
     def destroy = {
     }

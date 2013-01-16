@@ -1,3 +1,5 @@
+import org.transmart.searchapp.SecureObject;
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 

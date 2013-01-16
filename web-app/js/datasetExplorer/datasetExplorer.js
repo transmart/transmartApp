@@ -388,7 +388,7 @@ Ext.onReady(function()
 					        ,
 					        {
 					        	 text : 'PLINK',
-					        	 disabled : false, // true,
+					        	 disabled : true,
 					        	 handler : function()	{
 					        	 	if(isSubsetEmpty(1) && isSubsetEmpty(2))
 					        	 	{
@@ -872,7 +872,7 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
-				
+		
 		resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
@@ -881,7 +881,6 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
-		
 		if (GLOBAL.metacoreAnalyticsEnabled) {
 			resultsTabPanel.add(metacoreEnrichmentPanel);
 		}
@@ -4670,3 +4669,4 @@ function ontFilterLoaded(el, success, response, options)
 			Ext.get("ontSearchButton").dom.click();
 		}
 }
+

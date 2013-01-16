@@ -18,6 +18,10 @@
  ******************************************************************/
   
 
+import org.transmart.searchapp.AuthUser;
+import org.transmart.searchapp.Principal;
+import org.transmart.searchapp.UserGroup;
+
 import groovy.sql.Sql;
 import command.UserGroupCommand;
 import grails.converters.*;
@@ -32,7 +36,9 @@ class UserGroupController {
     def allowedMethods = [delete:'POST', save:'POST', update:'POST']
 
     def list = {
-        if(!params.max) params.max = 10
+        if(!params.max) {
+            params.max = 10
+        }
         [ userGroupInstanceList: UserGroup.findAllByIdGreaterThanEquals(0, params ) ]
     }
 
@@ -125,14 +131,11 @@ class UserGroupController {
     {
     	String searchText = request.getParameter("query");
 		def userdata=[];
-		 def users=AuthUser.executeQuery("from AuthUser p where upper(p.name) like upper ('%"+searchText+"%') order by p.name");
-			users.each{user ->
-
-					userdata.add([name:user.name, username:user.username,  type:user.type, description:user.description, uid:user.id ])
-				}
+		def users=AuthUser.executeQuery("from AuthUser p where upper(p.name) like upper ('%"+searchText+"%') order by p.name");
+		    users.each{user ->
+                userdata.add([name:user.name, username:user.username,  type:user.type, description:user.description, uid:user.id ])
+			}
 		def result = [rows:userdata]
-		println(result as JSON)
-
 		render params.callback+"("+(result as JSON)+")"
     }
 
@@ -287,20 +290,21 @@ def removeUserFromGroups =
 						userdata.add([name:user.name, username:"No Login", type:user.type, description:user.description, uid:user.id ])
 						}
 					}
-			def result = [rows:userdata]
-			//println(result as JSON)
+			def result = [rows:userdata]		
 			render params.callback+"("+(result as JSON)+")"
 	    }
+    
 
 
-	 def getGroupsWithUser(userid)
-		{
-		return UserGroup.executeQuery('Select g FROM UserGroup g, IN (g.members) m WHERE m.id=?)', userid);
-		}
+        
+	private getGroupsWithUser(userid)
+	{
+        return UserGroup.executeQuery('Select g FROM UserGroup g, IN (g.members) m WHERE m.id=?)', userid);
+	}
 
-		def getGroupsWithoutUser(userid, insearchtext)
-		{
-			def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
-			return UserGroup.executeQuery('from UserGroup g WHERE g.id<>-1 AND g.id NOT IN (SELECT g2.id from UserGroup g2, IN (g2.members) m WHERE m.id=?) AND upper(g.name) like ?', [userid, searchtext] );
-		}
+	private getGroupsWithoutUser(userid, insearchtext)
+	{
+		def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
+		return UserGroup.executeQuery('from UserGroup g WHERE g.id<>-1 AND g.id NOT IN (SELECT g2.id from UserGroup g2, IN (g2.members) m WHERE m.id=?) AND upper(g.name) like ?', [userid, searchtext] );
+	} 
 }

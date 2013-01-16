@@ -18,7 +18,7 @@
 -->
 
 
-<%@ page import="SecureObjectAccess" %>
+<%@ page import="org.transmart.searchapp.SecureObjectAccess" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -28,6 +28,8 @@
    p { width:430px; }
         .ext-ie .x-form-text {position:static !important;}
   </style>
+    <g:javascript library="prototype" plugin="prototype"/>
+    <r:layoutResources/>  
     </head>
     <body>
         <div class="body">
@@ -38,6 +40,9 @@
   <div id="divuser" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br><b>Search User/Group</b><br>
   <input type="text"  size="80" id="searchUsers" autocomplete="off" /></div>
   <script type="text/javascript">
+  var pageInfo = {
+          basePath :"${request.getContextPath()}"
+      }
   createUserSearchBox('${request.getContextPath()}/userGroup/ajaxGetUsersAndGroupsSearchBoxData', 440,'${principalInstance?.name}');
 
   function searchtrial(){
@@ -63,13 +68,13 @@
                 				<td><input name="searchtext" id="searchtext"></input><button class="" onclick="searchtrial();">Search Study</button></td>
                      			<tr><td>Has Access for these studies</td><td></td><td>Available studies:</td></tr>
                        			<tr id="permissions">
-                                    <g:render template="addremoveAccess" model="['secureObjectInstance':secureObjectInstance,'secureObjectAccessList' :secureObjectAccessList,'objectswithoutaccess':objectswithoutaccess" />
+                                    <g:render template="addremoveAccess" model="['secureObjectInstance':secureObjectInstance,'secureObjectAccessList' :secureObjectAccessList,'objectswithoutaccess':objectswithoutaccess]" />
                                     </tr>
                                      </table>
                                 	</div>
                                 </td>
                             </tr>
                         </tbody>
-
+    <r:layoutResources/>
     </body>
 </html>

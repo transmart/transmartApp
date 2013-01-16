@@ -16,7 +16,7 @@
   
  
 -->
-
+<g:setProvider library="prototype"/>
 
 <g:formRemote name="ontTagFilterForm" id="ontTagFilterForm"
 	url="[controller:'ontology',action:'ajaxOntTagFilter']"

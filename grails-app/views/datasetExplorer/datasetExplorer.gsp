@@ -37,7 +37,7 @@
 	src="${resource(dir:'js/sarissa', file: 'sarissa_ieemu_xpath.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js/javeline', file: 'javeline_xpath.js')}"></script>
-<g:javascript library="prototype" />
+<script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	
@@ -83,17 +83,12 @@
 
  
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
-	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'metacore.css')}">
 	
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
 	
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-	
-	<script type="text/javascript" src="${resource(dir:'js/raphael', file:'raphael-min.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
 		
 	<!-- Combo-handled YUI JS files: --> 
 	<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script> 

@@ -18,16 +18,21 @@
  ******************************************************************/
   
 
-import bio.BioMarker
-import bio.Compound
-import bio.Disease
-import bio.ClinicalTrial
-import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
-import bio.BioAssayAnalysisDataTea
-import bio.Experiment
-import search.SearchBioMarkerCorrelFastMV
-import bio.BioMarkerCorrelationMV
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Compound
+import org.transmart.biomart.Disease
+import org.transmart.biomart.ClinicalTrial
+import org.transmart.biomart.Experiment
+
+import org.transmart.AnalysisResult;
+import org.transmart.AssayAnalysisValue;
+import org.transmart.ExpAnalysisResultSet;
+import org.transmart.SearchFilter;
+import org.transmart.biomart.BioAssayAnalysis;
+import org.transmart.biomart.BioAssayAnalysisData;
+import org.transmart.biomart.BioAssayAnalysisDataTea;
+import org.transmart.searchapp.SearchBioMarkerCorrelFastMV
+import org.transmart.biomart.BioMarkerCorrelationMV
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.AssayAnalysisDataTeaQuery
 import com.recomdata.search.query.Query
@@ -50,7 +55,7 @@ class AnalysisTEABaseService {
 			return 0
 		}
 
-		return bio.BioAssayAnalysisData.executeQuery(createCountQuery(filter))[0]
+		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(createCountQuery(filter))[0]
 	}
 
 	/**
@@ -61,7 +66,7 @@ class AnalysisTEABaseService {
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return []
 		}
-		def result = queryExpAnalysis(filter)//bio.BioAssayAnalysisData.executeQuery(createQuery(false, filter), paramMap==null?[:]:paramMap)
+		def result = queryExpAnalysis(filter)//org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery(false, filter), paramMap==null?[:]:paramMap)
 
 		List trialResult = []
 		if(result!=null)
@@ -100,10 +105,10 @@ class AnalysisTEABaseService {
 		def gfilter = filter.globalFilter
 
 		def query =new AssayAnalysisDataQuery(mainTableAlias:'baad');
-		query.addTable("bio.BioAssayAnalysisData baad ");
+		query.addTable("org.transmart.biomart.BioAssayAnalysisData baad ");
 		query.addCondition(" baad.experiment.type='"+getExpType()+"'")
 
-		////query.addTable ("bio.ClinicalTrial ct ");
+		////query.addTable ("org.transmart.biomart.ClinicalTrial ct ");
 		//query.addCondition("baad.experiment.id = ct.id ")
 
 		query.createGlobalFilterCriteria(gfilter);
@@ -122,12 +127,12 @@ class AnalysisTEABaseService {
 
 	def createAnalysisIDSelectQuery(SearchFilter filter){
 		if(filter == null || filter.globalFilter.isTextOnly()){
-			return " SELECT -1 FROM bio.BioAssayAnalysisData baad WHERE 1 = 1 "
+			return " SELECT -1 FROM org.transmart.biomart.BioAssayAnalysisData baad WHERE 1 = 1 "
 		}
 		def gfilter = filter.globalFilter
 
 		def query =new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true);
-		query.addTable("bio.BioAssayAnalysisDataTea baad ");
+		query.addTable("org.transmart.biomart.BioAssayAnalysisDataTea baad ");
 		query.addCondition(" baad.experiment.type='"+getExpType()+"'")
 
 		query.createGlobalFilterCriteria(gfilter);
@@ -150,7 +155,7 @@ class AnalysisTEABaseService {
 
 		// get distinct analyses
 		def query = new AssayAnalysisDataTeaQuery(mainTableAlias:"baad", setDistinct:true)
-		query.addTable("bio.BioAssayAnalysisDataTea baad")
+		query.addTable("org.transmart.biomart.BioAssayAnalysisDataTea baad")
 		//query.addTable("JOIN baad.markers baad_bm")
 		query.addCondition(" baad.experiment.type='"+getExpType()+"'")
 		query.addCondition(" baad.analysis.teaDataCount IS NOT NULL")
@@ -163,7 +168,7 @@ class AnalysisTEABaseService {
 	//	createNPVCondition(query)
 
 		// get count
-		def result = bio.BioAssayAnalysisDataTea.executeQuery(query.generateSQL())
+		def result = org.transmart.biomart.BioAssayAnalysisDataTea.executeQuery(query.generateSQL())
 		log.info "anal ct result: "+result
 		if(result!=null && result.size()>0) analysisCount = result[0]
 		return analysisCount
@@ -179,7 +184,7 @@ class AnalysisTEABaseService {
 
 		if(!gfilter.getBioMarkerFilters().isEmpty()){
 			def query = new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true)
-			query.addTable("bio.BioAssayAnalysisDataTea baad")
+			query.addTable("org.transmart.biomart.BioAssayAnalysisDataTea baad")
 			//query.addTable("JOIN FETCH baad.analysis ")
 			query.addTable("JOIN baad.featureGroup.markers baad_bm")
 			query.addCondition(" baad.experimentType='"+getExpType()+"'")
@@ -195,7 +200,7 @@ class AnalysisTEABaseService {
 			//createNPVCondition(query)
 
 			def sql = query.generateSQL();
-			result = bio.BioAssayAnalysisDataTea.executeQuery(sql)
+			result = org.transmart.biomart.BioAssayAnalysisDataTea.executeQuery(sql)
 
 			// get up/down info from mv for all biomarkers
 			def biomarkerFilters = gfilter.getBioMarkerFilters()
@@ -208,10 +213,10 @@ class AnalysisTEABaseService {
 				// switch for gene sig or list
 				def dynamicValuesQuery
 				if(gfilter.getGeneSignatureFilters().size()>0) {
-					dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, sbmcmv.valueMetric FROM search.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in ("+mids+")";
+					dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, sbmcmv.valueMetric FROM org.transmart.searchapp.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in ("+mids+")";
 				} else {
 					// always up regulated for gene list
-					dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, 1 as valueMetric FROM search.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in ("+mids+")";
+					dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, 1 as valueMetric FROM org.transmart.searchapp.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in ("+mids+")";
 				}
 				updownResult.addAll(SearchBioMarkerCorrelFastMV.executeQuery(dynamicValuesQuery))
 				log.info "number of search app biomarkers: "+updownResult.size()
@@ -219,7 +224,7 @@ class AnalysisTEABaseService {
 
 			// add static biomarkers
 			// make sure no homology gene is searched
-			def bioMarkersQuery = "SELECT DISTINCT bmcmv.assoBioMarkerId as assocBioMarkerId, 0 as valueMetric FROM bio.BioMarkerCorrelationMV bmcmv WHERE bmcmv.bioMarkerId in ("+mids+") AND bmcmv.correlType <>'HOMOLOGENE_GENE'";
+			def bioMarkersQuery = "SELECT DISTINCT bmcmv.assoBioMarkerId as assocBioMarkerId, 0 as valueMetric FROM org.transmart.biomart.BioMarkerCorrelationMV bmcmv WHERE bmcmv.bioMarkerId in ("+mids+") AND bmcmv.correlType <>'HOMOLOGENE_GENE'";
 			def staticResult = BioMarkerCorrelationMV.executeQuery(bioMarkersQuery);
 			log.info "number of static biomarkers: "+staticResult.size()
 
@@ -288,7 +293,7 @@ class AnalysisTEABaseService {
 	def getAllAnalyses(SearchFilter filter){
 		// need both filters here
 		def analysisQuery = new AssayAnalysisDataQuery(mainTableAlias:"baad", setDistinct:true)
-		analysisQuery.addTable("bio.BioAssayAnalysisDataTea baad")
+		analysisQuery.addTable("org.transmart.biomart.BioAssayAnalysisDataTea baad")
 		analysisQuery.addCondition(" baad.experiment.type='"+getExpType()+"'")
 		analysisQuery.addCondition(" baad.analysis.teaDataCount IS NOT NULL");
 
@@ -302,7 +307,7 @@ class AnalysisTEABaseService {
 		analysisQuery.createGlobalFilterCriteria(filter.globalFilter, true);
 		createSubFilterCriteria(filter, analysisQuery);
 
-		return bio.BioAssayAnalysisDataTea.executeQuery(analysisQuery.generateSQL())
+		return org.transmart.biomart.BioAssayAnalysisDataTea.executeQuery(analysisQuery.generateSQL())
 	}
 
 	/**
@@ -328,7 +333,7 @@ class AnalysisTEABaseService {
 		// loop through data
 		for(row in result){
 			def analysisData = row[0]
-			def biomarker = row[1]; //bio.BioMarker.get(row[1])
+			def biomarker = row[1]; //org.transmart.biomart.BioMarker.get(row[1])
 			
 			def mvlookup = mvMap.get(biomarker.id)
 			def aid = analysisData.analysis.id;

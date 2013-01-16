@@ -21,7 +21,6 @@
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
-grails.project.war.file = "target/transmart.war"
 
 //grails.plugin.location.rmodules = "C:\\SVN\\repo1\\pharma\\transmart\\trunk\\plugins\\Rmodules"
 
@@ -48,10 +47,18 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.jboss.com/maven2/"
     }
     dependencies {
-        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
+		// specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
+		runtime 'postgresql:postgresql:9.0-801.jdbc4'
+    }
 
-  
+    plugins {
+        compile ":hibernate:$grailsVersion"
+        build ":tomcat:$grailsVersion"
+        compile ":quartz:1.0-RC2"
+        build ":rdc-rmodules:0.2"
+        compile ":spring-security-core:1.2.7.1"
+        build ":build-info:1.1"
+		runtime ":prototype:1.0"
+		compile ":resources:1.1.6"
     }
 }
-
-
