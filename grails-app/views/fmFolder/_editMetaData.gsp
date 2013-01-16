@@ -38,7 +38,22 @@
 	        	        </g:elseif>
 	        	    </g:else>    
                 </g:if>
-                
+                <%-- 
+                <g:elseif test="${amTagItem.tagItemType == 'CUSTOM'}">
+                	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[objectUid,amTagItem.id])}"/>
+	           		<g:if test="${amTagItem.editable == false}">
+						not editable CUSTOM
+                	</g:if>
+                	<g:else>
+	                	<g:if test="${(tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:'')?.length()<100}">
+							<g:textField size="100" name="amTagItem_${amTagItem.id}"  value="${tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:''}"/>
+		                </g:if>
+	    	            <g:else>
+	            	         <g:textArea size="100" cols="74" rows="10" name="amTagItem_${amTagItem.id}" value="${tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:''}" />          
+	        	        </g:else>
+                	</g:else>
+	           </g:elseif>
+                --%>
                 <%-- 
                 <g:elseif test="${amTagItem.tagItemType == 'PICKLIST'}">
                 	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[objectUid,amTagItem.id])}"/>
@@ -50,20 +65,7 @@
                 	name="amTagItem_${amTagItem.id}" value="${tagValues!=null&&tagValues.size()>0?tagValues[0].objectId:''}"  optionKey="id" optionValue="codeName"  noSelection="['':'-Select One-']" />	
 					</g:else>
                 </g:elseif>
-                <g:elseif test="${amTagItem.tagItemType == 'CUSTOM'}">
-                	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[objectUid,amTagItem.id])}"/>
-	           		<g:if test="${amTagItem.editable == false}">
-						not editable CUSTOM
-                	</g:if>
-                	<g:else>
-	                	<g:if test="${(tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:'').length()<100}">
-							<g:textField size="100" name="amTagItem_${amTagItem.id}"  value="${tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:''}"/>
-		                </g:if>
-	    	            <g:else>
-	            	         <g:textArea size="100" cols="74" rows="10" name="amTagItem_${amTagItem.id}" value="${tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:''}" />          
-	        	        </g:else>
-                	</g:else>
-	           </g:elseif>
+
                  --%>
                 <g:else>
                 </g:else>

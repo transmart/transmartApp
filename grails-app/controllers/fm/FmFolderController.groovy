@@ -18,7 +18,10 @@
  ******************************************************************/
 package fm
 
+import am.AmData;
+import annotation.AmTagAssociation;
 import annotation.AmTagDisplayValue;
+import annotation.AmTagValue;
 
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
@@ -602,6 +605,7 @@ class FmFolderController {
 			folder = FmFolder.get(folderId)
 			if(folder)
 			{
+				def folderUniqueId = folder.getUniqueId()
 				def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
 				if(folderAssociation)
 				{
@@ -619,7 +623,7 @@ class FmFolderController {
 					bioDataObject = folder
 				}
 				
-				amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+				amTagTemplate = amTagTemplateService.getTemplate(folderUniqueId)
 				if(amTagTemplate)
 				{
 					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
@@ -633,15 +637,27 @@ class FmFolderController {
 							bioDataObject."${tagItem.tagItemAttr}" = newValue
 						}
 					}
-					else if (tagItem.tagItemType.equals('CUSTOM')) {
+					else if (tagItem.tagItemType.equals('CUSTOM') && tagItem.tagItemSubtype.equals('FREETEXT')) {
 						//Look for new value by tag item ID
 						def newValue = params."amTagItem_${tagItem.id}"
 						if (newValue != null) {
-							//TODO Update/create the tag value here!
-//							def tagValueId = AmTagDisplayValue.get(folder.getUniqueId(), tagItem.id).objectId
-//							if (displayValue) {
-//								displayValue.displayValue = newValue
-//							}
+							
+
+							//Create a new AmTagValue and point to it
+							def newTagValue = new AmTagValue(value: newValue)
+							newTagValue.save()
+							//TODO This is an awful way of generating UIDs and should be changed forthwith, posthaste, etc
+							def newUid = newTagValue.id + ":" + newTagValue.value
+							
+							AmData amData = new AmData(uniqueId: newUid, amDataType: 'AM_TAG_VALUE')
+							amData.id = newTagValue.id
+							amData.save()
+							
+							AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folderUniqueId, objectUid: newUid, tagItemId: tagItem.id)
+							ata.save()
+							
+//							
+							
 						}
 					}
 				}
@@ -655,7 +671,7 @@ class FmFolderController {
 					log.info "Errors occurred saving Meta data"
 					def errors = bioDataObject.errors
 					
-					amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+					amTagTemplate = amTagTemplateService.getTemplate(folderUniqueId)
 					if(amTagTemplate)
 					{
 						metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
