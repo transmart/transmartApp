@@ -47,7 +47,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 		table 'am_tag_item'
 		version false
 		cache true
-		sort "displayName"
+		sort "displayOrder"
 		amTagTemplate joinTable: [name: 'am_tag_template',  key:'tag_template_id', column: 'tag_item_id'], lazy: false
 		columns { id column:'tag_item_id'}
 		amTagTemplate column: 'tag_template_id' 

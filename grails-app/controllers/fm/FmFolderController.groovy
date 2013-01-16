@@ -409,21 +409,31 @@ class FmFolderController {
 			AmTagItem amTagItem = obj
 			if(amTagItem.viewInChildGrid) 
 			{
-				if(amTagItem.tagItemType == 'FIXED'  &&  dataObject.hasProperty(amTagItem.tagItemAttr))
+				if(amTagItem.tagItemType == 'FIXED')
 				{
-					log.info ("COLUMNS == " + amTagItem.tagItemAttr + " " + amTagItem.displayName)
-					table.putColumn(amTagItem.tagItemAttr, new ExportColumn(amTagItem.tagItemAttr, amTagItem.displayName, "", 'String'));
+					log.info ("FIXED TYPE == " + amTagItem.id + " " + amTagItem.displayName)
+					
+					if(dataObject.hasProperty(amTagItem.tagItemAttr))
+					{
+						log.info ("FIXED COLUMNS == " + amTagItem.tagItemAttr + " " + amTagItem.displayName)
+						table.putColumn(amTagItem.id.toString(), new ExportColumn(amTagItem.id.toString(), amTagItem.displayName, "", 'String'));
+					}
+					else
+					{
+						log.error("TAG ITEM ID = " + amTagItem.id + " COLUMN " + amTagItem.tagItemAttr + " is not a propery of " + dataObject)
+					}
+					
 				}
-/*				else if(amTagItem.tagItemType == 'CUSTOM')
+				else if(amTagItem.tagItemType == 'CUSTOM')
 				{
-					def tagValues = AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folders[0].getUniqueId(),amTagItem.id])
-					log.info ("COLUMNS == " + amTagItem.displayName)
-					table.putColumn(amTagItem.tagItemAttr, new ExportColumn(amTagItem.tagItemAttr, amTagItem.displayName, "", 'String'));
+					log.info ("CUSTOM COLUMNS == " + amTagItem.displayName)
+					table.putColumn(amTagItem.id.toString(), new ExportColumn(amTagItem.id.toString(), amTagItem.displayName, "", 'String'));
 
 				}
-	*/			else
+				else
 				{
-					log.error("COLUMN " + amTagItem.tagItemAttr + " is not a propery of " + dataObject)
+					log.info ("TYPE == " + amTagItem.tagItemType + " ID = " + amTagItem.id + " " + amTagItem.displayName)
+					
 				}
 			}
 
@@ -437,21 +447,40 @@ class FmFolderController {
 				childMetaDataTagItems.eachWithIndex()
 				{obj, i -> 
 					AmTagItem amTagItem = obj
-					
-					if(amTagItem.tagItemType == 'FIXED' && bioDataObject.hasProperty(amTagItem.tagItemAttr))
+					if(amTagItem.viewInChildGrid)
 					{
-						log.info("ROWS == " + amTagItem.tagItemAttr + " " + bioDataObject[amTagItem.tagItemAttr])
-						newrow.put(amTagItem.tagItemAttr,bioDataObject[amTagItem.tagItemAttr]?bioDataObject[amTagItem.tagItemAttr]:'');
-					}
-		/*			else if(amTagItem.tagItemType == 'CUSTOM')
-					{
-						def tagValues = AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folders[0].getUniqueId(),amTagItem.id])
 						
-						log.info ("COLUMNS == " + amTagItem.displayName)
-						table.putColumn(amTagItem.tagItemAttr, new ExportColumn(amTagItem.tagItemAttr, amTagItem.displayName, "", 'String'));
+						if(amTagItem.tagItemType == 'FIXED' && bioDataObject.hasProperty(amTagItem.tagItemAttr))
+						{
+							log.info("ROWS == " + amTagItem.tagItemAttr + " " + bioDataObject[amTagItem.tagItemAttr])
+							newrow.put(amTagItem.id.toString(),bioDataObject[amTagItem.tagItemAttr]?bioDataObject[amTagItem.tagItemAttr]:'');
+						}
+						else if(amTagItem.tagItemType == 'CUSTOM')
+						{
+							log.info("PARAMETERS " + bioDataObject.getUniqueId() + " " + amTagItem.id)
+							def tagValues = AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[bioDataObject.getUniqueId().toString(),amTagItem.id])
+							
+							log.info ("rows1 == " + tagValues)
+							def displayValue = ""
+							def counter = 0
+							tagValues.each 
+							{ 
+								log.info("TAGVALUE = " + it)
+								displayValue += counter>0? ", " + it.displayValue : it.displayValue  
+							}
+							
+							if(displayValue == null) displayValue = ""
+							
+							newrow.put(amTagItem.id.toString(),displayValue);
+		
+						}
+						else
+						{
+							log.info ("ROW --- TYPE == " + amTagItem.tagItemType + " ID = " +  amTagItem.id)
+							
+						}
 	
 					}
-	*/
 				}
 				
 				table.putRow(bioDataObject.id.toString(), newrow);
@@ -484,7 +513,7 @@ class FmFolderController {
 				metaDataTagItems = getMetaDataItems(folder)
 	
 				// If the folder is a study then get the analysis and the assay
-				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()))
+				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name()))
 				{
 					def subFolderTypes = getChildrenFolderTypes(folder.id)
 					log.info "subFolderTypes = " + subFolderTypes
@@ -506,7 +535,9 @@ class FmFolderController {
 				}
 			}
 		}
-
+		
+	
+		
 		log.info "FolderInstance = " + bioDataObject.toString()
 		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems, jSONForGrids: jSONForGrids])
 		

@@ -38,8 +38,7 @@ class AmTagDisplayValue implements Serializable {
 		table 'am_tag_display_vw'
 		version false
 		cache true
-		sort "value"
-		id composite: ["subjectUid","amTagItem"]
+		id composite: ["subjectUid","objectId"]
 		amTagItem column: 'tag_item_id'
 
 	}
@@ -47,16 +46,23 @@ class AmTagDisplayValue implements Serializable {
 	static constraints = {
 	}
 
-	static AmTagDisplayValue get(String subjectUid, long amTagItemId) {
-		find 'from AmTagDisplayValue where subjectUid=:subjectUid and amTagItem.id=:amTagItemId',
-			[subjectUid: subjectUid, amTagItemId: amTagItemId]
+	static AmTagDisplayValue get(String subjectUid, long objectId) {
+		find 'from AmTagDisplayValue where subjectUid=:subjectUid and objectId=:objectId',
+			[subjectUid: subjectUid, objectId: objectId]
 	}
 
-	static boolean remove(String objectUid, AmTagItem amTagItem, boolean flush = false) {
+	static boolean remove(String objectUid, long objectId, boolean flush = false) {
 	//	AmTagDisplayValue instance = FmFolderAssociation.findByObjectUidAndFmFolder(objectUid, fmFolder)
 	//	instance ? instance.delete(flush: flush) : false
 		
 		false
+	}
+	
+	 static Collection<Object> findAllDisplayValue(String subjectUid, long amTagItemId) {
+		findAll 'from AmTagDisplayValue where subjectUid=:subjectUid and amTagItem.id=:amTagItemId',
+			[subjectUid: subjectUid, amTagItemId: amTagItemId]
+		
+		
 	}
 
 }

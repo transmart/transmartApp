@@ -18,21 +18,15 @@
 -->
 
 <script type="text/javascript">
-var analysisCount = 1
-var assayCount = 3
-
     $j(document).ready(function() 
-    {   
-    	   <g:each var='jSONForGrid' status="gridCounter" in="${jSONForGrids}">
-    	   		var dt${gridCounter}  = new dataTableWrapper('gridViewWrapper${gridCounter}', 'gridViewTable${gridCounter}', 'Title');
-    	   		dt${gridCounter}.loadData(${jSONForGrids[0]});
-          	</g:each>
-             
-    	
-       var dt4 = new dataTableWrapper('gridViewWrapper4', 'gridViewTable4', 'Analysis (' + analysisCount + ")");
-     //  dt4.loadData(${jSONForGrids[0]});
-       var dt5 = new dataTableWrapper('gridViewWrapper5', 'gridViewTable5', 'Assays (' + assayCount + ')');
-                
+    {  
+ 	   <g:each var='jSONForGrid' status="gridCounter" in="${jSONForGrids}">
+ 	   alert("world")
+   		var dt${gridCounter}  = new dataTableWrapper('gridViewWrapper${gridCounter}', 'gridViewTable${gridCounter}', 'Title');
+   		dt${gridCounter}.loadData(${jSONForGrids[0]});
+  	</g:each>
+     
+
      });
 </script>
 
@@ -122,13 +116,12 @@ var assayCount = 3
                       ${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
                 </g:if>
                 <g:else>   
-                    <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId().toString(),amTagItem.id])}"/>
+                      <g:set var="tagValues" value="${AmTagDisplayValue.findAllDisplayValue(folder.getUniqueId(),amTagItem.id)}"/>
+                   
 	                <g:if test="${tagValues!=null}">
-	             	   <g:set var="counter" value="0"/>
-	             		 <g:each var="tagValue" status="k" in="${tagValues}">
-						      <g:if test="${counter==1}">, </g:if>${tagValue.displayValue}
-						      <g:set var="counter" value="${counter.toLong() + 1}"/>
-						 </g:each>
+	             	  	 <g:each var="mytag" status="k" in="${tagValues}">
+	             	  	      <g:if test="${k==1}">, </g:if>${tagValues[k].displayValue}
+							 </g:each>
 	                 </g:if>
 	                 
 	                </g:else>
@@ -195,20 +188,8 @@ var assayCount = 3
             <div id='gridViewWrapper${divCounter}'>
             </div>        
 	        </div>
-        
-          	</g:each>
-          	
-          	       <div style="height:20px;"></div>
-       <div style="width:1100px">
-            <div id='gridViewWrapper4'>
-            </div>        
-        </div>
-
-       <div style="height:30px;"></div>
-       <div style="width:1100px">
-            <div id='gridViewWrapper5'>
-            </div>        
-        </div>
+         </g:each>
+         
 <!--  overlay div  -->
 
 <g:overlayDiv divId="${overlayDiv}" />
