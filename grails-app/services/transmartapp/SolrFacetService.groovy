@@ -107,7 +107,7 @@ class SolrFacetService {
 	   def folderSearchList = [];
 	   for (node in folderIdNodes) {
 		   def folderId = node.text()
-		   def folder = FmFolder.findByUniqueId(folderId.id)
+		   def folder = FmFolder.findByUniqueId(folderId)
 		   folderSearchList.push(folder.folderFullName)
 	   }
 	   
