@@ -129,7 +129,7 @@ class FmFolderService {
 				filestoreName: "",
 				linkUrl: ""
 			);
-			if (!fmFile.save()) {
+			if (!fmFile.save(flush:true)) {
 				fmFile.errors.each {
 					log.error(it);
 				}
@@ -137,18 +137,25 @@ class FmFolderService {
 			}
 			fmFile.filestoreLocation = getFilestoreLocation(fmFolder);
 			fmFolder.addToFmFiles(fmFile);
-			if (!fmFolder.save()) {
+			if (!fmFolder.save(flush:true)) {
 				fmFolder.errors.each {
 					log.error(it);
 				}
 				return;
+			}
+			FmData fmData = new FmData(fmDataType: 'FM_FILE', uniqueId: 'FIL:' + fmFile.id);
+			fmData.id = fmFile.id;
+			if (!fmData.save(flush:true)) {
+				fmData.errors.each {
+					log.error(it);
+				}
 			}
 			log.info("File = " + file.getName() + " (" + fmFile.id + ") - New");
 		}
 
 		fmFile.filestoreName = Long.toString(fmFile.id, 36).toUpperCase() + "-" + Long.toString(fmFile.fileVersion, 36).toUpperCase() + "." + fmFile.fileType;
 
-		if (!fmFile.save()) {
+		if (!fmFile.save(flush:true)) {
 			fmFile.errors.each {
 				log.error(it);
 			}
@@ -258,8 +265,14 @@ class FmFolderService {
 		
 		try {
 			StringBuilder url = new StringBuilder(solrUrl);
-			// Use the file's ID as the document ID in SOLR
-			url.append("?").append("literal.id=").append(fmFile.id);
+			// Use the file's unique ID as the document ID in SOLR
+			url.append("?").append("literal.id=").append(URLEncoder.encode(fmFile.uniqueId, "UTF-8"));
+			
+			
+			// Use the file's parent folder's unique ID as the folder_uid in SOLR
+			if (fmFile.folder != null) {
+				url.append("&").append("literal.folder=").append(URLEncoder.encode(fmFile.folder.uniqueId, "UTF-8"));
+			}
 			
 			// Use the file's name as document name is SOLR
 			url.append("&").append("literal.name=").append(URLEncoder.encode(fmFile.originalName, "UTF-8"));
@@ -318,39 +331,31 @@ class FmFolderService {
 //	
 //	}
 	
-	def getFolderContents(id, folderMap) {
+	def getFolderContents(id) {
 		
-				log.info "Getting folder contents for ID: " + id
-				def parent;
-				def folderLevel = 0L;
-				if (id != null) {
-					parent = FmFolder.get(id)
-					folderLevel = parent.folderLevel + 1
+		def parent;
+		def folderLevel = 0L;
+		if (id != null) {
+			parent = FmFolder.get(id)
+			folderLevel = parent.folderLevel + 1
+		}
+		
+		def folders = null;
+		
+		//if (folderMask == null || folderMask.size() > 0) { //If we have an empty list, display no folders
+			folders = FmFolder.createCriteria().list {
+				if (parent != null) {
+					eq('parent', parent)
 				}
-				
-				
-				def folderMask = folderMap.get(folderLevel);
-				
-				log.info "Searching at level: " + folderLevel + " with mask: " + folderMask + ", " + folderMask?.size()
-				
-				def folders = null;
-				
-				if (folderMask == null || folderMask.size() > 0) { //If we have an empty list, display no folders
-					folders = FmFolder.createCriteria().list {
-						if (parent != null) {
-							eq('parent', parent)
-						}
-						if (folderMask) {
-							'in'('id', folderMask)
-						}
-						eq('folderLevel', folderLevel)
-						order('folderName', 'asc')
-					}
-				}
-				
-				log.info "Found folders: " + folders?.size();
-				 
-				return [folders: folders, files: parent?.fmFiles]
+//						if (folderMask) {
+//							'in'('id', folderMask)
+//						}
+				eq('folderLevel', folderLevel)
+				order('folderName', 'asc')
 			}
+		//}
+		 
+		return [folders: folders, files: parent?.fmFiles]
+	}
 	
 }

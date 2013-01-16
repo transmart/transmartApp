@@ -7,7 +7,7 @@
 					 <h2 style="float:right; padding-right:5px;" class="title">
 					 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
 					 </h2> 
-					 <div id="filterbutton" class="greybutton" onclick="jQuery('#filter-browser').dialog('open');">
+					 <div id="filterbutton" class="greybutton filterbrowser">
 						<img src="${resource(dir:'images', file:'filter.png')}"/> Filter
 					 </div>
 				</div>

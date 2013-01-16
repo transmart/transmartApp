@@ -17,6 +17,7 @@
  
 -->
 
+<%-- 
 <script type="text/javascript">
     $j(document).ready(function() 
     {  
@@ -29,9 +30,11 @@
 
      });
 </script>
-
+--%>
 <g:set var="overlayDiv" value="metaData_div" />
 <%! import annotation.* %> 
+<%! import bio.BioData %> 
+<%! import bio.ConceptCode %> 
 <%! import com.recomdata.util.* %> 
 
 <div style="margin:10px;padding:10px;">
@@ -97,10 +100,11 @@
                 <th>&nbsp;</th>
                 <th align="right">
 				<g:if test="${!folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
-	                <g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
+	                <%--<g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
                         params="[eleId:overlayDiv, folderId:folder?.id]" 
-                        before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">
-                  <img align="right" src="${resource(dir:'images', file:'pencil.png')}"/></g:remoteLink>
+                        before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">--%>
+                  <img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
+                  <%-- </g:remoteLink>--%>
                 </g:if>
                 </th>
             </tr>
@@ -113,7 +117,24 @@
                 <td valign="top" align="right" class="columnname" width="20%">${amTagItem.displayName}</td>
                 <td valign="top" align="left" class="columnvalue" width="60%">
                  <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
-                      ${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
+                 	<g:set var="fieldValue" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
+                 	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
+                 		<%-- Split multiple values by pipe --%>
+                 		<g:set var="terms" value="${fieldValue.split('\\|')}"/>
+                 		<g:each in="${terms}" var="term" status="t">
+	                 		<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
+	                 		<g:if test="${t > 0}">, </g:if>
+	                 		<g:if test="${bioDataId}">
+		                 		${ConceptCode.find('from ConceptCode where id=?', bioDataId).codeName}
+	                 		</g:if>
+	                 		<g:else>
+	                 			${term}
+	                 		</g:else>
+                 		</g:each>
+                 	</g:if>
+                 	<g:else>
+                 		${fieldValue}
+                 	</g:else>
                 </g:if>
                 <g:else>   
                       <g:set var="tagValues" value="${AmTagDisplayValue.findAllDisplayValue(folder.getUniqueId(),amTagItem.id)}"/>

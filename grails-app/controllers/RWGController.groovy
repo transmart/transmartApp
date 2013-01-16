@@ -112,7 +112,7 @@ class RWGController {
 	  // create the key that matches what we use in javascript to identify search terms
 	  // assuming for now that the category and the category display are the same (with category being all caps); may
 	  // need to break this out into separate fields	  
-	  parent["key"] = categoryName + "|" + categoryName.toUpperCase() + ":" + parentNode.termName + ":" + id	  
+	  parent["key"] = categoryName + "|" + categoryName.toUpperCase() + ";" + parentNode.termName + ";" + id	  
 	  
 	  // if category, then display as folder and don't show checkbox; other levels, not a folder and show checkbox
 	  parent["isFolder"] = isCategory 
@@ -172,7 +172,7 @@ class RWGController {
 	  if (parentNode.children) {
 		  // recursively add each child
 		  for (childNode in parentNode.children)  {			 
-			  addDynaNode(childNode, children, false, categoryName, uniqueTreeId + ":" + childIndex, initialFacetCounts)
+			  addDynaNode(childNode, children, false, categoryName, uniqueTreeId + ";" + childIndex, initialFacetCounts)
 			  childIndex++
 		  }
 	  }
@@ -213,8 +213,8 @@ class RWGController {
 	   for (p in params)  {
 		   
 		   // each queryParam is in form cat1:term1|term2|term3
-		   String category = p.split(":")[0]
-		   String termList = p.split(":")[1]
+		   String category = p.split(";")[0]
+		   String termList = p.split(";")[1]
 
 		   // add all the genes from a gene list/sig to the List of genes		   
 		   if (category == 'GENELIST' || category == 'GENESIG')  {
@@ -316,7 +316,7 @@ class RWGController {
 	   	   
 	   def startTime = new Date()								// Clock starts running now!
 
-	   session['folderSearchMap'] = [:]; //Clear the folder search map
+	   session['folderSearchList'] = []; //Clear the folder search list
 	   
 	   //Search string is saved in session (for passing between RWG and Dataset Explorer pages)
 	   def searchString = params.searchTerms
@@ -326,7 +326,7 @@ class RWGController {
 	   
 	   //If we have no search terms and this is for RWG, just return the top level
 	   if ((searchTerms == null || searchTerms.size() == 0) && params.page.equals('RWG')) {
-		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null, [:]).folders])
+		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null).folders])
 		   return
 	   }
 	   
@@ -356,11 +356,20 @@ class RWGController {
 	   log.info("facet search: " + params)
 	   
 	   if (params.page.equals('RWG')) {
-		   def folderMap = solrFacetService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'foldermap')
-		   session['folderSearchMap'] = folderMap;
+		   def folderSearchList = solrFacetService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'foldermap')
+		   session['folderSearchList'] = folderSearchList;
 		   
-		   def folderContents = fmFolderService.getFolderContents(null, session['folderSearchMap'])
-		   render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files])
+		   def folderContents = fmFolderService.getFolderContents(null)
+		   
+		   if (folderSearchList) {
+			   def folderSearchString = folderSearchList.join("\\,") + "\\," //Extra , - used to identify leaves
+			   println folderSearchString
+			   render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString])
+		   }
+		   else {
+			   render(template:'/fmFolder/noResults')
+		   }
+		   
 	   }
 	   else {
 		   def ontologyResult = solrFacetService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'JSON')
@@ -434,6 +443,10 @@ class RWGController {
    // Return search categories for the drop down 
    def getSearchCategories = {
 	   render searchKeywordService.findSearchCategories() as JSON	   
+   }
+   
+   def getFilterCategories = {
+	   render searchKeywordService.findFilterCategories() as JSON
    }
    
    // Return search keywords

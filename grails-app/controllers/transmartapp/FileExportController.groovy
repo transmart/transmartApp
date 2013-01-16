@@ -100,6 +100,8 @@ class FileExportController {
 			//FileOutputStream fwZip = new FileOutputStream(fileZip);
 			def zipStream = new ZipOutputStream(response.outputStream);
 			
+			def manifestMap = [:]
+			
 			for (f in exportList) {
 				FmFile fmFile = FmFile.get(f)
 				File file = new File(fmFile.filestoreLocation + "/" + fmFile.filestoreName)
@@ -111,8 +113,27 @@ class FileExportController {
 					file.withInputStream({is -> zipStream << is})
 					zipStream.closeEntry()
 					
-					//TODO For manifest files, add this file to a map, keyed by folder names. After adding all files, create manifest files out of folder data and place in the ZIP at the key folder name
+					//For manifest files, add this file to a map, keyed by folder names.
+					def manifestList = []
+					if (manifestMap.containsKey(dirName)) {
+						manifestList = manifestMap.get(dirName)
+					}
+					
+					manifestList.push(fmFile)
+					manifestMap.put(dirName, manifestList)
 				}
+			}
+			
+			//Now for each item in the manifest map, create a manifest file and add it to the ZIP.
+			def keyset = manifestMap.keySet()
+			for (key in keyset) {
+				def manifestEntry = new ZipEntry(key + "/" + "manifest.txt")
+				zipStream.putNextEntry(manifestEntry)
+				def manifestList = manifestMap.get(key)					
+				for (fmFile in manifestList) {
+					zipStream.write((fmFile.displayName + "\t" + fmFile.fileType + "\t" + fmFile.fileSize + "\n").getBytes())
+				}
+				zipStream.closeEntry()
 			}
 			
 			zipStream.flush();

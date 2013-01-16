@@ -37,19 +37,21 @@ class FmFile {
 	Boolean activeInd = Boolean.TRUE
 	Date createDate = new Date()
 	Date updateDate = new Date()
+	String uniqueId
 	
-	static hasMany = [fmFolder: FmFolder] //Should probably only have one, but Grails doesn't allow join table on one-many
+	static hasMany = [folders: FmFolder] //Should probably only have one, but Grails doesn't allow join table on one-many
+
 	static belongsTo = FmFolder
 	
+	static transients = ['folder', 'uniqueId']
 
 	static mapping = {
 		table 'fm_file'
 		version false
 		cache true
 		sort "displayName"
-		id generator: 'sequence', params:[sequence:'seq_fm_id']
-		fmFolder joinTable: [name: 'fm_folder_file_association',  key:'file_id', column: 'folder_id']
-		columns { id column:'file_id' }
+		id column:'file_id', generator: 'sequence', params:[sequence:'seq_fm_id']
+		folders joinTable: [name: 'fm_folder_file_association',  key:'file_id', column: 'folder_id']
 	}
 	
 	static contraints = {
@@ -61,7 +63,54 @@ class FmFile {
 		filestoreName(nullable:true, maxSize:1000)
 		linkUrl(nullable:true, maxSize:1000)
 	}
+
+	/**
+	 * Gets file's associated folder.
+	 * @return
+	 */
+	FmFolder getFolder() {
+		if (folders != null && !folders.isEmpty()) {
+			return folders.iterator().next();
+		}
+		return null;
+	}
 	
-	static transients = ['description', 'uploadDate']
+	/**
+	 * Sets file's associated folder.
+	 * @param folder
+	 */
+	def setFolder(FmFolder folder) {
+		this.addToFolders(folder);
+	}
 	
+	/**
+	 * Use transient property to support unique ID for folder.
+	 * @return folder's uniqueId
+	 */
+	String getUniqueId() {
+		if (uniqueId == null) {
+			FmData data = FmData.get(id);
+			if (data != null) {
+				uniqueId = data.uniqueId
+				return data.uniqueId;
+			}
+			return null;
+		}
+		return uniqueId;
+	}
+
+	/**
+	 * Find file by its uniqueId
+	 * @param uniqueId
+	 * @return file with matching uniqueId or null, if match not found.
+	 */
+	static FmFile findByUniqueId(String uniqueId) {
+		FmFile file;
+		FmData data = FmData.findByUniqueId(uniqueId);
+		if (data != null) {
+			file = FmFile.get(data.id);
+		}
+		return file;
+	}
+
 }

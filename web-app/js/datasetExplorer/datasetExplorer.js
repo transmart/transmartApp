@@ -1762,13 +1762,23 @@ function createTree(includeExcludeFlag, ontresponse){
 		// set the root node
 		var autoExpand=false;
 		if(GLOBAL.PathToExpand.indexOf(key)>-1) autoExpand=true;
+		
+   		//For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
+   		if(level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) == -1) {continue;}
+   		
+   		var iconCls = "";
+	    if (level == '0') {
+	    	iconCls="programicon";
+	    }
+   		
 		var ontRoot = new Tree.AsyncTreeNode(
 				{
 					text : name,
 					draggable : false,
 					id : key,
 					qtip : tooltip,
-					expanded : autoExpand
+					expanded : autoExpand,
+					iconCls : iconCls
 				}
 		);
 		

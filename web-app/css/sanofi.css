@@ -198,9 +198,8 @@ table.menuDetail th.menuVisited {
 
 .term
 {
-		margin-top:0.3em;
-		white-space:nowrap;
-		line-height: 1.4em;
+	margin-top:0.3em;
+	line-height: 1.4em;
 }
 
 
@@ -243,7 +242,7 @@ table.menuDetail th.menuVisited {
 .greybutton.addassay { background-image: url('../images/addassay.png'); }
 .greybutton.addfolder { background-image: url('../images/addfolder.png'); }
 .greybutton.addanalysis { background-image: url('../images/addanalysis.png'); }
-.greybutton.closeexport { background-image: url('../images/small_cross.png'); }
+.greybutton.close { background-image: url('../images/small_cross.png'); }
 
 .greybutton.disabled {
 	cursor: normal;
@@ -284,11 +283,6 @@ table.menuDetail th.menuVisited {
 	cursor: pointer;
 	border-top: 1px solid #EEE;
 	font-weight: bold;
-}
-
-#filter-browser {
-	font-size: 8pt;
-	font-family: Verdana, Arial, sans-serif;	
 }
 
 .filteritem {
@@ -371,13 +365,9 @@ table.menuDetail th.menuVisited {
 	margin: 8px;
 }
 
-#exportOverlay {
+.overlay {
 	position: absolute;
-	z-index: 10000;
-	top: 10%;
-	left: 10%;
-	width: 80%;
-	height: 80%;
+	z-index: 10000;	
 	border: 8px solid #DDDEE6;
 	border-radius: 16px;
 	box-shadow: #DDD 11px 11px 8px -7px;
@@ -385,11 +375,44 @@ table.menuDetail th.menuVisited {
 	overflow: auto;
 }
 
+#exportOverlay {
+	top: 10%;
+	left: 10%;
+	width: 80%;
+	height: 80%;
+}
+
+#editMetadataOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
+#filter-browser {
+	font-size: 8pt;
+	font-family: Verdana, Arial, sans-serif;
+	top: 50px;
+	left: 300px;
+	width: 300px;
+	height: 500px;
+}
+
 .exporttable td {
 	padding: 4px;
 	border-bottom: 1px solid #DDD;	
 }
 
+.x-tree-node-icon.studyicon { background-image: url('../images/foldertypes/study.png'); }
+
+.x-tree-node-icon.programicon { background-image: url('../images/foldertypes/program.png'); }
+
+.ajaxloading {
+	background-image: url('../images/loader-large.gif') !important;
+	background-repeat: no-repeat !important;
+	background-position: 50% 50% !important;
+	min-height: 128px;
+}
 
 /* Catch-all for making IE look slightly less stupid */
 *:focus {

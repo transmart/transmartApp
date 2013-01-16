@@ -1,7 +1,7 @@
 <div style="margin: 16px;">
 <div>
 <div style="float: right;">
-	<span class="greybutton buttonicon closeexport">Close</span>
+	<span id="closeexport" class="greybutton buttonicon close">Close</span>
 </div>
 <h3 class="rdc-h3">Export Files</h3>
 </div>

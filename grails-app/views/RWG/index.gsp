@@ -72,13 +72,11 @@
 
 		        addToggleButton();
 
-		        jQuery('#meta-').accordion(); 
-			        
 		        jQuery("#xtButton").colorbox({opacity:.75, inline:true, width:"95%", height:"95%"});
       
 		        jQuery("#searchResultOptions_btn").click(function(){
 		        	jQuery("#searchResultOptions").toggle();
-		        	});
+		        });
 		        
 		        //used to hide the options div when the mouse is clicked outside of it
 
@@ -101,166 +99,33 @@
 		             }
 
 	            });
-
-	        	
-	        //    var resize= $("#sidebar");
-	      //        var containerWidth = $("#main").width();
-	                        
-	/*                $("#sidebar").resizable({
-	                      handles: 'e',
-	                      maxWidth: 450,
-	                      minWidth: 120,
-	                });
-
-                    resize: function(event, ui){
-                        var currentWidth = ui.size.width;
-                        
-                        // this accounts for padding in the panels + 
-                        // borders, you could calculate this using jQuery
-                        var padding = 12; 
-                        
-                        // this accounts for some lag in the ui.size value, if you take this away 
-                        // you'll get some instable behaviour
-                        $(this).width(currentWidth);
-                        
-                        // set the content panel width
-                        $("#content").width(containerWidth - currentWidth - padding);            
-                    }
-	*/        	
-	    	    jQuery('body').on('mouseenter', '.folderheader', function() {
-					jQuery(this).find('.foldericonwrapper').fadeIn(150);
-		    	});
-
-	    	    jQuery('body').on('mouseleave', '.folderheader', function() {
-					jQuery(this).find('.foldericonwrapper').fadeOut(150);
-		    	});
-
-	    	    jQuery('body').on('click', '.foldericon.add', function() {
-					var id = jQuery(this).attr('name');
-					jQuery(this).removeClass().text("Added to cart");
-					jQuery('#cartcount').hide();
-					
-					jQuery.ajax({
-						url:exportAddURL,
-						data: {id: id},			
+	            
+	            jQuery("#editMetadataOverlay").on('click', '#cancelmetadatabutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#editMetadataOverlay').fadeOut();
+	            });
+	            
+	            jQuery("#editMetadataOverlay").on('click', '#savemetadatabutton', function() {
+	            
+	            	//TODO Indicate working here!
+	            	
+	            	var protoForm = $('editMetadataForm');
+		            var serializedForm = Form.serialize(protoForm);
+            		jQuery.ajax({
+						url:saveFolderURL + "?" + serializedForm,	
 						success: function(response) {
-							jQuery('#cartcount').show().text(response);
+							jQuery('#editMetadataOverlay').fadeOut();
+							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
 						},
 						error: function(xhr) {
-							jQuery('#cartcount').show();
+						alert(xhr);
 						}
 					});
-		    	});
-
-	    	    jQuery('body').on('click', '.foldericon.addall', function() {
-					var nameelements = jQuery(this).closest('table').find('.foldericon.add');
-					var ids = [];
-					for (i = 0; i < nameelements.size(); i++) {
-						ids.push(jQuery(nameelements[i]).attr('name'));
-						jQuery(nameelements[i]).removeClass().text("Added to cart");
-					}
-					
-					jQuery('#cartcount').hide();
-					
-					jQuery.ajax({
-						url:exportAddURL,
-						data: {id: ids.join(",")},			
-						success: function(response) {
-							jQuery('#cartcount').show().text(response);
-						},
-						error: function(xhr) {
-							jQuery('#cartcount').show();
-						}
-					});
-		    	});
-
-	    	    jQuery('body').on('click', '.foldericon.view', function() {
-		    	    var id = jQuery(this).closest(".folderheader").attr('name');
-	    	    	showDetailDialog(experimentDataUrl + '?id=' + id);
-		    	});
-
-	    	    jQuery('body').on('click', '.greybutton.remove', function() {
-
-	    	    	var row = jQuery(this).closest("tr");
-		    	    var id = row.attr('name');
-		    	   
-		    	    jQuery('#cartcount').hide();
-		    	    
-					jQuery.ajax({
-						url:exportRemoveURL,
-						data: {id: id},			
-						success: function(response) {
-							row.remove();
-							jQuery('#cartcount').show().text(response);
-							updateExportCount();
-						},
-						error: function(xhr) {
-							jQuery('#cartcount').show();
-						}
-					});
-		    	});
-
-	    	    jQuery('body').on('click', '.greybutton.export', function() {
-
-	    	    	var checkboxes = jQuery('#exporttable input:checked');
-					var ids = [];
-					for (i = 0; i < checkboxes.size(); i++) {
-						ids.push(jQuery(checkboxes[i]).attr('name'));
-					}
-
-					if (ids.size() == 0) {return false;}
-
-					window.location = exportURL + "?id=" + ids.join(',');
-		    	    
-		    	});
-
-		    	jQuery('body').on('click', '.greybutton.closeexport', function() {
-		    		jQuery('#exportOverlay').fadeOut();	
-			    });
-
-	    	    //Close export overlay on click outside
-	    	    jQuery('body').on('click', function(e) {
-
-	    	    	if (!jQuery(e.target).closest('#exportOverlay').length
-	    	    	    	&& !jQuery(e.target).closest('#cartbutton').length
-	    	    	    	&& jQuery(e.target).attr('id') != 'cartbutton') {
-	    	    	
-		    	    	if (jQuery('#exportOverlay').is(':visible')) {
-			    	    	jQuery('#exportOverlay').fadeOut();
-		    	    	}
-	    	    	}
-		    	});
-
-		    	jQuery('#results-div').on('click', '.result-folder-name', function() {
-			    	jQuery('.result-folder-name').removeClass('selected');
-					jQuery(this).addClass('selected');
-			    });
-
-	    	    jQuery('#logocutout').on('click', function() {
-	    	    	jQuery('#metadata-viewer').empty();
-
-	    	    	jQuery('#welcome-viewer').empty().addClass('ajaxloading');
-	    	    	jQuery('#welcome-viewer').load(welcomeURL, {}, function() {
-	    	    		jQuery('#welcome-viewer').removeClass('ajaxloading');
-	    	    	});
-		    	});
-
-	    	    jQuery('#cartbutton').click(function() {
-					jQuery.ajax({
-						url:exportViewURL,		
-						success: function(response) {
-							jQuery('#exportOverlay').html(response);
-						},
-						error: function(xhr) {
-						}
-					});
-					jQuery('#exportOverlay').fadeToggle();
-		    	});
-	       	
-
-	        	jQuery('#sidebar-accordion').accordion({heightStyle: "fill", icons: { 'header': 'suppressicon', 'headerSelected': 'suppressicon' }});
+	            });
+	            
+	            
+	            
 	        	resizeAccordion();
-	        	
                  
 	        	jQuery('#sidebar').resizable({
                     handles: 'e',
@@ -281,7 +146,8 @@
                         jQuery('#program-explorer').width(currentWidth - 20)
                         // jQuery('#results-div').width(currentWidth -20)
                         // set the content panel width
-                        jQuery('#main').width(jQuery('body').width() - currentWidth - padding);            
+                        jQuery('#main').width(jQuery('body').width() - currentWidth - padding);
+                        jQuery('#filter-browser').css('left', jQuery('#box-search').width() + 50);
                     }
               });
 
@@ -304,6 +170,7 @@
 	        	jQuery('#results-div').height(targetHeight);
 	        	jQuery('#welcome').height(windowHeight - 90);
 	        	jQuery('#main').width(jQuery('body').width() - jQuery('#sidebar').width() - 12);
+	        	jQuery('#box-search').width(jQuery('#program-explorer').width());
 			}
 
 			function updateExportCount() {
@@ -381,7 +248,8 @@
                     
                      $j("#" + containerId + " div.gridTitle").html(title);                  
 
-                }; 
+                };
+                
 
                 function setupGridData(data)
                 {
@@ -461,7 +329,8 @@
 		</div>
 	
 		<!--  This is the DIV we stuff the browse windows into. -->
-		<div id="exportOverlay" style="display: none;">&nbsp;</div>
+		<div id="exportOverlay" class="overlay" style="display: none;">&nbsp;</div>
+		<tmpl:editMetadataOverlay />
 		<div id="divBrowsePopups" style="width:800px; display: none;">
 			
 		</div>
@@ -495,7 +364,7 @@
 			</table>
 		</div>
 		
-		<!--  Everything for the across trial function goes here and is displayed using colorbox -->
+		<!-- Everything for the across trial function goes here and is displayed using colorbox -->
 		<div style="display:none">
 			<div id="xtHolder">
 				<div id="xtTopbar">

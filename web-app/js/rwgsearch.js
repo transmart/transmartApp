@@ -18,13 +18,43 @@ var allowOnSelectEvent = true;
 function addSelectCategories()	{
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All"));
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "DATANODE").text("Data Node"));
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "FREETEXT").text("Free Text"));
+	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "CONTENT").text("Free Text"));
 	jQuery.getJSON(getCategoriesURL, function(json) {
 		for (var i=0; i<json.length; i++)	{
 			var category = json[i].category;
 			var catText = convertCategory(category);
 			jQuery("#search-categories").append(jQuery("<option></option>").attr("value", category).text(catText));
 		}
+    });
+}
+
+function addFilterCategories() {
+	jQuery.getJSON(getFilterCategoriesURL, function(json) {
+		for (var i=0; i<json.length; i++)	{
+			var category = json[i].category;
+			var choices = json[i].choices;
+			var titleDiv = jQuery("<div></div>").addClass("filtertitle").attr("name", category.category).text(category.displayName);
+			var contentDiv = jQuery("<div></div>").addClass("filtercontent").attr("name", category.category).attr("style", "display: none");
+			for (var j=0; j < choices.length; j++) {
+				var choice = choices[j];
+				
+				var newItem = jQuery("<div></div>").addClass("filteritem").attr("name", category.category).attr("id", choice.uid).text(choice.name);
+				
+				//If this has been selected, highlight it
+				var idString = '[id="' + category.displayName + "|" + category.category + ";" + choice.name + ";" + choice.uid + '"]';
+				idString = idString.replace(/,/g, "%44"); //Replace commas!
+				var element = jQuery(idString);
+				if (element.size() > 0) {
+					newItem.addClass("selected");
+				}
+
+				contentDiv.append(newItem);
+			}
+			jQuery("#filter-browser").append(titleDiv);
+			jQuery("#filter-browser").append(contentDiv);
+		}
+		
+		jQuery("#filter-browser").removeClass("ajaxloading");
     });
 }
 
@@ -40,10 +70,10 @@ function addSearchAutoComplete()	{
 			
 			//If category is ALL, add this as free text as well
 			var category = jQuery("#search-categories").val();
-			if (category == 'ALL') {
-				searchParam={id:ui.item.label,display:'Free Text',keyword:ui.item.label,category:'FREETEXT'};
-				addSearchTerm(searchParam);
-			}
+//			if (category == 'ALL') {
+//				searchParam={id:ui.item.label,display:'Free Text',keyword:ui.item.label,category:'CONTENT'};
+//				addSearchTerm(searchParam);
+//			}
 			return false;
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
@@ -69,9 +99,9 @@ function addSearchAutoComplete()	{
 	jQuery('#search-ac').keypress(function(event) {
 		var category = jQuery("#search-categories").val();
 		var categoryText = jQuery('#search-categories option:selected').text();
-		if (event.which == 13 && (category == 'DATANODE' || category == 'FREETEXT' || category == 'ALL')) {
+		if (event.which == 13 && (category == 'DATANODE' || category == 'CONTENT' || category == 'ALL')) {
 			var val = jQuery('#search-ac').val();
-			if (category == 'ALL') {category = 'FREETEXT'; categoryText = 'Free Text';}
+			if (category == 'ALL') {category = 'CONTENT'; categoryText = 'Free Text';}
 			searchParam={id:val,display:categoryText,keyword:val,category:category};
 			addSearchTerm(searchParam);
 			return false;
@@ -84,6 +114,9 @@ function addSearchAutoComplete()	{
 //Helper method to only capitalize the first letter of each word
 function convertCategory(valueToConvert)	{
 	var convertedValue = valueToConvert.toLowerCase();
+	if (convertedValue == "genesig") {
+		return "Gene List";
+	}
 	return convertedValue.slice(0,1).toUpperCase() + convertedValue.slice(1);
 }
 
@@ -95,7 +128,7 @@ function addSearchTerm(searchTerm, noUpdate)	{
 	
 	var text = (searchTerm.text == undefined ? (searchTerm.keyword == undefined ? searchTerm : searchTerm.keyword) : searchTerm.text);
 	var id = searchTerm.id == undefined ? -1 : searchTerm.id;
-	var key = category + ":" + text + ":" + id;
+	var key = category + ";" + text + ";" + id;
 	if (currentSearchTerms.indexOf(key) < 0)	{
 		currentSearchTerms.push(key);
 		if (currentCategories.indexOf(category) < 0)	{
@@ -174,7 +207,7 @@ function showSearchTemplate()	{
 	
 	for (var i=0; i<currentCategories.length; i++)	{
 		for (var j=0; j<currentSearchTerms.length; j++)	{
-			var fields = currentSearchTerms[j].split(":");
+			var fields = currentSearchTerms[j].split(";");
 			if (currentCategories[i] == fields[0]){
 				var tagID = currentSearchTerms[j].split(' ').join('%20');			// URL encode the spaces
 				var tagID = currentSearchTerms[j].split(',').join('%44');			// And the commas
@@ -268,7 +301,7 @@ function showFacetResults()	{
 
 	// first, loop through each term and add categories and terms to respective arrays 		
     for (var i=0; i<savedSearchTermsArray.length; i++)	{
-		var fields = savedSearchTermsArray[i].split(":");
+		var fields = savedSearchTermsArray[i].split(";");
 		// search terms are in format <Category Display>|<Category>:<Search term display>:<Search term id>
 		var termId = fields[2]; 
 		var categoryFields = fields[0].split("|");
@@ -388,7 +421,7 @@ function getSearchKeywordList()   {
 	var keywords = new Array();
 	
 	for (var j=0; j<currentSearchTerms.length; j++)	{
-		var fields = currentSearchTerms[j].split(":");		
+		var fields = currentSearchTerms[j].split(";");		
 	    var keyword = fields[2];			
 		keywords.push(keyword);
 	}
@@ -404,7 +437,7 @@ function removeSearchTerm(ctrl)	{
 		currentSearchTerms.splice(idx, 1);
 		
 		// check if there are any remaining terms for this category; remove category from list if none
-		var fields = currentSearchTermID.split(":");
+		var fields = currentSearchTermID.split(";");
 		var category = fields[0];
 		clearCategoryIfNoTerms(category);
 
@@ -502,7 +535,7 @@ function clearCategoryIfNoTerms(category)  {
 	
 	var found = false;
 	for (var j=0; j<currentSearchTerms.length; j++)	{
-		var fields2 = currentSearchTerms[j].split(":");
+		var fields2 = currentSearchTerms[j].split(";");
 		var category2 = fields2[0];
 		
 		if (category == category2)  {
@@ -517,7 +550,8 @@ function clearCategoryIfNoTerms(category)  {
 }
 
 function unselectFilterItem(id) {
-	jQuery('#' + id).removeClass('selected');
+	//Longhand as may contain : characters
+	jQuery("[id='" + id + "']").removeClass('selected');
 }
 
 // ---
@@ -527,24 +561,15 @@ jQuery(document).ready(function() {
 	jQuery('#sidebartoggle').click(function() {
 		toggleSidebar();
     });
-    
-	//Filter browser
-	jQuery('#filter-browser').dialog({
-		autoOpen: false,
-		width:200,
-		height:400,
-		position: [300, 30],
-		resizable:true,
-		show: 'fade',
-		hide: 'fade',
-		title: 'Filter Browser'
-    });
 	
-	jQuery('.filtertitle').click(function () {
+	
+	
+	jQuery('#filter-browser').on('click', '.filtertitle', function () {
 		jQuery('.filtercontent[name="' + jQuery(this).attr('name') + '"]').toggle('fast');
 	});
 	
-	jQuery('.filteritem').click(function () {
+	
+	jQuery('#filter-browser').on('click', '.filteritem', function () {
 		var selecting = !jQuery(this).hasClass('selected');
 		jQuery(this).toggleClass('selected');
 		
@@ -563,169 +588,187 @@ jQuery(document).ready(function() {
 			addSearchTerm(searchParam);
 		}
 		else {
-			var idString = '[id="' + category + "|" + name + ":" + value + ":" + id + '"]';
+			var idString = '[id="' + category + "|" + name + ";" + value + ";" + id + '"]';
+			idString = idString.replace(/,/g, "%44"); //Replace commas!
 			var element = jQuery(idString);
 			removeSearchTerm(element[0]);
 		}
 	});
 	
-    addSelectCategories();
-    addSearchAutoComplete();
+    jQuery('body').on('mouseenter', '.folderheader', function() {
+		jQuery(this).find('.foldericonwrapper').fadeIn(150);
+	});
+
+    jQuery('body').on('mouseleave', '.folderheader', function() {
+		jQuery(this).find('.foldericonwrapper').fadeOut(150);
+	});
+
+    jQuery('body').on('click', '.foldericon.add', function() {
+		var id = jQuery(this).attr('name');
+		jQuery(this).removeClass().text("Added to cart");
+		jQuery('#cartcount').hide();
+		
+		jQuery.ajax({
+			url:exportAddURL,
+			data: {id: id},			
+			success: function(response) {
+				jQuery('#cartcount').show().text(response);
+			},
+			error: function(xhr) {
+				jQuery('#cartcount').show();
+			}
+		});
+	});
+
+    jQuery('body').on('click', '.foldericon.addall', function() {
+		var nameelements = jQuery(this).closest('table').find('.foldericon.add');
+		var ids = [];
+		for (i = 0; i < nameelements.size(); i++) {
+			ids.push(jQuery(nameelements[i]).attr('name'));
+			jQuery(nameelements[i]).removeClass().text("Added to cart");
+		}
+		
+		jQuery('#cartcount').hide();
+		
+		jQuery.ajax({
+			url:exportAddURL,
+			data: {id: ids.join(",")},			
+			success: function(response) {
+				jQuery('#cartcount').show().text(response);
+			},
+			error: function(xhr) {
+				jQuery('#cartcount').show();
+			}
+		});
+	});
+
+    jQuery('body').on('click', '.foldericon.view', function() {
+	    var id = jQuery(this).closest(".folderheader").attr('name');
+    	showDetailDialog(experimentDataUrl + '?id=' + id);
+	});
+	
+	jQuery('#metadata-viewer').on('click', '.editmetadata', function() {
+
+    	var id = jQuery(this).attr('name');
+
+		jQuery('#editMetadataOverlay').fadeIn();
+		jQuery('#editMetadata').empty().addClass('ajaxloading');
+
+		jQuery.ajax({
+			url:editFolderURL,
+			data: {folderId: id},			
+			success: function(response) {
+				jQuery('#editMetadata').html(response).removeClass('ajaxloading');
+			},
+			error: function(xhr) {
+				alert(xhr);
+				jQuery('#editMetadata').html(response).removeClass('ajaxloading');
+			}
+		});
+	});
+
+    jQuery('#exportOverlay').on('click', '.greybutton.remove', function() {
+
+    	var row = jQuery(this).closest("tr");
+	    var id = row.attr('name');
+	   
+	    jQuery('#cartcount').hide();
+	    
+		jQuery.ajax({
+			url:exportRemoveURL,
+			data: {id: id},			
+			success: function(response) {
+				row.remove();
+				jQuery('#cartcount').show().text(response);
+				updateExportCount();
+			},
+			error: function(xhr) {
+				jQuery('#cartcount').show();
+			}
+		});
+	});
+
+    jQuery('#exportOverlay').on('click', '.greybutton.export', function() {
+
+    	var checkboxes = jQuery('#exporttable input:checked');
+		var ids = [];
+		for (i = 0; i < checkboxes.size(); i++) {
+			ids.push(jQuery(checkboxes[i]).attr('name'));
+		}
+
+		if (ids.size() == 0) {return false;}
+
+		window.location = exportURL + "?id=" + ids.join(',');
+	    
+	});
+
+	jQuery('body').on('click', '#closeexport', function() {
+		jQuery('#exportOverlay').fadeOut();	
+    });
     
-//    jQuery("#filter-div").dynatree({
-//    	initAjax: {  url: treeURL,
-//    		data: { mode: "all" } 
-//    	},
-//    	checkbox: true,
-//    	persist: false,
-//    	selectMode: 3,
-//    	minExpandLevel: 1,
-//    	fx:{ height: "toggle", duration: 180 },
-//    	autoCollapse: true,
-//        onQuerySelect: function(flag, node) {   // event that is triggered prior to select actually happening on node
-//        	
-//        	if (!allowOnSelectEvent)  {
-//        		return true;
-//        	} 
-//        	
-//        	// before selecting node, save a copy of which nodes were selected
-//        	// (note that this only gets done when select is called outside of the onSelect event since we're using the global allowOnSelectEvent flag above) 
-//        	nodesBeforeSelect = node.tree.getSelectedNodes(false);
-//
-//        },
-//        onSelect: function(flag, node) {
-//        	// don't allow this event to be triggered by itself; return immediately if called as a result of the event itself
-//        	if (!allowOnSelectEvent)  {
-//        		return true;
-//        	} 
-//        	else  {
-//        		allowOnSelectEvent = false;
-//        	}
-//        	
-//        	// before re-synchronizing tree, make sure any nodes that have same key as this one have been properly
-//        	// selected and deselected
-//            
-//        	var tree = node.tree;        	
-//            var selectNode = node;   // store the node that was selected so we can reference unambiguously in tree.visit function below 
-//
-//        	// node is now selected, and any other changes to the tree have already happened (i.e. changes to children, parents,
-//            //   cousins, second cousins, ...) so retrieve a copy of which nodes are now selected
-//        	var nodesAfterSelect = node.tree.getSelectedNodes(false);
-//           
-//            // retrieve a list of those that are partially selected (e.g. no check box but a child or grandchild .. may be);
-//            var nodesPartiallySelected = new Array();
-//        	jQuery(".dynatree-partsel").each(
-//        			function(){
-//        		                  var node = jQuery.ui.dynatree.getNode(this);
-//        		                  
-//        		                  //  Selected nodes may also appear here - 
-//        		                  //   make sure only those that are not selected are actually included
-//        		                  //    in this list; 
-//        		                  //  And don't add category nodes either
-//        		                  if (!node.isSelected() && !node.data.isCategory)  {
-//        		                      nodesPartiallySelected.push(node);
-//        		                  }
-//        		              }
-//        			);
-//        	
-//        	
-//        	
-//        	// find nodes that are in After but were not in Before (i.e. Added)
-//        	var nodesAdded = subtractNodes(nodesAfterSelect, nodesBeforeSelect);
-//
-//        	for (var i = 0; i < nodesAdded.length; i++) {
-//        		var n = nodesAdded[i];
-//        		// process node if it's not a category
-//        		if (!n.data.isCategory)  {
-//            		// loop through every node in tree and find copies, make sure all copies are selected        		
-//    	            n.tree.visit(  function (node) {
-//      	                              if ((n.data.key == node.data.key) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
-//    	            	            	  node.select(true);
-//    	            	              } 
-//    	            	           } 
-//    	                         , false
-//    	            		     );
-//                }
-//        		
-//        		
-//        	}
-//
-//        	// find nodes that are in Before but were not in After (i.e. Removed)
-//        	var nodesRemoved = subtractNodes(nodesBeforeSelect, nodesAfterSelect);
-//        	
-//        	// We need to remove partially selected nodes from removed list, since we don't want to call the select(false) method on these;
-//            //   if we did, then we would trigger all children to then be deselected in copies which isn't right;  instead the state of this
-//        	//   node will be controlled by actions on the children 
-//        	var nodesFullyRemoved = subtractNodes(nodesRemoved, nodesPartiallySelected);
-//        	
-//        	for (var i = 0; i < nodesFullyRemoved.length; i++) {
-//        		var n = nodesFullyRemoved[i];         		
-//
-//        		// process node if it's not a category
-//        		if (!n.data.isCategory)  {
-//            		// loop through every node in tree and find copies, make sure all copies are DEselected
-//    	            n.tree.visit(  function (node) {
-//    	            	              if ((n.data.key == node.data.key) && (n.data.uniqueTreeId != node.data.uniqueTreeId)) {
-//    	            	            	  node.select(false);
-//    	            	              } 
-//    	            	           } 
-//    	                         , false
-//    	            		     );
-//                }
-//        		
-//        	}
-//        	
-//        	// reset flag to true now that we're past part that might trigger the event again	      
-//    		allowOnSelectEvent = true;
-//
-//        	// Resynchronize entire tree when something changes
-//        	// We need to do this because a select may affect other nodes than the one selected,
-//        	//  but that doesn't trigger the onSelect event
-//        	// Following call executes the syncNode function on all nodes in tree, except for root
-//        	node.tree.visit(syncNode, false); 
-//        	showSearchTemplate();
-//        	showSearchResults();        	
-//        },
-//        onClick: function(node, event) {
-//        	// if the user clicked outside the node, but in the tree, don't select/unselect the node
-//        	// or if the node has a zero count and is not selected, don't allow it to be selected (but allow it to be expanded)       	
-//            if( (node.getEventTargetType(event) == null) ||             	 
-//           		(node.data.facetCount == 0 && !node.isSelected() && !(node.getEventTargetType(event) == 'expander'))
-//              )
-//            {
-//                return false;// Prevent default processing
-//            }
-//            
-//            //New code to generate popup because the categories don't have children.
-//            generateBrowseWindow(node.data.title)
-//            
-//            return true;
-//        },
-//        onActivate: function(node){
-//	    	if(!node.data.isCategory){
-//	    		if(!node.isSelected()){
-//	    			node.select(true);
-//	    		}
-//	    		else{
-//	    			node.select(false);
-//	    		}
-//	    	
-//	    	}
-//	    	
-//	    	node.deactivate();
-//    	},
-//    	onCustomRender: function(node) {
-//    		// if not a category and count is zero, apply the custom class to node
-//    		if (!node.data.isCategory && node.data.facetCount == 0)  {
-//    			node.data.addClass = "zero-selected";
-//    		}
-//    		else
-//    	    {
-//    			node.data.addClass = null;
-//    	    }
-//    	},
-//    	classNames: {connector: "dynatree-no-connector"}
-//    });
+   jQuery('body').on('click', '#closefilter', function() {
+		jQuery('#filter-browser').fadeOut();	
+    });
+    
+   jQuery('body').on('click', '#closeedit', function() {
+		jQuery('#editMetadataOverlay').fadeOut();	
+    });
+
+    //Close export and filter overlays on click outside
+    jQuery('body').on('click', function(e) {
+
+    	if (!jQuery(e.target).closest('#exportOverlay').length
+    	    	&& !jQuery(e.target).closest('#cartbutton').length
+    	    	&& jQuery(e.target).attr('id') != 'cartbutton') {
+    	
+	    	if (jQuery('#exportOverlay').is(':visible')) {
+    	    	jQuery('#exportOverlay').fadeOut();
+	    	}
+    	}
+    	
+    	if (!jQuery(e.target).closest('#filter-browser').length
+    			&& !jQuery(e.target).closest('#filterbutton').length
+    	    	&& jQuery(e.target).attr('id') != 'filter-browser') {
+    	
+	    	if (jQuery('#filter-browser').is(':visible')) {
+    	    	jQuery('#filter-browser').fadeOut();
+	    	}
+    	}
+	});
+
+	jQuery('#results-div').on('click', '.result-folder-name', function() {
+    	jQuery('.result-folder-name').removeClass('selected');
+		jQuery(this).addClass('selected');
+    });
+
+    jQuery('#logocutout').on('click', function() {
+    	jQuery('#metadata-viewer').empty();
+
+    	jQuery('#welcome-viewer').empty().addClass('ajaxloading');
+    	jQuery('#welcome-viewer').load(welcomeURL, {}, function() {
+    		jQuery('#welcome-viewer').removeClass('ajaxloading');
+    	});
+	});
+
+    jQuery('#cartbutton').click(function() {
+		jQuery.ajax({
+			url:exportViewURL,		
+			success: function(response) {
+				jQuery('#exportOverlay').html(response);
+			},
+			error: function(xhr) {
+			}
+		});
+		jQuery('#exportOverlay').fadeToggle();
+	});
+	
+	jQuery('#filterbutton').click(function() {
+		jQuery('#filter-browser').fadeToggle();
+	});
+	
+    addSelectCategories();
+    addFilterCategories();
+    addSearchAutoComplete();
     
     //Trigger a search immediately if RWG. Dataset Explorer does this on Ext load
     loadSearchFromSession();
@@ -741,7 +784,7 @@ function loadSearchFromSession() {
 		var item = sessionFilters[i];
 		if (item != null && item != "") {
 			var itemData = item.split("|");
-			var itemSearchData = itemData[1].split(":");
+			var itemSearchData = itemData[1].split(";");
 			var searchParam = {id: itemSearchData[2], display: itemData[0], category: itemSearchData[0], keyword: itemSearchData[1]};
 			addSearchTerm(searchParam, true);
 		}

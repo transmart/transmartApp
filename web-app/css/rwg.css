@@ -456,6 +456,11 @@ ul.dynatree-container li ul li{
 }
 
 .result-folder-name.selected {
+    padding: 2px;
+    background-color: #DDF;
+}
+
+.result-folder-name.searchResult {
     font-weight: bold; 
 }
 
@@ -973,13 +978,6 @@ div.selected ul.selected li {
 /* Override multiselect dimensions */
 select.multiselect {
 	width: 96%; height: 94%
-}
-
-.ajaxloading {
-	background-image: url('../images/loader-large.gif') !important;
-	background-repeat: no-repeat !important;
-	background-position: 50% 50% !important;
-	min-height: 128px;
 }
 
 .columnname {

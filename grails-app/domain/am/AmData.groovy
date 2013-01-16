@@ -16,30 +16,19 @@
  * 
  *
  ******************************************************************/
-  
 
-package annotation
+package am
 
-class AmTagValue {
-	
+class AmData { 
+
 	Long id
-	String value
-		
-//	static belongsTo=[amTagItem: AmTagItem]
-	
+	String uniqueId
+	String amDataType
+			
 	static mapping = {
-		table 'am_tag_value'
+		table 'AM_DATA_UID'
 		version false
-		cache true
-		sort "value"
-		columns { id column:'tag_value_id' }
-//		amTagItem joinTable: [name: 'am_tag_template',  key:'tag_item_id', column: 'tag_value_id'], lazy: false
-//		amTagItem column: 'tag_item_id'
-
-	}
-
-	static constraints = {
-		value(maxSize:2000)
+		id column:'AM_DATA_ID', generator:'assigned'
 	}
 
 }

@@ -39,7 +39,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 	Boolean viewInGrid = Boolean.TRUE
 	Boolean viewInChildGrid = Boolean.TRUE
 	static belongsTo=[amTagTemplate: AmTagTemplate]
-	 
+	
 	
 //	AmTagAssociation amTagAssociation
 	

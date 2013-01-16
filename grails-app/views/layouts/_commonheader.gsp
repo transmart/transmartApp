@@ -32,8 +32,8 @@
 		<th class="menuBar" style="width: 160px">
 			&nbsp;
 		</th>
-		<th class="menuBar" style="width: 120px"><select id="search-categories"></select></th>
-		<th class="menuBar" style="width: 160px"><input id="search-ac"/></input></th>
+		<th class="menuBar" style="width: 120px"><g:if test="${'rwg' == app || 'datasetExplorer' == app}"><select id="search-categories"></select></g:if></th>
+		<th class="menuBar" style="width: 160px"><g:if test="${'rwg' == app || 'datasetExplorer' == app}"><input id="search-ac"/></input></g:if></th>
 		<th class="menuBar" style="width: 110px">
 			<g:if test="${'rwg' == app}">
 				<div id="cartbutton" class="greybutton">

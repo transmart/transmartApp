@@ -18,6 +18,11 @@
  ******************************************************************/
 package fm
 
+import am.AmData;
+import annotation.AmTagAssociation;
+import annotation.AmTagDisplayValue;
+import annotation.AmTagValue;
+
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
@@ -25,7 +30,6 @@ import grails.converters.*
 import groovy.xml.StreamingMarkupBuilder
 import com.recomdata.util.FolderType
 import annotation.AmTagItem
-import annotation.AmTagDisplayValue
 
 
 class FmFolderController {
@@ -253,40 +257,68 @@ class FmFolderController {
 	
 	def getFolderContents = {
 		def id = params.id
-		def folderContents = fmFolderService.getFolderContents(id, session['folderSearchMap'])
+		def folderContents = fmFolderService.getFolderContents(id)
 		
-		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files])
+		def folderSearchList = session['folderSearchList']
+		def folderSearchString = folderSearchList ? folderSearchList.join("\\,") + "\\," : "" //Extra , - used to identify leaves
+		
+		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString])
 	}
 
-
-	
-	private void addFolder(String folderType, FmFolderController fd, long parentId)
-	{
-		fd.folderType = folderType
+	/**
+	 * Update incorrect or missing tag vaulues for folders.
+	 */
+	def fixFolderTags = {
 		
-		if(FolderType.PROGRAM.name() == folderType)
+		def folders = FmFolder.findAll();
+		log.info("fixFolderTags found " + folders?.size());
+		for (folder in folders) {
+			log.info("checking tag for folder " + folder.id);
+			if (folder.folderTag == null || folder.folderTag != Long.toString(folder.id, 36).toUpperCase()) {
+				folder.folderTag = Long.toString(folder.id, 36).toUpperCase();
+				log.info("updating tag to " + folder.folderTag);
+				folder.save();
+			}
+		}
+		
+	}
+	
+	private void addFolder(String folderType, FmFolder folder, long parentId)
+	{
+		folder.folderType = folderType
+		
+		if (FolderType.PROGRAM.name() == folderType)
 		{
-			fd.folderLevel = 0			
+			folder.folderLevel = 0			
 		}
 		else
 		{
 			def parentFolder = FmFolderController.getAt(parentId)
-			fd.folderLevel = parentFolder.folderLevel + 1
-			fd.parent = parentFolder
+			folder.folderLevel = parentFolder.folderLevel + 1
+			folder.parent = parentFolder
 		}
 		
-		if(p.save()) 
+		if (folder.save(flush:true)) 
 		{
-			render p as XML
+			// Set folder's tag value based on a radix-36 conversion of its ID.
+			folder.tag = Long.toString(folder.id, 36).toUpperCase();
+			folder.save(flush:true);
+			
+			// Create UID for folder.
+			def data = new FmData(type:'FM_FOLDER', uniqueId:'FOL:' + folder.id);
+			data.id = folder.id;
+			data.save(flush:true);
+	
+			render folder as XML
 		}
 		else {
-			render p.errors
+			render folder.errors
 		}
 	}
 
 	private void updateFolder()
 	{
-		def folder = FmFolderController.getAt(params.folderId)
+		def folder = FmFolder.getAt(params.folderId)
 		folder.properties = params
 		
 		if(folder.save())
@@ -300,7 +332,7 @@ class FmFolderController {
 	
 	private void moveFolder(long folderId, String newFolderFullName, String newFolderLevel)
 	{
-		def folder = FmFolderController.getAt(folderId)
+		def folder = FmFolder.getAt(folderId)
 		def oldFullName = folder.folderFullName
 		def oldLevel = folder.folderLevel
 		folder.folderFullName = newFolderFullName
@@ -308,7 +340,7 @@ class FmFolderController {
 			
 		if(folder.save())
 		{
-			List<FmFolderController> subFolderList = FmFolderController.findAll("from FmFolder as fd where fd.folderFullName like :fn",
+			List<FmFolderController> subFolderList = FmFolder.findAll("from FmFolder as fd where fd.folderFullName like :fn",
 				[fn:oldFullName+"%"])
 
 			subFolderList.each {
@@ -331,12 +363,12 @@ class FmFolderController {
 	
 	private void removeFolder(long folderId)
 	{
-		def folder = FmFolderController.getAt(folderId)
+		def folder = FmFolder.getAt(folderId)
 		folder.activeInd = false
 		
 		if(folder.save())
 		{
-			List<FmFolderController> subFolderList = FmFolderController.findAll("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel = :fl",
+			List<FmFolderController> subFolderList = FmFolder.findAll("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel = :fl",
 				[fn:folder.folderFullName+"%", fl: (folder.folderLevel + 1)])
 
 			subFolderList.each {
@@ -394,7 +426,6 @@ class FmFolderController {
 	}
 
 	private String createDataTable(folders)
-	//layoutColumns, folders)
 	{
 		
 		if (folders == null || folders.size() < 1) return
@@ -435,6 +466,10 @@ class FmFolderController {
 					log.info ("TYPE == " + amTagItem.tagItemType + " ID = " + amTagItem.id + " " + amTagItem.displayName)
 					
 				}
+			}
+			else
+			{
+				log.error("COLUMN " + it.column + " is either set not to display or is not a propery of " + dataObject)
 			}
 
 		}
@@ -611,16 +646,17 @@ class FmFolderController {
 
 		} 
 
-		// due to 1.37 grails plugin bug, defer to view, then template
-		// render(template:'/fmFolder/editMetaData', model:[folder:folder,layout:layout]);
-		render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		render(template: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 	
 	def updateMetaData =
 	{
 		log.info "updateMetaData called"
 		
+		def paramMap = params
 		def folderId = params.id
+		def amTagTemplate
+		def metaDataTagItems
 		def folder
 		def bioDataObject
 		if (folderId)
@@ -628,6 +664,7 @@ class FmFolderController {
 			folder = FmFolder.get(folderId)
 			if(folder)
 			{
+				def folderUniqueId = folder.getUniqueId()
 				def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
 				if(folderAssociation)
 				{
@@ -644,15 +681,54 @@ class FmFolderController {
 					log.info "Unable to find bio data object. Setting folder to the biodata object "
 					bioDataObject = folder
 				}
+				
+				amTagTemplate = amTagTemplateService.getTemplate(folderUniqueId)
+				if(amTagTemplate)
+				{
+					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+				}
+				
+				//Use metaDataTagItems to update fields
+				for (tagItem in metaDataTagItems) {
+					if (tagItem.tagItemType.equals('FIXED')) {
+						def newValue = params."${tagItem.tagItemAttr}"
+						if (newValue != null) {
+							bioDataObject."${tagItem.tagItemAttr}" = newValue
+						}
+					}
+					else if (tagItem.tagItemType.equals('CUSTOM') && tagItem.tagItemSubtype.equals('FREETEXT')) {
+						//Look for new value by tag item ID
+						def newValue = params."amTagItem_${tagItem.id}"
+						if (newValue != null) {
+							
 
-				bioDataObject.properties = params
+							//Create a new AmTagValue and point to it
+							def newTagValue = new AmTagValue(value: newValue)
+							newTagValue.save()
+							//TODO This is an awful way of generating UIDs and should be changed forthwith, posthaste, etc
+							def newUid = newTagValue.id + ":" + newTagValue.value
+							
+							AmData amData = new AmData(uniqueId: newUid, amDataType: 'AM_TAG_VALUE')
+							amData.id = newTagValue.id
+							amData.save()
+							
+							AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folderUniqueId, objectUid: newUid, tagItemId: tagItem.id)
+							ata.save()
+							
+//							
+							
+						}
+					}
+				}
 				if (!bioDataObject.hasErrors() && bioDataObject.save(flush: true)) {
 					log.info "Meta data saved"
-					redirect(action: "show", id: bioDataObject.id)
+					def result = [id: folderId]
+					render result as JSON
+					return
 				}
 				else {
 					log.info "Errors occurred saving Meta data"
-					def metaDataTagItems  =  getMetaDataItems(folder)
+					metaDataTagItems  =  getMetaDataItems(folder)
 
 					render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 					//	render(view: "edit", model: [fmFolderInstance: fmFolderInstance])

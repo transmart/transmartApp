@@ -9,6 +9,7 @@ var tableURL = "${createLink([controller:'RWG', action:'newTable'])}";
 var treeURL = "${createLink([controller:'RWG', action:'getDynatree'])}";
 var sourceURL = "${createLink([controller:'RWG', action:'searchAutoComplete'])}";	      
 var getCategoriesURL = "${createLink([controller:'RWG', action:'getSearchCategories'])}";
+var getFilterCategoriesURL = "${createLink([controller:'RWG', action:'getFilterCategories'])}";
 var getHeatmapNumberProbesURL = "${createLink([controller:'RWG', action:'getHeatmapNumberProbes'])}";
 var getHeatmapDataURL = "${createLink([controller:'RWG', action:'getHeatmapData'])}";
 var getHeatmapDataForExportURL = "${createLink([controller:'RWG', action:'getHeatmapDataForExport2'])}";
@@ -41,6 +42,10 @@ var exportAddURL = "${createLink([controller:'fileExport', action:'add'])}";
 var exportRemoveURL = "${createLink([controller:'fileExport', action:'remove'])}";
 var exportViewURL = "${createLink([controller:'fileExport', action:'view'])}";
 var exportURL = "${createLink([controller:'fileExport', action:'export'])}";
+
+var folderContentsURL = "${createLink([controller:'fmFolder',action:'getFolderContents'])}";
+var editFolderURL = "${createLink([controller:'fmFolder',action:'editMetaData'])}";
+var saveFolderURL = "${createLink([controller:'fmFolder',action:'updateMetaData'])}";
 
 var welcomeURL = "${createLink([controller:'RWG', action:'ajaxWelcome'])}";
 

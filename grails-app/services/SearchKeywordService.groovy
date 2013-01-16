@@ -18,11 +18,12 @@
  ******************************************************************/
   
 
-import auth.AuthUser;
-import bio.BioDataExternalCode;
+import search.GeneSignature
 import search.SearchKeyword
 import search.SearchKeywordTerm
-import search.GeneSignature
+import auth.AuthUser
+import bio.BioDataExternalCode
+import bio.ConceptCode
 
 /**
  * @author $Author: mmcduffie $
@@ -60,28 +61,71 @@ public class SearchKeywordService {
 		return categories
 	}
 	
+	def findFilterCategories() {
+		
+		def categories = []
+		
+		//Very, VERY hard-coded just now... configure in Config?
+		
+		def filtercats = [
+			[codeTypeName: "TYPE_OF_BM_STUDIED", category: "BIOMARKER_TYPE", displayName: "Biomarker Type"],
+			[codeTypeName: "COUNTRY", category: "COUNTRY", displayName: "Country"],
+			[codeTypeName: "INSTITUTION", category: "INSTITUTION", displayName: "Institution"],
+			[codeTypeName: "MEASUREMENT_TYPE", category: "MEASUREMENT_TYPE", displayName: "Measurement Type"],
+			[codeTypeName: "ORGANISM", category: "ORGANISM", displayName: "Organism"],
+			[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
+			[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
+			[codeTypeName: "STUDY_OBJECTIVE", category: "STUDY_OBJECTIVE", displayName: "Study Objective"],
+			[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
+			[codeTypeName: "STUDY_DESIGN", category: "STUDY_DESIGN", displayName: "Study Design"],
+			[codeTypeName: "TECHNOLOGY", category: "TECHNOLOGY", displayName: "Technology", prefix: true],
+			[codeTypeName: "THERAPEUTIC_DOMAIN", category: "THERAPEUTIC_DOMAIN", displayName: "Therapeutic Domain"],
+			[codeTypeName: "VENDOR", category: "VENDOR", displayName: "Vendor", prefix: true],
+		]
+		
+		for (filtercat in filtercats) {
+			def results 
+			
+			if (filtercat.prefix) {				
+				results = ConceptCode.createCriteria().list	{
+					like("codeTypeName", filtercat.codeTypeName + ":%")
+					order("codeName", "asc")
+				}
+			}
+			else {
+				results = ConceptCode.createCriteria().list	{
+					eq("codeTypeName", filtercat.codeTypeName)
+					order("codeName", "asc")
+				}
+			}
+			
+			def choices = []
+			for (result in results) {
+				choices.push([name: result.codeName, uid: result.bioDataUid.uniqueId[0]])
+			}
+
+			categories.add(["category":filtercat, "choices":choices])
+		}
+		
+		return categories
+	}
+	
 	/** Searches for all keywords for a given term (like %il%) */
 	def findSearchKeywords(category, term, max)	{
 		log.info "Finding matches for ${term} in ${category}"
 		
 		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 		
+		/*
+		 * Get results from Search Keyword table
+		 */
 		def c = SearchKeywordTerm.createCriteria()
 		def results = c.list 	{
 			if (term.size() > 0)	{
 				like("keywordTerm", term.toUpperCase() + '%')
 			}
 			
-			//TODO Special case for gene or SNP - rework to support multiple categories!
-			if ("GENE_OR_SNP".equals(category))	{
-				searchKeyword	{
-					or {
-						eq("dataCategory", "GENE", [ignoreCase: true])
-						eq("dataCategory", "SNP", [ignoreCase: true])
-					}
-				}
-			}
-			else if ("ALL".compareToIgnoreCase(category) != 0)	{
+			if ("ALL".compareToIgnoreCase(category) != 0)	{
 				searchKeyword	{
 					eq("dataCategory", category)
 				}
@@ -121,17 +165,9 @@ public class SearchKeywordService {
 			
 			m.put("label", sk.searchKeyword.keyword)
 			m.put("category", sk.searchKeyword.displayDataCategory)
-			
-			
-			//Further hack: Alter fields depending on the category
-			if (sk.searchKeyword.dataCategory.equals("DISEASE") || sk.searchKeyword.dataCategory.equals("OBSERVATION")) {
-				m.put("categoryId", sk.searchKeyword.dataCategory)
-				m.put("id", sk.searchKeyword.keyword)
-			}
-			else {
-				m.put("categoryId", sk.searchKeyword.dataCategory)
-				m.put("id", sk.searchKeyword.id)
-			}
+			m.put("categoryId", sk.searchKeyword.dataCategory)
+			m.put("id", sk.searchKeyword.uniqueId)
+
 			if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0)	{
 				def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
 				def synList = new StringBuilder()
@@ -150,6 +186,34 @@ public class SearchKeywordService {
 			}
 			keywords.add(m)
 		}
+		
+		/*
+		* Get results from Bio Concept Code table
+		*/
+		results = ConceptCode.createCriteria().list {
+			if (term.size() > 0)	{
+				like("bioConceptCode", term.toUpperCase().replace(" ", "_") + '%')
+			}
+			
+			if ("ALL".compareToIgnoreCase(category) != 0)	{
+				like("codeTypeName", category + "%")
+			}
+			maxResults(max)
+			order("bioConceptCode", "asc")
+		}
+		log.info("Bio concept code keywords found: " + results.size())
+		
+		for (result in results)	{
+			def m = [:]
+			
+			m.put("label", result.codeName)
+			m.put("category", result.codeTypeName)
+			m.put("categoryId", result.codeTypeName)
+			m.put("id", result.bioDataUid.uniqueId[0])
+			
+			keywords.add(m)
+		}
+		
 		return keywords
 	 }
 
