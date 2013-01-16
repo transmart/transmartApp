@@ -25,7 +25,10 @@ function addSelectCategories()	{
 			var catText = convertCategory(category);
 			jQuery("#search-categories").append(jQuery("<option></option>").attr("value", category).text(catText));
 		}
+		
+		jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "THERAPEUTIC_DOMAIN").text("Therapeutic Domain"));
     });
+	
 }
 
 function addFilterCategories() {
