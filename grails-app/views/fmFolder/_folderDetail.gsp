@@ -110,13 +110,18 @@ var assayCount = 3
                  <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
                  	<g:set var="fieldValue" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
                  	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
-                 		<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[fieldValue])?.id}"/>
-                 		<g:if test="${bioDataId}">
-	                 		${ConceptCode.find('from ConceptCode where id=?', bioDataId).codeName}
-                 		</g:if>
-                 		<g:else>
-                 			${fieldValue}
-                 		</g:else>
+                 		<%-- Split multiple values by pipe --%>
+                 		<g:set var="terms" value="${fieldValue.split('\\|')}"/>
+                 		<g:each in="${terms}" var="term" status="t">
+	                 		<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
+	                 		<g:if test="${t > 0}">, </g:if>
+	                 		<g:if test="${bioDataId}">
+		                 		${ConceptCode.find('from ConceptCode where id=?', bioDataId).codeName}
+	                 		</g:if>
+	                 		<g:else>
+	                 			${term}
+	                 		</g:else>
+                 		</g:each>
                  	</g:if>
                  	<g:else>
                  		${fieldValue}
