@@ -73,7 +73,7 @@ class FileExportController {
 		for (id in exportList) {
 			FmFile f = FmFile.get(id)
 			if (f) {
-				files.push([id: f.id, fileType: f.fileType, displayName: f.displayName, folder: f.fmFolder.folderFullName[0]])
+				files.push([id: f.id, fileType: f.fileType, displayName: f.displayName, folder: f.folder.folderFullName])
 			}
 		}
 		files.sort { a, b ->
@@ -106,7 +106,7 @@ class FileExportController {
 				FmFile fmFile = FmFile.get(f)
 				File file = new File(fmFile.filestoreLocation + "/" + fmFile.filestoreName)
 				if (file.exists()) {
-					String dirName = fmFile.fmFolder.folderFullName[0]
+					String dirName = fmFile.folder.folderFullName
 					if (dirName.startsWith("/") || dirName.startsWith("\\")) { dirName = dirName.substring(1) } //Lose the first separator character, this would cause a blank folder name in the zip
 					def fileEntry = new ZipEntry(dirName + "/" + fmFile.displayName)
 					zipStream.putNextEntry(fileEntry)
