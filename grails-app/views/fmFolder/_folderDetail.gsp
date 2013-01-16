@@ -127,17 +127,14 @@ var assayCount = 3
                  		${fieldValue}
                  	</g:else>
                 </g:if>
-                <g:else>   
+                <g:else>
                     <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.uniqueId.toString(),amTagItem.id])}"/>
 	                <g:if test="${tagValues!=null}">
-	             	   <g:set var="counter" value="0"/>
-	             		 <g:each var="tagValue" status="k" in="${tagValues}">
-						      <g:if test="${counter==1}">, </g:if>${tagValue.displayValue}
-						      <g:set var="counter" value="${counter.toLong() + 1}"/>
-						 </g:each>
-	                 </g:if>
-	                 
-	                </g:else>
+	             		<g:each var="tagValue" status="k" in="${tagValues}">
+							<g:if test="${k > 0}">, </g:if>${tagValue.displayValue}				      
+						</g:each>
+					</g:if>
+				</g:else>
                 </td>
             </tr>
          </g:if>

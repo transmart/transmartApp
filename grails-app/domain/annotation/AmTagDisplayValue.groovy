@@ -39,7 +39,7 @@ class AmTagDisplayValue implements Serializable {
 		version false
 		cache true
 		sort "value"
-		id composite: ["subjectUid","amTagItem"]
+		id composite: ["subjectUid","objectUid","amTagItem"]
 		amTagItem column: 'tag_item_id'
 
 	}
@@ -57,6 +57,14 @@ class AmTagDisplayValue implements Serializable {
 	//	instance ? instance.delete(flush: flush) : false
 		
 		false
+	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Subject UID: ").append(subjectUid).append(", ");
+		sb.append("Object UID: ").append(objectUid).append(", ");
+		sb.append("Display Value: ").append(displayValue);
+		return sb.toString();
 	}
 
 }
