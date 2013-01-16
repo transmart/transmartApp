@@ -62,11 +62,11 @@ class MetacoreEnrichmentController {
 		}
 		
 		def cohortData = [
-			IdType: params.IdType?:'AFFYMETRIX',
+			IdType: 'LOCUSLINK',
 			Data: [geneList as List]	
 		]
 		
-		log.info "Running enrichment for ${geneList.size()} genes (IdType passed: ${params.IdType})"
+		log.info "Running enrichment for ${geneList.size()} genes"
 		
 		render metacoreEnrichmentService.getEnrichmentByMaps(cohortData, metacoreParams) as JSON
 	}
@@ -88,10 +88,11 @@ class MetacoreEnrichmentController {
 		def mode = metacoreEnrichmentService.metacoreSettingsMode()
 		def sysDef = metacoreEnrichmentService.systemMetacoreSettingsDefined()
 		def settings = metacoreEnrichmentService.getMetacoreParams()
+		def isConfigured = metacoreEnrichmentService.areSettingsConfigured()
 		
 		def res = (mode=='user')?settings:[baseUrl: settings?.baseUrl]
 		
-		render(view:'metacoreSettingsWindow', model: [settingsMode: mode, systemSettingsDefined: sysDef, settings: res])
+		render(view:'metacoreSettingsWindow', model: [settingsConfigured: isConfigured, settingsMode: mode, systemSettingsDefined: sysDef, settings: res])
 	}
 	
 	def saveMetacoreSettings = {
