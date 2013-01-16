@@ -37,6 +37,7 @@ class FmFile {
 	Boolean activeInd = Boolean.TRUE
 	Date createDate = new Date()
 	Date updateDate = new Date()
+	String uniqueId
 	
 	static hasMany = [folders: FmFolder] //Should probably only have one, but Grails doesn't allow join table on one-many
 

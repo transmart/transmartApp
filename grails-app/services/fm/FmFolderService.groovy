@@ -129,7 +129,7 @@ class FmFolderService {
 				filestoreName: "",
 				linkUrl: ""
 			);
-			if (!fmFile.save()) {
+			if (!fmFile.save(flush:true)) {
 				fmFile.errors.each {
 					log.error(it);
 				}
@@ -137,18 +137,25 @@ class FmFolderService {
 			}
 			fmFile.filestoreLocation = getFilestoreLocation(fmFolder);
 			fmFolder.addToFmFiles(fmFile);
-			if (!fmFolder.save()) {
+			if (!fmFolder.save(flush:true)) {
 				fmFolder.errors.each {
 					log.error(it);
 				}
 				return;
+			}
+			FmData fmData = new FmData(fmDataType: 'FM_FILE', uniqueId: 'FIL:' + fmFile.id);
+			fmData.id = fmFile.id;
+			if (!fmData.save(flush:true)) {
+				fmData.errors.each {
+					log.error(it);
+				}
 			}
 			log.info("File = " + file.getName() + " (" + fmFile.id + ") - New");
 		}
 
 		fmFile.filestoreName = Long.toString(fmFile.id, 36).toUpperCase() + "-" + Long.toString(fmFile.fileVersion, 36).toUpperCase() + "." + fmFile.fileType;
 
-		if (!fmFile.save()) {
+		if (!fmFile.save(flush:true)) {
 			fmFile.errors.each {
 				log.error(it);
 			}
@@ -258,8 +265,14 @@ class FmFolderService {
 		
 		try {
 			StringBuilder url = new StringBuilder(solrUrl);
-			// Use the file's ID as the document ID in SOLR
-			url.append("?").append("literal.id=").append(fmFile.id);
+			// Use the file's unique ID as the document ID in SOLR
+			url.append("?").append("literal.id=").append(URLEncoder.encode(fmFile.uniqueId, "UTF-8"));
+			
+			
+			// Use the file's parent folder's unique ID as the folder_uid in SOLR
+			if (fmFile.folder != null) {
+				url.append("&").append("literal.folder=").append(URLEncoder.encode(fmFile.folder.uniqueId, "UTF-8"));
+			}
 			
 			// Use the file's name as document name is SOLR
 			url.append("&").append("literal.name=").append(URLEncoder.encode(fmFile.originalName, "UTF-8"));
