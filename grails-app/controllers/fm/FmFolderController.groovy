@@ -265,7 +265,23 @@ class FmFolderController {
 		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString])
 	}
 
-
+	/**
+	 * Update incorrect or missing tag vaulues for folders.
+	 */
+	def fixFolderTags = {
+		
+		def folders = FmFolder.findAll();
+		log.info("fixFolderTags found " + folders?.size());
+		for (folder in folders) {
+			log.info("checking tag for folder " + folder.id);
+			if (folder.folderTag == null || folder.folderTag != Long.toString(folder.id, 36).toUpperCase()) {
+				folder.folderTag = Long.toString(folder.id, 36).toUpperCase();
+				log.info("updating tag to " + folder.folderTag);
+				folder.save();
+			}
+		}
+		
+	}
 	
 	private void addFolder(String folderType, FmFolder folder, long parentId)
 	{
@@ -284,6 +300,11 @@ class FmFolderController {
 		
 		if (folder.save(flush:true)) 
 		{
+			// Set folder's tag value based on a radix-36 conversion of its ID.
+			folder.tag = Long.toString(folder.id, 36).toUpperCase();
+			folder.save(flush:true);
+			
+			// Create UID for folder.
 			def data = new FmData(type:'FM_FOLDER', uniqueId:'FOL:' + folder.id);
 			data.id = folder.id;
 			data.save(flush:true);
