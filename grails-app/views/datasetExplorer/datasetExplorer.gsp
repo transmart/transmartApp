@@ -174,7 +174,7 @@
 	  HelpURL: '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}',
 	  ContactUs: '${grailsApplication.config.com.recomdata.searchtool.contactUs}',
 	  AppTitle: '${grailsApplication.config.com.recomdata.searchtool.appTitle}',
-      BuildVersion: 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
+      BuildVersion: 'Build Version: <g:meta name="app.version"/> <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
 	  AnalysisRun: false,
 	  Analysis: 'Advanced',
 	  HighDimDataType: '',

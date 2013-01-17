@@ -44,8 +44,15 @@ class MetacoreEnrichmentController {
 	def runAnalysis = {
 		def metacoreParams = metacoreEnrichmentService.getMetacoreParams()
 		
-		// only cohort1 (first list in the first parameter is used in enrichment for now
+		// only cohort1 (first list in the first parameter is used in enrichment for now)
 		def fname = params['mrnaFilename']
+		def threshold = 0
+		
+		try {
+			threshold = Double.parseDouble(params['zThresholdAbs'])
+		}
+		catch (e) {}
+		
 		def f = new File(fname)
 		
 		def i = 0
@@ -55,7 +62,14 @@ class MetacoreEnrichmentController {
 			line ->
 			if (i > 0) {
 				def values = line.split("\t")
-				if (values[11]) geneList << values[11]
+				def z_score = 0
+				
+				try {
+					z_score = Double.parseDouble(values[7])
+				}
+				catch (e) {}
+				
+				if (values[11] && Math.abs(z_score) >= threshold) geneList << values[11]
 			}
 			
 			i++
@@ -66,7 +80,7 @@ class MetacoreEnrichmentController {
 			Data: [geneList as List]	
 		]
 		
-		log.info "Running enrichment for ${geneList.size()} genes"
+		log.info "Running enrichment for ${geneList.size()} genes; |z| >= ${threshold}"
 		
 		render metacoreEnrichmentService.getEnrichmentByMaps(cohortData, metacoreParams) as JSON
 	}
