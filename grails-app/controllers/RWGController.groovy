@@ -335,7 +335,7 @@ class RWGController {
 		   
 		   if (combinedResult) {
 			   def folderSearchString = combinedResult.join("\\,") + "\\," //Extra , - used to identify leaves
-			   render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString])
+			   render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString, auto: true])
 		   }
 		   else {
 			   render(template:'/fmFolder/noResults')
