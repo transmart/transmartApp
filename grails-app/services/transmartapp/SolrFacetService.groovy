@@ -25,6 +25,11 @@ import java.util.List;
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 import org.json.*
 
+import search.SearchKeyword;
+
+import bio.BioDataExternalCode;
+import bio.ConceptCode;
+
 import fm.FmData;
 import fm.FmFile;
 import fm.FmFolder;
@@ -42,6 +47,135 @@ class SolrFacetService {
 	def ontologyService
 
     boolean transactional = true
+	
+	def getCombinedResults(categoryList, page) {
+		
+		String solrRequestUrl = createSOLRQueryPath()
+		
+		def searchResultIds = []
+		
+		//For each category (except Datanode), construct a SOLR query
+		for (category in categoryList) {
+			def categoryName = ((String) category).split(":", 2)[0]
+			def termList = ((String) category).split(":", 2)[1].split("\\|")
+			
+			//If in Browse, we're gathering folder paths. If in Analyze, we want i2b2 paths
+			//CategoryResultIds is used to gather IDs returned by this category - always add to this list, don't intersect (producing OR).
+			def categoryResultIds = []
+
+			//Start HERE if we're looking for metadata (anything other than DATANODE and CONTENT)
+			if (!categoryName.equals("DATANODE") && !categoryName.equals("CONTENT")) {
+				//Make this metadata field into a SOLR query
+				println "Searching for metadata: " + termList.join(",")
+
+				def categoryQuery = createCategoryQueryString(categoryName, termList)
+				def solrQuery = "q=" + createSOLRQueryString(categoryQuery, "", "")
+				def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQuery, false)
+				
+				//If browse, convert this to a folder path list - if analyze, a node path list
+				if (page.equals('RWG')) {
+					categoryResultIds += getFolderList(xml)
+				}
+				else {
+					categoryResultIds += getNodesByAccession(xml)
+				}
+				
+				//Now that we've searched on the UIDs, we need to convert the term list to plain text.
+				termList = convertTermList(categoryName, termList)
+			}
+			
+			//Start HERE if we're looking for CONTENT
+			if (!categoryName.equals("DATANODE")) {
+				//Content: Get the list of terms, and search in CONTENT field OR the data nodes
+				println "Searching for freetext: " + termList.join(",")
+				
+				def categoryQuery = createCategoryQueryString("CONTENT", termList)
+				def solrQuery = "q=" + createSOLRQueryString(categoryQuery, "", "")
+				def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQuery, false)
+				
+				//If browse, convert this to a folder path list - if analyze, a node path list
+				if (page.equals('RWG')) {
+					categoryResultIds += getFolderList(xml)
+				}
+				else {
+					categoryResultIds += getNodesByAccession(xml)
+				}
+			}
+
+			//Start HERE if we're searching for datanodes.
+				println "Searching for datanodes: " + termList.join(",")
+				
+				//If browse, get the studies from SOLR that correspond to the returned accessions - if analyze, just add the paths.
+				if (page.equals('RWG')) {
+					def ontologyAccessions = ontologyService.searchOntology(null, termList, 'ALL', 'accession', null)
+					
+					if (ontologyAccessions) {
+						def solrQueryString = ""
+						
+						for (accession in ontologyAccessions) {
+							println ("Got accession: " + accession)
+							
+							if (solrQueryString) {solrQueryString += " OR "; }
+							
+							solrQueryString += "ACCESSION:\"" + accession + "\""
+						}
+						
+						solrQueryString = "q=(" + solrQueryString + ")"
+						
+						def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
+						categoryResultIds += getFolderList(xml)
+					}
+				}
+				else {
+					categoryResultIds += ontologyService.searchOntology(null, termList, 'ALL', 'path', null)
+				}
+			
+			//If the master searchResultsIds list is empty, copy this in - otherwise intersect.
+			//If we have nothing for ANY search category, return nothing immediately!
+			if (!categoryResultIds) {
+				return []
+			}
+			
+			if (!searchResultIds) {
+				searchResultIds = categoryResultIds
+			}
+			else {
+				searchResultIds = searchResultIds.intersect(categoryResultIds)
+			}
+			
+		}
+		
+		//And return the complete list of folder/i2b2 paths!
+		return searchResultIds
+		
+	}
+	
+	def convertTermList(category, termList) {
+		def textList = []
+		
+		//Find terms and synonyms depending on category
+		if (category.equals("GENE") || category.equals("DISEASE") || category.equals("COMPOUND") || category.equals("PATHWAY")) {
+			for (term in termList) {
+				
+				def sk = SearchKeyword.findByUniqueId(term)
+				textList += sk.keyword.toLowerCase()
+				def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.bioDataId, codeType: "SYNONYM")
+				for (s in synonyms) {
+					textList += s.code
+				}
+			}
+		}
+		//Assume ConceptCode UID for everything else
+		else {
+			for (term in termList) {
+				def cc = ConceptCode.findByUniqueId(term)
+				def lowerCaseName = cc.codeName.toLowerCase()
+				textList += lowerCaseName
+			}
+		}
+		
+		return textList
+	}
 
    def getSolrResults(queryParams, facetQueryParams, facetFieldsParams, returntype) {
 		   
@@ -77,6 +211,19 @@ class SolrFacetService {
 		   
    }
    
+   def getNodesByAccession(xml) {
+	   def accessions = getAccessions(xml)
+	   if (!accessions) {
+		   return []
+	   }
+	   
+	   //If we have any accessions, return the node paths from i2b2 (on the study level)
+	   else {
+		   def results = ontologyService.searchOntology(null, null, 'ALL', 'path', accessions)
+		   return results
+	   }
+   }
+   
    def getAccessions(xml) {
 	   def result = new StreamingMarkupBuilder().bind{
 		   mkp.yield xml
@@ -93,9 +240,9 @@ class SolrFacetService {
 	   return accessions
    }
    
-   def getFolderList(xml, dataNodeSearchTerms, solrRequestUrl) {
+   def getFolderList(xml) {
 	   
-	   // retrieve all folderIds from the returned data
+	   //retrieve all folderUIDs from the returned data
 	   
 	   def result = new StreamingMarkupBuilder().bind{
 		   mkp.yield xml
@@ -107,8 +254,8 @@ class SolrFacetService {
 	   def folderSearchList = [];
 	   for (node in folderIdNodes) {
 		   def folderId = node.text()
-		   def folder = FmFolder.findByUniqueId(folderId)
-		   folderSearchList.push(folder.folderFullName)
+		   def fmFolder = FmFolder.findByUniqueId(folderId)
+		   folderSearchList.push(fmFolder.folderFullName)
 	   }
 	   
 	   return folderSearchList
@@ -160,11 +307,11 @@ class SolrFacetService {
 
 	  // create a query for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
 	  String categoryQuery = ""
-	  for (t in termList.tokenize("|"))  {
+	  for (t in termList)  {
 		  
 		  //If searching on text, add wildcards (instead of quote marks)
 		  if (category.equals("CONTENT")) {
-			  t = "*" + t + "*";
+			  t = "*" + t.toLowerCase() + "*";
 		  }
 		  else {
 			  t = "\"" + t + "\"";

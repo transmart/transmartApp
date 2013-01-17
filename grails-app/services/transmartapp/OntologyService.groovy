@@ -53,7 +53,7 @@ class OntologyService {
 					if (!searchtermstring.equals("")) {
 						searchtermstring += " OR "
 					}
-					def searchtermWild = '%'+searchterm.toLowerCase()+'%';
+					def searchtermWild = '%'+searchterm.toLowerCase().replace("'", "''")+'%';
 					searchtermstring += "lower(o.name) like '"+searchtermWild+"' "
 				}
 			}
@@ -64,13 +64,7 @@ class OntologyService {
 			def accessionSearchString = ""
 			if (accessionsToInclude) {
 				accessionSearchString += " OR (o.hlevel = 1 AND o.sourcesystemcd IN ("
-				
 				accessionSearchString += "'" + accessionsToInclude.join("','") + "'"
-//				accessionSearchString += "'" + accessionsToInclude[0] + "'"
-//				for (def i = 1; i < accessionsToInclude.size(); i++) {
-//					accessionSearchString += ",'" + accessionsToInclude[i] + "'"
-//				}
-				
 				accessionSearchString += "))"
 			}
 			
@@ -153,6 +147,17 @@ class OntologyService {
 					}
 				}
 				return accessions
+			}
+			else if (returnType.equals("path")) {
+				def ids = []
+				
+				myNodes.each{node ->
+					def key="\\"+node.id.substring(0,node.id.indexOf("\\",2))+node.id // ?!
+					if (!ids.contains(key)) {
+						ids.add(key)
+					}
+				}
+				return ids
 			}
 	}
 }
