@@ -17,20 +17,19 @@
  
 -->
 
-<%-- 
+
 <script type="text/javascript">
     $j(document).ready(function() 
     {  
  	   <g:each var='jSONForGrid' status="gridCounter" in="${jSONForGrids}">
- 	   alert("world")
-   		var dt${gridCounter}  = new dataTableWrapper('gridViewWrapper${gridCounter}', 'gridViewTable${gridCounter}', 'Title');
+ 	 	var dt${gridCounter}  = new dataTableWrapper('gridViewWrapper${gridCounter}', 'gridViewTable${gridCounter}', 'Title');
    		dt${gridCounter}.loadData(${jSONForGrids[0]});
   	</g:each>
      
 
      });
 </script>
---%>
+
 <g:set var="overlayDiv" value="metaData_div" />
 <%! import annotation.* %> 
 <%! import bio.BioData %> 

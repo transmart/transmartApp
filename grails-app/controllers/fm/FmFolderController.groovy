@@ -469,7 +469,7 @@ class FmFolderController {
 			}
 			else
 			{
-				log.error("COLUMN " + it.column + " is either set not to display or is not a propery of " + dataObject)
+				log.info("COLUMN " + amTagItem.displayName + " is not to display in grid")
 			}
 
 		}
