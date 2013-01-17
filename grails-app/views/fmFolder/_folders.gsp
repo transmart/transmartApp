@@ -2,13 +2,13 @@
 
 <div class="search-results-table">
 	<g:each in="${folders}" status="ti" var="folder">        
-		<g:if test="${folder.folderLevel >= 1 || !folderSearchString || folderSearchString?.indexOf(folder.folderFullName + '\\') > -1}">
+		<g:if test="${folder.folderLevel > 1 || !folderSearchString || folderSearchString?.indexOf(folder.folderFullName + '\\') > -1 || !auto}">
 			<table class="folderheader" name="${folder.uniqueId}">
 				
 				<tr>
 					<td class="foldertitle">
 						<span>
-							<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}');">
+							<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false');">
 								<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderplus.png')}" />
 							    <span class="foldericon ${folder.folderType.toLowerCase()}"></span>   
 							</a>
@@ -25,7 +25,7 @@
 				</tr>
 				
 				<g:if test="${folderSearchString?.indexOf(folder.folderFullName + '\\') > -1}">
-					<script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}');</script>
+					<script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true');</script>
 				</g:if>
 				<g:if test="${files?.size()> 0}">
 		            <tr>

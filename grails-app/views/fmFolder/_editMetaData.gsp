@@ -37,6 +37,7 @@
 	        	        </g:elseif>
 	        	    </g:else>    
                 </g:if>
+                <%--
                 <g:elseif test="${amTagItem.tagItemType == 'PICKLIST'}">
                 	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
 					<g:if test="${amTagItem.editable == false}">

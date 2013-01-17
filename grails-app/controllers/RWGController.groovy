@@ -307,12 +307,50 @@ class RWGController {
 	   session['rwgSearchFilter'] = [:];
 	   render(text: "OK")
    }
+   
+   /**
+    * 
+    */
+   def getFacetResults = {
+	   session['folderSearchList'] = []; //Clear the folder search list
+	   
+	   def paramMap = params
+	   //Search string is saved in session (for passing between RWG and Dataset Explorer pages)
+	   def searchString = params.searchTerms
+	   def searchTerms = searchString?.split(",,,")
+	   if (searchTerms != null && searchTerms[0] == "") {searchTerms = null;}
+	   session['rwgSearchFilter'] = searchTerms
+	   
+	   //If we have no search terms and this is for RWG, just return the top level
+	   if ((searchTerms == null || searchTerms.size() == 0) && params.page.equals('RWG')) {
+		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null).folders])
+		   return
+	   }
+	   
+	   def combinedResult = solrFacetService.getCombinedResults(request.getParameterValues('q') as List, params.page)
+	   if (params.page.equals('RWG')) {
+		   session['folderSearchList'] = combinedResult
+		   
+		   def folderContents = fmFolderService.getFolderContents(null)
+		   
+		   if (combinedResult) {
+			   def folderSearchString = combinedResult.join("\\,") + "\\," //Extra , - used to identify leaves
+			   render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString])
+		   }
+		   else {
+			   render(template:'/fmFolder/noResults')
+		   }
+	   }
+	   else {
+		   render combinedResult as JSON
+	   }	   
+   }
            
    /**
    * Load the search results for the given search terms (used for AJAX calls)
    * @return JSON object containing facet counts
    */
-   def getFacetResults = {
+   def getFacetResultsOld = {
 	   	   
 	   def startTime = new Date()								// Clock starts running now!
 
