@@ -68,7 +68,7 @@
 						</g:elseif>
                 	</g:else>
 	           </g:elseif>
-                --%>
+                
                 <%-- 
                 <g:elseif test="${amTagItem.tagItemType == 'PICKLIST'}">
                 	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[objectUid,amTagItem.id])}"/>
