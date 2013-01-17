@@ -135,16 +135,15 @@
                  		${fieldValue}
                  	</g:else>
                 </g:if>
-                <g:else>   
+                <g:else>
                       <g:set var="tagValues" value="${AmTagDisplayValue.findAllDisplayValue(folder.getUniqueId(),amTagItem.id)}"/>
                    
 	                <g:if test="${tagValues!=null}">
-	             	  	 <g:each var="mytag" status="k" in="${tagValues}">
-	             	  	      <g:if test="${k==1}">, </g:if>${tagValues[k].displayValue}
-							 </g:each>
-	                 </g:if>
-	                 
-	                </g:else>
+	             		<g:each var="tagValue" status="k" in="${tagValues}">
+							<g:if test="${k > 0}">, </g:if>${tagValue.displayValue}				      
+						</g:each>
+					</g:if>
+				</g:else>
                 </td>
             </tr>
          </g:if>
