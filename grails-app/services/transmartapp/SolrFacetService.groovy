@@ -165,6 +165,10 @@ class SolrFacetService {
 				}
 			}
 		}
+		//Fields of a program target are plain text and shouldn't be altered
+		if (category.equals("MEASUREMENT_TYPE") || category.equals("VENDOR") || category.equals("TECHNOLOGY") || category.equals ("PROGRAM_TARGET")) {
+			textList = termList
+		}
 		//Assume ConceptCode UID for everything else
 		else {
 			for (term in termList) {
