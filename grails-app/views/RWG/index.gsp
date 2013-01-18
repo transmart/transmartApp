@@ -106,9 +106,6 @@
 	            });
 	            
 	            jQuery("#editMetadataOverlay").on('click', '#savemetadatabutton', function() {
-	            
-	            	//TODO Indicate working here!
-	            	
 	            	var protoForm = $('editMetadataForm');
 		            var serializedForm = Form.serialize(protoForm);
             		jQuery.ajax({
@@ -220,7 +217,6 @@
                     
                     data = dataIn;
                     setupGridData(data);
-
                     gridPanelHeaderTips = data.headerToolTips.slice(0);
 
                     //Add the callback for when the grid is redrawn
@@ -246,7 +242,7 @@
                         $j('#' + tableId).dataTable().fnAdjustColumnSizing()
                       } );
                     
-                     $j("#" + containerId + " div.gridTitle").html(title);                  
+                     $j("#" + containerId + " div.gridTitle").html(data.iTitle);                  
 
                 };
                 

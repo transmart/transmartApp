@@ -96,6 +96,16 @@ public class ExportTableNew {
 	}
 	
 	//Supports jQuery datatables object
+	public JSONObject toJSON_DataTables(String echo, String title) throws JSONException {
+		
+		
+		JSONObject jsonTable = toJSON_DataTables(echo);
+		jsonTable.put("iTitle", title);
+						
+		return jsonTable;
+	}
+	
+	//Supports jQuery datatables object
 	public JSONObject toJSON_DataTables(String echo) throws JSONException {
 		
 		JSONObject jsonTable = new JSONObject();	
@@ -114,6 +124,7 @@ public class ExportTableNew {
 		}
 
 		if (echo != null) jsonTable.put("sEcho", echo);
+		jsonTable.put("iTitle", "Title");
 		jsonTable.put("iTotalRecords", rows.size());
 		jsonTable.put("iTotalDisplayRecords", rows.size());
 		jsonTable.put("aoColumns", aoColumns);

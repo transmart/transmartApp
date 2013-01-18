@@ -17,25 +17,19 @@
  
 -->
 
-<%-- 
-<script type="text/javascript">
-var analysisCount = 1
-var assayCount = 3
 
+<script type="text/javascript">
     $j(document).ready(function() 
-    {   
-    	   <g:each var='jSONForGrid' status="gridCounter" in="${jSONForGrids}">
-    	   		var dt${gridCounter}  = new dataTableWrapper('gridViewWrapper${gridCounter}', 'gridViewTable${gridCounter}', 'Title');
-    	   		dt${gridCounter}.loadData(${jSONForGrids[0]});
-          	</g:each>
-             
-    	
-       var dt4 = new dataTableWrapper('gridViewWrapper4', 'gridViewTable4', 'Analysis (' + analysisCount + ")");
-       var dt5 = new dataTableWrapper('gridViewWrapper5', 'gridViewTable5', 'Assays (' + assayCount + ')');
-                
+    {  
+ 	   <g:each var='jSONForGrid' status="gridCounter" in="${jSONForGrids}">
+ 	 	var dt${gridCounter}  = new dataTableWrapper('gridViewWrapper${gridCounter}', 'gridViewTable${gridCounter}', 'Title');
+   		dt${gridCounter}.loadData(${jSONForGrids[0]});
+  	</g:each>
+     
+
      });
 </script>
---%>
+
 <g:set var="overlayDiv" value="metaData_div" />
 <%! import annotation.* %> 
 <%! import bio.BioData %> 
@@ -50,6 +44,7 @@ var assayCount = 3
 		
 		<sec:ifAnyGranted roles="ROLE_ADMIN">
 			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name())}">
+			createStudy
 				<span class="greybutton buttonicon addstudy">Add new study</span>
 			</g:if>
 		</sec:ifAnyGranted>
@@ -67,9 +62,12 @@ var assayCount = 3
 		<g:if test="${bioDataObject?.hasProperty('title')}">
 		${bioDataObject?.title}
 		</g:if>
-		<g:else>
+		<g:elseif test="${bioDataObject?.hasProperty('folderName')}">
 		${bioDataObject?.folderName}
-		</g:else>
+		</g:elseif>
+		<g:elseif test="${folder?.hasProperty('folderName')}">
+			${folder?.folderName}
+		</g:elseif>
 	</h3>
 </div>
 <g:if test="${bioDataObject?.hasProperty('description')}">
@@ -83,6 +81,17 @@ var assayCount = 3
                         </g:else></div>
 <div style="height:20px;"></div>
 </g:if>
+<g:elseif test="${bioDataObject?.hasProperty('longDescription')}">
+<div style="line-height:14px;font-family:arial, ��tahoma, ��helvetica, ��sans-serif; font-size: 12px;">
+ <g:if test="${bioDataObject?.longDescription?.length() > 325000}">
+                       ${(bioDataObject?.longDescription)?.substring(0,324000)}&nbsp;&nbsp;
+                       <a href=# >...See more</a>
+                       </g:if>
+                       <g:else>
+                        ${bioDataObject?.longDescription}
+                        </g:else></div>
+<div style="height:20px;"></div>
+</g:elseif>
 
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
 <table class="details-table">
@@ -109,11 +118,12 @@ var assayCount = 3
                 <td valign="top" align="left" class="columnvalue" width="60%">
                  <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
                  	<g:set var="fieldValue" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
-                 	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
+                   	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
                  		<%-- Split multiple values by pipe --%>
                  		<g:set var="terms" value="${fieldValue.split('\\|')}"/>
+                 		
                  		<g:each in="${terms}" var="term" status="t">
-	                 		<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
+                 			<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
 	                 		<g:if test="${t > 0}">, </g:if>
 	                 		<g:if test="${bioDataId}">
 		                 		${ConceptCode.find('from ConceptCode where id=?', bioDataId).codeName}
@@ -127,17 +137,14 @@ var assayCount = 3
                  		${fieldValue}
                  	</g:else>
                 </g:if>
-                <g:else>   
-                    <g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.uniqueId.toString(),amTagItem.id])}"/>
-	                <g:if test="${tagValues!=null}">
-	             	   <g:set var="counter" value="0"/>
-	             		 <g:each var="tagValue" status="k" in="${tagValues}">
-						      <g:if test="${counter==1}">, </g:if>${tagValue.displayValue}
-						      <g:set var="counter" value="${counter.toLong() + 1}"/>
-						 </g:each>
-	                 </g:if>
-	                 
-	                </g:else>
+                <g:else>
+                    <g:set var="tagValues" value="${AmTagDisplayValue.findAllDisplayValue(folder.getUniqueId(),amTagItem.id)}"/>
+                    <g:if test="${tagValues!=null}">
+	             		<g:each var="tagValue" status="k" in="${tagValues}">
+							<g:if test="${k > 0 && tagValue.displayValue}">, </g:if>${tagValue.displayValue}				      
+						</g:each>
+					</g:if>
+				</g:else>
                 </td>
             </tr>
          </g:if>
@@ -201,20 +208,8 @@ var assayCount = 3
             <div id='gridViewWrapper${divCounter}'>
             </div>        
 	        </div>
-        
-          	</g:each>
-          	
-          	       <div style="height:20px;"></div>
-       <div style="width:1100px">
-            <div id='gridViewWrapper4'>
-            </div>        
-        </div>
-
-       <div style="height:30px;"></div>
-       <div style="width:1100px">
-            <div id='gridViewWrapper5'>
-            </div>        
-        </div>
+         </g:each>
+         
 <!--  overlay div  -->
 
 <g:overlayDiv divId="${overlayDiv}" />

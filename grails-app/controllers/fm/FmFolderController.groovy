@@ -21,15 +21,17 @@ package fm
 import am.AmData;
 import annotation.AmTagAssociation;
 import annotation.AmTagDisplayValue;
+import annotation.AmTagItem;
+import annotation.AmTagTemplate;
 import annotation.AmTagValue;
 
+import bio.ConceptCode
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
+import com.recomdata.util.FolderType
 import grails.converters.*
 import groovy.xml.StreamingMarkupBuilder
-import com.recomdata.util.FolderType
-
 
 
 class FmFolderController {
@@ -82,6 +84,22 @@ class FmFolderController {
         return [fmFolderInstance: fmFolderInstance]
     }
 
+	def createStudy = {
+		log.info "createStudy called"
+		log.info "params = " + params		
+		//log.info "** action: expDetail called!"
+		
+		def folder = new FmFolder()
+		folder.folderType = FolderType.STUDY.name()
+		def bioDataObject = folder
+		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.STUDY.name().toLowerCase())
+		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+
+		render(template: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+	
+	}
+	
+	
     def save = {
 		log.info params
         def fmFolderInstance = new FmFolder(params)
@@ -159,9 +177,9 @@ class FmFolderController {
 
 	def getPrograms = {
 
-		//List<FmFolderController> folders = getFolder(FolderType.PROGRAM.name(), null)
+		List<FmFolderController> folders = getFolder(FolderType.PROGRAM.name(), null)
 		// 	[fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
-		List<FmFolderController> folders = getFolder("Program", null)
+		//List<FmFolderController> folders = getFolder("Program", null)
 		
 		render folders as XML
 		
@@ -262,7 +280,7 @@ class FmFolderController {
 		def folderSearchList = session['folderSearchList']
 		def folderSearchString = folderSearchList ? folderSearchList.join("\\,") + "\\," : "" //Extra , - used to identify leaves
 		
-		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString])
+		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString, auto: params.auto])
 	}
 
 	/**
@@ -318,7 +336,7 @@ class FmFolderController {
 
 	private void updateFolder()
 	{
-		def folder = FmFolderController.getAt(params.folderId)
+		def folder = FmFolder.getAt(params.folderId)
 		folder.properties = params
 		
 		if(folder.save())
@@ -332,7 +350,7 @@ class FmFolderController {
 	
 	private void moveFolder(long folderId, String newFolderFullName, String newFolderLevel)
 	{
-		def folder = FmFolderController.getAt(folderId)
+		def folder = FmFolder.getAt(folderId)
 		def oldFullName = folder.folderFullName
 		def oldLevel = folder.folderLevel
 		folder.folderFullName = newFolderFullName
@@ -340,7 +358,7 @@ class FmFolderController {
 			
 		if(folder.save())
 		{
-			List<FmFolderController> subFolderList = FmFolderController.findAll("from FmFolder as fd where fd.folderFullName like :fn",
+			List<FmFolderController> subFolderList = FmFolder.findAll("from FmFolder as fd where fd.folderFullName like :fn",
 				[fn:oldFullName+"%"])
 
 			subFolderList.each {
@@ -363,12 +381,12 @@ class FmFolderController {
 	
 	private void removeFolder(long folderId)
 	{
-		def folder = FmFolderController.getAt(folderId)
+		def folder = FmFolder.getAt(folderId)
 		folder.activeInd = false
 		
 		if(folder.save())
 		{
-			List<FmFolderController> subFolderList = FmFolderController.findAll("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel = :fl",
+			List<FmFolderController> subFolderList = FmFolder.findAll("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel = :fl",
 				[fn:folder.folderFullName+"%", fl: (folder.folderLevel + 1)])
 
 			subFolderList.each {
@@ -391,14 +409,15 @@ class FmFolderController {
 	}
 
 	private List<FmFolder> getFolder(String folderType, String parentPath)  
-	{		
-		if(parentPath == null)
+	{
+		log.info("getFolder(" + folderType + ", " + parentPath + ")")
+ 		if(parentPath == null)
 		{
-		 return FmFolder.executeQuery("from FmFolder as fd where fd.folderType = :fl ", [fl: folderType])
+			return FmFolder.executeQuery("from FmFolder as fd where upper(fd.folderType) = upper(:fl) ", [fl: folderType])
 		}
 		else
 		{
-		 return FmFolder.executeQuery("from FmFolder as fd where fd.folderType = :fl and fd.folderFullName like :fn ",
+			return FmFolder.executeQuery("from FmFolder as fd where upper(fd.folderType) = upper(:fl) and fd.folderFullName like :fn ",
 				 [fl: folderType, fn:parentPath+"%"])
 		}
 	
@@ -415,42 +434,61 @@ class FmFolderController {
 	private List<FmFolder> getChildrenFolderByType(Long parentId, String folderType)
 	{
 		def folder = FmFolder.get(parentId)
-		return FmFolder.executeQuery("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl and fd.folderType= :ft",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%", ft: folderType])
+		return FmFolder.executeQuery("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl and upper(fd.folderType) = upper(:ft)", [fl: folder.folderLevel+1, fn:folder.folderFullName+"%", ft: folderType])
 	}
 
 	//method which returns a list of folders which are the children of the folder of which the identifier is passed as parameter
 	private List getChildrenFolderTypes(Long parentId)
 	{
 		def folder = FmFolder.get(parentId)
-		return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
+		return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ", [fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
 	}
 
-	private String createDataTable(layoutColumns, folders)
+	private String createDataTable(folders, folderType)
 	{
-/*		FormLayout				Long id
-		String key;
-				String column;
-				String displayName;
-				String dataType;
-				Integer sequence;
-				Boolean display=true;
-	*/
 		
 		if (folders == null || folders.size() < 1) return
 					
 		ExportTableNew table=new ExportTableNew();
 		
 		def dataObject = getBioDataObject(folders[0])
-		layoutColumns.each 
-		{
-			if(it.display && dataObject.hasProperty(it.column))
+		def childMetaDataTagItems = getMetaDataItems(folders[0])
+						
+		childMetaDataTagItems.eachWithIndex() 
+		{obj, i ->    // 
+			AmTagItem amTagItem = obj
+			if(amTagItem.viewInChildGrid) 
 			{
-				log.info ("COLUMNS == " + it.column + " " + it.displayName + " " +  it.dataType)
-				table.putColumn(it.column, new ExportColumn(it.column, it.displayName, "", it.dataType));
+				if(amTagItem.tagItemType == 'FIXED')
+				{
+					log.info ("FIXED TYPE == " + amTagItem.id + " " + amTagItem.displayName)
+					
+					if(dataObject.hasProperty(amTagItem.tagItemAttr))
+					{
+						log.info ("FIXED COLUMNS == " + amTagItem.tagItemAttr + " " + amTagItem.displayName)
+						table.putColumn(amTagItem.id.toString(), new ExportColumn(amTagItem.id.toString(), amTagItem.displayName, "", 'String'));
+					}
+					else
+					{
+						log.error("TAG ITEM ID = " + amTagItem.id + " COLUMN " + amTagItem.tagItemAttr + " is not a propery of " + dataObject)
+					}
+					
+				}
+				else if(amTagItem.tagItemType == 'CUSTOM')
+				{
+					log.info ("CUSTOM COLUMNS == " + amTagItem.displayName)
+					table.putColumn(amTagItem.id.toString(), new ExportColumn(amTagItem.id.toString(), amTagItem.displayName, "", 'String'));
+
+				}
+				else
+				{
+					log.info ("TYPE == " + amTagItem.tagItemType + " ID = " + amTagItem.id + " " + amTagItem.displayName)
+					
+				}
 			}
 			else
 			{
-				log.error("COLUMN " + it.column + " is either set not to display or is not a propery of " + dataObject)
+				log.info("COLUMN " + amTagItem.displayName + " is not to display in grid")
 			}
 
 		}
@@ -460,19 +498,66 @@ class FmFolderController {
 			def bioDataObject = getBioDataObject(it)
 			
 				ExportRowNew newrow=new ExportRowNew();
-				layoutColumns.eachWithIndex()
+				childMetaDataTagItems.eachWithIndex()
 				{obj, i -> 
-					if(obj.display && bioDataObject.hasProperty(obj.column))
+					AmTagItem amTagItem = obj
+					if(amTagItem.viewInChildGrid)
 					{
-						log.info("ROWS == " + obj.column + " " + bioDataObject[obj.column])
-						newrow.put(obj.column,bioDataObject[obj.column]?bioDataObject[obj.column]:'');
-					}		
+						
+						if(amTagItem.tagItemType == 'FIXED' && bioDataObject.hasProperty(amTagItem.tagItemAttr))
+						{
+							def bioDataDisplayValue = null 
+							def bioDataPropertyValue = bioDataObject[amTagItem.tagItemAttr]
+							if(amTagItem.tagItemSubtype == 'PICKLIST')
+							{
+								def cc = ConceptCode.findByUniqueId(bioDataPropertyValue)
+								bioDataDisplayValue = cc.codeName
+								
+							}
+							else if(amTagItem.tagItemSubtype == 'FREETEXT')
+							{
+								bioDataDisplayValue = bioDataPropertyValue
+							}
+							else
+							{
+								log.error "Unkknown tagItemSubType"
+							}
+							
+							log.info("ROWS == " + amTagItem.tagItemAttr + " " + bioDataObject[amTagItem.tagItemAttr])
+							newrow.put(amTagItem.id.toString(),bioDataDisplayValue?bioDataDisplayValue:'');
+						}
+						else if(amTagItem.tagItemType == 'CUSTOM')
+						{
+							log.info("PARAMETERS " + bioDataObject.getUniqueId() + " " + amTagItem.id)
+							def tagValues = AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[bioDataObject.getUniqueId().toString(),amTagItem.id])
+							
+							log.info ("rows1 == " + tagValues)
+							def displayValue = ""
+							def counter = 0
+							tagValues.each 
+							{ 
+								log.info("TAGVALUE = " + it)
+								displayValue += counter>0? ", " + it.displayValue : it.displayValue  
+							}
+							
+							if(displayValue == null) displayValue = ""
+							
+							newrow.put(amTagItem.id.toString(),displayValue);
+		
+						}
+						else
+						{
+							log.info ("ROW --- TYPE == " + amTagItem.tagItemType + " ID = " +  amTagItem.id)
+							
+						}
+	
+					}
 				}
 				
 				table.putRow(bioDataObject.id.toString(), newrow);
 		}
 		
-		return table.toJSON_DataTables("").toString(5);
+		return table.toJSON_DataTables("", folderType).toString(5);
 	}
 	
 	def folderDetail = {
@@ -487,14 +572,19 @@ class FmFolderController {
 		def amTagTemplate
 		def metaDataTagItems
 		def jSONForGrids = []
+		def childMetaDataTagItems = [] 
+
 		if (folderId) 
 		{
 			folder = FmFolder.get(folderId)
 			
 			if(folder)
 			{
+				bioDataObject = getBioDataObject(folder)
+				metaDataTagItems = getMetaDataItems(folder)
+	
 				// If the folder is a study then get the analysis and the assay
-				if (folder.folderType.toLowerCase() == FolderType.STUDY.name().toLowerCase())
+				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name()))
 				{
 					def subFolderTypes = getChildrenFolderTypes(folder.id)
 					log.info "subFolderTypes = " + subFolderTypes
@@ -505,52 +595,45 @@ class FmFolderController {
 						if(subFolders!=null && subFolders.size()>0)
 						{
 							log.info("subFolders == " + subFolders)
+
 								subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
-								String gridData = createDataTable(subFolderLayout,subFolders)
+								String gridData = createDataTable(subFolders, subFolders[0].folderType)
 								log.info gridData
 								jSONForGrids.add(gridData)
 								log.info "ADDING JSON GRID"
 						}
 					}
 				}
-						
-				bioDataObject = getBioDataObject(folder)
-				//def fmData = FmData.get(folder.id)
-				
-				amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
-				if(amTagTemplate)
-				{
-					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-				}
-				else
-				{
-					log.error "Unable to find amTagTemplate for object Id = " + folder.uniqueId
-				}
-	
-				//  amTagTemplate.amTagItems
 			}
 		}
-
+		
+	
+		
 		log.info "FolderInstance = " + bioDataObject.toString()
 		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems, jSONForGrids: jSONForGrids])
 		
 	}
 
+	private Object getMetaDataItems(folder)
+	{
+		def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+		def metaDataTagItems
+		if(amTagTemplate)
+		{
+			metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+		}
+		else
+		{
+			log.error "Unable to find amTagTemplate for object Id = " + folder.getUniqueId()
+		}
+		
+		return metaDataTagItems
+	}
 
 	private Object getBioDataObject(folder)
 	{
 		def bioDataObject
-		def folderAssociation
-		def fmData = FmData.get(folder.id)
-		if(fmData)
-		{
-			folderAssociation = FmFolderAssociation.findByFmFolder(folder)
-		}
-		else
-		{
-			log.error("FmDataUid record was not found for folder id = " + folder.id)
-		}
-		
+		def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
 		
 		if(folderAssociation)
 		{
@@ -590,16 +673,7 @@ class FmFolderController {
 			if(folder)
 			{
 				bioDataObject = getBioDataObject(folder)
-			
-				amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
-				if(amTagTemplate)
-				{
-					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-				}
-				else
-				{
-					log.error "Unable to find amTagTemplate for object Id = " + folder.uniqueId
-				}
+				metaDataTagItems = getMetaDataItems(folder)
 			}
 			else
 			{
@@ -690,18 +764,8 @@ class FmFolderController {
 				}
 				else {
 					log.info "Errors occurred saving Meta data"
-					def errors = bioDataObject.errors
-					
-					amTagTemplate = amTagTemplateService.getTemplate(folderUniqueId)
-					if(amTagTemplate)
-					{
-						metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-					}
-					else
-					{
-						log.error "Unable to find amTagTemplate for object Id = " + folder.uniqueId
-					}
-	
+					metaDataTagItems  =  getMetaDataItems(folder)
+
 					render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 					//	render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
 				}

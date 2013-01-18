@@ -4244,14 +4244,10 @@ function searchByTagComplete(response)
 	// shorthand
 	var Tree = Ext.tree;
 	var treeRoot = Ext.getCmp('navigateTermsPanel').getRootNode();
-	//ontFilterPanel.el.unmask();
+
 	viewport.el.unmask();
-	var robj=response;
-	var rtext=robj.resulttext;
-	var concepts = robj.concepts;
-	// concept = concepts[4];
-	// test = concept.selectSingleNode('name').firstChild.nodeValue;
-	// alert(response.responseText);
+	var concepts = response; //Response is an array of concept paths
+
 	var length;
 	var leaf = false;
 	var draggable = false;
@@ -4280,8 +4276,8 @@ function searchByTagComplete(response)
 		}
 		for(var c = 0; c < length; c ++ )
 		{
-			var newnode=getTreeNodeFromJSON(concepts[c])
-			GLOBAL.PathToExpand += newnode.id + ",";
+			//var newnode=getTreeNodeFromJSON(concepts[c])
+			GLOBAL.PathToExpand += concepts[c] + ",";
 			//treeRoot.appendChild(newnode);
 			//setTreeNodeSecurity(newnode, concepts[c].access);
 		}

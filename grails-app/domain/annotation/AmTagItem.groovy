@@ -37,6 +37,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 	Boolean required = Boolean.TRUE
 	Boolean activeInd = Boolean.TRUE
 	Boolean viewInGrid = Boolean.TRUE
+	Boolean viewInChildGrid = Boolean.TRUE
 	static belongsTo=[amTagTemplate: AmTagTemplate]
 	
 	
@@ -46,7 +47,7 @@ class AmTagItem implements Comparable<AmTagItem>{
 		table 'am_tag_item'
 		version false
 		cache true
-		sort "displayName"
+		sort "displayOrder"
 		amTagTemplate joinTable: [name: 'am_tag_template',  key:'tag_template_id', column: 'tag_item_id'], lazy: false
 		columns { id column:'tag_item_id'}
 		amTagTemplate column: 'tag_template_id' 
