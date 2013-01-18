@@ -44,6 +44,7 @@
 		
 		<sec:ifAnyGranted roles="ROLE_ADMIN">
 			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name())}">
+			createStudy
 				<span class="greybutton buttonicon addstudy">Add new study</span>
 			</g:if>
 		</sec:ifAnyGranted>
@@ -117,11 +118,12 @@
                 <td valign="top" align="left" class="columnvalue" width="60%">
                  <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
                  	<g:set var="fieldValue" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
-                 	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
+                   	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
                  		<%-- Split multiple values by pipe --%>
                  		<g:set var="terms" value="${fieldValue.split('\\|')}"/>
+                 		
                  		<g:each in="${terms}" var="term" status="t">
-	                 		<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
+                 			<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
 	                 		<g:if test="${t > 0}">, </g:if>
 	                 		<g:if test="${bioDataId}">
 		                 		${ConceptCode.find('from ConceptCode where id=?', bioDataId).codeName}
@@ -136,11 +138,10 @@
                  	</g:else>
                 </g:if>
                 <g:else>
-                      <g:set var="tagValues" value="${AmTagDisplayValue.findAllDisplayValue(folder.getUniqueId(),amTagItem.id)}"/>
-                   
-	                <g:if test="${tagValues!=null}">
+                    <g:set var="tagValues" value="${AmTagDisplayValue.findAllDisplayValue(folder.getUniqueId(),amTagItem.id)}"/>
+                    <g:if test="${tagValues!=null}">
 	             		<g:each var="tagValue" status="k" in="${tagValues}">
-							<g:if test="${k > 0}">, </g:if>${tagValue.displayValue}				      
+							<g:if test="${k > 0 && tagValue.displayValue}">, </g:if>${tagValue.displayValue}				      
 						</g:each>
 					</g:if>
 				</g:else>

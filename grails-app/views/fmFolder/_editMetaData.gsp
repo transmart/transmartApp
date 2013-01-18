@@ -5,7 +5,7 @@
   
 <g:form name="editMetadataForm">
 <g:hiddenField name="id" value="${folder?.id}" />
-<g:set var="objectUid" value="${folder.uniqueId}"/>
+<g:set var="objectUid" value="${folder?.uniqueId}"/>
 <div>  
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
     <table class="detail" height="300px">
@@ -37,6 +37,7 @@
 	        	        </g:elseif>
 	        	    </g:else>    
                 </g:if>
+                <%--
                 <g:elseif test="${amTagItem.tagItemType == 'PICKLIST'}">
                 	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
 					<g:if test="${amTagItem.editable == false}">
@@ -55,7 +56,7 @@
                 	<g:else>
                 	  	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
 	                	<g:if test="${amTagItem.tagItemSubtype == 'FREETEXT'}">
-		                	<g:if test="${(tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:'').length()<100}">
+		                	<g:if test="${(tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:'')?.length()<100}">
 								<g:textField size="100" name="${amTagItem.id}"  value="${tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:''}"/>
 			                </g:if>
 		    	            <g:else>

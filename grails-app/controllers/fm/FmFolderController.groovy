@@ -21,15 +21,17 @@ package fm
 import am.AmData;
 import annotation.AmTagAssociation;
 import annotation.AmTagDisplayValue;
+import annotation.AmTagItem;
+import annotation.AmTagTemplate;
 import annotation.AmTagValue;
 
+import bio.ConceptCode
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
+import com.recomdata.util.FolderType
 import grails.converters.*
 import groovy.xml.StreamingMarkupBuilder
-import com.recomdata.util.FolderType
-import annotation.AmTagItem
 
 
 class FmFolderController {
@@ -82,6 +84,22 @@ class FmFolderController {
         return [fmFolderInstance: fmFolderInstance]
     }
 
+	def createStudy = {
+		log.info "createStudy called"
+		log.info "params = " + params		
+		//log.info "** action: expDetail called!"
+		
+		def folder = new FmFolder()
+		folder.folderType = FolderType.STUDY.name()
+		def bioDataObject = folder
+		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.STUDY.name().toLowerCase())
+		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+
+		render(template: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+	
+	}
+	
+	
     def save = {
 		log.info params
         def fmFolderInstance = new FmFolder(params)
@@ -262,7 +280,7 @@ class FmFolderController {
 		def folderSearchList = session['folderSearchList']
 		def folderSearchString = folderSearchList ? folderSearchList.join("\\,") + "\\," : "" //Extra , - used to identify leaves
 		
-		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString])
+		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString, auto: params.auto])
 	}
 
 	/**
@@ -488,8 +506,25 @@ class FmFolderController {
 						
 						if(amTagItem.tagItemType == 'FIXED' && bioDataObject.hasProperty(amTagItem.tagItemAttr))
 						{
+							def bioDataDisplayValue = null 
+							def bioDataPropertyValue = bioDataObject[amTagItem.tagItemAttr]
+							if(amTagItem.tagItemSubtype == 'PICKLIST')
+							{
+								def cc = ConceptCode.findByUniqueId(bioDataPropertyValue)
+								bioDataDisplayValue = cc.codeName
+								
+							}
+							else if(amTagItem.tagItemSubtype == 'FREETEXT')
+							{
+								bioDataDisplayValue = bioDataPropertyValue
+							}
+							else
+							{
+								log.error "Unkknown tagItemSubType"
+							}
+							
 							log.info("ROWS == " + amTagItem.tagItemAttr + " " + bioDataObject[amTagItem.tagItemAttr])
-							newrow.put(amTagItem.id.toString(),bioDataObject[amTagItem.tagItemAttr]?bioDataObject[amTagItem.tagItemAttr]:'');
+							newrow.put(amTagItem.id.toString(),bioDataDisplayValue?bioDataDisplayValue:'');
 						}
 						else if(amTagItem.tagItemType == 'CUSTOM')
 						{

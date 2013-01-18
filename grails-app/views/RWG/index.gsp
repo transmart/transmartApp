@@ -106,9 +106,6 @@
 	            });
 	            
 	            jQuery("#editMetadataOverlay").on('click', '#savemetadatabutton', function() {
-	            
-	            	//TODO Indicate working here!
-	            	
 	            	var protoForm = $('editMetadataForm');
 		            var serializedForm = Form.serialize(protoForm);
             		jQuery.ajax({
