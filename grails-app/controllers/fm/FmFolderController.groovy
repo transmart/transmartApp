@@ -177,9 +177,9 @@ class FmFolderController {
 
 	def getPrograms = {
 
-		//List<FmFolderController> folders = getFolder(FolderType.PROGRAM.name(), null)
+		List<FmFolderController> folders = getFolder(FolderType.PROGRAM.name(), null)
 		// 	[fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
-		List<FmFolderController> folders = getFolder("Program", null)
+		//List<FmFolderController> folders = getFolder("Program", null)
 		
 		render folders as XML
 		
@@ -409,14 +409,15 @@ class FmFolderController {
 	}
 
 	private List<FmFolder> getFolder(String folderType, String parentPath)  
-	{		
-		if(parentPath == null)
+	{
+		log.info("getFolder(" + folderType + ", " + parentPath + ")")
+ 		if(parentPath == null)
 		{
-		 return FmFolder.executeQuery("from FmFolder as fd where fd.folderType = :fl ", [fl: folderType])
+			return FmFolder.executeQuery("from FmFolder as fd where upper(fd.folderType) = upper(:fl) ", [fl: folderType])
 		}
 		else
 		{
-		 return FmFolder.executeQuery("from FmFolder as fd where fd.folderType = :fl and fd.folderFullName like :fn ",
+			return FmFolder.executeQuery("from FmFolder as fd where upper(fd.folderType) = upper(:fl) and fd.folderFullName like :fn ",
 				 [fl: folderType, fn:parentPath+"%"])
 		}
 	
@@ -433,14 +434,14 @@ class FmFolderController {
 	private List<FmFolder> getChildrenFolderByType(Long parentId, String folderType)
 	{
 		def folder = FmFolder.get(parentId)
-		return FmFolder.executeQuery("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl and fd.folderType= :ft",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%", ft: folderType])
+		return FmFolder.executeQuery("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl and upper(fd.folderType) = upper(:ft)", [fl: folder.folderLevel+1, fn:folder.folderFullName+"%", ft: folderType])
 	}
 
 	//method which returns a list of folders which are the children of the folder of which the identifier is passed as parameter
 	private List getChildrenFolderTypes(Long parentId)
 	{
 		def folder = FmFolder.get(parentId)
-		return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
+		return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ", [fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
 	}
 
 	private String createDataTable(folders, folderType)

@@ -342,18 +342,13 @@ class FmFolderService {
 		
 		def folders = null;
 		
-		//if (folderMask == null || folderMask.size() > 0) { //If we have an empty list, display no folders
-			folders = FmFolder.createCriteria().list {
-				if (parent != null) {
-					eq('parent', parent)
-				}
-//						if (folderMask) {
-//							'in'('id', folderMask)
-//						}
-				eq('folderLevel', folderLevel)
-				order('folderName', 'asc')
+		folders = FmFolder.createCriteria().list {
+			if (parent != null) {
+				eq('parent', parent)
 			}
-		//}
+			eq('folderLevel', folderLevel)
+			order('folderName', 'asc')
+		}
 		 
 		return [folders: folders, files: parent?.fmFiles]
 	}
