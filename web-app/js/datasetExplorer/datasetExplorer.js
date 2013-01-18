@@ -1970,7 +1970,7 @@ function setupDragAndDrop()
 
 	dts = new Ext.dd.DropTarget(qcd,
 			{
-		ddGroup : 'analysis'
+		ddGroup : 'makeQuery'
 			}
 	);
 
@@ -1986,7 +1986,7 @@ function setupDragAndDrop()
 	var mcd = Ext.get(analysisGridPanel.body);
 	dtg = new Ext.dd.DropTarget(mcd,
 			{
-		ddGroup : 'analysis'
+		ddGroup : 'makeQuery'
 			}
 	);
 
