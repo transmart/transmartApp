@@ -585,7 +585,7 @@ Ext.onReady(function()
 						GLOBAL.CurrentSubsetIDs[1] = null;
 						GLOBAL.CurrentSubsetIDs[2] = null;
 						runAllQueries(getSummaryStatistics);
-						activateTab;
+						activateTab();
 					},
 					deactivate: function(){
 						resultsTabPanel.tools.help.dom.style.display="none";
@@ -1434,6 +1434,14 @@ function loginComplete(pmresponse)
 		// get the urls to the other important cells
 		GLOBAL.ONTUrl = oDomDoc.selectSingleNode("//cell_data[@id='ONT']/url").firstChild.nodeValue;
 		GLOBAL.CRCUrl = oDomDoc.selectSingleNode("//cell_data[@id='CRC']/url").firstChild.nodeValue;
+		
+		//If a proxy was used to call the PM Service, override the ONT and CRC urls by using the PM Service host.
+		//This will have to be modified based on the format of the i2b2 urls for specific environments.
+		if(GLOBAL.usePMHost=="true"){
+		GLOBAL.ONTUrl = GLOBAL.PMUrl.replace("/services/PMService/", "/rest/OntologyService/");
+		GLOBAL.CRCUrl = GLOBAL.PMUrl.replace("/services/PMService/", "/rest/QueryToolService/");
+		}
+		
 		if(GLOBAL.Debug)
 		{
 			alert(GLOBAL.ONTUrl);
