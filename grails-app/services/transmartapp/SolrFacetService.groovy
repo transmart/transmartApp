@@ -166,7 +166,7 @@ class SolrFacetService {
 			}
 		}
 		//Fields of a program target are plain text and shouldn't be altered
-		if (category.equals("MEASUREMENT_TYPE") || category.equals("VENDOR") || category.equals("TECHNOLOGY") || category.equals ("PROGRAM_TARGET")) {
+		else if (category.equals("MEASUREMENT_TYPE") || category.equals("VENDOR") || category.equals("TECHNOLOGY") || category.equals ("PROGRAM_TARGET")) {
 			textList = termList
 		}
 		//Assume ConceptCode UID for everything else
@@ -315,7 +315,7 @@ class SolrFacetService {
 		  
 		  //If searching on text, add wildcards (instead of quote marks)
 		  if (category.equals("CONTENT")) {
-			  t = "*" + t.toLowerCase() + "*";
+			  t = ("*" + t.toLowerCase() + "*").replace(" ", "\\ ");
 		  }
 		  else {
 			  t = "\"" + t + "\"";
