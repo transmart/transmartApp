@@ -443,7 +443,7 @@ class FmFolderController {
 		return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
 	}
 
-	private String createDataTable(folders)
+	private String createDataTable(folders, folderType)
 	{
 		
 		if (folders == null || folders.size() < 1) return
@@ -556,7 +556,7 @@ class FmFolderController {
 				table.putRow(bioDataObject.id.toString(), newrow);
 		}
 		
-		return table.toJSON_DataTables("").toString(5);
+		return table.toJSON_DataTables("", folderType).toString(5);
 	}
 	
 	def folderDetail = {
@@ -596,7 +596,7 @@ class FmFolderController {
 							log.info("subFolders == " + subFolders)
 
 								subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
-								String gridData = createDataTable(subFolders)
+								String gridData = createDataTable(subFolders, subFolders[0].folderType)
 								log.info gridData
 								jSONForGrids.add(gridData)
 								log.info "ADDING JSON GRID"
