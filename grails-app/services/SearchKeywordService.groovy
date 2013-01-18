@@ -71,16 +71,16 @@ public class SearchKeywordService {
 			[codeTypeName: "TYPE_OF_BM_STUDIED", category: "BIOMARKER_TYPE", displayName: "Biomarker Type"],
 			[codeTypeName: "COUNTRY", category: "COUNTRY", displayName: "Country"],
 			[codeTypeName: "INSTITUTION", category: "INSTITUTION", displayName: "Institution"],
-			[codeTypeName: "MEASUREMENT_TYPE", category: "MEASUREMENT_TYPE", displayName: "Measurement Type"],
+			[codeTypeName: "MEASUREMENT_TYPE", category: "MEASUREMENT_TYPE", displayName: "Measurement Type", useText: true],
 			[codeTypeName: "ORGANISM", category: "ORGANISM", displayName: "Organism"],
 			[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
 			[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
 			[codeTypeName: "STUDY_OBJECTIVE", category: "STUDY_OBJECTIVE", displayName: "Study Objective"],
 			[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
 			[codeTypeName: "STUDY_DESIGN", category: "STUDY_DESIGN", displayName: "Study Design"],
-			[codeTypeName: "TECHNOLOGY", category: "TECHNOLOGY", displayName: "Technology", prefix: true],
+			[codeTypeName: "TECHNOLOGY", category: "TECHNOLOGY", displayName: "Technology", prefix: true, useText: true],
 			[codeTypeName: "THERAPEUTIC_DOMAIN", category: "THERAPEUTIC_DOMAIN", displayName: "Therapeutic Domain"],
-			[codeTypeName: "VENDOR", category: "VENDOR", displayName: "Vendor", prefix: true],
+			[codeTypeName: "VENDOR", category: "VENDOR", displayName: "Vendor", prefix: true, useText: true],
 		]
 		
 		for (filtercat in filtercats) {
@@ -99,9 +99,23 @@ public class SearchKeywordService {
 				}
 			}
 			
-			def choices = []
+			def choices = new TreeSet<Map>(new Comparator() {
+				int compare(Object o1, Object o2) {
+					if (!o1 instanceof Map || !o2 instanceof Map) {
+						return 0;
+					}
+					Map m1 = (Map) o1;
+					Map m2 = (Map) o2;
+					return o1.get('name').compareTo(o2.get('name'));
+				}
+			});
 			for (result in results) {
-				choices.push([name: result.codeName, uid: result.bioDataUid.uniqueId[0]])
+				if (filtercat.useText) {
+					choices.add([name: result.codeName, uid: result.codeName])
+				}
+				else {
+					choices.add([name: result.codeName, uid: result.bioDataUid.uniqueId[0]])
+				}
 			}
 
 			categories.add(["category":filtercat, "choices":choices])
