@@ -27,9 +27,23 @@ class FmFolderJob {
 	def fmFolderService
 	
 	static triggers = {
+		def startDelay = ConfigHolder.config.com.recomdata.FmFolderJob.startDelayMs
+		def cronExpression =  ConfigHolder.config.com.recomdata.FmFolderJob.cronExpression
+				
+		if(startDelay instanceof String){
+			try {
+				startDelay = Integer.parseInt(startDelay)
+			}catch(NumberFormatException nfe){
+			log.error("Folder job not initialized. Configuration not readable")
+			}
+		}else{
+			startDelay=null
+		}
 		cron name:'FmFolderJobTrigger',
-		cronExpression: ConfigHolder.config.com.recomdata.FmFolderJob.cronExpression != null ? ConfigHolder.config.com.recomdata.FmFolderJob.cronExpression : '0 0/5 * * * ?',
-		startDelay: ConfigHolder.config.com.recomdata.FmFolderJob.startDelayMs != null ? ConfigHolder.config.com.recomdata.FmFolderJob.startDelayMs : 60000
+		cronExpression: (cronExpression instanceof String)? cronExpression : '0 0/5 * * * ?',
+		startDelay:  startDelay!= null ? startDelay : 60000
+
+		
 	}
 
     def execute() {
