@@ -580,12 +580,19 @@ class ExperimentAnalysisQueryService {
 		//	}
 
 		// fold change on BioAssayAnalysisData
-		if(expfilter.filterFoldChange()){
-			def StringBuilder s = new StringBuilder();
-			def symbol = "abs(" + query.mainTableAlias+".foldChangeRatio)" // abs value
-			s.append (" ((").append(symbol).append(" >=").append(expfilter.foldChange).append(" )")
-					.append(" OR ").append(symbol).append(" IS NULL )");
-			query.addCondition(s.toString())
+		if(expfilter.filterFoldChange())	{
+			if (expfilter.filterSpecies())	{
+				query.addCondition(" abs(baad_platform.foldChangeRatio) >= " + expfilter.foldChange)
+			} else	{
+				query.addTable("bio.BioAssayAnalysisData baad_ffc")
+				query.addCondition(" abs(baad_ffc.foldChangeRatio) >= " + expfilter.foldChange)
+				query.addCondition( query.mainTableAlias+".experiment = baad_ffc.experiment" )
+			}
+			//def StringBuilder s = new StringBuilder();
+			//def symbol = "abs(" + query.mainTableAlias+".foldChangeRatio)" // abs value
+			//s.append (" ((").append(symbol).append(" >=").append(expfilter.foldChange).append(" )")
+			//		.append(" OR ").append(symbol).append(" IS NULL )");
+			//query.addCondition(s.toString())
 
 			//s.append (" (").append(symbol).append(" >=").append(expfilter.foldChange)
 			//		.append(" OR ").append(symbol).append(" <= ").append(-expfilter.foldChange)
@@ -593,12 +600,22 @@ class ExperimentAnalysisQueryService {
 		}
 
 		// pvalue on BioAssayAnalysisData
-		if(expfilter.filterPValue()){
-			def StringBuilder s = new StringBuilder();
-			def symbol = query.mainTableAlias+".preferredPvalue"
-			s.append(" (").append(symbol).append(" <= ").append(expfilter.pValue).append( ")")
-			// .append(" OR ").append(symbol).append(" IS NULL)");
-			query.addCondition(s.toString())
+		if(expfilter.filterPValue())	{		
+			if (expfilter.filterSpecies())	{
+				query.addCondition(" baad_platform.preferredPvalue <= " + expfilter.pValue)
+			} else if (expfilter.filterFoldChange())	{
+				query.addCondition(" baad_ffc.preferredPvalue <= " + expfilter.pValue)
+			} else	{
+				query.addTable("bio.BioAssayAnalysisData baad_pv")
+				query.addCondition(" baad_pv.preferredPvalue <= " + expfilter.pValue)
+				query.addCondition( query.mainTableAlias+".experiment = baad_pv.experiment" )
+			}
+			
+			//def StringBuilder s = new StringBuilder();
+			//def symbol = query.mainTableAlias+".preferredPvalue"
+			//s.append(" (").append(symbol).append(" <= ").append(expfilter.pValue).append( ")")
+			//// .append(" OR ").append(symbol).append(" IS NULL)");
+			//query.addCondition(s.toString())
 		}
 	}
 
