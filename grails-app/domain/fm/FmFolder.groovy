@@ -65,13 +65,20 @@ class FmFolder implements Buildable {
 	 */
 	String getUniqueId() {
 		if (uniqueId == null) {
-			FmData data = FmData.get(id);
-			if (data != null) {
-				uniqueId = data.uniqueId
-				return data.uniqueId;
+			if(id)
+			{
+				FmData data = FmData.get(id);
+				if (data != null) {
+					uniqueId = data.uniqueId
+					return data.uniqueId;
+				}
+				return null;
 			}
-			return null;
-		}
+			else
+			{
+				return null;
+			}
+		}  
 		return uniqueId;
 	}
 		

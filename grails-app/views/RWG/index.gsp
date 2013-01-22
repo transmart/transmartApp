@@ -109,7 +109,7 @@
 	            	var protoForm = $('editMetadataForm');
 		            var serializedForm = Form.serialize(protoForm);
             		jQuery.ajax({
-						url:saveFolderURL + "?" + serializedForm,	
+						url:saveMetaDataURL + "?" + serializedForm,	
 						success: function(response) {
 							jQuery('#editMetadataOverlay').fadeOut();
 							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
@@ -119,7 +119,88 @@
 						}
 					});
 	            });
+
+	            jQuery("#createAssayOverlay").on('click', '#cancelassaybutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#createAssayOverlay').fadeOut();
+	            });
 	            
+	            jQuery("#createAssayOverlay").on('click', '#saveassaybutton', function() {
+	            	var protoForm = $('createAssayForm');
+		            var serializedForm = Form.serialize(protoForm);
+            		jQuery.ajax({
+						url:saveAssayURL + "?" + serializedForm,	
+						success: function(response) {
+							jQuery('#createAssayOverlay').fadeOut();
+							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
+						},
+						error: function(xhr) {
+						alert(xhr);
+						}
+					});
+	            });
+
+
+	            jQuery("#createFolderOverlay").on('click', '#cancelfolderbutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#createFolderOverlay').fadeOut();
+	            });
+	            
+	            jQuery("#createFolderOverlay").on('click', '#savefolderbutton', function() {
+	            	var protoForm = $('createFolderForm');
+		            var serializedForm = Form.serialize(protoForm);
+            		jQuery.ajax({
+						url:saveFolderURL + "?" + serializedForm,	
+						success: function(response) {
+							jQuery('#createFolderOverlay').fadeOut();
+							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
+						},
+						error: function(xhr) {
+						alert(xhr);
+						}
+					});
+	            });
+
+
+	            jQuery("#createStudyOverlay").on('click', '#cancelstudybutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#createStudyOverlay').fadeOut();
+	            });
+	            
+	            jQuery("#createStudyOverlay").on('click', '#savestudybutton', function() {
+	            	var protoForm = $('createStudyForm');
+		            var serializedForm = Form.serialize(protoForm);
+            		jQuery.ajax({
+						url:saveStudyURL + "?" + serializedForm,	
+						success: function(response) {
+							jQuery('#createStudyOverlay').fadeOut();
+							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
+						},
+						error: function(xhr) {
+						alert(xhr);
+						}
+					});
+	            });
+
+	            jQuery("#createProgramOverlay").on('click', '#cancelprogrambutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#createProgramOverlay').fadeOut();
+	            });
+	            
+	            jQuery("#createProgramOverlay").on('click', '#saveprogrambutton', function() {
+	            	var protoForm = $('createProgramForm');
+		            var serializedForm = Form.serialize(protoForm);
+            		jQuery.ajax({
+						url:saveProgamURL + "?" + serializedForm,	
+						success: function(response) {
+							jQuery('#createProgramOverlay').fadeOut();
+							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
+						},
+						error: function(xhr) {
+						alert(xhr);
+						}
+					});
+	            });
 	            
 	            
 	        	resizeAccordion();
@@ -306,7 +387,8 @@
                 </div>
                 <div id="metadata-viewer">
 				</div>
-				<div id="subfolder-viewer">
+			
+  				<div id="subfolder-viewer">
                 </div>
                 </div>
 				
@@ -327,6 +409,10 @@
 		<!--  This is the DIV we stuff the browse windows into. -->
 		<div id="exportOverlay" class="overlay" style="display: none;">&nbsp;</div>
 		<tmpl:editMetadataOverlay />
+		<tmpl:createAssayOverlay />
+		<tmpl:createFolderOverlay />
+		<tmpl:createStudyOverlay />
+		<tmpl:createProgramOverlay />
 		<div id="divBrowsePopups" style="width:800px; display: none;">
 			
 		</div>

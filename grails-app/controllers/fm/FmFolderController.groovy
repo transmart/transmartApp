@@ -84,7 +84,39 @@ class FmFolderController {
         return [fmFolderInstance: fmFolderInstance]
     }
 
-	def createStudy = {
+	def createAssay = {
+		log.info "createAssay called"
+		log.info "params = " + params
+		//log.info "** action: expDetail called!"
+		
+		def folder = new FmFolder()
+		folder.folderType = FolderType.ASSAY.name()
+		def bioDataObject = folder
+		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.ASSAY.name())
+		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+		def title = "Create Assay"
+		def templateType = "createAssayForm"
+		render(template: "createAssay", model:[templateType: templateType, title:title, bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+	}
+
+	def createFolder = {
+		log.info "createFolder called"
+		log.info "params = " + params
+		//log.info "** action: expDetail called!"
+		
+		def folder = new FmFolder()
+		folder.folderType = FolderType.FOLDER.name()
+		def bioDataObject = folder
+		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.FOLDER.name())
+		if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
+		
+		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+		def title = "Create Folder"
+		def templateType = "createFolderForm"
+		render(template: "createFolder", model:[templateType: templateType, title:title, bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+	}
+
+		def createStudy = {
 		log.info "createStudy called"
 		log.info "params = " + params		
 		//log.info "** action: expDetail called!"
@@ -92,13 +124,29 @@ class FmFolderController {
 		def folder = new FmFolder()
 		folder.folderType = FolderType.STUDY.name()
 		def bioDataObject = folder
-		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.STUDY.name().toLowerCase())
+		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.STUDY.name())
 		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-
-		render(template: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
-	
+		def title = "Create Study"
+		def templateType = "createStudyForm"
+		render(template: "createStudy", model:[templateType: templateType, title:title, bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
+
+		def createProgram = {
+			log.info "createProgram called"
+			log.info "params = " + params
+			//log.info "** action: expDetail called!"
+			
+			def folder = new FmFolder()
+			folder.folderType = FolderType.PROGRAM.name()
+			def bioDataObject = folder
+			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.PROGRAM.name())
+			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+			def title = "Create Program"
+			def templateType = "createProgramForm"
+			render(template: "createProgram", model:[templateType: templateType, title:title, bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		}
 	
+
 	
     def save = {
 		log.info params
@@ -514,6 +562,12 @@ class FmFolderController {
 								bioDataDisplayValue = cc.codeName
 								
 							}
+							else if(amTagItem.tagItemSubtype == 'PICKLIST')
+							{
+								def cc = ConceptCode.findByUniqueId(bioDataPropertyValue)
+								bioDataDisplayValue = cc.codeName
+								
+							}
 							else if(amTagItem.tagItemSubtype == 'FREETEXT')
 							{
 								bioDataDisplayValue = bioDataPropertyValue
@@ -607,8 +661,6 @@ class FmFolderController {
 			}
 		}
 		
-	
-		
 		log.info "FolderInstance = " + bioDataObject.toString()
 		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems, jSONForGrids: jSONForGrids])
 		
@@ -682,7 +734,9 @@ class FmFolderController {
 
 		} 
 
-		render(template: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		def title = "Edit Meta Data"
+		def templateType = "editMetadataForm"
+		render(template: "editMetaData", templateType: templateType, title: title, model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 	
 	def updateMetaData =

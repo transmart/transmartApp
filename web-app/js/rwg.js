@@ -77,6 +77,7 @@ function showDetailDialog(dataURL)	{
 	jQuery('#metadata-viewer').load(dataURL, {}, function() {
 		jQuery('#metadata-viewer').removeClass('ajaxloading');
 	});
+
 	
 //	var height = 'auto';
 //	if (typeof dialogHeight == 'number')	{

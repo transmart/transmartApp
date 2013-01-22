@@ -4,8 +4,6 @@
 <%! import com.recomdata.util.* %> 
 <div>  
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
-    <table class="detail" height="300px">
-        <tbody>
         <g:each in="${metaDataTagItems}" status="i" var="amTagItem">
           <g:if test="${amTagItem.editable}">
             <tr>
@@ -76,8 +74,6 @@
             </tr>
          </g:if>
         </g:each>
-    </tbody>    
-</table>
 </g:if> 
 </div>
 
