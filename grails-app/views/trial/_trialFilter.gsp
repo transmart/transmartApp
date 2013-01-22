@@ -88,7 +88,7 @@
 
 					</tr>
 						<tr>
-						<td style="width: 175px; white-space: nowrap;">Absolute R/Rho Value is Less Than:</td>
+						<td style="width: 175px; white-space: nowrap;">Absolute R Value is Less Than:</td>
 						<td style="font-weight:normal">
 							<g:textField name="rValue" value="${trialFilter?.rValue}"/>
 						</td>

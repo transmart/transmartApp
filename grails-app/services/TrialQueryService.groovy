@@ -340,25 +340,25 @@ class TrialQueryService {
 			//	.append(-trialfilter.foldChange).append(")")
 			//	.append(" OR baad.foldChangeRatio IS NULL)")
 			bFirstWhereItem = false
-			s.append("( abs(baad.foldChangeRatio) >= ").append(trialfilter.foldChange).append(" OR baad.foldChangeRatio IS NULL)")
+			s.append("( abs(baad.foldChangeRatio) >= ").append(trialfilter.foldChange) //.append(" OR baad.foldChangeRatio IS NULL)")
 		}
 
 		// preferred p value on BioAssayAnalysisData
 		if(trialfilter.hasPValue()){
 			if(bFirstWhereItem) {
-				s.append(" (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
+				s.append(" (baad.preferredPvalue <= ").append(trialfilter.pValue).append(")")
 				bFirstWhereItem = false
 			} else {
-				s.append(" AND (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
+				s.append(" AND (baad.preferredPvalue <= ").append(trialfilter.pValue).append(")")
 			}			
 		}
 		//		 rvalue on BioAssayAnalysisData
 		if(trialfilter.hasRValue()){
 			if(bFirstWhereItem) {
-				s.append(" ((baad.rValue >= abs(").append(trialfilter.rValue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+				s.append(" (baad.rValue >= abs(").append(trialfilter.rValue).append("))") // OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
 				bFirstWhereItem = false
 			} else {
-				s.append(" AND (baad.rValue >= abs(").append(trialfilter.rValue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+				s.append(" AND (baad.rValue >= abs(").append(trialfilter.rValue).append("))") // OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
 			}
 		}
 		// platform filter
