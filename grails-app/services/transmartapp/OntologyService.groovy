@@ -32,7 +32,7 @@ class OntologyService {
 	def i2b2HelperService
 	def springSecurityService
 
-    def searchOntology(searchtags, searchterms, tagsearchtype, returnType, accessionsToInclude) {
+    def searchOntology(searchtags, searchterms, tagsearchtype, returnType, accessionsToInclude, searchOperator) {
 
 			def concepts=[];
     		def myNodes;
@@ -51,7 +51,7 @@ class OntologyService {
 				searchterm = searchterm?.trim();
 				if (searchterm) {
 					if (!searchtermstring.equals("")) {
-						searchtermstring += " OR "
+						searchtermstring += " " + searchOperator + " "
 					}
 					def searchtermWild = '%'+searchterm.toLowerCase().replace("'", "''")+'%';
 					searchtermstring += "lower(o.name) like '"+searchtermWild+"' "
