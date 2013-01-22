@@ -47,15 +47,26 @@ class RWGController {
 	def solrFacetService
 	
     def index = {
-		def rwgSearchFilter = session['rwgSearchFilter'];
+		
 		def exportList = session['export'];
+		
+		def rwgSearchFilter = session['rwgSearchFilter'];
 		if (rwgSearchFilter) {
 			rwgSearchFilter = rwgSearchFilter.join(",,,")
 		}
 		else {
 			rwgSearchFilter = "";
 		}
-		return [rwgSearchFilter: rwgSearchFilter, exportCount: exportList?.size()];
+		
+		def rwgSearchOperators = session['rwgSearchOperators'];
+		if (rwgSearchOperators) {
+			rwgSearchOperators = rwgSearchOperators.join(";")
+		}
+		else {
+			rwgSearchOperators = "";
+		}
+		
+		return [rwgSearchFilter: rwgSearchFilter, rwgSearchOperators: rwgSearchOperators, exportCount: exportList?.size()];
 	}
 	
 	def ajaxWelcome = {
@@ -305,6 +316,7 @@ class RWGController {
    //Just clear the search filter and render non-null back
    def clearSearchFilter = {
 	   session['rwgSearchFilter'] = [:];
+	   session['rwgSearchOperators'] = [:];
 	   render(text: "OK")
    }
    
@@ -317,9 +329,16 @@ class RWGController {
 	   def paramMap = params
 	   //Search string is saved in session (for passing between RWG and Dataset Explorer pages)
 	   def searchString = params.searchTerms
+	   def searchOperatorsString = params.searchOperators
+	   
 	   def searchTerms = searchString?.split(",,,")
 	   if (searchTerms != null && searchTerms[0] == "") {searchTerms = null;}
+	   
+	   def searchOperators = searchOperatorsString?.split(";")
+	   if (searchOperators != null && searchOperators[0] == "") {searchOperators = null;}
+	   
 	   session['rwgSearchFilter'] = searchTerms
+	   session['rwgSearchOperators'] = searchOperators
 	   
 	   //If we have no search terms and this is for RWG, just return the top level
 	   if ((searchTerms == null || searchTerms.size() == 0) && params.page.equals('RWG')) {
@@ -344,75 +363,6 @@ class RWGController {
 	   else {
 		   render combinedResult as JSON
 	   }	   
-   }
-           
-   /**
-   * Load the search results for the given search terms (used for AJAX calls)
-   * @return JSON object containing facet counts
-   */
-   def getFacetResultsOld = {
-	   	   
-	   def startTime = new Date()								// Clock starts running now!
-
-	   session['folderSearchList'] = []; //Clear the folder search list
-	   
-	   //Search string is saved in session (for passing between RWG and Dataset Explorer pages)
-	   def searchString = params.searchTerms
-	   def searchTerms = searchString?.split(",,,")
-	   if (searchTerms != null && searchTerms[0] == "") {searchTerms = null;}
-	   session['rwgSearchFilter'] = searchTerms
-	   
-	   //If we have no search terms and this is for RWG, just return the top level
-	   if ((searchTerms == null || searchTerms.size() == 0) && params.page.equals('RWG')) {
-		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null).folders])
-		   return
-	   }
-	   
-	   // q params are filtered on but not faceted
-       def queryParams = request.getParameterValues('q') as List
-	   
-	   // get name of SOLR search field to be used for gene queries (SIGGENE or ALLGENE) and set session var
-	   def solrGenesField = setSOLRGenesField()
-
-	   //fq params are also faceted and also filtered on
-	   def facetQueryParams = request.getParameterValues('fq')
-
-	   // save all the filter params to a session List variable   
-	   def sessionFilterParams = []	  
-	    
-	   for (p in queryParams)  {
-		   sessionFilterParams.add p
-	   }	   
-	   for (p in facetQueryParams)  {
-		   sessionFilterParams.add p
-	   }
-	   session['solrSearchFilter'] = sessionFilterParams
-	   
-	   // ff params are faceted, but not filtered on
-	   def facetFieldsParams = request.getParameterValues('ff')	  
-	   
-	   log.info("facet search: " + params)
-	   
-	   if (params.page.equals('RWG')) {
-		   def folderSearchList = solrFacetService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'foldermap')
-		   session['folderSearchList'] = folderSearchList;
-		   
-		   def folderContents = fmFolderService.getFolderContents(null)
-		   
-		   if (folderSearchList) {
-			   def folderSearchString = folderSearchList.join("\\,") + "\\," //Extra , - used to identify leaves
-			   println folderSearchString
-			   render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString])
-		   }
-		   else {
-			   render(template:'/fmFolder/noResults')
-		   }
-		   
-	   }
-	   else {
-		   def ontologyResult = solrFacetService.getSolrResults(queryParams, facetQueryParams, facetFieldsParams, 'JSON')
-		   render ontologyResult as JSON
-	   }
    }
 
    /**

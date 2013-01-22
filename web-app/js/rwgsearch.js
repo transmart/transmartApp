@@ -2,6 +2,7 @@
 // Globals
 // Store the current search terms in an array in format ("category display|category:term") where category display is the display term i.e. Gene, Disease, etc.
 var currentCategories = new Array();
+var currentSearchOperators = new Array(); //AND or OR - keep in line with currentCategories
 var currentSearchTerms = new Array(); 
 
 // Store the nodes that were selected before a new node was selected, so that we can compare to the nodes that are selected after.  Selecting
@@ -124,7 +125,7 @@ function convertCategory(valueToConvert)	{
 }
 
 //Add the search term to the array and show it in the panel.
-function addSearchTerm(searchTerm, noUpdate)	{
+function addSearchTerm(searchTerm, noUpdate, loadingFromSession)	{
 	var category = searchTerm.display == undefined ? "TEXT" : searchTerm.display;
 	
 	category = category + "|" + (searchTerm.category == undefined ? "TEXT" : searchTerm.category);
@@ -136,6 +137,7 @@ function addSearchTerm(searchTerm, noUpdate)	{
 		currentSearchTerms.push(key);
 		if (currentCategories.indexOf(category) < 0)	{
 			currentCategories.push(category);
+			currentSearchOperators.push("or");
 		}
 	} 
 	
@@ -174,6 +176,7 @@ function showSearchTemplate()	{
 
 	// iterate through categories array and move all the "gene" categories together at the top 
 	var newCategories = new Array();
+	var newSearchOperators = new Array();
 	
 	var geneCategoriesProcessed = false;
 	for (var i=0; i<currentCategories.length; i++)	{
@@ -187,6 +190,7 @@ function showSearchTemplate()	{
 				
 				// add first gene category to new array
 				newCategories.push(currentCategories[i]);
+				newSearchOperators.push(currentSearchOperators[i]);
 
 				// look for other "gene" categories, starting at the next index value, and add each to array
 				for (var j=i+1; j<currentCategories.length; j++)	{
@@ -194,6 +198,7 @@ function showSearchTemplate()	{
 					var catId2 = catFields2[1];
 					if (isGeneCategory(catId2)) {
 						newCategories.push(currentCategories[j]);
+						newSearchOperators.push(currentSearchOperators[j]);
 					}				
 				}
 				// set flag so we don't try to process again
@@ -202,11 +207,13 @@ function showSearchTemplate()	{
 		}
 		else  {    // not a gene catageory, add to new list
 			newCategories.push(currentCategories[i]);
+			newSearchOperators.push(currentSearchOperators[i]);
 		}
 	}
 	
 	// replace old array with new array
     currentCategories = newCategories;
+    currentSearchOperators = newSearchOperators;
 	
 	for (var i=0; i<currentCategories.length; i++)	{
 		for (var j=0; j<currentSearchTerms.length; j++)	{
@@ -242,14 +249,17 @@ function showSearchTemplate()	{
 					}
 					searchHTML = searchHTML +"<span class='category_label'>" +catDisplay + "&nbsp;></span>&nbsp;<span class=term>"+ fields[1] + startATag + tagID + endATag + imgTag +"</span>";
 					firstItem = false;
-				} else	{
+				}
+				else {
 					searchHTML = searchHTML + "<span class='spacer'>| </span><span class=term>"+ fields[1] + startATag + tagID + endATag + imgTag +"</span> ";
-				}				
-			} else	{
+				}			
+			}
+			else {
 				continue;												// Do the categories by row and in order
 			}
 		}
 		firstItem = true;
+		searchHTML = searchHTML + "<div name='" + i + "' class='andor " + currentSearchOperators[i] + "'>&nbsp;</div>";
 	}
 	document.getElementById('active-search-div').innerHTML = searchHTML;
 	getSearchKeywordList();
@@ -301,6 +311,7 @@ function showFacetResults()	{
 	var facetSearch = new Array();   // will be an array of strings "Cat1:Term1|Term2", "Cat2:Term3", ...   
 	var categories = new Array();    // will be an array of categories "Cat1","Cat2"
 	var terms = new Array();         // will be an array of strings "Term1|Term2", "Term3"
+	var operators = new Array();
 
 	// first, loop through each term and add categories and terms to respective arrays 		
     for (var i=0; i<savedSearchTermsArray.length; i++)	{
@@ -315,6 +326,14 @@ function showFacetResults()	{
 		// if category not in array yet, add category and term to their respective array, else just append term to proper spot in its array
 		if (categoryIndex == -1)  {
 		    categories.push(category);
+		    
+		    //Get the operator for this category from the global arrays
+		    var operatorIndex = currentCategories.indexOf(fields[0]);
+		    var operator = currentSearchOperators[operatorIndex];
+		    if (operator == null) { operator = 'or' }
+		    operators.push(operator);
+		    
+
 		    terms.push(termId);
 		}
 		else  {
@@ -349,7 +368,7 @@ function showFacetResults()	{
     	//else  {
     		queryType = "q";
     	//}
-    	facetSearch.push(queryType + "=" + categories[i] + ":" + terms[i]);
+    	facetSearch.push(queryType + "=" + categories[i] + ":" + terms[i] + "::" + operators[i]);
     }
 
     // now add all tree categories that arene't being searched on to the string
@@ -360,24 +379,26 @@ function showFacetResults()	{
 //    	}
 //    }
     
-	jQuery("#results-div").empty();
-    
-    // add study id to list of fields to facet (so we can get count for show search results)
-    //facetSearch.push("ff=STUDY_ID");
+	jQuery("#results-div").addClass('ajaxloading').empty();
     
     var queryString = facetSearch.join("&");
     
-    //Show significant results is disabled
-   	//queryString = queryString + "&showSignificantResults=" + document.getElementById('cbShowSignificantResults').checked
-    
+    //Construct a list of the current categories and operators to save
+    var operators = [];
+    for (var i=0; i < currentCategories.length; i++) {
+    	var category = currentCategories[i];
+    	var operator = currentSearchOperators[i];
+    	operators.push(category + "," + operator);
+    }
+    var operatorString = operators.join(";");
     
     if (searchPage == 'RWG') {
 		jQuery.ajax({
 			url:facetResultsURL,
-			data: queryString + "&searchTerms=" + savedSearchTerms + "&page=RWG",
+			data: queryString + "&searchTerms=" + savedSearchTerms + "&searchOperators=" + operatorString + "&page=RWG",
 			success: function(response) {
 	
-					jQuery('#results-div').html(response);
+					jQuery('#results-div').removeClass('ajaxloading').html(response);
 	
 			},
 			error: function(xhr) {
@@ -396,7 +417,7 @@ function showFacetResults()	{
     	else {
 			jQuery.ajax({
 				url:facetResultsURL,
-				data: queryString + "&searchTerms=" + savedSearchTerms + "&page=datasetExplorer",
+				data: queryString + "&searchTerms=" + savedSearchTerms + "&searchOperators=" + operatorString + "&page=datasetExplorer",
 				success: function(response) {
 						searchByTagComplete(response);
 				},
@@ -491,6 +512,7 @@ function clearSearch()	{
 	
 	currentSearchTerms = new Array();
 	currentCategories = new Array();
+	currentSearchOperators = new Array();
 	
 	// Change the category picker back to ALL and set autocomplete to not have a category (ALL by default)
 	document.getElementById("search-categories").selectedIndex = 0;
@@ -548,7 +570,9 @@ function clearCategoryIfNoTerms(category)  {
 	}
 	
 	if (!found)  {
-		currentCategories.splice(currentCategories.indexOf(category), 1);
+		var index = currentCategories.indexOf(category);
+		currentCategories.splice(index, 1);
+		currentSearchOperators.splice(index, 1);
 	}
 }
 
@@ -668,6 +692,18 @@ jQuery(document).ready(function() {
 				jQuery('#editMetadata').html(response).removeClass('ajaxloading');
 			}
 		});
+	});
+	
+    jQuery('#box-search').on('click', '.andor', function() {
+    	//Alter this index of the current search operators, then redisplay
+	    if (jQuery(this).hasClass("or")) {
+	    	currentSearchOperators[jQuery(this).attr('name')] = 'and'
+	    }
+	    else {
+	    	currentSearchOperators[jQuery(this).attr('name')] = 'or'
+	    }
+	    showSearchTemplate();
+	    showSearchResults();
 	});
 
 
@@ -878,6 +914,21 @@ jQuery(document).ready(function() {
 
 function loadSearchFromSession() {
 	var sessionFilters = sessionSearch.split(",,,");
+	var sessionOperatorStrings = sessionOperators.split(";");
+	
+	//This pre-populates the categories array with the search operators - our saved terms will
+	//then have the correct operator automatically applied
+	for (var i=0; i < sessionOperatorStrings.length; i++) {
+		var operatorPair = sessionOperatorStrings[i].split(",");
+		var cat = operatorPair[0];
+		var op = operatorPair[1];
+		
+		if (cat != null && cat != "") {
+			currentCategories.push(cat);
+			currentSearchOperators.push(op);
+		}
+	}
+	
 	
 	for (var i = 0; i < sessionFilters.length; i++) {
 		var item = sessionFilters[i];
@@ -885,7 +936,7 @@ function loadSearchFromSession() {
 			var itemData = item.split("|");
 			var itemSearchData = itemData[1].split(";");
 			var searchParam = {id: itemSearchData[2], display: itemData[0], category: itemSearchData[0], keyword: itemSearchData[1]};
-			addSearchTerm(searchParam, true);
+			addSearchTerm(searchParam, true, true);
 		}
 	}
 }

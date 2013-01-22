@@ -56,6 +56,10 @@ class SolrFacetService {
 		
 		//For each category (except Datanode), construct a SOLR query
 		for (category in categoryList) {
+			//Split off the operator with ::
+			def operator = ((String) category).split("::")[1].toUpperCase()
+			category = ((String) category).split("::")[0]
+			
 			def categoryName = ((String) category).split(":", 2)[0]
 			def termList = ((String) category).split(":", 2)[1].split("\\|")
 			
@@ -68,7 +72,7 @@ class SolrFacetService {
 				//Make this metadata field into a SOLR query
 				println "Searching for metadata: " + termList.join(",")
 
-				def categoryQuery = createCategoryQueryString(categoryName, termList)
+				def categoryQuery = createCategoryQueryString(categoryName, termList, operator)
 				def solrQuery = "q=" + createSOLRQueryString(categoryQuery, "", "")
 				def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQuery, false)
 				
@@ -89,7 +93,7 @@ class SolrFacetService {
 				//Content: Get the list of terms, and search in CONTENT field OR the data nodes
 				println "Searching for freetext: " + termList.join(",")
 				
-				def categoryQuery = createCategoryQueryString("CONTENT", termList)
+				def categoryQuery = createCategoryQueryString("CONTENT", termList, operator)
 				def solrQuery = "q=" + createSOLRQueryString(categoryQuery, "", "")
 				def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQuery, false)
 				
@@ -107,7 +111,7 @@ class SolrFacetService {
 				
 				//If browse, get the studies from SOLR that correspond to the returned accessions - if analyze, just add the paths.
 				if (page.equals('RWG')) {
-					def ontologyAccessions = ontologyService.searchOntology(null, termList, 'ALL', 'accession', null)
+					def ontologyAccessions = ontologyService.searchOntology(null, termList, 'ALL', 'accession', null, operator)
 					
 					if (ontologyAccessions) {
 						def solrQueryString = ""
@@ -127,7 +131,7 @@ class SolrFacetService {
 					}
 				}
 				else {
-					categoryResultIds += ontologyService.searchOntology(null, termList, 'ALL', 'path', null)
+					categoryResultIds += ontologyService.searchOntology(null, termList, 'ALL', 'path', null, operator)
 				}
 			
 			//If the master searchResultsIds list is empty, copy this in - otherwise intersect.
@@ -164,6 +168,10 @@ class SolrFacetService {
 					textList += s.code
 				}
 			}
+		}
+		//Fields of a program target are plain text and shouldn't be altered
+		else if (category.equals("MEASUREMENT_TYPE") || category.equals("VENDOR") || category.equals("TECHNOLOGY") || category.equals ("PROGRAM_TARGET")) {
+			textList = termList
 		}
 		//Assume ConceptCode UID for everything else
 		else {
@@ -219,7 +227,7 @@ class SolrFacetService {
 	   
 	   //If we have any accessions, return the node paths from i2b2 (on the study level)
 	   else {
-		   def results = ontologyService.searchOntology(null, null, 'ALL', 'path', accessions)
+		   def results = ontologyService.searchOntology(null, null, 'ALL', 'path', accessions, "")
 		   return results
 	   }
    }
@@ -303,7 +311,7 @@ class SolrFacetService {
    /**
    * Create a query string for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
    */
-  def createCategoryQueryString = {category, termList ->
+  def createCategoryQueryString = {category, termList, operator ->
 
 	  // create a query for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
 	  String categoryQuery = ""
@@ -311,7 +319,7 @@ class SolrFacetService {
 		  
 		  //If searching on text, add wildcards (instead of quote marks)
 		  if (category.equals("CONTENT")) {
-			  t = "*" + t.toLowerCase() + "*";
+			  t = ("*" + t.toLowerCase() + "*").replace(" ", "\\ ");
 		  }
 		  else {
 			  t = "\"" + t + "\"";
@@ -323,7 +331,7 @@ class SolrFacetService {
 			  categoryQuery = queryTerm
 		  }
 		  else  {
-			  categoryQuery = /${categoryQuery} OR ${queryTerm}/
+			  categoryQuery = /${categoryQuery} ${operator} ${queryTerm}/
 		  }
 	  }
 
