@@ -317,12 +317,14 @@ class SolrFacetService {
 	  String categoryQuery = ""
 	  for (t in termList)  {
 		  
+		  t = t.replace("&", "%26");
+		  
 		  //If searching on text, add wildcards (instead of quote marks)
 		  if (category.equals("CONTENT")) {
 			  t = ("*" + t.toLowerCase() + "*").replace(" ", "\\ ");
 		  }
 		  else {
-			  t = "\"" + t + "\"";
+			  t = ("\"" + t + "\"")
 		  }
 	  
 		  def queryTerm = /${category}:${t}/
