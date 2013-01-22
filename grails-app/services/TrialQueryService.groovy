@@ -347,24 +347,25 @@ class TrialQueryService {
 		if(trialfilter.hasPValue()){
 			if(bFirstWhereItem) {
 				s.append(" (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
+				bFirstWhereItem = false
 			} else {
 				s.append(" AND (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
-			}
-			//.append(" OR baad.preferredPvalue IS NULL)")
+			}			
 		}
 		//		 rvalue on BioAssayAnalysisData
 		if(trialfilter.hasRValue()){
 			if(bFirstWhereItem) {
 				s.append(" ((baad.rValue >= abs(").append(trialfilter.rValue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+				bFirstWhereItem = false
 			} else {
 				s.append(" AND (baad.rValue >= abs(").append(trialfilter.rValue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
 			}
-
 		}
 		// platform filter
 		if(trialfilter.hasPlatform()){
 			if(bFirstWhereItem) {
 				s.append(" (baad.analysis.assayDataType = '").append(trialfilter.platform).append("')")
+				bFirstWhereItem = false
 			} else {
 				s.append(" AND (baad.analysis.assayDataType = '").append(trialfilter.platform).append("')")
 			}
@@ -378,7 +379,6 @@ class TrialQueryService {
 			query.addTable("bio.ClinicalTrial ct ");
 			query.addCondition("baad.experiment.id = ct.id ")
 			query.addCondition("ct.id in (" + trialfilter.createTrialInclause()+ ")")
-
 		}
 	}
 
