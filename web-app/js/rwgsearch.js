@@ -416,7 +416,7 @@ function showFacetResults()	{
     	else {
 			jQuery.ajax({
 				url:facetResultsURL,
-				data: queryString + "&searchTerms=" + savedSearchTerms + "&searchOperators=" + operatorString + "&page=datasetExplorer",
+				data: queryString + "&searchTerms=" + encodeURIComponent(savedSearchTerms) + "&searchOperators=" + operatorString + "&page=datasetExplorer",
 				success: function(response) {
 						searchByTagComplete(response);
 				},
