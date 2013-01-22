@@ -683,7 +683,7 @@ jQuery(document).ready(function() {
 		jQuery('#editMetadata').empty().addClass('ajaxloading');
 
 		jQuery.ajax({
-			url:editFolderURL,
+			url:editMetaDataURL,
 			data: {folderId: id},			
 			success: function(response) {
 				jQuery('#editMetadata').html(response).removeClass('ajaxloading');
@@ -705,6 +705,87 @@ jQuery(document).ready(function() {
 	    }
 	    showSearchTemplate();
 	    showSearchResults();
+	});
+
+
+	jQuery('#metadata-viewer').on('click', '.addassay', function() {
+
+    	var id = jQuery(this).attr('name');
+
+		jQuery('#createAssayOverlay').fadeIn();
+		jQuery('#createAssay').empty().addClass('ajaxloading');
+
+		jQuery.ajax({
+			url:createAssayURL,
+			data: {folderId: id},			
+			success: function(response) {
+				jQuery('#createAssay').html(response).removeClass('ajaxloading');
+			},
+			error: function(xhr) {
+				alert(xhr);
+				jQuery('#createAssay').html(response).removeClass('ajaxloading');
+			}
+		});
+	});
+
+	jQuery('#metadata-viewer').on('click', '.addfolder', function() {
+
+    	var id = jQuery(this).attr('name');
+
+		jQuery('#createFolderOverlay').fadeIn();
+		jQuery('#createFolder').empty().addClass('ajaxloading');
+
+		jQuery.ajax({
+			url:createFolderURL,
+			data: {folderId: id},			
+			success: function(response) {
+				jQuery('#createFolder').html(response).removeClass('ajaxloading');
+			},
+			error: function(xhr) {
+				alert(xhr);
+				jQuery('#createFolder').html(response).removeClass('ajaxloading');
+			}
+		});
+	});
+
+	jQuery('#metadata-viewer').on('click', '.addstudy', function() {
+
+    	var id = jQuery(this).attr('name');
+
+		jQuery('#createStudyOverlay').fadeIn();
+		jQuery('#createStudy').empty().addClass('ajaxloading');
+
+		jQuery.ajax({
+			url:createStudyURL,
+			data: {folderId: id},			
+			success: function(response) {
+				jQuery('#createStudy').html(response).removeClass('ajaxloading');
+			},
+			error: function(xhr) {
+				alert(xhr);
+				jQuery('#createStudy').html(response).removeClass('ajaxloading');
+			}
+		});
+	});
+
+	jQuery('#welcome-viewer').on('click', '.addprogram', function() {
+		
+	   	var id = jQuery(this).attr('name');
+
+		jQuery('#createProgramOverlay').fadeIn();
+		jQuery('#createProgram').empty().addClass('ajaxloading');
+
+		jQuery.ajax({
+			url:createProgramURL,
+			data: {folderId: id},			
+			success: function(response) {
+				jQuery('#createProgram').html(response).removeClass('ajaxloading');
+			},
+			error: function(xhr) {
+				alert(xhr);
+				jQuery('#createProgram').html(response).removeClass('ajaxloading');
+			}
+		});
 	});
 
     jQuery('#exportOverlay').on('click', '.greybutton.remove', function() {
@@ -753,6 +834,21 @@ jQuery(document).ready(function() {
    jQuery('body').on('click', '#closeedit', function() {
 		jQuery('#editMetadataOverlay').fadeOut();	
     });
+
+   jQuery('body').on('click', '#closeassay', function() {
+		jQuery('#createAssayOverlay').fadeOut();	
+   });
+
+   jQuery('body').on('click', '#closefolder', function() {
+		jQuery('#createFolderOverlay').fadeOut();	
+   });
+
+   jQuery('body').on('click', '#closestudy', function() {
+		jQuery('#createStudyOverlay').fadeOut();	
+   });
+   jQuery('body').on('click', '#closeprogram', function() {
+		jQuery('#createProgramOverlay').fadeOut();	
+  });
 
     //Close export and filter overlays on click outside
     jQuery('body').on('click', function(e) {

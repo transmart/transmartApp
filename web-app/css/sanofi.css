@@ -404,6 +404,34 @@ table.menuDetail th.menuVisited {
 	height: 80%;
 }
 
+#createFolderOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
+#createProgramOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
+#createStudyOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
+#createAssayOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
 #filter-browser {
 	font-size: 8pt;
 	font-family: Verdana, Arial, sans-serif;
