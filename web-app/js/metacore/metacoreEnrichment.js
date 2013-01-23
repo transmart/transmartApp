@@ -246,7 +246,7 @@ function resetSettingsButton(mode) {
 	}
 	else {
 		jQuery('#metacoreSettingsButton').attr('class', 'metacoreSettingsDemo');
-		jQuery('#metacoreSettingsButton a').attr('title', 'Using demo enrichment')
+		jQuery('#metacoreSettingsButton a').attr('title', 'Using free enrichment')
 	}
 }
 

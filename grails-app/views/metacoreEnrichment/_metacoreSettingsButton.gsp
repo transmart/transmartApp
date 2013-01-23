@@ -10,7 +10,7 @@
 	</g:if>
 	<g:else>
 		<g:set var="buttonClass" value="metacoreSettingsDemo" />
-		<g:set var="buttonDescription" value="Using demo enrichment" />
+		<g:set var="buttonDescription" value="Using free enrichment" />
 	</g:else>
 </g:else>
 

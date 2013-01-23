@@ -24,7 +24,7 @@
 	<g:if test="${settingsConfigured}">
 		<g:if test="${systemSettingsDefined}">
 			<input id="radioSystem" type="radio" name="accountType" value="system" onChange="onRadioChange()"/> Use company account. 
-			This account is specified in your TranSMART server settings and provides a shared environment for all users. You will still need to know login/password in order to open individual maps.
+			This account is specified in your tranSMART server settings and provides a shared environment for all users. You will still need to know login/password in order to open individual maps.
 			<br/><br/>
 		</g:if>
 		<input id="radioRegular" type="radio" name="accountType" value="user" onChange="onRadioChange()"/> Use my personal MetaCore account:

@@ -27,35 +27,35 @@
 					<g:if test="${res.Description.size()}">
 					{
 			            contentEl:'Description', 
-			            title: 'Description',
+			            title: 'Description'
 			            //closable: true
 		        	},
 					</g:if>
 					<g:if test="${res.Synonyms.size()}">
 					{
 			            contentEl:'Synonyms', 
-			            title: 'Synonyms',
+			            title: 'Synonyms'
 			            //closable: true
 		        	},
 					</g:if>
 					<g:if test="${res.Localizations.size()}">
 					{
 						contentEl:'Localizations',
-						title: 'Localizations',
+						title: 'Localizations'
 						//closable: true
 					},
 					</g:if>
 					<g:if test="${res.Conditions.size()}">
 					{
 						contentEl:'Conditions',
-						title: 'Conditions',
+						title: 'Conditions'
 						//closable: true
 					},
 					</g:if>
 					<g:if test="${res.Maps.size()}">
 					{
 						contentEl: 'Maps',
-						title: 'MetaCore Maps',
+						title: 'MetaCore Maps'
 						//closable: true
 					}
 					</g:if>
