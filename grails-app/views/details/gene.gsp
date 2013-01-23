@@ -54,11 +54,6 @@
 				 </g:if>
 				 <sec:ifNotGranted roles="ROLE_PUBLIC_USER">
 	 				 <g:if test="${isRWG==false}">
-						{
-			        		title:"Pictor",
-			                id:'pictor',
-			                defaultSrc:"http://chip.janbe.eu.jnj.com/cgi-bin/chip/pathways.cgi?symbol=${symbol}"
-			            },
 			            {
 			        		title:"Hydra",
 			                id:'hydra',

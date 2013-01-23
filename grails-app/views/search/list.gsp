@@ -105,12 +105,7 @@
 			    },
 
 			    pictor: {
-			   		<g:if test="${session.searchFilter.pictorTerms != null}">
-						resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pictorURL}" + "&symbol=${session.searchFilter.pictorTerms}"
-	    			</g:if>
-					<g:else>
-	                	resultsUrl: "${createLink(controller:'search',action:'noResult')}"
-					</g:else>
+			        resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pictorURL}"
 			    },
 			    genego: {
 					resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.genegoURL}" + "/cgi/search/ez.cgi?submitted=1&name=${session.searchFilter.getExternalTerms()}",

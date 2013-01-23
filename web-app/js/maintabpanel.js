@@ -400,9 +400,6 @@ function activateTab(tab) {
         setButtonVisibility("exportsummary", false);
         setButtonVisibility("studyview", false)
         setButtonVisibility("tea",false);
-        if (pageData.pictor.resultsUrl.length > 1980) {
-            window.alert("Note: The length of the URL for the Pictor query has exceeded the maximum supported by Internet Explorer and some genes may have been excluded from the query.");
-        }
         setButtonVisibility("contextHelp", false);
         break;
 

@@ -44,7 +44,6 @@ class SearchFilter {
 	ExperimentAnalysisFilter  expAnalysisFilter = new ExperimentAnalysisFilter()
 	ExpressionProfileFilter exprProfileFilter = new ExpressionProfileFilter()
 	String summaryWithLinks
-	String pictorTerms
 
 	def acttab = {
 
@@ -76,25 +75,6 @@ class SearchFilter {
 			return "doc"
 		else
 			return datasource;
-	}
-
-	def createPictorTerms = {
-
-		def geneFilters = globalFilter.getGeneFilters();
-		// Get all pathway ids from globalFilter
-		def pathwayIds = globalFilter.formatIdList(globalFilter.getAllListFilters(), ",")
-		// If there are pathways, then get all genes in pathways and add them to the geneFilters (hash set)
-		if (pathwayIds.size() > 0) {
-			geneFilters.addAll(searchKeywordService.expandAllListToGenes(pathwayIds))
-		}
-
-		// Format the gene filter keywords into comma separated strings
-		if (geneFilters?.size() > 0) {
-			pictorTerms = globalFilter.formatKeywordList(geneFilters, ",", "", 1900)
-		} else {
-			pictorTerms = null
-		}
-
 	}
 
 	def marshal(){
