@@ -201,33 +201,6 @@ public class SearchKeywordService {
 			keywords.add(m)
 		}
 		
-		/*
-		* Get results from Bio Concept Code table
-		* Therapeutic Domain is the only one that we need to know about here...
-		*/
-		if (category.equals("THERAPEUTIC_DOMAIN") || category.equals("ALL")) {
-			results = ConceptCode.createCriteria().list {
-				if (term.size() > 0)	{
-					like("bioConceptCode", term.toUpperCase().replace(" ", "_") + '%')
-				}
-				like("codeTypeName", "THERAPEUTIC_DOMAIN")
-				maxResults(max)
-				order("bioConceptCode", "asc")
-			}
-			log.info("Bio concept code keywords found: " + results.size())
-			
-			for (result in results)	{
-				def m = [:]
-				
-				m.put("label", result.codeName)
-				m.put("category", "Therapeutic Domain")
-				m.put("categoryId", result.codeTypeName)
-				m.put("id", result.bioDataUid.uniqueId[0])
-				
-				keywords.add(m)
-			}
-		}
-		
 		return keywords
 	 }
 

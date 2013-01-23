@@ -26,6 +26,7 @@ import java.net.URLEncoder;
 import fm.FmFolder;
 import fm.FmFile;
 import org.apache.solr.util.SimplePostTool;
+import org.apache.commons.io.FileUtils;
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
@@ -95,15 +96,14 @@ class FmFolderService {
 		// Use file's parent directory as ID of folder which file will
 		// be associated with.
 		File directory = file.getParentFile();
-		long folderId = Long.parseLong(directory.getName(), 36);
-		def fmFolder = FmFolder.get(folderId);
-		
-		if (fmFolder == null) {
-			log.error("Folder with id " + folderId + " does not exist.")
+		FmFolder fmFolder;
+		try {
+			fmFolder = FmFolder.get(Long.parseLong(directory.getName()));
+		} catch (NumberFormatException ex) {
+			log.error("Folder with id " + directory.getName() + " does not exist.")
 			return;
 		}
-		//log.info("Folder = " + fmFolder.folderName + " (" + folderId + ")");
-
+		
 		// Check if folder already contains file with same name.
 		def fmFile;
 		for (f in fmFolder.fmFiles) {
@@ -143,17 +143,10 @@ class FmFolderService {
 				}
 				return;
 			}
-			FmData fmData = new FmData(fmDataType: 'FM_FILE', uniqueId: 'FIL:' + fmFile.id);
-			fmData.id = fmFile.id;
-			if (!fmData.save(flush:true)) {
-				fmData.errors.each {
-					log.error(it);
-				}
-			}
 			log.info("File = " + file.getName() + " (" + fmFile.id + ") - New");
 		}
 
-		fmFile.filestoreName = Long.toString(fmFile.id, 36).toUpperCase() + "-" + Long.toString(fmFile.fileVersion, 36).toUpperCase() + "." + fmFile.fileType;
+		fmFile.filestoreName = fmFile.id + "-" + fmFile.fileVersion + "." + fmFile.fileType;
 
 		if (!fmFile.save(flush:true)) {
 			fmFile.errors.each {
@@ -164,6 +157,7 @@ class FmFolderService {
 
 		// Use filestore directory based on file's parent study or common directory
 		// for files in folders above studies. If directory does not exist, then create it.
+		// PREREQUISITE: Service account running tomcat has ownership of filestore directory.
 		File filestoreDir = new File(filestoreDirectory + fmFile.filestoreLocation);
 		if (!filestoreDir.exists()) {
 			if (!filestoreDir.mkdirs()) {
@@ -172,10 +166,16 @@ class FmFolderService {
 			}
 		}
 		
-		// Move file to appropriate filestore directory.
+		// Move file to appropriate filestore directory. 
 		File filestoreFile = new File(filestoreDirectory + fmFile.filestoreLocation + file.separator + fmFile.filestoreName);
-		if (!file.renameTo(filestoreFile)) {
-			log.error("unable to move file to " + filestoreFile.getPath());
+		try {
+			FileUtils.copyFile(file, filestoreFile);
+			if (!file.delete()) {
+				log.error("unable to delete file " + file.getPath());
+			}
+			//if (!file.renameTo(filestoreFile)) {
+		} catch (IOException ex) {
+			log.error("unable to copy file to " + filestoreFile.getPath());
 			return;
 		}
 
@@ -206,7 +206,7 @@ class FmFolderService {
 
 	/**
 	 * Gets filestore location for specified folder. Files are stored in directories
-	 * grouped by their parent study folder tags. If the files are being loaded at
+	 * grouped by their parent study folder id. If the files are being loaded at
 	 * the program level, then a default folder, "0" will be used.
 	 *
 	 * @param folder
@@ -219,7 +219,7 @@ class FmFolderService {
 		if (fmFolder.folderLevel == 0) {
 			filestoreLocation = "0";
 		} else if (fmFolder.folderLevel == 1) {
-			filestoreLocation = fmFolder.folderTag;
+			filestoreLocation = fmFolder.id;
 		} else {
 			log.info("folderFullName = " + fmFolder.folderFullName);
 			int pos = fmFolder.folderFullName.indexOf("\\", 1);
@@ -232,11 +232,11 @@ class FmFolderService {
 				log.error("Unable to find folder with folderFullName of " + fmFolder.folderFullName.substring(0, pos));
 				filestoreLocation = "0";
 			} else {
-				filestoreLocation = fmParentFolder.folderTag;
+				filestoreLocation = fmParentFolder.id;
 			}
 		}
 
-		return File.separator + "fs-" + filestoreLocation;
+		return File.separator + filestoreLocation;
 
 	}
 	
@@ -290,46 +290,6 @@ class FmFolderService {
 		}
 		
 	}
-
-//	def createFolder(String folderFullName) {
-//
-//		String[] types = { "Program", "Project", "Assay", "Data" };
-//		String[] names = folderFullName.split("\\");
-//		String currentFullName = "\\";
-//		FmFolder fmFolder;
-//
-//		for (int level = 0; level < names.length; level++) {
-//			currentFullName = currentFullName + names[i] + "\\";
-//			fmFolder = FmFolder.findByFolderFullName(currentFullName);
-//			if (fmFolder == null) {
-//				fmFolder = new FmFolder(
-//					folderName: names[level],
-//					folderFullName: currentFullName,
-//					folderLevel: level,
-//					folderType: type[level],
-//					activeInd: true,
-//					objectUid: currentFullName
-//				);
-//
-//				if (!fmFolder.save(flush:true)) {
-//					fmFolder.errors.each {
-//						log.error(it);
-//					}
-//				}
-//
-//				fmFolder.folderTag = String.format("%8s", Long.toString(fmFolder.id, 36).toUpperCase()).replace(' ', '0');
-//				fmFolder.objectUid = String.format("%8s", Long.toString(fmFolder.id, 36).toUpperCase()).replace(' ', '0');
-//				if (!fmFolder.save(flush:true)) {
-//					fmFolder.errors.each {
-//						log.error(it);
-//					}
-//				}
-//			}
-//
-//			log.info("Folder = " + fmFolder.folderName + " (" + folderId + ")");
-//		}
-//	
-//	}
 	
 	def getFolderContents(id) {
 		

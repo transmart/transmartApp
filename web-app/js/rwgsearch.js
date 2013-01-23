@@ -26,8 +26,6 @@ function addSelectCategories()	{
 			var catText = convertCategory(category);
 			jQuery("#search-categories").append(jQuery("<option></option>").attr("value", category).text(catText));
 		}
-		
-		jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "THERAPEUTIC_DOMAIN").text("Therapeutic Domain"));
     });
 	
 }
@@ -46,7 +44,7 @@ function addFilterCategories() {
 				
 				//If this has been selected, highlight it
 				var idString = '[id="' + category.displayName + "|" + category.category + ";" + choice.name + ";" + choice.uid + '"]';
-				idString = idString.replace(/,/g, "%44"); //Replace commas!
+				idString = idString.replace(/,/g, "%44").replace(/&/g, "%26"); //Replace commas and ampersands
 				var element = jQuery(idString);
 				if (element.size() > 0) {
 					newItem.addClass("selected");
@@ -221,6 +219,7 @@ function showSearchTemplate()	{
 			if (currentCategories[i] == fields[0]){
 				var tagID = currentSearchTerms[j].split(' ').join('%20');			// URL encode the spaces
 				var tagID = currentSearchTerms[j].split(',').join('%44');			// And the commas
+				var tagID = currentSearchTerms[j].split('&').join('%26');			// And ampersands
 				
 				if (firstItem)	{
 					var catFields = fields[0].split("|");
@@ -368,7 +367,7 @@ function showFacetResults()	{
     	//else  {
     		queryType = "q";
     	//}
-    	facetSearch.push(queryType + "=" + categories[i] + ":" + terms[i] + "::" + operators[i]);
+    	facetSearch.push(queryType + "=" + categories[i] + ":" + encodeURIComponent(terms[i]) + "::" + operators[i]);
     }
 
     // now add all tree categories that arene't being searched on to the string
@@ -395,7 +394,7 @@ function showFacetResults()	{
     if (searchPage == 'RWG') {
 		jQuery.ajax({
 			url:facetResultsURL,
-			data: queryString + "&searchTerms=" + savedSearchTerms + "&searchOperators=" + operatorString + "&page=RWG",
+			data: queryString + "&searchTerms=" + encodeURIComponent(savedSearchTerms) + "&searchOperators=" + operatorString + "&page=RWG",
 			success: function(response) {
 	
 					jQuery('#results-div').removeClass('ajaxloading').html(response);
@@ -417,7 +416,7 @@ function showFacetResults()	{
     	else {
 			jQuery.ajax({
 				url:facetResultsURL,
-				data: queryString + "&searchTerms=" + savedSearchTerms + "&searchOperators=" + operatorString + "&page=datasetExplorer",
+				data: queryString + "&searchTerms=" + encodeURIComponent(savedSearchTerms) + "&searchOperators=" + operatorString + "&page=datasetExplorer",
 				success: function(response) {
 						searchByTagComplete(response);
 				},
@@ -455,7 +454,7 @@ function getSearchKeywordList()   {
 
 //Remove the search term that the user has clicked.
 function removeSearchTerm(ctrl)	{
-	var currentSearchTermID = ctrl.id.replace(/\%20/g, " ").replace(/\%44/g, ",");
+	var currentSearchTermID = ctrl.id.replace(/\%20/g, " ").replace(/\%44/g, ",").replace(/\%26/g, "&");
 	var idx = currentSearchTerms.indexOf(currentSearchTermID);
 	if (idx > -1)	{
 		currentSearchTerms.splice(idx, 1);
@@ -616,7 +615,7 @@ jQuery(document).ready(function() {
 		}
 		else {
 			var idString = '[id="' + category + "|" + name + ";" + value + ";" + id + '"]';
-			idString = idString.replace(/,/g, "%44"); //Replace commas!
+			idString = idString.replace(/,/g, "%44").replace(/&/g, "%26"); //Replace special characters!
 			var element = jQuery(idString);
 			removeSearchTerm(element[0]);
 		}
