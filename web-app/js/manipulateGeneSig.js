@@ -26,7 +26,7 @@ var visualize = function(geneLists, action, labels){
 		//-------Set Visualization done
 		
 		//Render the venn diagram.
-		draw(region, regionTitles, labels);
+		draw(region, regionTitles, labels, action);
 	});
 }
 
@@ -47,6 +47,11 @@ function mapSetIndexToGeneListId(geneLists){
 	}
 }
 
+/**
+ * Returns the region object which contains mapping between region id and the number of elements in that region
+ * @param sets
+ * @returns {region}
+ */
 function calculateRegionMembers(sets){
 	var region = new Object();
 	//Region 1
@@ -208,13 +213,13 @@ function operate(sets, action){
 }
 
 //**********Visualization Venn Diagram Rendering functions**********
+
 /**
  * Initialize the global array that will hold a list of active region ids
  * Draw the venn diagram.
  */
-function draw(region, regionTitles, labels){
-	//Global variable: Initialize the global array that will hold a list of active region ids
-	activeRegionIds = new Array();
+function draw(region, regionTitles, labels, action){
+	populateActiveRegionIds(action, region);
 	
 	//Clear out div before drawing SVG again.
 	jQuery('#svg').empty();
@@ -256,7 +261,7 @@ function draw(region, regionTitles, labels){
     .attr("width", w)
     .attr("height", h)
     .attr("id", "1")
-    .style("fill", unselectedColorMapping["1"])
+    .style("fill", determineRegionColor("1", activeRegionIds))
     .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
     .text(regionTitles["1"]);
@@ -266,7 +271,7 @@ function draw(region, regionTitles, labels){
     .attr("width", w)
     .attr("height", h)
     .attr("id", "2")
-    .style("fill", unselectedColorMapping["2"])
+    .style("fill", determineRegionColor("2", activeRegionIds))
     .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
     .text(regionTitles["2"]);
@@ -277,7 +282,7 @@ function draw(region, regionTitles, labels){
 	    .attr("width", w)
 	    .attr("height", h)
 	    .attr("id", "3")
-	    .style("fill", unselectedColorMapping["3"])
+	    .style("fill", determineRegionColor("3", activeRegionIds))
 	    .on("click", function(){mouseclick(region, this)})
 	    .append("svg:title")
 	    .text(regionTitles["3"]);
@@ -290,7 +295,7 @@ function draw(region, regionTitles, labels){
     .attr("width", w)
     .attr("height", h)
     .attr("id", "12")
-    .style("fill", unselectedColorMapping["12"])
+    .style("fill", determineRegionColor("12", activeRegionIds))
     .on("click", function(){mouseclick(region, this)})
     .append("svg:title")
     .text(regionTitles["12"]);
@@ -303,7 +308,7 @@ function draw(region, regionTitles, labels){
 	    .attr("width", w)
 	    .attr("height", h)
 	    .attr("id", "23")
-	    .style("fill", unselectedColorMapping["23"])
+	    .style("fill", determineRegionColor("23", activeRegionIds))
 	    .on("click", function(){mouseclick(region, this)})
 	    .append("svg:title")
 	    .text(regionTitles["23"]);
@@ -317,7 +322,7 @@ function draw(region, regionTitles, labels){
 	    .attr("width", w)
 	    .attr("height", h)
 	    .attr("id", "13")
-	    .style("fill", unselectedColorMapping["13"])
+	    .style("fill", determineRegionColor("13", activeRegionIds))
 	    .on("click", function(){mouseclick(region, this)})
 	    .append("svg:title")
 	    .text(regionTitles["13"]);
@@ -333,7 +338,7 @@ function draw(region, regionTitles, labels){
 	    .attr("width", w)
 	    .attr("height", h)
 		.attr("id", "123")
-	    .style("fill", unselectedColorMapping["123"])
+	    .style("fill", determineRegionColor("123", activeRegionIds))
 	    .on("click", function(){mouseclick(region, this)})
 	    .append("svg:title")
 	    .text(regionTitles["123"]);
@@ -496,6 +501,34 @@ function mapColor(region, map, regionId, color){
 		map[regionId]="#CCCCCC"
 	}
 	return map;
+}
+
+/**
+ * Determines based on action and region id, what the color of the given region is (between selected and unselected).
+ * @param regionId
+ * @param action
+ * @returns
+ */
+function determineRegionColor(regionId, activeRegionIds){
+	if(activeRegionIds.indexOf(regionId)<0){
+		return unselectedColorMapping[regionId];		
+	}
+	
+	return selectedColorMapping[regionId];
+}
+
+/**
+ * Determine the initial list of active regions based on the user selected action
+ */
+function populateActiveRegionIds(action, region){
+	//Global variable: Initialize the global array that will hold a list of active region ids
+	activeRegionIds = new Array();
+	
+	['1', '2', '3', '12', '13', '23', '123'].forEach(function(regionId){
+		if(region[regionId].length>0 && (action=='union'|| action=='concat' || (action=='intersection' && (regionId=='12' || regionId=='123')))){
+			activeRegionIds.push(regionId);
+		}
+	});
 }
 
 //**********Visualization Form handling functions**********
