@@ -27,6 +27,7 @@
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}"></link>
+		<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
 
 		<g:javascript library="prototype" />
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
@@ -104,12 +105,7 @@
 			    },
 
 			    pictor: {
-			   		<g:if test="${session.searchFilter.pictorTerms != null}">
-						resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pictorURL}" + "&symbol=${session.searchFilter.pictorTerms}"
-	    			</g:if>
-					<g:else>
-	                	resultsUrl: "${createLink(controller:'search',action:'noResult')}"
-					</g:else>
+			        resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pictorURL}"
 			    },
 			    genego: {
 					resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.genegoURL}" + "/cgi/search/ez.cgi?submitted=1&name=${session.searchFilter.getExternalTerms()}",

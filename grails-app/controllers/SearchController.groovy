@@ -258,7 +258,6 @@ public class SearchController{
 		//log.info "isTextOnly = " + filter.globalFilter.isTextOnly()
 		SearchService.doResultCount(sResult,filter)
 		filter.summaryWithLinks = createSummaryWithLinks(filter)
-		filter.createPictorTerms()
 		boolean defaultSet = false;
 
 		if (sResult.trialCount>0) {
