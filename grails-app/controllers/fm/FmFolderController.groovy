@@ -91,12 +91,14 @@ class FmFolderController {
 		
 		def folder = new FmFolder()
 		folder.folderType = FolderType.ASSAY.name()
+		def parentFolder = FmFolder.getAt(params.folderId)
+		folder.parent = parentFolder
 		def bioDataObject = folder
 		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.ASSAY.name())
 		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 		def title = "Create Assay"
 		def templateType = "createAssayForm"
-		render(template: "createAssay", model:[templateType: templateType, title:title, bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		render(template: "createAssay", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 
 	def createFolder = {
@@ -106,6 +108,9 @@ class FmFolderController {
 		
 		def folder = new FmFolder()
 		folder.folderType = FolderType.FOLDER.name()
+		def parentFolder = FmFolder.get(params.folderId)
+		folder.parent = parentFolder
+		
 		def bioDataObject = folder
 		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.FOLDER.name())
 		if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
@@ -113,7 +118,7 @@ class FmFolderController {
 		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 		def title = "Create Folder"
 		def templateType = "createFolderForm"
-		render(template: "createFolder", model:[templateType: templateType, title:title, bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		render(template: "createFolder", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 
 		def createStudy = {
@@ -123,12 +128,14 @@ class FmFolderController {
 		
 		def folder = new FmFolder()
 		folder.folderType = FolderType.STUDY.name()
+		def parentFolder = FmFolder.get(params.folderId)
+		folder.parent = parentFolder
 		def bioDataObject = folder
 		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.STUDY.name())
 		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 		def title = "Create Study"
 		def templateType = "createStudyForm"
-		render(template: "createStudy", model:[templateType: templateType, title:title, bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		render(template: "createStudy", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 
 		def createProgram = {
@@ -141,9 +148,7 @@ class FmFolderController {
 			def bioDataObject = folder
 			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.PROGRAM.name())
 			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-			def title = "Create Program"
-			def templateType = "createProgramForm"
-			render(template: "createProgram", model:[templateType: templateType, title:title, bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+			render(template: "createProgram", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 		}
 	
 
@@ -159,7 +164,106 @@ class FmFolderController {
         }
     }
 
-    def show = {
+	def saveAssay = {
+		log.info "saveAssay called"
+		log.info params
+		def fmFolderInstance = new FmFolder(params)
+		if (fmFolderInstance.save(flush: true)) {
+			log.info "Assay saved"
+			def result = [id: fmFolderInstance.id]
+			render result as JSON
+			return
+		}
+		else {
+			render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+		}
+	}
+
+	def saveFolder = {
+		log.info "saveFolder called"
+		log.info params
+		def parentFolder = FmFolder.get(params.parentId)
+		log.info("parentFolder = " + parentFolder)
+	
+		def fmFolderInstance = new FmFolder(params)
+		if(parentFolder)
+		{
+			fmFolderInstance.folderFullName = parentFolder.folderFullName + "\\" + fmFolderInstance.folderName
+			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
+			fmFolderInstance.folderType = FolderType.STUDY.name()
+			fmFolderInstance.parent = parentFolder
+		}
+		else
+		{
+			log.error "Parent folder is null"
+		}
+		
+		log.info fmFolderInstance
+		if (fmFolderInstance.save(flush: true)) {
+			log.info "Folder saved"
+			def result = [id: fmFolderInstance.id]
+			render result as JSON
+			return
+		}
+		else {
+			log.error "Saved folder failed"
+			def bioDataObject = fmFolderInstance
+			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.FOLDER.name())
+			if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
+			
+			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+			render(template: "createFolder", model:[bioDataObject:bioDataObject, folder:fmFolderInstance, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		}
+	}
+
+	def saveProgram = {
+		log.info "saveProgram called"
+		log.info params
+		def fmFolderInstance = new FmFolder(params)
+		fmFolderInstance.folderFullName = "\\" + fmFolderInstance.folderName
+		fmFolderInstance.folderLevel = 0
+		
+		log.info(fmFolderInstance)
+		if (fmFolderInstance.save(flush: true)) {
+			log.info "Program saved"
+			log.info(fmFolderInstance)
+			log.info(fmFolderInstance.getUniqueId())
+			
+			def result = [id: fmFolderInstance.id]
+			render result as JSON
+			return
+			
+//			redirect(action: "show", id: fmFolderInstance.id)
+		}
+		else {
+			log.error "Unable to save program"
+			
+			def folder = fmFolderInstance
+			folder.folderType = FolderType.PROGRAM.name()
+			def bioDataObject = folder
+			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.PROGRAM.name())
+			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+			render(template: "createProgram", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		}
+	}
+
+	def saveStudy = {
+		log.info "saveStudy called"
+		log.info params
+		def fmFolderInstance = new FmFolder(params)
+		if (fmFolderInstance.save(flush: true)) {
+			log.info "Study saved"
+			def result = [id: fmFolderInstance.id]
+			render result as JSON
+			return
+		}
+		else {
+			render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+		}
+	}
+
+	
+    def showStudy = {
         def fmFolderInstance = FmFolder.get(params.id)
 
 		// test the class
@@ -208,7 +312,7 @@ class FmFolderController {
     }
 
     def delete = {
-        def fmFolderInstance = FmFolderController.get(params.id)
+        def fmFolderInstance = FmFolder.get(params.id)
         if (fmFolderInstance) {
             try {
                 fmFolderInstance.delete(flush: true)
@@ -360,7 +464,7 @@ class FmFolderController {
 		}
 		else
 		{
-			def parentFolder = FmFolderController.getAt(parentId)
+			def parentFolder = FmFolder.getAt(parentId)
 			folder.folderLevel = parentFolder.folderLevel + 1
 			folder.parent = parentFolder
 		}
@@ -500,9 +604,17 @@ class FmFolderController {
 					
 		ExportTableNew table=new ExportTableNew();
 		
-		def dataObject = getBioDataObject(folders[0])
-		def childMetaDataTagItems = getMetaDataItems(folders[0])
-						
+		def dataObject
+		def childMetaDataTagItems
+	
+		
+		for (folder in folders) {
+			dataObject = getBioDataObject(folder)
+			childMetaDataTagItems = getMetaDataItems(folder)
+			if (dataObject && childMetaDataTagItems) break
+		}
+		
+		
 		childMetaDataTagItems.eachWithIndex() 
 		{obj, i ->    // 
 			AmTagItem amTagItem = obj
@@ -531,7 +643,7 @@ class FmFolderController {
 				}
 				else
 				{
-					log.info ("TYPE == " + amTagItem.tagItemType + " ID = " + amTagItem.id + " " + amTagItem.displayName)
+					log.info ("BUSINESS OBJECT == " + amTagItem.tagItemType + " ID = " + amTagItem.id + " " + amTagItem.displayName)
 					
 				}
 			}
@@ -544,7 +656,8 @@ class FmFolderController {
 		
 		folders.each 
 		{
-			def bioDataObject = getBioDataObject(it)
+				log.info it
+				def bioDataObject = getBioDataObject(it)
 			
 				ExportRowNew newrow=new ExportRowNew();
 				childMetaDataTagItems.eachWithIndex()
@@ -602,7 +715,11 @@ class FmFolderController {
 						}
 						else
 						{
-							log.info ("ROW --- TYPE == " + amTagItem.tagItemType + " ID = " +  amTagItem.id)
+					//		FmFolderAssociation.findByUniqueId(this.objectUid)
+						//	AmTagDisplayValue.findAllDisplayValue(folder.getUniqueId(),amTagItem.id)
+							//log.info ("bioDataObject.getUniqueId()" + bioDataObject.hasProperty(amTagItem.tagItemAttr))
+							
+							log.info ("ROW --- TYPE1 == " + amTagItem.tagItemType + " ID = " +  amTagItem.id + " DV = " )
 							
 						}
 	
@@ -686,11 +803,13 @@ class FmFolderController {
 	private Object getBioDataObject(folder)
 	{
 		def bioDataObject
+		log.info "getBioDataObject::folder = " + folder
+		
 		def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
 		
 		if(folderAssociation)
 		{
-			log.info "folderAssociation = " + folderAssociation
+			log.info "getBioDataObject::folderAssociation = " + folderAssociation
 			bioDataObject =folderAssociation.getBioObject()
 		}
 		else
@@ -737,7 +856,7 @@ class FmFolderController {
 
 		def title = "Edit Meta Data"
 		def templateType = "editMetadataForm"
-		render(template: "editMetaData", templateType: templateType, title: title, model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		render(template: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 	
 	def updateMetaData =

@@ -5,6 +5,9 @@
   
 <g:form name="createAssayForm">
 <g:hiddenField name="id" value="${folder?.id}" />
+<g:hiddenField name="folderType" value="${folder?.folderType}" />
+<g:hiddenField name="parentId" value="${folder?.parentId}" />
+
 <g:set var="objectUid" value="${folder?.uniqueId}"/>
 <table class="detail" height="300px">
         <tbody>

@@ -98,4 +98,15 @@ class FmFolderAssociation implements Serializable{
 		return clazz
 	}
 	
+	/**
+	 * override display
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("objectUid: ").append(this.objectUid).append(", objectType: ").append(this.objectType);
+		sb.append(", Folder: ").append(this.fmFolder.id);
+		return sb.toString();
+	}
+ 
+	
 }
