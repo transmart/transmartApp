@@ -132,6 +132,7 @@
             		jQuery.ajax({
 						url:saveAssayURL + "?" + serializedForm,	
 						success: function(response) {
+							showSearchResults();
 							jQuery('#createAssayOverlay').fadeOut();
 							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
 						},
@@ -153,6 +154,7 @@
             		jQuery.ajax({
 						url:saveFolderURL + "?" + serializedForm,	
 						success: function(response) {
+							showSearchResults();
 							jQuery('#createFolderOverlay').fadeOut();
 							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
 						},
@@ -174,6 +176,7 @@
             		jQuery.ajax({
 						url:saveStudyURL + "?" + serializedForm,	
 						success: function(response) {
+							showSearchResults();
 							jQuery('#createStudyOverlay').fadeOut();
 							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
 						},
@@ -189,11 +192,13 @@
 	            });
 	            
 	            jQuery("#createProgramOverlay").on('click', '#saveprogrambutton', function() {
+		            
 	            	var protoForm = $('createProgramForm');
 		            var serializedForm = Form.serialize(protoForm);
-            		jQuery.ajax({
-						url:saveProgamURL + "?" + serializedForm,	
+		        	jQuery.ajax({
+						url:saveProgramURL + "?" + serializedForm,	
 						success: function(response) {
+							showSearchResults();
 							jQuery('#createProgramOverlay').fadeOut();
 							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
 						},

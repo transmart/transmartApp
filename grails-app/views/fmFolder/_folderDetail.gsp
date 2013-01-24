@@ -37,6 +37,7 @@
 <%! import com.recomdata.util.* %> 
 
 <div style="margin:10px;padding:10px;">
+<g:hiddenField name="parentId" value="${folder?.parentId}" />
 
 <div>
 	<div style="float: right">
@@ -44,17 +45,17 @@
 		
 		<sec:ifAnyGranted roles="ROLE_ADMIN">
 			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name())}">
-		 		<span  class="greybutton buttonicon addstudy">Add new study</span>
+		 		<span name="${folder.id}" class="greybutton buttonicon addstudy">Add new study</span>
 			</g:if>
 		</sec:ifAnyGranted>
 		
 		<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())}">
-			<span class="greybutton buttonicon addassay">Add new assay</span>
-			<span class="greybutton buttonicon addfolder">Add new folder</span>
+			<span name="${folder.id}" class="greybutton buttonicon addassay">Add new assay</span>
+			<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
 		</g:if>
 		
 		<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.FOLDER.name()) || folder.folderType.equalsIgnoreCase(FolderType.ASSAY.name()) || folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
-			<span class="greybutton buttonicon addfolder">Add new folder</span>
+			<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
 		</g:if>
 	</div>
 	<h3 class="rdc-h3">
@@ -91,6 +92,8 @@
                         </g:else></div>
 <div style="height:20px;"></div>
 </g:elseif>
+
+
 
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
 <table class="details-table">

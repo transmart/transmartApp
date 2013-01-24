@@ -5,6 +5,8 @@
   
 <g:form name="createProgramForm">
 <g:hiddenField name="id" value="${folder?.id}" />
+<g:hiddenField name="folderType" value="${folder?.folderType}" />
+
 <g:set var="objectUid" value="${folder?.uniqueId}"/>
 
     <table class="detail" height="300px">

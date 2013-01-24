@@ -750,7 +750,7 @@ jQuery(document).ready(function() {
 		jQuery('#createFolder').empty().addClass('ajaxloading');
 
 		jQuery.ajax({
-			url:createFolderURL,
+			url:createFolderURL + "?",
 			data: {folderId: id},			
 			success: function(response) {
 				jQuery('#createFolder').html(response).removeClass('ajaxloading');
