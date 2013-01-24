@@ -422,7 +422,7 @@ class RWGController {
 			   for (t in termList) {
 				   def expandedList = expandGeneList(t)
 				   if (expandedList) {
-					   geneGroups += []
+					   geneGroups += [expandedList]
 				   }
 			   }
 			   geneOperator = operator
@@ -431,7 +431,7 @@ class RWGController {
 			   for (t in termList) {
 				   def expandedList = expandPathway(t)
 				   if (expandedList) {
-					   geneGroups += []
+					   geneGroups += [expandedList]
 				   }
 			   }
 			   geneOperator = operator
