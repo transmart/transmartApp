@@ -74,7 +74,6 @@ class AmTagItem implements Comparable<AmTagItem>{
 		guiHandler(maxSize:200)
 		tagItemSubtype(nullable:true)
 //		tagItemUid(maxSize:300)
-		amTagDisplayValue unique:true
 	}
 	
 	/**
