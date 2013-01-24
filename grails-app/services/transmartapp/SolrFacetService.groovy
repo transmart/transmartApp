@@ -117,7 +117,7 @@ class SolrFacetService {
 						def solrQueryString = ""
 						
 						for (accession in ontologyAccessions) {
-							println ("Got accession: " + accession)
+							println ("Got accession for datanode: " + accession)
 							
 							if (solrQueryString) {solrQueryString += " OR "; }
 							
@@ -159,6 +159,19 @@ class SolrFacetService {
 		
 		//Find terms and synonyms depending on category
 		if (category.equals("GENE") || category.equals("DISEASE") || category.equals("COMPOUND") || category.equals("PATHWAY")) {
+			
+			if (category.equals("GENE")) {
+				//Expand the term list
+				def newTermList = []
+				for (term in termList) {
+					def splitList = term.split("/")
+					for (item in splitList) {
+						newTermList += item
+					}
+				}
+				termList = newTermList
+			}
+			
 			for (term in termList) {
 				
 				def sk = SearchKeyword.findByUniqueId(term)
@@ -322,6 +335,14 @@ class SolrFacetService {
 		  //If searching on text, add wildcards (instead of quote marks)
 		  if (category.equals("CONTENT")) {
 			  t = ("*" + t.toLowerCase() + "*").replace(" ", "\\ ");
+		  }
+		  else if (category.equals("GENE")) {
+			  //GENE may have individual genes separated by slashes. OR these, and quote each individual one
+			  def geneList = []
+			  for (g in t.split("/")) {
+				  geneList += ("\"" + g + "\"")
+			  }
+			  t = "(" + geneList.join(" OR ") + ")"
 		  }
 		  else {
 			  t = ("\"" + t + "\"")
@@ -558,6 +579,36 @@ class SolrFacetService {
 	  else {
 		  throw new Exception("SOLR Request failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
 	  }
+  }
+  
+  def executeSOLRUpdate = {solrRequestUrl, folderUid ->
+	  
+	  // submit request
+	  def solrConnection = new URL(solrRequestUrl).openConnection()
+	  solrConnection.requestMethod= "POST"
+	  solrConnection.doOutput = true
+
+	  // add params to request
+	  def dataWriter = new OutputStreamWriter(solrConnection.outputStream)
+	  dataWriter.write(solrQueryParams)
+	  dataWriter.flush()
+	  dataWriter.close()
+	  
+	  // process response
+	  if (solrConnection.responseCode == solrConnection.HTTP_OK)  {
+		  def xml
+		  
+		  solrConnection.inputStream.withStream {
+			  xml = slurper.parse(it)
+		  }
+		  
+		  solrConnection.disconnect()
+		  return xml
+	  }
+	  else {
+		  throw new Exception("SOLR Request failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
+	  }
+	  
   }
    
    

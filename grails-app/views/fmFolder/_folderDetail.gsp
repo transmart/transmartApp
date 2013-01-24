@@ -102,7 +102,16 @@
 	                <%--<g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
                         params="[eleId:overlayDiv, folderId:folder?.id]" 
                         before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">--%>
-                  <img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
+                  
+                  <%-- Restrict edits to administrators if this is a PROGRAM or STUDY --%>
+                  <g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name())}">
+	                  <sec:ifAnyGranted roles="ROLE_ADMIN">
+	                  	<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
+	                  </sec:ifAnyGranted>
+                  </g:if>
+                  <g:else>
+					<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
+                  </g:else>
                   <%-- </g:remoteLink>--%>
                 </g:if>
                 </th>

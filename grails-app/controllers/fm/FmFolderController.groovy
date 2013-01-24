@@ -323,6 +323,10 @@ class FmFolderController {
 	
 	def getFolderContents = {
 		def id = params.id
+		if (!id) {
+			def uid = params.uid
+			id = FmFolder.findByUniqueId(uniqueId).id
+		}
 		def auto = params.boolean('auto') //Flag for whether folder was automatically opened - if not, then it shouldn't respect the folder mask
 		def folderContents = fmFolderService.getFolderContents(id)
 		

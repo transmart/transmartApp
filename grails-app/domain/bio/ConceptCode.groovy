@@ -28,6 +28,7 @@ class ConceptCode {
 		String codeName
 		String codeDescription
 		String codeTypeName
+		Boolean filterFlag
 
  static hasMany = [bioDataUid:BioData]
  static mapping = {
@@ -41,6 +42,7 @@ class ConceptCode {
 		codeName column:'CODE_NAME'
 		codeDescription column:'CODE_DESCRIPTION'
 		codeTypeName column:'CODE_TYPE_NAME'
+		filterFlag column:'FILTER_FLAG'
 	 }
 	 bioDataUid joinTable: [name: 'BIO_DATA_UID', key: 'BIO_DATA_ID']
 	}

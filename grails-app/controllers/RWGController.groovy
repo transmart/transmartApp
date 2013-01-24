@@ -313,6 +313,55 @@ class RWGController {
 	   return newParams
    }
    
+   def expandGeneList = { geneListUid ->
+	   
+	   def genesList = []
+	   
+		   
+	  def geneSig = GeneSignature.findByUniqueId(geneListUid)
+	  def geneKeywords = GeneSignatureItem.createCriteria().list {
+		  eq('geneSignature', geneSig)
+	  }
+	  
+	  // loop through each keyword for the gene list items and add to list
+	  geneKeywords.each {
+		  // don't add duplicates
+		  if (it.bioDataUniqueId && genesList.indexOf(it.bioDataUniqueId)<0)   {
+			  genesList.add it.bioDataUniqueId
+		  }
+	  }
+	  
+	   
+	   return genesList
+	   
+   }
+   
+   def expandPathway = { pathwayUid ->
+	   
+	   def genesList = []
+		   
+	   def geneKeywords = SearchKeyword.executeQuery("""
+		   				select k_gene.uniqueId
+						from search.SearchKeyword k_pathway, bio.BioMarkerCorrelationMV b,
+						search.SearchKeyword k_gene
+						where b.correlType = 'PATHWAY_GENE'
+						and b.bioMarkerId = k_pathway.bioDataId
+						and k_pathway.dataCategory = 'PATHWAY'
+						and b.assoBioMarkerId = k_gene.bioDataId
+						and k_gene.dataCategory = 'GENE'
+						and k_pathway.uniqueId = :pathwayUid """, [pathwayUid: pathwayUid])
+
+	   // loop through each keyword for the gene list items and add to list
+	   geneKeywords.each {
+		   // don't add duplicates
+		   if (genesList.indexOf(it)<0) {
+			   genesList.add it
+		   }
+	   }
+	   
+	   return genesList
+   }
+   
    //Just clear the search filter and render non-null back
    def clearSearchFilter = {
 	   session['rwgSearchFilter'] = [:];
@@ -326,6 +375,9 @@ class RWGController {
    def getFacetResults = {
 	   session['folderSearchList'] = []; //Clear the folder search list
 	   
+	   /*
+	    * Record this as the latest search and store it in the session
+	    */
 	   def paramMap = params
 	   //Search string is saved in session (for passing between RWG and Dataset Explorer pages)
 	   def searchString = params.searchTerms
@@ -340,13 +392,79 @@ class RWGController {
 	   session['rwgSearchFilter'] = searchTerms
 	   session['rwgSearchOperators'] = searchOperators
 	   
+	   /*
+	    * Pre-processing
+	    */
+	   
+	   //Convert gene categories into unified category. Our operator will be the last one processed.
+	   def geneGroups = []
+	   def categorizedSearchTerms = request.getParameterValues('q') as List
+	   def processedSearchTerms = []
+	   
+	   //Separate gene-related search terms into gene groups.
+	   //Always set geneOperator if this is a gene search term - the last one is the one we want to use.
+	   def geneOperator = "or"
+	   for (categoryLine in categorizedSearchTerms) {
+		   def operator = ((String) categoryLine).split("::")[1].toUpperCase()
+		   def category = ((String) categoryLine).split("::")[0]
+		   
+		   def categoryName = ((String) category).split(":", 2)[0]
+		   def termList = ((String) category).split(":", 2)[1].split("\\|")
+		   
+		   if (categoryName.equals("GENE")) {
+			   //Easy - get each term and add them as gene groups of 1
+			   for (term in termList) {
+				   geneGroups.add([term])
+			   }
+			   geneOperator = operator
+		   }
+	       else if (categoryName.equals("GENELIST") || categoryName.equals("GENESIG")) {
+			   for (t in termList) {
+				   def expandedList = expandGeneList(t)
+				   if (expandedList) {
+					   geneGroups += []
+				   }
+			   }
+			   geneOperator = operator
+		   }
+		   else if (categoryName.equals("PATHWAY")) {
+			   for (t in termList) {
+				   def expandedList = expandPathway(t)
+				   if (expandedList) {
+					   geneGroups += []
+				   }
+			   }
+			   geneOperator = operator
+		   }
+		   else {
+			   processedSearchTerms.add(categoryLine)
+		   }
+	   }
+	   
+	   //Now create a new GENE category with the computed groups and the latest operator.
+	   if (geneGroups) {
+		   def geneGroupStrings = []
+		   for (group in geneGroups) {
+			   geneGroupStrings += group.join("/")
+		   }
+		   def newGeneCategory = "GENE:" + geneGroupStrings.join("|") + "::" + geneOperator
+		   processedSearchTerms.add(newGeneCategory)
+	   }
+	   
 	   //If we have no search terms and this is for RWG, just return the top level
-	   if ((searchTerms == null || searchTerms.size() == 0) && params.page.equals('RWG')) {
+	   if ((processedSearchTerms == null || processedSearchTerms.size() == 0) && params.page.equals('RWG')) {
 		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null).folders])
 		   return
 	   }
 	   
-	   def combinedResult = solrFacetService.getCombinedResults(request.getParameterValues('q') as List, params.page)
+	   /*
+	    * Run the search!
+	    */
+	   def combinedResult = solrFacetService.getCombinedResults(processedSearchTerms, params.page)
+	   
+	   /**
+	    * Organize and display
+	    */
 	   if (params.page.equals('RWG')) {
 		   session['folderSearchList'] = combinedResult
 		   

@@ -158,8 +158,9 @@ function addSearchTerm(searchTerm, noUpdate, loadingFromSession)	{
 //			   , false);
 
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
-	showSearchTemplate();
+	
 	if (!treeUpdated && !noUpdate) {
+      showSearchTemplate();
 	  showSearchResults();
 	}
 }
@@ -171,18 +172,23 @@ function showSearchTemplate()	{
 	var endATag = '\" class="term-remove" href="#" onclick="removeSearchTerm(this);">';
 	var imgTag = '<img alt="remove" src="' + crossImageURL + '"/></a>&nbsp;'
 	var firstItem = true;
+	var needsToggle = false;
+	var geneTerms = 0;
 
 	// iterate through categories array and move all the "gene" categories together at the top 
 	var newCategories = new Array();
 	var newSearchOperators = new Array();
 	
 	var geneCategoriesProcessed = false;
+	var geneCategories = 0;
+	
 	for (var i=0; i<currentCategories.length; i++)	{
 		var catFields = currentCategories[i].split("|");
 		var catId = catFields[1];
 		
 		// when we find a "gene" category, add it and the rest of the "gene" categories to the new array
 		if (isGeneCategory(catId)) {
+			geneCategories++;
 			// first check if we've processed "gene" categories yet
 			if (!geneCategoriesProcessed)  {
 				
@@ -221,11 +227,16 @@ function showSearchTemplate()	{
 				var tagID = currentSearchTerms[j].split(',').join('%44');			// And the commas
 				var tagID = currentSearchTerms[j].split('&').join('%26');			// And ampersands
 				
-				if (firstItem)	{
-					var catFields = fields[0].split("|");
-					var catDisplay = catFields[0];
-					var catId = catFields[1];
+				var catFields = fields[0].split("|");
+				var catDisplay = catFields[0];
+				var catId = catFields[1];
+				
+				if (isGeneCategory(catId)) {
+					geneTerms++;
+				}
 
+				if (firstItem)	{
+					
 					if (i>0)	{	
 						
 						var suppressAnd = false;
@@ -251,14 +262,19 @@ function showSearchTemplate()	{
 				}
 				else {
 					searchHTML = searchHTML + "<span class='spacer'>| </span><span class=term>"+ fields[1] + startATag + tagID + endATag + imgTag +"</span> ";
+					needsToggle = true;
 				}			
 			}
 			else {
-				continue;												// Do the categories by row and in order
+				continue; // Do the categories by row and in order
 			}
 		}
+		//Show the and/or toggle, if this is a non-gene category or any gene category but the last.
+		if ((!isGeneCategory(catId) && needsToggle) || i == geneCategories-1 && geneTerms > 1)  {
+			searchHTML = searchHTML + "<div name='" + i + "' class='andor " + currentSearchOperators[i] + "'>&nbsp;</div>";
+		}
 		firstItem = true;
-		searchHTML = searchHTML + "<div name='" + i + "' class='andor " + currentSearchOperators[i] + "'>&nbsp;</div>";
+		needsToggle = false;
 	}
 	document.getElementById('active-search-div').innerHTML = searchHTML;
 	getSearchKeywordList();
@@ -938,4 +954,20 @@ function loadSearchFromSession() {
 			addSearchTerm(searchParam, true, true);
 		}
 	}
+	
+	showSearchTemplate();
+}
+
+function updateFolder(id) {
+	jQuery.ajax({
+		url:folderContentsURL,
+		data: {id: id, auto: false},
+		success: function(response) {
+			jQuery('#' + id + '_detail').html(response).addClass('gtb1').addClass('analysesopen').attr('data', true);
+
+		},
+		error: function(xhr) {
+			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+		}
+	});
 }
