@@ -40,6 +40,7 @@ class FmFolderController {
 	def amTagTemplateService
 	def amTagItemService
 	def fmFolderService
+	def ontologyService
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def index = {
@@ -749,7 +750,8 @@ class FmFolderController {
 		def amTagTemplate
 		def metaDataTagItems
 		def jSONForGrids = []
-		def childMetaDataTagItems = [] 
+		def childMetaDataTagItems = []
+		def subjectLevelDataAvailable = false 
 
 		if (folderId) 
 		{
@@ -760,6 +762,10 @@ class FmFolderController {
 				bioDataObject = getBioDataObject(folder)
 				metaDataTagItems = getMetaDataItems(folder)
 	
+				//If the folder is a study, check for subject-level data being available
+				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())) {
+					subjectLevelDataAvailable = ontologyService.checkSubjectLevelData(bioDataObject.accession)
+				}
 				// If the folder is a study then get the analysis and the assay
 				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name()))
 				{
@@ -785,7 +791,7 @@ class FmFolderController {
 		}
 		
 		log.info "FolderInstance = " + bioDataObject.toString()
-		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems, jSONForGrids: jSONForGrids])
+		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems, jSONForGrids: jSONForGrids, subjectLevelDataAvailable: subjectLevelDataAvailable])
 		
 	}
 

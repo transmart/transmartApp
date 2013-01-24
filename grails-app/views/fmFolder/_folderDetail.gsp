@@ -93,7 +93,10 @@
 <div style="height:20px;"></div>
 </g:elseif>
 
-
+<g:if test="${subjectLevelDataAvailable}">
+	<center><div class="messagebox">Subject-level data is available for this study. <a href="${createLink(controller:'datasetExplorer', action:'index')}?study=${bioDataObject.accession}">Open in Analyze view</a></div></center>
+	<br/><br/>
+</g:if>
 
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
 <table class="details-table">
@@ -221,7 +224,7 @@
                </td> 
                <td>
 	               <div>
-	                    <span class="foldericon add link" name="${fmFile.id}">Add to export</span>
+	                    <span class="exportaddspan foldericon add link" name="${fmFile.id}">Add to export</span>
 	               </div>
                </td>
                 

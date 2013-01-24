@@ -380,6 +380,15 @@ table.menuDetail th.menuVisited {
 	margin: 8px;
 }
 
+.messagebox {
+	border: 1px solid #CBCCD6;
+	padding: 8px;
+	background: #EDEEF8;
+	margin: 8px;
+	border-radius: 2px;
+	display: inline-block;
+}
+
 .overlay {
 	position: absolute;
 	z-index: 10000;	

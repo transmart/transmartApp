@@ -69,10 +69,10 @@ public class SearchKeywordService {
 		
 		def filtercats = [
 			[codeTypeName: "TYPE_OF_BM_STUDIED", category: "BIOMARKER_TYPE", displayName: "Biomarker Type"],
-			[codeTypeName: "COUNTRY", category: "COUNTRY", displayName: "Country"],
+			//[codeTypeName: "COUNTRY", category: "COUNTRY", displayName: "Country"],
 			[codeTypeName: "INSTITUTION", category: "INSTITUTION", displayName: "Institution"],
 			[codeTypeName: "MEASUREMENT_TYPE", category: "MEASUREMENT_TYPE", displayName: "Measurement Type", useText: true],
-			[codeTypeName: "SPECIES", category: "ORGANISM", displayName: "Organism"],
+			//[codeTypeName: "SPECIES", category: "ORGANISM", displayName: "Organism"],
 			[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
 			[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
 			[codeTypeName: "STUDY_OBJECTIVE", category: "STUDY_OBJECTIVE", displayName: "Study Objective"],
@@ -89,14 +89,12 @@ public class SearchKeywordService {
 			if (filtercat.prefix) {				
 				results = ConceptCode.createCriteria().list	{
 					like("codeTypeName", filtercat.codeTypeName + ":%")
-					eq("filterFlag", true)
 					order("codeName", "asc")
 				}
 			}
 			else {
 				results = ConceptCode.createCriteria().list	{
 					eq("codeTypeName", filtercat.codeTypeName)
-					eq("filterFlag", true)
 					order("codeName", "asc")
 				}
 			}

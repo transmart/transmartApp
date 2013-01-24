@@ -160,4 +160,14 @@ class OntologyService {
 				return ids
 			}
 	}
+	
+	def checkSubjectLevelData(accession) {
+		
+		def nodes = i2b2.OntNode.createCriteria().list {
+			eq('sourcesystemcd', accession)
+			maxResults(1)
+		}
+		
+		return (nodes.size() > 0)
+	}
 }
