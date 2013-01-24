@@ -644,7 +644,7 @@ class FmFolderController {
 				else
 				{
 					log.info ("BUSINESS OBJECT == " + amTagItem.tagItemType + " ID = " + amTagItem.id + " " + amTagItem.displayName)
-					
+					table.putColumn(amTagItem.id.toString(), new ExportColumn(amTagItem.id.toString(), amTagItem.displayName, "", 'String'));
 				}
 			}
 			else
@@ -656,7 +656,7 @@ class FmFolderController {
 		
 		folders.each 
 		{
-				log.info it
+				log.info "FOLDER::" + it
 				def bioDataObject = getBioDataObject(it)
 			
 				ExportRowNew newrow=new ExportRowNew();
@@ -688,7 +688,7 @@ class FmFolderController {
 							}
 							else
 							{
-								log.error "Unkknown tagItemSubType"
+								log.error "FIXED ATTRIBUTE ERROR::Unknown tagItemSubType"
 							}
 							
 							log.info("ROWS == " + amTagItem.tagItemAttr + " " + bioDataObject[amTagItem.tagItemAttr])
@@ -698,29 +698,12 @@ class FmFolderController {
 						{
 							log.info("PARAMETERS " + bioDataObject.getUniqueId() + " " + amTagItem.id)
 							def tagValues = AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[bioDataObject.getUniqueId().toString(),amTagItem.id])
-							
-							log.info ("rows1 == " + tagValues)
-							def displayValue = ""
-							def counter = 0
-							tagValues.each 
-							{ 
-								log.info("TAGVALUE = " + it)
-								displayValue += counter>0? ", " + it.displayValue : it.displayValue  
-							}
-							
-							if(displayValue == null) displayValue = ""
-							
-							newrow.put(amTagItem.id.toString(),displayValue);
-		
+							newrow.put(amTagItem.id.toString(),createDisplayString(tagValues));
 						}
 						else
 						{
-					//		FmFolderAssociation.findByUniqueId(this.objectUid)
-						//	AmTagDisplayValue.findAllDisplayValue(folder.getUniqueId(),amTagItem.id)
-							//log.info ("bioDataObject.getUniqueId()" + bioDataObject.hasProperty(amTagItem.tagItemAttr))
-							
-							log.info ("ROW --- TYPE1 == " + amTagItem.tagItemType + " ID = " +  amTagItem.id + " DV = " )
-							
+						    def tagValues = AmTagDisplayValue.findAllDisplayValue(it.uniqueId,amTagItem.id)
+							newrow.put(amTagItem.id.toString(),createDisplayString(tagValues));
 						}
 	
 					}
@@ -730,6 +713,24 @@ class FmFolderController {
 		}
 		
 		return table.toJSON_DataTables("", folderType).toString(5);
+	}
+	
+	private createDisplayString(tagValues)
+	{
+		log.info ("TAGVALUES == " + tagValues)
+		
+		def displayValue = ""
+		def counter = 0
+						
+		tagValues.each
+		{
+			log.info("TAGVALUE = " + it)
+			displayValue += counter>0? ", " + it.displayValue : it.displayValue
+		}
+		
+		if(displayValue == null) displayValue = ""
+		
+		return displayValue
 	}
 	
 	def folderDetail = {
