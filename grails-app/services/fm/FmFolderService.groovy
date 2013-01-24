@@ -72,6 +72,7 @@ class FmFolderService {
 	 */
 	def processDirectory(File directory) {
 
+		log.info("FmFolderService.processDirectory(" + directory.getPath() + ")");
 		for (File file : directory.listFiles()) {
 			if (file.isDirectory()) {
 				processDirectory(file);
@@ -93,14 +94,19 @@ class FmFolderService {
 	 */
 	def processFile(File file) {
 	
+		log.info("FmFolderService.processFile(" + file.getPath() + ")");
 		// Use file's parent directory as ID of folder which file will
 		// be associated with.
 		File directory = file.getParentFile();
 		FmFolder fmFolder;
 		try {
-			fmFolder = FmFolder.get(Long.parseLong(directory.getName()));
+			long folderId = Long.parseLong(directory.getName());
+			fmFolder = FmFolder.get(folderId);
+			if (fmFolder == null) {
+				log.error("Folder with id " + folderId + " does not exist.")
+				return;
+			}
 		} catch (NumberFormatException ex) {
-			log.error("Folder with id " + directory.getName() + " does not exist.")
 			return;
 		}
 		
