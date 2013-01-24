@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  *
- *test
+ *
  ******************************************************************/
   
 
@@ -50,8 +50,10 @@ class AuthUserController {
 
 	def list = {
 		if (!params.max) {
-			params.max = grailsApplication.config.com.recomdata.admin.paginate.max
-		}
+			//Changed this to use the jQuery dataTable, which includes client side paging/searching
+			//Need to return all user accounts here
+			//params.max = grailsApplication.config.com.recomdata.admin.paginate.max
+			params.max = 999999		}
 		[personList: AuthUser.list(params)]
 	}
 
