@@ -647,7 +647,7 @@ jQuery(document).ready(function() {
 
     jQuery('body').on('click', '.foldericon.add', function() {
 		var id = jQuery(this).attr('name');
-		jQuery(this).removeClass().text("Added to cart");
+		jQuery(this).removeClass("foldericon").removeClass("add").removeClass("link").text("Added to cart");
 		jQuery('#cartcount').hide();
 		
 		jQuery.ajax({
@@ -667,7 +667,7 @@ jQuery(document).ready(function() {
 		var ids = [];
 		for (i = 0; i < nameelements.size(); i++) {
 			ids.push(jQuery(nameelements[i]).attr('name'));
-			jQuery(nameelements[i]).removeClass().text("Added to cart");
+			jQuery(nameelements[i]).removeClass("foldericon").removeClass("add").removeClass("link").text("Added to cart");
 		}
 		
 		jQuery('#cartcount').hide();
@@ -816,6 +816,7 @@ jQuery(document).ready(function() {
 				row.remove();
 				jQuery('#cartcount').show().text(response);
 				updateExportCount();
+				jQuery('#metadata-viewer').find(".exportaddspan[name='" + id + "']").addClass("foldericon").addClass("add").addClass("link").text('Add to export');
 			},
 			error: function(xhr) {
 				jQuery('#cartcount').show();
