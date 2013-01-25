@@ -170,4 +170,13 @@ class OntologyService {
 		
 		return (nodes.size() > 0)
 	}
+	
+	def getPathForAccession(accession) {
+		def node = i2b2.OntNode.createCriteria().get {
+			eq('sourcesystemcd', accession)
+			eq('hlevel', 1L)
+		}
+		
+		return ("\\"+node.id.substring(0,node.id.indexOf("\\",2))+node.id).replace("\\", "\\\\")
+	}
 }

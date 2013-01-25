@@ -25,13 +25,21 @@ import grails.converters.*
 class DatasetExplorerController {
 	def springSecurityService
 	def i2b2HelperService
+	def ontologyService
 	
 	def defaultAction = "index"
 	
 	def index = {
 			log.trace("in index");
+			
+			def pathToExpand
+			//If we have an accession passed, retrieve its path
+			if (params.accession) {
+				pathToExpand = ontologyService.getPathForAccession(params.accession)
+			}
+			
 			//code for retrieving a saved comparison
-			def pathToExpand=params.path;
+			pathToExpand= pathToExpand ?: params.path;
 			def sc=params.id;
 			log.trace("DatasetExplorer Controller found saved comparison id="+sc);
 			def qid1=null;

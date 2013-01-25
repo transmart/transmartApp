@@ -336,6 +336,10 @@ table.menuDetail th.menuVisited {
 	font-weight: bold;	
 }
 
+#navigateTermsPanel .defaultPathNode {
+	background-color: #FEEEF8;	
+}
+
 #navigateTermsPanel .x-panel-header-text{
 	color: white;
 }

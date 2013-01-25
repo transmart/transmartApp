@@ -1748,6 +1748,10 @@ function createTree(includeExcludeFlag, ontresponse){
 	var Tree = Ext.tree;
 	var ontRoots = [];
 	
+	if (GLOBAL.DefaultPathToExpand != "") {
+		GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
+	}
+	
 	var concepts = ontresponse.responseXML.selectNodes('//concept');
 	var treeRoot = new Tree.TreeNode(
 			{
@@ -4263,6 +4267,10 @@ function searchByTagComplete(response)
 	
 	//Clear path to expand
 	GLOBAL.PathToExpand = '';
+	
+	if (GLOBAL.DefaultPathToExpand != "") {
+		GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
+	}
 	
 	if(concepts != undefined)
 	{
