@@ -18,7 +18,7 @@
  ******************************************************************/
 package fm
 
-import am.AmData;
+import annotation.AmData;
 import annotation.AmTagAssociation;
 import annotation.AmTagDisplayValue;
 import annotation.AmTagItem;
@@ -189,7 +189,7 @@ class FmFolderController {
 		def fmFolderInstance = new FmFolder(params)
 		if(parentFolder)
 		{
-			fmFolderInstance.folderFullName = parentFolder.folderFullName + "\\" + fmFolderInstance.folderName
+//			fmFolderInstance.folderFullName = parentFolder.folderFullName + "\\" + fmFolderInstance.folderName
 			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
 			fmFolderInstance.folderType = FolderType.STUDY.name()
 			fmFolderInstance.parent = parentFolder
@@ -221,7 +221,7 @@ class FmFolderController {
 		log.info "saveProgram called"
 		log.info params
 		def fmFolderInstance = new FmFolder(params)
-		fmFolderInstance.folderFullName = "\\" + fmFolderInstance.folderName
+//		fmFolderInstance.folderFullName = "\\" + fmFolderInstance.folderName
 		fmFolderInstance.folderLevel = 0
 		
 		log.info(fmFolderInstance)
@@ -329,54 +329,34 @@ class FmFolderController {
     }
 
 	def getPrograms = {
-
-		List<FmFolderController> folders = getFolder(FolderType.PROGRAM.name(), null)
-		// 	[fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
-		//List<FmFolderController> folders = getFolder("Program", null)
-		
+		List<FmFolder> folders = getFolder(FolderType.PROGRAM.name(), null)
 		render folders as XML
-		
 	}
 
 	def getStudies = {
-		
-		List<FmFolderController> folders = getFolder(FolderType.STUDY.name(), params.parentPath)
-				// 	[fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
-		
+		List<FmFolder> folders = getFolder(FolderType.STUDY.name(), params.parentPath)
 		render folders as XML
-				
 	}
 
 	def getFolders = {
-		
 		List<FmFolderController> folders = getFolder(FolderType.FOLDER.name(), params.parentPath)
-				// 	[fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
-				
 		render folders as XML
 	}
 
 	def getAnalysises = {
-		
-		List<FmFolderController> folders = getFolder(FolderType.ANALYSIS.name(), params.parentPath)
-				// 	[fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
-		
+		List<FmFolder> folders = getFolder(FolderType.ANALYSIS.name(), params.parentPath)
 		render folders as XML
-				
 	}
 
 	def getAssayes= {
-		
-		List<FmFolderController> folders = getFolder(FolderType.ASSAY.name(), params.parentPath)
-				// 	[fn:this.folderFullName+"%", fl: (this.folderLevel + 1)])
-		
+		List<FmFolder> folders = getFolder(FolderType.ASSAY.name(), params.parentPath)
 		render folders as XML
-				
 	}
 	
 	//service to call to get all the children of a folder, regardless their type
 	//need a parameter parentId corresponding to the parent identifier
 	def getAllChildren ={
-		List<FmFolderController> children = getChildrenFolder(params.parentId)
+		List<FmFolder> children = getChildrenFolder(params.parentId)
 		render children as XML
 	}
 
@@ -480,10 +460,11 @@ class FmFolderController {
 			folder.tag = Long.toString(folder.id, 36).toUpperCase();
 			folder.save(flush:true);
 			
+			// This is now done in the database
 			// Create UID for folder.
-			def data = new FmData(type:'FM_FOLDER', uniqueId:'FOL:' + folder.id);
-			data.id = folder.id;
-			data.save(flush:true);
+		//	def data = new FmData(type:'FM_FOLDER', uniqueId:'FOL:' + folder.id);
+		//	data.id = folder.id;
+		//	data.save(flush:true);
 	
 			render folder as XML
 		}
@@ -516,7 +497,7 @@ class FmFolderController {
 			
 		if(folder.save())
 		{
-			List<FmFolderController> subFolderList = FmFolder.findAll("from FmFolder as fd where fd.folderFullName like :fn",
+			List<FmFolder> subFolderList = FmFolder.findAll("from FmFolder as fd where fd.folderFullName like :fn",
 				[fn:oldFullName+"%"])
 
 			subFolderList.each {
@@ -544,7 +525,7 @@ class FmFolderController {
 		
 		if(folder.save())
 		{
-			List<FmFolderController> subFolderList = FmFolder.findAll("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel = :fl",
+			List<FmFolder> subFolderList = FmFolder.findAll("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel = :fl",
 				[fn:folder.folderFullName+"%", fl: (folder.folderLevel + 1)])
 
 			subFolderList.each {
@@ -927,17 +908,15 @@ class FmFolderController {
 							def newTagValue = new AmTagValue(value: newValue)
 							newTagValue.save()
 							//TODO This is an awful way of generating UIDs and should be changed forthwith, posthaste, etc
-							def newUid = newTagValue.id + ":" + newTagValue.value
-							
+							/* Now done by the database
+							 * def newUid = newTagValue.id + ":" + newTagValue.value
 							AmData amData = new AmData(uniqueId: newUid, amDataType: 'AM_TAG_VALUE')
 							amData.id = newTagValue.id
 							amData.save()
+							*/
 							
 							AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folderUniqueId, objectUid: newUid, tagItemId: tagItem.id)
 							ata.save()
-							
-//							
-							
 						}
 					}
 				}

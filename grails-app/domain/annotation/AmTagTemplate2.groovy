@@ -16,19 +16,25 @@
  * 
  *
  ******************************************************************/
+  
 
-package am
+package annotation
 
-class AmData { 
 
+class AmTagTemplate2 {
+	
 	Long id
-	String uniqueId
-	String amDataType
-			
-	static mapping = {
-		table 'AM_DATA_UID'
-		version false
-		id column:'AM_DATA_ID', generator:'assigned'
-	}
+	String tagTemplateName
+	String tagTemplateType
+	String guiHandler
 
+	static mapping = {
+		table 'am_tag_template'
+		version false
+		cache true
+		sort "tagTemplateName"
+		columns { id column:'tag_template_id' }
+	}
+	
+	
 }
