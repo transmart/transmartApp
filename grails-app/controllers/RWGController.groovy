@@ -471,7 +471,7 @@ class RWGController {
 		   def folderContents = fmFolderService.getFolderContents(null)
 		   
 		   if (combinedResult) {
-			   def folderSearchString = combinedResult.join("\\,") + "\\," //Extra , - used to identify leaves
+			   def folderSearchString = combinedResult.join(",") + "," //Extra , - used to identify leaves
 			   render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString, auto: true])
 		   }
 		   else {

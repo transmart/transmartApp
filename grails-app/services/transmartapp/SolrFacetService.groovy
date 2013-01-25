@@ -270,11 +270,21 @@ class SolrFacetService {
 	   }
 	   println result
 	   
-	   def folderIdNodes = xml.result.doc.str.findAll{it.@name == 'id'}
+	   def resultNodes = xml.result.doc
 	   
 	   def folderSearchList = [];
-	   for (node in folderIdNodes) {
-		   def folderId = node.text()
+	   for (node in resultNodes) {
+		   
+		   def folderId;
+		   //Use "folder" if this is a file result, "id" otherwise
+		   def folderNode = node.str.findAll{it.@name == 'folder'}
+		   folderId = folderNode.text()
+		   
+		   if (!folderId) {
+			   def idNode = node.str.findAll{it.@name == 'id'}
+			   folderId = folderNode.text()
+		   }
+		   
 		   def fmFolder = FmFolder.findByUniqueId(folderId)
 		   folderSearchList.push(fmFolder.folderFullName)
 	   }
