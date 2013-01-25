@@ -516,6 +516,16 @@ class SolrFacetService {
 	  return solrRequestUrl
   }
   
+  def createSOLRUpdatePath = {
+	  
+		String solrScheme = ConfigurationHolder.config.com.rwg.solr.scheme
+		String solrHost = ConfigurationHolder.config.com.rwg.solr.host
+		String solrPath = ConfigurationHolder.config.com.rwg.solr.update.path
+		String solrRequestUrl = new URI(solrScheme, solrHost, solrPath, "", "").toURL()
+		
+		return solrRequestUrl
+  }
+  
   /**
   * Create the SOLR query string for the faceted query
   * @param nonfacetedQueryString - the portion of the URL containing the non faceted query string
@@ -581,7 +591,10 @@ class SolrFacetService {
 	  }
   }
   
-  def executeSOLRUpdate = {solrRequestUrl, folderUid ->
+  def reindexFolder = {folderUid ->
+	  
+	  def solrRequestUrl = createSOLRUpdatePath()
+	  def solrUpdateParams = "command=full-import&commit=true&clean=false&uid=" + folderUid
 	  
 	  // submit request
 	  def solrConnection = new URL(solrRequestUrl).openConnection()
@@ -590,23 +603,17 @@ class SolrFacetService {
 
 	  // add params to request
 	  def dataWriter = new OutputStreamWriter(solrConnection.outputStream)
-	  dataWriter.write(solrQueryParams)
+	  dataWriter.write(solrUpdateParams)
 	  dataWriter.flush()
 	  dataWriter.close()
 	  
-	  // process response
+	  //If HTTP OK, return success
 	  if (solrConnection.responseCode == solrConnection.HTTP_OK)  {
-		  def xml
-		  
-		  solrConnection.inputStream.withStream {
-			  xml = slurper.parse(it)
-		  }
-		  
 		  solrConnection.disconnect()
-		  return xml
+		  return true
 	  }
 	  else {
-		  throw new Exception("SOLR Request failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
+		  throw new Exception("SOLR update failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
 	  }
 	  
   }

@@ -41,6 +41,7 @@ class FmFolderController {
 	def amTagItemService
 	def fmFolderService
 	def ontologyService
+	def solrFacetService
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def index = {
@@ -1007,6 +1008,10 @@ def getFdDetails = {
 		
 		fmFolderService.reindexFiles();
 		
+	}
+	
+	def reindexFolder = {
+		solrFacetService.reindexFolder(params.uid)
 	}
 	
 }
