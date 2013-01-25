@@ -67,8 +67,8 @@ class SolrFacetService {
 			//CategoryResultIds is used to gather IDs returned by this category - always add to this list, don't intersect (producing OR).
 			def categoryResultIds = []
 
-			//Start HERE if we're looking for metadata (anything other than DATANODE and CONTENT)
-			if (!categoryName.equals("DATANODE") && !categoryName.equals("CONTENT")) {
+			//Start HERE if we're looking for metadata (anything other than DATANODE and text)
+			if (!categoryName.equals("DATANODE") && !categoryName.equals("text")) {
 				//Make this metadata field into a SOLR query
 				println "Searching for metadata: " + termList.join(",")
 
@@ -88,12 +88,12 @@ class SolrFacetService {
 				termList = convertTermList(categoryName, termList)
 			}
 			
-			//Start HERE if we're looking for CONTENT
+			//Start HERE if we're looking for text
 			if (!categoryName.equals("DATANODE")) {
-				//Content: Get the list of terms, and search in CONTENT field OR the data nodes
+				//Content: Get the list of terms, and search in text field OR the data nodes
 				println "Searching for freetext: " + termList.join(",")
 				
-				def categoryQuery = createCategoryQueryString("CONTENT", termList, operator)
+				def categoryQuery = createCategoryQueryString("text", termList, operator)
 				def solrQuery = "q=" + createSOLRQueryString(categoryQuery, "", "")
 				def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQuery, false)
 				
@@ -333,8 +333,8 @@ class SolrFacetService {
 		  t = t.replace("&", "%26");
 		  
 		  //If searching on text, add wildcards (instead of quote marks)
-		  if (category.equals("CONTENT")) {
-			  t = ("*" + t.toLowerCase() + "*").replace(" ", "\\ ");
+		  if (category.equals("text")) {
+			  t = ("*" + t.toLowerCase() + "*");
 		  }
 		  else if (category.equals("GENE")) {
 			  //GENE may have individual genes separated by slashes. OR these, and quote each individual one
@@ -375,7 +375,7 @@ class SolrFacetService {
 		 // each queryParam is in form cat1:term1|term2|term3
 		 String category = qp.split(":")[0]
 		 
-		 if (category.equals("DATANODE") || category.equals("CONTENT")) {
+		 if (category.equals("DATANODE") || category.equals("text")) {
 			 String termList = qp.split(":")[1]
 		 
 			 for (t in termList.tokenize("|"))  {

@@ -131,7 +131,7 @@
 	  CurrentGpls: new Array(),
 	  CurrentTissues: new Array(),
 	  CurrentRbmpanels: new Array(),
-	  PathToExpand: "${pathToExpand}",
+	  DefaultPathToExpand: "${pathToExpand}",
 	  preloadStudy: "${params.DataSetName}",
 	  Binning: false,
 	  ManualBinning: false,

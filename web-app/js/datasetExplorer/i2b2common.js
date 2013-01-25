@@ -1977,6 +1977,13 @@ function getTreeNodeFromXMLNode(concept)
 	    if (isSearchResult) {
 	    	tcls += ' searchResultNode';
 	    }
+	    //And another to highlight if it's the default passed-in path (only do this once)
+	    var isDefaultPath = (GLOBAL.DefaultPathToExpand.indexOf(key) > -1);
+	    if (isDefaultPath) {
+	    	tcls += ' defaultPathNode';
+	    }
+	    GLOBAL.DefaultPathToExpand = '';
+	    
 	    if(GLOBAL.PathToExpand.indexOf(key)>-1) autoExpand=true;
 		
 	    // set the root node

@@ -19,7 +19,7 @@ var allowOnSelectEvent = true;
 function addSelectCategories()	{
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All"));
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "DATANODE").text("Data Node"));
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "CONTENT").text("Free Text"));
+	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "text").text("Free Text"));
 	jQuery.getJSON(getCategoriesURL, function(json) {
 		for (var i=0; i<json.length; i++)	{
 			var category = json[i].category;
@@ -73,7 +73,7 @@ function addSearchAutoComplete()	{
 			//If category is ALL, add this as free text as well
 			var category = jQuery("#search-categories").val();
 //			if (category == 'ALL') {
-//				searchParam={id:ui.item.label,display:'Free Text',keyword:ui.item.label,category:'CONTENT'};
+//				searchParam={id:ui.item.label,display:'Free Text',keyword:ui.item.label,category:'text'};
 //				addSearchTerm(searchParam);
 //			}
 			return false;
@@ -101,9 +101,9 @@ function addSearchAutoComplete()	{
 	jQuery('#search-ac').keypress(function(event) {
 		var category = jQuery("#search-categories").val();
 		var categoryText = jQuery('#search-categories option:selected').text();
-		if (event.which == 13 && (category == 'DATANODE' || category == 'CONTENT' || category == 'ALL')) {
+		if (event.which == 13 && (category == 'DATANODE' || category == 'text' || category == 'ALL')) {
 			var val = jQuery('#search-ac').val();
-			if (category == 'ALL') {category = 'CONTENT'; categoryText = 'Free Text';}
+			if (category == 'ALL') {category = 'text'; categoryText = 'Free Text';}
 			searchParam={id:val,display:categoryText,keyword:val,category:category};
 			addSearchTerm(searchParam);
 			return false;
@@ -960,10 +960,16 @@ function loadSearchFromSession() {
 }
 
 function updateFolder(id) {
+	
+	var imgExpand = "#imgExpand_"  + id;
+	var src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'ajax-loader-flat.gif').replace('folderminus.png', 'ajax-loader-flat.gif');
+	jQuery(imgExpand).attr('src',src);
+	
 	jQuery.ajax({
 		url:folderContentsURL,
 		data: {id: id, auto: false},
 		success: function(response) {
+			jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderminus.png'));
 			jQuery('#' + id + '_detail').html(response).addClass('gtb1').addClass('analysesopen').attr('data', true);
 
 		},

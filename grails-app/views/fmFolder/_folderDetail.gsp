@@ -94,7 +94,7 @@
 </g:elseif>
 
 <g:if test="${subjectLevelDataAvailable}">
-	<center><div class="messagebox">Subject-level data is available for this study. <a href="${createLink(controller:'datasetExplorer', action:'index')}?study=${bioDataObject.accession}">Open in Analyze view</a></div></center>
+	<center><div class="messagebox">Subject-level data is available for this study. <a href="${createLink(controller:'datasetExplorer', action:'index')}?accession=${bioDataObject.accession}">Open in Analyze view</a></div></center>
 	<br/><br/>
 </g:if>
 
