@@ -20,12 +20,54 @@
 
 package annotation
 
+
+
 class AmTagValue {
 	
 	Long id
 	String value
 		
+	static transients = ['uniqueId']
+	
 //	static belongsTo=[amTagItem: AmTagItem]
+	
+	/**
+	 * Use transient property to support unique ID for tagValue.
+	 * @return tagValue's uniqueId
+	 */
+	String getUniqueId() {
+		if (uniqueId == null) {
+			if(id)
+			{
+				AmData data = AmData.get(id);
+				if (data != null) {
+					uniqueId = data.uniqueId
+					return data.uniqueId;
+				}
+				return null;
+			}
+			else
+			{
+				return null;
+			}
+		}
+		return uniqueId;
+	}
+		
+	/**
+	 * Find tagValue by its uniqueId
+	 * @param uniqueId
+	 * @return tagValue with matching uniqueId or null, if match not found.
+	 */
+	static AmTagValue findByUniqueId(String uniqueId) {
+		AmTagValue tagValue;
+		AmData data = AmData.findByUniqueId(uniqueId);
+		if (data != null) {
+			tagValue = AmTagValue.get(data.id);
+		}
+		return tagValue;
+	}
+	
 	
 	static mapping = {
 		table 'am_tag_value'
