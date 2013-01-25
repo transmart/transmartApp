@@ -278,11 +278,11 @@ class SolrFacetService {
 		   def folderId;
 		   //Use "folder" if this is a file result, "id" otherwise
 		   def folderNode = node.str.findAll{it.@name == 'folder'}
-		   folderId = folderNode.text()
+		   folderId = folderNode?.text()
 		   
 		   if (!folderId) {
 			   def idNode = node.str.findAll{it.@name == 'id'}
-			   folderId = folderNode.text()
+			   folderId = folderNode?.text()
 		   }
 		   
 		   def fmFolder = FmFolder.findByUniqueId(folderId)
