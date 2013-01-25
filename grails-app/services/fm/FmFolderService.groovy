@@ -65,6 +65,19 @@ class FmFolderService {
 	}	
 	
 	/**
+	 * Re-index all files through SOLR.
+	 * @return
+	 */
+	def reindexFiles() {
+		
+		def fmFiles = FmFile.findAll();
+		for (fmFile in fmFiles) {
+			indexFile(fmFile);
+		}
+		
+	}
+	
+	/**
 	 * Process files and sub-directories in specified directory.
 	 *
 	 * @param directory
@@ -72,7 +85,7 @@ class FmFolderService {
 	 */
 	def processDirectory(File directory) {
 
-		log.info("FmFolderService.processDirectory(" + directory.getPath() + ")");
+//		log.info("FmFolderService.processDirectory(" + directory.getPath() + ")");
 		for (File file : directory.listFiles()) {
 			if (file.isDirectory()) {
 				processDirectory(file);
@@ -94,7 +107,7 @@ class FmFolderService {
 	 */
 	def processFile(File file) {
 	
-		log.info("FmFolderService.processFile(" + file.getPath() + ")");
+//		log.info("FmFolderService.processFile(" + file.getPath() + ")");
 		// Use file's parent directory as ID of folder which file will
 		// be associated with.
 		File directory = file.getParentFile();
@@ -227,12 +240,10 @@ class FmFolderService {
 		} else if (fmFolder.folderLevel == 1) {
 			filestoreLocation = fmFolder.id;
 		} else {
-			log.info("folderFullName = " + fmFolder.folderFullName);
+//			log.info("folderFullName = " + fmFolder.folderFullName);
 			int pos = fmFolder.folderFullName.indexOf("\\", 1);
-			log.info("pos 1 = " + pos);
 			pos = fmFolder.folderFullName.indexOf("\\", pos + 1);
-			log.info("pos 2 = " + pos);
-			log.info("find name = " + fmFolder.folderFullName.substring(0, pos));
+//			log.info("find name = " + fmFolder.folderFullName.substring(0, pos));
 			FmFolder fmParentFolder = FmFolder.findByFolderFullName(fmFolder.folderFullName.substring(0, pos));	
 			if (fmParentFolder == null) {
 				log.error("Unable to find folder with folderFullName of " + fmFolder.folderFullName.substring(0, pos));
