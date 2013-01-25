@@ -960,10 +960,16 @@ function loadSearchFromSession() {
 }
 
 function updateFolder(id) {
+	
+	var imgExpand = "#imgExpand_"  + id;
+	var src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'ajax-loader-flat.gif').replace('folderminus.png', 'ajax-loader-flat.gif');
+	jQuery(imgExpand).attr('src',src);
+	
 	jQuery.ajax({
 		url:folderContentsURL,
 		data: {id: id, auto: false},
 		success: function(response) {
+			jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderminus.png'));
 			jQuery('#' + id + '_detail').html(response).addClass('gtb1').addClass('analysesopen').attr('data', true);
 
 		},
