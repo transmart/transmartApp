@@ -591,10 +591,13 @@ class SolrFacetService {
 	  }
   }
   
-  def reindexFolder = {folderUid ->
+  def reindexFolder = {folderUid, folderType = "" ->
 	  
 	  def solrRequestUrl = createSOLRUpdatePath()
 	  def solrUpdateParams = "command=full-import&commit=true&clean=false&uid=" + folderUid
+	  if (folderType) {
+		  solrUpdateParams += "&entity=" + folderType
+	  }
 	  
 	  // submit request
 	  def solrConnection = new URL(solrRequestUrl).openConnection()
