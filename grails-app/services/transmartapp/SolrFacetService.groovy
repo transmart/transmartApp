@@ -275,18 +275,22 @@ class SolrFacetService {
 	   def folderSearchList = [];
 	   for (node in resultNodes) {
 		   
-		   def folderId;
+		   def folderId
 		   //Use "folder" if this is a file result, "id" otherwise
 		   def folderNode = node.str.findAll{it.@name == 'folder'}
-		   folderId = folderNode?.text()
-		   
-		   if (!folderId) {
-			   def idNode = node.str.findAll{it.@name == 'id'}
-			   folderId = folderNode?.text()
+		   if (folderNode.size() > 0) {
+			   folderId = folderNode.text()
+		   } else {
+		   		def idNode = node.str.findAll{it.@name == 'id'}
+				if (idNode.size() > 0) {
+				   folderId = idNode.text()
+				} else {
+					log.error "SolrFacetService.getFolderList: result node does not contain an id or folder"
+				}
 		   }
 		   
 		   def fmFolder = FmFolder.findByUniqueId(folderId)
-		   folderSearchList.push(fmFolder.folderFullName)
+		   folderSearchList.push(fmFolder?.folderFullName)
 	   }
 	   
 	   return folderSearchList
@@ -580,6 +584,7 @@ class SolrFacetService {
 	  // add params to request
 	  def dataWriter = new OutputStreamWriter(solrConnection.outputStream)
 	  dataWriter.write(solrQueryParams)
+	  dataWriter.write("&fl=id,folder")
 	  dataWriter.flush()
 	  dataWriter.close()
 	  
