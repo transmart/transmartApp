@@ -46,6 +46,7 @@ class FmFolderService {
 	 */
 	def importFiles() {
 		
+		log.info("importFiles called");
 		if (importDirectory == null || filestoreDirectory == null) {
 			if (importDirectory == null) {
 				log.error("Unable to check for new files. config.com.recomdata.FmFolderService.importDirectory property has not been defined in the Config.groovy file.");
@@ -70,6 +71,7 @@ class FmFolderService {
 	 */
 	def reindexFiles() {
 		
+		log.info("reindexFiles called");
 		def fmFiles = FmFile.findAll();
 		for (fmFile in fmFiles) {
 			indexFile(fmFile);
