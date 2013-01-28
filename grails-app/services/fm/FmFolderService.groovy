@@ -244,9 +244,9 @@ class FmFolderService {
 			int pos = fmFolder.folderFullName.indexOf("\\", 1);
 			pos = fmFolder.folderFullName.indexOf("\\", pos + 1);
 //			log.info("find name = " + fmFolder.folderFullName.substring(0, pos));
-			FmFolder fmParentFolder = FmFolder.findByFolderFullName(fmFolder.folderFullName.substring(0, pos));	
+			FmFolder fmParentFolder = FmFolder.findByFolderFullName(fmFolder.folderFullName.substring(0, pos + 1));	
 			if (fmParentFolder == null) {
-				log.error("Unable to find folder with folderFullName of " + fmFolder.folderFullName.substring(0, pos));
+				log.error("Unable to find folder with folderFullName of " + fmFolder.folderFullName.substring(0, pos + 1));
 				filestoreLocation = "0";
 			} else {
 				filestoreLocation = fmParentFolder.id;
