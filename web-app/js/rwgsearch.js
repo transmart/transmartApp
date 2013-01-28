@@ -17,15 +17,22 @@ var allowOnSelectEvent = true;
 
 // Method to add the categories for the select box
 function addSelectCategories()	{
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All"));
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "DATANODE").text("Data Node"));
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "text").text("Free Text"));
+	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All").attr('id', 'allCategory'));
+	
+	
 	jQuery.getJSON(getCategoriesURL, function(json) {
 		for (var i=0; i<json.length; i++)	{
 			var category = json[i].category;
 			var catText = convertCategory(category);
 			jQuery("#search-categories").append(jQuery("<option></option>").attr("value", category).text(catText));
 		}
+		
+		jQuery("#search-categories").html(jQuery("option", jQuery("#search-categories")).sort(function(a, b) { 
+	        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1 
+	    }));
+		
+		jQuery("#allCategory").after(jQuery("<option></option>").attr("value", "text").text("Free Text"));
+		jQuery("#allCategory").after(jQuery("<option></option>").attr("value", "DATANODE").text("Data Node"));
     });
 	
 }
@@ -118,6 +125,9 @@ function convertCategory(valueToConvert)	{
 	var convertedValue = valueToConvert.toLowerCase();
 	if (convertedValue == "genesig") {
 		return "Gene List";
+	}
+	if (convertedValue == "species") {
+		return "Organism";
 	}
 	return convertedValue.slice(0,1).toUpperCase() + convertedValue.slice(1);
 }
