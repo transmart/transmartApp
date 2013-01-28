@@ -1768,6 +1768,7 @@ function createTree(includeExcludeFlag, ontresponse){
 		var name = concepts[c].selectSingleNode('name').firstChild.nodeValue;
 		var tooltip = concepts[c].selectSingleNode('tooltip').firstChild.nodeValue;
 		var dimcode = concepts[c].selectSingleNode('dimcode').firstChild.nodeValue;
+		var visualAttributes = concepts[c].selectSingleNode('visualattributes').firstChild.nodeValue;
 		
 		if(includeExcludeFlag==="include" && name!=="Across Trials") continue;
 		if(includeExcludeFlag==="exclude" && name==="Across Trials") continue;
@@ -1779,19 +1780,19 @@ function createTree(includeExcludeFlag, ontresponse){
    		if(level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) == -1) {continue;}
    		
    		var iconCls = "";
-	    if (level == '0') {
+	    if (visualAttributes.indexOf('P') > '-1') {
 	    	iconCls="programicon";
 	    }
    		
 		var ontRoot = new Tree.AsyncTreeNode(
-				{
-					text : name,
-					draggable : false,
-					id : key,
-					qtip : tooltip,
-					expanded : autoExpand,
-					iconCls : iconCls
-				}
+			{
+				text : name,
+				draggable : false,
+				id : key,
+				qtip : tooltip,
+				expanded : autoExpand,
+				iconCls : iconCls
+			}
 		);
 		
 		//treeRoot.appendChild(ontRoot);
