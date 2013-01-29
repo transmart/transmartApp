@@ -19,6 +19,8 @@
   
 
 import java.io.File
+import java.text.SimpleDateFormat;
+
 import com.recomdata.search.DocumentHit
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
@@ -328,6 +330,21 @@ class RecomTagLib {
 		out << "<a id='"+divPrefix+"_fclose' style='"+closedStyle+"' "
 		out << 		"onclick=\"javascript:toggleDetail('"+divPrefix+"');\">"+label+"&nbsp;<img alt='Close' src=\"${resource(dir:'images/skin',file:'sorted_asc.gif')}\" /></a> "
 		out << "</th></tr></thead>"
+	}
+	
+	def fieldDate = { attrs, body ->
+		
+		def bean = attrs["bean"]
+		def field = attrs["field"]
+		def format = attrs["format"]
+		
+		def date = bean."${field}"
+		if (date) {
+			out << (new SimpleDateFormat(format).format(date))
+		}
+		else {
+			out << "None"
+		}
 	}
 
 }

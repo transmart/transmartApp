@@ -37,6 +37,7 @@ class ExperimentAnalysisController {
 	def analysisDataExportService
 	def searchService
 	def experimentAnalysisTEAService
+	def formLayoutService
 
 	// session attribute
 	static def TEA_PAGING_DATA = "analListPaging"
@@ -161,15 +162,24 @@ class ExperimentAnalysisController {
 	def expDetail = {
 		//log.info "** action: expDetail called!"
 		def expid = params.id
-		def exp = Experiment.get(expid)
+		def expaccession = params.accession
+		
+		def exp
+		if (expid) {
+			exp = Experiment.get(expid)
+		}
+		else {
+			exp = Experiment.findByAccession(expaccession)
+		}
 		log.info "exp.id = " + exp.id
 		def platforms = experimentAnalysisQueryService.getPlatformsForExperment(exp.id);
 		def organisms = new HashSet()
 		for(pf in platforms){
 			organisms.add(pf.organism)
 		}
-
-		render(template:'/experiment/expDetail', model:[experimentInstance:exp, expPlatforms:platforms, expOrganisms:organisms,search:1])
+		
+		def formLayout = formLayoutService.getLayout('study');
+		render(template:'/experiment/expDetail', model:[layout: formLayout, experimentInstance:exp, expPlatforms:platforms, expOrganisms:organisms,search:1])
 	}
 
 	def getAnalysis = {
@@ -246,4 +256,22 @@ class ExperimentAnalysisController {
 		sResult.result = experimentAnalysisTEAService.queryExpAnalysis(session.searchFilter, null)
 	    DomainObjectExcelHelper.downloadToExcel(response, "analysisteaviewexport.xls", analysisDataExportService.createExcelEATEAView(sResult));
 	}
+	
+	/**
+	* This will render a UI where the user can pick an experiment from a list of all the experiments in the system. Selection of multiple studies is allowed.
+	*/
+   def browseAnalysisMultiSelect = {
+	   
+	   def analyses = bio.BioAssayAnalysis.executeQuery("select id, name from BioAssayAnalysis b order by b.name");
+	   
+	  /* analyses.sort({a, b ->
+		   def aname = a[1] ?: ""
+		   def bname = b[1] ?: ""
+		   return aname.trim().compareToIgnoreCase(bname.trim());
+	   })*/
+	   
+	   render(template:'browseMulti',model:[analyses:analyses])
+   }
+   
+	
 }

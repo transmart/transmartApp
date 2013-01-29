@@ -25,15 +25,15 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder as ConfigHolder;
 
 class FileSweepJob {
     
-	def sweepingService
+	//def sweepingService
 	
 	//def timeout = 5000l 
 	
 	static triggers = {
-		simple name:'fileSweepTrigger', startDelay: ConfigHolder.config.com.recomdata.export.jobs.sweep.startDelay, repeatInterval:ConfigHolder.config.com.recomdata.export.jobs.sweep.repeatInterval
+		//simple name:'fileSweepTrigger', startDelay: ConfigHolder.config.com.recomdata.export.jobs.sweep.startDelay, repeatInterval:ConfigHolder.config.com.recomdata.export.jobs.sweep.repeatInterval
 	}
 
     def execute() {
-        sweepingService.sweep()
+       // sweepingService.sweep()
     }
 }

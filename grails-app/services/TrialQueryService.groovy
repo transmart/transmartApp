@@ -348,4 +348,111 @@ class TrialQueryService {
 		}
 	}
 
+	
+	/**
+	 * Execute the SOLR query to get the analyses for the trial that match the given search criteria
+	 * @param solrRequestUrl - the base URL for the SOLR request
+	 * @param solrQueryParams - the query string for the search, to be passed into the data for the POST request
+	 * @return List containing the analysis Ids
+	 */
+	 def executeSOLRTrialAnalysisQuery = {solrRequestUrl, solrQueryParams ->
+		 
+		 List analysisIds = []
+		 
+		 def slurper = new XmlSlurper()
+  
+		 // submit request
+		 def solrConnection = new URL(solrRequestUrl).openConnection()
+		 solrConnection.requestMethod= "POST"
+		 solrConnection.doOutput = true
+  
+		 // add params to request
+		 def dataWriter = new OutputStreamWriter(solrConnection.outputStream)
+		 dataWriter.write(solrQueryParams)
+		 dataWriter.flush()
+		 dataWriter.close()
+		 
+		 def docs   // will store the document nodes from the xml response in here
+		 
+		 // process response
+		 if (solrConnection.responseCode == solrConnection.HTTP_OK)  {
+			 def xml
+			 
+			 solrConnection.inputStream.withStream {
+				 xml = slurper.parse(it)
+			 }
+ 
+			 // retrieve all the document nodes from the xml
+			 docs = xml.result.find{it.@name == 'response'}.doc
+		 }
+		 else {
+			 throw new Exception("SOLR Request failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
+		 }
+		 
+		 solrConnection.disconnect()
+		 
+		 // put analysis id for each document into a list to pass back
+		 for (docNode in docs) {
+			 def analysisIdNode = docNode.str.find{it.@name == 'ANALYSIS_ID'}
+			 def analysisId = analysisIdNode.text()
+						 
+			 analysisIds.add(analysisId)
+		 }
+		 
+		 return analysisIds
+	 }
+	  
+    /**
+	*   Execute a SOLR query to retrieve all the analyses for a certain trial that match the given criteria
+	 */
+	def querySOLRTrialAnalysis(params, List sessionFilter) {
+		RWGController rwgController = new RWGController()
+		
+		def trialNumber = params['trialNumber']
+ 
+		// create a copy of the original list (we don't want to mess with original filter params)
+		// (the list is an object, so it is not "passed by val", it's a reference)
+		def filter = []
+		sessionFilter.each {
+			filter.add(it)
+		}
+ 
+		filter.add("STUDY_ID:" + trialNumber)
+		def nonfacetedQueryString = rwgController.createSOLRNonfacetedQueryString(filter)
+ 
+		String solrRequestUrl = rwgController.createSOLRQueryPath()
+		
+		// TODO create a conf setting for max rows
+		String solrQueryString = rwgController.createSOLRQueryString(nonfacetedQueryString, "", "", 10000, false)
+		def analysisIds = executeSOLRTrialAnalysisQuery(solrRequestUrl, solrQueryString)
+ 
+		def analysisList = []
+ 
+		// retrieve the descriptions for each analysis
+		def results = bio.BioAssayAnalysis.executeQuery("select b.id, b.shortDescription, b.longDescription, b.name " +
+			" from bio.BioAssayAnalysis b" +
+			" where b.id in (" + analysisIds.join(',') +  ") ORDER BY b.longDescription")
+ 
+		// retrieve the analyses that are of type Time Course by checking the taxonomy
+		def timeCourseAnalyses = bio.BioAnalysisAttributeLineage.executeQuery("select b1.bioAnalysisAttribute.bioAssayAnalysisID from bio.BioAnalysisAttributeLineage b1" +
+			" where b1.bioAnalysisAttribute.bioAssayAnalysisID in (" + analysisIds.join(',') +  ") " +
+			" and lower(b1.ancestorTerm.termName) = lower('Time Course')" )
+ 
+		for (r in results)  {
+					 
+			// if current analysis is in time course list then set flag to true
+			def isTimeCourse = false
+			if (timeCourseAnalyses.contains(r[0]))  {
+				isTimeCourse = true
+			}
+			
+			// create a map for each record
+			def aMap = ['id':r[0], 'shortDescription':r[1], 'longDescription':r[2], 'name':r[3], 'isTimeCourse':isTimeCourse]
+					   
+			analysisList.add aMap
+		}
+	   
+		return analysisList
+	}
+ 
 }

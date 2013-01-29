@@ -37,6 +37,20 @@ Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayou
 		}
 );
 
+/* 
+ * Unfortunately this is available from Ext JS v 3.x, and we are still on 2.2.1
+ * Adding the data type floatOrString to fix the sorting issue in Grid View
+Ext.data.Types.FLOATORSTRING = {
+    convert: function(v, n) {
+        return n;
+    },
+    sortType: function(v) {
+        v = Ext.isNumber(v) ? v : parseFloat(String(v), 10);
+        return isNaN(v) ? -999999 : v;
+    },
+    type: 'floatOrString'
+};*/
+
 var runner = new Ext.util.TaskRunner();
 
 var wfsWindow = null;
