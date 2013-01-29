@@ -32,7 +32,6 @@ function addSelectCategories()	{
 	    }));
 		
 		jQuery("#allCategory").after(jQuery("<option></option>").attr("value", "text").text("Free Text"));
-		jQuery("#allCategory").after(jQuery("<option></option>").attr("value", "DATANODE").text("Data Node"));
     });
 	
 }
@@ -424,6 +423,7 @@ function showFacetResults()	{
 			success: function(response) {
 	
 					jQuery('#results-div').removeClass('ajaxloading').html(response);
+					checkSearchLog();
 	
 			},
 			error: function(xhr) {
@@ -445,6 +445,7 @@ function showFacetResults()	{
 				data: queryString + "&searchTerms=" + encodeURIComponent(savedSearchTerms) + "&searchOperators=" + operatorString + "&page=datasetExplorer",
 				success: function(response) {
 						searchByTagComplete(response);
+						checkSearchLog();
 				},
 				error: function(xhr) {
 					console.log('Error!  Status = ' + xhr.status + xhr.statusText);
@@ -987,4 +988,24 @@ function updateFolder(id) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
 	});
+}
+
+function checkSearchLog() {
+	
+	if (jQuery('#searchlog').size() > 0) {
+		jQuery.ajax({
+			url:searchLogURL,
+			success: function(response) {
+				var searchLog = jQuery('#searchlog').empty();
+				searchLog.append("<br/>" + "------");
+				var log = response.log
+				for (var i = 0; i < log.length; i++) {
+					searchLog.append("<br/>" + log[i]);
+				}
+			},
+			error: function(xhr) {
+				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+			}
+		});
+	}
 }

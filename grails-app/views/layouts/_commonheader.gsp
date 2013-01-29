@@ -26,6 +26,13 @@
 	</g:else>
 	
 </div>
+
+<g:if test="${debug}">
+	<div id="search-explain" class="overlay">
+		<b>Search Explainer</b>
+		<tt id="searchlog">&nbsp;</tt>
+	</div>
+</g:if>
 		
 <table class="menuDetail" width="100%" style="height: 28px; border-collapse: collapse">
 	<tr>

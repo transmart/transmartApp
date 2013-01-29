@@ -95,6 +95,7 @@ class DatasetExplorerController {
 													i2b2Username: i2b2Username,
 													i2b2Password: i2b2Password,
 													rwgSearchFilter: rwgSearchFilter,
-													rwgSearchOperators: rwgSearchOperators]) 
+													rwgSearchOperators: rwgSearchOperators,
+													debug: params.debug]) 
     		}
 }

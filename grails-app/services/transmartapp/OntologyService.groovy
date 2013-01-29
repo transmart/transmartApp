@@ -75,7 +75,7 @@ class OntologyService {
 				countQuery = countQuery.replace("_searchterms_", searchtermstring).replace("_accessionSearch_", accessionSearchString)
 				nodeQuery = nodeQuery.replace("_searchterms_", searchtermstring).replace("_accessionSearch_", accessionSearchString)
 
-				println (nodeQuery)
+				log.debug (nodeQuery)
 				
 				myCount = i2b2.OntNode.executeQuery(countQuery)[0]
 				myNodes = i2b2.OntNode.executeQuery(nodeQuery, [max:100])

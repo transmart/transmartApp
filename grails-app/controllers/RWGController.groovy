@@ -66,11 +66,15 @@ class RWGController {
 			rwgSearchOperators = "";
 		}
 		
-		return [rwgSearchFilter: rwgSearchFilter, rwgSearchOperators: rwgSearchOperators, exportCount: exportList?.size()];
+		return [rwgSearchFilter: rwgSearchFilter, rwgSearchOperators: rwgSearchOperators, exportCount: exportList?.size(), debug: params.debug];
 	}
 	
 	def ajaxWelcome = {
 		render (template: 'welcome');
+	}
+	
+	def searchLog = {
+		render ([log: session['searchLog']] as JSON)
 	}
 
 	/**
@@ -391,6 +395,7 @@ class RWGController {
 	   
 	   session['rwgSearchFilter'] = searchTerms
 	   session['rwgSearchOperators'] = searchOperators
+	   def searchLog = ["Starting a new search"]
 	   
 	   /*
 	    * Pre-processing
@@ -453,6 +458,8 @@ class RWGController {
 	   
 	   //If we have no search terms and this is for RWG, just return the top level
 	   if ((processedSearchTerms == null || processedSearchTerms.size() == 0) && params.page.equals('RWG')) {
+		   searchLog += "No search terms found - returning all programs"
+		   session['searchLog'] = searchLog
 		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null).folders])
 		   return
 	   }
@@ -460,26 +467,27 @@ class RWGController {
 	   /*
 	    * Run the search!
 	    */
-	   def combinedResult = solrFacetService.getCombinedResults(processedSearchTerms, params.page)
+	   def combinedResult = solrFacetService.getCombinedResults(processedSearchTerms, params.page, searchLog)
+	   session['searchLog'] = combinedResult.searchLog
 	   
 	   /**
 	    * Organize and display
 	    */
 	   if (params.page.equals('RWG')) {
-		   session['folderSearchList'] = combinedResult
-		   
+		   session['folderSearchList'] = combinedResult.paths
 		   def folderContents = fmFolderService.getFolderContents(null)
 		   
-		   if (combinedResult) {
-			   def folderSearchString = combinedResult.join(",") + "," //Extra , - used to identify leaves
-			   render(template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString, auto: true])
+		   if (combinedResult.paths) {
+			   def folderSearchString = combinedResult.paths.join(",") + "," //Extra , - used to identify leaves
+			   session['searchLog'] += "Final folder string: " + folderSearchString
+			   render (template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString, auto: true])
 		   }
 		   else {
 			   render(template:'/fmFolder/noResults')
 		   }
 	   }
 	   else {
-		   render combinedResult as JSON
+		   render combinedResult.paths as JSON
 	   }	   
    }
 

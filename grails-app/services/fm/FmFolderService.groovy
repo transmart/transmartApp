@@ -30,6 +30,8 @@ import org.apache.commons.io.FileUtils;
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
+import com.recomdata.util.FolderType;
+
 class FmFolderService {
 
 	boolean transactional = true;
@@ -330,6 +332,22 @@ class FmFolderService {
 		}
 		 
 		return [folders: folders, files: parent?.fmFiles]
+	}
+	
+	def getAssociatedAccession(fmFolder) {
+		//Walk up the tree to find the study accession for this folder
+		if (!fmFolder) {
+			return null
+		}
+		
+		if (fmFolder.folderType.equals(FolderType.STUDY.name())) {
+			def experiment = FmFolderAssociation.findByFmFolder(fmFolder)?.getBioObject()
+			log.error("No experiment associated with study folder: " + fmFolder.folderFullName)
+			return experiment?.accession
+		}
+		else {
+			getAssociatedAccession(fmFolder.parent)
+		}
 	}
 	
 }

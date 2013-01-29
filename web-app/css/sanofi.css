@@ -454,6 +454,18 @@ table.menuDetail th.menuVisited {
 	height: 500px;
 }
 
+#search-explain {
+	font-size: 8pt;
+	font-family: Verdana, Arial, sans-serif;
+	position: absolute;
+	right: 20px;
+	width: 600px;
+	height: 90%;
+	top: 5%;
+	display: block;
+	color: black;
+}
+
 .exporttable td {
 	padding: 4px;
 	border-bottom: 1px solid #DDD;	
