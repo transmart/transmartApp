@@ -1,0 +1,16 @@
+transmart.log*
+transmartApp.log*
+null.log*
+System.out
+.buildpath
+.classpath
+.settings
+.project
+.idea
+*.iml
+target-eclipse/
+target/
+.svn/
+tempImages/
+bin/
+bin/*
