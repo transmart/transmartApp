@@ -47,16 +47,16 @@
 			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name())}">
 		 		<span name="${folder.id}" class="greybutton buttonicon addstudy">Add new study</span>
 			</g:if>
+		
+			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())}">
+				<span name="${folder.id}" class="greybutton buttonicon addassay">Add new assay</span>
+				<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
+			</g:if>
+			
+			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.FOLDER.name()) || folder.folderType.equalsIgnoreCase(FolderType.ASSAY.name()) || folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
+				<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
+			</g:if>
 		</sec:ifAnyGranted>
-		
-		<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())}">
-			<span name="${folder.id}" class="greybutton buttonicon addassay">Add new assay</span>
-			<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
-		</g:if>
-		
-		<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.FOLDER.name()) || folder.folderType.equalsIgnoreCase(FolderType.ASSAY.name()) || folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
-			<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
-		</g:if>
 	</div>
 	<h3 class="rdc-h3">
 		<g:if test="${bioDataObject?.hasProperty('title')}">
@@ -109,15 +109,10 @@
                         params="[eleId:overlayDiv, folderId:folder?.id]" 
                         before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">--%>
                   
-                  <%-- Restrict edits to administrators if this is a PROGRAM or STUDY --%>
-                  <g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name())}">
-	                  <sec:ifAnyGranted roles="ROLE_ADMIN">
-	                  	<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
-	                  </sec:ifAnyGranted>
-                  </g:if>
-                  <g:else>
-					<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
-                  </g:else>
+                  <%-- Restrict edits to administrators --%>
+                  <sec:ifAnyGranted roles="ROLE_ADMIN">
+                  	<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
+                  </sec:ifAnyGranted>
                   <%-- </g:remoteLink>--%>
                 </g:if>
                 </th>
