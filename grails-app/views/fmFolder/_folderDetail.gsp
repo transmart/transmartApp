@@ -71,7 +71,7 @@
 	</h3>
 </div>
 <g:if test="${bioDataObject?.hasProperty('description')}">
-<div style="line-height:14px;font-family:arial, ��tahoma, ��helvetica, ��sans-serif; font-size: 12px;">
+<div style="line-height:14px;font-family:arial, tahoma, helvetica, sans-serif; font-size: 12px;">
  <g:if test="${bioDataObject?.description?.length() > 325000}">
                        ${(bioDataObject?.description)?.substring(0,324000)}&nbsp;&nbsp;
                        <a href=# >...See more</a>
@@ -82,7 +82,7 @@
 <div style="height:20px;"></div>
 </g:if>
 <g:elseif test="${bioDataObject?.hasProperty('longDescription')}">
-<div style="line-height:14px;font-family:arial, ��tahoma, ��helvetica, ��sans-serif; font-size: 12px;">
+<div style="line-height:14px;font-family:arial, tahoma, helvetica, sans-serif; font-size: 12px;">
  <g:if test="${bioDataObject?.longDescription?.length() > 325000}">
                        ${(bioDataObject?.longDescription)?.substring(0,324000)}&nbsp;&nbsp;
                        <a href=# >...See more</a>

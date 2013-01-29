@@ -36,7 +36,10 @@
 					</g:if>
 					<script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=${autoExpand}');</script>
 				</g:if>
-				<g:if test="${files?.size()> 0}">
+				
+				<g:set var="files" value="${folder.fmFiles}" />
+				
+				<g:if test="${files?.size() > 0}">
 		            <tr>
 		                <td class="foldertitle">
 		                    <span class="result-document-count"><i>Documents (${files.size()})</i></span>                   

@@ -419,7 +419,7 @@ class FmFolderController {
 		def folderSearchList = session['folderSearchList']
 		def folderSearchString = folderSearchList ? folderSearchList.join(",") + "," : "" //Extra , - used to identify leaves
 		
-		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString, auto: auto])
+		render(template:'folders', model: [folders: folderContents, folderSearchString: folderSearchString, auto: auto])
 	}
 
 	/**

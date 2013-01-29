@@ -460,7 +460,7 @@ class RWGController {
 	   if ((processedSearchTerms == null || processedSearchTerms.size() == 0) && params.page.equals('RWG')) {
 		   searchLog += "No search terms found - returning all programs"
 		   session['searchLog'] = searchLog
-		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null).folders])
+		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null)])
 		   return
 	   }
 	   
@@ -480,7 +480,7 @@ class RWGController {
 		   if (combinedResult.paths) {
 			   def folderSearchString = combinedResult.paths.join(",") + "," //Extra , - used to identify leaves
 			   session['searchLog'] += "Final folder string: " + folderSearchString
-			   render (template:'/fmFolder/folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString, auto: true])
+			   render (template:'/fmFolder/folders', model: [folders: folderContents, folderSearchString: folderSearchString, auto: true])
 		   }
 		   else {
 			   render(template:'/fmFolder/noResults')

@@ -331,7 +331,7 @@ class FmFolderService {
 			order('folderName', 'asc')
 		}
 		 
-		return [folders: folders, files: parent?.fmFiles]
+		return folders
 	}
 	
 	def getAssociatedAccession(fmFolder) {
