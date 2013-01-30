@@ -72,6 +72,8 @@ class DatasetExplorerController {
 				rwgSearchOperators = "";
 			}
 			
+			def globalOperator = session['globalOperator'];
+			
 			//Grab i2b2 credentials from the config file
 			def i2b2Domain = grailsApplication.config.com.recomdata.i2b2.subject.domain
 			def i2b2ProjectID = grailsApplication.config.com.recomdata.i2b2.subject.projectid
@@ -96,6 +98,7 @@ class DatasetExplorerController {
 													i2b2Password: i2b2Password,
 													rwgSearchFilter: rwgSearchFilter,
 													rwgSearchOperators: rwgSearchOperators,
+													globalOperator: globalOperator,
 													debug: params.debug]) 
     		}
 }
