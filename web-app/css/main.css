@@ -846,10 +846,6 @@ select.jubselect {
 	background-image:url(../images/folder-minus.gif);
 }
 
-.feedbackbutton {
-	background-image:url(../images/feedback.png) !important;
-}
-
 /* ExtJS customizations */
 
 .ext-ie .x-form-text {
@@ -924,11 +920,6 @@ select.jubselect {
 .contextHelpBtn {
 	background-image:url(../images/help/helpicon_gray.jpg ) !important;
 	color:#ff0000;	
-}
-
-.feedbackBtn {
-    background-image:url(../images/feedback.png ) !important;
-    color:#ff0000;
 }
 
 .blankNode {

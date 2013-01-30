@@ -5,7 +5,6 @@ System.out
 .buildpath
 .classpath
 .settings
-.project
 .idea
 *.iml
 target-eclipse/

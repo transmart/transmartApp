@@ -49,13 +49,14 @@ grails.project.dependency.resolution = {
     dependencies {
 		// specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 		runtime 'postgresql:postgresql:9.0-801.jdbc4'
+		compile 'antlr:antlr:2.7.7'
     }
 
     plugins {
         compile ":hibernate:$grailsVersion"
         build ":tomcat:$grailsVersion"
         compile ":quartz:1.0-RC2"
-        build ":rdc-rmodules:0.2"
+        //build ":rdc-rmodules:0.2"
         compile ":spring-security-core:1.2.7.1"
         build ":build-info:1.1"
 		runtime ":prototype:1.0"
