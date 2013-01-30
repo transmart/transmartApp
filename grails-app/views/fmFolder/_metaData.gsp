@@ -5,7 +5,6 @@
 <div>  
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
         <g:each in="${metaDataTagItems}" status="i" var="amTagItem">
-          <g:if test="${amTagItem.editable}">
             <tr>
                 <td valign="top" align="right" class="name">${amTagItem.displayName} 
                 <g:if test="${amTagItem.required == true}"><g:requiredIndicator/></g:if>:
@@ -14,11 +13,7 @@
              
               <!-- FIXED -->
                 <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
-					<g:if test="${amTagItem.editable == false}">
-						${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}
-                	</g:if>
-                	<g:else>
-	                	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
+						<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
 	           			<g:select from="${ConceptCode.findAll('from ConceptCode where codeTypeName=? order by codeName',[amTagItem.codeTypeName])}"	
 		                	name="${amTagItem.tagItemAttr}"   optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	
 						</g:if>
@@ -38,7 +33,7 @@
 	        	        <g:else>
 	        	        ERROR -- Unrecognized tag item subtype
 	        	        </g:else>
-	        	    </g:else>    
+	        	        
                 </g:if>
 				<g:elseif test="${amTagItem.tagItemType == 'CUSTOM'}">
                 	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
@@ -71,7 +66,6 @@
 				</g:else>
                 </td>
             </tr>
-         </g:if>
         </g:each>
 </g:if> 
 </div>
