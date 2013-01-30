@@ -1,0 +1,11 @@
+tranSMART - translational medicine data mart
+ 
+Copyright 2008-2011 Janssen Research & Development, LLC.
+ 
+This product includes software developed at Janssen Research & Development, LLC.
+
+This product includes open source software developed by SprintSource, a division of VMWare (http://www.springsource.com)
+
+This product includes open source software developed by Sencha (http://www.sencha.com/)
+
+
