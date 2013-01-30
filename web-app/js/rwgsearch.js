@@ -191,6 +191,9 @@ function showSearchTemplate()	{
 	var firstItem = true;
 	var needsToggle = false;
 	var geneTerms = 0;
+	
+	var globalLogicOperator = "AND";
+	if (jQuery('#globaloperator').hasClass("or")) { globalLogicOperator = "OR" }
 
 	// iterate through categories array and move all the "gene" categories together at the top 
 	var newCategories = new Array();
@@ -266,9 +269,9 @@ function showSearchTemplate()	{
 		                	}
 		                } 
 						
-		                // if previous category is a "gene" category, don't show AND
+		                // if previous category is a "gene" category, don't show operator
 		                if (!suppressAnd)  {
-							searchHTML = searchHTML + "<span class='category_join'>AND<span class='h_line'></span></span>";  			// Need to add a new row and a horizontal line
+							searchHTML = searchHTML + "<span class='category_join'>" + globalLogicOperator + "<span class='h_line'></span></span>";  			// Need to add a new row and a horizontal line
 					    }
 		                else  {
 							searchHTML = searchHTML + "<br/>";  				                	
@@ -278,7 +281,7 @@ function showSearchTemplate()	{
 					firstItem = false;
 				}
 				else {
-					searchHTML = searchHTML + "<span class='spacer'>| </span><span class=term>"+ fields[1] + startATag + tagID + endATag + imgTag +"</span> ";
+					searchHTML = searchHTML + "<span class='spacer'>" + currentSearchOperators[i] + " </span><span class=term>"+ fields[1] + startATag + tagID + endATag + imgTag +"</span> ";
 					needsToggle = true;
 				}			
 			}
@@ -319,6 +322,9 @@ function showSearchResults()	{
 
 //Method to load the facet results in the search tree and populate search results panel
 function showFacetResults()	{
+	
+	var globalLogicOperator = "AND";
+	if (jQuery('#globaloperator').hasClass("or")) { globalLogicOperator = "OR" }
 	
 	var savedSearchTermsArray;
 	var savedSearchTerms;
@@ -424,15 +430,16 @@ function showFacetResults()	{
     }
     var operatorString = operators.join(";");
     
+    queryString += "&searchTerms=" + encodeURIComponent(savedSearchTerms) + "&searchOperators=" + operatorString + "&globaloperator=" + globalLogicOperator;
+    
     if (searchPage == 'RWG') {
 		jQuery.ajax({
 			url:facetResultsURL,
-			data: queryString + "&searchTerms=" + encodeURIComponent(savedSearchTerms) + "&searchOperators=" + operatorString + "&page=RWG",
+			data: queryString + "&page=RWG",
 			success: function(response) {
 	
 					jQuery('#results-div').removeClass('ajaxloading').html(response);
 					checkSearchLog();
-	
 			},
 			error: function(xhr) {
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
@@ -450,7 +457,7 @@ function showFacetResults()	{
     	else {
 			jQuery.ajax({
 				url:facetResultsURL,
-				data: queryString + "&searchTerms=" + encodeURIComponent(savedSearchTerms) + "&searchOperators=" + operatorString + "&page=datasetExplorer",
+				data: queryString + "&page=datasetExplorer",
 				success: function(response) {
 						searchByTagComplete(response);
 						checkSearchLog();
@@ -729,15 +736,29 @@ jQuery(document).ready(function() {
 	});
 	
     jQuery('#box-search').on('click', '.andor', function() {
-    	//Alter this index of the current search operators, then redisplay
-	    if (jQuery(this).hasClass("or")) {
-	    	currentSearchOperators[jQuery(this).attr('name')] = 'and'
-	    }
-	    else {
-	    	currentSearchOperators[jQuery(this).attr('name')] = 'or'
-	    }
-	    showSearchTemplate();
-	    showSearchResults();
+    	
+    	if (jQuery(this).attr('id') == 'globaloperator') {
+    		//For global switch, just alter the class - this is picked up later
+    	    if (jQuery(this).hasClass("or")) {
+    	    	jQuery(this).removeClass("or").addClass("and");
+    	    }
+    	    else {
+    	    	jQuery(this).removeClass("and").addClass("or");
+    	    }
+    	    showSearchTemplate();
+    	    showSearchResults();
+    	}
+    	else {
+    		//For individual categories, alter this index of the current search operators, then redisplay
+		    if (jQuery(this).hasClass("or")) {
+		    	currentSearchOperators[jQuery(this).attr('name')] = 'and'
+		    }
+		    else {
+		    	currentSearchOperators[jQuery(this).attr('name')] = 'or'
+		    }
+		    showSearchTemplate();
+		    showSearchResults();
+    	}
 	});
 
 

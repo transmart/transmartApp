@@ -50,7 +50,7 @@ class SolrFacetService {
     boolean transactional = true
 	def searchLog = [] //Search log for debug only! Will be shared across all sessions
 	
-	def getCombinedResults(categoryList, page, passedInSearchLog) {
+	def getCombinedResults(categoryList, page, globalOperator, passedInSearchLog) {
 		
 		String solrRequestUrl = createSOLRQueryPath()
 		
@@ -148,9 +148,9 @@ class SolrFacetService {
 			searchLog += "Category result IDs: " + categoryResultIds
 			
 			//If the master searchResultsIds list is empty, copy this in - otherwise intersect.
-			//If we have nothing for ANY search category, return nothing immediately!
-			if (!categoryResultIds) {
-				searchLog += "No results for this category - stopping."
+			//If we have nothing for a search category during an AND search, return nothing immediately!
+			if (!categoryResultIds && globalOperator.equals("AND")) {
+				searchLog += "No results for this category during an AND search - stopping."
 				return [paths: [], searchLog: searchLog]
 			}
 			
@@ -160,7 +160,14 @@ class SolrFacetService {
 			}
 			else {
 				searchLog += "Search results so far are these IDs: " + searchResultIds
-				searchResultIds = searchResultIds.intersect(categoryResultIds)
+				if (globalOperator.equals("AND")) {
+					searchLog += "Intersecting for AND search."
+					searchResultIds = searchResultIds.intersect(categoryResultIds)
+				}
+				else {
+					searchLog += "Combining for OR search."
+					searchResultIds = searchResultIds + categoryResultIds
+				}
 				searchLog += "Search results after combining: " + searchResultIds
 			}
 			

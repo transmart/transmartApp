@@ -66,7 +66,9 @@ class RWGController {
 			rwgSearchOperators = "";
 		}
 		
-		return [rwgSearchFilter: rwgSearchFilter, rwgSearchOperators: rwgSearchOperators, exportCount: exportList?.size(), debug: params.debug];
+		def globalOperator = session['globalOperator'];
+		
+		return [rwgSearchFilter: rwgSearchFilter, rwgSearchOperators: rwgSearchOperators, globalOperator: globalOperator, exportCount: exportList?.size(), debug: params.debug];
 	}
 	
 	def ajaxWelcome = {
@@ -386,6 +388,7 @@ class RWGController {
 	   //Search string is saved in session (for passing between RWG and Dataset Explorer pages)
 	   def searchString = params.searchTerms
 	   def searchOperatorsString = params.searchOperators
+	   def globalOperator = params.globaloperator
 	   
 	   def searchTerms = searchString?.split(",,,")
 	   if (searchTerms != null && searchTerms[0] == "") {searchTerms = null;}
@@ -395,6 +398,7 @@ class RWGController {
 	   
 	   session['rwgSearchFilter'] = searchTerms
 	   session['rwgSearchOperators'] = searchOperators
+	   session['globalOperator'] = globalOperator
 	   def searchLog = ["Starting a new search"]
 	   
 	   /*
@@ -467,7 +471,7 @@ class RWGController {
 	   /*
 	    * Run the search!
 	    */
-	   def combinedResult = solrFacetService.getCombinedResults(processedSearchTerms, params.page, searchLog)
+	   def combinedResult = solrFacetService.getCombinedResults(processedSearchTerms, params.page, globalOperator, searchLog)
 	   session['searchLog'] = combinedResult.searchLog
 	   
 	   /**
