@@ -103,7 +103,7 @@ class MetacoreEnrichmentService {
 	}
 	
 
-	// cohortGeneList = [ list1, list2 ], where list is just a list of EntrezGene IDs
+	// cohortGeneList = [ IdType: id_type, Data: [list1, list2] ], where list is just a list of EntrezGene IDs
 	// metacoreParams = [ "baseUrl": url, "login": login, "password": password ]
     def getEnrichmentByMaps(cohortGeneLists, metacoreParams) {
 		def res
