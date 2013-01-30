@@ -350,4 +350,16 @@ class FmFolderService {
 		}
 	}
 	
+	def getPath(fmFolder) {
+		//Get the full path of a folder by gathering folder names
+		def names = [fmFolder.folderName]
+		while (fmFolder.parent != null) {
+			fmFolder = fmFolder.parent
+			names.add(0, fmFolder.folderName)
+		}
+		
+		def path = names.join("/")
+		return path
+	}
+	
 }

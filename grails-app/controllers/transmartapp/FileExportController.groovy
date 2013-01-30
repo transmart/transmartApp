@@ -21,11 +21,14 @@
 package transmartapp
 
 import fm.FmFile
+import fm.FmFolderService
 
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream
 
 class FileExportController {
+	
+	def fmFolderService
 
     def add = {
 		def paramMap = params
@@ -73,7 +76,7 @@ class FileExportController {
 		for (id in exportList) {
 			FmFile f = FmFile.get(id)
 			if (f) {
-				files.push([id: f.id, fileType: f.fileType, displayName: f.displayName, folder: f.folder.folderFullName])
+				files.push([id: f.id, fileType: f.fileType, displayName: f.displayName, folder: fmFolderService.getPath(f.folder)])
 			}
 		}
 		files.sort { a, b ->
@@ -106,7 +109,7 @@ class FileExportController {
 				FmFile fmFile = FmFile.get(f)
 				File file = new File(fmFile.filestoreLocation + "/" + fmFile.filestoreName)
 				if (file.exists()) {
-					String dirName = fmFile.folder.folderFullName
+					String dirName = fmFolderService.getPath(fmFile.folder)
 					if (dirName.startsWith("/") || dirName.startsWith("\\")) { dirName = dirName.substring(1) } //Lose the first separator character, this would cause a blank folder name in the zip
 					def fileEntry = new ZipEntry(dirName + "/" + fmFile.displayName)
 					zipStream.putNextEntry(fileEntry)
@@ -138,10 +141,6 @@ class FileExportController {
 			
 			zipStream.flush();
 			zipStream.close();
-			
-			//byte[] fileBytes = fileZip.getBytes();
-	
-			//response.outputStream = zipStream
 		}
 		catch (Exception e) {
 			render(status: 500, text: e.getMessage())
