@@ -210,15 +210,31 @@ class FmFolderController {
 						{
 							//Look for new value by tag item ID
 							log.info "SAVING CUSTOM::FREETEXT == " + newValue
-							AmTagValue newTagValue = new AmTagValue(value: newValue)
-							newTagValue.save(flush: true)
+								
 							// Save the new tag value
 							if (newValue != null && newValue != "")
 							{
-								//Create a new AmTagValue and point to it
-								log.info("SAVING AmTagAssociation = CUSTOM " + folder.getUniqueId() + " ")// + newTagValue.getUniqueId() + " " + tagItem.id)
-								AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
-								ata.save(flush: true)
+								AmTagValue newTagValue = new AmTagValue(value: newValue)
+								if(newTagValue.save(flush: true))
+								{
+										//Create a new AmTagValue and point to it
+									log.info("SAVING AmTagAssociation = CUSTOM " + folder.getUniqueId() + " ")// + newTagValue.getUniqueId() + " " + tagItem.id)
+									AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
+									if(ata.save(flush: true))
+									{
+										ata.errors.each
+										{
+											log.error it
+										}
+									}
+								}
+								else
+								{
+									newTagValue.errors.each
+									{
+										log.error it
+									}
+								}
 							}
 	
 						}
@@ -226,18 +242,23 @@ class FmFolderController {
 						{
 							//Look for new value by tag item ID
 							log.info "SAVING CUSTOM::PICKLIST == " + newValue
-							log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id
-							AmTagAssociation ata = AmTagAssociation.find ("from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-							if (ata)
+							// Save the new tag value
+							if (newValue != null && newValue != "")
 							{
-								ata.delete()
-							}
-							
-							ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
+						
+								log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id
+								AmTagAssociation ata = AmTagAssociation.find ("from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+								if (ata)
+								{
+									ata.delete()
+								}
 								
-							if (!ata.save(flush:true)) {
-								ata.errors.each {
-									println it
+								ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
+									
+								if (!ata.save(flush:true)) {
+									ata.errors.each {
+										println it
+									}
 								}
 							}
 						}
@@ -321,7 +342,8 @@ class FmFolderController {
 		if (fmFolderInstance.save(flush: true)) {
 			log.info "Assay saved"
 			createAmTagTemplateAssociation(FolderType.ASSAY.name(), fmFolderInstance)
-
+			saveMetaData(fmFolderInstance, null, params)
+			
 			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
 			render result as JSON
 			return
@@ -438,30 +460,41 @@ class FmFolderController {
 
 		if (fmFolderInstance.save(flush: true)) 
 		{
-			log.info "Study saved"
+			log.info "Study folder saved"
   			createAmTagTemplateAssociation(FolderType.STUDY.name(), fmFolderInstance)
+			
+			log.info "Study folder association saved"
 			def bioDataObject = new bio.Experiment()
 			bioDataObject.title = fmFolderInstance.folderName
 			bioDataObject.description = fmFolderInstance.description
 		//	bioDataObject.accession = fmFolderInstance.folderName
-			log.info "bioDataObject.accession  = " + bioDataObject.accession 
+		//	log.info "bioDataObject.accession  = " + bioDataObject.accession 
 			bioDataObject.type="Experiment"
 			bioDataObject = saveMetaData(fmFolderInstance, bioDataObject, params)
 			BioData bioData = BioData.get(bioDataObject.id)
-			FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.Experiment",fmFolder:fmFolderInstance)
-			if(ffa.save(flush: true))
-			{
-				def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
-				render result as JSON
-				return
+			if(!bioData){
+				 log.error "Biodata for " + bioDataObject.id + " is not found"
 			}
-			else
-			{
-				ffa.errors.each {
-					log.error it
-				} 
+			else{
+				log.info "Study experiment saved"
+				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.Experiment",fmFolder:fmFolderInstance)
+				if(ffa.save(flush: true))
+				{
+					log.info "Study experiment folder association saved"
+					
+					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
+					render result as JSON
+					return
+				}
+				else
+				{
+					ffa.errors.each {
+						log.error it
+					} 
+				}
+				
 			}
-	
+
 		}
 		else 
 		{
@@ -1133,16 +1166,32 @@ class FmFolderController {
 						{
 							//Look for new value by tag item ID
 							log.info "SAVING CUSTOM::FREETEXT == " + newValue
-							AmTagValue newTagValue = new AmTagValue(value: newValue)
-							newTagValue.save(flush: true)
-							// Save the new tag value
+														// Save the new tag value
 							if (newValue != null && newValue != "")
 							{
-								//Create a new AmTagValue and point to it
-								log.info("SAVING AmTagAssociation = CUSTOM " + folder.getUniqueId() + " ")// + newTagValue.getUniqueId() + " " + tagItem.id)
-								AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
-								ata.save(flush: true)
+								AmTagValue newTagValue = new AmTagValue(value: newValue)
+								if(newTagValue.save(flush: true))
+								{
+										//Create a new AmTagValue and point to it
+									log.info("SAVING AmTagAssociation = CUSTOM " + folder.getUniqueId() + " ")// + newTagValue.getUniqueId() + " " + tagItem.id)
+									AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
+									if(ata.save(flush: true))
+									{
+										ata.errors.each
+										{
+											log.error it
+										}
+									}
+								}
+								else
+								{
+									newTagValue.errors.each
+									{
+										log.error it
+									}
+								}
 							}
+
 	
 						}
 						else if(tagItem.tagItemSubtype.equals('PICKLIST'))
@@ -1150,18 +1199,21 @@ class FmFolderController {
 							//Look for new value by tag item ID
 							log.info "SAVING CUSTOM::PICKLIST == " + newValue
 							log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id
-							AmTagAssociation ata = AmTagAssociation.find ("from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-							if (ata)
+							if (newValue != null && newValue != "")
 							{
-								ata.delete()
-							}
-							
-							ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
+								AmTagAssociation ata = AmTagAssociation.find ("from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+								if (ata)
+								{
+									ata.delete()
+								}
 								
-								
-							if (!ata.save(flush:true)) {
-								ata.errors.each {
-									println it
+								ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
+									
+									
+								if (!ata.save(flush:true)) {
+									ata.errors.each {
+										println it
+									}
 								}
 							}
 						}
