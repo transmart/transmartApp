@@ -132,7 +132,7 @@
             		jQuery.ajax({
 						url:saveAssayURL + "?" + serializedForm,	
 						success: function(response) {
-							showSearchResults();
+							updateFolder(response.parentId);
 							jQuery('#createAssayOverlay').fadeOut();
 							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
 						},
@@ -154,7 +154,7 @@
             		jQuery.ajax({
 						url:saveFolderURL + "?" + serializedForm,	
 						success: function(response) {
-							showSearchResults();
+							updateFolder(response.parentId);
 							jQuery('#createFolderOverlay').fadeOut();
 							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
 						},
@@ -176,7 +176,7 @@
             		jQuery.ajax({
 						url:saveStudyURL + "?" + serializedForm,	
 						success: function(response) {
-							showSearchResults();
+							updateFolder(response.parentId);
 							jQuery('#createStudyOverlay').fadeOut();
 							showDetailDialog('/transmartApp/fmFolder/folderDetail/' + response.id);
 						},

@@ -133,7 +133,6 @@
                 <td valign="top" align="left" class="columnvalue" width="60%">
             
             <!-- FIXED -->
-            
                  <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
                  	<g:set var="fieldValue" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
                    	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">

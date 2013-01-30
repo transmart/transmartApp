@@ -23,8 +23,10 @@ import annotation.AmTagAssociation;
 import annotation.AmTagDisplayValue;
 import annotation.AmTagItem;
 import annotation.AmTagTemplate;
+import annotation.AmTagTemplateAssociation
 import annotation.AmTagValue;
 
+import bio.BioData
 import bio.ConceptCode
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
@@ -88,11 +90,12 @@ class FmFolderController {
 	def createAssay = {
 		log.info "createAssay called"
 		log.info "params = " + params
+	
 		//log.info "** action: expDetail called!"
 		
 		def folder = new FmFolder()
 		folder.folderType = FolderType.ASSAY.name()
-		def parentFolder = FmFolder.getAt(params.folderId)
+		def parentFolder = FmFolder.get(params.folderId)
 		folder.parent = parentFolder
 		def bioDataObject = folder
 		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.ASSAY.name())
@@ -131,7 +134,7 @@ class FmFolderController {
 		folder.folderType = FolderType.STUDY.name()
 		def parentFolder = FmFolder.get(params.folderId)
 		folder.parent = parentFolder
-		def bioDataObject = folder
+		def bioDataObject = new bio.Experiment()
 		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.STUDY.name())
 		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 		def title = "Create Study"
@@ -152,7 +155,138 @@ class FmFolderController {
 			render(template: "createProgram", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 		}
 	
+		
+	private createAmTagTemplateAssociation(folderType, folder)
+	{
+		def amTagTemplate = AmTagTemplate.findByTagTemplateType(folderType)
+		AmTagTemplateAssociation atta = new AmTagTemplateAssociation(tagTemplateId:amTagTemplate.id, objectUid:folder.getUniqueId())
+		
+		if(!atta.save(flush:true))
+		{
+			atta.errors.each {
+				log.error it
+			}
+		}
+	}
+	
+	private Object saveMetaData(FmFolder folder, bioDataObject, params)
+	{
+		log.info "saveMetaData called"
+		def paramMap = params
+		def folderId = folder.id
+		def amTagTemplate
+		List<AmTagItem> metaDataTagItems
+		
+			if(folder)
+			{
+				def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
+				
+				if(!bioDataObject)
+				{
+					bioDataObject = getBioDataObject(folder)
+				}
+				
+				amTagTemplate = AmTagTemplate.findByTagTemplateType(folder.folderType)
+				if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
+			    metaDataTagItems = amTagItemService.getEditableItems(amTagTemplate.id)
+		
+				log.info metaDataTagItems
+				//Use metaDataTagItems to update fields
+				for (tagItem in metaDataTagItems) {
+					log.info tagItem.id + " " + tagItem.tagItemType + " " + tagItem.tagItemSubtype
+					def newValue = null
+					if (tagItem.tagItemType.equals('FIXED')) {
+						newValue = params."${tagItem.tagItemAttr}"
+						log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + newValue
+						if (newValue != null) {
+							bioDataObject."${tagItem.tagItemAttr}" = newValue
+						}
+					}
+					else if (tagItem.tagItemType.equals('CUSTOM'))
+					{
+						newValue = params."amTagItem_${tagItem.id}"
+						if(tagItem.tagItemSubtype.equals('FREETEXT'))
+						{
+							//Look for new value by tag item ID
+							log.info "SAVING CUSTOM::FREETEXT == " + newValue
+							AmTagValue newTagValue = new AmTagValue(value: newValue)
+							newTagValue.save(flush: true)
+							// Save the new tag value
+							if (newValue != null && newValue != "")
+							{
+								//Create a new AmTagValue and point to it
+								log.info("SAVING AmTagAssociation = CUSTOM " + folder.getUniqueId() + " ")// + newTagValue.getUniqueId() + " " + tagItem.id)
+								AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
+								ata.save(flush: true)
+							}
+	
+						}
+						else if(tagItem.tagItemSubtype.equals('PICKLIST'))
+						{
+							//Look for new value by tag item ID
+							log.info "SAVING CUSTOM::PICKLIST == " + newValue
+							log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id
+							AmTagAssociation ata = AmTagAssociation.find ("from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+							if (ata)
+							{
+								ata.delete()
+							}
+							
+							ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
+								
+							if (!ata.save(flush:true)) {
+								ata.errors.each {
+									println it
+								}
+							}
+						}
+						else
+						{
+							// TODO: throw an exception
+							// unrcognized subtype
+						}
+						
 
+					}
+					else
+					{
+						newValue = params."amTagItem_${tagItem.id}"
+						log.info "SAVING BUSINESS OBJECT == " + newValue
+						 
+					}
+					
+				}
+				
+				if (bioDataObject.save(flush: true))
+				{
+					bioDataObject.save(flush: true)
+					log.info "bioDataObject.id = " + bioDataObject.id + " Meta data saved == " + bioDataObject.getUniqueId()
+					
+
+					/*
+					if(!bioDataObject.getUniqueId())
+					{
+						BioData bd =new BioData(id:bioDataObject.id, type:"BIO_EXPERIMENT", uniqueId:"WVET:"+bioDataObject.id)
+						if (!bd.save(flush:true)) 
+						{
+							bd.errors.each {
+								println it
+							}
+						}
+					}
+					*/
+				}
+				else
+				{
+					bioDataObject.errors.each {
+						log.error it
+					}
+				}
+
+			}	
+			
+			return bioDataObject
+	}
 	
     def save = {
 		log.info params
@@ -168,14 +302,33 @@ class FmFolderController {
 	def saveAssay = {
 		log.info "saveAssay called"
 		log.info params
+		def parentFolder = FmFolder.get(params.parentId)
+		log.info("parentFolder = " + parentFolder)
 		def fmFolderInstance = new FmFolder(params)
+		if(parentFolder)
+		{
+			fmFolderInstance.folderFullName = "folder"
+			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
+			fmFolderInstance.folderType = FolderType.ASSAY.name()
+			fmFolderInstance.parent = parentFolder
+		}
+		else
+		{
+			log.error "Parent folder is null"
+		}
+
 		if (fmFolderInstance.save(flush: true)) {
 			log.info "Assay saved"
-			def result = [id: fmFolderInstance.id]
+			createAmTagTemplateAssociation(FolderType.ASSAY.name(), fmFolderInstance)
+
+			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
 			render result as JSON
 			return
 		}
 		else {
+			fmFolderInstance.errors.each {
+				log.error it
+			}
 			render(view: "create", model: [fmFolderInstance: fmFolderInstance])
 		}
 	}
@@ -185,13 +338,12 @@ class FmFolderController {
 		log.info params
 		def parentFolder = FmFolder.get(params.parentId)
 		log.info("parentFolder = " + parentFolder)
-	
 		def fmFolderInstance = new FmFolder(params)
 		if(parentFolder)
 		{
-//			fmFolderInstance.folderFullName = parentFolder.folderFullName + "\\" + fmFolderInstance.folderName
+			fmFolderInstance.folderFullName = "folder"
 			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
-			fmFolderInstance.folderType = FolderType.STUDY.name()
+			fmFolderInstance.folderType = FolderType.FOLDER.name()
 			fmFolderInstance.parent = parentFolder
 		}
 		else
@@ -202,12 +354,19 @@ class FmFolderController {
 		log.info fmFolderInstance
 		if (fmFolderInstance.save(flush: true)) {
 			log.info "Folder saved"
-			def result = [id: fmFolderInstance.id]
+			createAmTagTemplateAssociation(FolderType.FOLDER.name(), fmFolderInstance)
+			saveMetaData(fmFolderInstance, null, params)
+			
+			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
 			render result as JSON
 			return
 		}
 		else {
 			log.error "Saved folder failed"
+			fmFolderInstance.errors.each {
+				log.error it
+			}
+
 			def bioDataObject = fmFolderInstance
 			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.FOLDER.name())
 			if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
@@ -216,12 +375,14 @@ class FmFolderController {
 			render(template: "createFolder", model:[bioDataObject:bioDataObject, folder:fmFolderInstance, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 		}
 	}
+	
 
 	def saveProgram = {
 		log.info "saveProgram called"
 		log.info params
 		def fmFolderInstance = new FmFolder(params)
 //		fmFolderInstance.folderFullName = "\\" + fmFolderInstance.folderName
+		fmFolderInstance.folderFullName = "program"
 		fmFolderInstance.folderLevel = 0
 		
 		log.info(fmFolderInstance)
@@ -230,6 +391,9 @@ class FmFolderController {
 			log.info(fmFolderInstance)
 			log.info(fmFolderInstance.getUniqueId())
 			
+			// Save metadata
+			createAmTagTemplateAssociation(FolderType.PROGRAM.name(), fmFolderInstance)
+			saveMetaData(fmFolderInstance, null, params)
 			def result = [id: fmFolderInstance.id]
 			render result as JSON
 			return
@@ -238,6 +402,9 @@ class FmFolderController {
 		}
 		else {
 			log.error "Unable to save program"
+			fmFolderInstance.errors.each {
+				log.error it
+			}
 			
 			def folder = fmFolderInstance
 			folder.folderType = FolderType.PROGRAM.name()
@@ -248,20 +415,62 @@ class FmFolderController {
 		}
 	}
 
+	
 	def saveStudy = {
 		log.info "saveStudy called"
 		log.info params
+	
+		def parentFolder = FmFolder.get(params.parentId)
+		log.info("parentFolder = " + parentFolder)
 		def fmFolderInstance = new FmFolder(params)
-		if (fmFolderInstance.save(flush: true)) {
+		if(parentFolder)
+		{
+			fmFolderInstance.folderFullName = "study"
+			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
+			fmFolderInstance.folderType = FolderType.STUDY.name()
+			fmFolderInstance.parent = parentFolder
+		}
+		else
+		{
+			log.error "Parent folder is null"
+		}
+
+		if (fmFolderInstance.save(flush: true)) 
+		{
 			log.info "Study saved"
-			def result = [id: fmFolderInstance.id]
-			render result as JSON
-			return
+  			createAmTagTemplateAssociation(FolderType.STUDY.name(), fmFolderInstance)
+			def bioDataObject = new bio.Experiment()
+			bioDataObject.title = fmFolderInstance.folderName
+			bioDataObject.description = fmFolderInstance.description
+		//	bioDataObject.accession = fmFolderInstance.folderName
+			log.info "bioDataObject.accession  = " + bioDataObject.accession 
+			bioDataObject.type="Experiment"
+			bioDataObject = saveMetaData(fmFolderInstance, bioDataObject, params)
+			BioData bioData = BioData.get(bioDataObject.id)
+			FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.Experiment",fmFolder:fmFolderInstance)
+			if(ffa.save(flush: true))
+			{
+				def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
+				render result as JSON
+				return
+			}
+			else
+			{
+				ffa.errors.each {
+					log.error it
+				} 
+			}
+	
 		}
-		else {
-			render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+		else 
+		{
+			fmFolderInstance.errors.each {
+				log.error it
+			}
 		}
-	}
+		
+		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+    }
 
 	
     def showStudy = {
@@ -658,11 +867,26 @@ class FmFolderController {
 							def bioDataPropertyValue = bioDataObject[amTagItem.tagItemAttr]
 							if(amTagItem.tagItemSubtype == 'PICKLIST')
 							{
+								if(bioDataPropertyValue)
+								{
 								def cc = ConceptCode.findByUniqueId(bioDataPropertyValue)
-								bioDataDisplayValue = cc.codeName
-								
+								if(cc) 
+								{ 
+									bioDataDisplayValue = cc.codeName
+								}
+								else
+								{
+									 bioDataDisplayValue = ""
+								}
+								}
+								else
+								{
+									 bioDataDisplayValue = ""
+								}
+
 							}
-							else if(amTagItem.tagItemSubtype == 'PICKLIST')
+							
+							else if(amTagItem.tagItemSubtype == 'MULTIPICKLIST')
 							{
 								def cc = ConceptCode.findByUniqueId(bioDataPropertyValue)
 								bioDataDisplayValue = cc.codeName
@@ -703,14 +927,14 @@ class FmFolderController {
 	
 	private createDisplayString(tagValues)
 	{
-		log.info ("TAGVALUES == " + tagValues)
+//		log.info ("createDisplayString::TAGVALUES == " + tagValues)
 		
 		def displayValue = ""
 		def counter = 0
 						
 		tagValues.each
 		{
-			log.info("TAGVALUE = " + it)
+			log.info("createDisplayString::TAGVALUE = " + it)
 			displayValue += counter>0? ", " + it.displayValue : it.displayValue
 		}
 		
@@ -741,10 +965,11 @@ class FmFolderController {
 			if(folder)
 			{
 				bioDataObject = getBioDataObject(folder)
-				metaDataTagItems = getMetaDataItems(folder)
+				metaDataTagItems = getEditableMetaDataItems(folder)
 	
 				//If the folder is a study, check for subject-level data being available
-				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())) {
+				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) && bioDataObject!=null && bioDataObject.hasProperty("accession"))
+			   {
 					subjectLevelDataAvailable = ontologyService.checkSubjectLevelData(bioDataObject.accession)
 				}
 				// If the folder is a study then get the analysis and the assay
@@ -762,7 +987,7 @@ class FmFolderController {
 
 								subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
 								String gridData = createDataTable(subFolders, subFolders[0].folderType)
-								log.info gridData
+								// log.info gridData
 								jSONForGrids.add(gridData)
 								log.info "ADDING JSON GRID"
 						}
@@ -776,10 +1001,26 @@ class FmFolderController {
 		
 	}
 
-	private Object getMetaDataItems(folder)
+	private List<AmTagItem> getEditableMetaDataItems(folder)
 	{
 		def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
-		def metaDataTagItems
+		List<AmTagItem> metaDataTagItems
+		if(amTagTemplate)
+		{
+			metaDataTagItems = amTagItemService.getEditableItems(amTagTemplate.id)
+		}
+		else
+		{
+			log.error "Unable to find amTagTemplate for object Id = " + folder.getUniqueId()
+		}
+		
+		return metaDataTagItems
+	}
+
+		private List<AmTagItem> getMetaDataItems(folder)
+	{
+		def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+		List<AmTagItem> metaDataTagItems
 		if(amTagTemplate)
 		{
 			metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
@@ -854,70 +1095,88 @@ class FmFolderController {
 	def updateMetaData =
 	{
 		log.info "updateMetaData called"
+		log.info params
 		
 		def paramMap = params
 		def folderId = params.id
 		def amTagTemplate
-		def metaDataTagItems
+		List<AmTagItem> metaDataTagItems
 		def folder
 		def bioDataObject
 		if (folderId)
 		{
 			folder = FmFolder.get(folderId)
+			
 			if(folder)
 			{
-				def folderUniqueId = folder.getUniqueId()
 				def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
-				if(folderAssociation)
-				{
-					log.info "folderAssociation = " + folderAssociation
-					bioDataObject =folderAssociation.getBioObject()
-				}
-				else
-				{
-					log.error "Unable to find folderAssociation for folder Id = " + folder.id
-				}
-	
-				if(!bioDataObject)
-				{
-					log.info "Unable to find bio data object. Setting folder to the biodata object "
-					bioDataObject = folder
-				}
 				
-				amTagTemplate = amTagTemplateService.getTemplate(folderUniqueId)
-				if(amTagTemplate)
-				{
-					metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-				}
-				
+				bioDataObject = getBioDataObject(folder)
+				metaDataTagItems = getEditableMetaDataItems(folder)
+				log.info metaDataTagItems
 				//Use metaDataTagItems to update fields
 				for (tagItem in metaDataTagItems) {
+					log.info tagItem.id + " " + tagItem.tagItemType + " " + tagItem.tagItemSubtype
+					def newValue = null
 					if (tagItem.tagItemType.equals('FIXED')) {
-						def newValue = params."${tagItem.tagItemAttr}"
+						newValue = params."${tagItem.tagItemAttr}"
+						log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + newValue
 						if (newValue != null) {
 							bioDataObject."${tagItem.tagItemAttr}" = newValue
 						}
 					}
-					else if (tagItem.tagItemType.equals('CUSTOM') && tagItem.tagItemSubtype.equals('FREETEXT')) {
-						//Look for new value by tag item ID
-						def newValue = params."amTagItem_${tagItem.id}"
-						if (newValue != null) {
-							
-
-							//Create a new AmTagValue and point to it
-							def newTagValue = new AmTagValue(value: newValue)
-							newTagValue.save()
-							//TODO This is an awful way of generating UIDs and should be changed forthwith, posthaste, etc
-							/* Now done by the database
-							 * def newUid = newTagValue.id + ":" + newTagValue.value
-							AmData amData = new AmData(uniqueId: newUid, amDataType: 'AM_TAG_VALUE')
-							amData.id = newTagValue.id
-							amData.save()
-							*/
-							
-							AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folderUniqueId, objectUid: newUid, tagItemId: tagItem.id)
-							ata.save()
+					else if (tagItem.tagItemType.equals('CUSTOM'))
+					{
+						newValue = params."amTagItem_${tagItem.id}"
+						if(tagItem.tagItemSubtype.equals('FREETEXT')) 
+						{
+							//Look for new value by tag item ID
+							log.info "SAVING CUSTOM::FREETEXT == " + newValue
+							AmTagValue newTagValue = new AmTagValue(value: newValue)
+							newTagValue.save(flush: true)
+							// Save the new tag value
+							if (newValue != null && newValue != "")
+							{
+								//Create a new AmTagValue and point to it
+								log.info("SAVING AmTagAssociation = CUSTOM " + folder.getUniqueId() + " ")// + newTagValue.getUniqueId() + " " + tagItem.id)
+								AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
+								ata.save(flush: true)
+							}
+	
 						}
+						else if(tagItem.tagItemSubtype.equals('PICKLIST'))
+						{
+							//Look for new value by tag item ID
+							log.info "SAVING CUSTOM::PICKLIST == " + newValue
+							log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id
+							AmTagAssociation ata = AmTagAssociation.find ("from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+							if (ata)
+							{
+								ata.delete()
+							}
+							
+							ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
+								
+								
+							if (!ata.save(flush:true)) {
+								ata.errors.each {
+									println it
+								}
+							}
+						}
+						else
+						{
+							// TODO: throw an exception
+							// unrcognized subtype
+						}
+						
+
+					}
+					else 
+					{
+						newValue = params."amTagItem_${tagItem.id}"
+						log.info "SAVING BUSINESS OBJECT == " + newValue
+					 	
 					}
 				}
 				if (!bioDataObject.hasErrors() && bioDataObject.save(flush: true)) {

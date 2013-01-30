@@ -57,8 +57,10 @@ class Experiment implements IExcelProfile {
 		version false
 		//cache usage:'read-only'
 		//	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		id column:'BIO_EXPERIMENT_ID', generator: 'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		
 		columns {
-			id column:'BIO_EXPERIMENT_ID'
+		//	id column:'BIO_EXPERIMENT_ID'
 			type column:'BIO_EXPERIMENT_TYPE'
 			title column:'TITLE'
 			description column:'DESCRIPTION'
@@ -86,6 +88,7 @@ class Experiment implements IExcelProfile {
 	static constraints = {
 		type(nullable:true, maxSize:400)
 		title(nullable:true, maxSize:2000)
+		accession(unique:true)
 		description(nullable:true, maxSize:4000)
 		design(nullable:true, maxSize:4000)
 		overallDesign(nullable:true, maxSize:4000)

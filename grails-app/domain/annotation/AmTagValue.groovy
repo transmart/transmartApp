@@ -26,6 +26,8 @@ class AmTagValue {
 	
 	Long id
 	String value
+	String uniqueId
+	
 		
 	static transients = ['uniqueId']
 	

@@ -20,14 +20,17 @@
 
 package bio
 
-import fm.FmFolder;
-
 class ConceptCode {
 		Long id
 		String bioConceptCode
 		String codeName
 		String codeDescription
 		String codeTypeName
+		String uniqueId
+		
+		static transients = ['uniqueId']
+		
+	
 
  static hasMany = [bioDataUid:BioData]
  static mapping = {
@@ -49,6 +52,33 @@ class ConceptCode {
 	codeDescription(nullable:true, maxSize:2000)
 	codeTypeName(nullable:true, maxSize:400)
 	}
+
+ /**
+  * Use transient property to support unique ID for tagValue.
+  * @return tagValue's uniqueId
+  */
+ String getUniqueId() {
+	 if (uniqueId == null) {
+		 if(id)
+		 {
+			 BioData data = BioData.get(id);
+			 if (data != null) {
+				 uniqueId = data.uniqueId
+				 return data.uniqueId;
+			 }
+			 return null;
+		 }
+		 else
+		 {
+			 return null;
+		 }
+	 }
+	 else
+	 {
+		 return uniqueId;
+	 }
+ }
+
  
  /**
  * Find concept code by its uniqueId
