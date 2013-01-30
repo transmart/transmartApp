@@ -1,0 +1,9 @@
+[{'text':'Research','id':'root','leaf':false, uiProvider:Ext.tree.CheckboxUI, checked:true, qtip: 'Root mouseover text',
+			 'children':[
+	    				{text:"Immunology", id:"root/immunology", leaf:false, checked:true, uiProvider: Ext.tree.CheckboxUI,
+	    					 'children':[
+	    								{text:"Asthma", id:"root/immunology/asthma", leaf:true,checked:true, uiProvider: Ext.tree.CheckboxUI},
+	    								{text:"Sarcoidosis",id:"root/immunology/sarcoidosis", leaf: true, checked:true, uiProvider: Ext.tree.CheckboxUI}]},
+	   					 {text:"Oncology",id:"root/oncology", leaf:true, checked:true,uiProvider: Ext.tree.CheckboxUI}
+	]}
+ ]

@@ -1,0 +1,45 @@
+@CHARSET "ISO-8859-1";
+ div.analysis {
+	font-family: arial;
+	font-size: 8pt;
+	}
+table.analysis {
+	border-width: 1px 1px 1px 1px;
+	border-spacing: 4px;
+	border-style: outset outset outset outset;
+	border-color: gray gray gray gray;
+	border-collapse: collapse;
+	background-color: white;
+	font-family: arial;
+	font-size: 8pt;
+}
+table.analysis th {
+	border-width: 1px 1px 1px 1px;
+	padding: 5px 5px 5px 5px;
+	border-style: inset inset inset inset;
+	border-color: gray gray gray gray;
+	background-color: white;
+	-moz-border-radius: 12px 12px 12px 12px;
+	font-weight: bold;
+	
+}
+table.analysis td {
+	border-width: 1px 1px 1px 1px;
+	padding: 5px 5px 5px 5px;
+	border-style: inset inset inset inset;
+	border-color: gray gray gray gray;
+	background-color: white;
+	-moz-border-radius: 12px 12px 12px 12px;
+}
+
+div.analysistitle {
+	font-size: 14pt;
+	font-weight: bold;
+	font-family:arial;
+}
+	
+div.smalltitle {
+	font-size: 10pt;
+	font-weight: bold;
+	font-family:arial;
+}

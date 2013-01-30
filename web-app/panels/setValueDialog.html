@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>queryPanel.html</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <link rel="stylesheet" type="text/css" href="../css/datasetExplorer.css">
+  
+  </head>
+  
+  <body>
+    <script type="text/javascript">
+  function setValueMethodChanged(value)
+  {
+  if(value=="highlow")
+      {document.getElementById("divhighlow").style.display="inline";
+       document.getElementById("divnumeric").style.display="none";
+       }
+  if(value=="numeric")
+      {
+      document.getElementById("divhighlow").style.display="none";
+      document.getElementById("divnumeric").style.display="inline"; 
+      }
+  if(value=="novalue")
+  	{
+  	 document.getElementById("divhighlow").style.display="none";
+     document.getElementById("divnumeric").style.display="none";
+  	}
+  }
+  function setValueOperatorChanged(value)
+  {
+  if(value=="BETWEEN")
+  document.getElementById("divhighvalue").style.display="inline";
+  else
+  document.getElementById("divhighvalue").style.display="none"; 
+  }
+    </script>
+  <div style="background:#eee;height:100%;padding:5px;">
+
+  <table style="font:9pt arial;width=500px">
+  <tr><td colspan="2">Searches by value can be constrained by the high/low flag set by the 
+  performing laboratory, or by the values themselves.</td></tr>
+  <tr>
+  <td width="200px"><input type="radio"  name="setValueMethod" value="novalue" onclick="setValueMethodChanged(this.value)">No Value
+	<br>
+	<input type="radio" name="setValueMethod" value="highlow" onclick="setValueMethodChanged(this.value)">By high/low flag
+	<br>
+	<input type="radio" name="setValueMethod" CHECKED value="numeric" onclick="setValueMethodChanged(this.value)">By numeric value  
+	<br><div style="visibility:hidden">
+	units = <select id="setValueUnits">
+			</select></div>
+	</td>
+  <td width="200px">
+  <div id="divnumeric" style="display:inline">
+  Please select operator:<br>
+  <select id="setValueOperator" onclick="setValueOperatorChanged(this.value);">
+  <option value="LT">LESS THAN(<)</option>
+  <option value="LE">LESS THAN OR EQUAL TO(<=)</option>
+  <option value="EQ">EQUAL TO(=)</option>
+  <option value="BETWEEN">BETWEEN</option>
+  <option value="GT">GREATER THAN(>)</option>
+  <option value="GE">GREATER THAN OR EQUAL TO(>=)</option>
+  </select>
+  <br>
+  Please enter value:<br>
+  <input type="text" size="5" name="lowvalue" id="setValueLowValue" value="" />
+  <div id="divhighvalue" style="display:none">AND
+  <input type="text" size="5" name="highvalue" id="setValueHighValue" value="" /></div>
+  </div>
+  <div id="divhighlow" style="display:none">
+  Please select range:<br>
+  <select id="setValueHighLowSelect">
+  <option value="L">Low</option>
+  <option value="H">High</option>
+  <option value="N">Normal</option>
+  </select>
+  </div>
+  </td>
+  </tr>
+  </table>
+  </div>
+<div id="setValueGraphs"></div>
+  </body>
+</html>

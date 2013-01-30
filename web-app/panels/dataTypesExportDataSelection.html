@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>dataTypesToExportDataSelection</title>	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <link rel="stylesheet" type="text/css" href="css/datasetExplorer.css">
+    <style>
+   		p { width:430px; }
+        .ext-ie .x-form-text {position:static !important;}
+  	</style>
+  </head>
+  
+  <body>
+  <div style="background:#eee;height:100%;padding:5px; font:11px tahoma, arial, helvetica, sans-serif;">  
+   	<table width="400">
+	   	<tr>
+	   		<th align="left" colspan="2">
+	   			<div id="labelsubset3" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br><b>SUBSET 1</b><br></div>
+	   		</th>
+	   		<th align="left" colspan="2">
+	   			<div id="labelsubset4" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br><b>SUBSET 2<br></b></div>
+	   		</th>
+	   	</tr>
+	   	<tr>
+	    	<td align="left" colspan="2">
+	    		<div id="divplatform3" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Platform:<br>
+	  			<input type="text"  size="20" id="platforms3" autocomplete="off" />
+	  			</div>
+	  		</td>
+	  		<td align="left" colspan="2">
+	  			<div id="divplatform4" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Platform:<br>
+	  			<input type="text"  size="20" id="platforms4" autocomplete="off" />
+	  			</div>
+	  		</td>
+	  	</tr>
+	  	<tr>
+	   		<td align="left">
+	   			<div id="labeldata3" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif">Clinical Data:</div>
+	   		</td>
+	   		<td align="left">
+	   			<input type="checkbox" id="clinicalDataTxt3" name="clinicalData3" title=".txt"/>.txt &nbsp; &nbsp; 
+	   			<input type="checkbox" id="clinicalDataCsv3" name="clinicalData3" title=".csv"/>.csv<br>
+	   		</td>
+	   		<td align="left">
+	   			<div id="labeldata4" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif">Clinical Data:</div>
+	   		</td>
+	   		<td align="left">
+	   			<input type="checkbox" id="clinicalDataTxt4" name="clinicalData4" title=".txt"/>.txt &nbsp; &nbsp; 
+	   			<input type="checkbox" id="clinicalDataCsv4" name="clinicalData4" title=".csv"/>.csv<br>
+	   		</td>
+	   	</tr>
+	   	<tr>
+	   		<td align="left">
+	   			<div id="labeldata31" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif">Gene Expression Data:</div>
+	   		</td>
+	   		<td align="left">
+	   			<input type="checkbox" id="geneExpressionDataTxt3" name="geneExpressionData3" title=".txt"/>.txt &nbsp; &nbsp; 
+	   			<input type="checkbox" id="geneExpressionDataCsv3" name="geneExpressionData3" title=".csv"/>.CEL</div>
+	   		</td>
+	   		<td align="left">
+	   			<div id="labeldata41" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif">Gene Expression Data:</div>
+	   		</td>
+	   		<td align="left">
+	   			<input type="checkbox" id="geneExpressionDataTxt4" name="geneExpressionData4" title=".txt"/>.txt &nbsp; &nbsp; 
+	   			<input type="checkbox" id="geneExpressionDataCsv4" name="geneExpressionData4" title=".csv"/>.CEL</div>
+	   		</td>
+	   	</tr>
+	</table>
+	<div id="advancedDataExport">
+	  <table>
+	  	<tr>
+			<td align="left">
+			  	<div id="divrbmpanel3" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>RBM Panel:<br>
+			  		<input type="text"  size="20" id="rbmpanel3" autocomplete="off" />
+			  	</div>
+			</td>
+			<td align="left">
+			  	<div id="divrbmpanel4" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>RBM Panel:<br>
+			  		<input type="text"  size="20" id="rbmpanel4" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+			<td align="left">
+			  	<div id="divgpl3" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>GPL Platform:<br>
+			  		<input type="text"  size="20" id="gpl3" autocomplete="off" />
+			  	</div>
+			</td>
+			<td align="left">
+			  	<div id="divgpl4" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>GPL Platform:<br>
+			  		<input type="text"  size="20" id="gpl4" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+	  		<td align="left">
+			  	<div id="divsample3" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Sample:<br>
+			  		<input type="text"  size="20" id="sample3" autocomplete="off" />
+			  	</div>
+			</td>
+			<td align="left">  	
+			  	<div id="divsample4" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Sample:<br>
+			  		<input type="text"  size="20" id="sample4" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+			<td align="left">
+			  	<div id="divtissue3" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Tissue Type:<br>
+			  		<input type="text"  size="20" id="tissue3" autocomplete="off" />
+			  	</div>
+			</td>
+			<td align="left">
+			  	<div id="divtissue4" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Tissue Type:<br>
+			  		<input type="text"  size="20" id="tissue4" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+			<td align="left">
+			  	<div id="divtimepoint3" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Timepoint:<br>
+			  		<input type="text"  size="20" id="timepoint3" autocomplete="off" />
+			  	</div>
+			</td>
+			<td align="left">
+			  	<div id="divtimepoint4" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Timepoint:<br>
+			  		<input type="text"  size="20" id="timepoint4" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+	  		<td colspan="2">
+			  	<div id="divpathway1" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Select a Gene/Pathway:<br>
+			  		<input type="text"  size="80" id="searchPathway1" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+  	</table>
+   </div>
+  </div>
+
+  <script type="text/javascript">
+  	createPathwaySearchBox('searchPathway1', 'divpathway1');
+  	createPlatformSearchBox(1, 3);
+  	createPlatformSearchBox(2, 4);
+  	createTimePointsSearchBox(1, 3);
+  	createTimePointsSearchBox(2, 4);
+  	createTissueSearchBox(1, 3);
+  	createTissueSearchBox(2, 4);
+  	createSamplesSearchBox(1, 3);
+  	createSamplesSearchBox(2, 4);
+  	createGplSearchBox(1, 3);
+  	createGplSearchBox(2, 4);
+  	createRbmPanelSearchBox(1, 3);
+  	createRbmPanelSearchBox(2, 4);
+  	$('advancedDataExport').hide();
+  </script><br/><br/>
+  </body>
+</html>

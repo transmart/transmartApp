@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<topics>
+    <topic id="0" tId="53" url="Documents/afterirunasearchcanifurtherrefinethesearchresults1.htm" target="right"><![CDATA[After I run a search, can I further refine the search results?]]><contextids /></topic>
+    <topic id="1" tId="44" url="Documents/aresearchescasesensitive1.htm" target="right" default="1"><![CDATA[Are searches case-sensitive?]]><contextids /></topic>
+    <topic id="2" tId="61" url="Documents/aretheredifferentkindsofheatmaps1.htm" target="right"><![CDATA[Are there different kinds of heat maps?]]><contextids /></topic>
+    <topic id="3" tId="50" url="Documents/canibrowsethroughalistofsearchterms1.htm" target="right"><![CDATA[Can I browse through a list of search terms?]]><contextids /></topic>
+    <topic id="4" tId="51" url="Documents/canicreateasearchquerywithmultiplecriteria1.htm" target="right"><![CDATA[Can I create a search query with multiple criteria?]]><contextids /></topic>
+    <topic id="5" tId="62" url="Documents/canidisplayheatmapsifihavepopupblockerenabledonmybrowser1.htm" target="right"><![CDATA[Can I display heat maps if I have pop-up blocker enabled on my browser?]]><contextids /></topic>
+    <topic id="6" tId="59" url="Documents/caniexportstatisticsandmeasurementsfromaclinicaltrialorexperiment1.htm" target="right"><![CDATA[Can I export statistics and measurements from a clinical trial or experiment?]]><contextids /></topic>
+    <topic id="7" tId="56" url="Documents/caniremovesomeofapathwaysgenesfromthesearchfilter1.htm" target="right"><![CDATA[Can I remove some of a pathway's genes from the search filter?]]><contextids /></topic>
+    <topic id="8" tId="52" url="Documents/canisaveasearchquery1.htm" target="right"><![CDATA[Can I save a search query?]]><contextids /></topic>
+    <topic id="9" tId="45" url="Documents/canisearchforagenealias1.htm" target="right"><![CDATA[Can I search for a gene alias?]]><contextids /></topic>
+    <topic id="10" tId="46" url="Documents/caniusewildcardsinmysearches1.htm" target="right"><![CDATA[Can I use wild cards in my searches?]]><contextids /></topic>
+    <topic id="11" tId="57" url="Documents/howcaniopenadetailsboxforanitemsuchasaclinicaltrial1.htm" target="right"><![CDATA[How can I open a details box for an item such as a clinical trial?]]><contextids /></topic>
+    <topic id="12" tId="58" url="Documents/howcaniprintthecontentsofadetailsboxorexportthecontentstoexcel1.htm" target="right"><![CDATA[How can I print the contents of a details box, or export the contents to Excel?]]><contextids /></topic>
+    <topic id="13" tId="70" url="Documents/howdoideterminethestudyownerofagivenclinicalstudy1.htm" target="right"><![CDATA[How do I determine the study owner of a given clinical study?]]><contextids /></topic>
+    <topic id="14" tId="69" url="Documents/howdoigainaccesstoadditionalclinicalstudies1.htm" target="right"><![CDATA[How do I gain access to additional clinical studies?]]><contextids /></topic>
+    <topic id="15" tId="66" url="Documents/indatasetexplorercanisearchforastudyaccordingtomyareaofinterest1.htm" target="right"><![CDATA[In Dataset Explorer, can I search for a study according to my area of interest?]]><contextids /></topic>
+    <topic id="16" tId="67" url="Documents/indatasetexplorerwhydosomeoftheelementsintheontologynavigationpanehavelettericonswhileothershavenumericicons1.htm" target="right"><![CDATA[In Dataset Explorer, why do some of the elements in the ontology navigation pane have letter icons while others have numeric icons?]]><contextids /></topic>
+    <topic id="17" tId="49" url="Documents/whataresearchcategories1.htm" target="right"><![CDATA[What are search categories?]]><contextids /></topic>
+    <topic id="18" tId="55" url="Documents/whatdoallofthegreenarrowsrepresent1.htm" target="right"><![CDATA[What do all of the green arrows represent?]]><contextids /></topic>
+    <topic id="19" tId="71" url="Documents/whatdoidoificantfindthedataimlookingfor1.htm" target="right"><![CDATA[What do I do if I can't find the data I'm looking for?]]><contextids /></topic>
+    <topic id="20" tId="65" url="Documents/whatdoidoifigetajavasecuritywarning1.htm" target="right"><![CDATA[What do I do if I get a Java security warning?]]><contextids /></topic>
+    <topic id="21" tId="72" url="Documents/whatdoidoifihaveasuggestiontoimprovetransmartorfindabug1.htm" target="right"><![CDATA[What do I do if I have a suggestion to improve tranSMART or find a bug?]]><contextids /></topic>
+    <topic id="22" tId="54" url="Documents/whatdothenumbersonthetabsintheresultswindowrepresent1.htm" target="right"><![CDATA[What do the numbers on the tabs in the results window represent?]]><contextids /></topic>
+    <topic id="23" tId="60" url="Documents/whatdoestheheatmapshowme1.htm" target="right"><![CDATA[What does the heat map show me?]]><contextids /></topic>
+    <topic id="24" tId="64" url="Documents/whatisjubilantdata1.htm" target="right"><![CDATA[What is Jubilant data?]]><contextids /></topic>
+    <topic id="25" tId="47" url="Documents/whatistheautocompletefeature1.htm" target="right"><![CDATA[What is the 'autocomplete' feature?]]><contextids /></topic>
+    <topic id="26" tId="63" url="Documents/whatistheteaalgorithm1.htm" target="right"><![CDATA[What is the TEA algorithm?]]><contextids /></topic>
+    <topic id="27" tId="48" url="Documents/whyamionlyseeingsearchresultsonthedocumentstab1.htm" target="right"><![CDATA[Why am I only seeing search results on the Documents tab?]]><contextids /></topic>
+    <topic id="28" tId="68" url="Documents/whyisthistrialfoldergrayedout1.htm" target="right"><![CDATA[Why is this trial-folder grayed out?]]><contextids /></topic>
+</topics>

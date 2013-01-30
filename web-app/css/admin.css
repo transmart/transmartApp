@@ -1,0 +1,144 @@
+div.body { padding-top:20px; }
+h1 { font-weight:bold; font-size:10pt; padding-bottom:10px; }
+th { font-weight:bold; padding:5px 5px 0 5px }
+td { padding:5px 5px 5px 5px; }
+.prop { width: 25%; text-align:left; }
+.name { width: 75%; }
+
+/* --------------------------------------*/
+/* PAGE container                        */
+/* --------------------------------------*/
+/* Contains page contents e.g header,navbar, content, footer */
+#page {
+width: 100%;
+margin: 0px auto;
+padding: 0px 0px;
+text-align:left;
+}
+
+
+/* --------------------------------------*/
+/* HEADER                                */
+/* --------------------------------------*/
+#header {
+height: 34px;
+}
+
+/* --------------------------------------*/
+/* CONTENT                               */
+/* --------------------------------------*/
+#content {
+float: right;
+width: 80%;
+}
+
+/* --------------------------------------*/
+/* NAVBAR                                */
+/* --------------------------------------*/
+#navbar {
+float: left;
+width: 15%;
+color: #ff0000;
+margin: 0 0 0 0;
+padding: 1px 1px 1px 1px;
+}
+
+
+
+/*----------------------------------------------------------*/
+/*  Improved vertical menu for navbar: see http://css.maxdesign.com.au/listamatic/vertical10.htm
+/*----------------------------------------------------------*/
+
+h1.panelHeader{
+font-weight: bold;
+text-align: left;
+padding: 8px 0px 0px 0px;
+border-bottom: 2px solid #000;
+}
+
+/*need html>body hack otw menu boxes, e.g. navbarbx all merge together*/
+html>body .navcontainer1
+{
+width: 100%;
+/*border-right: 1px solid #000;*/
+font-family: Verdana, Lucida, Geneva, Helvetica, Arial, sans-serif;
+}
+
+.navcontainer1 ul
+{
+list-style: none;
+margin: 0;
+padding: 0 0 0 0;
+}
+
+.navcontainer1 li
+{
+/*border-bottom: 1px solid #90bade;*/
+margin: 0;
+padding:0;
+height:26px;
+
+}
+
+.navcontainer1 li a
+{
+display: block;
+margin:0;
+padding:0;
+
+}
+
+html>body .navcontainer1 li a { width: auto; }
+
+.navcontainer1 li a:hover
+{
+/*border-left: 10px solid #1c64d1;
+border-right: 10px solid #5ba3e0;*/
+}
+
+.adminMenuButton {
+    font-size: 10px;
+    padding: 1px ;
+}
+
+.adminMenuButton a {
+    color: #333;
+    padding: 2px;
+}
+
+.adminMenuButton a.home {
+    background: url(../images/skin/house.png) center left no-repeat;
+    color: #333;
+    padding-left: 25px;
+}
+
+.adminMenuButton a.list {
+    background: url(../images/skin/database_table.png) center left no-repeat;
+    color: #333;
+    padding-left: 25px;
+}
+
+.adminMenuButton a.create {
+    background: url(../images/skin/database_add.png) center left no-repeat;
+    color: #333;
+    padding-left: 25px;
+}
+
+.addremoveselect
+{
+width:300px;
+}
+
+.addremovebuttonholder
+{
+	vertical-align:middle;
+}
+
+.admin-utilities-div {
+    position:absolute;
+    width:100px;
+    top:0;
+    right:0;
+    height:24px;
+    z-index:100;
+}

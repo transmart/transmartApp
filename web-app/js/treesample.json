@@ -1,0 +1,9 @@
+[{'text':'Research','id':'Trialsl','leaf':false, uiProvider:Ext.tree.CheckboxUI, checked:false, qtip: 'Root mouseover text',
+			 'children':[
+	    				{text:"Immunology", id:"C0524T03", leaf:false, checked:false, uiProvider: Ext.tree.CheckboxUI,
+	    					 'children':[
+	    								{text:"Asthma", id:"C0524T", leaf:true,checked:false, uiProvider: Ext.tree.CheckboxUI},
+	    								{text:"Sarcoidosis",id:"Sebastian Johns", leaf: true, checked: false, uiProvider: Ext.tree.CheckboxUI}]},
+	   					 {text:"Oncology",id:"C0743X01", leaf:true, checked: false,  uiProvider: Ext.tree.CheckboxUI}
+	]}
+ ]

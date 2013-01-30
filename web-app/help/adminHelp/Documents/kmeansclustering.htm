@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<html><head><title>K-Means Clustering</title>
+<meta content="text/html; charset=us-ascii" http-equiv="Content-Type" /><link rel="stylesheet" type="text/css" href="../Theme/nav.css" /><link rel="stylesheet" type="text/css" href="../Theme/popupmenu.css" /><link rel="stylesheet" type="text/css" href="../Theme/lf.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/d2hTarget.css" /><link rel="stylesheet" type="text/css" href="../LinksExt/OpenSource_tranSMART_User_Guide.css" />
+<script type="text/javascript">
+//<![CDATA[
+
+
+
+var _needIndentation = false;
+
+
+
+
+//]]></script>
+
+<script language="JavaScript" src="../linker.js" type="text/JavaScript"></script>
+
+<script language="JavaScript" src="../special.js" type="text/JavaScript"></script>
+
+<script language="JavaScript" src="../common.js" type="text/JavaScript"></script>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2012.1.0.688" />
+<meta name="D2HTheme" content="(Default) v.153" />
+</head>
+<body style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #535353; MARGIN: 7px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; OVERFLOW: hidden; PADDING-TOP: 0px" onload="d2hOnLoadToolbar(event);" relpart="../">
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+
+
+d2hTopicPreOpen();
+
+
+
+d2hTrySyncTOC();
+
+
+
+
+
+
+
+var prev = true;
+
+
+
+
+
+var next = true;
+
+
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers(prev, next);
+
+d2hAdjustTopicBorders(document);    
+
+
+
+if (typeof d2hLoadWindows != "undefined")
+
+    d2hLoadWindows();
+
+if (typeof d2hLoadNavUrls != "undefined")
+
+    d2hLoadNavUrls();
+
+
+
+
+//]]></script>
+
+<div style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: white; MARGIN: 0px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; HEIGHT: 100%; OVERFLOW: auto; PADDING-TOP: 0px" id="D2HTopicOuterBody" class="d2h_outer_topic">
+<div id="nsbanner" class="d2hNavigatorTopic">
+<div style="PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px" id="TitleRow" class="d2h_main_titlerow">
+<div style="DISPLAY: none"><a id="D2HPreviousAnchor" href="hierarchicalclustering.htm"></a><a id="D2HNextAnchor" href="markerselection.htm"></a></div></div>
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+if (typeof d2hProcessTopicNavForCSH != "undefined")
+
+    d2hProcessTopicNavForCSH();
+
+
+//]]></script>
+</div>
+<div style="PADDING-BOTTOM: 10px; PADDING-LEFT: 22px; PADDING-RIGHT: 10px; HEIGHT: 100%; PADDING-TOP: 5px" id="nstext" class="d2h_main_nstext" valign="bottom">
+<div id="d2h_breadcrumbs" class="d2h_breadcrumbs"><span class="d2h_breadcrumbsLabel"><b><span style="COLOR: #000080">User's 
+Guide</span></b>&#160;&#160;</span><a class="d2h_breadcrumbsNormal" href="datasetexplorer1.htm">Dataset Explorer</a><span class="d2h_breadcrumbsLinkSeparator"> &gt; </span><a class="d2h_breadcrumbsNormal" href="generatingadvancedanalysesandvisualizations.htm">Generating Advanced 
+Analyses and Visualizations</a><span class="d2h_breadcrumbsLinkSeparator"> &gt; 
+</span><a class="d2h_breadcrumbsNormal" href="generatingheatmaps.htm">Generating 
+Heatmaps</a></div>
+<h4><a name="_Ref320096492" id="_Ref320096492">K-Means Clustering</a></h4>
+<p style="PAGE-BREAK-AFTER: avoid" class="MsoNormal">K-Means clustering is a 
+visualization of groupings of the most closely related data points, based on the 
+number of groupings you specify.</p>
+<table style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BORDER-COLLAPSE: collapse; BORDER-TOP: medium none; BORDER-RIGHT: medium none" class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+  <tr>
+    <td style="PADDING-BOTTOM: 0pt; PADDING-LEFT: 5.4pt; WIDTH: 54.9pt; PADDING-RIGHT: 5.4pt; PADDING-TOP: 0pt" valign="top" width="73">
+      <p style="PAGE-BREAK-AFTER: avoid; TEXT-ALIGN: center" class="MsoNormal" align="center"><img title="Description: C:\Users\bkingsbury\Dropbox\Stuff\Recombinant\note.png" border="0" alt="Description: C:\Users\bkingsbury\Dropbox\Stuff\Recombinant\note.png" src="../ImagesExt/image48_0.jpg" /></p></td>
+    <td style="PADDING-BOTTOM: 0pt; PADDING-LEFT: 5.4pt; WIDTH: 387.9pt; PADDING-RIGHT: 5.4pt; PADDING-TOP: 0pt" valign="top" width="517">
+      <p style="PAGE-BREAK-AFTER: avoid" class="MsoNormal">The K-Means analysis 
+      clusters columns together &#8211; rows are not 
+clustered.</p></td></tr></tbody></table>
+<p style="tab-stops: 0pt" class="ListNumStart">To generate a k-means clustering 
+heatmap:</p>
+<p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">1.&#160; Run tranSMART, then click the <span class="Bold">Dataset Explorer</span> tab.</p>
+<p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">2.&#160; Define the cohorts you wish to analyze by dragging 
+one or more concepts from a study into empty subset definition boxes. For more 
+information, see <span class="xRef"><a href="populatingthestudygroups.htm"><span class="xRef">Populating the Study Groups</span></a></span>.</p>
+<table style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BORDER-COLLAPSE: collapse; BORDER-TOP: medium none; BORDER-RIGHT: medium none" class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+  <tr>
+    <td style="PADDING-BOTTOM: 0pt; PADDING-LEFT: 5.4pt; WIDTH: 54.9pt; PADDING-RIGHT: 5.4pt; PADDING-TOP: 0pt" valign="top" width="73">
+      <p style="PAGE-BREAK-AFTER: avoid; TEXT-ALIGN: center" class="MsoNormal" align="center"><img title="Description: C:\Users\bkingsbury\Dropbox\Stuff\Recombinant\note.png" border="0" alt="Description: C:\Users\bkingsbury\Dropbox\Stuff\Recombinant\note.png" src="../ImagesExt/image48_37.jpg" /></p></td>
+    <td style="PADDING-BOTTOM: 0pt; PADDING-LEFT: 5.4pt; WIDTH: 387.9pt; PADDING-RIGHT: 5.4pt; PADDING-TOP: 0pt" valign="top" width="517">
+      <p style="PAGE-BREAK-AFTER: avoid" class="MsoNormal">To compare two subsets, 
+      you may drag an additional concept into the Subset 2 comparison 
+  box.</p></td></tr></tbody></table>
+<p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber"><span class="Bold"><span style="FONT-WEIGHT: normal">3.&#160; 
+</span></span>Click the <span class="Bold">Advanced Workflow </span><span class="Bold"><span style="FONT-WEIGHT: normal">tab:</span></span></p>
+<p style="TEXT-INDENT: 0pt" class="MsoListNumber"><img title="Description: C:\Users\ctucker\AppData\Local\Temp\SNAGHTML27dca9d6.PNG" border="0" alt="Description: C:\Users\ctucker\AppData\Local\Temp\SNAGHTML27dca9d6.PNG" src="../ImagesExt/image48_83.png" /><span class="Bold"><span style="FONT-WEIGHT: normal"></span></span></p>
+<p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber"><span class="Bold"><span style="FONT-WEIGHT: normal">4.&#160; 
+</span></span>Select <b>K-Means Clustering</b> from the <span class="Bold">Analysis</span> dropdown menu:<span class="Bold"><span style="FONT-WEIGHT: normal"></span></span></p>
+<p style="TEXT-INDENT: 0pt" class="MsoListNumber"><img border="0" src="../ImagesExt/image48_84.jpg" alt="" /></p>
+<p style="TEXT-INDENT: 0pt" class="MsoListNumber">The Variable Selection section 
+appears.</p>
+<p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">5.&#160; Define the heatmap variable by selecting a high 
+dimensional data node from the Dataset Explorer tree and dragging it into the 
+Heatmap Variable definition box:</p>
+<p style="TEXT-INDENT: 0pt" class="MsoListNumber"><img border="0" src="../ImagesExt/image48_85.jpg" alt="" /></p>
+<table style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BORDER-COLLAPSE: collapse; BORDER-TOP: medium none; BORDER-RIGHT: medium none" class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+  <tr>
+    <td style="PADDING-BOTTOM: 0pt; PADDING-LEFT: 5.4pt; WIDTH: 54.9pt; PADDING-RIGHT: 5.4pt; PADDING-TOP: 0pt" valign="top" width="73">
+      <p style="TEXT-ALIGN: center" class="MsoNormal" align="center"><img title="Description: C:\Users\bkingsbury\Dropbox\Stuff\Recombinant\note.png" border="0" alt="Description: C:\Users\bkingsbury\Dropbox\Stuff\Recombinant\note.png" src="../ImagesExt/image48_0.jpg" /></p></td>
+    <td style="PADDING-BOTTOM: 0pt; PADDING-LEFT: 5.4pt; WIDTH: 387.9pt; PADDING-RIGHT: 5.4pt; PADDING-TOP: 0pt" valign="top" width="517">
+      <p class="MsoNormal">High dimensional data nodes are indicated by the icon 
+      (<img border="0" src="../ImagesExt/image48_78.png" alt="" />) to the left of study 
+      data.</p></td></tr></tbody></table>
+<p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">6.&#160; Click the <b>High Dimensional Data </b>button.</p>
+<p style="TEXT-INDENT: 0pt" class="MsoListNumber">The Compare Subsets-Pathway 
+Selection dialog appears.</p>
+<p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">7.&#160; Specify the platform and other factors of 
+interest.</p>
+<p style="TEXT-INDENT: 0pt" class="MsoListNumber">For more information, see <span class="xRef"><a href="highdimensionaldata.htm"><span class="xRef">High Dimensional 
+Data</span></a></span>.</p>
+<p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">8.&#160; Click <b>Apply Selections</b>. </p>
+<p style="tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">9.&#160; In the <b>Number of clusters</b> field, type a 
+numerical value. </p>
+<p style="PAGE-BREAK-AFTER: avoid; tab-stops: 18.0pt 36.0pt 54.0pt 72.0pt 90.0pt 108.0pt" class="MsoListNumber">10. Click <span class="Bold">Run</span>.</p>
+<p style="PAGE-BREAK-AFTER: avoid; TEXT-INDENT: 0pt" class="MsoListNumber">Your 
+analysis appears below:</p>
+<p style="TEXT-INDENT: 0pt" class="MsoListNumber"><img border="0" src="../ImagesExt/image48_86.jpg" alt="" /></p>
+<table style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BORDER-COLLAPSE: collapse; BORDER-TOP: medium none; BORDER-RIGHT: medium none" class="MsoTableGrid" border="0" cellspacing="0" cellpadding="0">
+  <tbody>
+  <tr>
+    <td style="PADDING-BOTTOM: 0pt; PADDING-LEFT: 5.4pt; WIDTH: 54.9pt; PADDING-RIGHT: 5.4pt; PADDING-TOP: 0pt" valign="top" width="73">
+      <p style="TEXT-ALIGN: center" class="MsoNormal" align="center"><img title="Description: C:\Users\bkingsbury\Dropbox\Stuff\Recombinant\note.png" border="0" alt="Description: C:\Users\bkingsbury\Dropbox\Stuff\Recombinant\note.png" src="../ImagesExt/image48_37.jpg" /></p></td>
+    <td style="PADDING-BOTTOM: 0pt; PADDING-LEFT: 5.4pt; WIDTH: 387.9pt; PADDING-RIGHT: 5.4pt; PADDING-TOP: 0pt" valign="top" width="517">
+      <p class="MsoNormal">To read more about K-Means Clustering, visit: <span class="xRef">http://www.ics.uci.edu/~eppstein/280/cluster.html</span></p></td></tr></tbody></table>
+<p style="TEXT-INDENT: 0pt" class="MsoListNumber">&#160;</p><span id="related-topics"></span></div></div></body></html>

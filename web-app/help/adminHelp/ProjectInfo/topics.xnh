@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<topics>
+    <topic id="0" tId="178" url="Documents/additionalresources.htm" target="right"><![CDATA[Additional Resources]]><contextids><item id="1031" /></contextids></topic>
+    <topic id="1" tId="173" url="Documents/analysisview.htm" target="right"><![CDATA[Analysis View]]><contextids><item id="1027" /></contextids></topic>
+    <topic id="2" tId="271" url="Documents/boxplotwithanova.htm" target="right"><![CDATA[Box Plot with ANOVA]]><contextids><item id="1310" /></contextids></topic>
+    <topic id="3" tId="195" url="Documents/branchesandleavesofthenavigationtree.htm" target="right"><![CDATA[Branches and Leaves of the Navigation Tree]]><contextids><item id="1067" /></contextids></topic>
+    <topic id="4" tId="163" url="Documents/browseforafiltername.htm" target="right"><![CDATA[Browse for a Filter Name]]><contextids><item id="1016" /></contextids></topic>
+    <topic id="5" tId="165" url="Documents/buildingasearchstring.htm" target="right"><![CDATA[Building a Search String]]><contextids><item id="1018" /></contextids></topic>
+    <topic id="6" tId="268" url="Documents/clinicaltrialstab.htm" target="right"><![CDATA[Clinical Trials Tab]]><contextids><item id="1268" /></contextids></topic>
+    <topic id="7" tId="209" url="Documents/copyingindividualchartsintheresultsanalysisview.htm" target="right"><![CDATA[Copying Individual Charts in the Results/Analysis View]]><contextids><item id="1079" /></contextids></topic>
+    <topic id="8" tId="290" url="Documents/correlationanalysis.htm" target="right"><![CDATA[Correlation Analysis]]><contextids><item id="1290" /></contextids></topic>
+    <topic id="9" tId="239" url="Documents/creatingagenesignature.htm" target="right"><![CDATA[Creating a Gene Signature]]><contextids><item id="1100" /></contextids></topic>
+    <topic id="10" tId="224" url="Documents/databinning.htm" target="right"><![CDATA[Data Binning]]><contextids><item id="1090" /></contextids></topic>
+    <topic id="11" tId="273" url="Documents/databinningusingboxp.htm" target="right"><![CDATA[Data Binning Using Box Plot with ANOVA]]><contextids><item id="1091" /></contextids></topic>
+    <topic id="12" tId="225" url="Documents/databinningusingsurvivalanalysis.htm" target="right"><![CDATA[Data Binning Using Survival Analysis]]><contextids><item id="1092" /></contextids></topic>
+    <topic id="13" tId="251" url="Documents/datainputstotheteaalgorithm.htm" target="right"><![CDATA[Data Inputs to the TEA algorithm]]><contextids><item id="1109" /></contextids></topic>
+    <topic id="14" tId="187" url="Documents/datasetexplorer1.htm" target="right"><![CDATA[Dataset Explorer]]><contextids><item id="1258" /></contextids></topic>
+    <topic id="15" tId="153" url="Documents/datasetexplorer.htm" target="right"><![CDATA[Dataset Explorer]]><contextids><item id="1007" /></contextids></topic>
+    <topic id="16" tId="161" url="Documents/definingasearchfilter.htm" target="right"><![CDATA[Defining a Search Filter]]><contextids><item id="1014" /></contextids></topic>
+    <topic id="17" tId="206" url="Documents/definingpointsofcomparison.htm" target="right"><![CDATA[Defining Points of Comparison]]><contextids><item id="1076" /></contextids></topic>
+    <topic id="18" tId="270" url="Documents/documentstab.htm" target="right"><![CDATA[Documents Tab]]><contextids><item id="1270" /></contextids></topic>
+    <topic id="19" tId="229" url="Documents/downloadrawrdata.htm" target="right"><![CDATA[Download Raw R Data]]><contextids><item id="1097" /></contextids></topic>
+    <topic id="20" tId="169" url="Documents/editinganddeletingsavedfilters.htm" target="right"><![CDATA[Editing and Deleting Saved Filters]]><contextids><item id="1022" /></contextids></topic>
+    <topic id="21" tId="176" url="Documents/exportinformationaboutaparticularanalysis.htm" target="right"><![CDATA[Export Information about a Particular Analysis]]><contextids><item id="1030" /></contextids></topic>
+    <topic id="22" tId="175" url="Documents/exportresultsinanalysisvieworstudyview.htm" target="right"><![CDATA[Export Results in Analysis View or Study View]]><contextids><item id="1029" /></contextids></topic>
+    <topic id="23" tId="211" url="Documents/exportingdatasetexplorerfindings.htm" target="right"><![CDATA[Exporting Dataset Explorer Findings]]><contextids><item id="1312" /></contextids></topic>
+    <topic id="24" tId="150" url="Documents/featureoverview.htm" target="right"><![CDATA[Feature Overview]]><contextids><item id="1004" /></contextids></topic>
+    <topic id="25" tId="244" url="Documents/step2creatingthegenesignature.htm#genesigpg3.htm" target="right"><![CDATA[Step 2. Creating the Gene Signature]]><contextids><item id="1164" /></contextids></topic>
+    <topic id="26" tId="275" url="Documents/step2creatingthegenesignature.htm#genesigpg.htm" target="right"><![CDATA[Step 2. Creating the Gene Signature]]><contextids><item id="1275" /></contextids></topic>
+    <topic id="27" tId="155" url="Documents/genesignaturewizard.htm" target="right"><![CDATA[Gene Signature Wizard]]><contextids><item id="1008" /></contextids></topic>
+    <topic id="28" tId="238" url="Documents/genesignaturesandgenelists.htm" target="right"><![CDATA[Gene Signatures and Gene Lists]]><contextids><item id="1259" /></contextids></topic>
+    <topic id="29" tId="218" url="Documents/generatingadvancedanalyses.htm" target="right"><![CDATA[Generating Advanced Analyses]]><contextids><item id="1509" /></contextids></topic>
+    <topic id="30" tId="212" url="Documents/generatingadvancedanalysesandvisualizations.htm" target="right"><![CDATA[Generating Advanced Analyses and Visualizations]]><contextids><item id="1503" /></contextids></topic>
+    <topic id="31" tId="213" url="Documents/generatingheatmaps.htm" target="right"><![CDATA[Generating Heatmaps]]><contextids><item id="1504" /></contextids></topic>
+    <topic id="32" tId="204" url="Documents/generatingsummarystatistics.htm" target="right"><![CDATA[Generating Summary Statistics]]><contextids><item id="1074" /></contextids></topic>
+    <topic id="33" tId="267" url="Documents/gettingstartedwithtr.htm" target="right" default="1"><![CDATA[Getting Started with tranSMART]]><contextids><item id="1003" /></contextids></topic>
+    <topic id="34" tId="293" url="Documents/glossaryofterms1.htm" target="right"><![CDATA[Glossary of Terms]]><contextids><item id="1293" /></contextids></topic>
+    <topic id="35" tId="292" url="Documents/glossaryofterms.htm" target="right"><![CDATA[Glossary of Terms]]><contextids><item id="1292" /></contextids></topic>
+    <topic id="36" tId="215" url="Documents/hierarchicalclustering.htm" target="right"><![CDATA[Hierarchical Clustering]]><contextids><item id="1506" /></contextids></topic>
+    <topic id="37" tId="226" url="Documents/highdimensionaldata.htm" target="right"><![CDATA[High Dimensional Data]]><contextids><item id="1126" /></contextids></topic>
+    <topic id="38" tId="250" url="Documents/howteascoresarecalculated.htm" target="right"><![CDATA[How TEA Scores Are Calculated]]><contextids><item id="1261" /></contextids></topic>
+    <topic id="39" tId="167" url="Documents/instructionsforbuildingasearchstring.htm" target="right"><![CDATA[Instructions for Building a Search String]]><contextids><item id="1020" /></contextids></topic>
+    <topic id="40" tId="202" url="Documents/joiningmultiplecriteriaforasubsetdefinition.htm" target="right"><![CDATA[Joining Multiple Criteria for a Subset Definition]]><contextids><item id="1072" /></contextids></topic>
+    <topic id="41" tId="216" url="Documents/kmeansclustering.htm" target="right"><![CDATA[K-Means Clustering]]><contextids><item id="1507" /></contextids></topic>
+    <topic id="42" tId="291" url="Documents/linegraphanalysis.htm" target="right"><![CDATA[Line Graph Analysis]]><contextids><item id="1291" /></contextids></topic>
+    <topic id="43" tId="269" url="Documents/literaturetab.htm" target="right"><![CDATA[Literature Tab]]><contextids><item id="1269" /></contextids></topic>
+    <topic id="44" tId="236" url="Documents/locatethesourceofthesamplesindatasetexplorer.htm" target="right"><![CDATA[Locate the Source of the Samples in Dataset Explorer]]><contextids><item id="1442" /></contextids></topic>
+    <topic id="45" tId="156" url="Documents/loggingin.htm" target="right"><![CDATA[Logging In]]><contextids><item id="1009" /></contextids></topic>
+    <topic id="46" tId="245" url="Documents/makinganewgenesignaturepublic.htm" target="right"><![CDATA[Making a New Gene Signature Public]]><contextids><item id="1103" /></contextids></topic>
+    <topic id="47" tId="237" url="Documents/managethesamplesearchresultlist.htm" target="right"><![CDATA[Manage the Sample Search Result List]]><contextids><item id="1444" /></contextids></topic>
+    <topic id="48" tId="217" url="Documents/markerselection.htm" target="right"><![CDATA[Marker Selection]]><contextids><item id="1508" /></contextids></topic>
+    <topic id="49" tId="203" url="Documents/modifyingordeletingcriteria.htm" target="right"><![CDATA[Modifying or Deleting Criteria]]><contextids><item id="1073" /></contextids></topic>
+    <topic id="50" tId="177" url="Documents/mousegenehomologyinsearchresults.htm" target="right"><![CDATA[Mouse Gene Homology in Search Results]]><contextids><item id="1038" /></contextids></topic>
+    <topic id="51" tId="171" url="Documents/mrnaanalysistab.htm" target="right"><![CDATA[mRNA Analysis Tab]]><contextids><item id="1032" /></contextids></topic>
+    <topic id="52" tId="194" url="Documents/navigatetermstab.htm" target="right"><![CDATA[Navigate Terms Tab]]><contextids><item id="1066" /></contextids></topic>
+    <topic id="53" tId="158" url="Documents/openingaparticulartoolatlogin.htm" target="right"><![CDATA[Opening a Particular Tool at Login]]><contextids><item id="1011" /></contextids></topic>
+    <topic id="54" tId="252" url="Documents/operations.htm" target="right"><![CDATA[Operations]]><contextids><item id="1110" /></contextids></topic>
+    <topic id="55" tId="227" url="Documents/otherfeatures.htm" target="right"><![CDATA[Other Features]]><contextids><item id="1313" /></contextids></topic>
+    <topic id="56" tId="249" url="Documents/othertasks.htm" target="right"><![CDATA[Other Tasks]]><contextids><item id="1514" /></contextids></topic>
+    <topic id="57" tId="276" url="Documents/othertasks1.htm" target="right"><![CDATA[Other Tasks]]><contextids><item id="1276" /></contextids></topic>
+    <topic id="58" tId="188" url="Documents/overviewoftheui.htm" target="right"><![CDATA[Overview of the UI]]><contextids><item id="1061" /></contextids></topic>
+    <topic id="59" tId="247" url="Documents/performingactionsonotheruserssignatures.htm" target="right"><![CDATA[Performing Actions on Other Users&#8217; Signatures]]><contextids><item id="1105" /></contextids></topic>
+    <topic id="60" tId="246" url="Documents/performingactionsonyourgenesignatures.htm" target="right"><![CDATA[Performing Actions on Your Gene Signatures]]><contextids><item id="1104" /></contextids></topic>
+    <topic id="61" tId="196" url="Documents/populatingthestudygroups.htm" target="right"><![CDATA[Populating the Study Groups]]><contextids><item id="1068" /></contextids></topic>
+    <topic id="62" tId="220" url="Documents/principalcomponentanalysis.htm" target="right"><![CDATA[Principal Component Analysis]]><contextids><item id="1511" /></contextids></topic>
+    <topic id="63" tId="208" url="Documents/printingorsavingthecontentsoftheresultsanalysisview.htm" target="right"><![CDATA[Printing or Saving the Contents of the Results/Analysis View]]><contextids><item id="1078" /></contextids></topic>
+    <topic id="64" tId="190" url="Documents/publicandprivatestudies.htm" target="right"><![CDATA[Public and Private Studies]]><contextids><item id="1063" /></contextids></topic>
+    <topic id="65" tId="109" url="Documents/readthedocumentationinpdf.htm" target="right"><![CDATA[Read the Documentation in PDF]]><contextids><item id="1000" /></contextids></topic>
+    <topic id="66" tId="253" url="Documents/result.htm" target="right"><![CDATA[Result]]><contextids><item id="1111" /></contextids></topic>
+    <topic id="67" tId="207" url="Documents/resultsofacomparison.htm" target="right"><![CDATA[Results of a Comparison]]><contextids><item id="1077" /></contextids></topic>
+    <topic id="68" tId="166" url="Documents/rulesforbuildingasearchstring.htm" target="right"><![CDATA[Rules for Building a Search String]]><contextids><item id="1019" /></contextids></topic>
+    <topic id="69" tId="254" url="Documents/rulesforloadingomicsoftdata.htm" target="right"><![CDATA[Rules for Loading OmicSoft Data]]><contextids><item id="1299" /></contextids></topic>
+    <topic id="70" tId="277" url="Documents/rulesforloadingomics.htm" target="right"><![CDATA[Rules for Loading OmicSoft Data]]><contextids><item id="1277" /></contextids></topic>
+    <topic id="71" tId="154" url="Documents/sampleexplorer.htm" target="right"><![CDATA[Sample Explorer]]><contextids><item id="1425" /></contextids></topic>
+    <topic id="72" tId="232" url="Documents/sampleexplorer1.htm" target="right"><![CDATA[Sample Explorer]]><contextids><item id="1437" /></contextids></topic>
+    <topic id="73" tId="228" url="Documents/savetopdf.htm" target="right"><![CDATA[Save to PDF]]><contextids><item id="1314" /></contextids></topic>
+    <topic id="74" tId="168" url="Documents/savingasearchfilterorsearchstring.htm" target="right"><![CDATA[Saving a Search Filter or Search String]]><contextids><item id="1021" /></contextids></topic>
+    <topic id="75" tId="201" url="Documents/savingcomparisondefinitions.htm" target="right"><![CDATA[Saving Comparison Definitions]]><contextids><item id="1474" /></contextids></topic>
+    <topic id="76" tId="221" url="Documents/scatterplotwithlinearregression.htm" target="right"><![CDATA[Scatter Plot with Linear Regression]]><contextids><item id="1512" /></contextids></topic>
+    <topic id="77" tId="192" url="Documents/searchbysubjecttab.htm" target="right"><![CDATA[Search by Subject Tab]]><contextids><item id="1065" /></contextids></topic>
+    <topic id="78" tId="152" url="Documents/searchresults.htm" target="right"><![CDATA[Search Results]]><contextids><item id="1006" /></contextids></topic>
+    <topic id="79" tId="160" url="Documents/searchtasks.htm" target="right"><![CDATA[Search Tasks]]><contextids><item id="1013" /></contextids></topic>
+    <topic id="80" tId="151" url="Documents/searchtool.htm" target="right"><![CDATA[Search Tool]]><contextids><item id="1005" /></contextids></topic>
+    <topic id="81" tId="159" url="Documents/searchtool1.htm" target="right"><![CDATA[Search Tool]]><contextids><item id="1257" /></contextids></topic>
+    <topic id="82" tId="233" url="Documents/selectaprimarysearchfilter.htm" target="right"><![CDATA[Select a Primary Search Filter]]><contextids><item id="1438" /></contextids></topic>
+    <topic id="83" tId="235" url="Documents/selectandremovesearchfilters.htm" target="right"><![CDATA[Select and Remove Search Filters]]><contextids><item id="1440" /></contextids></topic>
+    <topic id="84" tId="193" url="Documents/selectingandopeningastudyinasearchresult.htm" target="right"><![CDATA[Selecting and Opening a Study in a Search Result]]><contextids><item id="1238" /></contextids></topic>
+    <topic id="85" tId="197" url="Documents/selectingcriteriaforthestudygroups.htm" target="right"><![CDATA[Selecting Criteria for the Study Groups]]><contextids><item id="1069" /></contextids></topic>
+    <topic id="86" tId="191" url="Documents/selectingthestudy.htm" target="right"><![CDATA[Selecting the Study]]><contextids><item id="1064" /></contextids></topic>
+    <topic id="87" tId="172" url="Documents/showfilters.htm" target="right"><![CDATA[Show Filters]]><contextids><item id="1025" /></contextids></topic>
+    <topic id="88" tId="205" url="Documents/significancetests.htm" target="right"><![CDATA[Significance Tests]]><contextids><item id="1075" /></contextids></topic>
+    <topic id="89" tId="199" url="Documents/specifyinganumericvalue.htm" target="right"><![CDATA[Specifying a Numeric Value]]><contextids><item id="1239" /></contextids></topic>
+    <topic id="90" tId="214" url="Documents/standardheatmap.htm" target="right"><![CDATA[Standard Heatmap]]><contextids><item id="1505" /></contextids></topic>
+    <topic id="91" tId="240" url="Documents/step1addingthegenestoatextfile.htm" target="right"><![CDATA[Step 1. Adding the Genes to a Text File]]><contextids><item id="1101" /></contextids></topic>
+    <topic id="92" tId="242" url="Documents/step2creatingthegenesignature.htm" target="right"><![CDATA[Step 2. Creating the Gene Signature]]><contextids><item id="1102" /></contextids></topic>
+    <topic id="93" tId="174" url="Documents/studyview.htm" target="right"><![CDATA[Study View]]><contextids><item id="1028" /></contextids></topic>
+    <topic id="94" tId="222" url="Documents/survivalanalysis.htm" target="right"><![CDATA[Survival Analysis]]><contextids><item id="1088" /></contextids></topic>
+    <topic id="95" tId="272" url="Documents/tablewithfishertesta.htm" target="right"><![CDATA[Table with Fisher Test Analysis]]><contextids><item id="1272" /></contextids></topic>
+    <topic id="96" tId="181" url="Documents/teaanalyses.htm" target="right"><![CDATA[TEA Analyses]]><contextids><item id="1054" /></contextids></topic>
+    <topic id="97" tId="183" url="Documents/teaindicatorsappliedtoananalysis.htm" target="right"><![CDATA[TEA Indicators Applied to an Analysis]]><contextids><item id="1056" /></contextids></topic>
+    <topic id="98" tId="186" url="Documents/teaindicatorsappliedtoanindividualgene.htm" target="right"><![CDATA[TEA Indicators Applied to an Individual Gene]]><contextids><item id="1059" /></contextids></topic>
+    <topic id="99" tId="182" url="Documents/teaindicatorsappliedtoindividualbiomarkers.htm" target="right"><![CDATA[TEA Indicators Applied to Individual Biomarkers]]><contextids><item id="1055" /></contextids></topic>
+    <topic id="100" tId="230" url="Documents/thejobstab.htm" target="right"><![CDATA[The Jobs Tab]]><contextids><item id="1456" /></contextids></topic>
+    <topic id="101" tId="157" url="Documents/tools.htm" target="right"><![CDATA[Tools]]><contextids><item id="1010" /></contextids></topic>
+    <topic id="102" tId="162" url="Documents/typethefiltername.htm" target="right"><![CDATA[Type the Filter Name]]><contextids><item id="1015" /></contextids></topic>
+    <topic id="103" tId="164" url="Documents/useasavedsearchfilter.htm" target="right"><![CDATA[Use a Saved Search Filter]]><contextids><item id="1017" /></contextids></topic>
+    <topic id="104" tId="189" url="Documents/usingdatasetexplorer.htm" target="right"><![CDATA[Using Dataset Explorer]]><contextids><item id="1062" /></contextids></topic>
+    <topic id="105" tId="274" url="Documents/usingtransmarttosele.htm" target="right"><![CDATA[Using tranSMART to Select Genes]]><contextids><item id="1274" /></contextids></topic>
+    <topic id="106" tId="234" url="Documents/viewandrefinesamplesearchresults.htm" target="right"><![CDATA[View and Refine Sample Search Results]]><contextids><item id="1439" /></contextids></topic>
+    <topic id="107" tId="248" url="Documents/viewingagenesignaturedefinition.htm" target="right"><![CDATA[Viewing a Gene Signature Definition]]><contextids><item id="1106" /></contextids></topic>
+    <topic id="108" tId="231" url="Documents/viewingaloggedjob.htm" target="right"><![CDATA[Viewing a Logged Job]]><contextids><item id="1476" /></contextids></topic>
+    <topic id="109" tId="210" url="Documents/viewingastudy.htm" target="right"><![CDATA[Viewing a Study]]><contextids><item id="1098" /></contextids></topic>
+    <topic id="110" tId="200" url="Documents/viewingthenumericvaluesassociatedwithaconcept.htm" target="right"><![CDATA[Viewing the Numeric Values Associated with a Concept]]><contextids><item id="1420" /></contextids></topic>
+    <topic id="111" tId="198" url="Documents/visualaidstohelpyouselectthecriteria.htm" target="right"><![CDATA[Visual Aids to Help You Select the Criteria]]><contextids><item id="1070" /></contextids></topic>
+    <topic id="112" tId="185" url="Documents/whatcoantiregulationandupdownregulationmean.htm" target="right"><![CDATA[What Co-/Anti-Regulation and Up-/Down-Regulation Mean]]><contextids><item id="1058" /></contextids></topic>
+    <topic id="113" tId="184" url="Documents/whattheteascoremeans.htm" target="right"><![CDATA[What the TEA Score Means]]><contextids><item id="1057" /></contextids></topic>
+    <topic id="114" tId="170" url="Documents/workingwithsearchresults.htm" target="right"><![CDATA[Working with Search Results]]><contextids><item id="1023" /></contextids></topic>
+</topics>

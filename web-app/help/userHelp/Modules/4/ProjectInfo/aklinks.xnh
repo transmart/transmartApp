@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<root>
+    <keywords />
+    <groups>
+        <group name="configtipsjavasecwarn">
+            <topics>
+                <topic url="Documents/javasecuritywarnings.htm" window="right"><![CDATA[Java Security Warnings]]></topic>
+            </topics>
+        </group>
+        <group name="iesecwarn">
+            <topics>
+                <topic url="Documents/internetexplorersecuritywarning.htm" window="right"><![CDATA[Internet Explorer Security Warning]]></topic>
+            </topics>
+        </group>
+        <group name="popupblocker">
+            <topics>
+                <topic url="Documents/usingpopupblockerwithtransmart.htm" window="right"><![CDATA[Using Pop-Up Blocker with tranSMART]]></topic>
+            </topics>
+        </group>
+        <group name="rntoconfig">
+            <topics>
+                <topic url="Documents/configurationtips.htm" window="right"><![CDATA[Configuration Tips]]></topic>
+            </topics>
+        </group>
+    </groups>
+    <links />
+</root>

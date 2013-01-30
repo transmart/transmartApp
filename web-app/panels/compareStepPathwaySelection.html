@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>compareStepSelectPathways</title>	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <link rel="stylesheet" type="text/css" href="css/datasetExplorer.css">
+    <style>
+   		p { width:430px; }
+        .ext-ie .x-form-text {position:static !important;}
+  	</style>
+  </head>
+  
+  <body>
+  <div style="background:#eee;height:100%;padding:5px; font:11px tahoma, arial, helvetica, sans-serif;">  
+   	<table width="400">
+	   	<tr>
+	   		<th align="left">
+	   			<div id="labelsubset1" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br><b>SUBSET 1</b><br></div>
+	   		</th>
+	   		<th align="left">
+	   			<div id="labelsubset2" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br><b>SUBSET 2<br></b></div>
+	   		</th>
+	   	</tr>
+	   	<tr>
+	    	<td align="left">
+	    		<div id="divplatform1" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Platform:<br>
+	  			<input type="text"  size="20" id="platforms1" autocomplete="off" />
+	  			</div>
+	  		</td>
+	  		<td align="left">
+	  			<div id="divplatform2" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Platform:<br>
+	  			<input type="text"  size="20" id="platforms2" autocomplete="off" />
+	  			</div>
+	  		</td>
+	  	</tr>
+	  	<tr>
+			<td align="left">
+			  	<div id="divrbmpanel1" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>RBM Panel:<br>
+			  		<input type="text"  size="20" id="rbmpanel1" autocomplete="off" />
+			  	</div>
+			</td>
+			<td align="left">
+			  	<div id="divrbmpanel2" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>RBM Panel:<br>
+			  		<input type="text"  size="20" id="rbmpanel2" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+			<td align="left">
+			  	<div id="divgpl1" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>GPL Platform:<br>
+			  		<input type="text"  size="20" id="gpl1" autocomplete="off" />
+			  	</div>
+			</td>
+			<td align="left">
+			  	<div id="divgpl2" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>GPL Platform:<br>
+			  		<input type="text"  size="20" id="gpl2" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+	  		<td align="left">
+			  	<div id="divsample1" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Sample:<br>
+			  		<input type="text"  size="20" id="sample1" autocomplete="off" />
+			  	</div>
+			</td>
+			<td align="left">  	
+			  	<div id="divsample2" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Sample:<br>
+			  		<input type="text"  size="20" id="sample2" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+			<td align="left">
+			  	<div id="divtissue1" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Tissue Type:<br>
+			  		<input type="text"  size="20" id="tissue1" autocomplete="off" />
+			  	</div>
+			</td>
+			<td align="left">
+			  	<div id="divtissue2" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Tissue Type:<br>
+			  		<input type="text"  size="20" id="tissue2" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+			<td align="left">
+			  	<div id="divtimepoint1" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Timepoint:<br>
+			  		<input type="text"  size="20" id="timepoint1" autocomplete="off" />
+			  	</div>
+			</td>
+			<td align="left">
+			  	<div id="divtimepoint2" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Timepoint:<br>
+			  		<input type="text"  size="20" id="timepoint2" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+	  		<td colspan="2">
+			  	<div id="divpathway" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Select a Gene/Pathway:<br>
+			  		<input type="text"  size="80" id="searchPathway" autocomplete="off" />
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+	  		<td colspan="2">
+			  	<div id="divSNPType" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Select SNP Type:<br>
+			  		<select id="SNPType">
+			  			<option value="Genotype">Genotype(categorical)</option>
+			  			<option value="CNV">CopyNumber(continuous)</option>			  			
+			  		</select>
+			  	</div>
+			</td>
+	  	</tr>
+	  	<tr>
+	  		<td colspan="2">
+			  	<div id="divProbesAggregation" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Aggregate Probes?<br>
+			  		<input type="checkbox"  size="20" id="probesAggregation"/>
+			  	</div>
+			</td>
+	  	</tr>	  	
+	  	<tr>
+	  		<td colspan="2">
+			  	<div id="divnclusters" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br>Select the number of Clusters:<br>
+			  		<input type="text"  size="3" id="nClusters" />
+			  	</div>
+			</td>
+	  	</tr>
+  	</table>
+  </div>
+
+  <script type="text/javascript">
+  	createNClustersBox();
+  	createPathwaySearchBox('searchPathway', 'divpathway');
+  	createPlatformSearchBox(1, 1);
+  	createPlatformSearchBox(2, 2);
+  	createTimePointsSearchBox(1, 1);
+  	createTimePointsSearchBox(2, 2);
+  	createTissueSearchBox(1, 1);
+  	createTissueSearchBox(2, 2);
+  	createSamplesSearchBox(1, 1);
+  	createSamplesSearchBox(2, 2);
+  	createGplSearchBox(1, 1);
+  	createGplSearchBox(2, 2);
+  	createRbmPanelSearchBox(1, 1);
+  	createRbmPanelSearchBox(2, 2);
+  </script><br/><br/>
+  </body>
+</html>

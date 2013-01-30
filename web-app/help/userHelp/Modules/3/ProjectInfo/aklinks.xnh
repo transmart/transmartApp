@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<root>
+    <keywords />
+    <groups>
+        <group name="configtipsjavasecwarn">
+            <topics />
+        </group>
+        <group name="rntofaqpopupblocker">
+            <topics>
+                <topic url="Documents/canidisplayheatmapsifihavepopupblockerenabledonmybrowser1.htm" window="right"><![CDATA[Can I display heat maps if I have pop-up blocker enabled on my browser?]]></topic>
+            </topics>
+        </group>
+    </groups>
+    <links>
+        <link id="69" window="">
+            <items>
+                <item role="group" name="configtipsjavasecwarn" />
+            </items>
+        </link>
+    </links>
+</root>

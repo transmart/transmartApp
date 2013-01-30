@@ -1,0 +1,46 @@
+
+======================
+
+ETL Analyst's Contacts
+
+======================
+
+
+
+------------
+Data Steward
+------------
+
+Robert Gruninger (RGruning@its.jnj.com)
+
+
+
+----------------------
+Subject Matter Experts
+----------------------
+
+Sandor Szalma (sszalma@its.jnj.com)
+
+Venkata Koka (VKoka@its.jnj.com)
+
+
+
+------------
+Data Curator
+------------
+
+Tatiana Khasanova (TKhasano@its.jnj.com)   
+
+
+
+
+-------------------------
+Recombinant Data Contacts
+-------------------------
+
+Jean Avitabile (JAvitabile@recomdata.com)
+
+Kevin Russell (KRussell@recomdata.com)
+
+
+
