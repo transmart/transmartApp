@@ -4,6 +4,7 @@ null.log*
 System.out
 .buildpath
 .classpath
+.project
 .settings
 .idea
 *.iml
