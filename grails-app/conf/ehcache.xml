@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd" >
+
+    <diskStore path="java.io.tmpdir"/>
+
+    <cacheManagerEventListenerFactory class="" properties=""/>
+
+
+    <defaultCache
+            maxElementsInMemory="50000"
+            eternal="false"
+            timeToLiveSeconds="300"
+            overflowToDisk="false"
+            diskPersistent="false"
+            />
+
+    <cache name="transmart"
+           maxElementsInMemory="50000"
+           timeToIdleSeconds="300"
+            />
+
+    <cache name="org.hibernate.cache.UpdateTimestampsCache"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+
+    <cache name="org.hibernate.cache.StandardQueryCache"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+
+
+
+</ehcache>
