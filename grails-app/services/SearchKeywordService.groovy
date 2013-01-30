@@ -37,6 +37,21 @@ public class SearchKeywordService {
 
 	// probably not needed but makes all methods transactional
 	static transactional = true
+	
+	//Hard-coded list of items that we consider filter categories... configure in Config/database?
+	def filtercats = [
+		[codeTypeName: "TYPE_OF_BM_STUDIED", category: "BIOMARKER_TYPE", displayName: "Biomarker Type"],
+		[codeTypeName: "INSTITUTION", category: "INSTITUTION", displayName: "Institution"],
+		[codeTypeName: "MEASUREMENT_TYPE", category: "MEASUREMENT_TYPE", displayName: "Measurement Type", useText: true],
+		[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
+		[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
+		[codeTypeName: "STUDY_OBJECTIVE", category: "STUDY_OBJECTIVE", displayName: "Study Objective"],
+		[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
+		[codeTypeName: "STUDY_DESIGN", category: "STUDY_DESIGN", displayName: "Study Design"],
+		[codeTypeName: "TECHNOLOGY", category: "TECHNOLOGY", displayName: "Technology", prefix: true, useText: true],
+		[codeTypeName: "THERAPEUTIC_DOMAIN", category: "THERAPEUTIC_DOMAIN", displayName: "Therapeutic Domain"],
+		[codeTypeName: "VENDOR", category: "VENDOR", displayName: "Vendor", prefix: true, useText: true],
+	]
 
 	/** Finds all of the search categories pertaining to search keywords */
 	def findSearchCategories()	{
@@ -64,24 +79,6 @@ public class SearchKeywordService {
 	def findFilterCategories() {
 		
 		def categories = []
-		
-		//Very, VERY hard-coded just now... configure in Config?
-		
-		def filtercats = [
-			[codeTypeName: "TYPE_OF_BM_STUDIED", category: "BIOMARKER_TYPE", displayName: "Biomarker Type"],
-			//[codeTypeName: "COUNTRY", category: "COUNTRY", displayName: "Country"],
-			[codeTypeName: "INSTITUTION", category: "INSTITUTION", displayName: "Institution"],
-			[codeTypeName: "MEASUREMENT_TYPE", category: "MEASUREMENT_TYPE", displayName: "Measurement Type", useText: true],
-			//[codeTypeName: "SPECIES", category: "ORGANISM", displayName: "Organism"],
-			[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
-			[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
-			[codeTypeName: "STUDY_OBJECTIVE", category: "STUDY_OBJECTIVE", displayName: "Study Objective"],
-			[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
-			[codeTypeName: "STUDY_DESIGN", category: "STUDY_DESIGN", displayName: "Study Design"],
-			[codeTypeName: "TECHNOLOGY", category: "TECHNOLOGY", displayName: "Technology", prefix: true, useText: true],
-			[codeTypeName: "THERAPEUTIC_DOMAIN", category: "THERAPEUTIC_DOMAIN", displayName: "Therapeutic Domain"],
-			[codeTypeName: "VENDOR", category: "VENDOR", displayName: "Vendor", prefix: true, useText: true],
-		]
 		
 		for (filtercat in filtercats) {
 			def results 
@@ -202,6 +199,48 @@ public class SearchKeywordService {
 			}
 			keywords.add(m)
 		}
+		
+		/*
+		* Get results from Bio Concept Code table
+		*/
+		
+		if (category.equals("ALL")) {
+			results = ConceptCode.createCriteria().list {
+				if (term.size() > 0) {
+					like("bioConceptCode", term.toUpperCase().replace(" ", "_") + '%')
+				}
+				or {
+					'in'("codeTypeName", filtercats*.codeTypeName)
+					like("codeTypeName", "VENDOR%")
+					like("codeTypeName", "TECHNOLOGY%")
+				}
+				maxResults(max)
+				order("bioConceptCode", "asc")
+			}
+			log.info("Bio concept code keywords found: " + results.size())
+			
+			for (result in results)	{
+				def m = [:]
+				
+				//Get display name by category
+				def cat = filtercats.find {result.codeTypeName.startsWith(it.codeTypeName)}
+				
+				m.put("label", result.codeName)
+				m.put("category", cat.displayName)
+				m.put("categoryId", cat.category)
+				if (cat.useText) {
+					m.put("id", result.codeName)
+				}
+				else {
+					m.put("id", result.bioDataUid.uniqueId[0])
+				}
+				if (!keywords.find {it.id.equals(m.id)}) {
+					keywords.add(m)
+				}
+				
+			}
+		}
+		
 		
 		return keywords
 	 }

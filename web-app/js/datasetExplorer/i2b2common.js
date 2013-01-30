@@ -1947,10 +1947,10 @@ function getTreeNodeFromXMLNode(concept)
 	    	tcls=visualattributes.substr(2,1).toLowerCase()+"leafclass";
 	    }
 	    
-	    if (level == '0') {
+	    if (visualattributes.indexOf('P') > '-1') {
 	    	iconCls="programicon";
 	    }
-	    else if (level == '1') {
+	    if (visualattributes.indexOf('S') > '-1') {
 	    	iconCls="studyicon";
 	    }
 	    

@@ -43,6 +43,7 @@ class FmFolderController {
 	def amTagItemService
 	def fmFolderService
 	def ontologyService
+	def solrFacetService
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def index = {
@@ -625,9 +626,9 @@ class FmFolderController {
 		def folderContents = fmFolderService.getFolderContents(id)
 		
 		def folderSearchList = session['folderSearchList']
-		def folderSearchString = folderSearchList ? folderSearchList.join("\\,") + "\\," : "" //Extra , - used to identify leaves
+		def folderSearchString = folderSearchList ? folderSearchList.join(",") + "," : "" //Extra , - used to identify leaves
 		
-		render(template:'folders', model: [folders: folderContents.folders, files: folderContents.files, folderSearchString: folderSearchString, auto: auto])
+		render(template:'folders', model: [folders: folderContents, folderSearchString: folderSearchString, auto: auto])
 	}
 
 	/**
@@ -1245,6 +1246,10 @@ def getFdDetails = {
 		
 		fmFolderService.reindexFiles();
 		
+	}
+	
+	def reindexFolder = {
+		solrFacetService.reindexFolder(params.uid)
 	}
 	
 }

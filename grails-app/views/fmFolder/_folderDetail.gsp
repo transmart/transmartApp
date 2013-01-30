@@ -47,16 +47,16 @@
 			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name())}">
 		 		<span name="${folder.id}" class="greybutton buttonicon addstudy">Add new study</span>
 			</g:if>
+		
+			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())}">
+				<span name="${folder.id}" class="greybutton buttonicon addassay">Add new assay</span>
+				<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
+			</g:if>
+			
+			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.FOLDER.name()) || folder.folderType.equalsIgnoreCase(FolderType.ASSAY.name()) || folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
+				<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
+			</g:if>
 		</sec:ifAnyGranted>
-		
-		<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())}">
-			<span name="${folder.id}" class="greybutton buttonicon addassay">Add new assay</span>
-			<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
-		</g:if>
-		
-		<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.FOLDER.name()) || folder.folderType.equalsIgnoreCase(FolderType.ASSAY.name()) || folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
-			<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
-		</g:if>
 	</div>
 	<h3 class="rdc-h3">
 		<g:if test="${bioDataObject?.hasProperty('title')}">
@@ -71,7 +71,7 @@
 	</h3>
 </div>
 <g:if test="${bioDataObject?.hasProperty('description')}">
-<div style="line-height:14px;font-family:arial, ��tahoma, ��helvetica, ��sans-serif; font-size: 12px;">
+<div style="line-height:14px;font-family:arial, tahoma, helvetica, sans-serif; font-size: 12px;">
  <g:if test="${bioDataObject?.description?.length() > 325000}">
                        ${(bioDataObject?.description)?.substring(0,324000)}&nbsp;&nbsp;
                        <a href=# >...See more</a>
@@ -82,7 +82,7 @@
 <div style="height:20px;"></div>
 </g:if>
 <g:elseif test="${bioDataObject?.hasProperty('longDescription')}">
-<div style="line-height:14px;font-family:arial, ��tahoma, ��helvetica, ��sans-serif; font-size: 12px;">
+<div style="line-height:14px;font-family:arial, tahoma, helvetica, sans-serif; font-size: 12px;">
  <g:if test="${bioDataObject?.longDescription?.length() > 325000}">
                        ${(bioDataObject?.longDescription)?.substring(0,324000)}&nbsp;&nbsp;
                        <a href=# >...See more</a>
@@ -109,15 +109,10 @@
                         params="[eleId:overlayDiv, folderId:folder?.id]" 
                         before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">--%>
                   
-                  <%-- Restrict edits to administrators if this is a PROGRAM or STUDY --%>
-                  <g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name())}">
-	                  <sec:ifAnyGranted roles="ROLE_ADMIN">
-	                  	<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
-	                  </sec:ifAnyGranted>
-                  </g:if>
-                  <g:else>
-					<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
-                  </g:else>
+                  <%-- Restrict edits to administrators --%>
+                  <sec:ifAnyGranted roles="ROLE_ADMIN">
+                  	<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
+                  </sec:ifAnyGranted>
                   <%-- </g:remoteLink>--%>
                 </g:if>
                 </th>

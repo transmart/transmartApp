@@ -30,6 +30,8 @@ import org.apache.commons.io.FileUtils;
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
+import com.recomdata.util.FolderType;
+
 class FmFolderService {
 
 	boolean transactional = true;
@@ -46,6 +48,7 @@ class FmFolderService {
 	 */
 	def importFiles() {
 		
+		log.info("importFiles called");
 		if (importDirectory == null || filestoreDirectory == null) {
 			if (importDirectory == null) {
 				log.error("Unable to check for new files. config.com.recomdata.FmFolderService.importDirectory property has not been defined in the Config.groovy file.");
@@ -70,6 +73,7 @@ class FmFolderService {
 	 */
 	def reindexFiles() {
 		
+		log.info("reindexFiles called");
 		def fmFiles = FmFile.findAll();
 		for (fmFile in fmFiles) {
 			indexFile(fmFile);
@@ -244,9 +248,9 @@ class FmFolderService {
 			int pos = fmFolder.folderFullName.indexOf("\\", 1);
 			pos = fmFolder.folderFullName.indexOf("\\", pos + 1);
 //			log.info("find name = " + fmFolder.folderFullName.substring(0, pos));
-			FmFolder fmParentFolder = FmFolder.findByFolderFullName(fmFolder.folderFullName.substring(0, pos));	
+			FmFolder fmParentFolder = FmFolder.findByFolderFullName(fmFolder.folderFullName.substring(0, pos + 1));	
 			if (fmParentFolder == null) {
-				log.error("Unable to find folder with folderFullName of " + fmFolder.folderFullName.substring(0, pos));
+				log.error("Unable to find folder with folderFullName of " + fmFolder.folderFullName.substring(0, pos + 1));
 				filestoreLocation = "0";
 			} else {
 				filestoreLocation = fmParentFolder.id;
@@ -327,7 +331,23 @@ class FmFolderService {
 			order('folderName', 'asc')
 		}
 		 
-		return [folders: folders, files: parent?.fmFiles]
+		return folders
+	}
+	
+	def getAssociatedAccession(fmFolder) {
+		//Walk up the tree to find the study accession for this folder
+		if (!fmFolder) {
+			return null
+		}
+		
+		if (fmFolder.folderType.equals(FolderType.STUDY.name())) {
+			def experiment = FmFolderAssociation.findByFmFolder(fmFolder)?.getBioObject()
+			log.error("No experiment associated with study folder: " + fmFolder.folderFullName)
+			return experiment?.accession
+		}
+		else {
+			getAssociatedAccession(fmFolder.parent)
+		}
 	}
 	
 }

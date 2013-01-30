@@ -17,15 +17,21 @@ var allowOnSelectEvent = true;
 
 // Method to add the categories for the select box
 function addSelectCategories()	{
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All"));
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "DATANODE").text("Data Node"));
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "text").text("Free Text"));
+	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All").attr('id', 'allCategory'));
+	
+	
 	jQuery.getJSON(getCategoriesURL, function(json) {
 		for (var i=0; i<json.length; i++)	{
 			var category = json[i].category;
 			var catText = convertCategory(category);
 			jQuery("#search-categories").append(jQuery("<option></option>").attr("value", category).text(catText));
 		}
+		
+		jQuery("#search-categories").html(jQuery("option", jQuery("#search-categories")).sort(function(a, b) { 
+	        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1 
+	    }));
+		
+		jQuery("#allCategory").after(jQuery("<option></option>").attr("value", "text").text("Free Text"));
     });
 	
 }
@@ -79,9 +85,17 @@ function addSearchAutoComplete()	{
 			return false;
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
+		var resulta = '<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b>&nbsp;';
+		if (item.synonyms != null) {
+			resulta += (item.synonyms + '</a>');
+		}
+		else {
+			resulta += '</a>';
+		}
+		
 		return jQuery('<li></li>')		
 		  .data("item.autocomplete", item )
-		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b>&nbsp;' + item.synonyms + '</a>')
+		  .append(resulta)
 		  .appendTo(ul);
 	};	
 		
@@ -118,6 +132,9 @@ function convertCategory(valueToConvert)	{
 	var convertedValue = valueToConvert.toLowerCase();
 	if (convertedValue == "genesig") {
 		return "Gene List";
+	}
+	if (convertedValue == "species") {
+		return "Organism";
 	}
 	return convertedValue.slice(0,1).toUpperCase() + convertedValue.slice(1);
 }
@@ -414,6 +431,7 @@ function showFacetResults()	{
 			success: function(response) {
 	
 					jQuery('#results-div').removeClass('ajaxloading').html(response);
+					checkSearchLog();
 	
 			},
 			error: function(xhr) {
@@ -435,6 +453,7 @@ function showFacetResults()	{
 				data: queryString + "&searchTerms=" + encodeURIComponent(savedSearchTerms) + "&searchOperators=" + operatorString + "&page=datasetExplorer",
 				success: function(response) {
 						searchByTagComplete(response);
+						checkSearchLog();
 				},
 				error: function(xhr) {
 					console.log('Error!  Status = ' + xhr.status + xhr.statusText);
@@ -977,4 +996,24 @@ function updateFolder(id) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
 	});
+}
+
+function checkSearchLog() {
+	
+	if (jQuery('#searchlog').size() > 0) {
+		jQuery.ajax({
+			url:searchLogURL,
+			success: function(response) {
+				var searchLog = jQuery('#searchlog').empty();
+				searchLog.append("<br/>" + "------");
+				var log = response.log
+				for (var i = 0; i < log.length; i++) {
+					searchLog.append("<br/>" + log[i]);
+				}
+			},
+			error: function(xhr) {
+				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+			}
+		});
+	}
 }
