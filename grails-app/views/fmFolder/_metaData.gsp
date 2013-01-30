@@ -15,7 +15,7 @@
                 <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
 						<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
 	           			<g:select from="${ConceptCode.findAll('from ConceptCode where codeTypeName=? order by codeName',[amTagItem.codeTypeName])}"	
-		                	name="${amTagItem.tagItemAttr}"   optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	
+		                	name="${amTagItem.tagItemAttr}"  value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"   optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	
 						</g:if>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'MULTIPICKLIST'}">
 	                		<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>

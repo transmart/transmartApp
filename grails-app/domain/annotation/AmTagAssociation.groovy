@@ -47,15 +47,26 @@ class AmTagAssociation implements Serializable{
 	{
 	}
 
-	static AmTagAssociation get(String objectUid, String subjectUid) {
-		find 'from AmTagAssociation where objectUid=:objectUid and subjectUid=:subjectUid',
-			[objectUid: objectUid, subjectUid: subjectUid]
+	static AmTagAssociation get(String objectUid, Long tagItemId, String subjectUid) {
+		find 'from AmTagAssociation where objectUid=:objectUid and tagItemId=:tagItemId and subjectUid=:subjectUid',
+			[objectUid: objectUid, tagItemId: tagItemId.toString(), subjectUid: subjectUid]
 	}
 
-	static boolean remove(String objectUid, String subjectUid, boolean flush = false) {
-		AmTagAssociation instance = AmTagAssociation.findByObjectUidAndSubjectUid(objectUid, subjectUid)
+	static boolean remove(String objectUid, Long tagItemId, String subjectUid, boolean flush = false) {
+		AmTagAssociation instance = AmTagAssociation.findByObjectUidAndTagItemIdAndSubjectUid(objectUid,tagItemId.toString(),subjectUid)
 		instance ? instance.delete(flush: flush) : false
 	}
+	
+	/**
+	 * override display
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("objectType: ").append(this.objectType).append(", subjectUid: ").append(this.subjectUid);
+		sb.append(", objectUid: ").append(this.objectUid).append(", tagItemId: ").append(this.tagItemId.toString());
+		return sb.toString();
+	}
+ 
 
 }
 
