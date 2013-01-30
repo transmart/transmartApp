@@ -189,7 +189,7 @@ class FmFolderController {
 				
 				amTagTemplate = AmTagTemplate.findByTagTemplateType(folder.folderType)
 				if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
-			    metaDataTagItems = amTagItemService.getEditableItems(amTagTemplate.id)
+			    metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 		
 				log.info metaDataTagItems
 				//Use metaDataTagItems to update fields
@@ -281,7 +281,6 @@ class FmFolderController {
 				
 				if (bioDataObject.save(flush: true))
 				{
-					bioDataObject.save(flush: true)
 					log.info "bioDataObject.id = " + bioDataObject.id + " Meta data saved == " + bioDataObject.getUniqueId()
 					
 
@@ -300,6 +299,7 @@ class FmFolderController {
 				}
 				else
 				{
+					log.info bioDataObject
 					bioDataObject.errors.each {
 						log.error it
 					}
