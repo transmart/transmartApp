@@ -1,0 +1,70 @@
+1) Gene List Example using Gene Symbol (no tab character needed, exclude fold change metric):
+
+TCN1
+IL1RN
+KIAA1199
+G0S2
+CXCL2
+IL1RN
+IL24
+APOBEC3A
+VNN3
+DSG3
+
+
+2) Gene Signature Example using Gene Symbol with actual fold change (separate columns with a tab):
+
+CXCL5	-19.19385797
+IL8RB	-18.21493625
+FPR1	-17.6056338
+FCGR3A	-15.69858713
+MMP3	-15.31393568
+CXCL6	-14.7275405
+BCL2A1	-12.65822785
+CXCL2	-12.300123
+SERPINB3	-12.22493888
+KYNU	-10.76426265
+
+
+3) Gene Signature Example using Gene Symbol for composite lists (separate columns with a tab):
+
+CXCL5	-1
+IL8RB	-1
+MMP3	-1
+SOD2	0
+PI3	0
+CDH3	0
+LAIR2	1
+ZBP1	1
+SPRR1B	1
+APOL1	1
+
+4) Gene List Example using Probeset ID (no tab character needed, exclude fold change metric):
+
+224301_x_at
+1398191_at
+Dr.2473.1.A1_at
+A_24_P93251
+31465_g_at
+1553082_at
+224029_x_at
+
+
+5) Gene Signature Example using Probeset ID with actual fold change (separate columns with a tab):
+
+224301_x_at	-19.19385797
+1398191_at	-18.21493625
+Dr.2473.1.A1_at	-17.6056338
+A_24_P93251	-15.69858713
+31465_g_at	-19.19385797
+
+
+6) Gene Signature Example using Probeset ID for composite lists (separate columns with a tab):
+
+224301_x_at	-1
+1398191_at	0
+Dr.2473.1.A1_at	1
+A_24_P93251	-1
+31465_g_at	0
+1553082_at	1
+224029_x_at	1
