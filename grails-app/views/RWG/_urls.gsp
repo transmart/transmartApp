@@ -58,4 +58,6 @@ var saveProgramURL = "${createLink([controller:'fmFolder',action:'saveProgram'])
 var welcomeURL = "${createLink([controller:'RWG', action:'ajaxWelcome'])}";
 var searchLogURL = "${createLink([controller:'RWG', action:'searchLog'])}";
 
+var updateSearchCategoryURL = "${createLink([controller:'RWG', action:'updateSearchCategory'])}";
+
 </script>

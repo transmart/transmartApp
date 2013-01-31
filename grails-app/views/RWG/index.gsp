@@ -67,6 +67,7 @@
 	        var mouse_inside_options_div = false;
 	        var sessionSearch = "${rwgSearchFilter}";
 	        var sessionOperators = "${rwgSearchOperators}";
+	        var sessionSearchCategory = "${rwgSearchCategory}";
 	        var searchPage = "RWG";
 
 	        jQuery(document).ready(function() {

@@ -2,9 +2,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+        <!-- Force Internet Explorer 8 to override compatibility mode -->
+        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 <title>Dataset Explorer</title>
+
 
 <LINK REL="SHORTCUT ICON"
 	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
@@ -176,6 +179,7 @@
 <script type="text/javascript">
 	var sessionSearch = "${rwgSearchFilter}";
 	var sessionOperators = "${rwgSearchOperators}";
+	var sessionSearchCategory = "${rwgSearchCategory}";
 	var searchPage = "datasetExplorer";
 	var $j = jQuery.noConflict();
 	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";

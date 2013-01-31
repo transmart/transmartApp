@@ -72,6 +72,7 @@ class DatasetExplorerController {
 				rwgSearchOperators = "";
 			}
 			
+			def searchCategory = session['searchCategory'];
 			def globalOperator = session['globalOperator'];
 			
 			//Grab i2b2 credentials from the config file
@@ -99,6 +100,7 @@ class DatasetExplorerController {
 													rwgSearchFilter: rwgSearchFilter,
 													rwgSearchOperators: rwgSearchOperators,
 													globalOperator: globalOperator,
+													rwgSearchCategory: searchCategory,
 													debug: params.debug]) 
     		}
 }

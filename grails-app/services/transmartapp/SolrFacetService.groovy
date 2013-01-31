@@ -161,8 +161,8 @@ class SolrFacetService {
 			else {
 				searchLog += "Search results so far are these IDs: " + searchResultIds
 				if (globalOperator.equals("AND")) {
-					searchLog += "Intersecting for AND search."
-					searchResultIds = searchResultIds.intersect(categoryResultIds)
+					searchLog += "Doing hierarchical intersect for AND search."
+					searchResultIds = hierarchicalIntersect(searchResultIds, categoryResultIds)
 				}
 				else {
 					searchLog += "Combining for OR search."
@@ -175,6 +175,48 @@ class SolrFacetService {
 		
 		//And return the complete list of folder/i2b2 paths!
 		return [paths: searchResultIds, searchLog: searchLog]
+		
+	}
+	
+	def hierarchicalIntersect(searchResults, categoryResults) {
+		
+		//Add to the list if:
+		//This is the first category result (handled above)
+		//The current path exactly matches an existing path
+		//There is a path in the existing path results that is an exact subset of the current path
+		//The current path is an exact subset of an existing path result
+		for (result in categoryResults) {
+			for (existingResult in searchResults) {
+				if (existingResult.startsWith(result) || result.startsWith(existingResult)) {
+					searchResults += result; break;
+				}
+			}
+		}
+		
+		//Find the maximum depth
+		def maxDepth = 0
+		for (result in searchResults) {
+			def depth = result.split("\\\\").size()
+			if (maxDepth < depth) {maxDepth = depth;}
+		}
+		
+		def newSearchResults = []
+		for (result in searchResults) {
+			//If this result is below the maximum depth, check for a superset of this result - if found, add it.
+			def depth = result.split("\\\\").size()
+			if (depth == maxDepth) { newSearchResults.add(result) }
+			else {
+				for (comparedResult in searchResults) {
+					if (comparedResult.startsWith(result) && !comparedResult.equals(result)) {
+						//Superset found
+						newSearchResults.add(result)
+						break
+					}
+				}
+			}
+		}
+		
+		return newSearchResults
 		
 	}
 	
