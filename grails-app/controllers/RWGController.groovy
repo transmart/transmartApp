@@ -67,8 +67,9 @@ class RWGController {
 		}
 		
 		def globalOperator = session['globalOperator'];
+		def searchCategory = session['searchCategory'];
 		
-		return [rwgSearchFilter: rwgSearchFilter, rwgSearchOperators: rwgSearchOperators, globalOperator: globalOperator, exportCount: exportList?.size(), debug: params.debug];
+		return [rwgSearchFilter: rwgSearchFilter, rwgSearchOperators: rwgSearchOperators, globalOperator: globalOperator, rwgSearchCategory: searchCategory, exportCount: exportList?.size(), debug: params.debug];
 	}
 	
 	def ajaxWelcome = {
@@ -77,6 +78,11 @@ class RWGController {
 	
 	def searchLog = {
 		render ([log: session['searchLog']] as JSON)
+	}
+	
+	def updateSearchCategory = {
+		session['searchCategory'] = params.id
+		render(status: 200, text: "OK")
 	}
 
 	/**

@@ -17,8 +17,18 @@ var allowOnSelectEvent = true;
 
 // Method to add the categories for the select box
 function addSelectCategories()	{
+	
+	if (sessionSearchCategory == "") { sessionSearchCategory == "ALL" }
+	
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All").attr('id', 'allCategory'));
 	
+	jQuery("#search-categories").change(function() {
+		jQuery('#search-ac').autocomplete('option', 'source', sourceURL + "?category=" + this.options[this.selectedIndex].value);
+		jQuery.ajax({
+			url:updateSearchCategoryURL,
+			data: {id: jQuery("#search-categories").val()}
+		});
+	});
 	
 	jQuery.getJSON(getCategoriesURL, function(json) {
 		for (var i=0; i<json.length; i++)	{
@@ -29,9 +39,13 @@ function addSelectCategories()	{
 		
 		jQuery("#search-categories").html(jQuery("option", jQuery("#search-categories")).sort(function(a, b) { 
 	        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1 
-	    }));
+	    }))
 		
 		jQuery("#allCategory").after(jQuery("<option></option>").attr("value", "text").text("Free Text"));
+		
+		jQuery("#search-categories").val(sessionSearchCategory);
+		jQuery('#search-ac').autocomplete('option', 'source', sourceURL + "?category=" + jQuery('#search-categories').val());
+
     });
 	
 }
@@ -98,12 +112,6 @@ function addSearchAutoComplete()	{
 		  .append(resulta)
 		  .appendTo(ul);
 	};	
-		
-	// Add an onchange event to the select so we can set the category in the URL for the autocomplete
-	var categorySelect = document.getElementById("search-categories"); 
-	categorySelect.onchange=function()	{
-		jQuery('#search-ac').autocomplete('option', 'source', sourceURL + "?category=" + this.options[this.selectedIndex].value);
-	};
 		
 	// Capture the enter key on the slider and fire off the search event on the autocomplete
 	jQuery("#search-categories").keypress(function(event)	{

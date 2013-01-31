@@ -40,18 +40,23 @@ public class SearchKeywordService {
 	
 	//Hard-coded list of items that we consider filter categories... configure in Config/database?
 	def filtercats = [
-		[codeTypeName: "TYPE_OF_BM_STUDIED", category: "BIOMARKER_TYPE", displayName: "Biomarker Type"],
+		[codeTypeName: "THERAPEUTIC_DOMAIN", category: "THERAPEUTIC_DOMAIN", displayName: "Program Therapeutic Domain"],
 		[codeTypeName: "PROGRAM_INSTITUTION", category: "PROGRAM_INSTITUTION", displayName: "Program Institution"],
-		[codeTypeName: "STUDY_INSTITUTION", category: "STUDY_INSTITUTION", displayName: "Study Institution"],
-		[codeTypeName: "MEASUREMENT_TYPE", category: "MEASUREMENT_TYPE", displayName: "Measurement Type", useText: true],
 		[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
+		
 		[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
 		[codeTypeName: "STUDY_OBJECTIVE", category: "STUDY_OBJECTIVE", displayName: "Study Objective"],
-		[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
 		[codeTypeName: "STUDY_DESIGN", category: "STUDY_DESIGN", displayName: "Study Design"],
-		[codeTypeName: "TECHNOLOGY", category: "TECHNOLOGY", displayName: "Technology", prefix: true, useText: true],
-		[codeTypeName: "THERAPEUTIC_DOMAIN", category: "THERAPEUTIC_DOMAIN", displayName: "Therapeutic Domain"],
-		[codeTypeName: "VENDOR", category: "VENDOR", displayName: "Vendor", prefix: true, useText: true],
+		[codeTypeName: "TYPE_OF_BM_STUDIED", category: "STUDY_BIOMARKER_TYPE", displayName: "Study Biomarker Type"], //*
+		[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
+		[codeTypeName: "STUDY_INSTITUTION", category: "STUDY_INSTITUTION", displayName: "Study Institution"],
+		
+		[codeTypeName: "TYPE_OF_BM_STUDIED", category: "ASSAY_BIOMARKER_TYPE", displayName: "Assay Biomarker Studied"], //*
+		[codeTypeName: "MEASUREMENT_TYPE", category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true], //*
+		[codeTypeName: "TECHNOLOGY", category: "TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true],
+		[codeTypeName: "VENDOR", category: "VENDOR", displayName: "Assay Vendor", prefix: true, useText: true],
+		
+		[codeTypeName: "MEASUREMENT_TYPE", category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true], //*
 	]
 
 	/** Finds all of the search categories pertaining to search keywords */
