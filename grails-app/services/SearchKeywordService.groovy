@@ -41,7 +41,8 @@ public class SearchKeywordService {
 	//Hard-coded list of items that we consider filter categories... configure in Config/database?
 	def filtercats = [
 		[codeTypeName: "TYPE_OF_BM_STUDIED", category: "BIOMARKER_TYPE", displayName: "Biomarker Type"],
-		[codeTypeName: "INSTITUTION", category: "INSTITUTION", displayName: "Institution"],
+		[codeTypeName: "PROGRAM_INSTITUTION", category: "PROGRAM_INSTITUTION", displayName: "Program Institution"],
+		[codeTypeName: "STUDY_INSTITUTION", category: "STUDY_INSTITUTION", displayName: "Study Institution"],
 		[codeTypeName: "MEASUREMENT_TYPE", category: "MEASUREMENT_TYPE", displayName: "Measurement Type", useText: true],
 		[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
 		[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
