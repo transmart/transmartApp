@@ -2,6 +2,12 @@
 <%! import annotation.* %> 
 <%! import bio.* %>  
 <%! import com.recomdata.util.* %> 
+
+<link rel="stylesheet" href="${resource(dir:'css', file:'uploadData.css')}"></link>
+<script type="text/javascript">$j = jQuery.noConflict();</script>
+<script type="text/javascript" src="${resource(dir:'js', file:'uploadData.js')}"></script>
+
+
 <div>  
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
         <g:each in="${metaDataTagItems}" status="i" var="amTagItem">
@@ -55,10 +61,8 @@
 			                	name="amTagItem_${amTagItem.id}" value="${tagValues!=null&&tagValues.size()>0?tagValues[0].objectUid:''}"  optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	
 						</g:elseif>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'MULTIPICKLIST'}">
-		                	<g:select from="${ConceptCode.findAll('from ConceptCode where codeTypeName=? order by codeName',[amTagItem.codeTypeName])}"	
-			                	name="amTagItem_${amTagItem.id}" value="${tagValues!=null&&tagValues.size()>0?tagValues[0].objectUid:''}"  optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	
+	                	    <tmpl:extTagSearchField fieldName="amTagItem_${amTagItem.id}" searchAction="extSearch" searchController="metaData" values="${tagValues}"/>
 						</g:elseif>
-
                 	</g:else>
 	           </g:elseif>
                 <g:else>

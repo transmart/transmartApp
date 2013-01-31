@@ -59,15 +59,9 @@
 		</sec:ifAnyGranted>
 	</div>
 	<h3 class="rdc-h3">
-		<g:if test="${bioDataObject?.hasProperty('title')}">
-		${bioDataObject?.title}
-		</g:if>
-		<g:elseif test="${bioDataObject?.hasProperty('folderName')}">
-		${bioDataObject?.folderName}
-		</g:elseif>
-		<g:elseif test="${folder?.hasProperty('folderName')}">
+		<g:if test="${folder?.hasProperty('folderName')}">
 			${folder?.folderName}
-		</g:elseif>
+		</g:if>
 	</h3>
 </div>
 <g:if test="${bioDataObject?.hasProperty('description')}">
@@ -185,7 +179,7 @@
                     
                    
 <div style="height:20px;"></div>
-<g:if test="${bioDataObject?.hasProperty('fmFiles') && null!=bioDataObject?.fmFiles && bioDataObject?.fmFiles.size()>0}">   
+<g:if test="${folder?.hasProperty('fmFiles') && null!=folder?.fmFiles && folder?.fmFiles.size()>0}">   
 <div style="align:center;" ><h4 class="rdc-h4" align="center" >Associated Files</h4></div>
 <table class="list-table">
             <thead>
@@ -207,7 +201,7 @@
 		    	</tr>
 		    </tfoot>
     <tbody>
-        <g:each in="${bioDataObject?.fmFiles}" status="i" var="fmFile">
+        <g:each in="${folder?.fmFiles}" status="i" var="fmFile">
             <tr class="file-row">
                 <td style="padding: 3px;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
                <td >

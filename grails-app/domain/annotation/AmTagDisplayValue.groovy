@@ -31,7 +31,22 @@ class AmTagDisplayValue implements Serializable {
 	String objectType
 	String objectUid
 	Long objectId
+	String uniqueId
 	
+	
+	static transients = ['uniqueId']
+	
+	/**
+	 * Use transient property to support unique ID for tagValue.
+	 * @return tagValue's uniqueId
+	 */
+	String getUniqueId() {
+		if (uniqueId == null) {
+			uniqueId = subjectUid + "_" + objectId
+		}
+		
+		return uniqueId;
+	}
 	
 		
 	static mapping = {

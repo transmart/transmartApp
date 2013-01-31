@@ -28,10 +28,7 @@ class AmTagValue {
 	String value
 	String uniqueId
 	
-		
 	static transients = ['uniqueId']
-	
-//	static belongsTo=[amTagItem: AmTagItem]
 	
 	/**
 	 * Use transient property to support unique ID for tagValue.
