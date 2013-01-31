@@ -603,6 +603,17 @@ class FmFolderController {
 		render children as XML
 	}
 
+	//service to call to get all experiments objects that are associated with a folder in fm_folder_association table 
+	def getExperiments = {
+		List<FmFolderAssociation> assoc=FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='bio.Experiment'")
+		List<Experiment> experiments=new ArrayList<Experiment>();
+		for(FmFolderAssociation a: assoc){
+			Experiment exp=a.getBioObject();
+			if(exp!=null) experiments.add(exp)
+		}
+		render experiments as XML
+	}
+
 	def addProgram = {
 		def p = new FmFolder(params['fmFolder'])
 		addFolder(FolderType.PROGRAM.name(), p, null)
