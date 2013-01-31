@@ -28,6 +28,7 @@ import annotation.AmTagValue;
 
 import bio.BioData
 import bio.ConceptCode
+import bio.Experiment
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
