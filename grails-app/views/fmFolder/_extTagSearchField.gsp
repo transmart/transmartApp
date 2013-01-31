@@ -8,7 +8,6 @@ jQuery(document).ready(function() {
 			jQuery.ajax({
 				url: '${createLink([action:searchAction,controller:searchController])}',
 				data: {
-					type: ANALYSIS_TYPE,
 					term: request.term
 				},
 				success: function( data ) {
