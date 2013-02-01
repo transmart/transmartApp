@@ -2118,13 +2118,6 @@ function ontologyRightClick(eventNode, event)
 					        	 {
 					        	 showConceptInfoDialog(eventNode.attributes.id, eventNode.attributes.text, eventNode.attributes.comment);
 					        	 }
-					         },
-					         {
-					        	 text : 'Show Node', 
-					        	 handler : function()
-					        	 {
-					        	 	showNode(eventNode.attributes.id);
-					        	 }
 					         }
 					         ]
 				}

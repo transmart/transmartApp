@@ -131,6 +131,35 @@ class RecomTagLib {
 
 	}
 
+	/**
+	 * Outputs display value for tag item creating links to studies, pubmed IDs.
+	 */
+	def createTagItemValue = { attrs ->
+		
+		def tagItem = attrs?.tagItem
+		def tagValue = attrs?.tagValue
+//		println("tagItem = " + tagItem + ", tagValue = " + tagValue)
+		
+		if (tagItem == null || tagValue == null) {
+			return
+		}
+//		println("codeTypeName = " + tagItem.codeTypeName + ", displayVale = " + tagValue.displayValue)
+		if (tagItem.codeTypeName.equals("STUDY_LINK")) {
+			out << "<a href=\"#\" onclick=\"var w=window.open('" << tagValue.displayValue << "', '_blank'); w.focus(); return false;\">"
+			out << tagValue.displayValue << "&nbsp;"
+			out << "<img alt=\"external link\" class=\"ExternalLink\" src=\"" << resource(dir:'images',file:'linkext7.gif') << "\"/>"
+			out << "</a>"
+		} else if (tagItem.codeTypeName.endsWith("_PUBMED_ID")) {
+			out << "<a href=\"#\" onclick=\"var w=window.open('http://www.ncbi.nlm.nih.gov/pubmed/" << tagValue.displayValue << "', '_blank'); w.focus(); return false;\">"
+			out << tagValue.displayValue << "&nbsp;"
+			out << "<img alt=\"external link\" src=\"" << resource(dir:'images',file:'linkext7.gif') << "\"/>"
+			out << "</a>"
+		} else {
+			out << tagValue.displayValue
+		}
+
+	}
+	
 	def createFilterDetailsLink = { attrs ->
 
 		def id = attrs?.id == null ? "" : attrs.id
