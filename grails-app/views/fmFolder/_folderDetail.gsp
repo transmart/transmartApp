@@ -163,14 +163,7 @@
                     <g:if test="${tagValues!=null}">
 	             		<g:each var="tagValue" status="k" in="${tagValues}">
 							<g:if test="${k > 0 && tagValue.displayValue}">, </g:if>
-							<g:if test="${amTagItem.codeTypeName == 'STUDY_LINK'}">
-								<a href="#" onclick="var w=window.open('${tagValue.displayValue}', '_blank'); w.focus(); return false;">
-									${tagValue.displayValue}&nbsp;<img class="ExternalLink" src="${resource(dir:'images',file:'linkext7.gif')}"/>
-								</a>
-							</g:if>
-							<g:else>
-								${tagValue.displayValue}
-							</g:else>				      
+							<g:createTagItemValue tagItem="${amTagItem}" tagValue="${tagValue}"/>
 						</g:each>
 					</g:if>
 				</g:else>
