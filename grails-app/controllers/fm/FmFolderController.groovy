@@ -196,6 +196,7 @@ class FmFolderController {
 			    metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 		
 				log.info metaDataTagItems
+				
 				//Use metaDataTagItems to update fields
 				for (tagItem in metaDataTagItems) {
 					log.info tagItem.id + " " + tagItem.tagItemType + " " + tagItem.tagItemSubtype
@@ -223,6 +224,7 @@ class FmFolderController {
 								{
 										//Create a new AmTagValue and point to it
 									log.info("SAVING AmTagAssociation = CUSTOM " + folder.getUniqueId() + " ")// + newTagValue.getUniqueId() + " " + tagItem.id)
+									AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
 									AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
 									if(ata.save(flush: true))
 									{
@@ -251,17 +253,34 @@ class FmFolderController {
 							{
 						
 								log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id
-								AmTagAssociation ata = AmTagAssociation.find ("from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-								if (ata)
-								{
-									ata.delete(flush:true)
-								}
+								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
 								
 								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
 									
 								if (!ata1.save(flush:true)) {
 									ata1.errors.each {
 										println it
+									}
+								}
+							}
+						}
+						else if(tagItem.tagItemSubtype.equals('MULTIPICKLIST'))
+						{
+							//Look for new value by tag item ID
+							log.info "SAVING CUSTOM::MULTIPICKLIST == " + newValue
+							// Save the new tag value
+							if (newValue != null && newValue != "")
+							{
+								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+								
+								newValue.each
+								{
+									AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+									
+									if (!ata1.save(flush:true)) {
+										ata1.errors.each {
+											println it
+										}
 									}
 								}
 							}
@@ -1232,6 +1251,28 @@ class FmFolderController {
 								}
 							}
 						}
+						else if(tagItem.tagItemSubtype.equals('MULTIPICKLIST'))
+						{
+							//Look for new value by tag item ID
+							log.info "SAVING CUSTOM::MULTIPICKLIST == " + newValue
+							// Save the new tag value
+							if (newValue != null && newValue != "")
+							{
+								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+								
+								newValue.each
+								{
+									AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+									
+									if (!ata1.save(flush:true)) {
+										ata1.errors.each {
+											println it
+										}
+									}
+								}
+							}
+						}
+
 						else
 						{
 							// TODO: throw an exception

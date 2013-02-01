@@ -69,14 +69,15 @@ class MetaDataController {
 		def paramMap = params
 		log.info params
 		
-		def value = params.codeTypeName?params.codeTypeName.toUpperCase():'';
+		def value = params.term?params.term.toUpperCase():''
+		def codeTypeName = params.codeTypeName?params.codeTypeName:'';
 		
 		def observations = null;
-		def conceptCodes = ConceptCode.executeQuery("SELECT id, codeTypeName FROM ConceptCode cc WHERE upper(cc.codeTypeName) LIKE '%' || :codeTypeName || '%'", [codeTypeName: value], [max: 10]);
+		def conceptCodes = ConceptCode.executeQuery("FROM ConceptCode cc WHERE cc.codeTypeName = :codeTypeName and  upper(cc.codeName) LIKE :codeName order by codeTypeName", [codeTypeName: codeTypeName, codeName: "%"+value+"%"], [max: 10]);
 		
 		def itemlist = [];
 		for (conceptCode in conceptCodes) {
-			itemlist.add([id:conceptCode[0], keyword:conceptCode[1], sourceAndCode:"MESH:"+conceptCode[0], category:"CONCEPTCODE", display:"ConceptCode"]);
+			itemlist.add([id:conceptCode.uniqueId, keyword:conceptCode.codeName, sourceAndCode:conceptCode.uniqueId, category:"", display:""]);
 		}
 		
 		render itemlist as JSON;

@@ -61,12 +61,12 @@
 			                	name="amTagItem_${amTagItem.id}" value="${tagValues!=null&&tagValues.size()>0?tagValues[0].objectUid:''}"  optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	
 						</g:elseif>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'MULTIPICKLIST'}">
-	                	    <tmpl:extTagSearchField fieldName="amTagItem_${amTagItem.id}" searchAction="extSearch" searchController="metaData" values="${tagValues}"/>
+	                	    <tmpl:extTagSearchField fieldName="amTagItem_${amTagItem.id}" codeTypeName="${amTagItem.codeTypeName}" searchAction="extSearch" searchController="metaData" values="${tagValues}"/>
 						</g:elseif>
                 	</g:else>
 	           </g:elseif>
                 <g:else>
-     			${amTagItem.guiHandler }
+               
 				</g:else>
                 </td>
             </tr>
