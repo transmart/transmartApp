@@ -19,15 +19,22 @@
   
 
 
+import fm.FmFolderAssociation;
 import grails.converters.*
 import org.json.*;
 import edu.mit.wi.haploview.*;
+import annotation.AmTagItem;
+import annotation.AmTagItemService;
+import annotation.AmTagTemplateService;
+
 class OntologyController {
 
     def index = { }
     def i2b2HelperService
     def springSecurityService
 	def ontologyService
+	def amTagTemplateService
+	def amTagItemService
     
     def showOntTagFilter= {
     		def tagtypesc=[]
@@ -98,8 +105,27 @@ class OntologyController {
 			def trialid=trial.tag;
 			chain(controller:'trial', action:'trialDetailByTrialNumber', id:trialid)
 		}
-		
-		render(template:'showDefinition', model:[tags:node.tags])
+		//Check for study by visual attributes
+		else if (node.visualattributes.contains("S")) {
+			def accession = node.sourcesystemcd
+			def study = bio.Experiment.findByAccession(accession)
+			def folder
+			if (study) {
+				folder = FmFolderAssociation.findByObjectUid(study.getUniqueId().uniqueId)?.fmFolder
+			}
+			else {
+				render(status: 200, text: "No study definition found for accession: " + accession)
+				return
+			}
+			
+			def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+			List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+			
+			render(template:'showStudy', model:[folder:folder, bioDataObject:study, metaDataTagItems: metaDataTagItems])
+		}
+		else {
+			render(template:'showDefinition', model:[tags:node.tags])
+		}
 	}
 	
 }
