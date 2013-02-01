@@ -85,6 +85,19 @@
 			<td><br /></td>
 		</tr>
 		<tr>
+			<td colspan="4" align="center">
+				Specify a Z-Score threshold (optional):
+			</td>
+		</tr>
+		<tr>
+			<td colspan="4" align="center">
+				|zscore| &gt;= <input type="text" name="z_threshold_abs" id="z_threshold_abs" size="4" value="0" />
+			</td>
+		</tr>
+		<tr>
+			<td><br /></td>
+		</tr>		
+		<tr>
 			<td colspan="4" align="center"><g:metacoreSettingsButton /><input type="button" value="Run"
 				onClick="submitMetaCoreEnrichmentJob(this.form);"></input></td>
 		</tr>

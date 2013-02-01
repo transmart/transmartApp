@@ -16,9 +16,24 @@ class UserSettings {
 		value column: 'SETTING_VALUE'
 	}
 	
+	static boolean isConfigured() {
+		try {
+			UserSettings.count()
+			return true
+		}
+		catch (e) {
+			return false
+		}
+	}
+	
 	static String getSetting(Long userid, String name) {
-		def res = UserSettings.findByUserIdAndName(userid, name)
-		return res?.value
+		try {
+			def res = UserSettings.findByUserIdAndName(userid, name)
+			return res?.value
+		}
+		catch (e) {
+			return null
+		}
 	}
 	
 	static String setSetting(Long userid, String name, String value) {

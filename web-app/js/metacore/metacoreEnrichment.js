@@ -105,7 +105,7 @@ function submitMetaCoreEnrichmentJob(form) {
 }
 
 function runEnrichment(preparedData) {
-// run enrichment, TODO: pass exp. data filename to the controller
+// run enrichment
 	
 	jQuery('#metacoreEnrichmentResults').hide();
 	jQuery('#enrichment tbody').empty();
@@ -158,6 +158,7 @@ function submitMetaCoreEnrichment(formParams) {
 	formParams.result_instance_id2=GLOBAL.CurrentSubsetIDs[2];
 	formParams.analysis='heatmap'; // to fool RModulesService
 
+	var z_threshold_abs = jQuery('#z_threshold_abs').val()
 	
 	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Preparing data, please wait..."});
 	spinnerMask.show();
@@ -172,6 +173,7 @@ function submitMetaCoreEnrichment(formParams) {
 		success : function(response, request) {
 			spinnerMask.hide();
 			preparedData = Ext.decode(response.responseText);
+			preparedData.zThresholdAbs = z_threshold_abs;
 			runEnrichment(preparedData);
 		},
 		failure : function(response, request) {
@@ -244,7 +246,7 @@ function resetSettingsButton(mode) {
 	}
 	else {
 		jQuery('#metacoreSettingsButton').attr('class', 'metacoreSettingsDemo');
-		jQuery('#metacoreSettingsButton a').attr('title', 'Using demo enrichment')
+		jQuery('#metacoreSettingsButton a').attr('title', 'Using free enrichment')
 	}
 }
 

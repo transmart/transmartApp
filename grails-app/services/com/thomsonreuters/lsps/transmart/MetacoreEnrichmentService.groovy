@@ -15,19 +15,28 @@ class MetacoreEnrichmentService {
 				&& grailsApplication.config.com.thomsonreuters.transmart.metacoreDefaultPassword
 	}
 	
+	def areSettingsConfigured() {
+		return UserSettings.isConfigured()
+	}
+	
 	def metacoreSettingsMode() {
 		def user = springSecurityService.getPrincipal()
 		def userid = user?.id
 		
-		def mode = UserSettings.getSetting(userid, "com.thomsonreuters.transmart.metacoreSettingsMode")
+		if (areSettingsConfigured()) {
 		
-		if (mode == 'demo' || mode == 'system' || mode == 'user')	
-			return mode
-		else
-			if (systemMetacoreSettingsDefined()) 
-				return 'system'
+			def mode = UserSettings.getSetting(userid, "com.thomsonreuters.transmart.metacoreSettingsMode")
+			
+			if (mode == 'demo' || mode == 'system' || mode == 'user')	
+				return mode
 			else
-				return 'demo'
+				if (systemMetacoreSettingsDefined()) 
+					return 'system'
+				else
+					return 'demo'
+		}
+		else 
+			return 'demo'
 	}
 	
 	def setMetacoreSettingsMode(mode) {
@@ -94,7 +103,7 @@ class MetacoreEnrichmentService {
 	}
 	
 
-	// cohortGeneList = [ list1, list2 ], where list is just a list of EntrezGene IDs
+	// cohortGeneList = [ IdType: id_type, Data: [list1, list2] ], where list is just a list of EntrezGene IDs
 	// metacoreParams = [ "baseUrl": url, "login": login, "password": password ]
     def getEnrichmentByMaps(cohortGeneLists, metacoreParams) {
 		def res
