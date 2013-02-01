@@ -901,9 +901,9 @@ function exportCanvas(svgID){
 	if(svgData.indexOf("<a xlink")>-1){
 		svgData = svgData.replace(/(<a xlink(.*?)>|<\/a>)/g, "");
 	}
-	
+		
 	if(svgData.indexOf("<title>")>-1){
-		svgData = svgData.replace(/(<title(.*?)<\/title>)/g, "");
+		svgData = svgData.replace(/(<title((.|\s)*?)<\/title>)/g, "");
 	}
 
 	canvg('canvas', svgData, { ignoreMouse: true, ignoreAnimation: true }) ;

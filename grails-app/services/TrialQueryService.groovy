@@ -44,8 +44,25 @@ class TrialQueryService {
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return 0
 		}
-
-		return bio.BioAssayAnalysisData.executeQuery(createQuery("COUNT_EXP", filter))[0]
+		
+		////////////////////////////////////////////////////////////////////////
+		// Hack to get bind variable in the query
+		////////////////////////////////////////////////////////////////////////
+		def q = createQuery("COUNT_EXP", filter)
+		def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+		def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+		def bID = q.substring(fP+1, lP)     // pull out the ID
+		if (bID.isLong())	{
+			def bioID = bID.toLong()
+			def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+			log.info("Bio ID: ${bioID}")
+			log.trace("Updated Query: ${qBV}")
+			return BioAssayAnalysisData.executeQuery(qBV, [bioID])[0]
+		} else	{
+			log.warn("Parsing failed: ${bID}")
+			log.warn("Running original query")
+			return BioAssayAnalysisData.executeQuery(q)[0]
+		}
 	}
 
 	def countAnalysis(SearchFilter filter){
@@ -53,8 +70,25 @@ class TrialQueryService {
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return 0
 		}
-
-		return bio.BioAssayAnalysisData.executeQuery(createQuery("COUNT_ANALYSIS", filter))[0]
+		
+		////////////////////////////////////////////////////////////////////////
+		// Hack to get bind variable in the query
+		////////////////////////////////////////////////////////////////////////
+		def q = createQuery("COUNT_ANALYSIS", filter)
+		def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+		def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+		def bID = q.substring(fP+1, lP)     // pull out the ID
+		if (bID.isLong())	{
+			def bioID = bID.toLong()
+			def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+			log.info("Bio ID: ${bioID}")
+			log.trace("Updated Query: ${qBV}")
+			return BioAssayAnalysisData.executeQuery(qBV, [bioID])[0]
+		} else	{
+			log.warn("Parsing failed: ${bID}")
+			log.warn("Running original query")
+			return BioAssayAnalysisData.executeQuery(q)[0]
+		}
 	}
 
 	/**
@@ -306,31 +340,32 @@ class TrialQueryService {
 			//	.append(-trialfilter.foldChange).append(")")
 			//	.append(" OR baad.foldChangeRatio IS NULL)")
 			bFirstWhereItem = false
-			s.append("( abs(baad.foldChangeRatio) >= ").append(trialfilter.foldChange).append(" OR baad.foldChangeRatio IS NULL)")
+			s.append("( abs(baad.foldChangeRatio) >= ").append(trialfilter.foldChange) //.append(" OR baad.foldChangeRatio IS NULL)")
 		}
 
 		// preferred p value on BioAssayAnalysisData
 		if(trialfilter.hasPValue()){
 			if(bFirstWhereItem) {
-				s.append(" (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
+				s.append(" (baad.preferredPvalue <= ").append(trialfilter.pValue).append(")")
+				bFirstWhereItem = false
 			} else {
-				s.append(" AND (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
-			}
-			//.append(" OR baad.preferredPvalue IS NULL)")
+				s.append(" AND (baad.preferredPvalue <= ").append(trialfilter.pValue).append(")")
+			}			
 		}
 		//		 rvalue on BioAssayAnalysisData
 		if(trialfilter.hasRValue()){
 			if(bFirstWhereItem) {
-				s.append(" ((baad.rValue >= abs(").append(trialfilter.rValue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+				s.append(" (baad.rValue >= abs(").append(trialfilter.rValue).append("))") // OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+				bFirstWhereItem = false
 			} else {
-				s.append(" AND (baad.rValue >= abs(").append(trialfilter.rValue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+				s.append(" AND (baad.rValue >= abs(").append(trialfilter.rValue).append("))") // OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
 			}
-
 		}
 		// platform filter
 		if(trialfilter.hasPlatform()){
 			if(bFirstWhereItem) {
 				s.append(" (baad.analysis.assayDataType = '").append(trialfilter.platform).append("')")
+				bFirstWhereItem = false
 			} else {
 				s.append(" AND (baad.analysis.assayDataType = '").append(trialfilter.platform).append("')")
 			}
@@ -344,7 +379,6 @@ class TrialQueryService {
 			query.addTable("bio.ClinicalTrial ct ");
 			query.addCondition("baad.experiment.id = ct.id ")
 			query.addCondition("ct.id in (" + trialfilter.createTrialInclause()+ ")")
-
 		}
 	}
 

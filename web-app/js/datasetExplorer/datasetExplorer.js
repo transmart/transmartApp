@@ -846,8 +846,9 @@ Ext.onReady(function()
 		if (GLOBAL.EnableGP=='true')	{
 			resultsTabPanel.add(analysisJobsPanel);
 		}
-		resultsTabPanel.add(analysisDataExportPanel);
-		resultsTabPanel.add(analysisExportJobsPanel);
+		// JNJ-2525: Disable these until we 
+		// resultsTabPanel.add(analysisDataExportPanel);
+		// resultsTabPanel.add(analysisExportJobsPanel);
 		
 		southCenterPanel = new Ext.Panel(
 				{
