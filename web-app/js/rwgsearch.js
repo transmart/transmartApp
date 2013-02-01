@@ -18,7 +18,7 @@ var allowOnSelectEvent = true;
 // Method to add the categories for the select box
 function addSelectCategories()	{
 	
-	if (sessionSearchCategory == "") { sessionSearchCategory == "ALL" }
+	if (sessionSearchCategory == "") { sessionSearchCategory = "ALL"; }
 	
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All").attr('id', 'allCategory'));
 	
