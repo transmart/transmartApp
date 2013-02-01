@@ -1046,3 +1046,8 @@ function checkSearchLog() {
 		});
 	}
 }
+
+//Globally prevent AJAX from being cached (mostly by IE)
+jQuery.ajaxSetup({
+	cache: false
+});
