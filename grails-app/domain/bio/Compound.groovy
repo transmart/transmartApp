@@ -34,6 +34,9 @@ class Compound {
 	String description
 	String sourceCode
 	
+	String uniqueId
+	static transients = ['uniqueId']
+
 	static hasMany=[experiments:Experiment, literatures:Literature]
 	
 	def getName(){
@@ -84,4 +87,44 @@ class Compound {
 		sourceCode(nullable:true, maxSize:100)
 	}
 	
+	/**
+	 * Use transient property to support unique ID for tagValue.
+	 * @return tagValue's uniqueId
+	 */
+	String getUniqueId() {
+		if (uniqueId == null) {
+			if(id)
+			{
+				BioData data = BioData.get(id);
+				if (data != null) {
+					uniqueId = data.uniqueId
+					return data.uniqueId;
+				}
+				return null;
+			}
+			else
+			{
+				return null;
+			}
+		}
+		else
+		{
+			return uniqueId;
+		}
+	}
+   
+	
+	/**
+	* Find concept code by its uniqueId
+	* @param uniqueId
+	* @return concept code with matching uniqueId or null, if match not found.
+	*/
+   static Compound findByUniqueId(String uniqueId) {
+	   Compound cc;
+	   BioData bd = BioData.findByUniqueId(uniqueId);
+	   if (bd != null) {
+		   cc = Compound.get(bd.id);
+	   }
+	   return cc;
+   }
 }
