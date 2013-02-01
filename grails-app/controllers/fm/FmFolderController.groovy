@@ -25,6 +25,7 @@ import annotation.AmTagItem;
 import annotation.AmTagTemplate;
 import annotation.AmTagTemplateAssociation
 import annotation.AmTagValue;
+import auth.AuthUser;
 
 import bio.BioData
 import bio.ConceptCode
@@ -35,6 +36,7 @@ import com.recomdata.export.ExportTableNew
 import com.recomdata.util.FolderType
 import grails.converters.*
 import groovy.xml.StreamingMarkupBuilder
+import grails.plugins.springsecurity.SpringSecurityService
 
 
 class FmFolderController {
@@ -45,6 +47,7 @@ class FmFolderController {
 	def fmFolderService
 	def ontologyService
 	def solrFacetService
+	def springSecurityService
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
     def index = {
@@ -1135,8 +1138,14 @@ class FmFolderController {
 	{		
 		log.info "editMetaData called"
 		log.info "params = " + params
+		
+		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		if(!user.isAdmin()) {
+			render(status: 200, text: "You do not have permission to edit this object's metadata.")
+			return
+		}
 	
-			
+			 
 		//log.info "** action: expDetail called!"
 		def folderId = params.folderId
 		
@@ -1168,6 +1177,12 @@ class FmFolderController {
 	{
 		log.info "updateMetaData called"
 		log.info params
+		
+		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		if(!user.isAdmin()) {
+			render(status: 200, text: "You do not have permission to edit this object's metadata.")
+			return
+		}
 		
 		def paramMap = params
 		def folderId = params.id
