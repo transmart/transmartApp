@@ -66,7 +66,7 @@
                 	</g:else>
 	           </g:elseif>
                 <g:else>
-     			${amTagItem.guiHandler }
+               
 				</g:else>
                 </td>
             </tr>

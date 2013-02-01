@@ -222,7 +222,6 @@ class FmFolderController {
 										//Create a new AmTagValue and point to it
 									log.info("SAVING AmTagAssociation = CUSTOM " + folder.getUniqueId() + " ")// + newTagValue.getUniqueId() + " " + tagItem.id)
 									AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-									
 									AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
 									if(ata.save(flush: true))
 									{
