@@ -35,7 +35,8 @@ import com.recomdata.export.ExportTableNew
 import com.recomdata.util.FolderType
 import grails.converters.*
 import groovy.xml.StreamingMarkupBuilder
-
+import bio.Disease
+import bio.Compound
 
 class MetaDataController {
 
@@ -78,6 +79,48 @@ class MetaDataController {
 		def itemlist = [];
 		for (conceptCode in conceptCodes) {
 			itemlist.add([id:conceptCode.uniqueId, keyword:conceptCode.codeName, sourceAndCode:conceptCode.uniqueId, category:"", display:""]);
+		}
+		
+		render itemlist as JSON;
+	}
+	
+	/**
+	 * Find the top 15 diseases with a case-insensitive LIKE
+	 */
+	def bioCompoundSearch = {
+		log.info "EXT bioCompoundSearch called"
+		def paramMap = params
+		log.info params
+		
+		def value = params.term?params.term.toUpperCase():''
+		
+		def observations = null;
+		def compounds = Compound.executeQuery("FROM Compound cc WHERE upper(cc.codeName) LIKE :codeName order by codeName", [codeName: "%"+value+"%"], [max: 10]);
+		
+		def itemlist = [];
+		for (compound in compounds) {
+			itemlist.add([id:compound.uniqueId, keyword:compound.codeName, sourceAndCode:compound.uniqueId, category:"", display:""]);
+		}
+		
+		render itemlist as JSON;
+	}
+	
+	/**
+	 * Find the top 15 diseases with a case-insensitive LIKE
+	 */
+	def bioDiseaseSearch = {
+		log.info "EXT bioDiseaseSearch called"
+		def paramMap = params
+		log.info params
+		
+		def value = params.term?params.term.toUpperCase():''
+			
+		def observations = null;
+		def diseases = Disease.executeQuery("FROM Disease cc WHERE upper(cc.disease) LIKE :disease order by disease", [disease: "%"+value+"%"], [max: 10]);
+		
+		def itemlist = [];
+		for (disease in diseases) {
+			itemlist.add([id:disease.uniqueId, keyword:disease.disease, sourceAndCode:disease.uniqueId, category:"", display:""]);
 		}
 		
 		render itemlist as JSON;

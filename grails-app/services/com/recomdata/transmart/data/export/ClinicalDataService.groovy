@@ -78,7 +78,7 @@ class ClinicalDataService {
 			sqlQuery <<= "case ofa.VALTYPE_CD "
 			sqlQuery <<= " WHEN 'T' THEN TVAL_CHAR "
 			sqlQuery <<= " WHEN 'N' THEN CAST(NVAL_NUM AS varchar2(30)) "
-			sqlQuery <<= "END VALUE, ? SUBSET , pd.sourcesystem_cd "
+			sqlQuery <<= "END VALUE, ? SUBSET , pd.sourcesystem_cd, ed.days_since_enroll "
 			
 			//If we are going to union in the codes that have parent concepts, we include the parent columns here too.
 			if(parentConceptCodeList.size() > 0)
@@ -98,6 +98,7 @@ class ClinicalDataService {
 			
 			sqlQuery <<= "FROM qt_patient_set_collection qt "
 			sqlQuery <<= "INNER JOIN OBSERVATION_FACT ofa ON qt.PATIENT_NUM = ofa.PATIENT_NUM "
+			sqlQuery <<= "LEFT OUTER JOIN DE_OBS_ENROLL_DAYS ed on ofa.encounter_num = ed.encounter_num "
 			
 			//If we are including the concepts context, add the tables to the statement here.
 			if(includeConceptContext)
@@ -244,6 +245,10 @@ class ClinicalDataService {
 		
 					//Actual Concept Path is required for Data Association
 					values.add(row.CONCEPT_PATH)
+					
+					//NOD Data field
+					values.add(row.DAYS_SINCE_ENROLL);
+					
 					if (retrievalTypeExists("MRNA", retrievalTypes)) {
 						values.add(row.ASSAY_ID?.toString())
 					}
@@ -370,6 +375,7 @@ class ClinicalDataService {
 		columnNames.add("CONCEPT PATH")
 		columnNames.add("VALUE")
 		columnNames.add("CONCEPT_PATH_FULL")
+		columnNames.add("NOD")
 		if (retrievalTypeExists("MRNA", retrievalTypes)) {
 			columnNames.add("ASSAY ID")
 		}

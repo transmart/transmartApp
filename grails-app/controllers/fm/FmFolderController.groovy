@@ -213,8 +213,6 @@ class FmFolderController {
 						newValue = params."amTagItem_${tagItem.id}"
 						if(tagItem.tagItemSubtype.equals('FREETEXT'))
 						{
-							//Look for new value by tag item ID
-							log.info "SAVING CUSTOM::FREETEXT == " + newValue
 								
 							// Save the new tag value
 							if (newValue != null && newValue != "")
@@ -223,10 +221,10 @@ class FmFolderController {
 								if(newTagValue.save(flush: true))
 								{
 										//Create a new AmTagValue and point to it
-									log.info("SAVING AmTagAssociation = CUSTOM " + folder.getUniqueId() + " ")// + newTagValue.getUniqueId() + " " + tagItem.id)
+									log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " objectUid: " + newValue
 									AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
 									AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
-									if(ata.save(flush: true))
+									if(!ata.save(flush: true))
 									{
 										ata.errors.each
 										{
@@ -246,13 +244,11 @@ class FmFolderController {
 						}
 						else if(tagItem.tagItemSubtype.equals('PICKLIST'))
 						{
-							//Look for new value by tag item ID
-							log.info "SAVING CUSTOM::PICKLIST == " + newValue
 							// Save the new tag value
 							if (newValue != null && newValue != "")
 							{
 						
-								log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id
+							    log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " objectUid: " + newValue
 								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
 								
 								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
@@ -266,11 +262,11 @@ class FmFolderController {
 						}
 						else if(tagItem.tagItemSubtype.equals('MULTIPICKLIST'))
 						{
-							//Look for new value by tag item ID
-							log.info "SAVING CUSTOM::MULTIPICKLIST == " + newValue
+							newValue = params.list("amTagItem_${tagItem.id}")
 							// Save the new tag value
 							if (newValue != null && newValue != "")
 							{
+								log.info "REMOVING - objectType: CUSTOM " + " subjectUid = " + folder.getUniqueId() + " tagItemId: " + tagItem.id
 								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
 								
 								newValue.each
@@ -295,9 +291,28 @@ class FmFolderController {
 					}
 					else
 					{
-						newValue = params."amTagItem_${tagItem.id}"
+
+						newValue = params.list("amTagItem_${tagItem.id}")
+						//Look for new value by tag item ID
 						log.info "SAVING BUSINESS OBJECT == " + newValue
-						 
+						// Save the new tag value
+						if (newValue != null && newValue != "")
+						{
+							log.info "REMOVING - objectType: CUSTOM " + " subjectUid = " + folder.getUniqueId() + " tagItemId: " + tagItem.id
+							AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+							
+							newValue.each
+							{
+								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+								
+								if (!ata1.save(flush:true)) {
+									ata1.errors.each {
+										println it
+									}
+								}
+							}
+						}
+
 					}
 					
 				}
@@ -1219,7 +1234,7 @@ class FmFolderController {
 								
 									AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
 									AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
-									if(ata.save(flush: true))
+									if(!ata.save(flush: true))
 									{
 										ata.errors.each
 										{
@@ -1257,16 +1272,19 @@ class FmFolderController {
 						}
 						else if(tagItem.tagItemSubtype.equals('MULTIPICKLIST'))
 						{
+							newValue = params.list("amTagItem_${tagItem.id}")
 							//Look for new value by tag item ID
 							log.info "SAVING CUSTOM::MULTIPICKLIST == " + newValue
 							// Save the new tag value
 							if (newValue != null && newValue != "")
 							{
+								log.info "REMOVING - objectType: CUSTOM " + " subjectUid = " + folder.getUniqueId() + " tagItemId: " + tagItem.id
 								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
 								
 								newValue.each
-								{
-									AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+								{   
+									log.info "NEWVALUE = " + it
+ 									AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
 									
 									if (!ata1.save(flush:true)) {
 										ata1.errors.each {
@@ -1287,8 +1305,26 @@ class FmFolderController {
 					}
 					else 
 					{
-						newValue = params."amTagItem_${tagItem.id}"
+						newValue = params.list("amTagItem_${tagItem.id}")
+						//Look for new value by tag item ID
 						log.info "SAVING BUSINESS OBJECT == " + newValue
+						// Save the new tag value
+						if (newValue != null && newValue != "")
+						{
+							log.info "REMOVING - objectType: CUSTOM " + " subjectUid = " + folder.getUniqueId() + " tagItemId: " + tagItem.id
+							AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+							
+							newValue.each
+							{
+								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+								
+								if (!ata1.save(flush:true)) {
+									ata1.errors.each {
+										println it
+									}
+								}
+							}
+						}
 					 	
 					}
 				}

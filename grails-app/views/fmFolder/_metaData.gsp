@@ -25,8 +25,8 @@
 						</g:if>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'MULTIPICKLIST'}">
 	                		<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
-							<g:select from="${ConceptCode.findAll('from ConceptCode where codeTypeName=? order by codeName',[amTagItem.codeTypeName])}"	
-		                	name="amTagItem_${amTagItem.id}" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"  optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	
+	                	    <tmpl:extTagSearchField fieldName="${amTagItem.tagItemAttr}" codeTypeName="${amTagItem.codeTypeName}" searchAction="extSearch" searchController="metaData" values="${tagValues}"/>
+				
 						</g:elseif>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'FREETEXT'}">
 		                	<g:if test="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr).length()<100}">
@@ -66,7 +66,8 @@
                 	</g:else>
 	           </g:elseif>
                 <g:else>
-               
+                <g:render template="${amTagItem.guiHandler}" model="${[fieldName:'amTagItem_' + amTagItem.id,searchAction:amTagItem.guiHandler + 'Search',searchController:'metaData', values:tagValues]}" />
+                
 				</g:else>
                 </td>
             </tr>
