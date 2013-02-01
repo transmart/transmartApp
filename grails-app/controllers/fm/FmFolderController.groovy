@@ -692,8 +692,12 @@ class FmFolderController {
 		def auto = params.boolean('auto') //Flag for whether folder was automatically opened - if not, then it shouldn't respect the folder mask
 		def folderContents = fmFolderService.getFolderContents(id)
 		
-		def folderSearchList = session['folderSearchList']
-		def folderSearchString = folderSearchList ? folderSearchList.join(",") + "," : "" //Extra , - used to identify leaves
+		def folderSearchLists = session['folderSearchList']
+		if (!folderSearchLists) {
+			folderSearchLists = [[],[]]
+		}
+		def folderSearchString = folderSearchLists[0] ? folderSearchLists[0].join(",") + "," : "" //Extra , - used to identify leaves
+		def uniqueLeavesString = folderSearchLists[1] ? folderSearchLists[1].join(",") + "," : ""
 		
 		render(template:'folders', model: [folders: folderContents, folderSearchString: folderSearchString, auto: auto])
 	}

@@ -385,7 +385,7 @@ class RWGController {
     * 
     */
    def getFacetResults = {
-	   session['folderSearchList'] = []; //Clear the folder search list
+	   session['folderSearchList'] = [[], []]; //Clear the folder search list
 	   
 	   /*
 	    * Record this as the latest search and store it in the session
@@ -484,21 +484,54 @@ class RWGController {
 	    * Organize and display
 	    */
 	   if (params.page.equals('RWG')) {
-		   session['folderSearchList'] = combinedResult.paths
 		   def folderContents = fmFolderService.getFolderContents(null)
 		   
 		   if (combinedResult.paths) {
-			   def folderSearchString = combinedResult.paths.join(",") + "," //Extra , - used to identify leaves
+			   def pathLists = finalizePathLists(combinedResult.paths)
+			   session['folderSearchList'] = pathLists
+			   def folderSearchString = pathLists[0].join(",") + "," //Extra , - used to identify search results
+			   def uniqueLeavesString = pathLists[1].join(",") + ","
 			   session['searchLog'] += "Final folder string: " + folderSearchString
-			   render (template:'/fmFolder/folders', model: [folders: folderContents, folderSearchString: folderSearchString, auto: true])
+			   render (template:'/fmFolder/folders', model: [folders: folderContents, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: true])
 		   }
 		   else {
+			   session['folderSearchList'] = [[],[]]
 			   render(template:'/fmFolder/noResults')
 		   }
 	   }
 	   else {
-		   render combinedResult.paths as JSON
+		   def pathLists = finalizePathLists(combinedResult.paths)
+		   def jsonArrays = [:]
+		   jsonArrays.put("searchResults", pathLists[0])
+		   jsonArrays.put("uniqueLeaves", pathLists[1])
+		   render jsonArrays as JSON
 	   }	   
+   }
+   
+   def finalizePathLists(pathList) {
+	   def uniquePaths = []
+	   def uniqueLeaves = []
+	   for (path in pathList) {
+		   if (!uniquePaths.contains(path)) {
+			   uniquePaths.push(path)
+		   }
+		   
+		   if (!uniqueLeaves.contains(path)) {
+			   //If no other path in the path list starts with this path, it's uniquely a leaf
+			   def childPathFound = false
+			   for (otherPath in pathList) {
+				   if (otherPath.startsWith(path) && !otherPath.equals(path)) {
+					   childPathFound = true
+					   break
+				   }
+			   }
+			   if (!childPathFound) {
+				   uniqueLeaves.push(path)
+			   }
+		   }
+	   }
+	   
+	   return [uniquePaths, uniqueLeaves]
    }
 
    /**
