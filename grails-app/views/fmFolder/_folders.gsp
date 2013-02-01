@@ -10,7 +10,7 @@
 						<span>
 							<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false');">
 								<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderplus.png')}" />
-							    <span class="foldericon ${folder.folderType.toLowerCase()}"></span>   
+							    <span class="foldericon ${folder.folderType.toLowerCase()}"></span>
 							</a>
 						</span>
 						<a href="#" onclick="showDetailDialog('${createLink(controller:'fmFolder',action:'folderDetail',id:folder.id)}');">

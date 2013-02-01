@@ -27,7 +27,6 @@ class ConceptCode {
 		String codeDescription
 		String codeTypeName
 		String uniqueId
-		
 		static transients = ['uniqueId']
 		
 	

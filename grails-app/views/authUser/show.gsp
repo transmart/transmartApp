@@ -93,7 +93,7 @@
 						<td valign="top" class="name">Studies Assigned:</td>
 						<td valign="top" class="value">
 							<ul>
-							<g:each in="${SecureObjectAccess.findAllByPrincipal(person,[sort:accessLevel])}" var='soa'>
+							<g:each in="${auth.SecureObjectAccess.findAllByPrincipal(person,[sort:accessLevel])}" var='soa'>
 								<li>${soa.getObjectAccessName()}</li>
 							</g:each>
 							</ul>
@@ -104,7 +104,7 @@
 						<td valign="top" class="name">Studies with Access(via groups):</td>
 						<td valign="top" class="value">
 							<ul>
-							<g:each in="${AuthUserSecureAccess.findAllByAuthUser(person,[sort:accessLevel])}" var='soa'>
+							<g:each in="${auth.AuthUserSecureAccess.findAllByAuthUser(person,[sort:accessLevel])}" var='soa'>
 								<li><g:link controller="secureObject" action="show" id="${soa.secureObject.id}"> ${soa.getObjectAccessName()}</g:link></li>
 							</g:each>
 							</ul>
