@@ -70,12 +70,26 @@ parseXml:function (response, node) {
  var concept=null;
  var concepts=response.responseXML.selectNodes('//concept');
 	
+ var matchList = GLOBAL.PathToExpand.split(",");
+ 
 	for(i=0;i<concepts.length;i++)
 	  {
    		 var c=getTreeNodeFromXMLNode(concepts[i]);
    		 if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
    		 //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
-   		 if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {continue;}
+   		 if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {
+			//However, don't filter studies/top folders out if a higher-level match exists
+			var highLevelMatchFound = false;
+			for (var j = 0; j < matchList.size()-1; j++) { //-1 here - leave out last result (trailing comma)	
+				if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
+					highLevelMatchFound = true;
+					break;
+				}
+			}
+			if (!highLevelMatchFound) {
+				continue;
+			}
+   	     }
    		 node.appendChild(c);
    	 }
 	

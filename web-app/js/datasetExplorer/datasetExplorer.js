@@ -1777,11 +1777,17 @@ function createTree(includeExcludeFlag, ontresponse){
 		if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key+",") == -1) { autoExpand=true; }
 		
    		//For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
-   		if(level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) == -1) {continue;}
+   		if(level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) == -1) { continue; }
    		
    		var iconCls = "";
 	    if (visualAttributes.indexOf('P') > '-1') {
 	    	iconCls="programicon";
+	    }
+	    
+	    var tcls = "";
+	    var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
+	    if (isSearchResult) {
+	    	tcls += ' searchResultNode';
 	    }
    		
 		var ontRoot = new Tree.AsyncTreeNode(
@@ -1791,7 +1797,8 @@ function createTree(includeExcludeFlag, ontresponse){
 				id : key,
 				qtip : tooltip,
 				expanded : autoExpand,
-				iconCls : iconCls
+				iconCls : iconCls,
+				cls : tcls
 			}
 		);
 		
