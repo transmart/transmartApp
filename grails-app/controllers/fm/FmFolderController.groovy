@@ -367,7 +367,7 @@ class FmFolderController {
 		def fmFolderInstance = new FmFolder(params)
 		if(parentFolder)
 		{
-			fmFolderInstance.folderFullName = "folder"
+			// fmFolderInstance.folderFullName = "folder"
 			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
 			fmFolderInstance.folderType = FolderType.ASSAY.name()
 			fmFolderInstance.parent = parentFolder
@@ -402,7 +402,7 @@ class FmFolderController {
 		def fmFolderInstance = new FmFolder(params)
 		if(parentFolder)
 		{
-			fmFolderInstance.folderFullName = "folder"
+			// fmFolderInstance.folderFullName = "folder"
 			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
 			fmFolderInstance.folderType = FolderType.FOLDER.name()
 			fmFolderInstance.parent = parentFolder
@@ -443,7 +443,7 @@ class FmFolderController {
 		log.info params
 		def fmFolderInstance = new FmFolder(params)
 //		fmFolderInstance.folderFullName = "\\" + fmFolderInstance.folderName
-		fmFolderInstance.folderFullName = "program"
+	//	fmFolderInstance.folderFullName = "program"
 		fmFolderInstance.folderLevel = 0
 		
 		log.info(fmFolderInstance)
@@ -486,7 +486,7 @@ class FmFolderController {
 		def fmFolderInstance = new FmFolder(params)
 		if(parentFolder)
 		{
-			fmFolderInstance.folderFullName = "study"
+	//		fmFolderInstance.folderFullName = "study"
 			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
 			fmFolderInstance.folderType = FolderType.STUDY.name()
 			fmFolderInstance.parent = parentFolder

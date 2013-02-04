@@ -125,4 +125,26 @@ class MetaDataController {
 		
 		render itemlist as JSON;
 	}
+	
+	/**
+	 * Find the top 15 diseases with a case-insensitive LIKE
+	 */
+	def bioMarkerSearch = {
+		log.info "EXT bioMarkerSearch called"
+		def paramMap = params
+		log.info params
+		
+		def value = params.term?params.term.toUpperCase():''
+		
+		def observations = null;
+		def compounds = Compound.executeQuery("FROM Compound cc WHERE upper(cc.codeName) LIKE :codeName order by codeName", [codeName: "%"+value+"%"], [max: 10]);
+		
+		def itemlist = [];
+		for (compound in compounds) {
+			itemlist.add([id:compound.uniqueId, keyword:compound.codeName, sourceAndCode:compound.uniqueId, category:"", display:""]);
+		}
+		
+		render itemlist as JSON;
+	}
+
 }

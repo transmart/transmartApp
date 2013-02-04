@@ -54,7 +54,7 @@ jQuery(document).ready(function() {
 <div id="${fieldName}-tags" class="tagBox" name="${fieldName}">
 	<g:each in="${values}" var="value">
 	<span class="tag" id="${fieldName}-tag-${value.uniqueId}" name="${value.uniqueId}">${value.codeName}</span>
-	</g:each>
+		</g:each>
 </div>
 
 <%-- Hidden select field, keeps actual selected values --%>

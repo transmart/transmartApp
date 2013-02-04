@@ -36,6 +36,11 @@ class BioMarker implements IExcelProfile {
 		String primarySourceCode
 		String primaryExternalId
 		String bioMarkerType
+		
+		String uniqueId
+		static transients = ['uniqueId']
+	
+		
 		static hasMany=[correlations:BioDataCorrelation,
 		                associatedCorrels:BioDataCorrelation,
 		                assayAnalysisData:BioAssayAnalysisData,
@@ -84,4 +89,46 @@ class BioMarker implements IExcelProfile {
 	public List getValues() {	     
 		return [name, description, organism]
 	}
+	
+	/**
+	 * Use transient property to support unique ID for tagValue.
+	 * @return tagValue's uniqueId
+	 */
+	String getUniqueId() {
+		if (uniqueId == null) {
+			if(id)
+			{
+				BioData data = BioData.get(id);
+				if (data != null) {
+					uniqueId = data.uniqueId
+					return data.uniqueId;
+				}
+				return null;
+			}
+			else
+			{
+				return null;
+			}
+		}
+		else
+		{
+			return uniqueId;
+		}
+	}
+   
+	
+	/**
+	* Find concept code by its uniqueId
+	* @param uniqueId
+	* @return biomarker with matching uniqueId or null, if match not found.
+	*/
+   static BioMarker findByUniqueId(String uniqueId) {
+	   BioMarker cc;
+	   BioData bd = BioData.findByUniqueId(uniqueId);
+	   if (bd != null) {
+		   cc = BioMarker.get(bd.id);
+	   }
+	   return cc;
+   }
+
 }
