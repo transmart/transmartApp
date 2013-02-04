@@ -129,7 +129,7 @@ class SolrFacetService {
 							solrQueryString += "ACCESSION:\"" + accession + "\""
 						}
 						
-						solrQueryString = "q=(" + solrQueryString + ")"
+						solrQueryString = "q=(" + solrQueryString + ")&facet=false&rows=1000"
 						
 						searchLog += "Searching SOLR for studies with accessions: " + solrQueryString
 						xml = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
