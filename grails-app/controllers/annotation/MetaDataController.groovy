@@ -28,15 +28,19 @@ import annotation.AmTagTemplateAssociation
 import annotation.AmTagValue;
 
 import bio.BioData
+import bio.BioMarker
+import bio.Compound
 import bio.ConceptCode
+import bio.Disease
+
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
 import com.recomdata.util.FolderType
 import grails.converters.*
 import groovy.xml.StreamingMarkupBuilder
-import bio.Disease
-import bio.Compound
+
+
 
 class MetaDataController {
 
@@ -137,11 +141,11 @@ class MetaDataController {
 		def value = params.term?params.term.toUpperCase():''
 		
 		def observations = null;
-		def compounds = Compound.executeQuery("FROM Compound cc WHERE upper(cc.codeName) LIKE :codeName order by codeName", [codeName: "%"+value+"%"], [max: 10]);
-		
+		def bioMarkers = BioMarker.executeQuery("FROM BioMarker cc WHERE upper(cc.name) LIKE :name order by name", [name: "%"+value+"%"], [max: 10]);
+		log.info bioMarkers
 		def itemlist = [];
-		for (compound in compounds) {
-			itemlist.add([id:compound.uniqueId, keyword:compound.codeName, sourceAndCode:compound.uniqueId, category:"", display:""]);
+		for (bioMarker in bioMarkers) {
+			itemlist.add([id:bioMarker.uniqueId, keyword:bioMarker.name, sourceAndCode:bioMarker.uniqueId, category:"", display:""]);
 		}
 		
 		render itemlist as JSON;
