@@ -32,6 +32,7 @@ import bio.BioMarker
 import bio.Compound
 import bio.ConceptCode
 import bio.Disease
+import bio.Observation
 
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
@@ -80,6 +81,7 @@ class MetaDataController {
 		def observations = null;
 		def conceptCodes = ConceptCode.executeQuery("FROM ConceptCode cc WHERE cc.codeTypeName = :codeTypeName and  upper(cc.codeName) LIKE :codeName order by codeTypeName", [codeTypeName: codeTypeName, codeName: "%"+value+"%"], [max: 10]);
 		
+		log.info "There are " + conceptCodes.size() + " " + params.codeTypeName + " records found in ConceptCode"
 		def itemlist = [];
 		for (conceptCode in conceptCodes) {
 			itemlist.add([id:conceptCode.uniqueId, keyword:conceptCode.codeName, sourceAndCode:conceptCode.uniqueId, category:"", display:""]);
@@ -97,8 +99,6 @@ class MetaDataController {
 		log.info params
 		
 		def value = params.term?params.term.toUpperCase():''
-		
-		def observations = null;
 		def compounds = Compound.executeQuery("FROM Compound cc WHERE upper(cc.codeName) LIKE :codeName order by codeName", [codeName: "%"+value+"%"], [max: 10]);
 		
 		def itemlist = [];
@@ -118,8 +118,6 @@ class MetaDataController {
 		log.info params
 		
 		def value = params.term?params.term.toUpperCase():''
-			
-		def observations = null;
 		def diseases = Disease.executeQuery("FROM Disease cc WHERE upper(cc.disease) LIKE :disease order by disease", [disease: "%"+value+"%"], [max: 10]);
 		
 		def itemlist = [];
@@ -139,8 +137,6 @@ class MetaDataController {
 		log.info params
 		
 		def value = params.term?params.term.toUpperCase():''
-		
-		def observations = null;
 		def bioMarkers = BioMarker.executeQuery("FROM BioMarker cc WHERE upper(cc.name) LIKE :name order by name", [name: "%"+value+"%"], [max: 10]);
 		log.info bioMarkers
 		def itemlist = [];
@@ -148,6 +144,44 @@ class MetaDataController {
 			itemlist.add([id:bioMarker.uniqueId, keyword:bioMarker.name, sourceAndCode:bioMarker.uniqueId, category:"", display:""]);
 		}
 		
+		render itemlist as JSON;
+	}
+
+	/**
+	 * Find the top 15 diseases with a case-insensitive LIKE
+	 */
+	def programTargetSearch = {
+		log.info "EXT programTargetSearch called"
+		def paramMap = params
+		log.info params
+		def itemlist = [];
+		
+		def value = params.term?params.term.toUpperCase():''
+		
+		def diseases = Disease.executeQuery("FROM Disease cc WHERE upper(cc.disease) LIKE :disease order by disease", [disease: "%"+value+"%"], [max: 10]);
+		
+		for (disease in diseases) {
+			itemlist.add([id:disease.uniqueId, keyword:disease.disease, sourceAndCode:disease.uniqueId, category:"Disease", display:""]);
+		}
+
+		def genes = BioMarker.executeQuery("FROM BioMarker cc WHERE bioMarkerType = 'GENE' and upper(cc.name) LIKE :name order by name", [name: "%"+value+"%"], [max: 10]);
+		for (gene in genes) {
+			itemlist.add([id:gene.uniqueId, keyword:gene.name, sourceAndCode:gene.uniqueId, category:"Gene", display:""]);
+		}
+
+				def pathways = BioMarker.executeQuery("FROM BioMarker cc WHERE bioMarkerType = 'PATHWAY' and upper(cc.name) LIKE :name order by name", [name: "%"+value+"%"], [max: 10]);
+		for (pathway in pathways) {
+			itemlist.add([id:pathway.uniqueId, keyword:pathway.name, sourceAndCode:pathway.uniqueId, category:"Pathway", display:""]);
+		}
+
+		
+		def observations = Observation.executeQuery("FROM Observation cc WHERE upper(cc.name) LIKE :name order by name", [name: "%"+value+"%"], [max: 10]);
+		for (observation in observations) {
+			itemlist.add([id:observation.uniqueId, keyword:observation.name, sourceAndCode:observation.uniqueId, category:"Observation", display:""]);
+		}
+
+
+
 		render itemlist as JSON;
 	}
 

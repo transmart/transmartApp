@@ -19,38 +19,39 @@
   
 
 package bio
-class Disease {
+class Observation {
 		Long id
-		String disease
-		String ccsCategory
-		String icd10Code
-		String meshCode
-		String icd9Code
-		String preferredName
+		String name
+		String code
+		String description
+		Long etlId
+		String type
+		String codeSource
+	//	static hasMany=[experiments:Experiment,literatures:Literature,analyses:BioAssayAnalysis]
 		
 		String uniqueId
 		static transients = ['uniqueId']
-	
+
 		
-		static hasMany=[experiments:Experiment,literatures:Literature]
  static mapping = {
-	 table 'BIO_DISEASE'
+	 table 'BIO_OBSERVATION'
 	 version false
 	 cache usage:'read-only'
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		id column:'BIO_DISEASE_ID'
-		disease column:'DISEASE'
-		ccsCategory column:'CCS_CATEGORY'
-		icd10Code column:'ICD10_CODE'
-		meshCode column:'MESH_CODE'
-		icd9Code column:'ICD9_CODE'
-		preferredName column:'PREFERED_NAME'
-		experiments joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DISEASE_ID']
-		literatures joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DISEASE_ID']
+		id column:'BIO_OBSERVATION_ID'
+		name column:'OBS_NAME'
+		code column:'OBS_CODE'
+		description column:'OBS_DESCR'
+		etlId column: 'ETL_ID'
+		type column: 'OBS_TYPE'
+		codeSource column: 'OBS_CODE_SOURCE'
+		
+	//	experiments joinTable:[name:'BIO_DATA_UID', key:'BIO_OBSERVATION_ID']
+	//	literatures joinTable:[name:'BIO_DATA_UID', key:'BIO_OBSERVATION_ID']
+	//	analyses joinTable:[name:'BIO_DATA_UID', key:'BIO_OBSERVATION_ID']
 		}
 	}
- 
  
  /**
   * Use transient property to support unique ID for tagValue.
@@ -84,11 +85,11 @@ class Disease {
  * @param uniqueId
  * @return concept code with matching uniqueId or null, if match not found.
  */
-static Disease findByUniqueId(String uniqueId) {
-	Disease cc;
+static Observation findByUniqueId(String uniqueId) {
+	Observation cc;
 	BioData bd = BioData.findByUniqueId(uniqueId);
 	if (bd != null) {
-		cc = Disease.get(bd.id);
+		cc = Observation.get(bd.id);
 	}
 	return cc;
 }
