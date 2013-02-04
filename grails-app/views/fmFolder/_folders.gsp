@@ -8,10 +8,18 @@
 				<tr>
 					<td class="foldertitle">
 						<span>
-							<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false');">
-								<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderplus.png')}" />
-							    <span class="foldericon ${folder.folderType.toLowerCase()}"></span>
-							</a>
+							<g:if test="${folder.hasChildren()}">
+								<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false');">
+									<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderplus.png')}" />
+								    <span class="foldericon ${folder.folderType.toLowerCase()}"></span>
+								</a>
+							</g:if>
+							<g:else>
+								<a id="toggleDetail_${folder.id}" href="#">
+									<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderleaf.png')}" />
+								    <span class="foldericon ${folder.folderType.toLowerCase()}"></span>
+								</a>
+							</g:else>
 						</span>
 						<a href="#" onclick="showDetailDialog('${createLink(controller:'fmFolder',action:'folderDetail',id:folder.id)}');">
 						
