@@ -1984,7 +1984,7 @@ function getTreeNodeFromXMLNode(concept)
 	    }
 	    GLOBAL.DefaultPathToExpand = '';
 	    
-	    if(GLOBAL.PathToExpand.indexOf(key)>-1) autoExpand=true;
+	    if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key + ",")==-1) autoExpand=true;
 		
 	    // set the root node
     	newnode = new Tree.AsyncTreeNode({

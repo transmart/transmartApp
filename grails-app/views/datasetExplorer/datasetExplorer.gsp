@@ -135,6 +135,7 @@
 	  CurrentTissues: new Array(),
 	  CurrentRbmpanels: new Array(),
 	  DefaultPathToExpand: "${pathToExpand}",
+	  UniqueLeaves: "",
 	  preloadStudy: "${params.DataSetName}",
 	  Binning: false,
 	  ManualBinning: false,
