@@ -96,6 +96,19 @@ class FmFolder implements Buildable {
 		return folder;
 	}
 	
+	
+	/**
+	 * Return true if this folder has any folders that name it as a parent
+	 * @return true if this folder has children, false otherwise
+	 */
+	boolean hasChildren() {
+		def children = FmFolder.createCriteria().list {
+			eq('parent', this)
+		}
+		if (children) { return true }
+		return false
+	}
+	
 	def void build(GroovyObject builder) {
         def fmFolder = {
              folderDefinition(id:this.id){

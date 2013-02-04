@@ -47,16 +47,14 @@ public class SearchKeywordService {
 		[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
 		[codeTypeName: "STUDY_OBJECTIVE", category: "STUDY_OBJECTIVE", displayName: "Study Objective"],
 		[codeTypeName: "STUDY_DESIGN", category: "STUDY_DESIGN", displayName: "Study Design"],
-		[codeTypeName: "TYPE_OF_BM_STUDIED", category: "STUDY_BIOMARKER_TYPE", displayName: "Study Biomarker Type"], //*
+		[codeTypeName: "STUDY_BIOMARKER_TYPE", category: "STUDY_BIOMARKER_TYPE", displayName: "Study Biomarker Type"],
 		[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
 		[codeTypeName: "STUDY_INSTITUTION", category: "STUDY_INSTITUTION", displayName: "Study Institution"],
 		
-		[codeTypeName: "TYPE_OF_BM_STUDIED", category: "ASSAY_BIOMARKER_TYPE", displayName: "Assay Biomarker Studied"], //*
-		[codeTypeName: "MEASUREMENT_TYPE", category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true], //*
+		[codeTypeName: "ASSAY_TYPE_OF_BM_STUDIED", category: "ASSAY_BIOMARKER_TYPE", displayName: "Assay Biomarker Studied"],
 		[codeTypeName: "TECHNOLOGY", category: "TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true],
 		[codeTypeName: "VENDOR", category: "VENDOR", displayName: "Assay Vendor", prefix: true, useText: true],
-		
-		[codeTypeName: "MEASUREMENT_TYPE", category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true], //*
+
 	]
 
 	/** Finds all of the search categories pertaining to search keywords */
