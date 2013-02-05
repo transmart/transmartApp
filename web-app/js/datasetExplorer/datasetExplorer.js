@@ -586,6 +586,7 @@ Ext.onReady(function()
 							GLOBAL.CurrentSubsetIDs[2] = null;
 							runAllQueries(getSummaryStatistics);
 							activateTab();
+							onWindowResize();
 						},
 						deactivate: function(){
 							resultsTabPanel.tools.help.dom.style.display="none";
@@ -702,7 +703,13 @@ Ext.onReady(function()
 			        	activate : function() {
 							GLOBAL.Analysis="dataAssociation";
 							renderCohortSummary();
+							onWindowResize();
 							//Ext.getCmp('dataAssociationBodyPanel').focus()
+						},
+						'afterLayout': {
+							fn: function(el) {
+								onWindowResize();
+							}
 						}
 					},
 					collapsible : true
@@ -1020,6 +1027,7 @@ Ext.onReady(function()
 );
 
 function onWindowResize() {
+	//Assorted hackery for accounting for the presence of the toolbar
 	var windowHeight = jQuery(window).height();
 	
 	jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
@@ -1028,9 +1036,14 @@ function onWindowResize() {
 	jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 110);
 	
 	jQuery('#analysisPanel .x-panel-body').height(jQuery(window).height() - 65);
+	
 	if (jQuery('#dataTypesGridPanel .x-panel-body').size() > 0) {
 		var exportPanelTop = jQuery('#dataTypesGridPanel .x-panel-body').offset()['top'];
 		jQuery('#dataTypesGridPanel .x-panel-body').height(jQuery(window).height() - exportPanelTop - 40);
+	}
+	if (jQuery('#dataAssociationPanel .x-panel-body').size() > 0) {
+		var panelTop = jQuery('#dataAssociationPanel .x-panel-body').offset()['top'];
+		jQuery('#dataAssociationPanel .x-panel-body').height(jQuery(window).height() - panelTop);
 	}
 }
 
