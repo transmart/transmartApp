@@ -547,7 +547,7 @@ function getSecurityPanel() {
 		 return"<panel><panel_number>21</panel_number> \
                <invert>0</invert><total_item_occurrences>1</total_item_occurrences>\
    			   <item>\
-					<item_key>\\\\Clinical Trials\\Clinical Trials\\SECURITY\\</item_key>\
+					<item_key>\\\\Public Studies\\Public Studies\\SECURITY\\</item_key>\
 					<class>ENC</class>\
 					<constrain_by_value>\
 					<value_operator>IN</value_operator>\
