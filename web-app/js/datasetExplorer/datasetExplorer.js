@@ -471,7 +471,10 @@ Ext.onReady(function()
 								id : 'advancedbutton',
 								text : 'Advanced',
 								iconCls : 'comparebutton',
-								hidden : GLOBAL.EnableGP!='true',
+								// TODO -- To be Reviewed (f.guitton@imperial.ac.uk)
+								// hidden : GLOBAL.EnableGP!='true',
+								hidden : false,
+								// --
 								menu : advmenu,
 								handler : function()
 								{
@@ -836,6 +839,45 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
+		// TODO -- To be reviewed (f.guitton@imperial.ac.uk)
+		analysisHeatmapPanel = new Ext.Panel(
+				{
+					id : 'analysisHeatmapPanel',
+					title : 'Heatmap',
+					region : 'center',
+					split : true,
+					height : 90,
+					layout : 'fit',
+					//autoLoad : getDatadata,
+					listeners :
+					{
+						activate : function(p) {
+							GLOBAL.CurrentSubsetIDs[1] = null;
+							GLOBAL.CurrentSubsetIDs[2] = null;
+							p.body.mask("Magic is happening ...", 'x-mask-loading');
+							Ext.Ajax.request({
+								url : pageInfo.basePath + "/imperialHeatmap/",
+								method : 'POST',
+								success : function(result, request) {
+									p.body.unmask();
+									p.setBody(result.responseText);
+								},
+								failure : function(result, request) {
+									
+								},
+								timeout : '600000'
+							})
+							//runAllQueries(getDatadata, p);
+			        	 	return;
+						},
+						deactivate: function(){
+							//resultsTabPanel.tools.help.dom.style.display="none";
+						}
+					},
+					collapsible : true						
+				}
+		);
+		// --
 		resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
@@ -844,6 +886,10 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
+
+		// TODO -- To be reviewed (f.guitton@imperial.ac.uk)
+		resultsTabPanel.add(analysisHeatmapPanel);
+		// --
 		
 		southCenterPanel = new Ext.Panel(
 				{
@@ -1540,8 +1586,12 @@ function loginComplete(pmresponse)
 	else
 	{
 		// get the urls to the other important cells
+		// TODO -- To be reviewed (f.guitton@imperial.ac.uk)
 		GLOBAL.ONTUrl = oDomDoc.selectSingleNode("//cell_data[@id='ONT']/url").firstChild.nodeValue;
 		GLOBAL.CRCUrl = oDomDoc.selectSingleNode("//cell_data[@id='CRC']/url").firstChild.nodeValue;
+		//GLOBAL.ONTUrl = "http://146.169.35.149:9090/i2b2/rest/OntologyService/";
+		//GLOBAL.CRCUrl = "http://146.169.35.149:9090/i2b2/rest/QueryToolService/";
+		// --
 		if(GLOBAL.Debug)
 		{
 			alert(GLOBAL.ONTUrl);
@@ -1782,7 +1832,9 @@ function createTree(includeExcludeFlag, ontresponse){
 	// shorthand
 	var Tree = Ext.tree;
 	
-	var concepts = ontresponse.responseXML.selectNodes('//concept');
+	var concepts = {};
+	if (ontresponse != null && ontresponse.responseXML != null)
+		concepts = ontresponse.responseXML.selectNodes('//concept');
 	var treeRoot = new Tree.TreeNode(
 			{
 				text : 'root',
