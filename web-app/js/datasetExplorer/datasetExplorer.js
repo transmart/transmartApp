@@ -504,22 +504,22 @@ Ext.onReady(function()
 							GLOBAL.Analysis="Advanced";
 						}
 					}
-//					,
-//					bbar: new Ext.StatusBar({
-//						// Status bar to show the progress of generating heatmap and other advanced workflows
-//				        id: 'asyncjob-statusbar',
-//				        defaultText: 'Ready',
-//				        defaultIconCls: 'default-icon',
-//				        text: 'Ready',
-//				        statusAlign: 'right',
-//				        iconCls: 'ready-icon',
-//				        items: [{
-//				        	xtype: 'button',
-//				        	id: 'cancjob-button',
-//				        	text: 'Cancel',
-//				        	hidden: true
-//				        }]				        
-//				    })
+					,
+					bbar: new Ext.StatusBar({
+						// Status bar to show the progress of generating heatmap and other advanced workflows
+				        id: 'asyncjob-statusbar',
+				        defaultText: 'Ready',
+				        defaultIconCls: 'default-icon',
+				        text: 'Ready',
+				        statusAlign: 'right',
+				        iconCls: 'ready-icon',
+				        items: [{
+				        	xtype: 'button',
+				        	id: 'cancjob-button',
+				        	text: 'Cancel',
+				        	hidden: true
+				        }]				        
+				    })
 				}
 		);
 
@@ -580,16 +580,21 @@ Ext.onReady(function()
 					region : 'center',
 					fitToFrame : true,
 					listeners :
-					{
-					activate : function() {
-						GLOBAL.CurrentSubsetIDs[1] = null;
-						GLOBAL.CurrentSubsetIDs[2] = null;
-						runAllQueries(getSummaryStatistics);
-						activateTab();
-					},
-					deactivate: function(){
-						resultsTabPanel.tools.help.dom.style.display="none";
-					}
+						{
+						activate : function() {
+							GLOBAL.CurrentSubsetIDs[1] = null;
+							GLOBAL.CurrentSubsetIDs[2] = null;
+							runAllQueries(getSummaryStatistics);
+							activateTab();
+						},
+						deactivate: function(){
+							resultsTabPanel.tools.help.dom.style.display="none";
+						},
+						'afterLayout': {
+							fn: function(el) {
+								onWindowResize();
+							}
+						}
 					}
 				,
 				autoScroll : true,
@@ -644,6 +649,11 @@ Ext.onReady(function()
 						},
 						deactivate: function(){
 							//resultsTabPanel.tools.help.dom.style.display="none";
+						},
+						'afterLayout': {
+							fn: function(el) {
+								onWindowResize();
+							}
 						}
 					},
 					collapsible : true						
@@ -1016,6 +1026,12 @@ function onWindowResize() {
 	
 	var boxHeight = jQuery('#box-search').height();
 	jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 110);
+	
+	jQuery('#analysisPanel .x-panel-body').height(jQuery(window).height() - 65);
+	if (jQuery('#dataTypesGridPanel .x-panel-body').size() > 0) {
+		var exportPanelTop = jQuery('#dataTypesGridPanel .x-panel-body').offset()['top'];
+		jQuery('#dataTypesGridPanel .x-panel-body').height(jQuery(window).height() - exportPanelTop - 40);
+	}
 }
 
 
