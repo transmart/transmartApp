@@ -223,7 +223,7 @@ class FmFolderController {
 										//Create a new AmTagValue and point to it
 									log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " objectUid: " + newValue
 									AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-									AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
+									AmTagAssociation ata = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
 									if(!ata.save(flush: true))
 									{
 										ata.errors.each
@@ -251,7 +251,7 @@ class FmFolderController {
 							    log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " objectUid: " + newValue
 								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
 								
-								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
+								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
 									
 								if (!ata1.save(flush:true)) {
 									ata1.errors.each {
@@ -271,7 +271,7 @@ class FmFolderController {
 								
 								newValue.each
 								{
-									AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+									AmTagAssociation ata1 = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
 									
 									if (!ata1.save(flush:true)) {
 										ata1.errors.each {
@@ -303,7 +303,7 @@ class FmFolderController {
 							
 							newValue.each
 							{
-								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
 								
 								if (!ata1.save(flush:true)) {
 									ata1.errors.each {
@@ -1143,12 +1143,21 @@ class FmFolderController {
 		log.info "editMetaData called"
 		log.info "params = " + params
 		
+		
+		if("anonymousUser" != springSecurityService.getPrincipal())
+		{
 		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 		if(!user.isAdmin()) {
 			render(status: 200, text: "You do not have permission to edit this object's metadata.")
 			return
 		}
-	
+		}
+		else
+		{
+			render(status: 200, text: "You do not have permission to edit this object's metadata.")
+			return
+		}
+
 			 
 		//log.info "** action: expDetail called!"
 		def folderId = params.folderId
@@ -1233,7 +1242,7 @@ class FmFolderController {
 									log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " objectUid: " + newValue
 								
 									AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-									AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
+									AmTagAssociation ata = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
 									if(!ata.save(flush: true))
 									{
 										ata.errors.each
@@ -1261,7 +1270,7 @@ class FmFolderController {
 								log.info "SAVING CUSTOM::PICKLIST == " + newValue
 								log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " objectUid: " + newValue
 								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "CUSTOM", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-								AmTagAssociation ata = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
+								AmTagAssociation ata = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
 									
 								if (!ata.save(flush:true)) {
 									ata.errors.each {
@@ -1284,7 +1293,7 @@ class FmFolderController {
 								newValue.each
 								{   
 									log.info "NEWVALUE = " + it
- 									AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+ 									AmTagAssociation ata1 = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
 									
 									if (!ata1.save(flush:true)) {
 										ata1.errors.each {
@@ -1316,7 +1325,7 @@ class FmFolderController {
 							
 							newValue.each
 							{
-								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'CUSTOM', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
 								
 								if (!ata1.save(flush:true)) {
 									ata1.errors.each {

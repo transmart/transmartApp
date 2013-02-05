@@ -16,9 +16,9 @@
                 <g:if test="${amTagItem.required == true}"><g:requiredIndicator/></g:if>:
                 </td>
                 <td valign="top" align="left" class="value">
-             
               <!-- FIXED -->
-                <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
+                <g:if test="${amTagItem.tagItemType == 'FIXED'}">
+                	  <g:if test="${amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
 						<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
 	           			<g:select from="${ConceptCode.findAll('from ConceptCode where codeTypeName=? order by codeName',[amTagItem.codeTypeName])}"	
 		                	name="${amTagItem.tagItemAttr}"  value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"   optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	
@@ -39,7 +39,7 @@
 	        	        <g:else>
 	        	        ERROR -- Unrecognized tag item subtype
 	        	        </g:else>
-	        	        
+	        	        </g:if>
                 </g:if>
 				<g:elseif test="${amTagItem.tagItemType == 'CUSTOM'}">
                 	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
@@ -66,8 +66,8 @@
                 	</g:else>
 	           </g:elseif>
                 <g:else>
-                <g:render template="${amTagItem.guiHandler}" model="${[fieldName:'amTagItem_' + amTagItem.id,searchAction:amTagItem.guiHandler + 'Search',searchController:'metaData', values:tagValues]}" />
-                
+      		<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
+            <g:render template="${amTagItem.guiHandler}" model="${[fieldName:'amTagItem_' + amTagItem.id,searchAction:amTagItem.guiHandler + 'Search',searchController:'metaData', values:tagValues]}" />
 				</g:else>
                 </td>
             </tr>

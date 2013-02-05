@@ -9,7 +9,6 @@ jQuery(document).ready(function() {
 				url: '${createLink([action:searchAction,controller:searchController])}',
 				data: {
 					term: request.term,
-					codeTypeName: '${codeTypeName}'
 				},
 				success: function( data ) {
 					response( jQuery.map( data, function(item) {
@@ -53,14 +52,14 @@ jQuery(document).ready(function() {
 <%-- Tag box (visual display of tags) --%>
 <div id="${fieldName}-tags" class="tagBox" name="${fieldName}">
 	<g:each in="${values}" var="value">
-	<span class="tag" id="${fieldName}-tag-${value.uniqueId}" name="${value.uniqueId}">${value.codeName}</span>
+	<span class="tag" id="${fieldName}-tag-${value.uniqueId}" name="${value.uniqueId}">${value.displayValue}</span>
 		</g:each>
 </div>
 
 <%-- Hidden select field, keeps actual selected values --%>
 <select id="${fieldName}" name="${fieldName}" multiple="multiple" style="display: none;">
 	<g:each in="${values}" var="value">
-		<option selected="selected" value="${value.uniqueId}">${value.codeName}</option>
+		<option selected="selected" value="${value.uniqueId}">${value.displayValue}</option>
 	</g:each>
 </select>
 
