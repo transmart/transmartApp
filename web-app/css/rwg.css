@@ -66,9 +66,7 @@ body {
 
 .details-table
 {
-    border-width: 1px 1px 1px 1px;
     border-spacing: 4px;
-    border-style: outset outset outset outset;
     border-color: white;
     border-collapse: collapse;
     border-radius:8px;
