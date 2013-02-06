@@ -9,14 +9,13 @@ jQuery(document).ready(function() {
 				url: '${createLink([action:searchAction,controller:searchController])}',
 				data: {
 					term: request.term,
-					codeTypeName: '${codeTypeName}'
 				},
 				success: function( data ) {
 					response( jQuery.map( data, function(item) {
 						return {
 							category: item.category,
-							keyword: item.keyword,
-							sourceAndCode: item.sourceAndCode,
+							label: item.label,
+							sourceAndCode: item.id,
 							id: item.id,
 							display: item.display
 						}
@@ -29,14 +28,14 @@ jQuery(document).ready(function() {
 		
 		select: function(event, ui) {
 			var sourceAndCode = ui.item.sourceAndCode;
-			var diseaseName = ui.item.keyword;
+			var displayName = ui.item.label;
 			jQuery("#" + escapedFieldName + "-input").val('').focus();
-			$j('#' + escapedFieldName).append($j('<option></option>').val(sourceAndCode).text(diseaseName).attr('selected', 'selected'));
+			$j('#' + escapedFieldName).append($j('<option></option>').val(sourceAndCode).text(displayName).attr('selected', 'selected'));
 			var newTag = $j('<span/>', {
 				id: '${fieldName}-tag-' + sourceAndCode,
 				'class': 'tag',
 				name: sourceAndCode
-			}).text(diseaseName);
+			}).text(displayName);
 			$j('#' + escapedFieldName + '-tags').append(newTag);
 			newTag.hide().fadeIn('slow');
 			
@@ -45,7 +44,7 @@ jQuery(document).ready(function() {
 	}).data("autocomplete")._renderItem = function( ul, item ) {
 		return jQuery('<li></li>')		
 		  .data("item.autocomplete", item )
-		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.keyword + '</b></a>')
+		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b></a>')
 		  .appendTo(ul);
 	};
 });

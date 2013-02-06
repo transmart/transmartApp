@@ -185,6 +185,8 @@ public class SearchKeywordService {
 			m.put("categoryId", sk.searchKeyword.dataCategory)
 			m.put("id", sk.searchKeyword.uniqueId)
 
+			log.info "sk.searchKeyword.id = " + sk.searchKeyword.uniqueId + " sk.searchKeyword.keyword = " + sk.searchKeyword.keyword
+			
 			if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0)	{
 				def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
 				def synList = new StringBuilder()

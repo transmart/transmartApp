@@ -86,7 +86,7 @@ class Experiment implements IExcelProfile {
 	}
 	
 	static constraints = {
-		type(nullable:true, maxSize:400)
+		type(blank:false,nullable:false, maxSize:400)
 		title(nullable:true, maxSize:2000)
 		accession(unique:true)
 		description(nullable:true, maxSize:4000)

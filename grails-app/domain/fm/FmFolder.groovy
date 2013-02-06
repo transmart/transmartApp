@@ -51,11 +51,11 @@ class FmFolder implements Buildable {
 	}
 	
 	static constraints = {
-		folderName(maxSize:1000)
+		folderName(blank:false, maxSize:1000)
 		folderFullName(nullable: true, maxSize:1000)
-		folderType(maxSize:100)
+		folderType(blank:false, maxSize:100)
 		folderTag(nullable: true, maxSize:50)
-		description(nullable: true, maxSize: 2000)
+		description(blank:false, maxSize: 2000)
 		parent(nullable: true)
 	}
 
@@ -144,5 +144,7 @@ class FmFolder implements Buildable {
 	   sb.append(", Folder Type: ").append(this.folderType).append(", uniqueId: ").append(this.uniqueId).append(", Description: ").append(this.description);
 	   return sb.toString();
    }
+   
+   
 
 }
