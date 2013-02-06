@@ -25,12 +25,23 @@ requestData : function(node, callback){
         if(this.fireEvent("beforeload", this, node, callback) !== false){
         var getChildrenRequest=getONTRequestHeader()+'<ns4:get_children blob="true" max="1000" synonyms="false" hiddens="false">';
         getChildrenRequest=getChildrenRequest+"<parent>"+node.id+"</parent></ns4:getchildren>"+getONTRequestFooter();
+        var handler = this;
         
-            this.transId = Ext.Ajax.request({
+            this.transId = jQuery.ajax({
                 url: pageInfo.basePath+"/proxy?url="+GLOBAL.ONTUrl+"getChildren",
-    	        method: 'POST',
-    	        xmlData: getChildrenRequest,  
-                success: this.handleResponse,
+    	        type: 'POST',
+    	        data: getChildrenRequest,
+    	        dataProcess: false,
+    	        contentType: "text/xml",
+                success: function(response) {
+                	var argument = {};
+                	argument.callback = callback;
+                	argument.node = node;
+                	//Have to emulate handleResponse here as IE doesn't allow arbitrary properties on the XML object
+                    this.transId = false;
+                    handler.processResponse(response, argument.node, argument.callback);
+                    handler.fireEvent("load", handler, argument.node, response);
+                },
                 failure: this.handleFailure,
                 scope: this,
                 argument: {callback: callback, node: node},
@@ -68,7 +79,7 @@ parseXml:function (response, node) {
     var Tree = Ext.tree;
     
  var concept=null;
- var concepts=response.responseXML.selectNodes('//concept');
+ var concepts=response.selectNodes('//concept');
 	
  var matchList = GLOBAL.PathToExpand.split(",");
  
