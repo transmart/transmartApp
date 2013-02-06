@@ -15,7 +15,7 @@ jQuery(document).ready(function() {
 					response( jQuery.map( data, function(item) {
 						return {
 							category: item.category,
-							keyword: item.keyword,
+							keyword: item.label,
 							sourceAndCode: item.sourceAndCode,
 							id: item.id,
 							display: item.display
@@ -29,7 +29,7 @@ jQuery(document).ready(function() {
 		
 		select: function(event, ui) {
 			var sourceAndCode = ui.item.sourceAndCode;
-			var diseaseName = ui.item.keyword;
+			var diseaseName = ui.item.label;
 			jQuery("#" + escapedFieldName + "-input").val('').focus();
 			$j('#' + escapedFieldName).append($j('<option></option>').val(sourceAndCode).text(diseaseName).attr('selected', 'selected'));
 			var newTag = $j('<span/>', {
@@ -45,7 +45,7 @@ jQuery(document).ready(function() {
 	}).data("autocomplete")._renderItem = function( ul, item ) {
 		return jQuery('<li></li>')		
 		  .data("item.autocomplete", item )
-		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.keyword + '</b></a>')
+		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b></a>')
 		  .appendTo(ul);
 	};
 });
@@ -53,14 +53,14 @@ jQuery(document).ready(function() {
 <%-- Tag box (visual display of tags) --%>
 <div id="${fieldName}-tags" class="tagBox" name="${fieldName}">
 	<g:each in="${values}" var="value">
-	<span class="tag" id="${fieldName}-tag-${value.uniqueId}" name="${value.uniqueId}">${value.codeName}</span>
+	<span class="tag" id="${fieldName}-tag-${value.uniqueId}" name="${value.uniqueId}">${value.displayValue}</span>
 		</g:each>
 </div>
 
 <%-- Hidden select field, keeps actual selected values --%>
 <select id="${fieldName}" name="${fieldName}" multiple="multiple" style="display: none;">
 	<g:each in="${values}" var="value">
-		<option selected="selected" value="${value.uniqueId}">${value.codeName}</option>
+		<option selected="selected" value="${value.uniqueId}">${value.displayValue}</option>
 	</g:each>
 </select>
 

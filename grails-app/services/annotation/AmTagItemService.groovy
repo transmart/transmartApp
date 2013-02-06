@@ -20,6 +20,8 @@
 
 package annotation
 
+import fm.FmFolder
+
 class AmTagItemService {
 
     boolean transactional = true
@@ -84,4 +86,56 @@ class AmTagItemService {
 		return amTagItems
 	}
 
+	def getRequiredItems(Long key){
+		
+		log.info "Searching amTagItems for tag template " +  key
+		
+		def amTagItems
+		
+		if(key)
+		{
+			Map<String,Object> paramMap = new HashMap<Long,Object>();
+						
+			StringBuffer sb = new StringBuffer();
+			sb.append("from AmTagItem ati where required=1 ");
+			  sb.append(" and ati.amTagTemplate.id = :amTagTemplateId order by displayOrder");
+			paramMap.put("amTagTemplateId", key);
+			
+			amTagItems = AmTagItem.findAll(sb.toString(), paramMap);
+			
+			log.info "amTagItems = " + amTagItems + " for key = " + key
+		}
+		else
+		{
+			log.error "Unable to retrieve an amTagItems with a null key value"
+		}
+		
+		
+		return amTagItems
+	}
+	
+	def beforeValidate(FmFolder folder, params)
+	{
+		if (folder.folderName)
+		{
+			def amTagTemplate = AmTagTemplate.findByTagTemplateType(folder.folderName)
+			def metaDataTagItems = amTagItemService.getRequiredItems(amTagTemplate.id)
+			metaDataTagItems.each
+			{
+				if(it.tagItemType != 'FIXED')
+				{
+					if (null != params."amTagItem_${it.id}" && "" != params."amTagItem_${it.id}")
+					{
+						folder.errors.addError(it.displayName, it.displayName + " is required")
+					}
+				}
+			}
+		}
+		else
+		{
+			folder.errors.addError("folderName", "Folder name must have a value")
+		}
+		
+	}
+	 
 }

@@ -12,8 +12,7 @@
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
         <g:each in="${metaDataTagItems}" status="i" var="amTagItem">
             <tr>
-                <td valign="top" align="right" class="name">${amTagItem.displayName} 
-                <g:if test="${amTagItem.required == true}"><g:requiredIndicator/></g:if>:
+           <td valign="top" align="right" class="name">${amTagItem.displayName}&nbsp;<g:if test="${amTagItem.required == true}"><g:requiredIndicator/></g:if>:
                 </td>
                 <td valign="top" align="left" class="value">
               <!-- FIXED -->
@@ -26,7 +25,6 @@
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'MULTIPICKLIST'}">
 	                		<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
 	                	    <tmpl:extTagSearchField fieldName="${amTagItem.tagItemAttr}" codeTypeName="${amTagItem.codeTypeName}" searchAction="extSearch" searchController="metaData" values="${tagValues}"/>
-				
 						</g:elseif>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'FREETEXT'}">
 		                	<g:if test="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr).length()<100}">
@@ -67,7 +65,7 @@
 	           </g:elseif>
                 <g:else>
       		<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
-            <g:render template="${amTagItem.guiHandler}" model="${[fieldName:'amTagItem_' + amTagItem.id,searchAction:amTagItem.guiHandler + 'Search',searchController:'metaData', values:tagValues]}" />
+            <g:render template="extBusinessObjSearch" model="${[fieldName:'amTagItem_' + amTagItem.id,searchAction:amTagItem.guiHandler + 'Search',searchController:'metaData', values:tagValues]}" />
 				</g:else>
                 </td>
             </tr>

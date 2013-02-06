@@ -41,6 +41,7 @@ import com.recomdata.util.FolderType
 import grails.converters.*
 import groovy.xml.StreamingMarkupBuilder
 
+import org.codehaus.groovy.grails.web.json.*
 
 
 class MetaDataController {
@@ -50,6 +51,7 @@ class MetaDataController {
 	def amTagItemService
 	def fmFolderService
 	def ontologyService
+	def searchKeywordService
 	def solrFacetService
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
@@ -97,7 +99,7 @@ class MetaDataController {
 		log.info "EXT bioCompoundSearch called"
 		def paramMap = params
 		log.info params
-		
+/*		
 		def value = params.term?params.term.toUpperCase():''
 		def compounds = Compound.executeQuery("FROM Compound cc WHERE upper(cc.codeName) LIKE :codeName order by codeName", [codeName: "%"+value+"%"], [max: 10]);
 		
@@ -107,8 +109,17 @@ class MetaDataController {
 		}
 		
 		render itemlist as JSON;
+
+	<option value="COUNTRY">Country</option>
+	<option value="GENE">Gene</option>
+	<option value="GENESIG">Gene List</option>
+	<option value="SPECIES">Organism</option>
+	<option value="PATHWAY">Pathway</option>
+
+	*/
+		render 	searchKeywordService.findSearchKeywords("COMPOUND", params.term, 10) as JSON
+		
 	}
-	
 	/**
 	 * Find the top 15 diseases with a case-insensitive LIKE
 	 */
@@ -116,6 +127,7 @@ class MetaDataController {
 		log.info "EXT bioDiseaseSearch called"
 		def paramMap = params
 		log.info params
+	 /*
 		
 		def value = params.term?params.term.toUpperCase():''
 		def diseases = Disease.executeQuery("FROM Disease cc WHERE upper(cc.disease) LIKE :disease order by disease", [disease: "%"+value+"%"], [max: 10]);
@@ -124,8 +136,10 @@ class MetaDataController {
 		for (disease in diseases) {
 			itemlist.add([id:disease.uniqueId, keyword:disease.disease, sourceAndCode:disease.uniqueId, category:"", display:""]);
 		}
-		
-		render itemlist as JSON;
+		*/
+//		render itemlist as JSON;
+		render 	searchKeywordService.findSearchKeywords("DISEASE", params.term, 10) as JSON
+
 	}
 	
 	/**
@@ -136,7 +150,7 @@ class MetaDataController {
 		def paramMap = params
 		log.info params
 		
-		def value = params.term?params.term.toUpperCase():''
+/*		def value = params.term?params.term.toUpperCase():''
 		def bioMarkers = BioMarker.executeQuery("FROM BioMarker cc WHERE upper(cc.name) LIKE :name order by name", [name: "%"+value+"%"], [max: 10]);
 		log.info bioMarkers
 		def itemlist = [];
@@ -145,6 +159,9 @@ class MetaDataController {
 		}
 		
 		render itemlist as JSON;
+		*/
+		render 	searchKeywordService.findSearchKeywords("DISEASE", params.term, 10) as JSON
+		
 	}
 
 	/**
@@ -157,7 +174,7 @@ class MetaDataController {
 		def itemlist = [];
 		
 		def value = params.term?params.term.toUpperCase():''
-		
+	/*	
 		def diseases = Disease.executeQuery("FROM Disease cc WHERE upper(cc.disease) LIKE :disease order by disease", [disease: "%"+value+"%"], [max: 10]);
 		
 		for (disease in diseases) {
@@ -180,8 +197,18 @@ class MetaDataController {
 			itemlist.add([id:observation.uniqueId, keyword:observation.name, sourceAndCode:observation.uniqueId, category:"Observation", display:""]);
 		}
 
+*/
 
-
+		def diseaseJSON = searchKeywordService.findSearchKeywords("DISEASE", params.term, 10) as JSON
+		def list = JSON.parse(diseaseJSON.toString())
+		list.each {  itemlist.add(it)}
+		def geneJSON = searchKeywordService.findSearchKeywords("GENE", params.term, 10) as JSON
+		list = JSON.parse(geneJSON.toString())
+		list.each {  itemlist.add(it)}
+		def pathwayJSON = searchKeywordService.findSearchKeywords("PATHWAY", params.term, 10) as JSON
+		list = JSON.parse(pathwayJSON.toString())
+		list.each {  itemlist.add(it)}
+		
 		render itemlist as JSON;
 	}
 
