@@ -47,14 +47,14 @@
                           <tr class="prop">
                                 <td valign="top" class="name" >
                                     <label for="secureObject">Secure Object:</label>
-                                     <g:select optionKey="id" optionValue="displayName" from="${SecureObject.listOrderByDisplayName()}" name="secureobjectid" value="${secureObjectInstance?.id}" onchange="document.secobjaccessform.submit();"></g:select>
+                                     <g:select optionKey="id" optionValue="displayName" from="${auth.SecureObject.listOrderByDisplayName()}" name="secureobjectid" value="${secureObjectInstance?.id}" onchange="document.secobjaccessform.submit();"></g:select>
                                 </td>
                             </tr>
 
                             <tr class="prop">
                                 <td valign="top" class="name" >
                                     <label for="accessLevel">Access Level:</label>
-                                    <g:select optionKey="id" optionValue="accessLevelName" from="${SecureAccessLevel.list()}" name="accesslevelid" value="${accesslevelid}" onchange="document.secobjaccessform.submit();"></g:select>
+                                    <g:select optionKey="id" optionValue="accessLevelName" from="${auth.SecureAccessLevel.list()}" name="accesslevelid" value="${accesslevelid}" onchange="document.secobjaccessform.submit();"></g:select>
                                 </td>
                             </tr>
 				</tbody>
