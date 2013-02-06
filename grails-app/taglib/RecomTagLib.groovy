@@ -149,7 +149,7 @@ class RecomTagLib {
 			out << tagValue.displayValue << "&nbsp;"
 			out << "<img alt=\"external link\" class=\"ExternalLink\" src=\"" << resource(dir:'images',file:'linkext7.gif') << "\"/>"
 			out << "</a>"
-		} else if (tagItem.codeTypeName.endsWith("_PUBMED_ID")) {
+		} else if (tagItem.codeTypeName!= null && tagItem.codeTypeName.endsWith("_PUBMED_ID")) {
 			out << "<a href=\"#\" onclick=\"var w=window.open('http://www.ncbi.nlm.nih.gov/pubmed/" << tagValue.displayValue << "', '_blank'); w.focus(); return false;\">"
 			out << tagValue.displayValue << "&nbsp;"
 			out << "<img alt=\"external link\" src=\"" << resource(dir:'images',file:'linkext7.gif') << "\"/>"
