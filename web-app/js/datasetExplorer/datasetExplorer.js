@@ -504,22 +504,22 @@ Ext.onReady(function()
 							GLOBAL.Analysis="Advanced";
 						}
 					}
-//					,
-//					bbar: new Ext.StatusBar({
-//						// Status bar to show the progress of generating heatmap and other advanced workflows
-//				        id: 'asyncjob-statusbar',
-//				        defaultText: 'Ready',
-//				        defaultIconCls: 'default-icon',
-//				        text: 'Ready',
-//				        statusAlign: 'right',
-//				        iconCls: 'ready-icon',
-//				        items: [{
-//				        	xtype: 'button',
-//				        	id: 'cancjob-button',
-//				        	text: 'Cancel',
-//				        	hidden: true
-//				        }]				        
-//				    })
+					,
+					bbar: new Ext.StatusBar({
+						// Status bar to show the progress of generating heatmap and other advanced workflows
+				        id: 'asyncjob-statusbar',
+				        defaultText: 'Ready',
+				        defaultIconCls: 'default-icon',
+				        text: 'Ready',
+				        statusAlign: 'right',
+				        iconCls: 'ready-icon',
+				        items: [{
+				        	xtype: 'button',
+				        	id: 'cancjob-button',
+				        	text: 'Cancel',
+				        	hidden: true
+				        }]				        
+				    })
 				}
 		);
 
@@ -580,16 +580,22 @@ Ext.onReady(function()
 					region : 'center',
 					fitToFrame : true,
 					listeners :
-					{
-					activate : function() {
-						GLOBAL.CurrentSubsetIDs[1] = null;
-						GLOBAL.CurrentSubsetIDs[2] = null;
-						runAllQueries(getSummaryStatistics);
-						activateTab();
-					},
-					deactivate: function(){
-						resultsTabPanel.tools.help.dom.style.display="none";
-					}
+						{
+						activate : function() {
+							GLOBAL.CurrentSubsetIDs[1] = null;
+							GLOBAL.CurrentSubsetIDs[2] = null;
+							runAllQueries(getSummaryStatistics);
+							activateTab();
+							onWindowResize();
+						},
+						deactivate: function(){
+							resultsTabPanel.tools.help.dom.style.display="none";
+						},
+						'afterLayout': {
+							fn: function(el) {
+								onWindowResize();
+							}
+						}
 					}
 				,
 				autoScroll : true,
@@ -644,6 +650,11 @@ Ext.onReady(function()
 						},
 						deactivate: function(){
 							//resultsTabPanel.tools.help.dom.style.display="none";
+						},
+						'afterLayout': {
+							fn: function(el) {
+								onWindowResize();
+							}
 						}
 					},
 					collapsible : true						
@@ -692,7 +703,13 @@ Ext.onReady(function()
 			        	activate : function() {
 							GLOBAL.Analysis="dataAssociation";
 							renderCohortSummary();
+							onWindowResize();
 							//Ext.getCmp('dataAssociationBodyPanel').focus()
+						},
+						'afterLayout': {
+							fn: function(el) {
+								onWindowResize();
+							}
 						}
 					},
 					collapsible : true
@@ -1010,12 +1027,24 @@ Ext.onReady(function()
 );
 
 function onWindowResize() {
+	//Assorted hackery for accounting for the presence of the toolbar
 	var windowHeight = jQuery(window).height();
 	
 	jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
 	
 	var boxHeight = jQuery('#box-search').height();
 	jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 110);
+	
+	jQuery('#analysisPanel .x-panel-body').height(jQuery(window).height() - 65);
+	
+	if (jQuery('#dataTypesGridPanel .x-panel-body').size() > 0) {
+		var exportPanelTop = jQuery('#dataTypesGridPanel .x-panel-body').offset()['top'];
+		jQuery('#dataTypesGridPanel .x-panel-body').height(jQuery(window).height() - exportPanelTop - 40);
+	}
+	if (jQuery('#dataAssociationPanel .x-panel-body').size() > 0) {
+		var panelTop = jQuery('#dataAssociationPanel .x-panel-body').offset()['top'];
+		jQuery('#dataAssociationPanel .x-panel-body').height(jQuery(window).height() - panelTop);
+	}
 }
 
 

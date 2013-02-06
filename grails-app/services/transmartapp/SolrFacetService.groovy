@@ -180,41 +180,47 @@ class SolrFacetService {
 	
 	def hierarchicalIntersect(searchResults, categoryResults) {
 		
-		//Add to the list if:
-		//This is the first category result (handled above)
-		//The current path exactly matches an existing path
-		//There is a path in the existing path results that is an exact subset of the current path
-		//The current path is an exact subset of an existing path result
-		for (result in categoryResults) {
-			for (existingResult in searchResults) {
-				if (existingResult.startsWith(result) || result.startsWith(existingResult)) {
-					searchResults += result; break;
-				}
-			}
-		}
-		
-		//Find the maximum depth
-		def maxDepth = 0
-		for (result in searchResults) {
-			def depth = result.split("\\\\").size()
-			if (maxDepth < depth) {maxDepth = depth;}
-		}
-		
 		def newSearchResults = []
-		for (result in searchResults) {
-			//If this result is below the maximum depth, check for a superset of this result - if found, add it.
-			def depth = result.split("\\\\").size()
-			if (depth == maxDepth) { newSearchResults.add(result) }
-			else {
-				for (comparedResult in searchResults) {
-					if (comparedResult.startsWith(result) && !comparedResult.equals(result)) {
-						//Superset found
-						newSearchResults.add(result)
-						break
-					}
+		
+		//Add both sets of results to a map - folder/annotation.
+		def oldMap = [:]
+		def newMap = [:]
+		for (s in searchResults) {
+			oldMap.put(s, [])
+		}
+		for (c in categoryResults) {
+			newMap.put(c, [])
+		}
+		
+		//Iterate over both maps, annotating items according to whether old result is a superset, new result is a superset/match, or a conflict is created.
+		def oldKeys = oldMap.keySet()
+		def newKeys = newMap.keySet()
+		
+		for (nk in newKeys) {
+			for (ok in oldKeys) {
+				if (nk.startsWith(ok)) {
+					newMap[nk].push("N")
+					oldMap[ok].push("N")
+				}
+				else if (ok.startsWith(nk)) { //Equal will have been handled above
+					newMap[nk].push("O")
+					oldMap[ok].push("O")
 				}
 			}
 		}
+		
+		//Take Os from old keys, Ns from new keys
+		for (nk in newKeys) {
+			if (newMap[nk].contains("N") && !newSearchResults.contains(nk)) {
+				newSearchResults.push(nk)
+			}
+		}
+		for (ok in oldKeys) {
+			if (oldMap[ok].contains("O") && !newSearchResults.contains(ok)) {
+				newSearchResults.push(ok)
+			}
+		}
+		
 		
 		return newSearchResults
 		
