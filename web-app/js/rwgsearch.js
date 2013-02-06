@@ -790,6 +790,26 @@ jQuery(document).ready(function() {
 		});
 	});
 
+	jQuery('#metadata-viewer').on('click', '.addanalysis', function() {
+
+    	var id = jQuery(this).attr('name');
+
+		jQuery('#createAnalysisOverlay').fadeIn();
+		jQuery('#createAnalysis').empty().addClass('ajaxloading');
+
+		jQuery.ajax({
+			url:createAnalysisURL,
+			data: {folderId: id},			
+			success: function(response) {
+				jQuery('#createAnalysis').html(response).removeClass('ajaxloading');
+			},
+			error: function(xhr) {
+				alert(xhr);
+				jQuery('#createAnalysis').html(response).removeClass('ajaxloading');
+			}
+		});
+	});
+	
 	jQuery('#metadata-viewer').on('click', '.addfolder', function() {
 
     	var id = jQuery(this).attr('name');
