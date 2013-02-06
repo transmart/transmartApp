@@ -393,6 +393,12 @@ table.menuDetail th.menuVisited {
 	display: inline-block;
 }
 
+.description {
+	line-height:16px;
+	font-family: verdana, arial, helvetica, sans-serif;
+	text-align: justify;	
+}
+
 .overlay {
 	position: absolute;
 	z-index: 10000;	
