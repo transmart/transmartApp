@@ -790,6 +790,14 @@ jQuery(document).ready(function() {
 		});
 	});
 
+
+
+
+
+
+
+
+
 	jQuery('#metadata-viewer').on('click', '.addanalysis', function() {
 
     	var id = jQuery(this).attr('name');

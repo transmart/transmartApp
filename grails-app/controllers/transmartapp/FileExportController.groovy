@@ -91,23 +91,23 @@ class FileExportController {
 	
 	def export = {
 		
+		def errorResponse = []
+		def filestorePath = grailsApplication.config.com.recomdata.FmFolderService.filestoreDirectory
+		
 		try {
-			response.setHeader('Content-disposition', 'attachment; filename=export.zip')
-			response.contentType = 'application/zip'
-			
-			//File fileZip = new File();
 			
 			//Final export list comes from selected checkboxes
 			def exportList = params.id.split(",")
 			
-			//FileOutputStream fwZip = new FileOutputStream(fileZip);
-			def zipStream = new ZipOutputStream(response.outputStream);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream()
+			def zipStream = new ZipOutputStream(baos)
 			
 			def manifestMap = [:]
 			
 			for (f in exportList) {
 				FmFile fmFile = FmFile.get(f)
-				File file = new File(fmFile.filestoreLocation + "/" + fmFile.filestoreName)
+				def fileLocation = filestorePath + "/" + fmFile.filestoreLocation + "/" + fmFile.filestoreName
+				File file = new File(fileLocation)
 				if (file.exists()) {
 					String dirName = fmFolderService.getPath(fmFile.folder)
 					if (dirName.startsWith("/") || dirName.startsWith("\\")) { dirName = dirName.substring(1) } //Lose the first separator character, this would cause a blank folder name in the zip
@@ -125,6 +125,11 @@ class FileExportController {
 					manifestList.push(fmFile)
 					manifestMap.put(dirName, manifestList)
 				}
+				else {
+					def errorMessage = "File not found for export: " + fileLocation
+					log.error errorMessage
+					errorResponse += errorMessage
+				}
 			}
 			
 			//Now for each item in the manifest map, create a manifest file and add it to the ZIP.
@@ -141,9 +146,15 @@ class FileExportController {
 			
 			zipStream.flush();
 			zipStream.close();
+			
+			response.setHeader('Content-disposition', 'attachment; filename=export.zip')
+			response.contentType = 'application/zip'
+			response.outputStream << baos.toByteArray()
+			response.outputStream.flush()
 		}
 		catch (Exception e) {
-			render(status: 500, text: e.getMessage())
+			log.error("Error writing ZIP", e)
+			render(contentType: "text/plain", text: errorResponse.join("\n") + "\nError writing ZIP: " + e.getMessage())
 		}
 	}
 }

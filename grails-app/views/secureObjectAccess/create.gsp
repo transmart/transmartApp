@@ -50,7 +50,7 @@
                                     <label for="principal">Principal:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:secureObjectAccess,field:'principal','errors')}">
-                                    <g:select optionKey="id" from="${Principal.list()}" name="principal.id" value="${secureObjectAccess?.principal?.id}" noSelection="['null':'']"></g:select>
+                                    <g:select optionKey="id" from="${auth.Principal.list()}" name="principal.id" value="${secureObjectAccess?.principal?.id}" noSelection="['null':'']"></g:select>
                                 </td>
                             </tr> 
                         
@@ -59,7 +59,7 @@
                                     <label for="accessLevel">Access Level:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:secureObjectAccess,field:'accessLevel','errors')}">
-                                    <g:select optionKey="id" from="${SecureAccessLevel.list()}" name="accessLevel.id" value="${secureObjectAccess?.accessLevel?.id}" ></g:select>
+                                    <g:select optionKey="id" from="${auth.SecureAccessLevel.list()}" name="accessLevel.id" value="${secureObjectAccess?.accessLevel?.id}" ></g:select>
                                 </td>
                             </tr> 
                         
@@ -68,7 +68,7 @@
                                     <label for="secureObject">Secure Object:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:secureObjectAccess,field:'secureObject','errors')}">
-                                    <g:select optionKey="id" from="${SecureObject.list()}" name="secureObject.id" value="${secureObjectAccess?.secureObject?.id}" ></g:select>
+                                    <g:select optionKey="id" from="${auth.SecureObject.list()}" name="secureObject.id" value="${secureObjectAccess?.secureObject?.id}" ></g:select>
                                 </td>
                             </tr> 
                         

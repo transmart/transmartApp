@@ -51,6 +51,7 @@
 			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())}">
 				<span name="${folder.id}" class="greybutton buttonicon addanalysis">Add new analysis</span>
 				<span name="${folder.id}" class="greybutton buttonicon addassay">Add new assay</span>
+				<span name="${folder.id}" class="greybutton buttonicon addanalysis">Add new analysis</span>
 				<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
 			</g:if>
 			
@@ -66,7 +67,7 @@
 	</h3>
 </div>
 <g:if test="${bioDataObject?.hasProperty('description')}">
-<div style="line-height:14px;font-family:arial, tahoma, helvetica, sans-serif; font-size: 12px;">
+<div class="description">
  <g:if test="${bioDataObject?.description?.length() > 325000}">
                        ${(bioDataObject?.description)?.substring(0,324000)}&nbsp;&nbsp;
                        <a href=# >...See more</a>
@@ -77,7 +78,7 @@
 <div style="height:20px;"></div>
 </g:if>
 <g:elseif test="${bioDataObject?.hasProperty('longDescription')}">
-<div style="line-height:14px;font-family:arial, tahoma, helvetica, sans-serif; font-size: 12px;">
+<div class="description">
  <g:if test="${bioDataObject?.longDescription?.length() > 325000}">
                        ${(bioDataObject?.longDescription)?.substring(0,324000)}&nbsp;&nbsp;
                        <a href=# >...See more</a>
