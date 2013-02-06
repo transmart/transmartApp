@@ -445,6 +445,13 @@ table.menuDetail th.menuVisited {
 	height: 80%;
 }
 
+#createAnalysisOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
 #filter-browser {
 	font-size: 8pt;
 	font-family: Verdana, Arial, sans-serif;
