@@ -523,7 +523,7 @@ class FmFolderController {
 		if(parentFolder)
 		{
 			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
-			fmFolderInstance.folderType = FolderType.STUDY.name()
+			fmFolderInstance.folderType = FolderType.ANALYSIS.name()
 			fmFolderInstance.parent = parentFolder
 		}
 		else
@@ -534,13 +534,17 @@ class FmFolderController {
 		if (fmFolderInstance.save(flush: true))
 		{
 			log.info "Analysis folder saved"
-			createAmTagTemplateAssociation(FolderType.Analysis.name(), fmFolderInstance)
+			createAmTagTemplateAssociation(FolderType.ANALYSIS.name(), fmFolderInstance)
 			
 			log.info "Analysis folder association saved"
-			def bioDataObject = new bio.Experiment()
-			bioDataObject.title = fmFolderInstance.folderName
-			bioDataObject.description = fmFolderInstance.description
-			bioDataObject.type="Experiment"
+			def bioDataObject = new bio.BioAssayAnalysis()
+			bioDataObject.name = fmFolderInstance.folderName
+			bioDataObject.shortDescription = fmFolderInstance.description
+			bioDataObject.longDescription = fmFolderInstance.description
+			bioDataObject.analysisMethodCode="TBD"
+			bioDataObject.assayDataType="TBD"
+			bioDataObject.dataCount=-1
+			bioDataObject.teaDataCount=-1
 			bioDataObject = saveMetaData(fmFolderInstance, bioDataObject, params)
 			BioData bioData = BioData.get(bioDataObject.id)
 			if(!bioData){
@@ -548,7 +552,7 @@ class FmFolderController {
 			}
 			else{
 				log.info "Analysis saved"
-				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.Experiment",fmFolder:fmFolderInstance)
+				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.BioAssayAnalysis",fmFolder:fmFolderInstance)
 				if(ffa.save(flush: true))
 				{
 					log.info "Analysis experiment folder association saved"
@@ -587,7 +591,6 @@ class FmFolderController {
 		def fmFolderInstance = new FmFolder(params)
 		if(parentFolder)
 		{
-	//		fmFolderInstance.folderFullName = "study"
 			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
 			fmFolderInstance.folderType = FolderType.STUDY.name()
 			fmFolderInstance.parent = parentFolder

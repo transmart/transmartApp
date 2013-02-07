@@ -219,9 +219,9 @@
 	            	var protoForm = $('createAnalysisForm');
 		            var serializedForm = Form.serialize(protoForm);
 		        	jQuery.ajax({
-						url:saveProgramURL + "?" + serializedForm,	
+						url:saveAnalysisURL + "?" + serializedForm,	
 						success: function(response) {
-							showSearchResults();
+							updateFolder(response.parentId);
 							jQuery('#createAnalysisOverlay').fadeOut();
 							showDetailDialog('fmFolder/folderDetail/' + response.id);
 						},
