@@ -209,6 +209,27 @@
 					});
 	            });
 	            
+	            jQuery("#createAnalysisOverlay").on('click', '#cancelanalysisbutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#createAnalysisOverlay').fadeOut();
+	            });
+
+	            jQuery("#createAnalysisOverlay").on('click', '#saveanalysisbutton', function() {
+		            
+	            	var protoForm = $('createAnalysisForm');
+		            var serializedForm = Form.serialize(protoForm);
+		        	jQuery.ajax({
+						url:saveAnalysisURL + "?" + serializedForm,	
+						success: function(response) {
+							updateFolder(response.parentId);
+							jQuery('#createAnalysisOverlay').fadeOut();
+							showDetailDialog('fmFolder/folderDetail/' + response.id);
+						},
+						error: function(xhr) {
+						alert(xhr);
+						}
+					});
+	            });
 	            
 	        	resizeAccordion();
                  
@@ -416,6 +437,7 @@
 		<!--  This is the DIV we stuff the browse windows into. -->
 		<div id="exportOverlay" class="overlay" style="display: none;">&nbsp;</div>
 		<tmpl:editMetadataOverlay />
+		<tmpl:createAnalysisOverlay />
 		<tmpl:createAssayOverlay />
 		<tmpl:createFolderOverlay />
 		<tmpl:createStudyOverlay />

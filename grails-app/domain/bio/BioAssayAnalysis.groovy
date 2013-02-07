@@ -44,7 +44,7 @@ class BioAssayAnalysis implements IExcelProfile {
 	String type
 	Long dataCount
 	Long teaDataCount
-	static hasMany=[datasets:BioAssayDataset,files:ContentReference]
+	static hasMany=[datasets:BioAssayDataset,files:ContentReference,uniqueIds:BioData]
 	static belongsTo=[ContentReference]
 
 	static mapping = {
@@ -71,8 +71,8 @@ class BioAssayAnalysis implements IExcelProfile {
 			analysisMethodCode column:'ANALYSIS_METHOD_CD'
 			datasets joinTable:[name:'BIO_ASY_ANALYSIS_DATASET',key:'BIO_ASSAY_ANALYSIS_ID']
 			files joinTable:[name:'BIO_CONTENT_REFERENCE', key:'BIO_DATA_ID', column:'BIO_CONTENT_REFERENCE_ID'], cache:true
-
-
+			uniqueIds joinTable:[name:'BIO_DATA_UID', key:'BIO_DATA_ID']
+			
 		}
 	}
 
@@ -104,4 +104,11 @@ class BioAssayAnalysis implements IExcelProfile {
 	public List getValues() {
 		return [shortDescription, longDescription, pValueCutoff, foldChangeCutoff, qaCriteria, analysisPlatform == null ? "" : analysisPlatform.platformName, analysisMethodCode, assayDataType]
 	}
+	
+	def getUniqueId(){
+		if(uniqueIds!=null && !uniqueIds.isEmpty())
+			return uniqueIds.iterator().next();
+		return null;
+	}
+
 }

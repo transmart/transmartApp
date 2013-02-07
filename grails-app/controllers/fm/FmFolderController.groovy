@@ -92,6 +92,24 @@ class FmFolderController {
         return [fmFolderInstance: fmFolderInstance]
     }
 
+	def createAnalysis = {
+		log.info "createAnalysis called"
+		log.info "params = " + params
+	
+		//log.info "** action: expDetail called!"
+		
+		def folder = new FmFolder()
+		folder.folderType = FolderType.ANALYSIS.name()
+		def parentFolder = FmFolder.get(params.folderId)
+		folder.parent = parentFolder
+		def bioDataObject = new bio.BioAssayAnalysis()
+		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.ANALYSIS.name())
+		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+		def title = "Create Analysis"
+		def templateType = "createAnalysisForm"
+		render(template: "createAnalysis", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+	}
+
 	def createAssay = {
 		log.info "createAssay called"
 		log.info "params = " + params
@@ -494,6 +512,75 @@ class FmFolderController {
 		}
 	}
 
+
+	def saveAnalysis = {
+		log.info "saveAnalysis called"
+		log.info params
+	
+		def parentFolder = FmFolder.get(params.parentId)
+		log.info("parentFolder = " + parentFolder)
+		def fmFolderInstance = new FmFolder(params)
+		if(parentFolder)
+		{
+			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
+			fmFolderInstance.folderType = FolderType.ANALYSIS.name()
+			fmFolderInstance.parent = parentFolder
+		}
+		else
+		{
+			log.error "Parent folder is null"
+		}
+
+		if (fmFolderInstance.save(flush: true))
+		{
+			log.info "Analysis folder saved"
+			createAmTagTemplateAssociation(FolderType.ANALYSIS.name(), fmFolderInstance)
+			
+			log.info "Analysis folder association saved"
+			def bioDataObject = new bio.BioAssayAnalysis()
+			bioDataObject.name = fmFolderInstance.folderName
+			bioDataObject.shortDescription = fmFolderInstance.description
+			bioDataObject.longDescription = fmFolderInstance.description
+			bioDataObject.analysisMethodCode="TBD"
+			bioDataObject.assayDataType="TBD"
+			bioDataObject.dataCount=-1
+			bioDataObject.teaDataCount=-1
+			bioDataObject = saveMetaData(fmFolderInstance, bioDataObject, params)
+			BioData bioData = BioData.get(bioDataObject.id)
+			if(!bioData){
+				 log.error "Biodata for " + bioDataObject.id + " is not found"
+			}
+			else{
+				log.info "Analysis saved"
+				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.BioAssayAnalysis",fmFolder:fmFolderInstance)
+				if(ffa.save(flush: true))
+				{
+					log.info "Analysis experiment folder association saved"
+					
+					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
+					render result as JSON
+					return
+				}
+				else
+				{
+					ffa.errors.each {
+						log.error it
+					}
+				}
+				
+			}
+
+		}
+		else
+		{
+			fmFolderInstance.errors.each {
+				log.error it
+			}
+		}
+		
+		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+	}
+
 	
 	def saveStudy = {
 		log.info "saveStudy called"
@@ -504,7 +591,6 @@ class FmFolderController {
 		def fmFolderInstance = new FmFolder(params)
 		if(parentFolder)
 		{
-	//		fmFolderInstance.folderFullName = "study"
 			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
 			fmFolderInstance.folderType = FolderType.STUDY.name()
 			fmFolderInstance.parent = parentFolder
@@ -1227,6 +1313,10 @@ class FmFolderController {
 			
 			if(folder)
 			{
+				if(params.description)
+				{
+					folder.description = params.description 
+				}
 				def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
 				
 				bioDataObject = getBioDataObject(folder)
@@ -1371,18 +1461,29 @@ class FmFolderController {
 					 	
 					}
 				}
-				if (!bioDataObject.hasErrors() && bioDataObject.save(flush: true)) {
-					log.info "Meta data saved"
-					def result = [id: folderId]
-					render result as JSON
-					return
+				if (!folder.hasErrors() && folder.save(flush: true)) 
+				{
+					log.info "Folder saved"
+					
+					if (!bioDataObject.hasErrors() && bioDataObject.save(flush: true)) {
+						log.info "Meta data saved"
+						def result = [id: folderId]
+						render result as JSON
+						return
+					}
+					else {
+						log.error "Errors occurred saving Meta data"
+						metaDataTagItems  =  getMetaDataItems(folder, true)
+	
+						render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+						//	render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
+					}
 				}
-				else {
-					log.info "Errors occurred saving Meta data"
-					metaDataTagItems  =  getMetaDataItems(folder, true)
-
+				else
+				{
+					log.error "Errors occurred saving folder description"
 					render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
-					//	render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
+					
 				}
 			}
 		}

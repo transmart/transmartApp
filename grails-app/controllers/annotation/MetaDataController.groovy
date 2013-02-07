@@ -81,7 +81,7 @@ class MetaDataController {
 		def codeTypeName = params.codeTypeName?params.codeTypeName:'';
 		
 		def observations = null;
-		def conceptCodes = ConceptCode.executeQuery("FROM ConceptCode cc WHERE cc.codeTypeName = :codeTypeName and  upper(cc.codeName) LIKE :codeName order by codeTypeName", [codeTypeName: codeTypeName, codeName: "%"+value+"%"], [max: 10]);
+		def conceptCodes = ConceptCode.executeQuery("FROM ConceptCode cc WHERE cc.codeTypeName = :codeTypeName and  upper(cc.codeName) LIKE :codeName order by codeTypeName", [codeTypeName: codeTypeName, codeName: value+"%"], [max: 10]);
 		
 		log.info "There are " + conceptCodes.size() + " " + params.codeTypeName + " records found in ConceptCode"
 		def itemlist = [];

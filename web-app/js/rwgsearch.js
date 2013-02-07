@@ -807,7 +807,7 @@ jQuery(document).ready(function() {
 			}
 		});
 	});
-	
+
 	jQuery('#metadata-viewer').on('click', '.addfolder', function() {
 
     	var id = jQuery(this).attr('name');
@@ -919,6 +919,10 @@ jQuery(document).ready(function() {
    jQuery('body').on('click', '#closeassay', function() {
 		jQuery('#createAssayOverlay').fadeOut();	
    });
+
+   jQuery('body').on('click', '#closeanalysis', function() {
+		jQuery('#createAnalysisOverlay').fadeOut();	
+  });
 
    jQuery('body').on('click', '#closefolder', function() {
 		jQuery('#createFolderOverlay').fadeOut();	

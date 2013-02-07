@@ -49,8 +49,8 @@
 			</g:if>
 		
 			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())}">
-				<span name="${folder.id}" class="greybutton buttonicon addassay">Add new assay</span>
 				<span name="${folder.id}" class="greybutton buttonicon addanalysis">Add new analysis</span>
+				<span name="${folder.id}" class="greybutton buttonicon addassay">Add new assay</span>
 				<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
 			</g:if>
 			
