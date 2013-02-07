@@ -790,14 +790,6 @@ jQuery(document).ready(function() {
 		});
 	});
 
-
-
-
-
-
-
-
-
 	jQuery('#metadata-viewer').on('click', '.addanalysis', function() {
 
     	var id = jQuery(this).attr('name');
@@ -806,7 +798,7 @@ jQuery(document).ready(function() {
 		jQuery('#createAnalysis').empty().addClass('ajaxloading');
 
 		jQuery.ajax({
-			url:createAssayURL,
+			url:createAnalysisURL,
 			data: {folderId: id},			
 			success: function(response) {
 				jQuery('#createAnalysis').html(response).removeClass('ajaxloading');
