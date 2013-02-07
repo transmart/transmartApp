@@ -52,7 +52,7 @@ public class SearchKeywordService {
 		[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
 		[codeTypeName: "STUDY_INSTITUTION", category: "STUDY_INSTITUTION", displayName: "Study Institution"],
 		
-		[codeTypeName: "ASSAY_TYPE_OF_BM_STUDIED", category: "ASSAY_BIOMARKER_TYPE", displayName: "Assay Biomarker Studied"],
+		[codeTypeName: "ASSAY_TYPE_OF_BM_STUDIED", category: "ASSAY_TYPE_OF_BM_STUDIED", displayName: "Assay Biomarker Studied"],
 		[category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true, platformProperty: 'type'],
 		[category: "TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true, platformProperty: 'technology'],
 		[category: "VENDOR", displayName: "Assay Vendor", prefix: true, useText: true, platformProperty: 'vendor'],
