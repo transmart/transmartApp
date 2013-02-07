@@ -251,9 +251,7 @@ function showSearchTemplate()	{
 		for (var j=0; j<currentSearchTerms.length; j++)	{
 			var fields = currentSearchTerms[j].split(";");
 			if (currentCategories[i] == fields[0]){
-				var tagID = currentSearchTerms[j].split(' ').join('%20');			// URL encode the spaces
-				var tagID = currentSearchTerms[j].split(',').join('%44');			// And the commas
-				var tagID = currentSearchTerms[j].split('&').join('%26');			// And ampersands
+				var tagID = currentSearchTerms[j].replace(/,/g, "%44").replace(/&/g, "%26");	// URL encode a few things
 				
 				var catFields = fields[0].split("|");
 				var catDisplay = catFields[0];

@@ -393,7 +393,12 @@ class SolrFacetService {
 		   }
 		   
 		   def fmFolder = FmFolder.findByUniqueId(folderId)
-		   folderSearchList.push(fmFolder?.folderFullName)
+		   if (fmFolder != null) {
+			   folderSearchList.push(fmFolder?.folderFullName)
+		   }
+		   else {
+			   log.error "No folder found for unique ID: " + folderId
+		   }
 	   }
 	   
 	   return folderSearchList
