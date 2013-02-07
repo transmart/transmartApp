@@ -287,12 +287,12 @@ class FmFolderService {
 		try {
 			StringBuilder url = new StringBuilder(solrUrl);
 			// Use the file's unique ID as the document ID in SOLR
-			url.append("?").append("literal.id=").append(URLEncoder.encode(fmFile.uniqueId, "UTF-8"));
+			url.append("?").append("literal.id=").append(URLEncoder.encode(fmFile.getUniqueId(), "UTF-8"));
 			
 			
 			// Use the file's parent folder's unique ID as the folder_uid in SOLR
 			if (fmFile.folder != null) {
-				url.append("&").append("literal.folder=").append(URLEncoder.encode(fmFile.folder.uniqueId, "UTF-8"));
+				url.append("&").append("literal.folder=").append(URLEncoder.encode(fmFile.folder.getUniqueId(), "UTF-8"));
 			}
 			
 			// Use the file's name as document name is SOLR
