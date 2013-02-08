@@ -818,7 +818,7 @@ class FmFolderController {
 		def folderSearchString = folderSearchLists[0] ? folderSearchLists[0].join(",") + "," : "" //Extra , - used to identify leaves
 		def uniqueLeavesString = folderSearchLists[1] ? folderSearchLists[1].join(",") + "," : ""
 		
-		render(template:'folders', model: [folders: folderContents, folderSearchString: folderSearchString, auto: auto])
+		render(template:'folders', model: [folders: folderContents, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: auto])
 	}
 
 	/**
