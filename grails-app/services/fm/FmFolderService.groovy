@@ -340,13 +340,17 @@ class FmFolderService {
 			return null
 		}
 		
+		if (fmFolder.folderType.equals(FolderType.PROGRAM.name())) { //Programs use their folderUID as accession
+			return fmFolder.getUniqueId()
+		}
+		
 		if (fmFolder.folderType.equals(FolderType.STUDY.name())) {
 			def experiment = FmFolderAssociation.findByFmFolder(fmFolder)?.getBioObject()
 			log.error("No experiment associated with study folder: " + fmFolder.folderFullName)
 			return experiment?.accession
 		}
 		else {
-			getAssociatedAccession(fmFolder.parent)
+			return getAssociatedAccession(fmFolder.parent)
 		}
 	}
 	
