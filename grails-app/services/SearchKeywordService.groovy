@@ -22,6 +22,7 @@ import search.GeneSignature
 import search.SearchKeyword
 import search.SearchKeywordTerm
 import auth.AuthUser
+import bio.BioAssayPlatform
 import bio.BioDataExternalCode
 import bio.ConceptCode
 
@@ -51,12 +52,12 @@ public class SearchKeywordService {
 		[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
 		[codeTypeName: "STUDY_INSTITUTION", category: "STUDY_INSTITUTION", displayName: "Study Institution"],
 		
-		[codeTypeName: "ASSAY_TYPE_OF_BM_STUDIED", category: "ASSAY_BIOMARKER_TYPE", displayName: "Assay Biomarker Studied"],
-		[codeTypeName: "MEASUREMENT_TYPE", category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true],
-		[codeTypeName: "TECHNOLOGY", category: "TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true],
-		[codeTypeName: "VENDOR", category: "VENDOR", displayName: "Assay Vendor", prefix: true, useText: true],
+		[codeTypeName: "ASSAY_TYPE_OF_BM_STUDIED", category: "ASSAY_TYPE_OF_BM_STUDIED", displayName: "Assay Biomarker Studied"],
+		[category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true, platformProperty: 'type'],
+		[category: "TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true, platformProperty: 'technology'],
+		[category: "VENDOR", displayName: "Assay Vendor", prefix: true, useText: true, platformProperty: 'vendor'],
 		
-		[codeTypeName: "MEASUREMENT_TYPE", category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true]
+		[category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true, platformProperty: 'type']
 
 	]
 
@@ -90,7 +91,15 @@ public class SearchKeywordService {
 		for (filtercat in filtercats) {
 			def results 
 			
-			if (filtercat.prefix) {				
+			if (filtercat.platformProperty) {
+					results = BioAssayPlatform.createCriteria().list {
+					projections {
+						distinct(filtercat.platformProperty)
+					}
+					order(filtercat.platformProperty, "asc")
+				}
+			}
+			else if (filtercat.prefix) {				
 				results = ConceptCode.createCriteria().list	{
 					like("codeTypeName", filtercat.codeTypeName + ":%")
 					order("codeName", "asc")
@@ -114,7 +123,10 @@ public class SearchKeywordService {
 				}
 			});
 			for (result in results) {
-				if (filtercat.useText) {
+				if (filtercat.platformProperty) {
+					choices.add([name: result, uid: result])
+				}
+				else if (filtercat.useText) {
 					choices.add([name: result.codeName, uid: result.codeName])
 				}
 				else {
@@ -220,8 +232,6 @@ public class SearchKeywordService {
 				}
 				or {
 					'in'("codeTypeName", filtercats*.codeTypeName)
-					like("codeTypeName", "VENDOR%")
-					like("codeTypeName", "TECHNOLOGY%")
 				}
 				maxResults(max)
 				order("bioConceptCode", "asc")
@@ -247,6 +257,35 @@ public class SearchKeywordService {
 					keywords.add(m)
 				}
 				
+			}
+			
+			//If we're not over the maximum result threshold, query the platform table as well
+			if (keywords.size() < max) {
+				
+				//Perform a query for each platform field
+				for (cat in filtercats) {
+					if (cat.platformProperty) {
+						results = BioAssayPlatform.createCriteria().list {
+							ilike(cat.platformProperty, term + '%')
+							maxResults(max)
+							order(cat.platformProperty, "asc")
+						}
+						log.info("Platform " + cat.platformProperty +  " keywords found: " + results.size())
+						
+						for (result in results) {
+							def m = [:]
+							
+							m.put("label", result."${cat.platformProperty}")
+							m.put("category", cat.displayName)
+							m.put("categoryId", cat.category)
+							m.put("id", result."${cat.platformProperty}")
+							
+							if (!keywords.find {it.id.equals(m.id)}) {
+								keywords.add(m)
+							}
+						}
+					}
+				}
 			}
 		}
 		

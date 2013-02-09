@@ -1045,6 +1045,14 @@ function onWindowResize() {
 		var panelTop = jQuery('#dataAssociationPanel .x-panel-body').offset()['top'];
 		jQuery('#dataAssociationPanel .x-panel-body').height(jQuery(window).height() - panelTop);
 	}
+	if (jQuery('#resultsTabPanel .x-tab-panel-body').size() > 0) {
+		var panelTop = jQuery('#resultsTabPanel .x-tab-panel-body').offset()['top'];
+		jQuery('#resultsTabPanel .x-tab-panel-body').height(jQuery(window).height() - panelTop);
+	}
+	if (jQuery('#dataAssociationBody').size() > 0) {
+		var panelTop = jQuery('#dataAssociationBody').offset()['top'];
+		jQuery('#dataAssociationBody').height(jQuery(window).height() - 50);
+	}
 }
 
 
