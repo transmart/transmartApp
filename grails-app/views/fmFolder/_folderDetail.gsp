@@ -46,6 +46,7 @@
 		<sec:ifAnyGranted roles="ROLE_ADMIN">
 			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name())}">
 		 		<span name="${folder.id}" class="greybutton buttonicon addstudy">Add new study</span>
+				<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
 			</g:if>
 		
 			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name())}">

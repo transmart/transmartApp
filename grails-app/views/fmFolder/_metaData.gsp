@@ -64,8 +64,13 @@
                 	</g:else>
 	           </g:elseif>
                 <g:else>
-      		<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
-            <g:render template="extBusinessObjSearch" model="${[fieldName:'amTagItem_' + amTagItem.id,searchAction:amTagItem.guiHandler + 'Search',searchController:'metaData', values:tagValues]}" />
+      			<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
+            	<g:if test="${amTagItem.tagItemSubtype == 'COMPOUNDPICKLIST'}">
+            		<g:render template="${amTagItem.guiHandler}" model="${[measurements:measurements, technologies:technologies, vendors:vendors, platforms:platforms, fieldName:'amTagItem_' + amTagItem.id,searchAction:amTagItem.guiHandler + 'Search',searchController:'metaData', values:tagValues]}" />
+				</g:if>
+            	<g:else>
+            		<g:render template="extBusinessObjSearch" model="${[fieldName:'amTagItem_' + amTagItem.id,searchAction:amTagItem.guiHandler + 'Search',searchController:'metaData', values:tagValues]}" />
+				</g:else>
 				</g:else>
                 </td>
             </tr>

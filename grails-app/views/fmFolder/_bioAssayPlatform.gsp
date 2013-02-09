@@ -5,18 +5,21 @@ jQuery(document).ready(function() {
 	var escapedFieldName = '${fieldName}'.replace(".", "\\.");
 	jQuery("#" + escapedFieldName + "-input").autocomplete({
 		source: function( request, response ) {
+		
 			jQuery.ajax({
 				url: '${createLink([action:searchAction,controller:searchController])}',
 				data: {
 					term: request.term,
-					codeTypeName: '${codeTypeName}'
+					vendor:jQuery("#vendor").val(),
+					measurement:jQuery('#measurement').val(),
+					technology:jQuery('#technology').val(),
 				},
 				success: function( data ) {
 					response( jQuery.map( data, function(item) {
 						return {
 							category: item.category,
-							keyword: item.label,
-							sourceAndCode: item.sourceAndCode,
+							label: item.label,
+							sourceAndCode: item.id,
 							id: item.id,
 							display: item.display
 						}
@@ -29,14 +32,16 @@ jQuery(document).ready(function() {
 		
 		select: function(event, ui) {
 			var sourceAndCode = ui.item.sourceAndCode;
-			var diseaseName = ui.item.label;
+			 
+			var split = ui.item.label.split('--');
+			var displayName = split[0]
 			jQuery("#" + escapedFieldName + "-input").val('').focus();
-			$j('#' + escapedFieldName).append($j('<option></option>').val(sourceAndCode).text(diseaseName).attr('selected', 'selected'));
+			$j('#' + escapedFieldName).append($j('<option></option>').val(sourceAndCode).text(displayName).attr('selected', 'selected'));
 			var newTag = $j('<span/>', {
 				id: '${fieldName}-tag-' + sourceAndCode,
 				'class': 'tag',
 				name: sourceAndCode
-			}).text(diseaseName);
+			}).text(displayName);
 			$j('#' + escapedFieldName + '-tags').append(newTag);
 			newTag.hide().fadeIn('slow');
 			
@@ -50,6 +55,10 @@ jQuery(document).ready(function() {
 	};
 });
 </g:javascript>
+
+<%! import bio.* %>  
+
+
 <%-- Tag box (visual display of tags) --%>
 <div id="${fieldName}-tags" class="tagBox" name="${fieldName}">
 	<g:each in="${values}" var="value">
@@ -65,7 +74,26 @@ jQuery(document).ready(function() {
 </select>
 
 <%-- Visible input --%>
+
 <div style="background-color: #E4E4E4; float:left; padding: 8px; border-radius: 8px;">
-	<div style="float: left; line-height: 24px; font-style: italic; margin-right: 8px;">Add new: </div>
+	<div style="float: left; margin-right: 8px">
+	<div style="fixed: left; line-height: 24px; font-style: italic; margin-right: 8px;">Filter on: </div>
+	<div style="float: left; margin-right: 8px">
+	<div class="textsmaller">Measurement</div>
+	
+	<g:select style="width: 400px" id="measurement" name="measurement" noSelection="${['null':'Select...']}" from="${measurements}"/>
+	</div>
+	<div style="float: left; margin-right: 8px">
+	<div class="textsmaller">Technology</div>
+	<g:select style="width: 400px" id="technology" name="technology" noSelection="${['null':'Select...']}" from="${technologies}" />
+	</div>
+	<div style="float: left; margin-right: 8px">
+	<div class="textsmaller">Vendor</div>
+	<g:select style="width: 400px" id="vendor" name="vendor" noSelection="${['null':'Select...']}" from="${vendors}" />
+	</div>
+	</div>
+	<div style="float: left; margin-right: 8px">
+	<div style="fixed: left; line-height: 24px; font-style: italic; margin-right: 8px;">Add new platform: </div>
 	<input id="${fieldName}-input" style="float: left; width: 600px;"/>
+	</div>
 </div>

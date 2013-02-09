@@ -99,24 +99,6 @@ class MetaDataController {
 		log.info "EXT bioCompoundSearch called"
 		def paramMap = params
 		log.info params
-/*		
-		def value = params.term?params.term.toUpperCase():''
-		def compounds = Compound.executeQuery("FROM Compound cc WHERE upper(cc.codeName) LIKE :codeName order by codeName", [codeName: "%"+value+"%"], [max: 10]);
-		
-		def itemlist = [];
-		for (compound in compounds) {
-			itemlist.add([id:compound.uniqueId, keyword:compound.codeName, sourceAndCode:compound.uniqueId, category:"", display:""]);
-		}
-		
-		render itemlist as JSON;
-
-	<option value="COUNTRY">Country</option>
-	<option value="GENE">Gene</option>
-	<option value="GENESIG">Gene List</option>
-	<option value="SPECIES">Organism</option>
-	<option value="PATHWAY">Pathway</option>
-
-	*/
 		render 	searchKeywordService.findSearchKeywords("COMPOUND", params.term, 10) as JSON
 		
 	}
@@ -127,17 +109,6 @@ class MetaDataController {
 		log.info "EXT bioDiseaseSearch called"
 		def paramMap = params
 		log.info params
-	 /*
-		
-		def value = params.term?params.term.toUpperCase():''
-		def diseases = Disease.executeQuery("FROM Disease cc WHERE upper(cc.disease) LIKE :disease order by disease", [disease: "%"+value+"%"], [max: 10]);
-		
-		def itemlist = [];
-		for (disease in diseases) {
-			itemlist.add([id:disease.uniqueId, keyword:disease.disease, sourceAndCode:disease.uniqueId, category:"", display:""]);
-		}
-		*/
-//		render itemlist as JSON;
 		render 	searchKeywordService.findSearchKeywords("DISEASE", params.term, 10) as JSON
 
 	}
@@ -150,18 +121,7 @@ class MetaDataController {
 		def paramMap = params
 		log.info params
 		
-/*		def value = params.term?params.term.toUpperCase():''
-		def bioMarkers = BioMarker.executeQuery("FROM BioMarker cc WHERE upper(cc.name) LIKE :name order by name", [name: "%"+value+"%"], [max: 10]);
-		log.info bioMarkers
-		def itemlist = [];
-		for (bioMarker in bioMarkers) {
-			itemlist.add([id:bioMarker.uniqueId, keyword:bioMarker.name, sourceAndCode:bioMarker.uniqueId, category:"", display:""]);
-		}
-		
-		render itemlist as JSON;
-		*/
-		render 	searchKeywordService.findSearchKeywords("DISEASE", params.term, 10) as JSON
-		
+		render searchKeywordService.findSearchKeywords("GENE", params.term, 10) as JSON
 	}
 
 	/**
@@ -174,31 +134,7 @@ class MetaDataController {
 		def itemlist = [];
 		
 		def value = params.term?params.term.toUpperCase():''
-	/*	
-		def diseases = Disease.executeQuery("FROM Disease cc WHERE upper(cc.disease) LIKE :disease order by disease", [disease: "%"+value+"%"], [max: 10]);
-		
-		for (disease in diseases) {
-			itemlist.add([id:disease.uniqueId, keyword:disease.disease, sourceAndCode:disease.uniqueId, category:"Disease", display:""]);
-		}
-
-		def genes = BioMarker.executeQuery("FROM BioMarker cc WHERE bioMarkerType = 'GENE' and upper(cc.name) LIKE :name order by name", [name: "%"+value+"%"], [max: 10]);
-		for (gene in genes) {
-			itemlist.add([id:gene.uniqueId, keyword:gene.name, sourceAndCode:gene.uniqueId, category:"Gene", display:""]);
-		}
-
-				def pathways = BioMarker.executeQuery("FROM BioMarker cc WHERE bioMarkerType = 'PATHWAY' and upper(cc.name) LIKE :name order by name", [name: "%"+value+"%"], [max: 10]);
-		for (pathway in pathways) {
-			itemlist.add([id:pathway.uniqueId, keyword:pathway.name, sourceAndCode:pathway.uniqueId, category:"Pathway", display:""]);
-		}
-
-		
-		def observations = Observation.executeQuery("FROM Observation cc WHERE upper(cc.name) LIKE :name order by name", [name: "%"+value+"%"], [max: 10]);
-		for (observation in observations) {
-			itemlist.add([id:observation.uniqueId, keyword:observation.name, sourceAndCode:observation.uniqueId, category:"Observation", display:""]);
-		}
-
-*/
-
+	
 		def diseaseJSON = searchKeywordService.findSearchKeywords("DISEASE", params.term, 10) as JSON
 		def list = JSON.parse(diseaseJSON.toString())
 		list.each {  itemlist.add(it)}
@@ -209,6 +145,76 @@ class MetaDataController {
 		list = JSON.parse(pathwayJSON.toString())
 		list.each {  itemlist.add(it)}
 		
+		render itemlist as JSON;
+	}
+
+	def bioAssayPlatformSearch = {
+		log.info "EXT platformSearch called"
+		log.info params
+		Map pagingMap = [max: 20];
+		
+		def paramMap = [:];
+		def itemlist = [];
+		
+		def value = params.term.toUpperCase();
+		StringBuffer sb = new StringBuffer();
+		sb.append("from BioAssayPlatform p where 1=1 ");
+  
+		if (value != null && value != "null") {
+			sb.append(" and upper(p.name) like :term ");
+			paramMap.put("term", value + "%");
+		}
+
+		if (params.vendor != null && params.vendor != "null") {
+			sb.append(" and p.vendor = :vendor ");
+			paramMap.put("vendor", params.vendor);
+		}
+
+		if (params.measurement != null && params.measurement != "null") {
+			sb.append(" and p.platformType = :measurement ");
+			paramMap.put("measurement", params.measurement);
+		}
+
+		if (params.technology != null && params.technology != "null") {
+			sb.append(" and p.platformTechnology = :technology ");
+			paramMap.put("technology", params.technology);
+		}
+
+		// sort
+		sb.append("order by platformType, vendor, platformTechnology, name");
+
+		log.info "SB == " + sb.toString()
+		log.info "paramMap = " + paramMap
+		
+		def platforms = bio.BioAssayPlatform.executeQuery(sb.toString(), paramMap, pagingMap);
+		// .executeQuery("from BioAssayPlatform p WHERE upper(p.name) LIKE :term  order by platformType, vendor, platformTechnology, name", [term: value+'%'], [max: 20]);
+		log.info platforms
+		for (platform in platforms) {
+			String displayString = platform.name 
+			//+ " -- [MEASUREMENT::"+platform.platformType + " VENDOR::" + platform.vendor + " TECH::" + platform.platformTechnology + "]"
+			String filterString = ""
+	
+			if (params.measurement == null || params.measurement == "null" || params.measurement == "") 
+			{
+				filterString += " MEASUREMENT::" + platform.platformType;
+			}
+	
+			if (params.technology == null || params.technology == "null" || params.technology == "") 
+			{
+				filterString += " TECHNOLOGY::" + platform.platformTechnology;
+			}
+
+			if (params.vendor == null || params.vendor == "null" || params.vendor == "")
+			{
+				filterString += " VENDOR::" + platform.vendor;
+			}
+
+			if(filterString != ""){ filterString = " -- [" + filterString + "]"}
+			displayString = displayString+filterString
+			itemlist.add([id:platform.uniqueId, label:displayString, category:"PLATFORM", display:"Platform"]);
+		}
+		
+
 		render itemlist as JSON;
 	}
 

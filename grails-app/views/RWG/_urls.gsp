@@ -62,4 +62,6 @@ var searchLogURL = "${createLink([controller:'RWG', action:'searchLog'])}";
 
 var updateSearchCategoryURL = "${createLink([controller:'RWG', action:'updateSearchCategory'])}";
 
+var platformTypesUrl = '${createLink([action:'platformsForVendor',controller:'bioAssayPlatform'])}';
+
 </script>
