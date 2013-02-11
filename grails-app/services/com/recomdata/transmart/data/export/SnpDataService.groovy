@@ -409,7 +409,7 @@ class SnpDataService {
 	}
 	
 	private void downloadCELFiles(studyList, File studyDir, resultInstanceId, String jobName) {
-		String studies=convertList(studyList, false, 1000)
+		String studies= "(" + convertList(studyList, true, 1000) + ")"
 		
 		def groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		
@@ -421,9 +421,6 @@ class SnpDataService {
 			    SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ?
 					 AND patient_num IN (SELECT patient_num FROM patient_dimension WHERE sourcesystem_cd NOT LIKE '%:S:%')))
 		"""
-		
-		println(query)
-		log.info(query)
 		
 		def celFiles = sql.rows(query, [resultInstanceId])
 		def filesList = []
