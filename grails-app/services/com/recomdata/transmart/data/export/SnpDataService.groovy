@@ -422,6 +422,9 @@ class SnpDataService {
 					 AND patient_num IN (SELECT patient_num FROM patient_dimension WHERE sourcesystem_cd NOT LIKE '%:S:%')))
 		"""
 		
+		println(query)
+		log.info(query)
+		
 		def celFiles = sql.rows(query, [resultInstanceId])
 		def filesList = []
 		for (file in celFiles) {
