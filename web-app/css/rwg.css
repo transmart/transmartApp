@@ -1151,23 +1151,6 @@ select.multiselect {
 	background: none !important;
 }
 
-.rdc-h2 {
-    color: #515BA2;
-    font-size: 174%;
-    margin: 20px 0;
-}
-
-.rdc-h3 {
-    color: #515BA2;
-    font-size: 152%;
-    margin: 10px 0;
-}
-
-.rdc-h4 {
-    color: #515BA2;
-    font-size: 129%;
-    margin: 10px 0;
-}
 /* 
 .top{
     border-top-left-radius: 8px;
@@ -1179,51 +1162,5 @@ select.multiselect {
     border-bottom-right-radius: 8px;
 }
 */
-
-/* hidden overlay div, display with visibility toggle (note: if you need to edit review with Jeff or Jeremy!!) */
-.overlay {
-    display: none;
-    position: absolute;
-    background-color: white;
-    padding: 4px;
-    border-top: 4px solid #6E6E6E;
-    border-bottom: 4px solid #6E6E6E;
-    border-left: 4px solid #6E6E6E;
-    border-right: 4px solid #6E6E6E;
-    max-width: 90%;
-    max-height: 90%;
-    /*width:expression(this.width > document.body.clientWidth ? "80%": "auto" );
-    height:expression(this.height > document.body.clientHeight ? "80%": "auto" );*/
-    /*overflow:visible;*/
-    z-index:2001;
-}
-
-/* hidden overlay div, display with visibility toggle (let window size to content)*/
-.overlayAutoSize {  
-    display: none;
-    position: absolute;
-    background-color: white;
-    padding: 4px;
-    border: 4px solid #6E6E6E;
-    overflow: auto; 
-    z-index:2001;
-}
-
-/* background overlay */    
-.backgroundOverlay {
-    display: none;
-    position: fixed;
-    background-color: #F2F2F2;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    height:auto !important; /* real browsers */
-    height:100%; /* IE6: treaded as min-height*/
-    min-height:100%; /* real browsers */
-    z-index:1001;
-    -moz-opacity: 0.90;
-    opacity: 0.90;
-    filter: alpha(opacity=90);
-}
 
 
