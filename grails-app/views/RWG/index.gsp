@@ -275,7 +275,15 @@
 	        	var targetHeight = windowHeight - ypos - 90;
 	        	jQuery('#results-div').height(targetHeight);
 	        	jQuery('#welcome').height(windowHeight - 90);
-	        	jQuery('#main').width(jQuery('body').width() - jQuery('#sidebar').width() - 12);
+	        	
+	        	if (jQuery('#sidebar:visible').size() > 0) {
+	        		jQuery('#main').width(jQuery('body').width() - jQuery('#sidebar').width() - 12);
+	        	}
+	        	else {
+	        		jQuery('#main').width("100%");
+	        	}
+	        	
+	        	
 	        	jQuery('#box-search').width(jQuery('#program-explorer').width());
 			}
 
