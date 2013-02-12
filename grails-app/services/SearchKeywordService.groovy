@@ -53,11 +53,16 @@ public class SearchKeywordService {
 		[codeTypeName: "STUDY_INSTITUTION", category: "STUDY_INSTITUTION", displayName: "Study Institution"],
 		
 		[codeTypeName: "ASSAY_TYPE_OF_BM_STUDIED", category: "ASSAY_TYPE_OF_BM_STUDIED", displayName: "Assay Biomarker Studied"],
-		[category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true, platformProperty: 'platformType'],
-		[category: "TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true, platformProperty: 'platformTechnology'],
-		[category: "VENDOR", displayName: "Assay Vendor", prefix: true, useText: true, platformProperty: 'vendor'],
 		
-		[category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true, platformProperty: 'platformType']
+		[category: "ASSAY_PLATFORM_NAME", displayName: "Assay Platform Name", useText: true, platformProperty: 'name'],
+		[category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true, platformProperty: 'platformType'],
+		[category: "ASSAY_TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true, platformProperty: 'platformTechnology'],
+		[category: "ASSAY_VENDOR", displayName: "Assay Vendor", prefix: true, useText: true, platformProperty: 'vendor'],
+		
+		[category: "ANALYSIS_PLATFORM_NAME", displayName: "Analysis Platform Name", useText: true, platformProperty: 'name'],
+		[category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true, platformProperty: 'platformType'],
+		[category: "ANALYSIS_TECHNOLOGY", displayName: "Analysis Technology", prefix: true, useText: true, platformProperty: 'platformTechnology'],
+		[category: "ANALYSIS_VENDOR", displayName: "Analysis Vendor", prefix: true, useText: true, platformProperty: 'vendor']
 
 	]
 
@@ -280,7 +285,7 @@ public class SearchKeywordService {
 							m.put("categoryId", cat.category)
 							m.put("id", result."${cat.platformProperty}")
 							
-							if (!keywords.find {it.id.equals(m.id)}) {
+							if (!keywords.find {it.id.equals(m.id) && it.category.equals(m.category)}) {
 								keywords.add(m)
 							}
 						}
