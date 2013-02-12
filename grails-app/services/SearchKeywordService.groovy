@@ -53,11 +53,11 @@ public class SearchKeywordService {
 		[codeTypeName: "STUDY_INSTITUTION", category: "STUDY_INSTITUTION", displayName: "Study Institution"],
 		
 		[codeTypeName: "ASSAY_TYPE_OF_BM_STUDIED", category: "ASSAY_TYPE_OF_BM_STUDIED", displayName: "Assay Biomarker Studied"],
-		[category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true, platformProperty: 'type'],
-		[category: "TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true, platformProperty: 'technology'],
+		[category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true, platformProperty: 'platformType'],
+		[category: "TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true, platformProperty: 'platformTechnology'],
 		[category: "VENDOR", displayName: "Assay Vendor", prefix: true, useText: true, platformProperty: 'vendor'],
 		
-		[category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true, platformProperty: 'type']
+		[category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true, platformProperty: 'platformType']
 
 	]
 
