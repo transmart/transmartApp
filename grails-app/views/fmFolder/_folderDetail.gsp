@@ -98,21 +98,22 @@
 <table class="details-table">
         <thead>
             <tr>                
-                <th>&nbsp;</th>
-                <th align="right">
-				<g:if test="${!folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
-                  <%-- Restrict edits to administrators --%>
-                  <sec:ifAnyGranted roles="ROLE_ADMIN">
-                  	<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
-                  </sec:ifAnyGranted>
-                </g:if>
+                <th class="columnheader">Property</th>
+                <th class="columnheader">
+                	Value
+                	<g:if test="${!folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
+	                  <%-- Restrict edits to administrators --%>
+	                  <sec:ifAnyGranted roles="ROLE_ADMIN">
+	                  	<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
+	                  </sec:ifAnyGranted>
+	                </g:if>
                 </th>
             </tr>
         </thead>
     <tbody>
         <g:each in="${metaDataTagItems}" status="i" var="amTagItem">
           <g:if test="${amTagItem.viewInGrid}">
-            <tr class='details-row'> <!-- class="${(i % 2) == 0 ? 'odd' : 'even'}"> -->
+            <tr class='details-row ${(i % 2) == 0 ? 'odd' : 'even'}'>
             <!-- TODO: If active -->
             
                 <td valign="top" align="right" class="columnname" width="20%">${amTagItem.displayName}</td>
@@ -182,10 +183,10 @@
 <table class="details-table">
             <thead>
                 <tr>                
-                    <th class="columnvalue">File Name</th>
-                    <th class="columnvalue">Create Date</th>
-                    <th class="columnvalue">Update Date</th>
-                    <th class="columnvalue">&nbsp;</th>
+                    <th class="columnheader">File Name</th>
+                    <th class="columnheader">Create Date</th>
+                    <th class="columnheader">Update Date</th>
+                    <th class="columnheader">&nbsp;</th>
                 </tr>
             </thead>
 		    <tfoot>
@@ -200,7 +201,7 @@
 		    </tfoot>
     <tbody>
         <g:each in="${folder?.fmFiles}" status="i" var="fmFile">
-            <tr class="details-row">
+            <tr class="details-row ${(i % 2) == 0 ? 'odd' : 'even'}">
                <td class="columnname" style="text-align: left;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
                <td class="columnvalue">
                <g:formatDate format="yyyy-MM-dd" date="${fmFile.createDate}" />
