@@ -1039,7 +1039,7 @@ class FmFolderController {
 		{
 				log.info "FOLDER::" + it
 				def bioDataObject = getBioDataObject(it)
-			
+				def folderObject = it
 				ExportRowNew newrow=new ExportRowNew();
 				childMetaDataTagItems.eachWithIndex()
 				{obj, i -> 
@@ -1079,7 +1079,7 @@ class FmFolderController {
 							}
 							else if(amTagItem.tagItemSubtype == 'FREETEXT')
 							{
-								bioDataDisplayValue = bioDataPropertyValue
+								bioDataDisplayValue = createTitleString(amTagItem, bioDataPropertyValue, folderObject)
 							}
 							else
 							{
@@ -1110,6 +1110,16 @@ class FmFolderController {
 		}
 		
 		return table.toJSON_DataTables("", folderType).toString(5);
+	}
+	
+	//FIXME Quick hack to make title properties act as hyperlinks
+	def nameProperties = ['assay name', 'analysis name', 'study title', 'program title', 'folder name']
+	private createTitleString(amTagItem, name, folderObject) {
+		def tagName = amTagItem.displayName
+		if (nameProperties.contains(tagName.toLowerCase())) {
+			return ("<a href='#' onclick='openFolderAndShowChild(${folderObject.parent?.id}, ${folderObject.id})'>" + name + "</a>")
+		}
+		return name
 	}
 	
 	private createDisplayString(tagValues)

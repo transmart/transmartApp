@@ -718,7 +718,7 @@ jQuery(document).ready(function() {
 
     jQuery('body').on('click', '.foldericon.view', function() {
 	    var id = jQuery(this).closest(".folderheader").attr('name');
-    	showDetailDialog(experimentDataUrl + '?id=' + id);
+    	showDetailDialog(id);
 	});
 	
 	jQuery('#metadata-viewer').on('click', '.editmetadata', function() {

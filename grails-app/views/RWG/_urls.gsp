@@ -21,7 +21,6 @@ var deleteSearchURL = "${createLink([controller:'RWG', action:'deleteFacetedSear
 var exportAsImage = "${createLink([controller:'RWG', action:'exportAsImage'])}";
 
 var getStudyAnalysesUrl = "${createLink([controller:'RWG',action:'getTrialAnalysis'])}";
-var experimentDataUrl = "${createLink(controller:'experimentAnalysis',action:'expDetail')}";
 var fileDataUrl = "${createLink([controller:'RWG',action:'getFileDetails'])}";
 
 //These are the URLS for the different browse windows.
@@ -44,6 +43,7 @@ var exportViewURL = "${createLink([controller:'fileExport', action:'view'])}";
 var exportURL = "${createLink([controller:'fileExport', action:'export'])}";
 
 var folderContentsURL = "${createLink([controller:'fmFolder',action:'getFolderContents'])}";
+var folderDetailsURL = "${createLink(controller:'fmFolder',action:'folderDetail')}";
 var editMetaDataURL = "${createLink([controller:'fmFolder',action:'editMetaData'])}";
 var createAnalysisURL = "${createLink([controller:'fmFolder',action:'createAnalysis'])}";
 var createAssayURL = "${createLink([controller:'fmFolder',action:'createAssay'])}";

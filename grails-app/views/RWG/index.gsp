@@ -114,7 +114,7 @@
 						url:saveMetaDataURL + "?" + serializedForm,	
 						success: function(response) {
 							jQuery('#editMetadataOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -135,7 +135,7 @@
 						success: function(response) {
 							updateFolder(response.parentId);
 							jQuery('#createAssayOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -157,7 +157,7 @@
 						success: function(response) {
 							updateFolder(response.parentId);
 							jQuery('#createFolderOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -179,7 +179,7 @@
 						success: function(response) {
 							updateFolder(response.parentId);
 							jQuery('#createStudyOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -201,7 +201,7 @@
 						success: function(response) {
 							showSearchResults();
 							jQuery('#createProgramOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -223,7 +223,7 @@
 						success: function(response) {
 							updateFolder(response.parentId);
 							jQuery('#createAnalysisOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
