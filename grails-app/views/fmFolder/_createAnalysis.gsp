@@ -26,7 +26,7 @@
 		<td valign="top" align="right" class="name">Description&nbsp;<g:requiredIndicator/>:</td>
 		<td valign="top" align="left"><g:textArea size="100" cols="74" rows="10" name="description" value="${folder?.description}"/></td>
 	</tr>
-	<g:render template="metaData" model="[templateType: templateType, title:title, bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]"/>
+	<g:render template="metaData" model="[templateType: templateType,  measurements:measurements, technologies:technologies, vendors:vendors, platforms:platforms, title:title, bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]"/>
 	</tbody>
 </table>    
 

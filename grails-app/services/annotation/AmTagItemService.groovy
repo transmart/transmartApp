@@ -57,9 +57,37 @@ class AmTagItemService {
 		
 		return amTagItems
 	}
-
-	def getEditableItems(Long key){
+	
+	def getChildDisplayItems(Long key)
+	{
+		log.info "Searching child amTagItems for tag template " +  key
 		
+		def amTagItems
+		
+		if(key)
+		{
+			Map<String,Object> paramMap = new HashMap<Long,Object>();
+						
+			StringBuffer sb = new StringBuffer();
+			sb.append("from AmTagItem ati where viewInChildGrid=1 ");
+			  sb.append(" and ati.amTagTemplate.id = :amTagTemplateId order by displayOrder");
+			paramMap.put("amTagTemplateId", key);
+			
+			amTagItems = AmTagItem.findAll(sb.toString(), paramMap);
+			
+			log.info "amTagItems = " + amTagItems + " for key = " + key
+		}
+		else
+		{
+			log.error "Unable to retrieve an child amTagItems with a null key value"
+		}
+		
+		return amTagItems
+	
+	}
+
+	def getEditableItems(Long key)
+	{
 		log.info "Searching amTagItems for tag template " +  key
 		
 		def amTagItems

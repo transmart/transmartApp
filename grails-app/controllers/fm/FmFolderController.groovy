@@ -107,7 +107,17 @@ class FmFolderController {
 		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 		def title = "Create Analysis"
 		def templateType = "createAnalysisForm"
-		render(template: "createAnalysis", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+		def measurements  = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
+		def vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
+		def technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
+		def platforms = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT name FROM BioAssayPlatform as p ORDER BY p.name")
+
+		log.info measurements
+		log.info technologies
+		log.info vendors
+		log.info platforms
+		
+		render(template: "createAnalysis", model:[bioDataObject:bioDataObject, measurements:measurements, technologies:technologies, vendors:vendors, platforms:platforms, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 
 	def createAssay = {
@@ -325,14 +335,14 @@ class FmFolderController {
 						if (newValue != null && newValue != "" && newValue.size() > 0)
 						{
 							log.info "REMOVING - objectType: CUSTOM " + " subjectUid = " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " newValue: " + newValue.size() + " " + newValue
-							AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "BIO_CONCEPT_CODE", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+							AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: tagItem.tagItemType, subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
 							
 							newValue.each
 							{
 								log.info "NEWVALUE " + it
 								if(it)
 								{
-									AmTagAssociation ata1 = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+									AmTagAssociation ata1 = new AmTagAssociation(objectType: tagItem.tagItemType, subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
 									
 									if (!ata1.save(flush:true)) {
 										ata1.errors.each {
@@ -355,19 +365,6 @@ class FmFolderController {
 				{
 					log.info "bioDataObject.id = " + bioDataObject.id + " Meta data saved == " + bioDataObject.getUniqueId()
 					
-
-					/*
-					if(!bioDataObject.getUniqueId())
-					{
-						BioData bd =new BioData(id:bioDataObject.id, type:"BIO_EXPERIMENT", uniqueId:"WVET:"+bioDataObject.id)
-						if (!bd.save(flush:true)) 
-						{
-							bd.errors.each {
-								println it
-							}
-						}
-					}
-					*/
 				}
 				else
 				{
@@ -551,7 +548,7 @@ class FmFolderController {
 				 log.error "Biodata for " + bioDataObject.id + " is not found"
 			}
 			else{
-				log.info "Analysis saved"
+				log.info "Saving analysis objectUid: " + bioData.uniqueId + " objectType: bio.BioAssayAnalysis  fmFolder: " + fmFolderInstance
 				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.BioAssayAnalysis",fmFolder:fmFolderInstance)
 				if(ffa.save(flush: true))
 				{
@@ -992,14 +989,12 @@ class FmFolderController {
 		
 		def dataObject
 		def childMetaDataTagItems
-	
 		
 		for (folder in folders) {
 			dataObject = getBioDataObject(folder)
-			childMetaDataTagItems = getMetaDataItems(folder, false)
+			childMetaDataTagItems = getChildMetaDataItems(folder)
 			if (dataObject && childMetaDataTagItems) break
 		}
-		
 		
 		childMetaDataTagItems.eachWithIndex() 
 		{obj, i ->    // 
@@ -1008,28 +1003,28 @@ class FmFolderController {
 			{
 				if(amTagItem.tagItemType == 'FIXED')
 				{
-					log.info ("FIXED TYPE == " + amTagItem.id + " " + amTagItem.displayName)
+					log.info ("CREATEDATATABLE::FIXED TYPE == " + amTagItem.tagItemType + " ID = " + amTagItem.id + " " + amTagItem.displayName)
 					
 					if(dataObject.hasProperty(amTagItem.tagItemAttr))
 					{
-						log.info ("FIXED COLUMNS == " + amTagItem.tagItemAttr + " " + amTagItem.displayName)
+						//log.info ("CREATEDATATABLE::FIXED COLUMNS == " + amTagItem.tagItemAttr + " " + amTagItem.displayName)
 						table.putColumn(amTagItem.id.toString(), new ExportColumn(amTagItem.id.toString(), amTagItem.displayName, "", 'String'));
 					}
 					else
 					{
-						log.error("TAG ITEM ID = " + amTagItem.id + " COLUMN " + amTagItem.tagItemAttr + " is not a propery of " + dataObject)
+						log.error("CREATEDATATABLE::TAG ITEM ID = " + amTagItem.id + " COLUMN " + amTagItem.tagItemAttr + " is not a propery of " + dataObject)
 					}
 					
 				}
 				else if(amTagItem.tagItemType == 'CUSTOM')
 				{
-					log.info ("CUSTOM COLUMNS == " + amTagItem.displayName)
+					log.info ("CREATEDATATABLE::CUSTOM == " + amTagItem.tagItemType + " ID = " + amTagItem.id + " " + amTagItem.displayName)
 					table.putColumn(amTagItem.id.toString(), new ExportColumn(amTagItem.id.toString(), amTagItem.displayName, "", 'String'));
 
 				}
 				else
 				{
-					log.info ("BUSINESS OBJECT == " + amTagItem.tagItemType + " ID = " + amTagItem.id + " " + amTagItem.displayName)
+					log.info ("CREATEDATATABLE::BUSINESS OBJECT == " + amTagItem.tagItemType + " ID = " + amTagItem.id + " " + amTagItem.displayName)
 					table.putColumn(amTagItem.id.toString(), new ExportColumn(amTagItem.id.toString(), amTagItem.displayName, "", 'String'));
 				}
 			}
@@ -1051,7 +1046,6 @@ class FmFolderController {
 					AmTagItem amTagItem = obj
 					if(amTagItem.viewInChildGrid)
 					{
-						
 						if(amTagItem.tagItemType == 'FIXED' && bioDataObject.hasProperty(amTagItem.tagItemAttr))
 						{
 							def bioDataDisplayValue = null 
@@ -1097,13 +1091,15 @@ class FmFolderController {
 						}
 						else if(amTagItem.tagItemType == 'CUSTOM')
 						{
-							log.info("PARAMETERS " + bioDataObject.getUniqueId() + " " + amTagItem.id)
 							def tagValues = AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[bioDataObject.getUniqueId().toString(),amTagItem.id])
+							log.info("CUSTOM PARAMETERS " + bioDataObject.getUniqueId() + " " + amTagItem.id + " tagValues " +tagValues)
 							newrow.put(amTagItem.id.toString(),createDisplayString(tagValues));
 						}
 						else
 						{
 						    def tagValues = AmTagDisplayValue.findAllDisplayValue(it.uniqueId,amTagItem.id)
+							log.info("BIOOBJECT PARAMETERS " + it.uniqueId + " " + amTagItem.id + " tagValues " +tagValues)
+							
 							newrow.put(amTagItem.id.toString(),createDisplayString(tagValues));
 						}
 	
@@ -1148,7 +1144,11 @@ class FmFolderController {
 		def jSONForGrids = []
 		def childMetaDataTagItems = []
 		def subjectLevelDataAvailable = false 
-
+		def measurements
+		def technologies
+		def vendors
+		def platforms
+		
 		if (folderId) 
 		{
 			folder = FmFolder.get(folderId)
@@ -1156,13 +1156,23 @@ class FmFolderController {
 			if(folder)
 			{
 				bioDataObject = getBioDataObject(folder)
-				metaDataTagItems = getMetaDataItems(folder, true)
-	
+				metaDataTagItems = getMetaDataItems(folder, false)
+				log.info "metaDataTagItems  = " + metaDataTagItems
+				
 				//If the folder is a study, check for subject-level data being available
 				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) && bioDataObject!=null && bioDataObject.hasProperty("accession"))
 			   {
 					subjectLevelDataAvailable = ontologyService.checkSubjectLevelData(bioDataObject.accession)
 				}
+			   
+			   if (folder.folderType.equalsIgnoreCase(FolderType.ASSAY.name()) && folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())) 
+			   {
+				   measurements  = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
+				   vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
+				   technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
+				   platforms = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT name FROM BioAssayPlatform as p ORDER BY p.name")
+			   }
+			   			   
 				// If the folder is a study then get the analysis and the assay
 				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name()))
 				{
@@ -1188,10 +1198,26 @@ class FmFolderController {
 		}
 		
 		log.info "FolderInstance = " + bioDataObject.toString()
-		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems, jSONForGrids: jSONForGrids, subjectLevelDataAvailable: subjectLevelDataAvailable])
+		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, measurements:measurements, technologies:technologies, vendors:vendors, platforms:platforms, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems, jSONForGrids: jSONForGrids, subjectLevelDataAvailable: subjectLevelDataAvailable])
 		
 	}
 
+	
+	private List<AmTagItem> getChildMetaDataItems(folder)
+	{
+		def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+		List<AmTagItem> metaDataTagItems
+		if(amTagTemplate)
+		{
+			metaDataTagItems = amTagItemService.getChildDisplayItems(amTagTemplate.id)
+		}
+		else
+		{
+			log.error "Unable to find child amTagTemplate for object Id = " + folder.getUniqueId()
+		}
+		
+		return metaDataTagItems
+	}
 
 		private List<AmTagItem> getMetaDataItems(folder, editable)
 	{
@@ -1437,14 +1463,14 @@ class FmFolderController {
 						if (newValue != null && newValue != "" && newValue.size() > 0)
 						{
 							log.info "REMOVING - objectType: CUSTOM " + " subjectUid = " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " newValue: " + newValue.size() + " " + newValue
-							AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "BIO_CONCEPT_CODE", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+							AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: tagItem.tagItemType, subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
 							
 							newValue.each
 							{
 								log.info "NEWVALUE " + it
 								if(it)
 								{
-									AmTagAssociation ata1 = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+									AmTagAssociation ata1 = new AmTagAssociation(objectType: tagItem.tagItemType, subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
 									
 									if (!ata1.save(flush:true)) {
 										ata1.errors.each {
@@ -1474,7 +1500,7 @@ class FmFolderController {
 					else {
 						log.error "Errors occurred saving Meta data"
 						metaDataTagItems  =  getMetaDataItems(folder, true)
-	
+						log.info "metaDataTagItems  = " + metaDataTagItems   
 						render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 						//	render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
 					}
