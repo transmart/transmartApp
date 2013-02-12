@@ -409,7 +409,7 @@ class SnpDataService {
 	}
 	
 	private void downloadCELFiles(studyList, File studyDir, resultInstanceId, String jobName) {
-		String studies=convertList(studyList, false, 1000)
+		String studies= "(" + convertList(studyList, true, 1000) + ")"
 		
 		def groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		

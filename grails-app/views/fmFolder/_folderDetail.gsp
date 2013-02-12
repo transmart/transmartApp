@@ -95,21 +95,17 @@
 </g:if>
 
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
+<div style="align:center;" ><h4 class="rdc-h4" align="center" >Metadata</h4></div>
 <table class="details-table">
         <thead>
             <tr>                
                 <th>&nbsp;</th>
                 <th align="right">
 				<g:if test="${!folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
-	                <%--<g:remoteLink controller="fmFolder" action="editMetaData" update="${overlayDiv}" 
-                        params="[eleId:overlayDiv, folderId:folder?.id]" 
-                        before="initLoadingDialog('${overlayDiv}')" onComplete="centerDialog('${overlayDiv}')">--%>
-                  
                   <%-- Restrict edits to administrators --%>
                   <sec:ifAnyGranted roles="ROLE_ADMIN">
                   	<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
                   </sec:ifAnyGranted>
-                  <%-- </g:remoteLink>--%>
                 </g:if>
                 </th>
             </tr>
@@ -147,7 +143,7 @@
                  		
                  		<g:each in="${terms}" var="term" status="t">
                  			<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
-	                 		<g:if test="${t > 0}">, </g:if>
+	                 		<g:if test="${t > 0}"><br/></g:if>
 	                 		<g:if test="${bioDataId}">
 		                 		${ConceptCode.find('from ConceptCode where id=?', bioDataId).codeName}
 	                 		</g:if>
@@ -184,13 +180,13 @@
 <div style="height:20px;"></div>
 <g:if test="${folder?.hasProperty('fmFiles') && null!=folder?.fmFiles && folder?.fmFiles.size()>0}">   
 <div style="align:center;" ><h4 class="rdc-h4" align="center" >Associated Files</h4></div>
-<table class="list-table">
+<table class="details-table">
             <thead>
                 <tr>                
-                    <th>File Name</th>
-                    <th>Create Date</th>
-                    <th>Update Date</th>
-                    <th>&nbsp;</th>
+                    <th class="columnvalue">File Name</th>
+                    <th class="columnvalue">Create Date</th>
+                    <th class="columnvalue">Update Date</th>
+                    <th class="columnvalue">&nbsp;</th>
                 </tr>
             </thead>
 		    <tfoot>
@@ -205,15 +201,15 @@
 		    </tfoot>
     <tbody>
         <g:each in="${folder?.fmFiles}" status="i" var="fmFile">
-            <tr class="file-row">
-                <td style="padding: 3px;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
-               <td >
+            <tr class="details-row">
+               <td class="columnname" style="text-align: left;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
+               <td class="columnvalue">
                <g:formatDate format="yyyy-MM-dd" date="${fmFile.createDate}" />
                </td> 
-               <td >
+               <td class="columnvalue">
                <g:formatDate format="yyyy-MM-dd" date="${fmFile.updateDate}" />
                </td> 
-               <td>
+               <td class="columnvalue">
 	               <div>
 	                    <span class="exportaddspan foldericon add link" name="${fmFile.id}">Add to export</span>
 	               </div>
@@ -230,7 +226,7 @@
        <div style="height:20px;"></div>
       
          <g:each var='jSONForGrid' status="divCounter" in="${jSONForGrids}">
-    	    <div style="width:1100px">
+    	    <div>
             <div id='gridViewWrapper${divCounter}'>
             </div>        
 	        </div>
