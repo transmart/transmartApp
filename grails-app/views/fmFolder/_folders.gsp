@@ -21,13 +21,13 @@
 								</a>
 							</g:else>
 						</span>
-						<a href="#" onclick="showDetailDialog('${createLink(controller:'fmFolder',action:'folderDetail',id:folder.id)}');">
+						<a href="#" onclick="showDetailDialog(${folder.id});">
 						
 						<g:set var="highclass" value=""/>
 						<g:if test="${folderSearchString && folderSearchString.indexOf(folder.folderFullName + ',') > -1}">
 							<g:set var="highclass" value="searchResult"/>
 						</g:if>
-							<span class="result-folder-name ${highclass}" title="${folder.folderName}"> ${folder.folderName}</span>						
+							<span id="result-folder-name-${folder.id}" class="result-folder-name ${highclass}" title="${folder.folderName}"> ${folder.folderName}</span>						
 						</a>
 					</td>
 				</tr>

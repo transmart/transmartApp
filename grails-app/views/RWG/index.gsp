@@ -114,7 +114,7 @@
 						url:saveMetaDataURL + "?" + serializedForm,	
 						success: function(response) {
 							jQuery('#editMetadataOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -135,7 +135,7 @@
 						success: function(response) {
 							updateFolder(response.parentId);
 							jQuery('#createAssayOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -157,7 +157,7 @@
 						success: function(response) {
 							updateFolder(response.parentId);
 							jQuery('#createFolderOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -179,7 +179,7 @@
 						success: function(response) {
 							updateFolder(response.parentId);
 							jQuery('#createStudyOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -201,7 +201,7 @@
 						success: function(response) {
 							showSearchResults();
 							jQuery('#createProgramOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -223,7 +223,7 @@
 						success: function(response) {
 							updateFolder(response.parentId);
 							jQuery('#createAnalysisOverlay').fadeOut();
-							showDetailDialog('fmFolder/folderDetail/' + response.id);
+							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
 						alert(xhr);
@@ -275,7 +275,15 @@
 	        	var targetHeight = windowHeight - ypos - 90;
 	        	jQuery('#results-div').height(targetHeight);
 	        	jQuery('#welcome').height(windowHeight - 90);
-	        	jQuery('#main').width(jQuery('body').width() - jQuery('#sidebar').width() - 12);
+	        	
+	        	if (jQuery('#sidebar:visible').size() > 0) {
+	        		jQuery('#main').width(jQuery('body').width() - jQuery('#sidebar').width() - 12);
+	        	}
+	        	else {
+	        		jQuery('#main').width("100%");
+	        	}
+	        	
+	        	
 	        	jQuery('#box-search').width(jQuery('#program-explorer').width());
 			}
 

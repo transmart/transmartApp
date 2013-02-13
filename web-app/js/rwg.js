@@ -69,37 +69,21 @@ var cohortBGColors = new Array(
 }
 */
 ////////////////////////////////////////////////////////////////////
-function showDetailDialog(dataURL)	{
+function showDetailDialog(folderId)	{
 
 	jQuery('#welcome-viewer').empty();
 
 	jQuery('#metadata-viewer').empty().addClass('ajaxloading');
-	jQuery('#metadata-viewer').load(dataURL, {}, function() {
+	jQuery('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
 		jQuery('#metadata-viewer').removeClass('ajaxloading');
 	});
-
 	
-//	var height = 'auto';
-//	if (typeof dialogHeight == 'number')	{
-//		height = dialogHeight;
-//	}	
-//
-//	var dialogDetail = document.getElementById(dialogTitle);
-//	if (dialogDetail == null)	{
-//		jQuery('<div id="' + dialogTitle + '"></div>')
-//			.load(dataURL)
-//			.dialog({
-//				autoOpen: false,
-//				title: dialogTitle,
-//				height: height,
-//				width: 550,
-//				position: "top"
-//			})
-//			.dialog('open');
-//	} else	{
-//		jQuery(dialogDetail).dialog('isOpen') ? jQuery(dialogDetail).dialog('close') : jQuery(dialogDetail).dialog('open');		
-//	}
 	return false;
+}
+
+function openFolderAndShowChild(parent, child) {
+	toggleDetailDiv(parent, folderContentsURL + '?id=' + parent + '&auto=false', true, child);
+	showDetailDialog(child);
 }
 
 
@@ -112,7 +96,7 @@ function showOverlay(overlayDiv, dataURL)
 }
 
 // Open and close the analysis for a given trial
-function toggleDetailDiv(trialNumber, dataURL)	{	
+function toggleDetailDiv(trialNumber, dataURL, forceOpen, highlightFolder)	{	
 	var imgExpand = "#imgExpand_"  + trialNumber;
 	var trialDetail = "#" + trialNumber + "_detail";
 	
@@ -128,6 +112,12 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 				jQuery(trialDetail).html(response);
 				jQuery(trialDetail).addClass("analysesopen");
 				jQuery(trialDetail).attr('data', true);// Add an attribute that we will use as a flag so we don't need to load the data multiple times
+				
+				//If we have a folder to highlight, transfer the highlight to it
+				if (highlightFolder) {
+			    	jQuery('.result-folder-name').removeClass('selected');
+					jQuery('#result-folder-name-' + highlightFolder).addClass('selected');
+				}
 			},
 			error: function(xhr) {
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
@@ -135,16 +125,24 @@ function toggleDetailDiv(trialNumber, dataURL)	{
 		});
 	} else	{
 		var src = jQuery(imgExpand).attr('src').replace('folderminus.png', 'folderplus.png');
-		if (jQuery(trialDetail).attr('data') == "true")	{
+		if (jQuery(trialDetail).attr('data') == "true" && !forceOpen)	{
 			jQuery(trialDetail).attr('data',false);
 			jQuery(trialDetail).removeClass("analysesopen");
 		} else	{
 			src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'folderminus.png');
 			jQuery(trialDetail).attr('data',true);
 			jQuery(trialDetail).addClass("analysesopen");
+			
+	    	jQuery('.result-folder-name').removeClass('selected');
+			jQuery('#result-folder-name-' + highlightFolder).addClass('selected');
 		}	
 		jQuery(imgExpand).attr('src',src);
-		jQuery(trialDetail).toggle();		
+		if (!forceOpen) {
+			jQuery(trialDetail).toggle();
+		}
+		else {
+			jQuery(trialDetail).show();
+		}
 	}
 	return false;
 }
