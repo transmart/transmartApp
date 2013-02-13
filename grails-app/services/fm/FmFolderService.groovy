@@ -21,6 +21,7 @@ package fm
 
 import javax.tools.FileObject;
 import java.io.File;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import fm.FmFolder;
@@ -285,7 +286,27 @@ class FmFolderService {
 	def indexFile(FmFile fmFile) {
 		
 		try {
+			
+			/*
+			 * Create the file entry first - the POST will handle the content.
+			 */
+			String xmlString = "<add><doc><field name='id'>" + fmFile.getUniqueId() + "</field><field name='folder'>" + fmFile.folder.getUniqueId() + "</field><field name='name'>" + fmFile.originalName + "</field></doc></add>"
+			xmlString = URLEncoder.encode(xmlString, "UTF-8");
 			StringBuilder url = new StringBuilder(solrUrl);
+			url.append("?stream.body=").append(xmlString).append("&commit=true")
+			URL updateUrl = new URL(url.toString())
+			HttpURLConnection urlc = (HttpURLConnection) updateUrl.openConnection();
+			if (HttpURLConnection.HTTP_OK != urlc.getResponseCode()) {
+			  log.warn("The SOLR service returned an error #" + urlc.getResponseCode() + " " + urlc.getResponseMessage() + " for url "+ updateUrl);
+			}
+			else {
+			  log.debug("Pre-created record for " + fmFile.getUniqueId());
+			}
+			
+			/*
+			 * POST the file - if it has readable content, the contents will be indexed.
+			 */
+			url = new StringBuilder(solrUrl);
 			// Use the file's unique ID as the document ID in SOLR
 			url.append("?").append("literal.id=").append(URLEncoder.encode(fmFile.getUniqueId(), "UTF-8"));
 			
