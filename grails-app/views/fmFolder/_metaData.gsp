@@ -34,6 +34,9 @@
 		            	         <g:textArea size="100" cols="74" rows="10" name="${amTagItem.tagItemAttr}" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}" />          
 		        	        </g:else>
 	        	        </g:elseif>
+	                	<g:elseif test="${amTagItem.tagItemSubtype == 'FREETEXTAREA'}">
+	            	         <g:textArea size="100" cols="74" rows="10" name="${amTagItem.tagItemAttr}" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}" />          
+	        	        </g:elseif>
 	        	        <g:else>
 	        	        ERROR -- Unrecognized tag item subtype
 	        	        </g:else>
@@ -54,6 +57,9 @@
 		            	         <g:textArea size="100" cols="74" rows="10" name="amTagItem_${amTagItem.id}" value="${tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:''}" />          
 		        	        </g:else>
 						</g:if>
+	                	<g:elseif test="${amTagItem.tagItemSubtype == 'FREETEXTAREA'}">
+		               	     <g:textArea size="100" cols="74" rows="10" name="amTagItem_${amTagItem.id}" value="${tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:''}" />          
+		        	   </g:elseif>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
 		                	<g:select from="${ConceptCode.findAll('from ConceptCode where codeTypeName=? order by codeName',[amTagItem.codeTypeName])}"	
 			                	name="amTagItem_${amTagItem.id}" value="${tagValues!=null&&tagValues.size()>0?tagValues[0].objectUid:''}"  optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	

@@ -97,7 +97,7 @@ class AmTagItemService {
 			Map<String,Object> paramMap = new HashMap<Long,Object>();
 						
 			StringBuffer sb = new StringBuffer();
-			sb.append("from AmTagItem ati where viewInGrid=1 and editable= 1 ");
+			sb.append("from AmTagItem ati where editable= 1 ");
 			  sb.append(" and ati.amTagTemplate.id = :amTagTemplateId order by displayOrder");
 			paramMap.put("amTagTemplateId", key);
 			

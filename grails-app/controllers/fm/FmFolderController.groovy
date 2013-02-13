@@ -249,7 +249,7 @@ class FmFolderController {
 					else if (tagItem.tagItemType.equals('CUSTOM'))
 					{
 						newValue = params."amTagItem_${tagItem.id}"
-						if(tagItem.tagItemSubtype.equals('FREETEXT'))
+						if(tagItem.tagItemSubtype.equals('FREETEXT')||tagItem.tagItemSubtype.equals('FREETEXTAREA'))
 						{
 								
 							// Save the new tag value
@@ -1087,7 +1087,8 @@ class FmFolderController {
 								bioDataDisplayValue = cc.codeName
 								
 							}
-							else if(amTagItem.tagItemSubtype == 'FREETEXT')
+							else if(amTagItem.tagItemSubtype == 'FREETEXT' ||amTagItem.tagItemSubtype.equals('FREETEXTAREA'))
+
 							{
 								bioDataDisplayValue = createTitleString(amTagItem, bioDataPropertyValue, folderObject)
 							}
@@ -1382,7 +1383,7 @@ class FmFolderController {
 					else if (tagItem.tagItemType.equals('CUSTOM'))
 					{
 						newValue = params."amTagItem_${tagItem.id}"
-						if(tagItem.tagItemSubtype.equals('FREETEXT')) 
+						if(tagItem.tagItemSubtype.equals('FREETEXT') || tagItem.tagItemSubtype.equals('FREETEXTAREA')) 
 						{
 														// Save the new tag value
 							if (newValue != null && newValue != "")
