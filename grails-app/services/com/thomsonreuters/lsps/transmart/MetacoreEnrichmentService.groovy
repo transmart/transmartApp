@@ -8,6 +8,7 @@ class MetacoreEnrichmentService {
 	
 	def springSecurityService
 	def grailsApplication
+	def httpBuilderService
 	
 	def systemMetacoreSettingsDefined() {
 		return grailsApplication.config.com.thomsonreuters.transmart.metacoreURL \
@@ -107,16 +108,25 @@ class MetacoreEnrichmentService {
 	// metacoreParams = [ "baseUrl": url, "login": login, "password": password ]
     def getEnrichmentByMaps(cohortGeneLists, metacoreParams) {
 		def res
+		def baseUrl = ''
 		def mapBaseUrl = ''
 		// only one list is supported so far
 		
-		if (metacoreSettingsMode() == 'demo') {
-			// demo enrichment
-			def baseUrl = grailsApplication?.config?.com?.thomsonreuters?.transmart?.demoEnrichmentURL?:'http://pathwaymaps.com:7080'
+		def settingsMode = metacoreSettingsMode()
+		
+		if (settingsMode == 'demo') {
+			baseUrl = grailsApplication?.config?.com?.thomsonreuters?.transmart?.demoEnrichmentURL?:'http://pathwaymaps.com:7080'
 			mapBaseUrl = grailsApplication?.config?.com?.thomsonreuters?.transmart?.demoMapBaseURL?:'http://pathwaymaps.com/maps/'
-			def site = new HTTPBuilder(baseUrl)
-			if (System.properties.proxyHost && System.properties.proxyPort)
-				site.setProxy(System.properties.proxyHost, System.properties.proxyPort.toInteger(), null)
+		}
+		else {
+			baseUrl = metacoreParams['baseUrl']
+			mapBaseUrl = baseUrl
+		}
+		
+		def site = httpBuilderService.getInstance(baseUrl)
+			
+		if (settingsMode == 'demo') {
+			// demo enrichment
 			
 			log.info "Running demo enrichment: ${baseUrl}"
 			site.post( path: '/enrichmentApp/enrichment',
@@ -129,10 +139,6 @@ class MetacoreEnrichmentService {
 		}
 		else {
 			// call API functions
-			mapBaseUrl = metacoreParams['baseUrl']
-			def site = new HTTPBuilder(mapBaseUrl)
-			if (System.properties.proxyHost && System.properties.proxyPort)
-				site.setProxy(System.properties.proxyHost, System.properties.proxyPort.toInteger(), null)
 			
 			log.info 'MetaCore - logging in'
 			site.get( path: '/api/rpc.cgi',
