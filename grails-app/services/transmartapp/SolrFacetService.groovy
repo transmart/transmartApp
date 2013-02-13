@@ -454,9 +454,14 @@ class SolrFacetService {
 		  
 		  t = cleanForSOLR(t)
 		  
-		  //If searching on text, add wildcards (instead of quote marks)
+		  //If searching on text and we have no spaces (not a phrase search), add wildcards instead of quote marks
 		  if (category.equals("text")) {
-			  t = ("\"" + t.toLowerCase() + "\"");
+			  if (t.indexOf(" ") > -1) {
+				  t = ("\"" + t.toLowerCase() + "\"");
+			  }
+			  else {
+				  t = ("*" + t.toLowerCase() + "*");
+			  }
 		  }
 		  else if (category.equals("GENE")) {
 			  //GENE may have individual genes separated by slashes. OR these, and quote each individual one
