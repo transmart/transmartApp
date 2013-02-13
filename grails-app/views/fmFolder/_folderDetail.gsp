@@ -23,7 +23,7 @@
     {  
  	   <g:each var='jSONForGrid' status="gridCounter" in="${jSONForGrids}">
  	 	var dt${gridCounter}  = new dataTableWrapper('gridViewWrapper${gridCounter}', 'gridViewTable${gridCounter}', 'Title');
-   		dt${gridCounter}.loadData(${jSONForGrids[0]});
+   		dt${gridCounter}.loadData(${jSONForGrids[gridCounter]});
   	</g:each>
      
 

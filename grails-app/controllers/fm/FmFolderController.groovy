@@ -1205,11 +1205,11 @@ class FmFolderController {
 						subFolders = getChildrenFolderByType(folder.id, it)
 						if(subFolders!=null && subFolders.size()>0)
 						{
-							log.info("subFolders == " + subFolders)
+							log.info(subFolders.size() + " subFolders == " + subFolders)
 
 								subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
 								String gridData = createDataTable(subFolders, subFolders[0].folderType)
-								// log.info gridData
+							//	log.info gridData
 								jSONForGrids.add(gridData)
 								log.info "ADDING JSON GRID"
 						}
