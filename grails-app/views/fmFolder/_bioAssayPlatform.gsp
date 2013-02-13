@@ -79,17 +79,20 @@ jQuery(document).ready(function() {
 	<div style="float: left; margin-right: 8px">
 	<div style="fixed: left; line-height: 24px; font-style: italic; margin-right: 8px;">Filter on: </div>
 	<div style="float: left; margin-right: 8px">
-	<div class="textsmaller">Measurement</div>
 	
-	<g:select style="width: 400px" id="measurement" name="measurement" noSelection="${['null':'Select...']}" from="${measurements}"/>
+	<div class="textsmaller">Measurement</div>
+	<g:select style="width: 400px" id="measurement" name="measurement" noSelection="${['null':'Select...']}" from="${measurements}"
+			onchange="${remoteFunction(action:'ajaxTechnologies', update: 'technology', params:'\'queryType=measurement&measurementName=\' + this.value')}"/>
 	</div>
+	
 	<div style="float: left; margin-right: 8px">
 	<div class="textsmaller">Technology</div>
-	<g:select style="width: 400px" id="technology" name="technology" noSelection="${['null':'Select...']}" from="${technologies}" />
+	<g:select style="width: 400px" id="technology" name="technology" noSelection="${['null':'Select...']}" from="${technologies}" 
+			onchange="${remoteFunction(action:'ajaxVendors', update: 'vendor', params:'\'queryType=technology&measurementName=\'+document.getElementById(\'measurement\').value+\'&technologyName=\' + this.value' )}"/>
 	</div>
 	<div style="float: left; margin-right: 8px">
 	<div class="textsmaller">Vendor</div>
-	<g:select style="width: 400px" id="vendor" name="vendor" noSelection="${['null':'Select...']}" from="${vendors}" />
+		<g:select style="width: 400px" id="vendor" name="vendor" noSelection="${['null':'Select...']}" from="${vendors}" />
 	</div>
 	</div>
 	<div style="float: left; margin-right: 8px">

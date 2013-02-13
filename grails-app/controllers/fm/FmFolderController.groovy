@@ -1569,5 +1569,43 @@ def getFdDetails = {
 	def reindexFolder = {
 		solrFacetService.reindexFolder(params.uid)
 	}
-	
+
+
+	def ajaxTechnologies =
+	{
+		def queryString = ""
+		if(params.measurementName != 'null')
+		{
+			queryString = " where platformType = '" + params.measurementName  + "'"
+		}
+
+		def technologies  = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.platformTechnology")
+		log.info queryString + " " + technologies
+		render(template: "selectTechnologies", model: [technologies:technologies])
+	}
+
+	def ajaxVendors = 
+	{
+		log.info params
+		def queryString = " where 1=1"
+
+		if(params.technologyName!=null&&params.technologyName != 'null')
+		{
+			queryString += " and platformTechnology = '" + params.technologyName  + "'"
+		}
+		
+		if(params.measurementName!=null&&params.measurementName != 'null')
+		{
+			queryString += " and platformType = '" + params.measurementName + "'"
+		}
+
+		queryString = "SELECT DISTINCT vendor FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.vendor"
+		def vendors  = bio.BioAssayPlatform.executeQuery(queryString)
+		log.info queryString + " " +vendors
+		render(template: "selectVendors", model: [vendors:vendors])
+	}
+
+
 }
+
+
