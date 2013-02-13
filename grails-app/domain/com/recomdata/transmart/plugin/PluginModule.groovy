@@ -68,6 +68,7 @@ class PluginModule {
 	def private setParamsStr(moduleParams) {
 		if (moduleParams?.trim()) {
 			def jsonObject = JSON.parse(moduleParams)
+
 			//params = Hibernate.createClob(jsonObject?.toString())
 			params = jsonObject?.toString()
 		}

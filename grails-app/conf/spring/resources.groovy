@@ -68,7 +68,15 @@ beans = {
 	
 		utilService(com.recomdata.transmart.util.UtilService)
 		fileDownloadService(com.recomdata.transmart.util.FileDownloadService)
-		springSecurityService(grails.plugins.springsecurity.SpringSecurityService)
+
+		springSecurityService(grails.plugins.springsecurity.SpringSecurityService){bean ->
+			authenticationTrustResolver = ref('authenticationTrustResolver')
+			grailsApplication = ref('grailsApplication')
+			passwordEncoder = ref('passwordEncoder')
+			objectDefinitionSource = ref('objectDefinitionSource')
+			userDetailsService = ref('userDetailsService')
+			userCache = ref('userCache')
+		}
 		snpService(SnpService)
 		plinkService(PlinkService)
 		conceptService(ConceptService)

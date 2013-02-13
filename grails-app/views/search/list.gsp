@@ -136,6 +136,7 @@
 				cortellis: {
 			    	resultsUrl: "${createLink(controller:'cortellisSearch',action:'search', params:[text: session.searchFilter.getExternalTerms()])}"
 			    }
+
 				};
 
 			Ext.onReady(function(){
@@ -370,3 +371,4 @@
 		<r:layoutResources/>
 	</body>
 </html>
+

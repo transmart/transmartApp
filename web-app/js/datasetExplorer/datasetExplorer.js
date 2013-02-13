@@ -4669,4 +4669,3 @@ function ontFilterLoaded(el, success, response, options)
 			Ext.get("ontSearchButton").dom.click();
 		}
 }
-

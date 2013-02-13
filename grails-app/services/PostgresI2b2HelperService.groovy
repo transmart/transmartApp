@@ -404,6 +404,7 @@ class PostgresI2b2HelperService {
 		String sqlt = """select count(distinct(patient_num)) as patcount 
 						 FROM qt_patient_set_collection
 						 WHERE result_instance_id = ?""";
+
 		log.trace(sqlt);
 		sql.eachRow(sqlt, [result_instance_id], {row ->
 			log.trace("inrow");
