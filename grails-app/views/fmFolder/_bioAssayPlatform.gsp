@@ -21,6 +21,7 @@ jQuery(document).ready(function() {
 							label: item.label,
 							sourceAndCode: item.id,
 							id: item.id,
+							synonyms: item.synonyms,
 							display: item.display
 						}
 					}));

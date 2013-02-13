@@ -18,6 +18,7 @@ jQuery(document).ready(function() {
 							label: item.label,
 							sourceAndCode: item.sourceAndCode,
 							id: item.id,
+							synonyms: item.synonyms,
 							display: item.display
 						}
 					}));

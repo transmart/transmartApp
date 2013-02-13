@@ -612,7 +612,7 @@ class FmFolderController {
 			log.info "Study folder saved"
   			createAmTagTemplateAssociation(FolderType.STUDY.name(), fmFolderInstance)
 			
-			log.info "Study folder association saved"
+			log.info "Study tag template association saved"
 			def bioDataObject = new bio.Experiment()
 			bioDataObject.title = fmFolderInstance.folderName
 			bioDataObject.description = fmFolderInstance.description
@@ -625,11 +625,11 @@ class FmFolderController {
 				 log.error "Biodata for " + bioDataObject.id + " is not found"
 			}
 			else{
-				log.info "Study experiment saved"
+				log.info "Study experiment saved " + bioDataObject.id
 				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.Experiment",fmFolder:fmFolderInstance)
 				if(ffa.save(flush: true))
 				{
-					log.info "Study experiment folder association saved"
+					log.info "Study experiment folder association saved " + bioData.uniqueId
 					
 					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
 					render result as JSON
@@ -1087,10 +1087,13 @@ class FmFolderController {
 								bioDataDisplayValue = cc.codeName
 								
 							}
-							else if(amTagItem.tagItemSubtype == 'FREETEXT' ||amTagItem.tagItemSubtype.equals('FREETEXTAREA'))
-
+							else if(amTagItem.tagItemSubtype == 'FREETEXT')
 							{
 								bioDataDisplayValue = createTitleString(amTagItem, bioDataPropertyValue, folderObject)
+							}
+							else if(amTagItem.tagItemSubtype == 'FREETEXTAREA')
+							{
+								bioDataDisplayValue =  amTagItem.displayName
 							}
 							else
 							{

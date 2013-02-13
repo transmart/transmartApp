@@ -17,6 +17,7 @@ jQuery(document).ready(function() {
 							label: item.label,
 							sourceAndCode: item.id,
 							id: item.id,
+							synonyms: item.synonyms,
 							display: item.display
 						}
 					}));
@@ -44,7 +45,7 @@ jQuery(document).ready(function() {
 	}).data("autocomplete")._renderItem = function( ul, item ) {
 		return jQuery('<li></li>')		
 		  .data("item.autocomplete", item )
-		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b></a>')
+		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b>&nbsp;' + item.synonyms + '</a>')
 		  .appendTo(ul);
 	};
 });
