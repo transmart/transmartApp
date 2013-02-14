@@ -38,6 +38,7 @@ import grails.converters.*
 import groovy.xml.StreamingMarkupBuilder
 import grails.plugins.springsecurity.SpringSecurityService
 
+import org.apache.commons.lang.StringUtils
 
 class FmFolderController {
 
@@ -1224,7 +1225,8 @@ class FmFolderController {
 							log.info(subFolders.size() + " subFolders == " + subFolders)
 
 								subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
-								String gridData = createDataTable(subFolders, subFolders[0].folderType)
+								String gridTitle = "Associated " + StringUtils.capitalize(subFolders[0].pluralFolderTypeName.toLowerCase())
+								String gridData = createDataTable(subFolders, gridTitle)
 							//	log.info gridData
 								jSONForGrids.add(gridData)
 								log.info "ADDING JSON GRID"

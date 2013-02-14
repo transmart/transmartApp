@@ -34,7 +34,8 @@
 <%! import annotation.* %> 
 <%! import bio.BioData %> 
 <%! import bio.ConceptCode %> 
-<%! import com.recomdata.util.* %> 
+<%! import com.recomdata.util.* %>
+<%! import org.apache.commons.lang.StringUtils %> 
 
 <div style="margin:10px;padding:10px;">
 <g:hiddenField name="parentId" value="${folder?.parentId}" />
@@ -62,7 +63,7 @@
 	</div>
 	<h3 class="rdc-h3">
 		<g:if test="${folder?.hasProperty('folderName')}">
-			${folder?.folderName}
+			${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${folder?.folderName}
 		</g:if>
 	</h3>
 </div>
@@ -95,7 +96,7 @@
 </g:if>
 
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
-<div style="align:center;" ><h4 class="rdc-h4" align="center" >Metadata</h4></div>
+<div style="align:center;" ><h4 class="rdc-h4" align="center" >Associated Tags</h4></div>
 <table class="details-table">
         <thead>
             <tr>                
@@ -180,7 +181,7 @@
                    
 <div style="height:20px;"></div>
 <g:if test="${folder?.hasProperty('fmFiles') && null!=folder?.fmFiles && folder?.fmFiles.size()>0}">   
-<div style="align:center;" ><h4 class="rdc-h4" align="center" >Associated Files</h4></div>
+<div class="dataTables_wrapper"><div class="gridTitle">Associated Files</div>
 <table class="details-table">
             <thead>
                 <tr>                
@@ -220,6 +221,7 @@
         </g:each>
     </tbody>
 </table>
+</div>
 </g:if>
 
 <span></span>
