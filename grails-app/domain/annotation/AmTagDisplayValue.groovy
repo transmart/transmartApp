@@ -32,9 +32,9 @@ class AmTagDisplayValue implements Serializable {
 	String objectUid
 	Long objectId
 	String uniqueId
-	String codeTypeName
+	String codeName
 	
-	static transients = ['uniqueId','codeTypeName']
+	static transients = ['uniqueId','codeName']
 	
 	/**
 	 * Use transient property to support unique ID for tagValue.
@@ -48,12 +48,12 @@ class AmTagDisplayValue implements Serializable {
 		return uniqueId;
 	}
 
-	String getCodeTypeName() {
-		if (codeTypeName == null) {
-			codeTypeName = displayValue
+	String getCodeName() {
+		if (codeName == null) {
+			codeName = displayValue
 		}
 		
-		return codeTypeName;
+		return codeName;
 	}
 
 	

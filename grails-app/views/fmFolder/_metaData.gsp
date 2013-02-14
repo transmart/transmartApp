@@ -3,6 +3,10 @@
 <%! import bio.* %>  
 <%! import com.recomdata.util.* %> 
 
+<%
+    def metaDataService = grailsApplication.classLoader.loadClass('annotation.MetaDataService').newInstance()
+%>
+
 <link rel="stylesheet" href="${resource(dir:'css', file:'uploadData.css')}"></link>
 <script type="text/javascript">$j = jQuery.noConflict();</script>
 <script type="text/javascript" src="${resource(dir:'js', file:'uploadData.js')}"></script>
@@ -15,16 +19,20 @@
            <td valign="top" align="right" class="name">${amTagItem.displayName}&nbsp;<g:if test="${amTagItem.required == true}"><g:requiredIndicator/></g:if>:
                 </td>
                 <td valign="top" align="left" class="value">
-              <!-- FIXED -->
+               
+                <!-- FIXED -->
                 <g:if test="${amTagItem.tagItemType == 'FIXED'}">
-                	  <g:if test="${amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
+                 	  <g:if test="${amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
 						<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
 	           			<g:select from="${ConceptCode.findAll('from ConceptCode where codeTypeName=? order by codeName',[amTagItem.codeTypeName])}"	
 		                	name="${amTagItem.tagItemAttr}"  value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"   optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	
 						</g:if>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'MULTIPICKLIST'}">
-	                		<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
-	                	    <tmpl:extTagSearchField fieldName="${amTagItem.tagItemAttr}" codeTypeName="${amTagItem.codeTypeName}" searchAction="extSearch" searchController="metaData" values="${tagValues}"/>
+	                		<g:set var="metaDataService" bean="metaDataService"/>
+	                		<g:set var="fieldValue" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
+                    		<g:set var="displayValues" value="${metaDataService.getViewValues(fieldValue)}"/>
+                    		<tmpl:extTagSearchField fieldName="${amTagItem.tagItemAttr}" codeTypeName="${amTagItem.codeTypeName}" searchAction="extSearch" searchController="metaData" values="${displayValues}"/>
+						
 						</g:elseif>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'FREETEXT'}">
 		                	<g:if test="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr).length()<100}">
