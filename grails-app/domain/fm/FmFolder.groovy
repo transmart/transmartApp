@@ -44,10 +44,9 @@ class FmFolder implements Buildable {
 	static mapping = {
 		table 'fm_folder'
 		version false
-		cache true
 		sort "folderName"
 		id column:'folder_id', generator: 'sequence', params:[sequence:'seq_fm_id']
-		fmFiles joinTable: [name: 'fm_folder_file_association',  key:'folder_id', column: 'file_id'], lazy: false
+		fmFiles joinTable: [name: 'fm_folder_file_association',  key:'folder_id', column: 'file_id'], lazy: false, cascade: "all-delete-orphan"
 	}
 	
 	static constraints = {

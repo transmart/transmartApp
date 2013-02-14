@@ -715,6 +715,30 @@ jQuery(document).ready(function() {
 			}
 		});
 	});
+    
+    jQuery('body').on('click', '.foldericon.delete', function() {
+		var id = jQuery(this).attr('name');
+		
+		if (confirm("Are you sure you want to delete this file?")) {
+			jQuery.ajax({
+				url:deleteFileURL,
+				data: {id: id},
+				success: function(response) {
+					jQuery('#files-table').html(response);
+					//Get document count and reduce by 1
+					var folderId = jQuery('#file-list-table').attr('name');
+					var documentCount = jQuery('#folder-header-' + folderId + ' .document-count');
+					if (documentCount.size() > 0) {
+						var currentValue = documentCount.text();
+						documentCount.text(currentValue - 1);
+					}
+				},
+				error: function(xhr) {
+					alert(xhr.message);
+				}
+			});
+		}
+	});
 
     jQuery('body').on('click', '.foldericon.view', function() {
 	    var id = jQuery(this).closest(".folderheader").attr('name');
@@ -826,6 +850,27 @@ jQuery(document).ready(function() {
 				jQuery('#createFolder').html(response).removeClass('ajaxloading');
 			}
 		});
+	});
+	
+	jQuery('#metadata-viewer').on('click', '.deletefolder', function() {
+
+    	var id = jQuery(this).attr('name');
+    	var parent = jQuery(this).data('parent');
+    	
+    	if (confirm("Are you sure you want to delete this folder and the files and folders beneath it?")) {
+			jQuery.ajax({
+				url:deleteFolderURL,
+				data: {id: id},
+				success: function(response) {
+					//Update viewer with response ("folder has been deleted" message) and update the parent in the browse tree.
+					jQuery('#metadata-viewer').html(response);
+					updateFolder(parent);
+				},
+				error: function(xhr) {
+					alert(xhr.message);
+				}
+			});
+    	}
 	});
 
 	jQuery('#metadata-viewer').on('click', '.addstudy', function() {

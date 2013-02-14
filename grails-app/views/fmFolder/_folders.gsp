@@ -3,7 +3,7 @@
 <div class="search-results-table">
 	<g:each in="${folders}" status="ti" var="folder">        
 		<g:if test="${!auto || folder.folderLevel > 1 || !folderSearchString || folderSearchString?.indexOf(folder.folderFullName) > -1}">
-			<table class="folderheader" name="${folder.uniqueId}">
+			<table id="folder-header-${folder.id}" class="folderheader" name="${folder.uniqueId}">
 				
 				<tr>
 					<td class="foldertitle">
@@ -44,7 +44,7 @@
 				<g:if test="${files?.size() > 0}">
 		            <tr>
 		                <td class="foldertitle">
-		                    <span class="result-document-count"><i>Documents (${files.size()})</i></span>                   
+		                    <span class="result-document-count"><i>Documents (<span class="document-count">${files.size()}</span>)</i></span>                   
 		                </td>
 		            </tr>
 	            </g:if>

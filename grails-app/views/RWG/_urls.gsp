@@ -60,6 +60,9 @@ var saveProgramURL = "${createLink([controller:'fmFolder',action:'saveProgram'])
 var welcomeURL = "${createLink([controller:'RWG', action:'ajaxWelcome'])}";
 var searchLogURL = "${createLink([controller:'RWG', action:'searchLog'])}";
 
+var deleteFileURL = "${createLink([controller:'fmFolder',action:'deleteFile'])}";
+var deleteFolderURL = "${createLink([controller:'fmFolder',action:'deleteFolder'])}";
+
 var updateSearchCategoryURL = "${createLink([controller:'RWG', action:'updateSearchCategory'])}";
 
 var platformTypesUrl = '${createLink([action:'platformsForVendor',controller:'bioAssayPlatform'])}';

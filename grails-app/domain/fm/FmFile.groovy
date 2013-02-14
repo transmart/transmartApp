@@ -54,7 +54,7 @@ class FmFile {
 		folders joinTable: [name: 'fm_folder_file_association',  key:'file_id', column: 'folder_id']
 	}
 	
-	static contraints = {
+	static constraints = {
 		displayName(maxSize:1000)
 		originalName(maxSize:1000)
 		fileType(nullable:true, maxSize:100)

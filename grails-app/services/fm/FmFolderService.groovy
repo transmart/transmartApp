@@ -333,6 +333,67 @@ class FmFolderService {
 		
 	}
 	
+	/**
+	 * Removes files/folders by UID from the SOLR index.
+	 * @param uid UID of file or folder to remove
+	 * @return
+	 */
+	def removeSolrEntry(String uid) {
+		
+		try {
+			
+			String xmlString = "<delete><query>id:\"" + uid + "\"</query></delete>"
+			xmlString = URLEncoder.encode(xmlString, "UTF-8");
+			StringBuilder url = new StringBuilder(solrUrl);
+			url.append("?stream.body=").append(xmlString).append("&commit=true")
+			URL updateUrl = new URL(url.toString())
+			HttpURLConnection urlc = (HttpURLConnection) updateUrl.openConnection();
+			if (HttpURLConnection.HTTP_OK != urlc.getResponseCode()) {
+			  log.warn("The SOLR service returned an error #" + urlc.getResponseCode() + " " + urlc.getResponseMessage() + " for url "+ updateUrl);
+			}
+		} catch (Exception ex) {
+			log.error("Exception while deleting entry with uid of " + uid, ex);
+		}
+		
+	}
+	
+	def deleteFolder(FmFolder folder) {
+		//Delete all files within this folder.
+		//Convert PersistentSets to Arrays to avoid concurrent modification
+		def files = folder.fmFiles.toArray()
+		for (file in files) {
+			deleteFile(file)
+		}
+		def children = folder.children.toArray()
+		for (child in children) {
+			deleteFolder(child)
+		}
+		folder.activeInd = false
+		removeSolrEntry(folder.getUniqueId())
+		if (!folder.save(flush: true)) {
+			log.error("Unable to delete folder with uid of " + folder.getUniqueId());
+		}
+	}
+	
+	def deleteFile(FmFile file) {
+		try {
+			File filestoreFile = new File(filestoreDirectory + file.filestoreLocation + File.separator + file.filestoreName)
+			if (filestoreFile.exists()) {
+				filestoreFile.delete()
+			}
+			removeSolrEntry(file.getUniqueId())
+			def data = FmData.get(file.id)
+			if (data) {
+				data.delete(flush: true)
+			}
+			file.folder.fmFiles.remove(file)
+			file.folder.save(flush:true)
+		}
+		catch (Exception ex) {
+			log.error("Exception while deleting file with uid of " + file.getUniqueId(), ex);
+		}
+	}
+	
 	def getFolderContents(id) {
 		
 		def parent;
@@ -349,6 +410,7 @@ class FmFolderService {
 				eq('parent', parent)
 			}
 			eq('folderLevel', folderLevel)
+			eq('activeInd', true)
 			order('folderName', 'asc')
 		}
 		 
