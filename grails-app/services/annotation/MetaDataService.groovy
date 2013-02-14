@@ -45,7 +45,13 @@ class MetaDataService {
 		}
 		
 		log.info "list = " + list
-		def tagValues = bio.ConceptCode.executeQuery ('from ConceptCode as cc where id in(:list)',[list : list])
+		
+		def tagValues = ""
+		if(list.size>0)
+		{
+			tagValues = bio.ConceptCode.executeQuery ('from ConceptCode as cc where id in(:list)',[list : list])
+		}
+		
 		log.info "tagValues = " + tagValues				
 		
 		return tagValues
