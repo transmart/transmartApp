@@ -1211,8 +1211,8 @@ class FmFolderController {
 			   }
 			   			   
 				// If the folder is a study then get the analysis and the assay
-				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name()))
-				{
+				// if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name()))
+				// {
 					def subFolderTypes = getChildrenFolderTypes(folder.id)
 					log.info "subFolderTypes = " + subFolderTypes
 					subFolderTypes.each
@@ -1230,7 +1230,7 @@ class FmFolderController {
 								log.info "ADDING JSON GRID"
 						}
 					}
-				}
+				// }
 			}
 		}
 		
