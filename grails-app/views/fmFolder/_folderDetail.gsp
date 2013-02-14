@@ -58,6 +58,7 @@
 			
 			<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.FOLDER.name()) || folder.folderType.equalsIgnoreCase(FolderType.ASSAY.name()) || folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
 				<span name="${folder.id}" class="greybutton buttonicon addfolder">Add new folder</span>
+				<span name="${folder.id}" data-parent="${folder.parent?.id}" class="greybutton buttonicon deletefolder">Delete this ${folder.folderType.toLowerCase()}</span>
 			</g:if>
 		</sec:ifAnyGranted>
 	</div>
@@ -221,6 +222,9 @@
         </g:each>
     </tbody>
 </table>
+<div id="files-table">
+<tmpl:filesTable folder="${folder}" />
+</div>
 </div>
 </g:if>
 

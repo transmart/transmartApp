@@ -276,6 +276,7 @@ table.menuDetail th.menuVisited {
 .greybutton.addfolder { background-image: url('../images/addfolder.png'); }
 .greybutton.addanalysis { background-image: url('../images/addanalysis.png'); }
 .greybutton.close { background-image: url('../images/small_cross.png'); }
+.greybutton.deletefolder { background-image: url('../images/bin_closed.png'); }
 
 .greybutton.disabled {
 	cursor: normal;

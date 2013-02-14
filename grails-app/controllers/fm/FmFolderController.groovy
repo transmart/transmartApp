@@ -980,11 +980,11 @@ class FmFolderController {
 		log.info("getFolder(" + folderType + ", " + parentPath + ")")
  		if(parentPath == null)
 		{
-			return FmFolder.executeQuery("from FmFolder as fd where upper(fd.folderType) = upper(:fl) ", [fl: folderType])
+			return FmFolder.executeQuery("from FmFolder as fd where fd.activeInd = true and upper(fd.folderType) = upper(:fl) ", [fl: folderType])
 		}
 		else
 		{
-			return FmFolder.executeQuery("from FmFolder as fd where upper(fd.folderType) = upper(:fl) and fd.folderFullName like :fn ",
+			return FmFolder.executeQuery("from FmFolder as fd where fd.activeInd = true and upper(fd.folderType) = upper(:fl) and fd.folderFullName like :fn ",
 				 [fl: folderType, fn:parentPath+"%"])
 		}
 	
@@ -994,21 +994,21 @@ class FmFolderController {
 	private List<FmFolder> getChildrenFolder(String parentId)  
 	{		
 		def folder = FmFolder.get(parentId)
-		return FmFolder.executeQuery("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
+		return FmFolder.executeQuery("from FmFolder as fd where fd.activeInd = true and fd.folderFullName like :fn and fd.folderLevel= :fl ",[fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
 	}
 
 	//method which returns a list of folders which are the children of the folder of which the identifier is passed as parameter by folder types
 	private List<FmFolder> getChildrenFolderByType(Long parentId, String folderType)
 	{
 		def folder = FmFolder.get(parentId)
-		return FmFolder.executeQuery("from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl and upper(fd.folderType) = upper(:ft)", [fl: folder.folderLevel+1, fn:folder.folderFullName+"%", ft: folderType])
+		return FmFolder.executeQuery("from FmFolder as fd where fd.activeInd = true and fd.folderFullName like :fn and fd.folderLevel= :fl and upper(fd.folderType) = upper(:ft)", [fl: folder.folderLevel+1, fn:folder.folderFullName+"%", ft: folderType])
 	}
 
 	//method which returns a list of folders which are the children of the folder of which the identifier is passed as parameter
 	private List getChildrenFolderTypes(Long parentId)
 	{
 		def folder = FmFolder.get(parentId)
-		return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.folderFullName like :fn and fd.folderLevel= :fl ", [fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
+		return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.activeInd = true and fd.folderFullName like :fn and fd.folderLevel= :fl ", [fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
 	}
 
 	private String createDataTable(folders, folderType)
@@ -1069,6 +1069,7 @@ class FmFolderController {
 		folders.each 
 		{
 				log.info "FOLDER::" + it
+				
 				def bioDataObject = getBioDataObject(it)
 				def folderObject = it
 				ExportRowNew newrow=new ExportRowNew();
@@ -1193,6 +1194,11 @@ class FmFolderController {
 			
 			if(folder)
 			{
+				if (!folder.activeInd) {
+					render(template:'deletedFolder')
+					return
+				}
+				
 				bioDataObject = getBioDataObject(folder)
 				metaDataTagItems = getMetaDataItems(folder, false)
 				log.info "metaDataTagItems  = " + metaDataTagItems
@@ -1313,20 +1319,7 @@ class FmFolderController {
 		log.info "params = " + params
 		
 		
-		if("anonymousUser" != springSecurityService.getPrincipal())
-		{
-		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
-		if(!user.isAdmin()) {
-			render(status: 200, text: "You do not have permission to edit this object's metadata.")
-			return
-		}
-		}
-		else
-		{
-			render(status: 200, text: "You do not have permission to edit this object's metadata.")
-			return
-		}
-
+		if (!isAdmin()) return;
 			 
 		//log.info "** action: expDetail called!"
 		def folderId = params.folderId
@@ -1360,11 +1353,7 @@ class FmFolderController {
 		log.info "updateMetaData called"
 		log.info params
 		
-		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
-		if(!user.isAdmin()) {
-			render(status: 200, text: "You do not have permission to edit this object's metadata.")
-			return
-		}
+		if (!isAdmin()) return;
 		
 		def paramMap = params
 		def folderId = params.id
@@ -1616,9 +1605,6 @@ class FmFolderController {
 		
 	}
 
-def getFdDetails = {
-}
-
 	/**
 	 * Calls service to import files into tranSMART filestore and index them with SOLR
 	 */
@@ -1632,13 +1618,47 @@ def getFdDetails = {
 	 * Calls service to re-index existing files with SOLR
 	 */
 	def reindexFiles = {
-		
-		fmFolderService.reindexFiles();
-		
+		fmFolderService.reindexFiles();	
 	}
 	
 	def reindexFolder = {
 		solrFacetService.reindexFolder(params.uid)
+	}
+	
+	def removeEntry = {
+		fmFolderService.removeSolrEntry(params.uid)
+	}
+	
+	def deleteFolder = {
+		
+		if (!isAdmin()) return;
+		
+		def id = params.id
+		def folder = FmFolder.get(id)
+		if (folder) {
+			fmFolderService.deleteFolder(folder)
+			render(template:'deletedFolder')
+		}
+		else {
+			render(status:500, text:"FmFolder not found")
+		}
+	}
+	
+	def deleteFile = {
+		
+		if (!isAdmin()) return;
+		
+		def id = params.id
+		def file = FmFile.get(id)
+		def folder = file.getFolder()
+		if (file) {
+			fmFolderService.deleteFile(file)
+			render(template: 'filesTable', model: [folder: folder])
+		}
+		else {
+			render(status:500, text:"FmFile not found")
+		}
+		
 	}
 
 
@@ -1674,6 +1694,23 @@ def getFdDetails = {
 		def vendors  = bio.BioAssayPlatform.executeQuery(queryString)
 		log.info queryString + " " +vendors
 		render(template: "selectVendors", model: [vendors:vendors])
+	}
+	
+	private boolean isAdmin() {
+		if("anonymousUser" != springSecurityService.getPrincipal())
+		{
+		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		if(!user.isAdmin()) {
+			render(status: 200, text: "You do not have permission to edit this object's metadata.")
+			return false
+		}
+		}
+		else
+		{
+			render(status: 200, text: "You do not have permission to edit this object's metadata.")
+			return false
+		}
+		return true
 	}
 
 
