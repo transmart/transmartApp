@@ -43,9 +43,18 @@ jQuery(document).ready(function() {
 			return false;
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
+	
+		var resulta = '<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.keyword + '</b>&nbsp;';
+		if (item.synonyms != null) {
+			resulta += (item.synonyms + '</a>');
+		}
+		else {
+			resulta += '</a>';
+		}
+		
 		return jQuery('<li></li>')		
 		  .data("item.autocomplete", item )
-		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.keyword + '</b>&nbsp;' + item.synonyms + '</a>')
+		  .append(resulta)
 		  .appendTo(ul);
 	};
 });
@@ -53,14 +62,14 @@ jQuery(document).ready(function() {
 <%-- Tag box (visual display of tags) --%>
 <div id="${fieldName}-tags" class="tagBox" name="${fieldName}">
 	<g:each in="${values}" var="value">
-		<span class="tag" id="${fieldName}-tag-${value.uniqueId}" name="${value.uniqueId}">${value.codeTypeName}</span>
+		<span class="tag" id="${fieldName}-tag-${value.uniqueId}" name="${value.uniqueId}">${value.codeName}</span>
 	</g:each>
 </div>
 
 <%-- Hidden select field, keeps actual selected values --%>
 <select id="${fieldName}" name="${fieldName}" multiple="multiple" style="display: none;">
 	<g:each in="${values}" var="value">
-		<option selected="selected" value="${value.uniqueId}">${value.codeTypeName}</option>
+		<option selected="selected" value="${value.uniqueId}">${value.codeName}</option>
 	</g:each>
 </select>
 

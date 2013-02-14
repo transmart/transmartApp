@@ -243,7 +243,27 @@ class FmFolderController {
 						newValue = params."${tagItem.tagItemAttr}"
 						log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + newValue
 						if (newValue != null) {
-							bioDataObject."${tagItem.tagItemAttr}" = newValue
+							def value = ""
+							if (tagItem.tagItemSubtype.equals('MULTIPICKLIST'))
+							{
+								newValue = params.list("${tagItem.tagItemAttr}")
+								if (newValue != null && newValue != "" && newValue.size() > 0)
+								{
+									newValue.each {
+									if(value != ""){value += "|"}
+										value += it
+									}
+								}
+							}
+							else
+							{
+								value = newValue
+							}
+							
+							log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + value
+							
+							bioDataObject."${tagItem.tagItemAttr}" = value
+				
 						}
 					}
 					else if (tagItem.tagItemType.equals('CUSTOM'))
@@ -1061,7 +1081,7 @@ class FmFolderController {
 						{
 							def bioDataDisplayValue = null 
 							def bioDataPropertyValue = bioDataObject[amTagItem.tagItemAttr]
-							if(amTagItem.tagItemSubtype == 'PICKLIST')
+							if(amTagItem.tagItemSubtype == 'PICKLIST' || amTagItem.tagItemSubtype == 'MULTIPICKLIST')
 							{
 								if(bioDataPropertyValue)
 								{
@@ -1080,13 +1100,6 @@ class FmFolderController {
 									 bioDataDisplayValue = ""
 								}
 
-							}
-							
-							else if(amTagItem.tagItemSubtype == 'MULTIPICKLIST')
-							{
-								def cc = ConceptCode.findByUniqueId(bioDataPropertyValue)
-								bioDataDisplayValue = cc.codeName
-								
 							}
 							else if(amTagItem.tagItemSubtype == 'FREETEXT')
 							{
@@ -1204,8 +1217,8 @@ class FmFolderController {
 			   }
 			   			   
 				// If the folder is a study then get the analysis and the assay
-				if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name()))
-				{
+				// if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name()))
+				// {
 					def subFolderTypes = getChildrenFolderTypes(folder.id)
 					log.info "subFolderTypes = " + subFolderTypes
 					subFolderTypes.each
@@ -1223,7 +1236,7 @@ class FmFolderController {
 								log.info "ADDING JSON GRID"
 						}
 					}
-				}
+				// }
 			}
 		}
 		
@@ -1367,9 +1380,41 @@ class FmFolderController {
 					def newValue = null
 					if (tagItem.tagItemType.equals('FIXED')) {
 						newValue = params."${tagItem.tagItemAttr}"
+						
 						if (newValue != null) {
-						log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + newValue
-							bioDataObject."${tagItem.tagItemAttr}" = newValue
+							def value = ""
+							if (tagItem.tagItemSubtype.equals('MULTIPICKLIST'))
+							{
+								newValue = params.list("${tagItem.tagItemAttr}")
+								if (newValue != null && newValue != "" && newValue.size() > 0)
+								{
+									newValue.each {
+									if(value != ""){value += "|"}
+										value += it
+									}
+								}
+								
+								
+							}
+							else
+							{
+								value = newValue
+							}
+							
+							log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + value
+							
+							bioDataObject."${tagItem.tagItemAttr}" = value
+							
+							if(tagItem.tagItemAttr.equalsIgnoreCase("title"))
+							{
+								folder.folderName= newValue
+							}
+							
+							if(tagItem.tagItemAttr.equalsIgnoreCase("description"))
+							{
+								folder.description = newValue
+							}
+			
 						}
 					}
 					else if (tagItem.tagItemType.equals('CUSTOM'))

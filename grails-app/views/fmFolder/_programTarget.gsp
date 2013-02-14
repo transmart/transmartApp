@@ -44,9 +44,18 @@ jQuery(document).ready(function() {
 			return false;
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
+		
+		var resulta = '<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b>&nbsp;';
+		if (item.synonyms != null) {
+			resulta += (item.synonyms + '</a>');
+		}
+		else {
+			resulta += '</a>';
+		}
+		
 		return jQuery('<li></li>')		
 		  .data("item.autocomplete", item )
-		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b></a>')
+		  .append(resulta)
 		  .appendTo(ul);
 	};
 });
