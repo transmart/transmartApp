@@ -395,6 +395,7 @@ class FmFolderController {
 				if (bioDataObject.save(flush: true))
 				{
 					log.info "bioDataObject.id = " + bioDataObject.id + " Meta data saved == " + bioDataObject.getUniqueId()
+					solrFacetService.reindexFolder(folder.getUniqueId())
 					
 				}
 				else
@@ -446,6 +447,7 @@ class FmFolderController {
 			
 			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
 			render result as JSON
+			solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
 			return
 		}
 		else {
@@ -482,6 +484,7 @@ class FmFolderController {
 			
 			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
 			render result as JSON
+			solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
 			return
 		}
 		else {
@@ -521,6 +524,7 @@ class FmFolderController {
 			saveMetaData(fmFolderInstance, null, params)
 			def result = [id: fmFolderInstance.id]
 			render result as JSON
+			solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
 			return
 			
 //			redirect(action: "show", id: fmFolderInstance.id)
@@ -587,6 +591,7 @@ class FmFolderController {
 					
 					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
 					render result as JSON
+					solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
 					return
 				}
 				else
@@ -654,6 +659,7 @@ class FmFolderController {
 					
 					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
 					render result as JSON
+					solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
 					return
 				}
 				else
@@ -887,12 +893,7 @@ class FmFolderController {
 			// Set folder's tag value based on a radix-36 conversion of its ID.
 			folder.tag = Long.toString(folder.id, 36).toUpperCase();
 			folder.save(flush:true);
-			
-			// This is now done in the database
-			// Create UID for folder.
-		//	def data = new FmData(type:'FM_FOLDER', uniqueId:'FOL:' + folder.id);
-		//	data.id = folder.id;
-		//	data.save(flush:true);
+			solrFacetService.reindexFolder(folder.getUniqueId())
 	
 			render folder as XML
 		}
@@ -908,6 +909,7 @@ class FmFolderController {
 		
 		if(folder.save())
 		{
+			solrFacetService.reindexFolder(folder.getUniqueId())
 			render folder as XML
 		}
 		else {
@@ -1561,6 +1563,7 @@ class FmFolderController {
 						log.info "Meta data saved"
 						def result = [id: folderId]
 						render result as JSON
+						solrFacetService.reindexFolder(folder.getUniqueId())
 						return
 					}
 					else {

@@ -748,7 +748,7 @@ class SolrFacetService {
 		  return true
 	  }
 	  else {
-		  throw new Exception("SOLR update failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
+		  log.error("SOLR update failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
 	  }
 	  
   }
