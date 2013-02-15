@@ -22,6 +22,7 @@ package fm
 import groovy.xml.StreamingMarkupBuilder
 import java.util.ArrayList;
 import java.util.List;
+import com.recomdata.util.FolderType
 
 class FmFolder implements Buildable {
 	
@@ -34,12 +35,14 @@ class FmFolder implements Buildable {
 	String description
 	Boolean activeInd = Boolean.TRUE
 	String uniqueId
+	String pluralFolderTypeName
+	
 	
 	static belongsTo = [parent: FmFolder]
 	
 	static hasMany = [fmFiles: FmFile, children: FmFolder]
 	
-	static transients = ['uniqueId']
+	static transients = ['uniqueId', 'pluralFolderTypeName']
 	
 	static mapping = {
 		table 'fm_folder'
@@ -79,6 +82,25 @@ class FmFolder implements Buildable {
 			}
 		}  
 		return uniqueId;
+	}
+	
+	String getPluralFolderTypeName()
+	{
+		if(this.folderType == FolderType.ANALYSIS.name())
+		{
+			return "ANALYSES"
+		}
+		
+		if(this.folderType == FolderType.PROGRAM.name() || this.folderType == FolderType.ASSAY.name() || this.folderType == FolderType.FOLDER.name())
+		{
+			return this.folderType + "S"
+		}
+
+		if(this.folderType == FolderType.STUDY.name())
+		{
+			return "STUDIES"
+		}
+
 	}
 		
 	/**

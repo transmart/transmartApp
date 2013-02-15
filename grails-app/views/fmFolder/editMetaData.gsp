@@ -64,7 +64,7 @@
 </head>
 <body>
 <div style="width:800px">
-<g:render template="editMetaData" model="[folder:folder,layout:layout]" />
+<g:render template="editMetaData" model="[folder:folder, ,  measurements:measurements, technologies:technologies, vendors:vendors, platforms:platforms, layout:layout]" />
 </div>
 </body>
 </html>

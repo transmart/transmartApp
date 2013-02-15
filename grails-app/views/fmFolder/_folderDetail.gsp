@@ -34,7 +34,8 @@
 <%! import annotation.* %> 
 <%! import bio.BioData %> 
 <%! import bio.ConceptCode %> 
-<%! import com.recomdata.util.* %> 
+<%! import com.recomdata.util.* %>
+<%! import org.apache.commons.lang.StringUtils %> 
 
 <div style="margin:10px;padding:10px;">
 <g:hiddenField name="parentId" value="${folder?.parentId}" />
@@ -63,7 +64,7 @@
 	</div>
 	<h3 class="rdc-h3">
 		<g:if test="${folder?.hasProperty('folderName')}">
-			${folder?.folderName}
+			${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${folder?.folderName}
 		</g:if>
 	</h3>
 </div>
@@ -96,7 +97,7 @@
 </g:if>
 
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
-<div style="align:center;" ><h4 class="rdc-h4" align="center" >Metadata</h4></div>
+<div style="align:center;" ><h4 class="rdc-h4" align="center" >Associated Tags</h4></div>
 <table class="details-table">
         <thead>
             <tr>                
@@ -181,9 +182,49 @@
                    
 <div style="height:20px;"></div>
 <g:if test="${folder?.hasProperty('fmFiles') && null!=folder?.fmFiles && folder?.fmFiles.size()>0}">   
-<div style="align:center;" ><h4 class="rdc-h4" align="center" >Associated Files</h4></div>
+<div class="dataTables_wrapper"><div class="gridTitle">Associated Files</div>
+<table class="details-table">
+            <thead>
+                <tr>                
+                    <th class="columnheader">File Name</th>
+                    <th class="columnheader">Create Date</th>
+                    <th class="columnheader">Update Date</th>
+                    <th class="columnheader">&nbsp;</th>
+                </tr>
+            </thead>
+		    <tfoot>
+		    	<tr>
+		    		<td colspan="3">&nbsp;</td>
+	    		   <td>
+		               <div style="padding: 4px 0px;">
+		                    <span class="foldericon addall link">Export all</span>
+		               </div>
+	               </td>
+		    	</tr>
+		    </tfoot>
+    <tbody>
+        <g:each in="${folder?.fmFiles}" status="i" var="fmFile">
+            <tr class="details-row ${(i % 2) == 0 ? 'odd' : 'even'}">
+               <td class="columnname" style="text-align: left;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
+               <td class="columnvalue">
+               <g:formatDate format="yyyy-MM-dd" date="${fmFile.createDate}" />
+               </td> 
+               <td class="columnvalue">
+               <g:formatDate format="yyyy-MM-dd" date="${fmFile.updateDate}" />
+               </td> 
+               <td class="columnvalue">
+	               <div>
+	                    <span class="exportaddspan foldericon add link" name="${fmFile.id}">Add to export</span>
+	               </div>
+               </td>
+                
+            </tr>
+        </g:each>
+    </tbody>
+</table>
 <div id="files-table">
 <tmpl:filesTable folder="${folder}" />
+</div>
 </div>
 </g:if>
 

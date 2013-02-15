@@ -415,6 +415,7 @@ table.menuDetail th.menuVisited {
 .description {
 	line-height:16px;
 	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 8pt;
 	text-align: justify;	
 }
 
