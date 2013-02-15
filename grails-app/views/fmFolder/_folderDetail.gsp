@@ -104,12 +104,10 @@
                 <th class="columnheader">Property</th>
                 <th class="columnheader">
                 	Value
-                	<g:if test="${!folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
 	                  <%-- Restrict edits to administrators --%>
 	                  <sec:ifAnyGranted roles="ROLE_ADMIN">
 	                  	<img align="right" class="editmetadata" name="${folder?.id}" src="${resource(dir:'images', file:'pencil.png')}"/>
 	                  </sec:ifAnyGranted>
-	                </g:if>
                 </th>
             </tr>
         </thead>
