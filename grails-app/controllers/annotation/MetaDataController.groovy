@@ -80,7 +80,6 @@ class MetaDataController {
 		def value = params.term?params.term.toUpperCase():''
 		def codeTypeName = params.codeTypeName?params.codeTypeName:'';
 		
-		def observations = null;
 		def conceptCodes = ConceptCode.executeQuery("FROM ConceptCode cc WHERE cc.codeTypeName = :codeTypeName and  upper(cc.codeName) LIKE :codeName order by codeTypeName", [codeTypeName: codeTypeName, codeName: value+"%"], [max: 10]);
 		
 		log.info "There are " + conceptCodes.size() + " " + params.codeTypeName + " records found in ConceptCode"
@@ -137,14 +136,18 @@ class MetaDataController {
 	
 		def diseaseJSON = searchKeywordService.findSearchKeywords("DISEASE", params.term, 10) as JSON
 		def list = JSON.parse(diseaseJSON.toString())
-		list.each {  itemlist.add(it)}
+		list.each {itemlist.add(it)}
 		def geneJSON = searchKeywordService.findSearchKeywords("GENE", params.term, 10) as JSON
 		list = JSON.parse(geneJSON.toString())
-		list.each {  itemlist.add(it)}
+		list.each {itemlist.add(it)}
 		def pathwayJSON = searchKeywordService.findSearchKeywords("PATHWAY", params.term, 10) as JSON
 		list = JSON.parse(pathwayJSON.toString())
-		list.each {  itemlist.add(it)}
-		
+		list.each {itemlist.add(it)}
+		def conceptCodes = ConceptCode.executeQuery("FROM ConceptCode cc WHERE cc.codeTypeName = :codeTypeName and  upper(cc.codeName) LIKE :codeName order by codeTypeName", [codeTypeName: 'PROGRAM_TARGET_PATHWAY_PHENOTYPE', codeName: value+"%"], [max: 10]);
+			for (conceptCode in conceptCodes) {
+			itemlist.add([id:conceptCode.uniqueId, label:conceptCode.codeName, sourceAndCode:conceptCode.uniqueId, categoryId:"PROGRAM_TARGET", category:"Program Target", display:""]);
+		}
+
 		render itemlist as JSON;
 	}
 
