@@ -429,7 +429,9 @@ class FmFolderService {
 		
 		if (fmFolder.folderType.equals(FolderType.STUDY.name())) {
 			def experiment = FmFolderAssociation.findByFmFolder(fmFolder)?.getBioObject()
-			log.error("No experiment associated with study folder: " + fmFolder.folderFullName)
+			if (!experiment) {
+				log.error("No experiment associated with study folder: " + fmFolder.folderFullName)
+			}
 			return experiment?.accession
 		}
 		else {

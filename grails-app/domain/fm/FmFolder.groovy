@@ -103,6 +103,7 @@ class FmFolder implements Buildable {
 	boolean hasChildren() {
 		def children = FmFolder.createCriteria().list {
 			eq('parent', this)
+			eq('activeInd', true)
 		}
 		if (children) { return true }
 		return false

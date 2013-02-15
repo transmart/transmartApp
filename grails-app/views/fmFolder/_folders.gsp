@@ -1,3 +1,10 @@
+<%! import com.recomdata.util.* %>
+<%
+    def ontologyService = grailsApplication.classLoader.loadClass('transmartapp.OntologyService').newInstance()
+	def fmFolderService = grailsApplication.classLoader.loadClass('fm.FmFolderService').newInstance()
+%>
+<g:set var="ontologyService" bean="ontologyService"/>
+<g:set var="fmFolderService" bean="fmFolderService"/>
 <g:set var="ts" value="${Calendar.instance.time.time}" />
 
 <div class="search-results-table">
@@ -7,17 +14,21 @@
 				
 				<tr>
 					<td class="foldertitle">
+						<g:set var="folderIconType" value="${folder.folderType.toLowerCase()}"/>
+						<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) && ontologyService.checkSubjectLevelData(fmFolderService.getAssociatedAccession(folder))}">
+							<g:set var="folderIconType" value="studywsubject"/>
+						</g:if>
 						<span>
 							<g:if test="${folder.hasChildren()}">
 								<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false');">
 									<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderplus.png')}" />
-								    <span class="foldericon ${folder.folderType.toLowerCase()}"></span>
+								    <span class="foldericon ${folderIconType}"></span>
 								</a>
 							</g:if>
 							<g:else>
 								<a id="toggleDetail_${folder.id}" href="#">
 									<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderleaf.png')}" />
-								    <span class="foldericon ${folder.folderType.toLowerCase()}"></span>
+								    <span class="foldericon ${folderIconType}"></span>
 								</a>
 							</g:else>
 						</span>
