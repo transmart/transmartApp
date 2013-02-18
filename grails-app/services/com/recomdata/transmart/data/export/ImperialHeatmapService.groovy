@@ -65,7 +65,7 @@ class ImperialHeatmapService {
 
 		String rScriptDirectory = config.com.recomdata.transmart.data.export.rScriptDirectory;
 		log.debug("wsc rScriptDirectory: " + rScriptDirectory);
-		execute("/usr/local/R/bin/Rscript ${rScriptDirectory}/GeneExpression/Microarray.R " + wscFile1 + " " + wscFile2 + " &");
+		execute("/usr/bin/Rscript ${rScriptDirectory}/GeneExpression/Microarray.R " + wscFile1 + " " + wscFile2 + " &");
 
 		def resultList = readFilteredResultFromFile(wscFile1);
 
