@@ -38,8 +38,8 @@ function getImperialHeatmapData()
 	        'result_instance_id2': GLOBAL.CurrentSubsetIDs[2]
 		},
 		success : function(result, request) {
-			p.body.unmask();
-			p.setBody(result.responseText);
+			analysisHeatmapPanel.body.unmask();
+			analysisHeatmapPanel.setBody(result.responseText);
 			completeImperialHeatMapData();
 		},
 		failure : function(result, request) {
