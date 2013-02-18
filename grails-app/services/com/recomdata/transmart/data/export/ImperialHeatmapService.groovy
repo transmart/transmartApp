@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -35,7 +37,9 @@ class ImperialHeatmapService {
 	def geneExpressionDataService
 	def grailsApplication
 	def dataCountService
+	
 	def dataSource
+	def config = ConfigurationHolder.config
 
 	def getData(params) {
 		def dataTypesMap = grailsApplication.config.com.recomdata.transmart.data.export.dataTypesMap
