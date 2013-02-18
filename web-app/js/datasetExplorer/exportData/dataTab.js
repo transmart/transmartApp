@@ -22,6 +22,21 @@ var exportMetadataStore;
 
 function getImperialHeatMapData()
 {
+	Ext.Ajax.request({
+		url : pageInfo.basePath + "/imperialHeatmap/getData",
+		method : 'POST',
+		params : {result_instance_id1: GLOBAL.CurrentSubsetIDs[1], 
+	          	  result_instance_id2: GLOBAL.CurrentSubsetIDs[2]}
+		success : function(result, request) {
+			p.body.unmask();
+			p.setBody(result.responseText);
+			completeImperialHeatMapData();
+		},
+		failure : function(result, request) {
+			
+		},
+		timeout : '600000'
+	})
 	exportMetadataStore = new Ext.data.JsonStore({
 		url : pageInfo.basePath+'/dataExport/getImperialHeatmapData',
 		root : 'exportMetaData',
@@ -45,7 +60,7 @@ function completeImperialHeatMapData()
 function getDatadata()
 {
 	exportMetadataStore = new Ext.data.JsonStore({
-		url : pageInfo.basePath+'/dataExport/getImperialHeatmapData',
+		url : pageInfo.basePath+'/dataExport/getMetaData',
 		root : 'exportMetaData',
 		fields : ['subsetId1', 'subsetName1', 'subset1', 'subsetId2', 'subsetName2', 'subset2', 'dataTypeId', 'dataTypeName', 'metadataExists'],
 		autoLoad : false
