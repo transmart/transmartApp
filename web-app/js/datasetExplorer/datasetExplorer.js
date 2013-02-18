@@ -472,8 +472,8 @@ Ext.onReady(function()
 								text : 'Advanced',
 								iconCls : 'comparebutton',
 								// TODO -- To be Reviewed (f.guitton@imperial.ac.uk)
-								// hidden : GLOBAL.EnableGP!='true',
-								hidden : false,
+								hidden : GLOBAL.EnableGP!='true',
+								// hidden : false,
 								// --
 								menu : advmenu,
 								handler : function()
@@ -848,10 +848,15 @@ Ext.onReady(function()
 					split : true,
 					height : 90,
 					layout : 'fit',
-					//autoLoad : getDatadata,
 					listeners :
 					{
 						activate : function(p) {
+							GLOBAL.CurrentSubsetIDs[1] = null;
+							GLOBAL.CurrentSubsetIDs[2] = null;
+							p.body.mask("Magic is happening ...", 'x-mask-loading');
+							runAllQueries(getImperialHeatMapData, p);
+			        	 	return;
+			        	 	/*
 							GLOBAL.CurrentSubsetIDs[1] = null;
 							GLOBAL.CurrentSubsetIDs[2] = null;
 							p.body.mask("Magic is happening ...", 'x-mask-loading');
@@ -869,6 +874,7 @@ Ext.onReady(function()
 							})
 							//runAllQueries(getDatadata, p);
 			        	 	return;
+			        	 	*/
 						},
 						deactivate: function(){
 							//resultsTabPanel.tools.help.dom.style.display="none";
