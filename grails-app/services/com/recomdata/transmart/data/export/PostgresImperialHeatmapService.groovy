@@ -44,7 +44,7 @@ import org.rosuda.REngine.Rserve.RConnection;
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 import java.io.BufferedReader;
 
-class PostgresExportService {
+class PostgresImperialHeatmapService {
 
 	static transactional = true
 	def geneExpressionDataService
