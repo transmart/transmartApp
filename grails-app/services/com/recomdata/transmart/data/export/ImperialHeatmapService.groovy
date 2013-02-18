@@ -127,7 +127,7 @@ class ImperialHeatmapService {
 		}
 
 		result.put("success", true)
-		result.put('exportMetaData', rows)
+		result.put('imperialHeatmapData', rows)
 		// wsc add microarray data
 		result.put("microarray", resultList);
 		return result
