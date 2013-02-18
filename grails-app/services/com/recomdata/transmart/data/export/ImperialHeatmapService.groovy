@@ -33,6 +33,7 @@ class ImperialHeatmapService {
 
 	boolean transactional = true
 	def geneExpressionDataService
+	def grailsApplication
 	def dataCountService
 	def dataSource
 
