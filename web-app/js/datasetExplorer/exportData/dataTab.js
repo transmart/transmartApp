@@ -20,7 +20,7 @@
 
 var exportMetadataStore;
 
-function getImperialHeatMapData()
+function getImperialHeatmapData()
 {
 	Ext.Ajax.request({
 		url : pageInfo.basePath + "/imperialHeatmap/getData",
@@ -37,22 +37,9 @@ function getImperialHeatMapData()
 		},
 		timeout : '600000'
 	})
-	exportMetadataStore = new Ext.data.JsonStore({
-		url : pageInfo.basePath+'/dataExport/getImperialHeatmapData',
-		root : 'exportMetaData',
-		fields : ['subsetId1', 'subsetName1', 'subset1', 'subsetId2', 'subsetName2', 'subset2', 'dataTypeId', 'dataTypeName', 'metadataExists'],
-		autoLoad : false
-	});
-	
-	exportMetadataStore.load({
-		params : {result_instance_id1: GLOBAL.CurrentSubsetIDs[1], 
-		          result_instance_id2: GLOBAL.CurrentSubsetIDs[2]}
-	});
-	
-	exportMetadataStore.on('load', completeImperialHeatMapData);
 }
 
-function completeImperialHeatMapData()
+function completeImperialHeatmapData()
 {
 	console.log("All set !");
 }

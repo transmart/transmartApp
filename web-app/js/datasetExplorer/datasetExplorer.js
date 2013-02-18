@@ -854,27 +854,8 @@ Ext.onReady(function()
 							GLOBAL.CurrentSubsetIDs[1] = null;
 							GLOBAL.CurrentSubsetIDs[2] = null;
 							p.body.mask("Magic is happening ...", 'x-mask-loading');
-							runAllQueries(getImperialHeatMapData, p);
+							runAllQueries(getImperialHeatmapData, p);
 			        	 	return;
-			        	 	/*
-							GLOBAL.CurrentSubsetIDs[1] = null;
-							GLOBAL.CurrentSubsetIDs[2] = null;
-							p.body.mask("Magic is happening ...", 'x-mask-loading');
-							Ext.Ajax.request({
-								url : pageInfo.basePath + "/imperialHeatmap/",
-								method : 'POST',
-								success : function(result, request) {
-									p.body.unmask();
-									p.setBody(result.responseText);
-								},
-								failure : function(result, request) {
-									
-								},
-								timeout : '600000'
-							})
-							//runAllQueries(getDatadata, p);
-			        	 	return;
-			        	 	*/
 						},
 						deactivate: function(){
 							//resultsTabPanel.tools.help.dom.style.display="none";
