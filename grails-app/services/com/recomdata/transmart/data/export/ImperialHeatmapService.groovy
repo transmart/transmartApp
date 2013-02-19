@@ -330,7 +330,7 @@ class ImperialHeatmapService {
 		try {
 			// delete temp file
 			fileTobeDel = new File(File1);
-			fileTobeDel.delete();
+			//fileTobeDel.delete();
 		} catch (Exception e) {
 			log.error(e.getStackTrace());
 		}
