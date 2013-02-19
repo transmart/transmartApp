@@ -65,7 +65,9 @@ function completeImperialHeatmapData(data)
 		}
 		table.appendChild(line);
 	}
-	analysisHeatmapPanel.setBody(table);
+	var tmp = document.createElement("div");
+	tmp.appendChild(table);
+	analysisHeatmapPanel.setBody(tmp.innerHTML);
 }
 
 function getDatadata()
