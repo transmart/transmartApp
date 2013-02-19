@@ -44,6 +44,7 @@ var exportURL = "${createLink([controller:'fileExport', action:'export'])}";
 
 var folderContentsURL = "${createLink([controller:'fmFolder',action:'getFolderContents'])}";
 var folderDetailsURL = "${createLink(controller:'fmFolder',action:'folderDetail')}";
+var analysisDataURL = "${createLink([controller:'fmFolder',action:'analysisTable'])}";
 var editMetaDataURL = "${createLink([controller:'fmFolder',action:'editMetaData'])}";
 var createAnalysisURL = "${createLink([controller:'fmFolder',action:'createAnalysis'])}";
 var createAssayURL = "${createLink([controller:'fmFolder',action:'createAssay'])}";

@@ -27,6 +27,8 @@ import annotation.AmTagTemplateAssociation
 import annotation.AmTagValue;
 import auth.AuthUser;
 
+import bio.BioAssayAnalysis;
+import bio.BioAssayAnalysisData;
 import bio.BioData
 import bio.ConceptCode
 import bio.Experiment
@@ -1013,6 +1015,7 @@ class FmFolderController {
 		return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.activeInd = true and fd.folderFullName like :fn and fd.folderLevel= :fl ", [fl: folder.folderLevel+1, fn:folder.folderFullName+"%"])
 	}
 
+
 	private String createDataTable(folders, folderType)
 	{
 		
@@ -1219,34 +1222,68 @@ class FmFolderController {
 				   platforms = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT name FROM BioAssayPlatform as p ORDER BY p.name")
 			   }
 			   			   
-				// If the folder is a study then get the analysis and the assay
-				// if (folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) || folder.folderType.equalsIgnoreCase(FolderType.PROGRAM.name()))
-				// {
-					def subFolderTypes = getChildrenFolderTypes(folder.id)
-					log.info "subFolderTypes = " + subFolderTypes
-					subFolderTypes.each
+				def subFolderTypes = getChildrenFolderTypes(folder.id)
+				log.info "subFolderTypes = " + subFolderTypes
+				subFolderTypes.each
+				{
+					log.info "it = " + it
+					subFolders = getChildrenFolderByType(folder.id, it)
+					if(subFolders!=null && subFolders.size()>0)
 					{
-						log.info "it = " + it
-						subFolders = getChildrenFolderByType(folder.id, it)
-						if(subFolders!=null && subFolders.size()>0)
-						{
-							log.info(subFolders.size() + " subFolders == " + subFolders)
+						log.info(subFolders.size() + " subFolders == " + subFolders)
 
-								subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
-								String gridTitle = "Associated " + StringUtils.capitalize(subFolders[0].pluralFolderTypeName.toLowerCase())
-								String gridData = createDataTable(subFolders, gridTitle)
-							//	log.info gridData
-								jSONForGrids.add(gridData)
-								log.info "ADDING JSON GRID"
-						}
+							subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
+							String gridTitle = "Associated " + StringUtils.capitalize(subFolders[0].pluralFolderTypeName.toLowerCase())
+							String gridData = createDataTable(subFolders, gridTitle)
+						//	log.info gridData
+							jSONForGrids.add(gridData)
+							log.info "ADDING JSON GRID"
 					}
-				// }
+				}
 			}
 		}
 		
 		log.info "FolderInstance = " + bioDataObject.toString()
 		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, measurements:measurements, technologies:technologies, vendors:vendors, platforms:platforms, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems, jSONForGrids: jSONForGrids, subjectLevelDataAvailable: subjectLevelDataAvailable])
 		
+	}
+	
+	def analysisTable = {
+		
+		def analysisId = params.id
+		
+		def criteriaParams = [:]
+		if (!params.full) {
+			criteriaParams.put('max', 1000)
+		}
+		def rows = BioAssayAnalysisData.createCriteria().list (criteriaParams) {
+			eq('analysis', BioAssayAnalysis.get(analysisId))
+			order('rawPvalue', 'asc')
+		}
+		
+		ExportTableNew table = new ExportTableNew()
+		table.putColumn("pvalue", new ExportColumn("pvalue", "p-value", "", 'Number'));
+		table.putColumn("apvalue", new ExportColumn("apvalue", "Adjusted p-value", "", 'Number'));
+		table.putColumn("ppvalue", new ExportColumn("ppvalue", "Preferred p-value", "", 'Number'));
+		table.putColumn("teapvalue", new ExportColumn("teapvalue", "TEA-adjusted p-value", "", 'Number'));
+		table.putColumn("foldchangeratio", new ExportColumn("foldchangeratio", "Fold Change Ratio", "", 'Number'));
+		table.putColumn("gene", new ExportColumn("gene", "Gene", "", 'String'));
+		
+		rows.each {
+			ExportRowNew newrow=new ExportRowNew()
+			newrow.put("pvalue",it.rawPvalue.toString());
+			newrow.put("apvalue",it.adjustedPvalue.toString());
+			newrow.put("ppvalue",it.preferredPvalue.toString());
+			newrow.put("teapvalue",it.teaNormalizedPValue.toString());
+			newrow.put("foldchangeratio",it.foldChangeRatio.toString());
+			newrow.put("gene",it.featureGroup.markers*.name.join(", "));
+			table.putRow(it.id.toString(), newrow);
+		}
+		
+		def analysisData = table.toJSON_DataTables("", "Analysis Data");
+		analysisData.put("rowCount", rows.getTotalCount())
+		
+		render (contentType: "text/json", text: analysisData.toString(5))
 	}
 
 	

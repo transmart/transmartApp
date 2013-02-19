@@ -198,6 +198,31 @@
 	        </div>
          </g:each>
          
+<%-- If this is an analysis, provide a div for analysis data --%>
+<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())}">
+	<center><div id="partialanalysiswarning" class="messagebox" style="display: none;">Displaying the first 1000 rows. <a id="loadfullanalysis" href="#" onclick="loadFullAnalysisData(${bioDataObject.id})">Load all X</a></div></center>
+	<div id="gridViewWrapperAnalysis" class="ajaxloading">
+	</div>
+	<script type="text/javascript">
+    $j(document).ready(function() 
+    {
+		$j.ajax({
+			url:analysisDataURL,
+			data: {id: ${bioDataObject.id}},
+			success: function(response) {
+				jQuery('#gridViewWrapperAnalysis').removeClass('ajaxloading');
+		 	 	var dtAnalysis  = new dataTableWrapper('gridViewWrapperAnalysis', 'gridViewTableAnalysis', 'Title');
+		   		dtAnalysis.loadData(response);
+		   		if (response.rowCount > 1000) {
+			   		jQuery('#loadfullanalysis').text('Load all ' + response.rowCount + ' rows')
+		   			jQuery('#partialanalysiswarning').show();
+		   		}
+			}
+		});
+    });
+</script>
+</g:if>
+         
 <!--  overlay div  -->
 
 <g:overlayDiv divId="${overlayDiv}" />

@@ -374,7 +374,7 @@
                     data.bProcessing = true;
                     data.bLengthChange = false;
                     data.bScrollCollapse = false;
-                    data.iDisplayLength = 100;
+                    data.iDisplayLength = 25;
                     data.sDom = "<\"top\"<\"gridTitle\">p>Rrt<\"clear\">"
                 }
             }

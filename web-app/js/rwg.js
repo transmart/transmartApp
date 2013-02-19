@@ -2568,6 +2568,23 @@ function openPlotOptions() {
 	}
 }
 
+function loadFullAnalysisData(analysisId) {
+	jQuery('#partialanalysiswarning').hide();
+	jQuery('#gridViewWrapperAnalysis').empty().addClass('ajaxloading');
+	$j.ajax({
+		url:analysisDataURL,
+		data: {id: analysisId, full: true},
+		success: function(response) {
+			jQuery('#gridViewWrapperAnalysis').removeClass('ajaxloading');
+	 	 	var dtAnalysis  = new dataTableWrapper('gridViewWrapperAnalysis', 'gridViewTableAnalysis', 'Title');
+	   		dtAnalysis.loadData(response);
+		},
+		error: function(xhr) {
+			alert(xhr.message);
+		}
+	});
+}
+
 function toggleSidebar() {
 	var sidebarIsVisible = (jQuery('#sidebar:visible').size() > 0);
 	if (sidebarIsVisible) {
