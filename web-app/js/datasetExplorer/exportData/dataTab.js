@@ -39,8 +39,7 @@ function getImperialHeatmapData()
 		},
 		success : function(result, request) {
 			analysisHeatmapPanel.body.unmask();
-			analysisHeatmapPanel.setBody(result.responseText);
-			completeImperialHeatMapData();
+			completeImperialHeatMapData(result.responseText);
 		},
 		failure : function(result, request) {
 			
@@ -49,9 +48,24 @@ function getImperialHeatmapData()
 	})
 }
 
-function completeImperialHeatmapData()
+function completeImperialHeatmapData(data)
 {
 	console.log("All set !");
+	bonjour = eval('(' + data + ')');
+	
+	table = document.createElement('table');
+	for(j = 0; j <  bonjour['microarray'].length; j++)
+	{
+		line = document.createElement('tr');
+		for(i = 0; i < bonjour['microarray'][j].length; i++)
+		{
+			cell = document.createElement('td');
+			cell.appendChild(document.createTextNode(bonjour['microarray'][j][i]));
+			line.appendChild(cell)
+		}
+		table.appendChild(line);
+	}
+	analysisHeatmapPanel.setBody(table);
 }
 
 function getDatadata()
