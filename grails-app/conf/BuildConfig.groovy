@@ -22,7 +22,7 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
-//grails.plugin.location.rmodules = "C:\\SVN\\repo1\\pharma\\transmart\\trunk\\plugins\\Rmodules"
+//grails.plugin.location.rmodules = "../Rmodules"
 
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 grails.project.dependency.resolution = {
@@ -42,10 +42,10 @@ grails.project.dependency.resolution = {
 
         mavenLocal()
         mavenCentral()
-        mavenRepo "http://snapshots.repository.codehaus.org"
-        mavenRepo "http://repository.codehaus.org"
-        mavenRepo "http://download.java.net/maven/2/"
-        mavenRepo "http://repository.jboss.com/maven2/"
+        //mavenRepo "http://snapshots.repository.codehaus.org"
+        //mavenRepo "http://repository.codehaus.org"
+        //mavenRepo "http://download.java.net/maven/2/"
+        //mavenRepo "http://repository.jboss.com/maven2/"
     }
     dependencies {
 		// specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
@@ -57,10 +57,11 @@ grails.project.dependency.resolution = {
         compile ":hibernate:$grailsVersion"
         build ":tomcat:$grailsVersion"
         compile ":quartz:1.0-RC2"
-        // build ":rdc-rmodules:0.2"
+        compile ":rdc-rmodules:0.2"
         compile ":spring-security-core:1.2.7.3"
         build ":build-info:1.1"
 		runtime ":prototype:1.0"
 		compile ":resources:1.1.6"
     }
 }
+
