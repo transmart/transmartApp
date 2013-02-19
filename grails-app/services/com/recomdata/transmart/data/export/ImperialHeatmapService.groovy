@@ -311,8 +311,8 @@ class ImperialHeatmapService {
 				row = new ArrayList<String>();
 				while (stin.hasMoreTokens()) {
 					String str = stin.nextToken();
-					str = str.replace("\"", "");
-					str = str.replace("\\", "");
+					//str = str.replace("\"", "");
+					//str = str.replace("\\", "");
 					row.add(str);
 				}
 				resultList.add(row);
