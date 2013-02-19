@@ -270,6 +270,13 @@ table.menuDetail th.menuVisited {
 	background-position: 4px 50%;	
 }
 
+.greybutton.buttonloading {
+	padding-left: 24px;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+	background-image: url('../images/ajax-loader-flat.gif');
+}
+
 .greybutton.addprogram { background-image: url('../images/addprogram.png'); }
 .greybutton.addstudy { background-image: url('../images/addstudy.png'); }
 .greybutton.addassay { background-image: url('../images/addassay.png'); }

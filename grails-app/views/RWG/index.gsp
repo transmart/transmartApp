@@ -108,8 +108,12 @@
 	            });
 	            
 	            jQuery("#editMetadataOverlay").on('click', '#savemetadatabutton', function() {
+		            if (jQuery(this).hasClass('buttonloading')) {return false; }
+		            
 	            	var protoForm = $('editMetadataForm');
 		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#savemetadatabutton').addClass('buttonloading').html("&nbsp;");
+		            
             		jQuery.ajax({
 						url:saveMetaDataURL + "?" + serializedForm,	
 						success: function(response) {
@@ -117,6 +121,7 @@
 							showDetailDialog(response.id);
 						},
 						error: function(xhr) {
+						jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
 						alert(xhr);
 						}
 					});
