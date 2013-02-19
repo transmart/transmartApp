@@ -1161,16 +1161,7 @@ class FmFolderController {
 //		log.info ("createDisplayString::TAGVALUES == " + tagValues)
 		
 		def displayValue = ""
-		def counter = 0
-						
-		tagValues.each
-		{
-			log.info("createDisplayString::TAGVALUE = " + it)
-			displayValue += counter>0? ", " + it.displayValue : it.displayValue
-		}
-		
-		if(displayValue == null) displayValue = ""
-		
+		if (tagValues) { displayValue = tagValues*.displayValue.join(", ") }
 		return displayValue
 	}
 	

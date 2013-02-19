@@ -357,6 +357,8 @@
                         });
 
                     };
+                    
+                    data.fnInitComplete = function() {this.fnAdjustColumnSizing();};
 
                     $j('#' + tableId).dataTable(data);
 

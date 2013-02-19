@@ -41,9 +41,10 @@ public class SearchKeywordService {
 	
 	//Hard-coded list of items that we consider filter categories... configure in Config/database?
 	def filtercats = [
+		
+		[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
 		[codeTypeName: "THERAPEUTIC_DOMAIN", category: "THERAPEUTIC_DOMAIN", displayName: "Program Therapeutic Domain"],
 		[codeTypeName: "PROGRAM_INSTITUTION", category: "PROGRAM_INSTITUTION", displayName: "Program Institution"],
-		[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
 		
 		[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
 		[codeTypeName: "STUDY_OBJECTIVE", category: "STUDY_OBJECTIVE", displayName: "Study Objective"],
@@ -52,18 +53,16 @@ public class SearchKeywordService {
 		[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
 		[codeTypeName: "STUDY_INSTITUTION", category: "STUDY_INSTITUTION", displayName: "Study Institution"],
 		
-		[codeTypeName: "ASSAY_TYPE_OF_BM_STUDIED", category: "ASSAY_TYPE_OF_BM_STUDIED", displayName: "Assay Biomarker Studied"],
-		
-		[category: "ASSAY_PLATFORM_NAME", displayName: "Assay Platform Name", useText: true, platformProperty: 'name'],
+		[codeTypeName: "ASSAY_TYPE_OF_BM_STUDIED", category: "ASSAY_TYPE_OF_BM_STUDIED", displayName: "Assay Type of Biomarkers"],
 		[category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true, platformProperty: 'platformType'],
 		[category: "ASSAY_TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true, platformProperty: 'platformTechnology'],
 		[category: "ASSAY_VENDOR", displayName: "Assay Vendor", prefix: true, useText: true, platformProperty: 'vendor'],
+		[category: "ASSAY_PLATFORM_NAME", displayName: "Assay Platform Name", useText: true, platformProperty: 'name'],
 		
-		[category: "ANALYSIS_PLATFORM_NAME", displayName: "Analysis Platform Name", useText: true, platformProperty: 'name'],
 		[category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true, platformProperty: 'platformType'],
 		[category: "ANALYSIS_TECHNOLOGY", displayName: "Analysis Technology", prefix: true, useText: true, platformProperty: 'platformTechnology'],
-		[category: "ANALYSIS_VENDOR", displayName: "Analysis Vendor", prefix: true, useText: true, platformProperty: 'vendor']
-
+		[category: "ANALYSIS_VENDOR", displayName: "Analysis Vendor", prefix: true, useText: true, platformProperty: 'vendor'],
+		[category: "ANALYSIS_PLATFORM_NAME", displayName: "Analysis Platform Name", useText: true, platformProperty: 'name']
 	]
 
 	/** Finds all of the search categories pertaining to search keywords */
