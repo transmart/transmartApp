@@ -39,7 +39,7 @@ function getImperialHeatmapData()
 		},
 		success : function(result, request) {
 			analysisHeatmapPanel.body.unmask();
-			completeImperialHeatMapData(result.responseText);
+			completeImperialHeatmapData(result.responseText);
 		},
 		failure : function(result, request) {
 			
