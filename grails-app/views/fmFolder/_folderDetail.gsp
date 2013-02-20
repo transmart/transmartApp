@@ -211,8 +211,10 @@
 			data: {id: ${bioDataObject.id}},
 			success: function(response) {
 				jQuery('#gridViewWrapperAnalysis').removeClass('ajaxloading');
-		 	 	var dtAnalysis  = new dataTableWrapper('gridViewWrapperAnalysis', 'gridViewTableAnalysis', 'Title');
-		   		dtAnalysis.loadData(response);
+				if (response.rowCount > 0) {
+			 	 	var dtAnalysis  = new dataTableWrapper('gridViewWrapperAnalysis', 'gridViewTableAnalysis', 'Title');
+			   		dtAnalysis.loadData(response);
+				}
 		   		if (response.rowCount > 1000) {
 			   		jQuery('#loadfullanalysis').text('Load all ' + response.rowCount + ' rows')
 		   			jQuery('#partialanalysiswarning').show();

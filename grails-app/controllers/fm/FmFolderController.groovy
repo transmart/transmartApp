@@ -1744,6 +1744,27 @@ class FmFolderController {
 		render(template: "selectVendors", model: [vendors:vendors])
 	}
 	
+	def ajaxMeasurements =
+	{
+		log.info params
+		def queryString = " where 1=1"
+
+		if(params.technologyName!=null&&params.technologyName != 'null')
+		{
+			queryString += " and platformTechnology = '" + params.technologyName  + "'"
+		}
+		
+		if(params.vendorName!=null&&params.vendorName != 'null')
+		{
+			queryString += " and vendor = '" + params.vendorName + "'"
+		}
+
+		queryString = "SELECT DISTINCT platformType FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.platformType"
+		def measurements  = bio.BioAssayPlatform.executeQuery(queryString)
+		log.info queryString + " " + measurements
+		render(template: "selectMeasurements", model: [measurements:measurements])
+	}
+	
 	private boolean isAdmin() {
 		if("anonymousUser" != springSecurityService.getPrincipal())
 		{
