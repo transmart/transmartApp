@@ -79,6 +79,7 @@ function completeImperialHeatmapData(data)
 		{
 			cell = document.createElement('td');
 			cell.appendChild(document.createTextNode(bonjour['microarray'][j][i]));
+			cell.style.padding="2px";
 			if (i && j && (bonjour['microarray'][0][i].substr(0, 1) == "S"))
 			{
 				if ((tmp = parseFloat(bonjour['microarray'][j][i])) >= (min + max) / 2)
@@ -94,7 +95,6 @@ function completeImperialHeatmapData(data)
 	table.style.fontSize="10px";
 	table.style.fontFamily="tahoma,arial,helvetica";
 	table.cellSpacing="0";
-	table.cellPadding="2";
 	
 	var tmp = document.createElement("div");
 	tmp.appendChild(table);
