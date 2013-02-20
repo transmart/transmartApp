@@ -226,6 +226,17 @@ function createSearchTabs(toolbar) {
                 defaultSrc: pageData.genego.resultsUrl,
                 tabTip: pageData.genego.credentials
             }
+            ,
+            {
+                id: "tab18",
+                iconCls: "cortellisTab",
+                title: "Cortellis",
+                listeners: {activate: activateTab},
+                xtype: "iframepanel",
+                closable: false,
+                loadMask: true,
+                defaultSrc: pageData.cortellis.resultsUrl
+            }
             
         ]
     });
@@ -897,3 +908,4 @@ function validateDocumentFilters() {
     }
     return true;
 }
+
