@@ -1,4 +1,3 @@
-package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -19,55 +18,20 @@ package org.transmart
  ******************************************************************/
   
 
-/**
- * $Id: SearchResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
-class SearchResult {
+package com.thomsonreuters.lsps.transmart.search
 
-	def countmap =[:]
-	
-	// trial tab 
-	int analysisCount = 0
-	int trialCount = 0
-	
-	// mRNA tab
-	int mRNAAnalysisCount = 0
-	int experimentCount = 0
-	int allAnalysiCount = 0
-	
-	// Cortellis tab - currently not used
-	int cortellisCount = 0
-	
-	int documentCount = 0
-	int litJubOncAltCount = 0
-	int litJubOncInhCount = 0
-	int litJubOncIntCount = 0
-	int litJubAsthmaAltCount = 0
-	int litJubAsthmaInhCount = 0
-	int litJubAsthmaIntCount = 0
-	int litJubAsthmaPECount = 0
-	int resultCount = 0
-	int profileCount = 0
-	def summary
-	def result
-	String resultType
+import grails.test.*
 
-	def totalCount = {
-		return experimentCount + literatureCount() + trialCount + documentCount+ profileCount + cortellisCount
-	}
+class CortellisControllerTests extends GrailsUnitTestCase {
+    protected void setUp() {
+        super.setUp()
+    }
 
-	def litJubOncCount = {
-		return litJubOncAltCount + litJubOncInhCount + litJubOncIntCount
-	}
+    protected void tearDown() {
+        super.tearDown()
+    }
 
-	def litJubAsthmaCount = {
-		return litJubAsthmaAltCount + litJubAsthmaInhCount + litJubAsthmaIntCount + litJubAsthmaPECount
-	}
+    void testSomething() {
 
-	def literatureCount = {
-		return litJubOncCount() + litJubAsthmaCount()
-	}
-
+    }
 }
