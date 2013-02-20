@@ -55,7 +55,7 @@ function completeImperialHeatmapData(data)
 	table = document.createElement('table');
 	for(j = 0; j <  bonjour['microarray'].length; j++)
 		for(i = 0; i < bonjour['microarray'][j].length; i++)
-			if (i && j && (bonjour['microarray'][0][i].substr(0, 2) == "S1" || bonjour['microarray'][0][i].substr(0, 2) == "S2"))
+			if (i && j && (bonjour['microarray'][0][i].substr(0, 1) == "S"))
 			{
 				if (stt && !(stt = false))
 					min = max = parseFloat(bonjour['microarray'][j][i]);
@@ -79,7 +79,7 @@ function completeImperialHeatmapData(data)
 		{
 			cell = document.createElement('td');
 			cell.appendChild(document.createTextNode(bonjour['microarray'][j][i]));
-			if (i && j && (bonjour['microarray'][0][i].substr(0, 2) == "S1" || bonjour['microarray'][0][i].substr(0, 2) == "S2"))
+			if (i && j && (bonjour['microarray'][0][i].substr(0, 1) == "S"))
 			{
 				if ((tmp = parseFloat(bonjour['microarray'][j][i])) >= (min + max) / 2)
 					cell.style.backgroundColor="#" + rainbowR.colourAt(parseFloat(bonjour['microarray'][j][i]));
@@ -93,6 +93,8 @@ function completeImperialHeatmapData(data)
 	
 	table.style.fontSize="10px";
 	table.style.fontFamily="tahoma,arial,helvetica";
+	table.cellSpacing="0";
+	table.cellPadding="2";
 	
 	var tmp = document.createElement("div");
 	tmp.appendChild(table);
