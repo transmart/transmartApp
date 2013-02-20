@@ -117,8 +117,14 @@
             		jQuery.ajax({
 						url:saveMetaDataURL + "?" + serializedForm,	
 						success: function(response) {
-							jQuery('#editMetadataOverlay').fadeOut();
-							showDetailDialog(response.id);
+							if (response.errors != undefined) {
+								jQuery('#createProgram').scrollTop(0);
+								displayErrors(response.errors);
+								jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
+							} else {						
+								jQuery('#editMetadataOverlay').fadeOut();
+								showDetailDialog(response.id);
+							}
 						},
 						error: function(xhr) {
 						jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
@@ -204,12 +210,17 @@
 		        	jQuery.ajax({
 						url:saveProgramURL + "?" + serializedForm,	
 						success: function(response) {
-							showSearchResults();
-							jQuery('#createProgramOverlay').fadeOut();
-							showDetailDialog(response.id);
+							if (response.errors != undefined) {
+								jQuery('#createProgram').scrollTop(0);
+								displayErrors(response.errors);
+							} else {
+								showSearchResults();
+								jQuery('#createProgramOverlay').fadeOut();
+								showDetailDialog(response.id);
+							}
 						},
 						error: function(xhr) {
-						alert(xhr);
+							alert(xhr);
 						}
 					});
 	            });
@@ -385,6 +396,11 @@
                     data.sDom = "<\"top\"<\"gridTitle\">p>Rrt<\"clear\">"
                 }
             }
+            
+			function displayErrors(errors) {
+				var s = '<div class="errors">' + errors + '</div>';
+				jQuery("#displayErrors").empty().html(s);
+			}
 		
 //		var panel = createOntPanel()
 //		jQuery('#metadata-viewer').empty()

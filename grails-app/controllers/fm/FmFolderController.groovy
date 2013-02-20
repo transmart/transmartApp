@@ -18,6 +18,8 @@
  ******************************************************************/
 package fm
 
+import java.awt.event.ItemEvent;
+
 import annotation.AmData;
 import annotation.AmTagAssociation;
 import annotation.AmTagDisplayValue;
@@ -533,16 +535,17 @@ class FmFolderController {
 		}
 		else {
 			log.error "Unable to save program"
-			fmFolderInstance.errors.each {
-				log.error it
-			}
-			
-			def folder = fmFolderInstance
-			folder.folderType = FolderType.PROGRAM.name()
-			def bioDataObject = folder
-			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.PROGRAM.name())
-			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-			render(template: "createProgram", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+			def errors = g.renderErrors(bean:fmFolderInstance)
+			log.error errors
+			def result = [errors:errors]
+			render result as JSON
+
+//			def folder = fmFolderInstance
+//			folder.folderType = FolderType.PROGRAM.name()
+//			def bioDataObject = folder
+//			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.PROGRAM.name())
+//			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+//			render(template: "createProgram", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 		}
 	}
 
@@ -1595,17 +1598,25 @@ class FmFolderController {
 						return
 					}
 					else {
-						log.error "Errors occurred saving Meta data"
-						metaDataTagItems  =  getMetaDataItems(folder, true)
-						log.info "metaDataTagItems  = " + metaDataTagItems   
-						render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+						def errors = g.renderErrors(bean:bioDataObject)
+						log.error errors
+						def result = [errors:errors]
+						render result as JSON
+//						log.error "Errors occurred saving Meta data"
+//						metaDataTagItems  =  getMetaDataItems(folder, true)
+//						log.info "metaDataTagItems  = " + metaDataTagItems   
+//						render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 						//	render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
 					}
 				}
 				else
 				{
-					log.error "Errors occurred saving folder description"
-					render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+					def errors = g.renderErrors(bean:folder)
+					log.error errors
+					def result = [errors:errors]
+					render result as JSON
+//					log.error "Errors occurred saving folder description"
+//					render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 					
 				}
 			}
