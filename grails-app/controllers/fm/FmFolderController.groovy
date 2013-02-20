@@ -455,10 +455,14 @@ class FmFolderController {
 			return
 		}
 		else {
-			fmFolderInstance.errors.each {
-				log.error it
-			}
-			render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+			def errors = g.renderErrors(bean:fmFolderInstance)
+			log.error errors
+			def result = [errors:errors]
+			render result as JSON
+//			fmFolderInstance.errors.each {
+//				log.error it
+//			}
+//			render(view: "create", model: [fmFolderInstance: fmFolderInstance])
 		}
 	}
 
@@ -493,17 +497,21 @@ class FmFolderController {
 		}
 		else {
 			log.error "Saved folder failed"
-			fmFolderInstance.errors.each {
-				log.error it
-			}
-
-			def bioDataObject = fmFolderInstance
-			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.FOLDER.name())
-			if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
-			
-			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-			
-			render
+			def errors = g.renderErrors(bean:fmFolderInstance)
+			log.error errors
+			def result = [errors:errors]
+			render result as JSON
+//			fmFolderInstance.errors.each {
+//				log.error it
+//			}
+//
+//			def bioDataObject = fmFolderInstance
+//			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.FOLDER.name())
+//			if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
+//			
+//			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+//			
+//			render
 //			render(template: "createFolder", model:[bioDataObject:bioDataObject, folder:fmFolderInstance, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 		}
 	}
@@ -597,13 +605,17 @@ class FmFolderController {
 					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
 					render result as JSON
 					solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
-					return
+//					return
 				}
 				else
 				{
-					ffa.errors.each {
-						log.error it
-					}
+					def errors = g.renderErrors(bean:fmFolderInstance)
+					log.error errors
+					def result = [errors:errors]
+					render result as JSON
+//					ffa.errors.each {
+//						log.error it
+//					}
 				}
 				
 			}
@@ -611,12 +623,16 @@ class FmFolderController {
 		}
 		else
 		{
-			fmFolderInstance.errors.each {
-				log.error it
-			}
+			def errors = g.renderErrors(bean:fmFolderInstance)
+			log.error errors
+			def result = [errors:errors]
+			render result as JSON
+//			fmFolderInstance.errors.each {
+//				log.error it
+//			}
 		}
 		
-		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+//		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
 	}
 
 	
@@ -655,7 +671,7 @@ class FmFolderController {
 			if(!bioData){
 				 log.error "Biodata for " + bioDataObject.id + " is not found"
 			}
-			else{
+			else {
 				log.info "Study experiment saved " + bioDataObject.id
 				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.Experiment",fmFolder:fmFolderInstance)
 				if(ffa.save(flush: true))
@@ -669,22 +685,28 @@ class FmFolderController {
 				}
 				else
 				{
-					ffa.errors.each {
-						log.error it
-					} 
-				}
-				
+					def errors = g.renderErrors(bean:fmFolderInstance)
+					log.error errors
+					def result = [errors:errors]
+					render result as JSON
+//					ffa.errors.each {
+//						log.error it
+//					} 
+				}				
 			}
-
 		}
 		else 
 		{
-			fmFolderInstance.errors.each {
-				log.error it
-			}
+			def errors = g.renderErrors(bean:fmFolderInstance)
+			log.error errors
+			def result = [errors:errors]
+			render result as JSON
+//			fmFolderInstance.errors.each {
+//				log.error it
+//			}
 		}
 		
-		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+//		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
     }
 
 	

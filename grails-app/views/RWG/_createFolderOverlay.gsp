@@ -1,4 +1,5 @@
 <div id="createFolderOverlay" class="overlay" style="margin: 8px;">			        	
+	<div id="displayErrors"></div>
 	<div>
 		<div style="float: right;">
 			<span id="closefolder" class="greybutton buttonicon close">Close</span>
