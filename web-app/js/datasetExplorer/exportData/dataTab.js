@@ -53,7 +53,30 @@ function completeImperialHeatmapData(data)
 	console.log("All set !");
 	bonjour = eval('(' + data + ')');
 	
+	var min = [0, 0];
+	var max = [0, 0];
+	var stt = [true, true];
+	
+	min[0] = min[1] = max[0] = max[1] = 0;
+	stt[0] = stt[1] = true;
 	table = document.createElement('table');
+	for(j = 0; j <  bonjour['microarray'].length; j++)
+		for(i = 0; i < bonjour['microarray'][j].length; i++)
+			if (i && j)
+			{
+				if (bonjour['microarray'][0][i].substr(0, 2) == "S1")
+					minimax(0, parseFloat(bonjour['microarray'][j][i]));
+				if (bonjour['microarray'][0][i].substr(0, 2) == "S2")
+					minimax(1, parseFloat(bonjour['microarray'][j][i]));
+			}
+			
+	var rainbowL = new Rainbow(); 
+	var rainbowR = new Rainbow(); 
+	rainbowL.setSpectrum('F2D3D3', 'A11616');
+	rainbowL.setNumberRange(min[0], max[0]);
+	rainbowR.setSpectrum('D3D5F2', '163BA1');
+	rainbowR.setNumberRange(min[1], max[1]);
+			
 	for(j = 0; j <  bonjour['microarray'].length; j++)
 	{
 		line = document.createElement('tr');
@@ -61,13 +84,199 @@ function completeImperialHeatmapData(data)
 		{
 			cell = document.createElement('td');
 			cell.appendChild(document.createTextNode(bonjour['microarray'][j][i]));
+			if (i && j)
+			{
+				if (bonjour['microarray'][0][i].substr(0, 2) == "S1")
+					cell.style.backgroundColor="#" + rainbowL.colourAt(parseFloat(bonjour['microarray'][j][i]));
+				if (bonjour['microarray'][0][i].substr(0, 2) == "S2")
+					cell.style.backgroundColor="#" + rainbowR.colourAt(parseFloat(bonjour['microarray'][j][i]));
+			}
 			line.appendChild(cell)
 		}
 		table.appendChild(line);
 	}
-	var tmp = document.createElement("div");
-	tmp.appendChild(table);
-	analysisHeatmapPanel.setBody(tmp.innerHTML);
+	table.style.fontSize="10px";
+	table.style.fontFamily="tahoma,arial,helvetica";
+	document.body.appendChild(table);
+	
+	function minimax(idx, num) {
+		if (stt[idx] && !(stt[idx] = false))
+			min[idx] = max[idx] = num;
+		if (parseFloat(bonjour['microarray'][j][i]) < min[idx])
+			min[idx] = num;
+		if (parseFloat(bonjour['microarray'][j][i]) > max[idx])
+			max[idx] = num;
+	}
+	
+	function Rainbow()
+	{
+		var gradients = null;
+		var minNum = 0;
+		var maxNum = 100;
+		var colours = ['ff0000', 'ffff00', '00ff00', '0000ff']; 
+		setColours(colours);
+		
+		function setColours (spectrum) 
+		{
+			if (spectrum.length < 2) {
+				throw new Error('Rainbow must have two or more colours.');
+			} else {
+				var increment = (maxNum - minNum)/(spectrum.length - 1);
+				var firstGradient = new ColourGradient();
+				firstGradient.setGradient(spectrum[0], spectrum[1]);
+				firstGradient.setNumberRange(minNum, minNum + increment);
+				gradients = [ firstGradient ];
+				
+				for (var i = 1; i < spectrum.length - 1; i++) {
+					var colourGradient = new ColourGradient();
+					colourGradient.setGradient(spectrum[i], spectrum[i + 1]);
+					colourGradient.setNumberRange(minNum + increment * i, minNum + increment * (i + 1)); 
+					gradients[i] = colourGradient; 
+				}
+
+				colours = spectrum;
+				return this;
+			}
+		}
+
+		this.setColors = this.setColours;
+
+		this.setSpectrum = function () 
+		{
+			setColours(arguments);
+			return this;
+		}
+
+		this.setSpectrumByArray = function (array)
+		{
+			setColours(array);
+			return this;
+		}
+
+		this.colourAt = function (number)
+		{
+			if (isNaN(number)) {
+				throw new TypeError(number + ' is not a number');
+			} else if (gradients.length === 1) {
+				return gradients[0].colourAt(number);
+			} else {
+				var segment = (maxNum - minNum)/(gradients.length);
+				var index = Math.min(Math.floor((Math.max(number, minNum) - minNum)/segment), gradients.length - 1);
+				return gradients[index].colourAt(number);
+			}
+		}
+
+		this.colorAt = this.colourAt;
+
+		this.setNumberRange = function (minNumber, maxNumber)
+		{
+			if (maxNumber > minNumber) {
+				minNum = minNumber;
+				maxNum = maxNumber;
+				setColours(colours);
+			} else {
+				throw new RangeError('maxNumber (' + maxNumber + ') is not greater than minNumber (' + minNumber + ')');
+			}
+			return this;
+		}
+	}
+	function ColourGradient() 
+	{
+		var startColour = 'ff0000';
+		var endColour = '0000ff';
+		var minNum = 0;
+		var maxNum = 100;
+
+		this.setGradient = function (colourStart, colourEnd)
+		{
+			startColour = getHexColour(colourStart);
+			endColour = getHexColour(colourEnd);
+		}
+
+		this.setNumberRange = function (minNumber, maxNumber)
+		{
+			if (maxNumber > minNumber) {
+				minNum = minNumber;
+				maxNum = maxNumber;
+			} else {
+				throw new RangeError('maxNumber (' + maxNumber + ') is not greater than minNumber (' + minNumber + ')');
+			}
+		}
+
+		this.colourAt = function (number)
+		{
+			return calcHex(number, startColour.substring(0,2), endColour.substring(0,2)) 
+				+ calcHex(number, startColour.substring(2,4), endColour.substring(2,4)) 
+				+ calcHex(number, startColour.substring(4,6), endColour.substring(4,6));
+		}
+		
+		function calcHex(number, channelStart_Base16, channelEnd_Base16)
+		{
+			var num = number;
+			if (num < minNum) {
+				num = minNum;
+			}
+			if (num > maxNum) {
+				num = maxNum;
+			} 
+			var numRange = maxNum - minNum;
+			var cStart_Base10 = parseInt(channelStart_Base16, 16);
+			var cEnd_Base10 = parseInt(channelEnd_Base16, 16); 
+			var cPerUnit = (cEnd_Base10 - cStart_Base10)/numRange;
+			var c_Base10 = Math.round(cPerUnit * (num - minNum) + cStart_Base10);
+			return formatHex(c_Base10.toString(16));
+		}
+
+		formatHex = function (hex) 
+		{
+			if (hex.length === 1) {
+				return '0' + hex;
+			} else {
+				return hex;
+			}
+		} 
+		
+		function isHexColour(string)
+		{
+			var regex = /^#?[0-9a-fA-F]{6}$/i;
+			return regex.test(string);
+		}
+
+		function getHexColour(string)
+		{
+			if (isHexColour(string)) {
+				return string.substring(string.length - 6, string.length);
+			} else {
+				var colourNames =
+				[
+					['red', 'ff0000'],
+					['lime', '00ff00'],
+					['blue', '0000ff'],
+					['yellow', 'ffff00'],
+					['orange', 'ff8000'],
+					['aqua', '00ffff'],
+					['fuchsia', 'ff00ff'],
+					['white', 'ffffff'],
+					['black', '000000'],
+					['gray', '808080'],
+					['grey', '808080'],
+					['silver', 'c0c0c0'],
+					['maroon', '800000'],
+					['olive', '808000'],
+					['green', '008000'],
+					['teal', '008080'],
+					['navy', '000080'],
+					['purple', '800080']
+				];
+				for (var i = 0; i < colourNames.length; i++) {
+					if (string.toLowerCase() === colourNames[i][0]) {
+						return colourNames[i][1];
+					}
+				}
+				throw new Error(string + ' is not a valid colour.');
+			}
+		}
+	}
 }
 
 function getDatadata()
