@@ -80,7 +80,7 @@ class PostgresImperialHeatmapService {
 		return file
 	}
 
-	def getImperialHeatmapData(params) {
+	def getMetaData(params) {
 		def dataTypesMap = grailsApplication.config.com.recomdata.transmart.data.export.dataTypesMap
 
 		//The result instance id's are stored queries which we can use to get information from the i2b2 schema.
