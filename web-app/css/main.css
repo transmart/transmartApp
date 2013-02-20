@@ -810,6 +810,11 @@ table.jubsummary td {
     color:#ff0000;
 }
 
+.cortellisTab {
+    background-image:url(../images/thomsonreuters.png ) !important;
+    color:#ff0000;
+}
+
 .expTab {
     background-image:url(../images/ebi.png ) !important;
     color:#ff0000;
@@ -844,10 +849,6 @@ select.jubselect {
 
 .folderclose {
 	background-image:url(../images/folder-minus.gif);
-}
-
-.feedbackbutton {
-	background-image:url(../images/feedback.png) !important;
 }
 
 /* ExtJS customizations */

@@ -471,10 +471,7 @@ Ext.onReady(function()
 								id : 'advancedbutton',
 								text : 'Advanced',
 								iconCls : 'comparebutton',
-								// TODO -- To be Reviewed (f.guitton@imperial.ac.uk)
 								hidden : GLOBAL.EnableGP!='true',
-								// hidden : false,
-								// --
 								menu : advmenu,
 								handler : function()
 								{
@@ -839,7 +836,43 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
-		// TODO -- To be reviewed (f.guitton@imperial.ac.uk)
+		
+		metacoreEnrichmentPanel = new Ext.Panel(
+				{
+					id : 'metacoreEnrichmentPanel',
+					title : 'MetaCore Enrichment Analysis',
+					region : 'center',
+					split : true,
+					height : 90,
+					layout : 'fit',
+					//autoLoad : getExportJobs,
+					tbar : new Ext.Toolbar({
+						id : 'metacoreEnrichmentWorkflowToolbar',
+						title : 'Analysis menu',
+						items : []
+						}),
+					autoScroll : true,
+					autoLoad:
+			        {
+			        	url : pageInfo.basePath+'/metacoreEnrichment/index',
+			           	method:'GET',
+			           	// callback: setDataAssociationAvailableFlag,
+			           	evalScripts:true
+			        },
+					listeners :
+					{
+						activate : function(p) {
+							renderCohortSummaryMetaCoreEnrichment("cohortSummaryMetaCoreEnrichment");
+							initMetaCoreTab();
+						},
+						deactivate: function(){
+							//resultsTabPanel.tools.help.dom.style.display="none";
+						}
+					},
+					collapsible : true						
+				}
+		);
+
 		analysisHeatmapPanel = new Ext.Panel(
 				{
 					id : 'analysisHeatmapPanel',
@@ -864,6 +897,7 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
+		
 		// --
 		resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(dataAssociationPanel);
@@ -873,10 +907,10 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
-
-		// TODO -- To be reviewed (f.guitton@imperial.ac.uk)
 		resultsTabPanel.add(analysisHeatmapPanel);
-		// --
+		if (GLOBAL.metacoreAnalyticsEnabled) {
+			resultsTabPanel.add(metacoreEnrichmentPanel);
+		}
 		
 		southCenterPanel = new Ext.Panel(
 				{
@@ -1573,12 +1607,8 @@ function loginComplete(pmresponse)
 	else
 	{
 		// get the urls to the other important cells
-		// TODO -- To be reviewed (f.guitton@imperial.ac.uk)
 		GLOBAL.ONTUrl = oDomDoc.selectSingleNode("//cell_data[@id='ONT']/url").firstChild.nodeValue;
 		GLOBAL.CRCUrl = oDomDoc.selectSingleNode("//cell_data[@id='CRC']/url").firstChild.nodeValue;
-		//GLOBAL.ONTUrl = "http://146.169.35.149:9090/i2b2/rest/OntologyService/";
-		//GLOBAL.CRCUrl = "http://146.169.35.149:9090/i2b2/rest/QueryToolService/";
-		// --
 		if(GLOBAL.Debug)
 		{
 			alert(GLOBAL.ONTUrl);
