@@ -87,6 +87,8 @@ function completeImperialHeatmapData(data)
 				else
 					cell.style.backgroundColor="#" + rainbowL.colourAt(parseFloat(bonjour['microarray'][j][i]));
 			}
+			else if (j % 2)
+				cell.style.backgroundColor="#bcbcbc";
 			line.appendChild(cell)
 		}
 		table.appendChild(line);

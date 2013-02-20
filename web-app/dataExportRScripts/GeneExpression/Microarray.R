@@ -24,6 +24,7 @@ colnames(Data)[ncol(Data)] = "p-value"
 Data <- cbind(Data, matrix(Qval, length(Qval), 1))
 colnames(Data)[ncol(Data)] = "q-value"
 Data <- head(Data[order(Data[,"p-value"]),], n = 100L)
+Data <- order(Data[,"FC"])
 
 unlink(File1, recursive = FALSE, force = TRUE)
 unlink(File2, recursive = FALSE, force = TRUE)
