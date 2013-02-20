@@ -88,12 +88,14 @@ function completeImperialHeatmapData(data)
 					cell.style.backgroundColor="#" + rainbowL.colourAt(parseFloat(bonjour['microarray'][j][i]));
 			}
 			else if (j % 2)
-				cell.style.backgroundColor="#cccccc";
+				cell.style.backgroundColor="#dddddd";
 			line.appendChild(cell)
 		}
 		table.appendChild(line);
 	}
-	
+
+	table.style.width="100%";
+	table.style.padding="5px";
 	table.style.fontSize="10px";
 	table.style.fontFamily="tahoma,arial,helvetica";
 	table.cellSpacing="0";
