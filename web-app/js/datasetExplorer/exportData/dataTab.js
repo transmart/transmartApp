@@ -48,33 +48,29 @@ function getImperialHeatmapData()
 	})
 }
 
-var IHmin = [0, 0];
-var IHmax = [0, 0];
-var IHstt = [true, true];
-
 function completeImperialHeatmapData(data)
 {
 	bonjour = eval('(' + data + ')');
-	
-	IHmin[0] = IHmin[1] = IHmax[0] = IHmax[1] = 0;
-	IHstt[0] = IHstt[1] = true;
+	min = max = stt = true;
 	table = document.createElement('table');
 	for(j = 0; j <  bonjour['microarray'].length; j++)
 		for(i = 0; i < bonjour['microarray'][j].length; i++)
-			if (i && j)
+			if (i && j && (bonjour['microarray'][0][i].substr(0, 2) == "S1" || bonjour['microarray'][0][i].substr(0, 2) == "S2"))
 			{
-				if (bonjour['microarray'][0][i].substr(0, 2) == "S1")
-					IHminimax(0, parseFloat(bonjour['microarray'][j][i]));
-				if (bonjour['microarray'][0][i].substr(0, 2) == "S2")
-					IHminimax(1, parseFloat(bonjour['microarray'][j][i]));
+				if (stt && !(stt = false))
+					min = max = parseFloat(bonjour['microarray'][j][i]);
+				if (parseFloat(bonjour['microarray'][j][i]) < min)
+					min = parseFloat(bonjour['microarray'][j][i]);
+				if (parseFloat(bonjour['microarray'][j][i]) > max)
+					max = parseFloat(bonjour['microarray'][j][i]);
 			}
 			
 	var rainbowL = new Rainbow(); 
 	var rainbowR = new Rainbow(); 
-	rainbowL.setSpectrum('F2D3D3', 'A11616');
-	rainbowL.setNumberRange(IHmin[0], IHmax[0]);
-	rainbowR.setSpectrum('D3D5F2', '163BA1');
-	rainbowR.setNumberRange(IHmin[1], IHmax[1]);
+	rainbowL.setSpectrum('163BA1', 'D3D5F2');
+	rainbowL.setNumberRange(min, (min + max) / 2);
+	rainbowR.setSpectrum('F2D3D3', 'A11616');
+	rainbowR.setNumberRange((min + max) / 2, max);
 			
 	for(j = 0; j <  bonjour['microarray'].length; j++)
 	{
@@ -83,17 +79,18 @@ function completeImperialHeatmapData(data)
 		{
 			cell = document.createElement('td');
 			cell.appendChild(document.createTextNode(bonjour['microarray'][j][i]));
-			if (i && j)
+			if (i && j && (bonjour['microarray'][0][i].substr(0, 2) == "S1" || bonjour['microarray'][0][i].substr(0, 2) == "S2"))
 			{
-				if (bonjour['microarray'][0][i].substr(0, 2) == "S1")
-					cell.style.backgroundColor="#" + rainbowL.colourAt(parseFloat(bonjour['microarray'][j][i]));
-				if (bonjour['microarray'][0][i].substr(0, 2) == "S2")
+				if ((tmp = parseFloat(bonjour['microarray'][j][i])) >= (min + max) / 2)
 					cell.style.backgroundColor="#" + rainbowR.colourAt(parseFloat(bonjour['microarray'][j][i]));
+				else
+					cell.style.backgroundColor="#" + rainbowL.colourAt(parseFloat(bonjour['microarray'][j][i]));
 			}
 			line.appendChild(cell)
 		}
 		table.appendChild(line);
 	}
+	
 	table.style.fontSize="10px";
 	table.style.fontFamily="tahoma,arial,helvetica";
 	
@@ -101,15 +98,6 @@ function completeImperialHeatmapData(data)
 	tmp.appendChild(table);
 	analysisHeatmapPanel.setBody(tmp.innerHTML);
 	analysisHeatmapPanel.body.setStyle('overflow', 'auto');
-}
-
-function IHminimax(idx, num) {
-	if (IHmax[idx] && !(IHmax[idx] = false))
-		IHmin[idx] = IHmax[idx] = num;
-	if (parseFloat(bonjour['microarray'][j][i]) < IHmin[idx])
-		IHmin[idx] = num;
-	if (parseFloat(bonjour['microarray'][j][i]) > IHmax[idx])
-		IHmax[idx] = num;
 }
 
 function Rainbow()
