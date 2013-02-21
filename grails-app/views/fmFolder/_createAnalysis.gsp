@@ -8,12 +8,7 @@
 <g:hiddenField name="parentId" value="${folder?.parent.id}" />
 <g:set var="objectUid" value="${folder?.uniqueId}"/>
 
-<div id="displayErrors">
-<g:hasErrors bean="${folder}">
-  <div class="errors">
-      <g:renderErrors bean="${folder}" as="list" />
-  </div>
-</g:hasErrors>
+<div id="displayAnalysisErrors">
 </div>
 
 <table class="detail" height="300px">

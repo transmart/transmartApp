@@ -118,8 +118,8 @@
 						url:saveMetaDataURL + "?" + serializedForm,	
 						success: function(response) {
 							if (response.errors != undefined) {
-								jQuery('#createProgram').scrollTop(0);
-								displayErrors(response.errors);
+								jQuery('#editMetadataOverlay').scrollTop(0);
+								jQuery('#displayMetadataErrors').empty().html('<div class="errors">' + response.errors + '</div>');
 								jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
 							} else {						
 								jQuery('#editMetadataOverlay').fadeOut();
@@ -127,8 +127,8 @@
 							}
 						},
 						error: function(xhr) {
-						jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
-						alert(xhr);
+							jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
+							alert(xhr);
 						}
 					});
 	            });
@@ -141,15 +141,23 @@
 	            jQuery("#createAssayOverlay").on('click', '#saveassaybutton', function() {
 	            	var protoForm = $('createAssayForm');
 		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#saveassaybutton').addClass('buttonloading').html("&nbsp;");
             		jQuery.ajax({
 						url:saveAssayURL + "?" + serializedForm,	
 						success: function(response) {
-							updateFolder(response.parentId);
-							jQuery('#createAssayOverlay').fadeOut();
-							showDetailDialog(response.id);
+							if (response.errors != undefined) {
+								jQuery('#createAssayOverlay').scrollTop(0);
+								jQuery('#displayAssayErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#saveassaybutton').removeClass('buttonloading').text('Save');
+							} else {
+								updateFolder(response.parentId);
+								jQuery('#createAssayOverlay').fadeOut();
+								showDetailDialog(response.id);
+							}
 						},
 						error: function(xhr) {
-						alert(xhr);
+							alert(xhr);
+							jQuery('#saveassaybutton').removeClass('buttonloading').text('Save');
 						}
 					});
 	            });
@@ -163,15 +171,23 @@
 	            jQuery("#createFolderOverlay").on('click', '#savefolderbutton', function() {
 	            	var protoForm = $('createFolderForm');
 		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#savefolderbutton').addClass('buttonloading').html("&nbsp;");
             		jQuery.ajax({
 						url:saveFolderURL + "?" + serializedForm,	
 						success: function(response) {
-							updateFolder(response.parentId);
-							jQuery('#createFolderOverlay').fadeOut();
-							showDetailDialog(response.id);
+							if (response.errors != undefined) {
+								jQuery('#createFolderOverlay').scrollTop(0);
+								jQuery('#displayFolderErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#savefolderbutton').removeClass('buttonloading').text('Save');
+							} else {
+								updateFolder(response.parentId);
+								jQuery('#createFolderOverlay').fadeOut();
+								showDetailDialog(response.id);
+							}
 						},
 						error: function(xhr) {
-						alert(xhr);
+							alert(xhr);
+							jQuery('#savefolderbutton').removeClass('buttonloading').text('Save');
 						}
 					});
 	            });
@@ -185,15 +201,23 @@
 	            jQuery("#createStudyOverlay").on('click', '#savestudybutton', function() {
 	            	var protoForm = $('createStudyForm');
 		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#savestudybutton').addClass('buttonloading').html("&nbsp;");
             		jQuery.ajax({
 						url:saveStudyURL + "?" + serializedForm,	
 						success: function(response) {
-							updateFolder(response.parentId);
-							jQuery('#createStudyOverlay').fadeOut();
-							showDetailDialog(response.id);
+							if (response.errors != undefined) {
+								jQuery('#createStudyOverlay').scrollTop(0);
+								jQuery('#displayStudyErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#savestudybutton').removeClass('buttonloading').text('Save');
+							} else {
+								updateFolder(response.parentId);
+								jQuery('#createStudyOverlay').fadeOut();
+								showDetailDialog(response.id);
+							}
 						},
 						error: function(xhr) {
-						alert(xhr);
+							alert(xhr);
+							jQuery('#savestudybutton').removeClass('buttonloading').text('Save');
 						}
 					});
 	            });
@@ -207,12 +231,14 @@
 		            
 	            	var protoForm = $('createProgramForm');
 		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#saveprogrambutton').addClass('buttonloading').html("&nbsp;");
 		        	jQuery.ajax({
 						url:saveProgramURL + "?" + serializedForm,	
 						success: function(response) {
 							if (response.errors != undefined) {
-								jQuery('#createProgram').scrollTop(0);
-								displayErrors(response.errors);
+								jQuery('#createProgramOverlay').scrollTop(0);
+								jQuery('#displayProgramErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#saveprogrambutton').removeClass('buttonloading').text('Save');
 							} else {
 								showSearchResults();
 								jQuery('#createProgramOverlay').fadeOut();
@@ -221,6 +247,7 @@
 						},
 						error: function(xhr) {
 							alert(xhr);
+							jQuery('#saveprogrambutton').removeClass('buttonloading').text('Save');
 						}
 					});
 	            });
@@ -234,15 +261,24 @@
 		            
 	            	var protoForm = $('createAnalysisForm');
 		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#saveanalysisbutton').addClass('buttonloading').html("&nbsp;");
 		        	jQuery.ajax({
 						url:saveAnalysisURL + "?" + serializedForm,	
 						success: function(response) {
-							updateFolder(response.parentId);
-							jQuery('#createAnalysisOverlay').fadeOut();
-							showDetailDialog(response.id);
+							if (response.errors != undefined) {
+								jQuery('#createAnalysis').scrollTop(0);
+								jQuery('#displayAnalysisErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#saveanalysisbutton').removeClass('buttonloading').text('Save');
+							} else {
+								updateFolder(response.parentId);
+								jQuery('#createAnalysisOverlay').fadeOut();
+								showDetailDialog(response.id);
+							}
 						},
 						error: function(xhr) {
-						alert(xhr);
+							alert(xhr);
+							jQuery('#saveanalysisbutton').removeClass('buttonloading').text('Save');
+							
 						}
 					});
 	            });
@@ -396,11 +432,7 @@
                     data.sDom = "<\"top\"<\"gridTitle\">p>Rrt<\"clear\">"
                 }
             }
-            
-			function displayErrors(errors) {
-				var s = '<div class="errors">' + errors + '</div>';
-				jQuery("#displayErrors").empty().html(s);
-			}
+
 		
 //		var panel = createOntPanel()
 //		jQuery('#metadata-viewer').empty()

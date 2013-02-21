@@ -10,14 +10,9 @@
 
 <g:set var="objectUid" value="${folder?.uniqueId}"/>
 
-<div id="displayErrors">
-<g:hasErrors bean="${folder}">
-  <div class="errors">
-      <g:renderErrors bean="${folder}" as="list" />
-  </div>
-</g:hasErrors>
+<div id="displayFolderErrors">
 </div>
-
+  
  <table class="detail" height="300px">
         <tbody>
  <tr>
