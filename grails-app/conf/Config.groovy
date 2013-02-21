@@ -98,7 +98,7 @@ com.recomdata.search.autocomplete.max=20
 com.recomdata.search.paginate.max=10
 com.recomdata.search.paginate.maxsteps=5
 com.recomdata.admin.paginate.max=20
-/*
+
 //**************************
 //This is the login information for the different i2b2 projects.
 //SUBJECT Data.
@@ -113,7 +113,7 @@ com.recomdata.i2b2.sample.projectid = 'i2b2demo'
 com.recomdata.i2b2.sample.username = 'sample'
 com.recomdata.i2b2.sample.password = 'manager'
 //**************************
-*/
+
 
 
 // max genes to display after disease search
