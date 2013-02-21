@@ -98,8 +98,8 @@ jQuery(document).ready(function() {
 	</div>
 	
 	<div style="float: left; margin-right: 8px">
-	<div id="technologywrapper">
 	<div class="textsmaller">Vendor</div>
+	<div id="vendorwrapper">
 		<g:select style="width: 400px" id="vendor" name="vendor" noSelection="${['null':'Select...']}" from="${vendors}" />
 	</div>
 	</div>

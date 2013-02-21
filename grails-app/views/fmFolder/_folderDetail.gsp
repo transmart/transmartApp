@@ -129,7 +129,7 @@
                  		
                  		<g:each in="${terms}" var="term" status="t">
                  			<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
-	                 		<g:if test="${t > 0}">, </g:if>
+	                 		<g:if test="${t > 0}"><br/></g:if>
 	                 		<g:if test="${bioDataId}">
 		                 		${ConceptCode.find('from ConceptCode where id=?', bioDataId).codeName}
 	                 		</g:if>
@@ -161,7 +161,7 @@
                   <g:set var="tagValues" value="${AmTagDisplayValue.findAllDisplayValue(folder.getUniqueId(),amTagItem.id)}"/>
                     <g:if test="${tagValues!=null}">
 	             		<g:each var="tagValue" status="k" in="${tagValues}">
-							<g:if test="${k > 0 && tagValue.displayValue}">, </g:if>
+							<g:if test="${k > 0 && tagValue.displayValue}"><br/></g:if>
 							<g:createTagItemValue tagItem="${amTagItem}" tagValue="${tagValue}"/>
 						</g:each>
 					</g:if>
