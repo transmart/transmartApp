@@ -450,6 +450,7 @@ class RWGController {
 				   }
 			   }
 			   geneOperator = operator
+			   processedSearchTerms.add(categoryLine) //Retain pathways
 		   }
 		   else {
 			   processedSearchTerms.add(categoryLine)

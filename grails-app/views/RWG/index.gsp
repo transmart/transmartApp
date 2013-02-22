@@ -350,7 +350,7 @@
 				}
 			}
 
-    function dataTableWrapper (containerId, tableId, title)
+    function dataTableWrapper (containerId, tableId, title, sort)
             {
 
                 var data;
@@ -385,7 +385,8 @@
                     setupWrapper();
                     
                     data = dataIn;
-                    setupGridData(data);
+                    setupGridData(data, sort);
+                    
                     gridPanelHeaderTips = data.headerToolTips.slice(0);
 
                     //Add the callback for when the grid is redrawn
@@ -418,7 +419,7 @@
                 };
                 
 
-                function setupGridData(data)
+                function setupGridData(data, sort)
                 {
                     data.bAutoWidth = true;
                     data.bScrollAutoCss = true;
@@ -429,6 +430,9 @@
                     data.bLengthChange = false;
                     data.bScrollCollapse = false;
                     data.iDisplayLength = 25;
+                    if (sort != null) {
+	         			data.aaSorting = sort;
+	         		}
                     data.sDom = "<\"top\"<\"gridTitle\">p>Rrt<\"clear\">"
                 }
             }

@@ -1278,21 +1278,23 @@ class FmFolderController {
 		}
 		
 		ExportTableNew table = new ExportTableNew()
+		table.putColumn("probe", new ExportColumn("probe", "Probe", "", 'String'));
+		table.putColumn("gene", new ExportColumn("gene", "Gene", "", 'String'));
 		table.putColumn("pvalue", new ExportColumn("pvalue", "p-value", "", 'Number'));
 		table.putColumn("apvalue", new ExportColumn("apvalue", "Adjusted p-value", "", 'Number'));
 		table.putColumn("ppvalue", new ExportColumn("ppvalue", "Preferred p-value", "", 'Number'));
 		table.putColumn("teapvalue", new ExportColumn("teapvalue", "TEA-adjusted p-value", "", 'Number'));
 		table.putColumn("foldchangeratio", new ExportColumn("foldchangeratio", "Fold Change Ratio", "", 'Number'));
-		table.putColumn("gene", new ExportColumn("gene", "Gene", "", 'String'));
 		
 		rows.each {
 			ExportRowNew newrow=new ExportRowNew()
+			newrow.put("probe",it.featureGroupName);
+			newrow.put("gene",it.featureGroup.markers*.name.join(", "));
 			newrow.put("pvalue",it.rawPvalue.toString());
 			newrow.put("apvalue",it.adjustedPvalue.toString());
 			newrow.put("ppvalue",it.preferredPvalue.toString());
 			newrow.put("teapvalue",it.teaNormalizedPValue.toString());
 			newrow.put("foldchangeratio",it.foldChangeRatio.toString());
-			newrow.put("gene",it.featureGroup.markers*.name.join(", "));
 			table.putRow(it.id.toString(), newrow);
 		}
 		
