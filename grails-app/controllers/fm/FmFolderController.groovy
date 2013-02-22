@@ -630,9 +630,9 @@ class FmFolderController {
 		folder.parent = parentFolder
 		
 		def analysis = new bio.BioAssayAnalysis()
-		analysis.name = fmFolderInstance.folderName
-		analysis.shortDescription = fmFolderInstance.description
-		analysis.longDescription = fmFolderInstance.description
+		analysis.name = folder.folderName
+		analysis.shortDescription = folder.description
+		analysis.longDescription = folder.description
 		analysis.analysisMethodCode = "TBD"
 		analysis.assayDataType = "TBD"
 		analysis.dataCount = -1
