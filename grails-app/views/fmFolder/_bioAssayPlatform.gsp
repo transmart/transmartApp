@@ -1,64 +1,36 @@
-<g:javascript>
-
-jQuery(document).ready(function() {	
-	
-	var escapedFieldName = '${fieldName}'.replace(".", "\\.");
-	jQuery("#" + escapedFieldName + "-input").autocomplete({
-		source: function( request, response ) {
-		
-			jQuery.ajax({
-				url: '${createLink([action:searchAction,controller:searchController])}',
-				data: {
-					term: request.term,
-					vendor:jQuery("#vendor").val(),
-					measurement:jQuery('#measurement').val(),
-					technology:jQuery('#technology').val(),
-				},
-				success: function( data ) {
-					response( jQuery.map( data, function(item) {
-						return {
-							category: item.category,
-							label: item.label,
-							sourceAndCode: item.id,
-							id: item.id,
-							synonyms: item.synonyms,
-							display: item.display
-						}
-					}));
-				}
-			});
-		},
-			
-		minLength:0,
-		
-		select: function(event, ui) {
-			var sourceAndCode = ui.item.sourceAndCode;
-			 
-			var split = ui.item.label.split('--');
-			var displayName = split[0]
-			jQuery("#" + escapedFieldName + "-input").val('').focus();
-			$j('#' + escapedFieldName).append($j('<option></option>').val(sourceAndCode).text(displayName).attr('selected', 'selected'));
-			var newTag = $j('<span/>', {
-				id: '${fieldName}-tag-' + sourceAndCode,
-				'class': 'tag',
-				name: sourceAndCode
-			}).text(displayName);
-			$j('#' + escapedFieldName + '-tags').append(newTag);
-			newTag.hide().fadeIn('slow');
-			
-			return false;
-		}
-	}).data("autocomplete")._renderItem = function( ul, item ) {
-		return jQuery('<li></li>')		
-		  .data("item.autocomplete", item )
-		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b></a>')
-		  .appendTo(ul);
-	};
-});
-</g:javascript>
-
 <%! import bio.* %>  
 
+<g:javascript>
+function addToPlatformField() {
+	var platformId = jQuery('#platform').val();
+	var platformText = jQuery('#platform option:selected').text();
+	
+	$j('#amTagItem_1995743').append($j('<option></option>').val(platformId).text(platformText).attr('selected', 'selected'));
+	var newTag = $j('<span/>', {
+		id: '${fieldName}-tag-' + platformId,
+		'class': 'tag',
+		name: platformId
+	}).text(platformText);
+	$j('#${fieldName}-tags').append(newTag);
+	newTag.hide().fadeIn('slow');
+	jQuery('#platform').val(0);
+}
+
+function updatePlatforms() {
+	jQuery('#platformwrapper').empty();
+	jQuery.ajax({
+		url: ajaxPlatformsURL,
+		data: {
+			vendorName:jQuery("#vendor").val(),
+			measurementName:jQuery('#measurement').val(),
+			technologyName:jQuery('#technology').val(),
+		},
+		success: function(response) {
+			jQuery('#platformwrapper').html(response);
+		}
+	});
+}
+</g:javascript>
 
 <%-- Tag box (visual display of tags) --%>
 <div id="${fieldName}-tags" class="tagBox" name="${fieldName}">
@@ -104,6 +76,8 @@ jQuery(document).ready(function() {
 	</div>
 	<div style="float: left; margin-right: 8px">
 	<div style="fixed: left; line-height: 24px; font-style: italic; margin-right: 8px;">Add new platform: </div>
-	<input id="${fieldName}-input" style="float: left; width: 600px;"/>
+	<div id="platformwrapper">
+		<tmpl:selectPlatforms />
+	</div>
 	</div>
 </div>

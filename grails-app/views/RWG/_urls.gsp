@@ -68,4 +68,6 @@ var updateSearchCategoryURL = "${createLink([controller:'RWG', action:'updateSea
 
 var platformTypesUrl = '${createLink([action:'platformsForVendor',controller:'bioAssayPlatform'])}';
 
+var ajaxPlatformsURL = '${createLink([action:'ajaxPlatforms',controller:'fmFolder'])}';
+
 </script>

@@ -33,7 +33,7 @@ class BioAssayPlatform {
 		String platformTechnology
 		
 		String uniqueId
-		static transients = ['uniqueId']
+		static transients = ['uniqueId', 'fullName']
 
  
 static mapping = {
@@ -89,6 +89,10 @@ String getUniqueId() {
 	{
 		return uniqueId;
 	}
+}
+
+String getFullName() {
+	return (platformType + "/" + platformTechnology + "/" + vendor + "/" + name)
 }
 
 
