@@ -39,6 +39,7 @@ import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
 import com.recomdata.util.FolderType
 import grails.converters.*
+import grails.validation.ValidationException
 import groovy.xml.StreamingMarkupBuilder
 import grails.plugins.springsecurity.SpringSecurityService
 
@@ -173,7 +174,7 @@ class FmFolderController {
 		render(template: "createFolder", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 
-		def createStudy = {
+	def createStudy = {
 		log.info "createStudy called"
 		log.info "params = " + params		
 		//log.info "** action: expDetail called!"
@@ -190,18 +191,18 @@ class FmFolderController {
 		render(template: "createStudy", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 
-		def createProgram = {
-			log.info "createProgram called"
-			log.info "params = " + params
-			//log.info "** action: expDetail called!"
-			
-			def folder = new FmFolder()
-			folder.folderType = FolderType.PROGRAM.name()
-			def bioDataObject = folder
-			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.PROGRAM.name())
-			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-			render(template: "createProgram", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
-		}
+	def createProgram = {
+		log.info "createProgram called"
+		log.info "params = " + params
+		//log.info "** action: expDetail called!"
+		
+		def folder = new FmFolder()
+		folder.folderType = FolderType.PROGRAM.name()
+		def bioDataObject = folder
+		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.PROGRAM.name())
+		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+		render(template: "createProgram", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+	}
 	
 		
 	private createAmTagTemplateAssociation(folderType, folder)
@@ -426,288 +427,416 @@ class FmFolderController {
         }
     }
 
-	def saveAssay = {
-		log.info "saveAssay called"
-		log.info params
-		def parentFolder = FmFolder.get(params.parentId)
-		log.info("parentFolder = " + parentFolder)
-		def fmFolderInstance = new FmFolder(params)
-		if(parentFolder)
-		{
-			// fmFolderInstance.folderFullName = "folder"
-			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
-			fmFolderInstance.folderType = FolderType.ASSAY.name()
-			fmFolderInstance.parent = parentFolder
-		}
-		else
-		{
-			log.error "Parent folder is null"
-		}
-
-		if (fmFolderInstance.save(flush: true)) {
-			log.info "Assay saved"
-			createAmTagTemplateAssociation(FolderType.ASSAY.name(), fmFolderInstance)
-			saveMetaData(fmFolderInstance, null, params)
-			
-			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
-			render result as JSON
-			solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
-			return
-		}
-		else {
-			def errors = g.renderErrors(bean:fmFolderInstance)
-			log.error errors
-			def result = [errors:errors]
-			render result as JSON
-//			fmFolderInstance.errors.each {
-//				log.error it
-//			}
-//			render(view: "create", model: [fmFolderInstance: fmFolderInstance])
-		}
-	}
-
-	def saveFolder = {
-		log.info "saveFolder called"
-		log.info params
-		def parentFolder = FmFolder.get(params.parentId)
-		log.info("parentFolder = " + parentFolder)
-		def fmFolderInstance = new FmFolder(params)
-		if(parentFolder)
-		{
-			// fmFolderInstance.folderFullName = "folder"
-			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
-			fmFolderInstance.folderType = FolderType.FOLDER.name()
-			fmFolderInstance.parent = parentFolder
-		}
-		else
-		{
-			log.error "Parent folder is null"
-		}
-		
-		log.info fmFolderInstance
-		if (!fmFolderInstance.hasErrors() && fmFolderInstance.save(flush: true)) {
-			log.info "Folder saved"
-			createAmTagTemplateAssociation(FolderType.FOLDER.name(), fmFolderInstance)
-			saveMetaData(fmFolderInstance, null, params)
-			
-			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
-			render result as JSON
-			solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
-			return
-		}
-		else {
-			log.error "Saved folder failed"
-			def errors = g.renderErrors(bean:fmFolderInstance)
-			log.error errors
-			def result = [errors:errors]
-			render result as JSON
-//			fmFolderInstance.errors.each {
-//				log.error it
-//			}
+//	def saveAssay2 = {
+//		log.info "saveAssay called"
+//		log.info params
+//		def parentFolder = FmFolder.get(params.parentId)
+//		log.info("parentFolder = " + parentFolder)
+//		def fmFolderInstance = new FmFolder(params)
+//		if(parentFolder)
+//		{
+//			// fmFolderInstance.folderFullName = "folder"
+//			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
+//			fmFolderInstance.folderType = FolderType.ASSAY.name()
+//			fmFolderInstance.parent = parentFolder
+//		}
+//		else
+//		{
+//			log.error "Parent folder is null"
+//		}
 //
-//			def bioDataObject = fmFolderInstance
-//			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.FOLDER.name())
-//			if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
+//		if (fmFolderInstance.save(flush: true)) {
+//			log.info "Assay saved"
+//			createAmTagTemplateAssociation(FolderType.ASSAY.name(), fmFolderInstance)
+//			saveMetaData(fmFolderInstance, null, params)
 //			
-//			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+//			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
+//			render result as JSON
+//			solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
+//			return
+//		}
+//		else {
+//			def errors = g.renderErrors(bean:fmFolderInstance)
+//			log.error errors
+//			def result = [errors:errors]
+//			render result as JSON
+////			fmFolderInstance.errors.each {
+////				log.error it
+////			}
+////			render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+//		}
+//	}
+
+//	def saveFolder2 = {
+//		log.info "saveFolder called"
+//		log.info params
+//		def parentFolder = FmFolder.get(params.parentId)
+//		log.info("parentFolder = " + parentFolder)
+//		def fmFolderInstance = new FmFolder(params)
+//		if(parentFolder)
+//		{
+//			// fmFolderInstance.folderFullName = "folder"
+//			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
+//			fmFolderInstance.folderType = FolderType.FOLDER.name()
+//			fmFolderInstance.parent = parentFolder
+//		}
+//		else
+//		{
+//			log.error "Parent folder is null"
+//		}
+//		
+//		log.info fmFolderInstance
+//		if (!fmFolderInstance.hasErrors() && fmFolderInstance.save(flush: true)) {
+//			log.info "Folder saved"
+//			createAmTagTemplateAssociation(FolderType.FOLDER.name(), fmFolderInstance)
+//			saveMetaData(fmFolderInstance, null, params)
 //			
-//			render
-//			render(template: "createFolder", model:[bioDataObject:bioDataObject, folder:fmFolderInstance, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
-		}
-	}
-	
+//			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
+//			render result as JSON
+//			solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
+//			return
+//		}
+//		else {
+//			log.error "Saved folder failed"
+//			def errors = g.renderErrors(bean:fmFolderInstance)
+//			log.error errors
+//			def result = [errors:errors]
+//			render result as JSON
+////			fmFolderInstance.errors.each {
+////				log.error it
+////			}
+////
+////			def bioDataObject = fmFolderInstance
+////			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.FOLDER.name())
+////			if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
+////			
+////			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+////			
+////			render
+////			render(template: "createFolder", model:[bioDataObject:bioDataObject, folder:fmFolderInstance, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
+//		}
+//	}
 
 	def saveProgram = {
 		log.info "saveProgram called"
 		log.info params
-		def fmFolderInstance = new FmFolder(params)
-//		fmFolderInstance.folderFullName = "\\" + fmFolderInstance.folderName
-	//	fmFolderInstance.folderFullName = "program"
-		fmFolderInstance.folderLevel = 0
 		
-		log.info(fmFolderInstance)
-		if (fmFolderInstance.save(flush: true)) {
-			log.info "Program saved"
-			log.info(fmFolderInstance)
-			log.info(fmFolderInstance.getUniqueId())
-			
-			// Save metadata
-			createAmTagTemplateAssociation(FolderType.PROGRAM.name(), fmFolderInstance)
-			saveMetaData(fmFolderInstance, null, params)
-			def result = [id: fmFolderInstance.id]
+		def folder = new FmFolder(params)
+		folder.folderLevel = 0
+		folder.folderType = FolderType.PROGRAM.name()
+		
+		try {
+			fmFolderService.saveFolder(folder, folder, params)
+			def result = [id: folder.id]
 			render result as JSON
-			solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
-			return
-			
-//			redirect(action: "show", id: fmFolderInstance.id)
-		}
-		else {
+			solrFacetService.reindexFolder(folder.getUniqueId())
+		} catch (ValidationException ex) {
 			log.error "Unable to save program"
-			def errors = g.renderErrors(bean:fmFolderInstance)
+			def errors = g.renderErrors(bean:ex.errors)
 			log.error errors
 			def result = [errors:errors]
 			render result as JSON
-
-//			def folder = fmFolderInstance
-//			folder.folderType = FolderType.PROGRAM.name()
-//			def bioDataObject = folder
-//			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.PROGRAM.name())
-//			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-//			render(template: "createProgram", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 		}
-	}
-
-
-	def saveAnalysis = {
-		log.info "saveAnalysis called"
-		log.info params
-	
-		def parentFolder = FmFolder.get(params.parentId)
-		log.info("parentFolder = " + parentFolder)
-		def fmFolderInstance = new FmFolder(params)
-		if(parentFolder)
-		{
-			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
-			fmFolderInstance.folderType = FolderType.ANALYSIS.name()
-			fmFolderInstance.parent = parentFolder
-		}
-		else
-		{
-			log.error "Parent folder is null"
-		}
-
-		if (fmFolderInstance.save(flush: true))
-		{
-			log.info "Analysis folder saved"
-			createAmTagTemplateAssociation(FolderType.ANALYSIS.name(), fmFolderInstance)
+		// TODO: Handle other exceptions
 			
-			log.info "Analysis folder association saved"
-			def bioDataObject = new bio.BioAssayAnalysis()
-			bioDataObject.name = fmFolderInstance.folderName
-			bioDataObject.shortDescription = fmFolderInstance.description
-			bioDataObject.longDescription = fmFolderInstance.description
-			bioDataObject.analysisMethodCode="TBD"
-			bioDataObject.assayDataType="TBD"
-			bioDataObject.dataCount=-1
-			bioDataObject.teaDataCount=-1
-			bioDataObject = saveMetaData(fmFolderInstance, bioDataObject, params)
-			BioData bioData = BioData.get(bioDataObject.id)
-			if(!bioData){
-				 log.error "Biodata for " + bioDataObject.id + " is not found"
-			}
-			else{
-				log.info "Saving analysis objectUid: " + bioData.uniqueId + " objectType: bio.BioAssayAnalysis  fmFolder: " + fmFolderInstance
-				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.BioAssayAnalysis",fmFolder:fmFolderInstance)
-				if(ffa.save(flush: true))
-				{
-					log.info "Analysis experiment folder association saved"
-					
-					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
-					render result as JSON
-					solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
-//					return
-				}
-				else
-				{
-					def errors = g.renderErrors(bean:fmFolderInstance)
-					log.error errors
-					def result = [errors:errors]
-					render result as JSON
-//					ffa.errors.each {
-//						log.error it
-//					}
-				}
-				
-			}
-
-		}
-		else
-		{
-			def errors = g.renderErrors(bean:fmFolderInstance)
-			log.error errors
-			def result = [errors:errors]
-			render result as JSON
-//			fmFolderInstance.errors.each {
-//				log.error it
-//			}
-		}
-		
-//		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
 	}
-
 	
 	def saveStudy = {
 		log.info "saveStudy called"
 		log.info params
 	
 		def parentFolder = FmFolder.get(params.parentId)
-		log.info("parentFolder = " + parentFolder)
-		def fmFolderInstance = new FmFolder(params)
-		if(parentFolder)
-		{
-			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
-			fmFolderInstance.folderType = FolderType.STUDY.name()
-			fmFolderInstance.parent = parentFolder
-		}
-		else
-		{
+		if (!parentFolder) {
 			log.error "Parent folder is null"
+			def result = [errors:"<ul><li>Unexpected error: the parent folder ID is missing.</li></ul>"]
+			render result
+			return
 		}
 
-		if (fmFolderInstance.save(flush: true)) 
-		{
-			log.info "Study folder saved"
-  			createAmTagTemplateAssociation(FolderType.STUDY.name(), fmFolderInstance)
-			
-			log.info "Study tag template association saved"
-			def bioDataObject = new bio.Experiment()
-			bioDataObject.title = fmFolderInstance.folderName
-			bioDataObject.description = fmFolderInstance.description
-		//	bioDataObject.accession = fmFolderInstance.folderName
-		//	log.info "bioDataObject.accession  = " + bioDataObject.accession 
-			bioDataObject.type="Experiment"
-			bioDataObject = saveMetaData(fmFolderInstance, bioDataObject, params)
-			BioData bioData = BioData.get(bioDataObject.id)
-			if(!bioData){
-				 log.error "Biodata for " + bioDataObject.id + " is not found"
-			}
-			else {
-				log.info "Study experiment saved " + bioDataObject.id
-				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.Experiment",fmFolder:fmFolderInstance)
-				if(ffa.save(flush: true))
-				{
-					log.info "Study experiment folder association saved " + bioData.uniqueId
-					
-					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
-					render result as JSON
-					solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
-					return
-				}
-				else
-				{
-					def errors = g.renderErrors(bean:fmFolderInstance)
-					log.error errors
-					def result = [errors:errors]
-					render result as JSON
-//					ffa.errors.each {
-//						log.error it
-//					} 
-				}				
-			}
-		}
-		else 
-		{
-			def errors = g.renderErrors(bean:fmFolderInstance)
+		def folder = new FmFolder(params)
+		folder.folderLevel = parentFolder.folderLevel + 1
+		folder.folderType = FolderType.STUDY.name()
+		folder.parent = parentFolder
+		
+		def experiment = new bio.Experiment()
+		experiment.title = folder.folderName
+		experiment.description = folder.description
+		experiment.type = "Experiment"
+		
+		try {
+			fmFolderService.saveFolder(folder, experiment, params)
+			def result = [id: folder.id, parentId:folder.parentId]
+			render result as JSON
+			solrFacetService.reindexFolder(folder.getUniqueId())
+		} catch (ValidationException ex) {
+			log.error "Unable to save study"
+			def errors = g.renderErrors(bean:ex.errors)
 			log.error errors
 			def result = [errors:errors]
 			render result as JSON
-//			fmFolderInstance.errors.each {
-//				log.error it
-//			}
-		}
+		}	
+		// TODO: Handle other exceptions
 		
-//		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
-    }
+	}
+
+	def saveAssay = {
+		log.info "saveAssay called"
+		log.info params
+	
+		def parentFolder = FmFolder.get(params.parentId)
+		if (!parentFolder) {
+			log.error "Parent folder is null"
+			def result = [errors:"<ul><li>Unexpected error: the parent folder ID is missing.</li></ul>"]
+			render result
+			return
+		}
+
+		def folder = new FmFolder(params)
+		folder.folderLevel = parentFolder.folderLevel + 1
+		folder.folderType = FolderType.ASSAY.name()
+		folder.parent = parentFolder
+				
+		try {
+			fmFolderService.saveFolder(folder, folder, params)
+			def result = [id: folder.id, parentId:folder.parentId]
+			render result as JSON
+			solrFacetService.reindexFolder(folder.getUniqueId())
+		} catch (ValidationException ex) {
+			log.error "Unable to save assay"
+			def errors = g.renderErrors(bean:ex.errors)
+			log.error errors
+			def result = [errors:errors]
+			render result as JSON
+		}	
+		// TODO: Handle other exceptions
+		
+	}
+
+	def saveAnalysis = {
+		log.info "saveAnalysis called"
+		log.info params
+	
+		def parentFolder = FmFolder.get(params.parentId)
+		if (!parentFolder) {
+			log.error "Parent folder is null"
+			def result = [errors:"<ul><li>Unexpected error: the parent folder ID is missing.</li></ul>"]
+			render result
+			return
+		}
+
+		def folder = new FmFolder(params)
+		folder.folderLevel = parentFolder.folderLevel + 1
+		folder.folderType = FolderType.ANALYSIS.name()
+		folder.parent = parentFolder
+		
+		def analysis = new bio.BioAssayAnalysis()
+		analysis.name = fmFolderInstance.folderName
+		analysis.shortDescription = fmFolderInstance.description
+		analysis.longDescription = fmFolderInstance.description
+		analysis.analysisMethodCode = "TBD"
+		analysis.assayDataType = "TBD"
+		analysis.dataCount = -1
+		analysis.teaDataCount = -1
+		
+		try {
+			fmFolderService.saveFolder(folder, analysis, params)
+			def result = [id: folder.id, parentId:folder.parentId]
+			render result as JSON
+			solrFacetService.reindexFolder(folder.getUniqueId())
+		} catch (ValidationException ex) {
+			log.error "Unable to save study"
+			def errors = g.renderErrors(bean:ex.errors)
+			log.error errors
+			def result = [errors:errors]
+			render result as JSON
+		}	
+		// TODO: Handle other exceptions
+		
+	}
+
+	def saveFolder = {
+		log.info "saveFolder called"
+		log.info params
+	
+		def parentFolder = FmFolder.get(params.parentId)
+		if (!parentFolder) {
+			log.error "Parent folder is null"
+			def result = [errors:"<ul><li>Unexpected error: the parent folder ID is missing.</li></ul>"]
+			render result
+			return
+		}
+
+		def folder = new FmFolder(params)
+		folder.folderLevel = parentFolder.folderLevel + 1
+		folder.folderType = FolderType.FOLDER.name()
+		folder.parent = parentFolder
+				
+		try {
+			fmFolderService.saveFolder(folder, folder, params)
+			def result = [id: folder.id, parentId:folder.parentId]
+			render result as JSON
+			solrFacetService.reindexFolder(folder.getUniqueId())
+		} catch (ValidationException ex) {
+			log.error "Unable to save folder"
+			def errors = g.renderErrors(bean:ex.errors)
+			log.error errors
+			def result = [errors:errors]
+			render result as JSON
+		}	
+		// TODO: Handle other exceptions
+		
+	}
+
+//	def saveAnalysis2 = {
+//		log.info "saveAnalysis called"
+//		log.info params
+//	
+//		def parentFolder = FmFolder.get(params.parentId)
+//		log.info("parentFolder = " + parentFolder)
+//		def fmFolderInstance = new FmFolder(params)
+//		if(parentFolder)
+//		{
+//			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
+//			fmFolderInstance.folderType = FolderType.ANALYSIS.name()
+//			fmFolderInstance.parent = parentFolder
+//		}
+//		else
+//		{
+//			log.error "Parent folder is null"
+//		}
+//
+//		if (fmFolderInstance.save(flush: true))
+//		{
+//			log.info "Analysis folder saved"
+//			createAmTagTemplateAssociation(FolderType.ANALYSIS.name(), fmFolderInstance)
+//			
+//			log.info "Analysis folder association saved"
+//			def bioDataObject = new bio.BioAssayAnalysis()
+//			bioDataObject.name = fmFolderInstance.folderName
+//			bioDataObject.shortDescription = fmFolderInstance.description
+//			bioDataObject.longDescription = fmFolderInstance.description
+//			bioDataObject.analysisMethodCode="TBD"
+//			bioDataObject.assayDataType="TBD"
+//			bioDataObject.dataCount=-1
+//			bioDataObject.teaDataCount=-1
+//			bioDataObject = saveMetaData(fmFolderInstance, bioDataObject, params)
+//			BioData bioData = BioData.get(bioDataObject.id)
+//			if(!bioData){
+//				 log.error "Biodata for " + bioDataObject.id + " is not found"
+//			}
+//			else{
+//				log.info "Saving analysis objectUid: " + bioData.uniqueId + " objectType: bio.BioAssayAnalysis  fmFolder: " + fmFolderInstance
+//				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.BioAssayAnalysis",fmFolder:fmFolderInstance)
+//				if(ffa.save(flush: true))
+//				{
+//					log.info "Analysis experiment folder association saved"
+//					
+//					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
+//					render result as JSON
+//					solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
+////					return
+//				}
+//				else
+//				{
+//					def errors = g.renderErrors(bean:fmFolderInstance)
+//					log.error errors
+//					def result = [errors:errors]
+//					render result as JSON
+////					ffa.errors.each {
+////						log.error it
+////					}
+//				}
+//				
+//			}
+//
+//		}
+//		else
+//		{
+//			def errors = g.renderErrors(bean:fmFolderInstance)
+//			log.error errors
+//			def result = [errors:errors]
+//			render result as JSON
+////			fmFolderInstance.errors.each {
+////				log.error it
+////			}
+//		}
+//		
+////		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+//	}
+
+	
+//	def saveStudy2 = {
+//		log.info "saveStudy called"
+//		log.info params
+//	
+//		def parentFolder = FmFolder.get(params.parentId)
+//		log.info("parentFolder = " + parentFolder)
+//		def fmFolderInstance = new FmFolder(params)
+//		if(parentFolder)
+//		{
+//			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
+//			fmFolderInstance.folderType = FolderType.STUDY.name()
+//			fmFolderInstance.parent = parentFolder
+//		}
+//		else
+//		{
+//			log.error "Parent folder is null"
+//		}
+//
+//		if (fmFolderInstance.save(flush: true)) 
+//		{
+//			log.info "Study folder saved"
+//  			createAmTagTemplateAssociation(FolderType.STUDY.name(), fmFolderInstance)
+//			
+//			log.info "Study tag template association saved"
+//			def bioDataObject = new bio.Experiment()
+//			bioDataObject.title = fmFolderInstance.folderName
+//			bioDataObject.description = fmFolderInstance.description
+//		//	bioDataObject.accession = fmFolderInstance.folderName
+//		//	log.info "bioDataObject.accession  = " + bioDataObject.accession 
+//			bioDataObject.type="Experiment"
+//			bioDataObject = saveMetaData(fmFolderInstance, bioDataObject, params)
+//			BioData bioData = BioData.get(bioDataObject.id)
+//			if(!bioData){
+//				 log.error "Biodata for " + bioDataObject.id + " is not found"
+//			}
+//			else {
+//				log.info "Study experiment saved " + bioDataObject.id
+//				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.Experiment",fmFolder:fmFolderInstance)
+//				if(ffa.save(flush: true))
+//				{
+//					log.info "Study experiment folder association saved " + bioData.uniqueId
+//					
+//					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
+//					render result as JSON
+//					solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
+//					return
+//				}
+//				else
+//				{
+//					def errors = g.renderErrors(bean:fmFolderInstance)
+//					log.error errors
+//					def result = [errors:errors]
+//					render result as JSON
+////					ffa.errors.each {
+////						log.error it
+////					} 
+//				}				
+//			}
+//		}
+//		else 
+//		{
+//			def errors = g.renderErrors(bean:fmFolderInstance)
+//			log.error errors
+//			def result = [errors:errors]
+//			render result as JSON
+////			fmFolderInstance.errors.each {
+////				log.error it
+////			}
+//		}
+//		
+////		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
+//    }
 
 	
     def showStudy = {
@@ -1352,7 +1481,7 @@ class FmFolderController {
 		if(folderAssociation)
 		{
 			log.info "getBioDataObject::folderAssociation = " + folderAssociation
-			bioDataObject =folderAssociation.getBioObject()
+			bioDataObject = folderAssociation.getBioObject()
 		}
 		else
 		{
