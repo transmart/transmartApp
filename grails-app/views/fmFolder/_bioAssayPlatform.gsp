@@ -84,23 +84,21 @@ jQuery(document).ready(function() {
 	
 	<div class="textsmaller">Measurement</div>
 	<div id="measurementwrapper">
-	<g:select style="width: 400px" id="measurement" name="measurement" noSelection="${['null':'Select...']}" from="${measurements}"
-			onchange="${remoteFunction(action:'ajaxTechnologies', update: 'technologywrapper', params:'\'queryType=measurement&measurementName=\' + this.value')}"/>
+		<tmpl:selectMeasurements measurements="${measurements}"/>
 	</div>
 	</div>
 	
 	<div style="float: left; margin-right: 8px">
 	<div class="textsmaller">Technology</div>
 	<div id="technologywrapper">
-	<g:select style="width: 400px" id="technology" name="technology" noSelection="${['null':'Select...']}" from="${technologies}" 
-			onchange="${remoteFunction(action:'ajaxVendors', update: 'vendorwrapper', params:'\'queryType=technology&measurementName=\'+document.getElementById(\'measurement\').value+\'&technologyName=\' + this.value' )}"/>
+		<tmpl:selectTechnologies technologies="${technologies}"/>
 	</div>
 	</div>
 	
 	<div style="float: left; margin-right: 8px">
 	<div class="textsmaller">Vendor</div>
 	<div id="vendorwrapper">
-		<g:select style="width: 400px" id="vendor" name="vendor" noSelection="${['null':'Select...']}" from="${vendors}" />
+		<tmpl:selectVendors vendors="${vendors}"/>
 	</div>
 	</div>
 	</div>

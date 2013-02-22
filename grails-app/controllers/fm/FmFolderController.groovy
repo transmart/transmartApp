@@ -1865,15 +1865,20 @@ class FmFolderController {
 
 	def ajaxTechnologies =
 	{
-		def queryString = ""
-		if(params.measurementName != 'null')
+		def queryString = " where 1=1"
+		if(params.measurementName!=null&& params.measurementName != 'null')
 		{
-			queryString = " where platformType = '" + params.measurementName  + "'"
+			queryString += " and platformType = '" + params.measurementName  + "'"
 		}
-
-		def technologies  = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.platformTechnology")
+		if(params.vendorName!=null&&params.vendorName != 'null')
+		{
+			queryString += " and vendor = '" + params.vendorName + "'"
+		}
+		
+		queryString = "SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.platformTechnology"
+		def technologies = bio.BioAssayPlatform.executeQuery(queryString)
 		log.info queryString + " " + technologies
-		render(template: "selectTechnologies", model: [technologies:technologies])
+		render(template: "selectTechnologies", model: [technologies:technologies, technology: params.technologyName])
 	}
 
 	def ajaxVendors = 
@@ -1894,7 +1899,7 @@ class FmFolderController {
 		queryString = "SELECT DISTINCT vendor FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.vendor"
 		def vendors  = bio.BioAssayPlatform.executeQuery(queryString)
 		log.info queryString + " " +vendors
-		render(template: "selectVendors", model: [vendors:vendors])
+		render(template: "selectVendors", model: [vendors:vendors, vendor: params.vendorName])
 	}
 	
 	def ajaxMeasurements =
@@ -1915,7 +1920,7 @@ class FmFolderController {
 		queryString = "SELECT DISTINCT platformType FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.platformType"
 		def measurements  = bio.BioAssayPlatform.executeQuery(queryString)
 		log.info queryString + " " + measurements
-		render(template: "selectMeasurements", model: [measurements:measurements])
+		render(template: "selectMeasurements", model: [measurements:measurements, measurement: params.measurementName])
 	}
 	
 	private boolean isAdmin() {
