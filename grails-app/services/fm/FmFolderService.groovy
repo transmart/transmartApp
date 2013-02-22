@@ -26,10 +26,22 @@ import java.net.URL;
 import java.net.URLEncoder;
 import fm.FmFolder;
 import fm.FmFile;
+import annotation.AmTagAssociation
+import annotation.AmTagItemService;
+import annotation.AmTagTemplate;
+import annotation.AmTagTemplateAssociation;
+import annotation.AmTagItem;
+import annotation.AmTagValue;
+import bio.BioData;
+
+import grails.validation.ValidationException;
 import org.apache.solr.util.SimplePostTool;
 import org.apache.commons.io.FileUtils;
 
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+
+import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.FieldError;
 
 import com.recomdata.util.FolderType;
 
@@ -41,6 +53,7 @@ class FmFolderService {
 	String filestoreDirectory = config.com.recomdata.FmFolderService.filestoreDirectory.toString();
 	String fileTypes = config.com.recomdata.FmFolderService.fileTypes.toString();;
 	String solrUrl = config.com.recomdata.solr.baseURL.toString() + "/update";
+	def amTagItemService;
 	
 	/**
 	 * Imports files processing them into filestore and indexing them with SOLR.
@@ -451,4 +464,155 @@ class FmFolderService {
 		return path
 	}
 	
+//	def saveProgram(FmFolder folder, Map values) {
+//		
+//		AmTagTemplate template = AmTagTemplate.findByTagTemplateType(FolderType.PROGRAM.name())
+//		def sql = "from AmTagItem ati where ati.amTagTemplate.id = :templateId and ati.viewInGrid = 1 order by displayOrder"
+//		List items = AmTagItem.findAll(sql, [templateId:template.id])
+//	
+//		//FmFolderAssociation folderAssociation = FmFolderAssociation.findByFmFolder(folder)
+//		//Object object = folderAssociation.getBioObject() ?: folder	
+//
+//		validateFolder(folder, folder, items, values)
+//		saveMetaData(folder, folder, template, values)	
+//		
+//	}
+	
+	def saveFolder(FmFolder folder, Object object, Map values) {
+		
+		AmTagTemplate template = AmTagTemplate.findByTagTemplateType(folder.folderType)
+		def sql = "from AmTagItem ati where ati.amTagTemplate.id = :templateId and ati.viewInGrid = 1 order by displayOrder"
+		List items = AmTagItem.findAll(sql, [templateId:template.id])
+		
+		validateFolder(folder, items, values);	
+		saveFolder(folder, object, template, items, values);
+
+	}
+	
+	private void validateFolder(FmFolder folder, List items, Map values) {
+		
+		List fields = [ [displayName:"Name", fieldName:"folderName"],
+			[displayName:"Description", fieldName:"description"] ]
+		for (field in fields) {
+			def value = values[field.fieldName]
+			if (value == null || value.length() == 0) {
+				folder.errors.rejectValue(field.fieldName, "blank", [field.displayName] as String[], "{0} field requires a value.")
+			}
+		}
+		
+		for (item in items) {
+			if (item.required) {
+				def value = null;
+				if (item.tagItemType.equals("FIXED")) {
+					value = values.list(item.tagItemAttr)
+				} else {
+					value = values.list("amTagItem_" + item.id)
+				}
+				if (value.size == 0 || value[0] == null || value[0].length() == 0) {
+					folder.errors.rejectValue("id", "blank", [item.displayName] as String[], "{0} field requires a value.")
+				}
+				log.info item.displayName + " = \"" + value + "\""
+			} else {
+				log.info item.displayName + " not required"
+			}
+		}
+		
+		if (folder.hasErrors()) {
+			throw new ValidationException("Validation errors occurred.", folder.errors)
+		}
+		
+	}
+
+	private void saveFolder(FmFolder folder, Object object, AmTagTemplate template, List items, Map values) {
+
+		folder.save(flush:true, failOnError:true)
+
+//		List<AmTagItem> items = amTagItemService.getDisplayItems(template.id)
+		for (tagItem in items) {
+			def newValue = null
+			if (tagItem.tagItemType.equals('FIXED')) {
+				newValue = values."${tagItem.tagItemAttr}"
+				log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + newValue
+				if (newValue != null) {
+					def value = ""
+					if (tagItem.tagItemSubtype.equals('MULTIPICKLIST')) {
+						newValue = values.list("${tagItem.tagItemAttr}")
+						if (newValue != null && newValue != "" && newValue.size() > 0) {
+							newValue.each {
+								if (value != "") {
+									value += "|"
+								}
+								value += it
+							}
+						}
+					} else {
+						value = newValue
+					}
+					object."${tagItem.tagItemAttr}" = value
+				}
+			} else if (tagItem.tagItemType.equals('CUSTOM')) {
+				newValue = values."amTagItem_${tagItem.id}"
+				AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "BIO_CONCEPT_CODE", subjectUid: folder.getUniqueId(), tagItemId: tagItem.id])
+				if (tagItem.tagItemSubtype.equals('FREETEXT')||tagItem.tagItemSubtype.equals('FREETEXTAREA')) {
+					if (newValue != null && newValue != "") {
+						AmTagValue newTagValue = new AmTagValue(value: newValue)
+						newTagValue.save(flush: true, failOnError:true)
+						AmTagAssociation tagAssoc = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
+						tagAssoc.save(flush: true, failOnError:true)
+					}
+				} else if (tagItem.tagItemSubtype.equals('PICKLIST')) {
+					if (newValue != null && newValue != "") {
+						AmTagAssociation tagAssoc = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
+						tagAssoc.save(flush:true, failOnError:true)
+					}
+				} else if (tagItem.tagItemSubtype.equals('MULTIPICKLIST')) {
+					newValue = values.list("amTagItem_${tagItem.id}")
+					if (newValue != null && newValue != "" && newValue.size() > 0) {
+						newValue.each {
+							if (it) {
+								AmTagAssociation tagAssoc = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+								tagAssoc.save(flush:true, failOnError:true)
+							} else {
+								log.error("amTagItem_${tagItem.id} is null")
+							}
+						}
+					}
+				}
+			} else {
+				newValue = values.list("amTagItem_${tagItem.id}")
+				AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: tagItem.tagItemType, subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
+				if (newValue != null && newValue != "" && newValue.size() > 0) {
+					newValue.each {
+						if (it) {
+							AmTagAssociation tagAssoc = new AmTagAssociation(objectType: tagItem.tagItemType, subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
+							tagAssoc.save(flush:true, failOnError:true)
+						} else {
+							log.error("amTagItem_${tagItem.id} is null")
+						}
+					}
+				}
+			}
+
+		}
+
+		// Create tag template association between folder and template, if it does not already exist
+		AmTagTemplateAssociation templateAssoc = AmTagTemplateAssociation.findByObjectUid(folder.getUniqueId())
+		if (templateAssoc == null) {
+			templateAssoc = new AmTagTemplateAssociation(tagTemplateId:template.id, objectUid:folder.getUniqueId())
+			templateAssoc.save(flush:true, failOnError:true)
+		}
+
+		// If there is business object associated with folder, then save it and create association, if it does not exist.
+		if (object != folder) {
+			object.save(flush: true, failOnError:true)
+			FmFolderAssociation folderAssoc = FmFolderAssociation.findByFmFolder(folder)
+			if (folderAssoc == null) {
+				BioData bioData = BioData.get(object.id)
+				folderAssoc = new FmFolderAssociation(objectUid:bioData.uniqueId, objectType:object.getClass().getName(), fmFolder:folder)
+				folderAssoc.save(flush:true, failOnError:true)
+			}
+		}
+		
+	}
+
 }
