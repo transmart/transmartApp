@@ -452,6 +452,8 @@ class SolrFacetService {
 	  String categoryQuery = ""
 	  for (t in termList)  {
 		  
+		  def pathwayInGeneSearch = null
+		  
 		  t = cleanForSOLR(t)
 		  
 		  //If searching on text and we have no spaces (not a phrase search), add wildcards instead of quote marks
@@ -465,9 +467,15 @@ class SolrFacetService {
 		  }
 		  else if (category.equals("GENE")) {
 			  //GENE may have individual genes separated by slashes. OR these, and quote each individual one
+			  //If this is a pathway, flag it
 			  def geneList = []
 			  for (g in t.split("/")) {
-				  geneList += ("\"" + g + "\"")
+				  if (g.startsWith("PATHWAY")) {
+					  pathwayInGeneSearch = g
+				  }
+				  else {
+					  geneList += ("\"" + g + "\"")
+				  }
 			  }
 			  t = "(" + geneList.join(" OR ") + ")"
 		  }
@@ -475,8 +483,16 @@ class SolrFacetService {
 			  t = ("\"" + t + "\"")
 		  }
 	  
-		  def queryTerm = /${category}:${t}/
-	  
+		  def queryTerm
+		  
+		  //Special case for pathways in a gene search
+		  if (category.equals("GENE") && pathwayInGeneSearch) {
+			  queryTerm = /(PATHWAY:("${pathwayInGeneSearch}") OR GENE:${t})/
+		  }
+		  else {
+			  queryTerm = /${category}:${t}/
+		  }
+		  
 		  if (categoryQuery == "")  {
 			  categoryQuery = queryTerm
 		  }
