@@ -121,7 +121,8 @@
 								jQuery('#editMetadataOverlay').scrollTop(0);
 								jQuery('#displayMetadataErrors').empty().html('<div class="errors">' + response.errors + '</div>');
 								jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
-							} else {						
+							} else {	
+								jQuery('#result-folder-name-' + response.id).text(response.folderName);
 								jQuery('#editMetadataOverlay').fadeOut();
 								showDetailDialog(response.id);
 							}

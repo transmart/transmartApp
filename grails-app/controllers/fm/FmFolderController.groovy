@@ -1450,7 +1450,7 @@ class FmFolderController {
 		return metaDataTagItems
 	}
 
-		private List<AmTagItem> getMetaDataItems(folder, editable)
+	private List<AmTagItem> getMetaDataItems(folder, editable)
 	{
 		def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
 		List<AmTagItem> metaDataTagItems
@@ -1540,7 +1540,51 @@ class FmFolderController {
 		render(template: "editMetaData", model:[bioDataObject:bioDataObject, measurements:measurements, technologies:technologies, vendors:vendors, platforms:platforms, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 	
-	def updateMetaData =
+	def updateMetaData = {
+		log.info "updateMetaData called"
+		log.info params
+		
+		if (!isAdmin()) {
+			return;
+		}
+			
+		try {
+			FmFolder folder = FmFolder.get(params.id)
+			
+			// Get associated business object and deal with any special folderName/description inconsistencies.
+			Object object
+			FmFolderAssociation assoc = FmFolderAssociation.findByFmFolder(folder)
+			folder.folderName = params.folderName
+			folder.description = params.description
+			if (assoc != null) {
+				object = assoc.getBioObject()
+				if (object instanceof bio.Experiment) {
+					folder.folderName = params.title
+				} else if (object instanceof bio.BioAssayAnalysis) {
+					folder.folderName = params.name
+					folder.description = params.longDescription
+				}
+			} else {
+				object = folder
+			}
+			
+			fmFolderService.saveFolder(folder, object, params)
+			def result = [id: folder.id, folderName:folder.folderName]
+			render result as JSON
+			
+			solrFacetService.reindexFolder(folder.getUniqueId())
+		} catch (ValidationException ex) {
+			log.error "Unable to update metadata"
+			def errors = g.renderErrors(bean:ex.errors)
+			log.error errors
+			def result = [errors:errors]
+			render result as JSON
+		}
+		// TODO: Handle other exceptions
+
+	}
+	
+	def updateMetaData1 =
 	{
 		log.info "updateMetaData called"
 		log.info params

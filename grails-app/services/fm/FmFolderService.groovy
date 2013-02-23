@@ -481,22 +481,32 @@ class FmFolderService {
 	def saveFolder(FmFolder folder, Object object, Map values) {
 		
 		AmTagTemplate template = AmTagTemplate.findByTagTemplateType(folder.folderType)
-		def sql = "from AmTagItem ati where ati.amTagTemplate.id = :templateId and ati.viewInGrid = 1 order by displayOrder"
+		
+		// If this is new folder, then use viewInGrid items for validation, otherwise use editable items.
+		def sql
+		if (folder.id == null) {
+			sql = "from AmTagItem ati where ati.amTagTemplate.id = :templateId and ati.viewInGrid = 1 order by displayOrder"
+		} else {
+			sql = "from AmTagItem ati where ati.amTagTemplate.id = :templateId and ati.editable = 1 order by displayOrder"
+		}
 		List items = AmTagItem.findAll(sql, [templateId:template.id])
 		
-		validateFolder(folder, items, values);	
+		validateFolder(folder, object, items, values);	
 		saveFolder(folder, object, template, items, values);
 
 	}
 	
-	private void validateFolder(FmFolder folder, List items, Map values) {
+	private void validateFolder(FmFolder folder, Object object, List items, Map values) {
 		
-		List fields = [ [displayName:"Name", fieldName:"folderName"],
-			[displayName:"Description", fieldName:"description"] ]
-		for (field in fields) {
-			def value = values[field.fieldName]
-			if (value == null || value.length() == 0) {
-				folder.errors.rejectValue(field.fieldName, "blank", [field.displayName] as String[], "{0} field requires a value.")
+		// Validate folder specific fields, if there is no business object
+		if (folder == object) {
+			List fields = [ [displayName:"Name", fieldName:"folderName"],
+				[displayName:"Description", fieldName:"description"] ]
+			for (field in fields) {
+				def value = values[field.fieldName]
+				if (value == null || value.length() == 0) {
+					folder.errors.rejectValue(field.fieldName, "blank", [field.displayName] as String[], "{0} field requires a value.")
+				}
 			}
 		}
 		
@@ -527,7 +537,6 @@ class FmFolderService {
 
 		folder.save(flush:true, failOnError:true)
 
-//		List<AmTagItem> items = amTagItemService.getDisplayItems(template.id)
 		for (tagItem in items) {
 			def newValue = null
 			if (tagItem.tagItemType.equals('FIXED')) {
