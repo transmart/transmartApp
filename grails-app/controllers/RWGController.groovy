@@ -446,11 +446,11 @@ class RWGController {
 			   for (t in termList) {
 				   def expandedList = expandPathway(t)
 				   if (expandedList) {
-					   geneGroups += [expandedList]
+					   geneGroups += [expandedList + t] //Retain pathways
 				   }
 			   }
 			   geneOperator = operator
-			   processedSearchTerms.add(categoryLine) //Retain pathways
+			   
 		   }
 		   else {
 			   processedSearchTerms.add(categoryLine)
