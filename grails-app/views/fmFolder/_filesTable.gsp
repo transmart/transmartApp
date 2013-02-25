@@ -2,8 +2,8 @@
             <thead>
                 <tr>                
                     <th class="columnheader">File Name</th>
-                    <th class="columnheader">Create Date</th>
-                    <th class="columnheader">Update Date</th>
+                    <th class="columnheader">Created on</th>
+                    <th class="columnheader">Updated on</th>
                     <th class="columnheader" width="200px">&nbsp;</th>
                 </tr>
             </thead>

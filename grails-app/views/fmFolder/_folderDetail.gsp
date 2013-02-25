@@ -189,9 +189,10 @@
 
 <span></span>
                     
-       <div style="height:20px;"></div>
+       
       
          <g:each var='jSONForGrid' status="divCounter" in="${jSONForGrids}">
+         	<div style="height:20px;"></div>
     	    <div>
             <div id='gridViewWrapper${divCounter}'>
             </div>        

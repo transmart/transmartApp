@@ -429,8 +429,8 @@ class SnpDataService {
 			filesList.add(fileURL)
 		}
 		
-		File snpDir = FileWriterUtil.createDir(studyDir, 'SNP')
-		File rawDataDir = FileWriterUtil.createDir(snpDir, 'Raw_data')
+		File snpDir = (new FileWriterUtil()).createDir(studyDir, 'SNP')
+		File rawDataDir = (new FileWriterUtil()).createDir(snpDir, 'Raw_data')
 		
 		fileDownloadService.getFiles(filesList, rawDataDir.getPath())
 	}

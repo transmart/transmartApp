@@ -839,12 +839,12 @@ class GeneExpressionDataService {
 			})
 		
 			if (sampleCdsMap.size() > 0) {
-				File mRNADir = FileWriterUtil.createDir(studyDir, 'mRNA')
-				File rawDataDir = FileWriterUtil.createDir(mRNADir, 'Raw_data')
+				File mRNADir = (new FileWriterUtil()).createDir(studyDir, 'mRNA')
+				File rawDataDir = (new FileWriterUtil()).createDir(mRNADir, 'Raw_data')
 				
 				sampleCdsMap.each { key, value ->
 					// create dir with name as value
-					File valueDir = FileWriterUtil.createDir(rawDataDir, value)
+					File valueDir = (new FileWriterUtil()).createDir(rawDataDir, value)
 					// write files into that dir 
 					// use service to download files by passing the folder and filesURLs
 					def keyList = key.toString().tokenize("/")
