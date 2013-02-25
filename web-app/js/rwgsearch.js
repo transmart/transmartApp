@@ -759,7 +759,7 @@ jQuery(document).ready(function() {
 				jQuery('#editMetadata').html(response).removeClass('ajaxloading');
 			},
 			error: function(xhr) {
-				alert(xhr);
+				alert(xhr.responseText);
 				jQuery('#editMetadata').html(response).removeClass('ajaxloading');
 			}
 		});

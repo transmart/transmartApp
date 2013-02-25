@@ -97,7 +97,7 @@
 </g:if>
 
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">
-<div style="align:center;" ><h4 class="rdc-h4" align="center" >Associated Tags</h4></div>
+<div><h4 class="rdc-h4">Associated Tags</h4></div>
 <table class="details-table">
         <thead>
             <tr>                

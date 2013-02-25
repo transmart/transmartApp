@@ -36,14 +36,14 @@
 						</g:elseif>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'FREETEXT'}">
 		                	<g:if test="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr).length()<100}">
-								<g:textField size="100" name="${amTagItem.tagItemAttr}"  value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
+								<g:textField size="100" name="${amTagItem.tagItemAttr}"  value='${bioDataObject."${amTagItem.tagItemAttr}"}'/>
 			                </g:if>
 		    	            <g:else>
-		            	         <g:textArea size="100" cols="74" rows="10" name="${amTagItem.tagItemAttr}" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}" />          
+		            	         <g:textArea size="100" cols="74" rows="10" name="${amTagItem.tagItemAttr}" value='${bioDataObject."${amTagItem.tagItemAttr}"}' />          
 		        	        </g:else>
 	        	        </g:elseif>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'FREETEXTAREA'}">
-	            	         <g:textArea size="100" cols="74" rows="10" name="${amTagItem.tagItemAttr}" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}" />          
+	            	         <g:textArea size="100" cols="74" rows="10" name="${amTagItem.tagItemAttr}" value='${bioDataObject."${amTagItem.tagItemAttr}"}' />          
 	        	        </g:elseif>
 	        	        <g:else>
 	        	        ERROR -- Unrecognized tag item subtype
