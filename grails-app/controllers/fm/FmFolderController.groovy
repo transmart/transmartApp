@@ -217,205 +217,7 @@ class FmFolderController {
 			}
 		}
 	}
-	
-	private Object saveMetaData(FmFolder folder, bioDataObject, params)
-	{
-		log.info "saveMetaData called"
-		def paramMap = params
-		def folderId = folder.id
-		def amTagTemplate
-		List<AmTagItem> metaDataTagItems
 		
-			if(folder)
-			{
-				def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
-				
-				if(!bioDataObject)
-				{
-					bioDataObject = getBioDataObject(folder)
-				}
-				
-				amTagTemplate = AmTagTemplate.findByTagTemplateType(folder.folderType)
-				if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
-			    metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-		
-				log.info metaDataTagItems
-				
-				//Use metaDataTagItems to update fields
-				for (tagItem in metaDataTagItems) {
-					log.info tagItem.id + " " + tagItem.tagItemType + " " + tagItem.tagItemSubtype
-					def newValue = null
-					if (tagItem.tagItemType.equals('FIXED')) {
-						newValue = params."${tagItem.tagItemAttr}"
-						log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + newValue
-						if (newValue != null) {
-							def value = ""
-							if (tagItem.tagItemSubtype.equals('MULTIPICKLIST'))
-							{
-								newValue = params.list("${tagItem.tagItemAttr}")
-								if (newValue != null && newValue != "" && newValue.size() > 0)
-								{
-									newValue.each {
-									if(value != ""){value += "|"}
-										value += it
-									}
-								}
-							}
-							else
-							{
-								value = newValue
-							}
-							
-							log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + value
-							
-							bioDataObject."${tagItem.tagItemAttr}" = value
-				
-						}
-					}
-					else if (tagItem.tagItemType.equals('CUSTOM'))
-					{
-						newValue = params."amTagItem_${tagItem.id}"
-						if(tagItem.tagItemSubtype.equals('FREETEXT')||tagItem.tagItemSubtype.equals('FREETEXTAREA'))
-						{
-								
-							// Save the new tag value
-							if (newValue != null && newValue != "")
-							{
-								AmTagValue newTagValue = new AmTagValue(value: newValue)
-								if(newTagValue.save(flush: true))
-								{
-										//Create a new AmTagValue and point to it
-									log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " objectUid: " + newValue
-									AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "BIO_CONCEPT_CODE", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-									AmTagAssociation ata = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
-									if(!ata.save(flush: true))
-									{
-										ata.errors.each
-										{
-											log.error it
-										}
-									}
-								}
-								else
-								{
-									newTagValue.errors.each
-									{
-										log.error it
-									}
-								}
-							}
-	
-						}
-						else if(tagItem.tagItemSubtype.equals('PICKLIST'))
-						{
-							// Save the new tag value
-							if (newValue != null && newValue != "")
-							{
-						
-							    log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " objectUid: " + newValue
-								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "BIO_CONCEPT_CODE", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-								
-								AmTagAssociation ata1 = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
-									
-								if (!ata1.save(flush:true)) {
-									ata1.errors.each {
-										println it
-									}
-								}
-							}
-						}
-						else if(tagItem.tagItemSubtype.equals('MULTIPICKLIST'))
-						{
-							newValue = params.list("amTagItem_${tagItem.id}")
-							// Save the new tag value
-							if (newValue != null && newValue != "" && newValue.size() > 0)
-							{
-								log.info "REMOVING - objectType: CUSTOM " + " subjectUid = " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " newValue: " + newValue.size() + " " + newValue
-								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "BIO_CONCEPT_CODE", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-								
-								newValue.each
-								{
-									log.info "NEWVALUE " + it
-									if(it)
-									{
-										AmTagAssociation ata1 = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
-										
-										if (!ata1.save(flush:true)) {
-											ata1.errors.each {
-												println it
-											}
-										}
-									}
-									else
-									 {
-										 log.error("amTagItem_${tagItem.id} is null")
-									 }
-								}
-							}
-						}
-						else
-						{
-							// TODO: throw an exception
-							// unrcognized subtype
-						}
-						
-
-					}
-					else
-					{
-
-						newValue = params.list("amTagItem_${tagItem.id}")
-						//Look for new value by tag item ID
-						log.info "SAVING BUSINESS OBJECT == " + newValue
-						// Save the new tag value
-						if (newValue != null && newValue != "" && newValue.size() > 0)
-						{
-							log.info "REMOVING - objectType: CUSTOM " + " subjectUid = " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " newValue: " + newValue.size() + " " + newValue
-							AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: tagItem.tagItemType, subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-							
-							newValue.each
-							{
-								log.info "NEWVALUE " + it
-								if(it)
-								{
-									AmTagAssociation ata1 = new AmTagAssociation(objectType: tagItem.tagItemType, subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
-									
-									if (!ata1.save(flush:true)) {
-										ata1.errors.each {
-											println it
-										}
-									}
-								}
-								else
-								{
-									log.error("amTagItem_${tagItem.id} is null")
-								}
-							}
-						}
-
-					}
-					
-				}
-				
-				if (bioDataObject.save(flush: true))
-				{
-					log.info "bioDataObject.id = " + bioDataObject.id + " Meta data saved == " + bioDataObject.getUniqueId()
-					solrFacetService.reindexFolder(folder.getUniqueId())
-					
-				}
-				else
-				{
-					log.info bioDataObject
-					bioDataObject.errors.each {
-						log.error it
-					}
-				}
-
-			}	
-			
-			return bioDataObject
-	}
-	
     def save = {
 		log.info params
         def fmFolderInstance = new FmFolder(params)
@@ -426,96 +228,6 @@ class FmFolderController {
             render(view: "create", model: [fmFolderInstance: fmFolderInstance])
         }
     }
-
-//	def saveAssay2 = {
-//		log.info "saveAssay called"
-//		log.info params
-//		def parentFolder = FmFolder.get(params.parentId)
-//		log.info("parentFolder = " + parentFolder)
-//		def fmFolderInstance = new FmFolder(params)
-//		if(parentFolder)
-//		{
-//			// fmFolderInstance.folderFullName = "folder"
-//			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
-//			fmFolderInstance.folderType = FolderType.ASSAY.name()
-//			fmFolderInstance.parent = parentFolder
-//		}
-//		else
-//		{
-//			log.error "Parent folder is null"
-//		}
-//
-//		if (fmFolderInstance.save(flush: true)) {
-//			log.info "Assay saved"
-//			createAmTagTemplateAssociation(FolderType.ASSAY.name(), fmFolderInstance)
-//			saveMetaData(fmFolderInstance, null, params)
-//			
-//			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
-//			render result as JSON
-//			solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
-//			return
-//		}
-//		else {
-//			def errors = g.renderErrors(bean:fmFolderInstance)
-//			log.error errors
-//			def result = [errors:errors]
-//			render result as JSON
-////			fmFolderInstance.errors.each {
-////				log.error it
-////			}
-////			render(view: "create", model: [fmFolderInstance: fmFolderInstance])
-//		}
-//	}
-
-//	def saveFolder2 = {
-//		log.info "saveFolder called"
-//		log.info params
-//		def parentFolder = FmFolder.get(params.parentId)
-//		log.info("parentFolder = " + parentFolder)
-//		def fmFolderInstance = new FmFolder(params)
-//		if(parentFolder)
-//		{
-//			// fmFolderInstance.folderFullName = "folder"
-//			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
-//			fmFolderInstance.folderType = FolderType.FOLDER.name()
-//			fmFolderInstance.parent = parentFolder
-//		}
-//		else
-//		{
-//			log.error "Parent folder is null"
-//		}
-//		
-//		log.info fmFolderInstance
-//		if (!fmFolderInstance.hasErrors() && fmFolderInstance.save(flush: true)) {
-//			log.info "Folder saved"
-//			createAmTagTemplateAssociation(FolderType.FOLDER.name(), fmFolderInstance)
-//			saveMetaData(fmFolderInstance, null, params)
-//			
-//			def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
-//			render result as JSON
-//			solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
-//			return
-//		}
-//		else {
-//			log.error "Saved folder failed"
-//			def errors = g.renderErrors(bean:fmFolderInstance)
-//			log.error errors
-//			def result = [errors:errors]
-//			render result as JSON
-////			fmFolderInstance.errors.each {
-////				log.error it
-////			}
-////
-////			def bioDataObject = fmFolderInstance
-////			def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.FOLDER.name())
-////			if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
-////			
-////			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-////			
-////			render
-////			render(template: "createFolder", model:[bioDataObject:bioDataObject, folder:fmFolderInstance, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
-//		}
-//	}
 
 	def saveProgram = {
 		log.info "saveProgram called"
@@ -536,8 +248,11 @@ class FmFolderController {
 			log.error errors
 			def result = [errors:errors]
 			render result as JSON
+		} catch (Exception ex) {
+			log.error "Exception in FmFolderController.saveProgram", ex
+			def result = [errors:"<ul><li>An unexpected error has occurred. If this error persits, please click \"Close\" or \"Cancel\" to close this dialog box.<br><br>Error details: " + ex.getMessage() + "</li></ul>"]
+			render result as JSON
 		}
-		// TODO: Handle other exceptions
 			
 	}
 	
@@ -574,8 +289,11 @@ class FmFolderController {
 			log.error errors
 			def result = [errors:errors]
 			render result as JSON
+		} catch (Exception ex) {
+			log.error "Exception in FmFolderController.saveStudy", ex
+			def result = [errors:"<ul><li>An unexpected error has occurred. If this error persits, please click \"Close\" or \"Cancel\" to close this dialog box.<br><br>Error details: " + ex.getMessage() + "</li></ul>"]
+			render result as JSON
 		}	
-		// TODO: Handle other exceptions
 		
 	}
 
@@ -607,8 +325,11 @@ class FmFolderController {
 			log.error errors
 			def result = [errors:errors]
 			render result as JSON
-		}	
-		// TODO: Handle other exceptions
+		} catch (Exception ex) {
+			log.error "Exception in FmFolderController.saveAssay", ex
+			def result = [errors:"<ul><li>An unexpected error has occurred. If this error persits, please click \"Close\" or \"Cancel\" to close this dialog box.<br><br>Error details: " + ex.getMessage() + "</li></ul>"]
+			render result as JSON
+		}
 		
 	}
 
@@ -649,8 +370,11 @@ class FmFolderController {
 			log.error errors
 			def result = [errors:errors]
 			render result as JSON
+		} catch (Exception ex) {
+			log.error "Exception in FmFolderController.saveAnalysis", ex
+			def result = [errors:"<ul><li>An unexpected error has occurred. If this error persits, please click \"Close\" or \"Cancel\" to close this dialog box.<br><br>Error details: " + ex.getMessage() + "</li></ul>"]
+			render result as JSON
 		}	
-		// TODO: Handle other exceptions
 		
 	}
 
@@ -682,162 +406,13 @@ class FmFolderController {
 			log.error errors
 			def result = [errors:errors]
 			render result as JSON
+		} catch (Exception ex) {
+			log.error "Exception in FmFolderController.saveFolder", ex
+			def result = [errors:"<ul><li>An unexpected error has occurred. If this error persits, please click \"Close\" or \"Cancel\" to close this dialog box.<br><br>Error details: " + ex.getMessage() + "</li></ul>"]
+			render result as JSON
 		}	
-		// TODO: Handle other exceptions
 		
 	}
-
-//	def saveAnalysis2 = {
-//		log.info "saveAnalysis called"
-//		log.info params
-//	
-//		def parentFolder = FmFolder.get(params.parentId)
-//		log.info("parentFolder = " + parentFolder)
-//		def fmFolderInstance = new FmFolder(params)
-//		if(parentFolder)
-//		{
-//			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
-//			fmFolderInstance.folderType = FolderType.ANALYSIS.name()
-//			fmFolderInstance.parent = parentFolder
-//		}
-//		else
-//		{
-//			log.error "Parent folder is null"
-//		}
-//
-//		if (fmFolderInstance.save(flush: true))
-//		{
-//			log.info "Analysis folder saved"
-//			createAmTagTemplateAssociation(FolderType.ANALYSIS.name(), fmFolderInstance)
-//			
-//			log.info "Analysis folder association saved"
-//			def bioDataObject = new bio.BioAssayAnalysis()
-//			bioDataObject.name = fmFolderInstance.folderName
-//			bioDataObject.shortDescription = fmFolderInstance.description
-//			bioDataObject.longDescription = fmFolderInstance.description
-//			bioDataObject.analysisMethodCode="TBD"
-//			bioDataObject.assayDataType="TBD"
-//			bioDataObject.dataCount=-1
-//			bioDataObject.teaDataCount=-1
-//			bioDataObject = saveMetaData(fmFolderInstance, bioDataObject, params)
-//			BioData bioData = BioData.get(bioDataObject.id)
-//			if(!bioData){
-//				 log.error "Biodata for " + bioDataObject.id + " is not found"
-//			}
-//			else{
-//				log.info "Saving analysis objectUid: " + bioData.uniqueId + " objectType: bio.BioAssayAnalysis  fmFolder: " + fmFolderInstance
-//				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.BioAssayAnalysis",fmFolder:fmFolderInstance)
-//				if(ffa.save(flush: true))
-//				{
-//					log.info "Analysis experiment folder association saved"
-//					
-//					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
-//					render result as JSON
-//					solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
-////					return
-//				}
-//				else
-//				{
-//					def errors = g.renderErrors(bean:fmFolderInstance)
-//					log.error errors
-//					def result = [errors:errors]
-//					render result as JSON
-////					ffa.errors.each {
-////						log.error it
-////					}
-//				}
-//				
-//			}
-//
-//		}
-//		else
-//		{
-//			def errors = g.renderErrors(bean:fmFolderInstance)
-//			log.error errors
-//			def result = [errors:errors]
-//			render result as JSON
-////			fmFolderInstance.errors.each {
-////				log.error it
-////			}
-//		}
-//		
-////		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
-//	}
-
-	
-//	def saveStudy2 = {
-//		log.info "saveStudy called"
-//		log.info params
-//	
-//		def parentFolder = FmFolder.get(params.parentId)
-//		log.info("parentFolder = " + parentFolder)
-//		def fmFolderInstance = new FmFolder(params)
-//		if(parentFolder)
-//		{
-//			fmFolderInstance.folderLevel = parentFolder.folderLevel + 1
-//			fmFolderInstance.folderType = FolderType.STUDY.name()
-//			fmFolderInstance.parent = parentFolder
-//		}
-//		else
-//		{
-//			log.error "Parent folder is null"
-//		}
-//
-//		if (fmFolderInstance.save(flush: true)) 
-//		{
-//			log.info "Study folder saved"
-//  			createAmTagTemplateAssociation(FolderType.STUDY.name(), fmFolderInstance)
-//			
-//			log.info "Study tag template association saved"
-//			def bioDataObject = new bio.Experiment()
-//			bioDataObject.title = fmFolderInstance.folderName
-//			bioDataObject.description = fmFolderInstance.description
-//		//	bioDataObject.accession = fmFolderInstance.folderName
-//		//	log.info "bioDataObject.accession  = " + bioDataObject.accession 
-//			bioDataObject.type="Experiment"
-//			bioDataObject = saveMetaData(fmFolderInstance, bioDataObject, params)
-//			BioData bioData = BioData.get(bioDataObject.id)
-//			if(!bioData){
-//				 log.error "Biodata for " + bioDataObject.id + " is not found"
-//			}
-//			else {
-//				log.info "Study experiment saved " + bioDataObject.id
-//				FmFolderAssociation ffa = new FmFolderAssociation(objectUid: bioData.uniqueId, objectType:"bio.Experiment",fmFolder:fmFolderInstance)
-//				if(ffa.save(flush: true))
-//				{
-//					log.info "Study experiment folder association saved " + bioData.uniqueId
-//					
-//					def result = [id: fmFolderInstance.id, parentId: fmFolderInstance.parent.id]
-//					render result as JSON
-//					solrFacetService.reindexFolder(fmFolderInstance.getUniqueId())
-//					return
-//				}
-//				else
-//				{
-//					def errors = g.renderErrors(bean:fmFolderInstance)
-//					log.error errors
-//					def result = [errors:errors]
-//					render result as JSON
-////					ffa.errors.each {
-////						log.error it
-////					} 
-//				}				
-//			}
-//		}
-//		else 
-//		{
-//			def errors = g.renderErrors(bean:fmFolderInstance)
-//			log.error errors
-//			def result = [errors:errors]
-//			render result as JSON
-////			fmFolderInstance.errors.each {
-////				log.error it
-////			}
-//		}
-//		
-////		render(view: "create", model: [fmFolderInstance: fmFolderInstance])
-//    }
-
 	
     def showStudy = {
         def fmFolderInstance = FmFolder.get(params.id)
@@ -1581,247 +1156,14 @@ class FmFolderController {
 			log.error errors
 			def result = [errors:errors]
 			render result as JSON
+		} catch (Exception ex) {
+			log.error "Exception in FmFolderController.updateMetaData", ex
+			def result = [errors:"<ul><li>An unexpected error has occurred. If this error persits, please click \"Close\" or \"Cancel\" to close this dialog box.<br><br>Error details: " + ex.getMessage() + "</li></ul>"]
+			render result as JSON
 		}
-		// TODO: Handle other exceptions
 
 	}
 	
-	def updateMetaData1 =
-	{
-		log.info "updateMetaData called"
-		log.info params
-		
-		if (!isAdmin()) return;
-		
-		def paramMap = params
-		def folderId = params.id
-		def amTagTemplate
-		List<AmTagItem> metaDataTagItems
-		def folder
-		def bioDataObject
-		if (folderId)
-		{
-			folder = FmFolder.get(folderId)
-			
-			if(folder)
-			{
-				if(params.description)
-				{
-					folder.description = params.description 
-				}
-				def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
-				
-				bioDataObject = getBioDataObject(folder)
-				metaDataTagItems = getMetaDataItems(folder, true)
-				log.info metaDataTagItems
-				//Use metaDataTagItems to update fields
-				for (tagItem in metaDataTagItems) {
-					log.info "Processing tag = " + tagItem.id 
-					def newValue = null
-					if (tagItem.tagItemType.equals('FIXED')) {
-						newValue = params."${tagItem.tagItemAttr}"
-						
-						if (newValue != null) {
-							def value = ""
-							if (tagItem.tagItemSubtype.equals('MULTIPICKLIST'))
-							{
-								newValue = params.list("${tagItem.tagItemAttr}")
-								if (newValue != null && newValue != "" && newValue.size() > 0)
-								{
-									newValue.each {
-									if(value != ""){value += "|"}
-										value += it
-									}
-								}
-								
-								
-							}
-							else
-							{
-								value = newValue
-							}
-							
-							log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + value
-							
-							bioDataObject."${tagItem.tagItemAttr}" = value
-							
-							if(tagItem.tagItemAttr.equalsIgnoreCase("title"))
-							{
-								folder.folderName= newValue
-							}
-							
-							if(tagItem.tagItemAttr.equalsIgnoreCase("description"))
-							{
-								folder.description = newValue
-							}
-			
-						}
-					}
-					else if (tagItem.tagItemType.equals('CUSTOM'))
-					{
-						newValue = params."amTagItem_${tagItem.id}"
-						if(tagItem.tagItemSubtype.equals('FREETEXT') || tagItem.tagItemSubtype.equals('FREETEXTAREA')) 
-						{
-														// Save the new tag value
-							if (newValue != null && newValue != "")
-							{
-								//Look for new value by tag item ID
-								log.info "SAVING CUSTOM::FREETEXT == " + newValue
-								
-								AmTagValue newTagValue = new AmTagValue(value: newValue)
-								if(newTagValue.save(flush: true))
-								{
-									log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " objectUid: " + newValue
-								
-									AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "BIO_CONCEPT_CODE", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-									AmTagAssociation ata = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
-									if(!ata.save(flush: true))
-									{
-										ata.errors.each
-										{
-											log.error it
-										}
-									}
-								}
-								else
-								{
-									newTagValue.errors.each
-									{
-										log.error it
-									}
-								}
-							}
-
-	
-						}
-						else if(tagItem.tagItemSubtype.equals('PICKLIST'))
-						{
-							if (newValue != null && newValue != "")
-							{
-								//Look for new value by tag item ID
-								log.info "SAVING CUSTOM::PICKLIST == " + newValue
-								log.info "'CUSTOM', subjectUid: " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " objectUid: " + newValue
-								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "BIO_CONCEPT_CODE", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-								AmTagAssociation ata = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
-									
-								if (!ata.save(flush:true)) {
-									ata.errors.each {
-										println it
-									}
-								}
-							}
-						}
-						else if(tagItem.tagItemSubtype.equals('MULTIPICKLIST'))
-						{
-							newValue = params.list("amTagItem_${tagItem.id}")
-							//Look for new value by tag item ID
-							log.info "SAVING CUSTOM::MULTIPICKLIST == " + newValue
-							// Save the new tag value
-							if (newValue != null && newValue != "" && newValue.size() > 0)
-							{
-								log.info "REMOVING - objectType: CUSTOM " + " subjectUid = " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " newValue: " + newValue.size() + " " + newValue
-								AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "BIO_CONCEPT_CODE", subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-								
-								newValue.each
-								{   
-									log.info "NEWVALUE = " + it
- 									if(it)
-									{
-										 AmTagAssociation ata1 = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
-									
-										if (!ata1.save(flush:true)) {
-											ata1.errors.each {
-												println it
-											}
-									
-										}
-									}
-									else
-								 	{
-										 log.error("amTagItem_${tagItem.id} is null")
-									 }
-								}
-							}
-						}
-
-						else
-						{
-							// TODO: throw an exception
-							// unrcognized subtype
-						}
-						
-
-					}
-					else 
-					{
-						newValue = params.list("amTagItem_${tagItem.id}")
-						//Look for new value by tag item ID
-						log.info "SAVING BUSINESS OBJECT == " + newValue
-						// Save the new tag value
-						if (newValue != null && newValue != "" && newValue.size() > 0)
-						{
-							log.info "REMOVING - objectType: CUSTOM " + " subjectUid = " + folder.getUniqueId() + " tagItemId: " + tagItem.id + " newValue: " + newValue.size() + " " + newValue
-							AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: tagItem.tagItemType, subjectUid: folder.getUniqueId(),tagItemId: tagItem.id])
-							
-							newValue.each
-							{
-								log.info "NEWVALUE " + it
-								if(it)
-								{
-									AmTagAssociation ata1 = new AmTagAssociation(objectType: tagItem.tagItemType, subjectUid: folder.getUniqueId(), objectUid: it, tagItemId: tagItem.id)
-									
-									if (!ata1.save(flush:true)) {
-										ata1.errors.each {
-											println it
-										}
-									}
-								}
-								else
-								 {
-									 log.error("amTagItem_${tagItem.id} is null")
-								 }
-							}
-						}
-					 	
-					}
-				}
-				if (!folder.hasErrors() && folder.save(flush: true)) 
-				{
-					log.info "Folder saved"
-					
-					if (!bioDataObject.hasErrors() && bioDataObject.save(flush: true)) {
-						log.info "Meta data saved"
-						def result = [id: folderId]
-						render result as JSON
-						solrFacetService.reindexFolder(folder.getUniqueId())
-						return
-					}
-					else {
-						def errors = g.renderErrors(bean:bioDataObject)
-						log.error errors
-						def result = [errors:errors]
-						render result as JSON
-//						log.error "Errors occurred saving Meta data"
-//						metaDataTagItems  =  getMetaDataItems(folder, true)
-//						log.info "metaDataTagItems  = " + metaDataTagItems   
-//						render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
-						//	render(view: "edit", model: [fmFolderInstance: fmFolderInstance])
-					}
-				}
-				else
-				{
-					def errors = g.renderErrors(bean:folder)
-					log.error errors
-					def result = [errors:errors]
-					render result as JSON
-//					log.error "Errors occurred saving folder description"
-//					render(view: "editMetaData", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
-					
-				}
-			}
-		}
-	}
-			
 	def subFolders = 
 	{
 		ExportTableNew table;

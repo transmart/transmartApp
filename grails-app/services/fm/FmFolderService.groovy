@@ -463,21 +463,14 @@ class FmFolderService {
 		def path = names.join("/")
 		return path
 	}
-	
-//	def saveProgram(FmFolder folder, Map values) {
-//		
-//		AmTagTemplate template = AmTagTemplate.findByTagTemplateType(FolderType.PROGRAM.name())
-//		def sql = "from AmTagItem ati where ati.amTagTemplate.id = :templateId and ati.viewInGrid = 1 order by displayOrder"
-//		List items = AmTagItem.findAll(sql, [templateId:template.id])
-//	
-//		//FmFolderAssociation folderAssociation = FmFolderAssociation.findByFmFolder(folder)
-//		//Object object = folderAssociation.getBioObject() ?: folder	
-//
-//		validateFolder(folder, folder, items, values)
-//		saveMetaData(folder, folder, template, values)	
-//		
-//	}
-	
+		
+	/**
+	 * Validates and saves folder, associated business, and metadata fields.
+	 * @param folder
+	 * @param object associated business object or folder, if there is none
+	 * @param values params
+	 * @throws ValidationException if required fields are missing or error saving to database
+	 */
 	def saveFolder(FmFolder folder, Object object, Map values) {
 		
 		AmTagTemplate template = AmTagTemplate.findByTagTemplateType(folder.folderType)
@@ -496,6 +489,14 @@ class FmFolderService {
 
 	}
 	
+	/**
+	 * Validates required folder and meta data fields.
+	 * @param folder
+	 * @param object
+	 * @param items
+	 * @param values
+	 * @throws ValidationException
+	 */
 	private void validateFolder(FmFolder folder, Object object, List items, Map values) {
 		
 		// Validate folder specific fields, if there is no business object
@@ -515,9 +516,12 @@ class FmFolderService {
 				def value = null;
 				if (item.tagItemType.equals("FIXED")) {
 					value = values.list(item.tagItemAttr)
+//					log.info "validate item.tagItemAtrr = ${item.tagItemAttr}"
 				} else {
 					value = values.list("amTagItem_" + item.id)
+//					log.info "validate item.tagItemAtrr = amTagItem_${item.id}"
 				}
+//				log.info "validate value = ${value}, value.size() = ${value.size()}"
 				if (value.size() == 0 || value[0] == null || value[0].length() == 0) {
 					folder.errors.rejectValue("id", "blank", [item.displayName] as String[], "{0} field requires a value.")
 				}
@@ -533,10 +537,21 @@ class FmFolderService {
 		
 	}
 
+	/**
+	 * Saves folder, associated business object, and metadata fields
+	 * @param folder folder to be saved
+	 * @param object associated business object or folder, if there is none
+	 * @param template tag template associated with folder
+	 * @param items items associated with template
+	 * @param values field values to be saved
+	 * @throws ValidationException if there are any errors persisting data to the database
+	 */
 	private void saveFolder(FmFolder folder, Object object, AmTagTemplate template, List items, Map values) {
 
+		// Save folder object
 		folder.save(flush:true, failOnError:true)
 
+		// Using items associated with this folder's template, set business object property values or create tags.
 		for (tagItem in items) {
 			def newValue = null
 			if (tagItem.tagItemType.equals('FIXED')) {
