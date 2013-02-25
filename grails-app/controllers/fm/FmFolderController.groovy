@@ -1300,12 +1300,14 @@ class FmFolderController {
 		return table.toJSON_DataTables("", folderType).toString(5);
 	}
 	
-	//FIXME Quick hack to make title properties act as hyperlinks
+	//FIXME Quick hack to make title properties act as hyperlinks.
+	//These name properties should be indicated in the database, and the sort value should be specified (needs a rewrite of our ExportTable)
 	def nameProperties = ['assay name', 'analysis name', 'study title', 'program title', 'folder name']
 	private createTitleString(amTagItem, name, folderObject) {
 		def tagName = amTagItem.displayName
 		if (nameProperties.contains(tagName.toLowerCase())) {
-			return ("<a href='#' onclick='openFolderAndShowChild(${folderObject.parent?.id}, ${folderObject.id})'>" + name + "</a>")
+			//Comment with name at the start to preserve the sort order - precaution against "--" being included in a name
+			return ("<!--" + name.replace("--", "_") + "-->" + "<a href='#' onclick='openFolderAndShowChild(${folderObject.parent?.id}, ${folderObject.id})'>" + name + "</a>")
 		}
 		return name
 	}
