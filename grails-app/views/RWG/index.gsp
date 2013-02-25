@@ -434,7 +434,7 @@
                     if (sort != null) {
 	         			data.aaSorting = sort;
 	         		}
-                    data.sDom = "<\"top\"<\"gridTitle\">p>Rrt<\"clear\">"
+                    data.sDom = '<"top"<"gridTitle">Rrt><"bottom"p>' //WHO DESIGNED THIS
                 }
             }
 
