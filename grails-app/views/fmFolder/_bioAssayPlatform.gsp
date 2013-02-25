@@ -5,7 +5,7 @@ function addToPlatformField() {
 	var platformId = jQuery('#platform').val();
 	var platformText = jQuery('#platform option:selected').text();
 	
-	$j('#amTagItem_1995743').append($j('<option></option>').val(platformId).text(platformText).attr('selected', 'selected'));
+	$j('#${fieldName}').append($j('<option></option>').val(platformId).text(platformText).attr('selected', 'selected'));
 	var newTag = $j('<span/>', {
 		id: '${fieldName}-tag-' + platformId,
 		'class': 'tag',
