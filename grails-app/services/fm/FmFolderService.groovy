@@ -518,10 +518,10 @@ class FmFolderService {
 				} else {
 					value = values.list("amTagItem_" + item.id)
 				}
-				if (value.size == 0 || value[0] == null || value[0].length() == 0) {
+				if (value.size() == 0 || value[0] == null || value[0].length() == 0) {
 					folder.errors.rejectValue("id", "blank", [item.displayName] as String[], "{0} field requires a value.")
 				}
-				log.info item.displayName + " = \"" + value + "\""
+				// TODO: Check for max values
 			} else {
 				log.info item.displayName + " not required"
 			}
