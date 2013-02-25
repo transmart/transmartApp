@@ -39,7 +39,8 @@ grails.project.dependency.resolution = {
 
         // uncomment the below to enable remote dependency resolution
         // from public Maven repositories
-        //mavenLocal()
+
+        mavenLocal()
         mavenCentral()
         //mavenRepo "http://snapshots.repository.codehaus.org"
         //mavenRepo "http://repository.codehaus.org"
@@ -49,6 +50,7 @@ grails.project.dependency.resolution = {
     dependencies {
 		// specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 		runtime 'postgresql:postgresql:9.0-801.jdbc4'
+		compile 'antlr:antlr:2.7.7'
     }
 
     plugins {
@@ -56,7 +58,7 @@ grails.project.dependency.resolution = {
         build ":tomcat:$grailsVersion"
         compile ":quartz:1.0-RC2"
         compile ":rdc-rmodules:0.2"
-        compile ":spring-security-core:1.2.7.1"
+        compile ":spring-security-core:1.2.7.3"
         build ":build-info:1.1"
 		runtime ":prototype:1.0"
 		compile ":resources:1.1.6"

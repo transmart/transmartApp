@@ -68,14 +68,17 @@ class PluginModule {
 	def private setParamsStr(moduleParams) {
 		if (moduleParams?.trim()) {
 			def jsonObject = JSON.parse(moduleParams)
-			params = Hibernate.createClob(jsonObject?.toString())
+
+			//params = Hibernate.createClob(jsonObject?.toString())
+			params = jsonObject?.toString()
 		}
 	}
 	
 	def private getParamsStr() {
-		def InputStream textStream = params?.getAsciiStream()
+		/*def InputStream textStream = params?.getAsciiStream()
 		def paramsAsStr = ''
-		if (null != textStream) paramsAsStr = pluginService.convertStreamToString(textStream)
-		return paramsAsStr
+		if (null != textStream) paramsAsStr = pluginService.convertStreamToString(textStream).replace('\n',' ')
+		return paramsAsStr*/
+		return params
 	}
 }
