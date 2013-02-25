@@ -66,7 +66,7 @@ function createWorkflowStatus(parentElem, noTitleBar) {
 	
 	var d = $j( "#dialog-modal" ).dialog({
 		height: 100
-		, minHeight: 90
+		, minHeight: 120
 		, maxHeight: 120
 		, width: 300
 		, minWidth: 250
