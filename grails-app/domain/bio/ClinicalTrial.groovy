@@ -93,12 +93,16 @@ class ClinicalTrial extends Experiment {
 		maxAge(nullable:true)
 		minAge(nullable:true)
 		numberOfSites(nullable:true)
+		numberOfPatients(nullable:true)
 		primaryEndPoints(nullable:true)
 		routeOfAdministration(nullable:true)
 		secondaryEndPoints(nullable:true)
 		secondaryIds(nullable:true)
+		studyOwner(nullable:true)
+		studyPhase(nullable:true)
 		studyType(nullable:true)
 		subjects(nullable:true)
+		trialNumber(nullable:true)
 		typeOfControl(nullable:true)
 	}
 	
