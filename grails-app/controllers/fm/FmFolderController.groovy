@@ -1136,6 +1136,7 @@ class FmFolderController {
 			if (assoc != null) {
 				object = assoc.getBioObject()
 				if (object instanceof bio.Experiment) {
+					object = (bio.Experiment) object;
 					folder.folderName = params.title
 				} else if (object instanceof bio.BioAssayAnalysis) {
 					folder.folderName = params.name

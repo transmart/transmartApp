@@ -82,6 +82,26 @@ class ClinicalTrial extends Experiment {
 		}
 	}
 	
+	static constraints = {
+		blindingProcedure(nullable:true)
+		dosingRegimen(nullable:true)
+		durationOfStudyWeeks(nullable:true)
+		exclusionCriteria(nullable:true)
+		genderRestrictionMfb(nullable:true)
+		groupAssignment(nullable:true)
+		inclusionCriteria(nullable:true)
+		maxAge(nullable:true)
+		minAge(nullable:true)
+		numberOfSites(nullable:true)
+		primaryEndPoints(nullable:true)
+		routeOfAdministration(nullable:true)
+		secondaryEndPoints(nullable:true)
+		secondaryIds(nullable:true)
+		studyType(nullable:true)
+		subjects(nullable:true)
+		typeOfControl(nullable:true)
+	}
+	
 	/**
 	 * Get values to Export to Excel
 	 */
