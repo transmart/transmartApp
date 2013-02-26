@@ -49,9 +49,9 @@ function updatePlatforms() {
 <%-- Visible input --%>
 
 <div style="background-color: #E4E4E4; float:left; padding: 8px; border-radius: 8px;">
-	<div style="float: left; margin-right: 8px">
+	<div style="margin-right: 8px">
 	<div style="fixed: left; line-height: 24px; font-style: italic; margin-right: 8px;">Filter on: </div>
-	<div style="float: left; margin-right: 8px">
+	<div style="margin-right: 8px">
 	
 	
 	<div class="textsmaller">Measurement</div>

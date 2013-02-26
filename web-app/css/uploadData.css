@@ -59,10 +59,11 @@ a.button {
 	margin: 2px;
 	border-top-left-radius: 8px;
 	border-bottom-left-radius: 8px;
-	line-height: 16pt;
+	line-height: 12pt;
 	cursor: pointer;
 	background-image: url('../images/clearsmall.png');
 	background-repeat: no-repeat;
+	display: inline-block;
 }
 
 .tag:hover {
