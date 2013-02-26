@@ -43,10 +43,25 @@ jQuery(document).ready(function() {
 			return false;
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
-		return jQuery('<li></li>')		
+		var returnElement = jQuery('<li></li>')		
 		  .data("item.autocomplete", item )
 		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b></a>')
 		  .appendTo(ul);
+		  
+		ul.css('height', '');
+		
+		//If this addition would expand the list off the screen, limit its height and add a scrollbar
+		var windowHeight = jQuery(window).height();
+		var inputPosition = jQuery("#${fieldName}-input").offset().top;
+		var ulHeight = ul.height();
+		var bottomY = inputPosition + ulHeight + 20;
+		
+		if (bottomY > windowHeight) {
+			ul.height(windowHeight - inputPosition - 30);
+			ul.css('overflow', 'auto');
+		}
+		  
+		return returnElement;
 	};
 });
 </g:javascript>

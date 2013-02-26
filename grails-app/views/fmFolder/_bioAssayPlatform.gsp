@@ -60,21 +60,21 @@ function updatePlatforms() {
 	</div>
 	</div>
 	
-	<div style="float: left; margin-right: 8px">
+	<div style="margin-right: 8px">
 	<div class="textsmaller">Technology</div>
 	<div id="technologywrapper">
 		<tmpl:selectTechnologies technologies="${technologies}"/>
 	</div>
 	</div>
 	
-	<div style="float: left; margin-right: 8px">
+	<div style="margin-right: 8px">
 	<div class="textsmaller">Vendor</div>
 	<div id="vendorwrapper">
 		<tmpl:selectVendors vendors="${vendors}"/>
 	</div>
 	</div>
 	</div>
-	<div style="float: left; margin-right: 8px">
+	<div style="margin-right: 8px">
 	<div style="fixed: left; line-height: 24px; font-style: italic; margin-right: 8px;">Add new platform: </div>
 	<div id="platformwrapper">
 		<tmpl:selectPlatforms />

@@ -519,7 +519,7 @@ table.menuDetail th.menuVisited {
 
 .x-tree-node-icon.programicon { background-image: url('../images/foldertypes/program.png'); }
 
-.x-tree-node { font: 11px Verdana, Arial, sans-serif; color: #228822}
+.x-tree-node { font: 11px Verdana, Arial, sans-serif}
 
 .ajaxloading {
 	background-image: url('../images/loader-large.gif') !important;
