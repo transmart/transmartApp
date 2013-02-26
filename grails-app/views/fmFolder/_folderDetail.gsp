@@ -213,7 +213,7 @@
 			success: function(response) {
 				jQuery('#gridViewWrapperAnalysis').removeClass('ajaxloading');
 				if (response.rowCount > 0) {
-			 	 	var dtAnalysis  = new dataTableWrapper('gridViewWrapperAnalysis', 'gridViewTableAnalysis', 'Title', [[2, "asc"]]);
+			 	 	var dtAnalysis  = new dataTableWrapper('gridViewWrapperAnalysis', 'gridViewTableAnalysis', 'Title', [[2, "asc"]], 25);
 			   		dtAnalysis.loadData(response);
 				}
 		   		if (response.rowCount > 1000) {
