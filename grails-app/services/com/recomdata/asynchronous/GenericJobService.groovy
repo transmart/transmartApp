@@ -97,7 +97,7 @@ class GenericJobService implements Job {
 		
 		//Try to make the working directory.
 		File jtd = new File(jobTmpWorkingDirectory)
-		jtd.mkdirs();
+		log.info("Creating working folders: " + jtd.mkdirs())
 		
 		//Create a file that will have all the job parameters for debugging purposes.
 		jobInfoFile = new File(jobTmpWorkingDirectory + File.separator + 'jobInfo.txt')
