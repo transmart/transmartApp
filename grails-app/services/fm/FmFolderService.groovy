@@ -556,7 +556,6 @@ class FmFolderService {
 			def newValue = null
 			if (tagItem.tagItemType.equals('FIXED')) {
 				newValue = values."${tagItem.tagItemAttr}"
-				log.info "SAVING FIXED -- ${tagItem.tagItemAttr} == " + newValue
 				if (newValue != null) {
 					def value = ""
 					if (tagItem.tagItemSubtype.equals('MULTIPICKLIST')) {
@@ -576,20 +575,22 @@ class FmFolderService {
 				}
 			} else if (tagItem.tagItemType.equals('CUSTOM')) {
 				newValue = values."amTagItem_${tagItem.id}"
-				AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType: "BIO_CONCEPT_CODE", subjectUid: folder.getUniqueId(), tagItemId: tagItem.id])
-				if (tagItem.tagItemSubtype.equals('FREETEXT')||tagItem.tagItemSubtype.equals('FREETEXTAREA')) {
+				if (tagItem.tagItemSubtype.equals('FREETEXT') || tagItem.tagItemSubtype.equals('FREETEXTAREA')) {
+					AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType:"AM_TAG_VALUE", subjectUid:folder.getUniqueId(), tagItemId:tagItem.id])
 					if (newValue != null && newValue != "") {
 						AmTagValue newTagValue = new AmTagValue(value: newValue)
 						newTagValue.save(flush: true, failOnError:true)
-						AmTagAssociation tagAssoc = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
+						AmTagAssociation tagAssoc = new AmTagAssociation(objectType: 'AM_TAG_VALUE', subjectUid: folder.getUniqueId(), objectUid: newTagValue.getUniqueId(), tagItemId: tagItem.id)
 						tagAssoc.save(flush: true, failOnError:true)
 					}
 				} else if (tagItem.tagItemSubtype.equals('PICKLIST')) {
+					AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType:"BIO_CONCEPT_CODE", subjectUid:folder.getUniqueId(), tagItemId:tagItem.id])
 					if (newValue != null && newValue != "") {
 						AmTagAssociation tagAssoc = new AmTagAssociation(objectType: 'BIO_CONCEPT_CODE', subjectUid: folder.getUniqueId(), objectUid: newValue, tagItemId: tagItem.id)
 						tagAssoc.save(flush:true, failOnError:true)
 					}
 				} else if (tagItem.tagItemSubtype.equals('MULTIPICKLIST')) {
+					AmTagAssociation.executeUpdate ("delete from AmTagAssociation as ata where ata.objectType=:objectType and ata.subjectUid=:subjectUid and ata.tagItemId=:tagItemId", [objectType:"BIO_CONCEPT_CODE", subjectUid:folder.getUniqueId(), tagItemId:tagItem.id])
 					newValue = values.list("amTagItem_${tagItem.id}")
 					if (newValue != null && newValue != "" && newValue.size() > 0) {
 						newValue.each {
