@@ -91,13 +91,16 @@ class Experiment implements IExcelProfile {
 		accession(unique:true)
 		description(nullable:true, maxSize:4000)
 		design(nullable:true, maxSize:4000)
-		overallDesign(nullable:true, maxSize:4000)
 		startDate(nullable:true)
 		completionDate(nullable:true)
 		primaryInvestigator(nullable:true, maxSize:800)
-		accessType(nullable:true)
-		target(nullable:true)
 		status(nullable:true)
+		overallDesign(nullable:true, maxSize:4000)
+		institution(nullable:true)
+		country(nullable:true)
+		bioMarkerType(nullable:true)
+		target(nullable:true)
+		accessType(nullable:true)
 	}
 	
 	def getCompoundNames()	{

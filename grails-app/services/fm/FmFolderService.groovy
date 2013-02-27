@@ -629,6 +629,7 @@ class FmFolderService {
 
 		// If there is business object associated with folder, then save it and create association, if it does not exist.
 		if (object != folder) {
+			log.info "FmFolderService.saveFolder object.properties = ${object.properties}"
 			object.save(flush: true, failOnError:true)
 			FmFolderAssociation folderAssoc = FmFolderAssociation.findByFmFolder(folder)
 			if (folderAssoc == null) {
