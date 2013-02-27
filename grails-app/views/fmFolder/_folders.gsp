@@ -9,7 +9,7 @@
 
 <div class="search-results-table">
 	<g:each in="${folders}" status="ti" var="folder">        
-		<g:if test="${!auto || folder.folderLevel > 1 || !folderSearchString || folderSearchString?.indexOf(folder.folderFullName) > -1}">
+		<g:if test="${!auto || folder.folderLevel > 1 || !folderSearchString || folderSearchString?.indexOf(folder.folderFullName) > -1 || (folder.folderLevel == 1 && fmFolderService.searchMatchesParentProgram(folderSearchString, folder.folderFullName))}">
 			<table id="folder-header-${folder.id}" class="folderheader" name="${folder.uniqueId}">
 				
 				<tr>

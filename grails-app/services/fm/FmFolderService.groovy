@@ -640,5 +640,19 @@ class FmFolderService {
 		}
 		
 	}
+	
+	/**
+	 * Helper method to check whether a folder's parent program is included in the current search results.
+	 * 
+	 * @param folderSearchString The current search string
+	 * @param folderFullName The folder's full path (from which the program UID can be extracted).
+	 * @return
+	 */
+	def searchMatchesParentProgram(folderSearchString, folderFullName) {
+		def paths = folderSearchString.split(",")
+		def index = folderFullName.indexOf("\\", 1)
+		def programUID = folderFullName.substring(1, index)
+		return ("\\" + programUID + "\\" in paths)
+	}
 
 }
