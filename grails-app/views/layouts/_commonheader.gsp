@@ -70,8 +70,8 @@
 	   				<g:if test="${'sampleexplorer'==app}"><th class="menuVisited">Sample Explorer</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="sampleExplorer">Sample Explorer</g:link></th></g:else>	   
 		   			 </g:if>--%>
-	   				<g:if test="${'genesignature'==app}"><th class="menuVisited">Gene Signature/Lists</th></g:if>
-		   			<g:else><th class="menuLink"><g:link controller="geneSignature">Gene Signature/Lists</g:link></th></g:else>
+	   				<g:if test="${'genesignature'==app}"><th class="menuVisited">Gene&nbsp;Signature/Lists</th></g:if>
+		   			<g:else><th class="menuLink"><g:link controller="geneSignature">Gene&nbsp;Signature/Lists</g:link></th></g:else>
 		   			
 		      		<sec:ifAnyGranted roles="ROLE_ADMIN">
 	   					<g:if test="${'accesslog'==app}"><th class="menuVisited">Admin</th></g:if>

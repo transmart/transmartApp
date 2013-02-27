@@ -29,6 +29,7 @@
 		<g:javascript library="prototype" />
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+		<script type="text/javascript"	src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
 	    <script type="text/javascript"	src="${resource(dir:'js', file:'usergroup.js')}"></script>
 	    <script type="text/javascript"  src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 		<script type="text/javascript" charset="utf-8">
@@ -50,7 +51,7 @@
 	                layout: "border",
 	                items:[new Ext.Panel({                          
                        region: "center",  
-                       tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'admin-utilities-div'), 
+                       //tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'admin-utilities-div'), 
                        autoScroll:true,                     
                        contentEl: "page"
                     })]

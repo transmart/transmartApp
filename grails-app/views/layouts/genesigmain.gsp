@@ -29,6 +29,7 @@
 		<g:javascript library="prototype" />
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+		<script type="text/javascript"	src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'maintabpanel.js')}"></script>		
 		<script type="text/javascript" src="${resource(dir:'js', file:'toggle.js')}"></script>
 		<script type="text/javascript" charset="utf-8">
@@ -37,10 +38,12 @@
 			// set ajax to 90*1000 milliseconds
 			Ext.Ajax.timeout = 180000;
 
+			
             Ext.onReady(function()
 	        {
             	   Ext.QuickTips.init()
             	   
+            	   /*
             	   var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
                    var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
                    var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
@@ -55,8 +58,11 @@
                        contentEl: "page"
                     })]
                   });
+                   
                   viewport.doLayout();	                
+                   */
 	        });
+	        
 		</script>
 		<g:layoutHead />
 	</head>
