@@ -96,17 +96,19 @@ class OntologyController {
 	{
 		def conceptPath=i2b2HelperService.keyToPath(params.conceptKey);
 		def node=i2b2.OntNode.get(conceptPath);
+		
+		//Disabled check for trial - show all study metadata in the same way as the Browse view
 		//def testtag=new i2b2.OntNodeTag(tag:'test', tagtype:'testtype');
 		//node.addToTags(testtag);
 		//node.save();
-		def trial=node.tags.find{ w -> w.tagtype =="Trial" }
-		if(trial!=null)
-		{
-			def trialid=trial.tag;
-			chain(controller:'trial', action:'trialDetailByTrialNumber', id:trialid)
-		}
+//		def trial=node.tags.find{ w -> w.tagtype =="Trial" }
+//		if(trial!=null)
+//		{
+//			def trialid=trial.tag;
+//			chain(controller:'trial', action:'trialDetailByTrialNumber', id:trialid)
+//		}
 		//Check for study by visual attributes
-		else if (node.visualattributes.contains("S")) {
+		if (node.visualattributes.contains("S")) {
 			def accession = node.sourcesystemcd
 			def study = bio.Experiment.findByAccession(accession)
 			def folder
