@@ -1208,7 +1208,9 @@ class FmFolderController {
 	 * Calls service to re-index existing files with SOLR
 	 */
 	def reindexFiles = {
+		render (contentType: "text/plain", text: "Reindexing...")
 		fmFolderService.reindexFiles();	
+		render (contentType: "text/plain", text: "...complete!")
 	}
 	
 	def reindexFolder = {
