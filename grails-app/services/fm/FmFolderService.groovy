@@ -461,7 +461,7 @@ class FmFolderService {
 		}
 		
 		if (safe) {
-			for (int i = 0; i < names.length; i++) {
+			for (int i = 0; i < names.size(); i++) {
 				names[i] = safeFileName(names[i])
 			}
 		}
