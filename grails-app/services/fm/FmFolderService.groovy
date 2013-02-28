@@ -452,7 +452,7 @@ class FmFolderService {
 		}
 	}
 	
-	def getPath(fmFolder) {
+	def getPath(fmFolder, safe = false) {
 		//Get the full path of a folder by gathering folder names
 		def names = [fmFolder.folderName]
 		while (fmFolder.parent != null) {
@@ -460,8 +460,30 @@ class FmFolderService {
 			names.add(0, fmFolder.folderName)
 		}
 		
+		if (safe) {
+			for (int i = 0; i < names.length; i++) {
+				names[i] = safeFileName(names[i])
+			}
+		}
+		
 		def path = names.join("/")
 		return path
+	}
+	
+	def filenameBlacklist = "\\/:;*?\"<>|"
+	def safeFileName(name) {
+		//Handle special cases - files should not be named like this!
+		if (name.equals(".")) {
+			return "dot"
+		}
+		if (name.equals("..")) {
+			return "dotdot"
+		}
+		//Normal sanitation, should cover Windows/Unix
+		for (chr in filenameBlacklist) {
+			name = name.replace(chr, "_")
+		}
+		return name
 	}
 		
 	/**
