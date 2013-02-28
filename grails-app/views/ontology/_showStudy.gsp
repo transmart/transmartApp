@@ -25,7 +25,7 @@
                  		
                  		<g:each in="${terms}" var="term" status="t">
                  			<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
-	                 		<g:if test="${t > 0}">, </g:if>
+	                 		<g:if test="${t > 0}"><br/></g:if>
 	                 		<g:if test="${bioDataId}">
 		                 		${ConceptCode.find('from ConceptCode where id=?', bioDataId).codeName}
 	                 		</g:if>
@@ -40,7 +40,7 @@
                  		
                  		<g:each in="${terms}" var="term" status="t">
                  			<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
-	                 		<g:if test="${t > 0}">, </g:if>
+	                 		<g:if test="${t > 0}"><br/></g:if>
 	                 		<g:if test="${bioDataId}">
 		                 		${ConceptCode.find('from ConceptCode where id=?', bioDataId).codeName}
 	                 		</g:if>
