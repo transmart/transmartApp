@@ -512,13 +512,22 @@ class FmFolderController {
 
 	//service to call to get all experiments objects that are associated with a folder in fm_folder_association table 
 	def getExperiments = {
-		List<FmFolderAssociation> assoc=FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='bio.Experiment'")
-		List<Experiment> experiments=new ArrayList<Experiment>();
-		for(FmFolderAssociation a: assoc){
-			Experiment exp=a.getBioObject();
-			if(exp!=null) experiments.add(exp)
+		def assocs = FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='bio.Experiment'")
+		render(contentType:"text/xml") {	
+			experiments {
+				for (assoc in assocs) {
+					def exp = assoc.getBioObject()
+					if (exp != null) {
+						experiment(id:exp.id) {
+							accession(exp.accession)
+							title(exp.title?.encodeAsHTML())
+							folderId(assoc.fmFolder.id)
+							folderUid(assoc.fmFolder.uniqueId)
+						}
+					}
+				}
+			}
 		}
-		render experiments as XML
 	}
 
 	def addProgram = {
