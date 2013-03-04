@@ -530,6 +530,25 @@ class FmFolderController {
 		}
 	}
 
+	//service to get analyses details, mainly analysis unique id and title
+	def getAnalysesDetails = {
+		def assocs = FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='bio.BioAssayAnalysis'")
+		render(contentType:"text/xml") {	
+			analyses {
+				for (assoc in assocs) {
+					def folder = assoc.fmFolder
+					if (folder != null) {
+						analysis(id:assoc.objectUid) {
+							title(assoc.fmFolder.folderName)
+							folderId(assoc.fmFolder.id)
+							parentId(assoc.fmFolder.parent.id)
+						}
+					}
+				}
+			}
+		}
+	}
+
 	def addProgram = {
 		def p = new FmFolder(params['fmFolder'])
 		addFolder(FolderType.PROGRAM.name(), p, null)
