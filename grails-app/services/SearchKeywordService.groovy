@@ -42,7 +42,6 @@ public class SearchKeywordService {
 	//Hard-coded list of items that we consider filter categories... configure in Config/database?
 	def filtercats = [
 		
-		[codeTypeName: "PROGRAM_TARGET_PATHWAY_PHENOTYPE", category: "PROGRAM_TARGET", displayName: "Program Target"],
 		[codeTypeName: "THERAPEUTIC_DOMAIN", category: "THERAPEUTIC_DOMAIN", displayName: "Program Therapeutic Domain"],
 		[codeTypeName: "PROGRAM_INSTITUTION", category: "PROGRAM_INSTITUTION", displayName: "Program Institution"],
 		
