@@ -32,7 +32,6 @@ import auth.AuthUser;
 import bio.BioAssayAnalysis;
 import bio.BioAssayAnalysisData;
 import bio.BioData
-import bio.BioDataExternalCode;
 import bio.ConceptCode
 import bio.Experiment
 import com.recomdata.export.ExportColumn
@@ -45,8 +44,6 @@ import groovy.xml.StreamingMarkupBuilder
 import grails.plugins.springsecurity.SpringSecurityService
 
 import org.apache.commons.lang.StringUtils
-
-import search.SearchKeyword;
 
 class FmFolderController {
 
@@ -515,41 +512,13 @@ class FmFolderController {
 
 	//service to call to get all experiments objects that are associated with a folder in fm_folder_association table 
 	def getExperiments = {
-		def assocs = FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='bio.Experiment'")
-		render(contentType:"text/xml") {	
-			experiments {
-				for (assoc in assocs) {
-					def exp = assoc.getBioObject()
-					if (exp != null) {
-						experiment(id:exp.id) {
-							accession(exp.accession)
-							title(exp.title?.encodeAsHTML())
-							folderId(assoc.fmFolder.id)
-							folderUid(assoc.fmFolder.uniqueId)
-						}
-					}
-				}
-			}
+		List<FmFolderAssociation> assoc=FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='bio.Experiment'")
+		List<Experiment> experiments=new ArrayList<Experiment>();
+		for(FmFolderAssociation a: assoc){
+			Experiment exp=a.getBioObject();
+			if(exp!=null) experiments.add(exp)
 		}
-	}
-
-	//service to get analyses details, mainly analysis unique id and title
-	def getAnalysesDetails = {
-		def assocs = FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='bio.BioAssayAnalysis'")
-		render(contentType:"text/xml") {	
-			analyses {
-				for (assoc in assocs) {
-					def folder = assoc.fmFolder
-					if (folder != null) {
-						analysis(id:assoc.objectUid) {
-							title(assoc.fmFolder.folderName)
-							folderId(assoc.fmFolder.id)
-							parentId(assoc.fmFolder.parent.id)
-						}
-					}
-				}
-			}
-		}
+		render experiments as XML
 	}
 
 	def addProgram = {
@@ -1004,27 +973,9 @@ class FmFolderController {
 	def analysisTable = {
 		
 		def analysisId = params.id
-		def genes = []
-		def geneFilter = session['geneFilter']
-		//Convert gene filter to a straight list
-		if (geneFilter) {
-			geneFilter = geneFilter.substring(5).split("::")[0].replace("|", "/").split("/")
-		}
-		
-		//For each gene (ignore pathways), add the gene name and any synonyms to the list to match against
-		for (item in geneFilter) {
-			if (item.startsWith("GENE")) {
-				def sk = SearchKeyword.findByUniqueId(item)
-				def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.bioDataId, codeType: "SYNONYM")
-				genes.push(sk.keyword)
-				for (s in synonyms) {
-					genes.push(s.code)
-				}
-			}
-		}
 		
 		def criteriaParams = [:]
-		if (!params.boolean('full')) {
+		if (!params.full) {
 			criteriaParams.put('max', 1000)
 		}
 		def rows = BioAssayAnalysisData.createCriteria().list (criteriaParams) {
@@ -1037,39 +988,24 @@ class FmFolderController {
 		table.putColumn("gene", new ExportColumn("gene", "Gene", "", 'String'));
 		table.putColumn("pvalue", new ExportColumn("pvalue", "p-value", "", 'Number'));
 		table.putColumn("apvalue", new ExportColumn("apvalue", "Adjusted p-value", "", 'Number'));
+		table.putColumn("ppvalue", new ExportColumn("ppvalue", "Preferred p-value", "", 'Number'));
 		table.putColumn("teapvalue", new ExportColumn("teapvalue", "TEA-adjusted p-value", "", 'Number'));
 		table.putColumn("foldchangeratio", new ExportColumn("foldchangeratio", "Fold Change Ratio", "", 'Number'));
 		
 		rows.each {
-			//TODO There will only be about 3000 rows maximum just now... this filtering should be part of the query if the data size increases.
-			def rowGenes = it.featureGroup.markers*.name
-			def lowerGenes = []
-			for (gene in rowGenes) {
-				lowerGenes.push(gene.toLowerCase())
-			}
-			def foundGene = false
-			for (gene in genes) {
-				if (gene.toLowerCase() in lowerGenes) {
-					foundGene = true
-					break
-				}
-			}
-			
-			if (foundGene || !genes) {
-				ExportRowNew newrow=new ExportRowNew()
-				newrow.put("probe",it.featureGroupName);
-				newrow.put("gene",rowGenes.join(", "));
-				newrow.put("pvalue",it.rawPvalue.toString());
-				newrow.put("apvalue",it.adjustedPvalue.toString());
-				newrow.put("teapvalue",it.teaNormalizedPValue.toString());
-				newrow.put("foldchangeratio",it.foldChangeRatio.toString());
-				table.putRow(it.id.toString(), newrow);
-			}
+			ExportRowNew newrow=new ExportRowNew()
+			newrow.put("probe",it.featureGroupName);
+			newrow.put("gene",it.featureGroup.markers*.name.join(", "));
+			newrow.put("pvalue",it.rawPvalue.toString());
+			newrow.put("apvalue",it.adjustedPvalue.toString());
+			newrow.put("ppvalue",it.preferredPvalue.toString());
+			newrow.put("teapvalue",it.teaNormalizedPValue.toString());
+			newrow.put("foldchangeratio",it.foldChangeRatio.toString());
+			table.putRow(it.id.toString(), newrow);
 		}
 		
 		def analysisData = table.toJSON_DataTables("", "Analysis Data");
 		analysisData.put("rowCount", rows.getTotalCount())
-		analysisData.put("filteredByGenes", genes.size() > 0)
 		
 		render (contentType: "text/json", text: analysisData.toString(5))
 	}
