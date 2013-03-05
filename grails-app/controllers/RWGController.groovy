@@ -45,6 +45,7 @@ class RWGController {
 	def fmFolderService
 	def ontologyService
 	def solrFacetService
+	def geneSignatureService
 	
     def index = {
 		
@@ -325,55 +326,6 @@ class RWGController {
 	   return newParams
    }
    
-   def expandGeneList = { geneListUid ->
-	   
-	   def genesList = []
-	   
-		   
-	  def geneSig = GeneSignature.findByUniqueId(geneListUid)
-	  def geneKeywords = GeneSignatureItem.createCriteria().list {
-		  eq('geneSignature', geneSig)
-	  }
-	  
-	  // loop through each keyword for the gene list items and add to list
-	  geneKeywords.each {
-		  // don't add duplicates
-		  if (it.bioDataUniqueId && genesList.indexOf(it.bioDataUniqueId)<0)   {
-			  genesList.add it.bioDataUniqueId
-		  }
-	  }
-	  
-	   
-	   return genesList
-	   
-   }
-   
-   def expandPathway = { pathwayUid ->
-	   
-	   def genesList = []
-		   
-	   def geneKeywords = SearchKeyword.executeQuery("""
-		   				select k_gene.uniqueId
-						from search.SearchKeyword k_pathway, bio.BioMarkerCorrelationMV b,
-						search.SearchKeyword k_gene
-						where b.correlType = 'PATHWAY_GENE'
-						and b.bioMarkerId = k_pathway.bioDataId
-						and k_pathway.dataCategory = 'PATHWAY'
-						and b.assoBioMarkerId = k_gene.bioDataId
-						and k_gene.dataCategory = 'GENE'
-						and k_pathway.uniqueId = :pathwayUid """, [pathwayUid: pathwayUid])
-
-	   // loop through each keyword for the gene list items and add to list
-	   geneKeywords.each {
-		   // don't add duplicates
-		   if (genesList.indexOf(it)<0) {
-			   genesList.add it
-		   }
-	   }
-	   
-	   return genesList
-   }
-   
    //Just clear the search filter and render non-null back
    def clearSearchFilter = {
 	   session['rwgSearchFilter'] = [:];
@@ -405,6 +357,7 @@ class RWGController {
 	   session['rwgSearchFilter'] = searchTerms
 	   session['rwgSearchOperators'] = searchOperators
 	   session['globalOperator'] = globalOperator
+	   session['geneFilter'] = []
 	   def searchLog = ["Starting a new search"]
 	   
 	   /*
@@ -435,7 +388,7 @@ class RWGController {
 		   }
 	       else if (categoryName.equals("GENELIST") || categoryName.equals("GENESIG")) {
 			   for (t in termList) {
-				   def expandedList = expandGeneList(t)
+				   def expandedList = geneSignatureService.expandGeneList(t)
 				   if (expandedList) {
 					   geneGroups += [expandedList]
 				   }
@@ -444,7 +397,7 @@ class RWGController {
 		   }
 		   else if (categoryName.equals("PATHWAY")) {
 			   for (t in termList) {
-				   def expandedList = expandPathway(t)
+				   def expandedList = geneSignatureService.expandPathway(t)
 				   if (expandedList) {
 					   geneGroups += [expandedList + t] //Retain pathways
 				   }
@@ -465,6 +418,7 @@ class RWGController {
 		   }
 		   def newGeneCategory = "GENE:" + geneGroupStrings.join("|") + "::" + geneOperator
 		   processedSearchTerms.add(newGeneCategory)
+		   session['geneFilter'] = newGeneCategory
 	   }
 	   
 	   //If we have no search terms and this is for RWG, just return the top level

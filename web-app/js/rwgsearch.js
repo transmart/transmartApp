@@ -446,6 +446,7 @@ function showFacetResults()	{
 	
 					jQuery('#results-div').removeClass('ajaxloading').html(response);
 					checkSearchLog();
+					updateAnalysisData(null, false);
 			},
 			error: function(xhr) {
 				console.log('Error!  Status = ' + xhr.status + xhr.statusText);

@@ -2568,16 +2568,34 @@ function openPlotOptions() {
 	}
 }
 
-function loadFullAnalysisData(analysisId) {
+function updateAnalysisData(analysisId, full) {
 	jQuery('#partialanalysiswarning').hide();
+	jQuery('#analysisgenefilteredwarning').hide();
+	
+	//If passed a null analysisId, check to see if an analysis is displayed, then update it.
+	if (analysisId == null) {
+		var currentId = jQuery('#gridViewWrapperAnalysis').attr('name');
+		if (currentId == null || currentId == 0) {
+			return false;
+		}
+		analysisId = currentId;
+	}
+	
 	jQuery('#gridViewWrapperAnalysis').empty().addClass('ajaxloading');
 	$j.ajax({
 		url:analysisDataURL,
-		data: {id: analysisId, full: true},
+		data: {id: analysisId, full: full},
 		success: function(response) {
 			jQuery('#gridViewWrapperAnalysis').removeClass('ajaxloading');
-	 	 	var dtAnalysis  = new dataTableWrapper('gridViewWrapperAnalysis', 'gridViewTableAnalysis', 'Title');
+	 	 	var dtAnalysis  = new dataTableWrapper('gridViewWrapperAnalysis', 'gridViewTableAnalysis', 'Title', [[2, "asc"]], 25);
 	   		dtAnalysis.loadData(response);
+	   		if (!full && response.rowCount > 1000) {
+		   		jQuery('#loadfullanalysis').text('Load all ' + response.rowCount + ' rows')
+	   			jQuery('#partialanalysiswarning').show();
+	   		}
+	   		if (response.filteredByGenes) {
+		   		jQuery('#analysisgenefilteredwarning').show();
+		   	}
 		},
 		error: function(xhr) {
 			alert(xhr.message);

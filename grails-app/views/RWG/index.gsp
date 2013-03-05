@@ -393,7 +393,8 @@
                     //Add the callback for when the grid is redrawn
                     data.fnDrawCallback = function( oSettings ) {
 
-                        //Add the tooltips to the header. This must happen every redraw because the datatables code destroys the html
+                        //Removed the tooltips
+                        /*
                         $j(".dataTables_scrollHeadInner > table > thead > tr > th").each( function (index) {
                             
                             var titleAttr = $j(this).attr("title");
@@ -404,8 +405,9 @@
                             }
                             
                         });
+                        */
                         
-                        //Hide the pagination if both are disabled.
+                        //Hide the pagination if both directions are disabled.
                         if (jQuery('#' + tableId + '_paginate .paginate_disabled_previous').size() > 0 && jQuery('#' + tableId + '_paginate .paginate_disabled_next').size() > 0) {
                         	jQuery('#' + tableId + '_paginate').hide();
                         }
@@ -475,7 +477,7 @@
 			         <h2 style="float:left" class="title">Program Explorer</h2>
 			    </div>
 			    <div id="results-div" class="boxcontent" style="overflow: auto;">
-			      	Results appear here
+			      	&nbsp;
 			    </div>
 		    </div>
 		    
