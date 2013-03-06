@@ -32,17 +32,16 @@ class FileSweepJob {
 	static triggers = {
 		def startDelay = ConfigHolder.config.com.recomdata.export.jobs.sweep.startDelay
 		def repeatInterval = ConfigHolder.config.com.recomdata.export.jobs.sweep.repeatInterval
-		System.out.println("Initializing FileSweepJob... startDelay = ${startDelay}, repeatInterval = ${repeatInterval}")
 		if (startDelay instanceof String){
 			try {
 				startDelay = Integer.parseInt(startDelay)
 				repeatInterval = Integer.parseInt(repeatInterval)
-				simple name:'fileSweepTrigger', startDelay: startDelay, repeatInterval:repeatInterval
-				System.out.println("Sweeping service initialized")
-			}catch(NumberFormatException nfe){
-				log.error("Sweeping service not initialized. Configuration not readable")
+			} catch(NumberFormatException nfe){
+				startDelay = 60000
+				repeatInterval = 86400000
 			}
 		}
+		simple name:'fileSweepTrigger', startDelay:startDelay, repeatInterval:repeatInterval
 	}
 
     def execute() {
