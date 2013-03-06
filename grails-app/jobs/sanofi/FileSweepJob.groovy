@@ -20,12 +20,15 @@
 
 package sanofi
 
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.codehaus.groovy.grails.commons.ConfigurationHolder as ConfigHolder;
 
 
 class FileSweepJob {
     
 	def sweepingService
+	private static def log = LogFactory.getLog(this)
 	
 	//def timeout = 5000l 
 	
