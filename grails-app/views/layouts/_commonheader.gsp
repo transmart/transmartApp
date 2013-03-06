@@ -88,24 +88,20 @@
 
 <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'sanofi.css')}">
 
-<%--<g:if test="${'rwg' != app}" >
-	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
-	
-	<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
-	<script>jQuery.noConflict();</script> 
-	
-	<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>		
-</g:if>--%>
-
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.idletimeout.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.idletimer.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
 
+<!-- Session timeout dialog -->
+<div id="timeout-div" title="Your session is about to expire!">
+   	<p>You will be logged off in <span id="timeout-countdown"></span> seconds.</p>
+   	<p>Do you want to continue your session?</p>
+</div>
       
 <script>
      jQuery(document).ready(function() {
 		 var logoutURL = "${createLink([controller:'logout'])}";
 		 var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
-		 //addTimeoutDialog(heartbeatURL, logoutURL);
+		 addTimeoutDialog(heartbeatURL, logoutURL);
   	  });
 </script>
