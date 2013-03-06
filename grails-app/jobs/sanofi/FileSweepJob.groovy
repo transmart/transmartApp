@@ -36,12 +36,13 @@ class FileSweepJob {
 			try {
 				startDelay = Integer.parseInt(startDelay)
 				repeatInterval = Integer.parseInt(repeatInterval)
-			} catch(NumberFormatException nfe){
-				startDelay = 60000
-				repeatInterval = 86400000
+			} catch (NumberFormatException nfe) {
+				// do nothing
 			}
+		} 
+		if (startDelay instanceof Integer) {
+			simple name:'fileSweepTrigger', startDelay:startDelay, repeatInterval:repeatInterval
 		}
-		simple name:'fileSweepTrigger', startDelay:startDelay, repeatInterval:repeatInterval
 	}
 
     def execute() {
