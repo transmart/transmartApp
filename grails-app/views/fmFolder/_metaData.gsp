@@ -39,11 +39,11 @@
 								<g:textField size="100" name="${amTagItem.tagItemAttr}"  value='${bioDataObject."${amTagItem.tagItemAttr}"?:""}'/>
 			                </g:if>
 		    	            <g:else>
-		            	         <g:textArea size="100" cols="74" rows="10" name="${amTagItem.tagItemAttr}" value='${bioDataObject."${amTagItem.tagItemAttr}"?:""}' />          
+		            	         <g:textArea style="width: 100%" rows="10" name="${amTagItem.tagItemAttr}" value='${bioDataObject."${amTagItem.tagItemAttr}"?:""}' />          
 		        	        </g:else>
 	        	        </g:elseif>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'FREETEXTAREA'}">
-	            	         <g:textArea size="100" cols="74" rows="10" name="${amTagItem.tagItemAttr}" value='${bioDataObject."${amTagItem.tagItemAttr}"?:""}' />          
+	            	         <g:textArea style="width: 100%" rows="10" name="${amTagItem.tagItemAttr}" value='${bioDataObject."${amTagItem.tagItemAttr}"?:""}' />          
 	        	        </g:elseif>
 	        	        <g:else>
 	        	        ERROR -- Unrecognized tag item subtype

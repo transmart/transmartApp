@@ -422,8 +422,12 @@ table.menuDetail th.menuVisited {
 .description {
 	line-height:16px;
 	font-family: verdana, arial, helvetica, sans-serif;
-	font-size: 8pt;
+	font-size: 10pt;
 	text-align: justify;	
+}
+
+textarea#description, textarea#longDescription, input#description, input#longDescription {
+	font-size: 9pt;
 }
 
 .overlay {
