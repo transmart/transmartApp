@@ -28,6 +28,8 @@ import org.json.*
 import search.SearchKeyword;
 
 import bio.BioDataExternalCode;
+import bio.BioMarker;
+import bio.BioMarkerExpAnalysisMV;
 import bio.ConceptCode;
 
 import fm.FmData;
@@ -87,9 +89,17 @@ class SolrFacetService {
 				//If browse, convert this to a folder path list - if analyze, a node path list
 				if (page.equals('RWG')) {
 					categoryResultIds += getFolderList(xml)
+					if (categoryName.equals("GENE")) {
+						searchLog += "Getting analyses for gene categories..."
+						categoryResultIds += getAnalysesForGenes(termList, operator, false)
+					}
 				}
 				else {
-					categoryResultIds += getNodesByAccession(xml)
+					categoryResultIds += getNodesByAccession(getAccessions(xml))
+					if (categoryName.equals("GENE")) {
+						searchLog += "Getting analyses for gene categories..."
+						categoryResultIds += getAnalysesForGenes(termList, operator, true)
+					}
 				}
 			}
 			
@@ -110,7 +120,7 @@ class SolrFacetService {
 					categoryResultIds += getFolderList(xml)
 				}
 				else {
-					categoryResultIds += getNodesByAccession(xml)
+					categoryResultIds += getNodesByAccession(getAccessions(xml))
 				}
 
 				//If browse, get the studies from SOLR that correspond to the returned accessions - if analyze, just add the paths.
@@ -178,6 +188,92 @@ class SolrFacetService {
 		
 	}
 	
+	def getAnalysesForGenes(termList, operator, convertToNodes) {
+		//We get a list of genes here - slash-delimited for OR.
+		//For each set of terms, create a list then check against materialized view.
+		def analysisResults = []
+		
+		for (geneList in termList) {
+			searchLog += "Getting analyses for genes: " + geneList
+			def geneUids = geneList.split("/")
+			def bioMarkers = []
+			for (uid in geneUids) {
+				bioMarkers.push(BioMarker.findByUniqueId(uid))
+			}
+			def result = BioMarkerExpAnalysisMV.createCriteria().list {
+				'in'('marker', bioMarkers)
+			}
+			
+			searchLog += "Found " + result.size() + " analysis matches"
+			
+			//Union or intersection, as needed by AND/OR
+			if (operator.equals("OR")) {
+				analysisResults += result*.analysis
+			}
+			else {
+				if (!result) {
+					return []
+				}
+				else {
+					if (!analysisResults) {
+						analysisResults = result*.analysis
+					}
+					else {
+						def newAnalyses = result*.analysis
+						//Manually intersect
+						def newResults = []
+						for (aResult in analysisResults) {
+							for (newResult in newAnalyses) {
+								if (aResult.id == newResult.id) {
+									newResults.add(aResult)
+								}
+							}
+						}
+						analysisResults = newResults
+						if (!analysisResults) {
+							return []
+						}
+					}
+				}
+			}
+		}
+		
+		searchLog += "Final analysis ID list: " + (analysisResults*.id).join(", ")
+		
+		//Convert to folder UIDs, then convert to nodes if needed
+		def folders = []
+		for (result in analysisResults) {
+			def folderAssoc = FmFolderAssociation.findByObjectUid(result.getUniqueId().uniqueId)
+			if (folderAssoc) {
+				def folder = folderAssoc.fmFolder
+				folders.push(folder)
+			}
+		}
+		
+		if (convertToNodes) {
+			def accessions = []
+			for (fmFolder in folders) {
+				searchLog += "Finding associated accession for folder: " + fmFolder.folderId
+				def accession = fmFolderService.getAssociatedAccession(fmFolder)
+				if (accession) {
+					searchLog += "Got accession: " + accession
+					accessions.push(accession)
+				}
+				else {
+					searchLog += "No accession found"
+				}
+			}
+			return getNodesByAccession(accessions)
+		}
+		else {
+			def paths = []
+			for (folder in folders) {
+				paths.push(folder.folderFullName)
+			}
+			return paths
+		}
+	}
+	
 	def hierarchicalIntersect(searchResults, categoryResults) {
 		
 		def newSearchResults = []
@@ -226,86 +322,8 @@ class SolrFacetService {
 		
 	}
 	
-//	def convertTermList(category, termList) {
-//		def textList = []
-//		
-//		//Find terms and synonyms depending on category
-//		if (category.equals("GENE") || category.equals("DISEASE") || category.equals("COMPOUND") || category.equals("PATHWAY")) {
-//			
-//			if (category.equals("GENE")) {
-//				//Expand the term list
-//				def newTermList = []
-//				for (term in termList) {
-//					def splitList = term.split("/")
-//					for (item in splitList) {
-//						newTermList += item
-//					}
-//				}
-//				termList = newTermList
-//			}
-//			
-//			for (term in termList) {
-//				
-//				def sk = SearchKeyword.findByUniqueId(term)
-//				textList += sk.keyword.toLowerCase()
-//				def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.bioDataId, codeType: "SYNONYM")
-//				for (s in synonyms) {
-//					textList += s.code
-//				}
-//			}
-//		}
-//		//Fields of a program target are plain text and shouldn't be altered
-//		else if (category.equals("MEASUREMENT_TYPE") || category.equals("VENDOR") || category.equals("TECHNOLOGY") || category.equals ("PROGRAM_TARGET")) {
-//			textList = termList
-//		}
-//		//Assume ConceptCode UID for everything else
-//		else {
-//			for (term in termList) {
-//				def cc = ConceptCode.findByUniqueId(term)
-//				def lowerCaseName = cc.codeName.toLowerCase()
-//				textList += lowerCaseName
-//			}
-//		}
-//		
-//		return textList
-//	}
-
-//   def getSolrResults(queryParams, facetQueryParams, facetFieldsParams, returntype) {
-//		   
-//	   // build the SOLR query
-//	   def nonfacetedQueryString = createSOLRNonfacetedQueryString(queryParams)
-//	   def facetedQueryString = createSOLRFacetedQueryString(facetQueryParams)
-//	   def dataNodeSearchTerms = getDataNodeSearchTerms(queryParams)
-//	   def facetedFieldsString = createSOLRFacetedFieldsString(facetFieldsParams)
-//	   
-//	   String solrRequestUrl = createSOLRQueryPath()
-//	   String solrQueryString = createSOLRQueryString(nonfacetedQueryString, facetedQueryString, facetedFieldsString)
-//	
-//	   //Get initial folder map from SOLR query
-//	   def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
-//	   
-//	   if(returntype.equals('foldermap')) {
-//		   def folderSearchList = getFolderList(xml, dataNodeSearchTerms, solrRequestUrl)
-//
-//		   //Gather folders from i2b2 that match the free text search terms, if there are any
-//		   if (dataNodeSearchTerms) {
-//			   folderSearchList = addOntologyResults(folderSearchList, dataNodeSearchTerms, solrRequestUrl, "OR")
-//		   }
-//		   
-//		   return folderSearchList
-//	   }
-//	   else if(returntype.equals('JSON')) {
-//		   def accessions = getAccessions(xml)
-//		   def ontologyResult = ontologyService.searchOntology(null, dataNodeSearchTerms, 'ALL', 'JSON', accessions)
-//		   return ontologyResult
-//	   }
-//	   
-//	   return null
-//		   
-//   }
    
-   def getNodesByAccession(xml) {
-	   def accessions = getAccessions(xml)
+   def getNodesByAccession(accessions) {
 	   if (!accessions) {
 		   return []
 	   }
@@ -403,45 +421,6 @@ class SolrFacetService {
 	   
 	   return folderSearchList
    }
-   
-   // Add ontology results to the current search
-//   def addOntologyResults(folderList, dataNodeSearchTerms, solrRequestUrl, operator) {
-//	   
-//	   def accessions = ontologyService.searchOntology(null, dataNodeSearchTerms, 'ALL', 'accession', [])
-//	   
-//	   if (!accessions) {
-//		   if (operator.equals("AND")) {
-//			   return "" //No matches
-//		   }
-//		   else {
-//			   return folderList
-//		   }
-//	   }
-//	   
-//	   def solrQueryString = ""
-//	   
-//	   for (accession in accessions) {
-//		   log.debug("Got accession: " + accession)
-//		   
-//		   if (solrQueryString) {solrQueryString += " OR "; }
-//		   
-//		   solrQueryString += "ACCESSION:\"" + accession + "\""
-//	   }
-//	   
-//	   solrQueryString = "q=(" + solrQueryString + ")"
-//	   
-//	   def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
-//	   def newFolderList = getFolderList(xml, dataNodeSearchTerms, solrRequestUrl)
-//	   
-//	   //Now intersect/add to the lists
-//   
-//	   if (operator.equals("AND")) {
-//		   if (!folderList) { return newFolderList; }
-//		   return folderList.intersect(newFolderList)
-//	   }
-//	   
-//	   return folderList + newFolderList //Union
-//   }
    
    /**
    * Create a query string for the category in the form of (<cat1>:"term1" OR <cat1>:"term2")
