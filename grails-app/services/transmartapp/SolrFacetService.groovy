@@ -253,7 +253,7 @@ class SolrFacetService {
 		if (convertToNodes) {
 			def accessions = []
 			for (fmFolder in folders) {
-				searchLog += "Finding associated accession for folder: " + fmFolder.folderId
+				searchLog += "Finding associated accession for folder: " + fmFolder.folderFullName
 				def accession = fmFolderService.getAssociatedAccession(fmFolder)
 				if (accession) {
 					searchLog += "Got accession: " + accession
