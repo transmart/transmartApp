@@ -325,7 +325,7 @@
 	        	jQuery('#main').height(jQuery(window).height()-30);
 				var ypos = jQuery('#program-explorer').offset()['top'];
 	        	
-	        	var targetHeight = windowHeight - ypos - 90;
+	        	var targetHeight = windowHeight - ypos - 60;
 	        	jQuery('#results-div').height(targetHeight);
 	        	jQuery('#welcome').height(windowHeight - 90);
 	        	
