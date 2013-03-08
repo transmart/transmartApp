@@ -20,46 +20,42 @@
 
 package com.recomdata.transmart.plugin
 
-import grails.test.*
+import grails.test.mixin.TestFor
+import grails.test.mixin.TestMixin
+import grails.test.mixin.domain.DomainClassUnitTestMixin
+import org.junit.Before
 
-class PluginControllerTests extends GrailsUnitTestCase {
-	def pluginService
-	def PluginController pluginController
-	
-    protected void setUp() {
-        super.setUp()
-		pluginService = new PluginService()
-		
-		mockController(PluginController)
-		pluginController = new PluginController()
-		
-		mockDomain(Plugin, [new Plugin(name: 'Test Plugin',
-			pluginName: 'TestPlugin',
-			active: true,
-			hasModules: false)])
-    }
+@TestFor(PluginController)
+@TestMixin(DomainClassUnitTestMixin)
+class PluginControllerTests {
 
-    protected void tearDown() {
-        super.tearDown()
+    @Before
+    void setUp() {
+		mockDomain(Plugin);
+        def p = new Plugin(name: 'Test Plugin', pluginName: 'TestPlugin', active: true, hasForm: false, defaultLink: '', hasModules: false)
+                .save(flush: true)
+        assert p != null
     }
 
 	void testIndex() {
-		pluginController.index()
-		assertEquals pluginController.list, pluginController.redirectArgs["action"]
+		controller.index()
+        assert response.status == 302
+        assert response.redirectedUrl == "/plugin/list"
 	}
-	
+
 	void testList() {
-		def model = pluginController.list()
-		assertEquals 1, model.pluginInstanceTotal
+		def model = controller.list()
+        assert model.pluginInstanceTotal == 1
+        assert model.pluginInstanceList[0].name == 'Test Plugin'
 	}
 	
     void testShow() {
-		//MockDomain by default sets the id of the domain objects from 0..N (unless you specify the id explicitly) 
+		//MockDomain by default sets the id of the domain objects from 0..N (unless you specify the id explicitly)
 		//where N is the number of domain objects that we plan to mock
-		pluginController.params.id = 0
-		def returnMap = pluginController.show()
-		//If it fails to load the plugin there will be a message 
-		println pluginController.flash?.message
+        controller.params.id = 0
+		def returnMap = controller.show()
+		//If it fails to load the plugin there will be a message
+		assert controller.flash?.message == null
 		assertEquals 'Test Plugin', returnMap?.pluginInstance?.name
     }	
 }

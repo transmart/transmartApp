@@ -8,9 +8,11 @@ System.out
 .project
 .idea
 *.iml
+*.ipr
+*.iws
 target-eclipse/
 target/
 .svn/
 tempImages/
 bin/
-bin/*
+bin/
