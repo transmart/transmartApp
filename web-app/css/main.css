@@ -810,6 +810,11 @@ table.jubsummary td {
     color:#ff0000;
 }
 
+.cortellisTab {
+    background-image:url(../images/thomsonreuters.png ) !important;
+    color:#ff0000;
+}
+
 .expTab {
     background-image:url(../images/ebi.png ) !important;
     color:#ff0000;
@@ -920,6 +925,11 @@ select.jubselect {
 .contextHelpBtn {
 	background-image:url(../images/help/helpicon_gray.jpg ) !important;
 	color:#ff0000;	
+}
+
+.feedbackBtn {
+    background-image:url(../images/feedback.png ) !important;
+    color:#ff0000;
 }
 
 .blankNode {

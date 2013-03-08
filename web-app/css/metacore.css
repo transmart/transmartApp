@@ -1,0 +1,43 @@
+.enrichment td, th { 
+			font-family: Verdana, Helvetica, sans-serif; font-size: 11px; text-align: left;
+			padding-left: 5px;
+		 }
+.enrichment th { font-weight: bold; border-bottom: 1px solid black; }
+.enrichment table { border-collapse:collapse; }
+.enrichment tr:hover { background-color: #eeeeee; }
+
+.metacoreSettingsUser {
+	background-color: #78a22f; color: #ffffff; font-size: 7px; text-align: center; padding: 3px;
+}
+
+.metacoreSettingsUser a {
+	color: #ffffff; text-decoration:none;
+}
+
+.metacoreSettingsUser a:hover {
+	color: #ffffff; text-decoration:none;
+}
+
+.metacoreSettingsDemo {
+	background-color: #dc0a0a; color: #ffffff; font-size: 7px; text-align: center; padding: 3px;
+} 
+
+.metacoreSettingsDemo a {
+	color: #ffffff; text-decoration:none;
+}
+
+.metacoreSettingsDemo a:hover {
+	color: #ffffff; text-decoration:none;
+}
+
+.metacoreSettingsSystem {
+	background-color: #ff9100; color: #ffffff; font-size: 7px; text-align: center; padding: 3px;
+} 
+
+.metacoreSettingsSystem a {
+	color: #ffffff; text-decoration:none;
+}
+
+.metacoreSettingsSystem a:hover {
+	color: #ffffff; text-decoration:none;
+}

@@ -4,13 +4,14 @@ null.log*
 System.out
 .buildpath
 .classpath
-.project
 .settings
+.project
 .idea
 *.iml
+*.ipr
+*.iws
 target-eclipse/
 target/
 .svn/
 tempImages/
 bin/
-bin/*

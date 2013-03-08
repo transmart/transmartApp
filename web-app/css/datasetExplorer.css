@@ -423,6 +423,6 @@ content: counter(pages);
 }
 
 .x-tool-help {
-	background-image: url("../images/help/tool-sprites-rdc.gif");
-    background-position: 0 -300px;
+	background-image: url("../images/help/helpicon_gray.jpg") !important
+	background-position: 0 -300px;
 }
