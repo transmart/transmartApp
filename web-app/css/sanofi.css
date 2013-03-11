@@ -362,6 +362,10 @@ table.menuDetail th.menuVisited {
 	font-weight: bold;	
 }
 
+#navigateTermsPanel .locked a span {
+	color: #AAA;	
+}
+
 #navigateTermsPanel .defaultPathNode {
 	background-color: #FEEEF8;	
 }

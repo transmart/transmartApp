@@ -1644,7 +1644,7 @@ function projectDialogComplete(projectid)
 	}
 	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
 	{
-		Ext.getCmp("exportbutton").disable();
+		//Ext.getCmp("exportbutton").disable();
 	}
 }
 
@@ -1822,6 +1822,22 @@ function createTree(includeExcludeFlag, ontresponse){
 	    }
 	    
 	    var tcls = "";
+
+		var fullname=key.substr(key.indexOf("\\",2), key.length);
+		var access=GLOBAL.InitialSecurity[fullname];
+		
+		if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
+		{
+			//leave node unlocked must have some read access
+		}
+		else
+		{
+			tcls += ' locked';
+		}
+		
+		
+	
+
 	    var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
 	    if (isSearchResult) {
 	    	tcls += ' searchResultNode';
@@ -1838,28 +1854,24 @@ function createTree(includeExcludeFlag, ontresponse){
 				cls : tcls
 			}
 		);
+
+		if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) {
+
+		}
+		else {
+			ontRoot.attributes.access='locked';
+			//ontRoot.disable();
+			ontRoot.on('beforeload', function(node){return false});
+		}
 		
 		//treeRoot.appendChild(ontRoot);
+
+		ontRoots.push(ontRoot);
 		
 		/*****************************************/
-		var fullname=key.substr(key.indexOf("\\",2), key.length);
-		var access=GLOBAL.InitialSecurity[fullname];
 
-		if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
-		{
-			//leave node unlocked must have some read access
-		}
-		else
-		{
-			//default node to locked
-			//child.setText(child.text+" <b>Locked</b>");
-			ontRoot.attributes.access='locked';
-			ontRoot.disable();
-			ontRoot.on('beforeload', function(node){alert("Access to this node has been restricted. Please contact your administrator for access."); return false});
-		}
-		
-		ontRoots.push(ontRoot);
 	}
+
 	return ontRoots;
 }
 
