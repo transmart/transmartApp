@@ -1795,9 +1795,10 @@ function getCategoriesComplete(ontresponse){
 	ontTabPanel.add(ontFilterPanel);
 	ontFilterTree.dragZone.addToGroup("analysis");
 	getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
-	if(GLOBAL.hideAcrossTrialsPanel!='true'){
-		getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
-		}
+
+	if(GLOBAL.hideAcrossTrialsPanel != 'true') {
+        getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
+    }
 	setActiveTab();
 }
 
@@ -1821,23 +1822,21 @@ function setActiveTab(){
 function createTree(includeExcludeFlag, ontresponse){
 	// shorthand
 	var Tree = Ext.tree;
-	
-	var concepts = ontresponse.responseXML.selectNodes('//concept');
-	var treeRoot = new Tree.TreeNode(
-			{
-				text : 'root',
-				draggable : false,
-				id : 'root',
-				qtip : 'root'
-			}
-	);
-	for(var c = 0; c < concepts.length; c ++ )
+
+    var treeRoot = new Tree.TreeNode(
+        {
+            text      : 'root',
+            draggable : false,
+            id        : 'root',
+            qtip      : 'root'
+        }
+    );
+	for (var c = 0; c < ontresponse.length; c ++ )
 	{
-		var level = concepts[c].selectSingleNode('level').firstChild.nodeValue;
-		var key = concepts[c].selectSingleNode('key').firstChild.nodeValue;
-		var name = concepts[c].selectSingleNode('name').firstChild.nodeValue;
-		var tooltip = concepts[c].selectSingleNode('tooltip').firstChild.nodeValue;
-		var dimcode = concepts[c].selectSingleNode('dimcode').firstChild.nodeValue;
+		var key = ontresponse[c].key;
+		var name = ontresponse[c].name;
+		var tooltip = ontresponse[c].tooltip;
+		var dimcode = ontresponse[c].dimcode;
 		
 		if(includeExcludeFlag==="include" && name!=="Across Trials") continue;
 		if(includeExcludeFlag==="exclude" && name==="Across Trials") continue;

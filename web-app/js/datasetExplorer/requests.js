@@ -156,17 +156,11 @@ function getONTRequestFooter(){ return "</message_body>\
                    }
 
 function getCategories()
-{  
-     var getCategoriesRequest=getONTRequestHeader()+"<ns4:get_categories type='core'/>"+getONTRequestFooter(); 
- 	Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/proxy?url="+GLOBAL.ONTUrl+"getCategories",
-    	        method: 'POST',
-    	        xmlData: getCategoriesRequest, 
-    	        headers:{'Content-Type':'text/xml'},
-    	        success: function(result, request){getCategoriesComplete(result);},
-    	        failure: function(result, request){getCategoriesComplete(result);}
-    	    }); 
+{
+    jQuery.ajax(pageInfo.basePath + '/concepts/getCategories', {
+            dataType : 'json'
+        })
+        .always(getCategoriesComplete)
 }
 
  function getONTgetNameInfoRequest(matchstrategy, matchterm, matchontology)
