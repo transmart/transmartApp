@@ -580,7 +580,7 @@ Ext.onReady(function()
 					region : 'center',
 					fitToFrame : true,
 					listeners :
-						{
+					{
 						activate : function() {
 							GLOBAL.CurrentSubsetIDs[1] = null;
 							GLOBAL.CurrentSubsetIDs[2] = null;
@@ -588,14 +588,14 @@ Ext.onReady(function()
 							activateTab();
 							onWindowResize();
 						},
-						deactivate: function(){
-							resultsTabPanel.tools.help.dom.style.display="none";
+					deactivate: function(){
+						resultsTabPanel.tools.help.dom.style.display="none";
 						},
 						'afterLayout': {
 							fn: function(el) {
 								onWindowResize();
-							}
-						}
+					}
+					}
 					}
 				,
 				autoScroll : true,
@@ -654,7 +654,7 @@ Ext.onReady(function()
 						'afterLayout': {
 							fn: function(el) {
 								onWindowResize();
-							}
+						}
 						}
 					},
 					collapsible : true						
@@ -709,7 +709,7 @@ Ext.onReady(function()
 						'afterLayout': {
 							fn: function(el) {
 								onWindowResize();
-							}
+						}
 						}
 					},
 					collapsible : true
@@ -1110,7 +1110,7 @@ function createOntPanel()
 			width : 250,
 			deferredRender : false,
 			split : true
-			}
+	        		}
 	);
 
 	/* ontSearchTermsPanel = new Ext.TabPanel({
@@ -1695,7 +1695,13 @@ function getPreviousQueriesComplete(response)
 }
 
 function getCategoriesComplete(ontresponse){
-	getSubCategories(ontresponse);
+	ontTabPanel.add(ontFilterPanel);
+	ontFilterTree.dragZone.addToGroup("analysis");
+	getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
+	if(GLOBAL.hideAcrossTrialsPanel!='true'){
+		getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
+		}
+	setActiveTab();
 }
 
 function setActiveTab(){
@@ -1789,7 +1795,6 @@ function createTree(includeExcludeFlag, ontresponse){
 		GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
 	}
 	
-	var concepts = ontresponse.responseXML.selectNodes('//concept');
 	var treeRoot = new Tree.TreeNode(
 			{
 				text : 'root',
@@ -1798,15 +1803,15 @@ function createTree(includeExcludeFlag, ontresponse){
 				qtip : 'root'
 			}
 	);
-	for(var c = 0; c < concepts.length; c ++ )
+	for (var c = 0; c < ontresponse.length; c ++ )
 	{
-		var level = concepts[c].selectSingleNode('level').firstChild.nodeValue;
-		var key = concepts[c].selectSingleNode('key').firstChild.nodeValue;
-		var name = concepts[c].selectSingleNode('name').firstChild.nodeValue;
-		var tooltip = concepts[c].selectSingleNode('tooltip').firstChild.nodeValue;
-		var dimcode = concepts[c].selectSingleNode('dimcode').firstChild.nodeValue;
-		var visualAttributes = concepts[c].selectSingleNode('visualattributes').firstChild.nodeValue;
-
+		var level = ontresponse[c].level;
+		var key = ontresponse[c].key;
+		var name = ontresponse[c].name;
+		var tooltip = ontresponse[c].tooltip;
+		var dimcode = ontresponse[c].dimcode;
+		var visualAttributes = ontresponse[c].visualAttributes;
+		
 		var fullname=key.substr(key.indexOf("\\",2), key.length);		
 		var access=GLOBAL.InitialSecurity[fullname];
 		
@@ -1826,9 +1831,10 @@ function createTree(includeExcludeFlag, ontresponse){
    		if(level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) == -1) { continue; }
    		
    		var iconCls = "";
-	    if (visualAttributes.indexOf('P') > '-1') {
-	    	iconCls="programicon";
-	    }
+		/* FIXME: visualAttributes should be an array now after core-db integration */
+	    //if (visualAttributes.indexOf('P') > '-1') {
+	    //	iconCls="programicon";
+	    //}
 	    
 	    var tcls = "";
 		
@@ -1842,17 +1848,17 @@ function createTree(includeExcludeFlag, ontresponse){
 	    }
    		
 		var ontRoot = new Tree.AsyncTreeNode(
-			{
-				text : name,
-				draggable : false,
-				id : key,
-				qtip : tooltip,
+				{
+					text : name,
+					draggable : false,
+					id : key,
+					qtip : tooltip,
 				expanded : autoExpand,
 				iconCls : iconCls,
 				cls : tcls
-			}
+				}
 		);
-
+		
 		if(lockedNode) {
 			ontRoot.attributes.access='locked';
 			//ontRoot.disable();
@@ -1865,7 +1871,7 @@ function createTree(includeExcludeFlag, ontresponse){
 		
 		/*****************************************/
 
-	}
+		}
 
 	return ontRoots;
 }
@@ -1878,7 +1884,7 @@ function getSubCategories(ontresponse)
 {
 	// shorthand
 	var Tree = Ext.tree;
-	
+
 	var showFn;
 	
 	var ontRoots = createTree('exclude', ontresponse);
@@ -1896,20 +1902,20 @@ function getSubCategories(ontresponse)
     var treeRoot = Ext.getCmp('navigateTermsPanel').getRootNode();
 	for(c = treeRoot.childNodes.length - 1; c >= 0; c -- ) {
 		treeRoot.childNodes[c].remove();
-	}
-	
+						}
+
 	jQuery('#noAnalyzeResults').hide();
-	
+
 	for(var c = 0; c < ontRoots.length; c ++ )
-	{
+			{
 		var newnode=ontRoots[c];
 		treeRoot.appendChild(newnode);
-	}
-	
+			}
+
 	if (ontRoots.length == 0) { //This shouldn't happen!
 		jQuery('#noAnalyzeResults').show();
-	}
-        
+			}
+
 	if(GLOBAL.Debug)
 	{
 		alert(ontresponse.responseText);
@@ -4349,7 +4355,7 @@ function searchByTagComplete(response)
 		else {
 			//Get the categories with the new path to expand
 			getCategories();
-		}
+	}
 		
 	}
 }
