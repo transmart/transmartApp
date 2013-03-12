@@ -31,6 +31,7 @@
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
+		<g:javascript>jQuery.noConflict()</g:javascript>
 		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
 	    <script type="text/javascript"	src="${resource(dir:'js', file:'usergroup.js')}"></script>
 	    <script type="text/javascript"  src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
@@ -39,6 +40,7 @@
 
 			// set ajax to 90*1000 milliseconds
 			Ext.Ajax.timeout = 180000;
+			var pageInfo;
 
 			Ext.onReady(function()
 		    {
@@ -60,7 +62,7 @@
 	            });  
 	            viewport.doLayout();
 
-	            var pageInfo = {
+	            pageInfo = {
 					basePath :"${request.getContextPath()}"
 				}
 	        });

@@ -68,7 +68,7 @@
                                     <label for="secureObject">Secure Object:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:authUserSecureAccessInstance,field:'secureObject','errors')}">
-                                    <g:select optionKey="id" optionValue="displayName" from="${SecureObject.listOrderByDisplayName()}" name="secureObject.id" value="${authUserSecureAccessInstance?.secureObject?.id}" ></g:select>
+                                    <g:select optionKey="id" optionValue="displayName" from="${auth.SecureObject.listOrderByDisplayName()}" name="secureObject.id" value="${authUserSecureAccessInstance?.secureObject?.id}" ></g:select>
                                 </td>
                             </tr>
 
