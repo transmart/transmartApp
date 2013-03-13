@@ -143,6 +143,9 @@ class MetaDataController {
 		def pathwayJSON = searchKeywordService.findSearchKeywords("PATHWAY", params.term, 10) as JSON
 		list = JSON.parse(pathwayJSON.toString())
 		list.each {itemlist.add(it)}
+		def observationJSON = searchKeywordService.findSearchKeywords("OBSERVATION", params.term, 10) as JSON
+		list = JSON.parse(observationJSON.toString())
+		list.each {itemlist.add(it)}
 		def conceptCodes = ConceptCode.executeQuery("FROM ConceptCode cc WHERE cc.codeTypeName = :codeTypeName and  upper(cc.codeName) LIKE :codeName order by codeTypeName", [codeTypeName: 'PROGRAM_TARGET_PATHWAY_PHENOTYPE', codeName: value+"%"], [max: 10]);
 			for (conceptCode in conceptCodes) {
 			itemlist.add([id:conceptCode.uniqueId, label:conceptCode.codeName, sourceAndCode:conceptCode.uniqueId, categoryId:"PROGRAM_TARGET", category:"Program Target", display:""]);
