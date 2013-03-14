@@ -172,6 +172,13 @@ class Experiment implements IExcelProfile {
 	}
 	
 	/**
+	 * Override the Accession setter to force it to uppercase
+	 */
+	public void setAccession(String accession) {
+		this.accession = accession.toUpperCase();
+	}
+	
+	/**
 	 * hack to get around gorm inheritance bug
 	 */
 	def getExpId() {
