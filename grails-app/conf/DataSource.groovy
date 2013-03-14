@@ -21,12 +21,12 @@
 //check external configuration as described in Config.groovy
 // environment specific settings
 environments {
-    development {
+    /*development {
         dataSource {
             dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
             url = "jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
         }
-    }
+    }*/
     test {
         dataSource {
             pooled = true
@@ -46,3 +46,4 @@ environments {
             }
         }
     }
+}
