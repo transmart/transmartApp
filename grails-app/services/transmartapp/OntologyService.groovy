@@ -164,7 +164,7 @@ class OntologyService {
 	def checkSubjectLevelData(accession) {
 		
 		def nodes = i2b2.OntNode.createCriteria().list {
-			eq('sourcesystemcd', accession)
+			eq('sourcesystemcd', accession.toUpperCase())
 			maxResults(1)
 		}
 		
@@ -173,7 +173,7 @@ class OntologyService {
 	
 	def getPathForAccession(accession) {
 		def node = i2b2.OntNode.createCriteria().get {
-			eq('sourcesystemcd', accession)
+			eq('sourcesystemcd', accession.toUpperCase())
 			eq('hlevel', 1L)
 		}
 		
