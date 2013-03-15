@@ -1806,12 +1806,21 @@ function createTree(includeExcludeFlag, ontresponse){
 		var tooltip = concepts[c].selectSingleNode('tooltip').firstChild.nodeValue;
 		var dimcode = concepts[c].selectSingleNode('dimcode').firstChild.nodeValue;
 		var visualAttributes = concepts[c].selectSingleNode('visualattributes').firstChild.nodeValue;
+
+		var fullname=key.substr(key.indexOf("\\",2), key.length);		
+		var access=GLOBAL.InitialSecurity[fullname];
 		
 		if(includeExcludeFlag==="include" && name!=="Across Trials") continue;
 		if(includeExcludeFlag==="exclude" && name==="Across Trials") continue;
 		// set the root node
 		var autoExpand=false;
-		if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key+",") == -1) { autoExpand=true; }
+		
+	    var lockedNode = true;
+	    if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) {
+	    	lockedNode = false;
+	    }
+	    
+		if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key+",") == -1 && !lockedNode) { autoExpand=true; }
 		
    		//For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
    		if(level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) == -1) { continue; }
@@ -1822,21 +1831,10 @@ function createTree(includeExcludeFlag, ontresponse){
 	    }
 	    
 	    var tcls = "";
-
-		var fullname=key.substr(key.indexOf("\\",2), key.length);
-		var access=GLOBAL.InitialSecurity[fullname];
 		
-		if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
-		{
-			//leave node unlocked must have some read access
-		}
-		else
-		{
+		if(lockedNode) {
 			tcls += ' locked';
 		}
-		
-		
-	
 
 	    var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
 	    if (isSearchResult) {
@@ -1855,10 +1853,7 @@ function createTree(includeExcludeFlag, ontresponse){
 			}
 		);
 
-		if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) {
-
-		}
-		else {
+		if(lockedNode) {
 			ontRoot.attributes.access='locked';
 			//ontRoot.disable();
 			ontRoot.on('beforeload', function(node){return false});

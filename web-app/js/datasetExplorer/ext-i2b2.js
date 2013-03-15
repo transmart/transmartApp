@@ -101,7 +101,11 @@ parseXml:function (response, node) {
 				continue;
 			}
    	     }
-   		 node.appendChild(c);
+   		 
+   		 //If the node has been disabled, ignore all children
+   		 if (!node.disabled) {
+   		 	node.appendChild(c);
+   		 }
    	 }
 	
 }});
