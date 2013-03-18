@@ -62,7 +62,8 @@ processResponse:function (response, node, callback) {
  	try{
  	//response.responseText.evalJSON();
  	}
- 	catch(e){}
+        catch (e) {
+        }
 	//var nodes = this.parseXml(response);
 	node.beginUpdate();
 	//node.appendChild(nodes);
@@ -81,10 +82,8 @@ parseXml:function (response, node) {
  var concept=null;
  var concepts=response.selectNodes('//concept');
 	
- var matchList = GLOBAL.PathToExpand.split(",");
- 
-	for(i=0;i<concepts.length;i++)
-	  {
+        var matchList = GLOBAL.PathToExpand.split(",");
+        for (i = 0; i < concepts.length; i++) {
    		 var c=getTreeNodeFromXMLNode(concepts[i]);
    		 if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
    		 //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
@@ -104,33 +103,34 @@ parseXml:function (response, node) {
    		 
    		 //If the node has been disabled, ignore all children
    		 if (!node.disabled) {
-   		 	node.appendChild(c);
-   		 }
+   		 node.appendChild(c);
+   	 }
    	 }
 	
 }});
 
-function getConceptPatientCount(node)
-{
+function getConceptPatientCount(node) {
 Ext.Ajax.request(
     	    {
     	        url: pageInfo.basePath+"/chart/conceptPatientCount",
     	        method: 'POST',                                       
-    	        success: function(result, request){getConceptPatientCountComplete(result, node);},
-    	        failure: function(result, request){getConceptPatientCountComplete(result, node);},
+            success: function (result, request) {
+                getConceptPatientCountComplete(result, node);
+            },
+            failure: function (result, request) {
+                getConceptPatientCountComplete(result, node);
+            },
     	        timeout: '300000',
     	        params: Ext.urlEncode({charttype:"conceptpatientcount",
     	        		 			   concept_key: node.attributes.id})
     	    });   
 }
 
-function getConceptPatientCountComplete(result, node)
-{
+function getConceptPatientCountComplete(result, node) {
 node.setText(node.text+" <b>("+result.responseText+")</b>");
 }
 
-function getChildConceptPatientCounts(node)
-{
+function getChildConceptPatientCounts(node) {
 	
 var params =	Ext.urlEncode({charttype:"childconceptpatientcounts",
 		   concept_key: node.attributes.id})
@@ -141,11 +141,10 @@ jQuery.ajax({
     	        method: 'POST',                                       
     	        success: function(result){getChildConceptPatientCountsComplete(result, node);},
     	        data: {charttype: "childconceptpatientcounts", concept_key: node.attributes.id}
-			});   
+    	    });   
 }
 
-function getChildConceptPatientCountsComplete(result, node)
-{
+function getChildConceptPatientCountsComplete(result, node) {
 /* eval the response and look up in loop*/
 //var childaccess=Ext.util.JSON.decode(result.responseText).accesslevels;
 //var childcounts=Ext.util.JSON.decode(result.responseText).counts;
@@ -162,15 +161,13 @@ var blah=node;
 node.beginUpdate();
 var children=node.childNodes;
 var size2=children.size()
-for (var i=0;i<size2;i++)
-{
+    for (var i = 0; i < size2; i++) {
   var key=children[i].attributes.id;
   var fullname=key.substr(key.indexOf("\\",2), key.length);
   var count=childcounts[fullname];
   var access=childaccess[fullname];
   var child=children[i];
-  if(count!=undefined)
-  {
+        if (count != undefined) {
    child.setText(child.text+" ("+count+")");
   }
   
@@ -178,13 +175,15 @@ for (var i=0;i<size2;i++)
   {
   	//leave node unlocked must have some read access
   }
-  else
-  {
+        else {
   	//default node to locked
   	//child.setText(child.text+" <b>Locked</b>");
   	child.attributes.access='locked';
   	child.disable();
-  	child.on('beforeload', function(node){alert("Access to this node has been restricted. Please contact your administrator for access."); return false}); 
+            child.on('beforeload', function (node) {
+                alert("Access to this node has been restricted. Please contact your administrator for access.");
+                return false
+            });
   }
 }
 node.endUpdate();
