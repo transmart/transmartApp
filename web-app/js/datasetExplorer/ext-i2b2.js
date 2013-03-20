@@ -18,25 +18,22 @@
  ******************************************************************/
 
 
-
 Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
     requestData: function (node, callback) {
         if (this.fireEvent("beforeload", this, node, callback) !== false) {
-            var getChildrenRequest = getONTRequestHeader() + '<ns4:get_children blob="true" max="1000" synonyms="false" hiddens="false">';
-            getChildrenRequest = getChildrenRequest + "<parent>" + node.id + "</parent></ns4:get_children>" + getONTRequestFooter();
 
             this.transId = Ext.Ajax.request({
-                url: pageInfo.basePath + "/proxy?url=" + GLOBAL.ONTUrl + "getChildren",
-                method: 'POST',
-                xmlData: getChildrenRequest,
+                method: 'GET',
+                url: pageInfo.basePath + "/concepts/getChildren",
+                params: { concept_key: node.id },
                 success: this.handleResponse,
                 failure: this.handleFailure,
                 scope: this,
-                argument: {callback: callback, node: node},
-                timeout: '120000', //2 minutes
-                params: { }
+                argument: { callback: callback, node: node },
+                timeout: '120000' //2 minutes
             });
+
         } else {
             // if the load is cancelled, make sure we notify
             // the node that we are done
@@ -47,16 +44,9 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
     },
 
     processResponse: function (response, node, callback) {
-        //	if(GLOBAL.Debug){alert(response.responseText)};
-        try {
-            //response.responseText.evalJSON();
-        }
-        catch (e) {
-        }
-        //var nodes = this.parseXml(response);
         node.beginUpdate();
         //node.appendChild(nodes);
-        this.parseXml(response, node);
+        this.parseJson(response, node);
         getChildConceptPatientCounts(node);
         node.endUpdate();
         if (typeof callback == "function") {
@@ -64,15 +54,14 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
         }
     },
 
-    parseXml: function (response, node) {
+    parseJson: function (response, node) {
         // shorthand
         var Tree = Ext.tree;
 
-        var concept = null;
-        var concepts = response.responseXML.selectNodes('//concept');
+        var concepts = Ext.decode(response.responseText)
 
         for (i = 0; i < concepts.length; i++) {
-            var c = getTreeNodeFromXMLNode(concepts[i]);
+            var c = getTreeNodeFromJsonNode(concepts[i]);
             if (c.attributes.id.indexOf("SECURITY") > -1) {
                 continue;
             }
@@ -117,7 +106,7 @@ function getChildConceptPatientCounts(node) {
             params: Ext.urlEncode({charttype: "childconceptpatientcounts",
                 concept_key: node.attributes.id})
         });
-}
+}        var concept = null;
 
 function getChildConceptPatientCountsComplete(result, node) {
     /* eval the response and look up in loop*/
