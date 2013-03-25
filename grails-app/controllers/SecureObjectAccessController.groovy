@@ -18,6 +18,13 @@
  ******************************************************************/
   
 
+import org.transmart.searchapp.AuthUser;
+import org.transmart.searchapp.Principal;
+import org.transmart.searchapp.Role;
+import org.transmart.searchapp.SecureAccessLevel;
+import org.transmart.searchapp.SecureObject;
+import org.transmart.searchapp.SecureObjectAccess;
+
 import command.SecureObjectAccessCommand
 
 
@@ -128,6 +135,9 @@ class SecureObjectAccessController {
 		def 	secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
 		def 	userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
 
+		log.debug("accesslist:"+secureObjectAccessList);
+		log.debug("noaccess:"+userwithoutaccess);
+		log.debug("sec:"+secureObjInstance);
 		//println(userwithoutaccess)
 			render(view:'managePrincipalAccess',model:[
 			                                 secureObjectInstance:secureObjInstance,
@@ -232,6 +242,9 @@ class SecureObjectAccessController {
 		def secureObjectAccessList=getSecureObjAccessListForPrincipal(principalInstance, access);
 		def objectswithoutaccess=getObjsWithoutAccessForPrincipal(principalInstance, '');
 
+		log.debug("accesslist:"+secureObjectAccessList);
+		log.debug("noaccess:"+objectswithoutaccess);
+		log.debug("prin:"+principalInstance);
 		render(view:'manageAccess',model:[principalInstance:principalInstance,
 		accessLevelList:SecureAccessLevel.listOrderByAccessLevelValue(),
 		secureObjectAccessList: secureObjectAccessList,
@@ -262,6 +275,10 @@ class SecureObjectAccessController {
 		//println(searchtext)
 		def secureObjectAccessList=getSecureObjAccessListForPrincipal(principalInstance, access);
 		def objectswithoutaccess=getObjsWithoutAccessForPrincipal(principalInstance, searchtext);
+		if(secureObjectAccessList==null)
+		secureObjectAccessList = []
+		if(objectswithoutaccess==null)
+		objectswithoutaccess= []
 		render(template:'addremoveAccess',model:[principalInstance: principalInstance,
 		secureObjectAccessList: secureObjectAccessList,
 		objectswithoutaccess: objectswithoutaccess,
@@ -331,7 +348,7 @@ class SecureObjectAccessController {
 	def getObjsWithoutAccessForPrincipal(principal, insearchtext) {
 		def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
 		//	println(searchtext)
-		println(principal)
+		//println(principal)
 		if(principal!=null)
 			return SecureObject.findAll(" FROM SecureObject s WHERE s.dataType='BIO_CLINICAL_TRIAL' AND s.id NOT IN(SELECT so.secureObject.id FROM SecureObjectAccess so WHERE so.principal =:p ) and upper(s.displayName) like :dn ORDER BY s.displayName ",[p:principal,dn:searchtext]);
 		else
@@ -343,11 +360,7 @@ class SecureObjectAccessController {
 		if(principal!=null)
 			return SecureObjectAccess.findAll(" FROM SecureObjectAccess s WHERE s.principal =:p and s.accessLevel=:ac ORDER BY s.principal.name ", [p:principal,ac:access])
 		else
-			return [];//SecureObjectAccess.findAll(" FROM SecureObject s where 1=0");
-	}
-
-	def getSecureObjAccessListForPrincipal(principal) {
-		return SecureObjectAccess.findAll(" FROM SecureObjectAccess s WHERE s.principal = ? ORDER BY s.principal.name", principal)
+			return [];
 	}
 
 	def addAccess(principal, secobject,access){
@@ -394,8 +407,14 @@ class SecureObjectAccessController {
 		if(secureObj==null)
 			return []
 
-		return SecureObjectAccess.findAll(" FROM SecureObjectAccess s WHERE s.secureObject = :so AND s.accessLevel = :al ORDER BY s.principal.name", [so:secureObj,al:access]);
-	}
+		def all = SecureObjectAccess.findAll(" FROM SecureObjectAccess s WHERE s.secureObject = :so AND s.accessLevel = :al ORDER BY s.principal.name", [so:secureObj,al:access]);
+		if (all ==null)
+			all = []
+		for(soa in all){
+			soa.getObjectAccessName();
+		}
+		return all;
+			}
 
 	def getPrincipalsWithoutAccess(secureObj, access, insearchtext)
 	{
@@ -403,7 +422,10 @@ class SecureObjectAccessController {
 		if(secureObj == null)
 			return []
 		def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
-		println(searchtext)
-		return Principal.findAll('from Principal g WHERE g.id NOT IN (SELECT so.principal.id from SecureObjectAccess so WHERE so.secureObject =:secObj AND so.accessLevel =:al ) AND upper(g.name) like :st ORDER BY g.name', [secObj:secureObj, al:access, st:searchtext] );
-	}
+		//println(searchtext)
+		def all = Principal.findAll('from Principal g WHERE g.id NOT IN (SELECT so.principal.id from SecureObjectAccess so WHERE so.secureObject =:secObj AND so.accessLevel =:al ) AND upper(g.name) like :st ORDER BY g.name', [secObj:secureObj, al:access, st:searchtext] );
+		if(all == null)
+			all = []
+		return all;
+		}
 }

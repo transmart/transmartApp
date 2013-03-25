@@ -24,6 +24,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="main" />
         <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
+        <script>jQuery.noConflict();</script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
         <!-- ************************************** -->
 	    <!-- This implements the Help functionality -->
 	    <script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
@@ -38,7 +41,9 @@
 		<!-- ************************************** -->  
     </head>
     <body>
-		<g:render template="/layouts/commonheader" model="['app':'customfilters']" />
+        <div id="header-div">
+		  <g:render template="/layouts/commonheader" model="[app:customfilters]" />
+		</div>
         <div class="nav">
             <span class="menuButton"><g:link class="list" action="list">Saved Filters</g:link></span>
             <%topicID="1022" %>

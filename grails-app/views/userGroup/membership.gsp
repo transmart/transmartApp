@@ -18,7 +18,7 @@
 -->
 
 
-<%@ page import="AuthUser" %>
+<%@ page import="org.transmart.searchapp.AuthUser" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -40,6 +40,11 @@
   <br><b>Search User<b></b><br>
   <input type="text"  size="80" id="searchUsers" autocomplete="off" /></div>
   <script type="text/javascript">
+
+	var pageInfo = {
+			basePath :"${request.getContextPath()}"
+		}
+  
   createUserSearchBox2('${request.getContextPath()}/userGroup/ajaxGetUserSearchBoxData', 440);
 
   function searchgroup(){
@@ -49,7 +54,7 @@
 	return false;
 	}
 
-	  ${remoteFunction(action:'searchGroupsWithoutUser',update:[success:'groups', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
+	  ${remoteFunction(action:'searchGroupsWithoutUser',update:[success:'groups', failure:''], params:'jQuery(\'#searchtext\').serialize()+\'&id=\'+pid')};
 	   return false;
 	  }
   </script>
@@ -58,7 +63,7 @@
                 				<button class="" onclick="searchgroup();">Search Groups</button></td>
                      			<tr><td><b>Member of these groups</b></td><td></td><td><b>Available groups</b></td></tr>
                      			<tr id="groups">
-                                    <g:render template="addremoveg" model="['groupswithoutuser' :groupswithoutuser]" />
+                                    <g:render template="addremoveg" model="[groupswithoutuser :groupswithoutuser]" />
                                     </tr>
                                      </table>
                                 	</div>

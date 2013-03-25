@@ -18,7 +18,7 @@
 -->
 
 
-<%@ page import="SecureObjectAccess" %>
+<%@ page import="org.transmart.searchapp.SecureObjectAccess" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -38,6 +38,12 @@
   <div id="divuser" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br><b>Search User/Group</b><br>
   <input type="text"  size="80" id="searchUsers" autocomplete="off" /></div>
   <script type="text/javascript">
+
+	var pageInfo = {
+			basePath :"${request.getContextPath()}"
+		}
+  
+  
   createUserSearchBox('${request.getContextPath()}/userGroup/ajaxGetUsersAndGroupsSearchBoxData', 440,'${principalInstance?.name}');
 
   function searchtrial(){
@@ -46,7 +52,7 @@
 	alert("Please select a user/group first");
 	return false;
 	}
- ${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
+ ${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'jQuery(\'#searchtext\').serialize()+\'&id=\'+pid')};
 	return false;
   }
 
@@ -63,7 +69,7 @@
                 				<td><input name="searchtext" id="searchtext"></input><button class="" onclick="searchtrial();">Search Study</button></td>
                      			<tr><td>Has Access for these studies</td><td></td><td>Available studies:</td></tr>
                        			<tr id="permissions">
-                                    <g:render template="addremoveAccess" model="['secureObjectInstance':secureObjectInstance,'secureObjectAccessList' :secureObjectAccessList,'objectswithoutaccess':objectswithoutaccess" />
+                                    <g:render template="addremoveAccess" model="[secureObjectInstance:secureObjectInstance, secureObjectAccessList:secureObjectAccessList, objectswithoutaccess:objectswithoutaccess]"/>
                                     </tr>
                                      </table>
                                 	</div>

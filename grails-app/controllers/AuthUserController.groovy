@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  *
+ *
  ******************************************************************/
   
 
@@ -23,6 +24,11 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 10098 $
  */
+
+import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AuthUser;
+import org.transmart.searchapp.AuthUserSecureAccess;
+import org.transmart.searchapp.Role;
 
 import search.GeneSignature
 
@@ -44,8 +50,10 @@ class AuthUserController {
 
 	def list = {
 		if (!params.max) {
-			params.max = grailsApplication.config.com.recomdata.admin.paginate.max
-		}
+			//Changed this to use the jQuery dataTable, which includes client side paging/searching
+			//Need to return all user accounts here
+			//params.max = grailsApplication.config.com.recomdata.admin.paginate.max
+			params.max = 999999		}
 		[personList: AuthUser.list(params)]
 	}
 
@@ -89,7 +97,7 @@ class AuthUserController {
 				person.delete()
 				def msg = "$person.userRealName has been deleted."
 				flash.message = msg
-				new AccessLog(username: userName, event:"User Deleted",
+				new AccessLog(username: springSecurityService.getPrincipal().username, event:"User Deleted",
 					eventmessage: msg,
 					accesstime:new Date()).save()
 			}
@@ -113,13 +121,17 @@ class AuthUserController {
 	/**
 	 * Person update action.
 	 */
-	def update = {
+	def update = {		
+		def SSOEnabled = grailsApplication.config.com.recomdata.searchtool.identityVaultURL.size() > 0
+		
 		def person = AuthUser.get(params.id)		
 		person.properties = params
 		
-		if(!params.passwd.equals(person.getPersistentValue("passwd")))	{
-			log.info("Password has changed, encrypting new password")	
-			person.passwd = springSecurityService.encodePassword(params.passwd)
+        if (!SSOEnabled) {
+            if(!params.passwd.equals(person.getPersistentValue("passwd")))	{
+                log.info("Password has changed, encrypting new password")	
+                person.passwd = springSecurityService.encodePassword(params.passwd)
+            }	
 		}
 		
 		def msg = new StringBuilder("${person.username} has been updated.  Changed fields include: ")				
@@ -146,7 +158,8 @@ class AuthUserController {
 	}
 
 	def create = {
-		[person: new AuthUser(params), authorityList: Role.list()]
+        def SSOEnabled = grailsApplication.config.com.recomdata.searchtool.identityVaultURL.size() > 0
+		[person: new AuthUser(params), authorityList: Role.list(), SSO:SSOEnabled]
 	}
 
 	/**
@@ -175,7 +188,7 @@ class AuthUserController {
 		if (person.save()) {
 			addRoles(person)
 			def msg = "User: ${person.username} for ${person.userRealName} created";
-			new AccessLog(username: person.username, event:"User Created",
+			new AccessLog(username: springSecurityService.getPrincipal().username, event:"User Created",
 				eventmessage: msg,
 				accesstime:new Date()).save()
 			redirect action: show, id: person.id
@@ -194,6 +207,7 @@ class AuthUserController {
 	}
 
 	private Map buildPersonModel(person) {
+        def SSOEnabled = grailsApplication.config.com.recomdata.searchtool.identityVaultURL.size() > 0
 		List roles = Role.list()
 		roles.sort { r1, r2 ->
 			r1.authority <=> r2.authority
@@ -206,6 +220,6 @@ class AuthUserController {
 		for (role in roles) {
 			roleMap[(role)] = userRoleNames.contains(role.authority)
 		}
-		return [person: person, roleMap: roleMap]
+		return [person: person, roleMap: roleMap, SSO:SSOEnabled]
 	}
 }

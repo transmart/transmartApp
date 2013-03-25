@@ -19,11 +19,12 @@
   
 
 import java.text.*;
+
+import org.transmart.searchapp.AccessLog;
+
 import com.recomdata.util.ExcelSheet;
 import com.recomdata.util.ExcelGenerator;
 class AccessLogController {
-
-	def session
 	def searchService
 
 	def index = { redirect(action:list,params:params) }
@@ -52,7 +53,7 @@ class AccessLogController {
 	//		startdatestr="01/01/2009"
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.setTime(new Date());
-			calendar.roll(Calendar.DATE, -7);
+			calendar.add(Calendar.DATE, -7);
 			startdatestr= df1.format(calendar.getTime());
 		}
 		else if(params.startdate!=null)

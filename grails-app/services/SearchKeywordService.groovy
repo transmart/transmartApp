@@ -17,7 +17,9 @@
  *
  ******************************************************************/
   
+import org.transmart.searchapp.AuthUser;
 
+import bio.BioDataExternalCode
 import search.SearchKeyword
 import search.SearchKeywordTerm
 import search.GeneSignature
@@ -30,8 +32,113 @@ import search.GeneSignature
  */
 public class SearchKeywordService {
 
+	def springSecurityService
+	
 	// probably not needed but makes all methods transactional
 	static transactional = true
+
+	/** Finds all of the search categories pertaining to search keywords */
+	def findSearchCategories()	{
+		log.info "Finding all of the search categories..."
+		
+		def c = SearchKeyword.createCriteria()
+		def results = c.list	{
+			projections {
+				distinct("dataCategory")
+			}
+			order("dataCategory", "asc")
+		}
+		
+		log.info("Categories found: " + results.size())
+		
+		def categories = []
+		
+		for (result in results)	{
+			categories.add(["category":result])
+		}
+		
+		return categories
+	}
+	
+	/** Searches for all keywords for a given term (like %il%) */
+	def findSearchKeywords(category, term)	{
+		log.info "Finding matches for ${term} in ${category}"
+		
+		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		
+		def c = SearchKeywordTerm.createCriteria()
+		def results = c.list 	{
+			if (term.size() > 0)	{
+				ilike("keywordTerm", '%' + term + '%')
+			}
+			if (category.class.name.toLowerCase() == 'java.util.arraylist') {
+				searchKeyword	{
+					inList("dataCategory", category)
+				}
+			}
+			else  {
+				if ("ALL".compareToIgnoreCase(category) != 0)	{
+					searchKeyword	{
+						eq("dataCategory", category, [ignoreCase: true])
+					}
+				}
+			}			
+			
+			if (!user.isAdmin())	{
+				log.info("User is not an admin so filter out gene lists or signatures that are not public")
+				or	{
+					isNull("ownerAuthUserId")
+					eq("ownerAuthUserId", user.id)
+				}
+			}
+			maxResults(20)
+			order("rank", "asc")
+			order("termLength", "asc")
+			order("keywordTerm", "asc")
+		}
+		log.info("Search keywords found: " + results.size())
+		
+		def keywords = []
+		def dupeList = []			// store category:keyword for a duplicate check until DB is cleaned up
+		
+		for (result in results)	{
+			def m = [:]
+			def sk = result
+			//////////////////////////////////////////////////////////////////////////////////
+			// HACK:  Duplicate check until DB is cleaned up
+			def dupeKey = sk.searchKeyword.displayDataCategory + ":" +sk.searchKeyword.keyword
+			if (dupeKey in dupeList)	{
+				log.info "Found duplicate: " + dupeKey
+				continue
+			} else	{
+				log.info "Found new entry, adding to the list: " + dupeList
+				dupeList << dupeKey
+			}
+			///////////////////////////////////////////////////////////////////////////////////
+			m.put("label", sk.searchKeyword.keyword)
+			m.put("id", , sk.searchKeyword.id)
+			m.put("category", sk.searchKeyword.displayDataCategory)
+			m.put("categoryId", sk.searchKeyword.dataCategory)
+			if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0)	{
+				def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
+				def synList = new StringBuilder()
+				for (synonym in synonyms)	{
+					if (synList.size() > 0)	{
+						synList.append(", ")
+					} else	{
+						synList.append("(")
+					}
+					synList.append(synonym.code)
+				}
+				if (synList.size() > 0)	{
+					synList.append(")")
+				}
+				m.put("synonyms", synList.toString())
+			}
+			keywords.add(m)
+		}
+		return keywords
+	 }
 
 
 	/**

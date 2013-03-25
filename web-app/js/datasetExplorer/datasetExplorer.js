@@ -67,7 +67,8 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
 				params :  Ext.urlEncode({}),
 				success : function(result, request)
 				{
-					var exp = result.responseText.evalJSON();
+					//var exp = result.responseText.evalJSON();
+					var exp = Ext.util.JSON.decode(result.responseText);
 					if (exp.success && exp.files.length > 0)	{
 						/*for (var i = 0; i < exp.files.length; i++) {
 							var file = exp.files[i]
@@ -96,7 +97,7 @@ function loadScripts(scripts) {
 	for (var i = 0; i < scripts.length; i++) {
 		var file = scripts[i];
 		filesArr.push(file.path);
-	}
+	}	
 	YAHOO.util.Get.script(filesArr, {
 		onSuccess: function(o) {
 			//alert("JavaScripts loaded");
@@ -176,8 +177,7 @@ Ext.onReady(function()
 					region : 'north',
 					height : 30,
 					split : false,
-					border : true,
-					tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle,GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
+					border : true,					
 					contentEl: "header-div"
 				}
 		);
@@ -300,10 +300,10 @@ Ext.onReady(function()
 					        	 	advancedWorkflowContextHelpId="1172";
 					        	 },
 					        	 disabled : GLOBAL.GPURL == ""
-					         }
+					         }					         
 					         ,
 				        	 '-'
-				        	 ,
+				        	 , /*
 					         {
 					        	 text : 'Survival Analysis',
 					        	 handler : function()
@@ -321,7 +321,7 @@ Ext.onReady(function()
 					         }
 					         ,
 				        	 '-'
-				        	 ,
+				        	 , */
 					         {
 					        	 text : 'Haploview',
 					        	 handler : function()	{
@@ -386,7 +386,7 @@ Ext.onReady(function()
 					        	disabled : GLOBAL.GPURL == ""
 					        }
 					        ,
-					        {
+					      /*  {
 					        	 text : 'PLINK',
 					        	 disabled : true,
 					        	 handler : function()	{
@@ -405,7 +405,7 @@ Ext.onReady(function()
 					        	 	}
 					        	 	return;
 					        	}
-					        },
+					        },*/
 					        {
 					        	 text : 'Genome-Wide Association Study',
 					        	 handler : function()	{
@@ -424,7 +424,8 @@ Ext.onReady(function()
 					        	 	}
 					        	 	return;
 					        	}
-					        }					   ]
+					        }	
+					        				   ]
 				}
 		);
 
@@ -491,10 +492,11 @@ Ext.onReady(function()
 								handler : function()
 								{
 								if(confirm("Are you sure you want to clear your current analysis?"))
-									{
+									{										
 										clearAnalysisPanel();
 										resetQuery();
-										clearDataAssociation();									
+										clearDataAssociation();
+										resetExportTabs();
 									}
 								// clearGrid(); blah
 								}
@@ -529,6 +531,7 @@ Ext.onReady(function()
 							}
 					),
 					'->',
+					/*
 					new Ext.Toolbar.Separator(),
 					new Ext.Toolbar.Button({
 						id : 'exportbutton',
@@ -541,8 +544,9 @@ Ext.onReady(function()
 						// showExportStepSplitTimeSeries();
 						// if((typeof(grid)!='undefined') && (grid!=null)){exportGrid();}
 						// else {alert("Nothing to export");}
-					}}),
+					}}), 
 					new Ext.Toolbar.Separator(),
+					*/
 					new Ext.Toolbar.Button(
 							{
 								id : 'printanalysisbutton',
@@ -716,10 +720,8 @@ Ext.onReady(function()
 				height : 90
 				}
 		);
-		/*
-		 * Commented out the Jobs panel to hide as it isn't used without Gene Pattern
-		 * 
-		 * analysisJobsPanel = new Ext.Panel(
+		if (GLOBAL.EnableGP=='true')	{
+			analysisJobsPanel = new Ext.Panel(
 				{
 					id : 'analysisJobsPanel',
 					title : 'Jobs',
@@ -739,7 +741,8 @@ Ext.onReady(function()
 					},
 					collapsible : true						
 				}
-		);*/
+			);
+		}
 		analysisDataExportPanel = new Ext.Panel(
 				{
 					id : 'analysisDataExportPanel',
@@ -769,14 +772,14 @@ Ext.onReady(function()
 		dataAssociationPanel = new Ext.Panel(
 				{
 					id : 'dataAssociationPanel',
-					title : 'Advanced Workflow',
+					title : 'R Workflow',
 					region : 'center',
 					split : true,
 					height : 90,
 					layout : 'fit',
 					tbar : new Ext.Toolbar({
 						id : 'advancedWorkflowToolbar',
-						title : 'Advanced Workflow actions',
+						title : 'R Workflow actions',
 						items : []
 						}),
 					autoScroll : true,
@@ -840,10 +843,12 @@ Ext.onReady(function()
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
-		//Commented out the Jobs panel to hide as it isn't used without Gene Pattern
-		//resultsTabPanel.add(analysisJobsPanel);
-		resultsTabPanel.add(analysisDataExportPanel);
-		resultsTabPanel.add(analysisExportJobsPanel);
+		if (GLOBAL.EnableGP=='true')	{
+			resultsTabPanel.add(analysisJobsPanel);
+		}
+		// JNJ-2525: Disable these until we 
+		// resultsTabPanel.add(analysisDataExportPanel);
+		// resultsTabPanel.add(analysisExportJobsPanel);
 		
 		southCenterPanel = new Ext.Panel(
 				{
@@ -1542,6 +1547,14 @@ function loginComplete(pmresponse)
 		// get the urls to the other important cells
 		GLOBAL.ONTUrl = oDomDoc.selectSingleNode("//cell_data[@id='ONT']/url").firstChild.nodeValue;
 		GLOBAL.CRCUrl = oDomDoc.selectSingleNode("//cell_data[@id='CRC']/url").firstChild.nodeValue;
+		
+		//If a proxy was used to call the PM Service, override the ONT and CRC urls by using the PM Service host.
+		//Assuming the urls are in this format: "HOST_NAME/i2b2/services/*Service/"
+		if(GLOBAL.usePMHost=="true"){
+			GLOBAL.ONTUrl = GLOBAL.PMUrl.replace("/PMService/", "/OntologyService/");
+			GLOBAL.CRCUrl = GLOBAL.PMUrl.replace("/PMService/", "/QueryToolService/");
+		}
+		
 		if(GLOBAL.Debug)
 		{
 			alert(GLOBAL.ONTUrl);
@@ -1701,7 +1714,19 @@ function projectDialogComplete(projectid)
 	}
 	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
 	{
-		Ext.getCmp("exportbutton").disable();
+	//	Ext.getCmp("exportbutton").disable();
+		Ext.getCmp("analysisDataExportPanel").disable();
+		Ext.getCmp("analysisExportJobsPanel").disable();
+	}
+}
+
+function resetExportTabs()	
+{
+	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
+	{
+	//	Ext.getCmp("exportbutton").disable();
+		Ext.getCmp("analysisDataExportPanel").disable();
+		Ext.getCmp("analysisExportJobsPanel").disable();
 	}
 }
 
@@ -2259,7 +2284,6 @@ function drillDown(rootNode){
 
 function showConceptInfoDialog(conceptKey, conceptid, conceptcomment)
 {
-
 	if( ! this.conceptinfowin)
 	{
 		var link = '<a href="javascript:;"  onclick="return popitup(\'http://www.google.com/search?q='+conceptid+'\')">Search for more information...</a>'
@@ -2276,14 +2300,6 @@ function showConceptInfoDialog(conceptKey, conceptid, conceptcomment)
 					border : false,
 					autoScroll: true,
 					buttons : [
-					           /* {
-            text : 'Search For More Information',
-            handler : function()
-            {
-               popitup('http://www.google.com/search?q=' + conceptid);
-            }
-         }
-         ,*/
 					           {
 					        	   text : 'Close',
 					        	   handler : function()
@@ -2296,30 +2312,26 @@ function showConceptInfoDialog(conceptKey, conceptid, conceptcomment)
 				}
 		);
 	}
-	//var conceptKeySplits = conceptKey.split('\\');
-	//var conceptType = (conceptKeySplits[1]=='')?conceptKeySplits[2]:conceptKeySplits[1];
+	var conceptKeySplits = conceptKey.split('\\');
+	var conceptType = (conceptKeySplits[1]=='')?conceptKeySplits[2]:conceptKeySplits[1];
 
 	conceptinfowin.show(viewport);
 	conceptinfowin.header.update("Show Concept Definition-" + conceptid);
 	Ext.get(conceptinfowin.body.id).update(conceptcomment);
-	//var begin=conceptcomment.indexOf("trial:");
-	//if(begin==0)
-	//{
+	var begin=conceptcomment.indexOf("trial:");
+	if(begin==0)
+	{	
 		conceptinfowin.load({
-			//url: pageInfo.basePath+"/trial/trialDetailByTrialNumber",
-			url: pageInfo.basePath+"/ontology/showConceptDefinition",
-			//params: {id: conceptcomment.substring(6,conceptcomment.length), conceptType: conceptType}, // or a URL encoded string
-			params: {conceptKey:conceptKey}, // or a URL encoded string		
-			//callback: yourFunction,
-			//scope: yourObject, // optional scope for the callback
+			url: pageInfo.basePath+"/trial/trialDetailByTrialNumber", // /ontology/showConceptDefinition",
+			//params: {conceptKey:conceptKey}, // or a URL encoded string
+			params: {id: conceptcomment.substring(6,conceptcomment.length), conceptType: conceptType}, // or a URL encoded string					
 			discardUrl: true,
 			nocache: true,
 			text: "Loading...",
 			timeout: 30000,
 			scripts: false
 		});
-	//}
-
+	}
 }
 
 function showQuerySummaryWindow(source)
@@ -4008,7 +4020,7 @@ function getSummaryStatistics()
 
 function buildColumnModel(fields)
 {
-	var size = fields.size();
+	var size = fields.length;
 	var con = new Array();
 	for(var i = 0; i < size; i ++ )
 	{
@@ -4068,15 +4080,18 @@ function getExportButtonSecurity()
 
 function getExportButtonSecurityComplete(result)
 {
-	var mobj=result.responseText.evalJSON();
-	var canExport=mobj.canExport;
+	var canExport = Ext.util.JSON.decode(result.responseText).canExport;
 	if(canExport || GLOBAL.IsAdmin)
 	{
-		Ext.getCmp("exportbutton").enable();
+	//	Ext.getCmp("exportbutton").enable();
+		Ext.getCmp("analysisDataExportPanel").enable();
+		Ext.getCmp("analysisExportJobsPanel").enable();		
 	}
 	else
 	{
-		Ext.getCmp("exportbutton").disable();
+	//	Ext.getCmp("exportbutton").disable();
+		Ext.getCmp("analysisDataExportPanel").disable();
+		Ext.getCmp("analysisExportJobsPanel").disable();
 	}
 }
 
@@ -4317,9 +4332,8 @@ function searchByTagComplete(response)
 	var Tree = Ext.tree;
 	//ontFilterPanel.el.unmask();
 	viewport.el.unmask();
-	var robj=response.responseText.evalJSON();
-	var rtext=robj.resulttext;
-	var concepts = robj.concepts;
+	var concepts=response.concepts;
+	var rtext=response.resulttext;
 	// concept = concepts[4];
 	// test = concept.selectSingleNode('name').firstChild.nodeValue;
 	// alert(response.responseText);

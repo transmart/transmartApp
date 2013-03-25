@@ -143,7 +143,7 @@ public class XmlHttpProxyServlet extends HttpServlet {
        doProcess(req,res, true);
     }
     
-    public void doProcess(HttpServletRequest req, HttpServletResponse res, boolean isPost) {
+    private void doProcess(HttpServletRequest req, HttpServletResponse res, boolean isPost) {
         StringBuffer bodyContent = null;
         OutputStream out = null;
         PrintWriter writer = null;

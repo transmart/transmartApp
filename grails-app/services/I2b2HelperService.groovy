@@ -60,6 +60,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -70,6 +71,9 @@ import java.sql.*;
 import org.jfree.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.transmart.searchapp.AuthUser;
+import org.transmart.searchapp.AuthUserSecureAccess;
+import org.transmart.searchapp.SecureObjectPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -82,7 +86,7 @@ import com.recomdata.db.DBHelper;
 import com.recomdata.export.*;
 
 /**
- * ResNetService that will provide an .rnef file for Jubilant data
+ * i2b2HelperService
  *
  * @author $Author: mkapoor $
  * @version $Revision: 11303 $
@@ -253,6 +257,10 @@ class I2b2HelperService {
 				"and cd.concept_cd = ?",[conceptCd], {row ->
 					markerType = row.marker_type
 		})
+		
+		if(markerType==""){
+			log.error("No marker type defined for concept cd "+conceptCd+" in DE_GPL_INFO");
+		}
 		//return "Gene Expression"
 		//return "SNP"
 		return markerType

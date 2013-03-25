@@ -36,7 +36,7 @@ switch (true) {
     case Ext.isSafari: 
     case Ext.isChrome: 
     case Ext.isGecko3: 
-        _concurrentRequests = 4; 
+        _concurrentRequests = 14;   // Change this from 4 to 14 to allow more concurrent requests for tree loading
     break; 
 } 
 

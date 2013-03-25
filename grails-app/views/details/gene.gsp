@@ -1,22 +1,3 @@
-<!--
-  tranSMART - translational medicine data mart
-  
-  Copyright 2008-2012 Janssen Research & Development, LLC.
-  
-  This product includes software developed at Janssen Research & Development, LLC.
-  
-  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
-  as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
-  1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
-  2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
-  
-  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
- 
--->
-
 <html>
 <head>
 	<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
@@ -56,31 +37,50 @@
 			                title:"Entrez Gene",
 			                id:'entrezGene',
 			                timeout:180000,
-			            	defaultSrc: "http://www.ncbi.nlm.nih.gov/sites/entrez?Db=gene&Cmd=DetailsSearch&Term=${geneId}[GeneID]&doptcmdl=DocSum"
+			                <g:if test="${(geneId[0] == 'Q') || (geneId[0] == 'P')}">   // if it starts with Q or P, assume it's a protein
+			        	        defaultSrc: "http://www.ncbi.nlm.nih.gov/protein/${geneId}"
+				        	 </g:if>
+			        	     <g:else>
+			        	        defaultSrc: "http://www.ncbi.nlm.nih.gov/sites/entrez?Db=gene&Cmd=DetailsSearch&Term=${geneId}[GeneID]&doptcmdl=DocSum"
+			        	     </g:else>
 				     },
+				     
+				 <g:if test="${isRWG==false}">
 					{
 		                title:"Entrez Global",
 		                id:'entrezGlobal',
 		                defaultSrc: "http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=${symbol}"
-					}, /*
-				<sec:ifNotGranted roles="ROLE_PUBLIC_USER">
-					{
-		        		title:"Pictor",
-		                id:'pictor',
-		                defaultSrc:"http://servername/cgi-bin/chip/pathways.cgi?symbol=${symbol}"
-		            },		           
+					},
+				 </g:if>
+				 <sec:ifNotGranted roles="ROLE_PUBLIC_USER">
+	 				 <g:if test="${isRWG==false}">
+			            {
+			        		title:"Hydra",
+			                id:'hydra',
+			                defaultSrc:"http://hydra.rndus.na.jnj.com/hydra/viewer/index.cfm?jnjgeneid=${hydraGeneID}"
+			            },
+			            {
+			        		title:"TargetCV",
+			                id:'targetcv',
+			                defaultSrc:"http://bioinfo.janbe.eu.jnj.com/TargetCV/reports/${symbol}.htm"
+			            },
+					 </g:if>
+		         </sec:ifNotGranted>
+		         <sec:ifNotGranted roles="ROLE_PUBLIC_USER">    
 					{
 		        		title:"GeneCards",
 		                id:'genecard',
 		                defaultSrc:"http://www.genecards.org/cgi-bin/carddisp.pl?gene=${symbol}"
 		            },
-		           
-			</sec:ifNotGranted> */
+		         </sec:ifNotGranted>   
+				 <g:if test="${isRWG==false}">
 					{
 		                title:"Google Scholar",
 		                id:'google',
 		                defaultSrc: "http://scholar.google.com/scholar?hl=en&lr=&q=${symbol}+gene&btnG=Search&as_allsubj=some&as_subj=bio&as_subj=chm&as_subj=med"
-					}]
+					}
+				 </g:if>
+ 			     ]
 				}]
 			});
 		});

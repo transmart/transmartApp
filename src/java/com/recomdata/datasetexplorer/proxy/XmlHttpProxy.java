@@ -145,7 +145,7 @@ public class XmlHttpProxy {
      * @userName - userName used for basic authorization
      * @password - password used for basic authorization
      */        
-    public void doProcess(String urlString,
+    private void doProcess(String urlString,
             OutputStream out,
             InputStream xslInputStream,
             Map paramsMap,

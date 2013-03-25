@@ -55,6 +55,9 @@ public class WizardModelDetails extends ModelDetails{
 	def foldChgMetrics
 	def platforms
 	def compounds
+	def geneSigText
+	def manipulatedGeneSigText
+	def geneSigFile
 	
 	// domain class
 	def geneSigInst

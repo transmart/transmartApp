@@ -1,0 +1,22 @@
+#searchTooltip{
+	position:absolute;
+	padding:10px 10px 10px 30px;   		/* 20px on left to compensate for negative offsets used in search terms div  */	
+	display:none;
+
+	border:1px solid #bbb;
+	border-radius:3px;
+	background-color:rgba(255, 255, 255, 0.85);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+	color:#333;
+	display:none;
+	max-width:600px;
+
+	}	
+	
+	
+.searchTooltipTitle {
+	margin-left:-20px;
+	text-decoration:none;
+	margin-bottom:10px;
+	font-size:12px;
+}

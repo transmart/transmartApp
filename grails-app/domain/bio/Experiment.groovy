@@ -40,11 +40,11 @@ class Experiment implements IExcelProfile {
 	Date startDate
 	Date completionDate
 	String primaryInvestigator
-	String institution
-	String country
-	String bioMarkerType
-	String target
-	String accessType
+	//String institution
+	//String country
+	//String bioMarkerType
+	//String target
+	//String accessType
 	
 	static hasMany =[compounds:Compound, diseases:Disease, files:ContentReference, uniqueIds:BioData, organisms:Taxonomy]
 	static belongsTo=[Compound, Disease, Taxonomy, ContentReference]
@@ -65,11 +65,11 @@ class Experiment implements IExcelProfile {
 			completionDate column:'COMPLETION_DATE'
 			overallDesign column:'OVERALL_DESIGN'
 			accession column:'ACCESSION'
-			institution column:'INSTITUTION'
-			country column:'COUNTRY'
-			accessType column:'ACCESS_TYPE'
-			target column:'TARGET'
-			bioMarkerType column:'BIOMARKER_TYPE'
+			//institution column:'INSTITUTION'
+			//country column:'COUNTRY'
+			//accessType column:'ACCESS_TYPE'
+			//target column:'TARGET'
+			//bioMarkerType column:'BIOMARKER_TYPE'
 			primaryInvestigator column:'PRIMARY_INVESTIGATOR'
 			compounds joinTable:[name:'BIO_DATA_COMPOUND', key:'BIO_DATA_ID'], cache:true
 			diseases joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DATA_ID'], cache:true

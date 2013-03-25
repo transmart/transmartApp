@@ -18,6 +18,8 @@
  ******************************************************************/
   
 
+import org.transmart.searchapp.AuthUser;
+
 import search.SearchKeyword
 import search.GeneSignature
 import bio.Experiment

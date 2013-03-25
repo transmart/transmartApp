@@ -60,7 +60,7 @@ class ExperimentAnalysisController {
 		//log.info "expDesigns: " + expDesigns
 
 		// no data?
-		def celllines = [] //GeneExprAnalysis.executeQuery(queryCellLines.toString(),filter.gids)
+		def celllines = [] 
 
 		// no data?
 		def expTypes=[] //experimentAnalysisQueryService.findExperimentTypeFilter()
@@ -203,7 +203,7 @@ class ExperimentAnalysisController {
 	/**
 	 * page the tea analysis data
 	 */
-	List pageTEAData(List analysisList, int offset, int pageSize) {
+	private List pageTEAData(List analysisList, int offset, int pageSize) {
 
 		List pagedData = new ArrayList()
 		int numRecs = analysisList.size()

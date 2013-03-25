@@ -57,13 +57,10 @@
                     </thead>
                     <tbody>
                     <g:each in="${accessLogInstanceList}" status="i" var="accessLogInstance">
-                        <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-                        
-                        	<td>${fieldValue(bean:accessLogInstance, field:'accesstime')}</td>
-                            <td>${fieldValue(bean:accessLogInstance, field:'username')}</td>
-                        
-                            <td>${fieldValue(bean:accessLogInstance, field:'event')}</td>
-                        
+                        <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">                        
+                        	<td>${fieldValue(bean:accessLogInstance, field:'accesstime')}&nbsp&nbsp&nbsp&nbsp</td>
+                            <td>${fieldValue(bean:accessLogInstance, field:'username')}&nbsp&nbsp&nbsp&nbsp</td>                        
+                            <td>${fieldValue(bean:accessLogInstance, field:'event')}&nbsp&nbsp&nbsp&nbsp</td>                        
                             <td>${fieldValue(bean:accessLogInstance, field:'eventmessage')}</td>                        
                         </tr>
                     </g:each>
@@ -78,20 +75,12 @@
             </div>      
         </div> 
             <script>
-            Ext.onReady(function(){
-            var startdate = new Ext.form.DateField({
-  name: 'dateField',
-  allowBlank: false,
-  format: 'm/d/Y',
-  applyTo: 'startdate'
-});
-               var enddate = new Ext.form.DateField({
-  name: 'dateField',
-  allowBlank: false,
-  format: 'm/d/Y',
-  applyTo: 'enddate'
-});   
-    });
+        	jQuery(function() {
+            	jQuery("#startdate").datepicker();
+            });
+            jQuery(function() {
+                jQuery("#enddate").datepicker();
+            });
             </script>     
     </body>
 </html>

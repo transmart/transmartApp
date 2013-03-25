@@ -38,18 +38,11 @@ td {
 }
 
 /* --------------------------------------*/
-/* HEADER                                */
-/* --------------------------------------*/
-#header {
-	height: 30px;
-}
-
-/* --------------------------------------*/
 /* CONTENT                               */
 /* --------------------------------------*/
 #content {
-	float: right;
-	width: 80%;
+	padding-top: 20px;
+	width: 100%;
 }
 
 .geneSigButton {
@@ -90,13 +83,4 @@ td {
 	background: url(../images/skin/info.png) center left no-repeat;
 	color: #333;
 	padding-left: 25px;
-}
-
-.gs-utilities-div {
-    position:absolute;
-    width:100px;
-    top:0;
-    right:0;
-    height:24px;
-    z-index:100;
 }

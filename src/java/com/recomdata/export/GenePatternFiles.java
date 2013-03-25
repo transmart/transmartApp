@@ -33,7 +33,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.StringTokenizer;
 
-class GenePatternFiles {
+public class GenePatternFiles {
 	
 	protected File clsfile;
 	protected File gctfile;
@@ -45,6 +45,7 @@ class GenePatternFiles {
 	private static int FLUSH_COUNT = 100;
 	private int gctFlushCount = 0;
 	private int csvFlushCount  =0;
+	
 	public GenePatternFiles() throws java.io.IOException{
 		// put files in a directory 
 		File tmpdir = new File(System.getProperty("java.io.tmpdir") + File.separator + "datasetexplorer");

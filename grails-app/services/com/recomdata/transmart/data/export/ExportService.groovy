@@ -31,7 +31,7 @@ import org.quartz.SimpleTrigger;
 
 import com.recomdata.transmart.data.export.ExportDataProcessor
 import com.recomdata.transmart.domain.i2b2.AsyncJob;
-import com.recomdata.transmart.domain.searchapp.AccessLog
+import org.transmart.searchapp.AccessLog
 import com.recomdata.transmart.validate.RequestValidator;
 import com.recomdata.asynchronous.GenericJobService;
 

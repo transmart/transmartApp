@@ -16,7 +16,7 @@
   
  
 -->
-
+<%@ page import="org.transmart.searchapp.Role" %>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -43,9 +43,9 @@
 				<tbody>
 				<g:each in="${authorityList}" status="i" var="authority">
 					<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-						<td>${authority.id}</td>
-						<td>${authority.authority?.encodeAsHTML()}</td>
-						<td>${authority.description?.encodeAsHTML()}</td>
+						<td>${authority.id}&nbsp&nbsp&nbsp&nbsp</td>
+						<td>${authority.authority?.encodeAsHTML()}&nbsp&nbsp&nbsp&nbsp</td>
+						<td>${authority.description?.encodeAsHTML()}&nbsp&nbsp&nbsp&nbsp</td>
 						<td class="actionButtons">
 							<span class="actionButton">
 								<g:link action="show" id="${authority.id}">Show</g:link>

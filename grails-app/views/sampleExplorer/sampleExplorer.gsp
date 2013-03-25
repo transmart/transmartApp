@@ -39,8 +39,9 @@
 	<script type="text/javascript" src="${resource(dir:'js', file:'myJobs.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>
-		
-	
+	<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
+    <script>jQuery.noConflict();</script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
 	<script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/sampleExplorer.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/HaploView.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/SNP.js')}"></script>
@@ -50,7 +51,6 @@
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'ext-all.css')}">
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'sampleExplorer.css')}">	
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
-	<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
 </head>		
 	
@@ -86,11 +86,7 @@
 	  Explorer: "SAMPLE",
 	  resulttype: 'applet',
 	  subsetTabs: 1,
-      HelpURL: '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}',
-      ContactUs: '${grailsApplication.config.com.recomdata.searchtool.contactUs}',
       basePath: pageInfo.basePath,
-      AppTitle: '${grailsApplication.config.com.recomdata.searchtool.appTitle}',
-      BuildVersion: 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>'
 	};
 	// initialize browser version variables; see http://www.quirksmode.org/js/detect.html
 	BrowserDetect.init();
@@ -105,13 +101,13 @@
 	
 </script>	
 
-<div id="header-div"><g:render template="/layouts/commonheader" model="['app':'sampleexplorer']" /></div>
+<div id="header-div"><g:render template="/layouts/commonheader" model="[app:sampleexplorer]" /></div>
 <div id="main"></div>
 <h3 id="test">Loading....</h3>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
 
-<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}">
+<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled}">
 	<g:set var="gplogout" value="${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}/gp/logout"/>
 	</g:if>
 	<g:else>

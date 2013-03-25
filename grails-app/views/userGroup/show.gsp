@@ -17,7 +17,7 @@
  
 -->
 
-
+<%@page import="org.transmart.searchapp.SecureObjectAccess"%>
 
 <html>
     <head>

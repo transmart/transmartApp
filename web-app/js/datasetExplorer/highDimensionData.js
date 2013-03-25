@@ -24,17 +24,23 @@
  * @param divId
  */
 function gatherHighDimensionalData(divId){
+	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
+	spinnerMask.show();
+	
 	if(!variableDivEmpty(divId)
 			&& ((GLOBAL.CurrentSubsetIDs[1]	== null) ||	(multipleSubsets() && GLOBAL.CurrentSubsetIDs[2]== null))){
+		spinnerMask.hide();
 		runAllQueriesForSubsetId(function(){gatherHighDimensionalData(divId);}, divId);
 		return;
 	}
 	if(variableDivEmpty(divId)){
+		spinnerMask.hide();
 		Ext.Msg.alert("No cohort selected!", "Please select a cohort first.");
 		return;
 	}
 	//genePatternReplacement();
 	//Send a request to generate the heatmapdata that we use to populate the dropdowns in the popup.
+	
 	Ext.Ajax.request(
 			{
 				url : pageInfo.basePath+"/analysis/heatmapvalidate",
@@ -49,11 +55,13 @@ function gatherHighDimensionalData(divId){
 				),
 				success : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				},
 				failure : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				}
@@ -62,16 +70,22 @@ function gatherHighDimensionalData(divId){
 }
 
 function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
+	var spinnerMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
+	spinnerMask.show();
+	
 	if((!variableDivEmpty(divId) && currentSubsetId== null)){
+		spinnerMask.hide();
 		runQueryForSubsetidSingleSubset(function(sId){gatherHighDimensionalDataSingleSubset(divId, sId);}, divId);
 		return;
 	}
 	if(variableDivEmpty(divId)){
+		spinnerMask.hide();
 		Ext.Msg.alert("No cohort selected!", "Please select a cohort first.");
 		return;
 	}
 	//genePatternReplacement();
 	//Send a request to generate the heatmapdata that we use to populate the dropdowns in the popup.
+	
 	Ext.Ajax.request(
 			{
 				url : pageInfo.basePath+"/analysis/heatmapvalidate",
@@ -86,11 +100,13 @@ function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
 				),
 				success : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				},
 				failure : function(result, request)
 				{
+					spinnerMask.hide();
 					determineHighDimVariableType(result);
 					readCohortData(result,divId);
 				}
@@ -102,7 +118,8 @@ function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
  * Determine if we are dealing with genotype or copy number
  */
 function determineHighDimVariableType(result){
-	var mobj=result.responseText.evalJSON();
+	var mobj = Ext.util.JSON.decode(result.responseText);
+	//var mobj=result.responseText.evalJSON();
 	GLOBAL.HighDimDataType=mobj.markerType;
 }
 
@@ -114,7 +131,8 @@ function determineHighDimVariableType(result){
 function readCohortData(result, divId)
 {
 	//Get the JSON string we got from the server into a real JSON object.
-	var mobj=result.responseText.evalJSON();
+	//var mobj=result.responseText.evalJSON();
+	var mobj = Ext.util.JSON.decode(result.responseText);
 	
 	//If we failed to retrieve any test from the heatmap server call, we alert the user here. Otherwise, show the popup.
 	if(mobj.NoData && mobj.NoData == "true")
@@ -281,12 +299,14 @@ function getCRCRequest(subset, queryname, divId){
 	                <query_name>'+queryname+'</query_name>\
 	                <specificity_scale>0</specificity_scale>';
 	
-	var qcd=Ext.get(divId);
-	
-	if(qcd.dom.childNodes.length>0)
-	{
+
+
+		var qcd=Ext.get(divId);
+		if(qcd.dom.childNodes.length>0)
+		{
 		query=query+getCRCRequestPanel(qcd.dom, 1);
-	}
+		}
+
 	
 	for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
 	{
@@ -317,12 +337,15 @@ function getCRCRequestSingleSubset(divId, queryname){
 	                <query_name>'+queryname+'</query_name>\
 	                <specificity_scale>0</specificity_scale>';
 	
+
 	var qcd=Ext.get(divId);
 	
 	if(qcd.dom.childNodes.length>0)
 	{
 		query=query+getCRCRequestPanel(qcd.dom, 1);
+
 	}
+
 	
 	query=query+getSecurityPanel()+"</query_definition>"+getCRCRequestFooter();
 	//query=query+"</query_definition>"+getCRCRequestFooter();
@@ -352,7 +375,7 @@ function applyToForm(){
 	window[divId+'samplesValues']		= GLOBAL.CurrentSamples;
 	window[divId+'tissuesValues']		= GLOBAL.CurrentTissues;
 	window[divId+'timepointsValues']	= GLOBAL.CurrentTimepoints;
-	window[divId+'gplValues']			= GLOBAL.CurrentGpls.toArray();	
+	window[divId+'gplValues']			= GLOBAL.CurrentGpls;	
 	
 	displayHighDimSelectionSummary(subsetCount, divId, probesAgg, snpType);
 

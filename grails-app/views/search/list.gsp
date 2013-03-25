@@ -20,19 +20,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
 <html>
 	<head>
+	    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="shortcut icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}"></link>
-
-	<!--[if IE 7]>
-		<style type="text/css">
-			div#gfilterresult,div#ptfilterresult,  div#jubfilterresult, div#dqfilterresult { width: 99%; }
-			div#summary-div { margin-bottom:5px; }
-		</style>
-	<![endif]-->
+		<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
 
 		<g:javascript library="prototype" />
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
@@ -44,8 +39,9 @@
 		<script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'editfilterswindow.js')}"></script>
-		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-		
+		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
+        <script>jQuery.noConflict();</script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
 		<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -64,7 +60,7 @@
 				//activeTab: "${session.searchFilter.acttab()}",
 				//default to 0
 				activeTab:"0" ,
-				// flag to hideInternal tabs as well as the export resnet button
+				// flag to hideInternal tabs 
 				<sec:ifAnyGranted roles="ROLE_PUBLIC_USER">
 			         hideInternal:true,
 				</sec:ifAnyGranted>
@@ -109,17 +105,7 @@
 			    },
 
 			    pictor: {
-			   		<g:if test="${session.searchFilter.pictorTerms != null}">
-						resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pictorURL}" + "&symbol=${session.searchFilter.pictorTerms}"
-	    			</g:if>
-					<g:else>
-	                	resultsUrl: "${createLink(controller:'search',action:'noResult')}"
-					</g:else>
-			    },
-
-			    resnet: {
-			   		resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pathwayStudioURL}" + "/app/op?.name=comprehensiveSearch&query=${session.searchFilter.getExternalTerms()}",
-			   		credentials: "ID/Password=Pathway Studio ID/Password"
+			        resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.pictorURL}"
 			    },
 			    genego: {
 					resultsUrl: "${grailsApplication.config.com.recomdata.searchtool.genegoURL}" + "/cgi/search/ez.cgi?submitted=1&name=${session.searchFilter.getExternalTerms()}",
@@ -128,8 +114,7 @@
 			    trialFilterUrl: "${createLink(controller:'trial',action:'trialFilterJSON')}",
 			    jubSummaryUrl: "${createLink(controller:'literature',action:'jubSummaryJSON')}",
 				heatmapUrl: "${createLink(controller:'heatmap',action:'initheatmap')}",
-				downloadJubSummaryUrl: "${createLink(controller:'literature',action:'downloadJubData')}",
-				downloadResNetUrl: "${createLink(controller:'literature',action:'downloadresnet')}",
+				downloadJubSummaryUrl: "${createLink(controller:'literature',action:'downloadJubData')}",				
 				downloadTrialStudyUrl: "${createLink(controller:'trial', action:'downloadStudy')}",
 				downloadTrialAnalysisUrl: "${createLink(controller:'trial', action:'downloadAnalysisTEA')}",
 				downloadEaUrl: "${createLink(controller:'experimentAnalysis', action:'downloadAnalysis')}",
@@ -217,46 +202,19 @@
 				    tabpanel.remove(Ext.getCmp("tab3"));
 				    tabpanel.remove(Ext.getCmp("tab4"));
 				    tabpanel.remove(Ext.getCmp("tab5"));
-					tabpanel.remove(Ext.getCmp("tab6"));
-				    tabpanel.remove(Ext.getCmp("tab7"));
-				    //tabpanel.remove(Ext.getCmp("tab8"));
-				    //tabpanel.remove(Ext.getCmp("tab9"));
+				    tabpanel.remove(Ext.getCmp("tab6"));
 				} else  {
 					// All tabs should show only if the external configuration is correct
 					if ("${grailsApplication.config.com.recomdata.searchtool.pictorURL}" == "")    {
 						tabpanel.remove(Ext.getCmp("tab6"));
 					}
-				    if ("${grailsApplication.config.com.recomdata.searchtool.pathwayStudioURL}" == "")  {
-					    tabpanel.remove(Ext.getCmp("tab7"));
-				    }
 				    if ("${grailsApplication.config.com.recomdata.searchtool.genegoURL}" == "") {
 				        tabpanel.remove(Ext.getCmp("tab8"));
 					}				       
 				}
 				
 			    // set active tab
-			    tabpanel.activate(getActiveTab("${session.searchFilter.acttabname()}"));
-
-	            var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-	            var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
-	            var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
-	            var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
-			    
-				var viewport = new Ext.Viewport({
-					    layout: "border",
-					    items: [new Ext.Panel({						    
-					        region: "north",
-						   // autoHeight: true,
-						    tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'utilities-div'), 
-						    contentEl: "header-div"				
-						}),
-			            new Ext.Panel({
-				            layout: "fit",
-				            region: "center",
-				            items: [ tabpanel ]
-			            })
-			         ]
-				});
+			    tabpanel.activate(getActiveTab("${session.searchFilter.acttabname()}"));			    
 			});
 
 
@@ -339,26 +297,27 @@
 		<!-- ************************************** --> 
 	</head>
 <body>
-		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
-			<g:render template="/layouts/commonheader" model="['app':'search']" />
-			<g:render template="/layouts/searchheader" model="['app':'search']" />
-			<div id="summarycount-div" style="background:#dfe8f6; color:#000; padding:5px 10px 5px 10px;border-top:1px solid #36c;">
+		<div id="header-div">
+			<g:render template="/layouts/commonheader" model="[app:search]" />
+			<g:render template="/layouts/searchheader" model="[app:search]" />
+	    </div>
+			<div id="summary-div" style="color:#000;position: fixed; padding:75px 10px 5px 10px;border-top:1px solid #36c;">
 				<span id="summarycount-span" style="font-size:13px; font-weight:bold;">
-					About ${searchresult?.totalCount()} results found
+					About ${searchresult?.totalCount()} results found.
 				</span>
-			</div>
-			<div id="summary-div" style="padding:5px 10px 5px 10px;font-size:12px;line-height:17px;">
-				<b>Filters:</b>&nbsp;${session?.searchFilter?.summaryWithLinks}
-				&nbsp;<a class="tiny" style="text-decoration:underline;color:blue;font-size:11px;"
-					href="#" onclick="var win=Ext.getCmp('editfilters-window');win.show();return false;">advanced</a>
-				&nbsp;<a class="tiny" style="text-decoration:underline;color:blue;font-size:11px;"
-					href="${createLink(controller:'customFilter', action:'create')}">save</a>
-				&nbsp;<a class="tiny" style="text-decoration:underline;color:blue;font-size:11px;"
-					href="${createLink(controller:'search', action:'index')}">clear all</a>
+				<span id="summaryfilter-span" style="font-size:12px;line-height:17px;">
+				    <b>&nbsp;&nbsp;&nbsp;&nbsp;Filters:</b>&nbsp;${session?.searchFilter?.summaryWithLinks}
+                    &nbsp;<a class="tiny" style="text-decoration:underline;color:blue;font-size:11px;"
+                        href="#" onclick="var win=Ext.getCmp('editfilters-window');win.show();return false;">advanced</a>
+                    &nbsp;<a class="tiny" style="text-decoration:underline;color:blue;font-size:11px;"
+                        href="${createLink(controller:'customFilter', action:'create')}">save</a>
+                    &nbsp;<a class="tiny" style="text-decoration:underline;color:blue;font-size:11px;"
+                        href="${createLink(controller:'search', action:'index')}">clear all</a>
+                </span>
 			</div>
 			<g:form controller="geneExprAnalysis" name="globalfilter-form" id="globalfilter-form" action="doSearch">
-				<input type="hidden" name="selectedpath" value="">
+				    <input type="hidden" name="selectedpath" value="">
 			</g:form>
-		</div>
+		<div id="maintabs-div" style="position:fixed;margin-top:100px; width:100%"></div>
 	</body>
 </html>

@@ -1416,13 +1416,12 @@ function showCompareStepPathwaySelection()
                 title: 'Compare Subsets-Pathway Selection',
             	layout:'fit',
                 width:450,
-                // height:250,
                 autoHeight: true,
                 closable: false,
                 plain: true,
                 modal: true,
                 border:false,
-                //autoScroll: true,
+                y:100,
                 buttons: [
                 		{
                             id: 'compareStepPathwaySelectionOKButton',

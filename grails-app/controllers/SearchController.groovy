@@ -28,6 +28,8 @@
 import grails.converters.*
 
 import org.hibernate.*
+import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AuthUser;
 
 import search.CustomFilter
 import search.SearchKeyword
@@ -49,19 +51,15 @@ public class SearchController{
 	
 	def SEARCH_DELIMITER='SEARCHDELIMITER'
 
+	// restrict categories to those prior to the faceted search
+	def catList = "('COMPOUND', 'DISEASE', 'GENE', 'GENELIST', 'GENESIG', 'PATHWAY', 'STUDY' , 'TRIAL')"
+	
+
 	def index = {
 		session.setAttribute('searchFilter', new SearchFilter())
 	}
 
-	def list = {
-		if(!params.max) params.max = 20
-		//	session["opengenerifs"]=[:]
-		//	session["details"]=[:]
-		def results = GeneExprAnalysis.list( params )
-		[ geneExprAnalysisList: results,total:GeneExprAnalysis.count() ,page:true]
-	}
 
-	
 	def loadSearchAnalysis = {
 			def value = params.query.toUpperCase()
 			params.query = 'gene'+SEARCH_DELIMITER+'pathway'+SEARCH_DELIMITER+'genelist'+SEARCH_DELIMITER+'genesig:'+params.query
@@ -91,6 +89,10 @@ public class SearchController{
 				queryStr += " AND t.searchKeyword.dataCategory IN (:category) "
 				queryParams["category"] = category.toString().split(SEARCH_DELIMITER)
 			}
+			else {
+				queryStr += " AND t.searchKeyword.dataCategory in " +  catList
+			}
+
 			// this is generic way to access AuthUser
 			def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 			// permission to view search keyword (Admin gets all)
@@ -116,7 +118,12 @@ public class SearchController{
 
 	def loadCategories = {
 
-		def categories = SearchKeyword.executeQuery("select distinct k.dataCategory as value, k.displayDataCategory as label from search.SearchKeyword k order by lower(k.dataCategory)")
+		def sql = "select distinct k.dataCategory as value, k.displayDataCategory as label " + 
+                  " from search.SearchKeyword k " +
+				  " where k.dataCategory in " +
+				  catList +
+				  " order by lower(k.dataCategory)"
+		def categories = SearchKeyword.executeQuery(sql)
 		def rows = []
 		rows.add([value: "all", label:"all"])
 		for (category in categories) {
@@ -251,7 +258,6 @@ public class SearchController{
 		//log.info "isTextOnly = " + filter.globalFilter.isTextOnly()
 		SearchService.doResultCount(sResult,filter)
 		filter.summaryWithLinks = createSummaryWithLinks(filter)
-		filter.createPictorTerms()
 		boolean defaultSet = false;
 
 		if (sResult.trialCount>0) {
@@ -426,7 +432,7 @@ public class SearchController{
 	/**
 	 * update existing search Filter
 	 */
-	def updateSearchFilter(keyword, SearchFilter filter) {
+	private updateSearchFilter(keyword, SearchFilter filter) {
 		filter.searchText = keyword.keyword;
 		filter.globalFilter.addKeywordFilter(keyword)
 	}
@@ -495,7 +501,7 @@ public class SearchController{
 	/**
 	 * Creates summary of filters with links to details for filters.
 	 */
-	def createSummaryWithLinks(SearchFilter filter) {
+	private createSummaryWithLinks(SearchFilter filter) {
 
 		// get global filter
 		GlobalFilter gfilter = filter.globalFilter;

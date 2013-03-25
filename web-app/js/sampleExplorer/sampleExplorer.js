@@ -300,7 +300,7 @@ function loadDataSetGrid()
 
 function renderDSELink(val)
 {
-	return val + '&nbsp;<a href="' + pageInfo.basePath + '/datasetExplorer/index?DataSetName=' + val + '" target="_blank" title="Click to view ' + val + ' in Dataset Explorer!"><img src="/transmart/images/linkext7.gif"></a>';
+	return val + '&nbsp;<a href="' + pageInfo.basePath + '/datasetExplorer/index?DataSetName=' + val + '" target="_blank" title="Click to view ' + val + ' in Dataset Explorer!"><img src="../images/linkext7.gif"></a>';
 }
 
 //This renderer draws a checkbox.

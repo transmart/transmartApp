@@ -3,51 +3,123 @@ html * {
     /*padding: 0; SELECT NOT DISPLAYED CORRECTLY IN FIREFOX */
 }
 
-/* Top level menu */
-
-table.menuDetail {
-    padding: 0px 0px;
-    border: 0 none;
+/** Header Nav **/
+#header-div {
+  padding: 0;
+  margin: 0;
+  position: fixed;
+  top: 0px;    
+  left: 0px;
+  width: 100%;
+  height: 26px;
+  background-color:#242424;
+  border-bottom:1px solid #aaa;
+  z-index: 4000;
 }
 
-table.menuDetail th {
-   	font-family: verdana, arial, helvetica, sans-serif;
-    font-size: 11px;     
-	line-height: 15px;
-    vertical-align: middle;
-    text-align: center;
-    white-space: nowrap;
-    background: #fafafa url(../images/skin/shadow30.jpg);
-    font-weight: bold;
-    padding: 0px 0px;
+#navlist {
+    padding-top:0px;
 }
 
-table.menuDetail th.menuLink {
-	padding: 1px 15px;
-    color: #00c !important;
-    border-right: 1px solid #ccc;
+#navlist ul {
+    margin: 0;
+    padding: 0;
+    display: inline;
+} 
+
+#navlist ul li {
+    margin-left: 0;
+    margin-bottom: 0;
+
+    border-right: 1px solid #999;
+    border-collapse:collapse;
+    list-style: none;
+    float:left;
+}
+    
+#navlist ul a{
+    display: block;
+    padding: 6px 20px;
+    color:#cfcfcf;
 }
 
-table.menuDetail th.menuLink a:link, th.menuLink a:visited {
-    color: #00c !important;
-	font-size: 11px;
+#navlist ul a:hover{
+    background-color:#efefef;
+    text-decoration:none;
+    color:#000;
+}
+    
+#navlist ul li.active {
+    display: block;
+    padding: 6px 20px;
+    background-color:#DEEDF7;
+    font-weight:bold;
 }
 
-table.menuDetail th.menuLink a:hover {
-    cursor: pointer;
-	font-size: 11px;    
-	text-decoration: underline;
+
+#utilities-div {
+    float:right;
+    padding-top:0;
+    padding-right:10px;
 }
 
-table.menuDetail th.menuVisited {
-	padding: 1px 15px;
-    color: white;    
-    background: #C8C8C8;
-    border: 1px inset gray;
+#utilities-div a{
+    color:#cfcfcf;
+    display: block;
+    padding: 6px 20px;
+    text-decoration:none;
+        font-weight:bold;
 }
 
-/* end top level menu */
+#utilities-div a:hover{
+    display: block;
+    padding: 6px 20px;
+    text-decoration:none;
+    background-color:#444;
+     color:#fff;
+         font-weight:bold;
+}
 
+
+#utilities-dropdown {
+    position: absolute;
+    right: 10px;
+    padding-top:5px;
+    padding-bottom:10px;
+    top: 26px;
+    background-color: #242424;
+    color: #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+}
+
+
+#utilities-dropdown ol{
+    list-style: none;
+    margin:0;
+    padding:0;
+}
+#utilities-dropdown ol li:hover{
+    background-color:#444;
+}
+
+#utilities-dropdown ol li a{
+    display:block;
+    padding:5px;
+    padding-left:25px;
+    padding-right:25px;
+    color:#eee;
+    text-decoration:none;
+    font-weight:bold;
+}
+#utilities-dropdown ol li a:hover{
+    color:#fff;
+    padding-left:25px;
+    padding-right:25px;
+    background-color:#444;
+    text-decoration:none;
+    font-weight:bold;
+}
+/** End Header Nav **/
 
 /* GENERAL */
 
@@ -58,7 +130,7 @@ table.menuDetail th.menuVisited {
 }
 
 body {
-	margin: 0;
+	margin:26px 0 0 0;
 	padding:0;
     background: #fff !important;
     color: #333;
@@ -100,14 +172,14 @@ h1 {
     color: #006dba;
     font-weight: normal;
     font-size: 16px;
-    margin: .8em 0 .3em 0;
+    margin: .8em 0 .5em 0;
 }
 
 h2 {
     color: #006dba;
     font-weight: normal;
     font-size: 14px;
-    margin: .8em 0 .3em 0;
+    margin: .8em 0 .8em 0;
 }
 
 ul {
@@ -791,6 +863,11 @@ table.jubsummary td {
     color:#ff0000;
 }
 
+.mainTabBase {
+    height:100%;
+    padding:2px 0px 5px 5px;    
+}
+
 .clinicalTrialgovTab {
     background-image:url(../images/clinicaltrials.png ) !important;
     color:#ff0000;
@@ -800,9 +877,8 @@ table.jubsummary td {
     color:#ff0000;
 }
 
-.resnetTab {
-    background-image:url(../images/pathway.png ) !important;
-    color:#ff0000;
+.externalTabBase {
+    height:500px; 
 }
 
 .genegoTab {
@@ -913,11 +989,6 @@ select.jubselect {
 
 .exportSummaryBtn {
     background-image:url(../images/excel.png ) !important;
-    color:#ff0000;
-}
-
-.exportResNetBtn {
-    background-image:url(../images/download.png ) !important;
     color:#ff0000;
 }
 
@@ -1063,13 +1134,4 @@ td.prop, td.name {line-height: normal;}
 table.jobstatus {
 	background-color:#fff;
 	 font:12px tahoma, arial, helvetica, sans-serif;
-}
-
-.utilities-div {
-    position:absolute;
-    width:100px;
-    top:0;
-    right:0;
-    height:24px;
-    z-index:100;
 }

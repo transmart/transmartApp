@@ -20,29 +20,33 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
 <html>
 	<head>
+	    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="shortctu icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/ext-all.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"></link>
-		<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
-		
-	<!--[if IE 7]>
-		<style type="text/css">
-			 div#gfilterresult,div#ptfilterresult, div#jubfilterresult, div#dqfilterresult {
-				width: 99%;
-			}
-		</style>
-	<![endif]-->
-	
+		      <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}"></link>
+        
+    <!--[if IE 7]>
+        <style type="text/css">
+             div#gfilterresult,div#ptfilterresult, div#jubfilterresult, div#dqfilterresult {
+                width: 99%;
+            }
+        </style>
+    <![endif]-->
+    		
 		<g:javascript library="prototype" />
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
-	    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-		<script type="text/javascript" charset="utf-8">
+	    <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
+        <script>jQuery.noConflict();</script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
+	    <script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
 			// set ajax to 90*1000 milliseconds
@@ -51,23 +55,7 @@
 			// qtip on
 			Ext.QuickTips.init();
 
-			Ext.onReady(function(){			
-	            var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-	            var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
-	            var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
-	            var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
-	             
-				var viewport = new Ext.Viewport({
-					layout: "border",
-					items:[new Ext.Panel({                          
-						   region: "center",
-						   tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'utilities-div'), 
-						   contentEl: "header-div"
-					    })
-			        ]
-				});
-				viewport.doLayout();
-
+			Ext.onReady(function(){				             
 				var picklist = new Ext.app.PickList({
 					id: "categories",
 					cls: "categories-gray",
@@ -83,7 +71,6 @@
 				        }
 					}
 				});
-
 
 				var combo = new Ext.app.SearchComboBox({
 					id: "search-combobox",
@@ -106,7 +93,7 @@
 						document.form.submit();
 					},
 					value: "",
-					width: 470,
+					width: 400,
 			        onSelect: function(record) {
 						this.collapse();
 						if (record != null) {
@@ -156,8 +143,8 @@
 	</head>
 	<body>
 		<div id="header-div">
-			<g:render template="/layouts/commonheader" model="['app':'search']" />
-			<g:render template="/layouts/searchheader" model="['app':'search']" />
-		</div>
+			<g:render template="/layouts/commonheader" model="[app:search]" />		
+			<g:render template="/layouts/initialsearchheader" model="[app:search]" />
+		</div>		
 	</body>
 </html>

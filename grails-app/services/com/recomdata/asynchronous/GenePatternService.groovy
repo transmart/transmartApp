@@ -77,11 +77,6 @@ class GenePatternService implements Job {
 	    log.info("${jobName} has been triggered to run ")
 	   
 	    def jobDataMap = jobDetail.getJobDataMap()
-	    if (log.isDebugEnabled())	{
-		    jobDataMap.getKeys().each {_key ->
-		 	   log.debug("\t${_key} -> ${jobDataMap[_key]}")
-		    }
-	    } 
 	   
 		// Note: this is a superset of all parameters for all of the different analysis types.  
 		// Some will be present, others will not depending on the type of job
@@ -214,12 +209,12 @@ class GenePatternService implements Job {
 	 * @return the job result from the GenePattern server
 	 */
 	private JobResult runJobNoWF(String userName, Parameter[] parameters, String analysisType) throws WebServiceException {
-		GPClient gpClient = getGPClient(userName)				
-		if (log.isDebugEnabled())	{
-			log.debug("Sending ${analysisType} job to ${gpClient.getServer()}")
-			log.debug("As user ${gpClient.getUsername()} with parameters: ")
+		GPClient gpClient = getGPClient(userName)
+		if (log.isInfoEnabled()) {
+			log.info("Sending ${analysisType} job to ${gpClient.getServer()}")
+			log.info("As user ${gpClient.getUsername()} with parameters: ")
 			for (parameter in parameters)	{
-				log.debug("\t${parameter}")
+				log.info("\t Name:${parameter.getName()}\t Value:${parameter.getValue()}\n")
 			}
 		}
 				
@@ -435,7 +430,7 @@ class GenePatternService implements Job {
 		impParameters[3] = colMax;
 
 		updateStatus(jobName, "Imputing Missing Value KNN")
-		JobResult    imputedMissing   = runJobNoWF(userName, impParameters, "ImputeMissingValuesKNN")
+		JobResult    imputedMissing   = runJobNoWF(userName, impParameters, "ImputeMissingValues.KNN")
 		
 		Parameter    inputFilename     = new Parameter("input.file", getGenePatternRealURLBehindProxy(imputedMissing.getURL("gct").toString()));
 		Parameter    clsFilename       = new Parameter("cls.file", clsFile);
@@ -635,7 +630,7 @@ class GenePatternService implements Job {
 	   impParameters[2] = rowMax;
 	   impParameters[3] = colMax;
 
-	   JobResult    imputedMissing   = runJob(impParameters, "ImputeMissingValuesKNN")
+	   JobResult    imputedMissing   = runJob(impParameters, "ImputeMissingValues.KNN")
 	   
 	   Parameter    inputFilename     = new Parameter("input.file", getGenePatternRealURLBehindProxy(imputedMissing.getURL("gct").toString()));
 	   Parameter    clsFilename       = new Parameter("cls.file", clsFile);
@@ -1082,9 +1077,9 @@ public String survivalAnalysis(String userName, String jobName, File dataFile, F
 			log.debug("GPClient is already initialized for ${userName}, returning existing client")
 			return gpClient
 		}		
-		log.debug("Starting GPClient at ${gpURL} as ${userName}")	
+		log.info("Starting GPClient at ${gpURL} as ${userName}")		
 		gpClient = new GPClient(gpURL, userName)
-		log.debug("GPClient has been initialized")
+		log.info("GPClient has been initialized")
 		return gpClient
 	}
 	
