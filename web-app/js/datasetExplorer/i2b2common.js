@@ -1922,7 +1922,7 @@ function getTreeNodeFromJsonNode(concept)
                               ? concept.metadata.unitValues.normalUnits
                               : '';
     oktousevalues		=	concept.metadata
-                              ? (concept.metadata.okToUseValues ? 'Y ' : 'N')
+                              ? (concept.metadata.okToUseValues ? 'Y' : 'N')
                               : 'N'
 
     //We need to replace the < signs with &lt;
