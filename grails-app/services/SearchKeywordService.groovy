@@ -61,7 +61,9 @@ public class SearchKeywordService {
 		[category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true, platformProperty: 'platformType'],
 		[category: "ANALYSIS_TECHNOLOGY", displayName: "Analysis Technology", prefix: true, useText: true, platformProperty: 'platformTechnology'],
 		[category: "ANALYSIS_VENDOR", displayName: "Analysis Vendor", prefix: true, useText: true, platformProperty: 'vendor'],
-		[category: "ANALYSIS_PLATFORM_NAME", displayName: "Analysis Platform Name", useText: true, platformProperty: 'name']
+		[category: "ANALYSIS_PLATFORM_NAME", displayName: "Analysis Platform Name", useText: true, platformProperty: 'name'],
+		
+		[codeTypeName: "FILE_TYPE", category: "FILE_TYPE", displayName: "File type"]
 	]
 
 	/** Finds all of the search categories pertaining to search keywords */
