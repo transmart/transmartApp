@@ -2574,44 +2574,33 @@ function runAllQueries(callback, panel)
 	}
 }
 
-function runQuery(subset, callback)
-{
-	if(Ext.get('analysisPanelSubset1') == null)
-	{
-		// analysisPanel.body.update("<table border='1' width='100%' height='100%'><tr><td width='50%'><div id='analysisPanelSubset1'></div></td><td><div id='analysisPanelSubset2'></div></td></tr>");
-	}
-	/* if(isSubsetEmpty(subset))
-   {
-   callback();
-   return;
-   } */
-	var query = getCRCQueryRequest(subset);
-	// first subset
-	queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
-	Ext.Ajax.request(
-			{
-				url : pageInfo.basePath+"/proxy?url=" + GLOBAL.CRCUrl + "request",
-				method : 'POST',
-				xmlData : query,
-				// callback : callback,
-				success : function(result, request)
-				{
-				runQueryComplete(result, subset, callback);
-				}
-			,
-			failure : function(result, request)
-			{
-				runQueryComplete(result, subset, callback);
-			}
-			,
-			timeout : '600000'
-			}
-	);
+function runQuery(subset, callback) {
+    if (Ext.get('analysisPanelSubset1') == null) {
+        // analysisPanel.body.update("<table border='1' width='100%' height='100%'><tr><td width='50%'><div id='analysisPanelSubset1'></div></td><td><div id='analysisPanelSubset2'></div></td></tr>");
+    }
 
-	if(GLOBAL.Debug)
-	{
-		resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
-	}
+    var query = getCRCQueryRequest(subset);
+    // first subset
+    queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath + "/proxy?url=" + GLOBAL.CRCUrl + "request",
+            method: 'POST',
+            xmlData: query,
+            // callback : callback,
+            success: function (result, request) {
+                runQueryComplete(result, subset, callback);
+            },
+            failure: function (result, request) {
+                runQueryComplete(result, subset, callback);
+            },
+            timeout: '600000'
+        }
+    );
+
+    if (GLOBAL.Debug) {
+        resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
+    }
 }
 
 function runQueryComplete(result, subset, callback)
