@@ -22,8 +22,8 @@ package i2b2
 
 class Comparison {
     Long id
-    Long queryID1;
-    Long queryID2;
+    Long queryResultId1;
+    Long queryResultId2;
 
 
     static mapping = {
@@ -32,8 +32,8 @@ class Comparison {
         id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
         columns {
             id column: 'COMPARISON_ID'
-            queryID1 column: 'QUERY_ID1'
-            queryID2 column: 'QUERY_ID2'
+            queryResultId1 column: 'QUERY_ID1'
+            queryResultId2 column: 'QUERY_ID2'
         }
     }
 
