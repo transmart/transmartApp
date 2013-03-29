@@ -236,29 +236,25 @@ return '<result_output_list>\
 }
 
 
-function getCRCQueryRequest(subset, queryname) {
+function getCRCQueryRequest(subset, queryname)
+{
     if (queryname == "" || queryname == undefined) {
         var d = new Date();
-        queryname = GLOBAL.Username + "'s Query at " + d.toString();
+        queryname = GLOBAL.Username+"'s Query at "+ d.toString();
     }
 
-    var query = getCRCRequestHeader() + '<user group="' + GLOBAL.ProjectID + '" login="' + GLOBAL.Username + '">' + GLOBAL.Username + '</user>\
-            <patient_set_limit>0</patient_set_limit>\
-            <estimated_time>0</estimated_time>\
-            <request_type>CRC_QRY_runQueryInstance_fromQueryDefinition</request_type>\
-        </ns4:psmheader>\
-        <ns4:request xsi:type="ns4:query_definition_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\
-				<query_definition>\
-                <query_name>' + queryname + '</query_name>\
-                <specificity_scale>0</specificity_scale>';
+    var query =
+        '<ns4:query_definition xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\
+          <query_name>'+queryname+'</query_name>\
+          <specificity_scale>0</specificity_scale>';
 
     for (var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups; i++) {
         var qcd = Ext.get("queryCriteriaDiv" + subset + '_' + i.toString());
-        if (qcd.dom.childNodes.length > 0) {
+        if(qcd.dom.childNodes.length>0) {
             query = query + getCRCRequestPanel(qcd.dom, i);
         }
     }
-    query = query + getSecurityPanel() + "</query_definition>" + getCRCRequestFooter();
+    query = query + getSecurityPanel() + "</ns4:query_definition>";
 
     return query;
 }

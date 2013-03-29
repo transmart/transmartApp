@@ -135,6 +135,10 @@ com.recomdata.i2b2.sample.domain = 'i2b2demo'
 com.recomdata.i2b2.sample.projectid = 'i2b2demo'
 com.recomdata.i2b2.sample.username = 'sample'
 com.recomdata.i2b2.sample.password = 'manager'
+
+//core-db settings
+org.transmartproject.i2b2.user_id = 'i2b2'
+org.transmartproject.i2b2.group_id = 'Demo'
 //**************************
 
 
