@@ -122,7 +122,7 @@ function createPanelItemNew(panel, concept)
 	li.className="conceptUnselected";
 	
 	//Create a shortname
-	var splits=concept.tooltip.split("\\");
+	var splits=concept.key.split("\\");
 	var shortname="";
 	if(splits.length>1)
 	{
