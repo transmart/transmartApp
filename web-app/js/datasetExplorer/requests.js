@@ -446,23 +446,22 @@ var request=getCRCpdoRequestHeader()+
     	    }); 
 }
 
-function getPreviousQueryFromID(subset, queryMasterID)
-{
-var request=getCRCRequestHeader()+'<request_type>CRC_QRY_getRequestXml_fromQueryMasterId</request_type>\
-      	</ns4:psmheader>\
-        <ns4:request xsi:type="ns4:master_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\
-            <query_master_id>'+queryMasterID+'</query_master_id>'+getCRCRequestFooter();
-
-	queryPanel.el.mask('Rebuilding query...', 'x-mask-loading');
-	Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/proxy?url="+GLOBAL.CRCUrl+"request",
-    	        method: 'POST',
-    	        xmlData: request,                                        
-    	        success: function(result, request){getPreviousQueryFromIDComplete(subset, result);},
-    	        failure: function(result, request){getPreviousQueryFromIDComplete(subset, result);},
-    	        timeout: '300000'
-    	    }); 
+function getPreviousQueryFromID(subset, queryMasterID) {
+    queryPanel.el.mask('Rebuilding query...', 'x-mask-loading');
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath + "/queryTool/getQueryDefinitionFromResultId",
+            params: {
+                result_id: queryMasterID
+            },
+            success: function (result, request) {
+                getPreviousQueryFromIDComplete(subset, result);
+            },
+            failure: function (result, request) {
+                getPreviousQueryFromIDComplete(subset, result);
+            },
+            timeout: '300000'
+        });
 }
 
 function getQueryInstanceList(queryName, queryMasterId)
