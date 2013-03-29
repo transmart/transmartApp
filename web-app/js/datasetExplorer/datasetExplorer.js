@@ -2110,76 +2110,83 @@ function setupDragAndDrop()
 	}
 }
 
-function getPreviousQueryFromIDComplete(subset, result)
-{
-	var doc = result.responseXML;
-	// alert(result.responseText);
-	//resetQuery();  //if i do this now it wipes out the other subset i just loaded need to make it subset specific
-	var panels = doc.selectNodes("//panel");
-	for(var p = 0; p < panels.length; p ++ )
-	{
-		var panelnumber = panels[p].selectSingleNode("panel_number").firstChild.nodeValue;
-		if (panelnumber=="21") continue;
-		showCriteriaGroup(panelnumber); //in case its hidden;
-		var panel=document.getElementById("queryCriteriaDiv"+subset+"_"+panelnumber);
-		var invert = panels[p].selectSingleNode("invert").firstChild.nodeValue;
-		if(invert=="1"){excludeGroup(null, subset, panelnumber);} //set the invert for the panel
-		var occurences = panels[p].selectSingleNode("total_item_occurrences").firstChild.nodeValue;
-		// TODO : set the invert
-		// TODO : set the occurences
-		// make the items
+function getPreviousQueryFromIDComplete(subset, result) {
+    var doc = result.responseXML;
+    // alert(result.responseText);
+    //resetQuery();  //if i do this now it wipes out the other subset i just loaded need to make it subset specific
+    var panels = doc.selectNodes("//panel");
+    for (var p = 0; p < panels.length; p++) {
+        var panelnumber = panels[p].selectSingleNode("panel_number").firstChild.nodeValue;
+        if (panelnumber == "21") continue;
+        showCriteriaGroup(panelnumber); //in case its hidden;
+        var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + panelnumber);
+        var invert = panels[p].selectSingleNode("invert").firstChild.nodeValue;
+        if (invert == "1") {
+            excludeGroup(null, subset, panelnumber);
+        } //set the invert for the panel
+        var occurences = panels[p].selectSingleNode("total_item_occurrences").firstChild.nodeValue;
+        // TODO : set the invert
+        // TODO : set the occurences
+        // make the items
 
-		var items = panels[p].selectNodes("item")
-		for(var it = 0; it < items.length; it ++ )
-		{
-			var item = items[it];
-			var level = item.selectSingleNode("hlevel").firstChild.nodeValue;
-			var name = getValue(item.selectSingleNode("item_name"),"");
-			var key = item.selectSingleNode("item_key").firstChild.nodeValue;
-			var tooltip = getValue(item.selectSingleNode("tooltip"),"");
-			var itemclass = item.selectSingleNode("class").firstChild.nodeValue;
-			//createPanelItem(panelnumber, level, name, key, tooltip, '', '', '');
+        var items = panels[p].selectNodes("item")
+        for (var it = 0; it < items.length; it++) {
+            var item = items[it];
+            var level = item.selectSingleNode("hlevel").firstChild.nodeValue;
+            var name = getValue(item.selectSingleNode("item_name"), "");
+            var key = item.selectSingleNode("item_key").firstChild.nodeValue;
+            var tooltip = getValue(item.selectSingleNode("tooltip"), "");
+            var itemclass = item.selectSingleNode("class").firstChild.nodeValue;
+            //createPanelItem(panelnumber, level, name, key, tooltip, '', '', '');
 
 
-			/*need all this information for reconstruction but not all is available*/
-			var valuetype=getValue(item.selectSingleNode("constrain_by_value/value_type"),"");
-			var mode;
+            /*need all this information for reconstruction but not all is available*/
+            var valuetype = getValue(item.selectSingleNode("constrain_by_value/value_type"), "");
+            var mode;
 
-			if(valuetype=="FLAG"){mode="highlow";}
-			else if(valuetype=="NUMBER"){mode="numeric";}
-			else {mode=="novalue";}
+            if (valuetype == "FLAG") {
+                mode = "highlow";
+            }
+            else if (valuetype == "NUMBER") {
+                mode = "numeric";
+            }
+            else {
+                mode == "novalue";
+            }
 
-			var valuenode=item.selectSingleNode("contrain_by_value");
-			var oktousevalues;
-			if(valuenode!=null && typeof(valuenode)!=undefined){oktousevalues="Y";}
+            var valuenode = item.selectSingleNode("contrain_by_value");
+            var oktousevalues;
+            if (valuenode != null && typeof(valuenode) != undefined) {
+                oktousevalues = "Y";
+            }
 
-			var operator=getValue(item.selectSingleNode("constrain_by_value/value_operator"),"");
-			var numvalue=getValue(item.selectSingleNode("constrain_by_value/value_constraint"),"");
-			var lowvalue;
-			var highvalue;
-			if(operator=="BETWEEN")
-			{
-				lowvalue=numvalue.substring(0, numvalue.indexOf("and"));
-				highvalue=numvalue.substring(numvalue.indexOf("and")+3);
-			}
-			else
-			{
-				lowvalue=numvalue;
-			}
-			var highlowselect="";
-			if(mode=="highlow"){highlowselect=numvalue;}
-			var units=getValue(item.selectSingleNode("constrain_by_value/value_unit_of_measure"),"");
-			var dimcode="";
-			var comment="";
-			var normalunits=units;
+            var operator = getValue(item.selectSingleNode("constrain_by_value/value_operator"), "");
+            var numvalue = getValue(item.selectSingleNode("constrain_by_value/value_constraint"), "");
+            var lowvalue;
+            var highvalue;
+            if (operator == "BETWEEN") {
+                lowvalue = numvalue.substring(0, numvalue.indexOf("and"));
+                highvalue = numvalue.substring(numvalue.indexOf("and") + 3);
+            }
+            else {
+                lowvalue = numvalue;
+            }
+            var highlowselect = "";
+            if (mode == "highlow") {
+                highlowselect = numvalue;
+            }
+            var units = getValue(item.selectSingleNode("constrain_by_value/value_unit_of_measure"), "");
+            var dimcode = "";
+            var comment = "";
+            var normalunits = units;
 
-			var tablename="";
-			var value=new Value(mode, operator, highlowselect, lowvalue, highvalue, units);
-			var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value);
-			createPanelItemNew(panel, myConcept);
-		}
-	}
-	queryPanel.el.unmask();
+            var tablename = "";
+            var value = new Value(mode, operator, highlowselect, lowvalue, highvalue, units);
+            var myConcept = new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value);
+            createPanelItemNew(panel, myConcept);
+        }
+    }
+    queryPanel.el.unmask();
 }
 
 function createExportItem(name, setid)
