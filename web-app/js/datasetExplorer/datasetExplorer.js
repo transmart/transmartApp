@@ -2640,10 +2640,9 @@ function runQuery(subset, callback) {
     queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
     Ext.Ajax.request(
         {
-            url: pageInfo.basePath + "/proxy?url=" + GLOBAL.CRCUrl + "request",
+            url: pageInfo.basePath + "/queryTool/runQueryFromDefinition",
             method: 'POST',
             xmlData: query,
-            // callback : callback,
             success: function (result, request) {
                 runQueryComplete(result, subset, callback);
             },
@@ -2660,21 +2659,41 @@ function runQuery(subset, callback) {
 }
 
 function runQueryComplete(result, subset, callback) {
-    queryPanel.el.unmask();
-    if (GLOBAL.Debug) {
-        resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(result.responseText) + "</div>");
-    }
-    var numOfPatientsFound = result.responseXML.selectSingleNode("//set_size").firstChild.nodeValue;
-    var patientsetid = result.responseXML.selectSingleNode("//result_instance_id").firstChild.nodeValue;
-    GLOBAL.CurrentSubsetIDs[subset] = patientsetid;
+    var jsonRes = JSON.parse(result.responseText);
+    var error;
 
-    if (GLOBAL.Debug) {
-        alert(getCRCpdoRequest(patientsetid, 1, numOfPatientsFound));
+    if (result.status != 200) {
+        error = jsonRes.message;
+    } else if (jsonRes.errorMessage !== null) {
+        error = jsonRes.errorMessage;
     }
-    // need to set a maximum
+
+    queryPanel.el.unmask();
+
+    if (error) {
+        Ext.Msg.show(
+            {
+                title: 'Error generating patient set',
+                msg: error,
+                buttons: Ext.Msg.OK,
+                fn: function () {
+                    Ext.Msg.hide();
+                },
+                icon: Ext.MessageBox.ERROR
+            }
+        );
+    }
+
+    // Current code requires us to set CurrentSubsetIDs regardless of error status...
+    GLOBAL.CurrentSubsetIDs[subset] = jsonRes.id ? jsonRes.id : -1;
+
+    // getPDO_fromInputList is not implemented in core-db
+    //if (GLOBAL.Debug) {
+    //    alert(getCRCpdoRequest(patientsetid, 1, jsonRes.setSize));
+    //}
 
     /* removed the pdo request call 12 / 17 / 2008 added the callback logic here instead */
-    // runQueryPDO(patientsetid, 1, numOfPatientsFound, subset, callback );
+    // runQueryPDO(patientsetid, 1, jsonRes.setSize, subset, callback );
 
     if (STATE.QueryRequestCounter > 0) { // I'm in a chain of requests so decrement
         STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
