@@ -44,8 +44,8 @@ class DatasetExplorerController {
 				if(s!=null)
 				{
 					restorecomparison=true;
-					qid1=s.queryID1;
-					qid2=s.queryID2;
+					qid1=s.queryResultId1;
+					qid2=s.queryResultId2;
 				}
 			}
 			

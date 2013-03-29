@@ -20,15 +20,12 @@
 
 
 import grails.converters.*
-import org.json.*;
-import i2b2.Comparison;
 
 class ComparisonController {
 
     def index = { }
 
     def i2b2HelperService
-    def authenticateService
 
     def getQueryDefinition= {
     		 String qid = request.getParameter("qid");
@@ -40,20 +37,20 @@ class ComparisonController {
     }
 
     def save = {    		 
-    		def qid1 = i2b2HelperService.getQIDFromRID(request.getParameter("result_instance_id1"))
-    		def qid2 = i2b2HelperService.getQIDFromRID(request.getParameter("result_instance_id2"))
+            def qid1 = request.getParameter("result_instance_id1")
+            def qid2 = request.getParameter("result_instance_id2")
     		def s = new i2b2.Comparison()
 			
 			try	{
-				s.queryID1=Integer.parseInt(qid1)
+				s.queryResultId1=Integer.parseInt(qid1)
 			} catch(NumberFormatException nfe)	{
-				s.queryID1 = -1
+				s.queryResultId1 = -1
 			}
 			
 			try	{
-				s.queryID2=Integer.parseInt(qid2)
+				s.queryResultId2=Integer.parseInt(qid2)
 			} catch(NumberFormatException nfe)	{
-				s.queryID2= -1
+				s.queryResultId2= -1
 			}
 
     		boolean success=s.save()
