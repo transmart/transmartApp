@@ -1538,74 +1538,15 @@ function login(domain, username, password)
 	getServices();
 }
 
-function loginComplete(pmresponse)
+function loginComplete()
 {
-	// alert(pmXML);
-	// oDomDoc = (new DOMParser()).parseFromString(pmXML, "text/xml");
-	// oDomDoc = (new DOMParser()).parseFromString("<sending_application>blah</sending_application>", "text/xml");
-	if(GLOBAL.Debug)
-	{
-		alert(pmresponse.responseText);
-	}
-	oDomDoc = pmresponse.responseXML;
-	// if(GLOBAL.Debug){alert(new XMLSerializer().serializeToString(oDomDoc))};
-	// oDomDoc.setProperty("SelectionLanguage", "XPath");
-	// oDomDoc.setProperty("SelectionNamespaces", "xmlns:tns='http://ws.pm.i2b2.harvard.edu' \
-	// xmlns : ns3 = 'http://www.i2b2.org/xsd/hive/msg/version/' xmlns : ns4 = 'http://www.i2b2.org/xsd/cell/pm/1.1/' \
-	// xmlns : ns2 = 'http://www.i2b2.org/xsd/hive/msg/1.1/' ")
-	var statusNode = oDomDoc.selectSingleNode('//response_header/result_status/status');
-	var statusType = statusNode.getAttribute("type");
-	var statusText = statusNode.firstChild.nodeValue;
-	if(statusType == "ERROR")
-	{
-		if(loginform.isVisible())
-		{
-			loginform.el.unmask();
-		}
-		// Show a dialog using config options :
-		Ext.Msg.show(
-				{
-					title : 'Login error',
-					msg : statusText,
-					buttons : Ext.Msg.OK,
-					fn : function()
-					{
-					Ext.Msg.hide();
-					}
-				,
-				icon : Ext.MessageBox.ERROR
-				}
-		);
-	}
-	else
-	{
-		// get the urls to the other important cells
-		GLOBAL.ONTUrl = oDomDoc.selectSingleNode("//cell_data[@id='ONT']/url").firstChild.nodeValue;
-		GLOBAL.CRCUrl = oDomDoc.selectSingleNode("//cell_data[@id='CRC']/url").firstChild.nodeValue;
-		if(GLOBAL.Debug)
-		{
-			alert(GLOBAL.ONTUrl);
-			alert(GLOBAL.CRCUrl);
-		}
-		if(loginform.isVisible())
-		{
-			loginform.el.unmask();
-			loginwin.hide();
-		}
+    if(loginform.isVisible())
+    {
+        loginform.el.unmask();
+        loginwin.hide();
+    }
 
-
-		// figure out which project we want
-		var projects = oDomDoc.selectNodes('//project');
-		// need to show multiple projects and pick the project id
-		if(projects.length > 1)
-		{
-			showProjectDialog(projects);
-		}
-		else
-		{
-			projectDialogComplete(projects[0].getAttribute("id"));
-		}
-	}
+    projectDialogComplete();
 	
 	// Login GenePattern server. The login process should be completed by the time a user starts GenePattern tasks.
 	genePatternLogin();
@@ -1722,18 +1663,10 @@ function showProjectDialog(projects)
 
 
 
-function projectDialogComplete(projectid)
+function projectDialogComplete()
 {
-
-	// get the project id
-	GLOBAL.ProjectID = projectid;
-	/* var u = queryPanel.getUpdater();
-      while(u.isUpdating())
-      {
-      alert('waiting');
-      } */
 	getCategories();
-	//getPreviousQueries();
+
 	if(GLOBAL.RestoreComparison)
 	{
 		getPreviousQueryFromID(1, GLOBAL.RestoreQID1);

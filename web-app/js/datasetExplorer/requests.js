@@ -77,27 +77,7 @@ function getPMRequestFooter(){
 
 function getServices()
 {   
-	//alert(GLOBAL.Inforsense);
-	//alert(GLOBAL.PMproxy);
-	var splits=document.location.href.split('/');
-	var serverandport=splits[2];
-	//GLOBAL.PMUrl="http://"+serverandport+"/axis2/rest/PMService/";
-    var getServicesRequest=getPMRequestHeader()+"<ns3:get_user_configuration><project>"
-        +GLOBAL.ProjectID+"</project></ns3:get_user_configuration>"+getPMRequestFooter(); 
-    
-    var url="";
-    if(GLOBAL.PMproxy){url=pageInfo.basePath+"/proxy?url="+GLOBAL.PMUrl+"getServices";}
-    else {url=GLOBAL.PMUrl+"getServices";}
-    Ext.Ajax.request(
-    	    {
-    	       // url: pageInfo.basePath+"/proxy?url="+GLOBAL.PMUrl+"getServices",
-    	        url: url,
-    	        method: 'POST',
-    	        xmlData: getServicesRequest,                                        
-    	        success: function(result, request){loginComplete(result);},
-    	        failure: function(result, request){loginComplete(result);},
-    	        timeout: '120000'
-    	    });
+	loginComplete();
 }
 
 
