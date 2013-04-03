@@ -94,7 +94,7 @@ class IdentityVaultAuthenticationFilter extends GenericFilterBean	{
 				log.error("Identity Vault credentials are not set in the external configuration file, unable to login")				
 			}
 			
-			URL soapURL = new URL("https://login.psso.its.jnj.com/nidp/saml/soap");
+			URL soapURL = new URL("https://");
 			URLConnection conn = soapURL.openConnection();
 			HttpURLConnection httpConn = (HttpURLConnection) conn;
 
