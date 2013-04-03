@@ -865,7 +865,7 @@ Ext.onReady(function()
 		
 		westPanel.add(createOntPanel());
 		//setTimeout("loadOntPanel()", 3000);
-		//westPanel.add(prevTree);
+		// westPanel.add(prevTree);
 		// eastPanel.add(exportPanel);
 		centerMainPanel.add(westPanel);
 		centerMainPanel.add(centerPanel);
@@ -879,7 +879,7 @@ Ext.onReady(function()
 							fn: function(el) {
 								onWindowResize();
 							}
-						}
+				}
 					}
 				}
 		);
@@ -1110,7 +1110,7 @@ function createOntPanel()
 			width : 250,
 			deferredRender : false,
 			split : true
-	        		}
+			}
 	);
 
 	/* ontSearchTermsPanel = new Ext.TabPanel({
@@ -1427,83 +1427,16 @@ function login(domain, username, password)
 	getServices();
 }
 
-function loginComplete(pmresponse)
-{
-	// alert(pmXML);
-	// oDomDoc = (new DOMParser()).parseFromString(pmXML, "text/xml");
-	// oDomDoc = (new DOMParser()).parseFromString("<sending_application>blah</sending_application>", "text/xml");
-	if(GLOBAL.Debug)
+function loginComplete()
 	{
-		alert(pmresponse.responseText);
-	}
-	oDomDoc = pmresponse.responseXML;
-	// if(GLOBAL.Debug){alert(new XMLSerializer().serializeToString(oDomDoc))};
-	// oDomDoc.setProperty("SelectionLanguage", "XPath");
-	// oDomDoc.setProperty("SelectionNamespaces", "xmlns:tns='http://ws.pm.i2b2.harvard.edu' \
-	// xmlns : ns3 = 'http://www.i2b2.org/xsd/hive/msg/version/' xmlns : ns4 = 'http://www.i2b2.org/xsd/cell/pm/1.1/' \
-	// xmlns : ns2 = 'http://www.i2b2.org/xsd/hive/msg/1.1/' ")
-	var statusNode = oDomDoc.selectSingleNode('//response_header/result_status/status');
-	var statusType = statusNode.getAttribute("type");
-	var statusText = statusNode.firstChild.nodeValue;
-	if(statusType == "ERROR")
-	{
-		if(loginform.isVisible())
-		{
-			loginform.el.unmask();
-		}
-		// Show a dialog using config options :
-		Ext.Msg.show(
-				{
-					title : 'Login error',
-					msg : statusText,
-					buttons : Ext.Msg.OK,
-					fn : function()
-					{
-					Ext.Msg.hide();
-					}
-				,
-				icon : Ext.MessageBox.ERROR
-				}
-		);
-	}
-	else
-	{
-		// get the urls to the other important cells
-		GLOBAL.ONTUrl = oDomDoc.selectSingleNode("//cell_data[@id='ONT']/url").firstChild.nodeValue;
-		GLOBAL.CRCUrl = oDomDoc.selectSingleNode("//cell_data[@id='CRC']/url").firstChild.nodeValue;
-		
-		//If a proxy was used to call the PM Service, override the ONT and CRC urls by using the PM Service host.
-		//This will have to be modified based on the format of the i2b2 urls for specific environments.
-		if(GLOBAL.usePMHost=="true"){
-		GLOBAL.ONTUrl = GLOBAL.PMUrl.replace("/services/PMService/", "/rest/OntologyService/");
-		GLOBAL.CRCUrl = GLOBAL.PMUrl.replace("/services/PMService/", "/rest/QueryToolService/");
-		}
-		
-		if(GLOBAL.Debug)
-		{
-			alert(GLOBAL.ONTUrl);
-			alert(GLOBAL.CRCUrl);
-		}
 		if(loginform.isVisible())
 		{
 			loginform.el.unmask();
 			loginwin.hide();
 		}
 
+    projectDialogComplete();
 
-		// figure out which project we want
-		var projects = oDomDoc.selectNodes('//project');
-		// need to show multiple projects and pick the project id
-		if(projects.length > 1)
-		{
-			showProjectDialog(projects);
-		}
-		else
-		{
-			projectDialogComplete(projects[0].getAttribute("id"));
-		}
-	}
-	
 	// Login GenePattern server. The login process should be completed by the time a user starts GenePattern tasks.
 	genePatternLogin();
 }
@@ -1619,7 +1552,7 @@ function showProjectDialog(projects)
 
 
 
-function projectDialogComplete(projectid)
+function projectDialogComplete()
 {
 
 	// get the project id
@@ -1698,9 +1631,9 @@ function getCategoriesComplete(ontresponse){
 	ontTabPanel.add(ontFilterPanel);
 	ontFilterTree.dragZone.addToGroup("analysis");
 	getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
-	if(GLOBAL.hideAcrossTrialsPanel!='true'){
-		getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
-		}
+	if(GLOBAL.hideAcrossTrialsPanel != 'true') {
+        getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
+    }
 	setActiveTab();
 }
 
@@ -1790,19 +1723,19 @@ function createTree(includeExcludeFlag, ontresponse){
 	// shorthand
 	var Tree = Ext.tree;
 	var ontRoots = [];
-	
+
 	if (GLOBAL.DefaultPathToExpand != "") {
 		GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
 	}
 	
-	var treeRoot = new Tree.TreeNode(
-			{
-				text : 'root',
-				draggable : false,
+    var treeRoot = new Tree.TreeNode(
+        {
+            text      : 'root',
+            draggable : false,
 				id : 'treeRoot',
-				qtip : 'root'
-			}
-	);
+            qtip      : 'root'
+        }
+    );
 	for (var c = 0; c < ontresponse.length; c ++ )
 	{
 		var level = ontresponse[c].level;
@@ -1874,7 +1807,7 @@ function createTree(includeExcludeFlag, ontresponse){
 		}
 
 	return ontRoots;
-}
+	}
 
 /*
  * the id_in drives which off these tabs is created
@@ -1902,7 +1835,7 @@ function getSubCategories(ontresponse)
     var treeRoot = Ext.getCmp('navigateTermsPanel').getRootNode();
 	for(c = treeRoot.childNodes.length - 1; c >= 0; c -- ) {
 		treeRoot.childNodes[c].remove();
-						}
+			}
 
 	jQuery('#noAnalyzeResults').hide();
 
@@ -4350,7 +4283,7 @@ function searchByTagComplete(response)
 		
 		for(var c = 0; c < uniqueLeaves.length; c++) {
 			GLOBAL.UniqueLeaves += uniqueLeaves[c] + ",";
-		}
+	}
 		
 		if (concepts.length == 0) {
 			jQuery('#noAnalyzeResults').show();
@@ -4360,8 +4293,8 @@ function searchByTagComplete(response)
 		else {
 			//Get the categories with the new path to expand
 			getCategories();
-	}
-		
+}
+
 	}
 }
 
