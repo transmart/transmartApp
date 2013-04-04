@@ -122,7 +122,7 @@ function createPanelItemNew(panel, concept)
 	li.className="conceptUnselected";
 	
 	//Create a shortname
-	var splits=concept.tooltip.split("\\");
+	var splits=concept.key.split("\\");
 	var shortname="";
 	if(splits.length>1)
 	{
@@ -1889,107 +1889,97 @@ function doLogin()
 window.location.href=pageInfo.basePath;
 }
 
-function getTreeNodeFromXMLNode(concept)
+function getTreeNodeFromJsonNode(concept)
 {
-		var Tree = Ext.tree;
-		
- 		var level				=	null;
- 		var name				=	null;
- 		var tablename			=	null;
- 		var tooltip				=	null;
- 		var tooltipnode			=	null;
- 		var key					=	null;
- 		var dimcode				=	null;
- 		var newnode				=	null;
- 		var leaf				=	false;
- 		var draggable			=	true;
- 		var comment				=	null;
- 		var normalunits			=	null;
- 		var commentnode			=	null;
- 		var normalunitsnode 	= 	null;
- 		var oktousevaluesnode	= 	null;
- 		var oktousevalues		=	null;
- 			
-	    level				=	concept.selectSingleNode('level').firstChild.nodeValue;
-	    key					=	concept.selectSingleNode('key').firstChild.nodeValue;
-	    name				=	concept.selectSingleNode('name').firstChild.nodeValue; 
-	    tooltipnode			=	concept.selectSingleNode('tooltip')
-	    tooltip				=	tooltipnode == undefined ? "" : tooltipnode.firstChild.nodeValue;
-	    dimcode				=	concept.selectSingleNode('dimcode').firstChild.nodeValue;
-	    visualattributes	=	concept.selectSingleNode('visualattributes').firstChild.nodeValue;
-	    tablename			=	concept.selectSingleNode('tablename').firstChild.nodeValue;
-	    commentnode			=	concept.selectSingleNode('comment');
-	   	normalunitsnode		=	concept.selectSingleNode('.//metadataxml/ValueMetadata/UnitValues/NormalUnits');
-	    normalunits			=	getValue(normalunitsnode, "");
-	   	comment				=	getValue(commentnode, "");	    
-	    oktousevaluesnode	=	concept.selectSingleNode('.//metadataxml/ValueMetadata/Oktousevalues');
-	    oktousevalues		=	getValue(oktousevaluesnode, "N");
-	    
-	    //We need to replace the < signs with &lt;
-	    name = name.replace(/</gi,"&lt;");
-	    
-	    var iconCls	=	null;
-	    var cls		=	null;
-	    var tcls 	=	null;
-	    
-	    if(oktousevalues!="N")
-	    {
-	    	iconCls="valueicon";
-	    }
-	    
-	    //get type of node
-	    nodetype=visualattributes.substr(0,1);
-	    nodestatus=visualattributes.substr(1,1); //A=active I=inactive H=hidden	    
-	    if(visualattributes.length>2 && visualattributes.substr(2,1)!=' ')
-	    	{
-	    	iconCls=visualattributes.substr(2,1).toLowerCase()+"leaficon";
-	    	tcls=visualattributes.substr(2,1).toLowerCase()+"leafclass";
-	    	}
-	    if(nodetype=='F') //folder-dragable
-	    {
-	    leaf=false;
-	    draggable=true;
-	    }  
-	    else if(nodetype=='C') //folder-dragable
-	    {
-	    leaf=false;
-	    draggable=false;
-	    }    
-	    else if(nodetype=='L' || nodetype=='M') //leaf-dragable
-	    {
-	    leaf=true;
-	    draggable=true;   
-	    }    
-	    
-	    //set whether expanded or not.
-	    var autoExpand=false;
-		//var pathToExpand="\\\\Clinical Trials\\Clinical Trials\\C-2006-004\\Subjects\\Demographics\\Race\\";
-	    if(GLOBAL.PathToExpand.indexOf(key)>-1) autoExpand=true;
-		
-	    // set the root node
-    	newnode = new Tree.AsyncTreeNode({
-        text: name, 
-        draggable: draggable, 
-        leaf: leaf,
-        id: key,
-        comment: comment,
-        qtip: tooltip,
-   		iconCls:iconCls,
-   		cls: tcls,
-        /*qtipCfg:{
-        		 text:tooltip,
-      			 autoHide:true
-        		},*/ 		  
-        level: level,  //extra attribute for storing level in hierarchy access through node.attributes.level
-   		dimcode: dimcode,
-   		tablename: tablename,
-   		normalunits: normalunits,
-   		oktousevalues: oktousevalues,
-   		expanded: autoExpand
-   		 });
-   		 newnode.addListener('contextmenu',ontologyRightClick);
-	return newnode;
-	}
+    var Tree = Ext.tree;
+
+    var level				=	null;
+    var name				=	null;
+    var tablename			=	null;
+    var tooltip				=	null;
+    var key					=	null;
+    var dimcode				=	null;
+    var newnode				=	null;
+    var leaf				=	false;
+    var draggable			=	true;
+    var comment				=	null;
+    var normalunits			=	null;
+    var commentnode			=	null;
+    var normalunitsnode 	= 	null;
+    var oktousevaluesnode	= 	null;
+    var oktousevalues		=	null;
+
+    level				= concept.level;
+    key					= concept.key;
+    name				= concept.name;
+    tooltip				= concept.tooltip;
+    dimcode				= concept.dimensionCode;
+    tablename			= concept.dimensionTableName;
+    visualattributes	= concept.visualAttributes;
+
+    comment				= ''; //XXX
+    normalunits			= concept.metadata
+                              ? concept.metadata.unitValues.normalUnits
+                              : '';
+    oktousevalues		=	concept.metadata
+                              ? (concept.metadata.okToUseValues ? 'Y' : 'N')
+                              : 'N'
+
+    //We need to replace the < signs with &lt;
+    name = name.replace(/</gi, "&lt;");
+
+    var iconCls = null;
+    var cls = null;
+    var tcls = null;
+
+    if (oktousevalues != "N") {
+        iconCls = "valueicon";
+    }
+
+
+    if (visualattributes.indexOf('LEAF') != -1 ||
+        visualattributes.indexOf('MULTIPLE') != -1) {
+        leaf = true;
+        /* otherwise false; see init */
+    }
+    if (visualattributes.indexOf('CONTAINER') != -1) {
+        draggable = false;
+        /* otherwise true; see init */
+    }
+
+    if (visualattributes.indexOf('EDITABLE') != -1) {
+        iconCls = 'eleaficon';
+        tcls = 'eleafclass';
+    }
+
+
+    //set whether expanded or not.
+    var autoExpand = false;
+    //var pathToExpand="\\\\Clinical Trials\\Clinical Trials\\C-2006-004\\Subjects\\Demographics\\Race\\";
+    if (GLOBAL.PathToExpand.indexOf(key) > -1)
+        autoExpand = true;
+
+    // set the root node
+
+    newnode = new Tree.AsyncTreeNode({
+        text          : name,
+        draggable     : draggable,
+        leaf          : leaf,
+        id            : key,
+        comment       : comment,
+        qtip          : tooltip,
+        iconCls       : iconCls,
+        cls           : tcls,
+        level         : level,  //extra attribute for storing level in hierarchy access through node.attributes.level
+        dimcode       : dimcode,
+        tablename     : tablename,
+        normalunits   : normalunits,
+        oktousevalues : oktousevalues,
+        expanded      : autoExpand
+    });
+    newnode.addListener('contextmenu', ontologyRightClick);
+    return newnode;
+}
 
 
 function getTreeNodeFromJSON(concept)
