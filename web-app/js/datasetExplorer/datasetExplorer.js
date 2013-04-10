@@ -881,10 +881,7 @@ Ext.onReady(function()
 					split : true,
 					height : 90,
 					layout : 'fit',
-<<<<<<< HEAD
 					//autoLoad : getDatadata,
-=======
->>>>>>> refs/remotes/github/ImperialBranch
 					listeners :
 					{
 						activate : function(p) {
@@ -901,10 +898,7 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
-<<<<<<< HEAD
-=======
-		
->>>>>>> refs/remotes/github/ImperialBranch
+
 		// --
 		resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(dataAssociationPanel);
