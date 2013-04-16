@@ -444,7 +444,6 @@ content: counter(pages);
 /* */
 .snowpanel { padding: 10px; font-family: Tahoma, "sans serif"; font-size: 11px; background-color: #f5f5f5}
 div.subsettable label { display: block; margin-top: 5px;}
-.info {color: green}
-.warning {color: #ff0000}
-.testCls {background-color: gold}
-.selected {color:#000000; font-weight: bold}
+.warning {color: #ff0000;}
+#analysisContainer {font-family: Arial, "sans serif"; font-size: .7em;}
+.selected {color:#000000; font-weight: bold;}
