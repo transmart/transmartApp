@@ -112,6 +112,10 @@ class DataExportService {
 								filesDoneMap.put('MRNA.TXT', new Boolean(true))
 								break;
 							case "MRNA_DETAILED.TXT":
+							
+								println("Job data map:")
+								jobDataMap.each{ k, v -> println "${k}:${v}" }
+							
 								//We need to grab some inputs from the jobs data map.
 								def pathway 	= jobDataMap.get("gexpathway")
 								def timepoint 	= jobDataMap.get("gextime")
@@ -122,6 +126,10 @@ class DataExportService {
 								if(tissueType == ",") tissueType = ""
 								if(sampleType == ",") sampleType = ""
 								if(timepoint == ",") timepoint = ""
+								
+								println("tissueType:" + tissueType)
+								println("tissueType:" + sampleType)
+								println("timepoint:" + timepoint)
 								
 								if(gplIds != null)
 								{
@@ -160,8 +168,8 @@ class DataExportService {
 								//In this case we need to get a file with Patient ID, Probe ID, Gene, Genotype, Copy Number
 								//We need to grab some inputs from the jobs data map.
 								def pathway = jobDataMap.get("snppathway")
-								def sampleType = jobDataMap.get("snptime")
-								def timepoint = jobDataMap.get("snpsample")
+								def sampleType = jobDataMap.get("snpsample")
+								def timepoint = jobDataMap.get("snptime")
 								def tissueType = jobDataMap.get("snptissue")
 								
 								//This object will be our row processor which handles the writing to the SNP text file.
