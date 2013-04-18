@@ -580,9 +580,10 @@ class PostgresGeneExpressionDataService {
 		def nameIndexMap = [:]
 		int count = metaData.getColumnCount();
 		for (int i = 1; i <= count; i++) {
-			nameIndexMap.put(metaData.getColumnName(i), i);
+			nameIndexMap.put(
+				metaData.getColumnName(i).toUpperCase(Locale.ENGLISH), i);
 		}
-		
+
 		def rawIntensityRSIdx = nameIndexMap.get("RAW_INTENSITY");
 		def zScoreRSIdx = nameIndexMap.get("ZSCORE");
 		def ptIDIdx = nameIndexMap.get("PATIENT_ID");
