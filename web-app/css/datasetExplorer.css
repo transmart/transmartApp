@@ -107,7 +107,6 @@ a.toplink1:hover{
 .nextbutton{
     background-image:url(../images/next.png ) !important;
 }
-
 .clearbutton{
 		background-image:url(../images/clear.png ) !important;
 	}
@@ -123,8 +122,7 @@ a.toplink1:hover{
 .summarybutton{
 	background-image:url(../images/summary.png ) !important;
 	}
-.hleaficon
-	{
+.hleaficon{
 	background-image:url(../images/dna_icon.png ) !important;
 	}
 .valueicon{
@@ -133,10 +131,12 @@ a.toplink1:hover{
 .printbutton{
 	background-image:url(../images/printer.png ) !important;
 	}
-	
 .savebutton{
 	background-image:url(../images/disk.png ) !important;
 	}
+.downloadbutton{
+	background-image:url(../images/download.png ) !important;
+}
 .savepdfbutton{
 	background-image:url(../images/doc_pdf.png ) !important;
 }
@@ -486,5 +486,39 @@ div.plotResultContainer {
 }
 
 div.plotResultContainer h1 {
-	font-size: 1.5em;
+	font-size: 1.1em;
+	color: #3764A0;
+	margin-bottom: 10px;
+}
+
+#plotCurveDesc {margin-top: 20px;}
+
+#newspaper-a
+{
+	font-family: Tahoma, Arial, "sans serif";
+	font-size: 11px;
+	width: 100%;
+	text-align: left;
+	border-collapse: collapse;
+	border: 1px solid #d3d3d3;
+}
+#newspaper-a th
+{
+	padding: 5px;
+	font-weight: normal;
+	font-weight: bold;
+	font-size: 11px;
+	border-bottom: 1px dashed #d3d3d3;
+}
+#newspaper-a td
+{
+	padding: 5px;
+}
+#newspaper-a tfoot {
+	background-color: #F5F5F5;
+	color: dimgrey;
+}
+
+.plotCurveToolBar {
+	margin-top: 10px;
 }
