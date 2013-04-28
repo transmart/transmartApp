@@ -24,7 +24,7 @@ grails.project.test.reports.dir = "target/test-reports"
 
 grails.project.work.dir = "${userHome}/.grails/${grailsVersion}/projects/${appName}-${appVersion}/"
 //grails.plugin.location.rmodules = "C:\\svn\\repo1\\pharma\\transmart\\trunk\\plugins\\Rmodules"
-//grails.plugin.location.rmodules="..//Rmodules"
+grails.plugin.location.rmodules="..//Rmodules"
 
 
 grails.project.war.file = "target/transmart.war"
@@ -42,8 +42,8 @@ grails.project.dependency.resolution = {
 
         // uncomment the below to enable remote dependency resolution
         // from public Maven repositories
-        //mavenLocal()
-        //mavenCentral()
+        mavenLocal()
+        mavenCentral()
         //mavenRepo "http://snapshots.repository.codehaus.org"
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"

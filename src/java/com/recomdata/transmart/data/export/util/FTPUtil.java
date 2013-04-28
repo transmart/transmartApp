@@ -23,13 +23,8 @@
  */
 package com.recomdata.transmart.data.export.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-
+import com.recomdata.transmart.data.export.exception.FTPAuthenticationException;
+import com.recomdata.transmart.data.export.exception.InvalidFTPParamsException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.net.ftp.FTP;
@@ -38,8 +33,8 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
-import com.recomdata.transmart.data.export.exception.FTPAuthenticationException;
-import com.recomdata.transmart.data.export.exception.InvalidFTPParamsException;
+import java.io.*;
+import java.util.Map;
 
 /**
  * @author SMunikuntla

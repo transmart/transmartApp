@@ -24,15 +24,10 @@
  * @version $Revision: 10098 $
  *
  */
-import grails.converters.*
-import org.json.*;
+import auth.AuthUser
+import grails.converters.JSON
 
-import auth.AuthUser;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletOutputStream
 
 class ExportController {
 

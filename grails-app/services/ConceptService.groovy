@@ -16,12 +16,11 @@
  * 
  *
  ******************************************************************/
-  
 
 
-import org.jfree.util.Log;
 
-import i2b2.Concept;
+
+import i2b2.Concept
 
 class ConceptService {
 	def dataSource;

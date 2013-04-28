@@ -20,7 +20,7 @@
 
 package com.recomdata.asynchronous
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class GenePatternServiceTests extends GrailsUnitTestCase {
     protected void setUp() {

@@ -20,7 +20,7 @@
 
 package com.recomdata.transmart.externaltool
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class IgvControllerTests extends GrailsUnitTestCase {
     protected void setUp() {

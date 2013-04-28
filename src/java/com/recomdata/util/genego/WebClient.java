@@ -25,11 +25,10 @@
  */
 package com.recomdata.util.genego;
 
-import java.rmi.RemoteException;
+import org.apache.log4j.Logger;
 
 import javax.xml.rpc.ServiceException;
-
-import org.apache.log4j.Logger;
+import java.rmi.RemoteException;
 
 public class WebClient {
     static final String DEMO_USER = "demo";

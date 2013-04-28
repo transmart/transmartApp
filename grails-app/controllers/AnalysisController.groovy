@@ -16,9 +16,20 @@
  * 
  *
  ******************************************************************/
-  
 
-import grails.converters.*
+
+
+import com.recomdata.export.IgvFiles
+import com.recomdata.export.PlinkFiles
+import com.recomdata.export.SnpViewerFiles
+import com.recomdata.genepattern.JobStatus
+import com.recomdata.genepattern.WorkflowStatus
+import grails.converters.JSON
+import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
+import org.genepattern.webservice.JobResult
+import org.genepattern.webservice.WebServiceException
+import org.json.JSONException
+import org.json.JSONObject
 
 import java.io.File
 import java.text.*
@@ -27,22 +38,8 @@ import java.util.List
 import javax.xml.parsers.*
 import javax.xml.xpath.*
 
-import org.genepattern.client.*
-import org.genepattern.webservice.*
-import org.json.*
-import org.w3c.dom.*
 import org.xml.sax.*
-
-import search.SearchKeyword
-
 import com.recomdata.debugging.*
-import com.recomdata.export.GenePatternFiles
-import com.recomdata.export.IgvFiles
-import com.recomdata.export.SnpViewerFiles
-import com.recomdata.export.PlinkFiles
-import com.recomdata.genepattern.JobStatus
-import com.recomdata.genepattern.WorkflowStatus
-import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 
 /**
  * $Id: AnalysisController.groovy 11302 2011-12-23 02:59:44Z mkapoor $

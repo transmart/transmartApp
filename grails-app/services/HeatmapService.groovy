@@ -23,8 +23,6 @@
  * $Id: HeatmapService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @version $Revision: 9178 $
  */
- 
-import bio.BioMarker
 import com.recomdata.search.query.AssayAnalysisDataQuery
 
 public class HeatmapService {

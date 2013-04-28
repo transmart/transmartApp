@@ -16,12 +16,8 @@
  * 
  *
  ******************************************************************/
-  
-
- import com.recomdata.search.DocumentHit
- import java.io.File
+import java.io.File
  import java.net.URLDecoder
- import org.apache.log4j.Logger
 
 /**
  * $Id: DocumentController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

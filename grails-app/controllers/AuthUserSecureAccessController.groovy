@@ -1,4 +1,7 @@
-import auth.*;
+import auth.AuthUser
+import auth.AuthUserSecureAccess
+import auth.Role
+import auth.SecureAccessLevel;
 
 /*************************************************************************
  * tranSMART - translational medicine data mart

@@ -25,6 +25,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.DefaultRedirectStrategy
 
 beans = {
+
 	dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder){
 		dataSource = ref('dataSource')
 	}

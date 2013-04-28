@@ -20,12 +20,9 @@
 
 package com.recomdata.util;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * helper class provides assistance for downloading domain object

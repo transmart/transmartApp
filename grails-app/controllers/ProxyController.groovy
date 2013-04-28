@@ -22,10 +22,12 @@
  * @author JIsikoff
  *
  */
-import com.recomdata.datasetexplorer.proxy.*
-import javax.servlet.*
-import javax.servlet.http.*
-import com.recomdata.export.*
+import com.recomdata.datasetexplorer.proxy.XmlHttpProxy
+import com.recomdata.datasetexplorer.proxy.XmlHttpProxyServlet
+
+import javax.servlet.ServletContext
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 
 class ProxyController{

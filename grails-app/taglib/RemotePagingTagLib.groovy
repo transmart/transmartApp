@@ -16,20 +16,7 @@
  * 
  *
  ******************************************************************/
-  
-
-import org.springframework.validation.Errors;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.web.servlet.support.RequestContextUtils as RCU;
-import org.codehaus.groovy.grails.commons.GrailsClassUtils as GCU
-import com.opensymphony.module.sitemesh.PageParserSelector
-import com.opensymphony.module.sitemesh.Factory
-import org.codehaus.groovy.grails.web.pages.GroovyPagesTemplateEngine
-import org.springframework.web.context.ServletConfigAware
-import javax.servlet.ServletConfig
-import org.springframework.beans.factory.InitializingBean;
-import org.codehaus.groovy.grails.web.sitemesh.FactoryHolder
-
+import org.springframework.web.servlet.support.RequestContextUtils as RCU
 
 class RemotePagingTagLib {
 

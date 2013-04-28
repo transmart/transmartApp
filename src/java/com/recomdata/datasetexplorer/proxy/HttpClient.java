@@ -24,14 +24,15 @@
 */
 package com.recomdata.datasetexplorer.proxy;
 
+import com.sun.net.ssl.*;
+import org.apache.commons.codec.binary.Base64;
+
 import java.io.*;
 import java.net.*;
-import java.util.logging.*;
 import java.security.Security;
-//import javax.net.ssl.*;
-import com.sun.net.ssl.*;
+import java.util.logging.*;
 
-import org.apache.commons.codec.binary.Base64;
+//import javax.net.ssl.*;
 
 /**
  * @author Yutaka Yoshida, Greg Murray

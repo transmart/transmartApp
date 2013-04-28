@@ -16,11 +16,7 @@
  * 
  *
  ******************************************************************/
-  
-
-
-
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class AsyncJobTests extends GrailsUnitTestCase {
     protected void setUp() {

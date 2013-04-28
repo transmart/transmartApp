@@ -20,19 +20,17 @@
 
 package com.recomdata.transmart.data.export
 
-import java.io.File
-import java.util.ArrayList
-import java.util.List
-import java.util.Map
-
+import com.recomdata.dataexport.util.ExportUtil
+import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.apache.commons.lang.StringUtils
-import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
 
-import com.recomdata.dataexport.util.ExportUtil
-import com.recomdata.transmart.data.export.util.FileWriterUtil
+import java.io.File
+import java.util.ArrayList
+import java.util.List
+import java.util.Map
 
 class ClinicalDataService {
 

@@ -16,19 +16,17 @@
  * 
  *
  ******************************************************************/
-  
 
-import bio.BioMarker
-import bio.Compound
-import bio.Disease
-import bio.Experiment
+
+
 import bio.BioAssayAnalysis
 import bio.BioAssayAnalysisData
+import bio.Experiment
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.ExperimentAssayAnalysisMVQuery
 import com.recomdata.search.query.Query
+import com.recomdata.util.ElapseTimer
 
-import com.recomdata.util.ElapseTimer;
 /**
  * $Id: ExperimentAnalysisQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @author $Author: mmcduffie $

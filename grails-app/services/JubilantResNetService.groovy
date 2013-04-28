@@ -21,16 +21,8 @@
 /**
  * $Id: JubilantResNetService.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
  */
-import com.recomdata.util.ariadne.Attr
-import com.recomdata.util.ariadne.Batch
-import com.recomdata.util.ariadne.Control
-import com.recomdata.util.ariadne.Controls
-import com.recomdata.util.ariadne.Link
-import com.recomdata.util.ariadne.Node
-import com.recomdata.util.ariadne.Nodes
-import com.recomdata.util.ariadne.Properties
-import com.recomdata.util.ariadne.Resnet
-import groovy.xml.MarkupBuilder
+import com.recomdata.util.ariadne.*
+
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 

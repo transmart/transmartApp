@@ -21,7 +21,7 @@
 /**
 * $Id: I2b2HelperServiceTests.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
 */
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class I2b2HelperServiceTests extends GrailsUnitTestCase {
 	def i2b2HelperService

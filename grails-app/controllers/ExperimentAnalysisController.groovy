@@ -24,16 +24,13 @@
  * @version $Revision: 10098 $
  */
 
+import bio.Experiment
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
-import com.recomdata.util.DomainObjectExcelHelper;
-import com.recomdata.util.ExcelGenerator;
-import com.recomdata.util.ExcelSheet;
-import bio.Experiment
-import com.recomdata.util.ElapseTimer;
-
-import fm.FmFolder;
+import com.recomdata.util.DomainObjectExcelHelper
+import com.recomdata.util.ElapseTimer
+import fm.FmFolder
 
 class ExperimentAnalysisController {
 

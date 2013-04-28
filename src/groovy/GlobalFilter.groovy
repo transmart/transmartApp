@@ -16,9 +16,6 @@
  * 
  *
  ******************************************************************/
-  
-
-import search.SearchKeyword
 /**
  *
  * $Id: GlobalFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

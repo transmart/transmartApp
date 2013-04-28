@@ -23,12 +23,11 @@
  * @author $Author: jliu $
  * @version $Revision: 10280 $
  */
-import com.recomdata.util.DomainObjectExcelHelper;
-import grails.converters.*
-import bio.ClinicalTrial
-import bio.BioAssayPlatform
 import bio.BioAssayAnalysis
+import bio.ClinicalTrial
 import bio.Experiment
+import com.recomdata.util.DomainObjectExcelHelper
+import grails.converters.JSON
 import search.SearchKeyword
 
 class TrialController {

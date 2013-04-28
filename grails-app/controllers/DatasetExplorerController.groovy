@@ -16,10 +16,11 @@
  * 
  *
  ******************************************************************/
-  
 
-import auth.AuthUser;
-import grails.converters.*
+
+
+import auth.AuthUser
+import grails.converters.JSON
 
 
 class DatasetExplorerController {

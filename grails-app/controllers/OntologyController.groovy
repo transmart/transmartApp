@@ -16,16 +16,13 @@
  * 
  *
  ******************************************************************/
-  
 
 
-import fm.FmFolderAssociation;
-import grails.converters.*
-import org.json.*;
-import edu.mit.wi.haploview.*;
-import annotation.AmTagItem;
-import annotation.AmTagItemService;
-import annotation.AmTagTemplateService;
+
+
+import annotation.AmTagItem
+import fm.FmFolderAssociation
+import grails.converters.JSON
 
 class OntologyController {
 

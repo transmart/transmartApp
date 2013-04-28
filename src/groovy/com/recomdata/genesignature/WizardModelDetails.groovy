@@ -23,9 +23,8 @@
  */
 package com.recomdata.genesignature
 
-import com.recomdata.util.ModelDetails
 import bio.ConceptCode
-import search.GeneSignature
+import com.recomdata.util.ModelDetails
 
 /**
  * @author jspencer

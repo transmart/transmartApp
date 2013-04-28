@@ -24,16 +24,20 @@
 */
 package com.recomdata.datasetexplorer.proxy;
 
+import org.json.JSONObject;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.*;
 import java.util.logging.*;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.json.*;
 
 /**  XmlHttpProxyServlet
  *   @author Greg Murray

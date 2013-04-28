@@ -16,13 +16,12 @@
  * 
  *
  ******************************************************************/
-  
- import auth.*;
-
-import auth.AuthUser;
-import groovy.sql.Sql;
-import command.UserGroupCommand;
-import grails.converters.*;
+import auth.AuthUser
+import auth.Principal
+import auth.UserGroup
+import command.UserGroupCommand
+import grails.converters.JSON
+import groovy.sql.Sql
 
 class UserGroupController {
 	def dataSource ;

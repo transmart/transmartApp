@@ -16,21 +16,21 @@
  * 
  *
  ******************************************************************/
-  
 
-import javax.servlet.ServletOutputStream
 
-import search.GeneSignature
-import search.GeneSignatureFileSchema
-import auth.AuthUser;
+
+import auth.AuthUser
 import bio.BioAssayPlatform
 import bio.CellLine
 import bio.Compound
 import bio.ConceptCode
-
 import com.recomdata.genesignature.FileSchemaException
 import com.recomdata.genesignature.WizardModelDetails
 import com.recomdata.util.DomainObjectExcelHelper
+import search.GeneSignature
+import search.GeneSignatureFileSchema
+
+import javax.servlet.ServletOutputStream
 
 /**
  * Controller class for gene signature functionality

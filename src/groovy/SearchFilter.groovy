@@ -23,8 +23,6 @@
  *@author $Author: mmcduffie $
  *@version $Revision: 10125 $
  **/
-
-import grails.converters.*
 import org.apache.log4j.Logger
 
 class SearchFilter {

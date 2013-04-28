@@ -23,8 +23,6 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
-import org.hibernate.*
-
 class LiteratureFilter {
 
 	String dataType

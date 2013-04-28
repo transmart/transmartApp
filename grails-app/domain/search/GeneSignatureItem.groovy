@@ -20,9 +20,8 @@
 
 package search
 
+import bio.BioAssayFeatureGroup
 import bio.BioMarker
-import bio.BioData
-import bio.BioAssayFeatureGroup;
 
 /**
  * domain class for a gene signature item

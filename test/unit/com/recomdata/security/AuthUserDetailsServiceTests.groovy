@@ -20,7 +20,7 @@
 
 package com.recomdata.security
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 import org.springframework.security.core.userdetails.UserDetails
 
 class AuthUserDetailsServiceTests extends GrailsUnitTestCase {

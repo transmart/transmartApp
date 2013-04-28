@@ -21,11 +21,11 @@
 /*
  * $Id: CustomFilterController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  */
-import auth.AuthUser;
-import search.SearchKeyword
+
+import auth.AuthUser
 import search.CustomFilter
 import search.CustomFilterItem
-import grails.converters.*
+import search.SearchKeyword
 
 /**
  * @author $Author: mmcduffie $

@@ -20,7 +20,7 @@
 
 package com.recomdata.transmart.data.export
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class DataExportControllerTests extends GrailsUnitTestCase {
     protected void setUp() {

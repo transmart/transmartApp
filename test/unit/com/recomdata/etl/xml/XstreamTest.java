@@ -23,9 +23,8 @@
  */
 package com.recomdata.etl.xml;
 
-import groovy.util.GroovyTestCase;
-
 import com.thoughtworks.xstream.XStream;
+import groovy.util.GroovyTestCase;
 
 /**
  * Unit test of the Xstream class

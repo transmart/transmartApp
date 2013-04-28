@@ -20,7 +20,7 @@
 
 package fm
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class FmFolderServiceTests extends GrailsUnitTestCase {
     protected void setUp() {

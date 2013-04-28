@@ -20,7 +20,7 @@
 
 package com.recomdata.transmart.plugin
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class PluginControllerTests extends GrailsUnitTestCase {
 	def pluginService

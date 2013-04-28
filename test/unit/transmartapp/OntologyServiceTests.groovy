@@ -20,7 +20,7 @@
 
 package transmartapp
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class OntologyServiceTests extends GrailsUnitTestCase {
     protected void setUp() {

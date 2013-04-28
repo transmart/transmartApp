@@ -16,11 +16,7 @@
  * 
  *
  ******************************************************************/
-  
-
-
-
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class JobResultsServiceTests extends GrailsUnitTestCase {
     protected void setUp() {

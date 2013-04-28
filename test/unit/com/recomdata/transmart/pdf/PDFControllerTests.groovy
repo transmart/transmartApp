@@ -20,7 +20,7 @@
 
 package com.recomdata.transmart.pdf
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class PDFControllerTests extends GrailsUnitTestCase {
     protected void setUp() {

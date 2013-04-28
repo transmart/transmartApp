@@ -16,17 +16,19 @@
  * 
  *
  ******************************************************************/
-  
 
- import java.io.File
+
+
+import com.recomdata.search.DocumentHit
+import com.recomdata.search.DocumentQuery
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+
+import java.io.File
  import java.io.FileReader
  import java.io.StringWriter
  import java.util.StringTokenizer
- import org.codehaus.groovy.grails.commons.ConfigurationHolder
- import com.recomdata.search.DocumentQuery
- import com.recomdata.search.DocumentHit
 
- /**
+/**
   * $Id: DocumentService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
   * @author $Author: mmcduffie $
   * @version $Revision: 9178 $

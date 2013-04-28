@@ -23,8 +23,9 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 10098 $
  */
-
-import auth.*;
+import auth.AuthUser
+import auth.AuthUserSecureAccess
+import auth.Role
 import search.GeneSignature
 
 /**

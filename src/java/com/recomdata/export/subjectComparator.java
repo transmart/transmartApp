@@ -19,10 +19,9 @@
   
 
 package com.recomdata.export;
-import java.util.*;
+
 import java.io.*;
-import java.lang.System;
-import java.lang.String;
+import java.util.*;
 
 /* A simple class to compare subject id strings for sorting */
 

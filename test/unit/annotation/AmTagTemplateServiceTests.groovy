@@ -20,7 +20,7 @@
 
 package annotation
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class AmTagTemplateServiceTests extends GrailsUnitTestCase {
     protected void setUp() {

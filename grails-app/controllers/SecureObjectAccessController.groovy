@@ -16,11 +16,11 @@
  * 
  *
  ******************************************************************/
-  
 
-import auth.*;
+
+
+import auth.*
 import command.SecureObjectAccessCommand
-
 
 class SecureObjectAccessController {
 

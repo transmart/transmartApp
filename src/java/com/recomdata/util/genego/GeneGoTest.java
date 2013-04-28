@@ -23,9 +23,8 @@
  */
 package com.recomdata.util.genego;
 
-import java.rmi.RemoteException;
-
 import javax.xml.rpc.ServiceException;
+import java.rmi.RemoteException;
 
 /**
  * @author JBoles
