@@ -1947,7 +1947,10 @@ function getTreeNodeFromJsonNode(concept)
         /* otherwise true; see init */
     }
 
-    if (visualattributes.indexOf('EDITABLE') != -1) {
+    if (visualattributes.indexOf('HIGH_DIMENSIONAL') != -1) {
+        iconCls = 'hleaficon';
+        tcls = 'hleafclass';
+    } else if (visualattributes.indexOf('EDITABLE') != -1) {
         iconCls = 'eleaficon';
         tcls = 'eleafclass';
     }
