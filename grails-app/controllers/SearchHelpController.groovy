@@ -65,7 +65,7 @@ public class SearchHelpController{
 	def loadPathways = {
 
 		def step = params.step ? params.step : "A-C"
-		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource, upper(k.dataSource) from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
+		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
 		def defaultsource = datasources.size()>0? datasources[0]:'GeneGo'
 	    def dataSource = params.datasource ? params.datasource : defaultsource;
 		def sql = "select k from org.transmart.searchapp.SearchKeyword k where dataSource='" + dataSource + "' "
@@ -83,7 +83,7 @@ public class SearchHelpController{
 	//	def dataSource = params.datasource ? params.datasource : "GeneGO"
 		def step = params.step ? params.step : "A-C"
 		//def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
-		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource, upper(k.dataSource) from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)");
+		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)");
 		def defaultsource = datasources.size()>0? datasources[0]:'GeneGo'
 		def dataSource = params.datasource ? params.datasource : defaultsource;
 
