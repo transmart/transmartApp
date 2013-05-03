@@ -25,7 +25,7 @@
 */
 package com.recomdata.security
 
-import java.util.List
+// import java.util.List
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUserDetailsService

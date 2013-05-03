@@ -26,7 +26,7 @@ X * $Id: ClinicalTrial.groovy 10184 2011-10-24 21:43:59Z jliu $
 
 package bio
 
-import java.util.List;
+// import java.util.List;
 
 class ClinicalTrial extends Experiment {
 	String trialNumber

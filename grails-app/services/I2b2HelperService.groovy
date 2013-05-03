@@ -27,7 +27,7 @@ import com.recomdata.export.*
 import i2b2.*
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
-import java.util.List;
+//import java.util.List;
 
 import java.io.BufferedWriter
 
@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
+//import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
