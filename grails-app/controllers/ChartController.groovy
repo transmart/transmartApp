@@ -137,7 +137,7 @@ class ChartController {
      */
     def childConceptPatientCounts = {
 		
-			def paramMap = params;
+	//		def paramMap = params;
     		
 			def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
     		log.trace("Called childConceptPatientCounts action in ChartController")
