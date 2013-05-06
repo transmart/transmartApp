@@ -264,7 +264,7 @@ public class HeatmapController{
 			columnList.add([type:"n",label:'Gene Name',pattern:"",id:0])
 			def ccount=0
 			def columnPosMap = [:]
-			def analysisId = null
+			// def analysisId = null
 			def analysis = null
 			def analysisName = null
 			def analysisNameMap = [:]
@@ -312,7 +312,7 @@ public class HeatmapController{
 			// build empty data structure first
 			// for each data object build a row with bioMaker as first column value
 			def datavalue = null
-			def assayData = null
+			// def assayData = null
 			def rowArray = null
 			// handle ordered gene first
 			// this is the case that we need to display all genes in pathways
@@ -352,7 +352,7 @@ public class HeatmapController{
 
 
 			def rowlist=[]
-			def rowcount =0;
+			// def rowcount =0;
 			for (entryset in rowmap.entrySet()) {
 
 				def row = []

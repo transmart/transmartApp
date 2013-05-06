@@ -502,7 +502,7 @@ class GeneSignatureController {
 		def itemNum
 		def valueMetric
 		def param
-		def probe
+	//	def probe
 
 		// iterate through params
 		Iterator iter = params.entrySet().iterator()
@@ -715,9 +715,6 @@ class GeneSignatureController {
 			os.println("ZBP1\t1")
 			os.println("SPRR1B\t1")
 			os.println("APOL1\t1")
-		} finally {
-			//os.flush();
-		//	response.flushBuffer();
 		}
 	}
 
