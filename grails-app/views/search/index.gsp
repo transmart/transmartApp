@@ -43,7 +43,7 @@
 	    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 		<script type="text/javascript" charset="utf-8">
-            //Comment for test CI
+            //Comment for test CI #2
 
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
