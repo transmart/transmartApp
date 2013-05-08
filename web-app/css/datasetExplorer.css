@@ -464,7 +464,7 @@ div.subsettable label {
 	color: #ff0000;
 }
 
-#analysisContainer {
+#analysisContainer, #gtContainer {
 	font-family: Arial, "sans serif";
 	font-size: .7em;
 }
@@ -519,6 +519,6 @@ div.plotResultContainer h1 {
 	color: dimgrey;
 }
 
-.plotCurveToolBar {
+.downloadBtnInnerPage {
 	margin-top: 10px;
 }
