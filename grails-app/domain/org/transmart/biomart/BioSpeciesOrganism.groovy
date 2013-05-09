@@ -18,7 +18,7 @@
  ******************************************************************/
   
 
-package bio
+package org.transmart.biomart
 class BioSpeciesOrganism {
 		Long id
 		String species

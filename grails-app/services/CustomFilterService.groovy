@@ -30,19 +30,19 @@ class CustomFilterService{
 
 	def queryCustomFilters(searchUserId) {
 		
-		return search.CustomFilter.findAllBySearchUserId(Long.valueOf(searchUserId))
+		return org.transmart.searchapp.CustomFilter.findAllBySearchUserId(Long.valueOf(searchUserId))
 		
 	}
 	
 	def queryCustomFilter(id) {
 		
-		return search.CustomFilter.findAllById(Long.valueOf(id))
+		return org.transmart.searchapp.CustomFilter.findAllById(Long.valueOf(id))
 		
 	}
 	
 	def saveCustomFilter(customFilter) {
-		
-		search.CustomFilter.save();
+
+        org.transmart.searchapp.CustomFilter.save();
 		
 	}
 	

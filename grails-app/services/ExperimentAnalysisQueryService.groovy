@@ -590,7 +590,7 @@ class ExperimentAnalysisQueryService {
 			if (expfilter.filterSpecies())	{
 				query.addCondition(" abs(baad_platform.foldChangeRatio) >= " + expfilter.foldChange)
 			} else	{
-				query.addTable("bio.BioAssayAnalysisData baad_ffc")
+				query.addTable("org.transmart.biomart.BioAssayAnalysisData baad_ffc")
 				query.addCondition(" abs(baad_ffc.foldChangeRatio) >= " + expfilter.foldChange)
 				query.addCondition( query.mainTableAlias+".experiment = baad_ffc.experiment" )
 			}
@@ -612,7 +612,7 @@ class ExperimentAnalysisQueryService {
 			} else if (expfilter.filterFoldChange())	{
 				query.addCondition(" baad_ffc.preferredPvalue <= " + expfilter.pValue)
 			} else	{
-				query.addTable("bio.BioAssayAnalysisData baad_pv")
+				query.addTable("org.transmart.biomart.BioAssayAnalysisData baad_pv")
 				query.addCondition(" baad_pv.preferredPvalue <= " + expfilter.pValue)
 				query.addCondition( query.mainTableAlias+".experiment = baad_pv.experiment" )
 			}

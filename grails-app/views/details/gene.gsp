@@ -70,7 +70,7 @@
 		                id:'entrezGlobal',
 		                defaultSrc: "http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=${symbol}"
 					},
-				 </g:if>
+				 </g:if> /*
 				 <sec:ifNotGranted roles="ROLE_PUBLIC_USER">
 	 				 <g:if test="${isRWG==false}">
 			            {
@@ -96,7 +96,7 @@
 		                id:'genecard',
 		                defaultSrc:"http://www.genecards.org/cgi-bin/carddisp.pl?gene=${symbol}"
 		            },
-		         </sec:ifNotGranted>   
+		         </sec:ifNotGranted> */
 				 <g:if test="${isRWG==false}">
 					{
 		                title:"Google Scholar",

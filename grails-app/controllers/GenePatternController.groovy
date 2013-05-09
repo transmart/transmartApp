@@ -33,8 +33,10 @@ import org.quartz.JobDetail
 import org.quartz.JobExecutionContext
 import org.quartz.SimpleTrigger
 import org.transmart.searchapp.AccessLog;
-
-import search.SearchKeyword
+import org.transmart.searchapp.SearchKeyword
+import org.transmart.ExperimentData;
+import org.transmart.HeatmapValidator;
+import org.transmart.CohortInformation;
 
 import com.rdc.snp.haploview.PEDFormat
 

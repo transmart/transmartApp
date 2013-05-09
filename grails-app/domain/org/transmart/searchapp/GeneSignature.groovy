@@ -22,11 +22,10 @@ package org.transmart.searchapp
 import org.transmart.biomart.Compound
 import org.transmart.biomart.ConceptCode
 import org.transmart.biomart.BioAssayPlatform;
-import bio.Compound
-import bio.ConceptCode
+import org.transmart.biomart.Compound
+import org.transmart.biomart.ConceptCode
 import org.transmart.biomart.CellLine;
 import org.transmart.searchapp.SearchKeyword
-import search.SearchKeyword
 import com.recomdata.util.IDomainExcelWorkbook
 import com.recomdata.util.ExcelSheet
 import com.recomdata.util.ExcelGenerator

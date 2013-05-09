@@ -6,10 +6,10 @@
 
 import org.json.*
 
-import bio.BioAnalysisAttribute
-import bio.ClinicalTrial
-import bio.Experiment
-import bio.BioMarkerCorrelationMV
+import org.transmart.biomart.BioAnalysisAttribute
+import org.transmart.biomart.ClinicalTrial
+import org.transmart.biomart.Experiment
+import org.transmart.biomart.BioMarkerCorrelationMV
 
 import org.apache.commons.codec.binary.Base64
 
@@ -17,12 +17,12 @@ import RWGVisualizationDAO
 
 import grails.converters.*				// so we can render as JSON
 
-import search.SearchKeyword
-import search.SearchTaxonomy
-import search.SearchTaxonomyRels
-import search.GeneSignature
-import search.GeneSignatureItem
-import search.SavedFacetedSearch
+import org.transmart.searchapp.SearchKeyword
+import org.transmart.searchapp.SearchTaxonomy
+import org.transmart.searchapp.SearchTaxonomyRels
+import org.transmart.searchapp.GeneSignature
+import org.transmart.searchapp.GeneSignatureItem
+import org.transmart.searchapp.SavedFacetedSearch
 
 import groovy.time.TimeCategory;
 import groovy.time.TimeDuration;
@@ -521,7 +521,7 @@ class RWGController {
    
    private String getGeneSignatureErrorMessage(long gsKeywordId, boolean catchUnknownError)  {
 	   def geneSigs = GeneSignature.executeQuery("select gs.id, gs.name, gs.fileSchema.id " +
-		   " from search.SearchKeyword k_gs, search.GeneSignature gs" +
+		   " from org.transmart.searchapp.SearchKeyword k_gs, org.transmart.searchapp.GeneSignature gs" +
 		   " where k_gs.bioDataId = gs.id " +
 		   " and k_gs.id = ?", gsKeywordId)
 	   
@@ -550,7 +550,7 @@ class RWGController {
 	   }
 	   
 	   def geneSigItemCount = GeneSignature.executeQuery("select count(gsi.id)  " +
-		   " from search.GeneSignatureItem gsi " +
+		   " from org.transmart.searchapp.GeneSignatureItem gsi " +
 		   " where gsi.geneSignature.id = ?", geneSignatureId)
 
 	   if (geneSigItemCount[0].toString() == "0")  {
@@ -594,8 +594,8 @@ class RWGController {
 				   queryParams["tid"] = l
 
 				   def geneKeywords = SearchKeyword.executeQuery("select k_gsi.id " +
-						            " from search.SearchKeyword k_gs, search.GeneSignature gs," +
-									" search.GeneSignatureItem gsi, search.SearchKeyword k_gsi " +
+						            " from org.transmart.searchapp.SearchKeyword k_gs, org.transmart.searchapp.GeneSignature gs," +
+									" org.transmart.searchapp.GeneSignatureItem gsi, org.transmart.searchapp.SearchKeyword k_gsi " +
 									" where k_gs.bioDataId = gs.id " +
 									" and gs.id = gsi.geneSignature " +
 									" and gsi.bioMarker = k_gsi.bioDataId" + 
@@ -627,10 +627,10 @@ class RWGController {
 				   Long l = t.toLong()
 				   queryParams["tid"] = l
 				   def geneKeywords = SearchKeyword.executeQuery("select k_gene.id " +
-						            " from search.SearchKeyword k_pathway, bio.BioMarkerCorrelationMV b," +
-									" search.SearchKeyword k_gene " +
-									" where b.correlType = 'PATHWAY_GENE' " +  
-                                    " and b.bioMarkerId = k_pathway.bioDataId " + 
+						            " from org.transmart.searchapp.SearchKeyword k_pathway, org.transmart.biomart.BioMarkerCorrelationMV b," +
+									" org.transmart.searchapp.SearchKeyword k_gene " +
+									" where b.correlType = 'PATHWAY_GENE' " +
+                                    " and b.bioMarkerId = k_pathway.bioDataId " +
 									" and k_pathway.dataCategory = 'PATHWAY' " +
 									" and b.assoBioMarkerId = k_gene.bioDataId " +
 									" and k_gene.dataCategory = 'GENE' " +
@@ -1374,7 +1374,7 @@ class RWGController {
 
 				// retrieve information for each analysis
 			   def results = bio.BioAssayAnalysis.executeQuery("select b.id, b.longDescription " +
-						  						" from bio.BioAssayAnalysis b" +
+						  						" from org.transmart.biomart.BioAssayAnalysis b" +
 												  " where b.id in (" + aIds.join(',') +  ") ")
 					  			   
 			   aIds.each {aId->

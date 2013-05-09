@@ -1,10 +1,10 @@
 import org.apache.log4j.Logger
 import org.springframework.context.ApplicationContext
-import bio.BioMarkerCorrelationMV
-import search.SearchKeyword
+import org.transmart.biomart.BioMarkerCorrelationMV
+import org.transmart.searchapp.SearchKeyword
 import org.json.*
 
-import bio.BioAssayCohort
+import org.transmart.biomart.BioAssayCohort
 
 /**
  * $Id: $
