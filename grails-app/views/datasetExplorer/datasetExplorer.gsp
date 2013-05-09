@@ -37,12 +37,12 @@
 	src="${resource(dir:'js/sarissa', file: 'sarissa_ieemu_xpath.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js/javeline', file: 'javeline_xpath.js')}"></script>
-<g:javascript library="prototype" />
+<script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
   
 <script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script> 
@@ -77,21 +77,26 @@
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
 	<!-- Include JQuery stylesheets here: -->
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">
-	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
 	
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 	
 
  
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
+	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'metacore.css')}">
 	
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
 	
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
+		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+	
+	<script type="text/javascript" src="${resource(dir:'js/raphael', file:'raphael-min.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
 		
 	<!-- Combo-handled YUI JS files: --> 
-	<script type="text/javascript" src="${resource(dir:'js/yahoo/get', file:'get-min.js')}"></script> 
+	<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script> 
 	<style>
 		.ui-progressbar-value { background-image: url(images/pbar-ani.gif); }
 	</style> 
@@ -134,7 +139,6 @@
 	  PMproxy:${grailsApplication.config.com.recomdata.datasetExplorer.pmServiceProxy},
 	  CRCUrl: '',
 	  ONTUrl: '',
-	  usePMHost: '${grailsApplication.config.com.recomdata.datasetExplorer.usePMHost}',
 	  Config:'jj',
 	  CurrentQueryName:'',
 	  CurrentComparisonName:' ',
@@ -145,7 +149,7 @@
 	  CurrentChroms: '',
 	  CurrentDataType: '',
 	  GPURL: '${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}',
-	  EnableGP:'${grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled}',
+	  EnableGP:'${grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}',
 	  HeatmapType: 'Compare',
 	  IsAdmin: ${admin},
 	  Tokens: "${tokens}",
@@ -166,13 +170,19 @@
 	  preloadStudy: "${params.DataSetName}",
 	  Binning: false,
 	  ManualBinning: false,
-	  NumberOfBins: 4,	  
+	  NumberOfBins: 4,
+	  HelpURL: '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}',
+	  ContactUs: '${grailsApplication.config.com.recomdata.searchtool.contactUs}',
+	  AppTitle: '${grailsApplication.config.com.recomdata.searchtool.appTitle}',
+      BuildVersion: 'Build Version: <g:meta name="app.version"/> <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
 	  AnalysisRun: false,
 	  Analysis: 'Advanced',
 	  HighDimDataType: '',
 	  SNPType: '',
 	  basePath: pageInfo.basePath,
-	  hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}'
+	  hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
+	  metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
+	  metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}'
 	};
 	// initialize browser version variables; see http://www.quirksmode.org/js/detect.html
 	BrowserDetect.init();
@@ -183,12 +193,12 @@
 		}
 	}
 </script>
-<div id="header-div"><g:render template="/layouts/commonheader" model="[app:datasetExplorer]" /></div>
+<div id="header-div"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>
 <div id="main"></div>
 <h3 id="test">Loading....</h3>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
-	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled}">
+	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}">
 	<g:set var="gplogout" value="${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}/gp/logout"/>
 	</g:if>
 	<g:else>

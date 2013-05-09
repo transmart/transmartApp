@@ -18,43 +18,43 @@
  ******************************************************************/
   
 
-/**
- * $Id: GeneConverterTest.java 9178 2011-08-24 13:50:06Z mmcduffie $
- */
-package com.recomdata.etl.xml;
-
-import groovy.util.GroovyTestCase;
-
-/**
- * Unit test of the GeneConverter class
- * 
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
-public class GeneConverterTest extends GroovyTestCase {
-	private static GeneConverter gc = new GeneConverter();	
-	private static String name = "Unit Test";	
-
-	/**
-	 * Test method for {@link com.recomdata.etl.xml.GeneConverter#toString(java.lang.Object)}.
-	 */
-	public void testToStringObject() {
-		Gene g = new Gene();
-		g.setName(name);
-		assertEquals(gc.toString(g), name);		
-	}
-
-	/**
-	 * Test method for {@link com.recomdata.etl.xml.GeneConverter#fromString(java.lang.String)}.
-	 */
-	public void testFromString() {
-		assertNull(gc.fromString(name));
-	}
-
-	/**
-	 * Test method for {@link com.recomdata.etl.xml.GeneConverter#canConvert(java.lang.Class)}.
-	 */
-	public void testCanConvert() {
-		assertTrue(gc.canConvert(Gene.class));
-	}
-}
+/**
+ * $Id: GeneConverterTest.java 9178 2011-08-24 13:50:06Z mmcduffie $
+ */
+package com.recomdata.etl.xml;
+
+import groovy.util.GroovyTestCase;
+
+/**
+ * Unit test of the GeneConverter class
+ * 
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
+ */
+public class GeneConverterTest extends GroovyTestCase {
+	private static GeneConverter gc = new GeneConverter();	
+	private static String name = "Unit Test";	
+
+	/**
+	 * Test method for {@link com.recomdata.etl.xml.GeneConverter#toString(java.lang.Object)}.
+	 */
+	public void testToStringObject() {
+		Gene g = new Gene();
+		g.setName(name);
+		assertEquals(gc.toString(g), name);		
+	}
+
+	/**
+	 * Test method for {@link com.recomdata.etl.xml.GeneConverter#fromString(java.lang.String)}.
+	 */
+	public void testFromString() {
+		assertNull(gc.fromString(name));
+	}
+
+	/**
+	 * Test method for {@link com.recomdata.etl.xml.GeneConverter#canConvert(java.lang.Class)}.
+	 */
+	public void testCanConvert() {
+		assertTrue(gc.canConvert(Gene.class));
+	}
+}

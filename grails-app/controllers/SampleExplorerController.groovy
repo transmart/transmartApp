@@ -107,8 +107,10 @@ class SampleExplorerController {
 	 * This draws the simple HTML page that has the DIV that gets populated by the ExtJS datagrid.	
 	 */
 	def showDataSetResults =
-	{		
-		render(g.render(template:"dataSetResults").toString())
+	{
+		// With the Grails 2.0 upgrade, the straight render does not work here.  Using the g tag to get the content and then render it
+		String content = g.render(template:"dataSetResults")
+		render content
 	}
 	
 	/**

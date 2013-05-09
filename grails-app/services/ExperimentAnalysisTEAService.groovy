@@ -18,12 +18,15 @@
  ******************************************************************/
   
 
-import bio.BioMarker
-import bio.Compound
-import bio.Disease
-import bio.Experiment
-import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
+import org.transmart.ExperimentAnalysisResult;
+import org.transmart.SearchFilter;
+import org.transmart.biomart.BioAssayAnalysis;
+import org.transmart.biomart.BioAssayAnalysisData;
+
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Compound
+import org.transmart.biomart.Disease
+import org.transmart.biomart.Experiment
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.Query
 

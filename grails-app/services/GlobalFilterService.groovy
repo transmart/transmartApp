@@ -91,7 +91,7 @@ public class GlobalFilterService{
 
  /* def createExpandBioMarkerSubQuery(ids){
 	 StringBuilder s = new StringBuilder()
-	 s.append("SELECT DISTINCT marker.id FROM bio.BioMarker marker ")
+	 s.append("SELECT DISTINCT marker.id FROM org.transmart.biomart.BioMarker marker ")
 	 s.append(" LEFT JOIN marker.associatedCorrels marker_cor")
 	 s.append(" WHERE marker_cor.bioDataId IN (").append(ids).append(")")
 	 s.append (" AND marker_cor.correlationDescr.correlation='PATHWAY GENE'")

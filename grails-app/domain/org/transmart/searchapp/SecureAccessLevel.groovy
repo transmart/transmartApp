@@ -17,25 +17,24 @@ package org.transmart.searchapp
  * 
  *
  ******************************************************************/
-  
-
-
 class SecureAccessLevel {
 	static def OWN = "OWN"
-		Long accessLevelValue
-		Long id
-		String accessLevelName
- static mapping = {
-	 table 'SEARCH_SEC_ACCESS_LEVEL'
-	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-	 columns {
-		accessLevelValue column:'ACCESS_LEVEL_VALUE'
-		id column:'SEARCH_SEC_ACCESS_LEVEL_ID'
-		accessLevelName column:'ACCESS_LEVEL_NAME'
+	Long accessLevelValue
+	Long id
+	String accessLevelName
+	
+	static mapping = {
+		table 'SEARCH_SEC_ACCESS_LEVEL'
+		version false
+		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		columns {
+			accessLevelValue column:'ACCESS_LEVEL_VALUE'
+			id column:'SEARCH_SEC_ACCESS_LEVEL_ID'
+			accessLevelName column:'ACCESS_LEVEL_NAME'
 		}
 	}
- static constraints = {
-	accessLevelName(nullable:true, maxSize:400)
+	
+	static constraints = {
+		accessLevelName(nullable:true, maxSize:400)
 	}
 }

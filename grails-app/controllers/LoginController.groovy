@@ -78,8 +78,8 @@ class LoginController {
 		
 		def guestAutoLogin = grailsApplication.config.com.recomdata.guestAutoLogin;
 		boolean guestLoginEnabled = ('true'==guestAutoLogin)
-		log.info("enabled guest login")
-		//log.info("requet:"+request.getQueryString())
+		log.info("enabled guest login?: " + guestLoginEnabled);
+		//log.info("request:"+request.getQueryString())
 		boolean forcedFormLogin = request.getQueryString() != null
 		log.info("User is forcing the form login? : " + forcedFormLogin)
 		
@@ -87,19 +87,24 @@ class LoginController {
 		if(guestLoginEnabled && !forcedFormLogin){
 				log.info("proceeding with auto guest login")
 				def guestuser = grailsApplication.config.com.recomdata.guestUserName;
-
 				UserDetails ud = userDetailsService.loadUserByUsername(guestuser)
 				if(ud!=null){
 					log.debug("We have found user: ${ud.username}")
 					springSecurityService.reauthenticate(ud.username)
 					redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
-					
+					return
 				}else{
 					log.info("can not find the user:"+guestuser);
 				}
 			}
 
-		if (springSecurityService.isLoggedIn()) {
+		// patch for null pointer exception, see JIRA: http://transmartproject.org/jira/browse/TMPSTGSQL-146
+		boolean isLoggedIn = false;
+		try {
+			isLoggedin = springSecurityService.isLoggedIn()
+		} catch (Throwable ignore) {}
+		
+		if (isLoggedIn) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
 			/* For our IAPP purposes, disallow the ability for the user to force the form login.
@@ -112,7 +117,7 @@ class LoginController {
 				redirect(url: ivUrl)
 			} else  {
 				render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
-			}			
+			}
 		}
 	}
 		

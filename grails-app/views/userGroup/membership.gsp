@@ -28,6 +28,8 @@
    p { width:440px; }
         .ext-ie .x-form-text {position:static !important;}
   </style>
+  <g:javascript library="prototype" plugin="prototype"/>
+  <r:layoutResources/>
     </head>
     <body>
         <div class="body">
@@ -41,9 +43,9 @@
   <input type="text"  size="80" id="searchUsers" autocomplete="off" /></div>
   <script type="text/javascript">
 
-	var pageInfo = {
-			basePath :"${request.getContextPath()}"
-		}
+  var pageInfo = {
+	        basePath :"${request.getContextPath()}"
+	    }
   
   createUserSearchBox2('${request.getContextPath()}/userGroup/ajaxGetUserSearchBoxData', 440);
 
@@ -63,7 +65,7 @@
                 				<button class="" onclick="searchgroup();">Search Groups</button></td>
                      			<tr><td><b>Member of these groups</b></td><td></td><td><b>Available groups</b></td></tr>
                      			<tr id="groups">
-                                    <g:render template="addremoveg" model="[groupswithoutuser :groupswithoutuser]" />
+                                    <g:render template="addremoveg" model="['groupswithoutuser' :groupswithoutuser]" />
                                     </tr>
                                      </table>
                                 	</div>
@@ -71,5 +73,6 @@
                             </tr>
                         </tbody>
    <input type="hidden" id="currentprincipalid">
+    <r:layoutResources/>    
     </body>
 </html>

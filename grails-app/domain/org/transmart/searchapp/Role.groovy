@@ -1,4 +1,5 @@
 package org.transmart.searchapp
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -17,19 +18,7 @@ package org.transmart.searchapp
  * 
  *
  ******************************************************************/
-  
-
- /**
-  * $Id: Role.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
-  */
-
-/**
- * Authority domain class.
- */
 class Role {
-
 	// role types
 	static def ADMIN_ROLE = "ROLE_ADMIN"
 	static def STUDY_OWNER_ROLE = "ROLE_STUDY_OWNER"
@@ -38,18 +27,16 @@ class Role {
 	static def PUBLIC_USER_ROLE ="ROLE_PUBLIC_USER"
 	static def TRAINING_USER_ROLE ="ROLE_TRAINING_USER"
 
-
 	static hasMany = [people: AuthUser]
 
-	/** description */
 	String description
-	/** ROLE String */
 	String authority
 
 	static mapping = {
 		table 'SEARCH_ROLE'
 		people joinTable:[name:'SEARCH_ROLE_AUTH_USER', key:'PEOPLE_ID',column:'AUTHORITIES_ID']
 	}
+	
 	static constraints = {
 		authority(blank: false, unique: true)
 		description()

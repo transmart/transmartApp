@@ -333,7 +333,7 @@ function finalAdvancedMenuValidation()
 
 
 function runVisualizerFromSpan(viewerURL, altviewerURL) {	
-	genePatternLogin();	
+	//genePatternLogin();
 	Ext.Ajax.request(
 	{
 		url: viewerURL,

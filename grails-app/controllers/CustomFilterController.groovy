@@ -21,11 +21,12 @@
 /*
  * $Id: CustomFilterController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  */
+import org.transmart.GlobalFilter;
 import org.transmart.searchapp.AuthUser;
 
-import search.SearchKeyword
-import search.CustomFilter
-import search.CustomFilterItem
+import org.transmart.searchapp.SearchKeyword
+import org.transmart.searchapp.CustomFilter
+import org.transmart.searchapp.CustomFilterItem
 import grails.converters.*
 
 /**
@@ -150,7 +151,7 @@ class CustomFilterController {
 		return false
 	}
 
-	private createKeywordMapForGlobalFilter(GlobalFilter gfilter) {
+	def createKeywordMapForGlobalFilter(GlobalFilter gfilter) {
         def map = [:]
         def list
         list = gfilter.getGeneFilters()
@@ -189,7 +190,7 @@ class CustomFilterController {
         return map
 	}
 
-	private createKeywordMapForCustomFilter(CustomFilter filter) {
+	def createKeywordMapForCustomFilter(CustomFilter filter) {
 
 		def map = [:]
 		def uniqueIds = []
@@ -289,7 +290,7 @@ class CustomFilterController {
 	/**
 	 * Creates summary of filters with links to details for filters.
 	 */
-	private createSummaryWithLinks(keywordMap) {
+	def createSummaryWithLinks(keywordMap) {
 
 		def genes = createSummarySection("GENE", keywordMap)
 		def pathways = createSummarySection("PATHWAY", keywordMap)

@@ -29,11 +29,9 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
 import com.recomdata.transmart.data.export.util.FTPUtil;
 
@@ -45,22 +43,18 @@ public class ExportDataProcessor {
 
 	private static org.apache.log4j.Logger log = Logger
 			.getLogger(ExportDataProcessor.class);
-	@SuppressWarnings("rawtypes")
-	private static final Map config = ConfigurationHolder.getFlatConfig();
 
-	private static final String TEMP_DIR = (String) config.get("com.recomdata.plugins.tempFolderDirectory");
-
-	public InputStream getExportJobFileStream(String fileToGet) {
+	public InputStream getExportJobFileStream(String fileToGet, String tempDir, String ftpServer, String ftpServerPort, String ftpServerUserName, String ftpServerPassword, String ftpServerRemotePath) {
 		InputStream inputStream = null;
 		File jobZipFile = null;
 		try {
 			if (StringUtils.isEmpty(fileToGet))
 				return null;
 
-			inputStream = FTPUtil.downloadFile(true, fileToGet);
+			inputStream = FTPUtil.downloadFile(true, fileToGet, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath);
 			//If the file was not found at the FTP location try to download it from the server Temp dir
 			if (null == inputStream) {
-				String filePath = TEMP_DIR + File.separator + fileToGet;
+				String filePath = tempDir + File.separator + fileToGet;
 				jobZipFile = new File(filePath);
 				if (jobZipFile.isFile()) {
 					inputStream = new FileInputStream(jobZipFile);
@@ -74,10 +68,10 @@ public class ExportDataProcessor {
 	}
 
 	@SuppressWarnings("unused")
-	private String getZipFileName(String studyName) {
+	private String getZipFileName(String studyName, String tempDir) {
 		StringBuilder fileName = new StringBuilder();
 		DateFormat formatter = new SimpleDateFormat("MMddyyyyHHmmss");
-		fileName.append(TEMP_DIR);
+		fileName.append(tempDir);
 		fileName.append(studyName);
 		fileName.append(formatter.format(Calendar.getInstance().getTime()));
 		fileName.append(".zip");

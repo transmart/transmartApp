@@ -20,22 +20,20 @@
 
 import java.text.*;
 
+import org.transmart.AccessLogFilter;
 import org.transmart.searchapp.AccessLog;
 
 import com.recomdata.util.ExcelSheet;
 import com.recomdata.util.ExcelGenerator;
+
 class AccessLogController {
+
 	def searchService
 
 	def index = { redirect(action:list,params:params) }
 
 	// the delete, save and update actions only accept POST requests
 	static allowedMethods = [delete:'POST', save:'POST', update:'POST']
-
-	/*def list = {
-	 if(!params.max) params.max = grailsApplication.config.com.recomdata.search.paginate.max
-	 [ accessLogInstanceList: AccessLog.list( params ) ]
-	 }*/
 
 	def list = {
 		def startdatestr;
@@ -96,14 +94,7 @@ class AccessLogController {
 		order: pageMap['order']) {
 			between "accesstime", start, end
 		}
-		//def result = AccessLog.findAllByAccesstimeBetween(start,end, pageMap )
-		//def result2 = AccessLog.findAllByAccesstimeBetween(start,end)
-		//log.info "TESTcount:"+result3.totalCount
-		//log.info "COUNT:"+result2.size()
 		def totalcount=result3.totalCount
-		// cap max records at paging size * max steps
-	//	def maxRecs = grailsApplication.config.com.recomdata.search.paginate.max*grailsApplication.config.com.recomdata.search.paginate.maxsteps
-	//	if(totalcount>maxRecs) totalcount=maxRecs
 		render(view:'list',model:[accessLogInstanceList:result3, startdate: df1.format(filter.startdate), enddate: df1.format(filter.enddate), totalcount:totalcount])
 	}
 

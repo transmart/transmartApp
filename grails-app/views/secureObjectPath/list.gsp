@@ -46,8 +46,8 @@
                     <g:each in="${secureObjectPathInstanceList}" status="i" var="secureObjectPathInstance">
                         <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
                         
-                            <td><g:link action="show" id="${secureObjectPathInstance.id}">${fieldValue(bean:secureObjectPathInstance, field:'id')}</g:link></td>                        
-                            <td>${fieldValue(bean:secureObjectPathInstance, field:'conceptPath')}&nbsp&nbsp&nbsp&nbsp</td>                        
+                            <td><g:link action="show" id="${secureObjectPathInstance.id}">${fieldValue(bean:secureObjectPathInstance, field:'id')}</g:link></td>
+                            <td>${fieldValue(bean:secureObjectPathInstance, field:'conceptPath')}</td>
                             <td>${fieldValue(bean:secureObjectPathInstance, field:'secureObject')}</td>
                         
                         </tr>

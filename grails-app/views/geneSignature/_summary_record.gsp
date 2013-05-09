@@ -32,22 +32,29 @@
 	<td>${gs.tissueTypeConceptCode?.codeName?.encodeAsHTML()}</td>
 	<td id="${gs.id}Public" style="text-align:center;">${gs.publicFlag ? 'Public' : 'Private'}</td>
 	<td style="text-align:center;">${gs.createdByAuthUser.username}</td>
+	<td style="text-align:center;">${(gs.foldChgMetricConceptCode?.bioConceptCode=='NOT_USED') ? 'Yes' : 'No'}</td>
 	<g:hiddenField name="${gs.id}Owned" value="${(user.id==gs.createdByAuthUser.id)?'Owned':'Unowned'}"/>
 	<g:hiddenField name="${gs.id}Deleted" value="${gs.deletedFlag?'Deleted':'Undeleted'}"/>
 	<td style="text-align:center;">${(gs.foldChgMetricConceptCode.bioConceptCode=='NOT_USED') ? 'List' : 'Sig'}</td>
-	<td style="text-align:center;">
-		<g:if test="${ctLkup!=null}">
-			${ctLkup[1]}
-		</g:if>
+	<g:if test="${ctLkup!=null}">
+	<td style="text-align:center;">${ctLkup?.getAt(1)}</td>
+	<td style="text-align:center;">${ctLkup?.getAt(2)}</td>
+	<td style="text-align:center;">${ctLkup?.getAt(3)}</td>	
+	</g:if>
+	<g:else>
+	<td style="text-align:center;">0</td>
+	<td style="text-align:center;">0</td>
+	<td style="text-align:center;">0</td>		
+	</g:else>
+	<td><select name="action_${gs.id}" style="font-size: 10px;" onchange="handleActionItem(this, ${gs.id});">
+			<option value="">-- Select Action --</option>							             		                    	
+			<option value="clone">Clone</option>	                    								
+			<g:if test="${!gs.deletedFlag && ownerFlag}"><option value="delete">Delete</option></g:if>	                    								
+			<g:if test="${ownerFlag}"><option value="edit">Edit</option></g:if>	      
+			<g:if test="${ownerFlag}"><option value="showEditItems">Edit Items</option></g:if>	                    								              	
+			<option value="export">Excel Download</option>
+			<option value="gmt">Download .GMT file</option>
+			<g:if test="${!gs.publicFlag && ownerFlag}"><option value="public">Make Public</option></g:if>
+     	</select>
 	</td>
-	<td style="text-align:center;">
-		<g:if test="${ctLkup!=null}">
-			${ctLkup[2]}
-		</g:if>
-	</td>
-	<td style="text-align:center;">
-		<g:if test="${ctLkup!=null}">
-			${ctLkup[3]}
-		</g:if>
-	</td>	
 </tr>		     

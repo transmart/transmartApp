@@ -52,11 +52,11 @@
                         
                             <td><g:link action="show" id="${secureObjectInstance.id}">${fieldValue(bean:secureObjectInstance, field:'id')}</g:link></td>
                         
-                            <td>${fieldValue(bean:secureObjectInstance, field:'bioDataId')}&nbsp&nbsp&nbsp&nbsp</td>
+                            <td>${fieldValue(bean:secureObjectInstance, field:'bioDataId')}</td>
                         
-                            <td>${fieldValue(bean:secureObjectInstance, field:'dataType')}&nbsp&nbsp&nbsp&nbsp</td>
+                            <td>${fieldValue(bean:secureObjectInstance, field:'dataType')}</td>
                         
-                            <td>${fieldValue(bean:secureObjectInstance, field:'bioDataUniqueId')}&nbsp&nbsp&nbsp&nbsp</td>
+                            <td>${fieldValue(bean:secureObjectInstance, field:'bioDataUniqueId')}</td>
                         
                             <td>${fieldValue(bean:secureObjectInstance, field:'displayName')}</td>
                         </tr>

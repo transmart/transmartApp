@@ -16,7 +16,7 @@
   
  
 -->
-<%@ page import="org.transmart.searchapp.Requestmap" %>
+<%@ page import="org.transmart.searchapp.Requestmap"%>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -42,9 +42,9 @@
 				<tbody>
 				<g:each in="${requestmapList}" status="i" var="requestmap">
 					<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-						<td>${requestmap.id}&nbsp&nbsp&nbsp&nbsp</td>
-						<td>${requestmap.url?.encodeAsHTML()}&nbsp&nbsp&nbsp&nbsp</td>
-						<td>${requestmap.configAttribute}&nbsp&nbsp&nbsp&nbsp</td>
+						<td>${requestmap.id}</td>
+						<td>${requestmap.url?.encodeAsHTML()}</td>
+						<td>${requestmap.configAttribute}</td>
 						<td class="actionButtons">
 							<span class="actionButton">
 							<g:link action="show" id="${requestmap.id}">Show</g:link>

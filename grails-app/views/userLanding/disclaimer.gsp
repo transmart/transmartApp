@@ -27,11 +27,7 @@
 		<img style="display: block; margin: 12px auto;" src="${resource(dir:'images',file:grailsApplication.config.com.recomdata.searchtool.largeLogo)}" alt="Transmart" />
 		<center><h3>ATTENTION: Users of ${grailsApplication.config.com.recomdata.searchtool.appTitle}</h3></center>
 		<div style="text-align: justify; margin: 12px;">
-		  <p>Results of any data analysis generated from this Data Warehouse originating from Centocor or J&J sponsored clinical studies that is planned to be presented either internally or externally will need to be reviewed by the biomarker and clinical reps for a specific study/program prior to any presentations.</p>
-          <br><p>Not adhering to this will result in escalation of the issue to senior management.</p>
-          <br><p>If you are not clear whether a particular type of analysis has been completed on a specific dataset please contact the biomarker rep for a specific study/program.</p>
-          <br><p>Access to any relevant completed technical reports or publications will be provided as links in the Data Warehouse to prevent any unnecessary re-analysis of datasets.</p>
-          <p></p>
+			${grailsApplication.config.com.recomdata.disclaimer}
 		</div>
 		<center>		
 			<g:form name="disclaimer" method="post" id="disclaimerForm">

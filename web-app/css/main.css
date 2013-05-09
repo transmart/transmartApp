@@ -881,8 +881,18 @@ table.jubsummary td {
     height:500px; 
 }
 
+.resnetTab {
+    background-image:url(../images/pathway.png ) !important;
+    color:#ff0000;
+}
+
 .genegoTab {
     background-image:url(../images/genego.png ) !important;
+    color:#ff0000;
+}
+
+.cortellisTab {
+    background-image:url(../images/thomsonreuters.png ) !important;
     color:#ff0000;
 }
 
@@ -989,6 +999,11 @@ select.jubselect {
 
 .exportSummaryBtn {
     background-image:url(../images/excel.png ) !important;
+    color:#ff0000;
+}
+
+.exportResNetBtn {
+    background-image:url(../images/download.png ) !important;
     color:#ff0000;
 }
 
@@ -1134,4 +1149,13 @@ td.prop, td.name {line-height: normal;}
 table.jobstatus {
 	background-color:#fff;
 	 font:12px tahoma, arial, helvetica, sans-serif;
+}
+
+.utilities-div {
+    position:absolute;
+    width:100px;
+    top:0;
+    right:0;
+    height:24px;
+    z-index:100;
 }

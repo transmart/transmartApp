@@ -118,8 +118,7 @@ function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
  * Determine if we are dealing with genotype or copy number
  */
 function determineHighDimVariableType(result){
-	var mobj = Ext.util.JSON.decode(result.responseText);
-	//var mobj=result.responseText.evalJSON();
+	var mobj=result.responseText.evalJSON();
 	GLOBAL.HighDimDataType=mobj.markerType;
 }
 
@@ -131,8 +130,7 @@ function determineHighDimVariableType(result){
 function readCohortData(result, divId)
 {
 	//Get the JSON string we got from the server into a real JSON object.
-	//var mobj=result.responseText.evalJSON();
-	var mobj = Ext.util.JSON.decode(result.responseText);
+	var mobj=result.responseText.evalJSON();
 	
 	//If we failed to retrieve any test from the heatmap server call, we alert the user here. Otherwise, show the popup.
 	if(mobj.NoData && mobj.NoData == "true")
@@ -223,7 +221,7 @@ function runQueryForSubsetId(subset, callback, divId)
 	queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
 	Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/proxy?url=" + GLOBAL.CRCUrl + "request",
+				url : pageInfo.basePath + "/queryTool/runQueryFromDefinition",
 				method : 'POST',
 				xmlData : query,
 				// callback : callback,
@@ -251,7 +249,7 @@ function runQueryForSubsetidSingleSubset(callback, divId){
 	var query = getCRCRequestSingleSubset(divId);
 	Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/proxy?url=" + GLOBAL.CRCUrl + "request",
+				url : pageInfo.basePath + "/queryTool/runQueryFromDefinition",
 				method : 'POST',
 				xmlData : query,
 				// callback : callback,
@@ -289,24 +287,16 @@ function getCRCRequest(subset, queryname, divId){
 		var d=new Date();
 		queryname=GLOBAL.Username+"'s Query at "+ d.toString();
 		}
-	var query=getCRCRequestHeader()+ '<user group="'+GLOBAL.ProjectID+'" login="'+GLOBAL.Username+'">'+GLOBAL.Username+'</user>\
-	            <patient_set_limit>0</patient_set_limit>\
-	            <estimated_time>0</estimated_time>\
-	            <request_type>CRC_QRY_runQueryInstance_fromQueryDefinition</request_type>\
-	        </ns4:psmheader>\
-	        <ns4:request xsi:type="ns4:query_definition_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\
-					<query_definition>\
+	var query= '<ns4:query_definition xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\
 	                <query_name>'+queryname+'</query_name>\
 	                <specificity_scale>0</specificity_scale>';
 	
-
-
-		var qcd=Ext.get(divId);
-		if(qcd.dom.childNodes.length>0)
-		{
+	var qcd=Ext.get(divId);
+	
+	if(qcd.dom.childNodes.length>0)
+	{
 		query=query+getCRCRequestPanel(qcd.dom, 1);
-		}
-
+	}
 	
 	for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
 	{
@@ -317,7 +307,7 @@ function getCRCRequest(subset, queryname, divId){
 		}
 	}
 	
-	query=query+getSecurityPanel()+"</query_definition>"+getCRCRequestFooter();
+	query=query+getSecurityPanel()+"</ns4:query_definition>";
 	//query=query+"</query_definition>"+getCRCRequestFooter();
 	return query;
 }
@@ -327,27 +317,18 @@ function getCRCRequestSingleSubset(divId, queryname){
 		var d=new Date();
 		queryname=GLOBAL.Username+"'s Query at "+ d.toString();
 		}
-	var query=getCRCRequestHeader()+ '<user group="'+GLOBAL.ProjectID+'" login="'+GLOBAL.Username+'">'+GLOBAL.Username+'</user>\
-	            <patient_set_limit>0</patient_set_limit>\
-	            <estimated_time>0</estimated_time>\
-	            <request_type>CRC_QRY_runQueryInstance_fromQueryDefinition</request_type>\
-	        </ns4:psmheader>\
-	        <ns4:request xsi:type="ns4:query_definition_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\
-					<query_definition>\
-	                <query_name>'+queryname+'</query_name>\
-	                <specificity_scale>0</specificity_scale>';
+	var query= '<ns4:query_definition xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\
+        <query_name>'+queryname+'</query_name>\
+        <specificity_scale>0</specificity_scale>';
 	
-
 	var qcd=Ext.get(divId);
 	
 	if(qcd.dom.childNodes.length>0)
 	{
 		query=query+getCRCRequestPanel(qcd.dom, 1);
-
 	}
-
 	
-	query=query+getSecurityPanel()+"</query_definition>"+getCRCRequestFooter();
+	query=query+getSecurityPanel()+"</ns4:query_definition>";
 	//query=query+"</query_definition>"+getCRCRequestFooter();
 	return query;
 }
@@ -375,7 +356,7 @@ function applyToForm(){
 	window[divId+'samplesValues']		= GLOBAL.CurrentSamples;
 	window[divId+'tissuesValues']		= GLOBAL.CurrentTissues;
 	window[divId+'timepointsValues']	= GLOBAL.CurrentTimepoints;
-	window[divId+'gplValues']			= GLOBAL.CurrentGpls;	
+	window[divId+'gplValues']			= GLOBAL.CurrentGpls.toArray();	
 	
 	displayHighDimSelectionSummary(subsetCount, divId, probesAgg, snpType);
 
@@ -539,7 +520,7 @@ function toggleDataAssociationFields(extEle){
 	}
 	
 	//display the appropriate submit button
-	if(GLOBAL.Analysis=="dataAssociation"){
+	if(GLOBAL.Analysis=="dataAssociation" || GLOBAL.Analysis=='MetaCoreEnrichment'){
 		document.getElementById("compareStepPathwaySelectionOKButton").style.display="none";
 		document.getElementById("dataAssociationApplyButton").style.display="";
 	}else if(GLOBAL.Analysis=='Advanced'){

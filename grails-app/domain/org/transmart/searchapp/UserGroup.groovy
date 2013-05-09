@@ -1,4 +1,5 @@
 package org.transmart.searchapp
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -17,28 +18,14 @@ package org.transmart.searchapp
  * 
  *
  ******************************************************************/
-  
-
- /**
-  * $Id: UserGroup.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
-  */
-
-/**
- * Group class.
- */
 class UserGroup extends Principal{
 
-	String groupCategory;
+	String groupCategory
 
 	static hasMany = [members:AuthUser]
-	//static belongsTo = AuthUser
-
 
 	static mapping = {
 		table 'SEARCH_AUTH_GROUP'
-
 		columns
 		{
 			groupCategory column:'GROUP_CATEGORY'
@@ -51,10 +38,9 @@ class UserGroup extends Principal{
 	static constraints = {
 
 	}
-
+	
 	public UserGroup(){
-		groupCategory='USER_GROUP';
-		this.type ='GROUP';
-
+		groupCategory='USER_GROUP'
+		this.type ='GROUP'
 	}
 }

@@ -16,14 +16,7 @@
  * 
  *
  ******************************************************************/
-  
-
- /**
-  * $Id: BootStrap.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
-  */
-
+ 
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils

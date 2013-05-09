@@ -165,7 +165,7 @@
             		<g:if test="${gs.foldChgMetricConceptCode?.bioConceptCode!='NOT_USED'}"><td><g:textField name="foldChgMetric_${n}" maxlength="20" /></td></g:if>
       			</g:else>
 	
-				<td style="text-align: center;"><img alt="remove item" onclick="removeNewItem(${n});" src="${resource(dir:'images',file:'remove.png')}" /></td>
+				<td style="text-align: center;"><img alt="remove item" onclick="javascript:removeNewItem(${n});" src="${resource(dir:'images',file:'remove.png')}" /></td>
 			</tr>
 		</g:while>
 		</tbody>     
@@ -173,6 +173,7 @@
 	
 	<div class="buttons">
 		<g:actionSubmit class="save" action="addItems" value="Add Items" />
+		<g:actionSubmit class="delete" action="deleteItems" value="Delete Checked" onclick="return confirm('Are you sure you want to delete these items?')" />
 		<g:actionSubmit class="cancel" action="refreshSummary" onclick="return confirm('Are you sure you want to exit?')" value="Cancel" />
 	</div>	   	
    	   	

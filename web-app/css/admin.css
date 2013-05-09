@@ -16,6 +16,14 @@ padding: 0px 0px;
 text-align:left;
 }
 
+
+/* --------------------------------------*/
+/* HEADER                                */
+/* --------------------------------------*/
+#header {
+height: 34px;
+}
+
 /* --------------------------------------*/
 /* CONTENT                               */
 /* --------------------------------------*/
@@ -131,4 +139,13 @@ width:300px;
 .addremovebuttonholder
 {
 	vertical-align:middle;
+}
+
+.admin-utilities-div {
+    position:absolute;
+    width:100px;
+    top:0;
+    right:0;
+    height:24px;
+    z-index:100;
 }

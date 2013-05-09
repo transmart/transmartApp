@@ -31,6 +31,7 @@
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'maintabpanel.js')}"></script>		
 		<script type="text/javascript" src="${resource(dir:'js', file:'toggle.js')}"></script>
+		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>		
 		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
         <script>jQuery.noConflict();</script>
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>
@@ -41,6 +42,23 @@
 			Ext.Ajax.timeout = 180000;
             Ext.onReady(function()
 	        {
+            	   Ext.QuickTips.init()
+            	   
+            	   var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+                   var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
+                   var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
+                   var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
+                   
+                   var viewport = new Ext.Viewport({
+                    layout: "border",
+                    items:[new Ext.Panel({                          
+                       region: "center",  
+                       tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'gs-utilities-div'),  
+                       autoScroll:true,                    
+                       contentEl: "page"
+                    })]
+                  });
+                  viewport.doLayout();
             	   Ext.QuickTips.init();            	  	                
 	        });
 		</script>
@@ -48,8 +66,8 @@
 	</head>
 	<body>
 		<div id="page">
-			<div id="header-div"><g:render template="/layouts/commonheader"	model="['app':'genesignature']" /></div>
-			<div id="content"><g:layoutBody /></div>
+			<div id="header"><g:render template="/layouts/commonheader"	model="['app':'genesignature']" /></div>
+			<div id="app"><g:layoutBody /></div>
 		</div>
 	</body>
 </html>

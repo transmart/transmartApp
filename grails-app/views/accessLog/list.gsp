@@ -22,6 +22,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
         <meta name="layout" content="admin" />
         <title>AccessLog List</title>
+        <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
+		<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
+		<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">
     </head>
     <body>
     <div class="body">
@@ -57,10 +60,13 @@
                     </thead>
                     <tbody>
                     <g:each in="${accessLogInstanceList}" status="i" var="accessLogInstance">
-                        <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">                        
-                        	<td>${fieldValue(bean:accessLogInstance, field:'accesstime')}&nbsp&nbsp&nbsp&nbsp</td>
-                            <td>${fieldValue(bean:accessLogInstance, field:'username')}&nbsp&nbsp&nbsp&nbsp</td>                        
-                            <td>${fieldValue(bean:accessLogInstance, field:'event')}&nbsp&nbsp&nbsp&nbsp</td>                        
+                        <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
+                        
+                        	<td>${fieldValue(bean:accessLogInstance, field:'accesstime')}</td>
+                            <td>${fieldValue(bean:accessLogInstance, field:'username')}</td>
+                        
+                            <td>${fieldValue(bean:accessLogInstance, field:'event')}</td>
+                        
                             <td>${fieldValue(bean:accessLogInstance, field:'eventmessage')}</td>                        
                         </tr>
                     </g:each>
@@ -75,12 +81,12 @@
             </div>      
         </div> 
             <script>
-        	jQuery(function() {
-            	jQuery("#startdate").datepicker();
-            });
-            jQuery(function() {
-                jQuery("#enddate").datepicker();
-            });
-            </script>     
-    </body>
+            	jQuery(function() {
+                	jQuery("#startdate").datepicker();
+                });
+                jQuery(function() {
+                    jQuery("#enddate").datepicker();
+                });
+            </script>    
+	</body>
 </html>

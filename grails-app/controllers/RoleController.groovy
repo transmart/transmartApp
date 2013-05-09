@@ -20,17 +20,6 @@ import org.springframework.dao.DataIntegrityViolationException
  * 
  *
  ******************************************************************/
-  
-
- /**
- * $Id: RoleController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
-
-/**
- * Authority Controller.
- */
 class RoleController {
 	
 	// the delete, save and update actions only accept POST requests
@@ -67,30 +56,30 @@ class RoleController {
 	}
 	
 	/**
-	 * Delete a role	
+	 * Delete an authority.
 	 */
 	def delete = {
 		def role = Role.get(params.id)
-		try {
-			role.delete()
-			flash.message = "Role $params.id deleted."
-			redirect action: list
-		} catch (DataIntegrityViolationException e) {
-			flash.message = "Unable to delete the role"
-			log.error(e.getLocalizedMessage(), e)
-			redirect action: show, id: params.id
-		} catch (MissingMethodException mme)    {
-			flash.message = "Unable to delete the role"
-			log.error(mme.getLocalizedMessage(), mme)
-			redirect action: show, id: params.id
-		}
-		
-		def msg = "$role.authority has been deleted."
-		def authPrincipal = springSecurityService.getPrincipal()
-		flash.message = msg
-		new AccessLog(username:authPrincipal.username, event:"Role Deleted",
-			eventmessage: msg,
-			accesstime:new Date()).save()
+        try {
+            role.delete()
+            flash.message = "Role $params.id deleted."
+            redirect action: list
+        } catch (DataIntegrityViolationException e) {
+            flash.message = "Unable to delete the role"
+            log.error(e.getLocalizedMessage(), e)
+            redirect action: show, id: params.id
+        } catch (MissingMethodException mme)    {
+            flash.message = "Unable to delete the role"
+            log.error(mme.getLocalizedMessage(), mme)
+            redirect action: show, id: params.id
+        }
+        
+        def msg = "$role.authority has been deleted."
+        def authPrincipal = springSecurityService.getPrincipal()
+        flash.message = msg
+        new AccessLog(username:authPrincipal.username, event:"Role Deleted",
+            eventmessage: msg,
+            accesstime:new Date()).save()
 	}
 	
 	/**

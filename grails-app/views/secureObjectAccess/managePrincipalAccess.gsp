@@ -16,10 +16,8 @@
   
  
 -->
-
 <%@ page import="org.transmart.searchapp.SecureObject" %>
 <%@ page import="org.transmart.searchapp.SecureAccessLevel" %>
-
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

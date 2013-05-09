@@ -23,8 +23,10 @@
  import java.io.StringWriter
  import java.util.StringTokenizer
  import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.transmart.SearchFilter;
+
  import com.recomdata.search.DocumentQuery
- import com.recomdata.search.DocumentHit
+import com.recomdata.search.DocumentHit
 
  /**
   * $Id: DocumentService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

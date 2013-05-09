@@ -20,11 +20,11 @@
 
 import org.transmart.searchapp.AuthUser;
 
-import search.SearchKeyword
-import search.GeneSignature
-import bio.Experiment
-import bio.Compound
-import bio.Disease
+import org.transmart.searchapp.SearchKeyword
+import org.transmart.searchapp.GeneSignature
+import org.transmart.biomart.Experiment
+import org.transmart.biomart.Compound
+import org.transmart.biomart.Disease
 
 /**
  *$Id: SearchHelpController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -65,10 +65,10 @@ public class SearchHelpController{
 	def loadPathways = {
 
 		def step = params.step ? params.step : "A-C"
-		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from search.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
+		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource, upper(k.dataSource) from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
 		def defaultsource = datasources.size()>0? datasources[0]:'GeneGo'
 	    def dataSource = params.datasource ? params.datasource : defaultsource;
-		def sql = "select k from search.SearchKeyword k where dataSource='" + dataSource + "' "
+		def sql = "select k from org.transmart.searchapp.SearchKeyword k where dataSource='" + dataSource + "' "
 		if ("Other".equals(step)) {
 			sql += "and upper(substr(k.keyword, 1, 1)) not between 'A' and 'Z' "
 		} else {
@@ -82,12 +82,12 @@ public class SearchHelpController{
 	def listAllPathways = {
 	//	def dataSource = params.datasource ? params.datasource : "GeneGO"
 		def step = params.step ? params.step : "A-C"
-		//def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from search.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
-		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from search.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)");
+		//def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
+		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource, upper(k.dataSource) from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)");
 		def defaultsource = datasources.size()>0? datasources[0]:'GeneGo'
 		def dataSource = params.datasource ? params.datasource : defaultsource;
 
-		def sql = "select k from search.SearchKeyword k where dataSource='" + dataSource + "' "
+		def sql = "select k from org.transmart.searchapp.SearchKeyword k where dataSource='" + dataSource + "' "
 		if ("Other".equals(step)) {
 			sql += "and upper(substr(k.keyword, 1, 1)) not between 'A' and 'Z' "
 		} else {
@@ -100,12 +100,12 @@ public class SearchHelpController{
 	}
 
 	def listAllTrials = {
-		def all = SearchKeyword.executeQuery("SELECT s, e FROM SearchKeyword s, bio.Experiment e WHERE s.dataCategory='TRIAL' AND s.bioDataId=e.id ORDER BY s.keyword")
+		def all = SearchKeyword.executeQuery("SELECT s, e FROM SearchKeyword s, org.transmart.biomart.Experiment e WHERE s.dataCategory='TRIAL' AND s.bioDataId=e.id ORDER BY s.keyword")
 		render(view:'trialhelp', model:[trials:all])
 	}
 
 	def listAllDiseases = {
-		//def all = SearchKeyword.executeQuery("SELECT s, d FROM SearchKeyword s, bio.Disease d WHERE s.dataCategory='DISEASE' AND s.bioDataId=d.id ORDER BY s.keyword")
+		//def all = SearchKeyword.executeQuery("SELECT s, d FROM SearchKeyword s, org.transmart.biomart.Disease d WHERE s.dataCategory='DISEASE' AND s.bioDataId=d.id ORDER BY s.keyword")
 
 		def all = SearchKeyword.findAllByDataCategory("DISEASE", [sort:"keyword", cache:'read-only'])
 			//SearchKeyword.executeQuery("SELECT s FROM SearchKeyword s WHERE s.dataCategory='DISEASE' ORDER BY s.keyword")
@@ -113,7 +113,7 @@ public class SearchHelpController{
 	}
 
 	def listAllCompounds = {
-		def all = SearchKeyword.executeQuery("SELECT s, c FROM SearchKeyword s, bio.Compound c WHERE s.dataCategory='COMPOUND' AND s.bioDataId=c.id ORDER BY s.keyword")
+		def all = SearchKeyword.executeQuery("SELECT s, c FROM SearchKeyword s, org.transmart.biomart.Compound c WHERE s.dataCategory='COMPOUND' AND s.bioDataId=c.id ORDER BY s.keyword")
 		render(view:'compoundhelp', model:[compounds:all])
 	}
 

@@ -77,6 +77,11 @@ class GenePatternService implements Job {
 	    log.info("${jobName} has been triggered to run ")
 	   
 	    def jobDataMap = jobDetail.getJobDataMap()
+	    if (log.isDebugEnabled())	{
+		    jobDataMap.getKeys().each {_key ->
+		 	   log.debug("\t${_key} -> ${jobDataMap[_key]}")
+		    }
+	    } 
 	   
 		// Note: this is a superset of all parameters for all of the different analysis types.  
 		// Some will be present, others will not depending on the type of job

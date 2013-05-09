@@ -60,7 +60,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -71,6 +70,7 @@ import java.sql.*;
 import org.jfree.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.transmart.CohortInformation;
 import org.transmart.searchapp.AuthUser;
 import org.transmart.searchapp.AuthUserSecureAccess;
 import org.transmart.searchapp.SecureObjectPath;
@@ -84,6 +84,8 @@ import org.Hibernate.*;
 
 import com.recomdata.db.DBHelper;
 import com.recomdata.export.*;
+
+import com.recomdata.i2b2.SurvivalConcepts;
 
 /**
  * i2b2HelperService
@@ -256,8 +258,7 @@ class I2b2HelperService {
 		sql.eachRow("select dgi.marker_type from concept_dimension cd, de_gpl_info dgi where cd.concept_path like('%'||dgi.title||'%') "+
 				"and cd.concept_cd = ?",[conceptCd], {row ->
 					markerType = row.marker_type
-		})
-		
+		})		
 		if(markerType==""){
 			log.error("No marker type defined for concept cd "+conceptCd+" in DE_GPL_INFO");
 		}
@@ -402,9 +403,10 @@ class I2b2HelperService {
 		log.trace("Getting patient set size with id:" + result_instance_id);
 		Integer i=0;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = """select count(*) as patcount FROM (select distinct patient_num
-		        from qt_patient_set_collection
-				where result_instance_id = ?)""";
+
+		String sqlt = """select count(distinct(patient_num)) as patcount FROM qt_patient_set_collection
+				where result_instance_id = ?""";
+
 		log.trace(sqlt);
 		sql.eachRow(sqlt, [result_instance_id], {row ->
 			log.trace("inrow");
@@ -441,6 +443,10 @@ class I2b2HelperService {
 	 */
 	def String clobToString(clob) {
 		if(clob==null) return "";
+        if (clob instanceof java.lang.String)
+        {
+            return clob;
+        }
 		def buffer = new byte[1000];
 		def num = 0;
 		def inStream = clob.asciiStream;
@@ -4722,13 +4728,13 @@ class I2b2HelperService {
 			    pw.write("<tr><th>${title}</th></tr>")
 			    pw.write("<tr>")
 			    pw.write("<td>")
-				log.debug("Integrating over the nodes...")
+				log.debug("Interating over the nodes...")
 			    for (int p = 0; p < panels.getLength(); p++) {
 					panel=panels.item(p)
 				    Node panelnumber=(Node)xpath.evaluate("panel_number", panel, XPathConstants.NODE)
 				    
-					if(panelnumber.getTextContent().equalsIgnoreCase("21"))	{
-						log.debug("Skipping the security panel in printing the output")
+					if(panelnumber?.getTextContent()?.equalsIgnoreCase("21")) {
+                        log.debug("Skipping the security panel in printing the output")
 						continue
 					}
 				    
@@ -4737,7 +4743,7 @@ class I2b2HelperService {
 				    }
 				    
 					Node invert=(Node)xpath.evaluate("invert", panel, XPathConstants.NODE)
-				    if(invert.getTextContent().equalsIgnoreCase("1")) {
+				    if(invert?.getTextContent()?.equalsIgnoreCase("1")) {
 					    pw.write("<br><b>NOT</b><br>")
 	  			    } 
 				   
@@ -4797,13 +4803,11 @@ class I2b2HelperService {
 		def rootlevel=-1;
 		String xml;
 		def ls=[:];
-		//int i=getLevelFromKey(concept_key)+1;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		String mlevelsql = "SELECT MIN(C_HLEVEL) AS mlevel FROM i2b2metadata.i2b2_SECURE";
-		sql.eachRow(mlevelsql, {row ->
-			rootlevel=row.mlevel;
-			})
-
+ 		String mlevelsql = "SELECT MIN(C_HLEVEL) AS mlevel FROM i2b2metadata.i2b2_SECURE";	
+ 		sql.eachRow(mlevelsql, {row ->	
+ 		rootlevel=row.mlevel;	
+     		})
 		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [rootlevel], {row ->
 			String fullname=row.c_fullname;

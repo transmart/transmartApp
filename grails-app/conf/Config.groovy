@@ -82,12 +82,14 @@ grails.mime.types = [ html: [
 		'text/json'
 	],
 	form: 'application/x-www-form-urlencoded',
-	multipartForm: 'multipart/form-data'
+	multipartForm: 'multipart/form-data',
+	jnlp: 'application/x-java-jnlp-file'
 ]
 // The default codec used to encode data with ${}
 grails.views.default.codec="none" // none, html, base64
 grails.views.gsp.encoding="UTF-8"
 grails.converters.encoding="UTF-8"
+grails.converters.default.pretty.print=true
 
 // enabled native2ascii conversion of i18n properties files
 grails.enable.native2ascii = true
@@ -103,7 +105,7 @@ com.recomdata.admin.paginate.max=20
 //SUBJECT Data.
 com.recomdata.i2b2.subject.domain = 'i2b2demo'
 com.recomdata.i2b2.subject.projectid = 'i2b2demo'
-com.recomdata.i2b2.subject.username = 'Demo'
+com.recomdata.i2b2.subject.username = 'i2b2'
 com.recomdata.i2b2.subject.password = 'demouser'
 
 //SAMPLE Data.
@@ -111,6 +113,10 @@ com.recomdata.i2b2.sample.domain = 'i2b2demo'
 com.recomdata.i2b2.sample.projectid = 'i2b2demo'
 com.recomdata.i2b2.sample.username = 'sample'
 com.recomdata.i2b2.sample.password = 'manager'
+
+//core-db settings
+org.transmartproject.i2b2.user_id = 'i2b2'
+org.transmartproject.i2b2.group_id = 'Demo'
 //**************************
 
 
@@ -153,7 +159,9 @@ com.recomdata.analysis.survival.censorFlagList = [
 	'(DURTFICS)'
 ];
 
-com.recomdata.analysis.genepattern.file.dir = "genepattern"; // Relative to the app root "web-app"
+com.recomdata.analysis.genepattern.file.dir = "data"; // Relative to the app root "web-app" - deprecated - replaced with data.file.dir
+
+com.recomdata.analysis.data.file.dir = "data"; // Relative to the app root "web-app"
 
 //StringBuilder disclaimer = new StringBuilder()
 //disclaimer.append("<p></p>")
@@ -164,30 +172,5 @@ com.recomdata.analysis.genepattern.file.dir = "genepattern"; // Relative to the 
 //com.recomdata.view.studyview='_clinicaltrialdetail'
 com.recomdata.skipdisclaimer=true
 
-grails.spring.bean.packages = []	
-// development env log4j settings - prod should reconfigure it
-environments {
-	development {
+grails.spring.bean.packages = []
 
-log4j = {
-	appenders {
-		// set up a log file in the standard tomcat area; be sure to use .toString() with ${}
-		rollingFile name:'tomcatLog', file:"${appName}.log".toString(), maxFileSize:'1024KB', layout:pattern(conversionPattern: '[%p] %d{HH:mm:ss} (%c{5}:%M:%L) | %m%n')
-		'null' name:'stacktrace'
-	}
-
-	root {
-		// change the root logger to my tomcatLog file
-		info 'tomcatLog'
-		additivity = true
-	}
-
-	// example for sending stacktraces to my tomcatLog file
-	error tomcatLog:'StackTrace'
-	debug tomcatLog:'grails.app.task', 'grails.app.controller', 'grails.app.service'
-	
-	// set level for my messages; this uses the root logger (and thus the tomcatLog file)
-	}
-	}
-	
-}

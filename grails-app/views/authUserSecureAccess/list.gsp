@@ -26,7 +26,7 @@
         <title>Access Control List</title>
     </head>
     <body>
-      <g:render template="/layouts/commonheader" model="[app:authUserSecureAccess]" />
+      <g:render template="/layouts/commonheader" model="['app':'authUserSecureAccess']" />
         <div class="body">
             <h1>AuthUserSecureAccess List</h1>
             <g:if test="${flash.message}">

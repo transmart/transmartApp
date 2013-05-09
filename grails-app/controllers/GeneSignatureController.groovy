@@ -19,18 +19,17 @@
   
 
 import grails.converters.JSON;
-
 import javax.servlet.ServletOutputStream
+
+import org.transmart.biomart.BioAssayPlatform;
+import org.transmart.biomart.CellLine;
+import org.transmart.biomart.Compound
+import org.transmart.biomart.ConceptCode
 
 import org.transmart.searchapp.AccessLog;
 import org.transmart.searchapp.AuthUser;
-
-import search.GeneSignature
-import search.GeneSignatureFileSchema
-import bio.BioAssayPlatform
-import bio.CellLine
-import bio.Compound
-import bio.ConceptCode
+import org.transmart.searchapp.GeneSignature
+import org.transmart.searchapp.GeneSignatureFileSchema
 
 import com.recomdata.genesignature.FileSchemaException
 import com.recomdata.genesignature.WizardModelDetails
@@ -38,8 +37,6 @@ import com.recomdata.util.DomainObjectExcelHelper
 
 /**
  * Controller class for gene signature functionality
- * @author $Author: jliu $
- * @version $Revision: 11258 $
  */
 class GeneSignatureController {
 
@@ -108,11 +105,11 @@ class GeneSignatureController {
 		def pubItems = []
 
 		signatures.each {
-			//if(user.id==it.createdByAuthUser.id) {
+			if(user.id==it.createdByAuthUser.id) {
 				myItems.add(it)
-			//} else {
-				//pubItems.add(it)
-			//}
+			} else {
+				pubItems.add(it)
+			}
 		}
 
 		render(view: "list", model:[user: user, adminFlag: bAdmin, myItems: myItems, pubItems: pubItems, ctMap: ctMap])
@@ -133,7 +130,7 @@ class GeneSignatureController {
 		//	,"3333":["MIT", "HIT", "KIT", "SIT", "VIT", "LIT"]];
 		//render result as JSON;
 	}
-	
+
 	/**
 	 * initialize session for the create gs wizard
 	 */
@@ -167,6 +164,7 @@ class GeneSignatureController {
 		def geneSigInst = GeneSignature.get(params.id)
 		def clone = geneSigInst.clone()
 		clone.modifiedByAuthUser = user
+		if(clone.experimentTypeCellLine.id==null) clone.experimentTypeCellLine=null	 // this is hack, don't know how to get around this!
 		log.debug "experimentTypeCellLine: "+clone.experimentTypeCellLine+"; null? "+(clone.experimentTypeCellLine==null)
 
 		// set onto session
@@ -199,6 +197,7 @@ class GeneSignatureController {
 		clone.qcInfo = '';
 		clone.versionNumber = null;
 		clone.uniqueId = null;
+		if(clone.experimentTypeCellLine.id==null) clone.experimentTypeCellLine=null	 // this is hack, don't know how to get around this!
 
 		// set onto session
 		def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: clone, wizardType: WizardModelDetails.WIZ_TYPE_CLONE, cloneId: geneSigInst.id);
@@ -256,7 +255,7 @@ class GeneSignatureController {
 
 		// load data for page 1
 		loadWizardItems(1, wizard)
-		
+
 		render(view: "wizard1", model:[wizard:wizard])
 	}
 
@@ -360,7 +359,7 @@ class GeneSignatureController {
 		// bind params
 		bindGeneSigData(params, gs)
 
-		// get file. 
+		// get file
 		// The request parameter could be null if we are coming from last page of the wizard. In that case get it from the wizard session object.
 		def file = request.getFile('uploadFile')
 		if(!file){
@@ -864,7 +863,9 @@ class GeneSignatureController {
 				break;
 
 			case 3:
-				if(params.multipleTestingCorrection==null) params.multipleTestingCorrection="";
+				if (params.multipleTestingCorrection==null) {
+                    params.multipleTestingCorrection = "";
+				}
 				break;
 		}
 
@@ -919,11 +920,24 @@ class GeneSignatureController {
 			// owners
 			wizard.owners = ConceptCode.findAllByCodeTypeName(OWNER_CATEGORY, [sort:"bioConceptCode"])
 
+			// species
+			wizard.species = ConceptCode.findAllByCodeTypeName(SPECIES_CATEGORY, [sort:"bioConceptCode"])
+
+			// mouse sources
+			wizard.mouseSources = ConceptCode.findAllByCodeTypeName(MOUSE_SOURCE_CATEGORY, [sort:"bioConceptCode"])
+
 			// tissue types
 			wizard.tissueTypes = ConceptCode.findAllByCodeTypeName(TISSUE_TYPE_CATEGORY, [sort:"bioConceptCode"])
 
 			// experiment types
 			wizard.expTypes = ConceptCode.findAllByCodeTypeName(EXP_TYPE_CATEGORY, [sort:"bioConceptCode"])
+
+			// technology platforms
+			def platforms = BioAssayPlatform.findAll("from BioAssayPlatform as p where p.vendor is not null order by p.vendor, p.array");
+			BioAssayPlatform other = new BioAssayPlatform();
+			other.accession="other"
+			//platforms.add(other);
+			wizard.platforms = platforms;
 
 			// compounds
 			wizard.compounds = Compound.findAll("from Compound c where c.brandName is not null or c.genericName is not null order by codeName");
@@ -946,6 +960,14 @@ class GeneSignatureController {
 			wizard.analysisMethods = ConceptCode.findAllByCodeTypeName(ANALYSIS_METHOD_CATEGORY, [sort:"bioConceptCode"])
 			wizard.analysisMethods.add(otherConceptItem);
 
+			// file schemas
+			wizard.schemas = GeneSignatureFileSchema.findAllBySupported(true, [sort:"name"])
+
+			// p value cutoffs
+			wizard.pValCutoffs = ConceptCode.findAllByCodeTypeName(P_VAL_CUTOFF_CATEGORY, [sort:"bioConceptCode"])
+
+			// fold change metrics
+			wizard.foldChgMetrics = ConceptCode.findAllByCodeTypeName(FOLD_CHG_METRIC_CATEGORY, [sort:"bioConceptCode"])
 			break;
 
 			default:

@@ -43,6 +43,7 @@
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
+	    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
         <script>jQuery.noConflict();</script>
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
@@ -55,7 +56,23 @@
 			// qtip on
 			Ext.QuickTips.init();
 
-			Ext.onReady(function(){				             
+			Ext.onReady(function(){			
+	            var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+	            var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
+	            var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
+	            var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
+	             
+				var viewport = new Ext.Viewport({
+					layout: "border",
+					items:[new Ext.Panel({                          
+						   region: "center",
+						   tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'utilities-div'), 
+						   contentEl: "header-div"
+					    })
+			        ]
+				});
+				viewport.doLayout();
+
 				var picklist = new Ext.app.PickList({
 					id: "categories",
 					cls: "categories-gray",
@@ -93,7 +110,7 @@
 						document.form.submit();
 					},
 					value: "",
-					width: 400,
+					width: 470,
 			        onSelect: function(record) {
 						this.collapse();
 						if (record != null) {
@@ -143,8 +160,7 @@
 	</head>
 	<body>
 		<div id="header-div">
-			<g:render template="/layouts/commonheader" model="[app:search]" />		
-			<g:render template="/layouts/initialsearchheader" model="[app:search]" />
-		</div>		
+			<g:render template="/layouts/commonheader" model="['app':'search']" />
+			<g:render template="/layouts/initialsearchheader" model="['app':'search']" />
+		</div>
 	</body>
-</html>

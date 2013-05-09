@@ -36,9 +36,6 @@
 	<script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
 	<script type="text/javascript">
 		function validate() {
-			var errorMsg = "";
-			var formName = "geneSignatureFrm";
-			
 			// list name required
 			if(document.geneSignatureFrm.name.value=="") {
 				errorMsg="\n- You must specify a list name";
