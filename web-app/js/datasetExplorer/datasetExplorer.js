@@ -837,6 +837,31 @@ Ext.onReady(function()
 				}
 		);
 		
+        analysisHeatmapPanel = new Ext.Panel(
+            {
+                id : 'analysisHeatmapPanel',
+                title : 'Heatmap',
+                region : 'center',
+                split : true,
+                height : 90,
+                layout : 'fit',
+                listeners :
+                {
+                    activate : function(p) {
+                        GLOBAL.CurrentSubsetIDs[1] = null;
+                        GLOBAL.CurrentSubsetIDs[2] = null;
+                        p.body.mask("Magic is happening ...", 'x-mask-loading');
+                        runAllQueries(getImperialHeatmapData, p);
+                        return;
+                    },
+                    deactivate: function(){
+                        //resultsTabPanel.tools.help.dom.style.display="none";
+                    }
+                },
+                collapsible : true
+            }
+        );
+		
 		metacoreEnrichmentPanel = new Ext.Panel(
 				{
 					id : 'metacoreEnrichmentPanel',
@@ -881,6 +906,7 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
+        resultsTabPanel.add(analysisHeatmapPanel);
 		if (GLOBAL.metacoreAnalyticsEnabled) {
 			resultsTabPanel.add(metacoreEnrichmentPanel);
 		}
