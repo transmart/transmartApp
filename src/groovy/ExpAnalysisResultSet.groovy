@@ -16,6 +16,10 @@
  * 
  *
  ******************************************************************/
+  
+
+import bio.Experiment
+
 /**
  * @author $Author: mmcduffie $
  * $Id: ExpAnalysisResultSet.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

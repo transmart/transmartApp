@@ -20,13 +20,14 @@
 
 package com.recomdata.transmart.data.export;
 
-import com.recomdata.transmart.data.export.util.FTPUtil;
+import java.io.File;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
-import java.io.File;
-import java.util.Map;
+import com.recomdata.transmart.data.export.util.FTPUtil;
 
 
 

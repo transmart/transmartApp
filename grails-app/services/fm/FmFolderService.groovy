@@ -19,19 +19,31 @@
 
 package fm
 
-import annotation.*
-import bio.BioData
-import com.recomdata.util.FolderType
-import grails.validation.ValidationException
-import org.apache.commons.io.FileUtils
-import org.apache.solr.util.SimplePostTool
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
 import javax.tools.FileObject;
 import java.io.File;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder
+import java.net.URLEncoder;
+import fm.FmFolder;
+import fm.FmFile;
+import annotation.AmTagAssociation
+import annotation.AmTagItemService;
+import annotation.AmTagTemplate;
+import annotation.AmTagTemplateAssociation;
+import annotation.AmTagItem;
+import annotation.AmTagValue;
+import bio.BioData;
+
+import grails.validation.ValidationException;
+import org.apache.solr.util.SimplePostTool;
+import org.apache.commons.io.FileUtils;
+
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+
+import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.FieldError;
+
+import com.recomdata.util.FolderType;
 
 class FmFolderService {
 

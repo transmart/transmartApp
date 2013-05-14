@@ -23,11 +23,6 @@
  */
 package com.recomdata.transmart.data.export;
 
-import com.recomdata.transmart.data.export.util.FTPUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -35,6 +30,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+
+import com.recomdata.transmart.data.export.util.FTPUtil;
 
 /**
  * @author SMunikuntla

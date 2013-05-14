@@ -20,8 +20,10 @@
 
 package transmartapp
 
-import auth.AuthUser
-import grails.converters.JSON
+import grails.converters.*
+import org.json.*;
+
+import auth.AuthUser;
 
 class OntologyService {
 

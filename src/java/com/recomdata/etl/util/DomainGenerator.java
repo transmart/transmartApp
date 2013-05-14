@@ -23,9 +23,6 @@
  */
 package com.recomdata.etl.util;
 
-import com.recomdata.etl.db.DBConnect;
-import com.recomdata.etl.db.OracleConnectImpl;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,6 +30,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import com.recomdata.etl.db.DBConnect;
+import com.recomdata.etl.db.MssqlConnectImpl;
+import com.recomdata.etl.db.OracleConnectImpl;
 
 /**
  * Creates the domain class based on given table schema

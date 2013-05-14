@@ -25,6 +25,8 @@
  */
 package com.recomdata.util;
 
+import java.util.List;
+
 /** Interface that is implemented by domain objects that will be exported to Excel */
 public interface IBioTag {
     /**

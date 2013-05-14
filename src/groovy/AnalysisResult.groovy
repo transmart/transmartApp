@@ -16,6 +16,13 @@
  * 
  *
  ******************************************************************/
+  
+
+import AssayAnalysisValue
+import bio.BioAssayAnalysis
+import bio.BioAssayAnalysisData
+import com.recomdata.util.BinomialDistribution
+
 /**
  * $Id: AnalysisResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  *@author $Author: mmcduffie $

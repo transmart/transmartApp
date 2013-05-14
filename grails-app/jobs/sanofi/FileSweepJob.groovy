@@ -20,8 +20,10 @@
 
 package sanofi
 
-import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as ConfigHolder
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder as ConfigHolder;
+
 
 class FileSweepJob {
     

@@ -16,14 +16,11 @@
  * 
  *
  ******************************************************************/
+  
 
-
-
-import com.recomdata.util.ExcelGenerator
-import com.recomdata.util.ExcelSheet
-
-import java.text.*
-
+import java.text.*;
+import com.recomdata.util.ExcelSheet;
+import com.recomdata.util.ExcelGenerator;
 class AccessLogController {
 
 	def session

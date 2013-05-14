@@ -21,7 +21,9 @@
 
 package com.recomdata.genepattern
 
+import com.recomdata.genepattern.JobStatus;;
 import org.json.JSONObject;
+
 class WorkflowStatus {
 	def jobStatusList = new ArrayList();
 	def currentStatus = "Starting"; /* Starting, Running, Cancelled, Completed*/

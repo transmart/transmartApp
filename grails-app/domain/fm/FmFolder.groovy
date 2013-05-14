@@ -19,10 +19,10 @@
   
 package fm
 
-import com.recomdata.util.FolderType
-
+import groovy.xml.StreamingMarkupBuilder
 import java.util.ArrayList;
-import java.util.List
+import java.util.List;
+import com.recomdata.util.FolderType
 
 class FmFolder implements Buildable {
 	

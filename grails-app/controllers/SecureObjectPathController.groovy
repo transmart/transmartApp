@@ -16,7 +16,9 @@
  * 
  *
  ******************************************************************/
-import auth.SecureObjectPath;
+  
+
+ import auth.*;
 
 class SecureObjectPathController {
 

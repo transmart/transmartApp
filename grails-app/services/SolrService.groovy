@@ -16,11 +16,11 @@
  * 
  *
  ******************************************************************/
+  
 
-
+import org.jfree.util.Log;
 
 import groovyx.net.http.HTTPBuilder
-import org.jfree.util.Log
 
 class SolrService {
 	def grailsApplication

@@ -23,19 +23,6 @@
 */
 package com.recomdata.asynchronous
 
-import com.recomdata.export.GwasFiles
-import com.recomdata.export.IgvFiles
-import com.recomdata.genepattern.JobStatus
-import com.sun.pdfview.PDFFile
-import com.sun.pdfview.PDFPage
-import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
-import org.genepattern.client.GPClient
-import org.genepattern.webservice.JobResult
-import org.genepattern.webservice.Parameter
-import org.genepattern.webservice.WebServiceException
-import org.springframework.web.context.request.RequestContextHolder
-
 import java.awt.Image
 import java.awt.Rectangle
 import java.io.File
@@ -44,8 +31,22 @@ import java.nio.channels.FileChannel
 
 import javax.imageio.ImageIO
 
+import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
+import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
+import org.genepattern.client.GPClient
+import org.genepattern.webservice.JobResult
+import org.genepattern.webservice.Parameter
+import org.genepattern.webservice.WebServiceException
+
 import org.quartz.Job
 import org.quartz.JobExecutionContext
+import org.springframework.web.context.request.RequestContextHolder
+
+import com.recomdata.export.GwasFiles;
+import com.recomdata.export.IgvFiles
+import com.recomdata.genepattern.JobStatus
+import com.sun.pdfview.PDFFile
+import com.sun.pdfview.PDFPage
 
 /**
 * GenePatternService that manages the calls and jobs to the GenePattern server.

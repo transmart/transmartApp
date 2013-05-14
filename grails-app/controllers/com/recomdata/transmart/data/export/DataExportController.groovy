@@ -20,7 +20,9 @@
 
 package com.recomdata.transmart.data.export
 
-import org.json.JSONObject
+import org.json.JSONObject;
+
+import com.recomdata.transmart.domain.i2b2.AsyncJob;
 
 class DataExportController {
 

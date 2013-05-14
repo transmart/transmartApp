@@ -20,7 +20,7 @@
 
 package bio
 
-import grails.test.GrailsUnitTestCase
+import grails.test.*
 
 class BioTagTests extends GrailsUnitTestCase {
     protected void setUp() {

@@ -16,18 +16,23 @@
  * 
  *
  ******************************************************************/
-
-
+  
 
 import com.recomdata.export.GenePatternFiles
-import i2b2.SampleInfo
-import org.springframework.context.ApplicationContext;
+
+import grails.converters.JSON
+import i2b2.SampleInfo;
 
 import java.sql.ResultSet
 import java.sql.Statement
 import java.util.List;
-import java.util.Map
+import java.util.Map;
+import org.apache.log4j.Logger
+import org.codehaus.groovy.grails.web.json.JSONArray
+import org.json.JSONObject
+import org.springframework.context.ApplicationContext
 
+import com.recomdata.export.GenePatternFiles;
 import groovy.util.logging.*
 
 public class ExperimentData 

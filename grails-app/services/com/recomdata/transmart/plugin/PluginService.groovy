@@ -20,11 +20,13 @@
 
 package com.recomdata.transmart.plugin
 
-import com.recomdata.plugins.PluginDescriptor
-import grails.converters.JSON
+import grails.converters.JSON;
+
 import org.hibernate.Hibernate
-import org.json.JSONArray
-import org.json.JSONObject
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.recomdata.plugins.PluginDescriptor
 
 class PluginService {
 

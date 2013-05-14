@@ -16,13 +16,17 @@
  * 
  *
  ******************************************************************/
+  
 
+import i2b2.GeneWithSnp
+import i2b2.SnpDataByProbe
+import i2b2.SnpDataset
+import i2b2.SnpDatasetListByProbe
+import i2b2.SnpProbeSortedDef
+import i2b2.StringLineReader
+import java.util.List;
 
-
-import com.recomdata.export.IgvFiles
-import i2b2.*
-
-import java.util.List
+import com.recomdata.export.IgvFiles;
 
 class IgvService {
 

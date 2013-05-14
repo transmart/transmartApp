@@ -16,10 +16,10 @@
  * 
  *
  ******************************************************************/
-
-
+  
 
 import bio.BioMarker
+import bio.BioAssayAnalysisData
 
 /**
  * @author $Author: mmcduffie $

@@ -20,8 +20,9 @@
 
 package com.recomdata.export;
 
-import java.io.*;
 import java.util.*;
+import java.io.*;
+import org.apache.log4j.*;
 
 public class CSVGenerator {
 	

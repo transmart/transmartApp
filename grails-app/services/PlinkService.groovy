@@ -16,12 +16,18 @@
  * 
  *
  ******************************************************************/
+  
 
 
 
+import org.jfree.util.Log;
 
+import com.recomdata.export.PlinkFiles;
+import groovy.sql.*;
 
-import groovy.sql.Sql
+import i2b2.SubjectSnpDataset;
+import i2b2.SnpProbeSortedDef;
+
 
 class PlinkService {
 	

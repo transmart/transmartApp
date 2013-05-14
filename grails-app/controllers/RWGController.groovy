@@ -4,16 +4,11 @@
 * @version $Revision: 14836 $
 */
 
+import org.json.*
 
-import bio.Experiment
-import fm.FmFile
-import grails.converters.JSON
-import groovy.time.TimeCategory
+import fm.FmFile;
+import fm.FmFolder;
 import groovy.xml.StreamingMarkupBuilder
-import org.json.JSONArray
-import org.json.JSONObject
-import search.SearchKeyword
-import search.SearchTaxonomy
 
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.Transformer
@@ -22,8 +17,25 @@ import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 
 //import bio.BioAnalysisAttribute
+import bio.Experiment
+import bio.BioMarkerCorrelationMV
+
+import org.apache.commons.codec.binary.Base64
+
 //import RWGVisualizationDAO
-// so we can render as JSON
+
+import grails.converters.*				// so we can render as JSON
+
+import search.SearchKeyword
+import search.SearchTaxonomy
+import search.SearchTaxonomyRels
+import search.GeneSignature
+import search.GeneSignatureItem
+
+import groovy.time.TimeCategory;
+import groovy.time.TimeDuration;
+import groovyx.net.http.HTTPBuilder
+
 class RWGController {
 	def trialQueryService
 	def searchService

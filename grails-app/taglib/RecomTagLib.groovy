@@ -19,6 +19,8 @@
   
 
 import java.io.File
+import com.recomdata.search.DocumentHit
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 /**
  * $Id: RecomTagLib.groovy 10280 2011-10-29 03:00:52Z jliu $

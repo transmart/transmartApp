@@ -16,10 +16,10 @@
  * 
  *
  ******************************************************************/
-
-
+  
 
 import bio.BioAssayAnalysisData
+import bio.Literature
 import bio.BioAssayData
 
 /**

@@ -20,7 +20,7 @@
 
 package com.recomdata.transmart
 
-import grails.test.GrailsUnitTestCase
+import grails.test.*
 
 class ExternaltoolServiceTests extends GrailsUnitTestCase {
     protected void setUp() {

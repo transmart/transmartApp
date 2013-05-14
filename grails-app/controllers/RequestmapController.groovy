@@ -23,7 +23,9 @@
   * @author $Author: mmcduffie $
   * @version $Revision: 9178 $
   */
-import auth.Requestmap
+
+import auth.*;
+import org.springframework.util.StringUtils
 
 /**
  * Requestmap controller.

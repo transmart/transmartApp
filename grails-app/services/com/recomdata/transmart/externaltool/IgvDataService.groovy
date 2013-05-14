@@ -17,10 +17,10 @@
 *
 ******************************************************************/
  
-package com.recomdata.transmart.externaltool
+package com.recomdata.transmart.externaltool;
 
-import com.recomdata.export.IgvFiles
-import org.broad.igv.tools.IgvTools
+import com.recomdata.export.IgvFiles;
+import org.broad.igv.tools.IgvTools;
 
 class IgvDataService {
 	

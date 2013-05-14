@@ -21,6 +21,7 @@
 package com.recomdata.transmart.data.export
 
 import java.util.HashMap
+import i2b2.PatientTrial;
 
 class I2b2ExportHelperService {
 

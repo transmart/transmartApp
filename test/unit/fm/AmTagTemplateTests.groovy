@@ -20,7 +20,7 @@
 
 package fm
 
-import grails.test.GrailsUnitTestCase
+import grails.test.*
 
 class AmTagTemplateTests extends GrailsUnitTestCase {
     protected void setUp() {

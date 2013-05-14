@@ -16,12 +16,14 @@
  *
  *
  ******************************************************************/
-package com.recomdata.transmart.data.export
+package com.recomdata.transmart.data.export;
 
-import de.DeVariantDataSet
+import java.util.List;
+
+import de.DeVariantDataSet;
 import de.DeVariantSubjectDetail;
-
-import java.util.List
+import de.DeVariantSubjectIdx;
+import com.recomdata.transmart.data.export.util.FileWriterUtil;
 
 class VcfDataService {
 	boolean transactional = false

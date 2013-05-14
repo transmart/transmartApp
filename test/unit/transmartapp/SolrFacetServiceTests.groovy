@@ -20,7 +20,7 @@
 
 package transmartapp
 
-import grails.test.GrailsUnitTestCase
+import grails.test.*
 
 class SolrFacetServiceTests extends GrailsUnitTestCase {
     protected void setUp() {

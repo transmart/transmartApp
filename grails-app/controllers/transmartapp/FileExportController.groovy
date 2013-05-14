@@ -21,6 +21,7 @@
 package transmartapp
 
 import fm.FmFile
+import fm.FmFolderService
 
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream

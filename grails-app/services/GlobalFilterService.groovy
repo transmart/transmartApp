@@ -16,14 +16,17 @@
  * 
  *
  ******************************************************************/
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+  
 
-/**
+import com.recomdata.search.query.Query
+ /**
   * $Id: GlobalFilterService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
   * @author $Author: mmcduffie $
   * @version $Revision: 9178 $
   *
   */
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+
 public class GlobalFilterService{
 
 /**

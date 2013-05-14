@@ -20,9 +20,8 @@
 
 package com.recomdata.util;
 
-import org.apache.log4j.Logger;
-
 import javax.sql.DataSource;
+import org.apache.log4j.Logger;
 
 /**
  * this class injects a Spring DataSource for global access by other java classes

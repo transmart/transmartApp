@@ -20,7 +20,7 @@
 
 package transmartapp
 
-import grails.test.GrailsUnitTestCase
+import grails.test.*
 
 class FmFolderServiceTests extends GrailsUnitTestCase {
     protected void setUp() {

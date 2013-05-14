@@ -27,10 +27,15 @@
 package com.recomdata.export;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
+
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
 public class IgvFiles {
 	protected File tmpDir;

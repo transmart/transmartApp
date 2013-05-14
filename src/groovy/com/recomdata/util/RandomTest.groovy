@@ -18,12 +18,17 @@
  ******************************************************************/
   
 
-package com.recomdata.util
+package com.recomdata.util;
 
-import org.junit.After
-import org.junit.AfterClass
-import org.junit.Before
-import org.junit.BeforeClass
+import static org.junit.Assert.*;
+
+import org.apache.commons.lang.StringUtils;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+
+import com.recomdata.dataexport.util.ExportUtil;
 
 class RandomTest extends GroovyTestCase {
 

@@ -20,6 +20,7 @@
 
 package com.recomdata.genesignature
 
+import bio.BioAssayAnalysisData
 import com.recomdata.util.BinomialDistribution
 import org.apache.log4j.Logger
 

@@ -16,6 +16,10 @@
  * 
  *
  ******************************************************************/
+  
+
+import org.codehaus.groovy.grails.commons.GrailsClassUtils as GCU
+
 /**
  *	Explodes the plugins in the TranSMART plugin folder.
  */

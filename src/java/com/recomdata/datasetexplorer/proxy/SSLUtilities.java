@@ -20,10 +20,14 @@
 
 package com.recomdata.datasetexplorer.proxy;
 
-import javax.net.ssl.*;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * This class provide various static methods that relax X509 certificate and

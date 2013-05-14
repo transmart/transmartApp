@@ -20,16 +20,15 @@
 
 package com.recomdata.search;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.Token;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.*;
-
 import java.io.*;
 import java.util.*;
+
+import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.Token;
+import org.apache.lucene.analysis.standard.*;
+import org.apache.lucene.index.*;
+import org.apache.lucene.queryParser.*;
+import org.apache.lucene.search.*;
 
 public class DocumentQuery {
 

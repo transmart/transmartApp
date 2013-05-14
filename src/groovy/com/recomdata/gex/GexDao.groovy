@@ -20,17 +20,21 @@
 
 package com.recomdata.gex
 
-import com.recomdata.transmart.data.export.util.FileWriterUtil
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.rosuda.REngine.REXP
-import org.rosuda.REngine.Rserve.RConnection
-import org.springframework.context.ApplicationContext
+import i2b2.SampleInfo
 
 import java.io.File;
-import java.util.HashMap
+import java.util.HashMap;
 
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.springframework.context.ApplicationContext;
+
+import com.recomdata.transmart.data.export.util.FileWriterUtil;
 import com.sun.rowset.CachedRowSetImpl;
 /**
  * This class has been replaced with GeneExpressionDataService

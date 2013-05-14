@@ -23,8 +23,8 @@
  */
 package com.recomdata.etl.util;
 
-import com.recomdata.etl.db.MssqlConnectImpl;
 import groovy.util.GroovyTestCase;
+import com.recomdata.etl.db.MssqlConnectImpl;
 
 /**
  * Unit test of DomainGenerator class

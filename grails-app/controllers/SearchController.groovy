@@ -25,12 +25,17 @@
 *
 */
 
-import auth.AuthUser
-import bio.BioDataExternalCode
-import grails.converters.JSON
+import grails.converters.*
+
+import org.hibernate.*
+
 import search.CustomFilter
 import search.SearchKeyword
 import search.SearchKeywordTerm
+import auth.AuthUser;
+import bio.BioDataExternalCode
+
+import com.recomdata.util.*
 
 public class SearchController{
 	def sessionFactory

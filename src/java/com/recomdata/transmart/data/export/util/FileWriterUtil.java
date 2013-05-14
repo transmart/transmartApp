@@ -23,11 +23,12 @@
  */
 package com.recomdata.transmart.data.export.util;
 
-import au.com.bytecode.opencsv.CSVWriter;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -36,6 +37,11 @@ import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * @author SMunikuntla

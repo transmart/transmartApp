@@ -16,6 +16,10 @@
  * 
  *
  ******************************************************************/
+  
+
+import org.codehaus.groovy.grails.commons.GrailsClassUtils as GCU
+
 /**
  * This script installs the javascript library extjs available from
  * http://www.extjs.com. Requires the zip file be present in the

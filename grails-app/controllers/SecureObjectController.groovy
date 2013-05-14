@@ -16,7 +16,9 @@
  * 
  *
  ******************************************************************/
-import auth.SecureObject;
+  
+
+ import auth.*;
 
 class SecureObjectController {
 

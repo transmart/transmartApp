@@ -16,24 +16,30 @@
  * 
  *
  ******************************************************************/
-
-
-
-import auth.AuthUser
-import auth.AuthUserSecureAccess
-import auth.SecureObjectPath
-import com.recomdata.db.DBHelper
-import com.recomdata.export.*
-import i2b2.*
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+  
 
 import java.util.List;
 
-import java.io.BufferedWriter
+import java.io.BufferedWriter;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+
+import i2b2.SnpProbeSortedDef;
 
 /**
  * $Id: I2b2HelperService.groovy 11303 2011-12-23 06:05:17Z mkapoor $
  */
+import groovy.sql.*;
+import i2b2.Concept;
+import i2b2.GeneWithSnp
+import i2b2.SnpDataByPatient;
+import i2b2.SnpDataByProbe;
+import i2b2.SnpDataset;
+import i2b2.SnpDatasetByPatient;
+import i2b2.SnpDatasetListByProbe;
+import i2b2.SnpInfo
+import i2b2.StringLineReader;
+import i2b2.SampleInfo;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -59,13 +65,25 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-import java.sql.*
+import java.sql.*;
 
+import org.jfree.util.Log;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource
-import org.Hibernate.*
+import org.xml.sax.InputSource;
+import oracle.jdbc.driver.OracleTypes
+
+import org.Hibernate.*;
+
+import auth.AuthUser;
+
+import com.recomdata.db.DBHelper;
+import com.recomdata.export.*;
+
+import auth.*;
 
 /**
  * ResNetService that will provide an .rnef file for Jubilant data

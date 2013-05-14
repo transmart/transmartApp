@@ -20,10 +20,11 @@
 
 package com.recomdata.transmart.plugin
 
-import grails.converters.JSON
-import org.hibernate.Hibernate;
+import grails.converters.JSON;
 
-import java.sql.Clob
+import java.sql.Clob;
+
+import org.hibernate.Hibernate;
 
 class PluginModule {
 	

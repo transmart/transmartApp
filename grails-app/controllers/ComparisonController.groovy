@@ -16,7 +16,12 @@
  * 
  *
  ******************************************************************/
-import grails.converters.JSON
+  
+
+
+import grails.converters.*
+import org.json.*;
+import i2b2.Comparison;
 
 class ComparisonController {
 

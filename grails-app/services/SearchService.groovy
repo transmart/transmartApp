@@ -16,7 +16,9 @@
  * 
  *
  ******************************************************************/
-import groovy.time.TimeCategory
+  
+
+import groovy.time.*
 
 /**
   * $Id: SearchService.groovy 10098 2011-10-19 18:39:32Z mmcduffie $

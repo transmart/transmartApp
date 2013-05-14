@@ -20,7 +20,7 @@
 
 package com.recomdata.asynchronous
 
-import grails.test.GrailsUnitTestCase
+import grails.test.*
 
 class JobStatusServiceTests extends GrailsUnitTestCase {
     protected void setUp() {

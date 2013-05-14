@@ -16,16 +16,15 @@
  * 
  *
  ******************************************************************/
+  
 
-
-
+import search.GeneSignature
+import search.SearchKeyword
+import search.SearchKeywordTerm
 import auth.AuthUser
 import bio.BioAssayPlatform
 import bio.BioDataExternalCode
 import bio.ConceptCode
-import search.GeneSignature
-import search.SearchKeyword
-import search.SearchKeywordTerm
 
 /**
  * @author $Author: mmcduffie $

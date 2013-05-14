@@ -19,7 +19,8 @@
 
 package fm
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as ConfigHolder
+import fm.FmFolderService;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder as ConfigHolder;
 
 class FmFolderJob {
 

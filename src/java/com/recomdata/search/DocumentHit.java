@@ -23,16 +23,13 @@
 **/
 package com.recomdata.search;
 
+import java.io.*;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.highlight.Highlighter;
-import org.apache.lucene.search.highlight.QueryScorer;
-import org.apache.lucene.search.highlight.SimpleFragmenter;
-import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-
-import java.io.*;
+import org.apache.lucene.document.*;
+import org.apache.lucene.search.*;
+import org.apache.lucene.search.highlight.*;
 
 /**
  * This object holds information about a document found during a search of a Lucene index.

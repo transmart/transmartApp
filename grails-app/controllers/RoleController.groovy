@@ -23,7 +23,8 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
-import auth.Role;
+
+import auth.*;
  
 /**
  * Authority Controller.
