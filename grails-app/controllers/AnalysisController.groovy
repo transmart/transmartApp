@@ -223,7 +223,7 @@ class AnalysisController {
 	 */
 	def heatMapFromSample = {
 		
-		// String sampleIdList = request.getParameter("idList");
+		String sampleIdList = request.getParameter("idList");
 		//[{"SampleID":"PatientID"},{}]
 	//	String patientIdList = getPatientIdsFromSampleIds(sampleIdList);
 		println(idList);

@@ -170,7 +170,7 @@ class ChartController {
    * Action to get the distribution histogram for a concept
    */
   def conceptDistribution = {
-                               `
+
 		   String concept_key=params.concept_key;
 		   def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-Set Value Concept Histogram", eventmessage:"Concept:"+concept_key, accesstime:new java.util.Date())
   			al.save()
@@ -206,7 +206,7 @@ class ChartController {
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-        // NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
+        NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
         //domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
         ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
@@ -228,8 +228,8 @@ class ChartController {
 		def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-Set Value Concept Histogram for subset", eventmessage:"Concept:"+concept_key, accesstime:new java.util.Date())
 			al.save()
 		def result_instance_id1=params.result_instance_id1;
-   		// def result_instance_id2=params.result_instance_id2;
-		// def concept_cd=i2b2HelperService.getConceptCodeFromKey(concept_key);
+   		def result_instance_id2=params.result_instance_id2;
+		def concept_cd=i2b2HelperService.getConceptCodeFromKey(concept_key);
 		def concept_name=i2b2HelperService.getShortNameFromKey(concept_key);
 
 		if(result_instance_id1!="" && result_instance_id1 != null)
@@ -397,7 +397,7 @@ def analysis={
 		NumberAxis rangeAxis3 = (NumberAxis) plot3.getRangeAxis();
 		rangeAxis3.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-		// NumberAxis domainAxis3 = (NumberAxis) plot3.getDomainAxis();
+		NumberAxis domainAxis3 = (NumberAxis) plot3.getDomainAxis();
 		//domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
 		ChartRenderingInfo info3 = new ChartRenderingInfo(new StandardEntityCollection());
@@ -777,7 +777,7 @@ private void renderCategoryResultsHashMap(HashMap<String,Integer> results, Strin
 	  Map.Entry<String,Integer> entry = (Map.Entry<String,Integer>) keyValuePairs2.next();
 	  String key = entry.getKey();
 	  Integer value = entry.getValue();
-	  // Double test=((double)value / (double)totalsubjects);
+	  Double test=((double)value / (double)totalsubjects);
 	  pw.write("<tr>"
 			   + "<td>"+ key + "</td>"
 			   + "<td>" + value.toString() + "</td>"
