@@ -47,7 +47,7 @@ class ExperimentAnalysisController {
 	def showFilter = {
 		def filter =session.searchFilter
 
-	//	def datasources = []
+		def datasources = []
 		def stimer = new ElapseTimer();
 		//log.info ">> Compound query:"
 		def compounds = filterQueryService.experimentCompoundFilter("Experiment");
@@ -63,10 +63,10 @@ class ExperimentAnalysisController {
 		//log.info "expDesigns: " + expDesigns
 
 		// no data?
-	//	def celllines = [] //GeneExprAnalysis.executeQuery(queryCellLines.toString(),filter.gids)
+		def celllines = [] //GeneExprAnalysis.executeQuery(queryCellLines.toString(),filter.gids)
 
 		// no data?
-	//	def expTypes=[] //experimentAnalysisQueryService.findExperimentTypeFilter()
+		def expTypes=[] //experimentAnalysisQueryService.findExperimentTypeFilter()
 
 		def platformOrganisms = experimentAnalysisQueryService.findPlatformOrganizmFilter(filter)
 

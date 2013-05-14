@@ -189,7 +189,7 @@ public class ExpressionProfileController{
 		def chartMinVal = null
 		def chartMaxVal = null
 		def statdata = null;
-		// int i = 0
+		int i = 0
 		
 		for(drow in allData) {
 			// BioAssayDataStats record
