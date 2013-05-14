@@ -62,7 +62,7 @@ class AnalysisController {
 	
 		
 	def heatmapvalidate={
-	//	def platform="";
+		def platform="";
 		log.debug("Recieved heatmap validation request");
 		String resultInstanceID1 = request.getParameter("result_instance_id1");
 		if (resultInstanceID1 != null && resultInstanceID1.length()== 0) {
@@ -80,7 +80,7 @@ class AnalysisController {
 		log.debug("\tresultInstanceID2: " + resultInstanceID2);
 		def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-Before Heatmap", eventmessage:"RID1:"+resultInstanceID1+" RID2:"+resultInstanceID2, accesstime:new java.util.Date())
 		al.save()
-	//	String pathwayName = request.getParameter("pathway_name");
+		String pathwayName = request.getParameter("pathway_name");
 		
 		List<String> subjectIds1;
 		List<String> subjectIds2;
@@ -225,7 +225,7 @@ class AnalysisController {
 		
 		String sampleIdList = request.getParameter("idList");
 		//[{"SampleID":"PatientID"},{}]
-	//	String patientIdList = getPatientIdsFromSampleIds(sampleIdList);
+		String patientIdList = getPatientIdsFromSampleIds(sampleIdList);
 		println(idList);
 		
 		render "Done!";
@@ -323,7 +323,7 @@ def showSNPViewer = {
 		}
 		
 		String viewerURL;
-		// String altviewerURL;
+		String altviewerURL;
 		
 		try {
 			result.put("jobNumber", jresult[1].getJobNumber());

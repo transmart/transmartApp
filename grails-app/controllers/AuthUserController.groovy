@@ -157,7 +157,7 @@ class AuthUserController {
 	def save = {
 		def person = new AuthUser()
 		person.properties = params
-	//	def luser = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		def luser = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 		if(params.id==null || params.id=="") {
 			flash.message = 'Please enter an ID'
 			return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])
