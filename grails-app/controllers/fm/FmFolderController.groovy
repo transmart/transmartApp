@@ -38,8 +38,9 @@ import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.lang.StringUtils
 import search.SearchKeyword
 
-// import java.awt.event.ItemEvent
-// import grails.plugins.springsecurity.SpringSecurityService
+import java.awt.event.ItemEvent
+
+import grails.plugins.springsecurity.SpringSecurityService
 
 class FmFolderController {
 
@@ -107,8 +108,8 @@ class FmFolderController {
 		def bioDataObject = new bio.BioAssayAnalysis()
 		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.ANALYSIS.name())
 		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-		// def title = "Create Analysis"
-		// def templateType = "createAnalysisForm"
+		def title = "Create Analysis"
+		def templateType = "createAnalysisForm"
 		def measurements  = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
 		def vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
 		def technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
@@ -135,8 +136,8 @@ class FmFolderController {
 		def bioDataObject = folder
 		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.ASSAY.name())
 		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-		// def title = "Create Assay"
-		// def templateType = "createAssayForm"
+		def title = "Create Assay"
+		def templateType = "createAssayForm"
 		def measurements  = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
 		def vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
 		def technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
@@ -165,8 +166,8 @@ class FmFolderController {
 		if(!amTagTemplate) log.error ("Unable to find tag template for folder type = ")
 		
 		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-		// def title = "Create Folder"
-		// def templateType = "createFolderForm"
+		def title = "Create Folder"
+		def templateType = "createFolderForm"
 		render(template: "createFolder", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 
@@ -182,8 +183,8 @@ class FmFolderController {
 		def bioDataObject = new bio.Experiment()
 		def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.STUDY.name())
 		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-		// def title = "Create Study"
-		// def templateType = "createStudyForm"
+		def title = "Create Study"
+		def templateType = "createStudyForm"
 		render(template: "createStudy", model:[bioDataObject:bioDataObject, folder:folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
 	}
 
@@ -594,7 +595,7 @@ class FmFolderController {
 	def getFolderContents = {
 		def id = params.id
 		if (!id) {
-			// def uid = params.uid
+			def uid = params.uid
 			id = FmFolder.findByUniqueId(uniqueId).id
 		}
 		def auto = params.boolean('auto') //Flag for whether folder was automatically opened - if not, then it shouldn't respect the folder mask
@@ -932,7 +933,7 @@ class FmFolderController {
 		def amTagTemplate
 		def metaDataTagItems
 		def jSONForGrids = []
-		// def childMetaDataTagItems = []
+		def childMetaDataTagItems = []
 		def subjectLevelDataAvailable = false 
 		def measurements
 		def technologies
@@ -1163,8 +1164,8 @@ class FmFolderController {
 
 		} 
 
-		// def title = "Edit Meta Data"
-		// def templateType = "editMetadataForm"
+		def title = "Edit Meta Data"
+		def templateType = "editMetadataForm"
 		
 		def measurements  = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
 		def vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
