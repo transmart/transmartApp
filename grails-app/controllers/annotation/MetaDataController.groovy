@@ -50,7 +50,7 @@ class MetaDataController {
 	 */
 	def extSearch = {
 		log.info "EXT SEARCH called"
-		//def paramMap = params
+		def paramMap = params
 		log.info params
 		
 		def value = params.term?params.term.toUpperCase():''
@@ -72,7 +72,7 @@ class MetaDataController {
 	 */
 	def bioCompoundSearch = {
 		log.info "EXT bioCompoundSearch called"
-		// def paramMap = params
+		def paramMap = params
 		log.info params
 		render 	searchKeywordService.findSearchKeywords("COMPOUND", params.term, 10) as JSON
 		
@@ -82,7 +82,7 @@ class MetaDataController {
 	 */
 	def bioDiseaseSearch = {
 		log.info "EXT bioDiseaseSearch called"
-		// def paramMap = params
+		def paramMap = params
 		log.info params
 		render 	searchKeywordService.findSearchKeywords("DISEASE", params.term, 10) as JSON
 
@@ -93,7 +93,7 @@ class MetaDataController {
 	 */
 	def bioMarkerSearch = {
 		log.info "EXT bioMarkerSearch called"
-		// def paramMap = params
+		def paramMap = params
 		log.info params
 		
 		render searchKeywordService.findSearchKeywords("GENE", params.term, 10) as JSON
@@ -104,7 +104,7 @@ class MetaDataController {
 	 */
 	def programTargetSearch = {
 		log.info "EXT programTargetSearch called"
-		// def paramMap = params
+		def paramMap = params
 		log.info params
 		def itemlist = [];
 		
