@@ -45,9 +45,9 @@ class ProxyController{
 	def doProcess(HttpServletRequest req, HttpServletResponse res, boolean isPost) {
 
 		  boolean allowXDomain = true;
-	//	  boolean requireSession = false;
+		  boolean requireSession = false;
 		  String responseContentType = "text/xml;charset=UTF-8";  //changed from text/json in jmaki source
-	//	  boolean rDebug = false;
+		  boolean rDebug = false;
 		 XmlHttpProxy xhp = new XmlHttpProxy();;
 		 ServletContext ctx;
 		 println(this);

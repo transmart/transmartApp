@@ -125,7 +125,7 @@ class TrialController {
 	 */
 	def trialDetailByTrialNumber = {
 		def trialNumber = params['id'].toUpperCase()
-	//	def conceptType = params['conceptType']
+		def conceptType = params['conceptType']
 		def istrial = true;
 		def exp = ClinicalTrial.findByTrialNumber(trialNumber);
 		if(exp==null){

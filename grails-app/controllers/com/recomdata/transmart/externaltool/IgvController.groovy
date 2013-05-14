@@ -74,7 +74,7 @@ class IgvController {
 	//This URL will be launched with the job ID in the query string.
 	def launchIGV = {
 		
-	//	def webRootDir = servletContext.getRealPath ("/")
+		def webRootDir = servletContext.getRealPath ("/")
 		
 		//Grab the job ID from the query string.
 		String jobName = params.jobName
