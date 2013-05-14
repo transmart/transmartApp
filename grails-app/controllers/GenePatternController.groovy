@@ -33,7 +33,7 @@ import org.json.JSONObject
 //import org.genepattern.webservice.JobResult
 import org.quartz.JobDataMap
 import org.quartz.JobDetail
-// import org.quartz.JobExecutionContext
+import org.quartz.JobExecutionContext
 import org.quartz.SimpleTrigger
 import search.SearchKeyword
 
@@ -667,7 +667,7 @@ class GenePatternController {
 		
 		String[] args=["-nogui", "-quiet","-pedfile" ,pathinped, "-info", pathininfo, "-png"]
 		
-	//	HaploText argParser = new HaploText(args)
+		HaploText argParser = new HaploText(args)
 		String filename=filenamein+".ped.LD.PNG"
 
 		String hapleUrl = request.getContextPath() + "/chart/displayChart?filename=" + filename
@@ -721,7 +721,7 @@ class GenePatternController {
 		   //Create argument array.
 		   String[] args=["-nogui", "-quiet","-pedfile" ,pathinped, "-info", pathininfo, "-png"]
 		   
-	//	   HaploText argParser = new HaploText(args)
+		   HaploText argParser = new HaploText(args)
 		   
 		   //This is the filename of the image.
 		   String filename=filenamein+".ped.LD.PNG"
