@@ -56,7 +56,8 @@ class ComparisonController {
     		boolean success=s.save()
 
     		def link = new StringBuilder()
-			link.append("<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"mailto:?subject=Link to ")
+			link.append("<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID: <input type=\"text\" size=\"10\" value=\"${s.id}\">")
+			link.append("<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"mailto:?subject=Link to ")
     		link.append("Saved comparison ID=${s.id}")
     		link.append("&body=The following is a link to the saved comparison in tranSMART.  Please, note that you need to be logged into tranSMART prior to using this link.%0A%0A")    		
     		link.append(createLink(controller:'datasetExplorer', action:'index', id:s.id, absolute:true))
