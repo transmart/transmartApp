@@ -19,7 +19,6 @@
 
 
 
-
 import com.rdc.snp.haploview.PEDFormat
 import com.recomdata.export.GenePatternFiles
 import com.recomdata.export.GwasFiles
@@ -28,9 +27,9 @@ import com.recomdata.genepattern.JobStatus
 import com.recomdata.genepattern.WorkflowStatus
 import edu.mit.wi.haploview.HaploText
 import grails.converters.JSON
-import org.json.JSONObject
 
 //import org.genepattern.webservice.JobResult
+import org.json.JSONObject
 import org.quartz.JobDataMap
 import org.quartz.JobDetail
 import org.quartz.JobExecutionContext
