@@ -43,6 +43,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.FieldError;
 
+import com.recomdata.transmart.domain.searchapp.AccessLog;
 import com.recomdata.util.FolderType;
 
 class FmFolderService {
@@ -54,6 +55,7 @@ class FmFolderService {
 	String fileTypes = config.com.recomdata.FmFolderService.fileTypes.toString();;
 	String solrUrl = config.com.recomdata.solr.baseURL.toString() + "/update";
 	def amTagItemService;
+	def springSecurityService;
 	
 	/**
 	 * Imports files processing them into filestore and indexing them with SOLR.
@@ -385,6 +387,9 @@ class FmFolderService {
 		removeSolrEntry(folder.getUniqueId())
 		if (!folder.save(flush: true)) {
 			log.error("Unable to delete folder with uid of " + folder.getUniqueId());
+		}else{
+		def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Delete object", eventmessage: folder.folderType+": "+folder.folderName+" ("+folder.getUniqueId()+")", accesstime:new java.util.Date())
+		al.save()
 		}
 	}
 	
@@ -401,8 +406,11 @@ class FmFolderService {
 			}
 			file.folder.fmFiles.remove(file)
 			file.folder.save(flush:true)
+			def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Delete file", eventmessage: file.displayName+" ("+file.getUniqueId()+")", accesstime:new java.util.Date())
+			al.save()
 		}
 		catch (Exception ex) {
+			System.out.println("Exception while deleting file with uid of " + file.getUniqueId(), ex);
 			log.error("Exception while deleting file with uid of " + file.getUniqueId(), ex);
 		}
 	}
@@ -658,9 +666,13 @@ class FmFolderService {
 				BioData bioData = BioData.get(object.id)
 				folderAssoc = new FmFolderAssociation(objectUid:bioData.uniqueId, objectType:object.getClass().getName(), fmFolder:folder)
 				folderAssoc.save(flush:true, failOnError:true)
+				def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Create object", eventmessage: folder.folderType+": "+folder.folderName+" ("+folder.getUniqueId()+")", accesstime:new java.util.Date())
+				al.save()
+			}else{
+				def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Modify object", eventmessage: folder.folderType+": "+folder.folderName+" ("+folder.getUniqueId()+")", accesstime:new java.util.Date())
+				al.save()
 			}
 		}
-		
 	}
 	
 	/**

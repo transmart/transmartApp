@@ -337,6 +337,7 @@ class RWGController {
     * 
     */
    def getFacetResults = {
+	   
 	   session['folderSearchList'] = [[], []]; //Clear the folder search list
 	   
 	   /*
@@ -428,6 +429,8 @@ class RWGController {
 		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null)])
 		   return
 	   }
+	   def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Search", eventmessage: "", accesstime:new java.util.Date())
+	   al.save()
 	   
 	   /*
 	    * Run the search!

@@ -83,21 +83,17 @@ function showDetailDialog(folderId)	{
 
 //when a new object is created, show its details, highlight it and check for its parent to add expand/collapse image
 function updateForNewFolder(folderId)	{
-	jQuery('#welcome-viewer').empty();
-
-	jQuery('#metadata-viewer').empty().addClass('ajaxloading');
 	jQuery('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
-		jQuery('#metadata-viewer').removeClass('ajaxloading');
-		
-		jQuery('.result-folder-name').removeClass('selected');
-		jQuery('#result-folder-name-' + folderId).addClass('selected');
-		
+
 		var parentId=jQuery('#parentId').val();
 		var imgExpand = "#imgExpand_"  + parentId;
 		var src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'folderminus.png').replace('ajax-loader-flat.gif', 'folderminus.png').replace('folderleaf.png', 'folderminus.png');
 		jQuery(imgExpand).attr('src',src);
-		var action="toggleDetailDiv('"+parentId+"', folderContentsURL + '?id="+parentId+"&auto=false');"
-		jQuery(imgExpand).attr('onclick', action);
+		var action="toggleDetailDiv('"+parentId+"', folderContentsURL + '?id="+parentId+"&auto=false');";
+		jQuery('#toggleDetail_'+parentId).attr('onclick', action);
+		openFolderAndShowChild(parentId, folderId);
+		jQuery('.result-folder-name').removeClass('selected');
+		jQuery('#result-folder-name-' + folderId).addClass('selected');
 	});
 	
 	return false;
@@ -1199,6 +1195,7 @@ function expandAllStudies() {
 		var studyelement = jQuery(closedstudyelements[i]);
 		var studyId = studyelement.attr('name');
 		var key = new Date().getTime(); //Key to prevent AJAX caching
+		
 		toggleDetailDiv(studyId, getStudyAnalysesUrl + "?id=" + studyId + "&trialNumber=" + studyId + "&unqKey=" + key);
 	}
 }
