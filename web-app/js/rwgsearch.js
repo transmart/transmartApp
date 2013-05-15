@@ -149,6 +149,8 @@ function convertCategory(valueToConvert)	{
 
 //Add the search term to the array and show it in the panel.
 function addSearchTerm(searchTerm, noUpdate, loadingFromSession)	{
+	goWelcome();
+	
 	var category = searchTerm.display == undefined ? "TEXT" : searchTerm.display;
 	
 	category = category + "|" + (searchTerm.category == undefined ? "TEXT" : searchTerm.category);
@@ -503,6 +505,7 @@ function getSearchKeywordList()   {
 
 //Remove the search term that the user has clicked.
 function removeSearchTerm(ctrl)	{
+	goWelcome();
 	var currentSearchTermID = ctrl.id.replace(/\%20/g, " ").replace(/\%44/g, ",").replace(/\%26/g, "&");
 	var idx = currentSearchTerms.indexOf(currentSearchTermID);
 	if (idx > -1)	{
@@ -548,7 +551,7 @@ function removeSearchTerm(ctrl)	{
 
 //Clear the tree, results along with emptying the two arrays that store categories and search terms.
 function clearSearch()	{
-	
+	goWelcome();
 	//remove all pending jobs from the ajax queue
 	//rwgAJAXManager.clear(true); (this was causing problems, so removing for now)
 	
@@ -1115,7 +1118,17 @@ function checkSearchLog() {
 	}
 }
 
+//go back to the welcome message
+function goWelcome() {
+	jQuery('#metadata-viewer').empty();
+	jQuery('#welcome-viewer').empty().addClass('ajaxloading');
+	jQuery('#welcome-viewer').load(welcomeURL, {}, function() {
+		jQuery('#welcome-viewer').removeClass('ajaxloading');
+	});
+}
+
 //Globally prevent AJAX from being cached (mostly by IE)
 jQuery.ajaxSetup({
 	cache: false
 });
+
