@@ -1088,9 +1088,14 @@ function updateFolder(id) {
 		url:folderContentsURL,
 		data: {id: id, auto: false},
 		success: function(response) {
-			jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderminus.png'));
 			jQuery('#' + id + '_detail').html(response).addClass('gtb1').addClass('analysesopen').attr('data', true);
-
+			
+			//check if the object has children
+			if(jQuery('#' + id + '_detail .search-results-table .folderheader').size() > 0){
+				jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderminus.png'));
+			}else{
+				jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderleaf.png'));
+			}
 		},
 		error: function(xhr) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);

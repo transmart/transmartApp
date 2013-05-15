@@ -153,7 +153,8 @@
 							} else {
 								updateFolder(response.parentId);
 								jQuery('#createAssayOverlay').fadeOut();
-								showDetailDialog(response.id);
+								//showDetailDialog(response.id);
+								updateForNewFolder(response.id);
 							}
 						},
 						error: function(xhr) {
@@ -183,7 +184,8 @@
 							} else {
 								updateFolder(response.parentId);
 								jQuery('#createFolderOverlay').fadeOut();
-								showDetailDialog(response.id);
+								//showDetailDialog(response.id);
+								updateForNewFolder(response.id);
 							}
 						},
 						error: function(xhr) {
@@ -213,7 +215,8 @@
 							} else {
 								updateFolder(response.parentId);
 								jQuery('#createStudyOverlay').fadeOut();
-								showDetailDialog(response.id);
+								//showDetailDialog(response.id);
+								updateForNewFolder(response.id);
 							}
 						},
 						error: function(xhr) {
@@ -273,7 +276,8 @@
 							} else {
 								updateFolder(response.parentId);
 								jQuery('#createAnalysisOverlay').fadeOut();
-								showDetailDialog(response.id);
+								//showDetailDialog(response.id);
+								updateForNewFolder(response.id);
 							}
 						},
 						error: function(xhr) {

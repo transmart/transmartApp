@@ -81,6 +81,28 @@ function showDetailDialog(folderId)	{
 	return false;
 }
 
+//when a new object is created, show its details, highlight it and check for its parent to add expand/collapse image
+function updateForNewFolder(folderId)	{
+	jQuery('#welcome-viewer').empty();
+
+	jQuery('#metadata-viewer').empty().addClass('ajaxloading');
+	jQuery('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
+		jQuery('#metadata-viewer').removeClass('ajaxloading');
+		
+		jQuery('.result-folder-name').removeClass('selected');
+		jQuery('#result-folder-name-' + folderId).addClass('selected');
+		
+		var parentId=jQuery('#parentId').val();
+		var imgExpand = "#imgExpand_"  + parentId;
+		var src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'folderminus.png').replace('ajax-loader-flat.gif', 'folderminus.png').replace('folderleaf.png', 'folderminus.png');
+		jQuery(imgExpand).attr('src',src);
+		var action="toggleDetailDiv('"+parentId+"', folderContentsURL + '?id="+parentId+"&auto=false');"
+		jQuery(imgExpand).attr('onclick', action);
+	});
+	
+	return false;
+}
+
 function openFolderAndShowChild(parent, child) {
 	toggleDetailDiv(parent, folderContentsURL + '?id=' + parent + '&auto=false', true, child);
 	showDetailDialog(child);
