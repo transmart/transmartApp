@@ -796,8 +796,10 @@ class I2b2HelperService {
 		Group by UPPER("""+col+""")) b
 		ON a.cat=b.cat ORDER BY a.cat""";
 		sql.eachRow(sqlt, [result_instance_id], {row ->
-			results.put(row[0], row[1])
-			log.trace("in row getting patient demographic data for subset")
+			if(row[1]!=0){
+				results.put(row[0], row[1])
+				log.trace("in row getting patient demographic data for subset")
+			}
 		})
 		return results;
 	}
