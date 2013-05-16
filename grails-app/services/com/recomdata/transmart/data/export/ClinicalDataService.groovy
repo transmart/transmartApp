@@ -96,8 +96,8 @@ class ClinicalDataService {
 				sqlQuery <<= ", ssm.assay_id, ssm.sample_type, ssm.timepoint, ssm.tissue_type "
 			}
 			
-			sqlQuery <<= "FROM qt_patient_set_collection qt "
-			sqlQuery <<= "INNER JOIN OBSERVATION_FACT ofa ON qt.PATIENT_NUM = ofa.PATIENT_NUM "
+			sqlQuery <<= "FROM i2b2demodata.qt_patient_set_collection qt "
+			sqlQuery <<= "INNER JOIN i2b2demodata.OBSERVATION_FACT ofa ON qt.PATIENT_NUM = ofa.PATIENT_NUM "
 			
 			//If we are including the concepts context, add the tables to the statement here.
 			if(includeConceptContext)
@@ -106,22 +106,22 @@ class ClinicalDataService {
 				sqlQuery <<= " LEFT JOIN DEAPP.DE_CONTEXT DC ON DC.DE_CONTEXT_ID = DCC.DE_CONTEXT_ID "
 			}
 			
-			sqlQuery <<= "INNER JOIN CONCEPT_DIMENSION cd ON cd.CONCEPT_CD = ofa.CONCEPT_CD "
-			sqlQuery <<= "INNER JOIN PATIENT_DIMENSION pd on ofa.patient_num = pd.patient_num "
+			sqlQuery <<= "INNER JOIN i2b2demodata.CONCEPT_DIMENSION cd ON cd.CONCEPT_CD = ofa.CONCEPT_CD "
+			sqlQuery <<= "INNER JOIN i2b2demodata.PATIENT_DIMENSION pd on ofa.patient_num = pd.patient_num "
 			
 			if (retrievalTypeMRNAExists && null != filesDoneMap['MRNA.TXT'] && filesDoneMap['MRNA.TXT']) {
-				sqlQuery <<= "LEFT JOIN DE_SUBJECT_SAMPLE_MAPPING ssm ON ssm.PATIENT_ID = ofa.PATIENT_NUM  "
+				sqlQuery <<= "LEFT JOIN DEAPP.DE_SUBJECT_SAMPLE_MAPPING ssm ON ssm.PATIENT_ID = ofa.PATIENT_NUM  "
 			}
 			
 			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = ? AND ofa.MODIFIER_CD = ?"
 
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
 				sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT NVL(sample_type_cd,'-1') as gene_expr_concept"
-				sqlQuery <<= " FROM de_subject_sample_mapping WHERE trial_name = ?"
+				sqlQuery <<= " FROM DEAPP.de_subject_sample_mapping WHERE trial_name = ?"
 				sqlQuery <<= " UNION SELECT DISTINCT NVL(tissue_type_cd,'-1') as gene_expr_concept "
-				sqlQuery <<= " FROM de_subject_sample_mapping WHERE trial_name = ?"
+				sqlQuery <<= " FROM DEAPP.de_subject_sample_mapping WHERE trial_name = ?"
 				sqlQuery <<= " UNION SELECT DISTINCT NVL(platform_cd,'-1') as gene_expr_concept "
-				sqlQuery <<= " FROM de_subject_sample_mapping WHERE trial_name = ?)"
+				sqlQuery <<= " FROM DEAPP.de_subject_sample_mapping WHERE trial_name = ?)"
 			}
 			
 			if (retrievalTypeMRNAExists && null != filesDoneMap && filesDoneMap['MRNA.TXT'] && !platformsList?.isEmpty()) {
