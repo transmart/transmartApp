@@ -614,8 +614,7 @@ Ext.onReady(function()
 						scripts : true,
 						nocache : true,
 						discardUrl : true,
-						method : 'POST'//,
-						//callback: loadOntPanel
+						method : 'POST'
 					},
 					collapsible : true,
 					titleCollapse : false,
@@ -872,33 +871,7 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
-
-		analysisHeatmapPanel = new Ext.Panel(
-				{
-					id : 'analysisHeatmapPanel',
-					title : 'Heatmap',
-					region : 'center',
-					split : true,
-					height : 90,
-					layout : 'fit',
-					listeners :
-					{
-						activate : function(p) {
-							GLOBAL.CurrentSubsetIDs[1] = null;
-							GLOBAL.CurrentSubsetIDs[2] = null;
-							p.body.mask("Magic is happening ...", 'x-mask-loading');
-							runAllQueries(getImperialHeatmapData, p);
-			        	 	return;
-						},
-						deactivate: function(){
-							//resultsTabPanel.tools.help.dom.style.display="none";
-						}
-					},
-					collapsible : true						
-				}
-		);
 		
-		// --
 		resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
@@ -907,7 +880,6 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
-		resultsTabPanel.add(analysisHeatmapPanel);
 		if (GLOBAL.metacoreAnalyticsEnabled) {
 			resultsTabPanel.add(metacoreEnrichmentPanel);
 		}
@@ -1579,6 +1551,7 @@ function loginComplete()
 	genePatternLogin();
 }
 
+// TODO Check for unused function !
 function showProjectDialog(projects)
 {
 
@@ -2071,6 +2044,12 @@ function setupDragAndDrop()
 }
 
 function getPreviousQueryFromIDComplete(subset, result) {
+    if (document.getElementById("queryCriteriaDiv" + subset + "_1") == null) {
+        setTimeout(function(){
+            getPreviousQueryFromIDComplete(subset, result);
+        }, 100);
+        return ;
+    }
     if (result.status != 200) {
         queryPanel.el.unmask();
         return;
@@ -2084,7 +2063,7 @@ function getPreviousQueryFromIDComplete(subset, result) {
 
     panel:
     for (var p = 0; p < panels.length; p++) {
-        var panelnumber = p + 1
+        var panelnumber = p + 1;
 
         showCriteriaGroup(panelnumber); //in case its hidden;
         var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + panelnumber);
