@@ -39,8 +39,8 @@ class TsvFileReaderController {
         }
         def file = new File("${temporaryImageFolder}", "${params.jobName}/survival-test.txt")
         if(file && file.exists()) {
-            def from = params.from ? params.int('from') : 1
-            def to = params.max ? from + params.int('max') - 1 : -1
+            def from = params.start ? params.int('start') : 1
+            def to = params.limit ? from + params.int('limit') - 1 : -1
             def fields = (params.fields?.split('\\s*,\\s*') ?: DEFAULT_FIELDS) as Set<String>
 
             def obj = parseTsv(file, from, to, fields)
