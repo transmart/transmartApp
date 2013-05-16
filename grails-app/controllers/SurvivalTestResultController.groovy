@@ -23,7 +23,7 @@ import au.com.bytecode.opencsv.CSVReader
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
-class TsvFileReaderController {
+class SurvivalTestResultController {
 
     def config = ConfigurationHolder.config;
     String temporaryImageFolder = config.RModules.temporaryImageFolder
@@ -31,14 +31,14 @@ class TsvFileReaderController {
     char DEFAULT_SEPARATOR = '\t'
     int TO_LAST_ROW = -1
 
-    def index = {
+    def list = {
         response.contentType = 'text/json'
         if(!(params?.jobName ==~ /(?i)[-a-z0-9]+/)) {
             render new JSON([error: 'jobName parameter is required. It should contains just alphanumeric characters and dashes.'])
             return
         }
         def file = new File("${temporaryImageFolder}", "${params.jobName}/survival-test.txt")
-        if(file && file.exists()) {
+        if(file.exists()) {
             def from = params.start ? params.int('start') : 1
             def to = params.limit ? from + params.int('limit') - 1 : -1
             def fields = (params.fields?.split('\\s*,\\s*') ?: DEFAULT_FIELDS) as Set<String>
@@ -86,5 +86,29 @@ class TsvFileReaderController {
             csvReader.close()
         }
         [totalCount: rowNumber, result: resultRows]
+    }
+
+    def image = {
+        def imageFile = new File("${temporaryImageFolder}", "${params.jobName}/survival_${params.chromosome}_${params.start}_${params.end}_${params.type ?: '1'}.png")
+        if(imageFile.exists()) {
+            response.setHeader("Content-disposition", "attachment;filename=${imageFile.getName()}")
+            response.contentType  = 'image/png'
+            response.outputStream << imageFile.getBytes()
+            response.outputStream.flush()
+        } else {
+            response.status = 404
+        }
+    }
+
+    def zipFile = {
+        def zipFile = new File("${temporaryImageFolder}", "${params.jobName}/${params.jobName}.zip")
+        if(zipFile.exists()) {
+            response.setHeader("Content-disposition", "attachment;filename=${zipFile.getName()}")
+            response.contentType  = 'application/octet-stream'
+            response.outputStream << zipFile.getBytes()
+            response.outputStream.flush()
+        } else {
+            response.status = 404
+        }
     }
 }
