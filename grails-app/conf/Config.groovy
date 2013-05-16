@@ -29,6 +29,8 @@
 
 import grails.plugins.springsecurity.SecurityConfigType
 
+grails.plugins.springsecurity.successHandler.defaultTargetUrl = "/transmart"
+
 grails.config.locations = []
 def defaultConfigFiles = [
 	"${userHome}/.grails/${appName}Config/Config.groovy",

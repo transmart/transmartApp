@@ -38,7 +38,6 @@ import org.xml.sax.*
 
 import org.transmart.searchapp.SearchKeyword
 
-import com.recomdata.debugging.*
 import com.recomdata.export.GenePatternFiles
 import com.recomdata.export.IgvFiles
 import com.recomdata.export.SnpViewerFiles
@@ -195,32 +194,33 @@ class AnalysisController {
 			ci.tissues.addAll(Arrays.asList(tissues.split(',')));
 		if((gpls!=null) && (gpls.length()>0))
 			ci.gpls.addAll(Arrays.asList(gpls.split(',')));
-		i2b2HelperService.fillCohortInformation(null, null, ci, Integer.parseInt(infoType));
-		
+
 		def result=null;
-		
-		switch(Integer.parseInt(infoType)){
-			case CohortInformation.GPL_TYPE:
-				result = [rows:ci.gpls]
-				break;
-			case CohortInformation.TISSUE_TYPE:
-				result = [rows:ci.tissues]
-				break;
-			case CohortInformation.TIMEPOINTS_TYPE:
-				result = [rows:ci.timepoints]
-				break;
-			case CohortInformation.SAMPLES_TYPE:
-				result = [rows:ci.samples]
-				break;
-			case CohortInformation.PLATFORMS_TYPE:
-				result = [rows:ci.platforms]
-				break;
-			case CohortInformation.RBM_PANEL_TYPE:
-				result = [rows:ci.rbmpanels]
-				break;
-			default:
-				result = [rows:{""}]
-		}
+        if((infoType!=null) && (infoType.length()>0)){
+            i2b2HelperService.fillCohortInformation(null, null, ci, Integer.parseInt(infoType));
+            switch(Integer.parseInt(infoType)){
+                case CohortInformation.GPL_TYPE:
+                    result = [rows:ci.gpls]
+                    break;
+                case CohortInformation.TISSUE_TYPE:
+                    result = [rows:ci.tissues]
+                    break;
+                case CohortInformation.TIMEPOINTS_TYPE:
+                    result = [rows:ci.timepoints]
+                    break;
+                case CohortInformation.SAMPLES_TYPE:
+                    result = [rows:ci.samples]
+                    break;
+                case CohortInformation.PLATFORMS_TYPE:
+                    result = [rows:ci.platforms]
+                    break;
+                case CohortInformation.RBM_PANEL_TYPE:
+                    result = [rows:ci.rbmpanels]
+                    break;
+                default:
+                    result = [rows:{""}]
+            }
+        }
 		render params.callback+"("+(result as JSON)+")"
 	}
 	
@@ -931,7 +931,7 @@ public static String geneInputPrefix = "Gene>";
 void getGeneSearchIdListFromRequest(String genes, String geneAndIdListStr, List<Long> geneSearchIdList, List<String> geneNameList) {
 	if (genes == null || genes.length() == 0 || geneAndIdListStr == null || geneAndIdListStr.length() == 0 ||
 		geneSearchIdList == null || geneNameList == null)
-		return null;
+		return;
 	Map<String, Long> geneIdMap = new HashMap<String, Long>();
 	String[] geneAndIdList = geneAndIdListStr.split("\\|\\|\\|");
 	for (String geneAndIdStr : geneAndIdList) {

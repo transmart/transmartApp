@@ -614,8 +614,7 @@ Ext.onReady(function()
 						scripts : true,
 						nocache : true,
 						discardUrl : true,
-						method : 'POST'//,
-						//callback: loadOntPanel
+						method : 'POST'
 					},
 					collapsible : true,
 					titleCollapse : false,
@@ -1552,6 +1551,7 @@ function loginComplete()
 	genePatternLogin();
 }
 
+// TODO Check for unused function !
 function showProjectDialog(projects)
 {
 
@@ -2044,6 +2044,12 @@ function setupDragAndDrop()
 }
 
 function getPreviousQueryFromIDComplete(subset, result) {
+    if (document.getElementById("queryCriteriaDiv" + subset + "_1") == null) {
+        setTimeout(function(){
+            getPreviousQueryFromIDComplete(subset, result);
+        }, 100);
+        return ;
+    }
     if (result.status != 200) {
         queryPanel.el.unmask();
         return;
@@ -2057,7 +2063,7 @@ function getPreviousQueryFromIDComplete(subset, result) {
 
     panel:
     for (var p = 0; p < panels.length; p++) {
-        var panelnumber = p + 1
+        var panelnumber = p + 1;
 
         showCriteriaGroup(panelnumber); //in case its hidden;
         var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + panelnumber);
