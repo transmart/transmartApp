@@ -16,26 +16,72 @@
  * 
  *
  ******************************************************************/
-  
 
+
+
+import au.com.bytecode.opencsv.CSVReader
 import grails.converters.JSON
 
 class TsvFileReaderController {
 
-    String DEFAULT_FILENAME = 'survival-testALL.tsv'
+    def DEFAULT_FIELDS = ['chromosome', 'start', 'end', 'pvalue', 'fdr']
+    char DEFAULT_SEPARATOR = '\t'
+    int TO_LAST_ROW = -1
 
     def index = {
-        def file = servletContext.getResource("files/${params.filename ?: DEFAULT_FILENAME}")
-        if(file) {
-            def rowsArray = file.text
-                    .replaceAll('(?m)(?<=^|\t)"|"(?=$|\t)', '')
-                    .split('(?:\r?\n)+')*.split('\t+')
+        response.contentType = 'text/json'
+        if(!(params?.jobName ==~ /(?i)[-a-z0-9]+/)) {
+            render new JSON([error: 'jobName parameter is required. It should contains just alphanumeric characters and dashes.'])
+            return
+        }
+        def resource = servletContext.getResource("imges/templates/${params.jobName}/survival-test.txt")
+        if(resource) {
             def from = params.from ? params.int('from') : 1
             def to = params.max ? from + params.int('max') - 1 : -1
-            render new JSON(rowsArray[from..to])
+            def fields = (params.fields?.split('\\s*,\\s*') ?: DEFAULT_FIELDS) as Set<String>
+
+            def obj = parseTsv(resource, from, to, fields)
+
+            def json = new JSON(obj)
+            json.prettyPrint = false
+            render json
         } else {
             response.status = 404
             render '[]'
         }
+    }
+
+    def parseTsv(resource, from, to, fields) {
+        def resultRows = []
+        def csvReader = new CSVReader(new BufferedReader(new InputStreamReader(resource.openStream(), 'UTF-8')), DEFAULT_SEPARATOR)
+        int rowNumber = 0
+        try {
+            String[] headerRow
+            if((headerRow = csvReader.readNext()) != null) {
+                def useFields = []
+                def usePositions = []
+                headerRow.eachWithIndex{ String entry, int i ->
+                    if(fields.contains(entry)) {
+                        useFields << entry
+                        usePositions << i
+                    }
+                }
+                String[] row
+                while ((row = csvReader.readNext()) != null) {
+                    rowNumber += 1
+                    if(rowNumber >= from && (to == TO_LAST_ROW || rowNumber <= to)) {
+                        def rowMap = [:]
+                        def useValues = row[usePositions]
+                        useFields.eachWithIndex{ String entry, int i ->
+                            rowMap[entry] = useValues[i]
+                        }
+                        resultRows.add(rowMap)
+                    }
+                }
+            }
+        } finally {
+            csvReader.close()
+        }
+        [totalCount: rowNumber, result: resultRows]
     }
 }
