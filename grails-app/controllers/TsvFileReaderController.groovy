@@ -21,9 +21,12 @@
 
 import au.com.bytecode.opencsv.CSVReader
 import grails.converters.JSON
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class TsvFileReaderController {
 
+    def config = ConfigurationHolder.config;
+    String temporaryImageFolder = config.RModules.temporaryImageFolder
     def DEFAULT_FIELDS = ['chromosome', 'start', 'end', 'pvalue', 'fdr']
     char DEFAULT_SEPARATOR = '\t'
     int TO_LAST_ROW = -1
@@ -34,13 +37,13 @@ class TsvFileReaderController {
             render new JSON([error: 'jobName parameter is required. It should contains just alphanumeric characters and dashes.'])
             return
         }
-        def resource = servletContext.getResource("images/templates/${params.jobName}/survival-test.txt")
-        if(resource) {
+        def file = new File("${temporaryImageFolder}", "${params.jobName}/survival-test.txt")
+        if(file && file.exists()) {
             def from = params.from ? params.int('from') : 1
             def to = params.max ? from + params.int('max') - 1 : -1
             def fields = (params.fields?.split('\\s*,\\s*') ?: DEFAULT_FIELDS) as Set<String>
 
-            def obj = parseTsv(resource, from, to, fields)
+            def obj = parseTsv(file, from, to, fields)
 
             def json = new JSON(obj)
             json.prettyPrint = false
@@ -51,9 +54,9 @@ class TsvFileReaderController {
         }
     }
 
-    def parseTsv(resource, from, to, fields) {
+    def parseTsv(file, from, to, fields) {
         def resultRows = []
-        def csvReader = new CSVReader(new BufferedReader(new InputStreamReader(resource.openStream(), 'UTF-8')), DEFAULT_SEPARATOR)
+        def csvReader = new CSVReader(new BufferedReader(new InputStreamReader(new FileInputStream(file), 'UTF-8')), DEFAULT_SEPARATOR)
         int rowNumber = 0
         try {
             String[] headerRow
