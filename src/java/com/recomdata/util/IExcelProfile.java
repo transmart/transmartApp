@@ -18,21 +18,21 @@
  ******************************************************************/
   
 
-/**
- * $Id: IExcelProfile.java 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
-package com.recomdata.util;
-
-import java.util.List;
-
-/** Interface that is implemented by domain objects that will be exported to Excel */
-public interface IExcelProfile {
-    /**
-     * Create the List of values that will be used to create an excel worksheet for the domain object
-     *
-     * @return a List (could be nested) of values
-     */
-    public List getValues();
-}
+/**
+ * $Id: IExcelProfile.java 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
+ */
+package com.recomdata.util;
+
+import java.util.List;
+
+/** Interface that is implemented by domain objects that will be exported to Excel */
+public interface IExcelProfile {
+    /**
+     * Create the List of values that will be used to create an excel worksheet for the domain object
+     *
+     * @return a List (could be nested) of values
+     */
+    public List getValues();
+}

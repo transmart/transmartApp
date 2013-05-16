@@ -194,7 +194,8 @@ class AnalysisController {
 			ci.tissues.addAll(Arrays.asList(tissues.split(',')));
 		if((gpls!=null) && (gpls.length()>0))
 			ci.gpls.addAll(Arrays.asList(gpls.split(',')));
-
+		i2b2HelperService.fillCohortInformation(null, null, ci, Integer.parseInt(infoType));
+		
 		def result=null;
         if((infoType!=null) && (infoType.length()>0)){
             i2b2HelperService.fillCohortInformation(null, null, ci, Integer.parseInt(infoType));

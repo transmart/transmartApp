@@ -18,55 +18,55 @@
  ******************************************************************/
   
 
-/**
- * $Id: GeneTest.java 9178 2011-08-24 13:50:06Z mmcduffie $
- */
-package com.recomdata.etl.xml;
-
-import groovy.util.GroovyTestCase;
-
-/**
- * Unit test of the Gene class
- * 
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
-public class GeneTest extends GroovyTestCase {
-	private static Gene g = new Gene();
-	private static String name = "Unit Test";
-	private static Double value = 1.0;
-
-	/**
-	 * Test method for {@link com.recomdata.etl.xml.Gene#getName()}.
-	 */
-	public void testGetName() {
-		g.setName(name);
-		assertEquals(g.getName(), name);		
-	}
-
-	/**
-	 * Test method for {@link com.recomdata.etl.xml.Gene#setName(java.lang.String)}.
-	 */
-	public void testSetName() {
-		String actual = "foo";
-		g.setName(actual);
-		assertEquals(g.getName(), actual);
-	}
-
-	/**
-	 * Test method for {@link com.recomdata.etl.xml.Gene#getValue()}.
-	 */
-	public void testGetValue() {
-		g.setValue(value);
-		assertEquals(g.getValue(), value);
-	}
-
-	/**
-	 * Test method for {@link com.recomdata.etl.xml.Gene#setValue(java.lang.Double)}.
-	 */
-	public void testSetValue() {
-		Double actual = 100.5;
-		g.setValue(actual);
-		assertEquals(g.getValue(), actual);
-	}
-}
+/**
+ * $Id: GeneTest.java 9178 2011-08-24 13:50:06Z mmcduffie $
+ */
+package com.recomdata.etl.xml;
+
+import groovy.util.GroovyTestCase;
+
+/**
+ * Unit test of the Gene class
+ * 
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
+ */
+public class GeneTest extends GroovyTestCase {
+	private static Gene g = new Gene();
+	private static String name = "Unit Test";
+	private static Double value = 1.0;
+
+	/**
+	 * Test method for {@link com.recomdata.etl.xml.Gene#getName()}.
+	 */
+	public void testGetName() {
+		g.setName(name);
+		assertEquals(g.getName(), name);		
+	}
+
+	/**
+	 * Test method for {@link com.recomdata.etl.xml.Gene#setName(java.lang.String)}.
+	 */
+	public void testSetName() {
+		String actual = "foo";
+		g.setName(actual);
+		assertEquals(g.getName(), actual);
+	}
+
+	/**
+	 * Test method for {@link com.recomdata.etl.xml.Gene#getValue()}.
+	 */
+	public void testGetValue() {
+		g.setValue(value);
+		assertEquals(g.getValue(), value);
+	}
+
+	/**
+	 * Test method for {@link com.recomdata.etl.xml.Gene#setValue(java.lang.Double)}.
+	 */
+	public void testSetValue() {
+		Double actual = 100.5;
+		g.setValue(actual);
+		assertEquals(g.getValue(), actual);
+	}
+}

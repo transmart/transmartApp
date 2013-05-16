@@ -84,6 +84,9 @@ class PostgresGeneExpressionDataService {
 				//Create a query for the Subset.
 				if (null != resultInstanceId)
 				{
+					//Get the concepts for this result instance id.
+					def concepts = i2b2HelperService.getConcepts(resultInstanceId)
+		
 					//Add the subquery to the main query.
 					 sqlQuery = createMRNAHeatmapPathwayQuery(study, resultInstanceId, gplIds, pathway, timepoint, sampleTypes, tissueTypes)
 					 sampleQuery = createStudySampleAssayQuery(study,resultInstanceId, gplIds, timepoint, sampleTypes, tissueTypes )
@@ -201,7 +204,7 @@ class PostgresGeneExpressionDataService {
 		   
 		   //Include the tables we join on to get the unique_id.
 		   sTables.append("""
-			   INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = b.GENE_ID::varchar
+			   INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = to_char(b.GENE_ID)
 			   INNER JOIN bio_marker_correl_mv sbm ON sbm.asso_bio_marker_id = bm.bio_marker_id
 			   INNER JOIN search_keyword sk ON sk.bio_data_id = sbm.bio_marker_id
 		   """)
@@ -217,7 +220,7 @@ class PostgresGeneExpressionDataService {
 		   
 		   //Include the tables we join on to filter by the pathway.
 		   sTables.append("""
-		   INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = b.GENE_ID::varchar
+		   INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = to_char(b.GENE_ID)
 		   INNER JOIN SEARCHAPP.SEARCH_BIO_MKR_CORREL_VIEW sbm ON sbm.asso_bio_marker_id = bm.bio_marker_id
 		   INNER JOIN search_keyword sk ON sk.bio_data_id = sbm.domain_object_id
 		   """)

@@ -18,52 +18,52 @@
  ******************************************************************/
   
 
-/**
-* $Id: ExcelSheet.java 9178 2011-08-24 13:50:06Z mmcduffie $
-**/
-package com.recomdata.util;
-
-import java.util.*;
-
-/**
- *@author $Author: mmcduffie $
- *@version $Revision: 9178 $
- **/
-public class ExcelSheet {
-	private String name = null;
-	private List headers = null;
-	private List values = null;
-
-	public ExcelSheet() {
-
-	}
-
-
-	public ExcelSheet(String name, List headers, List values) {
-		this.name = name;
-		this.headers = headers;
-		this.values = values;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public List getHeaders() {
-		return headers;
-	}
-
-	public List getValues() {
-		return values;
-	}
-
-	public void setHeaders(List headers) {
-		this.headers = headers;
-	}
-
-	public void setValues(List values) {
-		this.values = values;
-	}
-
-}
-
+/**
+* $Id: ExcelSheet.java 9178 2011-08-24 13:50:06Z mmcduffie $
+**/
+package com.recomdata.util;
+
+import java.util.*;
+
+/**
+ *@author $Author: mmcduffie $
+ *@version $Revision: 9178 $
+ **/
+public class ExcelSheet {
+	private String name = null;
+	private List headers = null;
+	private List values = null;
+
+	public ExcelSheet() {
+
+	}
+
+
+	public ExcelSheet(String name, List headers, List values) {
+		this.name = name;
+		this.headers = headers;
+		this.values = values;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public List getHeaders() {
+		return headers;
+	}
+
+	public List getValues() {
+		return values;
+	}
+
+	public void setHeaders(List headers) {
+		this.headers = headers;
+	}
+
+	public void setValues(List values) {
+		this.values = values;
+	}
+
+}
+
