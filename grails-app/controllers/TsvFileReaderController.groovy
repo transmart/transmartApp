@@ -34,7 +34,7 @@ class TsvFileReaderController {
             render new JSON([error: 'jobName parameter is required. It should contains just alphanumeric characters and dashes.'])
             return
         }
-        def resource = servletContext.getResource("imges/templates/${params.jobName}/survival-test.txt")
+        def resource = servletContext.getResource("images/templates/${params.jobName}/survival-test.txt")
         if(resource) {
             def from = params.from ? params.int('from') : 1
             def to = params.max ? from + params.int('max') - 1 : -1
