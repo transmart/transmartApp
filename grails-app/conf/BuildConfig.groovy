@@ -54,7 +54,7 @@ grails.project.dependency.resolution = {
     plugins {
         compile ":hibernate:$grailsVersion"
         compile ":quartz:1.0-RC2"
-        compile ":rdc-rmodules:0.2"
+        compile ":rdc-rmodules:0.2-acgh"
         compile ":spring-security-core:1.2.7.3"
         compile ":resources:1.1.6"
         build ":tomcat:$grailsVersion"
