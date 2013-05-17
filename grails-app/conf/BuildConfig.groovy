@@ -22,7 +22,7 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
-//grails.plugin.location.'rdc-modules' = "../Rmodules"
+//grails.plugin.location.'rdc-rmodules' = "../Rmodules"
 
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 grails.project.dependency.resolution = {
@@ -48,6 +48,7 @@ grails.project.dependency.resolution = {
 		runtime 'postgresql:postgresql:9.0-801.jdbc4'
 		compile 'antlr:antlr:2.7.7'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
+        compile 'net.sf.opencsv:opencsv:2.3'
     }
 
     plugins {
