@@ -39,6 +39,7 @@ class DataExportService {
 	def metadataService
 	def snpDataService
 	def geneExpressionDataService
+    def ACGHDataService
 	def additionalDataService
 	def vcfDataService
 	
@@ -143,6 +144,27 @@ class DataExportService {
 									}
 								}
 								break;
+                            case "ACGH_REGIONS.TXT":
+                                if (studyList.size() != 1) {
+                                    throw new Exception("Only one study " +
+                                            "allowed per analysis; list given" +
+                                            " was : " + studyList);
+                                }
+                                def start = System.currentTimeMillis()
+                                this.ACGHDataService.writeRegions(
+                                        studyList[0],
+                                        studyDir,
+                                        'regions.txt',
+                                        jobDataMap.get("jobName"),
+                                        resultInstanceIdMap[subset]
+                                        /* currently the interface does not
+                                        allow filtering,
+                                        so don't implement it here was well */
+                                )
+                                println("It took " + ((System
+                                        .currentTimeMillis()-start) / 1000) +
+                                        " seconds");
+                                break;
 							case "MRNA.CEL":
 								geneExpressionDataService.downloadCELFiles(resultInstanceIdMap[subset], studyList, studyDir, jobDataMap.get("jobName"), null, null, null, null)
 								break;
