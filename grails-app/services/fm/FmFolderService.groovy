@@ -655,7 +655,12 @@ class FmFolderService {
 		if (templateAssoc == null) {
 			templateAssoc = new AmTagTemplateAssociation(tagTemplateId:template.id, objectUid:folder.getUniqueId())
 			templateAssoc.save(flush:true, failOnError:true)
-		}
+			def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Create object", eventmessage: folder.folderType+": "+folder.folderName+" ("+folder.getUniqueId()+")", accesstime:new java.util.Date())
+			al.save()
+		}else{
+				def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Modify object", eventmessage: folder.folderType+": "+folder.folderName+" ("+folder.getUniqueId()+")", accesstime:new java.util.Date())
+				al.save()
+			}
 
 		// If there is business object associated with folder, then save it and create association, if it does not exist.
 		if (object != folder) {
@@ -666,11 +671,6 @@ class FmFolderService {
 				BioData bioData = BioData.get(object.id)
 				folderAssoc = new FmFolderAssociation(objectUid:bioData.uniqueId, objectType:object.getClass().getName(), fmFolder:folder)
 				folderAssoc.save(flush:true, failOnError:true)
-				def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Create object", eventmessage: folder.folderType+": "+folder.folderName+" ("+folder.getUniqueId()+")", accesstime:new java.util.Date())
-				al.save()
-			}else{
-				def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Modify object", eventmessage: folder.folderType+": "+folder.folderName+" ("+folder.getUniqueId()+")", accesstime:new java.util.Date())
-				al.save()
 			}
 		}
 	}
