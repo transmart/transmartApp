@@ -151,7 +151,7 @@
 								jQuery('#displayAssayErrors').empty().html('<div class="errors">' + response.errors + '</div>');
 								jQuery('#saveassaybutton').removeClass('buttonloading').text('Save');
 							} else {
-								updateFolder(response.parentId);
+								//updateFolder(response.parentId);
 								jQuery('#createAssayOverlay').fadeOut();
 								//showDetailDialog(response.id);
 								updateForNewFolder(response.id);
@@ -182,7 +182,7 @@
 								jQuery('#displayFolderErrors').empty().html('<div class="errors">' + response.errors + '</div>');
 								jQuery('#savefolderbutton').removeClass('buttonloading').text('Save');
 							} else {
-								updateFolder(response.parentId);
+								//updateFolder(response.parentId);
 								jQuery('#createFolderOverlay').fadeOut();
 								//showDetailDialog(response.id);
 								updateForNewFolder(response.id);
@@ -213,7 +213,7 @@
 								jQuery('#displayStudyErrors').empty().html('<div class="errors">' + response.errors + '</div>');
 								jQuery('#savestudybutton').removeClass('buttonloading').text('Save');
 							} else {
-								updateFolder(response.parentId);
+								//updateFolder(response.parentId);
 								jQuery('#createStudyOverlay').fadeOut();
 								//showDetailDialog(response.id);
 								updateForNewFolder(response.id);
@@ -274,7 +274,7 @@
 								jQuery('#displayAnalysisErrors').empty().html('<div class="errors">' + response.errors + '</div>');
 								jQuery('#saveanalysisbutton').removeClass('buttonloading').text('Save');
 							} else {
-								updateFolder(response.parentId);
+								//updateFolder(response.parentId);
 								jQuery('#createAnalysisOverlay').fadeOut();
 								//showDetailDialog(response.id);
 								updateForNewFolder(response.id);

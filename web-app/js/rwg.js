@@ -77,15 +77,39 @@ function showDetailDialog(folderId)	{
 	jQuery('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
 		jQuery('#metadata-viewer').removeClass('ajaxloading');
 	});
-	
 	return false;
 }
 
 //when a new object is created, show its details, highlight it and check for its parent to add expand/collapse image
 function updateForNewFolder(folderId)	{
 	jQuery('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
-
 		var parentId=jQuery('#parentId').val();
+		
+		//update parent folder
+		var imgExpand = "#imgExpand_"  + parentId;
+		var src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'ajax-loader-flat.gif').replace('folderminus.png', 'ajax-loader-flat.gif').replace('folderleaf.png', 'ajax-loader-flat.gif');
+		jQuery(imgExpand).attr('src',src);
+		
+		jQuery.ajax({
+			url:folderContentsURL,
+			data: {id: parentId, auto: false},
+			success: function(response) {
+				jQuery('#' + parentId + '_detail').html(response).addClass('gtb1').addClass('analysesopen').attr('data', true);
+				
+				//check if the object has children
+				if(jQuery('#' + parentId + '_detail .search-results-table .folderheader').size() > 0){
+					jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderminus.png'));
+				}else{
+					jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderleaf.png'));
+				}
+				jQuery('.result-folder-name').removeClass('selected');
+				jQuery('#result-folder-name-' + folderId).addClass('selected');
+			},
+			error: function(xhr) {
+				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+			}
+		});
+		
 		var imgExpand = "#imgExpand_"  + parentId;
 		var src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'folderminus.png').replace('ajax-loader-flat.gif', 'folderminus.png').replace('folderleaf.png', 'folderminus.png');
 		jQuery(imgExpand).attr('src',src);
@@ -151,8 +175,10 @@ function toggleDetailDiv(trialNumber, dataURL, forceOpen, highlightFolder)	{
 			jQuery(trialDetail).attr('data',true);
 			jQuery(trialDetail).addClass("analysesopen");
 			
-	    	jQuery('.result-folder-name').removeClass('selected');
-			jQuery('#result-folder-name-' + highlightFolder).addClass('selected');
+			if (highlightFolder) {
+				jQuery('.result-folder-name').removeClass('selected');
+				jQuery('#result-folder-name-' + highlightFolder).addClass('selected');
+			}
 		}	
 		jQuery(imgExpand).attr('src',src);
 		if (!forceOpen) {
