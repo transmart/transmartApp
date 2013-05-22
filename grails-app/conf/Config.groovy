@@ -27,7 +27,6 @@
  * - dataSource location set path by system environment variable '<APP_NAME>_DATASOURCE_LOCATION'
  */
 
-import grails.plugins.springsecurity.SecurityConfigType
 
 grails.plugins.springsecurity.successHandler.defaultTargetUrl = "/transmart"
 
