@@ -14,6 +14,11 @@
 <LINK REL="ICON"
 	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
 
+<%-- We do not have a central template, so this only works in the database explorer for now --%>
+<g:if test="${grailsApplication.config.com.recomdata.debug.jsCallbacks == 'true'}">
+    <script type="text/javascript" src="${resource(dir:'js', file:'long-stack-traces.js')}"></script>
+</g:if>
+
 <!-- Include Ext and app-specific scripts: -->
 <script type="text/javascript"
 	src="${resource(dir:'js/sarissa', file:'sarissa.js')}"></script>
@@ -28,7 +33,7 @@
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.9.1.custom.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
-
+  
 <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.cookie.js')}"></script>   
 <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dynatree.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.paging.min.js')}"></script>
@@ -84,7 +89,7 @@
 	<script type="text/javascript">
 	/******************************************************************************/
 	//Global Variables
-	
+
 	var pageInfo = {
 		basePath :"${request.getContextPath()}"
 	}
@@ -158,7 +163,7 @@
 	    if(BrowserDetect.version < 7) {
 			GLOBAL.resulttype = 'image';
 		}
-	}	
+	}
 	</script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'rwgsearch.js')}"></script>
