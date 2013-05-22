@@ -20,6 +20,7 @@
 
 package com.recomdata.transmart.util
 
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
 
 import java.util.zip.ZipEntry
@@ -110,7 +111,7 @@ class ZipService {
     }
 
     static private void addFileToZip(String path, String srcFile, ZipOutputStream zip)
-            throws Exception {
+    throws Exception {
 
         File folder = new File(srcFile);
         if (folder.isDirectory()) {
@@ -119,9 +120,13 @@ class ZipService {
             byte[] buf = new byte[BUFFER_SIZE];
             int len;
             FileInputStream inStream = new FileInputStream(srcFile);
-            zip.putNextEntry(new ZipEntry(path + "/" + folder.getName()));
-            while ((len = inStream.read(buf)) > 0) {
-                zip.write(buf, 0, len);
+            try {
+                zip.putNextEntry(new ZipEntry(path + "/" + folder.getName()));
+                while ((len = inStream.read(buf)) > 0) {
+                    zip.write(buf, 0, len);
+                }
+            } finally {
+                IOUtils.closeQuietly(inStream)
             }
         }
     }
