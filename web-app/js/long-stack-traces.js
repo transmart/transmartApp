@@ -26,6 +26,11 @@
  */
 (function() {
 
+    if (!Error.prepareStackTrace) {
+        console.warn("Skipping long-stack-traces debug helper -- for V8 only");
+        return;
+    }
+
     var currentTraceError = null;
 
     var filename = new Error().stack.split("\n")[1].match(/^    at ((?:\w+:\/\/)?[^:]+)/)[1];
