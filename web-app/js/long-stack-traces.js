@@ -39,21 +39,20 @@
     }
 
     var originalPrepareStackTrace = Error.prepareStackTrace
-    var newPrepareStackTrace = function(error, structuredStackTrace) {
-        if (!error.__cachedTrace) {
-            error.__cachedTrace = filterInternalFrames(FormatStackTrace(error, structuredStackTrace));
-            if (!has.call(error, "__previous")) {
-                var previous = currentTraceError;
-                while (previous) {
-                    var previousTrace = previous.stack;
-                    error.__cachedTrace += "\nCallback registered at:\n" +
-                        "    at " + previous.__location + "\n" +
-                        previousTrace.substring(previousTrace.indexOf("\n") + 1);
-                    previous = previous.__previous;
-                }
+    var newPrepareStackTrace = function(error, frames) {
+        var result;
+        result = filterInternalFrames(FormatStackTrace(error, frames));
+        if (!has.call(error, "__previous")) {
+            var previous = currentTraceError;
+            while (previous) {
+                var previousTrace = previous.stack;
+                result += "\nCallback registered at:\n" +
+                    "    at " + previous.__location + "\n" +
+                    previousTrace.substring(previousTrace.indexOf("\n") + 1);
+                previous = previous.__previous;
             }
         }
-        return error.__cachedTrace;
+        return result;
     }
 
     Error.prepareStackTrace = newPrepareStackTrace;
