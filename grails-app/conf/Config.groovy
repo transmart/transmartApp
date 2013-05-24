@@ -41,7 +41,7 @@ defaultConfigFiles.each { filePath ->
 	} else {
 	}
 }
-String bashSafeEnvAppName = appName.toUpperCase(Locale.ENGLISH).replaceAll(/-/, '_')
+String bashSafeEnvAppName = appName.toString().toUpperCase(Locale.ENGLISH).replaceAll(/-/, '_')
 
 def externalConfig = System.getenv("${bashSafeEnvAppName}_CONFIG_LOCATION")
 if (externalConfig) {

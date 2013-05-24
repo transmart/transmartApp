@@ -61,6 +61,8 @@ grails.project.dependency.resolution = {
         build ":build-info:1.1"
 		runtime ":prototype:1.0"
         runtime ":transmart-core:1.0-SNAPSHOT"
+
+        test ":code-coverage:1.2.6"
     }
 }
 
