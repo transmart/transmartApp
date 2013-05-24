@@ -27,7 +27,6 @@
  * - dataSource location set path by system environment variable '<APP_NAME>_DATASOURCE_LOCATION'
  */
 
-import grails.plugins.springsecurity.SecurityConfigType
 
 grails.config.locations = []
 def defaultConfigFiles = [
@@ -42,7 +41,7 @@ defaultConfigFiles.each { filePath ->
 	} else {
 	}
 }
-String bashSafeEnvAppName = appName.toUpperCase(Locale.ENGLISH).replaceAll(/-/, '_')
+String bashSafeEnvAppName = appName.toString().toUpperCase(Locale.ENGLISH).replaceAll(/-/, '_')
 
 def externalConfig = System.getenv("${bashSafeEnvAppName}_CONFIG_LOCATION")
 if (externalConfig) {

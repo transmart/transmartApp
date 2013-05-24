@@ -1,4 +1,4 @@
-<!--
+<%--
   tranSMART - translational medicine data mart
   
   Copyright 2008-2012 Janssen Research & Development, LLC.
@@ -15,7 +15,7 @@
   You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
  
--->
+--%>
 
 <%@ page language="java" import="java.util.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -29,6 +29,11 @@
 	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
 <LINK REL="ICON"
 	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
+
+<%-- We do not have a central template, so this only works in the database explorer for now --%>
+<g:if test="${grailsApplication.config.com.recomdata.debug.jsCallbacks == 'true'}">
+    <script type="text/javascript" src="${resource(dir:'js', file:'long-stack-traces.js')}"></script>
+</g:if>
 
 <!-- Include Ext and app-specific scripts: -->
 <script type="text/javascript"
@@ -84,7 +89,7 @@
  
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'metacore.css')}">
-	
+    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'yui-combo-build-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
 	
@@ -95,8 +100,6 @@
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
 		
-	<!-- Combo-handled YUI JS files: --> 
-	<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script> 
 	<style>
 		.ui-progressbar-value { background-image: url(images/pbar-ani.gif); }
 	</style> 
