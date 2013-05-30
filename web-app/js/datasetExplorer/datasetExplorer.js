@@ -615,8 +615,7 @@ Ext.onReady(function()
 						scripts : true,
 						nocache : true,
 						discardUrl : true,
-						method : 'POST'//,
-						//callback: loadOntPanel
+						method : 'POST'
 					},
 					collapsible : true,
 					titleCollapse : false,
@@ -717,8 +716,10 @@ Ext.onReady(function()
 				height : 90
 				}
 		);
-		if (GLOBAL.EnableGP=='true') {
-			analysisJobsPanel = new Ext.Panel(
+		/*
+		 * Commented out the Jobs panel to hide as it isn't used without Gene Pattern
+		 * 
+		 * analysisJobsPanel = new Ext.Panel(
 				{
 					id : 'analysisJobsPanel',
 					title : 'Jobs',
@@ -738,8 +739,7 @@ Ext.onReady(function()
 					},
 					collapsible : true						
 				}
-			);
-		}
+		);*/
 		analysisDataExportPanel = new Ext.Panel(
 				{
 					id : 'analysisDataExportPanel',
@@ -769,14 +769,14 @@ Ext.onReady(function()
 		dataAssociationPanel = new Ext.Panel(
 				{
 					id : 'dataAssociationPanel',
-					title : 'R Workflow',
+					title : 'Advanced Workflow',
 					region : 'center',
 					split : true,
 					height : 90,
 					layout : 'fit',
 					tbar : new Ext.Toolbar({
 						id : 'advancedWorkflowToolbar',
-						title : 'R Workflow actions',
+						title : 'Advanced Workflow actions',
 						items : []
 						}),
 					autoScroll : true,
@@ -877,14 +877,13 @@ Ext.onReady(function()
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
-		if (GLOBAL.EnableGP=='true') {
-			resultsTabPanel.add(analysisJobsPanel);
-		}
+		//Commented out the Jobs panel to hide as it isn't used without Gene Pattern
+		//resultsTabPanel.add(analysisJobsPanel);
+		resultsTabPanel.add(analysisDataExportPanel);
+		resultsTabPanel.add(analysisExportJobsPanel);
 		if (GLOBAL.metacoreAnalyticsEnabled) {
 			resultsTabPanel.add(metacoreEnrichmentPanel);
 		}
-		resultsTabPanel.add(analysisDataExportPanel);
-		resultsTabPanel.add(analysisExportJobsPanel);
 		
 		southCenterPanel = new Ext.Panel(
 				{
@@ -1553,6 +1552,7 @@ function loginComplete()
 	genePatternLogin();
 }
 
+// TODO Check for unused function !
 function showProjectDialog(projects)
 {
 
@@ -2045,6 +2045,12 @@ function setupDragAndDrop()
 }
 
 function getPreviousQueryFromIDComplete(subset, result) {
+    if (document.getElementById("queryCriteriaDiv" + subset + "_1") == null) {
+        setTimeout(function(){
+            getPreviousQueryFromIDComplete(subset, result);
+        }, 100);
+        return ;
+    }
     if (result.status != 200) {
         queryPanel.el.unmask();
         return;
@@ -2058,7 +2064,7 @@ function getPreviousQueryFromIDComplete(subset, result) {
 
     panel:
     for (var p = 0; p < panels.length; p++) {
-        var panelnumber = p + 1
+        var panelnumber = p + 1;
 
         showCriteriaGroup(panelnumber); //in case its hidden;
         var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + panelnumber);

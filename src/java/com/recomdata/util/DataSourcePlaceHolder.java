@@ -18,24 +18,24 @@
  ******************************************************************/
   
 
-package com.recomdata.util;
-
-import javax.sql.DataSource;
-import org.apache.log4j.Logger;
-
-/**
- * this class injects a Spring DataSource for global access by other java classes
- */
-public class DataSourcePlaceHolder {
-
-	static Logger log = Logger.getLogger(DataSourcePlaceHolder.class);
-	public static DataSource s_dataSource = null;
-	
-	public void setDataSource(DataSource ds) {
-		s_dataSource = ds;
-		log.info("binding static dataSource reference!");		
-	}
-}
-
-
-
+package com.recomdata.util;
+
+import javax.sql.DataSource;
+import org.apache.log4j.Logger;
+
+/**
+ * this class injects a Spring DataSource for global access by other java classes
+ */
+public class DataSourcePlaceHolder {
+
+	static Logger log = Logger.getLogger(DataSourcePlaceHolder.class);
+	public static DataSource s_dataSource = null;
+	
+	public void setDataSource(DataSource ds) {
+		s_dataSource = ds;
+		log.info("binding static dataSource reference!");		
+	}
+}
+
+
+

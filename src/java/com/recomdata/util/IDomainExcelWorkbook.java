@@ -18,18 +18,18 @@
  ******************************************************************/
   
 
-package com.recomdata.util;
-
-/**
- * marker interface indicates a domain object
- * can be exposed as an Excel Workbook
- * @author jspencer
- */
-public interface IDomainExcelWorkbook {
-
-	/**
-	 * create an excel workbook for a domain object
-	 * @return
-	 */
-	public byte[] createWorkbook();
-}
+package com.recomdata.util;
+
+/**
+ * marker interface indicates a domain object
+ * can be exposed as an Excel Workbook
+ * @author jspencer
+ */
+public interface IDomainExcelWorkbook {
+
+	/**
+	 * create an excel workbook for a domain object
+	 * @return
+	 */
+	public byte[] createWorkbook();
+}

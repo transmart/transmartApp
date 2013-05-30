@@ -84,7 +84,7 @@
  
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'metacore.css')}">
-	
+    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'yui-combo-build-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
 	
@@ -95,8 +95,6 @@
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
 		
-	<!-- Combo-handled YUI JS files: --> 
-	<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script> 
 	<style>
 		.ui-progressbar-value { background-image: url(images/pbar-ani.gif); }
 	</style> 

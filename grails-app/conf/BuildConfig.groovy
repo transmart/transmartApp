@@ -17,6 +17,7 @@
  *
  ******************************************************************/
   
+
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
@@ -61,6 +62,8 @@ grails.project.dependency.resolution = {
 		runtime ":prototype:1.0"
 		runtime ":jquery:1.7.1"
         runtime ":transmart-core:1.0-SNAPSHOT"
+
+        test ":code-coverage:1.2.6"
     }
 }
 
