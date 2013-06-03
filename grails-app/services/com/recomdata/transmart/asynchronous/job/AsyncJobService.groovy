@@ -75,6 +75,7 @@ class AsyncJobService {
 			m["startDate"] = jobResult.lastRunOn
 			m["viewerURL"] = jobResult.viewerURL
 			m["altViewerURL"] = jobResult.altViewerURL
+			m["jobInputsJson"] = new JSONObject(jobResult.jobInputsJson)
 			rows.put(m)
 		}
 		
@@ -99,23 +100,25 @@ class AsyncJobService {
 	* Method that will create the new asynchronous job name
 	* Current methodology is username-jobtype-ID from sequence generator
 	*/
-	def createnewjob(jobName = null, jobType = null) {
+	def createnewjob(params) {
 		def userName = springSecurityService.getPrincipal().username
 		def jobStatus = "Started"
 		
 		def newJob = new AsyncJob(lastRunOn:new Date())
 		newJob.save()
-		
+
+		def jobName = params?.jobName
 		if (StringUtils.isEmpty(jobName)) {
 			def jobNameBuf = new StringBuffer(userName)
 			jobNameBuf.append('-')
-			if (StringUtils.isNotEmpty(jobType)) jobNameBuf.append(jobType)
+			if (StringUtils.isNotEmpty(params.jobType)) jobNameBuf.append(params.jobType)
 			jobNameBuf.append('-').append(newJob.id)
 			jobName = jobNameBuf.toString()
 		}
 		newJob.jobName = jobName 
-		newJob.jobType = jobType
+		newJob.jobType = params?.jobType
 		newJob.jobStatus = jobStatus
+		newJob.jobInputsJson = new JSONObject(params).toString()
 		newJob.save()
 		
 		jobResultsService[jobName] = [:]
