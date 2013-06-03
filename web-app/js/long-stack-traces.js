@@ -26,7 +26,7 @@
  */
 (function() {
 
-    if (!Error.prepareStackTrace) {
+    if (!Error.captureStackTrace) {
         console.warn("Skipping long-stack-traces debug helper -- for V8 only");
         return;
     }
