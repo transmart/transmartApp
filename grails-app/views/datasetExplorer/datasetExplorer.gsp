@@ -12,13 +12,13 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
 
 <%@ page language="java" import="java.util.*"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -40,9 +40,9 @@
 <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
-	
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
+
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
   
 <script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script> 
@@ -94,10 +94,7 @@
 	<script type="text/javascript" src="${resource(dir:'js/raphael', file:'raphael-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
-		
-	<style>
-		.ui-progressbar-value { background-image: url(images/pbar-ani.gif); }
-	</style> 
+
 </head>
 
 <body>
@@ -196,14 +193,10 @@
 <h3 id="test">Loading....</h3>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
-	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}">
-	<g:set var="gplogout" value="${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}/gp/logout"/>
+	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled}">
+        <IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
+        <IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
 	</g:if>
-	<g:else>
-	<g:set var="gplogout" value=""/>	
-	</g:else>
-	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
-	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
 		
 	<span id="visualizerSpan0"></span> <!-- place applet tag here -->
 	<span id="visualizerSpan1"></span> <!-- place applet tag here -->

@@ -12,13 +12,13 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
 
 <%@ page language="java" import="java.util.*"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -30,7 +30,8 @@
 	<script type="text/javascript" src="${resource(dir:'js/sarissa', file: 'sarissa_ieemu_xpath.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/javeline', file: 'javeline_xpath.js')}"></script>
 	<g:javascript library="prototype" />
-	<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
+    <r:layoutResources/>
+    <script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
@@ -52,7 +53,7 @@
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'sampleExplorer.css')}">	
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
 	<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
+	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"/>
 </head>		
 	
 	<body>

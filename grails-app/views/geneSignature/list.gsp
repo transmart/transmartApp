@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -24,7 +24,7 @@
         <title>Gene Signature Search</title>
         <link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
         <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'jquery.dataTables.css')}">
-        <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"/>
         <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 	    <script>jQuery.noConflict();</script> 
 		<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.colorbox-min.js')}"></script>	

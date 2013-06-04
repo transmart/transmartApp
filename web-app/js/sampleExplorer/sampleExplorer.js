@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -224,7 +224,7 @@ function loadDataSetGrid()
             {header: 'Sample Treatment',		sortable: true, dataIndex: 'Sample_Treatment', width: 14},
             {header: 'Subject Treatment',		sortable: true, dataIndex: 'Subject_Treatment', width: 14},
             {header: 'Timepoint',		sortable: true, dataIndex: 'Timepoint', hidden:true},
-            {header: 'Samples',			sortable: true, dataIndex: 'count', width: 7,renderer: renderSampleLink}
+            {header: 'Samples',			sortable: true, dataIndex: 'count', width: 7,renderer: renderSampleLink},
             {header: 'Gender',			sortable: true, dataIndex: 'Gender', width: 10},
             {header: 'Biomarker',		sortable: true, dataIndex: 'Biomarker', width: 14}
         ]
@@ -312,7 +312,7 @@ function renderDSELink(val)
 //This renderer draws a checkbox.
 function renderIncludeCheckBox(val)
 {
-	return '<input type="checkbox" onClick="modifyDataList();"></input>';
+	return '<input type="checkbox" onClick="modifyDataList();" />';
 }
 
 //When we remove or add a column from the grid panel we need to re-query Solr to get the results with or without this column.
@@ -435,7 +435,7 @@ function addSubset(panelNumber)
           {header: 'Source Organism',		sortable: true, dataIndex: 'Source_Organism', width: 10},
           {header: 'Sample Treatment',	sortable: true, dataIndex: 'Sample_Treatment', width: 14},
           {header: 'Subject Treatment',	sortable: true, dataIndex: 'Subject_Treatment', width: 14},
-          {header: 'Samples',				sortable: true, dataIndex: 'count', width: 7}
+          {header: 'Samples',				sortable: true, dataIndex: 'count', width: 7},
           {header: 'Gender',			sortable: true, dataIndex: 'Gender', width: 10},
           {header: 'Biomarker',		sortable: true, dataIndex: 'Biomarker', width: 14}
         ]

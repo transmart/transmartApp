@@ -231,7 +231,7 @@ class RWGController {
 	
 		  JSONArray categories = new JSONArray()
 		  
-		  if (rootNode.children)  {
+		  if (rootNode && rootNode.children)  {
 			  
 			  def categoriesList = []
 			  // loop thru all children of root and create a list of categories to be used for initial facet search
@@ -513,6 +513,9 @@ class RWGController {
 	   String solrScheme = grailsApplication.config.com.rwg.solr.scheme
 	   String solrHost = grailsApplication.config.com.rwg.solr.host
 	   String solrPath = grailsApplication.config.com.rwg.solr.path
+       log.debug("Scheme $grailsApplication.config.com.rwg.solr.scheme")
+       log.debug("Host $grailsApplication.config.com.rwg.solr.host")
+       log.debug("Path $grailsApplication.config.com.rwg.solr.path")
 	   String solrRequestUrl = new URI(solrScheme, solrHost, solrPath, "", "").toURL()
 	   
 	   return solrRequestUrl
@@ -1465,13 +1468,13 @@ class RWGController {
 	   
 	   def ta=SearchTaxonomy.findByTermName('Therapeutic Areas') //default to ta
 	   def d=SearchTaxonomy.findByTermName('Disease') //default to disease
-	   def currentsubcategoryid;
+	   def currentsubcategoryid = null;
 	   def currentcharttype="studies";
 	   if(params.currentsubcategoryid)
 	   {
 		   currentsubcategoryid=params.currentsubcategoryid.toLong()
 	   }
-	   else
+	   else if (d)
 	   {
 		   currentsubcategoryid=d.id
 	   }
@@ -1482,22 +1485,24 @@ class RWGController {
 	   def rwgDAO = new RWGVisualizationDAO()
 	   def favorites = getFavorites('FACETED_SEARCH')
 	   def favoritesXT = getFavorites('XT')
-	   def categories;
+	   def categories = null;
 	   def showAll=false;
 	   if(params.showAll=="true")
 	   {
 		   categories=rwgDAO.getSearchTaxonomyChildren(ta.id)
 		   showAll=true;
 	   }
-	   else
+	   else if (ta)
 	   {
 		  categories=rwgDAO.getCategoriesWithData(ta.id, currentsubcategoryid);
 	   }
 	    def subcategories=rwgDAO.getSearchTaxonomyChildren(1); //TODO: is one always root?
 		def currentsubcategory=SearchTaxonomy.get(currentsubcategoryid);
-	   render(template:'home', model: ['categories': categories, 'subcategories': subcategories, 'currentsubcategoryid':currentsubcategoryid, 'currentsubcategoryname':currentsubcategory.termName, 'favorites':favorites, 'favoritesXT':favoritesXT, 'currentcharttype':currentcharttype, 'showAll':showAll])
-
- }
+       if (currentsubcategory)
+           render(template:'home', model: ['categories': categories, 'subcategories': subcategories, 'currentsubcategoryid':currentsubcategoryid, 'currentsubcategoryname':currentsubcategory.termName, 'favorites':favorites, 'favoritesXT':favoritesXT, 'currentcharttype':currentcharttype, 'showAll':showAll])
+       else
+           render(template:'home', model: ['categories': categories, 'subcategories': subcategories, 'currentsubcategoryid':currentsubcategoryid, 'currentsubcategoryname':'Null', 'favorites':favorites, 'favoritesXT':favoritesXT, 'currentcharttype':currentcharttype, 'showAll':showAll])
+   }
  
    /**
 	* Returns the data for the pie chart visualizations

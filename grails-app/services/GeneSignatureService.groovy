@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -573,6 +573,7 @@ public class GeneSignatureService {
 	def listPermissionedGeneSignatures(Long userId, boolean bAdmin) {
 		def permCriteria = (bAdmin) ? "(1=1)" : "(gs.createdByAuthUser.id="+userId+" or gs.publicFlag=true)"
 		def qBuf = "from GeneSignature gs where "+permCriteria+" and gs.deletedFlag=false order by gs.name"
+        log.debug("Blablabla $qBuf")
 		return GeneSignature.findAll(qBuf);
 	}
 

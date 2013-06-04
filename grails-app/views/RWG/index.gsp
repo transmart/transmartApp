@@ -4,23 +4,23 @@
         <!-- Force Internet Explorer 8 to override compatibility mode -->
         <meta http-equiv="X-UA-Compatible" content="IE=edge" >        
         
-        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
         
         <!-- jQuery CSS for cupertino theme -->
-        <link rel="stylesheet" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}"></link>        
-        <link rel="stylesheet" href="${resource(dir:'css/jquery/skin', file:'ui.dynatree.css')}"></link>        
+        <link rel="stylesheet" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}"/>
+        <link rel="stylesheet" href="${resource(dir:'css/jquery/skin', file:'ui.dynatree.css')}"/>
         
         <!-- Our CSS -->
-        <link rel="stylesheet" href="${resource(dir:'css', file:'jquery.loadmask.css')}"></link>
-        <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>        
-        <link rel="stylesheet" href="${resource(dir:'css', file:'rwg.css')}"></link>
-        <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"></link>
-        <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/simpleModal.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'jquery.loadmask.css')}"/>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"/>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'rwg.css')}"/>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'colorbox.css')}"/>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/simpleModal.css')}"/>
 
-        <link rel="stylesheet" href="${resource(dir:'css', file:'searchTooltip.css')}"></link>
-        <link rel="stylesheet" href="${resource(dir:'css', file:'heatmapTooltip.css')}"></link>
-        <link rel="stylesheet" href="${resource(dir:'css', file:'geneChartTooltip.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'searchTooltip.css')}"/>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'heatmapTooltip.css')}"/>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'geneChartTooltip.css')}"/>
                                 
         <!-- jQuery JS libraries -->
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
@@ -51,7 +51,7 @@
        
        	<!--Pie Chart -->
        	<script type="text/javascript" src="${resource(dir:'js', file:'piechart.js')}"></script>
-        <link rel="stylesheet" href="${resource(dir:'css', file:'piechart.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'piechart.css')}"/>
         
        	<!--Heatmap (d3) -->
        	<script type="text/javascript" src="${resource(dir:'js', file:'heatmap.js')}"></script>
@@ -234,7 +234,7 @@
 							    <option value="250">250</option>
 							</select>  Probes/Page
 							<br /><br />
-							<input type="checkBox" id="cbShowSignificantResults" checked="true" onclick="showSearchResults(); ">Show only significant results</input>		
+							<input type="checkbox" id="cbShowSignificantResults" checked="true" onclick="showSearchResults(); ">Show only significant results
 						</div>
 					</div>
 				</li>		

@@ -1175,7 +1175,7 @@ JS.Test.Unit.UI.extend({
           while (n--) items[n].parentNode.removeChild(items[n]);
           
           var html = document.getElementsByTagName('html')[0];
-          return '<!doctype html><html>' + html.innerHTML + '</html>';
+          return '<!DOCTYPE html>';
         }
       })
     }

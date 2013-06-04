@@ -12,22 +12,22 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<!DOCTYPE html>
 <html>
 	<head>
 	    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="shortctu icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">
-		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/ext-all.css')}"></link>
-		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"></link>
-		      <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
-        <link rel="stylesheet" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}"></link>
+		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/ext-all.css')}"/>
+		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"/>
+		      <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"/>
+        <link rel="stylesheet" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}"/>
         
     <!--[if IE 7]>
         <style type="text/css">

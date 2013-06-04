@@ -445,7 +445,7 @@ function addSearchAutoComplete()	{
 
 function showIEWarningMsg(){
 	
-	if (jQuery.browser.msie && jQuery.browser.version.substr(0,1)<9) {
+	if (jQuery.browser.msie && jQuery.browser.version<9) {
 
 		var msg = "<div id='IEwarningBox'>Your browser is not supported. Please use the latest version of Chrome. <br /><br />";
 			msg = msg + "<a href='#' id='IEwarningOverlayLink'>More info</a> | <a href='#' onclick=\"javascript:jQuery('#IEwarningBox').slideUp('fast');\">Close</a> </div>";

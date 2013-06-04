@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -160,7 +160,7 @@ Ext.onReady(function()
 		northPanel = new Ext.Panel(
 				{
 					id : 'northPanel',
-					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif"></img></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
+					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif" /></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
 					region : 'north',
 					height : 45,
 					split : false,
@@ -1260,7 +1260,7 @@ function createOntPanel()
 
 	// make the ontSerchByNamePanel
 	shtml='<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>\
-		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td<td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15"></input>&nbsp;</td>\
+		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td><td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15" />&nbsp;</td>\
 		<td><button onclick="searchByName()">Find</button></td></tr><tr><td colspan="2">Select Ontology:<select id="searchByNameSelectOntology"></select></td></tr></table>';
 
 		searchByNameForm = new Ext.Panel(
@@ -1834,14 +1834,14 @@ function getSubCategories(id_in, title_in, ontresponse)
 		}
 		treeRoot = createTree('exclude', ontresponse);
 	}
-	
+
     var toolbar = new Ext.Toolbar([
 		{
 			id:'contextHelp-button',
 			handler: function(event, toolEl, panel){
 			   	D2H_ShowHelp((id_in=="navigateTermsPanel")?"1066":"1091",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
 			},
-		    iconCls: "contextHelpBtn"  
+		    iconCls: "contextHelpBtn"
 		}
     ]);
 	
@@ -4396,7 +4396,9 @@ function showHaploviewGeneSelection()
 }
 
 function genePatternLogin() {
-	document.getElementById("gplogin").src = pageInfo.basePath + '/analysis/gplogin';
+    element = document.getElementById("gplogin");
+	if(element)
+        element.src = pageInfo.basePath + '/analysis/gplogin';
 }
 
 function showWorkflowStatusWindow()

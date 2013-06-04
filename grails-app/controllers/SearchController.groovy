@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -115,7 +115,7 @@ public class SearchController{
 
 	def loadCategories = {
 
-		def sql = "select distinct k.dataCategory as value, k.displayDataCategory as label " + 
+		def sql = "select distinct lower(k.dataCategory) as value, k.displayDataCategory as label " +
                   " from org.transmart.searchapp.SearchKeyword k " +
 				  " where k.dataCategory in " +
 				  catList + " order by lower(k.dataCategory)"
@@ -136,7 +136,7 @@ public class SearchController{
 			rows.add(row)
 		}
 		def result = [rows:rows]
-		render params.callback + "(" + (result as JSON) + ")"
+        render(contentType: 'text/javascript', text:params.callback + "(" + (result as JSON) + ")")
 
 	}
 
@@ -242,7 +242,7 @@ public class SearchController{
 			}
 		}
 		def result = [rows:itemlist]
-		render params.callback+"("+(result as JSON)+")"
+        render(contentType: 'text/javascript', text:params.callback+"("+(result as JSON)+")")
 
 	}
 
