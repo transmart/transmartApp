@@ -94,10 +94,11 @@ class FileExportController {
 		def errorResponse = []
 		def filestorePath = grailsApplication.config.com.recomdata.FmFolderService.filestoreDirectory
 		
+		def exportList
 		try {
 			
 			//Final export list comes from selected checkboxes
-			def exportList = params.id.split(",")
+			exportList = params.id.split(",")
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream()
 			def zipStream = new ZipOutputStream(baos)
@@ -155,6 +156,9 @@ class FileExportController {
 		catch (Exception e) {
 			log.error("Error writing ZIP", e)
 			render(contentType: "text/plain", text: errorResponse.join("\n") + "\nError writing ZIP: " + e.getMessage())
+		}catch(OutOfMemoryError oe){
+			log.error("Files too large to be exported: "+exportList)
+			render(contentType: "text/plain", text:"Error: Files too large to be exported.\nPlease click on the \"Previous\" button on your web browser to go back to tranSMART.")
 		}
 	}
 }
