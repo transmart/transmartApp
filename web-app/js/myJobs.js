@@ -25,7 +25,7 @@ function getJobsData(tab)
    				url : pageInfo.basePath+'/asyncJob/getjobs',
    				root : 'jobs',
    				totalProperty : 'totalCount',
-   				fields : ['name', 'status', 'runTime', 'startDate', 'viewerURL', 'altViewerURL']
+   				fields : ['name', 'status', 'runTime', 'startDate', 'viewerURL', 'altViewerURL', 'jobInputsJson']
 			}
 	);
 	jobsstore.on('load', jobsstoreLoaded);

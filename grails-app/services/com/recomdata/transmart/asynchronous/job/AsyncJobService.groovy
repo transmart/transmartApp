@@ -75,7 +75,7 @@ class AsyncJobService {
 			m["startDate"] = jobResult.lastRunOn
 			m["viewerURL"] = jobResult.viewerURL
 			m["altViewerURL"] = jobResult.altViewerURL
-			m["jobInputsJson"] = new JSONObject(jobResult.jobInputsJson)
+			m["jobInputsJson"] = new JSONObject(jobResult.jobInputsJson ?: "{}")
 			rows.put(m)
 		}
 		
