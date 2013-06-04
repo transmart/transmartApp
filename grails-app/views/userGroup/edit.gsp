@@ -76,7 +76,7 @@
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:userGroupInstance,field:'members','errors')}">
                                <table>
-                  				<tr><td></td><td></td><td><input name="searchtext" id="searchtext"></input><button class="" onclick="${remoteFunction(action:'searchUsersNotInGroup',update:[success:'groupmembers', failure:''], id:userGroupInstance?.id, params:'\'searchtext=\' + document.getElementById(\'searchtext\').value' )}; return false;">Search Users</button></td>
+                  				<tr><td></td><td></td><td><input name="searchtext" id="searchtext"><button class="" onclick="${remoteFunction(action:'searchUsersNotInGroup',update:[success:'groupmembers', failure:''], id:userGroupInstance?.id, params:'\'searchtext=\' + document.getElementById(\'searchtext\').value' )}; return false;">Search Users</button></td>
                      				<tr><td>Members of group:</td><td></td><td>Available users:</td></tr>
                      				<tr id="groupmembers">
                                     <g:render template="addremove" bean="${userGroupInstance}" />

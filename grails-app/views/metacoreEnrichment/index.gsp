@@ -99,7 +99,7 @@
 		</tr>		
 		<tr>
 			<td colspan="4" align="center"><g:metacoreSettingsButton /><input type="button" value="Run"
-				onClick="submitMetaCoreEnrichmentJob(this.form);"></input></td>
+				onClick="submitMetaCoreEnrichmentJob(this.form);"></td>
 		</tr>
 	</table>
 </form>

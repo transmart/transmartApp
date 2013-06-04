@@ -59,7 +59,7 @@
 				</tbody>
 				</table>
 
-	<tr><td>&nbsp;</td><td>&nbsp;</td><td><input name="searchtext" id="searchtext"></input>
+	<tr><td>&nbsp;</td><td>&nbsp;</td><td><input name="searchtext" id="searchtext">
                 				<input type="submit" value="Search User/Groups"/></td></tr>
 				</g:form>
 			<table>

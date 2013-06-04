@@ -3728,7 +3728,7 @@ function showNameQueryDialog()
 					           }
 					           ],
 					           resizable : false,
-					           html : '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50"></input>'
+					           html : '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50">'
 				}
 		);
 	}

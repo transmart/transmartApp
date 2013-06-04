@@ -251,7 +251,7 @@
        
         <div id="search-div">         
             <select id="search-categories"></select>                          
-            <input id="search-ac"/></input>                                                          
+            <input id="search-ac"/>
         </div>
         
         <div id="title-search-div" class="ui-widget-header">
@@ -295,7 +295,7 @@
 
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
-       <div id="testTextHeightDiv" />         
+       <div id="testTextHeightDiv"></div>
     </body>
     
            		

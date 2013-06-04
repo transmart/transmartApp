@@ -23,7 +23,7 @@
 	<h1>Cross Trial Analysis</h1>
 
 	<div id ="xtSearch">
-		Search for genes, pathways, or gene signatures: <input id="xtSearch-ac"/></input> 
+		Search for genes, pathways, or gene signatures: <input id="xtSearch-ac"/>
 		<div style="float:right">
 			<a href="#" id="save-modal-xt" class='title-link-inactive'><span>Save Selection</span></a> | <a href="#" id='load-modal-xt' class='title-link-active' onclick="openLoadSearchDialog(true);"}>Load Analysis</a> | <a href="#" id="clear-xt" class='title-link-inactive' onclick="clearAllXTSearchTerms();">Clear Terms</a>
 		</div>
