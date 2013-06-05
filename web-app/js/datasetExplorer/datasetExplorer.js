@@ -836,6 +836,28 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
+
+		/**
+		 * panel to display list of jobs belong to a user
+		 * @type {Ext.Panel}
+		 */
+		analysisJobsPanel = new Ext.Panel(
+			{
+				id : 'analysisJobsPanel',
+				title : 'Analysis Jobs',
+				region : 'center',
+				split : true,
+				height : 90,
+				layout : 'fit',
+				listeners :
+				{
+					activate : function(p) {
+						getJobsData(p)
+					}
+				},
+				collapsible : true
+			}
+		);
 		
 		metacoreEnrichmentPanel = new Ext.Panel(
 				{
@@ -881,6 +903,7 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
+		resultsTabPanel.add(analysisJobsPanel);
 		if (GLOBAL.metacoreAnalyticsEnabled) {
 			resultsTabPanel.add(metacoreEnrichmentPanel);
 		}

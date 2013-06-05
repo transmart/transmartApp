@@ -20,16 +20,10 @@
 
 package com.recomdata.transmart.asynchronous.job
 
+import com.recomdata.genepattern.JobStatus
+import com.recomdata.genepattern.WorkflowStatus
 import grails.converters.JSON
-import groovy.time.*
-
-import org.apache.commons.lang.StringUtils;
-import org.json.*
-
-import com.recomdata.transmart.domain.i2b2.AsyncJob
-
-import com.recomdata.genepattern.WorkflowStatus;
-import com.recomdata.genepattern.JobStatus;
+import org.json.JSONObject;
 
 class AsyncJobController {
 	def quartzScheduler
@@ -62,7 +56,7 @@ class AsyncJobController {
 	}
 
 	def createnewjob = {
-		def result = asyncJobService.createnewjob(params.jobName, params.jobType)
+		def result = asyncJobService.createnewjob(params)
 
 		response.setContentType("text/json")
 		response.outputStream << result?.toString()
