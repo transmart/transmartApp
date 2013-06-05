@@ -69,14 +69,21 @@ function jobsstoreLoaded()
 					var jobName = grid.getStore().getAt(rowIndex).get('name');
 					var jobNameArray = jobName.split("-");
 					var jobType = jobNameArray[1];
-					
+
 					if (status == "Completed")	{
 						// First, we check all of the general heatmaps that store a URL
 						// Second, we check for special cases where the results are stored in JOB_RESULTS field
 						if (viewerURL != null)	{
-							runVisualizerFromSpan(viewerURL, altViewerURL);
+							// at the moment specific to these two analysis will load the analysis page
+							if (jobType == 'aCGHSurvivalAnalysis' || jobType == 'aCGHgroupTest' ) {
+								resultsTabPanel.setActiveTab('dataAssociationPanel');
+								loadAnalysisPage(jobType, true, jobName);
+								return;
+							} else { // otherwise .. using visualizer
+								runVisualizerFromSpan(viewerURL, altViewerURL);
+							}
 						} else	{
-							Ext.Ajax.request({						
+							Ext.Ajax.request({
 								url: pageInfo.basePath+"/asyncJob/getjobresults",
 								method: 'POST',
 								success: function(result, request){
@@ -96,7 +103,7 @@ function jobsstoreLoaded()
 							});							
 						}							
 					} else if (status == "Error")	{
-						Ext.Msg.alert("Job Failure", "Unfortunately, an error occurred generating this heatmap");	
+						Ext.Msg.alert("Job Failure", "Unfortunately, an error occurred on this job.");
 					} else if (status == "Cancelled")	{
 						Ext.Msg.alert("Job Cancelled", "The job has been cancelled");
 					} else	{
