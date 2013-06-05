@@ -56,18 +56,19 @@ class ACGHDataService {
         writerUtil.writeLine(header as String[])
 
         def templateArray = new String[header.size() + 1] //+1 b/c 1st row has no header
-        Long i = 1; //for the first row
+        Long i = 1; //counter for the first (unnamed/no header) column
         for (RegionRow row: regionResult.rows) {
             def line = templateArray.clone()
             def region = row.region
 
             line[0] = i++                   as String
-            line[1] = region.chromosome     as String
+            line[1] = region.chromosome
             line[2] = region.start          as String
             line[3] = region.end            as String
             line[4] = region.numberOfProbes as String
+            line[5] = region.cytoband
 
-            int j = 5
+            int j = 6
             PER_ASSAY_COLUMNS.each { k, value ->
                 assays.each { assay ->
                     line[j++] = value(row.getRegionDataForAssay(assay)) as String
@@ -94,6 +95,7 @@ class ACGHDataService {
                 'start',
                 'end',
                 'num.probes',
+                'cytoband',
         ];
 
         PER_ASSAY_COLUMNS.keySet().each { head ->
