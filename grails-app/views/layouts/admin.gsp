@@ -27,7 +27,7 @@
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />		
 		<link rel="stylesheet"	href="${resource(dir:'css',file:'admin.css')}" />
 		<link rel="stylesheet" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}"/>
-		<g:javascript library="prototype" />
+		<script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 	    <script type="text/javascript"	src="${resource(dir:'js', file:'usergroup.js')}"></script>

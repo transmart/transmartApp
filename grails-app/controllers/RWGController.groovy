@@ -513,9 +513,6 @@ class RWGController {
 	   String solrScheme = grailsApplication.config.com.rwg.solr.scheme
 	   String solrHost = grailsApplication.config.com.rwg.solr.host
 	   String solrPath = grailsApplication.config.com.rwg.solr.path
-       log.debug("Scheme $grailsApplication.config.com.rwg.solr.scheme")
-       log.debug("Host $grailsApplication.config.com.rwg.solr.host")
-       log.debug("Path $grailsApplication.config.com.rwg.solr.path")
 	   String solrRequestUrl = new URI(solrScheme, solrHost, solrPath, "", "").toURL()
 	   
 	   return solrRequestUrl

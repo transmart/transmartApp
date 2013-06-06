@@ -31,11 +31,11 @@
 	<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
-	<!-- <g:javascript library="prototype" />-->
+	<!-- <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>-->
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'toggle.js')}"></script>	
-	<g:javascript library="application" />
+	<script type="text/javascript" src="${resource(dir:'js', file:'application.js')}"></script>
 	
 	<script type="text/javascript">
 		 google.load("visualization", "1", {packages:["table"]});

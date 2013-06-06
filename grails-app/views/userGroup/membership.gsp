@@ -28,8 +28,7 @@
    p { width:440px; }
         .ext-ie .x-form-text {position:static !important;}
   </style>
-  <g:javascript library="prototype" plugin="prototype"/>
-  <r:layoutResources/>
+        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
     </head>
     <body>
         <div class="body">

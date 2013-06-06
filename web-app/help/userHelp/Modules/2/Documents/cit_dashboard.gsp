@@ -26,7 +26,7 @@
     <link rel="shortcut icon" href="${createLinkTo(dir:'images',file:'favicon.ico')}" type="image/x-icon" />   
     <g:javascript src="toggle.js" />
     <g:javascript src="FusionCharts.js" />	
-	<g:javascript library="prototype" />		
+	<script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
         
     <g:layoutHead /> 
 
