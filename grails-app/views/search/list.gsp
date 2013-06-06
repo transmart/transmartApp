@@ -34,6 +34,7 @@
 		</style>
 	<![endif]-->
 
+		<g:javascript library="prototype" />
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
@@ -342,9 +343,7 @@
 				helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 			</script>
 		</sec:ifAnyGranted>
-		<!-- ************************************** -->
-		<g:javascript library="prototype" plugin="prototype"/>
-        <r:layoutResources/> 
+		<!-- ************************************** --> 
 	</head>
 <body>
 		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
@@ -368,7 +367,6 @@
 				<input type="hidden" name="selectedpath" value="">
 			</g:form>
 		</div>
-		<r:layoutResources/>
 	</body>
 </html>
 

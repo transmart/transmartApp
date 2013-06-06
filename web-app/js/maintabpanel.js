@@ -457,6 +457,17 @@ function activateTab(tab) {
         setButtonVisibility("tea",false);
         setButtonVisibility("contextHelp", false);
         break;
+		
+    case "tab18":
+        setButtonVisibility("filters", false);
+        setButtonVisibility("summary", false);
+        setButtonVisibility("heatmap", false);
+        setButtonVisibility("exportsummary", false);
+        setButtonVisibility("exportresnet", false);
+        setButtonVisibility("studyview", false)
+        setButtonVisibility("tea",false);
+        setButtonVisibility("contextHelp", false);
+        break;
     }
 }
 
