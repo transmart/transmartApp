@@ -34,6 +34,7 @@
        	<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'geneSigSearch.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
        	<script type="text/javascript" src="${resource(dir:'js/d3', file:'d3.v2.js')}"></script>
        	<script type="text/javascript" src="${resource(dir:'js', file:'manipulateGeneSig.js')}"></script>
        	<script type="text/javascript">JSCLASS_PATH = '../js/JS.Class/min'</script>

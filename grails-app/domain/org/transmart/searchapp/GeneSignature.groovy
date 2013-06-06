@@ -16,14 +16,13 @@
  * 
  *
  ******************************************************************/
-  
+
 package org.transmart.searchapp
 
 import org.transmart.biomart.Compound
 import org.transmart.biomart.ConceptCode
+
 import org.transmart.biomart.BioAssayPlatform;
-import org.transmart.biomart.Compound
-import org.transmart.biomart.ConceptCode
 import org.transmart.biomart.CellLine;
 import org.transmart.searchapp.SearchKeyword
 import com.recomdata.util.IDomainExcelWorkbook
@@ -35,57 +34,57 @@ import com.recomdata.util.ExcelGenerator
  */
 class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 
-	static def DOMAIN_KEY = "GENESIG"
-	static def DISPLAY_TAG = "Gene Signature"
+    static def DOMAIN_KEY = "GENESIG"
+    static def DISPLAY_TAG = "Gene Signature"
 
-	// gene list version
-	static def DOMAIN_KEY_GL = "GENELIST"
-	static def DISPLAY_TAG_GL = "Gene List"
+    // gene list version
+    static def DOMAIN_KEY_GL = "GENELIST"
+    static def DISPLAY_TAG_GL = "Gene List"
 
-	Long id
-	String name
-	String description
-	String uploadFile
-	GeneSignatureFileSchema fileSchema
-	ConceptCode foldChgMetricConceptCode
-	ConceptCode analyticCatConceptCode
-	String analyticCatOther
-	BioAssayPlatform techPlatform
-	String analystName
-	ConceptCode normMethodConceptCode
-	String normMethodOther
-	ConceptCode analysisMethodConceptCode
-	String analysisMethodOther
-	Long multipleTestingCorrection
-	ConceptCode pValueCutoffConceptCode
-	String uniqueId
-	Date dateCreated
-	AuthUser createdByAuthUser
-	Date lastUpdated
-	AuthUser modifiedByAuthUser
-	String versionNumber
-	boolean publicFlag = false
-	boolean deletedFlag = false
-	GeneSignature parentGeneSignature
-	ConceptCode sourceConceptCode
-	String sourceOther
-	ConceptCode ownerConceptCode
-	String stimulusDescription
-	String stimulusDosing
-	String treatmentDescription
-	String treatmentDosing
-	Compound treatmentCompound
-	String treatmentProtocolNumber
-	String pmIds
-	ConceptCode speciesConceptCode
-	ConceptCode speciesMouseSrcConceptCode
-	String speciesMouseDetail
-	ConceptCode tissueTypeConceptCode
-	ConceptCode experimentTypeConceptCode
-	CellLine experimentTypeCellLine
-	String experimentTypeInVivoDescr
-	String experimentTypeATCCRef
-	
+    Long id
+    String name
+    String description
+    String uploadFile
+    GeneSignatureFileSchema fileSchema
+    ConceptCode foldChgMetricConceptCode
+    ConceptCode analyticCatConceptCode
+    String analyticCatOther
+    BioAssayPlatform techPlatform
+    String analystName
+    ConceptCode normMethodConceptCode
+    String normMethodOther
+    ConceptCode analysisMethodConceptCode
+    String analysisMethodOther
+    boolean multipleTestingCorrection
+    ConceptCode pValueCutoffConceptCode
+    String uniqueId
+    Date dateCreated
+    AuthUser createdByAuthUser
+    Date lastUpdated
+    AuthUser modifiedByAuthUser
+    String versionNumber
+    boolean publicFlag = false
+    boolean deletedFlag = false
+    GeneSignature parentGeneSignature
+    ConceptCode sourceConceptCode
+    String sourceOther
+    ConceptCode ownerConceptCode
+    String stimulusDescription
+    String stimulusDosing
+    String treatmentDescription
+    String treatmentDosing
+    Compound treatmentCompound
+    String treatmentProtocolNumber
+    String pmIds
+    ConceptCode speciesConceptCode
+    ConceptCode speciesMouseSrcConceptCode
+    String speciesMouseDetail
+    ConceptCode tissueTypeConceptCode
+    ConceptCode experimentTypeConceptCode
+    CellLine experimentTypeCellLine
+    String experimentTypeInVivoDescr
+    String experimentTypeATCCRef
+	/*
 	boolean qcPerformed = false
 	Date qcDate
 	String qcInfo
@@ -101,59 +100,60 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	String customName4
 	String customValue5
 	String customName5
+	*/
 	
-	
-	static hasMany = [geneSigItems:GeneSignatureItem]
+    static hasMany = [geneSigItems:GeneSignatureItem]
 
-	static mapping = {
-		table 'SEARCH_GENE_SIGNATURE'
-		version false
-		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-		geneSigItems sort: 'foldChgMetric'
-		columns {
-			id column:'SEARCH_GENE_SIGNATURE_ID'
-			name column:'NAME'
-			description column:'DESCRIPTION'
-			uploadFile column:'UPLOAD_FILE'
-			fileSchema column:'SEARCH_GENE_SIG_FILE_SCHEMA_ID'
-			foldChgMetricConceptCode column:'FOLD_CHG_METRIC_CONCEPT_ID'
-			analyticCatConceptCode column:'ANALYTIC_CAT_CONCEPT_ID'
-			analyticCatOther column:'ANALYTIC_CAT_OTHER'
-			techPlatform column:'BIO_ASSAY_PLATFORM_ID'
-			analystName column:'ANALYST_NAME'
-			normMethodConceptCode column:'NORM_METHOD_CONCEPT_ID'
-			normMethodOther column:'NORM_METHOD_OTHER'
-			analysisMethodConceptCode column:'ANALYSIS_METHOD_CONCEPT_ID'
-			analysisMethodOther column:'ANALYSIS_METHOD_OTHER'
-			multipleTestingCorrection column:'MULTIPLE_TESTING_CORRECTION'
-			pValueCutoffConceptCode column:'P_VALUE_CUTOFF_CONCEPT_ID'
-			uniqueId column:'UNIQUE_ID'
-			dateCreated column:'CREATE_DATE'
-			createdByAuthUser column:'CREATED_BY_AUTH_USER_ID'
-			lastUpdated column:'LAST_MODIFIED_DATE'
-			modifiedByAuthUser column:'MODIFIED_BY_AUTH_USER_ID'
-			versionNumber column:'VERSION_NUMBER'
-			publicFlag column:'PUBLIC_FLAG'
-			deletedFlag column:'DELETED_FLAG'
-			parentGeneSignature column:'PARENT_GENE_SIGNATURE_ID'
-			sourceConceptCode column:'SOURCE_CONCEPT_ID'
-			sourceOther column:'SOURCE_OTHER'
-			ownerConceptCode column:'OWNER_CONCEPT_ID'
-			stimulusDescription column:'STIMULUS_DESCRIPTION'
-			stimulusDosing column:'STIMULUS_DOSING'
-			treatmentDescription column:'TREATMENT_DESCRIPTION'
-			treatmentDosing column:'TREATMENT_DOSING'
-			treatmentCompound column:'TREATMENT_BIO_COMPOUND_ID'
-			treatmentProtocolNumber column:'TREATMENT_PROTOCOL_NUMBER'
-			pmIds column:'PMID_LIST'
-			speciesConceptCode column:'SPECIES_CONCEPT_ID'
-			speciesMouseSrcConceptCode column:'SPECIES_MOUSE_SRC_CONCEPT_ID'
-			speciesMouseDetail column:'SPECIES_MOUSE_DETAIL'
-			tissueTypeConceptCode column:'TISSUE_TYPE_CONCEPT_ID'
-			experimentTypeConceptCode column:'EXPERIMENT_TYPE_CONCEPT_ID'
-			experimentTypeCellLine column:'EXPERIMENT_TYPE_CELL_LINE_ID'
-			experimentTypeInVivoDescr column:'EXPERIMENT_TYPE_IN_VIVO_DESCR'
-			experimentTypeATCCRef column:'EXPERIMENT_TYPE_ATCC_REF'
+    static mapping = {
+        table 'SEARCH_GENE_SIGNATURE'
+        version false
+        id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+        geneSigItems sort: 'foldChgMetric'
+        columns {
+            id column:'SEARCH_GENE_SIGNATURE_ID'
+            name column:'NAME'
+            description column:'DESCRIPTION'
+            uploadFile column:'UPLOAD_FILE'
+            fileSchema column:'SEARCH_GENE_SIG_FILE_SCHEMA_ID'
+            foldChgMetricConceptCode column:'FOLD_CHG_METRIC_CONCEPT_ID'
+            analyticCatConceptCode column:'ANALYTIC_CAT_CONCEPT_ID'
+            analyticCatOther column:'ANALYTIC_CAT_OTHER'
+            techPlatform column:'BIO_ASSAY_PLATFORM_ID'
+            analystName column:'ANALYST_NAME'
+            normMethodConceptCode column:'NORM_METHOD_CONCEPT_ID'
+            normMethodOther column:'NORM_METHOD_OTHER'
+            analysisMethodConceptCode column:'ANALYSIS_METHOD_CONCEPT_ID'
+            analysisMethodOther column:'ANALYSIS_METHOD_OTHER'
+            multipleTestingCorrection column:'MULTIPLE_TESTING_CORRECTION'
+            pValueCutoffConceptCode column:'P_VALUE_CUTOFF_CONCEPT_ID'
+            uniqueId column:'UNIQUE_ID'
+            dateCreated column:'CREATE_DATE'
+            createdByAuthUser column:'CREATED_BY_AUTH_USER_ID'
+            lastUpdated column:'LAST_MODIFIED_DATE'
+            modifiedByAuthUser column:'MODIFIED_BY_AUTH_USER_ID'
+            versionNumber column:'VERSION_NUMBER'
+            publicFlag column:'PUBLIC_FLAG'
+            deletedFlag column:'DELETED_FLAG'
+            parentGeneSignature column:'PARENT_GENE_SIGNATURE_ID'
+            sourceConceptCode column:'SOURCE_CONCEPT_ID'
+            sourceOther column:'SOURCE_OTHER'
+            ownerConceptCode column:'OWNER_CONCEPT_ID'
+            stimulusDescription column:'STIMULUS_DESCRIPTION'
+            stimulusDosing column:'STIMULUS_DOSING'
+            treatmentDescription column:'TREATMENT_DESCRIPTION'
+            treatmentDosing column:'TREATMENT_DOSING'
+            treatmentCompound column:'TREATMENT_BIO_COMPOUND_ID'
+            treatmentProtocolNumber column:'TREATMENT_PROTOCOL_NUMBER'
+            pmIds column:'PMID_LIST'
+            speciesConceptCode column:'SPECIES_CONCEPT_ID'
+            speciesMouseSrcConceptCode column:'SPECIES_MOUSE_SRC_CONCEPT_ID'
+            speciesMouseDetail column:'SPECIES_MOUSE_DETAIL'
+            tissueTypeConceptCode column:'TISSUE_TYPE_CONCEPT_ID'
+            experimentTypeConceptCode column:'EXPERIMENT_TYPE_CONCEPT_ID'
+            experimentTypeCellLine column:'EXPERIMENT_TYPE_CELL_LINE_ID'
+            experimentTypeInVivoDescr column:'EXPERIMENT_TYPE_IN_VIVO_DESCR'
+            experimentTypeATCCRef column:'EXPERIMENT_TYPE_ATCC_REF'
+            /*
 			qcPerformed column:'QC_PERFORMED'
 			qcDate column:'QC_DATE'
 			qcInfo column:'QC_INFO'
@@ -169,44 +169,46 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 			customName4 column:'CUSTOM_NAME4'
 			customValue5 column:'CUSTOM_VALUE5'
 			customName5 column:'CUSTOM_NAME5'
-		}
-	}
+			*/
+        }
+    }
 
-	static constraints = {
-		uploadFile(maxSize:255)
-		analyticCatConceptCode(nullable:true)
-		analyticCatOther(nullable:true, maxSize:255)
-		analystName(nullable:true, maxSize:100)
-		normMethodConceptCode(nullable:true)
-		normMethodOther(nullable:true, maxSize:255)
-		analysisMethodConceptCode(nullable:true)
-		analysisMethodOther(nullable:true, maxSize:255)
-		name(maxSize:100)
-		description(nullable:true, maxSize:1000)
-		uniqueId(nullable:true, maxSize:50)
-		lastUpdated(nullable:true)
-		modifiedByAuthUser(nullable:true)
-		versionNumber(nullable:true, maxSize:50)
-		parentGeneSignature(nullable:true)
-		sourceConceptCode(nullable:true)
-		sourceOther(nullable:true, maxSize:255)
-		ownerConceptCode(nullable:true)
-		stimulusDescription(nullable:true, maxSize:1000)
-		stimulusDosing(nullable:true, maxSize:255)
-		treatmentDescription(nullable:true, maxSize:1000)
-		treatmentDosing(nullable:true, maxSize:255)
-		treatmentCompound(nullable:true)
-		treatmentProtocolNumber(nullable:true, maxSize:50)
-		pmIds(nullable:true, maxSize:255)
-		speciesMouseSrcConceptCode(nullable:true)
-		speciesMouseDetail(nullable:true, maxSize:255)
+    static constraints = {
+        uploadFile(maxSize:255)
+        analyticCatConceptCode(nullable:true)
+        analyticCatOther(nullable:true, maxSize:255)
+        analystName(nullable:true, maxSize:100)
+        normMethodConceptCode(nullable:true)
+        normMethodOther(nullable:true, maxSize:255)
+        analysisMethodConceptCode(nullable:true)
+        analysisMethodOther(nullable:true, maxSize:255)
+        name(maxSize:100)
+        description(nullable:true, maxSize:1000)
+        uniqueId(nullable:true, maxSize:50)
+        lastUpdated(nullable:true)
+        modifiedByAuthUser(nullable:true)
+        versionNumber(nullable:true, maxSize:50)
+        parentGeneSignature(nullable:true)
+        sourceConceptCode(nullable:true)
+        sourceOther(nullable:true, maxSize:255)
+        ownerConceptCode(nullable:true)
+        stimulusDescription(nullable:true, maxSize:1000)
+        stimulusDosing(nullable:true, maxSize:255)
+        treatmentDescription(nullable:true, maxSize:1000)
+        treatmentDosing(nullable:true, maxSize:255)
+        treatmentCompound(nullable:true)
+        treatmentProtocolNumber(nullable:true, maxSize:50)
+        pmIds(nullable:true, maxSize:255)
+        speciesMouseSrcConceptCode(nullable:true)
+        speciesMouseDetail(nullable:true, maxSize:255)
 		techPlatform(nullable:true)
-		tissueTypeConceptCode(nullable:true)
-		experimentTypeConceptCode(nullable:true)
-		experimentTypeCellLine(nullable:true)
-		experimentTypeInVivoDescr(nullable:true, maxSize:255)
-		experimentTypeATCCRef(nullable:true, maxSize:255)
-		multipleTestingCorrection(nullable:true)
+        tissueTypeConceptCode(nullable:true)
+        experimentTypeConceptCode(nullable:true)
+        experimentTypeCellLine(nullable:true)
+        experimentTypeInVivoDescr(nullable:true, maxSize:255)
+        experimentTypeATCCRef(nullable:true, maxSize:255)
+        multipleTestingCorrection(nullable:true)
+        /*
 		qcPerformed (nullable:true)
 		qcDate (nullable:true)
 		qcInfo (nullable:true)
@@ -222,71 +224,73 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		customName4(nullable:true, maxSize:255)
 		customValue5(nullable:true, maxSize:255)
 		customName5(nullable:true, maxSize:255)
-	}
+		*/
+    }
 
-	/**
-	 * event called before an insert
-	 */
-	def beforeInsert = {
-		dateCreated = new Date()
-		
+    /**
+     * event called before an insert
+     */
+    def beforeInsert = {
+        dateCreated = new Date()
+		/*
 		if(qcPerformed){
 			qcDate = new Date()
 		}
-		//uniqueId = DOMAIN_KEY+":"+id
-		//println("what is my id ?"+getId())
-	}
+		*/
+    }
 
-	/**
-	 * event called before an update
-	 */
-	def beforeUpdate = {
-		lastUpdated = new Date()
+    /**
+     * event called before an update
+     */
+    def beforeUpdate = {
+        lastUpdated = new Date()
+        /*
 		if(qcPerformed && qcDate==null){
 			qcDate = new Date()
 		}else if(!qcPerformed){
 			qcDate = null
 		}
-		uniqueId = DOMAIN_KEY+":"+id
-	}
+		*/
+        uniqueId = DOMAIN_KEY+":"+id
+    }
 
-	def updateUniqueId(){
-		setUniqueId(DOMAIN_KEY+":"+id);
-	}
+    def updateUniqueId(){
+        setUniqueId(DOMAIN_KEY+":"+id);
+    }
 
-	/**
-	 * parse comma separated Ids into a list
-	 */
-	def getPmIdsAsList(){
-		List pmidList = new ArrayList();
+    /**
+     * parse comma separated Ids into a list
+     */
+    def getPmIdsAsList(){
+        List pmidList = new ArrayList();
 
-		if(pmIds==null) return pmidList;
+        if(pmIds==null) return pmidList;
 
-		// parse into tokens
-		StringTokenizer st = new StringTokenizer(pmIds,",");
-		while(st.hasMoreTokens()) {
-			pmidList.add(st.nextToken())
-		}
+        // parse into tokens
+        StringTokenizer st = new StringTokenizer(pmIds,",");
+        while(st.hasMoreTokens()) {
+            pmidList.add(st.nextToken())
+        }
 
-		return pmidList;
-	}
+        return pmidList;
+    }
 
-	/**
-	 * cloneable interface implementation
-	 */
-	def clone() {
+    /**
+     * cloneable interface implementation
+     */
+    def clone() {
 
-		// clone object using a map of params
-		Map params = createParamMap();
-		GeneSignature clone = new GeneSignature();
-		clone.properties = params;
-		return clone;
-	}
+        // clone object using a map of params
+        Map params = createParamMap();
+        GeneSignature clone = new GeneSignature();
+        clone.properties = params;
+        return clone;
+    }
 
-	/**
-	 * creat a Map with the properties and values for each property similar to a request map
-	 */
-	def createParamMap() {
+    /**
+     * creat a Map with the properties and values for each property similar to a request map
+     */
+    def createParamMap() {
 
 		Map params = new HashMap();
 		params.put("name",name)
@@ -331,6 +335,7 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		if (modifiedByAuthUser?.id) params.put("modifiedByAuthUser.id",modifiedByAuthUser?.id)
 		params.put("lastUpdated",lastUpdated)
 		params.put("versionNumber",versionNumber)
+        /*
 		params.put("dataSource",dataSource)
 		params.put("qcPerformed",qcPerformed)
 		params.put("qcDate", qcDate)
@@ -346,55 +351,57 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		params.put("customName4",customName4)
 		params.put("customValue5",customValue5)
 		params.put("customName5",customName5)
-		return params;
-	}
+		*/
+        return params;
+    }
 
-	/**
-	 * copy properties from this instance to the specified object
-	 */
-	def copyPropertiesTo(GeneSignature gs) {
-		gs.name=name
-		gs.description=description
-		gs.uploadFile=uploadFile
-		gs.fileSchema=fileSchema
-		gs.foldChgMetricConceptCode=foldChgMetricConceptCode?.id ? foldChgMetricConceptCode : null
-		gs.analyticCatConceptCode = analyticCatConceptCode?.id ? analyticCatConceptCode : null   // need to check if there are actually not null concept codes before assigning or else we get transient object errors
-		gs.analyticCatOther=analyticCatOther
-		gs.techPlatform=techPlatform
-		gs.analystName=analystName
-		gs.normMethodConceptCode=normMethodConceptCode?.id ? normMethodConceptCode : null
-		gs.normMethodOther=normMethodOther
-		gs.analysisMethodConceptCode=analysisMethodConceptCode?.id ? analysisMethodConceptCode : null
-		gs.analysisMethodOther=analysisMethodOther
-		gs.multipleTestingCorrection=multipleTestingCorrection
-		gs.pValueCutoffConceptCode = pValueCutoffConceptCode?.id ? pValueCutoffConceptCode : null
-		gs.uniqueId=null
-		gs.publicFlag=publicFlag
-		gs.deletedFlag=deletedFlag
-		//gs.parentGeneSignature=parentGeneSignature
-		gs.sourceConceptCode = sourceConceptCode?.id ? sourceConceptCode : null
-		gs.sourceOther=sourceOther
-		gs.ownerConceptCode = ownerConceptCode?.id ? ownerConceptCode : null
-		gs.stimulusDescription=stimulusDescription
-		gs.stimulusDosing=stimulusDosing
-		gs.treatmentDescription=treatmentDescription
-		gs.treatmentDosing=treatmentDosing 
-		gs.treatmentCompound = treatmentCompound?.id ? treatmentCompound : null
-		gs.treatmentProtocolNumber=treatmentProtocolNumber
-		gs.pmIds=pmIds
-		gs.speciesConceptCode = speciesConceptCode?.id ? speciesConceptCode : null
-		gs.speciesMouseSrcConceptCode = speciesMouseSrcConceptCode?.id ? speciesMouseSrcConceptCode : null
-		gs.speciesMouseDetail=speciesMouseDetail
-		gs.tissueTypeConceptCode = tissueTypeConceptCode?.id ? tissueTypeConceptCode : null
-		gs.experimentTypeConceptCode = experimentTypeConceptCode?.id ? experimentTypeConceptCode : null
-		gs.experimentTypeCellLine= experimentTypeCellLine
-		gs.experimentTypeInVivoDescr=experimentTypeInVivoDescr
-		gs.experimentTypeATCCRef=experimentTypeATCCRef
-		gs.createdByAuthUser=createdByAuthUser
-		gs.dateCreated=dateCreated
-		gs.modifiedByAuthUser=modifiedByAuthUser
-		gs.lastUpdated=lastUpdated
-		gs.versionNumber=versionNumber
+    /**
+     * copy properties from this instance to the specified object
+     */
+    def copyPropertiesTo(GeneSignature gs) {
+        gs.name=name
+        gs.description=description
+        gs.uploadFile=uploadFile
+        gs.fileSchema=fileSchema
+        gs.foldChgMetricConceptCode=foldChgMetricConceptCode
+        gs.analyticCatConceptCode=analyticCatConceptCode
+        gs.analyticCatOther=analyticCatOther
+        gs.techPlatform=techPlatform
+        gs.analystName=analystName
+        gs.normMethodConceptCode=normMethodConceptCode
+        gs.normMethodOther=normMethodOther
+        gs.analysisMethodConceptCode=analysisMethodConceptCode
+        gs.analysisMethodOther=analysisMethodOther
+        gs.multipleTestingCorrection=multipleTestingCorrection
+        gs.pValueCutoffConceptCode=pValueCutoffConceptCode
+        gs.uniqueId=null
+        gs.publicFlag=publicFlag
+        gs.deletedFlag=deletedFlag
+        //gs.parentGeneSignature=parentGeneSignature
+        gs.sourceConceptCode=sourceConceptCode
+        gs.sourceOther=sourceOther
+        gs.ownerConceptCode=ownerConceptCode
+        gs.stimulusDescription=stimulusDescription
+        gs.stimulusDosing=stimulusDosing
+        gs.treatmentDescription=treatmentDescription
+        gs.treatmentDosing=treatmentDosing
+        gs.treatmentCompound=treatmentCompound
+        gs.treatmentProtocolNumber=treatmentProtocolNumber
+        gs.pmIds=pmIds
+        gs.speciesConceptCode=speciesConceptCode
+        gs.speciesMouseSrcConceptCode=speciesMouseSrcConceptCode
+        gs.speciesMouseDetail=speciesMouseDetail
+        gs.tissueTypeConceptCode=tissueTypeConceptCode
+        gs.experimentTypeConceptCode=experimentTypeConceptCode
+        gs.experimentTypeCellLine= experimentTypeCellLine
+        gs.experimentTypeInVivoDescr=experimentTypeInVivoDescr
+        gs.experimentTypeATCCRef=experimentTypeATCCRef
+        gs.createdByAuthUser=createdByAuthUser
+        gs.dateCreated=dateCreated
+        gs.modifiedByAuthUser=modifiedByAuthUser
+        gs.lastUpdated=lastUpdated
+        gs.versionNumber=versionNumber
+        /*
 		gs.dataSource= dataSource
 		gs.qcPerformed=qcPerformed
 		gs.qcDate=qcDate
@@ -410,89 +417,91 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		gs.customName4=customName4
 		gs.customValue5=customValue5
 		gs.customName5=customName5
-	}
+		*/
+    }
 
-	/**
-	 * create a workbook showing the details of this gene signature
-	 */
-	public byte[] createWorkbook() {
+    /**
+     * create a workbook showing the details of this gene signature
+     */
+    public byte[] createWorkbook() {
 
-		def descr
+        def descr
 
-		// gs sheet
-		def headers=[]
-		def values=[]
+        // gs sheet
+        def headers=[]
+        def values=[]
 
-		// general section
-		values.add(["1) General Info"])
-		values.add([])
-		values.add(["Name:",name])
-		values.add(["Description:",description])
-		values.add(["Public?:",publicFlag ? "Public":"Private"])
-		values.add(["Author:",createdByAuthUser?.userRealName])
-		values.add(["Create Date:",dateCreated])
-		values.add(["Modified By:",modifiedByAuthUser?.userRealName])
-		values.add(["Modified Date:",modifiedByAuthUser!=null ? lastUpdated : ""])
+        // general section
+        values.add(["1) General Info"])
+        values.add([])
+        values.add(["Name:",name])
+        values.add(["Description:",description])
+        values.add(["Public?:",publicFlag ? "Public":"Private"])
+        values.add(["Author:",createdByAuthUser?.userRealName])
+        values.add(["Create Date:",dateCreated])
+        values.add(["Modified By:",modifiedByAuthUser?.userRealName])
+        values.add(["Modified Date:",modifiedByAuthUser!=null ? lastUpdated : ""])
 
-		// meta section
-		values.add([])
-		values.add(["2) Meta-Data"])
-		values.add([])
+        // meta section
+        values.add([])
+        values.add(["2) Meta-Data"])
+        values.add([])
 
-		descr = sourceConceptCode?.id==1 ? sourceOther : sourceConceptCode?.codeName
-		values.add(["Source of list:",descr])
+        descr = sourceConceptCode?.id==1 ? sourceOther : sourceConceptCode?.codeName
+        values.add(["Source of list:",descr])
 
-		values.add(["Owner of data:",ownerConceptCode?.codeName])
+        values.add(["Owner of data:",ownerConceptCode?.codeName])
 
-		values.add(["Stimulus>>"])
-		values.add(["- Description:",stimulusDescription])
-		values.add(["- Dose, units, and time:",stimulusDosing])
+        values.add(["Stimulus>>"])
+        values.add(["- Description:",stimulusDescription])
+        values.add(["- Dose, units, and time:",stimulusDosing])
 
-		values.add(["Treatment>>"])
-		values.add(["- Description:",treatmentDescription])
-		values.add(["- Dose, units, and time:",treatmentDosing])
-		descr = ""
-		if(treatmentCompound!=null) descr = treatmentCompound?.codeName + ' [' + treatmentCompound?.genericName + ' / ' + treatmentCompound?.brandName +']'
-		values.add(["- Compound:",descr])
-		values.add(["- Protocol Number:",treatmentProtocolNumber])
+        values.add(["Treatment>>"])
+        values.add(["- Description:",treatmentDescription])
+        values.add(["- Dose, units, and time:",treatmentDosing])
+        descr = ""
+        if(treatmentCompound!=null) descr = treatmentCompound?.codeName + ' [' + treatmentCompound?.genericName + ' / ' + treatmentCompound?.brandName +']'
+        values.add(["- Compound:",descr])
+        values.add(["- Protocol Number:",treatmentProtocolNumber])
 
-		values.add(["PMIDs (comma separated):",pmIds])
+        values.add(["PMIDs (comma separated):",pmIds])
 
-		values.add(["Species:",speciesConceptCode?.codeName])
-		if(speciesMouseSrcConceptCode!=null) values.add(["- Mouse Source:",speciesMouseSrcConceptCode?.codeName])
-		if(speciesMouseDetail!=null) values.add(["- knockout/transgenic' or 'other' mouse strain:",speciesMouseDetail])
+        values.add(["Species:",speciesConceptCode?.codeName])
+        if(speciesMouseSrcConceptCode!=null) values.add(["- Mouse Source:",speciesMouseSrcConceptCode?.codeName])
+        if(speciesMouseDetail!=null) values.add(["- knockout/transgenic' or 'other' mouse strain:",speciesMouseDetail])
 
-		descr = ""
-		if(techPlatform!=null) descr = techPlatform?.vendor + ' - ' + techPlatform?.array + ' [' + techPlatform?.accession + ']'
-		values.add(["Technology Platform:",descr])
+        descr = ""
+        if(techPlatform!=null) descr = techPlatform?.vendor + ' - ' + techPlatform?.array + ' [' + techPlatform?.accession + ']'
+        values.add(["Technology Platform:",descr])
 
-		values.add(["Tissue Type:",tissueTypeConceptCode?.codeName])
+        values.add(["Tissue Type:",tissueTypeConceptCode?.codeName])
 
-		values.add(["Experiment Info>>"])
-		values.add(["- Type:",experimentTypeConceptCode?.codeName])
-		if(experimentTypeCellLine!=null) values.add(["- Established Cell Line:",experimentTypeCellLine.cellLineName])
-		if(experimentTypeConceptCode?.bioConceptCode=='IN_VIVO_ANIMAL' || experimentTypeConceptCode?.bioConceptCode=='IN_VIVO_HUMAN') values.add(["- 'in vivo' model:",experimentTypeInVivoDescr])
-		values.add(["- ATCC Designation:",experimentTypeATCCRef])
+        values.add(["Experiment Info>>"])
+        values.add(["- Type:",experimentTypeConceptCode?.codeName])
+        if(experimentTypeCellLine!=null) values.add(["- Established Cell Line:",experimentTypeCellLine.cellLineName])
+        if(experimentTypeConceptCode?.bioConceptCode=='IN_VIVO_ANIMAL' || experimentTypeConceptCode?.bioConceptCode=='IN_VIVO_HUMAN') values.add(["- 'in vivo' model:",experimentTypeInVivoDescr])
+        values.add(["- ATCC Designation:",experimentTypeATCCRef])
 
-		// analysis section
-		values.add([])
-		values.add(["3) Analysis Meta-Data"])
-		values.add([])
-		values.add(["Analysis Performed By:",analystName])
+        // analysis section
+        values.add([])
+        values.add(["3) Analysis Meta-Data"])
+        values.add([])
+        values.add(["Analysis Performed By:",analystName])
 
-		descr = normMethodConceptCode?.id==1 ? normMethodOther : normMethodConceptCode?.codeName
-		values.add(["Normalization Method:",descr])
+        descr = normMethodConceptCode?.id==1 ? normMethodOther : normMethodConceptCode?.codeName
+        values.add(["Normalization Method:",descr])
 
-		descr = analyticCatConceptCode?.id==1 ? analyticCatOther : analyticCatConceptCode?.codeName
-		values.add(["Analytic Category:",descr])
+        descr = analyticCatConceptCode?.id==1 ? analyticCatOther : analyticCatConceptCode?.codeName
+        values.add(["Analytic Category:",descr])
 
-		descr = analysisMethodConceptCode?.id==1 ? analysisMethodOther : analysisMethodConceptCode?.codeName
-		values.add(["Analysis Method:",descr])
+        descr = analysisMethodConceptCode?.id==1 ? analysisMethodOther : analysisMethodConceptCode?.codeName
+        values.add(["Analysis Method:",descr])
 
-		values.add(["Multiple Testing Correction?", (multipleTestingCorrection!=null) ? (multipleTestingCorrection==1?"Yes":"No") : ""])
-		values.add(["P-value Cutoff:",pValueCutoffConceptCode?.codeName])
-		values.add(["Fold-change metric:",foldChgMetricConceptCode?.codeName])
-		values.add(["Original upload file:",uploadFile])
+        values.add(["Multiple Testing Correction?", (multipleTestingCorrection!=null) ? (multipleTestingCorrection==1?"Yes":"No") : ""])
+        values.add(["P-value Cutoff:",pValueCutoffConceptCode?.codeName])
+        values.add(["Fold-change metric:",foldChgMetricConceptCode?.codeName])
+        values.add(["Original upload file:",uploadFile])
+        /*
 		values.add(["Version:", versionStr])
 		values.add(["Data Source:", dataSource])
 		values.add(["QC Performed", qcPerformed?"Yes":"No"])
@@ -503,40 +512,40 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		values.add([customName3, customValue3])
 		values.add([customName4, customValue4])
 		values.add([customName5, customValue5])
-		
-		def metaSheet = new ExcelSheet("Gene Signature Info", headers, values);
-		
-		values=[]
-		
-		//This is a quick fix. These booleans will tell us whether a gene signature was entered with probes or genes. In the future we should add some indicator field to the "gene" list to say what it is made of. 
-		Boolean hasGenes = false;
-		Boolean hasProbes = false;
-		
-		geneSigItems.each 
-		{
-			if(it.bioMarker != null)
-			{
-				hasGenes = true;
-				values.add([it.bioMarker.name, it.foldChgMetric])
-			}
-			else if(it.probeset != null)
-			{
-				hasProbes = true;
-				values.add([it.probeset.name, it.foldChgMetric])
-			}
-		}
-		
-		String itemName = ""
-		
-		if(hasGenes) itemName = "Gene Symbol"
-		if(hasProbes) itemName = "Probe ID"
-		
-		// items sheet
-		headers=[itemName,"Fold Change Metric"]
-				
-		def itemsSheet = new ExcelSheet("Gene Signature Items", headers, values);
+		*/
+        def metaSheet = new ExcelSheet("Gene Signature Info", headers, values);
 
-		// return Excel bytes
-		return ExcelGenerator.generateExcel([metaSheet, itemsSheet])
-	}
+        values=[]
+
+        //This is a quick fix. These booleans will tell us whether a gene signature was entered with probes or genes. In the future we should add some indicator field to the "gene" list to say what it is made of.
+        Boolean hasGenes = false;
+        Boolean hasProbes = false;
+
+        geneSigItems.each
+                {
+                    if(it.bioMarker != null)
+                    {
+                        hasGenes = true;
+                        values.add([it.bioMarker.name, it.foldChgMetric])
+                    }
+                    else if(it.probeset != null)
+                    {
+                        hasProbes = true;
+                        values.add([it.probeset.name, it.foldChgMetric])
+                    }
+                }
+
+        String itemName = ""
+
+        if(hasGenes) itemName = "Gene Symbol"
+        if(hasProbes) itemName = "Probe ID"
+
+        // items sheet
+        headers=[itemName,"Fold Change Metric"]
+
+        def itemsSheet = new ExcelSheet("Gene Signature Items", headers, values);
+
+        // return Excel bytes
+        return ExcelGenerator.generateExcel([metaSheet, itemsSheet])
+    }
 }
