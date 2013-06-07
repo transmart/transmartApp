@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -132,6 +132,9 @@ class SecureObjectAccessController {
 		def 	secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
 		def 	userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
 
+		log.debug("accesslist:"+secureObjectAccessList);
+		log.debug("noaccess:"+userwithoutaccess);
+		log.debug("sec:"+secureObjInstance);
 		//println(userwithoutaccess)
 			render(view:'managePrincipalAccess',model:[
 			                                 secureObjectInstance:secureObjInstance,
@@ -259,6 +262,10 @@ class SecureObjectAccessController {
 		//println(searchtext)
 		def secureObjectAccessList=getSecureObjAccessListForPrincipal(principalInstance, access);
 		def objectswithoutaccess=getObjsWithoutAccessForPrincipal(principalInstance, searchtext);
+		if(secureObjectAccessList==null)
+		secureObjectAccessList = []
+		if(objectswithoutaccess==null)
+		objectswithoutaccess= []
 		render(template:'addremoveAccess',model:[principalInstance: principalInstance,
 		secureObjectAccessList: secureObjectAccessList,
 		objectswithoutaccess: objectswithoutaccess,
@@ -328,7 +335,7 @@ class SecureObjectAccessController {
 	def getObjsWithoutAccessForPrincipal(principal, insearchtext) {
 		def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
 		//	println(searchtext)
-		println(principal)
+		//println(principal)
 		if(principal!=null)
 			return SecureObject.findAll(" FROM SecureObject s WHERE s.dataType='BIO_CLINICAL_TRIAL' AND s.id NOT IN(SELECT so.secureObject.id FROM SecureObjectAccess so WHERE so.principal =:p ) and upper(s.displayName) like :dn ORDER BY s.displayName ",[p:principal,dn:searchtext]);
 		else
@@ -387,8 +394,14 @@ class SecureObjectAccessController {
 		if(secureObj==null)
 			return []
 
-		return SecureObjectAccess.findAll(" FROM SecureObjectAccess s WHERE s.secureObject = :so AND s.accessLevel = :al ORDER BY s.principal.name", [so:secureObj,al:access]);
-	}
+		def all = SecureObjectAccess.findAll(" FROM SecureObjectAccess s WHERE s.secureObject = :so AND s.accessLevel = :al ORDER BY s.principal.name", [so:secureObj,al:access]);
+		if (all ==null)
+			all = []
+		for(soa in all){
+			soa.getObjectAccessName();
+		}
+		return all;
+			}
 
 	def getPrincipalsWithoutAccess(secureObj, access, insearchtext)
 	{
@@ -396,7 +409,10 @@ class SecureObjectAccessController {
 		if(secureObj == null)
 			return []
 		def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
-		println(searchtext)
-		return Principal.findAll('from Principal g WHERE g.id NOT IN (SELECT so.principal.id from SecureObjectAccess so WHERE so.secureObject =:secObj AND so.accessLevel =:al ) AND upper(g.name) like :st ORDER BY g.name', [secObj:secureObj, al:access, st:searchtext] );
-	}
+		//println(searchtext)
+		def all = Principal.findAll('from Principal g WHERE g.id NOT IN (SELECT so.principal.id from SecureObjectAccess so WHERE so.secureObject =:secObj AND so.accessLevel =:al ) AND upper(g.name) like :st ORDER BY g.name', [secObj:secureObj, al:access, st:searchtext] );
+		if(all == null)
+			all = []
+		return all;
+		}
 }

@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -88,7 +88,7 @@
 
 					</tr>
 						<tr>
-						<td style="width: 175px; white-space: nowrap;">Absolute R/Rho Value is Less Than:</td>
+						<td style="width: 175px; white-space: nowrap;">Absolute R Value is Less Than:</td>
 						<td style="font-weight:normal">
 							<g:textField name="rValue" value="${trialFilter?.rValue}"/>
 						</td>

@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -203,22 +203,4 @@ class OntologyController {
     		}
     		log.trace(access as JSON)
     }
-	
-	def showConceptDefinition =
-	{
-		def conceptPath=i2b2HelperService.keyToPath(params.conceptKey);
-		def node=i2b2.OntNode.get(conceptPath);
-		//def testtag=new i2b2.OntNodeTag(tag:'test', tagtype:'testtype');
-		//node.addToTags(testtag);
-		//node.save();
-		def trial=node.tags.find{ w -> w.tagtype =="Trial" }
-		if(trial!=null)
-		{
-			def trialid=trial.tag;
-			chain(controller:'trial', action:'trialDetailByTrialNumber', id:trialid)
-		}
-		
-		render(template:'showDefinition', model:[tags:node.tags])
-	}
-	
 }

@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -102,12 +102,22 @@ class LoginController {
 		boolean isLoggedIn = false;
 		try {
 			isLoggedin = springSecurityService.isLoggedIn()
-		} catch (Throwable ignore){}
+		} catch (Throwable ignore) {}
 		
 		if (isLoggedIn) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
-			render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
+			/* For our IAPP purposes, disallow the ability for the user to force the form login.
+			 * The ability to use either the Identity Vault or the form login will only
+			 * be set at the instance level through the identityVaultURL setting in the external configuration file.
+			 */
+			String ivUrl = grailsApplication.config.com.recomdata.searchtool.identityVaultURL
+			if (ivUrl.length() > 5) {
+				log.info("Proceeding with Identity Vault login")
+				redirect(url: ivUrl)
+			} else  {
+				render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
+			}
 		}
 	}
 		

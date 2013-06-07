@@ -1,6 +1,6 @@
 <%  if(property.type == Boolean.class || property.type == boolean.class)
         out << renderBooleanEditor(domainClass,property)	
-    else if(Number.class.isAssignableFrom(property.type) || (property.type.isPrimitive() && property.type != boolean.class))
+    else if(property.type && Number.class.isAssignableFrom(property.type) || (property.type.isPrimitive() && property.type != boolean.class))
         out << renderNumberEditor(domainClass,property)
     else if(property.type == String.class)
         out << renderStringEditor(domainClass,property)

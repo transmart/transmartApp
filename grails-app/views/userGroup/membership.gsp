@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -28,8 +28,7 @@
    p { width:440px; }
         .ext-ie .x-form-text {position:static !important;}
   </style>
-  <g:javascript library="prototype" plugin="prototype"/>
-  <r:layoutResources/>
+        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
     </head>
     <body>
         <div class="body">
@@ -42,9 +41,11 @@
   <br><b>Search User<b></b><br>
   <input type="text"  size="80" id="searchUsers" autocomplete="off" /></div>
   <script type="text/javascript">
+
   var pageInfo = {
 	        basePath :"${request.getContextPath()}"
 	    }
+  
   createUserSearchBox2('${request.getContextPath()}/userGroup/ajaxGetUserSearchBoxData', 440);
 
   function searchgroup(){
@@ -54,12 +55,12 @@
 	return false;
 	}
 
-	  ${remoteFunction(action:'searchGroupsWithoutUser',update:[success:'groups', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
+	  ${remoteFunction(action:'searchGroupsWithoutUser',update:[success:'groups', failure:''], params:'jQuery(\'#searchtext\').serialize()+\'&id=\'+pid')};
 	   return false;
 	  }
   </script>
           <table>
-                				<tr><td></td><td></td><td><input name="searchtext" id="searchtext"></input>
+                				<tr><td></td><td></td><td><input name="searchtext" id="searchtext">
                 				<button class="" onclick="searchgroup();">Search Groups</button></td>
                      			<tr><td><b>Member of these groups</b></td><td></td><td><b>Available groups</b></td></tr>
                      			<tr id="groups">

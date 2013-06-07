@@ -1,5 +1,4 @@
 package org.transmart.searchapp
-
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -14,33 +13,34 @@ package org.transmart.searchapp
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
+  
+
+
 class SecureObject {
-	Long id
-	Long bioDataId
-	String displayName
-	String dataType
-	String bioDataUniqueId
-	static hasMany=[conceptPaths:SecureObjectPath]
-	
-	static mapping = {
-		table 'SEARCH_SECURE_OBJECT'
-		version false
-		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-		columns {
-			id column:'SEARCH_SECURE_OBJECT_ID'
-			bioDataId column:'BIO_DATA_ID'
-			displayName column:'DISPLAY_NAME'
-			dataType column:'DATA_TYPE'
-			bioDataUniqueId column:'BIO_DATA_UNIQUE_ID'
-		}
+		Long id
+		Long bioDataId
+		String displayName
+		String dataType
+		String bioDataUniqueId
+		static hasMany=[conceptPaths:SecureObjectPath]
+ static mapping = {
+	 table 'SEARCH_SECURE_OBJECT'
+	 version false
+	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+	 columns {
+		id column:'SEARCH_SECURE_OBJECT_ID'
+		bioDataId column:'BIO_DATA_ID'
+		displayName column:'DISPLAY_NAME'
+		dataType column:'DATA_TYPE'
+		bioDataUniqueId column:'BIO_DATA_UNIQUE_ID'
+	 }
 	}
-	
-	static constraints = {
-		bioDataId(nullable:true)
-		dataType(nullable:true, maxSize:400)
+ static constraints = {
+	bioDataId(nullable:true)
+	dataType(nullable:true, maxSize:400)
 	}
 }

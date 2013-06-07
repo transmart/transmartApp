@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -26,7 +26,7 @@
 	
 	<body>
 		<div class="body">
-			<h1>Edit AuthUser</h1>
+			<h1>Edit AuthUser <g:if test="${SSO == true}"> - Single Sign On Enabled (no password required)</g:if></h1>
 			<g:if test="${flash.message}">
 			<div class="message">${flash.message}</div>
 			</g:if>
@@ -62,12 +62,14 @@
 							</td>
 						</tr>
 	
+	                    <g:if test="${SSO == false}"> 	
 						<tr class="prop">
 							<td valign="top" class="name"><label for="passwd">Password:</label></td>
 							<td valign="top" class="value ${hasErrors(bean:person,field:'passwd','errors')}">
 								<input type="password" id="passwd" name="passwd" value="${person.passwd?.encodeAsHTML()}"/>
 							</td>
 						</tr>
+						</g:if>
 	
 						<tr class="prop">
 							<td valign="top" class="name"><label for="enabled">Enabled:</label></td>

@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -23,6 +23,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="main" />
         <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
+        <script>jQuery.noConflict();</script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
         <!-- ************************************** -->
 	    <!-- This implements the Help functionality -->
 	    <script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
@@ -37,7 +40,9 @@
 		<!-- ************************************** -->
     </head>
     <body>
-		<g:render template="/layouts/commonheader" model="['app':'customfilters']" />
+        <div id="header-div">
+		  <g:render template="/layouts/commonheader" model="[app:customfilters]" />
+		</div>
         <div style="padding: 20px 10px 10px 10px;">
             <%topicID="1017" %>
 			<a HREF='JavaScript:D2H_ShowHelp(<%=topicID%>,helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP )'>

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="2.4"
+<web-app version="2.5"
          xmlns="http://java.sun.com/xml/ns/j2ee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-    <display-name>/@grails.project.key@</display-name>
 
+    <display-name>/@grails.project.key@</display-name>
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/applicationContext.xml</param-value>                     
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
     </context-param>
 
     <context-param>
@@ -42,6 +42,8 @@
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 <!--
     <listener>
@@ -80,6 +82,11 @@
         <servlet-name>GetGenePatternFile</servlet-name>
         <url-pattern>/analysis/getGenePatternFile</url-pattern>
     </servlet-mapping>
+
+    <session-config>
+        <!-- 30 minutes -->
+        <session-timeout>30</session-timeout>
+    </session-config>
 
     <welcome-file-list>
         <!--

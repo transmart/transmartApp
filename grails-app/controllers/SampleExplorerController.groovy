@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -150,8 +150,9 @@ class SampleExplorerController {
 		//Get the list of possible results.
 		def resultsHash = solrService.suggestTerms(category,values,grailsApplication.config.com.recomdata.solr.numberOfSuggestions.toString())
 
-		//Render the results as JSON.		
-		render params.callback+"("+(resultsHash as JSON)+")"
+		//Render the results as JSON.
+
+        render(contentType: 'text/javascript', text:params.callback+"("+(resultsHash as JSON)+")")
 	}
 	
 	/**
@@ -213,18 +214,18 @@ class SampleExplorerController {
 		   categoryMap['rows'].add(tempMap)
 	   }
 
-	   render params.callback+"("+(categoryMap as JSON)+")"
+       render(contentType: 'text/javascript', text:params.callback+"("+(categoryMap as JSON)+")")
    }
 
 	/**
-	 * When we want to display the BioBank screen we need to requery Solr to get the list of ID's for the row we clicked on.	
+	 * When we want to display the BioBank screen we need to requery Solr to get the list of ID's for the row we clicked on.
 	 */
 	def bioBank =
 	{
-		
+
 		//Get the list of Sample ID's based on the criteria in the JSON object.
 		def idList = solrService.getIDList(request.JSON.SearchJSON);
-		
+
 		//Get all the BioBank results for these IDs.
 		def sampleList = BioBankSample.getAll(idList);
 

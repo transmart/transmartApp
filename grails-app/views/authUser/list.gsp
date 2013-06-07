@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -22,6 +22,26 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<meta name="layout" content="admin" />
 		<title>AuthUser List</title>
+		
+		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>
+       	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'jquery.dataTables.css')}">
+		
+		
+        <script type="text/javascript" charset="utf-8">
+
+	        jQuery(document).ready(function() {
+
+	        	 jQuery("#userTable").dataTable({
+	    	        	 "iDisplayLength": 50,
+	    	        	 "aLengthMenu": [[25, 50,100, -1], [25, 50,100, "All"]],
+	    	        	 "sPaginationType": "full_numbers",
+	    	        	 "bStateSave": true
+	        	 });
+	
+	        });
+
+        </script>
+
 	</head>
 
 	<body>
@@ -30,26 +50,26 @@
 			<g:if test="${flash.message}">
 			<div class="message">${flash.message}</div>
 			</g:if>
-			<div class="list">
-				<table>
+			<div class="list" style="margin-top:15px">
+				<table id = 'userTable'>
 				<thead>
 					<tr>
-						<g:sortableColumn property="id" title="WWID" />
-						<g:sortableColumn property="username" title="Login Name" />
-						<g:sortableColumn property="userRealName" title="Full Name" />
-						<g:sortableColumn property="enabled" title="Enabled" />
-						<g:sortableColumn property="description" title="Description" />
+						<th>WWID</th>
+						<th>User Name</th>
+						<th>Full Name</th>
+						<th>Enabled</th>
+						<th>Description</th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody>
-				<g:each in="${personList}" status="i" var="person">
-					<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-						<td>${person.id}</td>
-						<td>${person.username?.encodeAsHTML()}</td>
-						<td>${person.userRealName?.encodeAsHTML()}</td>
+				<g:each in="${personList}" var="person">
+					<tr>
+						<td>${person.id}&nbsp&nbsp&nbsp&nbsp</td>
+						<td>${person.username?.encodeAsHTML()}&nbsp&nbsp&nbsp&nbsp</td>
+						<td>${person.userRealName?.encodeAsHTML()}&nbsp&nbsp&nbsp&nbsp</td>
 						<td>${person.enabled?.encodeAsHTML()}</td>
-						<td>${person.description?.encodeAsHTML()}</td>
+						<td>${person.description?.encodeAsHTML()}&nbsp&nbsp&nbsp&nbsp</td>
 						<td class="actionButtons">
 							<span class="actionButton">
 								<g:link action="show" id="${person.id}">Show</g:link>
@@ -59,10 +79,6 @@
 				</g:each>
 				</tbody>
 				</table>
-			</div>
-
-			<div class="paginateButtons">
-				<g:paginate total="${AuthUser.count()}" />
 			</div>
 
 		</div>

@@ -12,23 +12,24 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
   
 
+import grails.converters.JSON;
 import javax.servlet.ServletOutputStream
 
 import org.transmart.biomart.BioAssayPlatform;
 import org.transmart.biomart.CellLine;
-import org.transmart.searchapp.AccessLog;
-import org.transmart.searchapp.AuthUser;
-
-import org.transmart.searchapp.GeneSignature
-import org.transmart. searchapp.GeneSignatureFileSchema
 import org.transmart.biomart.Compound
 import org.transmart.biomart.ConceptCode
+
+import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AuthUser;
+import org.transmart.searchapp.GeneSignature
+import org.transmart.searchapp.GeneSignatureFileSchema
 
 import com.recomdata.genesignature.FileSchemaException
 import com.recomdata.genesignature.WizardModelDetails
@@ -113,6 +114,22 @@ class GeneSignatureController {
 
 		render(view: "list", model:[user: user, adminFlag: bAdmin, myItems: myItems, pubItems: pubItems, ctMap: ctMap])
 	}
+	
+
+	/**
+	 * Read in gene list ids and return constituent genes.
+	 */
+	def getGenes = {
+		def geneListIdsParam = params.geneListsIds
+		def map = geneSignatureService.getGeneListItems(geneListIdsParam)
+		
+		render map as JSON;
+		
+		//def result=["1111":["MIT", "HIT", "KIT", "SIT", "CIT", "DIT"]
+		//	,"2222":["HIT", "KIT", "CIT", "ZIT", "WIT"]
+		//	,"3333":["MIT", "HIT", "KIT", "SIT", "VIT", "LIT"]];
+		//render result as JSON;
+	}
 
 	/**
 	 * initialize session for the create gs wizard
@@ -129,6 +146,8 @@ class GeneSignatureController {
 
 		// initialize session
 		def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: geneSigInst);
+		def manipulationResults = params['manipulationResults'];
+		newWizard.manipulatedGeneSigText=manipulationResults
 		session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
 
 		redirect(action:'create1')
@@ -173,6 +192,9 @@ class GeneSignatureController {
 		clone.deletedFlag = false;
 		clone.dateCreated = null;
 		clone.lastUpdated = null;
+		clone.qcDate = null;
+		clone.qcPerformed = false
+		clone.qcInfo = '';
 		clone.versionNumber = null;
 		clone.uniqueId = null;
 		if(clone.experimentTypeCellLine.id==null) clone.experimentTypeCellLine=null	 // this is hack, don't know how to get around this!
@@ -241,7 +263,18 @@ class GeneSignatureController {
 		// get wizard
 		def wizard = session.getAttribute(WIZ_DETAILS_ATTRIBUTE)
 
-		// bind params
+		// save original file until final save
+		def file = request.getFile('uploadFile')
+		if(file!=null){
+			wizard.geneSigFile=file
+		}
+		
+		// save text box data until final save
+		def geneSigText = request.getParameter('genes')
+		if(geneSigText!=null){
+			wizard.geneSigText = geneSigText
+		}		
+		//bind data to model
 		bindGeneSigData(params, wizard.geneSigInst)
 
 		// load item data
@@ -282,11 +315,19 @@ class GeneSignatureController {
 	def edit2 = {
 		// get wizard
 		def wizard = session.getAttribute(WIZ_DETAILS_ATTRIBUTE)
-
-		// save original file until final save
-		def origFile = wizard.geneSigInst.uploadFile
 		bindGeneSigData(params, wizard.geneSigInst)
-		wizard.geneSigInst.uploadFile = origFile
+		
+		// save original file until final save
+		def file = request.getFile('uploadFile')
+		if(file!=null){
+			wizard.geneSigFile=file
+		}
+		
+		// save text box data until final save
+		def geneSigText = request.getParameter('genes')
+		if(geneSigText!=null){
+			wizard.geneSigText = geneSigText
+		}
 
 		// load item data
 		loadWizardItems(2, wizard)
@@ -319,18 +360,44 @@ class GeneSignatureController {
 		bindGeneSigData(params, gs)
 
 		// get file
+		// The request parameter could be null if we are coming from last page of the wizard. In that case get it from the wizard session object.
 		def file = request.getFile('uploadFile')
+		if(!file){
+			file=wizard.geneSigFile
+		}
+		
+		//get file contents
+		def fileContents = geneSignatureService.getFileContents(file);
+		//get file name
+		def fileName = file.getOriginalFilename()
+		
+		// get gene signature information from the textbox.
+		// The request parameter could be null if we are coming from last page of the wizard. In that case get it from the wizard session object.
+		def geneSigText = request.getParameter('genes')
+		if(!geneSigText){
+			geneSigText=wizard.geneSigText
+		}
+		//put the geneSigText back in the wizard for page redisplay
+		wizard.geneSigText=geneSigText
+		
+		def geneSigList = geneSignatureService.getTextBoxContents(geneSigText);
+		
+		// If there is information in the textbox, override the file contents with it.
+		if(geneSigList){
+			fileContents=geneSigList
+			fileName="uploadedFromTextBox"
+		}
 
 		// load file contents, if clone check for file presence
-		boolean bLoadFile = (wizard.wizardType==WizardModelDetails.WIZ_TYPE_CREATE) || (wizard.wizardType==WizardModelDetails.WIZ_TYPE_CLONE && file!=null && file.getOriginalFilename()!="")
-		if(!bLoadFile) file = null
+		boolean bLoadFile = (wizard.wizardType==WizardModelDetails.WIZ_TYPE_CREATE) || (wizard.wizardType==WizardModelDetails.WIZ_TYPE_CLONE && fileContents!=null && fileName!="")
+		if(!bLoadFile) fileContents = null
 		if(bLoadFile) {
-			gs.properties.uploadFile = file.getOriginalFilename()
+			gs.properties.uploadFile = fileName
 
 			// check for empty file
-			if(file.empty) {
+			if(fileContents.size()==0) {
 				flash.message = "The file:'${gs.properties.uploadFile}' you uploaded is empty"
-				return render(view: "wizard3", model:[wizard: wizard])
+				return render(view: "wizard1", model:[wizard: wizard])
 			}
 
 			// validate file format
@@ -338,10 +405,10 @@ class GeneSignatureController {
 			def schemaColCt = gs.fileSchema?.numberColumns
 
 			try {
-				geneSignatureService.verifyFileFormat(file, schemaColCt, metricType)
+				geneSignatureService.verifyFileFormat(fileName, fileContents, schemaColCt, metricType)
 			} catch (FileSchemaException e) {
 				flash.message = e.getMessage()
-				return render(view: "wizard3", model:[wizard: wizard])
+				return render(view: "wizard1", model:[wizard: wizard])
 			}
 
 		} else {
@@ -354,7 +421,7 @@ class GeneSignatureController {
 
 		// good to go, call save service
 		try {
-			gs = geneSignatureService.saveWizard(gs, file)
+			gs = geneSignatureService.saveWizard(gs, fileContents, fileName)
 
 			// clean up session
 			wizard = null
@@ -366,10 +433,10 @@ class GeneSignatureController {
 
 		} catch (FileSchemaException fse) {
 			flash.message = fse.getMessage()
-			render(view: "wizard3", model:[wizard: wizard])
+			render(view: "wizard1", model:[wizard: wizard])
 		} catch (RuntimeException re) {
 			flash.message = "Runtime exception "+re.getClass().getName()+":<br>"+re.getMessage()
-			render(view: "wizard3", model:[wizard: wizard])
+			render(view: "wizard1", model:[wizard: wizard])
 		}
 	}
 
@@ -389,38 +456,61 @@ class GeneSignatureController {
 		// load real domain object, apply edit params from clone
 		def gsReal = GeneSignature.get(wizard.editId)
 		def origFile = gsReal.uploadFile
-		clone.copyPropertiesTo(gsReal)
+		clone.copyPropertiesTo(gsReal)		
 		gsReal.modifiedByAuthUser=user
 		gsReal.uploadFile = origFile
 
-		// refresh items if new file uploaded
+		// refresh items if new file uploaded. If no file found in request try and get it from the wizard
 		def file = request.getFile('uploadFile')
-		log.debug " update wizard file:'"+file?.getOriginalFilename()+"'"
+		if(!file){
+			file=wizard.geneSigFile
+		}
+		
+		//get file contents
+		def fileContents = geneSignatureService.getFileContents(file);
+		
+		//get file name
+		def fileName = file.getOriginalFilename()
+		
+		// get gene signature information from the textbox. If no information found in the request try and get it from the wizard.
+		def geneSigText = request.getParameter('genes')
+		if(!geneSigText){
+			geneSigText=wizard.geneSigText
+		}
+		def geneSigList = geneSignatureService.getTextBoxContents(geneSigText);
+		
+		// If there is information in the textbox, override the file contents with it.
+		if(geneSigList){
+			fileContents=geneSigList
+			fileName="uploadedFromTextBox"
+		}
+		
+		log.debug " update wizard file:'"+fileName+"'"
 
 		// file validation
-		if(file!=null && file.getOriginalFilename()!="") {
+		if(fileContents!=null && fileName!="") {
 			// empty?
-			if(file.empty) {
+			if(fileContents.size()==0) {
 				flash.message = flash.message = "The file:'${file.getOriginalFilename()}' you uploaded is empty"
-				return render(view: "wizard3", model:[wizard: wizard])
+				return render(view: "wizard${params.page}", model:[wizard: wizard])
 			}
 
 			// check schema errors
 			def metricType = gsReal.foldChgMetricConceptCode?.bioConceptCode
 			def schemaColCt = gsReal.fileSchema?.numberColumns
 			try {
-				geneSignatureService.verifyFileFormat(file, schemaColCt, metricType)
-				gsReal.uploadFile = file.getOriginalFilename()
+				geneSignatureService.verifyFileFormat(fileName, fileContents, schemaColCt, metricType)
+				gsReal.uploadFile = fileName
 
 			} catch (FileSchemaException e) {
 				flash.message = e.getMessage()
-				return render(view: "wizard3", model:[wizard: wizard])
+				return render(view: "wizard${params.page}", model:[wizard: wizard])
 			}
 		}
 
 		// good to go, call update service
 		try {
-			geneSignatureService.updateWizard(gsReal, file)
+			geneSignatureService.updateWizard(gsReal, fileContents, fileName)
 
 			// clean up session
 			wizard = null
@@ -432,10 +522,10 @@ class GeneSignatureController {
 
 		} catch (FileSchemaException fse) {
 			flash.message = fse.getMessage()
-			render(view: "wizard3", model:[wizard: wizard])
+			render(view: "wizard${params.page}", model:[wizard: wizard])
 		} catch (RuntimeException re) {
 			flash.message = "Runtime exception "+re.getClass().getName()+":<br>"+re.getMessage()
-			render(view: "wizard3", model:[wizard: wizard])
+			render(view: "wizard${params.page}", model:[wizard: wizard])
 		}
 	}
 
@@ -472,6 +562,13 @@ class GeneSignatureController {
 	    	delParam.each { delItems.add(it) }
 	    }
 
+		int j = gs.geneSigItems.size()
+		
+		if(delItems.size() == j ) {
+			flash.message = "<div class='warning'>You tried to delete all items. You must leave at least one item</div>"
+			return render(view: 'edit_items', model:[gs:gs, errorFlag:true])
+		}
+		
 		// delete indicated ids
 		gs = geneSignatureService.deleteGeneSigItems(gs, delItems)
 
@@ -484,8 +581,8 @@ class GeneSignatureController {
 	 * add items to an existing gene signature
 	 */
 	 def addItems = {
-
-		def gs = GeneSignature.get(params.id)
+		def gs = GeneSignature.get(params.gsId)
+		
 		log.debug " adding items to gs: "+gs.name
 
 		// reset
@@ -580,7 +677,11 @@ class GeneSignatureController {
 		if(!bError) {
 			try {
 				geneSignatureService.addGenSigItems(gs, geneSymbols, probes, valueMetrics)
-				flash.message = "<div class='message'>"+geneSymbols.size()+ " gene signature item(s) were added to '"+gs.name+"'</div>"
+				def addedItemsSize=geneSymbols.size()
+				if(addedItemsSize==0){
+					addedItemsSize=probes.size()
+				}
+				flash.message = "<div class='message'>"+addedItemsSize+ " gene signature item(s) were added to '"+gs.name+"'</div>"
 
 			} catch (FileSchemaException fse) {
 				log.error "message>> "+fse.getMessage(), fse
@@ -763,7 +864,7 @@ class GeneSignatureController {
 
 			case 3:
 				if (params.multipleTestingCorrection==null) {
-                    params.multipleTestingCorrection = false
+                    params.multipleTestingCorrection = "";
 				}
 				break;
 		}
@@ -781,6 +882,29 @@ class GeneSignatureController {
 		switch (pageNum) {
 
 			case 1:
+			// species
+			//wizard.species = ConceptCode.findAllByCodeTypeName(SPECIES_CATEGORY, [sort:"bioConceptCode"])
+			wizard.species = ConceptCode.findAll("from ConceptCode where codeTypeName='SPECIES' and bioConceptCode!='CYNOMOLGUS_MONKEY'");
+			
+			// mouse sources
+			wizard.mouseSources = ConceptCode.findAllByCodeTypeName(MOUSE_SOURCE_CATEGORY, [sort:"bioConceptCode"])
+			
+			// technology platforms
+			def platforms = BioAssayPlatform.findAll("from BioAssayPlatform as p where p.vendor is not null order by p.vendor, p.array");
+			BioAssayPlatform other = new BioAssayPlatform();
+			other.accession="other"
+			//platforms.add(other);
+			wizard.platforms = platforms;
+			
+			// file schemas
+			wizard.schemas = GeneSignatureFileSchema.findAllBySupported(true, [sort:"name"])
+
+			// p value cutoffs
+			wizard.pValCutoffs = ConceptCode.findAllByCodeTypeName(P_VAL_CUTOFF_CATEGORY, [sort:"bioConceptCode"])
+
+			// fold change metrics
+			wizard.foldChgMetrics = ConceptCode.findAllByCodeTypeName(FOLD_CHG_METRIC_CATEGORY, [sort:"bioConceptCode"])
+			
 			break;
 
 			case 2:

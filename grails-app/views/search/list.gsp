@@ -12,20 +12,22 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<!DOCTYPE html>
 <html>
 	<head>
+	    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="shortcut icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">
-		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}"></link>
-		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}"></link>
-		<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}"></link>
+		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}"/>
+		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}"/>
+		<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}"/>
+		<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
 
 	<!--[if IE 7]>
 		<style type="text/css">
@@ -33,7 +35,8 @@
 			div#summary-div { margin-bottom:5px; }
 		</style>
 	<![endif]-->
-
+	
+		<script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
@@ -43,8 +46,10 @@
 		<script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'editfilterswindow.js')}"></script>
+		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
 		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-		
+        <script>jQuery.noConflict();</script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
 		<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -63,7 +68,7 @@
 				//activeTab: "${session.searchFilter.acttab()}",
 				//default to 0
 				activeTab:"0" ,
-				// flag to hideInternal tabs as well as the export resnet button
+				// flag to hideInternal tabs 
 				<sec:ifAnyGranted roles="ROLE_PUBLIC_USER">
 			         hideInternal:true,
 				</sec:ifAnyGranted>
@@ -220,7 +225,7 @@
 				    tabpanel.remove(Ext.getCmp("tab3"));
 				    tabpanel.remove(Ext.getCmp("tab4"));
 				    tabpanel.remove(Ext.getCmp("tab5"));
-					tabpanel.remove(Ext.getCmp("tab6"));
+				    tabpanel.remove(Ext.getCmp("tab6"));
 				    tabpanel.remove(Ext.getCmp("tab7"));
 				    //tabpanel.remove(Ext.getCmp("tab8"));
 				    //tabpanel.remove(Ext.getCmp("tab9"));
@@ -237,7 +242,7 @@
 					}		
 				    if ("${grailsApplication.config.com.recomdata.searchtool.cortellisEnabled}" == "") {
 						tabpanel.remove(Ext.getCmp("tab18"));
-					}			       
+					}
 				}
 				
 			    // set active tab
@@ -343,13 +348,13 @@
 			</script>
 		</sec:ifAnyGranted>
 		<!-- ************************************** -->
-		<g:javascript library="prototype" plugin="prototype"/>
-        <r:layoutResources/> 
+    <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 	</head>
 <body>
 		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
 			<g:render template="/layouts/commonheader" model="['app':'search']" />
 			<g:render template="/layouts/searchheader" model="['app':'search']" />
+	    </div>
 			<div id="summarycount-div" style="background:#dfe8f6; color:#000; padding:5px 10px 5px 10px;border-top:1px solid #36c;">
 				<span id="summarycount-span" style="font-size:13px; font-weight:bold;">
 					About ${searchresult?.totalCount()} results found
@@ -363,12 +368,13 @@
 					href="${createLink(controller:'customFilter', action:'create')}">save</a>
 				&nbsp;<a class="tiny" style="text-decoration:underline;color:blue;font-size:11px;"
 					href="${createLink(controller:'search', action:'index')}">clear all</a>
+                </span>
 			</div>
 			<g:form controller="geneExprAnalysis" name="globalfilter-form" id="globalfilter-form" action="doSearch">
 				<input type="hidden" name="selectedpath" value="">
 			</g:form>
 		</div>
+		<div id="maintabs-div" style="position:fixed;margin-top:100px; width:100%"></div>
 		<r:layoutResources/>
 	</body>
 </html>
-
