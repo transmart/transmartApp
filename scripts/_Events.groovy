@@ -1,6 +1,6 @@
 import grails.build.logging.GrailsConsole
 
-eventConfigureTomcat = {tomcat ->
+eventConfigureTomcat = { tomcat ->
     def ctx = tomcat.host.findChild(serverContextPath)
     def goAhead = true
     def console = GrailsConsole.getInstance()
@@ -26,7 +26,7 @@ eventConfigureTomcat = {tomcat ->
 
         /*
          * Prevent the resource plugin from handling the resources in this
-         * directly so that it can be served directly.
+         * so that it can be served directly.
          * Note that this will allow .gsp files under the "tempFolderDirectory"
          * to be executed! I'm not sure how this should be handled; maybe adding
          * a filter to deny access to such urls.
@@ -50,13 +50,3 @@ eventConfigureTomcat = {tomcat ->
         console.info("Set context aliases to ${ctx.aliases}")
     }
 }
-
-
-/*includeTargets << grailsScript("Init")
-
-target(main: "The description of the script goes here!") {
-    // TODO: Implement script here
-}
-
-setDefaultTarget(main)
-*/
