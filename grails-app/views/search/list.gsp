@@ -375,6 +375,4 @@
 			</g:form>
 		</div>
 		<div id="maintabs-div" style="position:fixed;margin-top:100px; width:100%"></div>
-		<r:layoutResources/>
 	</body>
-</html>
