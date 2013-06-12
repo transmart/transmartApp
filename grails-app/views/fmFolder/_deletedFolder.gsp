@@ -1,0 +1,1 @@
+	<center><div class="messagebox">This folder has been deleted.</div></center>

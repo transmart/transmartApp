@@ -27,6 +27,11 @@ class Disease {
 		String meshCode
 		String icd9Code
 		String preferredName
+		
+		String uniqueId
+		static transients = ['uniqueId']
+	
+		
 		static hasMany=[experiments:Experiment,literatures:Literature]
  static mapping = {
 	 table 'BIO_DISEASE'
@@ -45,5 +50,48 @@ class Disease {
 		literatures joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DISEASE_ID']
 		}
 	}
+ 
+ 
+ /**
+  * Use transient property to support unique ID for tagValue.
+  * @return tagValue's uniqueId
+  */
+ String getUniqueId() {
+	 if (uniqueId == null) {
+		 if(id)
+		 {
+			 BioData data = BioData.get(id);
+			 if (data != null) {
+				 uniqueId = data.uniqueId
+				 return data.uniqueId;
+			 }
+			 return null;
+		 }
+		 else
+		 {
+			 return null;
+		 }
+	 }
+	 else
+	 {
+		 return uniqueId;
+	 }
+ }
+
+ 
+ /**
+ * Find concept code by its uniqueId
+ * @param uniqueId
+ * @return concept code with matching uniqueId or null, if match not found.
+ */
+static Disease findByUniqueId(String uniqueId) {
+	Disease cc;
+	BioData bd = BioData.findByUniqueId(uniqueId);
+	if (bd != null) {
+		cc = Disease.get(bd.id);
+	}
+	return cc;
+}
+
 
 }

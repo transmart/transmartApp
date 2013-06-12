@@ -18,19 +18,28 @@
  ******************************************************************/
   
 
+import auth.AuthUser;
 import grails.converters.*
 
 
 class DatasetExplorerController {
 	def springSecurityService
 	def i2b2HelperService
+	def ontologyService
 	
 	def defaultAction = "index"
 	
 	def index = {
 			log.trace("in index");
+			
+			def pathToExpand
+			//If we have an accession passed, retrieve its path
+			if (params.accession) {
+				pathToExpand = ontologyService.getPathForAccession(params.accession)
+			}
+			
 			//code for retrieving a saved comparison
-			def pathToExpand=params.path;
+			pathToExpand= pathToExpand ?: params.path;
 			def sc=params.id;
 			log.trace("DatasetExplorer Controller found saved comparison id="+sc);
 			def qid1=null;
@@ -46,6 +55,25 @@ class DatasetExplorerController {
 					qid2=s.queryID2;
 				}
 			}
+			
+			def rwgSearchFilter = session['rwgSearchFilter'];
+			if (rwgSearchFilter) {
+				rwgSearchFilter = rwgSearchFilter.join(",,,")
+			}
+			else {
+				rwgSearchFilter = "";
+			}
+			
+			def rwgSearchOperators = session['rwgSearchOperators'];
+			if (rwgSearchOperators) {
+				rwgSearchOperators = rwgSearchOperators.join(";")
+			}
+			else {
+				rwgSearchOperators = "";
+			}
+			
+			def searchCategory = session['searchCategory'];
+			def globalOperator = session['globalOperator'];
 			
 			//Grab i2b2 credentials from the config file
 			def i2b2Domain = grailsApplication.config.com.recomdata.i2b2.subject.domain
@@ -68,6 +96,11 @@ class DatasetExplorerController {
 													i2b2Domain: i2b2Domain,
 													i2b2ProjectID: i2b2ProjectID,
 													i2b2Username: i2b2Username,
-													i2b2Password: i2b2Password]) 
+													i2b2Password: i2b2Password,
+													rwgSearchFilter: rwgSearchFilter,
+													rwgSearchOperators: rwgSearchOperators,
+													globalOperator: globalOperator,
+													rwgSearchCategory: searchCategory,
+													debug: params.debug]) 
     		}
 }

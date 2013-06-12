@@ -20,6 +20,7 @@
 
 import search.SearchKeyword
 import search.GeneSignature
+import auth.AuthUser;
 import bio.Experiment
 import bio.Compound
 import bio.Disease

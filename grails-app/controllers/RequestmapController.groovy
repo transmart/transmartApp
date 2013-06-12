@@ -24,6 +24,7 @@
   * @version $Revision: 9178 $
   */
 
+import auth.*;
 import org.springframework.util.StringUtils
 
 /**

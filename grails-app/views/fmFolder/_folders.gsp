@@ -1,57 +1,66 @@
+<%! import com.recomdata.util.* %>
+<%
+    def ontologyService = grailsApplication.classLoader.loadClass('transmartapp.OntologyService').newInstance()
+	def fmFolderService = grailsApplication.classLoader.loadClass('fm.FmFolderService').newInstance()
+%>
+<g:set var="ontologyService" bean="ontologyService"/>
+<g:set var="fmFolderService" bean="fmFolderService"/>
 <g:set var="ts" value="${Calendar.instance.time.time}" />
 
 <div class="search-results-table">
 	<g:each in="${folders}" status="ti" var="folder">        
-		<table class="folderheader" name="${folder.objectUid}">
-			<tr>
-				<td class="foldertitle">
-					<span>
-						<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', '${createLink(controller:'fmFolder',action:'getFolderContents',params:[id:folder.id])}');">
-							<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderplus.png')}" />
-							<img alt="" src="${resource(dir:'images',file:'folder.png')}" />
+		<g:if test="${!auto || folder.folderLevel > 1 || !folderSearchString || folderSearchString?.indexOf(folder.folderFullName) > -1 || (folder.folderLevel == 1 && fmFolderService.searchMatchesParentProgram(folderSearchString, folder.folderFullName))}">
+			<table id="folder-header-${folder.id}" class="folderheader" name="${folder.uniqueId}">
+				
+				<tr>
+					<td class="foldertitle">
+						<g:set var="folderIconType" value="${folder.folderType.toLowerCase()}"/>
+						<g:if test="${folder.folderType.equalsIgnoreCase(FolderType.STUDY.name()) && ontologyService.checkSubjectLevelData(fmFolderService.getAssociatedAccession(folder))}">
+							<g:set var="folderIconType" value="studywsubject"/>
+						</g:if>
+						<span>
+							<g:if test="${folder.hasChildren()}">
+								<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false');">
+									<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderplus.png')}" />
+								    <span class="foldericon ${folderIconType}"></span>
+								</a>
+							</g:if>
+							<g:else>
+								<a id="toggleDetail_${folder.id}" href="#">
+									<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderleaf.png')}" />
+								    <span class="foldericon ${folderIconType}"></span>
+								</a>
+							</g:else>
+						</span>
+						<a href="#" onclick="showDetailDialog(${folder.id});">
+						
+						<g:set var="highclass" value=""/>
+						<g:if test="${folderSearchString && folderSearchString.indexOf(folder.folderFullName + ',') > -1}">
+							<g:set var="highclass" value="searchResult"/>
+						</g:if>
+							<span id="result-folder-name-${folder.id}" class="result-folder-name ${highclass}" title="${folder.folderName}"> ${folder.folderName}</span>						
 						</a>
-					</span>
-					<a href="#" onclick="showDetailDialog('${createLink(controller:'experimentAnalysis',action:'expDetail',id:folder.objectUid)}');">
-						<span class="result-folder-name"> ${folder.folderName}</span>
-					</a>
-				</td>
-				<%--
-				<td class="foldericons">
-					<div class="foldericonwrapper" style="display: none;">
-						<span class="foldericon view">View metadata</span>
-						<span class="foldericon add">Add to export</span>
-					</div>
-				</td>
-				--%>
-			</tr>
-		</table>
+					</td>
+				</tr>
+				
+				<g:if test="${folderSearchString?.indexOf(folder.folderFullName) > -1}">
+					<%-- Auto-expand this folder as long as it isn't a unique leaf. --%>
+					<g:if test="${(uniqueLeavesString?.indexOf(folder.folderFullName + ',') == -1)}">
+						<script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true');</script>
+					</g:if>
+				</g:if>
+				
+				<g:set var="files" value="${folder.fmFiles}" />
+				
+				<g:if test="${files?.size() > 0}">
+		            <tr>
+		                <td class="foldertitle">
+		                    <span class="result-document-count"><i>Documents (<span class="document-count">${files.size()}</span>)</i></span>                   
+		                </td>
+		            </tr>
+	            </g:if>
+			</table>
+		</g:if>
 		<div id="${folder.id}_detail" name="${folder.id}" class="detailexpand"></div>
-	</g:each>
-	<%-- TODO This is unfinished. Don't display files here? Put them in a table in the metadata viewer --%>
-	<g:each in="${files}" status="ti" var="file">
-		<table class="folderheader" name="${file.id}" style="margin-left: 20px;">
-			<tr>
-				<td class="foldertitle">
-					<span>
-						<a id="toggleDetail_${file.id}" href="#" onclick="toggleDetailDiv('${file.id}', '${createLink(controller:'fmFolder',action:'getFolderContents',params:[id:file.id])}');">
-							<span style="padding: 0px 16px 0px 0px"></span>
-							<span class="fileicon ${file.fileType}"></span>
-						</a>
-					</span>
-					<a href="#" onclick="showDetailDialog('${createLink(controller:'RWG',action:'getFileDetails',id:file.id)}');">
-						<span class="result-file-name"> ${file.displayName}</span>
-					</a>
-				</td>
-				<%-- 
-				<td class="foldericons">
-					<div class="foldericonwrapper" style="display: none;">
-						<span class="foldericon viewfile">View file details</span>
-						<span class="foldericon add">Add to export</span>
-					</div>
-				</td>
-				--%>
-			</tr>
-		</table>
-		<div id="${file.id}_filedetail" name="${file.id}" class="detailexpand"></div>
 	</g:each>
 </div>

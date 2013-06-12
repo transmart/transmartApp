@@ -25,12 +25,23 @@ requestData : function(node, callback){
         if(this.fireEvent("beforeload", this, node, callback) !== false){
         var getChildrenRequest=getONTRequestHeader()+'<ns4:get_children blob="true" max="1000" synonyms="false" hiddens="false">';
         getChildrenRequest=getChildrenRequest+"<parent>"+node.id+"</parent></ns4:getchildren>"+getONTRequestFooter();
+        var handler = this;
         
-            this.transId = Ext.Ajax.request({
+            this.transId = jQuery.ajax({
                 url: pageInfo.basePath+"/proxy?url="+GLOBAL.ONTUrl+"getChildren",
-    	        method: 'POST',
-    	        xmlData: getChildrenRequest,  
-                success: this.handleResponse,
+    	        type: 'POST',
+    	        data: getChildrenRequest,
+    	        dataProcess: false,
+    	        contentType: "text/xml",
+                success: function(response) {
+                	var argument = {};
+                	argument.callback = callback;
+                	argument.node = node;
+                	//Have to emulate handleResponse here as IE doesn't allow arbitrary properties on the XML object
+                    this.transId = false;
+                    handler.processResponse(response, argument.node, argument.callback);
+                    handler.fireEvent("load", handler, argument.node, response);
+                },
                 failure: this.handleFailure,
                 scope: this,
                 argument: {callback: callback, node: node},
@@ -68,13 +79,33 @@ parseXml:function (response, node) {
     var Tree = Ext.tree;
     
  var concept=null;
- var concepts=response.responseXML.selectNodes('//concept');
+ var concepts=response.selectNodes('//concept');
 	
+ var matchList = GLOBAL.PathToExpand.split(",");
+ 
 	for(i=0;i<concepts.length;i++)
 	  {
    		 var c=getTreeNodeFromXMLNode(concepts[i]);
-   		 if(c.attributes.id.indexOf("SECURITY")>-1){continue;}
-   		 node.appendChild(c);
+   		 if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
+   		 //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
+   		 if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {
+			//However, don't filter studies/top folders out if a higher-level match exists
+			var highLevelMatchFound = false;
+			for (var j = 0; j < matchList.size()-1; j++) { //-1 here - leave out last result (trailing comma)	
+				if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
+					highLevelMatchFound = true;
+					break;
+				}
+			}
+			if (!highLevelMatchFound) {
+				continue;
+			}
+   	     }
+   		 
+   		 //If the node has been disabled, ignore all children
+   		 if (!node.disabled) {
+   		 	node.appendChild(c);
+   		 }
    	 }
 	
 }});
@@ -100,16 +131,17 @@ node.setText(node.text+" <b>("+result.responseText+")</b>");
 
 function getChildConceptPatientCounts(node)
 {
-Ext.Ajax.request(
-    	    {
+	
+var params =	Ext.urlEncode({charttype:"childconceptpatientcounts",
+		   concept_key: node.attributes.id})
+
+// Ext AJAX has intermittent failure to pass parameters when many AJAX requests are made in a short space of time - switched to jQuery here
+jQuery.ajax({
     	        url: pageInfo.basePath+"/chart/childConceptPatientCounts",
     	        method: 'POST',                                       
-    	        success: function(result, request){getChildConceptPatientCountsComplete(result, node);},
-    	        failure: function(result, request){getChildConceptPatientCountsComplete(result, node);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({charttype:"childconceptpatientcounts",
-    	        		 			   concept_key: node.attributes.id})
-    	    });   
+    	        success: function(result){getChildConceptPatientCountsComplete(result, node);},
+    	        data: {charttype: "childconceptpatientcounts", concept_key: node.attributes.id}
+			});   
 }
 
 function getChildConceptPatientCountsComplete(result, node)
@@ -117,7 +149,7 @@ function getChildConceptPatientCountsComplete(result, node)
 /* eval the response and look up in loop*/
 //var childaccess=Ext.util.JSON.decode(result.responseText).accesslevels;
 //var childcounts=Ext.util.JSON.decode(result.responseText).counts;
-var mobj=result.responseText.evalJSON();
+var mobj=result;
 var childaccess=mobj.accesslevels;
 var childcounts=mobj.counts;
 /*var cca=new Array();

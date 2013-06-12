@@ -65,8 +65,8 @@ function createWorkflowStatus(parentElem, noTitleBar) {
 	$j("#mask").fadeTo(500, 0.25);
 	
 	var d = $j( "#dialog-modal" ).dialog({
-		height: 100
-		, minHeight: 90
+		height: 120
+		, minHeight: 120
 		, maxHeight: 120
 		, width: 300
 		, minWidth: 250

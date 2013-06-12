@@ -65,7 +65,7 @@ class GeneExpressionDataService {
 	{
 		
 		//This tells us whether we need to include the pathway information or not.
-		private Boolean includePathwayInfo = false
+		 Boolean includePathwayInfo = false
 		
 		//This tells us whether we found data when we call the "Write Data" method.
 		boolean dataFound = false
@@ -804,7 +804,7 @@ class GeneExpressionDataService {
 	def downloadCELFiles(String resultInstanceId, studyList, File studyDir, String jobName, String pathway, String timepoint, String sampleTypes, String tissueTypes) {
 		groovy.sql.Sql sql = null
 
-		private Map sampleCdsMap = null
+		Map sampleCdsMap = null
 		
 		try {
 			//Get the subjects for this result instance id.
@@ -839,12 +839,12 @@ class GeneExpressionDataService {
 			})
 		
 			if (sampleCdsMap.size() > 0) {
-				File mRNADir = FileWriterUtil.createDir(studyDir, 'mRNA')
-				File rawDataDir = FileWriterUtil.createDir(mRNADir, 'Raw_data')
+				File mRNADir = (new FileWriterUtil()).createDir(studyDir, 'mRNA')
+				File rawDataDir = (new FileWriterUtil()).createDir(mRNADir, 'Raw_data')
 				
 				sampleCdsMap.each { key, value ->
 					// create dir with name as value
-					File valueDir = FileWriterUtil.createDir(rawDataDir, value)
+					File valueDir = (new FileWriterUtil()).createDir(rawDataDir, value)
 					// write files into that dir 
 					// use service to download files by passing the folder and filesURLs
 					def keyList = key.toString().tokenize("/")

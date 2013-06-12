@@ -2,8 +2,7 @@
 <html>
     <head>
         <!-- Force Internet Explorer 8 to override compatibility mode -->
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" >        
-        
+        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
         <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
         
@@ -19,6 +18,7 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/simpleModal.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/multiselect/ui.multiselect.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/multiselect/common.css')}"></link>
+        <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/jqueryDatatable.css')}"></link>
                                 
         <!-- jQuery JS libraries -->
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
@@ -39,78 +39,46 @@
   		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/ui.multiselect.js')}"></script>  
   		  
   		        
+  		<!--Datatable styling and scripts-->
+        <script type="text/javascript" src="${resource(dir:'js/', file:'jquery.dataTables.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js/', file:'ColVis.min.js')}"></script> 
+        <script type="text/javascript" src="${resource(dir:'js/', file:'ColReorderWithResize.js')}"></script>
+  		        
   		<!--  SVG Export -->
   		<%--<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  --%>
   		  
 	
         <g:javascript library="prototype" /> 
+        <script type="text/javascript">
+            var $j = jQuery.noConflict();
+        </script>
         
         <!-- Our JS -->        
         <script type="text/javascript" src="${resource(dir:'js', file:'rwg.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'rwgsearch.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js', file:'maintabpanel.js')}"></script>
         
         <!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
         <%-- <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-msie.min.js')}"></script> --%>
 
-        <script type="text/javascript" charset="utf-8">
-	        var searchResultsURL = "${createLink([action:'loadSearchResults'])}";
-	        var facetResultsURL = "${createLink([controller:'fmFolder', action:'getAllPrograms'])}";
-	        var facetTableResultsURL = "${createLink([action:'getFacetResultsForTable'])}";
-	        var newSearchURL = "${createLink([action:'newSearch'])}";
-	        var visualizationURL = "${createLink([action:'newVisualization'])}";
-	        var tableURL = "${createLink([action:'newTable'])}";
-	        var treeURL = "${createLink([action:'getDynatree'])}";
-	        var sourceURL = "${createLink([action:'searchAutoComplete'])}";	      
-	        var getCategoriesURL = "${createLink([action:'getSearchCategories'])}";
-	        var getHeatmapNumberProbesURL = "${createLink([action:'getHeatmapNumberProbes'])}";
-	        var getHeatmapDataURL = "${createLink([action:'getHeatmapData'])}";
-	        var getHeatmapDataForExportURL = "${createLink([action:'getHeatmapDataForExport2'])}";
-	        var getBoxPlotDataURL = "${createLink([action:'getBoxPlotData'])}";
-	        var getLinePlotDataURL = "${createLink([action:'getLinePlotData'])}";	        
-	        var saveSearchURL = "${createLink([action:'saveFacetedSearch'])}";
-	        var loadSearchURL = "${createLink([action:'loadFacetedSearch'])}";
-	        var deleteSearchURL = "${createLink([action:'deleteFacetedSearch'])}";
-	        var exportAsImage = "${createLink([action:'exportAsImage'])}";
-
-	        var getStudyAnalysesUrl = "${createLink([controller:'RWG',action:'getTrialAnalysis'])}";
-	        var experimentDataUrl = "${createLink(controller:'experimentAnalysis',action:'expDetail')}";
-	        var fileDataUrl = "${createLink([controller:'RWG',action:'getFileDetails'])}";
-
-	        //These are the URLS for the different browse windows.
-			var studyBrowseWindow = "${createLink([controller:'experiment',action:'browseExperimentsMultiSelect'])}";
-			var analysisBrowseWindow = "${createLink([controller:'experimentAnalysis',action:'browseAnalysisMultiSelect'])}";
-			var regionBrowseWindow = "${createLink([controller:'RWG',action:'getRegionFilter'])}";
-			var dataTypeBrowseWindow = "${createLink([controller:'RWG',action:'browseDataTypesMultiSelect'])}";
-			var getTableDataURL = "${createLink([controller:'search',action:'getTableResults'])}";
-			var getAnalysisDataURL = "${createLink([controller:'search',action:'getAnalysisResults'])}";
-			var getQQPlotURL = "${createLink([controller:'search',action:'getQQPlotImage'])}";
-
-			var webStartURL = "${createLink([controller:'search',action:'webStartPlotter'])}";
-			var datasetExplorerURL = "${createLink([controller:'datasetExplorer'])}";
-
-			var crossImageURL = "${resource([dir:'images', file:'small_cross.png'])}";
-	       	
+		<tmpl:/RWG/urls />
+		<script type="text/javascript" charset="utf-8">
 	        var mouse_inside_options_div = false;
+	        var sessionSearch = "${rwgSearchFilter}";
+	        var sessionOperators = "${rwgSearchOperators}";
+	        var sessionSearchCategory = "${rwgSearchCategory}";
+	        var searchPage = "RWG";
 
 	        jQuery(document).ready(function() {
-		        
-		        addSelectCategories();
-		        addSearchAutoComplete();
+
 		        addToggleButton();
 
 		        jQuery("#xtButton").colorbox({opacity:.75, inline:true, width:"95%", height:"95%"});
       
-
-		    	showSearchResults('analysis'); //reload the full search results for the analysis/study view
-
-		    	//Disabling this, we aren't using the d3js code that takes advantage of HTML5.
-		    	//showIEWarningMsg();
-
-
 		        jQuery("#searchResultOptions_btn").click(function(){
 		        	jQuery("#searchResultOptions").toggle();
-		        	});
+		        });
 		        
 		        //used to hide the options div when the mouse is clicked outside of it
 
@@ -133,127 +101,362 @@
 		             }
 
 	            });
+	            
+	            jQuery("#editMetadataOverlay").on('click', '#cancelmetadatabutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#editMetadataOverlay').fadeOut();
+	            });
+	            
+	            jQuery("#editMetadataOverlay").on('click', '#savemetadatabutton', function() {
+		            if (jQuery(this).hasClass('buttonloading')) {return false; }
+		            
+	            	var protoForm = $('editMetadataForm');
+		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#savemetadatabutton').addClass('buttonloading').html("&nbsp;");
+		            
+            		jQuery.ajax({
+						url:saveMetaDataURL + "?" + serializedForm,	
+						success: function(response) {
+							if (response.errors != undefined) {
+								jQuery('#editMetadataOverlay').scrollTop(0);
+								jQuery('#displayMetadataErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
+							} else {	
+								jQuery('#result-folder-name-' + response.id).text(response.folderName);
+								jQuery('#editMetadataOverlay').fadeOut();
+								showDetailDialog(response.id);
+							}
+						},
+						error: function(xhr) {
+							jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
+							alert(xhr);
+						}
+					});
+	            });
 
-	        	jQuery('#topTabs').tabs();	
-	        	jQuery('#topTabs').bind( "tabsshow", function(event, ui) {
-		        	var id = ui.panel.id;
-	        	    if (ui.panel.id == "study-view-div") {
-	        	    	
-	        	    } else if (ui.panel.id == "subject-view-div")	{
-						
-	        	    }
-	        	});
-	        	jQuery('#studyTabs').tabs();
+	            jQuery("#createAssayOverlay").on('click', '#cancelassaybutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#createAssayOverlay').fadeOut();
+	            });
+	            
+	            jQuery("#createAssayOverlay").on('click', '#saveassaybutton', function() {
+	            	var protoForm = $('createAssayForm');
+		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#saveassaybutton').addClass('buttonloading').html("&nbsp;");
+            		jQuery.ajax({
+						url:saveAssayURL + "?" + serializedForm,	
+						success: function(response) {
+							if (response.errors != undefined) {
+								jQuery('#createAssayOverlay').scrollTop(0);
+								jQuery('#displayAssayErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#saveassaybutton').removeClass('buttonloading').text('Save');
+							} else {
+								//updateFolder(response.parentId);
+								jQuery('#createAssayOverlay').fadeOut();
+								//showDetailDialog(response.id);
+								updateForNewFolder(response.id);
+							}
+						},
+						error: function(xhr) {
+							alert(xhr);
+							jQuery('#saveassaybutton').removeClass('buttonloading').text('Save');
+						}
+					});
+	            });
 
-	        	jQuery('#sidebartoggle').click(function() {
-					toggleSidebar();
-		        });
 
-	        	jQuery('#subject-view-div').append(
-	        		jQuery("<iframe></iframe>")
-	        			.attr("id", "datasetExplorer")
-	        			.attr("name", "datasetExplorer")
-	        			.attr("src", datasetExplorerURL)
-	    	    );
+	            jQuery("#createFolderOverlay").on('click', '#cancelfolderbutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#createFolderOverlay').fadeOut();
+	            });
+	            
+	            jQuery("#createFolderOverlay").on('click', '#savefolderbutton', function() {
+	            	var protoForm = $('createFolderForm');
+		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#savefolderbutton').addClass('buttonloading').html("&nbsp;");
+            		jQuery.ajax({
+						url:saveFolderURL + "?" + serializedForm,	
+						success: function(response) {
+							if (response.errors != undefined) {
+								jQuery('#createFolderOverlay').scrollTop(0);
+								jQuery('#displayFolderErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#savefolderbutton').removeClass('buttonloading').text('Save');
+							} else {
+								//updateFolder(response.parentId);
+								jQuery('#createFolderOverlay').fadeOut();
+								//showDetailDialog(response.id);
+								updateForNewFolder(response.id);
+							}
+						},
+						error: function(xhr) {
+							alert(xhr);
+							jQuery('#savefolderbutton').removeClass('buttonloading').text('Save');
+						}
+					});
+	            });
 
-	    	    jQuery('body').on('mouseenter', '.folderheader', function() {
-					jQuery(this).find('.foldericonwrapper').fadeIn(150);
-		    	});
 
-	    	    jQuery('body').on('mouseleave', '.folderheader', function() {
-					jQuery(this).find('.foldericonwrapper').fadeOut(150);
-		    	});
+	            jQuery("#createStudyOverlay").on('click', '#cancelstudybutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#createStudyOverlay').fadeOut();
+	            });
+	            
+	            jQuery("#createStudyOverlay").on('click', '#savestudybutton', function() {
+	            	var protoForm = $('createStudyForm');
+		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#savestudybutton').addClass('buttonloading').html("&nbsp;");
+            		jQuery.ajax({
+						url:saveStudyURL + "?" + serializedForm,	
+						success: function(response) {
+							if (response.errors != undefined) {
+								jQuery('#createStudyOverlay').scrollTop(0);
+								jQuery('#displayStudyErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#savestudybutton').removeClass('buttonloading').text('Save');
+							} else {
+								//updateFolder(response.parentId);
+								jQuery('#createStudyOverlay').fadeOut();
+								//showDetailDialog(response.id);
+								updateForNewFolder(response.id);
+							}
+						},
+						error: function(xhr) {
+							alert(xhr);
+							jQuery('#savestudybutton').removeClass('buttonloading').text('Save');
+						}
+					});
+	            });
 
-	    	    jQuery('body').on('click', '.foldericon.add', function() {
-					var count = jQuery('#cartcount').text();
-					count++;
-					jQuery('#cartcount').text(count);
-		    	});
+	            jQuery("#createProgramOverlay").on('click', '#cancelprogrambutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#createProgramOverlay').fadeOut();
+	            });
+	            
+	            jQuery("#createProgramOverlay").on('click', '#saveprogrambutton', function() {
+		            
+	            	var protoForm = $('createProgramForm');
+		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#saveprogrambutton').addClass('buttonloading').html("&nbsp;");
+		        	jQuery.ajax({
+						url:saveProgramURL + "?" + serializedForm,	
+						success: function(response) {
+							if (response.errors != undefined) {
+								jQuery('#createProgramOverlay').scrollTop(0);
+								jQuery('#displayProgramErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#saveprogrambutton').removeClass('buttonloading').text('Save');
+							} else {
+								showSearchResults();
+								jQuery('#createProgramOverlay').fadeOut();
+								showDetailDialog(response.id);
+							}
+						},
+						error: function(xhr) {
+							alert(xhr);
+							jQuery('#saveprogrambutton').removeClass('buttonloading').text('Save');
+						}
+					});
+	            });
+	            
+	            jQuery("#createAnalysisOverlay").on('click', '#cancelanalysisbutton', function(){ 
+	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
+	            	jQuery('#createAnalysisOverlay').fadeOut();
+	            });
 
-	    	    jQuery('body').on('click', '.foldericon.view', function() {
-		    	    var id = jQuery(this).closest(".folderheader").attr('name');
-	    	    	showDetailDialog(experimentDataUrl + '?id=' + id);
-		    	});
-
-	    	    jQuery('body').on('click', '.foldericon.viewfile', function() {
-		    	    var id = jQuery(this).closest(".folderheader").attr('name');
-	    	    	showDetailDialog(fileDataUrl + '?id=' + id);
-		    	});
-
-	    	    jQuery('#cartbutton').click(function() {
-					jQuery('#exportViewLink').click();
-		    	});
-	        	
-
-	        	jQuery('#sidebar-accordion').accordion({heightStyle: "fill", icons: { 'header': 'suppressicon', 'headerSelected': 'suppressicon' }});
+	            jQuery("#createAnalysisOverlay").on('click', '#saveanalysisbutton', function() {
+		            
+	            	var protoForm = $('createAnalysisForm');
+		            var serializedForm = Form.serialize(protoForm);
+		            jQuery('#saveanalysisbutton').addClass('buttonloading').html("&nbsp;");
+		        	jQuery.ajax({
+						url:saveAnalysisURL + "?" + serializedForm,	
+						success: function(response) {
+							if (response.errors != undefined) {
+								jQuery('#createAnalysis').scrollTop(0);
+								jQuery('#displayAnalysisErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+								jQuery('#saveanalysisbutton').removeClass('buttonloading').text('Save');
+							} else {
+								//updateFolder(response.parentId);
+								jQuery('#createAnalysisOverlay').fadeOut();
+								//showDetailDialog(response.id);
+								updateForNewFolder(response.id);
+							}
+						},
+						error: function(xhr) {
+							alert(xhr);
+							jQuery('#saveanalysisbutton').removeClass('buttonloading').text('Save');
+							
+						}
+					});
+	            });
+	            
 	        	resizeAccordion();
+                 
+	        	jQuery('#sidebar').resizable({
+                    handles: 'e',
+                    maxWidth: 800,
+                    minWidth: 150,
+                    resize: function(event, ui){
+                        var currentWidth = ui.size.width;
+                        
+                        // this accounts for padding in the panels + 
+                        // borders, you could calculate this using jQuery
+                        var padding = 12; 
+                        
+                        // this accounts for some lag in the ui.size value, if you take this away 
+                        // you'll get some unstable behaviour
+                        jQuery(this).width(currentWidth);
+                        
+                        jQuery('#box-search').width(currentWidth - 20)
+                        jQuery('#program-explorer').width(currentWidth - 20)
+                        // jQuery('#results-div').width(currentWidth -20)
+                        // set the content panel width
+                        jQuery('#main').width(jQuery('body').width() - currentWidth - padding);
+                        jQuery('#filter-browser').css('left', jQuery('#box-search').width() + 50);
+                    }
+              });
 
-	        	jQuery('#filter-browser').dialog({
-	        		autoOpen: false,
-	        		width:200,
-	        		height:400,
-	        		resizable:true,
-	        		show: 'fade',
-	        		hide: 'fade',
-	        		title: 'Filter Browser'
-		        });
+	        	var xpos = jQuery('#menuLinks').offset()['right'];
+
 	        });
 
 	        jQuery(window).resize(function() {
 				resizeAccordion();
 			});
-
-	        <%-- TODO Accordion is no longer needed, can simplify a lot of this by just making it a normal set of divs --%>
+	        
 			function resizeAccordion() {
 				
 				var windowHeight = jQuery(window).height();
-				var sidebarIsVisible = (jQuery('#sidebar:visible').size() > 0);
-				if (!sidebarIsVisible) {
-		        	jQuery('#main').css('width', '100%');
-				}
-				else {
-					jQuery('#main').width(jQuery(window).width()-310);
-				}
 	        	jQuery('#sidebar').height(jQuery(window).height()-30);
-				var ypos = jQuery('#sidebar-accordion').offset()['top'];
+	        	jQuery('#main').height(jQuery(window).height()-30);
+				var ypos = jQuery('#program-explorer').offset()['top'];
 	        	
-	        	var targetHeight = windowHeight - ypos - 90;
+	        	var targetHeight = windowHeight - ypos - 60;
 	        	jQuery('#results-div').height(targetHeight);
-
-	        	jQuery('#datasetExplorer').height(windowHeight - 70);
+	        	jQuery('#welcome').height(windowHeight - 90);
+	        	
+	        	if (jQuery('#sidebar:visible').size() > 0) {
+	        		jQuery('#main').width(jQuery('body').width() - jQuery('#sidebar').width() - 12);
+	        	}
+	        	else {
+	        		jQuery('#main').width("100%");
+	        	}
+	        	
+	        	
+	        	jQuery('#box-search').width(jQuery('#program-explorer').width());
 			}
 
-			function toggleSidebar() {
-				var sidebarIsVisible = (jQuery('#sidebar:visible').size() > 0);
-				if (sidebarIsVisible) {
-					jQuery('#sidebar').fadeOut(resizeAccordion);
-					var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-left', '-right');
-					jQuery('#sidebartoggle').css('background-image', bgimg);
+			function updateExportCount() {
+				var checkboxes = jQuery('#exporttable input:checked');
+				
+				if (checkboxes.size() == 0) {
+					jQuery('#exportbutton').text('No files to export').addClass('disabled');
 				}
 				else {
-					jQuery('#sidebar').fadeIn();
-					resizeAccordion(); //Not a callback here - resize as soon as it starts appearing.
-					var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-right', '-left');
-					jQuery('#sidebartoggle').css('background-image', bgimg);
+					jQuery('#exportbutton').removeClass('disabled').text('Export selected files (' + checkboxes.size() + ')');
 				}
 			}
 
-			function showTab(tab) {
-				if (tab == 'browse') {
-					jQuery('#metadata-viewer').show();
-					jQuery('#subject-view-div').hide();
-				}
-				else {
-					jQuery('#metadata-viewer').hide();
-					jQuery('#subject-view-div').show();
-				}
-			}
+    function dataTableWrapper (containerId, tableId, title, sort, pageSize)
+            {
 
-			
-            
-        </script>
-        
+                var data;
+                var gridPanelHeaderTips;
                 
+                function setupWrapper()
+                {
+                    var gridContainer =  $j('#' + containerId);
+                    gridContainer.html('<table id=\'' + tableId + '\'></table></div>');
+                }
+
+                function overrideSort() {
+
+                    $j.fn.dataTableExt.oSort['numeric-pre']  = function(a) {
+                        
+                        var floatA = parseFloat(a);
+                        var returnValue;
+                        
+                        if (isNaN(floatA))
+                            returnValue = Number.MAX_VALUE * -1;    //Emptys will go to top for -1, bottom for +1   
+                            else
+                                returnValue = floatA;
+                        
+                            return returnValue;
+                        };
+
+                };
+
+                this.loadData = function(dataIn) {
+
+
+                    setupWrapper();
+                    
+                    data = dataIn;
+                    setupGridData(data, sort, pageSize);
+                    
+                    gridPanelHeaderTips = data.headerToolTips.slice(0);
+
+                    //Add the callback for when the grid is redrawn
+                    data.fnDrawCallback = function( oSettings ) {
+
+                        //Removed the tooltips
+                        /*
+                        $j(".dataTables_scrollHeadInner > table > thead > tr > th").each( function (index) {
+                            
+                            var titleAttr = $j(this).attr("title");
+                            
+                            if (titleAttr == null && gridPanelHeaderTips != null)
+                            {
+                                $j(this).attr("title", gridPanelHeaderTips[index]);            
+                            }
+                            
+                        });
+                        */
+                        
+                        //Hide the pagination if both directions are disabled.
+                        if (jQuery('#' + tableId + '_paginate .paginate_disabled_previous').size() > 0 && jQuery('#' + tableId + '_paginate .paginate_disabled_next').size() > 0) {
+                        	jQuery('#' + tableId + '_paginate').hide();
+                        }
+                    };
+                    
+                    data.fnInitComplete = function() {this.fnAdjustColumnSizing();};
+
+                    $j('#' + tableId).dataTable(data);
+
+                    $j(window).bind('resize', function () {
+                        $j('#' + tableId).dataTable().fnAdjustColumnSizing()
+                      } );
+                    
+                     $j("#" + containerId + " div.gridTitle").html(data.iTitle);                  
+
+                };
+                
+
+                function setupGridData(data, sort, pageSize)
+                {
+                    data.bAutoWidth = true;
+                    data.bScrollAutoCss = true;
+//                    data.sScrollY = 400;
+                    data.sScrollX = "100%";
+                    data.bDestroy = true;
+                    data.bProcessing = true;
+                    data.bLengthChange = false;
+                    data.bScrollCollapse = false;
+                    data.iDisplayLength = 10;
+                    if (pageSize != null && pageSize > 0) {
+                    	data.iDisplayLength = pageSize;
+                    }
+                    if (sort != null) {
+	         			data.aaSorting = sort;
+	         		}
+                    data.sDom = '<"top"<"gridTitle">Rrt><"bottom"p>' //WHO DESIGNED THIS
+                }
+            }
+
+		
+//		var panel = createOntPanel()
+//		jQuery('#metadata-viewer').empty()
+ //           jQuery('#metadata-viewer').add(panel);
+        </script>
+          
         <script type="text/javascript">		
 			jQuery(function ($) {
 				// Load dialog on click of Save link
@@ -261,57 +464,24 @@
 			});
 		</script>
                   
-                
+       <r:layoutResources/>          
     </head>
     <body>
-        <div id="header-div">        
+    
+        <div id="header-div" class="header-div">        
             <g:render template="/layouts/commonheader" model="['app':'rwg', 'utilitiesMenu':'true']" />
         </div>
         
-		<div id="sidebar">
-		
-			<%-- 
-				Some code that needs justification here... jQuery Tabs assumes that the tabs will be followed by a
-				collection of divs with the intended content. We want these tabs to affect a pane to the right
-				instead - so we set up an invisible div for each tab, then call a function to display the tab we
-				actually want (and to do any additional setup work).
-			 --%>
-			<div id="topTabs" class="analysis-tabs">
-		       <ul>
-		          <li id="studyViewTab"><a href="#studyFake" onclick="showTab('browse')">Browse</a></li>
-		          <li id="subjectViewTab"><a href="#subjectFake" onclick="showTab('analyze')">Analyze</a></li>
-		       </ul>
-		       
-				<div id="studyFake" style="height: 0px; padding: 0">
-				      	
-				</div>
-				<div id="subjectFake" style="height: 0px; padding: 0">
-				
-				</div>
-		    </div>
+		<div id="sidebar" style="border-right:5px solid;border-color:#EDEEF6">
 	       
-	        <div id="box-search">
-		        <div id="title-search-div" class="ui-widget-header">
-			         <h2 style="float:left" class="title">Active Filters</h2>
-					 <h2 style="float:right; padding-right:5px;" class="title">
-					 	<a href="#" onclick="clearSearch(); return false;">Clear</a>
-					 </h2> 
-					 <div id="filterbutton" class="greybutton" onclick="jQuery('#filter-browser').dialog('open');">
-						<img src="${resource(dir:'images', file:'filter.png')}"/> Filter
-					 </div>
-				</div>
-				<div id="active-search-div" style="position: relative;">
-					&nbsp;
-				</div>
-			</div>
+	        <tmpl:/RWG/boxSearch />
 			
-			<div id="accordion-container" style="height: 600px">
-				<div id="sidebar-accordion">
-					
-			        <h3>Tree Browser</h3>
-			        <div id="results-div">
-			        	Results appear here
-			        </div>
+				<div id="program-explorer" style="width: 290px">
+		        <div id="title-program-div" class="ui-widget-header boxtitle">
+			         <h2 style="float:left" class="title">Program Explorer</h2>
+			    </div>
+			    <div id="results-div" class="boxcontent" style="overflow: auto;">
+			      	&nbsp;
 			    </div>
 		    </div>
 		    
@@ -319,12 +489,19 @@
 			
 		</div>
 		 
-		<div id="main">
-		     	
-				<div id="metadata-viewer">
-					<tmpl:welcome />
+		<div id="main">		     	
+                <div id="folder-viewer">
+                <div id="welcome-viewer">
+                    <tmpl:welcome />
+                </div>
+                <div id="metadata-viewer">
 				</div>
-				<div id="subject-view-div" style="display: none;">
+			
+  				<div id="subfolder-viewer">
+                </div>
+                </div>
+				
+				<div id="subject-view-div" style="display: none;" >
 				
 				</div>
 				<div id="export-div" style="display: none;">
@@ -339,6 +516,13 @@
 		</div>
 	
 		<!--  This is the DIV we stuff the browse windows into. -->
+		<div id="exportOverlay" class="overlay" style="display: none;">&nbsp;</div>
+		<tmpl:editMetadataOverlay />
+		<tmpl:createAnalysisOverlay />
+		<tmpl:createAssayOverlay />
+		<tmpl:createFolderOverlay />
+		<tmpl:createStudyOverlay />
+		<tmpl:createProgramOverlay />
 		<div id="divBrowsePopups" style="width:800px; display: none;">
 			
 		</div>
@@ -372,7 +556,7 @@
 			</table>
 		</div>
 		
-		<!--  Everything for the across trial function goes here and is displayed using colorbox -->
+		<!-- Everything for the across trial function goes here and is displayed using colorbox -->
 		<div style="display:none">
 			<div id="xtHolder">
 				<div id="xtTopbar">
@@ -384,58 +568,19 @@
 					</ul>
 					<p>close</p>
 				</div>
-				<div id="xtSummary"><!-- Summary Tab Content -->
-							
-				
-				</div>
-				<div id="xtHeatmap"><!-- Heatmap Tab Content -->
-				
-				
-				</div>
-				<div id="xtBoxplot"><!-- Boxplot Tab Content -->
-				
-				
-				</div>
+				<div id="xtSummary"><!-- Summary Tab Content --></div>
+				<div id="xtHeatmap"><!-- Heatmap Tab Content --></div>
+				<div id="xtBoxplot"><!-- Boxplot Tab Content --></div>
 			</div>
 		</div>
-		
 
 		<%-- Elements that are in fixed positions on the page --%>
 		<div id="sidebartoggle">&nbsp;</div>
-		<div id="search-div">
-      		<table><tr>
-      			<td><select id="search-categories"></select></td>
-      			<td><input id="search-ac"/></input></td>
-      		</tr></table>                                            
-      	</div>
-   		<div id="cartbutton" class="greybutton">
-			<img src="${resource(dir:'images', file:'cart.png')}"/> Cart
-			<div id="cartcount">0</div>
-		</div>
-      	
-        <div id="filter-browser">			        	
-        	<%-- TODO Source all of this from the database... obviously --%>
-        	<div class="filtertitle" name="ASSAY_PLATFORM">Assay Platform</div>
-        	<div class="filtercontent" name="ASSAY_PLATFORM" style="display: none;">
-        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap1">IHC</div>
-        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap2">mRNA Profiling</div>
-        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap3">SNP Profiling</div>
-        		<div class="filteritem" name="ASSAY_PLATFORM" id="ap4">ELISA</div>
-        	</div>
-        	<div class="filtertitle" name="COMPOUND">Compound</div>
-        	<div class="filtercontent" name="COMPOUND" style="display: none;">
-        		<div class="filteritem" name="COMPOUND" id="co1">XL147</div>
-        		<div class="filteritem" name="COMPOUND" id="co2">BSI-201</div>
-        	</div>
-        	<div class="filtertitle" name="ACCESS_TYPE">Access Type</div>
-        	<div class="filtercontent" name="ACCESS_TYPE" style="display: none;">
-        		<div class="filteritem" name="ACCESS_TYPE" id="at1">Proprietary</div>
-        		<div class="filteritem" name="ACCESS_TYPE" id="at2">Public</div>
-        	</div>
-        </div>
+		<tmpl:/RWG/filterBrowser />
         	
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
-	
-    </body>
+	 <r:layoutResources/>
+	 <g:overlayDiv divId="${overlayExportDiv}" />
+	 </body>
 </html>

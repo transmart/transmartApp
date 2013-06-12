@@ -236,7 +236,7 @@ class MetadataService {
 		def filesList = findAdditionalDataFiles(resultInstanceId, study)
 		if (filesList?.size > 0) {
 			def char separator = '\t';
-			File additionalDataDir = FileWriterUtil.createDir(studyDir, 'Additional_Data')
+			File additionalDataDir = (new FileWriterUtil()).createDir(studyDir, 'Additional_Data')
 			
 			def fileURLsList = []
 			for (file in filesList) {

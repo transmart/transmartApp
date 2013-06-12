@@ -24,18 +24,18 @@ class BioData {
 		String uniqueId
 		String type
 		static hasMany =[externalCodes: BioDataExternalCode]
- static mapping = {
 
-	table 'BIO_DATA_UID'
-	 version false
-	tablePerHierarchy false
-	 columns {
-		id column:'BIO_DATA_ID'
-		uniqueId column:'UNIQUE_ID'
-		type column:'BIO_DATA_TYPE'
-		externalCodes joinTable:[name:'BIO_DATA_EXT_CODE',key:'BIO_DATA_ID', column:'BIO_DATA_EXT_CODE_ID']
-
+        static mapping = {
+		
+			table 'BIO_DATA_UID'
+			version false
+			tablePerHierarchy false
+			columns {
+				id column:'BIO_DATA_ID'
+				uniqueId column:'UNIQUE_ID'
+				type column:'BIO_DATA_TYPE'
+				externalCodes joinTable:[name:'BIO_DATA_EXT_CODE',key:'BIO_DATA_ID', column:'BIO_DATA_EXT_CODE_ID']
+			}
 		}
-	}
 
 }

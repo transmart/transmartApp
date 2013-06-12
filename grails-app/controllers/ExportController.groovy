@@ -26,6 +26,9 @@
  */
 import grails.converters.*
 import org.json.*;
+
+import auth.AuthUser;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

@@ -74,7 +74,7 @@
                 </table>
             </div>
             <div class="paginateButtons">
-                <g:paginate total="${SecureObjectAccess.count()}" />
+                <g:paginate total="${auth.SecureObjectAccess.count()}" />
             </div>
         </div>
     </body>

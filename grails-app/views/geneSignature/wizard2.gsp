@@ -100,7 +100,7 @@
 			}
 
 			// pass species filter
-			var lkupUrl = '/${grailsApplication.metadata['app.name']}/geneSignature/cellLineLookup/'+species.value;
+			var lkupUrl = "${createLink([controller:'geneSignature',action:'cellLineLookup'])}/" + species.value;
 			//alert("url: "+lkupUrl);
 			lkupWinId = "lkup"+(new Date()).getTime();
 			showDialog(lkupWinId, { title: 'Cell Line Lookup', url: lkupUrl })

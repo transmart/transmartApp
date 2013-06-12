@@ -96,6 +96,9 @@ import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.IntervalXYDataset;
+
+import auth.AuthUser;
+
 import com.recomdata.charting.PieRenderer;
 import com.recomdata.export.ExportTableNew;
 import com.recomdata.statistics.StatHelper;
@@ -163,11 +166,15 @@ class ChartController {
      * Action to get the counts for the children of the passed in concept key
      */
     def childConceptPatientCounts = {
-    		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		
+			def paramMap = params;
+    		
+			def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
     		log.trace("Called childConceptPatientCounts action in ChartController")
     		log.trace("User is:"+user.username);
     		log.trace(user.toString());
     		def concept_key=params.concept_key;
+			log.trace("Requested counts for parent_concept_path="+ concept_key);
     		def counts=i2b2HelperService.getChildrenWithPatientCountsForConcept(concept_key)
     		def access=i2b2HelperService.getChildrenWithAccessForUserNew(concept_key, user)
     		log.trace("access:"+(access as JSON));
@@ -315,7 +322,7 @@ def analysis={
 
 		  		String analysis_key=i2b2HelperService.getConceptKeyForAnalysis(concept_key);
 				PrintWriter pw=new PrintWriter(response.getOutputStream());
-				pw.write("<html><head><link rel='stylesheet' type='text/css' href='css/chartservlet.css'></head><body><div class='analysis'>");
+				pw.write("<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body><div class='analysis'>");
 				//renderConceptAnalysis(analysis_key, result_instance_id1, result_instance_id2, pw, request);
     			log.debug("in analysis controller about to run render concept: "+analysis_key+" result_instance_id1:"+result_instance_id1);
 
@@ -325,10 +332,10 @@ def analysis={
 
 				//Set<String> cconcepts = i2b2HelperService.lookupChildConcepts(parentConcept, result_instance_id1, result_instance_id2);
 				//if (cconcepts.isEmpty()) {
-			//		cconcepts.add(concept_key);
-			//	}
+				//		cconcepts.add(concept_key);
+				//	}
 
-			//	log.debug("child concepts: "+cconcepts);
+				//	log.debug("child concepts: "+cconcepts);
 
 				log.debug("calling renderConceptAnalysisNew from analysis with analysis_key:"+analysis_key);
     			renderConceptAnalysisNew(analysis_key, result_instance_id1, result_instance_id2, pw, request);
@@ -376,7 +383,7 @@ def analysis={
 		log.trace("s2:"+s2)
 		PrintWriter pw=new PrintWriter(response.getOutputStream());
 
-		pw.write("<html><head><link rel='stylesheet' type='text/css' href='css/chartservlet.css'></head><body><div class='analysis'>");
+		pw.write("<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body><div class='analysis'>");
 		pw.write("<table width='100%'>");
 		pw.write("<tr><td colspan='2' align='center'><div class='analysistitle'>Summary Statistics</div></td></tr>");
 		pw.write("<tr><td width='50%' align='center'>");
@@ -470,7 +477,7 @@ def analysis={
 			renderBoxAndWhiskerInfoTable(l1, pw);}
 			pw.write("</td>");
 			pw.write("<td><img src='"+graphURL7+"' width=200 height=300 border=0 usemap='#"+filename7+"'>");
-			pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>");
+			pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-0.1/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
 			pw.write("</td><td align='center'>");
 			if(s2 && l2.size()>0){pw.write("<div class='smalltitle'><b>Subset 2</b></div>");
 			renderBoxAndWhiskerInfoTable(l2, pw);}
@@ -1265,7 +1272,7 @@ try
 		pw.write("<img src='"+graphURL+"' width="+width+" height=300 border=0 usemap='#"+filename+"'>");
 		ChartUtilities.writeImageMap(pw, filename, info, false);
 		pw.write("</td>");
-		pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>");
+		pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-0.1/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
 		pw.write("<td>")
 		pw.write("<table><tr><td>");
 		if(s1 && results1.size() > 0 ){

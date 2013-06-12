@@ -55,10 +55,12 @@ class Experiment implements IExcelProfile {
 		tablePerHierarchy false
 		table 'BIO_EXPERIMENT'
 		version false
-		cache usage:'read-only'
+		//cache usage:'read-only'
 		//	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		id column:'BIO_EXPERIMENT_ID', generator: 'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		
 		columns {
-			id column:'BIO_EXPERIMENT_ID'
+		//	id column:'BIO_EXPERIMENT_ID'
 			type column:'BIO_EXPERIMENT_TYPE'
 			title column:'TITLE'
 			description column:'DESCRIPTION'
@@ -84,14 +86,21 @@ class Experiment implements IExcelProfile {
 	}
 	
 	static constraints = {
-		type(nullable:true, maxSize:400)
+		type(blank:false,nullable:false, maxSize:400)
 		title(nullable:true, maxSize:2000)
+		accession(unique:true)
 		description(nullable:true, maxSize:4000)
 		design(nullable:true, maxSize:4000)
-		overallDesign(nullable:true, maxSize:4000)
 		startDate(nullable:true)
 		completionDate(nullable:true)
 		primaryInvestigator(nullable:true, maxSize:800)
+		status(nullable:true)
+		overallDesign(nullable:true, maxSize:4000)
+		institution(nullable:true)
+		country(nullable:true)
+		bioMarkerType(nullable:true)
+		target(nullable:true)
+		accessType(nullable:true)
 	}
 	
 	def getCompoundNames()	{
@@ -160,6 +169,13 @@ class Experiment implements IExcelProfile {
 			map.put(prop.key, prop.value)
 		}
 		return map
+	}
+	
+	/**
+	 * Override the Accession setter to force it to uppercase
+	 */
+	public void setAccession(String accession) {
+		this.accession = accession.toUpperCase();
 	}
 	
 	/**

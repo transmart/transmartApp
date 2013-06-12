@@ -1,29 +1,13 @@
-<!--
-  tranSMART - translational medicine data mart
-  
-  Copyright 2008-2012 Janssen Research & Development, LLC.
-  
-  This product includes software developed at Janssen Research & Development, LLC.
-  
-  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
-  as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
-  1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
-  2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
-  
-  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
- 
--->
-
 <%@ page language="java" import="java.util.*"%>
 <!DOCTYPE html>
 <html>
 <head>
+        <!-- Force Internet Explorer 8 to override compatibility mode -->
+        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 <title>Dataset Explorer</title>
+
 
 <LINK REL="SHORTCUT ICON"
 	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
@@ -41,9 +25,21 @@
 <script type="text/javascript"
 	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.9.1.custom.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
+
+<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.cookie.js')}"></script>   
+<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dynatree.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.paging.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.loadmask.min.js')}"></script>   
+<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.ajaxmanager.js')}"></script>  
+<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.numeric.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.colorbox-min.js')}"></script>  
+<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.simplemodal.min.js')}"></script>  
+<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js', file:'facetedSearch/facetedSearchBrowse.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/ui.multiselect.js')}"></script>
   
 <script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script> 
 
@@ -76,13 +72,15 @@
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'ext-all.css')}">
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
 	<!-- Include JQuery stylesheets here: -->
-	<%--<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">--%>
+    <link rel="stylesheet" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}"></link>        
+    <link rel="stylesheet" href="${resource(dir:'css/jquery/skin', file:'ui.dynatree.css')}"></link>      
 	
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 	
 
- 
+    <!--<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>    -->
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
+	
 	<script type="text/javascript">
 	/******************************************************************************/
 	//Global Variables
@@ -108,6 +106,7 @@
 	  PMproxy:${grailsApplication.config.com.recomdata.datasetExplorer.pmServiceProxy},
 	  CRCUrl: '',
 	  ONTUrl: '',
+	  usePMHost: '${grailsApplication.config.com.recomdata.datasetExplorer.usePMHost}',
 	  Config:'jj',
 	  CurrentQueryName:'',
 	  CurrentComparisonName:' ',
@@ -135,7 +134,8 @@
 	  CurrentGpls: new Array(),
 	  CurrentTissues: new Array(),
 	  CurrentRbmpanels: new Array(),
-	  PathToExpand: "${pathToExpand}",
+	  DefaultPathToExpand: "${pathToExpand}",
+	  UniqueLeaves: "",
 	  preloadStudy: "${params.DataSetName}",
 	  Binning: false,
 	  ManualBinning: false,
@@ -161,7 +161,9 @@
 	}	
 	</script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js', file:'rwgsearch.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
+	<tmpl:/RWG/urls />
 	
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
@@ -176,6 +178,10 @@
 <body>
 
 <script type="text/javascript">
+	var sessionSearch = "${rwgSearchFilter}";
+	var sessionOperators = "${rwgSearchOperators}";
+	var sessionSearchCategory = "${rwgSearchCategory}";
+	var searchPage = "datasetExplorer";
 	var $j = jQuery.noConflict();
 	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -187,9 +193,14 @@
 	
     var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 </script>
-<%--<div id="header-div" style="display: none;"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>--%>
+<div id="header-div"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>
 <div id="main"></div>
-<h3 id="test">Loading....</h3>
+<h3 id="test">&nbsp;</h3>
+<tmpl:/RWG/boxSearch hide="true"/>
+<tmpl:/RWG/filterBrowser />
+<div id="sidebartoggle">&nbsp;</div>
+<div id="noAnalyzeResults" style="display: none;">No subject-level results found.<br/><g:link controller="RWG" action="index">Switch to Browse view</g:link></div>
+<div id="filter-div" style="display: none;"></div>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
 	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}">

@@ -18,6 +18,7 @@
  ******************************************************************/
   
 
+import auth.*;
 import command.SecureObjectAccessCommand
 
 
@@ -133,7 +134,7 @@ class SecureObjectAccessController {
 			                                 secureObjectInstance:secureObjInstance,
 			                          		secureObjectAccessList: secureObjectAccessList,
 			                          		userwithoutaccess: userwithoutaccess,
-			                          		accesslevelid:access.id
+			                          		accesslevelid:access?.id
 			                          		] )
 	}
 
@@ -236,7 +237,7 @@ class SecureObjectAccessController {
 		accessLevelList:SecureAccessLevel.listOrderByAccessLevelValue(),
 		secureObjectAccessList: secureObjectAccessList,
 		objectswithoutaccess: objectswithoutaccess,
-		accesslevelid:access.id] )
+		accesslevelid:access?.id] )
 	}
 
 	def accessLevelChange = {

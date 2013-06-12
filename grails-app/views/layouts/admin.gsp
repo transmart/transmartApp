@@ -20,22 +20,27 @@
 <html>
 	<head>
 		<title><g:layoutTitle default="" /></title>
-		<link rel="shortctu icon" href="${resource(dir:'images',file:'searchtool.ico')}">
+		<link rel="shortcut icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
 		<link rel="stylesheet"	href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
 		<link rel="stylesheet"	href="${resource(dir:'css',file:'admin.css')}" />
+		<link rel="stylesheet" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}"></link>
 		<g:javascript library="prototype" />
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+		<script type="text/javascript"	src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
+		<g:javascript>jQuery.noConflict()</g:javascript>
+		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
 	    <script type="text/javascript"	src="${resource(dir:'js', file:'usergroup.js')}"></script>
-	    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+	    <script type="text/javascript"  src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 		<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
 			// set ajax to 90*1000 milliseconds
 			Ext.Ajax.timeout = 180000;
+			var pageInfo;
 
 			Ext.onReady(function()
 		    {
@@ -50,14 +55,14 @@
 	                layout: "border",
 	                items:[new Ext.Panel({                          
                        region: "center",  
-                       tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'admin-utilities-div'), 
+                       //tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'admin-utilities-div'), 
                        autoScroll:true,                     
                        contentEl: "page"
                     })]
-	            });
+	            });  
 	            viewport.doLayout();
 
-	            var pageInfo = {
+	            pageInfo = {
 					basePath :"${request.getContextPath()}"
 				}
 	        });

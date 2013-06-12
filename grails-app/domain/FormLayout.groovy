@@ -32,6 +32,7 @@ public class FormLayout{
 	String displayName;
 	String dataType;
 	Integer sequence;
+	Boolean display=true;
 
 	static mapping = {
 		table 'CZ_FORM_LAYOUT'

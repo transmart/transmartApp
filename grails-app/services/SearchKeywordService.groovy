@@ -18,10 +18,13 @@
  ******************************************************************/
   
 
-import bio.BioDataExternalCode;
+import search.GeneSignature
 import search.SearchKeyword
 import search.SearchKeywordTerm
-import search.GeneSignature
+import auth.AuthUser
+import bio.BioAssayPlatform
+import bio.BioDataExternalCode
+import bio.ConceptCode
 
 /**
  * @author $Author: mmcduffie $
@@ -35,6 +38,33 @@ public class SearchKeywordService {
 
 	// probably not needed but makes all methods transactional
 	static transactional = true
+	
+	//Hard-coded list of items that we consider filter categories... configure in Config/database?
+	def filtercats = [
+		
+		[codeTypeName: "THERAPEUTIC_DOMAIN", category: "THERAPEUTIC_DOMAIN", displayName: "Program Therapeutic Domain"],
+		[codeTypeName: "PROGRAM_INSTITUTION", category: "PROGRAM_INSTITUTION", displayName: "Program Institution"],
+		
+		[codeTypeName: "STUDY_PHASE", category: "STUDY_PHASE", displayName: "Study Phase"],
+		[codeTypeName: "STUDY_OBJECTIVE", category: "STUDY_OBJECTIVE", displayName: "Study Objective"],
+		[codeTypeName: "STUDY_DESIGN", category: "STUDY_DESIGN", displayName: "Study Design"],
+		[codeTypeName: "STUDY_BIOMARKER_TYPE", category: "STUDY_BIOMARKER_TYPE", displayName: "Study Biomarker Type"],
+		[codeTypeName: "STUDY_ACCESS_TYPE", category: "STUDY_ACCESS_TYPE", displayName: "Study Access Type"],
+		[codeTypeName: "STUDY_INSTITUTION", category: "STUDY_INSTITUTION", displayName: "Study Institution"],
+		
+		[codeTypeName: "ASSAY_TYPE_OF_BM_STUDIED", category: "ASSAY_TYPE_OF_BM_STUDIED", displayName: "Assay Type of Biomarkers"],
+		[category: "ASSAY_MEASUREMENT_TYPE", displayName: "Assay Measurement Type", useText: true, platformProperty: 'platformType'],
+		[category: "ASSAY_TECHNOLOGY", displayName: "Assay Technology", prefix: true, useText: true, platformProperty: 'platformTechnology'],
+		[category: "ASSAY_VENDOR", displayName: "Assay Vendor", prefix: true, useText: true, platformProperty: 'vendor'],
+		[category: "ASSAY_PLATFORM_NAME", displayName: "Assay Platform Name", useText: true, platformProperty: 'name'],
+		
+		[category: "ANALYSIS_MEASUREMENT_TYPE", displayName: "Analysis Measurement Type", useText: true, platformProperty: 'platformType'],
+		[category: "ANALYSIS_TECHNOLOGY", displayName: "Analysis Technology", prefix: true, useText: true, platformProperty: 'platformTechnology'],
+		[category: "ANALYSIS_VENDOR", displayName: "Analysis Vendor", prefix: true, useText: true, platformProperty: 'vendor'],
+		[category: "ANALYSIS_PLATFORM_NAME", displayName: "Analysis Platform Name", useText: true, platformProperty: 'name'],
+		
+		[codeTypeName: "FILE_TYPE", category: "FILE_TYPE", displayName: "File type"]
+	]
 
 	/** Finds all of the search categories pertaining to search keywords */
 	def findSearchCategories()	{
@@ -59,28 +89,80 @@ public class SearchKeywordService {
 		return categories
 	}
 	
+	def findFilterCategories() {
+		
+		def categories = []
+		
+		for (filtercat in filtercats) {
+			def results 
+			
+			if (filtercat.platformProperty) {
+					results = BioAssayPlatform.createCriteria().list {
+					projections {
+						distinct(filtercat.platformProperty)
+					}
+					order(filtercat.platformProperty, "asc")
+				}
+			}
+			else if (filtercat.prefix) {				
+				results = ConceptCode.createCriteria().list	{
+					like("codeTypeName", filtercat.codeTypeName + ":%")
+					order("codeName", "asc")
+				}
+			}
+			else {
+				results = ConceptCode.createCriteria().list	{
+					eq("codeTypeName", filtercat.codeTypeName)
+					order("codeName", "asc")
+				}
+			}
+			
+			def choices = new TreeSet<Map>(new Comparator() {
+				int compare(Object o1, Object o2) {
+					if (!o1 instanceof Map || !o2 instanceof Map) {
+						return 0;
+					}
+					Map m1 = (Map) o1;
+					Map m2 = (Map) o2;
+					return o1.get('name').compareTo(o2.get('name'));
+				}
+			});
+			for (result in results) {
+				if (filtercat.platformProperty) {
+					choices.add([name: result, uid: result])
+				}
+				else if (filtercat.useText) {
+					choices.add([name: result.codeName, uid: result.codeName])
+				}
+				else {
+					choices.add([name: result.codeName, uid: result.bioDataUid.uniqueId[0]])
+				}
+			}
+
+			if (choices) {
+				categories.add(["category":filtercat, "choices":choices])
+			}
+		}
+		
+		return categories
+	}
+	
 	/** Searches for all keywords for a given term (like %il%) */
 	def findSearchKeywords(category, term, max)	{
 		log.info "Finding matches for ${term} in ${category}"
 		
 		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 		
+		/*
+		 * Get results from Search Keyword table
+		 */
 		def c = SearchKeywordTerm.createCriteria()
 		def results = c.list 	{
 			if (term.size() > 0)	{
 				like("keywordTerm", term.toUpperCase() + '%')
 			}
 			
-			//TODO Special case for gene or SNP - rework to support multiple categories!
-			if ("GENE_OR_SNP".equals(category))	{
-				searchKeyword	{
-					or {
-						eq("dataCategory", "GENE", [ignoreCase: true])
-						eq("dataCategory", "SNP", [ignoreCase: true])
-					}
-				}
-			}
-			else if ("ALL".compareToIgnoreCase(category) != 0)	{
+			if ("ALL".compareToIgnoreCase(category) != 0)	{
 				searchKeyword	{
 					eq("dataCategory", category)
 				}
@@ -120,17 +202,11 @@ public class SearchKeywordService {
 			
 			m.put("label", sk.searchKeyword.keyword)
 			m.put("category", sk.searchKeyword.displayDataCategory)
+			m.put("categoryId", sk.searchKeyword.dataCategory)
+			m.put("id", sk.searchKeyword.uniqueId)
+
+			log.info "sk.searchKeyword.id = " + sk.searchKeyword.uniqueId + " sk.searchKeyword.keyword = " + sk.searchKeyword.keyword
 			
-			
-			//Further hack: Alter fields depending on the category
-			if (sk.searchKeyword.dataCategory.equals("DISEASE") || sk.searchKeyword.dataCategory.equals("OBSERVATION")) {
-				m.put("categoryId", sk.searchKeyword.dataCategory)
-				m.put("id", sk.searchKeyword.keyword)
-			}
-			else {
-				m.put("categoryId", sk.searchKeyword.dataCategory)
-				m.put("id", sk.searchKeyword.id)
-			}
 			if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0)	{
 				def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
 				def synList = new StringBuilder()
@@ -149,6 +225,76 @@ public class SearchKeywordService {
 			}
 			keywords.add(m)
 		}
+		
+		/*
+		* Get results from Bio Concept Code table
+		*/
+		
+		if (category.equals("ALL")) {
+			results = ConceptCode.createCriteria().list {
+				if (term.size() > 0) {
+					like("bioConceptCode", term.toUpperCase().replace(" ", "_") + '%')
+				}
+				or {
+					'in'("codeTypeName", filtercats*.codeTypeName)
+				}
+				maxResults(max)
+				order("bioConceptCode", "asc")
+			}
+			log.info("Bio concept code keywords found: " + results.size())
+			
+			for (result in results)	{
+				def m = [:]
+				
+				//Get display name by category
+				def cat = filtercats.find {result.codeTypeName.startsWith(it.codeTypeName)}
+				
+				m.put("label", result.codeName)
+				m.put("category", cat.displayName)
+				m.put("categoryId", cat.category)
+				if (cat.useText) {
+					m.put("id", result.codeName)
+				}
+				else {
+					m.put("id", result.bioDataUid.uniqueId[0])
+				}
+				if (!keywords.find {it.id.equals(m.id)}) {
+					keywords.add(m)
+				}
+				
+			}
+			
+			//If we're not over the maximum result threshold, query the platform table as well
+			if (keywords.size() < max) {
+				
+				//Perform a query for each platform field
+				for (cat in filtercats) {
+					if (cat.platformProperty) {
+						results = BioAssayPlatform.createCriteria().list {
+							ilike(cat.platformProperty, term + '%')
+							maxResults(max)
+							order(cat.platformProperty, "asc")
+						}
+						log.info("Platform " + cat.platformProperty +  " keywords found: " + results.size())
+						
+						for (result in results) {
+							def m = [:]
+							
+							m.put("label", result."${cat.platformProperty}")
+							m.put("category", cat.displayName)
+							m.put("categoryId", cat.category)
+							m.put("id", result."${cat.platformProperty}")
+							
+							if (!keywords.find {it.id.equals(m.id) && it.category.equals(m.category)}) {
+								keywords.add(m)
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
 		return keywords
 	 }
 

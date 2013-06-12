@@ -1,0 +1,590 @@
+/** For CSS shared between the browse view and reskinned Dataset Explorer. **/
+
+body {
+	font: 13px 'Helvetica',arial,clean,sans-serif	
+}
+
+table.menuDetail th.menuBar{
+    background:none;
+    background-image: none;
+    background-color: #EDEEF6;  
+}
+
+
+table.menuDetail th.menuLink a:link, th.menuLink a:visited {
+    font-size: 11px;
+    color: #515BA2 !important; /* Sorry */
+}
+
+.rdc-h2 {
+    color: #515BA2;
+    font-size: 174%;
+    margin: 20px 0;
+}
+
+.rdc-h3 {
+    color: #515BA2;
+    font-size: 152%;
+    margin: 10px 0;
+}
+
+.rdc-h4 {
+    color: #515BA2;
+    font-size: 129%;
+    margin: 10px 0;
+}
+
+/* Top level menu */
+
+.header-div {
+	background:none;
+    background-image: none;
+    color: #EDEEF6;
+	background-color: #EDEEF6;
+}
+
+#logocutout {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: 999;
+	cursor: pointer;
+}
+
+table.menuDetail {
+    padding: 0px 0px;
+    border: 0 none;
+}
+
+table.menuDetail th.menuBar {
+   	font-family: verdana, arial, helvetica, sans-serif;
+    font-size: 11px;     
+	line-height: 15px;
+    vertical-align: middle;
+    text-align: center;
+    white-space: nowrap;
+    font-weight: bold;
+    padding: 0px 0px;
+}
+
+table.menuDetail th {
+	background: transparent;	
+}
+
+table.menuDetail th.menuLink {
+	padding: 1px 15px;
+    color: #ddd;
+    border-right: none;
+    font-weight: bold;
+}
+
+table.menuDetail th.menuLink a {
+	text-decoration: none;	
+}
+
+table.menuDetail th.menuLink a:hover {
+    cursor: pointer;
+	font-size: 11px;    
+	text-decoration: underline;
+}
+
+table.menuDetail th.menuVisited {
+	padding: 1px 15px;
+    color: #ADAEB6;
+    font-size: 10pt;
+    font-weight: bold;
+    background: none;
+    border: none;
+}
+
+#search-div{
+  padding: 6px;
+  margin: 24px 10px 4px 0;
+  overflow: hidden;
+  position: absolute;
+  width: 300px;
+  top: -28px;
+  left: 120px;
+}
+
+#search-div table {
+	width: 100%	
+}
+
+#search-categories {
+    font-size: 10px;
+    height: 24px;
+    width: 130px;
+}
+
+#search-ac {
+    padding-top: 3px;
+    width: 135px;
+}
+
+.ui-autocomplete .ui-menu-item a {
+	font-size: 8pt;	
+}
+
+/* end top level menu */
+
+/* Sidebar */
+
+.andor {
+	width: 37px;
+	height: 13px;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.andor.and {
+	background-image: url('../images/logicand.png');
+}
+
+.andor.or {
+	background-image: url('../images/logicor.png');
+}
+
+#box-search, #program-explorer {
+	margin: 26px 8px 8px 8px;
+	border-radius: 8px;
+	border: #0000FF;
+	box-shadow: #DDD 11px 11px 8px -7px;
+}
+
+#active-search-div
+{
+	font-size: 11px;
+    min-height: 64px;
+    margin: 0;
+    overflow: auto;
+    padding: 5px 0 5px 20px;
+    background: #FFFFFF;
+}
+
+.boxcontent {
+	position: relative;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	border-left: 1px solid #888;
+	border-right: 1px solid #888;
+	border-bottom: 1px solid #888;	
+}
+
+.boxtitle, #navigateTermsPanel .x-panel-header {
+  height:27px;
+  overflow: hide;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-left: 1px solid #888;
+  border-right: 1px solid #888;
+  border-top: 1px solid #888;
+  position: relative;
+}
+.boxtitle .title {
+  color: white;
+}
+.boxtitle a {
+  color: white;
+}
+
+.category_join{
+	display:block;
+	color: #5e5e5e;
+	margin:0;
+	padding:0;
+	margin-left:-1.5em;
+	margin-top:0.5em;
+	margin-bottom:0.4em;
+
+}
+
+.category_label{
+	
+	color:#868686;
+	padding-bottom: 0.2em;
+    margin-left: -10px;
+    font-weight: bold;
+    white-space:nowrap;
+}
+	
+.spacer{
+	
+	color:#BBB;
+	}
+	
+	
+.h_line
+{
+	padding:0;
+	margin:0;
+	border:0;
+	font-size:1px;
+	width: 85%;
+	height:1px;
+	border-top:1px solid #e1e1e1;
+    margin-left: 5px;
+    padding-bottom: 1px;
+    display: inline-block;
+   
+}
+
+.term
+{
+	margin-top:0.3em;
+	line-height: 1.4em;
+}
+
+
+.term-remove img a:hover {
+	text-decoration:none;
+}
+
+#title-filter{
+  height:25px;
+  overflow: hide;  
+}
+
+.title, #navigateTermsPanel .x-panel-header-text{
+	  color:#333;
+	  padding:0;
+	  margin:0;
+	  font-size:11px;
+	  font-weight:bold;
+	  padding-left:0.5em;
+	  padding-top:0.5em;
+}
+
+.greybutton {
+	background-color: #F4F4F4;
+	border: 1px solid #DDD;
+	cursor: pointer;
+	border-radius: 2px;
+	font-size: 8pt;
+	padding: 2px;
+}
+
+.greybutton.buttonicon {
+	padding-left: 24px;
+	background-repeat: no-repeat;
+	background-position: 4px 50%;	
+}
+
+.greybutton.buttonloading {
+	padding-left: 24px;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+	background-image: url('../images/ajax-loader-flat.gif');
+}
+
+.greybutton.addprogram { background-image: url('../images/addprogram.png'); }
+.greybutton.addstudy { background-image: url('../images/addstudy.png'); }
+.greybutton.addassay { background-image: url('../images/addassay.png'); }
+.greybutton.addfolder { background-image: url('../images/addfolder.png'); }
+.greybutton.addanalysis { background-image: url('../images/addanalysis.png'); }
+.greybutton.close { background-image: url('../images/small_cross.png'); }
+.greybutton.deletefolder { background-image: url('../images/bin_closed.png'); }
+
+.greybutton.disabled {
+	cursor: normal;
+	color: #AAA;
+}
+
+
+#filterbutton {
+	position: absolute;
+	right: 40px;
+	bottom: 5px;
+	padding: 0px 4px;
+}
+
+#cartbutton {
+	position: relative;
+    width: 105px;
+	padding: 0px 4px;
+}
+
+#cartcount {
+	position: absolute;
+	left: 9px;
+	top: -1px;
+	font-size: 10px;
+	font-weight: bold;
+	text-align: center;
+	width: 20px;
+	color: #586;
+}
+
+.filtertitle {
+	padding: 4px 0px 4px 24px;
+	background-color: #FFFFFF;
+	background-image: url('../images/down_arrow_small2.png');
+	background-repeat: no-repeat;
+	background-position: 8px 50%;
+	cursor: pointer;
+	border-top: 1px solid #EEE;
+	font-weight: bold;
+}
+
+.filteritem {
+	padding: 4px 0px 4px 32px;
+	cursor: pointer;
+}
+
+.filteritem:hover,.filtertitle.hover {
+	background-color: #F4F4FF;	
+}
+
+.filteritem.selected {
+	background-color: #F0F0FF;	
+}
+
+.ui-widget-header, #navigateTermsPanel .x-panel-header {
+	border:none;
+	background:none;
+	background-image: none;
+	background-color: #515BA2;
+	font-family: 'Helvetica',arial,clean,sans-serif;
+}
+
+.ui-dialog-title {
+	color: white;	
+}
+
+#navigateTermsPanel {
+	margin: 8px 8px 8px 8px;
+	box-shadow: #DDD 11px 11px 8px -7px;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+
+#navigateTermsPanel .searchResultNode a {
+	font-weight: bold;	
+}
+
+#navigateTermsPanel .locked a span {
+	color: #AAA;	
+}
+
+#navigateTermsPanel .defaultPathNode {
+	background-color: #FEEEF8;	
+}
+
+#navigateTermsPanel .x-panel-header-text{
+	color: white;
+}
+
+#navigateTermsPanel .x-panel-header {
+	height: 18px;
+}
+
+#navigateTermsPanel .x-panel-body {
+	border-left: 1px solid #888;
+	border-right: 1px solid #888;
+	border-bottom: 1px solid #888;	
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+
+#navigateTermsPanel a {
+	font-weight: normal;	
+}
+
+.x-layout-split {
+	z-index: 1;	
+}
+
+#sidebartoggle {
+	position:absolute;
+	left:0px;
+	top: 29px;
+	z-index: 999;
+	background-image: url('../images/lefttab-left.png');
+	width: 22px;
+	height: 22px;
+	cursor: pointer;
+}
+
+.ui-autocomplete-loading { 
+	background: white url(../images/loader-small.gif) right center no-repeat;
+}
+
+#noAnalyzeResults {
+	font-size: 8pt;
+	margin: 8px;
+}
+
+.messagebox {
+	border: 1px solid #CBCCD6;
+	padding: 8px;
+	background: #EDEEF8;
+	margin: 8px;
+	border-radius: 2px;
+	display: inline-block;
+}
+
+.description {
+	line-height:16px;
+	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 10pt;
+	text-align: justify;	
+}
+
+textarea#description, textarea#longDescription, input#description, input#longDescription {
+	font-size: 9pt;
+}
+
+.overlay {
+	position: absolute;
+	z-index: 10000;	
+	border: 8px solid #DDDEE6;
+	border-radius: 16px;
+	box-shadow: #DDD 11px 11px 8px -7px;
+	background: white;
+	overflow: auto;
+}
+
+#exportOverlay {
+	top: 10%;
+	left: 10%;
+	width: 80%;
+	height: 80%;
+}
+
+#editMetadataOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
+#createFolderOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
+#createProgramOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
+#createStudyOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
+#createAssayOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
+#createAnalysisOverlay {
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+}
+
+#filter-browser {
+	font-size: 8pt;
+	font-family: Verdana, Arial, sans-serif;
+	top: 50px;
+	left: 300px;
+	width: 300px;
+	height: 500px;
+}
+
+#search-explain {
+	font-size: 8pt;
+	font-family: Verdana, Arial, sans-serif;
+	position: absolute;
+	right: 20px;
+	width: 600px;
+	height: 90%;
+	top: 5%;
+	display: block;
+	color: black;
+}
+
+.exporttable td {
+	padding: 4px;
+	border-bottom: 1px solid #DDD;	
+}
+
+.editmetadata {
+	cursor: pointer;
+}
+
+.x-tree-node-icon.studyicon { background-image: url('../images/foldertypes/study.png') !important; }
+
+.x-tree-node-icon.programicon { background-image: url('../images/foldertypes/program.png') !important; }
+
+.x-tree-node { font: 11px Verdana, Arial, sans-serif}
+
+.ajaxloading {
+	background-image: url('../images/loader-large.gif') !important;
+	background-repeat: no-repeat !important;
+	background-position: 50% 50% !important;
+	min-height: 128px;
+}
+
+/* hidden overlay div, display with visibility toggle (note: if you need to edit review with Jeff or Jeremy!!) */
+.overlay {
+    display: none;
+    position: absolute;
+    background-color: white;
+    padding: 4px;
+    max-width: 90%;
+    max-height: 90%;
+    z-index:2001;
+}
+
+/* hidden overlay div, display with visibility toggle (let window size to content)*/
+.overlayAutoSize {  
+    display: none;
+    position: absolute;
+    background-color: white;
+    padding: 4px;
+    border: 4px solid #6E6E6E;
+    overflow: auto; 
+    z-index:2001;
+}
+
+/* background overlay */    
+.backgroundOverlay {
+    display: none;
+    position: fixed;
+    background-color: #F2F2F2;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height:auto !important; /* real browsers */
+    height:100%; /* IE6: treaded as min-height*/
+    min-height:100%; /* real browsers */
+    z-index:1001;
+    -moz-opacity: 0.90;
+    opacity: 0.90;
+    filter: alpha(opacity=90);
+}
+
+/* Catch-all for making IE look slightly less stupid */
+*:focus {
+	outline:none;	
+}
+
+.link {
+	text-decoration: underline;
+	color: #282;	
+}
+
+.breaker {
+	clear: both;	
+}

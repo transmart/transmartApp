@@ -24,11 +24,16 @@
  * @version $Revision: 10098 $
  */
 
+import com.recomdata.export.ExportColumn
+import com.recomdata.export.ExportRowNew
+import com.recomdata.export.ExportTableNew
 import com.recomdata.util.DomainObjectExcelHelper;
 import com.recomdata.util.ExcelGenerator;
 import com.recomdata.util.ExcelSheet;
 import bio.Experiment
 import com.recomdata.util.ElapseTimer;
+
+import fm.FmFolder;
 
 class ExperimentAnalysisController {
 
@@ -160,7 +165,8 @@ class ExperimentAnalysisController {
 	}
 
 	def expDetail = {
-		//log.info "** action: expDetail called!"
+		log.info "** action: expDetail called!"
+		log.info params
 		def expid = params.id
 		def expaccession = params.accession
 		
@@ -179,7 +185,73 @@ class ExperimentAnalysisController {
 		}
 		
 		def formLayout = formLayoutService.getLayout('study');
-		render(template:'/experiment/expDetail', model:[layout: formLayout, experimentInstance:exp, expPlatforms:platforms, expOrganisms:organisms,search:1])
+		
+		def parent = FmFolder.findByObjectUid(expid)
+		
+		log.info "Parent = " + parent
+		
+//		def analysisFolders = FmFolder.executeQuery("from FmFolder as fd where fd.folderType = :folderType and fd.folderLevel = :level and fd.folderFullName like '" + parent.folderFullName + "%' order by folderName", [folderType: FolderType.ANALYSIS.name(), level: parent.folderLevel + 1])
+
+//		log.info "Subfolders = " + analysisFolders
+		
+		ExportTableNew table;
+		
+		//Keep this if you want to cache the grid data
+		//ExportTableNew table=(ExportTableNew)request.getSession().getAttribute("gridtable");
+		
+		if(table==null)
+		{
+			table=new ExportTableNew();
+		}
+		
+		def table2=new ExportTableNew();
+		table2.putColumn("name", new ExportColumn("name", "Name", "", "String"));
+		table2.putColumn("biosource", new ExportColumn("biosource", "Biosource", "", "String"));
+		table2.putColumn("Technology", new ExportColumn("Technology", "Technology", "", "String"));
+		table2.putColumn("Biomarkersstudied", new ExportColumn("Biomarkersstudied", "Biomarkers studied", "", "String"));
+
+		ExportRowNew newrow4=new ExportRowNew();
+		newrow4.put("name", "My Analysis");
+		newrow4.put("biosource", "Endometrial tumor");
+		newrow4.put("Technology", "IHC");
+		newrow4.put("Biomarkersstudied", "PTEN");
+		table2.putRow("somerow", newrow4);
+		
+		
+		table.putColumn("name", new ExportColumn("name", "Name", "", "String"));
+		table.putColumn("biosource", new ExportColumn("biosource", "Biosource", "", "String"));
+		table.putColumn("Technology", new ExportColumn("Technology", "Technology", "", "String"));
+		table.putColumn("Biomarkersstudied", new ExportColumn("Biomarkersstudied", "Biomarkers studied", "", "String"));
+
+		ExportRowNew newrow=new ExportRowNew();
+		newrow.put("name", "Assay 1");
+		newrow.put("biosource", "Endometrial tumor");
+		newrow.put("Technology", "IHC");
+		newrow.put("Biomarkersstudied", "PTEN");
+
+		ExportRowNew newrow2=new ExportRowNew();
+		newrow2.put("name", "Assay 2");
+		newrow2.put("biosource", "Endometrial tumor");
+		newrow2.put("Technology", "H&E");
+		newrow2.put("Biomarkersstudied", "None");
+
+		ExportRowNew newrow3=new ExportRowNew();
+		newrow3.put("name", "Assay 3");
+		newrow3.put("biosource", "Endometrial tumor");
+		newrow3.put("Technology", "nucleotide sequencing");
+		newrow3.put("Biomarkersstudied", "AKT1; BRAF; ESR1; HRAS; KRAS;");
+
+		table.putRow("somerow", newrow);
+		table.putRow("somerow2", newrow2);
+		table.putRow("somerow3", newrow3);
+		
+		def jSONToReturn1 = table.toJSON_DataTables("").toString(5);
+		def jSONToReturn2 = table2.toJSON_DataTables("").toString(5);
+		
+		request.getSession().setAttribute("gridtable", table);
+		
+		log.info "formLayout = " + formLayout
+		render(template:'/experiment/expDetail', model:[layout: formLayout, experimentInstance:exp, expPlatforms:platforms, expOrganisms:organisms,search:1, jSONForGrid: jSONToReturn2, jSONForGrid1: jSONToReturn1])
 	}
 
 	def getAnalysis = {

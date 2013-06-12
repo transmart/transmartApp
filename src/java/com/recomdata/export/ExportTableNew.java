@@ -70,6 +70,7 @@ public class ExportTableNew {
 		return rows;
 	}
 
+	//Supports ExtJS grid object
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject metadata = new JSONObject();		
 		JSONObject jsonTable = new JSONObject();	
@@ -93,6 +94,61 @@ public class ExportTableNew {
 		jsonTable.put("rows", jsonRows);
 		return jsonTable;
 	}
+	
+	//Supports jQuery datatables object
+	public JSONObject toJSON_DataTables(String echo, String title) throws JSONException {
+		
+		
+		JSONObject jsonTable = toJSON_DataTables(echo);
+		jsonTable.put("iTitle", title);
+						
+		return jsonTable;
+	}
+	
+	//Supports jQuery datatables object
+	public JSONObject toJSON_DataTables(String echo) throws JSONException {
+		
+		JSONObject jsonTable = new JSONObject();	
+		JSONArray aoColumns = new JSONArray();
+		JSONArray headerToolTips = new JSONArray();
+		
+		for (Iterator<ExportColumn> i = columns.values().iterator(); i.hasNext(); ) {
+			ExportColumn col = i.next();
+			aoColumns.put(col.toJSON_DataTables());
+			headerToolTips.put(col.getId());
+		}
+		
+		JSONArray jsonRows = new JSONArray();
+		for (Iterator<ExportRowNew> i = rows.values().iterator(); i.hasNext(); ) {
+			jsonRows.put(i.next().toJSONArray());
+		}
+
+		if (echo != null) jsonTable.put("sEcho", echo);
+		jsonTable.put("iTitle", "Title");
+		jsonTable.put("iTotalRecords", rows.size());
+		jsonTable.put("iTotalDisplayRecords", rows.size());
+		jsonTable.put("aoColumns", aoColumns);
+		jsonTable.put("headerToolTips", headerToolTips);
+		
+		jsonTable.put("aaData", jsonRows);
+		
+		return jsonTable;
+	}
+	
+public JSONObject getJSONColumns() throws JSONException {
+		
+		JSONObject jsonColumns = new JSONObject();	
+		JSONArray columnsAry = new JSONArray();
+		
+		for (Iterator<ExportColumn> i = columns.values().iterator(); i.hasNext(); ) {
+			columnsAry.put(i.next().toJSON_DataTables());
+		}
+
+		jsonColumns.put("aoColumns", columnsAry);
+		return jsonColumns;
+	}
+	
+	
 	public byte[] toCSVbytes()
 	{
 		byte[] table=null;

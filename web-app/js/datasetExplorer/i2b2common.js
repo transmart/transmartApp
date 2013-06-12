@@ -1942,10 +1942,18 @@ function getTreeNodeFromXMLNode(concept)
 	    nodetype=visualattributes.substr(0,1);
 	    nodestatus=visualattributes.substr(1,1); //A=active I=inactive H=hidden	    
 	    if(visualattributes.length>2 && visualattributes.substr(2,1)!=' ')
-	    	{
+	    {
 	    	iconCls=visualattributes.substr(2,1).toLowerCase()+"leaficon";
 	    	tcls=visualattributes.substr(2,1).toLowerCase()+"leafclass";
-	    	}
+	    }
+	    
+	    if (visualattributes.indexOf('P') > '-1') {
+	    	iconCls="programicon";
+	    }
+	    if (visualattributes.indexOf('S') > '-1') {
+	    	iconCls="studyicon";
+	    }
+	    
 	    if(nodetype=='F') //folder-dragable
 	    {
 	    leaf=false;
@@ -1964,8 +1972,19 @@ function getTreeNodeFromXMLNode(concept)
 	    
 	    //set whether expanded or not.
 	    var autoExpand=false;
-		//var pathToExpand="\\\\Clinical Trials\\Clinical Trials\\C-2006-004\\Subjects\\Demographics\\Race\\";
-	    if(GLOBAL.PathToExpand.indexOf(key)>-1) autoExpand=true;
+		// Crude string check to bold this node if it's appeared as an actual search result (leaf)
+	    var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
+	    if (isSearchResult) {
+	    	tcls += ' searchResultNode';
+	    }
+	    //And another to highlight if it's the default passed-in path (only do this once)
+	    var isDefaultPath = (GLOBAL.DefaultPathToExpand.indexOf(key) > -1);
+	    if (isDefaultPath) {
+	    	tcls += ' defaultPathNode';
+	    }
+	    GLOBAL.DefaultPathToExpand = '';
+	    
+	    if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key + ",")==-1) autoExpand=true;
 		
 	    // set the root node
     	newnode = new Tree.AsyncTreeNode({

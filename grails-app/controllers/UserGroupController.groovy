@@ -17,7 +17,9 @@
  *
  ******************************************************************/
   
+ import auth.*;
 
+import auth.AuthUser;
 import groovy.sql.Sql;
 import command.UserGroupCommand;
 import grails.converters.*;

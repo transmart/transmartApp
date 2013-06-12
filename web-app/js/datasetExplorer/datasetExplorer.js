@@ -21,6 +21,7 @@
 /* SubsetTool.js
 Jeremy M. Isikoff
 Recombinant */
+
 String.prototype.trim = function() {
 	return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
@@ -125,6 +126,7 @@ Ext.Panel.prototype.getBody = function(html)
 
 Ext.onReady(function()
 		{
+	
 	Ext.QuickTips.init();
 
 	//set ajax to 600*1000 milliseconds
@@ -502,22 +504,22 @@ Ext.onReady(function()
 							GLOBAL.Analysis="Advanced";
 						}
 					}
-//					,
-//					bbar: new Ext.StatusBar({
-//						// Status bar to show the progress of generating heatmap and other advanced workflows
-//				        id: 'asyncjob-statusbar',
-//				        defaultText: 'Ready',
-//				        defaultIconCls: 'default-icon',
-//				        text: 'Ready',
-//				        statusAlign: 'right',
-//				        iconCls: 'ready-icon',
-//				        items: [{
-//				        	xtype: 'button',
-//				        	id: 'cancjob-button',
-//				        	text: 'Cancel',
-//				        	hidden: true
-//				        }]				        
-//				    })
+					,
+					bbar: new Ext.StatusBar({
+						// Status bar to show the progress of generating heatmap and other advanced workflows
+				        id: 'asyncjob-statusbar',
+				        defaultText: 'Ready',
+				        defaultIconCls: 'default-icon',
+				        text: 'Ready',
+				        statusAlign: 'right',
+				        iconCls: 'ready-icon',
+				        items: [{
+				        	xtype: 'button',
+				        	id: 'cancjob-button',
+				        	text: 'Cancel',
+				        	hidden: true
+				        }]				        
+				    })
 				}
 		);
 
@@ -578,16 +580,22 @@ Ext.onReady(function()
 					region : 'center',
 					fitToFrame : true,
 					listeners :
-					{
-					activate : function() {
-						GLOBAL.CurrentSubsetIDs[1] = null;
-						GLOBAL.CurrentSubsetIDs[2] = null;
-						runAllQueries(getSummaryStatistics);
-						activateTab;
-					},
-					deactivate: function(){
-						resultsTabPanel.tools.help.dom.style.display="none";
-					}
+						{
+						activate : function() {
+							GLOBAL.CurrentSubsetIDs[1] = null;
+							GLOBAL.CurrentSubsetIDs[2] = null;
+							runAllQueries(getSummaryStatistics);
+							activateTab();
+							onWindowResize();
+						},
+						deactivate: function(){
+							resultsTabPanel.tools.help.dom.style.display="none";
+						},
+						'afterLayout': {
+							fn: function(el) {
+								onWindowResize();
+							}
+						}
 					}
 				,
 				autoScroll : true,
@@ -642,6 +650,11 @@ Ext.onReady(function()
 						},
 						deactivate: function(){
 							//resultsTabPanel.tools.help.dom.style.display="none";
+						},
+						'afterLayout': {
+							fn: function(el) {
+								onWindowResize();
+							}
 						}
 					},
 					collapsible : true						
@@ -690,7 +703,13 @@ Ext.onReady(function()
 			        	activate : function() {
 							GLOBAL.Analysis="dataAssociation";
 							renderCohortSummary();
+							onWindowResize();
 							//Ext.getCmp('dataAssociationBodyPanel').focus()
+						},
+						'afterLayout': {
+							fn: function(el) {
+								onWindowResize();
+							}
 						}
 					},
 					collapsible : true
@@ -846,7 +865,7 @@ Ext.onReady(function()
 		
 		westPanel.add(createOntPanel());
 		//setTimeout("loadOntPanel()", 3000);
-		// westPanel.add(prevTree);
+		//westPanel.add(prevTree);
 		// eastPanel.add(exportPanel);
 		centerMainPanel.add(westPanel);
 		centerMainPanel.add(centerPanel);
@@ -854,7 +873,14 @@ Ext.onReady(function()
 		viewport = new Ext.Viewport(
 				{
 					layout : 'border',
-					items : [centerMainPanel]
+					items : [centerMainPanel],
+					listeners: {
+						'afterLayout': {
+							fn: function(el) {
+								onWindowResize();
+							}
+						}
+					}
 				}
 		);
 
@@ -996,11 +1022,39 @@ Ext.onReady(function()
 
 		showLoginDialog();
 		var h=queryPanel.header;
-		//alert(h);
 		}
 
-
 );
+
+function onWindowResize() {
+	//Assorted hackery for accounting for the presence of the toolbar
+	var windowHeight = jQuery(window).height();
+	
+	jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
+	
+	var boxHeight = jQuery('#box-search').height();
+	jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 110);
+	
+	jQuery('#analysisPanel .x-panel-body').height(jQuery(window).height() - 65);
+	
+	if (jQuery('#dataTypesGridPanel .x-panel-body').size() > 0) {
+		var exportPanelTop = jQuery('#dataTypesGridPanel .x-panel-body').offset()['top'];
+		jQuery('#dataTypesGridPanel .x-panel-body').height(jQuery(window).height() - exportPanelTop - 40);
+	}
+	if (jQuery('#dataAssociationPanel .x-panel-body').size() > 0) {
+		var panelTop = jQuery('#dataAssociationPanel .x-panel-body').offset()['top'];
+		jQuery('#dataAssociationPanel .x-panel-body').height(jQuery(window).height() - panelTop);
+	}
+	if (jQuery('#resultsTabPanel .x-tab-panel-body').size() > 0) {
+		var panelTop = jQuery('#resultsTabPanel .x-tab-panel-body').offset()['top'];
+		jQuery('#resultsTabPanel .x-tab-panel-body').height(jQuery(window).height() - panelTop);
+	}
+	if (jQuery('#dataAssociationBody').size() > 0) {
+		var panelTop = jQuery('#dataAssociationBody').offset()['top'];
+		jQuery('#dataAssociationBody').height(jQuery(window).height() - 50);
+	}
+}
+
 
 /*
 This function will make a quick call to the server to check
@@ -1042,7 +1096,7 @@ function hasMultipleTimeSeries()
 function createOntPanel()
 {
 	// make tab panel, search panel, ontTree and combine them
-	ontTabPanel = new Ext.TabPanel(
+	ontTabPanel = new Ext.Panel(
 			{
 				id : 'ontPanel',
 				region : 'center',
@@ -1091,7 +1145,7 @@ function createOntPanel()
 			}
 	);
 
-	// make the ontSerchByNamePanel
+	// make the ontSearchByNamePanel
 	shtml='<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>\
 		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td<td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15"></input>&nbsp;</td>\
 		<td><button onclick="searchByName()">Find</button></td></tr><tr><td colspan="2">Select Ontology:<select id="searchByNameSelectOntology"></select></td></tr></table>';
@@ -1162,53 +1216,53 @@ function createOntPanel()
 			Ext.tree.TreePanel.superclass.onShow.call(this);
 			//Ext.get('advancedbutton').dom.style.display='';
 		}
-		ontFilterPanel = new Ext.Panel(
-				{
-					title : 'Search',
-					id : 'ontFilterPanel',
-					region : 'center',
-					height : 500,
-					width : 250,
-					border : true,
-					bodyStyle : 'background:lightgrey;',
-					onShow : showFn,
-					layout : 'border'
-						//layout: 'table',
-						//layoutConfig:{columns:1},
-						//split : true
-				}
-		);
+//		ontFilterPanel = new Ext.Panel(
+//				{
+//					title : 'Search',
+//					id : 'ontFilterPanel',
+//					region : 'center',
+//					height : 500,
+//					width : 250,
+//					border : true,
+//					bodyStyle : 'background:lightgrey;',
+//					onShow : showFn,
+//					layout : 'border'
+//						//layout: 'table',
+//						//layoutConfig:{columns:1},
+//						//split : true
+//				}
+//		);
 
-		ontFilterForm = new Ext.Panel(
-				{
-					title : 'Search',
-					id : 'ontFilterForm',
-					region : 'north',
-					bodyStyle : 'background:#eee;padding: 10px;',
-					//html : shtml,
-					height : 130,
-					border : true,
-					split : false,
-					//autoScroll: true,
-					autoLoad :
-					{
-					url : pageInfo.basePath+'/ontology/showOntTagFilter',
-					scripts : true,
-					nocache : true,
-					discardUrl : true,
-					method : 'POST',
-					callback : ontFilterLoaded
-					},
-			        tools:[{
-						id:'help',
-						qtip:'Click for context sensitive help',
-					    handler: function(event, toolEl, panel){
-					    	D2H_ShowHelp("1065",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-					    }
-			        }]
-				// collapsible: true
-				}
-		);
+//		ontFilterForm = new Ext.Panel(
+//				{
+//					title : 'Search',
+//					id : 'ontFilterForm',
+//					region : 'north',
+//					bodyStyle : 'background:#eee;padding: 10px;',
+//					//html : shtml,
+//					height : 130,
+//					border : true,
+//					split : false,
+//					//autoScroll: true,
+//					autoLoad :
+//					{
+//					url : pageInfo.basePath+'/ontology/showOntTagFilter',
+//					scripts : true,
+//					nocache : true,
+//					discardUrl : true,
+//					method : 'POST',
+//					callback : ontFilterLoaded
+//					},
+//			        tools:[{
+//						id:'help',
+//						qtip:'Click for context sensitive help',
+//					    handler: function(event, toolEl, panel){
+//					    	D2H_ShowHelp("1065",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+//					    }
+//			        }]
+//				// collapsible: true
+//				}
+//		);
 
 		// shorthand
 		var Tree = Ext.tree;
@@ -1254,10 +1308,12 @@ function createOntPanel()
 		);
 
 		ontFilterTree.setRootNode(ontFilterTreeRoot);
-		ontFilterPanel.add(ontFilterForm);
-		ontFilterPanel.add(ontFilterTree);
+//		ontFilterPanel.add(ontFilterForm);
+//		ontFilterPanel.add(ontFilterTree);
 		// ontTabPanel.add(ontSearchByCodePanel);
 
+		setupOntTree('navigateTermsPanel', 'Navigate Terms');
+		
 		return ontTabPanel;
 }
 
@@ -1415,6 +1471,14 @@ function loginComplete(pmresponse)
 		// get the urls to the other important cells
 		GLOBAL.ONTUrl = oDomDoc.selectSingleNode("//cell_data[@id='ONT']/url").firstChild.nodeValue;
 		GLOBAL.CRCUrl = oDomDoc.selectSingleNode("//cell_data[@id='CRC']/url").firstChild.nodeValue;
+		
+		//If a proxy was used to call the PM Service, override the ONT and CRC urls by using the PM Service host.
+		//This will have to be modified based on the format of the i2b2 urls for specific environments.
+		if(GLOBAL.usePMHost=="true"){
+		GLOBAL.ONTUrl = GLOBAL.PMUrl.replace("/services/PMService/", "/rest/OntologyService/");
+		GLOBAL.CRCUrl = GLOBAL.PMUrl.replace("/services/PMService/", "/rest/QueryToolService/");
+		}
+		
 		if(GLOBAL.Debug)
 		{
 			alert(GLOBAL.ONTUrl);
@@ -1565,8 +1629,14 @@ function projectDialogComplete(projectid)
       {
       alert('waiting');
       } */
-	getCategories();
 	//getPreviousQueries();
+	
+	jQuery('#box-search').prependTo(jQuery('#westPanel')).show();
+	jQuery('#noAnalyzeResults').prependTo(jQuery('#navigateTermsPanel .x-panel-body'));
+	
+	//Now that the ont tree has been set up, call the initial search
+	showSearchResults();
+	
 	if(GLOBAL.RestoreComparison)
 	{
 		getPreviousQueryFromID(1, GLOBAL.RestoreQID1);
@@ -1574,7 +1644,7 @@ function projectDialogComplete(projectid)
 	}
 	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
 	{
-		Ext.getCmp("exportbutton").disable();
+		//Ext.getCmp("exportbutton").disable();
 	}
 }
 
@@ -1625,13 +1695,7 @@ function getPreviousQueriesComplete(response)
 }
 
 function getCategoriesComplete(ontresponse){
-	ontTabPanel.add(ontFilterPanel);
-	ontFilterTree.dragZone.addToGroup("analysis");
-	getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
-	if(GLOBAL.hideAcrossTrialsPanel!='true'){
-		getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
-		}
-	setActiveTab();
+	getSubCategories(ontresponse);
 }
 
 function setActiveTab(){
@@ -1644,106 +1708,15 @@ function setActiveTab(){
 			activeTab='navigateTermsPanel';
 		}
 	}
-	ontTabPanel.setActiveTab(activeTab);
 }
 
-/*If includeExcludeFlag is
- * -"include": Across Trials is the only concept included
- * -"exclude": Across Trials concept is the only concept excluded 
- */
-function createTree(includeExcludeFlag, ontresponse){
-	// shorthand
+function setupOntTree(id_in, title_in) {
+	
 	var Tree = Ext.tree;
 	
-	var concepts = ontresponse.responseXML.selectNodes('//concept');
-	var treeRoot = new Tree.TreeNode(
-			{
-				text : 'root',
-				draggable : false,
-				id : 'root',
-				qtip : 'root'
-			}
-	);
-	for(var c = 0; c < concepts.length; c ++ )
-	{
-		var level = concepts[c].selectSingleNode('level').firstChild.nodeValue;
-		var key = concepts[c].selectSingleNode('key').firstChild.nodeValue;
-		var name = concepts[c].selectSingleNode('name').firstChild.nodeValue;
-		var tooltip = concepts[c].selectSingleNode('tooltip').firstChild.nodeValue;
-		var dimcode = concepts[c].selectSingleNode('dimcode').firstChild.nodeValue;
-		
-		if(includeExcludeFlag==="include" && name!=="Across Trials") continue;
-		if(includeExcludeFlag==="exclude" && name==="Across Trials") continue;
-		// set the root node
-		var autoExpand=false;
-		if(GLOBAL.PathToExpand.indexOf(key)>-1) autoExpand=true;
-		var ontRoot = new Tree.AsyncTreeNode(
-				{
-					text : name,
-					draggable : false,
-					id : key,
-					qtip : tooltip,
-					expanded : autoExpand
-				}
-		);
-		
-		treeRoot.appendChild(ontRoot);
-		/*****************************************/
-		var fullname=key.substr(key.indexOf("\\",2), key.length);
-		var access=GLOBAL.InitialSecurity[fullname];
-
-		if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
-		{
-			//leave node unlocked must have some read access
-		}
-		else
-		{
-			//default node to locked
-			//child.setText(child.text+" <b>Locked</b>");
-			ontRoot.attributes.access='locked';
-			ontRoot.disable();
-			ontRoot.on('beforeload', function(node){alert("Access to this node has been restricted. Please contact your administrator for access."); return false});
-		}
+	var showFn = function(node, e){
+		Ext.tree.TreePanel.superclass.onShow.call(this);
 	}
-	return treeRoot;
-}
-
-/*
- * the id_in drives which off these tabs is created
- * 
- */
-function getSubCategories(id_in, title_in, ontresponse)
-{
-	// shorthand
-	var Tree = Ext.tree;
-
-	var treeRoot;
-	
-	var showFn;
-	
-	if (id_in==='crossTrialsPanel'){
-		showFn = function(node, e){
-			Ext.tree.TreePanel.superclass.onShow.call(this);
-			//Ext.get('advancedbutton').dom.style.display='none';
-		}
-		treeRoot = createTree('include', ontresponse);
-	}else{
-		showFn = function(node, e){
-			Ext.tree.TreePanel.superclass.onShow.call(this);
-			//Ext.get('advancedbutton').dom.style.display='';
-		}
-		treeRoot = createTree('exclude', ontresponse);
-	}
-	
-    var toolbar = new Ext.Toolbar([
-		{
-			id:'contextHelp-button',
-			handler: function(event, toolEl, panel){
-			   	D2H_ShowHelp((id_in=="navigateTermsPanel")?"1066":"1091",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-			},
-		    iconCls: "contextHelpBtn"  
-		}
-    ]);
 	
 	var ontTree = new Tree.TreePanel(
 			{
@@ -1780,36 +1753,174 @@ function getSubCategories(id_in, title_in, ontresponse)
 
 			}
 	);
-
+	
+	var treeRoot = new Tree.TreeNode(
+			{
+				text : 'root',
+				draggable : false,
+				id : 'treeRoot',
+				qtip : 'root'
+			}
+	);
 
 	// add a tree sorter in folder mode
 	new Tree.TreeSorter(ontTree,
 			{
 		folderSort : true
 			}
-	);
+	);	
+	
 	ontTree.setRootNode(treeRoot);
-	//ontTree.add(toolbar);
 	ontTabPanel.add(ontTree);
-	/*if(GLOBAL.IsAdmin)
-   {
-   	ontTabPanel.add(searchByNamePanel);
-   	ontTabPanel.setActiveTab('searchByNamePanel');
-   }*/
+	ontTabPanel.doLayout();
+	onWindowResize();
+}
 
+/*If includeExcludeFlag is
+ * -"include": Across Trials is the only concept included
+ * -"exclude": Across Trials concept is the only concept excluded 
+ */
+function createTree(includeExcludeFlag, ontresponse){
+	// shorthand
+	var Tree = Ext.tree;
+	var ontRoots = [];
+	
+	if (GLOBAL.DefaultPathToExpand != "") {
+		GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
+	}
+	
+	var concepts = ontresponse.responseXML.selectNodes('//concept');
+	var treeRoot = new Tree.TreeNode(
+			{
+				text : 'root',
+				draggable : false,
+				id : 'treeRoot',
+				qtip : 'root'
+			}
+	);
+	for(var c = 0; c < concepts.length; c ++ )
+	{
+		var level = concepts[c].selectSingleNode('level').firstChild.nodeValue;
+		var key = concepts[c].selectSingleNode('key').firstChild.nodeValue;
+		var name = concepts[c].selectSingleNode('name').firstChild.nodeValue;
+		var tooltip = concepts[c].selectSingleNode('tooltip').firstChild.nodeValue;
+		var dimcode = concepts[c].selectSingleNode('dimcode').firstChild.nodeValue;
+		var visualAttributes = concepts[c].selectSingleNode('visualattributes').firstChild.nodeValue;
+
+		var fullname=key.substr(key.indexOf("\\",2), key.length);		
+		var access=GLOBAL.InitialSecurity[fullname];
+		
+		if(includeExcludeFlag==="include" && name!=="Across Trials") continue;
+		if(includeExcludeFlag==="exclude" && name==="Across Trials") continue;
+		// set the root node
+		var autoExpand=false;
+		
+	    var lockedNode = true;
+	    if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) {
+	    	lockedNode = false;
+	    }
+	    
+		if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key+",") == -1 && !lockedNode) { autoExpand=true; }
+		
+   		//For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
+   		if(level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) == -1) { continue; }
+   		
+   		var iconCls = "";
+	    if (visualAttributes.indexOf('P') > '-1') {
+	    	iconCls="programicon";
+	    }
+	    
+	    var tcls = "";
+		
+		if(lockedNode) {
+			tcls += ' locked';
+		}
+
+	    var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
+	    if (isSearchResult) {
+	    	tcls += ' searchResultNode';
+	    }
+   		
+		var ontRoot = new Tree.AsyncTreeNode(
+			{
+				text : name,
+				draggable : false,
+				id : key,
+				qtip : tooltip,
+				expanded : autoExpand,
+				iconCls : iconCls,
+				cls : tcls
+			}
+		);
+
+		if(lockedNode) {
+			ontRoot.attributes.access='locked';
+			//ontRoot.disable();
+			ontRoot.on('beforeload', function(node){return false});
+		}
+		
+		//treeRoot.appendChild(ontRoot);
+
+		ontRoots.push(ontRoot);
+		
+		/*****************************************/
+
+	}
+
+	return ontRoots;
+}
+
+/*
+ * the id_in drives which off these tabs is created
+ * 
+ */
+function getSubCategories(ontresponse)
+{
+	// shorthand
+	var Tree = Ext.tree;
+	
+	var showFn;
+	
+	var ontRoots = createTree('exclude', ontresponse);
+	
+    var toolbar = new Ext.Toolbar([
+		{
+			id:'contextHelp-button',
+			handler: function(event, toolEl, panel){
+			   	D2H_ShowHelp((id_in=="navigateTermsPanel")?"1066":"1091",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+			},
+		    iconCls: "contextHelpBtn"  
+		}
+    ]);
+	
+    var treeRoot = Ext.getCmp('navigateTermsPanel').getRootNode();
+	for(c = treeRoot.childNodes.length - 1; c >= 0; c -- ) {
+		treeRoot.childNodes[c].remove();
+	}
+	
+	jQuery('#noAnalyzeResults').hide();
+	
+	for(var c = 0; c < ontRoots.length; c ++ )
+	{
+		var newnode=ontRoots[c];
+		treeRoot.appendChild(newnode);
+	}
+	
+	if (ontRoots.length == 0) { //This shouldn't happen!
+		jQuery('#noAnalyzeResults').show();
+	}
+        
 	if(GLOBAL.Debug)
 	{
 		alert(ontresponse.responseText);
 	}
 
-	// ontTabPanel.add(ontSearchTermsPanel);
-	ontTabPanel.doLayout();
-	ontTree.dragZone.addToGroup("analysis");
+	onWindowResize();
+	Ext.getCmp('navigateTermsPanel').render();
 	/*if(GLOBAL.IsAdmin)
    {
    	searchByNameTree.dragZone.addToGroup("analysis");
    }*/
-	
 }
 
 function ontLoadNode(node)
@@ -1915,7 +2026,7 @@ function setupDragAndDrop()
 
 	dts = new Ext.dd.DropTarget(qcd,
 			{
-		ddGroup : 'analysis'
+		ddGroup : 'makeQuery'
 			}
 	);
 
@@ -1931,7 +2042,7 @@ function setupDragAndDrop()
 	var mcd = Ext.get(analysisGridPanel.body);
 	dtg = new Ext.dd.DropTarget(mcd,
 			{
-		ddGroup : 'analysis'
+		ddGroup : 'makeQuery'
 			}
 	);
 
@@ -2057,13 +2168,6 @@ function ontologyRightClick(eventNode, event)
 					        	 text : 'Show Definition', handler : function()
 					        	 {
 					        	 showConceptInfoDialog(eventNode.attributes.id, eventNode.attributes.text, eventNode.attributes.comment);
-					        	 }
-					         },
-					         {
-					        	 text : 'Show Node', 
-					        	 handler : function()
-					        	 {
-					        	 	showNode(eventNode.attributes.id);
 					        	 }
 					         }
 					         ]
@@ -4054,7 +4158,7 @@ function getAnalysisPanelContent()
 
 function printPreview(content)
 {
-	var stylesheet = "<html><head><link rel='stylesheet' type='text/css' href='css/chartservlet.css'></head><body>";
+	var stylesheet = "<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body>";
 	var generator = window.open('', 'name', 'height=400,width=500, resizable=yes, scrollbars=yes');
 	var printbutton = "<input type='button' value=' Print this page 'onclick='window.print();return false;' />";
 	var savebutton = "<input type='button' value='Save'  onclick='document.execCommand(\"SaveAs\",null,\".html\")' />";
@@ -4174,13 +4278,13 @@ function searchByTagBefore()
 			return false;
 		}
 	}
-	for(c = ontFilterTreeRoot.childNodes.length - 1;
+	for(c = treeRoot.childNodes.length - 1;
 	c >= 0;
 	c -- )
 	{
-		ontFilterTreeRoot.childNodes[c].remove();
+		treeRoot.childNodes[c].remove();
 	}
-	ontFilterTree.render();
+	ontTree.render();
 	viewport.el.mask("Searching...")
 	return true;
 }
@@ -4188,17 +4292,33 @@ function searchByTagComplete(response)
 {
 	// shorthand
 	var Tree = Ext.tree;
-	//ontFilterPanel.el.unmask();
+	var treeRoot = Ext.getCmp('navigateTermsPanel').getRootNode();
+
 	viewport.el.unmask();
-	var robj=response.responseText.evalJSON();
-	var rtext=robj.resulttext;
-	var concepts = robj.concepts;
-	// concept = concepts[4];
-	// test = concept.selectSingleNode('name').firstChild.nodeValue;
-	// alert(response.responseText);
+	var concepts = response.searchResults; //Response is an array of concept paths
+	var uniqueLeaves = response.uniqueLeaves;
+	
 	var length;
 	var leaf = false;
 	var draggable = false;
+	
+	for(c = treeRoot.childNodes.length - 1;
+	c >= 0;
+	c -- )
+	{
+		treeRoot.childNodes[c].remove();
+	}
+	
+	jQuery('#noAnalyzeResults').hide();
+	
+	//Clear path to expand and unique leaves
+	GLOBAL.PathToExpand = '';
+	GLOBAL.UniqueLeaves = '';
+	
+	if (GLOBAL.DefaultPathToExpand != "") {
+		GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
+	}
+	
 	if(concepts != undefined)
 	{
 		if(concepts.length < GLOBAL.MaxSearchResults)
@@ -4211,12 +4331,26 @@ function searchByTagComplete(response)
 		}
 		for(var c = 0; c < length; c ++ )
 		{
-			var newnode=getTreeNodeFromJSON(concepts[c])
-			ontFilterTreeRoot.appendChild(newnode);
-			setTreeNodeSecurity(newnode, concepts[c].access);
+			//var newnode=getTreeNodeFromJSON(concepts[c])
+			GLOBAL.PathToExpand += concepts[c] + ",";
+			//treeRoot.appendChild(newnode);
+			//setTreeNodeSecurity(newnode, concepts[c].access);
 		}
-		var t=document.getElementById("searchresultstext");
-		t.innerHTML=rtext;
+		
+		for(var c = 0; c < uniqueLeaves.length; c++) {
+			GLOBAL.UniqueLeaves += uniqueLeaves[c] + ",";
+		}
+		
+		if (concepts.length == 0) {
+			jQuery('#noAnalyzeResults').show();
+			Ext.getCmp('navigateTermsPanel').render();
+			onWindowResize();
+		}
+		else {
+			//Get the categories with the new path to expand
+			getCategories();
+		}
+		
 	}
 }
 
@@ -4510,4 +4644,17 @@ function clearQuery() {
 		resetQuery();
 		clearDataAssociation();									
 	}
+}
+
+function toggleSidebar() {
+	var panel = Ext.getCmp('westPanel');
+	if (panel.hidden) {
+	    panel.hidden = false;
+	    panel.setVisible(true); 
+	}
+	else {
+	    panel.hidden = true;
+	    panel.setVisible(false); 
+	}
+	viewport.doLayout();
 }

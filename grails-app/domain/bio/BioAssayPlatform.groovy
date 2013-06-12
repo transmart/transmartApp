@@ -29,6 +29,12 @@ class BioAssayPlatform {
 		String accession
 		String array
 		String vendor
+		String platformType
+		String platformTechnology
+		
+		String uniqueId
+		static transients = ['uniqueId', 'fullName']
+
  
 static mapping = {
 	 table 'BIO_ASSAY_PLATFORM'
@@ -44,6 +50,8 @@ static mapping = {
 		accession column:'PLATFORM_ACCESSION'
 		array column:'PLATFORM_ARRAY'
 		vendor column:'PLATFORM_VENDOR'
+		platformType column:'PLATFORM_TYPE'
+		platformTechnology column:'PLATFORM_TECHNOLOGY'
 		}
 	}
 
@@ -51,5 +59,55 @@ static constraints = {
 	name(nullable:true, maxSize:400)
 	platformVersion(nullable:true, maxSize:400)
 	description(nullable:true, maxSize:2000)
+	platformType(nullable:true)
+	platformTechnology(nullable:true)
+	
 	}		
+
+
+/**
+ * Use transient property to support unique ID for tagValue.
+ * @return tagValue's uniqueId
+ */
+String getUniqueId() {
+	if (uniqueId == null) {
+		if(id)
+		{
+			BioData data = BioData.get(id);
+			if (data != null) {
+				uniqueId = data.uniqueId
+				return data.uniqueId;
+			}
+			return null;
+		}
+		else
+		{
+			return null;
+		}
+	}
+	else
+	{
+		return uniqueId;
+	}
+}
+
+String getFullName() {
+	return (platformType + "/" + platformTechnology + "/" + vendor + "/" + name)
+}
+
+
+/**
+* Find concept code by its uniqueId
+* @param uniqueId
+* @return BioAssayPlatform with matching uniqueId or null, if match not found.
+*/
+static BioAssayPlatform findByUniqueId(String uniqueId) {
+   BioAssayPlatform cc;
+   BioData bd = BioData.findByUniqueId(uniqueId);
+   if (bd != null) {
+	   cc = BioAssayPlatform.get(bd.id);
+   }
+   return cc;
+}
+
 }

@@ -22,7 +22,10 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
-//grails.plugin.location.rmodules = "C:\\SVN\\repo1\\pharma\\transmart\\trunk\\plugins\\Rmodules"
+grails.project.work.dir = "${userHome}/.grails/${grailsVersion}/projects/${appName}-${appVersion}/"
+//grails.plugin.location.rmodules = "C:\\svn\\repo1\\pharma\\transmart\\trunk\\plugins\\Rmodules"
+//grails.plugin.location.rmodules="..//Rmodules"
+
 
 grails.project.war.file = "target/transmart.war"
 grails.project.dependency.resolution = {

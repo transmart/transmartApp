@@ -78,8 +78,12 @@ import oracle.jdbc.driver.OracleTypes
 
 import org.Hibernate.*;
 
+import auth.AuthUser;
+
 import com.recomdata.db.DBHelper;
 import com.recomdata.export.*;
+
+import auth.*;
 
 /**
  * ResNetService that will provide an .rnef file for Jubilant data
@@ -792,8 +796,10 @@ class I2b2HelperService {
 		Group by UPPER("""+col+""")) b
 		ON a.cat=b.cat ORDER BY a.cat""";
 		sql.eachRow(sqlt, [result_instance_id], {row ->
-			results.put(row[0], row[1])
-			log.trace("in row getting patient demographic data for subset")
+			if(row[1]!=0){
+				results.put(row[0], row[1])
+				log.trace("in row getting patient demographic data for subset")
+			}
 		})
 		return results;
 	}
@@ -4793,12 +4799,14 @@ class I2b2HelperService {
 		//int i=getLevelFromKey(concept_key)+1;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		//groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
- 		String mlevelsql = "SELECT MIN(C_HLEVEL) AS mlevel FROM i2b2metadata.i2b2_SECURE";	
- 		sql.eachRow(mlevelsql, {row ->	
- 		rootlevel=row.mlevel;	
-     		})
-		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE c_hlevel = ? ORDER BY C_FULLNAME";
-		sql.eachRow(sqlt, [rootlevel], {row ->
+// 		String mlevelsql = "SELECT MIN(C_HLEVEL) AS mlevel FROM i2b2metadata.i2b2_SECURE";	
+// 		sql.eachRow(mlevelsql, {row ->	
+// 		rootlevel=row.mlevel;	
+//     		})
+//		 
+//		Changed for Sanofi: Root levels are at 0 or -1.
+		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE c_hlevel IN (-1, 0) ORDER BY C_FULLNAME";
+		sql.eachRow(sqlt, [], {row ->
 			String fullname=row.c_fullname;
 			String prefix=fullname.substring(0, fullname.indexOf("\\",2)); //get the prefix to put on to the fullname to make a key
 			String conceptkey=prefix+fullname;

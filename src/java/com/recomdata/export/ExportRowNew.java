@@ -67,4 +67,15 @@ public class ExportRowNew {
 		}
 		return json;
 	}
+	
+	public JSONArray toJSONArray() throws JSONException {
+		
+		JSONArray jsonArray = new JSONArray();
+		
+		for (Iterator<String> i = values.keySet().iterator(); i.hasNext(); ) {
+			String column=i.next();
+			jsonArray.put(values.get(column));
+		}
+		return jsonArray;
+	}
 }

@@ -22,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import search.GeneSignatureItem;
 import search.GeneSignatureFileSchema;
 import search.GeneSignature;
+import search.SearchKeyword;
+import auth.AuthUser;
 import bio.BioMarker;
 import bio.BioData;
 import bio.BioAssayAnalysisData;
@@ -629,5 +631,54 @@ public class GeneSignatureService {
 		
 		return sbuf.toString()
 	}
+	
+   def expandGeneList(geneListUid) {
+	   
+	   def genesList = []
+	   
+		   
+	  def geneSig = GeneSignature.findByUniqueId(geneListUid)
+	  def geneKeywords = GeneSignatureItem.createCriteria().list {
+		  eq('geneSignature', geneSig)
+	  }
+	  
+	  // loop through each keyword for the gene list items and add to list
+	  geneKeywords.each {
+		  // don't add duplicates
+		  if (it.bioDataUniqueId && genesList.indexOf(it.bioDataUniqueId)<0)   {
+			  genesList.add it.bioDataUniqueId
+		  }
+	  }
+	  
+	   
+	   return genesList
+	   
+   }
+   
+   def expandPathway(pathwayUid) {
+	   
+	   def genesList = []
+		   
+	   def geneKeywords = SearchKeyword.executeQuery("""
+		   				select k_gene.uniqueId
+						from search.SearchKeyword k_pathway, bio.BioMarkerCorrelationMV b,
+						search.SearchKeyword k_gene
+						where b.correlType = 'PATHWAY_GENE'
+						and b.bioMarkerId = k_pathway.bioDataId
+						and k_pathway.dataCategory = 'PATHWAY'
+						and b.assoBioMarkerId = k_gene.bioDataId
+						and k_gene.dataCategory = 'GENE'
+						and k_pathway.uniqueId = :pathwayUid """, [pathwayUid: pathwayUid])
+
+	   // loop through each keyword for the gene list items and add to list
+	   geneKeywords.each {
+		   // don't add duplicates
+		   if (genesList.indexOf(it)<0) {
+			   genesList.add it
+		   }
+	   }
+	   
+	   return genesList
+   }
 
 }

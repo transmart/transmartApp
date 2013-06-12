@@ -32,9 +32,10 @@
 			<style type="text/css">
 				#utilitiesMenu{font:normal 11px tahoma,arial,sans-serif; border:1px solid #718bb7;z-index:15000;zoom:1;background:#f0f0f0 repeat-y; padding: 4px; position: absolute; right: 0; top: 24px; display: none;}
 				#utilitiesMenu a{text-decoration:none!important; font-weight:normal!important;}
-				#utilitiesMenuList {background:transparent;border:0 none; list-style: none;}
+				#utilitiesMenuList {background:transparent;border:0 none; list-style: none; margin: 10px 0 10px 25px;}
 				#utilitiesMenu li{line-height:100%; padding: 4px; border:1px solid #f0f0f0; cursor: pointer;}
 				#utilitiesMenu li:hover {background-color: #DDDDFF; border:1px solid #718bb7}
+				#utilitiesMenu li a {color: #000}
 				#utilitiesMenuButton {
 					cursor: pointer;
 					font-weight: bold;
