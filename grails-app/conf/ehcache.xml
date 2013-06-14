@@ -7,7 +7,6 @@
 
     <cacheManagerEventListenerFactory class="" properties=""/>
 
-
     <defaultCache
             maxElementsInMemory="50000"
             eternal="false"
@@ -16,21 +15,104 @@
             diskPersistent="false"
             />
 
-    <cache name="transmart"
-           maxElementsInMemory="50000"
+    <cache name="bio.ContentReference"
+           maxElementsInMemory="10000"
            timeToIdleSeconds="300"
             />
-
+    <cache name="bio.BioAssayCohort"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.CellLine"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.BioAssayAnalysisPlatform"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="search.GeneSignatureFileSchema"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.Disease"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.BioAssayPlatform"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="com.recomdata.transmart.plugin.Plugin"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.BioAssayFeatureGroup"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.Experiment"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.BioAssayAnalysis"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.Taxonomy"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.Compound"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.BioAssayDataset"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.ConceptCode"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.Content"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.ContentRepository"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
     <cache name="org.hibernate.cache.UpdateTimestampsCache"
            maxElementsInMemory="10000"
            timeToIdleSeconds="300"
             />
-
+    <cache name="bio.Experiment.compounds"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.Experiment.files"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.Experiment.diseases"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.Experiment.organisms"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="bio.BioAssayAnalysis.files"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+    <cache name="com.recomdata.transmart.plugin.Plugin.modules"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
     <cache name="org.hibernate.cache.StandardQueryCache"
            maxElementsInMemory="10000"
            timeToIdleSeconds="300"
             />
-
-
-
 </ehcache>
