@@ -175,3 +175,5 @@ com.recomdata.analysis.data.file.dir = "data"; // Relative to the app root "web-
 com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
+
+grails.resources.modules = {}
