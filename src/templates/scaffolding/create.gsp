@@ -1,28 +1,7 @@
-<!--
-  tranSMART - translational medicine data mart
-  
-  Copyright 2008-2012 Janssen Research & Development, LLC.
-  
-  This product includes software developed at Janssen Research & Development, LLC.
-  
-  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
-  as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
-  1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
-  2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
-  
-  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
-  
- 
--->
-
-<% import org.codehaus.groovy.grails.orm.hibernate.support.ClosureEventTriggeringInterceptor as Events %>
 <%=packageName%>
 <!DOCTYPE html>
 <html>
 	<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<meta name="layout" content="main">
 		<g:set var="entityName" value="\${message(code: '${domainClass.propertyName}.label', default: '${className}')}" />
 		<title><g:message code="default.create.label" args="[entityName]" /></title>
@@ -51,37 +30,6 @@
 				<fieldset class="form">
 					<g:render template="form"/>
 				</fieldset>
-				<fieldset class="dialog">
-                    <table>
-                        <tbody>
-                        <%
-
-                            excludedProps = ['version',
-                                             'id',
-                                               Events.ONLOAD_EVENT,
-                                               Events.BEFORE_DELETE_EVENT,
-                                               Events.BEFORE_INSERT_EVENT,
-                                               Events.BEFORE_UPDATE_EVENT]
-                            props = domainClass.properties.findAll { !excludedProps.contains(it.name) }
-
-                            Collections.sort(props, comparator.constructors[0].newInstance([domainClass] as Object[]))
-                            props.each { p ->
-                                if(!Collection.class.isAssignableFrom(p.type)) {
-                                    cp = domainClass.constrainedProperties[p.name]
-                                    display = (cp ? cp.display : true)        
-                                    if(display) { %>
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="${p.name}">${p.naturalName}:</label>
-                                </td>
-                                <td valign="top" class="value \${hasErrors(bean:${propertyName},field:'${p.name}','errors')}">
-                                    ${renderEditor(p)}
-                                </td>
-                            </tr> 
-                        <%  }   }   } %>
-                        </tbody>
-                    </table>
-                </fieldset>
 				<fieldset class="buttons">
 					<g:submitButton name="create" class="save" value="\${message(code: 'default.button.create.label', default: 'Create')}" />
 				</fieldset>
