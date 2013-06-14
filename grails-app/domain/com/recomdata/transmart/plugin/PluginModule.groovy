@@ -35,7 +35,6 @@ class PluginModule {
 	String moduleName
 	//Clob params
 	String params
-	String version
 	Boolean active
 	Boolean hasForm
 	String formLink
@@ -46,7 +45,6 @@ class PluginModule {
 	
 	static mapping = {
 		table 'SEARCHAPP.PLUGIN_MODULE'
-		version true
 		id column:'MODULE_SEQ',
 		   generator: 'sequence',
 		   params: [sequence:'SEARCHAPP.PLUGIN_MODULE_SEQ']
