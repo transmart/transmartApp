@@ -17,7 +17,6 @@
  
 -->
 
-<g:set var="gs" value="${wizard.geneSigInst.properties}" />
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -56,7 +55,15 @@
 
 			var errorMsg = "";
 			var formName = "geneSignatureFrm";
-			
+
+            //species required
+            var species = document.forms[formName].elements['speciesConceptCode.id'];
+            if(species.value=="null") errorMsg = "\n- Please select a relevant species";
+
+            //tech platform required
+            var techPlat = document.forms[formName].elements['techPlatform.id'];
+            if(techPlat.value=="null") errorMsg = errorMsg + "\n- Please select a technology platform"
+
 			//if source of list is other, detail required
 			var source = document.forms[formName].elements['sourceConceptCode.id'];	
 			var sourceText = source.options[source.selectedIndex].text.toUpperCase();
@@ -87,10 +94,15 @@
 		}
 
 		// show cell line lookup dialog
-		function showCellLineLookup() {
+		function showCellLineLookup() {// must select a species first
+            var species = document.forms['geneSignatureFrm'].elements['speciesConceptCode.id'];
+            if(species.value=="null") {
+                alert("Please select a species before picking a cell line!");
+                return false;
+            }
 		
 			// pass species filter
-			var lkupUrl = '/${grailsApplication.metadata['app.name']}/geneSignature/cellLineLookup/' + "${gs.speciesConceptCode.id}";
+			var lkupUrl = '/${grailsApplication.metadata['app.name']}/geneSignature/cellLineLookup/'+species.value;
 			//alert("url: "+lkupUrl);
 			lkupWinId = "lkup"+(new Date()).getTime();
 			showDialog(lkupWinId, { title: 'Cell Line Lookup', url: lkupUrl })
@@ -115,15 +127,16 @@
 <body>
 
 <div class="body">
-	<!-- initialize -->
-
 	<!--  show message -->
     <g:if test="${flash.message}">
     	<div class="warning">${flash.message}</div>
     	<g:hasErrors bean="${wizard.geneSigInst}"><div class="errors"><g:renderErrors bean="${wizard.geneSigInst}" as="list" /></div></g:hasErrors>
     	<br>
     </g:if>
-	
+
+    <!-- initialize -->
+    <g:set var="gs" value="${wizard.geneSigInst.properties}" />
+
 	<g:if test="${wizard.wizardType==0}"><h1>Gene Signature Create</h1></g:if>	
 	<g:if test="${wizard.wizardType==1}"><h1>Gene Signature Edit: ${gs.name}</h1></g:if>	
 	<g:if test="${wizard.wizardType==2}"><h1>Gene Signature Clone: ${gs.name}</h1></g:if>
@@ -175,10 +188,10 @@
 			<td class="value">
 				<table>				
 					<tr>
-						<td style="border: none; width; 33%;">i.e. LPS, polyIC, etc:</td><td style="border: none;"><g:textArea name="stimulusDescription" value="${gs.stimulusDescription}" rows="3" cols="85" /></td>
+						<td style="border: none; width: 33%;">i.e. LPS, polyIC, etc:</td><td style="border: none;"><g:textArea name="stimulusDescription" value="${gs.stimulusDescription}" rows="3" cols="85" /></td>
 					</tr>
 					<tr>						
-						<td style="border: none; width; 33%;">Dose, units, and time:</td><td style="border: none;"><g:textField name="stimulusDosing" value="${gs.stimulusDosing}" size="67%" maxlength="255" /></td>
+						<td style="border: none; width: 33%;">Dose, units, and time:</td><td style="border: none;"><g:textField name="stimulusDosing" value="${gs.stimulusDosing}" size="67%" maxlength="255" /></td>
 					</tr>
 				</table>
 			</td>
@@ -188,15 +201,15 @@
 			<td class="value">
 				<table>			
 					<tr>
-						<td style="border: none; width; 33%;">Drug treatment used in assay:</td><td style="border: none;"><g:textArea name="treatmentDescription" value="${gs.treatmentDescription}" rows="6" cols="85" /></td>
+						<td style="border: none; width: 33%;">Drug treatment used in assay:</td><td style="border: none;"><g:textArea name="treatmentDescription" value="${gs.treatmentDescription}" rows="6" cols="85" /></td>
 						</td>
 					</tr>
 					<tr>						
-						<td style="border: none; width; 33%;">Dose, units, and time:</td><td style="border: none;"><g:textField name="treatmentDosing" value="${gs.treatmentDosing}" size="67%" maxlength="255" /></td>
+						<td style="border: none; width: 33%;">Dose, units, and time:</td><td style="border: none;"><g:textField name="treatmentDosing" value="${gs.treatmentDosing}" size="67%" maxlength="255" /></td>
 					</tr>
 					<tr><td style="border: none; font-weight: bold; font-style: italic;" colspan=2>OR Enter:</td></tr>
 					<tr>
-						<td style="border: none; width; 33%;">Compound:</td>
+						<td style="border: none; width: 33%;">Compound:</td>
 						<td style="border: none;"><g:select name="treatmentCompound.id"
 								    					from="${wizard.compounds}"
 								    					value="${gs.treatmentCompound?.id}"
@@ -206,7 +219,7 @@
 						</td>
 					</tr>
 					<tr>						
-						<td style="border: none; width; 33%;">Protocol Number:</td><td style="border: none;"><g:textField name="treatmentProtocolNumber" value="${gs.treatmentProtocolNumber}" size="67%" maxlength="255" /></td>
+						<td style="border: none; width: 33%;">Protocol Number:</td><td style="border: none;"><g:textField name="treatmentProtocolNumber" value="${gs.treatmentProtocolNumber}" size="67%" maxlength="255" /></td>
 					</tr>			
 				</table>
 			</td>
@@ -215,6 +228,66 @@
 			<td class="name">PMIDs (comma separated)</td>
 			<td class="value"><g:textField name="pmIds" value="${gs.pmIds}" size="67%" maxlength="255" /></td>
 		</tr>
+        <tr class="prop">
+            <td class="name">Species<g:requiredIndicator/></td>
+            <td class="value">
+                <table>
+                    <tr>
+                        <td style="border: none; width: 50%">
+                            <g:select name="speciesConceptCode.id"
+                                      from="${wizard.species}"
+                                      value="${gs.speciesConceptCode?.id}"
+                                      noSelection="['null':'select relevant species']"
+                                      optionValue="codeName"
+                                      optionKey="id"
+                                      onChange="javascript:speciesToggle(this);" />&nbsp;
+                        <!--  toggle mouse div accordingly -->
+                            <g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_1' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_2' ||
+                                    gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">
+                                <div id="mouse_source_div" style="display: inline;">For Mouse, enter source<g:requiredIndicator/>:
+                            </g:if>
+                            <g:else>
+                                <div id="mouse_source_div" style="display: none;">For Mouse, enter source<g:requiredIndicator/>:
+                            </g:else>
+                            <g:select name="speciesMouseSrcConceptCode.id"
+                                      from="${wizard.mouseSources}"
+                                      value="${gs.speciesMouseSrcConceptCode?.id}"
+                                      noSelection="['null':'select source']"
+                                      optionValue="codeName"
+                                      optionKey="id" />
+                        </div>
+                        </td>
+                    </tr>
+                <!--  toggle mouse other accordingly -->
+                    <g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">
+                        <tr id="mouse_other_id" style="display: block;"><td">
+                    </g:if>
+                    <g:else>
+                        <tr id="mouse_other_id" style="display: none;">
+                    </g:else>
+                    <td style="border: none;">
+                        <label>Detail for 'knockout/transgenic' or 'other' mouse strain<g:requiredIndicator/>:</label>
+                        <br><g:textField name="speciesMouseDetail" value="${gs.speciesMouseDetail}" size="100%" maxlength="255" />
+                    </td>
+                </tr>
+                </table>
+            </td>
+        </tr>
+        <tr class="prop">
+            <td class="name">Technology Platform<g:requiredIndicator/></td>
+            <td class="value">
+                <g:select name="techPlatform.id"
+                          from="${wizard.platforms}"
+                          value="${gs.techPlatform?.id}"
+                          noSelection="['null':'select tech platform']"
+                          optionValue="${{it?.vendor + ' - ' + it?.array + ' [' + it?.accession + ']'}}"
+                          optionKey="id"
+                          onChange="javascript: toggleOtherDiv(this, 'platform_other_div');" />
+                <div id="platform_other_div" style="display: none;">
+                    <label>please provide 'other' accession #<g:requiredIndicator/>:</label>
+                    <br><input type="text" name="techPlatformOther" size="100%" />
+                </div>
+        </tr>
 		<tr class="prop">
 			<td class="name">Tissue Type</td>
 			<td class="value">
@@ -258,14 +331,11 @@
 				<!--  toggle in vivo model accordingly -->
 				<g:if test="${gs.experimentTypeConceptCode?.bioConceptCode=='IN_VIVO_ANIMAL' || gs.experimentTypeConceptCode?.bioConceptCode=='IN_VIVO_HUMAN'}">      				  								
 				<tr id="in_vivo_id" style="display: inline;">
+                    <td style="border: none;">
+                        <label>For 'in vivo', describe model<g:requiredIndicator/>:</label><br><g:textField name="experimentTypeInVivoDescr" value="${gs.experimentTypeInVivoDescr}" size="100%" maxlength="255" />
+                    </td>
+                </tr>
 				</g:if>
-				<g:else>	
-				<tr id="in_vivo_id" style="display: none;">	
-				</g:else>							
-					<td style="border: none;">
-						<label>For 'in vivo', describe model<g:requiredIndicator/>:</label><br><g:textField name="experimentTypeInVivoDescr" value="${gs.experimentTypeInVivoDescr}" size="100%" maxlength="255" />						
-					</td>
-				</tr>
 				<tr><td style="border: none;"><label>If applicable, ATCC designation:</label><br><g:textField name="experimentTypeATCCRef" value="${gs.experimentTypeATCCRef}" size="100%" maxlength="255" /></td></tr>										
 				</table>
 			</td>

@@ -65,9 +65,9 @@
 		<g:layoutHead />
 	</head>
 	<body>
-		<div id="page">
-			<div id="header"><g:render template="/layouts/commonheader"	model="['app':'genesignature']" /></div>
-			<div id="app"><g:layoutBody /></div>
-		</div>
+        <div id="header-div">
+            <g:render template="/layouts/commonheader" model="['app':'genesignature']" />
+            <div id="app"><g:layoutBody /></div>
+        </div>
 	</body>
 </html>
