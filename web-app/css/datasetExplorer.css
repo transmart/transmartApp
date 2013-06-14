@@ -135,7 +135,8 @@
 
 div.topall {
 	padding-top:4px;
-	background: #fafafa url(../images/skin/shadow30.jpg);
+    background-color: #fafafa);
+    background-image:url(../images/skin/shadow30.jpg);
 font-family:verdana,arial,helvetica,sans-serif;
 font-size:12px;
 font-size-adjust:none;
@@ -173,7 +174,8 @@ a.toplink1{
 	color:#00c !important;
 	vertical-align:bottom;
 	font-weight: bold;
-	background: #fafafa url(../images/skin/shadow30.jpg);
+    background-color: #fafafa);
+    background-image:url(../images/skin/shadow30.jpg);
 	text-decoration:none;
 }
 a.toplink1:hover{
@@ -228,7 +230,8 @@ height:0;
 position:absolute;
 top:30px;
 width:100%;
- background: #fafafa url(..//images/shadow30.jpg);
+    background-color: #fafafa);
+    background-image:url(../images/skin/shadow30.jpg);
 }
 
 
@@ -404,7 +407,7 @@ table.tablesorterAnalysisResults thead tr th, table.tablesorter tfoot tr th {
 	white-space: nowrap;	
 }
 table.tablesorterAnalysisResults thead tr .header {
-	background-image: (../images/bg.gif);
+	background-image: url(../images/bg.gif);
 	background-repeat: no-repeat;
 	background-position: center right;
 	cursor: pointer;
