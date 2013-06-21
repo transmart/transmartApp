@@ -20,14 +20,10 @@
 
 package com.recomdata.transmart.data.export
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.Callable;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.recomdata.snp.SnpData;
-import com.recomdata.transmart.data.export.exception.DataNotFoundException;
+import com.recomdata.snp.SnpData
+import com.recomdata.transmart.data.export.exception.DataNotFoundException
+import org.apache.commons.lang.StringUtils
+import org.springframework.transaction.annotation.Transactional
 
 class DataExportService {
 
@@ -97,15 +93,16 @@ class DataExportService {
 						if (StringUtils.equalsIgnoreCase(selectedFile, "CLINICAL.TXT")) {
 							writeClinicalData = true
 						}
-						
-						println 'Working on to export File :: ' + selectedFile
+
+                        def start = System.currentTimeMillis()
+						log.info 'Working on to export File :: ' + selectedFile
+
 						def List gplIds = subsetSelectedPlatformsByFiles?.get(subset)?.get(selectedFile)
-						def retVal = null
+						def retVal
 						switch (selectedFile)
 						{
 							case "STUDY":
 								retVal = metadataService.getData(studyDir, "experimentalDesign.txt", jobDataMap.get("jobName"), studyList);
-								log.info("retrieved study data")
 								break;
 							case "MRNA.TXT":
 								retVal = geneExpressionDataService.getData(studyList, studyDir, "mRNA.trans", jobDataMap.get("jobName"), resultInstanceIdMap[subset], pivotData, gplIds, null, null, null, null, false)
@@ -150,7 +147,6 @@ class DataExportService {
                                             "allowed per analysis; list given" +
                                             " was : " + studyList);
                                 }
-                                def start = System.currentTimeMillis()
                                 this.ACGHDataService.writeRegions(
                                         studyList[0],
                                         studyDir,
@@ -161,9 +157,6 @@ class DataExportService {
                                         allow filtering,
                                         so don't implement it here was well */
                                 )
-                                println("It took " + ((System
-                                        .currentTimeMillis()-start) / 1000) +
-                                        " seconds");
                                 break;
 							case "MRNA.CEL":
 								geneExpressionDataService.downloadCELFiles(resultInstanceIdMap[subset], studyList, studyDir, jobDataMap.get("jobName"), null, null, null, null)
@@ -235,6 +228,10 @@ class DataExportService {
 								vcfDataService.getDataAsFile(outputDir, jobDataMap.get("jobName"), null, resultInstanceIdMap[subset], selectedSNPs, selectedGenes, chromosomes, prefix);
 							break;
 						}
+
+                        log.info("Data retrieval for $selectedFile took "
+                                + ((System.currentTimeMillis() - start) / 1000)
+                                + " seconds");
 					}
 				}
 				

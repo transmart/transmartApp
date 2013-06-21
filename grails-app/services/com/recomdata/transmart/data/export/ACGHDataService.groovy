@@ -73,8 +73,9 @@ class ACGHDataService {
             line[2] = region.start as String
             line[3] = region.end as String
             line[4] = region.numberOfProbes as String
+            line[5] = region.cytoband
 
-            int j = 5
+            int j = 6
             PER_ASSAY_COLUMNS.each {k, Closure<ACGHValues> value ->
                 assays.each {Assay assay ->
                     line[j++] = value(row.getRegionDataForAssay(assay)) as String
@@ -100,6 +101,7 @@ class ACGHDataService {
                 'start',
                 'end',
                 'num.probes',
+                'cytoband',
         ];
 
         PER_ASSAY_COLUMNS.keySet().each {String head ->
