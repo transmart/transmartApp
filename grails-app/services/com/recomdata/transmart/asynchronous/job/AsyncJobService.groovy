@@ -85,6 +85,46 @@ class AsyncJobService {
 		
 		return result
 	}
+
+	/**
+	 * get job info by job name
+	 * @param jobName
+	 * @return
+	 */
+	def getjobbyname(jobName = '') {
+
+		JSONObject result = new JSONObject()
+		JSONArray rows = new JSONArray()
+		def jobResults = null
+
+		def c = AsyncJob.createCriteria()
+
+		if (StringUtils.isNotEmpty(jobName)) {
+			jobResults = c {
+				like("jobName", "%${jobName}%")
+			}
+		}
+
+		def m = [:]
+		for (jobResult in jobResults)	{
+			m = [:]
+			m["name"] = jobResult.jobName
+			m["status"] = jobResult.jobStatus
+			m["runTime"] = jobResult.runTime
+			m["startDate"] = jobResult.lastRunOn
+			m["viewerURL"] = jobResult.viewerURL
+			m["altViewerURL"] = jobResult.altViewerURL
+			m["jobInputsJson"] = new JSONObject(jobResult.jobInputsJson ?: "{}")
+			rows.put(m)
+		}
+
+		result.put("success", true)
+		result.put("totalCount", jobResults.size())
+		result.put("jobs", rows)
+
+		return result
+
+	}
 	
 	/**
 	* Called to retrieve the job results (HTML) stored in the JOB_RESULTS field for Haploview and Survival Analysis
