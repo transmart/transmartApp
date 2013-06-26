@@ -4731,8 +4731,8 @@ class PostgresI2b2HelperService {
 					panel=panels.item(p)
 				    Node panelnumber=(Node)xpath.evaluate("panel_number", panel, XPathConstants.NODE)
 				    
-					if(panelnumber.getTextContent().equalsIgnoreCase("21"))	{
-						log.debug("Skipping the security panel in printing the output")
+					if(panelnumber?.getTextContent()?.equalsIgnoreCase("21")) {
+                        log.debug("Skipping the security panel in printing the output")
 						continue
 					}
 				    
@@ -4741,7 +4741,7 @@ class PostgresI2b2HelperService {
 				    }
 				    
 					Node invert=(Node)xpath.evaluate("invert", panel, XPathConstants.NODE)
-				    if(invert.getTextContent().equalsIgnoreCase("1")) {
+				    if(invert?.getTextContent()?.equalsIgnoreCase("1")) {
 					    pw.write("<br><b>NOT</b><br>")
 	  			    } 
 				   
