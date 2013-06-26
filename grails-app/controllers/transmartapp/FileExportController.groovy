@@ -21,14 +21,31 @@
 package transmartapp
 
 import fm.FmFile
+import fm.FmFolder;
+import fm.FmFolderAssociation;
 import fm.FmFolderService
 
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream
 
+import search.SearchKeyword;
+
+import bio.BioAssayPlatform;
+import bio.BioData;
+import bio.BioMarker;
+import bio.Compound;
+import bio.ConceptCode;
+import bio.Disease;
+
+import annotation.AmTagTemplate;
+import annotation.AmTagValue;
+import annotation.AmTagAssociation;
+
+
 class FileExportController {
 	
 	def fmFolderService
+	def amTagItemService
 
     def add = {
 		def paramMap = params
@@ -125,6 +142,14 @@ class FileExportController {
 					
 					manifestList.push(fmFile)
 					manifestMap.put(dirName, manifestList)
+					
+					//for each folder of the hieararchy of the file path, add file with metadata
+					def path=fmFile.folder.folderFullName
+					for(folderId in path.split("\\\\", -1)){
+						if(!folderId.equals("")){
+							exportMetadata(folderId.split(":", 2)[1], zipStream);
+						}
+					}
 				}
 				else {
 					def errorMessage = "File not found for export: " + fileLocation
@@ -154,11 +179,145 @@ class FileExportController {
 			response.outputStream.flush()
 		}
 		catch (Exception e) {
+			e.printStackTrace()
 			log.error("Error writing ZIP", e)
 			render(contentType: "text/plain", text: errorResponse.join("\n") + "\nError writing ZIP: " + e.getMessage())
 		}catch(OutOfMemoryError oe){
 			log.error("Files too large to be exported: "+exportList)
 			render(contentType: "text/plain", text:"Error: Files too large to be exported.\nPlease click on the \"Previous\" button on your web browser to go back to tranSMART.")
 		}
+	}
+	
+	//add in a zip a file containing metadata for a given folder
+	private void exportMetadata(String folderId, ZipOutputStream zipStream){
+		def folder=FmFolder.get(folderId)
+		
+		String dirName = fmFolderService.getPath(folder, true)
+		if (dirName.startsWith("/") || dirName.startsWith("\\")) { dirName = dirName.substring(1) } //Lose the first separator character, this would cause a blank folder name in the zip
+		def fileEntry = new ZipEntry(dirName + "/"+ folder.folderName+ "_metadata.txt")
+		zipStream.putNextEntry(fileEntry)
+				
+		def amTagTemplate = AmTagTemplate.findByTagTemplateType(folder.folderType)
+		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+		
+		zipStream.write((folder.folderType+": "+folder.folderName+"\n").getBytes())
+		zipStream.write(("Description: "+folder.description+"\n").getBytes())
+		
+		//get associated bioDataObject
+		def bioDataObject
+		def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
+		if(folderAssociation)
+		{
+			bioDataObject = folderAssociation.getBioObject()
+		}
+		if(!bioDataObject)
+		{
+			bioDataObject = folder
+		}
+		
+		for(amTagItem in metaDataTagItems){
+			if(amTagItem.tagItemType == 'FIXED'){
+				if(amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false){
+					def value=fieldValue(bean:bioDataObject, field: amTagItem.tagItemAttr)
+					def bioData=BioData.findByUniqueId(value)
+					if(bioData!=null){
+						def concept=ConceptCode.findById(bioData.id)
+						if(concept!=null){
+							value=concept.codeName
+						}
+					}
+					if(value==null) value=""
+					zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes())
+				}
+			}else if(amTagItem.tagItemType == 'CUSTOM'){
+				if(amTagItem.tagItemSubtype == 'FREETEXT'){
+					def value=""
+					def tagAssoc=AmTagAssociation.find("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
+					if(tagAssoc!=null){
+						if((tagAssoc.objectUid).split("TAG:", 2).size()>0){
+							def tagValue=AmTagValue.findById((tagAssoc.objectUid).split("TAG:", 2)[1]);
+							if(tagValue!=null) value=tagValue.value
+						}
+					}
+					zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes());
+				}else if(amTagItem.tagItemSubtype == 'PICKLIST'){
+					def value=""
+					def tagAssoc=AmTagAssociation.find("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
+					if(tagAssoc!=null){
+						def valueUId=tagAssoc.objectUid
+						def bioData=BioData.findByUniqueId(valueUId)
+						if(bioData!=null){
+							def concept=ConceptCode.findById(bioData.id)
+							if(concept!=null){
+								value=concept.codeName
+							}
+						}
+					}
+					zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes());
+				}else if(amTagItem.tagItemSubtype == 'MULTIPICKLIST'){
+					def values=""
+					def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
+					for(tagAssoc in tagAssocs){
+						def valueUId=tagAssoc.objectUid
+						def bioData=BioData.findByUniqueId(valueUId)
+						if(bioData!=null){
+							def concept=ConceptCode.findById(bioData.id)
+							if(concept!=null){
+								if(values!="") values+="; "
+								values+=concept.codeName
+							}
+						}
+					}
+					zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
+				}
+			
+			}else{//bio_disease, bio_coumpound
+				def values=""
+				def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and objectType=?",["FOL:"+folderId, amTagItem.tagItemType])
+				for(tagAssoc in tagAssocs){
+					def valueUId=tagAssoc.objectUid
+					def bioData=BioData.findByUniqueId(valueUId)
+					if(bioData!=null){
+						if((tagAssoc.objectUid).split(":", 2).size()>0){
+							def tagCategory=(tagAssoc.objectUid).split(":", 2)[0];
+							def tagValue=(tagAssoc.objectUid).split(":", 2)[1];
+							if(tagCategory=='DIS'){
+								def disease=Disease.findByMeshCode(tagValue)
+								if(disease!=null){
+									if(values!="") values+="; "
+									values+=disease.preferredName
+								}
+							}else if(tagCategory=='COM'){
+								def compound=Compound.findById(tagValue)
+								if(compound!=null){
+									if(values!="") values+="; "
+									values+=compound.codeName
+								}
+							}else if(tagCategory=='GENE'){
+								def gene=BioMarker.findById(tagValue)
+								if(gene!=null){
+									if(values!="") values+="; "
+									values+=gene.name
+								}
+							}else if(tagCategory=='BAP'){
+								def bap=BioAssayPlatform.findByAccession(tagValue)
+								if(bap!=null){
+									if(values!="") values+="; "
+									values+=bap.platformType+"/"+bap.platformTechnology+"/"+bap.vendor+"/"+bap.name
+								}
+							}else if(tagCategory=='PATHWAY'){
+								def pat=SearchKeyword.findByUniqueId(tagAssoc.objectUid)
+								if(pat!=null){
+									if(values!="") values+="; "
+									values+=pat.keyword
+								}
+							}
+						}
+					}
+				}
+				zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
+			}
+		}
+		zipStream.closeEntry()	
 	}
 }
