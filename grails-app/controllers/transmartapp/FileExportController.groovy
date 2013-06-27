@@ -127,8 +127,9 @@ class FileExportController {
 				FmFile fmFile = FmFile.get(f)
 				def fileLocation = filestorePath + "/" + fmFile.filestoreLocation + "/" + fmFile.filestoreName
 				File file = new File(fileLocation)
-				if (file.exists()) {
-					String dirName = fmFolderService.getPath(fmFile.folder, true)
+				//if (file.exists()) {
+				if(1){
+					/*String dirName = fmFolderService.getPath(fmFile.folder, true)
 					if (dirName.startsWith("/") || dirName.startsWith("\\")) { dirName = dirName.substring(1) } //Lose the first separator character, this would cause a blank folder name in the zip
 					def fileEntry = new ZipEntry(dirName + "/" + fmFolderService.safeFileName(fmFile.displayName))
 					zipStream.putNextEntry(fileEntry)
@@ -142,7 +143,7 @@ class FileExportController {
 					}
 					
 					manifestList.push(fmFile)
-					manifestMap.put(dirName, manifestList)
+					manifestMap.put(dirName, manifestList)*/
 					
 					//for each folder of the hieararchy of the file path, add file with metadata
 					def path=fmFile.folder.folderFullName
@@ -220,16 +221,20 @@ class FileExportController {
 			for(amTagItem in metaDataTagItems){
 				if(amTagItem.tagItemType == 'FIXED'){
 					if(amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false){
+						def values=""
 						def value=fieldValue(bean:bioDataObject, field: amTagItem.tagItemAttr)
-						def bioData=BioData.findByUniqueId(value)
-						if(bioData!=null){
-							def concept=ConceptCode.findById(bioData.id)
-							if(concept!=null){
-								value=concept.codeName
+						for(v in (value.split("\\|", -1))){
+							def bioData=BioData.findByUniqueId(v)
+							if(bioData!=null){
+								def concept=ConceptCode.findById(bioData.id)
+								if(concept!=null){
+									if(values!="") values+="; "
+									values+=concept.codeName
+								}
 							}
 						}
-						if(value==null) value=""
-						zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes())
+						if(values.compareTo("")==0 && value!=null) values=value;
+ 						zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes())
 					}
 				}else if(amTagItem.tagItemType == 'CUSTOM'){
 					if(amTagItem.tagItemSubtype == 'FREETEXT'){
@@ -273,7 +278,19 @@ class FileExportController {
 						zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
 					}
 				
-				}else{//bio_disease, bio_coumpound
+				}else if(amTagItem.tagItemType == 'BIO_ASSAY_PLATFORM'){
+					def values=""
+					def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and objectType=?",["FOL:"+folderId, amTagItem.tagItemType])
+					for(tagAssoc in tagAssocs){
+						def tagValue=(tagAssoc.objectUid).split(":", 2)[1];
+		                def bap=BioAssayPlatform.findByAccession(tagValue)
+		                if(bap!=null){
+		                  if(values!="") values+="; "
+		                  values+=bap.platformType+"/"+bap.platformTechnology+"/"+bap.vendor+"/"+bap.name
+		                }
+					}
+					zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
+                }else{//bio_disease, bio_coumpound...
 					def values=""
 					def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and objectType=?",["FOL:"+folderId, amTagItem.tagItemType])
 					for(tagAssoc in tagAssocs){
@@ -281,6 +298,15 @@ class FileExportController {
 						if(key!=null){
 							if(values!="") values+="; "
 							values+=key.keyword
+						}else{
+							def bioData=BioData.findByUniqueId(tagAssoc.objectUid)
+							if(bioData!=null){
+								def concept=ConceptCode.findById(bioData.id)
+								if(concept!=null){
+									if(values!="") values+="; "
+									values+=concept.codeName
+								}
+							}
 						}
 					}
 					zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
