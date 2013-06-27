@@ -112,6 +112,7 @@ class FileExportController {
 		def filestorePath = grailsApplication.config.com.recomdata.FmFolderService.filestoreDirectory
 		
 		def exportList
+		def metadataExported=new HashSet();
 		try {
 			
 			//Final export list comes from selected checkboxes
@@ -147,7 +148,7 @@ class FileExportController {
 					def path=fmFile.folder.folderFullName
 					for(folderId in path.split("\\\\", -1)){
 						if(!folderId.equals("")){
-							exportMetadata(folderId.split(":", 2)[1], zipStream);
+							if(metadataExported.add(folderId)) exportMetadata(folderId.split(":", 2)[1], zipStream);
 						}
 					}
 				}
@@ -190,100 +191,104 @@ class FileExportController {
 	
 	//add in a zip a file containing metadata for a given folder
 	private void exportMetadata(String folderId, ZipOutputStream zipStream){
-		def folder=FmFolder.get(folderId)
-		
-		String dirName = fmFolderService.getPath(folder, true)
-		if (dirName.startsWith("/") || dirName.startsWith("\\")) { dirName = dirName.substring(1) } //Lose the first separator character, this would cause a blank folder name in the zip
-		def fileEntry = new ZipEntry(dirName + "/"+ folder.folderName+ "_metadata.txt")
-		zipStream.putNextEntry(fileEntry)
-				
-		def amTagTemplate = AmTagTemplate.findByTagTemplateType(folder.folderType)
-		def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-		
-		zipStream.write((folder.folderType+": "+folder.folderName+"\n").getBytes())
-		zipStream.write(("Description: "+folder.description+"\n").getBytes())
-		
-		//get associated bioDataObject
-		def bioDataObject
-		def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
-		if(folderAssociation)
-		{
-			bioDataObject = folderAssociation.getBioObject()
-		}
-		if(!bioDataObject)
-		{
-			bioDataObject = folder
-		}
-		
-		for(amTagItem in metaDataTagItems){
-			if(amTagItem.tagItemType == 'FIXED'){
-				if(amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false){
-					def value=fieldValue(bean:bioDataObject, field: amTagItem.tagItemAttr)
-					def bioData=BioData.findByUniqueId(value)
-					if(bioData!=null){
-						def concept=ConceptCode.findById(bioData.id)
-						if(concept!=null){
-							value=concept.codeName
-						}
-					}
-					if(value==null) value=""
-					zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes())
-				}
-			}else if(amTagItem.tagItemType == 'CUSTOM'){
-				if(amTagItem.tagItemSubtype == 'FREETEXT'){
-					def value=""
-					def tagAssoc=AmTagAssociation.find("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
-					if(tagAssoc!=null){
-						if((tagAssoc.objectUid).split("TAG:", 2).size()>0){
-							def tagValue=AmTagValue.findById((tagAssoc.objectUid).split("TAG:", 2)[1]);
-							if(tagValue!=null) value=tagValue.value
-						}
-					}
-					zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes());
-				}else if(amTagItem.tagItemSubtype == 'PICKLIST'){
-					def value=""
-					def tagAssoc=AmTagAssociation.find("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
-					if(tagAssoc!=null){
-						def valueUId=tagAssoc.objectUid
-						def bioData=BioData.findByUniqueId(valueUId)
+		try{
+			def folder=FmFolder.get(folderId)
+			
+			String dirName = fmFolderService.getPath(folder, true)
+			if (dirName.startsWith("/") || dirName.startsWith("\\")) { dirName = dirName.substring(1) } //Lose the first separator character, this would cause a blank folder name in the zip
+			def fileEntry = new ZipEntry(dirName + "/"+ folder.folderName+ "_metadata.txt")
+			zipStream.putNextEntry(fileEntry)
+					
+			def amTagTemplate = AmTagTemplate.findByTagTemplateType(folder.folderType)
+			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
+			
+			zipStream.write((folder.folderType+": "+folder.folderName+"\n").getBytes())
+			zipStream.write(("Description: "+folder.description+"\n").getBytes())
+			
+			//get associated bioDataObject
+			def bioDataObject
+			def folderAssociation = FmFolderAssociation.findByFmFolder(folder)
+			if(folderAssociation)
+			{
+				bioDataObject = folderAssociation.getBioObject()
+			}
+			if(!bioDataObject)
+			{
+				bioDataObject = folder
+			}
+			
+			for(amTagItem in metaDataTagItems){
+				if(amTagItem.tagItemType == 'FIXED'){
+					if(amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false){
+						def value=fieldValue(bean:bioDataObject, field: amTagItem.tagItemAttr)
+						def bioData=BioData.findByUniqueId(value)
 						if(bioData!=null){
 							def concept=ConceptCode.findById(bioData.id)
 							if(concept!=null){
 								value=concept.codeName
 							}
 						}
+						if(value==null) value=""
+						zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes())
 					}
-					zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes());
-				}else if(amTagItem.tagItemSubtype == 'MULTIPICKLIST'){
-					def values=""
-					def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
-					for(tagAssoc in tagAssocs){
-						def valueUId=tagAssoc.objectUid
-						def bioData=BioData.findByUniqueId(valueUId)
-						if(bioData!=null){
-							def concept=ConceptCode.findById(bioData.id)
-							if(concept!=null){
-								if(values!="") values+="; "
-								values+=concept.codeName
+				}else if(amTagItem.tagItemType == 'CUSTOM'){
+					if(amTagItem.tagItemSubtype == 'FREETEXT'){
+						def value=""
+						def tagAssoc=AmTagAssociation.find("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
+						if(tagAssoc!=null){
+							if((tagAssoc.objectUid).split("TAG:", 2).size()>0){
+								def tagValue=AmTagValue.findById((tagAssoc.objectUid).split("TAG:", 2)[1]);
+								if(tagValue!=null) value=tagValue.value
 							}
+						}
+						zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes());
+					}else if(amTagItem.tagItemSubtype == 'PICKLIST'){
+						def value=""
+						def tagAssoc=AmTagAssociation.find("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
+						if(tagAssoc!=null){
+							def valueUId=tagAssoc.objectUid
+							def bioData=BioData.findByUniqueId(valueUId)
+							if(bioData!=null){
+								def concept=ConceptCode.findById(bioData.id)
+								if(concept!=null){
+									value=concept.codeName
+								}
+							}
+						}
+						zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes());
+					}else if(amTagItem.tagItemSubtype == 'MULTIPICKLIST'){
+						def values=""
+						def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
+						for(tagAssoc in tagAssocs){
+							def valueUId=tagAssoc.objectUid
+							def bioData=BioData.findByUniqueId(valueUId)
+							if(bioData!=null){
+								def concept=ConceptCode.findById(bioData.id)
+								if(concept!=null){
+									if(values!="") values+="; "
+									values+=concept.codeName
+								}
+							}
+						}
+						zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
+					}
+				
+				}else{//bio_disease, bio_coumpound
+					def values=""
+					def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and objectType=?",["FOL:"+folderId, amTagItem.tagItemType])
+					for(tagAssoc in tagAssocs){
+						def key=SearchKeyword.findByUniqueId(tagAssoc.objectUid)
+						if(key!=null){
+							if(values!="") values+="; "
+							values+=key.keyword
 						}
 					}
 					zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
 				}
-			
-			}else{//bio_disease, bio_coumpound
-				def values=""
-				def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and objectType=?",["FOL:"+folderId, amTagItem.tagItemType])
-				for(tagAssoc in tagAssocs){
-					def key=SearchKeyword.findByUniqueId(tagAssoc.objectUid)
-					if(key!=null){
-						if(values!="") values+="; "
-						values+=key.keyword
-					}
-				}
-				zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
 			}
+			zipStream.closeEntry()	
+		}catch (Exception e) {
+			log.error("Error writing ZIP", e)
 		}
-		zipStream.closeEntry()	
 	}
 }
