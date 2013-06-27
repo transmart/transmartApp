@@ -275,44 +275,10 @@ class FileExportController {
 				def values=""
 				def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and objectType=?",["FOL:"+folderId, amTagItem.tagItemType])
 				for(tagAssoc in tagAssocs){
-					def valueUId=tagAssoc.objectUid
-					def bioData=BioData.findByUniqueId(valueUId)
-					if(bioData!=null){
-						if((tagAssoc.objectUid).split(":", 2).size()>0){
-							def tagCategory=(tagAssoc.objectUid).split(":", 2)[0];
-							def tagValue=(tagAssoc.objectUid).split(":", 2)[1];
-							if(tagCategory=='DIS'){
-								def disease=Disease.findByMeshCode(tagValue)
-								if(disease!=null){
-									if(values!="") values+="; "
-									values+=disease.preferredName
-								}
-							}else if(tagCategory=='COM'){
-								def compound=Compound.findById(tagValue)
-								if(compound!=null){
-									if(values!="") values+="; "
-									values+=compound.codeName
-								}
-							}else if(tagCategory=='GENE'){
-								def gene=BioMarker.findById(tagValue)
-								if(gene!=null){
-									if(values!="") values+="; "
-									values+=gene.name
-								}
-							}else if(tagCategory=='BAP'){
-								def bap=BioAssayPlatform.findByAccession(tagValue)
-								if(bap!=null){
-									if(values!="") values+="; "
-									values+=bap.platformType+"/"+bap.platformTechnology+"/"+bap.vendor+"/"+bap.name
-								}
-							}else if(tagCategory=='PATHWAY'){
-								def pat=SearchKeyword.findByUniqueId(tagAssoc.objectUid)
-								if(pat!=null){
-									if(values!="") values+="; "
-									values+=pat.keyword
-								}
-							}
-						}
+					def key=SearchKeyword.findByUniqueId(tagAssoc.objectUid)
+					if(key!=null){
+						if(values!="") values+="; "
+						values+=key.keyword
 					}
 				}
 				zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
