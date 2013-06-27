@@ -127,9 +127,8 @@ class FileExportController {
 				FmFile fmFile = FmFile.get(f)
 				def fileLocation = filestorePath + "/" + fmFile.filestoreLocation + "/" + fmFile.filestoreName
 				File file = new File(fileLocation)
-				//if (file.exists()) {
-				if(1){
-					/*String dirName = fmFolderService.getPath(fmFile.folder, true)
+				if (file.exists()) {
+					String dirName = fmFolderService.getPath(fmFile.folder, true)
 					if (dirName.startsWith("/") || dirName.startsWith("\\")) { dirName = dirName.substring(1) } //Lose the first separator character, this would cause a blank folder name in the zip
 					def fileEntry = new ZipEntry(dirName + "/" + fmFolderService.safeFileName(fmFile.displayName))
 					zipStream.putNextEntry(fileEntry)
@@ -143,7 +142,7 @@ class FileExportController {
 					}
 					
 					manifestList.push(fmFile)
-					manifestMap.put(dirName, manifestList)*/
+					manifestMap.put(dirName, manifestList)
 					
 					//for each folder of the hieararchy of the file path, add file with metadata
 					def path=fmFile.folder.folderFullName
