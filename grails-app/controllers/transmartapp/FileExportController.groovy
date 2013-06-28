@@ -143,7 +143,7 @@ class FileExportController {
 					
 					manifestList.push(fmFile)
 					manifestMap.put(dirName, manifestList)
-					
+				
 					//for each folder of the hieararchy of the file path, add file with metadata
 					def path=fmFile.folder.folderFullName
 					for(folderId in path.split("\\\\", -1)){
@@ -202,8 +202,8 @@ class FileExportController {
 			def amTagTemplate = AmTagTemplate.findByTagTemplateType(folder.folderType)
 			def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 			
-			zipStream.write((folder.folderType+": "+folder.folderName+"\n").getBytes())
-			zipStream.write(("Description: "+folder.description+"\n").getBytes())
+			zipStream.write((folder.folderType+": "+folder.folderName+"\r\n").getBytes())
+			zipStream.write(("Description: "+(folder.description).replace("\n"," ")+"\r\n").getBytes())
 			
 			//get associated bioDataObject
 			def bioDataObject
@@ -233,7 +233,7 @@ class FileExportController {
 							}
 						}
 						if(values.compareTo("")==0 && value!=null) values=value;
- 						zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes())
+ 						zipStream.write((amTagItem.displayName+": "+values+"\r\n").getBytes())
 					}
 				}else if(amTagItem.tagItemType == 'CUSTOM'){
 					if(amTagItem.tagItemSubtype == 'FREETEXT'){
@@ -245,7 +245,7 @@ class FileExportController {
 								if(tagValue!=null) value=tagValue.value
 							}
 						}
-						zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes());
+						zipStream.write((amTagItem.displayName+": "+value+"\r\n").getBytes());
 					}else if(amTagItem.tagItemSubtype == 'PICKLIST'){
 						def value=""
 						def tagAssoc=AmTagAssociation.find("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
@@ -259,7 +259,7 @@ class FileExportController {
 								}
 							}
 						}
-						zipStream.write((amTagItem.displayName+": "+value+"\n").getBytes());
+						zipStream.write((amTagItem.displayName+": "+value+"\r\n").getBytes());
 					}else if(amTagItem.tagItemSubtype == 'MULTIPICKLIST'){
 						def values=""
 						def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and tagItemId=?",["FOL:"+folderId, amTagItem.id])
@@ -274,7 +274,7 @@ class FileExportController {
 								}
 							}
 						}
-						zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
+						zipStream.write((amTagItem.displayName+": "+values+"\r\n").getBytes());
 					}
 				
 				}else if(amTagItem.tagItemType == 'BIO_ASSAY_PLATFORM'){
@@ -288,7 +288,7 @@ class FileExportController {
 		                  values+=bap.platformType+"/"+bap.platformTechnology+"/"+bap.vendor+"/"+bap.name
 		                }
 					}
-					zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
+					zipStream.write((amTagItem.displayName+": "+values+"\r\n").getBytes());
                 }else{//bio_disease, bio_coumpound...
 					def values=""
 					def tagAssocs=AmTagAssociation.findAll("from AmTagAssociation where subjectUid=? and objectType=?",["FOL:"+folderId, amTagItem.tagItemType])
@@ -308,7 +308,7 @@ class FileExportController {
 							}
 						}
 					}
-					zipStream.write((amTagItem.displayName+": "+values+"\n").getBytes());
+					zipStream.write((amTagItem.displayName+": "+values+"\r\n").getBytes());
 				}
 			}
 			zipStream.closeEntry()	
