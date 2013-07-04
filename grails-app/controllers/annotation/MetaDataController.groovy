@@ -122,6 +122,17 @@ class MetaDataController {
 		
 		render searchKeywordService.findSearchKeywords("GENE", params.term, 10) as JSON
 	}
+	
+		/**
+	 * Find the top 15 biosources with a case-insensitive LIKE
+	 */
+	def biosourceSearch = {
+		log.info "EXT biosourceSearch called"
+		def paramMap = params
+		log.info params
+		render 	searchKeywordService.findSearchKeywords("BIOSOURCE", params.term, 10) as JSON
+
+	}
 
 	/**
 	 * Find the top 15 diseases with a case-insensitive LIKE
