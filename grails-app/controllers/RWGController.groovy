@@ -444,17 +444,34 @@ class RWGController {
 	   if (params.page.equals('RWG')) {
 		   def folderContents = fmFolderService.getFolderContents(null)
 		   
+		   def numbers=new HashMap();
+		   numbers.put("PROGRAM", 0)
+		   numbers.put("STUDY", 0)
+		   numbers.put("ASSAY", 0)
+		   numbers.put("ANALYSIS", 0)
+		   numbers.put("FOLDER", 0)
+		   
 		   if (combinedResult.paths) {
 			   def pathLists = finalizePathLists(combinedResult.paths)
 			   session['folderSearchList'] = pathLists
 			   def folderSearchString = pathLists[0].join(",") + "," //Extra , - used to identify search results
 			   def uniqueLeavesString = pathLists[1].join(",") + ","
 			   session['searchLog'] += "Final folder string: " + folderSearchString
-			   render (template:'/fmFolder/folders', model: [folders: folderContents, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: true])
+			   
+			   //calculate number of each folder type:
+			   for(int i=0; i<pathLists[0].size(); i++){
+				   def folder=FmFolder.findByFolderFullName(pathLists[0][i])
+				   def c=numbers.containsKey(folder.folderType)? numbers.get(folder.folderType): 0
+				   numbers.put(folder.folderType, c+1)
+			   }
+			   def numbersJSON=new JSONObject(numbers)
+			   
+			   render (template:'/fmFolder/folders', model: [folders: folderContents, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: true, resultNumber: numbersJSON])
 		   }
 		   else {
 			   session['folderSearchList'] = [[],[]]
-			   render(template:'/fmFolder/noResults')
+			   def numbersJSON=new JSONObject(numbers)
+			   render(template:'/fmFolder/noResults', model: [resultNumber: numbersJSON])
 		   }
 	   }
 	   else {

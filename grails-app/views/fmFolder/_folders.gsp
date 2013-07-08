@@ -3,9 +3,14 @@
     def ontologyService = grailsApplication.classLoader.loadClass('transmartapp.OntologyService').newInstance()
 	def fmFolderService = grailsApplication.classLoader.loadClass('fm.FmFolderService').newInstance()
 %>
+
 <g:set var="ontologyService" bean="ontologyService"/>
 <g:set var="fmFolderService" bean="fmFolderService"/>
 <g:set var="ts" value="${Calendar.instance.time.time}" />
+
+ <script type="text/javascript">
+	 var resultNumber = '${resultNumber}';
+</script>
 
 <div class="search-results-table">
 	<g:each in="${folders}" status="ti" var="folder">        
