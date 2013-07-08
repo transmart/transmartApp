@@ -82,7 +82,7 @@ class SolrFacetService {
 				searchLog += "Searching for metadata: " + termList.join(",")
 
 				def categoryQuery = createCategoryQueryString(categoryName, termList, operator)
-				def solrQuery = "q=" + createSOLRQueryString(categoryQuery, "", "")
+				def solrQuery = "q=" + createSOLRQueryString(URLEncoder.encode(categoryQuery), "", "")
 				searchLog += solrQuery
 				def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQuery, false)
 				
@@ -111,8 +111,9 @@ class SolrFacetService {
 				searchLog += "Searching for freetext: " + termList.join(",")
 				
 				def categoryQuery = createCategoryQueryString("text", termList, operator)
-				def solrQuery = "q=" + createSOLRQueryString(categoryQuery, "", "")
+				def solrQuery = "q=" + createSOLRQueryString(URLEncoder.encode(categoryQuery), "", "")
 				searchLog += solrQuery
+				
 				def xml = executeSOLRFacetedQuery(solrRequestUrl, solrQuery, false)
 				
 				//If browse, convert this to a folder path list - if analyze, a node path list
