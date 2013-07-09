@@ -27,7 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.recomdata.plugins.PluginDescriptor
-import org.springframework.beans.factory.InitializingBean
 
 class PluginService {
 
