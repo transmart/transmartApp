@@ -16,31 +16,20 @@
  * 
  *
  ******************************************************************/
-  
 
+import PostgresI2b2HelperService
+import com.recomdata.transmart.data.export.*
+import org.springframework.security.core.session.SessionRegistryImpl
+import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
-import org.springframework.security.core.session.SessionRegistryImpl
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.DefaultRedirectStrategy
-
-import com.recomdata.transmart.data.export.ClinicalDataService;
-import com.recomdata.transmart.data.export.PostgresClinicalDataService;
-import com.recomdata.transmart.data.export.PostgresDataCountService;
-import com.recomdata.transmart.data.export.PostgresExportService;
-import com.recomdata.transmart.data.export.PostgresGeneExpressionDataService;
-import com.recomdata.transmart.data.export.PostgresSnpDataService;
-
-import I2b2HelperService;
-import PostgresI2b2HelperService;
-
-import org.springframework.context.ApplicationContext
-import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.apache.commons.dbcp.BasicDataSource
-import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean
-import grails.spring.BeanBuilder
 
 beans = {
+
+    if (grailsApplication.config.org.transmart.security.samlEnabled) {
+        importBeans('file:grails-app/conf/spring/spring-security-saml.xml')
+    }
+
 	dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder){
 		dataSource = ref('dataSource')
 	}
@@ -52,6 +41,8 @@ beans = {
 		sessionRegistry = sessionRegistry
 		expiredUrl = '/login'
 	}
+
+    //overrides bean implementing GormUserDetailsService?
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 	redirectStrategy(DefaultRedirectStrategy)
 	

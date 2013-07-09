@@ -26,6 +26,7 @@ class AuthUser extends Principal {
 	String userRealName
 	String passwd
 	String email
+	String federatedId
 	boolean emailShow
 
 	/** plain password to create a MD5 password */
@@ -56,6 +57,7 @@ class AuthUser extends Principal {
 		userRealName(blank: false)
 		passwd(blank: false)
 		email(nullable:true, maxSize:255)
+        federatedId(unique: true, nullable: true)
 	}
 
 	def String toString(){
