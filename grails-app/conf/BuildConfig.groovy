@@ -49,14 +49,11 @@ grails.project.dependency.resolution = {
 		compile 'antlr:antlr:2.7.7'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
         compile('org.springframework.security.extensions:spring-security-saml2-core:1.0.0.RC3-f0fb87a') {
+            //excludes of spring securirty necessary because they are for a more recent version (3.1 branch)
             excludes 'spring-security-config', 'spring-security-core', 'spring-security-web', 'servlet-api'
         }
         /* update when grails spring-security-core uses a more recent version of spring-security */
         runtime 'org.springframework.security:spring-security-config:3.0.7.RELEASE'
-		/*compile('org.opensaml:opensaml:2.6.0') {
-			excludes 'xml-apis', 'serializer', 'xercesImpl'
-		}
-		compile 'xerces:xercesImpl:2.10.0'*/
     }
 
     plugins {
