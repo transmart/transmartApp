@@ -129,6 +129,13 @@
 											Not a user? Contact <a href="mailto:${grailsApplication.config.com.recomdata.administrator}" target="_blank" style="text-decoration:underline;color:#0000FF">administrator</a> to request an account
 										</td>
 									</tr>
+                                    <g:if test='${grailsApplication.config.org.transmart.security.samlEnabled}'>
+                                        <tr>
+                                            <td colspan="2" style="font-size:10px;">
+                                                <a href="${createLink([action: 'login', controller:'saml'])}">&gt; Federated Login</a>
+                                            </td>
+                                        </tr>
+                                    </g:if>
 
 								</table>
 							</form>
