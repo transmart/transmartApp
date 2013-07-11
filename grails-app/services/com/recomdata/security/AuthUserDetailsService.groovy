@@ -25,52 +25,81 @@
 */
 package com.recomdata.security
 
-import java.util.List
-import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUserDetailsService
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.authentication.DisabledException;
+import org.hibernate.criterion.CriteriaSpecification
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
 /**
-* Implementation of <code>GrailsUserDetailsService</code> that uses
-* domain classes to load users and roles.
+ * Implementation of <code>GrailsUserDetailsService</code> that uses
+ * domain classes to load users and roles.
+ * See also GormUserDetailsService
 */
 class AuthUserDetailsService implements GrailsUserDetailsService {
 
-    boolean transactional = true
-	
-	static Logger log = Logger.getLogger(AuthUserDetailsService.class)
-	
-	def application = ApplicationHolder.application
+    /* Autowired is required because this bean is declared in resources.groovy
+       and therefore the service does not benefit from Grails' conventional
+       autoinjection into services */
+	@Autowired
+    @Qualifier('grailsApplication')
+    def grailsApplication
+
 	def conf = SpringSecurityUtils.securityConfig
 	
-	/** * Some Spring Security classes (e.g. RoleHierarchyVoter) expect at least one role, so * we give a user with no granted roles this one which gets past that restriction but * doesn't grant anything. */ 
+	/**
+     * Some Spring Security classes (e.g. RoleHierarchyVoter) expect at least
+     * one role, so we give a user with no granted roles this one which gets
+     * past that restriction but doesn't grant anything. */
 	static final List NO_ROLES = [new GrantedAuthorityImpl(SpringSecurityUtils.NO_ROLE)]
-	
-	UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		log.info "Attempting to find user for username: $username"		
-		log.debug "Use withTransaction to avoid lazy loading initialization error when accessing the authorities collection"
-		Class<?> User = application.getDomainClass(conf.userLookup.userDomainClassName).clazz
-		User.withTransaction { status ->
-			def user = User.findWhere((conf.userLookup.usernamePropertyName): username)			
-			if (!user) {
-				log.warn "User not found: $username"
-				throw new UsernameNotFoundException('User not found', username)
-			}		
-			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
-			
-			return new AuthUserDetails(user.username, user.passwd, user.enabled,
-				!user.accountExpired, !user.passwordExpired, !user.accountLocked,
-				authorities ?: NO_ROLES, user.id, user.userRealName)
-		}
-	}
 
-	UserDetails loadUserByUsername(String username, boolean loadRoles) throws UsernameNotFoundException {
-		return loadUserByUsername(username)
+    @Override
+    UserDetails loadUserByUsername(String username,
+                                   boolean loadRoles = true) throws UsernameNotFoundException {
+       loadUserByProperty(conf.userLookup.usernamePropertyName, username, loadRoles)
+    }
+	
+	UserDetails loadUserByProperty(String property,
+                                   String value,
+                                   boolean loadRoles)
+            throws UsernameNotFoundException {
+
+		log.info "Attempting to find user for $property = $value"
+
+		Class<?> User = grailsApplication.getDomainClass(conf.userLookup.userDomainClassName).clazz
+
+        def user = User.createCriteria().get {
+            eq property, value
+            if (loadRoles) {
+                createAlias 'authorities', 'a', CriteriaSpecification.LEFT_JOIN
+            }
+        }
+        def authorities = []
+
+        if (!user) {
+            log.warn "User not found with $property = $value"
+            throw new UsernameNotFoundException("User not found",
+                    "$property = $value")
+        }
+
+        if (loadRoles) {
+            authorities = user.authorities*.authority.collect {
+                new GrantedAuthorityImpl(it)
+            }
+        }
+
+        if (loadRoles && log.isDebugEnabled()) {
+            log.debug("Roles for user ${user.username} are: " +
+                    authorities.join(', ') ?: '(none)')
+        }
+
+        new AuthUserDetails(user.username, user.passwd, user.enabled,
+            !user.accountExpired, !user.passwordExpired, !user.accountLocked,
+            authorities ?: NO_ROLES, user.id, user.userRealName)
 	}
 	
 	/**
@@ -98,5 +127,5 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 				!user.accountExpired, !user.passwordExpired, !user.accountLocked,
 				authorities ?: NO_ROLES, user.id, user.userRealName)
 		}
-	}	
+	}
 }

@@ -40,15 +40,23 @@ grails.project.dependency.resolution = {
         mavenLocal()
         mavenCentral()
         mavenRepo([
-                name: 'repo.hyve.nl-snapshots',
-                root: 'http://repo.thehyve.nl/content/repositories/snapshots/',
+                name: 'repo.theyve.nl-public',
+                root: 'http://repo.thehyve.nl/content/repositories/public/',
         ])
     }
     dependencies {
 		runtime 'postgresql:postgresql:9.0-801.jdbc4'
 		compile 'antlr:antlr:2.7.7'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
+		/* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
+		compile 'javax.servlet:servlet-api:2.5'
         compile 'axis:axis:1.4'
+        compile('org.springframework.security.extensions:spring-security-saml2-core:1.0.0.RC3-f0fb87a') {
+            //excludes of spring securirty necessary because they are for a more recent version (3.1 branch)
+            excludes 'spring-security-config', 'spring-security-core', 'spring-security-web'
+        }
+        /* update when grails spring-security-core uses a more recent version of spring-security */
+        runtime 'org.springframework.security:spring-security-config:3.0.7.RELEASE'
     }
 
     plugins {

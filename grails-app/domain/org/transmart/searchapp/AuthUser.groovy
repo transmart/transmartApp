@@ -1,4 +1,11 @@
 package org.transmart.searchapp
+
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.hibernate.SQLQuery
+import org.hibernate.classic.Session
+import org.hibernate.type.StandardBasicTypes
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -22,10 +29,13 @@ class AuthUser extends Principal {
 	static hasMany = [authorities: Role, groups:UserGroup]
 	static belongsTo = [Role,UserGroup]
 
+    static Log log = LogFactory.getLog(AuthUser.class)
+
 	String username
 	String userRealName
 	String passwd
 	String email
+	String federatedId
 	boolean emailShow
 
 	/** plain password to create a MD5 password */
@@ -56,6 +66,7 @@ class AuthUser extends Principal {
 		userRealName(blank: false)
 		passwd(blank: false)
 		email(nullable:true, maxSize:255)
+        federatedId(unique: true, nullable: true)
 	}
 
 	def String toString(){
@@ -84,4 +95,46 @@ class AuthUser extends Principal {
 		authorities.each { if(it.authority==Role.ADMIN_ROLE) bAdmin = true; }
 		return bAdmin;
 	}
+
+    /*
+     * Should be called with an open session and active transaction
+     */
+    static AuthUser createFederatedUser(String federatedId,
+                                        String username,
+                                        String realName,
+                                        String email,
+                                        Session session)
+    {
+        /* Id strategy in Principal is assigned, so we need to manually assign
+           an id. The Principal table has a trigger that automatically assigns
+           an id from the sequence we use below in case the selected id is
+           -2000. We can't use that because when call .save() on AuthUser, it
+           will not refresh the Principal entity after inserting the row in the
+           database and therefore Hibernate won't be aware of the new id. When
+           it tries to write a row in AuthUser's table with id -2000 it will
+           fail with a foreign key violation.
+           Ultimately, this should be fixed by changing the GORM mapping and
+           maybe even the schema.
+         */
+        SQLQuery query = session.createSQLQuery(
+                'select nextval(\'searchapp.SEQ_SEARCH_DATA_ID\') as id')
+                .addScalar('id', StandardBasicTypes.LONG)
+        Long id = query.uniqueResult()
+        log.debug("New user will have id '$id'")
+
+        def ret = AuthUser.create()
+        ret.id = id
+
+        ret.federatedId = federatedId
+        ret.username = username ?: federatedId
+        ret.userRealName = realName ?: '<NONE PROVIDED>'
+        ret.name = realName
+        ret.email = email
+        ret.passwd = 'NO_PASSWORD'
+        ret.enabled = true
+
+        ret.addToAuthorities(Role.findByAuthority(Role.SPECTATOR_ROLE))
+
+        ret
+    }
 }
