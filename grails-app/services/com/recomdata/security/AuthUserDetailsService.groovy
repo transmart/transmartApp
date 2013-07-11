@@ -101,31 +101,5 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
             !user.accountExpired, !user.passwordExpired, !user.accountLocked,
             authorities ?: NO_ROLES, user.id, user.userRealName)
 	}
-	
-	/**
-	 * This is used by the Identity Vault authentication process
-	 *
-	 * @param wwid - The JNJ WWID from the Identity Vault
-	 *
-	 * @return the valid UserDetails (enabled user) for the given WWID or a DisabledException is thrown
-	 */
-	UserDetails loadUserByWWID(String wwid) throws DisabledException	{
-		log.info "Attempting to find user for WWID: $wwid"
-		log.debug "Use withTransaction to avoid lazy loading initialization error when accessing the authorities collection"
-		Class<?> User = application.getDomainClass(conf.userLookup.userDomainClassName).clazz
-		User.withTransaction { status ->
-			def user = User.findById(wwid)
-			if (!user) {
-				throw new DisabledException("User not found for WWID: $wwid")
-			}
-			if (!user.enabled)	{
-				throw new DisabledException("User with WWID: $wwid is not enabled for tranSMART")
-			}
-			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
-			
-			return new AuthUserDetails(user.username, user.passwd, user.enabled,
-				!user.accountExpired, !user.passwordExpired, !user.accountLocked,
-				authorities ?: NO_ROLES, user.id, user.userRealName)
-		}
-	}
+
 }
