@@ -1,5 +1,7 @@
 package org.transmart.searchapp
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.hibernate.SQLQuery
 import org.hibernate.classic.Session
 import org.hibernate.type.StandardBasicTypes
@@ -26,6 +28,8 @@ class AuthUser extends Principal {
 	static transients = ['pass', 'accountExpired', 'accountLocked', 'passwordExpired']
 	static hasMany = [authorities: Role, groups:UserGroup]
 	static belongsTo = [Role,UserGroup]
+
+    static Log log = LogFactory.getLog(AuthUser.class)
 
 	String username
 	String userRealName

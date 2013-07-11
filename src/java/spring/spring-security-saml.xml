@@ -6,7 +6,7 @@
                            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
                            http://www.springframework.org/schema/security
                            http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
-	
+
     <bean id="samlFilter" class="org.springframework.security.web.FilterChainProxy">
         <sec:filter-chain-map path-type="ant">
             <sec:filter-chain pattern="/saml/metadata/**" filters="metadataDisplayFilter"/>
@@ -18,7 +18,7 @@
             <sec:filter-chain pattern="/saml/discovery/**" filters="samlIDPDiscovery"/>
         </sec:filter-chain-map>
     </bean>
-    
+
     <!-- Handler deciding where to redirect user after successful login -->
     <bean id="successRedirectHandler"
           class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
@@ -30,31 +30,31 @@
        <property name="defaultTargetUrl" value="/" />
     </bean>
     -->
-    
+
      <!-- Handler for successful logout -->
     <bean id="successLogoutHandler" class="org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler">
         <property name="defaultTargetUrl" value="${org.transmart.security.successLogoutHandler.defaultTargetUrl}"/>
     </bean>
-    
+
     <!-- Logger for SAML messages and events -->
     <bean id="samlLogger" class="org.springframework.security.saml.log.SAMLDefaultLogger"/>
-    
+
     <!-- Central storage of cryptographic keys -->
-	<bean id="keyManager" class="org.springframework.security.saml.key.JKSKeyManager">
-		<constructor-arg value="${org.transmart.security.saml.keystore.file}"/>
-		<constructor-arg type="java.lang.String" value="${org.transmart.security.saml.keystore.password}"/>
-		<constructor-arg>
-			<map>
-				<entry key="${org.transmart.security.saml.keystore.encryptionKey.alias}" value="${org.transmart.security.saml.keystore.encryptionKey.password}"/>
-				<entry key="${org.transmart.security.saml.keystore.signingKey.alias}" value="${org.transmart.security.saml.keystore.signingKey.password}"/>
-			</map>
-		</constructor-arg>
-		<constructor-arg type="java.lang.String" value="${org.transmart.security.saml.keystore.defaultKey}"/>
-	</bean>
-	
-	<!-- Entry point to initialize authentication, default values taken from properties file -->
+    <bean id="keyManager" class="org.springframework.security.saml.key.JKSKeyManager">
+        <constructor-arg value="${org.transmart.security.saml.keystore.file}"/>
+        <constructor-arg type="java.lang.String" value="${org.transmart.security.saml.keystore.password}"/>
+        <constructor-arg>
+            <map>
+                <entry key="${org.transmart.security.saml.keystore.encryptionKey.alias}" value="${org.transmart.security.saml.keystore.encryptionKey.password}"/>
+                <entry key="${org.transmart.security.saml.keystore.signingKey.alias}" value="${org.transmart.security.saml.keystore.signingKey.password}"/>
+            </map>
+        </constructor-arg>
+        <constructor-arg type="java.lang.String" value="${org.transmart.security.saml.keystore.defaultKey}"/>
+    </bean>
+
+    <!-- Entry point to initialize authentication, default values taken from properties file -->
     <bean id="samlEntryPoint" class="org.springframework.security.saml.SAMLEntryPoint">
-    	<property name="filterProcessesUrl" value="${org.transmart.security.saml.entryPoint.filterProcesses}" />
+        <property name="filterProcessesUrl" value="${org.transmart.security.saml.entryPoint.filterProcesses}" />
         <property name="defaultProfileOptions">
             <bean class="org.springframework.security.saml.websso.WebSSOProfileOptions">
                 <property name="includeScoping" value="false"/>
@@ -63,37 +63,37 @@
             </bean>
         </property>
     </bean>
-    
+
     <!-- IDP Discovery Service -->
     <bean id="samlIDPDiscovery" class="org.springframework.security.saml.SAMLDiscovery">
         <property name="idpSelectionPath" value="/WEB-INF/security/idpSelection.jsp"/>
     </bean>
-    
+
     <!-- SAML Authentication Provider responsible for validating of received SAML messages -->
-	<bean id="samlAuthenticationProvider" class="org.springframework.security.saml.SAMLAuthenticationProvider">
-		<property name="userDetails" ref="samlUserService" />
-	</bean>
-	 
-	<bean id="samlUserService" class="${org.transmart.security.saml.userService}"/>
-    
+    <bean id="samlAuthenticationProvider" class="org.springframework.security.saml.SAMLAuthenticationProvider">
+        <property name="userDetails" ref="samlUserService" />
+    </bean>
+
+    <bean id="samlUserService" class="${org.transmart.security.saml.userService}"/>
+
     <!-- Filter automatically generates default SP metadata -->
     <bean id="metadataGeneratorFilter" class="org.springframework.security.saml.metadata.MetadataGeneratorFilter">
         <constructor-arg>
             <bean class="org.springframework.security.saml.metadata.MetadataGenerator">
-	            <property name="entityId" value="${org.transmart.security.saml.sp.id}"/>
-				<property name="entityBaseURL" value="${org.transmart.security.saml.sp.url}"/>
-				<property name="entityAlias" value="${org.transmart.security.saml.sp.alias}"/>
-				<property name="signingKey" value="${org.transmart.security.saml.sp.signingKeyAlias}"/>
-				<property name="encryptionKey" value="${org.transmart.security.saml.sp.encryptionKeyAlias}"/>
-		<!-- 		<property name="tlsKey" value="${org.transmart.security.saml.sp.tlsKey}"/> -->
-				<property name="requestSigned" value="true"/>
-				<property name="signMetadata" value="true"/>
-				<property name="wantAssertionSigned" value="true"/>
-            	<property name="includeDiscovery" value="false"/>
+                <property name="entityId" value="${org.transmart.security.saml.sp.id}"/>
+                <property name="entityBaseURL" value="${org.transmart.security.saml.sp.url}"/>
+                <property name="entityAlias" value="${org.transmart.security.saml.sp.alias}"/>
+                <property name="signingKey" value="${org.transmart.security.saml.sp.signingKeyAlias}"/>
+                <property name="encryptionKey" value="${org.transmart.security.saml.sp.encryptionKeyAlias}"/>
+        <!--         <property name="tlsKey" value="${org.transmart.security.saml.sp.tlsKey}"/> -->
+                <property name="requestSigned" value="true"/>
+                <property name="signMetadata" value="true"/>
+                <property name="wantAssertionSigned" value="true"/>
+                <property name="includeDiscovery" value="false"/>
             </bean>
         </constructor-arg>
     </bean>
-    
+
     <!-- The filter is waiting for connections on URL suffixed with filterSuffix and presents SP metadata there -->
     <bean id="metadataDisplayFilter" class="org.springframework.security.saml.metadata.MetadataDisplayFilter"/>
 
@@ -112,7 +112,7 @@
                         </bean>
                     </constructor-arg>
                     <constructor-arg>
-                        <bean class="org.springframework.security.saml.metadata.ExtendedMetadata">						
+                        <bean class="org.springframework.security.saml.metadata.ExtendedMetadata">
                         </bean>
                     </constructor-arg>
                 </bean>
@@ -123,7 +123,7 @@
         <!-- OPTIONAL property: can tell the system which IDP should be used for authenticating user by default. -->
         <!-- <property name="defaultIDP" value="http://localhost:8080/opensso"/> -->
     </bean>
-    
+
     <!-- Provider of default SAML Context -->
     <bean id="contextProvider" class="org.springframework.security.saml.context.SAMLContextProviderImpl"/>
 
@@ -132,7 +132,7 @@
         <property name="authenticationManager" ref="${org.transmart.security.saml.authenticationManager}"/>
         <property name="authenticationSuccessHandler" ref="successRedirectHandler"/>
     </bean>
-    
+
     <!-- Logout handler terminating local session -->
     <bean id="logoutHandler"
           class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler">
@@ -152,7 +152,7 @@
         <constructor-arg ref="successLogoutHandler"/>
         <constructor-arg ref="logoutHandler"/>
     </bean>
-    
+
     <!-- Class loading incoming SAML messages from httpRequest stream -->
     <bean id="processor" class="org.springframework.security.saml.processor.SAMLProcessorImpl">
         <constructor-arg>
@@ -228,5 +228,5 @@
     <!-- XML parser pool needed for OpenSAML parsing -->
     <bean id="parserPool" class="org.opensaml.xml.parse.StaticBasicParserPool" scope="singleton" init-method="initialize"/>
     <bean id="parserPoolHolder" class="org.springframework.security.saml.parser.ParserPoolHolder" scope="singleton"/>
-    
+
 </beans>

@@ -27,10 +27,10 @@ import org.springframework.security.web.session.ConcurrentSessionFilter
 beans = {
 
     if (grailsApplication.config.org.transmart.security.samlEnabled) {
-        importBeans('file:grails-app/conf/spring/spring-security-saml.xml')
+        importBeans('classpath:/spring/spring-security-saml.xml')
     }
 
-	dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder){
+    dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder) {
 		dataSource = ref('dataSource')
 	}
 	sessionRegistry(SessionRegistryImpl)
