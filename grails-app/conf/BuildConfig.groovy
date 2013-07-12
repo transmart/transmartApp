@@ -57,7 +57,7 @@ grails.project.dependency.resolution = {
 		runtime ":resources:1.1.6"
 		runtime ":spring-security-core:1.2.7.3"
 		runtime ":quartz:1.0-RC2"
-		compile ":rdc-rmodules:0.1"
+		compile ":rdc-rmodules:0.2"
 		build ":tomcat:$grailsVersion"
 	}
 }
