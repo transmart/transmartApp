@@ -44,14 +44,6 @@ beans = {
 
     //overrides bean implementing GormUserDetailsService?
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
-	redirectStrategy(DefaultRedirectStrategy)
-	identityVaultAuthenticationFilter(com.recomdata.security.IdentityVaultAuthenticationFilter)	{
-		authenticationManager = ref('authenticationManager')
-		springSecurityService = ref('springSecurityService')
-		userDetailsService = ref('userDetailsService')
-		filterProcessesUrl = '/saml/sso'
-		redirectStrategy = ref('redirectStrategy')
-	}
 	
 	/*if (isOracleConfigured())
 	{

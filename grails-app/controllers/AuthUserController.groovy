@@ -129,17 +129,13 @@ class AuthUserController {
 	 * Person update action.
 	 */
 	def update = {		
-		def SSOEnabled = grailsApplication.config.com.recomdata.searchtool.identityVaultURL.size() > 0
-		
-		def person = AuthUser.get(params.id)		
+		def person = AuthUser.get(params.id)
 		person.properties = params
 		
-        if (!SSOEnabled) {
-            if(!params.passwd.equals(person.getPersistentValue("passwd")))	{
-                log.info("Password has changed, encrypting new password")	
-                person.passwd = springSecurityService.encodePassword(params.passwd)
-            }	
-		}
+        if (!params.passwd.equals(person.getPersistentValue("passwd")))	{
+            log.info("Password has changed, encrypting new password")
+            person.passwd = springSecurityService.encodePassword(params.passwd)
+        }
 		
 		def msg = new StringBuilder("${person.username} has been updated.  Changed fields include: ")				
 		def modifiedFieldNames = person.getDirtyPropertyNames()
@@ -165,8 +161,7 @@ class AuthUserController {
 	}
 
 	def create = {
-        def SSOEnabled = grailsApplication.config.com.recomdata.searchtool.identityVaultURL.size() > 0
-		[person: new AuthUser(params), authorityList: Role.list(), SSO:SSOEnabled]
+		[person: new AuthUser(params), authorityList: Role.list()]
 	}
 
 	/**
@@ -224,7 +219,6 @@ class AuthUserController {
 	}
 
 	private Map buildPersonModel(person) {
-        def SSOEnabled = grailsApplication.config.com.recomdata.searchtool.identityVaultURL.size() > 0
 		List roles = Role.list()
 		roles.sort { r1, r2 ->
 			r1.authority <=> r2.authority
@@ -237,6 +231,6 @@ class AuthUserController {
 		for (role in roles) {
 			roleMap[(role)] = userRoleNames.contains(role.authority)
 		}
-		return [person: person, roleMap: roleMap, SSO:SSOEnabled]
+		return [person: person, roleMap: roleMap]
 	}
 }

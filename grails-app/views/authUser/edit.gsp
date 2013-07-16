@@ -26,7 +26,7 @@
 	
 	<body>
 		<div class="body">
-			<h1>Edit AuthUser <g:if test="${SSO == true}"> - Single Sign On Enabled (no password required)</g:if></h1>
+			<h1>Edit AuthUser</h1>
 			<g:if test="${flash.message}">
 			<div class="message">${flash.message}</div>
 			</g:if>
@@ -62,15 +62,13 @@
 							</td>
 						</tr>
 	
-	                    <g:if test="${SSO == false}"> 	
 						<tr class="prop">
 							<td valign="top" class="name"><label for="passwd">Password:</label></td>
 							<td valign="top" class="value ${hasErrors(bean:person,field:'passwd','errors')}">
 								<input type="password" id="passwd" name="passwd" value="${person.passwd?.encodeAsHTML()}"/>
 							</td>
 						</tr>
-						</g:if>
-	
+
 						<tr class="prop">
 							<td valign="top" class="name"><label for="enabled">Enabled:</label></td>
 							<td valign="top" class="value ${hasErrors(bean:person,field:'enabled','errors')}">
