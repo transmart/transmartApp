@@ -858,7 +858,8 @@ Ext.onReady(function()
 				collapsible : true
 			}
 		);
-		
+
+
 		metacoreEnrichmentPanel = new Ext.Panel(
 				{
 					id : 'metacoreEnrichmentPanel',
@@ -904,6 +905,91 @@ Ext.onReady(function()
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
 		resultsTabPanel.add(analysisJobsPanel);
+
+        // add genome browser panel if the plugin is installed
+
+        // JBROWSE
+        // =======
+        Ext.Ajax.request ({
+            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
+            method: 'POST',
+            success: function (result) {
+                console.log('genomeBrowser is installed?',result.responseText);
+                if (result.responseText === 'true') {
+
+                    // load script
+                    Ext.Ajax.request ({
+                        url: pageInfo.basePath+"/JBrowse/loadScripts",
+                        method: 'POST',
+                        success: function (result) {
+                            var exp = result.responseText.evalJSON();
+                            if (exp.success && exp.files.length > 0)	{
+
+                                var filesArr = [];
+
+                                for (var i = 0; i < exp.files.length; i++) {
+                                    var file = exp.files[i];
+                                    filesArr.push(file.path);
+                                }
+
+                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
+
+                            }
+                        }
+                    });
+
+                }
+            },
+            params: {
+                pluginName: 'jbrowse-plugin'
+            }
+        });
+
+        // DALLIANCE
+        // =======
+        Ext.Ajax.request ({
+            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
+            method: 'POST',
+            success: function (result) {
+                console.log('dalliance-plugin is installed?', result.responseText);
+                if (result.responseText === 'true') {
+
+                    // load script
+                    Ext.Ajax.request ({
+                        url: pageInfo.basePath+"/Dalliance/loadScripts",
+                        method: 'POST',
+                        success: function (result) {
+                            var exp = result.responseText.evalJSON();
+                            if (exp.success && exp.files.length > 0)	{
+                                var filesArr = [];
+
+                                for (var i = 0; i < exp.files.length; i++) {
+                                    var file = exp.files[i];
+                                    filesArr.push(file.path);
+                                }
+
+                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
+
+                            }
+                        }
+                    });
+
+
+                }
+            },
+            params: {
+                pluginName: 'dalliance-plugin'
+            }
+        });
+
+        function startDalliance() {
+            loadDalliance(resultsTabPanel);
+        }
+
+        function startJbrowse() {
+            loadJBrowse(resultsPanel);
+        }
+
 		if (GLOBAL.metacoreAnalyticsEnabled) {
 			resultsTabPanel.add(metacoreEnrichmentPanel);
 		}

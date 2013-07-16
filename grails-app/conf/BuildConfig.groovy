@@ -23,6 +23,10 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
 //grails.plugin.location.'rdc-rmodules' = "../Rmodules"
+grails.plugin.location.'rdc-rmodules:0.2-acgh' = "../Rmodules"
+grails.plugin.location.'jbrowse-plugin:0.1' = "../jbrowse-plugin"
+grails.plugin.location.'dalliance-plugin:0.1' = "../dalliance-plugin"
+
 
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 grails.project.dependency.resolution = {
@@ -54,7 +58,7 @@ grails.project.dependency.resolution = {
     plugins {
         compile ":hibernate:$grailsVersion"
         compile ":quartz:1.0-RC2"
-        compile ":rdc-rmodules:0.2-acgh"
+        //compile ":rdc-rmodules:0.2-acgh"
         compile ":spring-security-core:1.2.7.3"
         compile ":resources:1.1.6"
         build ":tomcat:$grailsVersion"

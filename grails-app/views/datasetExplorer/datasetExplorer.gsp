@@ -85,7 +85,8 @@
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">
 	
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
-	
+
+    <script type="text/javascript" src="${resource(dir:'js/utils', file:'dynamicLoad.js')}"></script>
 
  
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
