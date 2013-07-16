@@ -111,8 +111,8 @@ class LoginController {
 			 * The ability to use either the Identity Vault or the form login will only
 			 * be set at the instance level through the identityVaultURL setting in the external configuration file.
 			 */
-			String ivUrl = grailsApplication.config.com.recomdata.searchtool.identityVaultURL
-			if (ivUrl.length() > 5) {
+			def ivUrl = grailsApplication.config.com.recomdata.searchtool.identityVaultURL
+			if (ivUrl && ivUrl.length() > 5) {
 				log.info("Proceeding with Identity Vault login")
 				redirect(url: ivUrl)
 			} else  {
