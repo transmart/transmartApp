@@ -1753,7 +1753,7 @@ function setActiveTab(){
  * -"include": Across Trials is the only concept included
  * -"exclude": Across Trials concept is the only concept excluded 
  */
-function createTree(includeExcludeFlag, ontresponse){
+function createTree(includeExcludeFlag, ontresponse, treePanel){
 	// shorthand
 	var Tree = Ext.tree;
 
@@ -1765,6 +1765,8 @@ function createTree(includeExcludeFlag, ontresponse){
             qtip      : 'root'
         }
     );
+    treePanel.setRootNode(treeRoot);
+
 	for (var c = 0; c < ontresponse.length; c ++ )
 	{
 		var key = ontresponse[c].key;
@@ -1820,19 +1822,41 @@ function getSubCategories(id_in, title_in, ontresponse)
 	var treeRoot;
 	
 	var showFn;
+
+    var ontTree = new Tree.TreePanel(
+        {
+            id : id_in,
+            title : title_in,
+            animate : false,
+            autoScroll : true,
+            loader : new Ext.ux.OntologyTreeLoader(
+                {
+                    dataUrl : 'none'
+                }
+            ),
+            enableDrag : true,
+            ddGroup : 'makeQuery',
+            containerScroll : true,
+            enableDrop : false,
+            region : 'center',
+            rootVisible : false,
+            expanded : true,
+            onShow : function() { showFn.apply(this, arguments); }
+        }
+    );
 	
 	if (id_in==='crossTrialsPanel'){
 		showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
 			//Ext.get('advancedbutton').dom.style.display='none';
 		}
-		treeRoot = createTree('include', ontresponse);
+		treeRoot = createTree('include', ontresponse, ontTree);
 	}else{
 		showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
 			//Ext.get('advancedbutton').dom.style.display='';
 		}
-		treeRoot = createTree('exclude', ontresponse);
+		treeRoot = createTree('exclude', ontresponse, ontTree);
 	}
 
     var toolbar = new Ext.Toolbar([
@@ -1844,28 +1868,6 @@ function getSubCategories(id_in, title_in, ontresponse)
 		    iconCls: "contextHelpBtn"
 		}
     ]);
-	
-	var ontTree = new Tree.TreePanel(
-			{
-				id : id_in,
-				title : title_in,
-				animate : false,
-				autoScroll : true,
-				loader : new Ext.ux.OntologyTreeLoader(
-						{
-							dataUrl : 'none'
-						}
-				),
-				enableDrag : true,
-				ddGroup : 'makeQuery',
-				containerScroll : true,
-				enableDrop : false,
-				region : 'center',
-				rootVisible : false,
-				expanded : true,
-				onShow : showFn
-			}
-	);
 
 	ontTree.on('startdrag', function(panel, node, event)
 			{
