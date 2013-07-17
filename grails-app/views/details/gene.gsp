@@ -26,7 +26,8 @@
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
 	<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
 
-	<!-- <g:javascript library="prototype" /> -->
+	<!-- <g:javascript library="prototype" />
+ -->
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
@@ -74,12 +75,12 @@
 		                id:'genecard',
 		                defaultSrc:"http://www.genecards.org/cgi-bin/carddisp.pl?gene=${symbol}"
 		            },
-		           
+
 			</sec:ifNotGranted> */
 					{
 		                title:"Google Scholar",
 		                id:'google',
-		                defaultSrc: "http://scholar.google.com/scholar?hl=en&lr=&q=${symbol}+gene&btnG=Search&as_allsubj=some&as_subj=bio&as_subj=chm&as_subj=med"
+                        html: "<a href=\"http://scholar.google.com/scholar?q=${symbol} gene\" target=_new>Search Google Scholar for articles on ${symbol} gene</a> (n.b. opens results in a new window)."
 					}]
 				}]
 			});
