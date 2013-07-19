@@ -86,6 +86,7 @@
 	
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 
+    <script type="text/javascript" src="${resource(dir:'js/utils', file:'json2.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/utils', file:'dynamicLoad.js')}"></script>
 
  
