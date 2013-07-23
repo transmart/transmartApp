@@ -25,7 +25,7 @@ grails.project.test.reports.dir = "target/test-reports"
 //grails.plugin.location.'rdc-rmodules:0.2-acgh' = "../Rmodules"
 //grails.plugin.location.'dalliance-plugin:0.1-SNAPSHOT' = "../dalliance-plugin"
 
-//grails.project.war.file = "target/${appName}-${appVersion}.war"
+grails.project.war.file = "target/${appName}.war"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
