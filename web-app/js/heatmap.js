@@ -415,18 +415,22 @@ function drawHeatmapD3(divID, heatmapJSON, analysisID, forExport, isSA, keywordQ
 		addDataColumn(hm, xOffset, yOffset, w_fold_change, foldChange, "Fold change", "foldChangeGroup", h);
 	}
 
-	
+	var fourDecimalPlaces = function(n) { return n.toFixed(4); };
 	//only do this if the data contains TP values
 	if(hasTPvalue)  {
 		xOffset = w_probe + columns.length * w + w_gene + w_fold_change;
-		addDataColumn(hm, xOffset, yOffset, w_Tpvalue, tpValues, "TEA p-value", "tpValueGroup", h);		
+		addDataColumn(hm, xOffset, yOffset, w_Tpvalue,
+            tpValues.map(fourDecimalPlaces),
+            "TEA p-value", "tpValueGroup", h);
 	}
 
 	
 	//only do this if the data contains TP values
 	if(hasPvalue)  {
 		xOffset = w_probe + (columns.length * w) + w_gene + w_fold_change +w_Tpvalue;
-		addDataColumn(hm, xOffset, yOffset, w_pvalue, preferredPValues, "p-value", "ppValueGroup", h);		
+		addDataColumn(hm, xOffset, yOffset, w_pvalue,
+            preferredPValues.map(fourDecimalPlaces),
+            "p-value", "ppValueGroup", h);
 	}
 
 	
