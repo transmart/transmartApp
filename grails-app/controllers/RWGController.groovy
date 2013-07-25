@@ -4,39 +4,27 @@
 * @version $Revision: 14836 $
 */
 
-import org.json.*
 
-import org.transmart.biomart.BioAnalysisAttribute
-import org.transmart.biomart.ClinicalTrial
-import org.transmart.biomart.Experiment
-import org.transmart.biomart.BioMarkerCorrelationMV
-
+import RWGVisualizationDAOService
+import grails.converters.JSON
+import groovy.time.TimeCategory
 import org.apache.commons.codec.binary.Base64
+import org.json.JSONArray
+import org.json.JSONObject
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+import org.transmart.biomart.Experiment
+import org.transmart.searchapp.*
 
-import RWGVisualizationDAO
-
-import grails.converters.*				// so we can render as JSON
-
-import org.transmart.searchapp.SearchKeyword
-import org.transmart.searchapp.SearchTaxonomy
-import org.transmart.searchapp.SearchTaxonomyRels
-import org.transmart.searchapp.GeneSignature
-import org.transmart.searchapp.GeneSignatureItem
-import org.transmart.searchapp.SavedFacetedSearch
-
-import groovy.time.TimeCategory;
-import groovy.time.TimeDuration;
-import groovyx.net.http.HTTPBuilder
-
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.springframework.context.MessageSource
-import org.transmart.searchapp.AccessLog;
-
+// so we can render as JSON
 class RWGController {
 	def trialQueryService
 	def searchService
 	def searchKeywordService	
 	def springSecurityService
+
+    @Autowired
+    RWGVisualizationDAOService rwgDAO
 	
     def index = {}
 
@@ -142,7 +130,9 @@ class RWGController {
 		  
 		  
 		  // include facet count in title for non-category nodes
-		  parent["title"] = /${parentNode.termName} (${count})/ 
+          // force String conversion to avoid lazy eval of variables which
+          // may lead to a stackoverflow later on
+		  parent["title"] = (String)"${parentNode.termName} (${count})"
 	  }
 	  
 	  def childIndex = 1
@@ -172,8 +162,6 @@ class RWGController {
   def getDynatree = {
 	  def cachedJson = grailsApplication.config.getProperty("dynatree")
 
-	  def rwgDAO = new RWGVisualizationDAO()
-	  
 	  // retrieve the last time data was loaded/modified in the database, and the current time in the db
 	  // this needs to be done regardless of whether we have a cached value because the current db time is needed for
 	  //   storing the new string that will be cached
@@ -191,6 +179,9 @@ class RWGController {
 				useCachedValue = true
 			}
 	  }
+
+      //XXX
+      useCachedValue = false
 		
 	  def json
 	  if (useCachedValue)  {
@@ -889,10 +880,9 @@ class RWGController {
 	   
 	   def genes = r.get('genes')
 	   def errorMsg = r.get('errorMsg')
-	   def showSigResultsOnly = r.get('showSigResultsOnly') 	   
+	   def showSigResultsOnly = r.get('showSigResultsOnly')
 
-	   def rwgDAO = new RWGVisualizationDAO()
-	   def hmData = rwgDAO.getHeatmapData(params.id, genes, showSigResultsOnly,  params.probesPage, params.probesPerPage)	  
+	   def hmData = rwgDAO.getHeatmapData(params.id, genes, showSigResultsOnly,  params.probesPage, params.probesPerPage)
   
 	  	   
 	   render hmData as JSON	   	 	
@@ -900,7 +890,7 @@ class RWGController {
    
    
    // First iteration of the method to get the heatmap for exporting as a csv file
-   def getHeatmapDataForExport2 = {def rwgDAO = new RWGVisualizationDAO()
+   def getHeatmapDataForExport2 = {
 	   def genes = null
 	   def filterTerms = session.solrSearchFilter
 	   def solrGenesField = session.solrGenesField
@@ -984,8 +974,7 @@ class RWGController {
 	   def errorMsg = r.get('errorMsg')
 	   def showSigResultsOnly = r.get('showSigResultsOnly') 	   
 	   
-	   def rwgDAO = new RWGVisualizationDAO()
-	   def maxProbeIndex = rwgDAO.getNumberProbes(params.id, genes, showSigResultsOnly)	 
+	   def maxProbeIndex = rwgDAO.getNumberProbes(params.id, genes, showSigResultsOnly)
 	   
 	   JSONObject ret = new JSONObject()
 	   ret.put('maxProbeIndex', maxProbeIndex)
@@ -1017,7 +1006,6 @@ class RWGController {
     * Returns the data for the box plot visualization
     */
    def getBoxPlotData = {	   
-	   def rwgDAO = new RWGVisualizationDAO()	   
 	   def m = rwgDAO.getBoxplotData(params.id, params.probeID)
 	   render m as JSON
    }
@@ -1026,8 +1014,6 @@ class RWGController {
     * Returns the data for the box plot visualization for Cross Trial Analysis
     */
    def getBoxPlotDataCTA = {	   
-	   def rwgDAO = new RWGVisualizationDAO()
-	 
 	   def m = rwgDAO.getBoxplotDataCTA(params.ids.split(/\|/), params.keywordId)
 
 	   render m as JSON
@@ -1037,7 +1023,6 @@ class RWGController {
     * Returns the data for the line plot visualization
     */
    def getLinePlotData = {	   
-	   def rwgDAO = new RWGVisualizationDAO()	   
 	   def m = rwgDAO.getLineplotData(params.id, params.probeID)
 	   render m as JSON
    }
@@ -1051,7 +1036,6 @@ class RWGController {
 	* 
 	*/
    def getHeatmapCTARowCount = {
-	   def rwgDAO = new RWGVisualizationDAO()
        // Render the template for the favorites dialog
 	   
 	   def analysisIdsList = params.analysisIds.split(/\|/)
@@ -1088,7 +1072,6 @@ class RWGController {
 	* 
 	*/
    def getHeatmapCTARows = {
-	   def rwgDAO = new RWGVisualizationDAO()
        // Render the template for the favorites dialog
 	   
 	   def analysisIdsList = params.analysisIds.split(/\|/)
@@ -1479,7 +1462,6 @@ class RWGController {
 	   {
 		   currentcharttype=params.currentcharttype;
 	   }
-	   def rwgDAO = new RWGVisualizationDAO()
 	   def favorites = getFavorites('FACETED_SEARCH')
 	   def favoritesXT = getFavorites('XT')
 	   def categories = null;
@@ -1505,7 +1487,6 @@ class RWGController {
 	* Returns the data for the pie chart visualizations
 	*/
    def getPieChartData = {
-	   def rwgDAO = new RWGVisualizationDAO()
 	   def m = rwgDAO.getPieChartData(params.catid, params.ddid, params.boolean('drillback'), params.charttype)
 	   render m as JSON
    }
@@ -1513,7 +1494,6 @@ class RWGController {
    
    
    def getTopGenes = {
-	   def rwgDAO = new RWGVisualizationDAO()
 	   def r = rwgDAO.getTopGenesByFoldChange(params.analysisID)
 	   
 	   render r as JSON
@@ -1522,7 +1502,6 @@ class RWGController {
    
    
    def getSearchKeywordIDfromExternalID = {
-	   def rwgDAO = new RWGVisualizationDAO()
 	   def r = rwgDAO.getSearchKeywordIDfromExternalID(params.externalID)
 	   
 	 //  def map = [:]
@@ -1535,7 +1514,6 @@ class RWGController {
    
    
    def getCrossTrialSummaryTableStats = {
-	   def rwgDAO = new RWGVisualizationDAO()
 	   def r = rwgDAO.getCrossTrialSummaryTableStats(params.analysisList)
 	   
 	   render r as JSON
@@ -1546,7 +1524,6 @@ class RWGController {
    
    
    def getCrossTrialBioMarkerSummary = {
-	   def rwgDAO = new RWGVisualizationDAO()
 	   def r = rwgDAO.getCrossTrialBioMarkerSummary(params.search_keyword, params.analysisList)
 	   
 	   render r as JSON

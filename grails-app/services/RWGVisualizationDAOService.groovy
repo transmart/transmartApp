@@ -1,10 +1,8 @@
-import org.apache.log4j.Logger
-import org.springframework.context.ApplicationContext
-import org.transmart.biomart.BioMarkerCorrelationMV
-import org.transmart.searchapp.SearchKeyword
-import org.json.*
-
+import org.json.JSONObject
 import org.transmart.biomart.BioAssayCohort
+
+import javax.sql.DataSource
+import static DatabasePortabilityService.DatabaseType.*
 
 /**
  * $Id: $
@@ -15,12 +13,11 @@ import org.transmart.biomart.BioAssayCohort
 /**
  * Main Data Access Object to get all of the visualization data for the RWG datasets
  */
-class RWGVisualizationDAO {
-	ApplicationContext ctx = org.codehaus.groovy.grails.web.context.ServletContextHolder.getServletContext().getAttribute(org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes.APPLICATION_CONTEXT)
-	def dataSource = ctx.getBean('dataSource')
-	def grailsApplication = ctx.getBean('grailsApplication')
-	
-	static Logger log = Logger.getLogger(RWGVisualizationDAO.class)
+class RWGVisualizationDAOService {
+
+    DatabasePortabilityService databasePortabilityService
+	DataSource dataSource
+	def grailsApplication
 
  
 	/**
@@ -327,7 +324,7 @@ class RWGVisualizationDAO {
 	
 		 // loop through each cohort for the analysis and create a map that contains all the info
 		 // needed for the line plot (i.e. order, desc, data)
-		 def analysisInfo = getHeatmapAnalysisInfo(analysisId)
+		 def analysisInfo = getHeatmapAnalysisInfo(analysisId as Long)
 		 // First, retrieve all N cohorts from analysInfo map
 		 def cohorts =  analysisInfo.get("cohorts")
 				 
@@ -419,7 +416,7 @@ class RWGVisualizationDAO {
 	 * 
 	 * @return a map that contains information related to the analysis (e.g. study name, cohorts, analysis description)
 	 */	
-	def getHeatmapAnalysisInfo(analysisId)  {
+	def getHeatmapAnalysisInfo(Long analysisId)  {
 		
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 
@@ -644,7 +641,7 @@ class RWGVisualizationDAO {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 				
 		// retrieve information related to the analysis
-		def analysisInfo = getHeatmapAnalysisInfo(analysisID)
+		def analysisInfo = getHeatmapAnalysisInfo(analysisID as Long)
 		 	   
 		StringBuilder s = new StringBuilder()
 	    def sampleArray = []
@@ -885,7 +882,7 @@ class RWGVisualizationDAO {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 				
 		// retrieve information related to the analysis
-		def analysisInfo = getHeatmapAnalysisInfo(analysisID)
+		def analysisInfo = getHeatmapAnalysisInfo(analysisID as Long)
 	    def fullKeyListUnsorted = []
 	    def fullKeyListSorted = []
 		def currentCohort = null
@@ -1020,33 +1017,33 @@ class RWGVisualizationDAO {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 			   			   
 		// retrieve information related to the analysis
-		def analysisInfo = getHeatmapAnalysisInfo(analysisID)
+		def analysisInfo = getHeatmapAnalysisInfo(analysisID as Long)
 
 	    //def geneIds = getGeneListFromKeywords(genes)
 	    
 		StringBuilder s = new StringBuilder()
-		s = new StringBuilder()
+        String query
 
 		// This query grabs all of the values by significance
 		s.append("""
-               select probe_id, proberank, gene_name, gene_count from (
-                  SELECT probe_id, rownum proberank, gene_name, gene_count from (
-	                 SELECT probe_id, tea_normalized_pvalue, fold_change_ratio, gene_name, gene_count FROM (
-		                SELECT probe_id, tea_normalized_pvalue, fold_change_ratio, min(bio_marker_name) gene_name, count(distinct bio_marker_name) gene_count FROM heat_map_results
+              SELECT probe_id, gene_name, gene_count from (/*B*/
+                 SELECT probe_id, tea_normalized_pvalue, fold_change_ratio, gene_name, gene_count FROM (/*A*/
+                    SELECT probe_id, tea_normalized_pvalue, fold_change_ratio, min(bio_marker_name) gene_name, count(distinct bio_marker_name) gene_count FROM heat_map_results
 		""")
 	   
 		def sqlParams = addHeatmapFilters(s, null, genes, showSigResultsOnly, analysisInfo)
 		s.append(" group by probe_id, tea_normalized_pvalue, fold_change_ratio ")
 		
-    	s.append(" order by fold_change_ratio desc, tea_normalized_pvalue ) order by fold_change_ratio desc, tea_normalized_pvalue) ")
-    	s.append(" ) where proberank between ? and ? ")
+    	s.append(" order by fold_change_ratio desc, tea_normalized_pvalue ) A order by fold_change_ratio desc, tea_normalized_pvalue) B")
+    	//s.append(" ) C where proberank between ? and ? ")
+        query = databasePortabilityService.createPaginationQuery(s as String, 'proberank')
 		
 		int startIndex = (pageNumber.toInteger()-1)*probesPerPage + 1
 		int endIndex = (pageNumber.toInteger())*probesPerPage 
-		
-		sqlParams.add(startIndex)
-		sqlParams.add(endIndex)
-		log.info("${s}")
+
+        sqlParams.addAll(
+                databasePortabilityService.convertRangeStyle(startIndex, endIndex))
+		log.info(query)
 		log.info("${sqlParams}")
 
 		// build the probesList - one object for each probe id		
@@ -1057,7 +1054,7 @@ class RWGVisualizationDAO {
 		
 		log.info("before probe ranking query")
 		// execute query and save rows (since we need to do this twice, we don't want to execute query twice)
-		def results = sql.rows(s.toString(), sqlParams)
+		def results = sql.rows(query, sqlParams)
 		
 		def probeMap = [:]
 
@@ -1091,7 +1088,7 @@ class RWGVisualizationDAO {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 							  
 		// retrieve information related to the analysis
-		def analysisInfo = getHeatmapAnalysisInfo(analysisID)
+		def analysisInfo = getHeatmapAnalysisInfo(analysisID as Long)
 
 		def numberProbes
 		
@@ -1407,7 +1404,7 @@ class RWGVisualizationDAO {
    
    def getTopGenesByFoldChange(analysisID)	{
 	   groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-							 
+
 
     String s ="""
 	select * from (
@@ -1415,12 +1412,12 @@ class RWGVisualizationDAO {
 				from biomart.heat_map_results
 				where bio_assay_analysis_id = ${analysisID}
 				order by abs(fold_change_ratio) desc)
-				where rownum <= 20"""
-	   
-	   log.debug("${s}")
-   
-		   def rows = sql.rows(s)
-		   
+				where rownum <	   = 20"""
+
+	   log.de   bug("${s}")
+
+		   def rows		    = sql.rows(s)
+
 		   def topGenes=[]
 		   rows.each {row->
 			   def result=[:]
@@ -1429,7 +1426,7 @@ class RWGVisualizationDAO {
 		   result.put('fold_change_ratio', row.fold_change_ratio)
 		   topGenes.push(result)
 	   }
-   
+
 	   return  topGenes
    }
 
@@ -1757,7 +1754,7 @@ def getLastDataLoadTime  = {
 	groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 	StringBuilder s = new StringBuilder()
 
-	s.append("""select max(analysis_update_date) last_update_time, current_time AS current_time
+	s.append("""select max(analysis_update_date) last_update_time, now() AS current_time
              from biomart.bio_assay_analysis where analysis_update_date is not null""")
 
 	// retrieve results
