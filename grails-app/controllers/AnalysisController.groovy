@@ -206,7 +206,7 @@ class AnalysisController {
                 case CohortInformation.TISSUE_TYPE:
                     result = [rows:ci.tissues]
                     break;
-                case CohortInformation.TIMEPOINTS_TYPE:
+                case CohortInformation.TInew FileMEPOINTS_TYPE:
                     result = [rows:ci.timepoints]
                     break;
                 case CohortInformation.SAMPLES_TYPE:
@@ -222,7 +222,10 @@ class AnalysisController {
                     result = [rows:{""}]
             }
         }
-		render params.callback+"("+(result as JSON)+")"
+        if (result!=null)
+		    render params.callback+"("+(result as JSON)+")"
+        else
+            render params.callback+"({})"
 	}
 	
 	/**
