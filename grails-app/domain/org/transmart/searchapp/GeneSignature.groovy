@@ -55,7 +55,7 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	String normMethodOther
 	ConceptCode analysisMethodConceptCode
 	String analysisMethodOther
-	boolean multipleTestingCorrection
+	boolean multipleTestingCorrection = false
 	ConceptCode pValueCutoffConceptCode
 	String uniqueId
 	Date dateCreated
@@ -172,7 +172,6 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		experimentTypeCellLine(nullable:true)
 		experimentTypeInVivoDescr(nullable:true, maxSize:255)
 		experimentTypeATCCRef(nullable:true, maxSize:255)
-		multipleTestingCorrection(nullable:true)
 	}
 
 	/**
