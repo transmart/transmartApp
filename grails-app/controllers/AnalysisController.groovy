@@ -206,7 +206,7 @@ class AnalysisController {
                 case CohortInformation.TISSUE_TYPE:
                     result = [rows:ci.tissues]
                     break;
-                case CohortInformation.TInew FileMEPOINTS_TYPE:
+                case CohortInformation.TIMEPOINTS_TYPE:
                     result = [rows:ci.timepoints]
                     break;
                 case CohortInformation.SAMPLES_TYPE:
