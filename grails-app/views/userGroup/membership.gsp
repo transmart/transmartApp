@@ -59,7 +59,7 @@
 	  }
   </script>
           <table>
-                				<tr><td></td><td></td><td><input name="searchtext" id="searchtext"></input>
+                				<tr><td></td><td></td><td><input name="searchtext" id="searchtext">
                 				<button class="" onclick="searchgroup();">Search Groups</button></td>
                      			<tr><td><b>Member of these groups</b></td><td></td><td><b>Available groups</b></td></tr>
                      			<tr id="groups">

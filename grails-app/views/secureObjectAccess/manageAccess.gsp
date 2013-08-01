@@ -65,7 +65,7 @@
   <input type="hidden" name="currentprincipalid" id="currentprincipalid" value="${principalInstance?.id}"/>
    </g:form>
                                 </td><td>&nbsp;</td>
-                				<td><input name="searchtext" id="searchtext"></input><button class="" onclick="searchtrial();">Search Study</button></td>
+                				<td><input name="searchtext" id="searchtext"><button class="" onclick="searchtrial();">Search Study</button></td>
                      			<tr><td>Has Access for these studies</td><td></td><td>Available studies:</td></tr>
                        			<tr id="permissions">
                                     <g:render template="addremoveAccess" model="['secureObjectInstance':secureObjectInstance,'secureObjectAccessList' :secureObjectAccessList,'objectswithoutaccess':objectswithoutaccess]" />
