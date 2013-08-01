@@ -52,7 +52,6 @@
 <script type="text/javascript"
 	src="${resource(dir:'js/ext-ux', file:'miframe.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>
-<!-- <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'dataAssociation.js')}"></script> -->
 <script type="text/javascript"
 	src="${resource(dir:'js/datasetExplorer', file: 'requests.js')}"></script>
 <script type="text/javascript"
