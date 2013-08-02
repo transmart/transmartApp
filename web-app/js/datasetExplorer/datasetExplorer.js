@@ -1259,7 +1259,7 @@ function createOntPanel()
 
 	// make the ontSerchByNamePanel
 	shtml='<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>\
-		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td<td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15"></input>&nbsp;</td>\
+		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td<td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15">&nbsp;</td>\
 		<td><button onclick="searchByName()">Find</button></td></tr><tr><td colspan="2">Select Ontology:<select id="searchByNameSelectOntology"></select></td></tr></table>';
 
 		searchByNameForm = new Ext.Panel(
@@ -3727,7 +3727,7 @@ function showNameQueryDialog()
 					           }
 					           ],
 					           resizable : false,
-					           html : '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50"></input>'
+					           html : '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50">'
 				}
 		);
 	}
