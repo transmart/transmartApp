@@ -20,7 +20,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<!-- <g:javascript library="prototype" />-->
+
 
 <script type="text/javascript">
 

@@ -28,8 +28,7 @@
    p { width:430px; }
         .ext-ie .x-form-text {position:static !important;}
   </style>
-    <g:javascript library="prototype" plugin="prototype"/>
-    <r:layoutResources/>  
+        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
     </head>
     <body>
         <div class="body">
@@ -60,7 +59,7 @@
           <table>
                 				<tr><td>
 <g:form name="accessform" action="manageAccess">
-                                    <label for="accessLevel"><b>Access Level</b></label>
+                                    <label for="accesslevelid"><b>Access Level</b></label>
                                     <g:select optionKey="id"  optionValue="accessLevelName" from="${accessLevelList}" name="accesslevelid" value="${accesslevelid}" onchange="document.accessform.submit();"></g:select>
   <input type="hidden" name="currentprincipalid" id="currentprincipalid" value="${principalInstance?.id}"/>
    </g:form>
@@ -75,6 +74,5 @@
                                 </td>
                             </tr>
                         </tbody>
-    <r:layoutResources/>
     </body>
 </html>

@@ -337,14 +337,8 @@
 	    <script language="javascript">
 	    	helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 	    </script>
-	    <sec:ifAnyGranted roles="ROLE_ADMIN">
-			<script language="javascript">
-				helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-			</script>
-		</sec:ifAnyGranted>
 		<!-- ************************************** -->
-		<g:javascript library="prototype" plugin="prototype"/>
-        <r:layoutResources/> 
+        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 	</head>
 <body>
 		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
@@ -368,7 +362,6 @@
 				<input type="hidden" name="selectedpath" value="">
 			</g:form>
 		</div>
-		<r:layoutResources/>
 	</body>
 </html>
 

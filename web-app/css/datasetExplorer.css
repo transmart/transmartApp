@@ -24,7 +24,8 @@ table.menuDetail th {
     vertical-align: middle;
     text-align: center;
     white-space: nowrap;
-    background: #fafafa url(../images/skin/shadow30.jpg);
+    background: #fafafa
+    url(../images/skin/shadow30.jpg);
     font-weight: bold;
     padding: 0px 0px;
 }
