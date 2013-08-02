@@ -300,7 +300,7 @@ function renderDSELink(val)
 //This renderer draws a checkbox.
 function renderIncludeCheckBox(val)
 {
-	return '<input type="checkbox" onClick="modifyDataList();"></input>';
+	return '<input type="checkbox" onClick="modifyDataList();">';
 }
 
 //When we remove or add a column from the grid panel we need to re-query Solr to get the results with or without this column.
