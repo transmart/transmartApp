@@ -150,8 +150,8 @@ class SampleExplorerController {
 		//Get the list of possible results.
 		def resultsHash = solrService.suggestTerms(category,values,grailsApplication.config.com.recomdata.solr.numberOfSuggestions.toString())
 
-		//Render the results as JSON.		
-		render params.callback+"("+(resultsHash as JSON)+")"
+		//Render the results as JSON.
+        render(text:params.callback + "(" + (resultsHash as JSON) + ")", contentType:"application/javascript")
 	}
 	
 	/**
@@ -213,7 +213,7 @@ class SampleExplorerController {
 		   categoryMap['rows'].add(tempMap)
 	   }
 
-	   render params.callback+"("+(categoryMap as JSON)+")"
+       render(text:params.callback + "(" + (categoryMap as JSON) + ")", contentType:"application/javascript")
    }
 
 	/**
