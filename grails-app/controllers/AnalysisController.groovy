@@ -194,9 +194,6 @@ class AnalysisController {
 			ci.tissues.addAll(Arrays.asList(tissues.split(',')));
 		if((gpls!=null) && (gpls.length()>0))
 			ci.gpls.addAll(Arrays.asList(gpls.split(',')));
-        if(infoType==null)
-            infoType = 0
-		i2b2HelperService.fillCohortInformation(null, null, ci, Integer.parseInt(infoType));
 		
 		def result=null;
         if((infoType!=null) && (infoType.length()>0)){
@@ -225,9 +222,9 @@ class AnalysisController {
             }
         }
         if (result!=null)
-		    render params.callback+"("+(result as JSON)+")"
+            render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
         else
-            render params.callback+"({})"
+            render(text:"({})")
 	}
 	
 	/**
@@ -1162,7 +1159,7 @@ def ajaxGetPathwaySearchBoxData = {
 	})
 	
 	def result = [rows:pathways]
-	render params.callback+"("+(result as JSON)+")"
+    render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
 }
 
 def gplogin = {
