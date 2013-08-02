@@ -224,7 +224,7 @@ class AnalysisController {
         if (result!=null)
             render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
         else
-            render(text:params.callback + "({})", contentType:"application/javascript")
+            render(text:"({})")
 	}
 	
 	/**
