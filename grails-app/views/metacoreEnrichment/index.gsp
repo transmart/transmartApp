@@ -45,7 +45,7 @@
 					Selection</span> <a
 				href='JavaScript:D2H_ShowHelp(1505,helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP )'>
 					<img
-					src="${resource(dir:'images/help', file:'helpicon_white.jpg')}"
+					src="${resource(dir:'images', file:'help/helpicon_white.jpg')}"
 					alt="Help" border=0 width=18pt
 					style="margin-top: 1pt; margin-bottom: 1pt; margin-right: 18pt; float: right" />
 			</a></td>
@@ -99,7 +99,7 @@
 		</tr>		
 		<tr>
 			<td colspan="4" align="center"><g:metacoreSettingsButton /><input type="button" value="Run"
-				onClick="submitMetaCoreEnrichmentJob(this.form);"></input></td>
+				onClick="submitMetaCoreEnrichmentJob(this.form);"></td>
 		</tr>
 	</table>
 </form>

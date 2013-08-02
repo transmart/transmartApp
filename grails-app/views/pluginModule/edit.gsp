@@ -25,8 +25,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="main" />
         <title>Edit PluginModule</title>
-        <!-- <g:javascript library="prototype" />
-        <g:javascript library="scriptaculous" /> -->
     </head>
     <body>
         <div class="nav">
