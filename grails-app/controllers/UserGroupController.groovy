@@ -136,7 +136,7 @@ class UserGroupController {
                 userdata.add([name:user.name, username:user.username,  type:user.type, description:user.description, uid:user.id ])
 			}
 		def result = [rows:userdata]
-		render params.callback+"("+(result as JSON)+")"
+        render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
     }
 
 
@@ -290,8 +290,8 @@ def removeUserFromGroups =
 						userdata.add([name:user.name, username:"No Login", type:user.type, description:user.description, uid:user.id ])
 						}
 					}
-			def result = [rows:userdata]		
-			render params.callback+"("+(result as JSON)+")"
+			def result = [rows:userdata]
+            render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
 	    }
     
 
