@@ -142,6 +142,13 @@ com.recomdata.transmart.data.export.dataTypesMap=[
 	//,'GSEA':'Gene Set Enrichment Analysis (GSEA)'
 ];
 
+// Data export FTP settings is Rserve running remote in relation to transmartApp
+com.recomdata.transmart.data.export.ftp.server=''
+com.recomdata.transmart.data.export.ftp.serverport=''
+com.recomdata.transmart.data.export.ftp.username=''
+com.recomdata.transmart.data.export.ftp.password=''
+com.recomdata.transmart.data.export.ftp.remote.path=''
+
 // Control which gene/pathway search is used in Dataset Explorer
 // A value of "native" forces Dataset Explorer's native algorithm.
 // Abscence of this property or any other value forces the use of the Search Algorithm

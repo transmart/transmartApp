@@ -395,14 +395,18 @@ class PostgresExportService {
 		def jobName = params.jobname
 		def job = AsyncJob.findByJobName(jobName)
 		def exportDataProcessor = new ExportDataProcessor()
-		
-		def tempDir = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
-		def ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
-		def ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
-		def ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
-		def ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
-		def ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
 
-		return exportDataProcessor.getExportJobFileStream(job.viewerURL, tempDir, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath)
+        // If com.recomdata.transmart.data.export.ftp configuration not set, ExportDataProcessor receives incorrect
+        // method signature for getExportJobFileStream, so here we have used Strings instead of defs to initialize
+        // the correct parameter signature
+		String tempDir = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
+		String ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
+        String ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
+        String ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
+        String ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
+        String ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
+
+        InputStream is = exportDataProcessor.getExportJobFileStream(job.viewerURL, tempDir, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath)
+		return is;
 	}
 }
