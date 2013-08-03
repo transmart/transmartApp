@@ -31,7 +31,7 @@ import grails.plugins.springsecurity.SecurityConfigType
 
 grails.plugins.springsecurity.successHandler.defaultTargetUrl = "/transmart"
 
-grails.plugins.springsecurity.rejectIfNoRule = true
+//grails.plugins.springsecurity.rejectIfNoRule = true
 grails.plugins.springsecurity.securityConfigType = SecurityConfigType.InterceptUrlMap
 grails.plugins.springsecurity.interceptUrlMap = [
         '/js/**':        ['IS_AUTHENTICATED_ANONYMOUSLY'],
