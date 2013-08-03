@@ -78,7 +78,7 @@
 					{
 		                title:"Google Scholar",
 		                id:'google',
-		                defaultSrc: "http://scholar.google.com/scholar?hl=en&lr=&q=${symbol}+gene&btnG=Search&as_allsubj=some&as_subj=bio&as_subj=chm&as_subj=med"
+                        html: "<a href=\"http://scholar.google.com/scholar?q=${symbol} gene\" target=_new>Search Google Scholar for articles on ${symbol} gene</a> (n.b. opens results in a new window)."
 					}]
 				}]
 			});
