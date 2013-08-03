@@ -39,9 +39,9 @@
   <div id="divuser" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br><b>Search User/Group</b><br>
   <input type="text"  size="80" id="searchUsers" autocomplete="off" /></div>
   <script type="text/javascript">
-	var pageInfo = {
-			basePath :"${request.getContextPath()}"
-		}
+  var pageInfo = {
+          basePath :"${request.getContextPath()}"
+      }
   createUserSearchBox('${request.getContextPath()}/userGroup/ajaxGetUsersAndGroupsSearchBoxData', 440,'${principalInstance?.name}');
 
   function searchtrial(){
@@ -59,7 +59,7 @@
           <table>
                 				<tr><td>
 <g:form name="accessform" action="manageAccess">
-                                    <label for="accessLevel"><b>Access Level</b></label>
+                                    <label for="accesslevelid"><b>Access Level</b></label>
                                     <g:select optionKey="id"  optionValue="accessLevelName" from="${accessLevelList}" name="accesslevelid" value="${accesslevelid}" onchange="document.accessform.submit();"></g:select>
   <input type="hidden" name="currentprincipalid" id="currentprincipalid" value="${principalInstance?.id}"/>
    </g:form>
@@ -74,6 +74,5 @@
                                 </td>
                             </tr>
                         </tbody>
-    <r:layoutResources/>
     </body>
 </html>

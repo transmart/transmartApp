@@ -1822,7 +1822,7 @@ function getSubCategories(id_in, title_in, ontresponse)
 	var treeRoot;
 	
 	var showFn;
-
+	
     var ontTree = new Tree.TreePanel(
         {
             id : id_in,
@@ -1858,17 +1858,17 @@ function getSubCategories(id_in, title_in, ontresponse)
 		}
 		treeRoot = createTree('exclude', ontresponse, ontTree);
 	}
-
+	
     var toolbar = new Ext.Toolbar([
 		{
 			id:'contextHelp-button',
 			handler: function(event, toolEl, panel){
 			   	D2H_ShowHelp((id_in=="navigateTermsPanel")?"1066":"1091",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
 			},
-		    iconCls: "contextHelpBtn"
+		    iconCls: "contextHelpBtn"  
 		}
     ]);
-
+	
 	ontTree.on('startdrag', function(panel, node, event)
 			{
 		Ext.ux.ManagedIFrame.Manager.showShims()

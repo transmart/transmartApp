@@ -28,16 +28,16 @@
 		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"/>
 		      <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"/>
         <link rel="stylesheet" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}"/>
-        
-    <!--[if IE 7]>
-        <style type="text/css">
-             div#gfilterresult,div#ptfilterresult, div#jubfilterresult, div#dqfilterresult {
-                width: 99%;
-            }
-        </style>
-    <![endif]-->
-    		
-		<script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
+		
+	<!--[if IE 7]>
+		<style type="text/css">
+			 div#gfilterresult,div#ptfilterresult, div#jubfilterresult, div#dqfilterresult {
+				width: 99%;
+			}
+		</style>
+	<![endif]-->
+	
+
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
@@ -47,7 +47,7 @@
 	    <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
         <script>jQuery.noConflict();</script>
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
-	    <script type="text/javascript" charset="utf-8">
+		<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
 			// set ajax to 90*1000 milliseconds

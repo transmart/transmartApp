@@ -225,7 +225,7 @@ class LiteratureController {
 
 	def jubSummaryJSON = {
 		def result = createJubSummary()
-		render params.callback+"("+(result as JSON)+")"
+        render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
 	}
 
 	static List litRefDataColumns = [

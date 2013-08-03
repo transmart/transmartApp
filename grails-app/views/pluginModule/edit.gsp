@@ -25,8 +25,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="main" />
         <title>Edit PluginModule</title>
-        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
+        <%-- Imperial branch removed this, but is it really not needed?
         <script type="text/javascript" src="${resource(dir:'js', file:'scriptaculous.js')}"></script>
+        --%>
     </head>
     <body>
         <div class="nav">

@@ -18,18 +18,17 @@
  ******************************************************************/
   
 
-import org.transmart.biomart.BioMarker
-import org.transmart.biomart.Compound
-import org.transmart.biomart.Disease
-import org.transmart.biomart.Experiment
-import com.recomdata.search.query.AssayStatsExpMarkerQuery
-import com.recomdata.search.query.AssayDataStatsQuery
-import com.recomdata.search.query.Query
-import org.codehaus.groovy.grails.commons.*
-import org.transmart.SearchFilter;
-import org.transmart.biomart.BioAssayAnalysis;
-import org.transmart.biomart.BioAssayDataStatistics;
 
+
+
+
+import com.recomdata.search.query.AssayDataStatsQuery
+import com.recomdata.search.query.AssayStatsExpMarkerQuery
+import com.recomdata.search.query.Query
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.transmart.SearchFilter
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Disease
 /**
  * $Id: ExpressionProfileQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @author $Author: mmcduffie $
@@ -115,7 +114,14 @@ class ExpressionProfileQueryService {
 		query.addSelect("asemq.marker")
 		query.addOrderBy("asemq.marker.name")
 		def config = ConfigurationHolder.config
-		return org.transmart.biomart.BioAssayStatsExpMarker.executeQuery(query.generateSQL(), [max:config.com.recomdata.search.gene.max])
+        def result
+        try {
+            result = org.transmart.biomart.BioAssayStatsExpMarker.executeQuery(query.generateSQL(), [max:config.com.recomdata.search.gene.max])
+        } catch (Exception e) {
+            e.printStackTrace()
+            result = new ArrayList()    // return empty ResultSet
+        }
+		return result
 	}
 
 	def listDiseases(SearchFilter filter){
@@ -129,7 +135,14 @@ class ExpressionProfileQueryService {
 		query.addSelect("bads_dis")
 		query.addOrderBy("bads_dis.preferredName")
 		//println(">> disease query: " + query.generateSQL())
-		return org.transmart.biomart.BioAssayDataStatistics.executeQuery(query.generateSQL())
+        def result
+        try {
+            result = org.transmart.biomart.BioAssayDataStatistics.executeQuery(query.generateSQL())
+        } catch (Exception e) {
+            e.printStackTrace()
+            result = new ArrayList()    // return empty ResultSet
+        }
+        return result
 	}
 
 	/**

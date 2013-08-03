@@ -136,8 +136,7 @@ public class SearchController{
 			rows.add(row)
 		}
 		def result = [rows:rows]
-        render(contentType: 'text/javascript', text:params.callback + "(" + (result as JSON) + ")")
-
+        render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
 	}
 
 	// Used by EditFiltersWindow to load records for list of global filters.
@@ -242,7 +241,7 @@ public class SearchController{
 			}
 		}
 		def result = [rows:itemlist]
-        render(contentType: 'text/javascript', text:params.callback+"("+(result as JSON)+")")
+        render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
 
 	}
 

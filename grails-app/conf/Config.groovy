@@ -30,6 +30,15 @@
 
 grails.plugins.springsecurity.successHandler.defaultTargetUrl = "/transmart"
 
+//grails.plugins.springsecurity.rejectIfNoRule = true
+grails.plugins.springsecurity.securityConfigType = SecurityConfigType.InterceptUrlMap
+grails.plugins.springsecurity.interceptUrlMap = [
+        '/js/**':        ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/css/**':       ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/images/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/static/**':    ['IS_AUTHENTICATED_ANONYMOUSLY']
+]
+
 grails.config.locations = []
 def defaultConfigFiles = [
 	"${userHome}/.grails/${appName}Config/Config.groovy",
@@ -140,6 +149,13 @@ com.recomdata.transmart.data.export.dataTypesMap=[
 	'ADDITIONAL':'Additional Data'
 	//,'GSEA':'Gene Set Enrichment Analysis (GSEA)'
 ];
+
+// Data export FTP settings is Rserve running remote in relation to transmartApp
+com.recomdata.transmart.data.export.ftp.server=''
+com.recomdata.transmart.data.export.ftp.serverport=''
+com.recomdata.transmart.data.export.ftp.username=''
+com.recomdata.transmart.data.export.ftp.password=''
+com.recomdata.transmart.data.export.ftp.remote.path=''
 
 // Control which gene/pathway search is used in Dataset Explorer
 // A value of "native" forces Dataset Explorer's native algorithm.

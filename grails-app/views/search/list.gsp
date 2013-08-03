@@ -35,7 +35,7 @@
 			div#summary-div { margin-bottom:5px; }
 		</style>
 	<![endif]-->
-	
+
 		<script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
@@ -225,7 +225,7 @@
 				    tabpanel.remove(Ext.getCmp("tab3"));
 				    tabpanel.remove(Ext.getCmp("tab4"));
 				    tabpanel.remove(Ext.getCmp("tab5"));
-				    tabpanel.remove(Ext.getCmp("tab6"));
+					tabpanel.remove(Ext.getCmp("tab6"));
 				    tabpanel.remove(Ext.getCmp("tab7"));
 				    //tabpanel.remove(Ext.getCmp("tab8"));
 				    //tabpanel.remove(Ext.getCmp("tab9"));
@@ -242,7 +242,7 @@
 					}		
 				    if ("${grailsApplication.config.com.recomdata.searchtool.cortellisEnabled}" == "") {
 						tabpanel.remove(Ext.getCmp("tab18"));
-					}
+					}			       
 				}
 				
 			    // set active tab
@@ -342,11 +342,6 @@
 	    <script language="javascript">
 	    	helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 	    </script>
-	    <sec:ifAnyGranted roles="ROLE_ADMIN">
-			<script language="javascript">
-				helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-			</script>
-		</sec:ifAnyGranted>
 		<!-- ************************************** -->
     <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 	</head>

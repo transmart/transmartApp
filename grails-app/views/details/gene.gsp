@@ -26,7 +26,6 @@
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
 	<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
 
-	<script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
@@ -60,7 +59,7 @@
 			        	        defaultSrc: "http://www.ncbi.nlm.nih.gov/protein/${geneId}"
 				        	 </g:if>
 			        	     <g:else>
-			        	        defaultSrc: "http://www.ncbi.nlm.nih.gov/sites/entrez?Db=gene&Cmd=DetailsSearch&Term=${geneId}[GeneID]&doptcmdl=DocSum"
+			            	defaultSrc: "http://www.ncbi.nlm.nih.gov/sites/entrez?Db=gene&Cmd=DetailsSearch&Term=${geneId}[GeneID]&doptcmdl=DocSum"
 			        	     </g:else>
 				     },
 				     
@@ -71,9 +70,9 @@
 		                defaultSrc: "http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=${symbol}"
 					},
 				 </g:if> /*
-				 <sec:ifNotGranted roles="ROLE_PUBLIC_USER">
+				<sec:ifNotGranted roles="ROLE_PUBLIC_USER">
 	 				 <g:if test="${isRWG==false}">
-			            {
+					{
 			        		title:"Hydra",
 			                id:'hydra',
 			                defaultSrc:"http://hydra.rndus.na.jnj.com/hydra/viewer/index.cfm?jnjgeneid=${hydraGeneID}"
@@ -96,12 +95,12 @@
 		                id:'genecard',
 		                defaultSrc:"http://www.genecards.org/cgi-bin/carddisp.pl?gene=${symbol}"
 		            },
-		         </sec:ifNotGranted> */
+			</sec:ifNotGranted> */
 				 <g:if test="${isRWG==false}">
 					{
 		                title:"Google Scholar",
 		                id:'google',
-		                defaultSrc: "http://scholar.google.com/scholar?hl=en&lr=&q=${symbol}+gene&btnG=Search&as_allsubj=some&as_subj=bio&as_subj=chm&as_subj=med"
+                        html: "<a href=\"http://scholar.google.com/scholar?q=${symbol} gene\" target=_new>Search Google Scholar for articles on ${symbol} gene</a> (n.b. opens results in a new window)."
 					}
 				 </g:if>
  			     ]

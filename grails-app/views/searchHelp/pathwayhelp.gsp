@@ -23,7 +23,7 @@
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}"/>
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}"/>
 	<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
-	<!-- <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>-->
+
 	<script type="text/javascript" src="${resource(dir:'js', file:'toggle.js')}"></script>
 	<script type="text/javascript">
 

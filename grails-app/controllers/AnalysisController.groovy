@@ -194,7 +194,6 @@ class AnalysisController {
 			ci.tissues.addAll(Arrays.asList(tissues.split(',')));
 		if((gpls!=null) && (gpls.length()>0))
 			ci.gpls.addAll(Arrays.asList(gpls.split(',')));
-		i2b2HelperService.fillCohortInformation(null, null, ci, Integer.parseInt(infoType));
 		
 		def result=null;
         if((infoType!=null) && (infoType.length()>0)){
@@ -222,7 +221,10 @@ class AnalysisController {
                     result = [rows:{""}]
             }
         }
-		render params.callback+"("+(result as JSON)+")"
+        if (result!=null)
+            render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
+        else
+            render(text:"({})")
 	}
 	
 	/**
@@ -1157,7 +1159,7 @@ def ajaxGetPathwaySearchBoxData = {
 	})
 	
 	def result = [rows:pathways]
-	render params.callback+"("+(result as JSON)+")"
+    render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
 }
 
 	/**

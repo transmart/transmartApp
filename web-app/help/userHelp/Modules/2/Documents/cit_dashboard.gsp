@@ -24,8 +24,7 @@
     <link rel="stylesheet" href="${createLinkTo(dir:'css',file:'dashboard.css')}" />
 	<link rel="stylesheet" href="${createLinkTo(dir:'css',file:'nav_styles.css')}" />
     <link rel="shortcut icon" href="${createLinkTo(dir:'images',file:'favicon.ico')}" type="image/x-icon" />   
-    <g:javascript src="toggle.js" />
-    <g:javascript src="FusionCharts.js" />	
+    <script type="text/javascript" src="${resource(dir:'js', file:'toggle.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
         
     <g:layoutHead /> 

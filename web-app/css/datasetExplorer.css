@@ -52,7 +52,7 @@
     display: block;
     padding: 6px 20px;
     color:#cfcfcf;
-      text-decoration: none;
+    text-decoration: none;
 }
 
 #navlist ul a:hover{
@@ -442,7 +442,7 @@ a.AnalysisLink {
 		font: 14px tahoma,arial,helvetica,sans-serif;
 		font-weight:bold;
 	}
-			
+	
 @page { 
 size: letter landscape;
 margin: 0.25in; 
