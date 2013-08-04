@@ -69,14 +69,14 @@ grails.project.dependency.resolution = {
         compile ":hibernate:$grailsVersion"
         compile ":release:2.2.1"
         compile ":quartz:1.0-RC2"
-        compile ":rdc-rmodules:0.2"
+        compile ":rdc-rmodules:0.3-SNAPSHOT"
         compile ":spring-security-core:1.2.7.3"
         build ":tomcat:$grailsVersion"
         build ":build-info:1.1"
 		runtime ":prototype:1.0"
 		runtime ":jquery:1.7.1"
         runtime ":transmart-core:1.0-SNAPSHOT"
-        runtime ":resources:1.2.RC2"
+        runtime ":resources:1.2"
 
         test ":code-coverage:1.2.6"
     }
