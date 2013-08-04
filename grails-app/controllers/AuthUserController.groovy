@@ -168,19 +168,26 @@ class AuthUserController {
 	def save = {
 		def person = new AuthUser()
 		person.properties = params
-		def luser = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
-		if(params.id==null || params.id=="") {
-			flash.message = 'Please enter an ID'
-			return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])
-		}
+        def next_id = 0
 
-		def user = AuthUser.get(params.id)
-		if(user!=null) {
-			flash.message = 'ID: '+params.id+' is already taken'
-			return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])
-		}
+        if(params.id==null || params.id=="") {
+            def c = AuthUser.createCriteria()
+            next_id = c.get {
+                projections {
+                    max('id')
+                }
+            }
+            next_id++
+        }
+        else
+            next_id = new Long(params.id)
 
-		person.id = new Integer(params.id)
+        if(params.email==null || params.email=="") {
+            flash.message = 'Please enter an email'
+            return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])
+        }
+
+        person.id = next_id
 		person.passwd = springSecurityService.encodePassword(params.passwd)
 		person.uniqueId = ''
 		person.name=person.userRealName;

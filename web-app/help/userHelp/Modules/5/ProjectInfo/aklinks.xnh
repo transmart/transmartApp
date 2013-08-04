@@ -22,11 +22,11 @@
             <items>
                 <item role="group" name="popupblocker" />
             </items>
-        </link>
+
         <link id="937" window="">
             <items>
                 <item role="group" name="rntoconfig" />
             </items>
-        </link>
+
     </links>
 </root>

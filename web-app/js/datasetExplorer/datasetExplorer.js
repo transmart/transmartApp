@@ -1330,7 +1330,7 @@ function createOntPanel()
 		}
 		ontFilterPanel = new Ext.Panel(
 				{
-					title : 'Search by Subject',
+					title : 'Search Terms',
 					id : 'ontFilterPanel',
 					region : 'center',
 					height : 500,

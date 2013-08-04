@@ -25,7 +25,9 @@
 
 <title>Dataset Explorer</title>
 
-<LINK REL="SHORTCUT ICON"
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
+
+    <LINK REL="SHORTCUT ICON"
 	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
 <LINK REL="ICON"
 	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">

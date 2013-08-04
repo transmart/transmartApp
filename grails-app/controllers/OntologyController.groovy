@@ -211,6 +211,12 @@ class OntologyController {
 		//def testtag=new i2b2.OntNodeTag(tag:'test', tagtype:'testtype');
 		//node.addToTags(testtag);
 		//node.save();
+        if (node == null)
+        {
+            render(template:'showDefinition', model:[tags:[]])
+            return
+        }
+
 		def trial=node.tags.find{ w -> w.tagtype =="Trial" }
 		if(trial!=null)
 		{
