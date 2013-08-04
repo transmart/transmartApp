@@ -59,6 +59,9 @@ class AuthUserController {
 	}
 
 	def show = {
+        System.err.println("SCANDALE")
+        return;
+
 		def person = AuthUser.get(params.id)
 		if (!person) {
 			flash.message = "AuthUser not found with id $params.id"
