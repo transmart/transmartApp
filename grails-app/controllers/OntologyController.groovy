@@ -206,12 +206,8 @@ class OntologyController {
 	
 	def showConceptDefinition =
 	{
-
-        System.err.println(params.conceptKey)
 		def conceptPath=i2b2HelperService.keyToPath(params.conceptKey);
-        System.err.println(conceptPath)
 		def node=i2b2.OntNode.get(conceptPath);
-        System.err.println(node)
 		//def testtag=new i2b2.OntNodeTag(tag:'test', tagtype:'testtype');
 		//node.addToTags(testtag);
 		//node.save();
