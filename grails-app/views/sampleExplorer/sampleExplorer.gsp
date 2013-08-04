@@ -51,7 +51,7 @@
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'sampleExplorer.css')}">	
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
 	<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
+	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}">
 </head>		
 	
 	<body>

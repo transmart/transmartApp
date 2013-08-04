@@ -19,6 +19,7 @@
 
 
 <%@ page import="org.transmart.searchapp.SecureObjectAccess" %>
+
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -28,7 +29,7 @@
    p { width:430px; }
         .ext-ie .x-form-text {position:static !important;}
   </style>
-        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
+        <g:setProvider library="prototype"/>
     </head>
     <body>
         <div class="body">
@@ -50,7 +51,7 @@
 	alert("Please select a user/group first");
 	return false;
 	}
- ${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
+ //${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
 	return false;
   }
 
