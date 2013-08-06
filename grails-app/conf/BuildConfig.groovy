@@ -22,8 +22,9 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
-//grails.plugin.location.'rdc-rmodules:0.2-acgh' = "../Rmodules"
+//grails.plugin.location.'rdc-rmodules' = "../Rmodules"
 //grails.plugin.location.'dalliance-plugin:0.1-SNAPSHOT' = "../dalliance-plugin"
+//grails.plugin.location.'transmart-mydas' = "../transmart-mydas"
 
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 grails.project.dependency.resolution = {
@@ -50,14 +51,20 @@ grails.project.dependency.resolution = {
 		compile 'antlr:antlr:2.7.7'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
         compile 'net.sf.opencsv:opencsv:2.3'
+        compile "org.apache.lucene:lucene-core:2.4.0"
+        compile "org.apache.lucene:lucene-demos:2.4.0"
+        compile "org.apache.lucene:lucene-highlighter:2.4.0"
     }
 
     plugins {
         compile ":hibernate:$grailsVersion"
         compile ":quartz:1.0-RC2"
+        compile ":rdc-rmodules:0.2-acgh"
+        compile(":transmart-mydas:0.1-SNAPSHOT") {
+            excludes 'lucene-core'
+        }
         compile ":spring-security-core:1.2.7.3"
         compile ":resources:1.1.6"
-        compile ":rdc-rmodules:0.2-acgh"
         compile ":dalliance-plugin:0.1-SNAPSHOT"
         build ":tomcat:$grailsVersion"
         build ":build-info:1.1"
