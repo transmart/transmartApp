@@ -68,7 +68,9 @@ grails.project.dependency.resolution = {
 
     plugins {
         compile ":hibernate:$grailsVersion"
-        compile ":release:2.2.1"
+        build ':release:2.2.1', ':rest-client-builder:1.0.3', {
+            export = false
+        }
         compile ":quartz:1.0-RC2"
         compile ":rdc-rmodules:0.3-SNAPSHOT"
         compile ":spring-security-core:1.2.7.3"
@@ -113,3 +115,5 @@ if (buildConfigFile.exists()) {
         }
     }
 }
+
+// vim: set et sw=4 ts=4:
