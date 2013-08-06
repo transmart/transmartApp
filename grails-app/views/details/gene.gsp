@@ -20,7 +20,8 @@
 <html>
 <head>
 	<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
-	<link rel="SHORTCUT ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
+    <link rel="SHORTCUT ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
 	<link rel="ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />

@@ -1,10 +1,10 @@
 <html>
 <head>
 	<title>Cortellis API: ${res["@name"]}</title>
-	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}"/>
-	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}"/>
-	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"/>
-	<link rel="stylesheet" href="${resource(dir:'css', file:'cortellis.css')}"/>
+	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}">
+	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}">
+	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}">
+	<link rel="stylesheet" href="${resource(dir:'css', file:'cortellis.css')}">
 	<style type="text/css">
 		.x-tab-panel-body .x-panel-body {
 	    	padding: 10px;

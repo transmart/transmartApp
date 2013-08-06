@@ -1,8 +1,8 @@
 <html>
 <head>
 	<title>Cortellis API: ${res["@name"]}</title>
-	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"/>
-	<link rel="stylesheet" href="${resource(dir:'css', file:'cortellis.css')}"/>
+	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}">
+	<link rel="stylesheet" href="${resource(dir:'css', file:'cortellis.css')}">
 </head>
 <body>
 <h1>Cortellis returned ${res["@totalResults"]} relevant target records:</h1>

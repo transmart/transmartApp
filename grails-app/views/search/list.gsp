@@ -343,7 +343,7 @@
 	    	helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 	    </script>
 		<!-- ************************************** -->
-    <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 	</head>
 <body>
 		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
