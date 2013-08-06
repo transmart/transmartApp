@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -160,7 +160,7 @@ Ext.onReady(function()
 		northPanel = new Ext.Panel(
 				{
 					id : 'northPanel',
-					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif"></img></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
+					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif" /></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
 					region : 'north',
 					height : 45,
 					split : false,
@@ -495,6 +495,7 @@ Ext.onReady(function()
 										clearAnalysisPanel();
 										resetQuery();
 										clearDataAssociation();									
+										resetExportTabs();
 									}
 								// clearGrid(); blah
 								}
@@ -835,7 +836,30 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
-		
+
+		/**
+		 * panel to display list of jobs belong to a user
+		 * @type {Ext.Panel}
+		 */
+		analysisJobsPanel = new Ext.Panel(
+			{
+				id : 'analysisJobsPanel',
+				title : 'Analysis Jobs',
+				region : 'center',
+				split : true,
+				height : 90,
+				layout : 'fit',
+				listeners :
+				{
+					activate : function(p) {
+						getJobsData(p)
+					}
+				},
+				collapsible : true
+			}
+		);
+
+
 		metacoreEnrichmentPanel = new Ext.Panel(
 				{
 					id : 'metacoreEnrichmentPanel',
@@ -880,6 +904,98 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
+		resultsTabPanel.add(analysisJobsPanel);
+
+        // add genome browser panel if the plugin is installed
+
+        // JBROWSE
+        // =======
+        Ext.Ajax.request ({
+            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
+            method: 'POST',
+            success: function (result) {
+                console.log('genomeBrowser is installed?',result.responseText);
+                if (result.responseText === 'true') {
+
+                    // load script
+                    Ext.Ajax.request ({
+                        url: pageInfo.basePath+"/JBrowse/loadScripts",
+                        method: 'POST',
+                        success: function (result) {
+                            var exp = result.responseText.evalJSON();
+                            if (exp.success && exp.files.length > 0)	{
+
+                                var filesArr = [];
+
+                                for (var i = 0; i < exp.files.length; i++) {
+                                    var file = exp.files[i];
+                                    filesArr.push(file.path);
+                                }
+
+                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
+
+                            }
+                        }
+                    });
+
+                }
+            },
+            params: {
+                pluginName: 'jbrowse-plugin'
+            }
+        });
+
+        // DALLIANCE
+        // =======
+        Ext.Ajax.request ({
+            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
+            method: 'POST',
+            success: function (result) {
+
+                console.log('dalliance-plugin is installed?', result.responseText);
+                var _this = this;
+
+                if (result.responseText === 'true') {
+
+                    // load script
+                    Ext.Ajax.request ({
+                        url: pageInfo.basePath+"/Dalliance/loadScripts",
+                        method: 'POST',
+                        success: function (result) {
+
+                            var resultJSON = JSON.parse(result.responseText);
+                            var filesArr = [];
+
+                            if (resultJSON.success && resultJSON.files.length > 0)	{
+                                for (var i = 0; i < resultJSON.files.length; i++) {
+
+                                    var aFile = resultJSON.files[i];
+                                    filesArr.push(aFile.path);
+                                }
+                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
+                            }
+                        },
+                        failure: function() {
+                            console.error("Cannot load plugin scripts for " + _this.pluginName);
+                        }
+                    });
+
+
+                }
+            },
+            params: {
+                pluginName: 'dalliance-plugin'
+            }
+        });
+
+        function startDalliance() {
+            loadDalliance(resultsTabPanel);
+        }
+
+        function startJbrowse() {
+            loadJBrowse(resultsPanel);
+        }
+
 		if (GLOBAL.metacoreAnalyticsEnabled) {
 			resultsTabPanel.add(metacoreEnrichmentPanel);
 		}
@@ -1259,7 +1375,7 @@ function createOntPanel()
 
 	// make the ontSerchByNamePanel
 	shtml='<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>\
-		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td<td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15"></input>&nbsp;</td>\
+		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td><td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15" />&nbsp;</td>\
 		<td><button onclick="searchByName()">Find</button></td></tr><tr><td colspan="2">Select Ontology:<select id="searchByNameSelectOntology"></select></td></tr></table>';
 
 		searchByNameForm = new Ext.Panel(
@@ -1330,7 +1446,7 @@ function createOntPanel()
 		}
 		ontFilterPanel = new Ext.Panel(
 				{
-					title : 'Search by Subject',
+					title : 'Search Terms',
 					id : 'ontFilterPanel',
 					region : 'center',
 					height : 500,
@@ -1752,7 +1868,7 @@ function setActiveTab(){
  * -"include": Across Trials is the only concept included
  * -"exclude": Across Trials concept is the only concept excluded 
  */
-function createTree(includeExcludeFlag, ontresponse){
+function createTree(includeExcludeFlag, ontresponse, treePanel){
 	// shorthand
 	var Tree = Ext.tree;
 
@@ -1764,6 +1880,8 @@ function createTree(includeExcludeFlag, ontresponse){
             qtip      : 'root'
         }
     );
+    treePanel.setRootNode(treeRoot);
+
 	for (var c = 0; c < ontresponse.length; c ++ )
 	{
 		var key = ontresponse[c].key;
@@ -1820,18 +1938,40 @@ function getSubCategories(id_in, title_in, ontresponse)
 	
 	var showFn;
 	
+    var ontTree = new Tree.TreePanel(
+        {
+            id : id_in,
+            title : title_in,
+            animate : false,
+            autoScroll : true,
+            loader : new Ext.ux.OntologyTreeLoader(
+                {
+                    dataUrl : 'none'
+                }
+            ),
+            enableDrag : true,
+            ddGroup : 'makeQuery',
+            containerScroll : true,
+            enableDrop : false,
+            region : 'center',
+            rootVisible : false,
+            expanded : true,
+            onShow : function() { showFn.apply(this, arguments); }
+        }
+    );
+	
 	if (id_in==='crossTrialsPanel'){
 		showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
 			//Ext.get('advancedbutton').dom.style.display='none';
 		}
-		treeRoot = createTree('include', ontresponse);
+		treeRoot = createTree('include', ontresponse, ontTree);
 	}else{
 		showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
 			//Ext.get('advancedbutton').dom.style.display='';
 		}
-		treeRoot = createTree('exclude', ontresponse);
+		treeRoot = createTree('exclude', ontresponse, ontTree);
 	}
 	
     var toolbar = new Ext.Toolbar([
@@ -1844,28 +1984,6 @@ function getSubCategories(id_in, title_in, ontresponse)
 		}
     ]);
 	
-	var ontTree = new Tree.TreePanel(
-			{
-				id : id_in,
-				title : title_in,
-				animate : false,
-				autoScroll : true,
-				loader : new Ext.ux.OntologyTreeLoader(
-						{
-							dataUrl : 'none'
-						}
-				),
-				enableDrag : true,
-				ddGroup : 'makeQuery',
-				containerScroll : true,
-				enableDrop : false,
-				region : 'center',
-				rootVisible : false,
-				expanded : true,
-				onShow : showFn
-			}
-	);
-
 	ontTree.on('startdrag', function(panel, node, event)
 			{
 		Ext.ux.ManagedIFrame.Manager.showShims()
@@ -3727,7 +3845,7 @@ function showNameQueryDialog()
 					           }
 					           ],
 					           resizable : false,
-					           html : '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50"></input>'
+					           html : '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50">'
 				}
 		);
 	}
@@ -4395,7 +4513,9 @@ function showHaploviewGeneSelection()
 }
 
 function genePatternLogin() {
-	document.getElementById("gplogin").src = pageInfo.basePath + '/analysis/gplogin';
+    element = document.getElementById("gplogin");
+	if(element)
+        element.src = pageInfo.basePath + '/analysis/gplogin';
 }
 
 function showWorkflowStatusWindow()

@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -120,9 +120,18 @@ public class I2b2DAO {
 		log.debug("Retrieving Clinical data : " + sqlQuery)
 		log.debug("Retrieving Clinical data : " + parameterList)
 
-		//Only pivot the data if the parameter specifies it.		if(parPivotData)		{
+		//Only pivot the data if the parameter specifies it.
+		if(parPivotData)
+		{
 			boolean mRNAExists =  retrievalTypeMRNAExists && null != filesDoneMap['MRNA.TXT'] && filesDoneMap['MRNA.TXT']
-			boolean snpExists =  retrievalTypeSNPExists && null != filesDoneMap['SNP.PED, .MAP & .CNV'] && filesDoneMap['SNP.PED, .MAP & .CNV']			pivotData(writeData(studyDir, fileName, jobName, retrievalTypes, snpFilesMap), mRNAExists, snpExists)		}		else		{			writeData(studyDir, fileName, jobName, retrievalTypes)		}	}
+			boolean snpExists =  retrievalTypeSNPExists && null != filesDoneMap['SNP.PED, .MAP & .CNV'] && filesDoneMap['SNP.PED, .MAP & .CNV']
+			pivotData(writeData(studyDir, fileName, jobName, retrievalTypes, snpFilesMap), mRNAExists, snpExists)
+		}
+		else
+		{
+			writeData(studyDir, fileName, jobName, retrievalTypes)
+		}
+	}
 
 	private String writeData(File studyDir, String fileName, String jobName, List retrievalTypes, Map snpFilesMap = null)
 	{

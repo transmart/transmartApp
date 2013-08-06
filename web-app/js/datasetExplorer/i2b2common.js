@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -1416,13 +1416,12 @@ function showCompareStepPathwaySelection()
                 title: 'Compare Subsets-Pathway Selection',
             	layout:'fit',
                 width:450,
-                // height:250,
                 autoHeight: true,
                 closable: false,
                 plain: true,
                 modal: true,
                 border:false,
-                //autoScroll: true,
+                y:100,
                 buttons: [
                 		{
                             id: 'compareStepPathwaySelectionOKButton',

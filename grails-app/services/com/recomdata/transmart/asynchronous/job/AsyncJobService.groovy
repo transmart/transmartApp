@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -75,6 +75,7 @@ class AsyncJobService {
 			m["startDate"] = jobResult.lastRunOn
 			m["viewerURL"] = jobResult.viewerURL
 			m["altViewerURL"] = jobResult.altViewerURL
+			m["jobInputsJson"] = new JSONObject(jobResult.jobInputsJson ?: "{}")
 			rows.put(m)
 		}
 		
@@ -83,6 +84,46 @@ class AsyncJobService {
 		result.put("jobs", rows)
 		
 		return result
+	}
+	
+	/**
+	 * get job info by job name
+	 * @param jobName
+	 * @return
+	 */
+	def getjobbyname(jobName = '') {
+
+		JSONObject result = new JSONObject()
+		JSONArray rows = new JSONArray()
+		def jobResults = null
+
+		def c = AsyncJob.createCriteria()
+
+		if (StringUtils.isNotEmpty(jobName)) {
+			jobResults = c {
+				like("jobName", "%${jobName}%")
+			}
+		}
+
+		def m = [:]
+		for (jobResult in jobResults)	{
+			m = [:]
+			m["name"] = jobResult.jobName
+			m["status"] = jobResult.jobStatus
+			m["runTime"] = jobResult.runTime
+			m["startDate"] = jobResult.lastRunOn
+			m["viewerURL"] = jobResult.viewerURL
+			m["altViewerURL"] = jobResult.altViewerURL
+			m["jobInputsJson"] = new JSONObject(jobResult.jobInputsJson ?: "{}")
+			rows.put(m)
+		}
+
+		result.put("success", true)
+		result.put("totalCount", jobResults.size())
+		result.put("jobs", rows)
+
+		return result
+
 	}
 	
 	/**
@@ -99,23 +140,25 @@ class AsyncJobService {
 	* Method that will create the new asynchronous job name
 	* Current methodology is username-jobtype-ID from sequence generator
 	*/
-	def createnewjob(jobName = null, jobType = null) {
+	def createnewjob(params) {
 		def userName = springSecurityService.getPrincipal().username
 		def jobStatus = "Started"
 		
 		def newJob = new AsyncJob(lastRunOn:new Date())
 		newJob.save()
 		
+		def jobName = params?.jobName
 		if (StringUtils.isEmpty(jobName)) {
 			def jobNameBuf = new StringBuffer(userName)
 			jobNameBuf.append('-')
-			if (StringUtils.isNotEmpty(jobType)) jobNameBuf.append(jobType)
+			if (StringUtils.isNotEmpty(params.jobType)) jobNameBuf.append(params.jobType)
 			jobNameBuf.append('-').append(newJob.id)
 			jobName = jobNameBuf.toString()
 		}
 		newJob.jobName = jobName 
-		newJob.jobType = jobType
+		newJob.jobType = params?.jobType
 		newJob.jobStatus = jobStatus
+		newJob.jobInputsJson = new JSONObject(params).toString()
 		newJob.save()
 		
 		jobResultsService[jobName] = [:]

@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -27,9 +27,17 @@
  * - dataSource location set path by system environment variable '<APP_NAME>_DATASOURCE_LOCATION'
  */
 
-import grails.plugins.springsecurity.SecurityConfigType
 
 grails.plugins.springsecurity.successHandler.defaultTargetUrl = "/transmart"
+
+//grails.plugins.springsecurity.rejectIfNoRule = true
+grails.plugins.springsecurity.securityConfigType = SecurityConfigType.InterceptUrlMap
+grails.plugins.springsecurity.interceptUrlMap = [
+        '/js/**':        ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/css/**':       ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/images/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/static/**':    ['IS_AUTHENTICATED_ANONYMOUSLY']
+]
 
 grails.config.locations = []
 def defaultConfigFiles = [
@@ -142,6 +150,13 @@ com.recomdata.transmart.data.export.dataTypesMap=[
 	//,'GSEA':'Gene Set Enrichment Analysis (GSEA)'
 ];
 
+// Data export FTP settings is Rserve running remote in relation to transmartApp
+com.recomdata.transmart.data.export.ftp.server=''
+com.recomdata.transmart.data.export.ftp.serverport=''
+com.recomdata.transmart.data.export.ftp.username=''
+com.recomdata.transmart.data.export.ftp.password=''
+com.recomdata.transmart.data.export.ftp.remote.path=''
+
 // Control which gene/pathway search is used in Dataset Explorer
 // A value of "native" forces Dataset Explorer's native algorithm.
 // Abscence of this property or any other value forces the use of the Search Algorithm
@@ -165,10 +180,10 @@ com.recomdata.analysis.genepattern.file.dir = "data"; // Relative to the app roo
 
 com.recomdata.analysis.data.file.dir = "data"; // Relative to the app root "web-app"
 
-// Disclaimer
-StringBuilder disclaimer = new StringBuilder()
-disclaimer.append("<p></p>")
-com.recomdata.disclaimer=disclaimer.toString()
+//StringBuilder disclaimer = new StringBuilder()
+//disclaimer.append("<p></p>")
+//com.recomdata.disclaimer=disclaimer.toString()
+
 
 // customization views
 //com.recomdata.view.studyview='_clinicaltrialdetail'

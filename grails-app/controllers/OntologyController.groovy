@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -211,6 +211,12 @@ class OntologyController {
 		//def testtag=new i2b2.OntNodeTag(tag:'test', tagtype:'testtype');
 		//node.addToTags(testtag);
 		//node.save();
+        if (node == null)
+        {
+            render(template:'showDefinition', model:[tags:[]])
+            return
+        }
+
 		def trial=node.tags.find{ w -> w.tagtype =="Trial" }
 		if(trial!=null)
 		{

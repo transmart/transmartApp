@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -214,12 +214,12 @@ class GenePatternService implements Job {
 	 * @return the job result from the GenePattern server
 	 */
 	private JobResult runJobNoWF(String userName, Parameter[] parameters, String analysisType) throws WebServiceException {
-		GPClient gpClient = getGPClient(userName)				
-		if (log.isDebugEnabled())	{
-			log.debug("Sending ${analysisType} job to ${gpClient.getServer()}")
-			log.debug("As user ${gpClient.getUsername()} with parameters: ")
+		GPClient gpClient = getGPClient(userName)
+		if (log.isInfoEnabled()) {
+			log.info("Sending ${analysisType} job to ${gpClient.getServer()}")
+			log.info("As user ${gpClient.getUsername()} with parameters: ")
 			for (parameter in parameters)	{
-				log.debug("\t${parameter}")
+				log.info("\t Name:${parameter.getName()}\t Value:${parameter.getValue()}\n")
 			}
 		}
 				
@@ -435,7 +435,7 @@ class GenePatternService implements Job {
 		impParameters[3] = colMax;
 
 		updateStatus(jobName, "Imputing Missing Value KNN")
-		JobResult    imputedMissing   = runJobNoWF(userName, impParameters, "ImputeMissingValuesKNN")
+		JobResult    imputedMissing   = runJobNoWF(userName, impParameters, "ImputeMissingValues.KNN")
 		
 		Parameter    inputFilename     = new Parameter("input.file", getGenePatternRealURLBehindProxy(imputedMissing.getURL("gct").toString()));
 		Parameter    clsFilename       = new Parameter("cls.file", clsFile);
@@ -635,7 +635,7 @@ class GenePatternService implements Job {
 	   impParameters[2] = rowMax;
 	   impParameters[3] = colMax;
 
-	   JobResult    imputedMissing   = runJob(impParameters, "ImputeMissingValuesKNN")
+	   JobResult    imputedMissing   = runJob(impParameters, "ImputeMissingValues.KNN")
 	   
 	   Parameter    inputFilename     = new Parameter("input.file", getGenePatternRealURLBehindProxy(imputedMissing.getURL("gct").toString()));
 	   Parameter    clsFilename       = new Parameter("cls.file", clsFile);
@@ -1082,9 +1082,9 @@ public String survivalAnalysis(String userName, String jobName, File dataFile, F
 			log.debug("GPClient is already initialized for ${userName}, returning existing client")
 			return gpClient
 		}		
-		log.debug("Starting GPClient at ${gpURL} as ${userName}")	
+		log.info("Starting GPClient at ${gpURL} as ${userName}")		
 		gpClient = new GPClient(gpURL, userName)
-		log.debug("GPClient has been initialized")
+		log.info("GPClient has been initialized")
 		return gpClient
 	}
 	

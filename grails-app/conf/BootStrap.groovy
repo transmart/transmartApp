@@ -12,28 +12,32 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
- 
-import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 class BootStrap {
 	
-	def concurrentSessionController
 	def securityContextPersistenceFilter
 
+    def grailsApplication
+
 	def init = { servletContext ->
-		def ctx =  servletContext.getAttribute(ApplicationAttributes.APPLICATION_CONTEXT)
-		def dataSource = ctx.dataSource
-		
 		securityContextPersistenceFilter.forceEagerSessionCreation = true
 		
 		SpringSecurityUtils.clientRegisterFilter('concurrentSessionFilter', SecurityFilterPosition.CONCURRENT_SESSION_FILTER)
+
+        if (grailsApplication.config.org.transmart.security.samlEnabled) {
+            SpringSecurityUtils.clientRegisterFilter(
+                    'metadataGeneratorFilter', SecurityFilterPosition.FIRST)
+            SpringSecurityUtils.clientRegisterFilter(
+                    'samlFilter', SecurityFilterPosition.BASIC_AUTH_FILTER)
+        }
     }
+
     def destroy = {
     }
 }

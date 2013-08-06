@@ -12,20 +12,22 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<!DOCTYPE html>
 <html>
 	<head>
+	    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="shortctu icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">
-		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/ext-all.css')}"></link>
-		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"></link>
-		<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
+		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/ext-all.css')}"/>
+		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"/>
+		      <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"/>
+        <link rel="stylesheet" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}"/>
 		
 	<!--[if IE 7]>
 		<style type="text/css">
@@ -35,14 +37,19 @@
 		</style>
 	<![endif]-->
 	
-		<!--<g:javascript library="prototype" />-->
+
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+	    <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
+        <script>jQuery.noConflict();</script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui.min.js')}"></script>        
 		<script type="text/javascript" charset="utf-8">
+            //Comment for test CI #2
+
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
 			// set ajax to 90*1000 milliseconds
@@ -83,7 +90,6 @@
 				        }
 					}
 				});
-
 
 				var combo = new Ext.app.SearchComboBox({
 					id: "search-combobox",
@@ -157,7 +163,6 @@
 	<body>
 		<div id="header-div">
 			<g:render template="/layouts/commonheader" model="['app':'search']" />
-			<g:render template="/layouts/searchheader" model="['app':'search']" />
+			<g:render template="/layouts/initialsearchheader" model="['app':'search']" />
 		</div>
 	</body>
-</html>

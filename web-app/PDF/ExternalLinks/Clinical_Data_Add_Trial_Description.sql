@@ -1,4 +1,4 @@
---	Adds the data displayed when the trial name is right-clicked in Dataset Explorer.  Also adds the tags for the Dataset Explorer Search by Subject.
+--	Adds the data displayed when the trial name is right-clicked in Dataset Explorer.  Also adds the tags for the Dataset Explorer Search Terms.
 --	source of data is ClinicalTrialMetaData spreadsheet.  Latest version is ClinicalTrialMetaData_09232009.xls
 
 insert into biomart.bio_experiment

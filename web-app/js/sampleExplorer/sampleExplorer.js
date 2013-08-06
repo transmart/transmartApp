@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -189,12 +189,18 @@ function loadDataSetGrid()
 	var dataStoreReader = new Ext.data.JsonReader({
 		root: 'results',
 		fields: [
-		{name: 'DataSet', mapping: 'DataSet'},
 		{name: 'Pathology', mapping: 'Pathology'},
 		{name: 'Race', mapping: 'Race'},
 		{name: 'Tissue', mapping: 'Tissue'},
 		{name: 'Gender', mapping: 'Gender'},
+		{name: 'DataSet', mapping: 'DataSet'},
+		{name: 'DataType', mapping: 'DataType'},
+		{name: 'Source_Organism', mapping: 'Source_Organism'},
+		{name: 'Sample_Treatment', mapping: 'Sample_Treatment'},
+		{name: 'Subject_Treatment', mapping: 'Subject_Treatment'},
+		{name: 'BioBank', mapping: 'BioBank'},
 		{name: 'Biomarker', mapping: 'Biomarker'},
+		{name: 'Timepoint', mapping: 'Timepoint'},
 		{name: 'count', mapping: 'count'}
 		]
 		});
@@ -210,9 +216,15 @@ function loadDataSetGrid()
         },
         columns: [
             {header: 'DataSet',			renderer: renderDSELink, sortable: true, dataIndex: 'DataSet', width: 10},
+            {header: 'DataType',		sortable: true, dataIndex: 'DataType', width: 15},
             {header: 'Pathology',		sortable: true, dataIndex: 'Pathology', width: 15},
             {header: 'Race',			sortable: true, dataIndex: 'Race', width: 15},
             {header: 'Tissue',			sortable: true, dataIndex: 'Tissue', width: 12},
+            {header: 'Source Organism',	sortable: true, dataIndex: 'Source_Organism', width: 10},
+            {header: 'Sample Treatment',		sortable: true, dataIndex: 'Sample_Treatment', width: 14},
+            {header: 'Subject Treatment',		sortable: true, dataIndex: 'Subject_Treatment', width: 14},
+            {header: 'Timepoint',		sortable: true, dataIndex: 'Timepoint', hidden:true},
+            {header: 'Samples',			sortable: true, dataIndex: 'count', width: 7,renderer: renderSampleLink},
             {header: 'Gender',			sortable: true, dataIndex: 'Gender', width: 10},
             {header: 'Biomarker',		sortable: true, dataIndex: 'Biomarker', width: 14}
         ]
@@ -300,7 +312,7 @@ function renderDSELink(val)
 //This renderer draws a checkbox.
 function renderIncludeCheckBox(val)
 {
-	return '<input type="checkbox" onClick="modifyDataList();"></input>';
+	return '<input type="checkbox" onClick="modifyDataList();">';
 }
 
 //When we remove or add a column from the grid panel we need to re-query Solr to get the results with or without this column.
@@ -398,6 +410,12 @@ function addSubset(panelNumber)
 		{name: 'Race', mapping: 'Race'},
 		{name: 'Tissue', mapping: 'Tissue'},
 		{name: 'Gender', mapping: 'Gender'},
+		{name: 'DataSet', mapping: 'DataSet'},
+		{name: 'DataType', mapping: 'DataType'},
+		{name: 'Source_Organism', mapping: 'Source_Organism'},
+		{name: 'Sample_Treatment', mapping: 'Sample_Treatment'},
+		{name: 'Subject_Treatment', mapping: 'Subject_Treatment'},
+		{name: 'BioBank', mapping: 'BioBank'},
 		{name: 'Biomarker', mapping: 'Biomarker'},
 		{name: 'count', mapping: 'count'}
 		]
@@ -410,9 +428,14 @@ function addSubset(panelNumber)
         },
         columns: [
           {header: 'DataSet',			renderer: renderDSELink, sortable: true, dataIndex: 'DataSet', width: 10},
+          {header: 'DataType',			sortable: true, dataIndex: 'DataType', width: 15},
           {header: 'Pathology',		sortable: true, dataIndex: 'Pathology', width: 15},
           {header: 'Race',			sortable: true, dataIndex: 'Race', width: 15},
           {header: 'Tissue',			sortable: true, dataIndex: 'Tissue', width: 12},
+          {header: 'Source Organism',		sortable: true, dataIndex: 'Source_Organism', width: 10},
+          {header: 'Sample Treatment',	sortable: true, dataIndex: 'Sample_Treatment', width: 14},
+          {header: 'Subject Treatment',	sortable: true, dataIndex: 'Subject_Treatment', width: 14},
+          {header: 'Samples',				sortable: true, dataIndex: 'count', width: 7},
           {header: 'Gender',			sortable: true, dataIndex: 'Gender', width: 10},
           {header: 'Biomarker',		sortable: true, dataIndex: 'Biomarker', width: 14}
         ]
@@ -445,6 +468,10 @@ function addSubset(panelNumber)
 			{name: 'Race', mapping: 'Race'},
 			{name: 'Tissue', mapping: 'Tissue'},
 			{name: 'Gender', mapping: 'Gender'},
+			{name: 'DataType', mapping: 'DataType'},
+			{name: 'Source_Organism', mapping: 'Source_Organism'},
+			{name: 'Sample_Treatment', mapping: 'Sample_Treatment'},
+			{name: 'Subject_Treatment', mapping: 'Subject_Treatment'},
 			{name: 'Biomarker', mapping: 'Biomarker'},
 			{name: 'count', mapping: 'count'}
 		]

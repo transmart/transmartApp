@@ -12,14 +12,13 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
   
 
 package com.recomdata.transmart.domain.i2b2
-import java.util.Date;
 
 class AsyncJob {
 	String jobName
@@ -30,6 +29,7 @@ class AsyncJob {
 	String altViewerURL
 	String results
 	String jobType
+	String jobInputsJson
 	
 	static mapping = {
 		table 'I2B2DEMODATA.ASYNC_JOB'
@@ -42,6 +42,7 @@ class AsyncJob {
 		altViewerURL column:'ALT_VIEWER_URL'
 		results column:'JOB_RESULTS'
 		jobType column:'JOB_TYPE'
+		jobInputsJson column:'JOB_INPUTS_JSON'
 	}
 	
 	static constraints = {
@@ -52,5 +53,6 @@ class AsyncJob {
 		altViewerURL(nullable:true)		
 		results(nullable:true)
 		jobType(nullable:true)
+		jobInputsJson(nullable:true)
 	}
 }

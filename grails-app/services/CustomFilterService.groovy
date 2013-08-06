@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -30,19 +30,19 @@ class CustomFilterService{
 
 	def queryCustomFilters(searchUserId) {
 		
-		return search.CustomFilter.findAllBySearchUserId(Long.valueOf(searchUserId))
+		return org.transmart.searchapp.CustomFilter.findAllBySearchUserId(Long.valueOf(searchUserId))
 		
 	}
 	
 	def queryCustomFilter(id) {
 		
-		return search.CustomFilter.findAllById(Long.valueOf(id))
+		return org.transmart.searchapp.CustomFilter.findAllById(Long.valueOf(id))
 		
 	}
 	
 	def saveCustomFilter(customFilter) {
-		
-		search.CustomFilter.save();
+
+        org.transmart.searchapp.CustomFilter.save();
 		
 	}
 	

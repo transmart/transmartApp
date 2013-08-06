@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -55,7 +55,7 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 	String normMethodOther
 	ConceptCode analysisMethodConceptCode
 	String analysisMethodOther
-	boolean multipleTestingCorrection
+    boolean multipleTestingCorrection = false
 	ConceptCode pValueCutoffConceptCode
 	String uniqueId
 	Date dateCreated
@@ -167,12 +167,12 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		pmIds(nullable:true, maxSize:255)
 		speciesMouseSrcConceptCode(nullable:true)
 		speciesMouseDetail(nullable:true, maxSize:255)
+		techPlatform(nullable:true)
 		tissueTypeConceptCode(nullable:true)
 		experimentTypeConceptCode(nullable:true)
 		experimentTypeCellLine(nullable:true)
 		experimentTypeInVivoDescr(nullable:true, maxSize:255)
 		experimentTypeATCCRef(nullable:true, maxSize:255)
-		multipleTestingCorrection(nullable:true)
 	}
 
 	/**
@@ -233,42 +233,42 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		params.put("description",description)
 		params.put("uploadFile",uploadFile)
 		params.put("fileSchema.id",fileSchema?.id)
-		params.put("foldChgMetricConceptCode.id",foldChgMetricConceptCode?.id)
-		params.put("analyticCatConceptCode.id",analyticCatConceptCode?.id)
+		if (foldChgMetricConceptCode?.id) params.put("foldChgMetricConceptCode.id",foldChgMetricConceptCode?.id)
+		if (analyticCatConceptCode?.id) params.put("analyticCatConceptCode.id",analyticCatConceptCode?.id)
 		params.put("analyticCatOther",analyticCatOther)
 		params.put("techPlatform.id",techPlatform?.id)
 		params.put("analystName",analystName)
-		params.put("normMethodConceptCode.id",normMethodConceptCode?.id)
+		if (normMethodConceptCode?.id) params.put("normMethodConceptCode.id",normMethodConceptCode?.id)
 		params.put("normMethodOther",normMethodOther)
-		params.put("analysisMethodConceptCode.id",analysisMethodConceptCode?.id)
+		if (analysisMethodConceptCode?.id) params.put("analysisMethodConceptCode.id",analysisMethodConceptCode?.id)
 		params.put("analysisMethodOther",analysisMethodOther)
 		params.put("multipleTestingCorrection",multipleTestingCorrection)
-		params.put("pValueCutoffConceptCode.id",pValueCutoffConceptCode?.id)
+		if (pValueCutoffConceptCode?.id) params.put("pValueCutoffConceptCode.id",pValueCutoffConceptCode?.id)
 		params.put("uniqueId",uniqueId)
 		params.put("publicFlag",publicFlag)
 		params.put("deletedFlag",deletedFlag)
 		//params.put("parentGeneSignature.id",parentGeneSignature?.id)
-		params.put("sourceConceptCode.id",sourceConceptCode?.id)
+		if (sourceConceptCode?.id) params.put("sourceConceptCode.id",sourceConceptCode?.id)
 		params.put("sourceOther",sourceOther)
-		params.put("ownerConceptCode.id",ownerConceptCode?.id)
+		if (ownerConceptCode?.id) params.put("ownerConceptCode.id",ownerConceptCode?.id)
 		params.put("stimulusDescription",stimulusDescription)
 		params.put("stimulusDosing",stimulusDosing)
 		params.put("treatmentDescription",treatmentDescription)
 		params.put("treatmentDosing",treatmentDosing)
-		params.put("treatmentCompound.id",treatmentCompound?.id)
+		if (treatmentCompound?.id) params.put("treatmentCompound.id",treatmentCompound?.id)
 		params.put("treatmentProtocolNumber",treatmentProtocolNumber)
 		params.put("pmIds",pmIds)
-		params.put("speciesConceptCode.id",speciesConceptCode?.id)
-		params.put("speciesMouseSrcConceptCode.id",speciesMouseSrcConceptCode?.id)
+		if (speciesConceptCode?.id) params.put("speciesConceptCode.id",speciesConceptCode?.id)
+		if (speciesMouseSrcConceptCode?.id) params.put("speciesMouseSrcConceptCode.id",speciesMouseSrcConceptCode?.id)
 		params.put("speciesMouseDetail",speciesMouseDetail)
-		params.put("tissueTypeConceptCode.id",tissueTypeConceptCode?.id)
-		params.put("experimentTypeConceptCode.id",experimentTypeConceptCode?.id)
-		params.put("experimentTypeCellLine.id",experimentTypeCellLine?.id)
+		if (tissueTypeConceptCode?.id) params.put("tissueTypeConceptCode.id",tissueTypeConceptCode?.id)
+		if (experimentTypeConceptCode?.id) params.put("experimentTypeConceptCode.id",experimentTypeConceptCode?.id)
+		if (experimentTypeCellLine?.id) params.put("experimentTypeCellLine.id",experimentTypeCellLine?.id)
 		params.put("experimentTypeInVivoDescr",experimentTypeInVivoDescr)
 		params.put("experimentTypeATCCRef",experimentTypeATCCRef)
-		params.put("createdByAuthUser.id",createdByAuthUser?.id)
+		if (createdByAuthUser?.id) params.put("createdByAuthUser.id",createdByAuthUser?.id)
 		params.put("dateCreated",dateCreated)
-		params.put("modifiedByAuthUser.id",modifiedByAuthUser?.id)
+		if (modifiedByAuthUser?.id) params.put("modifiedByAuthUser.id",modifiedByAuthUser?.id)
 		params.put("lastUpdated",lastUpdated)
 		params.put("versionNumber",versionNumber)
 		return params;

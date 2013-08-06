@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -29,6 +29,11 @@
 
 <!--  wait image for gene selections -->
 <g:waitIndicator divId="expr_profile_main_loading_div" />
+<!--  if no expression profile results, render noResult -->
+<g:if test="${epr==null || epr.profCount==0 }">
+    <g:render template="/search/noResult" />
+</g:if>
+<g:else>
 <div id="expr_profile_main_div" style="display: block;" class="body">
 <table>
 
@@ -101,5 +106,6 @@
 	</tr>
 </table>
 </div>
+</g:else>
 </body>
 </html>

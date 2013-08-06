@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -30,8 +30,8 @@
     <div class="body">
         <g:form name="form">
         <table style="width:500px"><tr><td>
-        Start Date<input id="startdate" name="startdate" type="text" value="${startdate}"></input></td>
-		<td>End Date<input id="enddate" name="enddate" type="text" value="${enddate}"></input></td>
+        Start Date<input id="startdate" name="startdate" type="text" value="${startdate}"></td>
+		<td>End Date<input id="enddate" name="enddate" type="text" value="${enddate}"></td>
 		<td><br><g:actionSubmit class="filter" value="Filter" action="list" />&nbsp&nbsp&nbsp&nbsp<g:actionSubmit class="filter" value="Export to Excel" action="export" />
         </td></tr></table>
         </g:form>

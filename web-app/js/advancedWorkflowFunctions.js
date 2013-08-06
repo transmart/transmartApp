@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -164,7 +164,8 @@ function validateHeatMapsSample(completedFunction)
 function validateheatmapComplete(result,completedFunction)
 {
 	//Get the JSON string we got from the server into a real JSON object.
-	var mobj=result.responseText.evalJSON();
+	// var mobj=result.responseText.evalJSON();
+	var mobj=jQuery.parseJSON(result.responseText);
 	
 	//If we failed to retrieve any test from the heatmap server call, we alert the user here. Otherwise, show the popup.
 	if(mobj.NoData && mobj.NoData == "true")
@@ -331,20 +332,16 @@ function finalAdvancedMenuValidation()
 
 
 
-function runVisualizerFromSpan(viewerURL, altviewerURL) {
+function runVisualizerFromSpan(viewerURL, altviewerURL) {	
 	//genePatternLogin();
-
-	//genePatternReplacement();
 	Ext.Ajax.request(
 	{
 		url: viewerURL,
 		method: 'GET',
 		success: function(result, request){
-			//Ext.MessageBox.hide();
 			runAppletFromSpan(result, 'visualizerSpan0');
 		},
 		failure: function(result, request){
-			//Ext.MessageBox.hide();
 			alert('Failed in getting the content of ' + viewerURL);
 		},
 		timeout: '1800000'
@@ -352,8 +349,7 @@ function runVisualizerFromSpan(viewerURL, altviewerURL) {
 
 	if (altviewerURL == undefined || altviewerURL == "") {
 		return;
-	}
-	
+	}	
 	Ext.Ajax.request(
 	{
 		url: altviewerURL,

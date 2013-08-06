@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -36,7 +36,9 @@ import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.core.userdetails.UserDetails
-import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AccessLog
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Login Controller
@@ -102,15 +104,23 @@ class LoginController {
 		boolean isLoggedIn = false;
 		try {
 			isLoggedin = springSecurityService.isLoggedIn()
-		} catch (Throwable ignore){}
+		} catch (Throwable ignore) {}
 		
 		if (isLoggedIn) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
-			render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
+            render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
 		}
 	}
-		
+
+	/**
+	 * The redirect action for Ajax requests.
+	 */
+	def authAjax = {
+		response.setHeader 'Location', SpringSecurityUtils.securityConfig.auth.ajaxLoginFormUrl
+		response.sendError HttpServletResponse.SC_UNAUTHORIZED
+	}
+
 	/**
 	 * Show denied page.
 	 */

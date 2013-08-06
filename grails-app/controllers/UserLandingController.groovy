@@ -14,7 +14,7 @@ import org.transmart.searchapp.AccessLog;
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -34,26 +34,47 @@ class UserLandingController {
 	 */
     def springSecurityService
 	
+    private Object getUsername() {
+        if (!springSecurityService.principal?.metaClass.hasProperty('username')) {
+            log.error("The security principal is not the expected type of " +
+                    "object. This likely means your transmart installation is " +
+                    "not properly configured. Make sure your that:\n" +
+                    "1) Config.groovy is being read, 2) has no synctatic errors," +
+                    "3) check the value of " +
+                    "grails.plugins.springsecurity.userLookup.userDomainClassName, " +
+                    "4) make sure search_app.search_auth_user contains the " +
+                    "auto-login user (default: 'guest') and that 5) the " +
+                    "search_path setting of biomart_user is correct")
+        }
+
+        springSecurityService.getPrincipal().username
+    }
+
 	   def index = {
-            new AccessLog(username: springSecurityService.getPrincipal().username, event:"Login",
+        new AccessLog(username:     username,
+                      event:        "Login",
                   eventmessage: request.getHeader("user-agent"),
-                  accesstime:new Date()).save()
+                      accesstime:   new Date()).save()
                   def skip_disclaimer = grailsApplication.config.com.recomdata?.skipdisclaimer?:false;
-                  if(skip_disclaimer){
+        if (skip_disclaimer) {
                         redirect(uri:'/search');     
-                  }else{
+        } else {
                   redirect(uri: '/userLanding/disclaimer.gsp')
                   }
       }
 	def agree = {
-		new AccessLog(username: springSecurityService.getPrincipal().username, event:"Disclaimer accepted",
+        new AccessLog(username: username, event:"Disclaimer accepted",
 			accesstime:new Date()).save()				
 		redirect(uri: '/search')
 	}
 	
 	def disagree = {
-		new AccessLog(username: springSecurityService.getPrincipal().username, event:"Disclaimer not accepted",			
+        new AccessLog(username: username, event:"Disclaimer not accepted",
 			accesstime:new Date()).save()
 	    redirect(uri: '/logout')
 	}
+
+    def checkHeartBeat = {
+        render(text:"OK")
+    }
 }
