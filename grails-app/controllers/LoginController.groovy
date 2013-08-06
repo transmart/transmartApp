@@ -36,7 +36,9 @@ import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.core.userdetails.UserDetails
-import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AccessLog
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Login Controller
@@ -110,7 +112,15 @@ class LoginController {
             render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
 		}
 	}
-		
+
+	/**
+	 * The redirect action for Ajax requests.
+	 */
+	def authAjax = {
+		response.setHeader 'Location', SpringSecurityUtils.securityConfig.auth.ajaxLoginFormUrl
+		response.sendError HttpServletResponse.SC_UNAUTHORIZED
+	}
+
 	/**
 	 * Show denied page.
 	 */

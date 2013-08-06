@@ -20,16 +20,10 @@
 
 package com.recomdata.transmart.asynchronous.job
 
+import com.recomdata.genepattern.JobStatus
+import com.recomdata.genepattern.WorkflowStatus
 import grails.converters.JSON
-import groovy.time.*
-
-import org.apache.commons.lang.StringUtils;
-import org.json.*
-
-import com.recomdata.transmart.domain.i2b2.AsyncJob
-
-import com.recomdata.genepattern.WorkflowStatus;
-import com.recomdata.genepattern.JobStatus;
+import org.json.JSONObject;
 
 class AsyncJobController {
 	def quartzScheduler
@@ -53,6 +47,19 @@ class AsyncJobController {
 	}
 
 	/**
+     * get job stats by name
+     */
+    def getjobbyname = {
+
+		println(params.jobName)
+
+		def result = asyncJobService.getjobbyname(params.jobName)
+
+		response.setContentType("text/json")
+		response.outputStream << result?.toString()
+	}
+
+	/**
 	 * Called to retrieve the job results (HTML) stored in the JOB_RESULTS field for Haploview and Survival Analysis
 	 */
 	def getjobresults = {
@@ -62,7 +69,7 @@ class AsyncJobController {
 	}
 
 	def createnewjob = {
-		def result = asyncJobService.createnewjob(params.jobName, params.jobType)
+		def result = asyncJobService.createnewjob(params)
 
 		response.setContentType("text/json")
 		response.outputStream << result?.toString()

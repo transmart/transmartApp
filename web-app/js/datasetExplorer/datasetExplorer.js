@@ -836,7 +836,30 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
-		
+
+		/**
+		 * panel to display list of jobs belong to a user
+		 * @type {Ext.Panel}
+		 */
+		analysisJobsPanel = new Ext.Panel(
+			{
+				id : 'analysisJobsPanel',
+				title : 'Analysis Jobs',
+				region : 'center',
+				split : true,
+				height : 90,
+				layout : 'fit',
+				listeners :
+				{
+					activate : function(p) {
+						getJobsData(p)
+					}
+				},
+				collapsible : true
+			}
+		);
+
+
 		metacoreEnrichmentPanel = new Ext.Panel(
 				{
 					id : 'metacoreEnrichmentPanel',
@@ -881,6 +904,98 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
+		resultsTabPanel.add(analysisJobsPanel);
+
+        // add genome browser panel if the plugin is installed
+
+        // JBROWSE
+        // =======
+        Ext.Ajax.request ({
+            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
+            method: 'POST',
+            success: function (result) {
+                console.log('genomeBrowser is installed?',result.responseText);
+                if (result.responseText === 'true') {
+
+                    // load script
+                    Ext.Ajax.request ({
+                        url: pageInfo.basePath+"/JBrowse/loadScripts",
+                        method: 'POST',
+                        success: function (result) {
+                            var exp = result.responseText.evalJSON();
+                            if (exp.success && exp.files.length > 0)	{
+
+                                var filesArr = [];
+
+                                for (var i = 0; i < exp.files.length; i++) {
+                                    var file = exp.files[i];
+                                    filesArr.push(file.path);
+                                }
+
+                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
+
+                            }
+                        }
+                    });
+
+                }
+            },
+            params: {
+                pluginName: 'jbrowse-plugin'
+            }
+        });
+
+        // DALLIANCE
+        // =======
+        Ext.Ajax.request ({
+            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
+            method: 'POST',
+            success: function (result) {
+
+                console.log('dalliance-plugin is installed?', result.responseText);
+                var _this = this;
+
+                if (result.responseText === 'true') {
+
+                    // load script
+                    Ext.Ajax.request ({
+                        url: pageInfo.basePath+"/Dalliance/loadScripts",
+                        method: 'POST',
+                        success: function (result) {
+
+                            var resultJSON = JSON.parse(result.responseText);
+                            var filesArr = [];
+
+                            if (resultJSON.success && resultJSON.files.length > 0)	{
+                                for (var i = 0; i < resultJSON.files.length; i++) {
+
+                                    var aFile = resultJSON.files[i];
+                                    filesArr.push(aFile.path);
+                                }
+                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
+                            }
+                        },
+                        failure: function() {
+                            console.error("Cannot load plugin scripts for " + _this.pluginName);
+                        }
+                    });
+
+
+                }
+            },
+            params: {
+                pluginName: 'dalliance-plugin'
+            }
+        });
+
+        function startDalliance() {
+            loadDalliance(resultsTabPanel);
+        }
+
+        function startJbrowse() {
+            loadJBrowse(resultsPanel);
+        }
+
 		if (GLOBAL.metacoreAnalyticsEnabled) {
 			resultsTabPanel.add(metacoreEnrichmentPanel);
 		}

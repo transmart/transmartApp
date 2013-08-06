@@ -21,7 +21,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 <title>Dataset Explorer</title>
 
@@ -34,8 +33,7 @@
 
 <%-- We do not have a central template, so this only works in the database explorer for now --%>
 <g:if test="${grailsApplication.config.com.recomdata.debug.jsCallbacks == 'true'}">
-    <script type="text/javascript"
-            src="${resource(dir:'js', file: 'long-stack-traces.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'long-stack-traces.js')}"></script>
 </g:if>
 
 <!-- Include Ext and app-specific scripts: -->
@@ -48,7 +46,7 @@
 <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
-
+	
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
@@ -87,6 +85,8 @@
 	
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 	
+    <script type="text/javascript" src="${resource(dir:'js/utils', file:'json2.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/utils', file:'dynamicLoad.js')}"></script>
 
  
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
@@ -101,7 +101,7 @@
 	<script type="text/javascript" src="${resource(dir:'js/raphael', file:'raphael-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
-
+		
 </head>
 
 <body>
@@ -201,8 +201,8 @@
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
 	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled}">
-        <IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
-        <IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
+	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
+	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
 	</g:if>
 		
 	<span id="visualizerSpan0"></span> <!-- place applet tag here -->
