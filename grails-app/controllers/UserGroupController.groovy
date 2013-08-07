@@ -221,7 +221,7 @@ def removeUserFromGroups =
                     	render(template:'addremove',model:[userGroupInstance:userGroupInstance, usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext) ])
                 }
                 else {
-                	render(template:'addremove',model:[userGroupInstance:userGroupInstance, , usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext) ])
+                	render(template:'addremove',model:[userGroupInstance:userGroupInstance, usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext) ])
                 }
             }
             else {
@@ -258,7 +258,7 @@ def removeUserFromGroups =
                     	render(template:'addremove',model:[userGroupInstance:userGroupInstance, usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext) ])
                 }
                 else {
-                	render(template:'addremove',model:[userGroupInstance:userGroupInstance, , usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext) ])
+                	render(template:'addremove',model:[userGroupInstance:userGroupInstance, usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext) ])
                 }
             }
             else {
@@ -299,7 +299,7 @@ def removeUserFromGroups =
         
 	private getGroupsWithUser(userid)
 	{
-        return UserGroup.executeQuery('Select g FROM UserGroup g, IN (g.members) m WHERE m.id=?)', userid);
+        return UserGroup.executeQuery('Select g FROM UserGroup g, IN (g.members) m WHERE m.id=?', userid);
 	}
 
 	private getGroupsWithoutUser(userid, insearchtext)
