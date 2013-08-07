@@ -1,6 +1,6 @@
 includeTargets << grailsScript("_GrailsInit")
 
-target(main: "Event manager for Grails container") {
+target('default': "Event manager for Grails container") {
     eventWebXmlStart = { webXmlFile ->
         ant.echo message: "Change display-name for web.xml"
         def tmpWebXmlFile = new File(projectWorkDir, webXmlFile)
@@ -8,5 +8,3 @@ target(main: "Event manager for Grails container") {
                 value: "${grailsAppName}-${grailsAppVersion}")
     }
 }
-
-setDefaultTarget(main)
