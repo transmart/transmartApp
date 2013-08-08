@@ -144,10 +144,6 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1277"]="Documents/rulesforloadingomics.htm";
 
- g_d2hContextIds["1425"]="Documents/sampleexplorer.htm";
-
- g_d2hContextIds["1437"]="Documents/sampleexplorer1.htm";
-
  g_d2hContextIds["1314"]="Documents/savetopdf.htm";
 
  g_d2hContextIds["1021"]="Documents/savingasearchfilterorsearchstring.htm";

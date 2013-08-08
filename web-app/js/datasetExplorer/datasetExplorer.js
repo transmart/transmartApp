@@ -4586,7 +4586,7 @@ function saveComparisonComplete(result)
         closable: true,
         tools: [
                   {
-                	  	id : 'sampleExplorerHelpButton',
+                	  	id : 'saveComparisonWindowHelpButton',
 						qtip: 'Click for Saved Camparison Window Help',
 						disabled : false,
 						handler : function()
