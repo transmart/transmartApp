@@ -439,8 +439,8 @@ function showSetValueDialog()
         {	
         	if(test.length>0)
         		{
-				setCheckedValue(test, "numeric"); //numeric
-        		setValueMethodChanged("numeric");
+				setCheckedValue(test, "novalue"); //numeric
+        		setValueMethodChanged("novalue");
         		}
         	}
         
