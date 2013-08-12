@@ -84,7 +84,6 @@
 					}
 				});
 
-
 				var combo = new Ext.app.SearchComboBox({
 					id: "search-combobox",
 					renderTo: "search-text",
