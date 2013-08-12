@@ -135,7 +135,7 @@ public class GexDao {
 				INNER JOIN search_keyword sk ON sk.bio_data_id = sbm.bio_marker_id
 				INNER JOIN de_subject_sample_mapping ssm ON (ssm.trial_name = A.trial_name AND ssm.assay_id = A.assay_id)
 				INNER JOIN (SELECT DISTINCT sc.patient_num FROM qt_patient_set_collection sc, patient_dimension pd
-		 		WHERE sc.result_instance_id = ? AND pd.sourcesystem_cd NOT LIKE '%:S:%'
+		 		WHERE sc.result_instance_id = CAST(? AS numeric) AND pd.sourcesystem_cd NOT LIKE '%:S:%'
 		 		AND sc.patient_num = pd.patient_num) sub ON ssm.patient_id = sub.patient_num
 				""");
 		//TODO replace study within query as parameter to query
@@ -190,7 +190,7 @@ public class GexDao {
 		//SQL Query string.
 		StringBuilder assayS = new StringBuilder("select distinct s.assay_id  from de_subject_sample_mapping s");
 		assayS.append(", (SELECT DISTINCT sc.patient_num FROM qt_patient_set_collection sc, patient_dimension pd")
-		.append(" WHERE sc.result_instance_id = ? AND pd.sourcesystem_cd NOT LIKE '%:S:%'")
+		.append(" WHERE sc.result_instance_id = CAST(? AS numeric) AND pd.sourcesystem_cd NOT LIKE '%:S:%'")
 		.append(" AND sc.patient_num = pd.patient_num) A where s.patient_id = A.patient_num");
 
 		//If we have a sample type, append it to the query.
