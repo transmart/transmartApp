@@ -506,3 +506,4 @@ function showGeneSelection()
 			document.getElementById("divpathway").style.display = "";
 		}
 	}
+}
