@@ -12,20 +12,17 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
-<%@ page import="org.transmart.searchapp.SecureAccessLevel"%>
-<%@ page import="org.transmart.searchapp.SecureObject"%>
+<%@ page import="org.transmart.searchapp.SecureObject" %>
+<%@ page import="org.transmart.searchapp.SecureAccessLevel" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="admin" />
         <title>Manage Study Access</title>
-      <script type="text/javascript">
-
-  </script>
     </head>
     <body>
         <div class="body">
@@ -45,21 +42,21 @@
                         <tbody>
                           <tr class="prop">
                                 <td valign="top" class="name" >
-                                    <label for="secureObject">Secure Object:</label>
+                                    <label for="secureobjectid">Secure Object:</label>
                                      <g:select optionKey="id" optionValue="displayName" from="${SecureObject.listOrderByDisplayName()}" name="secureobjectid" value="${secureObjectInstance?.id}" onchange="document.secobjaccessform.submit();"></g:select>
                                 </td>
                             </tr>
 
                             <tr class="prop">
                                 <td valign="top" class="name" >
-                                    <label for="accessLevel">Access Level:</label>
+                                    <label for="accesslevelid">Access Level:</label>
                                     <g:select optionKey="id" optionValue="accessLevelName" from="${SecureAccessLevel.list()}" name="accesslevelid" value="${accesslevelid}" onchange="document.secobjaccessform.submit();"></g:select>
                                 </td>
                             </tr>
 				</tbody>
 				</table>
 
-	<tr><td>&nbsp;</td><td>&nbsp;</td><td><input name="searchtext" id="searchtext"></input>
+	<tr><td>&nbsp;</td><td>&nbsp;</td><td><input name="searchtext" id="searchtext">
                 				<input type="submit" value="Search User/Groups"/></td></tr>
 				</g:form>
 			<table>
@@ -67,7 +64,7 @@
                 	<table><tbody>
                      			<tr><td><b>User/Group Assigned Access</b></td><td></td><td><b>User/Group Without Access</b></td></tr>
                      			<tr id="groups">
-                                    <g:render template="addremovePrincipal" model="['userwithoutaccess' :userwithoutaccess, 'secureObjectAccessList':secureObjectAccessList]" />
+                                    <g:render template="addremovePrincipal" model="[userwithoutaccess:userwithoutaccess, secureObjectAccessList:secureObjectAccessList]"/>
                                    </tr>
                         </tbody>
                     </table>

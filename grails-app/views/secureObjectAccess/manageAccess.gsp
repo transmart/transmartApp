@@ -12,13 +12,14 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
 
 
 <%@ page import="org.transmart.searchapp.SecureObjectAccess" %>
+
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -28,8 +29,7 @@
    p { width:430px; }
         .ext-ie .x-form-text {position:static !important;}
   </style>
-    <g:javascript library="prototype" plugin="prototype"/>
-    <r:layoutResources/>  
+        <g:setProvider library="prototype"/>
     </head>
     <body>
         <div class="body">
@@ -51,7 +51,7 @@
 	alert("Please select a user/group first");
 	return false;
 	}
- ${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
+ ${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'jQuery(\'#searchtext\').serialize()+\'&id=\'+pid')};
 	return false;
   }
 
@@ -60,12 +60,12 @@
           <table>
                 				<tr><td>
 <g:form name="accessform" action="manageAccess">
-                                    <label for="accessLevel"><b>Access Level</b></label>
+                                    <label for="accesslevelid"><b>Access Level</b></label>
                                     <g:select optionKey="id"  optionValue="accessLevelName" from="${accessLevelList}" name="accesslevelid" value="${accesslevelid}" onchange="document.accessform.submit();"></g:select>
   <input type="hidden" name="currentprincipalid" id="currentprincipalid" value="${principalInstance?.id}"/>
    </g:form>
                                 </td><td>&nbsp;</td>
-                				<td><input name="searchtext" id="searchtext"></input><button class="" onclick="searchtrial();">Search Study</button></td>
+                				<td><input name="searchtext" id="searchtext"><button class="" onclick="searchtrial();">Search Study</button></td>
                      			<tr><td>Has Access for these studies</td><td></td><td>Available studies:</td></tr>
                        			<tr id="permissions">
                                     <g:render template="addremoveAccess" model="['secureObjectInstance':secureObjectInstance,'secureObjectAccessList' :secureObjectAccessList,'objectswithoutaccess':objectswithoutaccess]" />
@@ -75,6 +75,5 @@
                                 </td>
                             </tr>
                         </tbody>
-    <r:layoutResources/>
     </body>
 </html>

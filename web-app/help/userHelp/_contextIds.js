@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -57,8 +57,6 @@ var g_d2hContextIds = new Array();
  g_d2hContextIds["1257"]="Modules/2/Documents/chapter2searchtool.htm";
 
  g_d2hContextIds["1258"]="Modules/2/Documents/chapter3datasetexplorer.htm";
-
- g_d2hContextIds["1437"]="Modules/2/Documents/chapter4sampleexplorer.htm";
 
  g_d2hContextIds["1259"]="Modules/2/Documents/chapter5genesignaturesandgenelists.htm";
 
@@ -217,8 +215,6 @@ var g_d2hContextIds = new Array();
  g_d2hContextIds["1427"]="Modules/2/Documents/runningtheintegratedgenomicsviewer.htm";
 
  g_d2hContextIds["1360"]="Modules/2/Documents/runningthesnpviewer.htm";
-
- g_d2hContextIds["1425"]="Modules/2/Documents/sampleexplorer.htm";
 
  g_d2hContextIds["1021"]="Modules/2/Documents/savingasearchfilterorsearchstring.htm";
 

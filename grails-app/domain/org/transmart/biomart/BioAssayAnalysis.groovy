@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -96,7 +96,7 @@ class BioAssayAnalysis implements IExcelProfile {
 	 * get top analysis data records for the indicated analysis
 	 */
 	def static getTopAnalysisDataForAnalysis(Long analysisId, int topCount){
-		def query = "SELECT DISTINCT baad, baad_bm FROM org.transmart.biomart.BioAssayAnalysisData baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid ORDER BY ABS(baad.foldChangeRatio) desc, baad.rValue, baad.rhoValue DESC";
+		def query = "SELECT DISTINCT baad, baad_bm, ABS(baad.foldChangeRatio) FROM org.transmart.biomart.BioAssayAnalysisData baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid ORDER BY ABS(baad.foldChangeRatio) desc, baad.rValue, baad.rhoValue DESC";
 		return BioAssayAnalysisData.executeQuery(query, [aid:analysisId], [max:topCount]);
 	}
 

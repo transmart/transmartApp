@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -28,8 +28,8 @@ import java.util.Map
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.springframework.context.ApplicationContext
-import org.transmart.biomart.ClinicalTrial;
 
+import org.transmart.biomart.ClinicalTrial;
 import org.transmart.biomart.Compound
 import org.transmart.biomart.Experiment
 import org.transmart.biomart.Taxonomy
@@ -215,7 +215,7 @@ class MetadataService {
 				  select distinct s.sample_cd from de_subject_sample_mapping s
 				  where s.trial_name = ? and patient_id in (
 					SELECT DISTINCT sc.patient_num FROM qt_patient_set_collection sc, patient_dimension pd
-					WHERE sc.result_instance_id = ? AND sc.patient_num = pd.patient_num
+					WHERE sc.result_instance_id = CAST(? AS numeric) AND sc.patient_num = pd.patient_num
 				  ) and s.sample_cd is not null and b.file_name like s.sample_cd||'%'
 				)
 			"""

@@ -109,7 +109,6 @@
 		<!--  paging tabs -->	
 		<div id="analysisListDiv">	
 	  	<div class="paginateButtons">
-            <p>paginate2</p>
 	   		<g:remotePaginate update="ptfilterresult_tea" controller="experimentAnalysis" action="pageTEAAnalysisView" 
 	   				total="${ear.analysisCount-ear.inSignificantAnalCount}" max="${grailsApplication.config.com.recomdata.search.paginate.max}"/>
 	    </div>	

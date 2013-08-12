@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -94,7 +94,7 @@ function convertNodeToConcept(node)
 	//Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
 	var nodeType = node.attributes.iconCls
 	
-	if(oktousevalues=="Y"){value.mode="numeric";} //default to numeric
+	if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
 	
 	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType);
 	return myConcept;
@@ -435,12 +435,12 @@ function showSetValueDialog()
 				setCheckedValue(test, mode)
         		setValueMethodChanged(mode);
         	}
-        else //default to numeric
+        else //default to novalue
         {	
         	if(test.length>0)
         		{
-				setCheckedValue(test, "numeric"); //numeric
-        		setValueMethodChanged("numeric");
+				setCheckedValue(test, "novalue");
+        		setValueMethodChanged("novalue");
         		}
         	}
         
@@ -1416,13 +1416,12 @@ function showCompareStepPathwaySelection()
                 title: 'Compare Subsets-Pathway Selection',
             	layout:'fit',
                 width:450,
-                // height:250,
                 autoHeight: true,
                 closable: false,
                 plain: true,
                 modal: true,
                 border:false,
-                //autoScroll: true,
+                y:100,
                 buttons: [
                 		{
                             id: 'compareStepPathwaySelectionOKButton',

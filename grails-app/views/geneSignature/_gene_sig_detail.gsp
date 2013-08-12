@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -206,6 +206,56 @@
 		<tr class="prop">
 			<td class="name">Original upload file:</td>
 			<td class="value">${gs.uploadFile}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">Version:</td>
+			<td class="value">${gs.versionStr}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">Data Source:</td>
+			<td class="value">${gs.dataSource}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">QC Performed:</td>
+			<td class="value">${gs.qcPerformed? 'Yes' : 'No'}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">QC Date:</td>
+			<td class="value">${gs.qcDate}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">QC Detail:</td>
+			<td class="value">${gs.qcInfo}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">
+				<g:if test="${gs.customName1==null}">Custom Field 1:</g:if>
+				<g:else>${gs.customName1}:</g:else></td>
+			<td class="value">${gs.customValue1}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">
+				<g:if test="${gs.customName2==null}">Custom Field 2:</g:if>
+				<g:else>${gs.customName2}:</g:else></td>
+			<td class="value">${gs.customValue2}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">
+				<g:if test="${gs.customName3==null}">Custom Field 3:</g:if>
+				<g:else>${gs.customName3}:</g:else></td>
+			<td class="value">${gs.customValue3}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">
+				<g:if test="${gs.customName4==null}">Custom Field 4:</g:if>
+				<g:else>${gs.customName4}:</g:else></td>
+			<td class="value">${gs.customValue4}</td>
+		</tr>
+		<tr class="prop">
+			<td class="name">
+				<g:if test="${gs.customName5==null}">Custom Field 5:</g:if>
+				<g:else>${gs.customName5}:</g:else></td>
+			<td class="value">${gs.customValue5}</td>
 		</tr>
 	</tbody>
 </table>

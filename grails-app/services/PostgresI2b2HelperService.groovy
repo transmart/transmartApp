@@ -12,26 +12,13 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  *
  ******************************************************************/
   
-
-import java.util.List;
-
-import java.io.BufferedWriter;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
-
 import i2b2.SnpProbeSortedDef;
-
-/**
- * $Id: I2b2HelperService.groovy 11303 2011-12-23 06:05:17Z mkapoor $
- */
-
 import i2b2.Concept;
 import i2b2.GeneWithSnp
-
 import i2b2.SnpDataByProbe;
 import i2b2.SnpDataset;
 import i2b2.SnpDatasetByPatient;
@@ -40,17 +27,14 @@ import i2b2.SnpInfo
 import i2b2.StringLineReader;
 import i2b2.SampleInfo;
 
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.sql.*;
-
 
 import org.transmart.CohortInformation;
 import org.transmart.searchapp.AuthUser;
@@ -66,12 +50,6 @@ import com.recomdata.export.*;
 
 import com.recomdata.i2b2.SurvivalConcepts;
 
-/**
- * ResNetService that will provide an .rnef file for Jubilant data
- *
- * @author $Author: mkapoor $
- * @version $Revision: 11303 $
- */
 class PostgresI2b2HelperService {
 	
 	static String GENE_PATTERN_WHITE_SPACE_DEFAULT = "0";
@@ -92,7 +70,7 @@ class PostgresI2b2HelperService {
 		String sqlt = """SELECT """ + col + """ FROM patient_dimension f WHERE
 		    PATIENT_NUM IN (select distinct patient_num
 			from qt_patient_set_collection
-			where result_instance_id = ?)""";
+			where result_instance_id = CAST(? AS numeric))""";
 		sql.eachRow(sqlt, [result_instance_id], {row ->
 			values.add(row[0])
 		});
@@ -322,7 +300,7 @@ class PostgresI2b2HelperService {
 		
 		String sqlt="SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = '" +
 				concept_cd + "' AND PATIENT_NUM IN (select distinct patient_num " +
-				"from qt_patient_set_collection where result_instance_id = " + result_instance_id + ")";
+				"from qt_patient_set_collection where result_instance_id = CAST(" + result_instance_id + " AS numeric))";
 		
 		log.debug("executing query: sqlt=" + sqlt);
 		try {
@@ -356,7 +334,7 @@ class PostgresI2b2HelperService {
 		String sqlt="""SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
 		    PATIENT_NUM IN (select distinct patient_num
 			from qt_patient_set_collection
-			where result_instance_id = ?)""";
+			where result_instance_id = CAST (? AS numeric))""";
 		log.debug("executing query: "+sqlt);
 		sql.eachRow(sqlt, [
 			concept_cd,
@@ -382,7 +360,7 @@ class PostgresI2b2HelperService {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String sqlt = """select count(distinct(patient_num)) as patcount 
 						 FROM qt_patient_set_collection
-						 WHERE result_instance_id = ?""";
+						 WHERE result_instance_id = CAST(? AS numeric)""";
 
 		log.trace(sqlt);
 		sql.eachRow(sqlt, [result_instance_id], {row ->
@@ -401,8 +379,8 @@ class PostgresI2b2HelperService {
 		Integer i=0;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String sqlt = """Select count(*) as patcount FROM ((select distinct patient_num from qt_patient_set_collection
-		        where result_instance_id = ?) a inner join (select distinct patient_num from qt_patient_set_collection
-		        where result_instance_id = ?) b ON a.patient_num=b.patient_num)""";
+		        where result_instance_id = CAST(? AS numeric)) a inner join (select distinct patient_num from qt_patient_set_collection
+		        where result_instance_id = CAST(? AS numeric)) b ON a.patient_num=b.patient_num)""";
 		log.trace(sqlt);
 		sql.eachRow(sqlt, [
 			result_instance_id1,
@@ -486,7 +464,7 @@ class PostgresI2b2HelperService {
 		    (Select c_name, count(c_basecode) as obscount FROM
 			(SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) c
 			INNER JOIN observation_fact f ON f.concept_cd=c.c_basecode
-			WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
+			WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = CAST(? AS numeric))
 		    GROUP BY c_name) i
 		    ON i.c_name=m.c_name
 		    ORDER BY c_name""";
@@ -619,7 +597,7 @@ class PostgresI2b2HelperService {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String sqlt = """select count (*) as obscount FROM i2b2demodata.observation_fact
 		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
-			where concept_path LIKE ?)))) AND PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)""";
+			where concept_path LIKE ?)))) AND PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = CAST(? AS numeric))""";
 		sql.eachRow(sqlt, [
 			fullname+"%",
 			result_instance_id
@@ -636,7 +614,7 @@ class PostgresI2b2HelperService {
 		log.trace("Adding patient demographic data to grid with result instance id:" +result_instance_id+" and subset: "+subset)
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		String sqlt = """SELECT * FROM patient_dimension p INNER JOIN patient_trial t ON p.patient_num=t.patient_num
-		    WHERE p.PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
+		    WHERE p.PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = CAST(? AS numeric))
 		    ORDER BY p.PATIENT_NUM""";
 		
 		//if i have an empty table structure so far
@@ -708,7 +686,7 @@ class PostgresI2b2HelperService {
 				String sqlt = """SELECT PATIENT_NUM, NVAL_NUM, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
 				        PATIENT_NUM IN (select distinct patient_num
 						from qt_patient_set_collection
-						where result_instance_id = ?)""";
+						where result_instance_id = CAST(? AS numeric))""";
 				
 				sql.eachRow(sqlt, [
 					concept_cd,
@@ -734,7 +712,7 @@ class PostgresI2b2HelperService {
 				String sqlt = """SELECT PATIENT_NUM, TVAL_CHAR, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
 				        PATIENT_NUM IN (select distinct patient_num
 				        from qt_patient_set_collection
-						where result_instance_id = ?)""";
+						where result_instance_id = CAST(? AS numeric))""";
 				
 				sql.eachRow(sqlt, [
 					concept_cd,
@@ -780,7 +758,7 @@ class PostgresI2b2HelperService {
 		(SELECT DISTINCT UPPER("""+col+""") as cat FROM patient_dimension) a
 		LEFT OUTER JOIN
 		(SELECT UPPER("""+col+""") as cat,COUNT(*) as demcount FROM patient_dimension
-		WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
+		WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = CAST(? AS numeric))
 		Group by UPPER("""+col+""")) b
 		ON a.cat=b.cat ORDER BY a.cat""";
 		sql.eachRow(sqlt, [result_instance_id], {row ->
@@ -801,7 +779,7 @@ class PostgresI2b2HelperService {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		String sqlt = """SELECT REQUEST_XML FROM QT_QUERY_MASTER c INNER JOIN QT_QUERY_INSTANCE a
 		    ON a.QUERY_MASTER_ID=c.QUERY_MASTER_ID INNER JOIN QT_QUERY_RESULT_INSTANCE b
-		    ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = ?""";
+		    ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = CAST(? AS numeric)""";
 		
 		String xmlrequest="";
 		sql.eachRow(sqlt, [resultInstanceId], {row ->
@@ -927,10 +905,10 @@ class PostgresI2b2HelperService {
 						from qt_patient_set_collection q
 						inner join patient_trial p
 						on q.patient_num=p.patient_num
-						where q.result_instance_id=""";
+						where q.result_instance_id=CAST(""";
 		
-		String sqlTemplate2 = """ or result_instance_id=""";
-		String sqlTemplate3 = """) and x.parent_cd=""";
+		String sqlTemplate2 = """ AS numeric) or result_instance_id=CAST(""";
+		String sqlTemplate3 = """ AS numeric)) and x.parent_cd=""";
 		
 		
 		
@@ -1003,7 +981,7 @@ class PostgresI2b2HelperService {
 			groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 			String sqlt="""select QUERY_MASTER_ID FROM QT_QUERY_INSTANCE a
 		    	INNER JOIN QT_QUERY_RESULT_INSTANCE b
-		    	ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = ?"""
+		    	ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = CAST(? AS numeric)"""
 			sql.eachRow(sqlt, [resultInstanceId], {row ->qid=row.QUERY_MASTER_ID;})
 		}
 		return qid
@@ -1016,7 +994,7 @@ class PostgresI2b2HelperService {
 		String xmlrequest="";
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		
-		String sqlt="""select REQUEST_XML from QT_QUERY_MASTER WHERE QUERY_MASTER_ID = ?""";
+		String sqlt="""select REQUEST_XML from QT_QUERY_MASTER WHERE QUERY_MASTER_ID = CAST(? AS numeric)""";
 		log.trace(sqlt);
 		sql.eachRow(sqlt, [qid], {row ->
 			log.trace("in xml query")
@@ -1036,7 +1014,7 @@ class PostgresI2b2HelperService {
 		
 		String sqlt="""select REQUEST_XML from QT_QUERY_MASTER c INNER JOIN QT_QUERY_INSTANCE a
 		    ON a.QUERY_MASTER_ID=c.QUERY_MASTER_ID INNER JOIN QT_QUERY_RESULT_INSTANCE b
-		    ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = ?""";
+		    ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = CAST(? AS numeric)""";
 		log.trace(sqlt);
 		sql.eachRow(sqlt, [resultInstanceId], {row ->
 			log.trace("in xml query");
@@ -1057,7 +1035,7 @@ class PostgresI2b2HelperService {
 		StringBuilder subjectIds = new StringBuilder();
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		
-		String sqlt = """select distinct patient_num from qt_patient_set_collection where result_instance_id = ? 
+		String sqlt = """select distinct patient_num from qt_patient_set_collection where result_instance_id = CAST(? AS numeric) 
 		AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')""";
 		log.trace("before sql call")
 		sql.eachRow(sqlt, [resultInstanceId], {row ->
@@ -1077,7 +1055,7 @@ class PostgresI2b2HelperService {
 	def  List<String> getSubjectsAsList(String resultInstanceId){
 		List<String> subjectIds=new ArrayList<String>();
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id = ?";
+		String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id = CAST(? AS numeric)";
 		log.trace("before sql call")
 		sql.eachRow(sqlt, [resultInstanceId], {row ->
 			subjectIds.add(row.PATIENT_NUM);
@@ -1805,7 +1783,7 @@ class PostgresI2b2HelperService {
 	}
 	
 	boolean isSurvivalData(String conceptName) {
-		def dataList = ConfigurationHolder.config.com.recomdata.analysis.survival.survivalDataList;
+		def dataList = grailsApplication.config.com.recomdata.analysis.survival.survivalDataList;
 		for (String data : dataList) {
 			if (conceptName.indexOf(data) > 0) return true;
 		}
@@ -1813,7 +1791,7 @@ class PostgresI2b2HelperService {
 	}
 	
 	boolean isSurvivalCensor(String conceptName) {
-		def censorList = ConfigurationHolder.config.com.recomdata.analysis.survival.censorFlagList;
+		def censorList = grailsApplication.config.com.recomdata.analysis.survival.censorFlagList;
 		for (String data : censorList) {
 			if (conceptName.indexOf(data) > 0) return true;
 		}
@@ -1826,7 +1804,7 @@ class PostgresI2b2HelperService {
 		if (conceptSurvivalTime == null || conceptSurvivalTime.getBaseCode() == null)
 			throw new Exception ("The concept for survival time is not defined");
 		
-		Map<SurvivalData> dataMap = new HashMap<String, SurvivalData>();
+		Map<String, SurvivalData> dataMap = new HashMap<String, SurvivalData>();
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String subjectIdListInStr = DBHelper.listToInString(subjectStrList);
 		String sqlt = "SELECT * FROM observation_fact WHERE CONCEPT_CD = ?";
@@ -2735,7 +2713,7 @@ class PostgresI2b2HelperService {
 		String mapFilePath = mapFile.absolutePath;
 		String outputFileRoot = pedFile.parent + File.separator + gwasFiles.fileNameRoot
 		
-		String plinkExecutable = ConfigurationHolder.config.com.recomdata.datasetExplorer.plinkExcutable;
+		String plinkExecutable = grailsApplication.config.com.recomdata.datasetExplorer.plinkExcutable;
 		
 		String cmdLine = plinkExecutable + " --ped " + pedFilePath + " --map " + mapFilePath + " --out " + outputFileRoot + " --assoc --noweb";
 		
@@ -4149,7 +4127,7 @@ class PostgresI2b2HelperService {
 					"WHERE a.probeset_id = b.probeset_id AND a.trial_name IN ("+trialNames+") " +
 					"AND a.assay_id IN ("+assayIds+")";
 					
-			sql.eachRow (rawCountQuery, {row-> goodPct=row[0]})
+			sql.eachRow (rawCountQuery, [], {row-> goodPct=row[0]})
 			
 			if(goodPct==0) throw new Exception("No raw data for Comparative Marker Selection.");
 		}
@@ -4412,7 +4390,7 @@ class PostgresI2b2HelperService {
 		log.debug("getting genes for happloview");
 		def genes=[];
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = "select distinct gene from haploview_data a inner join qt_patient_set_collection b on a.I2B2_ID=b.patient_num where result_instance_id = ? order by gene asc"
+		String sqlt = "select distinct gene from haploview_data a inner join qt_patient_set_collection b on a.I2B2_ID=b.patient_num where result_instance_id = CAST(? AS numeric) order by gene asc"
 		//String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id="+resultInstanceId
 		sql.eachRow(sqlt, [resultInstanceId], {row ->
 			log.trace("IN ROW ITERATOR");
@@ -4504,7 +4482,7 @@ class PostgresI2b2HelperService {
 			String sqlt="""SELECT TRIAL, NVAL_NUM FROM OBSERVATION_FACT f  INNER JOIN PATIENT_TRIAL t
 			    ON f.PATIENT_NUM=t.PATIENT_NUM WHERE CONCEPT_CD = ? AND
 			    f.PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection
-				where result_instance_id = ?)""";
+				where result_instance_id = CAST(? AS numeric))""";
 			sql.eachRow(sqlt, [
 				concept_cd,
 				result_instance_id
@@ -5152,7 +5130,7 @@ class PostgresI2b2HelperService {
 			String sqlt="""SELECT DISTINCT SECURE_OBJ_TOKEN FROM PATIENT_TRIAL t
 			    WHERE t.PATIENT_NUM IN (select distinct patient_num
 				from qt_patient_set_collection
-				where result_instance_id IN (?, ?))""";
+				where result_instance_id IN (CAST(? AS numeric), CAST(? AS numeric)))""";
 			log.debug(sqlt);
 			sql.eachRow(sqlt, [rid1, rid2], {row ->
 				if(row.SECURE_OBJ_TOKEN!=null) {
@@ -5176,7 +5154,7 @@ class PostgresI2b2HelperService {
 			String sqlt="""SELECT DISTINCT SECURE_OBJ_TOKEN FROM PATIENT_TRIAL t
 			    WHERE t.PATIENT_NUM IN (select distinct patient_num
 				from qt_patient_set_collection
-				where result_instance_id = ?)""";
+				where result_instance_id = CAST(? AS numeric))""";
 			log.debug(sqlt);
 			sql.eachRow(sqlt, [rid], {row ->
 				if(row.SECURE_OBJ_TOKEN!=null) {

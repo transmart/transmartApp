@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -47,23 +47,57 @@ class ExperimentAnalysisQueryService {
 	 * count experiment with criteria
 	 */
 	def countExperiment(SearchFilter filter){
-
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return 0
 		}
-
-		return BioAssayAnalysisData.executeQuery(createMVExperimentQuery("COUNT_EXP", filter))[0]
+		
+		////////////////////////////////////////////////////////////////////////
+		// Hack to get bind variable in the query
+		////////////////////////////////////////////////////////////////////////
+		def q = createMVExperimentQuery("COUNT_EXP", filter)
+		def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+		def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+		def bID = q.substring(fP+1, lP)     // pull out the ID
+		if (bID.isLong())	{
+			def bioID = bID.toLong()
+			def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+			log.info("Bio ID: ${bioID}")
+			log.trace("Updated Query: ${qBV}")
+			return BioAssayAnalysisData.executeQuery(qBV, [bioID])[0]
+		} else	{
+			log.warn("Parsing failed: ${bID}")
+			log.warn("Running original query")
+			return BioAssayAnalysisData.executeQuery(q)[0]
+		}
 	}
 
 	def countExperimentMV(SearchFilter filter){
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return 0
 		}
-		if(!filter.expAnalysisFilter.isUsed())
-			return org.transmart.biomart.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_EXP", filter))[0]
-		//	elapseTimer.logElapsed("query count Experiment MV:",true)
-		else
+	
+		if(!filter.expAnalysisFilter.isUsed())	{			
+			////////////////////////////////////////////////////////////////////////
+			// Hack to get bind variable in the query
+			////////////////////////////////////////////////////////////////////////
+			def q = createExpAnalysisMVQuery("COUNT_EXP", filter)
+			def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+			def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+			def bID = q.substring(fP+1, lP)     // pull out the ID
+			if (bID.isLong())	{
+				def bioID = bID.toLong()
+				def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+				log.info("Bio ID: ${bioID}")
+				log.trace("Updated Query: ${qBV}")
+				return org.transmart.biomart.BioMarkerExpAnalysisMV.executeQuery(qBV, [bioID])[0]
+			} else	{
+				log.warn("Parsing failed: ${bID}")
+				log.warn("Running original query")
+				return org.transmart.biomart.BioMarkerExpAnalysisMV.executeQuery(q)[0]
+			}
+		} else	{
 			return countExperiment(filter)
+		}
 	}
 
 	/**
@@ -81,22 +115,80 @@ class ExperimentAnalysisQueryService {
 		query.addCondition(" baad.analysis.teaDataCount IS NOT NULL")
 		query.createGlobalFilterCriteria(gfilter);
 		createSubFilterCriteria(filter.expAnalysisFilter,query);
-		query.addSelect("COUNT(DISTINCT baad.analysis.id) ");
+		query.addSelect("COUNT(DISTINCT baad.analysis.id) ")
+		
+		////////////////////////////////////////////////////////////////////////
+		// Hack to get bind variable in the query
+		////////////////////////////////////////////////////////////////////////
+		def q = query.generateSQL()
+		def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+		def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+		def bID = q.substring(fP+1, lP)     // pull out the ID
+		if (bID.isLong())	{		
+			def bioID = bID.toLong()
+			def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+			log.info("Bio ID: ${bioID}")
+			log.trace("Updated Query: ${qBV}")		
+			return org.transmart.biomart.BioAssayAnalysisDataTea.executeQuery(qBV, [bioID])[0]
+		} else	{
+			log.warn("Parsing failed: ${bID}")
+			log.warn("Running original query")
 		return org.transmart.biomart.BioAssayAnalysisDataTea.executeQuery(query.generateSQL())[0];
+		}
 	}
 
-	def countAnalysis(SearchFilter filter){
-		if(filter == null || filter.globalFilter.isTextOnly()) return 0;
-
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(createMVExperimentQuery("COUNT_ANALYSIS", filter))[0]
+	def countAnalysis(SearchFilter filter)	{
+		if (filter == null || filter.globalFilter.isTextOnly())	{
+			return 0
+		}
+		
+		////////////////////////////////////////////////////////////////////////
+		// Hack to get bind variable in the query
+		////////////////////////////////////////////////////////////////////////
+		def q = createMVExperimentQuery("COUNT_ANALYSIS", filter)
+		def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+		def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+		def bID = q.substring(fP+1, lP)     // pull out the ID
+		if (bID.isLong())	{
+			def bioID = bID.toLong()
+			def qBV = q.replace(bID, '?')       // replace the BioID with the bind variable parameter
+			log.info("Bio ID: ${bioID}")
+			log.trace("Updated Query: ${qBV}")
+			return org.transmart.biomart.BioAssayAnalysisData.executeQuery(qBV, [bioID])[0]
+		} else	{
+			log.warn("Parsing failed: ${bID}")
+			log.warn("Running original query")
+			return org.transmart.biomart.BioAssayAnalysisData.executeQuery(q)[0]
+		}
 	}
 
 	def countAnalysisMV(SearchFilter filter){
-		if(filter == null || filter.globalFilter.isTextOnly()) return 0;
-		if(!filter.expAnalysisFilter.isUsed())
-			return org.transmart.biomart.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_ANALYSIS", filter))[0]
-		else
+		if (filter == null || filter.globalFilter.isTextOnly())	{
+			return 0
+		}
+		
+		if(!filter.expAnalysisFilter.isUsed())	{
+			////////////////////////////////////////////////////////////////////////
+			// Hack to get bind variable in the query
+			////////////////////////////////////////////////////////////////////////
+			def q = createExpAnalysisMVQuery("COUNT_ANALYSIS", filter)
+			def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+			def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+			def bID = q.substring(fP+1, lP)     // pull out the ID
+			if (bID.isLong())	{
+				def bioID = bID.toLong()
+				def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+				log.info("Bio ID: ${bioID}")
+				log.trace("Updated Query: ${qBV}")
+				return org.transmart.biomart.BioMarkerExpAnalysisMV.executeQuery(qBV, [bioID])[0]
+			} else	{
+				log.warn("Parsing failed: ${bID}")
+				log.warn("Running original query")
+				return org.transmart.biomart.BioMarkerExpAnalysisMV.executeQuery(q)[0]
+			}			
+		} else	{
 			return countAnalysis(filter)
+		}
 	}
 
 
@@ -130,7 +222,7 @@ class ExperimentAnalysisQueryService {
 		}
 
 		def q = query.generateSQL();
-		//	println(q)
+		log.trace(q)
 		return q;
 	}
 	/**
@@ -204,7 +296,7 @@ class ExperimentAnalysisQueryService {
 		}
 
 		def q = query.generateSQL();
-		//	println(q)
+		//println q
 		return q;
 	}
 
@@ -483,6 +575,7 @@ class ExperimentAnalysisQueryService {
 			//query.addTable(alias+" exp")
 			query.addTable("org.transmart.biomart.BioAssayAnalysisData baad_platform")
 			query.addCondition(" baad_platform.assayPlatform.organism ='"+expfilter.species+"'")
+			query.addCondition(query.mainTableAlias+".experiment = baad_platform.experiment" )
 		}
 		// type
 		//	if(expfilter.filterExpType()){
@@ -494,12 +587,18 @@ class ExperimentAnalysisQueryService {
 
 		// fold change on BioAssayAnalysisData
 		if(expfilter.filterFoldChange()){
-			def StringBuilder s = new StringBuilder();
-			query.addTable("org.transmart.biomart.BioAssayAnalysisData baad_foldChange")
-			def symbol = "abs(baad_foldChange.foldChangeRatio)" // abs value
-			s.append (" ((").append(symbol).append(" >=").append(expfilter.foldChange).append(" )")
-					.append(" OR ").append(symbol).append(" IS NULL )");
-			query.addCondition(s.toString())
+			if (expfilter.filterSpecies())	{
+				query.addCondition(" abs(baad_platform.foldChangeRatio) >= " + expfilter.foldChange)
+			} else	{
+				query.addTable("org.transmart.biomart.BioAssayAnalysisData baad_ffc")
+				query.addCondition(" abs(baad_ffc.foldChangeRatio) >= " + expfilter.foldChange)
+				query.addCondition( query.mainTableAlias+".experiment = baad_ffc.experiment" )
+			}
+			//def StringBuilder s = new StringBuilder();
+			//def symbol = "abs(" + query.mainTableAlias+".foldChangeRatio)" // abs value
+			//s.append (" ((").append(symbol).append(" >=").append(expfilter.foldChange).append(" )")
+			//		.append(" OR ").append(symbol).append(" IS NULL )");
+			//query.addCondition(s.toString())
 
 			//s.append (" (").append(symbol).append(" >=").append(expfilter.foldChange)
 			//		.append(" OR ").append(symbol).append(" <= ").append(-expfilter.foldChange)
@@ -508,12 +607,21 @@ class ExperimentAnalysisQueryService {
 
 		// pvalue on BioAssayAnalysisData
 		if(expfilter.filterPValue()){
-			def StringBuilder s = new StringBuilder();
-			query.addTable("org.transmart.biomart.BioAssayAnalysisData baad_pValue")
-			def symbol = "baad_pValue.preferredPvalue"
-			s.append(" (").append(symbol).append(" <= ").append(expfilter.pValue).append( ")")
+			if (expfilter.filterSpecies())	{
+				query.addCondition(" baad_platform.preferredPvalue <= " + expfilter.pValue)
+			} else if (expfilter.filterFoldChange())	{
+				query.addCondition(" baad_ffc.preferredPvalue <= " + expfilter.pValue)
+			} else	{
+				query.addTable("org.transmart.biomart.BioAssayAnalysisData baad_pv")
+				query.addCondition(" baad_pv.preferredPvalue <= " + expfilter.pValue)
+				query.addCondition( query.mainTableAlias+".experiment = baad_pv.experiment" )
+			}
+			
+			//def StringBuilder s = new StringBuilder();
+			//def symbol = query.mainTableAlias+".preferredPvalue"
+			//s.append(" (").append(symbol).append(" <= ").append(expfilter.pValue).append( ")")
 			// .append(" OR ").append(symbol).append(" IS NULL)");
-			query.addCondition(s.toString())
+			//query.addCondition(s.toString())
 		}
 	}
 

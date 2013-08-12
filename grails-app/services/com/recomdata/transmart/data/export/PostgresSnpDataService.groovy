@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -83,7 +83,7 @@ class PostgresSnpDataService {
 						WHERE platform = 'SNP' and patient_id in (
 							SELECT DISTINCT patient_num 
 							FROM qt_patient_set_collection 
-							WHERE result_instance_id = ?)
+							WHERE result_instance_id = CAST(? AS numeric))
 					"""
 		def patientDataMap = [:]
 		sql.eachRow(query, [resultInstanceId]) { row ->
@@ -194,7 +194,7 @@ class PostgresSnpDataService {
 		INNER JOIN de_subject_sample_mapping dssm on ssd.patient_num=dssm.omic_patient_id
 		WHERE dssm.patient_id IN (SELECT DISTINCT patient_num
 							FROM qt_patient_set_collection 
-							WHERE result_instance_id = ?)"""
+							WHERE result_instance_id = CAST(? AS numeric))"""
 		
 		def firstRow = sql.firstRow(platformQuery, [resultInstanceId])
 		def platformName = firstRow.title
@@ -419,7 +419,7 @@ class PostgresSnpDataService {
 			FROM bio_content b
 			WHERE b.study_name in ${studies}
 			AND b.file_name IN (SELECT DISTINCT sg.gsm_num FROM de_snp_calls_by_gsm sg WHERE sg.patient_num IN (
-			    SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ?
+			    SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = CAST(? AS numeric)
 					 AND patient_num IN (SELECT patient_num FROM patient_dimension WHERE sourcesystem_cd NOT LIKE '%:S:%')))
 		"""
 		
@@ -473,7 +473,7 @@ class PostgresSnpDataService {
 		//This from statement needs to be in all selects.
 		sTables.append(""" 	FROM DE_SUBJECT_SAMPLE_MAPPING DSM
 							INNER JOIN patient_dimension PD ON DSM.patient_id = PD.patient_num 
-							INNER JOIN qt_patient_set_collection qt ON qt.result_instance_id = ? AND qt.PATIENT_NUM = DSM.PATIENT_ID
+							INNER JOIN qt_patient_set_collection qt ON qt.result_instance_id = CAST(? AS numeric) AND qt.PATIENT_NUM = DSM.PATIENT_ID
 							LEFT JOIN DE_SNP_CALLS_BY_GSM SNP_GENO ON DSM.OMIC_PATIENT_ID = SNP_GENO.PATIENT_NUM AND DSM.SAMPLE_CD = SNP_GENO.GSM_NUM
 							LEFT JOIN DE_SNP_COPY_NUMBER SNP_COPY ON DSM.OMIC_PATIENT_ID = SNP_COPY.PATIENT_NUM AND SNP_GENO.snp_name = SNP_COPY.snp_name
 							INNER JOIN DE_SNP_GENE_MAP D2 ON D2.SNP_NAME = SNP_GENO.SNP_NAME

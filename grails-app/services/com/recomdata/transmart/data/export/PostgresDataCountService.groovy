@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -48,7 +48,7 @@ class PostgresDataCountService {
 		StringBuilder gseaQuery = new StringBuilder()
 		
 		subjectsQuery.append("select omic_patient_id from de_subject_sample_mapping where patient_id in ")
-		subjectsQuery.append("(SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ?")
+		subjectsQuery.append("(SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = CAST(? AS numeric)")
 		.append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%'))")
 		
 		subjectsFromBothSubsetsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id IN (")

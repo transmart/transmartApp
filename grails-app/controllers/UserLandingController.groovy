@@ -14,7 +14,7 @@ import org.transmart.searchapp.AccessLog;
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -33,7 +33,7 @@ class UserLandingController {
 	 * Dependency injection for the springSecurityService.
 	 */
     def springSecurityService
-
+	
     private Object getUsername() {
         if (!springSecurityService.principal?.metaClass.hasProperty('username')) {
             log.error("The security principal is not the expected type of " +
@@ -50,27 +50,31 @@ class UserLandingController {
         springSecurityService.getPrincipal().username
     }
 
-    def index = {
+	   def index = {
         new AccessLog(username:     username,
                       event:        "Login",
-                      eventmessage: request.getHeader("user-agent"),
+                  eventmessage: request.getHeader("user-agent"),
                       accesstime:   new Date()).save()
-        def skip_disclaimer = grailsApplication.config.com.recomdata?.skipdisclaimer?:false;
+                  def skip_disclaimer = grailsApplication.config.com.recomdata?.skipdisclaimer?:false;
         if (skip_disclaimer) {
-            redirect(uri:'/search');
+                        redirect(uri:'/search');     
         } else {
-            redirect(uri: '/userLanding/disclaimer.gsp')
-        }
-    }
-    def agree = {
+                  redirect(uri: '/userLanding/disclaimer.gsp')
+                  }
+      }
+	def agree = {
         new AccessLog(username: username, event:"Disclaimer accepted",
-                accesstime:new Date()).save()
-        redirect(uri: '/search')
-    }
-
-    def disagree = {
+			accesstime:new Date()).save()				
+		redirect(uri: '/search')
+	}
+	
+	def disagree = {
         new AccessLog(username: username, event:"Disclaimer not accepted",
-                accesstime:new Date()).save()
-        redirect(uri: '/logout')
+			accesstime:new Date()).save()
+	    redirect(uri: '/logout')
+	}
+
+    def checkHeartBeat = {
+        render(text:"OK")
     }
 }

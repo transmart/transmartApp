@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -56,7 +56,8 @@ class ComparisonController {
     		boolean success=s.save()
 
     		def link = new StringBuilder()
-			link.append("<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"mailto:?subject=Link to ")
+			link.append("<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID: <input type=\"text\" size=\"10\" value=\"${s.id}\">")
+			link.append("<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"mailto:?subject=Link to ")
     		link.append("Saved comparison ID=${s.id}")
     		link.append("&body=The following is a link to the saved comparison in tranSMART.  Please, note that you need to be logged into tranSMART prior to using this link.%0A%0A")    		
     		link.append(createLink(controller:'datasetExplorer', action:'index', id:s.id, absolute:true))

@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -160,7 +160,7 @@ Ext.onReady(function()
 		northPanel = new Ext.Panel(
 				{
 					id : 'northPanel',
-					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif"></img></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
+					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif" /></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
 					region : 'north',
 					height : 45,
 					split : false,
@@ -495,6 +495,7 @@ Ext.onReady(function()
 										clearAnalysisPanel();
 										resetQuery();
 										clearDataAssociation();									
+										resetExportTabs();
 									}
 								// clearGrid(); blah
 								}
@@ -614,8 +615,7 @@ Ext.onReady(function()
 						scripts : true,
 						nocache : true,
 						discardUrl : true,
-						method : 'POST'//,
-						//callback: loadOntPanel
+						method : 'POST'
 					},
 					collapsible : true,
 					titleCollapse : false,
@@ -1375,7 +1375,7 @@ function createOntPanel()
 
 	// make the ontSerchByNamePanel
 	shtml='<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>\
-		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td<td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15"></input>&nbsp;</td>\
+		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td><td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15" />&nbsp;</td>\
 		<td><button onclick="searchByName()">Find</button></td></tr><tr><td colspan="2">Select Ontology:<select id="searchByNameSelectOntology"></select></td></tr></table>';
 
 		searchByNameForm = new Ext.Panel(
@@ -1446,7 +1446,7 @@ function createOntPanel()
 		}
 		ontFilterPanel = new Ext.Panel(
 				{
-					title : 'Search by Subject',
+					title : 'Search Terms',
 					id : 'ontFilterPanel',
 					region : 'center',
 					height : 500,
@@ -1667,6 +1667,7 @@ function loginComplete()
 	genePatternLogin();
 }
 
+// TODO Check for unused function !
 function showProjectDialog(projects)
 {
 
@@ -1867,7 +1868,7 @@ function setActiveTab(){
  * -"include": Across Trials is the only concept included
  * -"exclude": Across Trials concept is the only concept excluded 
  */
-function createTree(includeExcludeFlag, ontresponse){
+function createTree(includeExcludeFlag, ontresponse, treePanel){
 	// shorthand
 	var Tree = Ext.tree;
 
@@ -1879,6 +1880,8 @@ function createTree(includeExcludeFlag, ontresponse){
             qtip      : 'root'
         }
     );
+    treePanel.setRootNode(treeRoot);
+
 	for (var c = 0; c < ontresponse.length; c ++ )
 	{
 		var key = ontresponse[c].key;
@@ -1935,18 +1938,40 @@ function getSubCategories(id_in, title_in, ontresponse)
 	
 	var showFn;
 	
+    var ontTree = new Tree.TreePanel(
+        {
+            id : id_in,
+            title : title_in,
+            animate : false,
+            autoScroll : true,
+            loader : new Ext.ux.OntologyTreeLoader(
+                {
+                    dataUrl : 'none'
+                }
+            ),
+            enableDrag : true,
+            ddGroup : 'makeQuery',
+            containerScroll : true,
+            enableDrop : false,
+            region : 'center',
+            rootVisible : false,
+            expanded : true,
+            onShow : function() { showFn.apply(this, arguments); }
+        }
+    );
+	
 	if (id_in==='crossTrialsPanel'){
 		showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
 			//Ext.get('advancedbutton').dom.style.display='none';
 		}
-		treeRoot = createTree('include', ontresponse);
+		treeRoot = createTree('include', ontresponse, ontTree);
 	}else{
 		showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
 			//Ext.get('advancedbutton').dom.style.display='';
 		}
-		treeRoot = createTree('exclude', ontresponse);
+		treeRoot = createTree('exclude', ontresponse, ontTree);
 	}
 	
     var toolbar = new Ext.Toolbar([
@@ -1959,28 +1984,6 @@ function getSubCategories(id_in, title_in, ontresponse)
 		}
     ]);
 	
-	var ontTree = new Tree.TreePanel(
-			{
-				id : id_in,
-				title : title_in,
-				animate : false,
-				autoScroll : true,
-				loader : new Ext.ux.OntologyTreeLoader(
-						{
-							dataUrl : 'none'
-						}
-				),
-				enableDrag : true,
-				ddGroup : 'makeQuery',
-				containerScroll : true,
-				enableDrop : false,
-				region : 'center',
-				rootVisible : false,
-				expanded : true,
-				onShow : showFn
-			}
-	);
-
 	ontTree.on('startdrag', function(panel, node, event)
 			{
 		Ext.ux.ManagedIFrame.Manager.showShims()
@@ -2159,6 +2162,12 @@ function setupDragAndDrop()
 }
 
 function getPreviousQueryFromIDComplete(subset, result) {
+    if (document.getElementById("queryCriteriaDiv" + subset + "_1") == null) {
+        setTimeout(function(){
+            getPreviousQueryFromIDComplete(subset, result);
+        }, 100);
+        return ;
+    }
     if (result.status != 200) {
         queryPanel.el.unmask();
         return;
@@ -2172,7 +2181,7 @@ function getPreviousQueryFromIDComplete(subset, result) {
 
     panel:
     for (var p = 0; p < panels.length; p++) {
-        var panelnumber = p + 1
+        var panelnumber = p + 1;
 
         showCriteriaGroup(panelnumber); //in case its hidden;
         var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + panelnumber);
@@ -2429,7 +2438,7 @@ function showQuerySummaryWindow(source)
 					id : 'showQuerySummaryWindow',
 					title : 'Query Summary',
 					layout : 'fit',
-					width : 500,
+					width : 600,
 					height : 500,
 					closable : false,
 					plain : true,
@@ -2444,7 +2453,7 @@ function showQuerySummaryWindow(source)
 					        	   }
 					           }
 					           ],
-					           resizable : false
+					           resizable : true
 				}
 		);
 
@@ -2473,7 +2482,7 @@ function showQuerySummaryWindow(source)
 		// querySummaryPanel.setBody(fakehtml);
 		var q1 = getQuerySummary(1);
 		var q2 = getQuerySummary(2);
-		querySummaryPanel.body.update('<table border="1" height="100%" width="100%"><tr><td width="50%" valign="top" style="padding:10px;"><h2>Subset 1 Criteria</h2>' + q1 + '</td><td valign="top" style="padding:10px;"><h2>Subset 2 Criteria</h2>' + q2 + '</td></tr></table>');
+		querySummaryPanel.body.update('<table border="1" height="100%" width="100%"><tr><td width="50%" valign="top"><div style="padding:10px;"><h2>Subset 1 Criteria</h2>' + q1 + '</div></td><td valign="top"><div style="padding:10px;"><h2>Subset 2 Criteria</h2>' + q2 + '</div></td></tr></table>');
 }
 
 
@@ -3836,7 +3845,7 @@ function showNameQueryDialog()
 					           }
 					           ],
 					           resizable : false,
-					           html : '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50"></input>'
+					           html : '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50">'
 				}
 		);
 	}
@@ -4504,7 +4513,9 @@ function showHaploviewGeneSelection()
 }
 
 function genePatternLogin() {
-	document.getElementById("gplogin").src = pageInfo.basePath + '/analysis/gplogin';
+    element = document.getElementById("gplogin");
+	if(element)
+        element.src = pageInfo.basePath + '/analysis/gplogin';
 }
 
 function showWorkflowStatusWindow()
@@ -4695,7 +4706,7 @@ function saveComparisonComplete(result)
         closable: true,
         tools: [
                   {
-                	  	id : 'sampleExplorerHelpButton',
+                	  	id : 'saveComparisonWindowHelpButton',
 						qtip: 'Click for Saved Camparison Window Help',
 						disabled : false,
 						handler : function()

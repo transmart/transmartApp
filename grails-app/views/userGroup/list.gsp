@@ -12,12 +12,12 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
 
-
+<%@page import="org.transmart.searchapp.UserGroup"%>
 
 <html>
     <head>
@@ -56,24 +56,17 @@
                         <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
 
                             <td><g:link action="show" id="${userGroupInstance.id}">${fieldValue(bean:userGroupInstance, field:'id')}</g:link></td>
-
-            <td>${fieldValue(bean:userGroupInstance, field:'name')}</td>
-
-                           <td>${fieldValue(bean:userGroupInstance, field:'description')}</td>
-
+                            <td>${fieldValue(bean:userGroupInstance, field:'name')}&nbsp&nbsp&nbsp&nbsp</td>
+                            <td>${fieldValue(bean:userGroupInstance, field:'description')}&nbsp&nbsp&nbsp&nbsp</td>
                             <td>${fieldValue(bean:userGroupInstance, field:'enabled')}</td>
-
-
                             <td>${fieldValue(bean:userGroupInstance, field:'groupCategory')}</td>
-
-
-
                         </tr>
                     </g:each>
                     </tbody>
                 </table>
             </div>
             <div class="paginateButtons">
+				<g:paginate total="${UserGroup.count()}" />
 
             </div>
         </div>

@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -25,8 +25,8 @@
                         <td> <g:select class="addremoveselect" name="sobjectstoremove" from="${secureObjectAccessList}" size="15" multiple="yes" optionKey="id" optionValue="objectAccessName" /></td>
 
 						  <td class="addremovebuttonholder">
-							<button class="ltarrowbutton" onclick="${remoteFunction(action:'addSecObjectsToPrincipal',update:[success:'permissions', failure:''],  params:'$(\'sobjectstoadd\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&id=\'+document.getElementById(\'currentprincipalid\').value+\'&accesslevelid=\'+document.getElementById(\'accesslevelid\').options[document.getElementById(\'accesslevelid\').selectedIndex].value')}; return false;">&LT;&LT;Add</button><br>
-							<button class="ltarrowbutton" onclick="${remoteFunction(action:'removeSecObjectsFromPrincipal',update:[success:'permissions', failure:''],  params:'$(\'sobjectstoremove\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&id=\'+document.getElementById(\'currentprincipalid\').value+\'&accesslevelid=\'+document.getElementById(\'accesslevelid\').options[document.getElementById(\'accesslevelid\').selectedIndex].value')}; return false;">Remove&GT;&GT;</button>
+							<button class="ltarrowbutton" onclick="${remoteFunction(action:'addSecObjectsToPrincipal',update:[success:'permissions', failure:''],  params:'jQuery(\'#sobjectstoadd\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&id=\'+document.getElementById(\'currentprincipalid\').value+\'&accesslevelid=\'+document.getElementById(\'accesslevelid\').options[document.getElementById(\'accesslevelid\').selectedIndex].value')}; return false;">&LT;&LT;Add</button><br>
+							<button class="ltarrowbutton" onclick="${remoteFunction(action:'removeSecObjectsFromPrincipal',update:[success:'permissions', failure:''],  params:'jQuery(\'#sobjectstoremove\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&id=\'+document.getElementById(\'currentprincipalid\').value+\'&accesslevelid=\'+document.getElementById(\'accesslevelid\').options[document.getElementById(\'accesslevelid\').selectedIndex].value')}; return false;">Remove&GT;&GT;</button>
 							</td>
 							<td>
 							<div id="addfrombox">
@@ -34,5 +34,3 @@
 							</div>
 							</td>
 			</g:else>
-
-

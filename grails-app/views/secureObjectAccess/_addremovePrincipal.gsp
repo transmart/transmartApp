@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -22,8 +22,8 @@
             </g:if>
                 <td> <g:select class="addremoveselect" name="groupstoremove" from="${secureObjectAccessList}" size="15" multiple="yes" optionKey="id" optionValue="principalAccessName" /></td>
 		  <td class="addremovebuttonholder">
-						<button class="ltarrowbutton" onclick="${remoteFunction(action:'addPrincipalToAccessList',update:[success:'groups', failure:''],  params:'$(\'groupstoadd\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&secureobjectid=\'+document.getElementById(\'secureobjectid\').options[document.getElementById(\'secureobjectid\').selectedIndex].value+\'&accesslevelid=\'+document.getElementById(\'accesslevelid\').options[document.getElementById(\'accesslevelid\').selectedIndex].value')}; return false;">&LT;&LT;Add</button><br>
-							<button class="ltarrowbutton" onclick="${remoteFunction(action:'removePrincipalFromAccessList',update:[success:'groups', failure:''],  params:'$(\'groupstoremove\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&secureobjectid=\'+document.getElementById(\'secureobjectid\').options[document.getElementById(\'secureobjectid\').selectedIndex].value+\'&accesslevelid=\'+document.getElementById(\'accesslevelid\').options[document.getElementById(\'accesslevelid\').selectedIndex].value')}; return false;">Remove&GT;&GT;</button>
+						<button class="ltarrowbutton" onclick="${remoteFunction(action:'addPrincipalToAccessList',update:[success:'groups', failure:''],  params:'jQuery(\'#groupstoadd\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&secureobjectid=\'+document.getElementById(\'secureobjectid\').options[document.getElementById(\'secureobjectid\').selectedIndex].value+\'&accesslevelid=\'+document.getElementById(\'accesslevelid\').options[document.getElementById(\'accesslevelid\').selectedIndex].value')}; return false;">&LT;&LT;Add</button><br>
+							<button class="ltarrowbutton" onclick="${remoteFunction(action:'removePrincipalFromAccessList',update:[success:'groups', failure:''],  params:'jQuery(\'#groupstoremove\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&secureobjectid=\'+document.getElementById(\'secureobjectid\').options[document.getElementById(\'secureobjectid\').selectedIndex].value+\'&accesslevelid=\'+document.getElementById(\'accesslevelid\').options[document.getElementById(\'accesslevelid\').selectedIndex].value')}; return false;">Remove&GT;&GT;</button>
 		</td>
 	<td>
 			<div id="addfrombox">
