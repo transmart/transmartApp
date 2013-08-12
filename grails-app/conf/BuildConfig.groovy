@@ -75,7 +75,6 @@ grails.project.dependency.resolution = {
         compile ":rdc-rmodules:0.3-SNAPSHOT"
         compile ":spring-security-core:1.2.7.3"
         compile ":dalliance-plugin:0.1-SNAPSHOT"
-        compile ":resources:1.2"
         build ":tomcat:$grailsVersion"
         build ":build-info:1.1"
 		runtime ":prototype:1.0"
