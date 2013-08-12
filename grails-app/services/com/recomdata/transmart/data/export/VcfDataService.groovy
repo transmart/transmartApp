@@ -370,10 +370,10 @@ class VcfDataService {
 """;
 		def param = []
 		if(resultInstanceId1!=null){
-			param.add(resultInstanceId1)
+			param.add('CAST(' + resultInstanceId1 + '? AS numeric)')
 		}
 		if(resultInstanceId2!=null){
-			param.add(resultInstanceId2)
+			param.add('CAST(' + resultInstanceId2 + '? AS numeric)')
 		}
 		
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
@@ -399,7 +399,7 @@ class VcfDataService {
 		def q  =
 """				SELECT distinct a.DATASET_ID, a.SUBJECT_ID, a.POSITION from DE_VARIANT_SUBJECT_IDX a
 		INNER JOIN de_subject_sample_mapping b on a.SUBJECT_ID = b.SUBJECT_ID 
-		INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id in (?) AND b.patient_id = sc.patient_num
+		INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id in (CAST(? AS numeric)) AND b.patient_id = sc.patient_num
  ORDER BY a.POSITION"""
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		def datasetIdxMap =[:]

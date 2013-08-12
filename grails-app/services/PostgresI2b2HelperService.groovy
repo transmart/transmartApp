@@ -301,7 +301,7 @@ class PostgresI2b2HelperService {
 		
 		String sqlt="SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = '" +
 				concept_cd + "' AND PATIENT_NUM IN (select distinct patient_num " +
-				"from qt_patient_set_collection where result_instance_id = " + result_instance_id + ")";
+				"from qt_patient_set_collection where result_instance_id = CAST(" + result_instance_id + " AS numeric))";
 		
 		log.debug("executing query: sqlt=" + sqlt);
 		try {
@@ -904,10 +904,10 @@ class PostgresI2b2HelperService {
 						from qt_patient_set_collection q
 						inner join patient_trial p
 						on q.patient_num=p.patient_num
-						where q.result_instance_id=""";
+						where q.result_instance_id=CAST(""";
 		
-		String sqlTemplate2 = """ or result_instance_id=""";
-		String sqlTemplate3 = """) and x.parent_cd=""";
+		String sqlTemplate2 = """ AS numeric) or result_instance_id=CAST(""";
+		String sqlTemplate3 = """ AS numeric)) and x.parent_cd=""";
 		
 		
 		

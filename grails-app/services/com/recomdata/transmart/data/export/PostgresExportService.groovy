@@ -74,9 +74,9 @@ class PostgresExportService {
 		def rID1 = RequestValidator.nullCheck(params.result_instance_id1)
 		def rID2 = RequestValidator.nullCheck(params.result_instance_id2)
 		def rIDs = null
-		if (rID1 && rID1?.trim() != '' && rID2 && rID2?.trim() != '') rIDs = rID1 + ',' + rID2
-		else if (rID1 && rID1?.trim() != '') rIDs = rID1
-		else if (rID2 && rID2?.trim() != '') rIDs = rID2
+		if (rID1 && rID1?.trim() != '' && rID2 && rID2?.trim() != '') rIDs = 'CAST(' + rID1 + ' AS numeric), CAST(' + rID2 + 'AS numeric)'
+		else if (rID1 && rID1?.trim() != '') rIDs = 'CAST(' + rID1 + ' AS numeric)'
+		else if (rID2 && rID2?.trim() != '') rIDs = 'CAST(' + rID2 + ' AS numeric)'
 		
 		def subsetLen = (rID1 && rID2) ? 2 : (rID1 || rID2) ? 1 : 0
 		log.debug('rID1 :: ' + rID1 + ' :: rID2 :: ' + rID2)

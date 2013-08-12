@@ -215,7 +215,7 @@ class MetadataService {
 				  select distinct s.sample_cd from de_subject_sample_mapping s
 				  where s.trial_name = ? and patient_id in (
 					SELECT DISTINCT sc.patient_num FROM qt_patient_set_collection sc, patient_dimension pd
-					WHERE sc.result_instance_id = ? AND sc.patient_num = pd.patient_num
+					WHERE sc.result_instance_id = CAST(? AS numeric) AND sc.patient_num = pd.patient_num
 				  ) and s.sample_cd is not null and b.file_name like s.sample_cd||'%'
 				)
 			"""
