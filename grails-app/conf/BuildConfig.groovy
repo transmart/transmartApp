@@ -60,7 +60,7 @@ grails.project.dependency.resolution = {
         compile('org.springframework.security.extensions:spring-security-saml2-core:1.0.0.RC3-f0fb87a') {
             //excludes of spring securirty necessary because they are for a more recent version (3.1 branch)
             excludes 'spring-security-config', 'spring-security-core', 'spring-security-web'
-		}
+    }
 
         /* update when grails spring-security-core uses a more recent version of spring-security */
         runtime 'org.springframework.security:spring-security-config:3.0.7.RELEASE'
@@ -74,8 +74,8 @@ grails.project.dependency.resolution = {
         compile ":quartz:1.0-RC2"
         compile ":rdc-rmodules:0.3-SNAPSHOT"
         compile ":spring-security-core:1.2.7.3"
-        compile ":resources:1.1.6"
         compile ":dalliance-plugin:0.1-SNAPSHOT"
+        compile ":resources:1.2"
         build ":tomcat:$grailsVersion"
         build ":build-info:1.1"
 		runtime ":prototype:1.0"

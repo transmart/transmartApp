@@ -31,7 +31,7 @@ def  findStudyAccessions( result_instance_ids){
 		def rids = []
 		for(r in result_instance_ids){
 			if(r?.trim()?.length()>0 ){
-				rids.add(r);
+				rids.add('CAST('+ r + ' AS numeric)');
 			}
 		}
 		

@@ -43,11 +43,11 @@
   <tr><td colspan="2">Searches by value can be constrained by the high/low flag set by the 
   performing laboratory, or by the values themselves.</td></tr>
   <tr>
-  <td width="200px"><input type="radio"  name="setValueMethod" value="novalue" onclick="setValueMethodChanged(this.value)">No Value
+  <td width="200px"><input type="radio" name="setValueMethod" value="novalue" onclick="setValueMethodChanged(this.value)" checked>No Value
 	<br>
 	<input type="radio" name="setValueMethod" value="highlow" onclick="setValueMethodChanged(this.value)">By high/low flag
 	<br>
-	<input type="radio" name="setValueMethod" CHECKED value="numeric" onclick="setValueMethodChanged(this.value)">By numeric value  
+	<input type="radio" name="setValueMethod" value="numeric" onclick="setValueMethodChanged(this.value)">By numeric value
 	<br><div style="visibility:hidden">
 	units = <select id="setValueUnits">
 			</select></div>

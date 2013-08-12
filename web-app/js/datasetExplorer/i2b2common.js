@@ -94,7 +94,7 @@ function convertNodeToConcept(node)
 	//Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
 	var nodeType = node.attributes.iconCls
 	
-	if(oktousevalues=="Y"){value.mode="numeric";} //default to numeric
+	if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
 	
 	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType);
 	return myConcept;
@@ -435,12 +435,12 @@ function showSetValueDialog()
 				setCheckedValue(test, mode)
         		setValueMethodChanged(mode);
         	}
-        else //default to numeric
+        else //default to novalue
         {	
         	if(test.length>0)
         		{
-				setCheckedValue(test, "numeric"); //numeric
-        		setValueMethodChanged("numeric");
+				setCheckedValue(test, "novalue");
+        		setValueMethodChanged("novalue");
         		}
         	}
         

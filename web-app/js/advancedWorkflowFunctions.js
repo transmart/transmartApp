@@ -189,9 +189,6 @@ function validateheatmapComplete(result,completedFunction)
 
 }
 //*******************************************************************
-
-
-//*******************************************************************
 //After the Run Workflow button is clicked on the advanced workflow popup, these functions run.
 //*******************************************************************
 
@@ -332,7 +329,7 @@ function finalAdvancedMenuValidation()
 
 
 
-function runVisualizerFromSpan(viewerURL, altviewerURL) {	
+function runVisualizerFromSpan(viewerURL, altviewerURL) {
 	//genePatternLogin();
 	Ext.Ajax.request(
 	{
@@ -349,7 +346,7 @@ function runVisualizerFromSpan(viewerURL, altviewerURL) {
 
 	if (altviewerURL == undefined || altviewerURL == "") {
 		return;
-	}	
+	}
 	Ext.Ajax.request(
 	{
 		url: altviewerURL,
@@ -509,49 +506,3 @@ function showGeneSelection()
 			document.getElementById("divpathway").style.display = "";
 		}
 	}
-}
-
-//We have more than 1 subset on the Sample Explorer so we need to put all the search queries together into one JSON object.
-//Each of the subsets when accessed are made up of the search criteria. [Pathology:["Disease","Non-Disease"]].
-function buildSubsetJSON()
-{
-	//This helps us determine if any of the grids have records.
-	var foundRecords = false;
-	
-	//We need to make sure at least one of the subset grids has results.
-	//We use the variable that holds the number of subsets to access all the subsets.
-	for (subsetCounter = 1;subsetCounter < GLOBAL.subsetTabs;subsetCounter++)
-	{
-		//Get the number of records in the grids datastore.		
-		if(Ext.getCmp("subsetGrid" + subsetCounter).store.getCount() > 0)
-		{
-			foundRecords = true;
-		}
-	}
-	
-	//If we don't find any records, exit.
-	if(!foundRecords)
-	{
-		return false;
-	}
-	
-	//This is the entire JSON object we return.
-	var completeSearchList = {};
-		
-	//We use the variable that holds the number of subsets to access all the subsets.
-	for (subsetCounter = 1;subsetCounter < GLOBAL.subsetTabs;subsetCounter++)
-	{
-		//This gets the object with our search criteria.
-		var jsonData = GLOBAL["SearchJSON" + subsetCounter];
-		
-		//Add our subset to the master JSON object.
-		completeSearchList[subsetCounter] = jsonData;
-	}
-	
-	return completeSearchList;
-}
-
-
-
-
-

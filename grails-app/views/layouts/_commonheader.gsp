@@ -20,25 +20,21 @@
     <ul>
         <g:if test="${'search'==app}"><li class="active">Search</li></g:if>
         <g:else><li><a href="${createLink([controller:'search'])}">Search</a></li></g:else>
-        
+
         <g:if test="${'rwg'==app}"><li class="active">Faceted Search</li></g:if>
         <g:else><li><a href="${createLink([controller:'RWG'])}">Faceted Search</a></li></g:else>    
-    
+
         <g:if test="${'datasetExplorer'==app}"><li class="active">Dataset Explorer</li></g:if>
         <g:else><li><a href="${createLink([controller:'secure'])}">Dataset Explorer</a></li></g:else>    
         
-        <g:if test="${grailsApplication.config.com.recomdata.hideSampleExplorer!='true'}">
-          <g:if test="${'sampleexplorer'==app}"><li class="active">Sample Explorer</li></g:if>
-          <g:else><li><a href="${createLink([controller:'sampleExplorer'])}">Sample Explorer</a></li></g:else>
-        </g:if>
-            
+		   			
         <g:if test="${'genesignature'==app}"><li class="active">Gene Signature/Lists</li></g:if>
         <g:else><li><a href="${createLink([controller:'geneSignature'])}">Gene Signature/Lists</a></li></g:else>
             
-        <sec:ifAnyGranted roles="ROLE_ADMIN">
+		      		<sec:ifAnyGranted roles="ROLE_ADMIN">
             <g:if test="${'accesslog'==app}"><li class="active">Admin</li></g:if>
             <g:else><li><a href="${createLink([controller:'accessLog'])}">Admin</a></li></g:else>
-        </sec:ifAnyGranted>
+		       		</sec:ifAnyGranted>
     </ul>
 </div>
 <div id = "utilities-holder">

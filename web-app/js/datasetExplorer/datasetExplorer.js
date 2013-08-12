@@ -2438,7 +2438,7 @@ function showQuerySummaryWindow(source)
 					id : 'showQuerySummaryWindow',
 					title : 'Query Summary',
 					layout : 'fit',
-					width : 500,
+					width : 600,
 					height : 500,
 					closable : false,
 					plain : true,
@@ -2453,7 +2453,7 @@ function showQuerySummaryWindow(source)
 					        	   }
 					           }
 					           ],
-					           resizable : false
+					           resizable : true
 				}
 		);
 
@@ -2482,7 +2482,7 @@ function showQuerySummaryWindow(source)
 		// querySummaryPanel.setBody(fakehtml);
 		var q1 = getQuerySummary(1);
 		var q2 = getQuerySummary(2);
-		querySummaryPanel.body.update('<table border="1" height="100%" width="100%"><tr><td width="50%" valign="top" style="padding:10px;"><h2>Subset 1 Criteria</h2>' + q1 + '</td><td valign="top" style="padding:10px;"><h2>Subset 2 Criteria</h2>' + q2 + '</td></tr></table>');
+		querySummaryPanel.body.update('<table border="1" height="100%" width="100%"><tr><td width="50%" valign="top"><div style="padding:10px;"><h2>Subset 1 Criteria</h2>' + q1 + '</div></td><td valign="top"><div style="padding:10px;"><h2>Subset 2 Criteria</h2>' + q2 + '</div></td></tr></table>');
 }
 
 
@@ -4706,7 +4706,7 @@ function saveComparisonComplete(result)
         closable: true,
         tools: [
                   {
-                	  	id : 'sampleExplorerHelpButton',
+                	  	id : 'saveComparisonWindowHelpButton',
 						qtip: 'Click for Saved Camparison Window Help',
 						disabled : false,
 						handler : function()

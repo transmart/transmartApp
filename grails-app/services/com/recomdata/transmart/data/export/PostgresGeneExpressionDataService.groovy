@@ -118,7 +118,7 @@ class PostgresGeneExpressionDataService {
 			ssm.GPL_ID
 		FROM
 		de_subject_sample_mapping ssm
-		INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = ? AND ssm.patient_id = sc.patient_num
+		INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = CAST(? AS numeric) AND ssm.patient_id = sc.patient_num
 
 		""");
 		sQuery.append(" WHERE ssm.trial_name = '").append(study).append("' ")
@@ -184,7 +184,7 @@ class PostgresGeneExpressionDataService {
 	   FROM de_subject_microarray_data a
 			   INNER JOIN de_mrna_annotation b ON a.probeset_id = b.probeset_id
 			   INNER JOIN de_subject_sample_mapping ssm ON ssm.assay_id = A.assay_id
-			   INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = ? AND ssm.PATIENT_ID = sc.patient_num
+			   INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = CAST(? AS numeric) AND ssm.PATIENT_ID = sc.patient_num
 	   		   INNER JOIN PATIENT_DIMENSION pd on ssm.patient_id = pd.patient_num
 	   """)
 	   
@@ -302,7 +302,7 @@ class PostgresGeneExpressionDataService {
 		assayS.append("""	SELECT DISTINCT s.assay_id 
 							FROM 	de_subject_sample_mapping s,
 									qt_patient_set_collection qt 
-							WHERE qt.patient_num = s.patient_id AND qt.result_instance_id = ? """);
+							WHERE qt.patient_num = s.patient_id AND qt.result_instance_id = CAST(? AS numeric) """);
 
 
 		//If we have a sample type, append it to the query.
@@ -879,11 +879,11 @@ class PostgresGeneExpressionDataService {
 							SELECT DISTINCT ssm.patient_id FROM de_subject_sample_mapping ssm 
 							INNER JOIN (SELECT DISTINCT patient_num 
 							            FROM qt_patient_set_collection
-							            WHERE result_instance_id = ?
+							            WHERE result_instance_id = CAST(? AS numeric)
 							            INTERSECT
 							            SELECT DISTINCT patient_num 
 							            FROM qt_patient_set_collection
-							            WHERE result_instance_id = ?) sc ON ssm.patient_id = sc.patient_num
+							            WHERE result_instance_id = CAST(? AS numeric)) sc ON ssm.patient_id = sc.patient_num
 							"""
 			groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 			def queryParams = []
@@ -1056,7 +1056,7 @@ class PostgresGeneExpressionDataService {
 	   def str = new StringBuffer()
 	   def mapValues = resultInstanceIdMap.values()
 	   mapValues.each { val ->
-		   if (val && ((String)val)?.trim() != '') str.append(val).append(',')
+		   if (val && ((String)val)?.trim() != '') str.append('CAST(').append(val).append(' AS numeric),')
 	   }
 	   str.delete(str.length()-1, str.length())
    

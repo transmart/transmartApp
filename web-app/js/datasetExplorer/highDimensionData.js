@@ -125,7 +125,7 @@ function determineHighDimVariableType(result){
 /**
  * read the result from heatmapvalidate call.
  * @param result
- * @param completedFunction
+ * @param divId
  */
 function readCohortData(result, divId)
 {
