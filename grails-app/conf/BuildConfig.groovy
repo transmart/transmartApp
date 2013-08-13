@@ -57,8 +57,8 @@ grails.project.dependency.resolution = {
 
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
 
-        /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
-        compile 'javax.servlet:servlet-api:2.5'
+		/* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
+		compile 'javax.servlet:servlet-api:2.5'
 
         /* for GeneGo web services: */
         compile 'axis:axis:1.4'
@@ -67,8 +67,9 @@ grails.project.dependency.resolution = {
          * see example config at https://github.com/thehyve/transmartApp/commit/bf15bb51a#all_commit_comments */
         compile('org.springframework.security.extensions:spring-security-saml2-core:1.0.0.RC3-f0fb87a') {
             //excludes of spring securirty necessary because they are for a more recent version (3.1 branch)
-            excludes 'spring-security-config', 'spring-security-core', 'spring-security-web'
-        }
+            //also remove xercesImpl because it breaks tomcat and is not otherwise needed
+            excludes 'spring-security-config', 'spring-security-core', 'spring-security-web', 'xercesImpl'
+    }
 
         /* update when grails spring-security-core uses a more recent version of spring-security */
         runtime 'org.springframework.security:spring-security-config:3.0.7.RELEASE'
