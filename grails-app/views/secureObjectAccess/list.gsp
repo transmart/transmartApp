@@ -47,7 +47,7 @@
                    	        <th><g:message code="secureObjectAccessInstance.accessLevel" default="Access Level"/></th>
                    	   
                         
-                   	        <th><g:message code="secureObjectAccessInstance.secureObject" default="Secure Object"/></th>
+                   	        <th><g:message code="secureObjectAccessInstance.secureObject" default="Study"/></th>
                    	   
                         
                         </tr>

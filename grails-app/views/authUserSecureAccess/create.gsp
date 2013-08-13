@@ -66,7 +66,7 @@
 
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="secureObject">Secure Object:</label>
+                                    <label for="secureObject">Study:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:authUserSecureAccessInstance,field:'secureObject','errors')}">
                                     <g:select id="secureObject" optionKey="id" optionValue="displayName" from="${SecureObject.listOrderByDisplayName()}" name="secureObject.id" value="${authUserSecureAccessInstance?.secureObject?.id}" ></g:select>

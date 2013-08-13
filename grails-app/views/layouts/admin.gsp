@@ -31,6 +31,7 @@
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 	    <script type="text/javascript"	src="${resource(dir:'js', file:'usergroup.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 		<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 

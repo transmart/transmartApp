@@ -38,7 +38,7 @@
                         
                    	        <g:sortableColumn property="conceptPath" title="Concept Path" />
                         
-                   	        <th>Secure Object</th>
+                   	        <th>Study</th>
                    	    
                         </tr>
                     </thead>

@@ -42,7 +42,7 @@
                         <tbody>
                           <tr class="prop">
                                 <td valign="top" class="name" >
-                                    <label for="secureobjectid">Secure Object:</label>
+                                    <label for="secureobjectid">Study:</label>
                                      <g:select optionKey="id" optionValue="displayName" from="${SecureObject.listOrderByDisplayName()}" name="secureobjectid" value="${secureObjectInstance?.id}" onchange="document.secobjaccessform.submit();"></g:select>
                                 </td>
                             </tr>
