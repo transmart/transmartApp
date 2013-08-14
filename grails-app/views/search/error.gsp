@@ -19,7 +19,7 @@
 
 <html>
   <head>
-	  <title>${grailsApplication.config.com.recomdata.searchtool.appTitle} - ${title}</title>
+	  <title>${grailsApplication.config.com.recomdata.appTitle} - ${title}</title>
 	  <style type="text/css">
 	  		.message {
 	  			border: 1px solid black;

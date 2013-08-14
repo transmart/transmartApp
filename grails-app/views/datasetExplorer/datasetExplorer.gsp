@@ -120,7 +120,7 @@
 		basePath :"${request.getContextPath()}"
 	}
 	
-    var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+    var helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 	 
 	/******************************************************************************/
 	//Global Variables
@@ -173,9 +173,9 @@
 	  Binning: false,
 	  ManualBinning: false,
 	  NumberOfBins: 4,
-	  HelpURL: '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}',
-	  ContactUs: '${grailsApplication.config.com.recomdata.searchtool.contactUs}',
-	  AppTitle: '${grailsApplication.config.com.recomdata.searchtool.appTitle}',
+	  HelpURL: '${grailsApplication.config.com.recomdata.adminHelpURL}',
+	  ContactUs: '${grailsApplication.config.com.recomdata.contactUs}',
+	  AppTitle: '${grailsApplication.config.com.recomdata.appTitle}',
       BuildVersion: 'Build Version: <g:meta name="app.version"/> <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
 	  AnalysisRun: false,
 	  Analysis: 'Advanced',
@@ -211,7 +211,7 @@
 	<!-- This implements the Help functionality -->
 	<script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
 	<script language="javascript">
-		helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+		helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 	</script>
 <!-- ************************************** --> 
 </body>

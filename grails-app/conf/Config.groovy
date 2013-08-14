@@ -16,8 +16,9 @@
  * 
  *
  ******************************************************************/
-  
 
+
+println grailsSettings
 
 /**
  * Running externalized configuration

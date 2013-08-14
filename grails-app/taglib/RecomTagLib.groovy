@@ -270,7 +270,7 @@ class RecomTagLib {
 		out << "&body=The following is a link to the "
 		out << customFilter?.name.replace("\"", "%22")
 		out << " saved filter in the "
-		out << grailsApplication.config.com.recomdata.searchtool.appTitle
+		out << grailsApplication.config.com.recomdata.appTitle
 		out << " application.%0A%0A"
 		out << createLink(controller:'search', action:'searchCustomFilter', id:customFilter.id, absolute:true)
 		out << "\" traget=\"_blank\" class=\"tiny\" style=\"text-decoration:underline;color:blue;font-size:11px;\">email</a>"
