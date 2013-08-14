@@ -52,9 +52,9 @@
 			Ext.QuickTips.init();
 
 			Ext.onReady(function(){			
-	            var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-	            var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
-	            var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
+                var helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
+	            var contact = '${grailsApplication.config.com.recomdata.contactUs}';
+	            var appTitle = '${grailsApplication.config.com.recomdata.appTitle}';
 	            var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
 	             
 				var viewport = new Ext.Viewport({
@@ -145,12 +145,12 @@
 				searchcombo.style.width = "442px";						
 			}
 		</script>
-		<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+		<title>${grailsApplication.config.com.recomdata.appTitle}</title>
 		<!-- ************************************** -->
         <!-- This implements the Help functionality -->
         <script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
         <script language="javascript">
-        	helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+            helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
         </script>
 		<!-- ************************************** -->
 	</head>

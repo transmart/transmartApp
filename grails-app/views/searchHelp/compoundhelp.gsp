@@ -19,7 +19,7 @@
 
 <html>
 <head>
-	<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+	<title>${grailsApplication.config.com.recomdata.appTitle}</title>
 	<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
 	<script type="text/javascript">
 

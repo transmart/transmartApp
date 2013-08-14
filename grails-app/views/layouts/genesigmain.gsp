@@ -25,7 +25,7 @@
 		<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
 		<link rel="stylesheet"	href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
-		<link rel="stylesheet"	href="${resource(dir:'css',file:'genesignature.css')}" />
+		<link rel="stylesheet"	href="${resource(dir:'css',file:'genesignature.css')}" />		
 		<link rel="stylesheet" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}"></link>
 		<g:javascript library="prototype" />
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
@@ -47,9 +47,9 @@
             	   Ext.QuickTips.init()
             	   
             	   /*
-            	   var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-                   var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
-                   var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
+            	   var helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
+                   var contact = '${grailsApplication.config.com.recomdata.contactUs}';
+                   var appTitle = '${grailsApplication.config.com.recomdata.appTitle}';
                    var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
                    
                    var viewport = new Ext.Viewport({

@@ -76,7 +76,7 @@ class LoginController {
 		nocache response
 		
 		def guestAutoLogin = grailsApplication.config.com.recomdata.guestAutoLogin;
-		boolean guestLoginEnabled = ('true'==guestAutoLogin)
+		boolean guestLoginEnabled = (guestAutoLogin == 'true' || guestAutoLogin.is(true))
 		log.info("enabled guest login")
 		//log.info("requet:"+request.getQueryString())
 		boolean forcedFormLogin = request.getQueryString() != null
@@ -101,11 +101,11 @@ class LoginController {
 		/*if (springSecurityService.isLoggedIn()) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
-			render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
+            render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
 		}*/
 		render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
 	}
-		
+
 	/**
 	 * Show denied page.
 	 */

@@ -19,8 +19,8 @@
 
 <html>
 <head>
-	<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
-	<link rel="SHORTCUT ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
+	<title>${grailsApplication.config.com.recomdata.appTitle}</title>
+    <link rel="SHORTCUT ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
 	<link rel="ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
@@ -63,7 +63,7 @@
 		                id:'entrezGlobal',
 		                defaultSrc: "http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=${symbol}"
 					}, /*
-				<sec:ifNotGranted roles="ROLE_PUBLIC_USER">
+		         <sec:ifNotGranted roles="ROLE_PUBLIC_USER">    
 					{
 		        		title:"Pictor",
 		                id:'pictor',
