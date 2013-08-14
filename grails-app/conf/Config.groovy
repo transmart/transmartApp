@@ -18,8 +18,6 @@
  ******************************************************************/
 
 
-println grailsSettings
-
 /**
  * Running externalized configuration
  * Assuming the following configuration files
@@ -29,16 +27,13 @@ println grailsSettings
  */
 
 
-grails.plugins.springsecurity.successHandler.defaultTargetUrl = "/transmart"
-
-//grails.plugins.springsecurity.rejectIfNoRule = true
-grails.plugins.springsecurity.securityConfigType = SecurityConfigType.InterceptUrlMap
-grails.plugins.springsecurity.interceptUrlMap = [
-        '/js/**':        ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/css/**':       ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/images/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/static/**':    ['IS_AUTHENTICATED_ANONYMOUSLY']
-]
+/* For some reason, the externalized config files are run with a different
+ * binding. None of the variables basedir, baseFile, baseName, grailsSettings,
+ * ... are available; the binding will actually be the root config object.
+ * So store the current binding in the config object so the externalized
+ * config has access to the variables mentioned.
+ */
+org.transmart.originalConfigBinding = getBinding()
 
 grails.config.locations = []
 def defaultConfigFiles = [
@@ -50,7 +45,6 @@ defaultConfigFiles.each { filePath ->
 	def f = new File(filePath)
 	if (f.exists()) {
 		grails.config.locations << "file:${filePath}"
-	} else {
 	}
 }
 String bashSafeEnvAppName = appName.toString().toUpperCase(Locale.ENGLISH).replaceAll(/-/, '_')
