@@ -113,7 +113,8 @@ class ClinicalDataService {
 				sqlQuery <<= "LEFT JOIN DEAPP.DE_SUBJECT_SAMPLE_MAPPING ssm ON ssm.PATIENT_ID = ofa.PATIENT_NUM  "
 			}
 			
-			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.MODIFIER_CD = ?"
+			//wl//sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.MODIFIER_CD = ?"
+			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.SOURCESYSTEM_CD = ? AND ofa.MODIFIER_CD = '@'"
 
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
 				sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT NVL(sample_type_cd,'-1') as gene_expr_concept"
@@ -433,7 +434,8 @@ class ClinicalDataService {
 		queryToReturn <<= "INNER JOIN CONCEPT_DIMENSION C1 ON C1.CONCEPT_CD = XMAP.CONCEPT_CD "
 		queryToReturn <<= "INNER JOIN CONCEPT_DIMENSION C2 ON C2.CONCEPT_CD = XMAP.PARENT_CD "
 		queryToReturn <<= "WHERE	qt.RESULT_INSTANCE_ID = CAST(? AS numeric) "
-		queryToReturn <<= "AND		ofa.MODIFIER_CD = ? "
+		//wl//queryToReturn <<= "AND		ofa.MODIFIER_CD = ? "
+		queryToReturn <<= "AND		ofa.SOURCESYSTEM_CD = ? AND ofa.MODIFIER_CD = '@' "
 		queryToReturn <<= "AND		ofa.CONCEPT_CD IN "
 		queryToReturn <<= "( "
 		queryToReturn <<= "		SELECT	C_BASECODE "
