@@ -1,4 +1,4 @@
-import grails.util.Environment /*************************************************************************
+/*************************************************************************
  * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
@@ -17,6 +17,8 @@ import grails.util.Environment /************************************************
  *
  ******************************************************************/
 
+import grails.util.Environment
+
 def console
 if (!Environment.isWarDeployed() && Environment.isWithinShell()) {
     console = grails.build.logging.GrailsConsole.instance
@@ -34,6 +36,15 @@ if (!Environment.isWarDeployed() && Environment.isWithinShell()) {
  * - config location set path by system variable '<APP_NAME>_CONFIG_LOCATION'
  * - dataSource location set path by system environment variable '<APP_NAME>_DATASOURCE_LOCATION'
  */
+
+
+/* For some reason, the externalized config files are run with a different
+ * binding. None of the variables basedir, baseFile, baseName, grailsSettings,
+ * ... are available; the binding will actually be the root config object.
+ * So store the current binding in the config object so the externalized
+ * config has access to the variables mentioned.
+ */
+org.transmart.originalConfigBinding = getBinding()
 
 grails.config.locations = []
 def defaultConfigFiles = [
