@@ -701,7 +701,7 @@ class I2b2HelperService {
 	 */
 	def ExportTableNew addConceptDataToTable(ExportTableNew tablein,String concept_key,String result_instance_id) {
 		if(isLeafConceptKey(concept_key)) {
-			String columnid=getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "");
+			String columnid=getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "").replace(".", "");
 			String columnname=getColumnNameFromKey(concept_key).replace(" ", "_");
 			//String columnid="...test\\test";
 			/*add the column to the table if its not there*/
