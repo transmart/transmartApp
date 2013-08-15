@@ -116,11 +116,11 @@ class ClinicalDataService {
 			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.MODIFIER_CD = ?"
 
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
-				sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT NVL(sample_type_cd,'-1') as gene_expr_concept"
+				sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT COALESCE(sample_type_cd,'-1') as gene_expr_concept"
 				sqlQuery <<= " FROM DEAPP.de_subject_sample_mapping WHERE trial_name = ?"
-				sqlQuery <<= " UNION SELECT DISTINCT NVL(tissue_type_cd,'-1') as gene_expr_concept "
+				sqlQuery <<= " UNION SELECT DISTINCT COALESCE(tissue_type_cd,'-1') as gene_expr_concept "
 				sqlQuery <<= " FROM DEAPP.de_subject_sample_mapping WHERE trial_name = ?"
-				sqlQuery <<= " UNION SELECT DISTINCT NVL(platform_cd,'-1') as gene_expr_concept "
+				sqlQuery <<= " UNION SELECT DISTINCT COALESCE(platform_cd,'-1') as gene_expr_concept "
 				sqlQuery <<= " FROM DEAPP.de_subject_sample_mapping WHERE trial_name = ?)"
 			}
 			
