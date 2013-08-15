@@ -403,28 +403,6 @@ var request=getCRCpdoRequestHeader()+
      request=request+getCRCpdoRequestFooter();
      return request;
   }
-         
- function getPreviousQueries()
-{  
-     var getPreviousQueriesRequest=getCRCRequestHeader()+'<user login="'+GLOBAL.Username+'">'+GLOBAL.Username+'</user>\
-            <patient_set_limit>0</patient_set_limit>\
-            <estimated_time>0</estimated_time>\
-            <request_type>CRC_QRY_getQueryMasterList_fromUserId</request_type>\
-        </ns4:psmheader>\
-        <ns4:request xsi:type="ns4:user_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\
-            <user_id>'+GLOBAL.Username+'</user_id>\
-            <group_id>'+GLOBAL.ProjectID+'</group_id>\
-            <fetch_size>20</fetch_size>'+getCRCRequestFooter(); 
- 	
- 	Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/proxy?url="+GLOBAL.CRCUrl+"request",
-    	        method: 'POST',
-    	        xmlData: getPreviousQueriesRequest,                                        
-    	        success: function(result, request){getPreviousQueriesComplete(result);},
-    	        failure: function(result, request){getPreviousQueriesComplete(result);}
-    	    }); 
-}
 
 function getPreviousQueryFromID(subset, queryMasterID) {
     queryPanel.el.mask('Rebuilding query...', 'x-mask-loading');
@@ -442,68 +420,6 @@ function getPreviousQueryFromID(subset, queryMasterID) {
             },
             timeout: '300000'
         });
-}
-
-function getQueryInstanceList(queryName, queryMasterId)
-{  
-     var getQueryInstanceListRequest=getCRCRequestHeader()+'<user login="'+GLOBAL.Username+'">'+GLOBAL.Username+'</user>\
-            <patient_set_limit>0</patient_set_limit>\
-            <estimated_time>0</estimated_time>\
-            <request_type>CRC_QRY_getQueryInstanceList_fromQueryMasterId</request_type>\
-        </ns4:psmheader>\
-        <ns4:request xsi:type="ns4:master_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\
-             <query_master_id>'+queryMasterId+'</query_master_id>'+getCRCRequestFooter(); 
- 	
- 	Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/proxy?url="+GLOBAL.CRCUrl+"request",
-    	        method: 'POST',
-    	        scope: this,
-    	        xmlData: getQueryInstanceListRequest,                                        
-    	        success: function(result, request){getQueryInstanceListComplete(result, queryName);},
-    	        failure: function(result, request){getQueryIntanceListComplete(result);}
-    	    }); 
-}
-
-function getQueryInstanceListComplete(response, queryName)
-{
-var queryInstances=response.responseXML.selectNodes('//query_instance');
-//get the first instance of the query
-var firstQueryInstanceId=queryInstances[0].selectSingleNode('query_master_id').firstChild.nodeValue;
-//alert(firstQueryInstanceId);
-//get the results of the first instance
-getQueryResultInstanceList(firstQueryInstanceId, queryName);
-}
-
-function getQueryResultInstanceList(queryInstanceId, queryName)
-{  
-     var getQueryResultInstanceListRequest=getCRCRequestHeader()+'<user login="'+GLOBAL.Username+'">'+GLOBAL.Username+'</user>\
-            <patient_set_limit>0</patient_set_limit>\
-            <estimated_time>0</estimated_time>\
-            <request_type>CRC_QRY_getQueryResultInstanceList_fromQueryInstanceId</request_type>\
-        </ns4:psmheader>\
-        <ns4:request xsi:type="ns4:instance_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\
-             <query_instance_id>'+queryInstanceId+'</query_instance_id>'+getCRCRequestFooter(); 
- 	
- 	Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/proxy?url="+GLOBAL.CRCUrl+"request",
-    	        method: 'POST',
-    	        scope: this,
-    	        headers:{'Content-Type':'text/xml'},
-    	        xmlData: getQueryResultInstanceListRequest,                                        
-    	        success: function(result, request){getQueryResultInstanceListComplete(result, queryName);},
-    	        failure: function(result, request){getQueryResultInstanceListComplete(result);}
-    	    }); 
-}
-
-function getQueryResultInstanceListComplete(response, queryName)
-{
-var queryResultInstances=response.responseXML.selectNodes('//query_result_instance');
-//get the first instance of the query
-var firstResultInstanceId=queryResultInstances[0].selectSingleNode('result_instance_id').firstChild.nodeValue;
-//alert(firstResultInstanceId);
-createExportItem(queryName, firstResultInstanceId);
 }
 
 
