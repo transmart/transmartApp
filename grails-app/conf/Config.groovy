@@ -1,4 +1,4 @@
-/*************************************************************************
+import grails.util.Environment /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
@@ -16,8 +16,16 @@
  * 
  *
  ******************************************************************/
-  
 
+def console
+if (!Environment.isWarDeployed() && Environment.isWithinShell()) {
+    console = grails.build.logging.GrailsConsole.instance
+} else {
+    console = [
+            info: { println "[INFO] $it" },
+            warn: { println "[WARN] $it" },
+    ]
+}
 
 /**
  * Running externalized configuration
@@ -26,8 +34,6 @@
  * - config location set path by system variable '<APP_NAME>_CONFIG_LOCATION'
  * - dataSource location set path by system environment variable '<APP_NAME>_DATASOURCE_LOCATION'
  */
-
-import grails.plugins.springsecurity.SecurityConfigType
 
 grails.config.locations = []
 def defaultConfigFiles = [
@@ -38,9 +44,13 @@ def defaultConfigFiles = [
 defaultConfigFiles.each { filePath ->
 	def f = new File(filePath)
 	if (f.exists()) {
+        if (f.name == 'RModulesConfig.groovy') {
+            console.warn "RModulesConfig.groovy is deprecated, it has been merged into Config.groovy. " +
+                    "Loading it anyway."
+        }
 		grails.config.locations << "file:${filePath}"
-	} else {
-        println "[INFO] Configuration file ${filePath} does not exist."
+	} else if (f.name != 'RModulesConfig.groovy') {
+        console.info "Configuration file ${filePath} does not exist."
 	}
 }
 String bashSafeEnvAppName = appName.toUpperCase(Locale.ENGLISH).replaceAll(/-/, '_')
@@ -53,7 +63,7 @@ def externalDataSource = System.getenv("${bashSafeEnvAppName}_DATASOURCE_LOCATIO
 if (externalDataSource) {
 	grails.config.locations << "file:" + externalDataSource
 }
-grails.config.locations.each { println "[INFO] Including configuration file [${it}] in configuration building." }
+grails.config.locations.each { console.info "Including configuration file [${it}] in configuration building." }
 
 
 /* 
