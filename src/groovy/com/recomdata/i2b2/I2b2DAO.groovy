@@ -229,7 +229,7 @@ public class I2b2DAO {
 				//Run the R command to set the working directory to our temp directory.
 				REXP x = c.eval(workingDirectoryCommand)
 
-				String pluginScriptDirectory = config.com.recomdata.plugins.pluginScriptDirectory
+				String pluginScriptDirectory = config.com.recomdata.transmart.data.export.rScriptDirectory
 				String compilePivotDataCommand = ''
 				if (mRNAExists) {
 					compilePivotDataCommand = "source('${pluginScriptDirectory}/PivotData/PivotClinicalDataWithAssays2.R')"
