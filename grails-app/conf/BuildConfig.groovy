@@ -54,7 +54,7 @@ grails.project.dependency.resolution = {
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
-        provided 'javax.servlet:servlet-api:' + grails.servlet.version
+        compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
 
         /* for GeneGo web services: */
         compile 'axis:axis:1.4'
@@ -89,6 +89,10 @@ grails.project.dependency.resolution = {
 
         test ":code-coverage:1.2.6"
     }
+}
+
+grails.war.resources = { stagingDir ->
+    delete(file: "${stagingDir}/WEB-INF/lib/servlet-api-${grails.servlet.version}.jar")
 }
 
 /* For development, it's interesting to use the plugins in-place.
