@@ -53,6 +53,9 @@ grails.project.dependency.resolution = {
         compile 'net.sf.opencsv:opencsv:2.3'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
 
+        /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
+        provided 'javax.servlet:servlet-api:' + grails.servlet.version
+
         /* for GeneGo web services: */
         compile 'axis:axis:1.4'
 
