@@ -24,6 +24,10 @@ grails.project.test.reports.dir = "target/test-reports"
 
 
 grails.project.war.file = "target/${appName}.war"
+
+/* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
+grails.servlet.version = "2.5"
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -48,9 +52,6 @@ grails.project.dependency.resolution = {
 		compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
-
-		/* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
-		compile 'javax.servlet:servlet-api:2.5'
 
         /* for GeneGo web services: */
         compile 'axis:axis:1.4'
