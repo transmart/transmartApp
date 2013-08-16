@@ -17,8 +17,6 @@
  *
  ******************************************************************/
 
-def console = grails.build.logging.GrailsConsole.instance
-
 /**
  * Running externalized configuration
  * Assuming the following configuration files
@@ -46,7 +44,7 @@ defaultConfigFiles.each { filePath ->
 	def f = new File(filePath)
 	if (f.exists()) {
         if (f.name.equals('RModulesConfig.groovy')) {
-            console.warn "RModulesConfig.groovy is deprecated, it has been merged into Config.groovy. " +
+            println "[WARN] RModulesConfig.groovy is deprecated, it has been merged into Config.groovy. " +
                     "Loading it anyway."
         }
 		grails.config.locations << "file:${filePath}"
@@ -62,7 +60,7 @@ def externalDataSource = System.getenv("${bashSafeEnvAppName}_DATASOURCE_LOCATIO
 if (externalDataSource) {
 	grails.config.locations << "file:" + externalDataSource
 }
-grails.config.locations.each { console.info "[INFO] Including configuration file [${it}] in configuration building." }
+grails.config.locations.each { println "[INFO] Including configuration file [${it}] in configuration building." }
 
 
 /* 
