@@ -100,14 +100,14 @@ Access Log
 %{--<div class='navbarBox'>--}%
 %{--<div class="navcontainer1">--}%
 %{--<h1 class="panelHeader">--}%
-%{--Secure Object Paths--}%
+%{--Concept Path Links--}%
 %{--</h1>--}%
 %{--<ul class="navlist">--}%
  %{--<li>--}%
-  %{--<span class="adminMenuButton"><g:link class="list" controller="secureObjectPath" action="list">SecureObjectPath List</g:link></span>--}%
+  %{--<span class="adminMenuButton"><g:link class="list" controller="secureObjectPath" action="list">Path Link List</g:link></span>--}%
  %{--</li>--}%
  %{--<li>--}%
-  %{--<span class="adminMenuButton"><g:link class="create" controller="secureObjectPath" action="create">Add SecureObjectPath</g:link></span>--}%
+  %{--<span class="adminMenuButton"><g:link class="create" controller="secureObjectPath" action="create">Add Path Link</g:link></span>--}%
  %{--</li>--}%
 %{--</ul>--}%
 %{--</div>--}%
