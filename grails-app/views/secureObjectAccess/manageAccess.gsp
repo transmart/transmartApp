@@ -29,7 +29,6 @@
    p { width:430px; }
         .ext-ie .x-form-text {position:static !important;}
   </style>
-        <g:setProvider library="prototype"/>
     </head>
     <body>
         <div class="body">

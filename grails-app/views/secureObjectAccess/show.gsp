@@ -67,7 +67,7 @@
                     
 
                         <tr class="prop">
-                            <td valign="top" class="name"><g:message code="secureObjectAccessInstance.secureObject" default="Secure Object"/>:</td>
+                            <td valign="top" class="name"><g:message code="secureObjectAccessInstance.secureObject" default="Study"/>:</td>
                             
                             <td valign="top" class="value"><g:link controller="secureObject" action="show" id="${secureObjectAccessInstance?.secureObject?.id}">${secureObjectAccessInstance?.secureObject?.encodeAsHTML()}</g:link></td>
                             

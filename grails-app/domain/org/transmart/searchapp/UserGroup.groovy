@@ -20,6 +20,9 @@ package org.transmart.searchapp
  ******************************************************************/
 class UserGroup extends Principal{
 
+    Long id
+	String name
+	String description
 	String groupCategory
 
 	static hasMany = [members:AuthUser]
@@ -28,9 +31,11 @@ class UserGroup extends Principal{
 		table 'SEARCH_AUTH_GROUP'
 		columns
 		{
+            id column:'ID'
+            name column:'NAME'
+            description column:'DESCRIPTION'
 			groupCategory column:'GROUP_CATEGORY'
 			members joinTable: [name: 'SEARCH_AUTH_GROUP_MEMBER', column: 'AUTH_USER_ID', key: 'AUTH_GROUP_ID' ]
-
 		}
 	}
 	

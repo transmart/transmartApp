@@ -49,7 +49,7 @@
                         </tr>
                     
                         <tr class="prop">
-                            <td valign="top" class="name">Secure Object:</td>
+                            <td valign="top" class="name">Study:</td>
                             
                             <td valign="top" class="value"><g:link controller="secureObject" action="show" id="${secureObjectPathInstance?.secureObject?.id}">${secureObjectPathInstance?.secureObject?.displayName?.encodeAsHTML()}</g:link></td>
                             

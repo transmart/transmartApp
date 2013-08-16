@@ -10,6 +10,12 @@
     .queryGroupIncludeLong {text-align:left;width:230px; height:135px;padding:5px;background:white;font:8pt arial;white-space:nowrap;overflow:auto;border:1px solid black}
  	.queryGroupExclude {text-align:left;width:330px; height:35px;padding:5px;background:lightgrey;font:8pt arial;white-space:nowrap;overflow:auto;border:1px solid black}
 
+    .help-tree-panel {
+        position: absolute !important;
+        right: 0 !important;
+        z-index: 100 !important;
+    }
+
 /* Top level menu */
 
 table.menuDetail {
