@@ -31,13 +31,27 @@ import grails.plugins.springsecurity.SecurityConfigType
 
 grails.plugins.springsecurity.successHandler.defaultTargetUrl = "/transmart"
 
-//grails.plugins.springsecurity.rejectIfNoRule = true
+grails.plugins.springsecurity.rejectIfNoRule = true
 grails.plugins.springsecurity.securityConfigType = SecurityConfigType.InterceptUrlMap
 grails.plugins.springsecurity.interceptUrlMap = [
-        '/js/**':        ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/css/**':       ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/images/**':    ['IS_AUTHENTICATED_ANONYMOUSLY'],
-        '/static/**':    ['IS_AUTHENTICATED_ANONYMOUSLY']
+        '/login/**'                   : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/css/**'                     : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/js/**'                      : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/images/**'                  : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/static/**'                  : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/search/loadAJAX**'          : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/analysis/getGenePatternFile': ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/analysis/getTestFile'       : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+        '/requestmap/**'              : ['ROLE_ADMIN'],
+        '/role/**'                    : ['ROLE_ADMIN'],
+        '/authUser/**'                : ['ROLE_ADMIN'],
+        '/secureObject/**'            : ['ROLE_ADMIN'],
+        '/accessLog/**'               : ['ROLE_ADMIN'],
+        '/authUserSecureAccess/**'    : ['ROLE_ADMIN'],
+        '/secureObjectPath/**'        : ['ROLE_ADMIN'],
+        '/userGroup/**'               : ['ROLE_ADMIN'],
+        '/secureObjectAccess/**'      : ['ROLE_ADMIN'],
+        '/**'                         : ['IS_AUTHENTICATED_REMEMBERED'], // must be last
 ]
 
 grails.config.locations = []
