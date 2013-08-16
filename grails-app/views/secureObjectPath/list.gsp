@@ -21,11 +21,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="admin" />
-        <title>SecureObjectPath List</title>
+        <title>Concept Path Link List</title>
     </head>
     <body>
         <div class="body">
-            <h1>SecureObjectPath List</h1>
+            <h1>Concept Path Link List</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
@@ -50,7 +50,7 @@
                         
                             <td>${fieldValue(bean:secureObjectPathInstance, field:'conceptPath')}</td>
                         
-                            <td>${fieldValue(bean:secureObjectPathInstance, field:'secureObject')}</td>
+                            <td>${fieldValue(bean:secureObjectPathInstance, field:'secureObject.displayName')}</td>
                         
                         </tr>
                     </g:each>
