@@ -42,7 +42,10 @@ class BootStrap {
                           "Tip: on ~/.grails/transmartConfig, run\n" +
                           "groovy -e 'new ConfigSlurper().parse(new File(\"Config.groovy\").toURL())'\n" +
                           "to detect compile errors. Other errors can be detected " +
-                          "with a breakpoing on the catch block in ConfigurationHelper::mergeInLocations()")
+                          "with a breakpoing on the catch block in ConfigurationHelper::mergeInLocations().\n" +
+                          "Alternatively, you can change the console logging settings by editing " +
+                          "\$GRAILS_HOME/scripts/log4j.properties, adding a proper appender and log " +
+                          "org.codehaus.groovy.grails.commons.cfg.ConfigurationHelper at level WARN")
             throw new GrailsConfigurationException("Configuration magic setting not found")
         }
     }
