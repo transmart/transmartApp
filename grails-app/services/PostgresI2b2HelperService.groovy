@@ -266,7 +266,7 @@ class PostgresI2b2HelperService {
 		String concept_cd=getConceptCodeFromKey(concept_key);
 		ArrayList<Double> values=new ArrayList<Double>();
 		//wl//sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ?", [concept_cd], {row ->
-		sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE MODIFIER_CD = '@' AND CONCEPT_CD = ?", [concept_cd], {row ->
+		sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = ?", [concept_cd], {row ->
 			if(row.NVAL_NUM!=null)	{
 				values.add(row.NVAL_NUM);
 				log.trace("adding"+row.NVAL_NUM);
@@ -300,7 +300,7 @@ class PostgresI2b2HelperService {
 		//        from qt_patient_set_collection where result_instance_id = ?)""";
 		
 		//wl//String sqlt="SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = '" +
-		String sqlt="SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE MODIFIER_CD = '@' AND CONCEPT_CD = '" +
+		String sqlt="SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = '" +
 				concept_cd + "' AND PATIENT_NUM IN (select distinct patient_num " +
 				"from qt_patient_set_collection where result_instance_id = CAST(" + result_instance_id + " AS numeric))";
 		
@@ -334,7 +334,7 @@ class PostgresI2b2HelperService {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		log.trace("preparing query");
 		//wl//String sqlt="""SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
-		String sqlt="""SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE MODIFIER_CD = '@' AND CONCEPT_CD = ? AND
+		String sqlt="""SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = ? AND
 		    PATIENT_NUM IN (select distinct patient_num
 			from qt_patient_set_collection
 			where result_instance_id = CAST (? AS numeric))""";
@@ -687,7 +687,7 @@ class PostgresI2b2HelperService {
 				String concept_cd=getConceptCodeFromKey(concept_key);
 				groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 				//wl//String sqlt = """SELECT PATIENT_NUM, NVAL_NUM, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
-				String sqlt = """SELECT PATIENT_NUM, NVAL_NUM, START_DATE FROM OBSERVATION_FACT f WHERE MODIFIER_CD = '@' AND CONCEPT_CD = ? AND
+				String sqlt = """SELECT PATIENT_NUM, NVAL_NUM, START_DATE FROM OBSERVATION_FACT f WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = ? AND
 				        PATIENT_NUM IN (select distinct patient_num
 						from qt_patient_set_collection
 						where result_instance_id = CAST(? AS numeric))""";
@@ -714,7 +714,7 @@ class PostgresI2b2HelperService {
 				String concept_cd=getConceptCodeFromKey(concept_key);
 				groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 				//wl//String sqlt = """SELECT PATIENT_NUM, TVAL_CHAR, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
-				String sqlt = """SELECT PATIENT_NUM, TVAL_CHAR, START_DATE FROM OBSERVATION_FACT f WHERE MODIFIER_CD = '@' AND CONCEPT_CD = ? AND
+				String sqlt = """SELECT PATIENT_NUM, TVAL_CHAR, START_DATE FROM OBSERVATION_FACT f WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = ? AND
 				        PATIENT_NUM IN (select distinct patient_num
 				        from qt_patient_set_collection
 						where result_instance_id = CAST(? AS numeric))""";
@@ -4489,7 +4489,7 @@ class PostgresI2b2HelperService {
 			//wl//    f.PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection
 			//wl//		where result_instance_id = ?)""";
 			String sqlt="""SELECT TRIAL, NVAL_NUM FROM OBSERVATION_FACT f  INNER JOIN PATIENT_TRIAL t
-			    ON f.PATIENT_NUM=t.PATIENT_NUM WHERE MODIFIER_CD = '@' AND CONCEPT_CD = ? AND
+			    ON f.PATIENT_NUM=t.PATIENT_NUM WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = ? AND
 			    f.PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection
 				where result_instance_id = CAST(? AS numeric))""";
 			sql.eachRow(sqlt, [
@@ -4529,7 +4529,7 @@ class PostgresI2b2HelperService {
 			//wl//		where result_instance_id="""+result_instance_id+""") """;
 			String sqlt="""SELECT TRIAL, NVAL_NUM FROM OBSERVATION_FACT f  INNER JOIN PATIENT_TRIAL t
 			ON f.PATIENT_NUM=t.PATIENT_NUM
-			WHERE MODIFIER_CD = '@' AND CONCEPT_CD IN ("""+listToIN(childConcepts.asList())+""") AND
+			WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD IN ("""+listToIN(childConcepts.asList())+""") AND
 			f.PATIENT_NUM IN (select distinct patient_num
 					from qt_patient_set_collection
 					where result_instance_id="""+result_instance_id+""") """;

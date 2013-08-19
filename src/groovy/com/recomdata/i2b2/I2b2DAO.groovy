@@ -88,7 +88,7 @@ public class I2b2DAO {
 				sqlQuery <<= "INNER JOIN DE_SUBJECT_SAMPLE_MAPPING ssm ON ssm.PATIENT_ID = ofa.PATIENT_NUM  "
 			}
 			//wl//sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.MODIFIER_CD = ? "
-			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.SOURCESYSTEM_CD = ? AND ofa.MODIFIER_CD = '@' "
+			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.SOURCESYSTEM_CD = ? AND ( ofa.MODIFIER_CD = '@' OR ofa.MODIFIER_CD = ofa.SOURCESYSTEM_CD) "
 
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
 				sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT sample_type_cd as gene_expr_concept FROM de_subject_sample_mapping WHERE trial_name = ?"
