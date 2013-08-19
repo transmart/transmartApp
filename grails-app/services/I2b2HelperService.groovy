@@ -5010,13 +5010,11 @@ class I2b2HelperService {
 		switch(infoType){
 			case CohortInformation.TRIALS_TYPE:
 				ci.trials = new ArrayList();
-				//wl//sqlt="select distinct modifier_cd from observation_fact where ";
 				sqlt="select distinct sourcesystem_cd from observation_fact where ";
 				if (subids != null)
 					sqlt += "PATIENT_NUM in ("+listToIN(subids)+") and ";
 				sqlt += "concept_cd in ("+listToIN(conids)+")";
 				sql.eachRow(sqlt, {row->
-					//wl//ci.trials.add(row.modifier_cd)
 					ci.trials.add(row.sourcesystem_cd)
 				})
 			
