@@ -58,9 +58,8 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 		User.withTransaction { status ->
 			def user = User.findWhere((conf.userLookup.usernamePropertyName): username)			
 			if (!user) {
-				def user = User.findWhere((conf.userLookup.usernamePropertyName): username.toUpperCase())
+				user = User.findWhere((conf.userLookup.usernamePropertyName): username.toUpperCase())
 				if (!user) {
-					def userWithDomain=false
 					if(username.split("@").size()==2){
 						user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0])
 						if(!user){
