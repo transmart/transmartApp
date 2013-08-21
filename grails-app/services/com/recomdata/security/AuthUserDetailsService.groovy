@@ -58,17 +58,20 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 		User.withTransaction { status ->
 			def user = User.findWhere((conf.userLookup.usernamePropertyName): username)			
 			if (!user) {
-				def userWithDomain=false
-				if(username.split("@").size()==2){
-					user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0])
-					if (!user) {
-						userWithDomain=true
+				def user = User.findWhere((conf.userLookup.usernamePropertyName): username.toUpperCase())
+				if (!user) {
+					def userWithDomain=false
+					if(username.split("@").size()==2){
+						user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0])
+						if(!user){
+						user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0].toUpperCase())
+							if(!user){
+								log.warn "User not found: $username"
+								throw new UsernameNotFoundException('User not found', username)
+							}
+						}
 					}
-				}
 				
-				if(userWithDomain){
-					log.warn "User not found: $username"
-					throw new UsernameNotFoundException('User not found', username)
 				}
 			}		
 			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
