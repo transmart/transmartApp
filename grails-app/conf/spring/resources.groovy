@@ -23,6 +23,12 @@ import org.springframework.security.web.session.ConcurrentSessionFilter
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.DefaultRedirectStrategy
+import org.springframework.security.extensions.kerberos.web.SpnegoAuthenticationProcessingFilter
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
+import org.springframework.security.web.authentication.AuthenticationFailureHandler
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.springframework.security.web.access.AccessDeniedHandlerImpl
+
 
 beans = {
 	dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder){
@@ -38,4 +44,14 @@ beans = {
 	}
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 	redirectStrategy(DefaultRedirectStrategy)
+	accessDeniedHandler(AccessDeniedHandlerImpl) {
+		errorPage = '/login'
+	}
+	failureHandler(SimpleUrlAuthenticationFailureHandler){
+		defaultFailureUrl='/login'
+	}
+	SpnegoAuthenticationProcessingFilter(SpnegoAuthenticationProcessingFilter){
+		authenticationManager=ref('authenticationManager')
+		failureHandler= ref('failureHandler')
+	}
 }
