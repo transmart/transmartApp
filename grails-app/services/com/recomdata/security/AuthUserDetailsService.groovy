@@ -33,13 +33,14 @@ import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
 /**
 * Implementation of <code>GrailsUserDetailsService</code> that uses
 * domain classes to load users and roles.
 */
 class AuthUserDetailsService implements GrailsUserDetailsService {
-
+	
     boolean transactional = true
 	
 	static Logger log = Logger.getLogger(AuthUserDetailsService.class)
@@ -57,8 +58,18 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 		User.withTransaction { status ->
 			def user = User.findWhere((conf.userLookup.usernamePropertyName): username)			
 			if (!user) {
-				log.warn "User not found: $username"
-				throw new UsernameNotFoundException('User not found', username)
+				def userWithDomain=false
+				if(username.split("@").size()==2){
+					user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0])
+					if (!user) {
+						userWithDomain=true
+					}
+				}
+				
+				if(userWithDomain){
+					log.warn "User not found: $username"
+					throw new UsernameNotFoundException('User not found', username)
+				}
 			}		
 			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
 			
