@@ -517,7 +517,7 @@ public class GexDao {
 				//Run the R command to set the working directory to our temp directory.
 				REXP x = c.eval(workingDirectoryCommand)
 				
-				String pluginScriptDirectory = config.com.recomdata.plugins.pluginScriptDirectory
+				String pluginScriptDirectory = config.com.recomdata.transmart.data.export.rScriptDirectory
 				String compilePivotDataCommand = "source('${pluginScriptDirectory}/PivotData/PivotGeneExprData.R')"
 				REXP comp = c.eval(compilePivotDataCommand)
 				//Prepare command to call the PivotClinicalData.R script

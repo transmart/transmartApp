@@ -47,7 +47,7 @@ eventConfigureTomcat = { tomcat ->
             ctx.aliases = alias
         }
 
-        console.info("Set context aliases to ${ctx.aliases}")
+        console.info("[INFO] Set context aliases to ${ctx.aliases}")
     }
 }
 

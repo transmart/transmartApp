@@ -107,7 +107,7 @@
 		</script>
 	  <script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
         <script language="javascript">
-        	helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+            helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
         </script>
 
 		<script language="javascript" type="text/javascript">

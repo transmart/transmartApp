@@ -27,6 +27,10 @@ grails.project.test.reports.dir = "target/test-reports"
 //grails.plugin.location.'transmart-mydas' = "../transmart-mydas"
 
 grails.project.war.file = "target/${appName}.war"
+
+/* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
+grails.servlet.version = "2.5"
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -57,8 +61,8 @@ grails.project.dependency.resolution = {
 
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
 
-		/* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
-		compile 'javax.servlet:servlet-api:2.5'
+        /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
+        compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
 
         /* for GeneGo web services: */
         compile 'axis:axis:1.4'
@@ -97,6 +101,10 @@ grails.project.dependency.resolution = {
 
         test ":code-coverage:1.2.6"
     }
+}
+
+grails.war.resources = { stagingDir ->
+    delete(file: "${stagingDir}/WEB-INF/lib/servlet-api-${grails.servlet.version}.jar")
 }
 
 /* For development, it's interesting to use the plugins in-place.

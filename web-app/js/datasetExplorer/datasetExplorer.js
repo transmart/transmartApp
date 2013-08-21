@@ -1794,52 +1794,6 @@ function projectDialogComplete()
 	}
 }
 
-function getPreviousQueriesComplete(response)
-{
-	// alert(response.responseText);
-	// shorthand
-	var Tree = Ext.tree;
-	// add a tree sorter in folder mode
-	// new Tree.TreeSorter(ontTree, {folderSort : true});
-
-	if(GLOBAL.Debug)
-	{
-		alert(response.responseText);
-	}
-	// clear the tree
-	for(c = prevTreeRoot.childNodes.length - 1; c >= 0;
-	c -- )
-	{
-		prevTreeRoot.childNodes[c].remove();
-	}
-	// prevTree.render();
-
-	var querymasters = response.responseXML.selectNodes('//query_master');
-	for(var c = 0; c < querymasters.length; c ++ )
-	{
-		var querymasterid = querymasters[c].selectSingleNode('query_master_id').firstChild.nodeValue;
-		var name = querymasters[c].selectSingleNode('name').firstChild.nodeValue;
-		var userid = querymasters[c].selectSingleNode('user_id').firstChild.nodeValue;
-		var groupid = querymasters[c].selectSingleNode('group_id').firstChild.nodeValue;
-		var createdate = querymasters[c].selectSingleNode('create_date').firstChild.nodeValue;
-		// set the root node
-		var prevNode = new Tree.TreeNode(
-				{
-					text : name,
-					draggable : true,
-					id : querymasterid,
-					qtip : name,
-					userid : userid,
-					groupid : groupid,
-					createdate : createdate,
-					leaf : true
-				}
-		);
-		prevNode.addListener('contextmenu', previousQueriesRightClick);
-		prevTreeRoot.appendChild(prevNode);
-	}
-}
-
 function getCategoriesComplete(ontresponse){
 	ontTabPanel.add(ontFilterPanel);
 	ontFilterTree.dragZone.addToGroup("analysis");
@@ -2768,76 +2722,6 @@ function runQueryComplete(result, subset, callback) {
         callback();
     }
     /* I'm the last request outstanding in this chain*/
-}
-
-
-
-
-
-
-
-function runQueryPDO(patientsetid, minpatient, maxpatient, subset, callback)
-{
-	var query = getCRCpdoRequest(patientsetid, minpatient, maxpatient, subset)
-	// resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
-	queryPanel.el.mask('Getting patient set ' + subset + '...', 'x-mask-loading');
-	Ext.Ajax.request(
-			{
-				url : pageInfo.basePath+"/proxy?url=" + GLOBAL.CRCUrl + "pdorequest",
-				method : 'POST',
-				// scope : this,
-				xmlData : query,
-				success : function(result, request)
-				{
-				runQueryPDOComplete(result, subset, callback);
-				}
-			,
-			failure : function(result, request)
-			{
-				runQueryPDOComplete(result, subset, callback);
-			}
-			,
-			timeout : '600000'
-			}
-	);
-
-}
-
-function runQueryPDOComplete(result, subset, callback)
-{
-	if(GLOBAL.Debug)
-	{
-		alert(result.responseText)
-	}
-	;
-	queryPanel.el.unmask();
-	var doc = result.responseXML;
-	doc.setProperty("SelectionLanguage", "XPath");
-	doc.setProperty("SelectionNamespaces", "xmlns:ns2='http://www.i2b2.org/xsd/hive/pdo/1.1/'");
-	var patientset = result.responseXML.selectSingleNode("//ns2:patient_set");
-	if(patientset == undefined)
-	{
-		patientset = result.responseXML.selectSingleNode("//patient_set");
-	}
-	if(patientset == null)
-	{
-		return
-	}
-	;
-	createStatistics(patientset, subset);
-	if(STATE.QueryRequestCounter > 0) // I'm in a chain of requests so decrement
-	{
-		STATE.QueryRequestCounter = -- STATE.QueryRequestCounter;
-	}
-	if(STATE.QueryRequestCounter == 0)
-	{
-		callback();
-	}
-	/* I'm the last request outstanding in this chain*/
-	if(GLOBAL.Debug)
-	{
-		resultsPanel.setBody(resultsPanel.getBody() + "<div style='height:200px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(result.responseText) + "</div>");
-	}
 }
 
 // takes a patientset node

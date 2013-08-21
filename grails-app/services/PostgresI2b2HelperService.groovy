@@ -458,7 +458,7 @@ class PostgresI2b2HelperService {
 		int i=getLevelFromKey(concept_key)+1;
 		
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		String sqlt = """Select DISTINCT m.c_name, nvl(i.obscount,0) as obscount FROM
+		String sqlt = """Select DISTINCT m.c_name, COALESCE(i.obscount,0) as obscount FROM
 		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) m
 		    LEFT OUTER JOIN
 		    (Select c_name, count(c_basecode) as obscount FROM
@@ -754,7 +754,7 @@ class PostgresI2b2HelperService {
 	def HashMap<String,Integer> getPatientDemographicDataForSubset(String col, String result_instance_id) {
 		HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		String sqlt = """SELECT a.cat as demcategory, nvl(b.demcount,0) as demcount FROM
+		String sqlt = """SELECT a.cat as demcategory, COALESCE(b.demcount,0) as demcount FROM
 		(SELECT DISTINCT UPPER("""+col+""") as cat FROM patient_dimension) a
 		LEFT OUTER JOIN
 		(SELECT UPPER("""+col+""") as cat,COUNT(*) as demcount FROM patient_dimension

@@ -19,7 +19,7 @@
 
 <head>
     <meta name='layout' content='main' />
-    <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+    <title>${grailsApplication.config.com.recomdata.appTitle}</title>
 
     <style type='text/css' media='screen'>
     #login {
@@ -69,7 +69,7 @@
     <table style="width:auto; border:0px; text-align:center; margin:auto;" align="center">
         <tr>
             <td style="text-align:center;vertical-align:middle;margin-left:-40px;">
-                <img src="${resource(dir:'images',file:grailsApplication.config.com.recomdata.searchtool.largeLogo)}" alt="Transmart" />
+                <img src="${resource(dir:'images',file:grailsApplication.config.com.recomdata.largeLogo)}" alt="Transmart" />
             </td>
         </tr>
         <tr><td>&nbsp;</td></tr>

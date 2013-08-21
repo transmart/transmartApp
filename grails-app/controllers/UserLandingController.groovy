@@ -35,16 +35,17 @@ class UserLandingController {
     def springSecurityService
 	
     private Object getUsername() {
-        if (!springSecurityService.principal?.metaClass.hasProperty('username')) {
+        if (!springSecurityService.principal?.username) {
             log.error("The security principal is not the expected type of " +
-                    "object. This likely means your transmart installation is " +
-                    "not properly configured. Make sure your that:\n" +
-                    "1) Config.groovy is being read, 2) has no synctatic errors," +
-                    "3) check the value of " +
+                    "object. This unfortunate error can happen due to several " +
+                    "circumstances, including but not limited to:\n" +
+                    "1) external Config.groovy with syntactic or runtime errors, " +
+                    "2) bad value for " +
                     "grails.plugins.springsecurity.userLookup.userDomainClassName, " +
-                    "4) make sure search_app.search_auth_user contains the " +
-                    "auto-login user (default: 'guest') and that 5) the " +
-                    "search_path setting of biomart_user is correct")
+                    "3) exception during authentication, " +
+                    "4) no data in search_app.search_auth_user and " +
+                    "5) search_path setting of biomart_user not being correct. " +
+                    "Details: the current principal is: " + springSecurityService.principal)
         }
 
         springSecurityService.getPrincipal().username
