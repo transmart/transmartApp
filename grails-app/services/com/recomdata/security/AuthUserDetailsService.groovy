@@ -60,17 +60,26 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 			if (!user) {
 				user = User.findWhere((conf.userLookup.usernamePropertyName): username.toUpperCase())
 				if (!user) {
-					if(username.split("@").size()==2){
-						user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0])
-						if(!user){
-						user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0].toUpperCase())
+					user = User.findWhere((conf.userLookup.usernamePropertyName): username.toLowerCase())
+					if (!user) {
+						if(username.split("@").size()==2){
+							user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0])
 							if(!user){
-								log.warn "User not found: $username"
-								throw new UsernameNotFoundException('User not found', username)
+							user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0].toUpperCase())
+								if(!user){
+									user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0].toLowerCase())
+									if(!user){
+										log.warn "User not found: $username"
+										throw new UsernameNotFoundException('User not found', username)
+									}
+								}
 							}
+						}else{
+							log.warn "User not found: $username"
+							throw new UsernameNotFoundException('User not found', username)
 						}
-					}
 				
+					}
 				}
 			}		
 			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
