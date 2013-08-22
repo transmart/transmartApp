@@ -40,8 +40,8 @@ grails.project.dependency.resolution = {
         mavenLocal()
         mavenCentral()
         mavenRepo([
-                name: 'repo.hyve.nl-snapshots',
-                root: 'http://repo.thehyve.nl/content/repositories/snapshots/',
+                name: 'repo.transmartfoundation.org-public',
+                root: 'https://repo.transmartfoundation.org/content/repositories/public/',
         ])
     }
     dependencies {
@@ -53,7 +53,7 @@ grails.project.dependency.resolution = {
     plugins {
         compile ":hibernate:$grailsVersion"
         compile ":quartz:1.0-RC2"
-        compile ":rdc-rmodules:0.2"
+        compile ":rdc-rmodules:0.3-SNAPSHOT"
         compile ":spring-security-core:1.2.7.3"
         compile ":resources:1.2"
         build ":tomcat:$grailsVersion"
