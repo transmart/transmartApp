@@ -98,11 +98,12 @@ class LoginController {
 				}
 			}
 
-		if (springSecurityService.isLoggedIn()) {
+		/*if (springSecurityService.isLoggedIn()) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
 		} else	{
 			render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
-		}
+		}*/
+		render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
 	}
 		
 	/**

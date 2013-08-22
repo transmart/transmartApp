@@ -65,7 +65,7 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 						if(username.split("@").size()==2){
 							user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0])
 							if(!user){
-							user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0].toUpperCase())
+								user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0].toUpperCase())
 								if(!user){
 									user = User.findWhere((conf.userLookup.usernamePropertyName): username.split("@")[0].toLowerCase())
 									if(!user){

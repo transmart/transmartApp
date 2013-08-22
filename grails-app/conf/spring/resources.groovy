@@ -54,4 +54,7 @@ beans = {
 		authenticationManager=ref('authenticationManager')
 		failureHandler= ref('failureHandler')
 	}
+	ldapUserDetailsMapper(com.recomdata.security.CustomUserDetailsContextMapper) {
+		dataSource = ref("dataSource")
+	}
 }
