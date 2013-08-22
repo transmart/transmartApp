@@ -18,6 +18,7 @@
 -->
 
 
+<g:setProvider library="prototype"/>
 <%@ page import="org.transmart.searchapp.AuthUser" %>
 <html>
 <head>
@@ -33,7 +34,7 @@
         position: static !important;
     }
     </style>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'prototype.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery.js')}"></script>
 </head>
 
 <body>

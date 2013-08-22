@@ -33,16 +33,16 @@ grails.project.dependency.resolution = {
     }
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     repositories {
-        mavenRepo([
-          name: 'repo.transmartfoundation.org-public',
-          root: 'https://repo.transmartfoundation.org/content/groups/public'
-        ])
         grailsPlugins()
         grailsHome()
         grailsCentral()
 
         mavenLocal()
         mavenCentral()
+        mavenRepo([
+                name: 'repo.transmartfoundation.org-public',
+                root: 'https://repo.transmartfoundation.org/content/repositories/public/',
+        ])
     }
     dependencies {
 		runtime 'postgresql:postgresql:9.0-801.jdbc4'
