@@ -25,7 +25,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="admin" />
-        <title>Manage Study Access</title>
+        <title>Access Control by User/Group</title>
                    <style>
    p { width:430px; }
         .ext-ie .x-form-text {position:static !important;}
@@ -33,7 +33,7 @@
     </head>
     <body>
         <div class="body">
-            <h1>Manage Study Access for User/Group</h1>
+            <h1>Access Control by User/Group</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
@@ -51,7 +51,7 @@
 	alert("Please select a user/group first");
 	return false;
 	}
- //${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
+    ${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
 	return false;
   }
 
