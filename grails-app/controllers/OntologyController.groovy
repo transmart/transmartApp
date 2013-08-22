@@ -217,14 +217,16 @@ class OntologyController {
             return
         }
 
-		def trial=node.tags.find{ w -> w.tagtype =="Trial" }
+		def result=node.tags.findAll{ it != null }
+		def trial=result.find { it.tagtype == "Trial" }
 		if(trial!=null)
 		{
 			def trialid=trial.tag;
 			chain(controller:'trial', action:'trialDetailByTrialNumber', id:trialid)
 		}
-		
-		render(template:'showDefinition', model:[tags:node.tags])
+
+        System.out.println("FINI")
+		render(template:'showDefinition', model:[tags:result])
 	}
 	
 }
