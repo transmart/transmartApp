@@ -182,7 +182,6 @@ class AuthUserController {
         else
             next_id = new Long(params.id)
 
-        System.err.println(next_id)
         if(params.email==null || params.email=="") {
             flash.message = 'Please enter an email'
             return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])

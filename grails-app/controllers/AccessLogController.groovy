@@ -163,7 +163,7 @@ class AccessLogController {
 		def sheet=new ExcelSheet("sheet1", headers, values);
 		def gen = new ExcelGenerator()
 		response.setHeader("Content-Type", "application/vnd.ms-excel; charset=utf-8")
-		response.setHeader("Content-Disposition", "attachment; filename=\"pre_clinical.xls\"")
+		response.setHeader("Content-Disposition", "attachment; filename=\"access_logs.xls\"")
 		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
 		response.setHeader("Pragma", "public");
 		response.setHeader("Expires", "0");
