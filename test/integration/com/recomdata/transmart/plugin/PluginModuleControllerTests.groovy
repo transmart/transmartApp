@@ -22,6 +22,8 @@ package com.recomdata.transmart.plugin
 
 import grails.test.*
 
+import org.junit.Ignore
+
 class PluginModuleControllerTests extends GrailsUnitTestCase {
     protected void setUp() {
         super.setUp()
@@ -31,6 +33,7 @@ class PluginModuleControllerTests extends GrailsUnitTestCase {
         super.tearDown()
     }
 
+	@Ignore // JIRA: THRONE-106
     void testUpdate() {
 		def pmc = new PluginModuleController()
 		pmc.params.id = 3
