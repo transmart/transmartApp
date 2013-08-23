@@ -18,10 +18,9 @@
  ******************************************************************/
   
 
-import org.transmart.biomart.BioAssayAnalysisData;
-import org.transmart.biomart.BioAssayData;
-
-import org.transmart.biomart.Literature
+import org.junit.Ignore
+import org.transmart.biomart.BioAssayAnalysisData
+import org.transmart.biomart.BioAssayData
 
 /**
  * @author JLiu
@@ -38,6 +37,7 @@ public class BioAssayAnalysisDataTests extends GroovyTestCase{
 	def targetIdForBioMarker = "8037275"
 	def targetIdForDisease = "8021799"
 
+	@Ignore // see JIRA item THRONE-103
 	void testAnalysisData(){
 		def tables = ["org.transmart.biomart.BioAssayAnalysisData","org.transmart.biomart.BioMarker","org.transmart.biomart.Disease"]
 		if (!dataAvailable(tables)) return
@@ -63,6 +63,7 @@ public class BioAssayAnalysisDataTests extends GroovyTestCase{
 		println(c)
 	}
 
+	@Ignore // see JIRA item THRONE-104
 	void testAssayData(){
 	
 		def tables = ["org.transmart.biomart.BioAssayData","org.transmart.biomart.BioMarker","org.transmart.biomart.Disease"]
@@ -89,6 +90,7 @@ public class BioAssayAnalysisDataTests extends GroovyTestCase{
 		println(c)
 	}
 
+	@Ignore // see JIRA item THRONE-105
 	void testLiteratureData(){
 		def tables = ["org.transmart.biomart.Literature","org.transmart.biomart.BioMarker","org.transmart.biomart.Disease"]
 
