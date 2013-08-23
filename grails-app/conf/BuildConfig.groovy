@@ -22,6 +22,9 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
+//grails.plugin.location.'rdc-rmodules' = "../Rmodules"
+//grails.plugin.location.'dalliance-plugin:0.1-SNAPSHOT' = "../dalliance-plugin"
+//grails.plugin.location.'transmart-mydas' = "../transmart-mydas"
 
 grails.project.war.file = "target/${appName}.war"
 
@@ -50,7 +53,12 @@ grails.project.dependency.resolution = {
     dependencies {
 		runtime 'postgresql:postgresql:9.0-801.jdbc4'
 		compile 'antlr:antlr:2.7.7'
+        compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
         compile 'net.sf.opencsv:opencsv:2.3'
+        compile "org.apache.lucene:lucene-core:2.4.0"
+        compile "org.apache.lucene:lucene-demos:2.4.0"
+        compile "org.apache.lucene:lucene-highlighter:2.4.0"
+
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
@@ -76,7 +84,11 @@ grails.project.dependency.resolution = {
         build ':release:2.2.1', ':rest-client-builder:1.0.3', {
             export = false
         }
+
         compile ":quartz:1.0-RC2"
+        compile(":transmart-mydas:0.1-SNAPSHOT") {
+            excludes 'lucene-core'
+        }
         compile ":rdc-rmodules:0.3-SNAPSHOT"
         compile ":spring-security-core:1.2.7.3"
         compile ":dalliance-plugin:0.1-SNAPSHOT"
