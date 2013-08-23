@@ -1,10 +1,8 @@
 package com.recomdata.transmart.services
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
 import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.junit.Ignore
 
 public class ClinicalDataServiceTests extends GroovyTestCase {
 
@@ -24,6 +22,7 @@ public class ClinicalDataServiceTests extends GroovyTestCase {
 	 * 
 	 * After the test was done running I extracted the required parameters from the jobInfo.txt file that is created in the jobs temporary directory.
 	 */
+	@Ignore
 	void testDataRetrieval()
 	{
 		//This is a list of studies.		
