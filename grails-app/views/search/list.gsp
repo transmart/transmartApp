@@ -62,7 +62,6 @@
 			// qtip on
 			Ext.QuickTips.init();
 
-
 			// Create global object to pass all the counts and urls to the main tab panel
 			var pageData = {
 				//activeTab: "${session.searchFilter.acttab()}",
@@ -197,15 +196,18 @@
 						"beforequery": {
 							fn: function(queryEvent) {
 					            var picklist = Ext.getCmp("categories");
+					            if (picklist != null) {
 					            var rec = picklist.getSelectedRecord();
 								if (rec != null) {
 									queryEvent.query = rec.id + ":" + queryEvent.query;
+								}
 								}
 							},
 							scope: this
 						}
 			        }
 				});
+				//combo.focus();
 
 				var win = new Ext.app.EditFiltersWindow({
 					id: "editfilters-window",
@@ -244,7 +246,6 @@
 						tabpanel.remove(Ext.getCmp("tab18"));
 					}			       
 				}
-				
 			    // set active tab
 			    tabpanel.activate(getActiveTab("${session.searchFilter.acttabname()}"));
 
@@ -255,9 +256,8 @@
 			    
 				var viewport = new Ext.Viewport({
 					    layout: "border",
-					    items: [new Ext.Panel({						    
+					    items: [new Ext.Panel({
 					        region: "north",
-						   // autoHeight: true,
 						    tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'utilities-div'), 
 						    contentEl: "header-div"				
 						}),
@@ -268,8 +268,8 @@
 			            })
 			         ]
 				});
+                viewport.doLayout();
 			});
-
 
 			var delayedTask = new Ext.util.DelayedTask();
 
@@ -333,7 +333,6 @@
 				return tab;
 				
 			}
-
 			</script>
 		<title>${grailsApplication.config.com.recomdata.appTitle}</title>
 		<!-- ************************************** -->
@@ -343,10 +342,9 @@
 	    	helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 	    </script>
 		<!-- ************************************** -->
-        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 	</head>
-<body>
-		<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
+	<body>
+		<div id="header-div">
 			<g:render template="/layouts/commonheader" model="['app':'search']" />
 			<g:render template="/layouts/searchheader" model="['app':'search']" />
 	    </div>
@@ -371,3 +369,4 @@
 		</div>
 		<div id="maintabs-div" style="position:fixed;margin-top:100px; width:100%"></div>
 	</body>
+</html>

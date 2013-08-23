@@ -22,11 +22,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="admin" />
-        <title>Manage Study Access</title>
+        <title>Access Control by Study</title>
     </head>
     <body>
         <div class="body">
-            <h1>Manage Study Access</h1>
+            <h1>Access Control by Study</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
@@ -42,7 +42,7 @@
                         <tbody>
                           <tr class="prop">
                                 <td valign="top" class="name" >
-                                    <label for="secureobjectid">Secure Object:</label>
+                                    <label for="secureobjectid">Study:</label>
                                      <g:select optionKey="id" optionValue="displayName" from="${SecureObject.listOrderByDisplayName()}" name="secureobjectid" value="${secureObjectInstance?.id}" onchange="document.secobjaccessform.submit();"></g:select>
                                 </td>
                             </tr>

@@ -30,7 +30,6 @@ class UserGroup extends Principal{
 		{
 			groupCategory column:'GROUP_CATEGORY'
 			members joinTable: [name: 'SEARCH_AUTH_GROUP_MEMBER', column: 'AUTH_USER_ID', key: 'AUTH_GROUP_ID' ]
-
 		}
 
 	}

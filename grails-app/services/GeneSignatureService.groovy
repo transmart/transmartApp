@@ -607,7 +607,7 @@ public class GeneSignatureService {
 		StringBuffer nativeSQL = new StringBuffer();
 		nativeSQL.append("select gsi.SEARCH_GENE_SIGNATURE_ID as id, count(*) Gene_Ct, sum(CASE WHEN gsi.FOLD_CHG_METRIC>0 THEN 1 ELSE 0 END) Up_Ct, sum(CASE WHEN gsi.FOLD_CHG_METRIC<0 THEN 1 ELSE 0 END) Down_Ct ");
 		nativeSQL.append("from SEARCH_GENE_SIGNATURE_ITEM gsi join SEARCH_GENE_SIGNATURE gs on gsi.search_gene_signature_id=gs.search_gene_signature_id ");
-		nativeSQL.append("where "+permCriteria+" and gs.DELETED_FLAG=0 ");
+		nativeSQL.append("where "+permCriteria+" and gs.DELETED_FLAG=FALSE ");
 		nativeSQL.append("group by gsi.SEARCH_GENE_SIGNATURE_ID");
 
 		// execute native sql on hibernate session

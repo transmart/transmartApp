@@ -41,7 +41,6 @@ import org.apache.commons.lang.StringUtils;
 
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.*;
-import org.rosuda.Rserve.*;
 
 
 /**

@@ -24,6 +24,7 @@
         <title>AccessLog List</title>
         <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 		<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">
     </head>
     <body>

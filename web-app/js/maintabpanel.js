@@ -556,7 +556,7 @@ function showFilters(button) {
         }
         layout.setActiveItem(1);
     } else {
-        layout.setActiveItem(0);
+        layout.setActiveItem(2);
     }
 
     var showFiltersButton = Ext.getCmp("filters-show-button");
@@ -644,6 +644,10 @@ function showStudyView(button){
     var activeitem = layout.activeItem;
     layout.setActiveItem(2);
     showContextSpecificHelp(activetab, button);
+    var showFiltersButton = Ext.getCmp("filters-show-button");
+    var hideFiltersButton = Ext.getCmp("filters-hide-button");
+    showFiltersButton.setVisible(true);
+    hideFiltersButton.setVisible(false);
 }
 
 function setButtonVisibility(id, visibility) {
@@ -772,10 +776,6 @@ function selectJubilantPanel(index) {
     var activetab = tabpanel.getActiveTab();
     var layout = activetab.getLayout();
     layout.setActiveItem(index);
-}
-
-function onItemCheck(item, checked){
-    ;
 }
 
 function popupWindow(mylink, windowname) {

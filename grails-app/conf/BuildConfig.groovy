@@ -43,8 +43,8 @@ grails.project.dependency.resolution = {
         mavenLocal()
         mavenCentral()
         mavenRepo([
-                name: 'repo.theyve.nl-public',
-                root: 'http://repo.thehyve.nl/content/repositories/public/',
+                name: 'repo.transmartfoundation.org-public',
+                root: 'https://repo.transmartfoundation.org/content/repositories/public/',
         ])
     }
     dependencies {
@@ -65,7 +65,7 @@ grails.project.dependency.resolution = {
             //excludes of spring securirty necessary because they are for a more recent version (3.1 branch)
             //also remove xercesImpl because it breaks tomcat and is not otherwise needed
             excludes 'spring-security-config', 'spring-security-core', 'spring-security-web', 'xercesImpl'
-        }
+    }
 
         /* update when grails spring-security-core uses a more recent version of spring-security */
         runtime 'org.springframework.security:spring-security-config:3.0.7.RELEASE'

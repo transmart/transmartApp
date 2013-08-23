@@ -21,11 +21,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="admin" />
-        <title>Show SecureObjectPath</title>
+        <title>Show Path Link</title>
     </head>
     <body>
         <div class="body">
-            <h1>Show SecureObjectPath</h1>
+            <h1>Show Path Link</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
@@ -49,7 +49,7 @@
                         </tr>
                     
                         <tr class="prop">
-                            <td valign="top" class="name">Secure Object:</td>
+                            <td valign="top" class="name">Study:</td>
                             
                             <td valign="top" class="value"><g:link controller="secureObject" action="show" id="${secureObjectPathInstance?.secureObject?.id}">${secureObjectPathInstance?.secureObject?.displayName?.encodeAsHTML()}</g:link></td>
                             

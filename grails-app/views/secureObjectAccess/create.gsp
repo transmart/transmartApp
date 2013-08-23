@@ -65,7 +65,7 @@
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="secureObject">Secure Object:</label>
+                                    <label for="secureObject">Study:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:secureObjectAccess,field:'secureObject','errors')}">
                                     <g:select optionKey="id" from="${SecureObject.list()}" name="secureObject.id" value="${secureObjectAccess?.secureObject?.id}" ></g:select>

@@ -24,6 +24,8 @@
  * @version $Revision: 10098 $
  */
 
+import groovy.sql.Sql
+
 import java.sql.BatchUpdateException
 import java.sql.SQLException
 
@@ -43,6 +45,7 @@ class AuthUserController {
 	 * Dependency injection for the springSecurityService.
 	 */
     def springSecurityService
+    def dataSource
 
 	// the delete, save and update actions only accept POST requests
 	static Map allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
@@ -170,16 +173,13 @@ class AuthUserController {
 	def save = {
 		def person = new AuthUser()
 		person.properties = params
-        def next_id = 0
+        def next_id
 
         if(params.id==null || params.id=="") {
-            def c = AuthUser.createCriteria()
-            next_id = c.get {
-                projections {
-                    max('id')
-                }
-            }
-            next_id++
+            def sql = new Sql(dataSource);
+            def seqSQL = "SELECT nextval('searchapp.hibernate_sequence')";
+            def result = sql.firstRow(seqSQL);
+            next_id = result.nextval
         }
         else
             next_id = new Long(params.id)
@@ -198,7 +198,7 @@ class AuthUserController {
             if (person.save()) {
                 addRoles(person)
                 def msg = "User: ${person.username} for ${person.userRealName} created";
-                new AccessLog(username: person.username, event:"User Created",
+                new AccessLog(username: springSecurityService.getPrincipal().username, event:"User Created",
                     eventmessage: msg,
                     accesstime:new Date()).save()
                 redirect action: show, id: person.id

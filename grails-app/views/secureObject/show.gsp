@@ -22,11 +22,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="admin" />
-        <title>Show SecureObject</title>
+        <title>Show Study</title>
     </head>
     <body>
         <div class="body">
-            <h1>Show SecureObject</h1>
+            <h1>Show Study</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>

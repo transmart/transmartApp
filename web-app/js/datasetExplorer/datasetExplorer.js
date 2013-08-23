@@ -1330,7 +1330,7 @@ function createOntPanel()
 			split : true,
 	        tools:[
 	               {
-		        		id:'help',
+		        		id:'help help-tree-panel',
 		        		qtip:'Click for context sensitive help',
 			        	handler: function(event, toolEl, panel)
 					    {

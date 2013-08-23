@@ -18,27 +18,32 @@
 -->
 
 
+<g:setProvider library="prototype"/>
 <%@ page import="org.transmart.searchapp.SecureObjectAccess" %>
 
 <html>
-    <head>
+<head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="admin" />
-        <title>Manage Study Access</title>
+    <title>Access Control by User/Group</title>
                    <style>
    p { width:430px; }
         .ext-ie .x-form-text {position:static !important;}
   </style>
-        <g:setProvider library="prototype"/>
-    </head>
-    <body>
-        <div class="body">
-            <h1>Manage Study Access for User/Group</h1>
+    <script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
+    <script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+</head>
+<body>
+<div class="body">
+    <h1>Access Control by User/Group</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
-  <div id="divuser" style="width:100%; font:11px tahoma, arial, helvetica, sans-serif"><br><b>Search User/Group</b><br>
-  <input type="text"  size="80" id="searchUsers" autocomplete="off" /></div>
+    <div id="divuser" style="width:100%; font-size: 11px; font-familiy: 'tahoma, arial, helvetica, sans-serif'">
+        <br><b>Search User/Group</b><br>
+        <input type="text"  size="80" id="searchUsers" autocomplete="off" />
+    </div>
+
   <script type="text/javascript">
   var pageInfo = {
           basePath :"${request.getContextPath()}"
@@ -51,7 +56,7 @@
 	alert("Please select a user/group first");
 	return false;
 	}
- ${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'jQuery(\'#searchtext\').serialize()+\'&id=\'+pid')};
+            ${remoteFunction(controller:'secureObjectAccess', action:'listAccessForPrincipal',update:[success:'permissions', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
 	return false;
   }
 
@@ -59,7 +64,7 @@
 
           <table>
                 				<tr><td>
-<g:form name="accessform" action="manageAccess">
+            <g:form name="accessform" action="manageAccess">
                                     <label for="accesslevelid"><b>Access Level</b></label>
                                     <g:select optionKey="id"  optionValue="accessLevelName" from="${accessLevelList}" name="accesslevelid" value="${accesslevelid}" onchange="document.accessform.submit();"></g:select>
   <input type="hidden" name="currentprincipalid" id="currentprincipalid" value="${principalInstance?.id}"/>
@@ -71,9 +76,6 @@
                                     <g:render template="addremoveAccess" model="['secureObjectInstance':secureObjectInstance,'secureObjectAccessList' :secureObjectAccessList,'objectswithoutaccess':objectswithoutaccess]" />
                                     </tr>
                                      </table>
-                                	</div>
-                                </td>
-                            </tr>
-                        </tbody>
-    </body>
+</div>
+</body>
 </html>
