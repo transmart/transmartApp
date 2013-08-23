@@ -1,22 +1,22 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ * 1.    You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
+ * 2.    You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
- * 
+ *
  *
  ******************************************************************/
-  
+
 
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
@@ -51,8 +51,8 @@ grails.project.dependency.resolution = {
         ])
     }
     dependencies {
-		runtime 'postgresql:postgresql:9.0-801.jdbc4'
-		compile 'antlr:antlr:2.7.7'
+        runtime 'postgresql:postgresql:9.0-801.jdbc4'
+        compile 'antlr:antlr:2.7.7'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
         compile 'net.sf.opencsv:opencsv:2.3'
         compile "org.apache.lucene:lucene-core:2.4.0"
@@ -73,7 +73,7 @@ grails.project.dependency.resolution = {
             //excludes of spring securirty necessary because they are for a more recent version (3.1 branch)
             //also remove xercesImpl because it breaks tomcat and is not otherwise needed
             excludes 'spring-security-config', 'spring-security-core', 'spring-security-web', 'xercesImpl'
-    }
+        }
 
         /* update when grails spring-security-core uses a more recent version of spring-security */
         runtime 'org.springframework.security:spring-security-config:3.0.7.RELEASE'
@@ -81,9 +81,7 @@ grails.project.dependency.resolution = {
 
     plugins {
         compile ":hibernate:$grailsVersion"
-        build ':release:2.2.1', ':rest-client-builder:1.0.3', {
-            export = false
-        }
+        build ':release:2.2.1', ':rest-client-builder:1.0.3'
 
         compile ":quartz:1.0-RC2"
         compile(":transmart-mydas:0.1-SNAPSHOT") {
@@ -94,8 +92,8 @@ grails.project.dependency.resolution = {
         compile ":dalliance-plugin:0.1-SNAPSHOT"
         build ":tomcat:$grailsVersion"
         build ":build-info:1.1"
-		runtime ":prototype:1.0"
-		runtime ":jquery:1.7.1"
+        runtime ":prototype:1.0"
+        runtime ":jquery:1.7.1"
         runtime ":transmart-core:1.0-SNAPSHOT"
         runtime ":resources:1.2"
 
