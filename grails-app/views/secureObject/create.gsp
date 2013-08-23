@@ -54,7 +54,7 @@
                                 <label for="dataType">Data Type:</label>
                             </td>
                             <td valign="top" class="value ${hasErrors(bean:secureObjectInstance,field:'dataType','errors')}">
-                                <textarea rows="5" cols="40" id="dataType">${fieldValue(bean:secureObjectInstance, field:'dataType')}</textarea>
+                                <textarea rows="5" cols="40" id="dataType" name="dataType">${fieldValue(bean:secureObjectInstance, field:'dataType')}</textarea>
                             </td>
                         </tr>
                         <tr class="prop">
