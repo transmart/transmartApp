@@ -22,7 +22,7 @@ public class ClinicalDataServiceTests extends GroovyTestCase {
 	 * 
 	 * After the test was done running I extracted the required parameters from the jobInfo.txt file that is created in the jobs temporary directory.
 	 */
-	@Ignore
+//	@Ignore
 	void testDataRetrieval()
 	{
 		//This is a list of studies.		
