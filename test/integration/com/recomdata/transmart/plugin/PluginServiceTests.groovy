@@ -33,7 +33,7 @@ class PluginServiceTests extends GrailsUnitTestCase {
         super.tearDown()
     }
 
-	@Ignore // JIRA: THRONE-107
+//	@Ignore // JIRA: THRONE-107
     void testGetPluginModulesAsJSON() {
 		def pluginService = new PluginService()
 		//R-Modules is the unique pluginName

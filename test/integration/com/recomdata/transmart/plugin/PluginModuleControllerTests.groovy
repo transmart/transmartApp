@@ -33,7 +33,7 @@ class PluginModuleControllerTests extends GrailsUnitTestCase {
         super.tearDown()
     }
 
-	@Ignore // JIRA: THRONE-106
+//	@Ignore // JIRA: THRONE-106
     void testUpdate() {
 		def pmc = new PluginModuleController()
 		pmc.params.id = 3

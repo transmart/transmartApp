@@ -18,7 +18,7 @@ public class RFunctionalityTests extends GroovyTestCase {
 	/**
 	 * This method will test our connection to the R Server.
 	 */
-	@Ignore // JIRA - THRONE-108
+//	@Ignore // JIRA - THRONE-108
 	void testRConnection()
 	{
 		

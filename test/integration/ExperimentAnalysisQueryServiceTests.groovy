@@ -25,13 +25,13 @@ class ExperimentAnalysisQueryServiceTests extends GroovyTestCase {
     def experimentAnalysisQueryService
 
 
-    @Ignore // JIRA - THRONE-109
+//    @Ignore // JIRA - THRONE-109
     void testExpDesign() {
         def results = experimentAnalysisQueryService.findExperimentDesignFilter();
         assertTrue(results.size()>=0)
     }
 
-    @Ignore // JIRA - THRONE-110
+//    @Ignore // JIRA - THRONE-110
     void testExpType() {
             def results = experimentAnalysisQueryService.findExperimentTypeFilter();
             assertTrue(results.size()>=0)
