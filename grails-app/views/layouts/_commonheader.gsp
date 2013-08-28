@@ -100,7 +100,7 @@
       
 <script>
      jQuery(document).ready(function() {
-		 var logoutURL = "${createLink([controller:'logout'])}";
+		 var logoutURL = "${createLink([controller:'login', action: 'forceAuth'])}";
 		 var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
 		 addTimeoutDialog(heartbeatURL, logoutURL);
   	  });
