@@ -93,7 +93,7 @@ class PostgresI2b2HelperService {
 		if(!fullname.endsWith("\\")) {
 			path=path+"\\";
 		}
-		return path.replaceAll((/\\${''}/), "\\\\\\\\");
+		return path;
 	}
 	
 	/**
@@ -4198,7 +4198,7 @@ class PostgresI2b2HelperService {
 	def getChildrenWithAccessForUser(String concept_key, AuthUser user) {
 		def List<String> children=getChildPathsFromParentKey(concept_key)
 		def access = [:]
-		def path=keyToPath(concept_key);
+		def path=keyToPath(concept_key).replaceAll((/\\${''}/), "\\\\\\\\");
 		
 		//1)put all the children into the access list with default unlocked
 		for(e in children)
