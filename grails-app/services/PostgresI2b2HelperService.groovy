@@ -93,7 +93,7 @@ class PostgresI2b2HelperService {
 		if(!fullname.endsWith("\\")) {
 			path=path+"\\";
 		}
-		return path;
+		return path.replaceAll((/\\${''}/), "\\\\\\\\");
 	}
 	
 	/**
@@ -454,7 +454,7 @@ class PostgresI2b2HelperService {
 	 * Gets the distribution of data for a concept
 	 */
 	def HashMap<String,Integer> getConceptDistributionDataForConceptOld(String concept_key, String result_instance_id) throws SQLException {
-		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
 		int i=getLevelFromKey(concept_key)+1;
 		
@@ -485,7 +485,7 @@ class PostgresI2b2HelperService {
 	 *  Gets the concept distributions for a concept in a subset
 	 */
 	def  HashMap<String,Integer> getConceptDistributionDataForConcept(String concept_key, String result_instance_id) throws SQLException {
-		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
 		
 		// check to see if there is a mapping from this concept_key to a concept_key for the results
@@ -533,7 +533,7 @@ class PostgresI2b2HelperService {
 	 */
 	def List<String> getChildValueConceptsFromParentKey(String concept_key) {
 		String prefix=concept_key.substring(0, concept_key.indexOf("\\",2)); //get the prefix to put on to the fullname to make a key
-		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		
 		String xml;
 		ArrayList ls=new ArrayList();
@@ -572,7 +572,7 @@ class PostgresI2b2HelperService {
 	 *  Returns the patient count for a concept key
 	 */
 	def  Integer getPatientCountForConcept(String concept_key) {
-		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		int i=0;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String sqlt = """select count (distinct patient_num) as patcount
@@ -591,7 +591,7 @@ class PostgresI2b2HelperService {
 	 */
 	def Integer getObservationCountForConceptForSubset(String concept_key, String result_instance_id) {
 		log.trace("Getting observation count for concept:"+concept_key+" and instance:"+result_instance_id);
-		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		int i=0;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String sqlt = """select count (*) as obscount FROM i2b2demodata.observation_fact
@@ -1126,7 +1126,7 @@ class PostgresI2b2HelperService {
 		//String slash="\\";
 		//logMessage("Here is slash: "+slash);
 		
-		String path=key.substring(key.indexOf("\\",2), key.length());
+		String path=key.substring(key.indexOf("\\",2), key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		//path=path.replace("@", slash);
 		StringBuilder concepts = new StringBuilder();
 		
@@ -1148,7 +1148,7 @@ class PostgresI2b2HelperService {
 		//String slash="\\";
 		//logMessage("Here is slash: "+slash);
 		
-		String path=key.substring(key.indexOf("\\",2), key.length());
+		String path=key.substring(key.indexOf("\\",2), key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		//path=path.replace("@", slash);
 		List<String> concepts = new ArrayList<String>();
 		
@@ -4266,7 +4266,7 @@ class PostgresI2b2HelperService {
 	 */
 	def List<String> getChildPathsFromParentKey(String concept_key) {
 		String prefix=concept_key.substring(0, concept_key.indexOf("\\",2)); //get the prefix to put on to the fullname to make a key
-		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		
 		String xml;
 		ArrayList ls=new ArrayList();
@@ -4564,7 +4564,7 @@ class PostgresI2b2HelperService {
 	 */
 	def  getChildPathsWithTokensFromParentKey(String concept_key) {
 		String prefix=concept_key.substring(0, concept_key.indexOf("\\",2)); //get the prefix to put on to the fullname to make a key
-		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		
 		String xml;
 		def ls=[:];
