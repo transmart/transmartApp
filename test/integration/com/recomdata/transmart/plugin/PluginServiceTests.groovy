@@ -22,6 +22,8 @@ package com.recomdata.transmart.plugin
 
 import grails.test.*
 
+import org.junit.Ignore
+
 class PluginServiceTests extends GrailsUnitTestCase {
     protected void setUp() {
         super.setUp()
@@ -31,6 +33,7 @@ class PluginServiceTests extends GrailsUnitTestCase {
         super.tearDown()
     }
 
+//	@Ignore // JIRA: THRONE-107
     void testGetPluginModulesAsJSON() {
 		def pluginService = new PluginService()
 		//R-Modules is the unique pluginName
