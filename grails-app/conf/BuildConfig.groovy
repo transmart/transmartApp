@@ -1,3 +1,5 @@
+import grails.util.Environment
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *
@@ -45,10 +47,22 @@ grails.project.dependency.resolution = {
 
         mavenLocal()
         mavenCentral()
-        mavenRepo([
-                name: 'repo.transmartfoundation.org-public',
-                root: 'https://repo.transmartfoundation.org/content/repositories/public/',
-        ])
+
+        if (!skipTransmartFoundationRepo()) {
+            /* Allow skipping the tranSMART foundation repository.
+             * We read extra repositories in the very limited externalized
+             * BuildConfig.groovy (see below), but they are append to this list.
+             * A company developing tranSMART may want not to use the tranSMART
+             * foundation repository, or it may want to give priority to its own.
+             * Setting grails.project.dependency.resolution in the externalized
+             * file will skip this repo. You may then include it in whatever order
+             * in the externalized file. */
+
+            mavenRepo([
+                    name: 'repo.transmartfoundation.org-public',
+                    root: 'https://repo.transmartfoundation.org/content/repositories/public/',
+            ])
+        }
     }
     dependencies {
         runtime 'postgresql:postgresql:9.0-801.jdbc4'
@@ -115,7 +129,10 @@ def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
         "BuildConfig.groovy")
 if (buildConfigFile.exists()) {
     println "Processing external build config at $buildConfigFile"
-    def slurpedBuildConfig = new ConfigSlurper().parse(buildConfigFile.toURL())
+
+    def slurpedBuildConfig = new ConfigSlurper(Environment.current.name).
+            parse(buildConfigFile.toURL())
+
     slurpedBuildConfig.grails.plugin.location.each { k, v ->
         if (!new File(v).exists()) {
             println "WARNING: Cannot load in-place plugin from ${v} as that " +
@@ -131,6 +148,21 @@ if (buildConfigFile.exists()) {
                         "the in-place $k plugin."
             }
         }
+    }
+
+    /* dependency resolution in external BuildConfig */
+    Closure originalDepRes = grails.project.dependency.resolution;
+    if (slurpedBuildConfig.grails.project.dependency.resolution) {
+        Closure extraDepRes = slurpedBuildConfig.grails.project.dependency.resolution;
+        grails.project.dependency.resolution = {
+            originalDepRes.delegate        = extraDepRes.delegate        = delegate
+            originalDepRes.resolveStrategy = extraDepRes.resolveStrategy = resolveStrategy
+            originalDepRes.metaClass.skipTransmartFoundationRepo = { true }
+            originalDepRes.call(it)
+            extraDepRes.call(it)
+        }
+    } else {
+        originalDepRes.metaClass.skipTransmartFoundationRepo = { false }
     }
 }
 
