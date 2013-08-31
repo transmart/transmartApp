@@ -119,12 +119,6 @@ grails.war.resources = { stagingDir ->
     delete(file: "${stagingDir}/WEB-INF/lib/servlet-api-${grails.servlet.version}.jar")
 }
 
-/* For development, it's interesting to use the plugins in-place.
-
- * This allows the developer to put the grails.plugin.location.* assignments
- * in an out-of-tree BuildConfig file if they want to.
- * Snippet from https://gist.github.com/acreeger/910438
- */
 def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
         "BuildConfig.groovy")
 if (buildConfigFile.exists()) {
@@ -133,7 +127,12 @@ if (buildConfigFile.exists()) {
     def slurpedBuildConfig = new ConfigSlurper(Environment.current.name).
             parse(buildConfigFile.toURL())
 
-    slurpedBuildConfig.grails.plugin.location.each { k, v ->
+    /* For development, it's interesting to use the plugins in-place.
+     * This allows the developer to put the grails.plugin.location.* assignments
+     * in an out-of-tree BuildConfig file if they want to.
+     * Snippet from https://gist.github.com/acreeger/910438
+     */
+    slurpedBuildConfig.grails.plugin.location.each { String k, v ->
         if (!new File(v).exists()) {
             println "WARNING: Cannot load in-place plugin from ${v} as that " +
                     "directory does not exist."
@@ -142,10 +141,14 @@ if (buildConfigFile.exists()) {
             grails.plugin.location."$k" = v
         }
         if (grailsSettings.projectPluginsDir?.exists()) {
-            grailsSettings.projectPluginsDir.eachDirMatch(~/${k}.*/) {dir ->
-                println "WARNING: Found a plugin directory at $dir that is a " +
-                        "possible conflict and may prevent grails from using " +
-                        "the in-place $k plugin."
+            grailsSettings.projectPluginsDir.eachDir { dir ->
+                // remove optional version from inline definition
+                def dirPrefix = k.replaceFirst(/:.+/, '') + '-'
+                if (dir.name.startsWith(dirPrefix)) {
+                    println "WARNING: Found a plugin directory at $dir that is a " +
+                            "possible conflict and may prevent grails from using " +
+                            "the in-place $k plugin."
+                }
             }
         }
     }
