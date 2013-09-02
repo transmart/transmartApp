@@ -45,6 +45,7 @@ class ExportService {
 	def asyncJobService
 	def quartzScheduler
 	def grailsApplication
+	def dataExportService
 
 	def Map createJSONFileObject(fileType, dataFormat, fileDataCount, gplId, gplTitle) {
 		def file = [:]
@@ -73,9 +74,9 @@ class ExportService {
 		def rID1 = RequestValidator.nullCheck(params.result_instance_id1)
 		def rID2 = RequestValidator.nullCheck(params.result_instance_id2)
 		def rIDs = null
-		if (rID1 && rID1?.trim() != '' && rID2 && rID2?.trim() != '') rIDs = rID1 + ',' + rID2
-		else if (rID1 && rID1?.trim() != '') rIDs = rID1
-		else if (rID2 && rID2?.trim() != '') rIDs = rID2
+		if (rID1 && rID1?.trim() != '' && rID2 && rID2?.trim() != '') rIDs = 'CAST(' + rID1 + ' AS numeric), CAST(' + rID2 + 'AS numeric)'
+		else if (rID1 && rID1?.trim() != '') rIDs = 'CAST(' + rID1 + ' AS numeric)'
+		else if (rID2 && rID2?.trim() != '') rIDs = 'CAST(' + rID2 + ' AS numeric)'
 		
 		def subsetLen = (rID1 && rID2) ? 2 : (rID1 || rID2) ? 1 : 0
 		log.debug('rID1 :: ' + rID1 + ' :: rID2 :: ' + rID2)
@@ -312,8 +313,17 @@ class ExportService {
 		jdm.put("renderSteps",["FILELINK":""]);
 				
 		def jobDetail = new JobDetail(params.jobName, params.analysis, GenericJobService.class)
-		jobDetail.setJobDataMap(jdm)
+		jobDetail.setJobDataMap(jdm);
+		
+		// TODO -- NEED TO BE REVIEWED (f.guitton@imperial.ac.uk)
+		
+		jobDetail.getJobDataMap().put("SGA", grailsApplication);
+		jobDetail.getJobDataMap().put("SAJS", asyncJobService);
+		jobDetail.getJobDataMap().put("SJRS", jobResultsService);
+		jobDetail.getJobDataMap().put("SDES", dataExportService);
 
+		// --
+		
 		if (asyncJobService.updateStatus(params.jobName, statusList[2]))	{
 			return
 		}
@@ -385,14 +395,18 @@ class ExportService {
 		def jobName = params.jobname
 		def job = AsyncJob.findByJobName(jobName)
 		def exportDataProcessor = new ExportDataProcessor()
-		
-		def tempDir = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
-		def ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
-		def ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
-		def ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
-		def ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
-		def ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
 
-		return exportDataProcessor.getExportJobFileStream(job.viewerURL, tempDir, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath)
+        // If com.recomdata.transmart.data.export.ftp configuration not set, ExportDataProcessor receives incorrect
+        // method signature for getExportJobFileStream, so here we have used Strings instead of defs to initialize
+        // the correct parameter signature
+		String tempDir = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
+		String ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
+        String ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
+        String ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
+        String ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
+        String ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
+
+        InputStream is = exportDataProcessor.getExportJobFileStream(job.viewerURL, tempDir, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath)
+		return is;
 	}
 }
