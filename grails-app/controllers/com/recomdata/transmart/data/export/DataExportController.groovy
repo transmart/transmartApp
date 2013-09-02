@@ -45,6 +45,7 @@ class DataExportController {
 		
 		if(null != inputStream){
 			result.put("fileStatus", true)
+            inputStream.close()
 		} else {
 		   	result.put("fileStatus", false)
 			result.put("message", "Download failed as file could not be found on the server")
