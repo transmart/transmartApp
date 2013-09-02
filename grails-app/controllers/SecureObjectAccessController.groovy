@@ -114,37 +114,33 @@ class SecureObjectAccessController {
 	}
 
 
-	def manageAccessBySecObj = {
-//			println(params)
-			def secureObjInstance
-			if(params.secureobjectid!=null)
-				secureObjInstance =	SecureObject.get( params.secureobjectid);
-            if (secureObjInstance == null)
-                secureObjInstance =	SecureObject.get(SecureObject.listOrderByDisplayName().first().id)
-//        println("Secure " + secureObjInstance)
-			def access = SecureAccessLevel.findByAccessLevelName("VIEW");
-			def accessid = params.accesslevelid
-			if(accessid!=null){
-				access = SecureAccessLevel.get(accessid);
-			}
-//        println("Acess " + access)
-//        println("Acess " + access.id)
-			def searchtext=params.searchtext;
-			if(searchtext==null)
-				searchtext=''
-            def secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
-            def userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
+    def manageAccessBySecObj = {
+        def secureObjInstance
+        if(params.secureobjectid!=null)
+            secureObjInstance =	SecureObject.get( params.secureobjectid);
+        if (secureObjInstance == null)
+            secureObjInstance =	SecureObject.get(SecureObject.listOrderByDisplayName().first().id)
 
-//        println(secureObjectAccessList)
-//        println(userwithoutaccess)
-//        println("-------------------------------")
-			render(view:'managePrincipalAccess',model:[
-			                                 secureObjectInstance:secureObjInstance,
-			                          		secureObjectAccessList: secureObjectAccessList,
-			                          		userwithoutaccess: userwithoutaccess,
-			                          		accesslevelid:access.id
-			                          		] )
-	}
+        def access = SecureAccessLevel.findByAccessLevelName("VIEW");
+        def accessid = params.accesslevelid
+        if(accessid!=null){
+            access = SecureAccessLevel.get(accessid);
+        }
+
+        def searchtext=params.searchtext;
+        if(searchtext==null)
+            searchtext=''
+
+        def secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
+        def userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
+
+        render(view:'managePrincipalAccess',model:[
+                secureObjectInstance:secureObjInstance,
+                secureObjectAccessList: secureObjectAccessList,
+                userwithoutaccess: userwithoutaccess,
+                accesslevelid:access.id
+        ] )
+    }
 
 	def addPrincipalToAccessList = {
 

@@ -19,14 +19,13 @@ package org.transmart.searchapp
  *
  ******************************************************************/
 class SecureObjectAccess {
-	static transients = ['objectAccessName','principalAccessName']
-	
+
+    static transients = ['objectAccessName','principalAccessName']
+
 	Long id
 	Principal principal
 	SecureObject secureObject
 	SecureAccessLevel accessLevel
-	String objectAccessName
-	String principalAccessName
 
 	static mapping = {
 		table 'SEARCH_AUTH_SEC_OBJECT_ACCESS'
@@ -45,7 +44,7 @@ class SecureObjectAccess {
 	}
 
 	public String toString(){
-		return objectAccessName();
+		return objectAccessName;
 	}
   
 	public String getObjectAccessName() {
