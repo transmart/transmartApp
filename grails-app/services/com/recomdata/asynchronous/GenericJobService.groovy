@@ -238,38 +238,41 @@ class GenericJobService implements Job {
 				
 					/** Access the ZipUtil in a static way */
 				
-					String zipFileLoc = (new File(jobTmpDirectory))?.getParent() + File.separator;
-					finalOutputFile = ZipUtil.zipFolder(jobTmpDirectory, zipFileLoc + jobDataMap.get("jobName") + ".zip")
+					File zipFileLoc = new File(jobTmpDirectory).parentFile;
+					finalOutputFile = ZipUtil.zipFolder(jobTmpDirectory,
+                            new File(zipFileLoc, jobDataMap.get("jobName") + ".zip").absolutePath)
 					try {
-						File outputFile = new File(zipFileLoc+finalOutputFile);
-						if (outputFile.isFile()) {
-							String ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
-							String ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
-							String ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
-							String ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
-							String ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
-							String remoteFilePath = FTPUtil.uploadFile(true, outputFile, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath);
-							if (StringUtils.isNotEmpty(remoteFilePath)) {
-								//Since File has been uploaded to the FTP server, we can delete the 
-								//ZIP file and the folder which has been zipped
-								
-								//Delete the output Folder
-								String outputFolder = null;
-								int index = outputFile.name.lastIndexOf('.');
-								if (index > 0 && index <= outputFile.name.length() - 2 ) {
-									outputFolder = outputFile.name.substring(0, index);
-								}
-								File outputDir = new File(zipFileLoc+outputFolder)
-								if (outputDir.isDirectory()) {
-									outputDir.deleteDir()
-								}
-								
-								//Delete the ZIP file 
-								outputFile.delete();
-							}
-						}
+						File outputFile = new File(zipFileLoc, finalOutputFile);
+						if (!outputFile.isFile()) {
+                            break
+                        }
+
+                        def ftp = grailsApplication.config.com.recomdata.transmart.data.export.ftp
+                        if (!ftp.server) {
+                            break
+                        }
+
+                        String remoteFilePath = FTPUtil.uploadFile(true, outputFile,
+                                ftp.server, ftp.serverPort ?: '21', ftp.username ?: '',
+                                ftp.password ?: '', ftp.remote.path ?: '')
+
+                        if (StringUtils.isEmpty(remoteFilePath)) {
+                            break
+                        }
+
+                        //Since File has been uploaded to the FTP server, we can delete the
+                        //ZIP file and the folder which has been zipped
+
+                        //Delete the output Folder
+                        File outputDir = new File(jobTmpDirectory)
+                        if (outputDir.isDirectory()) {
+                            outputDir.deleteDir()
+                        }
+
+                        //Delete the ZIP file
+                        outputFile.delete();
 					} catch (Exception e) {
-						println("Failed to FTP PUT the ZIP file");
+                        log.error("Failed to FTP PUT the ZIP file", e)
 					}
 					break
 				case "R":

@@ -66,24 +66,20 @@ class ExportService {
 		}
 		return file
 	}
-	
-	def getMetaData(params) {
+
+    JSONObject getMetaData(Long rID1, Long rID2) {
 		def dataTypesMap = grailsApplication.config.com.recomdata.transmart.data.export.dataTypesMap
-		
+
 		//The result instance id's are stored queries which we can use to get information from the i2b2 schema.
-		def rID1 = RequestValidator.nullCheck(params.result_instance_id1)
-		def rID2 = RequestValidator.nullCheck(params.result_instance_id2)
-		def rIDs = null
-		if (rID1 && rID1?.trim() != '' && rID2 && rID2?.trim() != '') rIDs = 'CAST(' + rID1 + ' AS numeric), CAST(' + rID2 + 'AS numeric)'
-		else if (rID1 && rID1?.trim() != '') rIDs = 'CAST(' + rID1 + ' AS numeric)'
-		else if (rID2 && rID2?.trim() != '') rIDs = 'CAST(' + rID2 + ' AS numeric)'
-		
-		def subsetLen = (rID1 && rID2) ? 2 : (rID1 || rID2) ? 1 : 0
-		log.debug('rID1 :: ' + rID1 + ' :: rID2 :: ' + rID2)
+		//Long rID1 = RequestValidator.nullCheck(params.result_instance_id1)
+		//def rID2 = RequestValidator.nullCheck(params.result_instance_id2)
+        def rIDs = [rID1, rID2].findAll() // remove nulls
+
+		log.debug('ExportService/getMetaData called for rIDs: ' + rIDs)
 				
 		//Retrieve the counts for each subset. We get back a map that looks like ['RBM':2,'MRNA':30]
-		def subset1CountMap = dataCountService.getDataCounts(rID1, rIDs)
-		def subset2CountMap = dataCountService.getDataCounts(rID2, rIDs)
+		def subset1CountMap = dataCountService.getDataCounts(rID1, rIDs as Long[])
+		def subset2CountMap = dataCountService.getDataCounts(rID2, rIDs as Long[])
 		log.debug('subset1CountMap :: ' + subset1CountMap + ' :: subset2CountMap :: ' + subset2CountMap)
 		
 		//This is the map we render to JSON.
@@ -94,7 +90,7 @@ class ExportService {
 		finalMap['subset2'] = subset2CountMap
 		//render '{"subset1": [{"PLINK": "102","RBM":"28"}],"subset2": [{"PLINK": "1","RBM":"2"}]}'
 		JSONObject result = new JSONObject()
-		result.put('noOfSubsets', subsetLen)
+		result.put('noOfSubsets', rIDs.size())
 		
 		JSONArray rows = new JSONArray();
 		dataTypesMap.each { key, value ->
@@ -400,13 +396,11 @@ class ExportService {
         // method signature for getExportJobFileStream, so here we have used Strings instead of defs to initialize
         // the correct parameter signature
 		String tempDir = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
-		String ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
-        String ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
-        String ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
-        String ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
-        String ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
+        def ftp = grailsApplication.config.com.recomdata.transmart.data.export.ftp
 
-        InputStream is = exportDataProcessor.getExportJobFileStream(job.viewerURL, tempDir, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath)
+        InputStream is = exportDataProcessor.getExportJobFileStream(job.viewerURL, tempDir,
+                ftp.server ?: '', ftp.serverport ?: '21', ftp.username ?: '',
+                ftp.password ?: '', ftp.remote.path ?: '')
 		return is;
 	}
 }

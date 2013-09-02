@@ -46,16 +46,19 @@ public class ExportDataProcessor {
 
 	public InputStream getExportJobFileStream(String fileToGet, String tempDir, String ftpServer, String ftpServerPort, String ftpServerUserName, String ftpServerPassword, String ftpServerRemotePath) {
 		InputStream inputStream = null;
-		File jobZipFile = null;
 		try {
 			if (StringUtils.isEmpty(fileToGet))
 				return null;
 
-			inputStream = FTPUtil.downloadFile(true, fileToGet, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath);
-			//If the file was not found at the FTP location try to download it from the server Temp dir
+            if (StringUtils.isNotEmpty(ftpServer)) {
+			    inputStream = FTPUtil.downloadFile(true, fileToGet, ftpServer, ftpServerPort,
+                        ftpServerUserName, ftpServerPassword, ftpServerRemotePath);
+            }
+
+			// If the file was not found at the FTP location (or we have no FTP server specified),
+			// try to download it from the server Temp dir
 			if (null == inputStream) {
-				String filePath = tempDir + File.separator + fileToGet;
-				jobZipFile = new File(filePath);
+				File jobZipFile = new File(tempDir, fileToGet);
 				if (jobZipFile.isFile()) {
 					inputStream = new FileInputStream(jobZipFile);
 				}
