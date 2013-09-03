@@ -46,9 +46,13 @@ grails.project.dependency.resolution = {
         mavenLocal()
         mavenCentral()
         mavenRepo([
-                name: 'repo.transmartfoundation.org-public',
-                root: 'https://repo.transmartfoundation.org/content/repositories/public/',
+                //name: 'repo.transmartfoundation.org-public',
+                //root: 'https://repo.transmartfoundation.org/content/repositories/public/',
+                name: 'repo.thehyve.nl-public',
+                root: 'https://repo.thehyve.nl/content/repositories/public/',
+
         ])
+
     }
     dependencies {
         runtime 'postgresql:postgresql:9.0-801.jdbc4'
