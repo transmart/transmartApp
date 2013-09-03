@@ -12,6 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  *
  ******************************************************************/
@@ -50,7 +51,7 @@ import com.recomdata.export.*;
 
 import com.recomdata.i2b2.SurvivalConcepts;
 
-class I2b2HelperService {
+class PostgresI2b2HelperService {
 	
 	static String GENE_PATTERN_WHITE_SPACE_DEFAULT = "0";
 	static String GENE_PATTERN_WHITE_SPACE_EMPTY = "";
@@ -265,7 +266,7 @@ class I2b2HelperService {
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String concept_cd=getConceptCodeFromKey(concept_key);
 		ArrayList<Double> values=new ArrayList<Double>();
-		sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = ?", [concept_cd], {row ->
+		sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ?", [concept_cd], {row ->
 			if(row.NVAL_NUM!=null)	{
 				values.add(row.NVAL_NUM);
 				log.trace("adding"+row.NVAL_NUM);
@@ -298,7 +299,7 @@ class I2b2HelperService {
 		//String sqlt=""""SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND PATIENT_NUM IN (select distinct patient_num
 		//        from qt_patient_set_collection where result_instance_id = ?)""";
 		
-		String sqlt="SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = '" +
+		String sqlt="SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = '" +
 				concept_cd + "' AND PATIENT_NUM IN (select distinct patient_num " +
 				"from qt_patient_set_collection where result_instance_id = CAST(" + result_instance_id + " AS numeric))";
 		
@@ -331,7 +332,7 @@ class I2b2HelperService {
 		log.trace("Getting concept distribution data for value concept code:"+concept_cd);
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		log.trace("preparing query");
-		String sqlt="""SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = ? AND
+		String sqlt="""SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
 		    PATIENT_NUM IN (select distinct patient_num
 			from qt_patient_set_collection
 			where result_instance_id = CAST (? AS numeric))""";
@@ -458,7 +459,7 @@ class I2b2HelperService {
 		int i=getLevelFromKey(concept_key)+1;
 		
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		String sqlt = """Select DISTINCT m.c_name, COALESCE(i.obscount,0) as obscount FROM
+		String sqlt = """Select DISTINCT m.c_name, nvl(i.obscount,0) as obscount FROM
 		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) m
 		    LEFT OUTER JOIN
 		    (Select c_name, count(c_basecode) as obscount FROM
@@ -681,7 +682,7 @@ class I2b2HelperService {
 				/*get the data*/
 				String concept_cd=getConceptCodeFromKey(concept_key);
 				groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-				String sqlt = """SELECT PATIENT_NUM, NVAL_NUM, START_DATE FROM OBSERVATION_FACT f WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = ? AND
+				String sqlt = """SELECT PATIENT_NUM, NVAL_NUM, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
 				        PATIENT_NUM IN (select distinct patient_num
 						from qt_patient_set_collection
 						where result_instance_id = CAST(? AS numeric))""";
@@ -707,7 +708,7 @@ class I2b2HelperService {
 			else {
 				String concept_cd=getConceptCodeFromKey(concept_key);
 				groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-				String sqlt = """SELECT PATIENT_NUM, TVAL_CHAR, START_DATE FROM OBSERVATION_FACT f WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = ? AND
+				String sqlt = """SELECT PATIENT_NUM, TVAL_CHAR, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
 				        PATIENT_NUM IN (select distinct patient_num
 				        from qt_patient_set_collection
 						where result_instance_id = CAST(? AS numeric))""";
@@ -752,7 +753,7 @@ class I2b2HelperService {
 	def HashMap<String,Integer> getPatientDemographicDataForSubset(String col, String result_instance_id) {
 		HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		String sqlt = """SELECT a.cat as demcategory, COALESCE(b.demcount,0) as demcount FROM
+		String sqlt = """SELECT a.cat as demcategory, nvl(b.demcount,0) as demcount FROM
 		(SELECT DISTINCT UPPER("""+col+""") as cat FROM patient_dimension) a
 		LEFT OUTER JOIN
 		(SELECT UPPER("""+col+""") as cat,COUNT(*) as demcount FROM patient_dimension
@@ -4478,7 +4479,7 @@ class I2b2HelperService {
 			String concept_cd=getConceptCodeFromKey(concept_key);
 			//ArrayList<Double> values=new ArrayList<Double>();
 			String sqlt="""SELECT TRIAL, NVAL_NUM FROM OBSERVATION_FACT f  INNER JOIN PATIENT_TRIAL t
-			    ON f.PATIENT_NUM=t.PATIENT_NUM WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD = ? AND
+			    ON f.PATIENT_NUM=t.PATIENT_NUM WHERE CONCEPT_CD = ? AND
 			    f.PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection
 				where result_instance_id = CAST(? AS numeric))""";
 			sql.eachRow(sqlt, [
@@ -4512,7 +4513,7 @@ class I2b2HelperService {
 			
 			String sqlt="""SELECT TRIAL, NVAL_NUM FROM OBSERVATION_FACT f  INNER JOIN PATIENT_TRIAL t
 			ON f.PATIENT_NUM=t.PATIENT_NUM
-			WHERE ( MODIFIER_CD = '@' OR MODIFIER_CD = SOURCESYSTEM_CD ) AND CONCEPT_CD IN ("""+listToIN(childConcepts.asList())+""") AND
+			WHERE CONCEPT_CD IN ("""+listToIN(childConcepts.asList())+""") AND
 			f.PATIENT_NUM IN (select distinct patient_num
 					from qt_patient_set_collection
 					where result_instance_id="""+result_instance_id+""") """;
@@ -4967,12 +4968,12 @@ class I2b2HelperService {
 		switch(infoType){
 			case CohortInformation.TRIALS_TYPE:
 				ci.trials = new ArrayList();
-				sqlt="select distinct sourcesystem_cd from observation_fact where ";
+				sqlt="select distinct modifier_cd from observation_fact where ";
 				if (subids != null)
 					sqlt += "PATIENT_NUM in ("+listToIN(subids)+") and ";
 				sqlt += "concept_cd in ("+listToIN(conids)+")";
 				sql.eachRow(sqlt, {row->
-					ci.trials.add(row.sourcesystem_cd)
+					ci.trials.add(row.modifier_cd)
 				})
 			
 				if (ci.trials.size()==0){

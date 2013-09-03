@@ -424,7 +424,9 @@ function getPreviousQueryFromID(subset, queryMasterID) {
 
 
 function getSecurityPanel() {
-		if(!GLOBAL.IsAdmin)
+//      Commenting this out while investigating for the right parameters
+//		if(!GLOBAL.IsAdmin)
+		if(false)
 		{
 		 return"<panel><panel_number>21</panel_number> \
                <invert>0</invert><total_item_occurrences>1</total_item_occurrences>\

@@ -76,7 +76,6 @@ class SecureObjectController {
 	}
 
 	def update = {
-        System.err.println("Plop ?")
 		def secureObjectInstance = SecureObject.get( params.id )
 		if(secureObjectInstance) {
 			if(params.version) {
@@ -88,10 +87,7 @@ class SecureObjectController {
 					return
 				}
 			}
-            System.err.println(secureObjectInstance.properties)
-            System.err.println(params)
 			secureObjectInstance.properties = params
-            System.err.println(secureObjectInstance.dataType)
 			if(!secureObjectInstance.hasErrors() && secureObjectInstance.save()) {
 				flash.message = "SecureObject ${params.id} updated"
 				redirect(action:show,id:secureObjectInstance.id)

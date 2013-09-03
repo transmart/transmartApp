@@ -46,6 +46,8 @@
 <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
+    <script type="text/javascript"
+            src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 	
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
@@ -53,8 +55,6 @@
   
 <script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script> 
 
-<script type="text/javascript"
-	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js/ext-ux', file:'miframe.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>

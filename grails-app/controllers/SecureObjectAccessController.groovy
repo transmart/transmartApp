@@ -115,27 +115,29 @@ class SecureObjectAccessController {
 
 
 	def manageAccessBySecObj = {
-		//	println(params)
 			def secureObjInstance
 			if(params.secureobjectid!=null)
 				secureObjInstance =	SecureObject.get( params.secureobjectid);
+        if (secureObjInstance == null)
+            secureObjInstance =	SecureObject.get(SecureObject.listOrderByDisplayName().first().id)
+
 			def access = SecureAccessLevel.findByAccessLevelName("VIEW");
 			def accessid = params.accesslevelid
 			if(accessid!=null){
 				access = SecureAccessLevel.get(accessid);
 			}
+
 			def searchtext=params.searchtext;
 			if(searchtext==null)
 				searchtext=''
-	//		println(secureObjInstance)
-	//		println(access)
+
 		def 	secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
 		def 	userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
 
 		log.debug("accesslist:"+secureObjectAccessList);
 		log.debug("noaccess:"+userwithoutaccess);
 		log.debug("sec:"+secureObjInstance);
-		//println(userwithoutaccess)
+
 			render(view:'managePrincipalAccess',model:[
 			                                 secureObjectInstance:secureObjInstance,
 			                          		secureObjectAccessList: secureObjectAccessList,
@@ -335,7 +337,6 @@ class SecureObjectAccessController {
 	def getObjsWithoutAccessForPrincipal(principal, insearchtext) {
 		def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
 		//	println(searchtext)
-		//println(principal)
 		if(principal!=null)
 			return SecureObject.findAll(" FROM SecureObject s WHERE s.dataType='BIO_CLINICAL_TRIAL' AND s.id NOT IN(SELECT so.secureObject.id FROM SecureObjectAccess so WHERE so.principal =:p ) and upper(s.displayName) like :dn ORDER BY s.displayName ",[p:principal,dn:searchtext]);
 		else
@@ -399,20 +400,19 @@ class SecureObjectAccessController {
 			all = []
 		for(soa in all){
 			soa.getObjectAccessName();
-		}
+	}
 		return all;
 			}
 
 	def getPrincipalsWithoutAccess(secureObj, access, insearchtext)
 	{
-		//println(secureObj)
 		if(secureObj == null)
 			return []
 		def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
-		//println(searchtext)
+
 		def all = Principal.findAll('from Principal g WHERE g.id NOT IN (SELECT so.principal.id from SecureObjectAccess so WHERE so.secureObject =:secObj AND so.accessLevel =:al ) AND upper(g.name) like :st ORDER BY g.name', [secObj:secureObj, al:access, st:searchtext] );
 		if(all == null)
 			all = []
 		return all;
-		}
+	}
 }

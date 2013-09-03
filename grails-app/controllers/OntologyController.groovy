@@ -225,7 +225,6 @@ class OntologyController {
 			chain(controller:'trial', action:'trialDetailByTrialNumber', id:trialid)
 		}
 
-        System.out.println("FINI")
 		render(template:'showDefinition', model:[tags:result])
 	}
 	

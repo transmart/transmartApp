@@ -1,12 +1,10 @@
 package com.recomdata.transmart.plugin
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-import org.rosuda.REngine.REXP;
-import org.rosuda.REngine.Rserve.*;
 import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.junit.Ignore
+import org.rosuda.REngine.REXP
+import org.rosuda.REngine.Rserve.*
 
 public class RFunctionalityTests extends GroovyTestCase {
 	
@@ -20,6 +18,7 @@ public class RFunctionalityTests extends GroovyTestCase {
 	/**
 	 * This method will test our connection to the R Server.
 	 */
+//	@Ignore // JIRA - THRONE-108
 	void testRConnection()
 	{
 		
