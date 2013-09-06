@@ -113,7 +113,9 @@ class PostgresClinicalDataService {
 				sqlQuery <<= "LEFT JOIN DE_SUBJECT_SAMPLE_MAPPING ssm ON ssm.PATIENT_ID = ofa.PATIENT_NUM  "
 			}
 			
-			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.MODIFIER_CD = ?"
+			// ofa.MODIFIER_CD is sometimes set and sometimes fixed as '@'
+			//sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.MODIFIER_CD = ?"
+			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric)"
 
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
 				sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT coalesce(sample_type_cd,'-1') as gene_expr_concept"
@@ -147,8 +149,9 @@ class PostgresClinicalDataService {
 			parameterList.add(subset)
 			//Add the value of the result instance ID to the parameter list.
 			parameterList.add(resultInstanceId.toInteger())
-			//Add study to the parameter list.
-			parameterList.add(study)
+			//Add study to the parameter list - onlyif MODIFIER_CD is defined and used.
+			// parameterList.add(study)
+
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
 				parameterList.add(study)
 				parameterList.add(study)
@@ -317,10 +320,12 @@ class PostgresClinicalDataService {
 				} else {
 					compilePivotDataCommand = "source('${rScriptDirectory}/PivotData/PivotClinicalData.R')"
 				}
+				log.info "compilePivotDataCommand ${compilePivotDataCommand} '${mRNAExists}' snpExists '${snpExists}'"
 				REXP comp = c.eval(compilePivotDataCommand)
 				//Prepare command to call the PivotClinicalData.R script
 				String pivotDataCommand = "PivotClinicalData.pivot('$inputFile.name', '$snpExists', '$multipleStudies', '$study')"
 				//, '"+mRNAExists+"','"+snpExists+"'
+				log.info "pivotDataCommand '${pivotDataCommand}' mRNAExists"
 				//Run the R command to pivot the data in the clinical.i2b2trans file.
 				REXP pivot = c.eval(pivotDataCommand)
 			}
@@ -437,7 +442,8 @@ class PostgresClinicalDataService {
 		queryToReturn <<= "INNER JOIN CONCEPT_DIMENSION C1 ON C1.CONCEPT_CD = XMAP.CONCEPT_CD "
 		queryToReturn <<= "INNER JOIN CONCEPT_DIMENSION C2 ON C2.CONCEPT_CD = XMAP.PARENT_CD "
 		queryToReturn <<= "WHERE	qt.RESULT_INSTANCE_ID = CAST(? AS numeric) "
-		queryToReturn <<= "AND		ofa.MODIFIER_CD = ? "
+		// ofa.MODIFIER_CD is sometimes set and sometimes fixed as '@'
+		//		queryToReturn <<= "AND		ofa.MODIFIER_CD = ? "
 		queryToReturn <<= "AND		ofa.CONCEPT_CD IN "
 		queryToReturn <<= "( "
 		queryToReturn <<= "		SELECT	C_BASECODE "
