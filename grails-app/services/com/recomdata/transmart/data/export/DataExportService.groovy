@@ -92,12 +92,12 @@ class DataExportService {
 				{
 					// Construct a list of the URL objects we're running, submitted to the pool
 					selectedFilesList.each() { selectedFile ->
-						
+
 						if (StringUtils.equalsIgnoreCase(selectedFile, "CLINICAL.TXT")) {
 							writeClinicalData = true
 						}
 						
-						println 'Working on to export File :: ' + selectedFile
+						println 'Working on export of File :: ' + selectedFile
 						def List gplIds = subsetSelectedPlatformsByFiles?.get(subset)?.get(selectedFile)
 						def retVal = null
 						switch (selectedFile)
@@ -203,7 +203,7 @@ class DataExportService {
 								// 
 							//	def outputDir = "/users/jliu/tmp"
 								def outputDir = grailsApplication.config.com.recomdata.analysis.data.file.dir;
-							def webRootName = jobDataMap.get("appRealPath");
+							        def webRootName = jobDataMap.get("appRealPath");
 								if (webRootName.endsWith(File.separator) == false)
 									webRootName += File.separator;
 								outputDir =  webRootName + outputDir;
@@ -211,13 +211,17 @@ class DataExportService {
 								if('subset2'==subset)
 									prefix = "S2"
 								vcfDataService.getDataAsFile(outputDir, jobDataMap.get("jobName"), null, resultInstanceIdMap[subset], selectedSNPs, selectedGenes, chromosomes, prefix);
-							break;
+								break;
+						        case "CLINICAL.TXT":
+							        break;
+						        default:
+							        println "Unknown name for selectedFile ${selectedFile}"
 						}
 					}
 				}
 				
 				if (writeClinicalData) {
-					
+					log.info "now exporting clinical data CLINICAL.TXT"
 					//Grab the item from the data map that tells us whether we need the concept contexts.
 					Boolean includeConceptContext = jobDataMap.get("includeContexts",false);
 					
