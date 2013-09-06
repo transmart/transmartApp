@@ -278,7 +278,7 @@ public class SearchController{
 	}
 
 	/**
-	 * conduct a search, params expected or keywork id or keyword text
+	 * conduct a search, params expected or keyword id or keyword text
 	 */
 	def search = {
 		def keyword
