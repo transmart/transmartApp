@@ -61,10 +61,6 @@ class JobStatusService {
 	   if(!retValue)
 	   {
 		   def asyncJob = AsyncJob.get(jobID)
-		   
-		   TimeDuration td = TimeCategory.minus(new Date(), asyncJob.lastRunOn)
-		   //log.debug("Job has been running for ${td}}")
-		   asyncJob.runTime = td
 		   asyncJob.jobStatus = status
 		   if (viewerURL && viewerURL != '') asyncJob.viewerURL = viewerURL
 		   if (altViewerURL && altViewerURL != '' && asyncJob.altViewerURL != null) asyncJob.altViewerURL = altViewerURL
