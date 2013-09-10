@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataConfig>
+<dataSource driver="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@10.44.128.224:1524:tmdev" user="biomart" password="biomart" />
+    <document>
+        <entity name="id" query="select FACET_ID, ANALYSIS_ID, STUDY, STUDY_ID, DISEASE, ANALYSES, DATA_TYPE, PLATFORM, OBSERVATION from biomart.vw_faceted_search_test" >
+            <field name="FACET_ID" column="FACET_ID" />
+            <field name="ANALYSIS_ID" column="ANALYSIS_ID" />
+            <field name="STUDY" column="STUDY" />
+            <field name="STUDY_ID" column="STUDY_ID" />
+            <field name="DISEASE" column="DISEASE" splitBy=";" />
+            <field name="ANALYSES" column="ANALYSES" />
+            <field name="DATA_TYPE" column="DATA_TYPE" />
+            <field name="PLATFORM" column="PLATFORM" />
+            <field name="OBSERVATION" column="OBSERVATION" />
+
+	     <!--This was David's attempt
+            <entity query="SELECT SEARCH_KEYWORD_ID 
+                           FROM bio_analysis_attribute baa, search_keyword sk
+                           WHERE baa.bio_assay_analysis_id='${id.BIO_ASSAY_ANALYSIS_ID}'
+                           AND sk.data_category='DISEASE'">
+                               <field name="DISEASE" column="SEARCH_KEYWORD_ID" />
+            </entity>-->
+        </entity>
+    </document>
+</dataConfig>
