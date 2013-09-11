@@ -1,22 +1,22 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
- * 
+ *
  *
  ******************************************************************/
-  
+
 
 package com.recomdata.transmart.asynchronous.job
 
@@ -41,15 +41,15 @@ class AsyncJobController {
 	 */
 	def getjobs = {
 		def result = asyncJobService.getjobs(params.jobType)
-		
+
 		response.setContentType("text/json")
 		response.outputStream << result?.toString()
 	}
 
 	/**
-     * get job stats by name
-     */
-    def getjobbyname = {
+   * get job stats by name
+   */
+  def getjobbyname = {
 
 		println(params.jobName)
 
@@ -86,7 +86,7 @@ class AsyncJobController {
 	}
 
 	/**
-	 * Repeatedly called by datasetExplorer.js to get the job status and results 
+	 * Repeatedly called by datasetExplorer.js to get the job status and results
 	 */
 	def checkJobStatus = {
 		def result = asyncJobService.checkJobStatus(params.jobName, params.jobType)
@@ -96,27 +96,27 @@ class AsyncJobController {
 			def statusIndex = result.get('statusIndex')
 			def statusHtml = g.render(template:"/genePattern/jobStatusList", model:[jobStatuses:jobResultsService[params.jobName]["StatusList"], statusIndex:statusIndex]).toString();
 			result.put('jobStatusHTML', statusHtml)
-			
+
 			result.remove('statusIndex')
 			result.remove('statusIndexExists')
 		}
-		
+
 		response.setContentType("text/json")
 		response.outputStream << result?.toString()
 	}
-	
+
 	/**
 	* Shows the job status window
 	*/
    def showJobStatus ={
 	   render (view:"/genePattern/workflowStatus")
    }
-   
+
    /**
    * for snp viewer and igv
    */
-   
-     def showWorkflowStatus ={
+
+   def showWorkflowStatus ={
 	   def wfstatus = session["workflowstatus"];
 	   if(wfstatus ==null){
 		   wfstatus = new WorkflowStatus();
@@ -126,21 +126,21 @@ class AsyncJobController {
 
 	   render (view:"/genePattern/workflowStatus");
    }
- 
-   
+
+
    def checkWorkflowStatus ={
    // check session status
 	   def wfstatus = session["workflowstatus"];
-	   
+
 	   JSONObject result = wfstatus.result;
 	   if(result==null){
 		   result = new JSONObject();
 	   }
-	   
+
 	   def statusHtml = g.render(template:"/genePattern/jobStatus", model:[wfstatus:wfstatus]).toString();
 	   result.put("statusHTML", statusHtml);
 	   println(statusHtml);
-	   
+
 	   if(wfstatus.isCompleted()){
 		   result.put("wfstatus","completed");
 		   wfstatus.rpCount++;
@@ -150,7 +150,7 @@ class AsyncJobController {
 	   }
 	   render result.toString();
    }
-   
+
    def cancelJob = {
 	   def wfstatus = session["workflowstatus"]
 	   wfstatus.setCancelled();
