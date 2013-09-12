@@ -32,7 +32,7 @@ public class CSVGenerator {
 		String rowValues="";
 		String export="";
 		try{
-			csvWriter=new FileWriter("export.csv");
+		    //csvWriter=new FileWriter("export.csv");
 			
 			for(int i=0;i<headers.size();i++)
 				columnNames=columnNames+headers.get(i)+",";
@@ -57,13 +57,13 @@ public class CSVGenerator {
 		
 		}catch(Exception e){
 			e.printStackTrace();
-		}finally{
-			try{
-				csvWriter.close();
-			}catch(IOException e){
-				e.printStackTrace();
-			}
-		}
+		}//finally{
+		//	try{
+		//		csvWriter.close();
+		//	}catch(IOException e){
+		//		e.printStackTrace();
+		//	}
+		//}
 		return(export.getBytes());
 	}
 }
