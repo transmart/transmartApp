@@ -218,6 +218,7 @@ Ext.onReady(function()
 						}
 					}
 				}
+                /*
 				,
 				'-'
 				,
@@ -226,7 +227,9 @@ Ext.onReady(function()
 					handler : function()	{
 						exportDataSets();
 					}
-				}]
+				}
+				*/
+				]
 			}
 		);
 
