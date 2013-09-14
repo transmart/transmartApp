@@ -249,8 +249,10 @@ public class SearchController{
 
 		def filter = session.searchFilter;
 		def sResult = new SearchResult()
-		//	log.info "doSearch:"+params
-		//log.info "isTextOnly = " + filter.globalFilter.isTextOnly()
+
+		log.info "doSearch:"+params
+		log.info "isTextOnly = " + filter.globalFilter.isTextOnly()
+
 		SearchService.doResultCount(sResult,filter)
 		filter.summaryWithLinks = createSummaryWithLinks(filter)
 		filter.createPictorTerms()
@@ -284,7 +286,7 @@ public class SearchController{
 	}
 
 	/**
-	 * conduct a search, params expected or keywork id or keyword text
+	 * conduct a search, params expected or keyword id or keyword text
 	 */
 	def search = {
 		def keyword
@@ -315,7 +317,9 @@ public class SearchController{
 		def sfilter = new SearchFilter()
 		def gfilter = sfilter.globalFilter
 		def customFilter = CustomFilter.get( params.id )
+		def redirected = false
 
+		log.info "searchCustomFilter: '${customFilter}'"
 		if (customFilter != null) {
 			def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 			if (customFilter.privateFlag != 'Y' || customFilter.searchUserId == user.id) {
@@ -342,16 +346,19 @@ public class SearchController{
 			} else {
 				flash.message = "You are not authorized to view the custom filter with ID ${params.id}."
 				redirect(action:'index')
+				redirected = true
 			}
 		} else {
 			flash.message = "The custom filter with ID ${params.id} no longer exists."
 			redirect(action:'index')
+			redirected = true
 		}
-		sfilter.searchText = ""
-		session.searchFilter = sfilter
 
-		redirect(action:'doSearch', params:[ts:new Date().getTime()])
-
+		if(!redirected) {
+			sfilter.searchText = ""
+			session.searchFilter = sfilter
+			redirect(action:'doSearch', params:[ts:new Date().getTime()])
+		}
 	}
 
 	/**

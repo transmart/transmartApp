@@ -92,10 +92,11 @@ class DataExportService {
 						
 						if (StringUtils.equalsIgnoreCase(selectedFile, "CLINICAL.TXT")) {
 							writeClinicalData = true
+                            return
 						}
-
+						
                         def start = System.currentTimeMillis()
-						log.info 'Working on to export File :: ' + selectedFile
+						log.info 'Working on export of File :: ' + selectedFile
 
 						def List gplIds = subsetSelectedPlatformsByFiles?.get(subset)?.get(selectedFile)
 						def retVal
@@ -226,7 +227,10 @@ class DataExportService {
 								if('subset2'==subset)
 									prefix = "S2"
 								vcfDataService.getDataAsFile(outputDir, jobDataMap.get("jobName"), null, resultInstanceIdMap[subset], selectedSNPs, selectedGenes, chromosomes, prefix);
-							break;
+                                break;
+                            default:
+                                log.error "Unknown name for selectedFile: ${selectedFile}"
+                                return
 						}
 
                         log.info("Data retrieval for $selectedFile took "
@@ -236,7 +240,7 @@ class DataExportService {
 				}
 				
 				if (writeClinicalData) {
-					
+					log.info "now exporting clinical data CLINICAL.TXT"
 					//Grab the item from the data map that tells us whether we need the concept contexts.
 					Boolean includeConceptContext = jobDataMap.get("includeContexts",false);
 					

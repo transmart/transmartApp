@@ -810,7 +810,7 @@ function showPathwaySearchBox(selectedListEltName, pathwayAndIdEltName, searchIn
 	            	 selectedListElt.setSelectionRange(selectedListText.length, selectedListText.length);
 	             }
 	             
-	             //Put the gene display || transmart search_keywork id in selectedGenesAndIdSNPViewer hidden field, separated by |||
+	             //Put the gene display || transmart search_keyword id in selectedGenesAndIdSNPViewer hidden field, separated by |||
 	             var geneAndIdStr = selectedGeneStr + '||' + record.data.id;
 	             var geneAndIdElt = Ext.get(pathwayAndIdEltName);
 	             var geneAndIdListText = geneAndIdElt.dom.value;

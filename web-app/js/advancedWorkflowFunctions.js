@@ -35,7 +35,7 @@
 //After we have selected to run a heat map from the Advanced workflow menu., these functions run.
 //*******************************************************************
 
-//This is fired after a advanced workflow button is clicked that generates a heatmap.
+//This is fired after an advanced workflow button is clicked that generates a heatmap.
 function validateHeatmap()
 {
 	//Determine if the subsets are actually filled in.
@@ -195,7 +195,7 @@ function validateheatmapComplete(result,completedFunction)
 //Sample side
 function finalAdvancedMenuValidationSample()
 {
-	//Hide the window that we select out gene/pathay from.
+	//Hide the window that we select our gene/pathway from.
 	compareGeneSelection.hide();
 	
 	Ext.Ajax.request(
@@ -431,7 +431,7 @@ function showGeneSelection()
 		plain: true,
 		modal: true,
 		border:false,
-        resizable: false,		
+		resizable: false,		
 		buttons: [
 		          {
 		            id: 'compareGeneSelectionOKButton',
