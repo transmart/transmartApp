@@ -33,19 +33,17 @@ grails.project.war.file = "target/${appName}.war"
 /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
 grails.servlet.version = "2.5"
 
+grails.project.dependency.resolver = "maven"
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
         // uncomment to disable ehcache
         // excludes 'ehcache'
     }
-    log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+    log "warn"
     repositories {
-        grailsPlugins()
-        grailsHome()
         grailsCentral()
-
-        mavenLocal()
         mavenCentral()
 
         if (!skipTransmartFoundationRepo()) {
@@ -60,7 +58,7 @@ grails.project.dependency.resolution = {
 
             mavenRepo([
                     name: 'repo.transmartfoundation.org-public',
-                    root: 'https://repo.transmartfoundation.org/content/repositories/public/',
+                    url: 'https://repo.transmartfoundation.org/content/repositories/public/',
             ])
         }
     }
@@ -94,8 +92,8 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":hibernate:$grailsVersion"
-        build ':release:2.2.1', ':rest-client-builder:1.0.3'
+        compile ":hibernate:3.6.10.1"
+        build ':release:3.0.0'
 
         compile ":quartz:1.0-RC2"
         compile(":transmart-mydas:0.1-SNAPSHOT") {
@@ -104,8 +102,8 @@ grails.project.dependency.resolution = {
         compile ":rdc-rmodules:0.3-SNAPSHOT"
         compile ":spring-security-core:1.2.7.3"
         compile ":dalliance-plugin:0.1-SNAPSHOT"
-        build ":tomcat:$grailsVersion"
-        build ":build-info:1.1"
+        build ":tomcat:7.0.41"
+        build ":build-info:1.2.4"
         runtime ":prototype:1.0"
         runtime ":jquery:1.7.1"
         runtime ":transmart-core:1.0-SNAPSHOT"
