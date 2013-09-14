@@ -26,10 +26,8 @@
 
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
 
-    <LINK REL="SHORTCUT ICON"
-	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
-<LINK REL="ICON"
-	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
+    <link rel="shortcut icon" href="${resource(dir:'images', file:'i2b2_hive.ico')}">
+    <link rel="icon" href="${resource(dir:'images', file:'i2b2_hive.ico')}">
 
 <%-- We do not have a central template, so this only works in the database explorer for now --%>
 <g:if test="${grailsApplication.config.com.recomdata.debug.jsCallbacks == 'true'}">

@@ -53,7 +53,7 @@ class AsyncJobService {
 				like("jobName", "${userName}%")
 				eq("jobType", "${jobType}")
 				ge("lastRunOn", new Date()-7)
-				order("id", "desc")
+				order("lastRunOn", "desc")
 			}
 		} else {
 			jobResults = c {
@@ -63,7 +63,7 @@ class AsyncJobService {
 					isNull("jobType")
 				}
 				ge("lastRunOn", new Date()-7)
-				order("id", "desc")
+				order("lastRunOn", "desc")
 			}
 		}
 		def m = [:]
