@@ -93,7 +93,7 @@ grails.project.dependency.resolution = {
 
     plugins {
         compile ":hibernate:3.6.10.1"
-        build ':release:3.0.0'
+        build ':release:3.0.0', ':rest-client-builder:1.0.3'
 
         compile ":quartz:1.0-RC2"
         compile(":transmart-mydas:0.1-SNAPSHOT") {
