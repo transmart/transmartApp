@@ -32,9 +32,14 @@ class PluginControllerTests {
     @Before
     void setUp() {
 		mockDomain(Plugin);
-        def p = new Plugin(name: 'Test Plugin', pluginName: 'TestPlugin', active: true, hasForm: false, defaultLink: '', hasModules: false)
-                .save(flush: true)
-        assert p != null
+        def p = new Plugin(
+                name: 'Test Plugin',
+                pluginName: 'TestPlugin',
+                active: true,
+                hasForm: false,
+                defaultLink: 'bogus_link',
+                hasModules: false)
+        assert p.save() != null
     }
 
 	void testIndex() {
