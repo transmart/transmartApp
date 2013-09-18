@@ -3,6 +3,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 
 import javax.annotation.PostConstruct
 import javax.sql.DataSource
+import java.sql.DatabaseMetaData
 
 /**
  * Helper service to make it easier to write code that works on both Oracle and
@@ -116,26 +117,24 @@ class DatabasePortabilityService {
 
     @PostConstruct
     void init() {
-        DataSource actualDataSource = dataSource;
-        if (dataSource.hasProperty('targetDataSource')) {
-            actualDataSource = dataSource.targetDataSource
-        }
+        DatabaseMetaData metaData = dataSource.connection.metaData
+        def databaseName = metaData.databaseProductName.toLowerCase()
 
-        switch (actualDataSource.driverClassName) {
-            case 'org.postgresql.Driver':
-                databaseType = DatabaseType.POSTGRESQL
-                break
+        switch (databaseName) {
+        case ~/postgresql.*/:
+            databaseType = DatabaseType.POSTGRESQL
+            break
 
-            case 'oracle.jdbc.driver.OracleDriver':
-                databaseType = DatabaseType.ORACLE
-                break
+        case ~/oracle.*/:
+            databaseType = DatabaseType.ORACLE
+            break
 
-            default:
-                log.warn 'Could not detect data source driver as either ' +
-                        'PostgreSQL or Oracle; defaulting to PostgreSQL ' +
-                        '(this is OK if running H2 in Postgres compatibility ' +
-                        'mode)'
-                databaseType = DatabaseType.POSTGRESQL
+        default:
+            log.warn 'Could not detect data source driver as either ' +
+                    'PostgreSQL or Oracle; defaulting to PostgreSQL ' +
+                    '(this is OK if running H2 in Postgres compatibility ' +
+                    'mode)'
+            databaseType = DatabaseType.POSTGRESQL
         }
     }
 
