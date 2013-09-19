@@ -120,6 +120,8 @@ grails.war.resources = { stagingDir ->
     delete(file: "${stagingDir}/WEB-INF/lib/servlet-api-${grails.servlet.version}.jar")
 }
 
+grails.project.dependency.resolution.metaClass.skipTransmartFoundatinRepo = { false }
+
 def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
         "BuildConfig.groovy")
 if (buildConfigFile.exists()) {
@@ -165,8 +167,6 @@ if (buildConfigFile.exists()) {
             originalDepRes.call(it)
             extraDepRes.call(it)
         }
-    } else {
-        originalDepRes.metaClass.skipTransmartFoundationRepo = { false }
     }
 }
 
