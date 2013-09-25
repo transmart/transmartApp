@@ -40,7 +40,11 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
-
+        compile 'antlr:antlr:2.7.7'
+        compile 'net.sf.opencsv:opencsv:2.3'
+        compile 'org.apache.lucene:lucene-core:2.4.0',
+                'org.apache.lucene:lucene-demos:2.4.0',
+                'org.apache.lucene:lucene-highlighter:2.4.0'
     }
 
     plugins {
