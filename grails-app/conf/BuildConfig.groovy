@@ -58,6 +58,8 @@ grails.project.dependency.resolution = {
         compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:1.0.6'
         compile ':rdc-rmodules:0.3-SNAPSHOT'
+
+        runtime ':prototype:1.0'
     }
 }
 
