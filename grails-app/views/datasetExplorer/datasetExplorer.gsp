@@ -103,7 +103,7 @@
 	  MaxSearchResults: 100,
 	  PMUrl: '${grailsApplication.config.com.recomdata.datasetExplorer.pmServiceURL}',
 	  PMTransport: 'rest',
-	  PMproxy:${grailsApplication.config.com.recomdata.datasetExplorer.pmServiceProxy},
+	  PMproxy: '${grailsApplication.config.com.recomdata.datasetExplorer.pmServiceProxy}',
 	  CRCUrl: '',
 	  ONTUrl: '',
 	  usePMHost: '${grailsApplication.config.com.recomdata.datasetExplorer.usePMHost}',
