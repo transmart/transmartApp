@@ -515,7 +515,7 @@ class FmFolderService {
 		List items = AmTagItem.findAll(sql, [templateId:template.id])
 		
 		validateFolder(folder, object, items, values);	
-		saveFolder(folder, object, template, items, values);
+		doSaveFolder(folder, object, template, items, values);
 
 	}
 	
@@ -576,7 +576,7 @@ class FmFolderService {
 	 * @param values field values to be saved
 	 * @throws ValidationException if there are any errors persisting data to the database
 	 */
-	private void saveFolder(FmFolder folder, Object object, AmTagTemplate template, List items, Map values) {
+	private void doSaveFolder(FmFolder folder, Object object, AmTagTemplate template, List items, Map values) {
 
 		// Save folder object
 		folder.save(flush:true, failOnError:true)

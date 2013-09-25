@@ -529,39 +529,6 @@ class RWGController {
 
 	   return solrGenesField
    }
-
-      
-   /**
-   * Load the initial facet results for the tree (no filters)
-   * @return JSON object containing facet counts
-   */
-   def getInitialFacetResults = {List categoriesList  ->
-	   // initial state of the significant field is checked, so need to add the search field to the SOLR query to get the initial facet coutns
-	   //  and save the search term to the session variable so that is applied to the query to get the analysis list 
-	   //def queryParams = ["ANY_SIGNIFICANT_GENES:1"]
-	   def queryParams = []
-	   session['solrSearchFilter'] = queryParams
-	   log.info("Initial facet search: " + queryParams)
-
-	   // set session var for SOLR genes field (no param passed so default will be used)
-	   setSOLRGenesField() 
-	   	   	   
-	   // build the SOLR query
-	   
-	   // get the base query string (i.e. "q=(*:*)" since no filters for initial search
-	   def nonfacetedQueryString = createSOLRNonfacetedQueryString(queryParams)
-	   def facetedQueryString = ""
-	   def facetedFieldsString = createSOLRFacetedFieldsString(categoriesList)
-
-	   String solrRequestUrl = createSOLRQueryPath()
-	   String solrQueryString = createSOLRQueryString(nonfacetedQueryString, facetedQueryString, facetedFieldsString)
-
-	   JSONObject facetCounts = executeSOLRFacetedQuery(solrRequestUrl, solrQueryString, false)
-		
-       return facetCounts
-	   
-   }
-
       
    /**
    * START: Methods for the keyword search

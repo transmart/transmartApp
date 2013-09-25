@@ -40,7 +40,7 @@ class ProxyController{
 	}
 	
 
-	def doProcess(HttpServletRequest req, HttpServletResponse res, boolean isPost) {
+	private doProcess(HttpServletRequest req, HttpServletResponse res, boolean isPost) {
 
 		  boolean allowXDomain = true;
 		  boolean requireSession = false;

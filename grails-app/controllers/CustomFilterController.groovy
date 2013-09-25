@@ -149,7 +149,7 @@ class CustomFilterController {
 		return false
 	}
 
-	def createKeywordMap(GlobalFilter gfilter) {
+	private createKeywordMap(GlobalFilter gfilter) {
         def map = [:]
         def list
         list = gfilter.getGeneFilters()
@@ -188,7 +188,7 @@ class CustomFilterController {
         return map
 	}
 
-	def createKeywordMap(CustomFilter filter) {
+	private createKeywordMap(CustomFilter filter) {
 
 		def map = [:]
 		def uniqueIds = []
