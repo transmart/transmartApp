@@ -191,6 +191,8 @@ com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
 
+org.transmart.security.spnegoEnabled = false
+
 // Uncomment and edit the following lines to start using Grails encoding & escaping improvements
 
 /* remove this line 

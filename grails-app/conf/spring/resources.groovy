@@ -16,19 +16,17 @@
  * 
  *
  ******************************************************************/
-  
 
+import org.apache.log4j.Logger
+import org.springframework.security.core.session.SessionRegistryImpl
+import org.springframework.security.extensions.kerberos.web.SpnegoAuthenticationProcessingFilter
+import org.springframework.security.web.DefaultRedirectStrategy
+import org.springframework.security.web.access.AccessDeniedHandlerImpl
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
-import org.springframework.security.core.session.SessionRegistryImpl
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.DefaultRedirectStrategy
-import org.springframework.security.extensions.kerberos.web.SpnegoAuthenticationProcessingFilter
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
-import org.springframework.security.web.authentication.AuthenticationFailureHandler
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import org.springframework.security.web.access.AccessDeniedHandlerImpl
 
+def logger = Logger.getLogger('com.recomdata.conf.resources')
 
 beans = {
 	sessionRegistry(SessionRegistryImpl)
@@ -40,6 +38,7 @@ beans = {
 		expiredUrl = '/login'
 	}
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
+
 	redirectStrategy(DefaultRedirectStrategy)
 	accessDeniedHandler(AccessDeniedHandlerImpl) {
 		errorPage = '/login'
@@ -47,11 +46,23 @@ beans = {
 	failureHandler(SimpleUrlAuthenticationFailureHandler){
 		defaultFailureUrl='/login'
 	}
-	SpnegoAuthenticationProcessingFilter(SpnegoAuthenticationProcessingFilter){
-		authenticationManager=ref('authenticationManager')
-		failureHandler= ref('failureHandler')
-	}
-	ldapUserDetailsMapper(com.recomdata.security.CustomUserDetailsContextMapper) {
-		dataSource = ref("dataSource")
-	}
+
+    if (grailsApplication.config.org.transmart.security.spnegoEnabled) {
+        SpnegoAuthenticationProcessingFilter(SpnegoAuthenticationProcessingFilter){
+            authenticationManager=ref('authenticationManager')
+            failureHandler= ref('failureHandler')
+        }
+        ldapUserDetailsMapper(com.recomdata.security.CustomUserDetailsContextMapper) {
+            dataSource = ref("dataSource")
+        }
+    } else {
+        SpringSecurityKerberosGrailsPlugin.metaClass.getDoWithSpring = { ->
+            logger.info "Skipped Kerberos Grails plugin initialization"
+            return {}
+        }
+        SpringSecurityLdapGrailsPlugin.metaClass.getDoWithSpring = { ->
+            logger.info "Skipped LDAP Grails plugin initialization"
+            return {}
+        }
+    }
 }
