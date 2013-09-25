@@ -31,9 +31,6 @@ import org.springframework.security.web.access.AccessDeniedHandlerImpl
 
 
 beans = {
-	dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder){
-		dataSource = ref('dataSource')
-	}
 	sessionRegistry(SessionRegistryImpl)
 	sessionAuthenticationStrategy(ConcurrentSessionControlStrategy, sessionRegistry) {
 		maximumSessions = 10
