@@ -222,7 +222,7 @@ public class FTPUtil {
 			
 			ret=ftp.deleteFile(remote);
 		}catch (InvalidFTPParamsException e) {
-			log.error("Invalid FTP Params to connect");
+			log.info("No FTP Params to connect");
 		} catch (FTPAuthenticationException e) {
 			log.error(e.getMessage());
 		} catch (IOException e) {
