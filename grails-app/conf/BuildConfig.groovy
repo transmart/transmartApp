@@ -57,4 +57,52 @@ grails.project.dependency.resolution = {
     }
 }
 
+def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
+        "BuildConfig.groovy")
+if (buildConfigFile.exists()) {
+    println "Processing external build config at $buildConfigFile"
 
+    def slurpedBuildConfig = new ConfigSlurper(Environment.current.name).
+            parse(buildConfigFile.toURL())
+
+    /* For development, it's interesting to use the plugins in-place.
+      * This allows the developer to put the grails.plugin.location.* assignments
+      * in an out-of-tree BuildConfig file if they want to.
+      * Snippet from https://gist.github.com/acreeger/910438
+      */
+    slurpedBuildConfig.grails.plugin.location.each { String k, v ->
+        if (!new File(v).exists()) {
+            println "WARNING: Cannot load in-place plugin from ${v} as that " +
+                    "directory does not exist."
+        } else {
+            println "Loading in-place plugin $k from $v"
+            grails.plugin.location."$k" = v
+        }
+        if (grailsSettings.projectPluginsDir?.exists()) {
+            grailsSettings.projectPluginsDir.eachDir { dir ->
+                // remove optional version from inline definition
+                def dirPrefix = k.replaceFirst(/:.+/, '') + '-'
+                if (dir.name.startsWith(dirPrefix)) {
+                    println "WARNING: Found a plugin directory at $dir that is a " +
+                            "possible conflict and may prevent grails from using " +
+                            "the in-place $k plugin."
+                }
+            }
+        }
+    }
+
+    /* dependency resolution in external BuildConfig */
+    Closure originalDepRes = grails.project.dependency.resolution;
+    if (slurpedBuildConfig.grails.project.dependency.resolution) {
+        Closure extraDepRes = slurpedBuildConfig.grails.project.dependency.resolution;
+        grails.project.dependency.resolution = {
+            originalDepRes.delegate        = extraDepRes.delegate        = delegate
+            originalDepRes.resolveStrategy = extraDepRes.resolveStrategy = resolveStrategy
+            originalDepRes.metaClass.skipTransmartFoundationRepo = { true }
+            originalDepRes.call(it)
+            extraDepRes.call(it)
+        }
+    }
+}
+
+// vim: set et sw=4 ts=4:
