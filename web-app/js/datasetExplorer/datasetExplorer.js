@@ -1554,16 +1554,6 @@ function showProjectDialog(projects)
 
 function projectDialogComplete()
 {
-
-	// get the project id
-	GLOBAL.ProjectID = projectid;
-	/* var u = queryPanel.getUpdater();
-      while(u.isUpdating())
-      {
-      alert('waiting');
-      } */
-	//getPreviousQueries();
-	
 	jQuery('#box-search').prependTo(jQuery('#westPanel')).show();
 	jQuery('#noAnalyzeResults').prependTo(jQuery('#navigateTermsPanel .x-panel-body'));
 	
@@ -1628,13 +1618,7 @@ function getPreviousQueriesComplete(response)
 }
 
 function getCategoriesComplete(ontresponse){
-	ontTabPanel.add(ontFilterPanel);
-	ontFilterTree.dragZone.addToGroup("analysis");
-	getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
-	if(GLOBAL.hideAcrossTrialsPanel != 'true') {
-        getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
-    }
-	setActiveTab();
+    getSubCategories(ontresponse);
 }
 
 function setActiveTab(){

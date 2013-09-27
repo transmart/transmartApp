@@ -23,6 +23,7 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
     requestData: function (node, callback) {
         if (this.fireEvent("beforeload", this, node, callback) !== false) {
 
+            this.transId = Ext.Ajax.request({
                 method: 'GET',
                 url: pageInfo.basePath + "/concepts/getChildren",
                 params: { concept_key: node.id },
@@ -119,6 +120,7 @@ jQuery.ajax({
     	        success: function(result){getChildConceptPatientCountsComplete(result, node);},
     	        data: {charttype: "childconceptpatientcounts", concept_key: node.attributes.id}
         });
+}
 
 function getChildConceptPatientCountsComplete(result, node) {
     /* eval the response and look up in loop*/
