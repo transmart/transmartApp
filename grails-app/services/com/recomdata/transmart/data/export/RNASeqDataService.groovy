@@ -24,8 +24,6 @@ class RNASeqDataService {
                      String jobName,
                      resultInstanceId) {
 
-        log.error("... RNASeqDataService.writeRegions: at start ...wl");
-
         def q = new ACGHRegionQuery(
                 common: new CommonHighDimensionalQueryConstraints(
                         studies: [study],
@@ -42,13 +40,7 @@ class RNASeqDataService {
             writerUtil = new FileWriterUtil(studyDir, fileName, jobName, 'RNASeq',
                     null, "\t" as char)
             session = sessionFactory.openStatelessSession()
-
-            log.error("... RNASeqDataService.writeRegions: before runRNASEQRegionQuery ...wl");
-
             result = dataQueryResourceNoGormService.runRNASEQRegionQuery(q, session)
-
-            log.error("... RNASeqDataService.writeRegions: after runRNASEQRegionQuery ...wl");
-
             doWithResult(result, writerUtil)
         } finally {
             writerUtil?.finishWriting()
