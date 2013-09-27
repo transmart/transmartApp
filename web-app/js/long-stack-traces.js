@@ -31,9 +31,11 @@
         return;
     }
 
+    Error.stackTraceLimit = 100
+
     var currentTraceError = null;
 
-    var filename = new Error().stack.split("\n")[1].match(/^    at ((?:\w+:\/\/)?[^:]+)/)[1];
+    var filename = 'long-stack-traces.js';
     function filterInternalFrames(frames) {
         return frames.split("\n").filter(function(frame) { return frame.indexOf(filename) < 0; }).join("\n");
     }
@@ -153,6 +155,11 @@
         /* TODO: support removeEventListener. Probably the easiest way would be
          *       to override replace removeEventListener on a per-object basis
          *       every time addEventListener is called
+         *       We can also replace removeEventListener on the prototype,
+         *       as long as we save the original function in a property of
+         *       the wrapped function. Then we can loop through the events
+         *       (obtained with the global getEventListeners()) and call the
+         *       real removeEventListener().
          */
         [
             window.Node.prototype,
@@ -169,38 +176,66 @@
             wrapRegistrationFunction(object, "addEventListener", 1);
         });
 
-        // this actually captures the stack when "send" is called, which isn't ideal,
-        // but it's the best we can do without hooking onreadystatechange assignments
-        var _send = XMLHttpRequest.prototype.send;
-        XMLHttpRequest.prototype.send = function() {
-            this.onreadystatechange = makeWrappedCallback(this.onreadystatechange, "onreadystatechange");
-            return _send.apply(this, arguments);
-        }
+        var onreadystatechangeDescriptor = {
+            get: function XMLHttpRequest_wrapping_onreadystatechange_getter() {
+                return this._onreadystatechange;
+            },
+            set: function XMLHttpRequest_wrapping_onreadystatechange_setter(newCallback) {
+                if (this._onreadystatechange) {
+                    this.removeEventListener("readystatechange", this._onreadystatechange);
+                }
 
-        // FIXME: experimental XHR wrapper for hooking onreadystatechange
-        // Based on https://gist.github.com/796032
-        // var _XMLHttpRequest = XMLHttpRequest;
-        // XMLHttpRequest = function () {
-        //     Object.defineProperty(this, "onreadystatechange", {
-        //         get: function() {
-        //             return this.__onreadystatechange;
-        //         },
-        //         set: function(onreadystatechange) {
-        //             if (this.__onreadystatechange && typeof this.__onreadystatechange.call === "function")
-        //                 this.removeEventListener("readystatechange", this.__onreadystatechange);
-        //             this.__onreadystatechange = makeWrappedCallback(onreadystatechange, "onreadystatechange");
-        //             if (this.__onreadystatechange && typeof this.__onreadystatechange.call === "function")
-        //                 this.addEventListener("readystatechange", this.__onreadystatechange);
-        //         },
-        //         enumerable: true
-        //     });
-        //     Object.defineProperty(this, "__onreadystatechange", {
-        //         value: null,
-        //         writable: true,
-        //         enumerable: false
-        //     });
-        // }
-        // XMLHttpRequest.prototype = new _XMLHttpRequest();
+                if (newCallback === null) {
+                    console.warn("(long-stack-traces) setting onreadystatechange " +
+                        "on XMLHttpRequest object to null; will not attempt " +
+                        "wrapping the callback");
+                    this._onreadystatechange = null;
+                } else {
+                    /* addEventListener already wraps the callback */
+                    this.addEventListener("readystatechange", newCallback);
+                }
+            }
+        }
+        var _onreadystatechangeDescriptor = {
+            value: null,
+            writable: true,
+            enumerable: false
+        };
+
+        /* for some reason setting the property on the prototype is not enough */
+        var _XMLHttpRequest = XMLHttpRequest;
+        XMLHttpRequest = function (arg) {
+            var actualThis = new _XMLHttpRequest(arg);
+
+            Object.defineProperty(actualThis, 'onreadystatechange', onreadystatechangeDescriptor);
+            Object.defineProperty(actualThis, '_onreadystatechange', _onreadystatechangeDescriptor);
+
+            return actualThis
+        }
+        XMLHttpRequest.prototype = _XMLHttpRequest.prototype;
+        Object.getOwnPropertyNames(_XMLHttpRequest).forEach(function(it) {
+            if (it == 'prototype' || it == 'name' || it == 'length')
+                return;
+
+            Object.defineProperty(XMLHttpRequest, it,
+                Object.getOwnPropertyDescriptor(_XMLHttpRequest, it));
+        });
+
+
+
+//        this actually captures the stack when "send" is called, which isn't ideal,
+//        but it's the best we can do without hooking onreadystatechange assignments
+//        use this only if hooking onreadystatechange fails
+//        var _send = XMLHttpRequest.prototype.send;
+//        XMLHttpRequest.prototype.send = function() {
+//            if (!Object.getOwnPropertyDescriptor(this, '_onreadystatechange')) {
+//                var wrappedCallback = makeWrappedCallback(this.onreadystatechange, "onreadystatechange");
+//                Object.defineProperty(this, "_onreadystatechange", backingDescriptor);
+//                Object.defineProperty(this, "onreadystatechange", onreadystatechangeDescriptor);
+//                this._onreadystatechange = wrappedCallback
+//            }
+//            return _send.apply(this, arguments);
+//        }
     }
 
     function FormatStackTrace(error, frames) {
@@ -256,7 +291,7 @@
             fileLocation = "unknown source";
         }
         var line = "";
-        var functionName = frame.getFunction().name;
+        var functionName = frame.getFunctionName();
         var isConstructor = frame.isConstructor();
         var isMethodCall = !(frame.isToplevel() || isConstructor);
         if (isMethodCall) {
