@@ -15,8 +15,8 @@
 	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
 
 <%-- We do not have a central template, so this only works in the database explorer for now --%>
-<g:if test="${grailsApplication.config.com.recomdata.debug.jsCallbacks == 'true'}">
-    <script type="text/javascript" src="${resource(dir:'js', file:'long-stack-traces.js')}"></script>
+<g:if test="${['true', true]*.equals(grailsApplication.config.com.recomdata.debug.jsCallbacks).any()}">
+    <g:javascript src="long-stack-traces.js"/>
 </g:if>
 
 <!-- Include Ext and app-specific scripts: -->
