@@ -538,7 +538,7 @@ div.subsettable label {
 	color: #ff0000;
 }
 
-#analysisContainer, #gtContainer, #rgtContainer {
+#analysisContainer, #gtContainer {
 	font-family: Arial, "sans serif";
 	font-size: .7em;
 }
