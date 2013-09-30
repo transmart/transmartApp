@@ -120,7 +120,7 @@ grails.war.resources = { stagingDir ->
     delete(file: "${stagingDir}/WEB-INF/lib/servlet-api-${grails.servlet.version}.jar")
 }
 
-grails.project.dependency.resolution.metaClass.skipTransmartFoundatinRepo = { false }
+grails.project.dependency.resolution.metaClass.skipTransmartFoundationRepo = { false }
 
 def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
         "BuildConfig.groovy")
