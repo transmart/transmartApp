@@ -52,7 +52,7 @@ class AnalysisDataExportService {
 
 	def renderComparisonAnalysisExcel(bio.BioAssayAnalysis analysis){
 
-		def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g JOIN  g.featureGroup.markers markers WHERE markers.bioMarkerType='GENE' AND g.analysis.id ="+analysis.id)
+		def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g WHERE g.analysis.id ="+analysis.id)
 		def headers =[]
 		def values=[]
 		def dataType = analysis.assayDataType;
@@ -63,9 +63,10 @@ class AnalysisDataExportService {
 		}
 
 		for(data in allprobesameexpr){
-		   	//println("?")
-		   	for(marker in data.featureGroup.markers){
-		   	values.add([data.analysis.name, data.featureGroupName, data.foldChangeRatio, data.rawPvalue, data.adjustedPvalue, data.teaNormalizedPValue, marker.name])
+			def rowGenes=(de.DeMrnaAnnotation.findAll("from DeMrnaAnnotation as a where a.probesetId=? and geneSymbol is not null", [data.probesetId]))*.geneSymbol
+			
+		   	for(marker in rowGenes){
+		   	values.add([data.analysis.name, data.probeset, data.foldChangeRatio, data.rawPvalue, data.adjustedPvalue, data.teaNormalizedPValue, marker])
 		   	}
 		}
 		return new ExcelSheet("sheet1", headers, values);
@@ -85,8 +86,10 @@ class AnalysisDataExportService {
 		}
 
 		for(data in allprobesameexpr){
-			for(marker in data.featureGroup.markers){
-			   	values.add([data.analysis.name, data.featureGroupName, , data.rValue, marker.name])
+			def rowGenes=(de.DeMrnaAnnotation.findAll("from DeMrnaAnnotation as a where a.probesetId=? and geneSymbol is not null", [data.probesetId]))*.geneSymbol
+			
+		   	for(marker in rowGenes){
+			   	values.add([data.analysis.name, data.probeset, , data.rValue, marker])
 			}
 		}
 		return new ExcelSheet("sheet1", headers, values);
@@ -96,7 +99,7 @@ class AnalysisDataExportService {
 
 		println(">> Spearman analysis query:")
 		//def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g JOIN FETCH g.markers markers WHERE markers.bioMarkerType='GENE' AND g.analysis.id ="+analysis.id)
-		def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g WHERE g.analysis.id ="+analysis.id+" order by g.featureGroupName")
+		def allprobesameexpr = BioAssayAnalysisData.executeQuery("SELECT distinct g FROM BioAssayAnalysisData g WHERE g.analysis.id ="+analysis.id+" order by g.probesetId")
 		def headers=[]
 		def values=[]
 		def dataType = analysis.assayDataType;
@@ -107,15 +110,17 @@ class AnalysisDataExportService {
 
 			// build excel data
 			for(data in allprobesameexpr){
-				for(marker in data.featureGroup.markers){
+				def rowGenes=(de.DeMrnaAnnotation.findAll("from DeMrnaAnnotation as a where a.probesetId=? and geneSymbol is not null", [data.probesetId]))*.geneSymbol
+			
+				for(marker in rowGenes){
 					//println(">>For antigen '" + data.featureGroupName + "' adding marker: id: " + marker + ", name: " + marker.name)
-			    	values.add([data.analysis.name, data.featureGroupName, , data.rhoValue, marker.name])
+			    	values.add([data.analysis.name, data.probeset, , data.rhoValue, marker])
 				}
 			}
 		} else if(isRBM(dataType)){
 			// don't grab associated markers due to data annotation
 			headers =["Analysis", "Antigen", "rho-value"]
-			for(data in allprobesameexpr) values.add([data.analysis.name, data.featureGroupName, data.rhoValue])
+			for(data in allprobesameexpr) values.add([data.analysis.name, data.probeset, data.rhoValue])
 
 			//def mc = [ compare: {a,b-> a.equals(b)? 0: a.size()>b.size()? -1: 1 } ] as Comparator
 			//values.sort{it}
