@@ -125,10 +125,10 @@
             
             <!-- FIXED -->
                  <g:if test="${amTagItem.tagItemType == 'FIXED'  && amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
-                 	<g:set var="fieldValue" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
+                    <g:set var="tagValue" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
                    	<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
                  		<%-- Split multiple values by pipe --%>
-                 		<g:set var="terms" value="${fieldValue.split('\\|')}"/>
+                        <g:set var="terms" value="${tagValue.split('\\|')}"/>
                  		
                  		<g:each in="${terms}" var="term" status="t">
                  			<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
@@ -143,7 +143,7 @@
                  	</g:if>
                   	<g:elseif test="${amTagItem.tagItemSubtype == 'MULTIPICKLIST'}">
                  		<%-- Split multiple values by pipe --%>
-                 		<g:set var="terms" value="${fieldValue.split('\\|')}"/>
+                        <g:set var="terms" value="${tagValue.split('\\|')}"/>
                  		
                  		<g:each in="${terms}" var="term" status="t">
                  			<g:set var="bioDataId" value="${BioData.find('from BioData where uniqueId=?',[term])?.id}"/>
@@ -157,7 +157,7 @@
                  		</g:each>
                  	</g:elseif>
                  	<g:else>
-                 		${fieldValue}
+                        ${tagValue}
                  	</g:else>
                 </g:if>
 			    <g:else>
@@ -239,4 +239,3 @@
  
  <!-- background-color:#9CA4E4;  -->   
     
- 
