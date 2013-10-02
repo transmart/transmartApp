@@ -927,10 +927,10 @@ class FmFolderController {
 		return displayValue
 	}
 	
-	def folderDetail = {
-		log.info "** action: folderDetail called!"
+	def folderDetail() {
+		log.debug "** action: folderDetail called!"
 		def folderId = params.id
-		log.info("PARAMS = " + params)
+		log.debug "PARAMS = $params"
 			
 		def folder
 		def subFolders
@@ -939,8 +939,7 @@ class FmFolderController {
 		def amTagTemplate
 		def metaDataTagItems
 		def jSONForGrids = []
-		def childMetaDataTagItems = []
-		def subjectLevelDataAvailable = false 
+		def subjectLevelDataAvailable = false
 		def measurements
 		def technologies
 		def vendors
@@ -976,29 +975,40 @@ class FmFolderController {
 			   }
 			   			   
 				def subFolderTypes = getChildrenFolderTypes(folder.id)
-				log.info "subFolderTypes = " + subFolderTypes
+				log.debug "subFolderTypes = subFolderTypes"
 				subFolderTypes.each
 				{
-					log.info "it = " + it
+					log.debug "it = $it"
 					subFolders = getChildrenFolderByType(folder.id, it)
 					if(subFolders!=null && subFolders.size()>0)
 					{
-						log.info(subFolders.size() + " subFolders == " + subFolders)
+						log.debug "${subFolders.size()} subFolders == $subFolders"
 
 							subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
 							String gridTitle = "Associated " + StringUtils.capitalize(subFolders[0].pluralFolderTypeName.toLowerCase())
 							String gridData = createDataTable(subFolders, gridTitle)
 						//	log.info gridData
 							jSONForGrids.add(gridData)
-							log.info "ADDING JSON GRID"
+							log.debug "ADDING JSON GRID"
 					}
 				}
 			}
 		}
 		
-		log.info "FolderInstance = " + bioDataObject.toString()
-		render(template:'/fmFolder/folderDetail', model:[folder:folder, bioDataObject:bioDataObject, measurements:measurements, technologies:technologies, vendors:vendors, platforms:platforms, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems, jSONForGrids: jSONForGrids, subjectLevelDataAvailable: subjectLevelDataAvailable])
-		
+		log.debug "FolderInstance = ${bioDataObject}"
+		render template: '/fmFolder/folderDetail',
+               model: [
+                       folder                    : folder,
+                       bioDataObject             : bioDataObject,
+                       measurements              : measurements,
+                       technologies              : technologies,
+                       vendors                   : vendors,
+                       platforms                 : platforms,
+                       amTagTemplate             : amTagTemplate,
+                       metaDataTagItems          : metaDataTagItems,
+                       jSONForGrids              : jSONForGrids,
+                       subjectLevelDataAvailable : subjectLevelDataAvailable
+               ]
 	}
 	
 	def analysisTable = {
