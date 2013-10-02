@@ -427,7 +427,7 @@ public class SearchController{
 	/**
 	 * update existing search Filter
 	 */
-	def updateSearchFilter(keyword, SearchFilter filter) {
+	private void updateSearchFilter(keyword, SearchFilter filter) {
 		filter.searchText = keyword.keyword;
 		filter.globalFilter.addKeywordFilter(keyword)
 	}
@@ -496,7 +496,7 @@ public class SearchController{
 	/**
 	 * Creates summary of filters with links to details for filters.
 	 */
-	def createSummaryWithLinks(SearchFilter filter) {
+	private createSummaryWithLinks(SearchFilter filter) {
 
 		// get global filter
 		GlobalFilter gfilter = filter.globalFilter;

@@ -24,16 +24,16 @@
 	<g:else>
 		<g:link controller="RWG" action="index"><img src="${resource(dir:'images', file:'logo.png')}"/></g:link>
 	</g:else>
-	
-</div>
 
+</div>
+        
 <g:if test="${debug}">
 	<div id="search-explain" class="overlay">
 		<b>Search Explainer</b>
 		<tt id="searchlog">&nbsp;</tt>
 	</div>
 </g:if>
-		
+		   			
 <table class="menuDetail" width="100%" style="height: 28px; border-collapse: collapse">
 	<tr>
 		<th class="menuBar" style="width: 160px">
@@ -60,7 +60,7 @@
 		    		<th width="150">&nbsp;</th>
 	   				<%--<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>--%>
-
+            
 			       	<g:if test="${'rwg'==app}"><th class="menuVisited">Browse</th></g:if>
 	       			<g:else><th class="menuLink"><g:link controller="RWG">Browse</g:link></th></g:else>
 			       	<g:if test="${'datasetExplorer'==app}"><th class="menuVisited">Analyze</th></g:if>
@@ -94,14 +94,14 @@
 
 <!-- Session timeout dialog -->
 <div id="timeout-div" title="Your session is about to expire!">
-   	<p>You will be logged off in <span id="timeout-countdown"></span> seconds.</p>
-   	<p>Do you want to continue your session?</p>
+    <p>You will be logged off in <span id="timeout-countdown"></span> seconds.</p>
+    <p>Do you want to continue your session?</p>
 </div>
       
 <script>
-     jQuery(document).ready(function() {
+    jQuery(document).ready(function() {
 		 var logoutURL = "${createLink([controller:'login', action: 'forceAuth'])}";
-		 var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
-		 addTimeoutDialog(heartbeatURL, logoutURL);
-  	  });
+	    var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
+	    addTimeoutDialog(heartbeatURL, logoutURL);
+   });
 </script>

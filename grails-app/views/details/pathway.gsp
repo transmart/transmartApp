@@ -19,7 +19,7 @@
 
 <html>
 <head>
-	<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+	<title>${grailsApplication.config.com.appTitle}</title>
 
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />

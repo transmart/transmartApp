@@ -14,6 +14,11 @@
 <LINK REL="ICON"
 	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
 
+<%-- We do not have a central template, so this only works in the database explorer for now --%>
+<g:if test="${['true', true]*.equals(grailsApplication.config.com.recomdata.debug.jsCallbacks).any()}">
+    <g:javascript src="long-stack-traces.js"/>
+</g:if>
+
 <!-- Include Ext and app-specific scripts: -->
 <script type="text/javascript"
 	src="${resource(dir:'js/sarissa', file:'sarissa.js')}"></script>
@@ -21,14 +26,15 @@
 	src="${resource(dir:'js/sarissa', file: 'sarissa_ieemu_xpath.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js/javeline', file: 'javeline_xpath.js')}"></script>
-<g:javascript library="prototype" />
+<script type="text/javascript"
+        src="${resource(dir:'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.9.1.custom.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
-
+  
 <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.cookie.js')}"></script>   
 <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dynatree.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.paging.min.js')}"></script>
@@ -84,7 +90,7 @@
 	<script type="text/javascript">
 	/******************************************************************************/
 	//Global Variables
-	
+
 	var pageInfo = {
 		basePath :"${request.getContextPath()}"
 	}
@@ -101,10 +107,6 @@
 	  NumOfQueryCriteriaGroups:20,
 	  NumOfQueryCriteriaGroupsAtStart:3,
 	  MaxSearchResults: 100,
-	  PMUrl: '${grailsApplication.config.com.recomdata.datasetExplorer.pmServiceURL}',
-	  PMTransport: 'rest',
-	  PMproxy:${grailsApplication.config.com.recomdata.datasetExplorer.pmServiceProxy},
-	  CRCUrl: '',
 	  ONTUrl: '',
 	  usePMHost: '${grailsApplication.config.com.recomdata.datasetExplorer.usePMHost}',
 	  Config:'jj',
@@ -140,9 +142,9 @@
 	  Binning: false,
 	  ManualBinning: false,
 	  NumberOfBins: 4,
-	  HelpURL: '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}',
-	  ContactUs: '${grailsApplication.config.com.recomdata.searchtool.contactUs}',
-	  AppTitle: '${grailsApplication.config.com.recomdata.searchtool.appTitle}',
+	  HelpURL: '${grailsApplication.config.com.recomdata.adminHelpURL}',
+	  ContactUs: '${grailsApplication.config.com.recomdata.contactUs}',
+	  AppTitle: '${grailsApplication.config.com.recomdata.appTitle}',
       BuildVersion: 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
 	  AnalysisRun: false,
 	  Analysis: 'Advanced',
@@ -158,7 +160,7 @@
 	    if(BrowserDetect.version < 7) {
 			GLOBAL.resulttype = 'image';
 		}
-	}	
+	}
 	</script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'rwgsearch.js')}"></script>
@@ -218,7 +220,7 @@
 	<!-- This implements the Help functionality -->
 	<script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
 	<script language="javascript">
-		helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+		helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 	</script>
 <!-- ************************************** --> 
 </body>

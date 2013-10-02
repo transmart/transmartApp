@@ -16,177 +16,154 @@
  * 
  *
  ******************************************************************/
-  
 
 
 Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
-requestData : function(node, callback){
-        if(this.fireEvent("beforeload", this, node, callback) !== false){
-        var getChildrenRequest=getONTRequestHeader()+'<ns4:get_children blob="true" max="1000" synonyms="false" hiddens="false">';
-        getChildrenRequest=getChildrenRequest+"<parent>"+node.id+"</parent></ns4:getchildren>"+getONTRequestFooter();
-        var handler = this;
-        
-            this.transId = jQuery.ajax({
-                url: pageInfo.basePath+"/proxy?url="+GLOBAL.ONTUrl+"getChildren",
-    	        type: 'POST',
-    	        data: getChildrenRequest,
-    	        dataProcess: false,
-    	        contentType: "text/xml",
-                success: function(response) {
-                	var argument = {};
-                	argument.callback = callback;
-                	argument.node = node;
-                	//Have to emulate handleResponse here as IE doesn't allow arbitrary properties on the XML object
-                    this.transId = false;
-                    handler.processResponse(response, argument.node, argument.callback);
-                    handler.fireEvent("load", handler, argument.node, response);
-                },
+    requestData: function (node, callback) {
+        if (this.fireEvent("beforeload", this, node, callback) !== false) {
+
+            this.transId = Ext.Ajax.request({
+                method: 'GET',
+                url: pageInfo.basePath + "/concepts/getChildren",
+                params: { concept_key: node.id },
+                success: this.handleResponse,
                 failure: this.handleFailure,
                 scope: this,
                 argument: {callback: callback, node: node},
-                timeout: '120000', //2 minutes
-                params: { }
+                timeout: '120000' //2 minutes
             });
-        }else{
+
+        } else {
             // if the load is cancelled, make sure we notify
             // the node that we are done
-            if(typeof callback == "function"){
+            if (typeof callback == "function") {
                 callback();
             }
         }
-  },
+    },
 
-processResponse:function (response, node, callback) {
- //	if(GLOBAL.Debug){alert(response.responseText)};
- 	try{
- 	//response.responseText.evalJSON();
- 	}
- 	catch(e){}
-	//var nodes = this.parseXml(response);
-	node.beginUpdate();
-	//node.appendChild(nodes);
-	this.parseXml(response, node);
-	getChildConceptPatientCounts(node);
-	node.endUpdate();
-	if (typeof callback == "function") {
-		callback(this, node);
-	}
-}, 
+    processResponse: function (response, node, callback) {
+        node.beginUpdate();
+        //node.appendChild(nodes);
+        this.parseJson(response, node);
+        getChildConceptPatientCounts(node);
+        node.endUpdate();
+        if (typeof callback == "function") {
+            callback(this, node);
+        }
+    },
 
-parseXml:function (response, node) {
- // shorthand
-    var Tree = Ext.tree;
-    
- var concept=null;
- var concepts=response.selectNodes('//concept');
-	
- var matchList = GLOBAL.PathToExpand.split(",");
- 
-	for(i=0;i<concepts.length;i++)
-	  {
-   		 var c=getTreeNodeFromXMLNode(concepts[i]);
-   		 if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
-   		 //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
-   		 if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {
-			//However, don't filter studies/top folders out if a higher-level match exists
-			var highLevelMatchFound = false;
-			for (var j = 0; j < matchList.size()-1; j++) { //-1 here - leave out last result (trailing comma)	
-				if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
-					highLevelMatchFound = true;
-					break;
-				}
-			}
-			if (!highLevelMatchFound) {
-				continue;
-			}
-   	     }
+    parseJson: function (response, node) {
+        // shorthand
+        var Tree = Ext.tree;
+
+        var concepts = Ext.decode(response.responseText)
+
+        var matchList = GLOBAL.PathToExpand.split(",");
+        for (i = 0; i < concepts.length; i++) {
+            var c = getTreeNodeFromJsonNode(concepts[i]);
+            if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
+            //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
+            if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {
+                //However, don't filter studies/top folders out if a higher-level match exists
+                var highLevelMatchFound = false;
+                for (var j = 0; j < matchList.size()-1; j++) { //-1 here - leave out last result (trailing comma)	
+                    if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
+                        highLevelMatchFound = true;
+                        break;
+                    }
+                }
+                if (!highLevelMatchFound) {
+                    continue;
+                }
+            }
    		 
-   		 //If the node has been disabled, ignore all children
-   		 if (!node.disabled) {
-   		 	node.appendChild(c);
-   		 }
-   	 }
-	
-}});
+            //If the node has been disabled, ignore all children
+            if (!node.disabled) {
+                node.appendChild(c);
+            }
+        }
 
-function getConceptPatientCount(node)
-{
-Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/chart/conceptPatientCount",
-    	        method: 'POST',                                       
-    	        success: function(result, request){getConceptPatientCountComplete(result, node);},
-    	        failure: function(result, request){getConceptPatientCountComplete(result, node);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({charttype:"conceptpatientcount",
-    	        		 			   concept_key: node.attributes.id})
-    	    });   
+    }});
+
+function getConceptPatientCount(node) {
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath + "/chart/conceptPatientCount",
+            method: 'POST',
+            success: function (result, request) {
+                getConceptPatientCountComplete(result, node);
+            },
+            failure: function (result, request) {
+                getConceptPatientCountComplete(result, node);
+            },
+            timeout: '300000',
+            params: Ext.urlEncode({charttype: "conceptpatientcount",
+                concept_key: node.attributes.id})
+        });
 }
 
-function getConceptPatientCountComplete(result, node)
-{
-node.setText(node.text+" <b>("+result.responseText+")</b>");
+function getConceptPatientCountComplete(result, node) {
+    node.setText(node.text + " <b>(" + result.responseText + ")</b>");
 }
 
-function getChildConceptPatientCounts(node)
-{
+function getChildConceptPatientCounts(node) {
 	
 var params =	Ext.urlEncode({charttype:"childconceptpatientcounts",
 		   concept_key: node.attributes.id})
 
 // Ext AJAX has intermittent failure to pass parameters when many AJAX requests are made in a short space of time - switched to jQuery here
 jQuery.ajax({
-    	        url: pageInfo.basePath+"/chart/childConceptPatientCounts",
-    	        method: 'POST',                                       
+            url: pageInfo.basePath + "/chart/childConceptPatientCounts",
+            method: 'POST',
     	        success: function(result){getChildConceptPatientCountsComplete(result, node);},
     	        data: {charttype: "childconceptpatientcounts", concept_key: node.attributes.id}
-			});   
+        });
 }
 
-function getChildConceptPatientCountsComplete(result, node)
-{
-/* eval the response and look up in loop*/
+function getChildConceptPatientCountsComplete(result, node) {
+    /* eval the response and look up in loop*/
 //var childaccess=Ext.util.JSON.decode(result.responseText).accesslevels;
 //var childcounts=Ext.util.JSON.decode(result.responseText).counts;
 var mobj=result;
-var childaccess=mobj.accesslevels;
-var childcounts=mobj.counts;
-/*var cca=new Array();
-var size=childcounts.size();
-for(var i=0;i<size;i++)
-{
-	cca[childcounts[i].concept]=childcounts[i].count;
-}*/
-var blah=node;
-node.beginUpdate();
-var children=node.childNodes;
-var size2=children.size()
-for (var i=0;i<size2;i++)
-{
-  var key=children[i].attributes.id;
-  var fullname=key.substr(key.indexOf("\\",2), key.length);
-  var count=childcounts[fullname];
-  var access=childaccess[fullname];
-  var child=children[i];
-  if(count!=undefined)
-  {
-   child.setText(child.text+" ("+count+")");
-  }
-  
-  if((access!=undefined && access!='Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
-  {
-  	//leave node unlocked must have some read access
-  }
-  else
-  {
-  	//default node to locked
-  	//child.setText(child.text+" <b>Locked</b>");
-  	child.attributes.access='locked';
-  	child.disable();
-  	child.on('beforeload', function(node){alert("Access to this node has been restricted. Please contact your administrator for access."); return false}); 
-  }
-}
-node.endUpdate();
+    var childaccess = mobj.accesslevels;
+    var childcounts = mobj.counts;
+    /*var cca=new Array();
+     var size=childcounts.size();
+     for(var i=0;i<size;i++)
+     {
+     cca[childcounts[i].concept]=childcounts[i].count;
+     }*/
+    var blah = node;
+    node.beginUpdate();
+    var children = node.childNodes;
+    var size2 = children.size()
+    for (var i = 0; i < size2; i++) {
+        var key = children[i].attributes.id;
+        var fullname = key.substr(key.indexOf("\\", 2), key.length);
+        var count = childcounts[fullname];
+        var access = childaccess[fullname];
+        var child = children[i];
+        if (count != undefined) {
+            child.setText(child.text + " (" + count + ")");
+        }
+
+        if ((access != undefined && access != 'Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
+        {
+            //leave node unlocked must have some read access
+        }
+        else {
+            //default node to locked
+            //child.setText(child.text+" <b>Locked</b>");
+            child.attributes.access = 'locked';
+            child.disable();
+            child.on('beforeload', function (node) {
+                alert("Access to this node has been restricted. Please contact your administrator for access.");
+                return false
+            });
+        }
+    }
+    node.endUpdate();
 }
 

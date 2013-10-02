@@ -285,7 +285,7 @@ class ExperimentAnalysisController {
 	/**
 	 * page the tea analysis data
 	 */
-	List pageTEAData(List analysisList, int offset, int pageSize) {
+	private List pageTEAData(List analysisList, int offset, int pageSize) {
 
 		List pagedData = new ArrayList()
 		int numRecs = analysisList.size()

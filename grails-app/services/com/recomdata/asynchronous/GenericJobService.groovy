@@ -37,7 +37,6 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
 
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.*;
-import org.rosuda.Rserve.*;
 
 
 /**
@@ -47,7 +46,7 @@ import org.rosuda.Rserve.*;
  *
  */
 class GenericJobService implements Job {
-
+	
 	def ctx = AH.application.mainContext
 	def springSecurityService = ctx.springSecurityService
 	def jobResultsService = ctx.jobResultsService
@@ -89,7 +88,7 @@ class GenericJobService implements Job {
 				log.debug("\t${_key} -> ${jobDataMap[_key]}")
 			}
 		}
-
+		
 		//Initialize the jobTmpDirectory which will be used during bundling in ZipUtil
 		jobTmpDirectory = tempFolderDirectory + File.separator + "${jobName}" + File.separator
 		jobTmpDirectory = jobTmpDirectory.replace("\\","\\\\")
@@ -390,7 +389,7 @@ class GenericJobService implements Job {
 	* @param status - the new status
 	* @return
 	*/
-   def updateStatus(jobName, status)	{
+   def updateStatus(jobName, status) {
 	   jobResultsService[jobName]["Status"] = status
 	   log.debug(status)
 	   asyncJobService.updateStatus(jobName, status)

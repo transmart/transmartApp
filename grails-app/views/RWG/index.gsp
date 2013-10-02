@@ -4,7 +4,7 @@
         <!-- Force Internet Explorer 8 to override compatibility mode -->
         <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
-        <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+        <title>${grailsApplication.config.com.recomdata.appTitle}</title>
         
         <!-- jQuery CSS for cupertino theme -->
         <link rel="stylesheet" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}"></link>        
@@ -19,7 +19,7 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/multiselect/ui.multiselect.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/multiselect/common.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/jqueryDatatable.css')}"></link>
-                                
+
         <!-- jQuery JS libraries -->
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
 	    <script>jQuery.noConflict();</script> 
@@ -43,10 +43,10 @@
         <script type="text/javascript" src="${resource(dir:'js/', file:'jquery.dataTables.min.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js/', file:'ColVis.min.js')}"></script> 
         <script type="text/javascript" src="${resource(dir:'js/', file:'ColReorderWithResize.js')}"></script>
-  		        
+  		
   		<!--  SVG Export -->
   		<%--<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  --%>
-  		  
+	        
 	
         <g:javascript library="prototype" /> 
         <script type="text/javascript">
@@ -61,7 +61,7 @@
         <!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
         <%-- <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
         <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-msie.min.js')}"></script> --%>
-
+       
 		<tmpl:/RWG/urls />
 		<script type="text/javascript" charset="utf-8">
 	        var mouse_inside_options_div = false;
@@ -69,19 +69,19 @@
 	        var sessionOperators = "${rwgSearchOperators}";
 	        var sessionSearchCategory = "${rwgSearchCategory}";
 	        var searchPage = "RWG";
-
+        
 	        jQuery(document).ready(function() {
 
 		        addToggleButton();
 
 		        jQuery("#xtButton").colorbox({opacity:.75, inline:true, width:"95%", height:"95%"});
-      
+	        
 		        jQuery("#searchResultOptions_btn").click(function(){
 		        	jQuery("#searchResultOptions").toggle();
 		        });
-		        
+	        			
 		        //used to hide the options div when the mouse is clicked outside of it
-
+			
 	            jQuery('#searchResultOptions_holder').hover(function(){ 
 	            	mouse_inside_options_div=true; 
 	            }, function(){ 
@@ -92,13 +92,13 @@
 		            //top menu options
 	                if(! mouse_inside_options_div ){
 		                jQuery('#searchResultOptions').hide();
-	                }
+	        	}
 
 	                var analysisID = jQuery('body').data('heatmapControlsID');
 
 	                if(analysisID > 1){
 	            		jQuery('#heatmapControls_' +analysisID).hide();
-		             }
+		        		}
 
 	            });
 	            
@@ -125,12 +125,12 @@
 								jQuery('#result-folder-name-' + response.id).text(response.folderName);
 								jQuery('#editMetadataOverlay').fadeOut();
 								showDetailDialog(response.id);
-							}
+			        }
 						},
 						error: function(xhr) {
 							jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
 							alert(xhr);
-						}
+	        	}
 					});
 	            });
 
@@ -138,7 +138,7 @@
 	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
 	            	jQuery('#createAssayOverlay').fadeOut();
 	            });
-	            
+		        
 	            jQuery("#createAssayOverlay").on('click', '#saveassaybutton', function() {
 	            	var protoForm = $('createAssayForm');
 		            var serializedForm = Form.serialize(protoForm);
@@ -169,7 +169,7 @@
 	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
 	            	jQuery('#createFolderOverlay').fadeOut();
 	            });
-	            
+
 	            jQuery("#createFolderOverlay").on('click', '#savefolderbutton', function() {
 	            	var protoForm = $('createFolderForm');
 		            var serializedForm = Form.serialize(protoForm);
@@ -200,7 +200,7 @@
 	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
 	            	jQuery('#createStudyOverlay').fadeOut();
 	            });
-	            
+
 	            jQuery("#createStudyOverlay").on('click', '#savestudybutton', function() {
 	            	var protoForm = $('createStudyForm');
 		            var serializedForm = Form.serialize(protoForm);
@@ -230,7 +230,7 @@
 	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
 	            	jQuery('#createProgramOverlay').fadeOut();
 	            });
-	            
+
 	            jQuery("#createProgramOverlay").on('click', '#saveprogrambutton', function() {
 		            
 	            	var protoForm = $('createProgramForm');
@@ -253,9 +253,9 @@
 							alert(xhr);
 							jQuery('#saveprogrambutton').removeClass('buttonloading').text('Save');
 						}
-					});
 	            });
-	            
+	            });
+
 	            jQuery("#createAnalysisOverlay").on('click', '#cancelanalysisbutton', function(){ 
 	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
 	            	jQuery('#createAnalysisOverlay').fadeOut();
@@ -278,18 +278,18 @@
 								jQuery('#createAnalysisOverlay').fadeOut();
 								//showDetailDialog(response.id);
 								updateForNewFolder(response.id);
-							}
+	                }
 						},
 						error: function(xhr) {
 							alert(xhr);
 							jQuery('#saveanalysisbutton').removeClass('buttonloading').text('Save');
 							
-						}
+	                }
 					});
 	            });
-	            
+
 	        	resizeAccordion();
-                 
+
 	        	jQuery('#sidebar').resizable({
                     handles: 'e',
                     maxWidth: 800,
@@ -311,17 +311,17 @@
                         // set the content panel width
                         jQuery('#main').width(jQuery('body').width() - currentWidth - padding);
                         jQuery('#filter-browser').css('left', jQuery('#box-search').width() + 50);
-                    }
+		             }
               });
 
 	        	var xpos = jQuery('#menuLinks').offset()['right'];
 
-	        });
+	            });	
 
 	        jQuery(window).resize(function() {
 				resizeAccordion();
 			});
-	        
+
 			function resizeAccordion() {
 				
 				var windowHeight = jQuery(window).height();
@@ -408,7 +408,7 @@
                                 $j(this).attr("title", gridPanelHeaderTips[index]);            
                             }
                             
-                        });
+	        });	
                         */
                         
                         //Hide the pagination if both directions are disabled.
@@ -451,7 +451,7 @@
                 }
             }
 
-		
+            
 //		var panel = createOntPanel()
 //		jQuery('#metadata-viewer').empty()
  //           jQuery('#metadata-viewer').add(panel);
@@ -463,7 +463,7 @@
 				$('#save-modal .basic').click(openSaveSearchDialog);
 			});
 		</script>
-                  
+
        <r:layoutResources/>          
     </head>
     <body>
@@ -471,50 +471,50 @@
         <div id="header-div" class="header-div">        
             <g:render template="/layouts/commonheader" model="['app':'rwg', 'utilitiesMenu':'true']" />
         </div>
-        
+		 
 		<div id="sidebar" style="border-right:5px solid;border-color:#EDEEF6">
-	       
-	        <tmpl:/RWG/boxSearch />
 			
+	        <tmpl:/RWG/boxSearch />
+									
 				<div id="program-explorer" style="width: 290px">
 		        <div id="title-program-div" class="ui-widget-header boxtitle">
 			         <h2 style="float:left" class="title">Program Explorer</h2>
-			    </div>
+						</div>
 			    <div id="results-div" class="boxcontent" style="overflow: auto;">
 			      	&nbsp;
-			    </div>
-		    </div>
+						</div>
+						</div>
 		    
 		    <div id="filter-div" style="display: none;"></div>
 			
-		</div>
-		 
+					</div>
+
 		<div id="main">		     	
                 <div id="folder-viewer">
                 <div id="welcome-viewer">
                     <tmpl:welcome />
                 </div>
                 <div id="metadata-viewer">
-				</div>
-			
+		</div>
+		
   				<div id="subfolder-viewer">
-                </div>
-                </div>
-				
+		</div>
+        </div>
+        
 				<div id="subject-view-div" style="display: none;" >
 				
-				</div>
-				<div id="export-div" style="display: none;">
-				
-				</div>
 		</div>
-
+				<div id="export-div" style="display: none;">
+		 
+		</div>
+		</div>
+		
 		<div id="hiddenItems" style="display:none">
 		        <!-- For image export -->
 		        <canvas id="canvas" width="1000px" height="600px"></canvas>  
 
 		</div>
-	
+		
 		<!--  This is the DIV we stuff the browse windows into. -->
 		<div id="exportOverlay" class="overlay" style="display: none;">&nbsp;</div>
 		<tmpl:editMetadataOverlay />
@@ -571,16 +571,16 @@
 				<div id="xtSummary"><!-- Summary Tab Content --></div>
 				<div id="xtHeatmap"><!-- Heatmap Tab Content --></div>
 				<div id="xtBoxplot"><!-- Boxplot Tab Content --></div>
-			</div>
 		</div>
-
+		</div>
+		
 		<%-- Elements that are in fixed positions on the page --%>
 		<div id="sidebartoggle">&nbsp;</div>
 		<tmpl:/RWG/filterBrowser />
-        	
+
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
 	 <r:layoutResources/>
 	 <g:overlayDiv divId="${overlayExportDiv}" />
-	 </body>
+    </body>
 </html>

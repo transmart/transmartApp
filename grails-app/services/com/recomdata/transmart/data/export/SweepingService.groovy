@@ -27,9 +27,11 @@ class SweepingService {
 
     boolean transactional = true
 
+    def grailsApplication
+
     def sweep() {
-		log.error("Triggering file sweep")
-		def fileAge = ConfigurationHolder.config.com.recomdata.export.jobs.sweep.fileAge;
+		log.info "Triggering file sweep"
+		def fileAge = grailsApplication.config.com.recomdata.export.jobs.sweep.fileAge;
 		def now = new Date()
 		def c = AsyncJob.createCriteria()
 		def jobList = c.list{

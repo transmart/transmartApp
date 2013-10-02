@@ -34,7 +34,7 @@
 		<g:javascript>jQuery.noConflict()</g:javascript>
 		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
 	    <script type="text/javascript"	src="${resource(dir:'js', file:'usergroup.js')}"></script>
-	    <script type="text/javascript"  src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+	    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 		<script type="text/javascript" charset="utf-8">
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -46,9 +46,9 @@
 		    {
 			    Ext.QuickTips.init();
 
-	            var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-	            var contact = '${grailsApplication.config.com.recomdata.searchtool.contactUs}';
-	            var appTitle = '${grailsApplication.config.com.recomdata.searchtool.appTitle}';
+	            var helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
+	            var contact = '${grailsApplication.config.com.recomdata.contactUs}';
+	            var appTitle = '${grailsApplication.config.com.recomdata.appTitle}';
 	            var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
 				   
 	            var viewport = new Ext.Viewport({
@@ -59,7 +59,7 @@
                        autoScroll:true,                     
                        contentEl: "page"
                     })]
-	            });  
+	            });
 	            viewport.doLayout();
 
 	            pageInfo = {

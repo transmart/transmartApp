@@ -17,7 +17,17 @@
  *
  ******************************************************************/
   
+import grails.util.Environment
 
+def console
+if (!Environment.isWarDeployed() && Environment.isWithinShell()) {
+    console = grails.build.logging.GrailsConsole.instance
+} else {
+    console = [
+            info: { println "[INFO] $it" },
+            warn: { println "[WARN] $it" },
+    ]
+}
 
 /**
  * Running externalized configuration
@@ -27,7 +37,14 @@
  * - dataSource location set path by system environment variable '<APP_NAME>_DATASOURCE_LOCATION'
  */
 
-import grails.plugins.springsecurity.SecurityConfigType
+
+/* For some reason, the externalized config files are run with a different
+ * binding. None of the variables basedir, baseFile, baseName, grailsSettings,
+ * ... are available; the binding will actually be the root config object.
+ * So store the current binding in the config object so the externalized
+ * config has access to the variables mentioned.
+ */
+org.transmart.originalConfigBinding = getBinding()
 
 grails.config.locations = []
 def defaultConfigFiles = [
@@ -38,8 +55,13 @@ def defaultConfigFiles = [
 defaultConfigFiles.each { filePath ->
 	def f = new File(filePath)
 	if (f.exists()) {
+        if (f.name == 'RModulesConfig.groovy') {
+            console.warn "RModulesConfig.groovy is deprecated, it has been merged into Config.groovy. " +
+                    "Loading it anyway."
+        }
 		grails.config.locations << "file:${filePath}"
-	} else {
+	} else if (f.name != 'RModulesConfig.groovy') {
+        console.info "Configuration file ${filePath} does not exist."
 	}
 }
 String bashSafeEnvAppName = appName.toUpperCase(Locale.ENGLISH).replaceAll(/-/, '_')
@@ -52,7 +74,7 @@ def externalDataSource = System.getenv("${bashSafeEnvAppName}_DATASOURCE_LOCATIO
 if (externalDataSource) {
 	grails.config.locations << "file:" + externalDataSource
 }
-grails.config.locations.each { println "[INFO] Including configuration file [${it}] in configuration building." }
+grails.config.locations.each { console.info "Including configuration file [${it}] in configuration building." }
 
 
 /* 
@@ -89,6 +111,7 @@ grails.mime.types = [ html: [
 grails.views.default.codec="none" // none, html, base64
 grails.views.gsp.encoding="UTF-8"
 grails.converters.encoding="UTF-8"
+grails.converters.default.pretty.print=true
 
 // enabled native2ascii conversion of i18n properties files
 grails.enable.native2ascii = true
@@ -112,6 +135,10 @@ com.recomdata.i2b2.sample.domain = 'i2b2demo'
 com.recomdata.i2b2.sample.projectid = 'i2b2demo'
 com.recomdata.i2b2.sample.username = 'sample'
 com.recomdata.i2b2.sample.password = 'manager'
+
+//core-db settings
+org.transmartproject.i2b2.user_id = 'i2b2'
+org.transmartproject.i2b2.group_id = 'Demo'
 //**************************
 
 
@@ -134,6 +161,13 @@ com.recomdata.transmart.data.export.dataTypesMap=[
 	'ADDITIONAL':'Additional Data'
 	//,'GSEA':'Gene Set Enrichment Analysis (GSEA)'
 ];
+
+// Data export FTP settings is Rserve running remote in relation to transmartApp
+com.recomdata.transmart.data.export.ftp.server=''
+com.recomdata.transmart.data.export.ftp.serverport=''
+com.recomdata.transmart.data.export.ftp.username=''
+com.recomdata.transmart.data.export.ftp.password=''
+com.recomdata.transmart.data.export.ftp.remote.path=''
 
 // Control which gene/pathway search is used in Dataset Explorer
 // A value of "native" forces Dataset Explorer's native algorithm.
@@ -169,67 +203,28 @@ com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
 
-// development env log4j settings - prod should reconfigure it
-environments {
-	development {
+org.transmart.security.spnegoEnabled = false
 
-		log4j = {
-			// Example of changing the log pattern for the default console
-			// appender:
-			//
-			//appenders {
-			//    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-			//}
-			root { info() }
-		
-			info   //'com.recomdata.grails.plugins.dih.dispatchroute'
-		
-			error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
-					'org.codehaus.groovy.grails.web.pages', //  GSP
-					'org.codehaus.groovy.grails.web.sitemesh', //  layouts
-					'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-					'org.codehaus.groovy.grails.web.mapping', // URL mapping
-					'org.codehaus.groovy.grails.commons', // core / classloading
-					'org.codehaus.groovy.grails.plugins', // plugins
-					'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
-					'org.springframework',
-					'org.hibernate',
-					'net.sf.ehcache.hibernate',
-					'org.springframework.security'
-		
-			warn   'org.mortbay.log'
-			
-			all    'com.recomdata.grails.plugins.dih.parser.mapping'
-					//'com.recomdata.grails.plugins.dih.persister.sql'
-					//'com.recomdata.grails.plugins.dih',
-					//'com.recomdata.services',
-					
-					
-		}
+// Uncomment and edit the following lines to start using Grails encoding & escaping improvements
 
-		
-		/*log4j = {
-	appenders {
-		// set up a log file in the standard tomcat area; be sure to use .toString() with ${}
-		rollingFile name:'tomcatLog', file:"${appName}.log".toString(), maxFileSize:'1024KB', layout:pattern(conversionPattern: '[%p] %d{HH:mm:ss} (%c{5}:%M:%L) | %m%n')
-		'null' name:'stacktrace'
-	}
-
-	root {
-		// change the root logger to my tomcatLog file
-		info 'tomcatLog'
-		additivity = true
-	}
-
-	// example for sending stacktraces to my tomcatLog file
-	error tomcatLog:'StackTrace'
-	debug tomcatLog:'grails.app.task', 'grails.app.controller', 'grails.app.service'
-	
-	// set level for my messages; this uses the root logger (and thus the tomcatLog file)
-	}
-	
-	*/
-		
-	}
-	
+/* remove this line 
+// GSP settings
+grails {
+    views {
+        gsp {
+            encoding = 'UTF-8'
+            htmlcodec = 'xml' // use xml escaping instead of HTML4 escaping
+            codecs {
+                expression = 'html' // escapes values inside null
+                scriptlet = 'none' // escapes output from scriptlets in GSPs
+                taglib = 'none' // escapes output from taglibs
+                staticparts = 'none' // escapes output from static template parts
+            }
+        }
+        // escapes all not-encoded output at final stage of outputting
+        filteringCodecForContentType {
+            //'text/html' = 'html'
+        }
+    }
 }
+remove this line */

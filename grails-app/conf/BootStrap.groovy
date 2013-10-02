@@ -12,35 +12,42 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  *
  ******************************************************************/
   
-
- /**
-  * $Id: BootStrap.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
-  */
-
-import org.codehaus.groovy.grails.commons.ApplicationAttributes
+import org.codehaus.groovy.grails.exceptions.GrailsConfigurationException
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.slf4j.LoggerFactory
 
 class BootStrap {
 	
-	def concurrentSessionController
+    final static logger = LoggerFactory.getLogger(this)
+
 	def securityContextPersistenceFilter
 
+    def grailsApplication
+
 	def init = { servletContext ->
-		def ctx =  servletContext.getAttribute(ApplicationAttributes.APPLICATION_CONTEXT)
-		def dataSource = ctx.dataSource
-		
 		securityContextPersistenceFilter.forceEagerSessionCreation = true
 		
 		SpringSecurityUtils.clientRegisterFilter('concurrentSessionFilter', SecurityFilterPosition.CONCURRENT_SESSION_FILTER)
-	//	SpringSecurityUtils.clientRegisterFilter('identityVaultAuthenticationFilter', SecurityFilterPosition.PRE_AUTH_FILTER.order + 10)
+
+        if (!grailsApplication.config.org.transmart.configFine.is(true)) {
+            logger.error("Something wrong happened parsing the externalized " +
+                          "Config.groovy, because we could not find the " +
+                          "configuration setting 'org.transmart.configFine " +
+                          "set to true.\n" +
+                          "Tip: on ~/.grails/transmartConfig, run\n" +
+                          "groovy -e 'new ConfigSlurper().parse(new File(\"Config.groovy\").toURL())'\n" +
+                          "to detect compile errors. Other errors can be detected " +
+                          "with a breakpoing on the catch block in ConfigurationHelper::mergeInLocations().\n" +
+                          "Alternatively, you can change the console logging settings by editing " +
+                          "\$GRAILS_HOME/scripts/log4j.properties, adding a proper appender and log " +
+                          "org.codehaus.groovy.grails.commons.cfg.ConfigurationHelper at level WARN")
+            throw new GrailsConfigurationException("Configuration magic setting not found")
+        }
     }
     def destroy = {
     }

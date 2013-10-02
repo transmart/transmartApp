@@ -554,22 +554,22 @@ class FmFolderController {
 
 	def addProgram = {
 		def p = new FmFolder(params['fmFolder'])
-		addFolder(FolderType.PROGRAM.name(), p, null)
+		doAddFolder(FolderType.PROGRAM.name(), p, null)
 	}
 
 	def addStudy = {
 		def p = new FmFolder(params['fmFolder'])
-		addFolder(FolderType.STUDY.name(), p, params['parentId'])
+		doAddFolder(FolderType.STUDY.name(), p, params['parentId'])
 	}
 
 	def addFolder = {
 		def p = new FmFolder(params['fmFolder'])
-		addFolder(FolderType.STUDY.name(), p, params['parentId'])
+		doAddFolder(FolderType.STUDY.name(), p, params['parentId'])
 	}
 
 	def addAnalysis = {
 		def p = new FmFolder(params['fmFolder'])
-		addFolder(FolderType.ANALYSIS.name(), p, params['parentId'])
+		doAddFolder(FolderType.ANALYSIS.name(), p, params['parentId'])
 	}
 	
 	def addFile = {
@@ -595,7 +595,7 @@ class FmFolderController {
 		}
 		
 		
-		addFolder(FolderType.STUDY.name(), p, params['parentId'])
+		doAddFolder(FolderType.STUDY.name(), p, params['parentId'])
 	}
 	
 	def getFolderContents = {
@@ -635,7 +635,7 @@ class FmFolderController {
 		
 	}
 	
-	private void addFolder(String folderType, FmFolder folder, long parentId)
+	private void doAddFolder(String folderType, FmFolder folder, long parentId)
 	{
 		folder.folderType = folderType
 		

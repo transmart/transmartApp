@@ -580,7 +580,7 @@ Ext.onReady(function()
 					region : 'center',
 					fitToFrame : true,
 					listeners :
-						{
+					{
 						activate : function() {
 							GLOBAL.CurrentSubsetIDs[1] = null;
 							GLOBAL.CurrentSubsetIDs[2] = null;
@@ -588,14 +588,14 @@ Ext.onReady(function()
 							activateTab();
 							onWindowResize();
 						},
-						deactivate: function(){
-							resultsTabPanel.tools.help.dom.style.display="none";
+					deactivate: function(){
+						resultsTabPanel.tools.help.dom.style.display="none";
 						},
 						'afterLayout': {
 							fn: function(el) {
 								onWindowResize();
-							}
-						}
+					}
+					}
 					}
 				,
 				autoScroll : true,
@@ -654,7 +654,7 @@ Ext.onReady(function()
 						'afterLayout': {
 							fn: function(el) {
 								onWindowResize();
-							}
+						}
 						}
 					},
 					collapsible : true						
@@ -709,7 +709,7 @@ Ext.onReady(function()
 						'afterLayout': {
 							fn: function(el) {
 								onWindowResize();
-							}
+						}
 						}
 					},
 					collapsible : true
@@ -865,7 +865,7 @@ Ext.onReady(function()
 		
 		westPanel.add(createOntPanel());
 		//setTimeout("loadOntPanel()", 3000);
-		//westPanel.add(prevTree);
+		// westPanel.add(prevTree);
 		// eastPanel.add(exportPanel);
 		centerMainPanel.add(westPanel);
 		centerMainPanel.add(centerPanel);
@@ -879,7 +879,7 @@ Ext.onReady(function()
 							fn: function(el) {
 								onWindowResize();
 							}
-						}
+				}
 					}
 				}
 		);
@@ -1427,83 +1427,16 @@ function login(domain, username, password)
 	getServices();
 }
 
-function loginComplete(pmresponse)
-{
-	// alert(pmXML);
-	// oDomDoc = (new DOMParser()).parseFromString(pmXML, "text/xml");
-	// oDomDoc = (new DOMParser()).parseFromString("<sending_application>blah</sending_application>", "text/xml");
-	if(GLOBAL.Debug)
+function loginComplete()
 	{
-		alert(pmresponse.responseText);
-	}
-	oDomDoc = pmresponse.responseXML;
-	// if(GLOBAL.Debug){alert(new XMLSerializer().serializeToString(oDomDoc))};
-	// oDomDoc.setProperty("SelectionLanguage", "XPath");
-	// oDomDoc.setProperty("SelectionNamespaces", "xmlns:tns='http://ws.pm.i2b2.harvard.edu' \
-	// xmlns : ns3 = 'http://www.i2b2.org/xsd/hive/msg/version/' xmlns : ns4 = 'http://www.i2b2.org/xsd/cell/pm/1.1/' \
-	// xmlns : ns2 = 'http://www.i2b2.org/xsd/hive/msg/1.1/' ")
-	var statusNode = oDomDoc.selectSingleNode('//response_header/result_status/status');
-	var statusType = statusNode.getAttribute("type");
-	var statusText = statusNode.firstChild.nodeValue;
-	if(statusType == "ERROR")
-	{
-		if(loginform.isVisible())
-		{
-			loginform.el.unmask();
-		}
-		// Show a dialog using config options :
-		Ext.Msg.show(
-				{
-					title : 'Login error',
-					msg : statusText,
-					buttons : Ext.Msg.OK,
-					fn : function()
-					{
-					Ext.Msg.hide();
-					}
-				,
-				icon : Ext.MessageBox.ERROR
-				}
-		);
-	}
-	else
-	{
-		// get the urls to the other important cells
-		GLOBAL.ONTUrl = oDomDoc.selectSingleNode("//cell_data[@id='ONT']/url").firstChild.nodeValue;
-		GLOBAL.CRCUrl = oDomDoc.selectSingleNode("//cell_data[@id='CRC']/url").firstChild.nodeValue;
-		
-		//If a proxy was used to call the PM Service, override the ONT and CRC urls by using the PM Service host.
-		//This will have to be modified based on the format of the i2b2 urls for specific environments.
-		if(GLOBAL.usePMHost=="true"){
-		GLOBAL.ONTUrl = GLOBAL.PMUrl.replace("/services/PMService/", "/rest/OntologyService/");
-		GLOBAL.CRCUrl = GLOBAL.PMUrl.replace("/services/PMService/", "/rest/QueryToolService/");
-		}
-		
-		if(GLOBAL.Debug)
-		{
-			alert(GLOBAL.ONTUrl);
-			alert(GLOBAL.CRCUrl);
-		}
 		if(loginform.isVisible())
 		{
 			loginform.el.unmask();
 			loginwin.hide();
 		}
 
+    projectDialogComplete();
 
-		// figure out which project we want
-		var projects = oDomDoc.selectNodes('//project');
-		// need to show multiple projects and pick the project id
-		if(projects.length > 1)
-		{
-			showProjectDialog(projects);
-		}
-		else
-		{
-			projectDialogComplete(projects[0].getAttribute("id"));
-		}
-	}
-	
 	// Login GenePattern server. The login process should be completed by the time a user starts GenePattern tasks.
 	genePatternLogin();
 }
@@ -1619,18 +1552,8 @@ function showProjectDialog(projects)
 
 
 
-function projectDialogComplete(projectid)
+function projectDialogComplete()
 {
-
-	// get the project id
-	GLOBAL.ProjectID = projectid;
-	/* var u = queryPanel.getUpdater();
-      while(u.isUpdating())
-      {
-      alert('waiting');
-      } */
-	//getPreviousQueries();
-	
 	jQuery('#box-search').prependTo(jQuery('#westPanel')).show();
 	jQuery('#noAnalyzeResults').prependTo(jQuery('#navigateTermsPanel .x-panel-body'));
 	
@@ -1695,7 +1618,7 @@ function getPreviousQueriesComplete(response)
 }
 
 function getCategoriesComplete(ontresponse){
-	getSubCategories(ontresponse);
+    getSubCategories(ontresponse);
 }
 
 function setActiveTab(){
@@ -1784,29 +1707,28 @@ function createTree(includeExcludeFlag, ontresponse){
 	// shorthand
 	var Tree = Ext.tree;
 	var ontRoots = [];
-	
+
 	if (GLOBAL.DefaultPathToExpand != "") {
 		GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
 	}
 	
-	var concepts = ontresponse.responseXML.selectNodes('//concept');
-	var treeRoot = new Tree.TreeNode(
-			{
-				text : 'root',
-				draggable : false,
+    var treeRoot = new Tree.TreeNode(
+        {
+            text      : 'root',
+            draggable : false,
 				id : 'treeRoot',
-				qtip : 'root'
-			}
-	);
-	for(var c = 0; c < concepts.length; c ++ )
+            qtip      : 'root'
+        }
+    );
+	for (var c = 0; c < ontresponse.length; c ++ )
 	{
-		var level = concepts[c].selectSingleNode('level').firstChild.nodeValue;
-		var key = concepts[c].selectSingleNode('key').firstChild.nodeValue;
-		var name = concepts[c].selectSingleNode('name').firstChild.nodeValue;
-		var tooltip = concepts[c].selectSingleNode('tooltip').firstChild.nodeValue;
-		var dimcode = concepts[c].selectSingleNode('dimcode').firstChild.nodeValue;
-		var visualAttributes = concepts[c].selectSingleNode('visualattributes').firstChild.nodeValue;
-
+		var level = ontresponse[c].level;
+		var key = ontresponse[c].key;
+		var name = ontresponse[c].name;
+		var tooltip = ontresponse[c].tooltip;
+		var dimcode = ontresponse[c].dimcode;
+		var visualAttributes = ontresponse[c].visualAttributes;
+		
 		var fullname=key.substr(key.indexOf("\\",2), key.length);		
 		var access=GLOBAL.InitialSecurity[fullname];
 		
@@ -1826,9 +1748,10 @@ function createTree(includeExcludeFlag, ontresponse){
    		if(level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) == -1) { continue; }
    		
    		var iconCls = "";
-	    if (visualAttributes.indexOf('P') > '-1') {
-	    	iconCls="programicon";
-	    }
+		/* FIXME: visualAttributes should be an array now after core-db integration */
+	    //if (visualAttributes.indexOf('P') > '-1') {
+	    //	iconCls="programicon";
+	    //}
 	    
 	    var tcls = "";
 		
@@ -1842,17 +1765,17 @@ function createTree(includeExcludeFlag, ontresponse){
 	    }
    		
 		var ontRoot = new Tree.AsyncTreeNode(
-			{
-				text : name,
-				draggable : false,
-				id : key,
-				qtip : tooltip,
+				{
+					text : name,
+					draggable : false,
+					id : key,
+					qtip : tooltip,
 				expanded : autoExpand,
 				iconCls : iconCls,
 				cls : tcls
-			}
+				}
 		);
-
+		
 		if(lockedNode) {
 			ontRoot.attributes.access='locked';
 			//ontRoot.disable();
@@ -1865,10 +1788,10 @@ function createTree(includeExcludeFlag, ontresponse){
 		
 		/*****************************************/
 
-	}
+		}
 
 	return ontRoots;
-}
+	}
 
 /*
  * the id_in drives which off these tabs is created
@@ -1878,7 +1801,7 @@ function getSubCategories(ontresponse)
 {
 	// shorthand
 	var Tree = Ext.tree;
-	
+
 	var showFn;
 	
 	var ontRoots = createTree('exclude', ontresponse);
@@ -1896,20 +1819,20 @@ function getSubCategories(ontresponse)
     var treeRoot = Ext.getCmp('navigateTermsPanel').getRootNode();
 	for(c = treeRoot.childNodes.length - 1; c >= 0; c -- ) {
 		treeRoot.childNodes[c].remove();
-	}
-	
+			}
+
 	jQuery('#noAnalyzeResults').hide();
-	
+
 	for(var c = 0; c < ontRoots.length; c ++ )
-	{
+			{
 		var newnode=ontRoots[c];
 		treeRoot.appendChild(newnode);
-	}
-	
+			}
+
 	if (ontRoots.length == 0) { //This shouldn't happen!
 		jQuery('#noAnalyzeResults').show();
-	}
-        
+			}
+
 	if(GLOBAL.Debug)
 	{
 		alert(ontresponse.responseText);
@@ -2055,76 +1978,85 @@ function setupDragAndDrop()
 	}
 }
 
-function getPreviousQueryFromIDComplete(subset, result)
-{
-	var doc = result.responseXML;
-	// alert(result.responseText);
-	//resetQuery();  //if i do this now it wipes out the other subset i just loaded need to make it subset specific
-	var panels = doc.selectNodes("//panel");
-	for(var p = 0; p < panels.length; p ++ )
-	{
-		var panelnumber = panels[p].selectSingleNode("panel_number").firstChild.nodeValue;
-		if (panelnumber=="21") continue;
-		showCriteriaGroup(panelnumber); //in case its hidden;
-		var panel=document.getElementById("queryCriteriaDiv"+subset+"_"+panelnumber);
-		var invert = panels[p].selectSingleNode("invert").firstChild.nodeValue;
-		if(invert=="1"){excludeGroup(null, subset, panelnumber);} //set the invert for the panel
-		var occurences = panels[p].selectSingleNode("total_item_occurrences").firstChild.nodeValue;
-		// TODO : set the invert
-		// TODO : set the occurences
-		// make the items
+function getPreviousQueryFromIDComplete(subset, result) {
+    if (result.status != 200) {
+        queryPanel.el.unmask();
+        return;
+    }
 
-		var items = panels[p].selectNodes("item")
-		for(var it = 0; it < items.length; it ++ )
-		{
-			var item = items[it];
-			var level = item.selectSingleNode("hlevel").firstChild.nodeValue;
-			var name = getValue(item.selectSingleNode("item_name"),"");
-			var key = item.selectSingleNode("item_key").firstChild.nodeValue;
-			var tooltip = getValue(item.selectSingleNode("tooltip"),"");
-			var itemclass = item.selectSingleNode("class").firstChild.nodeValue;
-			//createPanelItem(panelnumber, level, name, key, tooltip, '', '', '');
+    var doc = result.responseXML;
 
+    //resetQuery();  //if i do this now it wipes out the other subset i just loaded need to make it subset specific
 
-			/*need all this information for reconstruction but not all is available*/
-			var valuetype=getValue(item.selectSingleNode("constrain_by_value/value_type"),"");
-			var mode;
+    var panels = doc.selectNodes("//panel");
 
-			if(valuetype=="FLAG"){mode="highlow";}
-			else if(valuetype=="NUMBER"){mode="numeric";}
-			else {mode=="novalue";}
+    panel:
+    for (var p = 0; p < panels.length; p++) {
+        var panelnumber = p + 1
 
-			var valuenode=item.selectSingleNode("contrain_by_value");
-			var oktousevalues;
-			if(valuenode!=null && typeof(valuenode)!=undefined){oktousevalues="Y";}
+        showCriteriaGroup(panelnumber); //in case its hidden;
+        var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + panelnumber);
+        var invert = panels[p].selectSingleNode("invert").firstChild.nodeValue;
+        if (invert == "1") {
+            excludeGroup(null, subset, panelnumber);
+        } //set the invert for the panel
 
-			var operator=getValue(item.selectSingleNode("constrain_by_value/value_operator"),"");
-			var numvalue=getValue(item.selectSingleNode("constrain_by_value/value_constraint"),"");
-			var lowvalue;
-			var highvalue;
-			if(operator=="BETWEEN")
-			{
-				lowvalue=numvalue.substring(0, numvalue.indexOf("and"));
-				highvalue=numvalue.substring(numvalue.indexOf("and")+3);
-			}
-			else
-			{
-				lowvalue=numvalue;
-			}
-			var highlowselect="";
-			if(mode=="highlow"){highlowselect=numvalue;}
-			var units=getValue(item.selectSingleNode("constrain_by_value/value_unit_of_measure"),"");
-			var dimcode="";
-			var comment="";
-			var normalunits=units;
+        var items = panels[p].selectNodes("item")
+        for (var it = 0; it < items.length; it++) {
+            var item = items[it];
 
-			var tablename="";
-			var value=new Value(mode, operator, highlowselect, lowvalue, highvalue, units);
-			var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value);
-			createPanelItemNew(panel, myConcept);
-		}
-	}
-	queryPanel.el.unmask();
+            var key = item.selectSingleNode("item_key").firstChild.nodeValue;
+
+            if (key == "\\\\Public Studies\\Public Studies\\SECURITY\\")
+                continue panel;
+
+            /*need all this information for reconstruction but not all is available*/
+            var valuetype = getValue(item.selectSingleNode("constrain_by_value/value_type"), "");
+            var mode;
+
+            if (valuetype == "FLAG") {
+                mode = "highlow";
+            }
+            else if (valuetype == "NUMBER") {
+                mode = "numeric";
+            }
+            else {
+                mode == "novalue";
+            }
+
+            var valuenode = item.selectSingleNode("contrain_by_value");
+            var oktousevalues;
+            if (valuenode != null && typeof(valuenode) != undefined) {
+                oktousevalues = "Y";
+            }
+
+            var operator = getValue(item.selectSingleNode("constrain_by_value/value_operator"), "");
+            var numvalue = getValue(item.selectSingleNode("constrain_by_value/value_constraint"), "");
+            var lowvalue;
+            var highvalue;
+            if (operator == "BETWEEN") {
+                lowvalue = numvalue.substring(0, numvalue.indexOf("and"));
+                highvalue = numvalue.substring(numvalue.indexOf("and") + 3);
+            }
+            else {
+                lowvalue = numvalue;
+            }
+            var highlowselect = "";
+            if (mode == "highlow") {
+                highlowselect = numvalue;
+            }
+
+            var value = new Value(mode, operator, highlowselect, lowvalue, highvalue, '');
+            /* the panel (probably) only needs the concept key and the
+             * constraint, hence we not need to fill the rest of the parameters,
+             * which is good because we don't have that information...
+             */
+            var myConcept = new Concept('', key, -1, '', '', '', '', '', oktousevalues, value);
+            createPanelItemNew(panel, myConcept);
+        }
+    }
+
+    queryPanel.el.unmask();
 }
 
 function createExportItem(name, setid)
@@ -2568,82 +2500,78 @@ function runAllQueries(callback, panel)
 	}
 }
 
-function runQuery(subset, callback)
-{
-	if(Ext.get('analysisPanelSubset1') == null)
-	{
-		// analysisPanel.body.update("<table border='1' width='100%' height='100%'><tr><td width='50%'><div id='analysisPanelSubset1'></div></td><td><div id='analysisPanelSubset2'></div></td></tr>");
-	}
-	/* if(isSubsetEmpty(subset))
-   {
-   callback();
-   return;
-   } */
-	var query = getCRCQueryRequest(subset);
-	// first subset
-	queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
-	Ext.Ajax.request(
-			{
-				url : pageInfo.basePath+"/proxy?url=" + GLOBAL.CRCUrl + "request",
-				method : 'POST',
-				xmlData : query,
-				// callback : callback,
-				success : function(result, request)
-				{
-				runQueryComplete(result, subset, callback);
-				}
-			,
-			failure : function(result, request)
-			{
-				runQueryComplete(result, subset, callback);
-			}
-			,
-			timeout : '600000'
-			}
-	);
+function runQuery(subset, callback) {
+    if (Ext.get('analysisPanelSubset1') == null) {
+        // analysisPanel.body.update("<table border='1' width='100%' height='100%'><tr><td width='50%'><div id='analysisPanelSubset1'></div></td><td><div id='analysisPanelSubset2'></div></td></tr>");
+    }
 
-	if(GLOBAL.Debug)
-	{
-		resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
-	}
+    var query = getCRCQueryRequest(subset);
+    // first subset
+    queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath + "/queryTool/runQueryFromDefinition",
+            method: 'POST',
+            xmlData: query,
+            success: function (result, request) {
+                runQueryComplete(result, subset, callback);
+            },
+            failure: function (result, request) {
+                runQueryComplete(result, subset, callback);
+            },
+            timeout: '600000'
+        }
+    );
+
+    if (GLOBAL.Debug) {
+        resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
+    }
 }
 
-function runQueryComplete(result, subset, callback)
-{
-	queryPanel.el.unmask();
-	if(GLOBAL.Debug)
-	{
-		resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(result.responseText) + "</div>");
-	}
-	var numOfPatientsFound = result.responseXML.selectSingleNode("//set_size").firstChild.nodeValue;
-	var patientsetid = result.responseXML.selectSingleNode("//result_instance_id").firstChild.nodeValue;
-	GLOBAL.CurrentSubsetIDs[subset] = patientsetid;
-	// alert(GLOBAL.CurrentSubsetIDs[subset]);
-	var patlabel = "patients";
-	if(GLOBAL.Config == "jj")
-		patlabel = "subjects";
-	// analysisPanel.setBody(analysisPanel.getBody() + "<table style='margin:5px;font:12pt arial bold;'><tr><td><h1>" + numOfPatientsFound + " " + patlabel + " found in subset " + subset + ".</h1></td></tr></table>");
-	// analysisPanel.body.insertHtml("beforeEnd", "<table style='margin:5px;font:12pt arial bold;'><tr><td><h1>" + numOfPatientsFound + " " + patlabel + " found in subset " + subset + ".</h1></td></tr></table>");
-	// Ext.get("analysisPanelSubset" + subset).update("");
-	// Ext.get("analysisPanelSubset" + subset).insertHtml("beforeEnd", "<table style='margin:5px;font:12pt arial bold;'><tr><td><h1>" + numOfPatientsFound + " " + patlabel + " found in subset " + subset + ".</h1></td></tr></table>");
-	if(GLOBAL.Debug)
-	{
-		alert(getCRCpdoRequest(patientsetid, 1, numOfPatientsFound));
-	}
-	// need to set a maximum
+function runQueryComplete(result, subset, callback) {
+    var jsonRes = JSON.parse(result.responseText);
+    var error;
 
-	/* removed the pdo request call 12 / 17 / 2008 added the callback logic here instead */
-	// runQueryPDO(patientsetid, 1, numOfPatientsFound, subset, callback );
+    if (result.status != 200) {
+        error = jsonRes.message;
+    } else if (jsonRes.errorMessage !== null) {
+        error = jsonRes.errorMessage;
+    }
 
-	if(STATE.QueryRequestCounter > 0) // I'm in a chain of requests so decrement
-	{
-		STATE.QueryRequestCounter = -- STATE.QueryRequestCounter;
-	}
-	if(STATE.QueryRequestCounter == 0)
-	{
-		callback();
-	}
-	/* I'm the last request outstanding in this chain*/
+    queryPanel.el.unmask();
+
+    if (error) {
+        Ext.Msg.show(
+            {
+                title: 'Error generating patient set',
+                msg: error,
+                buttons: Ext.Msg.OK,
+                fn: function () {
+                    Ext.Msg.hide();
+                },
+                icon: Ext.MessageBox.ERROR
+            }
+        );
+    }
+
+    // Current code requires us to set CurrentSubsetIDs regardless of error status...
+    GLOBAL.CurrentSubsetIDs[subset] = jsonRes.id ? jsonRes.id : -1;
+
+    // getPDO_fromInputList is not implemented in core-db
+    //if (GLOBAL.Debug) {
+    //    alert(getCRCpdoRequest(patientsetid, 1, jsonRes.setSize));
+    //}
+
+    /* removed the pdo request call 12 / 17 / 2008 added the callback logic here instead */
+    // runQueryPDO(patientsetid, 1, jsonRes.setSize, subset, callback );
+
+    if (STATE.QueryRequestCounter > 0) { // I'm in a chain of requests so decrement
+        STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
+    }
+    if (STATE.QueryRequestCounter == 0) {
+        callback();
+    }
+    /* I'm the last request outstanding in this chain*/
 }
 
 
@@ -4339,7 +4267,7 @@ function searchByTagComplete(response)
 		
 		for(var c = 0; c < uniqueLeaves.length; c++) {
 			GLOBAL.UniqueLeaves += uniqueLeaves[c] + ",";
-		}
+	}
 		
 		if (concepts.length == 0) {
 			jQuery('#noAnalyzeResults').show();
@@ -4349,8 +4277,8 @@ function searchByTagComplete(response)
 		else {
 			//Get the categories with the new path to expand
 			getCategories();
-		}
-		
+}
+
 	}
 }
 
