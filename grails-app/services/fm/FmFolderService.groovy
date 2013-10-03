@@ -19,43 +19,34 @@
 
 package fm
 
-import javax.tools.FileObject;
-import java.io.File;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import fm.FmFolder;
-import fm.FmFile;
-import annotation.AmTagAssociation
-import annotation.AmTagItemService;
-import annotation.AmTagTemplate;
-import annotation.AmTagTemplateAssociation;
-import annotation.AmTagItem;
-import annotation.AmTagValue;
-import bio.BioData;
-
-import grails.validation.ValidationException;
-import org.apache.solr.util.SimplePostTool;
-import org.apache.commons.io.FileUtils;
-
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
-
-import org.springframework.validation.DirectFieldBindingResult;
-import org.springframework.validation.FieldError;
-
-import com.recomdata.transmart.domain.searchapp.AccessLog;
-import com.recomdata.util.FolderType;
+import annotation.*
+import bio.BioData
+import com.recomdata.transmart.domain.searchapp.AccessLog
+import com.recomdata.util.FolderType
+import grails.util.Holders
+import grails.validation.ValidationException
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.FilenameUtils
+import org.apache.solr.util.SimplePostTool
 
 class FmFolderService {
 
-	boolean transactional = true;
-	def config = ConfigurationHolder.config;
-	String importDirectory = config.com.recomdata.FmFolderService.importDirectory.toString();
-	String filestoreDirectory = config.com.recomdata.FmFolderService.filestoreDirectory.toString();
-	String fileTypes = config.com.recomdata.FmFolderService.fileTypes.toString();;
-	String solrUrl = config.com.recomdata.solr.baseURL.toString() + "/update";
+    final private static DEFAULT_FILE_TYPES =
+            'xml,json,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log'
+
+	static  transactional = true
+
+	def config = Holders.config
+	def importDirectory = config.com.recomdata.FmFolderService.importDirectory
+	def filestoreDirectory = config.com.recomdata.FmFolderService.filestoreDirectory
+	def fileTypes = config.com.recomdata.FmFolderService.fileTypes ?: DEFAULT_FILE_TYPES
+	def solrBaseUrl = config.com.recomdata.solr.baseURL
 	def amTagItemService;
 	def springSecurityService;
+
+    private String getSolrUrl() {
+        solrBaseUrl + '/update'
+    }
 	
 	/**
 	 * Imports files processing them into filestore and indexing them with SOLR.
@@ -64,23 +55,32 @@ class FmFolderService {
 	 */
 	def importFiles() {
 		
-		log.info("importFiles called");
-		if (importDirectory == null || filestoreDirectory == null) {
-			if (importDirectory == null) {
-				log.error("Unable to check for new files. config.com.recomdata.FmFolderService.importDirectory property has not been defined in the Config.groovy file.");
+		log.info "importFiles() called"
+
+        log.debug "Importing files from $importDirectory into $filestoreDirectory"
+
+		if (!importDirectory || !filestoreDirectory || !solrUrl) {
+			if (!importDirectory) {
+				log.error "Unable to check for new files. " +
+                        "com.recomdata.FmFolderService.importDirectory setting " +
+                        "has not been defined in the Config.groovy file"
 			}
-			if (filestoreDirectory == null) {
-				log.error("Unable to check for new files. config.com.recomdata.FmFolderService.filestoreDirectory property has not been defined in the Config.groovy file.");
+			if (!filestoreDirectory) {
+				log.error "Unable to check for new files. " +
+                        "com.recomdata.FmFolderService.filestoreDirectory " +
+                        "setting has not been defined in the Config.groovy file"
 			}
+            if (!solrUrl) {
+                log.error "Unable to check for new files. " +
+                        "com.recomdata.solr.baseURL " +
+                        "setting has not been defined in the Config.groovy file"
+            }
 			return;
 		}
 		
-		if (fileTypes == null) {
-			fileTypes = "xml,json,csv,pdf,doc,docx,ppt,pptx,xls,xlsx,odt,odp,ods,ott,otp,ots,rtf,htm,html,txt,log";
-		}
-		
-		processDirectory(new File(importDirectory));
-		
+		processDirectory new File(importDirectory)
+
+        log.debug "Finished importing files"
 	}	
 	
 	/**
@@ -104,17 +104,57 @@ class FmFolderService {
 	 * @return
 	 */
 	def processDirectory(File directory) {
+        def fmFolder = null /* null: uninitialized; false: not a folder it */
 
-//		log.info("FmFolderService.processDirectory(" + directory.getPath() + ")");
+        /* the lazy initialization is to avoid loading the fmFolder if there are
+         * actually no files under the directory being processed */
+        def getFmFolder = { ->
+            if (fmFolder != null) {
+                return fmFolder
+            }
+
+            long folderId
+            try {
+                folderId = Long.parseLong directory.name
+            } catch (NumberFormatException ex) {
+                fmFolder = false
+                return fmFolder
+            }
+
+            fmFolder = FmFolder.get folderId
+            if (fmFolder == null) {
+                log.error "Folder with id $folderId does not exist (reference " +
+                        "in directory $directory)"
+                fmFolder = false
+            }
+
+            fmFolder
+        }
+
+        log.debug "Looking for data in $directory"
+
 		for (File file : directory.listFiles()) {
 			if (file.isDirectory()) {
 				processDirectory(file);
-			} else {
-				processFile(file);
+			} else if (file.name != '.keep') {
+                if (getFmFolder()) {
+				    processFile getFmFolder(), file
+                } else {
+                    log.warn "Ignoring file $file because its parent " +
+                            "directory $directory could not be matched to a " +
+                            "folder in tranSMART"
+                }
 			}
 		}
-		
-		// TODO: If directory is empty the delete it.
+
+        if (directory != new File(importDirectory) /* not import root */ &&
+                directory.list().length == 0) {
+            if (!directory.delete()) {
+                log.warn "Could not delete presumably empty directory $directory"
+            } else {
+                log.debug "Deleted empty directory $directory"
+            }
+        }
 
 	}
 
@@ -125,24 +165,9 @@ class FmFolderService {
 	 * @param file file to be proceessed
 	 * @return
 	 */
-	def processFile(File file) {
-	
-//		log.info("FmFolderService.processFile(" + file.getPath() + ")");
-		// Use file's parent directory as ID of folder which file will
-		// be associated with.
-		File directory = file.getParentFile();
-		FmFolder fmFolder;
-		try {
-			long folderId = Long.parseLong(directory.getName());
-			fmFolder = FmFolder.get(folderId);
-			if (fmFolder == null) {
-				log.error("Folder with id " + folderId + " does not exist.")
-				return;
-			}
-		} catch (NumberFormatException ex) {
-			return;
-		}
-		
+	private void processFile(FmFolder fmFolder, File file) {
+        log.info "Importing file $file into folder $fmFolder"
+
 		// Check if folder already contains file with same name.
 		def fmFile;
 		for (f in fmFolder.fmFiles) {
@@ -226,21 +251,14 @@ class FmFolderService {
 	}
 
 	/**
-	 * Gets type (extension) of specified file.
+	 * Gets type (extension) of specified file or an empty string if it cannot
+     * be determined
 	 *
 	 * @param file
 	 * @return
 	 */
-	def getFileType(File file) {
-
-		String fileType = "";
-		int i = file.getName().lastIndexOf('.');
-		if (i > -1) {
-			fileType = file.getName().substring(i + 1);
-		}
-		
-		return fileType;
-
+	private String getFileType(File file) {
+        FilenameUtils.getExtension file.getName()
 	}
 
 	/**
@@ -251,7 +269,7 @@ class FmFolderService {
 	 * @param folder
 	 * @return
 	 */
-	def getFilestoreLocation(FmFolder fmFolder) {
+	private String getFilestoreLocation(FmFolder fmFolder) {
 
 		String filestoreLocation;
 		
@@ -282,7 +300,7 @@ class FmFolderService {
 	 * @param fileId ID of file to be indexed
 	 * @return
 	 */
-	def indexFile(String fileId) {
+	private void indexFile(String fileId) {
 		
 		FmFile fmFile = FmFile.get(fileId);
 		if (fmFile == null) {
@@ -298,7 +316,7 @@ class FmFolderService {
 	 * @param fmFile file to be indexed
 	 * @return
 	 */
-	def indexFile(FmFile fmFile) {
+	private void indexFile(FmFile fmFile) {
 		
 		try {
 			
@@ -501,7 +519,7 @@ class FmFolderService {
 	 * @param values params
 	 * @throws ValidationException if required fields are missing or error saving to database
 	 */
-	def saveFolder(FmFolder folder, Object object, Map values) {
+	private void saveFolder(FmFolder folder, Object object, Map values) {
 		
 		AmTagTemplate template = AmTagTemplate.findByTagTemplateType(folder.folderType)
 		
