@@ -38,7 +38,7 @@
              <img src="${resource(dir:'images/skin',file:'information.png')}" alt="Detail link" border="0" />
              </g:link>
              </td>
-            <g:each in="${subFolderLayout}" status=j var="layoutRow"> 
+            <g:each in="${subFolderLayout}" status="j" var="layoutRow">
                 <td valign="top" class="columnvalue">
                     <g:if test="${layoutRow.dataType == 'date'}">
                         <g:formatDate bean="${folderInstance}" field="${layoutRow.column}" format="yyyy-MM-dd"/>
