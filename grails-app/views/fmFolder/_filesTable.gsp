@@ -20,7 +20,12 @@
     <tbody>
         <g:each in="${folder?.fmFiles.sort{a,b-> a.displayName.compareTo(b.displayName)}}" status="i" var="fmFile">
             <tr class="details-row ${(i % 2) == 0 ? 'odd' : 'even'}">
-               <td class="columnname" style="text-align: left;"><span class="fileicon ${fmFile.fileType}"></span>&nbsp;${fmFile.displayName}</td>
+               <td class="columnname" style="text-align: left;">
+                   <span class="fileicon ${fmFile.fileType}"></span>
+                   <g:link controller="fmFolder" action="downloadFile" params="[id: fmFile.id]">
+                       ${fmFile.displayName}
+                   </g:link>
+               </td>
                <td class="columnvalue">
                <g:formatDate format="yyyy-MM-dd" date="${fmFile.createDate}" />
                </td> 

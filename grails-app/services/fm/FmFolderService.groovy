@@ -410,10 +410,16 @@ class FmFolderService {
 		al.save()
 		}
 	}
-	
+
+    def getFile(FmFile file) {
+        new File(
+                new File(filestoreDirectory, file.filestoreLocation),
+                file.filestoreName)
+    }
+
 	def deleteFile(FmFile file) {
 		try {
-			File filestoreFile = new File(filestoreDirectory + file.filestoreLocation + File.separator + file.filestoreName)
+			File filestoreFile = getFile(file)
 			if (filestoreFile.exists()) {
 				filestoreFile.delete()
 			}

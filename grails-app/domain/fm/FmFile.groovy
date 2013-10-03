@@ -19,10 +19,13 @@
   
 package fm
 
+import groovy.transform.ToString
+
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString(includes = ['id', 'displayName', 'originalName', 'fileSize', 'filestoreLocation', 'filestoreName', 'createDate'])
 class FmFile {
 	
 	Long id

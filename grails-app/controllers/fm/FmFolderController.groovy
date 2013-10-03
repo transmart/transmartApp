@@ -18,35 +18,29 @@
  ******************************************************************/
 package fm
 
-import java.awt.event.ItemEvent;
-
-import annotation.AmData;
-import annotation.AmTagAssociation;
-import annotation.AmTagDisplayValue;
-import annotation.AmTagItem;
-import annotation.AmTagTemplate;
+import annotation.AmTagDisplayValue
+import annotation.AmTagItem
+import annotation.AmTagTemplate
 import annotation.AmTagTemplateAssociation
-import annotation.AmTagValue;
-import auth.AuthUser;
-
-import bio.BioAssayAnalysis;
-import bio.BioAssayAnalysisData;
-import bio.BioData
-import bio.BioDataExternalCode;
+import auth.AuthUser
+import bio.BioAssayAnalysis
+import bio.BioAssayAnalysisData
+import bio.BioDataExternalCode
 import bio.ConceptCode
-import bio.Experiment
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
 import com.recomdata.util.FolderType
-import grails.converters.*
+import grails.converters.JSON
+import grails.converters.XML
 import grails.validation.ValidationException
 import groovy.xml.StreamingMarkupBuilder
-import grails.plugins.springsecurity.SpringSecurityService
-
 import org.apache.commons.lang.StringUtils
+import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
+import search.SearchKeyword
 
-import search.SearchKeyword;
+import javax.activation.MimetypesFileTypeMap
 
 class FmFolderController {
 
@@ -57,7 +51,30 @@ class FmFolderController {
 	def ontologyService
 	def solrFacetService
 	def springSecurityService
+
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
+
+    @Lazy static MimetypesFileTypeMap MIME_TYPES_FILES_MAP = {
+        File mimeTypesFile = [
+                new File(System.getenv('HOME'), '.mime.types'),
+                new File(System.getenv('JAVA_HOME'), 'lib/mime.types'),
+                new File('/etc/mime.types')
+        ].findResult null, { File file ->
+            if (file.exists()) {
+                return file
+            }
+        }
+
+        if (!mimeTypesFile) {
+            LoggerFactory.getLogger(this).warn 'Could not find a mime.types file'
+        } else {
+            LoggerFactory.getLogger(this).info "Loading mime.types file on $mimeTypesFile"
+        }
+
+        mimeTypesFile.withInputStream {
+            new MimetypesFileTypeMap(it)
+        }
+    }()
 
     def index = {
         redirect(action: "list", params: params)
@@ -1322,11 +1339,37 @@ class FmFolderController {
 			render(template: 'filesTable', model: [folder: folder])
 		}
 		else {
-			render(status:500, text:"FmFile not found")
+			render(status:404, text:"FmFile not found")
 		}
 		
 	}
 
+    def downloadFile() {
+        FmFile fmFile = FmFile.get params.id
+        if (!fmFile) {
+            render status: 404, text: 'FmFile not found'
+            return
+        }
+
+        String mimeType = MIME_TYPES_FILES_MAP.getContentType fmFile.originalName
+        log.debug "Downloading file $fmFile, mime type $mimeType"
+
+        response.setContentType mimeType
+
+        /* This form of sending the filename seems to be compatible
+         * with all major browsers, except for IE8. See:
+         * http://greenbytes.de/tech/tc2231/#attwithfn2231utf8comp
+         */
+        response.addHeader 'Content-Disposition',
+                "attachment; filename*=UTF-8''" +
+                        fmFile.originalName.getBytes('UTF-8').collect {
+                            '%' + String.format('%02x', it)
+                        }.join('')
+        def file = fmFolderService.getFile fmFile
+        def is = file.newInputStream().withStream {
+            response.outputStream << it
+        }
+    }
 
 	def ajaxTechnologies =
 	{
