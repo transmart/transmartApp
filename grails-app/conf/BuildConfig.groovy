@@ -26,6 +26,9 @@ grails.project.dependency.resolution = {
                 'org.apache.lucene:lucene-demos:2.4.0',
                 'org.apache.lucene:lucene-highlighter:2.4.0'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
+
+        test    'org.hamcrest:hamcrest-library:1.3',
+                'org.hamcrest:hamcrest-core:1.3'
     }
 
     plugins {
