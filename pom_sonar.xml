@@ -1,0 +1,129 @@
+<!-- vim: set ts=4 et ts=4 : -->
+<!--
+  This POM is only here for the purpose of allowing data to be uploaded to sonar.
+  In particular, tranSMART has not been converted to a Maven project.
+  You cannot use grails maven goals to build or run the application.
+-->
+
+<!-- You also need to change your settings.xml.
+     See http://docs.codehaus.org/display/SONAR/Installing+and+Configuring+Maven
+     Before running the sonar:sonar goal, generate test & coverage reports with:
+       grails test-app - -coverage - -xml (remove space between consecutive -)
+	 Finally:
+       mvn -f pom_sonar.xml \
+            pl.project13.maven:git-commit-id-plugin:revision \
+            nl.thehyve:change-project-properties-plugin:setProperties \
+            sonar:sonar
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.transmartproject</groupId>
+    <artifactId>transmartApp</artifactId>
+    <packaging>war</packaging>
+    <version>1.0</version><!-- but see profile ciUpdateVersion -->
+    <name>Transmart Application</name><!-- idem -->
+    <build>
+        <sourceDirectory>src/groovy</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <excludes>
+                        <exclude>**/*.*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/java</source>
+                                <source>grails-app/controllers</source>
+                                <source>grails-app/domain</source>
+                                <source>grails-app/jobs</source>
+                                <source>grails-app/services</source>
+                                <source>grails-app/taglib</source>
+                                <source>grails-app/utils</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- these plugins should not be bound and instead they should
+                 be run manually on the command line BEFORE sonar:sonar.
+                 By the time sonar:sonar is run, these plugins should
+                 already have run.
+                 On the other hand the sonar plugin will run the
+                 process-resources phase by itself, so if these plugins
+                 had executions bound to the validate phase, they would
+                 be run twice. Yes, it sucks.
+            -->
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.1.5-pull67</version>
+                <configuration>
+                    <prefix>git</prefix>
+                    <dateFormat>yyyy.MM.dd HH:mm:ss z</dateFormat>
+                    <verbose>false</verbose>
+                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+                    <skipPoms>false</skipPoms>
+                    <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                    <failOnNoGitDirectory>true</failOnNoGitDirectory>
+                    <gitDescribe>
+                        <skip>false</skip>
+                        <always>false</always>
+                        <abbrev>7</abbrev>
+                        <dirty>-dirty</dirty>
+                        <forceLongFormat>false</forceLongFormat>
+                    </gitDescribe>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>nl.thehyve</groupId>
+                <artifactId>change-project-properties-plugin</artifactId>
+                <version>1.0</version>
+                <configuration>
+                    <properties>
+                        <property>
+                            <key>sonar.branch</key>
+                            <value>${git.branch}</value>
+                        </property>
+                    </properties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repo.thehyve.nl-releases</id>
+            <url>http://repo.thehyve.nl/content/repositories/releases/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <properties>
+        <sonar.language>grvy</sonar.language>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.surefire.reportsPath>target/test-reports</sonar.surefire.reportsPath>
+		<sonar.cobertura.reportPath>target/test-reports/cobertura/coverage.xml</sonar.cobertura.reportPath>
+        <sonar.phase>generate-sources</sonar.phase>
+    </properties>
+</project>

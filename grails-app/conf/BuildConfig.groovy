@@ -42,6 +42,11 @@ grails.project.dependency.resolution = {
 
         runtime ':prototype:1.0'
         runtime ":transmart-core:1.0-SNAPSHOT"
+
+        //This version of code coverage plugin does not work with grails 2.3
+        //Despite specified test scope declaration of this plugin appears in grails.xml of prod war
+        //cause ClassNotFoundationException: CodeCoverageGrailsPlugin
+        //test ":code-coverage:1.2.6"
     }
 }
 
