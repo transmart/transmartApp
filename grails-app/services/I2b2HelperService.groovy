@@ -672,10 +672,10 @@ class I2b2HelperService {
                             patient_id,
                             LISTAGG ( sample_cd )
                                 WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
-                    FROM
-                        deapp.de_subject_sample_mapping
-                    GROUP BY
-                        patient_id )
+                        FROM
+                            deapp.de_subject_sample_mapping
+                        GROUP BY
+                            patient_id )
                     S ON ( S.patient_id = I.patient_num )
                 ORDER BY
                     I.PATIENT_NUM''';
