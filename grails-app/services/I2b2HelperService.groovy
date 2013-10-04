@@ -647,15 +647,47 @@ class I2b2HelperService {
 	def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
 		log.trace("Adding patient demographic data to grid with result instance id:" +result_instance_id+" and subset: "+subset)
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-		String sqlt = """SELECT * FROM patient_dimension p INNER JOIN patient_trial t ON p.patient_num=t.patient_num
-		    WHERE p.PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
-		    ORDER BY p.PATIENT_NUM""";
+		String sqlt = '''
+                SELECT
+                    I.*,
+                    S.SAMPLE_CDS
+                FROM (
+                        SELECT
+                            p.*,
+                            t.trial
+                        FROM
+                            patient_dimension p
+                        INNER JOIN patient_trial t ON p.patient_num = t.patient_num
+                        WHERE
+                            p.PATIENT_NUM IN (
+                                SELECT
+                                    DISTINCT patient_num
+                                FROM
+                                    qt_patient_set_collection
+                                WHERE
+                                    result_instance_id = ? ) )
+                    I
+                LEFT JOIN (
+                        SELECT
+                            patient_id,
+                            LISTAGG ( sample_cd )
+                                WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
+                    FROM
+                        deapp.de_subject_sample_mapping
+                    GROUP BY
+                        patient_id )
+                    S ON ( S.patient_id = I.patient_num )
+                ORDER BY
+                    I.PATIENT_NUM''';
+
+        log.debug "Initial grid query: $sqlt, riid: $result_instance_id"
 		
 		//if i have an empty table structure so far
 		if(tablein.getColumns().size()==0)
 		{
 			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "String"));
 			tablein.putColumn("patient", new ExportColumn("patient", "Patient", "", "String"));
+            tablein.putColumn("SAMPLE_CDS", new ExportColumn("SAMPLE_CDS", "Samples", "", "String"));
 			tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "String"));
 			//tablein.putColumn("BIRTH_DATE", new ExportColumn("BIRTH_DATE", "Birth Date", "", "Date"));
 			//tablein.putColumn("DEATH_DATE", new ExportColumn("DEATH_DATE", "Death Date", "", "Date"));
@@ -684,6 +716,7 @@ class I2b2HelperService {
 				newrow.put("subject", subject);
 				def arr = row.SOURCESYSTEM_CD?.split(":")
 				newrow.put("patient", arr?.length == 2 ? arr[1] : "");
+                newrow.put("SAMPLE_CDS", row.SAMPLE_CDS)
 				newrow.put("subset", subset);
 				newrow.put("TRIAL", row.TRIAL)
 				newrow.put("SEX_CD", row.SEX_CD)

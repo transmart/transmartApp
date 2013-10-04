@@ -683,6 +683,7 @@ def analysisGrid = {
 
   		def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-Grid Analysis Drag", eventmessage:"RID1:"+result_instance_id1+" RID2:"+result_instance_id2+" Concept:"+concept_key, accesstime:new java.util.Date())
 			al.save()
+        //XXX: session is a questionable place to store this because it breaks multi-window/tab nav
 		ExportTableNew table=(ExportTableNew)request.getSession().getAttribute("gridtable");
 		if(table==null)
 		{
