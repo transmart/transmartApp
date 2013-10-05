@@ -30,19 +30,6 @@ class DeMrnaAnnotation implements Serializable{
 	Long geneId
 	String organism
 	
-	boolean equals(other){
-		if(!(other.instanceOf(DeMrnaAnnotation))){
-			return false
-		}
-		other.probesetId==probesetId && other.geneSymbol==geneSymbol
-	}
-	
-	int hashCode(){
-		def builder=new HashCodeBuilder()
-		builder.append probesetId
-		builder.append geneSymbol
-	}
-	
 	static mapping = {
 		table 'DE_MRNA_ANNOTATION'
 		version false

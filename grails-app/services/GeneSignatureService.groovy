@@ -100,7 +100,6 @@ public class GeneSignatureService {
 
 					case METRIC_CODE_TRINARY:
 						foldChgTest = (String)items.get(items.size()-1)
-					//if(foldChgTest=="") break;
 						int triFoldChg;
 
 						try {
@@ -215,17 +214,11 @@ public class GeneSignatureService {
 						continue;
 					}
 					
-					//def probesetId = marker.getAt(0);
 					def probesetId = marker.getAt(0);
-				//	def bioMarkerId = marker.getAt(1);
 					println(">> Probeset lookup: 1) probeset id: "+probesetId )
-					
-					// create item instance if this probeset exists in bio_assay_feature_group table, otherwise do nothing 
-					//def annot = (de.DeMrnaAnnotation.find("from DeMrnaAnnotation as a where a.probesetId=?", [probesetId])).probesetId;
-					//if(annot!=null){						
-						GeneSignatureItem item = new GeneSignatureItem(probesetId: probesetId, foldChgMetric: foldChg);
-						gsItems.add(item);
-					//}
+										
+					GeneSignatureItem item = new GeneSignatureItem(probesetId: probesetId, foldChgMetric: foldChg);
+					gsItems.add(item);
 				}else{	
 					marker = null
 				}			
@@ -538,10 +531,6 @@ public class GeneSignatureService {
 
 		def qBuf = query.generateSQL();
 		
-		//log.debug("Lookup query: "+qBuf)
-
-		
-		//def marker = bio.BioAssayFeatureGroup.executeQuery(qBuf).asList();
 		def marker = de.DeMrnaAnnotation.executeQuery(qBuf).asList();
 		
 		return marker;
