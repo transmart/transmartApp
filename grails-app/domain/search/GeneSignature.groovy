@@ -27,14 +27,14 @@
  package search
 
 import auth.AuthUser;
- import bio.BioAssayPlatform
- import bio.Compound
- import bio.ConceptCode
- import bio.CellLine
- import search.SearchKeyword
- import com.recomdata.util.IDomainExcelWorkbook
- import com.recomdata.util.ExcelSheet
- import com.recomdata.util.ExcelGenerator
+import bio.BioAssayPlatform
+import bio.Compound
+import bio.ConceptCode
+import bio.CellLine
+import search.SearchKeyword
+import com.recomdata.util.IDomainExcelWorkbook
+import com.recomdata.util.ExcelSheet
+import com.recomdata.util.ExcelGenerator
 /**
  * GeneSignature domain class
  */
@@ -419,7 +419,6 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 		//This is a quick fix. These booleans will tell us whether a gene signature was entered with probes or genes. In the future we should add some indicator field to the "gene" list to say what it is made of. 
 		Boolean hasGenes = false;
 		Boolean hasProbes = false;
-		
 		geneSigItems.each 
 		{
 			if(it.bioMarker != null)
@@ -427,23 +426,27 @@ class GeneSignature implements Cloneable, IDomainExcelWorkbook {
 				hasGenes = true;
 				values.add([it.bioMarker.name, it.foldChgMetric])
 			}
-			else if(it.probeset != null)
+			else if(it.probesetId != null)
 			{
 				hasProbes = true;
-				values.add([it.probeset.name, it.foldChgMetric])
+				def annot = de.DeMrnaAnnotation.find("from DeMrnaAnnotation as a where a.probesetId=? ", [it.probesetId]);
+				if(annot!=null){
+					for(a in annot){
+						values.add([annot.geneSymbol, annot.probeId, it.foldChgMetric])
+					}
+				}else{
+					println "missing probesetId: "+it.probesetId
+				}
 			}
 		}
+
 		
 		String itemName = ""
 		
-		if(hasGenes) itemName = "Gene Symbol"
-		if(hasProbes) itemName = "Probe ID"
-		
-		// items sheet
-		headers=[itemName,"Fold Change Metric"]
+		if(hasGenes) headers=["Gene Symbol","Fold Change Metric"]
+		if(hasProbes)  headers=["Gene Symbol","Probe ID","Fold Change Metric"]
 				
 		def itemsSheet = new ExcelSheet("Gene Signature Items", headers, values);
-
 		// return Excel bytes
 		return ExcelGenerator.generateExcel([metaSheet, itemsSheet])
 	}

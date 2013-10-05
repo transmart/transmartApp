@@ -139,6 +139,8 @@ function addSearchAutoComplete()	{
 function convertCategory(valueToConvert)	{
 	var convertedValue = valueToConvert.toLowerCase();
 	if (convertedValue == "genesig") {
+		return "Gene Signature";
+	}if (convertedValue == "genelist") {
 		return "Gene List";
 	}
 	if (convertedValue == "species") {

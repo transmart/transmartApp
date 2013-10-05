@@ -110,7 +110,7 @@
       		<tr>
       			<td style="color: gray;">${i+1}</td>
 				<g:if test="${gs?.fileSchema.id!=3}"> <td>${item.bioMarker?.name}</td> </g:if>
-				<g:if test="${gs?.fileSchema.id==3}"> <td>${item.probeset?.name}</td> </g:if>
+				<g:if test="${gs?.fileSchema.id==3}"> <td>${item.probeset}</td> </g:if>
             	<g:if test="${gs.foldChgMetricConceptCode?.bioConceptCode!='NOT_USED'}"><td>${item.foldChgMetric}</td></g:if>  								
 				<td style="text-align: center;"><input type="checkbox" name="delete" value="${item.id}" /></td>
 			</tr>		     

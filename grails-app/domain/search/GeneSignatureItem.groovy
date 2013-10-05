@@ -32,9 +32,12 @@ class GeneSignatureItem {
 	Long id
 	GeneSignature geneSignature
 	BioMarker bioMarker
-	BioAssayFeatureGroup probeset
 	String bioDataUniqueId
 	Double foldChgMetric
+	Long probesetId
+	static transients = ['probeset', 'geneSymbol']
+	def probeset
+	def geneSymbol
 
 	static belongsTo = [ geneSignature:GeneSignature ]
 
@@ -46,17 +49,42 @@ class GeneSignatureItem {
 			id column:'ID'
 			geneSignature column:'SEARCH_GENE_SIGNATURE_ID'
 			bioMarker column:'BIO_MARKER_ID'
-			probeset column:'BIO_ASSAY_FEATURE_GROUP_ID'
 			foldChgMetric column:"FOLD_CHG_METRIC"
 			bioDataUniqueId column:'BIO_DATA_UNIQUE_ID'
+			probesetId column: 'PROBESET_ID'
 		}
 	}
 
 	static constraints = {
 		foldChgMetric(nullable:true)
 		bioDataUniqueId(nullable:true)
+		probesetId(nullable:true)
 		bioMarker(nullable:true)
-		probeset(nullable:true)
+		bioDataUniqueId(nullable:true)
 	}
+	def getProbeset(){
+		def probename=""
+		if(probesetId!=null){
+			def annot = de.DeMrnaAnnotation.find("from DeMrnaAnnotation as a where a.probesetId=?", [probesetId])
+			if(annot!=null) probename=annot.probeId
+		}
+		return probename
+	}
+	def getGeneSymbol(){
+		def symbol=[]
+		if(bioMarker!=null){
+			 symbol.add(bioMarker.name)
+		}
+		else if(probesetId!=null){
+			def annot = de.DeMrnaAnnotation.findAll("from DeMrnaAnnotation as a where a.probesetId=?", [probesetId])
+			if(annot!=null){
+				for(g in annot*.geneSymbol){
+					symbol.add(g)
+				}
+			}
+		}
+		return symbol
+	}
+	
 
 }

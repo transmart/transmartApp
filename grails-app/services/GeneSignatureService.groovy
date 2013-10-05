@@ -100,7 +100,6 @@ public class GeneSignatureService {
 
 					case METRIC_CODE_TRINARY:
 						foldChgTest = (String)items.get(items.size()-1)
-					//if(foldChgTest=="") break;
 						int triFoldChg;
 
 						try {
@@ -136,7 +135,7 @@ public class GeneSignatureService {
 	/**
 	 * parse file and create associated gene sig item records
 	 */
-	def loadGeneSigItemsFromFile(MultipartFile file, String organism, String metricType, String fileSchemaName) throws FileSchemaException {
+	def loadGeneSigItemsFromFile(MultipartFile file, String organism, String metricType, String fileSchemaName, GeneSignature gs) throws FileSchemaException {
 		BufferedReader br = null;
 		List<GeneSignatureItem> gsItems = new ArrayList();
 		SortedSet invalidSymbols = new TreeSet();
@@ -191,7 +190,6 @@ public class GeneSignatureService {
 				def marker
 				if(fileSchemaName.toUpperCase() =~ /GENE /){
 					marker = lookupBioAssociations(geneSymbol,organism)
-					
 					if(marker==null || marker.size()==0) {
 						println("WARN: invalid gene sybmol: "+ geneSymbol)
 						invalidSymbols.add(geneSymbol);
@@ -208,25 +206,19 @@ public class GeneSignatureService {
 					
 				} else if(fileSchemaName.toUpperCase() =~ /PROBESET /){	
 					// geneSymbol ==> probeset id
-					marker = lookupProbesetBioAssociations(geneSymbol)
+					marker = lookupProbesetBioAssociations(geneSymbol, gs.techPlatform.accession)
 				
 					if(marker==null || marker.isEmpty()) {
-						println("WARN: invalid probe set id: "+ geneSymbol)
+						println("WARN: invalid probe set id: "+ geneSymbol +" for platform "+gs.techPlatform.accession)
 						invalidSymbols.add(geneSymbol);
 						continue;
 					}
 					
-					//def probesetId = marker.getAt(0);
 					def probesetId = marker.getAt(0);
-				//	def bioMarkerId = marker.getAt(1);
 					println(">> Probeset lookup: 1) probeset id: "+probesetId )
-					
-					// create item instance if this probeset exists in bio_assay_feature_group table, otherwise do nothing 
-					def ba = bio.BioAssayFeatureGroup.read(probesetId);
-					if(ba!=null){						
-						GeneSignatureItem item = new GeneSignatureItem(probeset: ba, foldChgMetric: foldChg);
-						gsItems.add(item);
-					}
+										
+					GeneSignatureItem item = new GeneSignatureItem(probesetId: probesetId, foldChgMetric: foldChg);
+					gsItems.add(item);
 				}else{	
 					marker = null
 				}			
@@ -328,7 +320,7 @@ public class GeneSignatureService {
 
 			// check for invalid symbols
 			if(fileSchemaId != 3) marker = lookupBioAssociations(symbol, organism)
-			if(fileSchemaId == 3) marker = lookupProbesetBioAssociations(symbol)
+			if(fileSchemaId == 3) marker = lookupProbesetBioAssociations(symbol,gs.techPlatform.accession)
 			
 			if(marker==null || marker.size()==0) {
 				println("WARN: invalid gene sybmol: "+ symbol)
@@ -348,8 +340,11 @@ public class GeneSignatureService {
 			
 			if(fileSchemaId == 3){
 				// create item instance
-				GeneSignatureItem item = new GeneSignatureItem(probeset: BioAssayFeatureGroup.get(marker.getAt(0)), foldChgMetric: foldChgMetric);
-				gsItems.add(item)
+				def annot = (de.DeMrnaAnnotation.find("from DeMrnaAnnotation as a where a.probesetId=? ", [marker.getAt(0)])).probesetId;
+				if(annot!=null){
+					GeneSignatureItem item = new GeneSignatureItem(probesetId: annot, foldChgMetric: foldChgMetric);
+					gsItems.add(item)
+				}
 			}
 			
 		}
@@ -377,12 +372,13 @@ public class GeneSignatureService {
 	def saveWizard(GeneSignature gs, MultipartFile file) {
 
 		def metricType = gs.foldChgMetricConceptCode?.bioConceptCode
+		println "metrictype "+metricType
 		def organism = gs.techPlatform?.organism
 		def fileSchemaName = gs.fileSchema?.name
 
 		// load gs items (could be from a cloned object)
 		if (file != null) {
-			def gsItems = loadGeneSigItemsFromFile(file, organism, metricType, fileSchemaName);			
+			def gsItems = loadGeneSigItemsFromFile(file, organism, metricType, fileSchemaName, gs);			
 			gsItems.each { gs.addToGeneSigItems(it) }			
 		}
 		
@@ -400,8 +396,9 @@ public class GeneSignatureService {
 		//if(nsave) updateGenSigItems(nsave)
 		
 		// link objects to search
-		searchKeywordService.updateGeneSignatureLink(nsave,GeneSignature.DOMAIN_KEY,true)
 		searchKeywordService.updateGeneSignatureLink(nsave,GeneSignature.DOMAIN_KEY_GL,true)
+		searchKeywordService.updateGeneSignatureLink(nsave,GeneSignature.DOMAIN_KEY,true)
+		
 		return nsave;
 	}
 	
@@ -438,7 +435,7 @@ public class GeneSignatureService {
 			def fileSchemaName = gs.fileSchema?.name
 
 			// parse items
-			def gsItems = loadGeneSigItemsFromFile(file, organism, metricType, fileSchemaName);
+			def gsItems = loadGeneSigItemsFromFile(file, organism, metricType, fileSchemaName, gs);
 
 			// delete current items
 			log.info "deleting original items"
@@ -463,7 +460,11 @@ public class GeneSignatureService {
 
 		GeneSignatureItem item = null;
 		parent.geneSigItems.each {
-			item = new GeneSignatureItem(bioMarker: BioMarker.get(it.bioMarker.id), bioDataUniqueId: it.bioDataUniqueId, foldChgMetric: it.foldChgMetric);
+			if(it.bioMarker){
+				item = new GeneSignatureItem(bioMarker: BioMarker.get(it.bioMarker.id), bioDataUniqueId: it.bioDataUniqueId, foldChgMetric: it.foldChgMetric);
+			}else{
+				item = new GeneSignatureItem(foldChgMetric: it.foldChgMetric, probesetId: it.probesetId);
+			}
 			clone.addToGeneSigItems(item);
 		}
 	}
@@ -482,7 +483,7 @@ public class GeneSignatureService {
 		query.addCondition("bd.type='BIO_MARKER.GENE'")
 		query.addSelect("bm.id")
 		query.addSelect("bd.uniqueId")
-
+		
 		def qBuf = query.generateSQL();
 		//log.debug "Lookup query: "+qBuf
 
@@ -490,7 +491,7 @@ public class GeneSignatureService {
 		def markers = BioData.executeQuery(qBuf);
 
 		// try ext code lookup if necessary
-	    // println(markers)
+	    //println(markers)
 
 		if(markers==null || markers.size()==0 || markers.size()>1) {
 			query = new Query(mainTableAlias:"bm");
@@ -513,7 +514,6 @@ public class GeneSignatureService {
 			// check for none or ambiguity
 			if(markers==null || markers.size()>1) return null;
 		}
-
 		return markers[0];
 	}
 	
@@ -521,27 +521,17 @@ public class GeneSignatureService {
 	/**
 	 * match up the uploaded probeset id with our internal bio_assay_feature_group & bio_data_uid tables
 	 */
-	def lookupProbesetBioAssociations(String probeset) {
+	def lookupProbesetBioAssociations(String probeset, String platform) {
 		def query = new Query(mainTableAlias:"bf");
-		
-		query.addTable("bio.BioAssayFeatureGroup bf")
-		query.addCondition("bf.type='PROBESET'")
-		query.addCondition("upper(bf.name) ='" + probeset.toUpperCase() + "'")
-		query.addSelect("bf.id")
+
+		query.addTable("de.DeMrnaAnnotation a")
+		query.addCondition("a.gplId='"+platform+"'")
+		query.addCondition("a.probeId ='" + probeset.replace(" ","")+ "'")
+		query.addSelect("a.probesetId")
 
 		def qBuf = query.generateSQL();
 		
-		//log.debug("Lookup query: "+qBuf)
-
-		
-		def marker = bio.BioAssayFeatureGroup.executeQuery(qBuf).asList();
-		
-		// if not existed, add it and then retrieve it
-		if(!marker) {
-			def probe = new BioAssayFeatureGroup(name: probeset, type: "PROBESET")
-			def p = probe.save(flush: true)
-			marker = BioAssayFeatureGroup.executeQuery(qBuf);
-		}
+		def marker = de.DeMrnaAnnotation.executeQuery(qBuf).asList();
 		
 		return marker;
 	}
@@ -624,7 +614,7 @@ public class GeneSignatureService {
 		sbuf.append((gs?.description) ? gs?.description : '').append('\t')
 		
 		for (geneSigItem in gs.geneSigItems) {
-			sbuf.append((geneSigItem?.bioMarker?.name) ? geneSigItem?.bioMarker?.name : '').append('\t')
+			sbuf.append((geneSigItem?.geneSymbol) ? geneSigItem?.geneSymbol.join("/") : '').append('\t')
 		}
 		
 		sbuf.append('\n')
@@ -645,8 +635,12 @@ public class GeneSignatureService {
 	  // loop through each keyword for the gene list items and add to list
 	  geneKeywords.each {
 		  // don't add duplicates
-		  if (it.bioDataUniqueId && genesList.indexOf(it.bioDataUniqueId)<0)   {
-			  genesList.add it.bioDataUniqueId
+		  def symbol=it.geneSymbol
+		  for(g in symbol){
+			  def bioId=lookupBioAssociations(g, geneSig.techPlatform?.organism)[1]
+			  if(bioId && genesList.indexOf(bioId)<0){
+				  genesList.add(bioId)
+			  }
 		  }
 	  }
 	  
