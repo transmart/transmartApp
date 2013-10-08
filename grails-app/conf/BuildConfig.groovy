@@ -25,8 +25,6 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
 //grails.plugin.location.'rdc-rmodules' = "../Rmodules"
-//grails.plugin.location.'dalliance-plugin:0.1-SNAPSHOT' = "../dalliance-plugin"
-//grails.plugin.location.'transmart-mydas' = "../transmart-mydas"
 
 grails.project.war.file = "target/${appName}.war"
 
@@ -96,12 +94,8 @@ grails.project.dependency.resolution = {
         build ':release:3.0.0', ':rest-client-builder:1.0.3'
 
         compile ":quartz:1.0-RC2"
-        compile(":transmart-mydas:0.1-SNAPSHOT") {
-            excludes 'lucene-core'
-        }
         compile ":rdc-rmodules:0.3-SNAPSHOT"
         compile ":spring-security-core:1.2.7.3"
-        compile ":dalliance-plugin:0.1-SNAPSHOT"
         build ":tomcat:7.0.41"
         build ":build-info:1.2.4"
         runtime ":prototype:1.0"
