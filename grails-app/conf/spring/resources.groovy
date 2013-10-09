@@ -54,18 +54,22 @@ beans = {
 	}
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 	redirectStrategy(DefaultRedirectStrategy)
-	
-	/*if (isOracleConfigured())
+
+     bool isOracleConfigured = grailsApplication.config.dataSource.driverClassName ==~ /.*oracle.*/
+
+	if (isOracleConfigured)
 	{
 		log.debug("Oracle configured")
 		clinicalDataService(ClinicalDataService)
 		i2b2HelperService(I2b2HelperService)
 	}
 	else
-	{*/
+	{
 	
 		// TODO -- NEEDS TO BE REVIEWED
-	
+
+        log.debug("pg configured")
+
 		utilService(com.recomdata.transmart.util.UtilService)
 		fileDownloadService(com.recomdata.transmart.util.FileDownloadService)
 
@@ -130,45 +134,5 @@ beans = {
 			asyncJobService = ref('asyncJobService')
 			dataExportService = ref('dataExportService')
 		}
-	/*}*/
-}
-
-def isOracleConfigured()
-{
-	def locations = configurationLocations()
-
-	for (loc in locations)
-	{
-		def config = openConfig(loc)
-		if (config)
-		{
-			return config.dataSource.driverClassName ==~ /.*oracle.*/
-		}
-	}
-
-	log.error("Could not find configuration files");
-	return false;
-}
-
-def configurationLocations()
-{
-	def configLocations = ["/etc/transmart", "/usr/local/transmart", "/home/mkapoor/.grails/transmartConfig"]
-	def env = System.getenv()
-	def configOverride = env['TRANSMART_CONFIG']
-	def locations
-
-	return configOverride ? [configOverride] : configLocations
-}
-
-def openConfig(String dir)
-{
-	try
-	{
-		def config = new ConfigSlurper().parse(new File("${dir}/DataSource.groovy").toURL())
-		return config
-	}
-	catch (Throwable e)
-	{
-		return null
 	}
 }
