@@ -1365,6 +1365,7 @@ class FmFolderController {
                         fmFile.originalName.getBytes('UTF-8').collect {
                             '%' + String.format('%02x', it)
                         }.join('')
+        response.addHeader 'Content-length', fmFile.fileSize.toString()
         def file = fmFolderService.getFile fmFile
         def is = file.newInputStream().withStream {
             response.outputStream << it
