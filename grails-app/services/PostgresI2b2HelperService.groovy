@@ -650,10 +650,10 @@ class PostgresI2b2HelperService {
 				def arr = row.SOURCESYSTEM_CD?.split(":")
 				newrow.put("patient", arr?.length == 2 ? arr[1] : "");
 				newrow.put("subset", subset);
-				newrow.put("TRIAL", row.TRIAL)
-				newrow.put("SEX_CD", row.SEX_CD)
-				newrow.put("AGE_IN_YEARS_NUM", row.AGE_IN_YEARS_NUM.toString())
-				newrow.put("RACE_CD", row.RACE_CD)
+                newrow.put("TRIAL", row.TRIAL)
+                newrow.put("SEX_CD", row.SEX_CD ? (row.SEX_CD.toLowerCase().equals("m") || row.SEX_CD.toLowerCase().equals("male") ? "male" : (row.SEX_CD.toLowerCase().equals("f") || row.SEX_CD.toLowerCase().equals("female") ? "female" : "NULL")) : "NULL")
+                newrow.put("AGE_IN_YEARS_NUM", row.SEX_CD ? (row.AGE_IN_YEARS_NUM.toString().equals("0") ? "NULL" : row.AGE_IN_YEARS_NUM.toString()) : "NULL")
+                newrow.put("RACE_CD", row.RACE_CD ? (row.RACE_CD.toLowerCase().equals("unknown") ? "NULL" : row.RACE_CD.toLowerCase()) : "NULL")
 				tablein.putRow(subject, newrow);
 			}
 		})
@@ -700,7 +700,7 @@ class PostgresI2b2HelperService {
 					else /*fill the row*/ {
 						ExportRowNew newrow=new ExportRowNew();
 						newrow.put("subject", subject);
-						newrow.put(columnid, value.toString());
+						newrow.put(columnid, value ? (value.toString().toLowerCase().equals("unknown") ? "NULL" : value.toString().toLowerCase()) : "NULL");
 						tablein.putRow(subject, newrow);
 					}
 				})
@@ -728,7 +728,7 @@ class PostgresI2b2HelperService {
 					else /*fill the row*/ {
 						ExportRowNew newrow=new ExportRowNew();
 						newrow.put("subject", subject);
-						newrow.put(columnid, value.toString());
+						newrow.put(columnid, value ? (value.toString().toLowerCase().equals("unknown") ? "NULL" : value.toString().toLowerCase()) : "NULL");
 						tablein.putRow(subject, newrow);
 					}
 				});
@@ -737,7 +737,7 @@ class PostgresI2b2HelperService {
 			for(ExportRowNew row: tablein.getRows())
 			{
 				if(!row.containsColumn(columnid)) {
-					row.put(columnid, "N");
+					row.put(columnid, "NULL");
 				}
 			}
 		}
