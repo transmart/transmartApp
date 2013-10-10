@@ -1099,7 +1099,9 @@ class FmFolderController {
 		analysisData.put("filteredByGenes", genes.size() > 0)
 		
 		render (contentType: "text/json", text: analysisData.toString(5))
-		}catch(Exception e) {e.printStackTrace()}
+		}catch(Exception e) {
+			log.error(e.getStackTrace())
+		}
 	}
 
 	

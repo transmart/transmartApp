@@ -114,7 +114,7 @@ class AnalysisDataExportService {
 			
 				for(marker in rowGenes){
 					//println(">>For antigen '" + data.featureGroupName + "' adding marker: id: " + marker + ", name: " + marker.name)
-			    	values.add([data.analysis.name, data.probeset, , data.rhoValue, marker])
+			    	values.add([data.analysis.name, data.probeset, data.rhoValue, marker])
 				}
 			}
 		} else if(isRBM(dataType)){

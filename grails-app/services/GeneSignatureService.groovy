@@ -209,7 +209,7 @@ public class GeneSignatureService {
 					marker = lookupProbesetBioAssociations(geneSymbol, gs.techPlatform.accession)
 				
 					if(marker==null || marker.isEmpty()) {
-						println("WARN: invalid probe set id: "+ geneSymbol +" for platform "+gs.techPlatform.accession)
+						log.warn("WARN: invalid probe set id: " + geneSymbol + " for platform " + gs.techPlatform.accession)
 						invalidSymbols.add(geneSymbol);
 						continue;
 					}
