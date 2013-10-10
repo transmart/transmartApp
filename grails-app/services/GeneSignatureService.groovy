@@ -551,7 +551,7 @@ public class GeneSignatureService {
 	 * items are list of domain objects
 	 */
 	def listPermissionedGeneSignatures(Long userId, boolean bAdmin) {
-		def permCriteria = (bAdmin) ? "(1=1)" : "(gs.createdByAuthUser.id="+userId+" or gs.publicFlag=true)"
+		def permCriteria = (bAdmin) ? "(1=1)" : "(gs.createdByAuthUser.id="+userId+" or gs.publicFlag=TRUE)"
 		def qBuf = "from GeneSignature gs where "+permCriteria+" and gs.deletedFlag=false order by gs.name"
 		return GeneSignature.findAll(qBuf);
 	}
@@ -583,7 +583,7 @@ public class GeneSignatureService {
 		results.each { countMap.put(it.getAt(0), it) }
 		*/
 
-		def permCriteria = (bAdmin) ? "(1=1)" : "(gs.CREATED_BY_AUTH_USER_ID="+userId+" or gs.PUBLIC_FLAG=1)"
+		def permCriteria = (bAdmin) ? "(1=1)" : "(gs.CREATED_BY_AUTH_USER_ID="+userId+" or gs.PUBLIC_FLAG=TRUE)"
 		StringBuffer nativeSQL = new StringBuffer();
 		nativeSQL.append("select gsi.SEARCH_GENE_SIGNATURE_ID as id, count(*) Gene_Ct, sum(CASE WHEN gsi.FOLD_CHG_METRIC>0 THEN 1 ELSE 0 END) Up_Ct, sum(CASE WHEN gsi.FOLD_CHG_METRIC<0 THEN 1 ELSE 0 END) Down_Ct ");
 		nativeSQL.append("from SEARCH_GENE_SIGNATURE_ITEM gsi join SEARCH_GENE_SIGNATURE gs on gsi.search_gene_signature_id=gs.search_gene_signature_id ");
