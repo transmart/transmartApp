@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -62,32 +62,32 @@
                 <div class="dialog">
                     <table>
                        <tr class="prop">
-                           <td valign="top" class="name">
+                           <td class="name">
                                <label for="name">Name:</label>
                            </td>
-                           <td valign="top" class="value ${hasErrors(bean:customFilterInstance,field:'name','errors')}">
-								<g:textField size="80" name="name" value="${fieldValue(bean:customFilterInstance, field:'name')}" />
+                           <td class="value ${hasErrors(bean:customFilterInstance,field:'name','errors')}">
+								<g:textField size="80" name="name" value="${customFilterInstance?.name}" />
                            </td>
                        </tr> 
                    
                        <tr class="prop">
-                           <td valign="top" class="name">
+                           <td class="name">
                                <label for="description">Description:</label>
                            </td>
-                           <td valign="top" class="value ${hasErrors(bean:customFilterInstance,field:'description','errors')}">
-                               <g:textArea rows="2" cols="61" name="description" value="${fieldValue(bean:customFilterInstance, field:'description')}" />
+                           <td class="value ${hasErrors(bean:customFilterInstance,field:'description','errors')}">
+                               <g:textArea rows="2" cols="61" name="description" value="${customFilterInstance?.description}" />
                            </td>
                        </tr> 
                        <tr class="prop">
-                           <td valign="top" class="name">
+                           <td class="name">
                                <label for="privateFlag">Private Flag:</label>
                            </td>
-                           <td valign="top" class="value ${hasErrors(bean:customFilterInstance,field:'privateFlag','errors')}">
-								<g:checkBox name="privateFlag" value="${fieldValue(bean:customFilterInstance,field:'privateFlag') == 'Y'}" />
+                           <td class="value ${hasErrors(bean:customFilterInstance,field:'privateFlag','errors')}">
+								<g:checkBox name="privateFlag" value="${customFilterInstance?.privateFlag == 'Y'}" />
                            </td>
                        </tr> 
                        <tr class="prop">
-                           <td valign="top" class="name"><label for="items">Summary:</label></td>
+                           <td class="name"><label>Summary:</label></td>
 							<td valign="top">${customFilterInstance.summary}</td>
                     	</tr> 
                 	</table>
