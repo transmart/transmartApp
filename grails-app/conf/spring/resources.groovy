@@ -60,8 +60,6 @@ beans = {
 	if (isOracleConfigured)
 	{
 		log.debug("Oracle configured")
-		clinicalDataService(ClinicalDataService)
-		i2b2HelperService(I2b2HelperService)
 	}
 	else
 	{
@@ -123,6 +121,13 @@ beans = {
 			conceptService = ref('conceptService')
 			sampleInfoService = ref('conceptService')
 		}
+
+        geneSignatureService(PostgresGeneSignatureService){bean->
+            searchKeywordService = ref('searchKeywordService')
+            springSecurityService = ref('springSecurityService')
+            sessionFactory = ref('sessionFactory')
+        }
+
 		exportService(PostgresExportService){bean->
 			quartzScheduler = ref('quartzScheduler')
 			grailsApplication = ref('grailsApplication')
