@@ -36,8 +36,8 @@ eventConfigureTomcat = { tomcat ->
          * exist...).
          */
         def curExcludes = config.grails.resources.adhoc.excludes
-        config.grails.resources.adhoc.excludes = [imageUrl + "/**"]
-                + (curExcludes ?: [])
+        config.grails.resources.adhoc.excludes =
+            [imageUrl + "/**"] + (curExcludes ?: [])
 
 
         def alias = imageUrl + "=" + config.RModules.tempFolderDirectory
