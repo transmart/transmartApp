@@ -166,7 +166,7 @@ class ChartController {
      * Action to get the counts for the children of the passed in concept key
      */
     def childConceptPatientCounts = {
-    		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+    		def user = springSecurityService.getPrincipal()
     		log.trace("Called childConceptPatientCounts action in ChartController")
     		log.trace("User is:"+user.username);
     		log.trace(user.toString());
