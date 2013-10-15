@@ -223,8 +223,8 @@
 			</tr>			
 			<g:each in="${gs.geneSigItems}">
 			<tr>
-				<td class="name">${it.bioMarker?.name}</td>		
-				<td class="name">${it.probeset?.name}</td>
+				<td class="name">${it.geneSymbol.join("/")}</td>		
+				<td class="name">${it.probeset}</td>
 				<g:if test="${gs.foldChgMetricConceptCode?.bioConceptCode!='NOT_USED'}">		
 					<g:if test="${gs.foldChgMetricConceptCode?.bioConceptCode=='TRINARY'}"><td class="name" style="text-align: right;"><g:formatNumber number="${it.foldChgMetric}" format="0"/></td></g:if>
 					<g:else><td class="name" style="text-align: right;"><g:formatNumber number="${it.foldChgMetric}" format="##0.###"/></td></g:else>

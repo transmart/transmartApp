@@ -29,7 +29,6 @@ package bio
 import com.recomdata.util.IExcelProfile
 
 class BioAssayAnalysisDataTea implements IExcelProfile {
-		String featureGroupName
 		Experiment experiment
 		BioAssayPlatform assayPlatform
 		Double foldChangeRatio
@@ -47,17 +46,16 @@ class BioAssayAnalysisDataTea implements IExcelProfile {
 		String numericValueCode
 		Double teaNormalizedPValue
 		String experimentType
-		BioAssayFeatureGroup featureGroup
 		Long teaRank
-		static hasMany=[markers:BioMarker]
-		static belongsTo=[BioMarker]
+		Long probesetId
+		static transients = ['probeset']
+		def probeset
 
 	static mapping = {
 	 table 'BIO_ASSAY_ANALYSIS_DATA_TEA'
 	 version false
 	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
 	 columns {
-		featureGroupName column:'FEATURE_GROUP_NAME'
 		experiment column:'BIO_EXPERIMENT_ID'
 		assayPlatform column:'BIO_ASSAY_PLATFORM_ID'
 		foldChangeRatio column:'FOLD_CHANGE_RATIO'
@@ -69,7 +67,6 @@ class BioAssayAnalysisDataTea implements IExcelProfile {
 		analysis column:'BIO_ASSAY_ANALYSIS_ID'
 		cutValue column:'CUT_VALUE'
 		resultsValue column:'RESULTS_VALUE'
-		featureGroup column:'BIO_ASSAY_FEATURE_GROUP_ID'
 		id column:'BIO_ASY_ANALYSIS_DATA_ID'
 		adjustedPValueCode column:'ADJUSTED_P_VALUE_CODE'
 		numericValue column:'NUMERIC_VALUE'
@@ -77,22 +74,26 @@ class BioAssayAnalysisDataTea implements IExcelProfile {
 		teaNormalizedPValue column:'TEA_NORMALIZED_PVALUE'
 		experimentType column:'BIO_EXPERIMENT_TYPE'
 		teaRank column:'TEA_RANK'
-		markers joinTable:[name:'BIO_DATA_OMIC_MARKER', key:'BIO_DATA_ID']
+		probesetId column: 'PROBESET_ID'
 		}
 	}
 
-
+	def getProbeset(){
+		def annot = de.DeMrnaAnnotation.find("from DeMrnaAnnotation as a where a.probesetId=?", [probesetId])
+		def probename=annot.probeId
+		return probename
+	}
 	/**
 	 * get top analysis data records for the indicated analysis
 	 */
 	def static getTop50AnalysisDataForAnalysis(Long analysisId){
-		def query = "SELECT DISTINCT baad, baad_bm FROM bio.BioAssayAnalysisDataTea baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid and baad.teaRank<=50 ORDER BY baad.teaRank DESC";
+		def query = "SELECT DISTINCT baad FROM bio.BioAssayAnalysisDataTea baad WHERE baad.analysis.id =:aid and baad.teaRank<=50 ORDER BY baad.teaRank DESC";
 		return BioAssayAnalysisDataTea.executeQuery(query, [aid:analysisId], [max:50]);
 	}
 	/**
 	 * Get values to Export to Excel
 	 */
 	public List getValues() {
-		return [featureGroupName, foldChangeRatio, rValue, rawPvalue, teaNormalizedPValue, adjustedPvalue, rhoValue, cutValue, resultsValue, numericValueCode, numericValue]
+		return [probeset, foldChangeRatio, rValue, rawPvalue, teaNormalizedPValue, adjustedPvalue, rhoValue, cutValue, resultsValue, numericValueCode, numericValue]
 	}
 }

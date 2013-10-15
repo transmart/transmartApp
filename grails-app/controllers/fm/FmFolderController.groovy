@@ -33,6 +33,7 @@ import com.recomdata.export.ExportTableNew
 import com.recomdata.util.FolderType
 import grails.converters.JSON
 import grails.converters.XML
+import de.DeMrnaAnnotation;
 import grails.validation.ValidationException
 import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.lang.StringUtils
@@ -1029,7 +1030,7 @@ class FmFolderController {
 	}
 	
 	def analysisTable = {
-		
+		try{
 		def analysisId = params.id
 		def genes = []
 		def geneFilter = session['geneFilter']
@@ -1068,8 +1069,7 @@ class FmFolderController {
 		table.putColumn("foldchangeratio", new ExportColumn("foldchangeratio", "Fold Change Ratio", "", 'Number'));
 		
 		rows.each {
-			//TODO There will only be about 3000 rows maximum just now... this filtering should be part of the query if the data size increases.
-			def rowGenes = it.featureGroup.markers*.name
+			def rowGenes=(DeMrnaAnnotation.findAll("from DeMrnaAnnotation as a where a.probesetId=? and geneSymbol is not null", [it.probesetId]))*.geneSymbol
 			def lowerGenes = []
 			for (gene in rowGenes) {
 				lowerGenes.push(gene.toLowerCase())
@@ -1084,7 +1084,7 @@ class FmFolderController {
 			
 			if (foundGene || !genes) {
 				ExportRowNew newrow=new ExportRowNew()
-				newrow.put("probe",it.featureGroupName);
+				newrow.put("probe",it.probeset);
 				newrow.put("gene",rowGenes.join(", "));
 				newrow.put("pvalue",it.rawPvalue.toString());
 				newrow.put("apvalue",it.adjustedPvalue.toString());
@@ -1099,6 +1099,9 @@ class FmFolderController {
 		analysisData.put("filteredByGenes", genes.size() > 0)
 		
 		render (contentType: "text/json", text: analysisData.toString(5))
+		}catch(Exception e) {
+			log.error(e.getStackTrace())
+		}
 	}
 
 	

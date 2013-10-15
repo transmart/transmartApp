@@ -374,7 +374,7 @@ public class SearchKeywordService {
 		println("INFO: retrieved "+keyword)
 
 		// delete search keywords
-		if(gs.deletedFlag || (domainKey==GeneSignature.DOMAIN_KEY_GL && gs.foldChgMetricConceptCode.bioConceptCode=='NOT_USED')) {
+		if(gs.deletedFlag || (domainKey==GeneSignature.DOMAIN_KEY_GL && gs.foldChgMetricConceptCode.bioConceptCode!='NOT_USED') || (domainKey==GeneSignature.DOMAIN_KEY && gs.foldChgMetricConceptCode.bioConceptCode=='NOT_USED')) {
 			if(keyword!=null) keyword.delete(flush: bFlush)
 		} else {
 			// add if does not exist
