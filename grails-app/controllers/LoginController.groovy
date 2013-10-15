@@ -101,10 +101,7 @@ class LoginController {
 			}
 
 		// patch for null pointer exception, see JIRA: http://transmartproject.org/jira/browse/TMPSTGSQL-146
-		boolean isLoggedIn = false;
-		try {
-			isLoggedin = springSecurityService.isLoggedIn()
-		} catch (Throwable ignore) {}
+		boolean isLoggedIn = springSecurityService.isLoggedIn()
 		
 		if (isLoggedIn) {
 			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
