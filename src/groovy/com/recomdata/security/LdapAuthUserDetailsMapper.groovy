@@ -11,7 +11,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+import org.springframework.security.ldap.userdetails.UserDetailsContextMapper
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser;
@@ -21,8 +22,11 @@ import org.transmart.searchapp.AuthUser;
  * Date: 15/10/13
  * Time: 11:23
  */
+
+@Transactional
 public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
 
+    def persistenceInterceptor
     def springSecurityService
     def dataSource
     def conf = SpringSecurityUtils.securityConfig
@@ -34,8 +38,25 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
     private boolean convertToUpperCase = true;
     private List<GrantedAuthority> mutableAuthorities = new ArrayList<GrantedAuthority>();
 
-    public AuthUserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<GrantedAuthority> authorities) {
+//    LdapAuthUserDetailsMapper () {
+//        try {
+//            if (persistenceInterceptor) {
+//                logger.debug("opening persistence context for listener $methodName of $delegate")
+//                persistenceInterceptor.init()
+//            } else {
+//                logger.debug("no persistence interceptor for listener $methodName of $delegate")
+//            }
+//        } finally {
+//            if (persistenceInterceptor) {
+//                logger.debug("destroying persistence context for listener $methodName of $delegate")
+//                persistenceInterceptor.flush()
+//                persistenceInterceptor.destroy()
+//            }
+//        }
+//    }
 
+    public AuthUserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<GrantedAuthority> authorities)
+    {
         username = username.toLowerCase()
         logger.debug("Mapping user details from context and databse with username: " + username);
 
@@ -74,23 +95,26 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
 
         AuthUser.withTransaction { status ->
             def user = AuthUser.findByUsername(username)
+
             if(!user){
                 def sql = new Sql(dataSource);
                 def seqSQL = "SELECT nextval('searchapp.hibernate_sequence')";
                 def result = sql.firstRow(seqSQL);
                 def next_id = result.nextval
-                logger.debug(next_id)
                 user = new AuthUser(id: next_id, username: username, passwd: springSecurityService.encodePassword(password), name: fullName, userRealName: fullName, email: email, emailShow: true, enabled: true)
+
+                if (user.save(flush: true)) {
+                    AccessLog.withTransaction { statusLog ->
+                        new AccessLog(username: username, event:"User Created", eventmessage: "User: ${username} from LDAP for ${fullName} created", accesstime:new Date()).save()
+                    }
+                }
+
             }
             else {
-                logger.debug(fullName)
                 user.passwd = springSecurityService.encodePassword(password)
                 user.userRealName = fullName
                 user.email = email
-            }
-            if (!user.save(flush: true)) {
-                logger.error("Can't save User: ${username}:")
-                user.errors.allErrors.each { println it }
+                user.save(flush: true)
             }
 
             roles = user.getAuthorities()
@@ -108,7 +132,6 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
             else
                 authority = authorities
 
-            logger.error(user)
             return new AuthUserDetails(user.username, user.passwd, user.enabled, !user.accountExpired, !user.passwordExpired, !user.accountLocked, authority ?: AuthUserDetailsService.NO_ROLES, user.id, "LDAP '" + user.userRealName + "'")
         }
     }
