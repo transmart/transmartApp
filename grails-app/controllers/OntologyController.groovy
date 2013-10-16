@@ -137,7 +137,7 @@ class OntologyController {
     		keys.put(node.id, node.securitytoken)
     		log.trace(node.id+" security token:"+node.securitytoken)
     		}
-    		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+    		def user = springSecurityService.getPrincipal()
     		def access=i2b2HelperService.getAccess(keys, user);
     		log.trace(access as JSON)
     		
@@ -180,7 +180,7 @@ class OntologyController {
     
     def getInitialSecurity=
     {
-    		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+    		def user = springSecurityService.getPrincipal()
     		def result=i2b2HelperService.getAccess(i2b2HelperService.getRootPathsWithTokens(), user);
     		render result as JSON
     }
@@ -196,7 +196,7 @@ class OntologyController {
     			log.debug("in LOOP")
     			paths.add(i2b2HelperService.keyToPath(key))	
     		}	
-    		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+    		def user = springSecurityService.getPrincipal()
     	
     		
     		 access=i2b2HelperService.getConceptPathAccessCascadeForUser(paths, user)

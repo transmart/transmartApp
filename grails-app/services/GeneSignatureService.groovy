@@ -289,7 +289,7 @@ public class GeneSignatureService {
 
 		// load fresh gs and modify
 		gs = GeneSignature.get(gs.id)
-		gs.modifiedByAuthUser = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		gs.modifiedByAuthUser = springSecurityService.getPrincipal()
 		gs.lastUpdated = new Date()
 		gs.validate()
 		def saved = gs
@@ -360,7 +360,7 @@ public class GeneSignatureService {
 		if(invalidSymbols.size()>0) FileSchemaException.ThrowInvalidGenesFileSchemaException(invalidSymbols);
 
 		// modify gs and add new items
-		gs.modifiedByAuthUser = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		gs.modifiedByAuthUser = springSecurityService.getPrincipal()
 		gs.lastUpdated = new Date()
 
 		// add new items

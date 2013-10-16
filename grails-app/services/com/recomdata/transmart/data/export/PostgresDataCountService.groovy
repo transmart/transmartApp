@@ -47,7 +47,7 @@ class PostgresDataCountService {
 		StringBuilder subjectsFromBothSubsetsQuery = new StringBuilder()
 		StringBuilder gseaQuery = new StringBuilder()
 		
-		subjectsQuery.append("select omic_patient_id from de_subject_sample_mapping where patient_id in ")
+		//subjectsQuery.append("select omic_patient_id from de_subject_sample_mapping where patient_id in ")
 		subjectsQuery.append("(SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = CAST(? AS numeric)")
 		.append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%'))")
 		

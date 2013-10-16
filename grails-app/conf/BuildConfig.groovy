@@ -45,16 +45,16 @@ grails.project.dependency.resolution = {
         ])
     }
     dependencies {
-		runtime 'postgresql:postgresql:9.0-801.jdbc4'
+		runtime 'postgresql:postgresql:9.1-901.jdbc4'
 		compile 'antlr:antlr:2.7.7'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
     }
-
     plugins {
         compile ":hibernate:$grailsVersion"
         compile ":quartz:1.0-RC2"
         compile ":rdc-rmodules:0.3-SNAPSHOT"
         compile ":spring-security-core:1.2.7.3"
+        compile ":spring-security-ldap:1.0.6"
         compile ":resources:1.2"
         build ":tomcat:$grailsVersion"
         build ":build-info:1.1"

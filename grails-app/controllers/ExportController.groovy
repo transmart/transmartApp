@@ -44,7 +44,7 @@ class ExportController {
     		log.debug("Check export security")
         	String rid1 = request.getParameter("result_instance_id1");
     		String rid2 = request.getParameter("result_instance_id2");
-    		def user=AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+    		def user=springSecurityService.getPrincipal()
     		def canExport=CanExport(user, rid1, rid2);
     		log.debug("CANEXPORT:"+canExport);
       		def result=[canExport: canExport]

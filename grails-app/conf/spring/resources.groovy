@@ -16,8 +16,8 @@
  * 
  *
  ******************************************************************/
-  
 
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
 import org.springframework.security.core.session.SessionRegistryImpl
@@ -41,6 +41,32 @@ import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryB
 import grails.spring.BeanBuilder
 
 beans = {
+
+    println '\nConfiguring tranSMART Beans ...'
+
+    def conf = SpringSecurityUtils.securityConfig
+    String[] attributesToReturn = toStringArray(conf.ldap.authenticator.attributesToReturn)
+    String[] dnPatterns = toStringArray(conf.ldap.authenticator.dnPatterns)
+
+    ldapCustomAuthenticator(com.recomdata.security.LdapAuthUserAuthenticator, ref("contextSource")) {
+        userSearch = ref("ldapUserSearch")
+        if (attributesToReturn) {
+            userAttributes = attributesToReturn
+        }
+        if (dnPatterns) {
+            userDnPatterns = dnPatterns
+        }
+    }
+    ldapUserDetailsMapper(com.recomdata.security.LdapAuthUserDetailsMapper){
+        dataSource = ref('dataSource')
+        springSecurityService = ref('springSecurityService')
+    }
+    ldapAuthProvider(org.springframework.security.ldap.authentication.LdapAuthenticationProvider, ldapCustomAuthenticator, ref("ldapAuthoritiesPopulator")) {
+        userDetailsContextMapper = ldapUserDetailsMapper
+        hideUserNotFoundExceptions = Boolean.parseBoolean((String)conf.ldap.auth.hideUserNotFoundExceptions)
+        useAuthenticationRequestCredentials = Boolean.parseBoolean((String)conf.ldap.auth.useAuthPassword)
+    }
+
 	dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder){
 		dataSource = ref('dataSource')
 	}
@@ -55,6 +81,18 @@ beans = {
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 	redirectStrategy(DefaultRedirectStrategy)
 
+    springSecurityService(grails.plugins.springsecurity.SpringSecurityService){bean ->
+        authenticationTrustResolver = ref('authenticationTrustResolver')
+        grailsApplication = ref('grailsApplication')
+        passwordEncoder = ref('passwordEncoder')
+        objectDefinitionSource = ref('objectDefinitionSource')
+        userDetailsService = ref('userDetailsService')
+        userCache = ref('userCache')
+    }
+
+    utilService(com.recomdata.transmart.util.UtilService)
+    fileDownloadService(com.recomdata.transmart.util.FileDownloadService)
+
      bool isOracleConfigured = grailsApplication.config.dataSource.driverClassName ==~ /.*oracle.*/
 
 	if (isOracleConfigured)
@@ -66,19 +104,6 @@ beans = {
 	
 		// TODO -- NEEDS TO BE REVIEWED
 
-        log.debug("pg configured")
-
-		utilService(com.recomdata.transmart.util.UtilService)
-		fileDownloadService(com.recomdata.transmart.util.FileDownloadService)
-
-		springSecurityService(grails.plugins.springsecurity.SpringSecurityService){bean ->
-			authenticationTrustResolver = ref('authenticationTrustResolver')
-			grailsApplication = ref('grailsApplication')
-			passwordEncoder = ref('passwordEncoder')
-			objectDefinitionSource = ref('objectDefinitionSource')
-			userDetailsService = ref('userDetailsService')
-			userCache = ref('userCache')
-		}
 		snpService(SnpService)
 		plinkService(PlinkService)
 		conceptService(ConceptService)
@@ -140,4 +165,16 @@ beans = {
 			dataExportService = ref('dataExportService')
 		}
 	}
+
+    println '... finished configuring tranSMART Beans\n'
+}
+
+private String[] toStringArray(value) {
+    if (value == null) {
+        return null
+    }
+    if (value instanceof String) {
+        value = [value]
+    }
+    value as String[]
 }
