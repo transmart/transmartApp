@@ -27,6 +27,7 @@ import i2b2.SnpDatasetListByProbe;
 import i2b2.SnpInfo
 import i2b2.StringLineReader;
 import i2b2.SampleInfo;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,7 +39,6 @@ import javax.xml.xpath.XPathFactory;
 import java.sql.*;
 
 import org.transmart.CohortInformation;
-import org.transmart.searchapp.AuthUser;
 import org.transmart.searchapp.AuthUserSecureAccess;
 import org.transmart.searchapp.SecureObjectPath;
 import org.w3c.dom.Document;
@@ -4195,7 +4195,7 @@ class PostgresI2b2HelperService {
 	/**
 	 * Gets the distinct patient counts for the children of a parent concept key
 	 */
-	def getChildrenWithAccessForUser(String concept_key, AuthUser user) {
+	def getChildrenWithAccessForUser(String concept_key, UserDetails user) {
 		def List<String> children=getChildPathsFromParentKey(concept_key)
 		def access = [:]
 		def path=keyToPath(concept_key).replaceAll((/\\${''}/), "\\\\\\\\");
@@ -4322,7 +4322,7 @@ class PostgresI2b2HelperService {
 	/**
 	 * Gets the access level for a list of concept keys
 	 */
-	def getConceptPathAccessForUser(List<String> paths, AuthUser user) {
+	def getConceptPathAccessForUser(List<String> paths, UserDetails user) {
 		def access = [:]
 		
 		//1)put all the children into the access list with default unlocked
@@ -4403,7 +4403,7 @@ class PostgresI2b2HelperService {
 	/**
 	 * Gets the access level for a list of concept keys
 	 */
-	def getConceptPathAccessCascadeForUser(List<String> paths, AuthUser user) {
+	def getConceptPathAccessCascadeForUser(List<String> paths, UserDetails user) {
 		def access = [:];
 		
 		//1)put all the children into the access list with default unlocked
@@ -4600,7 +4600,7 @@ class PostgresI2b2HelperService {
 	/**
 	 * Gets the children with access for a concept
 	 */
-	def getChildrenWithAccessForUserNew(String concept_key, AuthUser user) {
+	def getChildrenWithAccessForUserNew(String concept_key, UserDetails user) {
 		def children=getChildPathsWithTokensFromParentKey(concept_key);
 		return getAccess(children, user);
 	}
