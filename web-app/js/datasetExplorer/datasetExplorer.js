@@ -3990,7 +3990,12 @@ function getSummaryStatistics()
 }
 
 
-
+function gridViewCellFormating(value)
+{
+    if (value == "NULL")
+        return '<span class="GVNullValues">' + value + '</span>';
+    return value;
+}
 
 function buildColumnModel(fields)
 {
@@ -4007,6 +4012,7 @@ function buildColumnModel(fields)
 		c.width = f.width;
 		c.sortable = f.sortable;
 		c.menuDisabled = false;
+        c.renderer = gridViewCellFormating;
 		con.push(c);
 	}
 

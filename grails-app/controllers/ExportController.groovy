@@ -25,8 +25,8 @@
  *
  */
 import grails.converters.*
-import org.json.*;
-import org.transmart.searchapp.AuthUser;
+import org.json.*
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServlet;
@@ -44,7 +44,7 @@ class ExportController {
     		log.debug("Check export security")
         	String rid1 = request.getParameter("result_instance_id1");
     		String rid2 = request.getParameter("result_instance_id2");
-    		def user=AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+    		def user=springSecurityService.getPrincipal()
     		def canExport=CanExport(user, rid1, rid2);
     		log.debug("CANEXPORT:"+canExport);
       		def result=[canExport: canExport]
@@ -52,7 +52,7 @@ class ExportController {
     		render result as JSON
     }
 
-    private boolean CanExport(AuthUser user, String rid1, String rid2)
+    private boolean CanExport(UserDetails user, String rid1, String rid2)
     {
 		def trials=i2b2HelperService.getDistinctTrialsInPatientSets(rid1, rid2);
    		def sectokens=i2b2HelperService.getSecureTokensWithAccessForUser(user)

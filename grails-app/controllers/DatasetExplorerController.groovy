@@ -55,7 +55,7 @@ class DatasetExplorerController {
 			def i2b2Username = grailsApplication.config.com.recomdata.i2b2.subject.username
 			def i2b2Password = grailsApplication.config.com.recomdata.i2b2.subject.password
 
-			def user=AuthUser.findByUsername(springSecurityService.getPrincipal().username)  
+			def user=springSecurityService.getPrincipal()
     		def admin=i2b2HelperService.isAdmin(user);
     		def tokens=i2b2HelperService.getSecureTokensCommaSeparated(user)
     		def initialaccess=new JSON(i2b2HelperService.getAccess(i2b2HelperService.getRootPathsWithTokens(), user)).toString();

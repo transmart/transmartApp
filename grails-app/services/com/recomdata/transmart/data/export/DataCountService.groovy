@@ -49,11 +49,11 @@ class DataCountService {
 		
 		subjectsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = CAST(? AS numeric)")
 		.append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')")
-		subjectsFromBothSubsetsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id IN (")
+
+        subjectsFromBothSubsetsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id IN (")
 		.append(resultInstanceIds).append(')')
 		.append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')")
 
-		
 		//Build the query we use to get MRNA Data. patient_id should be unique to a given study for each patient. 
 		//We count the distinct ID's with MRNA data.
 		mrnaQuery.append("SELECT count(distinct s.patient_id), s.gpl_id FROM de_subject_sample_mapping s WHERE s.patient_id IN (")

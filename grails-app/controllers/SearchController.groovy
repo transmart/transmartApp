@@ -44,6 +44,7 @@ import com.recomdata.util.*
 public class SearchController{
 	def sessionFactory
 	def springSecurityService
+    def i2b2HelperService
 	def experimentAnalysisQueryService
 	def literatureQueryService
 	def TrialQueryService
@@ -89,9 +90,9 @@ public class SearchController{
 				queryParams["category"] = category.toString().split(SEARCH_DELIMITER)
 			}
 			// this is generic way to access AuthUser
-			def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+			def user = springSecurityService.getPrincipal()
 			// permission to view search keyword (Admin gets all)
-			if (!user.isAdmin()) {
+			if (!i2b2HelperService.isAdmin(user)) {
 				queryStr += " AND (t.ownerAuthUserId = :uid OR t.ownerAuthUserId IS NULL)"
 				queryParams["uid"] = user.id
 			}
@@ -170,7 +171,7 @@ public class SearchController{
 		//	user=authenticateService.principal();   // Using Identity Vault and WWIDPrinicpal
 		//}
 
-		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		def user = springSecurityService.getPrincipal()
 		def uid = user.id;
 
 		//	def queryStr = "SELECT distinct k FROM org.transmart.searchapp.SearchKeyword k left join k.externalCodes c WHERE k.dataCategory IN ('GENE', 'PATHWAY') AND (UPPER(k.keyword) LIKE '"+values+"%' OR (c.codeType='SYNONYM' AND UPPER(c.code) LIKE '"+values+"%')) ORDER BY LENGTH(k.keyword), k.keyword";
@@ -272,7 +273,7 @@ public class SearchController{
 			session.searchFilter.datasource="document"
 		}
 
-		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		def user = springSecurityService.getPrincipal()
 		def al = new AccessLog(username: user.username, event:"Search", eventmessage:session.searchFilter.marshal(), accesstime:new Date())
 		al.save();
 
@@ -315,7 +316,7 @@ public class SearchController{
 
 		log.info "searchCustomFilter: '${customFilter}'"
 		if (customFilter != null) {
-			def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+			def user = springSecurityService.getPrincipal()
 			if (customFilter.privateFlag != 'Y' || customFilter.searchUserId == user.id) {
 				def uniqueIds = []
 				for (item in customFilter.items) {

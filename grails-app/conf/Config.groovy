@@ -16,20 +16,12 @@
  * 
  *
  ******************************************************************/
-  
-
-
-/**
- * Running externalized configuration
- * Assuming the following configuration files
- * - in the executing user's home at ~/.grails/<app_name>Config/[Config.groovy|DataSource.groovy]
- * - config location set path by system variable '<APP_NAME>_CONFIG_LOCATION'
- * - dataSource location set path by system environment variable '<APP_NAME>_DATASOURCE_LOCATION'
- */
 
 import grails.plugins.springsecurity.SecurityConfigType
 
-grails.plugins.springsecurity.successHandler.defaultTargetUrl = "/transmart"
+/*
+ * Spring Security Configuration
+ */
 
 grails.plugins.springsecurity.rejectIfNoRule = true
 grails.plugins.springsecurity.userLookup.userDomainClassName = 'org.transmart.searchapp.AuthUser'
@@ -58,6 +50,14 @@ grails.plugins.springsecurity.securityConfigType = SecurityConfigType.Requestmap
 //        '/**'                         : ['IS_AUTHENTICATED_REMEMBERED'], // must be last
 //]
 
+/**
+ * Running externalized configuration
+ * Assuming the following configuration files
+ * - in the executing user's home at ~/.grails/<app_name>Config/[Config.groovy|DataSource.groovy]
+ * - config location set path by system variable '<APP_NAME>_CONFIG_LOCATION'
+ * - dataSource location set path by system environment variable '<APP_NAME>_DATASOURCE_LOCATION'
+ */
+
 grails.config.locations = []
 def defaultConfigFiles = [
 	"${userHome}/.grails/${appName}Config/Config.groovy",
@@ -84,11 +84,10 @@ if (externalDataSource) {
 grails.config.locations.each { println "[INFO] Including configuration file [${it}] in configuration building." }
 
 
-/* 
- *  The following lines are copied from the previous COnfig.groovy
+/*
+ *  The following lines are copied from the previous Config.groovy
  * 
  */
-
 
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.types = [ html: [
