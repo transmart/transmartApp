@@ -92,7 +92,7 @@ class GeneSignatureController {
 		session.setAttribute(WIZ_DETAILS_ATTRIBUTE, null)
 
 		// logged in user
-		def user = springSecurityService.getPrincipal()
+		def user = AuthUser.findByUsername(springSecurityService.getAuthentication().getName())
 		def bAdmin = i2b2HelperService.isAdmin(user);
 		log.info "Admin? "+bAdmin
 
@@ -120,7 +120,7 @@ class GeneSignatureController {
 	 */
 	def createWizard = {
 		// initialize session model data
-		def user = springSecurityService.getPrincipal()
+		def user = AuthUser.findByUsername(springSecurityService.getAuthentication().getName())
 
 		// initialzize new gs inst
 		def geneSigInst = new GeneSignature();
@@ -140,7 +140,7 @@ class GeneSignatureController {
 	 */
 	def editWizard = {
 		// initialize session model data
-		def user = springSecurityService.getPrincipal()
+		def user = AuthUser.findByUsername(springSecurityService.getAuthentication().getName())
 
 		// load gs instance
 		def geneSigInst = GeneSignature.get(params.id)
@@ -161,7 +161,7 @@ class GeneSignatureController {
 	 */
 	def cloneWizard = {
 		// initialize session model data
-		def user = springSecurityService.getPrincipal()
+		def user = AuthUser.findByUsername(springSecurityService.getAuthentication().getName())
 
 		// load gs inst to clone
 		def geneSigInst = GeneSignature.get(params.id)
@@ -190,7 +190,7 @@ class GeneSignatureController {
 	 * set the indicated gs public for access by everyone
 	 */
 	def makePublic = {
-		def user = springSecurityService.getPrincipal()
+		def user = AuthUser.findByUsername(springSecurityService.getAuthentication().getName())
 		def gsInst = GeneSignature.get(params.id)
 		gsInst.modifiedByAuthUser = user
 		geneSignatureService.makePublic(gsInst)
@@ -203,7 +203,7 @@ class GeneSignatureController {
 	 * mark the indicated gs as deleted by setting deletedFlag as true
 	 */
 	def delete = {
-		def user = springSecurityService.getPrincipal()
+		def user = AuthUser.findByUsername(springSecurityService.getAuthentication().getName())
 		def gsInst = GeneSignature.get(params.id)
 		gsInst.modifiedByAuthUser = user
 		geneSignatureService.delete(gsInst)
@@ -378,7 +378,7 @@ class GeneSignatureController {
 	 * update gene signature and the associated items (new file only)
 	 */
 	def update = {
-		def user = springSecurityService.getPrincipal()
+		def user = AuthUser.findByUsername(springSecurityService.getAuthentication().getName())
 
 		// retrieve clone
 		def wizard = session.getAttribute(WIZ_DETAILS_ATTRIBUTE)
