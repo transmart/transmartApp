@@ -19,6 +19,7 @@
 
 <head>
 <meta name='layout' content='main' />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
 
 <style type='text/css' media='screen'>
@@ -90,40 +91,46 @@
 							</h3>
 							<g:if test='${flash.message}'>
 								<div class='login_message' style="color:red; font-size:12px;">${flash.message}</div>
+                                <br>
 							</g:if>
 							<form action='${postUrl}' method='POST' id='loginForm' class='cssform'>
-   								<table style="border:0px; text-align:center; width:340px">
+   								<table style="border:0px; text-align:center;">
 									<tr>
    										<td>
-											<label for='j_username' style="font-weight:bold">Login ID:</label>
+											<label for='username' style="font-weight:bold"><g:message code="springSecurity.login.username.label"/> :</label>
 										</td>
-										<td style="white-space:nowrap;" NOWRAP>								
-											<input type='text' class='text_' name='j_username' id='j_username' style="width:300px" autofocus/>
+										<td style="white-space:nowrap;">
+											<input type='text' class='text_' name='j_username' id='username' style="width:100%" autofocus/>
 											<script>
 											   if (!("autofocus" in document.createElement("input"))) {
-												   document.getElementById("j_username").focus();
+												   document.getElementById("username").focus();
 											   }
                                             </script>
 										</td>
-
 									</tr>
+                                    <tr>
+                                        <td>
+                                            <label for='password' style="font-weight:bold"><g:message code="springSecurity.login.password.label"/> :</label>
+                                        </td>
+                                        <td>
+                                            <input type='password' class='text_' name='j_password' id='password' style="width:100%"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <label for='remember_me' style="font-weight:bold"><g:message code="springSecurity.login.remember.me.label"/> :</label>
+                                        </td>
+                                        <td>
+                                            <input type='checkbox' class='chk' name='${rememberMeParameter}' id='remember_me' <g:if test='${hasCookie}'>checked='checked'</g:if>/>
+                                        </td>
+                                    </tr>
 									<tr>
-										<td>
-											<label for='j_password' style="font-weight:bold">Password:</label>
-										</td>
-										<td>
-											<input type='password' class='text_' name='j_password' id='j_password' style="width:300px"/>
-										</td>
+                                        <td colspan="2" style="text-align:center">
+                                            <br>
+                                            <input type='submit' id='loginButton' value='${message(code: "springSecurity.login.button")}' style="width:100%" />
+                                            <br><br>
+                                        </td>
 									</tr>
-									<tr>
-										<td colspan=2 style="text-align:center">
-											<input type='submit' id='loginButton' value='Login' />
-										</td>
-									</tr>
-									<tr>
-										<td colspan=2 style="text-align:center"> &nbsp;
-										</td>
-										</tr>
 									<tr>
 										<td colspan="2" style="font-size:10px;">
 											Not a user? Contact <a href="mailto:${grailsApplication.config.com.recomdata.administrator}" target="_blank" style="text-decoration:underline;color:#0000FF">administrator</a> to request an account
