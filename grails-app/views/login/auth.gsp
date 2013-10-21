@@ -99,7 +99,7 @@
    										<td>
 											<label for='username' style="font-weight:bold"><g:message code="springSecurity.login.username.label"/> :</label>
 										</td>
-										<td style="white-space:nowrap;">
+										<td style="white-space:nowrap; width:250px;">
 											<input type='text' class='text_' name='j_username' id='username' style="width:100%" autofocus/>
 											<script>
 											   if (!("autofocus" in document.createElement("input"))) {
