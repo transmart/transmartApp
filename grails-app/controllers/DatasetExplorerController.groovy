@@ -74,6 +74,8 @@ class DatasetExplorerController {
 			
 			def searchCategory = session['searchCategory'];
 			def globalOperator = session['globalOperator'];
+			def dseOpenedNodes=session["dseOpenedNodes"];
+			def dseClosedNodes=session['dseClosedNodes'];
 			
 			//Grab i2b2 credentials from the config file
 			def i2b2Domain = grailsApplication.config.com.recomdata.i2b2.subject.domain
@@ -101,6 +103,8 @@ class DatasetExplorerController {
 													rwgSearchOperators: rwgSearchOperators,
 													globalOperator: globalOperator,
 													rwgSearchCategory: searchCategory,
-													debug: params.debug]) 
+													debug: params.debug,
+													dseOpenedNodes: dseOpenedNodes,
+													dseClosedNodes: dseClosedNodes]) 
     		}
 }

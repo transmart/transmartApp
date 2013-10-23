@@ -184,6 +184,8 @@
 	var searchPage = "datasetExplorer";
 	var $j = jQuery.noConflict();
 	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
+	var dseOpenedNodes="${dseOpenedNodes}";
+	var dseClosedNodes="${dseClosedNodes}";
 
 	//set ajax to 600*1000 milliseconds
 	Ext.Ajax.timeout = 1800000;

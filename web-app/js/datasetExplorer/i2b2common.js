@@ -1986,6 +1986,8 @@ function getTreeNodeFromXMLNode(concept)
 	    
 	    if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key + ",")==-1) autoExpand=true;
 		
+	    var expand=((contains(dseOpenedNodes, key)) || autoExpand) && (!contains(dseClosedNodes, key));
+	    
 	    // set the root node
     	newnode = new Tree.AsyncTreeNode({
         text: name, 
@@ -1995,17 +1997,13 @@ function getTreeNodeFromXMLNode(concept)
         comment: comment,
         qtip: tooltip,
    		iconCls:iconCls,
-   		cls: tcls,
-        /*qtipCfg:{
-        		 text:tooltip,
-      			 autoHide:true
-        		},*/ 		  
+   		cls: tcls,	  
         level: level,  //extra attribute for storing level in hierarchy access through node.attributes.level
    		dimcode: dimcode,
    		tablename: tablename,
    		normalunits: normalunits,
    		oktousevalues: oktousevalues,
-   		expanded: autoExpand
+   		expanded: expand
    		 });
    		 newnode.addListener('contextmenu',ontologyRightClick);
 	return newnode;

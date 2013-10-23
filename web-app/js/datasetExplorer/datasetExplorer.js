@@ -48,7 +48,6 @@ function dataSelectionCheckboxChanged(ctl)
 {
 	if(getSelected(ctl)[0] != undefined)
 	{
-		// outputSelected(ctl);
 		Ext.getCmp("exportStepDataSelectionNextButton").enable();
 	}
 }
@@ -71,12 +70,6 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
 				{
 					var exp = result.responseText.evalJSON();
 					if (exp.success && exp.files.length > 0)	{
-						/*for (var i = 0; i < exp.files.length; i++) {
-							var file = exp.files[i]
-							if (file.type == 'script') {
-								
-							}
-						}*/
 						loadScripts(exp.files);
 					}
 				},
@@ -148,43 +141,6 @@ Ext.onReady(function()
 				layout : 'border'
 			}
 	);
-
-	/* eastPanel = new Ext.Panel({
-   id : 'eastPanel',
-   region : 'east',
-   width : 330,
-   minwidth : 200,
-   split : true,
-   border : true,
-   layout : 'border'}); */
-	
-//	if(GLOBAL.Config != "jj")
-//	{
-//		northPanel = new Ext.Panel(
-//				{
-//					id : 'northPanel',
-//					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif"></img></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
-//					region : 'north',
-//					height : 45,
-//					split : false,
-//					border : true
-//				}
-//		);
-//	}
-//	else
-//	{
-//		northPanel = new Ext.Panel(
-//				{
-//					id : 'northPanel',
-//					region : 'north',
-//					height : 30,
-//					split : false,
-//					border : true,
-//					tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle,GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
-//					contentEl: "header-div"
-//				}
-//		);
-//	}
 	qphtml = "<div style='margin: 10px'>Query Criteria<br /><select size='8' id='queryCriteriaSelect1' style='width:400px; height:250px;'></select><br />\
 		< button onclick = 'resetQuery()' > Reset < / button > < br / > < div id = 'queryCriteriaDiv1' style = 'font:11pt;width:200px; height:250px; white-space:nowrap;overflow:auto;border:1px solid black' > < / div > < / div > "
 
@@ -474,7 +430,6 @@ Ext.onReady(function()
 					split : true,
 					border : true,
 					layout : 'fit'
-					//tbar:tb2
 				}
 		);
 
@@ -546,10 +501,7 @@ Ext.onReady(function()
 				,
 				collapsible : false,
 				//height : 300,
-				//width : 300,
 				deferredRender : false,
-				//split : true,
-				//tbar : tb2,
 				activeTab : 0,
 		        tools:[{
 					id:'help',
@@ -606,30 +558,7 @@ Ext.onReady(function()
 				height : 90
 				}
 		);
-		/*
-		 * Commented out the Jobs panel to hide as it isn't used without Gene Pattern
-		 * 
-		 * analysisJobsPanel = new Ext.Panel(
-				{
-					id : 'analysisJobsPanel',
-					title : 'Jobs',
-					region : 'center',
-					split : true,
-					height : 90,
-					layout : 'fit',
-					//autoLoad : getJobsData,
-					listeners :
-					{
-						activate : function(p) {
-							getJobsData(p)
-						},
-						deactivate: function(){
-							//resultsTabPanel.tools.help.dom.style.display="none";
-						}
-					},
-					collapsible : true						
-				}
-		);*/
+		
 		analysisDataExportPanel = new Ext.Panel(
 				{
 					id : 'analysisDataExportPanel',
@@ -638,7 +567,6 @@ Ext.onReady(function()
 					split : true,
 					height : 90,
 					layout : 'fit',
-					//autoLoad : getDatadata,
 					listeners :
 					{
 						activate : function(p) {
@@ -648,9 +576,7 @@ Ext.onReady(function()
 							runAllQueries(getDatadata, p);
 			        	 	return;
 						},
-						deactivate: function(){
-							//resultsTabPanel.tools.help.dom.style.display="none";
-						},
+						deactivate: function(){},
 						'afterLayout': {
 							fn: function(el) {
 								onWindowResize();
@@ -682,29 +608,12 @@ Ext.onReady(function()
 			           	callback: setDataAssociationAvailableFlag,
 			           	evalScripts:true
 			        },
-			        /*buttons: [{
-						text:'Run Job',
-						handler: function()	{
-							var analysis = Ext.get('analysis');
-							if (analysis != undefined) {
-								var selectedAnalysis = analysis.dom.value;
-								if (selectedAnalysis != '') {
-									selectedAnalysis = selectedAnalysis.charAt(0).toUpperCase()+selectedAnalysis.substring(1);
-									eval("submit"+selectedAnalysis+"Job(this.form)");
-								} else {
-									Ext.Msg.alert('Analysis required!!!', 'Please select an Analysis from the \'Analysis\' menu.')
-								}
-							}
-						}      	
-			        }],
-			        buttonAlign:'center',*/
 			        listeners :
 					{
 			        	activate : function() {
 							GLOBAL.Analysis="dataAssociation";
 							renderCohortSummary();
 							onWindowResize();
-							//Ext.getCmp('dataAssociationBodyPanel').focus()
 						},
 						'afterLayout': {
 							fn: function(el) {
@@ -724,15 +633,12 @@ Ext.onReady(function()
 					split : true,
 					height : 90,
 					layout : 'fit',
-					//autoLoad : getExportJobs,
 					listeners :
 					{
 						activate : function(p) {
 							getExportJobs(p)
 						},
-						deactivate: function(){
-							//resultsTabPanel.tools.help.dom.style.display="none";
-						}
+						deactivate: function(){}
 					},
 					collapsible : true						
 				}
@@ -742,8 +648,6 @@ Ext.onReady(function()
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
 		resultsTabPanel.add(dataAssociationPanel);
-		//Commented out the Jobs panel to hide as it isn't used without Gene Pattern
-		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
 		
@@ -813,7 +717,6 @@ Ext.onReady(function()
 					title : treetitle,
 					animate : false,
 					autoScroll : true,
-					// loader : new Ext.ux.OntologyTreeLoader({dataUrl : 'none'}),
 					enableDrag : true,
 					ddGroup : 'makeQuery',
 					containerScroll : true,
@@ -839,34 +742,13 @@ Ext.onReady(function()
 
 		prevTree.setRootNode(prevTreeRoot);
 
-		// start filling in each region with the content panels
-		// if(GLOBAL.Config == "jj")
-		// {
-		// southCenterPanel.add(exportPanel);
-		// }
-		// southCenterPanel.add(resultsPanel);
-		// southCenterPanel.add(analysisPanel);
-		// southCenterPanel.add(southCenterCenterPanel);
-
-
-		/*southCenterPanel.add(resultsTabPanel);
-         centerPanel.add(queryPanel);*/
 
 		/**********new prototype*********/
 
 		centerPanel.add(resultsTabPanel);
 		/********************************/
-
-		//centerPanel.add(southCenterPanel);
-
-
-		// centerPanel.add(analysisPanel);
-		// centerPanel.add(resultsTabPanel);
 		
 		westPanel.add(createOntPanel());
-		//setTimeout("loadOntPanel()", 3000);
-		//westPanel.add(prevTree);
-		// eastPanel.add(exportPanel);
 		centerMainPanel.add(westPanel);
 		centerMainPanel.add(centerPanel);
 
@@ -885,8 +767,6 @@ Ext.onReady(function()
 		);
 
 		Ext.get(document.body).addListener('contextmenu', contextMenuPressed);
-		// prevTree.dragZone.addToGroup("export");
-
 
 		// preload the setvalue dialog
 		setvaluePanel = new Ext.Panel(
@@ -1065,27 +945,6 @@ heatmap options and loaded the gene expression data
 function exportDataSets()
 {
 	Ext.get("exportdsform").dom.submit();
-
-/*	Ext.Ajax.request(
-	{
-		url : pageInfo.basePath+"/export/check",
-			method : 'POST',
-			timeout: '600000',
-			params :  Ext.urlEncode({}),
-			success : function(result, request)
-			{
-				var exp = result.responseText.evalJSON();
-				if (exp.ready)	{
-					Ext.get("exportdsform").dom.submit();
-				} else	{
-					alert("Nothing to export");
-				}
-			},
-			failure : function(result, request)
-			{
-				alert("Unable to process the export: " + result.responseText);
-			}
-	}); */
  }
 
 function hasMultipleTimeSeries()
@@ -1112,15 +971,6 @@ function createOntPanel()
 			split : true
 			}
 	);
-
-	/* ontSearchTermsPanel = new Ext.TabPanel({
-   id : 'searchTermsPanel',
-   title : 'Find Terms',
-   region : 'center',
-   deferredRender : false,
-   border : true}); */
-
-
 
 	ontSearchByCodePanel = new Ext.Panel(
 			{
@@ -1152,7 +1002,6 @@ function createOntPanel()
 
 		searchByNameForm = new Ext.Panel(
 				{
-					// title : 'Search by Form',
 					id : 'searchByNameForm',
 					region : 'north',
 					bodyStyle : 'background:#eee;padding: 10px;',
@@ -1169,7 +1018,6 @@ function createOntPanel()
 		searchByNameTree = new Tree.TreePanel(
 				{
 					id : 'searchByNameTree',
-					// title : 'Search Results',
 					animate : false,
 					autoScroll : true,
 					loader : new Ext.ux.OntologyTreeLoader(
@@ -1178,7 +1026,6 @@ function createOntPanel()
 							}
 					),
 					enableDrag : true,
-					// bodyStyle : 'padding 10px;',
 					ddGroup : 'makeQuery',
 					containerScroll : true,
 					enableDrop : false,
@@ -1214,55 +1061,7 @@ function createOntPanel()
 //		******************************************************************************
 		var showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
-			//Ext.get('advancedbutton').dom.style.display='';
 		}
-//		ontFilterPanel = new Ext.Panel(
-//				{
-//					title : 'Search',
-//					id : 'ontFilterPanel',
-//					region : 'center',
-//					height : 500,
-//					width : 250,
-//					border : true,
-//					bodyStyle : 'background:lightgrey;',
-//					onShow : showFn,
-//					layout : 'border'
-//						//layout: 'table',
-//						//layoutConfig:{columns:1},
-//						//split : true
-//				}
-//		);
-
-//		ontFilterForm = new Ext.Panel(
-//				{
-//					title : 'Search',
-//					id : 'ontFilterForm',
-//					region : 'north',
-//					bodyStyle : 'background:#eee;padding: 10px;',
-//					//html : shtml,
-//					height : 130,
-//					border : true,
-//					split : false,
-//					//autoScroll: true,
-//					autoLoad :
-//					{
-//					url : pageInfo.basePath+'/ontology/showOntTagFilter',
-//					scripts : true,
-//					nocache : true,
-//					discardUrl : true,
-//					method : 'POST',
-//					callback : ontFilterLoaded
-//					},
-//			        tools:[{
-//						id:'help',
-//						qtip:'Click for context sensitive help',
-//					    handler: function(event, toolEl, panel){
-//					    	D2H_ShowHelp("1065",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-//					    }
-//			        }]
-//				// collapsible: true
-//				}
-//		);
 
 		// shorthand
 		var Tree = Ext.tree;
@@ -1270,7 +1069,6 @@ function createOntPanel()
 		ontFilterTree = new Tree.TreePanel(
 				{
 					id : 'ontFilterTree',
-					// title : 'Search Results',
 					animate : false,
 					autoScroll : true,
 					loader : new Ext.ux.OntologyTreeLoader(
@@ -1279,14 +1077,12 @@ function createOntPanel()
 							}
 					),
 					enableDrag : true,
-					// bodyStyle : 'padding 10px;',
 					ddGroup : 'makeQuery',
 					containerScroll : true,
 					enableDrop : false,
 					region : 'center',
 					rootVisible : false,
 					expanded : true,
-					//split : true,
 					border : true,
 					height : 400
 				}
@@ -1308,9 +1104,6 @@ function createOntPanel()
 		);
 
 		ontFilterTree.setRootNode(ontFilterTreeRoot);
-//		ontFilterPanel.add(ontFilterForm);
-//		ontFilterPanel.add(ontFilterTree);
-		// ontTabPanel.add(ontSearchByCodePanel);
 
 		setupOntTree('navigateTermsPanel', 'Navigate Terms');
 		
@@ -1429,19 +1222,11 @@ function login(domain, username, password)
 
 function loginComplete(pmresponse)
 {
-	// alert(pmXML);
-	// oDomDoc = (new DOMParser()).parseFromString(pmXML, "text/xml");
-	// oDomDoc = (new DOMParser()).parseFromString("<sending_application>blah</sending_application>", "text/xml");
 	if(GLOBAL.Debug)
 	{
 		alert(pmresponse.responseText);
 	}
 	oDomDoc = pmresponse.responseXML;
-	// if(GLOBAL.Debug){alert(new XMLSerializer().serializeToString(oDomDoc))};
-	// oDomDoc.setProperty("SelectionLanguage", "XPath");
-	// oDomDoc.setProperty("SelectionNamespaces", "xmlns:tns='http://ws.pm.i2b2.harvard.edu' \
-	// xmlns : ns3 = 'http://www.i2b2.org/xsd/hive/msg/version/' xmlns : ns4 = 'http://www.i2b2.org/xsd/cell/pm/1.1/' \
-	// xmlns : ns2 = 'http://www.i2b2.org/xsd/hive/msg/1.1/' ")
 	var statusNode = oDomDoc.selectSingleNode('//response_header/result_status/status');
 	var statusType = statusNode.getAttribute("type");
 	var statusText = statusNode.firstChild.nodeValue;
@@ -1514,17 +1299,6 @@ function showProjectDialog(projects)
 	// create the array
 	Ext.projects = [];
 
-	/* Ext.projects = [
-      ['AL', 'Alabama'],
-      ['AK', 'Alaska'],
-      ['AZ', 'Arizona'],
-      ['AR', 'Arkansas'],
-      ['CA', 'California'],
-      ['CO', 'Colorado'],
-      ['CN', 'Connecticut'],
-      ['DE', 'Delaware'],
-      ['DC', 'District of Columbia'] ]; */
-
 	// populate the array
 	for(c = 0; c < projects.length; c ++ )
 	{
@@ -1577,9 +1351,6 @@ function showProjectDialog(projects)
 			}
 	);
 
-
-
-
 	projectform = new Ext.FormPanel(
 			{
 				id : 'projectForm',
@@ -1624,13 +1395,7 @@ function projectDialogComplete(projectid)
 
 	// get the project id
 	GLOBAL.ProjectID = projectid;
-	/* var u = queryPanel.getUpdater();
-      while(u.isUpdating())
-      {
-      alert('waiting');
-      } */
-	//getPreviousQueries();
-	
+
 	jQuery('#box-search').prependTo(jQuery('#westPanel')).show();
 	jQuery('#noAnalyzeResults').prependTo(jQuery('#navigateTermsPanel .x-panel-body'));
 	
@@ -1650,11 +1415,8 @@ function projectDialogComplete(projectid)
 
 function getPreviousQueriesComplete(response)
 {
-	// alert(response.responseText);
 	// shorthand
 	var Tree = Ext.tree;
-	// add a tree sorter in folder mode
-	// new Tree.TreeSorter(ontTree, {folderSort : true});
 
 	if(GLOBAL.Debug)
 	{
@@ -1754,6 +1516,57 @@ function setupOntTree(id_in, title_in) {
 			}
 	);
 	
+	ontTree.on('beforecollapsenode', function(node, deep, anim)
+			{	
+				Ext.Ajax.request(
+						{
+							url : removeNodeDseURL+"?node="+node.id,
+							method : 'POST',
+							success : function(result, request)
+							{}
+						,
+						failure : function(result, request)
+						{
+							console.log(result);
+						}
+						,
+						timeout : '600000'
+						}
+				);	
+			}
+	);
+	var firstExpandProgram=new Array();
+	ontTree.on('beforeexpandnode', function(node, deep, anim)
+			{
+			var expand=true;
+			if(GLOBAL.PathToExpand!=undefined && GLOBAL.PathToExpand.indexOf(node.id) > -1 && node.parentNode.id=="treeRoot" && !contains(dseClosedNodes, node.id)){
+				if(firstExpandProgram.indexOf(node.id) == -1){
+					firstExpandProgram.push(node.id);
+					expand=false;
+				}
+			}
+
+			if(expand){
+				Ext.Ajax.request(
+						{
+							url : addNodeDseURL+"?node="+node.id,
+							method : 'POST',
+							success : function(result, request)
+							{}
+						,
+						failure : function(result, request)
+						{
+							console.log(result);
+						}
+						,
+						timeout : '600000'
+						}
+				);
+			}
+
+		}
+	);
+	
 	var treeRoot = new Tree.TreeNode(
 			{
 				text : 'root',
@@ -1776,10 +1589,6 @@ function setupOntTree(id_in, title_in) {
 	onWindowResize();
 }
 
-/*If includeExcludeFlag is
- * -"include": Across Trials is the only concept included
- * -"exclude": Across Trials concept is the only concept excluded 
- */
 function createTree(includeExcludeFlag, ontresponse){
 	// shorthand
 	var Tree = Ext.tree;
@@ -1798,6 +1607,7 @@ function createTree(includeExcludeFlag, ontresponse){
 				qtip : 'root'
 			}
 	);
+	
 	for(var c = 0; c < concepts.length; c ++ )
 	{
 		var level = concepts[c].selectSingleNode('level').firstChild.nodeValue;
@@ -1840,14 +1650,16 @@ function createTree(includeExcludeFlag, ontresponse){
 	    if (isSearchResult) {
 	    	tcls += ' searchResultNode';
 	    }
-   		
+
+	    var expand=((contains(dseOpenedNodes, key)) || autoExpand) && (!contains(dseClosedNodes, key));
+
 		var ontRoot = new Tree.AsyncTreeNode(
 			{
 				text : name,
 				draggable : false,
 				id : key,
 				qtip : tooltip,
-				expanded : autoExpand,
+				expanded : expand,
 				iconCls : iconCls,
 				cls : tcls
 			}
@@ -1855,18 +1667,14 @@ function createTree(includeExcludeFlag, ontresponse){
 
 		if(lockedNode) {
 			ontRoot.attributes.access='locked';
-			//ontRoot.disable();
 			ontRoot.on('beforeload', function(node){return false});
 		}
-		
-		//treeRoot.appendChild(ontRoot);
 
 		ontRoots.push(ontRoot);
 		
 		/*****************************************/
 
 	}
-
 	return ontRoots;
 }
 
@@ -1916,27 +1724,7 @@ function getSubCategories(ontresponse)
 	}
 
 	onWindowResize();
-	Ext.getCmp('navigateTermsPanel').render();
-	/*if(GLOBAL.IsAdmin)
-   {
-   	searchByNameTree.dragZone.addToGroup("analysis");
-   }*/
-}
 
-function ontLoadNode(node)
-{
-	// shorthand
-	var Tree = Ext.tree;
-	var child = new Tree.AsyncTreeNode(
-			{
-				text : 'fake second node',
-				draggable : true,
-				id : 'key',
-				qtip : 'tooltip'
-			}
-	);
-	child.addListener('beforeload', ontLoadNode, this);
-	node.appendChild(child);
 }
 
 function setupDragAndDrop()
@@ -1964,25 +1752,8 @@ function setupDragAndDrop()
 				}
 				else
 				{
-					/* var subset = this.id.substr(16, 1);
-               var panelnumber = this.id.substr(18);
-               var level = data.node.attributes.level;
-               var name = data.node.text;
-               var key = data.node.id;
-               var tooltip = data.node.attributes.qtip;
-               var tablename = data.node.attributes.tablename;
-               var dimcode = data.node.attributes.dimcode;
-               var comment = data.node.attributes.comment;
-               var normalunits = data.node.attributes.normalunits;
-               var oktousevalues = data.node.attributes.oktousevalues;
-               var concept = createPanelItem(subset, panelnumber, level, name, key, tooltip, tablename, dimcode, comment, normalunits, oktousevalues);
-					 */
-
 					var x=e.xy[0];
 					var y=e.xy[1];
-					//alert(document.elementFromPoint(x,y).id);
-					//alert(this.dragElId);
-					//if(document.elementFromPoint(x,y).id!=this.dragElId){return;} //hack to fix layers over each other
 					var concept = null;
 					if(data.node.attributes.oktousevalues != "Y")
 					{
@@ -2008,18 +1779,6 @@ function setupDragAndDrop()
 			}
 		}
 	}
-	/* Set up Drag and Drop for the export Panel
-   var qcd = Ext.get(exportPanel.body);
-   dts = new Ext.dd.DropTarget(qcd,
-   {
-   ddGroup : 'export'
-   });
-
-   dts.notifyDrop = function(source, e, data)
-   {
-   createExportItem(data.node.text, data.node.id);
-   return true;
-   } */
 
 	/* Set up Drag and Drop for the analysis Panel */
 	var qcd = Ext.get(analysisPanel.body);
@@ -2032,8 +1791,6 @@ function setupDragAndDrop()
 
 	dts.notifyDrop = function(source, e, data)
 	{
-		// createAnalysisItem(data.node.text, data.node.id);
-		// alert("build analsyis graph now!");
 		buildAnalysis(data.node);
 		return true;
 	}
@@ -2048,8 +1805,6 @@ function setupDragAndDrop()
 
 	dtg.notifyDrop = function(source, e, data)
 	{
-		// createAnalysisItem(data.node.text, data.node.id);
-		// alert("build analsyis graph now!");
 		buildAnalysis(data.node);
 		return true;
 	}
@@ -2058,8 +1813,6 @@ function setupDragAndDrop()
 function getPreviousQueryFromIDComplete(subset, result)
 {
 	var doc = result.responseXML;
-	// alert(result.responseText);
-	//resetQuery();  //if i do this now it wipes out the other subset i just loaded need to make it subset specific
 	var panels = doc.selectNodes("//panel");
 	for(var p = 0; p < panels.length; p ++ )
 	{
@@ -2083,7 +1836,6 @@ function getPreviousQueryFromIDComplete(subset, result)
 			var key = item.selectSingleNode("item_key").firstChild.nodeValue;
 			var tooltip = getValue(item.selectSingleNode("tooltip"),"");
 			var itemclass = item.selectSingleNode("class").firstChild.nodeValue;
-			//createPanelItem(panelnumber, level, name, key, tooltip, '', '', '');
 
 
 			/*need all this information for reconstruction but not all is available*/
@@ -2136,12 +1888,7 @@ function createExportItem(name, setid)
 	}
 	var panel = exportPanel.body.dom;
 	var li = document.createElement('div');
-	// was li
-	// convert all object attributes to element attributes so i can get them later (must be a way to keep them in object ? )
-	// li.setAttribute('conceptid', key);
-	// li.setAttribute('conceptlevel', level);
-	// li.setAttribute('concepttooltip', tooltip);
-	// li.setAttribute('concepttablename', tablename);
+
 	li.setAttribute('setid', setid);
 	li.setAttribute('setname', name);
 	li.className = "conceptUnselected";
@@ -2220,7 +1967,6 @@ function showNode(key){
 	GLOBAL.PathToExpand=key;
 	setActiveTab();
 	var rootNode = ontTabPanel.getActiveTab().getRootNode();
-	//rootNode.collapseChildNodes(true);
 	drillDown(rootNode);
 }
 
@@ -2253,14 +1999,6 @@ function showConceptInfoDialog(conceptKey, conceptid, conceptcomment)
 					border : false,
 					autoScroll: true,
 					buttons : [
-					           /* {
-            text : 'Search For More Information',
-            handler : function()
-            {
-               popitup('http://www.google.com/search?q=' + conceptid);
-            }
-         }
-         ,*/
 					           {
 					        	   text : 'Close',
 					        	   handler : function()
@@ -2273,35 +2011,26 @@ function showConceptInfoDialog(conceptKey, conceptid, conceptcomment)
 				}
 		);
 	}
-	//var conceptKeySplits = conceptKey.split('\\');
-	//var conceptType = (conceptKeySplits[1]=='')?conceptKeySplits[2]:conceptKeySplits[1];
 
 	conceptinfowin.show(viewport);
 	conceptinfowin.header.update("Show Concept Definition-" + conceptid);
 	Ext.get(conceptinfowin.body.id).update(conceptcomment);
-	//var begin=conceptcomment.indexOf("trial:");
-	//if(begin==0)
-	//{
-		conceptinfowin.load({
-			//url: pageInfo.basePath+"/trial/trialDetailByTrialNumber",
-			url: pageInfo.basePath+"/ontology/showConceptDefinition",
-			//params: {id: conceptcomment.substring(6,conceptcomment.length), conceptType: conceptType}, // or a URL encoded string
-			params: {conceptKey:conceptKey}, // or a URL encoded string		
-			//callback: yourFunction,
-			//scope: yourObject, // optional scope for the callback
-			discardUrl: true,
-			nocache: true,
-			text: "Loading...",
-			timeout: 30000,
-			scripts: false
-		});
-	//}
+
+	conceptinfowin.load({
+		url: pageInfo.basePath+"/ontology/showConceptDefinition",
+		params: {conceptKey:conceptKey}, // or a URL encoded string		
+		discardUrl: true,
+		nocache: true,
+		text: "Loading...",
+		timeout: 30000,
+		scripts: false
+	});
+
 
 }
 
 function showQuerySummaryWindow(source)
 {
-	// var query = getCRCQueryRequest();
 	if( ! this.querysummarywin)
 	{
 
@@ -2348,10 +2077,6 @@ function showQuerySummaryWindow(source)
 		TRIALS\\CT0145T03\\RBM\\Adjusted Values\\IL - 13 - & gt;\
 		.75 < br > "
 
-
-
-		// querySummaryPanel.setBody("<div style='height:500px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
-		// querySummaryPanel.setBody(fakehtml);
 		var q1 = getQuerySummary(1);
 		var q2 = getQuerySummary(2);
 		querySummaryPanel.body.update('<table border="1" height="100%" width="100%"><tr><td width="50%" valign="top" style="padding:10px;"><h2>Subset 1 Criteria</h2>' + q1 + '</td><td valign="top" style="padding:10px;"><h2>Subset 2 Criteria</h2>' + q2 + '</td></tr></table>');
@@ -2371,11 +2096,6 @@ function popitup(url)
 	}
 	return false;
 }
-
-
-
-
-
 
 function showExportStepSplitTimeSeries()
 {
@@ -2535,7 +2255,6 @@ function exportDataFinished()
 
 function runAllQueries(callback, panel)
 {
-	// analysisPanel.body.update("<table border='1' width='100%' height='100%'><tr><td width='50%'><div id='analysisPanelSubset1'></div></td><td><div id='analysisPanelSubset2'></div></td></tr>");
 	var subset = 1;
 	if(isSubsetEmpty(1) && isSubsetEmpty(2))
 	{
@@ -2574,11 +2293,6 @@ function runQuery(subset, callback)
 	{
 		// analysisPanel.body.update("<table border='1' width='100%' height='100%'><tr><td width='50%'><div id='analysisPanelSubset1'></div></td><td><div id='analysisPanelSubset2'></div></td></tr>");
 	}
-	/* if(isSubsetEmpty(subset))
-   {
-   callback();
-   return;
-   } */
 	var query = getCRCQueryRequest(subset);
 	// first subset
 	queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
@@ -2587,7 +2301,6 @@ function runQuery(subset, callback)
 				url : pageInfo.basePath+"/proxy?url=" + GLOBAL.CRCUrl + "request",
 				method : 'POST',
 				xmlData : query,
-				// callback : callback,
 				success : function(result, request)
 				{
 				runQueryComplete(result, subset, callback);
@@ -2618,22 +2331,13 @@ function runQueryComplete(result, subset, callback)
 	var numOfPatientsFound = result.responseXML.selectSingleNode("//set_size").firstChild.nodeValue;
 	var patientsetid = result.responseXML.selectSingleNode("//result_instance_id").firstChild.nodeValue;
 	GLOBAL.CurrentSubsetIDs[subset] = patientsetid;
-	// alert(GLOBAL.CurrentSubsetIDs[subset]);
 	var patlabel = "patients";
 	if(GLOBAL.Config == "jj")
 		patlabel = "subjects";
-	// analysisPanel.setBody(analysisPanel.getBody() + "<table style='margin:5px;font:12pt arial bold;'><tr><td><h1>" + numOfPatientsFound + " " + patlabel + " found in subset " + subset + ".</h1></td></tr></table>");
-	// analysisPanel.body.insertHtml("beforeEnd", "<table style='margin:5px;font:12pt arial bold;'><tr><td><h1>" + numOfPatientsFound + " " + patlabel + " found in subset " + subset + ".</h1></td></tr></table>");
-	// Ext.get("analysisPanelSubset" + subset).update("");
-	// Ext.get("analysisPanelSubset" + subset).insertHtml("beforeEnd", "<table style='margin:5px;font:12pt arial bold;'><tr><td><h1>" + numOfPatientsFound + " " + patlabel + " found in subset " + subset + ".</h1></td></tr></table>");
 	if(GLOBAL.Debug)
 	{
 		alert(getCRCpdoRequest(patientsetid, 1, numOfPatientsFound));
 	}
-	// need to set a maximum
-
-	/* removed the pdo request call 12 / 17 / 2008 added the callback logic here instead */
-	// runQueryPDO(patientsetid, 1, numOfPatientsFound, subset, callback );
 
 	if(STATE.QueryRequestCounter > 0) // I'm in a chain of requests so decrement
 	{
@@ -2655,13 +2359,11 @@ function runQueryComplete(result, subset, callback)
 function runQueryPDO(patientsetid, minpatient, maxpatient, subset, callback)
 {
 	var query = getCRCpdoRequest(patientsetid, minpatient, maxpatient, subset)
-	// resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
 	queryPanel.el.mask('Getting patient set ' + subset + '...', 'x-mask-loading');
 	Ext.Ajax.request(
 			{
 				url : pageInfo.basePath+"/proxy?url=" + GLOBAL.CRCUrl + "pdorequest",
 				method : 'POST',
-				// scope : this,
 				xmlData : query,
 				success : function(result, request)
 				{
@@ -2844,21 +2546,6 @@ function getNodeForAnalysis(node)
 function buildAnalysis(nodein)
 {
 	var node = nodein // getNodeForAnalysis(nodein);
-	/* if(GLOBAL.analysisFirst == undefined) // clear out the body
-   {
-   analysisPanel.body.update("");
-   GLOBAL.analysisFirst = false;
-   }
-   var html = "<div style='overflow:auto;height:100%; width:100%'><table border='1' class='demoTable' style='border:1px solid black;margin:5px;'>";
-   html = html + "<tr><td colspan='3'><b>" + node.attributes.text + " Distribution</b></td></tr>";
-   html = html + "<tr><td>Concept</td><td>Count</td><td>Percentage</td></tr>";
-   node.expand();
-   for(var p = 0; p < node.childNodes.length; p ++ )
-   {
-   html = html + "<tr><td>" + node.childNodes[p].attributes.text + "</td><td>9</td><td>33.3%</td></tr>"
-   }
-   html = html + "</table></div>"
-   analysisPanel.body.update(html); */
 	if(isSubsetEmpty(1) && isSubsetEmpty(2))
 	{
 		alert('Empty subsets found, need a valid subset to analyze!');
@@ -2875,21 +2562,6 @@ function buildAnalysis(nodein)
 		);
 		return;
 	}
-	/* analysisPanel.load({
-   // url : "analysis.jsp",
-   url : "chart",
-   params : Ext.urlEncode({charttype : "analysis",
-   concept_key : node.attributes.id,
-   result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-   result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]}), // or a URL encoded string
-   // callback : yourFunction,
-   // scope : yourObject, // optional scope for the callback
-   discardUrl : false,
-   nocache : true,
-   text : "Loading...",
-   timeout : 30,
-   scripts : true
-   }); */
 
 	Ext.Ajax.request(
 			{
@@ -2930,19 +2602,6 @@ function buildAnalysisComplete(result)
 
 function updateAnalysisPanel(html, insert)
 {
-	/* if(insert)
-   {
-   var frame = analysisPanel.getFrame();
-   var body = analysisPanel.getFrameBody();
-   var extBody = Ext.get(body);
-   extBody.insertHtml('afterBegin', txt, false);
-   extBody.scrollTo('top', 0, false);
-   lastAnalysisResult = txt + lastAnalysisResult;
-   }
-   else
-   {
-   analysisPanel.getFrame().update(html, false, null);
-   } */
 	if(insert)
 	{
 		var body = analysisPanel.body;
@@ -2989,14 +2648,10 @@ function searchByNameComplete(response)
 				url : pageInfo.basePath+"/ontology/sectest",
 				method : 'POST',
 				success : function(result, request)
-				{
-				//alert(result);
-				}
+				{}
 			,
 			failure : function(result, request)
-			{
-				//alert(result);
-			}
+			{}
 			,
 			timeout : '300000',
 			params : Ext.urlEncode(
@@ -3326,7 +2981,6 @@ function getIgv() {
 		selectedSNPsStr = selectedSNPsEltValue;
 	}
 	
-	//genePatternReplacement();
 	Ext.Ajax.request(
 	{
 		url: pageInfo.basePath+"/analysis/showIgv",
@@ -3419,57 +3073,6 @@ function showPlinkSelection() {
 
 
 function getPlink() {
-
-	// before Ajax call, log into genepattern:
-	//genePatternLogin();
-	
-	/*
-	var selectedGenesElt = Ext.get("selectedGenesPlink");
-	var selectedGenesEltValue = selectedGenesElt.dom.value;
-	var selectedGeneStr = "";
-	if (selectedGenesEltValue && selectedGenesEltValue.length != 0) {
-		selectedGeneStr = selectedGenesEltValue;
-	}
-	
-	var geneAndIdListElt = Ext.get("selectedGenesAndIdPlink");
-	var geneAndIdListEltValue = geneAndIdListElt.dom.value;
-	var geneAndIdListStr = "";
-	if (geneAndIdListElt && geneAndIdListEltValue.length != 0) {
-		geneAndIdListStr = geneAndIdListEltValue;
-	}
-	*/
-	
-	/*
-	var selectedSNPsElt = Ext.get("selectedSNPsPlink");
-	var selectedSNPsEltValue = selectedSNPsElt.dom.value;
-	var selectedSNPsStr = "";
-	if (selectedSNPsElt && selectedSNPsEltValue.length != 0) {
-		selectedSNPsStr = selectedSNPsEltValue;
-	}
-	*/
-	
-	//genePatternReplacement();
-	/*Ext.Ajax.request(
-	{
-		url: pageInfo.basePath+"/analysis/showPlink",
-		method: 'POST',
-		success: function(result, request){
-			//getSNPViewerComplete(result);
-		},
-		failure: function(result, request){
-			//getSNPViewerComplete(result);
-		},
-		timeout: '1800000',
-		params: { result_instance_id1:  GLOBAL.CurrentSubsetIDs[1],
-			result_instance_id2:  GLOBAL.CurrentSubsetIDs[2],
-			chroms: GLOBAL.CurrentChroms //,
-			//genes: selectedGeneStr,
-			//geneAndIdList: geneAndIdListStr//,
-			//snps: selectedSNPsStr
-			}
-	});
-	
-	showWorkflowStatusWindow();*/
 }
 
 function showGwasSelection() {
@@ -3550,19 +3153,6 @@ function showGwas() {
 	}
 	
 	genePatternReplacement();
-	/*Ext.Ajax.request({						
-		url: pageInfo.basePath+"/asyncJob/createnewjob",
-		method: 'POST',
-		success: function(result, request){
-			runGwas(result, GLOBAL.CurrentSubsetIDs[1], GLOBAL.CurrentSubsetIDs[2],
-					getQuerySummary(1), getQuerySummary(2));
-		},
-		failure: function(result, request){
-			Ext.Msg.alert('Status', 'Unable to create the heatmap job.');
-		},
-		timeout: '1800000',
-		params: {jobType:  "GWAS"}
-	});*/
 }
 
 // After we get a job created by GPController, we run GWAS
@@ -3572,22 +3162,6 @@ function runGwas(result, result_instance_id1, result_instance_id2,
 	var jobName = jobNameInfo.jobName;
 
 	genePatternReplacement();
-	/*showJobStatusWindow(result);	
-
-	Ext.Ajax.request(
-	{						
-		url: pageInfo.basePath+"/genePattern/runGwas",
-		method: 'POST',
-		timeout: '1800000',
-		params: {result_instance_id1: result_instance_id1,
-			result_instance_id2:  result_instance_id2,
-			querySummary1: querySummary1,
-			querySummary2: querySummary2,
-			chroms: GLOBAL.CurrentChroms,
-			jobName: jobName
-		}
-	});
-	checkJobStatus(jobName);*/
 }
 
 function validateheatmapComplete(result)
@@ -3595,7 +3169,6 @@ function validateheatmapComplete(result)
 	var mobj=result.responseText.evalJSON();
 	GLOBAL.DefaultCohortInfo=mobj;
 
-	//genePatternReplacement();
 	showCompareStepPathwaySelection();
 
 }
@@ -3636,46 +3209,8 @@ function compareSubsetsComplete(result, setname1, setname2)
 
 	var data = jsonToDataTable(result.responseText);
 
-	/* new google.visualization.DataTable();
-   data.addColumn('string', 'Gene Name');
-   data.addColumn('number', 'chip_XXX_XXX_600');
-   data.addColumn('number', 'chip2');
-   data.addColumn('number', 'chip3');
-   data.addColumn('number', 'chip4');
-   data.addColumn('number', 'chip5');
-   data.addColumn('number', 'chip6');
-   data.addRows(4);
-   data.setCell(0, 0, 'ATF3');
-   data.setCell(0, 1, 0);
-   data.setCell(0, 2, 0.5);
-   data.setCell(0, 3, 1);
-   data.setCell(0, 4, 1.5);
-   data.setCell(0, 5, 2);
-   data.setCell(0, 6, 2.5);
-   data.setCell(1, 0, 'INS');
-   data.setCell(1, 1, 3);
-   data.setCell(1, 2, 3.5);
-   data.setCell(1, 3, 4);
-   data.setCell(1, 4, 4.5);
-   data.setCell(1, 5, 5);
-   data.setCell(1, 6, 5.5);
-   data.setCell(2, 0, 'TAP1');
-   data.setCell(2, 1, 0);
-   data.setCell(2, 2, null);
-   data.setCell(2, 3, - 1);
-   data.setCell(2, 4, - 1.5);
-   data.setCell(2, 5, - 2);
-   data.setCell(2, 6, - 2.5);
-   data.setCell(3, 0, 'IL6');
-   data.setCell(3, 1, - 3);
-   data.setCell(3, 2, - 3.5);
-   data.setCell(3, 3, - 4);
-   data.setCell(3, 4, - 4.5);
-   data.setCell(3, 5, - 5);
-   data.setCell(3, 6, - 5.5); */
 	var container = heatmapDisplay.body.dom;
 	heatmap = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapContainer'));
-	// heatmap = new org.systemsbiology.visualization.BioHeatMap(container);
 	heatmap.draw(data,
 			{
 		cellHeight : 5, cellWidth : 5, fontHeight : 3
@@ -3755,8 +3290,6 @@ function jsonToDataTable(jsontext)
 		}
 	}
 
-	// var vis_table = new google.visualization.Table(document.getElementById('table_div'));
-	// vis_table.draw(data, {showRowNumber : false});
 	return data;
 }
 
@@ -3956,27 +3489,6 @@ function getSummaryStatistics()
 			}
 	);
 
-
-
-
-	/* analysisPanel.load({
-   // url : "analysis.jsp",
-   url : "chart",
-   params : Ext.urlEncode({charttype : "basicstatistics",
-   concept_key : "",
-   result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-   result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]}), // or a URL encoded string
-   // callback :
-   // scope : yourObject, // optional scope for the callback
-   discardUrl : false,
-   nocache : true,
-   text : "Loading...",
-   timeout : 30,
-   scripts : true
-   }); */
-
-	// analysisPanel.setTitle("Results/Analysis - Summary statistics");
-	// analysisPanel.body.mask("Running analysis...", 'x-mask-loading');
 	resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
 }
 
@@ -4006,13 +3518,9 @@ function buildColumnModel(fields)
 
 function getSummaryStatisticsComplete(result, request)
 {
-	// analysisPanel.body.update(result.responseText, true, null);
-	// analysisPanel.getFrame().update(result.responseText, true, null);
-	// lastAnalysisResult = result.responseText;
 	resultsTabPanel.setActiveTab('analysisPanel');
 	updateAnalysisPanel(result.responseText, false);
 	getSummaryGridData();
-	//getExportButtonSecurity();
 }
 
 
@@ -4114,8 +3622,6 @@ function storeLoaded()
 			),
 			layout : 'fit',
 			width : 800
-			// frame : true,
-			// title : 'Framed with Checkbox Selection and Horizontal Scrolling'
 			}
 	);
 	analysisGridPanel.add(grid);
@@ -4164,25 +3670,12 @@ function printPreview(content)
 	var savebutton = "<input type='button' value='Save'  onclick='document.execCommand(\"SaveAs\",null,\".html\")' />";
 	generator.document.write(stylesheet + printbutton + savebutton + content);
 	generator.document.close();
-	// generator.print();
 }
 
 function exportGrid()
 {
 	viewport.getEl().mask("Getting Data....");
-	/* Ext.Ajax.request(
-   {
-   url : "export",
-   method : 'POST',
-   success : function(result, request){exportDataComplete(result); },
-   failure : function(result, request){exportDataComplete(result); },
-   timeout : '300000',
-   params : { result_instance_id1 : id1,
-   result_instance_id2 : id2
-   }
-   });  */
-	// Ext.get("rid1").dom.value = id1;
-	// Ext.get("rid2").dom.value = id2;
+
 	Ext.get("exportgridform").dom.submit();
 	setTimeout('viewport.getEl().unmask();', 10000);
 }
@@ -4236,7 +3729,6 @@ function RunHaploViewer(result, result_instance_id1, result_instance_id2, genes)
 	var jobNameInfo = Ext.util.JSON.decode(result.responseText);					 
 	var jobName = jobNameInfo.jobName;
 
-	//genePatternReplacement();
 	showJobStatusWindow(result);	
 	document.getElementById("gplogin").src = pageInfo.basePath + '/analysis/gplogin';   // log into GenePattern
 	Ext.Ajax.request(
@@ -4255,7 +3747,6 @@ function RunHaploViewer(result, result_instance_id1, result_instance_id2, genes)
 
 function searchByTagBefore()
 {
-	//ontFilterPanel.el.mask("Searching...");
 	var tagterm=document.getElementById("tagterm");
 	var tagtype=document.getElementById("tagtype");
 	var searchterm = document.getElementById('ontsearchterm').value;
@@ -4331,10 +3822,7 @@ function searchByTagComplete(response)
 		}
 		for(var c = 0; c < length; c ++ )
 		{
-			//var newnode=getTreeNodeFromJSON(concepts[c])
 			GLOBAL.PathToExpand += concepts[c] + ",";
-			//treeRoot.appendChild(newnode);
-			//setTreeNodeSecurity(newnode, concepts[c].access);
 		}
 		
 		for(var c = 0; c < uniqueLeaves.length; c++) {
@@ -4356,9 +3844,6 @@ function searchByTagComplete(response)
 
 function showHaploviewGeneSelection()
 {
-	//genePatternReplacement();
-	//if(!this.compareStepPathwaySelection)
-	//{
 	var win = new Ext.Window({
 		id: 'showHaploviewGeneSelection',
 		title: 'Haploview-Gene Selection',
@@ -4369,7 +3854,6 @@ function showHaploviewGeneSelection()
 		plain: true,
 		modal: true,
 		border:false,
-		//autoScroll: true,
 		buttons: [
 		          {
 		        	  id: 'haploviewGeneSelectionOKButton',
@@ -4385,7 +3869,6 @@ function showHaploviewGeneSelection()
 		        	  for (var i = 0; i < ob.options.length; i++)
 		        		  if (ob.options[i].selected)
 		        			  selected.push(ob.options[i].value);
-		        	  //alert(selected.join(','));
 		        	  GLOBAL.CurrentGenes=selected.join(',');
 		        	  getHaploview();
 		        	  win.close();}
@@ -4434,7 +3917,6 @@ function showWorkflowStatusWindow()
 		plain: true,
 		modal: true,
 		border:false,
-		//autoScroll: true,
 		buttons: [
 		         {
 		        	  text: 'Cancel Job',
@@ -4463,14 +3945,11 @@ function showWorkflowStatusWindow()
 					method : 'POST',
 					success : function(result, request)
 					{
-						//alert(result);
 						workflowStatusUpdate(result);
 					}
 				,
 				failure : function(result, request)
 				{
-					//alert(result);
-					//saveComparisonComplete(result);
 				}
 				,
 				timeout : '300000'
@@ -4501,8 +3980,6 @@ function terminateWorkflow(){
 			,
 			failure : function(result, request)
 			{
-				//alert(result);
-				//saveComparisonComplete(result);
 			}
 			,
 			timeout : '300000'
@@ -4526,9 +4003,6 @@ function workflowStatusUpdate(result){
 			wfsWindow.close();
 			wfsWindow =null;
 		}		
-		//var rpCount = response.rpCount;
-		//if(rpCount<=1){}
-		// only show it once
 		showWorkflowResult(result);
 	} 
 }
@@ -4545,8 +4019,6 @@ function showWorkflowResult(result)
 	var atrURL = response.atrURL;
 	var error = response.error;
 	var snpGeneAnnotationPage = response.snpGeneAnnotationPage;
-
-	//Ext.MessageBox.hide();
 
 	if (error != undefined) {
 		alert(error);
@@ -4657,4 +4129,16 @@ function toggleSidebar() {
 	    panel.setVisible(false); 
 	}
 	viewport.doLayout();
+}
+
+//check that an array a contains an object obj
+function contains(a, obj) {
+    var l=a.replace("[", "").replace("]", "").split(", ");
+    var i = l.length;
+    while (i--) {
+       if (l[i] == obj) {
+           return true;
+       }
+    }
+    return false;
 }
