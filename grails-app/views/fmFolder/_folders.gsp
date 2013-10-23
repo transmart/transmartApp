@@ -25,7 +25,7 @@
 						</g:if>
 						<span>
 							<g:if test="${folder.hasChildren()}">
-								<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false');">
+								<a id="toggleDetail_${folder.id}" href="#" onclick="toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false', false, false, true);">
 									<img alt="expand/collapse" id="imgExpand_${folder.id}" src="${resource(dir:'images',file:'folderplus.png')}" />
 								    <span class="foldericon ${folderIconType}"></span>
 								</a>
@@ -47,13 +47,18 @@
 						</a>
 					</td>
 				</tr>
-				
 				<g:if test="${folderSearchString?.indexOf(folder.folderFullName) > -1}">
 					<%-- Auto-expand this folder as long as it isn't a unique leaf. --%>
-					<g:if test="${(uniqueLeavesString?.indexOf(folder.folderFullName + ',') == -1)}">
+					<g:if test="${(uniqueLeavesString?.indexOf(folder.folderFullName + ',') == -1 && !nodesToClose.grep(folder.uniqueId))}">
 						<script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true');</script>
 					</g:if>
+					<g:elseif test="${nodesToExpand.grep(folder.uniqueId)}">
+						<script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true', true, false);</script>
+					</g:elseif>
 				</g:if>
+				<g:elseif test="${nodesToExpand.grep(folder.uniqueId)}">
+						<script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true', true, false);</script>
+				</g:elseif>
 				
 				<g:set var="files" value="${folder.fmFiles}" />
 				

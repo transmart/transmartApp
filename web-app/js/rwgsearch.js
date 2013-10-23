@@ -92,10 +92,6 @@ function addSearchAutoComplete()	{
 			
 			//If category is ALL, add this as free text as well
 			var category = jQuery("#search-categories").val();
-//			if (category == 'ALL') {
-//				searchParam={id:ui.item.label,display:'Free Text',keyword:ui.item.label,category:'text'};
-//				addSearchTerm(searchParam);
-//			}
 			return false;
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
@@ -150,7 +146,7 @@ function convertCategory(valueToConvert)	{
 }
 
 //Add the search term to the array and show it in the panel.
-function addSearchTerm(searchTerm, noUpdate, loadingFromSession)	{
+function addSearchTerm(searchTerm, noUpdate, openInAnalyze,datasetExplorerPath)	{
 	goWelcome();
 	
 	var category = searchTerm.display == undefined ? "TEXT" : searchTerm.display;
@@ -170,27 +166,17 @@ function addSearchTerm(searchTerm, noUpdate, loadingFromSession)	{
 	
 	// clear the search text box
 	jQuery("#search-ac").val("");
-	
-	// create flag to track if tree was updated
-	var treeUpdated = false
-	
-	// find all nodes in tree with this key, and select them
-//	var tree = jQuery("#filter-div").dynatree("getTree");
-//
-//	tree.visit(  function selectNode(node) {
-//		             if (node.data.key == key)  {
-//		            	 node.select(true);
-//		            	 node.makeVisible();
-//		            	 treeUpdated = true;
-//		             }
-//	             }
-//			   , false);
 
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
 	
-	if (!treeUpdated && !noUpdate) {
-      showSearchTemplate();
-	  showSearchResults();
+	if (!noUpdate) {
+		if(!openInAnalyze){
+			jQuery.ajax({
+				url:resetNodesRwgURL
+			});
+			showSearchTemplate();
+		}
+	  showSearchResults(openInAnalyze, datasetExplorerPath);
 	}
 }
 
@@ -312,7 +298,7 @@ function showSearchTemplate()	{
 
 //Method to load the search results in the search results panel and facet counts into tree
 //This occurs whenever a user add/removes a search term
-function showSearchResults()	{
+function showSearchResults(openInAnalyze, datasetExplorerPath)	{
 
 	// clear stored probe Ids for each analysis
 	analysisProbeIds = new Array();  
@@ -323,7 +309,7 @@ function showSearchResults()	{
 	jQuery('#results-div').empty();
 	
 	// call method which retrieves facet counts and search results
-	showFacetResults();
+	showFacetResults(openInAnalyze, datasetExplorerPath);
 	
 	//all analyses will be closed when doing a new search, so clear this array
 	openAnalyses = [];
@@ -331,8 +317,10 @@ function showSearchResults()	{
 }
 
 //Method to load the facet results in the search tree and populate search results panel
-function showFacetResults()	{
-	
+function showFacetResults(openInAnalyze, datasetExplorerPath)	{
+	if(openInAnalyze==undefined){
+		openInAnalyze=false;
+	}
 	var globalLogicOperator = "AND";
 	if (jQuery('#globaloperator').hasClass("or")) { globalLogicOperator = "OR" }
 	
@@ -350,8 +338,6 @@ function showFacetResults()	{
 			savedSearchTerms = currentSearchTerms.join(",,,");
 			savedSearchTermsArray = savedSearchTerms.split(",,,");
 		}
-
-
 	
 	// Generate list of categories/terms to send to facet search
 	// create a string to send into the facet search, in form Cat1:Term1,Term2&Cat2:Term3,Term4,Term5&...
@@ -388,44 +374,14 @@ function showFacetResults()	{
 		    terms[categoryIndex] = terms[categoryIndex] + "|" + termId; 			
 		}
 	}
-    
-//	var tree = jQuery("#filter-div").dynatree("getTree");
-//
-//	// create an array of the categories that come from the tree
-//	var treeCategories = new Array();
-//	tree.visit(  function(node) {
-//        if (node.data.isCategory)  {
-//     	   var categoryName = node.data.categoryName.split("|");
-//     	   var cat = categoryName[1].replace(/ /g, "_");
-//     	   
-//     	   treeCategories.push(cat);        	    
-//        }
-//      }
-//      , false
-//    );
 
     // now construct the facetSearch array by concatenating the values from the cats and terms array
     for (var i=0; i<categories.length; i++)	{
     	var queryType = "";
-    	
-    	// determine if category is part of the tree; differentiate these types of query categories
-    	// from others
-    	//if (treeCategories.indexOf(categories[i])>-1) {
-    	//	queryType = "fq";
-    	//}
-    	//else  {
-    		queryType = "q";
-    	//}
+
+    	queryType = "q";
     	facetSearch.push(queryType + "=" + categories[i] + ":" + encodeURIComponent(terms[i]) + "::" + operators[i]);
     }
-
-    // now add all tree categories that arene't being searched on to the string
-//    for (var i=0; i<treeCategories.length; i++)  {
-//    	if (categories.indexOf(treeCategories[i])==-1)  {
-//    		queryType = "ff";
-//        	facetSearch.push(queryType + "=" + treeCategories[i]);
-//    	}
-//    }
     
 	jQuery("#results-div").addClass('ajaxloading').empty();
     
@@ -442,43 +398,57 @@ function showFacetResults()	{
     
     queryString += "&searchTerms=" + encodeURIComponent(savedSearchTerms) + "&searchOperators=" + operatorString + "&globaloperator=" + globalLogicOperator;
     
-    if (searchPage == 'RWG') {
-		jQuery.ajax({
-			url:facetResultsURL,
-			data: queryString + "&page=RWG",
-			success: function(response) {
-					jQuery('#results-div').removeClass('ajaxloading').html(response);
-					checkSearchLog();
-					updateAnalysisData(null, false);
-					 displayResultsNumber();
-			},
-			error: function(xhr) {
-				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
-			}
-		});
-    }
-    else {
-    	//If there are no search terms, pass responsibility on to getCategories - if not, do our custom search
-    	if (savedSearchTermsArray.length == 0) {
-    		//Need to silently clear the search map here as well
-			jQuery.ajax({url:clearSearchFilterURL});
-			GLOBAL.PathToExpand = '';
-    		getCategories();
-    	}
-    	else {
+    if(!openInAnalyze){
+	    if (searchPage == 'RWG') {
 			jQuery.ajax({
 				url:facetResultsURL,
-				data: queryString + "&page=datasetExplorer",
+				data: queryString + "&page=RWG",
 				success: function(response) {
-						searchByTagComplete(response);
+						jQuery('#results-div').removeClass('ajaxloading').html(response);
 						checkSearchLog();
+						updateAnalysisData(null, false);
+						 displayResultsNumber();
 				},
 				error: function(xhr) {
 					console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 				}
 			});
-    	}
-    }
+	    }
+	    else {
+	    	//If there are no search terms, pass responsibility on to getCategories - if not, do our custom search
+	    	if (savedSearchTermsArray.length == 0) {
+	    		//Need to silently clear the search map here as well
+				jQuery.ajax({url:clearSearchFilterURL});
+				GLOBAL.PathToExpand = '';
+	    		getCategories();
+	    	}
+	    	else {
+	    		jQuery.ajax({
+	    			url:facetResultsURL,
+	    			data: queryString + "&page=datasetExplorer",
+	    			success: function(response) {
+	    			searchByTagComplete(response);
+	    			checkSearchLog();
+	    			},
+	    			error: function(xhr) {
+	    			console.log('Error! Status = ' + xhr.status + xhr.statusText);
+	    			}
+	    			});
+	    	}
+	    }
+	}else{
+		jQuery.ajax({
+			url:saveSearchURL,
+			data: queryString + "&page=RWG",
+			success: function(response) {
+				window.location.href = datasetExplorerPath;
+			},
+			error: function(xhr) {
+				console.log('Error!  Status = ' + xhr.status + xhr.statusText);
+				window.location.href = datasetExplorerPath;
+			}
+		});
+	}
 
 }
 
@@ -508,6 +478,9 @@ function getSearchKeywordList()   {
 //Remove the search term that the user has clicked.
 function removeSearchTerm(ctrl)	{
 	goWelcome();
+	jQuery.ajax({
+		url:resetNodesRwgURL
+	});
 	var currentSearchTermID = ctrl.id.replace(/\%20/g, " ").replace(/\%44/g, ",").replace(/\%26/g, "&");
 	var idx = currentSearchTerms.indexOf(currentSearchTermID);
 	if (idx > -1)	{
@@ -529,17 +502,6 @@ function removeSearchTerm(ctrl)	{
 	// create flag to track if tree was updated
 	var treeUpdated = false
 
-	// find all nodes in tree with this key and deSelect
-//	var tree = jQuery("#filter-div").dynatree("getTree");
-//
-//	tree.visit(  function deselectNode(node) {
-//                    if (node.data.key == currentSearchTermID)  {
-//       	                node.select(false);
-//  	            	    treeUpdated = true;
-//                    }
-//                 }
-//                 , false);
-//	
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
 	if (!treeUpdated) {
       showSearchTemplate();
@@ -554,9 +516,9 @@ function removeSearchTerm(ctrl)	{
 //Clear the tree, results along with emptying the two arrays that store categories and search terms.
 function clearSearch()	{
 	goWelcome();
-	//remove all pending jobs from the ajax queue
-	//rwgAJAXManager.clear(true); (this was causing problems, so removing for now)
-	
+	jQuery.ajax({
+		url:resetNodesRwgURL
+	});
 	
 	openAnalyses = []; //all analyses will be closed, so clear this array
 	
@@ -570,20 +532,7 @@ function clearSearch()	{
 	// Change the category picker back to ALL and set autocomplete to not have a category (ALL by default)
 	document.getElementById("search-categories").selectedIndex = 0;
 	jQuery('#search-ac').autocomplete('option', 'source', sourceURL);
-		
-	//var tree = jQuery("#filter-div").dynatree("getTree");
-	
-	// Make sure the onSelect event doesn't fire for the nodes
-	// Otherwise, the main search query is going to fire after each item is deselected, as well as facet query
-//	allowOnSelectEvent = false;
-//	tree.visit(function clearNode(node) {
-//										 updateNodeIndividualFacetCount(node, -1);
-//		                                 node.select(false);
-//	                                    }, 
-//	                                    false
-//	           )
-//	allowOnSelectEvent = true;
-	
+
 	showSearchTemplate();
 	showSearchResults(); //reload the full search results
 	
