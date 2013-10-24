@@ -636,7 +636,7 @@ class FmFolderController {
 		
 		//check that all folders from folderContents are in the search path, or children of nodes in the search path
 		if(folderSearchLists[0].size()>0){
-			for(String folder: folderContents){
+			for(def folder: folderContents){
 				boolean found=false
 				for(String path: folderSearchLists[0]){
 					if(folder.folderFullName.indexOf(path) > -1){
@@ -653,7 +653,7 @@ class FmFolderController {
 			def filters=session['rwgSearchFilter']
 			for(def filter in filters){
 				if(filter!=null && filter.indexOf("|ACCESSION;") > -1){
-					for(String folder: folderContents){
+					for(def folder: folderContents){
 						if(folder.folderType=="STUDY"){
 							if(!nodesToExpand.grep(folder.uniqueId)){
 								nodesToExpand+=folder.uniqueId
