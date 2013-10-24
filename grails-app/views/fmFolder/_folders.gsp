@@ -60,6 +60,10 @@
 						<script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true', true, false);</script>
 				</g:elseif>
 				
+				<g:if test="${displayMetadata==(folder.uniqueId)}">
+					<script>showDetailDialog('${folder.id}');</script>
+				</g:if>
+				
 				<g:set var="files" value="${folder.fmFiles}" />
 				
 				<g:if test="${files?.size() > 0}">
