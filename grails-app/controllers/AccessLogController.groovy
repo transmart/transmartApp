@@ -23,7 +23,6 @@ import com.recomdata.util.ExcelSheet;
 import com.recomdata.util.ExcelGenerator;
 class AccessLogController {
 
-	def session
 	def searchService
 
 	def index = { redirect(action:list,params:params) }
