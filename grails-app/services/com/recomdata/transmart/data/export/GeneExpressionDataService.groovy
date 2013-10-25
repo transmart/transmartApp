@@ -27,7 +27,6 @@ import java.util.Map
 
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.math.NumberUtils;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
 
@@ -48,7 +47,6 @@ class GeneExpressionDataService {
 	def fileDownloadService
 	def utilService
 	
-	def config = ConfigurationHolder.config
 
 	public boolean getData(List studyList, 
 							File studyDir, 
@@ -475,7 +473,7 @@ class GeneExpressionDataService {
 		con = dataSource.getConnection()
 		
 		//Grab the configuration that sets the fetch size.
-		def rsize = config.com.recomdata.plugins.resultSize;
+		def rsize = grailsApplication.config.com.recomdata.plugins.resultSize;
 		Integer fetchSize = 5000;
 		if(rsize!=null){
 			try{
@@ -751,7 +749,7 @@ class GeneExpressionDataService {
 				//Run the R command to set the working directory to our temp directory.
 				REXP x = c.eval(workingDirectoryCommand)
 				
-				String rScriptDirectory = config.com.recomdata.transmart.data.export.rScriptDirectory
+				String rScriptDirectory = grailsApplication.config.com.recomdata.transmart.data.export.rScriptDirectory
 				String compilePivotDataCommand = "source('${rScriptDirectory}/PivotData/PivotGeneExprData.R')".replace("\\","\\\\")
 				
 				log.debug("Attempting following R Command : " + compilePivotDataCommand.replace("\\","\\\\"))
@@ -1076,7 +1074,7 @@ class GeneExpressionDataService {
    
    private Integer getStmtFetchSize() {
 	   //Grab the configuration that sets the fetch size.
-	   def rsize = config.com.recomdata.plugins.resultSize;
+	   def rsize = grailsApplication.config.com.recomdata.plugins.resultSize;
 	   Integer fetchSize = 5000;
 	   if(rsize!=null){
 		   try{
@@ -1337,7 +1335,7 @@ class GeneExpressionDataService {
 			   //Run the R command to set the working directory to our temp directory.
 			   REXP x = c.eval(workingDirectoryCommand)
 			   
-			   String rScriptDirectory = config.com.recomdata.transmart.data.export.rScriptDirectory
+			   String rScriptDirectory = grailsApplication.config.com.recomdata.transmart.data.export.rScriptDirectory
 			   String compilePivotDataCommand = "source('${rScriptDirectory}/PivotData/PivotGSEAExportGCTData.R')".replace("\\","\\\\")
 			   
 			   log.debug("Attempting following R Command : " + compilePivotDataCommand)
