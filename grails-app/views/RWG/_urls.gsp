@@ -70,4 +70,11 @@ var platformTypesUrl = '${createLink([action:'platformsForVendor',controller:'bi
 
 var ajaxPlatformsURL = '${createLink([action:'ajaxPlatforms',controller:'fmFolder'])}';
 
+var addNodeRwgURL = "${createLink([controller:'RWG', action:'addOpenedNodeRWG'])}";
+var removeNodeRwgURL = "${createLink([controller:'RWG', action:'removeOpenedNodeRWG'])}";
+var resetNodesRwgURL = "${createLink([controller:'RWG', action:'resetOpenedNodes'])}";
+
+var addNodeDseURL = "${createLink([controller:'RWG', action:'addOpenedNodeDSE'])}";
+var removeNodeDseURL = "${createLink([controller:'RWG', action:'removeOpenedNodeDSE'])}";
+
 </script>

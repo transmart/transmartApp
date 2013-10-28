@@ -631,8 +631,40 @@ class FmFolderController {
 		}
 		def folderSearchString = folderSearchLists[0] ? folderSearchLists[0].join(",") + "," : "" //Extra , - used to identify leaves
 		def uniqueLeavesString = folderSearchLists[1] ? folderSearchLists[1].join(",") + "," : ""
+		def nodesToExpand=session['rwgOpenedNodes']
 		
-		render(template:'folders', model: [folders: folderContents, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: auto])
+		
+		//check that all folders from folderContents are in the search path, or children of nodes in the search path
+		if(folderSearchLists[0].size()>0){
+			for(def folder: folderContents){
+				boolean found=false
+				for(String path: folderSearchLists[0]){
+					if(folder.folderFullName.indexOf(path) > -1){
+						found=true
+						break
+					}
+				}
+				if(!found) folderContents-=folder
+			}
+		}
+		def displayMetadata="";
+		//if there is an accession in filters, add the study node (there is just one) in the array for nodes to expand
+		if(session['rwgSearchFilter']!=null){
+			def filters=session['rwgSearchFilter']
+			for(def filter in filters){
+				if(filter!=null && filter.indexOf("|ACCESSION;") > -1){
+					for(def folder: folderContents){
+						if(folder.folderType=="STUDY"){
+							if(!nodesToExpand.grep(folder.uniqueId)){
+								nodesToExpand+=folder.uniqueId
+								displayMetadata=folder.uniqueId
+							}
+						}
+					}
+				}
+			}
+		}
+		render(template:'folders', model: [folders: folderContents, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: auto, nodesToExpand: nodesToExpand, displayMetadata: displayMetadata])
 	}
 
 	/**
@@ -741,12 +773,6 @@ class FmFolderController {
 			subFolderList.each {
 					println it
 					removeFolder(it.id)
-					/* it.activeInd = false
-					if(!it.save())
-					{
-						render it.errors
-					}
-					*/
 				}
 			
 			render folder as XML

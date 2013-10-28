@@ -426,7 +426,9 @@ class RWGController {
 	   if ((processedSearchTerms == null || processedSearchTerms.size() == 0) && params.page.equals('RWG')) {
 		   searchLog += "No search terms found - returning all programs"
 		   session['searchLog'] = searchLog
-		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null)])
+		   //retrieve folders id to expand as opened nodes
+		   def nodesToExpand=session['rwgOpenedNodes']
+		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null), nodesToExpand: nodesToExpand])
 		   return
 	   }
 	   def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Search", eventmessage: "", accesstime:new java.util.Date())
@@ -466,7 +468,11 @@ class RWGController {
 			   }
 			   def numbersJSON=new JSONObject(numbers)
 			   
-			   render (template:'/fmFolder/folders', model: [folders: folderContents, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: true, resultNumber: numbersJSON])
+			  //retrieve folders id to expand as opened nodes
+			   def nodesToExpand=session['rwgOpenedNodes']
+			   def nodesToClose=session['rwgClosedNodes']
+			   
+			   render (template:'/fmFolder/folders', model: [folders: folderContents, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: true, resultNumber: numbersJSON, nodesToExpand: nodesToExpand, nodesToClose: nodesToClose])
 		   }
 		   else {
 			   session['folderSearchList'] = [[],[]]
@@ -480,7 +486,7 @@ class RWGController {
 		   jsonArrays.put("searchResults", pathLists[0])
 		   jsonArrays.put("uniqueLeaves", pathLists[1])
 		   render jsonArrays as JSON
-	   }	   
+	   }   
    }
    
    def finalizePathLists(pathList) {
@@ -648,6 +654,120 @@ class RWGController {
 	   }
 	   
 	   solrConnection.disconnect()
+   }
+   
+   def saveFacetedSearch = {
+	   session['folderSearchList'] = [[], []]; //Clear the folder search list
+	   
+	   /*
+		* Record this as the latest search and store it in the session
+		*/
+	   def paramMap = params
+	   //Search string is saved in session (for passing between RWG and Dataset Explorer pages)
+	   def searchString = params.searchTerms
+	   def searchOperatorsString = params.searchOperators
+	   def globalOperator = params.globaloperator
+	   
+	   def searchTerms = searchString?.split(",,,")
+	   if (searchTerms != null && searchTerms[0] == "") {searchTerms = null;}
+	   
+	   def searchOperators = searchOperatorsString?.split(";")
+	   if (searchOperators != null && searchOperators[0] == "") {searchOperators = null;}
+	   
+	   session['rwgSearchFilter'] = searchTerms
+	   session['rwgSearchOperators'] = searchOperators
+	   session['globalOperator'] = globalOperator
+	   session['geneFilter'] = []
+	   render(text: "OK")
+   }
+   
+   def addOpenedNodeRWG = {
+	   if(session['rwgOpenedNodes']==null){
+		   session['rwgOpenedNodes']=[]
+	   }
+	   if(session['rwgClosedNodes']==null){
+		   session['rwgClosedNodes']=[]
+	   }
+	   def openedNodes=session['rwgOpenedNodes']
+	   def closedNodes=session['rwgClosedNodes']
+	   def paramMap = params
+	   if(closedNodes.grep(params.node)){
+		   closedNodes-=params.node
+	   }
+	   else if(!openedNodes.grep(params.node)){
+		   openedNodes+=params.node
+	   }
+	   session['rwgOpenedNodes']=openedNodes
+	   session['rwgClosedNodes']=closedNodes
+	   render(text: "OK")
+   }
+   def removeOpenedNodeRWG = {
+	   if(session['rwgOpenedNodes']==null){
+		   session['rwgOpenedNodes']=[]
+	   }
+	   if(session['rwgClosedNodes']==null){
+		   session['rwgClosedNodes']=[]
+	   }
+	   def openedNodes=session['rwgOpenedNodes']
+	   def closedNodes=session['rwgClosedNodes']
+	   if(openedNodes.grep(params.node)){
+		   openedNodes-=params.node
+	   }else{
+		   if(!closedNodes.grep(params.node)){
+			   closedNodes+=params.node
+		   }
+	   }
+	   session['rwgOpenedNodes']=openedNodes
+	   session['rwgClosedNodes']=closedNodes
+	   render(text: "OK")
+   }
+   def resetOpenedNodes = {//used for RWG and DSE
+	   session['rwgOpenedNodes']=[]
+	   session['dseOpenedNodes']=[]
+	   session['rwgClosedNodes']=[]
+	   session['dseClosedNodes']=[]
+	   render(text: "OK")
+   }
+   
+   def addOpenedNodeDSE = {
+	   if(session['dseOpenedNodes']==null){
+		   session['dseOpenedNodes']=[]
+	   }
+	   if(session['dseClosedNodes']==null){
+		   session['dseClosedNodes']=[]
+	   }
+	   def openedNodes=session['dseOpenedNodes']
+	   def closedNodes=session['dseClosedNodes']
+	   def paramMap = params
+	   if(closedNodes.grep(params.node.replace("\\", "\\\\"))){
+		   closedNodes-=params.node.replace("\\", "\\\\")
+	   }
+	   else if(!openedNodes.grep(params.node.replace("\\", "\\\\")) && params.node!="treeRoot"){
+		   openedNodes+=params.node.replace("\\", "\\\\")
+	   }
+	   session['dseOpenedNodes']=openedNodes
+	   session['dseClosedNodes']=closedNodes
+	   render(text: "OK")
+   }
+   def removeOpenedNodeDSE = {
+	   if(session['dseOpenedNodes']==null){
+		   session['dseOpenedNodes']=[]
+	   }
+	   if(session['dseClosedNodes']==null){
+		   session['dseClosedNodes']=[]
+	   }
+	   def openedNodes=session['dseOpenedNodes']
+	   def closedNodes=session['dseClosedNodes']
+	   if(openedNodes.grep(params.node.replace("\\", "\\\\"))){
+		   openedNodes-=params.node.replace("\\", "\\\\")
+	   }else{
+		   if(!closedNodes.grep(params.node.replace("\\", "\\\\"))){
+			   closedNodes+=params.node.replace("\\", "\\\\")
+		   }
+	   }
+	   session['dseOpenedNodes']=openedNodes
+	   session['dseClosedNodes']=closedNodes
+	   render(text: "OK")
    }
    
 }

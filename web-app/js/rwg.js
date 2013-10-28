@@ -138,12 +138,19 @@ function showOverlay(overlayDiv, dataURL)
 }
 
 // Open and close the analysis for a given trial
-function toggleDetailDiv(trialNumber, dataURL, forceOpen, highlightFolder)	{	
+function toggleDetailDiv(trialNumber, dataURL, forceOpen, highlightFolder, manual)	{	
+	if(manual==undefined){ manual=false;}
 	var imgExpand = "#imgExpand_"  + trialNumber;
 	var trialDetail = "#" + trialNumber + "_detail";
 	
 	// If data attribute is undefined then this is the first time opening the div, load the analysis... 
-	if (typeof jQuery(trialDetail).attr('data') == 'undefined')	{		
+	if (typeof jQuery(trialDetail).attr('data') == 'undefined')	{
+		//add node
+		if(manual){
+			jQuery.ajax({
+				url:addNodeRwgURL+"?node=FOL:"+trialNumber
+			});
+		}
 		var src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'ajax-loader-flat.gif');	
 		jQuery(imgExpand).attr('src',src);
 		jQuery.ajax({
@@ -168,9 +175,21 @@ function toggleDetailDiv(trialNumber, dataURL, forceOpen, highlightFolder)	{
 	} else	{
 		var src = jQuery(imgExpand).attr('src').replace('folderminus.png', 'folderplus.png');
 		if (jQuery(trialDetail).attr('data') == "true" && !forceOpen)	{
+			//remove node
+			if(manual){
+				jQuery.ajax({
+					url:removeNodeRwgURL+"?node=FOL:"+trialNumber
+				});
+			}
+			
 			jQuery(trialDetail).attr('data',false);
 			jQuery(trialDetail).removeClass("analysesopen");
 		} else	{
+			if(manual){
+				jQuery.ajax({
+					url:addNodeRwgURL+"?node=FOL:"+trialNumber
+				});
+			}
 			src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'folderminus.png');
 			jQuery(trialDetail).attr('data',true);
 			jQuery(trialDetail).addClass("analysesopen");
@@ -260,25 +279,6 @@ function showIEWarningMsg(){
 		
 	}
 	
-}
-
-//Method to clear the facet results in the search tree
-function clearFacetResults()	{
-	
-//	var tree = jQuery("#filter-div").dynatree("getTree");
-//	
-//	// clear counts from tree
-//	tree.visit(  function(node) {
-//		           if (!node.data.isCategory)  {
-//		        	   updateNodeIndividualFacetCount(node, -1);   		        	    
-//		           }
-//		           
-//	             }
-//                 , false
-//               );
-//		
-//	 // redraw entire tree after counts updated
-//	 tree.redraw();
 }
 
 //Add the search term to the array that the user has added to filter tree.
