@@ -16,38 +16,44 @@
   
  
 -->
-<g:setProvider library="prototype"/>
+
 
 <g:formRemote name="ontTagFilterForm" id="ontTagFilterForm"
 	url="[controller:'ontology',action:'ajaxOntTagFilter']"
 	before="if(searchByTagBefore()==false) return false;"
 	onSuccess="searchByTagComplete(e)">
+	%{--<img src="${resource(dir:'images/help', file:'helpicon.png')}" style="position: absolute; right: 8px; cursor: pointer;" onclick="D2H_ShowHelp('1065',helpURL,'wndExternal',CTXT_DISPLAY_FULLHELP );" />--}%
 	<table class="searchform" width="100%">
 		<tr>
-			<td valign="top"><b>Search:</b><br> <g:textField
-					id="ontsearchterm" name="ontsearchterm" value="" size="10" /><br>
+			<td><b>Search:</b></td>
+			<td>
+				<g:textField id="ontsearchterm" name="ontsearchterm" value="" />
 			</td>
-			<td valign="top"><br>AND</td>
-			<td valign="top"><b>Type:</b><br>
+			</tr>
+			<tr>
+			<td valign="top"><b>Type:</b></td>
+			<td>
 			 <g:select
 					class="searchform" name="tagtype" id="tagtype" from="${tagtypes}"
 					onchange="changeType();${remoteFunction(
             controller:'ontology', 
             action:'ajaxGetOntTagFilterTerms', 
             params: '{tagtype:this.value}', 
-            update:'tagtermdiv')}"></g:select><br>
+            update:'tagtermdiv')}"></g:select>
 				<div id="tagtermdiv">
-				&nbsp;
-				</div></td>
+					&nbsp;
+				</div>
+			</td>
 		</tr>
 	</table>
 	<table width="100%">
 		<tr>
-			<td colspan="3" align="center"><input id="ontSearchButton"
-				type="SUBMIT" VALUE="SEARCH" class="searchform"><input
-				type="reset" VALUE="CLEAR" onclick="clearSearch();"
-				class="searchform"><br>
-				<div class="searchform" id="searchresultstext"></div>
+			<td colspan="3" align="center">
+				<input id="ontSearchButton" type="submit" VALUE="Search" class="searchform flatbutton">
+				&nbsp;
+				<input type="reset" value="Clear" onclick="clearSearch();" class="searchform flatbutton">
+				<br/>
+				<div class="searchform" id="searchresultstext" style="font-size: 8pt; margin: 2px;"></div>
 			</td>
 		</tr>
 	</table>

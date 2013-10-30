@@ -23,12 +23,10 @@
   * @author $Author: mmcduffie $
   * @version $Revision: 9178 $
   */
-
-import org.springframework.util.StringUtils
-import org.transmart.searchapp.Requestmap;
+import org.transmart.searchapp.Requestmap
 
 /**
- * Requestmap controller.
+ * org.transmart.searchapp.Requestmap controller.
  */
 class RequestmapController {
 
@@ -86,7 +84,7 @@ class RequestmapController {
 	}
 
 	/**
-	 * Update action, called when an existing Requestmap is updated.
+	 * Update action, called when an existing org.transmart.searchapp.Requestmap is updated.
 	 */
 	def update = {
 
@@ -120,7 +118,7 @@ class RequestmapController {
 	}
 
 	/**
-	 * Save action, called when a new Requestmap is created.
+	 * Save action, called when a new org.transmart.searchapp.Requestmap is created.
 	 */
 	def save = {
 		def requestmap = new Requestmap(params)

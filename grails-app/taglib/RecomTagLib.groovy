@@ -16,11 +16,14 @@
  * 
  *
  ******************************************************************/
-  
 
-import java.io.File
-import com.recomdata.search.DocumentHit
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+
+
+import org.transmart.biomart.ContentRepository
+
+import java.text.SimpleDateFormat
+
+import org.transmart.biomart.BioMarker
 
 /**
  * $Id: RecomTagLib.groovy 10280 2011-10-29 03:00:52Z jliu $
@@ -41,7 +44,7 @@ class RecomTagLib {
 
 		if (document != null) {
 			def repository = document.getRepository()
-			content = org.transmart.biomart.ContentRepository.findByRepositoryType(repository)
+			content = ContentRepository.findByRepositoryType(repository)
 			label = document.getFileName()
 			path = content.location + "/" + document.getFilePath()
 			switch (content.getLocationType()) {
@@ -82,7 +85,7 @@ class RecomTagLib {
 				break;
 			}
 		}
-		out << "<a style=\"border: none\" target=\"_blank\" onclick=\"popupWindow('"
+		out << "<a style=\"border: none; cursor: pointer\" target=\"_blank\" onclick=\"popupWindow('"
 		out << url
 		out << "', 'documentWindow');\">"
 
@@ -328,6 +331,60 @@ class RecomTagLib {
 		out << "<a id='"+divPrefix+"_fclose' style='"+closedStyle+"' "
 		out << 		"onclick=\"javascript:toggleDetail('"+divPrefix+"');\">"+label+"&nbsp;<img alt='Close' src=\"${resource(dir:'images/skin',file:'sorted_asc.gif')}\" /></a> "
 		out << "</th></tr></thead>"
+	}
+	
+	def fieldDate = { attrs, body ->
+		
+		def bean = attrs["bean"]
+		def field = attrs["field"]
+		def format = attrs["format"]
+		
+		def date = bean."${field}"
+		if (date) {
+			out << (new SimpleDateFormat(format).format(date))
+		}
+		else {
+			out << "None"
+		}
+	}
+	
+	def fieldList = { attrs, body ->
+		def bean = attrs["bean"]
+		def field = attrs["field"]
+		def attribute = attrs["attribute"]
+		
+		def items = bean."${field}"
+		if (items) {
+			out << "<ul>"
+			for (item in items) {
+				if (attribute) {
+					out << "<li>" + item."${attribute}" + "</li>"
+				}
+				else {
+					out << "<li>" + item + "</li>"
+				}
+			}
+			out << "</ul>"
+		}
+
+	}
+	
+	def fieldGeneByName = { attrs, body ->
+		def name = attrs["name"]
+		def bm
+		if (name)
+			bm = BioMarker.findByName(name)
+		
+		if (bm) {
+			def appName = grailsApplication.metadata['app.name']
+			def output = """
+			<a href="#" onclick="var w=window.open('/${appName}/details/gene/${bm.id}?altId=', 'detailsWindow', 'width=900,height=800'); w.focus(); return false;"><span class="filter-item filter-item-gene">${name}</span>&nbsp;<img class="ExternalLink" src="/${appName}/images/linkext7.gif"></a>
+			"""			
+			out << output
+		}
+		else {
+			out << name
+		}
 	}
 
 }

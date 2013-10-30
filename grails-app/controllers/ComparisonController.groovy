@@ -20,12 +20,15 @@
 
 
 import grails.converters.*
+import org.json.*;
+import i2b2.Comparison;
 
 class ComparisonController {
 
     def index = { }
 
     def i2b2HelperService
+    def authenticateService
 
     def getQueryDefinition= {
     		 String qid = request.getParameter("qid");
@@ -37,27 +40,26 @@ class ComparisonController {
     }
 
     def save = {    		 
-            def qid1 = request.getParameter("result_instance_id1")
-            def qid2 = request.getParameter("result_instance_id2")
+    		def qid1 = i2b2HelperService.getQIDFromRID(request.getParameter("result_instance_id1"))
+    		def qid2 = i2b2HelperService.getQIDFromRID(request.getParameter("result_instance_id2"))
     		def s = new i2b2.Comparison()
 			
 			try	{
-				s.queryResultId1=Integer.parseInt(qid1)
+				s.queryID1=Integer.parseInt(qid1)
 			} catch(NumberFormatException nfe)	{
-				s.queryResultId1 = -1
+				s.queryID1 = -1
 			}
 			
 			try	{
-				s.queryResultId2=Integer.parseInt(qid2)
+				s.queryID2=Integer.parseInt(qid2)
 			} catch(NumberFormatException nfe)	{
-				s.queryResultId2= -1
+				s.queryID2= -1
 			}
 
     		boolean success=s.save()
 
     		def link = new StringBuilder()
-			link.append("<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID: <input type=\"text\" size=\"10\" value=\"${s.id}\">")
-			link.append("<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"mailto:?subject=Link to ")
+			link.append("<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"mailto:?subject=Link to ")
     		link.append("Saved comparison ID=${s.id}")
     		link.append("&body=The following is a link to the saved comparison in tranSMART.  Please, note that you need to be logged into tranSMART prior to using this link.%0A%0A")    		
     		link.append(createLink(controller:'datasetExplorer', action:'index', id:s.id, absolute:true))

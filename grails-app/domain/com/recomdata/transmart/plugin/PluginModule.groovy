@@ -33,8 +33,8 @@ class PluginModule {
 	long id
 	String name
 	String moduleName
-	//Clob params
-	String params
+	Clob params
+	String version
 	Boolean active
 	Boolean hasForm
 	String formLink
@@ -45,6 +45,7 @@ class PluginModule {
 	
 	static mapping = {
 		table 'SEARCHAPP.PLUGIN_MODULE'
+		version true
 		id column:'MODULE_SEQ',
 		   generator: 'sequence',
 		   params: [sequence:'SEARCHAPP.PLUGIN_MODULE_SEQ']
@@ -66,17 +67,14 @@ class PluginModule {
 	def private setParamsStr(moduleParams) {
 		if (moduleParams?.trim()) {
 			def jsonObject = JSON.parse(moduleParams)
-
-			//params = Hibernate.createClob(jsonObject?.toString())
-			params = jsonObject?.toString()
+			params = Hibernate.createClob(jsonObject?.toString())
 		}
 	}
 	
 	def private getParamsStr() {
-		/*def InputStream textStream = params?.getAsciiStream()
+		def InputStream textStream = params?.getAsciiStream()
 		def paramsAsStr = ''
-		if (null != textStream) paramsAsStr = pluginService.convertStreamToString(textStream).replace('\n',' ')
-		return paramsAsStr*/
-		return params
+		if (null != textStream) paramsAsStr = pluginService.convertStreamToString(textStream)
+		return paramsAsStr
 	}
 }

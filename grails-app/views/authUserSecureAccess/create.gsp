@@ -1,3 +1,4 @@
+<%@ page import="org.transmart.searchapp.SecureObject; org.transmart.searchapp.SecureAccessLevel; org.transmart.searchapp.AuthUser" %>
 <!--
   tranSMART - translational medicine data mart
   
@@ -19,7 +20,6 @@
 
 
 
-<g:setProvider library="prototype"/>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -47,7 +47,7 @@
                                     <label for="authUser">Auth User:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:authUserSecureAccessInstance,field:'authUser','errors')}">
-                                    <g:select id="authUser" optionKey="id"  from="${AuthUser.listOrderByUsername()}" name="authUser.id" value="${authUserSecureAccessInstance?.authUser?.id}" noSelection="['null':'']"
+                                    <g:select optionKey="id"  from="${AuthUser.listOrderByUsername()}" name="authUser.id" value="${authUserSecureAccessInstance?.authUser?.id}" noSelection="['null':'']"
                                     onchange="${remoteFunction(action:'listAccessLevel',
                                                                  update:'accessLevelList',
                                                                  params:'\'id=\'+this.value')}"
@@ -57,7 +57,7 @@
 
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="accessLevelList">Access Level:</label>
+                                    <label for="accessLevel">Access Level:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:authUserSecureAccessInstance,field:'accessLevel','errors')}">
                                     <g:select id="accessLevelList" optionKey="id"  optionValue="accessLevelName" from="${SecureAccessLevel.listOrderByAccessLevelValue()}" name="accessLevel.id" value="${authUserSecureAccessInstance?.accessLevel?.id}" ></g:select>
@@ -66,10 +66,10 @@
 
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="secureObject">Study:</label>
+                                    <label for="secureObject">Secure Object:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:authUserSecureAccessInstance,field:'secureObject','errors')}">
-                                    <g:select id="secureObject" optionKey="id" optionValue="displayName" from="${SecureObject.listOrderByDisplayName()}" name="secureObject.id" value="${authUserSecureAccessInstance?.secureObject?.id}" ></g:select>
+                                    <g:select optionKey="id" optionValue="displayName" from="${SecureObject.listOrderByDisplayName()}" name="secureObject.id" value="${authUserSecureAccessInstance?.secureObject?.id}" ></g:select>
                                 </td>
                             </tr>
 

@@ -25,8 +25,6 @@
  */
 package org.transmart.biomart
 
-import org.transmart.biomart.ContentReference;
-
 import com.recomdata.util.IExcelProfile
 
 class BioAssayAnalysis implements IExcelProfile {
@@ -46,8 +44,10 @@ class BioAssayAnalysis implements IExcelProfile {
 	String type
 	Long dataCount
 	Long teaDataCount
-	static hasMany=[datasets:BioAssayDataset,files:ContentReference]
-	static belongsTo=[ContentReference]
+	String etlId
+	static hasMany=[datasets:BioAssayDataset,files:ContentReference, diseases:Disease, observations:Observation, platforms:BioAssayPlatform]
+	static hasOne=[ext:BioAssayAnalysisExt]
+	static belongsTo=[ContentReference, Disease, Observation, BioAssayPlatform]
 
 	static mapping = {
 		table 'BIO_ASSAY_ANALYSIS'
@@ -62,6 +62,7 @@ class BioAssayAnalysis implements IExcelProfile {
 			qaCriteria column:'QA_CRITERIA'
 			analystId column:'ANALYST_ID'
 			id column:'BIO_ASSAY_ANALYSIS_ID'
+			etlId column:'ETL_ID'
 			foldChangeCutoff column:'FOLD_CHANGE_CUTOFF'
 			pValueCutoff column:'PVALUE_CUTOFF'
 			rValueCutoff column:'RVALUE_CUTOFF'
@@ -72,9 +73,11 @@ class BioAssayAnalysis implements IExcelProfile {
 			assayDataType column:'BIO_ASSAY_DATA_TYPE'
 			analysisMethodCode column:'ANALYSIS_METHOD_CD'
 			datasets joinTable:[name:'BIO_ASY_ANALYSIS_DATASET',key:'BIO_ASSAY_ANALYSIS_ID']
+			ext joinTable:[name:'BIO_ASSAY_ANALYSIS_EXT',key:'BIO_ASSAY_ANALYSIS_ID']
 			files joinTable:[name:'BIO_CONTENT_REFERENCE', key:'BIO_DATA_ID', column:'BIO_CONTENT_REFERENCE_ID'], cache:true
-
-
+			diseases joinTable:[name:'BIO_DATA_DISEASE', key:'BIO_DATA_ID'], cache:true
+			observations joinTable:[name:'BIO_DATA_OBSERVATION', key:'BIO_DATA_ID'], cache:true
+			platforms joinTable:[name:'BIO_DATA_PLATFORM', key:'BIO_DATA_ID'], cache:true
 		}
 	}
 
@@ -96,7 +99,7 @@ class BioAssayAnalysis implements IExcelProfile {
 	 * get top analysis data records for the indicated analysis
 	 */
 	def static getTopAnalysisDataForAnalysis(Long analysisId, int topCount){
-		def query = "SELECT DISTINCT baad, baad_bm, ABS(baad.foldChangeRatio) FROM org.transmart.biomart.BioAssayAnalysisData baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid ORDER BY ABS(baad.foldChangeRatio) desc, baad.rValue, baad.rhoValue DESC";
+		def query = "SELECT DISTINCT baad, baad_bm FROM org.transmart.biomart.BioAssayAnalysisData baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid ORDER BY ABS(baad.foldChangeRatio) desc, baad.rValue, baad.rhoValue DESC";
 		return BioAssayAnalysisData.executeQuery(query, [aid:analysisId], [max:topCount]);
 	}
 

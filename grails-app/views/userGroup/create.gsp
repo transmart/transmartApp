@@ -32,9 +32,9 @@
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
-            <g:hasErrors bean="${group}">
+            <g:hasErrors bean="${userGroupInstance}">
             <div class="errors">
-                <g:renderErrors bean="${group}" as="list" />
+                <g:renderErrors bean="${userGroupInstance}" as="list" />
             </div>
             </g:hasErrors>
             <g:form action="save" method="post" >
@@ -46,16 +46,16 @@
                                 <td valign="top" class="name">
                                     <label for="name">Name:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:group,field:'name','errors')}">
-                                    <input type="text" id="name" name="name" value="${fieldValue(bean:group,field:'name')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:userGroupInstance,field:'name','errors')}">
+                                    <input type="text" id="name" name="name" value="${fieldValue(bean:userGroupInstance,field:'name')}"/>
                                 </td>
                             </tr>
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="description">Description:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:group,field:'description','errors')}">
-                                    <textarea rows="5" cols="40" name="description">${fieldValue(bean:group, field:'description')}</textarea>
+                                <td valign="top" class="value ${hasErrors(bean:userGroupInstance,field:'description','errors')}">
+                                    <textarea rows="5" cols="40" name="description">${fieldValue(bean:userGroupInstance, field:'description')}</textarea>
                                 </td>
                             </tr>
 
@@ -63,8 +63,17 @@
                                 <td valign="top" class="name">
                                     <label for="enabled">Enabled:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:group,field:'enabled','errors')}">
-                                    <g:checkBox name="enabled" value="${group?.enabled}" ></g:checkBox>
+                                <td valign="top" class="value ${hasErrors(bean:userGroupInstance,field:'enabled','errors')}">
+                                    <g:checkBox name="enabled" value="${userGroupInstance?.enabled}" ></g:checkBox>
+                                </td>
+                            </tr>
+
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="uniqueId">Unique Id:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:userGroupInstance,field:'uniqueId','errors')}">
+                                    <input type="text" id="uniqueId" name="uniqueId" value="${fieldValue(bean:userGroupInstance,field:'uniqueId')}"/>
                                 </td>
                             </tr>
 

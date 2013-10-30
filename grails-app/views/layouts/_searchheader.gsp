@@ -49,7 +49,7 @@
 										<div id="search-text"></div>
 										<div id="loading-div" style="visibility:hidden;display:none;">
 											<input type="text" id="loading-text"
-												style="width:452px;background-image:url(js/ext/resources/images/default/grid/loading.gif);background-repeat:no-repeat;background-position:left center;padding-left:20px;"
+												style="width:452px;color:background-image:url(js/ext/resources/images/default/grid/loading.gif);background-repeat:no-repeat;background-position:left center;padding-left:20px;"
 											/>
 										</div>
 									</td>
@@ -91,7 +91,7 @@
 		<td>
 			<%topicID="1005" %>
 			<a HREF='JavaScript:D2H_ShowHelp(<%=topicID%>,helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP )'>
-				<img src="${resource(dir:'images', file:'help/helpicon_white.jpg')}" alt="Help" border=0 width=18pt style="margin-top:10pt;margin-bottom:10pt;margin-right:18pt;"/>
+				<img src="${resource(dir:'images',file:'help/helpicon_white.jpg')}" alt="Help" border=0 width=18pt style="margin-top:10pt;margin-bottom:10pt;margin-right:18pt;"/>
 			</a>
 		</td>
 	</tr>
@@ -100,6 +100,7 @@
 		    <g:if test="${flash.message}">
 		    	<div class="message">${flash.message}</div>
 		    </g:if>
+	    
 		</td>
 	</tr>
 </table>

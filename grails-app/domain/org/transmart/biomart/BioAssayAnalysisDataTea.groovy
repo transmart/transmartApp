@@ -26,9 +26,6 @@
 
 package org.transmart.biomart
 
-import org.transmart.biomart.BioMarker;
-import org.transmart.biomart.Experiment;
-
 import com.recomdata.util.IExcelProfile
 
 class BioAssayAnalysisDataTea implements IExcelProfile {

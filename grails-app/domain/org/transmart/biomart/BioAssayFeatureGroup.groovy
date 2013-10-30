@@ -19,9 +19,6 @@
   
 
 package org.transmart.biomart
-
-import org.transmart.biomart.BioMarker;
-
 class BioAssayFeatureGroup {
 		Long id
 		String name

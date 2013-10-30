@@ -6,7 +6,12 @@ html * {
 /* Top level menu */
 
 table.menuDetail {
-    padding: 0px 0px;
+      padding: 0px 0px ;
+      border: 0 none;
+}
+
+table.menuDetail .menuBar {
+    padding: 0px 0px 0px 0px ;
     border: 0 none;
 }
 
@@ -78,11 +83,11 @@ a.normal:link, a.normal:visited {
 }
 
 a:hover {
-	text-decoration:underline;
+	text-decoration:none;
 }
 
 a.normal:hover {
-	text-decoration:underline;
+	text-decoration:none;
 }
 
 a.tiny:link, a.tiny:visited {
@@ -810,11 +815,6 @@ table.jubsummary td {
     color:#ff0000;
 }
 
-.cortellisTab {
-    background-image:url(../images/thomsonreuters.png ) !important;
-    color:#ff0000;
-}
-
 .expTab {
     background-image:url(../images/ebi.png ) !important;
     color:#ff0000;
@@ -851,6 +851,10 @@ select.jubselect {
 	background-image:url(../images/folder-minus.gif);
 }
 
+.feedbackbutton {
+	background-image:url(../images/feedback.png) !important;
+}
+
 /* ExtJS customizations */
 
 .ext-ie .x-form-text {
@@ -869,6 +873,7 @@ select.jubselect {
 }
 
 .x-panel-body {
+	overflow: auto;
 	border: 0px;
 }
 
@@ -1073,3 +1078,27 @@ table.jobstatus {
     height:24px;
     z-index:100;
 }
+
+/* Special for tables based on formLayout templates */
+
+table.columndetail {
+    border-collapse:collapse;
+    width: 100%;
+    border:1px solid #ccc;
+     font: 10px verdana, arial, helvetica, sans-serif;
+}
+
+table.columndetail td {
+	 font: 10px verdana, arial, helvetica, sans-serif;
+     padding: 5px 3px;
+     text-align: left;
+     vertical-align: top;
+     border-bottom:1px solid #ccc;
+}
+
+table.columndetail td.columnname {
+	font-weight:bold;
+	background-color:#eee;
+}
+
+

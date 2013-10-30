@@ -19,26 +19,12 @@
   
 
 import grails.converters.*
-
-import java.io.File
-import java.text.*
-import java.util.List
-
-import javax.xml.parsers.*
-import javax.xml.xpath.*
-
-import org.genepattern.client.*
+import org.transmart.CohortInformation
+import org.transmart.HeatmapValidator
+import org.transmart.searchapp.AccessLog
 import org.genepattern.webservice.*
 import org.json.*
-import org.transmart.CohortInformation;
-import org.transmart.HeatmapValidator;
-import org.transmart.searchapp.AccessLog;
-import org.w3c.dom.*
-import org.xml.sax.*
-
-import org.transmart.searchapp.SearchKeyword
-
-import com.recomdata.export.GenePatternFiles
+import com.recomdata.debugging.*
 import com.recomdata.export.IgvFiles
 import com.recomdata.export.SnpViewerFiles
 import com.recomdata.export.PlinkFiles
@@ -64,11 +50,12 @@ class AnalysisController {
 	def analysisService;
 	def snpService;
 	def igvService;
+	def regionFilterService;
 	
 		
 	def heatmapvalidate={
 		def platform="";
-		log.debug("Received heatmap validation request");
+		log.debug("Recieved heatmap validation request");
 		String resultInstanceID1 = request.getParameter("result_instance_id1");
 		if (resultInstanceID1 != null && resultInstanceID1.length()== 0) {
 			resultInstanceID1 = null;
@@ -194,37 +181,33 @@ class AnalysisController {
 			ci.tissues.addAll(Arrays.asList(tissues.split(',')));
 		if((gpls!=null) && (gpls.length()>0))
 			ci.gpls.addAll(Arrays.asList(gpls.split(',')));
+		i2b2HelperService.fillCohortInformation(null, null, ci, Integer.parseInt(infoType));
 		
 		def result=null;
-        if((infoType!=null) && (infoType.length()>0)){
-            i2b2HelperService.fillCohortInformation(null, null, ci, Integer.parseInt(infoType));
-            switch(Integer.parseInt(infoType)){
-                case CohortInformation.GPL_TYPE:
-                    result = [rows:ci.gpls]
-                    break;
-                case CohortInformation.TISSUE_TYPE:
-                    result = [rows:ci.tissues]
-                    break;
-                case CohortInformation.TIMEPOINTS_TYPE:
-                    result = [rows:ci.timepoints]
-                    break;
-                case CohortInformation.SAMPLES_TYPE:
-                    result = [rows:ci.samples]
-                    break;
-                case CohortInformation.PLATFORMS_TYPE:
-                    result = [rows:ci.platforms]
-                    break;
-                case CohortInformation.RBM_PANEL_TYPE:
-                    result = [rows:ci.rbmpanels]
-                    break;
-                default:
-                    result = [rows:{""}]
-            }
-        }
-        if (result!=null)
-            render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
-        else
-            render(text:"({})")
+		
+		switch(Integer.parseInt(infoType)){
+			case CohortInformation.GPL_TYPE:
+				result = [rows:ci.gpls]
+				break;
+			case CohortInformation.TISSUE_TYPE:
+				result = [rows:ci.tissues]
+				break;
+			case CohortInformation.TIMEPOINTS_TYPE:
+				result = [rows:ci.timepoints]
+				break;
+			case CohortInformation.SAMPLES_TYPE:
+				result = [rows:ci.samples]
+				break;
+			case CohortInformation.PLATFORMS_TYPE:
+				result = [rows:ci.platforms]
+				break;
+			case CohortInformation.RBM_PANEL_TYPE:
+				result = [rows:ci.rbmpanels]
+				break;
+			default:
+				result = [rows:{""}]
+		}
+		render params.callback+"("+(result as JSON)+")"
 	}
 	
 	/**
@@ -934,7 +917,7 @@ public static String geneInputPrefix = "Gene>";
 void getGeneSearchIdListFromRequest(String genes, String geneAndIdListStr, List<Long> geneSearchIdList, List<String> geneNameList) {
 	if (genes == null || genes.length() == 0 || geneAndIdListStr == null || geneAndIdListStr.length() == 0 ||
 		geneSearchIdList == null || geneNameList == null)
-		return;
+		return null;
 	Map<String, Long> geneIdMap = new HashMap<String, Long>();
 	String[] geneAndIdList = geneAndIdListStr.split("\\|\\|\\|");
 	for (String geneAndIdStr : geneAndIdList) {
@@ -1159,7 +1142,7 @@ def ajaxGetPathwaySearchBoxData = {
 	})
 	
 	def result = [rows:pathways]
-    render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
+	render params.callback+"("+(result as JSON)+")"
 }
 
 def gplogin = {
@@ -1170,6 +1153,23 @@ def gplogin = {
   render(view:'nogp')
 
   }
+}
+
+// DEMOTM-25
+def filterPatientset = {
+
+	def resultInstanceId = request.JSON?.resultInstanceId;
+	def regions = request.JSON?.regions;
+	log.info("filterPatientset: resultInstanceId = " + resultInstanceId) 
+	log.info("regions: = " + regions)
+	
+	if (regions?.size() > 0) {
+		//TODO: handle filtering multiple regions
+		regionFilterService.filterPatientset(resultInstanceId, regions[0]);
+	}
+	
+	render "OK"
+	
 }
 	
 

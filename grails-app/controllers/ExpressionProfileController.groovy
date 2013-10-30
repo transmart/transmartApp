@@ -26,27 +26,21 @@
  */
 
  import org.jfree.chart.ChartFactory;
- import org.jfree.chart.JFreeChart;
- import org.jfree.chart.axis.NumberAxis;
- import org.jfree.chart.plot.CategoryPlot;
- import org.jfree.chart.plot.PlotOrientation;
- import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
- import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
- import org.jfree.data.statistics.BoxAndWhiskerCalculator;
- import org.jfree.data.statistics.BoxAndWhiskerItem;
- import org.jfree.data.statistics.DefaultBoxAndWhiskerXYDataset;
- import org.jfree.chart.axis.AxisLocation;
+ import org.jfree.chart.JFreeChart
+import org.jfree.chart.plot.PlotOrientation
+import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset
+import org.jfree.data.statistics.BoxAndWhiskerItem
+import org.jfree.chart.axis.AxisLocation;
  import org.jfree.chart.renderer.category.*;
  import org.jfree.chart.plot.CategoryPlot;
  import org.jfree.chart.axis.NumberAxis;
  import org.jfree.chart.*;
  import org.jfree.chart.entity.*;
- import org.jfree.chart.servlet.*;
+ import org.jfree.chart.servlet.*
 import org.transmart.ExpressionProfileResult;
-import org.transmart.biomart.BioAssayDataStatistics;
+import org.transmart.biomart.BioMarker;
+ import org.transmart.biomart.Disease
 
- import org.transmart.biomart.BioMarker;
- import org.transmart.biomart.Disease;
 import javax.servlet.ServletException;
 
 public class ExpressionProfileController{

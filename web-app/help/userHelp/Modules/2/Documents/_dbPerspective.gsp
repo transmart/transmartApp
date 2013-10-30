@@ -27,7 +27,7 @@
 
 
 <!-- ************************************** -->
-<!-- Role of user determines the help topic to display -->
+<!-- org.transmart.searchapp.Role of user determines the help topic to display -->
 
 <g:ifAnyGranted role="ROLE_ADMIN,ROLE_MANAGER">
 <% topicID = "1092" %>

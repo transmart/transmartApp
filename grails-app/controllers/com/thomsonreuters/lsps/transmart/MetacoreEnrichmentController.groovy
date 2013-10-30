@@ -1,10 +1,9 @@
 package com.thomsonreuters.lsps.transmart
 
-//import com.recomdata.transmart.data.association.RModulesService;
-
-import grails.converters.*
 import com.recomdata.transmart.data.export.util.FileWriterUtil
-import java.util.UUID
+
+//import com.recomdata.transmart.data.association.RModulesService;
+import grails.converters.JSON
 
 class MetacoreEnrichmentController {
 	

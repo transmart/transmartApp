@@ -1,7 +1,7 @@
-import org.transmart.searchapp.AuthUser;
-import org.transmart.searchapp.AuthUserSecureAccess;
-import org.transmart.searchapp.Role;
-import org.transmart.searchapp.SecureAccessLevel;
+import org.transmart.searchapp.AuthUser
+import org.transmart.searchapp.AuthUserSecureAccess
+import org.transmart.searchapp.Role
+import org.transmart.searchapp.SecureAccessLevel
 
 /*************************************************************************
  * tranSMART - translational medicine data mart
@@ -37,7 +37,7 @@ class AuthUserSecureAccessController {
    //    params.max = Math.min( params.max ? params.max.toInteger() : 20,  100)
 
 		// NOTE: grails <g:sortableColumn> can't reference subobjects, which means that we can just use .list(params) to
-		// query AuthUserSecureAccess. Instead we need to build a hibernate query and map custom property names to the subobjects.
+		// query org.transmart.searchapp.AuthUserSecureAccess. Instead we need to build a hibernate query and map custom property names to the subobjects.
 		// http://grails.org/GSP+Tag+-+sortableColumn
 		params.offset = params.offset ? params.offset.toInteger() : 0
 		params.order = params.order ? params.order : "asc"

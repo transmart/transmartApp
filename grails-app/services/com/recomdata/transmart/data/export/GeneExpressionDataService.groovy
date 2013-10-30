@@ -20,13 +20,9 @@
 
 package com.recomdata.transmart.data.export
 
-import java.io.File
 import java.sql.ResultSetMetaData
-import java.util.List;
-import java.util.Map
 
 import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.math.NumberUtils;
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
@@ -65,7 +61,7 @@ class GeneExpressionDataService {
 	{
 		
 		//This tells us whether we need to include the pathway information or not.
-		Boolean includePathwayInfo = false
+		private Boolean includePathwayInfo = false
 		
 		//This tells us whether we found data when we call the "Write Data" method.
 		boolean dataFound = false
@@ -143,7 +139,7 @@ class GeneExpressionDataService {
 		
 		//If we have gplid, append it to the query.
 		if(!gplIds?.isEmpty()){
-			sQuery.append(" AND ssm.GPL_ID IN (").append(utilService.toListString(gplIds)).append(")");
+			sQuery.append(" AND ssm.gpl_id IN (").append(utilService.toListString(gplIds)).append(")");
 		}
 		
 		return sQuery.toString()
@@ -184,11 +180,11 @@ class GeneExpressionDataService {
 		   """);
 	   
 	   sTables.append("""
-	   FROM de_subject_microarray_data a
-			   INNER JOIN de_subject_sample_mapping ssm ON ssm.assay_id = A.assay_id 
-			   INNER JOIN de_mrna_annotation b ON a.probeset_id = b.probeset_id and ssm.gpl_id = b.gpl_id
-			   INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = ? AND ssm.PATIENT_ID = sc.patient_num
-	   		   INNER JOIN PATIENT_DIMENSION pd on ssm.patient_id = pd.patient_num
+	   FROM de_subject_sample_mapping ssm
+       INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = ? AND ssm.PATIENT_ID = sc.patient_num
+       INNER JOIN PATIENT_DIMENSION pd on ssm.patient_id = pd.patient_num
+       INNER JOIN de_subject_microarray_data a ON ssm.assay_id = a.assay_id
+       INNER JOIN de_mrna_annotation b ON a.probeset_id = b.probeset_id
 	   """)
 	   
 	   //If a list of genes was entered, look up the gene ids and add them to the query. If a gene signature or list was supplied then we modify the query to join on the tables that link the list to the gene ids.
@@ -804,7 +800,7 @@ class GeneExpressionDataService {
 	def downloadCELFiles(String resultInstanceId, studyList, File studyDir, String jobName, String pathway, String timepoint, String sampleTypes, String tissueTypes) {
 		groovy.sql.Sql sql = null
 
-		Map sampleCdsMap = null
+		private Map sampleCdsMap = null
 		
 		try {
 			//Get the subjects for this result instance id.

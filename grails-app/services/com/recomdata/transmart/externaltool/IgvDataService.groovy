@@ -32,11 +32,11 @@ class IgvDataService {
 		StringBuilder s = new StringBuilder();
 		
 		// session file url
-		s.append("\t<argument>")
+		s.append("  <argument>")
 		s.append(sessionFileURL)
 		s.append("</argument>\n");
 		
-		s.append("</application-desc>")
+		s.append("  </application-desc>")
 		
 		ftext= ftext.replaceAll("</application-desc>",s.toString())
 		
@@ -50,11 +50,11 @@ class IgvDataService {
 	
 			
 		File sessionFile = igvFiles.getSessionFile();
-		sessionFile << "<?xml version='1.0' encoding='UTF-8' standalone='no'?>\n<Session genome='hg19'"
+		sessionFile << '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<Session genome="hg19"'
 		if(locus!=null){
-		sessionFile <<" locus='"+locus+"' "
+			sessionFile << ' locus="' + locus + '" '
 		}
-		sessionFile<<" version='4'>\n<Resources>\n";
+		sessionFile<< ' version="4">\n<Resources>\n';
 		List<File> fileList = igvFiles.getDataFileList();
 		
 	/* sessionFile<<"<Resource path='http://localhost:8080/transmartApp/data/test.vcf'/>";
@@ -66,13 +66,13 @@ class IgvDataService {
 		for (File file : fileList) {
 			
 			String fileUrl = igvFiles.getFileUrl(file);
-			sessionFile << "<Resource path='" + fileUrl + "'/>\n";
-			if(isVCFfile(file)){
-			createVCFIndexFile(file);
+			sessionFile << '<Resource path="' + fileUrl + '"/>\n';
+			if (isVCFfile(file)) {
+				createVCFIndexFile(file);
 			}
 		}
 		
-		sessionFile << "</Resources>\n</Session>";
+		sessionFile << '</Resources>\n</Session>';
 		return igvFiles.getFileUrl(sessionFile);
 
 	}
@@ -95,7 +95,9 @@ class IgvDataService {
 		idxFile.exists();
 		
 		}catch(Exception e){
-		logger.error(e.getMessage(), e);
+			println(e.getMessage());
+			e.printStackTrace();
+			//logger.error(e.getMessage(), e);
 		}
 		
 		return idxFile;

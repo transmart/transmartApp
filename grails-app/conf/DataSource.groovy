@@ -19,25 +19,3 @@
   
 
 //check external configuration as described in Config.groovy
-// environment specific settings
-environments {
-    test {
-        dataSource {
-            pooled = true
-            driverClassName = "org.h2.Driver"
-            username = "sa"
-            password = ""
-            dbCreate = "create-drop"
-            url = "jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000"
-        }
-        hibernate {
-            // hibernate cache config
-            cache {
-                use_second_level_cache=true
-                //turn on query cache
-                use_query_cache=true
-                provider_class='org.hibernate.cache.EhCacheProvider'
-            }
-        }
-    }
-}

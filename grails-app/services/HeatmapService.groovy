@@ -23,10 +23,9 @@
  * $Id: HeatmapService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @version $Revision: 9178 $
  */
- 
-import org.transmart.HeatmapDataValue;
 
-import org.transmart.biomart.BioMarker
+import org.transmart.HeatmapDataValue
+import org.transmart.biomart.BioAssayAnalysisData
 import com.recomdata.search.query.AssayAnalysisDataQuery
 
 public class HeatmapService {
@@ -92,7 +91,7 @@ public class HeatmapService {
 		def tquery = dataQuery.generateSQL()
 		log.debug(tquery)
 		
-		def dataList = org.transmart.biomart.BioAssayAnalysisData.executeQuery(tquery, ['analysisIds':searchAnalysisIds,'ids':markerList, max:2000])
+		def dataList = BioAssayAnalysisData.executeQuery(tquery, ['analysisIds':searchAnalysisIds,'ids':markerList, max:2000])
 		log.info("Total found: " + dataList.size())
 		
 		def dataMarkerMap = [:]
@@ -148,7 +147,7 @@ public class HeatmapService {
 		def q = query.generateSQL()
 		log.debug(q)
 		
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(q, [ids:searchAnalysisIds, max:total])
+		return BioAssayAnalysisData.executeQuery(q, [ids:searchAnalysisIds, max:total])
 	}
 
 	/**
@@ -173,7 +172,7 @@ public class HeatmapService {
 		def q = query.generateSQL()		
 		log.debug(q)
 		
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(q, [max:100])
+		return BioAssayAnalysisData.executeQuery(q, [max:100])
 	}
 
 	/**
@@ -199,6 +198,6 @@ public class HeatmapService {
 		def q = query.generateSQL()
 		log.debug(q)
 		
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(q, ['ids':geneIds,'analysisIds':searchAnalysisIds,max:100])
+		return BioAssayAnalysisData.executeQuery(q, ['ids':geneIds,'analysisIds':searchAnalysisIds,max:100])
 	}
 }

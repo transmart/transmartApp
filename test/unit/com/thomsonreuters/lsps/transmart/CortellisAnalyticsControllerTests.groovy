@@ -20,7 +20,7 @@
 
 package com.thomsonreuters.lsps.transmart
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class CortellisAnalyticsControllerTests extends GrailsUnitTestCase {
     protected void setUp() {

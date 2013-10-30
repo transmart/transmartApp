@@ -5,7 +5,7 @@ class UserSettings {
 	String name
 	String value
 	
-	// static belongsTo = [AuthUser]
+	// static belongsTo = [org.transmart.searchapp.AuthUser]
 	
 	static mapping = {
 		version false

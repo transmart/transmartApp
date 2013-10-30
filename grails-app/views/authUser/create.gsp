@@ -39,6 +39,14 @@
 				<div class="dialog">
 					<table>
 					<tbody>
+
+						<tr class="prop">
+							<td valign="top" class="name"><label for="id">WWID:</label></td>
+							<td valign="top" class="value ${hasErrors(bean:person,field:'id','errors')}">
+								<input type="text" id="id" name="id" value="${person.id}"/>
+							</td>
+						</tr>
+
 						<tr class="prop">
 							<td valign="top" class="name"><label for="username">Login Name:</label></td>
 							<td valign="top" class="value ${hasErrors(bean:person,field:'username','errors')}">

@@ -17,18 +17,31 @@ package org.transmart.searchapp
  * 
  *
  ******************************************************************/
+  
+
+ /**
+  * $Id: org.transmart.searchapp.Principal.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 9178 $
+  */
+
+/**
+ * principal class.
+ */
 class Principal {
 	static transients = ['principalNameWithType']
 
-	Long id
+	Long id ;
 	boolean enabled
-	String type
-	String name
+	String type;
+	String name;
 	String uniqueId =''
 	Date dateCreated
 	Date lastUpdated
+	/** description */
 	String description = ''
 	String principalNameWithType
+
 
 	static mapping = {
 		table 'SEARCH_AUTH_PRINCIPAL'

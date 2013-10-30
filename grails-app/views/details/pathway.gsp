@@ -25,10 +25,11 @@
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
 	<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
 
+	<g:javascript library="prototype" />
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'application.js')}"></script>
+	<g:javascript library="application" />
 
 	<script type="text/javascript">
 		Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";

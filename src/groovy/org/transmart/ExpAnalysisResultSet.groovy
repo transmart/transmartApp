@@ -17,13 +17,9 @@ package org.transmart
  * 
  *
  ******************************************************************/
-  
-
-import org.transmart.biomart.Experiment
-
 /**
  * @author $Author: mmcduffie $
- * $Id: ExpAnalysisResultSet.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * $Id: org.transmart.ExpAnalysisResultSet.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @version $Reversion$
  *
  */

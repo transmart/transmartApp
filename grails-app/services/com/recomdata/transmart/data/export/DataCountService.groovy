@@ -47,7 +47,7 @@ class DataCountService {
 		StringBuilder subjectsFromBothSubsetsQuery = new StringBuilder()
 		StringBuilder gseaQuery = new StringBuilder()
 		
-		subjectsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = CAST(? AS numeric)")
+		subjectsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ?")
 		.append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')")
 		subjectsFromBothSubsetsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id IN (")
 		.append(resultInstanceIds).append(')')

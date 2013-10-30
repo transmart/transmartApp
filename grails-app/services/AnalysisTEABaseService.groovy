@@ -16,21 +16,14 @@
  * 
  *
  ******************************************************************/
-  
 
-import org.transmart.biomart.BioMarker
-import org.transmart.biomart.Compound
-import org.transmart.biomart.Disease
-import org.transmart.biomart.ClinicalTrial
-import org.transmart.biomart.Experiment
-
-import org.transmart.AnalysisResult;
-import org.transmart.AssayAnalysisValue;
-import org.transmart.ExpAnalysisResultSet;
-import org.transmart.SearchFilter;
-import org.transmart.biomart.BioAssayAnalysis;
-import org.transmart.biomart.BioAssayAnalysisData;
-import org.transmart.biomart.BioAssayAnalysisDataTea;
+import org.transmart.AnalysisResult
+import org.transmart.AssayAnalysisValue
+import org.transmart.ExpAnalysisResultSet
+import org.transmart.SearchFilter
+import org.transmart.biomart.BioAssayAnalysis
+import org.transmart.biomart.BioAssayAnalysisData
+import org.transmart.biomart.BioAssayAnalysisDataTea
 import org.transmart.searchapp.SearchBioMarkerCorrelFastMV
 import org.transmart.biomart.BioMarkerCorrelationMV
 import com.recomdata.search.query.AssayAnalysisDataQuery
@@ -55,7 +48,7 @@ class AnalysisTEABaseService {
 			return 0
 		}
 
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(createCountQuery(filter))[0]
+		return BioAssayAnalysisData.executeQuery(createCountQuery(filter))[0]
 	}
 
 	/**
@@ -168,7 +161,7 @@ class AnalysisTEABaseService {
 	//	createNPVCondition(query)
 
 		// get count
-		def result = org.transmart.biomart.BioAssayAnalysisDataTea.executeQuery(query.generateSQL())
+		def result = BioAssayAnalysisDataTea.executeQuery(query.generateSQL())
 		log.info "anal ct result: "+result
 		if(result!=null && result.size()>0) analysisCount = result[0]
 		return analysisCount
@@ -200,7 +193,7 @@ class AnalysisTEABaseService {
 			//createNPVCondition(query)
 
 			def sql = query.generateSQL();
-			result = org.transmart.biomart.BioAssayAnalysisDataTea.executeQuery(sql)
+			result = BioAssayAnalysisDataTea.executeQuery(sql)
 
 			// get up/down info from mv for all biomarkers
 			def biomarkerFilters = gfilter.getBioMarkerFilters()
@@ -307,7 +300,7 @@ class AnalysisTEABaseService {
 		analysisQuery.createGlobalFilterCriteria(filter.globalFilter, true);
 		createSubFilterCriteria(filter, analysisQuery);
 
-		return org.transmart.biomart.BioAssayAnalysisDataTea.executeQuery(analysisQuery.generateSQL())
+		return BioAssayAnalysisDataTea.executeQuery(analysisQuery.generateSQL())
 	}
 
 	/**
@@ -315,7 +308,7 @@ class AnalysisTEABaseService {
 	 */
 	def processAnalysisResultNoSort(List result, AnalysisResult aresult){
 
-		//def aresult = new AnalysisResult(analysis);
+		//def aresult = new org.transmart.AnalysisResult(analysis);
 		for(row in result){
 			def analysisData = row[0]
 			def biomarker = row[1];
@@ -386,8 +379,8 @@ class AnalysisTEABaseService {
 	}
 
 	/**
-	 * function applies the TEA scoring algorithm to each AnalysisResult object and its associated collection of bio markers.
-	 * This function assigns the TEA metrics to each AnalysisResult and returns the supplied list in ascending TEA score order
+	 * function applies the TEA scoring algorithm to each org.transmart.AnalysisResult object and its associated collection of bio markers.
+	 * This function assigns the TEA metrics to each org.transmart.AnalysisResult and returns the supplied list in ascending TEA score order
 	 */
 	def assignTEAScoresAndRank(Collection<AnalysisResult> analyses, int geneCount) {
 
@@ -410,7 +403,7 @@ class AnalysisTEABaseService {
 			Collections.sort(ar.assayAnalysisValueList)
 		}
 
-		// AnalysisResult implements Comparable
+		// org.transmart.AnalysisResult implements Comparable
 		Collections.sort(rankedAnalyses)
 		return rankedAnalyses
 	}

@@ -17,12 +17,22 @@ package org.transmart.searchapp
  * 
  *
  ******************************************************************/
+  
+
+ /**
+  * $Id: org.transmart.searchapp.AccessLog.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 10098 $
+  */
+
+
 
 /**
- * Provides access to the logging table
+ * user access log file
+ *
  */
+public class AccessLog{
 
-public class AccessLog {
 	Long id
 	String username;
 	String event;
@@ -31,8 +41,8 @@ public class AccessLog {
 	Date accesstime;
 
 	static mapping = {
-		table 'SEARCH_APP_ACCESS_LOG'        
-	    id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		table 'SEARCH_APP_ACCESS_LOG'
+	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
 		version false
 		id column:'id'
 		username column:'USER_NAME'
@@ -42,6 +52,7 @@ public class AccessLog {
 		accesstime column:'ACCESS_TIME'
 	}
 
+
 	static constraints = {
 		username(blank: false)
 		event(nullable:false)
@@ -49,4 +60,5 @@ public class AccessLog {
 		requestURL(nullable: true)
 		accesstime(nullable:false)
 	}
+
 }

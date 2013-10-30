@@ -19,10 +19,11 @@
   
 package com.thomsonreuters.lsps.transmart
 
-import groovyx.net.http.*
-import java.security.KeyStore
+import groovyx.net.http.HTTPBuilder
 import org.apache.http.conn.scheme.Scheme
 import org.apache.http.conn.ssl.SSLSocketFactory
+
+import java.security.KeyStore
 
 class CortellisSearchController {
 	    

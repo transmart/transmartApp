@@ -21,7 +21,7 @@ package org.transmart
 
 /**
  * @author $Author: mmcduffie $
- * $Id: ExperimentAnalysisFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * $Id: org.transmart.ExperimentAnalysisFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * @version $Revision: 9178 $
  *
  */

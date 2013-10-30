@@ -21,11 +21,16 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link rel="shortcut icon" href="${resource(dir:'images',file:'searchtool.ico')}">
+		<link rel="shortctu icon" href="${resource(dir:'images',file:'searchtool.ico')}">
 		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">
-		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/ext-all.css')}">
-		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}">
-		<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}">
+		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/ext-all.css')}"></link>
+		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"></link>
+		<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
+		
+        <!-- jQuery JS libraries -->
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-1.7.1.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>   
+	    <script>jQuery.noConflict();</script> 		
 		
 	<!--[if IE 7]>
 		<style type="text/css">
@@ -35,7 +40,7 @@
 		</style>
 	<![endif]-->
 	
-
+		<g:javascript library="prototype" />
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
@@ -83,6 +88,7 @@
 				        }
 					}
 				});
+
 
 				var combo = new Ext.app.SearchComboBox({
 					id: "search-combobox",

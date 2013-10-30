@@ -22,25 +22,22 @@ package com.recomdata.asynchronous
 
 import com.recomdata.transmart.data.export.exception.DataNotFoundException;
 
-import org.quartz.Job
-import org.quartz.JobExecutionContext;
-
-
 import java.io.File;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import com.recomdata.transmart.data.export.util.FTPUtil;
 import com.recomdata.transmart.data.export.util.ZipUtil
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.RegularExpression.Context;
-
 import org.quartz.Job;
-import org.quartz.JobDataMap
 import org.quartz.JobExecutionContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
+import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
+
 
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.*;
+import org.rosuda.Rserve.*;
 
 
 /**
@@ -50,17 +47,17 @@ import org.rosuda.REngine.Rserve.*;
  *
  */
 class GenericJobService implements Job {
+
+	def ctx = AH.application.mainContext
+	def springSecurityService = ctx.springSecurityService
+	def jobResultsService = ctx.jobResultsService
+	def i2b2HelperService = ctx.i2b2HelperService
+	def i2b2ExportHelperService = ctx.i2b2ExportHelperService
+	def snpDataService = ctx.snpDataService
+	def dataExportService = ctx.dataExportService
+	def asyncJobService = ctx.asyncJobService
 	
-	def springSecurityService 
-	def i2b2HelperService 
-	def i2b2ExportHelperService 
-	def snpDataService
-	def dataExportService
-	def jobResultsService
-	def asyncJobService
-	def grailsApplication
-	
-	String tempFolderDirectory
+	def static final String tempFolderDirectory = CH.config.com.recomdata.plugins.tempFolderDirectory
 	
 	String jobTmpParentDir
 	String jobTmpDirectory
@@ -69,17 +66,22 @@ class GenericJobService implements Job {
 	String finalOutputFile
 	
 	def jobDataMap
-	def jobName
 	
 	File jobInfoFile
 	
-	// TODO -- NEED TO BE REVIEWED (f.guitton@imperial.ac.uk)
-	private void init ()
+	public void execute (JobExecutionContext jobExecutionContext)
 	{
+		//We use the job detail class to get information about the job.
+		def jobDetail = jobExecutionContext.getJobDetail()
+		
+		//Gather the jobs name.
+		def jobName = jobDetail.getName()
+		
 		//Put an entry in our log.
 		log.info("${jobName} has been triggered to run ")
 		
 		//Get the data map which shows the attributes for our job.
+		jobDataMap = jobDetail.getJobDataMap()
 		
 		//Write our attributes to a log file.
 		if (log.isDebugEnabled())	{
@@ -87,29 +89,7 @@ class GenericJobService implements Job {
 				log.debug("\t${_key} -> ${jobDataMap[_key]}")
 			}
 		}
-		
-		grailsApplication = jobDataMap.get("SGA")
-		jobResultsService = jobDataMap.get("SJRS")
-		asyncJobService = jobDataMap.get("SAJS")
-		dataExportService = jobDataMap.get("SDES")
-		
-	}
-	// --
-	
-	public void execute (JobExecutionContext jobExecutionContext)
-	{
-		//We use the job detail class to get information about the job.
-		def jobDetail = jobExecutionContext.getJobDetail()
-		
-		//Gather the jobs info.
-		jobName = jobDetail.getName()
-		jobDataMap = jobDetail.getJobDataMap()
-		
-		//Initialize
-		init();
-		
-		tempFolderDirectory = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
-		
+
 		//Initialize the jobTmpDirectory which will be used during bundling in ZipUtil
 		jobTmpDirectory = tempFolderDirectory + File.separator + "${jobName}" + File.separator
 		jobTmpDirectory = jobTmpDirectory.replace("\\","\\\\")
@@ -243,12 +223,7 @@ class GenericJobService implements Job {
 					try {
 						File outputFile = new File(zipFileLoc+finalOutputFile);
 						if (outputFile.isFile()) {
-							String ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
-							String ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
-							String ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
-							String ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
-							String ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
-							String remoteFilePath = FTPUtil.uploadFile(true, outputFile, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath);
+							String remoteFilePath = FTPUtil.uploadFile(true, outputFile);
 							if (StringUtils.isNotEmpty(remoteFilePath)) {
 								//Since File has been uploaded to the FTP server, we can delete the 
 								//ZIP file and the folder which has been zipped
@@ -415,7 +390,7 @@ class GenericJobService implements Job {
 	* @param status - the new status
 	* @return
 	*/
-   def updateStatus(jobName, status) {
+   def updateStatus(jobName, status)	{
 	   jobResultsService[jobName]["Status"] = status
 	   log.debug(status)
 	   asyncJobService.updateStatus(jobName, status)

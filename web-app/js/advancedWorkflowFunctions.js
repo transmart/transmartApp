@@ -26,7 +26,7 @@
  * Hierarchical Clustering = 'Cluster'
  * K-Means Clustering = 'KMeans'
  * Comparative Marker Selection (Heatmap) = 'Select'
- * Principal Component Analysis = 'PCA'
+ * org.transmart.searchapp.Principal Component Analysis = 'PCA'
 
 
 */
@@ -35,7 +35,7 @@
 //After we have selected to run a heat map from the Advanced workflow menu., these functions run.
 //*******************************************************************
 
-//This is fired after an advanced workflow button is clicked that generates a heatmap.
+//This is fired after a advanced workflow button is clicked that generates a heatmap.
 function validateHeatmap()
 {
 	//Determine if the subsets are actually filled in.
@@ -85,6 +85,111 @@ function validateHeatmap()
 	);
 }
 
+//We verify that rows were added to a subset, then submit the search parameters to the sampleExplorer controller.
+function validateHeatMapsSample(completedFunction)
+{
+	//We need to generate a JSON object that has all the subsets.
+	jsonDataToPass = buildSubsetJSON();
+	
+	//Exit is we found no records in the subsets.
+	if(!jsonDataToPass)
+	{
+		Ext.Msg.alert("No subsets loaded","Please add records to a subset to run a workflow!");
+		return false;
+	}
+	
+	//We need to validate samples to make sure we aren't mixing platforms/studies.
+	var DataSetList = [];
+	var DataTypeList = [];
+	
+	//Loop through each subset and get a distinct list of DataSets and DataTypes.
+	for (subset in jsonDataToPass)
+	{
+		//Add this dataset and datatype to our list.
+		if(jsonDataToPass[subset].DataSet)DataSetList.push(jsonDataToPass[subset].DataSet.toString());
+		if(jsonDataToPass[subset].DataType)DataTypeList.push(jsonDataToPass[subset].DataType.toString());
+	}
+	
+	//Distinct our arrays.
+	DataSetList = DataSetList.unique();
+	DataTypeList = DataTypeList.unique();
+	
+	//Make sure each list only has one value.
+	if(DataSetList.size() > 1)
+	{
+		Ext.Msg.alert("Different study comparisons not allowed","You have selected samples from different studies. Please clear your entries and select samples from only one study.");
+		return false;	
+	}
+
+	if(DataTypeList.size() > 1)
+	{
+		Ext.Msg.alert("Different data type comparisons not allowed","You have selected samples from different data types. Please clear your entries and select samples from only one data type.");
+		return false;	
+	}
+	
+	//Since our lists only have one value we can set the global variable for Data Type.
+	GLOBAL.DataType = DataTypeList[0];
+	
+	/*
+	//Workflow specific validation.
+	//GWAS Needs 2 subsets.
+ 	if(jsonDataToPass.length() != 2)
+ 	{
+ 		Ext.Msg.alert('Genome-Wide Association Study needs control datasets (normal patients) in subset 1, and case datasets (disease patients) in subset 2.');
+	 	return false;
+ 	}		
+	*/
+	
+	//Pass the selected rows off to the sampleExplorer controller.
+	Ext.Ajax.request(
+			{
+				url : pageInfo.basePath+"/sampleExplorer/sampleValidateHeatMap",
+				method : 'POST',
+				timeout: '1800000',
+	           	jsonData : {"SearchJSON" : jsonDataToPass},
+				success : function(result, request)
+				{
+					validateheatmapComplete(result,completedFunction);
+				},
+				failure : function(result, request)
+				{
+					validateheatmapComplete(result,completedFunction);
+				}
+			}
+	); 
+
+}
+
+//After the heatmap server call is done we eval the JSON returned and show the popup with the list of dropdowns.
+function validateheatmapComplete(result,completedFunction)
+{
+	//Get the JSON string we got from the server into a real JSON object.
+	var mobj=result.responseText.evalJSON();
+	
+	//If we failed to retrieve any test from the heatmap server call, we alert the user here. Otherwise, show the popup.
+	if(mobj.NoData && mobj.NoData == "true")
+	{
+		Ext.Msg.alert("No Data!","No data found for the samples you selected!");
+		return;
+	}
+	
+	//If we got data, store the JSON data globally.
+	GLOBAL.DefaultCohortInfo=mobj;
+
+	if(GLOBAL.Explorer == "SAMPLE")
+	{
+		//Run the function for post data retrieval.
+		completedFunction();		
+	}
+	else
+	{
+		showCompareStepPathwaySelection();
+	}
+
+}
+//*******************************************************************
+
+
 //*******************************************************************
 //After the Run Workflow button is clicked on the advanced workflow popup, these functions run.
 //*******************************************************************
@@ -92,7 +197,7 @@ function validateHeatmap()
 //Sample side
 function finalAdvancedMenuValidationSample()
 {
-	//Hide the window that we select our gene/pathway from.
+	//Hide the window that we select out gene/pathay from.
 	compareGeneSelection.hide();
 	
 	Ext.Ajax.request(
@@ -333,7 +438,7 @@ function showGeneSelection()
 		plain: true,
 		modal: true,
 		border:false,
-		resizable: false,		
+        resizable: false,		
 		buttons: [
 		          {
 		            id: 'compareGeneSelectionOKButton',
@@ -409,3 +514,48 @@ function showGeneSelection()
 		}
 	}
 }
+
+//We have more than 1 subset on the Sample Explorer so we need to put all the search queries together into one JSON object.
+//Each of the subsets when accessed are made up of the search criteria. [Pathology:["Disease","Non-Disease"]].
+function buildSubsetJSON()
+{
+	//This helps us determine if any of the grids have records.
+	var foundRecords = false;
+	
+	//We need to make sure at least one of the subset grids has results.
+	//We use the variable that holds the number of subsets to access all the subsets.
+	for (subsetCounter = 1;subsetCounter < GLOBAL.subsetTabs;subsetCounter++)
+	{
+		//Get the number of records in the grids datastore.		
+		if(Ext.getCmp("subsetGrid" + subsetCounter).store.getCount() > 0)
+		{
+			foundRecords = true;
+		}
+	}
+	
+	//If we don't find any records, exit.
+	if(!foundRecords)
+	{
+		return false;
+	}
+	
+	//This is the entire JSON object we return.
+	var completeSearchList = {};
+		
+	//We use the variable that holds the number of subsets to access all the subsets.
+	for (subsetCounter = 1;subsetCounter < GLOBAL.subsetTabs;subsetCounter++)
+	{
+		//This gets the object with our search criteria.
+		var jsonData = GLOBAL["SearchJSON" + subsetCounter];
+		
+		//Add our subset to the master JSON object.
+		completeSearchList[subsetCounter] = jsonData;
+	}
+	
+	return completeSearchList;
+}
+
+
+
+
+

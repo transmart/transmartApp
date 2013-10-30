@@ -22,6 +22,7 @@ package com.recomdata.transmart.data.export
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.groovy.grails.commons.ApplicationHolder;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 import org.json.JSONArray
 import org.json.JSONObject
 import org.quartz.JobDataMap;
@@ -29,7 +30,7 @@ import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
 
 import com.recomdata.transmart.data.export.ExportDataProcessor
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
+import org.transmart.searchapp.AsyncJob;
 import org.transmart.searchapp.AccessLog
 import com.recomdata.transmart.validate.RequestValidator;
 import com.recomdata.asynchronous.GenericJobService;
@@ -44,7 +45,8 @@ class ExportService {
 	def jobResultsService
 	def asyncJobService
 	def quartzScheduler
-	def grailsApplication
+	def config = ConfigurationHolder.config
+    def conceptService
 
 	def Map createJSONFileObject(fileType, dataFormat, fileDataCount, gplId, gplTitle) {
 		def file = [:]
@@ -67,7 +69,7 @@ class ExportService {
 	}
 	
 	def getMetaData(params) {
-		def dataTypesMap = grailsApplication.config.com.recomdata.transmart.data.export.dataTypesMap
+		def dataTypesMap = config.com.recomdata.transmart.data.export.dataTypesMap
 		
 		//The result instance id's are stored queries which we can use to get information from the i2b2 schema.
 		def rID1 = RequestValidator.nullCheck(params.result_instance_id1)
@@ -107,6 +109,8 @@ class ExportService {
 				
 				if (key == 'CLINICAL') {
 					files.put(createJSONFileObject('.TXT', 'Data', finalMap["subset${i}"][key], null, null))
+                    files.put(createJSONFileObject('.SAS.TXT', 'Data in SAS compatible format', finalMap["subset${i}"][key], null, null))
+                    files.put(createJSONFileObject('.ENCOUNTER.TXT', 'Data Linked by Encounter', finalMap["subset${i}"][key], null, null))
 				} else if (key == 'MRNA') {
 					def countsMap = createCountsMap('.TXT', 'Processed Data', finalMap, key, i)
 					dataTypeHasCounts=dataTypeHasCounts||countsMap.get('dataTypeHasCounts')
@@ -320,6 +324,37 @@ class ExportService {
 		def trigger = new SimpleTrigger("triggerNow"+Math.random(), params.analysis)
 		quartzScheduler.scheduleJob(jobDetail, trigger)
 	}
+
+    def private prepareConceptCodes(variablesConceptPaths) {
+        //Get the list of all the concepts that we are concerned with from the form.
+        String[] conceptCodesArray = new String[0]
+        if(variablesConceptPaths != null && variablesConceptPaths != "") {
+            Set conceptPaths = new HashSet();
+
+            //Split the concept path records on the var.
+            def conceptPathsRecords = variablesConceptPaths.split("\\|")
+
+
+            for(int i = 1; i<conceptPathsRecords.length; i++){//First concept path record is always blank so skip it
+                def currentConceptPathRecord = conceptPathsRecords[i].split("DELIMITER")
+                if(currentConceptPathRecord[1]=='FA'){
+                    def derivedConceptPaths = conceptService.getAllChildLeafConcepts(currentConceptPathRecord[0]);
+                    conceptPaths.addAll(derivedConceptPaths)
+                }else{
+                    conceptPaths.add(currentConceptPathRecord[0])
+                }
+            }
+
+
+            //We need to convert from concept paths to an actual concept code.
+            List conceptCodesList = new ArrayList()
+            conceptPaths.each { conceptPath ->
+                conceptCodesList.add(i2b2HelperService.getConceptCodeFromLongPath("\\\\"+conceptPath.trim()))
+            }
+            conceptCodesArray = conceptCodesList.toArray()
+        }
+        return conceptCodesArray
+    }
 	
     def exportData(params, userName) {
 		def statusList = ["Started", "Validating Cohort Information",
@@ -349,11 +384,12 @@ class ExportService {
 	def getExportJobs(userName) {
 		JSONObject result = new JSONObject()
 		JSONArray rows = new JSONArray()
-		def maxJobs = grailsApplication.config.com.recomdata.transmart.data.export.max.export.jobs.loaded
+		def config = ConfigurationHolder.config
+		def maxJobs = config.com.recomdata.transmart.data.export.max.export.jobs.loaded
 		
 		maxJobs = maxJobs ? maxJobs : 0
 		
-		//TODO find out why the domain class AsyncJob was not getting imported. Is it because it is in the default package?
+		//TODO find out why the domain class org.transmart.searchapp.AsyncJob was not getting imported. Is it because it is in the default package?
 		def c = AsyncJob.createCriteria()
 		def jobResults = c {
 			maxResults(maxJobs)
@@ -386,13 +422,64 @@ class ExportService {
 		def job = AsyncJob.findByJobName(jobName)
 		def exportDataProcessor = new ExportDataProcessor()
 		
-		def tempDir = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
-		def ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
-		def ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
-		def ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
-		def ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
-		def ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
-
-		return exportDataProcessor.getExportJobFileStream(job.viewerURL, tempDir, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath)
+		return exportDataProcessor.getExportJobFileStream(job.viewerURL)
 	}
+
+    def getChildConceptsJSON(childConcepts){
+
+        def JSONData = []
+
+        childConcepts.each(){	childConcept ->
+
+            //First figure out value type (N : Numeric or T  : Categorical) from observation fact table.
+            def valtypeCd = conceptService.getValueType(childConcept)
+
+            //Each node has a metadata section which the jstree uses to pass data around about the nodes.
+            def metaDataJson = [:]
+            metaDataJson["id"] = childConcept.id
+            metaDataJson["qtip"] = childConcept.toolTip
+            metaDataJson["dimcode"] = childConcept.dimCode
+            metaDataJson["iconCls"] = valtypeCd
+            metaDataJson["tablename"] = "CONCEPT_DIMENSION"
+            metaDataJson["level"] = childConcept.level
+            //metaDataJson["visitInd"] = modifierNode.visitInd ? modifierNode.visitInd : ""
+            //metaDataJson["inOutCode"] = modifierNode.inOutCode ? modifierNode.inOutCode : ""
+
+            //The attribute section controls how the node is displayed.
+            def attrDataJson = [:]
+
+            //If the modifier is a folder node, we put in an empty "rel" attribute.
+            if(childConcept.visualAttributes.trim()== "FA")
+            {
+                attrDataJson["rel"] = ""
+            }
+            else
+            {
+                attrDataJson["rel"] = valtypeCd
+            }
+
+            attrDataJson["name"] = childConcept.name
+            //The node name shouldn't have counts for the root node, modifer the name if the node isn't root.
+            def nodeName = childConcept.name
+
+            def finalJson = [:]
+            finalJson["data"] = nodeName
+
+            //If it's a folder, add this attribute so we know to draw the "+" sign indicating there are children.
+            def va = childConcept.visualAttributes
+            if(childConcept.visualAttributes.trim()== "FA")
+            {
+                finalJson["state"] = "closed"
+            }
+
+            //Build the final object from the sub arrays.
+            finalJson["metadata"] = metaDataJson
+            finalJson["attr"] = attrDataJson
+            finalJson["children"] = []
+
+            JSONData.add(finalJson)
+        }
+
+        return JSONData
+    }
 }

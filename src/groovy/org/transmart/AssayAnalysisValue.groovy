@@ -19,14 +19,12 @@ package org.transmart
  ******************************************************************/
   
 
-import org.transmart.biomart.BioAssayAnalysisData;
-
 import org.transmart.biomart.BioMarker
 
 /**
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
- * $Id: AssayAnalysisValue.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * $Id: org.transmart.AssayAnalysisValue.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  *
  */
 public class AssayAnalysisValue implements Comparable {

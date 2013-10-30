@@ -16,19 +16,13 @@
  * 
  *
  ******************************************************************/
-  
 
-import org.transmart.biomart.Disease
-import org.transmart.biomart.Compound
-
-import org.transmart.SearchFilter;
-import org.transmart.biomart.BioAssayAnalysis;
-import org.transmart.biomart.BioAssayAnalysisData;
-import org.transmart.searchapp.SearchKeyword
+import org.transmart.SearchFilter
 import org.transmart.biomart.ClinicalTrial
-import org.transmart.biomart.BioData
 import org.transmart.biomart.Experiment
+import org.transmart.biomart.BioAssayAnalysisData
 import com.recomdata.search.query.AssayAnalysisDataQuery
+import org.transmart.searchapp.SearchKeyword
 
 /**
  * $Id: FilterQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -66,7 +60,7 @@ class FilterQueryService {
 	//	println(query.generateSQL());
 
 
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(query.generateSQL());
+		return BioAssayAnalysisData.executeQuery(query.generateSQL());
 	}
 
 //	def experimentDiseaseFilter(String experimentType){
@@ -84,7 +78,7 @@ class FilterQueryService {
 	def experimentCompoundFilter(String experimentType){
 		def query = "SELECT distinct sk FROM org.transmart.searchapp.SearchKeyword sk, org.transmart.biomart.Experiment exp JOIN exp.compounds cpd "+
 		" WHERE sk.bioDataId = cpd.id AND exp.type=? ORDER BY sk.keyword";
-		return org.transmart.searchapp.SearchKeyword.executeQuery(query, experimentType);
+		return SearchKeyword.executeQuery(query, experimentType);
 	}
 
 	def findExperimentCompoundFilter(SearchFilter filter, experimentType){
@@ -102,21 +96,21 @@ class FilterQueryService {
 		// createSubFilterCriteria(filter.expAnalysisFilter, query);
 	//	println(query.generateSQL());
 
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(query.generateSQL());
+		return BioAssayAnalysisData.executeQuery(query.generateSQL());
 	}
 
 	def studyTypeFilter(){
 		def query = "SELECT distinct exp.studyType from org.transmart.biomart.ClinicalTrial exp WHERE exp.studyType IS NOT NULL ORDER BY exp.studyType"
-		return org.transmart.biomart.ClinicalTrial.executeQuery(query)
+		return ClinicalTrial.executeQuery(query)
 	}
 
 	def trialPhaseFilter(){
 		def query = "SELECT distinct exp.studyPhase FROM org.transmart.biomart.ClinicalTrial exp WHERE exp.studyPhase IS NOT NULL ORDER BY exp.studyPhase"
-		return org.transmart.biomart.ClinicalTrial.executeQuery(query)
+		return ClinicalTrial.executeQuery(query)
 	}
 
 	def studyDesignFilter(String experimentType){
-		return org.transmart.biomart.Experiment.executeQuery("SELECT DISTINCT exp.design FROM org.transmart.biomart.Experiment exp WHERE exp.type=? AND exp.design IS NOT NULL ORDER BY exp.design",experimentType);
+		return Experiment.executeQuery("SELECT DISTINCT exp.design FROM org.transmart.biomart.Experiment exp WHERE exp.type=? AND exp.design IS NOT NULL ORDER BY exp.design",experimentType);
 	}
 
 }

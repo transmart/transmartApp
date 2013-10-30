@@ -20,17 +20,17 @@
 <html>
 <head>
 	<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
-    <link rel="SHORTCUT ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
+	<link rel="SHORTCUT ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
 	<link rel="ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
 	<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
 
+	<g:javascript library="prototype" />
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'application.js')}"></script>
+	<g:javascript library="application" />
 
 	<script type="text/javascript">
 		Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
@@ -79,7 +79,7 @@
 					{
 		                title:"Google Scholar",
 		                id:'google',
-                        html: "<a href=\"http://scholar.google.com/scholar?q=${symbol} gene\" target=_new>Search Google Scholar for articles on ${symbol} gene</a> (n.b. opens results in a new window)."
+		                defaultSrc: "http://scholar.google.com/scholar?hl=en&lr=&q=${symbol}+gene&btnG=Search&as_allsubj=some&as_subj=bio&as_subj=chm&as_subj=med"
 					}]
 				}]
 			});

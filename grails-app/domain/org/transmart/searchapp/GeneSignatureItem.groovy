@@ -20,10 +20,9 @@
 
 package org.transmart.searchapp
 
-import org.transmart.biomart.BioAssayFeatureGroup;
-import org.transmart.biomart.BioData;
-
 import org.transmart.biomart.BioMarker
+import org.transmart.biomart.BioAssayFeatureGroup
+import org.transmart.searchapp.GeneSignature;
 
 /**
  * domain class for a gene signature item
@@ -59,4 +58,5 @@ class GeneSignatureItem {
 		bioMarker(nullable:true)
 		probeset(nullable:true)
 	}
+
 }

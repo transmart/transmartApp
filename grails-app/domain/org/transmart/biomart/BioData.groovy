@@ -25,10 +25,11 @@ class BioData {
 		String type
 		static hasMany =[externalCodes: BioDataExternalCode]
  static mapping = {
+
 	table 'BIO_DATA_UID'
 	 version false
 	tablePerHierarchy false
-	 columns {        
+	 columns {
 		id column:'BIO_DATA_ID'
 		uniqueId column:'UNIQUE_ID'
 		type column:'BIO_DATA_TYPE'

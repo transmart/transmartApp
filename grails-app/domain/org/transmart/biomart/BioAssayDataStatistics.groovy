@@ -19,10 +19,6 @@
   
 
 package org.transmart.biomart
-
-import org.transmart.biomart.BioSample;
-import org.transmart.biomart.Experiment;
-
 class BioAssayDataStatistics {
 		Long id
 		Long sampleCount

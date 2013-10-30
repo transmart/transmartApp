@@ -26,7 +26,7 @@ import groovy.time.*
 import org.apache.commons.lang.StringUtils;
 import org.json.*
 
-import com.recomdata.transmart.domain.i2b2.AsyncJob
+import org.transmart.searchapp.AsyncJob
 
 import com.recomdata.genepattern.WorkflowStatus;
 import com.recomdata.genepattern.JobStatus;
@@ -149,4 +149,18 @@ class AsyncJobController {
 	   wfstatus.setCancelled();
 	   render(wfstatus.jobStatusList as JSON)
    }
+   def deleteJobs = {
+        def selectedJobNames = params['selectedJobNames']
+
+        if(selectedJobNames!=""){
+            String[] jobNames = selectedJobNames.split("\\|")
+
+            List jobNamesList = new ArrayList(Arrays.asList(jobNames));
+
+
+            asyncJobService.deleteJobs(jobNamesList)
+        }
+
+        render 'success'
+    }
 }

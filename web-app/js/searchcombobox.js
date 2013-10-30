@@ -72,7 +72,7 @@ Ext.app.SearchComboBox = Ext.extend(Ext.form.ComboBox, {
 			listeners: {
 				"load" : {
 					fn: function(obj, records, options) {
-						if (records.length > 0) {
+						if (records.size() > 0) {
 							this.select(-1);
 						}
 					},

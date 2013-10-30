@@ -20,9 +20,12 @@
 
 package com.recomdata.transmart.data.export
 
+import i2b2.Concept;
+import grails.converters.JSON;
+
 import org.json.JSONObject;
 
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
+import org.transmart.searchapp.AsyncJob;
 
 class DataExportController {
 
@@ -30,6 +33,7 @@ class DataExportController {
 	
 	def exportService
 	def springSecurityService
+    def conceptService
 	
 	//We need to gather a JSON Object to represent the different data types.
 	def getMetaData =
@@ -84,6 +88,17 @@ class DataExportController {
 		
 		response.setContentType("text/json")
 		response.outputStream << jsonResult.toString()
+    }
+
+    def advancedExport = {
+
+    }
+
+    def childConcepts = {
+        Concept parentConcept = Concept.findByFullName(params['parentConcept'])
+        def childConcepts = conceptService.getChildrenConcepts(parentConcept)
+        def childConceptsJSON = exportService.getChildConceptsJSON(childConcepts)
+        render childConceptsJSON as JSON
     }
 }
 

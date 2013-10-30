@@ -1,3 +1,4 @@
+<%@ page import="org.transmart.searchapp.SecureObjectAccess" %>
 <!--
   tranSMART - translational medicine data mart
   
@@ -16,16 +17,16 @@
   
  
 -->
-<%@ page import="org.transmart.searchapp.SecureObjectAccess"%>
+
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="admin" />
-        <title>Show Study</title>
+        <title>Show SecureObject</title>
     </head>
     <body>
         <div class="body">
-            <h1>Show Study</h1>
+            <h1>Show SecureObject</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>

@@ -16,7 +16,7 @@
   
  
 -->
-<g:setProvider library="prototype"/>
+
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -29,11 +29,6 @@
 
 <!--  wait image for gene selections -->
 <g:waitIndicator divId="expr_profile_main_loading_div" />
-<!--  if no expression profile results, render noResult -->
-<g:if test="${epr==null || epr.profCount==0 }">
-    <g:render template="/search/noResult" />
-</g:if>
-<g:else>
 <div id="expr_profile_main_div" style="display: block;" class="body">
 <table>
 
@@ -106,6 +101,5 @@
 	</tr>
 </table>
 </div>
-</g:else>
 </body>
 </html>

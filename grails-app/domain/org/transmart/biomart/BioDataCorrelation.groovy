@@ -25,15 +25,16 @@ class BioDataCorrelation {
 		BioDataCorrelationDescr correlationDescr
 		Long id
 		static mapping = {
-            table 'BIO_DATA_CORRELATION'
-            version false
-            id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
-            columns {
-                id column:'BIO_DATA_CORREL_ID'
-                bioDataId column:'BIO_DATA_ID'
-                associatedBioDataId column:'ASSO_BIO_DATA_ID'
-                correlationDescr column:'BIO_DATA_CORREL_DESCR_ID'
-            }
-        }
+	 table 'BIO_DATA_CORRELATION'
+	 version false
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 columns {
+		id column:'BIO_DATA_CORREL_ID'
+		bioDataId column:'BIO_DATA_ID'
+		associatedBioDataId column:'ASSO_BIO_DATA_ID'
+		correlationDescr column:'BIO_DATA_CORREL_DESCR_ID'
+
+		}
+	}
 
 }

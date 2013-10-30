@@ -1,3 +1,4 @@
+<%@ page import="org.transmart.searchapp.Role" %>
 <!--
   tranSMART - translational medicine data mart
   
@@ -16,7 +17,7 @@
   
  
 -->
-<%@ page import="org.transmart.searchapp.Role"%>
+
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

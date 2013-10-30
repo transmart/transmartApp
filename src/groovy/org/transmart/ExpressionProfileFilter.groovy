@@ -25,7 +25,7 @@ package org.transmart
 
 /**
  * @author $Auther$
- * $Id: ExpressionProfileFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * $Id: org.transmart.ExpressionProfileFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  * $Revision: 9178 $
  *
  */

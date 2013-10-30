@@ -39,9 +39,9 @@
 			var metricItem = document.getElementById(metricId);
 					
 			// remove and reset
-			geneItem.value="";
-			probesetItem.value="";
-			metricItem.value=""
+			if (geneItem) {geneItem.value="";}
+			if (probesetItem) {probesetItem.value="";}
+			if (metricItem) {metricItem.value="";}
 			rowItem.style.display="none";
 		}
 		
@@ -91,9 +91,8 @@
 	</table>    
    	<br>
   
- 	<g:form frm="geneSignatureItemFrm" method="post">   	
-	<g:hiddenField name="id" value="${gs.id}" />	 	 
-   	
+ 	<g:form frm="geneSignatureItemFrm" method="post">   
+ 	<g:hiddenField name="id" value="${gs.id}" />		
    	<!-- existing items -->
    	<table class="detail">    	
        	<thead>
@@ -117,9 +116,17 @@
 		</g:each>			
 		</tbody>
     </table>       	
+    
+    <div class="buttons">
+		<g:actionSubmit class="delete" action="deleteItems" value="Delete Checked" onclick="return confirm('Are you sure you want to delete these items?')" />
+		<g:actionSubmit class="cancel" action="refreshSummary" onclick="return confirm('Are you sure you want to exit?')" value="Cancel" />
+	</div>	
+	</g:form>
      
   	<!-- new items -->
   	<br>
+  	<g:form frm="geneSignatureAddItemFrm" method="post">   
+  	<g:hiddenField name="gsId" value="${gs.id}" />	
     <table class="detail">
 		<g:tableHeaderToggle label="Expand to Add Items" divPrefix="${gs.id}_new_items" colSpan="${(gs.foldChgMetricConceptCode.bioConceptCode!='NOT_USED') ? '4' : '3'}" />
 		<tbody id="${gs.id}_new_items_detail" style="display: none;">
@@ -158,7 +165,7 @@
             		<g:if test="${gs.foldChgMetricConceptCode?.bioConceptCode!='NOT_USED'}"><td><g:textField name="foldChgMetric_${n}" maxlength="20" /></td></g:if>
       			</g:else>
 	
-				<td style="text-align: center;"><img alt="remove item" onclick="javascript:removeNewItem(${n});" src="${resource(dir:'images',file:'remove.png')}" /></td>
+				<td style="text-align: center;"><img alt="remove item" onclick="removeNewItem(${n});" src="${resource(dir:'images',file:'remove.png')}" /></td>
 			</tr>
 		</g:while>
 		</tbody>     
@@ -166,7 +173,6 @@
 	
 	<div class="buttons">
 		<g:actionSubmit class="save" action="addItems" value="Add Items" />
-		<g:actionSubmit class="delete" action="deleteItems" value="Delete Checked" onclick="return confirm('Are you sure you want to delete these items?')" />
 		<g:actionSubmit class="cancel" action="refreshSummary" onclick="return confirm('Are you sure you want to exit?')" value="Cancel" />
 	</div>	   	
    	   	

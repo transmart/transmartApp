@@ -26,11 +26,32 @@ function getExportJobs(tab)
 		url : pageInfo.basePath+'/asyncJob/getjobs',
 		root : 'jobs',
 		totalProperty : 'totalCount',
-		fields : ['name', 'status', 'runTime', 'startDate', 'viewerURL', 'querySummary']
+		fields : ['name', 'status', 'runTime', 'startDate', 'viewerURL', 'altViewerURL']
 	});
 	exportjobsstore.on('load', exportjobsstoreLoaded);
 	var myparams = Ext.urlEncode({jobType: 'DataExport', disableCaching: true});
 	exportjobsstore.load({params : myparams});
+}
+
+function clearSelectedJobs(){
+    var selectedJobs="";
+    jQuery("input:checked.exportJobCheckBox").each(function(index){
+        selectedJobs += this.value;
+        selectedJobs += "|";
+    });
+
+    if(selectedJobs!=""){
+        jQuery.ajax({
+            url: pageInfo.basePath + '/asyncJob/deleteJobs',
+            success:function(data){
+                getExportJobs();
+            },
+            failure:function(data){alert("Server error deleting jobs.");},
+            data: {selectedJobNames:selectedJobs}
+        });
+    }else{
+        alert("Please select jobs to be deleted");
+    }
 }
 
 function exportjobsstoreLoaded()
@@ -50,6 +71,12 @@ function exportjobsstoreLoaded()
 		store: exportjobsstore,
 		id:'exportJobsgrid',
 		columns: [
+                  {name:'select', header: "Select", width: 40, sortable: false,
+                        renderer: function(value, metaData, record, rowIndex, colIndex, store){
+                            var rowCheckBox = '<input type="checkbox" class="exportJobCheckBox" id="checkbox-'+value+'" value="'+value+'">';
+                            return rowCheckBox;
+                        }
+                  },
 		          {name:'name', header: "Name", width: 120, sortable: true, dataIndex: 'name',
 		        	  renderer: function(value, metaData, record, rowIndex, colIndex, store) {
 		        		  var changedName;
@@ -126,15 +153,49 @@ function exportjobsstoreLoaded()
 			}      	
        }],
         buttonAlign:'center',
-        tbar:['->',{
-            id:'help',
-            tooltip:'Click for Jobs help',
-            iconCls: "contextHelpBtn",
-            handler: function(event, toolEl, panel){
-		    	D2H_ShowHelp("1456",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-		    }
-        }]
+        tbar:[
+                {
+                    id:'selectAllExportJobs',
+                    tooltip: 'Select all export jobs',
+                    text: 'Select All',
+                    handler: function(event, toolEl, panel){
+                        selectAllExportJobs();
+                    }
+                },
+                {
+                    id:'clearAllExportJobsSelections',
+                    tooltip: 'Clear all export jobs selections',
+                    text: 'Cancel',
+                    handler: function(event, toolEl, panel){
+                        clearAllExportJobsSelections();
+                    }
+                },
+                '->',
+                {
+                    id:'clearExportJobs',
+                    tooltip: 'Click to clear selected export jobs',
+                    text: 'Clear',
+                    handler: function(event, toolEl, panel){
+                        clearSelectedJobs();
+                    }
+                },
+                {
+                    id:'help',
+                    tooltip:'Click for Jobs help',
+                    iconCls: "contextHelpBtn",
+                    handler: function(event, toolEl, panel){
+                        D2H_ShowHelp("1456",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    }
+                }
+        ]
 	});                
     analysisExportJobsPanel.add(jobs);
     analysisExportJobsPanel.doLayout();
+}
+function selectAllExportJobs(){
+    jQuery(".exportJobCheckBox").attr('checked','checked');
+}
+
+function clearAllExportJobsSelections(){
+    jQuery(".exportJobCheckBox").removeAttr('checked');
 }

@@ -26,11 +26,11 @@
 import grails.converters.*
 
 import com.recomdata.util.*
+import org.transmart.SearchResult
+import org.transmart.searchapp.AccessLog
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-
-import org.transmart.SearchResult;
-import org.transmart.searchapp.AccessLog;
 
 import com.recomdata.util.ariadne.Batch;
 
@@ -178,7 +178,7 @@ class LiteratureController {
 /*
 	def datasourceJubOncologyAlteration = {
 		def searchFilter = session.searchFilter
-		def sResult = new SearchResult()
+		def sResult = new org.transmart.SearchResult()
 		sResult.litJubOncAltCount = literatureQueryService.litJubOncAltCount(session.searchFilter)
 		sResult.result = literatureQueryService.litJubOncAltData(searchFilter, params)
 		render(template:'LiteratureAlterationData', model:[searchresult:sResult])
@@ -186,14 +186,14 @@ class LiteratureController {
 
 	def datasourceJubOncologyInhibitor = {
 		def searchFilter = session.searchFilter
-		def sResult = new SearchResult()
+		def sResult = new org.transmart.SearchResult()
 		sResult.result = literatureQueryService.litJubOncInhData(searchFilter, params)
 		render(template:'LiteratureInhibitorData', model:[searchresult:sResult])
 	}
 
 	def datasourceJubOncologyInteraction = {
 		def searchFilter = session.searchFilter
-		def sResult = new SearchResult()
+		def sResult = new org.transmart.SearchResult()
 		sResult.result = literatureQueryService.litJubOncIntData(searchFilter, params)
 		render(template:'LiteratureInteractionData', model:[searchresult:sResult])
 	}
@@ -225,7 +225,7 @@ class LiteratureController {
 
 	def jubSummaryJSON = {
 		def result = createJubSummary()
-        render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
+		render params.callback+"("+(result as JSON)+")"
 	}
 
 	static List litRefDataColumns = [

@@ -24,7 +24,7 @@ STATE = {
 		QueryRequestCounter: 0
 }
 
-function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType)
+function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, ismodifier, modifiername, modifierappliedpath, modifierkey, inOutCode, timingLevel)
 {
 	this.name=name;
 	this.key=key;
@@ -36,7 +36,13 @@ function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalu
 	this.normalunits=normalunits;
 	this.oktousevalues=oktousevalues;
 	this.value=value;
-	this.nodeType = nodeType
+	this.nodeType = nodeType;
+    this.ismodifier = ismodifier;
+    this.modifiername = modifiername;
+    this.modifierappliedpath = modifierappliedpath;
+    this.modifierkey = modifierkey;
+    this.inOutCode = inOutCode;
+    this.timingLevel = timingLevel;
 }
 
 function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
@@ -76,11 +82,23 @@ function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
 	else{
 		this.units=units;
 		}
-} 
+}
+
 
 function convertNodeToConcept(node)
 {
-	var value=new Value();
+    var ismodifier = node.attributes.ismodifier;
+    var modifierappliedpath = null;
+    var modifiername = null;
+    var modifierkey = null;
+    if(ismodifier)
+    {
+        modifierappliedpath = node.attributes.appliedpath;
+        modifiername =node.text;
+        modifierkey=node.id;
+        node=node.parentNode; //swap out for rest of properties;
+    }
+    var value=new Value();
 	var level=node.attributes.level;
 	var name=node.text;
 	var key=node.id;
@@ -90,16 +108,17 @@ function convertNodeToConcept(node)
 	var comment=node.attributes.comment;
 	var normalunits=node.attributes.normalunits;
 	var oktousevalues=node.attributes.oktousevalues;
-	
+
+
 	//Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
 	var nodeType = node.attributes.iconCls
 	
-	if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
-	
-	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType);
+	if(oktousevalues=="Y"){value.mode="numeric";} //default to numeric
+	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, ismodifier, modifiername, modifierappliedpath, modifierkey, null, null);
 	return myConcept;
 }
-function createPanelItemNew(panel, concept)
+
+function createPanelItemNew(panel, concept, shortNameDepth)
 {
 	var li=document.createElement('div'); //was li
 	//convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
@@ -119,16 +138,31 @@ function createPanelItemNew(panel, concept)
 	li.setAttribute('setvalueunits',concept.value.units);
 	li.setAttribute('oktousevalues',concept.oktousevalues);
 	li.setAttribute('setnodetype',concept.nodeType);
+    li.setAttribute('ismodifier', concept.ismodifier);
+    li.setAttribute('modifiername', concept.modifiername);
+    li.setAttribute('modifierappliedpath', concept.modifierappliedpath);
+    li.setAttribute('modifierkey', concept.modifierkey);
+    li.setAttribute('inOutCode', typeof concept.inOutCode !== 'undefined' ? concept.inOutCode : '');
+    li.setAttribute('timingLevel', typeof concept.timingLevel !== 'undefined' ? concept.timingLevel : '');
 	li.className="conceptUnselected";
 	
 	//Create a shortname
-	var splits=concept.key.split("\\");
-	var shortname="";
-	if(splits.length>1)
-	{
-	shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-	}
+	var splits=concept.tooltip.split("\\");
+	var shortname="...";
+
+    //Use default shortName depth of 2 if not specified
+    if(shortNameDepth==null){
+        shortNameDepth=2;
+    }
+
+    if(splits.length>1)
+    {
+        for(var i = shortNameDepth; i>0 ; i--){
+            shortname += "\\"+splits[splits.length-i];
+        }
+    }
 	else shortname=splits[splits.length-1];
+    if(concept.ismodifier){shortname=shortname+" ["+concept.modifiername+"] ";}
 	li.setAttribute('conceptshortname',shortname);
 	
 	//Create a setvalue description
@@ -157,7 +191,8 @@ function createPanelItemNew(panel, concept)
 }
 function getSubsetFromPanel(panel)
 {
-return panel.id.substr(16,1);
+	var idx = panel.id.substr(16,1);
+	return idx;
 }
 
 function createPanelItem(subset,panelNumber, level, name, key, tooltip, tablename, dimcode, comment, normalunits, oktousevalues,
@@ -335,7 +370,16 @@ function clearGroup(subset, panel)
 		}	
 	//reset the class
 	qc.dom.className="queryGroupInclude";
+
+    //Enable jQuery dragging into the DIV.
+    jQuery("#queryCriteriaDiv" + subset + "_" + panel).addClass("jstree-drop");
+    jQuery("#queryCriteriaDiv" + subset + "_" + panel).addClass("queryGroupSAMEEVENT");
+    jQuery("#btnPanelTimingGroup"+subset+"_"+panel).text("Independent");
+
 	invalidateSubset(subset);
+	
+	//Analysis has changed, mark this
+	GLOBAL.AnalysisHasBeenRun = false;
 }
 
 function excludeGroup(btn,subset, panel)
@@ -353,6 +397,8 @@ if(el.dom.className=="queryGroupInclude")
 	button.firstChild.nodeValue="Exclude";
 	}
 	invalidateSubset(subset);
+	//Analysis has changed, mark this
+	GLOBAL.AnalysisHasBeenRun = false;
 }
 
 function conceptClick(event)
@@ -382,7 +428,10 @@ function conceptRightClick(event)
 	text: 'Delete', handler: function(){
 										selectedDiv.removeChild(selectedConcept);
 										invalidateSubset(getSubsetFromPanel(selectedDiv));
-										
+										//Analysis has changed, mark this and invalidate current subsets
+										GLOBAL.CurrentSubsetIDs[1]=null;
+										GLOBAL.CurrentSubsetIDs[2]=null;
+										GLOBAL.AnalysisHasBeenRun = false;
 										}
 	},{id: 'setvaluemenu', text: 'Set Value', handler:function(){showSetValueDialog();}},
 	{
@@ -435,12 +484,12 @@ function showSetValueDialog()
 				setCheckedValue(test, mode)
         		setValueMethodChanged(mode);
         	}
-        else //default to novalue
+        else //default to numeric
         {	
         	if(test.length>0)
         		{
-				setCheckedValue(test, "novalue");
-        		setValueMethodChanged("novalue");
+				setCheckedValue(test, "numeric"); //numeric
+        		setValueMethodChanged("numeric");
         		}
         	}
         
@@ -495,6 +544,106 @@ if(STATE.Dragging==true){
 	}
 }
 
+function showSetRegionDialog()
+{		
+		var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
+        setregionwin.show(viewport);
+        
+		jQuery('#filterGeneRange').val('');
+		jQuery('#filterGeneBasePairs').val('');
+		jQuery('#filterGeneUse').val('');
+		jQuery('#filterChromosomeRange').val('');
+		jQuery('#filterChromosomeBasePairs').val('');
+		jQuery('#filterChromosomeUse').val('');
+		jQuery('#filterChromosomeNumber').val('');
+		jQuery('#filterChromosomePosition').val('');
+		jQuery('#filterInclusionCriteriaMutant').attr('checked', 'checked');
+		jQuery('[name=\'regionFilter\'][value=\'gene\']').attr('checked', 'checked');
+		changeField('filterGeneId-combobox', 'filterGeneId');
+}
+
+
+function setRegionDialogComplete(regionData)
+{
+var conceptnode=selectedConcept;
+setRegion(conceptnode, regionData);
+if(STATE.Dragging==true){
+	STATE.Dragging=false;
+	moveSelectedConceptFromHoldingToTarget();
+	}
+}
+
+function setRegion(conceptnode, regionData)
+{
+	conceptnode.setAttribute('setregionmode', regionData.mode);
+	conceptnode.setAttribute('setregionrange', regionData.range);
+	conceptnode.setAttribute('setregionbasepairs', regionData.basePairs);
+	conceptnode.setAttribute('setregiongeneid', regionData.geneId);
+	conceptnode.setAttribute('setregiongenename', regionData.geneName);
+	conceptnode.setAttribute('setregionchromosome', regionData.chromosome);
+	conceptnode.setAttribute('setregionposition', regionData.position);
+	conceptnode.setAttribute('setregionversion', regionData.use);
+	conceptnode.setAttribute('setregioninclusioncriteria', regionData.inclusionCriteria);
+	var regiontext="";
+	regiontext=getSetRegionText(regionData);
+	conceptnode.setAttribute('conceptsetregiontext', regiontext);
+	var conceptshortname=conceptnode.getAttribute("conceptshortname");
+	//alert(conceptshortname+" "+valuetext);
+	Ext.get(conceptnode.id).update(conceptshortname+" "+regiontext);
+	//conceptnode.update(conceptshortname+" "+valuetext);
+	var subset=getSubsetFromPanel(conceptnode.parentNode);
+	invalidateSubset(subset);
+}
+
+function getRegionParams(subset)
+{
+	var result = new Array();
+	
+	for (var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups;i++) {
+		var div = Ext.get("queryCriteriaDiv" + subset +  '_' + i.toString());
+		for(var j = 0; j < div.dom.childNodes.length; j++) {
+			var el = div.dom.childNodes[j];
+			if (el.getAttribute('setregionmode') != null) {
+				result[result.length] = {
+						mode: el.getAttribute('setregionmode'),
+						range: el.getAttribute('setregionrange'),
+						basepairs: el.getAttribute('setregionbasepairs'),
+						geneid: el.getAttribute('setregiongeneid'),
+						genename: el.getAttribute('setregiongenename'),
+						chromosome: el.getAttribute('setregionchromosome'),
+						position: el.getAttribute('setregionposition'),
+						version: el.getAttribute('setregionversion'),
+						inclusionCriteria: el.getAttribute('setregioninclusioncriteria')
+					};
+			}
+		}
+	}
+	
+	return result;
+	
+}
+
+function getSetRegionText(regionData) {
+	var regionString = '';
+	var range;
+	if (regionData.range == 'both') {
+		range = '+/-';
+	}
+	else if (regionData.range == 'plus') {
+		range = '+';
+	}
+	else {
+		range = '-';
+	}
+	if (regionData.mode == 'gene') {
+		regionString += 'Gene: ' + regionData.geneName + ' ' + range + ' ' + regionData.basePairs + ' base pairs (HG' + regionData.use + '): ' + regionData.inclusionCriteria;
+	}
+	else {
+		regionString += 'Chromosome: ' + regionData.chromosome + ', ' + regionData.position + ' ' + range + ' ' + regionData.basePairs + ' base pairs (HG' + regionData.use + '): ' + regionData.inclusionCriteria;
+	}
+	return regionString;
+}
+
 function moveSelectedConceptFromHoldingToTarget()
 {
 	var node=selectedConcept;
@@ -508,7 +657,8 @@ function invalidateSubset(subset)
 {
 if(GLOBAL.CurrentSubsetIDs[subset]!=null) //check if its already been invalidated so i dont call again (otherwise I clear ap and grid too many times)
 	{
-	GLOBAL.CurrentSubsetIDs[subset]=null; //invalidate the subset
+    GLOBAL.AnalysisHasBeenRun = false;
+    GLOBAL.CurrentSubsetIDs[subset]=null; //invalidate the subset
 	clearAnalysisPanel();
 	}
 }
@@ -810,7 +960,7 @@ function showPathwaySearchBox(selectedListEltName, pathwayAndIdEltName, searchIn
 	            	 selectedListElt.setSelectionRange(selectedListText.length, selectedListText.length);
 	             }
 	             
-	             //Put the gene display || transmart search_keyword id in selectedGenesAndIdSNPViewer hidden field, separated by |||
+	             //Put the gene display || transmart search_keywork id in selectedGenesAndIdSNPViewer hidden field, separated by |||
 	             var geneAndIdStr = selectedGeneStr + '||' + record.data.id;
 	             var geneAndIdElt = Ext.get(pathwayAndIdEltName);
 	             var geneAndIdListText = geneAndIdElt.dom.value;
@@ -1734,7 +1884,17 @@ for(var i=0;i<qd.childNodes.length;i++)
 }
 return panel+"<b>)</b>";
 }
-                  
+
+function getQueryCdItem(el){
+ 	var item=el.getAttribute("conceptid");
+ 	
+ 	var inOutCode = el.getAttribute("inoutcode")
+ 	
+	//If there is visit information in the node, add it to the item we return.
+ 	if(inOutCode) item += "~" + inOutCode;
+ 	
+ 	return item;
+}                 
 
 function getQuerySummaryItem(el){
  	var item=el.getAttribute("conceptdimcode")+" "+
@@ -1765,40 +1925,28 @@ function isSubsetEmpty(subset)
 	return true;
 }
 
-function showConceptDistributionHistogram(){
-var conceptnode=selectedConcept; 
-/*var cdhwindow=Ext.getCmp('cdhwindow');
-if(cdhwindow==null)
+function showConceptDistributionHistogram()
 {
-cdhwindow = new Ext.Window({
-                id: 'cdhwindow',
-                title: 'Histogram',
-            	layout:'fit',
-                width:250,
-                height:180,
-                closable: true,
-     			closeAction:'hide',  
-                plain: true,
-                modal: false,
-                border:false,
-                resizable: false
-            });
-}
-     cdhwindow.show();
-     cdhwindow.el.alignTo(setvaluewin.el, "tl-bl");
-     cdhwindow.body.update("");*/
-     //*run the current query
-     var concept_key=conceptnode.getAttribute('conceptid');
-     Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/chart/conceptDistribution",
-    	        method: 'POST',                                       
-    	        success: function(result, request){showConceptDistributionHistogramComplete(result);},
-    	        failure: function(result, request){showConceptDistributionHistogramComplete(result);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({charttype:"conceptdistribution",
-    	        		 			   concept_key: concept_key})
-    	    });   
+    var conceptnode=selectedConcept;
+
+    //*run the current query
+    var concept_key=conceptnode.getAttribute('conceptid');
+
+    //Pull the concept path from the DIV. This will be used in the histogram label.
+    var concept_path=conceptnode.getAttribute('concepttooltip');
+
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath + "/chart/conceptDistribution",
+            method: 'POST',
+            success: function(result, request){showConceptDistributionHistogramComplete(result);},
+            failure: function(result, request){showConceptDistributionHistogramComplete(result);},
+            timeout: '300000',
+            params: Ext.urlEncode({charttype:"conceptdistribution",
+                concept_key: concept_key,
+                concept_path: concept_path,
+                codeType: GLOBAL.codeType})
+        });
 }
 
 function showConceptDistributionHistogramComplete(result)
@@ -1811,50 +1959,42 @@ Ext.get("setvaluechartsPanel1").update(result.responseText);
 
 function showConceptDistributionHistogramForSubset()
 {
-/*var cdhswindow=Ext.getCmp('cdhswindow');
-if(cdhswindow==null)
-{
-cdhswindow = new Ext.Window({
-                id: 'cdhswindow',
-                title: 'Histogram for Subset',
-            	layout:'fit',
-                width:250,
-                height:180,
-                closable: true,
-     			closeAction:'hide',  
-                plain: true,
-                modal: false,
-                border:false,
-                resizable: false
-            });
+    var conceptnode=selectedConcept;
+
+    //*run the current query
+    var concept_key=conceptnode.getAttribute('conceptid');
+
+    //Pull the concept path from the DIV. This will be used in the histogram label.
+    var concept_path=conceptnode.getAttribute('concepttooltip');
+
+    var subset;
+    if(conceptnode.parentNode.id=="hiddenDragDiv") //was dragging so get target panel
+    {
+        subset=getSubsetFromPanel(STATE.Target);
+    }
+    else
+    {
+        subset=getSubsetFromPanel(conceptnode.parentNode);
+    } //wasn't dragging so get selected panel
+
+
+    var result_instance_id1=GLOBAL.CurrentSubsetIDs[subset];
+
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath+"/chart/conceptDistributionForSubset",
+            method: 'POST',
+            success: function(result, request){showConceptDistributionHistogramForSubsetComplete(result);},
+            failure: function(result, request){showConceptDistrubutionHistogramForSubsetComplete(result);},
+            timeout: '300000',
+            params: Ext.urlEncode({ charttype: "conceptdistributionforsubset",
+                concept_key: concept_key,
+                concept_path: concept_path,
+                codeType: GLOBAL.codeType,
+                result_instance_id1: result_instance_id1})
+        });
 }
-     cdhswindow.show();
-     cdhswindow.el.alignTo(setvaluewin.el, "tr-br");
-     cdhswindow.body.update("");*/
 
-var conceptnode=selectedConcept; 
-var concept_key=conceptnode.getAttribute('conceptid');
-
-var subset;
-if(conceptnode.parentNode.id=="hiddenDragDiv") //was dragging so get target panel
-	{
-	 subset=getSubsetFromPanel(STATE.Target);
-	 }
-else{subset=getSubsetFromPanel(conceptnode.parentNode);} //wasn't dragging so get selected panel
-var result_instance_id1=GLOBAL.CurrentSubsetIDs[subset];
-
-Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/chart/conceptDistributionForSubset",
-    	        method: 'POST',                                       
-    	        success: function(result, request){showConceptDistributionHistogramForSubsetComplete(result);},
-    	        failure: function(result, request){showConceptDistrubutionHistogramForSubsetComplete(result);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({ charttype: "conceptdistributionforsubset",
-    	        		  				concept_key: concept_key, 
-    	        		  				result_instance_id1: result_instance_id1})
-    	    }); 
-}
 function showConceptDistributionHistogramForSubsetComplete(result)
 {
 /*Ext.getCmp("cdhswindow").body.update(result.responseText);*/
@@ -1889,100 +2029,119 @@ function doLogin()
 window.location.href=pageInfo.basePath;
 }
 
-function getTreeNodeFromJsonNode(concept)
+function getTreeNodeFromXMLNode(concept)     //or modifier
 {
-    var Tree = Ext.tree;
+		var Tree = Ext.tree;
+		
+ 		var level				=	null;
+ 		var appliedpathnode     =   null;
+        var appliedpath         =   null;
+        var ismodifier          =   false;
+        var name				=	null;
+ 		var tablename			=	null;
+ 		var tooltip				=	null;
+ 		var tooltipnode			=	null;
+ 		var key					=	null;
+ 		var dimcode				=	null;
+ 		var newnode				=	null;
+ 		var leaf				=	false;
+ 		var draggable			=	true;
+ 		var comment				=	null;
+ 		var normalunits			=	null;
+ 		var commentnode			=	null;
+ 		var normalunitsnode 	= 	null;
+ 		var oktousevaluesnode	= 	null;
+ 		var oktousevalues		=	null;
+ 	    var visualattributes    =   null;
 
-    var level				=	null;
-    var name				=	null;
-    var tablename			=	null;
-    var tooltip				=	null;
-    var key					=	null;
-    var dimcode				=	null;
-    var newnode				=	null;
-    var leaf				=	false;
-    var draggable			=	true;
-    var comment				=	null;
-    var normalunits			=	null;
-    var commentnode			=	null;
-    var normalunitsnode 	= 	null;
-    var oktousevaluesnode	= 	null;
-    var oktousevalues		=	null;
+	    level				=	concept.selectSingleNode('level').firstChild.nodeValue;
+        appliedpathnode		=	concept.selectSingleNode('applied_path');
+        appliedpath			=	appliedpathnode == undefined ? "@" : appliedpathnode.firstChild.nodeValue;
+        key					=	concept.selectSingleNode('key').firstChild.nodeValue;
+	    name				=	concept.selectSingleNode('name').firstChild.nodeValue; 
+	    tooltipnode			=	concept.selectSingleNode('tooltip')
+	    tooltip				=	tooltipnode == undefined ? "" : tooltipnode.firstChild.nodeValue;
+	    dimcode				=	concept.selectSingleNode('dimcode').firstChild.nodeValue;
+	    visualattributes	=	concept.selectSingleNode('visualattributes').firstChild.nodeValue;
+	    tablename			=	concept.selectSingleNode('tablename').firstChild.nodeValue;
+	    commentnode			=	concept.selectSingleNode('comment');
+	   	normalunitsnode		=	concept.selectSingleNode('.//metadataxml/ValueMetadata/UnitValues/NormalUnits');
+	    normalunits			=	getValue(normalunitsnode, "");
+	   	comment				=	getValue(commentnode, "");	    
+	    oktousevaluesnode	=	concept.selectSingleNode('.//metadataxml/ValueMetadata/Oktousevalues');
+	    oktousevalues		=	getValue(oktousevaluesnode, "N");
 
-    level				= concept.level;
-    key					= concept.key;
-    name				= concept.name;
-    tooltip				= concept.tooltip;
-    dimcode				= concept.dimensionCode;
-    tablename			= concept.dimensionTableName;
-    visualattributes	= concept.visualAttributes;
-
-    comment				= ''; //XXX
-    normalunits			= concept.metadata
-                              ? concept.metadata.unitValues.normalUnits
-                              : '';
-    oktousevalues		=	concept.metadata
-                              ? (concept.metadata.okToUseValues ? 'Y' : 'N')
-                              : 'N'
-
-    //We need to replace the < signs with &lt;
-    name = name.replace(/</gi, "&lt;");
-
-    var iconCls = null;
-    var cls = null;
-    var tcls = null;
-
-    if (oktousevalues != "N") {
-        iconCls = "valueicon";
-    }
-
-
-    if (visualattributes.indexOf('LEAF') != -1 ||
-        visualattributes.indexOf('MULTIPLE') != -1) {
-        leaf = true;
-        /* otherwise false; see init */
-    }
-    if (visualattributes.indexOf('CONTAINER') != -1) {
-        draggable = false;
-        /* otherwise true; see init */
-    }
-
-    if (visualattributes.indexOf('HIGH_DIMENSIONAL') != -1) {
-        iconCls = 'hleaficon';
-        tcls = 'hleafclass';
-    } else if (visualattributes.indexOf('EDITABLE') != -1) {
-        iconCls = 'eleaficon';
-        tcls = 'eleafclass';
-    }
-
-
-    //set whether expanded or not.
-    var autoExpand = false;
-    //var pathToExpand="\\\\Clinical Trials\\Clinical Trials\\C-2006-004\\Subjects\\Demographics\\Race\\";
-    if (GLOBAL.PathToExpand.indexOf(key) > -1)
-        autoExpand = true;
-
-    // set the root node
-
-    newnode = new Tree.AsyncTreeNode({
-        text          : name,
-        draggable     : draggable,
-        leaf          : leaf,
-        id            : key,
-        comment       : comment,
-        qtip          : tooltip,
-        iconCls       : iconCls,
-        cls           : tcls,
-        level         : level,  //extra attribute for storing level in hierarchy access through node.attributes.level
-        dimcode       : dimcode,
-        tablename     : tablename,
-        normalunits   : normalunits,
-        oktousevalues : oktousevalues,
-        expanded      : autoExpand
-    });
-    newnode.addListener('contextmenu', ontologyRightClick);
-    return newnode;
-}
+	    //We need to replace the < signs with &lt;
+	    name = name.replace(/</gi,"&lt;");
+	    
+	    var iconCls	=	null;
+	    var cls		=	null;
+	    var tcls 	=	null;
+	    
+	    if(oktousevalues!="N")
+	    {
+	    	iconCls="valueicon";
+	    }
+	    if(appliedpath!='@')  //must be a modifier
+        {
+            iconCls="modifiericon";
+            ismodifier=true;
+        }
+	    //get type of node
+	    nodetype=visualattributes.substr(0,1);
+	    nodestatus=visualattributes.substr(1,1); //A=active I=inactive H=hidden	    
+	    if(visualattributes.length>2 && visualattributes.substr(2,1)!=' ')
+	    	{
+	    	iconCls=visualattributes.substr(2,1).toLowerCase()+"leaficon";
+	    	tcls=visualattributes.substr(2,1).toLowerCase()+"leafclass";
+	    	}
+	    if(nodetype=='F') //folder-dragable
+	    {
+	    leaf=false;
+	    draggable=true;
+	    }  
+	    else if(nodetype=='C') //folder-dragable
+	    {
+	    leaf=false;
+	    draggable=false;
+	    }    
+	    else if(nodetype=='L' || nodetype=='M' || nodetype == 'R') //leaf-dragable
+	    {
+	    leaf=true;
+	    draggable=true;   
+	    }    
+	    
+	    //set whether expanded or not.
+	    var autoExpand=false;
+		//var pathToExpand="\\\\Clinical Trials\\Clinical Trials\\C-2006-004\\Subjects\\Demographics\\Race\\";
+	    if(GLOBAL.PathToExpand.indexOf(key)>-1) autoExpand=true;
+		
+	    // set the root node
+    	newnode = new Tree.AsyncTreeNode({
+        text: name, 
+        draggable: draggable, 
+        leaf: leaf,
+        id: key,
+        comment: comment,
+        qtip: tooltip,
+   		iconCls:iconCls,
+   		cls: tcls,
+        /*qtipCfg:{
+        		 text:tooltip,
+      			 autoHide:true
+        		},*/ 		  
+        level: level,  //extra attribute for storing level in hierarchy access through node.attributes.level
+   		dimcode: dimcode,
+   		tablename: tablename,
+   		normalunits: normalunits,
+   		oktousevalues: oktousevalues,
+   		expanded: autoExpand,
+        ismodifier: ismodifier,
+        appliedpath: appliedpath
+   		 });
+   		 newnode.addListener('contextmenu',ontologyRightClick);
+	return newnode;
+	}
 
 
 function getTreeNodeFromJSON(concept)

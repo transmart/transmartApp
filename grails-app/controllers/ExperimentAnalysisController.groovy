@@ -24,13 +24,11 @@
  * @version $Revision: 10098 $
  */
 
-import org.transmart.SearchResult;
-
-import com.recomdata.util.DomainObjectExcelHelper;
-import com.recomdata.util.ExcelGenerator;
-import com.recomdata.util.ExcelSheet;
+import com.recomdata.util.DomainObjectExcelHelper
+import org.transmart.SearchResult
 import org.transmart.biomart.Experiment
-import com.recomdata.util.ElapseTimer;
+import com.recomdata.util.ElapseTimer
+import org.transmart.biomart.BioAssayAnalysis;
 
 class ExperimentAnalysisController {
 
@@ -39,6 +37,7 @@ class ExperimentAnalysisController {
 	def analysisDataExportService
 	def searchService
 	def experimentAnalysisTEAService
+	def formLayoutService
 
 	// session attribute
 	static def TEA_PAGING_DATA = "analListPaging"
@@ -62,7 +61,7 @@ class ExperimentAnalysisController {
 		//log.info "expDesigns: " + expDesigns
 
 		// no data?
-		def celllines = [] 
+		def celllines = [] //GeneExprAnalysis.executeQuery(queryCellLines.toString(),filter.gids)
 
 		// no data?
 		def expTypes=[] //experimentAnalysisQueryService.findExperimentTypeFilter()
@@ -163,15 +162,24 @@ class ExperimentAnalysisController {
 	def expDetail = {
 		//log.info "** action: expDetail called!"
 		def expid = params.id
-		def exp = Experiment.get(expid)
+		def expaccession = params.accession
+		
+		def exp
+		if (expid) {
+			exp = Experiment.get(expid)
+		}
+		else {
+			exp = Experiment.findByAccession(expaccession)
+		}
 		log.info "exp.id = " + exp.id
 		def platforms = experimentAnalysisQueryService.getPlatformsForExperment(exp.id);
 		def organisms = new HashSet()
 		for(pf in platforms){
 			organisms.add(pf.organism)
 		}
-
-		render(template:'/experiment/expDetail', model:[experimentInstance:exp, expPlatforms:platforms, expOrganisms:organisms,search:1])
+		
+		def formLayout = formLayoutService.getLayout('study');
+		render(template:'/experiment/expDetail', model:[layout: formLayout, experimentInstance:exp, expPlatforms:platforms, expOrganisms:organisms,search:1])
 	}
 
 	def getAnalysis = {
@@ -188,7 +196,7 @@ class ExperimentAnalysisController {
 		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
 		response.setHeader("Pragma", "public");
 		response.setHeader("Expires", "0");
-		def analysis = org.transmart.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+		def analysis = BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
 		response.outputStream<<analysisDataExportService.renderAnalysisInExcel(analysis)
 	}
 
@@ -198,14 +206,14 @@ class ExperimentAnalysisController {
 		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
 		response.setHeader("Pragma", "public");
 		response.setHeader("Expires", "0");
-		def analysis = org.transmart.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+		def analysis = BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
 		response.outputStream<<analysisDataExportService.renderAnalysisInExcel(analysis)
 	}
 
 	/**
 	 * page the tea analysis data
 	 */
-	private List pageTEAData(List analysisList, int offset, int pageSize) {
+	List pageTEAData(List analysisList, int offset, int pageSize) {
 
 		List pagedData = new ArrayList()
 		int numRecs = analysisList.size()
@@ -248,4 +256,22 @@ class ExperimentAnalysisController {
 		sResult.result = experimentAnalysisTEAService.queryExpAnalysis(session.searchFilter, null)
 	    DomainObjectExcelHelper.downloadToExcel(response, "analysisteaviewexport.xls", analysisDataExportService.createExcelEATEAView(sResult));
 	}
+	
+	/**
+	* This will render a UI where the user can pick an experiment from a list of all the experiments in the system. Selection of multiple studies is allowed.
+	*/
+   def browseAnalysisMultiSelect = {
+	   
+	   def analyses = BioAssayAnalysis.executeQuery("select id, name from BioAssayAnalysis b order by b.name");
+	   
+	  /* analyses.sort({a, b ->
+		   def aname = a[1] ?: ""
+		   def bname = b[1] ?: ""
+		   return aname.trim().compareToIgnoreCase(bname.trim());
+	   })*/
+	   
+	   render(template:'browseMulti',model:[analyses:analyses])
+   }
+   
+	
 }

@@ -16,24 +16,30 @@
  * 
  *
  ******************************************************************/
-  
+
+
+
+
+import org.transmart.AccessLogFilter
+import org.transmart.searchapp.AccessLog
 
 import java.text.*;
-
-import org.transmart.AccessLogFilter;
-import org.transmart.searchapp.AccessLog;
-
 import com.recomdata.util.ExcelSheet;
 import com.recomdata.util.ExcelGenerator;
-
 class AccessLogController {
 
+	def session
 	def searchService
 
 	def index = { redirect(action:list,params:params) }
 
 	// the delete, save and update actions only accept POST requests
 	static allowedMethods = [delete:'POST', save:'POST', update:'POST']
+
+	/*def list = {
+	 if(!params.max) params.max = grailsApplication.config.com.recomdata.search.paginate.max
+	 [ accessLogInstanceList: org.transmart.searchapp.AccessLog.list( params ) ]
+	 }*/
 
 	def list = {
 		def startdatestr;
@@ -51,7 +57,7 @@ class AccessLogController {
 	//		startdatestr="01/01/2009"
 			GregorianCalendar calendar = new GregorianCalendar();
 			calendar.setTime(new Date());
-			calendar.add(Calendar.DATE, -7);
+			calendar.roll(Calendar.DATE, -7);
 			startdatestr= df1.format(calendar.getTime());
 		}
 		else if(params.startdate!=null)
@@ -94,7 +100,14 @@ class AccessLogController {
 		order: pageMap['order']) {
 			between "accesstime", start, end
 		}
+		//def result = org.transmart.searchapp.AccessLog.findAllByAccesstimeBetween(start,end, pageMap )
+		//def result2 = org.transmart.searchapp.AccessLog.findAllByAccesstimeBetween(start,end)
+		//log.info "TESTcount:"+result3.totalCount
+		//log.info "COUNT:"+result2.size()
 		def totalcount=result3.totalCount
+		// cap max records at paging size * max steps
+	//	def maxRecs = grailsApplication.config.com.recomdata.search.paginate.max*grailsApplication.config.com.recomdata.search.paginate.maxsteps
+	//	if(totalcount>maxRecs) totalcount=maxRecs
 		render(view:'list',model:[accessLogInstanceList:result3, startdate: df1.format(filter.startdate), enddate: df1.format(filter.enddate), totalcount:totalcount])
 	}
 
@@ -163,7 +176,7 @@ class AccessLogController {
 		def sheet=new ExcelSheet("sheet1", headers, values);
 		def gen = new ExcelGenerator()
 		response.setHeader("Content-Type", "application/vnd.ms-excel; charset=utf-8")
-		response.setHeader("Content-Disposition", "attachment; filename=\"access_logs.xls\"")
+		response.setHeader("Content-Disposition", "attachment; filename=\"pre_clinical.xls\"")
 		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
 		response.setHeader("Pragma", "public");
 		response.setHeader("Expires", "0");

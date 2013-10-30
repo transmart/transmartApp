@@ -1,3 +1,5 @@
+import org.transmart.searchapp.CustomFilter
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -30,19 +32,19 @@ class CustomFilterService{
 
 	def queryCustomFilters(searchUserId) {
 		
-		return search.CustomFilter.findAllBySearchUserId(Long.valueOf(searchUserId))
+		return CustomFilter.findAllBySearchUserId(Long.valueOf(searchUserId))
 		
 	}
 	
 	def queryCustomFilter(id) {
 		
-		return search.CustomFilter.findAllById(Long.valueOf(id))
+		return CustomFilter.findAllById(Long.valueOf(id))
 		
 	}
 	
 	def saveCustomFilter(customFilter) {
 		
-		search.CustomFilter.save();
+		CustomFilter.save();
 		
 	}
 	

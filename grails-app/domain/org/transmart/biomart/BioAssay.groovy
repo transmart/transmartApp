@@ -19,9 +19,6 @@
   
 
 package org.transmart.biomart
-
-import org.transmart.biomart.Experiment;
-
 class BioAssay {
 
 		Long id

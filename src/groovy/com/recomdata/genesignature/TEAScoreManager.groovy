@@ -22,7 +22,6 @@ package com.recomdata.genesignature
 
 import com.recomdata.util.BinomialDistribution
 import org.apache.log4j.Logger
-import org.transmart.biomart.BioAssayAnalysisData;
 
 /**
  * manager class for TEA scoring logic
@@ -41,8 +40,8 @@ public class TEAScoreManager {
 	def geneCount = 0
 
 	/**
-	 * applies the TEA scoring algorithm for the specified AnalysisResult based on its value object list
-	 * The algorithm populates the AnalysisResult with the various TEA metrics
+	 * applies the TEA scoring algorithm for the specified org.transmart.AnalysisResult based on its value object list
+	 * The algorithm populates the org.transmart.AnalysisResult with the various TEA metrics
 	 */
 	def assignTEAMetrics(analysisResult) {
 

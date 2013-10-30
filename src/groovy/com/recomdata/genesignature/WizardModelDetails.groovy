@@ -25,7 +25,6 @@ package com.recomdata.genesignature
 
 import com.recomdata.util.ModelDetails
 import org.transmart.biomart.ConceptCode
-import org.transmart.searchapp.GeneSignature
 
 /**
  * @author jspencer
@@ -55,6 +54,9 @@ public class WizardModelDetails extends ModelDetails{
 	def foldChgMetrics
 	def platforms
 	def compounds
+	def geneSigText
+	def manipulatedGeneSigText
+	def geneSigFile
 	
 	// domain class
 	def geneSigInst

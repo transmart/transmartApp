@@ -17,41 +17,59 @@
  
 -->
 
-<table class="detail" style="width: 515px;">
+<g:if test="${!layout}">
+	<i>No columns have been set up for the analysis view</i>
+</g:if>
+<table class="columndetail" style="width: 515px;">
 	<tbody>
-		<tr class="prop">
-			<td valign="top" class="name" style="text-align: right">Title:</td>
-			<td valign="top" class="value">${fieldValue(bean:analysis, field:'shortDescription')}</td>
-		</tr>
-		<tr class="prop">
-			<td valign="top" class="name" style="text-align: right">Analysis Description:</td>
-			<td valign="top" class="value">${fieldValue(bean:analysis, field:'longDescription')}</td>
-		</tr>
-		<g:if test='${"comparison".equals(analysis.analysisMethodCode)}'>
-			<tr class="prop">
-				<td valign="top" class="name" style="text-align: right">p-Value	Cut Off:</td>
-				<td valign="top" class="value">${fieldValue(bean:analysis, field:'pValueCutoff')}</td>
-			</tr>
-			<tr class="prop">
-				<td valign="top" class="name" style="text-align: right">Fold Change Cut Off:</td>
-				<td valign="top" class="value">${fieldValue(bean:analysis, field:'foldChangeCutoff')}</td>
-			</tr>
-		</g:if>
-		<tr class="prop">
-			<td valign="top" class="name" style="text-align: right">QA Criteria:</td>
-			<td valign="top" class="value">${fieldValue(bean:analysis, field:'qaCriteria')}</td>
-		</tr>
-		<tr class="prop">
-			<td valign="top" class="name" style="text-align: right">Analysis Platform:</td>
-			<td valign="top" class="value">${fieldValue(bean:analysis, field:'analysisPlatform.platformName')}</td>
-		</tr>
-		<tr class="prop">
-			<td valign="top" class="name" style="text-align: right">Method:</td>
-			<td valign="top" class="value">${fieldValue(bean:analysis, field:'analysisMethodCode')}</td>
-		</tr>
-		<tr class="prop">
-			<td valign="top" class="name" style="text-align: right">Data type:</td>
-			<td valign="top" class="value">${fieldValue(bean:analysis, field:'assayDataType')}</td>
-		</tr>
+		<g:each in="${layout}" var="layoutRow">
+			<%-- Special cases: only display cutoffs if this is a comparison --%>
+			<g:if test="${(!layoutRow.column.equals('pValueCutoff') && !layoutRow.column.equals('foldChangeCutoff')) || 'comparison'.equals(analysis.analysisMethodCode)}">
+				<tr class="columnprop">
+				
+					<g:if test="${analysis.assayDataType.equals('EQTL') && layoutRow.column.equals('phenotypes')}">
+						<td valign="top" class="columnname">Diseases</td>
+					</g:if>
+					<g:else>
+						<td valign="top" class="columnname">${layoutRow.displayName}</td>
+					</g:else>
+					
+					<td valign="top" class="columnvalue">
+						<%-- Special cases --%>
+						<g:if test="${layoutRow.column.equals('study')}">
+							${study?.title}
+						</g:if>
+						<g:elseif test="${layoutRow.column.equals('phenotypes')}">
+							<ul>
+								<g:each in="${analysis.diseases}" var="disease">
+									<li>${disease.disease}</li>
+								</g:each>
+								<%-- If this is not EQTL, put observations here as well --%>
+								<g:if test="${!analysis.assayDataType.equals('EQTL')}">
+									<g:each in="${analysis.observations}" var="obs">
+										<li>${obs.name}</li>
+									</g:each>
+								</g:if>
+							</ul>
+						</g:elseif>
+						<g:elseif test="${layoutRow.column.equals('platforms')}">
+							<ul>
+								<g:each in="${analysis.platforms}" var="platform">
+									<li>${platform.vendor}: ${platform.name}</li>
+								</g:each>
+							</ul>
+						</g:elseif>
+						
+						<g:elseif test="${layoutRow.dataType == 'date'}">
+							<g:fieldDate bean="${analysis}" field="${layoutRow.column}" format="yyyy-MM-dd"/>
+						</g:elseif>
+						
+						<g:else> <%-- In all other cases, display as string --%>
+							${fieldValue(bean:analysis,field:layoutRow.column)}
+						</g:else>
+					</td>
+				</tr>
+			</g:if>
+		</g:each>
 	</tbody>
 </table>

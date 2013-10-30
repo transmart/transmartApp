@@ -20,16 +20,12 @@ package org.transmart
   
 
 /**
- * $Id: SearchFilter.groovy 10125 2011-10-20 19:12:48Z mmcduffie $
+ * $Id: org.transmart.SearchFilter.groovy 10125 2011-10-20 19:12:48Z mmcduffie $
  *@author $Author: mmcduffie $
  *@version $Revision: 10125 $
  **/
-
-import grails.converters.*
-import grails.validation.Validateable
 import org.apache.log4j.Logger
 
-@Validateable
 class SearchFilter {
 
     static Logger log = Logger.getLogger(SearchFilter.class)
@@ -101,7 +97,7 @@ class SearchFilter {
 	}
 
 	def marshal(){
-		def s = new StringBuilder("<SearchFilter.searchText:").append(searchText).append(">");
+		def s = new StringBuilder("<org.transmart.SearchFilter.searchText:").append(searchText).append(">");
 		// todo -- add filter stuff in
 		return s.toString();
 	}

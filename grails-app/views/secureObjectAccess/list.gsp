@@ -1,3 +1,4 @@
+<%@ page import="org.transmart.searchapp.SecureObjectAccess" %>
 <!--
   tranSMART - translational medicine data mart
   
@@ -16,7 +17,9 @@
   
  
 -->
-<%@ page import="org.transmart.searchapp.SecureObjectAccess"%>
+
+
+
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -47,7 +50,7 @@
                    	        <th><g:message code="secureObjectAccessInstance.accessLevel" default="Access Level"/></th>
                    	   
                         
-                   	        <th><g:message code="secureObjectAccessInstance.secureObject" default="Study"/></th>
+                   	        <th><g:message code="secureObjectAccessInstance.secureObject" default="Secure Object"/></th>
                    	   
                         
                         </tr>

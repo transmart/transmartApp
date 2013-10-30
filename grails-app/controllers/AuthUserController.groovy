@@ -24,17 +24,10 @@
  * @version $Revision: 10098 $
  */
 
-import groovy.sql.Sql
-
-import java.sql.BatchUpdateException
-import java.sql.SQLException
-
-import org.codehaus.groovy.grails.exceptions.InvalidPropertyException
-import org.transmart.searchapp.AccessLog;
-import org.transmart.searchapp.AuthUser;
-import org.transmart.searchapp.AuthUserSecureAccess;
-import org.transmart.searchapp.Role;
-
+import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.AuthUser
+import org.transmart.searchapp.AuthUserSecureAccess
+import org.transmart.searchapp.Role
 import org.transmart.searchapp.GeneSignature
 
 /**
@@ -45,7 +38,6 @@ class AuthUserController {
 	 * Dependency injection for the springSecurityService.
 	 */
     def springSecurityService
-    def dataSource
 
 	// the delete, save and update actions only accept POST requests
 	static Map allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
@@ -96,11 +88,7 @@ class AuthUserController {
 				log.info("Deleting ${person.username} from secure access list")				 
 				AuthUserSecureAccess.findAllByAuthUser(person).each {it.delete()}
 				log.info("Deleting the gene signatures created by ${person.username}")
-                try {
-                    GeneSignature.findAllByCreatedByAuthUser(person).each {it.delete()}
-                } catch(InvalidPropertyException ipe)   {
-                    log.warn("AuthUser properties in the GeneSignature domain need to be enabled")
-                }
+				GeneSignature.findAllByCreatedByAuthUser(person).each {it.delete()}
 				log.info("Finally, deleting ${person.username}")															
 				person.delete()
 				def msg = "$person.userRealName has been deleted."
@@ -130,7 +118,7 @@ class AuthUserController {
 	 * Person update action.
 	 */
 	def update = {
-		def person = AuthUser.get(params.id)		
+		def person = AuthUser.get(params.id)
 		person.properties = params
 		
 		if(!params.passwd.equals(person.getPersistentValue("passwd")))	{
@@ -171,48 +159,34 @@ class AuthUserController {
 	def save = {
 		def person = new AuthUser()
 		person.properties = params
-        def next_id
+		def luser = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		if(params.id==null || params.id=="") {
+			flash.message = 'Please enter an ID'
+			return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])
+		}
 
-        if(params.id==null || params.id=="") {
-            def sql = new Sql(dataSource);
-            def seqSQL = "SELECT nextval('searchapp.hibernate_sequence')";
-            def result = sql.firstRow(seqSQL);
-            next_id = result.nextval
-        }
-        else
-            next_id = new Long(params.id)
+		def user = AuthUser.get(params.id)
+		if(user!=null) {
+			flash.message = 'ID: '+params.id+' is already taken'
+			return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])
+		}
 
-        if(params.email==null || params.email=="") {
-            flash.message = 'Please enter an email'
-            return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])
-        }
-
-        person.id = next_id
+		person.id = new Integer(params.id)
 		person.passwd = springSecurityService.encodePassword(params.passwd)
 		person.uniqueId = ''
 		person.name=person.userRealName;
 
-        try {
-            if (person.save()) {
-                addRoles(person)
-                def msg = "User: ${person.username} for ${person.userRealName} created";
-                new AccessLog(username: springSecurityService.getPrincipal().username, event:"User Created",
-                    eventmessage: msg,
-                    accesstime:new Date()).save()
-                redirect action: show, id: person.id
-            }
-            else {
-                render view: 'create', model: [authorityList: Role.list(), person: person]
-            }            
-        } catch(BatchUpdateException bue)   {
-            flash.message = 'Cannot create user'
-            log.error(bue.getLocalizedMessage(), bue)
-            render view: 'create', model: [authorityList: Role.list(), person: person]
-        } catch(SQLException sqle)    {
-            flash.message = 'Cannot create user'            
-            log.error(sqle.getNextException().getMessage())
-            render view: 'create', model: [authorityList: Role.list(), person: person]
-        } 
+		if (person.save()) {
+			addRoles(person)
+			def msg = "User: ${person.username} for ${person.userRealName} created";
+			new AccessLog(username: person.username, event:"User Created",
+				eventmessage: msg,
+				accesstime:new Date()).save()
+			redirect action: show, id: person.id
+		}
+		else {
+			render view: 'create', model: [authorityList: Role.list(), person: person]
+		}
 	}
 
 	private void addRoles(person) {

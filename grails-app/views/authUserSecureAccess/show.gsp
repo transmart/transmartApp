@@ -58,7 +58,7 @@
                         </tr>
                     
                         <tr class="prop">
-                            <td valign="top" class="name">Study:</td>
+                            <td valign="top" class="name">Secure Object:</td>
                             
                             <td valign="top" class="value"><g:link controller="secureObject" action="show" id="${authUserSecureAccessInstance?.secureObject?.id}">${authUserSecureAccessInstance?.secureObject?.displayName?.encodeAsHTML()}</g:link></td>
                             

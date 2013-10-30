@@ -1,4 +1,4 @@
-import org.transmart.searchapp.AccessLog;
+import org.transmart.searchapp.AccessLog
 
 /*************************************************************************
  * tranSMART - translational medicine data mart

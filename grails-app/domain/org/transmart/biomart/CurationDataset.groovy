@@ -19,7 +19,6 @@
   
 
 package org.transmart.biomart
-
 class CurationDataset {
 		String curationType
 		Date createDate

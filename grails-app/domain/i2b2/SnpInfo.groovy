@@ -26,4 +26,16 @@ class SnpInfo {
 	String chrom;
 	Long chromPos;
 	
+	static mapping = {
+		table 'DE_SNP_INFO'
+		version false
+		cache usage:'read-only'
+		
+		columns {
+			id column: 'SNP_INFO_ID'
+			name column: 'NAME'
+			chrom column: 'CHROM'
+			chromPos column: 'CHROM_POS'
+		}
+	}
 }

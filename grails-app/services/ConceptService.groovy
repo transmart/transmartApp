@@ -37,5 +37,44 @@ class ConceptService {
 				[fullNameLike: concept.getFullName() + "%", levelNew: concept.getLevel().intValue() + 1]);
 		return conceptList;
 	}
+
+    def getValueType(concept){
+        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        StringBuilder sqlBuilder=new StringBuilder("select distinct(valtype_cd) from observation_fact ofa")
+                .append(" join concept_dimension cdim")
+                .append(" on ofa.concept_cd=cdim.concept_cd")
+                .append(" where cdim.concept_path='")
+                .append(concept.fullName)
+                .append("'")
+
+        def valType
+        sql.eachRow(sqlBuilder.toString(),
+                {row ->
+                    valType=row.valtype_cd;
+                }
+        )
+        return valType
+    }
+
+    public List<Concept> getAllChildLeafConcepts(String conceptPath) throws Exception {
+        if (conceptPath == null || conceptPath == '') return null;
+
+        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        StringBuilder sqlBuilder=new StringBuilder("select c_fullname from i2b2")
+                .append(" where c_fullname like'")
+                .append(conceptPath)
+                .append("%'")
+                .append("and c_visualattributes LIKE 'LA%'")
+
+        List<Concept> conceptList = new ArrayList()
+
+        sql.eachRow(sqlBuilder.toString(),
+                {row ->
+                    conceptList.add(row.c_fullname)
+                })
+
+        return conceptList;
+
+    }
 	
 }

@@ -32,7 +32,7 @@ public class GlobalFilterService{
 /**
  *
  */
-	//def createGlobalFilterCriteria(GlobalFilter gfilter,
+	//def createGlobalFilterCriteria(org.transmart.GlobalFilter gfilter,
 	//		Query query){
 	//return createGlobalFilterCriteria(gfilter, query, false)
 
@@ -42,7 +42,7 @@ public class GlobalFilterService{
  *
  */
 
-/*	def createGlobalFilterCriteria(GlobalFilter gfilter,
+/*	def createGlobalFilterCriteria(org.transmart.GlobalFilter gfilter,
 			Query query,
 			boolean expandBioMarkers){
 		StringBuilder s = new StringBuilder();

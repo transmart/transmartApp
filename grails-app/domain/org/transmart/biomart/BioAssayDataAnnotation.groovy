@@ -18,11 +18,7 @@
  ******************************************************************/
   
 
-package org.transmart.biomart;
-
-import org.transmart.biomart.BioAssayFeatureGroup;
-
-import org.transmart.biomart.BioMarker;
+package org.transmart.biomart
 
 class BioAssayDataAnnotation implements Serializable {
 	

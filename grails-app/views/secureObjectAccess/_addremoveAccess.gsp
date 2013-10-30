@@ -16,10 +16,9 @@
   
  
 -->
-<g:setProvider library="prototype"/>
 
-            <g:if test="${flash.message}">
-                <td colspan=3><div class="message">${flash.message}</div></td>
+              					<g:if test="${flash.message}">
+            <td colspan=3><div class="message">${flash.message}</div></td>
             </g:if>
             <g:else>
                         <td> <g:select class="addremoveselect" name="sobjectstoremove" from="${secureObjectAccessList}" size="15" multiple="yes" optionKey="id" optionValue="objectAccessName" /></td>

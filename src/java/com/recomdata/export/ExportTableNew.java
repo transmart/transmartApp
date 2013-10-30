@@ -93,6 +93,51 @@ public class ExportTableNew {
 		jsonTable.put("rows", jsonRows);
 		return jsonTable;
 	}
+
+    //Supports jQuery datatables object
+    public JSONObject toJSON_DataTables(String echo) throws JSONException {
+
+        JSONObject jsonTable = new JSONObject();
+        JSONArray aoColumns = new JSONArray();
+        JSONArray headerToolTips = new JSONArray();
+        List<String> columnOrder = new ArrayList<String>();
+
+        for (Iterator<ExportColumn> i = columns.values().iterator(); i.hasNext(); ) {
+            ExportColumn col = i.next();
+            aoColumns.put(col.toJSON_DataTables());
+            headerToolTips.put(col.getId());
+            columnOrder.add(col.getId());
+        }
+
+        JSONArray jsonRows = new JSONArray();
+        for (Iterator<ExportRowNew> i = rows.values().iterator(); i.hasNext(); ) {
+            jsonRows.put(i.next().toJSONArray(columnOrder));
+        }
+
+        if (echo != null) jsonTable.put("sEcho", echo);
+        jsonTable.put("iTotalRecords", rows.size());
+        jsonTable.put("iTotalDisplayRecords", rows.size());
+        jsonTable.put("aoColumns", aoColumns);
+        jsonTable.put("headerToolTips", headerToolTips);
+
+        jsonTable.put("aaData", jsonRows);
+
+        return jsonTable;
+    }
+
+    public JSONObject getJSONColumns() throws JSONException {
+
+        JSONObject jsonColumns = new JSONObject();
+        JSONArray columnsAry = new JSONArray();
+
+        for (Iterator<ExportColumn> i = columns.values().iterator(); i.hasNext(); ) {
+            columnsAry.put(i.next().toJSON_DataTables());
+        }
+
+        jsonColumns.put("aoColumns", columnsAry);
+        return jsonColumns;
+    }
+
 	public byte[] toCSVbytes()
 	{
 		byte[] table=null;

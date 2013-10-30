@@ -18,6 +18,7 @@
  ******************************************************************/
 package com.recomdata.transmart.data.export;
 
+import java.util.Collection;
 import java.util.List;
 
 import de.DeVariantDataSet;
@@ -31,37 +32,74 @@ class VcfDataService {
 	def snpRefDataService
 	def dataSource
 	def VCF_V4_1_HEADER_LINE ="#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT"
-	
+	def selectGeneNamesSql = """
+			select distinct
+				bm.bio_marker_name as gene_name
+			from
+				search_keyword sk, bio_marker bm
+			where
+				sk.search_keyword_id in (:seachKeywordIds)
+			  	and sk.bio_data_id = bm.bio_marker_id
+			  	and bm.bio_marker_type = 'GENE'
+			union
+			select
+				bm.bio_marker_name from search_keyword sk, search_bio_mkr_correl_view sbmcv, bio_marker bm
+			where
+				sk.search_keyword_id in (:seachKeywordIds)
+			  	and sk.bio_data_id = sbmcv.domain_object_id
+			  	and sbmcv.asso_bio_marker_id = bm.bio_marker_id
+			  	and bm.bio_marker_type = 'GENE'
+			union
+			select
+				bm.bio_marker_name from search_keyword sk, search_bio_mkr_correl_view sbmcv, bio_marker bm
+			where
+				sk.search_keyword_id in (:seachKeywordIds)
+			  	and sk.bio_data_id = sbmcv.domain_object_id
+			  	and sbmcv.asso_bio_marker_id = bm.bio_marker_id
+			  	and bm.bio_marker_type = 'GENE'
+		"""		
+	def variantDetailColumns = ["id", "alt", "chromosome", "dataset", "filter", "format", "info",
+		"position", "quality", "ref", "rsID", "variant"]		
+	def selectVariantDetailSql = """
+			select
+				variant_subject_detail_id as id, alt, chr as chromosome, dataset_id as dataset, filter, format, 
+				info, pos as position, qual as quality, ref, rs_id as rsID, variant_value as variant
+			from
+				de_variant_subject_detail 
+			where
+		"""
+	/**
+	 * Creates VCF file based on variant data
+	 * @param outputDir
+	 * @param jobName
+	 * @param studyList
+	 * @param resultInstanceId1
+	 * @param selectedSNPs
+	 * @param selectedGenes
+	 * @param selectedGenesAndId
+	 * @param selectedChromosomes
+	 * @param subjectPrefix
+	 * @return true
+	 */	
 	def boolean getDataAsFile(
-		String outputDir,
-		String jobName,
-		List studyList,
-	String resultInstanceId1,
-	//String resultInstanceId2,
-	String selectedSNPs,
-	String selectedGenes,
-	String selectedChromosomes,
-	String subjectPrefix){
+			String outputDir,
+			String jobName,
+			List studyList,
+			String resultInstanceId1,
+			String selectedSNPs,
+			String selectedGenes,
+			String selectedGenesAndId,
+			String selectedChromosomes,
+			String subjectPrefix) {
 
 		def rsList = []
 		def chrList =[]
 		def geneNameList = [];
-		// create query to find gene to snps
-		if(selectedGenes!=null&& selectedGenes.trim().length()>0){
-			// ToDo- parse gene list
-			//def geneList = parseGeneList(selectedGenes)
-		//	def geneList = parseGeneList(["BRCA1"])
-			List<Long> geneSearchIdList = new ArrayList<Long>();
-			
-			if (selectedGenes != null && selectedGenes.length() != 0) {
-				
-				geneNameList = parseGeneList(selectedGenes, null, geneSearchIdList);
-				//println(selectedGenes)
-				//println(geneNameList)
-				
-			rsList.addAll(snpRefDataService.findRsIdByGeneNames(geneNameList))
-			}
-
+		def selectedIds = parseSelectedGenesAndId(selectedGenesAndId)
+		
+		// Get list of gene names for selected searchKeywordIds
+		if (selectedIds != null && selectedIds.trim().length() > 0) {
+			geneNameList.addAll(parseSearchKeywordIds(selectedIds))
 		}
 
 		// create query to find snps
@@ -73,61 +111,36 @@ class VcfDataService {
 			chrList.addAll(parseChrList(selectedChromosomes));
 		}
 
-		
 		// locate dataset
-		
 		def datasets = findDataset(resultInstanceId1, null);
-		
 
 		// locate and retrieve variant
-				
-		def variants = retrieveVariantDetail(rsList, chrList, datasets)
-		
+		def variants = retrieveVariantDetail(geneNameList, rsList, chrList, datasets)
+
 		def dsSubjectIdxMap = [:]
 		def dsSubHeaderColMap=[:]
 		// create subset 1 subject id query
-		
+
 		def s1 = [:]
 		if(resultInstanceId1!=null)
 			s1 = findSubjectIdx(resultInstanceId1)
-	
-		// create subset 2 subject id query
 
-		def s2 =[:]
-	//	if(resultInstanceId2!=null) {
-	//		s2= findSubjectIdx(resultInstanceId2)
-	//	}
-			// create vcf sample and header list by dataset id
-			// each dataset has a vcf file
-			s1.each { k,v ->
-				if(dsSubjectIdxMap.get(k)==null){
-					dsSubjectIdxMap.put(k, [])
-					dsSubHeaderColMap.put(k,[])
-				}
-				v.each{key, value->
+		s1.each { k,v ->
+			if(dsSubjectIdxMap.get(k)==null){
+				dsSubjectIdxMap.put(k, [])
+				dsSubHeaderColMap.put(k,[])
+			}
+			v.each{key, value->
 				dsSubjectIdxMap.get(k).add(value)
 				// construct key
 				dsSubHeaderColMap.get(k).add(subjectPrefix+"_"+key)
-				}
 			}
-			// s2
-			s2.each { k,v ->
-				if(dsSubjectIdxMap.get(k)==null){
-					dsSubjectIdxMap.put(k, [])
-					dsSubHeaderColMap.put(k,[])
-				}
-				v.each{key, value->
-				dsSubjectIdxMap.get(k).add(value)
-				// construct key
-				dsSubHeaderColMap.get(k).add(subjectPrefix+key)
-				}
-			}
-			
-			// construct VCFdata file
+		}
+
+		// construct VCFdata file
 		def vsnpset =	constructVCFfile(variants, datasets, dsSubjectIdxMap, dsSubHeaderColMap, outputDir, jobName,subjectPrefix)
 		println(vsnpset)
 		constructVCFParamFile(outputDir, geneNameList, new ArrayList(vsnpset), chrList,jobName)
-		
 
 		return true;
 	}
@@ -137,7 +150,7 @@ class VcfDataService {
 		geneNameList,
 		rsList,
 		chrList,
-		jobName){
+		jobName) {
 		// create a filter file so that we can get the right params
 		def pfile = null;
 		def pfilewriter = null;
@@ -146,46 +159,40 @@ class VcfDataService {
 			//println("writing file:"+pfile.getAbsolutePath())
 		
 			 pfilewriter = pfile.newWriter();
-		// if there is a gene use the first gene 
-		if(geneNameList!=null && !geneNameList.isEmpty()){
-			pfilewriter.writeLine("Gene="+geneNameList[0])
-			
-		}
-		if(chrList!=null && !chrList.isEmpty()){
-			pfilewriter.writeLine("Chr="+"chr"+chrList[0])
-		}
-		
-		if(rsList!=null && !rsList.isEmpty()){
-			
-			//println(rsList)
-			def nrsid = rsList[0].trim().toLowerCase();
-			if(!nrsid.startsWith("rs")){
-			nrsid = "rs"+nrsid;
+			// if there is a gene use the first gene 
+			if (geneNameList!=null && !geneNameList.isEmpty()) {
+				pfilewriter.writeLine("Gene="+geneNameList[0])			
 			}
-		//	println("rsid:"+nrsid)
-			def result = DeVariantSubjectDetail.executeQuery("SELECT d.chromosome, d.position FROM DeVariantSubjectDetail d WHERE d.rsID =?", nrsid)
-			def chr = null;
-			def pos = null;
-			if(result!=null){
-				chr = result[0][0];
-				pos = result[0][1];
-			
-			def spos = pos -50;
-			def epos = pos+50;
-			
-			pfilewriter.writeLine("SNP="+"chr"+chr+":"+spos+"-"+epos)
+			if (chrList!=null && !chrList.isEmpty()) {
+				pfilewriter.writeLine("Chr="+"chr"+chrList[0])
 			}
-		}
 			
-			
-		}catch(Exception e ){
-		log.error(e.getMessage(), e)
-			
-		}finally{
-		if(pfilewriter!=null){
-		pfilewriter.flush()
-		pfilewriter.close();
-		}
+			if (rsList!=null && !rsList.isEmpty()) {
+				def nrsid = rsList[0].trim().toLowerCase();
+				if (!nrsid.startsWith("rs")) {
+					nrsid = "rs"+nrsid;
+				}
+	
+				def result = DeVariantSubjectDetail.executeQuery("SELECT d.chromosome, d.position FROM DeVariantSubjectDetail d WHERE d.rsID =?", nrsid)
+				def chr = null;
+				def pos = null;
+				if (result!=null) {
+					chr = result[0][0];
+					pos = result[0][1];
+				
+					def spos = pos -50;
+					def epos = pos+50;
+				
+					pfilewriter.writeLine("SNP="+"chr"+chr+":"+spos+"-"+epos)
+				}
+			}		
+		} catch(Exception e  ){
+			log.error(e.getMessage(), e)		
+		} finally {
+			if (pfilewriter!=null) {
+				pfilewriter.flush()
+				pfilewriter.close();
+			}
 		}
 	}
 
@@ -221,7 +228,12 @@ class VcfDataService {
 			def dsMetadata = DeVariantDataSet.get(it)
 			// metadata
 			
-			nwriter.write(dsMetadata.metadata);
+			def metadata = dsMetadata.metadata
+			// If meta data includes header, then trim it
+			if (metadata.indexOf("#CHROM") != -1) {
+				metadata = metadata.substring(0, dsMetadata.metadata.lastIndexOf("#CHROM"))
+			}
+			nwriter.write(metadata);
 			// header
 		
 				StringBuilder s = new StringBuilder(VCF_V4_1_HEADER_LINE)
@@ -260,20 +272,33 @@ class VcfDataService {
 			// using a split to get the value in array by tab
 			String[] valueArray = value.split("\\t");
 			def total = valueArray.length
-			//println("totalvalue:"+total)
-		//	println(valueArray)
 			def indexList = dsSubjectIdxMap.get(it.dataset);
 			// 1 based index list
-			
-			
+						
 			indexList.each {
-				int idx = it-1;
-				if(idx<=total){			
-				//println(it)
-				variant.append("\t").append(valueArray[idx])
-			//	println(valueArray[idx])
-				}
-				else{
+				int idx = it-1
+				if (idx <= total) {	
+					def subjectValue = valueArray[idx]
+					
+					// HACK to replace "." characters in subject value fields with "0" so that IGV doesn't gernate errors.
+					String[] values = subjectValue.split(":")
+					StringBuilder newSubjectValue = new StringBuilder();
+					newSubjectValue.append(values[0])
+					newSubjectValue.append(":")
+					if (values[1].indexOf(".") != -1) {
+						newSubjectValue.append(values[1].replaceAll("\\.", "0"))
+					} else {
+						newSubjectValue.append(values[1])
+					}
+					newSubjectValue.append(":")
+					if (values[2].indexOf(".") != -1) {
+						newSubjectValue.append(values[2].replaceAll("\\.", "0")) 
+					} else {
+						newSubjectValue.append(values[2])
+					}
+					variant.append("\t").append(newSubjectValue.toString())
+				//	println(valueArray[idx])
+				}  else {
 					throw new Exception("variant size :"+total+" do not match variant index:"+it)
 				}
 			}
@@ -284,8 +309,8 @@ class VcfDataService {
 		}
 		dsWriterMap.values().each {
 			try{
-			it.flush()
-			it.close()
+				it.flush()
+				it.close()
 			}catch(Exception e){
 				log.error(e.getMessage(), e)
 			}
@@ -296,37 +321,85 @@ class VcfDataService {
 	}
 
 	/**
-	 * retrieve variant by rsid, chr and dataset. dataset is required	 
-	 * @param rsList
-	 * @param chrList
-	 * @param dataset
+	 * Gets variant detail records for specified parameters.	
+	 * @param geneNameList
+	 * @param rsIdList
+	 * @param chromosomeList
+	 * @param datasetIdList
 	 * @return
 	 */
-	def retrieveVariantDetail(rsList, chrList, datasetList){
-		String query = "FROM DeVariantSubjectDetail dvd WHERE dvd.dataset IN (:ds) "
-		def vmap = [:]
-		vmap.put('ds',datasetList)
-
-	//	println("Rs:"+rsList);
-	//	println("CHR:"+chrList);
+	def retrieveVariantDetail(geneNameList, rsIdList, chromosomeList, datasetIdList) {
 		
-		if(!rsList.isEmpty())
-		{
-			query +=" AND dvd.rsID IN (:rsids) " // this could be an issue for more than 1000 rs ids
-			vmap.put('rsids', rsList)
+		// NOTE: This was converted to a SQL query to be able to handle queries with more than 1000 rsIDs
+		
+		StringBuilder whereClause = new StringBuilder()
+		if (geneNameList.size() > 0) {
+			whereClause.append(" and (rs_id in (select rs_id from de_rc_snp_info where gene_name in (")
+				.append(listToParams(geneNameList)).append("))")
+		}
+		if (rsIdList.size() > 0) {
+			if (whereClause.length() > 0) {
+				whereClause.append(" or ")
+			} else {
+				whereClause.append("and (")
+			}
+			whereClause.append("rs_id in (").append(listToParams(rsIdList)).append( ")")
+		}
+		if (whereClause.length() > 0) {
+			whereClause.append(")")
 		}
 		
-		if (!chrList.isEmpty()){
-
-			query+= " AND dvd.chromosome IN (:chrNums) "
-			vmap.put('chrNums', chrList)
+		if (chromosomeList.size() > 0) {
+			whereClause.append(" and chr in (").append(listToParams(chromosomeList)).append(")")
 		}
-		query +=" ORDER BY dvd.chromosome, dvd.position"
 		
-		return DeVariantSubjectDetail.findAll(query, vmap)
+		StringBuilder sql = new StringBuilder()
+		sql.append(selectVariantDetailSql)
+			.append(" dataset_id in (").append(listToParams(datasetIdList)).append(")")
+			.append(whereClause.toString())
+			.append(" order by chr, pos")
 
+		def con = null
+		def stmt = null
+		def rs = null
+		def records = []
+		try {
+			con = dataSource.getConnection()
+			stmt = con.prepareStatement(sql.toString())
+			rs = stmt.executeQuery()
+			while (rs.next()) {
+				def record = [:]
+				for (column in variantDetailColumns) {
+					record[column] = rs.getString(column)
+				}
+				records.add(record)
+			}
+	
+		} finally {
+			rs?.close()
+			stmt?.close()
+			con?.close()
+		}
+		
+		return records
+		
 	}
 
+	/**
+	 * Splits list into string of comma separated sql string values
+	 * @param list
+	 * @return
+	 */
+	def listToParams(list) {
+		StringBuilder params = new StringBuilder()
+		for (item in list) {
+			if (params.length() > 0) {
+				params.append(", ")
+			}
+			params.append("'").append(item).append("'")
+		}
+		return params.toString()
+	}
 	
 	/**
 	 * parse rsids
@@ -358,8 +431,7 @@ class VcfDataService {
 	 * @param resultInstanceId1
 	 * @param resultInstanceId2
 	 * @return
-	 */
-	
+	 */	
 	def findDataset(resultInstanceId1, resultInstanceId2){
 		
 		
@@ -370,10 +442,10 @@ class VcfDataService {
 """;
 		def param = []
 		if(resultInstanceId1!=null){
-			param.add('CAST(' + resultInstanceId1 + '? AS numeric)')
+			param.add(resultInstanceId1)
 		}
 		if(resultInstanceId2!=null){
-			param.add('CAST(' + resultInstanceId2 + '? AS numeric)')
+			param.add(resultInstanceId2)
 		}
 		
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
@@ -399,7 +471,7 @@ class VcfDataService {
 		def q  =
 """				SELECT distinct a.DATASET_ID, a.SUBJECT_ID, a.POSITION from DE_VARIANT_SUBJECT_IDX a
 		INNER JOIN de_subject_sample_mapping b on a.SUBJECT_ID = b.SUBJECT_ID 
-		INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id in (CAST(? AS numeric)) AND b.patient_id = sc.patient_num
+		INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id in (?) AND b.patient_id = sc.patient_num
  ORDER BY a.POSITION"""
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		def datasetIdxMap =[:]
@@ -419,63 +491,90 @@ class VcfDataService {
 
 	}
 	
-	
+	/**
+	 * Parses list of gene names and search keyword IDs to get comma separated list of search keyword IDs
+	 * @param selectedGenesAndId
+	 * @return
+	 */
+	def parseSelectedGenesAndId(String selectedGenesAndId) {
+		
+		StringBuilder result = new StringBuilder()
+		String[] geneAndIds = selectedGenesAndId.split("\\|\\|\\|")
+		
+		for (geneAndId in geneAndIds) {
+			String[] tokens = geneAndId.split("\\|\\|")
+			if (result.length() > 0) {
+				result.append(", ")
+			}
+			result.append(tokens[1])
+		}
+		
+		return result.toString()
+		
+	}
 	
 	/**
-	* This function parse the ","-separated gene string like "Gene>MET", and return a list of gene search ID and a list of matching gene names.
-	*/
+	 * Gets list of gene names for specified search keyword IDs, splitting out
+	 * genes from pathways, gene signatures, and gene lists
+	 * @param seachKeywordIds
+	 * @param geneNameList
+	 * @return
+	 */
+	def parseSearchKeywordIds(String seachKeywordIds) {
+		
+		if (seachKeywordIds == null || seachKeywordIds.length() == 0) {
+			return null
+		}
+
+		def con = null
+		def stmt = null
+		def rs = null
+		def sql = selectGeneNamesSql.replace(":seachKeywordIds", seachKeywordIds)
+		def geneNameList = []
+		
+		try {
+			con = dataSource.getConnection()
+			stmt = con.prepareStatement(sql)
+			rs = stmt.executeQuery()
+			while (rs.next()) {
+				geneNameList.add(rs.getString("gene_name"))
+			}
+
+		} finally {
+			rs?.close()
+			stmt?.close()
+			con?.close()
+		}
+		
+		return geneNameList
+		
+	}
    
-   
-   def parseGeneList(String genes, String geneAndIdListStr, List<Long> geneSearchIdList) {
-	   def geneNameList = []
-	    if (genes == null || genes.length() == 0)
-		   return null;
-	   Map<String, Long> geneIdMap = new HashMap<String, Long>();
-	 
-	/*   String[] geneAndIdList = geneAndIdListStr.split("\\|\\|\\|");
-	   for (String geneAndIdStr : geneAndIdList) {
-		   String[] geneIdPair = geneAndIdStr.split("\\|\\|");
-		   geneIdMap.put(geneIdPair[0].trim(), new Long(geneIdPair[1].trim()));
-	   }*/
-	   String[] geneValues = genes.split(",");
-	   
-	 //  println("parse:"+geneValues)
-	   for (String geneStr : geneValues) {
-		   geneStr = geneStr.trim();
-		   Long geneId = geneIdMap.get(geneStr.trim());
-		   geneSearchIdList.add(geneId);
-		   if (geneStr.startsWith("Gene>"))
-			   geneStr = geneStr.substring("Gene>".length());
-		   geneNameList.add(geneStr.trim());
-	   }
-	   return geneNameList;
-   }
-   
-   def listToIN(List<String> list) {
-	   StringBuilder sb=new StringBuilder();
-	   // need to make it less than 1000! -- temp solution
-	   int i = 0;
-	   for(c in list)
-	   {
-		   //If the only thing submitted was "ALL" we return an empty string just like there was nothinbg in the box.
-		   if(c.toString()=="ALL" && list.size()==1)
-		   {
-			   break;
-		   }
-		   
-		   sb.append("'");
-		   sb.append(c.toString().replace("'","''"));
-		   sb.append("'");
-		   sb.append(",");
-		   i++;
-		   if(i>=1000){
-			   break;
-		   }
-	   }
-	   if(sb.length()>0) {
-		   sb.deleteCharAt(sb.length() - 1);//remove last comma
-	   }
-	   return sb.toString();
-   }
+	def listToIN(List<String> list) {
+		StringBuilder sb=new StringBuilder();
+		// need to make it less than 1000! -- temp solution
+		int i = 0;
+		for(c in list)
+		{
+			//If the only thing submitted was "ALL" we return an empty string just like there was nothinbg in the box.
+			if(c.toString()=="ALL" && list.size()==1)
+			{
+				break;
+			}
+
+			sb.append("'");
+			sb.append(c.toString().replace("'","''"));
+			sb.append("'");
+			sb.append(",");
+			i++;
+			if(i>=1000){
+				break;
+			}
+		}
+		if(sb.length()>0) {
+			sb.deleteCharAt(sb.length() - 1);//remove last comma
+		}
+		return sb.toString();
+	}
 
 }

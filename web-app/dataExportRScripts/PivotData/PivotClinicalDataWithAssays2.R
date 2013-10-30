@@ -36,7 +36,7 @@ input.dataFile, snpDataExists, multipleStudies, study
   #We use reshape2 package to do the conversion
   require(reshape2)
   
-  finalData <- dcast(df, PATIENT.ID + ASSAY.ID ~ CONCEPT.PATH, value.var = 'VALUE')
+  finalData <- dcast(df, PATIENT.ID + ASSAY.ID ~ CONCEPT.PATH,paste, collapse="; ", value.var = 'VALUE')
   
   unqSubjectData <- unique(subset(finalData, select = -ASSAY.ID))
   tdf <- aggregate(ASSAY.ID ~ PATIENT.ID, data=finalData, FUN=paste, collapse=" | ")

@@ -1,4 +1,4 @@
-import org.transmart.searchapp.SecureObjectPath;
+import org.transmart.searchapp.SecureObjectPath
 
 /*************************************************************************
  * tranSMART - translational medicine data mart

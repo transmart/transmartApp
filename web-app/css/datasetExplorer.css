@@ -1,210 +1,278 @@
 @CHARSET "ISO-8859-1";
-  	.conceptSelected {background:#eee}
-	.conceptUnselected {background:white}
-	.demoTable td {padding: 3px; font: 10pt arial;}
-	.demoTable th {padding: 3px; font: 10pt arial;}
-	div#vertLineDiv {border-left:3px solid black; height:100%; background:white;}
 
-    .queryGroupInclude {text-align:left;width:330px; height:35px;padding:5px;background:white;font:8pt arial;white-space:nowrap;overflow:auto;border:1px solid black}
-    .queryGroupIncludeSmall {text-align:left;width:230px; height:35px;padding:5px;background:white;font:8pt arial;white-space:nowrap;overflow:auto;border:1px solid black}
-    .queryGroupIncludeLong {text-align:left;width:230px; height:135px;padding:5px;background:white;font:8pt arial;white-space:nowrap;overflow:auto;border:1px solid black}
- 	.queryGroupExclude {text-align:left;width:330px; height:35px;padding:5px;background:lightgrey;font:8pt arial;white-space:nowrap;overflow:auto;border:1px solid black}
+.conceptSelected {
+	background: #eee
+}
 
-    .help-tree-panel, .help-resana-panel {
-        position: absolute !important;
-        right: 0 !important;
-        z-index: 100 !important;
-    }
+.conceptUnselected {
+	background: white
+}
+
+.demoTable td {
+	padding: 3px;
+	font: 10pt arial;
+}
+
+.demoTable th {
+	padding: 3px;
+	font: 10pt arial;
+}
+
+div#vertLineDiv {
+	border-left: 3px solid black;
+	height: 100%;
+	background: white;
+}
+
+.queryGroupInclude {
+	text-align: left;
+	width: 330px;
+	height: 35px;
+	padding: 5px;
+	background: white;
+	font: 8pt arial;
+	white-space: nowrap;
+	overflow: auto;
+	border: 1px solid black
+}
+
+.queryGroupIncludeSmall {
+	text-align: left;
+	width: 230px;
+	height: 35px;
+	padding: 5px;
+	background: white;
+	font: 8pt arial;
+	white-space: nowrap;
+	overflow: auto;
+	border: 1px solid black
+}
+
+.queryGroupIncludeLong {
+	text-align: left;
+	width: 230px;
+	height: 135px;
+	padding: 5px;
+	background: white;
+	font: 8pt arial;
+	white-space: nowrap;
+	overflow: auto;
+	border: 1px solid black
+}
+
+.queryGroupExclude {
+	text-align: left;
+	width: 330px;
+	height: 35px;
+	padding: 5px;
+	background: lightgrey;
+	font: 8pt arial;
+	white-space: nowrap;
+	overflow: auto;
+	border: 1px solid black
+}
 
 /* Top level menu */
-
 table.menuDetail {
-    padding: 0px 0px;
-    border: 0 none;
+	padding: 0px 0px;
+	border: 0 none;
 }
 
 table.menuDetail th {
-   	font-family: verdana, arial, helvetica, sans-serif;
-    font-size: 11px;     
+	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 11px;
 	line-height: 15px;
-    vertical-align: middle;
-    text-align: center;
-    white-space: nowrap;
-    background: #fafafa
-    url(../images/skin/shadow30.jpg);
-    font-weight: bold;
-    padding: 0px 0px;
+	vertical-align: middle;
+	text-align: center;
+	white-space: nowrap;
+	background: #fafafa url(../images/skin/shadow30.jpg);
+	font-weight: bold;
+	padding: 0px 0px;
 }
 
 table.menuDetail th.menuLink {
 	padding: 1px 15px;
-    color: #00c !important;
-    border-right: 1px solid #ccc;
-    text-decoration: none;
+	color: #00c !important;
+	border-right: 1px solid #ccc;
+	text-decoration: none;
 }
 
-table.menuDetail th.menuLink a:link, th.menuLink a:visited {
-    color: #00c !important;
+table.menuDetail th.menuLink a:link,th.menuLink a:visited {
+	color: #00c !important;
 	font-size: 11px;
-    text-decoration: none;	
+	text-decoration: none;
 }
 
 table.menuDetail th.menuLink a:hover {
-    cursor: pointer;
-    color: #00c !important;
-	font-size: 11px;    
+	cursor: pointer;
+	color: #00c !important;
+	font-size: 11px;
 	text-decoration: underline;
 }
 
 table.menuDetail th.menuVisited {
 	padding: 1px 15px;
-    color: white;    
-    background: #C8C8C8;
-    border: 1px inset gray;
+	color: white;
+	background: #C8C8C8;
+	border: 1px inset gray;
 }
 
 /* end top level menu */
-
 div.topall {
-	padding-top:4px;
-    background-color: #fafafa);
-    background-image:url(../images/skin/shadow30.jpg);
-font-family:verdana,arial,helvetica,sans-serif;
-font-size:12px;
-font-size-adjust:none;
-font-style:normal;
-font-variant:normal;
-font-weight:normal;
-line-height:normal;
+	padding-top: 4px;
+	background: #fafafa url(../images/skin/shadow30.jpg);
+	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 12px;
+	font-size-adjust: none;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: normal;
+	line-height: normal;
 }
 
 #topbar {
-	height:24px;
-	padding-left:3px;
-	font-size:11px;
-	padding-top:6px !important;
-	float:left;
+	height: 24px;
+	padding-left: 3px;
+	font-size: 11px;
+	padding-top: 6px !important;
+	float: left;
 }
 
 #topuser {
-	height:24px;
+	height: 24px;
 	padding: 0px 4px 0px;
-	padding-bottom:2px !important;
-	font-size:11px;
-	padding-top:6px !important;
+	padding-bottom: 2px !important;
+	font-size: 11px;
+	padding-top: 6px !important;
 }
 
-
-.toplink1{
-	padding-left:1px;
-	margin-right:.73em;
-	vertical-align:bottom;
-	font-weight:bold;
-}
-
-a.toplink1{
-	color:#00c !important;
-	vertical-align:bottom;
+.toplink1 {
+	padding-left: 1px;
+	margin-right: .73em;
+	vertical-align: bottom;
 	font-weight: bold;
-    background-color: #fafafa);
-    background-image:url(../images/skin/shadow30.jpg);
-	text-decoration:none;
-}
-a.toplink1:hover{
-	text-decoration:underline;
-	}
-.nextbutton{
-    background-image:url(../images/next.png ) !important;
 }
 
-.clearbutton{
-		background-image:url(../images/clear.png ) !important;
-	}
-.runbutton{
-	background-image:url(../images/runprog.png ) !important;
-	}
-.exportbutton{
-	background-image:url(../images/fileexport.png ) !important;
-	}	
-.comparebutton{
-	background-image:url(../images/compare.png ) !important;
-	}
-.summarybutton{
-	background-image:url(../images/summary.png ) !important;
-	}
-.hleaficon
-	{
-	background-image:url(../images/dna_icon.png ) !important;
-	}
-.valueicon{
-	background-image:url(../images/numeric.gif ) !important;
-	}
-.printbutton{
-	background-image:url(../images/printer.png ) !important;
-	}
-	
-.savebutton{
-	background-image:url(../images/disk.png ) !important;
-	}	
-	
+a.toplink1 {
+	color: #00c !important;
+	vertical-align: bottom;
+	font-weight: bold;
+	background: #fafafa url(../images/skin/shadow30.jpg);
+	text-decoration: none;
+}
+
+a.toplink1:hover {
+	text-decoration: underline;
+}
+
+.nextbutton {
+	background-image: url(../images/next.png ) !important;
+}
+
+.clearbutton {
+	background-image: url(../images/small_cross.png ) !important;
+}
+
+.runbutton {
+	background-image: url(../images/runprog.png ) !important;
+}
+
+.exportbutton {
+	background-image: url(../images/fileexport.png ) !important;
+}
+
+.comparebutton {
+	background-image: url(../images/compare.png ) !important;
+}
+
+.summarybutton {
+	background-image: url(../images/summary.png ) !important;
+}
+
+.hleaficon {
+	background-image: url(../images/dna_icon.png ) !important;
+}
+
+.valueicon {
+	background-image: url(../images/numeric.gif ) !important;
+}
+
+.modifiericon {
+    background-image: url(../images/modifier.gif ) !important;
+}
+
+.printbutton {
+	background-image: url(../images/printer.png ) !important;
+}
+
+.savebutton {
+	background-image: url(../images/disk.png ) !important;
+}
+
 .jleafclass 
 	a span {
-
-    color: #33cc33;
-    padding: 1px 3px 1px 2px;
-    text-decoration: none;
-	}
-	
-.gbhblank{
-border-top:1px solid #c9d7f1;
-font-size:1px;
-height:0;
-position:absolute;
-top:30px;
-width:100%;
-    background-color: #fafafa);
-    background-image:url(../images/skin/shadow30.jpg);
+	color: #33cc33;
+	padding: 1px 3px 1px 2px;
+	text-decoration: none;
 }
 
+.gbhblank {
+	border-top: 1px solid #c9d7f1;
+	font-size: 1px;
+	height: 0;
+	position: absolute;
+	top: 30px;
+	width: 100%;
+	background: #fafafa url(..//images/shadow30.jpg);
+}
 
 a.button:active {
-    background-position: bottom right;
-    color: #000;
-    outline: none; /* hide dotted outline in Firefox */
-    border: 1px inset;
+	background-position: bottom right;
+	color: #000;
+	outline: none; /* hide dotted outline in Firefox */
+	border: 1px inset;
 }
+
 a.button:active span {
-    padding: 1px 0 1px 1px; /* push text down 1px */
-} 
+	padding: 1px 0 1px 1px; /* push text down 1px */
+}
+
 a.button {
-    color: #444;
-    display: block;
-    float: right;
-    font: normal 12px arial, sans-serif;
-    height: 24px;
-    margin-right: 2px;
-    padding-right: 5px; /* sliding doors padding */
-    text-decoration: none;
-    border: 1px outset;
+	color: #444;
+	display: block;
+	float: right;
+	font: normal 12px arial, sans-serif;
+	height: 24px;
+	margin-right: 2px;
+	padding-right: 5px; /* sliding doors padding */
+	text-decoration: none;
+	border: 1px outset;
 }
+
 a.button span {
-    display: block;
-    line-height: 14px;
-    padding: 4px 1px 4px 4px;
-} 
-.button:hover{
-    color:#d12f19;
-    cursor: pointer;
+	display: block;
+	line-height: 14px;
+	padding: 4px 1px 4px 4px;
 }
 
- .ext-ie .x-form-text {position:static !important;}
+.button:hover {
+	color: #d12f19;
+	cursor: pointer;
+}
 
-.x-tree-node-leaf .x-tree-node-icon{background-image:url(../images/alpha.gif);}
+.ext-ie .x-form-text {
+	position: static !important;
+}
+
+.x-tree-node-leaf .x-tree-node-icon {
+	background-image: url(../images/alpha.gif);
+}
 
 div.analysis {
 	font-family: arial;
 	font-size: 8pt;
-	}
+}
+
 table.analysis {
 	border-width: 1px 1px 1px 1px;
 	border-spacing: 4px;
@@ -214,6 +282,7 @@ table.analysis {
 	background-color: white;
 	font-family: arial;
 }
+
 table.analysis th {
 	border-width: 1px 1px 1px 1px;
 	padding: 5px 5px 5px 5px;
@@ -222,8 +291,8 @@ table.analysis th {
 	background-color: white;
 	-moz-border-radius: 12px 12px 12px 12px;
 	font-weight: bold;
-	
 }
+
 table.analysis td {
 	border-width: 1px 1px 1px 1px;
 	padding: 5px 5px 5px 5px;
@@ -236,203 +305,407 @@ table.analysis td {
 div.analysistitle {
 	font-size: 12pt;
 	font-weight: bold;
-	font-family:arial;
+	font-family: arial;
 }
 
+.searchform {
+	font: 12px tahoma, arial, helvetica, sans-serif;
+}
 
-	.searchform {
-	font:12px tahoma, arial, helvetica, sans-serif;
-	}
-	.subsettable {
-	font:12px tahoma, arial, helvetica, sans-serif;
-	}
-.search-item {font:normal 11px tahoma, arial, helvetica, sans-serif;padding:3px 10px 3px 10px;border:1px solid #fff;border-bottom:1px solid #eeeeee;white-space:normal;color:#505050;}
-.search-item h3 {font:inherit;font-weight:bold;color:#202020;}
-.search-item span {font-size:10px;color:#468528;}
+.subsettable {
+	font: 12px tahoma, arial, helvetica, sans-serif;
+}
 
+.search-item {
+	font: normal 11px tahoma, arial, helvetica, sans-serif;
+	padding: 3px 10px 3px 10px;
+	border: 1px solid #fff;
+	border-bottom: 1px solid #eeeeee;
+	white-space: normal;
+	color: #505050;
+}
+
+.search-item h3 {
+	font: inherit;
+	font-weight: bold;
+	color: #202020;
+}
+
+.search-item span {
+	font-size: 10px;
+	color: #468528;
+}
 
 .contextHelpBtn {
-	background-image:url(../images/help/helpicon_gray.jpg ) !important;
-	color:#ff0000;	
+	background-image: url(../images/help/helpicon.png ) !important;
+	color: #ff0000;
 }
-	
-.x-tool-saveComparisonWindowHelpButton {
-	background-image:url(../images/help/helpicon_gray.jpg ) !important;
-	color:#ff0000;	
+
+.x-tool-sampleExplorerHelpButton {
+	background-image: url(../images/help/helpicon.png ) !important;
+	color: #ff0000;
 }
 
 table.detail {
-    border-collapse:collapse;
-    width: 100%;
-    border:1px solid #ccc;
-     font: 10px verdana, arial, helvetica, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+	border: 1px solid #ccc;
+	font: 10px verdana, arial, helvetica, sans-serif;
 }
 
 table.detail td {
-	 font: 10px verdana, arial, helvetica, sans-serif;
-     padding: 5px 3px;
-     text-align: left;
-     vertical-align: top;
-     border-bottom:1px solid #ccc;
+	font: 10px verdana, arial, helvetica, sans-serif;
+	padding: 5px 3px;
+	text-align: left;
+	vertical-align: top;
+	border-bottom: 1px solid #ccc;
 }
 
 table.detail td.name {
-	font-weight:bold;
-	background-color:#fff;
+	font-weight: bold;
+	background-color: #fff;
 }
 
 table.detail td.value {
-background-color:#bbb;
+	background-color: #bbb;
 }
 
-td.prop, td.name {line-height: normal;}
+/* Special for tables based on formLayout templates */
+table.columndetail {
+	border-collapse: collapse;
+	width: 100%;
+	border: 1px solid #ccc;
+	font: 10px verdana, arial, helvetica, sans-serif;
+}
+
+table.columndetail td {
+	font: 10px verdana, arial, helvetica, sans-serif;
+	padding: 5px 3px;
+	text-align: left;
+	vertical-align: top;
+	border-bottom: 1px solid #ccc;
+}
+
+table.columndetail td.columnname {
+	font-weight: bold;
+	background-color: #eee;
+}
+
+td.prop,td.name {
+	line-height: normal;
+}
 
 table.AnalysisResults {
-		font: 12px tahoma,arial,helvetica,sans-serif;
-		border-width: 1px;
-		border-style: solid;
-		border-color: gray;
-		background-color: white;
-		border-collapse:collapse;
-	}
+	font: 12px tahoma, arial, helvetica, sans-serif;
+	border-width: 1px;
+	border-style: solid;
+	border-color: gray;
+	background-color: white;
+	border-collapse: collapse;
+}
 
 table.AnalysisResults td {
-		border-width: 1px;
-		border-style: solid;
-		border-color: gray;
-		background-color: white;
-		padding:10px;
-		white-space: nowrap;		
-	}
+	border-width: 1px;
+	border-style: solid;
+	border-color: gray;
+	background-color: white;
+	padding: 10px;
+	white-space: nowrap;
+}
 
 table.AnalysisResults th {
-		font: 12px tahoma,arial,helvetica,sans-serif;
-		font-weight:bold;
-		border-width: 1px;
-		border-style: solid;
-		border-color: gray;		
-		padding:10px;
-		text-align:left;
-		white-space: nowrap;
-	}
+	font: 12px tahoma, arial, helvetica, sans-serif;
+	font-weight: bold;
+	border-width: 1px;
+	border-style: solid;
+	border-color: gray;
+	padding: 10px;
+	text-align: left;
+	white-space: nowrap;
+}
 
-table.AnalysisResults td.blankCell{
-		border: 0px;
-	}
-
-
+table.AnalysisResults td.blankCell {
+	border: 0px;
+}
 
 /* --------------------------------------------- */
 /* Analysis Results with sorting functionality. */
 table.tablesorterAnalysisResults {
-	font-family:arial;
+	font-family: arial;
 	background-color: #CDCDCD;
-	margin:10px 0pt 15px;
+	margin: 10px 0pt 15px;
 	font-size: 8pt;
 	text-align: left;
 }
-table.tablesorterAnalysisResults thead tr th, table.tablesorter tfoot tr th {
+
+table.tablesorterAnalysisResults thead tr th,table.tablesorter tfoot tr th
+	{
 	background-color: #e6EEEE;
 	border: 1px solid #FFF;
 	font-size: 8pt;
 	padding: 4px;
-	white-space: nowrap;	
+	white-space: nowrap;
 }
+
 table.tablesorterAnalysisResults thead tr .header {
-    background-image: url(../images/bg.gif);
+	background-image: (../images/bg.gif);
 	background-repeat: no-repeat;
 	background-position: center right;
 	cursor: pointer;
-	white-space: nowrap;	
+	white-space: nowrap;
 }
+
 table.tablesorterAnalysisResults tbody td {
 	color: #3D3D3D;
 	padding: 4px;
 	background-color: #FFF;
 	vertical-align: top;
-	white-space: nowrap;	
+	white-space: nowrap;
 }
+
 table.tablesorterAnalysisResults tbody tr.odd td {
-	background-color:#F0F0F6;
+	background-color: #F0F0F6;
 }
+
 table.tablesorterAnalysisResults thead tr .headerSortUp {
 	background-image: url(../images/asc.gif);
 }
+
 table.tablesorterAnalysisResults thead tr .headerSortDown {
 	background-image: url(../images/desc.gif);
 }
-table.tablesorterAnalysisResults thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
-background-color: #8dbdd8;
+
+table.tablesorterAnalysisResults thead tr .headerSortDown,table.tablesorter thead tr .headerSortUp
+	{
+	background-color: #8dbdd8;
 }
 /* --------------------------------------------- */
-
 span.AnalysisHeader {
-		font: 14px tahoma,arial,helvetica,sans-serif;
-		font-weight:bold;
-	}
+	font: 14px tahoma, arial, helvetica, sans-serif;
+	font-weight: bold;
+}
+
 a.AnalysisLink {
-		font: 14px tahoma,arial,helvetica,sans-serif;
-		font-weight:bold;
-	}
-	
+	font: 14px tahoma, arial, helvetica, sans-serif;
+	font-weight: bold;
+}
+
 .utilities-div {
-    position:absolute;
-    width:100px;
-    top:0;
-    right:0;
-    height:24px;
-    z-index:100;
-}	
-		
-@page { 
-size: letter landscape;
-margin: 0.25in; 
--fs-flow-top: "header";
--fs-flow-bottom: "footer";
--fs-flow-left: "left";
--fs-flow-right: "right";
-border: 0px;
-padding: 1em;
+	position: absolute;
+	width: 100px;
+	top: 0;
+	right: 0;
+	height: 24px;
+	z-index: 100;
+}
+
+@page {
+	size: letter landscape;
+	margin: 0.25in;
+	-fs-flow-top: "header";
+	-fs-flow-bottom: "footer";
+	-fs-flow-left: "left";
+	-fs-flow-right: "right";
+	border: 0px;
+	padding: 1em;
 }
 
 #header {
-font: bold serif;
-position: absolute; top: 0; left: 0; 
--fs-move-to-flow: "header";
+	font: bold serif;
+	position: absolute;
+	top: 0;
+	left: 0;
+	-fs-move-to-flow: "header";
 }
 
 #footer {
-font-size: 90%; font-style: italic; 
-position: absolute; top: 0; left: 0;
--fs-move-to-flow: "footer";
+	font-size: 90%;
+	font-style: italic;
+	position: absolute;
+	top: 0;
+	left: 0;
+	-fs-move-to-flow: "footer";
 }
 
-
 #pagenumber:before {
-content: counter(page); 
+	content: counter(page);
 }
 
 #pagecount:before {
-content: counter(pages);  
+	content: counter(pages);
 }
 
 .dialog-modal {
-	font: 11px arial,tahoma,helvetica,sans-serif;
-	font-weight:normal;
+	font: 11px arial, tahoma, helvetica, sans-serif;
+	font-weight: normal;
 }
 
-#mask{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    display: none;
-    z-index: 9999;
+#mask {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	display: none;
+	z-index: 9999;
 }
 
 .x-tool-help {
 	background-image: url("../images/help/tool-sprites-rdc.gif");
-    background-position: 0 -300px;
+	background-position: 0 -300px;
+}
+
+.x-tool {
+	background-image: url("../images/help/tool-sprites-rdc.gif");
+}
+
+.flatbutton {
+	background-repeat: no-repeat;
+	background-position: 2px 50%;
+	font-family: Arial, sans-serif;
+	font-size: 9pt;
+	padding: 4px;
+	border: 1px solid #CCC;
+	cursor: pointer;
+	border-radius: 3px;
+}
+
+.flatbutton:hover {
+	background: #F4F4F4;
+	background-repeat: no-repeat;
+	background-position: 2px 50%;
+}
+
+.flatbutton.icon {
+	padding: 4px 4px 4px 20px;
+}
+
+/* Overrides for ext CSS */
+ul.x-tab-strip-top {
+	padding: 0;
+	background: none;
+	background-color: #FFF;
+}
+
+.x-tab-strip-top a.x-tab-right {
+	background: none;
+	background-image: none;
+}
+
+.x-tab-strip-top em.x-tab-left {
+	background: none;
+	background-image: none;
+}
+
+.x-tab-strip-top .x-tab-strip-inner {
+	background: none;
+	background-image: none;
+}
+
+li.x-tab-strip-active {
+	background-image: url('../images/uiTabsArrow.png');
+	background-repeat: no-repeat;
+	background-position: 50% 10px;
+	height: 22px;
+}
+
+.x-tab-strip-active span.x-tab-strip-text {
+	color: #1b74b3;
+}
+
+.x-tab-strip span.x-tab-strip-text {
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	font-size: 8pt;
+}
+
+.x-tab-strip-top .x-tab-strip-active .x-tab-right {
+	margin-bottom: 0px;
+}
+
+.x-tab-panel-header,.x-tab-panel-footer {
+	background: none;
+	background-image: none;
+	border: none;
+}
+
+.x-panel-body {
+	border: none;
+    overflow: hidden;
+}
+
+.x-tab-panel-body {
+	border: none;
+}
+
+#westPanel {
+	background-color: white;
+    border-right:1px solid #cfcfcf;
+}
+
+.x-tab-panel-header {
+    width: 316px;
+}
+
+.x-layout-split {
+	background-color: #FFFFFF;
+}
+
+#ontFilterForm .x-panel-body {
+	background-color: white !important;
+}
+
+#ontFilterTree {
+	border-top: 2px solid #EDEEF6;
+}
+
+.x-window-tl .x-window-header {
+	background: #deedf7
+		url('./jquery/cupertino/images/ui-bg_highlight-soft_100_deedf7_1x100.png')
+		50% 50% repeat-x;
+	margin: 4px 0px;
+	border: 1px solid #aed0ea;
+	padding: 8px;
+	border-radius: 4px;
+}
+
+.x-window-header-text {
+	font-weight: bold;
+	font-size: 11pt;
+	font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.x-window-dlg .x-window-header-text {
+	font-weight: bold;
+	font-size: 8pt;
+	font-family: 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.ui-autocomplete {
+	z-index: 9999 !important;
+	font-size: 8pt;
+}
+
+.ui-autocomplete-loading {
+	background: white url(../images/loader-small.gif) right center no-repeat;
+}
+
+/* Dreadful override - find out where query panel background color is actually set and replace this! */
+#queryPanel .x-panel-bwrap .x-panel-body {
+	background-color: white !important;
+}
+
+#setregionPanel .x-panel-body {
+	background-color: #E4E4E4;
+	padding-left: 16px;
+}
+
+#search-categories {
+    font-size: 10px;
+    height: 24px;
+    width: 90px;
+}
+
+#title-search-div{
+    width: 316px !important;
 }

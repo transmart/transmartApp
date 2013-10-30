@@ -44,7 +44,7 @@ function renderCohortSummaryMetaCoreEnrichment(cohortSummaryDisplayId) {
 //TODO: needs refactoring: modified copy of submitHeatmapJob from /plugins/rdc-modules-0.1/js/plugin/Heatmap.js
 function submitMetaCoreEnrichmentJob(form) {
 	var independentVariableConceptCode = "";
-	independentVariableConceptCode = readConceptVariables("divIndependentVariableMetaCoreEnrichment");
+	independentVariableConceptCode = readConceptVariables("divIndependentVariableMetaCoreEnrichment")[0];
 	var variablesConceptCode = independentVariableConceptCode;
 	// ----------------------------------
 	// Validation

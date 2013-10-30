@@ -18,9 +18,8 @@
  ******************************************************************/
   
 
-import org.transmart.searchapp.AuthUser;
-
 import grails.converters.*
+import org.transmart.searchapp.AuthUser
 
 
 class DatasetExplorerController {
@@ -44,10 +43,29 @@ class DatasetExplorerController {
 				if(s!=null)
 				{
 					restorecomparison=true;
-					qid1=s.queryResultId1;
-					qid2=s.queryResultId2;
+					qid1=s.queryID1;
+					qid2=s.queryID2;
 				}
 			}
+
+            def rwgSearchFilter = session['rwgSearchFilter'];
+            if (rwgSearchFilter) {
+                rwgSearchFilter = rwgSearchFilter.join(",,,")
+            }
+            else {
+                rwgSearchFilter = "";
+            }
+
+            def rwgSearchOperators = session['rwgSearchOperators'];
+            if (rwgSearchOperators) {
+                rwgSearchOperators = rwgSearchOperators.join(";")
+            }
+            else {
+                rwgSearchOperators = "";
+            }
+
+            def searchCategory = session['searchCategory'];
+            def globalOperator = session['globalOperator'];
 			
 			//Grab i2b2 credentials from the config file
 			def i2b2Domain = grailsApplication.config.com.recomdata.i2b2.subject.domain
@@ -55,7 +73,7 @@ class DatasetExplorerController {
 			def i2b2Username = grailsApplication.config.com.recomdata.i2b2.subject.username
 			def i2b2Password = grailsApplication.config.com.recomdata.i2b2.subject.password
 
-			def user=AuthUser.findByUsername(springSecurityService.getPrincipal().username)  
+			def user=AuthUser.findByUsername(springSecurityService.getPrincipal().username)
     		def admin=i2b2HelperService.isAdmin(user);
     		def tokens=i2b2HelperService.getSecureTokensCommaSeparated(user)
     		def initialaccess=new JSON(i2b2HelperService.getAccess(i2b2HelperService.getRootPathsWithTokens(), user)).toString();
@@ -70,6 +88,14 @@ class DatasetExplorerController {
 													i2b2Domain: i2b2Domain,
 													i2b2ProjectID: i2b2ProjectID,
 													i2b2Username: i2b2Username,
-													i2b2Password: i2b2Password]) 
+													i2b2Password: i2b2Password,
+                                                    rwgSearchFilter: rwgSearchFilter,
+                                                    rwgSearchOperators: rwgSearchOperators,
+                                                    globalOperator: globalOperator,
+                                                    rwgSearchCategory: searchCategory])
     		}
+	
+	def regionFilter = {
+		render(template: '/RWG/regionFilter', model: [ranges:['both':'+/-','plus':'+','minus':'-'], forDatasetExplorer: true])
+	}
 }

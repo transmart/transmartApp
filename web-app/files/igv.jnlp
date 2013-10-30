@@ -1,8 +1,6 @@
-<jnlp
-  spec="6.0+"
-  codebase="http://www.broadinstitute.org/igv/projects/current">
+<jnlp spec="6.0+" codebase="http://www.broadinstitute.org/igv/projects/current">
   <information>
-    <title>IGV 2.1</title>
+    <title>IGV 2.3.5</title>
     <vendor>The Broad Institute</vendor>
     <homepage href="http://www.broadinstitute.org/igv"/>
     <description>IGV Software</description>
@@ -10,14 +8,15 @@
     <icon href="IGV_64.png"/>
     <icon kind="splash" href="IGV_64.png"/>
     <offline-allowed/>
-	<shortcut/>
+    <shortcut/>
   </information>
   <security>
       <all-permissions/>
   </security>
   <update check="always" policy="always"/>
   <resources>
-<java version="1.6+" initial-heap-size="256m" max-heap-size="900m"/>    <jar href="igv.jar" download="eager" main="true"/>
+    <java version="1.6+" initial-heap-size="256m" max-heap-size="900m"/>
+    <jar href="igv.jar" download="eager" main="true"/>
     <jar href="batik-codec.jar" download="eager"/>
     <jar href="goby-io-igv.jar" download="lazy"/>   
     <property name="apple.laf.useScreenMenuBar" value="true"/>
@@ -28,4 +27,3 @@
   <application-desc main-class="org.broad.igv.ui.Main">
   </application-desc>
 </jnlp>
-

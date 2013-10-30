@@ -19,7 +19,7 @@
   
 
 /**
- * SearchResult.java
+ * org.transmart.SearchResult.java
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
@@ -48,7 +48,7 @@ public class SearchResult  implements java.io.Serializable {
 
 
     /**
-     * Gets the id value for this SearchResult.
+     * Gets the id value for this org.transmart.SearchResult.
      * 
      * @return id
      */
@@ -58,7 +58,7 @@ public class SearchResult  implements java.io.Serializable {
 
 
     /**
-     * Sets the id value for this SearchResult.
+     * Sets the id value for this org.transmart.SearchResult.
      * 
      * @param id
      */
@@ -68,7 +68,7 @@ public class SearchResult  implements java.io.Serializable {
 
 
     /**
-     * Gets the name value for this SearchResult.
+     * Gets the name value for this org.transmart.SearchResult.
      * 
      * @return name
      */
@@ -78,7 +78,7 @@ public class SearchResult  implements java.io.Serializable {
 
 
     /**
-     * Sets the name value for this SearchResult.
+     * Sets the name value for this org.transmart.SearchResult.
      * 
      * @param name
      */
@@ -88,7 +88,7 @@ public class SearchResult  implements java.io.Serializable {
 
 
     /**
-     * Gets the descr value for this SearchResult.
+     * Gets the descr value for this org.transmart.SearchResult.
      * 
      * @return descr
      */
@@ -98,7 +98,7 @@ public class SearchResult  implements java.io.Serializable {
 
 
     /**
-     * Sets the descr value for this SearchResult.
+     * Sets the descr value for this org.transmart.SearchResult.
      * 
      * @param descr
      */
@@ -152,7 +152,7 @@ public class SearchResult  implements java.io.Serializable {
         new org.apache.axis.description.TypeDesc(SearchResult.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("SOAP/MetaCore", "SearchResult"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName("SOAP/MetaCore", "org.transmart.SearchResult"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("id");
         elemField.setXmlName(new javax.xml.namespace.QName("", "id"));

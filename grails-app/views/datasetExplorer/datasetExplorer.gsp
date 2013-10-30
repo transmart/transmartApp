@@ -25,7 +25,7 @@
 
 <title>Dataset Explorer</title>
 
-    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
+    %{--<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">--}%
 
     <LINK REL="SHORTCUT ICON"
 	HREF="${resource(dir:'images', file:'i2b2_hive.ico')}">
@@ -39,21 +39,28 @@
 	src="${resource(dir:'js/sarissa', file: 'sarissa_ieemu_xpath.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js/javeline', file: 'javeline_xpath.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
-    <script type="text/javascript"
-            src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
-    <script type="text/javascript"
-            src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
-
-    <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
-  
+<script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
+<script type="text/javascript"
+	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
+	
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery/multiselect', file: 'jquery.multiselect.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery/validate', file:'jquery.validate.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery/validate', file:'additional-methods.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file: 'jquery.dataTables.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery/custom', file: 'fnGetColumnData.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery/flot', file: 'jquery.flot.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jsTree', file:'jquery.jstree.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script> 
 
 <script type="text/javascript"
+	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+<script type="text/javascript"
 	src="${resource(dir:'js/ext-ux', file:'miframe.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>
+<!-- <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'dataAssociation.js')}"></script> -->
 <script type="text/javascript"
 	src="${resource(dir:'js/datasetExplorer', file: 'requests.js')}"></script>
 <script type="text/javascript"
@@ -61,7 +68,11 @@
 <script type="text/javascript"
 	src="${resource(dir:'js/datasetExplorer', file: 'workflowStatus.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js', file:'myJobs.js')}"></script>
-
+<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'jsTreeFunctions.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'reports.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'acrossTrial.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'workspace.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'subject.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js/datasetExplorer/exportData', file: 'dataTab.js')}"></script>
 <script type="text/javascript"
@@ -72,38 +83,49 @@
 </script>
  <script type="text/javascript"
 	src="${resource(dir:'js', file:'bioheatmap.js')}"></script>-->
-	
+    <!--Datatable styling and scripts-->
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'jquery.dataTables.css')}">
 	<!-- Include Ext stylesheets here: -->
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'ext-all.css')}">
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
 	<!-- Include JQuery stylesheets here: -->
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">
-	
-	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
-	
+    <link rel="stylesheet" href="${resource(dir:'css/jquery/cupertino', file:'jquery-ui-1.8.18.custom.css')}">
+    <!-- jQuery Multiselect widget stylesheets -->
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/multiselect', file:'jquery.multiselect.css')}">
 
- 
+	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
+
+
+
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'rwg.css')}">
+
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'metacore.css')}">
     <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'yui-combo-build-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
-	
+    <script type="text/javascript" src="${resource(dir:'js', file:'rwgsearch.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'ColVis.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'ColReorderWithResize.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'workflowValidationFunctions.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
+
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 	
 	<script type="text/javascript" src="${resource(dir:'js/raphael', file:'raphael-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
-		
+
 	<style>
-		.ui-progressbar-value { background-image: url(images/pbar-ani.gif); }
-	</style> 
+		.ui-progressbar-value { background-image: url('images/pbar-ani.gif'); }
+	</style>
 </head>
 
 <body>
-
+<tmpl:/RWG/urls />
 <script type="text/javascript">
+
 	var $j = jQuery.noConflict();
 	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -112,13 +134,15 @@
 
 	// this overrides the above
 	Ext.Updater.defaults.timeout = 1800000;
+    var basicGridUrl = "${createLink(controller:'chart', action:'basicGrid')}"
+    var analysisGridUrl = "${createLink(controller:'chart', action:'analysisGrid')}"
 
 	var pageInfo = {
 		basePath :"${request.getContextPath()}"
 	}
-	
+
     var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-	 
+
 	/******************************************************************************/
 	//Global Variables
 	GLOBAL = {
@@ -138,6 +162,7 @@
 	  PMproxy:${grailsApplication.config.com.recomdata.datasetExplorer.pmServiceProxy},
 	  CRCUrl: '',
 	  ONTUrl: '',
+	  usePMHost: '${grailsApplication.config.com.recomdata.datasetExplorer.usePMHost}',
 	  Config:'jj',
 	  CurrentQueryName:'',
 	  CurrentComparisonName:' ',
@@ -165,7 +190,7 @@
 	  CurrentGpls: new Array(),
 	  CurrentTissues: new Array(),
 	  CurrentRbmpanels: new Array(),
-	  PathToExpand: "${pathToExpand}",
+      DefaultPathToExpand: "${pathToExpand}",
 	  preloadStudy: "${params.DataSetName}",
 	  Binning: false,
 	  ManualBinning: false,
@@ -173,16 +198,24 @@
 	  HelpURL: '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}',
 	  ContactUs: '${grailsApplication.config.com.recomdata.searchtool.contactUs}',
 	  AppTitle: '${grailsApplication.config.com.recomdata.searchtool.appTitle}',
-      BuildVersion: 'Build Version: <g:meta name="app.version"/> <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
+      BuildVersion: 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
 	  AnalysisRun: false,
 	  Analysis: 'Advanced',
 	  HighDimDataType: '',
 	  SNPType: '',
 	  basePath: pageInfo.basePath,
 	  hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
-	  metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
-	  metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}'
+      metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
+	  metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}',
+	 codeType: 'Concept',
+	  AnalysisHasBeenRun: false,
+	  ResultSetRegionParams: {},
+      currentReportCodes: [],
+      currentReportStudy: [],
+      currentSubsetsStudy: '',
+      isGridViewLoaded: false
 	};
+
 	// initialize browser version variables; see http://www.quirksmode.org/js/detect.html
 	BrowserDetect.init();
 	if (BrowserDetect.browser == "Explorer"){
@@ -193,7 +226,7 @@
 	}
 </script>
 <div id="header-div"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>
-<div id="main"></div>
+<div id="mainDS"></div>
 <h3 id="test">Loading....</h3>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
@@ -205,7 +238,27 @@
 	</g:else>
 	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
 	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
-		
+
+    <div id="saveReportDialog" style="display:none;font: 11px arial,tahoma,helvetica,sans-serif;font-weight:normal;">
+        <br />
+        Report Name : <input id='txtReportName' type='text' title="Report Name" /> <br />
+        Make Report Public : <input id='chkReportPublic' type='checkbox' value='Y' title="Make Report Public" /><br /><br />
+
+        <input type="button" onclick="saveReport(true,jQuery('#txtReportName').val(),jQuery('#txtReportDescription').val(),jQuery('#chkReportPublic').is(':checked'),GLOBAL.currentReportCodes.join('|'),GLOBAL.currentReportStudy)" value="Create Report" />
+    </div>
+
+    <div id="saveSubsetsDialog" style="display:none;font: 11px arial,tahoma,helvetica,sans-serif;font-weight:normal;">
+        <form id="saveSubsetForm">
+            <br />
+            <em>*</em> Description : <input id='txtSubsetDescription' type='text' name='txtSubsetDescription' title="Subset Description"/>
+            <br />
+            <em>*</em> Make Subset Public : <input id='chkSubsetPublic' type='checkbox' value='Y' title="Subset Public" />
+            <br />
+            <br />
+            <input class="submit" type="submit" value="Save Subsets"/>
+        </form>
+    </div>
+
 	<span id="visualizerSpan0"></span> <!-- place applet tag here -->
 	<span id="visualizerSpan1"></span> <!-- place applet tag here -->
 <!-- ************************************** -->
@@ -214,6 +267,9 @@
 	<script language="javascript">
 		helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 	</script>
-<!-- ************************************** --> 
+<!-- ************************************** -->
+
+    <tmpl:/RWG/boxSearch hide="true" />
+
 </body>
 </html>

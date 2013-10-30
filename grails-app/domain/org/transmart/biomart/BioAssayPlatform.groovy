@@ -29,6 +29,9 @@ class BioAssayPlatform {
 		String accession
 		String array
 		String vendor
+		String platformType
+		
+		static hasMany = [analyses:BioAssayAnalysis]
  
 static mapping = {
 	 table 'BIO_ASSAY_PLATFORM'
@@ -44,8 +47,11 @@ static mapping = {
 		accession column:'PLATFORM_ACCESSION'
 		array column:'PLATFORM_ARRAY'
 		vendor column:'PLATFORM_VENDOR'
-		}
+		platformType column:'PLATFORM_TYPE'
+		
+		analyses joinTable:[name:'BIO_DATA_PLATFORM', key:'BIO_ASSAY_PLATFORM_ID']
 	}
+}
 
 static constraints = {
 	name(nullable:true, maxSize:400)

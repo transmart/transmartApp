@@ -7,6 +7,7 @@
         <topic url="Documents/searchtool.htm" window="right" module="2" />
         <topic url="Documents/searchresults.htm" window="right" module="2" />
         <topic url="Documents/datasetexplorer.htm" window="right" module="2" />
+        <topic url="Documents/sampleexplorer.htm" window="right" module="2" />
         <topic url="Documents/genesignaturewizard.htm" window="right" module="2" />
         <topic url="Documents/loggingin.htm" window="right" module="2" />
         <topic url="Documents/tools.htm" window="right" module="2" />
@@ -120,6 +121,7 @@
         <topic url="Documents/asynchronousoperations.htm" window="right" module="2" />
         <topic url="Documents/jobstab.htm" window="right" module="2" />
         <topic url="Documents/viewingaloggedjob.htm" window="right" module="2" />
+        <topic url="Documents/chapter4sampleexplorer.htm" window="right" module="2" />
         <topic url="Documents/selectaprimarysearchfilter.htm" window="right" module="2" />
         <topic url="Documents/viewandrefinesamplesearchresults.htm" window="right" module="2" />
         <topic url="Documents/selectandremovesearchfilters.htm" window="right" module="2" />
@@ -186,6 +188,7 @@
         <topic url="Documents/clearingthejavacache.htm" window="right" module="4" />
         <topic url="Documents/transmartreleasenotes.htm" window="right" module="5" />
         <topic url="Documents/prerequisites.htm" window="right" module="5" />
+        <topic url="Documents/sampleexplorer.htm" window="right" module="5" />
         <topic url="Documents/snpviewerenhancements.htm" window="right" module="5" />
         <topic url="Documents/integratedgenomicsviewer.htm" window="right" module="5" />
         <topic url="Documents/asynchronousoperations.htm" window="right" module="5" />

@@ -226,17 +226,6 @@ function createSearchTabs(toolbar) {
                 defaultSrc: pageData.genego.resultsUrl,
                 tabTip: pageData.genego.credentials
             }
-            ,
-            {
-                id: "tab18",
-                iconCls: "cortellisTab",
-                title: "Cortellis",
-                listeners: {activate: activateTab},
-                xtype: "iframepanel",
-                closable: false,
-                loadMask: true,
-                defaultSrc: pageData.cortellis.resultsUrl
-            }
             
         ]
     });
@@ -562,7 +551,7 @@ function showFilters(button) {
         }
         layout.setActiveItem(1);
     } else {
-        layout.setActiveItem(2);
+        layout.setActiveItem(0);
     }
 
     var showFiltersButton = Ext.getCmp("filters-show-button");
@@ -650,10 +639,6 @@ function showStudyView(button){
     var activeitem = layout.activeItem;
     layout.setActiveItem(2);
     showContextSpecificHelp(activetab, button);
-    var showFiltersButton = Ext.getCmp("filters-show-button");
-    var hideFiltersButton = Ext.getCmp("filters-hide-button");
-    showFiltersButton.setVisible(true);
-    hideFiltersButton.setVisible(false);
 }
 
 function setButtonVisibility(id, visibility) {
@@ -784,6 +769,10 @@ function selectJubilantPanel(index) {
     layout.setActiveItem(index);
 }
 
+function onItemCheck(item, checked){
+    ;
+}
+
 function popupWindow(mylink, windowname) {
     if (!window.focus)
     return true;
@@ -908,4 +897,3 @@ function validateDocumentFilters() {
     }
     return true;
 }
-

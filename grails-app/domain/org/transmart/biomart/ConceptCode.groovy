@@ -19,7 +19,6 @@
   
 
 package org.transmart.biomart
-
 class ConceptCode {
 		Long id
 		String bioConceptCode

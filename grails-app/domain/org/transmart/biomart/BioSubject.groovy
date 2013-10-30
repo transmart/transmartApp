@@ -19,7 +19,6 @@
   
 
 package org.transmart.biomart
-
 class BioSubject {
 		Long id
 		Long siteSubjectId

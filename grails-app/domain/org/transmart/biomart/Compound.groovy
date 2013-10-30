@@ -83,5 +83,9 @@ class Compound {
 		description(nullable:true, maxSize:2000)
 		sourceCode(nullable:true, maxSize:100)
 	}
+
+    public String toString() {
+        return genericName;
+    }
 	
 }

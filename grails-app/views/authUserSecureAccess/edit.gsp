@@ -1,3 +1,4 @@
+<%@ page import="org.transmart.searchapp.SecureObject; org.transmart.searchapp.AuthUser" %>
 <!--
   tranSMART - translational medicine data mart
   
@@ -63,7 +64,7 @@
 
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="secureObject">Study:</label>
+                                    <label for="secureObject">Secure Object:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:authUserSecureAccessInstance,field:'secureObject','errors')}">
                                     <g:select optionKey="id" optionValue="displayName" from="${SecureObject.listOrderByDisplayName()}" name="secureObject.id" value="${authUserSecureAccessInstance?.secureObject?.id}" ></g:select>

@@ -29,35 +29,6 @@
 
 import grails.plugins.springsecurity.SecurityConfigType
 
-grails.plugins.springsecurity.successHandler.defaultTargetUrl = "/transmart"
-
-grails.plugins.springsecurity.rejectIfNoRule = true
-grails.plugins.springsecurity.userLookup.userDomainClassName = 'org.transmart.searchapp.AuthUser'
-grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'org.transmart.searchapp.AuthUserRole'
-grails.plugins.springsecurity.authority.className = 'org.transmart.searchapp.Role'
-grails.plugins.springsecurity.requestMap.className = 'org.transmart.searchapp.Requestmap'
-grails.plugins.springsecurity.securityConfigType = SecurityConfigType.Requestmap
-//grails.plugins.springsecurity.interceptUrlMap = [
-//        '/login/**'                   : ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/css/**'                     : ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/js/**'                      : ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/images/**'                  : ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/static/**'                  : ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/search/loadAJAX**'          : ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/analysis/getGenePatternFile': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/analysis/getTestFile'       : ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/requestmap/**'              : ['ROLE_ADMIN'],
-//        '/role/**'                    : ['ROLE_ADMIN'],
-//        '/authUser/**'                : ['ROLE_ADMIN'],
-//        '/secureObject/**'            : ['ROLE_ADMIN'],
-//        '/accessLog/**'               : ['ROLE_ADMIN'],
-//        '/authUserSecureAccess/**'    : ['ROLE_ADMIN'],
-//        '/secureObjectPath/**'        : ['ROLE_ADMIN'],
-//        '/userGroup/**'               : ['ROLE_ADMIN'],
-//        '/secureObjectAccess/**'      : ['ROLE_ADMIN'],
-//        '/**'                         : ['IS_AUTHENTICATED_REMEMBERED'], // must be last
-//]
-
 grails.config.locations = []
 def defaultConfigFiles = [
 	"${userHome}/.grails/${appName}Config/Config.groovy",
@@ -71,7 +42,7 @@ defaultConfigFiles.each { filePath ->
 	} else {
 	}
 }
-String bashSafeEnvAppName = appName.toString().toUpperCase(Locale.ENGLISH).replaceAll(/-/, '_')
+String bashSafeEnvAppName = appName.toUpperCase(Locale.ENGLISH).replaceAll(/-/, '_')
 
 def externalConfig = System.getenv("${bashSafeEnvAppName}_CONFIG_LOCATION")
 if (externalConfig) {
@@ -118,7 +89,6 @@ grails.mime.types = [ html: [
 grails.views.default.codec="none" // none, html, base64
 grails.views.gsp.encoding="UTF-8"
 grails.converters.encoding="UTF-8"
-grails.converters.default.pretty.print=true
 
 // enabled native2ascii conversion of i18n properties files
 grails.enable.native2ascii = true
@@ -134,7 +104,7 @@ com.recomdata.admin.paginate.max=20
 //SUBJECT Data.
 com.recomdata.i2b2.subject.domain = 'i2b2demo'
 com.recomdata.i2b2.subject.projectid = 'i2b2demo'
-com.recomdata.i2b2.subject.username = 'i2b2'
+com.recomdata.i2b2.subject.username = 'Demo'
 com.recomdata.i2b2.subject.password = 'demouser'
 
 //SAMPLE Data.
@@ -142,10 +112,6 @@ com.recomdata.i2b2.sample.domain = 'i2b2demo'
 com.recomdata.i2b2.sample.projectid = 'i2b2demo'
 com.recomdata.i2b2.sample.username = 'sample'
 com.recomdata.i2b2.sample.password = 'manager'
-
-//core-db settings
-org.transmartproject.i2b2.user_id = 'i2b2'
-org.transmartproject.i2b2.group_id = 'Demo'
 //**************************
 
 
@@ -168,13 +134,6 @@ com.recomdata.transmart.data.export.dataTypesMap=[
 	'ADDITIONAL':'Additional Data'
 	//,'GSEA':'Gene Set Enrichment Analysis (GSEA)'
 ];
-
-// Data export FTP settings is Rserve running remote in relation to transmartApp
-com.recomdata.transmart.data.export.ftp.server=''
-com.recomdata.transmart.data.export.ftp.serverport=''
-com.recomdata.transmart.data.export.ftp.username=''
-com.recomdata.transmart.data.export.ftp.password=''
-com.recomdata.transmart.data.export.ftp.remote.path=''
 
 // Control which gene/pathway search is used in Dataset Explorer
 // A value of "native" forces Dataset Explorer's native algorithm.
@@ -210,4 +169,30 @@ com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
 
-grails.resources.modules = {}
+// development env log4j settings - prod should reconfigure it
+environments {
+	development {
+
+        log4j = {
+            appenders {
+                // set up a log file in the standard tomcat area; be sure to use .toString() with ${}
+                rollingFile name:'tomcatLog', file:"c:\\temp\\TDemo.log", maxFileSize:'1024KB', layout:pattern(conversionPattern: '[%p] %d{HH:mm:ss} (%c{5}:%M:%L) | %m%n')
+                'null' name:'stacktrace'
+            }
+
+            root {
+                // change the root logger to my tomcatLog file
+                info 'tomcatLog'
+                additivity = true
+            }
+
+            // example for sending stacktraces to my tomcatLog file
+            error tomcatLog:'StackTrace'
+            debug tomcatLog:'grails.app.task', 'grails.app.controller', 'grails.app.service'
+
+            // set level for my messages; this uses the root logger (and thus the tomcatLog file)
+        }
+
+    }
+	
+}

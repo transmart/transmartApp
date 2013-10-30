@@ -20,13 +20,9 @@
 
 import grails.converters.*
 import com.recomdata.util.*
-import org.hibernate.*
-import org.transmart.GlobalFilter;
-import org.transmart.SearchFilter;
-import org.transmart.biomart.BioAssayAnalysis;
-import org.transmart.biomart.BioAssayAnalysisData;
-
-import org.transmart.biomart.BioMarker
+import org.transmart.biomart.BioAssayAnalysisData
+import org.transmart.biomart.BioAssayAnalysis
+import org.transmart.searchapp.SearchKeyword
 
 /**
  * $Id: HeatmapController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -50,7 +46,7 @@ public class HeatmapController{
 		session.searchFilter.heatmapFilter.heatmapfiltertype=params.heatmapfiltertype
 
 		if (params.id != null && params.id.length() > 0) {
-			session.searchFilter.heatmapFilter.searchTerm = org.transmart.searchapp.SearchKeyword.get(Long.valueOf(params.id))
+			session.searchFilter.heatmapFilter.searchTerm = SearchKeyword.get(Long.valueOf(params.id))
 
 		}
 		render(view:'initheatmap')
@@ -161,7 +157,7 @@ public class HeatmapController{
 		// for genes to be displayed in the heatmap - this is used for searchHeatmapFilter and search global filter
 		def orderedGenes = new LinkedHashSet()
 		def searchGeneIds = []
-		def searchAnalysisIds =org.transmart.biomart.BioAssayAnalysisData.executeQuery(trialQueryService.createAnalysisIDSelectQuery(sfilter), [max:100])
+		def searchAnalysisIds =BioAssayAnalysisData.executeQuery(trialQueryService.createAnalysisIDSelectQuery(sfilter), [max:100])
 
 
 		if("topgene".equalsIgnoreCase(sfilter.heatmapFilter.heatmapfiltertype)){
@@ -280,7 +276,7 @@ public class HeatmapController{
 				analysisName = analysisNameMap.get(data.assayAnalysisId)
 				// reformat & shorten analysis name
 				if(analysisName==null){
-					analysis = org.transmart.biomart.BioAssayAnalysis.get(data.assayAnalysisId)
+					analysis = BioAssayAnalysis.get(data.assayAnalysisId)
 					analysisName = analysis.shortDescription
 					if(analysisName == null){
 						analysisName = analysis.name

@@ -16,22 +16,21 @@
  * 
  *
  ******************************************************************/
-  
 
-import org.transmart.AnalysisResult;
-import org.transmart.AssayAnalysisValue;
-import org.transmart.ExpAnalysisResultSet;
-import org.transmart.SearchFilter;
-import org.transmart.TrialAnalysisResult;
-import org.transmart.biomart.BioAssayAnalysis;
-import org.transmart.biomart.BioAssayAnalysisData;
 
-import org.transmart.biomart.BioMarker
-import org.transmart.biomart.Compound
-import org.transmart.biomart.Disease
-import org.transmart.biomart.ClinicalTrial
+
+
+import org.transmart.AnalysisResult
+import org.transmart.AssayAnalysisValue
+import org.transmart.ExpAnalysisResultSet
+import org.transmart.SearchFilter
+import org.transmart.TrialAnalysisResult
+import org.transmart.biomart.BioAnalysisAttributeLineage
+import org.transmart.biomart.BioAssayAnalysis
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.Query
+import org.transmart.biomart.BioAssayAnalysisData
+import org.transmart.biomart.ClinicalTrial
 
 
 /**
@@ -51,7 +50,7 @@ class TrialQueryService {
 			return 0
 		}
 
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery("COUNT_EXP", filter))[0]
+		return BioAssayAnalysisData.executeQuery(createQuery("COUNT_EXP", filter))[0]
 	}
 
 	def countAnalysis(SearchFilter filter){
@@ -60,7 +59,7 @@ class TrialQueryService {
 			return 0
 		}
 
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery("COUNT_ANALYSIS", filter))[0]
+		return BioAssayAnalysisData.executeQuery(createQuery("COUNT_ANALYSIS", filter))[0]
 	}
 
 	/**
@@ -71,7 +70,7 @@ class TrialQueryService {
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return []
 		}
-		def result = org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery("DATA", filter), paramMap==null?[:]:paramMap)
+		def result = BioAssayAnalysisData.executeQuery(createQuery("DATA", filter), paramMap==null?[:]:paramMap)
 
 		List trialResult = []
 		//def analysisCount = 0;
@@ -79,7 +78,7 @@ class TrialQueryService {
 		for(row in result){
 			//	analysisCount +=row[1];
 			//	expCount++;
-			trialResult.add(new TrialAnalysisResult(trial:org.transmart.biomart.ClinicalTrial.get(row[0]), analysisCount:row[1], groupByExp:true))
+			trialResult.add(new TrialAnalysisResult(trial:ClinicalTrial.get(row[0]), analysisCount:row[1], groupByExp:true))
 		}
 		return new ExpAnalysisResultSet(expAnalysisResults:trialResult, groupByExp:true)
 	}
@@ -170,7 +169,7 @@ class TrialQueryService {
 		def tResult = new TrialAnalysisResult(trial:ClinicalTrial.get(clinicalTrialId))
 		// println("exe sql:"+sql)
 		if(!gfilter.getBioMarkerFilters().isEmpty()){
-			result =  org.transmart.biomart.BioAssayAnalysisData.executeQuery(sql)
+			result =  BioAssayAnalysisData.executeQuery(sql)
 			processAnalysisResult(result, tResult)
 		}
 
@@ -182,7 +181,7 @@ class TrialQueryService {
 				def countGene = row[1]
 				//result = getTopAnalysisDataForAnalysis(analysisId, 5);
 				result = BioAssayAnalysis.getTopAnalysisDataForAnalysis(analysisId, 50);
-				def analysisResult = new AnalysisResult(analysis:org.transmart.biomart.BioAssayAnalysis.get(analysisId),bioMarkerCount:countGene)
+				def analysisResult = new AnalysisResult(analysis:BioAssayAnalysis.get(analysisId),bioMarkerCount:countGene)
 				tResult.analysisResultList.add(analysisResult)
 				processAnalysisResultNoSort(result, analysisResult)
 			}
@@ -215,7 +214,7 @@ class TrialQueryService {
 		query.addCondition("baad.experiment.id ="+clinicalTrialId)
 		query.addGroupBy("baad.analysis")
 		query.addOrderBy("COUNT(DISTINCT baad_bm.id) DESC")
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(query.generateSQL());
+		return BioAssayAnalysisData.executeQuery(query.generateSQL());
 	}
 
 	/**
@@ -223,7 +222,7 @@ class TrialQueryService {
 	 */
 	def processAnalysisResultNoSort(List result, AnalysisResult  aresult){
 
-		//def aresult = new AnalysisResult(analysis);
+		//def aresult = new org.transmart.AnalysisResult(analysis);
 		for(row in result){
 			def analysisData = row[0]
 			def biomarker = row[1];
@@ -354,4 +353,111 @@ class TrialQueryService {
 		}
 	}
 
+	
+	/**
+	 * Execute the SOLR query to get the analyses for the trial that match the given search criteria
+	 * @param solrRequestUrl - the base URL for the SOLR request
+	 * @param solrQueryParams - the query string for the search, to be passed into the data for the POST request
+	 * @return List containing the analysis Ids
+	 */
+	 def executeSOLRTrialAnalysisQuery = {solrRequestUrl, solrQueryParams ->
+		 
+		 List analysisIds = []
+		 
+		 def slurper = new XmlSlurper()
+  
+		 // submit request
+		 def solrConnection = new URL(solrRequestUrl).openConnection()
+		 solrConnection.requestMethod= "POST"
+		 solrConnection.doOutput = true
+  
+		 // add params to request
+		 def dataWriter = new OutputStreamWriter(solrConnection.outputStream)
+		 dataWriter.write(solrQueryParams)
+		 dataWriter.flush()
+		 dataWriter.close()
+		 
+		 def docs   // will store the document nodes from the xml response in here
+		 
+		 // process response
+		 if (solrConnection.responseCode == solrConnection.HTTP_OK)  {
+			 def xml
+			 
+			 solrConnection.inputStream.withStream {
+				 xml = slurper.parse(it)
+			 }
+ 
+			 // retrieve all the document nodes from the xml
+			 docs = xml.result.find{it.@name == 'response'}.doc
+		 }
+		 else {
+			 throw new Exception("SOLR Request failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
+		 }
+		 
+		 solrConnection.disconnect()
+		 
+		 // put analysis id for each document into a list to pass back
+		 for (docNode in docs) {
+			 def analysisIdNode = docNode.str.find{it.@name == 'ANALYSIS_ID'}
+			 def analysisId = analysisIdNode.text()
+						 
+			 analysisIds.add(analysisId)
+		 }
+		 
+		 return analysisIds
+	 }
+	  
+    /**
+	*   Execute a SOLR query to retrieve all the analyses for a certain trial that match the given criteria
+	 */
+	def querySOLRTrialAnalysis(params, List sessionFilter) {
+		RWGController rwgController = new RWGController()
+		
+		def trialNumber = params['trialNumber']
+ 
+		// create a copy of the original list (we don't want to mess with original filter params)
+		// (the list is an object, so it is not "passed by val", it's a reference)
+		def filter = []
+		sessionFilter.each {
+			filter.add(it)
+		}
+ 
+		filter.add("STUDY_ID:" + trialNumber)
+		def nonfacetedQueryString = rwgController.createSOLRNonfacetedQueryString(filter)
+ 
+		String solrRequestUrl = rwgController.createSOLRQueryPath()
+		
+		// TODO create a conf setting for max rows
+		String solrQueryString = rwgController.createSOLRQueryString(nonfacetedQueryString, "", "", 10000, false)
+		def analysisIds = executeSOLRTrialAnalysisQuery(solrRequestUrl, solrQueryString)
+ 
+		def analysisList = []
+ 
+		// retrieve the descriptions for each analysis
+		def results = BioAssayAnalysis.executeQuery("select b.id, b.shortDescription, b.longDescription, b.name, b.assayDataType " +
+			" from org.transmart.biomart.BioAssayAnalysis b" +
+			" where b.id in (" + analysisIds.join(',') +  ") ORDER BY b.longDescription")
+ 
+		// retrieve the analyses that are of type Time Course by checking the taxonomy
+		def timeCourseAnalyses = BioAnalysisAttributeLineage.executeQuery("select b1.bioAnalysisAttribute.bioAssayAnalysisID from org.transmart.biomart.BioAnalysisAttributeLineage b1" +
+			" where b1.bioAnalysisAttribute.bioAssayAnalysisID in (" + analysisIds.join(',') +  ") " +
+			" and lower(b1.ancestorTerm.termName) = lower('Time Course')" )
+ 
+		for (r in results)  {
+					 
+			// if current analysis is in time course list then set flag to true
+			def isTimeCourse = false
+			if (timeCourseAnalyses.contains(r[0]))  {
+				isTimeCourse = true
+			}
+			
+			// create a map for each record
+			def aMap = ['id':r[0], 'shortDescription':r[1], 'longDescription':r[2], 'name':r[3], 'assayDataType':r[4], 'isTimeCourse':isTimeCourse]
+					   
+			analysisList.add aMap
+		}
+	   
+		return analysisList
+	}
+ 
 }

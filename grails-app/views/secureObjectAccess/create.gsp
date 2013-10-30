@@ -1,3 +1,4 @@
+<%@ page import="org.transmart.searchapp.Principal; org.transmart.searchapp.SecureObject; org.transmart.searchapp.SecureAccessLevel" %>
 <!--
   tranSMART - translational medicine data mart
   
@@ -16,9 +17,9 @@
   
  
 -->
-<%@ page import="org.transmart.searchapp.Principal"%>
-<%@ page import="org.transmart.searchapp.SecureAccessLevel"%>
-<%@ page import="org.transmart.searchapp.SecureObject"%>
+
+
+
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -65,7 +66,7 @@
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="secureObject">Study:</label>
+                                    <label for="secureObject">Secure Object:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:secureObjectAccess,field:'secureObject','errors')}">
                                     <g:select optionKey="id" from="${SecureObject.list()}" name="secureObject.id" value="${secureObjectAccess?.secureObject?.id}" ></g:select>

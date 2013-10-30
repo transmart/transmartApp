@@ -1,3 +1,5 @@
+import NewsUpdate
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 

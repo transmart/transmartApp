@@ -40,7 +40,7 @@ class ProxyController{
 	}
 	
 
-	private def doProcess(HttpServletRequest req, HttpServletResponse res, boolean isPost) {
+	def doProcess(HttpServletRequest req, HttpServletResponse res, boolean isPost) {
 
 		  boolean allowXDomain = true;
 		  boolean requireSession = false;
@@ -48,6 +48,7 @@ class ProxyController{
 		  boolean rDebug = false;
 		 XmlHttpProxy xhp = new XmlHttpProxy();;
 		 ServletContext ctx;
+		 println(this);
 		 
 		StringBuilder bodyContent = new StringBuilder();;
 		OutputStream out = null;

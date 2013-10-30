@@ -38,5 +38,8 @@ class Taxonomy {
 		experiments joinTable:[name:'BIO_DATA_TAXONOMY', key:'BIO_TAXONOMY_ID']
 		}
 	}
+    public String toString() {
+        return name;
+    }
 
 }

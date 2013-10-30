@@ -39,7 +39,7 @@
                             <g:sortableColumn property="id" title="Id" />
 							<g:sortableColumn property="username" title="User Name" />
 							<g:sortableColumn property="accessLevelName" title="Access Level" />
-							<g:sortableColumn property="displayName" title="Study" />
+							<g:sortableColumn property="displayName" title="Secure Object" />
                         </tr>
                     </thead>
                     <tbody>

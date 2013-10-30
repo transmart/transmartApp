@@ -22,6 +22,7 @@
  * $Id: CustomFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  */
 package org.transmart.searchapp
+
 class CustomFilter {
 	Long id
 	Long searchUserId

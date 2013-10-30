@@ -20,17 +20,16 @@
 
 package com.recomdata.transmart.data.export
 
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
+import org.transmart.searchapp.AsyncJob;
+import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
 class SweepingService {
 
     boolean transactional = true
-	
-	def grailsApplication
 
     def sweep() {
 		log.error("Triggering file sweep")
-		def fileAge = grailsApplication.config.com.recomdata.export.jobs.sweep.fileAge;
+		def fileAge = ConfigurationHolder.config.com.recomdata.export.jobs.sweep.fileAge;
 		def now = new Date()
 		def c = AsyncJob.createCriteria()
 		def jobList = c.list{
@@ -40,16 +39,9 @@ class SweepingService {
 			//between('lastRunOn',now-fileAge, now)
 		}
 		
-		def tempDir = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
-		def ftpServer = grailsApplication.config.com.recomdata.transmart.data.export.ftp.server
-		def ftpServerPort = grailsApplication.config.com.recomdata.transmart.data.export.ftp.serverport
-		def ftpServerUserName = grailsApplication.config.com.recomdata.transmart.data.export.ftp.username
-		def ftpServerPassword = grailsApplication.config.com.recomdata.transmart.data.export.ftp.password
-		def ftpServerRemotePath = grailsApplication.config.com.recomdata.transmart.data.export.ftp.remote.path
-
 		def deleteDataFilesProcessor = new DeleteDataFilesProcessor()
 		jobList.each{ job->
-			if(deleteDataFilesProcessor.deleteDataFile(job.viewerURL, job.jobName, tempDir, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath)){
+			if(deleteDataFilesProcessor.deleteDataFile(job.viewerURL, job.jobName)){
 				job.delete()
 			}
 		}

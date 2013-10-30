@@ -17,26 +17,34 @@ package org.transmart.searchapp
  * 
  *
  ******************************************************************/
+  
+
+ /**
+  * $Id: org.transmart.searchapp.Requestmap.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 9178 $
+  */
 
 /**
- * Request Map domain class used by Spring Security plugin to determine the security level by URL
+ * Request Map domain class.
  */
 class Requestmap {
+
 	String url
 	String configAttribute
 	Long id
 	Long version
 	static mapping ={
 		table 'SEARCH_REQUEST_MAP'
-		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-		columns {
+		 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		 columns {
 			id column:'ID'
 			version column:'VERSION'
 			configAttribute column:'CONFIG_ATTRIBUTE'
 			url column:'URL'
-		}
+			}
+
 	}
-	
 	static constraints = {
 		url(blank: false, unique: true)
 		configAttribute(blank: false)

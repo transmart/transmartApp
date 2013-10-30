@@ -1,3 +1,4 @@
+<%@ page import="org.transmart.searchapp.SecureObject" %>
 <!--
   tranSMART - translational medicine data mart
   
@@ -16,16 +17,16 @@
   
  
 -->
-<%@ page import="org.transmart.searchapp.SecureObject"%>
+
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="admin" />
-        <title>Create Concept Path Link</title>
+        <title>Create SecureObjectPath</title>         
     </head>
     <body>
         <div class="body">
-            <h1>Create Concept Path Link</h1>
+            <h1>Create SecureObjectPath</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
@@ -50,7 +51,7 @@
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="secureObject.id">Study:</label>
+                                    <label for="secureObject">Secure Object:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:secureObjectPathInstance,field:'secureObject','errors')}">
                                     <g:select optionKey="id"  optionValue="displayName" from="${SecureObject.list()}" name="secureObject.id" value="${secureObjectPathInstance?.secureObject?.id}" ></g:select>

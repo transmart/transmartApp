@@ -57,7 +57,7 @@
                                     <label for="dataType">Data Type:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:secureObjectInstance,field:'dataType','errors')}">
-                                    <textarea rows="5" cols="40" id="dataType" name="dataType">${fieldValue(bean:secureObjectInstance, field:'dataType')}</textarea>
+                                    <textarea rows="5" cols="40" name="dataType">${fieldValue(bean:secureObjectInstance, field:'dataType')}</textarea>
                                 </td>
                             </tr> 
                         
@@ -74,7 +74,7 @@
                                 <td valign="top" class="name">
                                     <label for="conceptPaths">Concept Paths:</label>
                                 </td>
-                                <td id="conceptPaths" valign="top" class="value ${hasErrors(bean:secureObjectInstance,field:'conceptPaths','errors')}">
+                                <td valign="top" class="value ${hasErrors(bean:secureObjectInstance,field:'conceptPaths','errors')}">
                                     
 <ul>
 <g:each var="c" in="${secureObjectInstance?.conceptPaths?}">

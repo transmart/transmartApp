@@ -77,7 +77,27 @@ function getPMRequestFooter(){
 
 function getServices()
 {   
-	loginComplete();
+	//alert(GLOBAL.Inforsense);
+	//alert(GLOBAL.PMproxy);
+	var splits=document.location.href.split('/');
+	var serverandport=splits[2];
+	//GLOBAL.PMUrl="http://"+serverandport+"/axis2/rest/PMService/";
+    var getServicesRequest=getPMRequestHeader()+"<ns3:get_user_configuration><project>"
+        +GLOBAL.ProjectID+"</project></ns3:get_user_configuration>"+getPMRequestFooter(); 
+    
+    var url="";
+    if(GLOBAL.PMproxy){url=pageInfo.basePath+"/proxy?url="+GLOBAL.PMUrl+"getServices";}
+    else {url=GLOBAL.PMUrl+"getServices";}
+    Ext.Ajax.request(
+    	    {
+    	       // url: pageInfo.basePath+"/proxy?url="+GLOBAL.PMUrl+"getServices",
+    	        url: url,
+    	        method: 'POST',
+    	        xmlData: getServicesRequest,                                        
+    	        success: function(result, request){loginComplete(result);},
+    	        failure: function(result, request){loginComplete(result);},
+    	        timeout: '120000'
+    	    });
 }
 
 
@@ -136,11 +156,17 @@ function getONTRequestFooter(){ return "</message_body>\
                    }
 
 function getCategories()
-{
-    jQuery.ajax(pageInfo.basePath + '/concepts/getCategories', {
-            dataType : 'json'
-        })
-        .always(getCategoriesComplete)
+{  
+     var getCategoriesRequest=getONTRequestHeader()+"<ns4:get_categories type='core'/>"+getONTRequestFooter(); 
+ 	Ext.Ajax.request(
+    	    {
+    	        url: pageInfo.basePath+"/proxy?url="+GLOBAL.ONTUrl+"getCategories",
+    	        method: 'POST',
+    	        xmlData: getCategoriesRequest, 
+    	        headers:{'Content-Type':'text/xml'},
+    	        success: function(result, request){getCategoriesComplete(result);},
+    	        failure: function(result, request){getCategoriesComplete(result);}
+    	    }); 
 }
 
  function getONTgetNameInfoRequest(matchstrategy, matchterm, matchontology)
@@ -213,30 +239,37 @@ return '<result_output_list>\
  		</ns4:request>\
  		</message_body>\
  		</ns6:request>';
-}
+}    
 
 
 function getCRCQueryRequest(subset, queryname)
 {
-    if (queryname == "" || queryname == undefined) {
-        var d = new Date();
-        queryname = GLOBAL.Username+"'s Query at "+ d.toString();
-    }
+if(queryname=="" || queryname==undefined)
+	{
+	var d=new Date();
+	queryname=GLOBAL.Username+"'s Query at "+ d.toString();
+	}
+var query=getCRCRequestHeader()+ '<user group="'+GLOBAL.ProjectID+'" login="'+GLOBAL.Username+'">'+GLOBAL.Username+'</user>\
+            <patient_set_limit>0</patient_set_limit>\
+            <estimated_time>0</estimated_time>\
+            <request_type>CRC_QRY_runQueryInstance_fromQueryDefinition</request_type>\
+        </ns4:psmheader>\
+        <ns4:request xsi:type="ns4:query_definition_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\
+				<query_definition>\
+                <query_name>'+queryname+'</query_name>\
+                <specificity_scale>0</specificity_scale>';
 
-    var query =
-        '<ns4:query_definition xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\
-          <query_name>'+queryname+'</query_name>\
-          <specificity_scale>0</specificity_scale>';
-
-    for (var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups; i++) {
-        var qcd = Ext.get("queryCriteriaDiv" + subset + '_' + i.toString());
-        if(qcd.dom.childNodes.length>0) {
-            query = query + getCRCRequestPanel(qcd.dom, i);
-        }
-    }
-    query = query + getSecurityPanel() + "</ns4:query_definition>";
-
-    return query;
+for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
+{
+var qcd=Ext.get("queryCriteriaDiv"+subset+'_'+i.toString());
+	if(qcd.dom.childNodes.length>0)
+	{
+	query=query+getCRCRequestPanel(qcd.dom, i);
+	}
+}
+query=query+getSecurityPanel()+"</query_definition>"+getCRCRequestFooter();
+//query=query+"</query_definition>"+getCRCRequestFooter();
+return query;
 }
 
 //takes actual dom element
@@ -294,6 +327,14 @@ function getCRCRequestItem(el){
             item=item+'<value_constraint>'+el.getAttribute("setvaluehighlowselect").substring(0,1).toUpperCase()+'</value_constraint><value_type>FLAG</value_type></constrain_by_value>';
         	item=item+'<value_unit_of_measure>'+el.getAttribute("setvalueunits")+'</value_unit_of_measure>'               
         }
+
+      if(el.getAttribute("ismodifier")=="true")
+      {
+          item=item+'<constrain_by_modifier><modifier_name>'+el.getAttribute("modifiername")+'</modifier_name>\
+              <applied_path>'+el.getAttribute("modifierappliedpath")+'</applied_path>\
+              <modifier_key>'+el.getAttribute("modifierkey")+'</modifier_key>\
+          </constrain_by_modifier>'
+      }
        // else if (el.getAttribute("oktousevalues")=="Y" && el.getAttribute("setvaluemode")=="novalue")
        // {
        //item=item+'<constrain_by_value></constrain_by_value>'   
@@ -426,22 +467,23 @@ var request=getCRCpdoRequestHeader()+
     	    }); 
 }
 
-function getPreviousQueryFromID(subset, queryMasterID) {
-    queryPanel.el.mask('Rebuilding query...', 'x-mask-loading');
-    Ext.Ajax.request(
-        {
-            url: pageInfo.basePath + "/queryTool/getQueryDefinitionFromResultId",
-            params: {
-                result_id: queryMasterID
-            },
-            success: function (result, request) {
-                getPreviousQueryFromIDComplete(subset, result);
-            },
-            failure: function (result, request) {
-                getPreviousQueryFromIDComplete(subset, result);
-            },
-            timeout: '300000'
-        });
+function getPreviousQueryFromID(subset, queryMasterID)
+{
+var request=getCRCRequestHeader()+'<request_type>CRC_QRY_getRequestXml_fromQueryMasterId</request_type>\
+      	</ns4:psmheader>\
+        <ns4:request xsi:type="ns4:master_requestType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\
+            <query_master_id>'+queryMasterID+'</query_master_id>'+getCRCRequestFooter();
+
+	queryPanel.el.mask('Rebuilding query...', 'x-mask-loading');
+	Ext.Ajax.request(
+    	    {
+    	        url: pageInfo.basePath+"/proxy?url="+GLOBAL.CRCUrl+"request",
+    	        method: 'POST',
+    	        xmlData: request,                                        
+    	        success: function(result, request){getPreviousQueryFromIDComplete(subset, result);},
+    	        failure: function(result, request){getPreviousQueryFromIDComplete(subset, result);},
+    	        timeout: '300000'
+    	    }); 
 }
 
 function getQueryInstanceList(queryName, queryMasterId)
@@ -508,9 +550,7 @@ createExportItem(queryName, firstResultInstanceId);
 
 
 function getSecurityPanel() {
-//      Commenting this out while investigating for the right parameters
-//		if(!GLOBAL.IsAdmin)
-		if(false)
+		if(!GLOBAL.IsAdmin)
 		{
 		 return"<panel><panel_number>21</panel_number> \
                <invert>0</invert><total_item_occurrences>1</total_item_occurrences>\

@@ -1,7 +1,5 @@
 package com.thomsonreuters.lsps.transmart
-
-import groovyx.net.http.*
-
+import com.thomsonreuters.lsps.transmart.UserSettings
 class MetacoreEnrichmentService {
 
     boolean transactional = true

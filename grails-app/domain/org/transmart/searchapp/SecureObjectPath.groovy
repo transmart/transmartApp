@@ -1,5 +1,4 @@
 package org.transmart.searchapp
-
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,19 +17,24 @@ package org.transmart.searchapp
  * 
  *
  ******************************************************************/
+  
+
+
 class SecureObjectPath {
-	Long id
-	SecureObject secureObject
-	String conceptPath
- 
-	static mapping = {
-		table 'SEARCH_SECURE_OBJECT_PATH'
-		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
-		version false
-		columns {
-			id column:'SEARCH_SECURE_OBJ_PATH_ID'
-			secureObject column:'SEARCH_SECURE_OBJECT_ID'
-			conceptPath column:'I2B2_CONCEPT_PATH'
+		Long id
+		SecureObject secureObject
+		String conceptPath
+ static mapping = {
+	 table 'SEARCH_SECURE_OBJECT_PATH'
+	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+	 version false
+	 columns {
+		id column:'SEARCH_SECURE_OBJ_PATH_ID'
+		secureObject column:'SEARCH_SECURE_OBJECT_ID'
+		conceptPath column:'I2B2_CONCEPT_PATH'
 		}
 	}
+
+ static constraints = {
+ }
 }

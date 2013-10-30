@@ -26,10 +26,6 @@ X * $Id: ClinicalTrial.groovy 10184 2011-10-24 21:43:59Z jliu $
 
 package org.transmart.biomart
 
-import java.util.List;
-
-import org.transmart.biomart.Experiment;
-
 class ClinicalTrial extends Experiment {
 	String trialNumber
 	String studyOwner

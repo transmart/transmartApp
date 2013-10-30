@@ -540,7 +540,7 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
             cachedSerQNames.add(qName);
             cls = SearchResult[].class;
             cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "SearchResult");
+            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "org.transmart.SearchResult");
             qName2 = null;
             cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
             cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
@@ -628,7 +628,7 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "SearchResult");
+            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "org.transmart.SearchResult");
             cachedSerQNames.add(qName);
             cls = SearchResult.class;
             cachedSerClasses.add(cls);

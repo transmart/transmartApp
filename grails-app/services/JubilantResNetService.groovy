@@ -30,11 +30,10 @@ import com.recomdata.util.ariadne.Node
 import com.recomdata.util.ariadne.Nodes
 import com.recomdata.util.ariadne.Properties
 import com.recomdata.util.ariadne.Resnet
-import groovy.xml.MarkupBuilder
+import org.transmart.SearchResult
+
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-
-import org.transmart.SearchResult;
 
 /**
  * ResNetService that will provide an .rnef file for Jubilant data

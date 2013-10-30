@@ -16,15 +16,12 @@
  * 
  *
  ******************************************************************/
-  
 
-import org.transmart.searchapp.AuthUser;
 
+
+import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.SearchKeyword
 import org.transmart.searchapp.GeneSignature
-import org.transmart.biomart.Experiment
-import org.transmart.biomart.Compound
-import org.transmart.biomart.Disease
 
 /**
  *$Id: SearchHelpController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -65,7 +62,7 @@ public class SearchHelpController{
 	def loadPathways = {
 
 		def step = params.step ? params.step : "A-C"
-		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource, upper(k.dataSource) from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
+		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
 		def defaultsource = datasources.size()>0? datasources[0]:'GeneGo'
 	    def dataSource = params.datasource ? params.datasource : defaultsource;
 		def sql = "select k from org.transmart.searchapp.SearchKeyword k where dataSource='" + dataSource + "' "
@@ -83,7 +80,7 @@ public class SearchHelpController{
 	//	def dataSource = params.datasource ? params.datasource : "GeneGO"
 		def step = params.step ? params.step : "A-C"
 		//def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
-		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource, upper(k.dataSource) from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)");
+		def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)");
 		def defaultsource = datasources.size()>0? datasources[0]:'GeneGo'
 		def dataSource = params.datasource ? params.datasource : defaultsource;
 

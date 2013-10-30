@@ -1,3 +1,4 @@
+<%@ page import="org.transmart.searchapp.AuthUserSecureAccess; org.transmart.searchapp.SecureObjectAccess" %>
 <!--
   tranSMART - translational medicine data mart
   
@@ -16,8 +17,7 @@
   
  
 -->
-<%@ page import="org.transmart.searchapp.AuthUserSecureAccess"%>
-<%@ page import="org.transmart.searchapp.SecureObjectAccess"%>
+
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

@@ -23,22 +23,11 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
-
-import org.transmart.GlobalFilter;
-import org.transmart.LiteratureFilter;
-import org.transmart.SearchFilter;
-import org.transmart.biomart.BioDataExternalCode;
-
-import org.transmart.biomart.BioMarker
+import org.transmart.GlobalFilter
+import org.transmart.LiteratureFilter
+import org.transmart.SearchFilter
+import org.transmart.biomart.BioDataExternalCode
 import org.transmart.biomart.Literature
-import org.transmart.biomart.LiteratureAlterationData
-import org.transmart.biomart.LiteratureInhibitorData
-import org.transmart.biomart.LiteratureInteractionData
-import org.transmart.biomart.LiteratureProteinEffectData
-import org.transmart.biomart.LiteratureSummaryData
-import org.transmart.biomart.LiteratureReferenceData
-import org.transmart.biomart.LiteratureModelData
-import org.transmart.biomart.LiteratureAssocMoleculeDetailsData
 import com.recomdata.search.query.LiteratureDataQuery
 
 class LiteratureQueryService {
@@ -236,7 +225,7 @@ class LiteratureQueryService {
 	/**
 	 * Gathers the WHERE clause conditions for the Alteration data
 	 * 
-	 * @param litFilter the LiteratureFilter
+	 * @param litFilter the org.transmart.LiteratureFilter
 	 * @param dataType (asthma or oncology)
 	 * @param query the LiteratureDataQuery that will be used to query the database
 	 * 
@@ -345,7 +334,7 @@ class LiteratureQueryService {
 	/**
 	 * Gathers the WHERE clause conditions for the Inhibitor data
 	 * 
-	 * @param litFilter the LiteratureFilter
+	 * @param litFilter the org.transmart.LiteratureFilter
 	 * @param dataType (asthma or oncology)
 	 * @param query the LiteratureDataQuery that will be used to query the database
 	 * 
@@ -440,7 +429,7 @@ class LiteratureQueryService {
 	/**
 	 * Gathers the WHERE clause conditions for the Interaction data
 	 * 
-	 * @param litFilter the LiteratureFilter
+	 * @param litFilter the org.transmart.LiteratureFilter
 	 * @param dataType (asthma or oncology)
 	 * @param query the LiteratureDataQuery that will be used to query the database
 	 * 
@@ -505,7 +494,7 @@ class LiteratureQueryService {
 	/**
 	 * Gathers the WHERE clause conditions for the Interaction data
 	 * 
-	 * @param litFilter the LiteratureFilter
+	 * @param litFilter the org.transmart.LiteratureFilter
 	 * @param dataType (asthma or oncology)
 	 * @param query the LiteratureDataQuery that will be used to query the database
 	 * 

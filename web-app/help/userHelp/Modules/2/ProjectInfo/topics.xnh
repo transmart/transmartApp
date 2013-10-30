@@ -18,6 +18,7 @@
     <topic id="15" tId="256" url="Documents/chapter1gettingstartedwithtransmart.htm" target="right" default="1"><![CDATA[Chapter 1:  Getting Started with tranSMART]]><contextids><item id="1256" /></contextids></topic>
     <topic id="16" tId="257" url="Documents/chapter2searchtool.htm" target="right"><![CDATA[Chapter 2:  Search Tool]]><contextids><item id="1257" /></contextids></topic>
     <topic id="17" tId="258" url="Documents/chapter3datasetexplorer.htm" target="right"><![CDATA[Chapter 3:  Dataset Explorer]]><contextids><item id="1258" /></contextids></topic>
+    <topic id="18" tId="437" url="Documents/chapter4sampleexplorer.htm" target="right"><![CDATA[Chapter 4:  Sample Explorer]]><contextids><item id="1437" /></contextids></topic>
     <topic id="19" tId="445" url="Documents/chapter5genesignaturesandgenelists.htm" target="right"><![CDATA[Chapter 5:  Gene Signatures and Gene Lists]]><contextids><item id="1259" /></contextids></topic>
     <topic id="20" tId="446" url="Documents/chapter6othertasks.htm" target="right"><![CDATA[Chapter 6:  Other Tasks]]><contextids><item id="1446" /></contextids></topic>
     <topic id="21" tId="24" url="Documents/clinicaltrialstab.htm" target="right"><![CDATA[Clinical Trials Tab]]><contextids><item id="1024" /></contextids></topic>
@@ -97,9 +98,10 @@
     <topic id="95" tId="448" url="Documents/rulesforloadingomicsoftdata.htm" target="right"><![CDATA[Rules for Loading OmicSoft Data]]><contextids><item id="1448" /></contextids></topic>
     <topic id="96" tId="427" url="Documents/runningtheintegratedgenomicsviewer.htm" target="right"><![CDATA[Running the Integrated Genomics Viewer]]><contextids><item id="1427" /></contextids></topic>
     <topic id="97" tId="360" url="Documents/runningthesnpviewer.htm" target="right"><![CDATA[Running the SNP Viewer]]><contextids><item id="1360" /></contextids></topic>
+    <topic id="98" tId="425" url="Documents/sampleexplorer.htm" target="right"><![CDATA[Sample Explorer]]><contextids><item id="1425" /></contextids></topic>
     <topic id="99" tId="21" url="Documents/savingasearchfilterorsearchstring.htm" target="right"><![CDATA[Saving a Search Filter or Search String]]><contextids><item id="1021" /></contextids></topic>
     <topic id="100" tId="474" url="Documents/savingcomparisondefinitions.htm" target="right"><![CDATA[Saving Comparison Definitions]]><contextids><item id="1474" /></contextids></topic>
-    <topic id="101" tId="65" url="Documents/searchbysubjecttab.htm" target="right"><![CDATA[Search Terms Tab]]><contextids><item id="1065" /></contextids></topic>
+    <topic id="101" tId="65" url="Documents/searchbysubjecttab.htm" target="right"><![CDATA[Search by Subject Tab]]><contextids><item id="1065" /></contextids></topic>
     <topic id="102" tId="6" url="Documents/searchresults.htm" target="right"><![CDATA[Search Results]]><contextids><item id="1006" /></contextids></topic>
     <topic id="103" tId="13" url="Documents/searchtasks.htm" target="right"><![CDATA[Search Tasks]]><contextids><item id="1013" /></contextids></topic>
     <topic id="104" tId="5" url="Documents/searchtool.htm" target="right"><![CDATA[Search Tool]]><contextids><item id="1005" /></contextids></topic>

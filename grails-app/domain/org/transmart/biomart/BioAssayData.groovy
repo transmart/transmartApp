@@ -19,12 +19,6 @@
   
 
 package org.transmart.biomart
-
-import org.transmart.biomart.BioMarker;
-import org.transmart.biomart.Compound;
-import org.transmart.biomart.Disease;
-import org.transmart.biomart.Experiment;
-
 class BioAssayData {
 		Long numericValue
 		String textValue

@@ -121,7 +121,8 @@
 										</td>
 									</tr>
 									<tr>
-										<td colspan=2 style="text-align:center"> &nbsp;
+										<td colspan=2 style="text-align:center">
+											&nbsp;
 										</td>
 										</tr>
 									<tr>
@@ -145,5 +146,8 @@
 		</td>
 	</tr>
 </table>
+<g:if test="${grailsApplication.config.com.recomdata.lastBuildDate}">
+	<span style="font-variant: italic; color: #AAA">Built on ${grailsApplication.config.com.recomdata.lastBuildDate}</span>
+</g:if>
 </div>
 </body>

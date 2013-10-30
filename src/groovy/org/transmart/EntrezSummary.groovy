@@ -20,7 +20,7 @@ package org.transmart
   
 
 /**
-* $Id: EntrezSummary.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+* $Id: org.transmart.EntrezSummary.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
 * @author $Author: mmcduffie $
 * @version $Revision: 9178 $
 */

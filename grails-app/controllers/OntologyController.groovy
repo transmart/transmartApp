@@ -20,10 +20,7 @@
 
 
 import grails.converters.*
-import org.json.*;
 import org.transmart.searchapp.AuthUser;
-
-import edu.mit.wi.haploview.*;
 class OntologyController {
 
     def index = { }
@@ -63,7 +60,7 @@ class OntologyController {
     		log.trace("searching for:"+searchtags+" of type"+tagsearchtype+"with searchterm:"+searchterm)
 			def myCount  =0;
 			def allSystemCds = []
-			def searchtermWild = '%'+searchterm.toLowerCase()+'%';
+			def searchtermWild = '%'+searchterm+'%';
 			def visualAttrHiddenWild = '%H%';
 			
 			if(searchterm==null){// if there is no search term just do exact match
@@ -116,16 +113,16 @@ class OntologyController {
 			// this is not a generic solution - 
 			// if tag type is all then do a name like search
 			if(tagsearchtype=='ALL'){
-				myCount = i2b2.OntNode.executeQuery("SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'")[0]
+				myCount = i2b2.OntNode.executeQuery("SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE o.name like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'")[0]
 				
-				myNodes = i2b2.OntNode.executeQuery("SELECT o from i2b2.OntNode o WHERE lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [max:100])
+				myNodes = i2b2.OntNode.executeQuery("SELECT o from i2b2.OntNode o WHERE o.name like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [max:100])
   
 			}else{
 			 allSystemCds = i2b2.OntNode.executeQuery("SELECT DISTINCT o.sourcesystemcd FROM i2b2.OntNode o JOIN o.tags t WHERE t.tag IN (:tagArg) AND t.tagtype =:tagTypeArg",[tagArg:searchtags, tagTypeArg:tagsearchtype], [max:800])
 			 	
-			  myCount = i2b2.OntNode.executeQuery("SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [scdArg:allSystemCds])[0]
+			  myCount = i2b2.OntNode.executeQuery("SELECT COUNT(DISTINCT o.id) from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND o.name like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [scdArg:allSystemCds])[0]
 			  
-			  myNodes = i2b2.OntNode.executeQuery("SELECT o from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND lower(o.name) like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [scdArg:allSystemCds], [max:100])
+			  myNodes = i2b2.OntNode.executeQuery("SELECT o from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND o.name like '"+searchtermWild+"' AND o.visualattributes NOT like '"+visualAttrHiddenWild+"'", [scdArg:allSystemCds], [max:100])
 			}
 			 }
 			
@@ -164,7 +161,9 @@ class OntologyController {
     		 def comment=node.comment
     		 def tooltip=node.tooltip
     		 def metadataxml=i2b2HelperService.metadataxmlToJSON(node.metadataxml)
-    		 concepts.add([level:level, key:key,  name:name, synonym_cd:synonym_cd, visualattributes:visualattributes, totalnum:totalnum, facttablecolumn:facttablecolumn, tablename:tablename, columnname:columnname, columndatatype:columndatatype, operator:operator, dimcode:dimcode, comment:comment, tooltip:tooltip, metadataxml:metadataxml, access:access[node.id]] )
+			 //Check for VCF data
+			 def hasVCFData = i2b2HelperService.hasVCFData(node.sourcesystemcd)
+    		 concepts.add([level:level, key:key,  name:name, synonym_cd:synonym_cd, visualattributes:visualattributes, totalnum:totalnum, facttablecolumn:facttablecolumn, tablename:tablename, columnname:columnname, columndatatype:columndatatype, operator:operator, dimcode:dimcode, comment:comment, tooltip:tooltip, metadataxml:metadataxml, access:access[node.id], hasVCFData: hasVCFData] )
     					
     		}
             def resulttext;
@@ -176,6 +175,13 @@ class OntologyController {
     		log.trace(result as JSON)
     		render result as JSON		
     }
+	
+	def hasVCFData=
+	{
+		def conceptPath=i2b2HelperService.keyToPath(params.conceptKey);
+		def node=i2b2.OntNode.get(conceptPath);
+		render (i2b2HelperService.hasVCFData(node.name)) as JSON
+	}
     
     
     def getInitialSecurity=
@@ -211,21 +217,14 @@ class OntologyController {
 		//def testtag=new i2b2.OntNodeTag(tag:'test', tagtype:'testtype');
 		//node.addToTags(testtag);
 		//node.save();
-        if (node == null)
-        {
-            render(template:'showDefinition', model:[tags:[]])
-            return
-        }
-
-		def result=node.tags.findAll{ it != null }
-		def trial=result.find { it.tagtype == "Trial" }
+		def trial=node.tags.find{ w -> w.tagtype =="Trial" }
 		if(trial!=null)
 		{
 			def trialid=trial.tag;
 			chain(controller:'trial', action:'trialDetailByTrialNumber', id:trialid)
 		}
-
-		render(template:'showDefinition', model:[tags:result])
+		
+		render(template:'showDefinition', model:[tags:node.tags])
 	}
 	
 }

@@ -20,7 +20,7 @@
 
 package com.thomsonreuters.lsps.transmart.search
 
-import grails.test.*
+import grails.test.GrailsUnitTestCase
 
 class CortellisControllerTests extends GrailsUnitTestCase {
     protected void setUp() {

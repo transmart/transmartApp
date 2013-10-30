@@ -87,7 +87,7 @@ public class I2b2DAO {
 			if (retrievalTypeMRNAExists && null != filesDoneMap['MRNA.TXT'] && filesDoneMap['MRNA.TXT']) {
 				sqlQuery <<= "INNER JOIN DE_SUBJECT_SAMPLE_MAPPING ssm ON ssm.PATIENT_ID = ofa.PATIENT_NUM  "
 			}
-			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.MODIFIER_CD = ? "
+			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = ? AND ofa.MODIFIER_CD = ? "
 
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
 				sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT sample_type_cd as gene_expr_concept FROM de_subject_sample_mapping WHERE trial_name = ?"
@@ -120,18 +120,9 @@ public class I2b2DAO {
 		log.debug("Retrieving Clinical data : " + sqlQuery)
 		log.debug("Retrieving Clinical data : " + parameterList)
 
-		//Only pivot the data if the parameter specifies it.
-		if(parPivotData)
-		{
+		//Only pivot the data if the parameter specifies it.		if(parPivotData)		{
 			boolean mRNAExists =  retrievalTypeMRNAExists && null != filesDoneMap['MRNA.TXT'] && filesDoneMap['MRNA.TXT']
-			boolean snpExists =  retrievalTypeSNPExists && null != filesDoneMap['SNP.PED, .MAP & .CNV'] && filesDoneMap['SNP.PED, .MAP & .CNV']
-			pivotData(writeData(studyDir, fileName, jobName, retrievalTypes, snpFilesMap), mRNAExists, snpExists)
-		}
-		else
-		{
-			writeData(studyDir, fileName, jobName, retrievalTypes)
-		}
-	}
+			boolean snpExists =  retrievalTypeSNPExists && null != filesDoneMap['SNP.PED, .MAP & .CNV'] && filesDoneMap['SNP.PED, .MAP & .CNV']			pivotData(writeData(studyDir, fileName, jobName, retrievalTypes, snpFilesMap), mRNAExists, snpExists)		}		else		{			writeData(studyDir, fileName, jobName, retrievalTypes)		}	}
 
 	private String writeData(File studyDir, String fileName, String jobName, List retrievalTypes, Map snpFilesMap = null)
 	{

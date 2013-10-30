@@ -37,7 +37,7 @@ class PluginModuleTests extends GrailsUnitTestCase {
 		pluginModule.name = 'Test Plugin Module'
 		pluginModule.category = PluginModuleCategory.DEFAULT
 		pluginModule.moduleName = 'TestPluginModule'
-		pluginModule.version = 0.1
+		pluginModule.version = '0.1'
 		pluginModule.active = true
 		pluginModule.hasForm = false
 		pluginModule.formLink = null

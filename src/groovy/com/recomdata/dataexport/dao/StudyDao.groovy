@@ -23,8 +23,8 @@ package com.recomdata.dataexport.dao
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.springframework.context.ApplicationContext
-import org.transmart.biomart.ClinicalTrial;
 
+import org.transmart.biomart.ClinicalTrial
 import org.transmart.biomart.Compound
 import org.transmart.biomart.Experiment
 import org.transmart.biomart.Taxonomy
@@ -63,7 +63,7 @@ public class StudyDao
 	public void getData(File studyDir, String fileName, String jobName, List<String> studyAccessions) 
 	{
 		//Log the action of data access.
-		//def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"i2b2DAO - getData", eventmessage:"RID:"+result_instance_ids.toString()+" Concept:"+conceptCodeList.toString(), accesstime:new java.util.Date())
+		//def al = new org.transmart.searchapp.AccessLog(username:springSecurityService.getPrincipal().username, event:"i2b2DAO - getData", eventmessage:"RID:"+result_instance_ids.toString()+" Concept:"+conceptCodeList.toString(), accesstime:new java.util.Date())
 		//al.save()
 		
 		log.info("loading study metadata for "+studyAccessions)
