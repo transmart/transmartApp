@@ -25,6 +25,7 @@
         <link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"></link>
        	<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
+        <g:setProvider library="prototype" />
 		<g:javascript library="prototype" />
         <link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
         <script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>

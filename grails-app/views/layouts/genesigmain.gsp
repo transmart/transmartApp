@@ -27,6 +27,7 @@
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
 		<link rel="stylesheet"	href="${resource(dir:'css',file:'genesignature.css')}" />		
 		<link rel="stylesheet" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}"></link>
+        <g:setProvider library="prototype" />
 		<g:javascript library="prototype" />
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
