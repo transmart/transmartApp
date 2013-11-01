@@ -20,6 +20,7 @@
 package fm
 
 import annotation.*
+import auth.AuthUser
 import bio.BioData
 import com.recomdata.transmart.domain.searchapp.AccessLog
 import com.recomdata.util.FolderType
@@ -41,8 +42,9 @@ class FmFolderService {
     def filestoreDirectory = config.com.recomdata.FmFolderService.filestoreDirectory
     def fileTypes = config.com.recomdata.FmFolderService.fileTypes ?: DEFAULT_FILE_TYPES
     def solrBaseUrl = config.com.recomdata.solr.baseURL
-    def amTagItemService;
-    def springSecurityService;
+    def amTagItemService
+    def springSecurityService
+    def i2b2HelperService
 
     private String getSolrUrl() {
         solrBaseUrl + '/update'
@@ -439,18 +441,15 @@ class FmFolderService {
         }
     }
 
-    def getFolderContents(id) {
-
-        def parent;
+    List<FmFolder> getFolderContents(id) {
+        def parent
         def folderLevel = 0L;
-        if (id != null) {
+        if (id) {
             parent = FmFolder.get(id)
             folderLevel = parent.folderLevel + 1
         }
 
-        def folders = null;
-
-        folders = FmFolder.createCriteria().list {
+        FmFolder.createCriteria().list {
             if (parent != null) {
                 eq('parent', parent)
             }
@@ -458,8 +457,53 @@ class FmFolderService {
             eq('activeInd', true)
             order('folderName', 'asc')
         }
+    }
 
-        return folders
+    Map<FmFolder, String> getAccessLevelInfoForFolders(AuthUser user, Collection<FmFolder> fmFolders) {
+        if(!fmFolders) return [:]
+
+        def foldersByStudy = fmFolders.groupBy { it.findParentStudyFolder() }
+
+        def studyFolderStudyIdMap = foldersByStudy.keySet().findAll().collectEntries {
+            def studyId = FmFolderAssociation.findByFmFolder(it)?.getBioObject()?.accession
+            [(it) : studyId]
+        }
+
+        def studyTokensMap = i2b2HelperService.getSecureTokensForStudies(studyFolderStudyIdMap.values().findAll())
+
+        boolean isAdmin = user.isAdmin() || user.isDseAdmin()
+
+        def userAssignedTokens
+        if(!isAdmin)
+            userAssignedTokens = i2b2HelperService.getSecureTokensWithAccessForUser(user)
+
+        def results = [:]
+        foldersByStudy.each { entry ->
+            if(entry.key) {
+                if(isAdmin) {
+                    results += entry.value.collectEntries { [ (it): 'ADMIN' ] }
+                } else {
+                    def studyId = studyFolderStudyIdMap[entry.key]
+                    def token = studyTokensMap[studyId]
+                    def accessLevelInfo = userAssignedTokens[token] ?: 'LOCKED'
+                    results += entry.value.collectEntries { [ (it): accessLevelInfo ] }
+                }
+            } else {
+                results += entry.value.collectEntries { [ (it): 'NA' ] }
+            }
+        }
+
+        results
+    }
+
+    String getAccessLevelInfoForFolder(AuthUser user, FmFolder fmFolder) {
+        def map = getAccessLevelInfoForFolders(user, [fmFolder])
+        map ? map.values()[0] : null
+    }
+
+    Map<FmFolder, String> getFolderContentsWithAccessLevelInfo(AuthUser user, folderId) {
+        def childFolders = getFolderContents(folderId)
+        getAccessLevelInfoForFolders(user, childFolders)
     }
 
     def getAssociatedAccession(fmFolder) {

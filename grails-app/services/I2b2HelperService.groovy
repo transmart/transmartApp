@@ -21,9 +21,11 @@
 
 import auth.AuthUser
 import auth.AuthUserSecureAccess
+import auth.SecureAccessLevel
 import auth.SecureObjectPath
 import com.recomdata.db.DBHelper
 import com.recomdata.export.*
+import groovy.sql.Sql
 import i2b2.*
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.w3c.dom.Document
@@ -67,7 +69,7 @@ class I2b2HelperService {
      */
     def double[] getPatientDemographicValueDataForSubset(String col, String result_instance_id) {
         ArrayList<Double> values = new ArrayList<Double>();
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = """SELECT """ + col + """ FROM patient_dimension f WHERE
 		    PATIENT_NUM IN (select distinct patient_num
 			from qt_patient_set_collection
@@ -156,7 +158,7 @@ class I2b2HelperService {
         if (!path.endsWith("\\")) {
             path += "\\";
         }
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt =
             sql.eachRow("SELECT CONCEPT_CD FROM CONCEPT_DIMENSION c WHERE CONCEPT_PATH = ?", [path], {row ->
                 log.trace("Found code:" + row.CONCEPT_CD);
@@ -168,7 +170,7 @@ class I2b2HelperService {
 
     def String getConceptPathFromCode(String code) {
         String path = null;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt =
             sql.eachRow("SELECT CONCEPT_PATH FROM CONCEPT_DIMENSION c WHERE CONCEPT_CD = ?", [code], {row ->
                 path = row.CONCEPT_PATH;
@@ -200,7 +202,7 @@ class I2b2HelperService {
         String fullname = key.substring(key.indexOf("\\", 2), key.length());
         //path=path.replace("@", slash);
         int res = 0;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt =
             sql.eachRow("SELECT c_hlevel FROM i2b2metadata.i2b2 WHERE C_FULLNAME = ?", [fullname], {row ->
                 res = row.c_hlevel
@@ -211,7 +213,7 @@ class I2b2HelperService {
 
     def getMarkerTypeFromConceptCd(conceptCd) {
         log.trace("Getting marker type from concept code:" + conceptCd);
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
 
         def markerType = ""
         //def rs = sql.executePreparedQuery("select dgi.marker_type from concept_dimension cd, de_gpl_info dgi where cd.name_char=dgi.title "+
@@ -238,7 +240,7 @@ class I2b2HelperService {
     def Boolean isLeafConceptKey(String concept_key) {
         String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
         Boolean res = false;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         sql.eachRow("SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_FULLNAME = ?", [fullname], {row ->
             res = row.c_visualattributes.indexOf('L') > -1
         })
@@ -249,7 +251,7 @@ class I2b2HelperService {
      * Gets the distinct patient counts for the children of a parent concept key
      */
     def getChildrenWithPatientCountsForConcept(String concept_key) {
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         def counts = [:];
         log.trace("Trying to get counts for parent_concept_path=" + keyToPath(concept_key));
         sql.eachRow("select * from CONCEPT_COUNTS where parent_concept_path = ?", [keyToPath(concept_key)], {row ->
@@ -265,7 +267,7 @@ class I2b2HelperService {
      */
     def getConceptDistributionDataForValueConcept(String concept_key) {
         log.trace("Getting concept distribution data for value concept: " + concept_key);
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String concept_cd = getConceptCodeFromKey(concept_key);
         ArrayList<Double> values = new ArrayList<Double>();
         sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ?", [concept_cd], {row ->
@@ -289,7 +291,7 @@ class I2b2HelperService {
 
     def getConceptDistributionDataForValueConcept(String concept_key, String result_instance_id) {
         log.debug("Getting concept distribution data for value concept:" + concept_key);
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String concept_cd = getConceptCodeFromKey(concept_key);
         ArrayList<Double> values = new ArrayList<Double>();
 
@@ -331,7 +333,7 @@ class I2b2HelperService {
             return returnvalues;
         }
         log.trace("Getting concept distribution data for value concept code:" + concept_cd);
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         log.trace("preparing query");
         String sqlt = """SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
 		    PATIENT_NUM IN (select distinct patient_num
@@ -359,7 +361,7 @@ class I2b2HelperService {
     def Integer getPatientSetSize(String result_instance_id) {
         log.trace("Getting patient set size with id:" + result_instance_id);
         Integer i = 0;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = """select count(*) as patcount FROM (select distinct patient_num
 		        from qt_patient_set_collection
 				where result_instance_id = ?)""";
@@ -378,7 +380,7 @@ class I2b2HelperService {
     def int getPatientSetIntersectionSize(String result_instance_id1, String result_instance_id2) {
         log.trace("Getting patient set intersection");
         Integer i = 0;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = """Select count(*) as patcount FROM ((select distinct patient_num from qt_patient_set_collection
 		        where result_instance_id = ?) a inner join (select distinct patient_num from qt_patient_set_collection
 		        where result_instance_id = ?) b ON a.patient_num=b.patient_num)""";
@@ -417,7 +419,7 @@ class I2b2HelperService {
     def Boolean isValueConceptCode(String concept_code) {
         log.trace("Checking isValueConceptCode for code:" + concept_code);
         Boolean res = false;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = "SELECT C_METADATAXML FROM I2B2METADATA.I2B2 WHERE C_BASECODE = ?"
         String xml = "";
         log.trace(sqlt);
@@ -457,7 +459,7 @@ class I2b2HelperService {
         HashMap<String, Integer> results = new LinkedHashMap<String, Integer>();
         int i = getLevelFromKey(concept_key) + 1;
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = """Select DISTINCT m.c_name, nvl(i.obscount,0) as obscount FROM
 		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) m
 		    LEFT OUTER JOIN
@@ -503,7 +505,7 @@ class I2b2HelperService {
                 int i = getLevelFromKey(concept_key) + 1;
                 fullname = getConceptPathFromCode(c);
                 log.debug("** IN LOOP: fullname: " + fullname);
-                groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+                Sql sql = new Sql(dataSource);
                 String sqlt =
                     "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
                 log.trace(sqlt);
@@ -517,7 +519,7 @@ class I2b2HelperService {
             }
         } else {
             int i = getLevelFromKey(concept_key) + 1;
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+            Sql sql = new Sql(dataSource);
             String sqlt = "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
             log.trace(sqlt);
             sql.eachRow(sqlt, [fullname + "%", i], {row ->
@@ -537,7 +539,7 @@ class I2b2HelperService {
         String xml;
         ArrayList ls = new ArrayList();
         int i = getLevelFromKey(concept_key) + 1;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = "SELECT C_FULLNAME, C_METADATAXML FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
         sql.eachRow(sqlt, [fullname + "%", i], {row ->
             String conceptkey = prefix + row.c_fullname;
@@ -572,7 +574,7 @@ class I2b2HelperService {
     def Integer getPatientCountForConcept(String concept_key) {
         String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
         int i = 0;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = """select count (distinct patient_num) as patcount
 		    FROM i2b2demodata.observation_fact
 		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
@@ -591,7 +593,7 @@ class I2b2HelperService {
         log.trace("Getting observation count for concept:" + concept_key + " and instance:" + result_instance_id);
         String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
         int i = 0;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = """select count (*) as obscount FROM i2b2demodata.observation_fact
 		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
 			where concept_path LIKE ?)))) AND PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)""";
@@ -609,7 +611,7 @@ class I2b2HelperService {
      */
     def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
         log.trace("Adding patient demographic data to grid with result instance id:" + result_instance_id + " and subset: " + subset)
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = '''
                 SELECT
                     I.*,
@@ -709,7 +711,7 @@ class I2b2HelperService {
             if (isValueConceptKey(concept_key)) {
                 /*get the data*/
                 String concept_cd = getConceptCodeFromKey(concept_key);
-                groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+                Sql sql = new Sql(dataSource)
                 String sqlt = """SELECT PATIENT_NUM, NVAL_NUM, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
 				        PATIENT_NUM IN (select distinct patient_num
 						from qt_patient_set_collection
@@ -734,7 +736,7 @@ class I2b2HelperService {
                 })
             } else {
                 String concept_cd = getConceptCodeFromKey(concept_key);
-                groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+                Sql sql = new Sql(dataSource)
                 String sqlt = """SELECT PATIENT_NUM, TVAL_CHAR, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
 				        PATIENT_NUM IN (select distinct patient_num
 				        from qt_patient_set_collection
@@ -778,7 +780,7 @@ class I2b2HelperService {
      * */
     def HashMap<String, Integer> getPatientDemographicDataForSubset(String col, String result_instance_id) {
         HashMap<String, Integer> results = new LinkedHashMap<String, Integer>();
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = """SELECT a.cat as demcategory, nvl(b.demcount,0) as demcount FROM
 		(SELECT DISTINCT UPPER(""" + col + """) as cat FROM patient_dimension) a
 		LEFT OUTER JOIN
@@ -803,7 +805,7 @@ class I2b2HelperService {
         log.trace("called getConceptKeysInSubset");
 
         ArrayList<String> concepts = new ArrayList<String>();
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = """SELECT REQUEST_XML FROM QT_QUERY_MASTER c INNER JOIN QT_QUERY_INSTANCE a
 		    ON a.QUERY_MASTER_ID=c.QUERY_MASTER_ID INNER JOIN QT_QUERY_RESULT_INSTANCE b
 		    ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = ?""";
@@ -879,7 +881,7 @@ class I2b2HelperService {
         /*get all distinct  concepts for analysis from both subsets into hashmap*/
 
         try {
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+            Sql sql = new Sql(dataSource);
             String sqlQuery = """select parent_cd from deapp.de_xtrial_child_map xcm
 				inner join concept_dimension cd
 				on xcm.concept_cd=cd.concept_cd
@@ -914,7 +916,7 @@ class I2b2HelperService {
             return (childConcepts)
         }
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         //	String sqlTemplate1 =
         //	  """SELECT distinct f.concept_CD
@@ -1006,7 +1008,7 @@ class I2b2HelperService {
     def String getQIDFromRID(String resultInstanceId) {
         String qid = ""
         if (resultInstanceId != null && resultInstanceId.length() > 0) {
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+            Sql sql = new Sql(dataSource)
             String sqlt = """select QUERY_MASTER_ID FROM QT_QUERY_INSTANCE a
 		    	INNER JOIN QT_QUERY_RESULT_INSTANCE b
 		    	ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = ?"""
@@ -1021,7 +1023,7 @@ class I2b2HelperService {
     def String getQueryDefinitionXMLFromQID(String qid) {
         log.trace("Called getQueryDefinitionXML")
         String xmlrequest = "";
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
 
         String sqlt = """select REQUEST_XML from QT_QUERY_MASTER WHERE QUERY_MASTER_ID = ?""";
         log.trace(sqlt);
@@ -1040,7 +1042,7 @@ class I2b2HelperService {
     def String getQueryDefinitionXML(String resultInstanceId) {
         log.trace("Called getQueryDefinitionXML")
         String xmlrequest = "";
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
 
         String sqlt = """select REQUEST_XML from QT_QUERY_MASTER c INNER JOIN QT_QUERY_INSTANCE a
 		    ON a.QUERY_MASTER_ID=c.QUERY_MASTER_ID INNER JOIN QT_QUERY_RESULT_INSTANCE b
@@ -1063,7 +1065,7 @@ class I2b2HelperService {
             return null;
         }
         StringBuilder subjectIds = new StringBuilder();
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
 
         String sqlt = """select distinct patient_num from qt_patient_set_collection where result_instance_id = ? 
 		AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')""";
@@ -1084,7 +1086,7 @@ class I2b2HelperService {
      */
     def List<String> getSubjectsAsList(String resultInstanceId) {
         List<String> subjectIds = new ArrayList<String>();
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id = ?";
         log.trace("before sql call")
         sql.eachRow(sqlt, [resultInstanceId], {row ->
@@ -1102,7 +1104,7 @@ class I2b2HelperService {
         List<String> subjectIds = new ArrayList<String>();
 
         //This is the SQL object we use to gather our data.
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
 
         //This is the SQL statement we run.
         String sqlt = "select distinct PATIENT_ID from DE_SUBJECT_SAMPLE_MAPPING where SAMPLE_ID in (" + listToIN(SampleIDList) + ")";
@@ -1121,7 +1123,7 @@ class I2b2HelperService {
         List<Long> subjectIds = new ArrayList<Long>();
 
         //This is the SQL object we use to gather our data.
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
 
         //This is the SQL statement we run.
         String sqlt = "select distinct PATIENT_ID from DE_SUBJECT_SAMPLE_MAPPING where SAMPLE_ID in (" + listToIN(SampleIDList) + ")";
@@ -1140,7 +1142,7 @@ class I2b2HelperService {
         List<String> conceptIds = new ArrayList<String>();
 
         //This is the SQL object we use to gather our data.
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
 
         //This is the SQL statement we run.
         String sqlt = "select distinct CONCEPT_CODE from DE_SUBJECT_SAMPLE_MAPPING where SAMPLE_ID in (" + listToIN(SampleIDList) + ")";
@@ -1161,7 +1163,7 @@ class I2b2HelperService {
         //path=path.replace("@", slash);
         StringBuilder concepts = new StringBuilder();
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = "SELECT CONCEPT_CD FROM CONCEPT_DIMENSION c WHERE CONCEPT_PATH LIKE ?";
         sql.eachRow(sqlt, [path + "%"], {row ->
             if (concepts.length() > 0) {
@@ -1184,7 +1186,7 @@ class I2b2HelperService {
         List<String> concepts = new ArrayList<String>();
 
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = "SELECT CONCEPT_CD FROM CONCEPT_DIMENSION c WHERE CONCEPT_PATH LIKE ?";
         sql.eachRow(sqlt, [path + "%"], {row ->
             concepts.add(row.CONCEPT_CD)
@@ -1275,7 +1277,7 @@ class I2b2HelperService {
         if (ids == null || ids.length() == 0) {
             return ids
         };
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         //println(ids);
         StringBuilder fids = new StringBuilder();
         StringBuilder sampleQ = new StringBuilder("SELECT distinct s.patient_id FROM de_subject_sample_mapping s WHERE s.patient_id IN (").append(ids).append(")");
@@ -1384,7 +1386,7 @@ class I2b2HelperService {
             String curGeneSymbol = null;
             Map<Long, Float> assayIdValueMap = null;
             StringBuffer dataBuf = new StringBuffer();
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+            Sql sql = new Sql(dataSource);
             int geneNum = 0;
             sql.eachRow(sqlStr) {row ->
                 String geneSymbol = row.gene_symbol;
@@ -1653,7 +1655,7 @@ class I2b2HelperService {
                 String query = createRBMHeatmapQuery(pathwayName, ids1, ids2,
                         concepts1, concepts2, timepoint1, timepoint2, rbmPanels1, rbmPanels2);
                 log.debug("RBM heatmap query: " + query);
-                groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+                Sql sql = new Sql(dataSource);
 
                 def rowsObj = sql.rows(query, numColumnsClosure)
 
@@ -1686,7 +1688,7 @@ class I2b2HelperService {
                 log.debug("Protein heatmap query: " + query);
 
                 StringBuilder s = new StringBuilder("");
-                groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+                Sql sql = new Sql(dataSource);
                 def rowsObj = sql.rows(query, numColumnsClosure)
 
                 // create header
@@ -1883,7 +1885,7 @@ class I2b2HelperService {
         };
 
         Map<SurvivalData> dataMap = new HashMap<String, SurvivalData>();
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String subjectIdListInStr = DBHelper.listToInString(subjectStrList);
         String sqlt = "SELECT * FROM observation_fact WHERE CONCEPT_CD = ?";
         if (subjectIdListInStr != null) {
@@ -2050,7 +2052,7 @@ class I2b2HelperService {
             throw new Exception("The snpIds is empty")
         };
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         String trialName = datasetList.get(0).trialName;
         // Get the order of each dataset in the compacted data String
@@ -2143,7 +2145,7 @@ class I2b2HelperService {
         };
         String conceptDisplayName = conceptIdToDisplayNameMap.get(conceptId);
         if (conceptDisplayName == null) {
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+            Sql sql = new Sql(dataSource);
             sql.eachRow("select name_char from concept_dimension where concept_cd = ?", [conceptId]) {row ->
                 conceptDisplayName = row.name_char;
             }
@@ -2154,7 +2156,7 @@ class I2b2HelperService {
     String getEntrezIdStrFromSearchIdStr(String geneSearchIdListStr) {
         String sqlStr = "select unique_id from search_keyword where search_keyword_id in (" + geneSearchIdListStr + ")";
         String geneEntrezIdListStr = "";
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         sql.eachRow(sqlStr) {row ->
             String unique_id = row.unique_id;
             int idx = unique_id.indexOf(":");
@@ -2184,7 +2186,7 @@ class I2b2HelperService {
         String sqlStr = "select unique_id, keyword from search_keyword where search_keyword_id in (" + geneSearchIdListStr + ") ";
         sqlStr += " and data_category = 'GENE'";
         String geneEntrezIdListStr = "";
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         sql.eachRow(sqlStr) {row ->
             String unique_id = row.unique_id;
             int idx = unique_id.indexOf(":");
@@ -2260,7 +2262,7 @@ class I2b2HelperService {
 
         Map<Long, GeneWithSnp> geneEntrezIdMap = new HashMap<Long, GeneWithSnp>();
         // Get the snp association and chrom mapping
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlStr = "select a.entrez_gene_id, b.* from de_snp_gene_map a, de_snp_info b where a.snp_id = b.snp_info_id and b.name in (" + snpNameListStr + ") ";
         sql.eachRow(sqlStr) {row ->
             Long snpId = row.snp_info_id;
@@ -2398,7 +2400,7 @@ class I2b2HelperService {
         String commonPlatformName = null; // To make sure there is noly one platform among all the datasets
         String commonTrialName = null; // For now only one trial is allowed.
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlStr = "select * from de_subject_snp_dataset where patient_num in (" + subjectListStr + ")";
         sql.eachRow(sqlStr) {row ->
             SnpDataset snpDataset = new SnpDataset();
@@ -2446,7 +2448,7 @@ class I2b2HelperService {
             return
         };
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         sql.eachRow("select patient_num, sex_cd from patient_dimension where patient_num in (" + subjectListStr + ")") {row ->
             Long patientNum = row.patient_num;
             String gender = row.sex_cd;
@@ -3129,7 +3131,7 @@ class I2b2HelperService {
             };
             snpNamesBuf.append("'" + snpName + "'");
         }
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlStr = "select * from de_snp_gene_map where snp_name in (" + snpNamesBuf.toString() + ")";
         sql.eachRow(sqlStr) {row ->
             String snpName = row.snp_name;
@@ -3200,7 +3202,7 @@ class I2b2HelperService {
         };
         Map<Long, Map<String, String>> snpDataByDatasetByChrom = new HashMap<Long, Map<String, String>>(); // Map<[datasetId], Map<chrom, data>>
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         // Get the list of dataset first, SNP data will be fetched later
         String sqlt = "SELECT a.*, b.chrom as chrom, b.data_by_patient_chr as data FROM de_subject_snp_dataset a, de_snp_data_by_patient b ";
@@ -3426,7 +3428,7 @@ class I2b2HelperService {
             return null
         };
         List<Long> idList = null;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = "SELECT subject_snp_dataset_id as id FROM de_subject_snp_dataset WHERE patient_num in (" + subjectIds + ") ";
         sql.eachRow(sqlt) {row ->
             Long id = row.id;
@@ -3450,7 +3452,7 @@ class I2b2HelperService {
             return null
         };
         Map<String, SnpProbeSortedDef> snpProbeDefMap = new HashMap<String, SnpProbeSortedDef>();
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = "SELECT snp_probe_sorted_def_id, platform_name, num_probe, chrom, snp_id_def FROM de_snp_probe_sorted_def WHERE platform_name = '";
         sqlt += platformName + "' and chrom in (" + getSqlStrFromChroms(chroms) + ") order by chrom";
         sql.eachRow(sqlt) {row ->
@@ -3472,7 +3474,7 @@ class I2b2HelperService {
             return null
         };
         List<String> list = null;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = "SELECT distinct(platform_name) as platform FROM de_subject_snp_dataset WHERE patient_num in (" + subjectIds + ") ";
         sql.eachRow(sqlt) {row ->
             if (list == null) {
@@ -3513,7 +3515,7 @@ class I2b2HelperService {
         if (conceptCensoring == null || conceptCensoring.getBaseCode() == null || dataMap == null || dataMap.size() == 0) {
             return
         };
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String subjectIdListInStr = DBHelper.listToInString(subjectStrList);
         String sqlt = "SELECT * FROM observation_fact WHERE CONCEPT_CD = ?";
         if (subjectIdListInStr != null) {
@@ -3539,7 +3541,7 @@ class I2b2HelperService {
         if (conceptEvent == null || conceptEvent.getBaseCode() == null || dataMap == null || dataMap.size() == 0) {
             return
         };
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String subjectIdListInStr = DBHelper.listToInString(subjectStrList);
         String sqlt = "SELECT * FROM observation_fact WHERE CONCEPT_CD = ?";
         if (subjectIdListInStr != null) {
@@ -3561,7 +3563,7 @@ class I2b2HelperService {
 
     def String getTrialName(String ids) {
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         StringBuilder trialQ = new StringBuilder("select distinct s.trial_name from de_subject_sample_mapping s ");
         trialQ.append(" where s.patient_id in (").append(ids).append(") and s.platform = 'MRNA_AFFYMETRIX'");
@@ -3594,7 +3596,7 @@ class I2b2HelperService {
     def String getTrialNameBySampleID(String ids) {
 
         //Create a SQL object.
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         //Build the query to get the trial names.
         StringBuilder trialQ = new StringBuilder("select distinct s.trial_name from i2b2DemoData.sample_categories s ");
@@ -3634,7 +3636,7 @@ class I2b2HelperService {
 
     def getSampleTypes(String concepts) {
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         def sampleTypesArray = [];
         StringBuilder sampleQ = new StringBuilder("SELECT distinct s.SAMPLE_TYPE_CD FROM de_subject_sample_mapping s WHERE s.CONCEPT_CODE IN ").append(convertStringToken(concepts));
@@ -3653,7 +3655,7 @@ class I2b2HelperService {
 
     def String getAssayIds(String ids, String sampleTypes, String timepoint) {
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         StringBuilder assayS = new StringBuilder("select distinct s.assay_id  from de_subject_sample_mapping s where s.patient_id in (").append(ids).append(")");
         // check sample type
@@ -3680,7 +3682,7 @@ class I2b2HelperService {
 
     def String getGenes(String pathwayName) {
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         // build pathway sub query and get gene symbol list
         //		StringBuilder pathwayS = new StringBuilder("(select distinct upper(gene_symbol) as gene_symbol from DE_pathway_gene c,de_pathway p where p.pathway_uid= '");
@@ -3897,7 +3899,7 @@ class I2b2HelperService {
     List<String> getSubjectNameList(String ids, String prefix) {
         List<String> nameList = new ArrayList<String>();
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         String sqlStr = "SELECT sourcesystem_cd, patient_num FROM patient_dimension WHERE patient_num IN (" +
                 ids + ") order by patient_num";
@@ -3916,7 +3918,7 @@ class I2b2HelperService {
 
     def String createRBMHeatmapQuery(String prefix, String ids, String concepts, String pathwayName, String timepoint, String rbmPanels) {
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         StringBuilder s = new StringBuilder();
         String genes;
 
@@ -3959,7 +3961,7 @@ class I2b2HelperService {
 
         log.debug("createProteinHeatmapQuery called with concepts = " + concepts);
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         log.debug("createProteinHeatmapQuery created sql object");
 
@@ -4356,7 +4358,7 @@ class I2b2HelperService {
 
     def String createMRNAHeatmapPathwayQuery(String prefix, String ids, String concepts, String pathwayName, String timepoint, String sampleTypes, String intensityType) throws Exception {
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
 
         //Get the list of trial names based on 
         String trialNames = getTrialName(ids);
@@ -4530,7 +4532,7 @@ class I2b2HelperService {
         String xml;
         ArrayList ls = new ArrayList();
         int i = getLevelFromKey(concept_key) + 1;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = "SELECT C_FULLNAME FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
         sql.eachRow(sqlt, [fullname + "%", i], {row ->
             String conceptkey = prefix + row.c_fullname;
@@ -4648,7 +4650,7 @@ class I2b2HelperService {
     def getGenesForHaploviewFromResultInstanceId(resultInstanceId) {
         log.debug("getting genes for happloview");
         def genes = [];
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        Sql sql = new Sql(dataSource);
         String sqlt = "select distinct gene from haploview_data a inner join qt_patient_set_collection b on a.I2B2_ID=b.patient_num where result_instance_id = ? order by gene asc"
         //String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id="+resultInstanceId
         sql.eachRow(sqlt, [resultInstanceId], {row ->
@@ -4735,7 +4737,7 @@ class I2b2HelperService {
 
         if (result_instance_id != null && result_instance_id != "") {
             log.trace("Getting concept distribution data for value concept:" + concept_key);
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+            Sql sql = new Sql(dataSource);
             String concept_cd = getConceptCodeFromKey(concept_key);
             //ArrayList<Double> values=new ArrayList<Double>();
             String sqlt = """SELECT TRIAL, NVAL_NUM FROM OBSERVATION_FACT f  INNER JOIN PATIENT_TRIAL t
@@ -4763,7 +4765,7 @@ class I2b2HelperService {
         def trialdata = [:];
 
         if (result_instance_id != null && result_instance_id != "" && !childConcepts.isEmpty()) {
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+            Sql sql = new Sql(dataSource);
             // String concept_cd=getConceptCodeFromKey(concept_key);
             //ArrayList<Double> values=new ArrayList<Double>();
 
@@ -4827,7 +4829,7 @@ class I2b2HelperService {
         String xml;
         def ls = [:];
         int i = getLevelFromKey(concept_key) + 1;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
         sql.eachRow(sqlt, [fullname + "%", i], {row ->
             String conceptkey = prefix + row.c_fullname;
@@ -4837,21 +4839,40 @@ class I2b2HelperService {
         return ls;
     }
 
-    def getSecureTokensWithAccessForUser(user) {
-        StringBuilder s = new StringBuilder();
-        s.append("SELECT DISTINCT ausa.accessLevel, so.bioDataUniqueId FROM AuthUserSecureAccess ausa JOIN ausa.accessLevel JOIN ausa.secureObject so ")
-        s.append(" WHERE ausa.authUser IS NULL OR ausa.authUser.id = ").append(user.id)
-        def t = [:];
-        //return access levels for the children of this path that have them
-        def results = AuthUserSecureAccess.executeQuery(s.toString());
-        for (row in results) {
-            def token = row[1];
-            def accessLevel = row[0];
-            log.trace(token + ":" + accessLevel.accessLevelName);
-            t.put(token, accessLevel.accessLevelName);
+    Map<String, String> getSecureTokensForStudies(Collection<String> sdudyIds) {
+        if(!sdudyIds) return [:]
+
+        Sql sql = new Sql(dataSource)
+        def tokens = [:]
+        try {
+            sql.eachRow("""
+                SELECT sourcesystem_cd, secure_obj_token FROM i2b2metadata.i2b2_SECURE WHERE sourcesystem_cd IN  (""" + listToIN(sdudyIds.asList()) + """) AND c_hlevel = 1
+            """, { row ->
+                tokens += [(row.sourcesystem_cd): row.secure_obj_token]
+            })
+        } finally {
+            sql.close()
         }
-        t.put("EXP:PUBLIC", "OWN");
-        return t;
+
+        tokens
+    }
+
+    Map<String, String> getSecureTokensWithAccessForUser(AuthUser user) {
+        def rows = AuthUserSecureAccess.executeQuery("""
+            SELECT DISTINCT
+                so.bioDataUniqueId,
+                ausa.accessLevel.accessLevelName
+            FROM AuthUserSecureAccess ausa
+            JOIN ausa.accessLevel
+            JOIN ausa.secureObject so
+            WHERE ausa.authUser IS NULL OR ausa.authUser = :user
+        """, [user: user])
+
+        rows.collectEntries { row ->
+            def bioDataUniqueIdToken = row[0]
+            def accessLevelName = row[1]
+            [ (bioDataUniqueIdToken): accessLevelName ]
+        } + ["EXP:PUBLIC": SecureAccessLevel.OWN ]
     }
 
 
@@ -5015,8 +5036,8 @@ class I2b2HelperService {
         String xml;
         def ls = [:];
         //int i=getLevelFromKey(concept_key)+1;
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-        //groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
+        //Sql sql = new Sql(dataSource)
         // 		String mlevelsql = "SELECT MIN(C_HLEVEL) AS mlevel FROM i2b2metadata.i2b2_SECURE";	
         // 		sql.eachRow(mlevelsql, {row ->	
         // 		rootlevel=row.mlevel;	
@@ -5075,7 +5096,7 @@ class I2b2HelperService {
         log.trace(conids)
         log.trace(subids)
 
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = "SELECT TISSUE_TYPE, TISSUE_TYPE_CD, PLATFORM, TIMEPOINT, TIMEPOINT_CD, SAMPLE_TYPE_CD, SAMPLE_TYPE FROM DE_SUBJECT_SAMPLE_MAPPING WHERE "
         if (subids != null) {
             sqlt += "PATIENT_ID IN (" + listToIN(subids) + ") AND "
@@ -5180,7 +5201,7 @@ class I2b2HelperService {
         }
 
         def timepoints = [];
-        sql = new groovy.sql.Sql(dataSource)
+        sql = new Sql(dataSource)
         sqlt = "SELECT TISSUE_TYPE, TISSUE_TYPE_CD, PLATFORM, TIMEPOINT, TIMEPOINT_CD, SAMPLE_TYPE_CD, SAMPLE_TYPE FROM DE_SUBJECT_SAMPLE_MAPPING WHERE ";
         if (subids != null) {
             sqlt += "PATIENT_ID IN (" + listToIN(subids) + ") AND "
@@ -5257,7 +5278,7 @@ class I2b2HelperService {
         if (subids == null || subids.size == 0 || (subids.size == 1 && subids[0] == "ALL")) {
             subids = null
         };
-        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        Sql sql = new Sql(dataSource)
         String sqlt = "";
         switch (infoType) {
         case CohortInformation.TRIALS_TYPE:
@@ -5380,7 +5401,7 @@ class I2b2HelperService {
             hv.gpls.add(((Map) ci.gpls.get(0)).get('gpl'))
             hv.gplLabels.add(((Map) ci.gpls.get(0)).get('gplLabel'))
         } else if (ci.gpls.size() > 1) {
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+            Sql sql = new Sql(dataSource)
             String sqlt = "";
             sqlt = "select distinct rgi.platform, rgi.title from de_subject_sample_mapping dssm, de_gpl_info rgi where dssm.trial_name in (" + listToIN(ci.trials) + ") " +
                     "and dssm.platform in (" + listToIN(ci.platforms) + ")" +
@@ -5410,7 +5431,7 @@ class I2b2HelperService {
             hv.rbmpanels.add(((Map) ci.rbmpanels.get(0)).get('rbmpanel'))
             hv.rbmpanelsLabels.add(((Map) ci.rbmpanels.get(0)).get('rbmpanelLabel'))
         } else if (ci.rbmpanels.size() > 1) {
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+            Sql sql = new Sql(dataSource)
             String sqlt = "";
             sqlt = "select distinct dssm.rbm_panel from de_subject_sample_mapping dssm where dssm.trial_name in (" + listToIN(ci.trials) + ") " +
                     "and dssm.platform in (" + listToIN(ci.platforms) + ") and dssm.CONCEPT_CODE IN (" + listToIN(concepts) + ")"
@@ -5430,7 +5451,7 @@ class I2b2HelperService {
             log.debug("TESTED AS NULL");
         }
         if (rid1 != null & rid2 != null) {
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+            Sql sql = new Sql(dataSource);
             String sqlt = """SELECT DISTINCT SECURE_OBJ_TOKEN FROM PATIENT_TRIAL t
 			    WHERE t.PATIENT_NUM IN (select distinct patient_num
 				from qt_patient_set_collection
@@ -5453,7 +5474,7 @@ class I2b2HelperService {
             } else {
                 rid = rid2;
             }
-            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+            Sql sql = new Sql(dataSource)
             String sqlt = """SELECT DISTINCT SECURE_OBJ_TOKEN FROM PATIENT_TRIAL t
 			    WHERE t.PATIENT_NUM IN (select distinct patient_num
 				from qt_patient_set_collection

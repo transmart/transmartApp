@@ -4,6 +4,8 @@
 * @version $Revision: 14836 $
 */
 
+
+import auth.AuthUser
 import org.json.*
 
 import fm.FmFile;
@@ -339,7 +341,8 @@ class RWGController {
    def getFacetResults = {
 	   
 	   session['folderSearchList'] = [[], []]; //Clear the folder search list
-	   
+       def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+
 	   /*
 	    * Record this as the latest search and store it in the session
 	    */
@@ -428,7 +431,7 @@ class RWGController {
 		   session['searchLog'] = searchLog
 		   //retrieve folders id to expand as opened nodes
 		   def nodesToExpand=session['rwgOpenedNodes']
-		   render(template:'/fmFolder/folders', model: [folders: fmFolderService.getFolderContents(null), nodesToExpand: nodesToExpand])
+		   render(template:'/fmFolder/folders', model: [folderContentsAccessLevelMap: fmFolderService.getFolderContentsWithAccessLevelInfo(user, null), nodesToExpand: nodesToExpand])
 		   return
 	   }
 	   def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"Browse-Search", eventmessage: "", accesstime:new java.util.Date())
@@ -444,8 +447,6 @@ class RWGController {
 	    * Organize and display
 	    */
 	   if (params.page.equals('RWG')) {
-		   def folderContents = fmFolderService.getFolderContents(null)
-		   
 		   def numbers=new HashMap();
 		   numbers.put("PROGRAM", 0)
 		   numbers.put("STUDY", 0)
@@ -471,8 +472,9 @@ class RWGController {
 			  //retrieve folders id to expand as opened nodes
 			   def nodesToExpand=session['rwgOpenedNodes']
 			   def nodesToClose=session['rwgClosedNodes']
-			   
-			   render (template:'/fmFolder/folders', model: [folders: folderContents, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: true, resultNumber: numbersJSON, nodesToExpand: nodesToExpand, nodesToClose: nodesToClose])
+
+               def folderContentsAccessLevelMap = fmFolderService.getFolderContentsWithAccessLevelInfo(user, null)
+			   render (template:'/fmFolder/folders', model: [folderContentsAccessLevelMap: folderContentsAccessLevelMap, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: true, resultNumber: numbersJSON, nodesToExpand: nodesToExpand, nodesToClose: nodesToClose])
 		   }
 		   else {
 			   session['folderSearchList'] = [[],[]]

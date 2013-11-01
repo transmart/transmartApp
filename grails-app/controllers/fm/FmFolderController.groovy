@@ -606,12 +606,12 @@ class FmFolderController {
     def getFolderContents = {
         def id = params.id
         if (!id) {
-            def uid = params.uid
-            id = FmFolder.findByUniqueId(uniqueId).id
+            id = FmFolder.findByUniqueId(params.uid).id
         }
         def auto = params.boolean('auto')
         //Flag for whether folder was automatically opened - if not, then it shouldn't respect the folder mask
-        def folderContents = fmFolderService.getFolderContents(id)
+        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def folderContentsAccessLevelMap = fmFolderService.getFolderContentsWithAccessLevelInfo(user, id)
 
         def folderSearchLists = session['folderSearchList']
         if (!folderSearchLists) {
@@ -625,16 +625,16 @@ class FmFolderController {
 
         //check that all folders from folderContents are in the search path, or children of nodes in the search path
         if (folderSearchLists[0].size() > 0) {
-            for (def folder : folderContents) {
+            for (def folderEntry : folderContentsAccessLevelMap) {
                 boolean found = false
                 for (String path : folderSearchLists[0]) {
-                    if (folder.folderFullName.indexOf(path) > -1) {
+                    if (folderEntry.key.folderFullName.indexOf(path) > -1) {
                         found = true
                         break
                     }
                 }
                 if (!found) {
-                    folderContents -= folder
+                    folderContentsAccessLevelMap -= folderEntry
                 }
             }
         }
@@ -644,18 +644,18 @@ class FmFolderController {
             def filters = session['rwgSearchFilter']
             for (def filter in filters) {
                 if (filter != null && filter.indexOf("|ACCESSION;") > -1) {
-                    for (def folder : folderContents) {
-                        if (folder.folderType == "STUDY") {
-                            if (!nodesToExpand.grep(folder.uniqueId)) {
-                                nodesToExpand += folder.uniqueId
-                                displayMetadata = folder.uniqueId
+                    for (def folderEntry : folderContentsAccessLevelMap) {
+                        if (folderEntry.key.folderType == "STUDY") {
+                            if (!nodesToExpand.grep(folderEntry.key.uniqueId)) {
+                                nodesToExpand += folderEntry.key.uniqueId
+                                displayMetadata = folderEntry.key.uniqueId
                             }
                         }
                     }
                 }
             }
         }
-        render(template: 'folders', model: [folders: folderContents, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: auto, nodesToExpand: nodesToExpand, displayMetadata: displayMetadata])
+        render(template: 'folders', model: [folderContentsAccessLevelMap: folderContentsAccessLevelMap, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: auto, nodesToExpand: nodesToExpand, displayMetadata: displayMetadata])
     }
 
     /**
@@ -898,10 +898,14 @@ class FmFolderController {
     def nameProperties = ['assay name', 'analysis name', 'study title', 'program title', 'folder name']
 
     private createTitleString(amTagItem, name, folderObject) {
+        //TODO Not optimal. Move these to calls to upper levels
+        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def accessLevelInfo = fmFolderService.getAccessLevelInfoForFolder(user, folderObject)
         def tagName = amTagItem.displayName
         if (nameProperties.contains(tagName.toLowerCase())) {
+            def titleHtml = accessLevelInfo == 'LOCKED' ? name : "<a href='#' onclick='openFolderAndShowChild(\${folderObject.parent?.id}, \${folderObject.id})'>$name</a>"
             //Comment with name at the start to preserve the sort order - precaution against "--" being included in a name
-            return ("<!--" + name.replace("--", "_") + "-->" + "<a href='#' onclick='openFolderAndShowChild(${folderObject.parent?.id}, ${folderObject.id})'>" + name + "</a>")
+            return "<!-- ${name.replace('--', '_')} -->$titleHtml"
         }
         return name
     }

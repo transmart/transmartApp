@@ -7,13 +7,15 @@
 <g:set var="ontologyService" bean="ontologyService"/>
 <g:set var="fmFolderService" bean="fmFolderService"/>
 <g:set var="ts" value="${Calendar.instance.time.time}"/>
-
+<g:set var="folders" value="${folderContentsAccessLevelMap?.keySet()}"/>
+<g:set var="restrictedAccessMessage" value="Access to this node has been restricted. Please contact your administrator for access." />
 <script type="text/javascript">
     var resultNumber = '${resultNumber}';
 </script>
 
 <div class="search-results-table">
     <g:each in="${folders}" status="ti" var="folder">
+        <g:set var="folderAccessLevel" value="${folderContentsAccessLevelMap[folder]}"/>
         <g:if test="${!auto || folder.folderLevel > 1 || !folderSearchString || folderSearchString?.indexOf(folder.folderFullName) > -1 || (folder.folderLevel == 1 && fmFolderService.searchMatchesParentProgram(folderSearchString, folder.folderFullName))}">
             <table id="folder-header-${folder.id}" class="folderheader"
                    name="${folder.uniqueId}">
@@ -27,8 +29,11 @@
                         </g:if>
                         <span>
                             <g:if test="${folder.hasChildren()}">
+                                <g:set var="toggleJsFunc" value="${folderAccessLevel == 'LOCKED' ? "alert('$restrictedAccessMessage')"
+                                : "toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false', false, false, true);"}" />
+
                                 <a id="toggleDetail_${folder.id}" href="#"
-                                   onclick="toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false', false, false, true);">
+                                   onclick="${toggleJsFunc}">
                                     <img alt="expand/collapse"
                                          id="imgExpand_${folder.id}"
                                          src="${resource(dir: 'images', file: 'folderplus.png')}"/>
@@ -44,33 +49,37 @@
                                 </a>
                             </g:else>
                         </span>
-                        <a href="#" onclick="showDetailDialog(${folder.id});">
+                        <g:set var="showDetailDialogJsFunc" value="${folderAccessLevel == 'LOCKED' ? "alert('$restrictedAccessMessage')" : "showDetailDialog(${folder.id});"}" />
+                        <a href="#" onclick="${showDetailDialogJsFunc}">
 
                             <g:set var="highclass" value=""/>
                             <g:if test="${folderSearchString && folderSearchString.indexOf(folder.folderFullName + ',') > -1}">
                                 <g:set var="highclass" value="searchResult"/>
                             </g:if>
                             <span id="result-folder-name-${folder.id}"
-                                  class="result-folder-name ${highclass}"
+                                  class="result-folder-name ${highclass} accLev_${folderAccessLevel}"
                                   title="${folder.folderName}">${folder.folderName}</span>
                         </a>
                     </td>
                 </tr>
-                <g:if test="${folderSearchString?.indexOf(folder.folderFullName) > -1}">
-                <%-- Auto-expand this folder as long as it isn't a unique leaf. --%>
-                    <g:if test="${(uniqueLeavesString?.indexOf(folder.folderFullName + ',') == -1 && !nodesToClose.grep(folder.uniqueId))}">
-                        <script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true');</script>
+
+                <g:if test="${folderAccessLevel != 'LOCKED'}">
+                    <g:if test="${folderSearchString?.indexOf(folder.folderFullName) > -1}">
+                    <%-- Auto-expand this folder as long as it isn't a unique leaf. --%>
+                        <g:if test="${(uniqueLeavesString?.indexOf(folder.folderFullName + ',') == -1 && !nodesToClose.grep(folder.uniqueId))}">
+                            <script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true');</script>
+                        </g:if>
+                        <g:elseif test="${nodesToExpand.grep(folder.uniqueId)}">
+                            <script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true', true, false);</script>
+                        </g:elseif>
                     </g:if>
                     <g:elseif test="${nodesToExpand.grep(folder.uniqueId)}">
                         <script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true', true, false);</script>
                     </g:elseif>
-                </g:if>
-                <g:elseif test="${nodesToExpand.grep(folder.uniqueId)}">
-                    <script>toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=true', true, false);</script>
-                </g:elseif>
 
-                <g:if test="${displayMetadata == (folder.uniqueId)}">
-                    <script>showDetailDialog('${folder.id}');</script>
+                    <g:if test="${displayMetadata == (folder.uniqueId)}">
+                        <script>showDetailDialog('${folder.id}');</script>
+                    </g:if>
                 </g:if>
 
                 <g:set var="files" value="${folder.fmFiles}"/>
