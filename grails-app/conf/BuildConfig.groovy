@@ -2,7 +2,15 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
-//grails.plugin.location.rmodules="..//Rmodules"
+//grails.plugin.location.'rdc-rmodules' = "../Rmodules"
+//grails.plugin.location.'dalliance-plugin:0.1-SNAPSHOT' = "../dalliance-plugin"
+//grails.plugin.location.'transmart-mydas:0.1-gwas-SNAPSHOT' = "../transmart-mydas"
+//grails.plugin.location.'transmart-core:1.0-gwas-SNAPSHOT' = "../transmart-core-db"
+
+grails.project.war.file = "target/${appName}.war"
+
+/* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
+grails.servlet.version = "2.5"
 
 grails.project.dependency.resolver = 'maven'
 
@@ -44,7 +52,9 @@ grails.project.dependency.resolution = {
         compile ':rdc-rmodules:0.3-SNAPSHOT'
 
         runtime ':prototype:1.0'
-        runtime ":transmart-core:1.0-SNAPSHOT"
+        //runtime ':resources:1.2'
+        runtime ':transmart-core:1.0-SNAPSHOT'
+        //runtime ":jquery:1.7.1"
 
         //This version of code coverage plugin does not work with grails 2.3
         //Despite specified test scope declaration of this plugin appears in grails.xml of prod war

@@ -14,7 +14,6 @@
   
   You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
- 
 -->
 
 <html>
@@ -26,8 +25,8 @@
 		<link rel="stylesheet"	href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
 		<link rel="stylesheet"	href="${resource(dir:'css',file:'admin.css')}" />
-		<link rel="stylesheet" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}"></link>
-		<g:javascript library="prototype" />
+		<link rel="stylesheet" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}" />
+       <script type="text/javascript" src="${resource(dir:'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
@@ -50,13 +49,13 @@
 	            var contact = '${grailsApplication.config.com.recomdata.contactUs}';
 	            var appTitle = '${grailsApplication.config.com.recomdata.appTitle}';
 	            var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
-				   
+
 	            var viewport = new Ext.Viewport({
 	                layout: "border",
-	                items:[new Ext.Panel({                          
-                       region: "center",  
-                       //tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'admin-utilities-div'), 
-                       autoScroll:true,                     
+	                items:[new Ext.Panel({
+                       region: "center",
+                       //tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'admin-utilities-div'),
+                       autoScroll:true,
                        contentEl: "page"
                     })]
 	            });
@@ -73,7 +72,7 @@
 		<div id="page">
 			<div id="header"><g:render template="/layouts/commonheader"	model="['app':'accesslog']" /></div>
  			<div id='navbar'><g:render template="/layouts/adminnavbar" /></div>
-			<div id="content"><g:layoutBody /></div>    
+			<div id="content"><g:layoutBody /></div>
 		</div>
 	</body>
 </html>
