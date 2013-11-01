@@ -129,7 +129,7 @@ function updateWorkflowStatus(jobStatusInfo) {
 		
 		if (jobStatusInfo.jobStatus =='Completed') {
 			$j('#progress-img').attr('src', '../images/green_check2.png');
-			$j( "#dialog-modal" ).dialog('close');
+			$j( "#dialog-modal" ).dialog().dialog('close');
 		}
 	}
 }
@@ -181,8 +181,8 @@ function showWorkflowStatusErrorDialog(jobStatusHeader, jobStatusMsg) {
 			$j("#mask").remove();
 		}
 		, close: function (event, ui) {
-			$j("#error-dialog-modal").dialog('destroy');
-			$j("#dialog-modal").dialog('close');
+			$j("#error-dialog-modal").dialog().dialog('close');
+			$j("#dialog-modal").dialog().dialog('close');
 		}
 		, zIndex: 10002
 		, autoOpen: false
