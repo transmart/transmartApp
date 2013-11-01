@@ -16,7 +16,7 @@
  * 
  *
  ******************************************************************/
-  
+
 
 /* SubsetTool.js
 Jeremy M. Isikoff
@@ -929,10 +929,10 @@ function onWindowResize() {
 		var panelTop = jQuery('#resultsTabPanel .x-tab-panel-body').offset()['top'];
 		jQuery('#resultsTabPanel .x-tab-panel-body').height(jQuery(window).height() - panelTop);
 	}
-	if (jQuery('#dataAssociationBody').size() > 0) {
-		var panelTop = jQuery('#dataAssociationBody').offset()['top'];
-		jQuery('#dataAssociationBody').height(jQuery(window).height() - 50);
-	}
+//	if (jQuery('#dataAssociationBody').size() > 0) {
+//		var panelTop = jQuery('#dataAssociationBody').offset()['top'];
+//		jQuery('#dataAssociationBody').height(jQuery(window).height() - 50);
+//	}
 }
 
 
