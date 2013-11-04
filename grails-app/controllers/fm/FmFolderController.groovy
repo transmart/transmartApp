@@ -520,7 +520,7 @@ class FmFolderController {
     //service to call to get all the children of a folder, regardless their type
     //need a parameter parentId corresponding to the parent identifier
     def getAllChildren = {
-        List<FmFolder> children = getChildrenFolder(params.parentId)
+        List<FmFolder> children = fmFolderService.getChildrenFolder(params.parentId)
         render children as XML
     }
 
@@ -770,31 +770,13 @@ class FmFolderController {
 
     }
 
-    //method which returns a list of folders which are the children of the folder of which the identifier is passed as parameter
-    private List<FmFolder> getChildrenFolder(String parentId) {
-        def folder = FmFolder.get(parentId)
-        return FmFolder.executeQuery("from FmFolder as fd where fd.activeInd = true and fd.folderFullName like :fn and fd.folderLevel= :fl ", [fl: folder.folderLevel + 1, fn: folder.folderFullName + "%"])
-    }
+    private String createDataTable(Map<FmFolder, String> subFoldersAccessLevelMap, String folderType) {
 
-    //method which returns a list of folders which are the children of the folder of which the identifier is passed as parameter by folder types
-    private List<FmFolder> getChildrenFolderByType(Long parentId, String folderType) {
-        def folder = FmFolder.get(parentId)
-        return FmFolder.executeQuery("from FmFolder as fd where fd.activeInd = true and fd.folderFullName like :fn and fd.folderLevel= :fl and upper(fd.folderType) = upper(:ft)", [fl: folder.folderLevel + 1, fn: folder.folderFullName + "%", ft: folderType])
-    }
-
-    //method which returns a list of folders which are the children of the folder of which the identifier is passed as parameter
-    private List getChildrenFolderTypes(Long parentId) {
-        def folder = FmFolder.get(parentId)
-        return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.activeInd = true and fd.folderFullName like :fn and fd.folderLevel= :fl ", [fl: folder.folderLevel + 1, fn: folder.folderFullName + "%"])
-    }
-
-
-    private String createDataTable(folders, folderType) {
-
-        if (folders == null || folders.size() < 1) {
-            return
+        if (!subFoldersAccessLevelMap) {
+            return '{}'
         }
 
+        Set<FmFolder> folders = subFoldersAccessLevelMap.keySet()
         ExportTableNew table = new ExportTableNew();
 
         def dataObject
@@ -837,58 +819,55 @@ class FmFolderController {
 
                 }
 
-        folders.each
-                {
-                    log.info "FOLDER::" + it
+        folders.each { folderObject ->
+            log.info "FOLDER::$folderObject"
 
-                    def bioDataObject = getBioDataObject(it)
-                    def folderObject = it
-                    ExportRowNew newrow = new ExportRowNew();
-                    childMetaDataTagItems.eachWithIndex()
-                            {obj, i ->
-                                AmTagItem amTagItem = obj
-                                if (amTagItem.viewInChildGrid) {
-                                    if (amTagItem.tagItemType == 'FIXED' && bioDataObject.hasProperty(amTagItem.tagItemAttr)) {
-                                        def bioDataDisplayValue = null
-                                        def bioDataPropertyValue = bioDataObject[amTagItem.tagItemAttr]
-                                        if (amTagItem.tagItemSubtype == 'PICKLIST' || amTagItem.tagItemSubtype == 'MULTIPICKLIST') {
-                                            if (bioDataPropertyValue) {
-                                                def cc = ConceptCode.findByUniqueId(bioDataPropertyValue)
-                                                if (cc) {
-                                                    bioDataDisplayValue = cc.codeName
-                                                } else {
-                                                    bioDataDisplayValue = ""
-                                                }
-                                            } else {
-                                                bioDataDisplayValue = ""
-                                            }
-
-                                        } else if (amTagItem.tagItemSubtype == 'FREETEXT') {
-                                            bioDataDisplayValue = createTitleString(amTagItem, bioDataPropertyValue, folderObject)
-                                        } else if (amTagItem.tagItemSubtype == 'FREETEXTAREA') {
-                                            bioDataDisplayValue = amTagItem.displayName
-                                        } else {
-                                            log.error "FIXED ATTRIBUTE ERROR::Unknown tagItemSubType"
-                                        }
-
-                                        log.info("ROWS == " + amTagItem.tagItemAttr + " " + bioDataObject[amTagItem.tagItemAttr])
-                                        newrow.put(amTagItem.id.toString(), bioDataDisplayValue ? bioDataDisplayValue : '');
-                                    } else if (amTagItem.tagItemType == 'CUSTOM') {
-                                        def tagValues = AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?', [bioDataObject.getUniqueId().toString(), amTagItem.id])
-                                        log.info("CUSTOM PARAMETERS " + bioDataObject.getUniqueId() + " " + amTagItem.id + " tagValues " + tagValues)
-                                        newrow.put(amTagItem.id.toString(), createDisplayString(tagValues));
-                                    } else {
-                                        def tagValues = AmTagDisplayValue.findAllDisplayValue(it.uniqueId, amTagItem.id)
-                                        log.info("BIOOBJECT PARAMETERS " + it.uniqueId + " " + amTagItem.id + " tagValues " + tagValues)
-
-                                        newrow.put(amTagItem.id.toString(), createDisplayString(tagValues));
-                                    }
-
+            def bioDataObject = getBioDataObject(folderObject)
+            ExportRowNew newrow = new ExportRowNew();
+            childMetaDataTagItems.eachWithIndex() {obj, i ->
+                AmTagItem amTagItem = obj
+                if (amTagItem.viewInChildGrid) {
+                    if (amTagItem.tagItemType == 'FIXED' && bioDataObject.hasProperty(amTagItem.tagItemAttr)) {
+                        def bioDataDisplayValue = null
+                        def bioDataPropertyValue = bioDataObject[amTagItem.tagItemAttr]
+                        if (amTagItem.tagItemSubtype == 'PICKLIST' || amTagItem.tagItemSubtype == 'MULTIPICKLIST') {
+                            if (bioDataPropertyValue) {
+                                def cc = ConceptCode.findByUniqueId(bioDataPropertyValue)
+                                if (cc) {
+                                    bioDataDisplayValue = cc.codeName
+                                } else {
+                                    bioDataDisplayValue = ""
                                 }
+                            } else {
+                                bioDataDisplayValue = ""
                             }
 
-                    table.putRow(bioDataObject.id.toString(), newrow);
+                        } else if (amTagItem.tagItemSubtype == 'FREETEXT') {
+                            bioDataDisplayValue = createTitleString(amTagItem, bioDataPropertyValue, folderObject, subFoldersAccessLevelMap[folderObject] != 'LOCKED')
+                        } else if (amTagItem.tagItemSubtype == 'FREETEXTAREA') {
+                            bioDataDisplayValue = amTagItem.displayName
+                        } else {
+                            log.error "FIXED ATTRIBUTE ERROR::Unknown tagItemSubType"
+                        }
+
+                        log.info("ROWS == " + amTagItem.tagItemAttr + " " + bioDataObject[amTagItem.tagItemAttr])
+                        newrow.put(amTagItem.id.toString(), bioDataDisplayValue ? bioDataDisplayValue : '');
+                    } else if (amTagItem.tagItemType == 'CUSTOM') {
+                        def tagValues = AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?', [bioDataObject.getUniqueId().toString(), amTagItem.id])
+                        log.info("CUSTOM PARAMETERS " + bioDataObject.getUniqueId() + " " + amTagItem.id + " tagValues " + tagValues)
+                        newrow.put(amTagItem.id.toString(), createDisplayString(tagValues));
+                    } else {
+                        def tagValues = AmTagDisplayValue.findAllDisplayValue(folderObject.uniqueId, amTagItem.id)
+                        log.info("BIOOBJECT PARAMETERS " + folderObject.uniqueId + " " + amTagItem.id + " tagValues " + tagValues)
+
+                        newrow.put(amTagItem.id.toString(), createDisplayString(tagValues));
+                    }
+
                 }
+            }
+
+            table.putRow(bioDataObject.id.toString(), newrow);
+        }
 
         return table.toJSON_DataTables("", folderType).toString(5);
     }
@@ -897,13 +876,10 @@ class FmFolderController {
     //These name properties should be indicated in the database, and the sort value should be specified (needs a rewrite of our ExportTable)
     def nameProperties = ['assay name', 'analysis name', 'study title', 'program title', 'folder name']
 
-    private createTitleString(amTagItem, name, folderObject) {
-        //TODO Not optimal. Move these to calls to upper levels
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
-        def accessLevelInfo = fmFolderService.getAccessLevelInfoForFolder(user, folderObject)
+    private createTitleString(AmTagItem amTagItem, String name, FmFolder folderObject, boolean isLink = true) {
         def tagName = amTagItem.displayName
         if (nameProperties.contains(tagName.toLowerCase())) {
-            def titleHtml = accessLevelInfo == 'LOCKED' ? name : "<a href='#' onclick='openFolderAndShowChild(\${folderObject.parent?.id}, \${folderObject.id})'>$name</a>"
+            def titleHtml = isLink ? "<a href='#' onclick='openFolderAndShowChild(${folderObject.parent?.id}, ${folderObject.id})'>$name</a>" : name
             //Comment with name at the start to preserve the sort order - precaution against "--" being included in a name
             return "<!-- ${name.replace('--', '_')} -->$titleHtml"
         }
@@ -963,18 +939,19 @@ class FmFolderController {
                     platforms = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT name FROM BioAssayPlatform as p ORDER BY p.name")
                 }
 
-                def subFolderTypes = getChildrenFolderTypes(folder.id)
+                def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+                def subFolderTypes = fmFolderService.getChildrenFolderTypes(folder.id)
                 log.debug "subFolderTypes = subFolderTypes"
                 subFolderTypes.each
                         {
                             log.debug "it = $it"
-                            subFolders = getChildrenFolderByType(folder.id, it)
+                            subFolders = fmFolderService.getChildrenFolderByType(folder.id, it)
                             if (subFolders != null && subFolders.size() > 0) {
                                 log.debug "${subFolders.size()} subFolders == $subFolders"
-
+                                def subFoldersAccessLevelMap = fmFolderService.getAccessLevelInfoForFolders(user, subFolders)
                                 subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
                                 String gridTitle = "Associated " + StringUtils.capitalize(subFolders[0].pluralFolderTypeName.toLowerCase())
-                                String gridData = createDataTable(subFolders, gridTitle)
+                                String gridData = createDataTable(subFoldersAccessLevelMap, gridTitle)
                                 //	log.info gridData
                                 jSONForGrids.add(gridData)
                                 log.debug "ADDING JSON GRID"

@@ -274,27 +274,27 @@ class FmFolderService {
      */
     private String getFilestoreLocation(FmFolder fmFolder) {
 
-        String filestoreLocation;
+        String filestoreLocation
 
         if (fmFolder.folderLevel == 0) {
-            filestoreLocation = "0";
+            filestoreLocation = "0"
         } else if (fmFolder.folderLevel == 1) {
-            filestoreLocation = fmFolder.id;
+            filestoreLocation = fmFolder.id
         } else {
-            //			log.info("folderFullName = " + fmFolder.folderFullName);
-            int pos = fmFolder.folderFullName.indexOf("\\", 1);
-            pos = fmFolder.folderFullName.indexOf("\\", pos + 1);
-            //			log.info("find name = " + fmFolder.folderFullName.substring(0, pos));
-            FmFolder fmParentFolder = FmFolder.findByFolderFullName(fmFolder.folderFullName.substring(0, pos + 1));
+            log.debug("folderFullName = ${fmFolder.folderFullName}")
+            int pos = fmFolder.folderFullName.indexOf("\\", 1)
+            pos = fmFolder.folderFullName.indexOf("\\", pos + 1)
+            log.debug("find name = ${fmFolder.folderFullName.substring(0, pos)}")
+            FmFolder fmParentFolder = FmFolder.findByFolderFullName(fmFolder.folderFullName.substring(0, pos + 1))
             if (fmParentFolder == null) {
-                log.error("Unable to find folder with folderFullName of " + fmFolder.folderFullName.substring(0, pos + 1));
-                filestoreLocation = "0";
+                log.error("Unable to find folder with folderFullName of " + fmFolder.folderFullName.substring(0, pos + 1))
+                filestoreLocation = "0"
             } else {
-                filestoreLocation = fmParentFolder.id;
+                filestoreLocation = fmParentFolder.id
             }
         }
 
-        return File.separator + filestoreLocation;
+        return File.separator + filestoreLocation
 
     }
 
@@ -462,20 +462,21 @@ class FmFolderService {
     Map<FmFolder, String> getAccessLevelInfoForFolders(AuthUser user, Collection<FmFolder> fmFolders) {
         if(!fmFolders) return [:]
 
+        boolean isAdmin = user && (user.isAdmin() || user.isDseAdmin())
+
         def foldersByStudy = fmFolders.groupBy { it.findParentStudyFolder() }
 
-        def studyFolderStudyIdMap = foldersByStudy.keySet().findAll().collectEntries {
-            def studyId = FmFolderAssociation.findByFmFolder(it)?.getBioObject()?.accession
-            [(it) : studyId]
-        }
+        def userAssignedTokens, studyFolderStudyIdMap, studyTokensMap
+        if(!isAdmin) {
+            studyFolderStudyIdMap = foldersByStudy.keySet().findAll().collectEntries {
+                def studyId = FmFolderAssociation.findByFmFolder(it)?.getBioObject()?.accession
+                [(it) : studyId]
+            }
 
-        def studyTokensMap = i2b2HelperService.getSecureTokensForStudies(studyFolderStudyIdMap.values().findAll())
+            studyTokensMap = i2b2HelperService.getSecureTokensForStudies(studyFolderStudyIdMap.values().findAll())
 
-        boolean isAdmin = user.isAdmin() || user.isDseAdmin()
-
-        def userAssignedTokens
-        if(!isAdmin)
             userAssignedTokens = i2b2HelperService.getSecureTokensWithAccessForUser(user)
+        }
 
         def results = [:]
         foldersByStudy.each { entry ->
@@ -756,6 +757,33 @@ class FmFolderService {
         def index = folderFullName.indexOf("\\", 1)
         def programUID = folderFullName.substring(1, index)
         return ("\\" + programUID + "\\" in paths)
+    }
+
+    /**
+     * @param parentId
+     * @return list of folders which are the children of the folder of which the identifier is passed as parameter
+     */
+    List<FmFolder> getChildrenFolder(String parentId) {
+        def folder = FmFolder.get(parentId)
+        return FmFolder.executeQuery("from FmFolder as fd where fd.activeInd = true and fd.folderFullName like :fn and fd.folderLevel= :fl ", [fl: folder.folderLevel + 1, fn: folder.folderFullName + "%"])
+    }
+
+    /**
+     * @param parentId
+     * @return list of folders which are the children of the folder of which the identifier is passed as parameter by folder types
+     */
+    List<FmFolder> getChildrenFolderByType(Long parentId, String folderType) {
+        def folder = FmFolder.get(parentId)
+        return FmFolder.executeQuery("from FmFolder as fd where fd.activeInd = true and fd.folderFullName like :fn and fd.folderLevel= :fl and upper(fd.folderType) = upper(:ft)", [fl: folder.folderLevel + 1, fn: folder.folderFullName + "%", ft: folderType])
+    }
+
+    /**
+     * @param parentId
+     * @return list of folders which are the children of the folder of which the identifier is passed as parameter
+     */
+    List getChildrenFolderTypes(Long parentId) {
+        def folder = FmFolder.get(parentId)
+        return FmFolder.executeQuery("select distinct(fd.folderType) from FmFolder as fd where fd.activeInd = true and fd.folderFullName like :fn and fd.folderLevel= :fl ", [fl: folder.folderLevel + 1, fn: folder.folderFullName + "%"])
     }
 
 }
