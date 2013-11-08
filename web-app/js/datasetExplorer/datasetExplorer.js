@@ -1595,7 +1595,7 @@ function createTree(includeExcludeFlag, ontresponse){
 					draggable : false,
 					id : key,
 					qtip : tooltip,
-				expanded : autoExpand,
+				expanded : expand,
 				iconCls : iconCls,
 				cls : tcls
 				}
