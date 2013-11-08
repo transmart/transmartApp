@@ -16,7 +16,7 @@ grails.project.dependency.resolver = 'maven'
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
-    inherits("global") { }
+    inherits("global") {}
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
 
     repositories {
@@ -24,18 +24,18 @@ grails.project.dependency.resolution = {
         mavenCentral()
 
         mavenRepo name: 'repo.thehyve.nl-public',
-                  url:  'https://repo.thehyve.nl/content/repositories/public/'
+                url: 'https://repo.thehyve.nl/content/repositories/public/'
     }
 
     dependencies {
-		compile 'antlr:antlr:2.7.7'
+        compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
         compile 'org.apache.lucene:lucene-core:2.4.0',
                 'org.apache.lucene:lucene-demos:2.4.0',
                 'org.apache.lucene:lucene-highlighter:2.4.0'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
 
-        test    'org.hamcrest:hamcrest-library:1.3',
+        test 'org.hamcrest:hamcrest-library:1.3',
                 'org.hamcrest:hamcrest-core:1.3'
     }
 
@@ -102,7 +102,7 @@ if (buildConfigFile.exists()) {
     if (slurpedBuildConfig.grails.project.dependency.resolution) {
         Closure extraDepRes = slurpedBuildConfig.grails.project.dependency.resolution;
         grails.project.dependency.resolution = {
-            originalDepRes.delegate        = extraDepRes.delegate        = delegate
+            originalDepRes.delegate = extraDepRes.delegate = delegate
             originalDepRes.resolveStrategy = extraDepRes.resolveStrategy = resolveStrategy
             originalDepRes.metaClass.skipTransmartFoundationRepo = { true }
             originalDepRes.call(it)
