@@ -20,14 +20,13 @@
 
 package com.recomdata.transmart.asynchronous.job
 
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import groovy.time.*;
-
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
+import com.recomdata.transmart.domain.i2b2.AsyncJob
+import groovy.time.TimeCategory
+import groovy.time.TimeDuration
+import org.apache.commons.lang.StringUtils
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.json.JSONArray
+import org.json.JSONObject
 
 class AsyncJobService {
 

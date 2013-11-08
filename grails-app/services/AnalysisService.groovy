@@ -16,18 +16,6 @@
  *
  *
  ******************************************************************/
-
-
-
-import i2b2.SnpDataset;
-import i2b2.SnpProbeSortedDef;
-import i2b2.StringLineReader
-
-import java.util.List;
-import java.util.Map;
-
-import com.recomdata.export.SnpViewerFiles;
-
 /**
  * This class contains methods that will help us ran our analysis components like the modules in the advanced workflow menu.
  * @author MMcDuffie

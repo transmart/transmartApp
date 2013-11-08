@@ -25,15 +25,14 @@
 
 package search
 
-import auth.AuthUser;
+import auth.AuthUser
 import bio.BioAssayPlatform
+import bio.CellLine
 import bio.Compound
 import bio.ConceptCode
-import bio.CellLine
-import search.SearchKeyword
-import com.recomdata.util.IDomainExcelWorkbook
-import com.recomdata.util.ExcelSheet
 import com.recomdata.util.ExcelGenerator
+import com.recomdata.util.ExcelSheet
+import com.recomdata.util.IDomainExcelWorkbook
 
 /**
  * GeneSignature domain class

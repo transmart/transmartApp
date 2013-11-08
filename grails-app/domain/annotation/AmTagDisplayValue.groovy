@@ -20,9 +20,6 @@
 
 package annotation
 
-import java.io.Serializable;
-
-
 class AmTagDisplayValue implements Serializable {
 
     AmTagItem amTagItem

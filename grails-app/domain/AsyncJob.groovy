@@ -16,10 +16,6 @@
  *
  *
  ******************************************************************/
-
-
-import java.util.Date;
-
 class AsyncJob {
     String jobName
     String jobStatus

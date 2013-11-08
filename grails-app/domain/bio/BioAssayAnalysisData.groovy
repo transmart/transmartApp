@@ -27,8 +27,6 @@ package bio
 
 import com.recomdata.util.IExcelProfile
 
-import de.DeMrnaAnnotation;
-
 class BioAssayAnalysisData implements IExcelProfile {
     Experiment experiment
     BioAssayPlatform assayPlatform

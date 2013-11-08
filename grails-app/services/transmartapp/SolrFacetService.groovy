@@ -20,29 +20,13 @@
 
 package transmartapp
 
-import java.util.List;
-
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
-import org.json.*
-
-import search.SearchKeyword;
-
-import bio.BioDataExternalCode;
-import bio.BioMarker;
-import bio.BioMarkerExpAnalysisMV;
-import bio.ConceptCode;
-
-import fm.FmData;
-import fm.FmFile;
-import fm.FmFolder;
-import fm.FmFolderAssociation;
+import bio.BioMarker
+import bio.BioMarkerExpAnalysisMV
+import fm.FmFolder
+import fm.FmFolderAssociation
 import groovy.xml.StreamingMarkupBuilder
-
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.Transformer
-import javax.xml.transform.OutputKeys
-import javax.xml.transform.stream.StreamResult
-import javax.xml.transform.stream.StreamSource
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.json.JSONObject
 
 class SolrFacetService {
 

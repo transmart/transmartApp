@@ -16,10 +16,7 @@
  *
  *
  ******************************************************************/
-
-
-
-import grails.converters.*
+import grails.converters.JSON
 
 class ComparisonController {
 

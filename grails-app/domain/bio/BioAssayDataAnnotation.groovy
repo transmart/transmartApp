@@ -18,10 +18,7 @@
  ******************************************************************/
 
 
-package bio;
-
-import bio.BioAssayFeatureGroup;
-import bio.BioMarker;
+package bio
 
 class BioAssayDataAnnotation implements Serializable {
 

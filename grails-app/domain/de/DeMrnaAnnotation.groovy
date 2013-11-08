@@ -20,8 +20,6 @@
 
 package de
 
-import org.apache.commons.lang.builder.HashCodeBuilder
-
 class DeMrnaAnnotation implements Serializable {
     String gplId
     String probeId

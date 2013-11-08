@@ -18,14 +18,11 @@
  ******************************************************************/
 
 
-import grails.converters.*
-import com.recomdata.util.*
-import SearchFilter
-import org.hibernate.*
-import GlobalFilter
+
 import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
-import bio.BioMarker
+import com.recomdata.util.ExcelGenerator
+import com.recomdata.util.ExcelSheet
+import grails.converters.JSON
 
 /**
  * $Id: HeatmapController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

@@ -23,17 +23,8 @@
  * @version $Revision: 9178 $
  */
 
-import bio.BioMarker
 import bio.BioDataExternalCode
 import bio.Literature
-import bio.LiteratureAlterationData
-import bio.LiteratureInhibitorData
-import bio.LiteratureInteractionData
-import bio.LiteratureProteinEffectData
-import bio.LiteratureSummaryData
-import bio.LiteratureReferenceData
-import bio.LiteratureModelData
-import bio.LiteratureAssocMoleculeDetailsData
 import com.recomdata.search.query.LiteratureDataQuery
 
 class LiteratureQueryService {

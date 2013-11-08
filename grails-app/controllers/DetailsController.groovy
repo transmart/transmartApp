@@ -20,9 +20,6 @@
 /*
  * $Id: DetailsController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  */
-
-import grails.converters.JSON
-
 /**
  * This controller is used to display details data for genes, pathways, and compounds. For each of these there
  * is a corresponsing action and view which displays a window with tabs, e.g. "gene" action and view. And then

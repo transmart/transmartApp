@@ -16,18 +16,7 @@
  *
  *
  ******************************************************************/
-
-
-import bio.BioMarker
-import bio.Compound
-import bio.Disease
-import bio.Experiment
-import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
-import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.Query
-
-
 
 /**
  * $Id: ExperimentAnalysisTEAService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

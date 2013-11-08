@@ -18,12 +18,10 @@
  ******************************************************************/
 
 
-import search.SearchKeyword
+
+import auth.AuthUser
 import search.GeneSignature
-import auth.AuthUser;
-import bio.Experiment
-import bio.Compound
-import bio.Disease
+import search.SearchKeyword
 
 /**
  * $Id: SearchHelpController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

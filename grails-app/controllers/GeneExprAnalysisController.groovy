@@ -20,12 +20,6 @@
 /**
  * $Id: GeneExprAnalysisController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  */
-import grails.converters.*
-import com.recomdata.util.*
-import SearchFilter
-import org.hibernate.*
-import GlobalFilter
-
 /**
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $

@@ -17,32 +17,8 @@ package annotation
  *
  *
  ******************************************************************/
-
-
-import annotation.AmData;
-import annotation.AmTagAssociation;
-import annotation.AmTagDisplayValue;
-import annotation.AmTagItem;
-import annotation.AmTagTemplate;
-import annotation.AmTagTemplateAssociation
-import annotation.AmTagValue;
-
-import bio.BioData
-import bio.BioMarker
-import bio.Compound
 import bio.ConceptCode
-import bio.Disease
-import bio.Observation
-
-import com.recomdata.export.ExportColumn
-import com.recomdata.export.ExportRowNew
-import com.recomdata.export.ExportTableNew
-import com.recomdata.util.FolderType
-import grails.converters.*
-import groovy.xml.StreamingMarkupBuilder
-
-import org.codehaus.groovy.grails.web.json.*
-
+import grails.converters.JSON
 
 class MetaDataController {
 

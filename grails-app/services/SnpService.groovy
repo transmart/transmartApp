@@ -18,21 +18,9 @@
  ******************************************************************/
 
 
-import i2b2.GeneWithSnp
-import i2b2.SnpDataByProbe
-import i2b2.SnpDataset;
-import i2b2.SnpDatasetListByProbe
-import i2b2.SnpInfo
-import i2b2.SnpProbeSortedDef;
-import i2b2.StringLineReader
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-
-import com.recomdata.export.SnpViewerFiles;
+import com.recomdata.export.SnpViewerFiles
+import i2b2.*
 
 class SnpService {
 

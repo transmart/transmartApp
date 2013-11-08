@@ -20,19 +20,13 @@
 
 package com.recomdata.transmart.data.export
 
-import java.io.File
-import java.sql.ResultSetMetaData
-import java.util.List;
-import java.util.Map
-
+import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.math.NumberUtils;
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
-
 import search.SearchKeyword
 
-import com.recomdata.transmart.data.export.util.FileWriterUtil
+import java.sql.ResultSetMetaData
 
 class GeneExpressionDataService {
 

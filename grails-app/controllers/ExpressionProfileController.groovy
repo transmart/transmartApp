@@ -24,27 +24,23 @@
  *
  */
 
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
-import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
-import org.jfree.data.statistics.BoxAndWhiskerCalculator;
-import org.jfree.data.statistics.BoxAndWhiskerItem;
-import org.jfree.data.statistics.DefaultBoxAndWhiskerXYDataset;
-import org.jfree.chart.axis.AxisLocation;
-import org.jfree.chart.renderer.category.*;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.*;
-import org.jfree.chart.entity.*;
-import org.jfree.chart.servlet.*;
-import bio.BioMarker;
-import bio.Disease;
-import bio.BioAssayDataStatistics;
-import javax.servlet.ServletException;
+import bio.BioMarker
+import bio.Disease
+import org.jfree.chart.ChartFactory
+import org.jfree.chart.ChartRenderingInfo
+import org.jfree.chart.JFreeChart
+import org.jfree.chart.axis.AxisLocation
+import org.jfree.chart.axis.NumberAxis
+import org.jfree.chart.entity.StandardEntityCollection
+import org.jfree.chart.plot.CategoryPlot
+import org.jfree.chart.plot.PlotOrientation
+import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer
+import org.jfree.chart.servlet.ChartDeleter
+import org.jfree.chart.servlet.ServletUtilities
+import org.jfree.data.statistics.BoxAndWhiskerItem
+import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset
+
+import javax.servlet.ServletException
 
 public class ExpressionProfileController {
 

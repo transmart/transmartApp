@@ -22,13 +22,13 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 10133 $
  */
-import grails.converters.*
+import com.recomdata.util.ExcelGenerator
+import com.recomdata.util.ExcelSheet
+import com.recomdata.util.ariadne.Batch
+import grails.converters.JSON
 
-import com.recomdata.util.*
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-
-import com.recomdata.util.ariadne.Batch;
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.Marshaller
 
 class LiteratureController {
 

@@ -20,21 +20,12 @@
 
 package com.recomdata.transmart.data.export
 
-import java.io.File
-import java.util.ArrayList
-import java.util.List
-import java.util.Map
-
-import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.springframework.context.ApplicationContext
-
 import bio.ClinicalTrial
 import bio.Compound
 import bio.Experiment
 import bio.Taxonomy
-
 import com.recomdata.transmart.data.export.util.FileWriterUtil
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class MetadataService {
 

@@ -20,10 +20,8 @@
 
 package com.recomdata.transmart.externaltool
 
-import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 import com.recomdata.export.IgvFiles
-import com.recomdata.transmart.externaltool.IgvDataService
-
+import org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib
 
 class IgvController {
 

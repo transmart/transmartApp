@@ -20,12 +20,9 @@
 
 package com.recomdata.asynchronous
 
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
-
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
-
-import groovy.time.TimeCategory;
-import groovy.time.TimeDuration;
+import com.recomdata.transmart.domain.i2b2.AsyncJob
+import groovy.time.TimeCategory
+import groovy.time.TimeDuration
 
 class JobStatusService {
 

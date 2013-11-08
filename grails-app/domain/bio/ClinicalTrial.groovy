@@ -25,8 +25,6 @@
 
 package bio
 
-import java.util.List;
-
 class ClinicalTrial extends Experiment {
     String trialNumber
     String studyOwner

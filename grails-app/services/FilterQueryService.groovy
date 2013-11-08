@@ -16,16 +16,6 @@
  *
  *
  ******************************************************************/
-
-
-import bio.BioAssayAnalysis
-import bio.Disease
-import bio.Compound
-import search.SearchKeyword
-import bio.ClinicalTrial
-import bio.BioData
-import bio.Experiment
-import bio.BioAssayAnalysisData
 import com.recomdata.search.query.AssayAnalysisDataQuery
 
 /**

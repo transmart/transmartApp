@@ -19,19 +19,6 @@
 
 package fm
 
-import fm.FmFolder;
-import java.util.ArrayList;
-import java.util.List;
-import groovy.lang.Buildable;
-import groovy.lang.GroovyObject;
-import groovy.xml.StreamingMarkupBuilder;
-
-import org.codehaus.groovy.grails.commons.GrailsApplication
-
-import com.recomdata.util.IBioTag
-
-import bio.BioData
-
 class FmFolderAssociation implements Serializable {
 
     def grailsApplication

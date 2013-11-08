@@ -20,8 +20,7 @@
 
 package com.recomdata.transmart.data.export
 
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+import com.recomdata.transmart.domain.i2b2.AsyncJob
 
 class SweepingService {
 

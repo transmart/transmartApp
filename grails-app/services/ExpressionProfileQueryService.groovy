@@ -18,16 +18,13 @@
  ******************************************************************/
 
 
+
 import bio.BioMarker
-import bio.Compound
 import bio.Disease
-import bio.Experiment
-import bio.BioAssayAnalysis
-import bio.BioAssayDataStatistics
-import com.recomdata.search.query.AssayStatsExpMarkerQuery
 import com.recomdata.search.query.AssayDataStatsQuery
+import com.recomdata.search.query.AssayStatsExpMarkerQuery
 import com.recomdata.search.query.Query
-import org.codehaus.groovy.grails.commons.*
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 /**
  * $Id: ExpressionProfileQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

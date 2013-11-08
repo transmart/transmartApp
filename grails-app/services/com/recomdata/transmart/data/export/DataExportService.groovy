@@ -20,14 +20,10 @@
 
 package com.recomdata.transmart.data.export
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.Callable;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.recomdata.snp.SnpData;
-import com.recomdata.transmart.data.export.exception.DataNotFoundException;
+import com.recomdata.snp.SnpData
+import com.recomdata.transmart.data.export.exception.DataNotFoundException
+import org.apache.commons.lang.StringUtils
+import org.springframework.transaction.annotation.Transactional
 
 class DataExportService {
 

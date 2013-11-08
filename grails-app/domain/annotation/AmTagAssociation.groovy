@@ -20,10 +20,6 @@
 
 package annotation
 
-import java.io.Serializable;
-
-
-
 class AmTagAssociation implements Serializable {
 
     String objectType

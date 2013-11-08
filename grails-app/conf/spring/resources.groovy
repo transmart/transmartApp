@@ -17,6 +17,7 @@
  *
  ******************************************************************/
 
+
 import org.apache.log4j.Logger
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.extensions.kerberos.web.SpnegoAuthenticationProcessingFilter

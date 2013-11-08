@@ -20,29 +20,19 @@
 
 package transmartapp
 
+import annotation.AmTagAssociation
+import annotation.AmTagTemplate
+import annotation.AmTagValue
+import bio.BioAssayPlatform
+import bio.BioData
+import bio.ConceptCode
 import fm.FmFile
-import fm.FmFolder;
-import fm.FmFolderAssociation;
-import fm.FmFolderService
+import fm.FmFolder
+import fm.FmFolderAssociation
+import search.SearchKeyword
 
-import java.util.zip.ZipEntry;
+import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-
-import org.apache.tools.ant.taskdefs.Dirname;
-
-import search.SearchKeyword;
-
-import bio.BioAssayPlatform;
-import bio.BioData;
-import bio.BioMarker;
-import bio.Compound;
-import bio.ConceptCode;
-import bio.Disease;
-
-import annotation.AmTagTemplate;
-import annotation.AmTagValue;
-import annotation.AmTagAssociation;
-
 
 class FileExportController {
 
