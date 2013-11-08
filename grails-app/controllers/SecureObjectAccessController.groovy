@@ -155,7 +155,7 @@ class SecureObjectAccessController {
                     it.toLong()
                 }]);
 
-                groupsToAdd.each {r ->
+                groupsToAdd.each { r ->
                     addAccess(r, secureObjInstance, access);
                     msg.append("<User:").append(r.name).append(", Permission:").append(access.accessLevelName).append(", Study:").append(secureObjInstance.bioDataUniqueId).append(">");
                 };
@@ -190,7 +190,7 @@ class SecureObjectAccessController {
                     it.toLong()
                 }]);
 
-                groupsToRemove.each {r ->
+                groupsToRemove.each { r ->
                     r.delete(flush: true);
                     msg.append("<User:").append(r.principal.name).append(", Permission:").append(r.accessLevel.accessLevelName).append(", Study:").append(r.secureObject.bioDataUniqueId).append(">");
 
@@ -256,11 +256,11 @@ class SecureObjectAccessController {
                 accesslevelid: accesslevelid])
     }
 
-    def addSecObjectsToPrincipal = {SecureObjectAccessCommand fl ->
+    def addSecObjectsToPrincipal = { SecureObjectAccessCommand fl ->
         def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
         def msg = new StringBuilder(" Grant new access permission: ");
 
-        log.debug("INCOMOING users to add:"+params.userstoadd)
+        log.debug("INCOMOING users to add:" + params.userstoadd)
         def principalInstance = Principal.get(params.id);
         def access = SecureAccessLevel.get(params.accesslevelid)
         if (fl.sobjectstoadd != null) {
@@ -268,9 +268,9 @@ class SecureObjectAccessController {
                 it.toLong()
             }]);
 
-            objectsToAdd.each {r ->
+            objectsToAdd.each { r ->
                 addAccess(principalInstance, r, access);
-                log.debug("Adding report:"+r.id)
+                log.debug("Adding report:" + r.id)
                 msg.append("<User:").append(principalInstance.name).append(", Permission:").append(access.accessLevelName).append(", Study:").append(r.bioDataUniqueId).append(">");
 
             };
@@ -282,13 +282,13 @@ class SecureObjectAccessController {
         render(template: 'addremoveAccess', model: [principalInstance: principalInstance, secureObjectAccessList: secureObjAccessList, objectswithoutaccess: objectswithoutaccess])
     }
 
-    def removeSecObjectsFromPrincipal = {SecureObjectAccessCommand fl ->
+    def removeSecObjectsFromPrincipal = { SecureObjectAccessCommand fl ->
 
         def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
         def msg = new StringBuilder(" Revoke access permission: ");
 
 
-        log.debug("INCOMOING users to add:"+params.userstoadd)
+        log.debug("INCOMOING users to add:" + params.userstoadd)
         def principalInstance = Principal.get(params.id);
         def access = SecureAccessLevel.get(params.accesslevelid)
         if (fl.sobjectstoremove != null) {
@@ -296,7 +296,7 @@ class SecureObjectAccessController {
                 it.toLong()
             }]);
 
-            objectsToRemove.each {r ->
+            objectsToRemove.each { r ->
                 r.delete(flush: true);
                 msg.append("<User:").append(r.principal.name).append(", Permission:").append(r.accessLevel.accessLevelName).append(", Study:").append(r.secureObject.bioDataUniqueId).append(">");
 

@@ -125,7 +125,7 @@ class UserGroupController {
             String searchText = request.getParameter("query");
             def userdata = [];
             def users = AuthUser.executeQuery("from AuthUser p where upper(p.name) like upper ('%" + searchText + "%') order by p.name");
-            users.each {user ->
+            users.each { user ->
 
                 userdata.add([name: user.name, username: user.username, type: user.type, description: user.description, uid: user.id])
             }
@@ -156,11 +156,11 @@ class UserGroupController {
 
 
     def addUserToGroups =
-        {UserGroupCommand fl ->
+        { UserGroupCommand fl ->
             def userInstance = AuthUser.get(params.id)
-            def groupsToAdd = UserGroup.findAll("from UserGroup r where r.id in (:p)", [p: fl.groupstoadd.collect {it.toLong()}]);
+            def groupsToAdd = UserGroup.findAll("from UserGroup r where r.id in (:p)", [p: fl.groupstoadd.collect { it.toLong() }]);
             if (userInstance) {
-                groupsToAdd.each {g ->
+                groupsToAdd.each { g ->
                     g.addToMembers(userInstance);
                     g.save(flush: true);
                 } //add to each group and save the group
@@ -168,7 +168,6 @@ class UserGroupController {
             }
 
             def searchtext = params.searchtext;
-
 
             // userInstance().save();
 
@@ -180,11 +179,11 @@ class UserGroupController {
 
 
     def removeUserFromGroups =
-        {UserGroupCommand fl ->
+        { UserGroupCommand fl ->
             def userInstance = AuthUser.get(params.id)
-            def groupsToRemove = UserGroup.findAll("from UserGroup r where r.id in (:p)", [p: fl.groupstoremove.collect {it.toLong()}]);
+            def groupsToRemove = UserGroup.findAll("from UserGroup r where r.id in (:p)", [p: fl.groupstoremove.collect { it.toLong() }]);
             if (userInstance) {
-                groupsToRemove.each {g ->
+                groupsToRemove.each { g ->
                     g.removeFromMembers(userInstance)
                     g.save(flush: true)
                 } //remove from each group and save the group
@@ -197,12 +196,12 @@ class UserGroupController {
         }
 
     def addUsersToUserGroup =
-        {UserGroupCommand fl ->
+        { UserGroupCommand fl ->
 
             println("INCOMOING to add Group:" + params.userstoadd);
             def userGroupInstance = UserGroup.get(params.id)
-            fl.userstoadd.collect {println("collecting:" + it.toLong())};
-            def usersToAdd = AuthUser.findAll("from AuthUser r where r.id in (:p)", [p: fl.userstoadd.collect {it.toLong()}]);
+            fl.userstoadd.collect { println("collecting:" + it.toLong()) };
+            def usersToAdd = AuthUser.findAll("from AuthUser r where r.id in (:p)", [p: fl.userstoadd.collect { it.toLong() }]);
             if (userGroupInstance) {
                 if (params.version) {
                     def version = params.version.toLong()
@@ -212,7 +211,7 @@ class UserGroupController {
                         render(template: 'addremove', model: [userGroupInstance: userGroupInstance])
                     }
                 }
-                usersToAdd.each {r ->
+                usersToAdd.each { r ->
                     userGroupInstance.members.add(r);
                     println("Adding user:" + r.id);
                 };
@@ -240,8 +239,8 @@ class UserGroupController {
                 fl.errors.allErrors.each {
                     println it
                 }
-                fl.userstoremove.collect {println("collecting:" + it.toLong())};
-                def usersToRemove = AuthUser.findAll("from AuthUser r where r.id in (:p)", [p: fl.userstoremove.collect {it.toLong()}]);
+                fl.userstoremove.collect { println("collecting:" + it.toLong()) };
+                def usersToRemove = AuthUser.findAll("from AuthUser r where r.id in (:p)", [p: fl.userstoremove.collect { it.toLong() }]);
                 if (userGroupInstance) {
                     if (params.version) {
                         def version = params.version.toLong()
@@ -251,7 +250,7 @@ class UserGroupController {
                             render(template: 'addremove', model: [userGroupInstance: userGroupInstance])
                         }
                     }
-                    usersToRemove.each {r ->
+                    usersToRemove.each { r ->
                         userGroupInstance.members.remove(r);
                         println("Removing user:" + r.id);
                     };
@@ -270,7 +269,7 @@ class UserGroupController {
 
     def searchForUsersNotInGroup(groupid, insearchtext) {
         def searchtext = '%' + insearchtext.toString().toUpperCase() + '%';
-        return AuthUser.executeQuery('from AuthUser us WHERE us NOT IN (select u.id from UserGroup g, IN (g.members) u where g.id=?) AND upper(us.name) LIKE ? ORDER BY us.userRealName', [groupid, searchtext]).sort {it.name};
+        return AuthUser.executeQuery('from AuthUser us WHERE us NOT IN (select u.id from UserGroup g, IN (g.members) u where g.id=?) AND upper(us.name) LIKE ? ORDER BY us.userRealName', [groupid, searchtext]).sort { it.name };
     }
 
     def ajaxGetUsersAndGroupsSearchBoxData =
@@ -278,7 +277,7 @@ class UserGroupController {
             String searchText = request.getParameter("query");
             def userdata = [];
             def users = Principal.executeQuery("from Principal p where upper(p.name) like upper ('%" + searchText + "%') order by p.name");
-            users.each {user ->
+            users.each { user ->
 
                 if (user.type == 'USER') {
                     userdata.add([name: user.name, username: user.username, type: user.type, description: user.description, uid: user.id])
