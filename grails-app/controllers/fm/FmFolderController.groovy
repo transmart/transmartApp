@@ -639,7 +639,7 @@ class FmFolderController {
 			for(def folder: folderContents){
 				boolean found=false
 				for(String path: folderSearchLists[0]){
-					if(folder.folderFullName.indexOf(path) > -1){
+					if(path.indexOf(folder.folderFullName) > -1 || folder.folderFullName.indexOf(path) > -1){
 						found=true
 						break
 					}
