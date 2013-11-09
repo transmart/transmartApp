@@ -483,6 +483,9 @@ ul.dynatree-container li ul li{
     font-weight: bold; 
 }
 
+.result-folder-name.accLev_LOCKED {
+    color: gray;
+}
 
 .result-analysis-label
 {
