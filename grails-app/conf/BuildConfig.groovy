@@ -52,7 +52,7 @@ grails.project.dependency.resolution = {
         compile ':rdc-rmodules:0.3-SNAPSHOT'
 
         runtime ':prototype:1.0'
-        //runtime ':resources:1.2'
+        runtime ':resources:1.2'
         runtime ':transmart-core:1.0-SNAPSHOT'
         //runtime ":jquery:1.7.1"
 
