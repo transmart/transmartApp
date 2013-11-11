@@ -249,6 +249,9 @@ class PostgresExportService {
 			if(checkboxItemArray.size()>3){
 				def fileName = checkboxItemArray[1].trim()+checkboxItemArray[2].trim()
 				def platform = checkboxItemArray[3].trim()
+                for (int i = 4; i < checkboxItemArray.size(); i++) {
+                    platform += ("_" + checkboxItemArray[i])
+                }
 				if(subsetSelectedPlatformsByFiles.containsKey(currentSubset)){
 					if(subsetSelectedPlatformsByFiles.get(currentSubset).containsKey(fileName)){
 						def platformFilesList = subsetSelectedPlatformsByFiles.get(currentSubset).get(fileName)
@@ -282,6 +285,7 @@ class PostgresExportService {
 		
 		//Loop through the values for each selected checkbox.
 		def checkboxList = params.selectedSubsetDataTypeFiles
+        System.err.println(checkboxList)
 		
 		if(checkboxList instanceof String)
 		{
@@ -289,6 +293,7 @@ class PostgresExportService {
 			if (checkboxList && !checkboxList?.trim().equals("")) tempArray.add(checkboxList)
 			checkboxList = tempArray
 		}
+        System.err.println(checkboxList)
 		
 		def jdm = new JobDataMap()
 		jdm.put("analysis", params.analysis)
@@ -296,6 +301,7 @@ class PostgresExportService {
 		jdm.put("jobName", params.jobName)
 		jdm.put("result_instance_ids",resultInstanceIdHashMap);
 		//jdm.put("datatypes", jobDataTypes);
+		System.err.println(getsubsetSelectedPlatformsByFiles(checkboxList))
 		jdm.put("subsetSelectedPlatformsByFiles", getsubsetSelectedPlatformsByFiles(checkboxList))
 		jdm.put("checkboxList", checkboxList);
 		jdm.put("subsetSelectedFilesMap", getSubsetSelectedFilesMap(params.selectedSubsetDataTypeFiles))

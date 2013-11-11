@@ -120,7 +120,7 @@ grails.converters.encoding="UTF-8"
 grails.converters.default.pretty.print=true
 
 // enabled native2ascii conversion of i18n properties files
-grails.enable.native2ascii = true
+grails.enable.native2ascii = false
 
 com.recomdata.search.autocomplete.max=20
 // default paging size

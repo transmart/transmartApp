@@ -48,9 +48,7 @@
   									<td>
 										<div id="search-text"></div>
 										<div id="loading-div" style="visibility:hidden;display:none;">
-											<input type="text" id="loading-text"
-												style="width:452px;background-image:url(js/ext/resources/images/default/grid/loading.gif);background-repeat:no-repeat;background-position:left center;padding-left:20px;"
-											/>
+											<input type="text" id="loading-text" style="width:452px;" class="searchcombobox-disabled"/>
 										</div>
 									</td>
 									<td style="white-space:nowrap;" nowrap>
