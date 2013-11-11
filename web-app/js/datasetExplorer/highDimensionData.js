@@ -54,8 +54,7 @@ function gatherHighDimensionalData(divId){
 				},
 				failure : function(result, request)
 				{
-					determineHighDimVariableType(result);
-					readCohortData(result,divId);
+                    Ext.Msg.alert("Error", "Communication failed.");
 				}
 			}
 	);
@@ -160,9 +159,6 @@ function runAllQueriesForSubsetId(callback, divId)
 	var subset = 1;
 	if(isSubsetEmpty(1) && isSubsetEmpty(2))
 	{
-		if (null != panel) { 
-			panel.body.unmask()
-		}
 		Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
 		return;
 	}
@@ -180,7 +176,7 @@ function runAllQueriesForSubsetId(callback, divId)
 	/* set the number of requests before callback is fired for runquery complete */
 
 	// iterate through all subsets calling the ones that need to be run
-	for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1)
+	for (var i = 1; i <= GLOBAL.NumOfSubsets; i++)
 	{
 		if( ! isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null)
 		{
