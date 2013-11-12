@@ -188,18 +188,20 @@ public class SearchKeywordService {
 		for (result in results)	{
 			def m = [:]
 			def sk = result
+
 			//////////////////////////////////////////////////////////////////////////////////
 			// HACK:  Duplicate check until DB is cleaned up
-			def dupeKey = sk.searchKeyword.displayDataCategory + ":" +sk.searchKeyword.keyword
-			if (dupeKey in dupeList)	{
+			def dupeKey = sk.searchKeyword.displayDataCategory + ":" + sk.searchKeyword.keyword +
+							":" + sk.searchKeyword.bioDataId
+			if (dupeKey in dupeList) {
 				log.info "Found duplicate: " + dupeKey
 				continue
-			} else	{
+			} else {
 				log.info "Found new entry, adding to the list: " + dupeList
 				dupeList << dupeKey
 			}
 			///////////////////////////////////////////////////////////////////////////////////
-			
+
 			m.put("label", sk.searchKeyword.keyword)
 			m.put("category", sk.searchKeyword.displayDataCategory)
 			m.put("categoryId", sk.searchKeyword.dataCategory)
