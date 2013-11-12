@@ -1,22 +1,21 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  *
  ******************************************************************/
-  
 
 /**
  * $Id: ExperimentAnalysisController.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
@@ -24,228 +23,225 @@
  * @version $Revision: 10098 $
  */
 
-import org.transmart.SearchResult;
-
-import com.recomdata.util.DomainObjectExcelHelper;
-import com.recomdata.util.ExcelGenerator;
-import com.recomdata.util.ExcelSheet;
+import com.recomdata.util.DomainObjectExcelHelper
+import com.recomdata.util.ElapseTimer
+import org.transmart.SearchResult
 import org.transmart.biomart.Experiment
-import com.recomdata.util.ElapseTimer;
 
 class ExperimentAnalysisController {
 
-	def experimentAnalysisQueryService
-	def filterQueryService
-	def analysisDataExportService
-	def searchService
-	def experimentAnalysisTEAService
+    def experimentAnalysisQueryService
+    def filterQueryService
+    def analysisDataExportService
+    def searchService
+    def experimentAnalysisTEAService
 
-	// session attribute
-	static def TEA_PAGING_DATA = "analListPaging"
+    // session attribute
+    static def TEA_PAGING_DATA = "analListPaging"
 
-	def showFilter = {
-		def filter =session.searchFilter
+    def showFilter = {
+        def filter = session.searchFilter
 
-		def datasources = []
-		def stimer = new ElapseTimer();
-		//log.info ">> Compound query:"
-		def compounds = filterQueryService.experimentCompoundFilter("Experiment");
+        def datasources = []
+        def stimer = new ElapseTimer();
+        //log.info ">> Compound query:"
+        def compounds = filterQueryService.experimentCompoundFilter("Experiment");
 
-		//log.info ">> Diseases query:"
-		def diseases = filterQueryService.findExperimentDiseaseFilter(session.searchFilter, "Experiment");
-		//if(diseases==null) diseases=[]
-		//log.info "diseases: " + diseases)
+        //log.info ">> Diseases query:"
+        def diseases = filterQueryService.findExperimentDiseaseFilter(session.searchFilter, "Experiment");
+        //if(diseases==null) diseases=[]
+        //log.info "diseases: " + diseases)
 
-		//log.info ">> Exp designs query:"
-		def expDesigns = experimentAnalysisQueryService.findExperimentDesignFilter(filter)
-		if(expDesigns==null) expDesigns=[]
-		//log.info "expDesigns: " + expDesigns
+        //log.info ">> Exp designs query:"
+        def expDesigns = experimentAnalysisQueryService.findExperimentDesignFilter(filter)
+        if (expDesigns == null) expDesigns = []
+        //log.info "expDesigns: " + expDesigns
 
-		// no data?
-		def celllines = [] 
+        // no data?
+        def celllines = []
 
-		// no data?
-		def expTypes=[] //experimentAnalysisQueryService.findExperimentTypeFilter()
+        // no data?
+        def expTypes = [] //experimentAnalysisQueryService.findExperimentTypeFilter()
 
-		def platformOrganisms = experimentAnalysisQueryService.findPlatformOrganizmFilter(filter)
+        def platformOrganisms = experimentAnalysisQueryService.findPlatformOrganizmFilter(filter)
 
-		stimer.logElapsed("Loading Exp Analysis Filters", true);
-		// note: removed datasource, celllines and expTypes since no data being retrieved (removed from filter page too)
-		render(template:'expFilter', model:[diseases:diseases, compounds:compounds, expDesigns:expDesigns, platformOrganisms:platformOrganisms])
-	}
+        stimer.logElapsed("Loading Exp Analysis Filters", true);
+        // note: removed datasource, celllines and expTypes since no data being retrieved (removed from filter page too)
+        render(template: 'expFilter', model: [diseases: diseases, compounds: compounds, expDesigns: expDesigns, platformOrganisms: platformOrganisms])
+    }
 
-	def filterResult = {
-		def sResult = new SearchResult()
-		session.searchFilter.datasource="experiment"
-		bindData(session.searchFilter.expAnalysisFilter, params)
+    def filterResult = {
+        def sResult = new SearchResult()
+        session.searchFilter.datasource = "experiment"
+        bindData(session.searchFilter.expAnalysisFilter, params)
 
-		//  log.info params
-		searchService.doResultCount(sResult,session.searchFilter)
-		render(view:'/search/list',model:[searchresult:sResult, page:false])
-	}
+        //  log.info params
+        searchService.doResultCount(sResult, session.searchFilter)
+        render(view: '/search/list', model: [searchresult: sResult, page: false])
+    }
 
-	/**
-	 * summary result view
-	 */
-	def datasourceResult = {
-		//def diseases = experimentAnalysisQueryService.findExperimentDiseaseFilter(session.searchFilter, "Experiment");
-		//log.info diseases
-		def stimer = new ElapseTimer();
+    /**
+     * summary result view
+     */
+    def datasourceResult = {
+        //def diseases = experimentAnalysisQueryService.findExperimentDiseaseFilter(session.searchFilter, "Experiment");
+        //log.info diseases
+        def stimer = new ElapseTimer();
 
-		//	log.info params
-		def max = grailsApplication.config.com.recomdata.search.paginate.max
-		def paramMap = searchService.createPagingParamMap(params,max,0)
+        //	log.info params
+        def max = grailsApplication.config.com.recomdata.search.paginate.max
+        def paramMap = searchService.createPagingParamMap(params, max, 0)
 
-		def sResult = new SearchResult()
-	//	sResult.experimentCount = experimentAnalysisQueryService.countExperiment(session.searchFilter);
-		sResult.experimentCount = experimentAnalysisQueryService.countExperimentMV(session.searchFilter);
-		
-		def expAnalysisCount = experimentAnalysisQueryService.countAnalysisMV(session.searchFilter);
-		//def expAnalysisCount = 9;
-		
-		stimer.logElapsed("Loading Exp Analysis Counts", true);
+        def sResult = new SearchResult()
+        //	sResult.experimentCount = experimentAnalysisQueryService.countExperiment(session.searchFilter);
+        sResult.experimentCount = experimentAnalysisQueryService.countExperimentMV(session.searchFilter);
 
-		sResult.result=experimentAnalysisQueryService.queryExperiment(session.searchFilter, paramMap)
-		sResult.result.analysisCount = expAnalysisCount;
-		sResult.result.expCount = sResult.experimentCount;
-		//	sResult.experimentCount = experimentAnalysisTEAService.countAnalysis(session.searchFilter);
-		//	sResult.result = experimentAnalysisTEAService.queryExperiment(session.searchFilter, paramMap)
-		render(template:'experimentResult',model:[searchresult:sResult, page:false])
-	}
+        def expAnalysisCount = experimentAnalysisQueryService.countAnalysisMV(session.searchFilter);
+        //def expAnalysisCount = 9;
 
-	/**
-	 * tea result view
-	 */
-	def datasourceResultTEA = {
-		//def diseases = experimentAnalysisQueryService.findExperimentDiseaseFilter(session.searchFilter, "Experiment");
-		//log.info diseases
-		def stimer = new ElapseTimer();
+        stimer.logElapsed("Loading Exp Analysis Counts", true);
 
-		def max = grailsApplication.config.com.recomdata.search.paginate.max
-		def paramMap = searchService.createPagingParamMap(params,max,0)
+        sResult.result = experimentAnalysisQueryService.queryExperiment(session.searchFilter, paramMap)
+        sResult.result.analysisCount = expAnalysisCount;
+        sResult.result.expCount = sResult.experimentCount;
+        //	sResult.experimentCount = experimentAnalysisTEAService.countAnalysis(session.searchFilter);
+        //	sResult.result = experimentAnalysisTEAService.queryExperiment(session.searchFilter, paramMap)
+        render(template: 'experimentResult', model: [searchresult: sResult, page: false])
+    }
 
-		def sResult = new SearchResult()
-		//sResult.result=experimentAnalysisQueryService.queryExperiment(session.searchFilter, paramMap)
-		//sResult.experimentCount = experimentAnalysisTEAService.countAnalysis(session.searchFilter);
+    /**
+     * tea result view
+     */
+    def datasourceResultTEA = {
+        //def diseases = experimentAnalysisQueryService.findExperimentDiseaseFilter(session.searchFilter, "Experiment");
+        //log.info diseases
+        def stimer = new ElapseTimer();
 
-		sResult.experimentCount = experimentAnalysisQueryService.countExperimentMV(session.searchFilter);
-		//sResult.experimentCount = experimentAnalysisQueryService.countExperiment(session.searchFilter);
-		
-		sResult.result = experimentAnalysisTEAService.queryExpAnalysis(session.searchFilter, paramMap)
-				stimer.logElapsed("Loading Exp TEA Counts", true);
-		sResult.result.expCount = sResult.experimentCount;
+        def max = grailsApplication.config.com.recomdata.search.paginate.max
+        def paramMap = searchService.createPagingParamMap(params, max, 0)
 
-		def ear = sResult.result.expAnalysisResults[0]
-		ear.pagedAnalysisList = pageTEAData(ear.analysisResultList, 0, max);
+        def sResult = new SearchResult()
+        //sResult.result=experimentAnalysisQueryService.queryExperiment(session.searchFilter, paramMap)
+        //sResult.experimentCount = experimentAnalysisTEAService.countAnalysis(session.searchFilter);
 
-		// store in session for paging requests
-		session.setAttribute(TEA_PAGING_DATA, sResult)
+        sResult.experimentCount = experimentAnalysisQueryService.countExperimentMV(session.searchFilter);
+        //sResult.experimentCount = experimentAnalysisQueryService.countExperiment(session.searchFilter);
 
-		render(template:'experimentResult',model:[searchresult:sResult, page:true])
-	}
+        sResult.result = experimentAnalysisTEAService.queryExpAnalysis(session.searchFilter, paramMap)
+        stimer.logElapsed("Loading Exp TEA Counts", true);
+        sResult.result.expCount = sResult.experimentCount;
 
-	/**
-	 * page TEA analysis view
-	 */
-	def pageTEAAnalysisView = {
+        def ear = sResult.result.expAnalysisResults[0]
+        ear.pagedAnalysisList = pageTEAData(ear.analysisResultList, 0, max);
 
-		def max = Integer.parseInt(params.max)
-	    def offset = Integer.parseInt(params.offset)
+        // store in session for paging requests
+        session.setAttribute(TEA_PAGING_DATA, sResult)
 
-	    // retrieve session data, page analyses
-	    def sResult = session.getAttribute(TEA_PAGING_DATA);
-		def ear = sResult.result.expAnalysisResults[0]
-		ear.pagedAnalysisList = pageTEAData(ear.analysisResultList, offset, max);
+        render(template: 'experimentResult', model: [searchresult: sResult, page: true])
+    }
 
-		render(template:'experimentResult',model:[searchresult:sResult, page:true])
-	}
+    /**
+     * page TEA analysis view
+     */
+    def pageTEAAnalysisView = {
 
-	def expDetail = {
-		//log.info "** action: expDetail called!"
-		def expid = params.id
-		def exp = Experiment.get(expid)
-		log.info "exp.id = " + exp.id
-		def platforms = experimentAnalysisQueryService.getPlatformsForExperment(exp.id);
-		def organisms = new HashSet()
-		for(pf in platforms){
-			organisms.add(pf.organism)
-		}
+        def max = Integer.parseInt(params.max)
+        def offset = Integer.parseInt(params.offset)
 
-		render(template:'/experiment/expDetail', model:[experimentInstance:exp, expPlatforms:platforms, expOrganisms:organisms,search:1])
-	}
+        // retrieve session data, page analyses
+        def sResult = session.getAttribute(TEA_PAGING_DATA);
+        def ear = sResult.result.expAnalysisResults[0]
+        ear.pagedAnalysisList = pageTEAData(ear.analysisResultList, offset, max);
 
-	def getAnalysis = {
-		def expid = params.id
-		def tResult = experimentAnalysisQueryService.queryAnalysis(expid, session.searchFilter)
-		render(template:'/trial/trialAnalysis', model:[trialresult:tResult])
-	}
+        render(template: 'experimentResult', model: [searchresult: sResult, page: true])
+    }
 
-	// download search result into excel
-	def downloadanalysisexcel ={
+    def expDetail = {
+        //log.info "** action: expDetail called!"
+        def expid = params.id
+        def exp = Experiment.get(expid)
+        log.info "exp.id = " + exp.id
+        def platforms = experimentAnalysisQueryService.getPlatformsForExperment(exp.id);
+        def organisms = new HashSet()
+        for (pf in platforms) {
+            organisms.add(pf.organism)
+        }
 
-		response.setHeader("Content-Type", "application/vnd.ms-excel; charset=utf-8")
-		response.setHeader("Content-Disposition", "attachment; filename=\"pre_clinical.xls\"")
-		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
-		response.setHeader("Pragma", "public");
-		response.setHeader("Expires", "0");
-		def analysis = org.transmart.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
-		response.outputStream<<analysisDataExportService.renderAnalysisInExcel(analysis)
-	}
+        render(template: '/experiment/expDetail', model: [experimentInstance: exp, expPlatforms: platforms, expOrganisms: organisms, search: 1])
+    }
 
-	//	 download search result to GPE file for Pathway Studio
-	def downloadanalysisgpe ={
-		response.setHeader("Content-Disposition", "attachment; filename=\"expression.gpe\"")
-		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
-		response.setHeader("Pragma", "public");
-		response.setHeader("Expires", "0");
-		def analysis = org.transmart.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
-		response.outputStream<<analysisDataExportService.renderAnalysisInExcel(analysis)
-	}
+    def getAnalysis = {
+        def expid = params.id
+        def tResult = experimentAnalysisQueryService.queryAnalysis(expid, session.searchFilter)
+        render(template: '/trial/trialAnalysis', model: [trialresult: tResult])
+    }
 
-	/**
-	 * page the tea analysis data
-	 */
-	private List pageTEAData(List analysisList, int offset, int pageSize) {
+    // download search result into excel
+    def downloadanalysisexcel = {
 
-		List pagedData = new ArrayList()
-		int numRecs = analysisList.size()
-		int lastIndex = (offset+pageSize<=numRecs) ? (offset+pageSize-1) : numRecs;
+        response.setHeader("Content-Type", "application/vnd.ms-excel; charset=utf-8")
+        response.setHeader("Content-Disposition", "attachment; filename=\"pre_clinical.xls\"")
+        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
+        response.setHeader("Pragma", "public");
+        response.setHeader("Expires", "0");
+        def analysis = org.transmart.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+        response.outputStream << analysisDataExportService.renderAnalysisInExcel(analysis)
+    }
 
-		// iteratre through list starting from start index
-		ListIterator it = analysisList.listIterator(offset);
+    //	 download search result to GPE file for Pathway Studio
+    def downloadanalysisgpe = {
+        response.setHeader("Content-Disposition", "attachment; filename=\"expression.gpe\"")
+        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
+        response.setHeader("Pragma", "public");
+        response.setHeader("Expires", "0");
+        def analysis = org.transmart.biomart.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+        response.outputStream << analysisDataExportService.renderAnalysisInExcel(analysis)
+    }
 
-		while(it.hasNext()) {
-			//attach to hibernate session
-			def ar = it.next();
-			if(!ar.analysis.isAttached()) ar.analysis.attach();
+    /**
+     * page the tea analysis data
+     */
+    private List pageTEAData(List analysisList, int offset, int pageSize) {
 
-			pagedData.add(ar)
-			int nextIdx = it.nextIndex()
-			if(nextIdx>lastIndex) break;
-		}
-		log.info("Paged data: start Idx: "+offset+"; last idx: "+lastIndex+" ; size: "+pagedData.size())
-		return pagedData;
-	}
+        List pagedData = new ArrayList()
+        int numRecs = analysisList.size()
+        int lastIndex = (offset + pageSize <= numRecs) ? (offset + pageSize - 1) : numRecs;
 
-	def downloadAnalysis = {
-	    log.info("Downloading the Experimental Analysis (Study) view");
-		def sResult = new SearchResult()
-		def analysisRS = null
-		def eaMap = [:]
+        // iteratre through list starting from start index
+        ListIterator it = analysisList.listIterator(offset);
 
-		sResult.result=experimentAnalysisQueryService.queryExperiment(session.searchFilter,null)
-		sResult.result.expAnalysisResults.each()	{
-			analysisRS=experimentAnalysisQueryService.queryAnalysis(it.experiment.id, session.searchFilter)
-			eaMap.put(it.experiment, analysisRS.analysisResultList)
-		}
-	    DomainObjectExcelHelper.downloadToExcel(response, "analysisstudyviewexport.xls", analysisDataExportService.createExcelEAStudyView(sResult, eaMap));
-	}
+        while (it.hasNext()) {
+            //attach to hibernate session
+            def ar = it.next();
+            if (!ar.analysis.isAttached()) ar.analysis.attach();
 
-	def downloadAnalysisTEA = {
-	    log.info("Downloading the Experimental Analysis TEA view");
-	    def sResult = new SearchResult()
+            pagedData.add(ar)
+            int nextIdx = it.nextIndex()
+            if (nextIdx > lastIndex) break;
+        }
+        log.info("Paged data: start Idx: " + offset + "; last idx: " + lastIndex + " ; size: " + pagedData.size())
+        return pagedData;
+    }
 
-		sResult.result = experimentAnalysisTEAService.queryExpAnalysis(session.searchFilter, null)
-	    DomainObjectExcelHelper.downloadToExcel(response, "analysisteaviewexport.xls", analysisDataExportService.createExcelEATEAView(sResult));
-	}
+    def downloadAnalysis = {
+        log.info("Downloading the Experimental Analysis (Study) view");
+        def sResult = new SearchResult()
+        def analysisRS = null
+        def eaMap = [:]
+
+        sResult.result = experimentAnalysisQueryService.queryExperiment(session.searchFilter, null)
+        sResult.result.expAnalysisResults.each() {
+            analysisRS = experimentAnalysisQueryService.queryAnalysis(it.experiment.id, session.searchFilter)
+            eaMap.put(it.experiment, analysisRS.analysisResultList)
+        }
+        DomainObjectExcelHelper.downloadToExcel(response, "analysisstudyviewexport.xls", analysisDataExportService.createExcelEAStudyView(sResult, eaMap));
+    }
+
+    def downloadAnalysisTEA = {
+        log.info("Downloading the Experimental Analysis TEA view");
+        def sResult = new SearchResult()
+
+        sResult.result = experimentAnalysisTEAService.queryExpAnalysis(session.searchFilter, null)
+        DomainObjectExcelHelper.downloadToExcel(response, "analysisteaviewexport.xls", analysisDataExportService.createExcelEATEAView(sResult));
+    }
 }

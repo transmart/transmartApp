@@ -1,22 +1,22 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  *
  ******************************************************************/
-  
+
 
 /**
  * $Id: DomainGeneratorTest.java 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -24,7 +24,6 @@
 package com.recomdata.etl.util;
 
 import groovy.util.GroovyTestCase;
-import com.recomdata.etl.db.MssqlConnectImpl;
 
 /**
  * Unit test of DomainGenerator class
@@ -33,11 +32,11 @@ import com.recomdata.etl.db.MssqlConnectImpl;
  * @version $Revision: 9178 $
  */
 public class DomainGeneratorTest extends GroovyTestCase {
-	/**
-	 * Test method for {@link com.recomdata.etl.util.DomainGenerator#generateDomain(java.lang.String, java.lang.String)}.
-	 */
-	public final void testGenerateDomain() {
-		
+    /**
+     * Test method for {@link com.recomdata.etl.util.DomainGenerator#generateDomain(java.lang.String, java.lang.String)}.
+     */
+    public final void testGenerateDomain() {
+
 		/*
 		 * This test was failing on the attempt to create a connection to a non-existent database in the call MssqlConnectImpl.createStrangeLoveConnect() below.
 		 * The code called looks like test/development code that is not referenced anywhere else in the project. 
@@ -86,10 +85,10 @@ public class DomainGeneratorTest extends GroovyTestCase {
 //		expected.append("\tid column:'id'\n");
 //		expected.append("\t}\n\t}\n\n}");
 
-	//	String actual =
+        //	String actual =
 //			DomainGenerator.generateDomain(MssqlConnectImpl.createStrangeLoveConnect(), tableName, className, null);
 
-		// expected not defined 
-		//assertEquals(actual, expected.toString());
-	}
+        // expected not defined
+        //assertEquals(actual, expected.toString());
+    }
 }
