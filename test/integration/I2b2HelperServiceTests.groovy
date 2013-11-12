@@ -17,15 +17,14 @@
  *
  ******************************************************************/
 
-
 /**
-* $Id: I2b2HelperServiceTests.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-*/
-import grails.test.*
+ * $Id: I2b2HelperServiceTests.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ */
+import grails.test.GrailsUnitTestCase
 import groovy.sql.Sql
 
 class I2b2HelperServiceTests extends GrailsUnitTestCase {
-	def i2b2HelperService
+    def i2b2HelperService
     def dataSource
 
     private static dataInserts = [
@@ -45,10 +44,10 @@ class I2b2HelperServiceTests extends GrailsUnitTestCase {
     }
 
     void testRenderQueryDefinition() {
-		StringWriter sw = new StringWriter()
-		String rID = "-50"
-		String title = "Subset1"
-		i2b2HelperService.renderQueryDefinition(rID, title, sw)
+        StringWriter sw = new StringWriter()
+        String rID = "-50"
+        String title = "Subset1"
+        i2b2HelperService.renderQueryDefinition(rID, title, sw)
         assert sw.toString() == '''<table class='analysis'><tr><th>Subset1</th></tr><tr><td><br><b>NOT</b><br><b>(</b><b>)</b></td></tr></table>'''
     }
 }
