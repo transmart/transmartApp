@@ -81,26 +81,24 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
 	}
 }
 
+/**
+ * Load js and css dynamically
+ * @param scripts
+ */
 function loadScripts(scripts) {
-	var handlerData = {
-	//data you wish to pass to your success or failure
-	//handlers.
-	};
-	 
-	var filesArr = []
-	for (var i = 0; i < scripts.length; i++) {
-		var file = scripts[i];
-		filesArr.push(file.path);
-	}
-	YAHOO.util.Get.script(filesArr, {
-		onSuccess: function(o) {
-			//alert("JavaScripts loaded");
-		},
-		onFailure: function(o) {
-			alert("Failed to load Javascript files");
-		},
-		data:      handlerData
-	});
+    // loop through script array
+    for (var i = 0; i < scripts.length; i++) {
+
+        var file = scripts[i];
+
+        if (file.type == 'script') { // if javascript
+            $j.getScript(file.path);
+        } else if (file.type == 'css') { // if css
+            $j('head').append( $j('<link rel="stylesheet" type="text/css" />').attr('href', file.path) );
+        } else {
+            console.error("Unknown file type.");
+        }
+    }
 }
 
 Ext.Panel.prototype.setBody = function(html)
