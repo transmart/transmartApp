@@ -66,6 +66,20 @@ public class SearchController{
 			params.query = 'gene'+SEARCH_DELIMITER+'pathway'+SEARCH_DELIMITER+'genelist'+SEARCH_DELIMITER+'genesig:'+params.query
 			loadSearch()
 	}
+
+    /**
+     * load list of keyword terms to following data category:
+     * - MIRNA
+     * - GENE
+     * - PATHWAY
+     * - GENELIST
+     * - GENESIG
+     */
+    def loadSearchPathways = {
+        params.query = 'mirna'+SEARCH_DELIMITER+'gene'+SEARCH_DELIMITER+'pathway'+SEARCH_DELIMITER+'genelist'+SEARCH_DELIMITER+'genesig:'+params.query
+        loadSearch()
+    }
+
 	/**
 	 * find top 20 biomarkers that exist in the keyword table  with case insensitive LIKE match
 	 */
