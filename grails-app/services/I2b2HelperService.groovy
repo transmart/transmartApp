@@ -74,7 +74,7 @@ class I2b2HelperService {
 		    PATIENT_NUM IN (select distinct patient_num
 			from qt_patient_set_collection
 			where result_instance_id = ?)""";
-        sql.eachRow(sqlt, [result_instance_id], {row ->
+        sql.eachRow(sqlt, [result_instance_id], { row ->
             values.add(row[0])
         });
         double[] returnvalues = new double[values.size()];
@@ -83,7 +83,6 @@ class I2b2HelperService {
         }
         return returnvalues;
     }
-
 
     /**
      * Converts a concept key to a path
@@ -160,7 +159,7 @@ class I2b2HelperService {
         }
         Sql sql = new Sql(dataSource);
         String sqlt =
-            sql.eachRow("SELECT CONCEPT_CD FROM CONCEPT_DIMENSION c WHERE CONCEPT_PATH = ?", [path], {row ->
+            sql.eachRow("SELECT CONCEPT_CD FROM CONCEPT_DIMENSION c WHERE CONCEPT_PATH = ?", [path], { row ->
                 log.trace("Found code:" + row.CONCEPT_CD);
                 concepts.append(row.CONCEPT_CD);
             });
@@ -172,7 +171,7 @@ class I2b2HelperService {
         String path = null;
         Sql sql = new Sql(dataSource)
         String sqlt =
-            sql.eachRow("SELECT CONCEPT_PATH FROM CONCEPT_DIMENSION c WHERE CONCEPT_CD = ?", [code], {row ->
+            sql.eachRow("SELECT CONCEPT_PATH FROM CONCEPT_DIMENSION c WHERE CONCEPT_CD = ?", [code], { row ->
                 path = row.CONCEPT_PATH;
             })
         return path;
@@ -204,7 +203,7 @@ class I2b2HelperService {
         int res = 0;
         Sql sql = new Sql(dataSource);
         String sqlt =
-            sql.eachRow("SELECT c_hlevel FROM i2b2metadata.i2b2 WHERE C_FULLNAME = ?", [fullname], {row ->
+            sql.eachRow("SELECT c_hlevel FROM i2b2metadata.i2b2 WHERE C_FULLNAME = ?", [fullname], { row ->
                 res = row.c_hlevel
             })
         log.trace("Level is:" + res);
@@ -219,7 +218,7 @@ class I2b2HelperService {
         //def rs = sql.executePreparedQuery("select dgi.marker_type from concept_dimension cd, de_gpl_info dgi where cd.name_char=dgi.title "+
         //		"and cd.concept_cd = ?",[conceptCd])
         sql.eachRow("select dgi.marker_type from concept_dimension cd, de_gpl_info dgi where cd.concept_path like('%'||dgi.title||'%') " +
-                "and cd.concept_cd = ?", [conceptCd], {row ->
+                "and cd.concept_cd = ?", [conceptCd], { row ->
             markerType = row.marker_type
         })
         //return "Gene Expression"
@@ -241,7 +240,7 @@ class I2b2HelperService {
         String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
         Boolean res = false;
         Sql sql = new Sql(dataSource)
-        sql.eachRow("SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_FULLNAME = ?", [fullname], {row ->
+        sql.eachRow("SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_FULLNAME = ?", [fullname], { row ->
             res = row.c_visualattributes.indexOf('L') > -1
         })
         return res;
@@ -254,7 +253,7 @@ class I2b2HelperService {
         Sql sql = new Sql(dataSource);
         def counts = [:];
         log.trace("Trying to get counts for parent_concept_path=" + keyToPath(concept_key));
-        sql.eachRow("select * from CONCEPT_COUNTS where parent_concept_path = ?", [keyToPath(concept_key)], {row ->
+        sql.eachRow("select * from CONCEPT_COUNTS where parent_concept_path = ?", [keyToPath(concept_key)], { row ->
             log.trace "Found " << row.concept_path
             counts.put(row.concept_path, row.patient_count)
         });
@@ -270,7 +269,7 @@ class I2b2HelperService {
         Sql sql = new Sql(dataSource);
         String concept_cd = getConceptCodeFromKey(concept_key);
         ArrayList<Double> values = new ArrayList<Double>();
-        sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ?", [concept_cd], {row ->
+        sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ?", [concept_cd], { row ->
             if (row.NVAL_NUM != null) {
                 values.add(row.NVAL_NUM);
                 log.trace("adding" + row.NVAL_NUM);
@@ -309,7 +308,7 @@ class I2b2HelperService {
         log.debug("executing query: sqlt=" + sqlt);
         try {
             //sql.eachRow(sqlt, [concept_cd, result_instance_id], {row ->
-            sql.eachRow(sqlt, {row ->
+            sql.eachRow(sqlt, { row ->
                 if (row.NVAL_NUM != null) {
                     values.add(row.NVAL_NUM);
                 }
@@ -343,7 +342,7 @@ class I2b2HelperService {
         sql.eachRow(sqlt, [
                 concept_cd,
                 result_instance_id
-        ], {row ->
+        ], { row ->
             if (row.NVAL_NUM != null) {
                 values.add(row.NVAL_NUM);
             }
@@ -366,7 +365,7 @@ class I2b2HelperService {
 		        from qt_patient_set_collection
 				where result_instance_id = ?)""";
         log.trace(sqlt);
-        sql.eachRow(sqlt, [result_instance_id], {row ->
+        sql.eachRow(sqlt, [result_instance_id], { row ->
             log.trace("inrow");
             i = row.patcount;
             log.trace(row.patcount);
@@ -388,7 +387,7 @@ class I2b2HelperService {
         sql.eachRow(sqlt, [
                 result_instance_id1,
                 result_instance_id2
-        ], {row ->
+        ], { row ->
             log.trace("inrow of intersection")
             i = row.patcount;
             log.trace(row.patcount);
@@ -423,7 +422,7 @@ class I2b2HelperService {
         String sqlt = "SELECT C_METADATAXML FROM I2B2METADATA.I2B2 WHERE C_BASECODE = ?"
         String xml = "";
         log.trace(sqlt);
-        sql.eachRow(sqlt, [concept_code], {row ->
+        sql.eachRow(sqlt, [concept_code], { row ->
             log.trace("checking metadata xml:" + row.c_metadataxml);
             xml = clobToString(row.c_metadataxml);
         });
@@ -476,7 +475,7 @@ class I2b2HelperService {
                 fullname + "%",
                 i,
                 result_instance_id
-        ], {row ->
+        ], { row ->
             results.put(row[1], row[2])
         })
         return results;
@@ -509,7 +508,7 @@ class I2b2HelperService {
                 String sqlt =
                     "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
                 log.trace(sqlt);
-                sql.eachRow(sqlt, [fullname + "%", i], {row ->
+                sql.eachRow(sqlt, [fullname + "%", i], { row ->
                     if (results.get(row[0]) == null) {
                         results.put(row[0], getObservationCountForConceptForSubset("\\blah" + row[1], result_instance_id));
                     } else {
@@ -522,7 +521,7 @@ class I2b2HelperService {
             Sql sql = new Sql(dataSource);
             String sqlt = "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
             log.trace(sqlt);
-            sql.eachRow(sqlt, [fullname + "%", i], {row ->
+            sql.eachRow(sqlt, [fullname + "%", i], { row ->
                 results.put(row[0], getObservationCountForConceptForSubset("\\blah" + row[1], result_instance_id));
             });
         }
@@ -541,7 +540,7 @@ class I2b2HelperService {
         int i = getLevelFromKey(concept_key) + 1;
         Sql sql = new Sql(dataSource);
         String sqlt = "SELECT C_FULLNAME, C_METADATAXML FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
-        sql.eachRow(sqlt, [fullname + "%", i], {row ->
+        sql.eachRow(sqlt, [fullname + "%", i], { row ->
             String conceptkey = prefix + row.c_fullname;
             xml = clobToString(row.c_metadataxml);
             log.trace("METADATA XML:" + xml);
@@ -579,12 +578,11 @@ class I2b2HelperService {
 		    FROM i2b2demodata.observation_fact
 		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
 		    where concept_path LIKE ?))))""";
-        sql.eachRow(sqlt, [fullname + "%"], {row ->
+        sql.eachRow(sqlt, [fullname + "%"], { row ->
             i = row[1];
         })
         return i;
     }
-
 
     /**
      * Gets the count of the observations in the fact table for a concept and a subset
@@ -600,7 +598,7 @@ class I2b2HelperService {
         sql.eachRow(sqlt, [
                 fullname + "%",
                 result_instance_id
-        ], {row ->
+        ], { row ->
             i = row[0]
         })
         return i;
@@ -665,7 +663,7 @@ class I2b2HelperService {
             //tablein.putColumn("ZIP_CD", new ExportColumn("ZIP_CD", "Zipcode", "", "String"));
         }
         //def founddata=false;
-        sql.eachRow(sqlt, [result_instance_id], {row ->
+        sql.eachRow(sqlt, [result_instance_id], { row ->
             /*If I already have this subject mark it in the subset column as belonging to both subsets*/
             //founddata=true;
             String subject = row.PATIENT_NUM;
@@ -720,7 +718,7 @@ class I2b2HelperService {
                 sql.eachRow(sqlt, [
                         concept_cd,
                         result_instance_id
-                ], {row ->
+                ], { row ->
                     /*If I already have this subject mark it in the subset column as belonging to both subsets*/
                     String subject = row.PATIENT_NUM
                     Double value = row.NVAL_NUM
@@ -745,7 +743,7 @@ class I2b2HelperService {
                 sql.eachRow(sqlt, [
                         concept_cd,
                         result_instance_id
-                ], {row ->
+                ], { row ->
                     /*If I already have this subject mark it in the subset column as belonging to both subsets*/
                     String subject = row.PATIENT_NUM
                     String value = row.TVAL_CHAR
@@ -788,7 +786,7 @@ class I2b2HelperService {
 		WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
 		Group by UPPER(""" + col + """)) b
 		ON a.cat=b.cat ORDER BY a.cat""";
-        sql.eachRow(sqlt, [result_instance_id], {row ->
+        sql.eachRow(sqlt, [result_instance_id], { row ->
             if (row[1] != 0) {
                 results.put(row[0], row[1])
                 log.trace("in row getting patient demographic data for subset")
@@ -811,7 +809,7 @@ class I2b2HelperService {
 		    ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = ?""";
 
         String xmlrequest = "";
-        sql.eachRow(sqlt, [resultInstanceId], {row ->
+        sql.eachRow(sqlt, [resultInstanceId], { row ->
             xmlrequest = clobToString(row.request_xml);
             log.trace("REQUEST_XML:" + xmlrequest)
 
@@ -889,7 +887,7 @@ class I2b2HelperService {
             log.debug("\ncalled with conceptPath:" + conceptPath);
             log.debug("\nexecuting query:" + sqlQuery);
             String parentConcept = "";
-            sql.eachRow(sqlQuery, [conceptPath], {row -> parentConcept = row.parent_cd;});
+            sql.eachRow(sqlQuery, [conceptPath], { row -> parentConcept = row.parent_cd; });
             if (parentConcept != "") {
                 log.debug("returning parentConcept=" + parentConcept);
                 return parentConcept;
@@ -955,7 +953,7 @@ class I2b2HelperService {
         log.debug("\n");
 
         try {
-            sql.eachRow(sqlQuery, {row -> childConcepts.add(row.concept_cd);});
+            sql.eachRow(sqlQuery, { row -> childConcepts.add(row.concept_cd); });
         } catch (e) {
             log.error("Exception occurred when looking up child concepts: " + e.getMessage());
             log.error("query: " + sqlQuery);
@@ -1001,7 +999,6 @@ class I2b2HelperService {
         return finalSet;
     }
 
-
     /**
      * Gets the querymasterid for resultinstanceid
      */
@@ -1012,7 +1009,7 @@ class I2b2HelperService {
             String sqlt = """select QUERY_MASTER_ID FROM QT_QUERY_INSTANCE a
 		    	INNER JOIN QT_QUERY_RESULT_INSTANCE b
 		    	ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = ?"""
-            sql.eachRow(sqlt, [resultInstanceId], {row -> qid = row.QUERY_MASTER_ID;})
+            sql.eachRow(sqlt, [resultInstanceId], { row -> qid = row.QUERY_MASTER_ID; })
         }
         return qid
     }
@@ -1027,7 +1024,7 @@ class I2b2HelperService {
 
         String sqlt = """select REQUEST_XML from QT_QUERY_MASTER WHERE QUERY_MASTER_ID = ?""";
         log.trace(sqlt);
-        sql.eachRow(sqlt, [qid], {row ->
+        sql.eachRow(sqlt, [qid], { row ->
             log.trace("in xml query")
             log.trace(row.REQUEST_XML)
             xmlrequest = clobToString(row.REQUEST_XML);
@@ -1048,7 +1045,7 @@ class I2b2HelperService {
 		    ON a.QUERY_MASTER_ID=c.QUERY_MASTER_ID INNER JOIN QT_QUERY_RESULT_INSTANCE b
 		    ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID = ?""";
         log.trace(sqlt);
-        sql.eachRow(sqlt, [resultInstanceId], {row ->
+        sql.eachRow(sqlt, [resultInstanceId], { row ->
             log.trace("in xml query");
             log.trace(row.REQUEST_XML);
             xmlrequest = clobToString(row.REQUEST_XML);
@@ -1070,7 +1067,7 @@ class I2b2HelperService {
         String sqlt = """select distinct patient_num from qt_patient_set_collection where result_instance_id = ? 
 		AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')""";
         log.trace("before sql call")
-        sql.eachRow(sqlt, [resultInstanceId], {row ->
+        sql.eachRow(sqlt, [resultInstanceId], { row ->
             log.trace("in iterator")
             if (subjectIds.length() > 0) {
                 subjectIds.append(",");
@@ -1089,7 +1086,7 @@ class I2b2HelperService {
         Sql sql = new Sql(dataSource)
         String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id = ?";
         log.trace("before sql call")
-        sql.eachRow(sqlt, [resultInstanceId], {row ->
+        sql.eachRow(sqlt, [resultInstanceId], { row ->
             subjectIds.add(row.PATIENT_NUM);
         })
         return subjectIds;
@@ -1109,7 +1106,7 @@ class I2b2HelperService {
         //This is the SQL statement we run.
         String sqlt = "select distinct PATIENT_ID from DE_SUBJECT_SAMPLE_MAPPING where SAMPLE_ID in (" + listToIN(SampleIDList) + ")";
 
-        sql.eachRow(sqlt, [], {row -> subjectIds.add(row.PATIENT_ID);})
+        sql.eachRow(sqlt, [], { row -> subjectIds.add(row.PATIENT_ID); })
 
         return subjectIds;
     }
@@ -1128,7 +1125,7 @@ class I2b2HelperService {
         //This is the SQL statement we run.
         String sqlt = "select distinct PATIENT_ID from DE_SUBJECT_SAMPLE_MAPPING where SAMPLE_ID in (" + listToIN(SampleIDList) + ")";
 
-        sql.eachRow(sqlt, [], {row -> subjectIds.add(row.PATIENT_ID);})
+        sql.eachRow(sqlt, [], { row -> subjectIds.add(row.PATIENT_ID); })
 
         return subjectIds;
     }
@@ -1147,7 +1144,7 @@ class I2b2HelperService {
         //This is the SQL statement we run.
         String sqlt = "select distinct CONCEPT_CODE from DE_SUBJECT_SAMPLE_MAPPING where SAMPLE_ID in (" + listToIN(SampleIDList) + ")";
 
-        sql.eachRow(sqlt, [], {row -> conceptIds.add(row.CONCEPT_CODE);})
+        sql.eachRow(sqlt, [], { row -> conceptIds.add(row.CONCEPT_CODE); })
 
         return conceptIds;
     }
@@ -1165,7 +1162,7 @@ class I2b2HelperService {
 
         Sql sql = new Sql(dataSource)
         String sqlt = "SELECT CONCEPT_CD FROM CONCEPT_DIMENSION c WHERE CONCEPT_PATH LIKE ?";
-        sql.eachRow(sqlt, [path + "%"], {row ->
+        sql.eachRow(sqlt, [path + "%"], { row ->
             if (concepts.length() > 0) {
                 concepts.append(",");
             }
@@ -1188,7 +1185,7 @@ class I2b2HelperService {
 
         Sql sql = new Sql(dataSource)
         String sqlt = "SELECT CONCEPT_CD FROM CONCEPT_DIMENSION c WHERE CONCEPT_PATH LIKE ?";
-        sql.eachRow(sqlt, [path + "%"], {row ->
+        sql.eachRow(sqlt, [path + "%"], { row ->
             concepts.add(row.CONCEPT_CD)
         })
         return concepts;
@@ -1284,7 +1281,7 @@ class I2b2HelperService {
 
         //	println(sampleQ);
         sql.eachRow(sampleQ.toString(),
-                {row ->
+                { row ->
                     String st = row.patient_id;
                     if (fids.length() > 0) {
                         fids.append(",");
@@ -1388,7 +1385,7 @@ class I2b2HelperService {
             StringBuffer dataBuf = new StringBuffer();
             Sql sql = new Sql(dataSource);
             int geneNum = 0;
-            sql.eachRow(sqlStr) {row ->
+            sql.eachRow(sqlStr) { row ->
                 String geneSymbol = row.gene_symbol;
                 Long assayId = row.assay_id;
                 Float zvalue = row.zvalue;
@@ -1536,7 +1533,7 @@ class I2b2HelperService {
 
             Integer rows = 0;
             def numCols = 0
-            def numColumnsClosure = {meta -> numCols = meta.columnCount}
+            def numColumnsClosure = { meta -> numCols = meta.columnCount }
 
             //Determine if we are dealing with MRNA or Protein data.
             if (datatype.toUpperCase() == "MRNA_AFFYMETRIX") {
@@ -1662,7 +1659,7 @@ class I2b2HelperService {
                 // create header
                 gpf.createGctHeader(rowsObj.size(), subjectNameArray, "\t");
 
-                rowsObj.each {row ->
+                rowsObj.each { row ->
                     s.setLength(0);
                     for (int count in 0..<numCols - 1) {
                         String val = row.getAt(count);
@@ -1694,7 +1691,7 @@ class I2b2HelperService {
                 // create header
                 gpf.createGctHeader(rowsObj.size(), subjectNameArray, "\t");
 
-                rowsObj.each {row ->
+                rowsObj.each { row ->
                     s.setLength(0);
                     if (row.getAt("component") == null) {
                         s.append(row.getAt("GENE_SYMBOL"));
@@ -1767,7 +1764,7 @@ class I2b2HelperService {
 
         clsBuf.append(totalCount + " 2 1\n# clsA clsB\n");
         dataBuf.append("name\ttime\tcensor\n");
-        survivalDataList_1.eachWithIndex() {obj, i ->
+        survivalDataList_1.eachWithIndex() { obj, i ->
             clsBuf.append("1 ");
             dataBuf.append(obj.subjectId + "\t" + obj.survivalTime.intValue() + "\t");
             if (obj.isEvent != null && obj.isEvent.booleanValue() == true) {
@@ -1777,7 +1774,7 @@ class I2b2HelperService {
             };
         }
 
-        survivalDataList_2.eachWithIndex() {obj, i ->
+        survivalDataList_2.eachWithIndex() { obj, i ->
             clsBuf.append("2");
             if (i != survivalDataList_2.size() - 1) {
                 clsBuf.append(" ");
@@ -1816,7 +1813,7 @@ class I2b2HelperService {
         fillEventToSurvivalData(survivalConcepts.conceptEvent, survivalDataMap, subjectStrList);
 
         List<SurvivalData> dataList = new ArrayList<SurvivalData>();
-        survivalDataMap.each() {key, value ->
+        survivalDataMap.each() { key, value ->
             dataList.add(value);
         }
         return dataList;
@@ -1893,7 +1890,7 @@ class I2b2HelperService {
         };
         sql.eachRow(sqlt, [
                 conceptSurvivalTime.getBaseCode()
-        ], {row ->
+        ], { row ->
             SurvivalData survivalData = new SurvivalData();
             survivalData.subjectId = row.patient_num;
             survivalData.survivalTime = row.nval_num;
@@ -2058,7 +2055,7 @@ class I2b2HelperService {
         // Get the order of each dataset in the compacted data String
         Map<Long, Integer> datasetCompactLocationMap = new HashMap<Long, Integer>();
         String sqlStr = "select snp_dataset_id, location from de_snp_data_dataset_loc where trial_name = ?";
-        sql.eachRow(sqlStr, [trialName]) {row ->
+        sql.eachRow(sqlStr, [trialName]) { row ->
             Long datasetId = row.snp_dataset_id;
             Integer order = row.location;
             datasetCompactLocationMap.put(datasetId, order);
@@ -2069,7 +2066,7 @@ class I2b2HelperService {
         sqlStr = "select b.name, b.chrom, b.chrom_pos, c.snp_data_by_probe_id, c.snp_id, c.probe_id, c.probe_name, c.trial_name, c.data_by_probe ";
         sqlStr += "from de_snp_info b, de_snp_data_by_probe c where b.snp_info_id = c.snp_id ";
         sqlStr += "and c.trial_name = ? and b.snp_info_id in (" + snpIdListStr + ") order by b.chrom, b.chrom_pos";
-        sql.eachRow(sqlStr, [trialName]) {row ->
+        sql.eachRow(sqlStr, [trialName]) { row ->
             SnpDataByProbe snpDataByProbe = new SnpDataByProbe();
             snpDataByProbe.snpDataByProbeId = row.snp_data_by_probe_id;
             snpDataByProbe.snpInfoId = row.snp_id;
@@ -2146,7 +2143,7 @@ class I2b2HelperService {
         String conceptDisplayName = conceptIdToDisplayNameMap.get(conceptId);
         if (conceptDisplayName == null) {
             Sql sql = new Sql(dataSource);
-            sql.eachRow("select name_char from concept_dimension where concept_cd = ?", [conceptId]) {row ->
+            sql.eachRow("select name_char from concept_dimension where concept_cd = ?", [conceptId]) { row ->
                 conceptDisplayName = row.name_char;
             }
         }
@@ -2157,7 +2154,7 @@ class I2b2HelperService {
         String sqlStr = "select unique_id from search_keyword where search_keyword_id in (" + geneSearchIdListStr + ")";
         String geneEntrezIdListStr = "";
         Sql sql = new Sql(dataSource);
-        sql.eachRow(sqlStr) {row ->
+        sql.eachRow(sqlStr) { row ->
             String unique_id = row.unique_id;
             int idx = unique_id.indexOf(":");
             String geneEntrezIdStr = unique_id.substring(idx + 1).trim();
@@ -2187,7 +2184,7 @@ class I2b2HelperService {
         sqlStr += " and data_category = 'GENE'";
         String geneEntrezIdListStr = "";
         Sql sql = new Sql(dataSource);
-        sql.eachRow(sqlStr) {row ->
+        sql.eachRow(sqlStr) { row ->
             String unique_id = row.unique_id;
             int idx = unique_id.indexOf(":");
             String geneEntrezIdStr = unique_id.substring(idx + 1).trim();
@@ -2204,7 +2201,7 @@ class I2b2HelperService {
 
         // Get the snp association and chrom mapping
         sqlStr = "select a.entrez_gene_id, b.* from de_snp_gene_map a, de_snp_info b where a.snp_id = b.snp_info_id and a.entrez_gene_id in (" + geneEntrezIdListStr + ") ";
-        sql.eachRow(sqlStr) {row ->
+        sql.eachRow(sqlStr) { row ->
             Long snpId = row.snp_info_id;
             String snpName = row.name;
             String chrom = row.chrom;
@@ -2264,7 +2261,7 @@ class I2b2HelperService {
         // Get the snp association and chrom mapping
         Sql sql = new Sql(dataSource);
         String sqlStr = "select a.entrez_gene_id, b.* from de_snp_gene_map a, de_snp_info b where a.snp_id = b.snp_info_id and b.name in (" + snpNameListStr + ") ";
-        sql.eachRow(sqlStr) {row ->
+        sql.eachRow(sqlStr) { row ->
             Long snpId = row.snp_info_id;
             String snpName = row.name;
             String chrom = row.chrom;
@@ -2307,7 +2304,7 @@ class I2b2HelperService {
         // Get the gene name from search_keyword table
         sqlStr = "select unique_id, keyword from search_keyword where unique_id in (" + geneSearchStr + ") ";
         sqlStr += " and data_category = 'GENE'";
-        sql.eachRow(sqlStr) {row ->
+        sql.eachRow(sqlStr) { row ->
             String unique_id = row.unique_id;
             int idx = unique_id.indexOf(":");
             String geneEntrezIdStr = unique_id.substring(idx + 1).trim();
@@ -2402,7 +2399,7 @@ class I2b2HelperService {
 
         Sql sql = new Sql(dataSource);
         String sqlStr = "select * from de_subject_snp_dataset where patient_num in (" + subjectListStr + ")";
-        sql.eachRow(sqlStr) {row ->
+        sql.eachRow(sqlStr) { row ->
             SnpDataset snpDataset = new SnpDataset();
             snpDataset.id = row.subject_snp_dataset_id;
             snpDataset.datasetName = row.dataset_name;
@@ -2449,7 +2446,7 @@ class I2b2HelperService {
         };
 
         Sql sql = new Sql(dataSource);
-        sql.eachRow("select patient_num, sex_cd from patient_dimension where patient_num in (" + subjectListStr + ")") {row ->
+        sql.eachRow("select patient_num, sex_cd from patient_dimension where patient_num in (" + subjectListStr + ")") { row ->
             Long patientNum = row.patient_num;
             String gender = row.sex_cd;
             if (gender != null) {
@@ -2913,7 +2910,7 @@ class I2b2HelperService {
         Float pValueMostSignificant = new Float("1E-6");
         Float pValueSignificant = new Float("0.01");
         Map<String, String[]> snpNameDataMap = new HashMap<String, String[]>();
-        assocFile.eachLine {line ->
+        assocFile.eachLine { line ->
             if (line.startsWith(" CHR") == false) {
                 String chrom = line.substring(0, 4).trim();
                 String snpName = line.substring(4, 17).trim();
@@ -3133,7 +3130,7 @@ class I2b2HelperService {
         }
         Sql sql = new Sql(dataSource);
         String sqlStr = "select * from de_snp_gene_map where snp_name in (" + snpNamesBuf.toString() + ")";
-        sql.eachRow(sqlStr) {row ->
+        sql.eachRow(sqlStr) { row ->
             String snpName = row.snp_name;
             String entrezId = row.entrez_gene_id;
 
@@ -3162,7 +3159,7 @@ class I2b2HelperService {
             entrezListBuf.append("'GENE:" + entrezId + "'");
         }
         sqlStr = "select keyword, unique_id from search_keyword where unique_id in (" + entrezListBuf.toString() + ")";
-        sql.eachRow(sqlStr) {row ->
+        sql.eachRow(sqlStr) { row ->
             String geneName = row.keyword;
             String entrezStr = row.unique_id;
             String entrezId = entrezStr.substring(5);
@@ -3209,7 +3206,7 @@ class I2b2HelperService {
         sqlt += "WHERE a.subject_snp_dataset_id = b.snp_dataset_id and a.patient_num in (" + subjectIds + ") ";
         sqlt += " and b.chrom in (" + getSqlStrFromChroms(chroms) + ") ";
 
-        sql.eachRow(sqlt) {row ->
+        sql.eachRow(sqlt) { row ->
             Long datasetId = row.subject_snp_dataset_id;
             String chrom = row.chrom;
             java.sql.Clob clob = (java.sql.Clob) row.data;
@@ -3430,7 +3427,7 @@ class I2b2HelperService {
         List<Long> idList = null;
         Sql sql = new Sql(dataSource);
         String sqlt = "SELECT subject_snp_dataset_id as id FROM de_subject_snp_dataset WHERE patient_num in (" + subjectIds + ") ";
-        sql.eachRow(sqlt) {row ->
+        sql.eachRow(sqlt) { row ->
             Long id = row.id;
             if (idList == null) {
                 idList = new ArrayList<Long>();
@@ -3455,7 +3452,7 @@ class I2b2HelperService {
         Sql sql = new Sql(dataSource);
         String sqlt = "SELECT snp_probe_sorted_def_id, platform_name, num_probe, chrom, snp_id_def FROM de_snp_probe_sorted_def WHERE platform_name = '";
         sqlt += platformName + "' and chrom in (" + getSqlStrFromChroms(chroms) + ") order by chrom";
-        sql.eachRow(sqlt) {row ->
+        sql.eachRow(sqlt) { row ->
             SnpProbeSortedDef probeDef = new SnpProbeSortedDef();
             probeDef.id = row.snp_probe_sorted_def_id;
             probeDef.platformName = row.platform_name;
@@ -3476,7 +3473,7 @@ class I2b2HelperService {
         List<String> list = null;
         Sql sql = new Sql(dataSource);
         String sqlt = "SELECT distinct(platform_name) as platform FROM de_subject_snp_dataset WHERE patient_num in (" + subjectIds + ") ";
-        sql.eachRow(sqlt) {row ->
+        sql.eachRow(sqlt) { row ->
             if (list == null) {
                 list = new ArrayList<String>();
             }
@@ -3523,7 +3520,7 @@ class I2b2HelperService {
         };
         sql.eachRow(sqlt, [
                 conceptCensoring.getBaseCode()
-        ], {row ->
+        ], { row ->
             String subjectId = row.patient_num;
             String censoringStr = row.tval_char;
             if (censoringStr != null &&
@@ -3547,7 +3544,7 @@ class I2b2HelperService {
         if (subjectIdListInStr != null) {
             sqlt += " and PATIENT_NUM in (" + subjectIdListInStr + ")"
         };
-        sql.eachRow(sqlt, [conceptEvent.getBaseCode()], {row ->
+        sql.eachRow(sqlt, [conceptEvent.getBaseCode()], { row ->
             String subjectId = row.patient_num;
             String censoringStr = row.tval_char;
             if (censoringStr != null &&
@@ -3571,7 +3568,7 @@ class I2b2HelperService {
         log.debug("getTrialName used this query: " + trialQ.toString());
 
         String trialNames = "";
-        sql.eachRow(trialQ.toString(), {row ->
+        sql.eachRow(trialQ.toString(), { row ->
             if (trialNames.length() > 0) {
                 trialNames += ",";
             }
@@ -3609,7 +3606,7 @@ class I2b2HelperService {
         String trialNames = "";
 
         //For each of the retrieved SQL records, add the trial name to the list.
-        sql.eachRow(trialQ.toString(), {row ->
+        sql.eachRow(trialQ.toString(), { row ->
 
             //If we have multiple trial Names, make them comma delimited.
             if (trialNames.length() > 0) {
@@ -3643,7 +3640,7 @@ class I2b2HelperService {
 
         log.debug("getSampleTypes used this query: " + sampleQ.toString());
 
-        sql.eachRow(sampleQ.toString(), {row ->
+        sql.eachRow(sampleQ.toString(), { row ->
             String st = row.sample_type_cd;
             if (st != null && st.trim().length() > 0) {
                 sampleTypesArray.add(st);
@@ -3670,7 +3667,7 @@ class I2b2HelperService {
         log.debug("getAssayIds used this query: " + assayS.toString());
 
         def assayIdsArray = [];
-        sql.eachRow(assayS.toString(), {row ->
+        sql.eachRow(assayS.toString(), { row ->
             if (row.assay_id != null) {
                 assayIdsArray.add(row.assay_id)
             }
@@ -3712,7 +3709,7 @@ class I2b2HelperService {
         log.debug("query to get genes from pathway: " + pathwayS.toString());
 
         def genesArray = [];
-        sql.eachRow(pathwayS.toString(), {row ->
+        sql.eachRow(pathwayS.toString(), { row ->
             if (row.gene_id != null) {
                 genesArray.add(row.gene_id);
             }
@@ -3904,7 +3901,7 @@ class I2b2HelperService {
         String sqlStr = "SELECT sourcesystem_cd, patient_num FROM patient_dimension WHERE patient_num IN (" +
                 ids + ") order by patient_num";
 
-        sql.eachRow(sqlStr) {row ->
+        sql.eachRow(sqlStr) { row ->
             String sourceSystemCd = row.sourcesystem_cd;
             Long patientNum = row.patient_num;
             if (sourceSystemCd != null && sourceSystemCd.length() != 0) {
@@ -3975,7 +3972,7 @@ class I2b2HelperService {
         log.debug("createProteinHeatmapQuery defined cnt = " + cntQuery);
 
 
-        sql.query(cntQuery) {ResultSet rs ->
+        sql.query(cntQuery) { ResultSet rs ->
             while (rs.next()) {
                 cnt = rs.toRowResult().N
             };
@@ -4384,7 +4381,7 @@ class I2b2HelperService {
                     "WHERE a.probeset_id = b.probeset_id AND a.trial_name IN (" + trialNames + ") " +
                     "AND a.assay_id IN (" + assayIds + ")";
 
-            sql.eachRow(rawCountQuery, , {row -> goodPct = row[0]})
+            sql.eachRow(rawCountQuery, , { row -> goodPct = row[0] })
 
             if (goodPct == 0) {
                 throw new Exception("No raw data for Comparative Marker Selection.")
@@ -4408,7 +4405,6 @@ class I2b2HelperService {
         log.debug(s.toString());
         return s.toString();
     }
-
 
     /**
      *
@@ -4467,7 +4463,6 @@ class I2b2HelperService {
             access.put(e.toString(), 'Unlocked');
         }
 
-
         //2)if we are at the root level then check the security
         def level = getLevelFromKey(concept_key);
         def admin = false;
@@ -4521,7 +4516,6 @@ class I2b2HelperService {
         return access;
     }
 
-
     /**
      * Gets the children value type concepts of a parent key
      */
@@ -4534,7 +4528,7 @@ class I2b2HelperService {
         int i = getLevelFromKey(concept_key) + 1;
         Sql sql = new Sql(dataSource);
         String sqlt = "SELECT C_FULLNAME FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
-        sql.eachRow(sqlt, [fullname + "%", i], {row ->
+        sql.eachRow(sqlt, [fullname + "%", i], { row ->
             String conceptkey = prefix + row.c_fullname;
             ls.add(keyToPath(conceptkey));
         })
@@ -4580,8 +4574,6 @@ class I2b2HelperService {
         return [oktousevalues: oktousevalues, normalunits: normalunits]
     }
 
-
-
     /**
      * Gets the access level for a list of concept keys
      */
@@ -4592,7 +4584,6 @@ class I2b2HelperService {
         for (e in paths) {
             access.put(e.toString(), 'Unlocked')
         }
-
 
         //2)if we are not an admin
         def admin = false;
@@ -4653,7 +4644,7 @@ class I2b2HelperService {
         Sql sql = new Sql(dataSource);
         String sqlt = "select distinct gene from haploview_data a inner join qt_patient_set_collection b on a.I2B2_ID=b.patient_num where result_instance_id = ? order by gene asc"
         //String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id="+resultInstanceId
-        sql.eachRow(sqlt, [resultInstanceId], {row ->
+        sql.eachRow(sqlt, [resultInstanceId], { row ->
             log.trace("IN ROW ITERATOR");
             log.trace("Found:" + row.gene);
             genes.add(row.gene);
@@ -4672,7 +4663,6 @@ class I2b2HelperService {
         for (e in paths) {
             access.put(e.toString(), 'Unlocked');
         }
-
 
         //2)if we are not an admin
         def admin = false;
@@ -4747,7 +4737,7 @@ class I2b2HelperService {
             sql.eachRow(sqlt, [
                     concept_cd,
                     result_instance_id
-            ], {row ->
+            ], { row ->
                 if (row.NVAL_NUM != null) {
                     //add a new Array if this is the first time im hitting this trial
                     if (!trialdata.containsKey(row.TRIAL)) {
@@ -4781,7 +4771,7 @@ class I2b2HelperService {
             log.debug("about to execute query: " + sqlt);
 
             sql.eachRow(sqlt,
-                    {row ->
+                    { row ->
                         if (row.NVAL_NUM != null) {
                             //add a new Array if this is the first time im hitting this trial
                             if (!trialdata.containsKey(row.TRIAL)) {
@@ -4831,7 +4821,7 @@ class I2b2HelperService {
         int i = getLevelFromKey(concept_key) + 1;
         Sql sql = new Sql(dataSource)
         String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
-        sql.eachRow(sqlt, [fullname + "%", i], {row ->
+        sql.eachRow(sqlt, [fullname + "%", i], { row ->
             String conceptkey = prefix + row.c_fullname;
             ls.put(keyToPath(conceptkey), row.secure_obj_token);
             log.trace("@@found" + conceptkey);
@@ -4840,7 +4830,7 @@ class I2b2HelperService {
     }
 
     Map<String, String> getSecureTokensForStudies(Collection<String> sdudyIds) {
-        if(!sdudyIds) return [:]
+        if (!sdudyIds) return [:]
 
         Sql sql = new Sql(dataSource)
         def tokens = [:]
@@ -4871,10 +4861,9 @@ class I2b2HelperService {
         rows.collectEntries { row ->
             def bioDataUniqueIdToken = row[0]
             def accessLevelName = row[1]
-            [ (bioDataUniqueIdToken): accessLevelName ]
-        } + ["EXP:PUBLIC": SecureAccessLevel.OWN ]
+            [(bioDataUniqueIdToken): accessLevelName]
+        } + ["EXP:PUBLIC": SecureAccessLevel.OWN]
     }
-
 
     /**
      * Gets the children with access for a concept
@@ -5045,7 +5034,7 @@ class I2b2HelperService {
         //		 
         //		Changed for Sanofi: Root levels are at 0 or -1.
         String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE c_hlevel IN (-1, 0) ORDER BY C_FULLNAME";
-        sql.eachRow(sqlt, [], {row ->
+        sql.eachRow(sqlt, [], { row ->
             String fullname = row.c_fullname;
             String prefix = fullname.substring(0, fullname.indexOf("\\", 2)); //get the prefix to put on to the fullname to make a key
             String conceptkey = prefix + fullname;
@@ -5081,7 +5070,6 @@ class I2b2HelperService {
         return sb.toString();
     }
 
-
     /**
      * Gets the platforms found
      * For now, subids could be null due to complexity of workflow and user error
@@ -5102,7 +5090,7 @@ class I2b2HelperService {
             sqlt += "PATIENT_ID IN (" + listToIN(subids) + ") AND "
         };
         sqlt += "SAMPLE_TYPE_CD IN (" + listToIN(conids) + ") GROUP BY PLATFORM, TIMEPOINT, TIMEPOINT_CD, SAMPLE_TYPE_CD, SAMPLE_TYPE, TISSUE_TYPE, TISSUE_TYPE_CD";
-        sql.eachRow(sqlt, {row ->
+        sql.eachRow(sqlt, { row ->
             if (row.PLATFORM != null) {
                 hv.platforms.add(row.PLATFORM)
             };
@@ -5136,7 +5124,7 @@ class I2b2HelperService {
             sqlt += "PATIENT_ID IN (" + listToIN(subids) + ") AND "
         };
         sqlt += "TIMEPOINT_CD IN (" + listToIN(conids) + ") GROUP BY PLATFORM, TIMEPOINT, TIMEPOINT_CD, SAMPLE_TYPE_CD, SAMPLE_TYPE, TISSUE_TYPE, TISSUE_TYPE_CD";
-        sql.eachRow(sqlt, {row ->
+        sql.eachRow(sqlt, { row ->
             if (row.PLATFORM != null) {
                 hv.platforms.add(row.PLATFORM)
             };
@@ -5171,7 +5159,7 @@ class I2b2HelperService {
         };
         sqlt += "CONCEPT_CODE IN (" + listToIN(conids) + ") GROUP BY PLATFORM, TIMEPOINT, TIMEPOINT_CD, SAMPLE_TYPE_CD, SAMPLE_TYPE, TISSUE_TYPE, TISSUE_TYPE_CD";
         log.trace(sqlt);
-        sql.eachRow(sqlt, {row ->
+        sql.eachRow(sqlt, { row ->
             if (row.PLATFORM != null) {
                 hv.platforms.add(row.PLATFORM)
             };
@@ -5207,7 +5195,7 @@ class I2b2HelperService {
             sqlt += "PATIENT_ID IN (" + listToIN(subids) + ") AND "
         };
         sqlt += "PLATFORM_CD IN (" + listToIN(conids) + ") GROUP BY PLATFORM, TIMEPOINT, TIMEPOINT_CD, SAMPLE_TYPE_CD, SAMPLE_TYPE, TISSUE_TYPE, TISSUE_TYPE_CD";
-        sql.eachRow(sqlt, {row ->
+        sql.eachRow(sqlt, { row ->
             if (row.PLATFORM != null) {
                 hv.platforms.add(row.PLATFORM)
             };
@@ -5241,7 +5229,7 @@ class I2b2HelperService {
             sqlt += "PATIENT_ID IN (" + listToIN(subids) + ") AND "
         };
         sqlt += "TISSUE_TYPE_CD IN (" + listToIN(conids) + ") GROUP BY PLATFORM, TIMEPOINT, TIMEPOINT_CD, SAMPLE_TYPE_CD, SAMPLE_TYPE, TISSUE_TYPE, TISSUE_TYPE_CD";
-        sql.eachRow(sqlt, {row ->
+        sql.eachRow(sqlt, { row ->
             if (row.PLATFORM != null) {
                 hv.platforms.add(row.PLATFORM)
             };
@@ -5281,107 +5269,107 @@ class I2b2HelperService {
         Sql sql = new Sql(dataSource)
         String sqlt = "";
         switch (infoType) {
-        case CohortInformation.TRIALS_TYPE:
-            ci.trials = new ArrayList();
-            sqlt = "select distinct modifier_cd from observation_fact where ";
-            if (subids != null) {
-                sqlt += "PATIENT_NUM in (" + listToIN(subids) + ") and "
-            };
-            sqlt += "concept_cd in (" + listToIN(conids) + ")";
-            sql.eachRow(sqlt, {row ->
-                ci.trials.add(row.modifier_cd)
-            })
-
-            if (ci.trials.size() == 0) {
-                sqlt = "select distinct sourcesystem_cd from i2b2 where c_basecode in (" + listToIN(conids) + ")";
-                sql.eachRow(sqlt, {row ->
-                    ci.trials.add(row.sourcesystem_cd)
+            case CohortInformation.TRIALS_TYPE:
+                ci.trials = new ArrayList();
+                sqlt = "select distinct modifier_cd from observation_fact where ";
+                if (subids != null) {
+                    sqlt += "PATIENT_NUM in (" + listToIN(subids) + ") and "
+                };
+                sqlt += "concept_cd in (" + listToIN(conids) + ")";
+                sql.eachRow(sqlt, { row ->
+                    ci.trials.add(row.modifier_cd)
                 })
-            }
 
-            break;
-        case CohortInformation.PLATFORMS_TYPE:
-            ci.platforms = new ArrayList();
-            sqlt = "select distinct platform from de_subject_sample_mapping where trial_name in (" + listToIN(ci.trials) + ") order by platform";
-            sql.eachRow(sqlt, {row ->
-                ci.platforms.add([platform: row.platform, platformLabel: ("MRNA_AFFYMETRIX".equals(row.platform) ? "MRNA" : row.platform)])
-            })
-            break;
-        case CohortInformation.TIMEPOINTS_TYPE:
-            ci.timepoints = new ArrayList();
-            sqlt = "select distinct timepoint, timepoint_cd from de_subject_sample_mapping where trial_name in (" + listToIN(ci.trials) + ") " +
-                    "and platform in (" + listToIN(ci.platforms) + ")"
-            if (ci.platforms.get(0) == 'RBM') {
-                sqlt += " and instr(timepoint_cd, ':Z:')>0"
-            }
-            if (ci.gpls.size > 0) {
-                sqlt += " and gpl_id in(" + listToIN(ci.gpls) + ")"
-            };
-            if (ci.tissues.size > 0) {
-                sqlt += " and tissue_type_cd in(" + listToIN(ci.tissues) + ")"
-            };
-            if (ci.samples.size > 0) {
-                sqlt += " and sample_type_cd in (" + listToIN(ci.samples) + ")"
-            };
-            if (ci.rbmpanels.size > 0) {
-                sqlt += " and rbm_panel in (" + listToIN(ci.rbmpanels) + ")"
-            };
-            sqlt += " order by timepoint"
-            sql.eachRow(sqlt, {row ->
-                if (row.timepoint_cd != null) {
-                    ci.timepoints.add([timepointLabel: row.timepoint, timepoint: row.timepoint_cd])
+                if (ci.trials.size() == 0) {
+                    sqlt = "select distinct sourcesystem_cd from i2b2 where c_basecode in (" + listToIN(conids) + ")";
+                    sql.eachRow(sqlt, { row ->
+                        ci.trials.add(row.sourcesystem_cd)
+                    })
                 }
-            })
-            break;
-        case CohortInformation.SAMPLES_TYPE:
-            ci.samples = new ArrayList();
-            sqlt = "select distinct sample_type, sample_type_cd from de_subject_sample_mapping where trial_name in (" + listToIN(ci.trials) + ") " +
-                    "and platform in (" + listToIN(ci.platforms) + ")";
-            if (ci.gpls.size > 0) {
-                sqlt += " and gpl_id in(" + listToIN(ci.gpls) + ")"
-            };
-            sqlt += " order by sample_type";
-            sql.eachRow(sqlt, {row ->
-                ci.samples.add([sample: row.sample_type_cd, sampleLabel: row.sample_type])
-            })
-            break;
-        case CohortInformation.TISSUE_TYPE:
-            ci.tissues = new ArrayList();
-            sqlt = "select distinct tissue_type, tissue_type_cd from de_subject_sample_mapping where trial_name in (" + listToIN(ci.trials) + ") " +
-                    "and platform in (" + listToIN(ci.platforms) + ")";
-            if (ci.gpls.size > 0) {
-                sqlt += " and gpl_id in(" + listToIN(ci.gpls) + ")"
-            };
-            if (ci.samples.size > 0) {
-                sqlt += " and sample_type_cd in (" + listToIN(ci.samples) + ")"
-            };
-            sqlt += " order by tissue_type";
-            sql.eachRow(sqlt, {row ->
-                if (row.tissue_type_cd != null) {
-                    ci.tissues.add([tissue: row.tissue_type_cd, tissueLabel: row.tissue_type])
+
+                break;
+            case CohortInformation.PLATFORMS_TYPE:
+                ci.platforms = new ArrayList();
+                sqlt = "select distinct platform from de_subject_sample_mapping where trial_name in (" + listToIN(ci.trials) + ") order by platform";
+                sql.eachRow(sqlt, { row ->
+                    ci.platforms.add([platform: row.platform, platformLabel: ("MRNA_AFFYMETRIX".equals(row.platform) ? "MRNA" : row.platform)])
+                })
+                break;
+            case CohortInformation.TIMEPOINTS_TYPE:
+                ci.timepoints = new ArrayList();
+                sqlt = "select distinct timepoint, timepoint_cd from de_subject_sample_mapping where trial_name in (" + listToIN(ci.trials) + ") " +
+                        "and platform in (" + listToIN(ci.platforms) + ")"
+                if (ci.platforms.get(0) == 'RBM') {
+                    sqlt += " and instr(timepoint_cd, ':Z:')>0"
                 }
-            })
-            break;
-        case CohortInformation.GPL_TYPE:
-            ci.gpls = new ArrayList();
-            sqlt = "select distinct rgi.platform, rgi.title from de_subject_sample_mapping dssm, de_gpl_info rgi where dssm.trial_name in (" + listToIN(ci.trials) + ") " +
-                    "and dssm.platform in (" + listToIN(ci.platforms) + ")" +
-                    "and dssm.gpl_id=rgi.platform"
-            sqlt += " order by rgi.title";
-            sql.eachRow(sqlt, {row ->
-                ci.gpls.add([gpl: row.platform, gplLabel: row.title])
-            })
-            break;
-        case CohortInformation.RBM_PANEL_TYPE:
-            ci.rbmpanels = new ArrayList();
-            sqlt = "select distinct dssm.rbm_panel from de_subject_sample_mapping dssm where dssm.trial_name in (" + listToIN(ci.trials) + ") " +
-                    "and dssm.platform in (" + listToIN(ci.platforms) + ")"
-            sql.eachRow(sqlt, {row ->
-                ci.rbmpanels.add([rbmpanel: row.rbm_panel, rbmpanelLabel: row.rbm_panel])
-            })
-            break;
-        default:
-            log.trace('No Info Type selected');
+                if (ci.gpls.size > 0) {
+                    sqlt += " and gpl_id in(" + listToIN(ci.gpls) + ")"
+                };
+                if (ci.tissues.size > 0) {
+                    sqlt += " and tissue_type_cd in(" + listToIN(ci.tissues) + ")"
+                };
+                if (ci.samples.size > 0) {
+                    sqlt += " and sample_type_cd in (" + listToIN(ci.samples) + ")"
+                };
+                if (ci.rbmpanels.size > 0) {
+                    sqlt += " and rbm_panel in (" + listToIN(ci.rbmpanels) + ")"
+                };
+                sqlt += " order by timepoint"
+                sql.eachRow(sqlt, { row ->
+                    if (row.timepoint_cd != null) {
+                        ci.timepoints.add([timepointLabel: row.timepoint, timepoint: row.timepoint_cd])
+                    }
+                })
+                break;
+            case CohortInformation.SAMPLES_TYPE:
+                ci.samples = new ArrayList();
+                sqlt = "select distinct sample_type, sample_type_cd from de_subject_sample_mapping where trial_name in (" + listToIN(ci.trials) + ") " +
+                        "and platform in (" + listToIN(ci.platforms) + ")";
+                if (ci.gpls.size > 0) {
+                    sqlt += " and gpl_id in(" + listToIN(ci.gpls) + ")"
+                };
+                sqlt += " order by sample_type";
+                sql.eachRow(sqlt, { row ->
+                    ci.samples.add([sample: row.sample_type_cd, sampleLabel: row.sample_type])
+                })
+                break;
+            case CohortInformation.TISSUE_TYPE:
+                ci.tissues = new ArrayList();
+                sqlt = "select distinct tissue_type, tissue_type_cd from de_subject_sample_mapping where trial_name in (" + listToIN(ci.trials) + ") " +
+                        "and platform in (" + listToIN(ci.platforms) + ")";
+                if (ci.gpls.size > 0) {
+                    sqlt += " and gpl_id in(" + listToIN(ci.gpls) + ")"
+                };
+                if (ci.samples.size > 0) {
+                    sqlt += " and sample_type_cd in (" + listToIN(ci.samples) + ")"
+                };
+                sqlt += " order by tissue_type";
+                sql.eachRow(sqlt, { row ->
+                    if (row.tissue_type_cd != null) {
+                        ci.tissues.add([tissue: row.tissue_type_cd, tissueLabel: row.tissue_type])
+                    }
+                })
+                break;
+            case CohortInformation.GPL_TYPE:
+                ci.gpls = new ArrayList();
+                sqlt = "select distinct rgi.platform, rgi.title from de_subject_sample_mapping dssm, de_gpl_info rgi where dssm.trial_name in (" + listToIN(ci.trials) + ") " +
+                        "and dssm.platform in (" + listToIN(ci.platforms) + ")" +
+                        "and dssm.gpl_id=rgi.platform"
+                sqlt += " order by rgi.title";
+                sql.eachRow(sqlt, { row ->
+                    ci.gpls.add([gpl: row.platform, gplLabel: row.title])
+                })
+                break;
+            case CohortInformation.RBM_PANEL_TYPE:
+                ci.rbmpanels = new ArrayList();
+                sqlt = "select distinct dssm.rbm_panel from de_subject_sample_mapping dssm where dssm.trial_name in (" + listToIN(ci.trials) + ") " +
+                        "and dssm.platform in (" + listToIN(ci.platforms) + ")"
+                sql.eachRow(sqlt, { row ->
+                    ci.rbmpanels.add([rbmpanel: row.rbm_panel, rbmpanelLabel: row.rbm_panel])
+                })
+                break;
+            default:
+                log.trace('No Info Type selected');
         }
     }
 
@@ -5408,7 +5396,7 @@ class I2b2HelperService {
                     "and dssm.concept_code in (" + listToIN(concepts) + ")" +
                     "and dssm.gpl_id=rgi.platform"
             sqlt += " order by rgi.title";
-            sql.eachRow(sqlt, {row ->
+            sql.eachRow(sqlt, { row ->
                 hv.gpls.add(row.platform)
                 hv.gplLabels.add(row.title)
             })
@@ -5435,7 +5423,7 @@ class I2b2HelperService {
             String sqlt = "";
             sqlt = "select distinct dssm.rbm_panel from de_subject_sample_mapping dssm where dssm.trial_name in (" + listToIN(ci.trials) + ") " +
                     "and dssm.platform in (" + listToIN(ci.platforms) + ") and dssm.CONCEPT_CODE IN (" + listToIN(concepts) + ")"
-            sql.eachRow(sqlt, {row ->
+            sql.eachRow(sqlt, { row ->
                 hv.rbmpanels.add(row.rbm_panel)
                 hv.rbmpanelsLabels.add(row.rbm_panel)
             })
@@ -5457,7 +5445,7 @@ class I2b2HelperService {
 				from qt_patient_set_collection
 				where result_instance_id IN (?, ?))""";
             log.debug(sqlt);
-            sql.eachRow(sqlt, [rid1, rid2], {row ->
+            sql.eachRow(sqlt, [rid1, rid2], { row ->
                 if (row.SECURE_OBJ_TOKEN != null) {
                     trials.add(row.SECURE_OBJ_TOKEN);
                 }
@@ -5480,7 +5468,7 @@ class I2b2HelperService {
 				from qt_patient_set_collection
 				where result_instance_id = ?)""";
             log.debug(sqlt);
-            sql.eachRow(sqlt, [rid], {row ->
+            sql.eachRow(sqlt, [rid], { row ->
                 if (row.SECURE_OBJ_TOKEN != null) {
                     trials.add(row.SECURE_OBJ_TOKEN)
                 }

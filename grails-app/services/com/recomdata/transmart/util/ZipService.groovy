@@ -132,7 +132,7 @@ class ZipService {
     }
 
     static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip)
-            throws Exception {
+    throws Exception {
         File folder = new File(srcFolder);
 
         for (String fileName : folder.list()) {

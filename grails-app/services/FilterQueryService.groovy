@@ -1,31 +1,21 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  *
  ******************************************************************/
-  
-
-import bio.BioAssayAnalysis
-import bio.Disease
-import bio.Compound
-import search.SearchKeyword
-import bio.ClinicalTrial
-import bio.BioData
-import bio.Experiment
-import bio.BioAssayAnalysisData
 import com.recomdata.search.query.AssayAnalysisDataQuery
 
 /**
@@ -36,36 +26,36 @@ import com.recomdata.search.query.AssayAnalysisDataQuery
 
 class FilterQueryService {
 
-	def trialDiseaseFilter(){
-		return experimentDiseaseFilter("Clinical Trial")
-	}
+    def trialDiseaseFilter() {
+        return experimentDiseaseFilter("Clinical Trial")
+    }
 
-	def trialDiseaseFilter(SearchFilter filter){
-		return findExperimentDiseaseFilter(filter, "Clinical Trial")
-	}
+    def trialDiseaseFilter(SearchFilter filter) {
+        return findExperimentDiseaseFilter(filter, "Clinical Trial")
+    }
 
-	def trialCompoundFilter(SearchFilter filter){
-		return findExperimentCompoundFilter(filter, "Clinical Trial")
-	}
+    def trialCompoundFilter(SearchFilter filter) {
+        return findExperimentCompoundFilter(filter, "Clinical Trial")
+    }
 
-	def findExperimentDiseaseFilter(SearchFilter filter, experimentType){
-		def gfilter = filter.globalFilter
+    def findExperimentDiseaseFilter(SearchFilter filter, experimentType) {
+        def gfilter = filter.globalFilter
 
-		def query = new AssayAnalysisDataQuery(mainTableAlias:"baad",setDistinct:true)
-		def alias = query.mainTableAlias+"_dis"
-		query.addTable("bio.BioAssayAnalysisData baad");
-		query.addTable("JOIN "+query.mainTableAlias+".experiment.diseases "+alias)
-		query.addSelect(alias)
-		query.addOrderBy(alias+".preferredName");
-		query.addCondition(query.mainTableAlias+".experiment.type='"+experimentType+"'")
-		 query.createGlobalFilterCriteria(gfilter, true);
+        def query = new AssayAnalysisDataQuery(mainTableAlias: "baad", setDistinct: true)
+        def alias = query.mainTableAlias + "_dis"
+        query.addTable("bio.BioAssayAnalysisData baad");
+        query.addTable("JOIN " + query.mainTableAlias + ".experiment.diseases " + alias)
+        query.addSelect(alias)
+        query.addOrderBy(alias + ".preferredName");
+        query.addCondition(query.mainTableAlias + ".experiment.type='" + experimentType + "'")
+        query.createGlobalFilterCriteria(gfilter, true);
 
-		// createSubFilterCriteria(filter.expAnalysisFilter, query);
-	//	println(query.generateSQL());
+        // createSubFilterCriteria(filter.expAnalysisFilter, query);
+        //	println(query.generateSQL());
 
 
-		return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
-	}
+        return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
+    }
 
 //	def experimentDiseaseFilter(String experimentType){
 //		def query = "SELECT distinct sk FROM search.SearchKeyword sk, bio.Experiment exp JOIN exp.diseases ds "+
@@ -79,42 +69,42 @@ class FilterQueryService {
 //		return search.SearchKeyword.executeQuery(query, experimentType);
 //}
 
-	def experimentCompoundFilter(String experimentType){
-		def query = "SELECT distinct sk FROM search.SearchKeyword sk, bio.Experiment exp JOIN exp.compounds cpd "+
-		" WHERE sk.bioDataId = cpd.id AND exp.type=? ORDER BY sk.keyword";
-		return search.SearchKeyword.executeQuery(query, experimentType);
-	}
+    def experimentCompoundFilter(String experimentType) {
+        def query = "SELECT distinct sk FROM search.SearchKeyword sk, bio.Experiment exp JOIN exp.compounds cpd " +
+                " WHERE sk.bioDataId = cpd.id AND exp.type=? ORDER BY sk.keyword";
+        return search.SearchKeyword.executeQuery(query, experimentType);
+    }
 
-	def findExperimentCompoundFilter(SearchFilter filter, experimentType){
-		def gfilter = filter.globalFilter
+    def findExperimentCompoundFilter(SearchFilter filter, experimentType) {
+        def gfilter = filter.globalFilter
 
-		def query = new AssayAnalysisDataQuery(mainTableAlias:"baad",setDistinct:true)
-		def alias = query.mainTableAlias+"_cpd"
-		query.addTable("bio.BioAssayAnalysisData baad");
-		query.addTable("JOIN "+query.mainTableAlias+".experiment.compounds "+alias)
-		query.addSelect(alias)
-		query.addOrderBy(alias+".genericName");
-		query.addCondition(query.mainTableAlias+".experiment.type='"+experimentType+"'")
-		 query.createGlobalFilterCriteria(gfilter, true);
+        def query = new AssayAnalysisDataQuery(mainTableAlias: "baad", setDistinct: true)
+        def alias = query.mainTableAlias + "_cpd"
+        query.addTable("bio.BioAssayAnalysisData baad");
+        query.addTable("JOIN " + query.mainTableAlias + ".experiment.compounds " + alias)
+        query.addSelect(alias)
+        query.addOrderBy(alias + ".genericName");
+        query.addCondition(query.mainTableAlias + ".experiment.type='" + experimentType + "'")
+        query.createGlobalFilterCriteria(gfilter, true);
 
-		// createSubFilterCriteria(filter.expAnalysisFilter, query);
-	//	println(query.generateSQL());
+        // createSubFilterCriteria(filter.expAnalysisFilter, query);
+        //	println(query.generateSQL());
 
-		return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
-	}
+        return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
+    }
 
-	def studyTypeFilter(){
-		def query = "SELECT distinct exp.studyType from bio.ClinicalTrial exp WHERE exp.studyType IS NOT NULL ORDER BY exp.studyType"
-		return bio.ClinicalTrial.executeQuery(query)
-	}
+    def studyTypeFilter() {
+        def query = "SELECT distinct exp.studyType from bio.ClinicalTrial exp WHERE exp.studyType IS NOT NULL ORDER BY exp.studyType"
+        return bio.ClinicalTrial.executeQuery(query)
+    }
 
-	def trialPhaseFilter(){
-		def query = "SELECT distinct exp.studyPhase FROM bio.ClinicalTrial exp WHERE exp.studyPhase IS NOT NULL ORDER BY exp.studyPhase"
-		return bio.ClinicalTrial.executeQuery(query)
-	}
+    def trialPhaseFilter() {
+        def query = "SELECT distinct exp.studyPhase FROM bio.ClinicalTrial exp WHERE exp.studyPhase IS NOT NULL ORDER BY exp.studyPhase"
+        return bio.ClinicalTrial.executeQuery(query)
+    }
 
-	def studyDesignFilter(String experimentType){
-		return bio.Experiment.executeQuery("SELECT DISTINCT exp.design FROM bio.Experiment exp WHERE exp.type=? AND exp.design IS NOT NULL ORDER BY exp.design",experimentType);
-	}
+    def studyDesignFilter(String experimentType) {
+        return bio.Experiment.executeQuery("SELECT DISTINCT exp.design FROM bio.Experiment exp WHERE exp.type=? AND exp.design IS NOT NULL ORDER BY exp.design", experimentType);
+    }
 
 }
