@@ -619,7 +619,7 @@ function createPathwaySearchBox(searchInputEltName, divName){
   	var ds;
   	var resultTpl;
   	if (GLOBAL.searchType==='native'){
-  		ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';  
+  		ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';
   		ds =new Ext.data.Store({
 			proxy: new Ext.data.ScriptTagProxy({
 				url: ajaxurl}),
@@ -630,7 +630,7 @@ function createPathwaySearchBox(searchInputEltName, divName){
 					{name: 'uid'},
 					{name: 'source'},
 					{name: 'name'},
-					{name: 'type'},
+					{name: 'type'}
 			   	]
 			)
 		});
@@ -641,7 +641,7 @@ function createPathwaySearchBox(searchInputEltName, divName){
 	        '</div></tpl>'
 	    );
   	}else{
-  		ajaxurl=pageInfo.basePath+'/search/loadSearchAnalysis';
+  		ajaxurl=pageInfo.basePath+'/search/loadSearchPathways';
   		ds =new Ext.data.Store({
 			proxy: new Ext.data.ScriptTagProxy({
 				url: ajaxurl}),
