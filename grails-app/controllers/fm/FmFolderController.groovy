@@ -91,16 +91,16 @@ class FmFolderController {
     public String serializeFoldersToXMLFile() {
         def writer = new FileWriter("c:\\temp\\SerializedAsXML.xml")
 
-        //		List<FmFolder> folderList = FmFolder.list()
+//		List<FmFolder> folderList = FmFolder.list()
         def fmFolderInstance = FmFolder.get(8)
 
 
         def builder = new StreamingMarkupBuilder().bind {
             //	mkp.xmlDeclaration()
             unescaped << '<fmFolders>'
-            //		folderList.each {folder ->
+//		folderList.each {folder ->
             out << fmFolderInstance
-            //		}
+//		}
             unescaped << '</fmFolders>'
         }
         writer << builder
@@ -437,8 +437,8 @@ class FmFolderController {
         def fmFolderInstance = FmFolder.get(params.id)
 
         // test the class
-        //		def json = new JSONSerializer(target: fmFolderInstance).getJSON()
-        //		log.info json
+//		def json = new JSONSerializer(target: fmFolderInstance).getJSON()
+//		log.info json
 
         def data = serializeFoldersToXMLFile()
         log.info data
@@ -627,7 +627,7 @@ class FmFolderController {
             for (def folderEntry : folderContentsAccessLevelMap) {
                 boolean found = false
                 for (String path : folderSearchLists[0]) {
-                    if (folderEntry.key.folderFullName.indexOf(path) > -1) {
+                    if (path.indexOf(folderEntry.key.folderFullName) > -1 || folderEntry.key.folderFullName.indexOf(path) > -1) {
                         found = true
                         break
                     }
@@ -886,7 +886,7 @@ class FmFolderController {
     }
 
     private createDisplayString(tagValues) {
-        //		log.info ("createDisplayString::TAGVALUES == " + tagValues)
+//		log.info ("createDisplayString::TAGVALUES == " + tagValues)
 
         def displayValue = ""
         if (tagValues) {
