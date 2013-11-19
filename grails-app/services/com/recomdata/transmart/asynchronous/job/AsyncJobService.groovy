@@ -24,7 +24,6 @@ import com.recomdata.transmart.domain.i2b2.AsyncJob
 import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 import org.apache.commons.lang.StringUtils
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -35,7 +34,6 @@ class AsyncJobService {
     def quartzScheduler
     def springSecurityService
     def jobResultsService
-    def config = ConfigurationHolder.config
 
     /**
      * Method that will get the list of jobs to show in the jobs tab

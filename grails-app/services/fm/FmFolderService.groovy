@@ -41,7 +41,7 @@ class FmFolderService {
     def importDirectory = config.com.recomdata.FmFolderService.importDirectory
     def filestoreDirectory = config.com.recomdata.FmFolderService.filestoreDirectory
     def fileTypes = config.com.recomdata.FmFolderService.fileTypes ?: DEFAULT_FILE_TYPES
-    def solrBaseUrl = config.com.recomdata.solr.baseURL
+    String solrBaseUrl = config.com.recomdata.solr.baseURL
     def amTagItemService
     def springSecurityService
     def i2b2HelperService

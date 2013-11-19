@@ -22,20 +22,20 @@ package com.recomdata.gex
 
 import i2b2.SampleInfo
 
-import java.io.File;
-import java.util.HashMap;
+import java.io.File
+import java.util.HashMap
 
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
-import org.rosuda.REngine.REXP;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.springframework.context.ApplicationContext;
+import org.apache.commons.lang.math.NumberUtils
+import org.apache.commons.lang.StringUtils
+import org.apache.commons.logging.LogFactory
+import org.apache.log4j.Logger
+import org.rosuda.REngine.REXP
+import org.rosuda.REngine.Rserve.RConnection
+import org.springframework.context.ApplicationContext
+import grails.util.Holders
 
-import com.recomdata.transmart.data.export.util.FileWriterUtil;
-import com.sun.rowset.CachedRowSetImpl;
+import com.recomdata.transmart.data.export.util.FileWriterUtil
+import com.sun.rowset.CachedRowSetImpl
 /**
  * This class has been replaced with GeneExpressionDataService
  * @author SMunikuntla
@@ -49,12 +49,8 @@ public class GexDao {
 	def springSecurityService = ctx.getBean('springSecurityService')
 	def grailsApplication = ctx.getBean('grailsApplication')
 	
-	//private static org.apache.log4j.Logger log = Logger.getLogger(GexDao.class);
 	private static final log = LogFactory.getLog('grails.app.' +GexDao.class.name)
 	
-	//def SearchKeyword = ctx.getBean('SearchKeyword')
-	def config = ConfigurationHolder.config
-
 	//This is the SQL query we use to get our data.
 	private String sqlQuery = ""
 
@@ -517,7 +513,7 @@ public class GexDao {
 				//Run the R command to set the working directory to our temp directory.
 				REXP x = c.eval(workingDirectoryCommand)
 				
-				String pluginScriptDirectory = config.com.recomdata.plugins.pluginScriptDirectory
+				String pluginScriptDirectory = Holders.config.com.recomdata.plugins.pluginScriptDirectory
 				String compilePivotDataCommand = "source('${pluginScriptDirectory}/PivotData/PivotGeneExprData.R')"
 				REXP comp = c.eval(compilePivotDataCommand)
 				//Prepare command to call the PivotClinicalData.R script

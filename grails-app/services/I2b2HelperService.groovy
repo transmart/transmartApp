@@ -27,7 +27,6 @@ import com.recomdata.db.DBHelper
 import com.recomdata.export.*
 import groovy.sql.Sql
 import i2b2.*
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -41,6 +40,7 @@ import javax.xml.xpath.XPathFactory
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
+import grails.util.Holders
 
 /**
  * $Id: I2b2HelperService.groovy 11303 2011-12-23 06:05:17Z mkapoor $
@@ -60,9 +60,9 @@ class I2b2HelperService {
 
     boolean transactional = false;
     def sessionFactory
-    def dataSource;
-    def conceptService;
-    def sampleInfoService;
+    def dataSource
+    def conceptService
+    def sampleInfoService
 
     /**
      * Gets a distribution of information from the patient dimention table for value columns
@@ -1855,7 +1855,7 @@ class I2b2HelperService {
     }
 
     boolean isSurvivalData(String conceptName) {
-        def dataList = ConfigurationHolder.config.com.recomdata.analysis.survival.survivalDataList;
+        def dataList = Holders.config.com.recomdata.analysis.survival.survivalDataList;
         for (String data : dataList) {
             if (conceptName.indexOf(data) > 0) {
                 return true
@@ -1865,7 +1865,7 @@ class I2b2HelperService {
     }
 
     boolean isSurvivalCensor(String conceptName) {
-        def censorList = ConfigurationHolder.config.com.recomdata.analysis.survival.censorFlagList;
+        def censorList = Holders.config.com.recomdata.analysis.survival.censorFlagList;
         for (String data : censorList) {
             if (conceptName.indexOf(data) > 0) {
                 return true
@@ -2879,7 +2879,7 @@ class I2b2HelperService {
         String mapFilePath = mapFile.absolutePath;
         String outputFileRoot = pedFile.parent + File.separator + gwasFiles.fileNameRoot
 
-        String plinkExecutable = ConfigurationHolder.config.com.recomdata.datasetExplorer.plinkExcutable;
+        String plinkExecutable = Holders.config.com.recomdata.datasetExplorer.plinkExcutable;
 
         String cmdLine = plinkExecutable + " --ped " + pedFilePath + " --map " + mapFilePath + " --out " + outputFileRoot + " --assoc --noweb";
 

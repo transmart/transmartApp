@@ -21,9 +21,7 @@
 package com.recomdata.dataexport.dao
 
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.springframework.context.ApplicationContext
-
 import bio.ClinicalTrial
 import bio.Compound
 import bio.Experiment
@@ -50,8 +48,6 @@ public class StudyDao
 		
 	//This is the list of parameters passed to the SQL statement.
 	ArrayList parameterList = new ArrayList();
-	
-	def config = ConfigurationHolder.config
 	
 	/**
 	 * This method will gather study data and write it to a file.

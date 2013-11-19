@@ -20,20 +20,19 @@
 
 package com.recomdata.i2b2
 
-import com.recomdata.dataexport.util.ExportUtil;
-import com.recomdata.transmart.data.export.util.FileWriterUtil;
-import com.sun.rowset.CachedRowSetImpl;
+import com.recomdata.dataexport.util.ExportUtil
+import com.recomdata.transmart.data.export.util.FileWriterUtil
+import com.sun.rowset.CachedRowSetImpl
 
 import java.sql.ResultSet
 import java.sql.Statement
 
-import org.rosuda.REngine.REXP;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.springframework.context.ApplicationContext;
-import org.apache.commons.lang.StringUtils;
+import org.rosuda.REngine.REXP
+import org.rosuda.REngine.Rserve.RConnection
+import org.springframework.context.ApplicationContext
+import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+import grails.util.Holders
 
 /**
  * This class has been replaced with ClinicalDataService
@@ -51,8 +50,6 @@ public class I2b2DAO {
 
 	//This is the list of parameters passed to the SQL statement.
 	ArrayList parameterList = new ArrayList();
-
-	def config = ConfigurationHolder.config
 
 	boolean dataFound = false
 	
@@ -120,9 +117,18 @@ public class I2b2DAO {
 		log.debug("Retrieving Clinical data : " + sqlQuery)
 		log.debug("Retrieving Clinical data : " + parameterList)
 
-		//Only pivot the data if the parameter specifies it.		if(parPivotData)		{
+		//Only pivot the data if the parameter specifies it.
+		if(parPivotData)
+		{
 			boolean mRNAExists =  retrievalTypeMRNAExists && null != filesDoneMap['MRNA.TXT'] && filesDoneMap['MRNA.TXT']
-			boolean snpExists =  retrievalTypeSNPExists && null != filesDoneMap['SNP.PED, .MAP & .CNV'] && filesDoneMap['SNP.PED, .MAP & .CNV']			pivotData(writeData(studyDir, fileName, jobName, retrievalTypes, snpFilesMap), mRNAExists, snpExists)		}		else		{			writeData(studyDir, fileName, jobName, retrievalTypes)		}	}
+			boolean snpExists =  retrievalTypeSNPExists && null != filesDoneMap['SNP.PED, .MAP & .CNV'] && filesDoneMap['SNP.PED, .MAP & .CNV']
+			pivotData(writeData(studyDir, fileName, jobName, retrievalTypes, snpFilesMap), mRNAExists, snpExists)
+		}
+		else
+		{
+			writeData(studyDir, fileName, jobName, retrievalTypes)
+		}
+	}
 
 	private String writeData(File studyDir, String fileName, String jobName, List retrievalTypes, Map snpFilesMap = null)
 	{
@@ -220,7 +226,7 @@ public class I2b2DAO {
 				//Run the R command to set the working directory to our temp directory.
 				REXP x = c.eval(workingDirectoryCommand)
 
-				String pluginScriptDirectory = config.com.recomdata.plugins.pluginScriptDirectory
+				String pluginScriptDirectory = Holders.config.com.recomdata.plugins.pluginScriptDirectory
 				String compilePivotDataCommand = ''
 				if (mRNAExists) {
 					compilePivotDataCommand = "source('${pluginScriptDirectory}/PivotData/PivotClinicalDataWithAssays2.R')"

@@ -19,15 +19,15 @@
 
 package fm
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as ConfigHolder
+import grails.util.Holders
 
 class FmFolderJob {
 
     def fmFolderService
 
     static triggers = {
-        def startDelay = ConfigHolder.config.com.recomdata.FmFolderJob.startDelayMs
-        def cronExpression = ConfigHolder.config.com.recomdata.FmFolderJob.cronExpression
+        def startDelay = Holders.config.com.recomdata.FmFolderJob.startDelayMs
+        def cronExpression = Holders.config.com.recomdata.FmFolderJob.cronExpression
 
         if (startDelay instanceof String) {
             try {

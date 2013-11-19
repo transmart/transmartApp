@@ -21,7 +21,7 @@
 
 import com.recomdata.search.DocumentHit
 import com.recomdata.search.DocumentQuery
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import grails.util.Holders
 
 /**
  * $Id: DocumentService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -32,7 +32,7 @@ class DocumentService {
 
     def searchKeywordService
     def globalFilterService
-    def String index = ConfigurationHolder.config.com.recomdata.searchengine.index.toString()
+    def String index = Holders.config.com.recomdata.searchengine.index.toString()
     def DocumentQuery documentQuery = new DocumentQuery(index)
 
     def documentCount(SearchFilter sfilter) {

@@ -25,8 +25,8 @@ import bio.BioMarkerExpAnalysisMV
 import fm.FmFolder
 import fm.FmFolderAssociation
 import groovy.xml.StreamingMarkupBuilder
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.json.JSONObject
+import grails.util.Holders
 
 class SolrFacetService {
 
@@ -597,9 +597,9 @@ class SolrFacetService {
      */
     def createSOLRQueryPath = {
 
-        String solrScheme = ConfigurationHolder.config.com.rwg.solr.scheme
-        String solrHost = ConfigurationHolder.config.com.rwg.solr.host
-        String solrPath = ConfigurationHolder.config.com.rwg.solr.path
+        String solrScheme = Holders.config.com.rwg.solr.scheme
+        String solrHost = Holders.config.com.rwg.solr.host
+        String solrPath = Holders.config.com.rwg.solr.path
         String solrRequestUrl = new URI(solrScheme, solrHost, solrPath, "", "").toURL()
 
         return solrRequestUrl
@@ -607,9 +607,9 @@ class SolrFacetService {
 
     def createSOLRUpdatePath = {
 
-        String solrScheme = ConfigurationHolder.config.com.rwg.solr.scheme
-        String solrHost = ConfigurationHolder.config.com.rwg.solr.host
-        String solrPath = ConfigurationHolder.config.com.rwg.solr.update.path
+        String solrScheme = Holders.config.com.rwg.solr.scheme
+        String solrHost = Holders.config.com.rwg.solr.host
+        String solrPath = Holders.config.com.rwg.solr.update.path
         String solrRequestUrl = new URI(solrScheme, solrHost, solrPath, "", "").toURL()
 
         return solrRequestUrl

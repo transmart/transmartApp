@@ -36,8 +36,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
-
+import grails.util.Holders;
 import com.recomdata.transmart.data.export.exception.FTPAuthenticationException;
 import com.recomdata.transmart.data.export.exception.InvalidFTPParamsException;
 
@@ -50,7 +49,7 @@ public class FTPUtil {
 	private static org.apache.log4j.Logger log =
             Logger.getLogger(FTPUtil.class);
 	@SuppressWarnings("rawtypes")
-	private static final Map config = ConfigurationHolder.getFlatConfig();
+	private static final Map config = Holders.getFlatConfig();
 	
 	private static final String FTP_SERVER = (String) config.get("com.recomdata.transmart.data.export.ftp.server");
 	private static final String FTP_SERVER_PORT = (String) config.get("com.recomdata.transmart.data.export.ftp.serverport");
