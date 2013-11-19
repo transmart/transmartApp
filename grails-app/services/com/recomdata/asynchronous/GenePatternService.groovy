@@ -40,6 +40,7 @@ import java.awt.*
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.util.List
+import grails.util.Holders
 
 /**
  * GenePatternService that manages the calls and jobs to the GenePattern server.
