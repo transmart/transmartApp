@@ -45,6 +45,7 @@ class PluginModule {
 	
 	static mapping = {
 		table 'SEARCHAPP.PLUGIN_MODULE'
+        version false
 		id column:'MODULE_SEQ',
 		   generator: 'sequence',
 		   params: [sequence:'SEARCHAPP.PLUGIN_MODULE_SEQ']

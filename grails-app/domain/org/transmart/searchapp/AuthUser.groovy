@@ -59,29 +59,19 @@ class AuthUser extends Principal {
 	}
 
 	def String toString(){
-		return userRealName+" - "+username;
+		return userRealName + " - " + username;
 	}
 
 	public AuthUser(){
 		this.type ='USER';
 	}
 
-	def beforeInsert  ={
-		if(name==null)	{
+	def beforeInsert = {
+		if(name == null)
 			name = userRealName
-		}
 	}
 	
-	def beforeUpdate =	{
+	def beforeUpdate ={
 		name = userRealName
-	}
-	
-	/**
-	 * is this user an Admin
-	 */
-	def isAdmin() {
-		def bAdmin = false;
-		authorities.each { if(it.authority==Role.ADMIN_ROLE) bAdmin = true; }
-		return bAdmin;
 	}
 }

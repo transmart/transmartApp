@@ -319,7 +319,7 @@ class RecomTagLib {
 		boolean bOpen = (status=="open")
 		if(colSpan==null) colSpan = 1
 
-		def openStyle = bOpen ? "visibility: hidden; display: none; vertical-align: middle;" : "'visibility: visible; display: block; vertical-align: middle;"
+		def openStyle = bOpen ? "visibility: hidden; display: none; vertical-align: middle;" : "visibility: visible; display: block; vertical-align: middle;"
 		def closedStyle = bOpen ? "visibility: visible; display: block; vertical-align: middle;" : "visibility: hidden; display: none; vertical-align: middle;"
 
 		out << "<thead><tr><th colSpan='"+colSpan+"' class='tableToggle'>"

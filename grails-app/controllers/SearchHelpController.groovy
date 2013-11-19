@@ -37,6 +37,7 @@ public class SearchHelpController{
 	// service injections
 	def springSecurityService
 	def geneSignatureService
+    def i2b2HelperService
 
 	def list = {
 
@@ -123,8 +124,8 @@ public class SearchHelpController{
 	def listAllGeneSignatures = {
 
 		// logged in user
-		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
-		def bAdmin = user.isAdmin()
+		def user = springSecurityService.getPrincipal()
+		def bAdmin = i2b2HelperService.isAdmin(user);
 
 		// signatures user has search access
 		def signatures = geneSignatureService.listPermissionedGeneSignatures(user.id, bAdmin)

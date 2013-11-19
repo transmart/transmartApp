@@ -16,6 +16,10 @@
         z-index: 100 !important;
     }
 
+    .GVNullValues {
+        color:#d3d3d3;
+    }
+
 /* Top level menu */
 
 table.menuDetail {
