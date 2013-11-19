@@ -24,11 +24,11 @@ class CustomUserDetailsContextMapper implements UserDetailsContextMapper {
 	def conf = SpringSecurityUtils.securityConfig
 	static Logger log = Logger.getLogger(CustomUserDetailsContextMapper.class)
 	static final List NO_ROLES = [new GrantedAuthorityImpl(SpringSecurityUtils.NO_ROLE)]
-	
+
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<GrantedAuthority> authority) {
 
-		log.info "Attempting to find user for username: $username"		
+		log.info "Attempting to find user for username: $username"
 		log.debug "Use withTransaction to avoid lazy loading initialization error when accessing the authorities collection"
 		Class<?> User = Holders.grailsApplication.getDomainClass(conf.userLookup.userDomainClassName).clazz
 
@@ -45,7 +45,7 @@ class CustomUserDetailsContextMapper implements UserDetailsContextMapper {
 				throw new UsernameNotFoundException('User not found', username)
             }
 			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
-			
+
 			// def userDetails = new AuthUserDetails(username, user.password, user.enabled, false, false, false, authorities, user.id)
 			 return new AuthUserDetails(user.username, user.passwd, user.enabled,
 				 !user.accountExpired, !user.passwordExpired, !user.accountLocked,
