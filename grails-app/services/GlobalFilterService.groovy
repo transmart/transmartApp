@@ -16,7 +16,8 @@
  *
  *
  ******************************************************************/
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+
+import grails.util.Holders
 
 /**
  * $Id: GlobalFilterService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -102,7 +103,7 @@ public class GlobalFilterService {
         def max = params.max
         def offset = params.offset
         if (max == null)
-            max = ConfigurationHolder.config.com.recomdata.search.paginate.max
+            max = Holders.config.com.recomdata.search.paginate.max
         if (offset == null)
             offset = 0
         // dynamic typing sucks here..

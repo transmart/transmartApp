@@ -21,8 +21,6 @@
 package com.recomdata.transmart.util
 
 import org.apache.commons.lang.StringUtils
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
 import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
 import java.util.concurrent.Executors
@@ -32,8 +30,6 @@ import java.util.concurrent.TimeUnit
 class FileDownloadService {
 
     boolean transactional = true
-
-    def config = ConfigurationHolder.config
 
     def getFilename(String fileURIStr) {
         URI fileURI = new URI(fileURIStr);
@@ -78,8 +74,6 @@ class FileDownloadService {
         }
 
         // Always a good idea to set a timeout for the pool if we don't want the threads to go on for ever.
-        // Get max-time to process files download using URLs from the config
-        // def timeout = config.com.recomdata.transmart.data.export.files.pool.timeout
         def timeout = 0
         if (timeout > 0) pool.awaitTermination(timeout, TimeUnit.SECONDS)
         println 'Waiting for Threads to finish executing'

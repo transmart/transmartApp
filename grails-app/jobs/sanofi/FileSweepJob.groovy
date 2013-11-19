@@ -21,7 +21,7 @@
 package sanofi
 
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as ConfigHolder
+import grails.util.Holders
 
 class FileSweepJob {
 
@@ -31,8 +31,8 @@ class FileSweepJob {
     //def timeout = 5000l
 
     static triggers = {
-        def startDelay = ConfigHolder.config.com.recomdata.export.jobs.sweep.startDelay
-        def repeatInterval = ConfigHolder.config.com.recomdata.export.jobs.sweep.repeatInterval
+        def startDelay = Holders.config.com.recomdata.export.jobs.sweep.startDelay
+        def repeatInterval = Holders.config.com.recomdata.export.jobs.sweep.repeatInterval
         if (startDelay instanceof String) {
             try {
                 startDelay = Integer.parseInt(startDelay)

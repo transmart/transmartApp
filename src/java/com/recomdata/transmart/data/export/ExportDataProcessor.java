@@ -33,9 +33,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 
 import com.recomdata.transmart.data.export.util.FTPUtil;
+import grails.util.Holders;
 
 /**
  * @author SMunikuntla
@@ -46,7 +46,7 @@ public class ExportDataProcessor {
 	private static org.apache.log4j.Logger log = Logger
 			.getLogger(ExportDataProcessor.class);
 	@SuppressWarnings("rawtypes")
-	private static final Map config = ConfigurationHolder.getFlatConfig();
+	private static final Map config = Holders.getFlatConfig();
 
 	private static final String TEMP_DIR = (String) config.get("com.recomdata.plugins.tempFolderDirectory");
 

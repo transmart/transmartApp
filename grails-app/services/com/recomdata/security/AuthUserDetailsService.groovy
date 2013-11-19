@@ -25,12 +25,12 @@
 package com.recomdata.security
 
 import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUserDetailsService
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.util.Holders
 
 /**
  * Implementation of <code>GrailsUserDetailsService</code> that uses
@@ -42,7 +42,6 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 
     static Logger log = Logger.getLogger(AuthUserDetailsService.class)
 
-    def application = ApplicationHolder.application
     def conf = SpringSecurityUtils.securityConfig
 
     /** * Some Spring Security classes (e.g. RoleHierarchyVoter) expect at least one role, so * we give a user with no granted roles this one which gets past that restriction but * doesn't grant anything. */
@@ -51,7 +50,7 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info "Attempting to find user for username: $username"
         log.debug "Use withTransaction to avoid lazy loading initialization error when accessing the authorities collection"
-        Class<?> User = application.getDomainClass(conf.userLookup.userDomainClassName).clazz
+        Class<?> User = Holders.grailsApplication.getDomainClass(conf.userLookup.userDomainClassName).clazz
         User.withTransaction { status ->
             def user = User.findWhere((conf.userLookup.usernamePropertyName): username)
             if (!user) {

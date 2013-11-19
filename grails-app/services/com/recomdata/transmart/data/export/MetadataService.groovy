@@ -25,7 +25,6 @@ import bio.Compound
 import bio.Experiment
 import bio.Taxonomy
 import com.recomdata.transmart.data.export.util.FileWriterUtil
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class MetadataService {
 
@@ -34,14 +33,12 @@ class MetadataService {
     def dataSource
     def springSecurityService
     def fileDownloadService
-    def dataTypeName = "Study";
-    def dataTypeFolder = null;
-    def char separator = '\t';
+    def dataTypeName = "Study"
+    def dataTypeFolder = null
+    def char separator = '\t'
 
     //This is the list of parameters passed to the SQL statement.
-    ArrayList parameterList = new ArrayList();
-
-    def config = ConfigurationHolder.config
+    ArrayList parameterList = new ArrayList()
 
     /**
      * This method will gather study data and write it to a file.

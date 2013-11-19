@@ -10,28 +10,27 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.GrantedAuthority
-import org.apache.log4j.Logger;
+import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.authentication.DisabledException
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.apache.log4j.Logger
+import grails.util.Holders
 
 class CustomUserDetailsContextMapper implements UserDetailsContextMapper {
 
     def dataSource
-	def application = ApplicationHolder.application
 	def conf = SpringSecurityUtils.securityConfig
 	static Logger log = Logger.getLogger(CustomUserDetailsContextMapper.class)
 	static final List NO_ROLES = [new GrantedAuthorityImpl(SpringSecurityUtils.NO_ROLE)]
-	
+
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<GrantedAuthority> authority) {
 
-		log.info "Attempting to find user for username: $username"		
+		log.info "Attempting to find user for username: $username"
 		log.debug "Use withTransaction to avoid lazy loading initialization error when accessing the authorities collection"
-		Class<?> User = application.getDomainClass(conf.userLookup.userDomainClassName).clazz
+		Class<?> User = Holders.grailsApplication.getDomainClass(conf.userLookup.userDomainClassName).clazz
 
         User.withTransaction { status ->
 			def user = User.findByUsername(username)
@@ -46,7 +45,7 @@ class CustomUserDetailsContextMapper implements UserDetailsContextMapper {
 				throw new UsernameNotFoundException('User not found', username)
             }
 			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
-			
+
 			// def userDetails = new AuthUserDetails(username, user.password, user.enabled, false, false, false, authorities, user.id)
 			 return new AuthUserDetails(user.username, user.passwd, user.enabled,
 				 !user.accountExpired, !user.passwordExpired, !user.accountLocked,

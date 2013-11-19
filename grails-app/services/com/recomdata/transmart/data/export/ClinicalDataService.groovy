@@ -23,9 +23,9 @@ package com.recomdata.transmart.data.export
 import com.recomdata.dataexport.util.ExportUtil
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.apache.commons.lang.StringUtils
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
+import grails.util.Holders
 
 class ClinicalDataService {
 
@@ -35,6 +35,7 @@ class ClinicalDataService {
     def i2b2HelperService
     def springSecurityService
     def utilService
+
     //Logger log = Logger.getLogger(getClass()) // log4j
 
     //This is the SQL query we use to get our data.
@@ -42,8 +43,6 @@ class ClinicalDataService {
 
     //This is the list of parameters passed to the SQL statement.
     //def parameterList = null;
-
-    def config = ConfigurationHolder.config
 
     boolean dataFound = false
 
@@ -291,7 +290,7 @@ class ClinicalDataService {
                 //Run the R command to set the working directory to our temp directory.
                 REXP x = c.eval(workingDirectoryCommand)
 
-                String rScriptDirectory = config.com.recomdata.transmart.data.export.rScriptDirectory
+                String rScriptDirectory = Holders.config.com.recomdata.transmart.data.export.rScriptDirectory
                 String compilePivotDataCommand = ''
                 if (mRNAExists) {
                     compilePivotDataCommand = "source('${rScriptDirectory}/PivotData/PivotClinicalDataWithAssays2.R')"

@@ -24,13 +24,12 @@ import com.recomdata.transmart.data.export.exception.DataNotFoundException
 import com.recomdata.transmart.data.export.util.FTPUtil
 import com.recomdata.transmart.data.export.util.ZipUtil
 import org.apache.commons.lang.StringUtils
-import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
 import org.quartz.Job
 import org.quartz.JobExecutionContext
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
 import org.rosuda.REngine.Rserve.RserveException
+import grails.util.Holders
 
 import java.lang.reflect.UndeclaredThrowableException
 
@@ -42,7 +41,7 @@ import java.lang.reflect.UndeclaredThrowableException
  */
 class GenericJobService implements Job {
 
-    def ctx = AH.application.mainContext
+    def ctx = Holders.grailsApplication.mainContext
     def springSecurityService = ctx.springSecurityService
     def jobResultsService = ctx.jobResultsService
     def i2b2HelperService = ctx.i2b2HelperService
@@ -51,7 +50,7 @@ class GenericJobService implements Job {
     def dataExportService = ctx.dataExportService
     def asyncJobService = ctx.asyncJobService
 
-    def static final String tempFolderDirectory = CH.config.com.recomdata.plugins.tempFolderDirectory
+    final String tempFolderDirectory = Holders.config.com.recomdata.plugins.tempFolderDirectory
 
     String jobTmpParentDir
     String jobTmpDirectory

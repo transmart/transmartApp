@@ -27,8 +27,6 @@ import com.recomdata.export.IgvFiles
 import com.recomdata.genepattern.JobStatus
 import com.sun.pdfview.PDFFile
 import com.sun.pdfview.PDFPage
-import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
-import org.codehaus.groovy.grails.commons.ConfigurationHolder as CH
 import org.genepattern.client.GPClient
 import org.genepattern.webservice.JobResult
 import org.genepattern.webservice.Parameter
@@ -55,7 +53,7 @@ class GenePatternService implements Job {
     GPClient gpClient = null
 
     // TODO: Figure out why dependency injection is not working as before.  Is the implements Job causing an issue?
-    def ctx = AH.application.mainContext
+    def ctx = Holders.grailsApplication.mainContext
     def springSecurityService = ctx.springSecurityService
     def i2b2HelperService = ctx.i2b2HelperService
     def jobResultsService = ctx.jobResultsService
@@ -64,7 +62,7 @@ class GenePatternService implements Job {
      * Quartz job execute method
      */
     public void execute(JobExecutionContext jobExecutionContext) {
-        def gpURL = CH.config.com.recomdata.datasetExplorer.genePatternURL + "/gp/jobResults/"
+        def gpURL = Holders.config.com.recomdata.datasetExplorer.genePatternURL + "/gp/jobResults/"
         def group = "heatmaps"
 
         def jobDetail = jobExecutionContext.getJobDetail()
@@ -1051,12 +1049,12 @@ class GenePatternService implements Job {
 
         String userName = springSecurityService.getPrincipal().username
         log.debug("starting genepattern client at " +
-                CH.config.com.recomdata.datasetExplorer.genePatternURL +
+                Holders.config.com.recomdata.datasetExplorer.genePatternURL +
                 " as " + userName
         );
 
         gpClient = new GPClient(
-                CH.config.com.recomdata.datasetExplorer.genePatternURL,
+                Holders.config.com.recomdata.datasetExplorer.genePatternURL,
                 userName);
         log.debug("genepattern client initialized");
         return gpClient;
@@ -1070,7 +1068,7 @@ class GenePatternService implements Job {
      * @return - the GenePattern Client object
      */
     public GPClient getGPClient(String userName) throws WebServiceException {
-        def gpURL = CH.config.com.recomdata.datasetExplorer.genePatternURL
+        def gpURL = Holders.config.com.recomdata.datasetExplorer.genePatternURL
         if (gpClient != null && userName.compareToIgnoreCase(gpClient.getUsername()) == 0) {
             log.debug("GPClient is already initialized for ${userName}, returning existing client")
             return gpClient
@@ -1156,10 +1154,10 @@ class GenePatternService implements Job {
      * @return
      */
     public String getGenePatternRealURLBehindProxy(String gpURLIn) {
-        String gpServerRealURL = CH.config.com.recomdata.datasetExplorer.genePatternRealURLBehindProxy;
+        String gpServerRealURL = Holders.config.com.recomdata.datasetExplorer.genePatternRealURLBehindProxy;
         if (gpServerRealURL == null || gpServerRealURL.length() == 0 || gpServerRealURL.equals("{}"))
             return gpURLIn;
-        String gpServerURL = CH.config.com.recomdata.datasetExplorer.genePatternURL;
+        String gpServerURL = Holders.config.com.recomdata.datasetExplorer.genePatternURL;
         gpURLIn.replace(gpServerURL, gpServerRealURL);
     }
 

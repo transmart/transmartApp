@@ -35,8 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
-
 public class IgvFiles {
 	protected File tmpDir;
 	protected String fileAccessUrl;

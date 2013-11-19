@@ -22,10 +22,10 @@ package com.recomdata.transmart.data.export
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.apache.commons.lang.StringUtils
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
 import search.SearchKeyword
+import grails.util.Holders
 
 import java.sql.Clob
 import java.sql.Connection
@@ -43,8 +43,6 @@ class SnpDataService {
     def plinkService
     def fileDownloadService
     def utilService
-    def grailsApplication
-    def config = ConfigurationHolder.config
 
     def Map getData(studyDir, fileName, jobName, resultInstanceId) {
         def snpFilesMap = [:]
@@ -114,7 +112,7 @@ class SnpDataService {
         conn = dataSource.getConnection()
 
         //Grab the configuration that sets the fetch size.
-        def rsize = config.com.recomdata.plugins.resultSize;
+        def rsize = Holders.config.com.recomdata.plugins.resultSize;
         Integer fetchSize = 5000;
         if (rsize != null) {
             try {
@@ -203,7 +201,7 @@ class SnpDataService {
         //Run the R command to set the working directory to our temp directory.
         REXP x = c.eval(workingDirectoryCommand)
 
-        String rScriptDirectory = config.com.recomdata.transmart.data.export.rScriptDirectory
+        String rScriptDirectory = Holders.config.com.recomdata.transmart.data.export.rScriptDirectory
         String compilePivotDataCommand = "source('${rScriptDirectory}/PivotData/PivotSNPCNVData.R')"
         REXP comp = c.eval(compilePivotDataCommand)
         //Prepare command to call the PivotSNPCNVData.R script
@@ -534,7 +532,7 @@ class SnpDataService {
         conn = dataSource.getConnection()
 
         //Grab the configuration that sets the fetch size.
-        def rsize = config.com.recomdata.plugins.resultSize;
+        def rsize = Holders.config.com.recomdata.plugins.resultSize;
         Integer fetchSize = 5000;
         if (rsize != null) {
             try {
@@ -627,7 +625,7 @@ class SnpDataService {
             pathway_name = null
         }
 
-        boolean nativeSearch = grailsApplication.config.com.recomdata.search.genepathway == 'native'
+        boolean nativeSearch = Holders.config.com.recomdata.search.genepathway == 'native'
 
         if (!nativeSearch && pathway_name != null) {
             //If we have multiple genes they will be comma separated. We need to split the string and find the unique ID for each.

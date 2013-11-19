@@ -24,7 +24,7 @@ import bio.Disease
 import com.recomdata.search.query.AssayDataStatsQuery
 import com.recomdata.search.query.AssayStatsExpMarkerQuery
 import com.recomdata.search.query.Query
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import grails.util.Holders
 
 /**
  * $Id: ExpressionProfileQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -110,8 +110,7 @@ class ExpressionProfileQueryService {
         createSubFilterCriteriaForMarker(filter.exprProfileFilter, query)
         query.addSelect("asemq.marker")
         query.addOrderBy("asemq.marker.name")
-        def config = ConfigurationHolder.config
-        return bio.BioAssayStatsExpMarker.executeQuery(query.generateSQL(), [max: config.com.recomdata.search.gene.max])
+        return bio.BioAssayStatsExpMarker.executeQuery(query.generateSQL(), [max: Holders.config.com.recomdata.search.gene.max])
     }
 
     def listDiseases(SearchFilter filter) {
