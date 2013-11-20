@@ -179,7 +179,8 @@ public class SearchKeywordService {
         log.info("Search keywords found: " + results.size())
 
         def keywords = []
-        def dupeList = []            // store category:keyword for a duplicate check until DB is cleaned up
+        def dupeList = []
+        // store category:keyword for a duplicate check until DB is cleaned up
 
         for (result in results) {
             def m = [:]
@@ -203,7 +204,8 @@ public class SearchKeywordService {
             m.put("categoryId", sk.searchKeyword.dataCategory)
             m.put("id", sk.searchKeyword.uniqueId)
 
-            log.info "sk.searchKeyword.id = " + sk.searchKeyword.uniqueId + " sk.searchKeyword.keyword = " + sk.searchKeyword.keyword
+            log.info "sk.searchKeyword.id = " + sk.searchKeyword.uniqueId +
+                    " sk.searchKeyword.keyword = " + sk.searchKeyword.keyword
 
             if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0) {
                 def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
@@ -310,10 +312,11 @@ public class SearchKeywordService {
             return []
         }
         def query = "select DISTINCT k from search.SearchKeyword k, bio.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
-        if (max != null)
+        if (max != null) {
             return SearchKeyword.executeQuery(query, [max: max])
-        else
+        } else {
             return SearchKeyword.executeQuery(query)
+        }
 
 
     }
@@ -331,8 +334,9 @@ public class SearchKeywordService {
         def query = "select DISTINCT k from search.SearchKeyword k, bio.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
         // find gene sigs
         def query2 = "select DISTINCT k from search.SearchKeyword k, search.SearchBioMarkerCorrelFastMV c where k.bioDataId=c.assocBioMarkerId and c.domainObjectId in (" + pathwayIds + ") ORDER BY k.keyword"
-        if (max != null)
+        if (max != null) {
             result.addAll(SearchKeyword.executeQuery(query, [max: max]))
+        }
         if (result.size() < max) {
             result.addAll(SearchKeyword.executeQuery(query2, [max: (max - result.size())]));
         } else {
@@ -371,7 +375,9 @@ public class SearchKeywordService {
 
         // delete search keywords
         if (gs.deletedFlag || (domainKey == GeneSignature.DOMAIN_KEY_GL && gs.foldChgMetricConceptCode.bioConceptCode != 'NOT_USED') || (domainKey == GeneSignature.DOMAIN_KEY && gs.foldChgMetricConceptCode.bioConceptCode == 'NOT_USED')) {
-            if (keyword != null) keyword.delete(flush: bFlush)
+            if (keyword != null) {
+                keyword.delete(flush: bFlush)
+            }
         } else {
             // add if does not exist
             if (keyword == null) {
@@ -415,14 +421,18 @@ public class SearchKeywordService {
         keyword.properties.dataCategory = domainKey
         keyword.properties.displayDataCategory = displayName
         keyword.properties.dataSource = "Internal"
-        if (!gs.publicFlag) keyword.properties.ownerAuthUserId = gs.createdByAuthUser?.id
+        if (!gs.publicFlag) {
+            keyword.properties.ownerAuthUserId = gs.createdByAuthUser?.id
+        }
 
         // keyword term
         SearchKeywordTerm term = new SearchKeywordTerm()
         term.properties.keywordTerm = gs.name.toUpperCase()
         term.properties.rank = 1
         term.properties.termLength = gs.name.length()
-        if (!gs.publicFlag) term.properties.ownerAuthUserId = gs.createdByAuthUser?.id
+        if (!gs.publicFlag) {
+            term.properties.ownerAuthUserId = gs.createdByAuthUser?.id
+        }
 
         // associate term
         keyword.addToTerms(term)
