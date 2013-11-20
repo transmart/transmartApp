@@ -155,7 +155,7 @@ public class SearchKeywordService {
         def c = SearchKeywordTerm.createCriteria()
         def results = c.list {
             if (term.size() > 0) {
-                like("keywordTerm", term.toUpperCase() + '%')
+                ilike("keywordTerm", '%' + term + '%')
             }
 
             if ("ALL".compareToIgnoreCase(category) != 0) {
@@ -178,33 +178,20 @@ public class SearchKeywordService {
         }
         log.info("Search keywords found: " + results.size())
 
-        def keywords = []
-        def dupeList = []            // store category:keyword for a duplicate check until DB is cleaned up
+        List<Map> keywords = []
 
-        for (result in results) {
-            def m = [:]
-            def sk = result
+        for (sk in results) {
+            Map keywordEntry = [:]
 
-            //////////////////////////////////////////////////////////////////////////////////
-            // HACK:  Duplicate check until DB is cleaned up
-            def dupeKey = sk.searchKeyword.displayDataCategory + ":" + sk.searchKeyword.keyword +
-                    ":" + sk.searchKeyword.bioDataId
-            if (dupeKey in dupeList) {
-                log.info "Found duplicate: " + dupeKey
-                continue
-            } else {
-                log.info "Found new entry, adding to the list: " + dupeList
-                dupeList << dupeKey
-            }
-            ///////////////////////////////////////////////////////////////////////////////////
+            keywordEntry.put("label", sk.searchKeyword.keyword)
+            keywordEntry.put("category", sk.searchKeyword.displayDataCategory)
+            keywordEntry.put("categoryId", sk.searchKeyword.dataCategory)
+            keywordEntry.put("id", sk.searchKeyword.uniqueId)
 
-            m.put("label", sk.searchKeyword.keyword)
-            m.put("category", sk.searchKeyword.displayDataCategory)
-            m.put("categoryId", sk.searchKeyword.dataCategory)
-            m.put("id", sk.searchKeyword.uniqueId)
+            log.info "sk.searchKeyword.id = " + sk.searchKeyword.uniqueId +
+                    " sk.searchKeyword.keyword = " + sk.searchKeyword.keyword
 
-            log.info "sk.searchKeyword.id = " + sk.searchKeyword.uniqueId + " sk.searchKeyword.keyword = " + sk.searchKeyword.keyword
-
+            // Collect synonyms
             if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0) {
                 def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
                 def synList = new StringBuilder()
@@ -219,15 +206,15 @@ public class SearchKeywordService {
                 if (synList.size() > 0) {
                     synList.append(")")
                 }
-                m.put("synonyms", synList.toString())
+                keywordEntry.put("synonyms", synList.toString())
             }
-            keywords.add(m)
+
+            keywords.add(keywordEntry)
         }
 
         /*
         * Get results from Bio Concept Code table
         */
-
         if (category.equals("ALL")) {
             results = ConceptCode.createCriteria().list {
                 if (term.size() > 0) {
@@ -291,7 +278,6 @@ public class SearchKeywordService {
             }
         }
 
-
         return keywords
     }
 
@@ -310,10 +296,11 @@ public class SearchKeywordService {
             return []
         }
         def query = "select DISTINCT k from search.SearchKeyword k, bio.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
-        if (max != null)
+        if (max != null) {
             return SearchKeyword.executeQuery(query, [max: max])
-        else
+        } else {
             return SearchKeyword.executeQuery(query)
+        }
 
 
     }
@@ -331,8 +318,9 @@ public class SearchKeywordService {
         def query = "select DISTINCT k from search.SearchKeyword k, bio.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
         // find gene sigs
         def query2 = "select DISTINCT k from search.SearchKeyword k, search.SearchBioMarkerCorrelFastMV c where k.bioDataId=c.assocBioMarkerId and c.domainObjectId in (" + pathwayIds + ") ORDER BY k.keyword"
-        if (max != null)
+        if (max != null) {
             result.addAll(SearchKeyword.executeQuery(query, [max: max]))
+        }
         if (result.size() < max) {
             result.addAll(SearchKeyword.executeQuery(query2, [max: (max - result.size())]));
         } else {
@@ -371,7 +359,9 @@ public class SearchKeywordService {
 
         // delete search keywords
         if (gs.deletedFlag || (domainKey == GeneSignature.DOMAIN_KEY_GL && gs.foldChgMetricConceptCode.bioConceptCode != 'NOT_USED') || (domainKey == GeneSignature.DOMAIN_KEY && gs.foldChgMetricConceptCode.bioConceptCode == 'NOT_USED')) {
-            if (keyword != null) keyword.delete(flush: bFlush)
+            if (keyword != null) {
+                keyword.delete(flush: bFlush)
+            }
         } else {
             // add if does not exist
             if (keyword == null) {
@@ -415,14 +405,18 @@ public class SearchKeywordService {
         keyword.properties.dataCategory = domainKey
         keyword.properties.displayDataCategory = displayName
         keyword.properties.dataSource = "Internal"
-        if (!gs.publicFlag) keyword.properties.ownerAuthUserId = gs.createdByAuthUser?.id
+        if (!gs.publicFlag) {
+            keyword.properties.ownerAuthUserId = gs.createdByAuthUser?.id
+        }
 
         // keyword term
         SearchKeywordTerm term = new SearchKeywordTerm()
         term.properties.keywordTerm = gs.name.toUpperCase()
         term.properties.rank = 1
         term.properties.termLength = gs.name.length()
-        if (!gs.publicFlag) term.properties.ownerAuthUserId = gs.createdByAuthUser?.id
+        if (!gs.publicFlag) {
+            term.properties.ownerAuthUserId = gs.createdByAuthUser?.id
+        }
 
         // associate term
         keyword.addToTerms(term)
