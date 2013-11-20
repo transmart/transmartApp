@@ -179,24 +179,9 @@ public class SearchKeywordService {
         log.info("Search keywords found: " + results.size())
 
         List<Map> keywords = []
-        List<String> dupeList = []
-        // stores category:keyword for a duplicate check until DB is cleaned up
 
         for (sk in results) {
             Map keywordEntry = [:]
-
-            //////////////////////////////////////////////////////////////////////////////////
-            // HACK:  Duplicate check until DB is cleaned up
-            String dupeKey = sk.searchKeyword.displayDataCategory + ":" + sk.searchKeyword.keyword +
-                    ":" + sk.searchKeyword.bioDataId
-            if (dupeKey in dupeList) {
-                log.info "Found duplicate: " + dupeKey
-                continue
-            } else {
-                log.info "Found new entry, adding to the list: " + dupeList
-                dupeList << dupeKey
-            }
-            ///////////////////////////////////////////////////////////////////////////////////
 
             keywordEntry.put("label", sk.searchKeyword.keyword)
             keywordEntry.put("category", sk.searchKeyword.displayDataCategory)
