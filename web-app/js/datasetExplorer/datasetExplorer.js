@@ -484,7 +484,6 @@ Ext.onReady(function () {
             }
         );
 
-
         analysisGridPanel = new Ext.Panel(
             {
                 id: 'analysisGridPanel',
@@ -492,10 +491,16 @@ Ext.onReady(function () {
                 region: 'center',
                 split: true,
                 height: 90,
-                layout: 'fit'
+                layout: 'fit',
+                listeners: {
+                    activate: function () {
+                        getSummaryGridData();
+                    }
+                }
             }
         );
-        analysisPanel = new Ext.Panel(
+
+        analysisPanel = new Ext.Panel (
             {
                 id: 'analysisPanel',
                 title: 'Summary Statistics',
@@ -712,6 +717,7 @@ Ext.onReady(function () {
         westPanel.add(createOntPanel());
         centerMainPanel.add(westPanel);
         centerMainPanel.add(centerPanel);
+
 
         viewport = new Ext.Viewport(
             {
@@ -1382,7 +1388,7 @@ function setupOntTree(id_in, title_in) {
                     success: function (result, request) {
                     },
                     failure: function (result, request) {
-                        console.log(result);
+                        console.error(result);
                     },
                     timeout: '600000'
                 }
@@ -2347,6 +2353,8 @@ function buildAnalysis(nodein) {
         return;
     }
 
+    resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
+
     Ext.Ajax.request(
         {
             url: pageInfo.basePath + "/chart/analysis",
@@ -2362,15 +2370,13 @@ function buildAnalysis(nodein) {
             ), // or a URL encoded string
             success: function (result, request) {
                 buildAnalysisComplete(result);
+                resultsTabPanel.body.unmask();
             },
             failure: function (result, request) {
                 buildAnalysisComplete(result);
             }
         }
     );
-
-    resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
-    // analysisPanel.setTitle("Results/Analysis - Analysis of concept " + getShortNameFromKey(node.attributes.id));
     getAnalysisGridData(node.attributes.id);
 }
 
@@ -3203,12 +3209,14 @@ function searchByName() {
 }
 
 function getSummaryStatistics() {
+    resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
     Ext.Ajax.request(
         {
             url: pageInfo.basePath + "/chart/basicStatistics",
             method: 'POST',
             success: function (result, request) {
                 getSummaryStatisticsComplete(result);
+                resultsTabPanel.body.unmask();
             },
             failure: function (result, request) {
                 getSummaryStatisticsComplete(result);
@@ -3224,34 +3232,12 @@ function getSummaryStatistics() {
             ) // or a URL encoded string
         }
     );
-
-    resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
 }
 
-
-function buildColumnModel(fields) {
-    var size = fields.size();
-    var con = new Array();
-    for (var i = 0; i < size; i++) {
-        var c = new Object();
-        var f = fields[i];
-        c.id = f.name;
-        c.dataIndex = f.name;
-        c.header = f.header;
-        c.tooltip = f.name;
-        c.width = f.width;
-        c.sortable = f.sortable;
-        c.menuDisabled = false;
-        con.push(c);
-    }
-
-    return new Ext.grid.ColumnModel(con);
-}
 
 function getSummaryStatisticsComplete(result, request) {
     resultsTabPanel.setActiveTab('analysisPanel');
     updateAnalysisPanel(result.responseText, false);
-    getSummaryGridData();
 }
 
 
@@ -3310,40 +3296,42 @@ function getSummaryGridData() {
         }
     );
     // or a URL encoded string */
-
-    gridstore.load(
-        {
-            params: myparams
+    resultsTabPanel.body.mask("Loading ..", 'x-mask-loading');
+    gridstore.load({
+        params: myparams,
+        callback: function () {
+            resultsTabPanel.body.unmask();
         }
-    );
+    });
 }
 
 function storeLoaded() {
-    var blah = gridstore;
+
     var cm = buildColumnModel(gridstore.reader.meta.fields);
-    if (window.grid) {
+
+    grid = analysisGridPanel.getComponent('gridView');
+    if (grid) {
         analysisGridPanel.remove(grid);
     }
-    grid = new Ext.grid.GridPanel(
-        {
-            id: 'grid',
-            store: gridstore,
-            cm: cm,
-            viewConfig: {
-                // forceFit : true
-            },
-            sm: new Ext.grid.RowSelectionModel(
-                {
-                    singleSelect: true
-                }
-            ),
-            layout: 'fit',
-            width: 800
-        }
-    );
+
+    grid = new GridViewPanel({
+        id: 'gridView',
+        title: 'Grid View',
+        viewConfig: {
+            forceFit : true
+        },
+        bbar: new Ext.Toolbar({
+            buttons: [exportButton]
+        }),
+        frame:true,
+        layout: 'fit',
+        width: 800,
+        cm: cm,
+        store: gridstore
+    });
+
     analysisGridPanel.add(grid);
     analysisGridPanel.doLayout();
-    resultsTabPanel.body.unmask();
 }
 
 function getAnalysisGridData(concept_key) {
@@ -3365,11 +3353,9 @@ function getAnalysisGridData(concept_key) {
     );
     // or a URL encoded string */
 
-    gridstore.load(
-        {
-            params: myparams
-        }
-    );
+    gridstore.load({
+        params: myparams
+    });
 }
 
 function getAnalysisPanelContent() {
