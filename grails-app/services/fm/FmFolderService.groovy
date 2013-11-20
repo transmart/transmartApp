@@ -41,7 +41,7 @@ class FmFolderService {
     def importDirectory = config.com.recomdata.FmFolderService.importDirectory
     def filestoreDirectory = config.com.recomdata.FmFolderService.filestoreDirectory
     def fileTypes = config.com.recomdata.FmFolderService.fileTypes ?: DEFAULT_FILE_TYPES
-    def solrBaseUrl = config.com.recomdata.solr.baseURL
+    String solrBaseUrl = config.com.recomdata.solr.baseURL
     def amTagItemService
     def springSecurityService
     def i2b2HelperService
@@ -345,7 +345,6 @@ class FmFolderService {
             // Use the file's unique ID as the document ID in SOLR
             url.append("?").append("literal.id=").append(URLEncoder.encode(fmFile.getUniqueId(), "UTF-8"));
 
-
             // Use the file's parent folder's unique ID as the folder_uid in SOLR
             if (fmFile.folder != null) {
                 url.append("&").append("literal.folder=").append(URLEncoder.encode(fmFile.folder.getUniqueId(), "UTF-8"));
@@ -460,17 +459,17 @@ class FmFolderService {
     }
 
     Map<FmFolder, String> getAccessLevelInfoForFolders(AuthUser user, Collection<FmFolder> fmFolders) {
-        if(!fmFolders) return [:]
+        if (!fmFolders) return [:]
 
         boolean isAdmin = user && (user.isAdmin() || user.isDseAdmin())
 
         def foldersByStudy = fmFolders.groupBy { it.findParentStudyFolder() }
 
         def userAssignedTokens, studyFolderStudyIdMap, studyTokensMap
-        if(!isAdmin) {
+        if (!isAdmin) {
             studyFolderStudyIdMap = foldersByStudy.keySet().findAll().collectEntries {
                 def studyId = FmFolderAssociation.findByFmFolder(it)?.getBioObject()?.accession
-                [(it) : studyId]
+                [(it): studyId]
             }
 
             studyTokensMap = i2b2HelperService.getSecureTokensForStudies(studyFolderStudyIdMap.values().findAll())
@@ -480,17 +479,17 @@ class FmFolderService {
 
         def results = [:]
         foldersByStudy.each { entry ->
-            if(entry.key) {
-                if(isAdmin) {
-                    results += entry.value.collectEntries { [ (it): 'ADMIN' ] }
+            if (entry.key) {
+                if (isAdmin) {
+                    results += entry.value.collectEntries { [(it): 'ADMIN'] }
                 } else {
                     def studyId = studyFolderStudyIdMap[entry.key]
                     def token = studyTokensMap[studyId]
                     def accessLevelInfo = userAssignedTokens[token] ?: 'LOCKED'
-                    results += entry.value.collectEntries { [ (it): accessLevelInfo ] }
+                    results += entry.value.collectEntries { [(it): accessLevelInfo] }
                 }
             } else {
-                results += entry.value.collectEntries { [ (it): 'NA' ] }
+                results += entry.value.collectEntries { [(it): 'NA'] }
             }
         }
 

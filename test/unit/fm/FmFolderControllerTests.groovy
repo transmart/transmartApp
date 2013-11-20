@@ -23,7 +23,7 @@ class FmFolderControllerTests {
         controller.fmFolderService = new FmFolderService()
         controller.fmFolderService.metaClass.getFile = { FmFile f ->
             def bogusFile = new File('bogus')
-            bogusFile.metaClass.newInputStream = { ->
+            bogusFile.metaClass.newInputStream = {->
                 new StringInputStream('foobar')
             }
             bogusFile

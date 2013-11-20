@@ -1,39 +1,38 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  *
  ******************************************************************/
-  
+
 
 package com.recomdata.i2b2
 
-import com.recomdata.dataexport.util.ExportUtil;
-import com.recomdata.transmart.data.export.util.FileWriterUtil;
-import com.sun.rowset.CachedRowSetImpl;
+import com.recomdata.dataexport.util.ExportUtil
+import com.recomdata.transmart.data.export.util.FileWriterUtil
+import com.sun.rowset.CachedRowSetImpl
 
 import java.sql.ResultSet
 import java.sql.Statement
 
-import org.rosuda.REngine.REXP;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.springframework.context.ApplicationContext;
-import org.apache.commons.lang.StringUtils;
+import org.rosuda.REngine.REXP
+import org.rosuda.REngine.Rserve.RConnection
+import org.springframework.context.ApplicationContext
+import org.apache.commons.lang.StringUtils
 import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+import grails.util.Holders
 
 /**
  * This class has been replaced with ClinicalDataService
@@ -52,10 +51,8 @@ public class I2b2DAO {
 	//This is the list of parameters passed to the SQL statement.
 	ArrayList parameterList = new ArrayList();
 
-	def config = ConfigurationHolder.config
-
 	boolean dataFound = false
-	
+
 	/**
 	 * This method will gather data from the i2b2 database and write it to a file. The file will contain PATIENT_NUM,CONCEPT_PATH, The concept name and a subset.
 	 * @param fileName Name of the data file.
@@ -63,8 +60,8 @@ public class I2b2DAO {
 	 * @param conceptCodeList An array of strings representing the concept codes to filter on.
 	 * @return
 	 */
-	public void getData(String study, File studyDir, String fileName, String jobName, String resultInstanceId, 
-		String[] conceptCodeList, List retrievalTypes, boolean parPivotData, boolean parFilterHighLevelConcepts, 
+	public void getData(String study, File studyDir, String fileName, String jobName, String resultInstanceId,
+		String[] conceptCodeList, List retrievalTypes, boolean parPivotData, boolean parFilterHighLevelConcepts,
 		Map snpFilesMap, String subset, Map filesDoneMap) 	{
 
 		boolean retrievalTypeMRNAExists = retrievalTypeExists('MRNA', retrievalTypes)
@@ -120,9 +117,18 @@ public class I2b2DAO {
 		log.debug("Retrieving Clinical data : " + sqlQuery)
 		log.debug("Retrieving Clinical data : " + parameterList)
 
-		//Only pivot the data if the parameter specifies it.		if(parPivotData)		{
+		//Only pivot the data if the parameter specifies it.
+		if(parPivotData)
+		{
 			boolean mRNAExists =  retrievalTypeMRNAExists && null != filesDoneMap['MRNA.TXT'] && filesDoneMap['MRNA.TXT']
-			boolean snpExists =  retrievalTypeSNPExists && null != filesDoneMap['SNP.PED, .MAP & .CNV'] && filesDoneMap['SNP.PED, .MAP & .CNV']			pivotData(writeData(studyDir, fileName, jobName, retrievalTypes, snpFilesMap), mRNAExists, snpExists)		}		else		{			writeData(studyDir, fileName, jobName, retrievalTypes)		}	}
+			boolean snpExists =  retrievalTypeSNPExists && null != filesDoneMap['SNP.PED, .MAP & .CNV'] && filesDoneMap['SNP.PED, .MAP & .CNV']
+			pivotData(writeData(studyDir, fileName, jobName, retrievalTypes, snpFilesMap), mRNAExists, snpExists)
+		}
+		else
+		{
+			writeData(studyDir, fileName, jobName, retrievalTypes)
+		}
+	}
 
 	private String writeData(File studyDir, String fileName, String jobName, List retrievalTypes, Map snpFilesMap = null)
 	{
@@ -135,18 +141,18 @@ public class I2b2DAO {
 		def char separator = '\t';
 		def filePath = null
 		FileWriterUtil writerUtil = null
-		
+
 		try {
 			writerUtil = new FileWriterUtil(studyDir, fileName, jobName, dataTypeName, dataTypeFolder, separator);
 			writerUtil.writeLine(getColumnNames(retrievalTypes, snpFilesMap) as String[])
-			
+
 			sql.eachRow(sqlQuery.toString(), parameterList, { row ->
 				dataFound = true
 				def values = []
 				values.add(row.PATIENT_NUM?.toString())
 				values.add(row.SUBSET?.toString())
 				values.add(row.CONCEPT_CD?.toString())
-	
+
 				//Add Concept Path
 				def removalArr = [row.VALUE]
 				if (retrievalTypeExists("MRNA", retrievalTypes)) {
@@ -158,7 +164,7 @@ public class I2b2DAO {
 					removalArr.add(row.NAME_CHAR?.toString())
 				}
 				values.add(ExportUtil.getShortConceptPath(row.CONCEPT_PATH, removalArr))
-	
+
 				if (retrievalTypeExists("MRNA", retrievalTypes)) {
 					values.add(ExportUtil.getSampleValue(row.VALUE, row.SAMPLE_TYPE, row.TIMEPOINT, row.TISSUE_TYPE))
 				} else {
@@ -168,13 +174,13 @@ public class I2b2DAO {
 						values.add(row.VALUE?.toString())
 					}
 				}
-	
+
 				//Actual Concept Path is required for Data Association
 				values.add(row.CONCEPT_PATH)
 				if (retrievalTypeExists("MRNA", retrievalTypes)) {
 					values.add(row.ASSAY_ID?.toString())
 				}
-	
+
 				if (retrievalTypeExists("SNP", retrievalTypes)) {
 					def pedFile = snpFilesMap?.get("PEDFiles")?.get(row.PATIENT_NUM?.toString()+'_'+row.CONCEPT_CD?.toString())
 					if (null != snpFilesMap?.get("PEDFiles")) {
@@ -193,15 +199,15 @@ public class I2b2DAO {
 						}
 					}
 				}
-	
+
 				writerUtil.writeLine(values as String[])
 			})
-			
+
 			filePath = writerUtil.outputFile.getAbsolutePath()
 		} catch (Exception e) {
 			log.info(e.getMessage())
 		} finally {
-			writerUtil?.finishWriting()	
+			writerUtil?.finishWriting()
 			sql?.close()
 		}
 
@@ -220,7 +226,7 @@ public class I2b2DAO {
 				//Run the R command to set the working directory to our temp directory.
 				REXP x = c.eval(workingDirectoryCommand)
 
-				String pluginScriptDirectory = config.com.recomdata.plugins.pluginScriptDirectory
+				String pluginScriptDirectory = Holders.config.com.recomdata.plugins.pluginScriptDirectory
 				String compilePivotDataCommand = ''
 				if (mRNAExists) {
 					compilePivotDataCommand = "source('${pluginScriptDirectory}/PivotData/PivotClinicalDataWithAssays2.R')"
@@ -299,5 +305,5 @@ public class I2b2DAO {
 	def public boolean wasDataFound(){
 		return dataFound
 	}
-	
+
 }

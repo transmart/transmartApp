@@ -95,8 +95,8 @@ class FmFolder implements Buildable {
 
     FmFolder findParentStudyFolder() {
         def currentFolder = this
-        while(currentFolder) {
-            if(currentFolder.folderType == FolderType.STUDY.name()) {
+        while (currentFolder) {
+            if (currentFolder.folderType == FolderType.STUDY.name()) {
                 return currentFolder
             }
             currentFolder = currentFolder.parent
@@ -117,7 +117,6 @@ class FmFolder implements Buildable {
         }
         return folder;
     }
-
 
     /**
      * Return true if this folder has any folders that name it as a parent

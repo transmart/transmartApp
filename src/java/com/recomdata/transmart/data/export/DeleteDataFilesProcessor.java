@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
+import grails.util.Holders;
 
 import com.recomdata.transmart.data.export.util.FTPUtil;
 
@@ -36,7 +36,7 @@ public class DeleteDataFilesProcessor {
 			.getLogger(DeleteDataFilesProcessor.class);
 	
 	@SuppressWarnings("rawtypes")
-	private static final Map config = ConfigurationHolder.getFlatConfig();
+	private static final Map config = Holders.getFlatConfig();
 	private static final String TEMP_DIR = (String) config.get("com.recomdata.plugins.tempFolderDirectory");
 	
 	public boolean deleteDataFile(String fileToDelete, String directoryToDelete){
