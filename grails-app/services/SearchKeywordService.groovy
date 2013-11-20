@@ -178,17 +178,16 @@ public class SearchKeywordService {
         }
         log.info("Search keywords found: " + results.size())
 
-        def keywords = []
-        def dupeList = []
-        // store category:keyword for a duplicate check until DB is cleaned up
+        List<Map> keywords = []
+        List<String> dupeList = []
+        // stores category:keyword for a duplicate check until DB is cleaned up
 
-        for (result in results) {
-            def m = [:]
-            def sk = result
+        for (sk in results) {
+            Map keywordEntry = [:]
 
             //////////////////////////////////////////////////////////////////////////////////
             // HACK:  Duplicate check until DB is cleaned up
-            def dupeKey = sk.searchKeyword.displayDataCategory + ":" + sk.searchKeyword.keyword +
+            String dupeKey = sk.searchKeyword.displayDataCategory + ":" + sk.searchKeyword.keyword +
                     ":" + sk.searchKeyword.bioDataId
             if (dupeKey in dupeList) {
                 log.info "Found duplicate: " + dupeKey
@@ -199,14 +198,15 @@ public class SearchKeywordService {
             }
             ///////////////////////////////////////////////////////////////////////////////////
 
-            m.put("label", sk.searchKeyword.keyword)
-            m.put("category", sk.searchKeyword.displayDataCategory)
-            m.put("categoryId", sk.searchKeyword.dataCategory)
-            m.put("id", sk.searchKeyword.uniqueId)
+            keywordEntry.put("label", sk.searchKeyword.keyword)
+            keywordEntry.put("category", sk.searchKeyword.displayDataCategory)
+            keywordEntry.put("categoryId", sk.searchKeyword.dataCategory)
+            keywordEntry.put("id", sk.searchKeyword.uniqueId)
 
             log.info "sk.searchKeyword.id = " + sk.searchKeyword.uniqueId +
                     " sk.searchKeyword.keyword = " + sk.searchKeyword.keyword
 
+            // Collect synonyms
             if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0) {
                 def synonyms = BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
                 def synList = new StringBuilder()
@@ -221,15 +221,15 @@ public class SearchKeywordService {
                 if (synList.size() > 0) {
                     synList.append(")")
                 }
-                m.put("synonyms", synList.toString())
+                keywordEntry.put("synonyms", synList.toString())
             }
-            keywords.add(m)
+
+            keywords.add(keywordEntry)
         }
 
         /*
         * Get results from Bio Concept Code table
         */
-
         if (category.equals("ALL")) {
             results = ConceptCode.createCriteria().list {
                 if (term.size() > 0) {
@@ -292,7 +292,6 @@ public class SearchKeywordService {
                 }
             }
         }
-
 
         return keywords
     }
