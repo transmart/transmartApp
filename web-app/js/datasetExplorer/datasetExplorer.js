@@ -3279,6 +3279,7 @@ function activateTab(tab) {
 }
 
 function getSummaryGridData() {
+
     gridstore = new Ext.data.JsonStore(
         {
             url: pageInfo.basePath + '/chart/basicGrid',
@@ -3287,6 +3288,7 @@ function getSummaryGridData() {
         }
     );
     gridstore.on('load', storeLoaded);
+
     var myparams = Ext.urlEncode(
         {
             charttype: "basicgrid",
@@ -3295,17 +3297,30 @@ function getSummaryGridData() {
             result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
         }
     );
+
     // or a URL encoded string */
     resultsTabPanel.body.mask("Loading ..", 'x-mask-loading');
+
     gridstore.load({
         params: myparams,
         callback: function () {
             resultsTabPanel.body.unmask();
         }
     });
+
 }
 
 function storeLoaded() {
+
+    var exportButton = new Ext.Button ({
+        text:'Export to Excel',
+        listeners: {
+            click: function () {
+                window.location = 'data:application/vnd.ms-excel;base64,' +
+                    Base64.encode(grid.getExcelXml());
+            }
+        }
+    });
 
     var cm = buildColumnModel(gridstore.reader.meta.fields);
 
@@ -3325,7 +3340,6 @@ function storeLoaded() {
         }),
         frame:true,
         layout: 'fit',
-        width: 800,
         cm: cm,
         store: gridstore
     });
