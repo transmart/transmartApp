@@ -40,17 +40,17 @@ public class ExperimentAnalysisFilter {
 	//Double foldChange = 1.2
 	//Double pValue = 0.05
 	Double foldChange
-	Double pValue
+	Double pvalue
 
 	def isUsed(){
-		return validString(species) || validString(expDesign)||validString(expType)||validString(dataSource)||bioCompoundId!=null || bioDiseaseId!=null || foldChange!=null || pValue!=null || validString(cellLine);
+		return validString(species) || validString(expDesign)||validString(expType)||validString(dataSource)||bioCompoundId!=null || bioDiseaseId!=null || foldChange!=null || pvalue!=null || validString(cellLine);
 	}
 	def filterFoldChange(){
 		return foldChange!=null && foldChange>0;
 	}
 
 	def filterPValue(){
-		return pValue!=null && pValue>0;
+		return pvalue!=null && pvalue>0;
 	}
 
 	def filterDisease(){

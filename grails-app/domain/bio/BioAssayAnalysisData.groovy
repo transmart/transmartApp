@@ -34,7 +34,7 @@ class BioAssayAnalysisData implements IExcelProfile {
     Double rawPvalue
     Double adjustedPvalue
     Double preferredPvalue
-    Double rValue
+    Double rvalue
     Double rhoValue
     BioAssayAnalysis analysis
     Double cutValue
@@ -59,7 +59,7 @@ class BioAssayAnalysisData implements IExcelProfile {
             rawPvalue column: 'RAW_PVALUE'
             adjustedPvalue column: 'ADJUSTED_PVALUE'
             preferredPvalue column: 'PREFERRED_PVALUE'
-            rValue column: 'R_VALUE'
+            rvalue column: 'R_VALUE'
             rhoValue column: 'RHO_VALUE'
             analysis column: 'BIO_ASSAY_ANALYSIS_ID'
             cutValue column: 'CUT_VALUE'
@@ -82,6 +82,6 @@ class BioAssayAnalysisData implements IExcelProfile {
      * Get values to Export to Excel
      */
     public List getValues() {
-        return [probeset, foldChangeRatio, rValue, rawPvalue, teaNormalizedPValue, adjustedPvalue, rhoValue, cutValue, resultsValue, numericValueCode, numericValue]
+        return [probeset, foldChangeRatio, rvalue, rawPvalue, teaNormalizedPValue, adjustedPvalue, rhoValue, cutValue, resultsValue, numericValueCode, numericValue]
     }
 }

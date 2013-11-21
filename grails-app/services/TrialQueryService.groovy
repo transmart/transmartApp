@@ -305,18 +305,18 @@ class TrialQueryService {
         // preferred p value on BioAssayAnalysisData
         if (trialfilter.hasPValue()) {
             if (bFirstWhereItem) {
-                s.append(" (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
+                s.append(" (baad.preferredPvalue <= ").append(trialfilter.pvalue).append(" )")
             } else {
-                s.append(" AND (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
+                s.append(" AND (baad.preferredPvalue <= ").append(trialfilter.pvalue).append(" )")
             }
             //.append(" OR baad.preferredPvalue IS NULL)")
         }
         //		 rvalue on BioAssayAnalysisData
         if (trialfilter.hasRValue()) {
             if (bFirstWhereItem) {
-                s.append(" ((baad.rValue >= abs(").append(trialfilter.rValue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+                s.append(" ((baad.rvalue >= abs(").append(trialfilter.rvalue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rvalue).append(")) OR baad.rhoValue IS NULL)");
             } else {
-                s.append(" AND (baad.rValue >= abs(").append(trialfilter.rValue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+                s.append(" AND (baad.rvalue >= abs(").append(trialfilter.rvalue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rvalue).append(")) OR baad.rhoValue IS NULL)");
             }
 
         }

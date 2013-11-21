@@ -340,7 +340,7 @@ public class HeatmapController {
                 if (rowArray != null) {
 
                     if ("correlation".equals(method)) {
-                        datavalue = data.rValue
+                        datavalue = data.rvalue
                     } else if ("spearman correlation".equals(method)) {
                         datavalue = data.rhoValue
                     } else {

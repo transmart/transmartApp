@@ -67,7 +67,7 @@ public class DomainGeneratorTest extends GroovyTestCase {
         expected.append("\texperiment column:'experiment'\n");
         expected.append("\tgroup1desc column:'group1desc'\n");
         expected.append("\tgroup2desc column:'group2desc'\n");
-        expected.append("\tpvaluecutoff column:'pValuecutoff'\n");
+        expected.append("\tpvaluecutoff column:'pvaluecutoff'\n");
         expected.append("\tfoldchangecutoff column:'foldchangecutoff'\n");
         expected.append("\tqacriteria column:'QAcriteria'\n");
         expected.append("\tcompound column:'compound'\n");

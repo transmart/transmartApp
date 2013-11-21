@@ -83,14 +83,14 @@
 					<tr>
 						<td style="width: 175px; white-space: nowrap;">p Value Is Less Than:</td>
 						<td style="font-weight:normal">
-							<g:textField name="pValue" value="${trialFilter?.pValue}"/> (Maximum P-Value 0.1)
+							<g:textField name="pvalue" value="${trialFilter?.pvalue}"/> (Maximum P-Value 0.1)
 						</td>
 
 					</tr>
 						<tr>
 						<td style="width: 175px; white-space: nowrap;">Absolute R/Rho Value is Less Than:</td>
 						<td style="font-weight:normal">
-							<g:textField name="rValue" value="${trialFilter?.rValue}"/>
+							<g:textField name="rvalue" value="${trialFilter?.rvalue}"/>
 						</td>
 					</tr>
 				</table>

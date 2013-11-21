@@ -53,7 +53,7 @@
 			</tr>
 			<tr>
 				<td style="width: 200px; white-space: nowrap;">Data p Value Less Than:</td>
-				<td style="font-weight:normal"><g:textField name="pValue" value="${expAnalysisFilter.pValue}" /> (Maximum P-Value 0.1)</td>
+				<td style="font-weight:normal"><g:textField name="pvalue" value="${expAnalysisFilter.pvalue}" /> (Maximum P-Value 0.1)</td>
 			</tr>
 		</table>
 		</td>

@@ -43,7 +43,7 @@
 			<g:if test="${data.featureGroupName!=null}"><td style="white-space: no-wrap;"><B>ProbeSet:</B>&nbsp;${fieldValue(bean:data,field:'featureGroupName')}</td></g:if>
 			<td style="white-space: no-wrap;"><b>Gene:</b>&nbsp;<g:createFilterDetailsLink id="${marker?.id}" label="${marker?.name}" type="gene" /></td>
 			<g:if test="${data.foldChangeRatio!=null}"><td style="white-space: no-wrap;"><B>Fold Change:</B>&nbsp;${fieldValue(bean:data,field:'foldChangeRatio')}</td></g:if>
-			<g:if test="${data.rValue!=null}"><td style="white-space: no-wrap;"><B>RValue:</B>&nbsp;${fieldValue(bean:data,field:'rValue')}</td></g:if>
+			<g:if test="${data.rvalue!=null}"><td style="white-space: no-wrap;"><B>RValue:</B>&nbsp;${fieldValue(bean:data,field:'rvalue')}</td></g:if>
 			<g:if test="${data.rawPvalue!=null}"><td style="white-space: no-wrap;"><B>p-Value:</B>&nbsp;${fieldValue(bean:data,field:'rawPvalue')}</td></g:if>
 			<g:if test="${data.teaNormalizedPValue!=null}"><td style="white-space: no-wrap;"><B>TEA p-Value:</B>&nbsp;${fieldValue(bean:data,field:'teaNormalizedPValue')}</td></g:if>
 			<g:if test="${dataadjustedPvalue!=null}"><td style="white-space: no-wrap;"><B>FDR p-Value:</B>&nbsp;${fieldValue(bean:data,field:'adjustedPvalue')}</td></g:if>

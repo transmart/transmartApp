@@ -30,7 +30,7 @@ public class HeatmapDataValue{
 	def bioMarkerName
 	def assayAnalysisId
 	def foldChangeRatio
-	def rValue
+	def rvalue
 	def rhoValue
 
 

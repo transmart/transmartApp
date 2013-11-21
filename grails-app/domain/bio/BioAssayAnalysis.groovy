@@ -35,8 +35,8 @@ class BioAssayAnalysis implements IExcelProfile {
     String analystId
     Long id
     Double foldChangeCutoff
-    Double pValueCutoff
-    Double rValueCutoff
+    Double pvalueCutoff
+    Double rvalueCutoff
     BioAssayAnalysisPlatform analysisPlatform
     String assayDataType
     String analysisMethodCode
@@ -60,8 +60,8 @@ class BioAssayAnalysis implements IExcelProfile {
             analystId column: 'ANALYST_ID'
             id column: 'BIO_ASSAY_ANALYSIS_ID'
             foldChangeCutoff column: 'FOLD_CHANGE_CUTOFF'
-            pValueCutoff column: 'PVALUE_CUTOFF'
-            rValueCutoff column: 'RVALUE_CUTOFF'
+            pvalueCutoff column: 'PVALUE_CUTOFF'
+            rvalueCutoff column: 'RVALUE_CUTOFF'
             analysisPlatform column: 'BIO_ASY_ANALYSIS_PLTFM_ID'
             type column: 'ANALYSIS_TYPE'
             dataCount column: 'DATA_COUNT'
@@ -83,8 +83,8 @@ class BioAssayAnalysis implements IExcelProfile {
         qaCriteria(nullable: true, maxSize: 4000)
         analystId(nullable: true, maxSize: 1020)
         foldChangeCutoff(nullable: true)
-        pValueCutoff(nullable: true)
-        rValueCutoff(nullable: true)
+        pvalueCutoff(nullable: true)
+        rvalueCutoff(nullable: true)
         analysisPlatform(nullable: true)
         type(nullable: true, maxSize: 400)
     }
@@ -93,7 +93,7 @@ class BioAssayAnalysis implements IExcelProfile {
      * get top analysis data records for the indicated analysis
      */
     def static getTopAnalysisDataForAnalysis(Long analysisId, int topCount) {
-        def query = "SELECT DISTINCT baad, baad_bm FROM bio.BioAssayAnalysisData baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid ORDER BY ABS(baad.foldChangeRatio) desc, baad.rValue, baad.rhoValue DESC";
+        def query = "SELECT DISTINCT baad, baad_bm FROM bio.BioAssayAnalysisData baad JOIN baad.featureGroup.markers baad_bm  WHERE baad.analysis.id =:aid ORDER BY ABS(baad.foldChangeRatio) desc, baad.rvalue, baad.rhoValue DESC";
         return BioAssayAnalysisData.executeQuery(query, [aid: analysisId], [max: topCount]);
     }
 
@@ -101,7 +101,7 @@ class BioAssayAnalysis implements IExcelProfile {
      * Get values to Export to Excel
      */
     public List getValues() {
-        return [shortDescription, longDescription, pValueCutoff, foldChangeCutoff, qaCriteria, analysisPlatform == null ? "" : analysisPlatform.platformName, analysisMethodCode, assayDataType]
+        return [shortDescription, longDescription, pvalueCutoff, foldChangeCutoff, qaCriteria, analysisPlatform == null ? "" : analysisPlatform.platformName, analysisMethodCode, assayDataType]
     }
 
     def getUniqueId() {

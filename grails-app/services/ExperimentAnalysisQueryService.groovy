@@ -243,7 +243,7 @@ class ExperimentAnalysisQueryService {
         query.createGlobalFilterCriteria(gfilter, true);
         createSubFilterCriteria(filter.expAnalysisFilter, query);
         query.addOrderBy("abs(baad.foldChangeRatio) DESC ");
-        query.addOrderBy("baad.rValue DESC ");
+        query.addOrderBy("baad.rvalue DESC ");
         query.addOrderBy("baad.rhoValue DESC ");
 
         def sql = query.generateSQL();
@@ -502,7 +502,7 @@ class ExperimentAnalysisQueryService {
             def StringBuilder s = new StringBuilder();
             query.addTable("bio.BioAssayAnalysisData baad_pValue")
             def symbol = "baad_pValue.preferredPvalue"
-            s.append(" (").append(symbol).append(" <= ").append(expfilter.pValue).append(")")
+            s.append(" (").append(symbol).append(" <= ").append(expfilter.pvalue).append(")")
             // .append(" OR ").append(symbol).append(" IS NULL)");
             query.addCondition(s.toString())
         }

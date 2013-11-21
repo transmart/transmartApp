@@ -613,7 +613,6 @@ class FmFolderController {
         def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
         def folderContentsAccessLevelMap = fmFolderService.getFolderContentsWithAccessLevelInfo(user, id)
         def folderContents = new ArrayList(folderContentsAccessLevelMap.keySet())
-
         def folderSearchLists = session['folderSearchList']
         if (!folderSearchLists) {
             folderSearchLists = [[], []]
@@ -622,7 +621,6 @@ class FmFolderController {
         //Extra , - used to identify leaves
         def uniqueLeavesString = folderSearchLists[1] ? folderSearchLists[1].join(",") + "," : ""
         def nodesToExpand = session['rwgOpenedNodes']
-
         //check that all folders from folderContents are in the search path, or children of nodes in the search path
         if (folderSearchLists[0].size() > 0) {
             for (def folder : folderContents) {
@@ -1047,7 +1045,7 @@ class FmFolderController {
 
             render(contentType: "text/json", text: analysisData.toString(5))
         } catch (Exception e) {
-            log.error(e.getStackTrace())
+            log.error('Error while building analysis table', e)
         }
     }
 

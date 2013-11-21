@@ -87,7 +87,7 @@ class AnalysisDataExportService {
             def rowGenes = (de.DeMrnaAnnotation.findAll("from DeMrnaAnnotation as a where a.probesetId=? and geneSymbol is not null", [data.probesetId]))*.geneSymbol
 
             for (marker in rowGenes) {
-                values.add([data.analysis.name, data.probeset, , data.rValue, marker])
+                values.add([data.analysis.name, data.probeset, , data.rvalue, marker])
             }
         }
         return new ExcelSheet("sheet1", headers, values);

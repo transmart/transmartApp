@@ -71,7 +71,7 @@ public class HeatmapService {
         def dataQuery = new AssayAnalysisDataQuery(mainTableAlias: 'baad', setDistinct: true)
         dataQuery.addTable("bio.BioAssayAnalysisData baad")
         dataQuery.addTable("JOIN baad.featureGroup.markers baad_bm")
-        dataQuery.addSelect("baad_bm.id, baad_bm.name, baad.analysis.id,baad.foldChangeRatio, baad.rValue, baad.rhoValue ")
+        dataQuery.addSelect("baad_bm.id, baad_bm.name, baad.analysis.id,baad.foldChangeRatio, baad.rvalue, baad.rhoValue ")
         trialQueryService.createTrialFilterCriteria(sfilter.trialFilter, dataQuery)
         dataQuery.addCondition("baad.analysis.id IN (:analysisIds)")
         dataQuery.addCondition("baad_bm.id IN(:ids)")
@@ -97,7 +97,7 @@ public class HeatmapService {
                     bioMarkerName: data[1],
                     assayAnalysisId: data[2],
                     foldChangeRatio: data[3],
-                    rValue: data[4],
+                    rvalue: data[4],
                     rhoValue: data[5])
 
             markerId = value.bioMarkerId

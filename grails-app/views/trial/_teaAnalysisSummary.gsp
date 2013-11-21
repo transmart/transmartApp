@@ -125,7 +125,7 @@
 										<img alt="signature down" src="${resource(dir:'images',file:'down_arrow.PNG')}" />
 									</g:else>
 								</g:if>
-								<g:if test="${analysisvalue.analysisData.rValue!=null}"> (R Value:${analysisvalue.analysisData.rValue})</g:if>
+								<g:if test="${analysisvalue.analysisData.rvalue!=null}"> (R Value:${analysisvalue.analysisData.rvalue})</g:if>
 								<g:if test="${analysisvalue.analysisData.rhoValue!=null}"> (Rho Value:${analysisvalue.analysisData.rhoValue})</g:if>
 								<g:if test="${analysisvalue.analysisData.resultsValue!=null}"> (Result:${analysisvalue.analysisData.resultsValue})</g:if>
 								<g:if test="${analysisvalue.analysisData.numericValue!=null}">&nbsp;&nbsp;&nbsp;<B>${analysisvalue.analysisData.numericValueCode}:</B>&nbsp;${analysisvalue.analysisData.numericValue}</g:if>
