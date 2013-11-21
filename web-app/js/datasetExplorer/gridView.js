@@ -252,17 +252,6 @@ var Base64 = (function() {
     };
 })();
 
-
-var exportButton = new Ext.Button ({
-    text:'Export to Excel',
-    listeners: {
-        click: function () {
-            window.location = 'data:application/vnd.ms-excel;base64,' +
-                Base64.encode(grid.getExcelXml());
-        }
-    }
-});
-
 function buildColumnModel(fields) {
     var size = fields.size();
     var con = new Array();
@@ -286,11 +275,6 @@ var GridViewPanel = Ext.extend(Ext.grid.GridPanel, {
 
     constructor : function (config) {
         GridViewPanel.superclass.constructor.apply(this, arguments);
-        this.init();
-    },
-    init : function () {
-        exportButton['parent'] = this;
     }
-
 
 });
