@@ -612,6 +612,7 @@ class FmFolderController {
         //Flag for whether folder was automatically opened - if not, then it shouldn't respect the folder mask
         def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
         def folderContentsAccessLevelMap = fmFolderService.getFolderContentsWithAccessLevelInfo(user, id)
+        def folderContents = new ArrayList(folderContentsAccessLevelMap.keySet())
 
         def folderSearchLists = session['folderSearchList']
         if (!folderSearchLists) {
@@ -624,16 +625,16 @@ class FmFolderController {
 
         //check that all folders from folderContents are in the search path, or children of nodes in the search path
         if (folderSearchLists[0].size() > 0) {
-            for (def folderEntry : folderContentsAccessLevelMap) {
+            for (def folder : folderContents) {
                 boolean found = false
                 for (String path : folderSearchLists[0]) {
-                    if (path.indexOf(folderEntry.key.folderFullName) > -1 || folderEntry.key.folderFullName.indexOf(path) > -1) {
+                    if (path.indexOf(folder.folderFullName) > -1 || folder.folderFullName.indexOf(path) > -1) {
                         found = true
                         break
                     }
                 }
                 if (!found) {
-                    folderContentsAccessLevelMap -= folderEntry
+                    folderContents -= folder
                 }
             }
         }
@@ -643,18 +644,18 @@ class FmFolderController {
             def filters = session['rwgSearchFilter']
             for (def filter in filters) {
                 if (filter != null && filter.indexOf("|ACCESSION;") > -1) {
-                    for (def folderEntry : folderContentsAccessLevelMap) {
-                        if (folderEntry.key.folderType == "STUDY") {
-                            if (!nodesToExpand.grep(folderEntry.key.uniqueId)) {
-                                nodesToExpand += folderEntry.key.uniqueId
-                                displayMetadata = folderEntry.key.uniqueId
+                    for (def folder : folderContents) {
+                        if (folder.folderType == "STUDY") {
+                            if (!nodesToExpand.grep(folder.uniqueId)) {
+                                nodesToExpand += folder.uniqueId
+                                displayMetadata = folder.uniqueId
                             }
                         }
                     }
                 }
             }
         }
-        render(template: 'folders', model: [folderContentsAccessLevelMap: folderContentsAccessLevelMap, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: auto, nodesToExpand: nodesToExpand, displayMetadata: displayMetadata])
+        render(template: 'folders', model: [folders: folderContents, folderContentsAccessLevelMap: folderContentsAccessLevelMap, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: auto, nodesToExpand: nodesToExpand, displayMetadata: displayMetadata])
     }
 
     /**

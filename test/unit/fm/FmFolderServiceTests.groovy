@@ -24,10 +24,12 @@ import auth.AuthUser
 import auth.Role
 import grails.test.GrailsUnitTestCase
 import grails.test.mixin.TestFor
+import grails.test.mixin.Mock
 
 import static com.recomdata.util.FolderType.*
 
 @TestFor(FmFolderService)
+@Mock(FmFolderAssociation)
 class FmFolderServiceTests extends GrailsUnitTestCase {
 
     AuthUser user
@@ -124,16 +126,15 @@ class FmFolderServiceTests extends GrailsUnitTestCase {
         assertEquals(['NA'], foldersMap.values().toList())
     }
 
-    /*TODO Mock objects
-        void testGetAccessLevelInfoForFolders_locked() {
-            def fmFolderAccesssionControll = mockFor(FmFolderAssociation)
-            def i2b2HelperServiceControll = mockFor(I2b2HelperService)
+    void testGetAccessLevelInfoForFolders_locked() {
+        def i2b2HelperServiceControll = mockFor(I2b2HelperService)
 
-            def foldersMap = service.getAccessLevelInfoForFolders(user, studyFolders)
+        service.i2b2HelperService =  i2b2HelperServiceControll.createMock()
 
-            assertEquals 2, foldersMap?.size()
-            assertEquals studyFolders, foldersMap.keySet().toList()
-            assertEquals(['LOCKED', 'LOCKED'], foldersMap.values().toList())
-        }
-     */
+        def foldersMap = service.getAccessLevelInfoForFolders(user, studyFolders)
+
+        assertEquals 2, foldersMap?.size()
+        assertEquals studyFolders, foldersMap.keySet().toList()
+        assertEquals(['LOCKED', 'LOCKED'], foldersMap.values().toList())
+    }
 }
