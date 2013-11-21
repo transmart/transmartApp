@@ -7,6 +7,9 @@
 <g:set var="ontologyService" bean="ontologyService"/>
 <g:set var="fmFolderService" bean="fmFolderService"/>
 <g:set var="ts" value="${Calendar.instance.time.time}"/>
+<g:if test="!folders">
+    <g:set var="folders" value="${folderContentsAccessLevelMap?.keySet()}"/>
+</g:if>
 <g:set var="restrictedAccessMessage" value="Access to this node has been restricted. Please contact your administrator for access." />
 <script type="text/javascript">
     var resultNumber = '${resultNumber}';
