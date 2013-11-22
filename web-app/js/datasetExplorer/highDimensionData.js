@@ -494,8 +494,10 @@ function toggleDataAssociationFields(extEle){
 			}else if (GLOBAL.HighDimDataType=='SNP'){
 				document.getElementById("divSNPType").style.display="";
 			}else if (GLOBAL.HighDimDataType==''){
-			document.getElementById("divSNPType").style.display="none";
-			}
+			    document.getElementById("divSNPType").style.display="none";
+			}else if (GLOBAL.HighDimDataType=='QPCR MIRNA'){
+                document.getElementById("divSNPType").style.display="none";
+            }
 		}
 	}
 	
@@ -514,7 +516,7 @@ function isProbesAggregationSupported(){
 	//The checkbox is displayd only for the dataAssociation tab.
 	if(GLOBAL.Analysis=="dataAssociation"){
 		var highDimDataTypeSupported=false;
-		if(["Gene Expression", "SNP"].indexOf(GLOBAL.HighDimDataType)>-1){
+		if(["Gene Expression", "SNP", "QPCR MIRNA"].indexOf(GLOBAL.HighDimDataType)>-1){
 			highDimDataTypeSupported=true;
 		}
 		

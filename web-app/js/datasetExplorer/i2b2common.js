@@ -961,7 +961,7 @@ function createPlatformSearchBox(subsetId, applyToDivIdx){
 		var eleTissue=Ext.get('divtissue'+applyToDivIdx);
 		var eleRbmpanel=Ext.get('divrbmpanel'+applyToDivIdx);
 		
-		if((GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='MRNA_AFFYMETRIX') || (GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='SNP'))
+		if((GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='MRNA_AFFYMETRIX') || (GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='SNP') || (GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='MIRNA_AFFYMETRIX') )
 		{
 			ele.dom.style.display='';
 			eleGpl.dom.style.display='';
@@ -979,6 +979,7 @@ function createPlatformSearchBox(subsetId, applyToDivIdx){
 		//Toggle the High Dimensional Data elements after reseting the High Dim variable.
 		if(GLOBAL.CurrentPlatforms[subsetId-1] == "SNP") GLOBAL.HighDimDataType = 'SNP'
 		if(GLOBAL.CurrentPlatforms[subsetId-1] == "MRNA_AFFYMETRIX") GLOBAL.HighDimDataType = 'Gene Expression'
+		if(GLOBAL.CurrentPlatforms[subsetId-1] == "MIRNA_AFFYMETRIX") GLOBAL.HighDimDataType = 'QPCR MIRNA'
 
 		toggleDataAssociationFields();
 		
@@ -1101,7 +1102,7 @@ function clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx){
  */
 function displayConditionally(applyToDivId, subsetId)
 {
-	if(GLOBAL.CurrentPlatforms[subsetId-1]!='MRNA_AFFYMETRIX' && GLOBAL.CurrentPlatforms[subsetId-1]!='SNP' && GLOBAL.CurrentPlatforms[subsetId-1]!=null)
+	if(GLOBAL.CurrentPlatforms[subsetId-1]!='MRNA_AFFYMETRIX' && GLOBAL.CurrentPlatforms[subsetId-1]!='SNP' && GLOBAL.CurrentPlatforms[subsetId-1]!=null && GLOBAL.CurrentPlatforms[subsetId-1]!='MIRNA_AFFYMETRIX')
 	{
 		var ele=Ext.get('div'+applyToDivId);
 		ele.dom.style.display='none';
@@ -1591,7 +1592,7 @@ function resetCohortInfoValues(){
 	var eleGpl=(Ext.get('divgpl1')) ? Ext.get('divgpl1') : Ext.get('divgpl3');
 	var eleTissue=(Ext.get('divtissue1')) ? Ext.get('divtissue1') : Ext.get('divtissue3');
 	var eleRbmpanel=(Ext.get('divrbmpanel1')) ? Ext.get('divrbmpanel1') : Ext.get('divrbmpanel3')
-	if(GLOBAL.CurrentPlatforms[0]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[0]=='SNP' || GLOBAL.CurrentPlatforms[0]==null){
+	if(GLOBAL.CurrentPlatforms[0]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[0]=='SNP' || GLOBAL.CurrentPlatforms[0]==null || GLOBAL.CurrentPlatforms[0]=='MIRNA_AFFYMETRIX'){
 		ele.dom.style.display='';
 		eleGpl.dom.style.display='';
 		eleTissue.dom.style.display='';
@@ -1606,7 +1607,7 @@ function resetCohortInfoValues(){
 	eleGpl=(Ext.get('divgpl2')) ? Ext.get('divgpl2') : Ext.get('divgpl4');
 	eleTissue=(Ext.get('divtissue2')) ? Ext.get('divtissue2') : Ext.get('divtissue4');
 	eleRbmpanel=(Ext.get('divrbmpanel2')) ? Ext.get('divrbmpanel2') : Ext.get('divrbmpanel4')
-	if(GLOBAL.CurrentPlatforms[1]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[1]==null){
+	if(GLOBAL.CurrentPlatforms[1]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[1]==null || GLOBAL.CurrentPlatforms[1]=='MIRNA_AFFYMETRIX'){
 		ele.dom.style.display='';
 		eleGpl.dom.style.display='';
 		eleTissue.dom.style.display='';
