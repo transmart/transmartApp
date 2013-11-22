@@ -27,6 +27,10 @@ import i2b2.SnpInfo
 import i2b2.StringLineReader;
 import i2b2.SampleInfo;
 
+import org.transmartproject.db.i2b2data.ConceptDimension
+import org.transmartproject.db.i2b2data.ObservationFact
+import org.transmartproject.db.querytool.QtQueryResultInstance
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.xml.parsers.DocumentBuilder;
@@ -59,6 +63,7 @@ class I2b2HelperService {
 	def sessionFactory
 	def dataSource;
 	def conceptService;
+	def conceptsResourceService
 	def sampleInfoService;
 	
 	/**
@@ -427,7 +432,14 @@ class I2b2HelperService {
 			xml=clobToString(row.c_metadataxml);
 		});
 		log.trace("METADATA XML:" +xml);
-		if(!xml.equalsIgnoreCase("")) {
+		res = nodeXmlRepresentsValueConcept(xml)
+		return res;
+	}
+	
+	def Boolean nodeXmlRepresentsValueConcept( String xml ) {
+		Boolean res=false;
+		
+		if(xml && !xml.equalsIgnoreCase("")) {
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 			domFactory.setNamespaceAware(true); // never forget this!
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -446,6 +458,7 @@ class I2b2HelperService {
 			if(key.equalsIgnoreCase("Y")){res=true;
 			}
 		}
+		
 		return res;
 	}
 	
@@ -741,6 +754,94 @@ class I2b2HelperService {
 			}
 		}
 		else {
+			// If a folder is dragged in, we want the contents of the folder to be added to the data
+			// That is possible if the folder contains only categorical values and no subfolders.
+			
+			// Check whether the folder is valid: first find all children of the current code
+			def item = conceptsResourceService.getByKey( concept_key )
+			
+			if( !item.children ) {
+				log.debug( "Can not show data in gridview for empty node: " + concept_key )
+			}
+			
+			// All children should be leaf categorical values
+			if( item.children.any { 
+				return !it.cVisualattributes.contains( "L" ) || nodeXmlRepresentsValueConcept( it.metadataxml )  
+			}) {
+				log.debug( "Can not show data in gridview for foldernodes with mixed type of children" )
+				return tablein
+			}
+			
+			// Find the concept names
+			String columnid=getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "");
+			String columnname=getColumnNameFromKey(concept_key).replace(" ", "_");
+			
+			/*add the column to the table if its not there*/
+			if(tablein.getColumn("subject")==null)
+			{
+				tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
+			}
+			if(tablein.getColumn(columnid)==null) {
+				tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "string"));
+			}
+			
+			// Store the concept paths to query
+			def paths = item.children*.fullName
+			
+			// Find the concept codes for the given children
+			def conceptCriteria = ConceptDimension.createCriteria()
+			def concepts = conceptCriteria.list {
+				'in'( "conceptPath", paths )
+			}
+			
+			// Determine the patients to query
+			def queryResultInstance = QtQueryResultInstance.read( result_instance_id )
+			def patientSet = queryResultInstance.patientSet
+			def patientIds =  patientSet.collect { BigDecimal.valueOf( it.patient.id ) }
+
+			// If nothing is found, return
+			if( !concepts || !patientSet ) {
+				return
+			}
+						
+			// After that, retrieve all data entries for the children
+			def c  = ObservationFact.createCriteria()
+			def results = c.list {
+				or {
+					eq( "modifierCd", "@" )
+					eqProperty( "modifierCd", "sourcesystemCd" )
+				}
+				'in'( "conceptCd", concepts*.conceptCd )
+				'in'( "patientNum", patientIds )
+			}
+			
+			results.each { row ->
+				
+				/*If I already have this subject mark it in the subset column as belonging to both subsets*/
+				String subject=row.patientNum
+				String value=row.tvalChar
+				if(value==null){
+					value="Y";
+				}
+				if(tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
+					tablein.getRow(subject).put(columnid, value.toString());
+				}
+				else /*fill the row*/ {
+					ExportRowNew newrow=new ExportRowNew();
+					newrow.put("subject", subject);
+					newrow.put(columnid, value.toString());
+					tablein.putRow(subject, newrow);
+				}
+			}
+			
+			//pad all the empty values for this column
+			for(ExportRowNew row: tablein.getRows())
+			{
+				if(!row.containsColumn(columnid)) {
+					row.put(columnid, "N");
+				}
+			}
+			
 			log.trace("must be a folder dont add to grid");
 		}
 		return tablein;
