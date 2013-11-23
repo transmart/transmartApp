@@ -90,18 +90,18 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":hibernate:3.6.10.1"
-        build ':release:3.0.0', ':rest-client-builder:1.0.3'
+        compile ":hibernate:3.6.10.4"
+        build ':release:3.0.1', ':rest-client-builder:1.0.3'
 
         compile ":quartz:1.0-RC2"
         compile ":rdc-rmodules:0.3-SNAPSHOT"
         compile ":spring-security-core:1.2.7.3"
-        build ":tomcat:7.0.41"
-        build ":build-info:1.2.4"
+        build ":tomcat:7.0.47"
+        build ":build-info:1.2.5"
         runtime ":prototype:1.0"
         runtime ":jquery:1.7.1"
         runtime ":transmart-core:1.0-SNAPSHOT"
-        runtime ":resources:1.2"
+        runtime ":resources:1.2.1"
 
         //This version of code coverage plugin does not work with grails 2.3
         //Despite specified test scope declaration of this plugin appears in grails.xml of prod war
