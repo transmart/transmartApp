@@ -1,6 +1,16 @@
-grails.project.class.dir = "target/classes"
-grails.project.test.class.dir = "target/test-classes"
-grails.project.test.reports.dir = "target/test-reports"
+def forkSettings = [
+        minMemory: 1536,
+        maxMemory: 4096,
+        maxPerm:   384,
+        debug:     false,
+]
+/* We can't enable forked run-app now because of a bug in Grails:
+ * http://stackoverflow.com/questions/19371859 */
+grails.project.fork = [
+        test:    [ *:forkSettings, daemon: true ],
+        run:     false,
+        war:     forkSettings,
+        console: forkSettings ]
 
 //grails.plugin.location.'rdc-rmodules' = "../Rmodules"
 //grails.plugin.location.'dalliance-plugin:0.1-SNAPSHOT' = "../dalliance-plugin"
@@ -37,14 +47,14 @@ grails.project.dependency.resolution = {
 
         test 'org.hamcrest:hamcrest-library:1.3',
                 'org.hamcrest:hamcrest-core:1.3'
-    }
+        }
 
     plugins {
-        build ':tomcat:7.0.41'
-        build ':build-info:1.2.4'
-        build ':release:3.0.0', ':rest-client-builder:1.0.3'
+        build ':tomcat:7.0.47'
+        build ':build-info:1.2.5'
+        build ':release:3.0.1', ':rest-client-builder:1.0.3'
 
-        compile ':hibernate:3.6.10.1'
+        compile ':hibernate:3.6.10.4'
         compile ':quartz:1.0-RC2'
         compile ':spring-security-core:1.2.7.3'
         compile ':spring-security-kerberos:0.1'
@@ -52,7 +62,7 @@ grails.project.dependency.resolution = {
         compile ':rdc-rmodules:0.3-SNAPSHOT'
 
         runtime ':prototype:1.0'
-        runtime ':resources:1.2'
+        runtime ':resources:1.2.1'
         runtime ':transmart-core:1.0-SNAPSHOT'
         //runtime ":jquery:1.7.1"
 
@@ -72,10 +82,10 @@ if (buildConfigFile.exists()) {
             parse(buildConfigFile.toURL())
 
     /* For development, it's interesting to use the plugins in-place.
-      * This allows the developer to put the grails.plugin.location.* assignments
-      * in an out-of-tree BuildConfig file if they want to.
-      * Snippet from https://gist.github.com/acreeger/910438
-      */
+     * This allows the developer to put the grails.plugin.location.* assignments
+     * in an out-of-tree BuildConfig file if they want to.
+     * Snippet from https://gist.github.com/acreeger/910438
+     */
     slurpedBuildConfig.grails.plugin.location.each { String k, v ->
         if (!new File(v).exists()) {
             println "WARNING: Cannot load in-place plugin from ${v} as that " +
@@ -102,7 +112,7 @@ if (buildConfigFile.exists()) {
     if (slurpedBuildConfig.grails.project.dependency.resolution) {
         Closure extraDepRes = slurpedBuildConfig.grails.project.dependency.resolution;
         grails.project.dependency.resolution = {
-            originalDepRes.delegate = extraDepRes.delegate = delegate
+            originalDepRes.delegate        = extraDepRes.delegate        = delegate
             originalDepRes.resolveStrategy = extraDepRes.resolveStrategy = resolveStrategy
             originalDepRes.metaClass.skipTransmartFoundationRepo = { true }
             originalDepRes.call(it)

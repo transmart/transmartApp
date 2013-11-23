@@ -38,8 +38,8 @@ if (!Environment.isWarDeployed() && Environment.isWithinShell()) {
  */
 
 /* For some reason, the externalized config files are run with a different
- * binding. None of the variables basedir, baseFile, baseName, grailsSettings,
- * ... are available; the binding will actually be the root config object.
+ * binding. None of the variables appName, userHome, appVersion, grailsHome
+ * are available; the binding will actually be the root config object.
  * So store the current binding in the config object so the externalized
  * config has access to the variables mentioned.
  */
