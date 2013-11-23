@@ -2,58 +2,66 @@ package com.recomdata.transmart.data.export
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 import groovy.transform.CompileStatic
-import org.transmartproject.core.dataquery.acgh.ACGHValues
-import org.transmartproject.core.dataquery.acgh.RegionResult
-import org.transmartproject.core.dataquery.acgh.RegionRow
-import org.transmartproject.core.dataquery.assay.Assay
-import org.transmartproject.core.dataquery.constraints.ACGHRegionQuery
-import org.transmartproject.core.dataquery.constraints.CommonHighDimensionalQueryConstraints
-import org.transmartproject.core.dataquery.acgh.Region
+import org.transmartproject.core.dataquery.TabularResult
+import org.transmartproject.core.dataquery.highdim.AssayColumn
+import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
+import org.transmartproject.core.dataquery.highdim.HighDimensionResource
+import org.transmartproject.core.dataquery.highdim.acgh.AcghValues
+import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
+import org.transmartproject.db.dataquery.highdim.acgh.RegionRow
 
-
+import javax.annotation.PostConstruct
 
 class ACGHDataService {
 
-    def dataQueryResourceNoGormService
     def queriesResourceService
+    HighDimensionResource highDimensionResourceService
+    HighDimensionDataTypeResource<RegionRow> acghResource
     def sessionFactory
+
+    @PostConstruct
+    void init() {
+        /* No way to automatically inject the acgh resource in Spring?
+         * Would be easy in CDI by having a producer of HighDimensionDataTypeResource
+         * beans creating it on the fly by looking at the injection point */
+        acghResource = highDimensionResourceService.getSubResourceForType 'acgh'
+    }
 
     def writeRegions(String study,
                      File studyDir,
                      String fileName,
                      String jobName,
                      resultInstanceId) {
-        def q = new ACGHRegionQuery(
-                common: new CommonHighDimensionalQueryConstraints(
-                        studies: [study],
-                        patientQueryResult: queriesResourceService.
-                                getQueryResultFromId(resultInstanceId as Long)
-                )
-        );
-        def session,
-            result,
+        def assayConstraints = [
+                acghResource.createAssayConstraint(
+                        AssayConstraint.TRIAL_NAME_CONSTRAINT,
+                        name: study),
+                acghResource.createAssayConstraint(
+                        AssayConstraint.PATIENT_SET_CONSTRAINT,
+                        result_instance_id: resultInstanceId as Long),
+        ]
+        def projection = acghResource.createProjection([:], 'acgh_values')
+
+        def result,
             writerUtil;
 
         try {
             /* dataType == 'aCGH' => file created in a subdir w/ that name */
             writerUtil = new FileWriterUtil(studyDir, fileName, jobName, 'aCGH',
                     null, "\t" as char)
-            session = sessionFactory.openStatelessSession()
-            result = dataQueryResourceNoGormService.runACGHRegionQuery(q, session)
-
+            result = acghResource.retrieveData assayConstraints, [], projection
             doWithResult(result, writerUtil)
         } finally {
             writerUtil?.finishWriting()
             result?.close()
-            session?.close()
         }
     }
 
     @CompileStatic
-    private doWithResult(RegionResult regionResult,
+    private doWithResult(TabularResult<AssayColumn, RegionRow> regionResult,
                          FileWriterUtil writerUtil) {
 
-        List<Assay> assays = regionResult.indicesList
+        List<AssayColumn> assays = regionResult.indicesList
         String[] header = createHeader(assays)
         writerUtil.writeLine(header as String[])
 
@@ -66,19 +74,18 @@ class ACGHDataService {
                 break
             }
             String[] line = templateArray.clone()
-            Region region = row.region
 
             line[0] = i++ as String
-            line[1] = region.chromosome as String
-            line[2] = region.start as String
-            line[3] = region.end as String
-            line[4] = region.numberOfProbes as String
-            line[5] = region.cytoband
+            line[1] = row.chromosome as String
+            line[2] = row.start as String
+            line[3] = row.end as String
+            line[4] = row.numberOfProbes as String
+            line[5] = row.cytoband
 
             int j = 6
-            PER_ASSAY_COLUMNS.each {k, Closure<ACGHValues> value ->
-                assays.each {Assay assay ->
-                    line[j++] = value(row.getRegionDataForAssay(assay)) as String
+            PER_ASSAY_COLUMNS.each {k, Closure<AcghValues> value ->
+                assays.each { AssayColumn assay ->
+                    line[j++] = value(row[assay]) as String
                 }
             }
 
@@ -87,15 +94,15 @@ class ACGHDataService {
     }
 
     private static final Map PER_ASSAY_COLUMNS = [
-            chip: {ACGHValues v -> v.getChipCopyNumberValue()},
-            flag: {ACGHValues v -> v.getCopyNumberState().getIntValue()},
-            probloss: {ACGHValues v -> v.getProbabilityOfLoss()},
-            probnorm: {ACGHValues v -> v.getProbabilityOfNormal()},
-            probgain: {ACGHValues v -> v.getProbabilityOfGain()},
-            probamp: {ACGHValues v -> v.getProbabilityOfAmplification()},
+            chip:     { AcghValues v -> v.getChipCopyNumberValue() },
+            flag:     { AcghValues v -> v.getCopyNumberState().getIntValue() },
+            probloss: { AcghValues v -> v.getProbabilityOfLoss() },
+            probnorm: { AcghValues v -> v.getProbabilityOfNormal() },
+            probgain: { AcghValues v -> v.getProbabilityOfGain() },
+            probamp:  { AcghValues v -> v.getProbabilityOfAmplification() },
     ]
 
-    private String[] createHeader(List<Assay> assays) {
+    private String[] createHeader(List<AssayColumn> assays) {
         List<String> r = [
                 'chromosome',
                 'start',
@@ -105,9 +112,8 @@ class ACGHDataService {
         ];
 
         PER_ASSAY_COLUMNS.keySet().each {String head ->
-            assays.each {Assay assay ->
-                /* FIXME: subjectId is not public */
-                r << "${head}.${assay.subjectId}".toString()
+            assays.each { AssayColumn assay ->
+                r << "${head}.${assay.patientInTrialId}".toString()
             }
         }
 
