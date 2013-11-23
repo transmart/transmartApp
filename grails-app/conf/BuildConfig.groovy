@@ -20,9 +20,19 @@ import grails.util.Environment
  ******************************************************************/
 
 
-grails.project.class.dir = "target/classes"
-grails.project.test.class.dir = "target/test-classes"
-grails.project.test.reports.dir = "target/test-reports"
+def forkSettings = [
+        minMemory: 1536,
+        maxMemory: 4096,
+        maxPerm:   384,
+        debug:     false,
+]
+/* We can't enable forked run-app now because of a bug in Grails:
+ * http://stackoverflow.com/questions/19371859 */
+grails.project.fork = [
+        test:    [ *:forkSettings, daemon: true ],
+        run:     false,
+        war:     forkSettings,
+        console: forkSettings ]
 
 //grails.plugin.location.'rdc-rmodules' = "../Rmodules"
 
