@@ -1,16 +1,22 @@
-def forkSettings = [
+def forkSettingsRun = [
         minMemory: 1536,
         maxMemory: 4096,
+        maxPerm:   384,
+        debug:     false,
+]
+def forkSettingsOther = [
+        minMemory: 256,
+        maxMemory: 1024,
         maxPerm:   384,
         debug:     false,
 ]
 /* We can't enable forked run-app now because of a bug in Grails:
  * http://stackoverflow.com/questions/19371859 */
 grails.project.fork = [
-        test:    [ *:forkSettings, daemon: true ],
+        test:    [ *:forkSettingsOther, daemon: true ],
         run:     false,
-        war:     forkSettings,
-        console: forkSettings ]
+        war:     forkSettingsRun,
+        console: forkSettingsOther ]
 
 //grails.plugin.location.'rdc-rmodules' = "../Rmodules"
 //grails.plugin.location.'dalliance-plugin:0.1-SNAPSHOT' = "../dalliance-plugin"
@@ -47,7 +53,7 @@ grails.project.dependency.resolution = {
 
         test 'org.hamcrest:hamcrest-library:1.3',
                 'org.hamcrest:hamcrest-core:1.3'
-        }
+    }
 
     plugins {
         build ':release:3.0.1', ':rest-client-builder:1.0.3'
