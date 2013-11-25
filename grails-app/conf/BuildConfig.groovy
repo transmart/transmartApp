@@ -100,22 +100,21 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":hibernate:3.6.10.4"
         build ':release:3.0.1', ':rest-client-builder:1.0.3'
+        build ':tomcat:7.0.47'
+        build ':build-info:1.2.5'
 
-        compile ":quartz:1.0-RC2"
-        compile ":rdc-rmodules:0.3-SNAPSHOT"
-        compile ":spring-security-core:1.2.7.3"
-        build ":tomcat:7.0.47"
-        build ":build-info:1.2.5"
-        runtime ":prototype:1.0"
-        runtime ":jquery:1.7.1"
-        runtime ":transmart-core:1.0-SNAPSHOT"
-        runtime ":resources:1.2.1"
+        compile ':hibernate:3.6.10.4'
+        compile ':quartz:1.0-RC2'
+        compile ':rdc-rmodules:0.3-SNAPSHOT'
+        compile ':spring-security-core:1.2.7.3'
 
-        //This version of code coverage plugin does not work with grails 2.3
-        //Despite specified test scope declaration of this plugin appears in grails.xml of prod war
-        //cause ClassNotFoundationException: CodeCoverageGrailsPlugin
+        runtime ':prototype:1.0'
+        runtime ':jquery:1.7.1'
+        runtime ':transmart-core:1.0-SNAPSHOT'
+        runtime ':resources:1.2.1'
+
+        // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
     }
 }
