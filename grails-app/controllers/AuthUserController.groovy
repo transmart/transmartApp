@@ -105,7 +105,7 @@ class AuthUserController {
 				person.delete()
 				def msg = "$person.userRealName has been deleted."
 				flash.message = msg
-				new AccessLog(username: userName, event:"User Deleted",
+				new AccessLog(username: springSecurityService.getPrincipal().username, event:"User Deleted",
 					eventmessage: msg,
 					accesstime:new Date()).save()
 			}
