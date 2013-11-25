@@ -22,23 +22,26 @@ package fm
 
 import auth.AuthUser
 import auth.Role
-import grails.test.GrailsUnitTestCase
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
+import grails.test.mixin.TestMixin
+import grails.test.mixin.support.GrailsUnitTestMixin
+import org.junit.Before
+import org.junit.Test
 
 import static com.recomdata.util.FolderType.*
 
 @TestFor(FmFolderService)
 @Mock(FmFolderAssociation)
-class FmFolderServiceTests extends GrailsUnitTestCase {
+@TestMixin(GrailsUnitTestMixin)
+class FmFolderServiceTests {
 
     AuthUser user
     List<FmFolder> studyFolders
     def program1, study1, assay111, folder121, study2, analysys122
 
-    protected void setUp() {
-        super.setUp()
-
+    @Before
+    void setUp() {
         user = new AuthUser()
 
         program1 = new FmFolder(
@@ -88,14 +91,12 @@ class FmFolderServiceTests extends GrailsUnitTestCase {
         studyFolders = [study1, study2]
     }
 
-    protected void tearDown() {
-        super.tearDown()
-    }
-
+    @Test
     void testGetAccessLevelInfoForFolders_no_folders() {
         assertEquals [:], service.getAccessLevelInfoForFolders(user, [])
     }
 
+    @Test
     void testGetAccessLevelInfoForFolders_admin() {
         user.authorities = [new Role(authority: Role.ADMIN_ROLE)]
 
@@ -106,6 +107,7 @@ class FmFolderServiceTests extends GrailsUnitTestCase {
         assertEquals(['ADMIN', 'ADMIN'], foldersMap.values().toList())
     }
 
+    @Test
     void testGetAccessLevelInfoForFolders_dse_admin() {
         user.authorities = [new Role(authority: Role.DS_EXPLORER_ROLE)]
 
@@ -116,6 +118,7 @@ class FmFolderServiceTests extends GrailsUnitTestCase {
         assertEquals(['ADMIN', 'ADMIN'], foldersMap.values().toList())
     }
 
+    @Test
     void testGetAccessLevelInfoForFolders_not_applicable() {
         user.authorities = [new Role(authority: Role.ADMIN_ROLE), new Role(authority: Role.DS_EXPLORER_ROLE)]
 
@@ -126,8 +129,9 @@ class FmFolderServiceTests extends GrailsUnitTestCase {
         assertEquals(['NA'], foldersMap.values().toList())
     }
 
+    @Test
     void testGetAccessLevelInfoForFolders_locked() {
-        def i2b2HelperServiceControll = mockFor(I2b2HelperService)
+        def i2b2HelperServiceControll = mockFor(Class.forName('I2b2HelperService'))
 
         service.i2b2HelperService =  i2b2HelperServiceControll.createMock()
 

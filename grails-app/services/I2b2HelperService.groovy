@@ -48,11 +48,6 @@ import java.sql.Statement
 import grails.util.Holders
 
 /**
- * $Id: I2b2HelperService.groovy 11303 2011-12-23 06:05:17Z mkapoor $
- */
-import org.Hibernate.*
-
-/**
  * ResNetService that will provide an .rnef file for Jubilant data
  *
  * @author $Author: mkapoor $
@@ -4473,7 +4468,7 @@ class I2b2HelperService {
                     "WHERE a.probeset_id = b.probeset_id AND a.trial_name IN (" + trialNames + ") " +
                     "AND a.assay_id IN (" + assayIds + ")";
 
-            sql.eachRow(rawCountQuery, , { row -> goodPct = row[0] })
+            sql.eachRow(rawCountQuery, { row -> goodPct = row[0] })
 
             if (goodPct == 0) {
                 throw new Exception("No raw data for Comparative Marker Selection.")

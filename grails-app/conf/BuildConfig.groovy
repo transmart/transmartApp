@@ -1,16 +1,22 @@
-def forkSettings = [
+def forkSettingsRun = [
         minMemory: 1536,
         maxMemory: 4096,
+        maxPerm:   384,
+        debug:     false,
+]
+def forkSettingsOther = [
+        minMemory: 256,
+        maxMemory: 1024,
         maxPerm:   384,
         debug:     false,
 ]
 /* We can't enable forked run-app now because of a bug in Grails:
  * http://stackoverflow.com/questions/19371859 */
 grails.project.fork = [
-        test:    [ *:forkSettings, daemon: true ],
+        test:    [ *:forkSettingsOther, daemon: true ],
         run:     false,
-        war:     forkSettings,
-        console: forkSettings ]
+        war:     forkSettingsRun,
+        console: forkSettingsOther ]
 
 //grails.plugin.location.'rdc-rmodules' = "../Rmodules"
 //grails.plugin.location.'dalliance-plugin:0.1-SNAPSHOT' = "../dalliance-plugin"
@@ -47,28 +53,26 @@ grails.project.dependency.resolution = {
 
         test 'org.hamcrest:hamcrest-library:1.3',
                 'org.hamcrest:hamcrest-core:1.3'
-        }
+    }
 
     plugins {
-        build ':tomcat:7.0.47'
-        build ':build-info:1.2.5'
         build ':release:3.0.1', ':rest-client-builder:1.0.3'
+        build ':tomcat:7.0.47'
 
+        compile ':build-info:1.2.5'
         compile ':hibernate:3.6.10.4'
         compile ':quartz:1.0-RC2'
+        compile ':rdc-rmodules:0.3-SNAPSHOT'
         compile ':spring-security-core:1.2.7.3'
         compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:1.0.6'
-        compile ':rdc-rmodules:0.3-SNAPSHOT'
 
         runtime ':prototype:1.0'
-        runtime ':resources:1.2.1'
+        //runtime ':jquery:1.7.1'
         runtime ':transmart-core:1.0-SNAPSHOT'
-        //runtime ":jquery:1.7.1"
+        runtime ':resources:1.2.1'
 
-        //This version of code coverage plugin does not work with grails 2.3
-        //Despite specified test scope declaration of this plugin appears in grails.xml of prod war
-        //cause ClassNotFoundationException: CodeCoverageGrailsPlugin
+        // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
     }
 }
