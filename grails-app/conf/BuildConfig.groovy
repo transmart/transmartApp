@@ -20,19 +20,25 @@ import grails.util.Environment
  ******************************************************************/
 
 
-def forkSettings = [
+def forkSettingsRun = [
         minMemory: 1536,
         maxMemory: 4096,
+        maxPerm:   384,
+        debug:     false,
+]
+def forkSettingsOther = [
+        minMemory: 256,
+        maxMemory: 1024,
         maxPerm:   384,
         debug:     false,
 ]
 /* We can't enable forked run-app now because of a bug in Grails:
  * http://stackoverflow.com/questions/19371859 */
 grails.project.fork = [
-        test:    [ *:forkSettings, daemon: true ],
+        test:    [ *:forkSettingsOther, daemon: true ],
         run:     false,
-        war:     forkSettings,
-        console: forkSettings ]
+        war:     forkSettingsRun,
+        console: forkSettingsOther ]
 
 //grails.plugin.location.'rdc-rmodules' = "../Rmodules"
 
