@@ -54,7 +54,7 @@ function gatherHighDimensionalData(divId){
 				},
 				failure : function(result, request)
 				{
-                    Ext.Msg.alert("Error", "Communication failed.");
+                    Ext.Msg.alert("Error", "Ajax call is failed.");
 				}
 			}
 	);
@@ -226,40 +226,31 @@ function runQueryForSubsetId(subset, callback, divId)
 }
 
 function runQueryForSubsetidSingleSubset(callback, divId){
-	var query = getCRCRequestSingleSubset(divId);
-	Ext.Ajax.request(
-			{
-				url : pageInfo.basePath + "/queryTool/runQueryFromDefinition",
-				method : 'POST',
-				xmlData : query,
-				// callback : callback,
-				success : function(result, request)
-				{
-				runQueryCompleteForSubsetId(result, callback);
-				}
-			,
-			failure : function(result, request)
-			{
-				runQueryCompleteForSubsetId(result, callback);
-			}
-			,
-			timeout : '600000'
-			}
-	);
+    var query = getCRCRequestSingleSubset(divId);
+    Ext.Ajax.request(
+        {
+            url : pageInfo.basePath + "/queryTool/runQueryFromDefinition",
+            method : 'POST',
+            xmlData : query,
+            // callback : callback,
+            success : function(result, request)
+            {
+                runQueryComplete(result, null, callback);
+            }
+            ,
+            failure : function(result, request)
+            {
+                Ext.Msg.alert("Error", "Ajax call is failed.")
+            }
+            ,
+            timeout : '600000'
+        }
+    );
 
-	if(GLOBAL.Debug)
-	{
-		resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
-	}
-}
-
-function runQueryCompleteForSubsetId(result, callback)
-{
-	var numOfPatientsFound = result.responseXML.selectSingleNode("//set_size").firstChild.nodeValue;
-	var patientsetid = result.responseXML.selectSingleNode("//result_instance_id").firstChild.nodeValue;
-	var currentSubsetId = patientsetid;
-	callback(currentSubsetId);
-
+    if(GLOBAL.Debug)
+    {
+        resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
+    }
 }
 
 function getCRCRequest(subset, queryname, divId){
