@@ -2708,21 +2708,28 @@ function runQueryComplete(result, subset, callback) {
     // Current code requires us to set CurrentSubsetIDs regardless of error status...
     GLOBAL.CurrentSubsetIDs[subset] = jsonRes.id ? jsonRes.id : -1;
 
-    // getPDO_fromInputList is not implemented in core-db
-    //if (GLOBAL.Debug) {
-    //    alert(getCRCpdoRequest(patientsetid, 1, jsonRes.setSize));
-    //}
+    if (subset === null) { // if single subset
 
-    /* removed the pdo request call 12 / 17 / 2008 added the callback logic here instead */
-    // runQueryPDO(patientsetid, 1, jsonRes.setSize, subset, callback );
+        callback(GLOBAL.CurrentSubsetIDs[subset]);
 
-    if (STATE.QueryRequestCounter > 0) { // I'm in a chain of requests so decrement
-        STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
+    } else {
+
+        // getPDO_fromInputList is not implemented in core-db
+        //if (GLOBAL.Debug) {
+        //    alert(getCRCpdoRequest(patientsetid, 1, jsonRes.setSize));
+        //}
+
+        /* removed the pdo request call 12 / 17 / 2008 added the callback logic here instead */
+        // runQueryPDO(patientsetid, 1, jsonRes.setSize, subset, callback );
+
+        if (STATE.QueryRequestCounter > 0) { // I'm in a chain of requests so decrement
+            STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
+        }
+        if (STATE.QueryRequestCounter == 0) {
+            callback();
+        }
+        /* I'm the last request outstanding in this chain*/
     }
-    if (STATE.QueryRequestCounter == 0) {
-        callback();
-    }
-    /* I'm the last request outstanding in this chain*/
 }
 
 // takes a patientset node
