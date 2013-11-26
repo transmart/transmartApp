@@ -102,7 +102,7 @@ jQuery(document).ready(function() {
 
 <div style="float: left">
 	<div class="textsmaller">Platform</div>
-	<g:select style="width: 200px" name="genotypePlatformName" onchange="addPlatform('genotypePlatform')"/>
+	<select style="width: 200px" name="genotypePlatformName" onchange="addPlatform('genotypePlatform')"/>
 	<select id="genotypePlatform" name="genotypePlatform" multiple="multiple" style="display: none;">
 		<g:each in="${platforms}" var="value">
 			<option selected="selected" value="${value.key}">${value.value}</option>
