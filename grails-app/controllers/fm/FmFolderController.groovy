@@ -35,10 +35,14 @@ import de.DeMrnaAnnotation
 import grails.converters.JSON
 import grails.converters.XML
 import grails.validation.ValidationException
+import groovy.util.slurpersupport.NoChildren
+import groovy.util.slurpersupport.NodeChild
+import groovy.util.slurpersupport.NodeChildren
 import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
 import search.SearchKeyword
+import transmartapp.SolrFacetService
 
 import javax.activation.MimetypesFileTypeMap
 
@@ -952,6 +956,37 @@ class FmFolderController {
                         //	log.info gridData
                         jSONForGrids.add(gridData)
                         log.debug "ADDING JSON GRID"
+                    }
+                }
+
+                /*
+                 *   Highlighting of search terms (if params.q is specified)
+                 */
+                def searchQuery = params.q
+                if (searchQuery != "") {
+                    // Construct search query (with highlight parameters)
+                    String url = solrFacetService.createSOLRQueryPath()
+                    String query = "q=$searchQuery"
+                    String filter = "fq=id:\"$folder.uniqueId\""
+                    String highlight = "hl=true&hl.fl=title+description&hl.simple.pre=<b>&hl.simple.post=</b>"
+                    String parameters = [query, filter, highlight].join("&")
+
+                    // Execute search
+                    NodeChild xml = solrFacetService.executeSOLRFacetedQuery(url, parameters, false)
+
+                    // Extract the highlighted text from the result
+                    def highlighting = xml.lst.find { it.@name == "highlighting" }
+                    def hlTitle = highlighting.lst[0].arr.find { it.@title == "title" }
+                    if (!(hlTitle instanceof NoChildren)) {
+                        String title = hlTitle.str[0].text()
+                        println(title)
+                        bioDataObject.title = title
+                    }
+                    def hlDescription = highlighting.lst[0].arr.find { it.@name == "description" }
+                    if (!(hlDescription instanceof NoChildren)) {
+                        String description = hlDescription.str[0].text()
+                        println(description)
+                        bioDataObject.description = description
                     }
                 }
             }
