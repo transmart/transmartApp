@@ -24,6 +24,45 @@ STATE = {
 		QueryRequestCounter: 0
 }
 
+// list of supported platform
+// TODO : future refactoring should retrieve these values from gpl definitions in the database
+var HIGH_DIMENSIONAL_DATA = {
+    "MRNA_AFFYMETRIX"   : {"platform" : "MRNA_AFFYMETRIX", "type" : "Gene Expression"},
+    "MIRNA_AFFYMETRIX"  : {"platform" : "MIRNA_AFFYMETRIX", "type" : "QPCR MIRNA"},
+    "MIRNA_SEQ"         : {"platform" : "MIRNA_SEQ", "type" : "SEQ MIRNA"},
+    "RBM"               : {"platform" : "RBM", "type" : "RBM"},
+    "PROTEIN"           : {"platform" : "PROTEIN", "type" : "PROTEOMICS"},
+    "SNP"               : {"platform" : "SNP", "type" : "SNP"}
+};
+
+// Check if current platform is supported
+function isSupportedPlatform (currentPlatform) {
+    for (var key in HIGH_DIMENSIONAL_DATA) {
+        if (currentPlatform == HIGH_DIMENSIONAL_DATA[key].platform) return true;
+    }
+    return false;
+}
+
+// Check if current platform is RBM
+function isRBMPlatform (currentPlatform) {
+    return currentPlatform == HIGH_DIMENSIONAL_DATA["RBM"].platform ? true : false;
+}
+
+// toggle elements in the popup based on whether it is RBM or not
+function toggleRBMDisplayElements (ele, eleGpl, eleTissue, eleRbmpanel, platform) {
+    if (!isRBMPlatform(platform)) {
+        ele.dom.style.display='';
+        eleGpl.dom.style.display='';
+        eleTissue.dom.style.display='';
+        eleRbmpanel.dom.style.display='none'
+    } else {
+        ele.dom.style.display='none';
+        eleGpl.dom.style.display='none';
+        eleTissue.dom.style.display='none';
+        eleRbmpanel.dom.style.display='';
+    }
+}
+
 function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes)
 {
 	this.name=name;
@@ -960,22 +999,9 @@ function createPlatformSearchBox(subsetId, applyToDivIdx){
 		var eleGpl=Ext.get('divgpl'+applyToDivIdx);
 		var eleTissue=Ext.get('divtissue'+applyToDivIdx);
 		var eleRbmpanel=Ext.get('divrbmpanel'+applyToDivIdx);
-		
-		if((GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='MRNA_AFFYMETRIX') || (GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='SNP') || (GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='MIRNA_AFFYMETRIX') )
-		{
-			ele.dom.style.display='';
-			eleGpl.dom.style.display='';
-			eleTissue.dom.style.display='';
-			eleRbmpanel.dom.style.display='none';
-		}
-		else
-		{
-			ele.dom.style.display='none';
-			eleGpl.dom.style.display='none';
-			eleTissue.dom.style.display='none';
-			eleRbmpanel.dom.style.display='';
-		}
-       
+
+        toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[applyToDivIdx-1]);
+
 		//Toggle the High Dimensional Data elements after reseting the High Dim variable.
 		if(GLOBAL.CurrentPlatforms[subsetId-1] == "SNP") GLOBAL.HighDimDataType = 'SNP'
 		if(GLOBAL.CurrentPlatforms[subsetId-1] == "MRNA_AFFYMETRIX") GLOBAL.HighDimDataType = 'Gene Expression'
@@ -1100,13 +1126,13 @@ function clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx){
  * @param applyToDivIdx
  * @return
  */
-function displayConditionally(applyToDivId, subsetId)
+function hideWhenRBM(applyToDivId, subsetId)
 {
-	if(GLOBAL.CurrentPlatforms[subsetId-1]!='MRNA_AFFYMETRIX' && GLOBAL.CurrentPlatforms[subsetId-1]!='SNP' && GLOBAL.CurrentPlatforms[subsetId-1]!=null && GLOBAL.CurrentPlatforms[subsetId-1]!='MIRNA_AFFYMETRIX')
-	{
-		var ele=Ext.get('div'+applyToDivId);
-		ele.dom.style.display='none';
-	}
+
+    if (isRBMPlatform(GLOBAL.CurrentPlatforms[subsetId-1])) {
+        var ele=Ext.get('div'+applyToDivId);
+        ele.dom.style.display='none';
+    }
 }
 
 /**
@@ -1115,8 +1141,8 @@ function displayConditionally(applyToDivId, subsetId)
  * @param applyToDivIdx
  * @return
  */
-function displayWhenRBM(applyToDivId, subsetId){
-	if(GLOBAL.CurrentPlatforms[subsetId-1]!='RBM'){
+function hideWhenNotRBM(applyToDivId, subsetId){
+	if(!isRBMPlatform(GLOBAL.CurrentPlatforms[subsetId-1])){
 		var ele=Ext.get('div'+applyToDivId);
 		ele.dom.style.display='none';
 	}
@@ -1163,7 +1189,7 @@ function createGplSearchBox(subsetId, applyToDivIdx){
 	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'gpl', GLOBAL.DefaultCohortInfo.defaultGplLabels[subsetId-1]);
 	    
 	   	//Display this select box only if Platform is MRNA or unselected.
-	    displayConditionally(applyToDivId, subsetId);
+	    hideWhenRBM(applyToDivId, subsetId);
 }
 
 function createRbmPanelSearchBox(subsetId, applyToDivIdx){
@@ -1207,7 +1233,7 @@ function createRbmPanelSearchBox(subsetId, applyToDivIdx){
 	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'rbmpanel', GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[subsetId-1]);
 
 	   	//Display this select box only if Platform is RBM.
-	    displayWhenRBM(applyToDivId, subsetId);
+	    hideWhenNotRBM(applyToDivId, subsetId);
 }
 
 function createTimePointsSearchBox(subsetId, applyToDivIdx){
@@ -1293,7 +1319,7 @@ function createSamplesSearchBox(subsetId, applyToDivIdx){
 	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'sample', GLOBAL.DefaultCohortInfo.defaultSampleLabels[subsetId-1]);
 	    
 	   	//Display this select box only if Platform is MRNA or unselected.
-	    displayConditionally(applyToDivId, subsetId);
+	    hideWhenRBM(applyToDivId, subsetId);
 }
 
 function createTissueSearchBox(subsetId, applyToDivIdx){
@@ -1337,7 +1363,7 @@ function createTissueSearchBox(subsetId, applyToDivIdx){
 	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'tissue', GLOBAL.DefaultCohortInfo.defaultTissueLabels[subsetId-1]);
 	    
 	   	//Display this select box only if Platform is MRNA or unselected.
-	    displayConditionally(applyToDivId, subsetId);
+	    hideWhenRBM(applyToDivId, subsetId);
 }
 
 Ext.ux.TransmartComboBox = Ext.extend(Ext.form.ComboBox, {
@@ -1587,38 +1613,21 @@ function resetCohortInfoValues(){
 	}
 	GLOBAL.CurrentRbmpanels[0]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[0];
 	GLOBAL.CurrentRbmpanels[1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[1];
-	
+
 	var ele=(Ext.get('divsample1')) ? Ext.get('divsample1') : Ext.get('divsample3');
 	var eleGpl=(Ext.get('divgpl1')) ? Ext.get('divgpl1') : Ext.get('divgpl3');
 	var eleTissue=(Ext.get('divtissue1')) ? Ext.get('divtissue1') : Ext.get('divtissue3');
 	var eleRbmpanel=(Ext.get('divrbmpanel1')) ? Ext.get('divrbmpanel1') : Ext.get('divrbmpanel3')
-	if(GLOBAL.CurrentPlatforms[0]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[0]=='SNP' || GLOBAL.CurrentPlatforms[0]==null || GLOBAL.CurrentPlatforms[0]=='MIRNA_AFFYMETRIX'){
-		ele.dom.style.display='';
-		eleGpl.dom.style.display='';
-		eleTissue.dom.style.display='';
-		eleRbmpanel.dom.style.display='none'
-	}else{
-		ele.dom.style.display='none';
-		eleGpl.dom.style.display='none';
-		eleTissue.dom.style.display='none';
-		eleRbmpanel.dom.style.display='';
-	}
+
+    toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[0]);
+
 	ele=(Ext.get('divsample2')) ? Ext.get('divsample2') : Ext.get('divsample4');
 	eleGpl=(Ext.get('divgpl2')) ? Ext.get('divgpl2') : Ext.get('divgpl4');
 	eleTissue=(Ext.get('divtissue2')) ? Ext.get('divtissue2') : Ext.get('divtissue4');
 	eleRbmpanel=(Ext.get('divrbmpanel2')) ? Ext.get('divrbmpanel2') : Ext.get('divrbmpanel4')
-	if(GLOBAL.CurrentPlatforms[1]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[1]==null || GLOBAL.CurrentPlatforms[1]=='MIRNA_AFFYMETRIX'){
-		ele.dom.style.display='';
-		eleGpl.dom.style.display='';
-		eleTissue.dom.style.display='';
-		eleRbmpanel.dom.style.display='none';
-	}else{
-		ele.dom.style.display='none';
-		eleGpl.dom.style.display='none';
-		eleTissue.dom.style.display='none';
-		eleRbmpanel.dom.style.display='';
-	}
-	
+
+    toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[1]);
+
 	//Clear out the pathway/aggregation input.
 	document.getElementById("probesAggregation").checked=false;
 	document.getElementById("searchPathway").value = "";
