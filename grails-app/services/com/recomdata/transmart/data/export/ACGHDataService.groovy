@@ -83,7 +83,7 @@ class ACGHDataService {
             int j = 6
             PER_ASSAY_COLUMNS.each {k, Closure<AcghValues> value ->
                 assays.each { AssayColumn assay ->
-                    line[j++] = value(row[assay]) as String
+                    line[j++] = value(row.getAt(assay)) as String
                 }
             }
 
