@@ -103,6 +103,8 @@ grails.project.dependency.resolution = {
 
         /* update when grails spring-security-core uses a more recent version of spring-security */
         runtime 'org.springframework.security:spring-security-config:3.0.7.RELEASE'
+
+        compile 'org.grails:grails-plugin-url-mappings:2.3.3-hyve1' // until Grails 2.3.4 is out
     }
 
     plugins {
