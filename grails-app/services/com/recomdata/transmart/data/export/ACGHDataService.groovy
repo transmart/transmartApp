@@ -8,16 +8,14 @@ import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
 import org.transmartproject.core.dataquery.highdim.HighDimensionResource
 import org.transmartproject.core.dataquery.highdim.acgh.AcghValues
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
-import org.transmartproject.db.dataquery.highdim.acgh.RegionRow
+import org.transmartproject.core.dataquery.highdim.chromoregion.RegionRow
 
 import javax.annotation.PostConstruct
 
 class ACGHDataService {
 
-    def queriesResourceService
     HighDimensionResource highDimensionResourceService
     HighDimensionDataTypeResource<RegionRow> acghResource
-    def sessionFactory
 
     @PostConstruct
     void init() {
