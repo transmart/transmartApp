@@ -85,16 +85,25 @@
             <g:if test="${folder?.hasProperty('folderName')}">
                 ${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${folder?.folderName}
             </g:if>
+            <g:if test="${hlTitle?.length() > 0}">
+                ${hlTitle}
+            </g:if>
         </h3>
     </div>
     <g:if test="${bioDataObject?.hasProperty('description')}">
         <div class="description">
-            <g:if test="${bioDataObject?.description?.length() > 325000}">
-                ${(bioDataObject?.description)?.substring(0, 324000)}&nbsp;&nbsp;
+            <g:if test="${hlDescription?.length() > 0}">
+                <g:set var="description" value="${hlDescription}"></g:set>
+            </g:if>
+            <g:else>
+                <g:set var="description" value="${bioDataObject?.description}"></g:set>
+            </g:else>
+            <g:if test="${description?.length() > 325000}">
+                ${(description)?.substring(0, 324000)}&nbsp;&nbsp;
                 <a href=#>...See more</a>
             </g:if>
             <g:else>
-                ${bioDataObject?.description}
+                ${description}
             </g:else></div>
 
         <div style="height:20px;"></div>

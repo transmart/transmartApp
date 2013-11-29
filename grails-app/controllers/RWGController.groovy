@@ -312,7 +312,7 @@ class RWGController {
     /**
      *
      */
-    def getFacetResults = {
+    def getFacetResults() {
 
         session['folderSearchList'] = [[], []]; //Clear the folder search list
         def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
@@ -350,6 +350,9 @@ class RWGController {
         def geneGroups = []
         def categorizedSearchTerms = request.getParameterValues('q') as List
         def processedSearchTerms = []
+
+        // Store search terms for use in folder details
+        session['rwgCategorizedSearchTerms'] = categorizedSearchTerms
 
         //Separate gene-related search terms into gene groups.
         //Always set geneOperator if this is a gene search term - the last one is the one we want to use.

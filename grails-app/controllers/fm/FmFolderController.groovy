@@ -915,6 +915,8 @@ class FmFolderController {
         def technologies
         def vendors
         def platforms
+        String hlTitle
+        String hlDescription
 
         if (folderId) {
             folder = FmFolder.get(folderId)
@@ -960,33 +962,46 @@ class FmFolderController {
                 }
 
                 /*
-                 *   Highlighting of search terms (if params.q is specified)
+                 *   Highlighting of search terms (if they are specified)
                  */
-                def searchQuery = params.q
-                if (searchQuery != "") {
+                // The search terms have been set in RWGController
+                def categoryList = session['rwgCategorizedSearchTerms']
+
+                if (categoryList?.size() > 0) {
+                //For each category (except Datanode), construct a SOLR query
+                //for (category in categoryList) {
+                    def category = categoryList[0]
+
+                    // Parse the search terms into an operator, category and term list
+                    category = ((String) category)
+                    def operator = category.split("::")[1].toUpperCase()
+                    category = category.split("::")[0]
+                    def categoryName = category.split(":", 2)[0]
+                    def termList = category.split(":", 2)[1].split("\\|")
+
                     // Construct search query (with highlight parameters)
                     String url = solrFacetService.createSOLRQueryPath()
-                    String query = "q=$searchQuery"
+                    String categoryQuery = solrFacetService.createCategoryQueryString(categoryName, termList, operator)
+                    String solrQuery = "q=" + solrFacetService.createSOLRQueryString(URLEncoder.encode(categoryQuery), "", "")
                     String filter = "fq=id:\"$folder.uniqueId\""
-                    String highlight = "hl=true&hl.fl=title+description&hl.simple.pre=<b>&hl.simple.post=</b>"
-                    String parameters = [query, filter, highlight].join("&")
+                    String highlight = "hl=true&hl.fl=title+description&hl.fragsize=0" +
+                            "&hl.simple.pre=<mark><b>&hl.simple.post=</b></mark>"
+                    String parameters = [solrQuery, filter, highlight].join("&")
 
                     // Execute search
                     NodeChild xml = solrFacetService.executeSOLRFacetedQuery(url, parameters, false)
 
                     // Extract the highlighted text from the result
                     def highlighting = xml.lst.find { it.@name == "highlighting" }
-                    def hlTitle = highlighting.lst[0].arr.find { it.@title == "title" }
-                    if (!(hlTitle instanceof NoChildren)) {
-                        String title = hlTitle.str[0].text()
-                        println(title)
-                        bioDataObject.title = title
-                    }
-                    def hlDescription = highlighting.lst[0].arr.find { it.@name == "description" }
-                    if (!(hlDescription instanceof NoChildren)) {
-                        String description = hlDescription.str[0].text()
-                        println(description)
-                        bioDataObject.description = description
+                    if (!(highlighting instanceof NoChildren)) {
+                        def hlTitleNode = highlighting.lst[0].arr.find { it.@name == "title" }
+                        if (!(hlTitleNode instanceof NoChildren)) {
+                            hlTitle = hlTitleNode.str[0].text()
+                        }
+                        def hlDescriptionNode = highlighting.lst[0].arr.find { it.@name == "description" }
+                        if (!(hlDescriptionNode instanceof NoChildren)) {
+                            hlDescription = hlDescriptionNode.str[0].text()
+                        }
                     }
                 }
             }
@@ -1004,7 +1019,9 @@ class FmFolderController {
                         amTagTemplate: amTagTemplate,
                         metaDataTagItems: metaDataTagItems,
                         jSONForGrids: jSONForGrids,
-                        subjectLevelDataAvailable: subjectLevelDataAvailable
+                        subjectLevelDataAvailable: subjectLevelDataAvailable,
+                        hlTitle: hlTitle,
+                        hlDescription: hlDescription
                 ]
     }
 
