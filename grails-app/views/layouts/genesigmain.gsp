@@ -71,11 +71,13 @@
 	        
 		</script>
 		<g:layoutHead />
+        <r:layoutResources/>
 	</head>
 	<body>
 		<div id="page">
 			<div id="header"><g:render template="/layouts/commonheader"	model="['app':'genesignature']" /></div>
 			<div id="app"><g:layoutBody /></div>
 		</div>
+        <r:layoutResources/>
 	</body>
 </html>

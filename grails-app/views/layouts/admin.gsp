@@ -69,6 +69,7 @@
 	        });
 		</script>
 		<g:layoutHead />
+        <r:layoutResources/>
 	</head>
 	<body>
 		<div id="page">
@@ -76,5 +77,6 @@
  			<div id='navbar'><g:render template="/layouts/adminnavbar" /></div>
 			<div id="content"><g:layoutBody /></div>
 		</div>
+        <r:layoutResources/>
 	</body>
 </html>
