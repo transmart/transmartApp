@@ -53,6 +53,8 @@ grails.project.dependency.resolution = {
 
         test 'org.hamcrest:hamcrest-library:1.3',
                 'org.hamcrest:hamcrest-core:1.3'
+
+        compile 'org.grails:grails-plugin-url-mappings:2.3.3-hyve1' // until Grails 2.3.4 is out
     }
 
     plugins {
