@@ -208,5 +208,3 @@ com.recomdata.disclaimer=disclaimer.toString()
 com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
-
-grails.resources.modules = {}
