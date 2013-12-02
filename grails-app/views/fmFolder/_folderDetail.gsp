@@ -82,12 +82,14 @@
         </div>
 
         <h3 class="rdc-h3">
-            <g:if test="${folder?.hasProperty('folderName')}">
-                ${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${folder?.folderName}
-            </g:if>
             <g:if test="${hlTitle?.length() > 0}">
-                ${hlTitle}
+                ${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${hlTitle}
             </g:if>
+            <g:else>
+                <g:if test="${folder?.hasProperty('folderName')}">
+                    ${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${folder?.folderName}
+                </g:if>
+            </g:else>
         </h3>
     </div>
     <g:if test="${bioDataObject?.hasProperty('description')}">
