@@ -32,6 +32,11 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 
+import org.transmartproject.db.i2b2data.ConceptDimension
+import org.transmartproject.db.i2b2data.ObservationFact
+import org.transmartproject.db.querytool.QtQueryResultInstance
+import org.transmartproject.db.querytool.QtPatientSetCollection
+
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPath
@@ -41,11 +46,6 @@ import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
 import grails.util.Holders
-
-/**
- * $Id: I2b2HelperService.groovy 11303 2011-12-23 06:05:17Z mkapoor $
- */
-import org.Hibernate.*
 
 /**
  * ResNetService that will provide an .rnef file for Jubilant data
@@ -62,6 +62,7 @@ class I2b2HelperService {
     def sessionFactory
     def dataSource
     def conceptService
+    def conceptsResourceService
     def sampleInfoService
 
     /**
@@ -427,7 +428,15 @@ class I2b2HelperService {
             xml = clobToString(row.c_metadataxml);
         });
         log.trace("METADATA XML:" + xml);
-        if (!xml.equalsIgnoreCase("")) {
+
+        res = nodeXmlRepresentsValueConcept(xml)
+        return res;
+    }
+
+    def Boolean nodeXmlRepresentsValueConcept( String xml ) {
+        Boolean res=false;
+
+        if ( xml && !xml.equalsIgnoreCase("")) {
             DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
             domFactory.setNamespaceAware(true); // never forget this!
             DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -447,7 +456,8 @@ class I2b2HelperService {
                 res = true;
             }
         }
-        return res;
+
+	return res;
     }
 
     /**
@@ -768,7 +778,84 @@ class I2b2HelperService {
                 }
             }
         } else {
-            log.trace("must be a folder dont add to grid");
+		// If a folder is dragged in, we want the contents of the folder to be added to the data
+		// That is possible if the folder contains only categorical values and no subfolders.
+
+		// Check whether the folder is valid: first find all children of the current code
+		def item = conceptsResourceService.getByKey( concept_key )
+
+		if( !item.children ) {
+			log.debug( "Can not show data in gridview for empty node: " + concept_key )
+		}
+
+		// All children should be leaf categorical values
+		if( item.children.any { 
+			return !it.cVisualattributes.contains( "L" ) || nodeXmlRepresentsValueConcept( it.metadataxml )  
+		}) {
+			log.debug( "Can not show data in gridview for foldernodes with mixed type of children" )
+			return tablein
+		}
+
+		// Find the concept names
+		String columnid=getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "");
+		String columnname=getColumnNameFromKey(concept_key).replace(" ", "_");
+
+		/*add the column to the table if its not there*/
+		if(tablein.getColumn("subject")==null)
+		{
+			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
+		}
+		if(tablein.getColumn(columnid)==null) {
+			tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "string"));
+		}
+
+		// Store the concept paths to query
+		def paths = item.children*.fullName
+		
+		// Find the concept codes for the given children
+		def conceptCriteria = ConceptDimension.createCriteria()
+		def concepts = conceptCriteria.list {
+			'in'( "conceptPath", paths )
+		}
+
+		// Determine the patients to query
+		def patientIds = QtPatientSetCollection.executeQuery( "SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?", result_instance_id.toLong() )
+		patientIds = patientIds.collect { BigDecimal.valueOf( it ) }
+
+		// If nothing is found, return
+		if( !concepts || !patientIds ) {
+			return
+		}
+		
+		// After that, retrieve all data entries for the children
+		def results = ObservationFact.executeQuery( "SELECT o.patientNum, o.tvalChar FROM ObservationFact o WHERE ( modifierCd = '@' OR modifierCd = sourcesystemCd ) AND conceptCd IN (:conceptCodes) AND patientNum in (:patientNums)", [ conceptCodes: concepts*.conceptCd, patientNums: patientIds ] )
+
+		results.each { row ->
+	
+			/*If I already have this subject mark it in the subset column as belonging to both subsets*/
+			String subject=row[ 0 ]
+			String value=row[ 1 ]
+			if(value==null){
+				value="Y";
+			}
+			if(tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
+				tablein.getRow(subject).put(columnid, value.toString());
+			}
+			else /*fill the row*/ {
+				ExportRowNew newrow=new ExportRowNew();
+				newrow.put("subject", subject);
+				newrow.put(columnid, value.toString());
+				tablein.putRow(subject, newrow);
+			}
+		}
+
+		//pad all the empty values for this column
+		for(ExportRowNew row: tablein.getRows())
+		{
+			if(!row.containsColumn(columnid)) {
+				row.put(columnid, "N");
+			}
+		}
         }
         return tablein;
     }
@@ -4381,7 +4468,7 @@ class I2b2HelperService {
                     "WHERE a.probeset_id = b.probeset_id AND a.trial_name IN (" + trialNames + ") " +
                     "AND a.assay_id IN (" + assayIds + ")";
 
-            sql.eachRow(rawCountQuery, , { row -> goodPct = row[0] })
+            sql.eachRow(rawCountQuery, { row -> goodPct = row[0] })
 
             if (goodPct == 0) {
                 throw new Exception("No raw data for Comparative Marker Selection.")

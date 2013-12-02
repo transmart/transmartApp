@@ -1,8 +1,8 @@
 
 <%! import annotation.* %> 
 <%! import bio.* %>  
-<%! import com.recomdata.util.* %> 
-  
+<%! import com.recomdata.util.* %>
+
 <g:form name="editMetadataForm">
 <g:hiddenField name="id" value="${folder?.id}" />
 <g:set var="objectUid" value="${folder?.uniqueId}"/>
@@ -22,3 +22,4 @@
     <span id="cancelmetadatabutton" class="greybutton buttonicon close">Cancel</span>
 </div>
 </g:form>
+<r:layoutResources disposition="defer"/>

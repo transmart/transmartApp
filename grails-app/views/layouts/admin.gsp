@@ -26,12 +26,14 @@
 		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
 		<link rel="stylesheet"	href="${resource(dir:'css',file:'admin.css')}" />
 		<link rel="stylesheet" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}" />
-       <script type="text/javascript" src="${resource(dir:'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
+        <script type="text/javascript"	src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
+        <script type="text/javascript">
+            var $j = jQuery.noConflict();
+        </script>
+        <script type="text/javascript" src="${resource(dir:'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
 		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
-		<script type="text/javascript"	src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
-		<g:javascript>jQuery.noConflict()</g:javascript>
-		<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
 	    <script type="text/javascript"	src="${resource(dir:'js', file:'usergroup.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 		<script type="text/javascript" charset="utf-8">
@@ -67,6 +69,7 @@
 	        });
 		</script>
 		<g:layoutHead />
+        <r:layoutResources/>
 	</head>
 	<body>
 		<div id="page">
@@ -74,5 +77,6 @@
  			<div id='navbar'><g:render template="/layouts/adminnavbar" /></div>
 			<div id="content"><g:layoutBody /></div>
 		</div>
+        <r:layoutResources/>
 	</body>
 </html>

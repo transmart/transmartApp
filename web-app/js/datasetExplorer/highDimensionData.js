@@ -54,7 +54,7 @@ function gatherHighDimensionalData(divId){
 				},
 				failure : function(result, request)
 				{
-                    Ext.Msg.alert("Error", "Communication failed.");
+                    Ext.Msg.alert("Error", "Ajax call is failed.");
 				}
 			}
 	);
@@ -90,8 +90,7 @@ function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
 				},
 				failure : function(result, request)
 				{
-					determineHighDimVariableType(result);
-					readCohortData(result,divId);
+                    Ext.Msg.alert("Error", "Ajax call is failed.");
 				}
 			}
 	);
@@ -114,7 +113,7 @@ function readCohortData(result, divId)
 {
 	//Get the JSON string we got from the server into a real JSON object.
 	var mobj=result.responseText.evalJSON();
-	
+
 	//If we failed to retrieve any test from the heatmap server call, we alert the user here. Otherwise, show the popup.
 	if(mobj.NoData && mobj.NoData == "true")
 	{
@@ -226,40 +225,31 @@ function runQueryForSubsetId(subset, callback, divId)
 }
 
 function runQueryForSubsetidSingleSubset(callback, divId){
-	var query = getCRCRequestSingleSubset(divId);
-	Ext.Ajax.request(
-			{
-				url : pageInfo.basePath + "/queryTool/runQueryFromDefinition",
-				method : 'POST',
-				xmlData : query,
-				// callback : callback,
-				success : function(result, request)
-				{
-				runQueryCompleteForSubsetId(result, callback);
-				}
-			,
-			failure : function(result, request)
-			{
-				runQueryCompleteForSubsetId(result, callback);
-			}
-			,
-			timeout : '600000'
-			}
-	);
+    var query = getCRCRequestSingleSubset(divId);
+    Ext.Ajax.request(
+        {
+            url : pageInfo.basePath + "/queryTool/runQueryFromDefinition",
+            method : 'POST',
+            xmlData : query,
+            // callback : callback,
+            success : function(result, request)
+            {
+                runQueryComplete(result, null, callback);
+            }
+            ,
+            failure : function(result, request)
+            {
+                Ext.Msg.alert("Error", "Ajax call is failed.")
+            }
+            ,
+            timeout : '600000'
+        }
+    );
 
-	if(GLOBAL.Debug)
-	{
-		resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
-	}
-}
-
-function runQueryCompleteForSubsetId(result, callback)
-{
-	var numOfPatientsFound = result.responseXML.selectSingleNode("//set_size").firstChild.nodeValue;
-	var patientsetid = result.responseXML.selectSingleNode("//result_instance_id").firstChild.nodeValue;
-	var currentSubsetId = patientsetid;
-	callback(currentSubsetId);
-
+    if(GLOBAL.Debug)
+    {
+        resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
+    }
 }
 
 function getCRCRequest(subset, queryname, divId){
@@ -371,13 +361,13 @@ function displayHighDimSelectionSummary(subsetCount, divId, probesAgg, snpType){
 	var innerHtml = summaryString+ 
 	'<br> <b>Pathway:</b> '+selectedSearchPathway+
 	'<br> <b>Marker Type:</b> '+GLOBAL.HighDimDataType;
-	
-	if(GLOBAL.HighDimDataType=="Gene Expression")
+
+	if(GLOBAL.HighDimDataType==HIGH_DIMENSIONAL_DATA["MRNA_AFFYMETRIX"].type)
 	{
 		if(isProbesAggregationSupported()){
 			innerHtml += '<br><b> Aggregate Probes:</b> '+ probesAgg.checked;
 		}
-	}else if(GLOBAL.HighDimDataType=="SNP"){
+	} else if(GLOBAL.HighDimDataType==HIGH_DIMENSIONAL_DATA["SNP"].type){
 		if(isProbesAggregationSupported()){
 			innerHtml += '<br><b> Aggregate Probes:</b> '+ probesAgg.checked;
 		}
@@ -485,23 +475,20 @@ function toggleDataAssociationFields(extEle){
 	}
 	
 	//toggle display of SNP type dropdown
-	if (document.getElementById("divSNPType") != null) {
-		if(GLOBAL.Analysis=='Advanced'){
-			document.getElementById("divSNPType").style.display="none";
-		}else if(GLOBAL.Analysis=="dataAssociation"){
-			if(GLOBAL.HighDimDataType=='Gene Expression'){
-				document.getElementById("divSNPType").style.display="none";
-			}else if (GLOBAL.HighDimDataType=='SNP'){
-				document.getElementById("divSNPType").style.display="";
-			}else if (GLOBAL.HighDimDataType==''){
-			    document.getElementById("divSNPType").style.display="none";
-			}else if (GLOBAL.HighDimDataType=='QPCR MIRNA'){
-                document.getElementById("divSNPType").style.display="none";
-            }
-		}
-	}
-	
-	//display the appropriate submit button
+    if (document.getElementById("divSNPType") != null) {
+        if (GLOBAL.Analysis == 'Advanced') {
+            document.getElementById("divSNPType").style.display = "none";
+        } else if (GLOBAL.Analysis == "dataAssociation") {
+
+            if (GLOBAL.HighDimDataType == HIGH_DIMENSIONAL_DATA["SNP"].type)
+                document.getElementById("divSNPType").style.display = "";
+            else
+                document.getElementById("divSNPType").style.display = "none";
+
+        }
+    }
+
+    //display the appropriate submit button
 	if(GLOBAL.Analysis=="dataAssociation"){
 		document.getElementById("compareStepPathwaySelectionOKButton").style.display="none";
 		document.getElementById("dataAssociationApplyButton").style.display="";
@@ -516,7 +503,8 @@ function isProbesAggregationSupported(){
 	//The checkbox is displayd only for the dataAssociation tab.
 	if(GLOBAL.Analysis=="dataAssociation"){
 		var highDimDataTypeSupported=false;
-		if(["Gene Expression", "SNP", "QPCR MIRNA"].indexOf(GLOBAL.HighDimDataType)>-1){
+
+		if(["Gene Expression", "SNP"].indexOf(GLOBAL.HighDimDataType)>-1){
 			highDimDataTypeSupported=true;
 		}
 		
