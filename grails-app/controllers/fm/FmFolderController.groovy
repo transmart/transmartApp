@@ -37,12 +37,10 @@ import grails.converters.XML
 import grails.validation.ValidationException
 import groovy.util.slurpersupport.NoChildren
 import groovy.util.slurpersupport.NodeChild
-import groovy.util.slurpersupport.NodeChildren
 import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
 import search.SearchKeyword
-import transmartapp.SolrFacetService
 
 import javax.activation.MimetypesFileTypeMap
 
@@ -917,6 +915,7 @@ class FmFolderController {
         def platforms
         String hlTitle
         String hlDescription
+        List<String> hlFileIds = []
 
         if (folderId) {
             folder = FmFolder.get(folderId)
@@ -966,41 +965,46 @@ class FmFolderController {
                  */
                 // The search terms have been set in RWGController
                 def categoryList = session['rwgCategorizedSearchTerms']
-
-                if (categoryList?.size() > 0) {
-                //For each category (except Datanode), construct a SOLR query
-                //for (category in categoryList) {
-                    def category = categoryList[0]
+                String textSearch = categoryList?.find { it.startsWith("text:") }
+                if (textSearch) {
 
                     // Parse the search terms into an operator, category and term list
-                    category = ((String) category)
-                    def operator = category.split("::")[1].toUpperCase()
-                    category = category.split("::")[0]
-                    def categoryName = category.split(":", 2)[0]
-                    def termList = category.split(":", 2)[1].split("\\|")
+                    def operator = textSearch.split("::")[1].toUpperCase()
+                    textSearch = textSearch.split("::")[0]
+                    def categoryName = textSearch.split(":", 2)[0]
+                    def termList = textSearch.split(":", 2)[1].split("\\|")
 
                     // Construct search query (with highlight parameters)
                     String url = solrFacetService.createSOLRQueryPath()
                     String categoryQuery = solrFacetService.createCategoryQueryString(categoryName, termList, operator)
                     String solrQuery = "q=" + solrFacetService.createSOLRQueryString(URLEncoder.encode(categoryQuery), "", "")
-                    String filter = "fq=id:\"$folder.uniqueId\""
                     String highlight = "hl=true&hl.fl=title+description&hl.fragsize=0" +
                             "&hl.simple.pre=<mark><b>&hl.simple.post=</b></mark>"
-                    String parameters = [solrQuery, filter, highlight].join("&")
+                    String parameters = [solrQuery, highlight].join("&")
 
                     // Execute search
                     NodeChild xml = solrFacetService.executeSOLRFacetedQuery(url, parameters, false)
 
-                    // Extract the highlighted text from the result
+                    // Search the response for the current folder and matching file ids
                     def highlighting = xml.lst.find { it.@name == "highlighting" }
                     if (!(highlighting instanceof NoChildren)) {
-                        def hlTitleNode = highlighting.lst[0].arr.find { it.@name == "title" }
-                        if (!(hlTitleNode instanceof NoChildren)) {
-                            hlTitle = hlTitleNode.str[0].text()
-                        }
-                        def hlDescriptionNode = highlighting.lst[0].arr.find { it.@name == "description" }
-                        if (!(hlDescriptionNode instanceof NoChildren)) {
-                            hlDescription = hlDescriptionNode.str[0].text()
+                        for (NodeChild match : highlighting.lst) {
+                            String matchId = match.@name.text()
+                            if (matchId == folder.uniqueId) {
+                                // Extract the highlighted title & description from the result
+                                def hlTitleNode = match.arr.find { it.@name == "title" }
+                                if (!(hlTitleNode instanceof NoChildren)) {
+                                    hlTitle = hlTitleNode.str[0].text()
+                                }
+                                def hlDescriptionNode = match.arr.find { it.@name == "description" }
+                                if (!(hlDescriptionNode instanceof NoChildren)) {
+                                    hlDescription = hlDescriptionNode.str[0].text()
+                                }
+                            }
+                            if (matchId.startsWith("FIL")) {
+                                // File match found; add it for highlighting in filesTable
+                                hlFileIds.add(matchId)
+                            }
                         }
                     }
                 }
@@ -1021,7 +1025,8 @@ class FmFolderController {
                         jSONForGrids: jSONForGrids,
                         subjectLevelDataAvailable: subjectLevelDataAvailable,
                         hlTitle: hlTitle,
-                        hlDescription: hlDescription
+                        hlDescription: hlDescription,
+                        hlFileIds: hlFileIds
                 ]
     }
 
@@ -1319,7 +1324,7 @@ class FmFolderController {
         def folder = file.getFolder()
         if (file) {
             fmFolderService.deleteFile(file)
-            render(template: 'filesTable', model: [folder: folder])
+            render(template: 'filesTable', model: [folder: folder, hlFileIds: []])
         } else {
             render(status: 404, text: "FmFile not found")
         }

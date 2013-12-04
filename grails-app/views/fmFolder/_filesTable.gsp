@@ -23,7 +23,12 @@
                <td class="columnname" style="text-align: left;">
                    <span class="fileicon ${fmFile.fileType}"></span>
                    <g:link controller="fmFolder" action="downloadFile" params="[id: fmFile.id]">
-                       ${fmFile.displayName}
+                       <g:if test="${hlFileIds?.contains(fmFile.uniqueId)}">
+                           <mark><b>${fmFile.displayName}</b></mark>
+                       </g:if>
+                       <g:else>
+                           ${fmFile.displayName}
+                       </g:else>
                    </g:link>
                </td>
                <td class="columnvalue">

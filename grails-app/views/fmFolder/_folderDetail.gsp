@@ -233,7 +233,7 @@
                 class="gridTitle">Associated Files</div>
 
             <div id="files-table">
-                <tmpl:filesTable folder="${folder}"/>
+                <tmpl:filesTable folder="${folder}" hlFileIds="${hlFileIds}"/>
             </div>
         </div>
     </g:if>
