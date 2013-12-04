@@ -57,7 +57,8 @@ class RWGController {
     }
 
     def ajaxWelcome = {
-        render(template: 'welcome');
+		//add a unused model to be able to use the template
+		render (template: 'welcome', model: [page: "RWG"]);
     }
 
     def searchLog = {
