@@ -436,13 +436,20 @@ class RWGController {
                 def uniqueLeavesString = pathLists[1].join(",") + ","
                 session['searchLog'] += "Final folder string: " + folderSearchString
 
-                //calculate number of each folder type:
-                for (int i = 0; i < pathLists[0].size(); i++) {
-                    def folder = FmFolder.findByFolderFullName(pathLists[0][i])
-                    def c = numbers.containsKey(folder.folderType) ? numbers.get(folder.folderType) : 0
-                    numbers.put(folder.folderType, c + 1)
-                }
-                def numbersJSON = new JSONObject(numbers)
+				//if no accession in search list, calculate number of each folder type:
+				def numbersJSON
+				if (searchString.indexOf("|ACCESSION;") == -1) {
+	                for (int i = 0; i < pathLists[0].size(); i++) {
+	                    def folder = FmFolder.findByFolderFullName(pathLists[0][i])
+	                    def c = numbers.containsKey(folder.folderType) ? numbers.get(folder.folderType) : 0
+	                    numbers.put(folder.folderType, c + 1)
+	                }
+					numbersJSON = new JSONObject(numbers)
+				}else{
+					numbersJSON=null
+				}
+
+				
 
                 //retrieve folders id to expand as opened nodes
                 def nodesToExpand = session['rwgOpenedNodes']
