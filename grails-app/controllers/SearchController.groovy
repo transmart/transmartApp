@@ -72,7 +72,7 @@ public class SearchController {
      * - GENESIG
      */
     def loadSearchPathways = {
-        params.query = 'mirna'+SEARCH_DELIMITER+'gene'+SEARCH_DELIMITER+'pathway'+SEARCH_DELIMITER+'genelist'+SEARCH_DELIMITER+'genesig:'+params.query
+        params.query = 'protein'+SEARCH_DELIMITER+'mirna'+SEARCH_DELIMITER+'gene'+SEARCH_DELIMITER+'pathway'+SEARCH_DELIMITER+'genelist'+SEARCH_DELIMITER+'genesig:'+params.query
         loadSearch()
     }
 
