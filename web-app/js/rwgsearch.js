@@ -147,8 +147,6 @@ function convertCategory(valueToConvert)	{
 
 //Add the search term to the array and show it in the panel.
 function addSearchTerm(searchTerm, noUpdate, openInAnalyze,datasetExplorerPath)	{
-	goWelcome();
-	
 	var category = searchTerm.display == undefined ? "TEXT" : searchTerm.display;
 	
 	category = category + "|" + (searchTerm.category == undefined ? "TEXT" : searchTerm.category);
@@ -477,7 +475,6 @@ function getSearchKeywordList()   {
 
 //Remove the search term that the user has clicked.
 function removeSearchTerm(ctrl)	{
-	goWelcome();
 	jQuery.ajax({
 		url:resetNodesRwgURL
 	});
