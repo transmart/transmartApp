@@ -57,8 +57,8 @@ class RWGController {
     }
 
     def ajaxWelcome = {
-		//add a unused model to be able to use the template
-		render (template: 'welcome', model: [page: "RWG"]);
+        //add a unused model to be able to use the template
+        render (template: 'welcome', model: [page: "RWG"]);
     }
 
     def searchLog = {
@@ -437,20 +437,21 @@ class RWGController {
                 def uniqueLeavesString = pathLists[1].join(",") + ","
                 session['searchLog'] += "Final folder string: " + folderSearchString
 
-				//if no accession in search list, calculate number of each folder type:
-				def numbersJSON
-				if (searchString.indexOf("|ACCESSION;") == -1) {
-	                for (int i = 0; i < pathLists[0].size(); i++) {
-	                    def folder = FmFolder.findByFolderFullName(pathLists[0][i])
-	                    def c = numbers.containsKey(folder.folderType) ? numbers.get(folder.folderType) : 0
-	                    numbers.put(folder.folderType, c + 1)
-	                }
-					numbersJSON = new JSONObject(numbers)
-				}else{
-					numbersJSON=null
-				}
+                //if no accession in search list, calculate number of each folder type:
+                def numbersJSON
+                if (searchString.contains("|ACCESSION;")) {
+                    for (folderName in pathLists[0]) {
+                        def folder = FmFolder.findByFolderFullName folderName
+                        if (!folder) {
+                            log.info "No folder with full name $folderName"
+                            continue
+                        }
+                        def c = numbers[folder.folderType] ?: 0
+                        numbers[folder.folderType] = c + 1
+                    }
+                    numbersJSON = new JSONObject(numbers)
+                }
 
-				
 
                 //retrieve folders id to expand as opened nodes
                 def nodesToExpand = session['rwgOpenedNodes']
