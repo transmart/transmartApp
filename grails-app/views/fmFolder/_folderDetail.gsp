@@ -82,8 +82,8 @@
         </div>
 
         <h3 class="rdc-h3">
-            <g:if test="${hlTitle?.length() > 0}">
-                ${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${hlTitle}
+            <g:if test="${searchHighlight?.title?.length() > 0}">
+                ${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${searchHighlight.title}
             </g:if>
             <g:else>
                 <g:if test="${folder?.hasProperty('folderName')}">
@@ -94,8 +94,8 @@
     </div>
     <g:if test="${bioDataObject?.hasProperty('description')}">
         <div class="description">
-            <g:if test="${hlDescription?.length() > 0}">
-                <g:set var="description" value="${hlDescription}"></g:set>
+            <g:if test="${searchHighlight?.description?.length() > 0}">
+                <g:set var="description" value="${searchHighlight.description}"></g:set>
             </g:if>
             <g:else>
                 <g:set var="description" value="${bioDataObject?.description}"></g:set>
@@ -233,7 +233,7 @@
                 class="gridTitle">Associated Files</div>
 
             <div id="files-table">
-                <tmpl:filesTable folder="${folder}" hlFileIds="${hlFileIds}"/>
+                <tmpl:filesTable folder="${folder}" hlFileIds="${searchHighlight?.fileIds}"/>
             </div>
         </div>
     </g:if>

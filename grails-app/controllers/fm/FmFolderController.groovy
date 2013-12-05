@@ -913,9 +913,7 @@ class FmFolderController {
         def technologies
         def vendors
         def platforms
-        String hlTitle
-        String hlDescription
-        List<String> hlFileIds = []
+        Map searchHighlight
 
         if (folderId) {
             folder = FmFolder.get(folderId)
@@ -960,54 +958,9 @@ class FmFolderController {
                     }
                 }
 
-                /*
-                 *   Highlighting of search terms (if they are specified)
-                 */
-                // The search terms have been set in RWGController
+                // Highlight search terms (if specified by RWGController)
                 def categoryList = session['rwgCategorizedSearchTerms']
-                String textSearch = categoryList?.find { it.startsWith("text:") }
-                if (textSearch) {
-
-                    // Parse the search terms into an operator, category and term list
-                    def operator = textSearch.split("::")[1].toUpperCase()
-                    textSearch = textSearch.split("::")[0]
-                    def categoryName = textSearch.split(":", 2)[0]
-                    def termList = textSearch.split(":", 2)[1].split("\\|")
-
-                    // Construct search query (with highlight parameters)
-                    String url = solrFacetService.createSOLRQueryPath()
-                    String categoryQuery = solrFacetService.createCategoryQueryString(categoryName, termList, operator)
-                    String solrQuery = "q=" + solrFacetService.createSOLRQueryString(URLEncoder.encode(categoryQuery), "", "")
-                    String highlight = "hl=true&hl.fl=title+description&hl.fragsize=0" +
-                            "&hl.simple.pre=<mark><b>&hl.simple.post=</b></mark>"
-                    String parameters = [solrQuery, highlight].join("&")
-
-                    // Execute search
-                    NodeChild xml = solrFacetService.executeSOLRFacetedQuery(url, parameters, false)
-
-                    // Search the response for the current folder and matching file ids
-                    def highlighting = xml.lst.find { it.@name == "highlighting" }
-                    if (!(highlighting instanceof NoChildren)) {
-                        for (NodeChild match : highlighting.lst) {
-                            String matchId = match.@name.text()
-                            if (matchId == folder.uniqueId) {
-                                // Extract the highlighted title & description from the result
-                                def hlTitleNode = match.arr.find { it.@name == "title" }
-                                if (!(hlTitleNode instanceof NoChildren)) {
-                                    hlTitle = hlTitleNode.str[0].text()
-                                }
-                                def hlDescriptionNode = match.arr.find { it.@name == "description" }
-                                if (!(hlDescriptionNode instanceof NoChildren)) {
-                                    hlDescription = hlDescriptionNode.str[0].text()
-                                }
-                            }
-                            if (matchId.startsWith("FIL")) {
-                                // File match found; add it for highlighting in filesTable
-                                hlFileIds.add(matchId)
-                            }
-                        }
-                    }
-                }
+                searchHighlight = solrFacetService.getSearchHighlight(folder, categoryList)
             }
         }
 
@@ -1024,9 +977,7 @@ class FmFolderController {
                         metaDataTagItems: metaDataTagItems,
                         jSONForGrids: jSONForGrids,
                         subjectLevelDataAvailable: subjectLevelDataAvailable,
-                        hlTitle: hlTitle,
-                        hlDescription: hlDescription,
-                        hlFileIds: hlFileIds
+                        searchHighlight: searchHighlight
                 ]
     }
 

@@ -24,6 +24,8 @@ import bio.BioMarker
 import bio.BioMarkerExpAnalysisMV
 import fm.FmFolder
 import fm.FmFolderAssociation
+import groovy.util.slurpersupport.NoChildren
+import groovy.util.slurpersupport.NodeChild
 import groovy.xml.StreamingMarkupBuilder
 import org.json.JSONObject
 import grails.util.Holders
@@ -707,6 +709,61 @@ class SolrFacetService {
             log.error("SOLR update failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
         }
 
+    }
+
+    public Map getSearchHighlight(FmFolder folder, categoryList) {
+        String hlTitle
+        String hlDescription
+        List<String> hlFileIds = []
+
+        String textSearch = categoryList?.find { it.startsWith("text:") }
+        if (textSearch) {
+
+            // Parse the search terms into an operator, category and term list
+            def operator = textSearch.split("::")[1].toUpperCase()
+            textSearch = textSearch.split("::")[0]
+            def categoryName = textSearch.split(":", 2)[0]
+            def termList = textSearch.split(":", 2)[1].split("\\|")
+
+            // Construct search query (with highlight parameters)
+            String url = createSOLRQueryPath()
+            String categoryQuery = createCategoryQueryString(categoryName, termList, operator)
+            String solrQuery = "q=" + createSOLRQueryString(URLEncoder.encode(categoryQuery), "", "")
+            String highlight = "hl=true&hl.fl=title+description&hl.fragsize=0" +
+                    "&hl.simple.pre=<mark><b>&hl.simple.post=</b></mark>"
+            String parameters = [solrQuery, highlight].join("&")
+
+            // Execute search
+            NodeChild xml = executeSOLRFacetedQuery(url, parameters, false)
+
+            // Search the response for the current folder and matching file ids
+            def highlighting = xml.lst.find { it.@name == "highlighting" }
+            if (!(highlighting instanceof NoChildren)) {
+                for (NodeChild match : highlighting.lst) {
+                    String matchId = match.@name.text()
+                    if (matchId == folder.uniqueId) {
+                        // Extract the highlighted title & description from the result
+                        def hlTitleNode = match.arr.find { it.@name == "title" }
+                        if (!(hlTitleNode instanceof NoChildren)) {
+                            hlTitle = hlTitleNode.str[0].text()
+                        }
+                        def hlDescriptionNode = match.arr.find { it.@name == "description" }
+                        if (!(hlDescriptionNode instanceof NoChildren)) {
+                            hlDescription = hlDescriptionNode.str[0].text()
+                        }
+                    }
+                    if (matchId.startsWith("FIL")) {
+                        // File match found; add it for highlighting in filesTable
+                        hlFileIds.add(matchId)
+                    }
+                }
+            }
+            return [title: hlTitle,
+                    description: hlDescription,
+                    fileIds: hlFileIds
+            ]
+        }
+        return null
     }
 
 
