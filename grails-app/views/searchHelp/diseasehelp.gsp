@@ -7,8 +7,8 @@
   
   This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
   as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
-  1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
-  2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
+  1.    You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
+  2.    You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
@@ -18,34 +18,41 @@
 -->
 
 <html>
-<head>
-<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
-<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
-
-<script type="text/javascript">
-
-	function refreshParent(newurl){
-     parent.window.close();
-	 if(parent!=null && parent.window.opener!=null && !parent.window.opener.closed){
-		parent.window.opener.location =newurl;
-		}
-	}
-
-</script>
-</head>
-<body>
-<div id="summary">
-
-<p class="Title"><span class="Title"> </span></p>
-<div id="SummaryHeader"><span class="SummaryHeader">Available Disease Search Terms</span></div>
-<table class="trborderbottom" width="100%">
-	<g:each in="${diseases}" status="i" var="keyword">
-		<tr style="border-bottom: 1px solid #CCCCCC;">
-			<td>${createKeywordSearchLink(popup:true, jsfunction:'refreshParent', keyword:keyword)}</td>
-		</tr>
-	</g:each>
-</table>
-<br/>
-</div>
-</body>
+    <head>
+        <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+        <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'jquery.dataTables.css')}">
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>                   
+        <script type="text/javascript">
+            jQuery(document).ready(function() {
+                jQuery("#diseaseTable").dataTable({
+                     "iDisplayLength": 10,
+                     "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],                    
+                     "sPaginationType": "full_numbers",
+                     "bStateSave": true                    
+                 });
+            });      
+            function refreshParent(newurl){
+             parent.window.close();
+             if(parent!=null && parent.window.opener!=null && !parent.window.opener.closed){
+                    parent.window.opener.location =newurl;
+             }
+            }   
+        </script>
+    </head>
+    <body>
+        <table id='diseaseTable'>
+            <thead>
+                <tr>
+                    <th>Available Diseases</th>
+                </tr>
+            </thead>
+            <tbody>
+                <g:each in="${diseases}" status ="i" var="keyword">
+                    <tr>
+                        <td style="font: 12px verdana, arial, helvetica, sans-serif;">${createKeywordSearchLink(popup:true, jsfunction:"refreshParent", keyword:keyword)}</td>
+                    </tr>
+                </g:each>
+            </tbody>
+        </table>
+    </body>
 </html>
