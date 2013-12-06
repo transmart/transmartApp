@@ -36,7 +36,7 @@ class AsyncJob {
 		table 'I2B2DEMODATA.ASYNC_JOB'
 		version false
         id column:'ID',
-                generator: 'sequence',
+                generator: 'increment',
                 params: [sequence:'I2B2DEMODATA.ASYNC_JOB_SEQ']
 		jobName column:'JOB_NAME'
 		jobStatus column:'JOB_STATUS'
