@@ -276,7 +276,7 @@ class AsyncJobService {
 		 if (viewerURL && viewerURL != '') asyncJob.viewerURL = viewerURL
 		 if (altViewerURL && altViewerURL != '' && asyncJob.altViewerURL != null) asyncJob.altViewerURL = altViewerURL
 		 if (results && results != '') asyncJob.results = results
-		 
+            jobResultsService[jobName]["ViewerURL"] = viewerURL
 		 //We need to flush so that the value doesn't overwrite cancelled when the controller finishes.
 		 asyncJob.save(flush:true)
 	 }
