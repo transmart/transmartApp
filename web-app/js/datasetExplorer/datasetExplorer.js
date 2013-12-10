@@ -915,7 +915,6 @@ Ext.onReady(function()
             url: pageInfo.basePath+"/pluginDetector/checkPlugin",
             method: 'POST',
             success: function (result) {
-                console.log('genomeBrowser is installed?',result.responseText);
                 if (result.responseText === 'true') {
 
                     // load script
@@ -953,7 +952,6 @@ Ext.onReady(function()
             method: 'POST',
             success: function (result) {
 
-                console.log('dalliance-plugin is installed?', result.responseText);
                 var _this = this;
 
                 if (result.responseText === 'true') {

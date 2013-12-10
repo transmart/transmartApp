@@ -79,7 +79,6 @@ DynamicLoad.prototype = {
             function scriptLoaded() {
                 // check done variable to make sure we aren't getting notified more than once on the same script
                 if (!done) {
-                    console.log("!done");
                     script.onreadystatechange = script.onload = null;   // kill memory leak in IE
                     done = true;
                     if (scriptsToLoad.length != 0) {
