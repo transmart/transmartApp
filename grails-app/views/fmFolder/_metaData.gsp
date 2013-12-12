@@ -24,13 +24,13 @@
                 <g:if test="${amTagItem.tagItemType == 'FIXED'}">
                  	  <g:if test="${amTagItem.tagItemAttr!=null?bioDataObject?.hasProperty(amTagItem.tagItemAttr):false}" >
 						<g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
-	           			<g:select from="${ConceptCode.findAll('from ConceptCode where codeTypeName=? order by codeName',[amTagItem.codeTypeName])}"	
-		                	name="${amTagItem.tagItemAttr}"  value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"   optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />	
+	           			<g:select from="${ConceptCode.findAll('from ConceptCode where codeTypeName=? order by codeName',[amTagItem.codeTypeName])}"
+		                	name="${amTagItem.tagItemAttr}"  value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"   optionKey="uniqueId" optionValue="codeName"  noSelection="['':'-Select One-']" />
 						</g:if>
 	                	<g:elseif test="${amTagItem.tagItemSubtype == 'MULTIPICKLIST'}">
 	                		<g:set var="metaDataService" bean="metaDataService"/>
-	                		<g:set var="fieldValue" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
-                    		<g:set var="displayValues" value="${metaDataService.getViewValues(fieldValue)}"/>
+	                		<g:set var="fval" value="${fieldValue(bean:bioDataObject,field:amTagItem.tagItemAttr)}"/>
+                    		<g:set var="displayValues" value="${metaDataService.getViewValues(fval)}"/>
                     		<tmpl:extTagSearchField fieldName="${amTagItem.tagItemAttr}" codeTypeName="${amTagItem.codeTypeName}" searchAction="extSearch" searchController="metaData" values="${displayValues}"/>
 						
 						</g:elseif>
