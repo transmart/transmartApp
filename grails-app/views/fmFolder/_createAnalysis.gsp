@@ -31,3 +31,4 @@
     <span id="cancelanalysisbutton" class="greybutton buttonicon close">Cancel</span>
 </div>
 </g:form>
+<r:layoutResources disposition="defer"/>

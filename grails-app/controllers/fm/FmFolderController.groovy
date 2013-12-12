@@ -35,6 +35,8 @@ import de.DeMrnaAnnotation
 import grails.converters.JSON
 import grails.converters.XML
 import grails.validation.ValidationException
+import groovy.util.slurpersupport.NoChildren
+import groovy.util.slurpersupport.NodeChild
 import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
@@ -60,7 +62,7 @@ class FmFolderController {
                 new File(System.getenv('HOME'), '.mime.types'),
                 new File(System.getenv('JAVA_HOME'), 'lib/mime.types'),
                 new File('/etc/mime.types')
-        ].findResult null, { File file ->
+        ].findResult null, {File file ->
             if (file.exists()) {
                 return file
             }
@@ -91,16 +93,16 @@ class FmFolderController {
     public String serializeFoldersToXMLFile() {
         def writer = new FileWriter("c:\\temp\\SerializedAsXML.xml")
 
-//		List<FmFolder> folderList = FmFolder.list()
+        //		List<FmFolder> folderList = FmFolder.list()
         def fmFolderInstance = FmFolder.get(8)
 
 
         def builder = new StreamingMarkupBuilder().bind {
             //	mkp.xmlDeclaration()
             unescaped << '<fmFolders>'
-//		folderList.each {folder ->
+            //		folderList.each {folder ->
             out << fmFolderInstance
-//		}
+            //		}
             unescaped << '</fmFolders>'
         }
         writer << builder
@@ -136,7 +138,7 @@ class FmFolderController {
         def measurements = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
         def vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
         def technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
-        def platforms = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT name FROM BioAssayPlatform as p ORDER BY p.name")
+        def platforms = bio.BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
 
         log.info measurements
         log.info technologies
@@ -164,7 +166,7 @@ class FmFolderController {
         def measurements = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
         def vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
         def technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
-        def platforms = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT name FROM BioAssayPlatform as p ORDER BY p.name")
+        def platforms = bio.BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
 
         log.info measurements
         log.info technologies
@@ -437,8 +439,8 @@ class FmFolderController {
         def fmFolderInstance = FmFolder.get(params.id)
 
         // test the class
-//		def json = new JSONSerializer(target: fmFolderInstance).getJSON()
-//		log.info json
+        // def json = new JSONSerializer(target: fmFolderInstance).getJSON()
+        // log.info json
 
         def data = serializeFoldersToXMLFile()
         log.info data
@@ -789,7 +791,7 @@ class FmFolderController {
         }
 
         childMetaDataTagItems.eachWithIndex()
-                { obj, i ->
+                {obj, i ->
                     //
                     AmTagItem amTagItem = obj
                     if (amTagItem.viewInChildGrid) {
@@ -817,12 +819,12 @@ class FmFolderController {
 
                 }
 
-        folders.each { folderObject ->
+        folders.each {folderObject ->
             log.info "FOLDER::$folderObject"
 
             def bioDataObject = getBioDataObject(folderObject)
             ExportRowNew newrow = new ExportRowNew();
-            childMetaDataTagItems.eachWithIndex() { obj, i ->
+            childMetaDataTagItems.eachWithIndex() {obj, i ->
                 AmTagItem amTagItem = obj
                 if (amTagItem.viewInChildGrid) {
                     if (amTagItem.tagItemType == 'FIXED' && bioDataObject.hasProperty(amTagItem.tagItemAttr)) {
@@ -885,7 +887,7 @@ class FmFolderController {
     }
 
     private createDisplayString(tagValues) {
-//		log.info ("createDisplayString::TAGVALUES == " + tagValues)
+        // log.info ("createDisplayString::TAGVALUES == " + tagValues)
 
         def displayValue = ""
         if (tagValues) {
@@ -911,6 +913,7 @@ class FmFolderController {
         def technologies
         def vendors
         def platforms
+        Map searchHighlight
 
         if (folderId) {
             folder = FmFolder.get(folderId)
@@ -934,27 +937,30 @@ class FmFolderController {
                     measurements = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
                     vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
                     technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
-                    platforms = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT name FROM BioAssayPlatform as p ORDER BY p.name")
+                    platforms = bio.BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
                 }
 
                 def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
                 def subFolderTypes = fmFolderService.getChildrenFolderTypes(folder.id)
                 log.debug "subFolderTypes = subFolderTypes"
-                subFolderTypes.each
-                        {
-                            log.debug "it = $it"
-                            subFolders = fmFolderService.getChildrenFolderByType(folder.id, it)
-                            if (subFolders != null && subFolders.size() > 0) {
-                                log.debug "${subFolders.size()} subFolders == $subFolders"
-                                def subFoldersAccessLevelMap = fmFolderService.getAccessLevelInfoForFolders(user, subFolders)
-                                subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
-                                String gridTitle = "Associated " + StringUtils.capitalize(subFolders[0].pluralFolderTypeName.toLowerCase())
-                                String gridData = createDataTable(subFoldersAccessLevelMap, gridTitle)
-                                //	log.info gridData
-                                jSONForGrids.add(gridData)
-                                log.debug "ADDING JSON GRID"
-                            }
-                        }
+                subFolderTypes.each {
+                    log.debug "it = $it"
+                    subFolders = fmFolderService.getChildrenFolderByType(folder.id, it)
+                    if (subFolders != null && subFolders.size() > 0) {
+                        log.debug "${subFolders.size()} subFolders == $subFolders"
+                        def subFoldersAccessLevelMap = fmFolderService.getAccessLevelInfoForFolders(user, subFolders)
+                        subFolderLayout = formLayoutService.getLayout(it.toLowerCase());
+                        String gridTitle = "Associated " + StringUtils.capitalize(subFolders[0].pluralFolderTypeName.toLowerCase())
+                        String gridData = createDataTable(subFoldersAccessLevelMap, gridTitle)
+                        //	log.info gridData
+                        jSONForGrids.add(gridData)
+                        log.debug "ADDING JSON GRID"
+                    }
+                }
+
+                // Highlight search terms (if specified by RWGController)
+                def categoryList = session['rwgCategorizedSearchTerms']
+                searchHighlight = solrFacetService.getSearchHighlight(folder, categoryList)
             }
         }
 
@@ -970,7 +976,8 @@ class FmFolderController {
                         amTagTemplate: amTagTemplate,
                         metaDataTagItems: metaDataTagItems,
                         jSONForGrids: jSONForGrids,
-                        subjectLevelDataAvailable: subjectLevelDataAvailable
+                        subjectLevelDataAvailable: subjectLevelDataAvailable,
+                        searchHighlight: searchHighlight
                 ]
     }
 
@@ -1133,7 +1140,7 @@ class FmFolderController {
             def measurements = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
             def vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
             def technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
-            def platforms = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT name FROM BioAssayPlatform as p ORDER BY p.name")
+            def platforms = bio.BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
 
             render(template: "editMetaData", model: [bioDataObject: bioDataObject, measurements: measurements, technologies: technologies, vendors: vendors, platforms: platforms, folder: folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
         }
@@ -1268,7 +1275,7 @@ class FmFolderController {
         def folder = file.getFolder()
         if (file) {
             fmFolderService.deleteFile(file)
-            render(template: 'filesTable', model: [folder: folder])
+            render(template: 'filesTable', model: [folder: folder, hlFileIds: []])
         } else {
             render(status: 404, text: "FmFile not found")
         }

@@ -82,19 +82,30 @@
         </div>
 
         <h3 class="rdc-h3">
-            <g:if test="${folder?.hasProperty('folderName')}">
-                ${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${folder?.folderName}
+            <g:if test="${searchHighlight?.title?.length() > 0}">
+                ${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${searchHighlight.title}
             </g:if>
+            <g:else>
+                <g:if test="${folder?.hasProperty('folderName')}">
+                    ${StringUtils.capitalize(folder?.folderType.toLowerCase())}: ${folder?.folderName}
+                </g:if>
+            </g:else>
         </h3>
     </div>
     <g:if test="${bioDataObject?.hasProperty('description')}">
         <div class="description">
-            <g:if test="${bioDataObject?.description?.length() > 325000}">
-                ${(bioDataObject?.description)?.substring(0, 324000)}&nbsp;&nbsp;
+            <g:if test="${searchHighlight?.description?.length() > 0}">
+                <g:set var="description" value="${searchHighlight.description}"></g:set>
+            </g:if>
+            <g:else>
+                <g:set var="description" value="${bioDataObject?.description}"></g:set>
+            </g:else>
+            <g:if test="${description?.length() > 325000}">
+                ${(description)?.substring(0, 324000)}&nbsp;&nbsp;
                 <a href=#>...See more</a>
             </g:if>
             <g:else>
-                ${bioDataObject?.description}
+                ${description}
             </g:else></div>
 
         <div style="height:20px;"></div>
@@ -222,7 +233,7 @@
                 class="gridTitle">Associated Files</div>
 
             <div id="files-table">
-                <tmpl:filesTable folder="${folder}"/>
+                <tmpl:filesTable folder="${folder}" hlFileIds="${searchHighlight?.fileIds}"/>
             </div>
         </div>
     </g:if>

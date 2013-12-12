@@ -222,7 +222,6 @@ class AsyncJobService {
         } else {
             jobResultsService[jobName]["Status"] = status
         }
-
         //If the job isn't already cancelled, update the job info.
         if (!retValue) {
             def asyncJob = AsyncJob.get(jobID)
@@ -234,7 +233,7 @@ class AsyncJobService {
             if (viewerURL && viewerURL != '') asyncJob.viewerURL = viewerURL
             if (altViewerURL && altViewerURL != '' && asyncJob.altViewerURL != null) asyncJob.altViewerURL = altViewerURL
             if (results && results != '') asyncJob.results = results
-
+            jobResultsService[jobName]["ViewerURL"] = viewerURL
             //We need to flush so that the value doesn't overwrite cancelled when the controller finishes.
             asyncJob.save(flush: true)
         }
