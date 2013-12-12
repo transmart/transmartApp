@@ -111,9 +111,24 @@ class SnpDataService {
         //Grab the connection from the grails object.
         conn = dataSource.getConnection()
 
+        //check if there are data for copy number. If not, don't create files for this
+        def query="""SELECT count(*)
+                FROM de_snp_copy_number 
+                WHERE patient_num in (
+                select distinct patient_num from
+                qt_patient_set_collection where result_instance_id = ?)"""
+        pStmt = conn.prepareStatement(query)
+        pStmt.setBigDecimal(1, Integer.valueOf(resultInstanceId))
+        rs = pStmt.executeQuery()
+        if(rs.next()){
+            if(rs.getInt(1)==0) {
+                log.info("No copy number data for these cohorts. Skip copy number export")
+                return
+            }
+        }
         //Grab the configuration that sets the fetch size.
         def rsize = Holders.config.com.recomdata.plugins.resultSize;
-        Integer fetchSize = 5000;
+        Integer fetchSize = 10000;
         if (rsize != null) {
             try {
                 fetchSize = Integer.parseInt(rsize);
@@ -130,14 +145,10 @@ class SnpDataService {
             /**
              * Prepare the query to extract the records for this subject
              */
-            def query = """
-							SELECT dscg.gsm_num, dscg.patient_num, dscg.snp_calls, dscg.snp_name, dscn.copy_number
-							FROM de_snp_calls_by_gsm dscg
-							LEFT JOIN (SELECT patient_num, snp_name, copy_number 
-							      FROM de_snp_copy_number 
-							      WHERE patient_num = ?) dscn ON dscg.patient_num = dscn.patient_num AND dscg.snp_name = dscn.snp_name
-							WHERE dscg.patient_num = ?
-						"""
+    	      query = """SELECT dssm.sample_cd as gsm_num, dscn.snp_name, dscn.copy_number
+    				FROM de_snp_copy_number dscn, de_subject_sample_mapping dssm
+    				WHERE dscn.patient_num = ?
+                             and dssm.patient_id=dscn.patient_num"""
 
             def filename = subjectId + '.CNV'
             def FileWriterUtil writerUtil = new FileWriterUtil(studyDir, filename, jobName, dataTypeName, dataTypeFolder, separator)
@@ -148,7 +159,6 @@ class SnpDataService {
             //Prepare the SQL statement.
             pStmt = conn.prepareStatement(query)
             pStmt.setBigDecimal(1, patientData?.omicPatientId)
-            pStmt.setBigDecimal(2, patientData?.omicPatientId)
             pStmt.setFetchSize(fetchSize)
 
             rs = pStmt.executeQuery()
