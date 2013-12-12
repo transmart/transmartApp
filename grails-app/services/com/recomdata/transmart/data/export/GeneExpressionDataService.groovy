@@ -247,7 +247,7 @@ class GeneExpressionDataService {
 
         //Get the list of assay Ids based on patient ids, sample types, and timepoints.
         String assayIds = getAssayIds(resultInstanceId, sampleTypes, timepoint, tissueTypes);
-        String studies = convertList(studyList, false, 1000)
+        String studies = convertList(studyList, true, 1000)
         //If we didn't find any assay Id's, abandon all hope.
         if (StringUtils.isNotEmpty(assayIds)) {
             //Build the string to get the sample data.
@@ -759,7 +759,7 @@ class GeneExpressionDataService {
     private List getCELFiles(String studyName, String sampleCd) {
         //Build the query to get the clinical data.
         groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-        sqlQuery = "SELECT * FROM bio_content WHERE study_name = ? and file_name like ?"
+        def sqlQuery = "SELECT * FROM bio_content WHERE study_name = ? and file_name like ?"
         def files = sql.rows(sqlQuery, [studyName, sampleCd + '%'])
 
         return files
@@ -768,7 +768,7 @@ class GeneExpressionDataService {
     def downloadCELFiles(String resultInstanceId, studyList, File studyDir, String jobName, String pathway, String timepoint, String sampleTypes, String tissueTypes) {
         groovy.sql.Sql sql = null
 
-        Map sampleCdsMap = null
+        Map sampleCdsMap = new HashMap<StringBuilder, StringBuilder>()
 
         try {
             //Get the subjects for this result instance id.
