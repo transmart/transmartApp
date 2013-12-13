@@ -27,13 +27,13 @@ STATE = {
 // list of supported platform
 // TODO : future refactoring should retrieve these values from gpl definitions in the database
 var HIGH_DIMENSIONAL_DATA = {
-    "MRNA_AFFYMETRIX"   : {"platform" : "MRNA_AFFYMETRIX", "type" : "Gene Expression"},
-    "MIRNA_AFFYMETRIX"  : {"platform" : "MIRNA_AFFYMETRIX", "type" : "QPCR MIRNA"},
-    "MIRNA_SEQ"         : {"platform" : "MIRNA_SEQ", "type" : "SEQ MIRNA"},
-    "RBM"               : {"platform" : "RBM", "type" : "RBM"},
-    "PROTEIN"           : {"platform" : "PROTEIN", "type" : "PROTEOMICS"},
-    "SNP"               : {"platform" : "SNP", "type" : "SNP"},
-    "RNASEQ"            : {"platform" : "RNASEQ", "type" : "RNASEQ"}
+    "mrna"          : {"platform" : "MRNA_AFFYMETRIX", "type" : "Gene Expression"},
+    "mirna_qpcr"    : {"platform" : "MIRNA_QPCR", "type" : "MIRNA_QPCR"},
+    "mirna_seq"     : {"platform" : "MIRNA_SEQ", "type" : "MIRNA_SEQ"},
+    "rbm"               : {"platform" : "RBM", "type" : "RBM"},
+    "proteomics"        : {"platform" : "PROTEIN", "type" : "PROTEOMICS"},
+    "snp"               : {"platform" : "SNP", "type" : "SNP"},
+    "rnaseq"            : {"platform" : "RNA_AFFYMETRIX", "type" : "RNASEQ"}
 };
 
 // Check if current platform is supported
@@ -46,7 +46,7 @@ function isSupportedPlatform (currentPlatform) {
 
 // Check if current platform is RBM
 function isRBMPlatform (currentPlatform) {
-    return currentPlatform == HIGH_DIMENSIONAL_DATA["RBM"].platform ? true : false;
+    return currentPlatform == HIGH_DIMENSIONAL_DATA["rbm"].platform ? true : false;
 }
 
 // toggle elements in the popup based on whether it is RBM or not
