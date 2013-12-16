@@ -954,7 +954,7 @@ function createPathwaySearchBoxRBM(ajaxurl, boxwidth){
 }
 
 function createPlatformSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix = 'platforms'; 
+	var applyToDivIdPrefix = 'platforms';
 	var applyToDivId = applyToDivIdPrefix + applyToDivIdx;
 	var ajaxurl;
 	var ds;
@@ -1002,11 +1002,6 @@ function createPlatformSearchBox(subsetId, applyToDivIdx){
 		var eleRbmpanel=Ext.get('divrbmpanel'+applyToDivIdx);
 
         toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[applyToDivIdx-1]);
-
-		//Toggle the High Dimensional Data elements after reseting the High Dim variable.
-		if(GLOBAL.CurrentPlatforms[subsetId-1] == "SNP") GLOBAL.HighDimDataType = 'SNP'
-		if(GLOBAL.CurrentPlatforms[subsetId-1] == "MRNA_AFFYMETRIX") GLOBAL.HighDimDataType = 'Gene Expression'
-		if(GLOBAL.CurrentPlatforms[subsetId-1] == "MIRNA_AFFYMETRIX") GLOBAL.HighDimDataType = 'QPCR MIRNA'
 
 		toggleDataAssociationFields();
 		
