@@ -508,11 +508,11 @@ Ext.onReady(function () {
                 fitToFrame: true,
                 listeners: {
                     activate: function () {
-                        GLOBAL.CurrentSubsetIDs[1] = null;
-                        GLOBAL.CurrentSubsetIDs[2] = null;
-                        runAllQueries(getSummaryStatistics);
-                        activateTab();
-                        onWindowResize();
+                        if (isSubsetQueriesChanged()) {
+                            runAllQueries(getSummaryStatistics);
+                            activateTab();
+                            onWindowResize();
+                        }
                     },
                     deactivate: function () {
                         resultsTabPanel.tools.help.dom.style.display = "none";
@@ -542,11 +542,11 @@ Ext.onReady(function () {
                 layout: 'fit',
                 listeners: {
                     activate: function (p) {
-                        GLOBAL.CurrentSubsetIDs[1] = null;
-                        GLOBAL.CurrentSubsetIDs[2] = null;
-                        p.body.mask("Loading...", 'x-mask-loading');
-                        runAllQueries(getDatadata, p);
-                        return;
+                        if (isSubsetQueriesChanged()) {
+                            p.body.mask("Loading...", 'x-mask-loading');
+                            runAllQueries(getDatadata, p);
+                            return;
+                        }
                     },
                     deactivate: function () {
                     },
@@ -582,9 +582,22 @@ Ext.onReady(function () {
                 },
                 listeners: {
                     activate: function () {
-                        GLOBAL.Analysis = "dataAssociation";
-                        renderCohortSummary();
-                        onWindowResize();
+                        /**
+                         * routines when activating advanced workflow tab
+                         * @private
+                         */
+                        var _activateAdvancedWorkflow = function () {
+                            activateTab();
+                            GLOBAL.Analysis = "dataAssociation";
+                            renderCohortSummary();
+                            onWindowResize();
+                        }
+
+                        if (isSubsetQueriesChanged()) {
+                            runAllQueries(_activateAdvancedWorkflow);
+                        }
+
+                        _activateAdvancedWorkflow();
                     },
                     'afterLayout': {
                         fn: function (el) {
@@ -2084,12 +2097,11 @@ function runAllQueries(callback, panel) {
             panel.body.unmask()
         }
         Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
-        return;
     }
 
     // setup the number of subsets that need running
     var subsetstorun = 0;
-    for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1) {
+    for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
         if (!isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null) {
             subsetstorun++;
         }
@@ -2098,11 +2110,48 @@ function runAllQueries(callback, panel) {
     /* set the number of requests before callback is fired for runquery complete */
 
     // iterate through all subsets calling the ones that need to be run
-    for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1) {
+    for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
         if (!isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null) {
             runQuery(i, callback);
         }
     }
+}
+
+
+/**
+ * Get subset query that represent user's cohort selections
+ * @param subsetId
+ * @returns {string}
+ */
+function getSubsetQuery (subsetId) {
+    var _query = "";
+    for (var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups; i++) {
+        var qcd = Ext.get("queryCriteriaDiv" + subsetId + '_' + i.toString());
+        if(qcd.dom.childNodes.length>0) {
+            _query += getCRCRequestPanel(qcd.dom, i);
+        }
+    }
+
+    return _query;
+}
+
+/**
+ * Check if there're any changes in both subsets
+ * @returns {boolean}
+ */
+function isSubsetQueriesChanged() {
+    var retVal = false;
+
+    for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
+
+        var _newQuery = getSubsetQuery(i);
+        retVal = GLOBAL.CurrentSubsetQueries[i] != _newQuery ? true : false;
+        if (retVal) {
+            break;
+        }
+    }
+
+    return retVal;
 }
 
 function runQuery(subset, callback) {
@@ -2111,6 +2160,7 @@ function runQuery(subset, callback) {
     }
 
     var query = getCRCQueryRequest(subset);
+    var _subsetQuery = getSubsetQuery(subset);
     // first subset
     queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
     Ext.Ajax.request(
@@ -2127,6 +2177,9 @@ function runQuery(subset, callback) {
             timeout: '600000'
         }
     );
+
+    // save query to global variable
+    GLOBAL.CurrentSubsetQueries[subset] = _subsetQuery;
 
     if (GLOBAL.Debug) {
         resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
