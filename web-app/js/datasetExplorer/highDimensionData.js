@@ -417,8 +417,8 @@ function clearHighDimDataSelections(divId){
 	window[divId+'markerType']			="";
 	
 	//invalidate the two global subsets
-	GLOBAL.CurrentSubsetIDs[1]			=null;
-	GLOBAL.CurrentSubsetIDs[2]			=null;
+//	GLOBAL.CurrentSubsetIDs[1]			=null;
+//	GLOBAL.CurrentSubsetIDs[2]			=null;
 	
 	GLOBAL.CurrentPathway				=null;
 	GLOBAL.CurrentPathwayName			=null;

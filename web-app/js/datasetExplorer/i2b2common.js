@@ -200,13 +200,19 @@ function createPanelItemNew(panel, concept)
 	new Ext.ToolTip({ target:li, html:concept.key, dismissDelay:10000 });
 	li.concept=concept;
 	//return the node
-	var subset=getSubsetFromPanel(panel);
-	invalidateSubset(subset);
+
+    // Invalidate only when something dropped to the subset panel
+    if (panel.id.indexOf("queryCriteriaDiv") > -1) {
+        var subset=getSubsetFromPanel(panel);
+        invalidateSubset(subset);
+    }
+
 	return li;
 }
+
 function getSubsetFromPanel(panel)
 {
-return panel.id.substr(16,1);
+    return panel.id.substr(16,1);
 }
 
 function createPanelItem(subset,panelNumber, level, name, key, tooltip, tablename, dimcode, comment, normalunits, oktousevalues,
