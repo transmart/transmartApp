@@ -21,8 +21,7 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/jqueryDatatable.css')}"></link>
 
         <!-- jQuery JS libraries -->
-        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
-	    <script>jQuery.noConflict();</script> 
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
         
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
         
@@ -46,12 +45,12 @@
   		
   		<!--  SVG Export -->
   		<%--<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  --%>
-	        
-	
-        <g:javascript library="prototype" /> 
+
         <script type="text/javascript">
             var $j = jQuery.noConflict();
         </script>
+        <script type="text/javascript" src="${resource(dir:'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
+
         
         <!-- Our JS -->        
         <script type="text/javascript" src="${resource(dir:'js', file:'rwg.js')}"></script>
@@ -111,7 +110,7 @@
 		            if (jQuery(this).hasClass('buttonloading')) {return false; }
 		            
 	            	var protoForm = $('editMetadataForm');
-		            var serializedForm = Form.serialize(protoForm);
+		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#savemetadatabutton').addClass('buttonloading').html("&nbsp;");
 		            
             		jQuery.ajax({
@@ -141,7 +140,7 @@
 		        
 	            jQuery("#createAssayOverlay").on('click', '#saveassaybutton', function() {
 	            	var protoForm = $('createAssayForm');
-		            var serializedForm = Form.serialize(protoForm);
+		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#saveassaybutton').addClass('buttonloading').html("&nbsp;");
             		jQuery.ajax({
 						url:saveAssayURL + "?" + serializedForm,	
@@ -172,7 +171,7 @@
 
 	            jQuery("#createFolderOverlay").on('click', '#savefolderbutton', function() {
 	            	var protoForm = $('createFolderForm');
-		            var serializedForm = Form.serialize(protoForm);
+		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#savefolderbutton').addClass('buttonloading').html("&nbsp;");
             		jQuery.ajax({
 						url:saveFolderURL + "?" + serializedForm,	
@@ -203,7 +202,7 @@
 
 	            jQuery("#createStudyOverlay").on('click', '#savestudybutton', function() {
 	            	var protoForm = $('createStudyForm');
-		            var serializedForm = Form.serialize(protoForm);
+		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#savestudybutton').addClass('buttonloading').html("&nbsp;");
             		jQuery.ajax({
 						url:saveStudyURL + "?" + serializedForm,	
@@ -234,7 +233,7 @@
 	            jQuery("#createProgramOverlay").on('click', '#saveprogrambutton', function() {
 		            
 	            	var protoForm = $('createProgramForm');
-		            var serializedForm = Form.serialize(protoForm);
+		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#saveprogrambutton').addClass('buttonloading').html("&nbsp;");
 		        	jQuery.ajax({
 						url:saveProgramURL + "?" + serializedForm,	
@@ -264,7 +263,7 @@
 	            jQuery("#createAnalysisOverlay").on('click', '#saveanalysisbutton', function() {
 		            
 	            	var protoForm = $('createAnalysisForm');
-		            var serializedForm = Form.serialize(protoForm);
+		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#saveanalysisbutton').addClass('buttonloading').html("&nbsp;");
 		        	jQuery.ajax({
 						url:saveAnalysisURL + "?" + serializedForm,	
