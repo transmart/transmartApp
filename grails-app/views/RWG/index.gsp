@@ -112,25 +112,26 @@
 	            	var protoForm = $('editMetadataForm');
 		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#savemetadatabutton').addClass('buttonloading').html("&nbsp;");
-		            
-            		jQuery.ajax({
-						url:saveMetaDataURL + "?" + serializedForm,	
-						success: function(response) {
-							if (response.errors != undefined) {
-								jQuery('#editMetadataOverlay').scrollTop(0);
-								jQuery('#displayMetadataErrors').empty().html('<div class="errors">' + response.errors + '</div>');
-								jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
-							} else {	
-								jQuery('#result-folder-name-' + response.id).text(response.folderName);
-								jQuery('#editMetadataOverlay').fadeOut();
-								showDetailDialog(response.id);
-			        }
-						},
-						error: function(xhr) {
-							jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
-							alert(xhr);
-	        	}
-					});
+
+                    jQuery.ajax({
+                        url: saveMetaDataURL + "?" + serializedForm,
+                        success: function (response) {
+                            if (response.errors != undefined) {
+                                jQuery('#editMetadataOverlay').scrollTop(0);
+                                jQuery('#displayMetadataErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+                                jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
+                            } else {
+                                jQuery('#result-folder-name-' + response.id).text(response.folderName);
+                                jQuery('#editMetadataOverlay').fadeOut();
+                                showDetailDialog(response.id);
+                            }
+                        },
+                        error: function (xhr) {
+                            jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
+                            alert(xhr);
+                        },
+                        type: 'POST'
+                    });
 	            });
 
 	            jQuery("#createAssayOverlay").on('click', '#cancelassaybutton', function(){ 
@@ -142,25 +143,26 @@
 	            	var protoForm = $('createAssayForm');
 		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#saveassaybutton').addClass('buttonloading').html("&nbsp;");
-            		jQuery.ajax({
-						url:saveAssayURL + "?" + serializedForm,	
-						success: function(response) {
-							if (response.errors != undefined) {
-								jQuery('#createAssayOverlay').scrollTop(0);
-								jQuery('#displayAssayErrors').empty().html('<div class="errors">' + response.errors + '</div>');
-								jQuery('#saveassaybutton').removeClass('buttonloading').text('Save');
-							} else {
-								//updateFolder(response.parentId);
-								jQuery('#createAssayOverlay').fadeOut();
-								//showDetailDialog(response.id);
-								updateForNewFolder(response.id);
-							}
-						},
-						error: function(xhr) {
-							alert(xhr);
-							jQuery('#saveassaybutton').removeClass('buttonloading').text('Save');
-						}
-					});
+                    jQuery.ajax({
+                        url: saveAssayURL + "?" + serializedForm,
+                        success: function (response) {
+                            if (response.errors != undefined) {
+                                jQuery('#createAssayOverlay').scrollTop(0);
+                                jQuery('#displayAssayErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+                                jQuery('#saveassaybutton').removeClass('buttonloading').text('Save');
+                            } else {
+                                //updateFolder(response.parentId);
+                                jQuery('#createAssayOverlay').fadeOut();
+                                //showDetailDialog(response.id);
+                                updateForNewFolder(response.id);
+                            }
+                        },
+                        error: function (xhr) {
+                            alert(xhr);
+                            jQuery('#saveassaybutton').removeClass('buttonloading').text('Save');
+                        },
+                        type: 'POST'
+                    });
 	            });
 
 
@@ -173,25 +175,26 @@
 	            	var protoForm = $('createFolderForm');
 		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#savefolderbutton').addClass('buttonloading').html("&nbsp;");
-            		jQuery.ajax({
-						url:saveFolderURL + "?" + serializedForm,	
-						success: function(response) {
-							if (response.errors != undefined) {
-								jQuery('#createFolderOverlay').scrollTop(0);
-								jQuery('#displayFolderErrors').empty().html('<div class="errors">' + response.errors + '</div>');
-								jQuery('#savefolderbutton').removeClass('buttonloading').text('Save');
-							} else {
-								//updateFolder(response.parentId);
-								jQuery('#createFolderOverlay').fadeOut();
-								//showDetailDialog(response.id);
-								updateForNewFolder(response.id);
-							}
-						},
-						error: function(xhr) {
-							alert(xhr);
-							jQuery('#savefolderbutton').removeClass('buttonloading').text('Save');
-						}
-					});
+                    jQuery.ajax({
+                        url: saveFolderURL + "?" + serializedForm,
+                        success: function (response) {
+                            if (response.errors != undefined) {
+                                jQuery('#createFolderOverlay').scrollTop(0);
+                                jQuery('#displayFolderErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+                                jQuery('#savefolderbutton').removeClass('buttonloading').text('Save');
+                            } else {
+                                //updateFolder(response.parentId);
+                                jQuery('#createFolderOverlay').fadeOut();
+                                //showDetailDialog(response.id);
+                                updateForNewFolder(response.id);
+                            }
+                        },
+                        error: function (xhr) {
+                            alert(xhr);
+                            jQuery('#savefolderbutton').removeClass('buttonloading').text('Save');
+                        },
+                        type: 'POST'
+                    });
 	            });
 
 
@@ -204,25 +207,26 @@
 	            	var protoForm = $('createStudyForm');
 		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#savestudybutton').addClass('buttonloading').html("&nbsp;");
-            		jQuery.ajax({
-						url:saveStudyURL + "?" + serializedForm,	
-						success: function(response) {
-							if (response.errors != undefined) {
-								jQuery('#createStudyOverlay').scrollTop(0);
-								jQuery('#displayStudyErrors').empty().html('<div class="errors">' + response.errors + '</div>');
-								jQuery('#savestudybutton').removeClass('buttonloading').text('Save');
-							} else {
-								//updateFolder(response.parentId);
-								jQuery('#createStudyOverlay').fadeOut();
-								//showDetailDialog(response.id);
-								updateForNewFolder(response.id);
-							}
-						},
-						error: function(xhr) {
-							alert(xhr);
-							jQuery('#savestudybutton').removeClass('buttonloading').text('Save');
-						}
-					});
+                    jQuery.ajax({
+                        url: saveStudyURL + "?" + serializedForm,
+                        success: function (response) {
+                            if (response.errors != undefined) {
+                                jQuery('#createStudyOverlay').scrollTop(0);
+                                jQuery('#displayStudyErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+                                jQuery('#savestudybutton').removeClass('buttonloading').text('Save');
+                            } else {
+                                //updateFolder(response.parentId);
+                                jQuery('#createStudyOverlay').fadeOut();
+                                //showDetailDialog(response.id);
+                                updateForNewFolder(response.id);
+                            }
+                        },
+                        error: function (xhr) {
+                            alert(xhr);
+                            jQuery('#savestudybutton').removeClass('buttonloading').text('Save');
+                        },
+                        type: 'POST'
+                    });
 	            });
 
 	            jQuery("#createProgramOverlay").on('click', '#cancelprogrambutton', function(){ 
@@ -235,24 +239,25 @@
 	            	var protoForm = $('createProgramForm');
 		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#saveprogrambutton').addClass('buttonloading').html("&nbsp;");
-		        	jQuery.ajax({
-						url:saveProgramURL + "?" + serializedForm,	
-						success: function(response) {
-							if (response.errors != undefined) {
-								jQuery('#createProgramOverlay').scrollTop(0);
-								jQuery('#displayProgramErrors').empty().html('<div class="errors">' + response.errors + '</div>');
-								jQuery('#saveprogrambutton').removeClass('buttonloading').text('Save');
-							} else {
-								showSearchResults();
-								jQuery('#createProgramOverlay').fadeOut();
-								showDetailDialog(response.id);
-							}
-						},
-						error: function(xhr) {
-							alert(xhr);
-							jQuery('#saveprogrambutton').removeClass('buttonloading').text('Save');
-						}
-	            });
+                    jQuery.ajax({
+                        url: saveProgramURL + "?" + serializedForm,
+                        success: function (response) {
+                            if (response.errors != undefined) {
+                                jQuery('#createProgramOverlay').scrollTop(0);
+                                jQuery('#displayProgramErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+                                jQuery('#saveprogrambutton').removeClass('buttonloading').text('Save');
+                            } else {
+                                showSearchResults();
+                                jQuery('#createProgramOverlay').fadeOut();
+                                showDetailDialog(response.id);
+                            }
+                        },
+                        error: function (xhr) {
+                            alert(xhr);
+                            jQuery('#saveprogrambutton').removeClass('buttonloading').text('Save');
+                        },
+                        type: 'POST'
+                    });
 	            });
 
 	            jQuery("#createAnalysisOverlay").on('click', '#cancelanalysisbutton', function(){ 
@@ -265,26 +270,27 @@
 	            	var protoForm = $('createAnalysisForm');
 		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#saveanalysisbutton').addClass('buttonloading').html("&nbsp;");
-		        	jQuery.ajax({
-						url:saveAnalysisURL + "?" + serializedForm,	
-						success: function(response) {
-							if (response.errors != undefined) {
-								jQuery('#createAnalysis').scrollTop(0);
-								jQuery('#displayAnalysisErrors').empty().html('<div class="errors">' + response.errors + '</div>');
-								jQuery('#saveanalysisbutton').removeClass('buttonloading').text('Save');
-							} else {
-								//updateFolder(response.parentId);
-								jQuery('#createAnalysisOverlay').fadeOut();
-								//showDetailDialog(response.id);
-								updateForNewFolder(response.id);
-	                }
-						},
-						error: function(xhr) {
-							alert(xhr);
-							jQuery('#saveanalysisbutton').removeClass('buttonloading').text('Save');
-							
-	                }
-					});
+                    jQuery.ajax({
+                        url: saveAnalysisURL + "?" + serializedForm,
+                        success: function (response) {
+                            if (response.errors != undefined) {
+                                jQuery('#createAnalysis').scrollTop(0);
+                                jQuery('#displayAnalysisErrors').empty().html('<div class="errors">' + response.errors + '</div>');
+                                jQuery('#saveanalysisbutton').removeClass('buttonloading').text('Save');
+                            } else {
+                                //updateFolder(response.parentId);
+                                jQuery('#createAnalysisOverlay').fadeOut();
+                                //showDetailDialog(response.id);
+                                updateForNewFolder(response.id);
+                            }
+                        },
+                        error: function (xhr) {
+                            alert(xhr);
+                            jQuery('#saveanalysisbutton').removeClass('buttonloading').text('Save');
+
+                        },
+                        type: 'POST'
+                    });
 	            });
 
 	        	resizeAccordion();
