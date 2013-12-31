@@ -1958,7 +1958,7 @@ function getTreeNodeFromJsonNode(concept)
     if (oktousevalues != "N") {
 	    	iconCls="valueicon";
 	    }
-	    
+
 
     if (visualattributes.indexOf('LEAF') != -1 ||
         visualattributes.indexOf('MULTIPLE') != -1) {
@@ -1976,16 +1976,16 @@ function getTreeNodeFromJsonNode(concept)
     } else if (visualattributes.indexOf('EDITABLE') != -1) {
         iconCls = 'eleaficon';
         tcls = 'eleafclass';
-	    }    
-	    
-    /* FIXME: handle new types in Sanofi's branch:
-	    if (visualattributes.indexOf('P') > '-1') {
-	    	iconCls="programicon";
 	    }
-	    if (visualattributes.indexOf('S') > '-1') {
-	    	iconCls="studyicon";
-	    }
-	*/
+
+    if (visualattributes.indexOf('PROGRAM') != '-1') {
+        iconCls="programicon";
+    }
+
+    if (visualattributes.indexOf('STUDY') != '-1') {
+        iconCls="studyicon";
+    }
+
 
 	    //set whether expanded or not.
 	    var autoExpand=false;

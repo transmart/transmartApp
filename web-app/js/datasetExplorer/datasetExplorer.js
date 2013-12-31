@@ -1506,10 +1506,10 @@ function createTree(includeExcludeFlag, ontresponse) {
         }
 
         var iconCls = "";
-        /* FIXME: visualAttributes should be an array now after core-db integration */
-        //if (visualAttributes.indexOf('P') > '-1') {
-        //	iconCls="programicon";
-        //}
+
+        if (visualAttributes.indexOf('PROGRAM') != '-1') {
+        	iconCls="programicon";
+        }
 
         var tcls = "";
 
