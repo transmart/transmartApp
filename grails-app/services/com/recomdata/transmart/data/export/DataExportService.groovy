@@ -101,7 +101,14 @@ class DataExportService {
                                     log.info("retrieved study data")
                                     break;
                                 case "MRNA.TXT":
-                                    retVal = geneExpressionDataService.getData(studyList, studyDir, "mRNA.trans", jobDataMap.get("jobName"), resultInstanceIdMap[subset], pivotData, gplIds, null, null, null, null, false)
+                                    //retVal = geneExpressionDataService.getData(studyList, studyDir, "mRNA.trans", jobDataMap.get("jobName"), resultInstanceIdMap[subset], pivotData, gplIds, null, null, null, null, false)
+                                    retval = geneExpressionDataService.exportMrnaData(studyList: studyList,
+                                                                                      studyDir: studyDir,
+                                                                                      fileName: "mRNA.trans",
+                                                                                      jobName: jobDataMap.get("jobName"),
+                                                                                      resultInstanceId: resultInstanceIdMap[subset],
+                                                                                      gplIds: gplIds,
+                                                                                      splitAttributeColumn: false)
                                     //filesDoneMap is used for building the Clinical Data query
                                     filesDoneMap.put('MRNA.TXT', new Boolean(true))
                                     break;

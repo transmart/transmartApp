@@ -22,8 +22,14 @@ package com.recomdata.transmart.data.export
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.apache.commons.lang.StringUtils
+import org.hibernate.Query
+import org.hibernate.ScrollMode
+import org.hibernate.ScrollableResults
+import org.hibernate.Session
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
+import org.transmartproject.db.dataquery.highdim.mrna.DeMrnaAnnotationCoreDb
+import org.transmartproject.db.dataquery.highdim.mrna.DeSubjectMicroarrayDataCoreDb
 import search.SearchKeyword
 
 import java.sql.ResultSetMetaData
@@ -40,6 +46,7 @@ class GeneExpressionDataService {
     def grailsApplication
     def fileDownloadService
     def utilService
+    def sessionFactory
 
 
     public boolean getData(List studyList,
@@ -1327,5 +1334,119 @@ class GeneExpressionDataService {
         return gplTitle
     }
 
+    def exportMrnaData(Map args) {
 
+//                       List studyList,
+//                       File studyDir,
+//                       String fileName,
+//                       String jobName,
+//                       String resultInstanceId,
+//                       boolean pivot,
+//                       List gplIds,
+//                       String pathway,
+//                       String timepoint,
+//                       String sampleTypes,
+//                       String tissueTypes,
+//                       Boolean splitAttributeColumn
+
+        def trialName = args.trialName
+        def gplIds = args.gplIds
+        def resultInstanceId = args.resultInstanceId
+        boolean splitAttributeColumn = args.splitAttributeColumn
+
+        trialName = 'GSE8581'
+        gplIds = ['GPL570']
+        resultInstanceId = 22967
+
+        ScrollableResults res = null
+        Writer writer = null
+        File outputFile = null
+        String fileName = null
+        boolean dataFound = false
+        long startTime = 0
+        try {
+            FileWriterUtil writerUtil = new FileWriterUtil(args.studyDir, args.fileName, args.jobName, args.dataTypeName, args.dataTypeFolder, '\t' as char);
+            // I copied the direct access to writerUtil.outputFile from writeData, probably meant as a performance optimization. TODO: do we really need this?
+            outputFile = writerUtil.outputFile
+            fileName = outputFile.getAbsolutePath()
+            writer = outputFile.newWriter(true)
+
+            // Using a hibernate query since I couldn't get this to work using GORM. If this can be done in GORM, pleas convert.
+            Session session = sessionFactory.currentSession
+            Query query = session.createQuery("""
+                select
+                    data.assay.id, data.rawIntensity, data.zscore, data.logIntensity,
+                    data.probe.probeId, data.probe.id, data.probe.geneId, data.probe.geneSymbol,
+                    data.assay.patient.sourcesystemCd,
+                    data.assay.sampleTypeName, data.assay.timepointName, data.assay.tissueTypeName, data.assay.platform.id
+                from DeSubjectMicroarrayDataCoreDb as data,
+                    QtPatientSetCollection as sc
+                where sc.patient = data.assay.patient
+                    and data.assay.platform.id = data.probe.gplId
+                    and data.assay.platform.id in (:platform)
+                    and data.assay.trialName = :trialName
+                    and sc.resultInstance.id = :resultInstanceId
+                """).setReadOnly(true).setCacheable(false).setFetchSize(20000)
+            query.setParameter('trialName', trialName).
+                    setParameterList('platform', gplIds).
+                    setParameter('resultInstanceId', resultInstanceId as long)
+
+
+            log.info("start sample retrieving query");
+
+            startTime = System.currentTimeMillis();
+
+            res = query.scroll(ScrollMode.FORWARD_ONLY)
+
+            log.info("started file writing")
+
+            List<String> header = ["PATIENT ID"]
+            header += splitAttributeColumn ? ["SAMPLE TYPE", "TIMEPOINT", "TISSUE TYPE", "GPL ID"] : ["SAMPLE"]
+            header += ["ASSAY ID", "VALUE", "ZSCORE", "LOG2ED", "PROBE ID", "PROBESET ID", "GENE_ID", "GENE_SYMBOL"]
+
+            writer << header.join('\t') << '\n';
+
+            while (res.next()) {
+                dataFound = true
+                def (String assayId,
+                     String rawIntensity,
+                     String zscore,
+                     String logIntensity,
+                     String probeId,
+                     String probesetId,
+                     String geneId,
+                     String geneSymbol,
+                     String sourcesystemCd,
+                     String sampleTypeName,
+                     String timepointName,
+                     String tissueTypeName,
+                     String platform) = res.get()
+
+                //                   PATIENT ID
+                List<String> line = [sourcesystemCd.split(':')[-1]]
+                if (splitAttributeColumn)
+                    //       SAMPLE TYPE     TIMEPOINT      TISSUE TYPE     GPL ID
+                    line += [sampleTypeName, timepointName, tissueTypeName, platform]
+                else
+                    //      SAMPLE
+                    line << [sampleTypeName, timepointName, tissueTypeName, platform].grep({it != null}).join('_')
+                //       ASSAY ID VALUE         ZSCORE  LOG2ED        PROBE ID PROBESET ID GENE_ID GENE_SYMBOL
+                line += [assayId, rawIntensity, zscore, logIntensity, probeId, probesetId, geneId, geneSymbol]
+
+                writer << line.join('\t') << '\n'
+            }
+
+            if (!dataFound) {
+                log.error("No data found while trying to export DeSubjectMicroarrayDataCoreDb data")
+                if (!outputFile.delete())
+                    log.error("Unable to delete empty output file "+fileName)
+            }
+            log.info("Retrieving data took ${System.currentTimeMillis() - startTime} ms")
+        } finally {
+            writer?.close()
+            //res?.close()
+        }
+
+        return [outFile: fileName, dataFound: dataFound]
+    }
 }
