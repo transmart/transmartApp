@@ -25,11 +25,12 @@
 */
 package com.recomdata.security
 
+import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.userdetails.GrailsUserDetailsService
+
 import java.util.List
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUserDetailsService
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -61,7 +62,7 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 				throw new UsernameNotFoundException('User not found', username)
 			}		
 			def authorities = user.authorities.collect {new GrantedAuthorityImpl(it.authority)}
-			
+
 			return new AuthUserDetails(user.username, user.passwd, user.enabled,
 				!user.accountExpired, !user.passwordExpired, !user.accountLocked,
 				authorities ?: NO_ROLES, user.id, user.userRealName)

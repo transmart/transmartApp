@@ -1,10 +1,9 @@
 import grails.converters.JSON
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 
 import javax.servlet.http.HttpServletResponse
-
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 import org.springframework.security.authentication.AccountExpiredException
 import org.springframework.security.authentication.CredentialsExpiredException

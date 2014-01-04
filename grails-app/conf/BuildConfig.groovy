@@ -53,8 +53,8 @@ grails.project.dependency.resolution = {
         compile ":hibernate:$grailsVersion"
         compile ":quartz:1.0-RC2"
         compile ":rdc-rmodules:0.3-SNAPSHOT"
-        compile ":spring-security-core:1.2.7.3"
-        compile ":spring-security-ldap:1.0.6"
+        compile ":spring-security-core:2.0-RC2"
+        compile ":spring-security-ldap:2.0-RC2"
         compile ":resources:1.2"
         build ":tomcat:$grailsVersion"
         build ":build-info:1.1"
@@ -66,7 +66,6 @@ grails.project.dependency.resolution = {
 }
 
 /* For development, it's interesting to use the plugins in-place.
-
  * This allows the developer to put the grails.plugin.location.* assignments
  * in an out-of-tree BuildConfig file if they want to.
  * Snippet from https://gist.github.com/acreeger/910438
