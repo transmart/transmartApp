@@ -40,8 +40,8 @@ grails.project.dependency.resolution = {
         mavenLocal()
         mavenCentral()
         mavenRepo([
-                name: 'repo.transmartfoundation.org-public',
-                root: 'https://repo.transmartfoundation.org/content/repositories/public/',
+                name: 'eTRIKS Reporitory',
+                root: 'http://repo.etriks.com:55558/content/groups/public/',
         ])
     }
     dependencies {
@@ -52,7 +52,8 @@ grails.project.dependency.resolution = {
     plugins {
         compile ":hibernate:$grailsVersion"
         compile ":quartz:1.0-RC2"
-        compile ":rdc-rmodules:0.3-SNAPSHOT"
+        compile ":rdc-rmodules:0.3.1-SNAPSHOT"
+        compile ":transmart-legacy-db:0.1.0-SNAPSHOT"
         compile ":spring-security-core:2.0-RC2"
         compile ":spring-security-ldap:2.0-RC2"
         compile ":resources:1.2"
