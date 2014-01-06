@@ -1348,15 +1348,27 @@ class GeneExpressionDataService {
 //                       String sampleTypes,
 //                       String tissueTypes,
 //                       Boolean splitAttributeColumn
+        def fileName = args.fileName
+        args.studyList.each {
+            args.trialName = it
+            if (args.studyList.size() > 1) {
+                args.fileName = "${it}_${fileName}"
+            }
+            exportMrnaStudy(args)
+        }
+    }
 
+
+    def exportMrnaStudy(Map args) {
         def trialName = args.trialName
         def gplIds = args.gplIds
         def resultInstanceId = args.resultInstanceId
         boolean splitAttributeColumn = args.splitAttributeColumn
 
-        trialName = 'GSE8581'
-        gplIds = ['GPL570']
-        resultInstanceId = 22967
+//        // example data:
+//        trialName = 'GSE8581'
+//        gplIds = ['GPL570']
+//        resultInstanceId = 22967
 
         ScrollableResults res = null
         Writer writer = null
@@ -1444,7 +1456,7 @@ class GeneExpressionDataService {
             log.info("Retrieving data took ${System.currentTimeMillis() - startTime} ms")
         } finally {
             writer?.close()
-            //res?.close()
+            res?.close()
         }
 
         return [outFile: fileName, dataFound: dataFound]
