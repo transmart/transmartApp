@@ -362,12 +362,12 @@ function displayHighDimSelectionSummary(subsetCount, divId, probesAgg, snpType){
 	'<br> <b>Pathway:</b> '+selectedSearchPathway+
 	'<br> <b>Marker Type:</b> '+GLOBAL.HighDimDataType;
 
-	if(GLOBAL.HighDimDataType==HIGH_DIMENSIONAL_DATA["MRNA_AFFYMETRIX"].type)
+	if(GLOBAL.HighDimDataType==HIGH_DIMENSIONAL_DATA["mrna"].type)
 	{
 		if(isProbesAggregationSupported()){
 			innerHtml += '<br><b> Aggregate Probes:</b> '+ probesAgg.checked;
 		}
-	} else if(GLOBAL.HighDimDataType==HIGH_DIMENSIONAL_DATA["SNP"].type){
+	} else if(GLOBAL.HighDimDataType==HIGH_DIMENSIONAL_DATA["snp"].type){
 		if(isProbesAggregationSupported()){
 			innerHtml += '<br><b> Aggregate Probes:</b> '+ probesAgg.checked;
 		}
@@ -417,8 +417,8 @@ function clearHighDimDataSelections(divId){
 	window[divId+'markerType']			="";
 	
 	//invalidate the two global subsets
-	GLOBAL.CurrentSubsetIDs[1]			=null;
-	GLOBAL.CurrentSubsetIDs[2]			=null;
+//	GLOBAL.CurrentSubsetIDs[1]			=null;
+//	GLOBAL.CurrentSubsetIDs[2]			=null;
 	
 	GLOBAL.CurrentPathway				=null;
 	GLOBAL.CurrentPathwayName			=null;
@@ -480,7 +480,7 @@ function toggleDataAssociationFields(extEle){
             document.getElementById("divSNPType").style.display = "none";
         } else if (GLOBAL.Analysis == "dataAssociation") {
 
-            if (GLOBAL.HighDimDataType == HIGH_DIMENSIONAL_DATA["SNP"].type)
+            if (GLOBAL.HighDimDataType == HIGH_DIMENSIONAL_DATA["snp"].type)
                 document.getElementById("divSNPType").style.display = "";
             else
                 document.getElementById("divSNPType").style.display = "none";

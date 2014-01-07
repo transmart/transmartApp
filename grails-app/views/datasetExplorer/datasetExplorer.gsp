@@ -113,6 +113,7 @@
 	  CurrentQueryName:'',
 	  CurrentComparisonName:' ',
 	  CurrentSubsetIDs: new Array(),
+      CurrentSubsetQueries: new Array(),
 	  CurrentPathway: '',
 	  CurrentPathwayName: '',
 	  CurrentGenes: '',

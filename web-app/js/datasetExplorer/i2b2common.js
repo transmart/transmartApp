@@ -27,13 +27,13 @@ STATE = {
 // list of supported platform
 // TODO : future refactoring should retrieve these values from gpl definitions in the database
 var HIGH_DIMENSIONAL_DATA = {
-    "MRNA_AFFYMETRIX"   : {"platform" : "MRNA_AFFYMETRIX", "type" : "Gene Expression"},
-    "MIRNA_AFFYMETRIX"  : {"platform" : "MIRNA_AFFYMETRIX", "type" : "QPCR MIRNA"},
-    "MIRNA_SEQ"         : {"platform" : "MIRNA_SEQ", "type" : "SEQ MIRNA"},
-    "RBM"               : {"platform" : "RBM", "type" : "RBM"},
-    "PROTEIN"           : {"platform" : "PROTEIN", "type" : "PROTEOMICS"},
-    "SNP"               : {"platform" : "SNP", "type" : "SNP"},
-    "RNASEQ"            : {"platform" : "RNASEQ", "type" : "RNASEQ"}
+    "mrna"          : {"platform" : "MRNA_AFFYMETRIX", "type" : "Gene Expression"},
+    "mirna_qpcr"    : {"platform" : "MIRNA_QPCR", "type" : "MIRNA_QPCR"},
+    "mirna_seq"     : {"platform" : "MIRNA_SEQ", "type" : "MIRNA_SEQ"},
+    "rbm"               : {"platform" : "RBM", "type" : "RBM"},
+    "proteomics"        : {"platform" : "PROTEIN", "type" : "PROTEOMICS"},
+    "snp"               : {"platform" : "SNP", "type" : "SNP"},
+    "rnaseq"            : {"platform" : "RNA_AFFYMETRIX", "type" : "RNASEQ"}
 };
 
 // Check if current platform is supported
@@ -46,7 +46,7 @@ function isSupportedPlatform (currentPlatform) {
 
 // Check if current platform is RBM
 function isRBMPlatform (currentPlatform) {
-    return currentPlatform == HIGH_DIMENSIONAL_DATA["RBM"].platform ? true : false;
+    return currentPlatform == HIGH_DIMENSIONAL_DATA["rbm"].platform ? true : false;
 }
 
 // toggle elements in the popup based on whether it is RBM or not
@@ -200,13 +200,19 @@ function createPanelItemNew(panel, concept)
 	new Ext.ToolTip({ target:li, html:concept.key, dismissDelay:10000 });
 	li.concept=concept;
 	//return the node
-	var subset=getSubsetFromPanel(panel);
-	invalidateSubset(subset);
+
+    // Invalidate only when something dropped to the subset panel
+    if (panel.id.indexOf("queryCriteriaDiv") > -1) {
+        var subset=getSubsetFromPanel(panel);
+        invalidateSubset(subset);
+    }
+
 	return li;
 }
+
 function getSubsetFromPanel(panel)
 {
-return panel.id.substr(16,1);
+    return panel.id.substr(16,1);
 }
 
 function createPanelItem(subset,panelNumber, level, name, key, tooltip, tablename, dimcode, comment, normalunits, oktousevalues,
@@ -954,7 +960,7 @@ function createPathwaySearchBoxRBM(ajaxurl, boxwidth){
 }
 
 function createPlatformSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix = 'platforms'; 
+	var applyToDivIdPrefix = 'platforms';
 	var applyToDivId = applyToDivIdPrefix + applyToDivIdx;
 	var ajaxurl;
 	var ds;
@@ -1002,11 +1008,6 @@ function createPlatformSearchBox(subsetId, applyToDivIdx){
 		var eleRbmpanel=Ext.get('divrbmpanel'+applyToDivIdx);
 
         toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[applyToDivIdx-1]);
-
-		//Toggle the High Dimensional Data elements after reseting the High Dim variable.
-		if(GLOBAL.CurrentPlatforms[subsetId-1] == "SNP") GLOBAL.HighDimDataType = 'SNP'
-		if(GLOBAL.CurrentPlatforms[subsetId-1] == "MRNA_AFFYMETRIX") GLOBAL.HighDimDataType = 'Gene Expression'
-		if(GLOBAL.CurrentPlatforms[subsetId-1] == "MIRNA_AFFYMETRIX") GLOBAL.HighDimDataType = 'QPCR MIRNA'
 
 		toggleDataAssociationFields();
 		
@@ -1957,7 +1958,7 @@ function getTreeNodeFromJsonNode(concept)
     if (oktousevalues != "N") {
 	    	iconCls="valueicon";
 	    }
-	    
+
 
     if (visualattributes.indexOf('LEAF') != -1 ||
         visualattributes.indexOf('MULTIPLE') != -1) {
@@ -1975,16 +1976,16 @@ function getTreeNodeFromJsonNode(concept)
     } else if (visualattributes.indexOf('EDITABLE') != -1) {
         iconCls = 'eleaficon';
         tcls = 'eleafclass';
-	    }    
-	    
-    /* FIXME: handle new types in Sanofi's branch:
-	    if (visualattributes.indexOf('P') > '-1') {
-	    	iconCls="programicon";
 	    }
-	    if (visualattributes.indexOf('S') > '-1') {
-	    	iconCls="studyicon";
-	    }
-	*/
+
+    if (visualattributes.indexOf('PROGRAM') != '-1') {
+        iconCls="programicon";
+    }
+
+    if (visualattributes.indexOf('STUDY') != '-1') {
+        iconCls="studyicon";
+    }
+
 
 	    //set whether expanded or not.
 	    var autoExpand=false;
