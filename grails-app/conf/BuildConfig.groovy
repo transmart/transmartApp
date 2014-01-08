@@ -41,7 +41,7 @@ grails.project.dependency.resolution = {
         mavenCentral()
         mavenRepo([
                 name: 'eTRIKS Reporitory',
-                root: 'http://repo.etriks.com:55558/content/groups/public/',
+                root: 'http://repo.etriks.org/content/groups/public/',
         ])
     }
     dependencies {
@@ -60,7 +60,7 @@ grails.project.dependency.resolution = {
         build ":tomcat:$grailsVersion"
         build ":build-info:1.1"
 		runtime ":prototype:1.0"
-        runtime ":transmart-core:1.0-SNAPSHOT"
+        runtime ":transmart-core:1.0.1-SNAPSHOT"
 
         test ":code-coverage:1.2.6"
     }
