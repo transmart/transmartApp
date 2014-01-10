@@ -17,7 +17,7 @@
  *
  ******************************************************************/
 
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
 import org.springframework.security.core.session.SessionRegistryImpl
@@ -81,7 +81,7 @@ beans = {
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 	redirectStrategy(DefaultRedirectStrategy)
 
-    springSecurityService(grails.plugins.springsecurity.SpringSecurityService){bean ->
+    springSecurityService(grails.plugin.springsecurity.SpringSecurityService){bean ->
         authenticationTrustResolver = ref('authenticationTrustResolver')
         grailsApplication = ref('grailsApplication')
         passwordEncoder = ref('passwordEncoder')

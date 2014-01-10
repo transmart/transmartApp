@@ -1,4 +1,4 @@
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.transmart.searchapp.AccessLog;
 
 /**
@@ -11,8 +11,8 @@ class LogoutController {
 	/**
 	 * Index action. Redirects to the Spring security logout uri.
 	 */	
-	def index = {		
+	def index = {
 		new AccessLog(username: springSecurityService.getPrincipal().username, event:"Logout", accesstime:new Date()).save()		
-		redirect uri: SpringSecurityUtils.securityConfig.logout.filterProcessesUrl 
+		redirect uri: SpringSecurityUtils.securityConfig.logout.filterProcessesUrl
 	}
 }

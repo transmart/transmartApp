@@ -105,7 +105,7 @@ class AuthUserController {
 				person.delete()
 				def msg = "$person.userRealName has been deleted."
 				flash.message = msg
-				new AccessLog(username: userName, event:"User Deleted",
+				new AccessLog(username: springSecurityService.getPrincipal().username, event:"User Deleted",
 					eventmessage: msg,
 					accesstime:new Date()).save()
 			}
@@ -132,18 +132,32 @@ class AuthUserController {
 	def update = {
 		def person = AuthUser.get(params.id)		
 		person.properties = params
-		
-		if(!params.passwd.equals(person.getPersistentValue("passwd")))	{
+
+        if(params.email == null || params.email == "") {
+            flash.message = 'Please enter an email'
+            return render(view: 'edit', model: buildPersonModel(person))
+        }
+
+		if(!params.passwd.equals(person.getPersistentValue("passwd"))) {
+            def passwordStrength = grailsApplication.config.com.recomdata.passwordstrength ?: null
+            def strengthPattern = passwordStrength?.pattern ?: null
+            def strengthDescription = passwordStrength?.description ?: null
+
+            if(strengthPattern != null && !strengthPattern.matcher(params.passwd).matches()) {
+                flash.message = 'Password does not match complexity criteria. ' + (strengthDescription ?: "")
+                return render(view: 'edit', model: buildPersonModel(person))
+            }
+
 			log.info("Password has changed, encrypting new password")	
 			person.passwd = springSecurityService.encodePassword(params.passwd)
 		}
-		
-		def msg = new StringBuilder("${person.username} has been updated.  Changed fields include: ")				
+
+		def msg = new StringBuilder("${person.username} has been updated. Changed fields include: ")
 		def modifiedFieldNames = person.getDirtyPropertyNames()
-		for (fieldName in modifiedFieldNames)	{			
-			def currentValue =person."$fieldName"
+		for (fieldName in modifiedFieldNames) {			
+			def currentValue = person."$fieldName"
 			def origValue = person.getPersistentValue(fieldName)
-			if (currentValue != origValue)	{
+			if (currentValue != origValue) {
 				msg.append(" ${fieldName} ")
 			}			
 		}
@@ -182,8 +196,17 @@ class AuthUserController {
         else
             next_id = new Long(params.id)
 
-        if(params.email==null || params.email=="") {
+        if(params.email == null || params.email == "") {
             flash.message = 'Please enter an email'
+            return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])
+        }
+
+        def passwordStrength = grailsApplication.config.com.recomdata.passwordstrength ?: null
+        def strengthPattern = passwordStrength?.pattern ?: null
+        def strengthDescription = passwordStrength?.description ?: null
+
+        if(strengthPattern != null && !strengthPattern.matcher(params.passwd).matches()) {
+            flash.message = 'Password does not match complexity criteria. ' + (strengthDescription ?: "")
             return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])
         }
 

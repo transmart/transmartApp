@@ -17,27 +17,25 @@
  *
  ******************************************************************/
 
-import grails.plugins.springsecurity.SecurityConfigType
+import grails.plugin.springsecurity.SecurityConfigType
 
 /*
  * Spring Security Configuration
  */
 
-grails.plugins.springsecurity.rejectIfNoRule = true
-grails.plugins.springsecurity.userLookup.userDomainClassName = 'org.transmart.searchapp.AuthUser'
-grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'org.transmart.searchapp.AuthUserRole'
-grails.plugins.springsecurity.authority.className = 'org.transmart.searchapp.Role'
-grails.plugins.springsecurity.requestMap.className = 'org.transmart.searchapp.Requestmap'
-grails.plugins.springsecurity.securityConfigType = SecurityConfigType.Requestmap
-//grails.plugins.springsecurity.interceptUrlMap = [
+grails.plugin.springsecurity.rejectIfNoRule = true
+grails.plugin.springsecurity.userLookup.userDomainClassName = 'org.transmart.searchapp.AuthUser'
+grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'org.transmart.searchapp.AuthUserRole'
+grails.plugin.springsecurity.authority.className = 'org.transmart.searchapp.Role'
+grails.plugin.springsecurity.requestMap.className = 'org.transmart.searchapp.Requestmap'
+grails.plugin.springsecurity.securityConfigType = SecurityConfigType.Requestmap
+//grails.plugin.springsecurity.interceptUrlMap = [
 //        '/login/**'                   : ['IS_AUTHENTICATED_ANONYMOUSLY'],
 //        '/css/**'                     : ['IS_AUTHENTICATED_ANONYMOUSLY'],
 //        '/js/**'                      : ['IS_AUTHENTICATED_ANONYMOUSLY'],
 //        '/images/**'                  : ['IS_AUTHENTICATED_ANONYMOUSLY'],
 //        '/static/**'                  : ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/search/loadAJAX**'          : ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/analysis/getGenePatternFile': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-//        '/analysis/getTestFile'       : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+//        '/service/rest'               : ['IS_AUTHENTICATED_ANONYMOUSLY'],
 //        '/requestmap/**'              : ['ROLE_ADMIN'],
 //        '/role/**'                    : ['ROLE_ADMIN'],
 //        '/authUser/**'                : ['ROLE_ADMIN'],
@@ -208,5 +206,3 @@ com.recomdata.disclaimer=disclaimer.toString()
 com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
-
-grails.resources.modules = {}

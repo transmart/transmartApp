@@ -16,10 +16,10 @@
  * 
  *
  ******************************************************************/
- 
+
+import grails.plugin.springsecurity.SecurityFilterPosition
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
-import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 class BootStrap {
 	

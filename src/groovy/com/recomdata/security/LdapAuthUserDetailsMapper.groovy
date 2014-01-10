@@ -1,9 +1,9 @@
 package com.recomdata.security
 
+import grails.plugin.springsecurity.SpringSecurityUtils
 import groovy.sql.Sql
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations
 import org.springframework.security.authentication.DisabledException;
@@ -55,7 +55,7 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
 //        }
 //    }
 
-    public AuthUserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<GrantedAuthority> authorities)
+    public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities)
     {
         username = username.toLowerCase()
         logger.debug("Mapping user details from context and databse with username: " + username);
