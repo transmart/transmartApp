@@ -38,9 +38,9 @@ class LoginController {
 
     def forceAuth = {
         session.invalidate();
-        String view = 'auth'
-        String postUrl = "${request.contextPath}${config.apf.filterProcessesUrl}"
-        render view: view, model: [postUrl: postUrl]
+        def config = SpringSecurityUtils.securityConfig
+        def postUrl = "${request.contextPath}${config.apf.filterProcessesUrl}"
+        render view: 'auth', model: [postUrl: postUrl]
     }
 
     /**
