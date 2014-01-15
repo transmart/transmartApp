@@ -649,7 +649,7 @@ public class GeneSignatureService {
 		   				select k_gene.uniqueId
 						from search.SearchKeyword k_pathway, bio.BioMarkerCorrelationMV b,
 						search.SearchKeyword k_gene
-						where b.correlType = 'PATHWAY_GENE'
+						where b.correlType = 'PATHWAY GENE'
 						and b.bioMarkerId = k_pathway.bioDataId
 						and k_pathway.dataCategory = 'PATHWAY'
 						and b.assoBioMarkerId = k_gene.bioDataId
