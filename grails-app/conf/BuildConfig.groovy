@@ -14,14 +14,15 @@ def forkSettingsOther = [
  * http://stackoverflow.com/questions/19371859 */
 grails.project.fork = [
         test:    [ *:forkSettingsOther, daemon: true ],
-        run:     false,
+        run:     forkSettingsRun,
         war:     forkSettingsRun,
         console: forkSettingsOther ]
 
-//grails.plugin.location.'rdc-rmodules' = "../Rmodules"
+grails.plugin.location.'rdc-rmodules' = "../Rmodules"
 //grails.plugin.location.'dalliance-plugin:0.1-SNAPSHOT' = "../dalliance-plugin"
 //grails.plugin.location.'transmart-mydas:0.1-gwas-SNAPSHOT' = "../transmart-mydas"
-//grails.plugin.location.'transmart-core:1.0-gwas-SNAPSHOT' = "../transmart-core-db"
+grails.plugin.location.'transmart-core:1.0-gwas-SNAPSHOT' = "../transmart-core-db"
+grails.plugin.location.'transmart-api' = "../transmart-core-api"
 
 grails.project.war.file = "target/${appName}.war"
 

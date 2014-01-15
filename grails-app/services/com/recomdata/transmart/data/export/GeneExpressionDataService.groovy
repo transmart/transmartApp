@@ -1383,7 +1383,7 @@ class GeneExpressionDataService {
             fileName = outputFile.getAbsolutePath()
             writer = outputFile.newWriter(true)
 
-            // Using a hibernate query since I couldn't get this to work using GORM. If this can be done in GORM, pleas convert.
+            // Using a hibernate query since I couldn't get this to work using GORM. If this can be done in GORM, please convert.
             Session session = sessionFactory.currentSession
             Query query = session.createQuery("""
                 select
@@ -1441,7 +1441,7 @@ class GeneExpressionDataService {
                     line += [sampleTypeName, timepointName, tissueTypeName, platform]
                 else
                     //      SAMPLE
-                    line << [sampleTypeName, timepointName, tissueTypeName, platform].grep({it != null}).join('_')
+                    line << [sampleTypeName, timepointName, tissueTypeName, platform].grep().join('_')
                 //       ASSAY ID VALUE         ZSCORE  LOG2ED        PROBE ID PROBESET ID GENE_ID GENE_SYMBOL
                 line += [assayId, rawIntensity, zscore, logIntensity, probeId, probesetId, geneId, geneSymbol]
 
