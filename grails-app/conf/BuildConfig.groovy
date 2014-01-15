@@ -43,6 +43,10 @@ grails.project.dependency.resolution = {
                 name: 'repo.transmartfoundation.org-public',
                 root: 'https://repo.transmartfoundation.org/content/repositories/public/',
         ])
+                mavenRepo([
+                name: 'Spring IO Reporitory',
+                root: 'http://repo.spring.io/milestone/'
+        ])
     }
     dependencies {
 		runtime 'postgresql:postgresql:9.1-901.jdbc4'
