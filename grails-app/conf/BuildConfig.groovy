@@ -43,6 +43,10 @@ grails.project.dependency.resolution = {
                 name: 'eTRIKS Reporitory',
                 root: 'http://repo.etriks.org/content/groups/public/',
         ])
+                mavenRepo([
+                name: 'Spring IO Reporitory',
+                root: 'http://repo.spring.io/milestone/'
+        ])
     }
     dependencies {
 		runtime 'postgresql:postgresql:9.1-901.jdbc4'
