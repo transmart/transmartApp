@@ -43,13 +43,13 @@ grails.project.dependency.resolution = {
                 name: 'eTRIKS Reporitory',
                 root: 'http://repo.etriks.org/content/groups/public/',
         ])
-                mavenRepo([
+        mavenRepo([
                 name: 'Spring IO Reporitory',
                 root: 'http://repo.spring.io/milestone/'
         ])
     }
     dependencies {
-		runtime 'postgresql:postgresql:9.1-901.jdbc4'
+		runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
 		compile 'antlr:antlr:2.7.7'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
     }
