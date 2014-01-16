@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -53,12 +53,12 @@
 							</td>
 						</tr>
 
-						<tr class="prop">
-							<td valign="top" class="name"><label for="passwd">Password:</label></td>
-							<td valign="top" class="value ${hasErrors(bean:person,field:'passwd','errors')}">
-								<input type="password" id="passwd" name="passwd" value="${person.passwd?.encodeAsHTML()}"/>
-							</td>
-						</tr>
+                        <tr class="prop">
+                            <td valign="top" class="name"><label for="passwd">Password:</label></td>
+                            <td valign="top" class="value ${hasErrors(bean:person,field:'passwd','errors')}">
+                                <input type="password" id="passwd" name="passwd" value="${person.passwd?.encodeAsHTML()}"/>
+                            </td>
+                        </tr>
 
 						<tr class="prop">
 							<td valign="top" class="name"><label for="email">Email:</label></td>

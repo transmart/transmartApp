@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -270,7 +270,7 @@ class RecomTagLib {
 		out << "&body=The following is a link to the "
 		out << customFilter?.name.replace("\"", "%22")
 		out << " saved filter in the "
-		out << grailsApplication.config.com.recomdata.searchtool.appTitle
+		out << grailsApplication.config.com.recomdata.appTitle
 		out << " application.%0A%0A"
 		out << createLink(controller:'search', action:'searchCustomFilter', id:customFilter.id, absolute:true)
 		out << "\" traget=\"_blank\" class=\"tiny\" style=\"text-decoration:underline;color:blue;font-size:11px;\">email</a>"

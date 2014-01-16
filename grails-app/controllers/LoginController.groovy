@@ -1,3 +1,22 @@
+/*************************************************************************
+ * tranSMART - translational medicine data mart
+ * 
+ * Copyright 2008-2012 Janssen Research & Development, LLC.
+ * 
+ * This product includes software developed at Janssen Research & Development, LLC.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+ * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
+ * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
+ * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
+ * 
+ *
+ ******************************************************************/
+
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityUtils
 import org.transmart.searchapp.AccessLog
@@ -39,8 +58,7 @@ class LoginController {
     def forceAuth = {
         session.invalidate();
         def config = SpringSecurityUtils.securityConfig
-        def postUrl = "${request.contextPath}${config.apf.filterProcessesUrl}"
-        render view: 'auth', model: [postUrl: postUrl]
+        render view: 'auth', model: [postUrl: "${request.contextPath}${config.apf.filterProcessesUrl}"]
     }
 
     /**
@@ -112,10 +130,9 @@ class LoginController {
      * Callback after a failed login. Redirects to the auth page with a warning message.
      */
     def authfail = {
-
         def username = session[UsernamePasswordAuthenticationFilter.SPRING_SECURITY_LAST_USERNAME_KEY]
         String msg = ''
-        def exception = session[WebAttributes.AUTHENTICATION_EXCEPTION]
+	    def exception = session[AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY]
         if (exception) {
             if (exception instanceof AccountExpiredException) {
                 msg = g.message(code: "springSecurity.errors.login.expired")
@@ -141,20 +158,6 @@ class LoginController {
             flash.message = msg
             redirect action: 'auth', params: params
         }
-    }
-
-    /**
-     * The Ajax success redirect url.
-     */
-    def ajaxSuccess = {
-        render([success: true, username: springSecurityService.authentication.name] as JSON)
-    }
-
-    /**
-     * The Ajax denied redirect url.
-     */
-    def ajaxDenied = {
-        render([error: 'access denied'] as JSON)
     }
 
     /** cache controls */

@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -77,8 +77,8 @@ class ClinicalDataService {
 			sqlQuery <<= "SELECT ofa.PATIENT_NUM, cd.CONCEPT_PATH, cd.CONCEPT_CD, cd.NAME_CHAR, "
 			sqlQuery <<= "case ofa.VALTYPE_CD "
 			sqlQuery <<= " WHEN 'T' THEN TVAL_CHAR "
-			sqlQuery <<= " WHEN 'N' THEN CAST(NVAL_NUM AS varchar2(30)) "
-			sqlQuery <<= "END VALUE, ? SUBSET , pd.sourcesystem_cd "
+			sqlQuery <<= " WHEN 'N' THEN CAST(NVAL_NUM AS VARCHAR (30)) "
+			sqlQuery <<= "END AS VALUE, ? SUBSET , pd.sourcesystem_cd "
 			
 			//If we are going to union in the codes that have parent concepts, we include the parent columns here too.
 			if(parentConceptCodeList.size() > 0)
@@ -96,8 +96,8 @@ class ClinicalDataService {
 				sqlQuery <<= ", ssm.assay_id, ssm.sample_type, ssm.timepoint, ssm.tissue_type "
 			}
 			
-			sqlQuery <<= "FROM i2b2demodata.qt_patient_set_collection qt "
-			sqlQuery <<= "INNER JOIN i2b2demodata.OBSERVATION_FACT ofa ON qt.PATIENT_NUM = ofa.PATIENT_NUM "
+			sqlQuery <<= "FROM qt_patient_set_collection qt "
+			sqlQuery <<= "INNER JOIN OBSERVATION_FACT ofa ON qt.PATIENT_NUM = ofa.PATIENT_NUM "
 			
 			//If we are including the concepts context, add the tables to the statement here.
 			if(includeConceptContext)
@@ -106,22 +106,24 @@ class ClinicalDataService {
 				sqlQuery <<= " LEFT JOIN DEAPP.DE_CONTEXT DC ON DC.DE_CONTEXT_ID = DCC.DE_CONTEXT_ID "
 			}
 			
-			sqlQuery <<= "INNER JOIN i2b2demodata.CONCEPT_DIMENSION cd ON cd.CONCEPT_CD = ofa.CONCEPT_CD "
-			sqlQuery <<= "INNER JOIN i2b2demodata.PATIENT_DIMENSION pd on ofa.patient_num = pd.patient_num "
+			sqlQuery <<= "INNER JOIN CONCEPT_DIMENSION cd ON cd.CONCEPT_CD = ofa.CONCEPT_CD "
+			sqlQuery <<= "INNER JOIN PATIENT_DIMENSION pd on ofa.patient_num = pd.patient_num "
 			
 			if (retrievalTypeMRNAExists && null != filesDoneMap['MRNA.TXT'] && filesDoneMap['MRNA.TXT']) {
-				sqlQuery <<= "LEFT JOIN DEAPP.DE_SUBJECT_SAMPLE_MAPPING ssm ON ssm.PATIENT_ID = ofa.PATIENT_NUM  "
+				sqlQuery <<= "LEFT JOIN DE_SUBJECT_SAMPLE_MAPPING ssm ON ssm.PATIENT_ID = ofa.PATIENT_NUM  "
 			}
 			
-			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.MODIFIER_CD = ?"
+            //MODIFIER_CD used to be used to store the study name as well
+			sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = CAST(? AS numeric) AND ofa.SOURCESYSTEM_CD = ? " +
+                    "AND ( ofa.MODIFIER_CD = '@' OR ofa.MODIFIER_CD = ofa.SOURCESYSTEM_CD )"
 
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
-				sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT NVL(sample_type_cd,'-1') as gene_expr_concept"
-				sqlQuery <<= " FROM DEAPP.de_subject_sample_mapping WHERE trial_name = ?"
-				sqlQuery <<= " UNION SELECT DISTINCT NVL(tissue_type_cd,'-1') as gene_expr_concept "
-				sqlQuery <<= " FROM DEAPP.de_subject_sample_mapping WHERE trial_name = ?"
-				sqlQuery <<= " UNION SELECT DISTINCT NVL(platform_cd,'-1') as gene_expr_concept "
-				sqlQuery <<= " FROM DEAPP.de_subject_sample_mapping WHERE trial_name = ?)"
+				sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT coalesce(sample_type_cd,'-1') as gene_expr_concept"
+				sqlQuery <<= " FROM de_subject_sample_mapping WHERE trial_name = ?"
+				sqlQuery <<= " UNION SELECT DISTINCT coalesce(tissue_type_cd,'-1') as gene_expr_concept "
+				sqlQuery <<= " FROM de_subject_sample_mapping WHERE trial_name = ?"
+				sqlQuery <<= " UNION SELECT DISTINCT coalesce(platform_cd,'-1') as gene_expr_concept "
+				sqlQuery <<= " FROM de_subject_sample_mapping WHERE trial_name = ?)"
 			}
 			
 			if (retrievalTypeMRNAExists && null != filesDoneMap && filesDoneMap['MRNA.TXT'] && !platformsList?.isEmpty()) {
@@ -146,7 +148,7 @@ class ClinicalDataService {
 			//Add the name of the subset to the parameter list.
 			parameterList.add(subset)
 			//Add the value of the result instance ID to the parameter list.
-			parameterList.add(resultInstanceId)
+			parameterList.add(resultInstanceId.toInteger())
 			//Add study to the parameter list.
 			parameterList.add(study)
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
@@ -172,7 +174,7 @@ class ClinicalDataService {
 			def filename = (studyList?.size() > 1) ? study+'_'+fileName : fileName
 			log.debug("Retrieving Clinical data : " + sqlQuery)
 			log.debug("Retrieving Clinical data : " + parameterList)
-	
+			
 			//Only pivot the data if the parameter specifies it.
 			if(parPivotData)
 			{
@@ -193,6 +195,7 @@ class ClinicalDataService {
 
 	private String writeData(StringBuilder sqlQuery, List parameterList, File studyDir, String fileName, String jobName, List retrievalTypes, Map snpFilesMap = null,Boolean includeParentInfo = false,Boolean includeConceptContext = false)
 	{
+
 		//TODO Get the dataTypeName from the list of DataTypeNames either from DB or from config file
 		def dataTypeName = "Clinical";
 		//TODO set this to either "Raw_Files/Findings" or NULL for processed_files
@@ -208,12 +211,14 @@ class ClinicalDataService {
 			
 			
 			log.debug('Clinical Data Query :: ' + sqlQuery.toString())
+			println('Clinical Data Query :: ' + sqlQuery.toString())
+			println('Parameter List :: ' + parameterList)
 			def rows = sql.rows(sqlQuery.toString(), parameterList)
 			if (rows.size() > 0) {
 				log.debug('Writing Clinical File')
 				writerUtil = new FileWriterUtil(studyDir, fileName, jobName, dataTypeName, dataTypeFolder, separator);
 				writerUtil.writeLine(getColumnNames(retrievalTypes, snpFilesMap,includeParentInfo,includeConceptContext) as String[])
-			
+				
 				rows.each { row ->
 					dataFound = true
 					def values = []
@@ -286,6 +291,7 @@ class ClinicalDataService {
 			filePath = writerUtil?.outputFile?.getAbsolutePath()
 		} catch (Exception e) {
 			log.info(e.getMessage())
+			throw(e)
 		} finally {
 			writerUtil?.finishWriting()	
 			sql?.close()
@@ -313,10 +319,12 @@ class ClinicalDataService {
 				} else {
 					compilePivotDataCommand = "source('${rScriptDirectory}/PivotData/PivotClinicalData.R')"
 				}
+				log.info "compilePivotDataCommand ${compilePivotDataCommand} '${mRNAExists}' snpExists '${snpExists}'"
 				REXP comp = c.eval(compilePivotDataCommand)
 				//Prepare command to call the PivotClinicalData.R script
 				String pivotDataCommand = "PivotClinicalData.pivot('$inputFile.name', '$snpExists', '$multipleStudies', '$study')"
 				//, '"+mRNAExists+"','"+snpExists+"'
+				log.info "pivotDataCommand '${pivotDataCommand}' mRNAExists"
 				//Run the R command to pivot the data in the clinical.i2b2trans file.
 				REXP pivot = c.eval(pivotDataCommand)
 			}
@@ -433,7 +441,8 @@ class ClinicalDataService {
 		queryToReturn <<= "INNER JOIN CONCEPT_DIMENSION C1 ON C1.CONCEPT_CD = XMAP.CONCEPT_CD "
 		queryToReturn <<= "INNER JOIN CONCEPT_DIMENSION C2 ON C2.CONCEPT_CD = XMAP.PARENT_CD "
 		queryToReturn <<= "WHERE	qt.RESULT_INSTANCE_ID = CAST(? AS numeric) "
-		queryToReturn <<= "AND		ofa.MODIFIER_CD = ? "
+        //ofa.MODIFIER_CD used to be used to store the study name
+		queryToReturn <<= "AND		ofa.SOURCESYSTEM_CD = ? AND ( ofa.MODIFIER_CD = '@' OR ofa.MODIFIER_CD = ofa.SOURCESYSTEM_CD ) "
 		queryToReturn <<= "AND		ofa.CONCEPT_CD IN "
 		queryToReturn <<= "( "
 		queryToReturn <<= "		SELECT	C_BASECODE "

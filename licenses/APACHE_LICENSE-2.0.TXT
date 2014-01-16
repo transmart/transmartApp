@@ -1,5 +1,5 @@
-bplist00Ñ_WebMainResourceÕ	
-_WebResourceData_WebResourceMIMEType^WebResourceURL_WebResourceFrameName_WebResourceTextEncodingNameO\<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+bplist00ï¿½_WebMainResourceï¿½	
+_WebResourceData_WebResourceMIMEType^WebResourceURL_WebResourceFrameName_WebResourceTextEncodingNameO\<!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -217,4 +217,5 @@ bplist00Ñ_WebMainResourceÕ
 <p class="p2"><span class="Apple-converted-space">Â Â  </span>limitations under the License.</p>
 </body>
 </html>
-Ytext/html_file:///index.htmlPUutf-8    ( : P _ v ”\¬\¶\Ë\Ì                           \Ò
+Ytext/html_file:///index.htmlPUutf-8    ( : P _ v ï¿½\ï¿½\ï¿½\ï¿½\ï¿½             
+              \ï¿½

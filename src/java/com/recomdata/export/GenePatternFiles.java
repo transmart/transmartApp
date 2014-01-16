@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -33,7 +33,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.StringTokenizer;
 
-class GenePatternFiles {
+public class GenePatternFiles {
 	
 	protected File clsfile;
 	protected File gctfile;
@@ -45,6 +45,7 @@ class GenePatternFiles {
 	private static int FLUSH_COUNT = 100;
 	private int gctFlushCount = 0;
 	private int csvFlushCount  =0;
+	
 	public GenePatternFiles() throws java.io.IOException{
 		// put files in a directory 
 		File tmpdir = new File(System.getProperty("java.io.tmpdir") + File.separator + "datasetexplorer");

@@ -790,8 +790,9 @@
 		{
 			var oCol = oSettings.aoColumns[iCol];
 			var oData = oSettings.aoData[iRow]._aData;
-		
-			oCol.fnSetData( oData, val );
+
+            if (oCol)
+			    oCol.fnSetData( oData, val );
 		}
 		
 		
@@ -3610,9 +3611,10 @@
 					{
 						nThs[i-iCorrector].style.width = _fnStringToCss( oColumn.sWidthOrig );
 					}
-					else if ( oColumn.bVisible )
+					else if ( oColumn.bVisible)
 					{
-						nThs[i-iCorrector].style.width = "";
+                        if (nThs[i-iCorrector])
+						    nThs[i-iCorrector].style.width = "";
 					}
 					else
 					{

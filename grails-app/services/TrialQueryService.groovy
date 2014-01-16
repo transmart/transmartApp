@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -50,8 +50,25 @@ class TrialQueryService {
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return 0
 		}
-
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery("COUNT_EXP", filter))[0]
+		
+		////////////////////////////////////////////////////////////////////////
+		// Hack to get bind variable in the query
+		////////////////////////////////////////////////////////////////////////
+		def q = createQuery("COUNT_EXP", filter)
+		def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+		def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+		def bID = q.substring(fP+1, lP)     // pull out the ID
+		if (bID.isLong())	{
+			def bioID = bID.toLong()
+			def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+			log.info("Bio ID: ${bioID}")
+			log.trace("Updated Query: ${qBV}")
+			return BioAssayAnalysisData.executeQuery(qBV, [bioID])[0]
+		} else	{
+			log.warn("Parsing failed: ${bID}")
+			log.warn("Running original query")
+			return BioAssayAnalysisData.executeQuery(q)[0]
+		}
 	}
 
 	def countAnalysis(SearchFilter filter){
@@ -59,8 +76,25 @@ class TrialQueryService {
 		if(filter == null || filter.globalFilter.isTextOnly()){
 			return 0
 		}
-
-		return org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery("COUNT_ANALYSIS", filter))[0]
+		
+		////////////////////////////////////////////////////////////////////////
+		// Hack to get bind variable in the query
+		////////////////////////////////////////////////////////////////////////
+		def q = createQuery("COUNT_ANALYSIS", filter)
+		def fP = q.lastIndexOf('(')			// grab the index last open parenthesis
+		def lP = q.indexOf(')', fP)	        // grab the index of the corresponding closing parenthesis
+		def bID = q.substring(fP+1, lP)     // pull out the ID
+		if (bID.isLong())	{
+			def bioID = bID.toLong()
+			def qBV = q.replace(bID, '?')       // replace the Bio ID with the bind variable parameter
+			log.info("Bio ID: ${bioID}")
+			log.trace("Updated Query: ${qBV}")
+			return BioAssayAnalysisData.executeQuery(qBV, [bioID])[0]
+		} else	{
+			log.warn("Parsing failed: ${bID}")
+			log.warn("Running original query")
+			return BioAssayAnalysisData.executeQuery(q)[0]
+		}
 	}
 
 	/**
@@ -312,31 +346,32 @@ class TrialQueryService {
 			//	.append(-trialfilter.foldChange).append(")")
 			//	.append(" OR baad.foldChangeRatio IS NULL)")
 			bFirstWhereItem = false
-			s.append("( abs(baad.foldChangeRatio) >= ").append(trialfilter.foldChange).append(" OR baad.foldChangeRatio IS NULL)")
+			s.append("( abs(baad.foldChangeRatio) >= ").append(trialfilter.foldChange) //.append(" OR baad.foldChangeRatio IS NULL)")
 		}
 
 		// preferred p value on BioAssayAnalysisData
 		if(trialfilter.hasPValue()){
 			if(bFirstWhereItem) {
-				s.append(" (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
+				s.append(" (baad.preferredPvalue <= ").append(trialfilter.pValue).append(")")
+				bFirstWhereItem = false
 			} else {
-				s.append(" AND (baad.preferredPvalue <= ").append(trialfilter.pValue).append(" )")
-			}
-			//.append(" OR baad.preferredPvalue IS NULL)")
+				s.append(" AND (baad.preferredPvalue <= ").append(trialfilter.pValue).append(")")
+			}			
 		}
 		//		 rvalue on BioAssayAnalysisData
 		if(trialfilter.hasRValue()){
 			if(bFirstWhereItem) {
-				s.append(" ((baad.rValue >= abs(").append(trialfilter.rValue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+				s.append(" (baad.rValue >= abs(").append(trialfilter.rValue).append("))") // OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+				bFirstWhereItem = false
 			} else {
-				s.append(" AND (baad.rValue >= abs(").append(trialfilter.rValue).append(")) OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
+				s.append(" AND (baad.rValue >= abs(").append(trialfilter.rValue).append("))") // OR (baad.rhoValue>=abs(").append(trialfilter.rValue).append(")) OR baad.rhoValue IS NULL)");
 			}
-
 		}
 		// platform filter
 		if(trialfilter.hasPlatform()){
 			if(bFirstWhereItem) {
 				s.append(" (baad.analysis.assayDataType = '").append(trialfilter.platform).append("')")
+				bFirstWhereItem = false
 			} else {
 				s.append(" AND (baad.analysis.assayDataType = '").append(trialfilter.platform).append("')")
 			}
@@ -350,8 +385,114 @@ class TrialQueryService {
 			query.addTable("org.transmart.biomart.ClinicalTrial ct ");
 			query.addCondition("baad.experiment.id = ct.id ")
 			query.addCondition("ct.id in (" + trialfilter.createTrialInclause()+ ")")
-
 		}
 	}
 
+	
+	/**
+	 * Execute the SOLR query to get the analyses for the trial that match the given search criteria
+	 * @param solrRequestUrl - the base URL for the SOLR request
+	 * @param solrQueryParams - the query string for the search, to be passed into the data for the POST request
+	 * @return List containing the analysis Ids
+	 */
+	 def executeSOLRTrialAnalysisQuery = {solrRequestUrl, solrQueryParams ->
+		 
+		 List analysisIds = []
+		 
+		 def slurper = new XmlSlurper()
+  
+		 // submit request
+		 def solrConnection = new URL(solrRequestUrl).openConnection()
+		 solrConnection.requestMethod= "POST"
+		 solrConnection.doOutput = true
+  
+		 // add params to request
+		 def dataWriter = new OutputStreamWriter(solrConnection.outputStream)
+		 dataWriter.write(solrQueryParams)
+		 dataWriter.flush()
+		 dataWriter.close()
+		 
+		 def docs   // will store the document nodes from the xml response in here
+		 
+		 // process response
+		 if (solrConnection.responseCode == solrConnection.HTTP_OK)  {
+			 def xml
+			 
+			 solrConnection.inputStream.withStream {
+				 xml = slurper.parse(it)
+			 }
+ 
+			 // retrieve all the document nodes from the xml
+			 docs = xml.result.find{it.@name == 'response'}.doc
+		 }
+		 else {
+			 throw new Exception("SOLR Request failed! Request url:" + solrRequestUrl + "  Response code:" + solrConnection.responseCode + "  Response message:" + solrConnection.responseMessage)
+		 }
+		 
+		 solrConnection.disconnect()
+		 
+		 // put analysis id for each document into a list to pass back
+		 for (docNode in docs) {
+			 def analysisIdNode = docNode.str.find{it.@name == 'ANALYSIS_ID'}
+			 def analysisId = analysisIdNode.text()
+						 
+			 analysisIds.add(analysisId)
+		 }
+		 
+		 return analysisIds
+	 }
+	  
+    /**
+	*   Execute a SOLR query to retrieve all the analyses for a certain trial that match the given criteria
+	 */
+	def querySOLRTrialAnalysis(params, List sessionFilter) {
+		RWGController rwgController = new RWGController()
+		
+		def trialNumber = params['trialNumber']
+ 
+		// create a copy of the original list (we don't want to mess with original filter params)
+		// (the list is an object, so it is not "passed by val", it's a reference)
+		def filter = []
+		sessionFilter.each {
+			filter.add(it)
+		}
+ 
+		filter.add("STUDY_ID:" + trialNumber) 
+		def nonfacetedQueryString = rwgController.createSOLRNonfacetedQueryString(filter)
+ 
+		String solrRequestUrl = rwgController.createSOLRQueryPath()
+		
+		// TODO create a conf setting for max rows
+		String solrQueryString = rwgController.createSOLRQueryString(nonfacetedQueryString, "", "", 10000, false)
+		def analysisIds = executeSOLRTrialAnalysisQuery(solrRequestUrl, solrQueryString)
+ 
+		def analysisList = []
+ 
+		// retrieve the descriptions for each analysis
+		def results = org.transmart.biomart.BioAssayAnalysis.executeQuery("select b.id, b.shortDescription, b.longDescription " +
+			" from org.transmart.biomart.BioAssayAnalysis b" +
+			" where b.id in (" + analysisIds.join(',') +  ") ORDER BY b.longDescription")
+ 
+		// retrieve the analyses that are of type Time Course by checking the taxonomy
+		def timeCourseAnalyses = org.transmart.biomart.BioAnalysisAttributeLineage.executeQuery("select b1.bioAnalysisAttribute.bioAssayAnalysisID from org.transmart.biomart.BioAnalysisAttributeLineage b1" +
+			" where b1.bioAnalysisAttribute.bioAssayAnalysisID in (" + analysisIds.join(',') +  ") " +
+			" and lower(b1.ancestorTerm.termName) = lower('Time Course')" )
+ 
+		for (r in results)  {
+					 
+			// if current analysis is in time course list then set flag to true
+			def isTimeCourse = false
+			if (timeCourseAnalyses.contains(r[0]))  {
+				isTimeCourse = true
+			}
+			
+			// create a map for each record
+			def aMap = ['id':r[0], 'shortDescription':r[1], 'longDescription':r[2], 'isTimeCourse':isTimeCourse, 'studyID':trialNumber]
+					   
+			analysisList.add aMap
+		}
+	   
+		return analysisList
+	}
+ 
 }

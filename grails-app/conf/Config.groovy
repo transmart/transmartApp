@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -56,6 +56,14 @@ grails.plugin.springsecurity.securityConfigType = SecurityConfigType.Requestmap
  * - dataSource location set path by system environment variable '<APP_NAME>_DATASOURCE_LOCATION'
  */
 
+/* For some reason, the externalized config files are run with a different
+ * binding. None of the variables appName, userHome, appVersion, grailsHome
+ * are available; the binding will actually be the root config object.
+ * So store the current binding in the config object so the externalized
+ * config has access to the variables mentioned.
+ */
+org.transmart.originalConfigBinding = getBinding()
+
 grails.config.locations = []
 def defaultConfigFiles = [
 	"${userHome}/.grails/${appName}Config/Config.groovy",
@@ -65,8 +73,11 @@ def defaultConfigFiles = [
 defaultConfigFiles.each { filePath ->
 	def f = new File(filePath)
 	if (f.exists()) {
+        if (f.name.equals('RModulesConfig.groovy')) {
+            println "[WARN] RModulesConfig.groovy is deprecated, it has been merged into Config.groovy. " +
+                    "Loading it anyway."
+        }
 		grails.config.locations << "file:${filePath}"
-	} else {
 	}
 }
 String bashSafeEnvAppName = appName.toString().toUpperCase(Locale.ENGLISH).replaceAll(/-/, '_')
@@ -118,7 +129,7 @@ grails.converters.encoding="UTF-8"
 grails.converters.default.pretty.print=true
 
 // enabled native2ascii conversion of i18n properties files
-grails.enable.native2ascii = false
+grails.enable.native2ascii = true
 
 com.recomdata.search.autocomplete.max=20
 // default paging size
@@ -196,13 +207,38 @@ com.recomdata.analysis.genepattern.file.dir = "data"; // Relative to the app roo
 
 com.recomdata.analysis.data.file.dir = "data"; // Relative to the app root "web-app"
 
-// Disclaimer
-StringBuilder disclaimer = new StringBuilder()
-disclaimer.append("<p></p>")
-com.recomdata.disclaimer=disclaimer.toString()
+//StringBuilder disclaimer = new StringBuilder()
+//disclaimer.append("<p></p>")
+//com.recomdata.disclaimer=disclaimer.toString()
+
 
 // customization views
 //com.recomdata.view.studyview='_clinicaltrialdetail'
 com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
+
+
+// Uncomment and edit the following lines to start using Grails encoding & escaping improvements
+
+/* remove this line
+// GSP settings
+grails {
+    views {
+        gsp {
+            encoding = 'UTF-8'
+            htmlcodec = 'xml' // use xml escaping instead of HTML4 escaping
+            codecs {
+                expression = 'html' // escapes values inside null
+                scriptlet = 'none' // escapes output from scriptlets in GSPs
+                taglib = 'none' // escapes output from taglibs
+                staticparts = 'none' // escapes output from static template parts
+            }
+        }
+        // escapes all not-encoded output at final stage of outputting
+        filteringCodecForContentType {
+            //'text/html' = 'html'
+        }
+    }
+}
+remove this line */

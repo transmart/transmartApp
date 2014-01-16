@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -20,9 +20,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+	<title>${grailsApplication.config.com.recomdata.appTitle}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
     <link rel="SHORTCUT ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
 	<link rel="ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
 	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
@@ -58,14 +57,36 @@
 			                title:"Entrez Gene",
 			                id:'entrezGene',
 			                timeout:180000,
+			                <g:if test="${(geneId[0] == 'Q') || (geneId[0] == 'P')}">   // if it starts with Q or P, assume it's a protein
+			        	        defaultSrc: "http://www.ncbi.nlm.nih.gov/protein/${geneId}"
+				        	 </g:if>
+			        	     <g:else>
 			            	defaultSrc: "http://www.ncbi.nlm.nih.gov/sites/entrez?Db=gene&Cmd=DetailsSearch&Term=${geneId}[GeneID]&doptcmdl=DocSum"
+			        	     </g:else>
 				     },
+				     
+				 <g:if test="${isRWG==false}">
 					{
 		                title:"Entrez Global",
 		                id:'entrezGlobal',
 		                defaultSrc: "http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=${symbol}"
-					}, /*
+					},
+				 </g:if> /*
 				<sec:ifNotGranted roles="ROLE_PUBLIC_USER">
+	 				 <g:if test="${isRWG==false}">
+					{
+			        		title:"Hydra",
+			                id:'hydra',
+			                defaultSrc:"http://hydra.rndus.na.jnj.com/hydra/viewer/index.cfm?jnjgeneid=${hydraGeneID}"
+			            },
+			            {
+			        		title:"TargetCV",
+			                id:'targetcv',
+			                defaultSrc:"http://bioinfo.janbe.eu.jnj.com/TargetCV/reports/${symbol}.htm"
+			            },
+					 </g:if>
+		         </sec:ifNotGranted>
+		         <sec:ifNotGranted roles="ROLE_PUBLIC_USER">    
 					{
 		        		title:"Pictor",
 		                id:'pictor',
@@ -76,13 +97,15 @@
 		                id:'genecard',
 		                defaultSrc:"http://www.genecards.org/cgi-bin/carddisp.pl?gene=${symbol}"
 		            },
-		           
 			</sec:ifNotGranted> */
+				 <g:if test="${isRWG==false}">
 					{
 		                title:"Google Scholar",
 		                id:'google',
                         html: "<a href=\"http://scholar.google.com/scholar?q=${symbol} gene\" target=_new>Search Google Scholar for articles on ${symbol} gene</a> (n.b. opens results in a new window)."
-					}]
+					}
+				 </g:if>
+ 			     ]
 				}]
 			});
 		});

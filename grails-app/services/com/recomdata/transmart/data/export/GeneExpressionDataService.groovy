@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -84,9 +84,6 @@ class GeneExpressionDataService {
 				//Create a query for the Subset.
 				if (null != resultInstanceId)
 				{
-					//Get the concepts for this result instance id.
-					def concepts = i2b2HelperService.getConcepts(resultInstanceId)
-		
 					//Add the subquery to the main query.
 					 sqlQuery = createMRNAHeatmapPathwayQuery(study, resultInstanceId, gplIds, pathway, timepoint, sampleTypes, tissueTypes)
 					 sampleQuery = createStudySampleAssayQuery(study,resultInstanceId, gplIds, timepoint, sampleTypes, tissueTypes )
@@ -121,7 +118,7 @@ class GeneExpressionDataService {
 			ssm.GPL_ID
 		FROM
 		de_subject_sample_mapping ssm
-		INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = ? AND ssm.patient_id = sc.patient_num
+		INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = CAST(? AS numeric) AND ssm.patient_id = sc.patient_num
 
 		""");
 		sQuery.append(" WHERE ssm.trial_name = '").append(study).append("' ")
@@ -185,9 +182,9 @@ class GeneExpressionDataService {
 	   
 	   sTables.append("""
 	   FROM de_subject_microarray_data a
-			   INNER JOIN de_subject_sample_mapping ssm ON ssm.assay_id = A.assay_id 
-			   INNER JOIN de_mrna_annotation b ON a.probeset_id = b.probeset_id and ssm.gpl_id = b.gpl_id
-			   INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = ? AND ssm.PATIENT_ID = sc.patient_num
+			   INNER JOIN de_mrna_annotation b ON a.probeset_id = b.probeset_id
+			   INNER JOIN de_subject_sample_mapping ssm ON ssm.assay_id = A.assay_id
+			   INNER JOIN qt_patient_set_collection sc ON sc.result_instance_id = CAST(? AS numeric) AND ssm.PATIENT_ID = sc.patient_num
 	   		   INNER JOIN PATIENT_DIMENSION pd on ssm.patient_id = pd.patient_num
 	   """)
 	   
@@ -204,7 +201,7 @@ class GeneExpressionDataService {
 		   
 		   //Include the tables we join on to get the unique_id.
 		   sTables.append("""
-			   INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = to_char(b.GENE_ID)
+			   INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = b.GENE_ID::varchar
 			   INNER JOIN bio_marker_correl_mv sbm ON sbm.asso_bio_marker_id = bm.bio_marker_id
 			   INNER JOIN search_keyword sk ON sk.bio_data_id = sbm.bio_marker_id
 		   """)
@@ -220,7 +217,7 @@ class GeneExpressionDataService {
 		   
 		   //Include the tables we join on to filter by the pathway.
 		   sTables.append("""
-		   INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = to_char(b.GENE_ID)
+		   INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = b.GENE_ID::varchar
 		   INNER JOIN SEARCHAPP.SEARCH_BIO_MKR_CORREL_VIEW sbm ON sbm.asso_bio_marker_id = bm.bio_marker_id
 		   INNER JOIN search_keyword sk ON sk.bio_data_id = sbm.domain_object_id
 		   """)
@@ -305,7 +302,7 @@ class GeneExpressionDataService {
 		assayS.append("""	SELECT DISTINCT s.assay_id 
 							FROM 	de_subject_sample_mapping s,
 									qt_patient_set_collection qt 
-							WHERE qt.patient_num = s.patient_id AND qt.result_instance_id = ? """);
+							WHERE qt.patient_num = s.patient_id AND qt.result_instance_id = CAST(? AS numeric) """);
 
 
 		//If we have a sample type, append it to the query.
@@ -537,7 +534,6 @@ class GeneExpressionDataService {
 		// and writes to the writer
 		
 		log.info("start sample retrieving query");
-		log.debug("Sample Query : " + sampleQuery);
 		rs = stmt1.executeQuery();
 		def sttSampleStr = null;
 		
@@ -581,9 +577,10 @@ class GeneExpressionDataService {
 		def nameIndexMap = [:]
 		int count = metaData.getColumnCount();
 		for (int i = 1; i <= count; i++) {
-			nameIndexMap.put(metaData.getColumnName(i), i);
+			nameIndexMap.put(
+				metaData.getColumnName(i).toUpperCase(Locale.ENGLISH), i);
 		}
-		
+
 		def rawIntensityRSIdx = nameIndexMap.get("RAW_INTENSITY");
 		def zScoreRSIdx = nameIndexMap.get("ZSCORE");
 		def ptIDIdx = nameIndexMap.get("PATIENT_ID");
@@ -882,11 +879,11 @@ class GeneExpressionDataService {
 							SELECT DISTINCT ssm.patient_id FROM de_subject_sample_mapping ssm 
 							INNER JOIN (SELECT DISTINCT patient_num 
 							            FROM qt_patient_set_collection
-							            WHERE result_instance_id = ?
+							            WHERE result_instance_id = CAST(? AS numeric)
 							            INTERSECT
 							            SELECT DISTINCT patient_num 
 							            FROM qt_patient_set_collection
-							            WHERE result_instance_id = ?) sc ON ssm.patient_id = sc.patient_num
+							            WHERE result_instance_id = CAST(? AS numeric)) sc ON ssm.patient_id = sc.patient_num
 							"""
 			groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 			def queryParams = []
@@ -1059,7 +1056,7 @@ class GeneExpressionDataService {
 	   def str = new StringBuffer()
 	   def mapValues = resultInstanceIdMap.values()
 	   mapValues.each { val ->
-		   if (val && ((String)val)?.trim() != '') str.append(val).append(',')
+		   if (val && ((String)val)?.trim() != '') str.append('CAST(').append(val).append(' AS numeric),')
 	   }
 	   str.delete(str.length()-1, str.length())
    
