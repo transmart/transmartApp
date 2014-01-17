@@ -277,8 +277,7 @@ function getCRCRequest(subset, queryname, divId){
 		}
 	}
 	
-	query=query+getSecurityPanel()+"</ns4:query_definition>";
-	//query=query+"</query_definition>"+getCRCRequestFooter();
+	query=query+"</ns4:query_definition>";
 	return query;
 }
 
@@ -298,8 +297,7 @@ function getCRCRequestSingleSubset(divId, queryname){
 		query=query+getCRCRequestPanel(qcd.dom, 1);
 	}
 	
-	query=query+getSecurityPanel()+"</ns4:query_definition>";
-	//query=query+"</query_definition>"+getCRCRequestFooter();
+	query=query+"</ns4:query_definition>";
 	return query;
 }
 
