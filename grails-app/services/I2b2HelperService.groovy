@@ -803,7 +803,6 @@ class I2b2HelperService {
 			if( !concepts || !patientSet ) {
 				return
 			}
-						
 			// After that, retrieve all data entries for the children
 			def c  = ObservationFact.createCriteria()
 			def results = c.list {
@@ -811,10 +810,9 @@ class I2b2HelperService {
 					eq( "modifierCd", "@" )
 					eqProperty( "modifierCd", "sourcesystemCd" )
 				}
-				'in'( "conceptCd", concepts*.conceptCd )
-				'in'( "patientNum", patientIds )
+				'in'( "conceptCode", concepts*.conceptCode )
+				'in'( "patient", patientIds )
 			}
-			
 			results.each { row ->
 				
 				/*If I already have this subject mark it in the subset column as belonging to both subsets*/
