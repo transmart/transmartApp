@@ -1,13 +1,23 @@
+import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Lists
+import grails.converters.JSON
 import grails.util.Holders
 import org.hibernate.Query
 import org.hibernate.ScrollMode
 import org.hibernate.Session
 import org.transmartproject.core.dataquery.DataRow
+import org.transmartproject.core.dataquery.assay.Assay
+import org.transmartproject.core.dataquery.assay.SampleType
+import org.transmartproject.core.dataquery.assay.Timepoint
+import org.transmartproject.core.dataquery.assay.TissueType
 import org.transmartproject.core.dataquery.highdim.AssayColumn
+import org.transmartproject.core.dataquery.highdim.BioMarkerDataRow
 import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
 import org.transmartproject.core.dataquery.highdim.HighDimensionResource
+import org.transmartproject.core.dataquery.highdim.Platform
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
+import org.transmartproject.core.dataquery.highdim.projections.Projection
+import org.transmartproject.db.dataquery.highdim.HighDimensionResourceService
 import org.transmartproject.db.dataquery.highdim.mrna.DeSubjectMicroarrayDataCoreDb
 import org.transmartproject.db.dataquery.highdim.projections.GenericProjection
 
@@ -15,7 +25,7 @@ import org.transmartproject.db.dataquery.highdim.projections.GenericProjection
  * Created by jan on 12/30/13.
  */
 class TestClass {
-    static String version = "version 13"
+    static String version = "version 14"
 
     static Object getBean(bean) {
         Holders.grailsApplication.mainContext.getBean(bean)
@@ -77,70 +87,81 @@ class TestClass {
     }
 
     static HighDimensionResource highDimensionResource = getBean(HighDimensionResource)
+    static HighDimensionResourceService highDimensionResourceService = getBean(HighDimensionResourceService)
+
+    static findSingleDataType(List<String> conceptpaths) {
+
+        def dataTypeConstraint = highDimensionResourceService.createAssayConstraint(
+                AssayConstraint.DISJUNCTION_CONSTRAINT,
+                subconstraints:
+                        [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptpaths.collect {[concept_key: it]}])
+
+        def datatypes = highDimensionResourceService.getSubResourcesAssayMultiMap([dataTypeConstraint]).keySet()*.dataType
+
+        if (datatypes.size() > 1) {
+            throw new IllegalArgumentException("The provided concepts must have the same type, but they have types \"${datatypes.join(', ')}\"")
+        }
+
+        datatypes[0]
+    }
 
     static apiquery() {
 
-        HighDimensionDataTypeResource dataTypeResource = highDimensionResource.getSubResourceForType('mrna')
+        // The input: a resultInstanceId and a list of concept paths
 
         def resultInstanceId = 23306  //22967
-        def trialName = 'GSE8581'
-        def gplIds = ['GPL570']
-        gplIds = [570]
+//        def trialName = 'GSE8581'
+//        def gplIds = ['GPL570']
+//        gplIds = [570]
 //        resultInstanceId = 22967
 
-        def conceptPath = /\\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung\ /.trim()
-        conceptPath = /\\Public Studies\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung /.trim()
+        def conceptPaths = [/\\Public Studies\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung/]
 
 
-//        def ontologyTerm = /\\Public Studies\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung\ /.trim()
+
+        HighDimensionDataTypeResource dataTypeResource = highDimensionResource.getSubResourceForType(findSingleDataType(conceptPaths))
+
+        def dataProperties = dataTypeResource.dataProperties as ArrayList
+        def rowProperties = dataTypeResource.rowProperties as ArrayList
+
 
         def assayconstraints = []
         def dataconstraints = []
-        def projection = new GenericProjection(DeSubjectMicroarrayDataCoreDb)
-        //dataTypeResource.createProjection([:], 'zscore')
-
-//        assayconstraints << dataTypeResource.createAssayConstraint(
-//                AssayConstraint.TRIAL_NAME_CONSTRAINT,
-//                name: trialName)
-//
-//        assayconstraints << dataTypeResource.createAssayConstraint(
-//                AssayConstraint.ASSAY_ID_LIST_CONSTRAINT,
-//                ids: gplIds)
+        def projection = dataTypeResource.createProjection(Projection.GENERIC_PROJECTION)
 
         assayconstraints << dataTypeResource.createAssayConstraint(
                 AssayConstraint.PATIENT_SET_CONSTRAINT,
                 result_instance_id: resultInstanceId)
 
         assayconstraints << dataTypeResource.createAssayConstraint(
-                AssayConstraint.ONTOLOGY_TERM_CONSTRAINT,
-                concept_key: conceptPath)
-
-//        assayconstraints << dataTypeResource.createAssayConstraint(
-//                        AssayConstraint.ONTOLOGY_TERM_CONSTRAINT,
-//                        concept_key: ontologyTerm)
+                AssayConstraint.DISJUNCTION_CONSTRAINT,
+                subconstraints:
+                    [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
 
         def tabularResult = dataTypeResource.retrieveData(assayconstraints, dataconstraints, projection)
 
         def assayList = tabularResult.indicesList
 
+        def fixedfields = ['patient id', 'sample', 'assay id', 'value', 'zscore', 'log2e', 'probe id', 'gene symbol', 'gene id']
+
         int count = 0
-        for (DataRow row : tabularResult) {
+        for (BioMarkerDataRow<Map<String, String>> datarow : tabularResult) {
             for (AssayColumn assay : assayList) {
                 count++
-                if (count < 55) continue
-                if (count > 75) return [assay, row]
+                if (count < 50) continue
+                if (count > 75) return [assay, datarow]
                 //println "$assay: ${row[assay]}"
-                Map data = row[assay]
+                Map data = datarow[assay]
+                Map<String, String> row = datarow.associatedData
 
-                /* geneId: option 1: extend ProbeRow for each datatype, option 2: add to projection*/
                 String assayId =        assay.id
                 String rawIntensity =   data.rawIntensity
                 String zscore =         data.zscore
                 String logIntensity =   data.logIntensity
                 String probeId =        row.probe
-                String geneId =         '<geneId>'
+                String geneId =         row.geneId
                 String geneSymbol =     row.geneSymbol
-                String sourcesystemCd = assay.patientInTrialId
+                String patientId =      assay.patientInTrialId
                 String sampleTypeName = assay.sampleType.label
                 String timepointName =  assay.timepoint.label
                 String tissueTypeName = assay.tissueType.label
@@ -151,14 +172,43 @@ class TestClass {
 //                        row.geneSymbol, assay.patientInTrialId, assay.sampleType.label, assay.timepoint.label, assay.tissueType.label /*<assay.tissueTypeName>*/,
 //                        assay.platform.id /*<platform>*/]
 
-                println([assayId, rawIntensity, zscore, logIntensity, probeId, geneId, geneSymbol, sourcesystemCd,
+                println([assayId, rawIntensity, zscore, logIntensity, probeId, geneId, geneSymbol, patientId,
                         sampleTypeName, timepointName, tissueTypeName, platform].join(' '))
             }
         }
     }
 
+    static newquery() {
+        getBean('geneExpressionDataService').exportData()
+    }
+
     static toList(it) {
         Lists.newArrayList(it)
     }
+
+    static test() {
+        ImmutableSet foo = [1,2,3]
+        foo
+    }
+
+    private static platformToMap(Platform p) {
+        Platform.metaClass.properties.
+                collect { it.name }.
+                minus(['class', 'template']).
+                collectEntries {
+                    [  it, p."$it" ]
+                }
+    }
+
+    static nodedetails() {
+        def constraints = []
+
+        constraints << highDimensionResourceService.createAssayConstraint(
+                AssayConstraint.ONTOLOGY_TERM_CONSTRAINT,
+                concept_key: /\\Public Studies\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung /.trim())
+
+        highDimensionResourceService.getSubResourcesAssayMultiMap(constraints).keySet()*.dataType
+    }
+
 
 }
