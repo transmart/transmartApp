@@ -163,8 +163,8 @@ function showWorkflowStatusErrorDialog(jobStatusHeader, jobStatusMsg) {
 		, maxWidth: 350
 		, resizable: true
 		, closeOnEscape: true
-		, show: { effect: 'fade', duration: 2500 }
-		, hide: { effect: 'fade', duration: 2500 }
+		, show: { effect: 'fade', duration: 500 }
+		, hide: { effect: 'fade', duration: 500 }
 		, dialogClass: 'dialog-modal'
 		, title: jobStatusHeader
 		, position: {
