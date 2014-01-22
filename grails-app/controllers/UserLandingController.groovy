@@ -52,21 +52,20 @@ class UserLandingController {
     }
 
 	   def index = {
-        new AccessLog(username:     username,
-                      event:        "Login",
+            new AccessLog(username: username, event:"Login",
                   eventmessage: request.getHeader("user-agent"),
-                      accesstime:   new Date()).save()
+                  accesstime:new Date()).save()
                   def skip_disclaimer = grailsApplication.config.com.recomdata?.skipdisclaimer?:false;
-        if (skip_disclaimer) {
-                        redirect(uri:'/search');     
-        } else {
+                  if(skip_disclaimer){
+                        redirect(uri: grailsApplication.config.com.recomdata?.defaults?.landing);
+                  }else{
                   redirect(uri: '/userLanding/disclaimer.gsp')
                   }
       }
 	def agree = {
         new AccessLog(username: username, event:"Disclaimer accepted",
 			accesstime:new Date()).save()				
-		redirect(uri: '/search')
+		redirect(uri: grailsApplication.config.com.recomdata?.defaults?.landing)
 	}
 	
 	def disagree = {

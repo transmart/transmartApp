@@ -74,9 +74,8 @@ grails.project.dependency.resolution = {
         }
     }
     dependencies {
-        runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
-
-        compile 'antlr:antlr:2.7.7'
+		compile 'org.postgresql:postgresql:9.3-1100-jdbc4'
+		compile 'antlr:antlr:2.7.7'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
         compile 'net.sf.opencsv:opencsv:2.3'
         compile "org.apache.lucene:lucene-core:2.4.0"
