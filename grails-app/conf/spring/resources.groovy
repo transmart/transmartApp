@@ -68,5 +68,15 @@ beans = {
     //overrides bean implementing GormUserDetailsService?
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 
+    println '... finished configuring tranSMART Beans\n'
+}
 
+private String[] toStringArray(value) {
+    if (value == null) {
+        return null
+    }
+    if (value instanceof String) {
+        value = [value]
+    }
+    value as String[]
 }
