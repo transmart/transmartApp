@@ -8,7 +8,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper
@@ -126,7 +126,7 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
 
             if (conf.ldap.context.allowInternaRoles)
             {
-                authority = roles.collect { new GrantedAuthorityImpl(it.authority) }
+                authority = roles.collect { new SimpleGrantedAuthority(it.authority) }
                 authority.addAll(authorities)
             }
             else
@@ -153,7 +153,7 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
             if (convertToUpperCase) {
                 role = ((String) role).toUpperCase();
             }
-            return new GrantedAuthorityImpl(rolePrefix + role);
+            return new SimpleGrantedAuthority(rolePrefix + role);
         }
         return null;
     }

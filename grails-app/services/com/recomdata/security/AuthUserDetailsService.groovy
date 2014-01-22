@@ -25,13 +25,12 @@
 */
 package com.recomdata.security
 
-import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUserDetailsService
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import org.springframework.security.authentication.DisabledException;
+import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.userdetails.GrailsUserDetailsService
 import org.hibernate.criterion.CriteriaSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.security.core.authority.GrantedAuthorityImpl
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 
@@ -55,7 +54,7 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
      * Some Spring Security classes (e.g. RoleHierarchyVoter) expect at least
      * one role, so we give a user with no granted roles this one which gets
      * past that restriction but doesn't grant anything. */
-	static final List NO_ROLES = [new GrantedAuthorityImpl(SpringSecurityUtils.NO_ROLE)]
+	static final List NO_ROLES = [new SimpleGrantedAuthority(SpringSecurityUtils.NO_ROLE)]
 
     @Override
     UserDetails loadUserByUsername(String username,
@@ -88,7 +87,7 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
 
         if (loadRoles) {
             authorities = user.authorities*.authority.collect {
-                new GrantedAuthorityImpl(it)
+                new SimpleGrantedAuthority(it)
             }
         }
 
