@@ -30,13 +30,12 @@ class DataExportController {
     def springSecurityService
 
     //We need to gather a JSON Object to represent the different data types.
-    def getMetaData =
-        {
+    def getMetaData() {
             response.setContentType("text/json")
             render exportService.getMetaData(params)
-        }
+    }
 
-    def downloadFileExists = {
+    def downloadFileExists() {
         def InputStream inputStream = exportService.downloadFile(params);
         response.setContentType("text/json")
         JSONObject result = new JSONObject()
@@ -51,7 +50,7 @@ class DataExportController {
         response.outputStream << result.toString()
     }
 
-    def downloadFile = {
+    def downloadFile() {
         def InputStream inputStream = exportService.downloadFile(params);
 
         def fileName = params.jobname + ".zip"
@@ -67,7 +66,7 @@ class DataExportController {
      * Method that will create the new asynchronous job name
      * Current methodology is username-jobtype-ID from sequence generator
      */
-    def createnewjob = {
+    def createnewjob() {
         def result = exportService.createExportDataAsyncJob(params, springSecurityService.getPrincipal().username)
 
         response.setContentType("text/json")
@@ -77,7 +76,8 @@ class DataExportController {
     /**
      * Method that will run a data export and is called asynchronously from the datasetexplorer -> Data Export tab
      */
-    def runDataExport = {
+    def runDataExport() {
+        params['highDimDataConcepts'] = [/\\Public Studies\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung/]
         def jsonResult = exportService.exportData(params, springSecurityService.getPrincipal().username)
 
         response.setContentType("text/json")

@@ -19,6 +19,8 @@
 
 
 package com.recomdata.transmart.data.export
+import com.google.common.base.Function
+import com.google.common.base.Predicate
 import com.google.common.collect.Maps
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.apache.commons.lang.StringUtils
@@ -28,6 +30,8 @@ import org.hibernate.ScrollableResults
 import org.hibernate.Session
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
+import org.transmartproject.core.dataquery.DataColumn
+import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.BioMarkerDataRow
 import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
@@ -52,8 +56,6 @@ class GeneExpressionDataService {
     def fileDownloadService
     def utilService
     def sessionFactory
-    def highDimensionResourceService
-    def highDimensionResource
 
 
     public boolean getData(List studyList,
@@ -1339,272 +1341,5 @@ class GeneExpressionDataService {
             gplTitle = row[0]
         })
         return gplTitle
-    }
-
-    def exportMrnaData(Map args) {
-
-//                       List studyList,
-//                       File studyDir,
-//                       String fileName,
-//                       String jobName,
-//                       String resultInstanceId,
-//                       boolean pivot,
-//                       List gplIds,
-//                       String pathway,
-//                       String timepoint,
-//                       String sampleTypes,
-//                       String tissueTypes,
-//                       Boolean splitAttributeColumn
-        def fileName = args.fileName
-        args.studyList.each {
-            args.trialName = it
-            if (args.studyList.size() > 1) {
-                args.fileName = "${it}_${fileName}"
-            }
-            exportMrnaStudy(args)
-        }
-    }
-
-    def findSingleDataType(List<String> conceptPaths) {
-
-        def dataTypeConstraint = highDimensionResourceService.createAssayConstraint(
-                AssayConstraint.DISJUNCTION_CONSTRAINT,
-                subconstraints:
-                        [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
-
-        def datatypes = highDimensionResourceService.getSubResourcesAssayMultiMap([dataTypeConstraint]).keySet()*.dataType
-
-        if (datatypes.size() > 1) {
-            throw new IllegalArgumentException("The provided concepts must have the same type, but they have types ${datatypes.collect({"'$it'"}).join(', ')}")
-        }
-
-        datatypes[0]
-    }
-
-    def exportData(/*Long resultInstanceId, Collection<String> conceptPaths,*/ boolean splitAttributeColumn=false) {
-
-        // static input for now: a resultInstanceId and a list of concept paths
-
-        def resultInstanceId = 23306  //22967
-//        def trialName = 'GSE8581'
-//        def gplIds = ['GPL570']
-//        gplIds = [570]
-//        resultInstanceId = 22967
-
-        def conceptPaths = [/\\Public Studies\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung/]
-
-
-
-        HighDimensionDataTypeResource dataTypeResource = highDimensionResource.getSubResourceForType(findSingleDataType(conceptPaths))
-
-        def assayconstraints = []
-
-        assayconstraints << dataTypeResource.createAssayConstraint(
-                AssayConstraint.PATIENT_SET_CONSTRAINT,
-                result_instance_id: resultInstanceId)
-
-        assayconstraints << dataTypeResource.createAssayConstraint(
-                AssayConstraint.DISJUNCTION_CONSTRAINT,
-                subconstraints:
-                        [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
-
-        def projection = dataTypeResource.createProjection(Projection.GENERIC_PROJECTION)
-        def tabularResult = dataTypeResource.retrieveData(assayconstraints, [], projection)
-
-        def assayList = tabularResult.indicesList
-
-
-        /*
-         per-datatype fields we need to export:
-
-         mrna: (trialName), rawIntensity->value zscore logIntensity->log2e / probe (id), geneSymbol, geneId
-         mirna: rawIntensity, logIntensity, zscore / label,, bioMarker
-         protein: intensity, zscore / peptide -> peptide sequence, unitProtId
-         rbm: value, zscore / antigenName, uniprotId   ---gplId, antigenName, uniprotId, geneSymbol, geneId
-         rnaseqcog: rawIntensity, zscore / transcriptId, geneSymbol, geneId   ---transcriptId, geneSymbol, geneId
-         metabolomics: (not implemented in coredb) ?? / biochemical name, hmdbId
-
-         */
-
-        def writer = System.out
-
-        String[] header = ['PATIENT ID']
-        header += splitAttributeColumn ? ["SAMPLE TYPE", "TIMEPOINT", "TISSUE TYPE", "GPL ID"] : ["SAMPLE"]
-        header += ["ASSAY ID"]
-
-        LinkedHashMap<String, String> dataKeys = Maps.filterKeys(
-                [rawIntensity: 'value', intensity: 'value', 'value': 'value', logIntensity: 'log2e', zscore: 'zscore'],
-                {it in dataTypeResource.dataProperties})
-        dataKeys = Maps.transformValues(dataKeys) {it.toUpperCase()}
-
-        LinkedHashMap<String, String> rowKeys = Maps.filterKeys(
-                [rawIntensity: 'value', intensity: 'value', 'value': 'value', logIntensity: 'log2e', zscore: 'zscore'],
-                {it in dataTypeResource.rowProperties})
-        rowKeys = Maps.transformValues(rowKeys) {it.toUpperCase()}
-
-        header += dataKeys.values()
-        header += rowKeys.values()
-
-        writer << header.join('\t') << '\n'
-
-
-        int count = 0
-        for (BioMarkerDataRow<Map<String, String>> datarow : tabularResult) {
-            for (AssayColumn assay : assayList) {
-                count++
-                if (count < 50) continue
-                if (count > 75) return [assay, datarow]
-                //println "$assay: ${row[assay]}"
-                Map<String, String> data = datarow[assay]
-                Map<String, String> row = datarow.associatedData
-
-                String assayId =        assay.id
-                String patientId =      assay.patientInTrialId
-                String sampleTypeName = assay.sampleType.label
-                String timepointName =  assay.timepoint.label
-                String tissueTypeName = assay.tissueType.label
-                String platform =       assay.platform.id
-
-                List<String> line = [patientId]
-                if (splitAttributeColumn)
-                    //       SAMPLE TYPE     TIMEPOINT      TISSUE TYPE     GPL ID
-                    line += [sampleTypeName, timepointName, tissueTypeName, platform]
-                else
-                    //      SAMPLE
-                    line << [sampleTypeName, timepointName, tissueTypeName, platform].grep().join('_')
-
-                line << assayId
-
-                for (def entry: dataKeys) {
-                    line << data[entry.key]
-                }
-
-                for (def entry: rowKeys) {
-                    line << row[entry.key]
-                }
-
-                writer << line.join('\t') << '\n'
-
-//                String sample
-//                if (splitAttributeColumn)
-//                    sample = [sampleTypeName, timepointName, tissueTypeName, platform]
-//                else
-//                    sample = [[sampleTypeName, timepointName, tissueTypeName, platform].grep().join('_')]
-//
-//
-//                List<String> output = [assay.patientInTrialId]
-////                        [
-////                        assay.id, data.rawIntensity, data.zscore, data.logIntensity, row.probe, '<geneId>',
-////                        row.geneSymbol, assay.patientInTrialId, assay.sampleType.label, assay.timepoint.label, assay.tissueType.label /*<assay.tissueTypeName>*/,
-////                        assay.platform.id /*<platform>*/]
-//
-//                println(([assayId, rawIntensity, zscore, logIntensity, probeId, geneId, geneSymbol, patientId]
-//                        + sample).join(' '))
-            }
-        }
-    }
-
-
-    def exportMrnaStudy(Map args) {
-        def trialName = args.trialName
-        def gplIds = args.gplIds
-        def resultInstanceId = args.resultInstanceId
-        boolean splitAttributeColumn = args.splitAttributeColumn
-
-//        // example data:
-//        trialName = 'GSE8581'
-//        gplIds = ['GPL570']
-//        resultInstanceId = 22967
-
-        ScrollableResults res = null
-        Writer writer = null
-        File outputFile = null
-        String fileName = null
-        boolean dataFound = false
-        long startTime = 0
-        try {
-            FileWriterUtil writerUtil = new FileWriterUtil(args.studyDir, args.fileName, args.jobName, args.dataTypeName, args.dataTypeFolder, '\t' as char);
-            // I copied the direct access to writerUtil.outputFile from writeData, probably meant as a performance optimization. TODO: do we really need this?
-            outputFile = writerUtil.outputFile
-            fileName = outputFile.getAbsolutePath()
-            writer = outputFile.newWriter(true)
-
-            // Using a hibernate query since I couldn't get this to work using GORM. If this can be done in GORM, please convert.
-            Session session = sessionFactory.currentSession
-            Query query = session.createQuery("""
-                select
-                    data.assay.id, data.rawIntensity, data.zscore, data.logIntensity,
-                    data.probe.probeId, data.probe.id, data.probe.geneId, data.probe.geneSymbol,
-                    data.assay.patient.sourcesystemCd,
-                    data.assay.sampleTypeName, data.assay.timepointName, data.assay.tissueTypeName, data.assay.platform.id
-                from DeSubjectMicroarrayDataCoreDb as data,
-                    QtPatientSetCollection as sc
-                where sc.patient = data.assay.patient
-                    and data.assay.platform.id = data.probe.gplId
-                    and data.assay.platform.id in (:platform)
-                    and data.assay.trialName = :trialName
-                    and sc.resultInstance.id = :resultInstanceId
-                """).setReadOnly(true).setCacheable(false).setFetchSize(20000)
-            query.setParameter('trialName', trialName).
-                    setParameterList('platform', gplIds).
-                    setParameter('resultInstanceId', resultInstanceId as long)
-
-
-            log.info("start sample retrieving query");
-
-            startTime = System.currentTimeMillis();
-
-            res = query.scroll(ScrollMode.FORWARD_ONLY)
-
-            log.info("started file writing")
-
-            List<String> header = ["PATIENT ID"]
-            header += splitAttributeColumn ? ["SAMPLE TYPE", "TIMEPOINT", "TISSUE TYPE", "GPL ID"] : ["SAMPLE"]
-            header += ["ASSAY ID", "VALUE", "ZSCORE", "LOG2ED", "PROBE ID", "PROBESET ID", "GENE_ID", "GENE_SYMBOL"]
-
-            writer << header.join('\t') << '\n';
-
-            while (res.next()) {
-                dataFound = true
-                def (String assayId,
-                     String rawIntensity,
-                     String zscore,
-                     String logIntensity,
-                     String probeId,
-                     String probesetId,
-                     String geneId,
-                     String geneSymbol,
-                     String sourcesystemCd,
-                     String sampleTypeName,
-                     String timepointName,
-                     String tissueTypeName,
-                     String platform) = res.get()
-
-                //                   PATIENT ID
-                List<String> line = [sourcesystemCd.split(':')[-1]]
-                if (splitAttributeColumn)
-                    //       SAMPLE TYPE     TIMEPOINT      TISSUE TYPE     GPL ID
-                    line += [sampleTypeName, timepointName, tissueTypeName, platform]
-                else
-                    //      SAMPLE
-                    line << [sampleTypeName, timepointName, tissueTypeName, platform].grep().join('_')
-                //       ASSAY ID VALUE         ZSCORE  LOG2ED        PROBE ID PROBESET ID GENE_ID GENE_SYMBOL
-                line += [assayId, rawIntensity, zscore, logIntensity, probeId, probesetId, geneId, geneSymbol]
-
-                writer << line.join('\t') << '\n'
-            }
-
-            if (!dataFound) {
-                log.error("No data found while trying to export DeSubjectMicroarrayDataCoreDb data")
-                if (!outputFile.delete())
-                    log.error("Unable to delete empty output file "+fileName)
-            }
-            log.info("Retrieving data took ${System.currentTimeMillis() - startTime} ms")
-        } finally {
-            writer?.close()
-            res?.close()
-        }
-
-        return [outFile: fileName, dataFound: dataFound]
     }
 }

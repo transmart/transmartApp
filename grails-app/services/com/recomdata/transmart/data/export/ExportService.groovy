@@ -288,7 +288,8 @@ class ExportService {
         jdm.put("analysis", params.analysis)
         jdm.put("userName", userName)
         jdm.put("jobName", params.jobName)
-        jdm.put("result_instance_ids", resultInstanceIdHashMap);
+        jdm.put("result_instance_ids", resultInstanceIdHashMap)
+        jdm.highDimDataConcepts = params.highDimDataConcepts
         //jdm.put("datatypes", jobDataTypes);
         jdm.put("subsetSelectedPlatformsByFiles", getsubsetSelectedPlatformsByFiles(checkboxList))
         jdm.put("checkboxList", checkboxList);
