@@ -319,7 +319,7 @@ class ExportService {
         jdm.put("userName", userName)
         jdm.put("jobName", params.jobName)
         jdm.put("result_instance_ids", resultInstanceIdHashMap)
-        jdm.highDimDataConcepts = params.highDimDataConcepts
+        jdm.newExport = params.newExport
         //jdm.put("datatypes", jobDataTypes);
         jdm.put("subsetSelectedPlatformsByFiles", getsubsetSelectedPlatformsByFiles(checkboxList))
         jdm.put("checkboxList", checkboxList);

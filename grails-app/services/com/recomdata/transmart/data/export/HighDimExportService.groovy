@@ -18,50 +18,43 @@ class HighDimExportService {
 
     def highDimensionResourceService
 
+//    def exportHighDimData(Map args) {
+//        def fileName = args.fileName
+//        args.studyList.each {
+//            args.trialName = it
+//            if (args.studyList.size() > 1) {
+//                args.fileName = "${it}_${fileName}"
+//            }
+//            exportOneSubsetHighDimData(args)
+//        }
+//    }
+
+//    def findSingleDataType(List<String> conceptPaths) {
+//
+//        def dataTypeConstraint = highDimensionResourceService.createAssayConstraint(
+//                AssayConstraint.DISJUNCTION_CONSTRAINT,
+//                subconstraints:
+//                        [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
+//
+//        def datatypes = highDimensionResourceService.getSubResourcesAssayMultiMap([dataTypeConstraint]).keySet().dataTypeName
+//
+//        if (datatypes.size() > 1) {
+//            throw new IllegalArgumentException("The provided concepts must have the same type, but they have types ${datatypes.collect({"'$it'"}).join(', ')}")
+//        }
+//
+//        datatypes[0]
+//    }
+
     def exportHighDimData(Map args) {
+        // boolean splitAttributeColumn
+        // String (but really a number) resultInstanceId
+        // List<String> conceptPaths
+        // String dataType
+        // String studyDir
 
-//                       List studyList,
-//                       File studyDir,
-//                       String fileName,
-//                       String jobName,
-//                       String resultInstanceId,
-//                       boolean pivot,
-//                       List gplIds,
-//                       String pathway,
-//                       String timepoint,
-//                       String sampleTypes,
-//                       String tissueTypes,
-//                       Boolean splitAttributeColumn
-        def fileName = args.fileName
-        args.studyList.each {
-            args.trialName = it
-            if (args.studyList.size() > 1) {
-                args.fileName = "${it}_${fileName}"
-            }
-            exportOneSubsetHighDimData(args)
-        }
-    }
+        // dataType one of: mrna, mirna, protein, rbm, rnaseqcog, (metabolomics)
 
-    def findSingleDataType(List<String> conceptPaths) {
-
-        def dataTypeConstraint = highDimensionResourceService.createAssayConstraint(
-                AssayConstraint.DISJUNCTION_CONSTRAINT,
-                subconstraints:
-                        [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
-
-        def datatypes = highDimensionResourceService.getSubResourcesAssayMultiMap([dataTypeConstraint]).keySet().dataTypeName
-
-        if (datatypes.size() > 1) {
-            throw new IllegalArgumentException("The provided concepts must have the same type, but they have types ${datatypes.collect({"'$it'"}).join(', ')}")
-        }
-
-        datatypes[0]
-    }
-
-    def exportOneSubsetHighDimData(Map args) {
-
-        // static input for now: a resultInstanceId and a list of concept paths
-
+//        // static input for now: a resultInstanceId and a list of concept paths
 //        def resultInstanceId = 23306  //22967
 //        def conceptPaths = [/\\Public Studies\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung/]
 
@@ -78,16 +71,17 @@ class HighDimExportService {
 
          */
 
+        String dataType = args.dataType
         boolean splitAttributeColumn = args.get('splitAttributeColumn', false)
         def resultInstanceId = args.resultInstanceId
         List<String> conceptPaths = args.conceptPaths
+        String studyDir = args.studyDir
 
         Map dataFields = [rawIntensity: 'value', intensity: 'value', 'value': 'value', logIntensity: 'log2e', zscore: 'zscore']
         Map rowFields = [geneSymbol: 'gene symbol', geneId: 'gene id', mirnaId: 'mirna id', peptide: 'peptide sequence',
                 antigenName: 'analyte name', uniprotId: 'uniprot id', transcriptId: 'transcript id']
 
 
-        String dataType = findSingleDataType(conceptPaths)
         HighDimensionDataTypeResource dataTypeResource = highDimensionResourceService.getSubResourceForType(dataType)
 
         def assayconstraints = []
@@ -120,12 +114,12 @@ class HighDimExportService {
         Writer writer = null
         String fileName = null
         TabularResult<AssayColumn, BioMarkerDataRow<Map<String, String>>> tabularResult = null
-        boolean dataFound = false
-        long startTime = 0
+        long rowsFound = 0
+        long startTime
         try {
-            FileWriterUtil writerUtil = new FileWriterUtil(args.studyDir, args.fileName, args.jobName, args.dataTypeName, args.dataTypeFolder, '\t' as char);
+            //FileWriterUtil writerUtil = new FileWriterUtil(args.studyDir, args.fileName, args.jobName, args.dataTypeName, args.dataTypeFolder, '\t' as char);
             // I copied the direct access to writerUtil.outputFile from writeData, probably meant as a performance optimization. TODO: do we really need this?
-            File outputFile = writerUtil.outputFile
+            File outputFile = new File(studyDir, dataType+'.trans')
             fileName = outputFile.getAbsolutePath()
             writer = outputFile.newWriter(true)
 
@@ -140,18 +134,13 @@ class HighDimExportService {
             log.info("started file writing to $fileName")
             writer << header.join('\t') << '\n'
 
-            int count = 0
-
             writeloop:
             for (BioMarkerDataRow<Map<String, String>> datarow : tabularResult) {
                 for (AssayColumn assay : assayList) {
-                    count++
-//                    if (count < 50) continue
-//                    if (count > 75) break writeloop
+                    rowsFound++
+                    //if (rowsFound > 20) break writeloop
 
-                    dataFound = true
                     Map<String, String> data = datarow[assay]
-
 
                     String assayId =        assay.id
                     String patientId =      assay.patientInTrialId
@@ -182,7 +171,7 @@ class HighDimExportService {
 
                 }
             }
-            if (!dataFound) {
+            if (!rowsFound) {
                 log.error("No data found while trying to export $dataType data")
                 if (!outputFile.delete())
                     log.error("Unable to delete empty output file $fileName")
@@ -194,6 +183,6 @@ class HighDimExportService {
             tabularResult?.close()
         }
 
-        return [outFile: fileName, dataFound: dataFound]
+        return [outFile: fileName, dataFound: rowsFound]
     }
 }

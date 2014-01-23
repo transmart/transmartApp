@@ -22,6 +22,7 @@ package com.recomdata.transmart.data.export
 
 import au.com.bytecode.opencsv.CSVWriter
 import com.google.common.collect.Lists
+import groovy.json.JsonSlurper
 import com.recomdata.snp.SnpData
 import com.recomdata.transmart.data.export.exception.DataNotFoundException
 import org.apache.commons.lang.StringUtils
@@ -58,6 +59,7 @@ class DataExportService {
         def study = null
         def File studyDir = null
         def filesDoneMap = [:]
+        Map newExportData = new JsonSlurper().parseText(jobDataMap.newExport)
 
         if (StringUtils.isEmpty(jobTmpDirectory)) {
             jobTmpDirectory = grailsApplication.config.com.recomdata.transmart.data.export.jobTmpDirectory
@@ -68,8 +70,12 @@ class DataExportService {
 
 
         subsets.each { subset ->
+            def columnFilter = newExportData[subset]?.clinical?.columnFilter
             def snpFilesMap = [:]
             def selectedFilesList = subsetSelectedFilesMap.get(subset)
+
+            selectedFilesList?.addAll(newExportData[subset]?.highdim?.keySet() ?: [])
+
             if (null != selectedFilesList && !selectedFilesList.isEmpty()) {
                 //Prepare Study dir
                 def List studyList = null
@@ -103,15 +109,27 @@ class DataExportService {
                                 retVal = metadataService.getData(studyDir, "experimentalDesign.txt", jobDataMap.get("jobName"), studyList);
                                 log.info("retrieved study data")
                                 break;
-                            case "MRNA.TXT":
+                            // New high dimensional data
+                            // case "MRNA.TXT":
+                            case 'mrna':
+                            case 'mirna':
+                            case 'protein':
+                            case 'rbm':
+                            case 'rnaseqcog':
+                            //case 'metabolomics':
                                 //retVal = geneExpressionDataService.getData(studyList, studyDir, "mRNA.trans", jobDataMap.get("jobName"), resultInstanceIdMap[subset], pivotData, gplIds, null, null, null, null, false)
-                                retVal = highDimExportService.exportHighDimData(studyList: studyList,
-                                                                                  studyDir: studyDir,
-                                                                                  fileName: "mRNA.trans",
-                                                                                  jobName: jobDataMap.jobName,
-                                                                                  resultInstanceId: resultInstanceIdMap[subset],
-                                                                                  conceptPaths: jobDataMap.highDimDataConcepts,
-                                                                                  splitAttributeColumn: false)
+
+                                // boolean splitAttributeColumn
+                                // String (of a number) resultInstanceId
+                                // List<String> conceptPaths
+                                // String dataType
+                                // String studyDir
+                                retVal = highDimExportService.exportHighDimData(splitAttributeColumn: false,
+                                                                                resultInstanceId: resultInstanceIdMap[subset],
+                                                                                conceptPaths: newExportData[subset][selectedFile],
+                                                                                dataType: selectedFile,
+                                                                                studyDir: studyDir,
+                                                                                )
                                 //filesDoneMap is used for building the Clinical Data query
                                 filesDoneMap.put('MRNA.TXT', new Boolean(true))
                                 break;
@@ -269,8 +287,8 @@ class DataExportService {
 
                     // Ugly hack to get filtering working FIXME ASAP!!!
 
-                    //def columnFilter = [/\Subjects\Ethnicity/, /\Endpoints\Diagnosis/]
-                    def columnFilter = []
+                    // columnFilter = [/\Subjects\Ethnicity/, /\Endpoints\Diagnosis/]
+                    // columnFilter = []
                     if (columnFilter) {
                         studyList.each { studyName ->
                             String directory
