@@ -20,6 +20,8 @@
 
 package com.recomdata.transmart.data.export
 
+import au.com.bytecode.opencsv.CSVWriter
+import com.google.common.collect.Lists
 import com.recomdata.snp.SnpData
 import com.recomdata.transmart.data.export.exception.DataNotFoundException
 import org.apache.commons.lang.StringUtils
@@ -263,9 +265,70 @@ class DataExportService {
                             throw new DataNotFoundException("There are no patients that meet the criteria selected therefore no clinical data was returned.")
                         }
                     }
+
+
+                    // Ugly hack to get filtering working FIXME ASAP!!!
+
+                    //def columnFilter = [/\Subjects\Ethnicity/, /\Endpoints\Diagnosis/]
+                    def columnFilter = []
+                    if (columnFilter) {
+                        studyList.each { studyName ->
+                            String directory
+                            String fileWritten = "clinical_i2b2trans.txt"
+                            if (studyList.size() > 1) {
+                                // yes, the output of the previous stage has a " _" in the name, with a space in it.
+                                fileWritten = studyName + ' _' + fileWritten
+                            }
+                            directory= clinicalDataFileName(studyDir.path)
+
+                            def reader = new File(directory, fileWritten)
+                            def writer = new File(directory, "newclinical")
+                            def writerstream = writer.newOutputStream()
+
+                            def filter = null
+
+                            reader.eachLine {
+                                def line = Arrays.asList(it.split('\t'))
+                                if (filter == null) {
+                                    filter = [0,1]
+                                    for (String columnName : columnFilter) {
+                                        def index = line.findIndexOf() {it == columnName}
+                                        if (index >= 2) filter.add(index)
+                                    }
+                                }
+                                def joined = ((line[filter]).join('\t')+'\n')
+                                writerstream.write(joined.getBytes())
+                            }
+
+                            writerstream.close()
+
+                            writer.renameTo(directory +'/'+ fileWritten)
+                        }
+                    }
                 }
             }
         }
+
+    }
+
+    static clinicalDataFileName(String studyDir) {
+
+        String dataTypeName = 'Clinical'
+        String dataTypeFolder = null
+
+        String dataTypeNameDir = (StringUtils.isNotEmpty(dataTypeName) && null != studyDir) ?
+                studyDir +'/'+ dataTypeName : null;
+        String dataTypeFolderDir = (StringUtils.isNotEmpty(dataTypeFolder) && null != dataTypeNameDir) ?
+                dataTypeNameDir +'/'+ dataTypeFolder : null;
+
+        if (null != studyDir && null == dataTypeNameDir) {
+            studyDir
+        } else if (null != studyDir && null != dataTypeNameDir) {
+            ((null == dataTypeFolderDir) ? dataTypeNameDir : dataTypeFolderDir)
+        }
+
+
+
     }
 
 }
