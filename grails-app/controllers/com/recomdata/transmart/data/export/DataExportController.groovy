@@ -31,8 +31,10 @@ class DataExportController {
 
     //We need to gather a JSON Object to represent the different data types.
     def getMetaData() {
-            response.setContentType("text/json")
-            render exportService.getMetaData(params)
+        response.setContentType("text/json")
+        def json = exportService.getMetaData(params)
+        json.put('highDim', exportService.getHighDimMetaData(params))
+        render json
     }
 
     def downloadFileExists() {

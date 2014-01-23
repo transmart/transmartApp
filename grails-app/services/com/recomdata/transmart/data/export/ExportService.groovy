@@ -31,6 +31,7 @@ import org.quartz.JobDataMap
 import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
 import grails.util.Holders
+import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
 
 class ExportService {
 
@@ -42,6 +43,7 @@ class ExportService {
     def jobResultsService
     def asyncJobService
     def quartzScheduler
+    def highDimensionResourceService
 
     def Map createJSONFileObject(fileType, dataFormat, fileDataCount, gplId, gplTitle) {
         def file = [:]
@@ -61,6 +63,34 @@ class ExportService {
             file['gplTitle'] = gplTitle
         }
         return file
+    }
+
+    def getHighDimMetaData(params) {
+        def resultInstanceId1 = params.result_instance_id1
+        def resultInstanceId2 = params.result_instance_id2
+
+        def (datatypes1, datatypes2) = [[], []]
+
+        if (resultInstanceId1) {
+            def dataTypeConstraint = highDimensionResourceService.createAssayConstraint(
+                    AssayConstraint.PATIENT_SET_CONSTRAINT,
+                    result_instance_id: resultInstanceId1)
+
+            datatypes1 = highDimensionResourceService.getSubResourcesAssayMultiMap([dataTypeConstraint])
+        }
+
+        if (resultInstanceId2) {
+            def dataTypeConstraint = highDimensionResourceService.createAssayConstraint(
+                    AssayConstraint.PATIENT_SET_CONSTRAINT,
+                    result_instance_id: resultInstanceId2)
+
+            datatypes2 = highDimensionResourceService.getSubResourcesAssayMultiMap([dataTypeConstraint])
+        }
+
+        def map = [subset1: datatypes1.collect() {type, assays -> [type: type.dataTypeName, description: type.dataTypeDescription, count: assays.size()]},
+                   subset2: datatypes2.collect() {type, assays -> [type: type.dataTypeName, description: type.dataTypeDescription, count: assays.size()]}]
+
+        map
     }
 
     def getMetaData(params) {
