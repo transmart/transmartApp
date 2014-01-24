@@ -224,23 +224,34 @@ class DataExportController {
      * Method that will run a data export and is called asynchronously from the datasetexplorer -> Data Export tab
      */
     def runDataExport() {
-        // insert demo data, since the front end doesn't support this yet
-        def newExport = JsonOutput.toJson([ //
-            subset1:[
-                clinical:[
-                    columnFilter: [/\Subjects\Ethnicity/, /\Endpoints\Diagnosis/]],
-                highdim:[
-                    // to not select a datatype, do not include it in this list. To select a datatype but without filter, add e.g. "mrna: []"
-                    mrna: [/\\Public Studies\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung/]],
-                ],
-            subset2: null,
-            ])
-        params['newExport'] = newExport
+		// TODO: Implement a proper way to retrieve the correct JSON 
+		// from the frontend directly, instead of converting it here
+		
+		// Convert raw input data into proper format for exportData
+		def newExport = [:]
+		def selections = params.list( "selectedSubsetDataTypeFiles" )
+		[ "subset1", "subset2" ].each { subset ->
+			newExport[ subset ] = [ 
+				clinical: [:],
+				highdim: [:] 
+			]
+				
+			selections.findAll { it.startsWith( subset ) }.each { selection ->
+				if( selection.endsWith( "_CLINICAL_TXT" ) ) {
+					newExport[ subset ].clinical.columnFilter = []
+				} else {
+					// Handle different HD data types
+					def datatype = selection.replace( subset + "_", "" ).replace( "_TXT", "" )
+						newExport[ subset ].highdim[ datatype ] = []
+				}
+			}
+		}
+        params['newExport'] = JsonOutput.toJson( newExport ) 
 
         def jsonResult = exportService.exportData(params, springSecurityService.getPrincipal().username)
 
         response.setContentType("text/json")
-        response.outputStream << jsonResult.toString()
+        response.outputStream << jsonResult.toString() 
     }
 }
 
