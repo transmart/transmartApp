@@ -65,11 +65,19 @@ class ExportService {
         return file
     }
 
-    def getHighDimMetaData(params) {
-        def resultInstanceId1 = params.result_instance_id1
-        def resultInstanceId2 = params.result_instance_id2
+	def getClinicalMetaData( Long resultInstanceId1, Long resultInstanceId2 ) {
+		//The result instance id's are stored queries which we can use to get information from the i2b2 schema.
+		log.debug('rID1 :: ' + resultInstanceId1 + ' :: rID2 :: ' + resultInstanceId1)
 
-        def (datatypes1, datatypes2) = [[], []]
+		//Retrieve the counts for each subset. We get back a map that looks like ['RBM':2,'MRNA':30]
+		[
+			subset1: resultInstanceId1 ? dataCountService.getClinicalDataCount( resultInstanceId1 ) : 0,	
+			subset2: resultInstanceId2 ? dataCountService.getClinicalDataCount( resultInstanceId2 ) : 0,	
+		]
+	}
+	
+    def getHighDimMetaData( Long resultInstanceId1, Long resultInstanceId2 ) {
+        def (datatypes1, datatypes2) = [[:], [:]]
 
         if (resultInstanceId1) {
             def dataTypeConstraint = highDimensionResourceService.createAssayConstraint(
@@ -86,86 +94,22 @@ class ExportService {
 
             datatypes2 = highDimensionResourceService.getSubResourcesAssayMultiMap([dataTypeConstraint])
         }
-
-        def map = [subset1: datatypes1.collect() {type, assays -> [type: type.dataTypeName, description: type.dataTypeDescription, count: assays.size()]},
-                   subset2: datatypes2.collect() {type, assays -> [type: type.dataTypeName, description: type.dataTypeDescription, count: assays.size()]}]
-
-        map
-    }
-
-    def getMetaData(params) {
-        def dataTypesMap = Holders.config.com.recomdata.transmart.data.export.dataTypesMap
-
-        //The result instance id's are stored queries which we can use to get information from the i2b2 schema.
-        def rID1 = RequestValidator.nullCheck(params.result_instance_id1)
-        def rID2 = RequestValidator.nullCheck(params.result_instance_id2)
-        def rIDs = null
-        if (rID1 && rID1?.trim() != '' && rID2 && rID2?.trim() != '') rIDs = rID1 + ',' + rID2
-        else if (rID1 && rID1?.trim() != '') rIDs = rID1
-        else if (rID2 && rID2?.trim() != '') rIDs = rID2
-
-        def subsetLen = (rID1 && rID2) ? 2 : (rID1 || rID2) ? 1 : 0
-        log.debug('rID1 :: ' + rID1 + ' :: rID2 :: ' + rID2)
-
-        //Retrieve the counts for each subset. We get back a map that looks like ['RBM':2,'MRNA':30]
-        def subset1CountMap = dataCountService.getDataCounts(rID1, rIDs)
-        def subset2CountMap = dataCountService.getDataCounts(rID2, rIDs)
-        log.debug('subset1CountMap :: ' + subset1CountMap + ' :: subset2CountMap :: ' + subset2CountMap)
-
-        //This is the map we render to JSON.
-        def finalMap = [:]
-
-        //Add our counts to the map.
-        finalMap['subset1'] = subset1CountMap
-        finalMap['subset2'] = subset2CountMap
-        //render '{"subset1": [{"PLINK": "102","RBM":"28"}],"subset2": [{"PLINK": "1","RBM":"2"}]}'
-        JSONObject result = new JSONObject()
-        result.put('noOfSubsets', subsetLen)
-
-        JSONArray rows = new JSONArray();
-        dataTypesMap.each { key, value ->
-            def dataType = [:]
-            def dataTypeHasCounts = false
-            dataType['dataTypeId'] = key
-            dataType['dataTypeName'] = value
-            //TODO replace 2 with subsetLen
-            for (i in 1..2) {
-                JSONArray files = new JSONArray();
-
-                if (key == 'CLINICAL') {
-                    files.put(createJSONFileObject('.TXT', 'Data', finalMap["subset${i}"][key], null, null))
-                } else if (key == 'MRNA') {
-                    def countsMap = createCountsMap('.TXT', 'Processed Data', finalMap, key, i)
-                    dataTypeHasCounts = dataTypeHasCounts || countsMap.get('dataTypeHasCounts')
-                    files.put(countsMap)
-                    files.put(createJSONFileObject('.CEL', 'Raw Data', finalMap["subset${i}"][key + '_CEL'], null, null))
-                } else if (key == 'SNP') {
-                    files.put(createJSONFileObject('.PED, .MAP & .CNV', 'Processed Data', finalMap["subset${i}"][key], null, null))
-                    files.put(createJSONFileObject('.CEL', 'Raw Data', finalMap["subset${i}"][key + '_CEL'], null, null))
-                } else if (key == 'ADDITIONAL') {
-                    files.put(createJSONFileObject('', 'Additional Data', finalMap["subset${i}"][key], null, null))
-                } else if (key == 'GSEA') {
-                    if (i == 1) {
-                        def countsMap = createCountsMap('.GCT & .CLS', 'Processed Data (for both subsets)', finalMap, key, i)
-                        dataTypeHasCounts = dataTypeHasCounts || countsMap.get('dataTypeHasCounts')
-                        files.put(countsMap)
-                    }
-                }
-                if (!(['MRNA', 'GSEA'].contains(key)) && (null != finalMap["subset${i}"][key] && finalMap["subset${i}"][key] > 0))
-                    dataTypeHasCounts = true;
-
-                dataType['metadataExists'] = true
-                dataType['subsetId' + i] = "subset" + i
-                dataType['subsetName' + i] = "Subset " + i
-                dataType['subset' + i] = files
-            }
-            if (dataTypeHasCounts) rows.put(dataType)
-        }
-
-        result.put("success", true)
-        result.put('exportMetaData', rows)
-
-        return result
+		
+		// Determine the unique set of datatypes, for both subsets
+		def uniqueDatatypes = ( datatypes1.keySet() + datatypes2.keySet() ).unique()
+		
+		// Combine the two subsets, into a map based on datatypes
+		def hdMetaData = []
+		
+		uniqueDatatypes.each { datatype ->
+			hdMetaData << [
+				datatype: datatype,
+				subset1: datatypes1[ datatype ],
+				subset2: datatypes2[ datatype ]
+			]
+		}
+		
+		hdMetaData
     }
 
     def createCountsMap(fileType, dataFormat, finalMap, key, subsetIdx) {

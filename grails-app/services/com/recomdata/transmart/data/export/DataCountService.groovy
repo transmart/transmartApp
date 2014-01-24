@@ -20,7 +20,10 @@
 
 package com.recomdata.transmart.data.export
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.StringUtils
+import org.transmartproject.db.i2b2data.ObservationFact
+import org.transmartproject.db.querytool.QtPatientSetCollection
+import org.transmartproject.db.querytool.QtQueryResultInstance
 
 class DataCountService {
 
@@ -127,6 +130,44 @@ class DataCountService {
 
         return resultMap
     }
+	
+	/**
+	 * Returns the number of patients within a given subset that has clinical data
+	 * @param resultInstanceId
+	 * @return	The number of patients within the given subset that have clinical data
+	 */
+	Long getClinicalDataCount( Long resultInstanceId ) {
+		// TODO: Convert this into using 
+		if( !resultInstanceId ) 
+			return 0
+		
+		def resultInstance = QtQueryResultInstance.get( resultInstanceId )
+		
+		if( !resultInstance )
+			return 0
+			
+		// Determine the patients to query. This has a few where clauses:
+		//		- match the selected subset
+		//		- sourceSystemCd should not contain :S:
+		def patientNums = QtPatientSetCollection.executeQuery( "SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ? AND q.patient.sourcesystemCd NOT LIKE '%:S:%'", resultInstanceId )
+		println "PATIENTNUMS: " + patientNums
+		
+		if( !patientNums ) 
+			return 0
+		
+		// Find all low dimensional observations
+		// TODO: Include a check on only low dimensional data, by looking
+		//		 at the visual attributes of the concept
+		def rows = ObservationFact.createCriteria().list {
+			projections {
+				groupProperty("patient")
+				countDistinct("patient")
+			}
+			'in'( 'patient.id', patientNums )
+		}
+		
+		rows.size()
+	}
 
 
     def getCountFromDB(String commandString, String rID = null) {
