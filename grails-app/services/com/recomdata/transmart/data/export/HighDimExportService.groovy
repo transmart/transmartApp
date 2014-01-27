@@ -9,6 +9,7 @@ import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.BioMarkerDataRow
 import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
+import org.transmartproject.core.dataquery.highdim.projections.AllDataProjection
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 
 /**
@@ -95,16 +96,16 @@ class HighDimExportService {
                 subconstraints:
                         [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
 
-        def projection = dataTypeResource.createProjection(Projection.ALL_DATA_PROJECTION)
+        AllDataProjection projection = dataTypeResource.createProjection(Projection.ALL_DATA_PROJECTION)
 
         String[] header = ['PATIENT ID']
         header += splitAttributeColumn ? ["SAMPLE TYPE", "TIMEPOINT", "TISSUE TYPE", "GPL ID"] : ["SAMPLE"]
         header += ["ASSAY ID"]
 
-        Map<String, String> dataKeys = Maps.filterKeys(dataFields, {it in dataTypeResource.dataProperties} as Predicate)
+        Map<String, String> dataKeys = Maps.filterKeys(dataFields, {it in projection.dataProperties} as Predicate)
         dataKeys = Maps.transformValues(dataKeys, {it.toUpperCase()} as Function)
 
-        Map<String, String> rowKeys = Maps.filterKeys(rowFields, {it in dataTypeResource.rowProperties} as Predicate)
+        Map<String, String> rowKeys = Maps.filterKeys(rowFields, {it in projection.rowProperties} as Predicate)
         rowKeys = Maps.transformValues(rowKeys, {it.toUpperCase()} as Function)
 
         header += dataKeys.values()
