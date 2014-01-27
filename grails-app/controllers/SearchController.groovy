@@ -76,7 +76,15 @@ public class SearchController{
      * - GENESIG
      */
     def loadSearchPathways = {
-        params.query = 'metabolite'+SEARCH_DELIMITER+'protein'+SEARCH_DELIMITER+'mirna'+SEARCH_DELIMITER+'gene'+SEARCH_DELIMITER+'pathway'+SEARCH_DELIMITER+'genelist'+SEARCH_DELIMITER+'genesig:'+params.query
+        params.query = 'metabolite_superpathway' + SEARCH_DELIMITER +
+                       'metabolite_subpathway' + SEARCH_DELIMITER +
+                       'metabolite' + SEARCH_DELIMITER +
+                       'protein' + SEARCH_DELIMITER +
+                       'mirna' + SEARCH_DELIMITER +
+                       'gene' + SEARCH_DELIMITER +
+                       'pathway' + SEARCH_DELIMITER +
+                       'genelist' + SEARCH_DELIMITER +
+                       'genesig:' + params.query
         loadSearch()
     }
 
