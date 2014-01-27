@@ -69,7 +69,7 @@ class ExportService {
 		//The result instance id's are stored queries which we can use to get information from the i2b2 schema.
 		log.debug('rID1 :: ' + resultInstanceId1 + ' :: rID2 :: ' + resultInstanceId1)
 
-		//Retrieve the counts for each subset. We get back a map that looks like ['RBM':2,'MRNA':30]
+		//Retrieve the counts for each subset.
 		[
 			subset1: resultInstanceId1 ? dataCountService.getClinicalDataCount( resultInstanceId1 ) : 0,	
 			subset2: resultInstanceId2 ? dataCountService.getClinicalDataCount( resultInstanceId2 ) : 0,	

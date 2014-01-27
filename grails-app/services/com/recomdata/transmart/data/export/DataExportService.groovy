@@ -39,6 +39,7 @@ class DataExportService {
     def snpDataService
     def geneExpressionDataService
     def highDimExportService
+    def highDimensionResourceService
     def additionalDataService
     def vcfDataService
 
@@ -111,12 +112,7 @@ class DataExportService {
                                 break;
                             // New high dimensional data
                             // case "MRNA.TXT":
-                            case 'mrna':
-                            case 'mirna':
-                            case 'protein':
-                            case 'rbm':
-                            case 'rnaseqcog':
-                            //case 'metabolomics':
+                            case highDimensionResourceService.knownTypes:
                                 //retVal = geneExpressionDataService.getData(studyList, studyDir, "mRNA.trans", jobDataMap.get("jobName"), resultInstanceIdMap[subset], pivotData, gplIds, null, null, null, null, false)
 
                                 // boolean splitAttributeColumn
