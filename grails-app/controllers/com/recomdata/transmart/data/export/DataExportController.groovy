@@ -81,14 +81,14 @@ class DataExportController {
 			
 			subset1: [
 				[
-					fileType: "TXT",
+					fileType: ".TXT",
 					dataFormat: "Data",
 					fileDataCount: clinicalData.subset1
 				]
 			],
 			subset2:[
 				[
-					fileType: "TXT",
+					fileType: ".TXT",
 					dataFormat: "Data",
 					fileDataCount: clinicalData.subset2
 				]
