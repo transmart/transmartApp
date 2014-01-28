@@ -156,17 +156,13 @@ class ExportService {
         return result
     }
 
-    def private Map getSubsetSelectedFilesMap(checkboxList) {
+    def private Map getSubsetSelectedFilesMap(selectedCheckboxList) {
         def subsetSelectedFilesMap = [:]
-        def selectedCheckboxList = []
         //If only one was checked, we need to add that one to an array list.
-        if (checkboxList instanceof String) {
-            def tempArray = []
-            tempArray.add(checkboxList)
-            selectedCheckboxList = tempArray
-        } else {
-            selectedCheckboxList = checkboxList
-        }
+        if (selectedCheckboxList instanceof String)
+            selectedCheckboxList = [selectedCheckboxList]
+        if (selectedCheckboxList == null)
+            selectedCheckboxList = []
 
         //Remove duplicates. duplicates are coming in from the UI, better handle it here
         //The same issue is handled in the UI now so the following code may not be necessary
@@ -263,7 +259,7 @@ class ExportService {
         jdm.put("userName", userName)
         jdm.put("jobName", params.jobName)
         jdm.put("result_instance_ids", resultInstanceIdHashMap)
-        jdm.newExport = params.newExport
+        jdm.selection = params.selection
         //jdm.put("datatypes", jobDataTypes);
         jdm.put("subsetSelectedPlatformsByFiles", getsubsetSelectedPlatformsByFiles(checkboxList))
         jdm.put("checkboxList", checkboxList);

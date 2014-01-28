@@ -60,7 +60,7 @@ class DataExportService {
         def study = null
         def File studyDir = null
         def filesDoneMap = [:]
-        Map newExportData = new JsonSlurper().parseText(jobDataMap.newExport)
+        Map selection = new JsonSlurper().parseText(jobDataMap.selection)
 
         if (StringUtils.isEmpty(jobTmpDirectory)) {
             jobTmpDirectory = grailsApplication.config.com.recomdata.transmart.data.export.jobTmpDirectory
@@ -71,11 +71,11 @@ class DataExportService {
 
 
         subsets.each { subset ->
-            def columnFilter = newExportData[subset]?.clinical?.columnFilter
+            def columnFilter = selection[subset]?.clinical?.selector
             def snpFilesMap = [:]
-            def selectedFilesList = subsetSelectedFilesMap.get(subset)
+            def selectedFilesList = subsetSelectedFilesMap.get(subset) ?: []
 
-            selectedFilesList?.addAll(newExportData[subset]?.highdim?.keySet() ?: [])
+            selectedFilesList?.addAll((selection[subset]?.keySet() ?: []) - ['clinical'])
 
             if (null != selectedFilesList && !selectedFilesList.isEmpty()) {
                 //Prepare Study dir
@@ -93,7 +93,7 @@ class DataExportService {
                 def pivotDataValueDef = jobDataMap.get("pivotData")
                 boolean pivotData = new Boolean(true)
                 if (pivotDataValueDef == false) pivotData = new Boolean(false)
-                boolean writeClinicalData = false
+                boolean writeClinicalData = 'clinical' in selection[subset]
                 if (null != resultInstanceIdMap[subset] && !resultInstanceIdMap[subset].isEmpty()) {
                     // Construct a list of the URL objects we're running, submitted to the pool
                     selectedFilesList.each() { selectedFile ->
@@ -122,7 +122,7 @@ class DataExportService {
                                 // String studyDir
                                 retVal = highDimExportService.exportHighDimData(splitAttributeColumn: false,
                                                                                 resultInstanceId: resultInstanceIdMap[subset],
-                                                                                conceptPaths: newExportData[subset][selectedFile],
+                                                                                conceptPaths: selection[subset][selectedFile].selector,
                                                                                 dataType: selectedFile,
                                                                                 studyDir: studyDir,
                                                                                 )
