@@ -169,7 +169,7 @@ class DataExportController {
 	 * 				gplTitle
 	 * 				fileDataCount
 	 */
-	def getPlatformsForSubjectSampleMappingList( Collection<DeSubjectSampleMapping> ssmList ) {
+	private getPlatformsForSubjectSampleMappingList( Collection<DeSubjectSampleMapping> ssmList ) {
 		if( !ssmList ) 
 			return []
 			
