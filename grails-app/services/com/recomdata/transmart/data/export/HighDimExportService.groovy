@@ -19,33 +19,6 @@ class HighDimExportService {
 
     def highDimensionResourceService
 
-//    def exportHighDimData(Map args) {
-//        def fileName = args.fileName
-//        args.studyList.each {
-//            args.trialName = it
-//            if (args.studyList.size() > 1) {
-//                args.fileName = "${it}_${fileName}"
-//            }
-//            exportOneSubsetHighDimData(args)
-//        }
-//    }
-
-//    def findSingleDataType(List<String> conceptPaths) {
-//
-//        def dataTypeConstraint = highDimensionResourceService.createAssayConstraint(
-//                AssayConstraint.DISJUNCTION_CONSTRAINT,
-//                subconstraints:
-//                        [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
-//
-//        def datatypes = highDimensionResourceService.getSubResourcesAssayMultiMap([dataTypeConstraint]).keySet().dataTypeName
-//
-//        if (datatypes.size() > 1) {
-//            throw new IllegalArgumentException("The provided concepts must have the same type, but they have types ${datatypes.collect({"'$it'"}).join(', ')}")
-//        }
-//
-//        datatypes[0]
-//    }
-
     def exportHighDimData(Map args) {
         // boolean splitAttributeColumn
         // String (but really a number) resultInstanceId

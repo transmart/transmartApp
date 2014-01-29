@@ -21,6 +21,7 @@
 package com.recomdata.transmart.data.export
 
 import au.com.bytecode.opencsv.CSVWriter
+import com.google.common.base.CharMatcher
 import com.google.common.collect.Lists
 import groovy.json.JsonSlurper
 import com.recomdata.snp.SnpData
@@ -293,7 +294,7 @@ class DataExportService {
                                 // yes, the output of the previous stage has a " _" in the name, with a space in it.
                                 fileWritten = studyName + ' _' + fileWritten
                             }
-                            directory= clinicalDataFileName(studyDir.path)
+                            directory = clinicalDataFileName(studyDir.path)
 
                             def reader = new File(directory, fileWritten)
                             def writer = new File(directory, "newclinical")
@@ -306,7 +307,8 @@ class DataExportService {
                                 if (filter == null) {
                                     filter = [0,1]
                                     for (String columnName : columnFilter) {
-                                        def index = line.findIndexOf() {it == columnName}
+                                        columnName = CharMatcher.is('\\' as char).trimTrailingFrom(columnName)
+                                        def index = line.findIndexOf() {columnName.endsWith(it)}
                                         if (index >= 2) filter.add(index)
                                     }
                                 }
