@@ -433,7 +433,7 @@ DataExport.prototype.getExportParams = function (gridPanel, selectedFiles) {
         var _el = Ext.get(tr); // convert tr to element
 
         for (var i = 1; i < _el.dom.childNodes.length; i++) {
-            var _concept_path = (_el.dom.childNodes[i]).getAttribute("conceptdimcode");
+            var _concept_path = (_el.dom.childNodes[i]).getAttribute("conceptid");
             _concept_path_arr.push(_concept_path);
         }
 
