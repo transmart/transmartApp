@@ -22,6 +22,7 @@ package com.recomdata.transmart.data.export
 
 import au.com.bytecode.opencsv.CSVWriter
 import com.google.common.base.CharMatcher
+import com.google.common.base.Splitter
 import com.google.common.collect.Lists
 import groovy.json.JsonSlurper
 import com.recomdata.snp.SnpData
@@ -308,8 +309,12 @@ class DataExportService {
                                     filter = [0,1]
                                     for (String columnName : columnFilter) {
                                         columnName = CharMatcher.is('\\' as char).trimTrailingFrom(columnName)
-                                        def index = line.findIndexOf() {columnName.endsWith(it)}
-                                        if (index >= 2) filter.add(index)
+                                        String parentColumnName = columnName.replaceFirst(/\\[^\\]+$/, '')
+                                        def index = line.findIndexOf() {
+                                            columnName.endsWith(it) ||
+                                            parentColumnName.endsWith(it)
+                                        }
+                                        if (index >= 2 && !(index in filter)) filter.add(index)
                                     }
                                 }
                                 def joined = ((line[filter]).join('\t')+'\n')
