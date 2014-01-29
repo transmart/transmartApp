@@ -21,6 +21,7 @@
 package com.recomdata.transmart.data.export
 
 import au.com.bytecode.opencsv.CSVWriter
+import com.google.common.base.CharMatcher
 import com.google.common.collect.Lists
 import groovy.json.JsonSlurper
 import com.recomdata.snp.SnpData
@@ -60,7 +61,7 @@ class DataExportService {
         def study = null
         def File studyDir = null
         def filesDoneMap = [:]
-        Map newExportData = new JsonSlurper().parseText(jobDataMap.newExport)
+        Map selection = new JsonSlurper().parseText(jobDataMap.selection)
 
         if (StringUtils.isEmpty(jobTmpDirectory)) {
             jobTmpDirectory = grailsApplication.config.com.recomdata.transmart.data.export.jobTmpDirectory
@@ -71,11 +72,11 @@ class DataExportService {
 
 
         subsets.each { subset ->
-            def columnFilter = newExportData[subset]?.clinical?.columnFilter
+            def columnFilter = selection[subset]?.clinical?.selector
             def snpFilesMap = [:]
-            def selectedFilesList = subsetSelectedFilesMap.get(subset)
+            def selectedFilesList = subsetSelectedFilesMap.get(subset) ?: []
 
-            selectedFilesList?.addAll(newExportData[subset]?.highdim?.keySet() ?: [])
+            selectedFilesList?.addAll((selection[subset]?.keySet() ?: []) - ['clinical'])
 
             if (null != selectedFilesList && !selectedFilesList.isEmpty()) {
                 //Prepare Study dir
@@ -93,7 +94,7 @@ class DataExportService {
                 def pivotDataValueDef = jobDataMap.get("pivotData")
                 boolean pivotData = new Boolean(true)
                 if (pivotDataValueDef == false) pivotData = new Boolean(false)
-                boolean writeClinicalData = false
+                boolean writeClinicalData = 'clinical' in selection[subset]
                 if (null != resultInstanceIdMap[subset] && !resultInstanceIdMap[subset].isEmpty()) {
                     // Construct a list of the URL objects we're running, submitted to the pool
                     selectedFilesList.each() { selectedFile ->
@@ -122,7 +123,7 @@ class DataExportService {
                                 // String studyDir
                                 retVal = highDimExportService.exportHighDimData(splitAttributeColumn: false,
                                                                                 resultInstanceId: resultInstanceIdMap[subset],
-                                                                                conceptPaths: newExportData[subset][selectedFile],
+                                                                                conceptPaths: selection[subset][selectedFile].selector,
                                                                                 dataType: selectedFile,
                                                                                 studyDir: studyDir,
                                                                                 )
@@ -293,7 +294,7 @@ class DataExportService {
                                 // yes, the output of the previous stage has a " _" in the name, with a space in it.
                                 fileWritten = studyName + ' _' + fileWritten
                             }
-                            directory= clinicalDataFileName(studyDir.path)
+                            directory = clinicalDataFileName(studyDir.path)
 
                             def reader = new File(directory, fileWritten)
                             def writer = new File(directory, "newclinical")
@@ -306,7 +307,8 @@ class DataExportService {
                                 if (filter == null) {
                                     filter = [0,1]
                                     for (String columnName : columnFilter) {
-                                        def index = line.findIndexOf() {it == columnName}
+                                        columnName = CharMatcher.is('\\' as char).trimTrailingFrom(columnName)
+                                        def index = line.findIndexOf() {columnName.endsWith(it)}
                                         if (index >= 2) filter.add(index)
                                     }
                                 }
