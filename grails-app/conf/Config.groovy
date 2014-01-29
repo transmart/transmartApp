@@ -159,10 +159,10 @@ com.recomdata.transmart.data.export.dataTypesMap = [
 ];
 
 // Data export FTP settings is Rserve running remote in relation to transmartApp
-com.recomdata.transmart.data.export.ftp.server = 'localhost'
+com.recomdata.transmart.data.export.ftp.server = ''
 com.recomdata.transmart.data.export.ftp.serverport = ''
-com.recomdata.transmart.data.export.ftp.username = 'transmartftp'
-com.recomdata.transmart.data.export.ftp.password = 'transmartftp'
+com.recomdata.transmart.data.export.ftp.username = ''
+com.recomdata.transmart.data.export.ftp.password = ''
 com.recomdata.transmart.data.export.ftp.remote.path = ''
 
 // Control which gene/pathway search is used in Dataset Explorer
