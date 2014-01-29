@@ -209,7 +209,7 @@ function checkJobStatus(jobName)	{
 	// Add the handler for the cancel button in the statusbar
 	cancBtn.setVisible(true);
 	cancBtn.setHandler(function()	{
-		Ext.TaskMgr.stop(checkTask);
+        runner.stopAll();
 		sb.setStatus({
 		    text: 'Job cancelled',
 		    clear: true
@@ -247,7 +247,7 @@ function checkJobStatus(jobName)	{
 							jWindow.close();							
 						}
 						Ext.Msg.alert('Please, Contact a tranSMART Administrator', 'Unable to complete: ' + exception);
-						Ext.TaskMgr.stop(checkTask);
+                        runner.stopAll();
 					
 						sb.setStatus({
 						    text: "Status: Error",
@@ -262,7 +262,7 @@ function checkJobStatus(jobName)	{
 							jWindow.close();
 						}
 						
-						Ext.TaskMgr.stop(checkTask);
+                        runner.stopAll();
 						
 						sb.setStatus({
 						    text: "Status: " + status,
@@ -304,7 +304,7 @@ function checkJobStatus(jobName)	{
 						if (jWindow != null && jWindow.isVisible())	{
 							jWindow.close();
 						}
-						Ext.TaskMgr.stop(checkTask);
+                        runner.stopAll();
 						sb.setStatus({
 						    text: 'Job cancelled',
 						    clear: true
@@ -321,7 +321,7 @@ function checkJobStatus(jobName)	{
 				failure : function(result, request)
 				{
 					Ext.Msg.alert('Failed', 'Could not complete the job, please contact an administrator');
-					Ext.TaskMgr.stop(checkTask);
+                    runner.stopAll();
 					sb.setStatus({
 						text: "Status: Failed",
 					    clear: true
@@ -339,6 +339,7 @@ function checkJobStatus(jobName)	{
 			run: updateJobStatus,
 	  	    interval: pollInterval	
 	}	
-	Ext.TaskMgr.start(checkTask);
+    var runner = new Ext.util.TaskRunner();
+    runner.start(checkTask);
 }
 
