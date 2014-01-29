@@ -433,7 +433,7 @@ DataExport.prototype.getExportParams = function (gridPanel, selectedFiles) {
         var _el = Ext.get(tr); // convert tr to element
 
         for (var i = 1; i < _el.dom.childNodes.length; i++) {
-            var _concept_path = getQuerySummaryItem(_el.dom.childNodes[i]).trim();
+            var _concept_path = (_el.dom.childNodes[i]).getAttribute("conceptdimcode");
             _concept_path_arr.push(_concept_path);
         }
 
@@ -447,6 +447,7 @@ DataExport.prototype.getExportParams = function (gridPanel, selectedFiles) {
 
             // get data type
             var _data_type = gridPanel.records[i].data.dataTypeId;
+            _data_type = _data_type.toLowerCase();
 
             // get concept paths
             var _concept_path_arr = _get_concept_path(gridPanel.getView().getRow(i+1));
