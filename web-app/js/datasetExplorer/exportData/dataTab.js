@@ -424,6 +424,18 @@ DataExport.prototype.getExportParams = function (gridPanel, selectedFiles) {
     } //
 
     /**
+     * Check if a particular data type is selected
+     * @param file
+     * @param type
+     * @returns {boolean}
+     * @private
+     */
+    var _checkDataType = function (file, type) {
+        var _typeRegex = new RegExp(type);
+        return _typeRegex.test(file);
+    }
+
+    /**
      * Get concept paths
      * @param el
      * @private
@@ -447,23 +459,30 @@ DataExport.prototype.getExportParams = function (gridPanel, selectedFiles) {
 
             // get data type
             var _data_type = gridPanel.records[i].data.dataTypeId;
-            _data_type = _data_type.toLowerCase();
+
 
             // get concept paths
             var _concept_path_arr = _get_concept_path(gridPanel.getView().getRow(i+1));
 
             // loop through selected files
             for (var j = 0; j < selectedFiles.length; j++) {
+
                 var _sub = _checkSubset(selectedFiles[j]);
+                var _type = _checkDataType(selectedFiles[j], _data_type);
+
                 if (_sub) {
 
-                    if (!params[_sub]) {
-                        params[_sub] = {};
+                    // create subset node
+                    if (!params[_sub]) params[_sub] = {};
+
+                    // create selector node
+                    if (_type) {
+                        _data_type = _data_type.toLowerCase();
+                        params[_sub][_data_type] = {
+                            'selector' : _concept_path_arr
+                        };
                     }
 
-                    params[_sub][_data_type] = {
-                        'selector' : _concept_path_arr
-                    };
                 }
             }
 
@@ -496,6 +515,8 @@ DataExport.prototype.runDataExportJob = function (result, gridPanel) {
     for (var i = 0; i < subsetDataTypeFiles.length; i++) {
         if (subsetDataTypeFiles[i].checked) selectedSubsetDataTypeFiles.push(subsetDataTypeFiles[i].value);
     }
+
+    console.log("selectedSubsetDataTypeFiles", selectedSubsetDataTypeFiles);
 
     var _exportParams = this.getExportParams(gridPanel, selectedSubsetDataTypeFiles);
 
