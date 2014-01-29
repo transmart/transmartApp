@@ -467,3 +467,5 @@ li.x-tab-strip-active {
 #queryPanel .x-panel-bwrap .x-panel-body {
 	background-color: white !important	
 }
+
+.x-grid3-row .conceptUnselected, .x-grid3-row .conceptSelected {padding: 0 0 5px 5px; font-size: .85em;}
