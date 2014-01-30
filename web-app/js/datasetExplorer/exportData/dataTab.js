@@ -190,7 +190,7 @@ DataExport.prototype.displayResult = function (records, options, success) {
     }
 
     // Display data when success and records contains data
-    if (success && (_this.records.length > 1)) {
+    if (success && (_this.records.length > 0)) {
 
         var _selectedCohortData = [];
 
@@ -209,11 +209,12 @@ DataExport.prototype.displayResult = function (records, options, success) {
         // add gridPanel to the main panel
         analysisDataExportPanel.add(_dataTypesGridPanel);
         analysisDataExportPanel.doLayout();
-        analysisDataExportPanel.body.unmask();
 
     } else {
         console.error("cannot load export metadata .. ");
     }
+    // unmask data export panel
+    analysisDataExportPanel.body.unmask();
 }
 
 /**
