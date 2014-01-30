@@ -642,14 +642,14 @@ class I2b2HelperService {
                     I
                 LEFT JOIN (
                         SELECT
-                            patient_id,
+                            patient_num,
                             LISTAGG ( sample_cd )
                                 WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
                         FROM
-                            deapp.de_subject_sample_mapping
+                            observation_fact
                         GROUP BY
-                            patient_id )
-                    S ON ( S.patient_id = I.patient_num )
+                            patient_num )
+                    S ON ( S.patient_num = I.patient_num )
                 ORDER BY
                     I.PATIENT_NUM''';
 
@@ -687,7 +687,7 @@ class I2b2HelperService {
                 newrow.put("subject", subject);
                 def arr = row.SOURCESYSTEM_CD?.split(":")
                 newrow.put("patient", arr?.length == 2 ? arr[1] : "");
-                newrow.put("SAMPLE_CDS", row.SAMPLE_CDS)
+                newrow.put("SAMPLE_CDS", row.SAMPLE_CDS ? row.SAMPLE_CDS : "")
                 newrow.put("subset", subset);
                 newrow.put("TRIAL", row.TRIAL)
                 newrow.put("SEX_CD", row.SEX_CD)
@@ -828,7 +828,7 @@ class I2b2HelperService {
 		}
 		
 		// After that, retrieve all data entries for the children
-		def results = ObservationFact.executeQuery( "SELECT o.patientNum, o.tvalChar FROM ObservationFact o WHERE ( modifierCd = '@' OR modifierCd = sourcesystemCd ) AND conceptCd IN (:conceptCodes) AND patientNum in (:patientNums)", [ conceptCodes: concepts*.conceptCd, patientNums: patientIds ] )
+		def results = ObservationFact.executeQuery( "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE ( modifierCd = '@' OR modifierCd = sourcesystemCd ) AND conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)", [ conceptCodes: concepts*.conceptCode, patientNums: patientIds.collect { it?.toLong() } ] )
 
 		results.each { row ->
 	
