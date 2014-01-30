@@ -828,7 +828,7 @@ class I2b2HelperService {
 		}
 		
 		// After that, retrieve all data entries for the children
-		def results = ObservationFact.executeQuery( "SELECT o.patientNum, o.tvalChar FROM ObservationFact o WHERE ( modifierCd = '@' OR modifierCd = sourcesystemCd ) AND conceptCd IN (:conceptCodes) AND patientNum in (:patientNums)", [ conceptCodes: concepts*.conceptCd, patientNums: patientIds ] )
+		def results = ObservationFact.executeQuery( "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE ( modifierCd = '@' OR modifierCd = sourcesystemCd ) AND conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)", [ conceptCodes: concepts*.conceptCode, patientNums: patientIds.collect { it?.toLong() } ] )
 
 		results.each { row ->
 	
