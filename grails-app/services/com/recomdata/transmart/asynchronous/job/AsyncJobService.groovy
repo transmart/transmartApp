@@ -195,6 +195,7 @@ class AsyncJobService {
         //log.debug("Returning status: ${jobStatus} for ${jobName}")
         result.put("jobStatus", jobStatus)
         result.put("errorType", errorType)
+        result.put("jobName", jobName)
 
         return result
     }
