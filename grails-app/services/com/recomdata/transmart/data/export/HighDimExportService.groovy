@@ -53,7 +53,7 @@ class HighDimExportService {
 
         Map dataFields = [rawIntensity: 'value', intensity: 'value', 'value': 'value', logIntensity: 'log2e', zscore: 'zscore']
         Map rowFields = [geneSymbol: 'gene symbol', geneId: 'gene id', mirnaId: 'mirna id', peptide: 'peptide sequence',
-                antigenName: 'analyte name', uniprotId: 'uniprot id', transcriptId: 'transcript id']
+                antigenName: 'analyte name', uniprotId: 'uniprot id', uniprotName: 'uniprot name', transcriptId: 'transcript id']
 
 
         HighDimensionDataTypeResource dataTypeResource = highDimensionResourceService.getSubResourceForType(dataType)
@@ -75,11 +75,9 @@ class HighDimExportService {
         header += splitAttributeColumn ? ["SAMPLE TYPE", "TIMEPOINT", "TISSUE TYPE", "GPL ID"] : ["SAMPLE"]
         header += ["ASSAY ID"]
 
-        Map<String, String> dataKeys = Maps.filterKeys(dataFields, {it in projection.dataProperties} as Predicate)
-        dataKeys = Maps.transformValues(dataKeys, {it.toUpperCase()} as Function)
+        Map<String, String> dataKeys = projection.dataProperties.collectEntries {[it, dataFields.get(it, it).toUpperCase()]}
 
-        Map<String, String> rowKeys = Maps.filterKeys(rowFields, {it in projection.rowProperties} as Predicate)
-        rowKeys = Maps.transformValues(rowKeys, {it.toUpperCase()} as Function)
+        Map<String, String> rowKeys = projection.rowProperties.collectEntries {[it, rowFields.get(it, it).toUpperCase()]}
 
         header += dataKeys.values()
         header += rowKeys.values()
