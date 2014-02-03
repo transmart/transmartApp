@@ -507,9 +507,10 @@ Ext.onReady(function () {
                 region: 'center',
                 fitToFrame: true,
                 listeners: {
-                    activate: function () {
-                        if (isSubsetQueriesChanged()) {
-                            runAllQueries(getSummaryStatistics);
+                    activate: function (p) {
+                        if (isSubsetQueriesChanged() || !Ext.get('analysis_title')) {
+                            p.body.mask("Loading...", 'x-mask-loading');
+                            runAllQueries(getSummaryStatistics, p);
                             activateTab();
                             onWindowResize();
                         }
@@ -547,8 +548,6 @@ Ext.onReady(function () {
                             runAllQueries(getDatadata, p);
                             return;
                         }
-                    },
-                    deactivate: function () {
                     },
                     'afterLayout': {
                         fn: function (el) {
@@ -619,6 +618,7 @@ Ext.onReady(function () {
                 layout: 'fit',
                 listeners: {
                     activate: function (p) {
+                        p.body.mask("Loading...", 'x-mask-loading');
                         getExportJobs(p)
                     },
                     deactivate: function () {
@@ -2102,7 +2102,7 @@ function runAllQueries(callback, panel) {
     // setup the number of subsets that need running
     var subsetstorun = 0;
     for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
-        if (!isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null) {
+        if (!isSubsetEmpty(i)) {
             subsetstorun++;
         }
     }
@@ -2111,7 +2111,7 @@ function runAllQueries(callback, panel) {
 
     // iterate through all subsets calling the ones that need to be run
     for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
-        if (!isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null) {
+        if (!isSubsetEmpty(i)) {
             runQuery(i, callback);
         }
     }
@@ -2150,7 +2150,7 @@ function isSubsetQueriesChanged() {
             break;
         }
     }
-
+    console.log("isSubsetQueriesChanged", retVal);
     return retVal;
 }
 
@@ -3269,17 +3269,18 @@ function searchByName() {
 }
 
 function getSummaryStatistics() {
-    resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
     Ext.Ajax.request(
         {
             url: pageInfo.basePath + "/chart/basicStatistics",
             method: 'POST',
             success: function (result, request) {
                 getSummaryStatisticsComplete(result);
-                resultsTabPanel.body.unmask();
+                analysisPanel.body.unmask();
             },
             failure: function (result, request) {
-                getSummaryStatisticsComplete(result);
+                //getSummaryStatisticsComplete(result);
+                console.error("Cannot get Summary Statistics");
+                analysisPanel.body.unmask();
             },
             timeout: '300000',
             params: Ext.urlEncode(
