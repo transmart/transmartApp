@@ -647,6 +647,13 @@ class I2b2HelperService {
                                 WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
                         FROM
                             observation_fact
+                        WHERE patient_num IN (
+                                SELECT
+                                    DISTINCT patient_num
+                                FROM
+                                    qt_patient_set_collection
+                                WHERE
+                                    result_instance_id = ? )
                         GROUP BY
                             patient_num )
                     S ON ( S.patient_num = I.patient_num )
@@ -673,7 +680,7 @@ class I2b2HelperService {
             //tablein.putColumn("ZIP_CD", new ExportColumn("ZIP_CD", "Zipcode", "", "String"));
         }
         //def founddata=false;
-        sql.eachRow(sqlt, [result_instance_id], { row ->
+        sql.eachRow(sqlt, [result_instance_id, result_instance_id], { row ->
             /*If I already have this subject mark it in the subset column as belonging to both subsets*/
             //founddata=true;
             String subject = row.PATIENT_NUM;
