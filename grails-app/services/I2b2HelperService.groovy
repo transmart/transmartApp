@@ -618,10 +618,6 @@ class I2b2HelperService {
      * Fills the main demographic data in an export table for the grid
      */
     def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
-		log.trace( "Finding patient IDs in the subset " + subset )
-		def patientIds = QtPatientSetCollection.executeQuery( "SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?", result_instance_id.toLong() )
-		patientIds = patientIds.collect { BigDecimal.valueOf( it ) }
-		
         log.trace("Adding patient demographic data to grid with result instance id:" + result_instance_id + " and subset: " + subset)
         Sql sql = new Sql(dataSource)
         String sqlt = '''
