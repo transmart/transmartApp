@@ -618,6 +618,10 @@ class I2b2HelperService {
      * Fills the main demographic data in an export table for the grid
      */
     def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
+		log.trace( "Finding patient IDs in the subset " + subset )
+		def patientIds = QtPatientSetCollection.executeQuery( "SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?", result_instance_id.toLong() )
+		patientIds = patientIds.collect { BigDecimal.valueOf( it ) }
+		
         log.trace("Adding patient demographic data to grid with result instance id:" + result_instance_id + " and subset: " + subset)
         Sql sql = new Sql(dataSource)
         String sqlt = '''
@@ -647,6 +651,13 @@ class I2b2HelperService {
                                 WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
                         FROM
                             observation_fact
+                        WHERE patient_num IN (
+                                SELECT
+                                    DISTINCT patient_num
+                                FROM
+                                    qt_patient_set_collection
+                                WHERE
+                                    result_instance_id = ? )
                         GROUP BY
                             patient_num )
                     S ON ( S.patient_num = I.patient_num )
@@ -673,7 +684,7 @@ class I2b2HelperService {
             //tablein.putColumn("ZIP_CD", new ExportColumn("ZIP_CD", "Zipcode", "", "String"));
         }
         //def founddata=false;
-        sql.eachRow(sqlt, [result_instance_id], { row ->
+        sql.eachRow(sqlt, [result_instance_id, result_instance_id], { row ->
             /*If I already have this subject mark it in the subset column as belonging to both subsets*/
             //founddata=true;
             String subject = row.PATIENT_NUM;
