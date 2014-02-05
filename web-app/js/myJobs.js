@@ -75,7 +75,10 @@ function jobsstoreLoaded()
 						// Second, we check for special cases where the results are stored in JOB_RESULTS field
 						if (viewerURL != null)	{
 							// at the moment specific to these two analysis will load the analysis page
-							if (jobType == 'aCGHSurvivalAnalysis' || jobType == 'aCGHgroupTest' ) {
+							if (jobType == 'aCGHSurvivalAnalysis' || 
+                                                            jobType == 'aCGHgroupTest'        || 
+                                                            jobType == 'RNASeqgroupTest'      || 
+                                                            jobType == 'acghFrequencyPlot'      ) {
 								resultsTabPanel.setActiveTab('dataAssociationPanel');
 								loadAnalysisPage(jobType, true, jobName);
 								return;

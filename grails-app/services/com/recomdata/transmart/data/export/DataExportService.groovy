@@ -36,6 +36,7 @@ class DataExportService {
 	def snpDataService
 	def geneExpressionDataService
     def ACGHDataService
+    def RNASeqDataService
 	def additionalDataService
 	def vcfDataService
 	
@@ -142,23 +143,40 @@ class DataExportService {
 									}
 								}
 								break;
-                            case "ACGH_REGIONS.TXT":
-                                if (studyList.size() != 1) {
-                                    throw new Exception("Only one study " +
-                                            "allowed per analysis; list given" +
-                                            " was : " + studyList);
-                                }
-                                this.ACGHDataService.writeRegions(
-                                        studyList[0],
-                                        studyDir,
-                                        'regions.txt',
-                                        jobDataMap.get("jobName"),
-                                        resultInstanceIdMap[subset]
-                                        /* currently the interface does not
-                                        allow filtering,
-                                        so don't implement it here was well */
-                                )
-                                break;
+							case "ACGH_REGIONS.TXT":
+								if (studyList.size() != 1) {
+									throw new Exception("Only one study " +
+									                    "allowed per analysis; list given" +
+									                    " was : " + studyList);
+								}
+								this.ACGHDataService.writeRegions(
+									studyList[0],
+									studyDir,
+									'regions.txt',
+									jobDataMap.get("jobName"),
+									resultInstanceIdMap[subset]
+									/* currently the interface does not allow filtering,
+									   so don't implement it here was well
+									 */
+								)
+								break;
+							case "RNASEQ.TXT":
+								if (studyList.size() != 1) {
+									throw new Exception("Only one study " +
+									                    "allowed per analysis; list given" +
+									                    " was : " + studyList);
+								}
+								this.RNASeqDataService.writeRegions(
+									studyList[0],
+									studyDir,
+									'RNASeq.txt',
+									jobDataMap.get("jobName"),
+									resultInstanceIdMap[subset]
+									/* currently the interface does not allow filtering,
+									   so don't implement it here was well
+									 */
+								)
+								break;
 							case "MRNA.CEL":
 								geneExpressionDataService.downloadCELFiles(resultInstanceIdMap[subset], studyList, studyDir, jobDataMap.get("jobName"), null, null, null, null)
 								break;
