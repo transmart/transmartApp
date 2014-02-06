@@ -1,7 +1,3 @@
-package transmart
-
-
-
 import grails.test.mixin.*
 import org.junit.*
 
