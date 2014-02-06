@@ -797,7 +797,7 @@ class I2b2HelperService {
 			// Determine the patients to query
 			def queryResultInstance = QtQueryResultInstance.read( result_instance_id )
 			def patientSet = queryResultInstance.patientSet
-			def patientIds =  patientSet.collect { BigDecimal.valueOf( it.patient.id ) }
+			def patientIds =  patientSet.collect { it.patient }
 
 			// If nothing is found, return
 			if( !concepts || !patientSet ) {
@@ -816,8 +816,8 @@ class I2b2HelperService {
 			results.each { row ->
 				
 				/*If I already have this subject mark it in the subset column as belonging to both subsets*/
-				String subject=row.patientNum
-				String value=row.tvalChar
+				String subject=row.patient.id
+				String value=row.textValue
 				if(value==null){
 					value="Y";
 				}
