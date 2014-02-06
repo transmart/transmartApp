@@ -71,6 +71,11 @@ grails.project.dependency.resolution = {
                     name: 'repo.transmartfoundation.org-public',
                     url: 'https://repo.transmartfoundation.org/content/repositories/public/',
             ])
+
+            mavenRepo([
+                    name: 'Spring Security',
+                    url: 'https://repo.spring.io/milestone',
+            ])
         }
     }
     dependencies {
@@ -105,17 +110,15 @@ grails.project.dependency.resolution = {
         compile ':build-info:1.2.5'
         compile ':hibernate:3.6.10.7'
         compile ':quartz:1.0-RC2'
-        compile ':rdc-rmodules:0.3.ic-SNAPSHOT'
-        compile ':transmart-legacy-db:0.1.0-SNAPSHOT'
+        compile ':rdc-rmodules:0.3-SNAPSHOT'
+        compile ':transmart-legacy-db:0.2-SNAPSHOT'
         compile ':spring-security-core:2.0-RC2'
         compile ':spring-security-ldap:2.0-RC2'
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
-        runtime ':transmart-core:1.0.ic-SNAPSHOT'
+        runtime ':transmart-core:1.0-SNAPSHOT'
         runtime ':resources:1.2.1'
-        runtime ':transmart-mydas:0.1-SNAPSHOT'
-        runtime ':dalliance-plugin:0.1-SNAPSHOT'
 
         test ":code-coverage:1.2.6"
     }
