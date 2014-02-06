@@ -93,8 +93,8 @@ class GeneSignatureController {
 		session.setAttribute(WIZ_DETAILS_ATTRIBUTE, null)
 
 		// logged in user
-		def user = AuthUser.findByUsername(springSecurityService.getAuthentication().getName())
-		def bAdmin = i2b2HelperService.isAdmin(user);
+        def user = AuthUser.findByUsername(springSecurityService.getAuthentication().getName())
+        def bAdmin = i2b2HelperService.isAdmin(user);
 		log.info "Admin? "+bAdmin
 
 		// summary view

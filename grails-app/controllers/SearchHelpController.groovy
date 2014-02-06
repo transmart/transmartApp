@@ -30,6 +30,7 @@ public class SearchHelpController{
 
 	def springSecurityService
 	def geneSignatureService
+    def i2b2HelperService
 
 	def list = {}
 
@@ -54,8 +55,9 @@ public class SearchHelpController{
 	}
 
 	def listAllGeneSignatures = {
-		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)		
-		def signatures = geneSignatureService.listPermissionedGeneSignatures(user)
+		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def bAdmin = i2b2HelperService.isAdmin(user);
+		def signatures = geneSignatureService.listPermissionedGeneSignatures(user.id, bAdmin)
 
 		def mapKeywordsGS = new HashMap()
 		def mapKeywordsGL = new HashMap()
