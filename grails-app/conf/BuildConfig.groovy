@@ -71,11 +71,6 @@ grails.project.dependency.resolution = {
                     name: 'repo.transmartfoundation.org-public',
                     url: 'https://repo.transmartfoundation.org/content/repositories/public/',
             ])
-
-            mavenRepo([
-                    name: 'Spring Security',
-                    url: 'https://repo.spring.io/milestone',
-            ])
         }
     }
     dependencies {
