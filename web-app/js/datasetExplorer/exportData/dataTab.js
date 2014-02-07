@@ -61,6 +61,14 @@ function exportMetadataStoreLoaded()
 			id : 'dataExportToolbar',
 			title : 'dataExportToolbar',
 			items : ['->', // aligns the items to the right
+                    new Ext.Toolbar.Button({
+                        id:'advancedExport',
+                        tooltip:'Advanced options for data export',
+                        text: "Advanced Options",
+                        handler: function(event, toolEl, panel){
+                            showAdvancedOptions();
+                        }
+                    }),
 					new Ext.Toolbar.Button(
 						{
 				            id:'help',
@@ -77,6 +85,7 @@ function exportMetadataStoreLoaded()
     	id: "dataTypesGridPanel",
 		store: newStore,
 		columns: columns,
+        region : 'north',
 		title: "Instructions: Select the check boxes to indicate the data types and file formats that are desired for export.  Then, click on the \"Export Data\" button at the bottom of the screen to initiate an asynchronous data download job.  To download your data navigate to the \"Export Jobs\" tab.",
 		viewConfig:	{
 			forceFit : true,
@@ -84,10 +93,13 @@ function exportMetadataStoreLoaded()
 		}, 
 		sm : new Ext.grid.RowSelectionModel({singleSelect : true}),
 		layout : "fit",
-		width : 600,
+		//width : 600,
+        autoWidth : true,
+        autoHeight : true,
         tbar:dataExportToolbar,
         buttons: [{
      	   id : "dataTypesToExportRunButton",
+           tooltip : 'Trigger the export job',
     	   text : "Export Data",
     	   handler : function() {
     		   createDataExportJob();
@@ -95,10 +107,232 @@ function exportMetadataStoreLoaded()
         }],
         buttonAlign:"center"
 	});
+
+    advancedDataExportPanel = new Ext.Panel({
+        id: "advancedDataExportPanel",
+        layout : "fit",
+        region : 'south',
+        autoScroll : true,
+        autoHeight : true,
+        autoWidth : true,
+        hidden : true,
+        autoLoad:
+        {
+            url : pageInfo.basePath+'/dataExport/advancedExport',
+            method:'POST',
+            callback: registerAdvancedExportDragAndDrop,
+            evalScripts:true
+        }
+    });
 	
     analysisDataExportPanel.add(dataTypesGridPanel);
+    analysisDataExportPanel.add(advancedDataExportPanel);
 	analysisDataExportPanel.doLayout();
 	analysisDataExportPanel.body.unmask();
+}
+
+function showAdvancedOptions(){
+    advancedDataExportPanel.show();
+}
+
+function registerAdvancedExportDragAndDrop(){
+    //Get the export concepts div
+    var exportableConceptsDiv = Ext.get("divExportableConcepts");
+    var dtgExport = new Ext.dd.DropTarget(exportableConceptsDiv,{ddGroup : 'makeQuery'});
+    dtgExport.notifyDrop = dropOntoAdvancedExportBox;
+}
+
+function dropOntoAdvancedExportBox(source, e, data){
+
+    if(data.node.leaf==false && !data.node.isLoaded())
+    {
+        data.node.reload(function(){
+            generateJSTree(data);
+        });
+    }
+    else
+    {
+        generateJSTree(data);
+    }
+
+    return true;
+}
+
+function generateJSTree(data){
+
+    var concepts = createConceptsFromNodeData(data);
+
+    var jsTreeData = convertConceptsToJSTreeData(concepts);
+
+    var currentTreeJson = jQuery("#divExportableConcepts").jstree("get_json");
+    if(currentTreeJson[0] && currentTreeJson[0].attr){
+        jsTreeData[1] = currentTreeJson;
+    }
+
+    drawJsTree(jsTreeData);
+}
+
+function createConceptsFromNodeData(data)
+{
+    var concepts= new Array();
+    //Node must be folder so use children leafs
+    if(data.node.leaf==false){
+
+        var concept = convertNodeToConcept(data.node);
+        concept.isLeaf = false;
+        concepts.push(concept);
+
+        //Adding this condition for certain nodes like Dosage and Response, where children of Dosage & Response are intentionally hidden
+        if (data.node.childrenRendered && data.node.firstChild == null) {
+            concepts.push(convertNodeToConcept(data.node));
+        }
+
+    }
+    else{
+        //Add the item to the input.
+        var concept = convertNodeToConcept(data.node);
+        concept.isLeaf = true;
+        concepts.push(concept);
+    }
+
+    return concepts;
+}
+
+function drawJsTree(jsTreeData){
+    jQuery("#divExportableConcepts").jstree({
+        "json_data" : {
+            "data" :jsTreeData,
+            "ajax" : {
+                url : pageInfo.basePath+'/dataExport/childConcepts',
+                data : function(n){
+                    return {parentConcept: n.data("dimcode")};
+                }
+            }
+        },
+        "types" : {
+            "valid_children" : [ "T","N","D" ],
+            "types" : {
+                "T" : {
+                    "icon" : {
+                        "image" : "../images/alpha.gif"
+                    }
+                },
+                "N" : {
+                    "icon" : {
+                        "image" : "../images/numeric.gif"
+                    }
+                },
+                "D" : {
+                    "icon" : {
+                        "image" : "../images/calendar.gif"
+                    }
+                }
+            }
+        },
+        "themes" : {
+            "theme" : "classic",
+            "dots" : true,
+            "icons" : true
+        },
+        "contextmenu" : {
+            items: customContextMenu
+        },
+        "plugins": ["themes", "json_data", "types", "contextmenu", "crrm"]
+    });
+}
+
+function customContextMenu(node) {
+    // The default set of all items
+    var items = {
+        deleteItem: { // The "delete" menu item
+            label: "Delete",
+            action: function (node) {this.remove(node);}
+        }
+    };
+
+    return items;
+}
+
+function convertConceptsToJSTreeData(concepts){
+    var data=new Array();
+
+    for(var i = 0; i<concepts.length; i++){
+        var concept = concepts[i];
+
+        var type = '';
+
+        if(concept.isLeaf){//Draw a leaf node with the appropriate type icons.
+            if(concept.oktousevalues=='Y'){
+                type = 'N';
+            }else{
+                type= 'T';
+            }
+
+            //Date concepts get a special type.
+            if(concept.nodeType == "dleaficon")
+            {
+                type = 'D';
+            }
+
+            data.push({
+                "data": concept.name,
+                "metadata": {dimcode:concept.dimcode},
+                "attr" : {rel:type}
+            });
+        }else{//Draw a exandible folder icon.
+            data.push({
+                "state": "closed",
+                "data": concept.name,
+                "metadata": {dimcode:concept.dimcode},
+                "children" : [],
+                "attr" : {rel:type}
+            });
+        }
+
+    }
+    return data;
+}
+
+function clearExportableConcepts(){
+    //Clear the drag and drop div.
+    var qc = Ext.get('divExportableConcepts');
+
+    for(var i=qc.dom.childNodes.length-1;i>=0;i--)
+    {
+        var child=qc.dom.childNodes[i];
+        qc.dom.removeChild(child);
+    }
+
+}
+
+function hideAdvancedExport(){
+    clearExportableConcepts();
+    advancedDataExportPanel.hide();
+}
+
+function readAdvancedExportOptions(){
+    var treeJson = jQuery("#divExportableConcepts").jstree("get_json");
+
+    var selectedConcepts = readTreeNode(treeJson);
+
+    return selectedConcepts;
+}
+
+function readTreeNode(treeNode){
+    var nodeConcepts = "";
+    for(var i = 0; i<treeNode.length; i++){
+        var currentNode = treeNode[i];
+        if(currentNode.children){//If a node has children, only add the children nodes.
+            nodeConcepts = nodeConcepts + readTreeNode(currentNode.children)
+        }else{//If a node does not have children add the node itself.
+            if(currentNode.metadata.iconCls=='T' || currentNode.metadata.iconCls=='N'){
+                nodeConcepts = nodeConcepts + "|" + currentNode.metadata.dimcode +"DELIMITER"+"LA";
+            }else{
+                nodeConcepts = nodeConcepts + "|" + currentNode.metadata.dimcode +"DELIMITER"+"FA";
+            }
+        }
+    }
+    return nodeConcepts;
 }
 
 function prepareColumnModel(store, selectedCohortData) {
@@ -257,6 +491,10 @@ function runDataExportJob(result) {
 	for (var i = 0; i < subsetDataTypeFiles.length; i++) {
 		if (subsetDataTypeFiles[i].checked) selectedSubsetDataTypeFiles.push(subsetDataTypeFiles[i].value);
 	}
+
+    //Read dragged concepts from advanced options box
+    var draggedConcepts = readAdvancedExportOptions();
+
 	Ext.Ajax.request(
 		{						
 			url: pageInfo.basePath+"/dataExport/runDataExport",

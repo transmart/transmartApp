@@ -266,7 +266,7 @@ class I2b2ModifierHelperService {
         groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
         String sqlt = """SELECT REQUEST_XML FROM QT_QUERY_MASTER c INNER JOIN QT_QUERY_INSTANCE a
            ON a.QUERY_MASTER_ID=c.QUERY_MASTER_ID INNER JOIN QT_QUERY_RESULT_INSTANCE b
-           ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID IN (?,?)""";
+           ON a.QUERY_INSTANCE_ID=b.QUERY_INSTANCE_ID WHERE RESULT_INSTANCE_ID IN (CAST (? AS numeric),CAST (? AS numeric))""";
 
         String xmlrequest="";
 

@@ -155,21 +155,21 @@ function buildCriteriaObject(conceptId, criteriaType, highlowselect, valueOperat
 
 function buildAnalysisCrossTrial(name, modifierCode, level, oktousevalues, dropType, inOutCode)
 {
-   // alert(modifierCode)   ;
-	if(dropType == 'stats')
-	{
-		analysisPanel.body.mask("Running analysis...", 'x-mask-loading');
-	}
 
-	if(dropType == 'grid')
-	{
-		analysisGridPanel.body.mask("Loading...", 'x-mask-loading');
-	}
+    if(dropType == 'stats')
+    {
+        analysisPanel.body.mask("Running analysis...", 'x-mask-loading');
+    }
+
+    if(dropType == 'grid')
+    {
+        analysisGridPanel.body.mask("Loading...", 'x-mask-loading');
+    }
 
     if(isSubsetEmpty(1) && isSubsetEmpty(2))
     {
-    	analysisPanel.body.unmask();
-    	analysisGridPanel.body.unmask();
+        analysisPanel.body.unmask();
+        analysisGridPanel.body.unmask();
         alert('Empty subsets found, need a valid subset to analyze!');
         return;
     }
@@ -177,57 +177,55 @@ function buildAnalysisCrossTrial(name, modifierCode, level, oktousevalues, dropT
     if((GLOBAL.CurrentSubsetIDs[1] == null && ! isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && ! isSubsetEmpty(2)))
     {
         runAllQueries(function()
-                {
-        	buildAnalysisCrossTrial(name, modifierCode, level, oktousevalues, dropType, inOutCode);
-                }
+            {
+                buildAnalysisCrossTrial(name, modifierCode, level, oktousevalues, dropType, inOutCode);
+            }
         );
         analysisPanel.body.unmask();
         return;
     }
 
-	if(dropType == 'grid')
-	{
-		getAnalysisGridDataModifier(name, modifierCode, level, oktousevalues, inOutCode);
-	}
+    if(dropType == 'grid')
+    {
+        getAnalysisGridDataModifier(name, modifierCode, level, oktousevalues, inOutCode);
+    }
 
 
-	if(dropType == 'stats')
-	{
-		Ext.Ajax.request(
-	            {
-	                url : pageInfo.basePath+"/chart/analysis",
-	                method : 'POST',
-	                timeout: '600000',
-	                params :  Ext.urlEncode(
-	                        {
-                                analisysType : "AccrossTrial",
-	                            charttype : "analysis",
-	                            name : name,
-	                            modifierCode : modifierCode,
-	                            level : level,
-	                            oktousevalues : oktousevalues,
-	                            inOutCode : inOutCode,
-                                concept_key : modifierCode,
-	                            result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-	                            result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
-	                        }
-	                ),
-	                success : function(result, request)
-	                {
-	                	//Add the code we just dragged in to the report list.
-	                	GLOBAL.currentReportCodes.push(modifierCode)
-	                	GLOBAL.currentReportStudy.push(name)
+    if(dropType == 'stats')
+    {
+        Ext.Ajax.request(
+            {
+                url : pageInfo.basePath+"/chart/analysisModifier",
+                method : 'POST',
+                timeout: '600000',
+                params :  Ext.urlEncode(
+                    {
+                        charttype : "analysis",
+                        name : name,
+                        modifierCode : modifierCode,
+                        level : level,
+                        oktousevalues : oktousevalues,
+                        inOutCode : inOutCode,
+                        result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                        result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+                    }
+                ),
+                success : function(result, request)
+                {
+                    //Add the code we just dragged in to the report list.
+                    GLOBAL.currentReportCodes.push(modifierCode)
+                    GLOBAL.currentReportStudy.push(name)
 
-	                	buildAnalysisComplete(result);
-	                }
-		            ,
-		            failure : function(result, request)
-		            {
-		                buildAnalysisComplete(result);
-		            }
-	            }
-	    );
-	}
+                    buildAnalysisComplete(result);
+                }
+                ,
+                failure : function(result, request)
+                {
+                    buildAnalysisComplete(result);
+                }
+            }
+        );
+    }
 
 }
 

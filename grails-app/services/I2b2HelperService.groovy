@@ -131,6 +131,43 @@ class I2b2HelperService {
 		else concept_name=splits[splits.length-1];
 		return concept_name;
 	}
+
+    def String getConceptCodeFromLongPath(String path)  {
+        log.trace("Getting concept codes for long path:" +path);
+        String shortPath=path.substring(path.indexOf("\\",2), path.length());
+
+        if(!path.endsWith("\\")){
+            path +="\\";
+        }
+        return getConceptCodeFromPath(shortPath);
+    }
+
+
+    /**
+     * Determines if a concept key is a folder or not
+     */
+    def Boolean isFolderConceptKey(String concept_key) {
+        String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+        Boolean res=false;
+        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        sql.eachRow("SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_FULLNAME = ?", [fullname], {row ->
+            res=row.c_visualattributes.indexOf('F')>-1
+        })
+        return res;
+    }
+
+    def String getConceptCodeFromPath(String path)  {
+        StringBuilder concepts = new StringBuilder();
+        log.trace("Getting concept codes for path:" +path);
+        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        String sqlt =
+            sql.eachRow("SELECT CONCEPT_CD FROM CONCEPT_DIMENSION c WHERE CONCEPT_PATH = ?", [path], {row ->
+                log.trace("Found code:"+row.CONCEPT_CD);
+                concepts.append(row.CONCEPT_CD);
+            });
+        log.trace("Done getting concept codes for path:" +path);
+        return concepts.toString();
+    }
 	
 	/**
 	 * Gets a grid column name from a concept key
@@ -539,6 +576,71 @@ class I2b2HelperService {
 		}
 		return results;
 	}
+
+    def  HashMap<String,Integer> getConceptDistributionDataForConceptSameEvent(String concept_key, TransmartQueryDefinition tQD) throws SQLException {
+
+        String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+        HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
+
+        // check to see if there is a mapping from this concept_key to a concept_key for the results
+        log.debug("getConceptDistributionDataForConcept: looking up parent_concept of fullname: " + fullname)
+        String parent_concept = lookupParentConcept(fullname);
+        log.debug("getConceptDistributionDataForConcept: parent_concept: "+parent_concept);
+        Set<String>	concepts = new HashSet<String>();
+
+        if (parent_concept != null) {
+            // lookup appropriate children
+            Set<String>	childConcepts = lookupChildConcepts(parent_concept, tQD.resultInstanceId);
+            if (childConcepts.isEmpty()) {
+                childConcepts.add(concept_key);
+            }
+            log.debug("getConceptDistributionDataForConcept: childConcepts: "+childConcepts);
+            for (c in childConcepts) {
+                int i=getLevelFromKey(concept_key)+1;
+                fullname = getConceptPathFromCode(c);
+                log.debug("** IN LOOP: fullname: "+fullname);
+                groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+                String sqlt =
+                    "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+                log.trace(sqlt);
+                sql.eachRow(sqlt, [fullname+"%", i], {row ->
+                    if (results.get(row[0]) == null) {
+                        results.put(row[0], getObservationCountForConceptForSubsetSameEvent("\\blah"+row[1], tQD));
+                    } else {
+                        results.put(row[0], results.get(row[0]) + getObservationCountForConceptForSubsetSameEvent("\\blah"+row[1], tQD));
+                    }
+                })
+            }
+        } else {
+            int i=getLevelFromKey(concept_key)+1;
+            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+            String sqlt = "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+            log.trace(sqlt);
+
+            //is this concept also a concept in one of the query panels?
+            def isConceptInPanels = tQD.distributions.keySet().find({ k->
+                def kShortened = k.substring(k.indexOf("\\",2), k.length());
+                return kShortened == fullname;
+            });
+
+            //Get children and loop through them to display observation counts for each
+            sql.eachRow(sqlt, [fullname+"%", i], {row ->
+
+                //Does the concept have a distribution to use to calculate the count from?
+                //Note: The hashmap keys (concepts) have the double slash study prefix so use a predicate as a filter
+                Boolean isConceptInPanelDistribution = tQD.distributions.containsKey(row[1]);
+
+                if (isConceptInPanelDistribution) {
+                    results.put(row[0], getObservationCountForConceptForSubsetSameEvent("\\blah" + row[1], tQD));
+                }
+                //This child concept wasn't in the panels but it's parent was so get count for it but not using same event
+                else if (isConceptInPanels) {
+                    results.put(row[0], getObservationCountForConceptForSubset("\\blah" + row[1], tQD.resultInstanceId));
+                }
+            });
+        }
+        return results;
+    }
 	
 	/**
 	 * Gets the children value type concepts of a parent key
@@ -5485,5 +5587,21 @@ class I2b2HelperService {
         else {
             return 'Chromosome: ' + rp.chromosome + ', ' + rp.position + ' ' + rp.range + ' ' + rp.basepairs + ' base pairs (HG' + rp.version + '): ' + rp.inclusionCriteria;
         }
+    }
+
+    def List<String> getChildKeysFromParentKey(String concept_key) {
+        String prefix=concept_key.substring(0, concept_key.indexOf("\\",2)); //get the prefix to put on to the fullname to make a key
+        String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+
+        String xml;
+        ArrayList ls=new ArrayList();
+        int i=getLevelFromKey(concept_key)+1;
+        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        String sqlt = "SELECT C_FULLNAME FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+        sql.eachRow(sqlt, [fullname+"%", i], {row ->
+            String conceptkey=prefix+row.c_fullname;
+            ls.add(conceptkey);
+        })
+        return ls;
     }
 }
