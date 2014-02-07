@@ -70,7 +70,7 @@ class I2b2ModifierHelperService {
         levelCount+=1
 
         groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-        String sqlt = "SELECT DISTINCT NAME_CHAR, MODIFIER_PATH, VISIT_IND FROM i2b2demodata.modifier_dimension MD INNER JOIN MODIFIER_METADATA MM ON MM.MODIFIER_CD = MD.MODIFIER_CD WHERE MODIFIER_PATH LIKE ? AND REGEXP_COUNT(MODIFIER_PATH, '\\\\', 1, 'i') = ? ORDER BY MODIFIER_PATH";
+        String sqlt = "SELECT DISTINCT NAME_CHAR, MODIFIER_PATH, VISIT_IND FROM i2b2demodata.modifier_dimension MD INNER JOIN MODIFIER_METADATA MM ON MM.MODIFIER_CD = MD.MODIFIER_CD WHERE MODIFIER_PATH LIKE ? AND length(MODIFIER_PATH) - length(translate(MODIFIER_PATH, '\\', '')) = ? ORDER BY MODIFIER_PATH";
 
         log.debug("Running following SQL in getModifierDistributionDataForModifier - " + sqlt)
         log.debug("Parameters - " + modifierPath + "%")
@@ -483,7 +483,7 @@ class I2b2ModifierHelperService {
                 FROM i2b2demodata.modifier_dimension MD
                 INNER JOIN i2b2demodata.modifier_metadata MM ON MD.MODIFIER_CD = MM.MODIFIER_CD
                 WHERE MODIFIER_PATH LIKE ?
-                AND REGEXP_COUNT(MODIFIER_PATH, '\\\\', 1, 'i') = ? ${valtypeCode}
+                AND length(MODIFIER_PATH) - length(translate(MODIFIER_PATH, '\\', '')) =  ? ${valtypeCode}
                 ORDER BY MODIFIER_PATH"""
 
         log.debug("Running following SQL in getChildModifiersFromParentKey - " + sqlt)

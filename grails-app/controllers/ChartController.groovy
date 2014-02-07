@@ -1411,7 +1411,7 @@ try
 		}
 		log.debug("renderConceptAnalysisNew: finished rendering "+concept_key)
 	}
-	catch(Exception e){log.error(e); e.printStackTrace();}
+	catch(Exception e){log.error(e);}
 }
 
 private void renderBoxAndWhiskerInfoTableNew(List<Number> values,String trial, StringWriter pw)
