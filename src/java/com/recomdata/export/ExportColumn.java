@@ -35,6 +35,7 @@ public class ExportColumn {
 	private String label;
 	private String pattern;
 	private String type;
+    private Integer width;
 	
 	public ExportColumn(String id, String label, String pattern, String type) {
 		this.id = id;
@@ -42,6 +43,15 @@ public class ExportColumn {
 		this.pattern = pattern;
 		this.type = type;
 	}
+
+    public ExportColumn(String id, String label, String pattern, String type, Integer width) {
+        this.id = id;
+        this.label = label;
+        this.pattern = pattern;
+        this.type = type;
+        this.width = width;
+    }
+
 	
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject json = new JSONObject();
@@ -51,6 +61,35 @@ public class ExportColumn {
 		json.put("width", 50);
 		return json;
 	}
+
+    public JSONObject toJSON_DataTables() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("sTitle", label);
+
+        String typeOut="";
+        if (type != null) {
+            if (type == "Number")
+                typeOut = "numeric";
+            else if(type == "String")
+                typeOut = "string";
+            else if(type == "Date")
+                typeOut = "date";
+
+            json.put("sType", typeOut);
+        }
+		/*
+		if (width > 0)
+		{
+			json.put("sWidth", width.toString() + "px");
+		}
+		else
+		{
+			json.put("sWidth", "100px");
+		}*/
+
+        return json;
+    }
+
 
 	public String getId() {
 		return id;

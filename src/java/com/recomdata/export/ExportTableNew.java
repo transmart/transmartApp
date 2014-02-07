@@ -1,22 +1,22 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
-  
+
 
 /**
  * $Id: ExportTableNew.java 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -29,10 +29,10 @@ import java.util.*;
 import org.json.*;
 
 public class ExportTableNew {
-    
+
 	private LinkedHashMap<String, ExportColumn> columns = new LinkedHashMap<String, ExportColumn>();
 	private LinkedHashMap<String, ExportRowNew> rows = new LinkedHashMap<String, ExportRowNew>();
-	
+
 	public ExportColumn getColumn(String columnname)
 	{
 		return columns.get(columnname);
@@ -71,19 +71,19 @@ public class ExportTableNew {
 	}
 
 	public JSONObject toJSONObject() throws JSONException {
-		JSONObject metadata = new JSONObject();		
-		JSONObject jsonTable = new JSONObject();	
+		JSONObject metadata = new JSONObject();
+		JSONObject jsonTable = new JSONObject();
 		JSONArray fields = new JSONArray();
-		
+
 		for (Iterator<ExportColumn> i = columns.values().iterator(); i.hasNext(); ) {
 			fields.put(i.next().toJSONObject());
 		}
-		
+
 		metadata.put("fields", fields);
 		metadata.put("totalProperty","results");
 		metadata.put("root", "rows");
 		metadata.put("id", "subject");
-		
+
 		jsonTable.put("metaData",metadata);
 		jsonTable.put("results",rows.size());
 		JSONArray jsonRows = new JSONArray();
@@ -111,8 +111,53 @@ public class ExportTableNew {
 			 newrows.add(row);
 		}
 		System.out.println("********"+rows.size());
-			
+
 		table=CSVGenerator.generateCSV(newheaders, newrows);
 		return table;
 	}
+
+    //Supports jQuery datatables object
+    public JSONObject toJSON_DataTables(String echo) throws JSONException {
+
+        JSONObject jsonTable = new JSONObject();
+        JSONArray aoColumns = new JSONArray();
+        JSONArray headerToolTips = new JSONArray();
+        List<String> columnOrder = new ArrayList<String>();
+
+        for (Iterator<ExportColumn> i = columns.values().iterator(); i.hasNext(); ) {
+            ExportColumn col = i.next();
+            aoColumns.put(col.toJSON_DataTables());
+            headerToolTips.put(col.getId());
+            columnOrder.add(col.getId());
+        }
+
+        JSONArray jsonRows = new JSONArray();
+        for (Iterator<ExportRowNew> i = rows.values().iterator(); i.hasNext(); ) {
+            jsonRows.put(i.next().toJSONArray(columnOrder));
+        }
+
+        if (echo != null) jsonTable.put("sEcho", echo);
+        jsonTable.put("iTotalRecords", rows.size());
+        jsonTable.put("iTotalDisplayRecords", rows.size());
+        jsonTable.put("aoColumns", aoColumns);
+        jsonTable.put("headerToolTips", headerToolTips);
+
+        jsonTable.put("aaData", jsonRows);
+
+        return jsonTable;
+    }
+
+    public JSONObject getJSONColumns() throws JSONException {
+
+        JSONObject jsonColumns = new JSONObject();
+        JSONArray columnsAry = new JSONArray();
+
+        for (Iterator<ExportColumn> i = columns.values().iterator(); i.hasNext(); ) {
+            columnsAry.put(i.next().toJSON_DataTables());
+        }
+
+        jsonColumns.put("aoColumns", columnsAry);
+        return jsonColumns;
+    }
+
 }
