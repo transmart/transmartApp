@@ -679,14 +679,47 @@ Ext.onReady(function()
 					region : 'center',
 					split : true,
 					height : 90
-				}
-		);
+            }
+        );
+        //jira- DEMOTM-115 Bringing Save report/save subset functionality to transmart Demo branch
+        var savesubsetsTbar = new Ext.Toolbar(
+            {
+                id: 'savesubsetsTbar',
+                title: 'Save Subsets',
+                items: [new Ext.Toolbar.Button(
+                    {
+                        id: 'savesubsetsButton',
+                        text: 'Save Subsets',
+                        iconCls: 'savebutton',
+                        disabled: false,
+                        handler: function () {
+                            showSaveSubsetsDialog();
+
+                        }
+                    }
+                ),
+                    new Ext.Toolbar.Button(
+                        {
+                            id: 'clearButton',
+                            text: 'Clear',
+                            iconCls: 'clearbutton2',
+                            disabled: false,
+                            handler: function () {
+                                clearQuery();
+
+                            }
+                        }
+                    )
+                ]
+            }
+        );
 
 		resultsTabPanel = new Ext.TabPanel(
 				{
 					id : 'resultsTabPanel',
 					title : 'Analysis/Results',
 					region : 'center',
+                tbar: savesubsetsTbar,
 
 					defaults :
 					{
@@ -748,28 +781,37 @@ Ext.onReady(function()
                     }
                 }
         );
-		analysisPanel = new Ext.Panel(
-				{
-					id : 'analysisPanel',
-					title : 'Results/Analysis',
-					region : 'center',
-					fitToFrame : true,
-					listeners :
-					{
-					activate : activateTab,
-					deactivate: function(){
-                        resultsTabPanel.tools['help help-resana-panel'].dom.style.display="none";
-					}
-					}
-				,
-				autoScroll : true,
-				// tbar : tb2,
-				html : '<div style="text-align:center;font:12pt arial;width:100%;height:100%;"><table style="width:100%;height:100%;"><tr><td align="center" valign="center">Drag concepts to this panel to view a breakdown of the subset by that concept</td></tr></table></div>',
-				split : true,
-				closable : false,
-				height : 90
-				}
-		);
+
+        analysisPanel = new Ext.Panel(
+            {
+                id: 'analysisPanel',
+                title: 'Results/Analysis',
+                region: 'center',
+                fitToFrame: true,
+                listeners: {
+                    activate: function () {
+                        if (GLOBAL.AnalysisHasBeenRun == false) {
+                            GLOBAL.CurrentSubsetIDs[1] = null;
+                            GLOBAL.CurrentSubsetIDs[2] = null;
+                            resultsTabPanel.body.mask("Performing queries...", 'x-mask-loading');
+                            runAllQueries(getSummaryStatistics, resultsTabPanel);
+                            activateTab();
+                        }
+                    },
+                    deactivate: function () {
+                        // resultsTabPanel.tools.help.dom.style.display="none";
+                    },
+                    'afterLayout': {
+                    }
+                },
+                autoScroll: true,
+                // tbar : tb2,
+                html: '<div style="text-align:center;font:12pt arial;width:100%;height:100%;"><table style="width:100%;height:100%;"><tr><td align="center" valign="center">Drag concepts to this panel to view a breakdown of the subset by that concept</td></tr></table></div>',
+                split: true,
+                closable: false,
+                height: 90
+            }
+        );
 		/*
 		 * Commented out the Jobs panel to hide as it isn't used without Gene Pattern
 		 * 
@@ -814,6 +856,12 @@ Ext.onReady(function()
 						},
 						deactivate: function(){
 							//resultsTabPanel.tools['help help-resana-panel'].dom.style.display="none";
+                        if (Ext.get('dataTypesGridPanel')) {
+                            this.remove('dataTypesGridPanel');
+                        }
+                        if (Ext.get('advancedDataExportPanel')) {
+                            this.remove('advancedDataExportPanel');
+                        }
 						}
 					},
 					collapsible : true						
@@ -976,6 +1024,7 @@ Ext.onReady(function()
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
+        resultsTabPanel.add(dataAssociationPanel);
 		//Commented out the Jobs panel to hide as it isn't used without Gene Pattern
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
@@ -1431,6 +1480,19 @@ function createOntPanel()
         }
     );
 
+    var searchPanel = new Ext.Panel(
+        {
+            id: 'searchPanel',
+            region: 'north',
+            collapsible: false,
+            height: 135,
+            width: 316,
+            deferredRender: false,
+            split: false,
+            contentEl: "box-search"
+        }
+    );
+
 	/* ontSearchTermsPanel = new Ext.TabPanel({
    id : 'searchTermsPanel',
    title : 'Find Terms',
@@ -1630,11 +1692,113 @@ function createOntPanel()
 		ontFilterPanel.add(ontFilterTree);
 		// ontTabPanel.add(ontSearchByCodePanel);
 
+    //Create a panel to hold the search criteria
+    westPanel.add(searchPanel);
+
+    setupOntTree('navigateTermsPanel', 'Navigate By Study');
+
 		return ontTabPanel;
 }
 
-function closeBrowser()
+
+function setupOntTree(id_in, title_in) {
+
+    var Tree = Ext.tree;
+
+    var showFn = function (node, e) {
+        Ext.tree.TreePanel.superclass.onShow.call(this);
+    }
+
+    var ontTree = new Tree.TreePanel(
+        {
+            id: id_in,
+            title: title_in,
+            animate: false,
+            autoScroll: true,
+            loader: new Ext.ux.OntologyTreeLoader(
+                {
+                    dataUrl: 'none'
+                }
+            ),
+            enableDrag: true,
+            ddGroup: 'makeQuery',
+            containerScroll: true,
+            enableDrop: false,
+            region: 'center',
+            rootVisible: false,
+            expanded: true,
+            onShow: showFn
+        }
+    );
+
+    ontTree.on('startdrag', function (panel, node, event) {
+            Ext.ux.ManagedIFrame.Manager.showShims()
+
+        }
+    );
+
+    ontTree.on('enddrag', function (panel, node, event) {
+            Ext.ux.ManagedIFrame.Manager.hideShims()
+
+        }
+    );
+
+    var treeRoot = new Tree.TreeNode(
+        {
+            text: 'root',
+            draggable: false,
+            id: 'treeRoot',
+            qtip: 'root'
+        }
+    );
+
+    // add a tree sorter in folder mode
+    new Tree.TreeSorter(ontTree,
 {
+            folderSort: true
+        }
+    );
+
+
+    ontTree.setRootNode(treeRoot);
+    ontTabPanel.add(ontTree);
+    ontTabPanel.doLayout();
+
+    onWindowResize();
+
+}
+
+function onWindowResize() {
+    //Assorted hackery for accounting for the presence of the toolbar
+    var windowHeight = jQuery(window).height();
+
+    jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
+
+    //var boxHeight = jQuery('#box-search').height();
+    //jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 110);
+
+    jQuery('#analysisPanel .x-panel-body').height(jQuery(window).height() - 65);
+
+    if (jQuery('#dataTypesGridPanel .x-panel-body').size() > 0) {
+        var exportPanelTop = jQuery('#dataTypesGridPanel .x-panel-body').offset()['top'];
+        jQuery('#dataTypesGridPanel .x-panel-body').height(jQuery(window).height() - exportPanelTop - 40);
+    }
+    if (jQuery('#dataAssociationPanel .x-panel-body').size() > 0) {
+        var panelTop = jQuery('#dataAssociationPanel .x-panel-body').offset()['top'];
+        jQuery('#dataAssociationPanel .x-panel-body').height(jQuery(window).height() - panelTop);
+    }
+    if (jQuery('#resultsTabPanel .x-tab-panel-body').size() > 0) {
+        var panelTop = jQuery('#resultsTabPanel .x-tab-panel-body').offset()['top'];
+        jQuery('#resultsTabPanel .x-tab-panel-body').height(jQuery(window).height() - panelTop);
+    }
+    if (jQuery('#dataAssociationBody').size() > 0) {
+        var panelTop = jQuery('#dataAssociationBody').offset()['top'];
+        jQuery('#dataAssociationBody').height(jQuery(window).height() - 50);
+    }
+    jQuery('#noAnalyzeResults').prependTo(jQuery('#navigateTermsPanel .x-panel-body'));
+}
+
+function closeBrowser() {
 	window.open('http://www.i2b2.org', '_self', '');
 	window.close();
 }
@@ -1884,14 +2048,69 @@ function projectDialogComplete()
 	}
 }
 
-function getCategoriesComplete(ontresponse){
+function getPreviousQueriesComplete(response) {
+    // alert(response.responseText);
+    // shorthand
+    var Tree = Ext.tree;
+    // add a tree sorter in folder mode
+    // new Tree.TreeSorter(ontTree, {folderSort : true});
+
+    if (GLOBAL.Debug) {
+        alert(response.responseText);
+    }
+    // clear the tree
+    for (c = prevTreeRoot.childNodes.length - 1; c >= 0;
+         c--) {
+        prevTreeRoot.childNodes[c].remove();
+    }
+    // prevTree.render();
+
+    var querymasters = response.responseXML.selectNodes('//query_master');
+    for (var c = 0; c < querymasters.length; c++) {
+        var querymasterid = querymasters[c].selectSingleNode('query_master_id').firstChild.nodeValue;
+        var name = querymasters[c].selectSingleNode('name').firstChild.nodeValue;
+        var userid = querymasters[c].selectSingleNode('user_id').firstChild.nodeValue;
+        var groupid = querymasters[c].selectSingleNode('group_id').firstChild.nodeValue;
+        var createdate = querymasters[c].selectSingleNode('create_date').firstChild.nodeValue;
+        // set the root node
+        var prevNode = new Tree.TreeNode(
+            {
+                text: name,
+                draggable: true,
+                id: querymasterid,
+                qtip: name,
+                userid: userid,
+                groupid: groupid,
+                createdate: createdate,
+                leaf: true
+            }
+        );
+        prevNode.addListener('contextmenu', previousQueriesRightClick);
+        prevTreeRoot.appendChild(prevNode);
+    }
+}
+
+
+function getCategoriesComplete(ontresponse) {
+    ontTabPanel.add(ontFilterPanel);
+    ontFilterTree.dragZone.addToGroup("analysis");
+    getSubCategories('navigateTermsPanel', 'Navigate By Study', ontresponse);
+	if(GLOBAL.hideAcrossTrialsPanel != 'true') {
+        getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
+    }
+    drawAcrossTrialTree();
+    setActiveTab();
+}
+
+
+function getCategoriesComplete_OLD(ontresponse) {
 
     ontTabPanel.add(ontFilterPanel);
     ontFilterTree.dragZone.addToGroup("analysis");
     getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
-    /*if(GLOBAL.hideAcrossTrialsPanel != 'true') {
+    if(GLOBAL.hideAcrossTrialsPanel != 'true') {
         getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
-    }*/
+    }
 
     drawHardcodedJQueryTree();
     setActiveTab();
@@ -2890,6 +3109,59 @@ function runQueryComplete(result, subset, callback) {
     }
 }
 
+function runQueryPDO(patientsetid, minpatient, maxpatient, subset, callback) {
+    var query = getCRCpdoRequest(patientsetid, minpatient, maxpatient, subset)
+    // resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
+    queryPanel.el.mask('Getting patient set ' + subset + '...', 'x-mask-loading');
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath + "/proxy?url=" + GLOBAL.CRCUrl + "pdorequest",
+            method: 'POST',
+            // scope : this,
+            xmlData: query,
+            success: function (result, request) {
+                runQueryPDOComplete(result, subset, callback);
+            },
+            failure: function (result, request) {
+                runQueryPDOComplete(result, subset, callback);
+            },
+            timeout: '600000'
+        }
+    );
+
+}
+
+function runQueryPDOComplete(result, subset, callback) {
+    if (GLOBAL.Debug) {
+        alert(result.responseText)
+    }
+    ;
+    queryPanel.el.unmask();
+    var doc = result.responseXML;
+    doc.setProperty("SelectionLanguage", "XPath");
+    doc.setProperty("SelectionNamespaces", "xmlns:ns2='http://www.i2b2.org/xsd/hive/pdo/1.1/'");
+    var patientset = result.responseXML.selectSingleNode("//ns2:patient_set");
+    if (patientset == undefined) {
+        patientset = result.responseXML.selectSingleNode("//patient_set");
+    }
+    if (patientset == null) {
+        return
+    }
+    ;
+    createStatistics(patientset, subset);
+    if (STATE.QueryRequestCounter > 0) // I'm in a chain of requests so decrement
+    {
+        STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
+    }
+    if (STATE.QueryRequestCounter == 0) {
+        callback();
+    }
+    /* I'm the last request outstanding in this chain*/
+    if (GLOBAL.Debug) {
+        resultsPanel.setBody(resultsPanel.getBody() + "<div style='height:200px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(result.responseText) + "</div>");
+    }
+}
+
 // takes a patientset node
 function createStatistics(patientset, subset)
 {
@@ -3138,6 +3410,7 @@ function updateAnalysisPanel(html, insert)
 	else
 	{
 		analysisPanel.body.update(html, false, null);
+        analysisPanel.body.insertHtml('afterBegin', printButtonHtml, false);
 	}
     analysisPanel.body.unmask();
 }
@@ -4719,8 +4992,11 @@ function searchByTagComplete(response)
 {
 	// shorthand
 	var Tree = Ext.tree;
+    var treeRoot = Ext.getCmp('navigateTermsPanel').getRootNode();
 	//ontFilterPanel.el.unmask();
 	viewport.el.unmask();
+    var concepts = response.searchResults; //Response is an array of concept paths
+    var uniqueLeaves = response.uniqueLeaves;
 	var robj=response.responseText.evalJSON();
 	var rtext=robj.resulttext;
 	var concepts = robj.concepts;
@@ -4730,6 +5006,24 @@ function searchByTagComplete(response)
 	var length;
 	var leaf = false;
 	var draggable = false;
+
+    for(c = treeRoot.length - 1;
+        c >= 0;
+        c -- )
+    {
+        treeRoot[c].remove();
+    }
+
+    jQuery('#noAnalyzeResults').hide();
+
+    //Clear path to expand and unique leaves
+    GLOBAL.PathToExpand = '';
+    GLOBAL.UniqueLeaves = '';
+
+    if (GLOBAL.DefaultPathToExpand != "") {
+        GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
+    }
+
 	if(concepts != undefined)
 	{
 		if(concepts.length < GLOBAL.MaxSearchResults)
@@ -4743,6 +5037,53 @@ function searchByTagComplete(response)
 		for(var c = 0; c < length; c ++ )
 		{
 			var newnode=getTreeNodeFromJSON(concepts[c])
+            GLOBAL.PathToExpand += concepts[c] + ",";
+            //treeRoot.appendChild(newnode);
+            //setTreeNodeSecurity(newnode, concepts[c].access);
+        }
+
+        for(var c = 0; c < uniqueLeaves.length; c++) {
+            GLOBAL.UniqueLeaves += uniqueLeaves[c] + ",";
+        }
+
+        if (concepts.length == 0) {
+            jQuery('#noAnalyzeResults').show();
+            Ext.getCmp('navigateTermsPanel').render();
+            onWindowResize();
+        }
+        else {
+            //Get the categories with the new path to expand
+            getCategories();
+
+        }
+
+    }
+}
+
+
+function searchByTagComplete2(response) {
+    // shorthand
+    var Tree = Ext.tree;
+    //ontFilterPanel.el.unmask();
+    viewport.el.unmask();
+    var robj = response.responseText.evalJSON();
+    var rtext = robj.resulttext;
+    var concepts = robj.concepts;
+    // concept = concepts[4];
+    // test = concept.selectSingleNode('name').firstChild.nodeValue;
+    // alert(response.responseText);
+    var length;
+    var leaf = false;
+    var draggable = false;
+    if (concepts != undefined) {
+        if (concepts.length < GLOBAL.MaxSearchResults) {
+            length = concepts.length;
+        }
+        else {
+            length = GLOBAL.MaxSearchResults;
+        }
+        for (var c = 0; c < length; c++) {
+            var newnode = getTreeNodeFromJSON(concepts[c])
 			ontFilterTreeRoot.appendChild(newnode);
 			setTreeNodeSecurity(newnode, concepts[c].access);
 		}
@@ -4751,8 +5092,7 @@ function searchByTagComplete(response)
 	}
 }
 
-function showHaploviewGeneSelection()
-{
+function showHaploviewGeneSelection() {
 	//genePatternReplacement();
 	//if(!this.compareStepPathwaySelection)
 	//{
@@ -5034,4 +5374,179 @@ function ontFilterLoaded(el, success, response, options)
 			Ext.get("ontsearchterm").dom.value = GLOBAL.preloadStudy;
 			Ext.get("ontSearchButton").dom.click();
 		}
+}
+
+function clearQuery() {
+    if (confirm("Are you sure you want to clear your current analysis?")) {
+        clearAnalysisPanel();
+        resetQuery();
+        clearDataAssociation();
+        GLOBAL.AnalysisHasBeenRun = false;
+    }
+}
+
+function addHelpIcons() {
+
+    jQuery('#analysisPanel').append(getHelpIconHTML(1074, 20, 25));
+    jQuery('#resultsTabPanel .x-tab-panel-header').append(getHelpIconHTML(1061));
+    jQuery('#ontPanel .x-tab-panel-header').append(getHelpIconHTML(1064));
+
+    jQuery('#ontFilterPanel').append(getHelpIconHTML(1065, 4, 28));
+
+}
+
+function getHelpIconHTML(id, right, top) {
+    if (right == null) {
+        right = 4;
+    }
+    if (top == null) {
+        top = 2;
+    }
+    return ('<div style="z-index: 999; cursor: pointer; height: 18px; width: 18px; position: absolute; right: ' + right + 'px; top: ' + top + 'px" class="contextHelpBtn" onclick="D2H_ShowHelp(\'' + id + '\',helpURL,\'wndExternal\',CTXT_DISPLAY_FULLHELP);">&nbsp;</div>')
+}
+
+
+
+
+/*If includeExcludeFlag is
+ * -"include": Across Trials is the only concept included
+ * -"exclude": Across Trials concept is the only concept excluded
+ */
+function createTree(includeExcludeFlag, ontresponse) {
+    // shorthand
+    var Tree = Ext.tree;
+    var treelist = [];
+    var treeRoot = new Tree.TreeNode(
+        {
+            text: 'root',
+            draggable: false,
+            id: 'root',
+            qtip: 'root'
+        }
+    );
+
+
+    for (var c = 0; c < ontresponse.length; c++) {
+        var level = ontresponse[c].level;
+        var key = ontresponse[c].key;
+        var name = ontresponse[c].name;
+        var tooltip = ontresponse[c].tooltip;
+        var dimcode = ontresponse[c].dimcode;
+
+        if (includeExcludeFlag === "include" && name !== "Across Trials") continue;
+        if (includeExcludeFlag === "exclude" && name === "Across Trials") continue;
+        // set the root node
+        var autoExpand = false;
+        if (GLOBAL.PathToExpand.indexOf(key) > -1) autoExpand = true;
+        if(GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) == -1) { continue; }
+        var ontRoot = new Tree.AsyncTreeNode(
+            {
+                text: name,
+                draggable: false,
+                id: key,
+                qtip: tooltip,
+                expanded: autoExpand
+            }
+        );
+
+        //treeRoot.appendChild(ontRoot);
+        treelist.push(ontRoot)  ;
+
+        /***************************************/
+        var fullname = key.substr(key.indexOf("\\", 2), key.length);
+        var access = GLOBAL.InitialSecurity[fullname];
+
+        if ((access != undefined && access != 'Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
+        {
+            //leave node unlocked must have some read access
+        }
+        else {
+            //default node to locked
+            //child.setText(child.text+" <b>Locked</b>");
+            ontRoot.attributes.access = 'locked';
+            ontRoot.disable();
+            ontRoot.on('beforeload', function (node) {
+                alert("Access to this node has been restricted. Please contact your administrator for access.");
+                return false
+            });
+        }
+    }
+
+    //return treeRoot;
+    return treelist;
+}
+
+/*
+ * the id_in drives which off these tabs is created
+ *
+ */
+
+
+function getSubCategories(id_in, title_in, ontresponse)
+{
+    // shorthand
+    var Tree = Ext.tree;
+    var ontRoots;
+    var panel;
+
+    var showFn;
+
+    if (id_in==='crossTrialsPanel'){
+        showFn = function(node, e){
+            Ext.tree.TreePanel.superclass.onShow.call(this);
+            // Ext.get('advancedbutton').dom.style.display='none';
+        }
+        ontRoots = createTree('include', ontresponse);
+        panel = Ext.getCmp('crossTrialsPanel');
+    }
+    else {
+        showFn = function(node, e){
+            Ext.tree.TreePanel.superclass.onShow.call(this);
+            // Ext.get('advancedbutton').dom.style.display='';
+        }
+        ontRoots = createTree('exclude', ontresponse);
+        panel = Ext.getCmp('navigateTermsPanel');
+    }
+
+    /*var toolbar = new Ext.Toolbar([
+     {
+     id:'contextHelp-button',
+     handler: function(event, toolEl, panel){
+     D2H_ShowHelp((id_in=="navigateTermsPanel")?"1066":"1091",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+     },
+     iconCls: "contextHelpBtn"
+     }
+     ]); */
+
+    var treeRoot = panel.getRootNode();
+    for(c = treeRoot.childNodes.length - 1; c >= 0; c -- ) {
+        treeRoot.childNodes[c].remove();
+    }
+
+    jQuery('#noAnalyzeResults').hide();
+
+    for(var c = 0; c < ontRoots.length; c ++ )
+    {
+        var newnode=ontRoots[c];
+        treeRoot.appendChild(newnode);
+    }
+
+    if (ontRoots.length == 0) { //This shouldn't happen!
+        jQuery('#noAnalyzeResults').show();
+    }
+
+    if(GLOBAL.Debug)
+    {
+        alert(ontresponse.responseText);
+    }
+
+    onWindowResize();
+
+    panel.render();
+    panel.dragZone.addToGroup("analysis");
+
+    /*if(GLOBAL.IsAdmin)
+     {
+     searchByNameTree.dragZone.addToGroup("analysis");
+     }*/
 }
