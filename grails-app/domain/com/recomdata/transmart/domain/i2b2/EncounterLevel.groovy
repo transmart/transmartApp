@@ -17,8 +17,6 @@ class EncounterLevel {
         studyId column: 'STUDY_ID', type: 'string'
         conceptCode column: 'CONCEPT_CD', type: 'string'
         linkType column: 'LINK_TYPE', type: 'string'
-
-        observations column: ['encounterNum', 'conceptCode', 'providerId', 'startDate', 'modifierCd', 'instanceNum'], type:'string'
     }
 
 
