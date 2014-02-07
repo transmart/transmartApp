@@ -164,7 +164,10 @@ class OntologyController {
     		 def comment=node.comment
     		 def tooltip=node.tooltip
     		 def metadataxml=i2b2HelperService.metadataxmlToJSON(node.metadataxml)
-    		 concepts.add([level:level, key:key,  name:name, synonym_cd:synonym_cd, visualattributes:visualattributes, totalnum:totalnum, facttablecolumn:facttablecolumn, tablename:tablename, columnname:columnname, columndatatype:columndatatype, operator:operator, dimcode:dimcode, comment:comment, tooltip:tooltip, metadataxml:metadataxml, access:access[node.id]] )
+             //Check for VCF data
+             def hasVCFData = i2b2HelperService.hasVCFData(node.sourcesystemcd)
+
+    		 concepts.add([level:level, key:key,  name:name, synonym_cd:synonym_cd, visualattributes:visualattributes, totalnum:totalnum, facttablecolumn:facttablecolumn, tablename:tablename, columnname:columnname, columndatatype:columndatatype, operator:operator, dimcode:dimcode, comment:comment, tooltip:tooltip, metadataxml:metadataxml, access:access[node.id], hasVCFData: hasVCFData])
     					
     		}
             def resulttext;
@@ -227,5 +230,14 @@ class OntologyController {
 
 		render(template:'showDefinition', model:[tags:result])
 	}
-	
+
+
+
+
+    def hasVCFData=
+        {
+            def conceptPath=i2b2HelperService.keyToPath(params.conceptKey);
+            def node=i2b2.OntNode.get(conceptPath);
+            render (i2b2HelperService.hasVCFData(node.name)) as JSON
+        }
 }

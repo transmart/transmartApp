@@ -36,8 +36,11 @@ function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalu
 	this.normalunits=normalunits;
 	this.oktousevalues=oktousevalues;
 	this.value=value;
-	this.nodeType = nodeType
+	this.nodeType = nodeType;
     this.visualattributes = visualattributes;
+    this.modifiername = modifiername;
+    this.modifierappliedpath = modifierappliedpath;
+    this.modifierkey = modifierkey;
     this.inOutCode = inOutCode;
     this.timingLevel = timingLevel;
 }
@@ -89,6 +92,17 @@ function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
 
 function convertNodeToConcept(node)
 {
+    var ismodifier = node.attributes.ismodifier;
+    var modifierappliedpath = null;
+    var modifiername = null;
+    var modifierkey = null;
+    if(ismodifier)
+    {
+        modifierappliedpath = node.attributes.appliedpath;
+        modifiername =node.text;
+        modifierkey=node.id;
+        node=node.parentNode; //swap out for rest of properties;
+    }
 	var value=new Value();
 	var level=node.attributes.level;
 	var name=node.text;
@@ -733,7 +747,7 @@ function createPathwaySearchBox(searchInputEltName, divName){
 					{name: 'uid'},
 					{name: 'source'},
 					{name: 'name'},
-					{name: 'type'},
+					{name: 'type'}
 			   	]
 			)
 		});
@@ -1812,7 +1826,7 @@ var query="";
 //Interate over the criteria groups
 for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
 	{
-		
+
 		var qcd=Ext.get("queryCriteriaDiv"+subset+'_'+i.toString());
 		if(qcd.dom.childNodes.length>0)
 		{

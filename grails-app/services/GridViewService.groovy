@@ -22,7 +22,7 @@ class GridViewService {
 		log.trace("Adding patient demographic data to grid with result instance id:" +result_instance_id+" and subset: "+subset)
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		String sqlt = """SELECT * FROM patient_dimension p INNER JOIN patient_trial t ON p.patient_num=t.patient_num
-		    WHERE p.PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
+		    WHERE p.PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = CAST (? AS numeric))
 		    ORDER BY p.PATIENT_NUM""";
 		
 		//if i have an empty table structure so far
@@ -115,7 +115,7 @@ class GridViewService {
 					WHERE f.CONCEPT_CD = ? AND
 			        f.PATIENT_NUM IN (select  patient_num
 					from qt_patient_set_collection
-					where result_instance_id = ?)""";
+					where result_instance_id = CAST (? AS numeric))""";
 			
 			log.debug("Retrieving Data for addConcepDataToTable: " + sqlt);	
 					
@@ -320,7 +320,7 @@ class GridViewService {
 						FROM I2B2DEMODATA.CONCEPT_DIMENSION C 
 						INNER JOIN DE_ENCOUNTER_LEVEL DEL ON C.CONCEPT_CD = DEL.CONCEPT_CD
 						INNER JOIN I2B2DEMODATA.OBSERVATION_FACT f ON (f.concept_cd = c.concept_cd AND c.concept_path LIKE ?) 
-						INNER JOIN I2B2DEMODATA.QT_PATIENT_SET_COLLECTION Q ON ( Q.PATIENT_NUM = f.PATIENT_NUM AND RESULT_INSTANCE_ID = ?)"""
+						INNER JOIN I2B2DEMODATA.QT_PATIENT_SET_COLLECTION Q ON ( Q.PATIENT_NUM = f.PATIENT_NUM AND RESULT_INSTANCE_ID = CAST (? AS numeric))"""
 
 		def resultRows = sql.rows(sqlt, [cpSQL, result_instance_id]);
 	
