@@ -15,8 +15,6 @@ class ConceptVisit {
 
         id column: 'CONCEPT_CD', type: 'string'
         visitName column: 'VISIT_NAME',type:'string'
-
-        observations column: ['encounterNum', 'conceptCode', 'providerId', 'startDate', 'modifierCd', 'instanceNum'], type:'string'
     }
 
 
