@@ -112,7 +112,7 @@ class ChartController {
 
     def i2b2HelperService
     def springSecurityService
-
+    def i2b2ModifierHelperService
 
     def displayChart = {
     		HttpSession session = request.getSession();
@@ -308,53 +308,92 @@ class ChartController {
  /**
   * Gets an analysis for a concept key and comparison
   */
-def analysis={
+//def analysis={
+//
+//		  		String concept_key=params.concept_key;
+//		  		def result_instance_id1=params.result_instance_id1;
+//		  		def result_instance_id2=params.result_instance_id2;
+//		  		def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-Analysis by Concept", eventmessage:"RID1:"+result_instance_id1+" RID2:"+result_instance_id2+" Concept:"+concept_key, accesstime:new java.util.Date())
+//	   			al.save()
+//
+//		  		String analysis_key=i2b2HelperService.getConceptKeyForAnalysis(concept_key);
+//				PrintWriter pw=new PrintWriter(response.getOutputStream());
+//				pw.write("<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body><div class='analysis'>");
+//				//renderConceptAnalysis(analysis_key, result_instance_id1, result_instance_id2, pw, request);
+//    			log.debug("in analysis controller about to run render concept: "+analysis_key+" result_instance_id1:"+result_instance_id1);
+//
+//    			// need to modify to try looking for equivalent concepts on both subsets
+//				//String parentConcept = i2b2HelperService.lookupParentConcept(i2b2HelperService.keyToPath(concept_key));
+//				//log.debug("parent concept: "+parentConcept);
+//
+//				//Set<String> cconcepts = i2b2HelperService.lookupChildConcepts(parentConcept, result_instance_id1, result_instance_id2);
+//				//if (cconcepts.isEmpty()) {
+//			//		cconcepts.add(concept_key);
+//			//	}
+//
+//			//	log.debug("child concepts: "+cconcepts);
+//
+//				log.debug("calling renderConceptAnalysisNew from analysis with analysis_key:"+analysis_key);
+//    			renderConceptAnalysisNew(analysis_key, result_instance_id1, result_instance_id2, pw, request);
+//				pw.write("<hr>");
+//    			if(!i2b2HelperService.isLeafConceptKey(analysis_key)) //must be a folder so render all the value children
+//    			{
+//    				log.debug("iterating through all items in folder")
+//
+//					for(String c : i2b2HelperService.getChildValueConceptsFromParentKey(concept_key))
+//    				{
+//    					log.debug("-- rendering "+c)
+//    					//logMessage("child key:"+c);
+//    					renderConceptAnalysisNew(c, result_instance_id1, result_instance_id2, pw, request);
+//    					pw.write("<hr>");
+//    				}
+//
+//
+//    			}
+//				//renderPatientCountInfoTable(result_instance_id1, result_instance_id2, pw);
+//				pw.write("</div></body></html>");
+//				pw.flush();
+//	}
+    def analysis = {
 
-		  		String concept_key=params.concept_key;
-		  		def result_instance_id1=params.result_instance_id1;
-		  		def result_instance_id2=params.result_instance_id2;
-		  		def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-Analysis by Concept", eventmessage:"RID1:"+result_instance_id1+" RID2:"+result_instance_id2+" Concept:"+concept_key, accesstime:new java.util.Date())
-	   			al.save()
+        def result_instance_id1=params.result_instance_id1;
+        def result_instance_id2=params.result_instance_id2;
+        def tQD1 = i2b2HelperService.getQueryDefinition(result_instance_id1);
+        def tQD2 = i2b2HelperService.getQueryDefinition(result_instance_id2);
 
-		  		String analysis_key=i2b2HelperService.getConceptKeyForAnalysis(concept_key);
-				PrintWriter pw=new PrintWriter(response.getOutputStream());
-				pw.write("<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body><div class='analysis'>");
-				//renderConceptAnalysis(analysis_key, result_instance_id1, result_instance_id2, pw, request);
-    			log.debug("in analysis controller about to run render concept: "+analysis_key+" result_instance_id1:"+result_instance_id1);
+        def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-Analysis by Modifier", eventmessage:"RID1:"+result_instance_id1+" RID2:"+result_instance_id2+" Modifier:"+ params.name, accesstime:new java.util.Date())
+        al.save()
 
-    			// need to modify to try looking for equivalent concepts on both subsets
-				//String parentConcept = i2b2HelperService.lookupParentConcept(i2b2HelperService.keyToPath(concept_key));
-				//log.debug("parent concept: "+parentConcept);
+        PrintWriter pw=new PrintWriter(response.getOutputStream());
+        pw.write("<html><head><link rel='stylesheet' type='text/css' href='css/chartservlet.css'></head><body><div class='analysis'>");
 
-				//Set<String> cconcepts = i2b2HelperService.lookupChildConcepts(parentConcept, result_instance_id1, result_instance_id2);
-				//if (cconcepts.isEmpty()) {
-			//		cconcepts.add(concept_key);
-			//	}
+        //Create the modifier object.
+        def analysisModifier = i2b2ModifierHelperService.createModifierObject(params.modifierCode,params.level,params.oktousevalues,params.name,params.inOutCode)
 
-			//	log.debug("child concepts: "+cconcepts);
+        //If it's a leaf text node we need to get its parent and use that.
+        if(params.level == "leaf" && params.oktousevalues == "N")
+        {
+            analysisModifier = i2b2ModifierHelperService.getModifierObjectParent(analysisModifier)
+        }
 
-				log.debug("calling renderConceptAnalysisNew from analysis with analysis_key:"+analysis_key);
-    			renderConceptAnalysisNew(analysis_key, result_instance_id1, result_instance_id2, pw, request);
-				pw.write("<hr>");
-    			if(!i2b2HelperService.isLeafConceptKey(analysis_key)) //must be a folder so render all the value children
-    			{
-    				log.debug("iterating through all items in folder")
+        //Render the analysis.
+        renderModifierAnalysisNew(analysisModifier, tQD1, tQD2, pw, request);
 
-					for(String c : i2b2HelperService.getChildValueConceptsFromParentKey(concept_key))
-    				{
-    					log.debug("-- rendering "+c)
-    					//logMessage("child key:"+c);
-    					renderConceptAnalysisNew(c, result_instance_id1, result_instance_id2, pw, request);
-    					pw.write("<hr>");
-    				}
+        pw.write("<hr>");
 
+        //If this is a folder, render all the child value values as a box plot.
+        if(!(params.level == "leaf"))
+        {
+            for(Map c : i2b2ModifierHelperService.getChildModifiersFromParentKey(params.name, true, params.inOutCode))
+            {
+                renderModifierAnalysisNew(c, tQD2, tQD2, pw, request);
+                pw.write("<hr>");
+            }
+        }
 
-    			}
-				//renderPatientCountInfoTable(result_instance_id1, result_instance_id2, pw);
-				pw.write("</div></body></html>");
-				pw.flush();
-	}
-
+        pw.write("</div></body></html>");
+        pw.flush();
+    }
   /**
    * Action to get the basic statistics for the subset comparison and render them
    */
@@ -1392,6 +1431,257 @@ private void renderBoxAndWhiskerInfoTableNew(List<Number> values,String trial, S
 	pw.write("</table>");
 	return;
 }
+    private void renderModifierAnalysisNew(modifier, TransmartQueryDefinition tQD1, TransmartQueryDefinition tQD2, PrintWriter pw, HttpServletRequest request)
+    {
+        try
+        {
+            StringWriter sw1=new StringWriter();
+            StringWriter sw2=new StringWriter();
+
+            //Find which subsets are provided.
+            boolean s1=true;
+            boolean s2=true;
+
+            def result_instance_id1 = tQD1?.resultInstanceId;
+            def result_instance_id2 = tQD2?.resultInstanceId;
+
+            if(result_instance_id1=="" || result_instance_id1==null){s1=false;}
+            if(result_instance_id2=="" || result_instance_id2==null){s2=false;}
+
+            //Determine if this modifier is a value code or not.
+            if(modifier.oktousevalues == "Y")
+            {
+
+                ArrayList<Double> valuesAlist3 = new ArrayList<Double>();
+                ArrayList<Double> valuesAlist4 = new ArrayList<Double>();
+
+                valuesAlist3.addAll(i2b2ModifierHelperService.getConceptDistributionDataForValueModifierFromCode(modifier, result_instance_id1));
+                valuesAlist4.addAll(i2b2ModifierHelperService.getConceptDistributionDataForValueModifierFromCode(modifier, result_instance_id2));
+
+                log.debug("\tvaluesAlist3:"+valuesAlist3);
+                log.debug("\tvaluesAlist4:"+valuesAlist4);
+
+                double[] values3 = valuesAlist3.toArray();
+                double[] values4 = valuesAlist4.toArray();
+
+                /*render the double histogram*/
+                HistogramDataset dataset3 = new HistogramDataset();
+                if(s1){dataset3.addSeries("Subset 1", values3, 10, StatHelper.min(values3), StatHelper.max(values3));}
+                if(s2){dataset3.addSeries("Subset 2", values4, 10, StatHelper.min(values4), StatHelper.max(values4));}
+                JFreeChart chart3 = ChartFactory.createHistogram(
+                        "Histogram of "+modifier.name,
+                        null,
+                        "Count",
+                        dataset3,
+                        PlotOrientation.VERTICAL,
+                        true,
+                        true,
+                        false
+                );
+                chart3.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
+                XYPlot plot3 = (XYPlot) chart3.getPlot();
+                plot3.setForegroundAlpha(0.85f);
+
+                XYBarRenderer renderer3 = (XYBarRenderer) plot3.getRenderer();
+                renderer3.setDrawBarOutline(false);
+                // flat bars look best...
+                renderer3.setBarPainter(new StandardXYBarPainter());
+                renderer3.setShadowVisible(false);
+
+                NumberAxis rangeAxis3 = (NumberAxis) plot3.getRangeAxis();
+                rangeAxis3.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+                NumberAxis domainAxis3 = (NumberAxis) plot3.getDomainAxis();
+                //domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+                ChartRenderingInfo info3 = new ChartRenderingInfo(new StandardEntityCollection());
+
+                String filename3 = ServletUtilities.saveChartAsJPEG(chart3, 245, 180, info3, request.getSession());
+                String graphURL3 = request.getContextPath() + "/chart/displayChart?filename=" + filename3;
+
+                def results1;
+                def results2;
+
+                log.debug("B getting data distribution for child concepts by trial");
+
+                results1 = i2b2ModifierHelperService.getModifierDistributionDataForValueModifierWithResultInstanceId(modifier, result_instance_id1);
+                results2 = i2b2ModifierHelperService.getModifierDistributionDataForValueModifierWithResultInstanceId(modifier, result_instance_id2);
+
+                def width=200;
+                def offset=40;
+                DefaultBoxAndWhiskerCategoryDataset dataset= new DefaultBoxAndWhiskerCategoryDataset();
+                BoxAndWhiskerItem boxitem;
+                if(s1 && results1.size() > 0) {
+                    log.debug("size of results1: "+results1.size());
+                    for(key in results1.keySet()) {
+                        boxitem=BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(results1[key]);
+                        dataset.add(boxitem, "Subset 1", key);
+                        width=width+offset;
+                        sw1.write("<td>")
+                        renderBoxAndWhiskerInfoTableNew(results1[key], key, sw1);
+                        sw1.write("</td>")
+                    }
+                    if (results1.size() > 1) {
+                        // add an extra item with data for all trials
+                        ArrayList<Number> vals = values3;
+                        boxitem=BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(vals);
+                        dataset.add(boxitem, "Subset 1", "All trials");
+                        width=width+offset;
+                        sw1.write("<td>")
+                        renderBoxAndWhiskerInfoTableNew(vals, "All trials", sw1);
+                        sw1.write("</td>")
+                    }
+                } else {
+                    log.debug("No result found for either "+modifier.name+" or equivalent concepts for subset 1.")
+                }
+                if(s2 && results2.size() > 0 ) {
+                    log.debug("size of results2: "+results2.size());
+                    for(key in results2.keySet()) {
+                        boxitem=BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(results2[key]);
+                        dataset.add(boxitem, "Subset 2", key);
+                        width=width+offset;
+                        sw2.write("<td>")
+                        renderBoxAndWhiskerInfoTableNew(results2[key], key, sw2);
+                        sw2.write("</td>")
+                    }
+                    if (results2.size() > 1) {
+                        // add an extra item with data for all trials
+                        ArrayList<Number> vals = values4;
+                        boxitem=BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(vals);
+                        dataset.add(boxitem, "Subset 2", "All trials");
+                        width=width+offset;
+                        sw2.write("<td>")
+                        renderBoxAndWhiskerInfoTableNew(vals, "All trials", sw2);
+                        sw2.write("</td>")
+                    }
+                } else {
+                    log.debug("No results found for either "+modifier.name+" or equivalent concepts for subset 2.")
+                }
+                JFreeChart chart = ChartFactory.createBoxAndWhiskerChart(
+                        "Comparison of "+modifier.name, "Trial", "Value", dataset,
+                        true);
+                chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
+                CategoryPlot plot = (CategoryPlot) chart.getPlot();
+                plot.setDomainGridlinesVisible(true);
+                CategoryAxis domainAxis =(CategoryAxis)plot.getDomainAxis();
+                BoxAndWhiskerRenderer rend=(BoxAndWhiskerRenderer)plot.getRenderer();
+                rend.setMaximumBarWidth(0.10);
+
+                //adjust the width depending on number of sets
+
+                NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+                //rangeAxis7.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+                ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
+
+                String filename = ServletUtilities.saveChartAsJPEG(chart, width, 300, info, request.getSession());
+                String graphURL = request.getContextPath() + "/chart/displayChart?filename=" + filename;
+                pw.write("<table>");
+                pw.write("<tr><td align='center' colspan='5'><div class='analysistitle'>Analysis of "+modifier.name+" for subsets:</div></td></tr>");
+                pw.write("<tr>");
+                pw.write("<td><img src='"+graphURL3+"' width=245 height=180 border=0 usemap='#"+filename3+"' alt='Summary Stats Graph'>");
+                ChartUtilities.writeImageMap(pw, filename3, info3, false);
+                pw.write("</td>");
+                pw.write("<td>");
+                pw.write("<img src='"+graphURL+"' width="+width+" height=300 border=0 usemap='#"+filename+"' alt='Summary Stats Graph'>");
+                ChartUtilities.writeImageMap(pw, filename, info, false);
+                pw.write("</td>");
+                pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('help/boxplot.html');\"><img src=\"../images/information.png\" alt='Information'>")
+                pw.write("</a></div></td>");
+                pw.write("<td>")
+                pw.write("<table><tr><td>");
+                if(s1 && results1.size() > 0 ){
+                    pw.write("<table><tr><td colspan='"+results1.keySet().size()+"' align='center'>")
+                    pw.write("<h2>Subset 1</h2>");
+                    pw.write("</td></tr>");
+                    pw.write("<tr><td><table><tr>");
+                    pw.write(sw1.toString());
+                    pw.write("</tr></table></td></tr></table>");
+                } else {
+                    log.debug("No results found for either "+modifier.name+" or equivalent concepts for subset 1.")
+                }
+                pw.write("</td><td>");
+                if(s2 && results2.size() > 0 ){
+                    pw.write("<table><tr><td colspan='"+results2.keySet().size()+"' align='center'>")
+                    pw.write("<h2>Subset 2</h2>");
+                    pw.write("</td></tr>");
+                    pw.write("<tr><td><table><tr>");
+                    pw.write(sw2.toString());
+                    pw.write("</tr></table></td></tr></table>");
+                } else {
+                    log.debug("No results found for either "+modifier.name+" or equivalent concepts for subset 1.")
+                }
+                pw.write("</td><tr><td align=\"center\" colspan=2>");
+
+                // significance test
+                renderTTestHashMap(results1, results2, pw);
+
+                if (s1 && results1.size() == 0) {
+                    pw.write("No results found for either "+modifier.name+" or equivalent concepts for subset 1.")
+                }
+                if (s2 && results2.size() == 0) {
+                    pw.write("No results found for either "+modifier.name+" or equivalent concepts for subset 2.")
+                }
+
+
+                pw.write("</td></tr></table></td></tr></table>")
+
+            }
+            else
+            {
+                log.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                log.debug("Wasn't a value concept, doing a non-value concept analysis:")
+                HashMap<String, Integer> results1;
+                HashMap<String, Integer> results2;
+                if (s1) {
+                    results1=i2b2ModifierHelperService.getModifierDistributionDataForModifier(modifier, result_instance_id1);
+                    log.debug("concept_key:" + modifier.modifierCode + ", results1: " + results1);
+                }
+                if (s2) {
+                    results2=i2b2ModifierHelperService.getModifierDistributionDataForModifier(modifier, result_instance_id2);
+                    log.debug("concept_key:" + modifier.modifierCode + ", results2: " + results2);
+                }
+                int height=80+15*results1.size();
+
+                pw.write("<table width='100%'>");
+                pw.write("<tr><td align='center' colspan='2'><div class='analysistitle'>Analysis of "+modifier.name+" for subsets:</div></td></tr>");
+                pw.write("<tr><td width='50%'>");
+                if(s1){
+
+                    JFreeChart chart5=createConceptAnalysisBarChart(hashMapToCategoryDataset(results1, "Subset 1"), "Subset 1");
+                    ChartRenderingInfo info5 = new ChartRenderingInfo(new StandardEntityCollection());
+                    String filename5 = ServletUtilities.saveChartAsJPEG(chart5, 400, height, info5, request.getSession());
+                    String graphURL5 = request.getContextPath() + "/chart/displayChart?filename=" + filename5;
+                    pw.write("<img src='"+graphURL5+"' width=400 height="+height+" border=0 usemap='#"+filename5+"' alt='Summary Stats Graph'>");
+                    ChartUtilities.writeImageMap(pw, filename5, info5, false);
+                }
+                pw.write("</td><td align='center'>");
+                if(s2){
+                    JFreeChart chart6=createConceptAnalysisBarChart(hashMapToCategoryDataset(results2, "Subset 2"), "Subset 2");
+                    ChartRenderingInfo info6 = new ChartRenderingInfo(new StandardEntityCollection());
+                    String filename6 = ServletUtilities.saveChartAsJPEG(chart6, 400, height, info6, request.getSession());
+                    String graphURL6 = request.getContextPath() + "/chart/displayChart?filename=" + filename6;
+                    pw.write("<img src='"+graphURL6+"' width=400 height="+height+" border=0 usemap='#"+filename6+"' alt='Summary Stats Graph'>");
+                    ChartUtilities.writeImageMap(pw, filename6, info6, false);
+                }
+                pw.write("</td></tr><tr><td align='center'>");
+                if(s1){
+                    renderCategoryResultsHashMap(results1,"Subset 1",i2b2HelperService.getPatientSetSize(result_instance_id1), pw);
+                }
+                pw.write("</td><td align='center'>");
+                if(s2){
+                    renderCategoryResultsHashMap(results2, "Subset 2",i2b2HelperService.getPatientSetSize(result_instance_id2), pw);
+                }
+                pw.write("</td></tr><tr><td align=\"center\" colspan=2>");
+                renderChiSquaredHashMap(results1, results2, pw);
+                pw.write("</td></tr></table>")
+
+            }
+            log.debug("renderConceptAnalysisNew: finished rendering "+modifier.name)
+        }
+        catch(Exception e){log.error(e); e.printStackTrace();}
+    }
+
 
 
 
