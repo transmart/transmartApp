@@ -200,6 +200,7 @@ function buildAnalysisCrossTrial(name, modifierCode, level, oktousevalues, dropT
 	                timeout: '600000',
 	                params :  Ext.urlEncode(
 	                        {
+                                analisysType : "AccrossTrial",
 	                            charttype : "analysis",
 	                            name : name,
 	                            modifierCode : modifierCode,

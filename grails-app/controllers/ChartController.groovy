@@ -19,6 +19,8 @@
   
 
 import grails.converters.*
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+
 import java.io.*;
 import java.util.HashMap;
 import java.awt.*;
@@ -356,6 +358,9 @@ class ChartController {
 //	}
     def analysis = {
 
+         if(params.analisysType != null && (params.analisysType).equalsIgnoreCase("AccrossTrial"))
+          {
+              print "*************************************AccrossTrial***********************************params:"+params;
         def result_instance_id1=params.result_instance_id1;
         def result_instance_id2=params.result_instance_id2;
         def tQD1 = i2b2HelperService.getQueryDefinition(result_instance_id1);
@@ -393,8 +398,63 @@ class ChartController {
 
         pw.write("</div></body></html>");
         pw.flush();
+    }else{
+        getNavigateTermAnalysis(params) ;
     }
-  /**
+    }
+
+    void getNavigateTermAnalysis(GrailsParameterMap params) {
+        print "*************************************Navigate Terms***********************************params:"+params;
+        String concept_key=params.concept_key;
+        def result_instance_id1=params.result_instance_id1;
+        def result_instance_id2=params.result_instance_id2;
+        def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-Analysis by Concept", eventmessage:"RID1:"+result_instance_id1+" RID2:"+result_instance_id2+" Concept:"+concept_key, accesstime:new java.util.Date())
+        al.save()
+
+        String analysis_key=i2b2HelperService.getConceptKeyForAnalysis(concept_key);
+        PrintWriter pw=new PrintWriter(response.getOutputStream());
+        pw.write("<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body><div class='analysis'>");
+        //renderConceptAnalysis(analysis_key, result_instance_id1, result_instance_id2, pw, request);
+        log.debug("in analysis controller about to run render concept: "+analysis_key+" result_instance_id1:"+result_instance_id1);
+
+        // need to modify to try looking for equivalent concepts on both subsets
+        //String parentConcept = i2b2HelperService.lookupParentConcept(i2b2HelperService.keyToPath(concept_key));
+        //log.debug("parent concept: "+parentConcept);
+
+        //Set<String> cconcepts = i2b2HelperService.lookupChildConcepts(parentConcept, result_instance_id1, result_instance_id2);
+        //if (cconcepts.isEmpty()) {
+        //                            cconcepts.add(concept_key);
+        //            }
+
+        //            log.debug("child concepts: "+cconcepts);
+
+        log.debug("calling renderConceptAnalysisNew from analysis with analysis_key:"+analysis_key);
+        renderConceptAnalysisNew(analysis_key, result_instance_id1, result_instance_id2, pw, request);
+        pw.write("<hr>");
+        if(!i2b2HelperService.isLeafConceptKey(analysis_key)) //must be a folder so render all the value children
+        {
+            log.debug("iterating through all items in folder")
+
+            for(String c : i2b2HelperService.getChildValueConceptsFromParentKey(concept_key))
+            {
+                log.debug("-- rendering "+c)
+                //logMessage("child key:"+c);
+                renderConceptAnalysisNew(c, result_instance_id1, result_instance_id2, pw, request);
+                pw.write("<hr>");
+            }
+
+
+        }
+        //renderPatientCountInfoTable(result_instance_id1, result_instance_id2, pw);
+        pw.write("</div></body></html>");
+        pw.flush();
+
+
+
+
+
+    }
+/**
    * Action to get the basic statistics for the subset comparison and render them
    */
   def basicStatistics = {
