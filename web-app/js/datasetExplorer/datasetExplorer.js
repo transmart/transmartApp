@@ -712,16 +712,42 @@ Ext.onReady(function()
 		);
 
 
-		analysisGridPanel = new Ext.Panel(
-				{
-					id : 'analysisGridPanel',
-					title : 'Grid View',
-					region : 'center',
-					split : true,
-					height : 90,
-					layout : 'fit'
-				}
-		);
+            analysisGridPanel = new Ext.Panel(
+                {
+                    id : 'analysisGridPanel',
+                    title : 'Grid View',
+                    region : 'center',
+                    split : true,
+                    height : 90,
+                    layout : 'fit',
+                    listeners :
+                    {
+                        activate: function(p)
+                        {
+                            //If we haven't loaded the subsets yet, do so and load the grid.
+                            if (GLOBAL.CurrentSubsetIDs[1] == null && GLOBAL.CurrentSubsetIDs[2] == null)
+                            {
+                                analysisGridPanel.body.mask('Getting subsets...', 'x-mask-loading');
+
+                                //Run the query and get the grid data.
+                                runAllQueries(getSummaryGridData, p);
+                            }
+                            else if(!GLOBAL.isGridViewLoaded)
+                            {
+                                analysisGridPanel.body.mask('Getting subsets...', 'x-mask-loading');
+
+                                //The grid isn't loaded but subsets have been run already, just load the grid.
+                                getSummaryGridData();
+                            }
+                            else
+                            {
+                                //The grid is already loaded, just try to resize it.
+                                trySizeGridTable ();
+                            }
+                        }
+                    }
+                }
+        );
 		analysisPanel = new Ext.Panel(
 				{
 					id : 'analysisPanel',
@@ -4480,29 +4506,76 @@ function storeLoaded()
 
 function getAnalysisGridData(concept_key)
 {
-	gridstore = new Ext.data.JsonStore(
-			{
-				url : pageInfo.basePath+'/chart/analysisGrid',
-				root : 'rows',
-				fields : ['name', 'url']
-			}
-	);
-	gridstore.on('load', storeLoaded);
-	var myparams = Ext.urlEncode(
-			{
-				charttype : "analysisgrid",
-				concept_key : concept_key,
-				result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-				result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
-			}
-	);
-	// or a URL encoded string */
 
-	gridstore.load(
-			{
-				params : myparams
-			}
-	);
+    isGridLoadRunning = true;
+
+    analysisGridPanel.body.mask("Loading...", 'x-mask-loading');
+
+    var subset1 = GLOBAL.CurrentSubsetIDs[1] == null ? "" : GLOBAL.CurrentSubsetIDs[1];
+    var subset2 = GLOBAL.CurrentSubsetIDs[2] == null ? "" : GLOBAL.CurrentSubsetIDs[2];
+    var dataArray = {concept_key: concept_key, result_instance_id1:subset1, result_instance_id2: subset2, columnsOnly: false };
+
+    setupGridViewWrapper(); //Setup the html for the jquery datatable
+
+    setTimeout(function(){}, 1);
+
+    $j.getJSON(analysisGridUrl, dataArray, function (data) {
+
+        //Add the configuration settings for the grid
+        setupGridData(data);
+
+        gridPanelHeaderTips = data.headerToolTips.slice(0);
+
+        //Add the callback for when the grid is redrawn
+        data.fnDrawCallback = function( oSettings ) {
+
+            $j(".dataTables_scrollHeadInner > table > thead > tr > th").each( function (index) {
+
+                var titleAttr = $j(this).attr("title");
+
+                if (titleAttr == null && gridPanelHeaderTips != null)
+                {
+                    $j(this).attr("title", gridPanelHeaderTips[index]);
+                }
+
+            });
+
+            analysisGridPanel.body.unmask();
+        };
+        /* This removes the subject profile link from the grid
+         data.aoColumnDefs=[ {
+         "aTargets": [ 1 ],
+         "mData": function ( source, type, val ) {
+         return source[1];
+         },
+         "mRender": function ( data, type, full ) {
+         return '<a onclick="displayProfile('+full[0]+',\''+data+'\',\''+full[3]+'\')" href="#">'+data+'</a>';
+         }
+         } ];
+         */
+
+        modifyDataTable();
+
+        setTimeout(function(){}, 1);
+
+        window.dt = $j('#gridViewTable').dataTable(data);
+
+        if (window.dt.dataTableSettings[0].aoColumns.length !==  window.columnVis.length)
+        {
+            window.columnVis.push(true);
+        }
+
+        ColVis.fnApplyVis(window.dt) ;
+
+        $j(window).bind('resize', function () {
+            $j('#gridViewTable').dataTable().fnAdjustColumnSizing()
+        } );
+
+
+    });
+
+    analysisGridPanel.doLayout();
+    resultsTabPanel.body.unmask();
 }
 
 function getAnalysisPanelContent()
