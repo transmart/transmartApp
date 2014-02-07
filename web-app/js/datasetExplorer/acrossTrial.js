@@ -194,19 +194,17 @@ function buildAnalysisCrossTrial(name, modifierCode, level, oktousevalues, dropT
     {
         Ext.Ajax.request(
             {
-	                url : pageInfo.basePath+"/chart/analysis",
-	                method : 'POST',
-	                timeout: '600000',
-	                params :  Ext.urlEncode(
-	                        {
-                                analisysType : "AccrossTrial",
-	                            charttype : "analysis",
-	                            name : name,
-	                            modifierCode : modifierCode,
-	                            level : level,
-	                            oktousevalues : oktousevalues,
-	                            inOutCode : inOutCode,
-                                concept_key : modifierCode,
+                url : pageInfo.basePath+"/chart/analysisModifier",
+                method : 'POST',
+                timeout: '600000',
+                params :  Ext.urlEncode(
+                    {
+                        charttype : "analysis",
+                        name : name,
+                        modifierCode : modifierCode,
+                        level : level,
+                        oktousevalues : oktousevalues,
+                        inOutCode : inOutCode,
                         result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
                         result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
                     }

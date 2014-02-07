@@ -513,10 +513,6 @@ class ChartController {
         pw.write("</div></body></html>");
         pw.flush();
 
-
-
-
-
     }
 /**
    * Action to get the basic statistics for the subset comparison and render them
