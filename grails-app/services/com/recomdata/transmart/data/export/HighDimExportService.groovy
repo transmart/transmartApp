@@ -73,7 +73,7 @@ class HighDimExportService {
 
         String[] header = ['PATIENT ID']
         header += splitAttributeColumn ? ["SAMPLE TYPE", "TIMEPOINT", "TISSUE TYPE", "GPL ID"] : ["SAMPLE"]
-        header += ["ASSAY ID"]
+        header += ["ASSAY ID", "SAMPLE CODE"]
 
         Map<String, String> dataKeys = Maps.filterKeys(dataFields, {it in projection.dataProperties} as Predicate)
         dataKeys = Maps.transformValues(dataKeys, {it.toUpperCase()} as Function)
@@ -125,6 +125,7 @@ class HighDimExportService {
                     String timepointName =  assay.timepoint.label
                     String tissueTypeName = assay.tissueType.label
                     String platform =       assay.platform.id
+                    String sampleCode =     assay.sampleCode
 
                     List<String> line = [patientId]
                     if (splitAttributeColumn)
@@ -134,7 +135,7 @@ class HighDimExportService {
                     //      SAMPLE
                         line << [sampleTypeName, timepointName, tissueTypeName, platform].grep().join('_')
 
-                    line << assayId
+                    line << assayId << sampleCode
 
                     for (Map.Entry<String, String> entry: dataKeys) {
                         line << data[entry.key]
