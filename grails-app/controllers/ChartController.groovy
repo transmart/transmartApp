@@ -383,9 +383,9 @@ def analysis={
 		pw.write("<table width='100%'>");
 		pw.write("<tr><td colspan='2' align='center'><div class='analysistitle'>Summary Statistics</div></td></tr>");
 		pw.write("<tr><td width='50%' align='center'>");
-		if(s1){i2b2HelperService.renderQueryDefinition(result_instance_id1,"Query Summary for Subset 1", pw);}
+		if(s1){i2b2HelperService.renderQueryDefinition(result_instance_id1,"Query Summary for Subset 1", pw, null);}
 		pw.write("</td><td align='center'>");
-		if(s2){i2b2HelperService.renderQueryDefinition(result_instance_id2, "Query Summary for Subset 2", pw);}
+		if(s2){i2b2HelperService.renderQueryDefinition(result_instance_id2, "Query Summary for Subset 2", pw, null);}
 		pw.write("</tr>");
 		pw.write("<tr><td colspan='2' align='center'>");
 		renderPatientCountInfoTable(result_instance_id1, result_instance_id2, pw);

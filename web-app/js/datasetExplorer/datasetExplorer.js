@@ -19,6 +19,12 @@ var runner = new Ext.util.TaskRunner();
 
 var wfsWindow = null;
 
+//Grid state
+var isGridLoadDone = false;
+var isGridLoadRunning = false;
+var gridPanelHeaderTips;
+
+var searchPage = "datasetExplorer";
 
 function dataSelectionCheckboxChanged(ctl)
 {
@@ -507,6 +513,27 @@ Ext.onReady(function()
 								}
 							}
 					),
+                    new Ext.Toolbar.Separator(),
+                    new Ext.Toolbar.Button(
+                            {
+                                id : 'savesubsetsbutton',
+                                text : 'Save Subsets',
+                                iconCls : 'savebutton',
+                                disabled : false,
+                                handler : function()
+                                {
+                                    if(isSubsetEmpty(1) && isSubsetEmpty(2))
+                                    {
+                                        alert('Empty subsets found, need at least 1 valid subset to save a comparsion');
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        showSaveSubsetsDialog();
+                                    }
+                                }
+                            }
+                    ),
 					'->',
 					new Ext.Toolbar.Separator(),
 					new Ext.Toolbar.Button({
@@ -837,6 +864,28 @@ Ext.onReady(function()
 			}
 		);
 
+        //jira DEMOTM-138 Workspaces tab - subset and report grid CRUD
+        var workspacePanel = new Ext.Panel(
+                {
+                    id : 'workspacePanel',
+                    title : 'Workspace',
+                    region : 'center',
+                    split : true,
+                    height : 90,
+                    layout : 'fit',
+                    autoScroll : true,
+                    listeners :
+                    {
+                        activate : function(p) {
+                            renderWorkspace(p)
+                        },
+                        deactivate: function(){
+
+                        }
+                    },
+                    collapsible : true
+                }
+        );
 
 		metacoreEnrichmentPanel = new Ext.Panel(
 				{
@@ -883,6 +932,8 @@ Ext.onReady(function()
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
 		resultsTabPanel.add(analysisJobsPanel);
+        //jira DEMOTM-138 Workspaces tab - subset and report grid CRUD
+        resultsTabPanel.add(workspacePanel);
 
         // add genome browser panel if the plugin is installed
 
@@ -1190,24 +1241,34 @@ Ext.onReady(function()
 						        		   subset = getSubsetFromPanel(selectedConcept.parentNode)
 						        	   }
 
-						        	   if(!isSubsetEmpty(subset))
-						        	   {
-						        		   runQuery(subset, showConceptDistributionHistogramForSubset);
-						        	   }
-						        	   else alert('Subset is empty!');
-						        	   }
-						           }
-						           ,
-						           {
-						        	   text : 'OK',
-						        	   handler : function()
-						        	   {
-						        	   var mode = getSelected(document.getElementsByName("setValueMethod"))[0].value;
-						        	   var highvalue = document.getElementById("setValueHighValue").value;
-						        	   var lowvalue = document.getElementById("setValueLowValue").value;
-						        	   var units = document.getElementById("setValueUnits").value;
-						        	   var operator = document.getElementById("setValueOperator").value;
-						        	   var highlowselect = document.getElementById("setValueHighLowSelect").value;
+                                if(!isSubsetEmpty(subset))
+                                {
+
+                                    //AccrossTrial Changes 
+                                    if(GLOBAL.codeType == "Modifier")
+                                    {
+                                        runQueryAcrossTrial(subset, showConceptDistributionHistogramForSubset);
+                                    }
+                                    else
+                                    {
+                                        runQuery(subset, showConceptDistributionHistogramForSubset);
+                                    }
+                                    //AccrossTrial Changes
+                                }
+                                else alert('Subset is empty!');
+                            }
+                        }
+                        ,
+                        {
+                            text : 'OK',
+                            handler : function()
+                            {
+                                var mode = getSelected(document.getElementsByName("setValueMethod"))[0].value;
+                                var highvalue = document.getElementById("setValueHighValue").value;
+                                var lowvalue = document.getElementById("setValueLowValue").value;
+                                var units = document.getElementById("setValueUnits").value;
+                                var operator = document.getElementById("setValueOperator").value;
+                                var highlowselect = document.getElementById("setValueHighLowSelect").value;
 
 						        	   // make sure that there is a value set
 						        	   if (mode=="numeric" && operator == "BETWEEN" && (highvalue == "" || lowvalue== "")){
@@ -1292,33 +1353,37 @@ function hasMultipleTimeSeries()
 
 function createOntPanel()
 {
-	// make tab panel, search panel, ontTree and combine them
-	ontTabPanel = new Ext.TabPanel(
-			{
-				id : 'ontPanel',
-				region : 'center',
-				defaults :
-				{
-				hideMode : 'offsets'
-				}
-			,
-			collapsible : false,
-			height : 300,
-			width : 300,
-			deferredRender : false,
-			split : true,
-	        tools:[
-	               {
-		        		id:'help help-tree-panel',
-		        		qtip:'Click for context sensitive help',
-			        	handler: function(event, toolEl, panel)
-					    {
-					    	D2H_ShowHelp("1064", helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-					    }
-	        		}
-	        ]
-			}
-	);
+
+    // make tab panel, search panel, ontTree and combine them
+    ontTabPanel = new Ext.TabPanel(
+        {
+            id : 'ontPanel',
+            region : 'center',
+            defaults :
+            {
+                hideMode : 'offsets'
+            }
+            ,
+            collapsible : false,
+            height : 300,
+            width : 316,
+            deferredRender : false,
+            split : true,
+            listeners: {
+                tabchange: function(tp,newTab) {
+                    if(newTab.id == "acrossTrialTreePanel")
+                    {
+                        GLOBAL.codeType = "Modifier"
+                    }
+                    else
+                    {
+                        GLOBAL.codeType = "Concept"
+                    }
+
+                }
+            }
+        }
+    );
 
 	/* ontSearchTermsPanel = new Ext.TabPanel({
    id : 'searchTermsPanel',
@@ -1774,14 +1839,16 @@ function projectDialogComplete()
 }
 
 function getCategoriesComplete(ontresponse){
-	ontTabPanel.add(ontFilterPanel);
-	ontFilterTree.dragZone.addToGroup("analysis");
-	getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
 
-	if(GLOBAL.hideAcrossTrialsPanel != 'true') {
+    ontTabPanel.add(ontFilterPanel);
+    ontFilterTree.dragZone.addToGroup("analysis");
+    getSubCategories('navigateTermsPanel', 'Navigate Terms', ontresponse);
+    /*if(GLOBAL.hideAcrossTrialsPanel != 'true') {
         getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
-    }
-	setActiveTab();
+    }*/
+
+    drawHardcodedJQueryTree();
+    setActiveTab();
 }
 
 function setActiveTab(){
@@ -1890,6 +1957,19 @@ function getSubCategories(id_in, title_in, ontresponse)
             rootVisible : false,
             expanded : true,
             onShow : function() { showFn.apply(this, arguments); }
+            listeners :
+            {
+                activate: function(p){
+
+                    sizeNavigateTreePanel("navigateTermsPanel");
+
+                    $j(window).resize(function() {
+                        ontTabPanel.doLayout();
+                        sizeNavigateTreePanel("navigateTermsPanel");
+                    });
+
+                }
+            }
         }
     );
 	
@@ -1952,14 +2032,40 @@ function getSubCategories(id_in, title_in, ontresponse)
 		alert(ontresponse.responseText);
 	}
 
-	// ontTabPanel.add(ontSearchTermsPanel);
-	ontTabPanel.doLayout();
-	ontTree.dragZone.addToGroup("analysis");
-	/*if(GLOBAL.IsAdmin)
-   {
-   	searchByNameTree.dragZone.addToGroup("analysis");
-   }*/
-	
+    // ontTabPanel.add(ontSearchTermsPanel);
+    ontTabPanel.doLayout();
+    ontTree.dragZone.addToGroup("analysis");
+    sizeNavigateTreePanel("navigateTermsPanel");
+    /*if(GLOBAL.IsAdmin)
+     {
+     searchByNameTree.dragZone.addToGroup("analysis");
+     }*/
+
+}
+
+//Setup the navigate tree for scrolling. We need to wrap the UL element in a DIV and setup scrolling and height
+function sizeNavigateTreePanel(panelId)
+{
+
+    var parentPanel = $j("#" + panelId);
+    var rootEl = $j("#" + panelId + " ul").first();
+
+    var parentHeight = parentPanel.innerHeight();
+
+    var otherHeight = 0;
+
+    if (rootEl.parent().attr("id") != "nbtTreeWrapper") {
+        rootEl.wrap('<div id="nbtTreeWrapper" />');
+    }
+
+    var wrapper = $j("#nbtTreeWrapper");
+
+    wrapper.siblings().filter(":visible").each( function() {
+        otherHeight += $j(this).outerHeight();
+    });
+
+    wrapper.css("overflow", "auto").css("height", parentHeight - otherHeight );
+
 }
 
 function ontLoadNode(node)
@@ -1994,8 +2100,13 @@ function setupDragAndDrop()
 					}
 			);
 
+            //Enable jQuery dragging into the DIV.
+            jQuery("#queryCriteriaDiv" + s.toString() + '_' + i.toString()).addClass("jstree-drop");
 			dts.notifyDrop = function(source, e, data)
 			{
+                GLOBAL.currentSubsetsStudy=data.node.attributes.comment.substr(6);
+                //Analysis will change as a result of this drop, mark this
+                GLOBAL.AnalysisHasBeenRun = false;
 				if(source.tree.id == "previousQueriesTree")
 				{
 					getPreviousQueryFromID(data.node.attributes.id);
@@ -2068,12 +2179,17 @@ function setupDragAndDrop()
 		ddGroup : 'analysis'
 			}
 	);
+    //Add a css class which lets us drop across trial nodes into the results/analysis screen.
+    jQuery("#" + analysisPanel.body.id).addClass("jstree-drop");
+    jQuery("#" + analysisPanel.body.id).addClass("excludeValuePopup");
+    jQuery("#" + analysisPanel.body.id).addClass("results_analysis");
+
 
 	dts.notifyDrop = function(source, e, data)
 	{
 		// createAnalysisItem(data.node.text, data.node.id);
 		// alert("build analsyis graph now!");
-		buildAnalysis(data.node);
+		buildAnalysis(data.node,'stats');
 		return true;
 	}
 
@@ -2084,12 +2200,15 @@ function setupDragAndDrop()
 		ddGroup : 'analysis'
 			}
 	);
+    jQuery("#" + analysisGridPanel.body.id).addClass("jstree-drop");
+    jQuery("#" + analysisGridPanel.body.id).addClass("excludeValuePopup");
+    jQuery("#" + analysisGridPanel.body.id).addClass("results_grid");
 
-	dtg.notifyDrop = function(source, e, data)
+    dtg.notifyDrop = function(source, e, data)
 	{
 		// createAnalysisItem(data.node.text, data.node.id);
 		// alert("build analsyis graph now!");
-		buildAnalysis(data.node);
+		buildAnalysis(data.node,'grid');
 		return true;
 	}
 }
@@ -2619,14 +2738,29 @@ function runAllQueries(callback, panel)
 	STATE.QueryRequestCounter = subsetstorun;
 	/* set the number of requests before callback is fired for runquery complete */
 
-	// iterate through all subsets calling the ones that need to be run
-	for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1)
-	{
-		if( ! isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null)
-		{
-			runQuery(i, callback);
-		}
-	}
+    //Accross Trial Changes
+    if(ontTabPanel.getActiveTab().title == "Across Trial")
+    {
+        for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1)
+        {
+            if( ! isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null)
+            {
+                runQueryAcrossTrial(i, callback);
+            }
+        }
+    }
+    else
+    {
+        //For the navigate by study tab we use i2b2 to get the data.
+        // iterate through all subsets calling the ones that need to be run
+        for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1)
+        {
+            if( ! isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null)
+            {
+                runQuery(i, callback);
+            }
+        }
+    }//Accross Trial Changes
 }
 
 function runQuery(subset, callback) {
@@ -2835,80 +2969,84 @@ function getNodeForAnalysis(node)
 }
 
 
-function buildAnalysis(nodein)
+function buildAnalysis(nodein, dropType)
 {
-	var node = nodein // getNodeForAnalysis(nodein);
-	/* if(GLOBAL.analysisFirst == undefined) // clear out the body
-   {
-   analysisPanel.body.update("");
-   GLOBAL.analysisFirst = false;
-   }
-   var html = "<div style='overflow:auto;height:100%; width:100%'><table border='1' class='demoTable' style='border:1px solid black;margin:5px;'>";
-   html = html + "<tr><td colspan='3'><b>" + node.attributes.text + " Distribution</b></td></tr>";
-   html = html + "<tr><td>Concept</td><td>Count</td><td>Percentage</td></tr>";
-   node.expand();
-   for(var p = 0; p < node.childNodes.length; p ++ )
-   {
-   html = html + "<tr><td>" + node.childNodes[p].attributes.text + "</td><td>9</td><td>33.3%</td></tr>"
-   }
-   html = html + "</table></div>"
-   analysisPanel.body.update(html); */
-	if(isSubsetEmpty(1) && isSubsetEmpty(2))
-	{
-		alert('Empty subsets found, need a valid subset to analyze!');
-		return;
-	}
+    //alert(nodein);
+
+    if(dropType == 'stats')
+    {
+        analysisPanel.body.mask("Running analysis...", 'x-mask-loading');
+    }
+
+    if(dropType == 'grid')
+    {
+        analysisGridPanel.body.mask("Loading...", 'x-mask-loading');
+    }
+
+    var node = nodein;
 
 
-	if((GLOBAL.CurrentSubsetIDs[1] == null && ! isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && ! isSubsetEmpty(2)))
-	{
-		runAllQueries(function()
-				{
-			buildAnalysis(node);
-				}
-		);
-		return;
-	}
-	/* analysisPanel.load({
-   // url : "analysis.jsp",
-   url : "chart",
-   params : Ext.urlEncode({charttype : "analysis",
-   concept_key : node.attributes.id,
-   result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-   result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]}), // or a URL encoded string
-   // callback : yourFunction,
-   // scope : yourObject, // optional scope for the callback
-   discardUrl : false,
-   nocache : true,
-   text : "Loading...",
-   timeout : 30,
-   scripts : true
-   }); */
+    if(isSubsetEmpty(1) && isSubsetEmpty(2))
+    {
+        analysisPanel.body.unmask();
+        analysisGridPanel.body.unmask();
 
-	Ext.Ajax.request(
-			{
-				url : pageInfo.basePath+"/chart/analysis",
-				method : 'POST',
-				timeout: '600000',
-				params :  Ext.urlEncode(
-						{
-							charttype : "analysis",
-							concept_key : node.attributes.id,
-							result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-							result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
-						}
-				), // or a URL encoded string
-				success : function(result, request)
-				{
-				buildAnalysisComplete(result);
-				}
-			,
-			failure : function(result, request)
-			{
-				buildAnalysisComplete(result);
-			}
-			}
-	);
+        alert('Empty subsets found, need a valid subset to analyze!');
+        return;
+    }
+
+
+    if((GLOBAL.CurrentSubsetIDs[1] == null && ! isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && ! isSubsetEmpty(2)))
+    {
+        runAllQueries(function()
+            {
+                buildAnalysis(node, dropType);
+            }
+        );
+        analysisPanel.body.unmask();
+        return;
+    }
+
+    if(dropType == 'grid')
+    {
+        window.dragToGrid = true;
+        getAnalysisGridData(node.attributes.id);
+    }
+
+    if(dropType == 'stats')
+    {
+        Ext.Ajax.request(
+            {
+                url : pageInfo.basePath+"/chart/analysis",
+                method : 'POST',
+                timeout: '600000',
+                params :  Ext.urlEncode(
+                    {
+                        charttype : "analysis",
+                        concept_key : node.attributes.id,
+                        result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                        result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+                    }
+                ), // or a URL encoded string
+                success : function(result, request)
+                {
+
+                    //Add the code we just dragged in to the report list.
+                    GLOBAL.currentReportCodes.push(node.attributes.id)
+                    GLOBAL.currentReportStudy.push(node.attributes.comment)
+
+                    //node.comment
+                    buildAnalysisComplete(result);
+
+                }
+                ,
+                failure : function(result, request)
+                {
+                    buildAnalysisComplete(result);
+                }
+            }
+        );
+    }
 
 	resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
 	// analysisPanel.setTitle("Results/Analysis - Analysis of concept " + getShortNameFromKey(node.attributes.id));
@@ -2924,6 +3062,8 @@ function buildAnalysisComplete(result)
 
 function updateAnalysisPanel(html, insert)
 {
+    var saveButtonHtml="<div id='reportSaveButton'><button style='float:right' type='button' onclick='saveCodeReport()'>Save Report</button></div>";
+    var printButtonHtml="<div id='printButton'><button style='float:right' type='button' onclick='print()'>Print or Save Results</button></div><br>";
 	/* if(insert)
    {
    var frame = analysisPanel.getFrame();
@@ -2941,12 +3081,35 @@ function updateAnalysisPanel(html, insert)
 	{
 		var body = analysisPanel.body;
 		body.insertHtml('afterBegin', html, false);
+        jQuery("#reportSaveButton").remove();
+        jQuery("#printButton").remove();
+
+        body.insertHtml('afterBegin', printButtonHtml, false);
+        body.insertHtml('afterBegin', saveButtonHtml, false);
 		body.scrollTo('top', 0, false);
 	}
 	else
 	{
 		analysisPanel.body.update(html, false, null);
 	}
+    analysisPanel.body.unmask();
+}
+
+function print(){
+    var text = getAnalysisPanelContent();
+
+    //Using string manipulation to hide the redundant buttons when printing reports screen.
+    //There should be a better way to do this by cloning the dom and manipulating it using jQuery.
+    if(text.indexOf("id=printButton")>-1){
+        text = text.replace("id=reportSaveButton","id=\"reportSaveButton\" style=\"display:none\"");
+        text = text.replace("id=printButton","id=\"printButton\" style=\"display:none\"");
+    }else{
+        text = text.replace("id=\"reportSaveButton\"","id=\"reportSaveButton\" style=\"display:none\"");
+        text = text.replace("id=\"printButton\"","id=\"printButton\" style=\"display:none\"");
+    }
+
+
+    printPreview(text);
 }
 
 function searchByNameComplete(response)
@@ -3922,7 +4085,7 @@ function searchByName()
 	);
 }
 
-function getSummaryStatistics()
+function getSummaryStatistics(postCompletionFunction,postCompletionFunctionParameter)
 {
 	Ext.Ajax.request(
 			{
@@ -3931,6 +4094,7 @@ function getSummaryStatistics()
 				success : function(result, request)
 				{
 				getSummaryStatisticsComplete(result);
+                if(postCompletionFunction) postCompletionFunction(postCompletionFunctionParameter)
 				}
 			,
 			failure : function(result, request)
@@ -4062,32 +4226,202 @@ function activateTab(tab)
     resultsTabPanel.tools['help help-resana-panel'].dom.style.display="";
 }
 
+/*function getSummaryGridData()
+{
+    gridstore = new Ext.data.JsonStore(
+        {
+            url : pageInfo.basePath+'/chart/basicGrid',
+            root : 'rows',
+            fields : ['name', 'url']
+        }
+    );
+    gridstore.on('load', storeLoaded);
+    var myparams = Ext.urlEncode(
+        {
+            charttype : "basicgrid",
+            concept_key : "",
+            result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+            result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+        }
+    );
+    // or a URL encoded string *//*
+
+    gridstore.load(
+        {
+            params : myparams
+        }
+    );
+}*/
+
+
 function getSummaryGridData()
 {
-	gridstore = new Ext.data.JsonStore(
-			{
-				url : pageInfo.basePath+'/chart/basicGrid',
-				root : 'rows',
-				fields : ['name', 'url']
-			}
-	);
-	gridstore.on('load', storeLoaded);
-	var myparams = Ext.urlEncode(
-			{
-				charttype : "basicgrid",
-				concept_key : "",
-				result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-				result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
-			}
-	);
-	// or a URL encoded string */
 
-	gridstore.load(
-			{
-				params : myparams
-			}
-	);
+    isGridLoadRunning = true;
+    analysisGridPanel.body.mask("Loading...", 'x-mask-loading');
+
+    var subset1 = GLOBAL.CurrentSubsetIDs[1] == null ? "" : GLOBAL.CurrentSubsetIDs[1];
+    var subset2 = GLOBAL.CurrentSubsetIDs[2] == null ? "" : GLOBAL.CurrentSubsetIDs[2];
+    var dataArray = {columnsOnly: false, result_instance_id1:subset1, result_instance_id2: subset2, codeType : GLOBAL.codeType };
+
+    setupGridViewWrapper();  //Add the datatable html if needed
+
+    setTimeout(function(){}, 1);
+
+    $j.getJSON(basicGridUrl, dataArray, function (data) {
+
+        setupGridData(data);
+
+        gridPanelHeaderTips = data.headerToolTips.slice(0);
+
+        data.fnDrawCallback = function( oSettings ) {
+
+        };
+
+        modifyDataTable();
+
+        setTimeout(function(){}, 1);
+
+        analysisGridPanel.body.mask("Data fetched, processing results...", 'x-mask-loading');
+
+        /* This removes the subject profile link from the grid
+         data.aoColumnDefs=[ {
+         "aTargets": [ 1 ],
+         "mData": function ( source, type, val ) {
+         return source[1];
+         },
+         "mRender": function ( data, type, full ) {
+         return '<a onclick="displayProfile('+full[0]+',\''+data+'\',\''+full[3]+'\')" href="#">'+data+'</a>';
+         }
+         } ];
+         */
+
+        window.dt = $j('#gridViewTable').dataTable(data);
+
+        $j(window).bind('resize', function () {
+            $j('#gridViewTable').dataTable().fnAdjustColumnSizing();
+        } );
+
+        analysisGridPanel.body.unmask();
+
+        ColVis.fnSaveVis(window.dt);
+
+    });
+
+    //resultsTabPanel.setActiveTab('analysisGridPanel');
+    analysisGridPanel.doLayout();
+
+    resultsTabPanel.body.unmask();
+
 }
+
+
+function modifyDataTable() {
+
+    //Override the pre-sorting algorithm for numerics so empty values go to top or bottom
+    $j.fn.dataTableExt.oSort['numeric-pre']  = function(a) {
+
+        var floatA = parseFloat(a);
+        var returnValue;
+
+        if (isNaN(floatA))
+            returnValue = Number.MAX_VALUE * -1;	//Emptys will go to top for -1, bottom for +1
+        else
+            returnValue = floatA;
+
+        return returnValue;
+    };
+}
+
+function setupGridViewWrapper()
+{
+    var gridTable = $j('#gridViewTable');
+    var gpBody = analysisGridPanel.body;
+
+    //Remove the wrapper html if it exists
+    if (gridTable.length != 0)
+    {
+        var gridViewWrapper = $j('#gridViewWrapper');
+        if (gridViewWrapper.length != 0) {
+            gridViewWrapper.remove();
+        }
+    }
+
+    gpBody.insertHtml('afterBegin', '<div id=\'gridViewWrapper\'><table id=\'gridViewTable\'></table></div><div id=\'subjectProfileWrapper\'></div>');
+}
+
+
+function setupGridData(data)
+{
+    data.bAutoWidth = true;
+    data.bScrollAutoCss = true;
+    data.sScrollY = 400;
+    data.sScrollX = "100%";
+    data.bDestroy = true;
+    data.bProcessing = true;
+    data.bLengthChange = false;
+    data.bScrollCollapse = false;
+    data.iDisplayLength = 100;
+    data.isDrawingDelayed = true;
+    data.fnLoadCallBack = function() {
+        isGridLoadDone = true;
+        GLOBAL.isGridViewLoaded = true;
+        trySizeGridTable();
+    };
+    data.sDom = "<\"top\"RfCp>rt<\"bottom\"ip><\"clear\">";
+}
+
+var trySizeGridTable = function ()
+{
+
+    if (!isGridLoadRunning) { return; }
+
+    var activePanel = resultsTabPanel.getActiveTab();
+
+    if (isGridLoadDone && activePanel == analysisGridPanel )
+    {
+        sizeGridTable();
+    }
+    else
+    {
+        setTimeout(function() {trySizeGridTable}, 500);
+    }
+}
+
+
+var sizeGridTable = function ()
+{
+
+    var gridTable = $j('#gridViewTable');
+
+    //Don't try to size the table if there is no table
+    if (gridTable == null)
+    {
+        return;
+    }
+
+    var d = gridTable.dataTable({"bRetrieve": true});
+    d.fnAdjustColumnSizing();
+
+    $j(".dataTables_scrollHeadInner > table > thead > tr > th").each( function (index) {
+
+        var titleAttr = $j(this).attr("title");
+
+        if (titleAttr == null && gridPanelHeaderTips != null)
+        {
+            $j(this).attr("title", gridPanelHeaderTips[index]);
+        }
+
+    });
+
+    analysisGridPanel.body.unmask();
+
+    isGridLoadRunning = false;
+    isGridLoadDone = false;
+
+
+}
+
 
 function storeLoaded()
 {

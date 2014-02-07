@@ -38,6 +38,8 @@ function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalu
 	this.value=value;
 	this.nodeType = nodeType
     this.visualattributes = visualattributes;
+    this.inOutCode = inOutCode;
+    this.timingLevel = timingLevel;
 }
 
 function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
@@ -107,7 +109,9 @@ function convertNodeToConcept(node)
 	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes);
 	return myConcept;
 }
-function createPanelItemNew(panel, concept)
+
+
+function createPanelItemNew(panel, concept, shortNameDepth)
 {
 	var li=document.createElement('div'); //was li
 	//convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
@@ -128,14 +132,98 @@ function createPanelItemNew(panel, concept)
 	li.setAttribute('oktousevalues',concept.oktousevalues);
 	li.setAttribute('setnodetype',concept.nodeType);
 	li.setAttribute('visualattributes',concept.visualattributes);
+    li.setAttribute('ismodifier', concept.ismodifier);
+    li.setAttribute('modifiername', concept.modifiername);
+    li.setAttribute('modifierappliedpath', concept.modifierappliedpath);
+    li.setAttribute('modifierkey', concept.modifierkey);
+    li.setAttribute('inOutCode', typeof concept.inOutCode !== 'undefined' ? concept.inOutCode : '');
+    li.setAttribute('timingLevel', typeof concept.timingLevel !== 'undefined' ? concept.timingLevel : '');
 	li.className="conceptUnselected";
 	
-	//Create a shortname
-	var splits=concept.key.split("\\");
-	var shortname="";
-	if(splits.length>1)
-	{
-	shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
+    //Create a shortname
+    var splits=concept.tooltip.split("\\");
+    var shortname="...";
+
+    //Use default shortName depth of 2 if not specified
+    if(shortNameDepth==null){
+        shortNameDepth=2;
+    }
+
+    if(splits.length>1)
+    {
+        for(var i = shortNameDepth; i>0 ; i--){
+            shortname += "\\"+splits[splits.length-i];
+        }
+    }
+    else shortname=splits[splits.length-1];
+    if(concept.ismodifier){shortname=shortname+" ["+concept.modifiername+"] ";}
+    li.setAttribute('conceptshortname',shortname);
+
+    //Create a setvalue description
+    var valuetext="";
+    if(typeof(concept.value.mode)!="undefined")
+    {
+        valuetext=getSetValueText(concept.value.mode, concept.value.operator, concept.value.highlowselect, concept.value.highvalue, concept.value.lowvalue, concept.value.units);
+        li.setAttribute('conceptsetvaluetext',valuetext);
+    }
+    else
+    {
+        li.setAttribute('conceptsetvaluetext','');
+    }
+    //Create the node
+    var text=document.createTextNode(shortname+" "+valuetext); //used to be name
+    li.appendChild(text);
+    panel.appendChild(li);
+    Ext.get(li).addListener('click',conceptClick);
+    Ext.get(li).addListener('contextmenu',conceptRightClick);
+    new Ext.ToolTip({ target:li, html:concept.key, dismissDelay:10000 });
+    li.concept=concept;
+    //return the node
+    var subset=getSubsetFromPanel(panel);
+    invalidateSubset(subset);
+    return li;
+}
+
+
+//took this 3 params method(createPanelItemNew) from FDA code and changed the name to 'createPanelItemNewWithShortName' to overcome method overloading issue in javascript
+function createPanelItemNewWithShortName(panel, concept, shortNameDepth)
+{
+    var li=document.createElement('div'); //was li
+//convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
+    li.setAttribute('conceptname',concept.name);
+    li.setAttribute('conceptid', concept.key);
+    li.setAttribute('conceptlevel',concept.level);
+    li.setAttribute('concepttooltip', concept.tooltip);
+    li.setAttribute('concepttablename',concept.tablename);
+    li.setAttribute('conceptdimcode',concept.dimcode);
+    li.setAttribute('conceptcomment', concept.comment);
+    li.setAttribute('normalunits',concept.normalunits);
+    li.setAttribute('setvaluemode',concept.value.mode);
+    li.setAttribute('setvalueoperator',concept.value.operator);
+    li.setAttribute('setvaluehighlowselect',concept.value.highlowselect);
+    li.setAttribute('setvaluehighvalue',concept.value.highvalue);
+    li.setAttribute('setvaluelowvalue',concept.value.lowvalue);
+    li.setAttribute('setvalueunits',concept.value.units);
+    li.setAttribute('oktousevalues',concept.oktousevalues);
+    li.setAttribute('setnodetype',concept.nodeType);
+    li.setAttribute('inOutCode', typeof concept.inOutCode !== 'undefined' ? concept.inOutCode : '');
+    li.setAttribute('timingLevel', typeof concept.timingLevel !== 'undefined' ? concept.timingLevel : '');
+    li.className="conceptUnselected";
+
+//Create a shortname
+    var splits=concept.tooltip.split("\\");
+    var shortname="...";
+
+//Use default shortName depth of 2 if not specified
+    if(shortNameDepth==null){
+        shortNameDepth=2;
+    }
+
+    if(splits.length>1)
+    {
+        for(var i = shortNameDepth; i>0 ; i--){
+            shortname += "\\"+splits[splits.length-i];
+        }
 	}
 	else shortname=splits[splits.length-1];
 	li.setAttribute('conceptshortname',shortname);
@@ -164,6 +252,7 @@ function createPanelItemNew(panel, concept)
 	invalidateSubset(subset);
 	return li;
 }
+
 function getSubsetFromPanel(panel)
 {
 return panel.id.substr(16,1);
@@ -344,7 +433,15 @@ function clearGroup(subset, panel)
 		}	
 	//reset the class
 	qc.dom.className="queryGroupInclude";
-	invalidateSubset(subset);
+
+    //Enable jQuery dragging into the DIV.
+    jQuery("#queryCriteriaDiv" + subset + "_" + panel).addClass("jstree-drop");
+    jQuery("#queryCriteriaDiv" + subset + "_" + panel).addClass("queryGroupSAMEEVENT");
+    jQuery("#btnPanelTimingGroup"+subset+"_"+panel).text("Independent");
+
+    invalidateSubset(subset);
+    //Analysis has changed, mark this
+    GLOBAL.AnalysisHasBeenRun = false;
 }
 
 function excludeGroup(btn,subset, panel)
@@ -362,6 +459,8 @@ if(el.dom.className=="queryGroupInclude")
 	button.firstChild.nodeValue="Exclude";
 	}
 	invalidateSubset(subset);
+    //Analysis has changed, mark this
+    GLOBAL.AnalysisHasBeenRun = false;
 }
 
 function conceptClick(event)
@@ -391,7 +490,11 @@ function conceptRightClick(event)
 	text: 'Delete', handler: function(){
 										selectedDiv.removeChild(selectedConcept);
 										invalidateSubset(getSubsetFromPanel(selectedDiv));
-										
+                                        //Analysis has changed, mark this and invalidate current subsets
+                                        GLOBAL.CurrentSubsetIDs[1]=null;
+                                        GLOBAL.CurrentSubsetIDs[2]=null;
+                                        GLOBAL.AnalysisHasBeenRun = false;
+
 										}
 	},{id: 'setvaluemenu', text: 'Set Value', handler:function(){showSetValueDialog();}},
 	{
@@ -517,8 +620,9 @@ function invalidateSubset(subset)
 {
 if(GLOBAL.CurrentSubsetIDs[subset]!=null) //check if its already been invalidated so i dont call again (otherwise I clear ap and grid too many times)
 	{
-	GLOBAL.CurrentSubsetIDs[subset]=null; //invalidate the subset
-	clearAnalysisPanel();
+        GLOBAL.AnalysisHasBeenRun = false;
+	    GLOBAL.CurrentSubsetIDs[subset]=null; //invalidate the subset
+	    clearAnalysisPanel();
 	}
 }
 
@@ -737,7 +841,7 @@ function showPathwaySearchBox(selectedListEltName, pathwayAndIdEltName, searchIn
 					{name: 'uid'},
 					{name: 'source'},
 					{name: 'name'},
-					{name: 'type'},
+					{name: 'type'}
 			   	]
 			)
 		});
@@ -1937,7 +2041,7 @@ function getTreeNodeFromJsonNode(concept)
     tablename			= concept.dimensionTableName;
     visualattributes	= concept.visualAttributes;
 
-    comment				= ''; //XXX
+    comment				= concept.comment; //XXX
     normalunits			= concept.metadata
                               ? concept.metadata.unitValues.normalUnits
                               : '';
