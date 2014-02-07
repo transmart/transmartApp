@@ -1,4 +1,4 @@
-/*************************************************************************
+    /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
  * Copyright 2008-2012 Janssen Research & Development, LLC.
@@ -1976,7 +1976,7 @@ function getSubCategories(id_in, title_in, ontresponse)
             region : 'center',
             rootVisible : false,
             expanded : true,
-            onShow : function() { showFn.apply(this, arguments); }
+            onShow : function() { showFn.apply(this, arguments); },
             listeners :
             {
                 activate: function(p){
