@@ -62,7 +62,9 @@ class DataExportService {
         def study = null
         def File studyDir = null
         def filesDoneMap = [:]
-        Map selection = new JsonSlurper().parseText(jobDataMap.selection)
+        def selection = jobDataMap.selection ?
+            new JsonSlurper().parseText(jobDataMap.selection)
+            : [:]
 
         if (StringUtils.isEmpty(jobTmpDirectory)) {
             jobTmpDirectory = grailsApplication.config.com.recomdata.transmart.data.export.jobTmpDirectory
