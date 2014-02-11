@@ -253,8 +253,7 @@ function checkJobStatus(jobName) {
                             clear: true
                         });
                         cancBtn.setVisible(false);
-                    }
-                    else if (status == 'Completed') {
+                    } else if (status == 'Completed') {
                         singletonflag++;
 
                         if (jWindow != null && jWindow.isVisible()) {
@@ -275,10 +274,7 @@ function checkJobStatus(jobName) {
                                 // < 120 seconds, just popup the heatmap.
                                 // >= 120 seconds then popup a message to indicate that the heatmap is finished.
                                 if (secCount < 120) {
-                                    // Disabling this line seems to fix https://jira.thehyve.nl/browse/SAN-281 and does not
-                                    // seem to have negative side effects. #ShotGunDebugging
-                                    // FIXME: verify this fix
-                                    //runVisualizerFromSpan(viewerURL, altViewerURL);
+                                    runVisualizerFromSpan(viewerURL, altViewerURL);
                                 } else {
                                     Ext.Msg.buttonText.yes = 'View Now';
                                     Ext.Msg.buttonText.no = 'View Later';
