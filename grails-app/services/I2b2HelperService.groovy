@@ -645,21 +645,25 @@ class I2b2HelperService {
                             patient_num,
                             LISTAGG ( sample_cd, ', ' )
                                 WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
-                        FROM
-                            ( SELECT patient_num, sample_cd 
-							  FROM observation_fact
-						      WHERE patient_num IN (
-                                SELECT
-                                    DISTINCT patient_num
-                                FROM
-                                    qt_patient_set_collection
-                                WHERE
-                                    result_instance_id = ? )
-							  GROUP BY patient_num, sample_cd
-							) o
-                        GROUP BY
-                            patient_num )
-                    S ON ( S.patient_num = I.patient_num )
+                        FROM ( 
+                            SELECT 
+                                patient_num, sample_cd 
+                            FROM 
+                                observation_fact
+                            WHERE 
+                                patient_num IN (
+                                    SELECT
+                                        DISTINCT patient_num
+                                    FROM
+                                        qt_patient_set_collection
+                                    WHERE
+                                        result_instance_id = ? )
+                            GROUP BY 
+                                patient_num, sample_cd
+                        ) 
+                        GROUP BY 
+                            patient_num 
+                    ) S ON ( S.patient_num = I.patient_num )
                 ORDER BY
                     I.PATIENT_NUM''';
 
