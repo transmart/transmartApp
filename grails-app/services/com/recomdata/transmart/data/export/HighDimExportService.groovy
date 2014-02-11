@@ -18,8 +18,11 @@ import org.transmartproject.core.dataquery.highdim.projections.Projection
 class HighDimExportService {
 
     def highDimensionResourceService
+    // FIXME: jobResultsService lives in Rmodules, so this is probably not a dependency we should have here
+    def jobResultsService
 
     def exportHighDimData(Map args) {
+        // String jobName
         // boolean splitAttributeColumn
         // String (but really a number) resultInstanceId
         // List<String> conceptPaths
@@ -45,6 +48,7 @@ class HighDimExportService {
 
          */
 
+        String jobName = args.jobName
         String dataType = args.dataType
         boolean splitAttributeColumn = args.get('splitAttributeColumn', false)
         def resultInstanceId = args.resultInstanceId
@@ -55,6 +59,9 @@ class HighDimExportService {
         Map rowFields = [geneSymbol: 'gene symbol', geneId: 'gene id', mirnaId: 'mirna id', peptide: 'peptide sequence',
                 antigenName: 'analyte name', uniprotId: 'uniprot id', transcriptId: 'transcript id']
 
+
+        if (jobIsCancelled(jobName))
+            return null
 
         HighDimensionDataTypeResource dataTypeResource = highDimensionResourceService.getSubResourceForType(dataType)
 
@@ -112,6 +119,8 @@ class HighDimExportService {
             for (BioMarkerDataRow<Map<String, String>> datarow : tabularResult) {
                 for (AssayColumn assay : assayList) {
                     rowsFound++
+                    if (rowsFound % 1024 == 0 && jobIsCancelled(jobName))
+                        return null
                     //if (rowsFound > 20) break writeloop
 
                     Map<String, String> data = datarow[assay]
@@ -162,5 +171,13 @@ class HighDimExportService {
         }
 
         return [outFile: fileName, dataFound: rowsFound]
+    }
+
+    def boolean jobIsCancelled(jobName) {
+        if (jobResultsService[jobName]["Status"] == "Cancelled") {
+            log.warn("${jobName} has been cancelled")
+            return true
+        }
+        return false
     }
 }
