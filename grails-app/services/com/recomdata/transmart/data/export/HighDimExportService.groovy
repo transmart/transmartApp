@@ -117,8 +117,9 @@ class HighDimExportService {
                     Map<String, String> data = datarow[assay]
 
                     // TODO: This probably shouldn't happen, but it does!
-                    if (data == null)
+                    if (data == null) {
                         continue
+                    }
 
                     String assayId =        assay.id
                     String patientId =      assay.patientInTrialId
