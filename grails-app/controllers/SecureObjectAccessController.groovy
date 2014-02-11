@@ -112,10 +112,13 @@ class SecureObjectAccessController {
 
     def manageAccessBySecObj = {
         def secureObjInstance
-        if (params.secureobjectid != null)
+        if (params.secureobjectid != null) {
             secureObjInstance = SecureObject.get(params.secureobjectid);
-        if (secureObjInstance == null)
-            secureObjInstance = SecureObject.get(SecureObject.listOrderByDisplayName().first().id)
+        }
+        if (secureObjInstance == null) {
+            secureObjInstance = SecureObject.list(
+                    sort: 'displayName', order: 'asc', max: 1)?.first()
+        }
 
         def access = SecureAccessLevel.findByAccessLevelName("VIEW");
         def accessid = params.accesslevelid
@@ -124,15 +127,16 @@ class SecureObjectAccessController {
         }
 
         def searchtext = params.searchtext;
-        if (searchtext == null)
+        if (searchtext == null) {
             searchtext = ''
+        }
 
-        def secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
-        def userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
+        def secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access)
+        def userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext)
 
-        log.debug("accesslist:" + secureObjectAccessList);
-        log.debug("noaccess:" + userwithoutaccess);
-        log.debug("sec:" + secureObjInstance);
+        log.debug("accesslist: $secureObjectAccessList")
+        log.debug("noaccess: $userwithoutaccess")
+        log.debug("sec: $secureObjInstance")
 
         render(view: 'managePrincipalAccess', model: [
                 secureObjectInstance: secureObjInstance,
