@@ -366,10 +366,10 @@ class GenericJobService implements Job {
      * @param status - the new status
      * @return
      */
-    def updateStatus(jobName, status) {
+    def updateStatus(jobName, status, viewerURL = null, altViewerURL = null, results = null) {
         jobResultsService[jobName]["Status"] = status
         log.debug(status)
-        asyncJobService.updateStatus(jobName, status)
+        asyncJobService.updateStatus(jobName, status, viewerURL, altViewerURL, results)
     }
 
     def boolean isJobCancelled(jobName) {
