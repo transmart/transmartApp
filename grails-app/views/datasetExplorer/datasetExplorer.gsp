@@ -49,7 +49,19 @@
 	
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
+<script type="text/javascript"
+        src="${resource(dir: 'js/jQuery/multiselect', file: 'jquery.multiselect.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery.tablesorter.min.js')}"></script>
+<script type="text/javascript"
+        src="${resource(dir: 'js/jQuery/validate', file: 'jquery.validate.min.js')}"></script>
+<script type="text/javascript"
+        src="${resource(dir: 'js/jQuery/validate', file: 'additional-methods.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery.dataTables.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js/jQuery/custom', file: 'fnGetColumnData.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js/jQuery/flot', file: 'jquery.flot.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js/jsTree', file: 'jquery.jstree.js')}"></script>
+<script type="text/javascript"
+        src="${resource(dir: 'js/datasetExplorer', file: 'workflowValidationFunctions.js')}"></script>
   
 <script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script> 
 
@@ -100,14 +112,14 @@
 
     <!-- Adding these validation functions to get the Forest Plot to work. These might be able to be blended into the javascript object that controls the advanced workflow validation. -->
     <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'workflowValidationFunctions.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
 	
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 	
 	<script type="text/javascript" src="${resource(dir:'js/raphael', file:'raphael-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/cortellisAnalytics', file:'cortellisAnalytics.js')}"></script>
 		
 </head>
 

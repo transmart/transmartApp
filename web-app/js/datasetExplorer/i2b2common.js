@@ -747,7 +747,7 @@ function createPathwaySearchBox(searchInputEltName, divName){
 					{name: 'uid'},
 					{name: 'source'},
 					{name: 'name'},
-					{name: 'type'},
+					{name: 'type'}
 			   	]
 			)
 		});
@@ -1826,7 +1826,7 @@ var query="";
 //Interate over the criteria groups
 for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
 	{
-		
+
 		var qcd=Ext.get("queryCriteriaDiv"+subset+'_'+i.toString());
 		if(qcd.dom.childNodes.length>0)
 		{
