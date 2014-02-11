@@ -22,46 +22,30 @@ class HighDimExportService {
     def jobResultsService
 
     def exportHighDimData(Map args) {
-        // String jobName
-        // boolean splitAttributeColumn
-        // String (but really a number) resultInstanceId
-        // List<String> conceptPaths
-        // String dataType
-        // String studyDir
-
-        // dataType one of: mrna, mirna, protein, rbm, rnaseqcog, (metabolomics)
-
-//        // static input for now: a resultInstanceId and a list of concept paths
-//        def resultInstanceId = 23306  //22967
-//        def conceptPaths = [/\\Public Studies\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung/]
-
+        String jobName =                args.jobName
+        String dataType =               args.dataType
+        boolean splitAttributeColumn =  args.get('splitAttributeColumn', false)
+        def resultInstanceId =          args.resultInstanceId
+        List<String> conceptPaths =     args.conceptPaths
+        String studyDir =               args.studyDir
 
         /*
-         per-datatype fields we need to export:
+         dataType one of: mrna, mirna, protein, rbm, rnaseqcog, metabolite
 
-         mrna: (trialName), rawIntensity->value zscore logIntensity->log2e / probe (id), geneSymbol, geneId
-         mirna: rawIntensity, logIntensity, zscore / mirnaId
-         protein: intensity, zscore / peptide -> peptide sequence, unitProtId
-         rbm: value, zscore / antigenName, uniprotId   ---gplId, antigenName, uniprotId, geneSymbol, geneId
-         rnaseqcog: rawIntensity, zscore / transcriptId, geneSymbol, geneId   ---transcriptId, geneSymbol, geneId
-         metabolomics: (not implemented in coredb) ?? / biochemical name, hmdbId
+         example inputs:
+         resultInstanceId = 23306  //22967
+         conceptPaths = [/\\Public Studies\Public Studies\GSE8581\MRNA\Biomarker Data\Affymetrix Human Genome U133A 2.0 Array\Lung/]
+        */
 
-         */
-
-        String jobName = args.jobName
-        String dataType = args.dataType
-        boolean splitAttributeColumn = args.get('splitAttributeColumn', false)
-        def resultInstanceId = args.resultInstanceId
-        List<String> conceptPaths = args.conceptPaths
-        String studyDir = args.studyDir
-
-        Map dataFields = [rawIntensity: 'value', intensity: 'value', 'value': 'value', logIntensity: 'log2e', zscore: 'zscore']
+        // These maps specify the row header in the output file for each database field name.
+        Map dataFields = [rawIntensity: 'value', intensity: 'value', value: 'value', logIntensity: 'log2e', zscore: 'zscore']
         Map rowFields = [geneSymbol: 'gene symbol', geneId: 'gene id', mirnaId: 'mirna id', peptide: 'peptide sequence',
                 antigenName: 'analyte name', uniprotId: 'uniprot id', transcriptId: 'transcript id']
 
 
-        if (jobIsCancelled(jobName))
+        if (jobIsCancelled(jobName)) {
             return null
+        }
 
         HighDimensionDataTypeResource dataTypeResource = highDimensionResourceService.getSubResourceForType(dataType)
 
@@ -119,8 +103,9 @@ class HighDimExportService {
             for (BioMarkerDataRow<Map<String, String>> datarow : tabularResult) {
                 for (AssayColumn assay : assayList) {
                     rowsFound++
-                    if (rowsFound % 1024 == 0 && jobIsCancelled(jobName))
+                    if (rowsFound % 1024 == 0 && jobIsCancelled(jobName)) {
                         return null
+                    }
                     //if (rowsFound > 20) break writeloop
 
                     Map<String, String> data = datarow[assay]
