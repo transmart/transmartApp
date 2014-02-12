@@ -103,10 +103,10 @@ class HighDimExportService {
             for (BioMarkerDataRow<Map<String, String>> datarow : tabularResult) {
                 for (AssayColumn assay : assayList) {
                     rowsFound++
+                    // test periodically if the job is cancelled
                     if (rowsFound % 1024 == 0 && jobIsCancelled(jobName)) {
                         return null
                     }
-                    //if (rowsFound > 20) break writeloop
 
                     Map<String, String> data = datarow[assay]
 
