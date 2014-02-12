@@ -719,9 +719,8 @@ class I2b2HelperService {
      */
     def ExportTableNew addConceptDataToTable(ExportTableNew tablein, String concept_key, String result_instance_id) {
         if (isLeafConceptKey(concept_key)) {
-            String columnid = getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "").replace(".", "");
+            String columnid = "col_${tablein.columns.size()}"
             String columnname = getColumnNameFromKey(concept_key).replace(" ", "_");
-            //String columnid="...test\\test";
             /*add the column to the table if its not there*/
             if (tablein.getColumn("subject") == null) {
                 tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
@@ -842,7 +841,7 @@ class I2b2HelperService {
 		}
 		
 		// After that, retrieve all data entries for the children
-		def results = ObservationFact.executeQuery( "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE ( modifierCd = '@' OR modifierCd = sourcesystemCd ) AND conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)", [ conceptCodes: concepts*.conceptCode, patientNums: patientIds.collect { it?.toLong() } ] )
+		def results = ObservationFact.executeQuery( "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)", [ conceptCodes: concepts*.conceptCode, patientNums: patientIds.collect { it?.toLong() } ] )
 
 		results.each { row ->
 	
