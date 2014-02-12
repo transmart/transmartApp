@@ -124,7 +124,8 @@ class DataExportService {
                                 // List<String> conceptPaths
                                 // String dataType
                                 // String studyDir
-                                retVal = highDimExportService.exportHighDimData(splitAttributeColumn: false,
+                                retVal = highDimExportService.exportHighDimData(jobName: jobDataMap.jobName,
+                                                                                splitAttributeColumn: false,
                                                                                 resultInstanceId: resultInstanceIdMap[subset],
                                                                                 conceptPaths: selection[subset][selectedFile].selector,
                                                                                 dataType: selectedFile,
