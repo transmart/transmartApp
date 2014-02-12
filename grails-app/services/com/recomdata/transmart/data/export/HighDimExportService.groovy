@@ -32,7 +32,9 @@ class HighDimExportService {
             antigenName: 'analyte name',
             uniprotId: 'uniprot id',
             uniprotName: 'uniprot name',
-            transcriptId: 'transcript id'
+            transcriptId: 'transcript id',
+            probe: 'probe id',
+            probeId: 'probe id'
     ]
 
     def highDimensionResourceService
