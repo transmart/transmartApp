@@ -1,9 +1,5 @@
 package com.recomdata.transmart.data.export
 
-import com.google.common.base.Function
-import com.google.common.base.Predicate
-import com.google.common.collect.Maps
-import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.BioMarkerDataRow
@@ -16,6 +12,28 @@ import org.transmartproject.core.dataquery.highdim.projections.Projection
  * Created by jan on 1/20/14.
  */
 class HighDimExportService {
+
+    /**
+     * This are the headers that are used in the tab-separated export files for each field type. Before export, they are
+     * captialised.
+     */
+    Map dataFieldHeaders = [
+            rawIntensity: 'value',
+            intensity: 'value',
+            value: 'value',
+            logIntensity: 'log2e',
+            zscore: 'zscore'
+    ]
+    Map rowFieldHeaders = [
+            geneSymbol: 'gene symbol',
+            geneId: 'gene id',
+            mirnaId: 'mirna id',
+            peptide: 'peptide sequence',
+            antigenName: 'analyte name',
+            uniprotId: 'uniprot id',
+            uniprotName: 'uniprot name',
+            transcriptId: 'transcript id'
+    ]
 
     def highDimensionResourceService
 
@@ -40,7 +58,7 @@ class HighDimExportService {
          mirna: rawIntensity, logIntensity, zscore / mirnaId
          protein: intensity, zscore / peptide -> peptide sequence, unitProtId
          rbm: value, zscore / antigenName, uniprotId   ---gplId, antigenName, uniprotId, geneSymbol, geneId
-         rnaseqcog: rawIntensity, zscore / transcriptId, geneSymbol, geneId   ---transcriptId, geneSymbol, geneId
+         rnaseqcog: rawIntensity, zscore / transcriptId, geneSymbol, geneId
          metabolomics: (not implemented in coredb) ?? / biochemical name, hmdbId
 
          */
@@ -50,10 +68,6 @@ class HighDimExportService {
         def resultInstanceId = args.resultInstanceId
         List<String> conceptPaths = args.conceptPaths
         String studyDir = args.studyDir
-
-        Map dataFields = [rawIntensity: 'value', intensity: 'value', 'value': 'value', logIntensity: 'log2e', zscore: 'zscore']
-        Map rowFields = [geneSymbol: 'gene symbol', geneId: 'gene id', mirnaId: 'mirna id', peptide: 'peptide sequence',
-                antigenName: 'analyte name', uniprotId: 'uniprot id', transcriptId: 'transcript id']
 
 
         HighDimensionDataTypeResource dataTypeResource = highDimensionResourceService.getSubResourceForType(dataType)
@@ -75,11 +89,9 @@ class HighDimExportService {
         header += splitAttributeColumn ? ["SAMPLE TYPE", "TIMEPOINT", "TISSUE TYPE", "GPL ID"] : ["SAMPLE"]
         header += ["ASSAY ID", "SAMPLE CODE"]
 
-        Map<String, String> dataKeys = Maps.filterKeys(dataFields, {it in projection.dataProperties} as Predicate)
-        dataKeys = Maps.transformValues(dataKeys, {it.toUpperCase()} as Function)
+        Map<String, String> dataKeys = projection.dataProperties.collectEntries {[it, dataFieldHeaders.get(it, it).toUpperCase()]}
 
-        Map<String, String> rowKeys = Maps.filterKeys(rowFields, {it in projection.rowProperties} as Predicate)
-        rowKeys = Maps.transformValues(rowKeys, {it.toUpperCase()} as Function)
+        Map<String, String> rowKeys = projection.rowProperties.collectEntries {[it, rowFieldHeaders.get(it, it).toUpperCase()]}
 
         header += dataKeys.values()
         header += rowKeys.values()
@@ -91,8 +103,6 @@ class HighDimExportService {
         long rowsFound = 0
         long startTime
         try {
-            //FileWriterUtil writerUtil = new FileWriterUtil(args.studyDir, args.fileName, args.jobName, args.dataTypeName, args.dataTypeFolder, '\t' as char);
-            // I copied the direct access to writerUtil.outputFile from writeData, probably meant as a performance optimization. TODO: do we really need this?
             File outputFile = new File(studyDir, dataType+'.trans')
             fileName = outputFile.getAbsolutePath()
             writer = outputFile.newWriter(true)
@@ -137,12 +147,12 @@ class HighDimExportService {
 
                     line << assayId << sampleCode
 
-                    for (Map.Entry<String, String> entry: dataKeys) {
-                        line << data[entry.key]
+                    for (String dataField: dataKeys.keySet()) {
+                        line << data[dataField]
                     }
 
-                    for (Map.Entry<String,String> entry: rowKeys) {
-                        line << datarow."$entry.key"
+                    for (String rowField: rowKeys.keySet()) {
+                        line << datarow."$rowField"
                     }
 
                     writer << line.join('\t') << '\n'
