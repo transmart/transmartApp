@@ -17,9 +17,23 @@ class HighDimExportService {
      * This are the headers that are used in the tab-separated export files for each field type. Before export, they are
      * captialised.
      */
-    Map dataFieldHeaders = [rawIntensity: 'value', intensity: 'value', 'value': 'value', logIntensity: 'log2e', zscore: 'zscore']
-    Map rowFieldHeaders = [geneSymbol: 'gene symbol', geneId: 'gene id', mirnaId: 'mirna id', peptide: 'peptide sequence',
-            antigenName: 'analyte name', uniprotId: 'uniprot id', uniprotName: 'uniprot name', transcriptId: 'transcript id']
+    Map dataFieldHeaders = [
+            rawIntensity: 'value',
+            intensity: 'value',
+            value: 'value',
+            logIntensity: 'log2e',
+            zscore: 'zscore'
+    ]
+    Map rowFieldHeaders = [
+            geneSymbol: 'gene symbol',
+            geneId: 'gene id',
+            mirnaId: 'mirna id',
+            peptide: 'peptide sequence',
+            antigenName: 'analyte name',
+            uniprotId: 'uniprot id',
+            uniprotName: 'uniprot name',
+            transcriptId: 'transcript id'
+    ]
 
     def highDimensionResourceService
 
