@@ -719,7 +719,13 @@ class I2b2HelperService {
      */
     def ExportTableNew addConceptDataToTable(ExportTableNew tablein, String concept_key, String result_instance_id) {
         if (isLeafConceptKey(concept_key)) {
-            String columnid = getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "").replace(".", "");
+            /* FIXME Apparently GridPanel (ext.js) does not render cell values correctly when corresponding json key contains
+            * certain symbols. e.g. Square brackets: `... rows: [ {"column1[a]": "value"} ] ...`
+            * Existing fix is ugly and potentially dangerous because it could produce column collisions.
+            * e.g. (column1[a], column1_a_) => (column1_a_, column1_a_)
+            * Actually the best fix would be in ext.js code
+            */
+            String columnid = getShortNameFromKey(concept_key).replaceAll(/[.\]\[\s]+/, '_')
             String columnname = getColumnNameFromKey(concept_key).replace(" ", "_");
             //String columnid="...test\\test";
             /*add the column to the table if its not there*/
