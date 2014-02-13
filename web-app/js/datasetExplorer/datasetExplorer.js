@@ -147,6 +147,18 @@ Ext.onReady(function()
 					border : true
 				}
 		);
+	}else
+	{
+		northPanel = new Ext.Panel(
+				{
+					id : 'northPanel',
+					region : 'north',
+					height : 30,
+					split : false,
+					border : true,
+					contentEl: "header-div"
+				}
+		);
 	}
 	qphtml = "<div style='margin: 10px'>Query Criteria<br /><select size='8' id='queryCriteriaSelect1' style='width:400px; height:250px;'></select><br />\
 		< button onclick = 'resetQuery()' > Reset < / button > < br / > < div id = 'queryCriteriaDiv1' style = 'font:11pt;width:200px; height:250px; white-space:nowrap;overflow:auto;border:1px solid black' > < / div > < / div > "
