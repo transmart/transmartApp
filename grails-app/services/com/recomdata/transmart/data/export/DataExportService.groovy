@@ -27,6 +27,7 @@ import com.google.common.collect.Lists
 import groovy.json.JsonSlurper
 import com.recomdata.snp.SnpData
 import com.recomdata.transmart.data.export.exception.DataNotFoundException
+import groovy.sql.Sql
 import org.apache.commons.lang.StringUtils
 import org.springframework.transaction.annotation.Transactional
 
@@ -44,6 +45,7 @@ class DataExportService {
     def highDimensionResourceService
     def additionalDataService
     def vcfDataService
+    def dataSource
 
     @Transactional(readOnly = true)
     def exportData(jobDataMap) {
@@ -288,28 +290,57 @@ class DataExportService {
 
                     // Ugly hack to get filtering working FIXME ASAP!!!
 
+                    def sampleCodesTable = new Sql(dataSource).rows("""
+                                SELECT
+                                    SOURCESYSTEM_CD,
+                                    LISTAGG (  sample_cd, ', ' )
+                                        WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
+                                FROM (
+                                    SELECT DISTINCT
+                                        p.SOURCESYSTEM_CD,
+                                        s.SAMPLE_CD
+                                    FROM
+                                        patient_dimension p
+                                    LEFT JOIN
+                                        observation_fact s on s.patient_num = p.patient_num
+                                    WHERE
+                                        p.PATIENT_NUM IN (
+                                            SELECT
+                                                DISTINCT patient_num
+                                            FROM
+                                                qt_patient_set_collection
+                                            WHERE
+                                                result_instance_id = ? )
+                                    )
+                                GROUP BY sourcesystem_cd""", resultInstanceIdMap[subset])
+                    sampleCodesTable = sampleCodesTable.collectEntries {
+                        [it.SOURCESYSTEM_CD.split(':')[-1].trim(), it.SAMPLE_CDS]
+                    }
+                    // add the header to the mapping table
+                    sampleCodesTable['PATIENT ID'] = 'SAMPLE CODES'
+
                     // columnFilter = [/\Subjects\Ethnicity/, /\Endpoints\Diagnosis/]
                     // columnFilter = []
-                    if (columnFilter) {
-                        studyList.each { studyName ->
-                            String directory
-                            String fileWritten = "clinical_i2b2trans.txt"
-                            if (studyList.size() > 1) {
-                                // yes, the output of the previous stage has a " _" in the name, with a space in it.
-                                fileWritten = studyName + ' _' + fileWritten
-                            }
-                            directory = clinicalDataFileName(studyDir.path)
+                    studyList.each { studyName ->
+                        String directory
+                        String fileWritten = "clinical_i2b2trans.txt"
+                        if (studyList.size() > 1) {
+                            // yes, the output of the previous stage has a " _" in the name, with a space in it.
+                            fileWritten = studyName + ' _' + fileWritten
+                        }
+                        directory = clinicalDataFileName(studyDir.path)
 
-                            def reader = new File(directory, fileWritten)
-                            def writer = new File(directory, "newclinical")
-                            def writerstream = writer.newOutputStream()
+                        def reader = new File(directory, fileWritten)
+                        def writer = new File(directory, "newclinical")
+                        def writerstream = writer.newOutputStream()
 
-                            def filter = null
+                        def filter = null
 
-                            reader.eachLine {
-                                def line = Arrays.asList(it.split('\t'))
-                                if (filter == null) {
-                                    filter = [0,1]
+                        reader.eachLine {
+                            def line = Arrays.asList(it.split('\t'))
+                            if (filter == null) {
+                                if (columnFilter) {
+                                    filter = [1]
                                     for (String columnName : columnFilter) {
                                         columnName = CharMatcher.is('\\' as char).trimTrailingFrom(columnName)
                                         String parentColumnName = columnName.replaceFirst(/\\[^\\]+$/, '')
@@ -319,15 +350,19 @@ class DataExportService {
                                         }
                                         if (index >= 2 && !(index in filter)) filter.add(index)
                                     }
+                                } else {
+                                    filter = 1 .. (line.size() - 1)
                                 }
-                                def joined = ((line[filter]).join('\t')+'\n')
-                                writerstream.write(joined.getBytes())
                             }
-
-                            writerstream.close()
-
-                            writer.renameTo(directory +'/'+ fileWritten)
+                            def patientId = line[0].trim()
+                            def joined = ((line[[0]] + [sampleCodesTable[patientId]] + line[filter])
+                                    .join('\t')+'\n')
+                            writerstream.write(joined.getBytes())
                         }
+
+                        writerstream.close()
+
+                        writer.renameTo(directory +'/'+ fileWritten)
                     }
                 }
             }
