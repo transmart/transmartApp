@@ -22,9 +22,6 @@ grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
-//grails.plugin.location.'rdc-modules' = "../Rmodules"
-
-//grails.project.war.file = "target/${appName}-${appVersion}.war"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -40,12 +37,12 @@ grails.project.dependency.resolution = {
         mavenLocal()
         mavenCentral()
         mavenRepo([
-                name: 'eTRIKS Reporitory',
-                root: 'http://repo.etriks.org/content/groups/public/',
-        ])
-        mavenRepo([
                 name: 'Spring IO Reporitory',
                 root: 'http://repo.spring.io/milestone/'
+        ])
+        mavenRepo([
+                name: 'eTRIKS Reporitory',
+                root: 'http://repo.etriks.org/content/groups/public/',
         ])
     }
     dependencies {
@@ -54,17 +51,17 @@ grails.project.dependency.resolution = {
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
     }
     plugins {
-        compile ":hibernate:$grailsVersion"
+            compile ":hibernate:3.6.10.7"
         compile ":quartz:1.0-RC2"
-        compile ":rdc-rmodules:0.3.1-SNAPSHOT"
+        compile ":rdc-rmodules:0.3.ic-SNAPSHOT"
         compile ":transmart-legacy-db:0.1.0-SNAPSHOT"
         compile ":spring-security-core:2.0-RC2"
         compile ":spring-security-ldap:2.0-RC2"
         compile ":resources:1.2"
-        build ":tomcat:$grailsVersion"
+        build ":tomcat:7.0.47"
         build ":build-info:1.1"
 		runtime ":prototype:1.0"
-        runtime ":transmart-core:1.0.1-SNAPSHOT"
+        runtime ":transmart-core:1.0.ic-SNAPSHOT"
 
         test ":code-coverage:1.2.6"
     }
