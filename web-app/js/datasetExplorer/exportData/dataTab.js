@@ -367,7 +367,7 @@ DataExport.prototype.prepareNewStore = function (store, columns, selectedCohortD
             }
         });
 
-        return " <br><span id='filter-tip-txt' class='data-export-filter-tip'>(Drag and drop " + _str_data_type
+        return " <br><span class='data-export-filter-tip'>(Drag and drop " + _str_data_type
             + " nodes here to filter the exported data.)</span>";
     }
 
