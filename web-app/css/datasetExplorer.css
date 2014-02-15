@@ -105,7 +105,7 @@ height:0;
 position:absolute;
 top:30px;
 width:100%;
- background: #fafafa url(..//images/shadow30.jpg);
+ background: #fafafa url(../images/skin/shadow30.jpg);
 }
 
 
@@ -281,7 +281,7 @@ table.tablesorterAnalysisResults thead tr th, table.tablesorter tfoot tr th {
 	white-space: nowrap;	
 }
 table.tablesorterAnalysisResults thead tr .header {
-	background-image: (../images/bg.gif);
+	background-image: url('../images/bg.gif');
 	background-repeat: no-repeat;
 	background-position: center right;
 	cursor: pointer;
@@ -469,3 +469,4 @@ li.x-tab-strip-active {
 }
 
 .x-grid3-row .conceptUnselected, .x-grid3-row .conceptSelected {padding: 0 0 5px 5px; font-size: .85em;}
+.data-export-filter-tip {color: #666; font-style: italic}

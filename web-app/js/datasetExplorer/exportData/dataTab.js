@@ -164,10 +164,14 @@ DataExport.prototype.displayResult = function (records, options, success) {
             id: "dataTypesGridPanel",
             store: newStore,
             columns: columns,
-            title: "Instructions: Select the check boxes to indicate the data types and file formats that are " +
-                "desired for export.  Then, click on the \"Export Data\" button at the bottom of the screen to " +
-                "initiate an asynchronous data download job.  To download your data navigate " +
-                "to the \"Export Jobs\" tab.",
+            title: "Instructions: <br>" +
+                "1. Select the check boxes to indicate the data types and file formats that are " +
+                "desired for export. <br>" +
+                "2. Optionally you can filter the data by dragging and dropping some " +
+                "criteria onto each data type row.<br> " +
+                "3. Click on the \"Export Data\" button at the bottom of the screen to " +
+                "initiate an asynchronous data download job.  <br>" +
+                "4. To download your data navigate to the \"Export Jobs\" tab.",
             viewConfig:	{
                 forceFit : true,
                 emptyText : "No rows to display"
@@ -335,6 +339,7 @@ DataExport.prototype.prepareNewStore = function (store, columns, selectedCohortD
 
     //Remove existing check-boxes
     var subsetDataTypeFiles = document.getElementsByName('SubsetDataTypeFileType');
+
     while (subsetDataTypeFiles.length >= 1) {
         subsetDataTypeFiles[0].parentNode.removeChild(subsetDataTypeFiles[0])
     }
@@ -343,13 +348,41 @@ DataExport.prototype.prepareNewStore = function (store, columns, selectedCohortD
     var data = [];
     data.push(selectedCohortData);
 
+    /**
+     * get export data tips
+     * @returns {string}
+     * @private
+     */
+    var _get_export_data_tip = function (files) {
+        var _str_data_type = 'low dimensional';
+
+        files.each(function (file) {
+            if (file.platforms) {
+
+                file.platforms.each(function (platform) {
+                    if (platform.fileDataCount > 0) {
+                        _str_data_type = 'high dimensional';
+                    }
+                });
+            }
+        });
+
+        return " <br><span class='data-export-filter-tip'>(Drag and drop " + _str_data_type
+            + " nodes here to filter the exported data.)</span>";
+    }
+
     store.each(function (row) {
         var this_data = [];
         this_data['dataTypeId'] = row.data.dataTypeId;
-        this_data['dataTypeName'] = row.data.dataTypeName;
+        this_data['dataTypeName'] = row.data.dataTypeName + _get_export_data_tip (row.data.subset1);
+
         var outStr = _this.prepareOutString(row.data.subset1, row.data.subsetId1, row.data.dataTypeId, row.data.metadataExists);
         this_data[row.data.subsetId1] = outStr;
+
         if (selectedCohortData['subset2'] != null && selectedCohortData['subset2'].length > 1) {
+            // cohort string for subset 2
+            this_data['dataTypeName'] = row.data.dataTypeName + _get_export_data_tip (row.data.subset2);
+            // outstring for subset 2
             outStr = _this.prepareOutString(row.data.subset2, row.data.subsetId2, row.data.dataTypeId, row.data.metadataExists);
             this_data[row.data.subsetId2] = outStr;
         }
