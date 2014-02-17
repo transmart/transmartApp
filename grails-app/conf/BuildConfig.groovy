@@ -77,7 +77,7 @@ grails.project.dependency.resolution = {
         }
     }
     dependencies {
-        runtime 'postgresql:postgresql:9.0-801.jdbc4'
+        runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
         compile 'antlr:antlr:2.7.7'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
         compile 'net.sf.opencsv:opencsv:2.3'
@@ -94,28 +94,26 @@ grails.project.dependency.resolution = {
         compile 'axis:axis:1.4'
 
         /* for SAML authentication
-         * see example config at https://github.com/thehyve/transmartApp/commit/bf15bb51a#all_commit_comments */
+         * see example config at https://github.com/thehyve/transmartApp/commit/bf15bb51a#all_commit_comments
+         * Note that the config namespace changed from grails.plugins.springsecurity to
+         * grails.plugin.springsecurity though (plugins -> plugin) */
         compile('org.springframework.security.extensions:spring-security-saml2-core:1.0.0.RC3-f0fb87a') {
-            //excludes of spring securirty necessary because they are for a more recent version (3.1 branch)
+            //excludes of spring securirty necessary because they are for an older version (3.1 branch)
             //also remove xercesImpl because it breaks tomcat and is not otherwise needed
             excludes 'spring-security-config', 'spring-security-core', 'spring-security-web', 'xercesImpl'
         }
-
-        /* update when grails spring-security-core uses a more recent version of spring-security */
-        runtime 'org.springframework.security:spring-security-config:3.0.7.RELEASE'
-
-        compile 'org.grails:grails-plugin-url-mappings:2.3.3-hyve1' // until Grails 2.3.4 is out
     }
 
     plugins {
-        build ':release:3.0.1', ':rest-client-builder:1.0.3'
+        build ':release:3.0.1'
+        build ':rest-client-builder:1.0.3'
         build ':tomcat:7.0.47'
 
         compile ':build-info:1.2.5'
-        compile ':hibernate:3.6.10.4'
+        compile ':hibernate:3.6.10.7'
         compile ':quartz:1.0-RC2'
         compile ':rdc-rmodules:0.3-SNAPSHOT'
-        compile ':spring-security-core:1.2.7.3'
+        compile ':spring-security-core:2.0-RC2'
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'

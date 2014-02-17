@@ -25,15 +25,14 @@
 */
 package com.recomdata.security
 
-import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUser
+import grails.plugin.springsecurity.userdetails.GrailsUser
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.userdetails.User
 
-class AuthUserDetails extends GrailsUser {	
+class AuthUserDetails extends GrailsUser {
 	final String userRealName
 
 	AuthUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
-		boolean accountNonLocked, Collection<GrantedAuthority> authorities, long id, String userRealName) {	 
+		boolean accountNonLocked, Collection<GrantedAuthority> authorities, long id, String userRealName) {
 			super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities, id)
 			
 			this.userRealName = userRealName}
