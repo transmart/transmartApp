@@ -1,8 +1,5 @@
-  
 
-/* SubsetTool.js
-Jeremy M. Isikoff
-Recombinant */
+
 String.prototype.trim = function() {
 	return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
@@ -34,7 +31,7 @@ function dataSelectionCheckboxChanged(ctl)
 }
 
 function setDataAssociationAvailableFlag(el, success, response, options) {
-	
+
 	if (!success) {
 		var dataAssociationPanel = Ext.getCmp('dataAssociationPanel');
 		var resultsTabPanel = Ext.getCmp('resultsTabPanel');
@@ -54,7 +51,7 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
 						/*for (var i = 0; i < exp.files.length; i++) {
 							var file = exp.files[i]
 							if (file.type == 'script') {
-								
+
 							}
 						}*/
 						loadScripts(exp.files);
@@ -134,7 +131,7 @@ Ext.onReady(function()
    split : true,
    border : true,
    layout : 'border'}); */
-	
+
 	if(GLOBAL.Config != "jj")
 	{
 		northPanel = new Ext.Panel(
@@ -148,6 +145,19 @@ Ext.onReady(function()
 				}
 		);
 	}
+	else
+            {
+                northPanel = new Ext.Panel(
+                    {
+                        id : 'northPanel',
+                        region : 'north',
+                        height : 30,
+                        split : false,
+                        border : true,
+                        contentEl: "header-div"
+                    }
+                );
+            }
 	qphtml = "<div style='margin: 10px'>Query Criteria<br /><select size='8' id='queryCriteriaSelect1' style='width:400px; height:250px;'></select><br />\
 		< button onclick = 'resetQuery()' > Reset < / button > < br / > < div id = 'queryCriteriaDiv1' style = 'font:11pt;width:200px; height:250px; white-space:nowrap;overflow:auto;border:1px solid black' > < / div > < / div > "
 
@@ -963,9 +973,12 @@ Ext.onReady(function()
             loadJBrowse(resultsPanel);
         }
 
-		if (GLOBAL.metacoreAnalyticsEnabled) {
+		if (GLOBAL.metacoreAn alyticsEnabled) {
+            // At the moment the metacoreanalysis is in Early alpha so we won't display it.
+            if(false){
 			resultsTabPanel.add(metacoreEnrichmentPanel);
-		}
+            }
+        }
 		
 		southCenterPanel = new Ext.Panel(
 				{
