@@ -861,7 +861,7 @@ Ext.onReady(function()
 							//resultsTabPanel.tools['help help-resana-panel'].dom.style.display="none";
 						}
 					},
-					collapsible : true						
+					collapsible : true
 				}
 		);
 		
