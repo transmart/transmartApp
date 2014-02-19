@@ -2112,10 +2112,10 @@ function exportDataFinished() {
 }
 
 function runAllQueries(callback, panel) {
-    var subset = 1;
+
     if (isSubsetEmpty(1) && isSubsetEmpty(2)) {
-        if (null != panel) {
-            panel.body.unmask()
+        if (panel) {
+            panel.body.unmask();
         }
         Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
     }
@@ -2127,16 +2127,21 @@ function runAllQueries(callback, panel) {
             subsetstorun++;
         }
     }
-    STATE.QueryRequestCounter = subsetstorun;
+
     /* set the number of requests before callback is fired for runquery complete */
+    STATE.QueryRequestCounter = subsetstorun;
 
     // init panel's subset query array if it's not existing yet
-    if (!panel.subsetQueries) panel.subsetQueries = ["", "", ""];
+    if (panel) {
+        panel.subsetQueries = panel.subsetQueries ? panel.subsetQueries : ["", "", ""];
+    }
 
     // iterate through all subsets calling the ones that need to be run
     for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
         if (!isSubsetEmpty(i)) {
-            panel.subsetQueries[i] = getSubsetQuery(i); // set subset queries to the selected tab
+            if (panel) {
+                panel.subsetQueries[i] = getSubsetQuery(i); // set subset queries to the selected tab
+            }
             runQuery(i, callback);
         }
     }
