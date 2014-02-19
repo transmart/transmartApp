@@ -321,8 +321,7 @@ class DataExportService {
                         // add the header to the mapping table
                         sampleCodesTable['PATIENT ID'] = 'SAMPLE CODES'
 
-                        // columnFilter = [/\Subjects\Ethnicity/, /\Endpoints\Diagnosis/]
-                        // columnFilter = []
+                        // example: columnFilter = [/\Subjects\Ethnicity/, /\Endpoints\Diagnosis/]
                         studyList.each { studyName ->
                             String directory
                             String fileWritten = "clinical_i2b2trans.txt"
