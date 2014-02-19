@@ -65,7 +65,7 @@ class ExportService {
         return file
     }
 
-	def getClinicalMetaData( Long resultInstanceId1, Long resultInstanceId2 ) {
+	def getClinicalMetaData(Long resultInstanceId1, Long resultInstanceId2 ) {
 		//The result instance id's are stored queries which we can use to get information from the i2b2 schema.
 		log.debug('rID1 :: ' + resultInstanceId1 + ' :: rID2 :: ' + resultInstanceId1)
 
@@ -76,7 +76,7 @@ class ExportService {
 		]
 	}
 	
-    def getHighDimMetaData( Long resultInstanceId1, Long resultInstanceId2 ) {
+    def getHighDimMetaData(Long resultInstanceId1, Long resultInstanceId2) {
         def (datatypes1, datatypes2) = [[:], [:]]
 
         if (resultInstanceId1) {
@@ -99,17 +99,77 @@ class ExportService {
 		def uniqueDatatypes = ( datatypes1.keySet() + datatypes2.keySet() ).unique()
 		
 		// Combine the two subsets, into a map based on datatypes
-		def hdMetaData = []
-		
-		uniqueDatatypes.each { datatype ->
-			hdMetaData << [
+		def hdMetaData = uniqueDatatypes.collect { datatype ->
+			[
 				datatype: datatype,
 				subset1: datatypes1[ datatype ],
 				subset2: datatypes2[ datatype ]
 			]
 		}
-		
+
 		hdMetaData
+    }
+
+    /*
+     * This method was taken from the ExportService before high dimensional datatypes were exported through core-api.
+     * SNP data is not yet implemented there. FIXME: implement SNP in core-db and remove this method
+     */
+    def getLegacyHighDimensionMetaData(Long resultInstanceId1, Long resultInstanceId2) {
+        def dataTypesMap = Holders.config.com.recomdata.transmart.data.export.dataTypesMap
+
+        //The result instance id's are stored queries which we can use to get information from the i2b2 schema.
+        def rID1 = RequestValidator.nullCheck(resultInstanceId1.toString())
+        def rID2 = RequestValidator.nullCheck(resultInstanceId2.toString())
+        def rIDs = [rID1, rID2].grep()*.trim().grep().join(', ')
+
+        def subsetLen = (rID1 && rID2) ? 2 : (rID1 || rID2) ? 1 : 0
+        log.debug('rID1 :: ' + rID1 + ' :: rID2 :: ' + rID2)
+
+        //Retrieve the counts for each subset. We get back a map that looks like ['RBM':2,'MRNA':30]
+        def subset1CountMap = dataCountService.getDataCounts(rID1, rIDs)
+        def subset2CountMap = dataCountService.getDataCounts(rID2, rIDs)
+        log.debug('subset1CountMap :: ' + subset1CountMap + ' :: subset2CountMap :: ' + subset2CountMap)
+
+        //This is the map we render to JSON.
+        def finalMap = [:]
+
+        //Add our counts to the map.
+        finalMap['subset1'] = subset1CountMap
+        finalMap['subset2'] = subset2CountMap
+        //render '{"subset1": [{"PLINK": "102","RBM":"28"}],"subset2": [{"PLINK": "1","RBM":"2"}]}'
+        def result = [:]
+        result.put('noOfSubsets', subsetLen)
+
+        def rows = []
+        dataTypesMap.each { key, value ->
+            if (key != 'SNP') return
+            def dataType = [:]
+            def dataTypeHasCounts = false
+            dataType['dataTypeId'] = key
+            dataType['dataTypeName'] = value
+            //TODO replace 2 with subsetLen
+            for (i in 1..2) {
+                def files = []
+                if (key == 'SNP') {
+                    files.add(createJSONFileObject('.PED, .MAP & .CNV', 'Processed Data',
+                            finalMap["subset${i}"][key],
+                            null, null))
+                    files.add(createJSONFileObject('.CEL', 'Raw Data', finalMap["subset${i}"][key + '_CEL'], null,
+                            null))
+                }
+                if ((null != finalMap["subset${i}"][key] && finalMap["subset${i}"][key] > 0))
+                    dataTypeHasCounts = true;
+
+                dataType['metadataExists'] = true
+                dataType['subsetId' + i] = "subset" + i
+                dataType['subsetName' + i] = "Subset " + i
+                dataType['subset' + i] = files
+                dataType.isHighDimensional = true
+            }
+            if (dataTypeHasCounts) rows.add(dataType)
+        }
+
+        return rows
     }
 
     def createCountsMap(fileType, dataFormat, finalMap, key, subsetIdx) {
