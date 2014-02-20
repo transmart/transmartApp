@@ -188,6 +188,9 @@ com.recomdata.skipdisclaimer=true
 
 grails.spring.bean.packages = []
 
+// requires NIO connector though. If you use apache in front of tomcat in the
+// same server, you can set this to false and set .apache = true
+grails.plugins.sendfile.tomcat = true
 
 // Uncomment and edit the following lines to start using Grails encoding & escaping improvements
 
