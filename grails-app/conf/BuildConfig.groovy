@@ -32,11 +32,10 @@ def forkSettingsOther = [
         maxPerm:   384,
         debug:     false,
 ]
-/* We can't enable forked run-app now because of a bug in Grails:
- * http://stackoverflow.com/questions/19371859 */
+
 grails.project.fork = [
         test:    [ *:forkSettingsOther, daemon: true ],
-        run:     false,
+        run:     forkSettingsRun,
         war:     forkSettingsRun,
         console: forkSettingsOther ]
 
@@ -132,6 +131,9 @@ grails.project.dependency.resolution = {
 grails.war.resources = { stagingDir ->
     delete(file: "${stagingDir}/WEB-INF/lib/servlet-api-${grails.servlet.version}.jar")
 }
+
+// Use new NIO connector in order to support sendfile
+grails.tomcat.nio = true
 
 grails.project.dependency.resolution.metaClass.skipTransmartFoundationRepo = { false }
 
