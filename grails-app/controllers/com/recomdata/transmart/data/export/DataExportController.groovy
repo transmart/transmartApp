@@ -39,6 +39,10 @@ class DataExportController {
 		
         def clinicalData = exportService.getClinicalMetaData( resultInstanceId1, resultInstanceId2 )
 		def metadata = convertIntoMetaDataMap( clinicalData, exportService.getHighDimMetaData( resultInstanceId1, resultInstanceId2 ) )
+
+        def legacyMetaData = exportService.getLegacyHighDimensionMetaData(resultInstanceId1, resultInstanceId2)
+
+        metadata.exportMetaData.addAll(legacyMetaData)
 		
         render metadata as JSON
     }
