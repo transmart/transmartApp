@@ -113,7 +113,7 @@ class DataExportService {
                         def retVal = null
                         switch (selectedFile) {
                             case "STUDY":
-                                retVal = metadataService.getData(studyDir, "experimentalDesign.txt", jobDataMap.get("jobName"), studyList);
+                                //retVal = metadataService.getData(studyDir, "experimentalDesign.txt", jobDataMap.get("jobName"), studyList);
                                 log.info("retrieved study data")
                                 break;
                             // New high dimensional data
