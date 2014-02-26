@@ -719,7 +719,7 @@ class I2b2HelperService {
      */
     def ExportTableNew addConceptDataToTable(ExportTableNew tablein, String concept_key, String result_instance_id) {
         if (isLeafConceptKey(concept_key)) {
-            String columnid = "col_${tablein.columns.size()}"
+            String columnid = concept_key.encodeAsSHA1()
             String columnname = getColumnNameFromKey(concept_key).replace(" ", "_");
             /*add the column to the table if its not there*/
             if (tablein.getColumn("subject") == null) {
