@@ -114,6 +114,7 @@ grails.project.dependency.resolution = {
         compile ':quartz:1.0-RC2'
         compile ':rdc-rmodules:0.3-SNAPSHOT'
         compile ':spring-security-core:2.0-RC2'
+        compile ":spring-security-oauth2-provider:1.0.5.2"
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
@@ -121,6 +122,7 @@ grails.project.dependency.resolution = {
         runtime ':resources:1.2.1'
         runtime ':transmart-mydas:0.1-SNAPSHOT'
         runtime ':dalliance-plugin:0.1-SNAPSHOT'
+        runtime ':transmart-rest-api:0.1-SNAPSHOT'
 
         // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
