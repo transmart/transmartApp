@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -1162,15 +1162,13 @@ def ajaxGetPathwaySearchBoxData = {
     render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
 }
 
-def gplogin = {
-	def gpEnabled = grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern;
-  if('true'==gpEnabled){
- return [userName : springSecurityService.getPrincipal().username]
-  }else{
-  render(view:'nogp')
-
-  }
-}
+	/**
+	 * Just return the username as this should be setup in Gene Pattern
+	 * If Gene Pattern is not enabled, the menu should not show at all
+	 */
+	def gplogin = {
+		return [userName : springSecurityService.getPrincipal().username]		
+	}
 	
 
 	protected String getGenePatternFileDirName() {

@@ -67,7 +67,128 @@ table.menuDetail th.menuVisited {
     border: 1px inset gray;
 }
 
-/* end top level menu */
+/** Header Nav **/
+#header-div {
+  padding: 0;
+  margin: 0;
+  position: fixed;
+  top: 0px;    
+  left: 0px;
+  width: 100%;
+  height: 26px;
+  background-color:#242424;
+  border-bottom:1px solid #aaa;
+  z-index: 4000;
+  font: 12px verdana, arial, helvetica, sans-serif;
+
+  font-weight: bold;
+}
+
+#navlist {
+    padding-top:0px;
+
+}
+
+#navlist ul {
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+#navlist ul li {
+    margin-left: 0;
+    margin-bottom: 0;
+
+    border-right: 1px solid #999;
+    border-collapse:collapse;
+    list-style: none;
+    float:left;
+}
+    
+#navlist ul a{
+    display: block;
+    padding: 6px 20px;
+    color:#cfcfcf;
+    text-decoration: none;
+}
+
+#navlist ul a:hover{
+    background-color:#efefef;
+    text-decoration:none;
+    color:#000;
+}
+    
+#navlist ul li.active {
+    display: block;
+    padding: 6px 20px;
+    background-color:#DEEDF7;
+    font-weight:bold;
+}
+
+
+#utilities-div {
+    float:right;
+    padding-top:0;
+    padding-right:10px;
+}
+
+#utilities-div a{
+    color:#cfcfcf;
+    display: block;
+    padding: 6px 20px;
+    text-decoration:none;
+        font-weight:bold;
+}
+
+#utilities-div a:hover{
+    display: block;
+    padding: 6px 20px;
+    text-decoration:none;
+    background-color:#444;
+     color:#fff;
+         font-weight:bold;
+}
+
+
+#utilities-dropdown {
+    position: absolute;
+    right: 10px;
+    padding-top:5px;
+    padding-bottom:10px;
+    top: 26px;
+    background-color: #242424;
+    color: #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+}
+
+
+#utilities-dropdown ol{
+    list-style: none;
+    margin:0;
+    padding:0;
+}
+#utilities-dropdown ol li:hover{
+    background-color:#444;
+}
+
+#utilities-dropdown ol li a{
+    display:block;
+    padding:5px;
+    padding-left:25px;
+    padding-right:25px;
+    color:#eee;
+    text-decoration:none;
+    font-weight:bold;
+}
+#utilities-dropdown ol li a:hover{
+    color:#fff;
+    padding-left:25px;
+    padding-right:25px;
+    background-color:#444;
+    text-decoration:none;
+    font-weight:bold;
+}
+/** End Header Nav **/
 
 div.topall {
 	padding-top:4px;
@@ -120,7 +241,6 @@ a.toplink1:hover{
 .nextbutton{
     background-image:url(../images/next.png ) !important;
 }
-
 .clearbutton{
 		background-image:url(../images/clear.png ) !important;
 	}
@@ -136,8 +256,7 @@ a.toplink1:hover{
 .summarybutton{
 	background-image:url(../images/summary.png ) !important;
 	}
-.hleaficon
-	{
+.hleaficon{
 	background-image:url(../images/dna_icon.png ) !important;
 	}
 .valueicon{
@@ -146,11 +265,30 @@ a.toplink1:hover{
 .printbutton{
 	background-image:url(../images/printer.png ) !important;
 	}
-	
 .savebutton{
 	background-image:url(../images/disk.png ) !important;
 	}	
-	
+.downloadbutton{
+	background-image:url(../images/download.png ) !important;
+}
+.savepdfbutton{
+	background-image:url(../images/doc_pdf.png ) !important;
+}
+.refreshbutton{
+	background-image:url(../images/refresh.png ) !important;
+}
+.chartcurvebutton{
+	background-image:url(../images/chart_curve.png ) !important;
+}
+.helpmebutton{
+	background-image:url(../images/help_me.png ) !important;
+}
+.gridbutton{
+	background-image:url(../images/pane-table.png ) !important;
+}
+.newbutton{
+	background-image:url(../images/new.png ) !important;
+}
 .jleafclass 
 	a span {
 
@@ -166,8 +304,7 @@ height:0;
 position:absolute;
 top:30px;
 width:100%;
-    background-color: #fafafa);
-    background-image:url(../images/skin/shadow30.jpg);
+ background: #fafafa url(../images/shadow30.jpg);
 }
 
 
@@ -247,9 +384,9 @@ div.analysistitle {
 	.searchform {
 	font:12px tahoma, arial, helvetica, sans-serif;
 	}
-	.subsettable {
-	font:12px tahoma, arial, helvetica, sans-serif;
-	}
+	/*.subsettable {*/
+	/*font:12px tahoma, arial, helvetica, sans-serif;*/
+	/*}*/
 .search-item {font:normal 11px tahoma, arial, helvetica, sans-serif;padding:3px 10px 3px 10px;border:1px solid #fff;border-bottom:1px solid #eeeeee;white-space:normal;color:#505050;}
 .search-item h3 {font:inherit;font-weight:bold;color:#202020;}
 .search-item span {font-size:10px;color:#468528;}
@@ -343,7 +480,7 @@ table.tablesorterAnalysisResults thead tr th, table.tablesorter tfoot tr th {
 	white-space: nowrap;	
 }
 table.tablesorterAnalysisResults thead tr .header {
-    background-image: url(../images/bg.gif);
+	/*background-image: url(../images/bg.gif); TODO: investigate where is this being used*/
 	background-repeat: no-repeat;
 	background-position: center right;
 	cursor: pointer;
@@ -379,15 +516,6 @@ a.AnalysisLink {
 		font-weight:bold;
 	}
 	
-.utilities-div {
-    position:absolute;
-    width:100px;
-    top:0;
-    right:0;
-    height:24px;
-    z-index:100;
-}	
-		
 @page { 
 size: letter landscape;
 margin: 0.25in; 
@@ -440,3 +568,91 @@ content: counter(pages);
 	background-image: url("../images/help/tool-sprites-rdc.gif");
     background-position: 0 -300px;
 }
+
+/* ------------------------------------ */
+/* Survival Analysis aCGH Page Stylings */
+/* ------------------------------------ */
+
+.snowpanel {
+	padding: 10px;
+	font-family: Tahoma, "sans serif";
+	font-size: 11px;
+	background-color: #f5f5f5
+}
+
+div.subsettable label {
+	display: block;
+	margin-top: 5px;
+}
+
+.warning {
+	color: #ff0000;
+}
+
+#analysisContainer, #gtContainer {
+	font-family: Arial, "sans serif";
+	font-size: .7em;
+}
+
+.selected {
+	color: #000000;
+	font-weight: bold;
+}
+
+.plotCurve {
+	width: 100px;
+	height: 100px;
+}
+
+div.plotResultContainer {
+	padding: 10px;
+	font-family: Tahoma, Arial, "sans serif";
+	font-size: .8em;
+}
+
+div.plotResultContainer h1 {
+	font-size: 1.1em;
+	color: #3764A0;
+	margin-bottom: 10px;
+}
+
+.newspaper-a
+{
+	font-family: Tahoma, Arial, "sans serif";
+	font-size: 11px;
+	width: 100%;
+	text-align: left;
+	border-collapse: collapse;
+	border: 1px solid #d3d3d3;
+}
+.newspaper-a th
+{
+	padding: 5px;
+	font-weight: bold;
+	font-size: 11px;
+	border: 1px solid #d3d3d3;
+	background-color: #D9E8FB;
+}
+.newspaper-a td
+{
+	padding: 5px;
+	border: 1px solid #d3d3d3;
+}
+
+.downloadBtnInnerPage {
+	margin-top: 10px;
+}
+
+.freq-plot{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.resultToolBar{
+	margin-top: 5px;
+	float: right;
+}
+
+.survivalPlotImg {display: block; margin-left: auto; margin-right: auto}
+.first-col {width: 200px;}

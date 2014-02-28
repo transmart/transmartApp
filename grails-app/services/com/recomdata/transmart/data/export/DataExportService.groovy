@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -20,14 +20,10 @@
 
 package com.recomdata.transmart.data.export
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.Callable;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.recomdata.snp.SnpData;
-import com.recomdata.transmart.data.export.exception.DataNotFoundException;
+import com.recomdata.snp.SnpData
+import com.recomdata.transmart.data.export.exception.DataNotFoundException
+import org.apache.commons.lang.StringUtils
+import org.springframework.transaction.annotation.Transactional
 
 class DataExportService {
 
@@ -39,6 +35,8 @@ class DataExportService {
 	def metadataService
 	def snpDataService
 	def geneExpressionDataService
+    def ACGHDataService
+    def RNASeqDataService
 	def additionalDataService
 	def vcfDataService
 	
@@ -92,19 +90,21 @@ class DataExportService {
 				{
 					// Construct a list of the URL objects we're running, submitted to the pool
 					selectedFilesList.each() { selectedFile ->
-
+						
 						if (StringUtils.equalsIgnoreCase(selectedFile, "CLINICAL.TXT")) {
 							writeClinicalData = true
+                            return
 						}
 						
-						println 'Working on export of File :: ' + selectedFile
+                        def start = System.currentTimeMillis()
+						log.info 'Working on export of File :: ' + selectedFile
+
 						def List gplIds = subsetSelectedPlatformsByFiles?.get(subset)?.get(selectedFile)
-						def retVal = null
+						def retVal
 						switch (selectedFile)
 						{
 							case "STUDY":
 								retVal = metadataService.getData(studyDir, "experimentalDesign.txt", jobDataMap.get("jobName"), studyList);
-								log.info("retrieved study data")
 								break;
 							case "MRNA.TXT":
 								retVal = geneExpressionDataService.getData(studyList, studyDir, "mRNA.trans", jobDataMap.get("jobName"), resultInstanceIdMap[subset], pivotData, gplIds, null, null, null, null, false)
@@ -142,6 +142,40 @@ class DataExportService {
 										throw new DataNotFoundException("There are no patients that meet the criteria selected therefore no gene expression data was returned.")
 									}
 								}
+								break;
+							case "ACGH_REGIONS.TXT":
+								if (studyList.size() != 1) {
+									throw new Exception("Only one study " +
+									                    "allowed per analysis; list given" +
+									                    " was : " + studyList);
+								}
+								this.ACGHDataService.writeRegions(
+									studyList[0],
+									studyDir,
+									'regions.txt',
+									jobDataMap.get("jobName"),
+									resultInstanceIdMap[subset]
+									/* currently the interface does not allow filtering,
+									   so don't implement it here was well
+									 */
+								)
+								break;
+							case "RNASEQ.TXT":
+								if (studyList.size() != 1) {
+									throw new Exception("Only one study " +
+									                    "allowed per analysis; list given" +
+									                    " was : " + studyList);
+								}
+								this.RNASeqDataService.writeRegions(
+									studyList[0],
+									studyDir,
+									'RNASeq.txt',
+									jobDataMap.get("jobName"),
+									resultInstanceIdMap[subset]
+									/* currently the interface does not allow filtering,
+									   so don't implement it here was well
+									 */
+								)
 								break;
 							case "MRNA.CEL":
 								geneExpressionDataService.downloadCELFiles(resultInstanceIdMap[subset], studyList, studyDir, jobDataMap.get("jobName"), null, null, null, null)
@@ -203,7 +237,7 @@ class DataExportService {
 								// 
 							//	def outputDir = "/users/jliu/tmp"
 								def outputDir = grailsApplication.config.com.recomdata.analysis.data.file.dir;
-							        def webRootName = jobDataMap.get("appRealPath");
+							def webRootName = jobDataMap.get("appRealPath");
 								if (webRootName.endsWith(File.separator) == false)
 									webRootName += File.separator;
 								outputDir =  webRootName + outputDir;
@@ -211,12 +245,15 @@ class DataExportService {
 								if('subset2'==subset)
 									prefix = "S2"
 								vcfDataService.getDataAsFile(outputDir, jobDataMap.get("jobName"), null, resultInstanceIdMap[subset], selectedSNPs, selectedGenes, chromosomes, prefix);
-								break;
-						        case "CLINICAL.TXT":
-							        break;
-						        default:
-							        println "Unknown name for selectedFile ${selectedFile}"
+                                break;
+                            default:
+                                log.error "Unknown name for selectedFile: ${selectedFile}"
+                                return
 						}
+
+                        log.info("Data retrieval for $selectedFile took "
+                                + ((System.currentTimeMillis() - start) / 1000)
+                                + " seconds");
 					}
 				}
 				

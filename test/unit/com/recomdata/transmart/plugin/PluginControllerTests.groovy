@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -32,9 +32,14 @@ class PluginControllerTests {
     @Before
     void setUp() {
 		mockDomain(Plugin);
-        def p = new Plugin(name: 'Test Plugin', pluginName: 'TestPlugin', active: true, hasForm: false, defaultLink: '', hasModules: false)
-                .save(flush: true)
-        assert p != null
+        def p = new Plugin(
+                name: 'Test Plugin',
+                pluginName: 'TestPlugin',
+                active: true,
+                hasForm: false,
+                defaultLink: 'bogus_link',
+                hasModules: false)
+        assert p.save() != null
     }
 
 	void testIndex() {

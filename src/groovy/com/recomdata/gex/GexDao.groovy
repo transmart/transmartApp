@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -517,7 +517,7 @@ public class GexDao {
 				//Run the R command to set the working directory to our temp directory.
 				REXP x = c.eval(workingDirectoryCommand)
 				
-				String pluginScriptDirectory = config.com.recomdata.plugins.pluginScriptDirectory
+				String pluginScriptDirectory = config.com.recomdata.transmart.data.export.rScriptDirectory
 				String compilePivotDataCommand = "source('${pluginScriptDirectory}/PivotData/PivotGeneExprData.R')"
 				REXP comp = c.eval(compilePivotDataCommand)
 				//Prepare command to call the PivotClinicalData.R script

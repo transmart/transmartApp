@@ -54,14 +54,13 @@
         <listener-class>org.codehaus.groovy.grails.web.context.GrailsContextLoaderListener</listener-class>
     </listener>
 
-    <!-- Grails dispatcher servlet -->
     <servlet>
         <servlet-name>grails</servlet-name>
         <servlet-class>org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <!-- The Groovy Server Pages servlet -->
+
     <servlet>
         <servlet-name>gsp</servlet-name>
         <servlet-class>org.codehaus.groovy.grails.web.pages.GroovyPagesServlet</servlet-class>
@@ -73,19 +72,11 @@
     </servlet-mapping>
 
     <session-config>
-        <!-- 30 minutes -->
         <session-timeout>30</session-timeout>
     </session-config>
 
-    <session-config>
-        <tracking-mode>URL</tracking-mode>
-    </session-config>
-
     <welcome-file-list>
-        <!--
-        The order of the welcome pages is important.  JBoss deployment will
-        break if index.gsp is first in the list.
-        -->
+
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>index.gsp</welcome-file>

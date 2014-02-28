@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -458,14 +458,14 @@ class SnpDataService {
 		StringBuilder sTables = new StringBuilder()
 		
 		sSelect.append("""
-						SELECT  SNP.SNP_NAME AS SNP,
+						SELECT  SNP_GENO.SNP_NAME AS SNP,
 						DSM.PATIENT_ID, DSM.SUBJECT_ID, 
 						bm.BIO_MARKER_NAME AS GENE,
 						DSM.sample_type,
 						DSM.timepoint,
 						DSM.tissue_type,
-						SNP.SNP_CALLS AS GENOTYPE,
-						SNP.COPY_NUMBER AS COPYNUMBER,
+						SNP_GENO.SNP_CALLS AS GENOTYPE,
+						SNP_COPY.COPY_NUMBER AS COPYNUMBER,
 						PD.sourcesystem_cd,
 						DSM.GPL_ID
 					""")
@@ -474,8 +474,9 @@ class SnpDataService {
 		sTables.append(""" 	FROM DE_SUBJECT_SAMPLE_MAPPING DSM
 							INNER JOIN patient_dimension PD ON DSM.patient_id = PD.patient_num 
 							INNER JOIN qt_patient_set_collection qt ON qt.result_instance_id = CAST(? AS numeric) AND qt.PATIENT_NUM = DSM.PATIENT_ID
-							INNER JOIN DE_SAMPLE_SNP_DATA SNP ON DSM.SAMPLE_CD = SNP.SAMPLE_ID
-							INNER JOIN DE_SNP_GENE_MAP D2 ON D2.SNP_NAME = SNP.SNP_NAME
+							LEFT JOIN DE_SNP_CALLS_BY_GSM SNP_GENO ON DSM.OMIC_PATIENT_ID = SNP_GENO.PATIENT_NUM AND DSM.SAMPLE_CD = SNP_GENO.GSM_NUM
+							LEFT JOIN DE_SNP_COPY_NUMBER SNP_COPY ON DSM.OMIC_PATIENT_ID = SNP_COPY.PATIENT_NUM AND SNP_GENO.snp_name = SNP_COPY.snp_name
+							INNER JOIN DE_SNP_GENE_MAP D2 ON D2.SNP_NAME = SNP_GENO.SNP_NAME
 							INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = to_char(D2.ENTREZ_GENE_ID)
 						""")
 

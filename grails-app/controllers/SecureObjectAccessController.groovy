@@ -1,22 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
 import command.SecureObjectAccessCommand
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser;
@@ -114,41 +95,45 @@ class SecureObjectAccessController {
 	}
 
 
-    def manageAccessBySecObj = {
-        def secureObjInstance
-        if(params.secureobjectid!=null)
-            secureObjInstance =	SecureObject.get( params.secureobjectid);
-        if (secureObjInstance == null)
+	def manageAccessBySecObj = {
+			def secureObjInstance
+			if(params.secureobjectid!=null)
+				secureObjInstance =	SecureObject.get( params.secureobjectid);
+        if (secureObjInstance == null && SecureObject.listOrderByDisplayName().size()!=0)
             secureObjInstance =	SecureObject.get(SecureObject.listOrderByDisplayName().first().id)
 
-        def access = SecureAccessLevel.findByAccessLevelName("VIEW");
-        def accessid = params.accesslevelid
-        if(accessid!=null){
-            access = SecureAccessLevel.get(accessid);
-        }
+			def access = SecureAccessLevel.findByAccessLevelName("VIEW");
+			def accessid = params.accesslevelid
+			if(accessid!=null){
+				access = SecureAccessLevel.get(accessid);
+			}
 
-        def searchtext=params.searchtext;
-        if(searchtext==null)
-            searchtext=''
+			def searchtext=params.searchtext;
+			if(searchtext==null)
+				searchtext=''
 
-        def secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
-        def userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
+		def 	secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
+		def 	userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
 
-        render(view:'managePrincipalAccess',model:[
-                secureObjectInstance:secureObjInstance,
-                secureObjectAccessList: secureObjectAccessList,
-                userwithoutaccess: userwithoutaccess,
-                accesslevelid:access.id
-        ] )
-    }
+		log.debug("accesslist:"+secureObjectAccessList);
+		log.debug("noaccess:"+userwithoutaccess);
+		log.debug("sec:"+secureObjInstance);
+
+			render(view:'managePrincipalAccess',model:[
+			                                 secureObjectInstance:secureObjInstance,
+			                          		secureObjectAccessList: secureObjectAccessList,
+			                          		userwithoutaccess: userwithoutaccess,
+			                          		accesslevelid:access.id
+			                          		] )
+	}
 
 	def addPrincipalToAccessList = {
-
+		
 			SecureObjectAccessCommand fl ->
 			def secureObjInstance
 			def user = springSecurityService.getPrincipal()
 			def msg = new StringBuilder(" Grant new access permission: ");
-
+			
 			if(params.secureobjectid!=null)
 				secureObjInstance =	SecureObject.get( params.secureobjectid);
 			def access = SecureAccessLevel.findByAccessLevelName("VIEW");
@@ -260,6 +245,10 @@ class SecureObjectAccessController {
 		//println(searchtext)
 		def secureObjectAccessList=getSecureObjAccessListForPrincipal(principalInstance, access);
 		def objectswithoutaccess=getObjsWithoutAccessForPrincipal(principalInstance, searchtext);
+		if(secureObjectAccessList==null)
+		secureObjectAccessList = []
+		if(objectswithoutaccess==null)
+		objectswithoutaccess= []
 		render(template:'addremoveAccess',model:[principalInstance: principalInstance,
 		secureObjectAccessList: secureObjectAccessList,
 		objectswithoutaccess: objectswithoutaccess,
@@ -329,7 +318,6 @@ class SecureObjectAccessController {
 	def getObjsWithoutAccessForPrincipal(principal, insearchtext) {
 		def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
 		//	println(searchtext)
-		println(principal)
 		if(principal!=null)
 			return SecureObject.findAll(" FROM SecureObject s WHERE s.dataType='BIO_CLINICAL_TRIAL' AND s.id NOT IN(SELECT so.secureObject.id FROM SecureObjectAccess so WHERE so.principal =:p ) and upper(s.displayName) like :dn ORDER BY s.displayName ",[p:principal,dn:searchtext]);
 		else
@@ -388,16 +376,24 @@ class SecureObjectAccessController {
 		if(secureObj==null)
 			return []
 
-		return SecureObjectAccess.findAll(" FROM SecureObjectAccess s WHERE s.secureObject = :so AND s.accessLevel = :al ORDER BY s.principal.name", [so:secureObj,al:access]);
+		def all = SecureObjectAccess.findAll(" FROM SecureObjectAccess s WHERE s.secureObject = :so AND s.accessLevel = :al ORDER BY s.principal.name", [so:secureObj,al:access]);
+		if (all ==null)
+			all = []
+		for(soa in all){
+			soa.getObjectAccessName();
 	}
+		return all;
+			}
 
 	def getPrincipalsWithoutAccess(secureObj, access, insearchtext)
 	{
-		//println(secureObj)
 		if(secureObj == null)
 			return []
 		def searchtext='%'+insearchtext.toString().toUpperCase()+'%'
-//		println(searchtext)
-		return Principal.findAll('from Principal g WHERE g.id NOT IN (SELECT so.principal.id from SecureObjectAccess so WHERE so.secureObject =:secObj AND so.accessLevel =:al ) AND upper(g.name) like :st ORDER BY g.name', [secObj:secureObj, al:access, st:searchtext] );
+
+		def all = Principal.findAll('from Principal g WHERE g.id NOT IN (SELECT so.principal.id from SecureObjectAccess so WHERE so.secureObject =:secObj AND so.accessLevel =:al ) AND upper(g.name) like :st ORDER BY g.name', [secObj:secureObj, al:access, st:searchtext] );
+		if(all == null)
+			all = []
+		return all;
 	}
 }

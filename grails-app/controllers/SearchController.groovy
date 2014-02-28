@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -55,16 +55,40 @@ public class SearchController{
 	
 	def SEARCH_DELIMITER='SEARCHDELIMITER'
 
+	// restrict categories to those prior to the faceted search
+	def catList = "('COMPOUND', 'DISEASE', 'GENE', 'GENELIST', 'GENESIG', 'PATHWAY', 'STUDY' , 'TRIAL')"
+
 	def index = {
 		session.setAttribute('searchFilter', new SearchFilter())
 	}
 
-	
 	def loadSearchAnalysis = {
 			def value = params.query.toUpperCase()
 			params.query = 'gene'+SEARCH_DELIMITER+'pathway'+SEARCH_DELIMITER+'genelist'+SEARCH_DELIMITER+'genesig:'+params.query
 			loadSearch()
 	}
+
+    /**
+     * load list of keyword terms to following data category:
+     * - MIRNA
+     * - GENE
+     * - PATHWAY
+     * - GENELIST
+     * - GENESIG
+     */
+    def loadSearchPathways = {
+        params.query = 'metabolite_superpathway' + SEARCH_DELIMITER +
+                       'metabolite_subpathway' + SEARCH_DELIMITER +
+                       'metabolite' + SEARCH_DELIMITER +
+                       'protein' + SEARCH_DELIMITER +
+                       'mirna' + SEARCH_DELIMITER +
+                       'gene' + SEARCH_DELIMITER +
+                       'pathway' + SEARCH_DELIMITER +
+                       'genelist' + SEARCH_DELIMITER +
+                       'genesig:' + params.query
+        loadSearch()
+    }
+
 	/**
 	 * find top 20 biomarkers that exist in the keyword table  with case insensitive LIKE match
 	 */
@@ -114,7 +138,11 @@ public class SearchController{
 
 	def loadCategories = {
 
-            def categories = SearchKeyword.executeQuery("select distinct k.dataCategory as value, k.displayDataCategory as label from org.transmart.searchapp.SearchKeyword k order by k.dataCategory")
+		def sql = "select distinct lower(k.dataCategory) as value, k.displayDataCategory as label " +
+                  " from org.transmart.searchapp.SearchKeyword k " +
+				  " where k.dataCategory in " +
+				  catList + " order by lower(k.dataCategory)"
+		def categories = SearchKeyword.executeQuery(sql)
 		def rows = []
 		rows.add([value: "all", label:"all"])
 		for (category in categories) {
@@ -638,7 +666,6 @@ public class SearchController{
 	}
 
 	def noResult = {
-		//Comment
 		render(view:'noresult')
 	}
 }

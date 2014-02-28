@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -22,7 +22,7 @@
 <table style="border:0px; align:left">
 	<tr>
   		<td style="width: 125px; padding-right:0px; vertical-align:middle">
-			<img src="${resource(dir:'images',file:grailsApplication.config.com.recomdata.searchtool.smallLogo)}" alt="tranSMART" style="position: relative; top: 8px;" />
+			<img src="${resource(dir:'images',file:grailsApplication.config.com.recomdata.smallLogo)}" alt="tranSMART" style="position: relative; top: 8px;" />
 		</td>
 		<td style="width: 10px; vertical-align:middle;padding-left:0px; padding-right:0px;">
 			<img src="${resource(dir:'images',file:'c-med.gif')}" alt="arrow" style="position: relative; top: 8px;" />
@@ -116,7 +116,7 @@
 	<tr>
 		<td style="vertical-align: middle;">
 			<g:link	controller="search">
-				<img src="${resource(dir:'images',file:grailsApplication.config.com.recomdata.searchtool.smallLogo)}" alt="tranSMART" />
+				<img src="${resource(dir:'images',file:grailsApplication.config.com.recomdata.smallLogo)}" alt="tranSMART" />
 			</g:link>
 		</td>
 		<td style="vertical-align: middle;">

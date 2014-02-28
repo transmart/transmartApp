@@ -12,7 +12,7 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
@@ -21,23 +21,28 @@
 	<g:set var="dtlLink" value="${createLink(action:'show', id:gs.id)}" />
 	<g:set var="ownerFlag" value="${adminFlag || user.id==gs.createdByAuthUser.id}" />
 	<g:set var="ctLkup" value="${ctMap.get(gs.id)}" />
-	     			
-    <td><a onclick="showDialog('GeneSigDetail_${gs.id}', { title: 'Gene Signature Detail [${gs.name?.replaceAll("'","\\\\'").encodeAsHTML()}]', url: '${dtlLink}'})">
-    		<img alt="detail" style="vertical-align:middle;" src="${resource(dir:'images',file:'grid.png')}" >&nbsp;${gs.name?.replaceAll("'","\\\\'").encodeAsHTML()}</a></td>       		
+	<td><g:checkBox name="${gs.id}" class="geneList"/></td>
+    <td><a onclick="showDialog('GeneSigDetail_${gs.id}', { title: 'Gene Signature Detail [${gs.name?.encodeAsHTML()}]', url: '${dtlLink}'})">
+    		<img alt="detail" style="vertical-align:middle;" src="${resource(dir:'images',file:'grid.png')}" />&nbsp;${gs.name?.encodeAsHTML()}</a></td>       		
 	<td>${gs.createdByAuthUser.userRealName?.encodeAsHTML()}</td>
 	<td><g:formatDate format="yyyy-MM-dd" date="${gs.dateCreated}" /></td>
+	<td><g:formatDate format="yyyy-MM-dd" date="${gs.lastUpdated}" /></td>
 	<td>${gs.speciesConceptCode?.codeName?.encodeAsHTML()}</td>
-	<td>${gs.techPlatform?.accession?.encodeAsHTML()}</td>
+	<td title="${gs.techPlatform?.description?.encodeAsHTML()}">${gs.techPlatform?.accession?.encodeAsHTML()}</td>
 	<td>${gs.tissueTypeConceptCode?.codeName?.encodeAsHTML()}</td>
-	<td style="text-align:center;">${gs.publicFlag ? 'Yes' : 'No'}</td>
+	<td id="${gs.id}Public" style="text-align:center;">${gs.publicFlag ? 'Public' : 'Private'}</td>
+	<td style="text-align:center;">${gs.createdByAuthUser.username}</td>
 	<td style="text-align:center;">${(gs.foldChgMetricConceptCode?.bioConceptCode=='NOT_USED') ? 'Yes' : 'No'}</td>
+	<g:hiddenField name="${gs.id}Owned" value="${(user.id==gs.createdByAuthUser.id)?'Owned':'Unowned'}"/>
+	<g:hiddenField name="${gs.id}Deleted" value="${gs.deletedFlag?'Deleted':'Undeleted'}"/>
+	<td style="text-align:center;">${(gs.foldChgMetricConceptCode.bioConceptCode=='NOT_USED') ? 'List' : 'Sig'}</td>
 	<g:if test="${ctLkup!=null}">
 	<td style="text-align:center;">${ctLkup?.getAt(1)}</td>
 	<td style="text-align:center;">${ctLkup?.getAt(2)}</td>
 	<td style="text-align:center;">${ctLkup?.getAt(3)}</td>	
 	</g:if>
 	<g:else>
-<td style="text-align:center;">0</td>
+	<td style="text-align:center;">0</td>
 	<td style="text-align:center;">0</td>
 	<td style="text-align:center;">0</td>		
 	</g:else>

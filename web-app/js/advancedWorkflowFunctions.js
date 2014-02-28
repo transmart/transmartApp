@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -85,6 +85,109 @@ function validateHeatmap()
 	);
 }
 
+//We verify that rows were added to a subset, then submit the search parameters to the sampleExplorer controller.
+function validateHeatMapsSample(completedFunction)
+{
+	//We need to generate a JSON object that has all the subsets.
+	jsonDataToPass = buildSubsetJSON();
+	
+	//Exit is we found no records in the subsets.
+	if(!jsonDataToPass)
+	{
+		Ext.Msg.alert("No subsets loaded","Please add records to a subset to run a workflow!");
+		return false;
+	}
+	
+	//We need to validate samples to make sure we aren't mixing platforms/studies.
+	var DataSetList = [];
+	var DataTypeList = [];
+	
+	//Loop through each subset and get a distinct list of DataSets and DataTypes.
+	for (subset in jsonDataToPass)
+	{
+		//Add this dataset and datatype to our list.
+		if(jsonDataToPass[subset].DataSet)DataSetList.push(jsonDataToPass[subset].DataSet.toString());
+		if(jsonDataToPass[subset].DataType)DataTypeList.push(jsonDataToPass[subset].DataType.toString());
+	}
+	
+	//Distinct our arrays.
+	DataSetList = DataSetList.unique();
+	DataTypeList = DataTypeList.unique();
+	
+	//Make sure each list only has one value.
+	if(DataSetList.size() > 1)
+	{
+		Ext.Msg.alert("Different study comparisons not allowed","You have selected samples from different studies. Please clear your entries and select samples from only one study.");
+		return false;	
+	}
+
+	if(DataTypeList.size() > 1)
+	{
+		Ext.Msg.alert("Different data type comparisons not allowed","You have selected samples from different data types. Please clear your entries and select samples from only one data type.");
+		return false;	
+	}
+	
+	//Since our lists only have one value we can set the global variable for Data Type.
+	GLOBAL.DataType = DataTypeList[0];
+	
+	/*
+	//Workflow specific validation.
+	//GWAS Needs 2 subsets.
+ 	if(jsonDataToPass.length() != 2)
+ 	{
+ 		Ext.Msg.alert('Genome-Wide Association Study needs control datasets (normal patients) in subset 1, and case datasets (disease patients) in subset 2.');
+	 	return false;
+ 	}		
+	*/
+	
+	//Pass the selected rows off to the sampleExplorer controller.
+	Ext.Ajax.request(
+			{
+				url : pageInfo.basePath+"/sampleExplorer/sampleValidateHeatMap",
+				method : 'POST',
+				timeout: '1800000',
+	           	jsonData : {"SearchJSON" : jsonDataToPass},
+				success : function(result, request)
+				{
+					validateheatmapComplete(result,completedFunction);
+				},
+				failure : function(result, request)
+				{
+					validateheatmapComplete(result,completedFunction);
+				}
+			}
+	); 
+
+}
+
+//After the heatmap server call is done we eval the JSON returned and show the popup with the list of dropdowns.
+function validateheatmapComplete(result,completedFunction)
+{
+	//Get the JSON string we got from the server into a real JSON object.
+	// var mobj=result.responseText.evalJSON();
+	var mobj=jQuery.parseJSON(result.responseText);
+	
+	//If we failed to retrieve any test from the heatmap server call, we alert the user here. Otherwise, show the popup.
+	if(mobj.NoData && mobj.NoData == "true")
+	{
+		Ext.Msg.alert("No Data!","No data found for the samples you selected!");
+		return;
+	}
+	
+	//If we got data, store the JSON data globally.
+	GLOBAL.DefaultCohortInfo=mobj;
+
+	if(GLOBAL.Explorer == "SAMPLE")
+	{
+		//Run the function for post data retrieval.
+		completedFunction();		
+	}
+	else
+	{
+		showCompareStepPathwaySelection();
+	}
+
+}
 //*******************************************************************
 //After the Run Workflow button is clicked on the advanced workflow popup, these functions run.
 //*******************************************************************
@@ -228,18 +331,14 @@ function finalAdvancedMenuValidation()
 
 function runVisualizerFromSpan(viewerURL, altviewerURL) {
 	//genePatternLogin();
-
-	//genePatternReplacement();
 	Ext.Ajax.request(
 	{
 		url: viewerURL,
 		method: 'GET',
 		success: function(result, request){
-			//Ext.MessageBox.hide();
 			runAppletFromSpan(result, 'visualizerSpan0');
 		},
 		failure: function(result, request){
-			//Ext.MessageBox.hide();
 			alert('Failed in getting the content of ' + viewerURL);
 		},
 		timeout: '1800000'
@@ -248,7 +347,6 @@ function runVisualizerFromSpan(viewerURL, altviewerURL) {
 	if (altviewerURL == undefined || altviewerURL == "") {
 		return;
 	}
-	
 	Ext.Ajax.request(
 	{
 		url: altviewerURL,

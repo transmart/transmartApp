@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -109,7 +109,13 @@ function getSelectedAsCommaSeparatedList(ob)
              h.dom.value=record.data.uid;
              //alert(h.dom.value);
              search.collapse();
-             new Ajax.Updater({success:'permissions'}, pageInfo.basePath+'/secureObjectAccess/listAccessForPrincipal/'+record.data.uid,{asynchronous:true,evalScripts:true,parameters:$('searchtext').serialize()});
+             jQuery.ajax(	{	url:pageInfo.basePath+'/secureObjectAccess/listAccessForPrincipal/'+record.data.uid,
+            		 			asynchronous:true,
+            	 				data:{searchtext:jQuery('#searchtext').serialize()},
+            	 				success: function( returnedData ) {
+            	 					jQuery( '#permissions' ).html( returnedData );
+            	 					}            	 				
+            	 				});
              //compareSubsets();
         }
     });
@@ -176,7 +182,14 @@ function getSelectedAsCommaSeparatedList(ob)
              h.dom.value=record.data.uid;
              //alert(h.dom.value);
              search.collapse();
-             new Ajax.Updater({success:'groups'}, pageInfo.basePath+'/userGroup/searchGroupsWithoutUser/'+record.data.uid,{asynchronous:true,evalScripts:true,parameters:$('searchtext').serialize()});
+             jQuery.ajax(	{	
+		 			url:pageInfo.basePath+'/userGroup/searchGroupsWithoutUser/'+record.data.uid,
+		 			asynchronous:true,
+	 				data:{searchtext:jQuery('#searchtext').serialize()},
+	 				success: function( returnedData ) {
+	 					jQuery( '#groups' ).html( returnedData );
+	 					}
+	 				});             
              //compareSubsets();
         }
     });

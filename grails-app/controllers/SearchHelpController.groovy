@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -30,6 +30,7 @@ public class SearchHelpController{
 
 	def springSecurityService
 	def geneSignatureService
+    def i2b2HelperService
 
 	def list = {}
 
@@ -54,8 +55,9 @@ public class SearchHelpController{
 	}
 
 	def listAllGeneSignatures = {
-		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)		
-		def signatures = geneSignatureService.listPermissionedGeneSignatures(user)
+		def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def bAdmin = i2b2HelperService.isAdmin(user);
+		def signatures = geneSignatureService.listPermissionedGeneSignatures(user.id, bAdmin)
 
 		def mapKeywordsGS = new HashMap()
 		def mapKeywordsGL = new HashMap()

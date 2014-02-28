@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -24,7 +24,7 @@ STATE = {
 		QueryRequestCounter: 0
 }
 
-function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType)
+function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes)
 {
 	this.name=name;
 	this.key=key;
@@ -37,45 +37,52 @@ function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalu
 	this.oktousevalues=oktousevalues;
 	this.value=value;
 	this.nodeType = nodeType
+    this.visualattributes = visualattributes;
 }
 
 function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
 {
-	if(typeof(mode)==undefined || mode==null)
-		{this.mode="novalue"} //default to novalue
-	else{
-		this.mode=mode;
-		}
-		
-	if(typeof(operator)==undefined || operator==null)
-		{this.operator="LT"}
-	else{
-		this.operator=operator;
-		}
-	
-	if(typeof(highlowselect)==undefined || highlowselect==null)
-		{this.highlowselect="N"}
-	else{
-		this.highlowselect=highlowselect;
-		}
+    if (typeof(mode) == undefined || mode == null) {
+        this.mode = "novalue"
+    } //default to novalue
+    else {
+        this.mode = mode;
+    }
 
-	if(typeof(lowvalue)==undefined || lowvalue==null)
-		{this.lowvalue=""}
-	else{
-		this.lowvalue=lowvalue;
-		}
+    if (typeof(operator) == undefined || operator == null) {
+        this.operator = "LT"
+    }
+    else {
+        this.operator = operator;
+    }
 
-	if(typeof(highvalue)==undefined || highvalue==null)
-		{this.highvalue=""}
-	else{
-		this.highvalue=highvalue;
-		}
-		
-		if(typeof(units)==undefined || units==null)
-		{this.units=""}
-	else{
-		this.units=units;
-		}
+    if (typeof(highlowselect) == undefined || highlowselect == null) {
+        this.highlowselect = "N"
+    }
+    else {
+        this.highlowselect = highlowselect;
+    }
+
+    if (typeof(lowvalue) == undefined || lowvalue == null) {
+        this.lowvalue = ""
+    }
+    else {
+        this.lowvalue = lowvalue;
+    }
+
+    if (typeof(highvalue) == undefined || highvalue == null) {
+        this.highvalue = ""
+    }
+    else {
+        this.highvalue = highvalue;
+    }
+
+    if (typeof(units) == undefined || units == null) {
+        this.units = ""
+    }
+    else {
+        this.units = units;
+    }
 } 
 
 function convertNodeToConcept(node)
@@ -90,13 +97,14 @@ function convertNodeToConcept(node)
 	var comment=node.attributes.comment;
 	var normalunits=node.attributes.normalunits;
 	var oktousevalues=node.attributes.oktousevalues;
-	
+	var visualattributes=node.attributes.visualattributes;
+
 	//Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
 	var nodeType = node.attributes.iconCls
 	
 	if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
 	
-	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType);
+	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes);
 	return myConcept;
 }
 function createPanelItemNew(panel, concept)
@@ -119,6 +127,7 @@ function createPanelItemNew(panel, concept)
 	li.setAttribute('setvalueunits',concept.value.units);
 	li.setAttribute('oktousevalues',concept.oktousevalues);
 	li.setAttribute('setnodetype',concept.nodeType);
+	li.setAttribute('visualattributes',concept.visualattributes);
 	li.className="conceptUnselected";
 	
 	//Create a shortname
@@ -1416,13 +1425,12 @@ function showCompareStepPathwaySelection()
                 title: 'Compare Subsets-Pathway Selection',
             	layout:'fit',
                 width:450,
-                // height:250,
                 autoHeight: true,
                 closable: false,
                 plain: true,
                 modal: true,
                 border:false,
-                //autoScroll: true,
+                y:100,
                 buttons: [
                 		{
                             id: 'compareStepPathwaySelectionOKButton',
@@ -1683,6 +1691,17 @@ if(!this.compareStepPathwaySelectionRBM)
                
 }
 
+function getQueryCdItem(el){
+    var item=el.getAttribute("conceptid");
+
+    var inOutCode = el.getAttribute("inoutcode")
+
+    //If there is visit information in the node, add it to the item we return.
+    if(inOutCode) item += "~" + inOutCode;
+
+    return item;
+}
+
 function getQuerySummary(subset)
 {
 var query="";
@@ -1908,6 +1927,7 @@ function getTreeNodeFromJsonNode(concept)
     var normalunitsnode 	= 	null;
     var oktousevaluesnode	= 	null;
     var oktousevalues		=	null;
+    var visualattributes    =   null;
 
     level				= concept.level;
     key					= concept.key;
@@ -1978,7 +1998,8 @@ function getTreeNodeFromJsonNode(concept)
         tablename     : tablename,
         normalunits   : normalunits,
         oktousevalues : oktousevalues,
-        expanded      : autoExpand
+        expanded      : autoExpand,
+        visualattributes : visualattributes
     });
     newnode.addListener('contextmenu', ontologyRightClick);
     return newnode;

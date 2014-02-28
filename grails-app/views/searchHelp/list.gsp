@@ -12,45 +12,108 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
 -->
 
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
-  <link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">  
-  <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
-  <script>jQuery.noConflict();</script>
-  <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
-  <script>
-  jQuery(document).ready(function() {
-    jQuery("#tabs").tabs({
-        cache:true,
-        load: function (e, ui) {
-               jQuery(ui.panel).find(".tab-loading").remove();
-        },
-        select: function (e, ui) {
-               var $panel = jQuery(ui.panel);
+	<title>${grailsApplication.config.com.recomdata.appTitle}</title>
+	<link rel="SHORTCUT ICON" href="${resource(dir:'images',file:'searchtool.ico')}">
+	<link rel="ICON" href="${resource(dir:'images',file:'searchtool.ico')}"> 
+	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
+	<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
+	<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
 
-               if ($panel.is(":empty")) {
-                   $panel.append("<div class='tab-loading'>Loading...</div>")
-               }
-        }
-    });
-  });
-  </script>
+
+	<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js', file:'ext/miframe.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js', file:'application.js')}"></script>
+
+	<style type="text/css">
+ 		.x-tab-strip span.x-tab-strip-text {
+		    font: 12px verdana, arial, helvetica, sans-serif;
+			color:#538d4e;
+		}
+      	.x-tab-strip-active span.x-tab-strip-text {
+        	font: 12px verdana, arial, helvetica, sans-serif;
+			color:#000000;
+			font-weight:bold;
+		}
+	</style>
+	<!-- ************************************** -->
+    <!-- This implements the Help functionality -->
+    <script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
+    <script language="javascript">
+        helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
+    </script>
+    <sec:ifAnyGranted roles="ROLE_ADMIN">
+			<script language="javascript">
+                helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
+			</script>
+	</sec:ifAnyGranted>
+	<!-- ************************************** -->
+
+	<script type="text/javascript">
+		Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
+
+		// set ajax to 90*1000 milliseconds
+		Ext.Ajax.timeout = 180000;
+
+		Ext.onReady(function() {
+			var panel = new Ext.Viewport({
+				layout: 'border',
+				items: [
+				{
+			        activeTab:0,
+			        xtype: 'tabpanel', // TabPanel
+					region: 'center',
+			        defaults: { autoScroll: true, closable: false, loadMask: true },
+			        defaultType: 'iframepanel', // tabs use ManagedIFrame to display encapsulated web pages.
+			        items:[/*
+						{
+			                title:"Clinical Trial",
+			                id:'trial',
+			                defaultSrc: {url: '${createLink(controller:'searchHelp',action:'listAllTrials')}',nocache:true, discardUrl:true,method:'POST'}
+						}, */
+						{
+							title:"Compound",
+			                id:'compound',
+				            defaultSrc: {url: '${createLink(controller:'searchHelp',action:'listAllCompounds')}',nocache:true, discardUrl:true,method:'POST'}
+						},
+						{
+							title:"Disease",
+				            id:'disease',
+			                defaultSrc: {url: '${createLink(controller:'searchHelp',action:'listAllDiseases')}',nocache:true, discardUrl:true,method:'POST'}
+						},
+						{
+							title:"Pathway",
+				            id:'pathway',
+				            defaultSrc: {url: '${createLink(controller:'searchHelp',action:'listAllPathways')}',nocache:true, discardUrl:true,method:'POST'}
+						},
+						{
+							title:"Gene Signature/Lists",
+				            id:'genesig',
+				            defaultSrc: {url: '${createLink(controller:'searchHelp',action:'listAllGeneSignatures')}',nocache:true, discardUrl:true, method:'POST'}
+						}					
+					],
+			        tools:[{
+						id:'help',
+						qtip:'Click for context sensitive help',
+					    handler: function(event, toolEl, panel){
+					    	<%topicID="1016" %>
+					    	D2H_ShowHelp(<%=topicID%>,helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+					    }
+			        }]
+				}]
+			});
+		});
+	</script>
 </head>
 <body style="margin:0px; font: 12px verdana, arial, helvetica, sans-serif;">
     <div id="tabs">
-      <ul>
-        <li><a href="${createLink(controller:'searchHelp',action:'listAllTrials')}">Clinical Trials</a></li>
-        <li><a href="${createLink(controller:'searchHelp',action:'listAllCompounds')}">Compounds</a></li>
-        <li><a href="${createLink(controller:'searchHelp',action:'listAllDiseases')}">Diseases</a></li>
-        <li><a href="${createLink(controller:'searchHelp',action:'listAllPathways')}">Pathways</a></li>
-        <li><a href="${createLink(controller:'searchHelp',action:'listAllGeneSignatures')}">Gene Signatures/Lists</a></li>
-      </ul>
-    </div> 
+<body>
+	<!-- Ext.Viewport automatically renders to document body -->
 </body>
 </html>

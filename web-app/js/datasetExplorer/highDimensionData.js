@@ -12,7 +12,7 @@
  * 
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  * 
  *
  ******************************************************************/
@@ -29,6 +29,7 @@ function gatherHighDimensionalData(divId){
 	
 	if(!variableDivEmpty(divId)
 			&& ((GLOBAL.CurrentSubsetIDs[1]	== null) ||	(multipleSubsets() && GLOBAL.CurrentSubsetIDs[2]== null))){
+		spinnerMask.hide();
 		runAllQueriesForSubsetId(function(){gatherHighDimensionalData(divId);}, divId);
 		return;
 	}
@@ -60,9 +61,7 @@ function gatherHighDimensionalData(divId){
 				},
 				failure : function(result, request)
 				{
-					spinnerMask.hide();
-					determineHighDimVariableType(result);
-					readCohortData(result,divId);
+                    Ext.Msg.alert("Error", "Communication failed.");
 				}
 			}
 	);
@@ -175,9 +174,6 @@ function runAllQueriesForSubsetId(callback, divId)
 	var subset = 1;
 	if(isSubsetEmpty(1) && isSubsetEmpty(2))
 	{
-		if (null != panel) { 
-			panel.body.unmask()
-		}
 		Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
 		return;
 	}
@@ -195,7 +191,7 @@ function runAllQueriesForSubsetId(callback, divId)
 	/* set the number of requests before callback is fired for runquery complete */
 
 	// iterate through all subsets calling the ones that need to be run
-	for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1)
+	for (var i = 1; i <= GLOBAL.NumOfSubsets; i++)
 	{
 		if( ! isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null)
 		{
@@ -245,40 +241,31 @@ function runQueryForSubsetId(subset, callback, divId)
 }
 
 function runQueryForSubsetidSingleSubset(callback, divId){
-	var query = getCRCRequestSingleSubset(divId);
-	Ext.Ajax.request(
-			{
-				url : pageInfo.basePath + "/queryTool/runQueryFromDefinition",
-				method : 'POST',
-				xmlData : query,
-				// callback : callback,
-				success : function(result, request)
-				{
-				runQueryCompleteForSubsetId(result, callback);
-				}
-			,
-			failure : function(result, request)
-			{
-				runQueryCompleteForSubsetId(result, callback);
-			}
-			,
-			timeout : '600000'
-			}
-	);
+    var query = getCRCRequestSingleSubset(divId);
+    Ext.Ajax.request(
+        {
+            url : pageInfo.basePath + "/queryTool/runQueryFromDefinition",
+            method : 'POST',
+            xmlData : query,
+            // callback : callback,
+            success : function(result, request)
+            {
+                runQueryComplete(result, null, callback);
+            }
+            ,
+            failure : function(result, request)
+            {
+                Ext.Msg.alert("Error", "Ajax call is failed.")
+            }
+            ,
+            timeout : '600000'
+        }
+    );
 
-	if(GLOBAL.Debug)
-	{
-		resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
-	}
-}
-
-function runQueryCompleteForSubsetId(result, callback)
-{
-	var numOfPatientsFound = result.responseXML.selectSingleNode("//set_size").firstChild.nodeValue;
-	var patientsetid = result.responseXML.selectSingleNode("//result_instance_id").firstChild.nodeValue;
-	var currentSubsetId = patientsetid;
-	callback(currentSubsetId);
-
+    if(GLOBAL.Debug)
+    {
+        resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
+    }
 }
 
 function getCRCRequest(subset, queryname, divId){

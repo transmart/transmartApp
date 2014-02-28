@@ -12,55 +12,59 @@
   
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
 -->
 
 <html>
-    <head>
-        <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
-        <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'jquery.dataTables.css')}">
-        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>                    
-        <script type="text/javascript">
-           jQuery(document).ready(function() {
-               jQuery("#geneSigTable").dataTable({
-                    "iDisplayLength": 10,
-                    "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],                    
-                    "sPaginationType": "full_numbers",                    
-                    "bStateSave": true
-               });
+<head>
+	<title>${grailsApplication.config.com.recomdata.appTitle}</title>
+	<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
+	<script type="text/javascript" src="${resource(dir:'js', file:'maintabpanel.js')}"></script>	
+	<script type="text/javascript">		
+		function refreshParent(newurl) {
+    		parent.window.close();
+	 		if(parent!=null && parent.window.opener!=null && !parent.window.opener.closed) {
+				parent.window.opener.location = newurl;
+	 		}
+		}
+	</script>
+</head>
 
-           });      
-           function refreshParent(newurl) {
-                parent.window.close();
-                if(parent!=null && parent.window.opener!=null && !parent.window.opener.closed) {
-                    parent.window.opener.location = newurl;
-                }
-           }
-        </script>
-    </head>
-    <body>     
-       <table id='geneSigTable'>
-        <thead>
-            <tr>
-                <th style="white-space: nowrap;">Gene Signature</th>
-                <th style="white-space: nowrap;">Gene List (up-regulated version)</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            <g:each in="${signatures}" var="gs">
-                <tr>         
-                    <td style="font: 12px verdana, arial, helvetica, sans-serif;">${createKeywordSearchLink(popup:true, jsfunction:"refreshParent", keyword:gsMap.getAt(gs.id))}</td>
-                    <g:if test="${gs.foldChgMetricConceptCode?.bioConceptCode!='NOT_USED'}">
-                        <td style="font: 12px verdana, arial, helvetica, sans-serif;">${createKeywordSearchLink(popup:true, jsfunction:"refreshParent", keyword:glMap.getAt(gs.id))}</td>
-                    </g:if>
-                    <g:else><td style="font: 12px verdana, arial, helvetica, sans-serif;">NA</td></g:else>
-                    <td style="font: 12px verdana, arial, helvetica, sans-serif;">${gs.description}</td>   
-                </tr>
-            </g:each>
-        </tbody>
-       </table> 
-    </body>
+<body>
+<div id="summary">
+
+	<!--  gene signatures -->
+	<div id="SummaryHeader"><span class="SummaryHeader">Available Gene Signatures</span></div>
+
+	<table class="trborderbottom" width="100%">
+		<thead>
+		<tr>
+			<th style="white-space: nowrap;">Gene Signature</th>
+			<th style="white-space: nowrap;">Gene List (up-regulated version)</th>
+			<th>Description</th>			
+		</tr>
+		</thead>
+	
+		<tbody>
+		<g:each in="${signatures}" var="gs" status="i">
+		<g:set var="dtlLink" value="${createLink(controller:'geneSignature', action:'show', id:gs.id)}" />
+		<tr style="border-bottom:1px solid #CCCCCC;padding-botton:2px;">  		
+			<td width="25%">${createKeywordSearchLink(popup:true, jsfunction:"refreshParent", keyword:gsMap.getAt(gs.id))}</td>
+			
+			<!--  offer gene list version if applicable -->				
+			<g:if test="${gs.foldChgMetricConceptCode?.bioConceptCode!='NOT_USED'}">
+				<td style="width:25%">${createKeywordSearchLink(popup:true, jsfunction:"refreshParent", keyword:glMap.getAt(gs.id))}</td>
+			</g:if>
+			<g:else><td style="width:25%;">NA</td></g:else>
+			
+	  		<td>${gs.description}</td>			
+		</tr>
+		</g:each>		
+		</tbody>		
+	</table>
+	
+</div>
+</body>
 </html>

@@ -1,26 +1,4 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
 
-/* SubsetTool.js
-Jeremy M. Isikoff
-Recombinant */
 String.prototype.trim = function() {
 	return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 }
@@ -52,7 +30,7 @@ function dataSelectionCheckboxChanged(ctl)
 }
 
 function setDataAssociationAvailableFlag(el, success, response, options) {
-	
+
 	if (!success) {
 		var dataAssociationPanel = Ext.getCmp('dataAssociationPanel');
 		var resultsTabPanel = Ext.getCmp('resultsTabPanel');
@@ -72,7 +50,7 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
 						/*for (var i = 0; i < exp.files.length; i++) {
 							var file = exp.files[i]
 							if (file.type == 'script') {
-								
+
 							}
 						}*/
 						loadScripts(exp.files);
@@ -86,26 +64,24 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
 	}
 }
 
+/**
+ * Load js and css dynamically
+ * @param scripts
+ */
 function loadScripts(scripts) {
-	var handlerData = {
-	//data you wish to pass to your success or failure
-	//handlers.
-	};
-	 
-	var filesArr = []
-	for (var i = 0; i < scripts.length; i++) {
-		var file = scripts[i];
-		filesArr.push(file.path);
-	}
-	YAHOO.util.Get.script(filesArr, {
-		onSuccess: function(o) {
-			//alert("JavaScripts loaded");
-		},
-		onFailure: function(o) {
-			alert("Failed to load Javascript files");
-		},
-		data:      handlerData
-	});
+    // loop through script array
+    for (var i = 0; i < scripts.length; i++) {
+
+        var file = scripts[i];
+
+        if (file.type == 'script') { // if javascript
+            $j.getScript(file.path);
+        } else if (file.type == 'css') { // if css
+            $j('head').append($j('<link rel="stylesheet" type="text/css" />').attr('href', file.path));
+        } else {
+            console.error("Unknown file type.");
+        }
+    }
 }
 
 Ext.Panel.prototype.setBody = function(html)
@@ -154,21 +130,20 @@ Ext.onReady(function()
    split : true,
    border : true,
    layout : 'border'}); */
-	
+
 	if(GLOBAL.Config != "jj")
 	{
 		northPanel = new Ext.Panel(
 				{
 					id : 'northPanel',
-					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif"></img></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
+					html : '<div style="padding:5px;background:#eee;font:14pt arial"><table><tr><td><img src="/images/i2b2_hive_32.gif" /></td><td><span style="font:arial 14pt;"><b> i2b2 Web Client</b></span></td></tr></table></div>',
 					region : 'north',
 					height : 45,
 					split : false,
 					border : true
 				}
 		);
-	}
-	else
+	}else
 	{
 		northPanel = new Ext.Panel(
 				{
@@ -177,11 +152,11 @@ Ext.onReady(function()
 					height : 30,
 					split : false,
 					border : true,
-					tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle,GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
 					contentEl: "header-div"
 				}
 		);
 	}
+
 	qphtml = "<div style='margin: 10px'>Query Criteria<br /><select size='8' id='queryCriteriaSelect1' style='width:400px; height:250px;'></select><br />\
 		< button onclick = 'resetQuery()' > Reset < / button > < br / > < div id = 'queryCriteriaDiv1' style = 'font:11pt;width:200px; height:250px; white-space:nowrap;overflow:auto;border:1px solid black' > < / div > < / div > "
 
@@ -498,6 +473,7 @@ Ext.onReady(function()
 										clearAnalysisPanel();
 										resetQuery();
 										clearDataAssociation();									
+										resetExportTabs();
 									}
 								// clearGrid(); blah
 								}
@@ -838,7 +814,30 @@ Ext.onReady(function()
 					collapsible : true						
 				}
 		);
-		
+
+		/**
+		 * panel to display list of jobs belong to a user
+		 * @type {Ext.Panel}
+		 */
+		analysisJobsPanel = new Ext.Panel(
+			{
+				id : 'analysisJobsPanel',
+				title : 'Analysis Jobs',
+				region : 'center',
+				split : true,
+				height : 90,
+				layout : 'fit',
+				listeners :
+				{
+					activate : function(p) {
+						getJobsData(p)
+					}
+				},
+				collapsible : true
+			}
+		);
+
+
 		metacoreEnrichmentPanel = new Ext.Panel(
 				{
 					id : 'metacoreEnrichmentPanel',
@@ -871,7 +870,7 @@ Ext.onReady(function()
 							//resultsTabPanel.tools['help help-resana-panel'].dom.style.display="none";
 						}
 					},
-					collapsible : true						
+					collapsible : true
 				}
 		);
 		
@@ -883,9 +882,102 @@ Ext.onReady(function()
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
+		resultsTabPanel.add(analysisJobsPanel);
+
+        // add genome browser panel if the plugin is installed
+
+        // JBROWSE
+        // =======
+        Ext.Ajax.request ({
+            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
+            method: 'POST',
+            success: function (result) {
+                if (result.responseText === 'true') {
+
+                    // load script
+                    Ext.Ajax.request ({
+                        url: pageInfo.basePath+"/JBrowse/loadScripts",
+                        method: 'POST',
+                        success: function (result) {
+                            var exp = result.responseText.evalJSON();
+                            if (exp.success && exp.files.length > 0)	{
+
+                                var filesArr = [];
+
+                                for (var i = 0; i < exp.files.length; i++) {
+                                    var file = exp.files[i];
+                                    filesArr.push(file.path);
+                                }
+
+                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
+
+                            }
+                        }
+                    });
+
+                }
+            },
+            params: {
+                pluginName: 'jbrowse-plugin'
+            }
+        });
+
+        // DALLIANCE
+        // =======
+        Ext.Ajax.request ({
+            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
+            method: 'POST',
+            success: function (result) {
+
+                var _this = this;
+
+                if (result.responseText === 'true') {
+
+                    // load script
+                    Ext.Ajax.request ({
+                        url: pageInfo.basePath+"/Dalliance/loadScripts",
+                        method: 'POST',
+                        success: function (result) {
+
+                            var resultJSON = JSON.parse(result.responseText);
+                            var filesArr = [];
+
+                            if (resultJSON.success && resultJSON.files.length > 0)	{
+                                for (var i = 0; i < resultJSON.files.length; i++) {
+
+                                    var aFile = resultJSON.files[i];
+                                    filesArr.push(aFile.path);
+                                }
+                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
+                            }
+                        },
+                        failure: function() {
+                            console.error("Cannot load plugin scripts for " + _this.pluginName);
+                        }
+                    });
+
+
+                }
+            },
+            params: {
+                pluginName: 'dalliance-plugin'
+            }
+        });
+
+        function startDalliance() {
+            loadDalliance(resultsTabPanel);
+        }
+
+        function startJbrowse() {
+            loadJBrowse(resultsPanel);
+        }
+
 		if (GLOBAL.metacoreAnalyticsEnabled) {
+            // At the moment the metacoreanalysis is in Early alpha so we won't display it.
+            if(false){
 			resultsTabPanel.add(metacoreEnrichmentPanel);
-		}
+            }
+        }
 		
 		southCenterPanel = new Ext.Panel(
 				{
@@ -1262,7 +1354,7 @@ function createOntPanel()
 
 	// make the ontSerchByNamePanel
 	shtml='<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>\
-		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td<td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15">&nbsp;</td>\
+		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td><td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15" />&nbsp;</td>\
 		<td><button onclick="searchByName()">Find</button></td></tr><tr><td colspan="2">Select Ontology:<select id="searchByNameSelectOntology"></select></td></tr></table>';
 
 		searchByNameForm = new Ext.Panel(
@@ -1681,52 +1773,6 @@ function projectDialogComplete()
 	}
 }
 
-function getPreviousQueriesComplete(response)
-{
-	// alert(response.responseText);
-	// shorthand
-	var Tree = Ext.tree;
-	// add a tree sorter in folder mode
-	// new Tree.TreeSorter(ontTree, {folderSort : true});
-
-	if(GLOBAL.Debug)
-	{
-		alert(response.responseText);
-	}
-	// clear the tree
-	for(c = prevTreeRoot.childNodes.length - 1; c >= 0;
-	c -- )
-	{
-		prevTreeRoot.childNodes[c].remove();
-	}
-	// prevTree.render();
-
-	var querymasters = response.responseXML.selectNodes('//query_master');
-	for(var c = 0; c < querymasters.length; c ++ )
-	{
-		var querymasterid = querymasters[c].selectSingleNode('query_master_id').firstChild.nodeValue;
-		var name = querymasters[c].selectSingleNode('name').firstChild.nodeValue;
-		var userid = querymasters[c].selectSingleNode('user_id').firstChild.nodeValue;
-		var groupid = querymasters[c].selectSingleNode('group_id').firstChild.nodeValue;
-		var createdate = querymasters[c].selectSingleNode('create_date').firstChild.nodeValue;
-		// set the root node
-		var prevNode = new Tree.TreeNode(
-				{
-					text : name,
-					draggable : true,
-					id : querymasterid,
-					qtip : name,
-					userid : userid,
-					groupid : groupid,
-					createdate : createdate,
-					leaf : true
-				}
-		);
-		prevNode.addListener('contextmenu', previousQueriesRightClick);
-		prevTreeRoot.appendChild(prevNode);
-	}
-}
-
 function getCategoriesComplete(ontresponse){
 	ontTabPanel.add(ontFilterPanel);
 	ontFilterTree.dragZone.addToGroup("analysis");
@@ -1755,7 +1801,7 @@ function setActiveTab(){
  * -"include": Across Trials is the only concept included
  * -"exclude": Across Trials concept is the only concept excluded 
  */
-function createTree(includeExcludeFlag, ontresponse){
+function createTree(includeExcludeFlag, ontresponse, treePanel){
 	// shorthand
 	var Tree = Ext.tree;
 
@@ -1767,6 +1813,8 @@ function createTree(includeExcludeFlag, ontresponse){
             qtip      : 'root'
         }
     );
+    treePanel.setRootNode(treeRoot);
+
 	for (var c = 0; c < ontresponse.length; c ++ )
 	{
 		var key = ontresponse[c].key;
@@ -1823,18 +1871,40 @@ function getSubCategories(id_in, title_in, ontresponse)
 	
 	var showFn;
 	
+    var ontTree = new Tree.TreePanel(
+        {
+            id : id_in,
+            title : title_in,
+            animate : false,
+            autoScroll : true,
+            loader : new Ext.ux.OntologyTreeLoader(
+                {
+                    dataUrl : 'none'
+                }
+            ),
+            enableDrag : true,
+            ddGroup : 'makeQuery',
+            containerScroll : true,
+            enableDrop : false,
+            region : 'center',
+            rootVisible : false,
+            expanded : true,
+            onShow : function() { showFn.apply(this, arguments); }
+        }
+    );
+	
 	if (id_in==='crossTrialsPanel'){
 		showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
 			//Ext.get('advancedbutton').dom.style.display='none';
 		}
-		treeRoot = createTree('include', ontresponse);
+		treeRoot = createTree('include', ontresponse, ontTree);
 	}else{
 		showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
 			//Ext.get('advancedbutton').dom.style.display='';
 		}
-		treeRoot = createTree('exclude', ontresponse);
+		treeRoot = createTree('exclude', ontresponse, ontTree);
 	}
 	
     var toolbar = new Ext.Toolbar([
@@ -1847,28 +1917,6 @@ function getSubCategories(id_in, title_in, ontresponse)
 		}
     ]);
 	
-	var ontTree = new Tree.TreePanel(
-			{
-				id : id_in,
-				title : title_in,
-				animate : false,
-				autoScroll : true,
-				loader : new Ext.ux.OntologyTreeLoader(
-						{
-							dataUrl : 'none'
-						}
-				),
-				enableDrag : true,
-				ddGroup : 'makeQuery',
-				containerScroll : true,
-				enableDrop : false,
-				region : 'center',
-				rootVisible : false,
-				expanded : true,
-				onShow : showFn
-			}
-	);
-
 	ontTree.on('startdrag', function(panel, node, event)
 			{
 		Ext.ux.ManagedIFrame.Manager.showShims()
@@ -2638,91 +2686,28 @@ function runQueryComplete(result, subset, callback) {
     // Current code requires us to set CurrentSubsetIDs regardless of error status...
     GLOBAL.CurrentSubsetIDs[subset] = jsonRes.id ? jsonRes.id : -1;
 
-    // getPDO_fromInputList is not implemented in core-db
-    //if (GLOBAL.Debug) {
-    //    alert(getCRCpdoRequest(patientsetid, 1, jsonRes.setSize));
-    //}
+    if (subset === null) { // if single subset
 
-    /* removed the pdo request call 12 / 17 / 2008 added the callback logic here instead */
-    // runQueryPDO(patientsetid, 1, jsonRes.setSize, subset, callback );
+        callback(GLOBAL.CurrentSubsetIDs[subset]);
 
-    if (STATE.QueryRequestCounter > 0) { // I'm in a chain of requests so decrement
-        STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
+    } else {
+
+        // getPDO_fromInputList is not implemented in core-db
+        //if (GLOBAL.Debug) {
+        //    alert(getCRCpdoRequest(patientsetid, 1, jsonRes.setSize));
+        //}
+
+        /* removed the pdo request call 12 / 17 / 2008 added the callback logic here instead */
+        // runQueryPDO(patientsetid, 1, jsonRes.setSize, subset, callback );
+
+        if (STATE.QueryRequestCounter > 0) { // I'm in a chain of requests so decrement
+            STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
+        }
+        if (STATE.QueryRequestCounter == 0) {
+            callback();
+        }
+        /* I'm the last request outstanding in this chain*/
     }
-    if (STATE.QueryRequestCounter == 0) {
-        callback();
-    }
-    /* I'm the last request outstanding in this chain*/
-}
-
-
-
-
-
-
-
-function runQueryPDO(patientsetid, minpatient, maxpatient, subset, callback)
-{
-	var query = getCRCpdoRequest(patientsetid, minpatient, maxpatient, subset)
-	// resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
-	queryPanel.el.mask('Getting patient set ' + subset + '...', 'x-mask-loading');
-	Ext.Ajax.request(
-			{
-				url : pageInfo.basePath+"/proxy?url=" + GLOBAL.CRCUrl + "pdorequest",
-				method : 'POST',
-				// scope : this,
-				xmlData : query,
-				success : function(result, request)
-				{
-				runQueryPDOComplete(result, subset, callback);
-				}
-			,
-			failure : function(result, request)
-			{
-				runQueryPDOComplete(result, subset, callback);
-			}
-			,
-			timeout : '600000'
-			}
-	);
-
-}
-
-function runQueryPDOComplete(result, subset, callback)
-{
-	if(GLOBAL.Debug)
-	{
-		alert(result.responseText)
-	}
-	;
-	queryPanel.el.unmask();
-	var doc = result.responseXML;
-	doc.setProperty("SelectionLanguage", "XPath");
-	doc.setProperty("SelectionNamespaces", "xmlns:ns2='http://www.i2b2.org/xsd/hive/pdo/1.1/'");
-	var patientset = result.responseXML.selectSingleNode("//ns2:patient_set");
-	if(patientset == undefined)
-	{
-		patientset = result.responseXML.selectSingleNode("//patient_set");
-	}
-	if(patientset == null)
-	{
-		return
-	}
-	;
-	createStatistics(patientset, subset);
-	if(STATE.QueryRequestCounter > 0) // I'm in a chain of requests so decrement
-	{
-		STATE.QueryRequestCounter = -- STATE.QueryRequestCounter;
-	}
-	if(STATE.QueryRequestCounter == 0)
-	{
-		callback();
-	}
-	/* I'm the last request outstanding in this chain*/
-	if(GLOBAL.Debug)
-	{
-		resultsPanel.setBody(resultsPanel.getBody() + "<div style='height:200px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(result.responseText) + "</div>");
-	}
 }
 
 // takes a patientset node
@@ -4403,7 +4388,9 @@ function showHaploviewGeneSelection()
 }
 
 function genePatternLogin() {
-	document.getElementById("gplogin").src = pageInfo.basePath + '/analysis/gplogin';
+    element = document.getElementById("gplogin");
+	if(element)
+        element.src = pageInfo.basePath + '/analysis/gplogin';
 }
 
 function showWorkflowStatusWindow()

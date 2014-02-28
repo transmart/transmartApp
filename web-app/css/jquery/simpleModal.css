@@ -1,0 +1,40 @@
+#basic-modal-content {display:none;}
+
+/* Overlay */
+#simplemodal-overlay {background-color:#fff; cursor:default;}
+
+/* Container */
+#simplemodal-container{
+height:600px; 
+width:600px;
+color:#000;
+overflow: clip;
+background-color:#fff;
+border:1px solid #999;
+padding:12px;
+box-shadow: 0 4px 16px rgba(0, 0, 0, .2);
+}
+#simplemodal-container .simplemodal-data {padding:8px;}
+#simplemodal-container code {background:#141414; border-left:3px solid #65B43D; color:#bbb; display:block; font-size:12px; margin-bottom:12px; padding:4px 6px 6px;}
+#simplemodal-container a {color:#1B74B3;}
+#simplemodal-container a.actions {color:#1B74B3;}
+#simplemodal-container a.modalCloseImg {background:url(../../images/cross_bw.png) no-repeat; width:25px; height:29px; display:inline; z-index:8000; position:absolute; top:8px; right:0px; cursor:pointer;}
+#simplemodal-container h3 {color:#333;}
+
+#simplemodal-container .editSearchDiv {color:#000; background-color:#eee; padding:12px;display:none;width:90%}
+#simplemodal-container .editSearchDiv a {color:#000;}
+
+#simplemodal-container textarea {resize: none;}
+
+#simplemodal-container .modal-controls a{
+	color: #1B74B3;
+	background-color:#fff;
+	border: 1px solid #CCC;
+	padding: 7px;
+}
+
+#simplemodal-container .modal-controls a:hover{
+	background-color:#fff;
+	border: 1px solid #999;
+	padding: 7px;
+}
