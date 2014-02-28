@@ -19,20 +19,21 @@
 
 import grails.converters.JSON
 import grails.plugin.springsecurity.SpringSecurityUtils
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
-import org.transmart.searchapp.AccessLog
-import org.transmart.searchapp.AuthUser
-
-import javax.servlet.http.HttpServletResponse
-
 import org.springframework.security.authentication.AccountExpiredException
 import org.springframework.security.authentication.CredentialsExpiredException
 import org.springframework.security.authentication.DisabledException
 import org.springframework.security.authentication.LockedException
 import org.springframework.security.core.context.SecurityContextHolder as SCH
-import org.springframework.security.web.WebAttributes
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.transmart.searchapp.AccessLog
 
+import javax.servlet.http.HttpServletResponse
+
+/**
+ * Login Controller
+ */
 class LoginController {
 
     /**
@@ -44,6 +45,7 @@ class LoginController {
      * Dependency injection for the springSecurityService.
      */
     def springSecurityService
+	def userDetailsService
 
     /**
      * Default action; redirects to 'defaultTargetUrl' if logged in, /login/auth otherwise.
@@ -79,7 +81,7 @@ class LoginController {
         if (autoLogin && !forceLogin) {
 
             log.info("Proceeding with auto guest login")
-            def user = AuthUser.findByUsername(guestUser)
+            def user = userDetailsService.findByUsername(guestUser)
             if (user != null) {
                 springSecurityService.reauthenticate(user.username)
             } else {
