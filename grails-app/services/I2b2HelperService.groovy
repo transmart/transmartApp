@@ -131,6 +131,43 @@ class I2b2HelperService {
 		else concept_name=splits[splits.length-1];
 		return concept_name;
 	}
+
+    def String getConceptCodeFromLongPath(String path)  {
+        log.trace("Getting concept codes for long path:" +path);
+        String shortPath=path.substring(path.indexOf("\\",2), path.length());
+
+        if(!path.endsWith("\\")){
+            path +="\\";
+        }
+        return getConceptCodeFromPath(shortPath);
+    }
+
+
+    /**
+     * Determines if a concept key is a folder or not
+     */
+    def Boolean isFolderConceptKey(String concept_key) {
+        String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+        Boolean res=false;
+        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        sql.eachRow("SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_FULLNAME = ?", [fullname], {row ->
+            res=row.c_visualattributes.indexOf('F')>-1
+        })
+        return res;
+    }
+
+    def String getConceptCodeFromPath(String path)  {
+        StringBuilder concepts = new StringBuilder();
+        log.trace("Getting concept codes for path:" +path);
+        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        String sqlt =
+            sql.eachRow("SELECT CONCEPT_CD FROM CONCEPT_DIMENSION c WHERE CONCEPT_PATH = ?", [path], {row ->
+                log.trace("Found code:"+row.CONCEPT_CD);
+                concepts.append(row.CONCEPT_CD);
+            });
+        log.trace("Done getting concept codes for path:" +path);
+        return concepts.toString();
+    }
 	
 	/**
 	 * Gets a grid column name from a concept key
@@ -539,6 +576,71 @@ class I2b2HelperService {
 		}
 		return results;
 	}
+
+    def  HashMap<String,Integer> getConceptDistributionDataForConceptSameEvent(String concept_key, TransmartQueryDefinition tQD) throws SQLException {
+
+        String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+        HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
+
+        // check to see if there is a mapping from this concept_key to a concept_key for the results
+        log.debug("getConceptDistributionDataForConcept: looking up parent_concept of fullname: " + fullname)
+        String parent_concept = lookupParentConcept(fullname);
+        log.debug("getConceptDistributionDataForConcept: parent_concept: "+parent_concept);
+        Set<String>	concepts = new HashSet<String>();
+
+        if (parent_concept != null) {
+            // lookup appropriate children
+            Set<String>	childConcepts = lookupChildConcepts(parent_concept, tQD.resultInstanceId);
+            if (childConcepts.isEmpty()) {
+                childConcepts.add(concept_key);
+            }
+            log.debug("getConceptDistributionDataForConcept: childConcepts: "+childConcepts);
+            for (c in childConcepts) {
+                int i=getLevelFromKey(concept_key)+1;
+                fullname = getConceptPathFromCode(c);
+                log.debug("** IN LOOP: fullname: "+fullname);
+                groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+                String sqlt =
+                    "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+                log.trace(sqlt);
+                sql.eachRow(sqlt, [fullname+"%", i], {row ->
+                    if (results.get(row[0]) == null) {
+                        results.put(row[0], getObservationCountForConceptForSubsetSameEvent("\\blah"+row[1], tQD));
+                    } else {
+                        results.put(row[0], results.get(row[0]) + getObservationCountForConceptForSubsetSameEvent("\\blah"+row[1], tQD));
+                    }
+                })
+            }
+        } else {
+            int i=getLevelFromKey(concept_key)+1;
+            groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+            String sqlt = "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+            log.trace(sqlt);
+
+            //is this concept also a concept in one of the query panels?
+            def isConceptInPanels = tQD.distributions.keySet().find({ k->
+                def kShortened = k.substring(k.indexOf("\\",2), k.length());
+                return kShortened == fullname;
+            });
+
+            //Get children and loop through them to display observation counts for each
+            sql.eachRow(sqlt, [fullname+"%", i], {row ->
+
+                //Does the concept have a distribution to use to calculate the count from?
+                //Note: The hashmap keys (concepts) have the double slash study prefix so use a predicate as a filter
+                Boolean isConceptInPanelDistribution = tQD.distributions.containsKey(row[1]);
+
+                if (isConceptInPanelDistribution) {
+                    results.put(row[0], getObservationCountForConceptForSubsetSameEvent("\\blah" + row[1], tQD));
+                }
+                //This child concept wasn't in the panels but it's parent was so get count for it but not using same event
+                else if (isConceptInPanels) {
+                    results.put(row[0], getObservationCountForConceptForSubset("\\blah" + row[1], tQD.resultInstanceId));
+                }
+            });
+        }
+        return results;
+    }
 	
 	/**
 	 * Gets the children value type concepts of a parent key
@@ -1072,8 +1174,10 @@ class I2b2HelperService {
 	/**
 	 * Gets the querymasterid for resultinstanceid
 	 */
-	def String getQIDFromRID(String resultInstanceId) {		
-		String qid=""
+	def String getQIDFromRID(String resultInstanceId) {
+        //The client can pass in an absent resultInstanceId as a 'null' string. Handle that here by explicitely making the absent resultInstanceId null
+        if(resultInstanceId=='null') resultInstanceId=null
+        String qid=""
 		if (resultInstanceId != null && resultInstanceId.length() > 0)	{
 			groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 			String sqlt="""select QUERY_MASTER_ID FROM QT_QUERY_INSTANCE a
@@ -4746,6 +4850,97 @@ class I2b2HelperService {
 		log.debug(access.toString());
 		return access;
 	}
+
+	def renderQueryDefinitionToString(String qid, String title, regionParams)
+	{
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		renderQueryDefinition(qid, title, pw);
+		StringBuffer sb = sw.getBuffer();
+		return sb.toString();
+	}
+
+    /**
+     * renderQueryDefinition provides an XML based string given a result instance ID
+     *
+     * @param qid - the query master id
+     * @param title - the title for the query (e.g. subset 2)
+     * @param pw - the StringWriter used to build the XML string
+     *
+     * @return an XML String
+     */
+    def renderQueryDefinition(String qid, String title, Writer pw, regionParams) {
+        if (log.isDebugEnabled())	{
+            log.debug("renderQueryDefinition called with ${qid} and ${title}")
+        }
+        if (qid != null) {
+            try {
+                String xmlrequest = getQueryDefinitionXMLFromQID(qid)
+                if(log.isDebugEnabled())	{
+                    log.debug("${xmlrequest}")
+                }
+                DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance()
+                domFactory.setNamespaceAware(true) // mandatory!
+                DocumentBuilder builder = domFactory.newDocumentBuilder()
+                Document doc = builder.parse(new InputSource(new StringReader(xmlrequest)))
+
+                XPathFactory factory = XPathFactory.newInstance()
+                XPath xpath = factory.newXPath()
+
+                Object result = xpath.evaluate("//panel", doc, XPathConstants.NODESET)
+                NodeList panels = (NodeList) result
+                Node panel = null
+
+
+                log.debug("Integrating over the nodes...")
+                for (int p = 0; p < panels.getLength(); p++) {
+                    panel=panels.item(p)
+                    Node panelnumber=(Node)xpath.evaluate("panel_number", panel, XPathConstants.NODE)
+
+                    if(panelnumber.getTextContent().equalsIgnoreCase("21"))	{
+                        log.debug("Skipping the security panel in printing the output")
+                        continue
+                    }
+
+                    if(p!=0 && p!=(panels.getLength()))	{
+                        pw.write("<br><b>AND</b><br>")
+                    }
+
+                    Node invert=(Node)xpath.evaluate("invert", panel, XPathConstants.NODE)
+                    if(invert.getTextContent().equalsIgnoreCase("1")) {
+                        pw.write("<br><b>NOT</b><br>")
+                    }
+
+                    NodeList items=(NodeList)xpath.evaluate("item", panel, XPathConstants.NODESET)
+                    pw.write("<b>(</b>")
+
+                    for(int i=0; i<items.getLength(); i++) {
+                        Node item=items.item(i);
+                        if(i!=0 && i!=(items.getLength()))	{
+                            pw.write("<br><b>OR</b><br>")
+                        }
+                        //jira - DEMOTM-231 : Summary of Concept in Summary Statistics view uses modifer_cd instead of modifer_path
+                        //Node key=(Node)xpath.evaluate("item_key", item, XPathConstants.NODE)
+                        Node key=(Node)xpath.evaluate("item_name", item, XPathConstants.NODE)
+
+                        String textContent = key.getTextContent()
+                        log.debug("Found item ${textContent}")
+                        pw.write(textContent+" "+renderConstrainByValue(item, xpath)+" "+renderConstrainByModifier(item, xpath));
+
+
+                        //TODO Tie region limitations into individual items
+                        if (regionParams) {
+                            pw.write(renderRegionParams(regionParams))
+                        }
+                    }
+                    pw.write("<b>)</b>")
+                }
+
+            } catch (Exception e) {
+                log.error(e)
+            }
+        }
+    }
 	
 	/**
 	 * renderQueryDefinition provides an XML based string given a result instance ID
@@ -4756,7 +4951,7 @@ class I2b2HelperService {
 	 * 
 	 * @return an XML String
 	 */	
-    def renderQueryDefinition(String resultInstanceId, String title, Writer pw) {
+   /* def renderQueryDefinition(String resultInstanceId, String title, Writer pw) {
 		if (log.isDebugEnabled())	{
 			log.debug("renderQueryDefinition called with ${resultInstanceId} and ${title}")
 		}
@@ -4830,7 +5025,7 @@ class I2b2HelperService {
 			   log.error(e)
 		   	}
 		}
-    }   
+    }  */
 	
 	def getSecureTokensCommaSeparated(user) {
 		def tokenmap=getSecureTokensWithAccessForUser(user);
@@ -5261,4 +5456,173 @@ class I2b2HelperService {
 			return trials;
 		}
 	}
+
+    def renderQueryDefinitionTable(String resultInstanceId, String title, Writer pw, regionParams)
+    {
+        String qid=getQIDFromRID(resultInstanceId);
+        pw.write("<table class='analysis'>")
+        pw.write("<tr><th>${title}</th></tr>")
+        pw.write("<tr>")
+        pw.write("<td>")
+        renderQueryDefinition(qid, title, pw, regionParams);
+        pw.write("</td></tr></table>")
+    }
+
+    TransmartQueryDefinition getQueryDefinition(String resultInstanceId) {
+
+        TransmartQueryDefinition tQD = null;
+
+        if (resultInstanceId != null) {
+            try {
+
+                String xmlRequest = getQueryDefinitionXML(resultInstanceId)
+
+                DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance()
+                domFactory.setNamespaceAware(true)
+                DocumentBuilder builder = domFactory.newDocumentBuilder()
+                Document doc = builder.parse(new InputSource(new StringReader(xmlRequest)))
+
+                XPathFactory factory = XPathFactory.newInstance()
+                XPath xpath = factory.newXPath()
+
+                Object queryTimingNodes=xpath.evaluate("//query_timing", doc, XPathConstants.NODESET)
+                NodeList qts =  (NodeList) queryTimingNodes
+                tQD = new TransmartQueryDefinition(resultInstanceId)
+                Node qtsNode = qts.item(0)
+                tQD.queryTiming = qtsNode.getTextContent()
+
+                Object result = xpath.evaluate("//panel", doc, XPathConstants.NODESET)
+                NodeList panels = (NodeList) result
+
+                for (int p = 0; p < panels.getLength(); p++) {
+
+                    TransmartQueryPanel tQP = new TransmartQueryPanel()
+
+                    Node panel=panels.item(p)
+                    Node panelNumber=(Node)xpath.evaluate("panel_number", panel, XPathConstants.NODE)
+                    tQP.panelNum = panelNumber.getTextContent();
+
+                    Node invert=(Node)xpath.evaluate("invert", panel, XPathConstants.NODE)
+                    tQP.invert = invert.getTextContent() != "0"
+
+                    Node panelTiming=(Node)xpath.evaluate("panel_timing", panel, XPathConstants.NODE)
+                    tQP.panelTiming = panelTiming.getTextContent()
+
+                    NodeList items=(NodeList)xpath.evaluate("item", panel, XPathConstants.NODESET)
+
+                    for(int i=0; i<items.getLength(); i++) {
+
+                        TransmartQueryItem tQI = new TransmartQueryItem()
+
+                        Node item=items.item(i);
+
+                        Node key=(Node)xpath.evaluate("item_key", item, XPathConstants.NODE)
+
+                        tQI.itemKey = key.getTextContent()
+
+                        tQI.concept_cd = getConceptCodeFromPath(tQI.fullName);
+                        tQI.linkType = getLinkTypeFromConceptCode(tQI.concept_cd)
+
+                        tQP.items.add(tQI)
+
+                    }
+
+                    tQD.panels.add(tQP);
+
+                }
+
+            } catch (Exception e) {
+                log.error(e)
+            }
+        }
+
+        return tQD
+
+    }
+
+    def renderConstrainByValue(Node item, XPath xpath)
+    {
+        Node valueinfo=(Node)xpath.evaluate("constrain_by_value", item, XPathConstants.NODE)
+        String operator="";
+        String constraints="";
+
+        if(valueinfo!=null) {
+            operator=((Node)xpath.evaluate("value_operator", valueinfo, XPathConstants.NODE)).getTextContent()
+            constraints=((Node)xpath.evaluate("value_constraint", valueinfo, XPathConstants.NODE)).getTextContent()
+        }
+        return operator+" "+constraints;
+    }
+
+    def renderConstrainByModifier(Node item, XPath xpath)
+    {
+        //initial modifier support
+        Node modifierinfo=(Node)xpath.evaluate("constrain_by_modifier", item, XPathConstants.NODE)
+        String modifierstring="";
+        String modifiername="";
+        String constraints="";
+        if(modifierinfo!=null) {
+            modifiername=((Node)xpath.evaluate("modifier_name", modifierinfo, XPathConstants.NODE)).getTextContent()
+            constraints=renderConstrainByValue(modifierinfo, xpath);
+            modifierstring="["+modifiername+" "+constraints+ "]";
+        }
+        return modifierstring;
+
+    }
+
+
+    def renderRegionParams(rp) {
+        if (rp.range?.equals("both")) {
+            rp.range = "+/-"
+        }
+        else if (rp.range?.equals("plus")) {
+            rp.range = "+"
+        }
+        else {
+            rp.range = "-"
+        }
+
+        if (rp.mode?.equals('gene')) {
+            return 'Gene: ' + rp.genename + ' ' + rp.range + ' ' + rp.basepairs + ' base pairs (HG' + rp.version + '): ' + rp.inclusionCriteria;
+        }
+        else {
+            return 'Chromosome: ' + rp.chromosome + ', ' + rp.position + ' ' + rp.range + ' ' + rp.basepairs + ' base pairs (HG' + rp.version + '): ' + rp.inclusionCriteria;
+        }
+    }
+
+    def List<String> getChildKeysFromParentKey(String concept_key) {
+        String prefix=concept_key.substring(0, concept_key.indexOf("\\",2)); //get the prefix to put on to the fullname to make a key
+        String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length());
+
+        String xml;
+        ArrayList ls=new ArrayList();
+        int i=getLevelFromKey(concept_key)+1;
+        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+        String sqlt = "SELECT C_FULLNAME FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+        sql.eachRow(sqlt, [fullname+"%", i], {row ->
+            String conceptkey=prefix+row.c_fullname;
+            ls.add(conceptkey);
+        })
+        return ls;
+    }
+
+/**
+ * Gets whether a platform has associated VCF data
+ */
+    def boolean hasVCFData(String platform) {
+        groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
+        String sqlt =
+            """
+		SELECT COUNT(*) FROM DE_GPL_INFO gpl
+		JOIN DE_SUBJECT_SAMPLE_MAPPING ssm
+		ON gpl.platform = ssm.platform
+		WHERE gpl.marker_type = 'NGS'
+		AND gpl.platform = ?
+		"""
+        def value = 0
+        sql.eachRow(sqlt, [platform], {row ->
+            value = row[0]
+        });
+        return (value > 0)
+    }
+
 }

@@ -49,7 +49,19 @@
 	
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.tablesorter.min.js')}"></script>
+<script type="text/javascript"
+        src="${resource(dir: 'js/jQuery/multiselect', file: 'jquery.multiselect.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery.tablesorter.min.js')}"></script>
+<script type="text/javascript"
+        src="${resource(dir: 'js/jQuery/validate', file: 'jquery.validate.min.js')}"></script>
+<script type="text/javascript"
+        src="${resource(dir: 'js/jQuery/validate', file: 'additional-methods.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery.dataTables.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js/jQuery/custom', file: 'fnGetColumnData.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js/jQuery/flot', file: 'jquery.flot.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js/jsTree', file: 'jquery.jstree.js')}"></script>
+<script type="text/javascript"
+        src="${resource(dir: 'js/datasetExplorer', file: 'workflowValidationFunctions.js')}"></script>
   
 <script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script> 
 
@@ -68,6 +80,10 @@
 	src="${resource(dir:'js/datasetExplorer/exportData', file: 'dataTab.js')}"></script>
 <script type="text/javascript"
 	src="${resource(dir:'js/datasetExplorer/exportData', file: 'exportJobsTab.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/jsTree', file:'jquery.jstree.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'acrossTrial.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'jsTreeFunctions.js')}"></script>
+
 <!-- <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
 	google.load("visualization", "1", {});
@@ -91,6 +107,7 @@
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'metacore.css')}">
     <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'yui-combo-build-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'ColVis.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
 
     <!-- Adding these validation functions to get the Forest Plot to work. These might be able to be blended into the javascript object that controls the advanced workflow validation. -->
@@ -101,7 +118,8 @@
 	
 	<script type="text/javascript" src="${resource(dir:'js/raphael', file:'raphael-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/cortellisAnalytics', file:'cortellisAnalytics.js')}"></script>
 		
 </head>
 
@@ -116,6 +134,9 @@
 
 	// this overrides the above
 	Ext.Updater.defaults.timeout = 1800000;
+
+    var basicGridUrl = "${createLink(controller:'chart', action:'basicGrid')}"
+    var analysisGridUrl = "${createLink(controller:'chart', action:'analysisGrid')}"
 
 	var pageInfo = {
 		basePath :"${request.getContextPath()}"
@@ -138,6 +159,7 @@
 	  NumOfQueryCriteriaGroupsAtStart:3,
 	  MaxSearchResults: 100,
 	  ONTUrl: '',
+      usePMHost: '${grailsApplication.config.com.recomdata.datasetExplorer.usePMHost}',
 	  Config:'jj',
 	  CurrentQueryName:'',
 	  CurrentComparisonName:' ',
@@ -181,7 +203,14 @@
 	  basePath: pageInfo.basePath,
 	  hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
 	  metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
-	  metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}'
+	  metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}',
+      codeType: 'Concept',
+      AnalysisHasBeenRun: false,
+      ResultSetRegionParams: {},
+      currentReportCodes: [],
+      currentReportStudy: [],
+      currentSubsetsStudy: '',
+      isGridViewLoaded: false
 	};
 	// initialize browser version variables; see http://www.quirksmode.org/js/detect.html
 	BrowserDetect.init();
@@ -201,7 +230,26 @@
 	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
 	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
 	</g:if>
-		
+	
+    <div id="saveReportDialog" style="display:none;font: 11px arial,tahoma,helvetica,sans-serif;font-weight:normal;">
+        <br />
+        Report Name : <input id='txtReportName' type='text' title="Report Name" /> <br />
+        Make Report Public : <input id='chkReportPublic' type='checkbox' value='Y' title="Make Report Public" /><br /><br />
+
+        <input type="button" onclick="saveReport(true,jQuery('#txtReportName').val(),jQuery('#txtReportDescription').val(),jQuery('#chkReportPublic').is(':checked'),GLOBAL.currentReportCodes.join('|'),GLOBAL.currentReportStudy)" value="Create Report" />
+    </div>
+
+    <div id="saveSubsetsDialog" style="display:none;font: 11px arial,tahoma,helvetica,sans-serif;font-weight:normal;">
+        <form id="saveSubsetForm">
+            <br />
+            <em>*</em> Description : <input id='txtSubsetDescription' type='text' name='txtSubsetDescription' title="Subset Description"/>
+            <br />
+            <em>*</em> Make Subset Public : <input id='chkSubsetPublic' type='checkbox' value='Y' title="Subset Public" />
+            <br />
+            <br />
+            <input class="submit" type="submit" value="Save Subsets"/>
+        </form>
+    </div>
 	<span id="visualizerSpan0"></span> <!-- place applet tag here -->
 	<span id="visualizerSpan1"></span> <!-- place applet tag here -->
 <!-- ************************************** -->

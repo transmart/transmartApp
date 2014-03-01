@@ -35,6 +35,26 @@ body {
   width: 300px;    
 }
 
+#search-div2{
+    padding: 6px;
+    margin: 24px 10px 4px 0;
+    overflow: hidden;
+    position: absolute;
+    width: 300px;
+    top: -28px;
+    left: 120px;
+}
+
+#search-div table {
+    width: 100%
+}
+
+#box-search {
+
+    position: absolute;
+
+}
+
 #active-search-div
 {
 font-size: 11px;
@@ -66,15 +86,19 @@ top: 58px;
   top: 90px;
   left: 0px;
   height:27px;
-  overflow: hide;    
-  width: 299px;    
+  overflow: hidden;
+  width: 299px;
+  background: url("images/ui-bg_highlight-soft_100_deedf7_1x100.png") repeat-x scroll 50% 50% #DEEDF7;
+  border: 1px solid #AED0EA;
+  color: #222222;
+  font-weight: bold;
 }
 #title-filter{
   position: absolute;    
   top: 225px;
   left: 0px;
   height:25px;
-  overflow: hide;    
+  overflow: hidden;
   width: 299px;    
 }
 
@@ -150,8 +174,6 @@ color: #333;
 padding: 12px;
 }
 
-
->>>>>>> 545704636a13e5b06d165ae4261c4647014c9559
 .x-panel-header
 {
 	margin:0;
@@ -185,6 +207,35 @@ padding: 12px;
 #searchFilterPanel{
 	border-right:1px solid #d0d0d0;
 	font-size:11px;
+}
+
+.boxtitle, #navigateTermsPanel .x-panel-header {
+    height:27px;
+    overflow: hidden;
+    position: relative;
+}
+
+.title {
+    color:#333;
+    padding:0;
+    margin:0;
+    font-size:11px;
+    font-weight:bold;
+    padding-left:0.5em;
+    padding-top:0.4em;
+    font-family: 'Helvetica',arial,clean,sans-serif;
+}
+
+#filterbutton {
+     font-size:11px;
+     display:table-cell;
+     vertical-align:middle;
+     text-align:center;
+     font-family: 'Helvetica',arial,clean,sans-serif;
+ }
+
+.boxcontent {
+    position: relative;
 }
 
 .category_join{
@@ -229,7 +280,7 @@ padding: 12px;
 }
 
 .term
-{
+{       font-family: verdana, arial, helvetica, sans-serif;
 		margin-top:0.3em;
 		white-space:nowrap;
 		line-height: 1.4em;
@@ -265,6 +316,7 @@ padding: 12px;
     padding-top: 3px;
     position: fixed;
     width: 165px;
+    margin-right: 10px;
     }
 
 #toggle-btn {          
@@ -276,6 +328,19 @@ padding: 12px;
     left: 276px;
     margin-top: 30px;
     width: 20px;
+}
+
+table.menuDetail th {
+    font-family: verdana,arial,helvetica,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1.22em;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.x-border-layout-ct {
+    background: none repeat scroll 0 0 #FFFFFF;
 }
 
 
@@ -293,6 +358,14 @@ padding: 12px;
 	height:100%;
 	overflow:auto;
 	}
+
+
+#filterbutton {
+    bottom: 5px;
+    padding: 0 4px;
+    position: absolute;
+    right: 40px;
+}
 	
 /***************************************************/
 /********** Override dynatree CSS rules ************/
@@ -488,6 +561,7 @@ ul.dynatree-container li ul li{
     margin-bottom: 5px;
     padding-bottom: 5px;
     padding-left: 10px;
+    padding-top: 5px;
     
 }
 
@@ -735,6 +809,7 @@ p.legend_probe {
 	border:1px solid #ccc;
 	border-top:0;
 	padding:10px;
+	width:220px;
 	display: inline;
 	margin-top: 2px;
 	margin-left:-5px;
@@ -745,8 +820,28 @@ p.legend_probe {
 #searchResultOptions_btn{
 
 	display: inline;
+	position: absolute;
 	cursor:pointer; 
 	width:55px;
+}
+#searchResultOptions_btn a{
+	color:#000;
+	font-weight: normal;
+	text-decoration: none;
+}
+
+#searchResultOptions_holder{
+	display:inline;
+	position:absolute;
+}
+
+#searchResultOptions ul {
+	
+	list-style-type: none;
+}
+
+#searchResultOptions ul li {
+	padding:3px;
 }
 #selectedAnalysesExpanded{
 	background-color: #EEE;
@@ -862,7 +957,9 @@ display: inline-block;
 display: inline-block;
 border-right: 1px dotted #CCC;
 font-size: 11px;
-
+padding-left: 8px;
+padding-right: 8px;
+margin-top: 8px;
 
 }
 .toolbar-item a:hover{
@@ -1298,3 +1395,122 @@ max-height:500px;
 
 
 /*******End Cross Trial Analysis Formatting *********/
+
+
+/* Patchy fixes for JQuery UI below here */
+
+.dataTable {
+    margin: 8px 0px;
+    font-size: 8px;
+    border-right: 1px solid #DDF;  
+}
+
+.dataTable th {
+     font-weight: bold;
+     padding: 4px;
+     min-width: 80px;
+     text-align: center;
+     font-size: 10px;
+     background-color: #BFCFFD;
+     background-image: none;
+}
+
+.dataTable td {
+     padding: 5px;
+     border-left: 1px solid #DDF;
+     border-bottom: 1px solid #DDF;
+     font-size: 10px;   
+}
+
+.dataTable tr.odd {
+    background-color: #EFFFFD;
+}
+
+.dataTables_length {
+     float: left;
+     margin-right: 64px;   
+}
+
+a.paginate_disabled_previous, a.paginate_disabled_next {
+    border: 1px solid #CCC;
+    padding: 4px;
+    color: #CCC;
+    margin: 0px 8px;
+}
+
+.paginate_enabled_previous, .paginate_enabled_next, .linkbutton {
+    border: 1px solid #AAF;
+    padding: 4px;
+    color: #000;
+    margin: 0px 8px;
+    cursor: pointer;
+}
+
+.linkbutton {
+	font-size: 8pt;	
+}
+
+.dataTables_info {
+    float: left;
+}
+
+.dataTables_paginate {
+	min-height: 30px;	
+}
+
+.dataTables_wrapper {
+	font-size: 9pt;
+}
+
+/* VERY cheap fix for left/right selection box issue! */
+div.ui-multiselect div.selected {
+	float: right;	
+}
+
+div.available ul.available li {
+    white-space: nowrap;   
+}
+
+div.selected ul.selected li {
+    white-space: nowrap;   
+}
+
+/* Override multiselect dimensions */
+select.multiselect {
+	width: 96%; height: 94%
+}
+
+.ui-autocomplete .ui-menu-item a {
+	font-size: 8pt;	
+}
+
+.ajaxloading, #table-results-div.ajaxloading {
+	background-image: url('../images/loader-large.gif') !important;
+	background-repeat: no-repeat !important;
+	background-position: 50% 50% !important;
+	min-height: 64px;
+}
+
+.andor.or {
+    background-image: url("../images/logicor.png");
+}
+
+.andor.and {
+    background-image: url("../images/logicand.png");
+}
+
+.andor {
+    cursor: pointer;
+    display: inline-block;
+    height: 13px;
+    width: 37px;
+}
+
+#noAnalyzeResults {
+    font-family: verdana, arial, helvetica, sans-serif;
+    color:#868686;
+    padding-bottom: 0.2em;
+    margin-left: -10px;
+    font-weight: bold;
+    white-space:nowrap;
+}

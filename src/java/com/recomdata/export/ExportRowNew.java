@@ -67,4 +67,22 @@ public class ExportRowNew {
 		}
 		return json;
 	}
+
+    public JSONArray toJSONArray(List<String> columnOrder) throws JSONException {
+
+        JSONArray jsonArray = new JSONArray();
+
+        //Loop through the column set
+        for (String columnId : columnOrder) {
+            jsonArray.put(values.get(columnId));
+        }
+
+		/*
+		for (Iterator<String> i = values.keySet().iterator(); i.hasNext(); ) {
+			String column=i.next();
+			jsonArray.put(values.get(column));
+		}
+		*/
+        return jsonArray;
+    }
 }
