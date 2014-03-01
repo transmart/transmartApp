@@ -106,10 +106,14 @@ grails.project.dependency.resolution = {
         compile ':hibernate:3.6.10.7'
         compile ':quartz:1.0-RC2'
         compile ':rdc-rmodules:0.4-SNAPSHOT'
-        compile ':transmart-legacy-db:0.2-SNAPSHOT'
+		compile ':transmart-legacy-db:0.3-SNAPSHOT'
+		compile ':search-domain:1.0-SNAPSHOT'
+		compile ':biomart-domain:1.0-SNAPSHOT'
+		compile ':transmart-java:1.0-SNAPSHOT'
+     //   compile ':transmart-legacy-db:0.2-SNAPSHOT'
         compile ':spring-security-core:2.0-RC2'
         compile ':spring-security-ldap:2.0-RC2'
-
+		compile(':folder-management:1.0-SNAPSHOT')
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
         runtime ':transmart-core:1.0-SNAPSHOT'
