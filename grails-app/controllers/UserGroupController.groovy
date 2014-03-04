@@ -165,14 +165,21 @@ class UserGroupController {
     }
 
     def ajaxGetUserSearchBoxData = {
-    	String searchText = request.getParameter("query");
-		def userdata=[];
-		def users=AuthUser.executeQuery("from AuthUser p where upper(p.name) like upper ('%"+searchText+"%') order by p.name");
-		    users.each{user ->
-                userdata.add([name:user.name, username:user.username,  type:user.type, description:user.description, uid:user.id ])
-			}
-		def result = [rows:userdata]
-        render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
+        def userData = AuthUser.withCriteria {
+            // TODO: searchText is not escaped for like special characters.
+            // This is not trivial to do in a database agnostic way afaik, see:
+            // http://git.io/H9y7gQ
+            or {
+                ilike 'name', "%${params.query}%"
+                ilike 'username', "%${params.query}%"
+            }
+        }.collect { AuthUser user ->
+            [name: user.name, username :user.username, type: user.type,
+                    description: user.description, uid: user.id]
+        }
+        def result = [rows: userData]
+        render text: params.callback + "(" + (result as JSON) + ")",
+                contentType:"application/javascript"
     }
 
     def searchUsersNotInGroup = {
