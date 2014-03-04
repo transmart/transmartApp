@@ -58,22 +58,8 @@ grails.project.dependency.resolution = {
     repositories {
         grailsCentral()
         mavenCentral()
-
-        if (!skipTransmartFoundationRepo()) {
-            /* Allow skipping the tranSMART foundation repository.
-             * We read extra repositories in the very limited externalized
-             * BuildConfig.groovy (see below), but they are append to this list.
-             * A company developing tranSMART may want not to use the tranSMART
-             * foundation repository, or it may want to give priority to its own.
-             * Setting grails.project.dependency.resolution in the externalized
-             * file will skip this repo. You may then include it in whatever order
-             * in the externalized file. */
-
-            mavenRepo([
-                    name: 'repo.transmartfoundation.org-public',
-                    url: 'https://repo.transmartfoundation.org/content/repositories/public/',
-            ])
-        }
+        //Note: External configuration should contain
+        //either hyve or transmartfoundation repository
     }
     dependencies {
         runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
@@ -83,7 +69,7 @@ grails.project.dependency.resolution = {
         compile "org.apache.lucene:lucene-core:2.4.0"
         compile "org.apache.lucene:lucene-demos:2.4.0"
         compile "org.apache.lucene:lucene-highlighter:2.4.0"
-
+        compile 'org.grails:grails-plugin-rest:2.3.5-hyve4'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
@@ -135,8 +121,6 @@ grails.war.resources = { stagingDir ->
 // Use new NIO connector in order to support sendfile
 grails.tomcat.nio = true
 
-grails.project.dependency.resolution.metaClass.skipTransmartFoundationRepo = { false }
-
 def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
         "BuildConfig.groovy")
 if (buildConfigFile.exists()) {
@@ -178,7 +162,6 @@ if (buildConfigFile.exists()) {
         grails.project.dependency.resolution = {
             originalDepRes.delegate        = extraDepRes.delegate        = delegate
             originalDepRes.resolveStrategy = extraDepRes.resolveStrategy = resolveStrategy
-            originalDepRes.metaClass.skipTransmartFoundationRepo = { true }
             originalDepRes.call(it)
             extraDepRes.call(it)
         }
