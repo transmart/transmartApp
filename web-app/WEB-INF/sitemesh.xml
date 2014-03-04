@@ -2,7 +2,7 @@
     <page-parsers>
         <parser content-type="text/html"
             class="org.codehaus.groovy.grails.web.sitemesh.GrailsHTMLPageParser" />
-        <parser content-type="text/html;charset=UTF-8"
+        <parser content-type="text/html;charset=ISO-8859-1"
             class="org.codehaus.groovy.grails.web.sitemesh.GrailsHTMLPageParser" />
         <parser content-type="text/html;charset=UTF-8"
             class="org.codehaus.groovy.grails.web.sitemesh.GrailsHTMLPageParser" />

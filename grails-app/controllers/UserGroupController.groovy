@@ -165,14 +165,21 @@ class UserGroupController {
     }
 
     def ajaxGetUserSearchBoxData = {
-    	String searchText = request.getParameter("query");
-		def userdata=[];
-		def users=AuthUser.executeQuery("from AuthUser p where upper(p.name) like upper ('%"+searchText+"%') order by p.name");
-		    users.each{user ->
-                userdata.add([name:user.name, username:user.username,  type:user.type, description:user.description, uid:user.id ])
-			}
-		def result = [rows:userdata]
-        render(text:params.callback + "(" + (result as JSON) + ")", contentType:"application/javascript")
+        def userData = AuthUser.withCriteria {
+            // TODO: searchText is not escaped for like special characters.
+            // This is not trivial to do in a database agnostic way afaik, see:
+            // http://git.io/H9y7gQ
+            or {
+                ilike 'name', "%${params.query}%"
+                ilike 'username', "%${params.query}%"
+            }
+        }.collect { AuthUser user ->
+            [name: user.name, username :user.username, type: user.type,
+                    description: user.description, uid: user.id]
+        }
+        def result = [rows: userData]
+        render text: params.callback + "(" + (result as JSON) + ")",
+                contentType:"application/javascript"
     }
 
     def searchUsersNotInGroup = {
@@ -194,39 +201,47 @@ class UserGroupController {
     	render(template:'addremoveg',model:[userInstance: userInstance, groupswithuser: groupswithuser, groupswithoutuser: groupswithoutuser])
    }
 
-    def addUserToGroups = {UserGroupCommand fl ->
-		def userInstance = AuthUser.get( params.id )
-		def groupsToAdd = UserGroup.findAll("from UserGroup r where r.id in (:p)", [p:fl.groupstoadd.collect{it.toLong()}]);
-        if(userInstance) {
-            groupsToAdd.each{ g -> g.addToMembers(userInstance);
-            					   g.save(flush:true);} //add to each group and save the group
-
+    def addUserToGroups = { UserGroupCommand fl ->
+        def userInstance = AuthUser.get params.id
+        def groupsToAdd = UserGroup.findAllByIdInList fl.groupstoadd.collect { it.toLong() }
+        if (userInstance) {
+            groupsToAdd.each { g ->
+                g.addToMembers userInstance
+                g.save failOnError: true, flush: true
+            }
         }
 
-         def searchtext=params.searchtext;
+        def searchText = params.searchtext
 
+        def groupsWithUser = getGroupsWithUser userInstance.id
+        def groupsWithoutUser = getGroupsWithoutUser userInstance.id, searchText
 
-      // userInstance().save();
-
-       def groupswithuser=getGroupsWithUser(userInstance.id);
-    	def groupswithoutuser=getGroupsWithoutUser(userInstance.id, searchtext);
-    	// println(groupswithuser);
-    	render(template:'addremoveg',model:[userInstance: userInstance, groupswithuser: groupswithuser, groupswithoutuser: groupswithoutuser])
+        render template: 'addremoveg',
+                model: [ userInstance: userInstance,
+                        groupswithuser: groupsWithUser,
+                        groupswithoutuser: groupsWithoutUser]
     }
 
 
-    def removeUserFromGroups = {UserGroupCommand fl ->
-		def userInstance = AuthUser.get( params.id )
-		def groupsToRemove= UserGroup.findAll("from UserGroup r where r.id in (:p)", [p:fl.groupstoremove.collect{it.toLong()}]);
-        if(userInstance) {
-            groupsToRemove.each{ g -> g.removeFromMembers(userInstance)
-            						g.save(flush:true)} //remove from each group and save the group
-            };
+    def removeUserFromGroups = { UserGroupCommand fl ->
+        def userInstance = AuthUser.get params.id
+        def groupsToRemove = UserGroup.findAllByIdInList fl.groupstoremove.collect { it.toLong() }
+        if (userInstance) {
+            groupsToRemove.each { g ->
+                g.removeFromMembers userInstance
+                g.save failOnError: true, flush: true
+            }
+        }
 
-         def searchtext=params.searchtext;
-    	def groupswithuser=getGroupsWithUser(userInstance.id);
-    	def groupswithoutuser=getGroupsWithoutUser(userInstance.id, searchtext);
-    	render(template:'addremoveg',model:[userInstance: userInstance, groupswithuser: groupswithuser, groupswithoutuser: groupswithoutuser])
+        def searchText = params.searchtext
+
+        def groupsWithUser = getGroupsWithUser userInstance.id
+        def groupsWithoutUser = getGroupsWithoutUser userInstance.id, searchText
+
+        render template: 'addremoveg',
+                model: [ userInstance: userInstance,
+                        groupswithuser: groupsWithUser,
+                        groupswithoutuser: groupsWithoutUser]
     }
 
     def addUsersToUserGroup = {UserGroupCommand fl ->
