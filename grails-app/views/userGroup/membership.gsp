@@ -18,7 +18,6 @@
 -->
 
 
-<g:setProvider library="prototype"/>
 <%@ page import="org.transmart.searchapp.AuthUser" %>
 <html>
 <head>
@@ -50,7 +49,7 @@
         <input type="text" size="80" id="searchUsers" autocomplete="off"/>
     </div>
 
-    <script type="text/javascript">
+    <r:script>
 
         var pageInfo = {
             basePath: "${request.getContextPath()}"
@@ -68,7 +67,7 @@
 	  ${remoteFunction(action:'searchGroupsWithoutUser',update:[success:'groups', failure:''], params:'jQuery(\'#searchtext\').serialize()+\'&id=\'+pid')};
             return false;
         }
-    </script>
+    </r:script>
     <table>
         <tr><td></td><td></td><td><input name="searchtext" id="searchtext">
             <button class="" onclick="searchgroup();">Search Groups</button></td></tr>

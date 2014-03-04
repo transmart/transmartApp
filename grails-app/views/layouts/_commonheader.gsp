@@ -55,10 +55,8 @@
     <p>You will be logged off in <span id="timeout-countdown"></span> seconds.</p>
     <p>Do you want to continue your session?</p>
 </div>
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.idletimeout.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.idletimer.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
-<script type="text/javascript" charset="utf-8">   
+<r:require module="session_timeout_nodep"/>
+<r:script>
     var mouse_inside_options_div = false;
     jQuery(document).ready(function() {
         jQuery("#utilities-div-link").click(function(){
@@ -97,4 +95,4 @@
       var w = window.open(mylink, windowname,'width=800,height=600,scrollbars=yes,resizable=yes');
       w.focus();
    }
-</script>
+</r:script>

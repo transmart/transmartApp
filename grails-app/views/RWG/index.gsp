@@ -188,8 +188,8 @@
 			});
 		</script>
 
-                  
-                
+
+        <r:layoutResources /><%-- XXX: Use template --%>
     </head>
     <body>
         <div id="header-div">        
@@ -296,6 +296,7 @@
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
        <div id="testTextHeightDiv"></div>
+        <r:layoutResources /><%-- XXX: Use template --%>
     </body>
     
            		

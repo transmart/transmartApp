@@ -16,19 +16,57 @@
   
  
 -->
-<g:setProvider library="prototype"/>
+<g:if test="${flash.message}">
+    <tr><td><div class="message">${flash.message}</div></td></tr>
+</g:if>
+<td><g:select class="addremoveselect" name="groupstoremove" from="${groupswithuser}" size="15" multiple="yes"
+              optionKey="id" optionValue="name"/></td>
+<td class="addremovebuttonholder">
+    <button class="ltarrowbutton"
+            onclick="${remoteFunction(action:'addUserToGroups', update:[success:'groups', failure:''],
+                     params: 'addremove_buildAddUser()')};
+            return false;">&LT;&LT;Add</button><br>
+    <button class="ltarrowbutton"
+            onclick="${remoteFunction(action:'removeUserFromGroups', update:[success:'groups', failure:''],
+                     params: 'addremove_buildRemoveUser()')};
+            return false;">Remove&GT;&GT;</button>
+</td>
+<td>
+    <div id="addfrombox">
+        <g:select class="addremoveselect" width="100px" size="15" name="groupstoadd" from="${groupswithoutuser}"
+                  multiple="yes" optionKey="id" optionValue="name" />
+    </div>
+</td>
 
-            <g:if test="${flash.message}">
-                <tr><td><div class="message">${flash.message}</div></td></tr>
-            </g:if>
-                        <td> <g:select class="addremoveselect" name="groupstoremove" from="${groupswithuser}" size="15" multiple="yes" optionKey="id" optionValue="name" /></td>
-						  <td class="addremovebuttonholder">
-							<button class="ltarrowbutton" onclick="${remoteFunction(action:'addUserToGroups',update:[success:'groups', failure:''],  params:'$(\'groupstoadd\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&id=\'+document.getElementById(\'currentprincipalid\').value')}; return false;">&LT;&LT;Add</button><br>
-							<button class="ltarrowbutton" onclick="${remoteFunction(action:'removeUserFromGroups',update:[success:'groups', failure:''],  params:'$(\'groupstoremove\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&id=\'+document.getElementById(\'currentprincipalid\').value')}; return false;">Remove&GT;&GT;</button>
-							</td>
-							<td>
-							<div id="addfrombox">
-							<g:select class="addremoveselect" width="100px" size="15" name="groupstoadd" from="${groupswithoutuser}" multiple="yes" optionKey="id" optionValue="name" ></g:select></td>
-							</div>
-							</td>
+<r:script>
+(function() {
+    "use strict";
 
+    var buildCommon = function addremoveg_buildCommon() {
+        return {
+            id: parseInt($('#currentprincipalid').val()),
+            searchtext: $('#searchtext').val()
+        };
+    }
+    var fetchIds = function addremoveg_fetchIds(name) {
+        return $('select[name=' + name + ']').val().
+                map(function(it) { return parseInt(it) });
+    }
+
+    var doData = function addremoveg_doData() {
+        var extra = {}
+        extra[this.selectName] = fetchIds(this.selectName)
+        return $.param(
+                $.extend(buildCommon(), extra),
+                true); // need to use traditional serialization
+    }
+
+    window.addremove_buildAddUser = $.proxy(doData, {
+        selectName: 'groupstoadd'
+    })
+
+    window.addremove_buildRemoveUser = $.proxy(doData, {
+        selectName: 'groupstoremove'
+    })
+})()
+</r:script>

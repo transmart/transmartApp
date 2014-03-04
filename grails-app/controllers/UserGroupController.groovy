@@ -201,39 +201,47 @@ class UserGroupController {
     	render(template:'addremoveg',model:[userInstance: userInstance, groupswithuser: groupswithuser, groupswithoutuser: groupswithoutuser])
    }
 
-    def addUserToGroups = {UserGroupCommand fl ->
-		def userInstance = AuthUser.get( params.id )
-		def groupsToAdd = UserGroup.findAll("from UserGroup r where r.id in (:p)", [p:fl.groupstoadd.collect{it.toLong()}]);
-        if(userInstance) {
-            groupsToAdd.each{ g -> g.addToMembers(userInstance);
-            					   g.save(flush:true);} //add to each group and save the group
-
+    def addUserToGroups = { UserGroupCommand fl ->
+        def userInstance = AuthUser.get params.id
+        def groupsToAdd = UserGroup.findAllByIdInList fl.groupstoadd.collect { it.toLong() }
+        if (userInstance) {
+            groupsToAdd.each { g ->
+                g.addToMembers userInstance
+                g.save failOnError: true, flush: true
+            }
         }
 
-         def searchtext=params.searchtext;
+        def searchText = params.searchtext
 
+        def groupsWithUser = getGroupsWithUser userInstance.id
+        def groupsWithoutUser = getGroupsWithoutUser userInstance.id, searchText
 
-      // userInstance().save();
-
-       def groupswithuser=getGroupsWithUser(userInstance.id);
-    	def groupswithoutuser=getGroupsWithoutUser(userInstance.id, searchtext);
-    	// println(groupswithuser);
-    	render(template:'addremoveg',model:[userInstance: userInstance, groupswithuser: groupswithuser, groupswithoutuser: groupswithoutuser])
+        render template: 'addremoveg',
+                model: [ userInstance: userInstance,
+                        groupswithuser: groupsWithUser,
+                        groupswithoutuser: groupsWithoutUser]
     }
 
 
-    def removeUserFromGroups = {UserGroupCommand fl ->
-		def userInstance = AuthUser.get( params.id )
-		def groupsToRemove= UserGroup.findAll("from UserGroup r where r.id in (:p)", [p:fl.groupstoremove.collect{it.toLong()}]);
-        if(userInstance) {
-            groupsToRemove.each{ g -> g.removeFromMembers(userInstance)
-            						g.save(flush:true)} //remove from each group and save the group
-            };
+    def removeUserFromGroups = { UserGroupCommand fl ->
+        def userInstance = AuthUser.get params.id
+        def groupsToRemove = UserGroup.findAllByIdInList fl.groupstoremove.collect { it.toLong() }
+        if (userInstance) {
+            groupsToRemove.each { g ->
+                g.removeFromMembers userInstance
+                g.save failOnError: true, flush: true
+            }
+        }
 
-         def searchtext=params.searchtext;
-    	def groupswithuser=getGroupsWithUser(userInstance.id);
-    	def groupswithoutuser=getGroupsWithoutUser(userInstance.id, searchtext);
-    	render(template:'addremoveg',model:[userInstance: userInstance, groupswithuser: groupswithuser, groupswithoutuser: groupswithoutuser])
+        def searchText = params.searchtext
+
+        def groupsWithUser = getGroupsWithUser userInstance.id
+        def groupsWithoutUser = getGroupsWithoutUser userInstance.id, searchText
+
+        render template: 'addremoveg',
+                model: [ userInstance: userInstance,
+                        groupswithuser: groupsWithUser,
+                        groupswithoutuser: groupsWithoutUser]
     }
 
     def addUsersToUserGroup = {UserGroupCommand fl ->
