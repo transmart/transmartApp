@@ -81,7 +81,7 @@ class LoginController {
         if (autoLogin && !forceLogin) {
 
             log.info("Proceeding with auto guest login")
-            def user = userDetailsService.findByUsername(guestUser)
+            def user = userDetailsService.loadUserByUsername(guestUser)
             if (user != null) {
                 springSecurityService.reauthenticate(user.username)
             } else {
