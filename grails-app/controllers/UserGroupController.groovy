@@ -202,7 +202,7 @@ class UserGroupController {
    }
 
     def addUserToGroups = { UserGroupCommand fl ->
-        def userInstance = AuthUser.get params.id
+        def userInstance = AuthUser.get params.currentprincipalid
         def groupsToAdd = UserGroup.findAllByIdInList fl.groupstoadd.collect { it.toLong() }
         if (userInstance) {
             groupsToAdd.each { g ->
@@ -224,7 +224,7 @@ class UserGroupController {
 
 
     def removeUserFromGroups = { UserGroupCommand fl ->
-        def userInstance = AuthUser.get params.id
+        def userInstance = AuthUser.get params.currentprincipalid
         def groupsToRemove = UserGroup.findAllByIdInList fl.groupstoremove.collect { it.toLong() }
         if (userInstance) {
             groupsToRemove.each { g ->
