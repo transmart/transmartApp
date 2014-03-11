@@ -43,13 +43,20 @@
                           <tr class="prop">
                                 <td valign="top" class="name" >
                                     <label for="secureobjectid">Study:</label>
-                                     <g:select optionKey="id" optionValue="displayName" from="${SecureObject.listOrderByDisplayName()}" name="secureobjectid" value="${secureObjectInstance?.id}" onchange="document.secobjaccessform.submit();"></g:select>
+                                     <g:select optionKey="id" optionValue="displayName"
+                                               from="${SecureObject.listOrderByDisplayName()}"
+                                               name="secureobjectid"
+                                               value="${secureObjectInstance?.id}"
+                                               onchange="document.secobjaccessform.submit();" />
                                 </td>
                             </tr>
                             <tr class="prop">
                                 <td valign="top" class="name" >
                                     <label for="accesslevelid">Access Level:</label>
-                                    <g:select optionKey="id" optionValue="accessLevelName" from="${SecureAccessLevel.list()}" name="accesslevelid" value="${accesslevelid}" onchange="document.secobjaccessform.submit();"></g:select>
+                                    <g:select optionKey="id" optionValue="accessLevelName"
+                                              from="${SecureAccessLevel.list()}"
+                                              name="accesslevelid" value="${accesslevelid}"
+                                              onchange="document.secobjaccessform.submit();" />
                                 </td>
                             </tr>
 				</tbody>

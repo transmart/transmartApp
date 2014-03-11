@@ -39,34 +39,17 @@
 </td>
 
 <r:script>
-(function() {
-    "use strict";
+    (function() {
+        'use strict';
 
-    var buildCommon = function addremoveg_buildCommon() {
-        return {
-            id: parseInt($('#currentprincipalid').val()),
-            searchtext: $('#searchtext').val()
-        };
-    }
-    var fetchIds = function addremoveg_fetchIds(name) {
-        return $('select[name=' + name + ']').val().
-                map(function(it) { return parseInt(it) });
-    }
+        window.addremove_buildAddUser = function(el) {
+            return Recom.rc.serializeFormElements.call(el,
+                    ['currentprincipalid', 'searchtext', 'groupstoadd'])
+        }
 
-    var doData = function addremoveg_doData() {
-        var extra = {}
-        extra[this.selectName] = fetchIds(this.selectName)
-        return $.param(
-                $.extend(buildCommon(), extra),
-                true); // need to use traditional serialization
-    }
-
-    window.addremove_buildAddUser = $.proxy(doData, {
-        selectName: 'groupstoadd'
-    })
-
-    window.addremove_buildRemoveUser = $.proxy(doData, {
-        selectName: 'groupstoremove'
-    })
-})()
+        window.addremove_buildRemoveUser = function(el) {
+            return Recom.rc.serializeFormElements.call(el,
+                    ['currentprincipalid', 'searchtext', 'groupstoremove'])
+        }
+    })()
 </r:script>

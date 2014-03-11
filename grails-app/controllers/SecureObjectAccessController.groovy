@@ -246,8 +246,7 @@ class SecureObjectAccessController {
     }
 
     def listAccessForPrincipal = {
-        //	println(params)
-        def principalInstance = Principal.get(params.id)
+        def principalInstance = Principal.get params.currentprincipalid
         def accesslevelid = params.accesslevelid;
         def access = SecureAccessLevel.findByAccessLevelName("VIEW");
         if (accesslevelid != null) {
@@ -256,7 +255,7 @@ class SecureObjectAccessController {
         accesslevelid = access.id;
         if (!principalInstance) {
             flash.message = "Please select a user/group."
-            render(template: 'addremove', model: [principalInstance: principalInstance, secureObjectAccessList: [], objectswithoutaccess: []])
+            render(template: 'addremoveAccess', model: [principalInstance: principalInstance, secureObjectAccessList: [], objectswithoutaccess: []])
             return;
         }
 
@@ -278,25 +277,21 @@ class SecureObjectAccessController {
         def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
         def msg = new StringBuilder(" Grant new access permission: ");
 
-        //println("INCOMOING users to add:"+params.userstoadd);
-        def principalInstance = Principal.get(params.id);
+        def principalInstance = Principal.get(params.currentprincipalid);
         def access = SecureAccessLevel.get(params.accesslevelid)
-        if (fl.sobjectstoadd != null) {
+        if (principalInstance && access && fl.sobjectstoadd) {
             def objectsToAdd = SecureObject.findAll("from SecureObject r where r.id in (:p)", [p: fl.sobjectstoadd.collect {
                 it.toLong()
             }]);
 
             objectsToAdd.each { r ->
-                //	println(principalInstance);
-                //	println(r)
-                //	println(access)
                 addAccess(principalInstance, r, access);
-                //println("Adding report:"+r.id);
                 msg.append("<User:").append(principalInstance.name).append(", Permission:").append(access.accessLevelName).append(", Study:").append(r.bioDataUniqueId).append(">");
 
             };
+
+            new AccessLog(username: user.username, event: "ADMIN", eventmessage: msg.toString(), accesstime: new Date()).save()
         }
-        new AccessLog(username: user.username, event: "ADMIN", eventmessage: msg.toString(), accesstime: new Date()).save()
         def searchtext = params.searchtext;
         def secureObjAccessList = getSecureObjAccessListForPrincipal(principalInstance, access);
         def objectswithoutaccess = getObjsWithoutAccessForPrincipal(principalInstance, searchtext);
@@ -308,10 +303,9 @@ class SecureObjectAccessController {
         def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
         def msg = new StringBuilder(" Revoke access permission: ");
 
-        //println("INCOMOING users to add:"+params.userstoadd);
-        def principalInstance = Principal.get(params.id);
+        def principalInstance = Principal.get(params.currentprincipalid);
         def access = SecureAccessLevel.get(params.accesslevelid)
-        if (fl.sobjectstoremove != null) {
+        if (principalInstance && access && fl.sobjectstoremove) {
             def objectsToRemove = SecureObjectAccess.findAll("from SecureObjectAccess r where r.id in (:p)", [p: fl.sobjectstoremove.collect {
                 it.toLong()
             }]);
@@ -321,9 +315,9 @@ class SecureObjectAccessController {
                 msg.append("<User:").append(r.principal.name).append(", Permission:").append(r.accessLevel.accessLevelName).append(", Study:").append(r.secureObject.bioDataUniqueId).append(">");
 
             };
-        }
 
-        new AccessLog(username: user.username, event: "ADMIN", eventmessage: msg.toString(), accesstime: new Date()).save()
+            new AccessLog(username: user.username, event: "ADMIN", eventmessage: msg.toString(), accesstime: new Date()).save()
+        }
 
         def searchtext = params.searchtext;
         def secureObjAccessList = getSecureObjAccessListForPrincipal(principalInstance, access);

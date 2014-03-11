@@ -1,4 +1,4 @@
-<!--
+<%--
   tranSMART - translational medicine data mart
   
   Copyright 2008-2012 Janssen Research & Development, LLC.
@@ -15,15 +15,22 @@
   You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
   
  
--->
-<g:setProvider library="prototype"/>
+--%>
 	<g:if test="${flash.message}">
             <tr><td><div class="message">${flash.message}</div></td></tr>
             </g:if>
                 <td> <g:select class="addremoveselect" name="groupstoremove" from="${secureObjectAccessList}" size="15" multiple="yes" optionKey="id" optionValue="principalAccessName" /></td>
 		  <td class="addremovebuttonholder">
-			<button class="ltarrowbutton" onclick="${remoteFunction(action:'addPrincipalToAccessList',update:[success:'groups', failure:''],  params:'$(\'groupstoadd\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&secureobjectid=\'+document.getElementById(\'secureobjectid\').options[document.getElementById(\'secureobjectid\').selectedIndex].value+\'&accesslevelid=\'+document.getElementById(\'accesslevelid\').options[document.getElementById(\'accesslevelid\').selectedIndex].value')}; return false;">&LT;&LT;Add</button><br>
-			<button class="ltarrowbutton" onclick="${remoteFunction(action:'removePrincipalFromAccessList',update:[success:'groups', failure:''],  params:'$(\'groupstoremove\').serialize()+\'&searchtext=\'+document.getElementById(\'searchtext\').value+\'&secureobjectid=\'+document.getElementById(\'secureobjectid\').options[document.getElementById(\'secureobjectid\').selectedIndex].value+\'&accesslevelid=\'+document.getElementById(\'accesslevelid\').options[document.getElementById(\'accesslevelid\').selectedIndex].value')}; return false;">Remove&GT;&GT;</button>
+			<button class="ltarrowbutton"
+                    onclick="${remoteFunction(action: 'addPrincipalToAccessList',
+                                              update: [success: 'groups', failure: ''],
+                                              params: 'addremovePrincipal_add_data(this)')};
+                             return false;">&LT;&LT;Add</button><br>
+			<button class="ltarrowbutton"
+                    onclick="${remoteFunction(action: 'removePrincipalFromAccessList',
+                                              update: [success: 'groups', failure: ''],
+                                              params: 'addRemovePrincipal_remove_data(this)')};
+                             return false;">Remove&GT;&GT;</button>
 		</td>
 	<td>
 			<div id="addfrombox">
@@ -31,4 +38,18 @@
 		</div>
 	</td>
 
+<r:script>
+(function() {
+    'use strict';
 
+    window.addremovePrincipal_add_data = function(el) {
+        return Recom.rc.serializeFormElements.call(el,
+                ['groupstoadd', 'searchtext', 'secureobjectid', 'accesslevelid'])
+    }
+
+    window.addRemovePrincipal_remove_data = function(el) {
+        return Recom.rc.serializeFormElements.call(el,
+                ['groupstoremove', 'searchtext', 'secureobjectid', 'accesslevelid'])
+    }
+})()
+</r:script>
