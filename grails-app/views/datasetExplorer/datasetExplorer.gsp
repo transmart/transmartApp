@@ -45,7 +45,7 @@
 <script type="text/javascript"
 	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
     <script type="text/javascript"
-            src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+            src="${resource(dir:'js', file:'ext/ext-all-debug.js')}"></script>
 	
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
