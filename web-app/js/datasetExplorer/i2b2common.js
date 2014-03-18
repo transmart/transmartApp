@@ -24,7 +24,7 @@ STATE = {
 		QueryRequestCounter: 0
 }
 
-function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes)
+function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes, modifiername, modifierappliedpath, modifierkey, inOutCode, timingLevel)
 {
 	this.name=name;
 	this.key=key;
@@ -1828,6 +1828,9 @@ for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
 	{
 
 		var qcd=Ext.get("queryCriteriaDiv"+subset+'_'+i.toString());
+        if(!(qcd && qcd.dom && qcd.dom.childNodes))
+            continue;
+
 		if(qcd.dom.childNodes.length>0)
 		{
 			var panel=getQuerySummaryPanel(qcd.dom, i);

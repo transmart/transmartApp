@@ -2327,7 +2327,8 @@ function setupDragAndDrop()
             jQuery("#queryCriteriaDiv" + s.toString() + '_' + i.toString()).addClass("jstree-drop");
 			dts.notifyDrop = function(source, e, data)
 			{
-                GLOBAL.currentSubsetsStudy=data.node.attributes.comment.substr(6);
+                if (data.node.attributes.comment)
+                    GLOBAL.currentSubsetsStudy=data.node.attributes.comment.substr(6);
                 //Analysis will change as a result of this drop, mark this
                 GLOBAL.AnalysisHasBeenRun = false;
 				if(source.tree.id == "previousQueriesTree")
