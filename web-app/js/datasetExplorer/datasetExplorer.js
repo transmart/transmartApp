@@ -2082,13 +2082,8 @@ function getCategoriesComplete_OLD(ontresponse) {
 function setActiveTab(){
 	//var activeTab='ontFilterPanel';
 	var activeTab='navigateTermsPanel';
-	if (GLOBAL.PathToExpand!==''){
-		if ((GLOBAL.PathToExpand.indexOf('Across Trials')>-1)&&(GLOBAL.hideAcrossTrialsPanel!='true')){
-			activeTab='crossTrialsPanel';
-		}else{
-			activeTab='navigateTermsPanel';
-		}
-	}
+    if ((GLOBAL.PathToExpand!==''&&GLOBAL.PathToExpand.indexOf('Across Trials')>-1)&&(GLOBAL.hideAcrossTrialsPanel!='true'))
+        activeTab='crossTrialsPanel';
 	ontTabPanel.setActiveTab(activeTab);
 }
 
@@ -5452,17 +5447,17 @@ function getSubCategories(id_in, title_in, ontresponse)
     var ontRoots;
     var panel;
 
-    var showFn;
+        var showFn;
 
-    if (id_in==='crossTrialsPanel'){
-        showFn = function(node, e){
-            Ext.tree.TreePanel.superclass.onShow.call(this);
-            // Ext.get('advancedbutton').dom.style.display='none';
+        if (id_in==='crossTrialsPanel'){
+            showFn = function(node, e){
+                Ext.tree.TreePanel.superclass.onShow.call(this);
+                // Ext.get('advancedbutton').dom.style.display='none';
+            }
+            ontRoots = createTree('include', ontresponse);
+            panel = Ext.getCmp('crossTrialsPanel');
         }
-        ontRoots = createTree('include', ontresponse);
-        panel = Ext.getCmp('crossTrialsPanel');
-    }
-    else {
+        else {
         showFn = function(node, e){
             Ext.tree.TreePanel.superclass.onShow.call(this);
             // Ext.get('advancedbutton').dom.style.display='';
@@ -5480,6 +5475,10 @@ function getSubCategories(id_in, title_in, ontresponse)
      iconCls: "contextHelpBtn"
      }
      ]); */
+
+    // TODO This needs further investiguation regarding to the acrossTrial feature
+    if (!panel)
+        return;
 
     var treeRoot = panel.getRootNode();
     for(c = treeRoot.childNodes.length - 1; c >= 0; c -- ) {
