@@ -779,36 +779,6 @@ jQuery(document).ready(function() {
 			}
 		});
 	});
-	
-    jQuery('#box-search').on('click', '.andor', function() {
-
-        if(currentSearchTerms.toString() != ''){
-    	
-            if (jQuery(this).attr('id') == 'globaloperator') {
-                //For global switch, just alter the class - this is picked up later
-                if (jQuery(this).hasClass("or")) {
-                    jQuery(this).removeClass("or").addClass("and");
-                }
-                else {
-                    jQuery(this).removeClass("and").addClass("or");
-                }
-                showSearchTemplate();
-                showSearchResults();
-            }
-            else {
-                //For individual categories, alter this index of the current search operators, then redisplay
-                if (jQuery(this).hasClass("or")) {
-                    currentSearchOperators[jQuery(this).attr('name')] = 'and'
-                }
-                else {
-                    currentSearchOperators[jQuery(this).attr('name')] = 'or'
-                }
-                showSearchTemplate();
-                showSearchResults();
-            }
-	    }
-    });
-
 
 	jQuery('#metadata-viewer').on('click', '.addassay', function() {
 
