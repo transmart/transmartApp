@@ -4946,80 +4946,8 @@ function searchByTagBefore()
 	viewport.el.mask("Searching...")
 	return true;
 }
-function searchByTagComplete(response)
-{
-	// shorthand
-	var Tree = Ext.tree;
-    var treeRoot = Ext.getCmp('navigateTermsPanel').getRootNode();
-	//ontFilterPanel.el.unmask();
-	viewport.el.unmask();
-    var concepts = response.searchResults; //Response is an array of concept paths
-    var uniqueLeaves = response.uniqueLeaves;
-	var robj=response.responseText.evalJSON();
-	var rtext=robj.resulttext;
-	var concepts = robj.concepts;
-	// concept = concepts[4];
-	// test = concept.selectSingleNode('name').firstChild.nodeValue;
-	// alert(response.responseText);
-	var length;
-	var leaf = false;
-	var draggable = false;
 
-    for(c = treeRoot.length - 1;
-        c >= 0;
-        c -- )
-    {
-        treeRoot[c].remove();
-    }
-
-    jQuery('#noAnalyzeResults').hide();
-
-    //Clear path to expand and unique leaves
-    GLOBAL.PathToExpand = '';
-    GLOBAL.UniqueLeaves = '';
-
-    if (GLOBAL.DefaultPathToExpand != "") {
-        GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
-    }
-
-	if(concepts != undefined)
-	{
-		if(concepts.length < GLOBAL.MaxSearchResults)
-		{
-			length = concepts.length;
-		}
-		else
-		{
-			length = GLOBAL.MaxSearchResults;
-		}
-		for(var c = 0; c < length; c ++ )
-		{
-			var newnode=getTreeNodeFromJSON(concepts[c])
-            GLOBAL.PathToExpand += concepts[c] + ",";
-            //treeRoot.appendChild(newnode);
-            //setTreeNodeSecurity(newnode, concepts[c].access);
-        }
-
-        for(var c = 0; c < uniqueLeaves.length; c++) {
-            GLOBAL.UniqueLeaves += uniqueLeaves[c] + ",";
-        }
-
-        if (concepts.length == 0) {
-            jQuery('#noAnalyzeResults').show();
-            Ext.getCmp('navigateTermsPanel').render();
-            onWindowResize();
-        }
-        else {
-            //Get the categories with the new path to expand
-            getCategories();
-
-        }
-
-    }
-}
-
-
-function searchByTagComplete2(response) {
+function searchByTagComplete(response) {
     // shorthand
     var Tree = Ext.tree;
     //ontFilterPanel.el.unmask();
