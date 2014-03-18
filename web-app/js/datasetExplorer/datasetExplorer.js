@@ -597,8 +597,7 @@ Ext.onReady(function()
 				{
 					id : 'centerPanel',
 					region : 'center',
-					width : 500,
-					minwidth : 150,
+					minwidth : 600,
 					split : true,
 					border : true,
 					layout : 'fit',
@@ -1001,7 +1000,6 @@ Ext.onReady(function()
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
-        resultsTabPanel.add(dataAssociationPanel);
 		//Commented out the Jobs panel to hide as it isn't used without Gene Pattern
 		//resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
@@ -1460,19 +1458,6 @@ function createOntPanel()
         }
     );
 
-    var searchPanel = new Ext.Panel(
-        {
-            id: 'searchPanel',
-            region: 'north',
-            collapsible: false,
-            height: 135,
-            width: 316,
-            deferredRender: false,
-            split: false,
-            contentEl: "box-search"
-        }
-    );
-
 	/* ontSearchTermsPanel = new Ext.TabPanel({
    id : 'searchTermsPanel',
    title : 'Find Terms',
@@ -1672,9 +1657,6 @@ function createOntPanel()
 		ontFilterPanel.add(ontFilterTree);
 		// ontTabPanel.add(ontSearchByCodePanel);
 
-    //Create a panel to hold the search criteria
-    westPanel.add(searchPanel);
-
     setupOntTree('navigateTermsPanel', 'Navigate By Study');
 
 		return ontTabPanel;
@@ -1754,7 +1736,6 @@ function onWindowResize() {
 
     jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
 
-    //var boxHeight = jQuery('#box-search').height();
     //jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 110);
 
     jQuery('#analysisPanel .x-panel-body').height(jQuery(window).height() - 65);
@@ -2073,7 +2054,9 @@ function getPreviousQueriesComplete(response) {
 
 function getCategoriesComplete(ontresponse) {
     ontTabPanel.add(ontFilterPanel);
-    ontFilterTree.dragZone.addToGroup("analysis");
+    // TODO This needs to be investigated further
+    if (ontFilterTree.dragZone)
+        ontFilterTree.dragZone.addToGroup("analysis");
     getSubCategories('navigateTermsPanel', 'Navigate By Study', ontresponse);
 	if(GLOBAL.hideAcrossTrialsPanel != 'true') {
         getSubCategories('crossTrialsPanel', 'Across Trials', ontresponse);
@@ -4473,7 +4456,7 @@ function getSummaryStatisticsComplete(result, request)
 	// analysisPanel.body.update(result.responseText, true, null);
 	// analysisPanel.getFrame().update(result.responseText, true, null);
 	// lastAnalysisResult = result.responseText;
-	resultsTabPanel.setActiveTab('analysisPanel');
+	resultsTabPanel.setActiveTab('queryPanel');
 	updateAnalysisPanel(result.responseText, false);
 	getSummaryGridData();
 	getExportButtonSecurity();
