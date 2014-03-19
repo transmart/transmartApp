@@ -343,7 +343,8 @@ class ChartController {
 
         pw.write("<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body><div class='analysis'>");
         pw.write("<table width='100%'>");
-        pw.write("<tr><td colspan='2' align='center'><div class='analysistitle'>Summary Statistics</div></td></tr>");
+        pw.write("<tr><td colspan='2' align='center'><div class='analysistitle' id='analysis_title'>Summary " +
+                "Statistics</div></td></tr>");
         pw.write("<tr><td width='50%' align='center'>");
         if (s1) {
             i2b2HelperService.renderQueryDefinition(result_instance_id1, "Query Summary for Subset 1", pw);

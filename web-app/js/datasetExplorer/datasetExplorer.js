@@ -404,49 +404,51 @@ Ext.onReady(function () {
             }
         );
 
+        // **************
+        // Comparison tab
+        // **************
+
         queryPanel = new Ext.Panel(
-            {
-                id: 'queryPanel',
-                title: 'Comparison',
-                region: 'north',
-                height: 340,
-                autoScroll: true,
-                split: true,
-                autoLoad: {
-                    url: pageInfo.basePath + '/panels/subsetPanel.html',
-                    scripts: true,
-                    nocache: true,
-                    discardUrl: true,
-                    method: 'POST'//,
-                    //callback: loadOntPanel
-                },
-                collapsible: true,
-                titleCollapse: false,
-                animCollapse: false,
-                listeners: {
-                    activate: function () {
-                        GLOBAL.Analysis = "Advanced";
+        {
+            id: 'queryPanel',
+            title: 'Comparison',
+            region: 'north',
+            height: 340,
+            autoScroll: true,
+            split: true,
+            autoLoad: {
+                url: pageInfo.basePath + '/panels/subsetPanel.html',
+                scripts: true,
+                nocache: true,
+                discardUrl: true,
+                method: 'POST'
+            },
+            collapsible: true,
+            titleCollapse: false,
+            animCollapse: false,
+            listeners: {
+                activate: function () {
+                    GLOBAL.Analysis = "Advanced";
+                }
+            },
+            bbar: new Ext.StatusBar({
+                // Status bar to show the progress of generating heatmap and other advanced workflows
+                id: 'asyncjob-statusbar',
+                defaultText: 'Ready',
+                defaultIconCls: 'default-icon',
+                text: 'Ready',
+                statusAlign: 'right',
+                iconCls: 'ready-icon',
+                items: [
+                    {
+                        xtype: 'button',
+                        id: 'cancjob-button',
+                        text: 'Cancel',
+                        hidden: true
                     }
-                },
-                bbar: new Ext.StatusBar({
-                    // Status bar to show the progress of generating heatmap and other advanced workflows
-                    id: 'asyncjob-statusbar',
-                    defaultText: 'Ready',
-                    defaultIconCls: 'default-icon',
-                    text: 'Ready',
-                    statusAlign: 'right',
-                    iconCls: 'ready-icon',
-                    items: [
-                        {
-                            xtype: 'button',
-                            id: 'cancjob-button',
-                            text: 'Cancel',
-                            hidden: true
-                        }
-                    ]
-                })
-            }
-        );
+                ]
+            })
+        });
 
         resultsPanel = new Ext.Panel(
             {
@@ -484,6 +486,10 @@ Ext.onReady(function () {
             }
         );
 
+        // **************
+        // Grid view tab
+        // **************
+
         analysisGridPanel = new Ext.Panel(
             {
                 id: 'analysisGridPanel',
@@ -500,37 +506,45 @@ Ext.onReady(function () {
             }
         );
 
-        analysisPanel = new Ext.Panel (
-            {
-                id: 'analysisPanel',
-                title: 'Summary Statistics',
-                region: 'center',
-                fitToFrame: true,
-                listeners: {
-                    activate: function () {
-                        if (isSubsetQueriesChanged()) {
-                            runAllQueries(getSummaryStatistics);
-                            activateTab();
-                            onWindowResize();
-                        }
-                    },
-                    deactivate: function () {
-                        resultsTabPanel.tools.help.dom.style.display = "none";
-                    },
-                    'afterLayout': {
-                        fn: function (el) {
-                            onWindowResize();
-                        }
+        // ******************
+        // Summary Statistics
+        // ******************
+
+        analysisPanel = new Ext.Panel ({
+            id: 'analysisPanel',
+            title: 'Summary Statistics',
+            region: 'center',
+            fitToFrame: true,
+            listeners: {
+                activate: function (p) {
+                    if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysis_title')) {
+                        p.body.mask("Loading...", 'x-mask-loading');
+                        runAllQueries(getSummaryStatistics, p);
+                        activateTab();
+                        onWindowResize();
                     }
                 },
-                autoScroll: true,
-                // tbar : tb2,
-                html: '<div style="text-align:center;font:12pt arial;width:100%;height:100%;"><table style="width:100%;height:100%;"><tr><td align="center" valign="center">Drag concepts to this panel to view a breakdown of the subset by that concept</td></tr></table></div>',
-                split: true,
-                closable: false,
-                height: 90
-            }
-        );
+                deactivate: function () {
+                    resultsTabPanel.tools.help.dom.style.display = "none";
+                },
+                'afterLayout': {
+                    fn: function (el) {
+                        onWindowResize();
+                    }
+                }
+            },
+            autoScroll: true,
+            html: '<div style="text-align:center;font:12pt arial;width:100%;height:100%;">' +
+                '<table style="width:100%;height:100%;"><tr><td align="center" valign="center">Drag concepts ' +
+                'to this panel to view a breakdown of the subset by that concept</td></tr></table></div>',
+            split: true,
+            closable: false,
+            height: 90
+        });
+
+        // ************
+        // Data Exports
+        // ************
 
         analysisDataExportPanel = new Ext.Panel(
             {
@@ -542,13 +556,11 @@ Ext.onReady(function () {
                 layout: 'fit',
                 listeners: {
                     activate: function (p) {
-                        if (isSubsetQueriesChanged()) {
+                        if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('dataTypesGridPanel')) {
                             p.body.mask("Loading...", 'x-mask-loading');
                             runAllQueries(getDatadata, p);
                             return;
                         }
-                    },
-                    deactivate: function () {
                     },
                     'afterLayout': {
                         fn: function (el) {
@@ -559,6 +571,10 @@ Ext.onReady(function () {
                 collapsible: true
             }
         );
+
+        // ******************
+        // Advanced Workflow
+        // ******************
 
         dataAssociationPanel = new Ext.Panel(
             {
@@ -581,7 +597,7 @@ Ext.onReady(function () {
                     evalScripts: true
                 },
                 listeners: {
-                    activate: function () {
+                    activate: function (p) {
                         /**
                          * routines when activating advanced workflow tab
                          * @private
@@ -593,8 +609,8 @@ Ext.onReady(function () {
                             onWindowResize();
                         }
 
-                        if (isSubsetQueriesChanged()) {
-                            runAllQueries(_activateAdvancedWorkflow);
+                        if (isSubsetQueriesChanged(p.subsetQueries)) {
+                            runAllQueries(_activateAdvancedWorkflow, p);
                         }
 
                         _activateAdvancedWorkflow();
@@ -609,6 +625,10 @@ Ext.onReady(function () {
             }
         );
 
+        // ******************
+        // Export Jobs
+        // ******************
+
         analysisExportJobsPanel = new Ext.Panel(
             {
                 id: 'analysisExportJobsPanel',
@@ -619,6 +639,7 @@ Ext.onReady(function () {
                 layout: 'fit',
                 listeners: {
                     activate: function (p) {
+                        p.body.mask("Loading...", 'x-mask-loading');
                         getExportJobs(p)
                     },
                     deactivate: function () {
@@ -965,7 +986,7 @@ function createOntPanel() {
 
     // make the ontSearchByNamePanel
     shtml = '<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>\
-		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td<td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15"></input>&nbsp;</td>\
+		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td><td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15">&nbsp;</td>\
 		<td><button onclick="searchByName()">Find</button></td></tr><tr><td colspan="2">Select Ontology:<select id="searchByNameSelectOntology"></select></td></tr></table>';
 
     searchByNameForm = new Ext.Panel(
@@ -2091,10 +2112,10 @@ function exportDataFinished() {
 }
 
 function runAllQueries(callback, panel) {
-    var subset = 1;
+
     if (isSubsetEmpty(1) && isSubsetEmpty(2)) {
-        if (null != panel) {
-            panel.body.unmask()
+        if (panel) {
+            panel.body.unmask();
         }
         Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
     }
@@ -2102,16 +2123,25 @@ function runAllQueries(callback, panel) {
     // setup the number of subsets that need running
     var subsetstorun = 0;
     for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
-        if (!isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null) {
+        if (!isSubsetEmpty(i)) {
             subsetstorun++;
         }
     }
-    STATE.QueryRequestCounter = subsetstorun;
+
     /* set the number of requests before callback is fired for runquery complete */
+    STATE.QueryRequestCounter = subsetstorun;
+
+    // init panel's subset query array if it's not existing yet
+    if (panel) {
+        panel.subsetQueries = panel.subsetQueries ? panel.subsetQueries : ["", "", ""];
+    }
 
     // iterate through all subsets calling the ones that need to be run
     for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
-        if (!isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null) {
+        if (!isSubsetEmpty(i)) {
+            if (panel) {
+                panel.subsetQueries[i] = getSubsetQuery(i); // set subset queries to the selected tab
+            }
             runQuery(i, callback);
         }
     }
@@ -2139,18 +2169,22 @@ function getSubsetQuery (subsetId) {
  * Check if there're any changes in both subsets
  * @returns {boolean}
  */
-function isSubsetQueriesChanged() {
+function isSubsetQueriesChanged (referenceQueries) {
     var retVal = false;
 
     for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
 
+        // get fresh subset query
         var _newQuery = getSubsetQuery(i);
-        retVal = GLOBAL.CurrentSubsetQueries[i] != _newQuery ? true : false;
-        if (retVal) {
-            break;
-        }
-    }
 
+        if (referenceQueries) {
+            // check if reference query is the same as the new query
+            // return true if it's changed.
+            retVal = referenceQueries[i] != _newQuery ? true : false;
+        }
+
+        if (retVal) break;
+    }
     return retVal;
 }
 
@@ -2160,7 +2194,7 @@ function runQuery(subset, callback) {
     }
 
     var query = getCRCQueryRequest(subset);
-    var _subsetQuery = getSubsetQuery(subset);
+
     // first subset
     queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
     Ext.Ajax.request(
@@ -2177,9 +2211,6 @@ function runQuery(subset, callback) {
             timeout: '600000'
         }
     );
-
-    // save query to global variable
-    GLOBAL.CurrentSubsetQueries[subset] = _subsetQuery;
 
     if (GLOBAL.Debug) {
         resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
@@ -2214,6 +2245,9 @@ function runQueryComplete(result, subset, callback) {
 
     // Current code requires us to set CurrentSubsetIDs regardless of error status...
     GLOBAL.CurrentSubsetIDs[subset] = jsonRes.id ? jsonRes.id : -1;
+
+    // Save query to global variable
+    GLOBAL.CurrentSubsetQueries[subset] = getSubsetQuery(subset);
 
     if (subset === null) { // if single subset
 
@@ -3084,7 +3118,7 @@ function showNameQueryDialog() {
                     }
                 ],
                 resizable: false,
-                html: '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50"></input>'
+                html: '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50">'
             }
         );
     }
@@ -3269,17 +3303,18 @@ function searchByName() {
 }
 
 function getSummaryStatistics() {
-    resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
     Ext.Ajax.request(
         {
             url: pageInfo.basePath + "/chart/basicStatistics",
             method: 'POST',
             success: function (result, request) {
                 getSummaryStatisticsComplete(result);
-                resultsTabPanel.body.unmask();
+                analysisPanel.body.unmask();
             },
             failure: function (result, request) {
-                getSummaryStatisticsComplete(result);
+                //getSummaryStatisticsComplete(result);
+                console.error("Cannot get Summary Statistics");
+                analysisPanel.body.unmask();
             },
             timeout: '300000',
             params: Ext.urlEncode(

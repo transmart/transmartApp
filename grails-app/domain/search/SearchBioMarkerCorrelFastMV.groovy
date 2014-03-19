@@ -27,7 +27,7 @@ class SearchBioMarkerCorrelFastMV {
 
     // correlation types
     static def GENE_CORREL_TYPE = "GENE"
-    static def PATHWAY_CORREL_TYPE = "PATHWAY_GENE"
+    static def PATHWAY_CORREL_TYPE = "PATHWAY GENE"
     static def GENE_SIG_CORREL_TYPE = "GENE_SIGNATURE_ITEM"
 
     Long id

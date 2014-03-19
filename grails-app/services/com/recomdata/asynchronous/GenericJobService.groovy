@@ -153,7 +153,7 @@ class GenericJobService implements Job {
         }
 
         //Marking the status as complete makes the
-        updateStatus(jobName, "Completed")
+        updateStatus(jobName, "Completed", jobResultsService[jobName]["ViewerURL"], jobResultsService[jobName]["AltViewerURL"])
     }
 
     private boolean isStudySelected(int studyCnt, List checkboxList) {
@@ -366,10 +366,10 @@ class GenericJobService implements Job {
      * @param status - the new status
      * @return
      */
-    def updateStatus(jobName, status) {
+    def updateStatus(jobName, status, viewerURL = null, altViewerURL = null, results = null) {
         jobResultsService[jobName]["Status"] = status
         log.debug(status)
-        asyncJobService.updateStatus(jobName, status)
+        asyncJobService.updateStatus(jobName, status, viewerURL, altViewerURL, results)
     }
 
     def boolean isJobCancelled(jobName) {

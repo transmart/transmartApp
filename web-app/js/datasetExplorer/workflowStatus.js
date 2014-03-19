@@ -126,9 +126,9 @@ function showWorkflowStatusError(jobStatusInfo) {
 
     if (jobStatusInfo.errorType == 'data') {
         jobStatusHeader = 'Please verify the selected data';
-        jobStatusMsg = 'Unable to complete: ' + jobStatusInfo.jobException;
+        jobStatusMsg = 'Unable to complete job ' + jobStatusInfo.jobName + ': ' + jobStatusInfo.jobException;
     } else {
-        jobStatusHeader = 'Error running job.';
+        jobStatusHeader = 'Error running job ' + jobStatusInfo.jobName + '.';
         jobStatusMsg = jobStatusInfo.jobException;
     }
 

@@ -642,14 +642,28 @@ class I2b2HelperService {
                     I
                 LEFT JOIN (
                         SELECT
-                            patient_id,
-                            LISTAGG ( sample_cd )
+                            patient_num,
+                            LISTAGG ( sample_cd, ', ' )
                                 WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
-                        FROM
-                            deapp.de_subject_sample_mapping
-                        GROUP BY
-                            patient_id )
-                    S ON ( S.patient_id = I.patient_num )
+                        FROM ( 
+                            SELECT 
+                                patient_num, sample_cd 
+                            FROM 
+                                observation_fact
+                            WHERE 
+                                patient_num IN (
+                                    SELECT
+                                        DISTINCT patient_num
+                                    FROM
+                                        qt_patient_set_collection
+                                    WHERE
+                                        result_instance_id = ? )
+                            GROUP BY 
+                                patient_num, sample_cd
+                        ) 
+                        GROUP BY 
+                            patient_num 
+                    ) S ON ( S.patient_num = I.patient_num )
                 ORDER BY
                     I.PATIENT_NUM''';
 
@@ -673,7 +687,7 @@ class I2b2HelperService {
             //tablein.putColumn("ZIP_CD", new ExportColumn("ZIP_CD", "Zipcode", "", "String"));
         }
         //def founddata=false;
-        sql.eachRow(sqlt, [result_instance_id], { row ->
+        sql.eachRow(sqlt, [result_instance_id, result_instance_id], { row ->
             /*If I already have this subject mark it in the subset column as belonging to both subsets*/
             //founddata=true;
             String subject = row.PATIENT_NUM;
@@ -687,7 +701,7 @@ class I2b2HelperService {
                 newrow.put("subject", subject);
                 def arr = row.SOURCESYSTEM_CD?.split(":")
                 newrow.put("patient", arr?.length == 2 ? arr[1] : "");
-                newrow.put("SAMPLE_CDS", row.SAMPLE_CDS)
+                newrow.put("SAMPLE_CDS", row.SAMPLE_CDS ? row.SAMPLE_CDS : "")
                 newrow.put("subset", subset);
                 newrow.put("TRIAL", row.TRIAL)
                 newrow.put("SEX_CD", row.SEX_CD)
@@ -705,9 +719,8 @@ class I2b2HelperService {
      */
     def ExportTableNew addConceptDataToTable(ExportTableNew tablein, String concept_key, String result_instance_id) {
         if (isLeafConceptKey(concept_key)) {
-            String columnid = getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "").replace(".", "");
+            String columnid = concept_key.encodeAsSHA1()
             String columnname = getColumnNameFromKey(concept_key).replace(" ", "_");
-            //String columnid="...test\\test";
             /*add the column to the table if its not there*/
             if (tablein.getColumn("subject") == null) {
                 tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
@@ -828,7 +841,7 @@ class I2b2HelperService {
 		}
 		
 		// After that, retrieve all data entries for the children
-		def results = ObservationFact.executeQuery( "SELECT o.patientNum, o.tvalChar FROM ObservationFact o WHERE ( modifierCd = '@' OR modifierCd = sourcesystemCd ) AND conceptCd IN (:conceptCodes) AND patientNum in (:patientNums)", [ conceptCodes: concepts*.conceptCd, patientNums: patientIds ] )
+		def results = ObservationFact.executeQuery( "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)", [ conceptCodes: concepts*.conceptCode, patientNums: patientIds.collect { it?.toLong() } ] )
 
 		results.each { row ->
 	

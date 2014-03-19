@@ -27,13 +27,14 @@ STATE = {
 // list of supported platform
 // TODO : future refactoring should retrieve these values from gpl definitions in the database
 var HIGH_DIMENSIONAL_DATA = {
-    "mrna"          : {"platform" : "MRNA_AFFYMETRIX", "type" : "Gene Expression"},
-    "mirna_qpcr"    : {"platform" : "MIRNA_QPCR", "type" : "MIRNA_QPCR"},
-    "mirna_seq"     : {"platform" : "MIRNA_SEQ", "type" : "MIRNA_SEQ"},
-    "rbm"               : {"platform" : "RBM", "type" : "RBM"},
-    "proteomics"        : {"platform" : "PROTEIN", "type" : "PROTEOMICS"},
-    "snp"               : {"platform" : "SNP", "type" : "SNP"},
-    "rnaseq"            : {"platform" : "RNA_AFFYMETRIX", "type" : "RNASEQ"}
+    "mrna"          : {"platform" : "MRNA_AFFYMETRIX",  "type" : "Gene Expression"},
+    "mirna_qpcr"    : {"platform" : "MIRNA_QPCR",       "type" : "MIRNA_QPCR"},
+    "mirna_seq"     : {"platform" : "MIRNA_SEQ",        "type" : "MIRNA_SEQ"},
+    "rbm"           : {"platform" : "RBM",              "type" : "RBM"},
+    "proteomics"    : {"platform" : "PROTEIN",          "type" : "PROTEOMICS"},
+    "snp"           : {"platform" : "SNP",              "type" : "SNP"},
+    "rnaseq"        : {"platform" : "RNA_AFFYMETRIX",   "type" : "RNASEQ"},
+    "metabolite"    : {"platform" : "METABOLOMICS",     "type" : "METABOLOMICS"}
 };
 
 // Check if current platform is supported
@@ -142,7 +143,7 @@ function convertNodeToConcept(node)
 	//Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
 	var nodeType = node.attributes.iconCls
 	
-	if(oktousevalues=="Y"){value.mode="numeric";} //default to numeric
+	if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
 	
 	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes);
 	return myConcept;

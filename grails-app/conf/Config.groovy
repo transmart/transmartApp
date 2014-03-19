@@ -152,7 +152,7 @@ com.recomdata.transmart.data.export.max.export.jobs.loaded = 20
 com.recomdata.transmart.data.export.dataTypesMap = [
         'CLINICAL': 'Clinical & Low Dimensional Biomarker Data',
         'MRNA': 'Gene Expression Data',
-        'SNP': 'SNP Data',
+        'SNP': 'SNP data (Microarray)',
         'STUDY': 'Study Metadata',
         'ADDITIONAL': 'Additional Data'
         //,'GSEA':'Gene Set Enrichment Analysis (GSEA)'

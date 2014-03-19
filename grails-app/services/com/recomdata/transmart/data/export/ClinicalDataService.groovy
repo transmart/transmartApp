@@ -426,4 +426,7 @@ class ClinicalDataService {
     }
 
 
+    def newExportData() {
+
+    }
 }

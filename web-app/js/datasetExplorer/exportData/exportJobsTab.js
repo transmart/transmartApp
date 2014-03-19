@@ -137,4 +137,5 @@ function exportjobsstoreLoaded()
 	});                
     analysisExportJobsPanel.add(jobs);
     analysisExportJobsPanel.doLayout();
+    analysisExportJobsPanel.body.unmask();
 }
