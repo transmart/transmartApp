@@ -511,8 +511,7 @@ DataExport.prototype.getExportParams = function (gridPanel, selectedFiles) {
 
                     // create selector node
                     if (_type) {
-                        _data_type = _data_type.toLowerCase();
-                        params[_sub][_data_type] = {
+                        params[_sub][_data_type.toLowerCase()] = {
                             'selector' : _concept_path_arr
                         };
                     }
