@@ -30,7 +30,7 @@ For details on how to install the tranSMART Foundationʼs versions, refer to
 
   [1]: http://grails.org/
   [2]: https://ci.ctmtrait.nl/
-  [3]: https://ci.transmart.nl/
+  [3]: https://ci.transmartfoundation.org/
   [4]: http://tomcat.apache.org/
   [5]: https://github.com/thehyve/transmart-data
   [6]: https://wiki.transmartfoundation.org/
