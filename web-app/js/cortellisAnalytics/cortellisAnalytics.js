@@ -66,39 +66,39 @@ function advancedWorkflowMenu() {
 
 function createAdvancedWorkflowMenu(result) {
 
-	var response = Ext.util.JSON.decode(result.responseText)
-
-	if (response.success) {
-
-		var advMenuItems = createAdvancedWorkflowMenuItems(response.modules)
-
-		var advMenu = new Ext.menu.Menu({
-
-			id : 'advancedWorkflowMenu',
-
-			minWidth: 250,
-
-			items : advMenuItems
-
-		});
-
-		
-
-		Ext.getCmp('advancedWorkflowToolbar')
-
-			.add({
-
-					text : 'Analysis',
-
-					iconCls : 'comparebutton',
-
-					disabled : false,
-
-					menu : advMenu
-
-				});
-
-	}
+//	var response = Ext.util.JSON.decode(result.responseText)
+//
+//	if (response.success) {
+//
+//		var advMenuItems = createAdvancedWorkflowMenuItems(response.modules)
+//
+//		var advMenu = new Ext.menu.Menu({
+//
+//			id : 'advancedWorkflowMenu',
+//
+//			minWidth: 250,
+//
+//			items : advMenuItems
+//
+//		});
+//
+//		
+//
+//		Ext.getCmp('advancedWorkflowToolbar')
+//
+//			.add({
+//
+//					text : 'Analysis',
+//
+//					iconCls : 'comparebutton',
+//
+//					disabled : false,
+//
+//					menu : advMenu
+//
+//				});
+//
+//	}
 
 }
 
