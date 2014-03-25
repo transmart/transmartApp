@@ -21,6 +21,7 @@ import org.codehaus.groovy.grails.plugins.GrailsPluginUtils
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.slf4j.LoggerFactory
+import org.transmart.marshallers.MarshallerRegistrarService
 
 class BootStrap {
 
@@ -51,6 +52,9 @@ class BootStrap {
         }
 
         fixupConfig()
+
+        // force marshaller registrar initialization
+        grailsApplication.mainContext.getBean 'marshallerRegistrarService'
     }
 
     private void fixupConfig() {

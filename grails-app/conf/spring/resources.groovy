@@ -26,6 +26,7 @@ import org.springframework.security.web.access.AccessDeniedHandlerImpl
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
+import org.transmart.marshallers.MarshallerRegistrarService
 
 def logger = Logger.getLogger('com.recomdata.conf.resources')
 
@@ -47,6 +48,8 @@ beans = {
     failureHandler(SimpleUrlAuthenticationFailureHandler) {
         defaultFailureUrl = '/login'
     }
+
+    marshallerRegistrarService(MarshallerRegistrarService)
 
     if (grailsApplication.config.org.transmart.security.spnegoEnabled) {
         SpnegoAuthenticationProcessingFilter(SpnegoAuthenticationProcessingFilter) {
