@@ -11,6 +11,8 @@ before_install:
     - source ~/ts-travis/init.sh
     - source ~/ts-travis/grails_dep.sh
     - source ~/ts-travis/maven_dep.sh
+    - mkdir -p ~/.grails/transmartConfig
+    - cp .travis.BuildConfig.groovy ~/.grails/transmartConfig/BuildConfig.groovy
 
 install:
     - maybe_build_maven_dep $REPOS_OWNER/transmart-core-api core-api
