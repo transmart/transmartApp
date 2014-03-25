@@ -1,3 +1,6 @@
+import grails.util.Environment
+import org.codehaus.groovy.grails.commons.GrailsApplication
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -34,11 +37,18 @@
 org.transmart.originalConfigBinding = getBinding()
 
 grails.config.locations = []
-def defaultConfigFiles = [
-	"${userHome}/.grails/${appName}Config/Config.groovy",
-	"${userHome}/.grails/${appName}Config/RModulesConfig.groovy",
-	"${userHome}/.grails/${appName}Config/DataSource.groovy"
-]
+def defaultConfigFiles
+if (Environment.current != Environment.TEST) {
+    defaultConfigFiles = [
+            "${userHome}/.grails/${appName}Config/Config.groovy",
+            "${userHome}/.grails/${appName}Config/RModulesConfig.groovy",
+            "${userHome}/.grails/${appName}Config/DataSource.groovy"
+    ]
+} else {
+    // settings for the test environment
+    org.transmart.configFine = true
+}
+
 defaultConfigFiles.each { filePath ->
 	def f = new File(filePath)
 	if (f.exists()) {
@@ -97,6 +107,10 @@ grails.views.default.codec="none" // none, html, base64
 grails.views.gsp.encoding="UTF-8"
 grails.converters.encoding="UTF-8"
 grails.converters.default.pretty.print=true
+
+/* Keep pre-2.3.0 behavior */
+grails.databinding.convertEmptyStringsToNull = false
+grails.databinding.trimStrings = false
 
 // enabled native2ascii conversion of i18n properties files
 grails.enable.native2ascii = true
