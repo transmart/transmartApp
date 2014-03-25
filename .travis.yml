@@ -1,0 +1,29 @@
+language: groovy
+
+jdk:
+    - oraclejdk7
+
+env:
+    - REPOS_OWNER=thehyve #XXX: take from travis envs
+
+before_install:
+    - git clone --depth 1 git://github.com/thehyve/transmart-travis.git ~/ts-travis
+    - source ~/ts-travis/init.sh
+    - source ~/ts-travis/grails_dep.sh
+    - source ~/ts-travis/maven_dep.sh
+
+install:
+    - maybe_build_maven_dep $REPOS_OWNER/transmart-core-api core-api
+    - maybe_build_grails_dep $REPOS_OWNER/transmart-core-db core-db
+    - maybe_build_grails_dep $REPOS_OWNER/Rmodules Rmodules
+
+script:
+    - grails test-app --refresh-dependencies --non-interactive --stacktrace
+    - grails war
+
+notifications:
+  hipchat:
+    rooms:
+      secure: "fdLLuPbpAjUDsuDRU4aFDnmvdPpw7VIrrBB7AOnSMSla4O3Mf4GAxhf35kuo8t2uBDHktqo8aETTkchZCzlDu1GyVREQJGkQv/SjBwa5PE9H262j6YMXW36rXWzkWruXMala6f1UQdQnU+8+ddbUNcyrgxxI6UzwBXDdIzDJa8k="
+    on_success: change
+    on_failure: always
