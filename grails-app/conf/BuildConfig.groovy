@@ -21,30 +21,35 @@ import grails.util.Environment
 
 def forkSettingsRun = [
         minMemory: 1536,
-        maxMemory: 4096,
+        maxMemory: 2096,
         maxPerm:   384,
-        debug:     false,
+        debug:     true,
 ]
 def forkSettingsOther = [
         minMemory: 256,
         maxMemory: 1024,
         maxPerm:   384,
-        debug:     false,
+        debug:     true,
 ]
 
+//grails.project.fork = [
+//        test:    [ *:forkSettingsOther, daemon: true ],
+//        run:     forkSettingsRun,
+//        war:     forkSettingsRun,
+//        console: forkSettingsOther ]
 grails.project.fork = [
-        test:    [ *:forkSettingsOther, daemon: true ],
-        run:     forkSettingsRun,
-        war:     forkSettingsRun,
-        console: forkSettingsOther ]
+        test:    false,
+        run:     false,
+        war:     false,
+        console: false ]
 
 grails.project.war.file = "target/${appName}.war"
 
 /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
 grails.servlet.version = "2.5"
+grails.reload.enabled = true
 
 grails.project.dependency.resolver = "maven"
-
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -55,10 +60,26 @@ grails.project.dependency.resolution = {
     repositories {
         grailsCentral()
         mavenCentral()
+
+        if (!skipTransmartFoundationRepo()) {
+            /* Allow skipping the tranSMART foundation repository.
+             * We read extra repositories in the very limited externalized
+             * BuildConfig.groovy (see below), but they are append to this list.
+             * A company developing tranSMART may want not to use the tranSMART
+             * foundation repository, or it may want to give priority to its own.
+             * Setting grails.project.dependency.resolution in the externalized
+             * file will skip this repo. You may then include it in whatever order
+             * in the externalized file. */
+
+            mavenRepo([
+                    name: 'repo.transmartfoundation.org-public',
+                    url: 'https://repo.transmartfoundation.org/content/repositories/public/',
+            ])
+        }
     }
     dependencies {
-		compile 'org.postgresql:postgresql:9.3-1100-jdbc4'
-		compile 'antlr:antlr:2.7.7'
+        compile 'org.postgresql:postgresql:9.3-1100-jdbc4'
+        compile 'antlr:antlr:2.7.7'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
         compile 'net.sf.opencsv:opencsv:2.3'
         compile "org.apache.lucene:lucene-core:2.4.0"
@@ -91,13 +112,13 @@ grails.project.dependency.resolution = {
         compile ':hibernate:3.6.10.7'
         compile ':quartz:1.0-RC2'
         compile ':rdc-rmodules:0.4-SNAPSHOT'
-	compile ':transmart-legacy-db:0.3-SNAPSHOT'
-	compile ':search-domain:1.0-SNAPSHOT'
-	compile ':biomart-domain:1.0-SNAPSHOT'
-	compile ':transmart-java:1.0-SNAPSHOT'
+        compile ':transmart-legacy-db:0.3-SNAPSHOT'
+        compile ':search-domain:1.0-SNAPSHOT'
+        compile ':biomart-domain:1.0-SNAPSHOT'
+        compile ':transmart-java:1.0-SNAPSHOT'
         compile ':spring-security-core:2.0-RC2'
         compile ':spring-security-ldap:2.0-RC2'
-	compile(':folder-management:1.0-SNAPSHOT')
+        compile ':folder-management:1.0-SNAPSHOT'
         compile ':spring-security-oauth2-provider:1.0.5.2'
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
@@ -119,6 +140,7 @@ grails.war.resources = { stagingDir ->
 
 // Use new NIO connector in order to support sendfile
 grails.tomcat.nio = true
+grails.project.dependency.resolution.metaClass.skipTransmartFoundationRepo = { false }
 
 def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
         "BuildConfig.groovy")
@@ -162,6 +184,7 @@ if (buildConfigFile.exists()) {
         grails.project.dependency.resolution = {
             originalDepRes.delegate        = extraDepRes.delegate        = delegate
             originalDepRes.resolveStrategy = extraDepRes.resolveStrategy = resolveStrategy
+            originalDepRes.metaClass.skipTransmartFoundationRepo = { true }
             originalDepRes.call(it)
             extraDepRes.call(it)
         }
