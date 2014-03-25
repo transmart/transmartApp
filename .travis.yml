@@ -16,7 +16,7 @@ before_install:
 
 install:
     - maybe_build_maven_dep $REPOS_OWNER/transmart-core-api core-api
-    - maybe_build_grails_dep $REPOS_OWNER/transmart-core-db core-db
+    - maybe_build_grails_dep $REPOS_OWNER/transmart-core-db core-db . transmart-core-db-tests
     - maybe_build_grails_dep $REPOS_OWNER/Rmodules Rmodules
 
 script:
