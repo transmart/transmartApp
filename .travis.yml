@@ -20,7 +20,8 @@ install:
     - maybe_build_grails_dep $REPOS_OWNER/Rmodules Rmodules
 
 script:
-    - grails test-app --refresh-dependencies --non-interactive --stacktrace
+    - grails refresh-dependencies --non-interactive
+    - grails test-app --non-interactive --stacktrace
     - grails war
 
 notifications:
