@@ -29,11 +29,10 @@ function
 subjectsStr, delimiter, filesPath, platformName
 )
 {
+  library(data.table)
   subjectList <- as.vector(unlist(strsplit(subjectsStr, delimiter)),mode="list");
   setwd(filesPath);
   
-  #Initialize a vector of unique probes
-  probes <- character(0)
   finalDataExists <- FALSE
   firstTime <- TRUE
   
@@ -43,41 +42,45 @@ subjectsStr, delimiter, filesPath, platformName
     #When only 1 subject in list, the str
     subject <- gsub("^\\s+|\\s+$", "",subject)
     #Read the input file.
-    try(dataFile <- data.frame(read.delim(paste(subject,".CNV", sep=""))), silent=TRUE)
-    #if (class(dataFile) == "try-error") {
-    #  print("file does not exist!!!")
-    #    print(paste(subject,".CNV", sep=""))
-    #    print(" does not exist.")
-    #} else {
+    try(
+      dataFile <- data.frame(read.delim(paste(subject,".CNV", sep=""))), silent=TRUE)
       print("file exists!!!")
       #Split the data by the PATIENT_ID+'_'+SAMPLE.
       splitData <- split(dataFile,paste(dataFile$PATIENT.ID,dataFile$SAMPLE, sep = '_'))
-      
-      #Create a vector of unique probes with PROBE.ID from all the files read
-      probes <- unique(c(probes, dataFile$PROBE.ID))
     
       #Create a matrix with unique PROBE.ID.
-      tempData <- matrix(unique(dataFile$PROBE.ID))
+      tempData <- data.table(matrix(unique(dataFile$PROBE.ID)))
       
       #Name the column.
-      colnames(tempData) <- c("PROBE.ID")
+      colnames(tempData) <- c("PROBE")
+      setkey(tempData, PROBE)
       
       #Get the unique list of samples.
       sampleList <- unique(paste(dataFile$PATIENT.ID,dataFile$SAMPLE, sep = '_'))
+    	#delete data file matrix
+    	rm(dataFile)
+    	gc()
       
       #For each of the passed in (patient+sample)s, append the rows onto the end of our temp matrix.
       for(entry in sampleList)
     	{
     		#For each (patient+sample) we merge the data against the PROBE.ID.
-    		tempData <- merge(tempData,splitData[[entry]][c('PROBE.ID','COPY.NUMBER')],by="PROBE.ID",all.x=TRUE)	
+    		sampleData=data.table(splitData[[entry]][c('PROBE.ID','COPY.NUMBER')])
+    		colnames(sampleData) <- c("PROBE", "COPY NUMBER")
+    		setkey(sampleData, PROBE)
+    		
+    		tempData <- tempData[sampleData]
+    		rm(sampleData)
+    		gc()
     	}
       
-      colnames(tempData) <- c("PROBE ID", paste(sampleList))
+      colnames(tempData) <- c("PROBE", paste(sampleList))
       
       if (firstTime) {
         finalData <- tempData
       } else {
-        finalData <- merge(finalData, tempData, by="PROBE ID", all.x=TRUE)
+      	 setkey(finalData, PROBE)
+        finalData <- finalData[tempData]
       }
       
       finalDataExists <- TRUE
