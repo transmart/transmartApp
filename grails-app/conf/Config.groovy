@@ -206,26 +206,16 @@ grails.spring.bean.packages = []
 // same server, you can set this to false and set .apache = true
 grails.plugins.sendfile.tomcat = true
 
-// Uncomment and edit the following lines to start using Grails encoding & escaping improvements
+log4j = {
+    environments {
+        test {
+            warn 'org.codehaus.groovy.grails.commons.spring'
+            warn 'org.codehaus.groovy.grails.domain.GrailsDomainClassCleaner'
+            warn 'org.codehaus.groovy.grails.plugins.DefaultGrailsPluginManager' //info to show plugin versions
 
-/* remove this line
-// GSP settings
-grails {
-    views {
-        gsp {
-            encoding = 'UTF-8'
-            htmlcodec = 'xml' // use xml escaping instead of HTML4 escaping
-            codecs {
-                expression = 'html' // escapes values inside null
-                scriptlet = 'none' // escapes output from scriptlets in GSPs
-                taglib = 'none' // escapes output from taglibs
-                staticparts = 'none' // escapes output from static template parts
+            root {
+                info('stdout')
             }
-        }
-        // escapes all not-encoded output at final stage of outputting
-        filteringCodecForContentType {
-            //'text/html' = 'html'
         }
     }
 }
-remove this line */
