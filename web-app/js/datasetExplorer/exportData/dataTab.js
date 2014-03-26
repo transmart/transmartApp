@@ -43,7 +43,7 @@ CustomGridPanel.prototype.dropZonesChecker = function () {
                 var _rowEl = _this.getView().getRow(i);
                 rows.push(_rowEl)
                 var _dtgI = new Ext.dd.DropTarget(_rowEl, {ddGroup: 'makeQuery'});
-                _dtgI.notifyDrop = dropOntoCategorySelection;
+                _dtgI.notifyDrop = dropOntoVariableSelection;
             }
 
             // stop runner when it's already found the elements
