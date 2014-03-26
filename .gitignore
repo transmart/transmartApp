@@ -10,3 +10,4 @@ target/
 *.ipr
 *.iws
 *.log
+.DS_Store

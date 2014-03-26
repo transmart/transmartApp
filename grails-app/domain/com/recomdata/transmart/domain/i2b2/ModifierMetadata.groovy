@@ -11,10 +11,10 @@ class ModifierMetadata {
 		table 'I2B2DEMODATA.MODIFIER_METADATA'
 		version false
 
-		id column: 'MODIFIER_CD', type: 'string'
-		valtypeCd column: 'VALTYPE_CD', type: 'string'
-		stdUnits column: 'STD_UNITS', type: 'string'
-		visitInd column: 'VISIT_IND', type: 'string'
+		id column: 'MODIFIER_CD'
+		valtypeCd column: 'VALTYPE_CD'
+		stdUnits column: 'STD_UNITS'
+		visitInd column: 'VISIT_IND'
 	}
 
 
