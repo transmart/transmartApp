@@ -14,9 +14,9 @@ class EncounterLevel {
         table 'DEAPP.DE_ENCOUNTER_LEVEL'
         version false
 
-        studyId column: 'STUDY_ID', type: 'string'
-        conceptCode column: 'CONCEPT_CD', type: 'string'
-        linkType column: 'LINK_TYPE', type: 'string'
+        studyId column: 'STUDY_ID'
+        conceptCode column: 'CONCEPT_CD'
+        linkType column: 'LINK_TYPE'
     }
 
 
