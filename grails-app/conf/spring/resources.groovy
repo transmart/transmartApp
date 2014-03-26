@@ -19,12 +19,15 @@
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
+import org.transmart.marshallers.MarshallerRegistrarService
 
 beans = {
 
     if (grailsApplication.config.org.transmart.security.samlEnabled) {
         importBeans('classpath:/spring/spring-security-saml.xml')
     }
+
+    marshallerRegistrarService(MarshallerRegistrarService)
 
     dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder) {
 		dataSource = ref('dataSource')

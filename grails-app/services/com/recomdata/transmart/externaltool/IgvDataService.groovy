@@ -19,8 +19,8 @@
  
 package com.recomdata.transmart.externaltool;
 
-import com.recomdata.export.IgvFiles;
-import org.broad.igv.tools.IgvTools;
+import com.recomdata.export.IgvFiles
+import org.transmartproject.core.exceptions.UnexpectedResultException;
 
 class IgvDataService {
 	
@@ -82,23 +82,31 @@ class IgvDataService {
 		return file.getName().toLowerCase().endsWith("vcf");
 			
 	}
-	
-	
-	def createVCFIndexFile(File vcfFile){
-		File idxFile = null;
-		String[]argv = ["index", vcfFile.absolutePath]
-		try{
-		(new IgvTools()).run(argv);
-		String fileName = vcfFile.absolutePath+".idx";
-		idxFile = new File(fileName);
-		//need to check
-		idxFile.exists();
-		
-		}catch(Exception e){
-		logger.error(e.getMessage(), e);
-		}
-		
-		return idxFile;
-	}
+
+
+    def createVCFIndexFile(File vcfFile) {
+        String[] argv = ["index", vcfFile.absolutePath]
+
+        Class igvToolsClass
+        try {
+            igvToolsClass = Class.forName 'org.broad.igv.tools.IgvTools'
+        } catch (e) {
+            log.error 'Could not load IgvTools. The igvtools jar is not ' +
+                    'bundled anymore. You will have to add it as a ' +
+                    'dependency to the project'
+            throw e
+        }
+
+        igvToolsClass.newInstance().run argv
+
+        File idxFile = File(vcfFile.absolutePath + ".idx")
+
+        idxFile.exists() || {
+            throw new UnexpectedResultException('Could not create index ' +
+                    "file for ${vcfFile.absolutePath}")
+        }()
+
+        idxFile
+    }
 	
 }

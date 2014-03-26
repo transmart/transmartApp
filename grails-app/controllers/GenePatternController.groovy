@@ -46,8 +46,6 @@ import com.recomdata.export.SurvivalAnalysisFiles
 import com.recomdata.genepattern.JobStatus
 import com.recomdata.genepattern.WorkflowStatus
 
-import edu.mit.wi.haploview.HaploText
-
 class GenePatternController {
 	def quartzScheduler	
 	def genePatternService
@@ -647,6 +645,19 @@ class GenePatternController {
 	   sb.append("</tr></table>")
 	   jobResultsService[jobName]["Results"] = sb.toString()
    }
+
+    private void callHaploText(String[] args) {
+        try {
+            // yes, this class does all the work in the constructor and
+            // it's instantiated for the collaterals. Don't believe it? See
+            // https://github.com/jazzywhit/Haploview/blob/69f7ca282/edu/mit/wi/haploview/HaploText.java#L210
+            Class.forName('edu.mit.wi.haploview.HaploText').
+                newInstance(args)
+        } catch (ClassNotFoundException e) {
+            log.error('Haploview class not found. It is not bundled anymore. ' +
+                    'You will need to add its jar as a dependency')
+        }
+    }
 	
 	/**
 	 * Helper method to create the haploview for each result instance ID
@@ -677,8 +688,8 @@ class GenePatternController {
 		boolean s1=ped.createPEDFile(genes, ids, pathin, con)
 		
 		String[] args=["-nogui", "-quiet","-pedfile" ,pathinped, "-info", pathininfo, "-png"]
-		
-		HaploText argParser = new HaploText(args)
+
+        callHaploText(args)
 		String filename=filenamein+".ped.LD.PNG"
 
 		String hapleUrl = request.getContextPath() + "/chart/displayChart?filename=" + filename
@@ -731,8 +742,8 @@ class GenePatternController {
 	   {
 		   //Create argument array.
 		   String[] args=["-nogui", "-quiet","-pedfile" ,pathinped, "-info", pathininfo, "-png"]
-		   
-		   HaploText argParser = new HaploText(args)
+
+           callHaploText(args)
 		   
 		   //This is the filename of the image.
 		   String filename=filenamein+".ped.LD.PNG"

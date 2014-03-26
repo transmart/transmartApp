@@ -117,7 +117,7 @@ public class SearchKeywordService {
 			}
 			///////////////////////////////////////////////////////////////////////////////////
 			m.put("label", sk.searchKeyword.keyword)
-			m.put("id", , sk.searchKeyword.id)
+			m.put("id", sk.searchKeyword.id)
 			m.put("category", sk.searchKeyword.displayDataCategory)
 			m.put("categoryId", sk.searchKeyword.dataCategory)
 			if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0)	{
