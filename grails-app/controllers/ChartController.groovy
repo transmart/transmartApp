@@ -477,7 +477,7 @@ class ChartController {
 
         String analysis_key=i2b2HelperService.getConceptKeyForAnalysis(concept_key);
         PrintWriter pw=new PrintWriter(response.getOutputStream());
-        pw.write("<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body><div class='analysis'>");
+        pw.write("<html><head><link rel='stylesheet' type='text/css' href='css/chartservlet.css'></head><body><div class='analysis'>");
         //renderConceptAnalysis(analysis_key, result_instance_id1, result_instance_id2, pw, request);
         log.debug("in analysis controller about to run render concept: "+analysis_key+" result_instance_id1:"+result_instance_id1);
 
@@ -538,7 +538,7 @@ class ChartController {
 		log.trace("s2:"+s2)
 		PrintWriter pw=new PrintWriter(response.getOutputStream());
 
-		pw.write("<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body><div class='analysis'>");
+		pw.write("<html><head><link rel='stylesheet' type='text/css' href='css/chartservlet.css'></head><body><div class='analysis'>");
 		pw.write("<table width='100%'>");
 		pw.write("<tr><td colspan='2' align='center'><div class='analysistitle'>Summary Statistics</div></td></tr>");
 		pw.write("<tr><td width='50%' align='center'>");
@@ -632,7 +632,7 @@ class ChartController {
 			renderBoxAndWhiskerInfoTable(l1, pw);}
 			pw.write("</td>");
 			pw.write("<td><img src='"+graphURL7+"' width=200 height=300 border=0 usemap='#"+filename7+"'>");
-			pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>");
+			pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('help/boxplot.html');\"><img src=\"images/information.png\"></a></div></td>");
 			pw.write("</td><td align='center'>");
 			if(s2 && l2.size()>0){pw.write("<div class='smalltitle'><b>Subset 2</b></div>");
 			renderBoxAndWhiskerInfoTable(l2, pw);}
@@ -909,8 +909,10 @@ class ChartController {
             }
             else
             {
-                List<String> keys=i2b2HelperService.getConceptKeysInSubsets(result_instance_id1, result_instance_id2);
 
+                List<String> keys=i2b2HelperService.getConceptKeysInSubsets(result_instance_id1, result_instance_id2);
+                //System.out.println("id1 " + result_instance_id1);
+                //System.out.println("id2 " + result_instance_id2);
                 Set<String> uniqueConcepts = i2b2HelperService.getDistinctConceptSet(result_instance_id1, result_instance_id2);
 
                 log.debug("Unique concepts: " + uniqueConcepts);
@@ -1959,7 +1961,7 @@ try
         pw.write("<img src='" + graphURL + "' width=" + width + " height=300 border=0 usemap='#" + filename + "' alt='Summary Stats Graph'>");
         ChartUtilities.writeImageMap(pw, filename, info, false);
         pw.write("</td>");
-        pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('help/boxplot.html');\"><img src=\"../images/information.png\" alt='Information'>")
+        pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('help/boxplot.html');\"><img src=\"images/information.png\" alt='Information'>")
         pw.write("</a></div></td>");
         pw.write("<td>")
         pw.write("<table><tr><td>");
@@ -2173,7 +2175,7 @@ try
                 pw.write("<img src='"+graphURL+"' width="+width+" height=300 border=0 usemap='#"+filename+"' alt='Summary Stats Graph'>");
                 ChartUtilities.writeImageMap(pw, filename, info, false);
                 pw.write("</td>");
-                pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('help/boxplot.html');\"><img src=\"../images/information.png\" alt='Information'>")
+                pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('help/boxplot.html');\"><img src=\"images/information.png\" alt='Information'>")
                 pw.write("</a></div></td>");
                 pw.write("<td>")
                 pw.write("<table><tr><td>");

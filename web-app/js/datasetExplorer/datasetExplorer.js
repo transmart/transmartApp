@@ -2962,6 +2962,7 @@ function runAllQueries(callback, panel)
 	STATE.QueryRequestCounter = subsetstorun;
 	/* set the number of requests before callback is fired for runquery complete */
 
+
     //Accross Trial Changes
     if(ontTabPanel.getActiveTab().title == "Across Trial")
     {
@@ -2975,6 +2976,7 @@ function runAllQueries(callback, panel)
     }
     else
     {
+
         //For the navigate by study tab we use i2b2 to get the data.
         // iterate through all subsets calling the ones that need to be run
         for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1)
@@ -2995,6 +2997,7 @@ function runQuery(subset, callback) {
     var query = getCRCQueryRequest(subset);
     // first subset
     queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
+
     Ext.Ajax.request(
         {
             url: pageInfo.basePath + "/queryTool/runQueryFromDefinition",
@@ -4372,6 +4375,7 @@ function getSummaryStatistics(postCompletionFunction,postCompletionFunctionParam
 				method : 'POST',
 				success : function(result, request)
 				{
+
 				getSummaryStatisticsComplete(result);
                 if(postCompletionFunction) postCompletionFunction(postCompletionFunctionParameter)
 				}
@@ -4452,9 +4456,10 @@ function getSummaryStatisticsComplete(result, request)
 	// analysisPanel.body.update(result.responseText, true, null);
 	// analysisPanel.getFrame().update(result.responseText, true, null);
 	// lastAnalysisResult = result.responseText;
-	resultsTabPanel.setActiveTab('queryPanel');
+	resultsTabPanel.setActiveTab('analysisPanel');
 	updateAnalysisPanel(result.responseText, false);
 	getSummaryGridData();
+
 	getExportButtonSecurity();
 }
 
@@ -4818,7 +4823,7 @@ function getAnalysisPanelContent()
 
 function printPreview(content)
 {
-	var stylesheet = "<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body>";
+	var stylesheet = "<html><head><link rel='stylesheet' type='text/css' href='css/chartservlet.css'></head><body>";
 	var generator = window.open('', 'name', 'height=400,width=500, resizable=yes, scrollbars=yes');
 	var printbutton = "<input type='button' value=' Print this page 'onclick='window.print();return false;' />";
 	generator.document.write(stylesheet + printbutton + content);
