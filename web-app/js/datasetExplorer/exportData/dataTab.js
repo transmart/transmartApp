@@ -549,7 +549,9 @@ DataExport.prototype.runDataExportJob = function (result, gridPanel) {
         if (subsetDataTypeFiles[i].checked) selectedSubsetDataTypeFiles.push(subsetDataTypeFiles[i].value);
     }
 
-    console.log("selectedSubsetDataTypeFiles", selectedSubsetDataTypeFiles);
+    if (window.console) {
+        console.log("selectedSubsetDataTypeFiles", selectedSubsetDataTypeFiles);
+    }
 
     var _exportParams = this.getExportParams(gridPanel, selectedSubsetDataTypeFiles);
 
