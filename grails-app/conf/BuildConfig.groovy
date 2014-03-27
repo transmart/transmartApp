@@ -87,6 +87,10 @@ grails.project.dependency.resolution = {
             //also remove xercesImpl because it breaks tomcat and is not otherwise needed
             excludes 'spring-security-config', 'spring-security-core', 'spring-security-web', 'xercesImpl'
         }
+
+        test 'org.gmock:gmock:0.8.3', {
+            transitive = false
+        }
     }
 
     plugins {
