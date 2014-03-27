@@ -64,7 +64,7 @@ grails.project.dependency.resolution = {
         compile ':build-info:1.2.5'
         compile ':hibernate:3.6.10.4'
         compile ':quartz:1.0-RC2'
-        compile ':rdc-rmodules:0.3-SNAPSHOT'
+        compile ':rdc-rmodules:0.3-rc2_dev-SNAPSHOT'
         compile ':spring-security-core:1.2.7.3'
         compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:1.0.6'
