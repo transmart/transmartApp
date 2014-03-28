@@ -100,7 +100,7 @@ class HighDimExportService {
         long rowsFound = 0
         long startTime
         try {
-            File outputFile = new File(studyDir, dataType+'.trans')
+            File outputFile = new File(studyDir, dataType+'.txt')
             fileName = outputFile.getAbsolutePath()
             writer = outputFile.newWriter(true)
 
