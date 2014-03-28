@@ -1154,10 +1154,10 @@ class I2b2HelperService {
 		
 		log.debug("getDistinctConceptSet called with arguments: "+result_instance_id1+" and "+result_instance_id2)
 
-        if(!result_instance_id1.trim().equalsIgnoreCase(""))
+        if(result_instance_id1 != null && !result_instance_id1.trim().equalsIgnoreCase(""))
 		    workingSet.addAll(getConceptKeysInSubset(result_instance_id1));
 
-        if(!result_instance_id2.trim().equalsIgnoreCase(""))
+        if(result_instance_id2 != null && !result_instance_id2.trim().equalsIgnoreCase(""))
 		    workingSet.addAll(getConceptKeysInSubset(result_instance_id2));
 		
 		for (String k : workingSet) {
