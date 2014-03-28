@@ -678,7 +678,7 @@ Ext.onReady(function()
                         {
                             id: 'clearButton',
                             text: 'Clear',
-                            iconCls: 'clearbutton2',
+                            iconCls: 'clearbutton',
                             disabled: false,
                             handler: function () {
                                 clearQuery();
