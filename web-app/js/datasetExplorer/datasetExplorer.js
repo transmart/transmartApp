@@ -4554,6 +4554,7 @@ function getSummaryGridData()
 
     $j.getJSON(basicGridUrl, dataArray, function (data) {
 
+
         setupGridData(data);
 
         gridPanelHeaderTips = data.headerToolTips.slice(0);
@@ -4637,9 +4638,11 @@ function setupGridViewWrapper()
 
 function setupGridData(data)
 {
+    data.bJQueryUI = true;
     data.bAutoWidth = true;
+
     data.bScrollAutoCss = true;
-    data.sScrollY = 400;
+    data.sScrollY = (jQuery(window).height() - 240);
     data.sScrollX = "100%";
     data.bDestroy = true;
     data.bProcessing = true;
@@ -4647,6 +4650,7 @@ function setupGridData(data)
     data.bScrollCollapse = false;
     data.iDisplayLength = 100;
     data.isDrawingDelayed = true;
+
     data.fnLoadCallBack = function() {
         isGridLoadDone = true;
         GLOBAL.isGridViewLoaded = true;

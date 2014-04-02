@@ -96,7 +96,14 @@
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
 	<!-- Include JQuery stylesheets here: -->
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css/jQueryUI/smoothness', file:'jquery-ui-1.8.17.custom.css')}">
-	
+
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'jquery.dataTables.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'jquery.dataTables_themeroller.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'demo_page.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'demo_table.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'demo_table_jui.css')}">
+
+
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 	
     <script type="text/javascript" src="${resource(dir:'js/utils', file:'json2.js')}"></script>
@@ -105,6 +112,7 @@
  
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'metacore.css')}">
+
     <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'yui-combo-build-min.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'ColVis.js')}"></script>
@@ -120,7 +128,34 @@
 	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/cortellisAnalytics', file:'cortellisAnalytics.js')}"></script>
-		
+
+    <style type = "text/css">
+
+    .bottom {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+
+    </style>
+
+    <script type="text/javascript">
+
+        var calcDataTableHeight = function() {
+            return (jQuery(window).height() - 240) + "px";
+        };
+
+        var $window = $(window);
+
+        $window.resize(function() {
+
+           // var myVar = jQuery("#gridViewWrapper").find('.dataTables_scrollBody');
+           // alert(myVar);
+            jQuery('div.dataTables_scrollBody').css("height", calcDataTableHeight());
+        });
+
+    </script>
+
 </head>
 
 <body>
@@ -258,6 +293,7 @@
 	<script language="javascript">
 		helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 	</script>
-<!-- ************************************** --> 
+<!-- ************************************** -->
+
 </body>
 </html>
