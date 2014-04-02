@@ -1,8 +1,8 @@
 import org.json.JSONObject
 import org.transmart.biomart.BioAssayCohort
+import org.transmartproject.db.support.DatabasePortabilityService
 
 import javax.sql.DataSource
-import static DatabasePortabilityService.DatabaseType.*
 
 /**
  * $Id: $

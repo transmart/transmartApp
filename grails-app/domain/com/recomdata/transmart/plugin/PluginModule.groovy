@@ -52,6 +52,7 @@ class PluginModule {
 		hasForm type:'yes_no'
 		plugin column:'PLUGIN_SEQ'
 		params lazy: true
+        version false
 	}
 	
 	static constraints = {
