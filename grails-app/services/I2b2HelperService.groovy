@@ -197,7 +197,9 @@ class I2b2HelperService {
 		if(!path.endsWith("\\")){
 			path +="\\";
 		}
+
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
+
 		String sqlt =
 				sql.eachRow("SELECT CONCEPT_CD FROM CONCEPT_DIMENSION c WHERE CONCEPT_PATH = ?", [path], {row ->
 					log.trace("Found code:"+row.CONCEPT_CD);
@@ -1151,9 +1153,12 @@ class I2b2HelperService {
 		Set<String>              parentSet  = new HashSet<String>();
 		
 		log.debug("getDistinctConceptSet called with arguments: "+result_instance_id1+" and "+result_instance_id2)
-		
-		workingSet.addAll(getConceptKeysInSubset(result_instance_id1));
-		workingSet.addAll(getConceptKeysInSubset(result_instance_id2));
+
+        if(result_instance_id1 != null && !result_instance_id1.trim().equalsIgnoreCase(""))
+		    workingSet.addAll(getConceptKeysInSubset(result_instance_id1));
+
+        if(result_instance_id2 != null && !result_instance_id2.trim().equalsIgnoreCase(""))
+		    workingSet.addAll(getConceptKeysInSubset(result_instance_id2));
 		
 		for (String k : workingSet) {
 			// always look for a parent
@@ -4895,9 +4900,9 @@ class I2b2HelperService {
                 log.debug("Integrating over the nodes...")
                 for (int p = 0; p < panels.getLength(); p++) {
                     panel=panels.item(p)
-                    Node panelnumber=(Node)xpath.evaluate("panel_number", panel, XPathConstants.NODE)
+                    Node panelnumber =(Node)xpath.evaluate("panel_number", panel, XPathConstants.NODE)
 
-                    if(panelnumber.getTextContent().equalsIgnoreCase("21"))	{
+                    if(panelnumber != null && panelnumber.getTextContent().equalsIgnoreCase("21"))	{
                         log.debug("Skipping the security panel in printing the output")
                         continue
                     }
@@ -4921,7 +4926,7 @@ class I2b2HelperService {
                         }
                         //jira - DEMOTM-231 : Summary of Concept in Summary Statistics view uses modifer_cd instead of modifer_path
                         //Node key=(Node)xpath.evaluate("item_key", item, XPathConstants.NODE)
-                        Node key=(Node)xpath.evaluate("item_name", item, XPathConstants.NODE)
+                        Node key=(Node)xpath.evaluate("item_key", item, XPathConstants.NODE)
 
                         String textContent = key.getTextContent()
                         log.debug("Found item ${textContent}")
@@ -5489,7 +5494,10 @@ class I2b2HelperService {
                 NodeList qts =  (NodeList) queryTimingNodes
                 tQD = new TransmartQueryDefinition(resultInstanceId)
                 Node qtsNode = qts.item(0)
-                tQD.queryTiming = qtsNode.getTextContent()
+                if(qtsNode != null){
+                    tQD.queryTiming = qtsNode.getTextContent()
+                }
+
 
                 Object result = xpath.evaluate("//panel", doc, XPathConstants.NODESET)
                 NodeList panels = (NodeList) result
@@ -5500,13 +5508,22 @@ class I2b2HelperService {
 
                     Node panel=panels.item(p)
                     Node panelNumber=(Node)xpath.evaluate("panel_number", panel, XPathConstants.NODE)
-                    tQP.panelNum = panelNumber.getTextContent();
+
+                    if(panelNumber != null){
+                        tQP.panelNum = panelNumber.getTextContent();
+                    }
+
+
 
                     Node invert=(Node)xpath.evaluate("invert", panel, XPathConstants.NODE)
                     tQP.invert = invert.getTextContent() != "0"
 
                     Node panelTiming=(Node)xpath.evaluate("panel_timing", panel, XPathConstants.NODE)
-                    tQP.panelTiming = panelTiming.getTextContent()
+
+                    if(panelTiming != null){
+                        tQP.panelTiming = panelTiming.getTextContent()
+                    }
+
 
                     NodeList items=(NodeList)xpath.evaluate("item", panel, XPathConstants.NODESET)
 
@@ -5521,7 +5538,7 @@ class I2b2HelperService {
                         tQI.itemKey = key.getTextContent()
 
                         tQI.concept_cd = getConceptCodeFromPath(tQI.fullName);
-                        tQI.linkType = getLinkTypeFromConceptCode(tQI.concept_cd)
+                        //tQI.linkType = getLinkTypeFromConceptCode(tQI.concept_cd)
 
                         tQP.items.add(tQI)
 
