@@ -66,6 +66,9 @@ function advancedWorkflowMenu() {
 
 function createAdvancedWorkflowMenu(result) {
 
+// the advanced workflow menu is build elseware. This call needs to be reviewed. Removed for now.
+// see https://github.com/transmart/transmartApp/commit/09f1a4c4eaa29f80a3375a17ee9ee39c80415b79
+
 //	var response = Ext.util.JSON.decode(result.responseText)
 //
 //	if (response.success) {
