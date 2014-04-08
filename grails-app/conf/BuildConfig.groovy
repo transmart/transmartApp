@@ -48,7 +48,7 @@ grails.project.dependency.resolution = {
         compile 'org.apache.lucene:lucene-core:2.4.0',
                 'org.apache.lucene:lucene-demos:2.4.0',
                 'org.apache.lucene:lucene-highlighter:2.4.0'
-        compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
+        compile 'org.transmartproject:transmart-core-api:1.0-LH-SNAPSHOT'
 
         test 'org.hamcrest:hamcrest-library:1.3',
                 'org.hamcrest:hamcrest-core:1.3'
@@ -63,14 +63,14 @@ grails.project.dependency.resolution = {
         compile ':build-info:1.2.5'
         compile ':hibernate:3.6.10.4'
         compile ':quartz:1.0-RC2'
-        compile ':rdc-rmodules:0.3-rc2_dev-SNAPSHOT'
+        compile ':rdc-rmodules:0.3-LH-SNAPSHOT'
         compile ':spring-security-core:1.2.7.3'
         compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:1.0.6'
 
         runtime ':prototype:1.0'
         //runtime ':jquery:1.7.1'
-        runtime ':transmart-core:1.0-SNAPSHOT'
+        runtime ':transmart-core:1.0-LH-SNAPSHOT'
         runtime ':resources:1.2.1'
 
         // Doesn't work with forked tests yet
