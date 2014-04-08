@@ -18,7 +18,7 @@
 -->
 
 
-<%@ page import="auth.AuthUser" %>
+<%@ page import="org.transmart.searchapp.AuthUser" %>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -47,7 +47,12 @@
         <br> please select a user then select groups</br>
         <br><b>Search User<b></b><br>
         <input type="text" size="80" id="searchUsers" autocomplete="off"/></div>
-    <script type="text/javascript">
+    <r:script>
+
+        var pageInfo = {
+            basePath: "${request.getContextPath()}"
+        }
+  
         createUserSearchBox2('${request.getContextPath()}/userGroup/ajaxGetUserSearchBoxData', 440);
 
         function searchgroup() {
@@ -60,7 +65,7 @@
             ${remoteFunction(action:'searchGroupsWithoutUser',update:[success:'groups', failure:''], params:'$(\'searchtext\').serialize()+\'&id=\'+pid')};
             return false;
         }
-    </script>
+    </r:script>
     <table>
         <tr><td></td><td></td><td>
             <input name="searchtext" id="searchtext" />

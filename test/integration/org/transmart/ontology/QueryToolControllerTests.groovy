@@ -35,6 +35,7 @@ class QueryToolControllerTests {
             Long setSize = 10
             QueryStatus status = QueryStatus.FINISHED
             String errorMessage = null
+            Set patients = [] as Set
         }
 
         QueryDefinitionXmlConverter xmlService = mock(QueryDefinitionXmlConverter)

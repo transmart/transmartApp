@@ -10,11 +10,10 @@ def forkSettingsOther = [
         maxPerm:   384,
         debug:     false,
 ]
-/* We can't enable forked run-app now because of a bug in Grails:
- * http://stackoverflow.com/questions/19371859 */
+
 grails.project.fork = [
         test:    [ *:forkSettingsOther, daemon: true ],
-        run:     false,
+        run:     forkSettingsRun,
         war:     forkSettingsRun,
         console: forkSettingsOther ]
 
@@ -41,42 +40,62 @@ grails.project.dependency.resolution = {
 
         mavenRepo: 'https://repo.transmartfoundation.org/content/repositories/public/'
     }
-
     dependencies {
+        runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
         compile 'org.apache.lucene:lucene-core:2.4.0',
                 'org.apache.lucene:lucene-demos:2.4.0',
                 'org.apache.lucene:lucene-highlighter:2.4.0'
         compile 'org.transmartproject:transmart-core-api:1.0-LH-SNAPSHOT'
+        compile 'org.grails:grails-plugin-rest:2.3.5-hyve4'
 
+        compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
+
+        /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
+        compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
+
+        /* for GeneGo web services: */
+        compile 'axis:axis:1.4'
+
+        test 'org.gmock:gmock:0.8.3', {
+            transitive = false
+        }
         test 'org.hamcrest:hamcrest-library:1.3',
                 'org.hamcrest:hamcrest-core:1.3'
-
-        compile 'org.grails:grails-plugin-url-mappings:2.3.3-hyve1' // until Grails 2.3.4 is out
     }
 
     plugins {
-        build ':release:3.0.1', ':rest-client-builder:1.0.3'
+        build ':release:3.0.1'
+        build ':rest-client-builder:1.0.3'
         build ':tomcat:7.0.47'
 
         compile ':build-info:1.2.5'
-        compile ':hibernate:3.6.10.4'
+        compile ':hibernate:3.6.10.7'
         compile ':quartz:1.0-RC2'
         compile ':rdc-rmodules:0.3-LH-SNAPSHOT'
-        compile ':spring-security-core:1.2.7.3'
-        compile ':spring-security-kerberos:0.1'
-        compile ':spring-security-ldap:1.0.6'
+        // Not compatible with spring security 3.2 yet
+        //compile ':spring-security-kerberos:0.1'
+        compile ':spring-security-ldap:2.0-RC2'
+        compile ':spring-security-core:2.0-RC2'
 
         runtime ':prototype:1.0'
-        //runtime ':jquery:1.7.1'
+        runtime ':jquery:1.7.1'
         runtime ':transmart-core:1.0-LH-SNAPSHOT'
         runtime ':resources:1.2.1'
 
         // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
+        test ':transmart-core-db-tests:1.0-LH-SNAPSHOT'
     }
 }
+
+grails.war.resources = { stagingDir ->
+    delete(file: "${stagingDir}/WEB-INF/lib/servlet-api-${grails.servlet.version}.jar")
+}
+
+// Use new NIO connector in order to support sendfile
+grails.tomcat.nio = true
 
 def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
         "BuildConfig.groovy")
@@ -119,7 +138,6 @@ if (buildConfigFile.exists()) {
         grails.project.dependency.resolution = {
             originalDepRes.delegate        = extraDepRes.delegate        = delegate
             originalDepRes.resolveStrategy = extraDepRes.resolveStrategy = resolveStrategy
-            originalDepRes.metaClass.skipTransmartFoundationRepo = { true }
             originalDepRes.call(it)
             extraDepRes.call(it)
         }

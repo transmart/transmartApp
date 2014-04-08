@@ -102,15 +102,20 @@ function getSelectedAsCommaSeparatedList(ob)
         //renderTo: 'search',
         itemSelector: 'div.search-item',
         onSelect: function(record){ // override default onSelect to do redirect
-         	//alert(record.data.uid);
              var sp=Ext.get("searchUsers");
              sp.dom.value=record.data.name;
              var h=Ext.get("currentprincipalid");
              h.dom.value=record.data.uid;
-             //alert(h.dom.value);
              search.collapse();
-             new Ajax.Updater({success:'permissions'}, pageInfo.basePath+'/secureObjectAccess/listAccessForPrincipal/'+record.data.uid,{asynchronous:true,evalScripts:true,parameters:$('searchtext').serialize()});
-             //compareSubsets();
+            jQuery.ajax({
+                url:          pageInfo.basePath + '/secureObjectAccess/listAccessForPrincipal',
+                asynchronous: true,
+                data: Recom.rc.serializeFormElements.call($('#accessform'),
+                        ['searchtext', 'currentprincipalid', 'accesslevelid']),
+                success: function (returnedData) {
+                    jQuery('#permissions').html(returnedData);
+                }
+            });
         }
     });
     search.on('focus', function(){
@@ -176,7 +181,14 @@ function getSelectedAsCommaSeparatedList(ob)
              h.dom.value=record.data.uid;
              //alert(h.dom.value);
              search.collapse();
-             new Ajax.Updater({success:'groups'}, pageInfo.basePath+'/userGroup/searchGroupsWithoutUser/'+record.data.uid,{asynchronous:true,evalScripts:true,parameters:$('searchtext').serialize()});
+             jQuery.ajax(	{	
+		 			url:pageInfo.basePath+'/userGroup/searchGroupsWithoutUser/'+record.data.uid,
+		 			asynchronous:true,
+	 				data:{searchtext:jQuery('#searchtext').val()},
+	 				success: function( returnedData ) {
+	 					jQuery( '#groups' ).html( returnedData );
+	 					}
+	 				});             
              //compareSubsets();
         }
     });
@@ -312,3 +324,27 @@ function highlightTextNodes(element, searchTerm) {
 	  element.innerHTML =a;
 	}
 
+Recom.rc.serializeFormElements = function(elements, form /* jquery el or undef */) {
+    if (!form) {
+        form = jQuery(this).closest('form')
+        if (!form.length) {
+            // if form is not set, search in the whole document
+            form = $(window.document);
+        }
+    }
+    var data = {};
+    elements.forEach(function(id) {
+        var jQueryEl = form.find('#' + id);
+        if (!jQueryEl.length) {
+            form = form.find('[name=' +  id + ']')
+            if (!jQueryEl.length) {
+                console.error('Could not find element with id or name \'' +
+                        id + '\' in form ' + form);
+            }
+        }
+
+        data[id] = jQueryEl.val();
+    })
+
+    return jQuery.param(data, true);
+}

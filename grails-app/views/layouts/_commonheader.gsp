@@ -97,6 +97,8 @@
     <p>You will be logged off in <span id="timeout-countdown"></span> seconds.</p>
     <p>Do you want to continue your session?</p>
 </div>
+<r:require module="session_timeout_nodep"/>
+<r:script>
       
 <script>
     jQuery(document).ready(function() {
@@ -104,4 +106,4 @@
 	    var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
 	    addTimeoutDialog(heartbeatURL, logoutURL);
    });
-</script>
+</r:script>

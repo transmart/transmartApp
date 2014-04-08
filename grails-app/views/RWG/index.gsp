@@ -21,7 +21,7 @@
         <link rel="stylesheet" href="${resource(dir:'css', file:'jquery/jqueryDatatable.css')}"></link>
 
         <!-- jQuery JS libraries -->
-        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
         
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
         
@@ -45,7 +45,7 @@
   		
   		<!--  SVG Export -->
   		<%--<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  --%>
-
+	        
         <script type="text/javascript">
             var $j = jQuery.noConflict();
         </script>
@@ -120,11 +120,11 @@
                                 jQuery('#editMetadataOverlay').scrollTop(0);
                                 jQuery('#displayMetadataErrors').empty().html('<div class="errors">' + response.errors + '</div>');
                                 jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
-                            } else {
+		        	}else{
                                 jQuery('#result-folder-name-' + response.id).text(response.folderName);
                                 jQuery('#editMetadataOverlay').fadeOut();
                                 showDetailDialog(response.id);
-                            }
+			        }
                         },
                         error: function (xhr) {
                             jQuery('#savemetadatabutton').removeClass('buttonloading').text('Save');
@@ -155,7 +155,7 @@
                                 jQuery('#createAssayOverlay').fadeOut();
                                 //showDetailDialog(response.id);
                                 updateForNewFolder(response.id);
-                            }
+	        	}
                         },
                         error: function (xhr) {
                             alert(xhr);
@@ -165,7 +165,7 @@
                     });
 	            });
 
-
+		        
 	            jQuery("#createFolderOverlay").on('click', '#cancelfolderbutton', function(){ 
 	            	if (!confirm('Are you sure you want to cancel your changes?')) {return false;}
 	            	jQuery('#createFolderOverlay').fadeOut();
@@ -235,7 +235,7 @@
 	            });
 
 	            jQuery("#createProgramOverlay").on('click', '#saveprogrambutton', function() {
-		            
+
 	            	var protoForm = $('createProgramForm');
 		            var serializedForm = jQuery(protoForm).serialize();
 		            jQuery('#saveprogrambutton').addClass('buttonloading').html("&nbsp;");
@@ -282,7 +282,7 @@
                                 jQuery('#createAnalysisOverlay').fadeOut();
                                 //showDetailDialog(response.id);
                                 updateForNewFolder(response.id);
-                            }
+	                }
                         },
                         error: function (xhr) {
                             alert(xhr);
@@ -316,7 +316,7 @@
                         // set the content panel width
                         jQuery('#main').width(jQuery('body').width() - currentWidth - padding);
                         jQuery('#filter-browser').css('left', jQuery('#box-search').width() + 50);
-		             }
+	                }
               });
 
 	        	var xpos = jQuery('#menuLinks').offset()['right'];
@@ -370,7 +370,7 @@
                 {
                     var gridContainer =  $j('#' + containerId);
                     gridContainer.html('<table id=\'' + tableId + '\'></table></div>');
-                }
+		             }
 
                 function overrideSort() {
 
@@ -413,23 +413,23 @@
                                 $j(this).attr("title", gridPanelHeaderTips[index]);            
                             }
                             
-	        });	
+	            });	
                         */
-                        
+
                         //Hide the pagination if both directions are disabled.
                         if (jQuery('#' + tableId + '_paginate .paginate_disabled_previous').size() > 0 && jQuery('#' + tableId + '_paginate .paginate_disabled_next').size() > 0) {
                         	jQuery('#' + tableId + '_paginate').hide();
                         }
                     };
-                    
+
                     data.fnInitComplete = function() {this.fnAdjustColumnSizing();};
 
                     $j('#' + tableId).dataTable(data);
 
                     $j(window).bind('resize', function () {
                         $j('#' + tableId).dataTable().fnAdjustColumnSizing()
-                      } );
-                    
+	        });	
+
                      $j("#" + containerId + " div.gridTitle").html(data.iTitle);                  
 
                 };
@@ -461,7 +461,7 @@
 //		jQuery('#metadata-viewer').empty()
  //           jQuery('#metadata-viewer').add(panel);
         </script>
-          
+            
         <script type="text/javascript">		
 			jQuery(function ($) {
 				// Load dialog on click of Save link
@@ -469,7 +469,8 @@
 			});
 		</script>
 
-       <r:layoutResources/>          
+
+        <r:layoutResources /><%-- XXX: Use template --%>
     </head>
     <body>
     
@@ -487,18 +488,18 @@
 						</div>
 			    <div id="results-div" class="boxcontent" style="overflow: auto;">
 			      	&nbsp;
-						</div>
+					</div>
 						</div>
 		    
 		    <div id="filter-div" style="display: none;"></div>
 			
-					</div>
+						</div>
 
 		<div id="main">		     	
                 <div id="folder-viewer">
                 <div id="welcome-viewer">
                     <tmpl:welcome />
-                </div>
+					</div>
                 <div id="metadata-viewer">
 		</div>
 		
@@ -578,14 +579,14 @@
 				<div id="xtBoxplot"><!-- Boxplot Tab Content --></div>
 		</div>
 		</div>
-		
+
 		<%-- Elements that are in fixed positions on the page --%>
 		<div id="sidebartoggle">&nbsp;</div>
 		<tmpl:/RWG/filterBrowser />
 
        <!--  Used to measure the width of a text element (in svg plots) -->
        <span id="ruler" style="visibility: hidden; white-space: nowrap;"></span> 
-	 <r:layoutResources/>
-	 <g:overlayDiv divId="${overlayExportDiv}" />
+       <div id="testTextHeightDiv"></div>
+        <r:layoutResources /><%-- XXX: Use template --%>
     </body>
 </html>

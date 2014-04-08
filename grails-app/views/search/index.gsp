@@ -42,7 +42,9 @@
 		<script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
 	    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-		<script type="text/javascript" charset="utf-8">
+		<r:script>
+            //Comment for test CI #2
+
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
 			// set ajax to 90*1000 milliseconds
@@ -144,7 +146,7 @@
 				searchcombo.className += " searchcombobox-disabled";
 				searchcombo.style.width = "442px";						
 			}
-		</script>
+		</r:script>
 		<title>${grailsApplication.config.com.recomdata.appTitle}</title>
 		<!-- ************************************** -->
         <!-- This implements the Help functionality -->
@@ -153,6 +155,7 @@
             helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
         </script>
 		<!-- ************************************** -->
+        <r:layoutResources /><%-- XXX: Use template --%>
 	</head>
 	<body>
 		<div id="header-div">
@@ -160,4 +163,5 @@
 			<g:render template="/layouts/searchheader" model="['app':'search']" />
 		</div>
 	</body>
+    <r:layoutResources /><%-- XXX: Use template --%>
 </html>

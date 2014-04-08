@@ -75,7 +75,7 @@
 	src="${resource(dir:'js', file:'bioheatmap.js')}"></script>-->
 <script type="text/javascript"
         src="${resource(dir:'js', file: 'fixconsole.js')}"></script>
-
+	
 	<!-- Include Ext stylesheets here: -->
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'ext-all.css')}">
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
@@ -85,11 +85,22 @@
 	
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
 	
-
+ 
     <!--<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>    -->
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
 	
-	<script type="text/javascript">
+	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
+		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+	
+	<script type="text/javascript" src="${resource(dir:'js/raphael', file:'raphael-min.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
+	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
+    <r:layoutResources /><%-- XXX: Use template --%>
+</head>
+
+<body>
+
+<script type="text/javascript">
 	/******************************************************************************/
 	//Global Variables
 
@@ -164,7 +175,7 @@
 			GLOBAL.resulttype = 'image';
 		}
 	}
-	</script>
+</script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'gridView.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
 	<script type="text/javascript" src="${resource(dir:'js', file:'rwgsearch.js')}"></script>
@@ -229,5 +240,6 @@
 		helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 	</script>
 <!-- ************************************** --> 
+<r:layoutResources /><%-- XXX: Use template --%>
 </body>
 </html>

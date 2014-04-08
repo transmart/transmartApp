@@ -13,30 +13,15 @@
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
   
   You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+ 
 -->
 
 <html>
 	<head>
 		<title><g:layoutTitle default="" /></title>
-		<link rel="shortcut icon" href="${resource(dir:'images',file:'searchtool.ico')}">
-		<link rel="icon" href="${resource(dir:'images',file:'searchtool.ico')}">
-		<link rel="stylesheet" href="${resource(dir:'css',file:'main.css')}" />
-		<link rel="stylesheet"	href="${resource(dir:'js',file:'ext/resources/css/ext-all.css')}" />
-		<link rel="stylesheet" href="${resource(dir:'js',file:'ext/resources/css/xtheme-gray.css')}" />
-		<link rel="stylesheet"	href="${resource(dir:'css',file:'admin.css')}" />
-		<link rel="stylesheet" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}" />
-        <script type="text/javascript"	src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
-        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
-        <script type="text/javascript">
-            var $j = jQuery.noConflict();
-        </script>
-        <script type="text/javascript" src="${resource(dir:'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
-		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
-		<script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
-	    <script type="text/javascript"	src="${resource(dir:'js', file:'usergroup.js')}"></script>
-	    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-		<script type="text/javascript" charset="utf-8">
+        <r:require module="admin"/>
+        <g:setProvider library="jquery"/>
+		<r:script>
 			Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
 			// set ajax to 90*1000 milliseconds
@@ -51,13 +36,13 @@
 	            var contact = '${grailsApplication.config.com.recomdata.contactUs}';
 	            var appTitle = '${grailsApplication.config.com.recomdata.appTitle}';
 	            var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>';
-
+				   
 	            var viewport = new Ext.Viewport({
 	                layout: "border",
-	                items:[new Ext.Panel({
-                       region: "center",
+	                items:[new Ext.Panel({                          
+                       region: "center",  
                        //tbar: createUtilitiesMenu(helpURL, contact, appTitle,'${request.getContextPath()}', buildVer, 'admin-utilities-div'),
-                       autoScroll:true,
+                       autoScroll:true,                     
                        contentEl: "page"
                     })]
 	            });
@@ -67,16 +52,16 @@
 					basePath :"${request.getContextPath()}"
 				}
 	        });
-		</script>
+		</r:script>
 		<g:layoutHead />
         <r:layoutResources/>
 	</head>
 	<body>
 		<div id="page">
-			<div id="header"><g:render template="/layouts/commonheader"	model="['app':'accesslog']" /></div>
+			<div id="header-div"><g:render template="/layouts/commonheader"	model="['app':'accesslog']" /></div>
  			<div id='navbar'><g:render template="/layouts/adminnavbar" /></div>
-			<div id="content"><g:layoutBody /></div>
+			<div id="content"><g:layoutBody /></div>    
+            <r:layoutResources />
 		</div>
-        <r:layoutResources/>
 	</body>
 </html>

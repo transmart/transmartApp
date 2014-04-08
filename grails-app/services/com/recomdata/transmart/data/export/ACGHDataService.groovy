@@ -66,11 +66,9 @@ class ACGHDataService {
         def templateArray = new String[header.size() + 1]
         //+1 b/c 1st row has no header
         Long i = 1; //for the first row
-        for (Iterator<RegionRow> iterator = regionResult.rows; ; iterator.hasNext()) {
+        for (Iterator<RegionRow> iterator = regionResult.rows; iterator.hasNext(); ) {
             RegionRow row = (RegionRow) iterator.next()
-            if (!row) {
-                break
-            }
+
             String[] line = templateArray.clone()
 
             line[0] = i++ as String

@@ -1,32 +1,28 @@
 package com.recomdata.security
 
-import java.util.List;
-
-import groovy.sql.Sql
-
+import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.util.Holders
+import org.apache.log4j.Logger
 import org.springframework.ldap.core.DirContextAdapter
 import org.springframework.ldap.core.DirContextOperations
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.ldap.userdetails.UserDetailsContextMapper
-import org.springframework.security.core.authority.GrantedAuthorityImpl
 import org.springframework.security.core.GrantedAuthority
-import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-
+import org.springframework.security.core.authority.GrantedAuthorityImpl
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.security.authentication.DisabledException
-import org.apache.log4j.Logger
-import grails.util.Holders
+import org.springframework.security.ldap.userdetails.UserDetailsContextMapper
 
 class CustomUserDetailsContextMapper implements UserDetailsContextMapper {
 
     def dataSource
 	def conf = SpringSecurityUtils.securityConfig
 	static Logger log = Logger.getLogger(CustomUserDetailsContextMapper.class)
-	static final List NO_ROLES = [new GrantedAuthorityImpl(SpringSecurityUtils.NO_ROLE)]
+	static final List NO_ROLES = [new SimpleGrantedAuthority(SpringSecurityUtils.NO_ROLE)]
 
     @Override
-    public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<GrantedAuthority> authority) {
+    public UserDetails mapUserFromContext(DirContextOperations ctx,
+                                          String username,
+                                          Collection<? extends GrantedAuthority> authority) {
 
 		log.info "Attempting to find user for username: $username"
 		log.debug "Use withTransaction to avoid lazy loading initialization error when accessing the authorities collection"
@@ -51,12 +47,6 @@ class CustomUserDetailsContextMapper implements UserDetailsContextMapper {
 				 !user.accountExpired, !user.passwordExpired, !user.accountLocked,
 				 authorities ?: NO_ROLES, user.id, user.userRealName)
         }
-
-        /*if ( !user.enabled )
-			log.warn "User disabled: $username"
-            throw new DisabledException("User is disabled", username)*/
-
-        //return userDetails
     }
 
     @Override
