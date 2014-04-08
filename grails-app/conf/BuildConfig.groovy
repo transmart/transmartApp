@@ -39,8 +39,7 @@ grails.project.dependency.resolution = {
         grailsCentral()
         mavenCentral()
 
-        mavenRepo name: 'repo.thehyve.nl-public',
-                url: 'https://repo.thehyve.nl/content/repositories/public/'
+        mavenRepo: 'https://repo.transmartfoundation.org/content/repositories/public/'
     }
 
     dependencies {
