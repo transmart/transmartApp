@@ -657,45 +657,12 @@ Ext.onReady(function()
 					height : 90
             }
         );
-        //jira- DEMOTM-115 Bringing Save report/save subset functionality to transmart Demo branch
-        var savesubsetsTbar = new Ext.Toolbar(
-            {
-                id: 'savesubsetsTbar',
-                title: 'Save Subsets',
-                items: [new Ext.Toolbar.Button(
-                    {
-                        id: 'savesubsetsButton',
-                        text: 'Save Subsets',
-                        iconCls: 'savebutton',
-                        disabled: false,
-                        handler: function () {
-                            showSaveSubsetsDialog();
-
-                        }
-                    }
-                ),
-                    new Ext.Toolbar.Button(
-                        {
-                            id: 'clearButton',
-                            text: 'Clear',
-                            iconCls: 'clearbutton',
-                            disabled: false,
-                            handler: function () {
-                                clearQuery();
-
-                            }
-                        }
-                    )
-                ]
-            }
-        );
 
 		resultsTabPanel = new Ext.TabPanel(
 				{
 					id : 'resultsTabPanel',
 					title : 'Analysis/Results',
 					region : 'center',
-                tbar: savesubsetsTbar,
 
 					defaults :
 					{
