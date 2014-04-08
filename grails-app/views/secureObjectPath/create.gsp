@@ -22,6 +22,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name="layout" content="admin" />
         <title>Create Concept Path Link</title>
+        <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
+        <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
     </head>
     <body>
         <div class="body">
