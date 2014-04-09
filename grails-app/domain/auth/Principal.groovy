@@ -30,7 +30,6 @@ package auth
 class Principal {
     static transients = ['principalNameWithType']
 
-    Long id;
     boolean enabled
     String type;
     String name;
@@ -46,10 +45,10 @@ class Principal {
         table 'SEARCH_AUTH_PRINCIPAL'
         tablePerHierarchy false
         version false
-        id generator: 'assigned'
+        id generator: 'sequence',
+           params:    [sequence: 'hibernate_sequence']
         columns
                 {
-                    id column: 'ID'
                     uniqueId column: 'UNIQUE_ID'
                     name column: 'NAME'
                     description column: 'DESCRIPTION'

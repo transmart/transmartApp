@@ -30,31 +30,28 @@ package auth
  */
 class UserGroup extends Principal {
 
-    String groupCategory;
+    String groupCategory
 
     static hasMany = [members: AuthUser]
     //static belongsTo = AuthUser
 
 
     static mapping = {
-        table 'SEARCH_AUTH_GROUP'
+        table 'SEARCHAPP.SEARCH_AUTH_GROUP'
 
-        columns
-                {
-                    groupCategory column: 'GROUP_CATEGORY'
-                    members joinTable: [name: 'SEARCH_AUTH_GROUP_MEMBER', column: 'AUTH_USER_ID', key: 'AUTH_GROUP_ID']
-
-                }
-
+        members joinTable: [name:   'SEARCH_AUTH_GROUP_MEMBER',
+                            column: 'AUTH_USER_ID',
+                            key:    'AUTH_GROUP_ID']
     }
 
     static constraints = {
-
+        name        blank: false
+        description blank: false
     }
 
     public UserGroup() {
-        groupCategory = 'USER_GROUP';
-        this.type = 'GROUP';
-
+        groupCategory = 'USER_GROUP'
+        // shouldn't this be using discriminator?
+        this.type = 'GROUP'
     }
 }
