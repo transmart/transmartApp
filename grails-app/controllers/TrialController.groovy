@@ -28,7 +28,7 @@ import org.transmart.biomart.Experiment
 import com.recomdata.util.DomainObjectExcelHelper
 import grails.converters.JSON
 import org.transmart.SearchResult
-import search.SearchKeyword
+import org.transmart.searchapp.SearchKeyword
 
 class TrialController {
 
@@ -172,7 +172,7 @@ class TrialController {
         // need to mark  trial with data
         // tmp solution
 
-        def triallist = ClinicalTrial.executeQuery("SELECT b.id, b.trialNumber, b.title FROM org.transmart.biomart.ClinicalTrial b, search.SearchKeyword s  WHERE s.bioDataId=b.id ORDER BY b.trialNumber");
+        def triallist = ClinicalTrial.executeQuery("SELECT b.id, b.trialNumber, b.title FROM org.transmart.biomart.ClinicalTrial b, org.transmart.searchapp.SearchKeyword s  WHERE s.bioDataId=b.id ORDER BY b.trialNumber");
 
         //		    def triallist = org.transmart.biomart.ClinicalTrial.listOrderByTrialNumber();
         boolean filtercheck = !session.searchFilter.trialFilter.newFilter;

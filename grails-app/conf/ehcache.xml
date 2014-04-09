@@ -31,7 +31,7 @@
            maxElementsInMemory="10000"
            timeToIdleSeconds="300"
             />
-    <cache name="search.GeneSignatureFileSchema"
+    <cache name="org.transmart.searchapp.GeneSignatureFileSchema"
            maxElementsInMemory="10000"
            timeToIdleSeconds="300"
             />

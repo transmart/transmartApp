@@ -31,7 +31,7 @@ import org.transmart.AssayAnalysisValue
 import org.transmart.ExpAnalysisResultSet
 import org.transmart.SearchFilter
 import org.transmart.biomart.BioAssayAnalysisDataTea
-import search.SearchBioMarkerCorrelFastMV
+import org.transmart.searchapp.SearchBioMarkerCorrelFastMV
 
 /**
  * $Id: AnalysisTEABaseService.groovy 11072 2011-12-08 19:03:28Z jliu $
@@ -207,10 +207,10 @@ class AnalysisTEABaseService {
                 // switch for gene sig or list
                 def dynamicValuesQuery
                 if (gfilter.getGeneSignatureFilters().size() > 0) {
-                    dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, sbmcmv.valueMetric FROM search.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in (" + mids + ")";
+                    dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, sbmcmv.valueMetric FROM org.transmart.searchapp.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in (" + mids + ")";
                 } else {
                     // always up regulated for gene list
-                    dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, 1 as valueMetric FROM search.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in (" + mids + ")";
+                    dynamicValuesQuery = "SELECT DISTINCT sbmcmv.assocBioMarkerId, 1 as valueMetric FROM org.transmart.searchapp.SearchBioMarkerCorrelFastMV sbmcmv WHERE sbmcmv.domainObjectId in (" + mids + ")";
                 }
                 updownResult.addAll(SearchBioMarkerCorrelFastMV.executeQuery(dynamicValuesQuery))
                 log.info "number of search app biomarkers: " + updownResult.size()

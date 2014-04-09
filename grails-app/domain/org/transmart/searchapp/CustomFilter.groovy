@@ -17,37 +17,37 @@
  *
  ******************************************************************/
 
+/*
+ * $Id: CustomFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ */
+package org.transmart.searchapp
 
-package search
-
-class SearchKeywordTerm {
-    Long ownerAuthUserId
-    String keywordTerm
-    SearchKeyword searchKeyword
-    Long rank
+class CustomFilter {
     Long id
-    Long termLength
-
-    static belongsTo = [searchKeyword: SearchKeyword]
-
+    Long searchUserId
+    String name
+    String description
+    String privateFlag
+    String summary
+    static hasMany = [items: CustomFilterItem]
+    static transients = ["summary"]
     static mapping = {
-        table 'SEARCH_KEYWORD_TERM'
+        table 'SEARCH_CUSTOM_FILTER'
         version false
         id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
         columns {
-            ownerAuthUserId column: 'OWNER_AUTH_USER_ID'
-            keywordTerm column: 'KEYWORD_TERM'
-            searchKeyword column: 'SEARCH_KEYWORD_ID'
-            rank column: 'RANK'
-            id column: 'SEARCH_KEYWORD_TERM_ID'
-            termLength column: 'TERM_LENGTH'
+            id column: 'SEARCH_CUSTOM_FILTER_ID'
+            searchUserId column: 'SEARCH_USER_ID'
+            name column: 'NAME'
+            description column: 'DESCRIPTION'
+            privateFlag column: 'PRIVATE'
+            items column: 'SEARCH_CUSTOM_FILTER_ID'
         }
     }
 
     static constraints = {
-        ownerAuthUserId(nullable: true)
-        keywordTerm(maxSize: 200)
-        rank(nullable: true)
-        termLength(nullable: true)
+        name(maxSize: 400)
+        description(nullable: true, maxSize: 4000)
+        privateFlag(maxSize: 1)
     }
 }

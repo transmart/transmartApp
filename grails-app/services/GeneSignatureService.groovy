@@ -27,9 +27,9 @@ import com.recomdata.genesignature.FileSchemaException
 import com.recomdata.search.query.Query
 import org.hibernate.Hibernate
 import org.springframework.web.multipart.MultipartFile
-import search.GeneSignature
-import search.GeneSignatureItem
-import search.SearchKeyword
+import org.transmart.searchapp.GeneSignature
+import org.transmart.searchapp.GeneSignatureItem
+import org.transmart.searchapp.SearchKeyword
 
 /**
  * Service class for Gene Signature functionality
@@ -647,8 +647,8 @@ public class GeneSignatureService {
 
         def geneKeywords = SearchKeyword.executeQuery("""
 		   				select k_gene.uniqueId
-						from search.SearchKeyword k_pathway, org.transmart.biomart.BioMarkerCorrelationMV b,
-						search.SearchKeyword k_gene
+						from org.transmart.searchapp.SearchKeyword k_pathway, org.transmart.biomart.BioMarkerCorrelationMV b,
+						org.transmart.searchapp.SearchKeyword k_gene
 						where b.correlType = 'PATHWAY GENE'
 						and b.bioMarkerId = k_pathway.bioDataId
 						and k_pathway.dataCategory = 'PATHWAY'

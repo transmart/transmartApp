@@ -18,36 +18,36 @@
  ******************************************************************/
 
 
-package search
+package org.transmart.searchapp
 
-/**
- * domain class for auto refresh materialized view in SearchApp (for gene signature items)
- */
-class SearchBioMarkerCorrelFastMV {
-
-    // correlation types
-    static def GENE_CORREL_TYPE = "GENE"
-    static def PATHWAY_CORREL_TYPE = "PATHWAY GENE"
-    static def GENE_SIG_CORREL_TYPE = "GENE_SIGNATURE_ITEM"
-
+class SearchKeywordTerm {
+    Long ownerAuthUserId
+    String keywordTerm
+    SearchKeyword searchKeyword
+    Long rank
     Long id
-    Long domainObjectId
-    Long assocBioMarkerId
-    String correlationType
-    Long valueMetric
+    Long termLength
+
+    static belongsTo = [searchKeyword: SearchKeyword]
 
     static mapping = {
-        table 'SEARCH_BIO_MKR_CORREL_FAST_MV'
+        table 'SEARCH_KEYWORD_TERM'
         version false
+        id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
         columns {
-            id column: 'MV_ID'
-            domainObjectId column: 'DOMAIN_OBJECT_ID'
-            assocBioMarkerId column: 'ASSO_BIO_MARKER_ID'
-            correlationType column: 'CORREL_TYPE'
-            valueMetric column: 'VALUE_METRIC'
+            ownerAuthUserId column: 'OWNER_AUTH_USER_ID'
+            keywordTerm column: 'KEYWORD_TERM'
+            searchKeyword column: 'SEARCH_KEYWORD_ID'
+            rank column: 'RANK'
+            id column: 'SEARCH_KEYWORD_TERM_ID'
+            termLength column: 'TERM_LENGTH'
         }
     }
 
     static constraints = {
+        ownerAuthUserId(nullable: true)
+        keywordTerm(maxSize: 200)
+        rank(nullable: true)
+        termLength(nullable: true)
     }
 }

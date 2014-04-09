@@ -24,7 +24,7 @@ import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.apache.commons.lang.StringUtils
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
-import search.SearchKeyword
+import org.transmart.searchapp.SearchKeyword
 import grails.util.Holders
 
 import java.sql.Clob

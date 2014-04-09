@@ -18,7 +18,7 @@
  ******************************************************************/
 
 
-import search.Feedback
+import org.transmart.searchapp.Feedback
 
 class FeedbackController {
 

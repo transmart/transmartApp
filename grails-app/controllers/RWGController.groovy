@@ -15,8 +15,8 @@ import groovy.time.TimeCategory
 import groovy.xml.StreamingMarkupBuilder
 import org.json.JSONArray
 import org.json.JSONObject
-import search.SearchKeyword
-import search.SearchTaxonomy
+import org.transmart.searchapp.SearchKeyword
+import org.transmart.searchapp.SearchTaxonomy
 
 //import bio.BioAnalysisAttribute
 //import RWGVisualizationDAO
@@ -228,8 +228,8 @@ class RWGController {
                     queryParams["tid"] = l
 
                     def geneKeywords = SearchKeyword.executeQuery("select k_gsi.id " +
-                            " from search.SearchKeyword k_gs, search.GeneSignature gs," +
-                            " search.GeneSignatureItem gsi, search.SearchKeyword k_gsi " +
+                            " from org.transmart.searchapp.SearchKeyword k_gs, org.transmart.searchapp.GeneSignature gs," +
+                            " org.transmart.searchapp.GeneSignatureItem gsi, org.transmart.searchapp.SearchKeyword k_gsi " +
                             " where k_gs.bioDataId = gs.id " +
                             " and gs.id = gsi.geneSignature " +
                             " and gsi.bioMarker = k_gsi.bioDataId" +
@@ -254,8 +254,8 @@ class RWGController {
                     Long l = t.toLong()
                     queryParams["tid"] = l
                     def geneKeywords = SearchKeyword.executeQuery("select k_gene.id " +
-                            " from search.SearchKeyword k_pathway, org.transmart.biomart.BioMarkerCorrelationMV b," +
-                            " search.SearchKeyword k_gene " +
+                            " from org.transmart.searchapp.SearchKeyword k_pathway, org.transmart.biomart.BioMarkerCorrelationMV b," +
+                            " org.transmart.searchapp.SearchKeyword k_gene " +
                             " where b.correlType = 'PATHWAY GENE' " +
                             " and b.bioMarkerId = k_pathway.bioDataId " +
                             " and k_pathway.dataCategory = 'PATHWAY' " +

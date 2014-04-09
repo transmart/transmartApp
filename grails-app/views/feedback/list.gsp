@@ -57,7 +57,7 @@
                 </table>
             </div>
             <div class="paginateButtons">
-                <g:paginate total="${search.Feedback.count()}" />
+                <g:paginate total="${org.transmart.searchapp.Feedback.count()}" />
             </div>
         </div>
     </body>

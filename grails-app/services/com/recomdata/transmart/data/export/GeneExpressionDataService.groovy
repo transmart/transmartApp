@@ -19,27 +19,12 @@
 
 
 package com.recomdata.transmart.data.export
-import com.google.common.base.Function
-import com.google.common.base.Predicate
-import com.google.common.collect.Maps
+
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.apache.commons.lang.StringUtils
-import org.hibernate.Query
-import org.hibernate.ScrollMode
-import org.hibernate.ScrollableResults
-import org.hibernate.Session
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
-import org.transmartproject.core.dataquery.DataColumn
-import org.transmartproject.core.dataquery.TabularResult
-import org.transmartproject.core.dataquery.highdim.AssayColumn
-import org.transmartproject.core.dataquery.highdim.BioMarkerDataRow
-import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
-import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
-import org.transmartproject.core.dataquery.highdim.projections.Projection
-import org.transmartproject.db.dataquery.highdim.mrna.DeMrnaAnnotationCoreDb
-import org.transmartproject.db.dataquery.highdim.mrna.DeSubjectMicroarrayDataCoreDb
-import search.SearchKeyword
+import org.transmart.searchapp.SearchKeyword
 
 import java.sql.ResultSetMetaData
 

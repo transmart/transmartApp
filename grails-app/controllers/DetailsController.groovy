@@ -1,5 +1,6 @@
 import org.transmart.biomart.BioMarker
 import org.transmart.biomart.Compound
+import org.transmart.searchapp.SearchKeyword
 
 /*************************************************************************
  * tranSMART - translational medicine data mart
@@ -50,7 +51,7 @@ class DetailsController {
         }
         if (bioDataId != null && bioDataId.length() > 0) {
             def marker = BioMarker.get(Long.valueOf(bioDataId))
-            //	def searchKeyword = search.SearchKeyword.findByBioDataId(Long.valueOf(bioDataId))
+            //	def searchKeyword = org.transmart.searchapp.SearchKeyword.findByBioDataId(Long.valueOf(bioDataId))
             //	if (searchKeyword != null) {
             //		geneSymbol = searchKeyword.keyword
             //		uniqueId = searchKeyword.uniqueId
@@ -72,7 +73,7 @@ class DetailsController {
         def pathwaySymbol = ""
         def uniqueId = ""
         def pathwayType = ""
-        def searchKeyword = search.SearchKeyword.findByBioDataId(Long.valueOf(bioDataId))
+        def searchKeyword = SearchKeyword.findByBioDataId(Long.valueOf(bioDataId))
         if (searchKeyword != null) {
             pathwaySymbol = searchKeyword.keyword
             uniqueId = searchKeyword.uniqueId
@@ -86,8 +87,8 @@ class DetailsController {
         def pathway = BioMarker.get(Long.valueOf(bioDataId))
         def genes
         if (pathway != null) {
-            def query = "select k from search.SearchKeyword k, org.transmart.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId=?"
-            genes = search.SearchKeyword.executeQuery(query, Long.valueOf(bioDataId))
+            def query = "select k from org.transmart.searchapp.SearchKeyword k, org.transmart.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId=?"
+            genes = SearchKeyword.executeQuery(query, Long.valueOf(bioDataId))
         }
         render(view: "pathwaySummary", model: [pathway: pathway, genes: genes])
     }
@@ -96,7 +97,7 @@ class DetailsController {
         def bioDataId = params.id
         def compoundSymbol = ""
         def uniqueId = ""
-        def searchKeyword = search.SearchKeyword.findByBioDataId(Long.valueOf(bioDataId))
+        def searchKeyword = SearchKeyword.findByBioDataId(Long.valueOf(bioDataId))
         if (searchKeyword != null) {
             compoundSymbol = searchKeyword.keyword
             uniqueId = searchKeyword.uniqueId

@@ -17,32 +17,30 @@
  *
  ******************************************************************/
 
+/*
+ * $Id: CustomFilterItem.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ */
+package org.transmart.searchapp
 
-package search
+import org.transmart.searchapp.CustomFilter
 
-class Feedback {
+class CustomFilterItem {
     Long id
-    Long searchUserId
-    Date createDate
-    String feedbackText
-    String appVersion
-
+    String uniqueId
+    String bioDataType
+    static belongsTo = [customFilter: CustomFilter]
     static mapping = {
-        table 'SEARCH_USER_FEEDBACK'
+        table 'SEARCH_CUSTOM_FILTER_ITEM'
         version false
         id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
         columns {
-            id column: 'SEARCH_USER_FEEDBACK_ID'
-            searchUserId column: 'SEARCH_USER_ID'
-            createDate column: 'CREATE_DATE'
-            feedbackText column: 'FEEDBACK_TEXT'
-            appVersion column: 'APP_VERSION'
+            id column: 'SEARCH_CUSTOM_FILTER_ITEM_ID'
+            customFilter column: 'SEARCH_CUSTOM_FILTER_ID'
+            uniqueId column: 'UNIQUE_ID'
+            bioDataType column: 'BIO_DATA_TYPE'
         }
     }
-
-
     static constraints = {
-        searchUserId(nullable: true)
+        bioDataType(maxSize: 100)
     }
-
 }

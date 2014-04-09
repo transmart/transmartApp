@@ -17,28 +17,59 @@
  *
  ******************************************************************/
 
-/*
- * $Id: CustomFilterItem.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- */
-package search
 
-class CustomFilterItem {
-    Long id
+package org.transmart.searchapp
+
+class SearchKeyword {
+    String keyword
+    Long bioDataId
     String uniqueId
-    String bioDataType
-    static belongsTo = [customFilter: CustomFilter]
+    Long id
+    String dataCategory
+    String dataSource
+    String displayDataCategory
+    Long ownerAuthUserId
+    static hasMany = [terms: SearchKeywordTerm]
+
     static mapping = {
-        table 'SEARCH_CUSTOM_FILTER_ITEM'
+        table 'SEARCH_KEYWORD'
         version false
         id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
         columns {
-            id column: 'SEARCH_CUSTOM_FILTER_ITEM_ID'
-            customFilter column: 'SEARCH_CUSTOM_FILTER_ID'
+            keyword column: 'KEYWORD'
+            bioDataId column: 'BIO_DATA_ID'
             uniqueId column: 'UNIQUE_ID'
-            bioDataType column: 'BIO_DATA_TYPE'
+            id column: 'SEARCH_KEYWORD_ID'
+            dataCategory column: 'DATA_CATEGORY'
+            dataSource column: 'SOURCE_CODE'
+            displayDataCategory column: 'DISPLAY_DATA_CATEGORY'
+            ownerAuthUserId column: 'OWNER_AUTH_USER_ID'
+            terms column: 'SEARCH_KEYWORD_ID'
         }
     }
     static constraints = {
-        bioDataType(maxSize: 100)
+        keyword(maxSize: 400)
+        bioDataId(nullable: true)
+        uniqueId(nullable: true, maxSize: 1000)
+        dataCategory(nullable: true, maxSize: 400)
+        dataSource(nullable: true, maxSize: 200)
+        displayDataCategory(nullable: true, maxSize: 400)
+        ownerAuthUserId(nullable: true)
+    }
+
+    int hashCode() {
+        // handle special case for TEXT SearchKeywords
+        if (id == -1) {
+            return keyword.hashCode();
+        }
+        return id
+    }
+
+    boolean equals(obj) {
+        // handle special case for TEXT SearchKeywords
+        if (id == -1) {
+            return keyword == obj?.keyword
+        }
+        return id == obj?.id
     }
 }

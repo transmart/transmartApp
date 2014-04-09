@@ -21,6 +21,7 @@ import org.transmart.SearchFilter
 import org.transmart.biomart.BioAssayAnalysisData
 import org.transmart.biomart.ClinicalTrial
 import org.transmart.biomart.Experiment
+import org.transmart.searchapp.SearchKeyword
 
 /**
  * $Id: FilterQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -62,21 +63,21 @@ class FilterQueryService {
     }
 
 //	def experimentDiseaseFilter(String experimentType){
-//		def query = "SELECT distinct sk FROM search.SearchKeyword sk, org.transmart.biomart.Experiment exp JOIN exp.diseases ds "+
+//		def query = "SELECT distinct sk FROM org.transmart.searchapp.SearchKeyword sk, org.transmart.biomart.Experiment exp JOIN exp.diseases ds "+
 //		" WHERE sk.bioDataId = ds.id AND exp.type=? ORDER BY sk.keyword";
-//		return search.SearchKeyword.executeQuery(query, experimentType);
+//		return org.transmart.searchapp.SearchKeyword.executeQuery(query, experimentType);
 //	}
 
 //	def experimentDiseaseFilterNew(String experimentType){
-//		def query = "SELECT distinct sk FROM search.SearchKeyword sk, org.transmart.biomart.Experiment exp JOIN exp.diseases ds "+
+//		def query = "SELECT distinct sk FROM org.transmart.searchapp.SearchKeyword sk, org.transmart.biomart.Experiment exp JOIN exp.diseases ds "+
 //		" WHERE sk.bioDataId = ds.id AND exp.type=? ORDER BY sk.keyword";
-//		return search.SearchKeyword.executeQuery(query, experimentType);
+//		return org.transmart.searchapp.SearchKeyword.executeQuery(query, experimentType);
 //}
 
     def experimentCompoundFilter(String experimentType) {
-        def query = "SELECT distinct sk FROM search.SearchKeyword sk, org.transmart.biomart.Experiment exp JOIN exp.compounds cpd " +
+        def query = "SELECT distinct sk FROM org.transmart.searchapp.SearchKeyword sk, org.transmart.biomart.Experiment exp JOIN exp.compounds cpd " +
                 " WHERE sk.bioDataId = cpd.id AND exp.type=? ORDER BY sk.keyword";
-        return search.SearchKeyword.executeQuery(query, experimentType);
+        return SearchKeyword.executeQuery(query, experimentType);
     }
 
     def findExperimentCompoundFilter(SearchFilter filter, experimentType) {

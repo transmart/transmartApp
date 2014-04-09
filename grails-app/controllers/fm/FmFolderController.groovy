@@ -40,7 +40,7 @@ import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
 import org.transmart.biomart.BioAssayPlatform
 import org.transmart.biomart.Experiment
-import search.SearchKeyword
+import org.transmart.searchapp.SearchKeyword
 
 import javax.activation.MimetypesFileTypeMap
 

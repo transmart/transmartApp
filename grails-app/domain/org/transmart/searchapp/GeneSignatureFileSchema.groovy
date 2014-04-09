@@ -18,7 +18,7 @@
  ******************************************************************/
 
 
-package search
+package org.transmart.searchapp
 
 /**
  * domain class for gene signature file schemas

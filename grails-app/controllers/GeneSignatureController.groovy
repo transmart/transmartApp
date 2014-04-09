@@ -27,8 +27,8 @@ import org.transmart.biomart.ConceptCode
 import com.recomdata.genesignature.FileSchemaException
 import com.recomdata.genesignature.WizardModelDetails
 import com.recomdata.util.DomainObjectExcelHelper
-import search.GeneSignature
-import search.GeneSignatureFileSchema
+import org.transmart.searchapp.GeneSignature
+import org.transmart.searchapp.GeneSignatureFileSchema
 
 import javax.servlet.ServletOutputStream
 

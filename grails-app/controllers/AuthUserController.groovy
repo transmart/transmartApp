@@ -25,7 +25,7 @@
 import auth.AuthUser
 import auth.AuthUserSecureAccess
 import auth.Role
-import search.GeneSignature
+import org.transmart.searchapp.GeneSignature
 
 /**
  * User controller.

@@ -17,37 +17,37 @@
  *
  ******************************************************************/
 
-/*
- * $Id: CustomFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- */
-package search
 
-class CustomFilter {
+package org.transmart.searchapp
+
+/**
+ * domain class for auto refresh materialized view in SearchApp (for gene signature items)
+ */
+class SearchBioMarkerCorrelFastMV {
+
+    // correlation types
+    static def GENE_CORREL_TYPE = "GENE"
+    static def PATHWAY_CORREL_TYPE = "PATHWAY GENE"
+    static def GENE_SIG_CORREL_TYPE = "GENE_SIGNATURE_ITEM"
+
     Long id
-    Long searchUserId
-    String name
-    String description
-    String privateFlag
-    String summary
-    static hasMany = [items: CustomFilterItem]
-    static transients = ["summary"]
+    Long domainObjectId
+    Long assocBioMarkerId
+    String correlationType
+    Long valueMetric
+
     static mapping = {
-        table 'SEARCH_CUSTOM_FILTER'
+        table 'SEARCH_BIO_MKR_CORREL_FAST_MV'
         version false
-        id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
         columns {
-            id column: 'SEARCH_CUSTOM_FILTER_ID'
-            searchUserId column: 'SEARCH_USER_ID'
-            name column: 'NAME'
-            description column: 'DESCRIPTION'
-            privateFlag column: 'PRIVATE'
-            items column: 'SEARCH_CUSTOM_FILTER_ID'
+            id column: 'MV_ID'
+            domainObjectId column: 'DOMAIN_OBJECT_ID'
+            assocBioMarkerId column: 'ASSO_BIO_MARKER_ID'
+            correlationType column: 'CORREL_TYPE'
+            valueMetric column: 'VALUE_METRIC'
         }
     }
 
     static constraints = {
-        name(maxSize: 400)
-        description(nullable: true, maxSize: 4000)
-        privateFlag(maxSize: 1)
     }
 }

@@ -23,9 +23,9 @@
 
 import auth.AuthUser
 import org.transmart.GlobalFilter
-import search.CustomFilter
-import search.CustomFilterItem
-import search.SearchKeyword
+import org.transmart.searchapp.CustomFilter
+import org.transmart.searchapp.CustomFilterItem
+import org.transmart.searchapp.SearchKeyword
 
 /**
  * @author $Author: mmcduffie $

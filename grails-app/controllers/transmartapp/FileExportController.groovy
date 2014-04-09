@@ -29,7 +29,7 @@ import org.transmart.biomart.ConceptCode
 import fm.FmFile
 import fm.FmFolder
 import fm.FmFolderAssociation
-import search.SearchKeyword
+import org.transmart.searchapp.SearchKeyword
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream

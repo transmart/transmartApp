@@ -21,6 +21,7 @@ import com.recomdata.util.ExcelSheet
 import grails.converters.JSON
 import org.transmart.biomart.BioAssayAnalysis
 import org.transmart.biomart.BioAssayAnalysisData
+import org.transmart.searchapp.SearchKeyword
 
 /**
  * $Id: HeatmapController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -44,7 +45,7 @@ public class HeatmapController {
         session.searchFilter.heatmapFilter.heatmapfiltertype = params.heatmapfiltertype
 
         if (params.id != null && params.id.length() > 0) {
-            session.searchFilter.heatmapFilter.searchTerm = search.SearchKeyword.get(Long.valueOf(params.id))
+            session.searchFilter.heatmapFilter.searchTerm = SearchKeyword.get(Long.valueOf(params.id))
 
         }
         render(view: 'initheatmap')

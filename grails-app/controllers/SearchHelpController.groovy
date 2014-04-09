@@ -20,8 +20,8 @@
 
 
 import auth.AuthUser
-import search.GeneSignature
-import search.SearchKeyword
+import org.transmart.searchapp.GeneSignature
+import org.transmart.searchapp.SearchKeyword
 
 /**
  * $Id: SearchHelpController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -62,10 +62,10 @@ public class SearchHelpController {
     def loadPathways = {
 
         def step = params.step ? params.step : "A-C"
-        def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from search.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache: 'read-only']);
+        def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache: 'read-only']);
         def defaultsource = datasources.size() > 0 ? datasources[0] : 'GeneGo'
         def dataSource = params.datasource ? params.datasource : defaultsource;
-        def sql = "select k from search.SearchKeyword k where dataSource='" + dataSource + "' "
+        def sql = "select k from org.transmart.searchapp.SearchKeyword k where dataSource='" + dataSource + "' "
         if ("Other".equals(step)) {
             sql += "and upper(substr(k.keyword, 1, 1)) not between 'A' and 'Z' "
         } else {
@@ -79,12 +79,12 @@ public class SearchHelpController {
     def listAllPathways = {
         //	def dataSource = params.datasource ? params.datasource : "GeneGO"
         def step = params.step ? params.step : "A-C"
-        //def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from search.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
-        def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from search.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)");
+        //def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)", [], [cache:'read-only']);
+        def datasources = SearchKeyword.executeQuery("select distinct k.dataSource from org.transmart.searchapp.SearchKeyword k where k.dataCategory='PATHWAY' order by upper(k.dataSource)");
         def defaultsource = datasources.size() > 0 ? datasources[0] : 'GeneGo'
         def dataSource = params.datasource ? params.datasource : defaultsource;
 
-        def sql = "select k from search.SearchKeyword k where dataSource='" + dataSource + "' "
+        def sql = "select k from org.transmart.searchapp.SearchKeyword k where dataSource='" + dataSource + "' "
         if ("Other".equals(step)) {
             sql += "and upper(substr(k.keyword, 1, 1)) not between 'A' and 'Z' "
         } else {

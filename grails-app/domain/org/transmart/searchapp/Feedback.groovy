@@ -18,58 +18,31 @@
  ******************************************************************/
 
 
-package search
+package org.transmart.searchapp
 
-class SearchKeyword {
-    String keyword
-    Long bioDataId
-    String uniqueId
+class Feedback {
     Long id
-    String dataCategory
-    String dataSource
-    String displayDataCategory
-    Long ownerAuthUserId
-    static hasMany = [terms: SearchKeywordTerm]
+    Long searchUserId
+    Date createDate
+    String feedbackText
+    String appVersion
 
     static mapping = {
-        table 'SEARCH_KEYWORD'
+        table 'SEARCH_USER_FEEDBACK'
         version false
         id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
         columns {
-            keyword column: 'KEYWORD'
-            bioDataId column: 'BIO_DATA_ID'
-            uniqueId column: 'UNIQUE_ID'
-            id column: 'SEARCH_KEYWORD_ID'
-            dataCategory column: 'DATA_CATEGORY'
-            dataSource column: 'SOURCE_CODE'
-            displayDataCategory column: 'DISPLAY_DATA_CATEGORY'
-            ownerAuthUserId column: 'OWNER_AUTH_USER_ID'
-            terms column: 'SEARCH_KEYWORD_ID'
+            id column: 'SEARCH_USER_FEEDBACK_ID'
+            searchUserId column: 'SEARCH_USER_ID'
+            createDate column: 'CREATE_DATE'
+            feedbackText column: 'FEEDBACK_TEXT'
+            appVersion column: 'APP_VERSION'
         }
     }
+
+
     static constraints = {
-        keyword(maxSize: 400)
-        bioDataId(nullable: true)
-        uniqueId(nullable: true, maxSize: 1000)
-        dataCategory(nullable: true, maxSize: 400)
-        dataSource(nullable: true, maxSize: 200)
-        displayDataCategory(nullable: true, maxSize: 400)
-        ownerAuthUserId(nullable: true)
+        searchUserId(nullable: true)
     }
 
-    int hashCode() {
-        // handle special case for TEXT SearchKeywords
-        if (id == -1) {
-            return keyword.hashCode();
-        }
-        return id
-    }
-
-    boolean equals(obj) {
-        // handle special case for TEXT SearchKeywords
-        if (id == -1) {
-            return keyword == obj?.keyword
-        }
-        return id == obj?.id
-    }
 }

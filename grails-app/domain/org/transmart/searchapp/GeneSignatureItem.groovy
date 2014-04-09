@@ -18,7 +18,7 @@
  ******************************************************************/
 
 
-package search
+package org.transmart.searchapp
 
 import org.transmart.biomart.BioMarker
 

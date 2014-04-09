@@ -1,4 +1,7 @@
 package org.transmart
+
+import org.transmart.searchapp.SearchKeyword
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -203,7 +206,7 @@ public class GlobalFilter{
 	}
 
 
-	def addKeywordFilter(search.SearchKeyword keyword){
+	def addKeywordFilter(SearchKeyword keyword){
 		def klist = categoryFilterMap.get(keyword.dataCategory)
 		if(klist == null){
 			// make sure no dup
@@ -214,7 +217,7 @@ public class GlobalFilter{
 
 	}
 
-	def removeKeywordFilter(search.SearchKeyword keyword) {
+	def removeKeywordFilter(SearchKeyword keyword) {
 		KeywordSet set = categoryFilterMap.get(keyword.dataCategory)
 		if (set != null) {
 			set.removeKeyword(keyword)

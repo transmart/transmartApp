@@ -23,7 +23,7 @@
  * @version $Revision: 9178 $
  */
 
-package search
+package org.transmart.searchapp
 
 import auth.AuthUser
 import org.transmart.biomart.BioAssayPlatform

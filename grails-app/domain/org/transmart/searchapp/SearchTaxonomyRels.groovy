@@ -1,4 +1,4 @@
-package search
+package org.transmart.searchapp
 
 class SearchTaxonomyRels {
     Long id
