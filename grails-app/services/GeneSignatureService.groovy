@@ -20,9 +20,9 @@
 
 
 import auth.AuthUser
-import bio.BioAssayDataAnnotation
-import bio.BioData
-import bio.BioMarker
+import org.transmart.biomart.BioAssayDataAnnotation
+import org.transmart.biomart.BioData
+import org.transmart.biomart.BioMarker
 import com.recomdata.genesignature.FileSchemaException
 import com.recomdata.search.query.Query
 import org.hibernate.Hibernate
@@ -467,8 +467,8 @@ public class GeneSignatureService {
      */
     def lookupBioAssociations(String geneSymbol, String organism) {
         def query = new Query(mainTableAlias: "bd");
-        query.addTable("bio.BioMarker bm")
-        query.addTable("bio.BioData bd")
+        query.addTable("org.transmart.biomart.BioMarker bm")
+        query.addTable("org.transmart.biomart.BioData bd")
         query.addCondition("bm.id=bd.id")
         query.addCondition("bm.bioMarkerType='GENE'")
         query.addCondition("bm.organism='" + organism.toUpperCase() + "'")
@@ -488,9 +488,9 @@ public class GeneSignatureService {
 
         if (markers == null || markers.size() == 0 || markers.size() > 1) {
             query = new Query(mainTableAlias: "bm");
-            query.addTable("bio.BioDataExternalCode ext")
-            query.addTable("bio.BioMarker bm")
-            query.addTable("bio.BioData bd")
+            query.addTable("org.transmart.biomart.BioDataExternalCode ext")
+            query.addTable("org.transmart.biomart.BioMarker bm")
+            query.addTable("org.transmart.biomart.BioData bd")
             query.addCondition("ext.bioDataId=bm.id")
             query.addCondition("bm.id=bd.id")
             query.addCondition("UPPER(ext.code) = '" + geneSymbol.toUpperCase() + "'")
@@ -647,7 +647,7 @@ public class GeneSignatureService {
 
         def geneKeywords = SearchKeyword.executeQuery("""
 		   				select k_gene.uniqueId
-						from search.SearchKeyword k_pathway, bio.BioMarkerCorrelationMV b,
+						from search.SearchKeyword k_pathway, org.transmart.biomart.BioMarkerCorrelationMV b,
 						search.SearchKeyword k_gene
 						where b.correlType = 'PATHWAY GENE'
 						and b.bioMarkerId = k_pathway.bioDataId

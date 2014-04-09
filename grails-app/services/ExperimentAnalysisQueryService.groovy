@@ -16,12 +16,7 @@
  *
  *
  ******************************************************************/
-
-
-
-import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
-import bio.Experiment
+import org.transmart.biomart.BioMarkerExpAnalysisMV
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.ExperimentAssayAnalysisMVQuery
 import com.recomdata.search.query.Query
@@ -31,6 +26,10 @@ import org.transmart.AssayAnalysisValue
 import org.transmart.ExpAnalysisResultSet
 import org.transmart.ExperimentAnalysisResult
 import org.transmart.SearchFilter
+import org.transmart.biomart.BioAssayAnalysis
+import org.transmart.biomart.BioAssayAnalysisData
+import org.transmart.biomart.BioAssayAnalysisDataTea
+import org.transmart.biomart.Experiment
 
 /**
  * $Id: ExperimentAnalysisQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -57,7 +56,7 @@ class ExperimentAnalysisQueryService {
             return 0
         }
         if (!filter.expAnalysisFilter.isUsed())
-            return bio.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_EXP", filter))[0]
+            return BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_EXP", filter))[0]
         //	elapseTimer.logElapsed("query count Experiment MV:",true)
         else
             return countExperiment(filter)
@@ -73,25 +72,25 @@ class ExperimentAnalysisQueryService {
         def gfilter = filter.globalFilter
 
         def query = new AssayAnalysisDataQuery(mainTableAlias: "baad")
-        query.addTable("bio.BioAssayAnalysisDataTea baad")
+        query.addTable("org.transmart.biomart.BioAssayAnalysisDataTea baad")
         query.addCondition(" baad.experiment.type='Experiment'")
         query.addCondition(" baad.analysis.teaDataCount IS NOT NULL")
         query.createGlobalFilterCriteria(gfilter);
         createSubFilterCriteria(filter.expAnalysisFilter, query);
         query.addSelect("COUNT(DISTINCT baad.analysis.id) ");
-        return bio.BioAssayAnalysisDataTea.executeQuery(query.generateSQL())[0];
+        return BioAssayAnalysisDataTea.executeQuery(query.generateSQL())[0];
     }
 
     def countAnalysis(SearchFilter filter) {
         if (filter == null || filter.globalFilter.isTextOnly()) return 0;
 
-        return bio.BioAssayAnalysisData.executeQuery(createMVExperimentQuery("COUNT_ANALYSIS", filter))[0]
+        return BioAssayAnalysisData.executeQuery(createMVExperimentQuery("COUNT_ANALYSIS", filter))[0]
     }
 
     def countAnalysisMV(SearchFilter filter) {
         if (filter == null || filter.globalFilter.isTextOnly()) return 0;
         if (!filter.expAnalysisFilter.isUsed())
-            return bio.BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_ANALYSIS", filter))[0]
+            return BioMarkerExpAnalysisMV.executeQuery(createExpAnalysisMVQuery("COUNT_ANALYSIS", filter))[0]
         else
             return countAnalysis(filter)
     }
@@ -104,7 +103,7 @@ class ExperimentAnalysisQueryService {
         def gfilter = filter.globalFilter
 
         def query = new ExperimentAssayAnalysisMVQuery(mainTableAlias: "baad")
-        query.addTable("bio.BioMarkerExpAnalysisMV baad")
+        query.addTable("org.transmart.biomart.BioMarkerExpAnalysisMV baad")
 
         query.createGlobalFilterCriteria(gfilter);
         createSubFilterCriteria(filter.expAnalysisFilter, query);
@@ -144,7 +143,7 @@ class ExperimentAnalysisQueryService {
         def gfilter = filter.globalFilter
 
         def query = new ExperimentAssayAnalysisMVQuery(mainTableAlias: "baad")
-        query.addTable("bio.BioMarkerExpAnalysisMV baad")
+        query.addTable("org.transmart.biomart.BioMarkerExpAnalysisMV baad")
 
         query.createGlobalFilterCriteria(gfilter);
         createSubFilterCriteria(filter.expAnalysisFilter, query);
@@ -154,7 +153,7 @@ class ExperimentAnalysisQueryService {
         query.addGroupBy("baad.experiment.id")
 
         def q = query.generateSQL();
-        def result = bio.BioAssayAnalysisData.executeQuery(q, paramMap == null ? [:] : paramMap)
+        def result = BioAssayAnalysisData.executeQuery(q, paramMap == null ? [:] : paramMap)
         //println("exp query:"+(System.currentTimeMillis()-time))
         List expResult = []
         elapseTimer.logElapsed("query Experiment:", true)
@@ -164,7 +163,7 @@ class ExperimentAnalysisQueryService {
         for (row in result) {
             //analysisCount +=row[1];
             //expCount++;
-            expResult.add(new ExperimentAnalysisResult(experiment: bio.Experiment.get(row[0]), analysisCount: row[1], groupByExp: true))
+            expResult.add(new ExperimentAnalysisResult(experiment: Experiment.get(row[0]), analysisCount: row[1], groupByExp: true))
         }
         return new ExpAnalysisResultSet(expAnalysisResults: expResult, groupByExp: true)
     }
@@ -177,7 +176,7 @@ class ExperimentAnalysisQueryService {
         def gfilter = filter.globalFilter
 
         def query = new AssayAnalysisDataQuery(mainTableAlias: "baad")
-        query.addTable("bio.BioMarkerExpAnalysisMV baad")
+        query.addTable("org.transmart.biomart.BioMarkerExpAnalysisMV baad")
 
         //query.createGlobalFilterCriteria(gfilter);
         query.createGlobalFilterCriteriaMV(gfilter);
@@ -212,7 +211,7 @@ class ExperimentAnalysisQueryService {
         def gfilter = filter.globalFilter
 
         def query = new AssayAnalysisDataQuery(mainTableAlias: "baad")
-        query.addTable("bio.BioAssayAnalysisData baad")
+        query.addTable("org.transmart.biomart.BioAssayAnalysisData baad")
         query.addCondition(" baad.experiment.type='Experiment'")
 
         query.createGlobalFilterCriteria(gfilter);
@@ -239,7 +238,7 @@ class ExperimentAnalysisQueryService {
         def gfilter = filter.globalFilter
         def query = new AssayAnalysisDataQuery(mainTableAlias: "baad", setDistinct: true)
         //query.setDistinct=true;
-        query.addTable("bio.BioAssayAnalysisData baad")
+        query.addTable("org.transmart.biomart.BioAssayAnalysisData baad")
         query.addTable("JOIN baad.featureGroup.markers baad_bm")
         query.addSelect("baad")
         query.addSelect("baad_bm")
@@ -258,7 +257,7 @@ class ExperimentAnalysisQueryService {
         def stimer = new ElapseTimer();
 
         if (!gfilter.getBioMarkerFilters().isEmpty()) {
-            result = bio.BioAssayAnalysisData.executeQuery(sql)
+            result = BioAssayAnalysisData.executeQuery(sql)
             stimer.logElapsed("Query Analysis with biomarker ", true);
             processAnalysisResult(result, tResult)
         } else {
@@ -270,7 +269,7 @@ class ExperimentAnalysisQueryService {
                 def countGene = row[1]
                 //result = getTopAnalysisDataForAnalysis(analysisId, 5);
                 result = BioAssayAnalysis.getTopAnalysisDataForAnalysis(analysisId, 50);
-                def analysisResult = new AnalysisResult(analysis: bio.BioAssayAnalysis.get(analysisId), bioMarkerCount: countGene)
+                def analysisResult = new AnalysisResult(analysis: BioAssayAnalysis.get(analysisId), bioMarkerCount: countGene)
                 tResult.analysisResultList.add(analysisResult)
                 processAnalysisResultNoSort(result, analysisResult)
                 stimer.logElapsed("Query Analysis without biomarker ", true);
@@ -292,14 +291,14 @@ class ExperimentAnalysisQueryService {
         query.addCondition("baad.experiment.id =" + clinicalTrialId)
         query.addGroupBy("baad.analysis")
         query.addOrderBy("COUNT(DISTINCT baad_bm.id) DESC")
-        return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
+        return BioAssayAnalysisData.executeQuery(query.generateSQL());
     }
 
     def createBaseQuery(SearchFilter filter, subFilter) {
         def gfilter = filter.globalFilter
 
         def query = new AssayAnalysisDataQuery(mainTableAlias: "baad", setDistinct: true)
-        query.addTable("bio.BioAssayAnalysisData baad")
+        query.addTable("org.transmart.biomart.BioAssayAnalysisData baad")
         if (filter != null)
             query.createGlobalFilterCriteria(gfilter, true);
         if (subFilter != null)
@@ -329,11 +328,11 @@ class ExperimentAnalysisQueryService {
         LinkedHashMap analysisResultMap = new LinkedHashMap()
         for (row in result) {
             def analysisData = row[0]
-            def biomarker = row[1];//bio.BioMarker.get(row[1])
+            def biomarker = row[1];//org.transmart.biomart.BioMarker.get(row[1])
             //println(biomarker)
             def aresult = analysisResultMap.get(analysisData.analysis.id)
             if (aresult == null) {
-                bio.BioAssayAnalysis analysisInst = bio.BioAssayAnalysis.get(analysisData.analysis.id);
+                BioAssayAnalysis analysisInst = BioAssayAnalysis.get(analysisData.analysis.id);
                 aresult = new AnalysisResult(analysis: analysisInst)
                 analysisResultMap.put(analysisData.analysis.id, aresult)
             }
@@ -353,7 +352,7 @@ class ExperimentAnalysisQueryService {
      * find experiment platforms
      */
     def getPlatformsForExperment(expid) {
-        return bio.BioAssayAnalysisData.executeQuery("SELECT DISTINCT baad.assayPlatform FROM bio.BioAssayAnalysisData baad WHERE baad.experiment.id =?", expid);
+        return BioAssayAnalysisData.executeQuery("SELECT DISTINCT baad.assayPlatform FROM org.transmart.biomart.BioAssayAnalysisData baad WHERE baad.experiment.id =?", expid);
     }
 
 
@@ -361,19 +360,19 @@ class ExperimentAnalysisQueryService {
         def gfilter = filter.globalFilter
         def query = new AssayAnalysisDataQuery(mainTableAlias: "baad", setDistinct: true)
         def alias = query.mainTableAlias + "_dis"
-        query.addTable("bio.BioAssayAnalysisData baad");
+        query.addTable("org.transmart.biomart.BioAssayAnalysisData baad");
         query.addSelect("baad.assayPlatform.organism")
         query.addCondition(query.mainTableAlias + ".experiment.type='Experiment'")
 
         query.createGlobalFilterCriteria(gfilter, true);
-        return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
+        return BioAssayAnalysisData.executeQuery(query.generateSQL());
     }
 
     /**
      * load experiment type filter
      */
     def findExperimentTypeFilter() {
-        return bio.Experiment.executeQuery("SELECT DISTINCT exp.type FROM bio.Experiment exp WHERE exp.type IS NOT NULL");
+        return Experiment.executeQuery("SELECT DISTINCT exp.type FROM org.transmart.biomart.Experiment exp WHERE exp.type IS NOT NULL");
     }
 
     /**
@@ -381,13 +380,13 @@ class ExperimentAnalysisQueryService {
      */
     def findExperimentDesignFilter(filter) {
 
-        // def query = "SELECT DISTINCT bda.propertyValue FROM bio.BioDataAttribute bda WHERE bda.propertyCode='Experiment Design' ORDER BY bda.propertyValue";
-        // return bio.BioDataAttribute.executeQuery();
+        // def query = "SELECT DISTINCT bda.propertyValue FROM org.transmart.biomart.BioDataAttribute bda WHERE bda.propertyCode='Experiment Design' ORDER BY bda.propertyValue";
+        // return org.transmart.biomart.BioDataAttribute.executeQuery();
         def gfilter = filter.globalFilter
         def query = new AssayAnalysisDataQuery(mainTableAlias: "baad", setDistinct: true)
         def alias = query.mainTableAlias + "_dis"
-        query.addTable("bio.BioAssayAnalysisData baad");
-        query.addTable("bio.BioDataAttribute bda")
+        query.addTable("org.transmart.biomart.BioAssayAnalysisData baad");
+        query.addTable("org.transmart.biomart.BioDataAttribute bda")
         query.addCondition("baad.experiment.id = bda.bioDataId")
         query.addSelect("bda.propertyValue")
         query.addOrderBy("bda.propertyValue");
@@ -397,11 +396,11 @@ class ExperimentAnalysisQueryService {
         query.createGlobalFilterCriteria(gfilter, true);
         // createSubFilterCriteria(filter.expAnalysisFilter, query);
         // println(query.generateSQL());
-        return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
+        return BioAssayAnalysisData.executeQuery(query.generateSQL());
 
         /*
-         return bio.BioDataAttribute.executeQuery("SELECT DISTINCT bda.propertyValue " +
-         "FROM bio.BioDataAttribute bda " +
+         return org.transmart.biomart.BioDataAttribute.executeQuery("SELECT DISTINCT bda.propertyValue " +
+         "FROM org.transmart.biomart.BioDataAttribute bda " +
          "WHERE bda.propertyCode='Experiment Design' and bda.propertyValue is not null ORDER BY bda.propertyValue");
          */
     }
@@ -414,7 +413,7 @@ class ExperimentAnalysisQueryService {
 
         def query = new AssayAnalysisDataQuery(mainTableAlias: "baad", setDistinct: true)
         def alias = query.mainTableAlias + "_dis"
-        query.addTable("bio.BioAssayAnalysisData baad");
+        query.addTable("org.transmart.biomart.BioAssayAnalysisData baad");
         query.addTable("JOIN " + query.mainTableAlias + ".experiment.diseases " + alias)
         query.addSelect(alias)
         query.addOrderBy(alias + ".preferredName");
@@ -422,7 +421,7 @@ class ExperimentAnalysisQueryService {
         query.createGlobalFilterCriteria(gfilter, true);
         // createSubFilterCriteria(filter.expAnalysisFilter, query);
         // println(query.generateSQL());
-        return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
+        return BioAssayAnalysisData.executeQuery(query.generateSQL());
     }
 
     /**
@@ -432,14 +431,14 @@ class ExperimentAnalysisQueryService {
         def gfilter = filter.globalFilter
 
         def query = new AssayAnalysisDataQuery(mainTableAlias: "baad", setDistinct: true)
-        query.addTable("bio.BioAssayAnalysisData baad");
+        query.addTable("org.transmart.biomart.BioAssayAnalysisData baad");
         query.addSelect("baad.assayPlatform.name")
         query.addOrderBy("baad.assayPlatform.name");
         query.addCondition(query.mainTableAlias + ".experiment.type='" + experimentType + "'")
         query.createGlobalFilterCriteria(gfilter, true);
         // createSubFilterCriteria(filter.expAnalysisFilter, query);
         // println(query.generateSQL());
-        return bio.BioAssayAnalysisData.executeQuery(query.generateSQL());
+        return BioAssayAnalysisData.executeQuery(query.generateSQL());
     }
 
     /**
@@ -469,7 +468,7 @@ class ExperimentAnalysisQueryService {
         if (expfilter.filterExpDesign()) {
             def alias = query.mainTableAlias + ".experiment"
             //query.addTable(alias+" exp")
-            query.addTable("bio.BioDataAttribute bda")
+            query.addTable("org.transmart.biomart.BioDataAttribute bda")
             query.addCondition(alias + ".id = bda.bioDataId")
             query.addCondition("bda.propertyValue ='" + expfilter.expDesign + "'")
         }
@@ -477,21 +476,21 @@ class ExperimentAnalysisQueryService {
         if (expfilter.filterSpecies()) {
             //	def alias = query.mainTableAlias+".assayPlatform.organism"
             //query.addTable(alias+" exp")
-            query.addTable("bio.BioAssayAnalysisData baad_platform")
+            query.addTable("org.transmart.biomart.BioAssayAnalysisData baad_platform")
             query.addCondition(" baad_platform.assayPlatform.organism ='" + expfilter.species + "'")
         }
         // type
         //	if(expfilter.filterExpType()){
         //		def alias = query.mainTableAlias+".experiment"
 
-        //	query.addTable("bio.Experiment exp");
+        //	query.addTable("org.transmart.biomart.Experiment exp");
         //		query.addCondition(alias+".type='"+expfilter.expType+"'")
         //	}
 
         // fold change on BioAssayAnalysisData
         if (expfilter.filterFoldChange()) {
             def StringBuilder s = new StringBuilder();
-            query.addTable("bio.BioAssayAnalysisData baad_foldChange")
+            query.addTable("org.transmart.biomart.BioAssayAnalysisData baad_foldChange")
             def symbol = "abs(baad_foldChange.foldChangeRatio)" // abs value
             s.append(" ((").append(symbol).append(" >=").append(expfilter.foldChange).append(" )")
                     .append(" OR ").append(symbol).append(" IS NULL )");
@@ -505,7 +504,7 @@ class ExperimentAnalysisQueryService {
         // pvalue on BioAssayAnalysisData
         if (expfilter.filterPValue()) {
             def StringBuilder s = new StringBuilder();
-            query.addTable("bio.BioAssayAnalysisData baad_pValue")
+            query.addTable("org.transmart.biomart.BioAssayAnalysisData baad_pValue")
             def symbol = "baad_pValue.preferredPvalue"
             s.append(" (").append(symbol).append(" <= ").append(expfilter.pvalue).append(")")
             // .append(" OR ").append(symbol).append(" IS NULL)");

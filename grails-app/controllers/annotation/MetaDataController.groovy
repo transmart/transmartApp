@@ -17,8 +17,9 @@ package annotation
  *
  *
  ******************************************************************/
-import bio.ConceptCode
+import org.transmart.biomart.ConceptCode
 import grails.converters.JSON
+import org.transmart.biomart.BioAssayPlatform
 
 class MetaDataController {
 
@@ -179,7 +180,7 @@ class MetaDataController {
         log.info "SB == " + sb.toString()
         log.info "paramMap = " + paramMap
 
-        def platforms = bio.BioAssayPlatform.executeQuery(sb.toString(), paramMap, pagingMap);
+        def platforms = BioAssayPlatform.executeQuery(sb.toString(), paramMap, pagingMap);
         // .executeQuery("from BioAssayPlatform p WHERE upper(p.name) LIKE :term  order by platformType, vendor, platformTechnology, name", [term: value+'%'], [max: 20]);
         log.info platforms
         for (platform in platforms) {

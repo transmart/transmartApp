@@ -1,3 +1,6 @@
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Compound
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *
@@ -40,13 +43,13 @@ class DetailsController {
         def geneId = ""
         if ((bioDataId == null || bioDataId.length() == 0) && (altId != null & altId.length() > 0)) {
             // TODO: Add type criteria
-            def result = bio.BioMarker.findByPrimaryExternalId(altId)
+            def result = BioMarker.findByPrimaryExternalId(altId)
             if (result != null) {
                 bioDataId = result.id.toString()
             }
         }
         if (bioDataId != null && bioDataId.length() > 0) {
-            def marker = bio.BioMarker.get(Long.valueOf(bioDataId))
+            def marker = BioMarker.get(Long.valueOf(bioDataId))
             //	def searchKeyword = search.SearchKeyword.findByBioDataId(Long.valueOf(bioDataId))
             //	if (searchKeyword != null) {
             //		geneSymbol = searchKeyword.keyword
@@ -80,10 +83,10 @@ class DetailsController {
 
     def pathwaySummary = {
         def bioDataId = params.id
-        def pathway = bio.BioMarker.get(Long.valueOf(bioDataId))
+        def pathway = BioMarker.get(Long.valueOf(bioDataId))
         def genes
         if (pathway != null) {
-            def query = "select k from search.SearchKeyword k, bio.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId=?"
+            def query = "select k from search.SearchKeyword k, org.transmart.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId=?"
             genes = search.SearchKeyword.executeQuery(query, Long.valueOf(bioDataId))
         }
         render(view: "pathwaySummary", model: [pathway: pathway, genes: genes])
@@ -103,7 +106,7 @@ class DetailsController {
 
     def compoundSummary = {
         def bioDataId = params.id
-        def compound = bio.Compound.get(Long.valueOf(bioDataId))
+        def compound = Compound.get(Long.valueOf(bioDataId))
         render(view: "compoundSummary", model: [compound: compound])
     }
 }

@@ -7,7 +7,7 @@
 
 
 import auth.AuthUser
-import bio.Experiment
+import org.transmart.biomart.Experiment
 import fm.FmFile
 import fm.FmFolder
 import grails.converters.JSON
@@ -254,7 +254,7 @@ class RWGController {
                     Long l = t.toLong()
                     queryParams["tid"] = l
                     def geneKeywords = SearchKeyword.executeQuery("select k_gene.id " +
-                            " from search.SearchKeyword k_pathway, bio.BioMarkerCorrelationMV b," +
+                            " from search.SearchKeyword k_pathway, org.transmart.biomart.BioMarkerCorrelationMV b," +
                             " search.SearchKeyword k_gene " +
                             " where b.correlType = 'PATHWAY GENE' " +
                             " and b.bioMarkerId = k_pathway.bioDataId " +

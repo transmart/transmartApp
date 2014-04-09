@@ -1,3 +1,5 @@
+import org.transmart.biomart.ContentRepository
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *
@@ -35,7 +37,7 @@ class RecomTagLib {
 
         if (document != null) {
             def repository = document.getRepository()
-            content = bio.ContentRepository.findByRepositoryType(repository)
+            content = ContentRepository.findByRepositoryType(repository)
             label = document.getFileName()
             path = content.location + "/" + document.getFilePath()
             switch (content.getLocationType()) {

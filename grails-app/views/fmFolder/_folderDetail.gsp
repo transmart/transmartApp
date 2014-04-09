@@ -1,3 +1,4 @@
+<%@ page import="org.transmart.biomart.ConceptCode; org.transmart.biomart.BioData" %>
 <!--
   tranSMART - translational medicine data mart
   
@@ -39,8 +40,8 @@
 
 <g:set var="overlayDiv" value="metaData_div"/>
 <%! import annotation . * %>
-<%! import bio.BioData %>
-<%! import bio.ConceptCode %>
+<%! import BioData %>
+<%! import ConceptCode %>
 <%! import com.recomdata.util.* %>
 <%! import org.apache.commons.lang.StringUtils %>
 

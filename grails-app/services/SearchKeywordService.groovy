@@ -22,9 +22,9 @@ import search.GeneSignature
 import search.SearchKeyword
 import search.SearchKeywordTerm
 import auth.AuthUser
-import bio.BioAssayPlatform
-import bio.BioDataExternalCode
-import bio.ConceptCode
+import org.transmart.biomart.BioAssayPlatform
+import org.transmart.biomart.BioDataExternalCode
+import org.transmart.biomart.ConceptCode
 
 /**
  * @author $Author: mmcduffie $
@@ -309,7 +309,7 @@ public class SearchKeywordService {
         if (pathwayIds == null || pathwayIds.length() == 0) {
             return []
         }
-        def query = "select DISTINCT k from search.SearchKeyword k, bio.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
+        def query = "select DISTINCT k from search.SearchKeyword k, org.transmart.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
         if (max != null)
             return SearchKeyword.executeQuery(query, [max: max])
         else
@@ -328,7 +328,7 @@ public class SearchKeywordService {
         }
         def result = [];
         // find pathways
-        def query = "select DISTINCT k from search.SearchKeyword k, bio.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
+        def query = "select DISTINCT k from search.SearchKeyword k, org.transmart.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId in (" + pathwayIds + ") ORDER BY k.keyword"
         // find gene sigs
         def query2 = "select DISTINCT k from search.SearchKeyword k, search.SearchBioMarkerCorrelFastMV c where k.bioDataId=c.assocBioMarkerId and c.domainObjectId in (" + pathwayIds + ") ORDER BY k.keyword"
         if (max != null)

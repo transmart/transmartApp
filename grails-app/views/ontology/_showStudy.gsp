@@ -1,8 +1,9 @@
+<%@ page import="org.transmart.biomart.BioData; org.transmart.biomart.ConceptCode" %>
 <%-- TODO This is a copy and paste from folderDetail - turn this into a template! --%>
 
 <%! import annotation.* %> 
-<%! import bio.BioData %> 
-<%! import bio.ConceptCode %> 
+<%! import BioData %>
+<%! import ConceptCode %>
 <%! import com.recomdata.util.* %> 
 
 <g:if test="${metaDataTagItems && metaDataTagItems.size()>0}">

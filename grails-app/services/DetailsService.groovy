@@ -1,3 +1,5 @@
+import org.transmart.biomart.BioDataExternalCode
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *
@@ -34,8 +36,8 @@ class DetailsService {
 
     def getHydraGeneID(id) {
 
-        def query = "SELECT DISTINCT bec.code FROM bio.BioDataExternalCode bec WHERE bec.bioDataId=? AND bec.codeType='HYDRA_GENE_ID'";
-        def result = bio.BioDataExternalCode.executeQuery(query, Long.valueOf(String.valueOf(id)));
+        def query = "SELECT DISTINCT bec.code FROM org.transmart.biomart.BioDataExternalCode bec WHERE bec.bioDataId=? AND bec.codeType='HYDRA_GENE_ID'";
+        def result = BioDataExternalCode.executeQuery(query, Long.valueOf(String.valueOf(id)));
         if (result != null && result.size() > 0)
             return result[0]
         else

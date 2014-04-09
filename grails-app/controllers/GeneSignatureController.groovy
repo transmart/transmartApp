@@ -20,10 +20,10 @@
 
 
 import auth.AuthUser
-import bio.BioAssayPlatform
-import bio.CellLine
-import bio.Compound
-import bio.ConceptCode
+import org.transmart.biomart.BioAssayPlatform
+import org.transmart.biomart.CellLine
+import org.transmart.biomart.Compound
+import org.transmart.biomart.ConceptCode
 import com.recomdata.genesignature.FileSchemaException
 import com.recomdata.genesignature.WizardModelDetails
 import com.recomdata.util.DomainObjectExcelHelper

@@ -25,7 +25,7 @@
 */
 
 import auth.AuthUser
-import bio.BioDataExternalCode
+import org.transmart.biomart.BioDataExternalCode
 import grails.converters.JSON
 import org.transmart.GlobalFilter
 import org.transmart.SearchFilter
@@ -173,7 +173,7 @@ public class SearchController{
 		if (params.id != null && params.id.length() > 0) {
 			def keyword = getSearchKeyword(params.id)
 			genes = searchKeywordService.expandPathwayToGenes(keyword.bioDataId.toString())
-            //			def query = "select k from search.SearchKeyword k, bio.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId=?"
+            //			def query = "select k from search.SearchKeyword k, org.transmart.biomart.BioDataCorrelation c where k.bioDataId=c.associatedBioDataId and c.bioDataId=?"
             //			genes = search.SearchKeyword.executeQuery(query, keyword.bioDataId)
 		}
 		renderSearchKeywords(genes)
@@ -225,7 +225,7 @@ public class SearchController{
 		}
 		def allSynonyms
 		if (dataIds?.size() > 0) {
-            allSynonyms = BioDataExternalCode.executeQuery("SELECT DISTINCT bdec FROM bio.BioDataExternalCode bdec WHERE bdec.bioDataId IN(:ids) AND bdec.codeType='SYNONYM'", [ids: dataIds])
+            allSynonyms = BioDataExternalCode.executeQuery("SELECT DISTINCT bdec FROM org.transmart.biomart.BioDataExternalCode bdec WHERE bdec.bioDataId IN(:ids) AND bdec.codeType='SYNONYM'", [ids: dataIds])
 		}
 		def synMap =[:]
 		def synList = null

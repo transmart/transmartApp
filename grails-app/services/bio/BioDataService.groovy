@@ -20,6 +20,8 @@
 
 package bio
 
+import org.transmart.biomart.BioData
+
 class BioDataService {
 
     boolean transactional = true

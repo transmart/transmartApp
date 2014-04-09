@@ -23,7 +23,7 @@
  * @version $Revision: 10098 $
  */
 
-import bio.Experiment
+import org.transmart.biomart.Experiment
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
@@ -31,6 +31,7 @@ import com.recomdata.util.DomainObjectExcelHelper
 import com.recomdata.util.ElapseTimer
 import fm.FmFolder
 import org.transmart.SearchResult
+import org.transmart.biomart.BioAssayAnalysis
 
 class ExperimentAnalysisController {
 
@@ -263,7 +264,7 @@ class ExperimentAnalysisController {
         response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
         response.setHeader("Pragma", "public");
         response.setHeader("Expires", "0");
-        def analysis = bio.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+        def analysis = BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
         response.outputStream << analysisDataExportService.renderAnalysisInExcel(analysis)
     }
 
@@ -273,7 +274,7 @@ class ExperimentAnalysisController {
         response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
         response.setHeader("Pragma", "public");
         response.setHeader("Expires", "0");
-        def analysis = bio.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+        def analysis = BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
         response.outputStream << analysisDataExportService.renderAnalysisInExcel(analysis)
     }
 

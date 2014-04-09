@@ -1,4 +1,7 @@
 package org.transmart
+
+import org.transmart.biomart.BioAssayAnalysis
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -30,7 +33,7 @@ public class AnalysisResult implements Comparable {
 	boolean bSignificantTEA = false
 	int defaultTop = 5;
 
-	bio.BioAssayAnalysis analysis
+	BioAssayAnalysis analysis
 	def experimentId;
 	def experimentAccession;
 	List assayAnalysisValueList =[] // collection of AssayAnalysisValue objects

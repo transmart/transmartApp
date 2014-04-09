@@ -21,7 +21,7 @@ package fm
 
 import annotation.*
 import auth.AuthUser
-import bio.BioData
+import org.transmart.biomart.BioData
 import com.recomdata.transmart.domain.searchapp.AccessLog
 import com.recomdata.util.FolderType
 import grails.util.Holders

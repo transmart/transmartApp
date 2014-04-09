@@ -24,8 +24,8 @@
  *
  */
 
-import bio.BioMarker
-import bio.Disease
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Disease
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.ChartRenderingInfo
 import org.jfree.chart.JFreeChart

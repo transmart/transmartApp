@@ -19,6 +19,8 @@
 
 package fm
 
+import org.transmart.biomart.BioData
+
 class FmFolderAssociation implements Serializable {
 
     def grailsApplication
@@ -56,7 +58,7 @@ class FmFolderAssociation implements Serializable {
 
     public getBioObject() {
         log.info "ObjectUID=" + this.objectUid
-        def bioData = bio.BioData.findByUniqueId(this.objectUid)
+        def bioData = BioData.findByUniqueId(this.objectUid)
         def clazz = lookupDomainClass()
         if (!clazz || !bioData) {
             return null

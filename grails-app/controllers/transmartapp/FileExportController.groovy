@@ -23,9 +23,9 @@ package transmartapp
 import annotation.AmTagAssociation
 import annotation.AmTagTemplate
 import annotation.AmTagValue
-import bio.BioAssayPlatform
-import bio.BioData
-import bio.ConceptCode
+import org.transmart.biomart.BioAssayPlatform
+import org.transmart.biomart.BioData
+import org.transmart.biomart.ConceptCode
 import fm.FmFile
 import fm.FmFolder
 import fm.FmFolderAssociation

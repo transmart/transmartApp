@@ -1,5 +1,6 @@
 import annotation.AmTagItem
 import grails.converters.JSON
+import org.transmart.biomart.Experiment
 
 /*************************************************************************
  * tranSMART - translational medicine data mart
@@ -105,7 +106,7 @@ class OntologyController {
             //Check for study by visual attributes
             if (node.visualattributes.contains("S")) {
                 def accession = node.sourcesystemcd
-                def study = bio.Experiment.findByAccession(accession.toUpperCase())
+                def study = Experiment.findByAccession(accession.toUpperCase())
                 def folder
                 if (study) {
                     folder = FmFolderAssociation.findByObjectUid(study.getUniqueId().uniqueId)?.fmFolder

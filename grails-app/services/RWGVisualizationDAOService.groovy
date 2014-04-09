@@ -1,4 +1,4 @@
-import bio.BioAssayCohort
+import org.transmart.biomart.BioAssayCohort
 import org.json.JSONObject
 import org.transmartproject.db.support.DatabasePortabilityService
 

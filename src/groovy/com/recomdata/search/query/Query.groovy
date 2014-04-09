@@ -241,9 +241,9 @@ public class Query {
 	def createExpandBioMarkerSubQuery(ids){
 
 		StringBuilder s = new StringBuilder();
-		s.append("SELECT DISTINCT bdc.associatedBioDataId FROM bio.BioDataCorrelation bdc ");
+		s.append("SELECT DISTINCT bdc.associatedBioDataId FROM org.transmart.biomart.BioDataCorrelation bdc ");
 		s.append(" WHERE bdc.bioDataId in (").append(ids).append(")");
-		// s.append("SELECT DISTINCT marker.id FROM bio.BioMarker marker ")
+		// s.append("SELECT DISTINCT marker.id FROM org.transmart.biomart.BioMarker marker ")
 		// s.append(" LEFT JOIN marker.associatedCorrels marker_cor")
 		// s.append(" WHERE marker_cor.bioDataId IN (").append(ids).append(")")
 		//s.append (" AND marker_cor.correlationDescr.correlation='PATHWAY GENE'")
@@ -275,7 +275,7 @@ public class Query {
 				s.append(" OR ");
 			}
 			s.append(markerAlias).append(".id IN (")
-			s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM bio.BioMarkerCorrelationMV bmcmv ");
+			s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM org.transmart.biomart.BioMarkerCorrelationMV bmcmv ");
 			s.append(" WHERE bmcmv.bioMarkerId in (").append(gfilter.getGenePathwayFilters().getKeywordDataIdString()).append(")) ");
 		}
 		s.append(")");
@@ -298,7 +298,7 @@ public class Query {
 				s.append(" OR ");
 			}
 			s.append(markerAlias).append(".id IN (")
-			s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM bio.BioMarkerCorrelationMV bmcmv ");
+			s.append("SELECT DISTINCT bmcmv.assoBioMarkerId FROM org.transmart.biomart.BioMarkerCorrelationMV bmcmv ");
 			s.append(" WHERE bmcmv.bioMarkerId in (").append(gfilter.getGenePathwayFilters().getKeywordDataIdString()).append(")) ");
 		}
 		s.append(")");

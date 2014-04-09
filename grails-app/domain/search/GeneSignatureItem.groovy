@@ -20,7 +20,7 @@
 
 package search
 
-import bio.BioMarker
+import org.transmart.biomart.BioMarker
 
 /**
  * domain class for a gene signature item

@@ -19,7 +19,7 @@ package org.transmart
  ******************************************************************/
   
 
-import bio.BioMarker
+import org.transmart.biomart.BioMarker
 
 /**
  * @author $Author: mmcduffie $

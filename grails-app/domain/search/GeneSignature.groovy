@@ -26,10 +26,10 @@
 package search
 
 import auth.AuthUser
-import bio.BioAssayPlatform
-import bio.CellLine
-import bio.Compound
-import bio.ConceptCode
+import org.transmart.biomart.BioAssayPlatform
+import org.transmart.biomart.CellLine
+import org.transmart.biomart.Compound
+import org.transmart.biomart.ConceptCode
 import com.recomdata.util.ExcelGenerator
 import com.recomdata.util.ExcelSheet
 import com.recomdata.util.IDomainExcelWorkbook

@@ -47,13 +47,13 @@ class ClinicalTrialAnalysisTEAService extends AnalysisTEABaseService {
      */
     def createAnalysisIDSelectQuery(SearchFilter filter) {
         if (filter == null || filter.globalFilter.isTextOnly()) {
-            return " SELECT -1 FROM bio.BioAssayAnalysisData baad WHERE 1 = 1 "
+            return " SELECT -1 FROM org.transmart.biomart.BioAssayAnalysisData baad WHERE 1 = 1 "
         }
         def gfilter = filter.globalFilter
 
         def query = new AssayAnalysisDataQuery(mainTableAlias: "baad", setDistinct: true);
-        query.addTable("bio.BioAssayAnalysisData baad ");
-        query.addTable("bio.ClinicalTrial ct ");
+        query.addTable("org.transmart.biomart.BioAssayAnalysisData baad ");
+        query.addTable("org.transmart.biomart.ClinicalTrial ct ");
         query.addCondition("baad.experiment.id = ct.id ")
 
         query.createGlobalFilterCriteria(gfilter);

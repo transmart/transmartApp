@@ -23,10 +23,10 @@ import annotation.AmTagItem
 import annotation.AmTagTemplate
 import annotation.AmTagTemplateAssociation
 import auth.AuthUser
-import bio.BioAssayAnalysis
-import bio.BioAssayAnalysisData
-import bio.BioDataExternalCode
-import bio.ConceptCode
+import org.transmart.biomart.BioAssayAnalysis
+import org.transmart.biomart.BioAssayAnalysisData
+import org.transmart.biomart.BioDataExternalCode
+import org.transmart.biomart.ConceptCode
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
@@ -35,11 +35,11 @@ import de.DeMrnaAnnotation
 import grails.converters.JSON
 import grails.converters.XML
 import grails.validation.ValidationException
-import groovy.util.slurpersupport.NoChildren
-import groovy.util.slurpersupport.NodeChild
 import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.lang.StringUtils
 import org.slf4j.LoggerFactory
+import org.transmart.biomart.BioAssayPlatform
+import org.transmart.biomart.Experiment
 import search.SearchKeyword
 
 import javax.activation.MimetypesFileTypeMap
@@ -130,15 +130,15 @@ class FmFolderController {
         folder.folderType = FolderType.ANALYSIS.name()
         def parentFolder = FmFolder.get(params.folderId)
         folder.parent = parentFolder
-        def bioDataObject = new bio.BioAssayAnalysis()
+        def bioDataObject = new BioAssayAnalysis()
         def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.ANALYSIS.name())
         def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
         def title = "Create Analysis"
         def templateType = "createAnalysisForm"
-        def measurements = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
-        def vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
-        def technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
-        def platforms = bio.BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
+        def measurements = BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
+        def vendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
+        def technologies = BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
+        def platforms = BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
 
         log.info measurements
         log.info technologies
@@ -163,10 +163,10 @@ class FmFolderController {
         def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
         def title = "Create Assay"
         def templateType = "createAssayForm"
-        def measurements = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
-        def vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
-        def technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
-        def platforms = bio.BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
+        def measurements = BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
+        def vendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
+        def technologies = BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
+        def platforms = BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
 
         log.info measurements
         log.info technologies
@@ -207,7 +207,7 @@ class FmFolderController {
         folder.folderType = FolderType.STUDY.name()
         def parentFolder = FmFolder.get(params.folderId)
         folder.parent = parentFolder
-        def bioDataObject = new bio.Experiment()
+        def bioDataObject = new Experiment()
         def amTagTemplate = AmTagTemplate.findByTagTemplateType(FolderType.STUDY.name())
         def metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
         def title = "Create Study"
@@ -294,7 +294,7 @@ class FmFolderController {
         folder.folderType = FolderType.STUDY.name()
         folder.parent = parentFolder
 
-        def experiment = new bio.Experiment()
+        def experiment = new Experiment()
         experiment.title = folder.folderName
         experiment.description = folder.description
         experiment.type = "Experiment"
@@ -371,7 +371,7 @@ class FmFolderController {
         folder.folderType = FolderType.ANALYSIS.name()
         folder.parent = parentFolder
 
-        def analysis = new bio.BioAssayAnalysis()
+        def analysis = new BioAssayAnalysis()
         analysis.name = folder.folderName
         analysis.shortDescription = folder.description
         analysis.longDescription = folder.description
@@ -528,7 +528,7 @@ class FmFolderController {
 
     //service to call to get all experiments objects that are associated with a folder in fm_folder_association table
     def getExperiments = {
-        def assocs = FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='bio.Experiment'")
+        def assocs = FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='org.transmart.biomart.Experiment'")
         render(contentType: "text/xml") {
             experiments {
                 for (assoc in assocs) {
@@ -548,7 +548,7 @@ class FmFolderController {
 
     //service to get analyses details, mainly analysis unique id and title
     def getAnalysesDetails = {
-        def assocs = FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='bio.BioAssayAnalysis'")
+        def assocs = FmFolderAssociation.findAll("from FmFolderAssociation as fd where fd.objectType='org.transmart.biomart.BioAssayAnalysis'")
         render(contentType: "text/xml") {
             analyses {
                 for (assoc in assocs) {
@@ -934,10 +934,10 @@ class FmFolderController {
                 }
 
                 if (folder.folderType.equalsIgnoreCase(FolderType.ASSAY.name()) && folder.folderType.equalsIgnoreCase(FolderType.ANALYSIS.name())) {
-                    measurements = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
-                    vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
-                    technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
-                    platforms = bio.BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
+                    measurements = BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
+                    vendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
+                    technologies = BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
+                    platforms = BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
                 }
 
                 def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
@@ -1137,10 +1137,10 @@ class FmFolderController {
             def title = "Edit Meta Data"
             def templateType = "editMetadataForm"
 
-            def measurements = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
-            def vendors = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
-            def technologies = bio.BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
-            def platforms = bio.BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
+            def measurements = BioAssayPlatform.executeQuery("SELECT DISTINCT platformType FROM BioAssayPlatform as p ORDER BY p.platformType")
+            def vendors = BioAssayPlatform.executeQuery("SELECT DISTINCT vendor FROM BioAssayPlatform as p ORDER BY p.vendor")
+            def technologies = BioAssayPlatform.executeQuery("SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p ORDER BY p.platformTechnology")
+            def platforms = BioAssayPlatform.executeQuery("FROM BioAssayPlatform as p ORDER BY p.name")
 
             render(template: "editMetaData", model: [bioDataObject: bioDataObject, measurements: measurements, technologies: technologies, vendors: vendors, platforms: platforms, folder: folder, amTagTemplate: amTagTemplate, metaDataTagItems: metaDataTagItems]);
         }
@@ -1163,10 +1163,10 @@ class FmFolderController {
             folder.description = params.description
             if (assoc != null) {
                 object = assoc.getBioObject()
-                if (object instanceof bio.Experiment) {
-                    object = (bio.Experiment) object;
+                if (object instanceof Experiment) {
+                    object = (Experiment) object;
                     folder.folderName = params.title
-                } else if (object instanceof bio.BioAssayAnalysis) {
+                } else if (object instanceof BioAssayAnalysis) {
                     folder.folderName = params.name
                     folder.description = params.longDescription
                 }
@@ -1321,7 +1321,7 @@ class FmFolderController {
             }
 
             queryString = "SELECT DISTINCT platformTechnology FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.platformTechnology"
-            def technologies = bio.BioAssayPlatform.executeQuery(queryString)
+            def technologies = BioAssayPlatform.executeQuery(queryString)
             log.info queryString + " " + technologies
             render(template: "selectTechnologies", model: [technologies: technologies, technology: params.technologyName])
         }
@@ -1340,7 +1340,7 @@ class FmFolderController {
             }
 
             queryString = "SELECT DISTINCT vendor FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.vendor"
-            def vendors = bio.BioAssayPlatform.executeQuery(queryString)
+            def vendors = BioAssayPlatform.executeQuery(queryString)
             log.info queryString + " " + vendors
             render(template: "selectVendors", model: [vendors: vendors, vendor: params.vendorName])
         }
@@ -1359,7 +1359,7 @@ class FmFolderController {
             }
 
             queryString = "SELECT DISTINCT platformType FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.platformType"
-            def measurements = bio.BioAssayPlatform.executeQuery(queryString)
+            def measurements = BioAssayPlatform.executeQuery(queryString)
             log.info queryString + " " + measurements
             render(template: "selectMeasurements", model: [measurements: measurements, measurement: params.measurementName])
         }
@@ -1382,7 +1382,7 @@ class FmFolderController {
             }
 
             queryString = "FROM BioAssayPlatform as p " + queryString + "  ORDER BY p.platformType"
-            def platforms = bio.BioAssayPlatform.executeQuery(queryString)
+            def platforms = BioAssayPlatform.executeQuery(queryString)
             log.info queryString + " " + platforms
             render(template: "selectPlatforms", model: [platforms: platforms])
         }

@@ -20,6 +20,9 @@
 
 package annotation
 
+import org.transmart.biomart.BioData
+import org.transmart.biomart.ConceptCode
+
 
 class MetaDataService {
 
@@ -36,7 +39,7 @@ class MetaDataService {
         def list = []
         terms.each
                 {
-                    def bioDataId = bio.BioData.find('from BioData where uniqueId=?', it)?.id
+                    def bioDataId = BioData.find('from BioData where uniqueId=?', it)?.id
                     if (bioDataId) {
                         list.add(bioDataId)
                     }
@@ -46,7 +49,7 @@ class MetaDataService {
 
         def tagValues = ""
         if (list.size > 0) {
-            tagValues = bio.ConceptCode.executeQuery('from ConceptCode as cc where id in(:list)', [list: list])
+            tagValues = ConceptCode.executeQuery('from ConceptCode as cc where id in(:list)', [list: list])
         }
 
         log.info "tagValues = " + tagValues

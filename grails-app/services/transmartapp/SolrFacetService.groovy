@@ -20,8 +20,8 @@
 
 package transmartapp
 
-import bio.BioMarker
-import bio.BioMarkerExpAnalysisMV
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.BioMarkerExpAnalysisMV
 import fm.FmFolder
 import fm.FmFolderAssociation
 import groovy.util.slurpersupport.NoChildren

@@ -22,9 +22,9 @@
  * @author $Author: jliu $
  * @version $Revision: 10280 $
  */
-import bio.BioAssayAnalysis
-import bio.ClinicalTrial
-import bio.Experiment
+import org.transmart.biomart.BioAssayAnalysis
+import org.transmart.biomart.ClinicalTrial
+import org.transmart.biomart.Experiment
 import com.recomdata.util.DomainObjectExcelHelper
 import grails.converters.JSON
 import org.transmart.SearchResult
@@ -40,7 +40,7 @@ class TrialController {
     def clinicalTrialAnalysisTEAService
 
     def showTrialFilter = {
-        def contentType = BioAssayAnalysis.executeQuery("SELECT DISTINCT assayDataType FROM bio.BioAssayAnalysis WHERE assayDataType IS NOT NULL")
+        def contentType = BioAssayAnalysis.executeQuery("SELECT DISTINCT assayDataType FROM org.transmart.biomart.BioAssayAnalysis WHERE assayDataType IS NOT NULL")
         if (contentType == null) contentType = []
 
         def diseases = filterQueryService.trialDiseaseFilter(session.searchFilter);
@@ -172,9 +172,9 @@ class TrialController {
         // need to mark  trial with data
         // tmp solution
 
-        def triallist = bio.ClinicalTrial.executeQuery("SELECT b.id, b.trialNumber, b.title FROM bio.ClinicalTrial b, search.SearchKeyword s  WHERE s.bioDataId=b.id ORDER BY b.trialNumber");
+        def triallist = ClinicalTrial.executeQuery("SELECT b.id, b.trialNumber, b.title FROM org.transmart.biomart.ClinicalTrial b, search.SearchKeyword s  WHERE s.bioDataId=b.id ORDER BY b.trialNumber");
 
-        //		    def triallist = bio.ClinicalTrial.listOrderByTrialNumber();
+        //		    def triallist = org.transmart.biomart.ClinicalTrial.listOrderByTrialNumber();
         boolean filtercheck = !session.searchFilter.trialFilter.newFilter;
 
         Set selectedTrials = session.searchFilter.trialFilter.selectedtrials;
@@ -222,7 +222,7 @@ class TrialController {
 
     def downloadanalysisexcel = {
 
-        def geneexpr = bio.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+        def geneexpr = BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
         def filename = geneexpr.shortDescription.replace("<", "-").replace(">", "-")
         filename = filename.replace(":", "-").replace("\"", "-").replace("/", "-")
         filename = filename.replace("\\", "-").replace("?", "-").replace("*", "-")
@@ -245,7 +245,7 @@ class TrialController {
         response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
         response.setHeader("Pragma", "public");
         response.setHeader("Expires", "0");
-        def analysis = bio.BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
+        def analysis = BioAssayAnalysis.get(Long.parseLong(params.id.toString()))
         response.outputStream << analysisDataExportService.renderAnalysisInExcel(analysis)
     }
 
