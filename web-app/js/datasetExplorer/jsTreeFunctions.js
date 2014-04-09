@@ -395,12 +395,12 @@ function drawjQueryTree(div,url,searchTerm,treeType)
             "types" : {
                 "T" : {
                     "icon" : {
-                        "image" : "../images/alpha.gif"
+                        "image" : pageInfo.basePath + "/images/alpha.gif"
                     }
                 },
                 "N" : {
                     "icon" : {
-                        "image" : "../images/numeric.gif"
+                        "image" : pageInfo.basePath + "/images/numeric.gif"
                     }
                 }
             }

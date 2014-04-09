@@ -1,16 +1,14 @@
 package com.recomdata.transmart.domain.i2b2
 
-import org.transmartproject.db.i2b2data.ObservationFact
-
 class ConceptVisit {
 
     String id
     String visitName
 
-    static hasMany = [observations: ObservationFact]
+    static hasMany = [observations: ObservationFactAcrossTrial]
 
     static mapping = {
-        table 'DEAPP.DE_CONCEPT_VISIT'
+        table name: 'DE_CONCEPT_VISIT', schema: 'DEAPP'
         version false
 
         id column: 'CONCEPT_CD', type: 'string'

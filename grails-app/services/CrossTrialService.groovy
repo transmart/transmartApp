@@ -1,5 +1,4 @@
 import com.recomdata.transmart.domain.i2b2.ModifierDimension
-import com.recomdata.transmart.domain.i2b2.ConceptVisit
 import org.transmart.searchapp.AuthUser
 
 class CrossTrialService {
@@ -40,10 +39,10 @@ class CrossTrialService {
 								A.modifierLevel as modifierLevel, 
 								A.modifierNodeType as modifierNodeType, 
 								E.linkType as timingLevel,
-								count(DISTINCT C.patientNum) as observationCount)  
+								count(DISTINCT C.patientNum) as observationCount)
 				FROM	ModifierDimension A,
 						ModifierMetadata B,
-						ObservationFact C,
+						ObservationFactAcrossTrial C,
 						EncounterLevel E
 				WHERE 	A.id = B.id
 				AND		A.id = C.modifierCd
@@ -69,10 +68,10 @@ class CrossTrialService {
 									B.visitInd as visitInd,
 									D.visitName as inOutCode,
 									E.linkType as timingLevel,
-									count(DISTINCT C.patientNum) as observationCount) 
+									count(DISTINCT C.patientNum) as observationCount)
 					FROM	ModifierDimension A, 
 							ModifierMetadata B,
-							ObservationFact C,
+							ObservationFactAcrossTrial C,
 							EncounterLevel E 
 					LEFT JOIN C.conceptVisit D
 					WHERE 	A.id = B.id 
@@ -118,7 +117,7 @@ class CrossTrialService {
 					FROM	ModifierDimension A,
 							ModifierMetadata B,
 							ModifierDimension A1,
-							ObservationFact C,
+							ObservationFactAcrossTrial C,
 							EncounterLevel E
 					LEFT JOIN C.conceptVisit D
 					WHERE 	A.id = B.id
@@ -180,7 +179,7 @@ class CrossTrialService {
 					FROM	ModifierDimension A,
 							ModifierMetadata B,
 							ModifierDimension A1,
-							ObservationFact C,
+							ObservationFactAcrossTrial C,
 							EncounterLevel E
 					LEFT JOIN C.conceptVisit D
 					WHERE 	A.id = B.id
@@ -255,12 +254,12 @@ class CrossTrialService {
 				def retrieveNodeLevel = nodeLevel.toInteger() + 1;
 				
 				modifierList = ModifierDimension.executeQuery("""
-					SELECT new map(A2.id as id, A2.modifierPath as modifierPath, A2.nameChar as nameChar,B1.valtypeCd as valtypeCd,A2.modifierLevel as modifierLevel,A2.modifierNodeType as modifierNodeType, count(DISTINCT C2.patientNum) as observationCount) 
+					SELECT new map(A2.id as id, A2.modifierPath as modifierPath, A2.nameChar as nameChar,B1.valtypeCd as valtypeCd,A2.modifierLevel as modifierLevel,A2.modifierNodeType as modifierNodeType, count(DISTINCT C2.patientNum) as observationCount)
 					FROM	ModifierDimension A1,
 							ModifierDimension A2,
 							ModifierMetadata B1,
-							ObservationFact C1,
-							ObservationFact C2
+							ObservationFactAcrossTrial C1,
+							ObservationFactAcrossTrial C2
 					WHERE 	A1.id = C1.modifierCd
 					AND		lower(A1.modifierPath) LIKE :searchTerm
 					AND		C2.patientNum = C1.patientNum
@@ -276,12 +275,12 @@ class CrossTrialService {
 			else
 			{
 				modifierList = ModifierDimension.executeQuery("""
-					SELECT new map(A2.id as id, A2.modifierPath as modifierPath, A2.nameChar as nameChar,B1.valtypeCd as valtypeCd,A2.modifierLevel as modifierLevel,A2.modifierNodeType as modifierNodeType, count(DISTINCT C2.patientNum) as observationCount) 
+					SELECT new map(A2.id as id, A2.modifierPath as modifierPath, A2.nameChar as nameChar,B1.valtypeCd as valtypeCd,A2.modifierLevel as modifierLevel,A2.modifierNodeType as modifierNodeType, count(DISTINCT C2.patientNum) as observationCount)
 					FROM	ModifierDimension A1,
 							ModifierDimension A2,
 							ModifierMetadata B1,
-							ObservationFact C1,
-							ObservationFact C2
+							ObservationFactAcrossTrial C1,
+							ObservationFactAcrossTrial C2
 					WHERE 	A1.id = C1.modifierCd
 					AND		lower(A1.modifierPath) LIKE :searchTerm
 					AND		C2.patientNum = C1.patientNum
