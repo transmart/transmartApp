@@ -1,3 +1,5 @@
+package org.transmart
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *
