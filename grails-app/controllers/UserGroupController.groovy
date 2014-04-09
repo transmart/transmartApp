@@ -16,21 +16,15 @@
  * 
  *
  ******************************************************************/
-  
 
 
-
-import groovy.sql.Sql
+import command.UserGroupCommand
+import grails.converters.JSON
+import grails.validation.ValidationException
 import org.transmart.searchapp.AccessLog
-import org.transmart.searchapp.AuthUser;
-import org.transmart.searchapp.Principal;
-import org.transmart.searchapp.UserGroup;
-
-import command.UserGroupCommand;
-import grails.converters.*
-
-import java.sql.BatchUpdateException
-import java.sql.SQLException;
+import org.transmart.searchapp.AuthUser
+import org.transmart.searchapp.Principal
+import org.transmart.searchapp.UserGroup
 
 class UserGroupController {
     /**
@@ -115,51 +109,20 @@ class UserGroupController {
         return ['userGroupInstance':userGroupInstance]
     }
 
-    def save = {
-        def userGroupInstance = new UserGroup()
-        userGroupInstance.properties = params
-        def next_id
-
-        if(params.id==null || params.id=="") {
-        def sql = new Sql(dataSource);
-            def seqSQL = "SELECT nextval('searchapp.hibernate_sequence')";
-        def result = sql.firstRow(seqSQL);
-            next_id = result.nextval
-        }
-        else
-            next_id = new Long(params.id)
-
-        if(params.name==null || params.name=="") {
-            flash.message = 'Please enter a name'
-            return render (view:'create', model:[userGroupInstance: new UserGroup(params)])
-        }
-        if(params.name==null || params.name=="") {
-            flash.message = 'Please enter a name'
-            return render (view:'create', model:[userGroupInstance: new UserGroup(params)])
-        }
-
-        userGroupInstance.id = next_id
-        userGroupInstance.name = params.name;
-        userGroupInstance.description = params.description;
+    def save() {
+        def userGroupInstance = new UserGroup(params)
 
         try {
-            if (!userGroupInstance.hasErrors() && userGroupInstance.save()) {
-                def msg = "Group: ${userGroupInstance.name} created.";
-                new AccessLog(username: springSecurityService.getPrincipal().username, event:"Group created",
-                        eventmessage: msg,
-                        accesstime:new Date()).save()
-                redirect action: show, id: userGroupInstance.id
-        }
-        else {
-                render view: 'create', model: [userGroupInstance: userGroupInstance]
-            }
-        } catch(BatchUpdateException bue)   {
-            flash.message = 'Cannot create group'
-            log.error(bue.getLocalizedMessage(), bue)
-            render view: 'create', model: [userGroupInstance: userGroupInstance]
-        } catch(SQLException sqle)    {
-            flash.message = 'Cannot create group'
-            log.error(sqle.getNextException().getMessage())
+            userGroupInstance.save(failOnError: true)
+            def msg = "Group: ${userGroupInstance.name} created.";
+            new AccessLog(username: springSecurityService.principal.username,
+                    event: "Group created",
+                    eventmessage: msg,
+                    accesstime: new Date()).save()
+
+            redirect action: 'show', id: userGroupInstance.id
+        } catch (ValidationException validationException) {
+            log.error validationException.localizedMessage, validationException
             render view: 'create', model: [userGroupInstance: userGroupInstance]
         }
     }
