@@ -1,4 +1,4 @@
-<!--
+<%--
   tranSMART - translational medicine data mart
   
   Copyright 2008-2012 Janssen Research & Development, LLC.
@@ -15,7 +15,7 @@
   You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
  
--->
+--%>
 
 <%-- Quick, self-contained replica of the Ext utilities menu, for use on pages without the Ext library (faceted search) --%>
 			<g:javascript>

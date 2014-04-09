@@ -1,4 +1,4 @@
-<!--
+<%--
   tranSMART - translational medicine data mart
   
   Copyright 2008-2012 Janssen Research & Development, LLC.
@@ -15,14 +15,16 @@
   You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
  
--->
+--%>
 
 <div id="logocutout">
 	<g:if test="${'rwg' == app}">
-		<img src="${resource(dir:'images', file:'logo.png')}"/>
+        <g:img file="logo.png"/>
 	</g:if>
 	<g:else>
-		<g:link controller="RWG" action="index"><img src="${resource(dir:'images', file:'logo.png')}"/></g:link>
+		<g:link controller="RWG" action="index">
+            <g:img file="logo.png"/>
+        </g:link>
 	</g:else>
 
 </div>
@@ -99,8 +101,6 @@
 </div>
 <r:require module="session_timeout_nodep"/>
 <r:script>
-      
-<script>
     jQuery(document).ready(function() {
 		 var logoutURL = "${createLink([controller:'login', action: 'forceAuth'])}";
 	    var heartbeatURL = "${createLink([controller:'userLanding', action:'checkHeartBeat'])}";
