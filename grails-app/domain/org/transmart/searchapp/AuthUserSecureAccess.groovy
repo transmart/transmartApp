@@ -1,4 +1,4 @@
-package auth
+package org.transmart.searchapp
 
 /*************************************************************************
  * tranSMART - translational medicine data mart
@@ -19,39 +19,47 @@ package auth
  *
  ******************************************************************/
 
-/**
- * $Id: UserGroup.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
 
-/**
- * Group class.
- */
-class UserGroup extends Principal {
 
-    String groupCategory
+class AuthUserSecureAccess {
 
-    static hasMany = [members: AuthUser]
-    //static belongsTo = AuthUser
+    static transients = ['objectAccessName', 'principalAccessName']
 
+    Long id
+    AuthUser authUser
+    SecureObject secureObject
+    SecureAccessLevel accessLevel
+    String objectAccessName
+    String principalAccessName
 
     static mapping = {
-        table 'SEARCHAPP.SEARCH_AUTH_GROUP'
-
-        members joinTable: [name:   'SEARCH_AUTH_GROUP_MEMBER',
-                            column: 'AUTH_USER_ID',
-                            key:    'AUTH_GROUP_ID']
+        table 'SEARCH_AUTH_USER_SEC_ACCESS_V'
+        version false
+        // id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+        columns {
+            id column: 'SEARCH_AUTH_USER_SEC_ACCESS_ID'
+            authUser column: 'SEARCH_AUTH_USER_ID'
+            secureObject column: 'SEARCH_SECURE_OBJECT_ID'
+            accessLevel column: 'SEARCH_SEC_ACCESS_LEVEL_ID'
+        }
     }
-
     static constraints = {
-        name        blank: false
-        description blank: false
+        authUser(nullable: true)
     }
 
-    public UserGroup() {
-        groupCategory = 'USER_GROUP'
-        // shouldn't this be using discriminator?
-        this.type = 'GROUP'
+    public String getObjectAccessName() {
+        return secureObject.displayName + ' (' + accessLevel.accessLevelName + ')';
+    }
+
+    public void setObjectAccessName(String s) {
+
+    }
+
+    public String getPrincipalAccessName() {
+        return authUser.name + ' (' + accessLevel.accessLevelName + ')';
+    }
+
+    public void setPrincipalAccessName(String s) {
+
     }
 }

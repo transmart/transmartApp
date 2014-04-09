@@ -1,4 +1,4 @@
-package auth
+package org.transmart.searchapp
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *
@@ -18,63 +18,29 @@ package auth
  *
  ******************************************************************/
 
-/**
- * $Id: Principal.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
-
-/**
- * principal class.
- */
-class Principal {
-    static transients = ['principalNameWithType']
-
-    boolean enabled
-    String type;
-    String name;
-    String uniqueId = ''
-    Date dateCreated
-    Date lastUpdated
-    /** description */
-    String description = ''
-    String principalNameWithType
 
 
+class SecureObject {
+    Long id
+    Long bioDataId
+    String displayName
+    String dataType
+    String bioDataUniqueId
+    static hasMany = [conceptPaths: SecureObjectPath]
     static mapping = {
-        table 'SEARCH_AUTH_PRINCIPAL'
-        tablePerHierarchy false
+        table 'SEARCH_SECURE_OBJECT'
         version false
-        id generator: 'sequence',
-           params:    [sequence: 'hibernate_sequence']
-        columns
-                {
-                    uniqueId column: 'UNIQUE_ID'
-                    name column: 'NAME'
-                    description column: 'DESCRIPTION'
-                    enabled column: 'ENABLED'
-                    type column: 'PRINCIPAL_TYPE'
-                    dateCreated column: 'DATE_CREATED'
-                    lastUpdated column: 'LAST_UPDATED'
-                }
-
+        id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
+        columns {
+            id column: 'SEARCH_SECURE_OBJECT_ID'
+            bioDataId column: 'BIO_DATA_ID'
+            displayName column: 'DISPLAY_NAME'
+            dataType column: 'DATA_TYPE'
+            bioDataUniqueId column: 'BIO_DATA_UNIQUE_ID'
+        }
     }
     static constraints = {
-        //enabled()
-        type(nullable: false)
-        description(nullable: true, maxSize: 255)
-        uniqueId(nullable: true)
-    }
-
-    def beforeInsert = {
-        uniqueId = type + " " + id;
-    }
-
-    public String getPrincipalNameWithType() {
-        return type + ' - ' + name;
-    }
-
-    public void setPrincipalNameWithType(String n) {
-
+        bioDataId(nullable: true)
+        dataType(nullable: true, maxSize: 400)
     }
 }

@@ -18,7 +18,7 @@
 -->
 
 
-<%@ page import="org.springframework.web.util.JavaScriptUtils; auth.SecureObjectAccess" %>
+<%@ page import="org.springframework.web.util.JavaScriptUtils; org.transmart.searchapp.SecureObjectAccess" %>
 
 <html>
 <head>

@@ -20,7 +20,7 @@
 package fm
 
 import annotation.*
-import auth.AuthUser
+import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.BioData
 import com.recomdata.transmart.domain.searchapp.AccessLog
 import com.recomdata.util.FolderType

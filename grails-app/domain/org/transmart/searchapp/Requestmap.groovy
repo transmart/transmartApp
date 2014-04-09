@@ -1,5 +1,4 @@
-package auth
-
+package org.transmart.searchapp
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *
@@ -19,47 +18,34 @@ package auth
  *
  ******************************************************************/
 
+/**
+ * $Id: Requestmap.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
+ */
 
+/**
+ * Request Map domain class.
+ */
+class Requestmap {
 
-class AuthUserSecureAccess {
-
-    static transients = ['objectAccessName', 'principalAccessName']
-
+    String url
+    String configAttribute
     Long id
-    AuthUser authUser
-    SecureObject secureObject
-    SecureAccessLevel accessLevel
-    String objectAccessName
-    String principalAccessName
-
+    Long version
     static mapping = {
-        table 'SEARCH_AUTH_USER_SEC_ACCESS_V'
-        version false
-        // id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+        table 'SEARCH_REQUEST_MAP'
+        id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
         columns {
-            id column: 'SEARCH_AUTH_USER_SEC_ACCESS_ID'
-            authUser column: 'SEARCH_AUTH_USER_ID'
-            secureObject column: 'SEARCH_SECURE_OBJECT_ID'
-            accessLevel column: 'SEARCH_SEC_ACCESS_LEVEL_ID'
+            id column: 'ID'
+            version column: 'VERSION'
+            configAttribute column: 'CONFIG_ATTRIBUTE'
+            url column: 'URL'
         }
+
     }
     static constraints = {
-        authUser(nullable: true)
-    }
-
-    public String getObjectAccessName() {
-        return secureObject.displayName + ' (' + accessLevel.accessLevelName + ')';
-    }
-
-    public void setObjectAccessName(String s) {
-
-    }
-
-    public String getPrincipalAccessName() {
-        return authUser.name + ' (' + accessLevel.accessLevelName + ')';
-    }
-
-    public void setPrincipalAccessName(String s) {
-
+        url(blank: false, unique: true)
+        configAttribute(blank: false)
     }
 }

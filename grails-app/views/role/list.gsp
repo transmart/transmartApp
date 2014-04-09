@@ -58,7 +58,7 @@
 			</div>
 	
 			<div class="paginateButtons">
-				<g:paginate total="${auth.Role.count()}" />
+				<g:paginate total="${org.transmart.searchapp.Role.count()}" />
 			</div>
 		</div>
 	</body>

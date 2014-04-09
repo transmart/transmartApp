@@ -1,4 +1,5 @@
-package auth
+package org.transmart.searchapp
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *
@@ -18,24 +19,39 @@ package auth
  *
  ******************************************************************/
 
+/**
+ * $Id: UserGroup.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
+ */
+
+/**
+ * Group class.
+ */
+class UserGroup extends Principal {
+
+    String groupCategory
+
+    static hasMany = [members: AuthUser]
+    //static belongsTo = AuthUser
 
 
-class SecureAccessLevel {
-    static def OWN = "OWN"
-    Long accessLevelValue
-    Long id
-    String accessLevelName
     static mapping = {
-        table 'SEARCH_SEC_ACCESS_LEVEL'
-        version false
-        id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
-        columns {
-            accessLevelValue column: 'ACCESS_LEVEL_VALUE'
-            id column: 'SEARCH_SEC_ACCESS_LEVEL_ID'
-            accessLevelName column: 'ACCESS_LEVEL_NAME'
-        }
+        table 'SEARCHAPP.SEARCH_AUTH_GROUP'
+
+        members joinTable: [name:   'SEARCH_AUTH_GROUP_MEMBER',
+                            column: 'AUTH_USER_ID',
+                            key:    'AUTH_GROUP_ID']
     }
+
     static constraints = {
-        accessLevelName(nullable: true, maxSize: 400)
+        name        blank: false
+        description blank: false
+    }
+
+    public UserGroup() {
+        groupCategory = 'USER_GROUP'
+        // shouldn't this be using discriminator?
+        this.type = 'GROUP'
     }
 }

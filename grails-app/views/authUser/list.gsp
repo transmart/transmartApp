@@ -62,7 +62,7 @@
 			</div>
 
 			<div class="paginateButtons">
-				<g:paginate total="${auth.AuthUser.count()}" />
+				<g:paginate total="${org.transmart.searchapp.AuthUser.count()}" />
 			</div>
 
 		</div>

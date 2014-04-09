@@ -16,7 +16,7 @@
  *
  *
  ******************************************************************/
-import auth.SecureObjectPath;
+import org.transmart.searchapp.SecureObjectPath;
 
 class SecureObjectPathController {
 

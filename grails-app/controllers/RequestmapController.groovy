@@ -22,7 +22,7 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
-import auth.Requestmap
+import org.transmart.searchapp.Requestmap
 
 /**
  * Requestmap controller.

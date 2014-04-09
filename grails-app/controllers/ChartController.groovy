@@ -19,7 +19,7 @@
 
 
 
-import auth.AuthUser
+import org.transmart.searchapp.AuthUser
 import com.recomdata.charting.PieRenderer
 import com.recomdata.export.ExportTableNew
 import com.recomdata.statistics.StatHelper

@@ -20,14 +20,14 @@
 
 package fm
 
-import auth.AuthUser
-import auth.Role
-import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
+import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import org.junit.Before
 import org.junit.Test
+import org.transmart.searchapp.AuthUser
+import org.transmart.searchapp.Role
 
 import static com.recomdata.util.FolderType.*
 

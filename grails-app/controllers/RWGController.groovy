@@ -6,7 +6,7 @@
 
 
 
-import auth.AuthUser
+import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.Experiment
 import fm.FmFile
 import fm.FmFolder

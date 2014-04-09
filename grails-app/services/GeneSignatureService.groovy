@@ -19,7 +19,7 @@
 
 
 
-import auth.AuthUser
+import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.BioAssayDataAnnotation
 import org.transmart.biomart.BioData
 import org.transmart.biomart.BioMarker

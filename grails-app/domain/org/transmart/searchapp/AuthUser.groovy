@@ -1,4 +1,4 @@
-package auth
+package org.transmart.searchapp
 
 /*************************************************************************
  * tranSMART - translational medicine data mart

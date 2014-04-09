@@ -19,7 +19,7 @@
 
 
 
-import auth.AuthUser
+import org.transmart.searchapp.AuthUser
 import grails.converters.JSON
 
 

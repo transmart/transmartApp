@@ -16,7 +16,7 @@
  *
  *
  ******************************************************************/
-import auth.SecureObject;
+import org.transmart.searchapp.SecureObject;
 
 class SecureObjectController {
 

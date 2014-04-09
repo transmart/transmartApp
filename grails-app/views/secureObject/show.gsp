@@ -86,7 +86,7 @@
 						<td valign="top" class="name">User/Group With Access:</td>
 						<td valign="top" class="value">
 							<ul>
-							<g:each in="${auth.SecureObjectAccess.findAllBySecureObject(secureObjectInstance,[sort:accessLevel])}" var='soa'>
+							<g:each in="${org.transmart.searchapp.SecureObjectAccess.findAllBySecureObject(secureObjectInstance,[sort:accessLevel])}" var='soa'>
 								<g:if test="${soa.principal.type=='GROUP'}">
 								<li><g:link controller="userGroup" action="show" id="${soa.principal.id}">${soa.getPrincipalAccessName()}</g:link></li>
 								</g:if>

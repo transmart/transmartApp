@@ -24,7 +24,7 @@
 *
 */
 
-import auth.AuthUser
+import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.BioDataExternalCode
 import grails.converters.JSON
 import org.transmart.GlobalFilter

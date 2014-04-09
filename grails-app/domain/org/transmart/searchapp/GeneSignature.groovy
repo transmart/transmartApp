@@ -25,7 +25,7 @@
 
 package org.transmart.searchapp
 
-import auth.AuthUser
+import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.BioAssayPlatform
 import org.transmart.biomart.CellLine
 import org.transmart.biomart.Compound

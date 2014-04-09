@@ -21,7 +21,7 @@
 import org.transmart.searchapp.GeneSignature
 import org.transmart.searchapp.SearchKeyword
 import org.transmart.searchapp.SearchKeywordTerm
-import auth.AuthUser
+import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.BioAssayPlatform
 import org.transmart.biomart.BioDataExternalCode
 import org.transmart.biomart.ConceptCode

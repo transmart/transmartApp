@@ -53,7 +53,7 @@
                                     <label for="secureObject">Secure Object:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:secureObjectPathInstance,field:'secureObject','errors')}">
-                                    <g:select optionKey="id"  optionValue="displayName" from="${auth.SecureObject.list()}" name="secureObject.id" value="${secureObjectPathInstance?.secureObject?.id}" ></g:select>
+                                    <g:select optionKey="id"  optionValue="displayName" from="${org.transmart.searchapp.SecureObject.list()}" name="secureObject.id" value="${secureObjectPathInstance?.secureObject?.id}" ></g:select>
                                 </td>
                             </tr> 
                         

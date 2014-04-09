@@ -22,7 +22,7 @@ import annotation.AmTagDisplayValue
 import annotation.AmTagItem
 import annotation.AmTagTemplate
 import annotation.AmTagTemplateAssociation
-import auth.AuthUser
+import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.BioAssayAnalysis
 import org.transmart.biomart.BioAssayAnalysisData
 import org.transmart.biomart.BioDataExternalCode

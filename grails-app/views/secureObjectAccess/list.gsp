@@ -74,7 +74,7 @@
                 </table>
             </div>
             <div class="paginateButtons">
-                <g:paginate total="${auth.SecureObjectAccess.count()}" />
+                <g:paginate total="${org.transmart.searchapp.SecureObjectAccess.count()}" />
             </div>
         </div>
     </body>

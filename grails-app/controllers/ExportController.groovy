@@ -23,7 +23,7 @@
  * @version $Revision: 10098 $
  *
  */
-import auth.AuthUser
+import org.transmart.searchapp.AuthUser
 import grails.converters.JSON
 
 import javax.servlet.ServletOutputStream

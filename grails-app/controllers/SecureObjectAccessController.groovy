@@ -16,11 +16,10 @@
  * 
  *
  ******************************************************************/
-  
 
 
-import auth.*
 import command.SecureObjectAccessCommand
+import org.transmart.searchapp.*
 
 class SecureObjectAccessController {
 

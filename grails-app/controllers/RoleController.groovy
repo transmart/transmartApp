@@ -22,7 +22,7 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 9178 $
  */
-import auth.Role;
+import org.transmart.searchapp.Role;
 
 /**
  * Authority Controller.

@@ -1,4 +1,4 @@
-package auth
+package org.transmart.searchapp
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *
@@ -18,34 +18,23 @@ package auth
  *
  ******************************************************************/
 
-/**
- * $Id: Requestmap.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- */
 
-/**
- * Request Map domain class.
- */
-class Requestmap {
 
-    String url
-    String configAttribute
+class SecureObjectPath {
     Long id
-    Long version
+    SecureObject secureObject
+    String conceptPath
     static mapping = {
-        table 'SEARCH_REQUEST_MAP'
+        table 'SEARCH_SECURE_OBJECT_PATH'
         id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
+        version false
         columns {
-            id column: 'ID'
-            version column: 'VERSION'
-            configAttribute column: 'CONFIG_ATTRIBUTE'
-            url column: 'URL'
+            id column: 'SEARCH_SECURE_OBJ_PATH_ID'
+            secureObject column: 'SEARCH_SECURE_OBJECT_ID'
+            conceptPath column: 'I2B2_CONCEPT_PATH'
         }
-
     }
+
     static constraints = {
-        url(blank: false, unique: true)
-        configAttribute(blank: false)
     }
 }

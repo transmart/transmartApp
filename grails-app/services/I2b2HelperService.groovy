@@ -19,10 +19,10 @@
 
 
 
-import auth.AuthUser
-import auth.AuthUserSecureAccess
-import auth.SecureAccessLevel
-import auth.SecureObjectPath
+import org.transmart.searchapp.AuthUser
+import org.transmart.searchapp.AuthUserSecureAccess
+import org.transmart.searchapp.SecureAccessLevel
+import org.transmart.searchapp.SecureObjectPath
 import com.recomdata.db.DBHelper
 import com.recomdata.export.*
 import groovy.sql.Sql
