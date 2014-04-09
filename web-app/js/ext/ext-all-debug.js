@@ -23402,7 +23402,7 @@ Ext.extend(Ext.tree.TreeNode, Ext.data.Node, {
     
     disable : function(){
         this.disabled = true;
-        this.unselect();
+        //this.unselect();
         if(this.rendered && this.ui.onDisableChange){ 
             this.ui.onDisableChange(this, true);
         }
