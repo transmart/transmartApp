@@ -75,6 +75,8 @@
 <script type="text/javascript"
 	src="${resource(dir:'js/datasetExplorer', file: 'workflowStatus.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js', file:'myJobs.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'reports.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'workspace.js')}"></script>
 
 <script type="text/javascript"
 	src="${resource(dir:'js/datasetExplorer/exportData', file: 'dataTab.js')}"></script>
