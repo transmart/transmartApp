@@ -485,34 +485,6 @@ Ext.onReady(function()
 								}
 							}
 					),
-					new Ext.Toolbar.Separator(),
-					new Ext.Toolbar.Button(
-							{
-								id : 'savecomparsionbutton',
-								text : 'Save',
-								iconCls : 'savebutton',
-								disabled : false,
-								handler : function()
-								{
-								if(isSubsetEmpty(1) && isSubsetEmpty(2))
-								{
-									alert('Empty subsets found, need at least 1 valid subset to save a comparsion');
-									return;
-								}
-								if((GLOBAL.CurrentSubsetIDs[1] == null && ! isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && ! isSubsetEmpty(2)))
-								{
-									runAllQueries(function()
-											{
-										saveComparison();});
-								}
-								else
-								{
-									saveComparison();
-								}
-								return;
-								}
-							}
-					),
                     new Ext.Toolbar.Separator(),
                     new Ext.Toolbar.Button(
                             {
