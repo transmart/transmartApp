@@ -29,6 +29,9 @@ import org.json.JSONObject
 import org.quartz.JobDataMap
 import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
+import org.transmart.CohortInformation
+import org.transmart.ExperimentData
+import org.transmart.HeatmapValidator
 
 class GenePatternController {
 	def quartzScheduler	

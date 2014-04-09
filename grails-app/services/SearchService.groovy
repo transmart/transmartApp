@@ -17,6 +17,8 @@
  *
  ******************************************************************/
 import groovy.time.TimeCategory
+import org.transmart.SearchFilter
+import org.transmart.SearchResult
 
 /**
  * $Id: SearchService.groovy 10098 2011-10-19 18:39:32Z mmcduffie $

@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,19 +19,24 @@
  ******************************************************************/
   
 
-import com.recomdata.tea.TEABaseResult
 
+import search.SearchKeyword
 /**
  * @author $Author: mmcduffie $
- * $Id: ExperimentAnalysisResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @version $Reversion$
+ * $Id: HeatmapFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @version $Revision: 9178 $
  *
  */
-public class ExperimentAnalysisResult extends TEABaseResult {
+public class HeatmapFilter{
 
-	def experiment
-	Long expCount
-	
-	// current page rendering in session
-	def pagedAnalysisList	
+	String datatype
+	String heatmapfiltertype
+	SearchKeyword searchTerm
+
+
+	def reset ={
+			datatype=null
+			heatmapfiltertype=null
+			searchTerm = null
+	}
 }

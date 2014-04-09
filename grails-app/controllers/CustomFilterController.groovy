@@ -22,6 +22,7 @@
  */
 
 import auth.AuthUser
+import org.transmart.GlobalFilter
 import search.CustomFilter
 import search.CustomFilterItem
 import search.SearchKeyword

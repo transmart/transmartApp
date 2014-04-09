@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,19 +19,32 @@
  ******************************************************************/
   
 
-import bio.Experiment
-
 /**
- * @author $Author: mmcduffie $
- * $Id: ExpAnalysisResultSet.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @version $Reversion$
- *
+ * stores results for expression profile 
  */
-public class ExpAnalysisResultSet{
 
-	def expAnalysisResults =[]
-	Long analysisCount
-    Long expCount
-	boolean groupByExp=false
+ /**
+  * $Id: ExpressionProfileResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+  * @author $Author: mmcduffie $
+  * @version $Revision: 9178 $
+  */
+public class ExpressionProfileResult {
 
+	// genes retrieved from a search
+	def genes = []
+	
+	// diseases retrieved from search or gene change
+	def diseases = []
+	
+	// probesets
+	def probeSets = []
+	
+	// box plot URL 
+	def graphURL = null
+	
+	// dataset items associated with box plot
+	def datasetItems = []
+	
+	 // experiment count from search
+	def profCount = 0
 }

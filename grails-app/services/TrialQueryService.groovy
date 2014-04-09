@@ -23,6 +23,11 @@ import bio.BioAssayAnalysis
 import bio.ClinicalTrial
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.Query
+import org.transmart.AnalysisResult
+import org.transmart.AssayAnalysisValue
+import org.transmart.ExpAnalysisResultSet
+import org.transmart.SearchFilter
+import org.transmart.TrialAnalysisResult
 
 /**
  * $Id: TrialQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

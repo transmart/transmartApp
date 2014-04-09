@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,18 +19,19 @@
  ******************************************************************/
   
 
+import bio.Experiment
 
 /**
  * @author $Author: mmcduffie $
- * $Revision: 9178 $
- * $Id: AccessLogFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * $Id: ExpAnalysisResultSet.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @version $Reversion$
  *
  */
-public class AccessLogFilter{
+public class ExpAnalysisResultSet{
 
-	Date startdate
-	Date enddate
-	
-	
-	
+	def expAnalysisResults =[]
+	Long analysisCount
+    Long expCount
+	boolean groupByExp=false
+
 }

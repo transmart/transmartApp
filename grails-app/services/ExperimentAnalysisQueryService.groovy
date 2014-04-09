@@ -26,6 +26,11 @@ import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.ExperimentAssayAnalysisMVQuery
 import com.recomdata.search.query.Query
 import com.recomdata.util.ElapseTimer
+import org.transmart.AnalysisResult
+import org.transmart.AssayAnalysisValue
+import org.transmart.ExpAnalysisResultSet
+import org.transmart.ExperimentAnalysisResult
+import org.transmart.SearchFilter
 
 /**
  * $Id: ExperimentAnalysisQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

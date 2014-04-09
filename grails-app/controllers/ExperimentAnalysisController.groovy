@@ -30,6 +30,7 @@ import com.recomdata.export.ExportTableNew
 import com.recomdata.util.DomainObjectExcelHelper
 import com.recomdata.util.ElapseTimer
 import fm.FmFolder
+import org.transmart.SearchResult
 
 class ExperimentAnalysisController {
 

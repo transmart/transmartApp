@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,38 +19,40 @@
  ******************************************************************/
   
 
-/**
- * stores filter params for expression profile filter screen
- */
+import bio.ClinicalTrial
+import com.recomdata.tea.TEABaseResult
 
 /**
- * @author $Auther$
- * $Id: ExpressionProfileFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * $Revision: 9178 $
- *
+ * $Id: TrialAnalysisResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
  */
-public class ExpressionProfileFilter{
-	 
-	Long bioDiseaseId
-	Long bioMarkerId
-	String probeSet
+public class TrialAnalysisResult extends TEABaseResult {
+    def trial
+    Long expCount
+    
+    def getProtocol() {
+    	def file = null
+    	for(cr in trial.files){
+    		if (cr.type == "Protocol") {
+    			file = cr
+    		}
+    	}
+    	return file
+    }
 
-	def filterDisease(){
-		return bioDiseaseId!=null && bioDiseaseId>0;
-	}
+    def getFiles() {
+    	def files = []
+    	for (cr in trial.files) {
+    		if (cr.type != "Protocol") {
+    			files.add(cr)
+    		}
+    	}
+    	return files
+    }
 
-	def filterBioMarker(){
-		return bioMarkerId!=null && bioMarkerId>0;
-	}
-
-	def filterProbeSet(){
-		return probeSet!=null && probeSet.length()>0;
-
-	}
-
-	def reset() {
-		bioDiseaseId = null;
-		bioMarkerId = null;
-		probeSet = null;	
-	}
+    def hasResult(){
+    	return analysisCount>0;
+    }
+    
 }

@@ -39,6 +39,7 @@ import org.jfree.chart.servlet.ChartDeleter
 import org.jfree.chart.servlet.ServletUtilities
 import org.jfree.data.statistics.BoxAndWhiskerItem
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset
+import org.transmart.ExpressionProfileResult
 
 import javax.servlet.ServletException
 

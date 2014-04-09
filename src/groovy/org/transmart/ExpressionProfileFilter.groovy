@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,42 +19,38 @@
  ******************************************************************/
   
 
-import bio.BioMarker
-import bio.BioAssayAnalysisData
+/**
+ * stores filter params for expression profile filter screen
+ */
 
 /**
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
- * $Id: AssayAnalysisValue.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Auther$
+ * $Id: ExpressionProfileFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * $Revision: 9178 $
  *
  */
-public class AssayAnalysisValue implements Comparable {
+public class ExpressionProfileFilter{
+	 
+	Long bioDiseaseId
+	Long bioMarkerId
+	String probeSet
 
-	def analysisData
-	BioMarker bioMarker
-
-	// indicator for the up/down regulation (i.e. gene lists and signatures). If null implies
-	// we don't care about the up/down regulation such as for a pathway
-	Double valueMetric
-
-	/**
-	 * comparable interface implementation, sort on NPV
-	 */
-	public int compareTo(Object obj) {
-		// verify correct object type
-		if (!(obj instanceof AssayAnalysisValue)) return -1
-
-		// compare objects
-		AssayAnalysisValue compare = (AssayAnalysisValue) obj;
-		Double thisScore = analysisData.teaNormalizedPValue
-		Double compScore = compare.analysisData.teaNormalizedPValue
-
-		// handle invalid values
-		if(compScore==null && thisScore!=null) return 1;
-		if(thisScore==null && compScore!=null) return -1;
-		if(thisScore==null && compScore==null) return 0;
-
-		return (thisScore.compareTo(compScore))
+	def filterDisease(){
+		return bioDiseaseId!=null && bioDiseaseId>0;
 	}
 
+	def filterBioMarker(){
+		return bioMarkerId!=null && bioMarkerId>0;
+	}
+
+	def filterProbeSet(){
+		return probeSet!=null && probeSet.length()>0;
+
+	}
+
+	def reset() {
+		bioDiseaseId = null;
+		bioMarkerId = null;
+		probeSet = null;	
+	}
 }

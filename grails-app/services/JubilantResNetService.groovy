@@ -21,6 +21,7 @@
  * $Id: JubilantResNetService.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
  */
 import com.recomdata.util.ariadne.*
+import org.transmart.SearchResult
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern

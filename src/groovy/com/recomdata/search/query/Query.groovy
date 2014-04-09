@@ -20,7 +20,7 @@
 
 package com.recomdata.search.query
 
-import GlobalFilter;
+import org.transmart.GlobalFilter;
 
 /**
  * $Id: Query.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

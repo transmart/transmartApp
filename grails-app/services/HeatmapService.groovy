@@ -23,6 +23,7 @@
  * @version $Revision: 9178 $
  */
 import com.recomdata.search.query.AssayAnalysisDataQuery
+import org.transmart.HeatmapDataValue
 
 public class HeatmapService {
     def trialQueryService

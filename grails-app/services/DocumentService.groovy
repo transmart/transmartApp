@@ -22,6 +22,7 @@
 import com.recomdata.search.DocumentHit
 import com.recomdata.search.DocumentQuery
 import grails.util.Holders
+import org.transmart.SearchFilter
 
 /**
  * $Id: DocumentService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

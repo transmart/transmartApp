@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,47 +19,42 @@
  ******************************************************************/
   
 
+import java.util.LinkedHashSet;
+
 /**
- * $Id: KeywordSet.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 9178 $
+ * 
+ * @author mkapoor
+ *
  */
-public class KeywordSet extends LinkedHashSet{
-
-	def getKeywordUniqueIds(){
-		def uidlist = []
-		for(keyword in this){
-			uidlist.add(keyword.uniqueId)
-		}
-		return uidlist
+class CohortInformation {
+	
+	public static final int PLATFORMS_TYPE=1;
+	public static final int TRIALS_TYPE=2;
+	public static final int TIMEPOINTS_TYPE=3;
+	public static final int SAMPLES_TYPE=4;
+	public static final int GPL_TYPE=5;
+	public static final int TISSUE_TYPE=6;
+	public static final int RBM_PANEL_TYPE=7;
+	
+	def platforms=new ArrayList();
+	def trials=new ArrayList();
+	def timepoints=new ArrayList();
+	def samples=new ArrayList();
+	def gpls=new ArrayList();
+	def tissues=new ArrayList();
+	def rbmpanels=new ArrayList();
+	
+	def getAllTrials = 
+	{
+			StringBuilder strng = new StringBuilder();
+    		Iterator itr = trials.iterator();
+    		if(itr.hasNext()){
+    			strng.append(itr.next());
+    		}	
+    		while (itr.hasNext()){
+    			strng.append(",").append(itr.next());
+    		}	
+			
+			return strng.toString();
 	}
-
-	def getKeywordDataIds(){
-		def bioids = []
-		for(keyword in this){
-			bioids.add(keyword.bioDataId)
-		}
-		return bioids
-	}
-
-	def getKeywordDataIdString(){
-		StringBuilder s = new StringBuilder()
-
-		for(keyword in this){
-			if(s.length()>0){
-				s.append(", ")
-			}
-			s.append(keyword.bioDataId)
-		}
-		return s.toString()
-	}
-
-	def removeKeyword(keyword) {
-		for (k in this) {
-			if (k.uniqueId.equals(keyword.uniqueId)) {
-				return this.remove(k)
-			}
-		}
-	}
-
 }

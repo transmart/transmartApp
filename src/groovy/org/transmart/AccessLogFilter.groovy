@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -18,32 +19,18 @@
  ******************************************************************/
   
 
+
 /**
- * stores results for expression profile 
+ * @author $Author: mmcduffie $
+ * $Revision: 9178 $
+ * $Id: AccessLogFilter.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ *
  */
+public class AccessLogFilter{
 
- /**
-  * $Id: ExpressionProfileResult.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-  * @author $Author: mmcduffie $
-  * @version $Revision: 9178 $
-  */
-public class ExpressionProfileResult {
-
-	// genes retrieved from a search
-	def genes = []
+	Date startdate
+	Date enddate
 	
-	// diseases retrieved from search or gene change
-	def diseases = []
 	
-	// probesets
-	def probeSets = []
 	
-	// box plot URL 
-	def graphURL = null
-	
-	// dataset items associated with box plot
-	def datasetItems = []
-	
-	 // experiment count from search
-	def profCount = 0
 }

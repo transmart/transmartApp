@@ -23,6 +23,7 @@ import bio.BioAssayAnalysisData
 import bio.Experiment
 import com.recomdata.util.ExcelGenerator
 import com.recomdata.util.ExcelSheet
+import org.transmart.SearchResult
 
 /**
  * $Id: AnalysisDataExportService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

@@ -21,6 +21,7 @@
 
 import com.recomdata.util.ExcelGenerator
 import com.recomdata.util.ExcelSheet
+import org.transmart.AccessLogFilter
 
 import java.text.SimpleDateFormat;
 class AccessLogController {

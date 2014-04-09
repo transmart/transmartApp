@@ -31,6 +31,8 @@ import org.genepattern.webservice.WebServiceException
 import org.json.JSONException
 import org.json.JSONObject
 import com.recomdata.debugging.*
+import org.transmart.CohortInformation
+import org.transmart.HeatmapValidator
 
 /**
  * $Id: AnalysisController.groovy 11302 2011-12-23 02:59:44Z mkapoor $

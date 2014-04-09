@@ -26,6 +26,10 @@ import com.recomdata.genesignature.TEAScoreManager
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.AssayAnalysisDataTeaQuery
 import com.recomdata.search.query.Query
+import org.transmart.AnalysisResult
+import org.transmart.AssayAnalysisValue
+import org.transmart.ExpAnalysisResultSet
+import org.transmart.SearchFilter
 import search.SearchBioMarkerCorrelFastMV
 
 /**

@@ -27,6 +27,7 @@ import bio.ClinicalTrial
 import bio.Experiment
 import com.recomdata.util.DomainObjectExcelHelper
 import grails.converters.JSON
+import org.transmart.SearchResult
 import search.SearchKeyword
 
 class TrialController {

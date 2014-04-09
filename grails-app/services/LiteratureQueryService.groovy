@@ -26,6 +26,9 @@
 import bio.BioDataExternalCode
 import bio.Literature
 import com.recomdata.search.query.LiteratureDataQuery
+import org.transmart.GlobalFilter
+import org.transmart.LiteratureFilter
+import org.transmart.SearchFilter
 
 class LiteratureQueryService {
 

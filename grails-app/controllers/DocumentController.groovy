@@ -1,3 +1,5 @@
+import org.transmart.SearchResult
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *

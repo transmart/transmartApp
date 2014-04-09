@@ -27,6 +27,9 @@
 import auth.AuthUser
 import bio.BioDataExternalCode
 import grails.converters.JSON
+import org.transmart.GlobalFilter
+import org.transmart.SearchFilter
+import org.transmart.SearchResult
 import search.CustomFilter
 import search.SearchKeyword
 import search.SearchKeywordTerm

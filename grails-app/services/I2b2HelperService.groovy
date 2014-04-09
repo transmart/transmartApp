@@ -27,6 +27,7 @@ import com.recomdata.db.DBHelper
 import com.recomdata.export.*
 import groovy.sql.Sql
 import i2b2.*
+import org.transmart.CohortInformation
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -34,7 +35,6 @@ import org.xml.sax.InputSource
 
 import org.transmartproject.db.i2b2data.ConceptDimension
 import org.transmartproject.db.i2b2data.ObservationFact
-import org.transmartproject.db.querytool.QtQueryResultInstance
 import org.transmartproject.db.querytool.QtPatientSetCollection
 
 import javax.xml.parsers.DocumentBuilder

@@ -17,6 +17,8 @@
  *
  ******************************************************************/
 import com.recomdata.search.query.Query
+import org.transmart.ExperimentAnalysisResult
+import org.transmart.SearchFilter
 
 /**
  * $Id: ExperimentAnalysisTEAService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

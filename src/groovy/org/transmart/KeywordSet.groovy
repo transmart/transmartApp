@@ -1,3 +1,4 @@
+package org.transmart
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -19,36 +20,46 @@
   
 
 /**
-* $Id: EntrezSummary.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
-* @author $Author: mmcduffie $
-* @version $Revision: 9178 $
-*/
-class EntrezSummary {
-	String GeneID
-	String Name
-	String Description
-	String Orgname
-	String OtherAliases
-	String Mim
-	String Summary
-	String NomenclatureStatus
-	
-	def getOMIMID()    {
-		def retValue = null
-		if (Mim != null)  {
-			retValue = Mim.split(":")
+ * $Id: KeywordSet.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
+ * @author $Author: mmcduffie $
+ * @version $Revision: 9178 $
+ */
+public class KeywordSet extends LinkedHashSet{
+
+	def getKeywordUniqueIds(){
+		def uidlist = []
+		for(keyword in this){
+			uidlist.add(keyword.uniqueId)
 		}
-		if (retValue != null && retValue.length > 1)  {
-			retValue = retValue[1]
-		}
-		return retValue
+		return uidlist
 	}
-	
-	def getAliases()    {
-		def retValue = null
-		if (OtherAliases != null) {
-			retValue = OtherAliases.split(",")
+
+	def getKeywordDataIds(){
+		def bioids = []
+		for(keyword in this){
+			bioids.add(keyword.bioDataId)
 		}
-		return retValue		 
+		return bioids
 	}
+
+	def getKeywordDataIdString(){
+		StringBuilder s = new StringBuilder()
+
+		for(keyword in this){
+			if(s.length()>0){
+				s.append(", ")
+			}
+			s.append(keyword.bioDataId)
+		}
+		return s.toString()
+	}
+
+	def removeKeyword(keyword) {
+		for (k in this) {
+			if (k.uniqueId.equals(keyword.uniqueId)) {
+				return this.remove(k)
+			}
+		}
+	}
+
 }

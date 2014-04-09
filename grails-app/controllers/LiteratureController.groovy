@@ -26,6 +26,7 @@ import com.recomdata.util.ExcelGenerator
 import com.recomdata.util.ExcelSheet
 import com.recomdata.util.ariadne.Batch
 import grails.converters.JSON
+import org.transmart.SearchResult
 
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
