@@ -14,13 +14,13 @@ class WorkspaceController {
             //def subsets = Subset.findAllByCreatingUserOrPublicFlag(springSecurityService.getPrincipal().username,true)
             def subsetsCriteria = Subset.createCriteria()
             def subsets = subsetsCriteria{
-//                and{
-//                    or{
+                and{
+                    or{
                         eq("creatingUser",springSecurityService.getPrincipal().username)
                         eq("publicFlag",true)
-//                    }
-//                    eq("deletedFlag",false)
-//                }
+                    }
+                    eq("deletedFlag",false)
+                }
             }
 
             //Construct the email link with placeholders for subset ids.
