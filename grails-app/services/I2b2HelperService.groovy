@@ -4860,7 +4860,7 @@ class I2b2HelperService {
 	{
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
-		renderQueryDefinition(qid, title, pw);
+		renderQueryDefinition(qid, title, pw, regionParams);
 		StringBuffer sb = sw.getBuffer();
 		return sb.toString();
 	}
