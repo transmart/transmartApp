@@ -41,7 +41,7 @@
 	</head>
 	<body>
 		<div id="page">
-			<div id="header"><g:render template="/layouts/commonheader"	model="['app':'accesslog']" /></div>
+			<div id="header-div"><g:render template="/layouts/commonheader"	model="['app':'accesslog']" /></div>
  			<div id='navbar'><g:render template="/layouts/adminnavbar" /></div>
 			<div id="content"><g:layoutBody /></div>    
 		</div>
