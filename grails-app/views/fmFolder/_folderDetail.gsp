@@ -1,5 +1,5 @@
-<%@ page import="org.transmart.biomart.ConceptCode; org.transmart.biomart.BioData" %>
-<!--
+<%@ page import="org.transmart.biomart.ConceptCode; org.transmart.biomart.BioData; org.apache.commons.lang.StringUtils; com.recomdata.util.*; annotation.*" %>
+<%--
   tranSMART - translational medicine data mart
   
   Copyright 2008-2012 Janssen Research & Development, LLC.
@@ -16,8 +16,7 @@
   You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
  
--->
-
+--%>
 
 <script type="text/javascript">
     $j(document).ready(function () {
@@ -39,11 +38,6 @@
 </script>
 
 <g:set var="overlayDiv" value="metaData_div"/>
-<%! import annotation . * %>
-<%! import BioData %>
-<%! import ConceptCode %>
-<%! import com.recomdata.util.* %>
-<%! import org.apache.commons.lang.StringUtils %>
 
 <div style="margin:10px;padding:10px;">
     <g:hiddenField name="parentId" value="${folder?.parentId}"/>
