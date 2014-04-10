@@ -17,9 +17,6 @@
  *
  ******************************************************************/
 
-
-
-
 import com.recomdata.transmart.domain.searchapp.Subset
 import grails.converters.JSON
 import org.transmart.searchapp.AuthUser
@@ -29,9 +26,8 @@ class SubsetController {
     def index = { }
 
     def i2b2HelperService
-    def authenticateService
+    def queriesResourceService
     def springSecurityService
-    //def subsetService
 
     def getQueryIdsForSubset = {
         def subsetId = params["subsetId"];
@@ -78,14 +74,10 @@ class SubsetController {
         }
         catch (Exception e)
         {
-            System.err.println(e.getMessage());
             subset.errors.each { error ->
                 System.err.println(error);
             }
         }
-        /*if(!subset.save(flush:true)){
-
-        }*/
 
         def result=[success: success]
         log.trace(result as JSON)
@@ -94,18 +86,38 @@ class SubsetController {
 
     def query = {
         def subsetId = params["subsetId"]
+        def displayQuery1
+        def displayQuery2
+
         Subset subset = Subset.get(subsetId)
 
-        def queryID1 = subset.queryID1
-        def queryID2 = subset.queryID2
+        def queryID1 = queriesResourceService.getQueryDefinitionForResult(
+                queriesResourceService.getQueryResultFromId(subset.queryID1))
+        displayQuery1 = generateDisplayOutput(queryID1)
 
-        def displayQuery1 = i2b2HelperService.renderQueryDefinitionToString(queryID1.toString(), "", null);
-        def displayQuery2 = ""
-        if(queryID2 > -1){
-            displayQuery2 = i2b2HelperService.renderQueryDefinitionToString(queryID2.toString(), "", null);
+        if (subset.queryID2 != -1) {
+            def queryID2 = queriesResourceService.getQueryDefinitionForResult(
+                    queriesResourceService.getQueryResultFromId(subset.queryID2))
+            displayQuery2 = generateDisplayOutput(queryID2)
         }
 
         render(template:'/subset/query', model:[query1:displayQuery1, query2:displayQuery2])
+    }
+
+    def generateDisplayOutput(qd) {
+        def result = "";
+        qd.panels.each { p ->
+            result += result.size() > 0 ? ("<b>" + (p.invert ? 'NOT' : 'AND') + "</b><br/>") : ''
+//            result += (p.invert ? "NOT" : "AND") + "<br/>"
+            p.items.each { i ->
+                result += i.conceptKey
+                if (i.constraint) {
+                    result += "( with constraints )"
+                }
+                result += "<br/>"
+            }
+        }
+        result
     }
 
     def delete = {

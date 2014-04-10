@@ -1,4 +1,4 @@
-<h3 class="workspaceheader">Subset Manager</h3><br>
+<h3 class="workspaceheader">Subset Manager</h3>
 <table id="subsets" style="width:100%;" class="detail">
 	<thead>
 		<tr>
@@ -146,9 +146,7 @@
 <div id="workspaceQueryDisplayDialog" title="Query Summary"></div>
 <div id="workspaceLinkDisplayDialog" title="Subset Link"></div>
 
-<br>
-<hr></hr>
-<br><h3 class="workspaceheader">Report Manager</h3><br>
+<h3 class="workspaceheader">Report Manager</h3>
 
 <table class="detail" id="reports" style="width:100%;">
 	<thead>

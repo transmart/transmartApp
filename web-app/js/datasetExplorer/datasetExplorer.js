@@ -885,7 +885,7 @@ Ext.onReady(function()
                     split : true,
                     height : 90,
                     layout : 'fit',
-                    autoScroll : true,
+                    autoScroll : false,
                     listeners :
                     {
                         activate : function(p) {
@@ -934,6 +934,24 @@ Ext.onReady(function()
 					collapsible : true
 				}
 		);
+		
+		GalaxyPanel = new Ext.Panel(
+            {
+                id : 'GalaxyPanel',
+                title : 'Galaxy Export',
+                region : 'center',
+                split : true,
+                height : 90,
+                layout : 'fit',
+                listeners :
+                {
+                    activate : function(p) {
+                        getJobsDataForGalaxy(p)
+                    }
+                },
+                collapsible : true
+            }
+         );
 		
 		resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(dataAssociationPanel);
@@ -1040,6 +1058,10 @@ Ext.onReady(function()
             if(false){
 			resultsTabPanel.add(metacoreEnrichmentPanel);
             }
+        }
+		
+		if (GLOBAL.galaxyEnabled == 'true') {
+                resultsTabPanel.add(GalaxyPanel);
         }
 		
 		southCenterPanel = new Ext.Panel(
@@ -2455,7 +2477,12 @@ function getPreviousQueryFromIDComplete(subset, result) {
              * constraint, hence we not need to fill the rest of the parameters,
              * which is good because we don't have that information...
              */
-            var myConcept = new Concept('', key, -1, '', '', '', '', '', oktousevalues, value);
+
+            var tooltip = key.replace("\\\\", "\\");
+            var name_ = tooltip.split("\\");
+            var name = name_[name_.length - 2];
+
+            var myConcept = new Concept(name, key, -1, tooltip, '', '', '', '', oktousevalues, value);
             createPanelItemNew(panel, myConcept);
         }
     }
@@ -4575,13 +4602,33 @@ function setupGridViewWrapper()
 }
 
 
+var getMinimumGridTableHeight = function(){
+    var topBarHeight = jQuery("#northPanel").outerHeight(true);
+    var otherTableComponentHeight = jQuery("#gridViewTable_wrapper").find(".bottom").outerHeight(true) + jQuery("#ext-gen35").outerHeight(true) + jQuery("#ext-gen131").outerHeight(true) + jQuery("#gridViewTable_wrapper").find(".top").outerHeight(true) + jQuery("#gridViewTable_wrapper").find(".dataTables_scrollHead").outerHeight(true);
+    return (topBarHeight + otherTableComponentHeight);
+}
+
+var calcGridDataTableHeight = function() {
+    return (jQuery(window).height() - getMinimumGridTableHeight());
+
+};
+
+jQuery(window).resize(function() {
+
+    jQuery('#gridViewTable_wrapper').find('div.dataTables_scrollBody').css("height", calcGridDataTableHeight() + "px");
+    jQuery('#subsets_wrapper').find('div.dataTables_scrollBody').css("height", calcWorkspaceDataTableHeight() + "px");
+    jQuery('#reports_wrapper').find('div.dataTables_scrollBody').css("height", calcWorkspaceDataTableHeight() + "px");
+});
+
+
+
 function setupGridData(data)
 {
     data.bJQueryUI = true;
     data.bAutoWidth = true;
 
     data.bScrollAutoCss = true;
-    data.sScrollY = (jQuery(window).height() - 240);
+    data.sScrollY = jQuery(window).height() - 199;      //The value is calculated by using getMinimumGridTableHeight()
     data.sScrollX = "100%";
     data.bDestroy = true;
     data.bProcessing = true;
