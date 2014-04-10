@@ -2,12 +2,11 @@ target/
 .buildpath
 .classpath
 .settings
-.classpath
 .project
 .idea/
-*.iml
 *.iml
 *.ipr
 *.iws
 *.log
+/out/
 .DS_Store
