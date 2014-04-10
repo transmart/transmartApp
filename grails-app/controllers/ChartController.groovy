@@ -359,8 +359,14 @@ class ChartController {
 
         /*get the data*/
         log.trace("Getting age data")
-        double[] values3 = i2b2HelperService.getPatientDemographicValueDataForSubset("AGE_IN_YEARS_NUM", result_instance_id1);
-        double[] values4 = i2b2HelperService.getPatientDemographicValueDataForSubset("AGE_IN_YEARS_NUM", result_instance_id2);
+        double[] values3 = s1 ?
+                i2b2HelperService.getPatientDemographicValueDataForSubset(
+                        "AGE_IN_YEARS_NUM", result_instance_id1) :
+                []
+        double[] values4 = s2 ?
+                i2b2HelperService.getPatientDemographicValueDataForSubset(
+                        "AGE_IN_YEARS_NUM", result_instance_id2) :
+                []
 
         log.trace("Rendering age histograms")
         /*render the double histogram*/

@@ -362,9 +362,10 @@ class I2b2HelperService {
 		log.trace("Getting patient set size with id:" + result_instance_id);
 		Integer i=0;
         Sql sql = new Sql(dataSource);
-        String sqlt = """select count(*) as patcount FROM (select distinct patient_num
-		        from qt_patient_set_collection
-				where result_instance_id = ?)""";
+		String sqlt = """select count(distinct(patient_num)) as patcount
+						 FROM qt_patient_set_collection
+						 WHERE result_instance_id = CAST(? AS numeric)""";
+
 		log.trace(sqlt);
 		sql.eachRow(sqlt, [result_instance_id], {row ->
 			log.trace("inrow");
@@ -403,6 +404,10 @@ class I2b2HelperService {
         if (clob == null) {
             return ""
         };
+        if (clob instanceof String) {
+            // postgres schema uses strings in some places oracle uses clobs
+            return clob
+        }
 		def buffer = new byte[1000];
 		def num = 0;
 		def inStream = clob.asciiStream;
@@ -885,7 +890,7 @@ class I2b2HelperService {
 	def HashMap<String,Integer> getPatientDemographicDataForSubset(String col, String result_instance_id) {
 		HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
         Sql sql = new Sql(dataSource)
-        String sqlt = """SELECT a.cat as demcategory, nvl(b.demcount,0) as demcount FROM
+		String sqlt = """SELECT a.cat as demcategory, COALESCE(b.demcount,0) as demcount FROM
 		(SELECT DISTINCT UPPER("""+col+""") as cat FROM patient_dimension) a
 		LEFT OUTER JOIN
 		(SELECT UPPER("""+col+""") as cat,COUNT(*) as demcount FROM patient_dimension
@@ -1086,9 +1091,13 @@ class I2b2HelperService {
 		Set<String>              parentSet  = new HashSet<String>();
 		
 		log.debug("getDistinctConceptSet called with arguments: "+result_instance_id1+" and "+result_instance_id2)
-		
-		workingSet.addAll(getConceptKeysInSubset(result_instance_id1));
-		workingSet.addAll(getConceptKeysInSubset(result_instance_id2));
+
+        if (result_instance_id1) {
+            workingSet.addAll(getConceptKeysInSubset(result_instance_id1));
+        }
+        if (result_instance_id2) {
+            workingSet.addAll(getConceptKeysInSubset(result_instance_id2));
+        }
 		
 		for (String k : workingSet) {
 			// always look for a parent
