@@ -10,12 +10,9 @@ class i2b2DemoDataService {
 	def generateResultInstanceId()
 	{
 		def sqlObject = new Sql(dataSource)
-		
-        //Orcle
-		//def newInstanceId = sqlObject.firstRow('SELECT QT_SQ_QRI_QRIID.nextval NEXTVAL from dual')
 
-        //Netezza
-		def newInstanceId = sqlObject.firstRow('SELECT next value for QT_SQ_QRI_QRIID NEXTVAL')
+        //TODO:All of this needs to be converted to use GORM so that we can run this database agnostic...
+        def newInstanceId = sqlObject.firstRow("SELECT nextval('QT_SQ_QRI_QRIID') NEXTVAL")
 
 		return newInstanceId.NEXTVAL;
 	}
@@ -26,38 +23,17 @@ class i2b2DemoDataService {
 		//This is the object we use for our queries.
 		def sqlObject = new Sql(dataSource)
 
-        //Oracle
-        //Generate the query master id.
-        //def queryMasterId = sqlObject.firstRow('SELECT QT_SQ_QM_QMID.nextval NEXTVAL from dual')
+        def queryMasterId = sqlObject.firstRow("SELECT nextval('QT_SQ_QM_QMID') NEXTVAL")
 
-        //Netezza
-		//Generate the query master id.
-		def queryMasterId = sqlObject.firstRow('SELECT next value for QT_SQ_QM_QMID NEXTVAL')
-
-        //Oracle
-        //Insert a record in the QT_QUERY_MASTER table.
-        //sqlObject.execute("INSERT INTO QT_QUERY_MASTER (QUERY_MASTER_ID, NAME, USER_ID, GROUP_ID, CREATE_DATE, REQUEST_XML, DELETE_FLAG) VALUES (?, ?, 'DEMO','DEMO', sysdate, ?, 'N')", [queryMasterId.NEXTVAL,'Across Trial Query',requestXML])
-
-        //Netezza
 		//Insert a record in the QT_QUERY_MASTER table.
         sqlObject.execute("INSERT INTO QT_QUERY_MASTER (QUERY_MASTER_ID, NAME, USER_ID, GROUP_ID, CREATE_DATE, REQUEST_XML, DELETE_FLAG) VALUES (?, ?, 'DEMO','DEMO', now(), ?, 'N')", [queryMasterId.NEXTVAL,'Across Trial Query',requestXML])
 
-        //Oracle
-        //Generate the query instance id.
-        //def queryInstanceId = sqlObject.firstRow('SELECT QT_SQ_QI_QIID.nextval NEXTVAL from dual')
-
-        //Netezza
 		//Generate the query instance id.
-		def queryInstanceId = sqlObject.firstRow('SELECT next value for  QT_SQ_QI_QIID NEXTVAL')
+		def queryInstanceId = sqlObject.firstRow("SELECT nextval('QT_SQ_QI_QIID') NEXTVAL")
 		
 		//Insert a record in the QT_QUERY_INSTANCE table.
 		sqlObject.execute("INSERT INTO QT_QUERY_INSTANCE (QUERY_INSTANCE_ID, QUERY_MASTER_ID, USER_ID, GROUP_ID, START_DATE) VALUES (?,?,'DEMO','DEMO', now())", [queryInstanceId.NEXTVAL, queryMasterId.NEXTVAL])
 
-        //Oracle
-        //Insert a record in the QT_QUERY_RESULT_INSTANCE table.
-        //sqlObject.execute("INSERT INTO QT_QUERY_RESULT_INSTANCE (RESULT_INSTANCE_ID, QUERY_INSTANCE_ID, RESULT_TYPE_ID, START_DATE, STATUS_TYPE_ID) VALUES (?,?,1,sysdate,3)", [resultInstanceId, queryInstanceId.NEXTVAL])
-
-		//Netezza
 		//Insert a record in the QT_QUERY_RESULT_INSTANCE table.
 		sqlObject.execute("INSERT INTO QT_QUERY_RESULT_INSTANCE (RESULT_INSTANCE_ID, QUERY_INSTANCE_ID, RESULT_TYPE_ID, START_DATE, STATUS_TYPE_ID) VALUES (?,?,1,now(),3)", [resultInstanceId, queryInstanceId.NEXTVAL])
 		
@@ -130,7 +106,7 @@ class i2b2DemoDataService {
 	{
 		//Netezza
 		//This is the final SQL string which does the inserts.
-		def finalSQLString = "INSERT INTO qt_patient_set_collection (patient_set_coll_id, result_instance_id, patient_num) select next value for qt_sq_qs_qsid, ?,t.patient_num from ( SELECT DISTINCT OBSFACT.PATIENT_NUM FROM OBSERVATION_FACT OBSFACT "
+		def finalSQLString = "INSERT INTO qt_patient_set_collection (result_instance_id, patient_num) select ?,t.patient_num from ( SELECT DISTINCT OBSFACT.PATIENT_NUM FROM OBSERVATION_FACT OBSFACT "
 
         //Oracle
         //This is the final SQL string which does the inserts.
