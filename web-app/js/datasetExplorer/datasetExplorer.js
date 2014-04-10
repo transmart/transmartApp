@@ -935,6 +935,24 @@ Ext.onReady(function()
 				}
 		);
 		
+		GalaxyPanel = new Ext.Panel(
+            {
+                id : 'GalaxyPanel',
+                title : 'Galaxy Export',
+                region : 'center',
+                split : true,
+                height : 90,
+                layout : 'fit',
+                listeners :
+                {
+                    activate : function(p) {
+                        getJobsDataForGalaxy(p)
+                    }
+                },
+                collapsible : true
+            }
+         );
+		
 		resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisPanel);
@@ -1040,6 +1058,10 @@ Ext.onReady(function()
             if(false){
 			resultsTabPanel.add(metacoreEnrichmentPanel);
             }
+        }
+		
+		if (GLOBAL.galaxyEnabled == 'true') {
+                resultsTabPanel.add(GalaxyPanel);
         }
 		
 		southCenterPanel = new Ext.Panel(
