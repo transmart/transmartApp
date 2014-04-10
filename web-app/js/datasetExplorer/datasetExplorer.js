@@ -656,42 +656,6 @@ Ext.onReady(function () {
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
 
-        // JBROWSE
-        // =======
-        Ext.Ajax.request ({
-            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
-            method: 'POST',
-            success: function (result) {
-                if (result.responseText === 'true') {
-
-                    // load script
-                    Ext.Ajax.request ({
-                        url: pageInfo.basePath+"/JBrowse/loadScripts",
-                        method: 'POST',
-                        success: function (result) {
-                            var exp = result.responseText.evalJSON();
-                            if (exp.success && exp.files.length > 0)	{
-
-                                var filesArr = [];
-
-                                for (var i = 0; i < exp.files.length; i++) {
-                                    var file = exp.files[i];
-                                    filesArr.push(file.path);
-                                }
-
-                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
-
-                            }
-                        }
-                    });
-
-                }
-            },
-            params: {
-                pluginName: 'jbrowse-plugin'
-            }
-        });
-
         // DALLIANCE
         // =======
         Ext.Ajax.request ({
@@ -736,10 +700,6 @@ Ext.onReady(function () {
 
         function startDalliance() {
             loadDalliance(resultsTabPanel);
-        }
-
-        function startJbrowse() {
-            loadJBrowse(resultsPanel);
         }
 
 		if (GLOBAL.metacoreAnalyticsEnabled) {
