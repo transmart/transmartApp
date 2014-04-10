@@ -120,26 +120,10 @@
         position: fixed;
         bottom: 0;
         width: 100%;
+        padding: 10px;
     }
 
     </style>
-
-    <script type="text/javascript">
-
-        var calcDataTableHeight = function() {
-            return (jQuery(window).height() - 240) + "px";
-        };
-
-        var $window = $(window);
-
-        $window.resize(function() {
-
-           // var myVar = jQuery("#gridViewWrapper").find('.dataTables_scrollBody');
-           // alert(myVar);
-            jQuery('div.dataTables_scrollBody').css("height", calcDataTableHeight());
-        });
-
-    </script>
 
 </head>
 
