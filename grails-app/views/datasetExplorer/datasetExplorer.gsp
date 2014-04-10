@@ -92,9 +92,6 @@
 	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
 		<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
 	
-	<script type="text/javascript" src="${resource(dir:'js/raphael', file:'raphael-min.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichment.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/metacore', file:'metacoreEnrichmentDisplay.js')}"></script>
     <r:layoutResources /><%-- XXX: Use template --%>
 </head>
 
