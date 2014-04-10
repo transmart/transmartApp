@@ -4397,9 +4397,9 @@ function getSummaryStatisticsComplete(result, request)
 	// lastAnalysisResult = result.responseText;
 	resultsTabPanel.setActiveTab('analysisPanel');
 	updateAnalysisPanel(result.responseText, false);
-	getSummaryGridData();
 
 	getExportButtonSecurity();
+    resultsTabPanel.body.unmask();
 }
 
 

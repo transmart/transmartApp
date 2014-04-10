@@ -157,8 +157,19 @@ class i2b2DemoDataService {
 				//As long as this isn't a time series node, add the modifier code to the query.
 				if(currentOrGroup["inOutCode"] == "" || currentOrGroup["inOutCode"] == "false")
 				{
-					sqlModifierConstraint = " MD.MODIFIER_CD = ? "
-					parameterList.push(currentOrGroup["conceptId"]);
+                    if(currentOrGroup["conceptLevel"] == "leaf") {
+                        sqlModifierConstraint = " MD.MODIFIER_CD = ? "
+                        parameterList.push(currentOrGroup["conceptId"]);
+                    }
+                    else
+                    {
+                        sqlModifierConstraint += " MD.MODIFIER_PATH LIKE ? "
+
+                        //The path we need to like is the full concept path with the timepoint text removed.
+                        def pathLike = currentOrGroup["conceptFullName"].replace("\\","\\\\") + "%"
+
+                        parameterList.push(pathLike);
+                    }
 				}
 				
 				//If the in out code isn't empty, we need to filter our analysis by the text name of the visit in visit_dimension.

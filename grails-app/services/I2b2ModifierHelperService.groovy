@@ -172,7 +172,7 @@ class I2b2ModifierHelperService {
        }
 
        log.debug("Running following SQL in getObservationCountForModifierForSubset - " + sqlt)
-       log.debug("Parameters - " + fullname+"%")
+       log.debug("Parameters - " + fullname.replace("\\","\\\\")+"%")
        log.debug("Parameters - " + result_instance_id)
 
         sql.eachRow(sqlt, parameterList, {row ->
