@@ -885,7 +885,7 @@ Ext.onReady(function()
                     split : true,
                     height : 90,
                     layout : 'fit',
-                    autoScroll : true,
+                    autoScroll : false,
                     listeners :
                     {
                         activate : function(p) {
