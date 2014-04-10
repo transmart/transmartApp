@@ -185,8 +185,7 @@ function createPanelItemNew(panel, concept, shortNameDepth)
         li.setAttribute('conceptsetvaluetext','');
     }
     //Create the node
-    var text=document.createTextNode(shortname+" "+valuetext); //used to be name
-    li.appendChild(text);
+    li.innerHTML = shortname + " " + valuetext;
     panel.appendChild(li);
     Ext.get(li).addListener('click',conceptClick);
     Ext.get(li).addListener('contextmenu',conceptRightClick);

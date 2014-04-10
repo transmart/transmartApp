@@ -2455,7 +2455,12 @@ function getPreviousQueryFromIDComplete(subset, result) {
              * constraint, hence we not need to fill the rest of the parameters,
              * which is good because we don't have that information...
              */
-            var myConcept = new Concept('', key, -1, '', '', '', '', '', oktousevalues, value);
+
+            var tooltip = key.replace("\\\\", "\\");
+            var name_ = tooltip.split("\\");
+            var name = name_[name_.length - 2];
+
+            var myConcept = new Concept(name, key, -1, tooltip, '', '', '', '', oktousevalues, value);
             createPanelItemNew(panel, myConcept);
         }
     }
