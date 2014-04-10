@@ -61,6 +61,18 @@ function renderWorkspace(p){
 			initWorkspaceDataTables);
 }
 
+var getMinimumWorkspaceHeight = function(){
+    var topBarHeight = jQuery("#northPanel").outerHeight(true);
+    var otherTableComponentHeight = jQuery("#ext-gen35").outerHeight(true) + jQuery("#ext-gen131").outerHeight(true) + jQuery("#ext-gen192").find(".workspaceheader").outerHeight(true) * 2 + jQuery("#subsets_wrapper").find(".fg-toolbar").outerHeight(true) * 4 + jQuery("#subsets_wrapper").find(".dataTables_scrollHead").outerHeight(true) * 2;
+    return (topBarHeight + otherTableComponentHeight);
+}
+
+var calcWorkspaceDataTableHeight = function() {
+
+    return (jQuery(window).height() - getMinimumWorkspaceHeight())/2;
+
+};
+
 function initWorkspaceDataTables(){
 	subsetsTable = jQuery("#subsets").dataTable({
 	  	 "sPaginationType": "full_numbers",
@@ -72,9 +84,11 @@ function initWorkspaceDataTables(){
 				jQuery(".editSubsetDescriptionBox").hide();
 		    },
 		"bDestroy": true,
-		"sScrollY": "320px",
+        "sScrollY": (jQuery(window).height() - 298)/2,  //The value is calculated by using getMinimumWorkspaceHeight()
 		"sScrollX": "100%",
-		"bProcessing": true
+		"bProcessing": true,
+        "bJQueryUI": true,
+        "bScrollAutoCss": true
 	});
 
 	reportsTable = jQuery("#reports").dataTable({
@@ -87,9 +101,11 @@ function initWorkspaceDataTables(){
 			jQuery(".editReportDescriptionBox").hide();
 		    },
 		"bDestroy": true,
-		"sScrollY": "320px",
+        "sScrollY": (jQuery(window).height() - 298)/2,   //The value is calculated by using getMinimumWorkspaceHeight()
 		"sScrollX": "100%",
-		"bProcessing": true
+		"bProcessing": true,
+        "bJQueryUI": true,
+        "bScrollAutoCss": true
 	});
 	
 	workspaceQueryDisplayDialog = jQuery("#workspaceQueryDisplayDialog").dialog({
