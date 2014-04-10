@@ -32,6 +32,9 @@
   </style>
     <script type="text/javascript"	src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
     <script type="text/javascript"	src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.8.17.custom.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'prototype.js')}"></script>
 </head>
 <body>
 <div class="body">

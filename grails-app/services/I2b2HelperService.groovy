@@ -399,7 +399,7 @@ class I2b2HelperService {
 	 *  Gets the count of a a patient set fromt he result instance id
 	 */
 	def  Integer getPatientSetSize(String result_instance_id) {
-		log.trace("Getting patient set size with id:" + result_instance_id);
+		log.debug("Getting patient set size with id:" + result_instance_id);
 		Integer i=0;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String sqlt = """select count(distinct(patient_num)) as patcount 

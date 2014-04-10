@@ -73,10 +73,10 @@ class I2b2ModifierHelperService {
         String sqlt = "SELECT DISTINCT NAME_CHAR, MODIFIER_PATH, VISIT_IND FROM i2b2demodata.modifier_dimension MD INNER JOIN MODIFIER_METADATA MM ON MM.MODIFIER_CD = MD.MODIFIER_CD WHERE MODIFIER_PATH LIKE ? AND length(MODIFIER_PATH) - length(translate(MODIFIER_PATH, '\\', '')) = ? ORDER BY MODIFIER_PATH";
 
         log.debug("Running following SQL in getModifierDistributionDataForModifier - " + sqlt)
-        log.debug("Parameters - " + modifierPath + "%")
+        log.debug("Parameters - " + modifierPath.replace("\\","\\\\") + "%")
         log.debug("Parameters - " + levelCount)
 
-        sql.eachRow(sqlt, [modifierPath + '%', levelCount],
+        sql.eachRow(sqlt, [modifierPath.replace("\\","\\\\") + '%', levelCount],
             {
                 row ->
 
@@ -161,7 +161,8 @@ class I2b2ModifierHelperService {
        WHERE (((MODIFIER_CD IN (select MODIFIER_CD from i2b2demodata.MODIFIER_DIMENSION MD
        where MODIFIER_PATH LIKE ?)))) AND f.PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)""";
 
-       parameterList.push(fullname+"%")
+       //TODO: Replacing slashes to get this to work in postgres. Needed to escape slashes in concept paths. This might not work in Oracle.
+       parameterList.push(fullname.replace("\\","\\\\")+"%")
        parameterList.push(result_instance_id)
 
        if(inOutCd)
@@ -336,7 +337,9 @@ class I2b2ModifierHelperService {
         log.debug("Parameters - " + resultInstanceId1)
         log.debug("Parameters - " + resultInstanceId2)
 
-        sql.eachRow(sqlt, [resultInstanceId1, resultInstanceId2], {
+
+
+        sql.eachRow(sqlt, [(resultInstanceId1 == "") ? 0 : resultInstanceId1, (resultInstanceId2 == "") ? 0 : resultInstanceId2], {
             row ->
 
             //Pull the XML column out.
