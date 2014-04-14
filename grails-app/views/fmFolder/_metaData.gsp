@@ -51,12 +51,12 @@
 	        	        </g:if>
                 </g:if>
 				<g:elseif test="${amTagItem.tagItemType == 'CUSTOM'}">
-                	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
+                	<g:set var="tagValues" value="${folder.getUniqueId()!=null?AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id]):null}"/>
 	           		<g:if test="${amTagItem.editable == false}">
 						not editable CUSTOM
                 	</g:if>
                 	<g:else>
-                	  	<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
+                	  	<g:set var="tagValues" value="${folder.getUniqueId()!=null?AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id]):null}"/>
 	                	<g:if test="${amTagItem.tagItemSubtype == 'FREETEXT'}">
 		                	<g:if test="${(tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:'')?.length()<100}">
 								<g:textField size="100" name="amTagItem_${amTagItem.id}"  value="${tagValues!=null&&tagValues.size()>0?tagValues[0].displayValue:''}"/>
@@ -78,7 +78,7 @@
                 	</g:else>
 	           </g:elseif>
                 <g:else>
-      			<g:set var="tagValues" value="${AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id])}"/>
+      			<g:set var="tagValues" value="${folder.getUniqueId()!=null?AmTagDisplayValue.findAll('from AmTagDisplayValue a where a.subjectUid=? and a.amTagItem.id=?',[folder.getUniqueId(),amTagItem.id]):null}"/>
             	<g:if test="${amTagItem.tagItemSubtype == 'COMPOUNDPICKLIST'}">
             		<g:render template="${amTagItem.guiHandler}" model="${[measurements:measurements, technologies:technologies, vendors:vendors, platforms:platforms, fieldName:'amTagItem_' + amTagItem.id,searchAction:amTagItem.guiHandler + 'Search',searchController:'metaData', values:tagValues]}" />
 				</g:if>
