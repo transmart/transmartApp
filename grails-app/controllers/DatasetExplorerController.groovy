@@ -16,8 +16,10 @@
  * 
  *
  ******************************************************************/
-  
 
+
+
+import com.recomdata.transmart.domain.searchapp.Subset
 import org.transmart.searchapp.AuthUser;
 
 import grails.converters.*
@@ -33,21 +35,23 @@ class DatasetExplorerController {
 			log.trace("in index");
 			//code for retrieving a saved comparison
 			def pathToExpand=params.path;
-			def sc=params.id;
-			log.trace("DatasetExplorer Controller found saved comparison id="+sc);
+
+            def subsetId = params.sId;
+
 			def qid1=null;
 			def qid2=null;
 			Boolean restorecomparison=false;
-			if (sc!=null && sc!="")
-			{
-				def s=i2b2.Comparison.get(Integer.parseInt(sc))
-				if(s!=null)
-				{
-					restorecomparison=true;
-					qid1=s.queryResultId1;
-					qid2=s.queryResultId2;
-				}
-			}
+
+
+            if(subsetId != null && subsetId != ""){
+                Subset subset = Subset.get(subsetId);
+                if(subset != null){
+                    restorecomparison=true;
+                    qid1 = subset.queryID1;
+                    qid2 = subset.queryID2;
+                }
+
+            }
 			
 			//Grab i2b2 credentials from the config file
 			def i2b2Domain = grailsApplication.config.com.recomdata.i2b2.subject.domain

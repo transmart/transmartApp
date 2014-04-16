@@ -1961,8 +1961,14 @@ function projectDialogComplete()
 
 	if(GLOBAL.RestoreComparison)
 	{
-		getPreviousQueryFromID(1, GLOBAL.RestoreQID1);
-		getPreviousQueryFromID(2, GLOBAL.RestoreQID2);
+        if(GLOBAL.RestoreQID1 != -1){
+            getPreviousQueryFromID(1, GLOBAL.RestoreQID1);
+        }
+
+        if(GLOBAL.RestoreQID2 != -1){
+            getPreviousQueryFromID(2, GLOBAL.RestoreQID2);
+        }
+
 	}
 	if((!GLOBAL.Tokens.indexOf("EXPORT")>-1) && (!GLOBAL.IsAdmin))
 	{
