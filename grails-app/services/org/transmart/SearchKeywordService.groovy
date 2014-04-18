@@ -497,12 +497,11 @@ public class SearchKeywordService {
 
         // display category GS or GL?
         def displayName = (domainKey == GeneSignature.DOMAIN_KEY) ? GeneSignature.DISPLAY_TAG : GeneSignature.DISPLAY_TAG_GL
-        def uniqueId = domainKey + ":" + gs.id
 
         SearchKeyword keyword = new SearchKeyword()
         keyword.properties.keyword = gs.name
         keyword.properties.bioDataId = gs.id
-        keyword.properties.uniqueId = uniqueId
+        keyword.properties.uniqueId = gs.uniqueId
         keyword.properties.dataCategory = domainKey
         keyword.properties.displayDataCategory = displayName
         keyword.properties.dataSource = "Internal"
