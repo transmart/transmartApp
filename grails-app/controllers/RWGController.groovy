@@ -1,10 +1,3 @@
-/**
- * $Id: $
- * @author $Author: $
- * @version $Revision: 14836 $
- */
-
-
 
 import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.Experiment

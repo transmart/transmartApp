@@ -38,7 +38,7 @@ grails.project.dependency.resolution = {
         grailsCentral()
         mavenCentral()
 
-        mavenRepo: 'https://repo.transmartfoundation.org/content/repositories/public/'
+        mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
     }
     dependencies {
         runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
