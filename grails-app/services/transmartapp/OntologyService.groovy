@@ -161,7 +161,7 @@ class OntologyService {
     def checkSubjectLevelData(accession) {
 
         def nodes = i2b2.OntNode.createCriteria().list {
-            eq('sourcesystemcd', accession.toUpperCase())
+            eq('sourcesystemcd', accession?.toUpperCase())
             maxResults(1)
         }
 
