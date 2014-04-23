@@ -30,7 +30,6 @@ import org.genepattern.webservice.JobResult
 import org.genepattern.webservice.WebServiceException
 import org.json.JSONException
 import org.json.JSONObject
-import com.recomdata.debugging.*
 import org.transmart.CohortInformation
 import org.transmart.HeatmapValidator
 
@@ -910,7 +909,7 @@ class AnalysisController {
     void getGeneSearchIdListFromRequest(String genes, String geneAndIdListStr, List<Long> geneSearchIdList, List<String> geneNameList) {
         if (genes == null || genes.length() == 0 || geneAndIdListStr == null || geneAndIdListStr.length() == 0 ||
                 geneSearchIdList == null || geneNameList == null)
-            return null;
+            return;
         Map<String, Long> geneIdMap = new HashMap<String, Long>();
         String[] geneAndIdList = geneAndIdListStr.split("\\|\\|\\|");
         for (String geneAndIdStr : geneAndIdList) {
