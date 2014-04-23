@@ -79,8 +79,9 @@ function jobsstoreLoaded() {
 								loadAnalysisPage(jobType, true, jobName);
 								return;
 							} else { // otherwise .. using visualizer
-								runVisualizerFromSpan(viewerURL, altViewerURL);
-						} else	{
+                                runVisualizerFromSpan(viewerURL, altViewerURL);
+                            }
+						} else {
 							Ext.Ajax.request({
 								url: pageInfo.basePath+"/asyncJob/getjobresults",
 								method: 'POST',
