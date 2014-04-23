@@ -814,8 +814,6 @@ jQuery(document).ready(function() {
 				url:deleteFolderURL,
 				data: {id: id},
 				success: function(response) {
-					//Update viewer with response ("folder has been deleted" message) and update the parent in the browse tree.
-					jQuery('#metadata-viewer').html(response);
 					updateFolder(parent);
 					showDetailDialog(parent);
 					jQuery('.result-folder-name').removeClass('selected');
