@@ -60,12 +60,14 @@ class FormLayoutService {
                             dataType: "string",
                             displayName: "Therapeutic domain",
                             column: "Oncology"
-                    ),
+                    )
+                    /*,
                     new FormLayout(
                             dataType: "string",
                             displayName: "Institution",
                             column: "Sanofi - Oncology BD"
                     )
+                    */
             ]
             return formLayout
         }
