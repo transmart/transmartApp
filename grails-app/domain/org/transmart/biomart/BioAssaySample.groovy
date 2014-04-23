@@ -26,7 +26,7 @@ class BioAssaySample {
  static mapping = {
 	 table 'BIO_ASSAY_SAMPLE'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_ASSAY_SAMPLE_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		bioAssayId column:'BIO_ASSAY_ID'
 		bioSampleId column:'BIO_SAMPLE_ID'

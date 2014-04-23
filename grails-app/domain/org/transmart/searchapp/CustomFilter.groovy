@@ -34,7 +34,7 @@ class CustomFilter {
 	static mapping = {
 		table 'SEARCH_CUSTOM_FILTER'
 		version false
-		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID', schema: 'searchapp']
 	 	columns {
 			id column:'SEARCH_CUSTOM_FILTER_ID'
 			searchUserId column:'SEARCH_USER_ID'

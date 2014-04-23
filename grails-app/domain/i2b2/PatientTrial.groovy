@@ -28,7 +28,7 @@ class PatientTrial {
 static mapping = {
  table 'PATIENT_TRIAL'
  version false
- id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+ id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID', schema: 'searchapp']
  columns {
 	id column:'PATIENT_NUM'
 	trial column:'TRIAL'

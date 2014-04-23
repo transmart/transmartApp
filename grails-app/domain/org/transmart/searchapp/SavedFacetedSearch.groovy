@@ -33,7 +33,7 @@ class SavedFacetedSearch {
 	 static mapping = {
 		 table 'SAVED_FACETED_SEARCH'
 		 version false
-		 id generator:'sequence', params:[sequence:'SEQ_SAVED_FACETED_SEARCH_ID']
+		 id generator:'sequence', params:[sequence:'SEQ_SAVED_FACETED_SEARCH_ID', schema: 'searchapp']
 		 columns {
 			id column:'SAVED_FACETED_SEARCH_ID'
 			userId column: "USER_ID"

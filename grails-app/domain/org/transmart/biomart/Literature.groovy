@@ -37,7 +37,7 @@ class Literature {
 		table 'BIO_DATA_LITERATURE'
 		tablePerHierarchy false
 		version false
-		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 		columns {
 			id column:'BIO_DATA_ID'
 			reference column: 'BIO_LIT_REF_DATA_ID'

@@ -29,7 +29,7 @@ class PatientEventAttribute {
  static mapping = {
 	 table 'BIO_PATIENT_EVENT_ATTRIBUTE'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_PATIENT_EVENT_ATTRIBUTE_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		bioPatientAttrCode column:'BIO_PATIENT_ATTR_CODE'
 		attributeTextValue column:'ATTRIBUTE_TEXT_VALUE'

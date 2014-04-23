@@ -39,7 +39,7 @@ class LiteratureSummaryData {
 		table 'BIO_LIT_SUM_DATA'
 		version false
 		id column:'BIO_LIT_SUM_DATA_ID'
-		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 		columns {
 			etlId column:'ETL_ID'
 			diseaseSite column:'DISEASE_SITE'

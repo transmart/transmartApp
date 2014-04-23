@@ -34,7 +34,7 @@ static mapping = {
 	 table 'BIO_ASSAY_PLATFORM'
 	 version false
 	 cache true
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		id column:'BIO_ASSAY_PLATFORM_ID'
 		name column:'PLATFORM_NAME'

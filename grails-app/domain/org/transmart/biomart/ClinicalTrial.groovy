@@ -56,7 +56,7 @@ class ClinicalTrial extends Experiment {
 	static mapping = {
 		table 'BIO_CLINICAL_TRIAL'
 		version false
-		//id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		//id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 		cache usage:'read-only'
 		columns {
 			id 	column:'BIO_EXPERIMENT_ID'

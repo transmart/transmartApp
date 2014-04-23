@@ -42,7 +42,7 @@ class GeneSignatureItem {
 	static mapping = {
 		table 'SEARCH_GENE_SIGNATURE_ITEM'
 		version false
-		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID', schema: 'searchapp']
 		columns {
 			id column:'ID'
 			geneSignature column:'SEARCH_GENE_SIGNATURE_ID'

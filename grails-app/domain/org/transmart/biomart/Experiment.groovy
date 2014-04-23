@@ -56,7 +56,7 @@ class Experiment implements IExcelProfile {
 		table 'BIO_EXPERIMENT'
 		version false
 		cache usage:'read-only'
-		//	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		//	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 		columns {
 			id column:'BIO_EXPERIMENT_ID'
 			type column:'BIO_EXPERIMENT_TYPE'
