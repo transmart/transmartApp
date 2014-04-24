@@ -220,7 +220,7 @@ function getCRCQueryRequest(subset, queryname)
 {
     if (queryname == "" || queryname == undefined) {
         var d = new Date();
-        queryname = GLOBAL.Username+"'s Query at "+ d.toString();
+        queryname = GLOBAL.Username+"'s Query at "+ d.toUTCString();
     }
 
     var query =
