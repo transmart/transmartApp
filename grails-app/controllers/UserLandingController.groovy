@@ -1,3 +1,5 @@
+import org.transmart.searchapp.AccessLog
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  *
@@ -17,13 +19,6 @@
  *
  ******************************************************************/
 
-/**
- * Central landing zone controller for post login events
- *
- * $Id: UserLandingController.groovy 10133 2011-10-20 21:34:43Z mmcduffie $
- * @author $Author: mmcduffie $
- * @version $Revision: 10133 $
- */
 class UserLandingController {
     /**
      * Dependency injection for the springSecurityService.
