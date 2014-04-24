@@ -139,7 +139,16 @@
             HighDimDataType: '',
             SNPType: '',
             basePath: pageInfo.basePath,
-            hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}'
+            hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
+	        metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
+	        metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}',
+            codeType: 'Concept',
+            AnalysisHasBeenRun: false,
+            ResultSetRegionParams: {},
+            currentReportCodes: [],
+            currentReportStudy: [],
+            currentSubsetsStudy: '',
+            isGridViewLoaded: false
         };
         // initialize browser version variables; see http://www.quirksmode.org/js/detect.html
         BrowserDetect.init();
@@ -174,7 +183,7 @@
 </script>
 <div id="header-div"><g:render template="/layouts/commonheader" model="['app':'datasetExplorer']" /></div>
 <div id="main"></div>
-<h3 id="test">&nbsp;</h3>
+<h3 id="test">Loading ...</h3>
 <tmpl:/RWG/boxSearch hide="true"/>
 <tmpl:/RWG/filterBrowser />
 <div id="sidebartoggle">&nbsp;</div>
@@ -182,15 +191,30 @@
 <div id="filter-div" style="display: none;"></div>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
-	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}">
-	<g:set var="gplogout" value="${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}/gp/logout"/>
-	</g:if>
-	<g:else>
-	<g:set var="gplogout" value=""/>	
-	</g:else>
+	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled}">
 	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
 	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
-		
+	</g:if>
+	
+    <div id="saveReportDialog" style="display:none;font: 11px arial,tahoma,helvetica,sans-serif;font-weight:normal;">
+        <br />
+        Report Name : <input id='txtReportName' type='text' title="Report Name" /> <br />
+        Make Report Public : <input id='chkReportPublic' type='checkbox' value='Y' title="Make Report Public" /><br /><br />
+
+        <input type="button" onclick="saveReport(true,jQuery('#txtReportName').val(),jQuery('#txtReportDescription').val(),jQuery('#chkReportPublic').is(':checked'),GLOBAL.currentReportCodes.join('|'),GLOBAL.currentReportStudy)" value="Create Report" />
+    </div>
+
+    <div id="saveSubsetsDialog" style="display:none;font: 11px arial,tahoma,helvetica,sans-serif;font-weight:normal;">
+        <form id="saveSubsetForm">
+            <br />
+            <em>*</em> Description : <input id='txtSubsetDescription' type='text' name='txtSubsetDescription' title="Subset Description"/>
+            <br />
+            <em>*</em> Make Subset Public : <input id='chkSubsetPublic' type='checkbox' value='Y' title="Subset Public" />
+            <br />
+            <br />
+            <input class="submit" type="submit" value="Save Subsets"/>
+        </form>
+    </div>
 	<span id="visualizerSpan0"></span> <!-- place applet tag here -->
 	<span id="visualizerSpan1"></span> <!-- place applet tag here -->
 <!-- ************************************** -->

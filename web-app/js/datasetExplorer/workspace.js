@@ -62,8 +62,8 @@ function renderWorkspace(p){
 }
 
 var getMinimumWorkspaceHeight = function(){
-    var topBarHeight = jQuery("#northPanel").outerHeight(true);
-    var otherTableComponentHeight = jQuery("#ext-gen35").outerHeight(true) + jQuery("#ext-gen131").outerHeight(true) + jQuery("#ext-gen192").find(".workspaceheader").outerHeight(true) * 2 + jQuery("#subsets_wrapper").find(".fg-toolbar").outerHeight(true) * 4 + jQuery("#subsets_wrapper").find(".dataTables_scrollHead").outerHeight(true) * 2;
+    var topBarHeight = jQuery("#header-div").outerHeight(true) * 2;
+    var otherTableComponentHeight = (jQuery("#subsets_wrapper .dataTables_scrollHead").outerHeight(true) + jQuery("#subsets_wrapper #subsets_length").outerHeight(true) * 5) * 2;
     return (topBarHeight + otherTableComponentHeight);
 }
 
