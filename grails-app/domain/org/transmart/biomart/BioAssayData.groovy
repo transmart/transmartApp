@@ -43,7 +43,7 @@ class BioAssayData {
 	 table 'BIO_ASSAY_DATA'
 	 version false
 	 id column:'BIO_ASSAY_DATA_ID'
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		numericValue column:'NUMERIC_VALUE'
 		textValue column:'TEXT_VALUE'

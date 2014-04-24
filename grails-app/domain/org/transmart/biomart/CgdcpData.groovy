@@ -30,7 +30,7 @@ class CgdcpData extends Literature {
  static mapping = {
 	 table 'BIO_CGDCP_DATA'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		evidenceCode column:'EVIDENCE_CODE'
 		negationIndicator column:'NEGATION_INDICATOR'

@@ -31,8 +31,8 @@ public class AccessLog {
 	Date accesstime;
 
 	static mapping = {
-		table 'SEARCH_APP_ACCESS_LOG'        
-	    id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		table 'SEARCH_APP_ACCESS_LOG'
+	    id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID', schema: 'searchapp']
 		version false
 		id column:'id'
 		username column:'USER_NAME'

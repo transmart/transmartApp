@@ -56,7 +56,7 @@ class BioAssayAnalysisData implements IExcelProfile {
 	static mapping = {
 	 table 'BIO_ASSAY_ANALYSIS_DATA'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		featureGroupName column:'FEATURE_GROUP_NAME'
 		experiment column:'BIO_EXPERIMENT_ID'

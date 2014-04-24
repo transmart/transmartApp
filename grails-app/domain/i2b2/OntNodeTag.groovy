@@ -29,7 +29,7 @@ static belongsTo=[ontnode:OntNode]
 static mapping = {
 	 table 'I2B2_TAGS'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_I2B2_DATA_ID']		
+	 id generator:'sequence', params:[sequence:'SEQ_I2B2_DATA_ID', schema: 'i2b2metadata']
 	 columns {
 		//path column:'PATH'
 		id column:'TAG_ID'

@@ -29,7 +29,7 @@ class CurationDataset {
  static mapping = {
 	 table 'BIO_CURATION_DATASET'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		curationType column:'BIO_CURATION_TYPE'
 		createDate column:'CREATE_DATE'

@@ -31,7 +31,7 @@ class BioSubject {
  static mapping = {
 	 table 'BIO_SUBJECT'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		id column:'BIO_SUBJECT_ID'
 		siteSubjectId column:'SITE_SUBJECT_ID'

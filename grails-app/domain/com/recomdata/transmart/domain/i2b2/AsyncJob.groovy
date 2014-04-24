@@ -38,6 +38,8 @@ class AsyncJob {
     String jobInputsJson
 
     static mapping = {
+        id generator: 'sequence',
+                params:    [sequence: 'hibernate_sequence', schema: 'searchapp']
         table 'I2B2DEMODATA.ASYNC_JOB'
         version false
         jobName column: 'JOB_NAME'

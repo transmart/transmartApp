@@ -106,7 +106,7 @@ class LiteratureAlterationData extends Literature {
 		table 'BIO_LIT_ALT_DATA'
 		version false
 		id column:'BIO_LIT_ALT_DATA_ID'
-		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 		columns {
 			reference column:'BIO_LIT_REF_DATA_ID'
 			inVivoModel column:'IN_VIVO_MODEL_ID'

@@ -29,7 +29,7 @@ class BioDataExternalCode {
  static mapping = {
 	 table 'BIO_DATA_EXT_CODE'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		id column:'BIO_DATA_EXT_CODE_ID'
 		bioDataId column:'BIO_DATA_ID'

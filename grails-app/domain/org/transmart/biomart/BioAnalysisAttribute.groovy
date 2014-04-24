@@ -10,7 +10,7 @@ class BioAnalysisAttribute {
 		table 'BIO_ANALYSIS_ATTRIBUTE'			   
 		version false
 		id column:'BIO_ANALYSIS_ATTRIBUTE_ID'
-		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 		columns {
 		   studyID column:'STUDY_ID'
 		   bioAssayAnalysisID column:'BIO_ASSAY_ANALYSIS_ID'

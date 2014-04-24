@@ -28,7 +28,7 @@ class ContentReference {
 	 table 'BIO_CONTENT_REFERENCE'
 	 version false
 	cache usage:'read-only'
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		id column:'BIO_CONTENT_REFERENCE_ID'
 		type column:'CONTENT_REFERENCE_TYPE'

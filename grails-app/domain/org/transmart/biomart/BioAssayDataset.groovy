@@ -35,7 +35,7 @@ class BioAssayDataset {
 	 table 'BIO_ASSAY_DATASET'
 	 version false
 	 cache usage:'read-only'
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		id column:'BIO_ASSAY_DATASET_ID'
 		name column:'DATASET_NAME'

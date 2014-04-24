@@ -45,7 +45,7 @@ class BioAssayDataStatistics {
  static mapping = {
 	 table 'BIO_ASSAY_DATA_STATS'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_FACT_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_FACT_ID', schema: 'biomart']
 	 columns {
 		id column:'BIO_ASSAY_DATA_STATS_ID'
 		sampleCount column:'BIO_SAMPLE_COUNT'

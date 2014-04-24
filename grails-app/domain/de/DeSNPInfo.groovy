@@ -23,7 +23,7 @@ class DeSNPInfo {
 	 table 'DE_RC_SNP_INFO'
 	 version false
 	 id column:'SNP_INFO_ID'
-	 id generator:'sequence', params:[sequence:'SEQ_DE_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_DATA_ID', schema: 'deapp']
 	 columns {
 		aminoAcidChange column:'AMINO_ACID_CHANGE'
 		codonChange column:'CODON_CHANGE'

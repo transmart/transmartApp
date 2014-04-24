@@ -28,7 +28,7 @@ class BioDataAttribute {
  static mapping = {
 	 table 'BIO_DATA_ATTRIBUTE'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		id column:'BIO_DATA_ATTRIBUTE_ID'
 		propertyCode column:'PROPERTY_CODE'
