@@ -22,7 +22,6 @@ package com.recomdata.transmart.data.export
 
 import com.recomdata.asynchronous.GenericJobService
 import com.recomdata.transmart.domain.i2b2.AsyncJob
-import com.recomdata.transmart.domain.searchapp.AccessLog
 import com.recomdata.transmart.validate.RequestValidator
 import org.apache.commons.lang.StringUtils
 import org.json.JSONArray
@@ -31,6 +30,7 @@ import org.quartz.JobDataMap
 import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
 import grails.util.Holders
+import org.transmart.searchapp.AccessLog
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
 
 class ExportService {

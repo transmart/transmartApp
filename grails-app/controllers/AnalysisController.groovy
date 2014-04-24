@@ -32,6 +32,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import org.transmart.CohortInformation
 import org.transmart.HeatmapValidator
+import org.transmart.searchapp.AccessLog
 
 /**
  * $Id: AnalysisController.groovy 11302 2011-12-23 02:59:44Z mkapoor $

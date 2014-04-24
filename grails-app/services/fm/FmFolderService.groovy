@@ -20,9 +20,9 @@
 package fm
 
 import annotation.*
+import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.BioData
-import com.recomdata.transmart.domain.searchapp.AccessLog
 import com.recomdata.util.FolderType
 import grails.util.Holders
 import grails.validation.ValidationException

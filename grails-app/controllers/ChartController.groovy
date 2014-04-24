@@ -18,7 +18,7 @@
  ******************************************************************/
 
 
-
+import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 import com.recomdata.charting.PieRenderer
 import com.recomdata.export.ExportTableNew

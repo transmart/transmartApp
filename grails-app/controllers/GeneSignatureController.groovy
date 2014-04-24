@@ -18,7 +18,7 @@
  ******************************************************************/
 
 
-
+import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.BioAssayPlatform
 import org.transmart.biomart.CellLine

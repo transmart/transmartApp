@@ -24,6 +24,7 @@
 *
 */
 
+import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 import org.transmart.biomart.BioDataExternalCode
 import grails.converters.JSON
