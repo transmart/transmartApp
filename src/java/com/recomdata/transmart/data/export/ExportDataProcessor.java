@@ -51,8 +51,7 @@ public class ExportDataProcessor {
 				return null;
 
             if (StringUtils.isNotEmpty(ftpServer)) {
-			    inputStream = FTPUtil.downloadFile(true, fileToGet, ftpServer, ftpServerPort,
-                        ftpServerUserName, ftpServerPassword, ftpServerRemotePath);
+			    inputStream = FTPUtil.downloadFile(true, fileToGet);
             }
 
 			// If the file was not found at the FTP location (or we have no FTP server specified),

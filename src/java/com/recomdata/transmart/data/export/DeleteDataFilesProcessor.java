@@ -44,7 +44,7 @@ public class DeleteDataFilesProcessor {
 			@SuppressWarnings("unused")
 			boolean directoryDeleted = deleteDirectoryStructure(new File(dirPath));
 			
-			fileDeleted = FTPUtil.deleteFile(fileToDelete, ftpServer, ftpServerPort, ftpServerUserName, ftpServerPassword, ftpServerRemotePath);
+			fileDeleted = FTPUtil.deleteFile(fileToDelete);
 			//If the file was not found at the FTP location try to delete it from the server Temp dir
 			if (!fileDeleted) {
 				String filePath = tempDir + File.separator + fileToDelete;

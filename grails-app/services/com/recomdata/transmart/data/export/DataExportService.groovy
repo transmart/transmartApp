@@ -122,19 +122,22 @@ class DataExportService {
                             // case "MRNA.TXT":
                             case highDimensionResourceService.knownTypes:
                                 //retVal = geneExpressionDataService.getData(studyList, studyDir, "mRNA.trans", jobDataMap.get("jobName"), resultInstanceIdMap[subset], pivotData, gplIds, null, null, null, null, false)
-
+                                
                                 // boolean splitAttributeColumn
                                 // String (of a number) resultInstanceId
                                 // List<String> conceptPaths
                                 // String dataType
                                 // String studyDir
+                                log.info "Exporting " + selectedFile + " using core api" 
                                 retVal = highDimExportService.exportHighDimData(jobName: jobDataMap.jobName,
                                                                                 splitAttributeColumn: false,
                                                                                 resultInstanceId: resultInstanceIdMap[subset],
                                                                                 conceptPaths: selection[subset][selectedFile].selector,
                                                                                 dataType: selectedFile,
-                                                                                studyDir: studyDir,
+                                                                                studyDir: studyDir
                                                                                 )
+                                log.info "Exported " + selectedFile + " using core api"
+                                 
 								//filesDoneMap is used for building the Clinical Data query
 								filesDoneMap.put('MRNA.TXT', new Boolean(true))
 								break;
@@ -261,7 +264,7 @@ class DataExportService {
 								// 
 							//	def outputDir = "/users/jliu/tmp"
 								def outputDir = grailsApplication.config.com.recomdata.analysis.data.file.dir;
-							def webRootName = jobDataMap.get("appRealPath");
+                                def webRootName = jobDataMap.get("appRealPath");
 								if (webRootName.endsWith(File.separator) == false)
 									webRootName += File.separator;
 								outputDir =  webRootName + outputDir;
