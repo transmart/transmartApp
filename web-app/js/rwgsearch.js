@@ -899,30 +899,24 @@ jQuery(document).ready(function() {
 		if (ids.size() == 0) {return false;}
 
 		window.location = exportURL + "?id=" + ids.join(',');
-	    
-
-		for(j=0; j<ids.size(); j++){
-		    var id = ids[j];
-		    var i=0;
 		   
-		    jQuery('#cartcount').hide();
-		    
-			jQuery.ajax({
-				url:exportRemoveURL,
-				data: {id: id},			
-				success: function(response) {
-					jQuery(checkboxes[i]).closest("tr").remove();
-					console.log(jQuery(checkboxes[i]).attr('name'));
+	    jQuery('#cartcount').hide();
+	    
+		jQuery.ajax({
+			url:exportRemoveURL,
+			data: {id: ids.join(',')},			
+			success: function(response) {
+				for(j=0; j<ids.size(); j++){
+					jQuery(checkboxes[j]).closest("tr").remove();
 					jQuery('#cartcount').show().text(response);
 					updateExportCount();
-					jQuery('#metadata-viewer').find(".exportaddspan[name='" + ids[i] + "']").addClass("foldericon").addClass("add").addClass("link").text('Add to export');
-					i=i+1;
-				},
-				error: function(xhr) {
-					jQuery('#cartcount').show();
+					jQuery('#metadata-viewer').find(".exportaddspan[name='" + ids[j] + "']").addClass("foldericon").addClass("add").addClass("link").text('Add to export');
 				}
-			});
-		}
+			},
+			error: function(xhr) {
+				jQuery('#cartcount').show();
+			}
+		});
 	});
 
 	jQuery('body').on('click', '#closeexport', function() {
