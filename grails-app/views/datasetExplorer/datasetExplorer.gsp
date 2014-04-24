@@ -54,7 +54,6 @@
 <script type="text/javascript"
 	src="${resource(dir:'js/ext-ux', file:'miframe.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>
-<!-- <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'dataAssociation.js')}"></script> -->
 <script type="text/javascript"
 	src="${resource(dir:'js/datasetExplorer', file: 'requests.js')}"></script>
 <script type="text/javascript"
@@ -84,8 +83,10 @@
     <link rel="stylesheet" href="${resource(dir:'css/jquery/skin', file:'ui.dynatree.css')}"></link>      
 	
 	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
-	
- 
+
+    <script type="text/javascript" src="${resource(dir:'js/utils', file:'json2.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/utils', file:'dynamicLoad.js')}"></script>
+
     <!--<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>    -->
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
 	

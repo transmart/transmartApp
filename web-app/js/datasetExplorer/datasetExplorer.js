@@ -649,7 +649,6 @@ Ext.onReady(function () {
 				}
 		);
         resultsTabPanel.add(queryPanel);
-		
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
         resultsTabPanel.add(dataAssociationPanel);
