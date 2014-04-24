@@ -20,10 +20,15 @@
 
 package com.recomdata.transmart.data.export
 
+import groovy.json.JsonSlurper
+import groovy.sql.Sql
+
+import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.text.StrMatcher.CharMatcher
+import org.springframework.transaction.annotation.Transactional
+
 import com.recomdata.snp.SnpData
 import com.recomdata.transmart.data.export.exception.DataNotFoundException
-import org.apache.commons.lang.StringUtils
-import org.springframework.transaction.annotation.Transactional
 
 class DataExportService {
 
@@ -35,10 +40,11 @@ class DataExportService {
 	def metadataService
 	def snpDataService
 	def geneExpressionDataService
-    def ACGHDataService
-    def RNASeqDataService
+    def highDimExportService
+    def highDimensionResourceService
 	def additionalDataService
 	def vcfDataService
+    def dataSource
 	
 	@Transactional(readOnly = true)
     def exportData(jobDataMap) {
@@ -47,16 +53,19 @@ class DataExportService {
 			(checkboxList instanceof List && checkboxList?.isEmpty())) {
 			throw new Exception("Please select the data to Export.");
 		}
-		def jobTmpDirectory = jobDataMap.get('jobTmpDirectory')
-		def resultInstanceIdMap = jobDataMap.get("result_instance_ids")
-		def subsetSelectedFilesMap = jobDataMap.get("subsetSelectedFilesMap")
-		def subsetSelectedPlatformsByFiles = jobDataMap.get("subsetSelectedPlatformsByFiles")
-		def mergeSubSet = jobDataMap.get("mergeSubset")
+        def jobTmpDirectory = jobDataMap.jobTmpDirectory
+        def resultInstanceIdMap = jobDataMap.result_instance_ids
+        def subsetSelectedFilesMap = jobDataMap.subsetSelectedFilesMap
+        def subsetSelectedPlatformsByFiles = jobDataMap.subsetSelectedPlatformsByFiles
+        def mergeSubSet = jobDataMap.mergeSubset
 		//Hard-coded subsets to count 2
 		def subsets = ['subset1', 'subset2']
 		def study = null
 		def File studyDir = null
 		def filesDoneMap = [:]
+        def selection = jobDataMap.selection ?
+            new JsonSlurper().parseText(jobDataMap.selection)
+            : [:]
 		
 		if (StringUtils.isEmpty(jobTmpDirectory)) {
 			jobTmpDirectory = grailsApplication.config.com.recomdata.transmart.data.export.jobTmpDirectory
@@ -67,8 +76,12 @@ class DataExportService {
 		
 		try {
 		subsets.each { subset ->
+            def columnFilter = selection[subset]?.clinical?.selector
 			def snpFilesMap = [:]
-			def selectedFilesList = subsetSelectedFilesMap.get(subset)
+            def selectedFilesList = subsetSelectedFilesMap.get(subset) ?: []
+
+            selectedFilesList?.addAll((selection[subset]?.keySet() ?: []) - ['clinical'])
+
 			if (null != selectedFilesList && !selectedFilesList.isEmpty()) {
 				//Prepare Study dir
 				def List studyList = null
@@ -85,9 +98,8 @@ class DataExportService {
 				def pivotDataValueDef = jobDataMap.get("pivotData")
 				boolean pivotData = new Boolean(true)
 				if(pivotDataValueDef==false) pivotData = new Boolean(false)
-				boolean writeClinicalData = false
-				if(null != resultInstanceIdMap[subset] && !resultInstanceIdMap[subset].isEmpty())
-				{
+                boolean writeClinicalData = 'clinical' in selection[subset]
+                if (resultInstanceIdMap[subset]) {
 					// Construct a list of the URL objects we're running, submitted to the pool
 					selectedFilesList.each() { selectedFile ->
 						
@@ -100,14 +112,29 @@ class DataExportService {
 						log.info 'Working on export of File :: ' + selectedFile
 
 						def List gplIds = subsetSelectedPlatformsByFiles?.get(subset)?.get(selectedFile)
-						def retVal
-						switch (selectedFile)
-						{
+                        def retVal = null
+                        switch (selectedFile) {
 							case "STUDY":
 								retVal = metadataService.getData(studyDir, "experimentalDesign.txt", jobDataMap.get("jobName"), studyList);
+                                log.info("retrieved study data")								
 								break;
-							case "MRNA.TXT":
-								retVal = geneExpressionDataService.getData(studyList, studyDir, "mRNA.trans", jobDataMap.get("jobName"), resultInstanceIdMap[subset], pivotData, gplIds, null, null, null, null, false)
+                            // New high dimensional data
+                            // case "MRNA.TXT":
+                            case highDimensionResourceService.knownTypes:
+                                //retVal = geneExpressionDataService.getData(studyList, studyDir, "mRNA.trans", jobDataMap.get("jobName"), resultInstanceIdMap[subset], pivotData, gplIds, null, null, null, null, false)
+
+                                // boolean splitAttributeColumn
+                                // String (of a number) resultInstanceId
+                                // List<String> conceptPaths
+                                // String dataType
+                                // String studyDir
+                                retVal = highDimExportService.exportHighDimData(jobName: jobDataMap.jobName,
+                                                                                splitAttributeColumn: false,
+                                                                                resultInstanceId: resultInstanceIdMap[subset],
+                                                                                conceptPaths: selection[subset][selectedFile].selector,
+                                                                                dataType: selectedFile,
+                                                                                studyDir: studyDir,
+                                                                                )
 								//filesDoneMap is used for building the Clinical Data query
 								filesDoneMap.put('MRNA.TXT', new Boolean(true))
 								break;
@@ -122,13 +149,10 @@ class DataExportService {
 								if(tissueType == ",") tissueType = ""
 								if(sampleType == ",") sampleType = ""
 								if(timepoint == ",") timepoint = ""
-								
-								if(gplIds != null)
-								{
+
+                                if (gplIds != null) {
 									gplIds 			= gplString.tokenize(",")
-								}
-								else
-								{
+                                } else {
 									gplIds = []
 								}
 								
@@ -194,8 +218,8 @@ class DataExportService {
 								//In this case we need to get a file with Patient ID, Probe ID, Gene, Genotype, Copy Number
 								//We need to grab some inputs from the jobs data map.
 								def pathway = jobDataMap.get("snppathway")
-								def sampleType = jobDataMap.get("snptime")
-								def timepoint = jobDataMap.get("snpsample")
+                                def sampleType = jobDataMap.get("snpsample")
+                                def timepoint = jobDataMap.get("snptime")
 								def tissueType = jobDataMap.get("snptissue")
 								
 								//This object will be our row processor which handles the writing to the SNP text file.
@@ -268,16 +292,13 @@ class DataExportService {
 					//This is list of concept codes that are parents to some child concepts. We need to expand these out in the service call.
 					List parentConceptCodeList = new ArrayList()
 					
-					if(jobDataMap.get("parentNodeList",null) != null)
-					{
+                    if (jobDataMap.get("parentNodeList", null) != null) {
 						//This variable tells us which variable actually holds the parent concept code.
 						String conceptVariable = jobDataMap.get("parentNodeList")
 						
 						//Get the actual concept value from the map.
 						parentConceptCodeList.add(jobDataMap.get(conceptVariable))
-					}
-					else
-					{
+                    } else {
 						parentConceptCodeList = []
 					}
 										
@@ -300,7 +321,9 @@ class DataExportService {
 							throw new DataNotFoundException("There are no patients that meet the criteria selected therefore no clinical data was returned.")
 						}
 					}
-				}
+
+                }
+					
 			}
 		}
 		} catch (Exception e) {
@@ -308,5 +331,25 @@ class DataExportService {
 		}
 		
     }
+    
+    static clinicalDataFileName(String studyDir) {
+
+        String dataTypeName = 'Clinical'
+        String dataTypeFolder = null
+
+        String dataTypeNameDir = (StringUtils.isNotEmpty(dataTypeName) && null != studyDir) ?
+                studyDir +'/'+ dataTypeName : null;
+        String dataTypeFolderDir = (StringUtils.isNotEmpty(dataTypeFolder) && null != dataTypeNameDir) ?
+                dataTypeNameDir +'/'+ dataTypeFolder : null;
+
+        if (null != studyDir && null == dataTypeNameDir) {
+            studyDir
+        } else if (null != studyDir && null != dataTypeNameDir) {
+            ((null == dataTypeFolderDir) ? dataTypeNameDir : dataTypeFolderDir)
+        }
+
+
+
+    }    
 		
 }
