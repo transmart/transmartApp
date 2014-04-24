@@ -255,7 +255,7 @@ function runQueryForSubsetidSingleSubset(callback, divId){
 function getCRCRequest(subset, queryname, divId){
 	if(queryname=="" || queryname==undefined){
 		var d=new Date();
-		queryname=GLOBAL.Username+"'s Query at "+ d.toString();
+		queryname=GLOBAL.Username+"'s Query at "+ d.toUTCString();
 		}
 	var query= '<ns4:query_definition xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\
 	                <query_name>'+queryname+'</query_name>\
@@ -284,7 +284,7 @@ function getCRCRequest(subset, queryname, divId){
 function getCRCRequestSingleSubset(divId, queryname){
 	if(queryname=="" || queryname==undefined){
 		var d=new Date();
-		queryname=GLOBAL.Username+"'s Query at "+ d.toString();
+		queryname=GLOBAL.Username+"'s Query at "+ d.toUTCString();
 		}
 	var query= '<ns4:query_definition xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\
 	                <query_name>'+queryname+'</query_name>\
