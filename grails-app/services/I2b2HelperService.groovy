@@ -923,7 +923,6 @@ class I2b2HelperService {
 		sql.eachRow(sqlt, [resultInstanceId], {row ->
 			xmlrequest=clobToString(row.request_xml);
 			log.trace("REQUEST_XML:" +xmlrequest)
-            System.err.println("REQUEST_XML:" + xmlrequest)
 			
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 			domFactory.setNamespaceAware(true); // never forget this!
