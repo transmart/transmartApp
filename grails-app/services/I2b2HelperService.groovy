@@ -709,10 +709,10 @@ class I2b2HelperService {
                 newrow.put("SAMPLE_CDS", row.SAMPLE_CDS ? row.SAMPLE_CDS : "")
 				newrow.put("subset", subset);
 				newrow.put("TRIAL", row.TRIAL)
-				newrow.put("SEX_CD", row.SEX_CD)
-				newrow.put("AGE_IN_YEARS_NUM", row.AGE_IN_YEARS_NUM.toString())
-				newrow.put("RACE_CD", row.RACE_CD)
-				tablein.putRow(subject, newrow);
+                newrow.put("SEX_CD", row.SEX_CD ? (row.SEX_CD.toLowerCase().equals("m") || row.SEX_CD.toLowerCase().equals("male") ? "male" : (row.SEX_CD.toLowerCase().equals("f") || row.SEX_CD.toLowerCase().equals("female") ? "female" : "NULL")) : "NULL")
+                newrow.put("AGE_IN_YEARS_NUM", row.SEX_CD ? (row.AGE_IN_YEARS_NUM.toString().equals("0") ? "NULL" : row.AGE_IN_YEARS_NUM.toString()) : "NULL")
+                newrow.put("RACE_CD", row.RACE_CD ? (row.RACE_CD.toLowerCase().equals("unknown") ? "NULL" : row.RACE_CD.toLowerCase()) : "NULL")
+                tablein.putRow(subject, newrow);
 			}
 		})
 		//log.trace("FOUND DEMOGRAPHIC DATA=:"+founddata.toString())
@@ -792,7 +792,7 @@ class I2b2HelperService {
 			//pad all the empty values for this column
             for (ExportRowNew row : tablein.getRows()) {
 				if(!row.containsColumn(columnid)) {
-					row.put(columnid, "N");
+					row.put(columnid, "NULL");
 				}
 			}
         } else {
@@ -923,6 +923,7 @@ class I2b2HelperService {
 		sql.eachRow(sqlt, [resultInstanceId], {row ->
 			xmlrequest=clobToString(row.request_xml);
 			log.trace("REQUEST_XML:" +xmlrequest)
+            System.err.println("REQUEST_XML:" + xmlrequest)
 			
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 			domFactory.setNamespaceAware(true); // never forget this!

@@ -30,6 +30,7 @@ import org.transmart.SearchFilter
 import org.transmart.SearchResult
 import org.transmart.biomart.BioDataExternalCode
 import org.transmart.searchapp.*
+import org.transmart.searchapp.SearchKeywordTerm
 
 public class SearchController{
 	def sessionFactory

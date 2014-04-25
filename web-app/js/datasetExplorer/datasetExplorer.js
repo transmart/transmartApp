@@ -643,13 +643,36 @@ Ext.onReady(function () {
 					collapsible : true						
 				}
 		);
+
+        workspacePanel = new Ext.Panel(
+            {
+                id : 'workspacePanel',
+                title : 'Workspace',
+                region : 'center',
+                split : true,
+                height : 90,
+                layout : 'fit',
+                autoScroll : false,
+                listeners :
+                {
+                    activate : function(p) {
+                        renderWorkspace(p)
+                    },
+                    deactivate: function(){
+
+                    }
+                },
+                collapsible : true
+            }
+        );
+
         resultsTabPanel.add(queryPanel);
-		
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
         resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
+		resultsTabPanel.add(workspacePanel);
 
         // DALLIANCE
         // =======
@@ -976,6 +999,9 @@ function onWindowResize() {
 //		var panelTop = jQuery('#dataAssociationBody').offset()['top'];
 //		jQuery('#dataAssociationBody').height(jQuery(window).height() - 50);
 //	}
+    jQuery('#subsets_wrapper').find('div.dataTables_scrollBody').css("height", calcWorkspaceDataTableHeight() + "px");
+    jQuery('#reports_wrapper').find('div.dataTables_scrollBody').css("height", calcWorkspaceDataTableHeight() + "px");
+
 }
 
 
