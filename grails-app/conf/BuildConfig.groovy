@@ -62,13 +62,11 @@ grails.project.dependency.resolution = {
         compile ':spring-security-ldap:2.0-RC2'
         compile ':spring-security-core:2.0-RC2'
 
-        //compile ':transmart-legacy-db:0.3-SNAPSHOT'
-
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
         runtime ':transmart-core:1.0-LH-SNAPSHOT'
         runtime ':resources:1.2.1'
-        compile ':transmart-legacy-db:0.3-SNAPSHOT'
+        compile ':transmart-legacy-db:0.3-ORACLE-SNAPSHOT'
         compile ':search-domain:1.0-SNAPSHOT'
         compile ':biomart-domain:1.0-SNAPSHOT'
         compile ':transmart-java:1.0-SNAPSHOT'
