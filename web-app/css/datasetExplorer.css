@@ -266,7 +266,70 @@ table.AnalysisResults td.blankCell{
 		border: 0px;
 	}
 
+/* workspace subset datatable style*/
+#subsets_length{
+    float: right;
+    margin-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
 
+#subsets_filter{
+    float: right;
+    margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#subsets_info{
+    float: left;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+#subsets_paginate{
+    float: right;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#subset_manager_name{
+    float: left;
+    margin: 10px;
+}
+
+/** workspace report datatable style **/
+
+#reports_length{
+    float: right;
+    margin-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#reports_filter{
+    float: right;
+    margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#reports_info{
+    float: left;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+#reports_paginate{
+    float: right;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#report_manager_name{
+    float: left;
+    margin: 10px;
+}
 
 /* --------------------------------------------- */
 /* Analysis Results with sorting functionality. */

@@ -946,7 +946,10 @@ Ext.onReady(function () {
 
 		showLoginDialog();
 		var h=queryPanel.header;
+
 		}
+
+
 
 );
 
@@ -981,6 +984,8 @@ function onWindowResize() {
     jQuery('#reports_wrapper').find('div.dataTables_scrollBody').css("height", calcWorkspaceDataTableHeight() + "px");
 
 }
+
+
 
 
 /*
