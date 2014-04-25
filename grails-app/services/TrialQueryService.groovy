@@ -469,12 +469,12 @@ class TrialQueryService {
 		def analysisList = []
  
 		// retrieve the descriptions for each analysis
-		def results = org.transmart.biomart.BioAssayAnalysis.executeQuery("select b.id, b.shortDescription, b.longDescription " +
+		def results = BioAssayAnalysis.executeQuery("select b.id, b.shortDescription, b.longDescription " +
 			" from org.transmart.biomart.BioAssayAnalysis b" +
 			" where b.id in (" + analysisIds.join(',') +  ") ORDER BY b.longDescription")
  
 		// retrieve the analyses that are of type Time Course by checking the taxonomy
-		def timeCourseAnalyses = org.transmart.biomart.BioAnalysisAttributeLineage.executeQuery("select b1.bioAnalysisAttribute.bioAssayAnalysisID from org.transmart.biomart.BioAnalysisAttributeLineage b1" +
+		def timeCourseAnalyses =BioAnalysisAttributeLineage.executeQuery("select b1.bioAnalysisAttribute.bioAssayAnalysisID from org.transmart.biomart.BioAnalysisAttributeLineage b1" +
 			" where b1.bioAnalysisAttribute.bioAssayAnalysisID in (" + analysisIds.join(',') +  ") " +
 			" and lower(b1.ancestorTerm.termName) = lower('Time Course')" )
  

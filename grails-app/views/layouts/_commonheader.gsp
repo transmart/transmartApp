@@ -30,6 +30,11 @@
 		   			
         <g:if test="${'genesignature'==app}"><li class="active">Gene Signature/Lists</li></g:if>
         <g:else><li><a href="${createLink([controller:'geneSignature'])}">Gene Signature/Lists</a></li></g:else>
+             
+             
+             <g:if test="${'gwas'==app}"><li class="active">GWAS</li></g:if>
+        <g:else><li><a href="${createLink([controller:'GWAS'])}">GWAS</a></li></g:else>    
+        
             
 		      		<sec:ifAnyGranted roles="ROLE_ADMIN">
             <g:if test="${'accesslog'==app}"><li class="active">Admin</li></g:if>

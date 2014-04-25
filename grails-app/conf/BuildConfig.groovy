@@ -120,6 +120,7 @@ grails.project.dependency.resolution = {
         compile ':spring-security-ldap:2.0-RC2'
         compile ':folder-management:1.0-SNAPSHOT'
         compile ':spring-security-oauth2-provider:1.0.5.2'
+		compile ':transmart-gwas:1.0-SNAPSHOT'
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
         runtime ':transmart-core:1.0-SNAPSHOT'
