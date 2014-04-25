@@ -10,6 +10,11 @@ var workspaceLinkDisplayDialog;
 var workspaceReportCodesDisplayDialog;
 
 function showSaveSubsetsDialog(){
+    if(isSubsetEmpty(1) && isSubsetEmpty(2))
+    {
+        alert('Empty subsets found, need at least 1 valid subset to save a comparsion');
+        return;
+    }
 	var validator = jQuery("#saveSubsetForm").validate({
 			rules: {
 				txtSubsetDescription: "required"
