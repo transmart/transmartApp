@@ -22,7 +22,7 @@ package com.recomdata.transmart.data.export
 
 import com.recomdata.asynchronous.GenericJobService
 import com.recomdata.transmart.domain.i2b2.AsyncJob
-import com.recomdata.transmart.domain.searchapp.AccessLog
+import org.transmart.searchapp.AccessLog
 import com.recomdata.transmart.validate.RequestValidator
 import org.apache.commons.lang.StringUtils
 import org.json.JSONArray

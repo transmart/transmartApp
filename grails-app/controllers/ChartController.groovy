@@ -18,8 +18,6 @@
  ******************************************************************/
 
 
-
-import org.transmart.searchapp.AuthUser
 import com.recomdata.charting.PieRenderer
 import com.recomdata.export.ExportTableNew
 import com.recomdata.statistics.StatHelper
@@ -53,6 +51,8 @@ import org.jfree.data.category.DefaultCategoryDataset
 import org.jfree.data.general.DefaultPieDataset
 import org.jfree.data.general.PieDataset
 import org.jfree.data.statistics.*
+import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.AuthUser
 
 import javax.servlet.ServletException
 import javax.servlet.ServletOutputStream

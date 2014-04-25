@@ -16,13 +16,14 @@
  * 
  *
  ******************************************************************/
-import org.transmart.searchapp.AuthUser
-import org.transmart.searchapp.Principal
-import org.transmart.searchapp.UserGroup
+
 import command.UserGroupCommand
 import grails.converters.JSON
 import grails.validation.ValidationException
-import groovy.sql.Sql
+import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.AuthUser
+import org.transmart.searchapp.Principal
+import org.transmart.searchapp.UserGroup
 
 class UserGroupController {
 
@@ -230,7 +231,7 @@ class UserGroupController {
                     flash.message = "UserGroup ${params.id} updated"
                     	render(template:'addremove',model:[userGroupInstance:userGroupInstance, usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext) ])
                 } else {
-                    render(template: 'addremove', model: [userGroupInstance: userGroupInstance, , usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext)])
+                    render(template: 'addremove', model: [userGroupInstance: userGroupInstance , usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext)])
                 }
             } else {
                 flash.message = "UserGroup not found with id ${params.id}"
@@ -268,7 +269,7 @@ class UserGroupController {
                     flash.message = "UserGroup ${params.id} updated"
                     	render(template:'addremove',model:[userGroupInstance:userGroupInstance, usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext) ])
                     } else {
-                        render(template: 'addremove', model: [userGroupInstance: userGroupInstance, , usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext)])
+                        render(template: 'addremove', model: [userGroupInstance: userGroupInstance , usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext)])
                 }
                 } else {
                 flash.message = "UserGroup not found with id ${params.id}"

@@ -22,10 +22,7 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 10098 $
  */
-import org.transmart.searchapp.AuthUser
-import org.transmart.searchapp.AuthUserSecureAccess
-import org.transmart.searchapp.Role
-import org.transmart.searchapp.GeneSignature
+import org.transmart.searchapp.*
 
 /**
  * User controller.

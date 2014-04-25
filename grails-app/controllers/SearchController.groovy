@@ -24,15 +24,12 @@
 *
 */
 
-import org.transmart.searchapp.AuthUser
-import org.transmart.biomart.BioDataExternalCode
 import grails.converters.JSON
 import org.transmart.GlobalFilter
 import org.transmart.SearchFilter
 import org.transmart.SearchResult
-import org.transmart.searchapp.CustomFilter
-import org.transmart.searchapp.SearchKeyword
-import org.transmart.searchapp.SearchKeywordTerm
+import org.transmart.biomart.BioDataExternalCode
+import org.transmart.searchapp.*
 
 public class SearchController{
 	def sessionFactory

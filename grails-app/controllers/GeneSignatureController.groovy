@@ -18,15 +18,15 @@
  ******************************************************************/
 
 
-
-import org.transmart.searchapp.AuthUser
+import com.recomdata.genesignature.FileSchemaException
+import com.recomdata.genesignature.WizardModelDetails
+import com.recomdata.util.DomainObjectExcelHelper
 import org.transmart.biomart.BioAssayPlatform
 import org.transmart.biomart.CellLine
 import org.transmart.biomart.Compound
 import org.transmart.biomart.ConceptCode
-import com.recomdata.genesignature.FileSchemaException
-import com.recomdata.genesignature.WizardModelDetails
-import com.recomdata.util.DomainObjectExcelHelper
+import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.GeneSignature
 import org.transmart.searchapp.GeneSignatureFileSchema
 

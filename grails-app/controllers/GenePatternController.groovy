@@ -32,6 +32,7 @@ import org.quartz.SimpleTrigger
 import org.transmart.CohortInformation
 import org.transmart.ExperimentData
 import org.transmart.HeatmapValidator
+import org.transmart.searchapp.AccessLog
 
 class GenePatternController {
 	def quartzScheduler	

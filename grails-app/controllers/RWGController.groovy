@@ -1,6 +1,3 @@
-
-import org.transmart.searchapp.AuthUser
-import org.transmart.biomart.Experiment
 import fm.FmFile
 import fm.FmFolder
 import grails.converters.JSON
@@ -8,6 +5,9 @@ import groovy.time.TimeCategory
 import groovy.xml.StreamingMarkupBuilder
 import org.json.JSONArray
 import org.json.JSONObject
+import org.transmart.biomart.Experiment
+import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.SearchKeyword
 import org.transmart.searchapp.SearchTaxonomy
 

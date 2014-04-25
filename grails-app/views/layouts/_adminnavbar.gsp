@@ -50,6 +50,24 @@ Access Log
 </div>
 </div>
 
+<g:if test = "${'${grailsApplication.config.com.galaxy.blend4j.galaxyEnabled}' }" >
+    <div class="navbarBox">
+        <div class="navcontainer1">
+                <h1 class="panelHeader">
+                        Galaxy Users
+                    </h1>
+                <ul class="navlist">
+                        <li>
+                                <span class="adminMenuButton"><g:link class="list" controller="GalaxyUserDetails" action="list">User List</g:link></span>
+                            </li>
+                        <li>
+                                <span class="adminMenuButton"><g:link class="create" controller="GalaxyUserDetails" action="create">Create User</g:link></span>
+                            </li>
+                    </ul>
+            </div>
+    </div>
+</g:if>
+
 <div class='navbarBox'>
 <div class="navcontainer1">
 <h1 class="panelHeader">
