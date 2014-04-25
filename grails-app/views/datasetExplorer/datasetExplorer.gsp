@@ -72,6 +72,7 @@
     <link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/skin', file:'ui.dynatree.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
 
+
     <r:layoutResources />
     <%-- XXX: Use template --%>
 

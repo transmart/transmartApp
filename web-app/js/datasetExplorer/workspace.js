@@ -62,8 +62,8 @@ function renderWorkspace(p){
 }
 
 var getMinimumWorkspaceHeight = function(){
-    var topBarHeight = jQuery("#header-div").outerHeight(true) * 2;
-    var otherTableComponentHeight = (jQuery("#subsets_wrapper .dataTables_scrollHead").outerHeight(true) + jQuery("#subsets_wrapper #subsets_length").outerHeight(true) * 5) * 2;
+    var topBarHeight = jQuery("#header-div").outerHeight(true);
+    var otherTableComponentHeight = jQuery("#ext-gen29").outerHeight(true) + jQuery(".workspaceheader").outerHeight(true) *2 + (jQuery("#subsets_wrapper .dataTables_scrollHead").outerHeight(true) + jQuery("#subsets_wrapper #subsets_length").outerHeight(true) * 2) * 2;
     return (topBarHeight + otherTableComponentHeight);
 }
 
@@ -84,7 +84,7 @@ function initWorkspaceDataTables(){
 				jQuery(".editSubsetDescriptionBox").hide();
 		    },
 		"bDestroy": true,
-        "sScrollY": (jQuery(window).height() - 298)/2,  //The value is calculated by using getMinimumWorkspaceHeight()
+        "sScrollY": (jQuery(window).height() - 271)/2,  //The value is calculated by using getMinimumWorkspaceHeight()
 		"sScrollX": "100%",
 		"bProcessing": true,
         "bJQueryUI": true,
@@ -101,7 +101,7 @@ function initWorkspaceDataTables(){
 			jQuery(".editReportDescriptionBox").hide();
 		    },
 		"bDestroy": true,
-        "sScrollY": (jQuery(window).height() - 298)/2,   //The value is calculated by using getMinimumWorkspaceHeight()
+        "sScrollY": (jQuery(window).height() - 271)/2,   //The value is calculated by using getMinimumWorkspaceHeight()
 		"sScrollX": "100%",
 		"bProcessing": true,
         "bJQueryUI": true,
@@ -139,6 +139,9 @@ function initWorkspaceDataTables(){
 		},
 		width: 600
 	}).css("font-size", "10px");
+
+    jQuery( "#subsets_length" ).before( "<div id=\"subset_manager_name\"><label>Subset Manager</label></div>" );
+    jQuery( "#reports_length" ).before( "<div id=\"report_manager_name\"><label>Report Manager</label></div>" );
 }
 
 function handleKeyPress(event, entityId, entity){
