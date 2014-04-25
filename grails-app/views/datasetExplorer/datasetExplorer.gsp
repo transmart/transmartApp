@@ -36,6 +36,8 @@
     <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dataTables.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'facetedSearch/facetedSearchBrowse.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/ui.multiselect.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.validate.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/additional-methods.min.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'ajax_queue.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/ext-ux', file:'miframe.js')}"></script>
