@@ -152,7 +152,9 @@
             currentReportCodes: [],
             currentReportStudy: [],
             currentSubsetsStudy: '',
-            isGridViewLoaded: false
+            isGridViewLoaded: false,
+            galaxyEnabled: '${grailsApplication.config.com.galaxy.blend4j.galaxyEnabled}',
+            galaxyUrl: "${grailsApplication.config.com.galaxy.blend4j.galaxyURL}"
         };
         // initialize browser version variables; see http://www.quirksmode.org/js/detect.html
         BrowserDetect.init();
