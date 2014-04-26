@@ -62,7 +62,7 @@
     <script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js/galaxy', file:'galaxyExport.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/Galaxy', file:'galaxyExport.js')}"></script>
     <script type="text/javascript" src="//yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script>
 
     <tmpl:/RWG/urls />
