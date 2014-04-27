@@ -3,7 +3,7 @@
 <html>
 <head>
     <!-- Force Internet Explorer 8 to override compatibility mode -->
-    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" >
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <title>Dataset Explorer</title>
@@ -197,10 +197,14 @@
 <div id="filter-div" style="display: none;"></div>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
 <g:form name="exportgridform" controller="chart" action="exportGrid" />
-	<g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.genePatternEnabled}">
-	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
-	<IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
-	</g:if>
+    <g:if test="${'true'==grailsApplication.config.com.recomdata.datasetExplorer.enableGenePattern}">
+        <g:set var="gplogout" value="${grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL}/gp/logout"/>
+    </g:if>
+    <g:else>
+        <g:set var="gplogout" value=""/>
+    </g:else>
+    <IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="gplogin"></IFRAME>
+    <IFRAME src="${gplogout}" width="1" height="1" scrolling="no" frameborder="0" id="altgplogin"></IFRAME>
 	
     <div id="saveReportDialog" style="display:none;font: 11px arial,tahoma,helvetica,sans-serif;font-weight:normal;">
         <br />
