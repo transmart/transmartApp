@@ -23,7 +23,6 @@ package com.recomdata.transmart.data.export
 import grails.converters.JSON
 
 import org.json.JSONObject
-import org.transmartproject.db.dataquery.highdim.DeSubjectSampleMapping
 
 class DataExportController {
 

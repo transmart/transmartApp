@@ -20,29 +20,19 @@
 
 package com.recomdata.asynchronous
 
-import com.recomdata.transmart.data.export.exception.DataNotFoundException;
+import grails.util.Holders
 
+import java.lang.reflect.UndeclaredThrowableException
+
+import org.apache.commons.lang.StringUtils
 import org.quartz.Job
-import org.quartz.JobExecutionContext;
-
-
-import java.io.File;
-import java.lang.reflect.UndeclaredThrowableException;
-
-import com.recomdata.transmart.data.export.util.FTPUtil;
-import com.recomdata.transmart.data.export.util.ZipUtil
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.RegularExpression.Context;
-
-import org.quartz.Job;
-import org.quartz.JobDataMap
-import org.quartz.JobExecutionContext;
-
-import org.apache.commons.lang.StringUtils;
-
-import grails.util.Holders;
-
+import org.quartz.JobExecutionContext
 import org.rosuda.REngine.REXP
-import org.rosuda.REngine.Rserve.*;
+import org.rosuda.REngine.Rserve.*
+
+import com.recomdata.transmart.data.export.exception.DataNotFoundException
+import com.recomdata.transmart.data.export.util.FTPUtil
+import com.recomdata.transmart.data.export.util.ZipUtil
 
 
 /**

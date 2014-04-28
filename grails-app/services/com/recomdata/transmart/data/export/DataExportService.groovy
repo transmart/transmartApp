@@ -21,10 +21,8 @@
 package com.recomdata.transmart.data.export
 
 import groovy.json.JsonSlurper
-import groovy.sql.Sql
 
 import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.text.StrMatcher.CharMatcher
 import org.springframework.transaction.annotation.Transactional
 
 import com.recomdata.snp.SnpData

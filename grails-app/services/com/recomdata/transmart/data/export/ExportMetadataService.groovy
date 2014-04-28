@@ -20,27 +20,10 @@
 
 package com.recomdata.transmart.data.export
 
-import java.util.Collection;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
-import org.json.JSONArray
-import org.json.JSONObject
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.SimpleTrigger;
-
-import com.recomdata.transmart.data.export.ExportDataProcessor
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
-import org.transmart.searchapp.AccessLog
-import org.transmartproject.db.dataquery.highdim.DeSubjectSampleMapping;
-import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
-
-
-import com.recomdata.transmart.validate.RequestValidator;
-import com.recomdata.asynchronous.GenericJobService;
 import grails.util.Holders
+
+import org.transmartproject.core.dataquery.assay.Assay
+import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
 
 class ExportMetadataService {
 
@@ -307,21 +290,21 @@ class ExportMetadataService {
     
     /**
      * Returns a list of unique platforms for a given set of subject sample mappings 
-     * @param ssmList
+     * @param assayList
      * @return  A list of unique platforms, each being a map with the keys
      *              gplId
      *              gplTitle
      *              fileDataCount
      */
-    private getPlatformsForSubjectSampleMappingList( Collection<DeSubjectSampleMapping> ssmList ) {
-        if( !ssmList ) 
+    private getPlatformsForSubjectSampleMappingList( Collection<Assay> assayList ) {
+        if( !assayList ) 
             return []
             
-        return ssmList*.platform.unique().collect { platform ->
+        return assayList*.platform.unique().collect { platform ->
             [
                 gplId: platform.id,
                 gplTitle: platform.title,
-                fileDataCount: ssmList.findAll { ssm -> ssm.platform.id == platform.id }.size()
+                fileDataCount: assayList.findAll { assay -> assay.platform.id == platform.id }.size()
             ]
         }
     }    
