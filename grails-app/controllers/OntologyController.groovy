@@ -2,6 +2,7 @@ import annotation.AmTagItem
 import fm.FmFolderAssociation
 import grails.converters.JSON
 import org.transmart.biomart.Experiment
+import org.transmart.searchapp.AuthUser
 
 class OntologyController {
 
