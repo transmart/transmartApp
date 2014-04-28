@@ -89,7 +89,7 @@ function initWorkspaceDataTables(){
 				jQuery(".editSubsetDescriptionBox").hide();
 		    },
 		"bDestroy": true,
-        "sScrollY": (jQuery(window).height() - 271)/2,  //The value is calculated by using getMinimumWorkspaceHeight()
+        "sScrollY": (jQuery(window).height() - 247)/2,  //The value is calculated by using getMinimumWorkspaceHeight()
 		"sScrollX": "100%",
 		"bProcessing": true,
         "bJQueryUI": true,
@@ -106,7 +106,7 @@ function initWorkspaceDataTables(){
 			jQuery(".editReportDescriptionBox").hide();
 		    },
 		"bDestroy": true,
-        "sScrollY": (jQuery(window).height() - 271)/2,   //The value is calculated by using getMinimumWorkspaceHeight()
+        "sScrollY": (jQuery(window).height() - 247)/2,   //The value is calculated by using getMinimumWorkspaceHeight()
 		"sScrollX": "100%",
 		"bProcessing": true,
         "bJQueryUI": true,
