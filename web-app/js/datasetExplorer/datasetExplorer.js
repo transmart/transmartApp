@@ -3428,7 +3428,7 @@ function getExportButtonSecurityComplete(result) {
 }
 
 function activateTab(tab) {
-    resultsTabPanel.tools.help.dom.style.display = "";
+    resultsTabPanel.tools.help.dom.style.display = "none";
 }
 
 function getSummaryGridData() {
