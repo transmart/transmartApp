@@ -101,23 +101,33 @@ class AsyncJobService {
 		def jobStatus = "Started"
 		
 		def newJob = new AsyncJob(lastRunOn:new Date())
-		newJob.save()
+		//newJob.save() //no longer needed as it requires jobName, jobType and jobStatus to generate the id
 		
 		if (StringUtils.isEmpty(jobName)) {
 			def jobNameBuf = new StringBuffer(userName)
 			jobNameBuf.append('-')
             if (StringUtils.isNotEmpty(jobType)) jobNameBuf.append(jobType)
-			jobNameBuf.append('-').append(newJob.id)
+			//jobNameBuf.append('-').append(newJob.id)
 			jobName = jobNameBuf.toString()
 		}
-		newJob.jobName = jobName 
+		newJob.jobName = jobName
         newJob.jobType = jobType
 		newJob.jobStatus = jobStatus
 		newJob.save()
+
+        def jobNameBuf = new StringBuffer(jobName)
+        jobNameBuf.append('-').append(newJob.id)
+        jobName = jobNameBuf.toString()
+
+        newJob.jobName = jobName
+        newJob.jobType = jobType
+        newJob.jobStatus = jobStatus
+        newJob.save()
 		
 		jobResultsService[jobName] = [:]
 		updateStatus(jobName, jobStatus)
-		
+
+
 		log.debug("Sending ${jobName} back to the client")
 		JSONObject result = new JSONObject()
 		result.put("jobName", jobName)
@@ -225,11 +235,11 @@ class AsyncJobService {
 	 }
 	 //If the job isn't already cancelled, update the job info.
         if (!retValue) {
-		 def asyncJob = AsyncJob.get(jobID)
+		 def asyncJob = AsyncJob.get(Long.parseLong(jobID))
 		 
-            TimeDuration td = TimeCategory.minus(new Date(), asyncJob.lastRunOn)
+        // TimeDuration td = TimeCategory.minus(new Date(), asyncJob.lastRunOn)
             //log.debug("Job has been running for ${td}}")
-            asyncJob.runTime = td
+         //asyncJob.runTime = td
 		 asyncJob.jobStatus = status
 		 if (viewerURL && viewerURL != '') asyncJob.viewerURL = viewerURL
 		 if (altViewerURL && altViewerURL != '' && asyncJob.altViewerURL != null) asyncJob.altViewerURL = altViewerURL
