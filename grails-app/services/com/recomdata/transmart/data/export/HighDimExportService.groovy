@@ -8,9 +8,7 @@ import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstra
 import org.transmartproject.core.dataquery.highdim.projections.AllDataProjection
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 
-/**
- * Created by jan on 1/20/14.
- */
+
 class HighDimExportService {
 
     /**
