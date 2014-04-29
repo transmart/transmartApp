@@ -101,6 +101,9 @@ class AsyncJobService {
 		def jobStatus = "Started"
 		
 		def newJob = new AsyncJob(lastRunOn:new Date())
+
+        newJob.jobType = jobType
+        newJob.jobStatus = jobStatus
 		newJob.save()
 		
 		if (StringUtils.isEmpty(jobName)) {
@@ -110,14 +113,14 @@ class AsyncJobService {
 			jobNameBuf.append('-').append(newJob.id)
 			jobName = jobNameBuf.toString()
 		}
-		newJob.jobName = jobName 
-        newJob.jobType = jobType
-		newJob.jobStatus = jobStatus
+
+		newJob.jobName = jobName
 		newJob.save()
 		
 		jobResultsService[jobName] = [:]
 		updateStatus(jobName, jobStatus)
-		
+
+
 		log.debug("Sending ${jobName} back to the client")
 		JSONObject result = new JSONObject()
 		result.put("jobName", jobName)
@@ -225,11 +228,11 @@ class AsyncJobService {
 	 }
 	 //If the job isn't already cancelled, update the job info.
         if (!retValue) {
-		 def asyncJob = AsyncJob.get(jobID)
+		 def asyncJob = AsyncJob.get(Long.parseLong(jobID))
 		 
-            TimeDuration td = TimeCategory.minus(new Date(), asyncJob.lastRunOn)
+        // TimeDuration td = TimeCategory.minus(new Date(), asyncJob.lastRunOn)
             //log.debug("Job has been running for ${td}}")
-            asyncJob.runTime = td
+         //asyncJob.runTime = td
 		 asyncJob.jobStatus = status
 		 if (viewerURL && viewerURL != '') asyncJob.viewerURL = viewerURL
 		 if (altViewerURL && altViewerURL != '' && asyncJob.altViewerURL != null) asyncJob.altViewerURL = altViewerURL
