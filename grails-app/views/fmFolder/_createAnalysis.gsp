@@ -1,5 +1,5 @@
 <%! import annotation.* %> 
-<%! import bio.* %>  
+<%! import org.transmart.biomart.* %>  
 <%! import com.recomdata.util.* %> 
   
 <g:form name="createAnalysisForm">
