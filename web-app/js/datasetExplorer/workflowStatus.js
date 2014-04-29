@@ -141,7 +141,7 @@ function showWorkflowStatusErrorDialog(jobStatusHeader, jobStatusMsg) {
     $j("#dialog-modal").parent().append(errorDialogDiv);
 
     var ed = $j("#error-dialog-modal").dialog({
-        height: 100, minHeight: 90, maxHeight: 120, width: 300, minWidth: 250, maxWidth: 350, resizable: true, closeOnEscape: true, show: { effect: 'fade', duration: 200 }, hide: { effect: 'fade', duration: 2500 }, dialogClass: 'dialog-modal', title: jobStatusHeader, position: {
+        height: 100, minHeight: 90, maxHeight: 120, width: 300, minWidth: 250, maxWidth: 350, resizable: true, closeOnEscape: true, show: { effect: 'fade', duration: 200 }, hide: { effect: 'fade', duration: 200 }, dialogClass: 'dialog-modal', title: jobStatusHeader, position: {
             my: 'left top',
             at: 'center',
             of: $j("#dialog-modal").parent()
