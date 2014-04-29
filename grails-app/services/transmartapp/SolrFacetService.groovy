@@ -237,7 +237,7 @@ class SolrFacetService {
             def folderAssoc = FmFolderAssociation.findByObjectUid(result.getUniqueId().uniqueId)
             if (folderAssoc) {
                 def folder = folderAssoc.fmFolder
-                folders.push(folder)
+                if(folder.activeInd) folders.push(folder)
             }
         }
 
