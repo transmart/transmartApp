@@ -101,28 +101,21 @@ class AsyncJobService {
 		def jobStatus = "Started"
 		
 		def newJob = new AsyncJob(lastRunOn:new Date())
-		//newJob.save() //no longer needed as it requires jobName, jobType and jobStatus to generate the id
+
+        newJob.jobType = jobType
+        newJob.jobStatus = jobStatus
+		newJob.save()
 		
 		if (StringUtils.isEmpty(jobName)) {
 			def jobNameBuf = new StringBuffer(userName)
 			jobNameBuf.append('-')
             if (StringUtils.isNotEmpty(jobType)) jobNameBuf.append(jobType)
-			//jobNameBuf.append('-').append(newJob.id)
+			jobNameBuf.append('-').append(newJob.id)
 			jobName = jobNameBuf.toString()
 		}
+
 		newJob.jobName = jobName
-        newJob.jobType = jobType
-		newJob.jobStatus = jobStatus
 		newJob.save()
-
-        def jobNameBuf = new StringBuffer(jobName)
-        jobNameBuf.append('-').append(newJob.id)
-        jobName = jobNameBuf.toString()
-
-        newJob.jobName = jobName
-        newJob.jobType = jobType
-        newJob.jobStatus = jobStatus
-        newJob.save()
 		
 		jobResultsService[jobName] = [:]
 		updateStatus(jobName, jobStatus)
