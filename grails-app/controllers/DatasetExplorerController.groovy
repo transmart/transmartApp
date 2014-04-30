@@ -18,7 +18,7 @@
  ******************************************************************/
 
 
-
+import com.recomdata.transmart.domain.searchapp.Subset
 import org.transmart.searchapp.AuthUser
 import grails.converters.JSON
 
@@ -41,18 +41,20 @@ class DatasetExplorerController {
 
         //code for retrieving a saved comparison
         pathToExpand = pathToExpand ?: params.path;
-        def sc = params.id;
-        log.trace("DatasetExplorer Controller found saved comparison id=" + sc);
+        def subsetId = params.sId;
+        log.trace("DatasetExplorer Controller found saved comparison id=" + subsetId);
         def qid1 = null;
         def qid2 = null;
         Boolean restorecomparison = false;
-        if (sc != null && sc != "") {
-            def s = i2b2.Comparison.get(Integer.parseInt(sc))
-            if (s != null) {
-                restorecomparison = true;
-                qid1 = s.queryResultId1;
-                qid2 = s.queryResultId2;
+
+        if(subsetId != null && subsetId != ""){
+            Subset subset = Subset.get(subsetId);
+            if(subset != null){
+                restorecomparison=true;
+                qid1 = subset.queryID1;
+                qid2 = subset.queryID2;
             }
+
         }
 
         def rwgSearchFilter = session['rwgSearchFilter'];
