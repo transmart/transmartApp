@@ -20,14 +20,21 @@
 
 package com.recomdata.transmart.data.export
 
-import org.transmartproject.db.i2b2data.ObservationFact
-import org.transmartproject.db.querytool.QtPatientSetCollection
-import org.transmartproject.db.querytool.QtQueryResultInstance
+import org.springframework.beans.factory.annotation.Autowired
+import org.transmartproject.core.dataquery.clinical.ClinicalDataResource
+import org.transmartproject.core.querytool.QueriesResource
+import org.transmartproject.core.querytool.QueryResult
 
 class DataCountService {
 	
 	def dataSource
     boolean transactional = true
+    
+    @Autowired
+    QueriesResource queriesResource
+    
+    @Autowired
+    ClinicalDataResource clinicalDataResource
 
 	//For the given list of Subjects get counts of what kind of data we have for those cohorts.
 	//We want to return a map that looks like {"PLINK": "102","RBM":"28"}
@@ -188,32 +195,8 @@ class DataCountService {
         if( !resultInstanceId ) 
             return 0
         
-        def resultInstance = QtQueryResultInstance.get( resultInstanceId )
-        
-        if( !resultInstance )
-            return 0
-            
-        // Determine the patients to query. This has a few where clauses:
-        //      - match the selected subset
-        //      - sourceSystemCd should not contain :S:
-        def patientNums = QtPatientSetCollection.executeQuery( "SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ? AND q.patient.sourcesystemCd NOT LIKE '%:S:%'", resultInstanceId )
-        println "PATIENTNUMS: " + patientNums
-        
-        if( !patientNums ) 
-            return 0
-        
-        // Find all low dimensional observations
-        // TODO: Include a check on only low dimensional data, by looking
-        //       at the visual attributes of the concept
-        def rows = ObservationFact.createCriteria().list {
-            projections {
-                groupProperty("patient")
-                countDistinct("patient")
-            }
-            'in'( 'patient.id', patientNums )
-        }
-        
-        rows.size()
+        QueryResult queryResult = queriesResource.getQueryResultFromId( resultInstanceId )
+        clinicalDataResource.getPatientCountWithClinicalData( queryResult )
     }
 	
 	def getCountFromDB(String commandString, Long rId)
