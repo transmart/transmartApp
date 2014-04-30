@@ -21,7 +21,6 @@
 package com.recomdata.transmart.data.export
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.transmartproject.core.dataquery.clinical.ClinicalDataResource
 import org.transmartproject.core.querytool.QueriesResource
 import org.transmartproject.core.querytool.QueryResult
 
@@ -33,9 +32,6 @@ class DataCountService {
     @Autowired
     QueriesResource queriesResource
     
-    @Autowired
-    ClinicalDataResource clinicalDataResource
-
 	//For the given list of Subjects get counts of what kind of data we have for those cohorts.
 	//We want to return a map that looks like {"PLINK": "102","RBM":"28"}
     Map getDataCounts(Long rId, Long[] resultInstanceIds)
@@ -196,7 +192,7 @@ class DataCountService {
             return 0
         
         QueryResult queryResult = queriesResource.getQueryResultFromId( resultInstanceId )
-        clinicalDataResource.getPatientCountWithClinicalData( queryResult )
+        queryResult.getSetSize()
     }
 	
 	def getCountFromDB(String commandString, Long rId)
