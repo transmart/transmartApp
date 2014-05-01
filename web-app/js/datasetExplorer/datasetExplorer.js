@@ -1847,7 +1847,7 @@ function getPreviousQueryFromIDComplete(subset, result) {
              * constraint, hence we not need to fill the rest of the parameters,
              * which is good because we don't have that information...
              */
-            var myConcept = new Concept('', key, -1, '', '', '', '', '', oktousevalues, value);
+            var myConcept = new Concept('', key, -1, '', '', key, '', '', oktousevalues, value);
             createPanelItemNew(panel, myConcept);
         }
     }
