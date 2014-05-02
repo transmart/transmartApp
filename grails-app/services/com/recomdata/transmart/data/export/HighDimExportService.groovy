@@ -1,5 +1,6 @@
 package com.recomdata.transmart.data.export
 
+import org.transmartproject.core.dataquery.DataRow
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.BioMarkerDataRow
@@ -113,7 +114,7 @@ class HighDimExportService {
             writer << header.join('\t') << '\n'
 
             writeloop:
-            for (BioMarkerDataRow<Map<String, String>> datarow : tabularResult) {
+            for (DataRow<AssayColumn,Map<String, String>> datarow : tabularResult) {
                 for (AssayColumn assay : assayList) {
                     rowsFound++
                     // test periodically if the job is cancelled
