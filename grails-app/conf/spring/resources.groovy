@@ -16,9 +16,11 @@
  * 
  *
  ******************************************************************/
+import org.springframework.aop.scope.ScopedProxyFactoryBean
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
+import org.transmart.authorization.CurrentUserBean
 import org.transmart.marshallers.MarshallerRegistrarService
 
 beans = {
@@ -28,6 +30,13 @@ beans = {
     }
 
     marshallerRegistrarService(MarshallerRegistrarService)
+
+    currentUserBeanRequestScoped(CurrentUserBean) { bean ->
+        bean.scope = 'request'
+    }
+    currentUserBean(ScopedProxyFactoryBean) {
+        targetBeanName = 'currentUserBeanRequestScoped'
+    }
 
     dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder) {
 		dataSource = ref('dataSource')
