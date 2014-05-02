@@ -16,11 +16,13 @@
  * 
  *
  ******************************************************************/
+import org.codehaus.groovy.grails.commons.spring.DefaultBeanConfiguration
 import org.springframework.aop.scope.ScopedProxyFactoryBean
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
 import org.transmart.authorization.CurrentUserBean
+import org.transmart.authorization.QueriesResourceAuthorizationDecorator
 import org.transmart.marshallers.MarshallerRegistrarService
 
 beans = {
@@ -30,6 +32,12 @@ beans = {
     }
 
     marshallerRegistrarService(MarshallerRegistrarService)
+
+    /* core-api authorization wrapped beans */
+    queriesResourceAuthorizationDecorator(QueriesResourceAuthorizationDecorator) {
+            DefaultBeanConfiguration bean ->
+        bean.beanDefinition.autowireCandidate = false
+    }
 
     currentUserBeanRequestScoped(CurrentUserBean) { bean ->
         bean.scope = 'request'
