@@ -88,7 +88,7 @@ grails.project.dependency.resolution = {
             excludes 'spring-security-config', 'spring-security-core', 'spring-security-web', 'xercesImpl'
         }
 
-        test 'org.gmock:gmock:0.8.3', {
+        test 'org.gmock:gmock:0.9.0-r435-hyve2', {
             transitive = false
         }
     }
