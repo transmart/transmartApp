@@ -750,6 +750,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#createAssayOverlay').fadeIn();
 		jQuery('#createAssay').empty().addClass('ajaxloading');
+		jQuery('#editMetadata').empty();
 
 		jQuery.ajax({
 			url:createAssayURL,
@@ -770,6 +771,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#createAnalysisOverlay').fadeIn();
 		jQuery('#createAnalysis').empty().addClass('ajaxloading');
+		jQuery('#editMetadata').empty();
 
 		jQuery.ajax({
 			url:createAnalysisURL,
@@ -790,6 +792,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#createFolderOverlay').fadeIn();
 		jQuery('#createFolder').empty().addClass('ajaxloading');
+		jQuery('#editMetadata').empty();
 
 		jQuery.ajax({
 			url:createFolderURL + "?",
@@ -832,6 +835,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#createStudyOverlay').fadeIn();
 		jQuery('#createStudy').empty().addClass('ajaxloading');
+		jQuery('#editMetadata').empty();
 
 		jQuery.ajax({
 			url:createStudyURL,
@@ -852,6 +856,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#createProgramOverlay').fadeIn();
 		jQuery('#createProgram').empty().addClass('ajaxloading');
+		jQuery('#editMetadata').empty();
 
 		jQuery.ajax({
 			url:createProgramURL,
