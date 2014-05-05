@@ -27,7 +27,7 @@ class BioDataCorrelation {
 		static mapping = {
             table 'BIO_DATA_CORRELATION'
             version false
-            id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+            id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
             columns {
                 id column:'BIO_DATA_CORREL_ID'
                 bioDataId column:'BIO_DATA_ID'

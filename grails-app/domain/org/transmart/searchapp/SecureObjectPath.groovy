@@ -26,7 +26,7 @@ class SecureObjectPath {
 		String conceptPath
  static mapping = {
 	 table 'SEARCH_SECURE_OBJECT_PATH'
-	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID', schema: 'searchapp']
 	 version false
 	 columns {
 		id column:'SEARCH_SECURE_OBJ_PATH_ID'

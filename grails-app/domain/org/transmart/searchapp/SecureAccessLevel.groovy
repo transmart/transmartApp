@@ -26,7 +26,7 @@ class SecureAccessLevel {
 	static mapping = {
 		table 'SEARCH_SEC_ACCESS_LEVEL'
 		version false
-		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID', schema: 'searchapp']
 		columns {
 			accessLevelValue column:'ACCESS_LEVEL_VALUE'
 			id column:'SEARCH_SEC_ACCESS_LEVEL_ID'

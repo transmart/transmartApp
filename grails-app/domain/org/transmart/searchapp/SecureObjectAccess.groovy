@@ -30,7 +30,7 @@ class SecureObjectAccess {
 	static mapping = {
 		table 'SEARCH_AUTH_SEC_OBJECT_ACCESS'
 		version false
-		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+		id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID', schema: 'searchapp']
 		columns {
 			id column:'AUTH_SEC_OBJ_ACCESS_ID'
 			principal column:'AUTH_PRINCIPAL_ID'

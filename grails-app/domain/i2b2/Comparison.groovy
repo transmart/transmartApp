@@ -29,7 +29,7 @@ class Comparison {
     static mapping = {
         table 'DE_SAVED_COMPARISON'
         version false
-        id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID']
+        id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_DATA_ID', schema: 'searchapp']
         columns {
             id column: 'COMPARISON_ID'
             queryResultId1 column: 'QUERY_ID1'

@@ -53,7 +53,7 @@ class BioAssayAnalysis implements IExcelProfile {
 		table 'BIO_ASSAY_ANALYSIS'
 		version false
 		cache usage:'read-only'
-		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+		id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 		columns {
 			name column:'ANALYSIS_NAME'
 			shortDescription column:'SHORT_DESCRIPTION'

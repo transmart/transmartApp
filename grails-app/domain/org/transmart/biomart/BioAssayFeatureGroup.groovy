@@ -34,7 +34,7 @@ class BioAssayFeatureGroup {
 	 table 'BIO_ASSAY_FEATURE_GROUP'
 	 version false
 	 cache usage:'read-only'
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		id column:'BIO_ASSAY_FEATURE_GROUP_ID'
 		name column:'FEATURE_GROUP_NAME'

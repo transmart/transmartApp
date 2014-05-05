@@ -28,7 +28,7 @@ class BioAssayAnalysisPlatform {
 	 table 'BIO_ASY_ANALYSIS_PLTFM'
 	 version false
 	 cache usage:'read-only'
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		id column:'BIO_ASY_ANALYSIS_PLTFM_ID'
 		platformName column:'PLATFORM_NAME'

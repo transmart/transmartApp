@@ -34,7 +34,7 @@ class SearchKeyword {
  static mapping = {
 	 table 'SEARCH_KEYWORD'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_SEARCH_DATA_ID', schema: 'searchapp']
 	 columns {
 		keyword column:'KEYWORD'
 		bioDataId column:'BIO_DATA_ID'

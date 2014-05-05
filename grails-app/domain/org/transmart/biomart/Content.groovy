@@ -43,7 +43,7 @@ static mapping = {
  table 'BIO_CONTENT'
  version false
  cache usage:'read-only'
- id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+ id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
  columns {
 	id column:'BIO_FILE_CONTENT_ID'
 	name column:'FILE_NAME'

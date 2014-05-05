@@ -36,7 +36,7 @@ class CellLine {
 	 table 'BIO_CELL_LINE'
 	 version false
 	 cache true
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		disease column:'DISEASE'
 		primarySite column:'PRIMARY_SITE'

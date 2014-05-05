@@ -37,7 +37,7 @@ class Patient {
  static mapping = {
 	 table 'BIO_PATIENT'
 	 version false
-	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID']
+	 id generator:'sequence', params:[sequence:'SEQ_BIO_DATA_ID', schema: 'biomart']
 	 columns {
 		id column:'BIO_PATIENT_ID'
 		firstName column:'FIRST_NAME'

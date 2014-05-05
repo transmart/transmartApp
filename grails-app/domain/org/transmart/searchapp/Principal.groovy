@@ -34,7 +34,7 @@ class Principal {
 		tablePerHierarchy false
 		version false
         id generator: 'sequence',
-           params:    [sequence: 'hibernate_sequence']
+           params:    [sequence: 'hibernate_sequence', schema: 'searchapp']
 		columns
 		{
 			uniqueId column:'UNIQUE_ID'
