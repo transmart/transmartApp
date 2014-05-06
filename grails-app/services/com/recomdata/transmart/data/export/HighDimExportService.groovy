@@ -12,30 +12,6 @@ import org.transmartproject.export.TabSeparatedExporter
 
 class HighDimExportService {
 
-    /**
-     * This are the headers that are used in the tab-separated export files for each field type. Before export, they are
-     * captialised.
-     */
-    Map dataFieldHeaders = [
-            rawIntensity: 'value',
-            intensity: 'value',
-            value: 'value',
-            logIntensity: 'log2e',
-            zscore: 'zscore'
-    ]
-    Map rowFieldHeaders = [
-            geneSymbol: 'gene symbol',
-            geneId: 'gene id',
-            mirnaId: 'mirna id',
-            peptide: 'peptide sequence',
-            antigenName: 'analyte name',
-            uniprotId: 'uniprot id',
-            uniprotName: 'uniprot name',
-            transcriptId: 'transcript id',
-            probe: 'probe id',
-            probeId: 'probe id'
-    ]
-
     def highDimensionResourceService
     // FIXME: jobResultsService lives in Rmodules, so this is probably not a dependency we should have here
     def jobResultsService
@@ -55,6 +31,7 @@ class HighDimExportService {
 
         HighDimensionDataTypeResource dataTypeResource = highDimensionResourceService.getSubResourceForType(dataType)
 
+        // Add constraints to filter the output
         def assayconstraints = []
 
         assayconstraints << dataTypeResource.createAssayConstraint(
@@ -66,18 +43,21 @@ class HighDimExportService {
                 subconstraints:
                         [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
 
-        AllDataProjection projection = dataTypeResource.createProjection(Projection.ALL_DATA_PROJECTION)
+        // Setup class to export the data
+        HighDimExporter exporter = new TabSeparatedExporter()
+        Projection projection = dataTypeResource.createProjection( exporter.projection )
 
-        File outputFile = new File(studyDir, dataType+'.txt')
+        File outputFile = new File(studyDir, dataType + '.txt')
         String fileName = outputFile.getAbsolutePath()
 
+        // Retrieve the data itself
         TabularResult<AssayColumn, DataRow<Map<String, String>>> tabularResult =
                 dataTypeResource.retrieveData(assayconstraints, [], projection)
+
+        // Start exporting
         try {
-            // Start exporting
-            HighDimExporter exporter = new TabSeparatedExporter()
             outputFile.withOutputStream { outputStream ->
-                exporter.export tabularResult, projection, outputStream
+                exporter.export tabularResult, projection, outputStream, { jobIsCancelled(jobName) }
             }
         } finally {
             tabularResult.close()

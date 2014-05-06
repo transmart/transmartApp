@@ -13,6 +13,13 @@ interface HighDimExporter {
      * @return true if the datatype is supported by this exporter, false otherwise
      */
     public boolean isDataTypeSupported( String dataType );
+    
+    /**
+     * Returns the projection name to be used for retrieving
+     * data from the database
+     * @return Projection name
+     */
+    public String getProjection();
 
     /**
      * @return A short string describing the format that is 

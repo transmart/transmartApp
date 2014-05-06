@@ -13,12 +13,12 @@ class TabSeparatedExporter implements HighDimExporter {
     
     @Override
     public boolean isDataTypeSupported(String dataType) {
-        // Each datatype that supports the all data projection
+        // Each datatype that supports the projection used
         // can be exported as tsv
         try {
             HighDimensionDataTypeResource dataTypeResource = 
                     highDimensionResourceService.getSubResourceForType(dataType)
-            return Projection.ALL_DATA_PROJECTION in 
+            return projection in 
                     dataTypeResource.supportedProjections
         } catch( NoSuchResourceException e ) {
             // No resource found for datatype, so not supported.
@@ -167,5 +167,9 @@ class TabSeparatedExporter implements HighDimExporter {
         
     }
 
+    @Override
+    public String getProjection() {
+        Projection.ALL_DATA_PROJECTION
+    }
 
 }
