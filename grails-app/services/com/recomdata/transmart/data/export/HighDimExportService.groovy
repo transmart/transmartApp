@@ -13,6 +13,8 @@ import org.transmartproject.export.TabSeparatedExporter
 class HighDimExportService {
 
     def highDimensionResourceService
+    def highDimExporterRegistry
+    
     // FIXME: jobResultsService lives in Rmodules, so this is probably not a dependency we should have here
     def jobResultsService
 
@@ -44,7 +46,7 @@ class HighDimExportService {
                         [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
 
         // Setup class to export the data
-        HighDimExporter exporter = new TabSeparatedExporter()
+        HighDimExporter exporter = highDimExporterRegistry.getExporterForFormat("TSV")
         Projection projection = dataTypeResource.createProjection( exporter.projection )
 
         File outputFile = new File(studyDir, dataType + '.txt')
