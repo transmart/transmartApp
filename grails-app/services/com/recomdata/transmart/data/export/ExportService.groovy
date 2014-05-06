@@ -30,7 +30,7 @@ import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
 import org.transmart.searchapp.AccessLog
 
-import com.recomdata.asynchronous.GenericJobService
+import com.recomdata.asynchronous.GenericJobExecutor
 import com.recomdata.transmart.domain.i2b2.AsyncJob
 import com.recomdata.transmart.validate.RequestValidator
 
@@ -196,7 +196,7 @@ class ExportService {
 		//This adds a step to the job to create a file link as the plugin output.
 		jdm.put("renderSteps",["FILELINK":""]);
 				
-		def jobDetail = new JobDetail(params.jobName, params.analysis, GenericJobService.class)
+		def jobDetail = new JobDetail(params.jobName, params.analysis, GenericJobExecutor.class)
 		jobDetail.setJobDataMap(jdm);
 		
 		// TODO -- NEED TO BE REVIEWED (f.guitton@imperial.ac.uk)

@@ -41,7 +41,7 @@ import com.recomdata.transmart.data.export.util.ZipUtil
  * @author MMcDuffie
  *
  */
-class GenericJobService implements Job {
+class GenericJobExecutor implements Job {
 	
     def ctx = Holders.grailsApplication.mainContext
     def springSecurityService = ctx.springSecurityService
@@ -253,7 +253,7 @@ class GenericJobService implements Job {
                             }
                         }
                     } catch (Exception e) {
-                        println("Failed to FTP PUT the ZIP file");
+                        log.error("Failed to FTP PUT the ZIP file: " + e.getMessage );
                     }
 
 					break
@@ -316,7 +316,6 @@ class GenericJobService implements Job {
 		RConnection c = new RConnection();
 		
 		log.debug("Attempting following R Command : " + "setwd('${rOutputDirectory}')".replace("\\","\\\\"))
-		println("Attempting following R Command : " + "setwd('${rOutputDirectory}')".replace("\\","\\\\"))
 		
 		//Set the working directory to be our temporary location.
 		String workingDirectoryCommand = "setwd('${rOutputDirectory}')".replace("\\","\\\\")
@@ -357,7 +356,6 @@ class GenericJobService implements Job {
 				}
 				
 			log.debug("Attempting following R Command : " + reformattedCommand)
-			println("Attempting following R Command : " + reformattedCommand)
 			
 			//Run the R command against our server.
 			//x = c.eval(reformattedCommand);
