@@ -20,27 +20,29 @@
 
 package com.recomdata.transmart.data.export
 
-import org.json.JSONObject;
+import grails.converters.JSON
 
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
+import org.json.JSONObject
 
 class DataExportController {
 
+    def exportService
+    def exportMetadataService
+    def springSecurityService
+   
     def index = { }
 	
-	def exportService
-	def springSecurityService
-	
-	//We need to gather a JSON Object to represent the different data types.
-	def getMetaData =
-	{
-		response.setContentType("text/json")
-		render exportService.getMetaData(
-                params.result_instance_id1 as Long,
-                params.result_instance_id2 as Long)
+    //We need to gather a JSON Object to represent the different data types.
+    def getMetaData() {
+        def resultInstanceId1 = params.long( "result_instance_id1" )
+        def resultInstanceId2 = params.long( "result_instance_id2" )
+        
+        render exportMetadataService.getMetaData(
+                resultInstanceId1,
+                resultInstanceId2) as JSON
     }
-
-    def downloadFileExists = {
+    
+     def downloadFileExists() {
 		def InputStream inputStream = exportService.downloadFile(params);
 		response.setContentType("text/json")
 		JSONObject result = new JSONObject()
@@ -55,7 +57,7 @@ class DataExportController {
 		response.outputStream << result.toString()
 	}
 	
-	def downloadFile = {
+	def downloadFile() {
 		def InputStream inputStream = exportService.downloadFile(params);
 		
 		def fileName = params.jobname + ".zip"
@@ -71,7 +73,7 @@ class DataExportController {
 	* Method that will create the new asynchronous job name
 	* Current methodology is username-jobtype-ID from sequence generator
 	*/
-   def createnewjob = {
+   def createnewjob() {
 	   def result = exportService.createExportDataAsyncJob(params, springSecurityService.getPrincipal().username)
 	   
 	   response.setContentType("text/json")

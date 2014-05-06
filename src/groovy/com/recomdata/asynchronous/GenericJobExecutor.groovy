@@ -20,27 +20,19 @@
 
 package com.recomdata.asynchronous
 
-import com.recomdata.transmart.data.export.exception.DataNotFoundException;
+import grails.util.Holders
 
+import java.lang.reflect.UndeclaredThrowableException
+
+import org.apache.commons.lang.StringUtils
 import org.quartz.Job
-import org.quartz.JobExecutionContext;
-
-
-import java.io.File;
-import java.lang.reflect.UndeclaredThrowableException;
-
-import com.recomdata.transmart.data.export.util.FTPUtil;
-import com.recomdata.transmart.data.export.util.ZipUtil
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.RegularExpression.Context;
-
-import org.quartz.Job;
-import org.quartz.JobDataMap
-import org.quartz.JobExecutionContext;
-
-import org.apache.commons.lang.StringUtils;
-
+import org.quartz.JobExecutionContext
 import org.rosuda.REngine.REXP
-import org.rosuda.REngine.Rserve.*;
+import org.rosuda.REngine.Rserve.*
+
+import com.recomdata.transmart.data.export.exception.DataNotFoundException
+import com.recomdata.transmart.data.export.util.FTPUtil
+import com.recomdata.transmart.data.export.util.ZipUtil
 
 
 /**
@@ -49,18 +41,18 @@ import org.rosuda.REngine.Rserve.*;
  * @author MMcDuffie
  *
  */
-class GenericJobService implements Job {
+class GenericJobExecutor implements Job {
 	
-	def springSecurityService 
-	def i2b2HelperService 
-	def i2b2ExportHelperService 
-	def snpDataService
-	def dataExportService
-	def jobResultsService
-	def asyncJobService
-	def grailsApplication
-	
-	String tempFolderDirectory
+    def ctx = Holders.grailsApplication.mainContext
+    def springSecurityService = ctx.springSecurityService
+    def jobResultsService = ctx.jobResultsService
+    def i2b2HelperService = ctx.i2b2HelperService
+    def i2b2ExportHelperService = ctx.i2b2ExportHelperService
+    def snpDataService = ctx.snpDataService
+    def dataExportService = ctx.dataExportService
+    def asyncJobService = ctx.asyncJobService
+
+    final String tempFolderDirectory = Holders.config.com.recomdata.plugins.tempFolderDirectory
 	
 	String jobTmpParentDir
 	String jobTmpDirectory
@@ -87,11 +79,13 @@ class GenericJobService implements Job {
 				log.debug("\t${_key} -> ${jobDataMap[_key]}")
 			}
 		}
+        
+        log.info("Data Export Service: " + dataExportService )
 		
-		grailsApplication = jobDataMap.get("SGA")
-		jobResultsService = jobDataMap.get("SJRS")
-		asyncJobService = jobDataMap.get("SAJS")
-		dataExportService = jobDataMap.get("SDES")
+//		grailsApplication = jobDataMap.get("SGA")
+//		jobResultsService = jobDataMap.get("SJRS")
+//		asyncJobService = jobDataMap.get("SAJS")
+//		dataExportService = jobDataMap.get("SDES")
 		
 	}
 	// --
@@ -107,8 +101,6 @@ class GenericJobService implements Job {
 		
 		//Initialize
 		init();
-		
-		tempFolderDirectory = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
 		
 		//Initialize the jobTmpDirectory which will be used during bundling in ZipUtil
 		jobTmpDirectory = tempFolderDirectory + File.separator + "${jobName}" + File.separator
@@ -132,7 +124,6 @@ class GenericJobService implements Job {
 		String sResult
 		try	{
 			//TODO: Possibly abstract this our so the Quartz job doesn't have all this nonsense.
-			
 			updateStatus(jobName, "Gathering Data")
 			if (isJobCancelled(jobName)) return
 			getData()
@@ -235,45 +226,36 @@ class GenericJobService implements Job {
 			switch (currentStep.key)
 			{
 				case "bundle":
-				
 					/** Access the ZipUtil in a static way */
-				
-					File zipFileLoc = new File(jobTmpDirectory).parentFile;
-					finalOutputFile = ZipUtil.zipFolder(jobTmpDirectory,
-                            new File(zipFileLoc, jobDataMap.get("jobName") + ".zip").absolutePath)
-					try {
-						File outputFile = new File(zipFileLoc, finalOutputFile);
-						if (!outputFile.isFile()) {
-                            break
+                    String zipFileLoc = (new File(jobTmpDirectory))?.getParent() + File.separator;
+                    finalOutputFile = ZipUtil.zipFolder(jobTmpDirectory, zipFileLoc + jobDataMap.get("jobName") + ".zip")
+                    try {
+                        File outputFile = new File(zipFileLoc + finalOutputFile);
+                        if (outputFile.isFile()) {
+                            String remoteFilePath = FTPUtil.uploadFile(true, outputFile);
+                            if (StringUtils.isNotEmpty(remoteFilePath)) {
+                                //Since File has been uploaded to the FTP server, we can delete the
+                                //ZIP file and the folder which has been zipped
+
+                                //Delete the output Folder
+                                String outputFolder = null;
+                                int index = outputFile.name.lastIndexOf('.');
+                                if (index > 0 && index <= outputFile.name.length() - 2) {
+                                    outputFolder = outputFile.name.substring(0, index);
+                                }
+                                File outputDir = new File(zipFileLoc + outputFolder)
+                                if (outputDir.isDirectory()) {
+                                    outputDir.deleteDir()
+                                }
+
+                                //Delete the ZIP file
+                                outputFile.delete();
+                            }
                         }
+                    } catch (Exception e) {
+                        log.error("Failed to FTP PUT the ZIP file: " + e.getMessage );
+                    }
 
-                        def ftp = grailsApplication.config.com.recomdata.transmart.data.export.ftp
-                        if (!ftp.server) {
-                            break
-                        }
-
-                        String remoteFilePath = FTPUtil.uploadFile(true, outputFile,
-                                ftp.server, ftp.serverPort ?: '21', ftp.username ?: '',
-                                ftp.password ?: '', ftp.remote.path ?: '')
-
-                        if (StringUtils.isEmpty(remoteFilePath)) {
-                            break
-                        }
-
-                        //Since File has been uploaded to the FTP server, we can delete the
-                        //ZIP file and the folder which has been zipped
-
-                        //Delete the output Folder
-                        File outputDir = new File(jobTmpDirectory)
-                        if (outputDir.isDirectory()) {
-                            outputDir.deleteDir()
-                        }
-
-                        //Delete the ZIP file
-                        outputFile.delete();
-					} catch (Exception e) {
-                        log.error("Failed to FTP PUT the ZIP file", e)
-					}
 					break
 				case "R":
 				
@@ -334,7 +316,6 @@ class GenericJobService implements Job {
 		RConnection c = new RConnection();
 		
 		log.debug("Attempting following R Command : " + "setwd('${rOutputDirectory}')".replace("\\","\\\\"))
-		println("Attempting following R Command : " + "setwd('${rOutputDirectory}')".replace("\\","\\\\"))
 		
 		//Set the working directory to be our temporary location.
 		String workingDirectoryCommand = "setwd('${rOutputDirectory}')".replace("\\","\\\\")
@@ -375,7 +356,6 @@ class GenericJobService implements Job {
 				}
 				
 			log.debug("Attempting following R Command : " + reformattedCommand)
-			println("Attempting following R Command : " + reformattedCommand)
 			
 			//Run the R command against our server.
 			//x = c.eval(reformattedCommand);

@@ -20,139 +20,30 @@
 
 package com.recomdata.transmart.data.export
 
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
+import grails.util.Holders
+
+import org.apache.commons.lang.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.SimpleTrigger;
-
-import com.recomdata.transmart.data.export.ExportDataProcessor
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
+import org.quartz.JobDataMap
+import org.quartz.JobDetail
+import org.quartz.SimpleTrigger
 import org.transmart.searchapp.AccessLog
-import com.recomdata.transmart.validate.RequestValidator;
-import com.recomdata.asynchronous.GenericJobService;
+
+import com.recomdata.asynchronous.GenericJobExecutor
+import com.recomdata.transmart.domain.i2b2.AsyncJob
+import com.recomdata.transmart.validate.RequestValidator
 
 class ExportService {
 
     static transactional = true
-	def geneExpressionDataService
 	def i2b2HelperService
 	def i2b2ExportHelperService
-	def dataCountService
 	def jobResultsService
 	def asyncJobService
 	def quartzScheduler
 	def grailsApplication
 	def dataExportService
-
-	def Map createJSONFileObject(fileType, dataFormat, fileDataCount, gplId, gplTitle) {
-		def file = [:]
-		if(dataFormat!=null){
-			file['dataFormat'] = dataFormat
-		}
-		if(fileType!=null){
-			file['fileType'] = fileType
-		}
-		if(fileDataCount!=null){
-			file['fileDataCount'] = fileDataCount
-		}
-		if(gplId!=null){
-			file['gplId']=gplId
-		}
-		if(gplTitle!=null){
-			file['gplTitle']=gplTitle
-		}
-		return file
-	}
-
-    JSONObject getMetaData(Long rID1, Long rID2) {
-		def dataTypesMap = grailsApplication.config.com.recomdata.transmart.data.export.dataTypesMap
-
-		//The result instance id's are stored queries which we can use to get information from the i2b2 schema.
-		//Long rID1 = RequestValidator.nullCheck(params.result_instance_id1)
-		//def rID2 = RequestValidator.nullCheck(params.result_instance_id2)
-        def rIDs = [rID1, rID2].findAll() // remove nulls
-
-		log.debug('ExportService/getMetaData called for rIDs: ' + rIDs)
-				
-		//Retrieve the counts for each subset. We get back a map that looks like ['RBM':2,'MRNA':30]
-		def subset1CountMap = dataCountService.getDataCounts(rID1, rIDs as Long[])
-		def subset2CountMap = dataCountService.getDataCounts(rID2, rIDs as Long[])
-		log.debug('subset1CountMap :: ' + subset1CountMap + ' :: subset2CountMap :: ' + subset2CountMap)
-		
-		//This is the map we render to JSON.
-		def finalMap = [:]
-		
-		//Add our counts to the map.
-		finalMap['subset1'] = subset1CountMap
-		finalMap['subset2'] = subset2CountMap
-		//render '{"subset1": [{"PLINK": "102","RBM":"28"}],"subset2": [{"PLINK": "1","RBM":"2"}]}'
-		JSONObject result = new JSONObject()
-		result.put('noOfSubsets', rIDs.size())
-		
-		JSONArray rows = new JSONArray();
-		dataTypesMap.each { key, value ->
-			def dataType = [:]
-			def dataTypeHasCounts = false
-			dataType['dataTypeId'] = key
-			dataType['dataTypeName'] = value
-			//TODO replace 2 with subsetLen
-			for (i in 1..2) {
-				JSONArray files = new JSONArray();
-				
-				if (key == 'CLINICAL') {
-					files.put(createJSONFileObject('.TXT', 'Data', finalMap["subset${i}"][key], null, null))
-				} else if (key == 'MRNA') {
-					def countsMap = createCountsMap('.TXT', 'Processed Data', finalMap, key, i)
-					dataTypeHasCounts=dataTypeHasCounts||countsMap.get('dataTypeHasCounts')
-					files.put(countsMap)
-					files.put(createJSONFileObject('.CEL', 'Raw Data', finalMap["subset${i}"][key+'_CEL'], null, null))
-				} else if (key == 'SNP') {
-					files.put(createJSONFileObject('.PED, .MAP & .CNV', 'Processed Data', finalMap["subset${i}"][key], null, null))
-					files.put(createJSONFileObject('.CEL', 'Raw Data', finalMap["subset${i}"][key+'_CEL'], null, null))
-				} else if (key == 'ADDITIONAL') {
-					files.put(createJSONFileObject('', 'Additional Data', finalMap["subset${i}"][key], null, null))
-				} else if (key == 'GSEA') {
-					if (i==1) {
-						def countsMap = createCountsMap('.GCT & .CLS', 'Processed Data (for both subsets)',finalMap, key, i)
-						dataTypeHasCounts=dataTypeHasCounts||countsMap.get('dataTypeHasCounts')
-						files.put(countsMap)
-					}
-				}
-				if (!(['MRNA', 'GSEA'].contains(key)) && (null != finalMap["subset${i}"][key] && finalMap["subset${i}"][key] > 0))
-					dataTypeHasCounts = true;
-				
-				dataType['metadataExists'] = true
-				dataType['subsetId'+i] = "subset"+i
-				dataType['subsetName'+i] = "Subset "+i
-				dataType['subset'+i] = files
-			}
-			if (dataTypeHasCounts) rows.put(dataType)
-		}
-
-		result.put("success", true)
-		result.put('exportMetaData', rows)
-		
-		return result
-	}
-	
-	def createCountsMap(fileType, dataFormat, finalMap, key, subsetIdx){
-		def dataTypeHasCounts = false
-		def countsMap = createJSONFileObject(fileType, dataFormat, null, null, null)
-		def platforms = new JSONArray()
-		finalMap["subset${subsetIdx}"][key].each {gplId, count->
-			if(count>0){
-				platforms.put(createJSONFileObject(null, null,
-													count, gplId, geneExpressionDataService.getGplTitle(gplId)))
-			}
-			dataTypeHasCounts = (dataTypeHasCounts||(count>0))
-		}
-		countsMap.put('platforms',platforms)
-		countsMap.put('dataTypeHasCounts', dataTypeHasCounts)
-		return countsMap
-	}
 	
 	def createExportDataAsyncJob(params, userName) {
 		def analysis = params.analysis
@@ -182,18 +73,15 @@ class ExportService {
 		return result
 	}
 	
-	def private Map getSubsetSelectedFilesMap(checkboxList) {
+	def private Map getSubsetSelectedFilesMap(selectedCheckboxList) {
 		def subsetSelectedFilesMap = [:]
-		def selectedCheckboxList = []
+        
 		//If only one was checked, we need to add that one to an array list.
-		if(checkboxList instanceof String)
-		{
-			def tempArray = []
-			tempArray.add(checkboxList)
-			selectedCheckboxList = tempArray
-		} else {
-			selectedCheckboxList = checkboxList
-		}
+        if (selectedCheckboxList instanceof String)
+            selectedCheckboxList = [selectedCheckboxList]
+        if (selectedCheckboxList == null)
+            selectedCheckboxList = []
+
 		
 		//Remove duplicates. duplicates are coming in from the UI, better handle it here
 		//The same issue is handled in the UI now so the following code may not be necessary
@@ -279,8 +167,7 @@ class ExportService {
 		//Loop through the values for each selected checkbox.
 		def checkboxList = params.selectedSubsetDataTypeFiles
 		
-		if(checkboxList instanceof String)
-		{
+		if(checkboxList instanceof String) {
 			def tempArray = []
 			if (checkboxList && !checkboxList?.trim().equals("")) tempArray.add(checkboxList)
 			checkboxList = tempArray
@@ -290,7 +177,8 @@ class ExportService {
 		jdm.put("analysis", params.analysis)
 		jdm.put("userName", userName)
 		jdm.put("jobName", params.jobName)
-		jdm.put("result_instance_ids",resultInstanceIdHashMap);
+		jdm.put("result_instance_ids", resultInstanceIdHashMap);
+		jdm.selection = params.selection
 		//jdm.put("datatypes", jobDataTypes);
 		jdm.put("subsetSelectedPlatformsByFiles", getsubsetSelectedPlatformsByFiles(checkboxList))
 		jdm.put("checkboxList", checkboxList);
@@ -308,7 +196,7 @@ class ExportService {
 		//This adds a step to the job to create a file link as the plugin output.
 		jdm.put("renderSteps",["FILELINK":""]);
 				
-		def jobDetail = new JobDetail(params.jobName, params.analysis, GenericJobService.class)
+		def jobDetail = new JobDetail(params.jobName, params.analysis, GenericJobExecutor.class)
 		jobDetail.setJobDataMap(jdm);
 		
 		// TODO -- NEED TO BE REVIEWED (f.guitton@imperial.ac.uk)
@@ -355,7 +243,7 @@ class ExportService {
 	def getExportJobs(userName) {
 		JSONObject result = new JSONObject()
 		JSONArray rows = new JSONArray()
-		def maxJobs = grailsApplication.config.com.recomdata.transmart.data.export.max.export.jobs.loaded
+		def maxJobs = Holders.config.com.recomdata.transmart.data.export.max.export.jobs.loaded
 		
 		maxJobs = maxJobs ? maxJobs : 0
 		
