@@ -20,24 +20,19 @@
 
 package com.recomdata.transmart.data.export
 
-import java.util.Collection;
-import java.util.Map;
+import grails.util.Holders
 
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
+import org.apache.commons.lang.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.SimpleTrigger;
-
-import com.recomdata.transmart.data.export.ExportDataProcessor
-import com.recomdata.transmart.domain.i2b2.AsyncJob;
+import org.quartz.JobDataMap
+import org.quartz.JobDetail
+import org.quartz.SimpleTrigger
 import org.transmart.searchapp.AccessLog
-import org.transmartproject.db.dataquery.highdim.DeSubjectSampleMapping;
 
-import com.recomdata.transmart.validate.RequestValidator;
-import com.recomdata.asynchronous.GenericJobService;
+import com.recomdata.asynchronous.GenericJobService
+import com.recomdata.transmart.domain.i2b2.AsyncJob
+import com.recomdata.transmart.validate.RequestValidator
 
 class ExportService {
 
