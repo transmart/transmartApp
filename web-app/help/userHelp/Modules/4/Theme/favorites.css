@@ -1,0 +1,17 @@
+﻿<style type="text/css">
+	p	{ margin-top: 0; margin-bottom: 0; }
+	div p	{ margin-top: 0; margin-bottom: 0; }
+	body.D2HFavorites { margin: 2px; 
+	                   background-color: #535353; 
+	                   overflow:hidden; pagging: 0px;}
+	div.D2HFavorites { margin: 0px; padding: 0px;  background-color: #EBEBEB; 
+		background-image: url();
+		background-repeat: no-repeat;  font-family: Verdana; font-size: 9.75pt; font-style: normal; font-weight: normal; text-decoration:  none; color: WindowText; 
+		overflow:auto; width:100%; height:100%}
+	div.D2HFavoritesInside { margin: 2px 4px 4px 4px; padding: 0px; }
+    span,a {  font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: normal; text-decoration:  none; color: Black; }
+    .clsMouseOver {  font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: normal; text-decoration:  underline; color: Black; }
+    .clsCurrentTocItem {  font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: bold; text-decoration:  none; color: Black; }
+    td { text-align:left; white-space:nowrap; }
+    table caption { text-align: left; margin-bottom: 6pt;}
+</style>

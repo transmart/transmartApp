@@ -1,0 +1,85 @@
+<html>
+	<head>
+		<script language="javascript" src="_contextIds.js">
+		</script>
+		<script language="javascript">
+	<!--
+		function processCSH()
+		{
+			var strSearch = document.location.search;
+			strSearch = unescape(strSearch.substring(1, strSearch.length));
+			var contextID = getQueryVal(strSearch, "contextID");
+			var mode = getQueryVal(strSearch, "mode");
+			var topicPage = getUrlByContextID(contextID);
+			if (topicPage)
+			{
+				var urlparam;
+				if (mode == "0")
+					urlparam = "?csh=1";
+				else
+				{
+					urlparam = "?turl=" + ((typeof encodeURIComponent != "undefined") ? encodeURIComponent(topicPage) : escape(topicPage));
+					topicPage = MAIN_HELP_PAGE;
+				}
+				var indx = topicPage.indexOf('#');
+				if (indx > -1)
+					topicPage = topicPage.substring(0, indx) + urlparam + topicPage.substring(indx, topicPage.length);
+				else
+					topicPage += urlparam;
+			}
+			else
+				topicPage = MAIN_HELP_PAGE;
+			if (location.replace && !isOpera())
+				location.replace(topicPage);
+			else
+				location.href = topicPage;
+		}
+		
+		function getSearchVal(strS, offset)
+		{
+			var endstr = strS.indexOf('&', offset);
+			if (endstr == -1)
+				endstr = strS.length + 1;
+			var val = strS.substring(offset, endstr);
+			var test = val.replace('+', ' ');
+			while (val.indexOf(test) == -1)
+			{
+				val = test;
+				test = val.replace('+', ' ');
+			}
+			return decodeURIComponent(test);
+		}
+
+		function getQueryVal(strS, name)
+		{
+			var arg = name + "=";
+			var alen = arg.length;
+			var clen = strS.length;
+			var i = 0;
+			while (i < clen)
+			{
+				var j = i + alen;
+				if (strS.substring(i, j) == arg)
+					return getSearchVal(strS, j);
+				i = strS.indexOf("&", i) + 1;
+				if (i == 0) break; 
+			}
+			return "";
+		}
+		
+		function getUrlByContextID(cId)
+		{
+			return g_d2hContextIds[cId];
+		}
+		
+		function isOpera()
+		{
+			var strUserAgent = navigator.userAgent.toLowerCase();
+			var res = strUserAgent.indexOf("opera") == -1 ? false : true;
+			return res;
+		}
+		processCSH();
+		//-->
+		</script>
+	</head>
+</html>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<root>
+    <topics>
+        <topic url="Documents/transmartreleasenotes.htm" window="right" />
+        <topic url="Documents/prerequisites.htm" window="right" />
+        <topic url="Documents/sampleexplorer.htm" window="right" />
+        <topic url="Documents/snpviewerenhancements.htm" window="right" />
+        <topic url="Documents/integratedgenomicsviewer.htm" window="right" />
+        <topic url="Documents/asynchronousoperations.htm" window="right" />
+        <topic url="Documents/enhancednamingconventions.htm" window="right" />
+        <topic url="Documents/performanceenhancements.htm" window="right" />
+        <topic url="Documents/trialsandstudiesindatasetexplorer.htm" window="right" />
+        <topic url="Documents/johnsonjohnsonclinicaltrialsintransmartsearch.htm" window="right" />
+        <topic url="Documents/resolveddefects.htm" window="right" />
+        <topic url="Documents/knowndefects.htm" window="right" />
+    </topics>
+</root>

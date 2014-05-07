@@ -33,6 +33,8 @@ import org.codehaus.groovy.grails.web.sitemesh.FactoryHolder
 
 class RemotePagingTagLib {
 
+
+
 	/**
 	 * Creates next/previous links to support pagination for the current controller
 	 *
@@ -327,5 +329,144 @@ class RemotePagingTagLib {
               out.println '</select>'
           }
       }
+	  /**
+	   * Creates ABC DEF ... links to support alpha pagination for the current controller
+	   *
+	   *
+	   */
+	  def remoteAlphaPaginate = { attrs ->
+  
+		  def steps = [ "A-C", "D-F", "G-I", "J-L", "M-O", "P-R", "S-V", "W-Z", "Other" ]
+			def writer = out
+		  def messageSource = grailsAttributes.getApplicationContext().getBean("messageSource")
+		  def locale = RCU.getLocale(request)
+		  def action = (attrs.action ? attrs.action : (params.action ? params.action : "search"))
+		  def update = attrs.update
+		  def currentstep = params.step ? params.step : "A-C"
+  
+		  def linkParams = [currentstep:currentstep]
+		  if(attrs.params) linkParams.putAll(attrs.params)
+		  if(params.searchStr) linkParams.searchStr = params.searchStr
+		  if(params.searchDate) linkParams.searchDate = params.searchDate
+		  if(params.searchField) linkParams.searchField = params.searchField
+  
+		  def linkTagAttrs = [action:action,'update':attrs.update]
+		  if(attrs.controller) {
+			  linkTagAttrs.controller = attrs.controller
+		  }
+		  if(attrs.id!=null) {
+			  linkTagAttrs.id = attrs.id
+		  }
+		  linkTagAttrs.params = linkParams
+		  linkTagAttrs.class = 'step'
+		  if (update != null) {
+			  linkTagAttrs.before = "toggleVisible('" + update + "_loading'); toggleVisible('" + update + "');"
+			  linkTagAttrs.onComplete = "toggleVisible('" + update + "'); toggleVisible('" + update + "_loading');"
+		  }
+  
+		  for (step in steps) {
+			  if (currentstep == step) {
+				  writer << "<span class=\"currentStep\">${step}</span>"
+			  } else {
+				  linkParams.step = step
+				  writer << remoteLink(linkTagAttrs.clone()) {step}
+			  }
+		  }
+		  
+	  }
+  
+	  /**
+	   * Renders a sortable column to support sorting in list views
+	   *
+	   * Attributes:
+	   *
+	   * property - name of the property relating to the field
+	   * defaultOrder (optional) - default order for the property; choose between asc (default if not provided) and desc
+	   * title (optional*) - title caption for the column
+	   * titleKey (optional*) - title key to use for the column, resolved against the message source
+	   * params (optional) - a map containing request parameters
+	   * action (optional) - the name of the action to use in the link, if not specified the list action will be linked
+	   * Attribute title or titleKey is required. When both attributes are specified then titleKey takes precedence,
+	   * resulting in the title caption to be resolved against the message source. In case when the message could
+	   * not be resolved, the title will be used as title caption.
+	   *
+	   * Examples:
+	   *
+	   * <g:sortableColumn property="title" title="Title" />
+	   * <g:sortableColumn property="title" title="Title" style="width: 200px" />
+	   * <g:sortableColumn property="title" titleKey="book.title" />
+	   * <g:sortableColumn property="releaseDate" defaultOrder="desc" title="Release Date" />
+	   * <g:sortableColumn property="releaseDate" defaultOrder="desc" title="Release Date" titleKey="book.releaseDate" />
+	   */
+	  def remoteSortableColumn = { attrs ->
+		  def writer = out
+		  if(!attrs.property)
+			  throwTagError("Tag [sortableColumn] is missing required attribute [property]")
+  
+		  if(!attrs.title && !attrs.titleKey)
+			  throwTagError("Tag [sortableColumn] is missing required attribute [title] or [titleKey]")
+  
+		  //println "sortable - > " + attrs
+		  //println "params - > " + params
+  
+		  def property = attrs.remove("property")
+		  def action = attrs.action ? attrs.remove("action") : (params.action ? params.action : "list")
+  
+		  def defaultOrder = attrs.remove("defaultOrder")
+		  if(defaultOrder != "desc") defaultOrder = "asc"
+  
+		  // current sorting property and order
+		  def sort = params.sort
+		  def order = params.order
+  
+		  // add sorting property and params to link params
+		  def linkParams = [sort:property]
+		  if(params.id) linkParams.put("id",params.id)
+		  if(attrs.params) linkParams.putAll(attrs.remove("params"))
+  
+		  // determine and add sorting order for this column to link params
+		  attrs.class = "sortable"
+		  if(property == sort) {
+			  attrs.class = attrs.class + " sorted " + order
+			  if(order == "asc") {
+				  linkParams.order = "desc"
+			  }
+			  else {
+				  linkParams.order = "asc"
+			  }
+		  }
+		  else {
+			  linkParams.order = defaultOrder
+		  }
+		  if (params.auditSearchStr){
+			  linkParams.put('logSearchStr',params.auditSearchStr)
+		  }
+		  if (params.logSearchStr){
+			  linkParams.put('logSearchStr',params.logSearchStr)
+		  }
+		  if (params.searchDate){
+			  linkParams.put('searchDate',params.searchDate)
+		  }
+		  if (params.searchField){
+			  linkParams.put('searchField',params.searchField)
+		  }
+		  // determine column title
+		  def title = attrs.remove("title")
+		  def titleKey = attrs.remove("titleKey")
+		  if(titleKey) {
+			  if(!title) title = titleKey
+			  def messageSource = grailsAttributes.getApplicationContext().getBean("messageSource")
+			  def locale = RCU.getLocale(request)
+			  title = messageSource.getMessage(titleKey, null, title, locale)
+		  }
+  
+		  writer << "<th "
+		  // process remaining attributes
+		  attrs.each { k, v ->
+			  writer << "${k}=\"${v.encodeAsHTML()}\" "
+		  }
+		  writer << ">${remoteLink(action:action, 'update':attrs.update , params:linkParams) { title }}</th>"
+	  }
+
 
 }

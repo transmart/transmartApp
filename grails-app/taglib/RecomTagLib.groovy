@@ -17,8 +17,11 @@
  *
  ******************************************************************/
   
-
+import org.codehaus.groovy.grails.plugins.GrailsPluginManager
+import org.codehaus.groovy.grails.plugins.PluginManagerHolder
 import java.io.File
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 import com.recomdata.search.DocumentHit
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
@@ -29,6 +32,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
  */
 
 class RecomTagLib {
+def diseaseService
 
 	def createFileLink = { attrs ->
 
@@ -329,5 +333,81 @@ class RecomTagLib {
 		out << 		"onclick=\"javascript:toggleDetail('"+divPrefix+"');\">"+label+"&nbsp;<img alt='Close' src=\"${resource(dir:'images/skin',file:'sorted_asc.gif')}\" /></a> "
 		out << "</th></tr></thead>"
 	}
+	def fieldDate = { attrs, body ->
+		
+		def bean = attrs["bean"]
+		def field = attrs["field"]
+		def format = attrs["format"]
+		
+		def date = bean."${field}"
+		if (date) {
+			out << (new SimpleDateFormat(format).format(date))
+		}
+		else {
+			out << "None"
+		}
+	}
+
+    def fieldBytes = { attrs, body ->
+        def bean = attrs["bean"]
+        def field = attrs["field"]
+        def bytes = bean."${field}"
+
+        if (bytes < 1024) {
+            out << bytes + " B" //Don't format a decimal on!
+            return
+        }
+
+        bytes /= 1024
+
+        if (bytes < 1024) {
+            out << new DecimalFormat("0.0").format(bytes) + " KB"
+            return
+        }
+
+        bytes /= 1024
+
+        if (bytes < 1024) {
+            out << new DecimalFormat("0.0").format(bytes) + " MB"
+            return
+        }
+    }
+
+    def meshLineage = { attrs, body ->
+
+        def disease = attrs["disease"]
+        def lineage = diseaseService.getMeshLineage(disease)
+
+        def index = 0;
+        for (item in lineage) {
+            out << "<div class='diseaseHierarchy'" + (index == 0 ? " style='background-image: none;'" : "") + ">" + item.disease
+            index++;
+        }
+        for (item in lineage) {
+            out << "</div>"
+        }
+
+    }
+
+    def ifPlugin = { attrs, body ->
+
+        def name = attrs['name']
+        def yes = attrs['true']
+        def no = attrs['false']
+
+        //If the tag does not have true/false reactions, do the body. If it does, output the yes/no string.
+        if (PluginManagerHolder.pluginManager.hasGrailsPlugin(name)) {
+            if (yes) {
+                out << yes
+            }
+            else {
+                out << body()
+            }
+        }
+        else if (no) {
+            out << no
+        }
+    }
+
 
 }

@@ -34,7 +34,11 @@
              
              <g:if test="${'gwas'==app}"><li class="active">GWAS</li></g:if>
         <g:else><li><a href="${createLink([controller:'GWAS'])}">GWAS</a></li></g:else>    
-        
+        	
+		   			<g:if test="${'uploaddata'==app}"><th class="active">Upload Data</th></g:if>
+		   			<g:else><th class="menuLink"><g:link controller="uploadData">Upload Data</g:link></th></g:else>
+		   			
+		      
             
 		      		<sec:ifAnyGranted roles="ROLE_ADMIN">
             <g:if test="${'accesslog'==app}"><li class="active">Admin</li></g:if>

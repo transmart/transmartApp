@@ -27,6 +27,7 @@
 		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/ext-all.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
+		<link rel="stylesheet" href="${resource(dir:'css',file:'/jquery/cupertino/jquery-ui-1.8.18.custom.css')}"></link>   
         <link rel="stylesheet" href="${resource(dir:'css/jquery/skin', file:'ui.dynatree.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'rwg.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'uploadData.css')}"></link>
@@ -40,7 +41,9 @@
 	<![endif]-->
 		
 		<g:javascript library="prototype" />
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.7.1.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.8.3.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
+       
 <script type="text/javascript">$j = jQuery.noConflict();</script>
 <script type="text/javascript" src="${resource(dir:'js', file:'uploadData.js')}"></script>
 <script type="text/javascript" charset="utf-8">
@@ -77,7 +80,7 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
 </head>
 <body>
 <div id="header-div">
-    <g:render template="/layouts/commonheader" model="['app':'uploaddata', 'utilitiesMenu':true]" />
+    <g:render template="/layouts/commonheader" model="['app':'uploaddata', 'utilitiesMenu':'true']" />
 </div>
 
 <div id="mainUploadPane">
@@ -93,7 +96,8 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                 </g:else>
             </div>
             <div style="position: relative; text-align:right;">
-                <a class="button" href="mailto:${grailsApplication.config.com.recomdata.dataUpload.adminEmail}">Email administrator</a><tmpl:/help/helpIcon id="1331"/>&nbsp;
+                <a class="button" href="mailto:${grailsApplication.config.com.recomdata.dataUpload.adminEmail}">Email administrator</a>
+                 <tmpl:/help/helpIcon id="1331"/>&nbsp;
                 <div class="uploadMessage">If you are unable to locate the relevant study, email the administrator by clicking the button above.</div>
             </div>
             <g:if test="${flash.message}">
@@ -212,7 +216,8 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
 
             <div class="dataFormTitle" id="dataFormTitle2">Upload Data</div>
                 <div style="position: relative; text-align:right;">
-                    <a class="button" href="mailto:${grailsApplication.config.com.recomdata.dataUpload.adminEmail}">Email administrator</a><tmpl:/help/helpIcon id="1332"/>&nbsp;
+                    <a class="button" href="mailto:${grailsApplication.config.com.recomdata.dataUpload.adminEmail}">Email administrator</a>
+                    <tmpl:/help/helpIcon id="1332"/>&nbsp;
                     <div class="uploadMessage">If you are unable to locate the relevant autocomplete fields, email the administrator by clicking the button above.</div>
                 </div>
 
@@ -289,7 +294,7 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                                         </div>
                                         <div style="float: left">
                                             <div class="textsmaller">Platform</div>
-                                            <g:select style="width: 200px" name="genotypePlatformName" onchange="addPlatform('genotypePlatform')"/>
+                                            <g:select style="width: 200px" name="genotypePlatformName" from="${snpVendors}" onchange="addPlatform('genotypePlatform')"/>
                                             <select id="genotypePlatform" name="genotypePlatform" multiple="multiple" style="display: none;">
                                                 <g:each in="${genotypePlatforms}" var="value">
                                                     <option selected="selected" value="${value.key}">${value.value}</option>
@@ -327,7 +332,7 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                                         </div>
                                         <div style="float: left">
                                             <div class="textsmaller">Platform</div>
-                                            <g:select style="width: 200px" name="expressionPlatformName" onchange="addPlatform('expressionPlatform')"/>
+                                            <g:select style="width: 200px" name="expressionPlatformName" onchange="addPlatform('expressionPlatform')" from="${expVendors}"/>
                                             <select id="expressionPlatform" name="expressionPlatform" multiple="multiple" style="display: none;">
                                                 <g:each in="${expressionPlatforms}" var="value">
                                                     <option selected="selected" value="${value.key}">${value.value}</option>
@@ -398,7 +403,7 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                         <div class="buttonbar">
                             <a class="button" onclick="showAnalysisForm()">Back</a>
                             <g:actionSubmit class="upload" value="Upload" action="upload"/>
-                            <a class="button" href="${createLink([action:'index',controller:'RWG'])}">Cancel</a>
+                            <a class="button" href="${createLink([action:'index',controller:'GWAS'])}">Cancel</a>
                         </div>
                     </div>
 

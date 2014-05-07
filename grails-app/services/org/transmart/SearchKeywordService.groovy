@@ -62,6 +62,102 @@ public class SearchKeywordService {
 	}
 	
 	/** Searches for all keywords for a given term (like %il%) */
+	def findSearchKeywords(category, term, max)	{
+		log.info "Finding matches for ${term} in ${category}"
+		
+		def user = org.transmart.searchapp.AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		
+		def c = SearchKeywordTerm.createCriteria()
+		def results = c.list 	{
+			if (term.size() > 0)	{
+				like("keywordTerm", term.toUpperCase() + '%')
+			}
+			
+			//TODO Special case for gene or SNP - rework to support multiple categories!
+			if ("GENE_OR_SNP".equals(category))	{
+				//or {
+				//	eq("dataCategory", "GENE")
+				//	like("keywordTerm", 'RS%')
+				//}
+				'in'("dataCategory",["GENE","SNP"])
+			}
+			else if ("SNP".equals(category)) {
+				//like("keywordTerm", 'RS%')
+				eq("dataCategory", "SNP")
+			}
+			else if ("ALL".compareToIgnoreCase(category) != 0)	{
+				eq("dataCategory", category.toUpperCase())
+			}
+
+			if (!user.isAdmin())	{
+				log.info("User is not an admin so filter out gene lists or signatures that are not public")
+				or	{
+					isNull("ownerAuthUserId")
+					eq("ownerAuthUserId", user.id)
+				}
+			}
+			maxResults(max)
+			order("rank", "asc")
+			order("termLength", "asc")
+			order("keywordTerm", "asc")
+		}
+		log.info("Search keywords found: " + results.size())
+		
+		def keywords = []
+		def dupeList = []			// store category:keyword for a duplicate check until DB is cleaned up
+		
+		for (result in results)	{
+			def m = [:]
+			def sk = result
+			//////////////////////////////////////////////////////////////////////////////////
+			// HACK:  Duplicate check until DB is cleaned up
+			def dupeKey = sk.searchKeyword.displayDataCategory + ":" +sk.searchKeyword.keyword
+			if (dupeKey in dupeList)	{
+				log.info "Found duplicate: " + dupeKey
+				continue
+			} else	{
+				log.info "Found new entry, adding to the list: " + dupeList
+				dupeList << dupeKey
+			}
+			///////////////////////////////////////////////////////////////////////////////////
+			
+			m.put("label", sk.searchKeyword.keyword)
+			m.put("category", sk.searchKeyword.displayDataCategory)
+			
+			
+			//Further hack: Alter fields depending on the category
+			if (sk.searchKeyword.dataCategory.equals("DISEASE") || sk.searchKeyword.dataCategory.equals("OBSERVATION")) {
+				m.put("categoryId", sk.searchKeyword.dataCategory)
+				m.put("id", sk.searchKeyword.uniqueId)
+			}
+			else {
+				m.put("categoryId", sk.searchKeyword.dataCategory)
+				m.put("id", sk.searchKeyword.id)
+			}
+			if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0)	{
+				def synonyms = org.transmart.biomart.BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
+				def synList = new StringBuilder()
+				for (synonym in synonyms)	{
+					if (synList.size() > 0)	{
+						synList.append(", ")
+					} else	{
+						synList.append("(")
+					}
+					synList.append(synonym.code)
+				}
+				if (synList.size() > 0)	{
+					synList.append(")")
+				}
+				m.put("synonyms", synList.toString())
+			}
+			keywords.add(m)
+		}
+		return keywords
+	 }
+
+
+	
+	/** Searches for all keywords for a given term (like %il%) */
 	def findSearchKeywords(category, term)	{
 		log.info "Finding matches for ${term} in ${category}"
 		
@@ -140,7 +236,13 @@ public class SearchKeywordService {
 		}
 		return keywords
 	 }
-
+	/**
+	 * This will render a UI where the user can pick an experiment from a list of all the experiments in the system. Selection of multiple studies is allowed.
+	 */
+	def browseAnalysisMultiSelect = {
+		def analyses = org.transmart.biomart.BioAssayAnalysis.executeQuery("select id, name, etlId from BioAssayAnalysis b order by b.name");
+	 	render(template:'browseMulti',model:[analyses:analyses])
+	}
 
 	/**
 	 * convert pathways to a list of genes

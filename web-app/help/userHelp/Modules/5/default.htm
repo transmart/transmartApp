@@ -1,0 +1,111 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+<title>ReleaseNotes</title>
+<script language="JavaScript" src="navmanager.js"></script>
+<script language="JavaScript" src="common.js"></script>
+<script language="javascript">
+<!--
+	var g_defaultTopic = "Documents/transmartreleasenotes.htm";
+	var g_mainLayout = true;
+	function processCSH()
+	{
+		var strSearch = document.location.search;
+		strSearch = unescape(strSearch.substring(1, strSearch.length));
+		var url = getQueryVal(strSearch, "turl");
+		if (url && url != "" && url.indexOf(":") < 0 && url.indexOf("//") < 0 && url.indexOf("\\\\") < 0)
+			g_defaultTopic = url;
+		var frm = window.g_Manager.Navigator.Right;
+		if (isOpera())
+		{
+			var doc = getFrameDocument(frm);
+			doc.location.href = g_defaultTopic;
+		}
+		else
+			frm.src = g_defaultTopic;
+		window.g_Manager.Navigator.SyncTOC();
+	}
+	function InitNavigationPanels()
+	{
+	    if (!window.g_Manager)
+	        window.g_Manager = new Object();
+	    if (!window.g_Manager.Navigator)
+	        window.g_Manager.Navigator = new d2hNavigationManager(getElemById(document, "left"), getElemById(document, "right"));
+	    if (!window.g_Manager.Favorites)
+	        window.g_Manager.Favorites = new d2hFavorites();
+	    processCSH();
+
+
+
+	}
+	function leftResize(evt)
+	{
+	    setTimeout("window.g_Manager.Navigator._onResizeLeft()", 10);
+	}
+	//adjusts frame border for specific browsers
+    function d2hAdjustFrameSet()
+    {
+        if (isOpera())
+        {
+            var elem = getElemById(document, "d2hBodyLayout");
+            if (elem != null)
+                elem.setAttribute("framespacing", "3");
+        }
+    }
+
+    function DestroyManager()
+	{
+	    window.g_Manager = null;
+	}
+
+(function() {
+    function async_load(){
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = 'c1search.js';
+        var x = document.getElementsByTagName('script')[0];
+        x.parentNode.insertBefore(s, x);
+        s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = 'HTMLSearch\\searchindex.js';
+        x.parentNode.insertBefore(s, x);
+    }
+    if (window.attachEvent)
+        window.attachEvent('onload', async_load);
+    else
+        window.addEventListener('load', async_load, false);
+})();
+//-->
+</script>
+</head>
+
+<frameset id="d2hMainLayout" border="-1" frameSpacing="0" rows="29px, *">
+<frame  border="0" frameborder="no" name="nav_top" title="Topic navigation" src="_d2h_theme_nav_left_top.htm" noresize scrolling="no" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0">
+<![if !IE]>
+<frameset id="d2hBodyLayout" border="7" frameSpacing="7" bordercolor="#535353" cols="25%, 75%" onload="d2hAdjustFrameSet();InitNavigationPanels()" onunload="DestroyManager()">
+<![endif]>
+<!--[if IE]>
+<frameset id="d2hBodyLayout" border="7" frameSpacing="7" bordercolor="#535353" frameborder="yes" cols="25%, 75%" onload="d2hAdjustFrameSet();InitNavigationPanels()" onunload="DestroyManager()">
+<![endif]-->
+<frameset id="d2hLeftBottomLayout" border="0" frameSpacing="0" rows="27px, *">
+<frame  border="0" frameborder="no" style="" name="nav_bottom" title="Bottom topic navigation" src="_d2h_theme_nav_left_bottom.htm" scrolling="no" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0">
+
+<frame id="left" name="left" title="Navigation panes" src="ReleaseNotes-toc.htm" border="0" frameborder="no" style="" onresize="leftResize(event);">
+
+</frameset>
+<![if !IE]>
+<frame id="right" name="right" title="Topic text" src="_d2hblank.htm">
+<![endif]>
+<!--[if IE]>
+<frame frameborder="no" id="right" name="right" title="Topic text" src="_d2hblank.htm">
+<![endif]-->
+</frameset>
+</frameset>
+<noframes>
+<h2>Your browser does not support frames</h2><a href="ReleaseNotes-toc.htm">Click here</a> to continue.
+</noframes>
+
+
+</html>

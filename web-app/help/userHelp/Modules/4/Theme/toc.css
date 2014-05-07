@@ -1,0 +1,31 @@
+<style type="text/css">
+	p	{ margin-top: 0; margin-bottom: 0; }
+	div p	{ margin-top: 0; margin-bottom: 0; }
+	body.D2HContents { margin: 2px; 
+	                   background-color: #535353; 
+	                   overflow:hidden; }
+	div.D2HContents	
+	 { margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; background-color: #EBEBEB; 
+		background-image: url();
+		background-repeat: no-repeat;  font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: normal; text-decoration:  none; color: WindowText; 
+		height:100%; width:100%; overflow:auto; }
+	table.D2HContents { margin: 2px 4px 4px 4px; }
+		
+	img	{ cursor: pointer; }
+	span
+	{ 
+
+	cursor: pointer;
+	
+	  font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: normal; text-decoration:  none; color: WindowText;
+	}
+    a {  font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: normal; text-decoration:  none; color: Black; }
+    .clsMouseOver {  font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: normal; text-decoration:  underline; color: Black; }
+    .clsCurrentTocItem {  font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: bold; text-decoration:  none; color: Black; }
+	.toc	{ margin-left: 20px;}
+	.topic	{}
+	.caption	{ font-weight: bold; margin-bottom: 6pt; white-space:nowrap; }
+	.back	{ margin-top: 12px; text-align: right; }
+    form.clsFrmHidden { margin:0px 0px 0px 0px; padding:0px 0px 0px 0px; height:0px; display: none; visibility: hidden;}
+    div.clsTocNavPanel { margin: 0px 4px 0px 0px; text-align: right; }
+</style>

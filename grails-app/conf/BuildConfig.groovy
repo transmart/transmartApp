@@ -76,6 +76,7 @@ grails.project.dependency.resolution = {
                     url: 'https://repo.transmartfoundation.org/content/repositories/public/',
             ])
         }
+		mavenLocal()
     }
     dependencies {
         compile 'org.postgresql:postgresql:9.3-1100-jdbc4'
@@ -114,7 +115,7 @@ grails.project.dependency.resolution = {
         compile ':rdc-rmodules:0.4-SNAPSHOT'
         compile ':transmart-legacy-db:0.3-SNAPSHOT'
         compile ':search-domain:1.0-SNAPSHOT'
-        compile ':biomart-domain:1.0-SNAPSHOT'
+        compile ':biomart-domain:1.1-SNAPSHOT'
         compile ':transmart-java:1.0-SNAPSHOT'
         compile ':spring-security-core:2.0-RC2'
         compile ':spring-security-ldap:2.0-RC2'

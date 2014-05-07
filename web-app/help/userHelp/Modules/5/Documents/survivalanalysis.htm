@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Survival Analysis</TITLE>
+<META content="text/html; charset=us-ascii" http-equiv=Content-Type><LINK 
+rel=stylesheet type=text/css href="../Theme/nav.css"><LINK rel=stylesheet 
+type=text/css href="../Theme/popupmenu.css"><LINK rel=stylesheet type=text/css 
+href="../Theme/lf.css"><LINK rel=stylesheet type=text/css 
+href="../LinksExt/doc2help.css"><LINK rel=stylesheet type=text/css 
+href="../LinksExt/tranSMART_RN.css">
+<SCRIPT type=text/javascript>
+
+
+
+var _needIndentation = false;
+
+
+
+</SCRIPT>
+
+<SCRIPT language=JavaScript src="../linker.js">
+
+</SCRIPT>
+
+<SCRIPT language=JavaScript src="../special.js">
+
+</SCRIPT>
+
+<SCRIPT language=JavaScript src="../common.js">
+
+</SCRIPT>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2010.3.0.555">
+<meta name="D2HTheme" content="(Default) v.139">
+</HEAD>
+<BODY 
+style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: #535353; MARGIN: 7px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; OVERFLOW: hidden; PADDING-TOP: 0px" 
+onload=d2hOnLoadToolbar(event); relPart="../">
+<SCRIPT language=javascript>
+
+
+
+d2hTopicPreOpen();
+
+
+
+d2hTrySyncTOC();
+
+
+
+
+
+
+
+var prev = true;
+
+
+
+
+
+var next = true;
+
+
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers(prev, next);
+
+d2hAdjustTopicBorders(document);    
+
+
+
+if (typeof d2hLoadWindows != "undefined")
+
+    d2hLoadWindows();
+
+if (typeof d2hLoadNavUrls != "undefined")
+
+    d2hLoadNavUrls();
+
+
+
+</SCRIPT>
+
+<DIV 
+style="PADDING-BOTTOM: 0px; BACKGROUND-COLOR: white; MARGIN: 0px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; HEIGHT: 100%; OVERFLOW: auto; PADDING-TOP: 0px" 
+id=D2HTopicOuterBody class=d2h_outer_topic>
+<DIV id=nsbanner class=d2hNavigatorTopic>
+<DIV 
+style="PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px" 
+id=TitleRow class=d2h_main_titlerow>
+<DIV style="DISPLAY: none"><A id=D2HPreviousAnchor 
+href="prerequisites.htm"></A><A id=D2HNextAnchor 
+href="newparametersforgeneratinggeneexpressionheatmaps.htm"></A></DIV></DIV>
+<SCRIPT language=javascript>
+
+if (typeof d2hProcessTopicNavForCSH != "undefined")
+
+    d2hProcessTopicNavForCSH();
+
+</SCRIPT>
+</DIV>
+<DIV 
+style="PADDING-BOTTOM: 10px; PADDING-LEFT: 22px; PADDING-RIGHT: 10px; HEIGHT: 100%; PADDING-TOP: 5px" 
+id=nstext class=d2h_main_nstext valign="bottom">
+<DIV id=d2h_breadcrumbs class=d2h_breadcrumbs><SPAN 
+class=d2h_breadcrumbsLabel><B><SPAN style="COLOR: #000080">Release 
+Notes</SPAN></B>&nbsp;&nbsp;</SPAN><A class=d2h_breadcrumbsNormal 
+href="transmartreleasenotes.htm">tranSMART Release Notes</A><SPAN 
+class=d2h_breadcrumbsLinkSeparator> &gt; </SPAN><SPAN 
+class=d2h_breadcrumbsContentsOnly>New Features in This Release</SPAN></DIV>
+<H4><A name=_Toc242498268></A><A name=_Toc274897659>Survival Analysis</A></H4>
+<P class=MsoNormal>Dataset Explorer now supports time-to-event analyses &#8211; that 
+is, a relationship between one or more predictive variables and the survival 
+times of individuals in&nbsp; two groups of cohorts.</P>
+<P style="MARGIN-RIGHT: -12pt" class=MsoNormal>Dataset Explorer&#8217;s survival 
+analysis functionality is based on the Cox regression model.&nbsp; The analysis 
+includes a Kaplan-Meier estimator chart similar to the one below:</P>
+<P class=MsoNormalIndent><IMG border=0 src="../ImagesExt/image28_0.png"></P>
+<P class=MsoNormalIndent>The curves in the visualization show the survival time 
+of patients,&nbsp;in days (x axis) and the percentage of patients who reached a 
+given survival&nbsp;time (y&nbsp;axis) for Subset 1 and Subset 2.&nbsp; </P>
+<P class=MsoNormal>To generate a survival analysis, define both cohorts in 
+Dataset Explorer, then click <SPAN class=Bold>Advanced &gt; Survival 
+Analysis</SPAN>.</P>
+<P class=Note><B><SPAN style="COLOR: #1f497d">Note:</SPAN></B><SPAN 
+style="COLOR: black">&nbsp; In Dataset Explorer survival analysis datasets, the 
+event is always death.&nbsp; Subjects who are censored are not included in the 
+death count.</SPAN></P></DIV></DIV></BODY></HTML>

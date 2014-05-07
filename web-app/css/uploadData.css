@@ -1,0 +1,211 @@
+/* Because we're working on IE8 */
+* { opacity: inherit; filter: inherit; }
+
+.uploadTable > tbody > tr > td {
+	padding: 8px;
+}
+.uploadTable > tbody > tr > td > input {
+	width: 300px;
+}
+.uploadTable > tbody > tr > td > select {
+	width: 300px;
+}
+a.upload {
+	color: blue;
+	font-weight: normal;
+	font-size: 8pt;
+	cursor: pointer;
+}
+
+.dataFormTitle {
+    font: 18px tahoma,verdana,helvetica;
+    font-weight:bold;
+    text-align: center;
+}
+
+.uploadTypeRadio {
+    padding: 8px;
+    border: 1px dotted #ccc;
+    margin-bottom: 8px;
+}
+
+div.buttonbar {
+	text-align: center;
+	padding: 16px;
+}
+
+a.button {
+	padding: 4px;
+	border: 1px solid #CCC;
+	background-color: #F8F8F8;
+	margin: 8px;
+	cursor: pointer;
+}
+
+#columnsAll {
+	font-style: italic;
+}
+#columnsNotFound {
+	font-style: italic;
+	font-weight: bold;
+	color: #D00;
+}
+
+.tagBox {
+	clear: both;
+	width: 90%;
+	padding: 4px;
+}
+
+.tag {
+	background-color: #EEF;
+	border: 1px solid #AAF;
+	font-size: 8pt;
+	padding: 2px 2px 2px 16px;
+	margin: 2px;
+	border-top-left-radius: 8px;
+	border-bottom-left-radius: 8px;
+	line-height: 16pt;
+	cursor: pointer;
+	background-image: url('../images/clearsmall.png');
+	background-repeat: no-repeat;
+}
+
+.tag.observationtag {
+    background-color: #EDF;
+    border: 1px solid #A9F;
+}
+
+.tagPrefixSpan {
+    font-size: 8pt;
+    border: 1px solid #ccc;
+    background-color: #e8e8e8;
+    padding: 2px;
+}
+
+.tag:hover {
+	background-color: #F0F0FF;
+	cursor: pointer;
+}
+
+input.upload {
+	padding: 4px;
+	border: 1px solid #CCC;
+	background-color: #F8F8F8;
+	margin: 8px;
+	cursor: pointer;
+	font-family: Verdana;
+	font-size: 9pt;
+}
+
+.fieldError {
+	font-size: 8pt;
+	border: 1px solid red;
+	background-color: #FFF3F3;
+	color: #C00;
+	margin: 2px;
+	padding: 2px;
+}
+
+input.locked {
+  background:white;
+  color:blue;
+  border: 1px solid blue;
+  cursor: default;
+}
+
+tr.bordertop td {
+	border-top: 1px solid #DADADA;
+}
+
+tr.borderbottom td {
+	border-bottom: 1px solid #DADADA;
+}
+
+.textsmaller {
+	font-size: 8pt;
+}
+
+.breaker {
+	clear: both;
+	height: 0px;	
+}
+
+.uploadMessage {
+	font-size: 8pt;
+	font-style: italic;
+	margin-top: 6px;
+}
+
+.uploaderror {
+	font-weight: bold;
+	color: #CC0000;	
+}
+
+.uploadwindow {
+	width:40%; text-align: center; margin: auto; padding: 8px; background-color: #EEE; border: 1px solid #DDD
+}
+
+.uploadfieldtable {
+	margin: 32px;
+}
+
+.datalabel {
+	font-weight: bold;
+}
+
+.ajaxloading {
+    background-image: url('../images/loader-large.gif') !important;
+    background-repeat: no-repeat !important;
+    background-position: 50% 50% !important;
+}
+
+#mainUploadPane {
+    margin-left: 300px;
+    border-left: 1px solid #cfcfcf;
+    padding: 32px;
+    position: absolute;
+    top:29px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+}
+
+#uploadSidebarWrapper {
+    position: absolute;
+    width:300px;
+    margin-top: 29px;
+    top: 15px;
+}
+
+#uploadSidebarDisabled {
+    font-size: 12pt;
+    text-align: center;
+    color: #BBB;
+    font-style: italic;
+    padding-top: 32px;
+}
+
+.formPage {
+    background-color: #F4F4F4;
+    border: 1px solid #CCC;
+    padding: 8px;
+}
+
+#title-upload-target {
+    height: 25px;
+    overflow: hide;
+    width: 299px;
+}
+
+ul.dynatree-container li {
+    cursor: pointer;
+}
+
+li.sidebarRadio.selected a {
+    background-color: #e1ecfa;
+}
+
+html {
+    overflow: auto;
+}

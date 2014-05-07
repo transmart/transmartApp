@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<root>
+    <topics>
+        <topic url="Documents/configurationtips.htm" window="right" />
+        <topic url="Documents/ie8compatibilityview.htm" window="right" />
+        <topic url="Documents/disablingtheloginpromptfortrustedsites.htm" window="right" />
+        <topic url="Documents/usingpopupblockerwithtransmart.htm" window="right" />
+        <topic url="Documents/internetexplorersecuritywarning.htm" window="right" />
+        <topic url="Documents/thesecuritywarningwithieversionsbeforeie8.htm" window="right" />
+        <topic url="Documents/disablingthesecuritywarning.htm" window="right" />
+        <topic url="Documents/minimumjavaversion.htm" window="right" />
+        <topic url="Documents/javasecuritywarnings.htm" window="right" />
+        <topic url="Documents/mixedcodesecuritywarning.htm" window="right" />
+        <topic url="Documents/unverifiabledigitalsignalwarning.htm" window="right" />
+        <topic url="Documents/performancetips.htm" window="right" />
+        <topic url="Documents/clearingthetempfolder.htm" window="right" />
+        <topic url="Documents/clearingthejavacache.htm" window="right" />
+    </topics>
+</root>

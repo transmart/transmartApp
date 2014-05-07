@@ -1,0 +1,17 @@
+﻿
+div.d2hPopupMenu { margin: 0pt; padding: 1px 1px 1px 1px; white-space:nowrap; width:auto; height:auto;
+
+background-color: #d4d0c8;}
+div.d2hPopupMenu div { margin: 0px; padding: 0px; width:auto; height:auto;}
+div.d2hPopupMenu a { display:block; margin: 0pt;  font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: normal; text-decoration:  none; color: #000000; white-space:nowrap; width:auto; height:auto;
+
+padding: 1px 2px 1px 2px;
+
+}
+div.d2hPopupMenu a:hover {
+
+ padding: 0px 1px 0px 1px; border: 1px solid #808080;
+
+  background-color: #0a246a;  font-family: Verdana; font-size: 8.25pt; font-style: normal; font-weight: normal; text-decoration:  none; color: #FFFFFF;}
+span.d2hHlt {
+  background-color: #0A246A; color: #FFFFFF;}

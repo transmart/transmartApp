@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<topics>
+    <topic id="0" tId="149" url="Documents/clearingthejavacache.htm" target="right"><![CDATA[Clearing the Java Cache]]><contextids /></topic>
+    <topic id="1" tId="148" url="Documents/clearingthetempfolder.htm" target="right"><![CDATA[Clearing the Temp Folder]]><contextids /></topic>
+    <topic id="2" tId="137" url="Documents/configurationtips.htm" target="right" default="1"><![CDATA[Configuration Tips]]><contextids /></topic>
+    <topic id="3" tId="139" url="Documents/disablingtheloginpromptfortrustedsites.htm" target="right"><![CDATA[Disabling the Login Prompt for Trusted Sites]]><contextids /></topic>
+    <topic id="4" tId="142" url="Documents/disablingthesecuritywarning.htm" target="right"><![CDATA[Disabling the Security Warning]]><contextids /></topic>
+    <topic id="5" tId="138" url="Documents/ie8compatibilityview.htm" target="right"><![CDATA[IE8 Compatibility View]]><contextids /></topic>
+    <topic id="6" tId="140" url="Documents/internetexplorersecuritywarning.htm" target="right"><![CDATA[Internet Explorer Security Warning]]><contextids /></topic>
+    <topic id="7" tId="144" url="Documents/javasecuritywarnings.htm" target="right"><![CDATA[Java Security Warnings]]><contextids /></topic>
+    <topic id="8" tId="143" url="Documents/minimumjavaversion.htm" target="right"><![CDATA[Minimum Java Version]]><contextids /></topic>
+    <topic id="9" tId="145" url="Documents/mixedcodesecuritywarning.htm" target="right"><![CDATA[Mixed Code Security Warning]]><contextids /></topic>
+    <topic id="10" tId="147" url="Documents/performancetips.htm" target="right"><![CDATA[Performance Tips]]><contextids /></topic>
+    <topic id="11" tId="141" url="Documents/thesecuritywarningwithieversionsbeforeie8.htm" target="right"><![CDATA[The Security Warning with IE versions before IE8]]><contextids /></topic>
+    <topic id="12" tId="146" url="Documents/unverifiabledigitalsignalwarning.htm" target="right"><![CDATA[Unverifiable Digital Signal Warning]]><contextids /></topic>
+    <topic id="13" tId="160" url="Documents/usingpopupblockerwithtransmart.htm" target="right"><![CDATA[Using Pop-Up Blocker with tranSMART]]><contextids /></topic>
+</topics>

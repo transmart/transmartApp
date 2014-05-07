@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<root>
+    <keywords />
+    <groups>
+        <group name="configtipsjavasecwarn">
+            <topics>
+                <topic url="Documents/javasecuritywarnings.htm" window="right" module="4"><![CDATA[Java Security Warnings]]></topic>
+            </topics>
+        </group>
+        <group name="iesecwarn">
+            <topics>
+                <topic url="Documents/internetexplorersecuritywarning.htm" window="right" module="4"><![CDATA[Internet Explorer Security Warning]]></topic>
+            </topics>
+        </group>
+        <group name="modules">
+            <topics>
+                <topic url="Documents/trialsandstudiesindatasetexplorer.htm" window="right" module="5"><![CDATA[Trials and Studies in Dataset Explorer]]></topic>
+            </topics>
+        </group>
+        <group name="useradmin">
+            <topics />
+        </group>
+        <group name="rntofaqpopupblocker">
+            <topics>
+                <topic url="Documents/canidisplayheatmapsifihavepopupblockerenabledonmybrowser1.htm" window="right" module="3"><![CDATA[Can I display heat maps if I have pop-up blocker enabled on my browser?]]></topic>
+            </topics>
+        </group>
+        <group name="popupblocker">
+            <topics>
+                <topic url="Documents/usingpopupblockerwithtransmart.htm" window="right" module="4"><![CDATA[Using Pop-Up Blocker with tranSMART]]></topic>
+            </topics>
+        </group>
+        <group name="rntoconfig">
+            <topics>
+                <topic url="Documents/configurationtips.htm" window="right" module="4"><![CDATA[Configuration Tips]]></topic>
+            </topics>
+        </group>
+    </groups>
+    <links>
+        <link id="5702" window="" module="2">
+            <items>
+                <item role="group" name="iesecwarn" />
+            </items>
+        </link>
+        <link id="5705" window="" module="2">
+            <items>
+                <item role="group" name="configtipsjavasecwarn" />
+            </items>
+        </link>
+        <link id="5710" window="" module="2">
+            <items>
+                <item role="group" name="modules" />
+            </items>
+        </link>
+        <link id="69" window="" module="3">
+            <items>
+                <item role="group" name="configtipsjavasecwarn" />
+            </items>
+        </link>
+        <link id="936" window="" module="5">
+            <items>
+                <item role="group" name="popupblocker" />
+            </items>
+        </link>
+        <link id="937" window="" module="5">
+            <items>
+                <item role="group" name="rntoconfig" />
+            </items>
+        </link>
+    </links>
+</root>
