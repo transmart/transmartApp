@@ -28,6 +28,7 @@ class QueryResultMarshallerTests {
                 getSetSize:      { 77L },
                 getStatus:       { QueryStatus.FINISHED },
                 getErrorMessage: { 'error message' },
+                getUsername:     { 'bogus_user_name' }
         ] as QueryResult
 
         def out = testee.convert(value)
@@ -38,6 +39,7 @@ class QueryResultMarshallerTests {
                 hasEntry('status', QueryStatus.FINISHED),
                 not(hasEntry(equalTo('statusTypeId'), anything())),
                 not(hasEntry(equalTo('description'), anything())),
+                not(hasEntry(equalTo('username'), anything())),
         )
     }
 }

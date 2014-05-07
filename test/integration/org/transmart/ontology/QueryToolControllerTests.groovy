@@ -12,6 +12,7 @@ import org.transmartproject.core.querytool.QueryDefinitionXmlConverter
 import org.transmartproject.core.querytool.QueryResult
 import org.transmartproject.core.querytool.QueryStatus
 import org.transmartproject.db.test.RuleBasedIntegrationTestMixin
+import org.transmartproject.core.users.User
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
@@ -30,12 +31,14 @@ class QueryToolControllerTests {
     @Test
     void testRunQueryFromDefinition() {
         def queryDefinition = new QueryDefinition([])
+        def testUsername = 'my_username'
         def resultInstance = new QueryResult() {
             Long id = -1
             Long setSize = 10
             QueryStatus status = QueryStatus.FINISHED
             String errorMessage = null
             Set patients = [] as Set
+            String username = testUsername
         }
 
         QueryDefinitionXmlConverter xmlService = mock(QueryDefinitionXmlConverter)
@@ -43,10 +46,15 @@ class QueryToolControllerTests {
                 returns queryDefinition
 
         QueriesResource queriesService = mock(QueriesResource)
-        queriesService.runQuery(is(queryDefinition)).returns resultInstance
+        queriesService.runQuery(is(queryDefinition), is(testUsername)).
+                returns resultInstance
+
+        User mockUser = mock(User)
+        mockUser.username.returns testUsername
 
         testee.queryDefinitionXmlService = xmlService
-        testee.queriesResourceService = queriesService
+        testee.queriesResourceAuthorizationDecorator = queriesService
+        testee.currentUserBean = mockUser
 
         play {
             testee.runQueryFromDefinition()
