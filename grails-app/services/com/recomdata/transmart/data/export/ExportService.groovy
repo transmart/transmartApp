@@ -193,14 +193,13 @@ class ExportService {
         def jobStatus = "Started"
 
         def newJob = new AsyncJob(lastRunOn: new Date())
+        newJob.jobType = analysis
+        newJob.jobStatus = jobStatus
         newJob.save()
 
         def jobName = userName + "-" + analysis + "-" + newJob.id
         newJob.jobName = jobName
-        newJob.jobStatus = jobStatus
-        newJob.jobType = analysis
         newJob.altViewerURL = 'Test'
-        //params.querySummary1 + ((params.querySummary2 != '') ? ' <br/> ' + params.querySummary2 : '')
         newJob.save()
 
         jobResultsService[jobName] = [:]

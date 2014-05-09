@@ -20,13 +20,10 @@
 
 package com.recomdata.transmart.data.export
 
-import au.com.bytecode.opencsv.CSVWriter
 import com.google.common.base.CharMatcher
-import com.google.common.base.Splitter
-import com.google.common.collect.Lists
-import groovy.json.JsonSlurper
 import com.recomdata.snp.SnpData
 import com.recomdata.transmart.data.export.exception.DataNotFoundException
+import groovy.json.JsonSlurper
 import groovy.sql.Sql
 import org.apache.commons.lang.StringUtils
 import org.springframework.transaction.annotation.Transactional
@@ -46,6 +43,8 @@ class DataExportService {
 	def additionalDataService
 	def vcfDataService
     def dataSource
+    def highDimensionResourceService
+    def highDimExportService
 	
 	@Transactional(readOnly = true)
     def exportData(jobDataMap) {

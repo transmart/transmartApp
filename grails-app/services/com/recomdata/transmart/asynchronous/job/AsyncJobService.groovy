@@ -19,10 +19,7 @@
   
 
 package com.recomdata.transmart.asynchronous.job
-
 import com.recomdata.transmart.domain.i2b2.AsyncJob
-import groovy.time.TimeCategory
-import groovy.time.TimeDuration
 import org.apache.commons.lang.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
@@ -68,7 +65,7 @@ class AsyncJobService {
 			m = [:]
 			m["name"] = jobResult.jobName
 			m["status"] = jobResult.jobStatus
-			m["runTime"] = jobResult.runTime
+			m["runTime"] = jobResult.jobStatusTime
 			m["startDate"] = jobResult.lastRunOn
 			m["viewerURL"] = jobResult.viewerURL
 			m["altViewerURL"] = jobResult.altViewerURL
@@ -218,7 +215,9 @@ class AsyncJobService {
 	 def retValue = false   // true if the job was cancelled
 	 def jobNameArray = jobName.split("-")
 	 def jobID = jobNameArray[2]
-	 
+
+      System.err.println(jobName)
+
 	 //log.debug("Checking to see if the user cancelled the job")
 	 if (jobResultsService[jobName]["Status"] == "Cancelled")	{
 		 log.warn("${jobName} has been cancelled")
@@ -229,7 +228,7 @@ class AsyncJobService {
 	 //If the job isn't already cancelled, update the job info.
         if (!retValue) {
 		 def asyncJob = AsyncJob.get(Long.parseLong(jobID))
-		 
+
         // TimeDuration td = TimeCategory.minus(new Date(), asyncJob.lastRunOn)
             //log.debug("Job has been running for ${td}}")
          //asyncJob.runTime = td
