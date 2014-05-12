@@ -47,14 +47,11 @@ class GenericJobExecutor implements Job {
     def springSecurityService = ctx.springSecurityService
     def jobResultsService = ctx.jobResultsService
     def i2b2HelperService = ctx.i2b2HelperService
-    def i2b2ExportHelperService = ctx.i2b2ExportHelperService
-    def snpDataService = ctx.snpDataService
     def dataExportService = ctx.dataExportService
     def asyncJobService = ctx.asyncJobService
 
     final String tempFolderDirectory = Holders.config.com.recomdata.plugins.tempFolderDirectory
 	
-	String jobTmpParentDir
 	String jobTmpDirectory
 	//This is where all the R scripts get run, intermediate files are created, images are initially saved, etc.
 	String jobTmpWorkingDirectory

@@ -191,7 +191,7 @@ class VcfDataService {
 
 	/**
 	 * construct multiple VCF files - each dataset has a file
-	 * @param variants
+	 * @param variantsqt_patient_set
 	 * @param datasetIds
 	 * @param dsSubjectIdxMap
 	 * @param dsSubHeaderColMap
