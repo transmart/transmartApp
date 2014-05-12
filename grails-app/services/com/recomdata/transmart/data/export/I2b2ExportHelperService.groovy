@@ -23,7 +23,6 @@ package com.recomdata.transmart.data.export
 class I2b2ExportHelperService {
 
     static transactional = false
-	def sessionFactory
 	def dataSource;
 
 
