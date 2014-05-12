@@ -21,7 +21,6 @@ class HighDimExportService {
     def exportHighDimData(Map args) {
         String jobName =                args.jobName
         String dataType =               args.dataType
-        boolean splitAttributeColumn =  args.get('splitAttributeColumn', false)
         def resultInstanceId =          args.resultInstanceId
         List<String> conceptPaths =     args.conceptPaths
         String studyDir =               args.studyDir

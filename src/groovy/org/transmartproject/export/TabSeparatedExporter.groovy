@@ -13,7 +13,9 @@ import org.transmartproject.db.dataquery.highdim.HighDimensionResourceService;
 
 class TabSeparatedExporter implements HighDimExporter {
     final static String SEPARATOR = "\t"
-    def highDimensionResourceService
+
+    @Autowired
+    HighDimensionResourceService highDimensionResourceService
     
     @Autowired
     HighDimExporterRegistry highDimExporterRegistry
@@ -21,7 +23,7 @@ class TabSeparatedExporter implements HighDimExporter {
     @PostConstruct
     void init() {
         this.highDimExporterRegistry.registerHighDimensionExporter(
-                format, this.class)
+                format, this )
     }
     
     @Override

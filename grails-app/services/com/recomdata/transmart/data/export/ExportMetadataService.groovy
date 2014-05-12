@@ -24,12 +24,14 @@ import grails.util.Holders
 
 import org.transmartproject.core.dataquery.assay.Assay
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
+import org.transmartproject.export.HighDimExporter
 
 class ExportMetadataService {
 
     static transactional = true
 	def dataCountService
-    def highDimensionResourceService	
+    def highDimensionResourceService
+    def highDimExporterRegistry
 
 	def Map createJSONFileObject(fileType, dataFormat, fileDataCount, gplId, gplTitle) {
 		def file = [:]
@@ -255,6 +257,17 @@ class ExportMetadataService {
         // on how it was specified previously, as well as on the types of data that were allowed
         // for different datatypes
         highDimensionalData.collect { highDimRow ->
+            // Determine the types of files that can be exported for this 
+            // datatype
+            Set<HighDimExporter> exporters = highDimExporterRegistry.getExportersForDataType( 
+                    highDimRow.datatype.dataTypeName );
+            
+            // Determine the data platforms that are present for a given subset
+            def platforms = [
+                "subset1": getPlatformsForSubjectSampleMappingList( highDimRow.subset1 ),
+                "subset2": getPlatformsForSubjectSampleMappingList( highDimRow.subset2 )
+            ]
+                
             [
                 subsetId1: "subset1",
                 subsetId2: "subset2",
@@ -266,24 +279,24 @@ class ExportMetadataService {
                 isHighDimensional: true,
                 metadataExists: true,
                 
-                subset1: [
+                subset1: exporters.collect {
                     [
-                        fileType: "TXT",
+                        fileType: it.format,
                         dataTypeHasCounts: true,
-                        dataFormat: "Data",
+                        dataFormat: it.description,
                         fileDataCount: highDimRow.subset1 ? highDimRow.subset1.size() : 0,
-                        platforms: getPlatformsForSubjectSampleMappingList( highDimRow.subset1 )
+                        platforms: platforms.subset1
                     ]
-                ],
-                subset2:[
+                },
+                subset2: exporters.collect {
                     [
-                        fileType: "TXT",
+                        fileType: it.format,
                         dataTypeHasCounts: true,
-                        dataFormat: "Data",
+                        dataFormat: it.description,
                         fileDataCount: highDimRow.subset2 ? highDimRow.subset2.size() : 0,
-                        platforms: getPlatformsForSubjectSampleMappingList( highDimRow.subset2 )
+                        platforms: platforms.subset2
                     ]
-                ],
+                }
             ]
         }
     }
