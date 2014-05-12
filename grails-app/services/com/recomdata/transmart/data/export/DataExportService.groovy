@@ -55,6 +55,8 @@ class DataExportService {
         def resultInstanceIdMap = jobDataMap.result_instance_ids
         def subsetSelectedFilesMap = jobDataMap.subsetSelectedFilesMap
         def subsetSelectedPlatformsByFiles = jobDataMap.subsetSelectedPlatformsByFiles
+        def highDimDataTypes = jobDataMap.highDimDataTypes
+        
         def mergeSubSet = jobDataMap.mergeSubset
 		//Hard-coded subsets to count 2
 		def subsets = ['subset1', 'subset2']
@@ -78,6 +80,7 @@ class DataExportService {
 			def snpFilesMap = [:]
             def selectedFilesList = subsetSelectedFilesMap.get(subset) ?: []
 
+            // Add all High Dimensional data types available, to the list
             selectedFilesList?.addAll((selection[subset]?.keySet() ?: []) - ['clinical'])
 
 			if (null != selectedFilesList && !selectedFilesList.isEmpty()) {
@@ -126,13 +129,21 @@ class DataExportService {
                                 // String dataType
                                 // String studyDir
                                 log.info "Exporting " + selectedFile + " using core api" 
-                                retVal = highDimExportService.exportHighDimData(jobName: jobDataMap.jobName,
-                                                                                splitAttributeColumn: false,
-                                                                                resultInstanceId: resultInstanceIdMap[subset],
-                                                                                conceptPaths: selection[subset][selectedFile].selector,
-                                                                                dataType: selectedFile,
-                                                                                studyDir: studyDir
-                                                                                )
+                                
+                                // For now we ignore the information about the platforms to 
+                                // export. All data that matches the selected concepts
+                                // is exported
+                                highDimDataTypes[subset][selectedFile].keySet().each { format ->
+                                    log.info "  Using format " + format 
+                                    retVal = highDimExportService.exportHighDimData(jobName: jobDataMap.jobName,
+                                                                                    splitAttributeColumn: false,
+                                                                                    resultInstanceId: resultInstanceIdMap[subset],
+                                                                                    conceptPaths: selection[subset][selectedFile].selector,
+                                                                                    dataType: selectedFile,
+                                                                                    format: format,
+                                                                                    studyDir: studyDir
+                                                                                    )
+                                }
                                 log.info "Exported " + selectedFile + " using core api"
                                  
 								//filesDoneMap is used for building the Clinical Data query

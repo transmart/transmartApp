@@ -24,6 +24,7 @@ class HighDimExportService {
         def resultInstanceId =          args.resultInstanceId
         List<String> conceptPaths =     args.conceptPaths
         String studyDir =               args.studyDir
+        String format =                 args.format
 
 
         if (jobIsCancelled(jobName)) {
@@ -45,10 +46,10 @@ class HighDimExportService {
                         [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
 
         // Setup class to export the data
-        HighDimExporter exporter = highDimExporterRegistry.getExporterForFormat("TSV")
+        HighDimExporter exporter = highDimExporterRegistry.getExporterForFormat( format )
         Projection projection = dataTypeResource.createProjection( exporter.projection )
 
-        File outputFile = new File(studyDir, dataType + '.txt')
+        File outputFile = new File(studyDir, dataType + '.' + format.toLowerCase() )
         String fileName = outputFile.getAbsolutePath()
 
         // Retrieve the data itself

@@ -73,6 +73,41 @@ class ExportService {
 		return result
 	}
 	
+    /**
+     * Converts the list of selected checkboxes, into a map
+     * 
+     * Each selected checkbox has the format
+     *      <subset_id>_<datatype>_<exportformat>_<platform>
+     *      
+     * @param selectedCheckboxList List with selected checkboxes
+     * @return
+     */
+    protected Map getHighDimDataTypesAndFormats( selectedCheckboxList ) {
+        Map formats = [:]
+        
+        selectedCheckboxList.each { 
+            String[] parts = it.split("_")
+            
+            // The third part is the export format. However,
+            // for compatibility reasons the format is prepended
+            // with a dot. That is not necessary anymore
+            def format = parts[2][1..-1] 
+            
+            if( !formats.containsKey( parts[0] ) )
+                formats[parts[0]] = [:]
+                
+            if( !formats[parts[0]].containsKey( parts[1] ) )
+                formats[parts[0]][parts[1]] = [:]
+
+            if( !formats[parts[0]][parts[1]].containsKey( format ) )
+                formats[parts[0]][parts[1]][format] = []
+                
+            formats[parts[0]][parts[1]][format] << parts[3]
+        }
+        
+        formats
+    }
+    
 	def private Map getSubsetSelectedFilesMap(selectedCheckboxList) {
 		def subsetSelectedFilesMap = [:]
         
@@ -149,6 +184,7 @@ class ExportService {
 				}
 			}
 		}
+        
 		return subsetSelectedPlatformsByFiles
 	}
 	
@@ -174,14 +210,14 @@ class ExportService {
 			if (checkboxList && !checkboxList?.trim().equals("")) tempArray.add(checkboxList)
 			checkboxList = tempArray
 		}
-		
+        
 		def jdm = new JobDataMap()
 		jdm.put("analysis", params.analysis)
 		jdm.put("userName", userName)
 		jdm.put("jobName", params.jobName)
 		jdm.put("result_instance_ids", resultInstanceIdHashMap);
 		jdm.selection = params.selection
-		//jdm.put("datatypes", jobDataTypes);
+        jdm.highDimDataTypes = getHighDimDataTypesAndFormats( checkboxList )
 		jdm.put("subsetSelectedPlatformsByFiles", getsubsetSelectedPlatformsByFiles(checkboxList))
 		jdm.put("checkboxList", checkboxList);
 		jdm.put("subsetSelectedFilesMap", getSubsetSelectedFilesMap(params.selectedSubsetDataTypeFiles))
