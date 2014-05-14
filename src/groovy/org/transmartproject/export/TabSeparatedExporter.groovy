@@ -1,21 +1,21 @@
 package org.transmartproject.export
 
-import javax.annotation.PostConstruct;
+import javax.annotation.PostConstruct
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.dataquery.DataRow
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
+import org.transmartproject.core.dataquery.highdim.HighDimensionResource
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.exceptions.NoSuchResourceException
-import org.transmartproject.db.dataquery.highdim.HighDimensionResourceService;
 
 class TabSeparatedExporter implements HighDimExporter {
     final static String SEPARATOR = "\t"
 
     @Autowired
-    HighDimensionResourceService highDimensionResourceService
+    HighDimensionResource highDimensionResourceService
     
     @Autowired
     HighDimExporterRegistry highDimExporterRegistry
@@ -72,6 +72,10 @@ class TabSeparatedExporter implements HighDimExporter {
         
         log.info("started exporting to $format ")
         def startTime = System.currentTimeMillis()
+        
+        if (isCancelled() ) {
+            return null
+        }
         
         outputStream.withWriter( "UTF-8" ) { writer ->
             

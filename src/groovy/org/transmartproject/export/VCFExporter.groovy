@@ -7,15 +7,15 @@ import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
+import org.transmartproject.core.dataquery.highdim.HighDimensionResource
 import org.transmartproject.core.dataquery.highdim.projections.Projection
-import org.transmartproject.db.dataquery.highdim.HighDimensionResourceService
 import org.transmartproject.db.dataquery.highdim.vcf.VcfDataRow
 import org.transmartproject.db.dataquery.highdim.vcf.VcfModule
 
 class VCFExporter implements HighDimExporter {
 
     @Autowired
-    HighDimensionResourceService highDimensionResourceService
+    HighDimensionResource highDimensionResourceService
     
     @Autowired
     HighDimExporterRegistry highDimExporterRegistry
@@ -54,6 +54,10 @@ class VCFExporter implements HighDimExporter {
         log.info("started exporting to $format ")
         def startTime = System.currentTimeMillis()
         
+        if (isCancelled() ) {
+            return
+        }
+
         outputStream.withWriter( "UTF-8" ) { writer ->
             
             // Write the headers
@@ -72,7 +76,7 @@ class VCFExporter implements HighDimExporter {
             for (VcfDataRow datarow : tabularResult) {
                 // Test periodically if the export is cancelled
                 if (isCancelled() ) {
-                    return null
+                    return
                 }
                 
                 writer << getDataForPosition( datarow, assayList ).join( "\t" ) << "\n"
