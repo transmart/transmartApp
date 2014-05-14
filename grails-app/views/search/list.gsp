@@ -313,7 +313,6 @@
 		<div id="header-div">
 			<g:render template="/layouts/commonheader" model="['app':'search']" />
 			<g:render template="/layouts/searchheader" model="['app':'search']" />
-	    </div>
 			<div id="summarycount-div" style="background:#dfe8f6; color:#000; padding:5px 10px 5px 10px;border-top:1px solid #36c;">
 				<span id="summarycount-span" style="font-size:13px; font-weight:bold;">
 					About ${searchresult?.totalCount()} results found
