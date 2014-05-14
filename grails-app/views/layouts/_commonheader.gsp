@@ -80,6 +80,9 @@
 	   				<g:if test="${'gwas'==app}"><th class="menuVisited">GWAS</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="GWAS">GWAS</g:link></th></g:else>
 
+	   				<g:if test="${'uploaddata'==app}"><th class="menuVisited">Upload Data</th></g:if>
+		   			<g:else><th class="menuLink"><g:link controller="uploadData">Upload Data</g:link></th></g:else>
+
 		      		<sec:ifAnyGranted roles="ROLE_ADMIN">
 	   					<g:if test="${'accesslog'==app}"><th class="menuVisited">Admin</th></g:if>
 		   				<g:else><th class="menuLink"><g:link controller="accessLog">Admin</g:link></th></g:else>

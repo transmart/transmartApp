@@ -1,30 +1,14 @@
-import org.transmart.biomart.ContentRepository
-
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
-/**
- * $Id: RecomTagLib.groovy 10280 2011-10-29 03:00:52Z jliu $
- * @author $Author: jliu $
- * @version $Revision: 10280 $
- */
+import org.transmart.biomart.ContentRepository 
+import org.codehaus.groovy.grails.plugins.GrailsPluginManager
+import org.codehaus.groovy.grails.plugins.PluginManagerHolder
+import java.io.File
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import com.recomdata.search.DocumentHit
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class RecomTagLib {
+def diseaseService
 
     def createFileLink = { attrs ->
 
@@ -352,6 +336,83 @@ class RecomTagLib {
         out << "<a id='" + divPrefix + "_fclose' style='" + closedStyle + "' "
         out << "onclick=\"javascript:toggleDetail('" + divPrefix + "');\">" + label + "&nbsp;<img alt='Close' src=\"${resource(dir: 'images/skin', file: 'sorted_asc.gif')}\" /></a> "
         out << "</th></tr></thead>"
+    }
+
+    
+	def fieldDate = { attrs, body ->
+		
+		def bean = attrs["bean"]
+		def field = attrs["field"]
+		def format = attrs["format"]
+		
+		def date = bean."${field}"
+		if (date) {
+			out << (new SimpleDateFormat(format).format(date))
+		}
+		else {
+			out << "None"
+		}
+	}
+
+    def fieldBytes = { attrs, body ->
+        def bean = attrs["bean"]
+        def field = attrs["field"]
+        def bytes = bean."${field}"
+
+        if (bytes < 1024) {
+            out << bytes + " B" //Don't format a decimal on!
+            return
+        }
+
+        bytes /= 1024
+
+        if (bytes < 1024) {
+            out << new DecimalFormat("0.0").format(bytes) + " KB"
+            return
+        }
+
+        bytes /= 1024
+
+        if (bytes < 1024) {
+            out << new DecimalFormat("0.0").format(bytes) + " MB"
+            return
+        }
+    }
+
+    def meshLineage = { attrs, body ->
+
+        def disease = attrs["disease"]
+        def lineage = diseaseService.getMeshLineage(disease)
+
+        def index = 0;
+        for (item in lineage) {
+            out << "<div class='diseaseHierarchy'" + (index == 0 ? " style='background-image: none;'" : "") + ">" + item.disease
+            index++;
+        }
+        for (item in lineage) {
+            out << "</div>"
+        }
+
+    }
+
+    def ifPlugin = { attrs, body ->
+
+        def name = attrs['name']
+        def yes = attrs['true']
+        def no = attrs['false']
+
+        //If the tag does not have true/false reactions, do the body. If it does, output the yes/no string.
+        if (PluginManagerHolder.pluginManager.hasGrailsPlugin(name)) {
+            if (yes) {
+                out << yes
+            }
+            else {
+                out << body()
+            }
+        }
+        else if (no) {
+            out << no
+        }
     }
 
     /**

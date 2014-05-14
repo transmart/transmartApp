@@ -23,6 +23,12 @@ a.upload {
 	text-align: center;
 }
 
+.uploadTypeRadio {
+    padding: 8px;
+    border: 1px dotted #ccc;
+    margin-bottom: 8px;
+}
+
 div.buttonbar {
 	text-align: center;
 	padding: 16px;
@@ -64,6 +70,18 @@ a.button {
 	background-image: url('../images/clearsmall.png');
 	background-repeat: no-repeat;
 	display: inline-block;
+}
+
+.tag.observationtag {
+    background-color: #EDF;
+    border: 1px solid #A9F;
+}
+
+.tagPrefixSpan {
+    font-size: 8pt;
+    border: 1px solid #ccc;
+    background-color: #e8e8e8;
+    padding: 2px;
 }
 
 .tag:hover {
@@ -135,4 +153,60 @@ tr.borderbottom td {
 
 .datalabel {
 	font-weight: bold;
+}
+
+.ajaxloading {
+    background-image: url('../images/loader-large.gif') !important;
+    background-repeat: no-repeat !important;
+    background-position: 50% 50% !important;
+}
+
+#mainUploadPane {
+    margin-left: 300px;
+    border-left: 1px solid #cfcfcf;
+    padding: 32px;
+    position: absolute;
+    top:29px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+}
+
+#uploadSidebarWrapper {
+    position: absolute;
+    width:300px;
+    margin-top: 29px;
+    top: 15px;
+}
+
+#uploadSidebarDisabled {
+    font-size: 12pt;
+    text-align: center;
+    color: #BBB;
+    font-style: italic;
+    padding-top: 32px;
+}
+
+.formPage {
+    background-color: #F4F4F4;
+    border: 1px solid #CCC;
+    padding: 8px;
+}
+
+#title-upload-target {
+    height: 25px;
+    overflow: hide;
+    width: 299px;
+}
+
+ul.dynatree-container li {
+    cursor: pointer;
+}
+
+li.sidebarRadio.selected a {
+    background-color: #e1ecfa;
+}
+
+html {
+    overflow: auto;
 }

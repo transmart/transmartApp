@@ -68,7 +68,7 @@ grails.project.dependency.resolution = {
         runtime ':resources:1.2.1'
         compile ':transmart-legacy-db:0.3-ORACLE-SNAPSHOT'
         compile ':search-domain:1.0-SNAPSHOT'
-        compile ':biomart-domain:1.0-SNAPSHOT'
+        compile ':biomart-domain:1.1-SNAPSHOT'
         compile ':transmart-java:1.0-SNAPSHOT'
         runtime ':transmart-mydas:0.1-SNAPSHOT'
         runtime ':dalliance-plugin:0.1-SNAPSHOT'
