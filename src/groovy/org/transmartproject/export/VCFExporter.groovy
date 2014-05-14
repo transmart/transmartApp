@@ -5,12 +5,11 @@ import grails.util.Metadata
 import javax.annotation.PostConstruct
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.transmartproject.core.dataquery.DataRow
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.HighDimensionResource
 import org.transmartproject.core.dataquery.highdim.projections.Projection
-import org.transmartproject.db.dataquery.highdim.vcf.VcfDataRow
-import org.transmartproject.db.dataquery.highdim.vcf.VcfModule
 
 class VCFExporter implements HighDimExporter {
 
@@ -73,7 +72,7 @@ class VCFExporter implements HighDimExporter {
             
             // Start looping 
             writeloop:
-            for (VcfDataRow datarow : tabularResult) {
+            for (DataRow datarow : tabularResult) {
                 // Test periodically if the export is cancelled
                 if (isCancelled() ) {
                     return
@@ -107,7 +106,7 @@ class VCFExporter implements HighDimExporter {
         [ "CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT" ] + tabularResult.indicesList*.label
     }
     
-    protected List<String> getDataForPosition( VcfDataRow datarow, List<AssayColumn> assayList ) {
+    protected List<String> getDataForPosition( DataRow datarow, List<AssayColumn> assayList ) {
         def data = []
         
         // First add general info from the summary
@@ -123,7 +122,7 @@ class VCFExporter implements HighDimExporter {
 
         // TODO: Determine which info fields can be exported (if any)
         // TODO: Determine what sample-specific fields can be exported (if any) 
-        data << '.'
+        data << ''
         data << "GT"
         
         // Now add the data for each assay
@@ -142,13 +141,15 @@ class VCFExporter implements HighDimExporter {
             // new indices that were computed
             def convertedIndices = []
             [ "allele1", "allele2" ].each {
-                int oldIndex = assayData[ it ]
-                
-                if( oldIndex != null ) {
-                    String variant = originalVariants[ oldIndex ]
-                    int newIndex = newVariants.indexOf( variant )
+                if( assayData.containsKey( it ) ) {
+                    int oldIndex = assayData[ it ]
                     
-                    convertedIndices << newIndex
+                    if( oldIndex != null ) {
+                        String variant = originalVariants[ oldIndex ]
+                        int newIndex = newVariants.indexOf( variant )
+                        
+                        convertedIndices << newIndex
+                    }
                 }
             }
             
@@ -162,7 +163,7 @@ class VCFExporter implements HighDimExporter {
     
     @Override
     public String getProjection() {
-        VcfModule.COHORT_PROJECTION
+        "cohort"
     }
 
 }

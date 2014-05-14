@@ -61,14 +61,6 @@ class TabSeparatedExporter implements HighDimExporter {
     @Override
     public void export(TabularResult tabularResult, Projection projection,
             OutputStream outputStream, Closure isCancelled) {
-
-        // Determine the fields to be exported, and the label they get
-        Map<String, String> dataKeys = projection.dataProperties.collectEntries {
-            [it.key, getFieldTranslation( it.key ).toUpperCase()]
-        }
-        Map<String, String> rowKeys = projection.rowProperties.collectEntries {
-            [it.key, getFieldTranslation( it.key ).toUpperCase()]
-        }
         
         log.info("started exporting to $format ")
         def startTime = System.currentTimeMillis()
@@ -76,7 +68,16 @@ class TabSeparatedExporter implements HighDimExporter {
         if (isCancelled() ) {
             return null
         }
+
         
+        // Determine the fields to be exported, and the label they get
+        Map<String, String> dataKeys = projection.dataProperties.collectEntries {
+            [it.key, getFieldTranslation( it.key ).toUpperCase()]
+        }
+        Map<String, String> rowKeys = projection.rowProperties.collectEntries {
+            [it.key, getFieldTranslation( it.key ).toUpperCase()]
+        }
+                
         outputStream.withWriter( "UTF-8" ) { writer ->
             
             // First write the header
