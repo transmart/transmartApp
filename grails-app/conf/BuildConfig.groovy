@@ -72,7 +72,7 @@ grails.project.dependency.resolution = {
         compile ':transmart-java:1.0-SNAPSHOT'
         runtime ':transmart-mydas:0.1-SNAPSHOT'
         runtime ':dalliance-plugin:0.1-SNAPSHOT'
-        // runtime ':transmart-rest-api:0.1-SNAPSHOT'
+        runtime ':transmart-rest-api:0.1-SNAPSHOT'
 
         // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
@@ -133,5 +133,3 @@ if (buildConfigFile.exists()) {
         }
     }
 }
-
-// vim: set et sw=4 ts=4:
