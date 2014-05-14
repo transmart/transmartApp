@@ -88,7 +88,18 @@ grails.project.dependency.resolution = {
             excludes 'spring-security-config', 'spring-security-core', 'spring-security-web', 'xercesImpl'
         }
 
-        test 'org.gmock:gmock:0.8.3', {
+        runtime 'org.javassist:javassist:3.16.1-GA'
+
+        
+        test('junit:junit:4.11') {
+            transitive = false /* don't bring hamcrest */
+            export     = false
+        }
+
+        test 'org.hamcrest:hamcrest-core:1.3',
+             'org.hamcrest:hamcrest-library:1.3'
+
+        test 'org.gmock:gmock:0.9.0-r435-hyve2', {
             transitive = false
         }
     }
