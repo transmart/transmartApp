@@ -217,7 +217,6 @@ function createSearchTabs(toolbar) {
                 defaultSrc: pageData.genego.resultsUrl,
                 tabTip: pageData.genego.credentials
             },
-            ,
             {
                 id: "tab18",
                 iconCls: "cortellisTab",
