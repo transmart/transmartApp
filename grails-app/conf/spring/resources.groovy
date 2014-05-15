@@ -24,9 +24,11 @@ import org.springframework.security.web.session.ConcurrentSessionFilter
 import org.transmart.authorization.CurrentUserBean
 import org.transmart.authorization.QueriesResourceAuthorizationDecorator
 import org.transmart.marshallers.MarshallerRegistrarService
+import org.transmartproject.export.HighDimExporter
 
 beans = {
-
+    xmlns context:"http://www.springframework.org/schema/context"
+    
     if (grailsApplication.config.org.transmart.security.samlEnabled) {
         importBeans('classpath:/spring/spring-security-saml.xml')
     }
@@ -58,6 +60,13 @@ beans = {
 		expiredUrl = '/login'
 	}
 
+    context.'component-scan'('base-package': 'org.transmartproject.export') {
+        context.'include-filter'(
+                type:       'assignable',
+                expression: HighDimExporter.canonicalName)
+    }
+    
+    
     //overrides bean implementing GormUserDetailsService?
 	userDetailsService(com.recomdata.security.AuthUserDetailsService)
 
