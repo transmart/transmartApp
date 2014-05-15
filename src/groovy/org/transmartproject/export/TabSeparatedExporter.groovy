@@ -49,7 +49,7 @@ class TabSeparatedExporter implements HighDimExporter {
 
     @Override
     public String getDescription() {
-        return "Tab separated file";
+        return "Tab separated file"
     }
 
     @Override

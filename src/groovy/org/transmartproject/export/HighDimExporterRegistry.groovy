@@ -1,6 +1,6 @@
 package org.transmartproject.export
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component
 
 @Component
 class HighDimExporterRegistry {

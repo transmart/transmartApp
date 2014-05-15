@@ -37,7 +37,7 @@ class VCFExporter implements HighDimExporter {
 
     @Override
     public String getDescription() {
-        return "VCF formatted variants";
+        return "VCF formatted variants"
     }
 
     @Override
