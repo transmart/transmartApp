@@ -78,7 +78,10 @@ class ExportService {
      * 
      * Each selected checkbox has the format
      *      <subset_id>_<datatype>_<exportformat>_<platform>
-     *      
+     * where exportformat is a string, prepended with a dot
+     * (for compatibility reasons). That dot is removed from the
+     * string in this method
+     * 
      * @param selectedCheckboxList List with selected checkboxes
      * @return
      */
