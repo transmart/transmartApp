@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.querytool.QueriesResource
 import org.transmartproject.core.querytool.QueryResult
 
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
+
 class DataCountService {
 	
 	def dataSource
@@ -36,6 +38,8 @@ class DataCountService {
 	//We want to return a map that looks like {"PLINK": "102","RBM":"28"}
     Map getDataCounts(Long rId, Long[] resultInstanceIds)
 	{
+        checkQueryResultAccess(*resultInstanceIds)
+
 		//This is the map we build for each subset that contains the data type and count for that data type.
         def resultMap = [
                 MRNA       : [:],

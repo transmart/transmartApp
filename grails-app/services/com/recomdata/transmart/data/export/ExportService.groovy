@@ -1,38 +1,39 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
- * 
+ *
  *
  ******************************************************************/
 
 
 package com.recomdata.transmart.data.export
 
+import com.recomdata.asynchronous.GenericJobExecutor
+import com.recomdata.transmart.domain.i2b2.AsyncJob
+import com.recomdata.transmart.validate.RequestValidator
 import grails.util.Holders
-
 import org.apache.commons.lang.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
 import org.quartz.JobDataMap
 import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
+import org.transmart.authorization.CurrentUserBeanProxyFactory
 import org.transmart.searchapp.AccessLog
 
-import com.recomdata.asynchronous.GenericJobExecutor
-import com.recomdata.transmart.domain.i2b2.AsyncJob
-import com.recomdata.transmart.validate.RequestValidator
+import javax.annotation.Resource
 
 class ExportService {
 
@@ -44,6 +45,9 @@ class ExportService {
     def quartzScheduler
     def grailsApplication
     def dataExportService
+
+    @Resource(name = CurrentUserBeanProxyFactory.BEAN_BAME)
+    def currentUser
 
     def createExportDataAsyncJob(params, userName) {
         def analysis = params.analysis
@@ -75,17 +79,17 @@ class ExportService {
 
     /**
      * Converts the list of selected checkboxes, into a map
-     * 
+     *
      * Each selected checkbox has the format
      *      <subset_id>_<datatype>_<exportformat>_<platform>
      * where exportformat is a string, prepended with a dot
      * (for compatibility reasons). That dot is removed from the
      * string in this method
-     * 
+     *
      * @param selectedCheckboxList List with selected checkboxes
      * @return
      */
-    protected Map getHighDimDataTypesAndFormats( selectedCheckboxList ) {
+    protected Map getHighDimDataTypesAndFormats(selectedCheckboxList) {
         Map formats = [:]
 
         selectedCheckboxList.each {
@@ -96,14 +100,17 @@ class ExportService {
             // with a dot. That is not necessary anymore
             def format = parts[2][1..-1]
 
-            if( !formats.containsKey( parts[0] ) )
+            if (!formats.containsKey(parts[0])) {
                 formats[parts[0]] = [:]
+            }
 
-            if( !formats[parts[0]].containsKey( parts[1] ) )
+            if (!formats[parts[0]].containsKey(parts[1])) {
                 formats[parts[0]][parts[1]] = [:]
+            }
 
-            if( !formats[parts[0]][parts[1]].containsKey( format ) )
+            if (!formats[parts[0]][parts[1]].containsKey(format)) {
                 formats[parts[0]][parts[1]][format] = []
+            }
 
             formats[parts[0]][parts[1]][format] << parts[3]
         }
@@ -115,11 +122,12 @@ class ExportService {
         def subsetSelectedFilesMap = [:]
 
         //If only one was checked, we need to add that one to an array list.
-        if (selectedCheckboxList instanceof String)
+        if (selectedCheckboxList instanceof String) {
             selectedCheckboxList = [selectedCheckboxList]
-        if (selectedCheckboxList == null)
+        }
+        if (selectedCheckboxList == null) {
             selectedCheckboxList = []
-
+        }
 
         //Remove duplicates. duplicates are coming in from the UI, better handle it here
         //The same issue is handled in the UI now so the following code may not be necessary
@@ -134,20 +142,22 @@ class ExportService {
             String currentSubset = null
             if (checkboxItemArray.size() > 0) {
                 //The first item is the subset name.
-                currentSubset = checkboxItemArray[0].trim().replace(" ","")
-                if (null == subsetSelectedFilesMap.get(currentSubset)) subsetSelectedFilesMap.put(currentSubset, ["STUDY"])
+                currentSubset = checkboxItemArray[0].trim().replace(" ", "")
+                if (null == subsetSelectedFilesMap.get(currentSubset)) {
+                    subsetSelectedFilesMap.put(currentSubset, ["STUDY"])
+                }
             }
 
             if (checkboxItemArray.size() > 1) {
                 //Second item is the data type.
                 String currentDataType = checkboxItemArray[1].trim()
-                if (checkboxItemArray.size()>3) {
-                    def jobDataType = currentDataType+checkboxItemArray[2].trim()
+                if (checkboxItemArray.size() > 3) {
+                    def jobDataType = currentDataType + checkboxItemArray[2].trim()
                     if (!subsetSelectedFilesMap.get(currentSubset)?.contains(jobDataType)) {
                         subsetSelectedFilesMap.get(currentSubset).push(jobDataType)
                     }
-                } else if (checkboxItemArray.size()>2) {
-                    subsetSelectedFilesMap.get(currentSubset)?.push(currentDataType+checkboxItemArray[2].trim())
+                } else if (checkboxItemArray.size() > 2) {
+                    subsetSelectedFilesMap.get(currentSubset)?.push(currentDataType + checkboxItemArray[2].trim())
                 } else {
                     subsetSelectedFilesMap.get(currentSubset)?.push(currentDataType)
                 }
@@ -157,33 +167,33 @@ class ExportService {
         subsetSelectedFilesMap
     }
 
-    def getsubsetSelectedPlatformsByFiles(checkboxList){
-        def subsetSelectedPlatformsByFiles=[:]
+    def getsubsetSelectedPlatformsByFiles(checkboxList) {
+        def subsetSelectedPlatformsByFiles = [:]
         //Split the list on commas first, each box is seperated by ",".
-        checkboxList.each {checkboxItem ->
-            // Split the item by "_" to get the different attributes.
+        checkboxList.each { checkboxItem ->
+            //Split the item by "_" to get the different attributes.
             // Attributes are: <subset_id>_<datatype>_<exportformat>_<platform>
             // e.g. subset1_mrna_TSV_GPL570
             String[] checkboxItemArray = StringUtils.split(checkboxItem, "_")
 
             //The first item is the subset name.
-            def currentSubset = checkboxItemArray[0].trim().replace(" ","")
+            def currentSubset = checkboxItemArray[0].trim().replace(" ", "")
 
             //Fourth item is the selected (gpl) platform
-            if(checkboxItemArray.size()>3){
-                def fileName = checkboxItemArray[1].trim()+checkboxItemArray[2].trim()
+            if (checkboxItemArray.size() > 3) {
+                def fileName = checkboxItemArray[1].trim() + checkboxItemArray[2].trim()
                 def platform = checkboxItemArray[3].trim()
-                if(subsetSelectedPlatformsByFiles.containsKey(currentSubset)){
-                    if(subsetSelectedPlatformsByFiles.get(currentSubset).containsKey(fileName)){
+                if (subsetSelectedPlatformsByFiles.containsKey(currentSubset)) {
+                    if (subsetSelectedPlatformsByFiles.get(currentSubset).containsKey(fileName)) {
                         def platformFilesList = subsetSelectedPlatformsByFiles.get(currentSubset).get(fileName)
                         platformFilesList.push(platform)
-                    }else{
-                        subsetSelectedPlatformsByFiles.get(currentSubset).put(fileName,[platform])
+                    } else {
+                        subsetSelectedPlatformsByFiles.get(currentSubset).put(fileName, [platform])
                     }
-                }else{
+                } else {
                     def platformsMap = new HashMap()
-                    platformsMap.put(fileName,[platform])
-                    subsetSelectedPlatformsByFiles.put(currentSubset,platformsMap)
+                    platformsMap.put(fileName, [platform])
+                    subsetSelectedPlatformsByFiles.put(currentSubset, platformsMap)
                 }
             }
         }
@@ -237,6 +247,8 @@ class ExportService {
         //This adds a step to the job to create a file link as the plugin output.
         jdm.put("renderSteps",["FILELINK":""]);
 
+        jdm.put("userInContext", currentUser.targetSource.target)
+
         def jobDetail = new JobDetail(params.jobName, params.analysis, GenericJobExecutor.class)
         jobDetail.setJobDataMap(jdm);
 
@@ -258,13 +270,13 @@ class ExportService {
 
     def exportData(params, userName) {
         def statusList = ["Started", "Validating Cohort Information",
-            "Triggering Data-Export Job","Gathering Data","Running Conversions","Running Analysis","Rendering Output"]
+                "Triggering Data-Export Job","Gathering Data","Running Conversions","Running Analysis","Rendering Output"]
 
         jobResultsService[params.jobName]["StatusList"] = statusList
         asyncJobService.updateStatus(params.jobName, statusList[0])
 
         def al = new AccessLog(username:userName, event:"${params.analysis}, Job: ${params.jobName}",
-        eventmessage:"", accesstime:new java.util.Date())
+                eventmessage:"", accesstime:new java.util.Date())
         al.save()
 
         //TODO get the required input parameters for the job and validate them

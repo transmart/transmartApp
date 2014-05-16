@@ -20,7 +20,9 @@
 
 package com.recomdata.transmart.data.export
 
-import com.recomdata.transmart.data.export.util.FileWriterUtil;
+import com.recomdata.transmart.data.export.util.FileWriterUtil
+
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess;
 
 class AdditionalDataService {
 
@@ -33,6 +35,8 @@ class AdditionalDataService {
 	def geneExpressionDataService
 
     def findAdditionalDataFiles(String resultInstanceId,  studyList) {
+        checkQueryResultAccess resultInstanceId
+
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		def filesList = []
 		

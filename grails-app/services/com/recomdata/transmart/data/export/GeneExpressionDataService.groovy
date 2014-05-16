@@ -35,6 +35,8 @@ import org.transmart.searchapp.SearchKeyword
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
+
 class GeneExpressionDataService {
 		
 	private String valueDelimiter ="\t";
@@ -292,6 +294,7 @@ class GeneExpressionDataService {
 	 * @return
 	 */
 	def String getAssayIds(String resultInstanceId, String sampleTypes, String timepoint, String tissueTypes) {
+        checkQueryResultAccess resultInstanceId
 
 		//Sql command used to retrieve Assay IDs.
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
@@ -874,6 +877,8 @@ class GeneExpressionDataService {
 	}
 	
 	def validateCommonSubjectsIn2Subsets(Map resultInstanceIdMap) {
+        checkQueryResultAccess(*resultInstanceIdMap.values())
+
 		if (resultInstanceIdMap && !resultInstanceIdMap.isEmpty() && resultInstanceIdMap.size() == 2) {
 			def sqlQuery = """
 							SELECT DISTINCT ssm.patient_id FROM de_subject_sample_mapping ssm 
@@ -992,6 +997,8 @@ class GeneExpressionDataService {
    }
 	   
    def private String createCLSDataQuery(List studyList, String resultInstanceIds, List platformsList) {
+       checkQueryResultAccess(*resultInstanceIds.split(/,/)*.trim())
+
 	   def sSelect = new StringBuilder()
 	   sSelect.append("""
 		   SELECT DISTINCT 	ssm.patient_id,
@@ -1012,6 +1019,8 @@ class GeneExpressionDataService {
    }
    
    def private String createGCTPathwayQuery(List studyList, String resultInstanceIds, List platformsList) {
+       checkQueryResultAccess(*resultInstanceIds.split(/,/)*.trim())
+
 	   def sSelect = new StringBuilder()	   
 	   sSelect.append("""
 	   	SELECT a.PATIENT_ID, a.LOG_INTENSITY, a.RAW_INTENSITY, a.assay_id, b.probe_id, b.probeset_id, pd.sourcesystem_cd, ssm.gpl_id
@@ -1037,6 +1046,8 @@ class GeneExpressionDataService {
    }
    
    def private String createGCTStudySampleAssayQuery(List studyList, String resultInstanceIds, List platformsList) {
+       checkQueryResultAccess(*resultInstanceIds.split(/,/)*.trim())
+
 	   def sQuery = new StringBuilder();
 	   sQuery.append("""
 	   	SELECT DISTINCT ssm.assay_id, ssm.sample_type, ssm.timepoint, ssm.tissue_type, ssm.sample_cd, ssm.trial_name, ssm.GPL_ID

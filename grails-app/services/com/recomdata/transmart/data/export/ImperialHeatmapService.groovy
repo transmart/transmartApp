@@ -29,7 +29,9 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 import org.json.JSONArray
 import org.json.JSONObject
 
-import com.recomdata.transmart.validate.RequestValidator;
+import com.recomdata.transmart.validate.RequestValidator
+
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess;
 
 class ImperialHeatmapService {
 
@@ -154,6 +156,8 @@ class ImperialHeatmapService {
 	}
 
 	def private getMicroarray(rID, subset){
+        checkQueryResultAccess rID
+
 		// wsc add the following for what...
 
 		groovy.sql.Sql wscsql = new groovy.sql.Sql(dataSource);

@@ -34,6 +34,8 @@ import org.rosuda.REngine.Rserve.RConnection
 import com.recomdata.dataexport.util.ExportUtil
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
+
 class ClinicalDataService {
 
     boolean transactional = true
@@ -64,6 +66,8 @@ class ClinicalDataService {
 	public boolean getData(List studyList, File studyDir, String fileName, String jobName, String resultInstanceId, 
 		String[] conceptCodeList, List retrievalTypes, boolean parPivotData, boolean parFilterHighLevelConcepts, 
 		Map snpFilesMap, String subset, Map filesDoneMap, List platformsList,String[] parentConceptCodeList, Boolean includeConceptContext) 	{
+
+        checkQueryResultAccess resultInstanceId
 		
 		def sqlQuery = new StringBuilder();
 		def parameterList = null;
