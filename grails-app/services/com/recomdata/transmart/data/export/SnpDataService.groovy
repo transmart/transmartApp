@@ -33,6 +33,8 @@ import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
+
 class SnpDataService {
 
     boolean transactional = false
@@ -67,7 +69,7 @@ class SnpDataService {
 		def patientId, omicPatientId, subjectId
 	} 
 	
-	def public getPatientData(resultInstanceId) {
+	private def getPatientData(resultInstanceId) {
 		def groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		def query = """
 						SELECT DISTINCT patient_id, omic_patient_id, subject_id
@@ -91,6 +93,8 @@ class SnpDataService {
 
 	def public getDataByPatientByProbes(studyDir, resultInstanceId, jobName)
 	{
+        checkQueryResultAccess resultInstanceId
+
 		def dataTypeName = 'SNP'
 		def dataTypeFolder = "Processed_data"
 		char separator = '\t'

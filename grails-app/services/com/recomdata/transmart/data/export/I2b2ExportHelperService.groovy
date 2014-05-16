@@ -20,13 +20,17 @@
 
 package com.recomdata.transmart.data.export
 
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
+
 class I2b2ExportHelperService {
 
     static transactional = false
 	def dataSource;
 
 
-def  findStudyAccessions( result_instance_ids){
+    def findStudyAccessions(result_instance_ids) {
+        checkQueryResultAccess(*(result_instance_ids.split(',') as List))
+
 		def rids = []
 		for(r in result_instance_ids){
 			if(r?.trim()?.length()>0 ){

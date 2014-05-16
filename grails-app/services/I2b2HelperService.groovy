@@ -52,7 +52,9 @@ import org.xml.sax.InputSource;
 import com.recomdata.db.DBHelper;
 import com.recomdata.export.*;
 
-import com.recomdata.i2b2.SurvivalConcepts;
+import com.recomdata.i2b2.SurvivalConcepts
+
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess;
 
 class I2b2HelperService {
 	
@@ -70,6 +72,8 @@ class I2b2HelperService {
 	 * Gets a distribution of information from the patient dimention table for value columns
 	 */
 	def double[] getPatientDemographicValueDataForSubset(String col, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		ArrayList<Double> values=new ArrayList<Double>();
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		String sqlt = """SELECT """ + col + """ FROM patient_dimension f WHERE
@@ -291,6 +295,8 @@ class I2b2HelperService {
 	
 	def getConceptDistributionDataForValueConcept(String concept_key, String result_instance_id) 
 	{
+        checkQueryResultAccess result_instance_id
+
 		log.debug("Getting concept distribution data for value concept:"+concept_key);
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 		String concept_cd=getConceptCodeFromKey(concept_key);
@@ -327,6 +333,8 @@ class I2b2HelperService {
 	}
 	
 	def getConceptDistributionDataForValueConceptFromCode(String concept_cd, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		ArrayList<Double> values=new ArrayList<Double>();
 		ArrayList<Double> returnvalues=new ArrayList<Double>(values.size());
 		if (result_instance_id==""){
@@ -360,6 +368,8 @@ class I2b2HelperService {
 	 *  Gets the count of a a patient set fromt he result instance id
 	 */
 	def  Integer getPatientSetSize(String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		log.trace("Getting patient set size with id:" + result_instance_id);
 		Integer i=0;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
@@ -380,6 +390,8 @@ class I2b2HelperService {
 	 *  Gets the intersection of the patient sets from two result instance ids
 	 */
 	def int getPatientSetIntersectionSize(String result_instance_id1, String result_instance_id2) {
+        checkQueryResultAccess result_instance_id1, result_instance_id2
+
 		log.trace("Getting patient set intersection");
 		Integer i=0;
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
@@ -466,6 +478,8 @@ class I2b2HelperService {
 	 * Gets the distribution of data for a concept
 	 */
 	def HashMap<String,Integer> getConceptDistributionDataForConceptOld(String concept_key, String result_instance_id) throws SQLException {
+        checkQueryResultAccess result_instance_id
+
 		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
 		int i=getLevelFromKey(concept_key)+1;
@@ -602,6 +616,8 @@ class I2b2HelperService {
 	 * Gets the count of the observations in the fact table for a concept and a subset
 	 */
 	def Integer getObservationCountForConceptForSubset(String concept_key, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		log.trace("Getting observation count for concept:"+concept_key+" and instance:"+result_instance_id);
 		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		int i=0;
@@ -622,6 +638,8 @@ class I2b2HelperService {
 	 * Fills the main demographic data in an export table for the grid
 	 */
 	def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
+        checkQueryResultAccess result_instance_id
+
 		log.trace("Adding patient demographic data to grid with result instance id:" +result_instance_id+" and subset: "+subset)
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		String sqlt = """SELECT * FROM patient_dimension p INNER JOIN patient_trial t ON p.patient_num=t.patient_num
@@ -677,6 +695,8 @@ class I2b2HelperService {
 	 * Adds a column of data to the grid export table
 	 */
 	def ExportTableNew addConceptDataToTable(ExportTableNew tablein,String concept_key,String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		if(isLeafConceptKey(concept_key)) {
 			String columnid=getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "");
 			String columnname=getColumnNameFromKey(concept_key).replace(" ", "_");
@@ -849,6 +869,8 @@ class I2b2HelperService {
 	 * Gets a distribution of information from the patient dimension table
 	 * */
 	def HashMap<String,Integer> getPatientDemographicDataForSubset(String col, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		String sqlt = """SELECT a.cat as demcategory, COALESCE(b.demcount,0) as demcount FROM
@@ -970,6 +992,7 @@ class I2b2HelperService {
 	}
 	
 	def Set<String> lookupChildConcepts(String parentConcept, String result_instance_id1, String result_instance_id2) {
+        checkQueryResultAccess result_instance_id1, result_instance_id2
 		
 		Set<String>	childConcepts = new HashSet<String>();
 		
@@ -1125,7 +1148,9 @@ class I2b2HelperService {
 	/**
 	 * Gets a comma delimited list of subjects for a result instance id
 	 */
-	def  String getSubjects(String resultInstanceId){
+	def String getSubjects(String resultInstanceId) {
+        checkQueryResultAccess resultInstanceId
+
 		if (resultInstanceId == null) {
 			return null;
 		}
@@ -1149,7 +1174,9 @@ class I2b2HelperService {
 	/**
 	 * Gets a list of subjects for a result instance id
 	 */
-	def  List<String> getSubjectsAsList(String resultInstanceId){
+	def List<String> getSubjectsAsList(String resultInstanceId) {
+        checkQueryResultAccess resultInstanceId
+
 		List<String> subjectIds=new ArrayList<String>();
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id = CAST(? AS numeric)";
@@ -4484,10 +4511,12 @@ class I2b2HelperService {
 	
 	
 	def  getGenesForHaploviewFromResultInstanceId(resultInstanceId) {
+        checkQueryResultAccess resultInstanceId
+
 		log.debug("getting genes for happloview");
 		def genes=[];
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
-		String sqlt = "select distinct gene from haploview_data a inner join qt_patient_set_collection b on a.I2B2_ID=b.patient_num where result_instance_id = CAST(? AS numeric) order by gene asc"
+		String sqlt = "select distinct gene from haploview_data a inner join q_patient_set_collection b on a.I2B2_ID=b.patient_num where result_instance_id = CAST(? AS numeric) order by gene asc"
 		//String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id="+resultInstanceId
 		sql.eachRow(sqlt, [resultInstanceId], {row ->
 			log.trace("IN ROW ITERATOR");
@@ -4569,6 +4598,8 @@ class I2b2HelperService {
 	 * for display in a distribution histogram for a given subset
 	 */
 	def getConceptDistributionDataForValueConceptByTrial(String concept_key, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		def trialdata=[:];
 		
 		if(result_instance_id!=null && result_instance_id!="") {
@@ -4600,6 +4631,8 @@ class I2b2HelperService {
 	}
 	
 	def getConceptDistributionDataForValueConceptByTrialByConcepts(Set<String> childConcepts, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		def trialdata=[:];
 		
 		if(result_instance_id!=null && result_instance_id!="" && !childConcepts.isEmpty()) {
@@ -5215,6 +5248,8 @@ class I2b2HelperService {
 	}
 	
 	def getDistinctTrialsInPatientSets(String rid1, String rid2) {
+        checkQueryResultAccess rid1, rid2
+
 		log.debug("Checking patient sets")
 		def trials=[];
 		
