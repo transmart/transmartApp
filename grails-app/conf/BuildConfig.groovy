@@ -62,13 +62,20 @@ grails.project.dependency.resolution = {
         //either hyve or transmartfoundation repository
     }
     dependencies {
+        // you can remove whichever you're not using
         runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
-        compile 'antlr:antlr:2.7.7'
+        runtime 'com.oracle:ojdbc7:12.1.0.1'
+
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
         compile 'net.sf.opencsv:opencsv:2.3'
         compile "org.apache.lucene:lucene-core:2.4.0"
         compile "org.apache.lucene:lucene-demos:2.4.0"
         compile "org.apache.lucene:lucene-highlighter:2.4.0"
+        compile 'commons-net:commons-net:3.3' // used for ftp transfers
+        compile 'org.apache.commons:commons-math:2.2' //>2MB lib briefly used in ChartController
+        compile 'org.codehaus.groovy:http-builder:0.4.1', {
+            excludes 'groovy', 'nekohtml'
+        }
         compile 'org.grails:grails-plugin-rest:2.3.5-hyve4'
         compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
 
