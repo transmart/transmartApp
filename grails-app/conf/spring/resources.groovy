@@ -60,6 +60,11 @@ beans = {
         bean.scope = 'quartz'
     }
 
+    legacyQueryResultAccessCheckRequestCache(
+            QueriesResourceAuthorizationDecorator.LegacyQueryResultAccessCheckRequestCache) { bean ->
+        bean.scope = 'request'
+    }
+
     dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder) {
 		dataSource = ref('dataSource')
 	}
