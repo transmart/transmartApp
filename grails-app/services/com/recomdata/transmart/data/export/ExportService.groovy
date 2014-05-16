@@ -20,8 +20,10 @@
 
 package com.recomdata.transmart.data.export
 
+import com.recomdata.asynchronous.GenericJobExecutor
+import com.recomdata.transmart.domain.i2b2.AsyncJob
+import com.recomdata.transmart.validate.RequestValidator
 import grails.util.Holders
-
 import org.apache.commons.lang.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
@@ -30,11 +32,6 @@ import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import org.transmart.searchapp.AccessLog
-
-import com.recomdata.asynchronous.GenericJobExecutor
-import com.recomdata.transmart.domain.i2b2.AsyncJob
-import com.recomdata.transmart.validate.RequestValidator
-import org.transmartproject.core.users.User
 
 import javax.annotation.Resource
 
@@ -50,7 +47,7 @@ class ExportService {
     def dataExportService
 
     @Resource(name = CurrentUserBeanProxyFactory.BEAN_BAME)
-    User currentUser
+    def currentUser
 
     def createExportDataAsyncJob(params, userName) {
         def analysis = params.analysis
