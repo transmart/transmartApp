@@ -16,8 +16,8 @@ import static org.transmartproject.core.users.ProtectedOperation.WellKnownOperat
 class QueriesResourceAuthorizationDecorator
         implements QueriesResource, AuthorizationDecorator<QueriesResource> {
 
-    @Resource(name = 'currentUserBean')
-    CurrentUserBean user
+    @Resource(name = CurrentUserBeanProxyFactory.BEAN_BAME)
+    User user
 
     @Autowired
     QueriesResource delegate

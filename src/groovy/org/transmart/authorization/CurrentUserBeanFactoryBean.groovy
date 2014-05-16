@@ -2,19 +2,17 @@ package org.transmart.authorization
 
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.plugin.springsecurity.SpringSecurityUtils
+import org.springframework.beans.factory.FactoryBean
 import org.springframework.beans.factory.annotation.Autowired
-import org.transmartproject.core.users.ProtectedOperation
-import org.transmartproject.core.users.ProtectedResource
 import org.transmartproject.core.users.User
 import org.transmartproject.core.users.UsersResource
 
+import javax.annotation.PostConstruct
+
 /**
- * Bean that can be inject to get the current {@link User}.
- *
- * Should be request scoped. Wrap it in a proxy so it can be injected in
- * singletons.
+ * Should be request scoped!
  */
-class CurrentUserBean implements User {
+class CurrentUserBeanFactoryBean implements FactoryBean<User> {
 
     @Autowired
     SpringSecurityService springSecurityService
@@ -22,8 +20,14 @@ class CurrentUserBean implements User {
     @Autowired
     UsersResource usersResource
 
-    @Lazy
-    User user = {
+    final boolean singleton = true
+
+    final Class<?> objectType = User
+
+    private User user
+
+    @PostConstruct
+    void fetchUser() {
         if (springSecurityService == null) {
             throw new IllegalStateException('springSecurityService not injected')
         }
@@ -37,27 +41,12 @@ class CurrentUserBean implements User {
         }
 
         def username = springSecurityService.principal.username
-        usersResource.getUserFromUsername(username)
-    }()
 
-    @Override
-    Long getId() {
-        user.id
+        user = usersResource.getUserFromUsername(username)
     }
 
     @Override
-    String getUsername() {
-        user.username
+    User getObject() throws Exception {
+        user
     }
-
-    @Override
-    String getRealName() {
-        user.username
-    }
-
-    @Override
-    boolean canPerform(ProtectedOperation operation, ProtectedResource protectedResource) {
-        user.canPerform(operation, protectedResource)
-    }
-
 }
