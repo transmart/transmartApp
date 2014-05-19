@@ -375,7 +375,7 @@ class DataExportService {
                                                 columnName.endsWith(it) ||
                                                         parentColumnName.endsWith(it)
                                             }
-                                            if (index >= 2 && !(index in filter)) filter.add(index)
+                                            if (index >= 1 && !(index in filter)) filter.add(index)
                                         }
                                     } else {
                                         filter = 1..(line.size() - 1)
