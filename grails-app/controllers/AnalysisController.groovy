@@ -182,11 +182,13 @@ class AnalysisController {
             ci.tissues.addAll(Arrays.asList(tissues.split(',')));
         if ((gpls != null) && (gpls.length() > 0))
             ci.gpls.addAll(Arrays.asList(gpls.split(',')));
-        i2b2HelperService.fillCohortInformation(null, null, ci, Integer.parseInt(infoType));
 
         def result = null;
+        def ifT = infoType != null ? Integer.parseInt(infoType) : 0;
 
-        switch (Integer.parseInt(infoType)) {
+        i2b2HelperService.fillCohortInformation(null, null, ci, ifT);
+
+        switch (ifT) {
             case CohortInformation.GPL_TYPE:
                 result = [rows: ci.gpls]
                 break;
