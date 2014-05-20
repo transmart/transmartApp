@@ -12,9 +12,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.web.context.request.RequestContextHolder
 import org.transmartproject.core.users.User
 
-/**
- * Created by glopes on 5/13/14.
- */
 @Log4j
 class CurrentUserBeanProxyFactory implements FactoryBean<User>, BeanFactoryAware {
 

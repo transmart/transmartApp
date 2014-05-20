@@ -29,7 +29,7 @@ class I2b2ExportHelperService {
 
 
     def findStudyAccessions(result_instance_ids) {
-        checkQueryResultAccess(*(result_instance_ids.split(',') as List))
+        checkQueryResultAccess(*result_instance_ids)
 
 		def rids = []
 		for(r in result_instance_ids){

@@ -171,7 +171,7 @@ class ExportService {
         def subsetSelectedPlatformsByFiles = [:]
         //Split the list on commas first, each box is seperated by ",".
         checkboxList.each { checkboxItem ->
-            //Split the item by "_" to get the different attributes.
+            // Split the item by "_" to get the different attributes.
             // Attributes are: <subset_id>_<datatype>_<exportformat>_<platform>
             // e.g. subset1_mrna_TSV_GPL570
             String[] checkboxItemArray = StringUtils.split(checkboxItem, "_")
