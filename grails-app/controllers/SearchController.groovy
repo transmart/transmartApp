@@ -257,7 +257,7 @@ public class SearchController{
 		}
 		def result = [rows:itemlist]
         //render(text:params.callback + "(" + (result as JSON) + ")", contentType: "text/javascript")
-        render(text:params.callback + "(" + (result as JSON) + ")", contentType: "text/javascript")
+        render(text:result as JSON, contentType: "application/json")
 
         //render(text:result as JSON, contentType: "text/javascript")
 
