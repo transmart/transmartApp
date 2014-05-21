@@ -38,6 +38,8 @@ class DataExportService {
 	def metadataService
 	def snpDataService
 	def geneExpressionDataService
+    def ACGHDataService
+    def RNASeqDataService
     def highDimExportService
     def highDimensionResourceService
 	def additionalDataService
