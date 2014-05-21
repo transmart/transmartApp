@@ -121,13 +121,22 @@ class VCFExporter implements HighDimExporter {
         data << datarow.filter
 
         // TODO: Determine which info fields can be exported (if any)
-        // TODO: Determine what sample-specific fields can be exported (if any) 
         data << ''
-        data << "GT"
+        data << datarow.format
         
-        // Now add the data for each assay
+        // Determine a list of original variants and new variants, to do translation
         List<String> originalVariants = [] + datarow.referenceAllele + datarow.alternativeAlleles
         List<String> newVariants = datarow.cohortInfo.alleles
+        
+        // Every line must always have a GT field in the format column
+        // to follow the specification.
+        def formats = datarow.format.tokenize(":")
+        def genotypeIndex = formats.indexOf("GT")
+        
+        if (genotypeIndex == -1)
+            throw new Exception( "No GT field found for position ${datarow.chromosome}:${datarow.position}" )
+            
+        // Now add the data for each assay
         for (AssayColumn assay : assayList) {
             // Retrieve data for the current assay from the datarow
             Map<String, String> assayData = datarow[assay]
@@ -140,7 +149,7 @@ class VCFExporter implements HighDimExporter {
             // Convert the old indices (e.g. 1 and 0) to the
             // new indices that were computed
             def convertedIndices = []
-            [ "allele1", "allele2" ].each {
+            ["allele1", "allele2"].each {
                 if( assayData.containsKey( it ) ) {
                     int oldIndex = assayData[ it ]
                     
@@ -153,9 +162,22 @@ class VCFExporter implements HighDimExporter {
                 }
             }
             
-            // Convert the both alleles into a single string
+            // Restore the original subject data for this subject
+            def originalData = datarow.getOriginalSubjectData( assay )
+            def newData
+            
+            if (originalData) {
+                newData = originalData.tokenize(":")
+            } else {
+                // Generate data to state that we don't know
+                newData = [ "." ].times( formats.size() )
+            }
+
+            // Put the computed genotype into the originaldata
             // TODO: Take phase of the original read into account (unphased or phased, / or |)
-            data << convertedIndices.join( "/" )
+            newData[ genotypeIndex ] = convertedIndices.join( "/" )
+             
+            data << newData.join(":") 
         }
 
         data
