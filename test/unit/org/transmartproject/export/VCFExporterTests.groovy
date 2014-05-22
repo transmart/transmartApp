@@ -84,16 +84,16 @@ class VCFExporterTests {
             
             // Check first chromosome
             assert lines[4] == [
-                    "1", "100", "rs0010", "G", "", "50", "PASS", "", "GT",
-                    "0/0", "0/0" ].join( "\t" )
+                    "1", "100", "rs0010", "G", "", "50", "PASS", "", "GT:DP",
+                    "0/0:3", "0/0:7" ].join( "\t" )
                 
             assert lines[5] == [
                     "2", "190", ".", "A", "G", "90", "q10", "", "GT",   // Inversion of reference and alternatives
                     "1/0", "0/0" ].join( "\t" )
                 
             assert lines[6] == [
-                    "X", "190", ".", "G", "A", "90", "PASS", "", "GT",    
-                    "0", "1" ].join( "\t" )
+                    "X", "190", ".", "G", "A", "90", "PASS", "", "GT:DP",    
+                    "0:3", "1:7" ].join( "\t" )
             
         }
      }
@@ -115,30 +115,48 @@ class VCFExporterTests {
     protected createMockVCFTabularResult() {
         // Setup tabularResult and projection to test with
         List<AssayColumn> sampleAssays = createSampleAssays(2)
+        def sampleCodes = sampleAssays*.sampleCode
         Map<String, List<Object>> labelToData = [
-            "row1": [[ "allele1": 0, "allele2": 0 ], [ "allele1": 0, "allele2": 0 ]],
-            "row2": [[ "allele1": 0, "allele2": 1 ], [ "allele1": 1, "allele2": 1 ]],
-            "row3": [[ "allele1": 0 ], [ "allele1": 1 ]],   // X chromosome
+            "row1": [
+                    [ "allele1": 0, "allele2": 0, 
+                            "subjectId": sampleCodes[0], "subjectPosition": 1 ], 
+                    [ "allele1": 0, "allele2": 0, 
+                            "subjectId": sampleCodes[1], "subjectPosition": 2 ],
+            ],  "row2": [
+                    [ "allele1": 0, "allele2": 1,
+                            "subjectId": sampleCodes[0], "subjectPosition": 1 ],
+                    [ "allele1": 1, "allele2": 1,
+                            "subjectId": sampleCodes[1], "subjectPosition": 2 ],
+            ], "row3": [
+                    [ "allele1": 0,
+                            "subjectId": sampleCodes[0], "subjectPosition": 1 ],
+                    [ "allele1": 1,
+                            "subjectId": sampleCodes[1], "subjectPosition": 2 ]
+            ], // X chromosome
         ]
         
         Map<String,Map> vcfProperties = [
             "row1": [ chromosome: 1, position: 100, rsId: "rs0010", 
                     referenceAllele: "G", alternativeAlleles: [], 
-                    quality: 50, filter: "PASS", cohortInfo: [
+                    quality: 50, filter: "PASS", format: "GT:DP",
+                    variants: "0/0:3\t0/0:7", 
+                    cohortInfo: [
                             referenceAllele: "G",
                             alternativeAlleles: [],
                             alleles: [ "G" ]
                     ]],
             "row2": [ chromosome: 2, position: 190, rsId: ".", 
                     referenceAllele: "G", alternativeAlleles: [ "A" ], 
-                    quality: 90, filter: "q10", cohortInfo: [
+                    quality: 90, filter: "q10", format: "GT",
+                    variants: "0/0\t0/0", cohortInfo: [
                             referenceAllele: "A",
                             alternativeAlleles: [ "G" ],
                             alleles: [ "A", "G" ]
                     ]],
             "row3": [ chromosome: "X", position: 190, rsId: ".", 
                     referenceAllele: "G", alternativeAlleles: [ "A" ], 
-                    quality: 90, filter: "PASS", cohortInfo: [
+                    quality: 90, filter: "PASS", format: "GT:DP",
+                    variants: "0:3\t1:7", cohortInfo: [
                             referenceAllele: "G",
                             alternativeAlleles: [ "A" ],
                             alleles: [ "G", "A" ]
@@ -181,15 +199,16 @@ class VCFExporterTests {
         row.alternativeAlleles.returns( vcfProperties.alternativeAlleles ).stub()
         row.quality.returns( vcfProperties.quality ).stub()
         row.filter.returns( vcfProperties.filter ).stub()
+        row.format.returns( vcfProperties.format ).stub()
+        row.variants.returns( vcfProperties.variants ).stub()
         row.cohortInfo.returns(vcfProperties.cohortInfo).stub()
 
         // Add values for each assay
-        
+        def variants = vcfProperties.variants ? vcfProperties.variants.tokenize("\t") : []
         values.eachWithIndex { entry, i ->
             row.getAt(i).returns(entry.value).stub()
-        }
-        values.keySet().each { column ->
-            row.getAt(column).returns(values[column]).stub()
+            row.getAt(entry.key).returns(entry.value).stub()
+            row.getOriginalSubjectData(entry.key).returns(variants.size() > i ? variants[i] : null)
         }
         row.iterator().returns(values.values().iterator()).stub()
         
