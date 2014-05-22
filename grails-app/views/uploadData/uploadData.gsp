@@ -43,7 +43,6 @@
 		<g:javascript library="prototype" />
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.8.3.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
-       
 <script type="text/javascript">$j = jQuery.noConflict();</script>
 <script type="text/javascript" src="${resource(dir:'js', file:'uploadData.js')}"></script>
 <script type="text/javascript" charset="utf-8">
@@ -196,12 +195,12 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                             <div class="uploadMessage">If this is left blank, the original file name will be used.</div>
                         </td>
                     </tr>
-                    <tr>
-                        <td>File Description:</td>
-                        <td colspan="3">
-                            <g:textArea name="fileDescription" style="width: 90%; height: 100px">${uploadFileInstance?.fileDescription}</g:textArea>
-                        </td>
-                    </tr>
+                    %{--<tr>--}%
+                        %{--<td>File Description:</td>--}%
+                        %{--<td colspan="3">--}%
+                            %{--<g:textArea name="fileDescription" style="width: 90%; height: 100px">${uploadFileInstance?.fileDescription}</g:textArea>--}%
+                        %{--</td>--}%
+                    %{--</tr>--}%
                 </table>
             </div>
 
@@ -428,12 +427,12 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                             <a class="dynatree-title">Upload analysis data</a>
                         </span>
                     </li>
-                    <li class="sidebarRadio" id="uploadFileRadio">
-                        <span class="dynatree-node dynatree-folder dynatree-exp-c dynatree-ico-cf">
-                            <span class="dynatree-no-connector"></span>
-                            <a class="dynatree-title">Upload file to Faceted Search</a>
-                        </span>
-                    </li>
+                    %{--<li class="sidebarRadio" id="uploadFileRadio">--}%
+                        %{--<span class="dynatree-node dynatree-folder dynatree-exp-c dynatree-ico-cf">--}%
+                            %{--<span class="dynatree-no-connector"></span>--}%
+                            %{--<a class="dynatree-title">Upload file to Faceted Search</a>--}%
+                        %{--</span>--}%
+                    %{--</li>--}%
                     <li class="sidebarRadio" id="uploadFileDatasetExplorerRadio">
                         <span class="dynatree-node dynatree-folder dynatree-exp-c dynatree-ico-cf">
                             <span class="dynatree-no-connector"></span>

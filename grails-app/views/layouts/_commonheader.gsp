@@ -103,7 +103,7 @@
 <script type="text/javascript" src="${resource(dir:'js', file:'sessiontimeout.js')}"></script>
 
 <!-- Session timeout dialog -->
-<div id="timeout-div" title="Your session is about to expire!">
+<div id="timeout-div" title="Your session is about to expire!" <g:if test="${'uploaddata' == app}">style="display:none;"</g:if>>
     <p>You will be logged off in <span id="timeout-countdown"></span> seconds.</p>
     <p>Do you want to continue your session?</p>
 </div>
