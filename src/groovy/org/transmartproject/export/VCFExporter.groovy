@@ -12,7 +12,23 @@ import org.transmartproject.core.dataquery.highdim.HighDimensionResource
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 
 class VCFExporter implements HighDimExporter {
-
+    /**
+     * List of info fields that can be exported without any change.
+     * This list should only include fields for which the value is the
+     * same for each subset of the assays.
+     * @see http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-41
+     */
+    final List<String> INFOFIELD_WHITELIST = [
+        'AA', // ancestral allele
+        'DB', // dbSNP membership
+        'END', // end position of the variant described in this record (for use with symbolic alleles)
+        'H2', // membership in hapmap2
+        'H3', // membership in hapmap3
+        'SOMATIC', // indicates that the record is a somatic mutation, for cancer genomics
+        'VALIDATED', // validated by follow-up experiment
+        '1000G', // membership in 1000 Genomes
+    ]
+    
     @Autowired
     HighDimensionResource highDimensionResourceService
     
@@ -106,7 +122,7 @@ class VCFExporter implements HighDimExporter {
         [ "CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT" ] + tabularResult.indicesList*.label
     }
     
-    protected List<String> getDataForPosition( DataRow datarow, List<AssayColumn> assayList ) {
+    protected List<String> getDataForPosition(DataRow datarow, List<AssayColumn> assayList) {
         def data = []
         
         // First add general info from the summary
@@ -121,7 +137,9 @@ class VCFExporter implements HighDimExporter {
         data << datarow.filter
 
         // TODO: Determine which info fields can be exported (if any)
-        data << ''
+        data << getInfoFields(datarow).collect { 
+            it.key + ( it.value != true ? '=' + it.value : '' )
+        }.join(";")
         data << datarow.format
         
         // Determine a list of original variants and new variants, to do translation
@@ -130,57 +148,114 @@ class VCFExporter implements HighDimExporter {
         
         // Every line must always have a GT field in the format column
         // to follow the specification.
-        def formats = datarow.format.tokenize(":")
-        def genotypeIndex = formats.indexOf("GT")
+        List<String> formats = datarow.format.tokenize(":")
+        int genotypeIndex = formats.indexOf("GT")
         
         if (genotypeIndex == -1)
             throw new Exception( "No GT field found for position ${datarow.chromosome}:${datarow.position}" )
             
         // Now add the data for each assay
         for (AssayColumn assay : assayList) {
-            // Retrieve data for the current assay from the datarow
-            Map<String, String> assayData = datarow[assay]
-    
-            if (assayData == null) {
-                data << "."
-                continue
-            }
-    
-            // Convert the old indices (e.g. 1 and 0) to the
-            // new indices that were computed
-            def convertedIndices = []
-            ["allele1", "allele2"].each {
-                if( assayData.containsKey( it ) ) {
-                    int oldIndex = assayData[ it ]
-                    
-                    if( oldIndex != null ) {
-                        String variant = originalVariants[ oldIndex ]
-                        int newIndex = newVariants.indexOf( variant )
-                        
-                        convertedIndices << newIndex
-                    }
-                }
-            }
-            
-            // Restore the original subject data for this subject
-            def originalData = datarow.getOriginalSubjectData( assay )
-            def newData
-            
-            if (originalData) {
-                newData = originalData.tokenize(":")
-            } else {
-                // Generate data to state that we don't know
-                newData = [ "." ].times( formats.size() )
-            }
-
-            // Put the computed genotype into the originaldata
-            // TODO: Take phase of the original read into account (unphased or phased, / or |)
-            newData[ genotypeIndex ] = convertedIndices.join( "/" )
-             
-            data << newData.join(":") 
+            data << getSubjectData(datarow, assay, originalVariants, newVariants, formats, genotypeIndex).join(":") 
         }
 
         data
+    }
+    
+    /**
+     * Returns a map with info fields and their values for this row
+     * @param datarow
+     * @return
+     */
+    protected Map getInfoFields(DataRow datarow) {
+        Map<String,String> infoFields = [:]
+        
+        // Add info fields from the whitelist
+        INFOFIELD_WHITELIST.each { infoField ->
+            if( datarow.infoFields[infoField] != null ) {
+                infoFields[infoField] = datarow.infoFields[infoField]
+            } 
+        }
+        
+        // Compute other info fields. Counts include the reference
+        // variant, but that should not be included in the VCF file
+        
+        // 'AC' : allele count in genotypes, for each ALT allele, in the 
+        //        same order as listed
+        if( datarow.cohortInfo.alternativeAlleles.size() > 0 )
+            infoFields["AC"] = datarow.cohortInfo.alleleCount.tail().join(",")
+        
+        // 'AF' : allele frequency for each ALT allele in the same order 
+        //        as listed: use this when estimated from primary data, 
+        //        not called genotypes
+        if( datarow.cohortInfo.alternativeAlleles.size() > 0 )
+            infoFields["AF"] = datarow.cohortInfo.alleleFrequency.tail().join(",")
+        
+        // 'AN' : total number of alleles in called genotypes
+        infoFields["AN"] = datarow.cohortInfo.totalAlleleCount
+        
+        // 'NS' : Number of samples with data
+        infoFields["NS"] = datarow.cohortInfo.numberOfSamplesWithData
+        
+        infoFields
+    }
+    
+    /**
+     * Returns a list of subject fields that can be put into the VCF file
+     * @param datarow  
+     * @param assay
+     * @param originalVariants  List of variants from the original VCF file. 
+     *                          Includes the reference.
+     * @param newVariants       New list of variants that are exported to the 
+     *                          VCF file. Includes the reference.
+     * @param formats           List of format fields that should be present
+     *                          for this subject.
+     * @param genotypeIndex     Index within the formats list of the GT field                                                  
+     * @return 
+     */
+    protected List getSubjectData(DataRow datarow, AssayColumn assay, 
+            List<String> originalVariants, List<String> newVariants,
+            List<String> formats, int genotypeIndex) {
+            
+        // Retrieve data for the current assay from the datarow
+        Map<String, String> assayData = datarow[assay]
+
+        if (assayData == null) {
+            return ["."]
+        }
+
+        // Convert the old indices (e.g. 1 and 0) to the
+        // new indices that were computed
+        def convertedIndices = []
+        ["allele1", "allele2"].each {
+            if( assayData.containsKey( it ) ) {
+                int oldIndex = assayData[ it ]
+                
+                if( oldIndex != null ) {
+                    String variant = originalVariants[ oldIndex ]
+                    int newIndex = newVariants.indexOf( variant )
+                    
+                    convertedIndices << newIndex
+                }
+            }
+        }
+        
+        // Restore the original subject data for this subject
+        def originalData = datarow.getOriginalSubjectData( assay )
+        def newData
+        
+        if (originalData) {
+            newData = originalData.tokenize(":")
+        } else {
+            // Generate data to state that we don't know
+            newData = [ "." ].times( formats.size() )
+        }
+
+        // Put the computed genotype into the originaldata
+        // TODO: Take phase of the original read into account (unphased or phased, / or |)
+        newData[ genotypeIndex ] = convertedIndices.join( "/" )
+        
+        newData
     }
     
     @Override
