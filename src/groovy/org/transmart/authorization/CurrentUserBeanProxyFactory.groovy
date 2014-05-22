@@ -12,6 +12,26 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.web.context.request.RequestContextHolder
 import org.transmartproject.core.users.User
 
+/**
+ * Creates a proxy bean that provides the "current user" appropriate for context
+ * of the caller.
+ *
+ * The current user has to be available to transmart services in several
+ * distinct contexts. Probably, it would be preferable to have it
+ * available only in a request thread and do the all the necessary checks
+ * against the user in the request thread. But, as it stands, we also need to
+ * have the user available in other contexts, like the quartz thread used in
+ * exporting.
+ *
+ * Consequently, the bean currentUserBean is now implemented using this proxy
+ * factory bean hat returns a proxy that delegates to other beans, trying them
+ * in order (typically each one is bound to a different scope).
+ *
+ * The currentUserBean returned proxy tries to delegate, in order, to the
+ * request scoped bean (see {@link CurrentUserBeanFactoryBean}, then to the
+ * quartz bean, and then to whatever other beans happen to be registered with
+ * {@link CurrentUserBeanProxyFactory#registerBeanToTry(java.lang.String)}.
+ */
 @Log4j
 class CurrentUserBeanProxyFactory implements FactoryBean<User>, BeanFactoryAware {
 
