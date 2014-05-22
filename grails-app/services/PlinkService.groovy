@@ -26,7 +26,9 @@ import com.recomdata.export.PlinkFiles;
 import groovy.sql.*;
 
 import i2b2.SubjectSnpDataset;
-import i2b2.SnpProbeSortedDef;
+import i2b2.SnpProbeSortedDef
+
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess;
 
 
 class PlinkService {
@@ -60,7 +62,8 @@ class PlinkService {
 	 * @return
 	 */
 	def String [] getStudyInfoByResultInstanceId(String resultInstanceId){
-		
+        checkQueryResultAccess resultInstanceId
+
 		def sql = new Sql(dataSource);
 		
 		def query = """

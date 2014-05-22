@@ -20,25 +20,20 @@
 
 package com.recomdata.transmart.data.export
 
-import java.io.File
-import java.sql.Clob
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.HashMap
-import java.util.List
-import java.util.Map
-
+import com.recomdata.snp.SnpDataObject
+import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.apache.commons.lang.StringUtils
-import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
+import org.transmart.searchapp.SearchKeyword
 
-import org.transmart.searchapp.SearchKeyword;
+import java.sql.Clob
+import java.sql.Connection
+import java.sql.PreparedStatement
+import java.sql.ResultSet
 
-import com.recomdata.snp.SnpDataObject;
-import com.recomdata.transmart.data.export.util.FileWriterUtil
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 
 class SnpDataService {
 
@@ -46,14 +41,13 @@ class SnpDataService {
 
 	def dataSource
 	def i2b2HelperService
-	def snpService
 	def springSecurityService
 	def plinkService
 	def fileDownloadService
 	def utilService
 	def grailsApplication
 	def config = ConfigurationHolder.config
-	
+
 	def Map getData(studyDir, fileName, jobName, resultInstanceId) {
 		def snpFilesMap = [:]
 		snpFilesMap.put("PEDFiles", writePEDFiles(studyDir, fileName, jobName, resultInstanceId))
@@ -75,7 +69,7 @@ class SnpDataService {
 		def patientId, omicPatientId, subjectId
 	} 
 	
-	def public getPatientData(resultInstanceId) {
+	private def getPatientData(resultInstanceId) {
 		def groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		def query = """
 						SELECT DISTINCT patient_id, omic_patient_id, subject_id
@@ -99,6 +93,8 @@ class SnpDataService {
 
 	def public getDataByPatientByProbes(studyDir, resultInstanceId, jobName)
 	{
+        checkQueryResultAccess resultInstanceId
+
 		def dataTypeName = 'SNP'
 		def dataTypeFolder = "Processed_data"
 		char separator = '\t'

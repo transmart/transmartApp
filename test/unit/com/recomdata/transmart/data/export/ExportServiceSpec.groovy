@@ -4,7 +4,7 @@ import grails.test.mixin.*
 import grails.test.mixin.support.*
 
 import org.junit.*
-
+import org.transmart.authorization.CurrentUserBeanProxyFactory
 import spock.lang.Specification
 
 /**
@@ -13,6 +13,15 @@ import spock.lang.Specification
 @TestMixin(GrailsUnitTestMixin)
 @TestFor(ExportService)
 class ExportServiceSpec extends Specification {
+
+    @Before
+    void init() {
+        defineBeans {
+            // the dependency only has to be satisfied; it's not used in the
+            // tested method here
+            "${CurrentUserBeanProxyFactory.BEAN_BAME}"(Object)
+        }
+    }
 
     void "test getHighDimDataTypesAndFormats basic functionality"() {
         given: "a set of selected checkboxes"

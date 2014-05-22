@@ -23,7 +23,9 @@ import java.util.List;
 import de.DeVariantDataSet;
 import de.DeVariantSubjectDetail;
 import de.DeVariantSubjectIdx;
-import com.recomdata.transmart.data.export.util.FileWriterUtil;
+import com.recomdata.transmart.data.export.util.FileWriterUtil
+
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess;
 
 class VcfDataService {
 	boolean transactional = false
@@ -361,6 +363,7 @@ class VcfDataService {
 	 */
 	
 	def findDataset(resultInstanceId1, resultInstanceId2){
+        checkQueryResultAccess resultInstanceId1, resultInstanceId2
 		
 		
 		def q= """

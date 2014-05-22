@@ -21,6 +21,8 @@
 package com.recomdata.asynchronous
 
 import grails.util.Holders
+import org.transmart.authorization.CurrentUserBeanProxyFactory
+import org.transmart.spring.QuartzSpringScope
 
 import java.lang.reflect.UndeclaredThrowableException
 
@@ -47,14 +49,13 @@ class GenericJobExecutor implements Job {
     def springSecurityService = ctx.springSecurityService
     def jobResultsService = ctx.jobResultsService
     def i2b2HelperService = ctx.i2b2HelperService
-    def i2b2ExportHelperService = ctx.i2b2ExportHelperService
-    def snpDataService = ctx.snpDataService
     def dataExportService = ctx.dataExportService
     def asyncJobService = ctx.asyncJobService
 
+    QuartzSpringScope quartzSpringScope = ctx.quartzSpringScope
+
     final String tempFolderDirectory = Holders.config.com.recomdata.plugins.tempFolderDirectory
 	
-	String jobTmpParentDir
 	String jobTmpDirectory
 	//This is where all the R scripts get run, intermediate files are created, images are initially saved, etc.
 	String jobTmpWorkingDirectory
@@ -98,6 +99,10 @@ class GenericJobExecutor implements Job {
 		//Gather the jobs info.
 		jobName = jobDetail.getName()
 		jobDataMap = jobDetail.getJobDataMap()
+
+        // put the user in context
+        quartzSpringScope."${CurrentUserBeanProxyFactory.SUB_BEAN_QUARTZ}" =
+                jobDataMap["userInContext"]
 		
 		//Initialize
 		init();

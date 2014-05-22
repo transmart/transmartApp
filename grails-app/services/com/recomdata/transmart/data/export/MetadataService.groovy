@@ -36,6 +36,8 @@ import org.transmart.biomart.Taxonomy
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
 
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
+
 class MetadataService {
 
     boolean transactional = true
@@ -207,6 +209,8 @@ class MetadataService {
 	}
 	
 	def findAdditionalDataFiles(String resultInstanceId, String study) {
+        checkQueryResultAccess resultInstanceId
+
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
 		def filesList = []
 		try {
