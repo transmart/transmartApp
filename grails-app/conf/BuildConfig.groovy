@@ -1,6 +1,13 @@
+def forkSettingsRun = [
+        minMemory: 1536,
+        maxMemory: 4096,
+        maxPerm:   384,
+        debug:     false,
+]
+
 grails.project.fork = [
         test:    false,
-        run:     false,
+        run:     forkSettingsRun,
         war:     false,
         console: false ]
 
