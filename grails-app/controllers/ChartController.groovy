@@ -452,7 +452,7 @@ class ChartController {
         {
             for(Map c : i2b2ModifierHelperService.getChildModifiersFromParentKey(params.name, true, params.inOutCode))
             {
-                renderModifierAnalysisNew(c, tQD2, tQD2, pw, request);
+                renderModifierAnalysisNew(c, tQD1, tQD2, pw, request);
                 pw.write("<hr>");
             }
         }
@@ -994,6 +994,54 @@ class ChartController {
         pw.flush();
         request.getSession().setAttribute("gridtable", table);
     }
+
+    def analysisGridModifier = {
+        String concept_key=params.concept_key;
+        def result_instance_id1=params.result_instance_id1;
+        def result_instance_id2=params.result_instance_id2;
+        def analysisModifier = i2b2ModifierHelperService.createModifierObject(params.modifierCode,params.level,params.oktousevalues,params.name,params.inOutCode)
+
+        boolean s1=true;
+        boolean s2=true;
+        if(result_instance_id1=="" || result_instance_id1==null){s1=false;}
+        if(result_instance_id2=="" || result_instance_id2==null){s2=false;}
+
+        def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-Modifier Grid Analysis Drag", eventmessage:"RID1:"+result_instance_id1+" RID2:"+result_instance_id2+" Concept:"+concept_key, accesstime:new java.util.Date())
+        al.save()
+        ExportTableNew table=(ExportTableNew)request.getSession().getAttribute("gridtable");
+        if(table==null)
+        {
+            table=new ExportTableNew();
+            if(table==null)
+            {
+                table=new ExportTableNew();
+                if(s1){gridViewService.addAllPatientDemographicDataForSubsetToTable(table, result_instance_id1, "subset1");}
+                if(s2){gridViewService.addAllPatientDemographicDataForSubsetToTable(table, result_instance_id2, "subset2");}
+            }
+        }
+        PrintWriter pw=new PrintWriter(response.getOutputStream());
+
+        if(params.level == "leaf")
+        {
+            if(s1){i2b2ModifierHelperService.addModifierDataToTable(table, analysisModifier, result_instance_id1);}
+            if(s2){i2b2ModifierHelperService.addModifierDataToTable(table, analysisModifier, result_instance_id2);}
+        }
+        else if (!(params.level == "leaf"))
+        {
+            for(Map c : i2b2ModifierHelperService.getChildModifiersFromParentKey(params.name, true, params.inOutCode))
+            {
+                if(s1){i2b2ModifierHelperService.addModifierFolderDataToTable(table, analysisModifier, c, result_instance_id1);}
+                if(s2){i2b2ModifierHelperService.addModifierFolderDataToTable(table, analysisModifier, c, result_instance_id2);}
+            }
+        }
+
+        def jSONToReturn = table.toJSON_DataTables().toString(5);
+
+        pw.write(jSONToReturn);
+        pw.flush();
+        request.getSession().setAttribute("gridtable", table);
+    }
+
 
     def clearGrid = {
 		log.debug("Clearing grid");
