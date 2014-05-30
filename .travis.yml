@@ -3,9 +3,6 @@ language: groovy
 jdk:
     - oraclejdk7
 
-env:
-    - REPOS_OWNER=thehyve #XXX: take from travis envs
-
 before_install:
     - mkdir -p ~/.m2
     - bash -c '{ curl http://files.thehyve.net/caches/grails_2.3.5_mvncache.tar.gz  | tar -C ~/.m2 -xzf -; } || true'
@@ -17,9 +14,9 @@ before_install:
     - cp .travis.BuildConfig.groovy ~/.grails/transmartConfig/BuildConfig.groovy
 
 install:
-    - maybe_build_maven_dep $REPOS_OWNER/transmart-core-api core-api
-    - maybe_make_inline_grails_dep $REPOS_OWNER/transmart-core-db core-db . transmart-core-db-tests
-    - maybe_make_inline_grails_dep $REPOS_OWNER/Rmodules Rmodules
+    - maybe_build_maven_dep $(travis_get_owner)/transmart-core-api core-api
+    - maybe_make_inline_grails_dep $(travis_get_owner)/transmart-core-db core-db . transmart-core-db-tests
+    - maybe_make_inline_grails_dep $(travis_get_owner)/Rmodules Rmodules
 
 script:
     - grails refresh-dependencies --non-interactive

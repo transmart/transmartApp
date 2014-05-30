@@ -35,7 +35,8 @@ import org.springframework.context.ApplicationContext
 import grails.util.Holders
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
-import com.sun.rowset.CachedRowSetImpl
+
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess;
 /**
  * This class has been replaced with GeneExpressionDataService
  * @author SMunikuntla
@@ -58,6 +59,8 @@ public class GexDao {
 
 	public  getData(String study, File studyDir, String fileName, String jobName, String resultInstanceId, boolean pivot, String pathway, String timepoint, String sampleTypes)
 	{
+        checkQueryResultAccess resultInstanceId
+
 		try {
 			pathway = derivePathwayName(pathway)
 			
@@ -179,6 +182,7 @@ public class GexDao {
 	 * @return
 	 */
 	def String getAssayIds(String resultInstanceId, String sampleTypes, String timepoint) {
+        checkQueryResultAccess resultInstanceId
 
 		//Sql command used to retrieve Assay IDs.
 		groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);

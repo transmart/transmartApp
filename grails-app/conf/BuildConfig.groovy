@@ -28,19 +28,24 @@ grails.project.dependency.resolution = {
         mavenCentral()
 
         mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
-        mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
     }
     dependencies {
+        // you can remove whichever you're not using
         runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
+        runtime 'com.oracle:ojdbc7:12.1.0.1'
+
+        compile 'org.transmartproject:transmart-core-api:1.0-LH-SNAPSHOT'
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
-        compile 'org.apache.lucene:lucene-core:2.4.0',
-                'org.apache.lucene:lucene-demos:2.4.0',
-                'org.apache.lucene:lucene-highlighter:2.4.0'
-        compile 'org.transmartproject:transmart-core-api:1.0-LH-SNAPSHOT'
+        compile "org.apache.lucene:lucene-core:2.4.0"
+        compile "org.apache.lucene:lucene-demos:2.4.0"
+        compile "org.apache.lucene:lucene-highlighter:2.4.0"
+        compile 'commons-net:commons-net:3.3' // used for ftp transfers
+        compile 'org.apache.commons:commons-math:2.2' //>2MB lib briefly used in ChartController
+        compile 'org.codehaus.groovy:http-builder:0.4.1', {
+            excludes 'groovy', 'nekohtml'
+        }
         compile 'org.grails:grails-plugin-rest:2.3.5-hyve4'
-
-        compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
         compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
@@ -48,7 +53,18 @@ grails.project.dependency.resolution = {
         /* for GeneGo web services: */
         compile 'axis:axis:1.4'
 
-        test 'org.gmock:gmock:0.8.3', {
+        runtime 'org.javassist:javassist:3.16.1-GA'
+
+        
+        test('junit:junit:4.11') {
+            transitive = false /* don't bring hamcrest */
+            export     = false
+        }
+
+        test 'org.hamcrest:hamcrest-core:1.3',
+             'org.hamcrest:hamcrest-library:1.3'
+
+        test 'org.gmock:gmock:0.9.0-r435-hyve2', {
             transitive = false
         }
         test 'org.hamcrest:hamcrest-library:1.3',
@@ -79,9 +95,6 @@ grails.project.dependency.resolution = {
         compile ':biomart-domain:1.1-SNAPSHOT'
         compile ':transmart-java:1.0-SNAPSHOT'
         compile ':transmart-gwas:1.1-SNAPSHOT'
-        runtime ':transmart-mydas:0.1-SNAPSHOT'
-        runtime ':dalliance-plugin:0.1-SNAPSHOT'
-        //runtime ':transmart-rest-api:0.1-SNAPSHOT'
 
         // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
