@@ -87,7 +87,7 @@ grails.project.dependency.resolution = {
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
-        runtime ':transmart-core:1.0-LH-SNAPSHOT'
+        runtime ':transmart-core:1.1-LH-SNAPSHOT'
         runtime ':resources:1.2.1'
         compile ':transmart-legacy-db:0.3-ORACLE-SNAPSHOT'
         compile ':folder-management:1.2-SNAPSHOT'
