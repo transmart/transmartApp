@@ -208,7 +208,7 @@ class AnalysisController {
                 result = [rows: ci.rbmpanels]
                 break;
             default:
-                result = [rows: { "" }]
+                result = [rows: []]
         }
         render params.callback + "(" + (result as JSON) + ")"
     }

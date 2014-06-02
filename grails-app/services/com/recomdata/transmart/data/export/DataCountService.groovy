@@ -20,19 +20,25 @@
 
 package com.recomdata.transmart.data.export
 
-import org.apache.commons.lang.StringUtils
-import org.transmartproject.db.i2b2data.ObservationFact
-import org.transmartproject.db.querytool.QtPatientSetCollection
-import org.transmartproject.db.querytool.QtQueryResultInstance
+import org.springframework.beans.factory.annotation.Autowired
+import org.transmartproject.core.querytool.QueriesResource
+import org.transmartproject.core.querytool.QueryResult
+
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 
 class DataCountService {
-
     def dataSource
     boolean transactional = true
 
+    @Autowired
+    QueriesResource queriesResource
+
     //For the given list of Subjects get counts of what kind of data we have for those cohorts.
     //We want to return a map that looks like {"PLINK": "102","RBM":"28"}
-    def getDataCounts(String rID, String resultInstanceIds = null) {
+    Map getDataCounts(Long rId, Long[] resultInstanceIds)
+    {
+        checkQueryResultAccess(*resultInstanceIds)
+
         //This is the map we build for each subset that contains the data type and count for that data type.
         def resultMap = [:]
 
@@ -80,9 +86,9 @@ class DataCountService {
                 .append(subjectsQuery).append(")");
 
         snpCelQuery.append("""SELECT count(DISTINCT ssd.patient_num)
-							FROM de_subject_snp_dataset ssd 
-							INNER JOIN bio_content b ON b.study_name = ssd.trial_name
-							WHERE ssd.patient_num IN (""").append(subjectsQuery).append(")");
+            FROM de_subject_snp_dataset ssd
+                    INNER JOIN bio_content b ON b.study_name = ssd.trial_name
+                WHERE ssd.patient_num IN (""").append(subjectsQuery).append(")");
 
         //Build the query we use to get Additional Data. patient_id should be unique to a given study for each patient.
         //We count the distinct ID's with additional data. TODO:change != to "ADDTIONAL" or something like that
@@ -130,45 +136,20 @@ class DataCountService {
 
         return resultMap
     }
-	
-	/**
-	 * Returns the number of patients within a given subset that has clinical data
-	 * @param resultInstanceId
-	 * @return	The number of patients within the given subset that have clinical data
-	 */
-	Long getClinicalDataCount( Long resultInstanceId ) {
-		// TODO: Convert this into using 
-		if( !resultInstanceId ) 
-			return 0
-		
-		def resultInstance = QtQueryResultInstance.get( resultInstanceId )
-		
-		if( !resultInstance )
-			return 0
-			
-		// Determine the patients to query. This has a few where clauses:
-		//		- match the selected subset
-		//		- sourceSystemCd should not contain :S:
-		def patientNums = QtPatientSetCollection.executeQuery( "SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ? AND q.patient.sourcesystemCd NOT LIKE '%:S:%'", resultInstanceId )
-		println "PATIENTNUMS: " + patientNums
-		
-		if( !patientNums ) 
-			return 0
-		
-		// Find all low dimensional observations
-		// TODO: Include a check on only low dimensional data, by looking
-		//		 at the visual attributes of the concept
-		def rows = ObservationFact.createCriteria().list {
-			projections {
-				groupProperty("patient")
-				countDistinct("patient")
-			}
-			'in'( 'patient.id', patientNums )
-		}
-		
-		rows.size()
-	}
 
+    /**
+     * Returns the number of patients within a given subset that has clinical data
+     * @param resultInstanceId
+     * @return	The number of patients within the given subset that have clinical data
+     */
+    Long getClinicalDataCount( Long resultInstanceId ) {
+        // TODO: Convert this into using
+        if( !resultInstanceId )
+            return 0
+
+        QueryResult queryResult = queriesResource.getQueryResultFromId( resultInstanceId )
+        queryResult.getSetSize()
+    }
 
     def getCountFromDB(String commandString, String rID = null) {
         //We use a groovy object to handle the DB connections.

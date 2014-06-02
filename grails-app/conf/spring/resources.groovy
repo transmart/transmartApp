@@ -19,6 +19,9 @@
 
 
 import org.apache.log4j.Logger
+import com.google.common.collect.ImmutableMap
+import org.codehaus.groovy.grails.commons.spring.DefaultBeanConfiguration
+import org.springframework.beans.factory.config.CustomScopeConfigurer
 import org.springframework.security.core.session.SessionRegistryImpl
 // plugin is not functional at this point
 //import org.springframework.security.extensions.kerberos.web.SpnegoAuthenticationProcessingFilter
@@ -27,11 +30,50 @@ import org.springframework.security.web.access.AccessDeniedHandlerImpl
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
+import org.transmart.authorization.CurrentUserBeanFactoryBean
+import org.transmart.authorization.CurrentUserBeanProxyFactory
+import org.transmart.authorization.QueriesResourceAuthorizationDecorator
 import org.transmart.marshallers.MarshallerRegistrarService
+import org.transmartproject.export.HighDimExporter
+import org.transmart.spring.QuartzSpringScope
+import org.transmartproject.core.users.User
 
 def logger = Logger.getLogger('com.recomdata.conf.resources')
 
 beans = {
+    xmlns context:"http://www.springframework.org/schema/context"
+
+    /* core-api authorization wrapped beans */
+    queriesResourceAuthorizationDecorator(QueriesResourceAuthorizationDecorator) {
+            DefaultBeanConfiguration bean ->
+        bean.beanDefinition.autowireCandidate = false
+    }
+
+    quartzSpringScope(QuartzSpringScope)
+    quartzScopeConfigurer(CustomScopeConfigurer) {
+        scopes = ImmutableMap.of('quartz', ref('quartzSpringScope'))
+    }
+
+    "${CurrentUserBeanProxyFactory.BEAN_BAME}"(CurrentUserBeanProxyFactory)
+    "${CurrentUserBeanProxyFactory.SUB_BEAN_REQUEST}"(CurrentUserBeanFactoryBean) { bean ->
+        bean.scope = 'request'
+    }
+    "${CurrentUserBeanProxyFactory.SUB_BEAN_QUARTZ}"(User) { bean ->
+        // Spring never actually creates this bean
+        bean.scope = 'quartz'
+    }
+
+    legacyQueryResultAccessCheckRequestCache(
+            QueriesResourceAuthorizationDecorator.LegacyQueryResultAccessCheckRequestCache) { bean ->
+        bean.scope = 'request'
+    }
+
+    context.'component-scan'('base-package': 'org.transmartproject.export') {
+        context.'include-filter'(
+                type:       'assignable',
+                expression: HighDimExporter.canonicalName)
+    }
+
 	sessionRegistry(SessionRegistryImpl)
 	sessionAuthenticationStrategy(ConcurrentSessionControlStrategy, sessionRegistry) {
 		maximumSessions = 10
@@ -40,7 +82,6 @@ beans = {
 		sessionRegistry = sessionRegistry
 		expiredUrl = '/login'
 	}
-    userDetailsService(com.recomdata.security.AuthUserDetailsService)
 
     redirectStrategy(DefaultRedirectStrategy)
     accessDeniedHandler(AccessDeniedHandlerImpl) {
@@ -49,6 +90,9 @@ beans = {
     failureHandler(SimpleUrlAuthenticationFailureHandler) {
         defaultFailureUrl = '/login'
     }
+
+    //overrides bean implementing GormUserDetailsService?
+    userDetailsService(com.recomdata.security.AuthUserDetailsService)
 
     marshallerRegistrarService(MarshallerRegistrarService)
 
