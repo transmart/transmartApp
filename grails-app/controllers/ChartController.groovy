@@ -70,7 +70,7 @@ class ChartController {
 
     def i2b2HelperService
     def springSecurityService
-
+    def i2b2ModifierHelperService
 
     def displayChart = {
         HttpSession session = request.getSession();
@@ -311,6 +311,51 @@ class ChartController {
         //renderPatientCountInfoTable(result_instance_id1, result_instance_id2, pw);
         pw.write("</div></body></html>");
         pw.flush();
+    }
+
+   /**
+     * Gets an analysis for a modifier key and comparison
+     */
+   def analysisModifier = {
+
+        def result_instance_id1=params.result_instance_id1;
+        def result_instance_id2=params.result_instance_id2;
+        def tQD1 = i2b2HelperService.getQueryDefinition(result_instance_id1);
+        def tQD2 = i2b2HelperService.getQueryDefinition(result_instance_id2);
+
+        def al = new AccessLog(username:springSecurityService.getPrincipal().username, event:"DatasetExplorer-Analysis by Modifier", eventmessage:"RID1:"+result_instance_id1+" RID2:"+result_instance_id2+" Modifier:"+ params.name, accesstime:new java.util.Date())
+        al.save()
+
+        PrintWriter pw=new PrintWriter(response.getOutputStream());
+        pw.write("<html><head><link rel='stylesheet' type='text/css' href='css/chartservlet.css'></head><body><div class='analysis'>");
+
+        //Create the modifier object.
+        def analysisModifier = i2b2ModifierHelperService.createModifierObject(params.modifierCode,params.level,params.oktousevalues,params.name,params.inOutCode)
+
+        //If it's a leaf text node we need to get its parent and use that.
+        if(params.level == "leaf" && params.oktousevalues == "N")
+        {
+            analysisModifier = i2b2ModifierHelperService.getModifierObjectParent(analysisModifier)
+        }
+
+        //Render the analysis.
+        renderModifierAnalysisNew(analysisModifier, tQD1, tQD2, pw, request);
+
+        pw.write("<hr>");
+
+        //If this is a folder, render all the child value values as a box plot.
+        if(!(params.level == "leaf"))
+        {
+            for(Map c : i2b2ModifierHelperService.getChildModifiersFromParentKey(params.name, true, params.inOutCode))
+            {
+                renderModifierAnalysisNew(c, tQD1, tQD2, pw, request);
+                pw.write("<hr>");
+            }
+        }
+
+        pw.write("</div></body></html>");
+        pw.flush();
+
     }
 
     /**
