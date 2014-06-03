@@ -1,13 +1,6 @@
-def forkSettingsRun = [
-        minMemory: 1536,
-        maxMemory: 4096,
-        maxPerm:   384,
-        debug:     false,
-]
-
 grails.project.fork = [
         test:    false,
-        run:     forkSettingsRun,
+        run:     false,
         war:     false,
         console: false ]
 
@@ -28,6 +21,7 @@ grails.project.dependency.resolution = {
         mavenCentral()
 
         mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
+        mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
     }
     dependencies {
         // you can remove whichever you're not using
@@ -95,6 +89,9 @@ grails.project.dependency.resolution = {
         compile ':biomart-domain:1.1-SNAPSHOT'
         compile ':transmart-java:1.0-SNAPSHOT'
         compile ':transmart-gwas:1.1-SNAPSHOT'
+        runtime ':transmart-mydas:0.1-SNAPSHOT'
+        runtime ':dalliance-plugin:0.1-SNAPSHOT'
+        //runtime ':transmart-rest-api:0.1-SNAPSHOT'
 
         // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
