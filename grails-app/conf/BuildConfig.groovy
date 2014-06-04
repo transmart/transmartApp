@@ -79,7 +79,7 @@ grails.project.dependency.resolution = {
         compile ':build-info:1.2.5'
         compile ':hibernate:3.6.10.7'
         compile ':quartz:1.0-RC2'
-        compile ':rdc-rmodules:0.3-LH-SNAPSHOT'
+        compile ':rdc-rmodules:0.4-LH-SNAPSHOT'
         // Not compatible with spring security 3.2 yet
         //compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:2.0-RC2'
