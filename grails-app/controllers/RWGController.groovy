@@ -16,7 +16,6 @@ import org.transmart.searchapp.SearchTaxonomy
 // so we can render as JSON
 class RWGController {
     def trialQueryService
-    def searchService
     def searchKeywordService
     def springSecurityService
     def formLayoutService
