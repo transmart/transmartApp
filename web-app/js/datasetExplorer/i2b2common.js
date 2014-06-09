@@ -1775,6 +1775,17 @@ if(!this.compareStepPathwaySelectionRBM)
                
 }
 
+function getQueryCdItem(el){
+    var item=el.getAttribute("conceptid");
+
+    var inOutCode = el.getAttribute("inoutcode");
+
+    //If there is visit information in the node, add it to the item we return.
+    if(inOutCode) item += "~" + inOutCode;
+
+    return item;
+}
+
 function getQuerySummary(subset)
 {
 var query="";
