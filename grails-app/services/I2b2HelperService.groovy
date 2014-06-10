@@ -19,23 +19,34 @@
 
 
 
+
+
+import com.recomdata.db.DBHelper
+import com.recomdata.export.*
+import grails.util.Holders
+import groovy.sql.Sql
+import i2b2.Concept
+import i2b2.GeneWithSnp
+import i2b2.SampleInfo
+import i2b2.SnpDataByProbe
+import i2b2.SnpDataset
+import i2b2.SnpDatasetByPatient
+import i2b2.SnpDatasetListByProbe
+import i2b2.SnpInfo
+import i2b2.SnpProbeSortedDef
+import i2b2.StringLineReader
+import org.transmart.CohortInformation
 import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.AuthUserSecureAccess
 import org.transmart.searchapp.SecureAccessLevel
 import org.transmart.searchapp.SecureObjectPath
-import com.recomdata.db.DBHelper
-import com.recomdata.export.*
-import groovy.sql.Sql
-import i2b2.*
-import org.transmart.CohortInformation
+import org.transmartproject.db.i2b2data.ConceptDimension
+import org.transmartproject.db.i2b2data.ObservationFact
+import org.transmartproject.db.querytool.QtPatientSetCollection
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
-
-import org.transmartproject.db.i2b2data.ConceptDimension
-import org.transmartproject.db.i2b2data.ObservationFact
-import org.transmartproject.db.querytool.QtPatientSetCollection
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
@@ -45,14 +56,9 @@ import javax.xml.xpath.XPathFactory
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
-import grails.util.Holders
 
-/**
- * ResNetService that will provide an .rnef file for Jubilant data
- *
- * @author $Author: mkapoor $
- * @version $Revision: 11303 $
- */
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
+
 class I2b2HelperService {
 	
 	static String GENE_PATTERN_WHITE_SPACE_DEFAULT = "0";
@@ -69,6 +75,8 @@ class I2b2HelperService {
 	 * Gets a distribution of information from the patient dimention table for value columns
 	 */
 	def double[] getPatientDemographicValueDataForSubset(String col, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		ArrayList<Double> values=new ArrayList<Double>();
         Sql sql = new Sql(dataSource)
 		String sqlt = """SELECT """ + col + """ FROM patient_dimension f WHERE
@@ -288,8 +296,9 @@ class I2b2HelperService {
 	 *  Gets the data associated with a value type concept from observation fact table
 	 * for display in a distribution histogram for a given subset
 	 */
-	
     def getConceptDistributionDataForValueConcept(String concept_key, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		log.debug("Getting concept distribution data for value concept:"+concept_key);
         Sql sql = new Sql(dataSource);
 		String concept_cd=getConceptCodeFromKey(concept_key);
@@ -326,6 +335,8 @@ class I2b2HelperService {
 	}
 	
 	def getConceptDistributionDataForValueConceptFromCode(String concept_cd, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		ArrayList<Double> values=new ArrayList<Double>();
 		ArrayList<Double> returnvalues=new ArrayList<Double>(values.size());
 		if (result_instance_id==""){
@@ -359,10 +370,12 @@ class I2b2HelperService {
 	 *  Gets the count of a a patient set fromt he result instance id
 	 */
 	def  Integer getPatientSetSize(String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		log.trace("Getting patient set size with id:" + result_instance_id);
 		Integer i=0;
         Sql sql = new Sql(dataSource);
-		String sqlt = """select count(distinct(patient_num)) as patcount
+		String sqlt = """select count(distinct(patient_num)) as patcount 
 						 FROM qt_patient_set_collection
 						 WHERE result_instance_id = CAST(? AS numeric)""";
 
@@ -379,6 +392,8 @@ class I2b2HelperService {
 	 *  Gets the intersection of the patient sets from two result instance ids
 	 */
 	def int getPatientSetIntersectionSize(String result_instance_id1, String result_instance_id2) {
+        checkQueryResultAccess result_instance_id1, result_instance_id2
+
 		log.trace("Getting patient set intersection");
 		Integer i=0;
         Sql sql = new Sql(dataSource);
@@ -469,7 +484,9 @@ class I2b2HelperService {
 	 * Gets the distribution of data for a concept
 	 */
 	def HashMap<String,Integer> getConceptDistributionDataForConceptOld(String concept_key, String result_instance_id) throws SQLException {
-        String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
+        checkQueryResultAccess result_instance_id
+
+		String fullname=concept_key.substring(concept_key.indexOf("\\",2), concept_key.length()).replaceAll((/\\${''}/), "\\\\\\\\");
 		HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
 		int i=getLevelFromKey(concept_key)+1;
 		
@@ -603,6 +620,8 @@ class I2b2HelperService {
 	 * Gets the count of the observations in the fact table for a concept and a subset
 	 */
 	def Integer getObservationCountForConceptForSubset(String concept_key, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		log.trace("Getting observation count for concept:"+concept_key+" and instance:"+result_instance_id);
         String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
 		int i=0;
@@ -623,6 +642,8 @@ class I2b2HelperService {
 	 * Fills the main demographic data in an export table for the grid
 	 */
 	def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
+        checkQueryResultAccess result_instance_id
+
 		log.trace("Adding patient demographic data to grid with result instance id:" +result_instance_id+" and subset: "+subset)
         Sql sql = new Sql(dataSource)
         String sqlt = '''
@@ -673,7 +694,7 @@ class I2b2HelperService {
                     I.PATIENT_NUM''';
 		
         log.debug "Initial grid query: $sqlt, riid: $result_instance_id"
-
+		
 		//if i have an empty table structure so far
         if (tablein.getColumns().size() == 0) {
 			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "String"));
@@ -712,7 +733,7 @@ class I2b2HelperService {
                 newrow.put("SEX_CD", row.SEX_CD ? (row.SEX_CD.toLowerCase().equals("m") || row.SEX_CD.toLowerCase().equals("male") ? "male" : (row.SEX_CD.toLowerCase().equals("f") || row.SEX_CD.toLowerCase().equals("female") ? "female" : "NULL")) : "NULL")
                 newrow.put("AGE_IN_YEARS_NUM", row.SEX_CD ? (row.AGE_IN_YEARS_NUM.toString().equals("0") ? "NULL" : row.AGE_IN_YEARS_NUM.toString()) : "NULL")
                 newrow.put("RACE_CD", row.RACE_CD ? (row.RACE_CD.toLowerCase().equals("unknown") ? "NULL" : row.RACE_CD.toLowerCase()) : "NULL")
-                tablein.putRow(subject, newrow);
+				tablein.putRow(subject, newrow);
 			}
 		})
 		//log.trace("FOUND DEMOGRAPHIC DATA=:"+founddata.toString())
@@ -723,6 +744,8 @@ class I2b2HelperService {
 	 * Adds a column of data to the grid export table
 	 */
 	def ExportTableNew addConceptDataToTable(ExportTableNew tablein,String concept_key,String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		if(isLeafConceptKey(concept_key)) {
             String columnid = concept_key.encodeAsSHA1()
 			String columnname=getColumnNameFromKey(concept_key).replace(" ", "_");
@@ -888,6 +911,8 @@ class I2b2HelperService {
 	 * Gets a distribution of information from the patient dimension table
 	 * */
 	def HashMap<String,Integer> getPatientDemographicDataForSubset(String col, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		HashMap<String,Integer> results = new LinkedHashMap<String, Integer>();
         Sql sql = new Sql(dataSource)
 		String sqlt = """SELECT a.cat as demcategory, COALESCE(b.demcount,0) as demcount FROM
@@ -1013,6 +1038,7 @@ class I2b2HelperService {
 	}
 	
 	def Set<String> lookupChildConcepts(String parentConcept, String result_instance_id1, String result_instance_id2) {
+        checkQueryResultAccess result_instance_id1, result_instance_id2
 		
 		Set<String>	childConcepts = new HashSet<String>();
 		
@@ -1092,12 +1118,12 @@ class I2b2HelperService {
 		Set<String>              parentSet  = new HashSet<String>();
 		
 		log.debug("getDistinctConceptSet called with arguments: "+result_instance_id1+" and "+result_instance_id2)
-
+		
         if (result_instance_id1) {
-            workingSet.addAll(getConceptKeysInSubset(result_instance_id1));
+		workingSet.addAll(getConceptKeysInSubset(result_instance_id1));
         }
         if (result_instance_id2) {
-            workingSet.addAll(getConceptKeysInSubset(result_instance_id2));
+		workingSet.addAll(getConceptKeysInSubset(result_instance_id2));
         }
 		
 		for (String k : workingSet) {
@@ -1174,6 +1200,8 @@ class I2b2HelperService {
 	 * Gets a comma delimited list of subjects for a result instance id
 	 */
 	def  String getSubjects(String resultInstanceId){
+        checkQueryResultAccess resultInstanceId
+
 		if (resultInstanceId == null) {
 			return null;
 		}
@@ -1198,6 +1226,8 @@ class I2b2HelperService {
 	 * Gets a list of subjects for a result instance id
 	 */
 	def  List<String> getSubjectsAsList(String resultInstanceId){
+        checkQueryResultAccess resultInstanceId
+
 		List<String> subjectIds=new ArrayList<String>();
         Sql sql = new Sql(dataSource)
         String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id = ?";
@@ -2725,9 +2755,9 @@ class I2b2HelperService {
                         snpNotUsedNameSet.add(snpName)
                     };
                 } else {
-					snpNotUsedNameSet.add(snpName);
+						snpNotUsedNameSet.add(snpName);
 				}
-			}
+				}
 			if (snpNotUsedNameSet != null && snpNotUsedNameSet.size() != 0) {
 				StringBuffer snpBuf = new StringBuffer();
 				for (String snpName : snpNotUsedNameSet) {
@@ -4290,7 +4320,7 @@ class I2b2HelperService {
 			def idArray = ids2.split(",")
             for (id in idArray) {
                 s.append(", round(" + prefix2 + id + ", 4) as " + prefix2 + id)
-            }
+		}
 		}
 		
 		return s
@@ -4315,7 +4345,7 @@ class I2b2HelperService {
 			def idArray = ids1.split(",")
             for (id in idArray) {
                 s.append(", round(" + prefix1 + id + ", 4) as " + prefix1 + id)
-            }
+		}
 		}
 		
 		if((ids2 != null) &&(ids2.length()>0)){
@@ -4323,7 +4353,7 @@ class I2b2HelperService {
             for (id in idArray) {
                 s.append(", round(" + prefix2 + id + ", 4) as " + prefix2 + id)
 		}
-        }
+		}
 		
 		return s
 	}
@@ -4755,12 +4785,13 @@ class I2b2HelperService {
 	
 	
 	def  getGenesForHaploviewFromResultInstanceId(resultInstanceId) {
+        checkQueryResultAccess resultInstanceId
+
 		log.debug("getting genes for happloview");
 		def genes=[];
         Sql sql = new Sql(dataSource);
         String sqlt = "select distinct gene from haploview_data a inner join qt_patient_set_collection b on a.I2B2_ID=b.patient_num where result_instance_id = ? order by gene asc"
-		//String sqlt = "select distinct patient_num from qt_patient_set_collection where result_instance_id="+resultInstanceId
-		sql.eachRow(sqlt, [resultInstanceId], {row ->
+		sql.eachRow(sqlt, [resultInstanceId as Long], {row ->
 			log.trace("IN ROW ITERATOR");
 			log.trace("Found:"+row.gene);
 			genes.add(row.gene);
@@ -4839,6 +4870,8 @@ class I2b2HelperService {
 	 * for display in a distribution histogram for a given subset
 	 */
 	def getConceptDistributionDataForValueConceptByTrial(String concept_key, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		def trialdata=[:];
 		
 		if(result_instance_id!=null && result_instance_id!="") {
@@ -4868,6 +4901,8 @@ class I2b2HelperService {
 	}
 	
 	def getConceptDistributionDataForValueConceptByTrialByConcepts(Set<String> childConcepts, String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
 		def trialdata=[:];
 		
 		if(result_instance_id!=null && result_instance_id!="" && !childConcepts.isEmpty()) {
@@ -4980,7 +5015,7 @@ class I2b2HelperService {
             [(bioDataUniqueIdToken): accessLevelName]
         } + ["EXP:PUBLIC": SecureAccessLevel.OWN]
     }
-
+	
 	/**
 	 * Gets the children with access for a concept
 	 */
@@ -5547,6 +5582,8 @@ class I2b2HelperService {
 	}
 	
 	def getDistinctTrialsInPatientSets(String rid1, String rid2) {
+        checkQueryResultAccess rid1, rid2
+
 		log.debug("Checking patient sets")
 		def trials=[];
 		

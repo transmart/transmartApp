@@ -1,6 +1,13 @@
+def forkSettingsRun = [
+        minMemory: 1536,
+        maxMemory: 4096,
+        maxPerm:   384,
+        debug:     false,
+]
+
 grails.project.fork = [
         test:    false,
-        run:     false,
+        run:     forkSettingsRun,
         war:     false,
         console: false ]
 
@@ -21,19 +28,24 @@ grails.project.dependency.resolution = {
         mavenCentral()
 
         mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
-        mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
     }
     dependencies {
+        // you can remove whichever you're not using
         runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
+        runtime 'com.oracle:ojdbc7:12.1.0.1'
+
+        compile 'org.transmartproject:transmart-core-api:1.0-LH-SNAPSHOT'
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
-        compile 'org.apache.lucene:lucene-core:2.4.0',
-                'org.apache.lucene:lucene-demos:2.4.0',
-                'org.apache.lucene:lucene-highlighter:2.4.0'
-        compile 'org.transmartproject:transmart-core-api:1.0-LH-SNAPSHOT'
+        compile "org.apache.lucene:lucene-core:2.4.0"
+        compile "org.apache.lucene:lucene-demos:2.4.0"
+        compile "org.apache.lucene:lucene-highlighter:2.4.0"
+        compile 'commons-net:commons-net:3.3' // used for ftp transfers
+        compile 'org.apache.commons:commons-math:2.2' //>2MB lib briefly used in ChartController
+        compile 'org.codehaus.groovy:http-builder:0.4.1', {
+            excludes 'groovy', 'nekohtml'
+        }
         compile 'org.grails:grails-plugin-rest:2.3.5-hyve4'
-
-        compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
         compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
@@ -41,7 +53,18 @@ grails.project.dependency.resolution = {
         /* for GeneGo web services: */
         compile 'axis:axis:1.4'
 
-        test 'org.gmock:gmock:0.8.3', {
+        runtime 'org.javassist:javassist:3.16.1-GA'
+
+        
+        test('junit:junit:4.11') {
+            transitive = false /* don't bring hamcrest */
+            export     = false
+        }
+
+        test 'org.hamcrest:hamcrest-core:1.3',
+             'org.hamcrest:hamcrest-library:1.3'
+
+        test 'org.gmock:gmock:0.9.0-r435-hyve2', {
             transitive = false
         }
         test 'org.hamcrest:hamcrest-library:1.3',
@@ -56,7 +79,7 @@ grails.project.dependency.resolution = {
         compile ':build-info:1.2.5'
         compile ':hibernate:3.6.10.7'
         compile ':quartz:1.0-RC2'
-        compile ':rdc-rmodules:0.3-LH-SNAPSHOT'
+        compile ':rdc-rmodules:0.4-LH-SNAPSHOT'
         // Not compatible with spring security 3.2 yet
         //compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:2.0-RC2'
@@ -64,7 +87,7 @@ grails.project.dependency.resolution = {
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
-        runtime ':transmart-core:1.0-LH-SNAPSHOT'
+        runtime ':transmart-core:1.1-LH-SNAPSHOT'
         runtime ':resources:1.2.1'
         compile ':transmart-legacy-db:0.3-ORACLE-SNAPSHOT'
         compile ':folder-management:1.2-SNAPSHOT'
@@ -72,9 +95,6 @@ grails.project.dependency.resolution = {
         compile ':biomart-domain:1.1-SNAPSHOT'
         compile ':transmart-java:1.0-SNAPSHOT'
         compile ':transmart-gwas:1.1-SNAPSHOT'
-        runtime ':transmart-mydas:0.1-SNAPSHOT'
-        runtime ':dalliance-plugin:0.1-SNAPSHOT'
-        //runtime ':transmart-rest-api:0.1-SNAPSHOT'
 
         // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
@@ -87,7 +107,9 @@ grails.war.resources = { stagingDir ->
 }
 
 // Use new NIO connector in order to support sendfile
-grails.tomcat.nio = true
+// This is a lovely thought, but with Tomcat running Grails 2.3.6+ NIO does not function in run-war mode
+// Official bug number : GRAILS-11376
+// grails.tomcat.nio = true
 
 def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
         "BuildConfig.groovy")

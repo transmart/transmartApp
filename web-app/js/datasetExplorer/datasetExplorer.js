@@ -1026,7 +1026,7 @@ function hasMultipleTimeSeries() {
 
 function createOntPanel() {
 	// make tab panel, search panel, ontTree and combine them
-    ontTabPanel = new Ext.Panel(
+    ontTabPanel = new Ext.TabPanel(
 			{
 				id : 'ontPanel',
 				region : 'center',
@@ -1037,7 +1037,20 @@ function createOntPanel() {
 			height : 300,
             width: 250,
 			deferredRender : false,
-            split: true
+            split: true,
+                listeners: {
+                    tabchange: function(tp,newTab) {
+                        if(newTab.id == "acrossTrialTreePanel")
+                        {
+                            GLOBAL.codeType = "Modifier"
+                        }
+                        else
+                        {
+                            GLOBAL.codeType = "Concept"
+                        }
+
+                    }
+                }
 	        		}
 	);
 
@@ -1441,6 +1454,8 @@ function getPreviousQueriesComplete(response) {
 
 function getCategoriesComplete(ontresponse){
     getSubCategories(ontresponse);
+    drawAcrossTrialTree();
+    setActiveTab();
     }
 
 function setActiveTab(){
@@ -1453,6 +1468,7 @@ function setActiveTab(){
 			activeTab='navigateTermsPanel';
 		}
 	}
+    ontTabPanel.setActiveTab(activeTab);
 }
 
 function setupOntTree(id_in, title_in) {
@@ -1715,6 +1731,9 @@ function setupDragAndDrop() {
 					}
 			);
 
+            //Enable jQuery dragging into the DIV.
+            jQuery("#queryCriteriaDiv" + s.toString() + '_' + i.toString()).addClass("jstree-drop");
+
             dts.notifyDrop = function (source, e, data) {
                 if (source.tree.id == "previousQueriesTree") {
 					getPreviousQueryFromID(data.node.attributes.id);
@@ -1754,6 +1773,10 @@ function setupDragAndDrop() {
             ddGroup: 'makeQuery'
 			}
 	);
+    //Add a css class which lets us drop across trial nodes into the results/analysis screen.
+    jQuery("#" + analysisPanel.body.id).addClass("jstree-drop");
+    jQuery("#" + analysisPanel.body.id).addClass("excludeValuePopup");
+    jQuery("#" + analysisPanel.body.id).addClass("results_analysis");
 
     dts.notifyDrop = function (source, e, data) {
 		buildAnalysis(data.node);
@@ -1767,6 +1790,10 @@ function setupDragAndDrop() {
             ddGroup: 'makeQuery'
 			}
 	);
+
+    jQuery("#" + analysisGridPanel.body.id).addClass("jstree-drop");
+    jQuery("#" + analysisGridPanel.body.id).addClass("excludeValuePopup");
+    jQuery("#" + analysisGridPanel.body.id).addClass("results_grid");
 
     dtg.notifyDrop = function (source, e, data) {
 		buildAnalysis(data.node);

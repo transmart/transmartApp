@@ -164,7 +164,7 @@ function runAllQueriesForSubsetId(callback, divId)
 
 	// setup the number of subsets that need running
 	var subsetstorun = 0;
-	for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1)
+	for (var i = 1; i <= GLOBAL.NumOfSubsets; i++)
 	{
 		if( ! isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null)
 		{
@@ -180,6 +180,9 @@ function runAllQueriesForSubsetId(callback, divId)
 		if( ! isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null)
 		{
 			runQueryForSubsetId(i, callback, divId);
+		} else if (!isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] != null) {
+            // execute the callback if subset is not empty and has subset id
+            callback();
 		}
 	}
 }

@@ -6,6 +6,6 @@ class QueryResultMarshaller extends SuperTypePropertiesMarshallerSupport {
     static targetType = QueryResult
 
     def convert(QueryResult queryResult) {
-        getPropertySubsetForSuperType(queryResult, QueryResult, ['patients'])
+        getPropertySubsetForSuperType(queryResult, QueryResult, ['patients', 'username'])
     }
 }
