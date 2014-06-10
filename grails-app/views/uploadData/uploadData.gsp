@@ -76,6 +76,7 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
     helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
 </script>
 <!-- ************************************** -->
+<r:layoutResources/>
 </head>
 <body>
 <div id="header-div">
@@ -450,6 +451,6 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
 		<div id="divBrowseStudies" title="Studies" style="display: none;">
 		   	<img src="${resource(file:'ajax-loader.gif', dir:'images')}"/>
 		</div>
-
+<r:layoutResources/>
 	</body>
 </html>

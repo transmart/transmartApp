@@ -24,39 +24,52 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	
 	<title>Sample Explorer</title>
-	
+
+    <g:javascript library="prototype"/>
+
 	<!-- Include Ext and app-specific scripts: -->
-	<script type="text/javascript" src="${resource(dir:'js/sarissa', file:'sarissa.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/sarissa', file: 'sarissa_ieemu_xpath.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/javeline', file: 'javeline_xpath.js')}"></script>
-	<g:javascript library="prototype" />
-	<script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorerMenu.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'myJobs.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>
-		
-	
-	<script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/sampleExplorer.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/HaploView.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/SNP.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/IGV.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/GWAS.js')}"></script>
-	<script type="text/javascript" src="${resource(dir:'js/ext-ux', file:'miframe.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/sarissa', file:'sarissa.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/sarissa', file: 'sarissa_ieemu_xpath.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/javeline', file: 'javeline_xpath.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
+
+    <script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all.js')}"></script>
+
+
+    <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.9.1.custom.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorerMenu.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'myJobs.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>
+
+    <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/sampleExplorer.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/HaploView.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/SNP.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/IGV.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/GWAS.js')}"></script>
+
+    <script type="text/javascript" src="${resource(dir:'js/ext-ux', file:'miframe.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'ext-all.css')}">
-	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'sampleExplorer.css')}">	
+	<link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'sampleExplorer.css')}">
 	<link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
-	<script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
+	<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}">
+
+    <r:layoutResources/>
 </head>		
 	
-	<body>
+<body>
 		
 <script type="text/javascript">
+
+
+
 	Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
 	//set ajax to 600*1000 milliseconds
@@ -101,8 +114,9 @@
 		}
 	}
 
-	
-	
+
+
+
 </script>	
 
 <div id="header-div"><g:render template="/layouts/commonheader" model="['app':'sampleexplorer']" /></div>
@@ -128,8 +142,10 @@
 	<script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
 	<script language="javascript">
 		helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
-	</script>
-<!-- ************************************** --> 
 
+	</script>
+<!-- ************************************** -->
+
+<r:layoutResources/>
 </body>
 </html>
