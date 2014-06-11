@@ -9,7 +9,7 @@
 
 <link rel="stylesheet" href="${resource(dir:'css', file:'uploadData.css')}"></link>
 <script type="text/javascript">$j = jQuery.noConflict();</script>
-<script type="text/javascript" src="${resource(dir:'js', file:'uploadData.js')}"></script>
+<script type="text/javascript" src="${resource(dir:'js', file:'metadata.js')}"></script>
 
 
 <div>  
