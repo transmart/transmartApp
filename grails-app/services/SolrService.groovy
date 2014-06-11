@@ -388,8 +388,10 @@ class SolrService {
 
         def resultList = []
 
+        System.out.println(solrServerUrl);
+        //System.err.println(solrServerUrl)
         //The luke request handler returns schema data.
-        def html = http.get(path: '/solr/admin/luke')
+        def html = http.get(path: 'admin/luke/')
                 {
                     resp, xml ->
 

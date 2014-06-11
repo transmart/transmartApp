@@ -112,7 +112,9 @@ grails.war.resources = { stagingDir ->
 }
 
 // Use new NIO connector in order to support sendfile
-grails.tomcat.nio = true
+// This is a lovely thought, but with Tomcat running Grails 2.3.6+ NIO does not function in run-war mode
+// Official bug number : GRAILS-11376
+// grails.tomcat.nio = true
 
 def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
         "BuildConfig.groovy")

@@ -2246,15 +2246,29 @@ function runAllQueries(callback, panel) {
         panel.subsetQueries = panel.subsetQueries ? panel.subsetQueries : ["", "", ""];
     }
 
-	// iterate through all subsets calling the ones that need to be run
-    for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
-        if (!isSubsetEmpty(i)) {
-            if (panel) {
-                panel.subsetQueries[i] = getSubsetQuery(i); // set subset queries to the selected tab
+    if(ontTabPanel.getActiveTab().title == "Across Trial")
+    {
+        for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1)
+        {
+            if( ! isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null)
+            {
+                runQueryAcrossTrial(i, callback);
             }
-			runQuery(i, callback);
-		}
-	}
+        }
+    }
+    else
+    {
+        // iterate through all subsets calling the ones that need to be run
+        for (var i = 1; i <= GLOBAL.NumOfSubsets; i++)
+        {
+            if (!isSubsetEmpty(i)) {
+                if (panel) {
+                    panel.subsetQueries[i] = getSubsetQuery(i); // set subset queries to the selected tab
+                }
+                runQuery(i, callback);
+            }
+        }
+    }
 }
 
 
