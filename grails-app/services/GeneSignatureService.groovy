@@ -31,6 +31,8 @@ import org.transmart.searchapp.GeneSignature
 import org.transmart.searchapp.GeneSignatureItem
 import org.transmart.searchapp.SearchKeyword
 
+import static org.transmartproject.db.support.DatabasePortabilityService.DatabaseType.ORACLE
+
 /**
  * Service class for Gene Signature functionality
  * $Id: GeneSignatureService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -51,6 +53,7 @@ public class GeneSignatureService {
     def searchKeywordService
     def springSecurityService
     def sessionFactory
+    def databasePortabilityService
 
     /**
      * verify file matches indicated schema
@@ -565,34 +568,27 @@ public class GeneSignatureService {
         results.each { countMap.put(it.getAt(0), it) }
         */
 
-        def permCriteria = (bAdmin) ? "(1=1)" : "(gs.CREATED_BY_AUTH_USER_ID=" + userId + " or gs.PUBLIC_FLAG=1)"
+        def permCriteria = (bAdmin) ? "(1=1)" : "(gs.CREATED_BY_AUTH_USER_ID=" + userId + " or gs.PUBLIC_FLAG=${databasePortabilityService.databaseType == ORACLE? '1' : 'true'})"
         StringBuffer nativeSQL = new StringBuffer();
         nativeSQL.append("select gsi.SEARCH_GENE_SIGNATURE_ID as id, count(*) Gene_Ct, sum(CASE WHEN gsi.FOLD_CHG_METRIC>0 THEN 1 ELSE 0 END) Up_Ct, sum(CASE WHEN gsi.FOLD_CHG_METRIC<0 THEN 1 ELSE 0 END) Down_Ct ");
         nativeSQL.append("from SEARCH_GENE_SIGNATURE_ITEM gsi join SEARCH_GENE_SIGNATURE gs on gsi.search_gene_signature_id=gs.search_gene_signature_id ");
-        nativeSQL.append("where " + permCriteria + " and gs.DELETED_FLAG=0 ");
+        nativeSQL.append("where " + permCriteria + " and gs.DELETED_FLAG=${databasePortabilityService.databaseType == ORACLE? '0' : 'false'} ");
         nativeSQL.append("group by gsi.SEARCH_GENE_SIGNATURE_ID");
 
         // execute native sql on hibernate session
         def countMap = new HashMap();
         def session = sessionFactory.getCurrentSession()
-        try {
 
-            //def trans = session.beginTransaction();
-            def hqlQuery = session.createSQLQuery(nativeSQL.toString())
-            hqlQuery.addScalar("id", Hibernate.LONG)
-            hqlQuery.addScalar("Gene_Ct", Hibernate.LONG)
-            hqlQuery.addScalar("Up_Ct", Hibernate.LONG)
-            hqlQuery.addScalar("Down_Ct", Hibernate.LONG)
-            def results = hqlQuery.list()
-            // stuff results into a lookup map
-            results.each { countMap.put(it.getAt(0), it); }
-            //trans.commit();
+        //def trans = session.beginTransaction();
+        def hqlQuery = session.createSQLQuery(nativeSQL.toString())
+        hqlQuery.addScalar("id", Hibernate.LONG)
+        hqlQuery.addScalar("Gene_Ct", Hibernate.LONG)
+        hqlQuery.addScalar("Up_Ct", Hibernate.LONG)
+        hqlQuery.addScalar("Down_Ct", Hibernate.LONG)
+        def results = hqlQuery.list()
+        // stuff results into a lookup map
+        results.each { countMap.put(it.getAt(0), it); }
 
-        } catch (Exception e) {
-            trans.rollback();
-        } finally {
-
-        }
         return countMap
     }
 
