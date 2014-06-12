@@ -99,7 +99,8 @@ grails.project.dependency.resolution = {
         compile ':biomart-domain:1.1-SNAPSHOT'
         compile ':transmart-java:1.0-SNAPSHOT'
         compile ':transmart-gwas:1.1-SNAPSHOT'
-        compile ':dalliance-plugin:0.2-SNAPSHOT'
+        runtime ':dalliance-plugin:0.2-SNAPSHOT'
+        runtime ':transmart-mydas:0.1-SNAPSHOT'
 
         // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
