@@ -106,6 +106,15 @@ table.categoryListCheckbox {
 
 #centerPanel .x-panel-body{
     background-color: #EEEEEE;
+    overflow:visible;
+}
+
+#northPanel .x-panel-body{
+    overflow:visible;
+}
+
+#northPanel .x-panel-bwrap{
+    overflow:visible;
 }
 
 #resultsGridPanel .x-grid3 {
