@@ -23,6 +23,7 @@ package com.recomdata.transmart.data.export
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.querytool.QueriesResource
 import org.transmartproject.core.querytool.QueryResult
+import org.apache.commons.lang.StringUtils
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 
@@ -35,7 +36,7 @@ class DataCountService {
 
     //For the given list of Subjects get counts of what kind of data we have for those cohorts.
     //We want to return a map that looks like {"PLINK": "102","RBM":"28"}
-    Map getDataCounts(Long rId, Long[] resultInstanceIds)
+    Map getDataCounts(Long rID, Long[] resultInstanceIds)
     {
         checkQueryResultAccess(*resultInstanceIds)
 
@@ -55,10 +56,20 @@ class DataCountService {
         StringBuilder subjectsFromBothSubsetsQuery = new StringBuilder()
         StringBuilder gseaQuery = new StringBuilder()
 
+        def subquery = "";
+
+        if(resultInstanceIds[0] == null && resultInstanceIds[1] != null){
+            subquery = resultInstanceIds[1];
+        } else if(resultInstanceIds[0] != null && resultInstanceIds[1] == null){
+            subquery = resultInstanceIds[0];
+        } else if (resultInstanceIds[0] != null && resultInstanceIds[1] != null){
+            subquery = resultInstanceIds[0] + "," + resultInstanceIds[1];
+        }
+
         subjectsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ?")
                 .append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')")
         subjectsFromBothSubsetsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id IN (")
-                .append(resultInstanceIds).append(')')
+                .append(subquery).append(')')
                 .append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')")
 
         //Build the query we use to get MRNA Data. patient_id should be unique to a given study for each patient.
@@ -108,25 +119,25 @@ class DataCountService {
                 .append(subjectsFromBothSubsetsQuery).append(") AND s.platform='MRNA_AFFYMETRIX' AND s.assay_id IS NOT NULL group by s.gpl_id");
 
         //Get the count of MRNA Data for the given list of subject IDs.
-        resultMap['MRNA'] = StringUtils.isNotEmpty(mrnaQuery.toString()) && rID ? getCountsPerPlatformFromDB(mrnaQuery.toString(), rID) : new HashMap()
+        resultMap['MRNA'] = StringUtils.isNotEmpty(mrnaQuery.toString()) && rID ? getCountsPerPlatformFromDB(mrnaQuery.toString(), String.valueOf(rID)) : new HashMap()
 
         //Get the count of MRNA "CEL" Data for the given list of subject IDs.
-        resultMap['MRNA_CEL'] = StringUtils.isNotEmpty(mrnaCelQuery.toString()) && rID ? getCountFromDB(mrnaCelQuery.toString(), rID) : 0
+        resultMap['MRNA_CEL'] = StringUtils.isNotEmpty(mrnaCelQuery.toString()) && rID ? getCountFromDB(mrnaCelQuery.toString(), String.valueOf(rID)) : 0
 
         //Get the count of Clinical Data for the given list of subject IDs.
-        resultMap['CLINICAL'] = StringUtils.isNotEmpty(clinicalQuery.toString()) && rID ? getCountFromDB(clinicalQuery.toString(), rID) : 0
+        resultMap['CLINICAL'] = StringUtils.isNotEmpty(clinicalQuery.toString()) && rID ? getCountFromDB(clinicalQuery.toString(), String.valueOf(rID)) : 0
 
         //Get the count of RBM Data for the given list of subject IDs.
-        resultMap['RBM'] = StringUtils.isNotEmpty(rbmQuery.toString()) && rID ? getCountFromDB(rbmQuery.toString(), rID) : 0
+        resultMap['RBM'] = StringUtils.isNotEmpty(rbmQuery.toString()) && rID ? getCountFromDB(rbmQuery.toString(), String.valueOf(rID)) : 0
 
         //Get the count of SNP Data for the given list of subject IDs.
-        resultMap['SNP'] = StringUtils.isNotEmpty(snpQuery.toString()) && rID ? getCountFromDB(snpQuery.toString(), rID) : 0
+        resultMap['SNP'] = StringUtils.isNotEmpty(snpQuery.toString()) && rID ? getCountFromDB(snpQuery.toString(), String.valueOf(rID)) : 0
 
         //Get the count of SNP CEL Data for the given list of subject IDs.
-        resultMap['SNP_CEL'] = StringUtils.isNotEmpty(snpCelQuery.toString()) && rID ? getCountFromDB(snpCelQuery.toString(), rID) : 0
+        resultMap['SNP_CEL'] = StringUtils.isNotEmpty(snpCelQuery.toString()) && rID ? getCountFromDB(snpCelQuery.toString(), String.valueOf(rID)) : 0
 
         //Get the count of Additional Data for the given list of subject IDs.
-        resultMap['ADDITIONAL'] = StringUtils.isNotEmpty(additionalDataQuery.toString()) && rID ? getCountFromDB(additionalDataQuery.toString(), rID) : 0
+        resultMap['ADDITIONAL'] = StringUtils.isNotEmpty(additionalDataQuery.toString()) && rID ? getCountFromDB(additionalDataQuery.toString(), String.valueOf(rID)) : 0
 
         //Get the count of GSEA Data for the given resultInstanceIds.
         resultMap['GSEA'] = StringUtils.isNotEmpty(gseaQuery.toString()) && rID ? getCountsPerPlatformFromDB(gseaQuery.toString()) : new HashMap()
@@ -185,6 +196,7 @@ class DataCountService {
                 countsPerPlatform.put(gplId, patientSampleCount)
             });
         } else {
+
             sql.eachRow(commandString, { row ->
                 patientSampleCount = row[0]
                 gplId = row['gpl_id']
