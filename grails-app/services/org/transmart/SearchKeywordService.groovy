@@ -167,7 +167,9 @@ public class SearchKeywordService {
                 //like("keywordTerm", 'RS%')
                 eq("dataCategory", "SNP")
             } else if ("ALL".compareToIgnoreCase(category) != 0) {
-                eq("dataCategory", category.toUpperCase())
+                searchKeyword {
+                    eq("dataCategory", category.toUpperCase())
+                }
             }
 
             if (!user.isAdmin()) {
