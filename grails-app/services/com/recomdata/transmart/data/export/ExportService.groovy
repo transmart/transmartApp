@@ -33,11 +33,15 @@ import org.quartz.SimpleTrigger
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import org.transmart.searchapp.AccessLog
 
+
+import org.apache.commons.lang.StringUtils
+
 import javax.annotation.Resource
 
 class ExportService {
 
     static transactional = true
+
 	def i2b2HelperService
 	def i2b2ExportHelperService
 	def jobResultsService
@@ -47,6 +51,7 @@ class ExportService {
 
     @Resource(name = CurrentUserBeanProxyFactory.BEAN_BAME)
     def currentUser
+
 		
 	def createExportDataAsyncJob(params, userName) {
 		def analysis = params.analysis
@@ -109,8 +114,6 @@ class ExportService {
             if (!formats[parts[0]][parts[1]].containsKey(format)) {
                 formats[parts[0]][parts[1]][format] = []
             }
-
-            formats[parts[0]][parts[1]][format] << parts[3]
         }
 
         formats
@@ -209,10 +212,10 @@ class ExportService {
 		
 		//We need a sub hash for each subset.
 		def resultInstanceIdHashMap = [:]
-		
+
 		resultInstanceIdHashMap["subset1"] = params.result_instance_id1
 		resultInstanceIdHashMap["subset2"] = params.result_instance_id2
-		
+
 		//Loop through the values for each selected checkbox.
 		def checkboxList = params.selectedSubsetDataTypeFiles
 		
@@ -233,7 +236,7 @@ class ExportService {
 		jdm.put("checkboxList", checkboxList);
 		jdm.put("subsetSelectedFilesMap", getSubsetSelectedFilesMap(params.selectedSubsetDataTypeFiles))
 		jdm.put("resulttype", "DataExport")
-		jdm.put("studyAccessions", i2b2ExportHelperService.findStudyAccessions(resultInstanceIdHashMap.values()) )
+		jdm.put("studyAccessions", i2b2ExportHelperService.findStudyAccessions(resultInstanceIdHashMap.values().toArray()))
 		
 		//Add the pivot flag to the jobs map.
 		jdm.put("pivotData", (new Boolean(true)));
@@ -322,15 +325,6 @@ class ExportService {
 		def job = AsyncJob.findByJobName(jobName)
 		def exportDataProcessor = new ExportDataProcessor()
 
-        // If com.recomdata.transmart.data.export.ftp configuration not set, ExportDataProcessor receives incorrect
-        // method signature for getExportJobFileStream, so here we have used Strings instead of defs to initialize
-        // the correct parameter signature
-        String tempDir = grailsApplication.config.com.recomdata.plugins.tempFolderDirectory
-        def ftp = grailsApplication.config.com.recomdata.transmart.data.export.ftp
-
-        InputStream is = exportDataProcessor.getExportJobFileStream(job.viewerURL, tempDir,
-                ftp.server ?: '', ftp.serverport ?: '21', ftp.username ?: '',
-                ftp.password ?: '', ftp.remote.path ?: '')
-        is
+        return exportDataProcessor.getExportJobFileStream(job.viewerURL)
 	}
 }
