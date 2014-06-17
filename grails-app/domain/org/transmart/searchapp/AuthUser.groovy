@@ -65,7 +65,7 @@ class AuthUser extends Principal {
 		username(blank: false, unique: true)
 		userRealName(blank: false)
 		passwd(blank: false)
-		email(nullable:true, maxSize:255)
+        email(blank:false, maxSize:255)
         federatedId(unique: true, nullable: true)
 	}
 

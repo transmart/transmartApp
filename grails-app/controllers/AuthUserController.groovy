@@ -23,19 +23,9 @@
  * @author $Author: mmcduffie $
  * @version $Revision: 10098 $
  */
-
-import groovy.sql.Sql
-
-import java.sql.BatchUpdateException
-import java.sql.SQLException
-
 import org.codehaus.groovy.grails.exceptions.InvalidPropertyException
-import org.transmart.searchapp.AccessLog;
-import org.transmart.searchapp.AuthUser;
-import org.transmart.searchapp.AuthUserSecureAccess;
-import org.transmart.searchapp.Role;
-
-import org.transmart.searchapp.GeneSignature
+import org.springframework.transaction.TransactionStatus
+import org.transmart.searchapp.*
 
 /**
  * User controller.
@@ -128,102 +118,84 @@ class AuthUserController {
 		return buildPersonModel(person)
 	}
 
-	/**
-	 * Person update action.
-	 */
-	def update = {		
-		def person = AuthUser.get(params.id)
-		person.properties = params
-		
-        if (!params.passwd.equals(person.getPersistentValue("passwd")))	{
-            log.info("Password has changed, encrypting new password")
-            person.passwd = springSecurityService.encodePassword(params.passwd)
-        }
-		
-		def msg = new StringBuilder("${person.username} has been updated.  Changed fields include: ")				
-		def modifiedFieldNames = person.getDirtyPropertyNames()
-		for (fieldName in modifiedFieldNames)	{			
-			def currentValue =person."$fieldName"
-			def origValue = person.getPersistentValue(fieldName)
-			if (currentValue != origValue)	{
-				msg.append(" ${fieldName} ")
-			}			
-		}
-		
-		if (person.save()) {
-			new AccessLog(username: springSecurityService.getPrincipal().username, event:"User Updated",
-				eventmessage: msg,
-				accesstime:new Date()).save()
-			Role.findAll().each { it.removeFromPeople(person) }
-			addRoles(person)
-			redirect action: show, id: person.id
-		}
-		else {
-			render view: 'edit', model: buildPersonModel(person)
-		}
-	}
+    def update() {
+        saveOrUpdate()
+    }
 
 	def create = {
 		[person: new AuthUser(params), authorityList: Role.list()]
 	}
 
-	/**
-	 * Person save action.
-	 */
-	def save = {
-		def person = new AuthUser()
-		person.properties = params
-        def next_id
+    def save() {
+        saveOrUpdate()
+    }
 
-        if(params.id==null || params.id=="") {
-            def sql = new Sql(dataSource);
-            def seqSQL = "SELECT nextval('searchapp.hibernate_sequence')";
-            def result = sql.firstRow(seqSQL);
-            next_id = result.nextval
+    private saveOrUpdate() {
+        boolean create = params.id == null
+        AuthUser person = create ? new AuthUser():
+                                   AuthUser.load(params.id as Long)
+
+        bindData person, params, [
+                include: [
+                        'enabled', 'username', 'userRealName', 'email',
+                        'description', 'emailShow', 'authorities']]
+
+        if (params.passwd) {
+            person.passwd = springSecurityService.encodePassword(params.passwd)
         }
-        else
-            next_id = new Long(params.id)
+        person.name = person.userRealName
 
-        if(params.email==null || params.email=="") {
-            flash.message = 'Please enter an email'
-            return render (view:'create', model:[person: new AuthUser(params), authorityList: Role.list()])
+        /* the auditing should probably be done in the beforeUpdate() callback,
+         * but that might cause problems in users created without a spring
+         * security login (does this happen?) */
+        def msg
+        if (create) {
+            msg = "User: ${person.username} for ${person.userRealName} created"
+        } else {
+            msg = "${person.username} has been updated. Changed fields include: "
+            msg += person.dirtyPropertyNames.collect { field ->
+                def newValue = person."$field"
+                def oldValue = person.getPersistentValue(field)
+                if (newValue != oldValue) {
+                    "$field ($oldValue -> $newValue)"
+                }
+            }.findAll().join ', '
         }
 
-        person.id = next_id
-		person.passwd = springSecurityService.encodePassword(params.passwd)
-		person.uniqueId = ''
-		person.name=person.userRealName;
-
-        try {
-            if (person.save()) {
-                addRoles(person)
-                def msg = "User: ${person.username} for ${person.userRealName} created";
-                new AccessLog(username: springSecurityService.getPrincipal().username, event:"User Created",
-                    eventmessage: msg,
-                    accesstime:new Date()).save()
+        AuthUser.withTransaction { TransactionStatus tx ->
+            manageRoles(person)
+            if (person.validate() && person.save(flush: true)) {
+                new AccessLog(
+                        username:     springSecurityService.getPrincipal().username,
+                        event:        "User ${create ? 'Created' : 'Updated' }",
+                        eventmessage: msg.toString(),
+                        accesstime:   new Date()).save()
                 redirect action: show, id: person.id
+            } else {
+                tx.setRollbackOnly()
+                flash.message = message(code: 'Cannot save user')
+                render view: create ? 'create' : 'edit',
+                        model: [authorityList: Role.list(), person: person]
             }
-            else {
-                render view: 'create', model: [authorityList: Role.list(), person: person]
-            }            
-        } catch(BatchUpdateException bue)   {
-            flash.message = 'Cannot create user'
-            log.error(bue.getLocalizedMessage(), bue)
-            render view: 'create', model: [authorityList: Role.list(), person: person]
-        } catch(SQLException sqle)    {
-            flash.message = 'Cannot create user'            
-            log.error(sqle.getNextException().getMessage())
-            render view: 'create', model: [authorityList: Role.list(), person: person]
-        } 
-	}
+        }
+    }
 
-	private void addRoles(person) {
-		for (String key in params.keySet()) {
-			if (key.contains('ROLE') && 'on' == params.get(key)) {
-				Role.findByAuthority(key).addToPeople(person)
-			}
-		}
-	}
+    /* the owning side of the many-to-many are the roles */
+    private void manageRoles(AuthUser person) {
+        def oldRoles = person.authorities
+        def newRoles = params.findAll { String key, String value ->
+            key.contains('ROLE') && value == 'on'
+        }.collect {
+            Role.findByAuthority(it.key)
+        } as Set
+
+        (newRoles - oldRoles).each {
+            it.addToPeople(person)
+        }
+        (oldRoles - newRoles).each {
+            it.removeFromPeople(person)
+        }
+    }
 
 	private Map buildPersonModel(person) {
 		List roles = Role.list()
