@@ -40,7 +40,7 @@
 			var formName = "geneSignatureFrm";
 
 			//p-value cutoff required
-			var cutoff = document.forms[formName].elements['pvalueCutoffConceptCode.id'];
+			var cutoff = document.forms[formName].elements['pValueCutoffConceptCode.id'];
 			if(cutoff.value=="null") errorMsg = "\n- Please select a p-value cutoff";
 
 			//file schema
@@ -178,9 +178,9 @@
 		<tr class="prop">
 			<td class="name">P-value Cutoff<g:requiredIndicator/></td>
 			<td class="value">
-				<g:select name="pvalueCutoffConceptCode.id"
+				<g:select name="pValueCutoffConceptCode.id"
     				      from="${wizard.pValCutoffs}"
-    				      value="${gs.pvalueCutoffConceptCode?.id}"
+    				      value="${gs.pValueCutoffConceptCode?.id}"
          				  noSelection="['null':'select p-value cutoff']"
          				  optionValue="codeName"
          				  optionKey="id" />
