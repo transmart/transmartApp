@@ -57,7 +57,7 @@
 			
 			<g:set var="buildNumber"><g:meta name="environment.BUILD_NUMBER"/></g:set>
 			<g:set var="buildId"><g:meta name="environment.BUILD_ID"/></g:set>
-			<div id="utilitiesMenu"">
+			<div id="utilitiesMenu">
 				<ul id="utilitiesMenuList">
 					<li><a href="#" onclick="jQuery('#utilitiesMenu').hide(); popupWindow('${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}', '_help')">Help</a></li>
 					<li><a onclick="jQuery('#utilitiesMenu').hide();" href="mailto:${grailsApplication.config.com.recomdata.searchtool.contactUs}">Contact Us</a></li>
