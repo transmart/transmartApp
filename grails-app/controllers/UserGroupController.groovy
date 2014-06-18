@@ -108,7 +108,7 @@ class UserGroupController {
         def userGroupInstance = new UserGroup(params)
 
         try {
-            userGroupInstance.save(failOnError: true)
+            userGroupInstance.save()
             def msg = "Group: ${userGroupInstance.name} created.";
             new AccessLog(username: springSecurityService.principal.username,
                           event: "Group created",
@@ -299,7 +299,7 @@ class UserGroupController {
 					}
 			def result = [rows:userdata]
             //println(result as JSON)
-            render params.callback + "(" + (result as JSON) + ")"
+            render(contentType:"text/javascript", text: "${params.callback}(${result as JSON})")
 	    }
     
 
