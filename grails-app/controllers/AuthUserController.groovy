@@ -182,7 +182,7 @@ class AuthUserController {
 
     /* the owning side of the many-to-many are the roles */
     private void manageRoles(AuthUser person) {
-        def oldRoles = person.authorities
+        def oldRoles = person.authorities ?: Collections.emptySet()
         def newRoles = params.findAll { String key, String value ->
             key.contains('ROLE') && value == 'on'
         }.collect {
