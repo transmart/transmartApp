@@ -130,7 +130,7 @@ grails.enable.native2ascii = true
 
 com.recomdata.search.autocomplete.max=20
 // default paging size
-com.recomdata.search.paginate.max=10
+com.recomdata.search.paginate.max=20
 com.recomdata.search.paginate.maxsteps=5
 com.recomdata.admin.paginate.max=20
 
