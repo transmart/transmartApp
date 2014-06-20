@@ -11,7 +11,7 @@ class EncounterLevel {
         version false
 
         studyId column: 'STUDY_ID'
-        conceptCode column: 'CONCEPT_CD'
+        conceptCode column: 'CONCEPT_ID'
         linkType column: 'LINK_TYPE'
     }
 

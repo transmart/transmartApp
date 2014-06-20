@@ -84,6 +84,8 @@ class CrossTrialService {
             } else {
                 //Netezza
                 //Since we aren't retrieving leaf time series data, we need to case the name_char and modifier path to get rid of duplicates.
+				// Note: escape '+' because + is a character removed in normal ETL processing and the alternative escape '' (empty string) did
+				//   not work in both Oracle and PostgreSQL - BTW the query and the one above are candidates for rewrite!
                 modifierList = ModifierDimension.executeQuery("""
 					SELECT new map(	case B.visitInd
 										WHEN 'Y' THEN D.visitName
@@ -116,10 +118,10 @@ class CrossTrialService {
 					WHERE 	A.id = B.id
 					AND     A1.id = C.modifierCd
 					AND     A1.modifierNodeType = 'L'
-					AND     A1.modifierPath LIKE A.modifierPath || '%' escape ''
+					AND     A1.modifierPath LIKE A.modifierPath || '%' escape '+'
                 	AND		E.conceptCode = C.conceptCd
 					AND		A.modifierLevel = :retrieveNodeLevel
-					AND		A.modifierPath LIKE :nodeToOpen escape ''
+					AND		A.modifierPath LIKE :nodeToOpen escape '+'
 					AND     C.sourcesystemCd IN (""" + studyNamesIN + """)
 					GROUP BY case B.visitInd
 										WHEN 'Y' THEN D.visitName
