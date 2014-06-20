@@ -217,7 +217,8 @@ org.transmart.security.spnegoEnabled = false
 
 // requires NIO connector though. If you use apache in front of tomcat in the
 // same server, you can set this to false and set .apache = true
-grails.plugins.sendfile.tomcat = true
+// Bear in mind bug GRAILS-11376 with Tomcat NIO and Grails 2.3.6+
+grails.plugins.sendfile.tomcat = false
 
 log4j = {
     environments {
