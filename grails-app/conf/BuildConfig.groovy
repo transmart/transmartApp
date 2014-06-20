@@ -101,6 +101,7 @@ grails.project.dependency.resolution = {
         compile ':transmart-gwas:1.1-SNAPSHOT'
         runtime ':dalliance-plugin:0.2'
         runtime ':transmart-mydas:0.1-SNAPSHOT'
+        //runtime ':blend4j-plugin:0.1-SNAPSHOT'
 
         // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
