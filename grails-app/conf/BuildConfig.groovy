@@ -28,10 +28,7 @@ grails.project.dependency.resolution = {
         mavenCentral()
 
         mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
-        mavenRepo([
-                name: 'repo.thehyve.nl-public',
-                url: 'https://repo.thehyve.nl/content/repositories/public/'
-        ])
+        mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
     }
     dependencies {
         // you can remove whichever you're not using
