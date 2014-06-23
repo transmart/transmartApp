@@ -100,8 +100,8 @@ Ext.onReady(function () {
 			{
 				id : 'westPanel',
 				region : 'west',
-                width: 280,
-				minwidth : 200,
+                width: 320,
+				minwidth : 280,
 				split : true,
 				border : true,
 				layout : 'border'
