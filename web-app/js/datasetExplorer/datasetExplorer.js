@@ -707,8 +707,6 @@ Ext.onReady(function () {
                             console.error("Cannot load plugin scripts for " + _this.pluginName);
                         }
                     });
-
-
                 }
             },
             params: {

@@ -65,7 +65,7 @@
 						<tr class="prop">
 							<td valign="top" class="name"><label for="passwd">Password:</label></td>
 							<td valign="top" class="value ${hasErrors(bean:person,field:'passwd','errors')}">
-								<input type="password" id="passwd" name="passwd" value="${person.passwd?.encodeAsHTML()}"/>
+								<input type="password" id="passwd" name="passwd" value=""/>
 							</td>
 						</tr>
 	

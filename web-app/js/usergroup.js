@@ -297,8 +297,8 @@ var originalRefresh=Ext.DataView.prototype.refresh;
 Ext.override(Ext.DataView, {
 
 	refresh: function(){
-	//originalRefresh.call(this, arguments);
-	//this.fireEvent("refresh", this);
+	originalRefresh.call(this, arguments);
+	this.fireEvent("refresh", this);
 	}
 
 });

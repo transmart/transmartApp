@@ -197,7 +197,7 @@
 		</tr>	
 		<tr class="prop">
 			<td class="name">P-value Cutoff:</td>
-			<td class="value">${gs.pvalueCutoffConceptCode?.codeName}</td>
+			<td class="value">${gs.pValueCutoffConceptCode?.codeName}</td>
 		</tr>
 		<tr class="prop">
 			<td class="name">Fold-change metric:</td>
