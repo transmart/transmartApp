@@ -492,10 +492,10 @@ class I2b2HelperService {
 		
         Sql sql = new Sql(dataSource)
         String sqlt = """Select DISTINCT m.c_name, nvl(i.obscount,0) as obscount FROM
-		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) m
+		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '/' AND c_hlevel = ?) m
 		    LEFT OUTER JOIN
 		    (Select c_name, count(c_basecode) as obscount FROM
-			(SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) c
+			(SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '/' AND c_hlevel = ?) c
 			INNER JOIN observation_fact f ON f.concept_cd=c.c_basecode
 			WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
 		    GROUP BY c_name) i
