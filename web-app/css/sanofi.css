@@ -340,11 +340,16 @@ table.menuDetail th.menuVisited {
 }
 
 .ui-widget-header, #navigateTermsPanel .x-panel-header {
+    color: white;
 	border:none;
 	background:none;
 	background-image: none;
 	background-color: #515BA2;
 	font-family: 'Helvetica',arial,clean,sans-serif;
+}
+
+#subsets_wrapper .ui-buttonset .ui-button {
+    margin-right: 0;
 }
 
 .ui-dialog-title {

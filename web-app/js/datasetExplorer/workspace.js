@@ -66,15 +66,14 @@ function renderWorkspace(p){
 			initWorkspaceDataTables);
 }
 
-var getMinimumWorkspaceHeight = function(){
-    var topBarHeight = jQuery("#header-div").outerHeight(true);
-    var otherTableComponentHeight = jQuery("#ext-gen29").outerHeight(true) + jQuery(".workspaceheader").outerHeight(true) *2 + (jQuery("#subsets_wrapper .dataTables_scrollHead").outerHeight(true) + jQuery("#subsets_wrapper #subsets_length").outerHeight(true) * 2) * 2;
-    return (topBarHeight + otherTableComponentHeight);
-}
-
 var calcWorkspaceDataTableHeight = function() {
 
-    return (jQuery(window).height() - getMinimumWorkspaceHeight())/2;
+    // Commenting this as we don't know WTH the report manager is suppose to work.
+    // The only demo provided to us, lamely failed.
+    // TODO Please invert as you know what is going on ... that's if you ever know.
+    // Disgusting ... but no choice I suppose.
+    return (jQuery('#workspacePanel').height() - jQuery('#subsets_wrapper .dataTables_scrollHead').height() - jQuery('#subsets_wrapper > div:first-child').height() - jQuery('#subsets_wrapper > div:last-child').height() - jQuery('.workspaceheader').height());
+//  return (jQuery('#workspacePanel').height() - jQuery('#subsets_wrapper .dataTables_scrollHead').height() - jQuery('#subsets_wrapper > div:first-child').height() - jQuery('#subsets_wrapper > div:last-child').height() - jQuery('.workspaceheader').height()) / 2;
 
 };
 
@@ -89,14 +88,19 @@ function initWorkspaceDataTables(){
 				jQuery(".editSubsetDescriptionBox").hide();
 		    },
 		"bDestroy": true,
-        "sScrollY": (jQuery(window).height() - 247)/2,  //The value is calculated by using getMinimumWorkspaceHeight()
+        "sScrollY": 0,
 		"sScrollX": "100%",
 		"bProcessing": true,
         "bJQueryUI": true,
         "bScrollAutoCss": true
 	});
 
-	reportsTable = jQuery("#reports").dataTable({
+    // Commenting this as we don't know WTH the report manager is suppose to work.
+    // The only demo provided to us, lamely failed.
+    // TODO Please invert as you know what is going on ... that's if you ever know.
+    jQuery("#reports").hide();
+    /*
+    reportsTable = jQuery("#reports").dataTable({
 	  	"sPaginationType": "full_numbers",
 	  	"aoColumnDefs":[
 			{"bSortable":false, "aTargets":[2,3,5,6]},
@@ -106,13 +110,16 @@ function initWorkspaceDataTables(){
 			jQuery(".editReportDescriptionBox").hide();
 		    },
 		"bDestroy": true,
-        "sScrollY": (jQuery(window).height() - 247)/2,   //The value is calculated by using getMinimumWorkspaceHeight()
+        "sScrollY": 0,
 		"sScrollX": "100%",
 		"bProcessing": true,
         "bJQueryUI": true,
         "bScrollAutoCss": true
 	});
-	
+	*/
+
+    onWindowResize();
+
 	workspaceQueryDisplayDialog = jQuery("#workspaceQueryDisplayDialog").dialog({
 		autoOpen:false,
 		open: function(event, ui){
