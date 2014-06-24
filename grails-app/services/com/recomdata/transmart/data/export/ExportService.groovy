@@ -94,7 +94,9 @@ class ExportService {
 
         selectedCheckboxList.each {
             String[] parts = it.split("_")
-
+            if(parts[1] == 'CLINICAL') {
+                return
+            }
             // The third part is the export format. However,
             // for compatibility reasons the format is prepended
             // with a dot. That is not necessary anymore
