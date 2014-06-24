@@ -649,11 +649,11 @@ class I2b2HelperService {
         String sqlt = '''
                 SELECT
                     I.*,
-                    S.SAMPLE_CDS
+                    S.sample_cd
                 FROM (
                         SELECT
-                            p.*,
-                            t.trial
+                            t.trial,
+                            p.*
                         FROM
                             patient_dimension p
                         INNER JOIN patient_trial t ON p.patient_num = t.patient_num
@@ -669,11 +669,10 @@ class I2b2HelperService {
                 LEFT JOIN (
                         SELECT
                             patient_num,
-                            LISTAGG ( sample_cd, ', ' )
-                                WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
+                            sample_cd
                         FROM ( 
                             SELECT 
-                                patient_num, sample_cd 
+                                distinct patient_num, sample_cd 
                             FROM 
                                 observation_fact
                             WHERE 
@@ -684,14 +683,10 @@ class I2b2HelperService {
                                         qt_patient_set_collection
                                     WHERE
                                         result_instance_id = ? )
-                            GROUP BY 
-                                patient_num, sample_cd
-                        ) 
-                        GROUP BY 
-                            patient_num 
+                        ) G
                     ) S ON ( S.patient_num = I.patient_num )
                 ORDER BY
-                    I.PATIENT_NUM''';
+                    trial, I.PATIENT_NUM, sample_cd''';
 		
         log.debug "Initial grid query: $sqlt, riid: $result_instance_id"
 		
@@ -699,8 +694,9 @@ class I2b2HelperService {
         if (tablein.getColumns().size() == 0) {
 			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "String"));
 			tablein.putColumn("patient", new ExportColumn("patient", "Patient", "", "String"));
-            tablein.putColumn("SAMPLE_CDS", new ExportColumn("SAMPLE_CDS", "Samples", "", "String"));
-			tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "String"));
+            tablein.putColumn("sample_cd", new ExportColumn("sample_cd", "Samples", "", "String"));
+// no subset in PostgresDB, June 24, 2014
+//			tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "String"));
 			//tablein.putColumn("BIRTH_DATE", new ExportColumn("BIRTH_DATE", "Birth Date", "", "Date"));
 			//tablein.putColumn("DEATH_DATE", new ExportColumn("DEATH_DATE", "Death Date", "", "Date"));
 			tablein.putColumn("TRIAL", new ExportColumn("TRIAL", "Trial", "", "String"));
@@ -718,17 +714,28 @@ class I2b2HelperService {
 			//founddata=true;
 			String subject=row.PATIENT_NUM;
             if (tablein.containsRow(subject)) {
-				String s=tablein.getRow(subject).get("subset");
-				s=s+","+subset;
-				tablein.getRow(subject).put("subset", s);
+				String sub=tablein.getRow(subject).get("subset");
+				// no subset in PostgresDB, June 24, 2014
+//				if (row.subset) {
+//					if (sub) sub=sub+","+row.subset;
+//					else sub = row.subset;
+//					tablein.getRow(subject).put("subset", sub);
+//				}
+				
+				String samp= tablein.getRow(subject).get("SAMPLE_CD");
+				if (row.sample_cd) {
+					if (samp) samp=samp+","+row.sample_cd;
+					else samp = row.sample_cd;
+					tablein.getRow(subject).put("SAMPLE_CD", samp);
+				}
             } else
             /*fill the row*/ {
 				ExportRowNew newrow=new ExportRowNew();
 				newrow.put("subject", subject);
 				def arr = row.SOURCESYSTEM_CD?.split(":")
 				newrow.put("patient", arr?.length == 2 ? arr[1] : "");
-                newrow.put("SAMPLE_CDS", row.SAMPLE_CDS ? row.SAMPLE_CDS : "")
-				newrow.put("subset", subset);
+                newrow.put("sample_cd", row.sample_cd ? row.sample_cd : "")
+//				newrow.put("subset", row.subset ? row.subset : ""); // no subset in PostgresDB, June 24, 2014
 				newrow.put("TRIAL", row.TRIAL)
                 newrow.put("SEX_CD", row.SEX_CD ? (row.SEX_CD.toLowerCase().equals("m") || row.SEX_CD.toLowerCase().equals("male") ? "male" : (row.SEX_CD.toLowerCase().equals("f") || row.SEX_CD.toLowerCase().equals("female") ? "female" : "NULL")) : "NULL")
                 newrow.put("AGE_IN_YEARS_NUM", row.SEX_CD ? (row.AGE_IN_YEARS_NUM.toString().equals("0") ? "NULL" : row.AGE_IN_YEARS_NUM.toString()) : "NULL")
