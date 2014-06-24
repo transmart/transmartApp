@@ -492,10 +492,10 @@ class I2b2HelperService {
 		
         Sql sql = new Sql(dataSource)
         String sqlt = """Select DISTINCT m.c_name, nvl(i.obscount,0) as obscount FROM
-		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '/' AND c_hlevel = ?) m
+		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ?) m
 		    LEFT OUTER JOIN
 		    (Select c_name, count(c_basecode) as obscount FROM
-			(SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '/' AND c_hlevel = ?) c
+			(SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ?) c
 			INNER JOIN observation_fact f ON f.concept_cd=c.c_basecode
 			WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
 		    GROUP BY c_name) i
@@ -538,7 +538,7 @@ class I2b2HelperService {
 				log.debug("** IN LOOP: fullname: "+fullname);
                 Sql sql = new Sql(dataSource);
 				String sqlt =
-						"SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '/' AND c_hlevel = ? ORDER BY C_FULLNAME";
+						"SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
 				log.trace(sqlt);
 				sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%", i], {row ->
 					if (results.get(row[0]) == null) {
@@ -551,7 +551,7 @@ class I2b2HelperService {
 		} else {
 			int i=getLevelFromKey(concept_key)+1;
             Sql sql = new Sql(dataSource);
-			String sqlt = "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '/' AND c_hlevel = ? ORDER BY C_FULLNAME";
+			String sqlt = "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
 			log.trace(sqlt);
 			sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%", i], {row ->
 				results.put(row[0], getObservationCountForConceptForSubset("\\blah"+row[1], result_instance_id));
@@ -571,7 +571,7 @@ class I2b2HelperService {
 		ArrayList ls=new ArrayList();
 		int i=getLevelFromKey(concept_key)+1;
         Sql sql = new Sql(dataSource);
-		String sqlt = "SELECT C_FULLNAME, C_METADATAXML FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '/' AND c_hlevel = ? ORDER BY C_FULLNAME";
+		String sqlt = "SELECT C_FULLNAME, C_METADATAXML FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%", i], {row ->
 			String conceptkey=prefix+row.c_fullname;
 			xml=clobToString(row.c_metadataxml);
@@ -609,7 +609,7 @@ class I2b2HelperService {
 		String sqlt = """select count (distinct patient_num) as patcount
 		    FROM i2b2demodata.observation_fact
 		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
-		    where concept_path LIKE ? escape '/'))))""";
+		    where concept_path LIKE ? escape '\\'))))""";
 		sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%"], {row ->
 			i= row[1];
 		})
@@ -628,7 +628,7 @@ class I2b2HelperService {
         Sql sql = new Sql(dataSource);
 		String sqlt = """select count (*) as obscount FROM i2b2demodata.observation_fact
 		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
-			where concept_path LIKE ? escape '/')))) AND PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)""";
+			where concept_path LIKE ? escape '\\')))) AND PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)""";
 		sql.eachRow(sqlt, [
 			fullname.asLikeLiteral()+"%", // Note: .asLikeLiteral() defined in github: 994dc5bb50055f8b800045f65c8e565b4aa0c113
 			result_instance_id
@@ -4673,7 +4673,7 @@ class I2b2HelperService {
 		ArrayList ls=new ArrayList();
 		int i=getLevelFromKey(concept_key)+1;
         Sql sql = new Sql(dataSource);
-		String sqlt = "SELECT C_FULLNAME FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '/' AND c_hlevel = ? ORDER BY C_FULLNAME";
+		String sqlt = "SELECT C_FULLNAME FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%", i], {row ->
 			String conceptkey=prefix+row.c_fullname;
 			ls.add(keyToPath(conceptkey));
@@ -4971,7 +4971,7 @@ class I2b2HelperService {
 		def ls=[:];
 		int i=getLevelFromKey(concept_key)+1;
         Sql sql = new Sql(dataSource)
-		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE C_FULLNAME LIKE ? escape '/' AND c_hlevel = ? ORDER BY C_FULLNAME";
+		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%", i], {row ->
 			String conceptkey=prefix+row.c_fullname;
 			ls.put(keyToPath(conceptkey), row.secure_obj_token);
