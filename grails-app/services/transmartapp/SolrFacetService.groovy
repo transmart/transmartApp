@@ -27,7 +27,9 @@ import fm.FmFolderAssociation
 import groovy.util.slurpersupport.NoChildren
 import groovy.util.slurpersupport.NodeChild
 import groovy.xml.StreamingMarkupBuilder
+
 import org.json.JSONObject
+
 import grails.util.Holders
 
 class SolrFacetService {
@@ -44,6 +46,9 @@ class SolrFacetService {
 
         def searchResultIds = []
         searchLog = passedInSearchLog
+        
+        //boolean to see if it is the first category. It is used for the search with AND operator: 
+        def firstCategory=true
 
         //For each category (except Datanode), construct a SOLR query
         for (category in categoryList) {
@@ -150,8 +155,14 @@ class SolrFacetService {
             }
 
             if (!searchResultIds) {
-                searchLog += "Starting search results list with the above IDs."
-                searchResultIds = categoryResultIds
+                if( firstCategory ){
+                    searchLog += "Starting search results list with the above IDs."
+                    searchResultIds = categoryResultIds
+                    firstCategory = false
+                }else{
+                    searchLog += "Starting search results list with empty list."
+                    searchResultIds = []
+                }
             } else {
                 searchLog += "Search results so far are these IDs: " + searchResultIds
                 if (globalOperator.equals("AND")) {
