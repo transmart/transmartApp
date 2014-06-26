@@ -459,7 +459,7 @@ function clearGroup(subset, panel)
 		qc.dom.removeChild(child);
 		}	
 	//reset the class
-	qc.dom.className="queryGroupInclude";
+	qc.dom.className="queryGroupInclude jstree-drop";
 	invalidateSubset(subset);
 }
 
@@ -467,14 +467,14 @@ function excludeGroup(btn,subset, panel)
 {
 var el=Ext.get("queryCriteriaDiv"+subset+"_"+panel);
 var button=Ext.get("btnExcludeGroup"+subset+"_"+panel).dom;
-if(el.dom.className=="queryGroupInclude")
+if(el.dom.className=="queryGroupInclude jstree-drop")
 	{
-	el.dom.className="queryGroupExclude";
+	el.dom.className="queryGroupExclude jstree-drop";
 	button.firstChild.nodeValue="Include";
 	}
 	else
 	{
-	el.dom.className="queryGroupInclude";
+	el.dom.className="queryGroupInclude jstree-drop";
 	button.firstChild.nodeValue="Exclude";
 	}
 	invalidateSubset(subset);
