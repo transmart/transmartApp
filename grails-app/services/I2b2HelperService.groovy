@@ -839,6 +839,7 @@ class I2b2HelperService {
 			
 			if( !item.children ) {
 				log.debug( "Can not show data in gridview for empty node: " + concept_key )
+				return tablein
 			}
 			
 			// All children should be leaf categorical values
@@ -887,6 +888,7 @@ class I2b2HelperService {
 			def patients = 	patientIds.collect {
 				org.transmartproject.db.i2b2data.PatientDimension.read(Long.valueOf(it))
 			}
+			
 			def c  = ObservationFact.createCriteria()
 			def results = c.list {
 				or {
