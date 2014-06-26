@@ -64,6 +64,11 @@ class I2b2HelperService {
 	static String GENE_PATTERN_WHITE_SPACE_DEFAULT = "0";
 	static String GENE_PATTERN_WHITE_SPACE_EMPTY = "";
 	
+	static List<String> DEMOGRAPHICS_HEADERS = [
+		// see method 
+		"Sex", "Race","Age","Samples","Trial"
+	]
+	
 	boolean transactional = false;
 	def sessionFactory
     def dataSource
@@ -845,8 +850,13 @@ class I2b2HelperService {
 			}
 			
 			// Find the concept names
-			String columnid=getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "");
-			String columnname=getColumnNameFromKey(concept_key).replace(" ", "_");
+			String columnid=getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "")
+			String columnname=getColumnNameFromKey(concept_key).replace(" ", "_")
+
+			if (DEMOGRAPHICS_HEADERS.contains(columnname)) {
+				println("duplicate of demographics column name: " + columnname)
+				return;
+			}	
 			
 			/*add the column to the table if its not there*/
 			if(tablein.getColumn("subject")==null)
@@ -868,13 +878,15 @@ class I2b2HelperService {
 			
 			// Determine the patients to query
 		def patientIds = QtPatientSetCollection.executeQuery( "SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?", result_instance_id.toLong() )
-		patientIds = patientIds.collect { BigDecimal.valueOf( it ) }
-
-			// If nothing is found, return
+			
+		// If nothing is found, return
 		if( !concepts || !patientIds ) {
 				return
 			}
-			// After that, retrieve all data entries for the children
+		
+			def patients = 	patientIds.collect {
+				org.transmartproject.db.i2b2data.PatientDimension.read(Long.valueOf(it))
+			}
 			def c  = ObservationFact.createCriteria()
 			def results = c.list {
 				or {
@@ -882,17 +894,18 @@ class I2b2HelperService {
 					eqProperty( "modifierCd", "sourcesystemCd" )
 				}
 				'in'( "conceptCode", concepts*.conceptCode )
-				'in'( "patient", patientIds )
+				'in'( "patient", patients )
 			}
 			results.each { row ->
-				
-				/*If I already have this subject mark it in the subset column as belonging to both subsets*/
-			String subject=row[ 0 ]
-			String value=row[ 1 ]
-				if(value==null){
-					value="Y";
+
+				String subject = row.patient.getId()
+								
+				String value = row.numberValue
+				if (row.valueType.equals("T")){
+					value = row.textValue
 				}
-				if(tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
+				
+				if(tablein.containsRow(subject)) /*should contain all subjects already because the demographics run is first*/ {
 					tablein.getRow(subject).put(columnid, value.toString());
 				}
 				else /*fill the row*/ {
@@ -903,13 +916,6 @@ class I2b2HelperService {
 				}
 			}
 			
-			//pad all the empty values for this column
-			for(ExportRowNew row: tablein.getRows())
-			{
-				if(!row.containsColumn(columnid)) {
-					row.put(columnid, "N");
-				}
-			}
 		}
 		return tablein;
 	}
