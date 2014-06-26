@@ -691,6 +691,7 @@ class ChartController {
         Set<String> uniqueConcepts = i2b2HelperService.getDistinctConceptSet(result_instance_id1, result_instance_id2);
 
         log.debug("Unique concepts: " + uniqueConcepts);
+		log.debug("keys: " + keys)
 
         for (int i = 0; i < keys.size(); i++) {
             log.trace("adding concept data for " + keys.get(i));
@@ -812,10 +813,22 @@ class ChartController {
 
     private void renderPatientCountInfoTable(String result_instance_id1, String result_instance_id2, PrintWriter pw) {
         try {
+			int count1 = 0
+			int count2 = 0
+			int countCross = 0
+			if (result_instance_id1) {
+				count1 = i2b2HelperService.getPatientSetSize(result_instance_id1)
+				if (result_instance_id2) {
+					countCross =  i2b2HelperService.getPatientSetIntersectionSize(result_instance_id1, result_instance_id2)
+				}
+			}
+			if (result_instance_id2) {
+				count2 = i2b2HelperService.getPatientSetSize(result_instance_id2)
+			}
             pw.write("<table width='100%'><tr><td align='center'><div class='smalltitle'><b>Subject Totals</b></div>");
             pw.write("<table class='analysis'>");
             pw.write("<tr><th>Subset 1</th><th>Both</th><th>Subset 2</th></th>");
-            pw.write("<tr><td>" + i2b2HelperService.getPatientSetSize(result_instance_id1) + "</td><td>" + i2b2HelperService.getPatientSetIntersectionSize(result_instance_id1, result_instance_id2) + "</td><td>" + i2b2HelperService.getPatientSetSize(result_instance_id2) + "</td></tr>");
+            pw.write("<tr><td>" + count1 + "</td><td>" + countCross + "</td><td>" + count2 + "</td></tr>");
             pw.write("</table></td></tr></table>");
         } catch (Exception e) {
             log.error(e);
