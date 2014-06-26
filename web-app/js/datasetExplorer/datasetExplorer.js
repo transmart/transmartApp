@@ -3497,32 +3497,38 @@ function activateTab(tab) {
 
 function getSummaryGridData() {
 
-	gridstore = new Ext.data.JsonStore(
-			{
-				url : pageInfo.basePath+'/chart/basicGrid',
-				root : 'rows',
-				fields : ['name', 'url']
-			}
-	);
-	gridstore.on('load', storeLoaded);
-
-	var myparams = Ext.urlEncode(
-			{
-				charttype : "basicgrid",
-				concept_key : "",
-				result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-				result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
-			}
-	);
-
-	// or a URL encoded string */
     resultsTabPanel.body.mask("Loading ..", 'x-mask-loading');
+
+    if (!(GLOBAL.CurrentSubsetIDs[1]) && !(GLOBAL.CurrentSubsetIDs[1])) {
+		Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
+		resultsTabPanel.body.unmask();
+		return;
+	}
+
+    gridstore = new Ext.data.JsonStore(
+        {
+            url : pageInfo.basePath+'/chart/basicGrid',
+            root : 'rows',
+            fields : ['name', 'url']
+        }
+    );
+
+    gridstore.on('load', storeLoaded);
+
+    var myparams = Ext.urlEncode(
+        {
+            charttype : "basicgrid",
+            concept_key : "",
+            result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+            result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+        }
+    );
 
     gridstore.load({
         params: myparams,
         callback: function () {
             resultsTabPanel.body.unmask();
-			}
+        }
     });
 
 }

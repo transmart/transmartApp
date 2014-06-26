@@ -492,10 +492,10 @@ class I2b2HelperService {
 		
         Sql sql = new Sql(dataSource)
         String sqlt = """Select DISTINCT m.c_name, nvl(i.obscount,0) as obscount FROM
-		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) m
+		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ?) m
 		    LEFT OUTER JOIN
 		    (Select c_name, count(c_basecode) as obscount FROM
-			(SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ?) c
+			(SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ?) c
 			INNER JOIN observation_fact f ON f.concept_cd=c.c_basecode
 			WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
 		    GROUP BY c_name) i
@@ -538,7 +538,7 @@ class I2b2HelperService {
 				log.debug("** IN LOOP: fullname: "+fullname);
                 Sql sql = new Sql(dataSource);
 				String sqlt =
-						"SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+						"SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
 				log.trace(sqlt);
 				sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%", i], {row ->
 					if (results.get(row[0]) == null) {
@@ -551,7 +551,7 @@ class I2b2HelperService {
 		} else {
 			int i=getLevelFromKey(concept_key)+1;
             Sql sql = new Sql(dataSource);
-			String sqlt = "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+			String sqlt = "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
 			log.trace(sqlt);
 			sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%", i], {row ->
 				results.put(row[0], getObservationCountForConceptForSubset("\\blah"+row[1], result_instance_id));
@@ -571,7 +571,7 @@ class I2b2HelperService {
 		ArrayList ls=new ArrayList();
 		int i=getLevelFromKey(concept_key)+1;
         Sql sql = new Sql(dataSource);
-		String sqlt = "SELECT C_FULLNAME, C_METADATAXML FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+		String sqlt = "SELECT C_FULLNAME, C_METADATAXML FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%", i], {row ->
 			String conceptkey=prefix+row.c_fullname;
 			xml=clobToString(row.c_metadataxml);
@@ -609,7 +609,7 @@ class I2b2HelperService {
 		String sqlt = """select count (distinct patient_num) as patcount
 		    FROM i2b2demodata.observation_fact
 		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
-		    where concept_path LIKE ?))))""";
+		    where concept_path LIKE ? escape '\\'))))""";
 		sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%"], {row ->
 			i= row[1];
 		})
@@ -628,7 +628,7 @@ class I2b2HelperService {
         Sql sql = new Sql(dataSource);
 		String sqlt = """select count (*) as obscount FROM i2b2demodata.observation_fact
 		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
-			where concept_path LIKE ?)))) AND PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)""";
+			where concept_path LIKE ? escape '\\')))) AND PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)""";
 		sql.eachRow(sqlt, [
 			fullname.asLikeLiteral()+"%", // Note: .asLikeLiteral() defined in github: 994dc5bb50055f8b800045f65c8e565b4aa0c113
 			result_instance_id
@@ -649,11 +649,11 @@ class I2b2HelperService {
         String sqlt = '''
                 SELECT
                     I.*,
-                    S.SAMPLE_CDS
+                    S.sample_cd
                 FROM (
                         SELECT
-                            p.*,
-                            t.trial
+                            t.trial,
+                            p.*
                         FROM
                             patient_dimension p
                         INNER JOIN patient_trial t ON p.patient_num = t.patient_num
@@ -669,11 +669,10 @@ class I2b2HelperService {
                 LEFT JOIN (
                         SELECT
                             patient_num,
-                            LISTAGG ( sample_cd, ', ' )
-                                WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
+                            sample_cd
                         FROM ( 
                             SELECT 
-                                patient_num, sample_cd 
+                                distinct patient_num, sample_cd 
                             FROM 
                                 observation_fact
                             WHERE 
@@ -684,14 +683,10 @@ class I2b2HelperService {
                                         qt_patient_set_collection
                                     WHERE
                                         result_instance_id = ? )
-                            GROUP BY 
-                                patient_num, sample_cd
-                        ) 
-                        GROUP BY 
-                            patient_num 
+                        ) G
                     ) S ON ( S.patient_num = I.patient_num )
                 ORDER BY
-                    I.PATIENT_NUM''';
+                    trial, I.PATIENT_NUM, sample_cd''';
 		
         log.debug "Initial grid query: $sqlt, riid: $result_instance_id"
 		
@@ -699,8 +694,9 @@ class I2b2HelperService {
         if (tablein.getColumns().size() == 0) {
 			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "String"));
 			tablein.putColumn("patient", new ExportColumn("patient", "Patient", "", "String"));
-            tablein.putColumn("SAMPLE_CDS", new ExportColumn("SAMPLE_CDS", "Samples", "", "String"));
-			tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "String"));
+            tablein.putColumn("sample_cd", new ExportColumn("sample_cd", "Samples", "", "String"));
+// no subset in PostgresDB, June 24, 2014
+//			tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "String"));
 			//tablein.putColumn("BIRTH_DATE", new ExportColumn("BIRTH_DATE", "Birth Date", "", "Date"));
 			//tablein.putColumn("DEATH_DATE", new ExportColumn("DEATH_DATE", "Death Date", "", "Date"));
 			tablein.putColumn("TRIAL", new ExportColumn("TRIAL", "Trial", "", "String"));
@@ -718,17 +714,28 @@ class I2b2HelperService {
 			//founddata=true;
 			String subject=row.PATIENT_NUM;
             if (tablein.containsRow(subject)) {
-				String s=tablein.getRow(subject).get("subset");
-				s=s+","+subset;
-				tablein.getRow(subject).put("subset", s);
+				String sub=tablein.getRow(subject).get("subset");
+				// no subset in PostgresDB, June 24, 2014
+//				if (row.subset) {
+//					if (sub) sub=sub+","+row.subset;
+//					else sub = row.subset;
+//					tablein.getRow(subject).put("subset", sub);
+//				}
+				
+				String samp= tablein.getRow(subject).get("SAMPLE_CD");
+				if (row.sample_cd) {
+					if (samp) samp=samp+","+row.sample_cd;
+					else samp = row.sample_cd;
+					tablein.getRow(subject).put("SAMPLE_CD", samp);
+				}
             } else
             /*fill the row*/ {
 				ExportRowNew newrow=new ExportRowNew();
 				newrow.put("subject", subject);
 				def arr = row.SOURCESYSTEM_CD?.split(":")
 				newrow.put("patient", arr?.length == 2 ? arr[1] : "");
-                newrow.put("SAMPLE_CDS", row.SAMPLE_CDS ? row.SAMPLE_CDS : "")
-				newrow.put("subset", subset);
+                newrow.put("sample_cd", row.sample_cd ? row.sample_cd : "")
+//				newrow.put("subset", row.subset ? row.subset : ""); // no subset in PostgresDB, June 24, 2014
 				newrow.put("TRIAL", row.TRIAL)
                 newrow.put("SEX_CD", row.SEX_CD ? (row.SEX_CD.toLowerCase().equals("m") || row.SEX_CD.toLowerCase().equals("male") ? "male" : (row.SEX_CD.toLowerCase().equals("f") || row.SEX_CD.toLowerCase().equals("female") ? "female" : "NULL")) : "NULL")
                 newrow.put("AGE_IN_YEARS_NUM", row.SEX_CD ? (row.AGE_IN_YEARS_NUM.toString().equals("0") ? "NULL" : row.AGE_IN_YEARS_NUM.toString()) : "NULL")
@@ -948,7 +955,6 @@ class I2b2HelperService {
 		sql.eachRow(sqlt, [resultInstanceId], {row ->
 			xmlrequest=clobToString(row.request_xml);
 			log.trace("REQUEST_XML:" +xmlrequest)
-            System.err.println("REQUEST_XML:" + xmlrequest)
 			
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 			domFactory.setNamespaceAware(true); // never forget this!
@@ -4673,7 +4679,7 @@ class I2b2HelperService {
 		ArrayList ls=new ArrayList();
 		int i=getLevelFromKey(concept_key)+1;
         Sql sql = new Sql(dataSource);
-		String sqlt = "SELECT C_FULLNAME FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+		String sqlt = "SELECT C_FULLNAME FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%", i], {row ->
 			String conceptkey=prefix+row.c_fullname;
 			ls.add(keyToPath(conceptkey));
@@ -4971,7 +4977,7 @@ class I2b2HelperService {
 		def ls=[:];
 		int i=getLevelFromKey(concept_key)+1;
         Sql sql = new Sql(dataSource)
-		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE C_FULLNAME LIKE ? AND c_hlevel = ? ORDER BY C_FULLNAME";
+		String sqlt = "SELECT C_FULLNAME, SECURE_OBJ_TOKEN FROM i2b2metadata.i2b2_SECURE WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
 		sql.eachRow(sqlt, [fullname.asLikeLiteral()+"%", i], {row ->
 			String conceptkey=prefix+row.c_fullname;
 			ls.put(keyToPath(conceptkey), row.secure_obj_token);
