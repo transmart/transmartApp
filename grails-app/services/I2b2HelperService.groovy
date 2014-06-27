@@ -898,6 +898,11 @@ class I2b2HelperService {
 				'in'( "conceptCode", concepts*.conceptCode )
 				'in'( "patient", patients )
 			}
+
+			log.debug("paths: " + paths)
+			log.debug("number of patients: " + patients.size())
+			log.debug("number of ObservationFact records: " + patients.size())
+			
 			results.each { row ->
 
 				String subject = row.patient.getId()
