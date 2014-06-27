@@ -26,6 +26,7 @@ import groovy.json.JsonSlurper
 import groovy.sql.Sql
 import org.apache.commons.lang.StringUtils
 import org.springframework.transaction.annotation.Transactional
+import com.google.common.base.CharMatcher
 
 class DataExportService {
 
