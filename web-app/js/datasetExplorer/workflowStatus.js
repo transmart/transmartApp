@@ -74,7 +74,7 @@ function createWorkflowStatus(parentElem, noTitleBar) {
         }
         //To hide the header of the dialog
         , create: function (event, ui) {
-            if (noTitleBar) $j(".ui-widget-header").hide();
+            if (noTitleBar) $j(".ui-widget-header", $(ui)).hide();
         }, close: function (event, ui) {
             $j("#mask").hide();
             $j("#mask").remove();
