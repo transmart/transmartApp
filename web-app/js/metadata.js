@@ -40,3 +40,14 @@ function loadPlatformTypes(field, type) {
 	var vendor = sourceField.val();
 	fillSelectAjax(targetField, platformTypesUrl, {vendor:vendor, type:type});
 }
+
+function removeTag(fieldName, tag) {
+	var escapedFieldName = fieldName.replace(".", "\\.");
+	//Attribute selector here gets around spaces in ID, which shouldn't be allowed... but is
+	$j('[id=\'' + escapedFieldName + '-tag-' + tag + "\']").remove();
+    $j('[id=\'' + escapedFieldName + '-tag-' + tag + '-prefix' + "\']").remove();
+    $j('[id=\'' + escapedFieldName + '-tag-' + tag + '-break' + "\']").remove();
+    $j('#' + escapedFieldName + ' option[value="' + tag + '"]').remove();
+}
+
+$j('.tag').live('click', function(e) { removeTag($j(this).parent().attr('name'), $j(this).attr('name')); });
