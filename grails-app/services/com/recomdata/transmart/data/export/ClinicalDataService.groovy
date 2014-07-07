@@ -73,8 +73,8 @@ class ClinicalDataService {
 			sqlQuery <<= "SELECT ofa.PATIENT_NUM, cd.CONCEPT_PATH, cd.CONCEPT_CD, cd.NAME_CHAR, "
 			sqlQuery <<= "case ofa.VALTYPE_CD "
 			sqlQuery <<= " WHEN 'T' THEN TVAL_CHAR "
-            sqlQuery <<= " WHEN 'N' THEN CAST(NVAL_NUM AS varchar2(30)) "
-            sqlQuery <<= "END VALUE, ? SUBSET , pd.sourcesystem_cd, ed.days_since_enroll "
+            sqlQuery <<= " WHEN 'N' THEN CAST(NVAL_NUM AS varchar(30)) "
+            sqlQuery <<= "END as VALUE, ? SUBSET , pd.sourcesystem_cd, ed.days_since_enroll "
 			
 			//If we are going to union in the codes that have parent concepts, we include the parent columns here too.
             if (parentConceptCodeList.size() > 0) {
@@ -392,8 +392,8 @@ class ClinicalDataService {
 		queryToReturn <<= "			C1.NAME_CHAR, "
 		queryToReturn <<= "			CASE ofa.VALTYPE_CD "
 		queryToReturn <<= "				WHEN 'T' THEN TVAL_CHAR "
-		queryToReturn <<= "				WHEN 'N' THEN CAST(NVAL_NUM AS VARCHAR2(30)) "
-		queryToReturn <<= "			END VALUE, ? SUBSET , pd.sourcesystem_cd, "
+		queryToReturn <<= "				WHEN 'N' THEN CAST(NVAL_NUM AS VARCHAR(30)) "
+		queryToReturn <<= "			END as VALUE, ? SUBSET , pd.sourcesystem_cd, "
 		queryToReturn <<= "			C2.CONCEPT_PATH AS PARENT_PATH, "
 		queryToReturn <<= "			C2.CONCEPT_CD AS PARENT_CODE "
 		
