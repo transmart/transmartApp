@@ -494,13 +494,8 @@ Ext.onReady(function () {
 					height : 90,
                 layout: 'fit',
                 listeners: {
-//                    activate: function () {
-//                        getSummaryGridData();
-//				}
                     activate: function (p) {
                         if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysis_title')) {
-                            //p.body.mask("Loading...", 'x-mask-loading');
-                            //resultsTabPanel.body.mask("Loading ..", 'x-mask-loading');
                             runAllQueries(getSummaryGridData, p);
                             activateTab();
                             onWindowResize();
