@@ -33,7 +33,7 @@ body {
   bottom: 0;
   overflow: auto;
   float: left;
-  position: relative;
+  position: absolute;
 }
 
 #results-div{
