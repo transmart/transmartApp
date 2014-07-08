@@ -495,11 +495,9 @@ Ext.onReady(function () {
                 layout: 'fit',
                 listeners: {
                     activate: function (p) {
-                        if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysis_title')) {
                             runAllQueries(getSummaryGridData, p);
                             activateTab();
                             onWindowResize();
-                        }
                     },
                     deactivate: function(){
                         resultsTabPanel.tools.help.dom.style.display = "none";
