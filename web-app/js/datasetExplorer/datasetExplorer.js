@@ -499,6 +499,8 @@ Ext.onReady(function () {
                             runAllQueries(getSummaryGridData, p);
                             activateTab();
                             onWindowResize();
+                        } else {
+                            getSummaryGridData();
                         }
                     },
                     deactivate: function(){

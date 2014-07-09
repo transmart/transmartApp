@@ -257,7 +257,7 @@ public class SearchController{
 		}
 		def result = [rows:itemlist]
 
-        render(text:result as JSON, contentType: "application/json")
+	    render params.callback + "(" + (result as JSON) + ")"
 
     }
 
