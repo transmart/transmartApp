@@ -318,23 +318,17 @@ class DataExportService {
                         }
                     }
 
-                    // Ugly hack to get filtering working FIXME ASAP!!!
-
                     if (jobDataMap.analysis == 'DataExport') {
+						
+						def resultInstanceId = resultInstanceIdMap[subset]
+						
+						def mapOfSampleCdsBySource = buildMapOfSampleCdsBySource(resultInstanceId)
 
                         def sampleCodesTable = new Sql(dataSource).rows("""
-                                    SELECT
-                                        SOURCESYSTEM_CD,
-                                        LISTAGG (  sample_cd, ', ' )
-                                            WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
-                                    FROM (
                                         SELECT DISTINCT
                                             p.SOURCESYSTEM_CD,
-                                            s.SAMPLE_CD
                                         FROM
                                             patient_dimension p
-                                        LEFT JOIN
-                                            observation_fact s on s.patient_num = p.patient_num
                                         WHERE
                                             p.PATIENT_NUM IN (
                                                 SELECT
@@ -344,13 +338,19 @@ class DataExportService {
                                                 WHERE
                                                     result_instance_id = ? )
                                         )
-                                    GROUP BY sourcesystem_cd""", resultInstanceIdMap[subset])
+                                    """, resultInstanceId)
+						println(sampleCodesTable)
+						for (row in sampleCodesTable) {
+							row.SAMPLE_CDS = mapOfSampleCdsBySource[row.SOURCESYSTEM_CD]
+						}
+						println(sampleCodesTable)
                         sampleCodesTable = sampleCodesTable.collectEntries {
                             [it.SOURCESYSTEM_CD.split(':')[-1].trim(), it.SAMPLE_CDS]
                         }
+						println(sampleCodesTable)
                         // add the header to the mapping table
                         sampleCodesTable['PATIENT ID'] = 'SAMPLE CODES'
-
+						println(sampleCodesTable)
                         // example: columnFilter = [/\Subjects\Ethnicity/, /\Endpoints\Diagnosis/]
                         studyList.each { studyName ->
                             String directory
@@ -403,6 +403,45 @@ class DataExportService {
 
     }
 
+	def buildMapOfSampleCdsBySource(resultInstanceId) {
+		def map = [:]
+		def sampleCodesTable = new Sql(dataSource).rows("""
+			SELECT DISTINCT
+                p.SOURCESYSTEM_CD,
+                s.SAMPLE_CD
+            FROM
+                patient_dimension p
+            LEFT JOIN
+                observation_fact s on s.patient_num = p.patient_num
+            WHERE
+                p.PATIENT_NUM IN (
+                    SELECT
+                        DISTINCT patient_num
+                    FROM
+                        qt_patient_set_collection
+                    WHERE
+                        result_instance_id = ? )
+            )
+			ORDER BY SOURCESYSTEM_CD, SAMPLE_CD
+			""",resultInstanceId
+		)
+		for (row in sampleCodesTable) {
+			def sourceSystemCd = row.SOURCESYSTEM_CD
+			if (!sourceSystemCd) continue
+			def sampleCd = row.SAMPLE_CD
+			if (!sampleCd) continue
+			def entry = map[sourceSystemCd]
+			if (!entry) {
+				entry = sampleCd
+			} else {
+				entry = entry + "," + sampleCd
+			}
+			map[sourceSystemCd] = entry
+		}
+		println(map)
+		return map
+	}
+	
     static clinicalDataFileName(String studyDir) {
 
         String dataTypeName = 'Clinical'
