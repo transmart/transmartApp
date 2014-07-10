@@ -649,69 +649,35 @@ class I2b2HelperService {
 	def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
         checkQueryResultAccess result_instance_id
 
-		println("----------------------------------------A")
-		println("  result_instance_id = "+ result_instance_id)
 		log.trace("Getting sampleCD's for paitent number")
 		def mapOfSampleCdsByPatientNum = buildMapOfSampleCdsByPatientNum(result_instance_id)
-		
-		println("----------------------------------------B")
-		println("  map = " + mapOfSampleCdsByPatientNum)
-		
+				
 		log.trace("Adding patient demographic data to grid with result instance id:" +result_instance_id+" and subset: "+subset)
         Sql sql = new Sql(dataSource)
         String sqlt = '''
+            SELECT
+                I.*
+            FROM (
                 SELECT
-                    I.*,
-                    S.SAMPLE_CDS
-                FROM (
+                    p.*,
+                    t.trial
+                FROM
+                    patient_dimension p
+                INNER JOIN patient_trial t ON p.patient_num = t.patient_num
+                WHERE
+                    p.PATIENT_NUM IN (
                         SELECT
-                            p.*,
-                            t.trial
+                            DISTINCT patient_num
                         FROM
-                            patient_dimension p
-                        INNER JOIN patient_trial t ON p.patient_num = t.patient_num
+                            qt_patient_set_collection
                         WHERE
-                            p.PATIENT_NUM IN (
-                                SELECT
-                                    DISTINCT patient_num
-                                FROM
-                                    qt_patient_set_collection
-                                WHERE
-                                    result_instance_id = ? ) )
-                    I
-                LEFT JOIN (
-                        SELECT
-                            patient_num,
-                            LISTAGG ( sample_cd, ', ' )
-                                WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
-                        FROM ( 
-                            SELECT 
-                                patient_num, sample_cd 
-                            FROM 
-                                observation_fact
-                            WHERE 
-                                patient_num IN (
-                                    SELECT
-                                        DISTINCT patient_num
-                                    FROM
-                                        qt_patient_set_collection
-                                    WHERE
-                                        result_instance_id = ? )
-                            GROUP BY 
-                                patient_num, sample_cd
-                        ) 
-                        GROUP BY 
-                            patient_num 
-                    ) S ON ( S.patient_num = I.patient_num )
-                ORDER BY
-                    I.PATIENT_NUM''';
+                            result_instance_id = ? ) )
+                I
+            ORDER BY
+                I.PATIENT_NUM''';
 		
         log.debug "Initial grid query: $sqlt, riid: $result_instance_id"
-		
-		println("----------------------------------------C")
-		println("Initial grid query: $sqlt, riid: $result_instance_id")
-
-		
+				
 		//if i have an empty table structure so far
         if (tablein.getColumns().size() == 0) {
 			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "String"));
@@ -730,7 +696,7 @@ class I2b2HelperService {
 			//tablein.putColumn("ZIP_CD", new ExportColumn("ZIP_CD", "Zipcode", "", "String"));
 		}
 		//def founddata=false;
-        sql.eachRow(sqlt, [result_instance_id, result_instance_id], { row ->
+        sql.eachRow(sqlt, [result_instance_id], { row ->
 			/*If I already have this subject mark it in the subset column as belonging to both subsets*/
 			//founddata=true;
 			String subject=row.PATIENT_NUM;
@@ -744,7 +710,8 @@ class I2b2HelperService {
 				newrow.put("subject", subject);
 				def arr = row.SOURCESYSTEM_CD?.split(":")
 				newrow.put("patient", arr?.length == 2 ? arr[1] : "");
-                newrow.put("SAMPLE_CDS", row.SAMPLE_CDS ? row.SAMPLE_CDS : "")
+				def cds = mapOfSampleCdsByPatientNum[row.PATIENT_NUM]
+                newrow.put("SAMPLE_CDS",cds ? cds : "")
 				newrow.put("subset", subset);
 				newrow.put("TRIAL", row.TRIAL)
                 newrow.put("SEX_CD", row.SEX_CD ? (row.SEX_CD.toLowerCase().equals("m") || row.SEX_CD.toLowerCase().equals("male") ? "male" : (row.SEX_CD.toLowerCase().equals("f") || row.SEX_CD.toLowerCase().equals("female") ? "female" : "NULL")) : "NULL")
@@ -758,9 +725,6 @@ class I2b2HelperService {
 	}
 	
 	def buildMapOfSampleCdsByPatientNum(resultInstanceId) {
-		println("----------------------------------------A1")
-
-		
 		def map = [:]
 		def sampleCodesTable = new Sql(dataSource).rows("""
 			SELECT DISTINCT
@@ -780,9 +744,6 @@ class I2b2HelperService {
 			""",resultInstanceId
 		)
 		
-		println("----------------------------------------A2")
-		println("row = " + sampleCodesTable.size())
-
 		for (row in sampleCodesTable) {
 			def patientNum = row.PATIENT_NUM
 			if (!patientNum) continue
@@ -796,8 +757,6 @@ class I2b2HelperService {
 			}
 			map[patientNum] = entry
 		}
-		println("----------------------------------------A2")
-		println("map = " + map)
 
 		return map
 	}
