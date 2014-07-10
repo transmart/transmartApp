@@ -110,11 +110,11 @@ class ClinicalDataService {
             sqlQuery <<= "WHERE qt.RESULT_INSTANCE_ID = ?"
 
 			if (!retrievalTypeMRNAExists && parFilterHighLevelConcepts) {
-                sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT NVL(sample_type_cd,'-1') as gene_expr_concept"
+                sqlQuery <<= " AND cd.concept_cd NOT IN (SELECT DISTINCT coalesce(sample_type_cd,'-1') as gene_expr_concept"
 				sqlQuery <<= " FROM de_subject_sample_mapping WHERE trial_name = ?"
-                sqlQuery <<= " UNION SELECT DISTINCT NVL(tissue_type_cd,'-1') as gene_expr_concept "
+                sqlQuery <<= " UNION SELECT DISTINCT coalesce(tissue_type_cd,'-1') as gene_expr_concept "
 				sqlQuery <<= " FROM de_subject_sample_mapping WHERE trial_name = ?"
-                sqlQuery <<= " UNION SELECT DISTINCT NVL(platform_cd,'-1') as gene_expr_concept "
+                sqlQuery <<= " UNION SELECT DISTINCT coalesce(platform_cd,'-1') as gene_expr_concept "
 				sqlQuery <<= " FROM de_subject_sample_mapping WHERE trial_name = ?)"
 			}
 			

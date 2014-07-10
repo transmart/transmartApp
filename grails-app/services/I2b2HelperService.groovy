@@ -496,7 +496,7 @@ class I2b2HelperService {
 		int i=getLevelFromKey(concept_key)+1;
 		
         Sql sql = new Sql(dataSource)
-        String sqlt = """Select DISTINCT m.c_name, nvl(i.obscount,0) as obscount FROM
+        String sqlt = """Select DISTINCT m.c_name, coalesce(i.obscount,0) as obscount FROM
 		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ?) m
 		    LEFT OUTER JOIN
 		    (Select c_name, count(c_basecode) as obscount FROM
