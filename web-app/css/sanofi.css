@@ -173,7 +173,7 @@ table.menuDetail th.menuVisited {
 
 .boxtitle, #navigateTermsPanel .x-panel-header {
   height:27px;
-  overflow: hide;
+  overflow: hidden;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   border-left: 1px solid #888;
