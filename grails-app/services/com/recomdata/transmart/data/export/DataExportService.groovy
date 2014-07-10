@@ -432,7 +432,6 @@ class DataExportService {
 			}
 			map[sourceSystemCd] = entry
 		}
-		println(map)
 		return map
 	}
 	

@@ -649,6 +649,14 @@ class I2b2HelperService {
 	def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
         checkQueryResultAccess result_instance_id
 
+		println("----------------------------------------A")
+		println("  result_instance_id = "+ result_instance_id)
+		log.trace("Getting sampleCD's for paitent number")
+		def mapOfSampleCdsByPatientNum = buildMapOfSampleCdsByPatientNum(result_instance_id)
+		
+		println("----------------------------------------B")
+		println("  map = " + mapOfSampleCdsByPatientNum)
+		
 		log.trace("Adding patient demographic data to grid with result instance id:" +result_instance_id+" and subset: "+subset)
         Sql sql = new Sql(dataSource)
         String sqlt = '''
@@ -700,6 +708,10 @@ class I2b2HelperService {
 		
         log.debug "Initial grid query: $sqlt, riid: $result_instance_id"
 		
+		println("----------------------------------------C")
+		println("Initial grid query: $sqlt, riid: $result_instance_id")
+
+		
 		//if i have an empty table structure so far
         if (tablein.getColumns().size() == 0) {
 			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "String"));
@@ -744,6 +756,52 @@ class I2b2HelperService {
 		//log.trace("FOUND DEMOGRAPHIC DATA=:"+founddata.toString())
 		return tablein;
 	}
+	
+	def buildMapOfSampleCdsByPatientNum(resultInstanceId) {
+		println("----------------------------------------A1")
+
+		
+		def map = [:]
+		def sampleCodesTable = new Sql(dataSource).rows("""
+			SELECT DISTINCT
+                f.PATIENT_NUM,
+                f.SAMPLE_CD
+			FROM
+                observation_fact f
+            WHERE
+                f.PATIENT_NUM IN (
+                    SELECT
+                        DISTINCT patient_num
+                    FROM
+                        qt_patient_set_collection
+                    WHERE
+                        result_instance_id = ? )
+			ORDER BY PATIENT_NUM, SAMPLE_CD
+			""",resultInstanceId
+		)
+		
+		println("----------------------------------------A2")
+		println("row = " + sampleCodesTable.size())
+
+		for (row in sampleCodesTable) {
+			def patientNum = row.PATIENT_NUM
+			if (!patientNum) continue
+			def sampleCd = row.SAMPLE_CD
+			if (!sampleCd) continue
+			def entry = map[patientNum]
+			if (!entry) {
+				entry = sampleCd
+			} else {
+				entry = entry + "," + sampleCd
+			}
+			map[patientNum] = entry
+		}
+		println("----------------------------------------A2")
+		println("map = " + map)
+
+		return map
+	}
+	
 	
 	/**
 	 * Adds a column of data to the grid export table
