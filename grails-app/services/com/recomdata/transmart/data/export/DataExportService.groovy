@@ -255,10 +255,10 @@ class DataExportService {
                                 def chromosomes = jobDataMap.get("chroms")
                                 def selectedSNPs = jobDataMap.get("selectedSNPs")
 
-                                println("VCF Parameters")
-                                println("selectedGenes:" + selectedGenes)
-                                println("chromosomes:" + chromosomes)
-                                println("selectedSNPs:" + selectedSNPs)
+                                log.trace("VCF Parameters")
+                                log.trace("selectedGenes:" + selectedGenes)
+                                log.trace("chromosomes:" + chromosomes)
+                                log.trace("selectedSNPs:" + selectedSNPs)
 
                                 //def IGVFolderLocation = jobTmpDirectory + File.separator + "subset1_${study}" + File.separator + "VCF" + File.separator
 
@@ -432,7 +432,6 @@ class DataExportService {
 			}
 			map[sourceSystemCd] = entry
 		}
-		println(map)
 		return map
 	}
 	
