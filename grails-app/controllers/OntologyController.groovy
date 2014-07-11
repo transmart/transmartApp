@@ -86,7 +86,7 @@ class OntologyController {
             //Check for study by visual attributes
             if (node.visualattributes.contains("S")) {
                 def accession = node.sourcesystemcd
-                def study = Experiment.findByAccession(accession.toUpperCase())
+                def study = Experiment.findByAccession(accession?.toUpperCase())
                 def folder
                 if (study) {
                     folder = FmFolderAssociation.findByObjectUid(study.getUniqueId().uniqueId)?.fmFolder

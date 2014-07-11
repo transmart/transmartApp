@@ -26,6 +26,7 @@ import groovy.json.JsonSlurper
 import groovy.sql.Sql
 import org.apache.commons.lang.StringUtils
 import org.springframework.transaction.annotation.Transactional
+import com.google.common.base.CharMatcher
 
 class DataExportService {
 
@@ -254,10 +255,10 @@ class DataExportService {
                                 def chromosomes = jobDataMap.get("chroms")
                                 def selectedSNPs = jobDataMap.get("selectedSNPs")
 
-                                println("VCF Parameters")
-                                println("selectedGenes:" + selectedGenes)
-                                println("chromosomes:" + chromosomes)
-                                println("selectedSNPs:" + selectedSNPs)
+                                log.trace("VCF Parameters")
+                                log.trace("selectedGenes:" + selectedGenes)
+                                log.trace("chromosomes:" + chromosomes)
+                                log.trace("selectedSNPs:" + selectedSNPs)
 
                                 //def IGVFolderLocation = jobTmpDirectory + File.separator + "subset1_${study}" + File.separator + "VCF" + File.separator
 
@@ -317,23 +318,17 @@ class DataExportService {
                         }
                     }
 
-                    // Ugly hack to get filtering working FIXME ASAP!!!
-
                     if (jobDataMap.analysis == 'DataExport') {
+						
+						def resultInstanceId = resultInstanceIdMap[subset]
+												
+						def mapOfSampleCdsBySource = buildMapOfSampleCdsBySource(resultInstanceId)
 
                         def sampleCodesTable = new Sql(dataSource).rows("""
-                                    SELECT
-                                        SOURCESYSTEM_CD,
-                                        LISTAGG (  sample_cd, ', ' )
-                                            WITHIN GROUP ( ORDER BY sample_cd ) SAMPLE_CDS
-                                    FROM (
                                         SELECT DISTINCT
-                                            p.SOURCESYSTEM_CD,
-                                            s.SAMPLE_CD
+                                            p.SOURCESYSTEM_CD
                                         FROM
                                             patient_dimension p
-                                        LEFT JOIN
-                                            observation_fact s on s.patient_num = p.patient_num
                                         WHERE
                                             p.PATIENT_NUM IN (
                                                 SELECT
@@ -342,14 +337,15 @@ class DataExportService {
                                                     qt_patient_set_collection
                                                 WHERE
                                                     result_instance_id = ? )
-                                        )
-                                    GROUP BY sourcesystem_cd""", resultInstanceIdMap[subset])
+                                    """, resultInstanceId)
+						for (row in sampleCodesTable) {
+							row.SAMPLE_CDS = mapOfSampleCdsBySource[row.SOURCESYSTEM_CD]
+						}
                         sampleCodesTable = sampleCodesTable.collectEntries {
                             [it.SOURCESYSTEM_CD.split(':')[-1].trim(), it.SAMPLE_CDS]
                         }
                         // add the header to the mapping table
                         sampleCodesTable['PATIENT ID'] = 'SAMPLE CODES'
-
                         // example: columnFilter = [/\Subjects\Ethnicity/, /\Endpoints\Diagnosis/]
                         studyList.each { studyName ->
                             String directory
@@ -402,6 +398,43 @@ class DataExportService {
 
     }
 
+	def buildMapOfSampleCdsBySource(resultInstanceId) {
+		def map = [:]
+		def sampleCodesTable = new Sql(dataSource).rows("""
+			SELECT DISTINCT
+                p.SOURCESYSTEM_CD,
+                s.SAMPLE_CD
+            FROM
+                patient_dimension p
+            LEFT JOIN
+                observation_fact s on s.patient_num = p.patient_num
+            WHERE
+                p.PATIENT_NUM IN (
+                    SELECT
+                        DISTINCT patient_num
+                    FROM
+                        qt_patient_set_collection
+                    WHERE
+                        result_instance_id = ? )
+			ORDER BY SOURCESYSTEM_CD, SAMPLE_CD
+			""",resultInstanceId
+		)
+		for (row in sampleCodesTable) {
+			def sourceSystemCd = row.SOURCESYSTEM_CD
+			if (!sourceSystemCd) continue
+			def sampleCd = row.SAMPLE_CD
+			if (!sampleCd) continue
+			def entry = map[sourceSystemCd]
+			if (!entry) {
+				entry = sampleCd
+			} else {
+				entry = entry + "," + sampleCd
+			}
+			map[sourceSystemCd] = entry
+		}
+		return map
+	}
+	
     static clinicalDataFileName(String studyDir) {
 
         String dataTypeName = 'Clinical'

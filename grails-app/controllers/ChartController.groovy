@@ -499,7 +499,8 @@ class ChartController {
         }
         pw.write("</td>");
         pw.write("<td><img src='" + graphURL7 + "' width=200 height=300 border=0 usemap='#" + filename7 + "'>");
-        pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-0.1/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
+        String rmodulesVersion = grailsApplication.mainContext.pluginManager.getGrailsPlugin('rdc-rmodules').version;
+        pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-$rmodulesVersion/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
         pw.write("</td><td align='center'>");
         if (s2 && l2.size() > 0) {
             pw.write("<div class='smalltitle'><b>Subset 2</b></div>");
@@ -691,6 +692,7 @@ class ChartController {
         Set<String> uniqueConcepts = i2b2HelperService.getDistinctConceptSet(result_instance_id1, result_instance_id2);
 
         log.debug("Unique concepts: " + uniqueConcepts);
+		log.debug("keys: " + keys)
 
         for (int i = 0; i < keys.size(); i++) {
             log.trace("adding concept data for " + keys.get(i));
@@ -812,10 +814,22 @@ class ChartController {
 
     private void renderPatientCountInfoTable(String result_instance_id1, String result_instance_id2, PrintWriter pw) {
         try {
+			int count1 = 0
+			int count2 = 0
+			int countCross = 0
+			if (result_instance_id1) {
+				count1 = i2b2HelperService.getPatientSetSize(result_instance_id1)
+				if (result_instance_id2) {
+					countCross =  i2b2HelperService.getPatientSetIntersectionSize(result_instance_id1, result_instance_id2)
+				}
+			}
+			if (result_instance_id2) {
+				count2 = i2b2HelperService.getPatientSetSize(result_instance_id2)
+			}
             pw.write("<table width='100%'><tr><td align='center'><div class='smalltitle'><b>Subject Totals</b></div>");
             pw.write("<table class='analysis'>");
             pw.write("<tr><th>Subset 1</th><th>Both</th><th>Subset 2</th></th>");
-            pw.write("<tr><td>" + i2b2HelperService.getPatientSetSize(result_instance_id1) + "</td><td>" + i2b2HelperService.getPatientSetIntersectionSize(result_instance_id1, result_instance_id2) + "</td><td>" + i2b2HelperService.getPatientSetSize(result_instance_id2) + "</td></tr>");
+            pw.write("<tr><td>" + count1 + "</td><td>" + countCross + "</td><td>" + count2 + "</td></tr>");
             pw.write("</table></td></tr></table>");
         } catch (Exception e) {
             log.error(e);
@@ -1315,7 +1329,8 @@ for (int i = 0; i < mapsize; i++)
                 pw.write("<img src='" + graphURL + "' width=" + width + " height=300 border=0 usemap='#" + filename + "'>");
                 ChartUtilities.writeImageMap(pw, filename, info, false);
                 pw.write("</td>");
-                pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-0.1/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
+                String rmodulesVersion = grailsApplication.mainContext.pluginManager.getGrailsPlugin('rdc-rmodules').version;
+                pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-$rmodulesVersion/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
                 pw.write("<td>")
                 pw.write("<table><tr><td>");
                 if (s1 && results1.size() > 0) {

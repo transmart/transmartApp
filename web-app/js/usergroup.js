@@ -293,17 +293,6 @@ Ext.extend(Recom.rc.ComboBox, Ext.form.ComboBox, {
 		}
     });
 
-var originalRefresh=Ext.DataView.prototype.refresh;
-Ext.override(Ext.DataView, {
-
-	refresh: function(){
-	originalRefresh.call(this, arguments);
-	this.fireEvent("refresh", this);
-	}
-
-});
-
-
 function doHighlight(rootelement, searchTerm, highlightStartTag, highlightEndTag)
 {
 	var elements=Ext.query(".dohighlight");

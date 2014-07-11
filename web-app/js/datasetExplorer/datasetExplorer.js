@@ -100,8 +100,8 @@ Ext.onReady(function () {
 			{
 				id : 'westPanel',
 				region : 'west',
-                width: 280,
-				minwidth : 200,
+                width: 320,
+				minwidth : 280,
 				split : true,
 				border : true,
 				layout : 'border'
@@ -521,34 +521,46 @@ Ext.onReady(function () {
 
         analysisPanel = new Ext.Panel ({
 					id : 'analysisPanel',
-            title: 'Summary Statistics',
+                    title: 'Summary Statistics',
 					region : 'center',
 					fitToFrame : true,
-            listeners: {
-                activate: function (p) {
-                    if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysis_title')) {
-                        p.body.mask("Loading...", 'x-mask-loading');
-                        runAllQueries(getSummaryStatistics, p);
-                        activateTab();
-                        onWindowResize();
-                    }
-                },
-					deactivate: function(){
-                    resultsTabPanel.tools.help.dom.style.display = "none";
-                },
-                'afterLayout': {
-                    fn: function (el) {
-                        onWindowResize();
-					}
-					}
-            },
+                    listeners: {
+                        activate: function (p) {
+                            if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysis_title')) {
+                                p.body.mask("Loading...", 'x-mask-loading');
+                                runAllQueries(getSummaryStatistics, p);
+                                activateTab();
+                                onWindowResize();
+                            }
+                        },
+                        deactivate: function(){
+                        resultsTabPanel.tools.help.dom.style.display = "none";
+                            },
+                        'afterLayout': {
+                            fn: function (el) {
+                                onWindowResize();
+                            }
+                        }
+                    },
 				autoScroll : true,
-            html: '<div style="text-align:center;font:12pt arial;width:100%;height:100%;">' +
+                html: '<div style="text-align:center;font:12pt arial;width:100%;height:100%;">' +
                 '<table style="width:100%;height:100%;"><tr><td align="center" valign="center">Drag concepts ' +
                 'to this panel to view a breakdown of the subset by that concept</td></tr></table></div>',
 				split : true,
 				closable : false,
-				height : 90
+				height : 90,
+                tbar    : [
+                '->', // Fill
+                {
+                    id : 'printanalysisbutton',
+                    text : 'Print',
+                    iconCls : 'printbutton',
+                    handler : function() {
+                        var text = getAnalysisPanelContent();
+                        printPreview(text);
+                    }
+                }
+            ]
         });
 
         // ************
@@ -2239,7 +2251,7 @@ function runAllQueries(callback, panel) {
         if (panel) {
             panel.body.unmask();
 		}
-		Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
+		Ext.Msg.alert('Subsets are empty xx', 'All subsets are empty xx. Please select subsets.');
 	}
 
 	// setup the number of subsets that need running
@@ -3514,7 +3526,8 @@ function getSummaryGridData() {
     resultsTabPanel.body.mask("Loading ..", 'x-mask-loading');
 
     if (!(GLOBAL.CurrentSubsetIDs[1]) && !(GLOBAL.CurrentSubsetIDs[1])) {
-		Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
+		Ext.Msg.alert('Subsets are unavailable.', 
+				'Please select one or two Comparison subsets and run Summary Statistics.');
 		resultsTabPanel.body.unmask();
 		return;
 	}
@@ -3618,8 +3631,8 @@ function printPreview(content) {
 	var stylesheet = "<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body>";
 	var generator = window.open('', 'name', 'height=400,width=500, resizable=yes, scrollbars=yes');
 	var printbutton = "<input type='button' value=' Print this page 'onclick='window.print();return false;' />";
-    var savebutton = "<input type='button' value='Save'  onclick='document.execCommand(\"SaveAs\",null,\".html\")' />";
-    generator.document.write(stylesheet + printbutton + savebutton + content);
+    //var savebutton = "<input type='button' value='Save'  onclick='document.execCommand(\"SaveAs\",null,\".html\")' />";
+    generator.document.write(stylesheet + printbutton + content);
 	generator.document.close();
 }
 

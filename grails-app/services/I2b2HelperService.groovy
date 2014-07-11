@@ -64,6 +64,11 @@ class I2b2HelperService {
 	static String GENE_PATTERN_WHITE_SPACE_DEFAULT = "0";
 	static String GENE_PATTERN_WHITE_SPACE_EMPTY = "";
 	
+	static List<String> DEMOGRAPHICS_HEADERS = [
+		// see method 
+		"Sex", "Race","Age","Samples","Trial"
+	]
+	
 	boolean transactional = false;
 	def sessionFactory
     def dataSource
@@ -491,7 +496,7 @@ class I2b2HelperService {
 		int i=getLevelFromKey(concept_key)+1;
 		
         Sql sql = new Sql(dataSource)
-        String sqlt = """Select DISTINCT m.c_name, nvl(i.obscount,0) as obscount FROM
+        String sqlt = """Select DISTINCT m.c_name, coalesce(i.obscount,0) as obscount FROM
 		    (SELECT c_name, c_basecode FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ?) m
 		    LEFT OUTER JOIN
 		    (Select c_name, count(c_basecode) as obscount FROM
@@ -644,59 +649,41 @@ class I2b2HelperService {
 	def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
         checkQueryResultAccess result_instance_id
 
+		log.trace("Getting sampleCD's for paitent number")
+		def mapOfSampleCdsByPatientNum = buildMapOfSampleCdsByPatientNum(result_instance_id)
+				
 		log.trace("Adding patient demographic data to grid with result instance id:" +result_instance_id+" and subset: "+subset)
         Sql sql = new Sql(dataSource)
         String sqlt = '''
+            SELECT
+                I.*
+            FROM (
                 SELECT
-                    I.*,
-                    S.sample_cd
-                FROM (
+                    p.*,
+                    t.trial
+                FROM
+                    patient_dimension p
+                INNER JOIN patient_trial t ON p.patient_num = t.patient_num
+                WHERE
+                    p.PATIENT_NUM IN (
                         SELECT
-                            t.trial,
-                            p.*
+                            DISTINCT patient_num
                         FROM
-                            patient_dimension p
-                        INNER JOIN patient_trial t ON p.patient_num = t.patient_num
+                            qt_patient_set_collection
                         WHERE
-                            p.PATIENT_NUM IN (
-                                SELECT
-                                    DISTINCT patient_num
-                                FROM
-                                    qt_patient_set_collection
-                                WHERE
-                                    result_instance_id = ? ) )
-                    I
-                LEFT JOIN (
-                        SELECT
-                            patient_num,
-                            sample_cd
-                        FROM ( 
-                            SELECT 
-                                distinct patient_num, sample_cd 
-                            FROM 
-                                observation_fact
-                            WHERE 
-                                patient_num IN (
-                                    SELECT
-                                        DISTINCT patient_num
-                                    FROM
-                                        qt_patient_set_collection
-                                    WHERE
-                                        result_instance_id = ? )
-                        ) G
-                    ) S ON ( S.patient_num = I.patient_num )
-                ORDER BY
-                    trial, I.PATIENT_NUM, sample_cd''';
+                            result_instance_id = ? ) )
+                I
+            ORDER BY
+                I.PATIENT_NUM''';
 		
         log.debug "Initial grid query: $sqlt, riid: $result_instance_id"
-		
+				
 		//if i have an empty table structure so far
         if (tablein.getColumns().size() == 0) {
 			tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "String"));
 			tablein.putColumn("patient", new ExportColumn("patient", "Patient", "", "String"));
-            tablein.putColumn("sample_cd", new ExportColumn("sample_cd", "Samples", "", "String"));
-// no subset in PostgresDB, June 24, 2014
-//			tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "String"));
+            tablein.putColumn("SAMPLE_CDS", new ExportColumn("SAMPLE_CDS", "Samples", "", "String"));
+			tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "String"));
 			//tablein.putColumn("BIRTH_DATE", new ExportColumn("BIRTH_DATE", "Birth Date", "", "Date"));
 			//tablein.putColumn("DEATH_DATE", new ExportColumn("DEATH_DATE", "Death Date", "", "Date"));
 			tablein.putColumn("TRIAL", new ExportColumn("TRIAL", "Trial", "", "String"));
@@ -709,33 +696,23 @@ class I2b2HelperService {
 			//tablein.putColumn("ZIP_CD", new ExportColumn("ZIP_CD", "Zipcode", "", "String"));
 		}
 		//def founddata=false;
-        sql.eachRow(sqlt, [result_instance_id, result_instance_id], { row ->
+        sql.eachRow(sqlt, [result_instance_id], { row ->
 			/*If I already have this subject mark it in the subset column as belonging to both subsets*/
 			//founddata=true;
 			String subject=row.PATIENT_NUM;
             if (tablein.containsRow(subject)) {
-				String sub=tablein.getRow(subject).get("subset");
-				// no subset in PostgresDB, June 24, 2014
-//				if (row.subset) {
-//					if (sub) sub=sub+","+row.subset;
-//					else sub = row.subset;
-//					tablein.getRow(subject).put("subset", sub);
-//				}
-				
-				String samp= tablein.getRow(subject).get("SAMPLE_CD");
-				if (row.sample_cd) {
-					if (samp) samp=samp+","+row.sample_cd;
-					else samp = row.sample_cd;
-					tablein.getRow(subject).put("SAMPLE_CD", samp);
-				}
+				String s=tablein.getRow(subject).get("subset");
+				s=s+","+subset;
+				tablein.getRow(subject).put("subset", s);
             } else
             /*fill the row*/ {
 				ExportRowNew newrow=new ExportRowNew();
 				newrow.put("subject", subject);
 				def arr = row.SOURCESYSTEM_CD?.split(":")
 				newrow.put("patient", arr?.length == 2 ? arr[1] : "");
-                newrow.put("sample_cd", row.sample_cd ? row.sample_cd : "")
-//				newrow.put("subset", row.subset ? row.subset : ""); // no subset in PostgresDB, June 24, 2014
+				def cds = mapOfSampleCdsByPatientNum[row.PATIENT_NUM]
+                newrow.put("SAMPLE_CDS",cds ? cds : "")
+				newrow.put("subset", subset);
 				newrow.put("TRIAL", row.TRIAL)
                 newrow.put("SEX_CD", row.SEX_CD ? (row.SEX_CD.toLowerCase().equals("m") || row.SEX_CD.toLowerCase().equals("male") ? "male" : (row.SEX_CD.toLowerCase().equals("f") || row.SEX_CD.toLowerCase().equals("female") ? "female" : "NULL")) : "NULL")
                 newrow.put("AGE_IN_YEARS_NUM", row.SEX_CD ? (row.AGE_IN_YEARS_NUM.toString().equals("0") ? "NULL" : row.AGE_IN_YEARS_NUM.toString()) : "NULL")
@@ -746,6 +723,44 @@ class I2b2HelperService {
 		//log.trace("FOUND DEMOGRAPHIC DATA=:"+founddata.toString())
 		return tablein;
 	}
+	
+	def buildMapOfSampleCdsByPatientNum(resultInstanceId) {
+		def map = [:]
+		def sampleCodesTable = new Sql(dataSource).rows("""
+			SELECT DISTINCT
+                f.PATIENT_NUM,
+                f.SAMPLE_CD
+			FROM
+                observation_fact f
+            WHERE
+                f.PATIENT_NUM IN (
+                    SELECT
+                        DISTINCT patient_num
+                    FROM
+                        qt_patient_set_collection
+                    WHERE
+                        result_instance_id = ? )
+			ORDER BY PATIENT_NUM, SAMPLE_CD
+			""",resultInstanceId
+		)
+		
+		for (row in sampleCodesTable) {
+			def patientNum = row.PATIENT_NUM
+			if (!patientNum) continue
+			def sampleCd = row.SAMPLE_CD
+			if (!sampleCd) continue
+			def entry = map[patientNum]
+			if (!entry) {
+				entry = sampleCd
+			} else {
+				entry = entry + "," + sampleCd
+			}
+			map[patientNum] = entry
+		}
+
+		return map
+	}
+	
 	
 	/**
 	 * Adds a column of data to the grid export table
@@ -834,6 +849,7 @@ class I2b2HelperService {
 			
 			if( !item.children ) {
 				log.debug( "Can not show data in gridview for empty node: " + concept_key )
+				return tablein
 			}
 			
 			// All children should be leaf categorical values
@@ -845,8 +861,13 @@ class I2b2HelperService {
 			}
 			
 			// Find the concept names
-			String columnid=getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "");
-			String columnname=getColumnNameFromKey(concept_key).replace(" ", "_");
+			String columnid=getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "")
+			String columnname=getColumnNameFromKey(concept_key).replace(" ", "_")
+
+			if (DEMOGRAPHICS_HEADERS.contains(columnname)) {
+				println("duplicate of demographics column name: " + columnname)
+				return;
+			}	
 			
 			/*add the column to the table if its not there*/
 			if(tablein.getColumn("subject")==null)
@@ -868,13 +889,16 @@ class I2b2HelperService {
 			
 			// Determine the patients to query
 		def patientIds = QtPatientSetCollection.executeQuery( "SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?", result_instance_id.toLong() )
-		patientIds = patientIds.collect { BigDecimal.valueOf( it ) }
-
-			// If nothing is found, return
+			
+		// If nothing is found, return
 		if( !concepts || !patientIds ) {
 				return
 			}
-			// After that, retrieve all data entries for the children
+		
+			def patients = 	patientIds.collect {
+				org.transmartproject.db.i2b2data.PatientDimension.read(Long.valueOf(it))
+			}
+			
 			def c  = ObservationFact.createCriteria()
 			def results = c.list {
 				or {
@@ -882,17 +906,23 @@ class I2b2HelperService {
 					eqProperty( "modifierCd", "sourcesystemCd" )
 				}
 				'in'( "conceptCode", concepts*.conceptCode )
-				'in'( "patient", patientIds )
+				'in'( "patient", patients )
 			}
+
+			log.debug("paths: " + paths)
+			log.debug("number of patients: " + patients.size())
+			log.debug("number of ObservationFact records: " + patients.size())
+			
 			results.each { row ->
-				
-				/*If I already have this subject mark it in the subset column as belonging to both subsets*/
-			String subject=row[ 0 ]
-			String value=row[ 1 ]
-				if(value==null){
-					value="Y";
+
+				String subject = row.patient.getId()
+								
+				String value = row.numberValue
+				if (row.valueType.equals("T")){
+					value = row.textValue
 				}
-				if(tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
+				
+				if(tablein.containsRow(subject)) /*should contain all subjects already because the demographics run is first*/ {
 					tablein.getRow(subject).put(columnid, value.toString());
 				}
 				else /*fill the row*/ {
@@ -903,13 +933,6 @@ class I2b2HelperService {
 				}
 			}
 			
-			//pad all the empty values for this column
-			for(ExportRowNew row: tablein.getRows())
-			{
-				if(!row.containsColumn(columnid)) {
-					row.put(columnid, "N");
-				}
-			}
 		}
 		return tablein;
 	}
