@@ -499,7 +499,8 @@ class ChartController {
         }
         pw.write("</td>");
         pw.write("<td><img src='" + graphURL7 + "' width=200 height=300 border=0 usemap='#" + filename7 + "'>");
-        pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-0.1/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
+        String rmodulesVersion = grailsApplication.mainContext.pluginManager.getGrailsPlugin('rdc-rmodules').version;
+        pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-$rmodulesVersion/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
         pw.write("</td><td align='center'>");
         if (s2 && l2.size() > 0) {
             pw.write("<div class='smalltitle'><b>Subset 2</b></div>");
@@ -1328,7 +1329,8 @@ for (int i = 0; i < mapsize; i++)
                 pw.write("<img src='" + graphURL + "' width=" + width + " height=300 border=0 usemap='#" + filename + "'>");
                 ChartUtilities.writeImageMap(pw, filename, info, false);
                 pw.write("</td>");
-                pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-0.1/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
+                String rmodulesVersion = grailsApplication.mainContext.pluginManager.getGrailsPlugin('rdc-rmodules').version;
+                pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-$rmodulesVersion/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
                 pw.write("<td>")
                 pw.write("<table><tr><td>");
                 if (s1 && results1.size() > 0) {
