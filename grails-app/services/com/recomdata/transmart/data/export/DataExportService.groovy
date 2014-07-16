@@ -367,7 +367,7 @@ class DataExportService {
                                 def line = Arrays.asList(it.split('\t'))
                                 if (filter == null) {
                                     if (columnFilter) {
-                                        filter = [1]
+                                        filter = []
                                         for (String columnName : columnFilter) {
                                             columnName = CharMatcher.is('\\' as char).trimTrailingFrom(columnName)
                                             String parentColumnName = columnName.replaceFirst(/\\[^\\]+$/, '')
