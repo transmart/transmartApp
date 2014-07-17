@@ -434,7 +434,7 @@ class RWGController {
 
                 //if no accession in search list, calculate number of each folder type:
                 def numbersJSON
-                if (searchString.contains("|ACCESSION;")) {
+                if (!searchString.contains("|ACCESSION;")) {
                     for (folderName in pathLists[0]) {
                         def folder = FmFolder.findByFolderFullName folderName
                         if (!folder) {

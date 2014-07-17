@@ -107,12 +107,18 @@
     </g:if>
     <g:elseif test="${bioDataObject?.hasProperty('longDescription')}">
         <div class="description">
+            <g:if test="${searchHighlight?.description?.length() > 0}">
+                <g:set var="description" value="${searchHighlight.description}"></g:set>
+            </g:if>
+            <g:else>
+                <g:set var="description" value="${bioDataObject?.longDescription}"></g:set>
+            </g:else>
             <g:if test="${bioDataObject?.longDescription?.length() > 325000}">
                 ${(bioDataObject?.longDescription)?.substring(0, 324000)}&nbsp;&nbsp;
                 <a href=#>...See more</a>
             </g:if>
             <g:else>
-                ${bioDataObject?.longDescription}
+                ${description}
             </g:else></div>
 
         <div style="height:20px;"></div>

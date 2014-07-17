@@ -401,21 +401,7 @@
 
                     //Add the callback for when the grid is redrawn
                     data.fnDrawCallback = function( oSettings ) {
-
-                        //Removed the tooltips
-                        /*
-                        $j(".dataTables_scrollHeadInner > table > thead > tr > th").each( function (index) {
-                            
-                            var titleAttr = $j(this).attr("title");
-                            
-                            if (titleAttr == null && gridPanelHeaderTips != null)
-                            {
-                                $j(this).attr("title", gridPanelHeaderTips[index]);            
-                            }
-                            
-	            });	
-                        */
-
+                        
                         //Hide the pagination if both directions are disabled.
                         if (jQuery('#' + tableId + '_paginate .paginate_disabled_previous').size() > 0 && jQuery('#' + tableId + '_paginate .paginate_disabled_next').size() > 0) {
                         	jQuery('#' + tableId + '_paginate').hide();
@@ -427,9 +413,11 @@
                     $j('#' + tableId).dataTable(data);
 
                     $j(window).bind('resize', function () {
-                        $j('#' + tableId).dataTable().fnAdjustColumnSizing()
-	        });	
-
+                        if($j('#' + tableId).dataTable().oSettings){
+                            $j('#' + tableId).dataTable().fnAdjustColumnSizing();
+                        }
+                      } );
+                    
                      $j("#" + containerId + " div.gridTitle").html(data.iTitle);                  
 
                 };

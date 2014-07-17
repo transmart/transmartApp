@@ -750,6 +750,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#createAssayOverlay').fadeIn();
 		jQuery('#createAssay').empty().addClass('ajaxloading');
+		jQuery('#editMetadata').empty();
 
 		jQuery.ajax({
 			url:createAssayURL,
@@ -770,6 +771,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#createAnalysisOverlay').fadeIn();
 		jQuery('#createAnalysis').empty().addClass('ajaxloading');
+		jQuery('#editMetadata').empty();
 
 		jQuery.ajax({
 			url:createAnalysisURL,
@@ -790,6 +792,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#createFolderOverlay').fadeIn();
 		jQuery('#createFolder').empty().addClass('ajaxloading');
+		jQuery('#editMetadata').empty();
 
 		jQuery.ajax({
 			url:createFolderURL + "?",
@@ -814,8 +817,6 @@ jQuery(document).ready(function() {
 				url:deleteFolderURL,
 				data: {id: id},
 				success: function(response) {
-					//Update viewer with response ("folder has been deleted" message) and update the parent in the browse tree.
-					jQuery('#metadata-viewer').html(response);
 					updateFolder(parent);
 					showDetailDialog(parent);
 					jQuery('.result-folder-name').removeClass('selected');
@@ -834,6 +835,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#createStudyOverlay').fadeIn();
 		jQuery('#createStudy').empty().addClass('ajaxloading');
+		jQuery('#editMetadata').empty();
 
 		jQuery.ajax({
 			url:createStudyURL,
@@ -854,6 +856,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#createProgramOverlay').fadeIn();
 		jQuery('#createProgram').empty().addClass('ajaxloading');
+		jQuery('#editMetadata').empty();
 
 		jQuery.ajax({
 			url:createProgramURL,
@@ -901,30 +904,24 @@ jQuery(document).ready(function() {
 		if (ids.size() == 0) {return false;}
 
 		window.location = exportURL + "?id=" + ids.join(',');
-	    
-
-		for(j=0; j<ids.size(); j++){
-		    var id = ids[j];
-		    var i=0;
 		   
-		    jQuery('#cartcount').hide();
-		    
-			jQuery.ajax({
-				url:exportRemoveURL,
-				data: {id: id},			
-				success: function(response) {
-					jQuery(checkboxes[i]).closest("tr").remove();
-					console.log(jQuery(checkboxes[i]).attr('name'));
+	    jQuery('#cartcount').hide();
+	    
+		jQuery.ajax({
+			url:exportRemoveURL,
+			data: {id: ids.join(',')},			
+			success: function(response) {
+				for(j=0; j<ids.size(); j++){
+					jQuery(checkboxes[j]).closest("tr").remove();
 					jQuery('#cartcount').show().text(response);
 					updateExportCount();
-					jQuery('#metadata-viewer').find(".exportaddspan[name='" + ids[i] + "']").addClass("foldericon").addClass("add").addClass("link").text('Add to export');
-					i=i+1;
-				},
-				error: function(xhr) {
-					jQuery('#cartcount').show();
+					jQuery('#metadata-viewer').find(".exportaddspan[name='" + ids[j] + "']").addClass("foldericon").addClass("add").addClass("link").text('Add to export');
 				}
-			});
-		}
+			},
+			error: function(xhr) {
+				jQuery('#cartcount').show();
+			}
+		});
 	});
 
 	jQuery('body').on('click', '#closeexport', function() {

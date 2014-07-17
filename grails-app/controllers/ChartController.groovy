@@ -868,7 +868,7 @@ class ChartController {
             pw.write("<tr>"
                     + "<td>" + key + "</td>"
                     + "<td>" + value.toString() + "</td>"
-                    + "<td>" + form.format(((double) value / (double) total)) + "</td>"
+                    + "<td>" + form.format((total == 0) ? 0 : ((double) value / (double) total)) + "</td>"
                     // + "<td>" + form.format(test) + "</td>"
                     + "</tr>"
             );
@@ -876,7 +876,7 @@ class ChartController {
         pw.write("<tr>"
                 + "<td><b>Total</b></td>"
                 + "<td><b>" + total + "</b></td>"
-                + "<td><b>" + form.format(((double) total / (double) total)) + "</b></td>"
+                + "<td><b>" + form.format((total == 0) ? 0 : ((double) total / (double) total)) + "</b></td>"
                 // + "<td><b>N/A</b></td>"
                 + "</tr>"
         );
