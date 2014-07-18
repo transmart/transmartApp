@@ -84,6 +84,11 @@
 					url = "${createLink(action: 'makePublic')}/"+id;
 				}
 
+				// private action
+                if(action=="private") {
+                    url = "${createLink(action: 'makePrivate')}/"+id;
+                }
+
 				// send to url
 				window.location.href=url;
 			}

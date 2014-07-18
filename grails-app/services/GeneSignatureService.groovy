@@ -236,8 +236,8 @@ public class GeneSignatureService {
     /**
      * mark specified instance public to user community
      */
-    def makePublic(GeneSignature gs) {
-        gs.publicFlag = true;
+    def makePublic(GeneSignature gs, boolean publicFlag) {
+        gs.publicFlag = publicFlag;
         def savedInst = gs.save()
 
         // update search link for both GS and GL version

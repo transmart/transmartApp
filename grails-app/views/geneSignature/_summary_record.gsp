@@ -50,6 +50,7 @@
 			<option value="export">Excel Download</option>
 			<option value="gmt">Download .GMT file</option>
 			<g:if test="${!gs.publicFlag && ownerFlag}"><option value="public">Make Public</option></g:if>
+			<g:if test="${gs.publicFlag && ownerFlag}"><option value="private">Make Private</option></g:if>
      	</select>
 	</td>
 </tr>		     
