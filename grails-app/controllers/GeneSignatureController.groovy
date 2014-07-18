@@ -192,9 +192,22 @@ class GeneSignatureController {
         def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
         def gsInst = GeneSignature.get(params.id)
         gsInst.modifiedByAuthUser = user
-        geneSignatureService.makePublic(gsInst)
+        geneSignatureService.makePublic(gsInst, true)
 
         flash.message = "GeneSignature '${gsInst.name}' was made public to everyone"
+        redirect(action: list)
+    }
+    
+    /**
+     * set the indicated gs private
+     */
+    def makePrivate = {
+        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def gsInst = GeneSignature.get(params.id)
+        gsInst.modifiedByAuthUser = user
+        geneSignatureService.makePublic(gsInst, false)
+
+        flash.message = "GeneSignature '${gsInst.name}' was made private"
         redirect(action: list)
     }
 
