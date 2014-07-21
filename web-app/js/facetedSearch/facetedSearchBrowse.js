@@ -28,6 +28,10 @@ function generateBrowseWindow(nodeClicked)
 			URLtoUse = dataTypeBrowseWindow;
 			filteringFunction = applyPopupFiltersDataTypes;
 			break;
+		case "eQTL Transcript Gene":
+			URLtoUse = eqtlTranscriptGeneWindow;
+			filteringFunction =  applyPopupFiltersEqtlTranscriptGene;
+			break;
 		default:
 			alert("Failed to find applicable popup! Please contact an administrator.");
 			return false;
