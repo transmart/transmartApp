@@ -26,11 +26,7 @@
  */
 package com.recomdata.export;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.StringTokenizer;
 
 class GenePatternFiles {

@@ -17,14 +17,14 @@
  *
  ******************************************************************/
 
+
+import command.UserGroupCommand
+import grails.converters.JSON
+import grails.validation.ValidationException
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.Principal
 import org.transmart.searchapp.UserGroup
-import command.UserGroupCommand
-import grails.converters.JSON
-import grails.validation.ValidationException
-import groovy.sql.Sql
 
 class UserGroupController {
 

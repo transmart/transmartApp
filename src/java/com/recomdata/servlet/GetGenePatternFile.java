@@ -20,17 +20,16 @@
 
 package com.recomdata.servlet;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import com.recomdata.export.IgvFiles;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.recomdata.export.IgvFiles;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * This servlet is to provide data as remote accessed URL to IGV. Grails controller cannot handle the HttpInputStream.close() call from the client

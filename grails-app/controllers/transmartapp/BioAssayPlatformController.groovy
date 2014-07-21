@@ -20,8 +20,8 @@
 
 package transmartapp
 
-import org.transmart.biomart.BioAssayPlatform
 import grails.converters.JSON
+import org.transmart.biomart.BioAssayPlatform
 
 class BioAssayPlatformController {
 

@@ -20,10 +20,10 @@
 
 package com.recomdata.transmart.data.export
 
+import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.querytool.QueriesResource
 import org.transmartproject.core.querytool.QueryResult
-import org.apache.commons.lang.StringUtils
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 

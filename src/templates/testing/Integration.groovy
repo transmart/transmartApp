@@ -1,6 +1,5 @@
 @artifact.package@
-
-import spock.lang.*
+import spock.lang.Specification
 
 /**
  *

@@ -1,4 +1,6 @@
-@artifact.package@import grails.test.mixin.TestFor
+@artifact.package
+@import grails.test.mixin.TestFor
+@import grails.test.mixin.TestFor
 import spock.lang.Specification
 
 /**

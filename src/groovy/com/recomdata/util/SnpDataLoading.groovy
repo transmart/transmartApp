@@ -18,24 +18,15 @@
  ******************************************************************/
   
 
-package com.recomdata.util;
+package com.recomdata.util
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.util.List;
-import java.util.Set;
+import groovy.sql.Sql
 
-
+import java.sql.Clob
+import java.sql.Connection
+import java.sql.DriverManager
 
 //import java.io.BufferedReader;
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.Properties;
-import java.sql.*;
-
-import groovy.sql.Sql;
 //import i2b2.SnpDataset;
 
 class SnpDataLoading {

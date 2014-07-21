@@ -20,8 +20,8 @@
 
 package transmartapp
 
-import org.transmart.biomart.Experiment;
 import grails.converters.JSON
+import org.transmart.biomart.Experiment
 
 class ExperimentController {
 

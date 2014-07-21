@@ -24,8 +24,6 @@
  *
  */
 
-import org.transmart.biomart.BioMarker
-import org.transmart.biomart.Disease
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.ChartRenderingInfo
 import org.jfree.chart.JFreeChart
@@ -40,6 +38,8 @@ import org.jfree.chart.servlet.ServletUtilities
 import org.jfree.data.statistics.BoxAndWhiskerItem
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset
 import org.transmart.ExpressionProfileResult
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Disease
 
 import javax.servlet.ServletException
 

@@ -33,9 +33,6 @@ import org.quartz.SimpleTrigger
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import org.transmart.searchapp.AccessLog
 
-
-import org.apache.commons.lang.StringUtils
-
 import javax.annotation.Resource
 
 class ExportService {

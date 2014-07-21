@@ -23,7 +23,6 @@
  * @version $Revision: 10098 $
  */
 
-import org.transmart.biomart.Experiment
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
@@ -32,6 +31,7 @@ import com.recomdata.util.ElapseTimer
 import fm.FmFolder
 import org.transmart.SearchResult
 import org.transmart.biomart.BioAssayAnalysis
+import org.transmart.biomart.Experiment
 
 class ExperimentAnalysisController {
 

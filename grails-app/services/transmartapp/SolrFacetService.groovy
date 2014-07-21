@@ -20,17 +20,15 @@
 
 package transmartapp
 
-import org.transmart.biomart.BioMarker
-import org.transmart.biomart.BioMarkerExpAnalysisMV
 import fm.FmFolder
 import fm.FmFolderAssociation
+import grails.util.Holders
 import groovy.util.slurpersupport.NoChildren
 import groovy.util.slurpersupport.NodeChild
 import groovy.xml.StreamingMarkupBuilder
-
 import org.json.JSONObject
-
-import grails.util.Holders
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.BioMarkerExpAnalysisMV
 
 class SolrFacetService {
 

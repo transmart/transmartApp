@@ -22,12 +22,12 @@
  * @author $Author: jliu $
  * @version $Revision: 10280 $
  */
-import org.transmart.biomart.BioAssayAnalysis
-import org.transmart.biomart.ClinicalTrial
-import org.transmart.biomart.Experiment
 import com.recomdata.util.DomainObjectExcelHelper
 import grails.converters.JSON
 import org.transmart.SearchResult
+import org.transmart.biomart.BioAssayAnalysis
+import org.transmart.biomart.ClinicalTrial
+import org.transmart.biomart.Experiment
 import org.transmart.searchapp.SearchKeyword
 
 class TrialController {

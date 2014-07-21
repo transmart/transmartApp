@@ -18,10 +18,6 @@
  ******************************************************************/
 
 
-
-import org.transmart.biomart.BioAssayAnalysis
-import org.transmart.biomart.BioAssayAnalysisData
-import org.transmart.biomart.BioMarkerCorrelationMV
 import com.recomdata.genesignature.TEAScoreManager
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.AssayAnalysisDataTeaQuery
@@ -30,7 +26,10 @@ import org.transmart.AnalysisResult
 import org.transmart.AssayAnalysisValue
 import org.transmart.ExpAnalysisResultSet
 import org.transmart.SearchFilter
+import org.transmart.biomart.BioAssayAnalysis
+import org.transmart.biomart.BioAssayAnalysisData
 import org.transmart.biomart.BioAssayAnalysisDataTea
+import org.transmart.biomart.BioMarkerCorrelationMV
 import org.transmart.searchapp.SearchBioMarkerCorrelFastMV
 
 /**

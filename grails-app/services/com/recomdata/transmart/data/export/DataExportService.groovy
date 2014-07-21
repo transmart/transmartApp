@@ -20,13 +20,13 @@
 
 package com.recomdata.transmart.data.export
 
+import com.google.common.base.CharMatcher
 import com.recomdata.snp.SnpData
 import com.recomdata.transmart.data.export.exception.DataNotFoundException
 import groovy.json.JsonSlurper
 import groovy.sql.Sql
 import org.apache.commons.lang.StringUtils
 import org.springframework.transaction.annotation.Transactional
-import com.google.common.base.CharMatcher
 
 class DataExportService {
 

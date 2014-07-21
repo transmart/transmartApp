@@ -18,15 +18,14 @@
  ******************************************************************/
 
 
-
-import org.transmart.searchapp.AuthUser
-import org.transmart.biomart.BioAssayDataAnnotation
-import org.transmart.biomart.BioData
-import org.transmart.biomart.BioMarker
 import com.recomdata.genesignature.FileSchemaException
 import com.recomdata.search.query.Query
 import org.hibernate.Hibernate
 import org.springframework.web.multipart.MultipartFile
+import org.transmart.biomart.BioAssayDataAnnotation
+import org.transmart.biomart.BioData
+import org.transmart.biomart.BioMarker
+import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.GeneSignature
 import org.transmart.searchapp.GeneSignatureItem
 import org.transmart.searchapp.SearchKeyword

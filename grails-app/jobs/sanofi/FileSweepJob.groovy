@@ -20,8 +20,8 @@
 
 package sanofi
 
-import org.apache.commons.logging.LogFactory
 import grails.util.Holders
+import org.apache.commons.logging.LogFactory
 
 class FileSweepJob {
 

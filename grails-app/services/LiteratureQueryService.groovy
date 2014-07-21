@@ -23,12 +23,12 @@
  * @version $Revision: 9178 $
  */
 
-import org.transmart.biomart.BioDataExternalCode
-import org.transmart.biomart.Literature
 import com.recomdata.search.query.LiteratureDataQuery
 import org.transmart.GlobalFilter
 import org.transmart.LiteratureFilter
 import org.transmart.SearchFilter
+import org.transmart.biomart.BioDataExternalCode
+import org.transmart.biomart.Literature
 
 class LiteratureQueryService {
 

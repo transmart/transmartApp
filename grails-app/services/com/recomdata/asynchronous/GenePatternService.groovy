@@ -27,6 +27,7 @@ import com.recomdata.export.IgvFiles
 import com.recomdata.genepattern.JobStatus
 import com.sun.pdfview.PDFFile
 import com.sun.pdfview.PDFPage
+import grails.util.Holders
 import org.genepattern.client.GPClient
 import org.genepattern.webservice.JobResult
 import org.genepattern.webservice.Parameter
@@ -40,7 +41,6 @@ import java.awt.*
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.util.List
-import grails.util.Holders
 
 /**
  * GenePatternService that manages the calls and jobs to the GenePattern server.

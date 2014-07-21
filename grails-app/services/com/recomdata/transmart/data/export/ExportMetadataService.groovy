@@ -21,7 +21,6 @@
 package com.recomdata.transmart.data.export
 
 import grails.util.Holders
-
 import org.transmartproject.core.dataquery.assay.Assay
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
 import org.transmartproject.export.HighDimExporter

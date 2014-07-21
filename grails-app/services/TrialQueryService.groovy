@@ -16,13 +16,10 @@
  *
  *
  ******************************************************************/
+
 import com.recomdata.search.query.AssayAnalysisDataQuery
 import com.recomdata.search.query.Query
-import org.transmart.AnalysisResult
-import org.transmart.AssayAnalysisValue
-import org.transmart.ExpAnalysisResultSet
-import org.transmart.SearchFilter
-import org.transmart.TrialAnalysisResult
+import org.transmart.*
 import org.transmart.biomart.BioAssayAnalysis
 import org.transmart.biomart.BioAssayAnalysisData
 import org.transmart.biomart.ClinicalTrial

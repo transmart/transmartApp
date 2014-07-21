@@ -22,10 +22,10 @@ package com.recomdata.transmart.data.export
 
 import com.recomdata.dataexport.util.ExportUtil
 import com.recomdata.transmart.data.export.util.FileWriterUtil
+import grails.util.Holders
 import org.apache.commons.lang.StringUtils
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
-import grails.util.Holders
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 

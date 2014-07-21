@@ -1,15 +1,14 @@
 package org.transmartproject.export
 
 import grails.util.Metadata
-
-import javax.annotation.PostConstruct
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.dataquery.DataRow
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.HighDimensionResource
 import org.transmartproject.core.dataquery.highdim.projections.Projection
+
+import javax.annotation.PostConstruct
 
 class VCFExporter implements HighDimExporter {
     /**

@@ -23,6 +23,8 @@
  */
 package com.recomdata.transmart.data.export.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,8 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author SMunikuntla
