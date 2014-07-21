@@ -3525,14 +3525,13 @@ function getSummaryGridData() {
 
     resultsTabPanel.body.mask("Loading ..", 'x-mask-loading');
 
-    /*    This has been commented out and allow the Summary grid data can be run without running Summary Statistics.
     if (!(GLOBAL.CurrentSubsetIDs[0]) && !(GLOBAL.CurrentSubsetIDs[1])) {
 		Ext.Msg.alert('Subsets are unavailable.',
 				'Please select one or two Comparison subsets and run Summary Statistics.');
 		resultsTabPanel.body.unmask();
 		return;
 	}
-    */
+
     gridstore = new Ext.data.JsonStore(
         {
             url : pageInfo.basePath+'/chart/basicGrid',
