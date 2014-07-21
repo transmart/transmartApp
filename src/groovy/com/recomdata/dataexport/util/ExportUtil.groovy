@@ -38,8 +38,7 @@ class ExportUtil {
 			if (i > 1 && !valShouldBeRemoved) { 
 				valList.add(val)
 			} else if (valShouldBeRemoved) {
-				def j = i
-				while (j < arr.length) arr[j++] = ''
+				 arr[i] = ''
 			}
 		}
 		

@@ -367,7 +367,7 @@ class DataExportService {
                                 def line = Arrays.asList(it.split('\t'))
                                 if (filter == null) {
                                     if (columnFilter) {
-                                        filter = [1]
+                                        filter = []
                                         for (String columnName : columnFilter) {
                                             columnName = CharMatcher.is('\\' as char).trimTrailingFrom(columnName)
                                             String parentColumnName = columnName.replaceFirst(/\\[^\\]+$/, '')
@@ -375,7 +375,7 @@ class DataExportService {
                                                 columnName.endsWith(it) ||
                                                         parentColumnName.endsWith(it)
                                             }
-                                            if (index >= 2 && !(index in filter)) filter.add(index)
+                                            if (index >= 1 && !(index in filter)) filter.add(index)
                                         }
                                     } else {
                                         filter = 1..(line.size() - 1)

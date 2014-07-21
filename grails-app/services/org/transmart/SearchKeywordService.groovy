@@ -207,15 +207,9 @@ public class SearchKeywordService {
 
             m.put("label", sk.searchKeyword.keyword)
             m.put("category", sk.searchKeyword.displayDataCategory)
+            m.put("categoryId", sk.searchKeyword.dataCategory)
+            m.put("id", sk.searchKeyword.uniqueId)
 
-            //Further hack: Alter fields depending on the category
-            if (sk.searchKeyword.dataCategory.equals("DISEASE") || sk.searchKeyword.dataCategory.equals("OBSERVATION")) {
-                m.put("categoryId", sk.searchKeyword.dataCategory)
-                m.put("id", sk.searchKeyword.uniqueId)
-            } else {
-                m.put("categoryId", sk.searchKeyword.dataCategory)
-                m.put("id", sk.searchKeyword.id)
-            }
             if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0) {
                 def synonyms = org.transmart.biomart.BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
                 def synList = new StringBuilder()
@@ -503,12 +497,11 @@ public class SearchKeywordService {
 
         // display category GS or GL?
         def displayName = (domainKey == GeneSignature.DOMAIN_KEY) ? GeneSignature.DISPLAY_TAG : GeneSignature.DISPLAY_TAG_GL
-        def uniqueId = domainKey + ":" + gs.id
 
         SearchKeyword keyword = new SearchKeyword()
         keyword.properties.keyword = gs.name
         keyword.properties.bioDataId = gs.id
-        keyword.properties.uniqueId = uniqueId
+        keyword.properties.uniqueId = gs.uniqueId
         keyword.properties.dataCategory = domainKey
         keyword.properties.displayDataCategory = displayName
         keyword.properties.dataSource = "Internal"
