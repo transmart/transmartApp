@@ -65,7 +65,7 @@ function createWorkflowStatus(parentElem, noTitleBar) {
     $j("#mask").fadeTo(500, 0.25);
 
     var d = $j("#dialog-modal").dialog({
-        height: 120, minHeight: 120, maxHeight: 120, width: 300, minWidth: 250, maxWidth: 350, closeOnEscape: false, show: { effect: 'drop', direction: "up" }, hide: { effect: 'fade', duration: 200 }, dialogClass: 'dialog-modal', title: 'Workflow Status', position: {
+        height: 130, minHeight: 130, maxHeight: 130, width: 300, minWidth: 250, maxWidth: 350, closeOnEscape: false, show: { effect: 'drop', direction: "up" }, hide: { effect: 'fade', duration: 200 }, dialogClass: 'dialog-modal', title: 'Workflow Status', position: {
             my: 'left top',
             at: 'center',
             of: parentElem
