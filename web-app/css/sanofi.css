@@ -530,7 +530,7 @@ textarea#description, textarea#longDescription, input#description, input#longDes
 
 .x-tree-node-icon.studyicon { background-image: url('../images/foldertypes/study.png') !important; }
 
-.x-tree-node-icon.programicon { background-image: url('../images/foldertypes/folder.png') !important; }
+.x-tree-node-icon.programicon { background-image: url('../images/foldertypes/program.png') !important; }
 
 .x-tree-node { font: 11px Verdana, Arial, sans-serif}
 
