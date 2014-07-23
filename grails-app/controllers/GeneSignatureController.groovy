@@ -147,7 +147,6 @@ class GeneSignatureController {
         clone.modifiedByAuthUser = user
         if (clone.experimentTypeCellLine?.id == null) clone.experimentTypeCellLine = null     // this is hack, don't know how to get around this!
         log.debug "experimentTypeCellLine: " + clone.experimentTypeCellLine + "; null? " + (clone.experimentTypeCellLine == null)
-
         // set onto session
         def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: clone, wizardType: WizardModelDetails.WIZ_TYPE_EDIT, editId: geneSigInst.id);
         session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
@@ -259,8 +258,9 @@ class GeneSignatureController {
 
         // load item data
         loadWizardItems(2, wizard)
+        def existingValues = createExistingValues(2, wizard.geneSigInst)
 
-        render(view: "wizard2", model: [wizard: wizard])
+        render(view: "wizard2", model: [wizard: wizard, existingValues: existingValues])
     }
 
     def create3 = {
@@ -271,8 +271,9 @@ class GeneSignatureController {
 
         // load data for page 3
         loadWizardItems(3, wizard)
+        def existingValues = createExistingValues(3, wizard.geneSigInst)
 
-        render(view: "wizard3", model: [wizard: wizard])
+        render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
     }
 
     /**
@@ -303,8 +304,9 @@ class GeneSignatureController {
 
         // load item data
         loadWizardItems(2, wizard)
+        def existingValues = createExistingValues(2, wizard.geneSigInst)
 
-        render(view: "wizard2", model: [wizard: wizard])
+        render(view: "wizard2", model: [wizard: wizard, existingValues: existingValues])
     }
 
     /**
@@ -316,8 +318,9 @@ class GeneSignatureController {
 
         // load data for page 3
         loadWizardItems(3, wizard)
+        def existingValues = createExistingValues(3, wizard.geneSigInst)
 
-        render(view: "wizard3", model: [wizard: wizard])
+        render(view: "wizard3", model: [wizard: wizard, existingValues:existingValues])
     }
 
     /**
@@ -343,7 +346,8 @@ class GeneSignatureController {
             // check for empty file
             if (file.empty) {
                 flash.message = "The file:'${gs.properties.uploadFile}' you uploaded is empty"
-                return render(view: "wizard3", model: [wizard: wizard])
+                def existingValues = createExistingValues(3, wizard.geneSigInst)
+                return render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
             }
 
             // validate file format
@@ -354,7 +358,8 @@ class GeneSignatureController {
                 geneSignatureService.verifyFileFormat(file, schemaColCt, metricType)
             } catch (FileSchemaException e) {
                 flash.message = e.getMessage()
-                return render(view: "wizard3", model: [wizard: wizard])
+                def existingValues = createExistingValues(3, wizard.geneSigInst)
+                return render(view: "wizard3", model: [wizard: wizard,existingValues:existingValues])
             }
 
         } else {
@@ -379,10 +384,12 @@ class GeneSignatureController {
 
         } catch (FileSchemaException fse) {
             flash.message = fse.getMessage()
-            render(view: "wizard3", model: [wizard: wizard])
+            def existingValues = createExistingValues(3, wizard.geneSigInst, existingValues: existingValues)
+            render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
         } catch (RuntimeException re) {
             flash.message = "Runtime exception " + re.getClass().getName() + ":<br>" + re.getMessage()
-            render(view: "wizard3", model: [wizard: wizard])
+            def existingValues = createExistingValues(3, wizard.geneSigInst)
+            render(view: "wizard3", model: [wizard: wizard,existingValues: existingValues])
         }
     }
 
@@ -415,7 +422,8 @@ class GeneSignatureController {
             // empty?
             if (file.empty) {
                 flash.message = flash.message = "The file:'${file.getOriginalFilename()}' you uploaded is empty"
-                return render(view: "wizard3", model: [wizard: wizard])
+                def existingValues = createExistingValues(3, wizard.geneSigInst)
+                return render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
             }
 
             // check schema errors
@@ -427,7 +435,8 @@ class GeneSignatureController {
 
             } catch (FileSchemaException e) {
                 flash.message = e.getMessage()
-                return render(view: "wizard3", model: [wizard: wizard])
+                def existingValues = createExistingValues(3, wizard.geneSigInst)
+                return render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
             }
         }
 
@@ -445,10 +454,12 @@ class GeneSignatureController {
 
         } catch (FileSchemaException fse) {
             flash.message = fse.getMessage()
-            render(view: "wizard3", model: [wizard: wizard])
+            def existingValues = createExistingValues(3, wizard.geneSigInst)
+            render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
         } catch (RuntimeException re) {
             flash.message = "Runtime exception " + re.getClass().getName() + ":<br>" + re.getMessage()
-            render(view: "wizard3", model: [wizard: wizard])
+            def existingValues = createExistingValues(3, wizard.geneSigInst)
+            render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
         }
     }
 
@@ -870,6 +881,45 @@ class GeneSignatureController {
         // merge the current domain instance into the persistence context with the wizard changes
         //if(!gs.isAttached()) wizard.geneSigInst = gs.merge()
         wizard.geneSigInst = gs.merge()
+    }
+    
+    def createExistingValues(int pageNum, GeneSignature gs) {
+        Map existingValues = new HashMap()
+        switch (pageNum) {
+            case 1:
+                break
+
+            case 2:
+                existingValues.put('experimentTypeConceptCode.bioConceptCode', gs.experimentTypeConceptCode?.bioConceptCode ?: '')
+                existingValues.put('sourceConceptCode.id', gs.sourceConceptCode?.id ?: '')
+                existingValues.put('sourceConceptCode.bioConceptCode', gs.sourceConceptCode?.bioConceptCode ?: '')
+                existingValues.put('ownerConceptCode.id', gs.ownerConceptCode?.id ?: '')
+                existingValues.put('treatmentCompound.id', gs.treatmentCompound?.id ?: '')
+                existingValues.put('speciesConceptCode.id', gs.speciesConceptCode?.id ?: '')
+                existingValues.put('speciesConceptCode.bioConceptCode', gs.speciesConceptCode?.bioConceptCode ?: '')
+                existingValues.put('techPlatform.id', gs.techPlatform?.id ?: '')
+                existingValues.put('experimentTypeCellLine.cellLineName', gs.experimentTypeCellLine?.cellLineName ?: '')
+                existingValues.put('experimentTypeCellLine.attcNumber', gs.experimentTypeCellLine?.attcNumber ?: '')
+                existingValues.put('speciesMouseSrcConceptCode.id', gs.speciesMouseSrcConceptCode?.id ?: '')
+                existingValues.put('tissueTypeConceptCode.id', gs.tissueTypeConceptCode?.id ?: '')
+                existingValues.put('experimentTypeConceptCode.id', gs.experimentTypeConceptCode?.id ?: '')
+                break
+                
+            case 3:
+                existingValues.put('normMethodConceptCode.id', gs.normMethodConceptCode?.id ?: '')
+                existingValues.put('normMethodConceptCode.bioConceptCode', gs.normMethodConceptCode?.bioConceptCode ?: '')
+                existingValues.put('analyticCatConceptCode.id', gs.analyticCatConceptCode?.id ?: '')
+                existingValues.put('analyticCatConceptCode.bioConceptCode', gs.analyticCatConceptCode?.bioConceptCode ?: '')
+                existingValues.put('analysisMethodConceptCode.id', gs.analysisMethodConceptCode?.id ?: '')
+                existingValues.put('analysisMethodConceptCode.bioConceptCode', gs.analysisMethodConceptCode?.bioConceptCode ?: '')
+                existingValues.put('pValueCutoffConceptCode.id', gs.pValueCutoffConceptCode?.id ?: '')
+                existingValues.put('fileSchema.id', gs.fileSchema?.id ?: '')
+                existingValues.put('foldChgMetricConceptCode.id', gs.foldChgMetricConceptCode?.id ?: '')
+                break
+            default:
+                log.warn "invalid page requested!"
+        }
+        return existingValues
     }
 }
 

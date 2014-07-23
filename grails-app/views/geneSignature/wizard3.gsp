@@ -101,13 +101,13 @@
 			<td class="value">
 				<g:select name="normMethodConceptCode.id"
     				      from="${wizard.normMethods}"
-    				      value="${gs.normMethodConceptCode?.id}"
+    				      value="${existingValues.'normMethodConceptCode.id'}"
          				  noSelection="['null':'select normalization method']"
          				  optionValue="codeName"
          				  optionKey="id"
          				  onchange="javascript: toggleOtherDiv(this, 'norm_method_other_div');" />
 				<!--  toggle other div accordingly -->
-				<g:if test="${gs.normMethodConceptCode?.bioConceptCode=='OTHER'}">
+				<g:if test="${existingValues.'normMethodConceptCode.bioConceptCode'=='OTHER'}">
 				<div id="norm_method_other_div" style="display: block;">
 				</g:if>
 				<g:else>
@@ -126,13 +126,13 @@
 						<td style="border: none;">
 							<g:select name="analyticCatConceptCode.id"
 							      		from="${wizard.analyticTypes}"
-							      		value="${gs.analyticCatConceptCode?.id}"
+							      		value="${existingValues.'analyticCatConceptCode.id'}"
 			     				  		noSelection="['null':'select category']"
 			     				  		optionValue="${{(it?.bioConceptCode=='OTHER')? it?.codeName : it?.codeName + ' (' + it?.codeDescription + ')'}}"
 			     				  		optionKey="id"
 			     				  		onchange="javascript: toggleOtherDiv(this, 'analysis_cat_other_div');" />
 							<!--  toggle other div accordingly -->
-							<g:if test="${gs.analyticCatConceptCode?.bioConceptCode=='OTHER'}">
+							<g:if test="${existingValues.'analyticCatConceptCode.bioConceptCode'=='OTHER'}">
 							<div id="analysis_cat_other_div" style="display: block;">
 							</g:if>
 							<g:else>
@@ -147,13 +147,13 @@
 						<td style="border: none;">
 							<g:select name="analysisMethodConceptCode.id"
 			    				      from="${wizard.analysisMethods}"
-			    				      value="${gs.analysisMethodConceptCode?.id}"
+			    				      value="${existingValues.'analysisMethodConceptCode.id'}"
 			         				  noSelection="['null':'select analysis method']"
 			         				  optionValue="codeName"
 			         				  optionKey="id"
 			         				  onchange="javascript: toggleOtherDiv(this, 'analysis_method_other_div');" />
 							<!--  toggle other div accordingly -->
-							<g:if test="${gs.analysisMethodConceptCode?.bioConceptCode=='OTHER'}">
+							<g:if test="${existingValues.'analysisMethodConceptCode.bioConceptCode'=='OTHER'}">
 							<div id="analysis_method_other_div" style="display: block;">
 							</g:if>
 							<g:else>
@@ -180,7 +180,7 @@
 			<td class="value">
 				<g:select name="pValueCutoffConceptCode.id"
     				      from="${wizard.pValCutoffs}"
-    				      value="${gs.pValueCutoffConceptCode?.id}"
+    				      value="${existingValues.'pValueCutoffConceptCode.id'}"
          				  noSelection="['null':'select p-value cutoff']"
          				  optionValue="codeName"
          				  optionKey="id" />
@@ -212,14 +212,14 @@
 					<tr>
 						<td style="width:25%; border: none;">File schema:</td>
 						<td style="border: none;">
-							<g:select name="fileSchema.id" from="${wizard.schemas}" value="${gs.fileSchema?.id}" optionValue="name" optionKey="id" /></td>
+							<g:select name="fileSchema.id" from="${wizard.schemas}" value="${existingValues.'fileSchema.id'}" optionValue="name" optionKey="id" /></td>
 					</tr>
 					<tr>
 						<td style="width:25%; border: none;">Fold change metric:</td>
 						<td style="border: none;">
 							<g:select name="foldChgMetricConceptCode.id"
 			    				      from="${wizard.foldChgMetrics}"
-			    				      value="${gs.foldChgMetricConceptCode?.id}"
+			    				      value="${existingValues.'foldChgMetricConceptCode.id'}"
 			         				  noSelection="['null':'select metric indicator']"
 			         				  optionValue="codeName"
 			         				  optionKey="id" />

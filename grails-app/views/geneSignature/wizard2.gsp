@@ -146,13 +146,13 @@
 			<td class="value">			
 				<g:select name="sourceConceptCode.id"
     				      from="${wizard.sources}"
-    				      value="${gs.sourceConceptCode?.id}"
+    				      value="${existingValues.'sourceConceptCode.id'}"
          				  noSelection="['null':'select source']"
          				  optionValue="codeName"
          				  optionKey="id"
          				  onChange="javascript: toggleOtherDiv(this, 'source_other_div');" />
 				<!--  toggle source other div accordingly -->
-				<g:if test="${gs.sourceConceptCode?.bioConceptCode=='OTHER'}">      				  	
+				<g:if test="${existingValues.'sourceConceptCode.bioConceptCode'=='OTHER'}">      				  	
 				<div id="source_other_div" style="display: block;">
 				</g:if>
 				<g:else>			
@@ -168,7 +168,7 @@
 			<td class="value">
 				<g:select name="ownerConceptCode.id"
     				      from="${wizard.owners}"
-    				      value="${gs.ownerConceptCode?.id}"
+    				      value="${existingValues.'ownerConceptCode.id'}"
          				  noSelection="['null':'select owner of the data']"
          				  optionValue="codeName"
          				  optionKey="id" />
@@ -203,7 +203,7 @@
 						<td style="border: none; width; 33%;">Compound:</td>
 						<td style="border: none;"><g:select name="treatmentCompound.id"
 								    					from="${wizard.compounds}"
-								    					value="${gs.treatmentCompound?.id}"
+								    					value="${existingValues.'treatmentCompound.id'}"
 								         				noSelection="['null':'select compound']"
 								         				optionValue="${{it?.getName()}}"
 								         				optionKey="id" />
@@ -227,14 +227,14 @@
 					<td style="border: none; width: 50%">					
 						<g:select name="speciesConceptCode.id"
     				      	from="${wizard.species}"
-    				      	value="${gs.speciesConceptCode?.id}"
+    				      	value="${existingValues.'speciesConceptCode.id'}"
          				  	noSelection="['null':'select relevant species']"
          				  	optionValue="codeName"
          				  	optionKey="id" 
          				  	onChange="javascript:speciesToggle(this);" />&nbsp;
 						<!--  toggle mouse div accordingly -->
-						<g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_1' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_2' || 
-																		gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">      				  	
+						<g:if test="${existingValues.'speciesConceptCode.bioConceptCode'=='MOUSE_1' || existingValues.'speciesConceptCode.bioConceptCode'=='MOUSE_2' || 
+																		existingValues.'speciesConceptCode.bioConceptCode'=='MOUSE_3' || existingValues.'speciesConceptCode.bioConceptCode'=='MOUSE_4'}">      				  	
 						<div id="mouse_source_div" style="display: inline;">For Mouse, enter source<g:requiredIndicator/>:						
 						</g:if>   
 						<g:else>
@@ -242,15 +242,14 @@
 						</g:else>														
 							<g:select name="speciesMouseSrcConceptCode.id"
 	    				      	from="${wizard.mouseSources}"
-	    				      	value="${gs.speciesMouseSrcConceptCode?.id}"
+	    				      	value="${existingValues.'speciesMouseSrcConceptCode.id'}"
 	    				      	noSelection="['null':'select source']"
 	         				  	optionValue="codeName"
 	         				  	optionKey="id" />
 						</div>
 					</td>
-				</tr>
 				<!--  toggle mouse other accordingly -->
-				<g:if test="${gs.speciesConceptCode?.bioConceptCode=='MOUSE_3' || gs.speciesConceptCode?.bioConceptCode=='MOUSE_4'}">      				  								
+				<g:if test="${existingValues.'speciesConceptCode.bioConceptCode'=='MOUSE_3' || existingValues.'speciesConceptCode.bioConceptCode'=='MOUSE_4'}">      				  								
 				<tr id="mouse_other_id" style="display: block;"><td">		
 				</g:if>
 				<g:else>		
@@ -269,7 +268,7 @@
 			<td class="value">			
 				<g:select name="techPlatform.id"
     				      from="${wizard.platforms}"
-    				      value="${gs.techPlatform?.id}"
+    				      value="${existingValues.'techPlatform.id'}"
          				  noSelection="['null':'select tech platform']"
          				  optionValue="${{it?.vendor + ' - ' + it?.array + ' [' + it?.accession + ']'}}"
          				  optionKey="id"
@@ -284,7 +283,7 @@
 			<td class="value">
 				<g:select name="tissueTypeConceptCode.id"
   				      	from="${wizard.tissueTypes}"
-  				      	value="${gs.tissueTypeConceptCode?.id}"
+  				      	value="${existingValues.'tissueTypeConceptCode.id'}"
        				  	noSelection="['null':'select relevant tissue']"
        				  	optionValue="codeName"
        				  	optionKey="id" />
@@ -298,14 +297,14 @@
 					<td style="border: none; width: 50%">					
 						<g:select name="experimentTypeConceptCode.id"
   				      		from="${wizard.expTypes}"
-  				      		value="${gs.experimentTypeConceptCode?.id}"
+  				      		value="${existingValues.'experimentTypeConceptCode.id'}"
        				  		noSelection="['null':'select experiment type']"
        				  		optionValue="codeName"
        				  		optionKey="id" 
        				  		onChange="javascript:toggleExpType(this);" />
        				  		
 						<!--  toggle established cell line accordingly -->
-						<g:if test="${gs.experimentTypeConceptCode?.bioConceptCode=='ESTABLISHED'}">      				  	
+						<g:if test="${existingValues.'experimentTypeConceptCode.bioConceptCode'=='ESTABLISHED'}">      				  	
 						<div id="exp_cell_line_div" style="display: inline;">Enter cell line<g:requiredIndicator/>:						
 						</g:if>   
 						<g:else>
@@ -313,14 +312,14 @@
 						</g:else>	  		
        				  		<!-- cell line lookup support -->
 							<g:hiddenField name="experimentTypeCellLine.id" value="${gs.experimentTypeCellLine? gs.experimentTypeCellLine.id : 'null'}" /> 							
-							<g:if test="${gs.experimentTypeCellLine!=null}"><g:textField name="experimentTypeCellLineText" value="${gs.experimentTypeCellLine?.cellLineName + ' ('+gs.experimentTypeCellLine?.attcNumber+')'}" readonly="readonly" size="80%" /> </g:if>
+							<g:if test="${gs.experimentTypeCellLine!=null}"><g:textField name="experimentTypeCellLineText" value="${existingValues.'experimentTypeCellLine.cellLineName' + ' ('+existingValues.'experimentTypeCellLine.attcNumber'+')'}" readonly="readonly" size="80%" /> </g:if>
 							<g:else><g:textField name="experimentTypeCellLineText" readonly="readonly" size="80%" /> </g:else>
        				  		&nbsp;<a onclick="javascript:showCellLineLookup();"><img alt="Cell Line Lookup" src="${resource(dir:'images',file:'filter.png')}" /></a>       				  		       				  		       				  		
 						</div>		
 					</td>
 				<tr>	
 				<!--  toggle in vivo model accordingly -->
-				<g:if test="${gs.experimentTypeConceptCode?.bioConceptCode=='IN_VIVO_ANIMAL' || gs.experimentTypeConceptCode?.bioConceptCode=='IN_VIVO_HUMAN'}">      				  								
+				<g:if test="${existingValues.'experimentTypeConceptCode.bioConceptCode'=='IN_VIVO_ANIMAL' || existingValues.'experimentTypeConceptCode.bioConceptCode'=='IN_VIVO_HUMAN'}">      				  								
 				<tr id="in_vivo_id" style="display: inline;">
 				</g:if>
 				<g:else>	
