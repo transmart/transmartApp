@@ -284,7 +284,8 @@ function checkJobStatus(jobName)	{
 							// < 120 seconds, just popup the heatmap.
 							// >= 120 seconds then popup a message to indicate that the heatmap is finished.
 							if (secCount < 120) {  
-								runVisualizerFromSpan(viewerURL, altViewerURL);	
+								//runVisualizerFromSpan(viewerURL, altViewerURL);
+                                window.location.href = pageInfo.basePath+"/dataExport/downloadFile?jobname=" + jobName;
 							} else	{
 								Ext.Msg.buttonText.yes = 'View Now';
 								Ext.Msg.buttonText.no = 'View Later';
@@ -294,7 +295,8 @@ function checkJobStatus(jobName)	{
 									buttons: Ext.Msg.YESNO,	
 									fn: function(btn) {
 										if (btn == 'yes')	{
-											runVisualizerFromSpan(viewerURL, altViewerURL);
+											//runVisualizerFromSpan(viewerURL, altViewerURL);
+                                            window.location.href = pageInfo.basePath+"/dataExport/downloadFile?jobname=" + jobName;
 										}										
 									},
 									icon: Ext.MessageBox.QUESTION
