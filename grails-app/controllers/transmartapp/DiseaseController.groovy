@@ -20,9 +20,9 @@
 
 package transmartapp
 
-import org.transmart.biomart.Disease;
-import org.transmart.biomart.Observation;
 import grails.converters.JSON
+import org.transmart.biomart.Disease
+import org.transmart.biomart.Observation
 
 class DiseaseController {
 

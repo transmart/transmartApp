@@ -5,6 +5,8 @@ import org.transmart.biomart.BioDataExternalCode
 import org.transmart.biomart.ConceptCode
 import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.GeneSignature
+import org.transmart.searchapp.SearchKeyword
+import org.transmart.searchapp.SearchKeywordTerm
 
 /*************************************************************************
  * tranSMART - translational medicine data mart
@@ -24,9 +26,6 @@ import org.transmart.searchapp.GeneSignature
  *
  *
  ******************************************************************/
-import org.transmart.searchapp.SearchKeyword
-import org.transmart.searchapp.SearchKeywordTerm
-
 /**
  * @author $Author: mmcduffie $
  * $Id: SearchKeywordService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

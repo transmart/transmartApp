@@ -20,15 +20,13 @@
 
 package com.recomdata.dataexport.dao
 
+import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.apache.commons.logging.LogFactory
 import org.springframework.context.ApplicationContext
 import org.transmart.biomart.ClinicalTrial
 import org.transmart.biomart.Compound
 import org.transmart.biomart.Experiment
 import org.transmart.biomart.Taxonomy
-
-import com.recomdata.transmart.data.export.util.FileWriterUtil
-
 
 /**
  * This class has been replaced with MetadataService.

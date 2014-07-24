@@ -21,7 +21,6 @@
 
 package com.recomdata.genepattern
 
-import com.recomdata.genepattern.JobStatus;;
 import org.json.JSONObject;
 
 class WorkflowStatus {

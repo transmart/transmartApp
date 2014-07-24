@@ -20,23 +20,16 @@
 
 package com.recomdata.gex
 
-import i2b2.SampleInfo
-
-import java.io.File
-import java.util.HashMap
-
-import org.apache.commons.lang.math.NumberUtils
+import com.recomdata.transmart.data.export.util.FileWriterUtil
+import grails.util.Holders
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.LogFactory
-import org.apache.log4j.Logger
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
 import org.springframework.context.ApplicationContext
-import grails.util.Holders
 
-import com.recomdata.transmart.data.export.util.FileWriterUtil
+import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 
-import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess;
 /**
  * This class has been replaced with GeneExpressionDataService
  * @author SMunikuntla

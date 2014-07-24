@@ -1,5 +1,4 @@
 import grails.util.Environment
-import org.codehaus.groovy.grails.commons.GrailsApplication
 
 /*************************************************************************
  * tranSMART - translational medicine data mart
@@ -19,9 +18,6 @@ import org.codehaus.groovy.grails.commons.GrailsApplication
  * 
  *
  ******************************************************************/
-  
-import grails.util.Environment
-
 def console
 if (!Environment.isWarDeployed() && Environment.isWithinShell()) {
     console = grails.build.logging.GrailsConsole.instance

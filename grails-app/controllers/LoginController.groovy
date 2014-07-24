@@ -33,8 +33,6 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.transmart.searchapp.AccessLog
 
-import javax.servlet.http.HttpServletResponse
-
 /**
  * Login Controller
  */

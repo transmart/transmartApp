@@ -19,9 +19,8 @@
 
 
 import com.recomdata.transmart.domain.searchapp.Subset
-import org.transmart.searchapp.AuthUser
 import grails.converters.JSON
-
+import org.transmart.searchapp.AuthUser
 
 class DatasetExplorerController {
     def springSecurityService

@@ -20,13 +20,8 @@
 
 package com.recomdata.util
 
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Set;
-
-import oracle.net.aso.e;
-
-import groovy.sql.Sql;
+import groovy.sql.Sql
+import oracle.net.aso.e
 
 /**
 Procedure of SNP Annotation Data Loading

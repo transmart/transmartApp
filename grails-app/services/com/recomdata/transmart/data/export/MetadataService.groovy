@@ -20,11 +20,11 @@
 
 package com.recomdata.transmart.data.export
 
+import com.recomdata.transmart.data.export.util.FileWriterUtil
 import org.transmart.biomart.ClinicalTrial
 import org.transmart.biomart.Compound
 import org.transmart.biomart.Experiment
 import org.transmart.biomart.Taxonomy
-import com.recomdata.transmart.data.export.util.FileWriterUtil
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 

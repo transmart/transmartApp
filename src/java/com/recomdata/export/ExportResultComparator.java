@@ -20,7 +20,7 @@
 
 package com.recomdata.export;
 
-import java.util.*;
+import java.util.Comparator;
 
 public class ExportResultComparator implements Comparator {
 	public int compare(Object obj1, Object obj2) {

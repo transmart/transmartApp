@@ -1,4 +1,8 @@
 package org.transmart
+
+import com.recomdata.export.GenePatternFiles
+import i2b2.SampleInfo
+
 /*************************************************************************
  * tranSMART - translational medicine data mart
  * 
@@ -17,26 +21,12 @@ package org.transmart
  * 
  *
  ******************************************************************/
-  
-
-import com.recomdata.export.GenePatternFiles
-
-import grails.converters.JSON
-import i2b2.SampleInfo;
+import org.springframework.context.ApplicationContext
 
 import java.sql.ResultSet
 import java.sql.Statement
-import java.util.List;
-import java.util.Map;
-import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.web.json.JSONArray
-import org.json.JSONObject
-import org.springframework.context.ApplicationContext
 
-import com.recomdata.export.GenePatternFiles;
-import groovy.util.logging.*
-
-public class ExperimentData 
+public class ExperimentData
 {
 
 	ApplicationContext ctx = org.codehaus.groovy.grails.web.context.ServletContextHolder.getServletContext().getAttribute(org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes.APPLICATION_CONTEXT)

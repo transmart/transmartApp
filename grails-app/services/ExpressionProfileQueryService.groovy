@@ -18,9 +18,6 @@
  ******************************************************************/
 
 
-
-import org.transmart.biomart.BioMarker
-import org.transmart.biomart.Disease
 import com.recomdata.search.query.AssayDataStatsQuery
 import com.recomdata.search.query.AssayStatsExpMarkerQuery
 import com.recomdata.search.query.Query
@@ -28,6 +25,8 @@ import grails.util.Holders
 import org.transmart.SearchFilter
 import org.transmart.biomart.BioAssayDataStatistics
 import org.transmart.biomart.BioAssayStatsExpMarker
+import org.transmart.biomart.BioMarker
+import org.transmart.biomart.Disease
 
 /**
  * $Id: ExpressionProfileQueryService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

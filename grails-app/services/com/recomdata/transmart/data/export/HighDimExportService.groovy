@@ -5,10 +5,8 @@ import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
-import org.transmartproject.core.dataquery.highdim.projections.AllDataProjection
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.export.HighDimExporter
-import org.transmartproject.export.TabSeparatedExporter
 
 class HighDimExportService {
 

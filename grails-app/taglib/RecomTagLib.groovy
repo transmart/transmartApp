@@ -1,11 +1,8 @@
-import org.transmart.biomart.ContentRepository 
-import org.codehaus.groovy.grails.plugins.GrailsPluginManager
 import org.codehaus.groovy.grails.plugins.PluginManagerHolder
-import java.io.File
+import org.transmart.biomart.ContentRepository
+
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import com.recomdata.search.DocumentHit
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class RecomTagLib {
 def diseaseService

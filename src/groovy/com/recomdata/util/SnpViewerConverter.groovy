@@ -21,8 +21,6 @@
 
 package com.recomdata.util
 
-import java.io.File;
-
 class SnpViewerConverter {
 	
 	private String gtcFileName = null;

@@ -18,13 +18,12 @@
  ******************************************************************/
 
 
-
-import org.transmart.biomart.BioAssayAnalysisData
-import org.transmart.biomart.BioAssayAnalysis
-import org.transmart.biomart.Experiment
 import com.recomdata.util.ExcelGenerator
 import com.recomdata.util.ExcelSheet
 import org.transmart.SearchResult
+import org.transmart.biomart.BioAssayAnalysis
+import org.transmart.biomart.BioAssayAnalysisData
+import org.transmart.biomart.Experiment
 
 /**
  * $Id: AnalysisDataExportService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $

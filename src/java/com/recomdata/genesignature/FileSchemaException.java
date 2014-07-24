@@ -20,8 +20,6 @@
 
 package com.recomdata.genesignature;
 
-import java.lang.RuntimeException;
-import java.lang.Throwable;
 import java.util.Collection;
 import java.util.Iterator;
 

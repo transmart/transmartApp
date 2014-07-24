@@ -1,5 +1,4 @@
-import com.recomdata.transmart.domain.searchapp.Report;
-import com.recomdata.transmart.domain.searchapp.ReportItem;
+import com.recomdata.transmart.domain.searchapp.Report
 import com.recomdata.transmart.domain.searchapp.Subset
 
 class WorkspaceController {

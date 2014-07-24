@@ -16,12 +16,12 @@
  *
  ******************************************************************/
 
+
 import grails.plugin.springsecurity.SecurityFilterPosition
 import grails.plugin.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.exceptions.GrailsConfigurationException
 import org.codehaus.groovy.grails.plugins.GrailsPluginUtils
 import org.slf4j.LoggerFactory
-import org.transmart.marshallers.MarshallerRegistrarService
 
 class BootStrap {
 

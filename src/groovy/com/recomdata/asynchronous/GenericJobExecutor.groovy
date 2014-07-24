@@ -20,22 +20,20 @@
 
 package com.recomdata.asynchronous
 
+import com.recomdata.transmart.data.export.exception.DataNotFoundException
+import com.recomdata.transmart.data.export.util.FTPUtil
+import com.recomdata.transmart.data.export.util.ZipUtil
 import grails.util.Holders
-import org.transmart.authorization.CurrentUserBeanProxyFactory
-import org.transmart.spring.QuartzSpringScope
-
-import java.lang.reflect.UndeclaredThrowableException
-
 import org.apache.commons.lang.StringUtils
 import org.quartz.Job
 import org.quartz.JobExecutionContext
 import org.rosuda.REngine.REXP
-import org.rosuda.REngine.Rserve.*
+import org.rosuda.REngine.Rserve.RConnection
+import org.rosuda.REngine.Rserve.RserveException
+import org.transmart.authorization.CurrentUserBeanProxyFactory
+import org.transmart.spring.QuartzSpringScope
 
-import com.recomdata.transmart.data.export.exception.DataNotFoundException
-import com.recomdata.transmart.data.export.util.FTPUtil
-import com.recomdata.transmart.data.export.util.ZipUtil
-
+import java.lang.reflect.UndeclaredThrowableException
 
 /**
  * This class will encompass the job scheduled by Quartz. When the execute method is called we will travel down a list of predefined methods to prep data

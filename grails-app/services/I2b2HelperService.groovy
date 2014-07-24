@@ -18,23 +18,11 @@
  ******************************************************************/
 
 
-
-
-
 import com.recomdata.db.DBHelper
 import com.recomdata.export.*
 import grails.util.Holders
 import groovy.sql.Sql
-import i2b2.Concept
-import i2b2.GeneWithSnp
-import i2b2.SampleInfo
-import i2b2.SnpDataByProbe
-import i2b2.SnpDataset
-import i2b2.SnpDatasetByPatient
-import i2b2.SnpDatasetListByProbe
-import i2b2.SnpInfo
-import i2b2.SnpProbeSortedDef
-import i2b2.StringLineReader
+import i2b2.*
 import org.transmart.CohortInformation
 import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.AuthUserSecureAccess

@@ -1,4 +1,6 @@
-@artifact.package@import grails.test.AbstractCliTestCase
+@artifact.package
+@import grails.test.AbstractCliTestCase
+@import grails.test.AbstractCliTestCase
 
 class @artifact.name@ extends AbstractCliTestCase {
     protected void setUp() {

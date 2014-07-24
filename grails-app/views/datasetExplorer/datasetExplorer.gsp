@@ -77,6 +77,8 @@
     <link rel="stylesheet" type="text/css" href="${resource(dir:'css/jquery/skin', file:'ui.dynatree.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
 
+    <!-- Adding these validation functions to get the Forest Plot to work. These might be able to be blended into the javascript object that controls the advanced workflow validation. -->
+    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'workflowValidationFunctions.js')}"></script>
 
     <r:layoutResources />
     <%-- XXX: Use template --%>

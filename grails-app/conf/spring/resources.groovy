@@ -18,8 +18,8 @@
  ******************************************************************/
 
 
-import org.apache.log4j.Logger
 import com.google.common.collect.ImmutableMap
+import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.spring.DefaultBeanConfiguration
 import org.springframework.beans.factory.config.CustomScopeConfigurer
 import org.springframework.security.core.session.SessionRegistryImpl
@@ -34,9 +34,9 @@ import org.transmart.authorization.CurrentUserBeanFactoryBean
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import org.transmart.authorization.QueriesResourceAuthorizationDecorator
 import org.transmart.marshallers.MarshallerRegistrarService
-import org.transmartproject.export.HighDimExporter
 import org.transmart.spring.QuartzSpringScope
 import org.transmartproject.core.users.User
+import org.transmartproject.export.HighDimExporter
 
 def logger = Logger.getLogger('com.recomdata.conf.resources')
 
