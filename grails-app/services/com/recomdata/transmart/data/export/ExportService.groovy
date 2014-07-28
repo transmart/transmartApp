@@ -98,18 +98,30 @@ class ExportService {
             // The third part is the export format. However,
             // for compatibility reasons the format is prepended
             // with a dot. That is not necessary anymore
-            def format = parts[2][1..-1]
-
+            def format
+            if (it.size()>4) {
+                format =  parts[parts.length - 2][1..-1]
+            }else{
+                format = parts[2][1..-1]
+            }
+            
+            def dataType
+            if (it.size()>4) {
+                dataType = (Arrays.copyOfRange(parts, 1, parts.length - 2)).join("_")
+            }else{
+                dataType = parts[1]
+            }
+            
             if (!formats.containsKey(parts[0])) {
                 formats[parts[0]] = [:]
             }
 
-            if (!formats[parts[0]].containsKey(parts[1])) {
-                formats[parts[0]][parts[1]] = [:]
+            if (!formats[parts[0]].containsKey(dataType)) {
+                formats[parts[0]][dataType] = [:]
             }
 
-            if (!formats[parts[0]][parts[1]].containsKey(format)) {
-                formats[parts[0]][parts[1]][format] = []
+            if (!formats[parts[0]][dataType].containsKey(format)) {
+                formats[parts[0]][dataType][format] = []
             }
         }
 
