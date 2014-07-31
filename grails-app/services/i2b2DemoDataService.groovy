@@ -5,15 +5,16 @@ import org.transmart.searchapp.AuthUser
 class i2b2DemoDataService {
     def dataSource;
     def i2b2HelperService;
+    def databasePortabilityService
 
     //Generate a new result instance ID using the sequence and return it.
     def generateResultInstanceId() {
         def sqlObject = new Sql(dataSource)
 
         //TODO:All of this needs to be converted to use GORM so that we can run this database agnostic...
-        def newInstanceId = sqlObject.firstRow("SELECT nextval('QT_SQ_QRI_QRIID') NEXTVAL")
+        def newInstanceId = sqlObject.firstRow(databasePortabilityService.getNextSequenceValueSql('i2b2demodata', 'QT_SQ_QRI_QRIID'))
 
-        return newInstanceId.NEXTVAL;
+        return newInstanceId[0];
     }
 
     //Generate records in QT_QUERY_MASTER, QT_QUERY_INSTANCE, QT_QUERY_RESULT_INSTANCE so we can retrieve information about this query later.
@@ -21,19 +22,19 @@ class i2b2DemoDataService {
         //This is the object we use for our queries.
         def sqlObject = new Sql(dataSource)
 
-        def queryMasterId = sqlObject.firstRow("SELECT nextval('QT_SQ_QM_QMID') NEXTVAL")
+        def queryMasterId = sqlObject.firstRow(databasePortabilityService.getNextSequenceValueSql('i2b2demodata', 'QT_SQ_QM_QMID'))
 
         //Insert a record in the QT_QUERY_MASTER table.
-        sqlObject.execute("INSERT INTO QT_QUERY_MASTER (QUERY_MASTER_ID, NAME, USER_ID, GROUP_ID, CREATE_DATE, REQUEST_XML, DELETE_FLAG) VALUES (?, ?, 'DEMO','DEMO', now(), ?, 'N')", [queryMasterId.NEXTVAL, 'Across Trial Query', requestXML])
+        sqlObject.execute("INSERT INTO QT_QUERY_MASTER (QUERY_MASTER_ID, NAME, USER_ID, GROUP_ID, CREATE_DATE, REQUEST_XML, DELETE_FLAG) VALUES (?, ?, 'DEMO','DEMO', ${databasePortabilityService.currentDateTimeFunc}, ?, 'N')", [queryMasterId[0], 'Across Trial Query', requestXML])
 
         //Generate the query instance id.
-        def queryInstanceId = sqlObject.firstRow("SELECT nextval('QT_SQ_QI_QIID') NEXTVAL")
+        def queryInstanceId = sqlObject.firstRow(databasePortabilityService.getNextSequenceValueSql('i2b2demodata', 'QT_SQ_QI_QIID'))
 
         //Insert a record in the QT_QUERY_INSTANCE table.
-        sqlObject.execute("INSERT INTO QT_QUERY_INSTANCE (QUERY_INSTANCE_ID, QUERY_MASTER_ID, USER_ID, GROUP_ID, START_DATE) VALUES (?,?,'DEMO','DEMO', now())", [queryInstanceId.NEXTVAL, queryMasterId.NEXTVAL])
+        sqlObject.execute("INSERT INTO QT_QUERY_INSTANCE (QUERY_INSTANCE_ID, QUERY_MASTER_ID, USER_ID, GROUP_ID, START_DATE) VALUES (?,?,'DEMO','DEMO', ${databasePortabilityService.currentDateTimeFunc})", [queryInstanceId[0], queryMasterId[0]])
 
         //Insert a record in the QT_QUERY_RESULT_INSTANCE table.
-        sqlObject.execute("INSERT INTO QT_QUERY_RESULT_INSTANCE (RESULT_INSTANCE_ID, QUERY_INSTANCE_ID, RESULT_TYPE_ID, START_DATE, STATUS_TYPE_ID) VALUES (?,?,1,now(),3)", [resultInstanceId, queryInstanceId.NEXTVAL])
+        sqlObject.execute("INSERT INTO QT_QUERY_RESULT_INSTANCE (RESULT_INSTANCE_ID, QUERY_INSTANCE_ID, RESULT_TYPE_ID, START_DATE, STATUS_TYPE_ID) VALUES (?,?,1,${databasePortabilityService.currentDateTimeFunc},3)", [resultInstanceId, queryInstanceId[0]])
 
     }
 
