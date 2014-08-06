@@ -610,7 +610,7 @@ class SolrFacetService {
 
         String solrScheme = Holders.config.com.rwg.solr.scheme
         String solrHost = Holders.config.com.rwg.solr.host
-        String solrPath = Holders.config.com.rwg.solr.path
+        String solrPath = Holders.config.com.rwg.solr.browse.path
         String solrRequestUrl = new URI(solrScheme, solrHost, solrPath, "", "").toURL()
 
         return solrRequestUrl
