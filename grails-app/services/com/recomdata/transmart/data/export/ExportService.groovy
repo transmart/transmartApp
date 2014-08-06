@@ -147,16 +147,10 @@ class ExportService {
 			}
 			
 			if (checkboxItemArray.size() > 1) {
-                String currentDataType
-                if (checkboxItemArray.size()>4) {
-                    //data type contains a underscore, need to join items corresponding to data type
-                    currentDataType = (Arrays.copyOfRange(checkboxItemArray, 1, checkboxItemArray.length - 2)).join("_")
-                }else{
-    				//Second item is the data type.
-    				currentDataType = checkboxItemArray[1].trim()
-                }
+				//Second item is the data type.
+				String currentDataType = checkboxItemArray[1].trim()
 				if (checkboxItemArray.size()>3) {
-					def jobDataType = currentDataType+checkboxItemArray[checkboxItemArray.length - 2].trim()
+					def jobDataType = currentDataType+checkboxItemArray[2].trim()
 					if (!subsetSelectedFilesMap.get(currentSubset)?.contains(jobDataType)) {
 						subsetSelectedFilesMap.get(currentSubset).push(jobDataType)
 					}
