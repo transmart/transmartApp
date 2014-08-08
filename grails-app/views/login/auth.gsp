@@ -20,7 +20,6 @@
 <head>
 <meta name='layout' content='main' />
 <title>${grailsApplication.config.com.recomdata.appTitle}</title>
-
 <style type='text/css' media='screen'>
 #login {
         margin:15px 0px;
@@ -64,6 +63,7 @@
 </style>
 </head>
 <body>
+<g:javascript src="tracking/track.js" />
 
 <div align="center" style="clear:both; margin-left:auto; margin-right:auto; margin-top:20px;text-align:center">
 <table style="width:auto; border:0px; text-align:center; margin:auto;" align="center">

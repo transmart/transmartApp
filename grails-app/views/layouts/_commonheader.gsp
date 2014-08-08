@@ -16,6 +16,7 @@
   
  
 --%>
+<g:javascript src="tracking/track.js" />
 
 <div id="logocutout">
 	<g:if test="${'rwg' == app}">
