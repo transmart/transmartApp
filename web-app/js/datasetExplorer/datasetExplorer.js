@@ -1602,7 +1602,7 @@ function setupOntTree(id_in, title_in) {
     onWindowResize();
 }
 
-function createTree(includeExcludeFlag, ontresponse) {
+function createTree(ontresponse) {
     // shorthand
     var Tree = Ext.tree;
     var ontRoots = [];
@@ -1630,8 +1630,6 @@ function createTree(includeExcludeFlag, ontresponse) {
         var fullname = key.substr(key.indexOf("\\", 2), key.length);
         var access = GLOBAL.InitialSecurity[fullname];
 
-		if(includeExcludeFlag==="include" && name!=="Across Trials") continue;
-		if(includeExcludeFlag==="exclude" && name==="Across Trials") continue;
 		// set the root node
 		var autoExpand=false;
 
@@ -1706,7 +1704,7 @@ function getSubCategories(ontresponse) {
 
 	var showFn;
 	
-    var ontRoots = createTree('exclude', ontresponse);
+    var ontRoots = createTree(ontresponse);
 	
     var toolbar = new Ext.Toolbar([
 		{

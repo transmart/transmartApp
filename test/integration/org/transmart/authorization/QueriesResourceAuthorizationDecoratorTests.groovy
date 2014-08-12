@@ -26,7 +26,7 @@ import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.
 @TestMixin(RuleBasedIntegrationTestMixin)
 class QueriesResourceAuthorizationDecoratorTests {
 
-    AccessLevelTestData accessLevelTestData = new AccessLevelTestData()
+    AccessLevelTestData accessLevelTestData = AccessLevelTestData.createDefault()
 
     SpringSecurityService springSecurityService
 

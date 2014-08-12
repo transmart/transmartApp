@@ -2022,7 +2022,7 @@ function getTreeNodeFromJsonNode(concept)
     visualattributes	= concept.visualAttributes;
 
     comment				= ''; //XXX
-    normalunits			= concept.metadata
+    normalunits			= concept.metadata && concept.metadata.unitValues
                               ? concept.metadata.unitValues.normalUnits
                               : '';
     oktousevalues		=	concept.metadata

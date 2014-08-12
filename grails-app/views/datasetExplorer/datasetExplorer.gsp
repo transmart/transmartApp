@@ -151,7 +151,6 @@
             hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
 	        metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
 	        metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}',
-            codeType: 'Concept',
             AnalysisHasBeenRun: false,
             ResultSetRegionParams: {},
             currentReportCodes: [],
