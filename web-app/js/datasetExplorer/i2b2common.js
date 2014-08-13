@@ -211,75 +211,6 @@ function createPanelItemNew(panel, concept)
 	return li;
 }
 
-
-//took this 3 params method(createPanelItemNew) from FDA code and changed the name to 'createPanelItemNewWithShortName' to overcome method overloading issue in javascript
-function createPanelItemNewWithShortName(panel, concept, shortNameDepth)
-{
-    var li=document.createElement('div'); //was li
-//convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
-    li.setAttribute('conceptname',concept.name);
-    li.setAttribute('conceptid', concept.key);
-    li.setAttribute('conceptlevel',concept.level);
-    li.setAttribute('concepttooltip', concept.tooltip);
-    li.setAttribute('concepttablename',concept.tablename);
-    li.setAttribute('conceptdimcode',concept.dimcode);
-    li.setAttribute('conceptcomment', concept.comment);
-    li.setAttribute('normalunits',concept.normalunits);
-    li.setAttribute('setvaluemode',concept.value.mode);
-    li.setAttribute('setvalueoperator',concept.value.operator);
-    li.setAttribute('setvaluehighlowselect',concept.value.highlowselect);
-    li.setAttribute('setvaluehighvalue',concept.value.highvalue);
-    li.setAttribute('setvaluelowvalue',concept.value.lowvalue);
-    li.setAttribute('setvalueunits',concept.value.units);
-    li.setAttribute('oktousevalues',concept.oktousevalues);
-    li.setAttribute('setnodetype',concept.nodeType);
-    li.setAttribute('inOutCode', typeof concept.inOutCode !== 'undefined' ? concept.inOutCode : '');
-    li.setAttribute('timingLevel', typeof concept.timingLevel !== 'undefined' ? concept.timingLevel : '');
-    li.className="conceptUnselected";
-
-//Create a shortname
-    var splits=concept.tooltip.split("\\");
-    var shortname="...";
-
-//Use default shortName depth of 2 if not specified
-    if(shortNameDepth==null){
-        shortNameDepth=2;
-    }
-
-    if(splits.length>1)
-    {
-        for(var i = shortNameDepth; i>0 ; i--){
-            shortname += "\\"+splits[splits.length-i];
-        }
-    }
-    else shortname=splits[splits.length-1];
-    li.setAttribute('conceptshortname',shortname);
-
-    //Create a setvalue description
-    var valuetext="";
-    if(typeof(concept.value.mode)!="undefined")
-    {
-        valuetext=getSetValueText(concept.value.mode, concept.value.operator, concept.value.highlowselect, concept.value.highvalue, concept.value.lowvalue, concept.value.units);
-        li.setAttribute('conceptsetvaluetext',valuetext);
-    }
-    else
-    {
-        li.setAttribute('conceptsetvaluetext','');
-    }
-    //Create the node
-    var text=document.createTextNode(shortname+" "+valuetext); //used to be name
-    li.appendChild(text);
-    panel.appendChild(li);
-    Ext.get(li).addListener('click',conceptClick);
-    Ext.get(li).addListener('contextmenu',conceptRightClick);
-    new Ext.ToolTip({ target:li, html:concept.key, dismissDelay:10000 });
-    li.concept=concept;
-    //return the node
-    var subset=getSubsetFromPanel(panel);
-    invalidateSubset(subset);
-    return li;
-}
-
 function getSubsetFromPanel(panel)
 {
     return panel.id.substr(16,1);
@@ -459,7 +390,7 @@ function clearGroup(subset, panel)
 		qc.dom.removeChild(child);
 		}	
 	//reset the class
-	qc.dom.className="queryGroupInclude jstree-drop";
+	qc.dom.className="queryGroupInclude";
 	invalidateSubset(subset);
 }
 
@@ -467,14 +398,14 @@ function excludeGroup(btn,subset, panel)
 {
 var el=Ext.get("queryCriteriaDiv"+subset+"_"+panel);
 var button=Ext.get("btnExcludeGroup"+subset+"_"+panel).dom;
-if(el.dom.className=="queryGroupInclude jstree-drop")
+if(el.dom.className=="queryGroupInclude")
 	{
-	el.dom.className="queryGroupExclude jstree-drop";
+	el.dom.className="queryGroupExclude";
 	button.firstChild.nodeValue="Include";
 	}
 	else
 	{
-	el.dom.className="queryGroupInclude jstree-drop";
+	el.dom.className="queryGroupInclude";
 	button.firstChild.nodeValue="Exclude";
 	}
 	invalidateSubset(subset);
