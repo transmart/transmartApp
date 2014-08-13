@@ -63,9 +63,6 @@
     <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/Galaxy', file:'galaxyExport.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js/jsTree', file:'jquery.jstree.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'acrossTrial.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file: 'jsTreeFunctions.js')}"></script>
     <script type="text/javascript" src="//yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script>
 
     <tmpl:/RWG/urls />
@@ -151,7 +148,6 @@
             hideAcrossTrialsPanel:'${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
 	        metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
 	        metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}',
-            codeType: 'Concept',
             AnalysisHasBeenRun: false,
             ResultSetRegionParams: {},
             currentReportCodes: [],
