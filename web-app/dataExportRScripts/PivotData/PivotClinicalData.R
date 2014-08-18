@@ -44,8 +44,6 @@ input.dataFile, snpDataExists, multipleStudies, study
         }
     }
     # == end for ABRISK ==
-
-	dataFile <- data.frame(read.delim(input.dataFile))
 	
 	#Split the data by the CONCEPT_PATH.
 	splitData <- split(dataFile,dataFile$CONCEPT.PATH)
