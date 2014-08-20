@@ -11,6 +11,7 @@ import org.springframework.security.saml.SAMLCredential
 import org.springframework.security.saml.userdetails.SAMLUserDetailsService
 import org.springframework.transaction.TransactionStatus
 import org.transmart.searchapp.AuthUser
+import org.opensaml.xml.XMLObject
 
 // not in grails-app/services to avoid being automatically instantiated
 public class FederatedUserDetailsService implements SAMLUserDetailsService {
@@ -53,7 +54,12 @@ public class FederatedUserDetailsService implements SAMLUserDetailsService {
         }
 
         def getAttr = {
-            credential.getAttributeByName(it)?.attributeValues?.getAt(0)?.value
+	    XMLObject attrValue = credential.getAttributeByName(it).getAttributeValues().getAt(0)
+	    if(attrValue.metaClass.hasProperty(attrValue, "textContent")) {
+		attrValue.getTextContent()
+	    } else {
+		credential.getAttributeByName(it)?.attributeValues?.getAt(0)?.value
+	    }
         }
         def attributes = grailsApplication.config.org.transmart.security.saml.attribute
 
