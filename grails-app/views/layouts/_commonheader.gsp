@@ -44,7 +44,7 @@
     <div id="utilities-dropdown" style="display:none;">
         <ol>
             <li><a href="javascript:popupWindow('${grailsApplication.config.com.recomdata.adminHelpURL}','transmart_help');">Help</a></li>
-            <li><a href="mailto:tranSMART@its.jnj.com">Contact Us</a></li>
+            <li><a href="mailto:${grailsApplication.config.com.recomdata.contactUs}">Contact Us</a></li>
             <li><a href="${createLink([controller:'login', action: 'forceAuth'])}">Login</a></li>
             <li><a href="${createLink([controller:'logout'])}">Logout</a></li>
         </ol>
