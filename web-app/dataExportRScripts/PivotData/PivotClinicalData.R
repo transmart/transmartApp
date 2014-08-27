@@ -33,20 +33,8 @@ input.dataFile, snpDataExists, multipleStudies, study
   
 	#Read the input file.
 	# === for ABIRISK === WG, SE & VS @ eTRIKS_WP4_UL
-    #dataFile <- data.frame(read.delim(input.dataFile))
-    dataFile <- read.delim(input.dataFile,colClasses = "character")
-    dataFile <- data.frame(apply(dataFile,2,function(x)gsub('\\s+$', '',x)),stringsAsFactors=F)
-    for (i in 1:nrow(dataFile)){
-        lastCP<-tail(unlist(strsplit(dataFile$CONCEPT.PATH[i],split="\\\\")),1)                  # last string in CONCEPT.PATH
-        lastCPfull<-tail(unlist(strsplit(dataFile$CONCEPT_PATH_FULL[i],split="\\\\")),1)         # last string in CONCEPT_PATH_FULL
-        if (!(length(grep("^Vt\\d+",lastCP))==length(grep("^Vt\\d+",lastCPfull)))){              # if CONCEPT_PATH_FULL has visit info but not CONCEPT.PATH
-            dataFile$CONCEPT.PATH[i]<-gsub(" ","",paste(dataFile$CONCEPT.PATH[i],lastCPfull))    # then add visit info to CONCEPT.PATH
-        }
-    }
-    # == end for ABRISK ==
-
 	dataFile <- data.frame(read.delim(input.dataFile))
-	
+
 	#Split the data by the CONCEPT_PATH.
 	splitData <- split(dataFile,dataFile$CONCEPT.PATH)
   foo <- unique(dataFile[c("PATIENT.ID")])

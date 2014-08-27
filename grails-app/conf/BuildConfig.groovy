@@ -35,7 +35,8 @@ grails.project.dependency.resolution = {
         runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
         runtime 'com.oracle:ojdbc7:12.1.0.1'
 
-        compile 'org.transmartproject:transmart-core-api:1.0-LH-SNAPSHOT'
+        //// already included in transmart-core
+        //compile 'org.transmartproject:transmart-core-api:1.2.1-SNAPSHOT'
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
         compile "org.apache.lucene:lucene-core:2.4.0"
@@ -80,7 +81,6 @@ grails.project.dependency.resolution = {
         compile ':build-info:1.2.5'
         compile ':hibernate:3.6.10.7'
         compile ':quartz:1.0-RC2'
-        compile ':rdc-rmodules:0.4-LH-SNAPSHOT'
         // Not compatible with spring security 3.2 yet
         //compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:2.0-RC2'
@@ -89,18 +89,26 @@ grails.project.dependency.resolution = {
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
-        runtime ':transmart-core:1.1-LH-SNAPSHOT'
+
+        compile ':rdc-rmodules:1.2.1-SNAPSHOT'
+        runtime ':transmart-core:1.2.1-SNAPSHOT'
         runtime ':resources:1.2.1'
-        compile ':transmart-legacy-db:0.3-ORACLE-SNAPSHOT'
-        compile ':folder-management:1.2-SNAPSHOT'
-        compile ':search-domain:1.0-SNAPSHOT'
-        compile ':biomart-domain:1.1-SNAPSHOT'
-        compile ':transmart-java:1.0-SNAPSHOT'
-        compile ':transmart-gwas:1.1-SNAPSHOT'
-        runtime ':dalliance-plugin:0.2'
+        compile ':transmart-gwas:1.2.1-SNAPSHOT'
+        //// already included in transmart-gwas
+        //compile ':transmart-legacy-db:1.2.1-SNAPSHOT'
+        //// already included in transmart-gwas
+        //compile ':folder-management:1.2.1-SNAPSHOT'
+        //// already included in transmart-gwas, folder-management
+        //compile ':search-domain:1.2.1-SNAPSHOT'
+        //// already included in search-domain, transmart-gwas,
+        //                       folder-management
+        //compile ':biomart-domain:1.1-SNAPSHOT'
+        //// already included in biomart-domain
+        //compile ':transmart-java:1.0-SNAPSHOT'
+        runtime ':dalliance-plugin:0.2-SNAPSHOT'
         runtime ':transmart-mydas:0.1-SNAPSHOT'
         runtime ':transmart-rest-api:0.1-SNAPSHOT'
-        //runtime ':blend4j-plugin:0.1-SNAPSHOT'
+        //runtime ':blend4j-plugin:1.2.1-SNAPSHOT'
 
         // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"

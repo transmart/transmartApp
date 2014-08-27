@@ -1050,7 +1050,7 @@ function hasMultipleTimeSeries() {
 
 function createOntPanel() {
 	// make tab panel, search panel, ontTree and combine them
-    ontTabPanel = new Ext.TabPanel(
+    ontTabPanel = new Ext.Panel(
 			{
 				id : 'ontPanel',
 				region : 'center',
@@ -1061,20 +1061,7 @@ function createOntPanel() {
 			height : 300,
             width: 250,
 			deferredRender : false,
-            split: true,
-                listeners: {
-                    tabchange: function(tp,newTab) {
-                        if(newTab.id == "acrossTrialTreePanel")
-                        {
-                            GLOBAL.codeType = "Modifier"
-                        }
-                        else
-                        {
-                            GLOBAL.codeType = "Concept"
-                        }
-
-                    }
-                }
+            split: true
 	        		}
 	);
 
@@ -1478,8 +1465,6 @@ function getPreviousQueriesComplete(response) {
 
 function getCategoriesComplete(ontresponse){
     getSubCategories(ontresponse);
-    drawAcrossTrialTree();
-    setActiveTab();
     }
 
 function setActiveTab(){
@@ -1492,7 +1477,6 @@ function setActiveTab(){
 			activeTab='navigateTermsPanel';
 		}
 	}
-    ontTabPanel.setActiveTab(activeTab);
 }
 
 function setupOntTree(id_in, title_in) {
@@ -1602,7 +1586,7 @@ function setupOntTree(id_in, title_in) {
     onWindowResize();
 }
 
-function createTree(includeExcludeFlag, ontresponse) {
+function createTree(ontresponse) {
     // shorthand
     var Tree = Ext.tree;
     var ontRoots = [];
@@ -1630,8 +1614,6 @@ function createTree(includeExcludeFlag, ontresponse) {
         var fullname = key.substr(key.indexOf("\\", 2), key.length);
         var access = GLOBAL.InitialSecurity[fullname];
 
-		if(includeExcludeFlag==="include" && name!=="Across Trials") continue;
-		if(includeExcludeFlag==="exclude" && name==="Across Trials") continue;
 		// set the root node
 		var autoExpand=false;
 
@@ -1706,7 +1688,7 @@ function getSubCategories(ontresponse) {
 
 	var showFn;
 	
-    var ontRoots = createTree('exclude', ontresponse);
+    var ontRoots = createTree(ontresponse);
 	
     var toolbar = new Ext.Toolbar([
 		{
@@ -1755,9 +1737,6 @@ function setupDragAndDrop() {
 					}
 			);
 
-            //Enable jQuery dragging into the DIV.
-            jQuery("#queryCriteriaDiv" + s.toString() + '_' + i.toString()).addClass("jstree-drop");
-
             dts.notifyDrop = function (source, e, data) {
                 if (source.tree.id == "previousQueriesTree") {
 					getPreviousQueryFromID(data.node.attributes.id);
@@ -1797,10 +1776,6 @@ function setupDragAndDrop() {
             ddGroup: 'makeQuery'
 			}
 	);
-    //Add a css class which lets us drop across trial nodes into the results/analysis screen.
-    jQuery("#" + analysisPanel.body.id).addClass("jstree-drop");
-    jQuery("#" + analysisPanel.body.id).addClass("excludeValuePopup");
-    jQuery("#" + analysisPanel.body.id).addClass("results_analysis");
 
     dts.notifyDrop = function (source, e, data) {
 		buildAnalysis(data.node);
@@ -1814,10 +1789,6 @@ function setupDragAndDrop() {
             ddGroup: 'makeQuery'
 			}
 	);
-
-    jQuery("#" + analysisGridPanel.body.id).addClass("jstree-drop");
-    jQuery("#" + analysisGridPanel.body.id).addClass("excludeValuePopup");
-    jQuery("#" + analysisGridPanel.body.id).addClass("results_grid");
 
     dtg.notifyDrop = function (source, e, data) {
 		buildAnalysis(data.node);
@@ -2270,29 +2241,15 @@ function runAllQueries(callback, panel) {
         panel.subsetQueries = panel.subsetQueries ? panel.subsetQueries : ["", "", ""];
     }
 
-    if(ontTabPanel.getActiveTab().title == "Across Trial")
-    {
-        for (i = 1; i <= GLOBAL.NumOfSubsets; i = i + 1)
-        {
-            if( ! isSubsetEmpty(i) && GLOBAL.CurrentSubsetIDs[i] == null)
-            {
-                runQueryAcrossTrial(i, callback);
+	// iterate through all subsets calling the ones that need to be run
+    for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
+        if (!isSubsetEmpty(i)) {
+            if (panel) {
+                panel.subsetQueries[i] = getSubsetQuery(i); // set subset queries to the selected tab
             }
-        }
-    }
-    else
-    {
-        // iterate through all subsets calling the ones that need to be run
-        for (var i = 1; i <= GLOBAL.NumOfSubsets; i++)
-        {
-            if (!isSubsetEmpty(i)) {
-                if (panel) {
-                    panel.subsetQueries[i] = getSubsetQuery(i); // set subset queries to the selected tab
-                }
-                runQuery(i, callback);
-            }
-        }
-    }
+			runQuery(i, callback);
+		}
+	}
 }
 
 

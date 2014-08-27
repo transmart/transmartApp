@@ -27,6 +27,7 @@ import grails.util.Holders
 import org.apache.commons.lang.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
+import grails.converters.JSON
 import org.quartz.JobDataMap
 import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
@@ -93,23 +94,23 @@ class ExportService {
         Map formats = [:]
 
         selectedCheckboxList.each {
-            String[] parts = it.split("_")
+            def checkbox = JSON.parse(it.toString())
 
             // The third part is the export format. However,
             // for compatibility reasons the format is prepended
             // with a dot. That is not necessary anymore
-            def format = parts[2][1..-1]
+            def format = checkbox.fileType[1..-1]
 
-            if (!formats.containsKey(parts[0])) {
-                formats[parts[0]] = [:]
+            if (!formats.containsKey(checkbox.subset)) {
+                formats[checkbox.subset] = [:]
             }
 
-            if (!formats[parts[0]].containsKey(parts[1])) {
-                formats[parts[0]][parts[1]] = [:]
+            if (!formats[checkbox.subset].containsKey(checkbox.dataTypeId)) {
+                formats[checkbox.subset][checkbox.dataTypeId] = [:]
             }
 
-            if (!formats[parts[0]][parts[1]].containsKey(format)) {
-                formats[parts[0]][parts[1]][format] = []
+            if (!formats[checkbox.subset][checkbox.dataTypeId].containsKey(format)) {
+                formats[checkbox.subset][checkbox.dataTypeId][format] = []
             }
         }
 
@@ -135,33 +136,26 @@ class ExportService {
 		
 		//Prepare a map like ['subset1'
 		selectedCheckboxList.each { checkboxItem ->
-			//Split the item by "_" to get the different attributes.
-			String[] checkboxItemArray = checkboxItem.split("_")
+            checkboxItem = JSON.parse(checkboxItem.toString())
 			String currentSubset = null
-			if (checkboxItemArray.size() > 0) {
+			if (checkboxItem.subset) {
 				//The first item is the subset name.
-				currentSubset = checkboxItemArray[0].trim().replace(" ","")
+				currentSubset = checkboxItem.subset.trim().replace(" ","")
                 if (null == subsetSelectedFilesMap.get(currentSubset)) {
                     subsetSelectedFilesMap.put(currentSubset, ["STUDY"])
                 }
 			}
 			
-			if (checkboxItemArray.size() > 1) {
-                String currentDataType
-                if (checkboxItemArray.size()>4) {
-                    //data type contains a underscore, need to join items corresponding to data type
-                    currentDataType = (Arrays.copyOfRange(checkboxItemArray, 1, checkboxItemArray.length - 2)).join("_")
-                }else{
-    				//Second item is the data type.
-    				currentDataType = checkboxItemArray[1].trim()
-                }
-				if (checkboxItemArray.size()>3) {
-					def jobDataType = currentDataType+checkboxItemArray[checkboxItemArray.length - 2].trim()
+			if (checkboxItem.dataTypeId) {
+				//Second item is the data type.
+				String currentDataType = checkboxItem.dataTypeId.trim()
+				if (checkboxItem.gplId) {
+					def jobDataType = currentDataType+checkboxItem.fileType.trim()
 					if (!subsetSelectedFilesMap.get(currentSubset)?.contains(jobDataType)) {
 						subsetSelectedFilesMap.get(currentSubset).push(jobDataType)
 					}
-				} else if (checkboxItemArray.size()>2) {
-					subsetSelectedFilesMap.get(currentSubset)?.push(currentDataType+checkboxItemArray[2].trim())
+				} else if (checkboxItem.dataTypeId) {
+					subsetSelectedFilesMap.get(currentSubset)?.push(currentDataType+checkboxItem.fileType.trim())
 				} else {
 					subsetSelectedFilesMap.get(currentSubset)?.push(currentDataType)
 				}

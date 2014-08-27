@@ -8,18 +8,18 @@ import org.json.JSONObject
 class AsyncJobService {
 
     boolean transactional = true
-	
+
 	def quartzScheduler
 	def springSecurityService
 	def jobResultsService
-	
+
 	/**
 	* Method that will get the list of jobs to show in the jobs tab
 	*/
 	def getjobs(jobType = null) {
 		JSONObject result = new JSONObject()
 		JSONArray rows = new JSONArray()
-		
+
 		def userName = springSecurityService.getPrincipal().username
 		def jobResults = null
 		def c = AsyncJob.createCriteria()
@@ -59,7 +59,47 @@ class AsyncJobService {
 
 		return result
 	}
-	
+
+	/**
+	 * get job info by job name
+	 * @param jobName
+	 * @return
+	 */
+	def getjobbyname(jobName = '') {
+
+		JSONObject result = new JSONObject()
+		JSONArray rows = new JSONArray()
+		def jobResults = null
+
+		def c = AsyncJob.createCriteria()
+
+		if (StringUtils.isNotEmpty(jobName)) {
+			jobResults = c {
+				like("jobName", "%${jobName}%")
+			}
+		}
+
+		def m = [:]
+		for (jobResult in jobResults)	{
+			m = [:]
+			m["name"] = jobResult.jobName
+			m["status"] = jobResult.jobStatus
+			m["runTime"] = jobResult.runTime
+			m["startDate"] = jobResult.lastRunOn
+			m["viewerURL"] = jobResult.viewerURL
+			m["altViewerURL"] = jobResult.altViewerURL
+			m["jobInputsJson"] = new JSONObject(jobResult.jobInputsJson ?: "{}")
+			rows.put(m)
+		}
+
+		result.put("success", true)
+		result.put("totalCount", jobResults.size())
+		result.put("jobs", rows)
+
+		return result
+
+	}
+
 	/**
 	* Called to retrieve the job results (HTML) stored in the JOB_RESULTS field for Haploview and Survival Analysis
 	*/
@@ -69,44 +109,43 @@ class AsyncJobService {
 	   result.put("jobResults", jobResults)
 	   return result
    }
-	
-	/**
-	* Method that will create the new asynchronous job name
-	* Current methodology is username-jobtype-ID from sequence generator
-	*/
-    def createnewjob(jobName = null, jobType = null) {
-		def userName = springSecurityService.getPrincipal().username
-		def jobStatus = "Started"
-		
-		def newJob = new AsyncJob(lastRunOn:new Date())
 
-        newJob.jobType = jobType
+    /**
+     * Method that will create the new asynchronous job name
+     * Current methodology is username-jobtype-ID from sequence generator
+     */
+    def createnewjob(params) {
+        def userName = springSecurityService.getPrincipal().username
+        def jobStatus = "Started"
+
+        def newJob = new AsyncJob(lastRunOn:new Date())
+        newJob.save()
+
+        def jobName = params?.jobName
+        if (StringUtils.isEmpty(jobName)) {
+            def jobNameBuf = new StringBuffer(userName)
+            jobNameBuf.append('-')
+            if (StringUtils.isNotEmpty(params.jobType)) jobNameBuf.append(params.jobType)
+            jobNameBuf.append('-').append(newJob.id)
+            jobName = jobNameBuf.toString()
+        }
+        newJob.jobName = jobName
+        newJob.jobType = params?.jobType
         newJob.jobStatus = jobStatus
-		newJob.save()
-		
-		if (StringUtils.isEmpty(jobName)) {
-			def jobNameBuf = new StringBuffer(userName)
-			jobNameBuf.append('-')
-            if (StringUtils.isNotEmpty(jobType)) jobNameBuf.append(jobType)
-			jobNameBuf.append('-').append(newJob.id)
-			jobName = jobNameBuf.toString()
-		}
+        newJob.jobInputsJson = new JSONObject(params).toString()
+        newJob.save()
 
-		newJob.jobName = jobName
-		newJob.save()
-		
-		jobResultsService[jobName] = [:]
-		updateStatus(jobName, jobStatus)
+        jobResultsService[jobName] = [:]
+        updateStatus(jobName, jobStatus)
 
+        log.debug("Sending ${jobName} back to the client")
+        JSONObject result = new JSONObject()
+        result.put("jobName", jobName)
+        result.put("jobStatus", jobStatus)
 
-		log.debug("Sending ${jobName} back to the client")
-		JSONObject result = new JSONObject()
-		result.put("jobName", jobName)
-		result.put("jobStatus", jobStatus)
-		
-		return result;
-	}
-	
+        return result;
+    }
+
 	/**
 	* Method called that will cancel a running job
 	*/
@@ -116,14 +155,14 @@ class AsyncJobService {
 	   log.debug("Attempting to delete ${jobName} from the Quartz scheduler")
 	   result = quartzScheduler.deleteJob(jobName, group)
 	   log.debug("Deletion attempt successful? ${result}")
-	   
+
 	   updateStatus(jobName, jobStatus)
-					   
+
 	   JSONObject jsonResult = new JSONObject()
 	   jsonResult.put("jobName", jobName)
 	   return jsonResult
    }
-   
+
    /**
    * Repeatedly called by datasetExplorer.js to get the job status and results
    */
@@ -177,10 +216,10 @@ class AsyncJobService {
 	  result.put("jobStatus", jobStatus)
 	  result.put("errorType", errorType)
         result.put("jobName", jobName)
-	  
+
 	  return result
   }
-  
+
   /**
   * Helper to update the status of the job and log it
   *
@@ -219,7 +258,7 @@ class AsyncJobService {
 		 //We need to flush so that the value doesn't overwrite cancelled when the controller finishes.
 		 asyncJob.save(flush:true)
 	 }
-	 
+
 	 return retValue
   }
 }
