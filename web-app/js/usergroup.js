@@ -318,7 +318,7 @@ Recom.rc.serializeFormElements = function(elements, form /* jquery el or undef *
         form = jQuery(this).closest('form')
         if (!form.length) {
             // if form is not set, search in the whole document
-            form = $(window.document);
+            form = jQuery(window.document);
         }
     }
     var data = {};
