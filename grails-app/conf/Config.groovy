@@ -253,3 +253,8 @@ grails {
     }
 }
 remove this line */
+
+
+/*
+// MetaCore plugin
+com.thomsonreuters.transmart.metacoreAnalyticsEnable=true */
