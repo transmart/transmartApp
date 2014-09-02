@@ -700,49 +700,53 @@ Ext.onReady(function () {
 		resultsTabPanel.add(analysisExportJobsPanel);
 		resultsTabPanel.add(workspacePanel);
 
+        function loadResources(resources, bootstrap) {
+            var scripts = [];
+            for (var i = 0; i < resources.length; i++) {
+                var aFile = resources[i];
+                if (aFile.type == 'script') {
+                    scripts.push(aFile.path);
+                } else if (aFile.type == 'stylesheet') {
+                    dynamicLoad.loadCSS(aFile.path);
+                }
+            }
+            if (scripts.length > 0) {
+                dynamicLoad.loadScriptsSequential(scripts, bootstrap);
+            } else {
+                bootstrap();
+            }
+        }
+
+        function loadResourcesByUrl(url, bootstrap) {
+            return jQuery.post(url, function(data) {
+                if (data.success) {
+                    loadResources(data.files, bootstrap)
+                }
+            }, "json").fail(function() {
+                console.error("Cannot load resources for " + url);
+            });
+        }
+
+        function loadPlugin(pluginName, scriptsUrl, bootstrap) {
+            var def = jQuery.Deferred();
+            jQuery.post(pageInfo.basePath + "/pluginDetector/checkPlugin", {pluginName: pluginName}, function(data) {
+                if (data === 'true') {
+                    loadResourcesByUrl(pageInfo.basePath + scriptsUrl, function() {
+                        bootstrap();
+                        def.resolve();
+                    }).fail(def.reject);
+                } else {
+                    def.reject();
+                }
+            }).fail(def.reject);
+            return def;
+        }
+
         // DALLIANCE
         // =======
-        Ext.Ajax.request ({
-            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
-            method: 'POST',
-            success: function (result) {
-
-                var _this = this;
-
-                if (result.responseText === 'true') {
-
-                    // load script
-                    Ext.Ajax.request ({
-                        url: pageInfo.basePath+"/Dalliance/loadScripts",
-                        method: 'POST',
-                        success: function (result) {
-
-                            var resultJSON = JSON.parse(result.responseText);
-                            var filesArr = [];
-
-                            if (resultJSON.success && resultJSON.files.length > 0)	{
-                                for (var i = 0; i < resultJSON.files.length; i++) {
-
-                                    var aFile = resultJSON.files[i];
-                                    filesArr.push(aFile.path);
-                                }
-                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
-                            }
-                        },
-                        failure: function() {
-                            console.error("Cannot load plugin scripts for " + _this.pluginName);
-                        }
-                    });
-                }
-            },
-            params: {
-                pluginName: 'dalliance-plugin'
-            }
-        });
-
-        function startDalliance() {
+        loadPlugin('dalliance-plugin', "/Dalliance/loadScripts", function () {
             loadDalliance(resultsTabPanel);
-        }
+        });
 
 		if (GLOBAL.metacoreAnalyticsEnabled) {
 			resultsTabPanel.add(metacoreEnrichmentPanel);
@@ -751,7 +755,7 @@ Ext.onReady(function () {
         if (GLOBAL.galaxyEnabled == 'true') {
            resultsTabPanel.add(GalaxyPanel);
         }
-		
+
 		southCenterPanel = new Ext.Panel(
 				{
 					id : 'southCenterPanel',
