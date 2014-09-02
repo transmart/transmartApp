@@ -4,12 +4,18 @@ def forkSettingsRun = [
         maxPerm:   384,
         debug:     false,
 ]
+def forkSettingsOther = [
+        minMemory: 256,
+        maxMemory: 1024,
+        maxPerm:   384,
+        debug:     false,
+]
 
 grails.project.fork = [
-        test:    false,
+        test:    forkSettingsOther,
         run:     forkSettingsRun,
         war:     false,
-        console: false ]
+        console: forkSettingsOther]
 
 grails.project.war.file = "target/${appName}.war"
 
