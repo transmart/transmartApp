@@ -746,11 +746,14 @@ Ext.onReady(function () {
         // =======
         loadPlugin('dalliance-plugin', "/Dalliance/loadScripts", function () {
             loadDalliance(resultsTabPanel);
+        }).always(function () {
+            // Keep loading order to prevent tabs shuffling
+            if (GLOBAL.metacoreAnalyticsEnabled) {
+                loadPlugin('transmart-metacore-plugin', "/MetacoreEnrichment/loadScripts", function () {
+                    loadMetaCoreEnrichment(resultsTabPanel);
+                });
+            }
         });
-
-		if (GLOBAL.metacoreAnalyticsEnabled) {
-			resultsTabPanel.add(metacoreEnrichmentPanel);
-		}
 
         if (GLOBAL.galaxyEnabled == 'true') {
            resultsTabPanel.add(GalaxyPanel);
