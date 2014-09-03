@@ -2,26 +2,33 @@ package com.recomdata.transmart.data.export
 
 import grails.converters.JSON
 import grails.test.mixin.*
+import grails.test.mixin.services.ServiceUnitTestMixin
 import grails.test.mixin.support.*
-
+import grails.test.mixin.web.ControllerUnitTestMixin
 import org.junit.*
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import spock.lang.Specification
 
 /**
- * See the API for {@link grails.test.mixin.support.GrailsUnitTestMixin} for usage instructions
+ * Don't name this ExportServiceSpec, grails is overly smart and this is
+ * equivalent to annotating the class with @TestFor(ExportService).
+ * But we need to define a bean before (see setup()).
+ *
+ * Add ControllerUnitTestMixin so Grails sets up the JSON converter.
+ * See http://stackoverflow.com/a/15485593
  */
-@TestMixin(GrailsUnitTestMixin)
-@TestFor(ExportService)
-class ExportServiceSpec extends Specification {
+@TestMixin([ServiceUnitTestMixin, ControllerUnitTestMixin])
+class ExportServiceXSpec extends Specification {
 
-    @Before
-    void init() {
+    def service
+
+    def setup() {
         defineBeans {
             // the dependency only has to be satisfied; it's not used in the
             // tested method here
             "${CurrentUserBeanProxyFactory.BEAN_BAME}"(Object)
         }
+        service = testFor(ExportService)
     }
 
     void "test getHighDimDataTypesAndFormats basic functionality"() {
