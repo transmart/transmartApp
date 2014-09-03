@@ -69,7 +69,6 @@ grails.project.dependency.resolution = {
         compile 'org.codehaus.groovy:http-builder:0.4.1', {
             excludes 'groovy', 'nekohtml'
         }
-        compile 'org.grails:grails-plugin-rest:2.3.5-hyve4'
         compile 'org.rosuda:Rserve:1.7.3'
         compile 'com.google.guava:guava:14.0.1'
 
@@ -98,10 +97,10 @@ grails.project.dependency.resolution = {
     plugins {
         build ':release:3.0.1'
         build ':rest-client-builder:2.0.1'
-        build ':tomcat:7.0.50'
+        build ':tomcat:7.0.52.1'
 
         compile ':build-info:1.2.5'
-        compile ':hibernate:3.6.10.7'
+        compile ':hibernate:3.6.10.10'
         compile ':quartz:1.0-RC2'
         // Not compatible with spring security 3.2 yet
         //compile ':spring-security-kerberos:0.1'
@@ -112,7 +111,7 @@ grails.project.dependency.resolution = {
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
 
-        runtime ':resources:1.2.1'
+        runtime ':resources:1.2.7'
 
         if (!dm) {
             compile ':rdc-rmodules:1.2.1-SNAPSHOT'
