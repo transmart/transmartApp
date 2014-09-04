@@ -132,13 +132,14 @@ grails.project.dependency.resolution = {
             runtime ':transmart-mydas:0.1-SNAPSHOT'
             runtime ':transmart-rest-api:0.1-SNAPSHOT'
             //runtime ':blend4j-plugin:1.2.1-SNAPSHOT'
+
+            test ':transmart-core-db-tests:1.2.1-SNAPSHOT'
         } else {
             dm.internalDependencies delegate
         }
 
         // Doesn't work with forked tests yet
         //test ":code-coverage:1.2.6"
-        //test ':transmart-core-db-tests:1.0-LH-SNAPSHOT'
     }
 }
 
