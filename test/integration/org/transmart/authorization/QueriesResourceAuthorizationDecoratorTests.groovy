@@ -32,7 +32,7 @@ class QueriesResourceAuthorizationDecoratorTests {
 
     ConceptsResource conceptsResourceService
 
-    QueriesResource queriesResourceAuthorizationDecorator
+    def queriesResourceAuthorizationDecorator
 
     @Before
     void setUp() {
@@ -176,40 +176,44 @@ class QueriesResourceAuthorizationDecoratorTests {
         GrailsWebUtil.bindMockWebRequest()
 
         def proxyMetaClass = ProxyMetaClass.getInstance(SpringSecurityService)
-        proxyMetaClass.interceptor = new PropertyAccessInterceptor() {
-            Object beforeInvoke(Object object, String methodName, Object[] arguments) {}
-
-            Object afterInvoke(Object object,
-                               String methodName,
-                               Object[] arguments,
-                               Object result) {
-                if (methodName == 'isLoggedIn') {
-                    return true
-                }
-                throw new UnsupportedOperationException(
-                        "Unexpected method call: $methodName($arguments)")
-            }
-
-            boolean doInvoke() {
-                false
-            }
-
-            Object beforeGet(Object object, String property) {
-                if (property == 'principal') {
-                    return [username: username]
-                }
-                throw new UnsupportedOperationException(
-                        "Unexpected property requested: $property")
-            }
-
-            void beforeSet(Object object, String property, Object newValue) {
-                throw new UnsupportedOperationException(
-                        "Unexpected property setting requested: $property, " +
-                                "value $newValue")
-            }
-        }
-
-        proxyMetaClass.use(springSecurityService, closure)
+        proxyMetaClass.interceptor =
+                new SpringSecurityProxyMetaClassInterceptor(username: username)
+        proxyMetaClass.use springSecurityService, closure
     }
 
+}
+
+class SpringSecurityProxyMetaClassInterceptor implements PropertyAccessInterceptor {
+    String username
+
+    Object beforeInvoke(Object object, String methodName, Object[] arguments) {}
+
+    Object afterInvoke(Object object,
+                       String methodName,
+                       Object[] arguments,
+                       Object result) {
+        if (methodName == 'isLoggedIn') {
+            return true
+        }
+        throw new UnsupportedOperationException(
+                "Unexpected method call: $methodName($arguments)")
+    }
+
+    boolean doInvoke() {
+        false
+    }
+
+    Object beforeGet(Object object, String property) {
+        if (property == 'principal') {
+            return [username: username]
+        }
+        throw new UnsupportedOperationException(
+                "Unexpected property requested: $property")
+    }
+
+    void beforeSet(Object object, String property, Object newValue) {
+        throw new UnsupportedOperationException(
+                "Unexpected property setting requested: $property, " +
+                        "value $newValue")
+    }
 }

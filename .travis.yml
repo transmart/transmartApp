@@ -17,6 +17,9 @@ install:
     - maybe_build_maven_dep $(travis_get_owner)/transmart-core-api core-api
     - maybe_make_inline_grails_dep $(travis_get_owner)/transmart-core-db core-db . transmart-core-db-tests
     - maybe_make_inline_grails_dep $(travis_get_owner)/Rmodules Rmodules
+    - maybe_make_inline_grails_dep $(travis_get_owner)/transmart-gwas-plugin transmart-gwas
+    - maybe_make_inline_grails_dep $(travis_get_owner)/folder-management-plugin folder-management
+    - maybe_make_inline_grails_dep $(travis_get_owner)/transmart-extensions transmart-extensions transmart-java search-domain biomart-domain
 
 script:
     - grails refresh-dependencies --non-interactive

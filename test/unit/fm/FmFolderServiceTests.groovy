@@ -20,19 +20,21 @@
 
 package fm
 
+import org.transmart.biomart.Experiment
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import org.junit.Before
 import org.junit.Test
+import org.transmart.biomart.BioData
 import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.Role
 
 import static com.recomdata.util.FolderType.*
 
 @TestFor(FmFolderService)
-@Mock(FmFolderAssociation)
+@Mock([FmFolder, FmFolderAssociation, BioData, Experiment])
 @TestMixin(GrailsUnitTestMixin)
 class FmFolderServiceTests {
 
@@ -89,6 +91,25 @@ class FmFolderServiceTests {
                 parent: study2)
 
         studyFolders = [study1, study2]
+
+        def allFolders = [program1, study1, assay111,
+                folder121, study2, analysys122]
+        allFolders*.description = 'description'
+        allFolders*.save(failOnError: true)
+        // setup authorization information for study1
+        def study2folderAssociation = new FmFolderAssociation(
+                fmFolder: study1,
+                objectType: Experiment.class.name,
+                objectUid: 'Omicsoft:STUDY1')
+        study2folderAssociation.save(failOnError: true)
+        def bioData = new BioData(
+                uniqueId: study2folderAssociation.objectUid,
+                type: 'EXP')
+        bioData.id = -142L
+        bioData.save(failOnError: true)
+        def bioExperiment = new Experiment(accession: 'STUDY1')
+        bioExperiment.id = bioData.id
+        bioExperiment.save(failOnError: true)
     }
 
     @Test
@@ -132,6 +153,14 @@ class FmFolderServiceTests {
     @Test
     void testGetAccessLevelInfoForFolders_locked() {
         def i2b2HelperServiceControll = mockFor(Class.forName('I2b2HelperService'))
+        i2b2HelperServiceControll.demand.getSecureTokensForStudies { param ->
+            assert param == ['STUDY1']
+            return [STUDY1: 'EXP:STUDY1']
+        }
+        i2b2HelperServiceControll.demand.getSecureTokensWithAccessForUser { passedUser ->
+            assert user == passedUser
+            ['EXP:PUBLIC': 'OWN'] // don't return a token for STUDY1 for this user; will be locked
+        }
 
         service.i2b2HelperService =  i2b2HelperServiceControll.createMock()
 
@@ -139,6 +168,10 @@ class FmFolderServiceTests {
 
         assertEquals 2, foldersMap?.size()
         assertEquals studyFolders, foldersMap.keySet().toList()
+        // study2 does not have a folder association linking it to a biomart
+        // object and from there to a study. Should be locked too
         assertEquals(['LOCKED', 'LOCKED'], foldersMap.values().toList())
     }
+
+    // TODO: test access granted to regular users
 }
