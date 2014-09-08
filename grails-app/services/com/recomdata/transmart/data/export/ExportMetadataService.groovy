@@ -27,7 +27,8 @@ import org.transmartproject.export.HighDimExporter
 
 class ExportMetadataService {
 
-    static transactional = true
+    static transactional = false
+
 	def dataCountService
     def highDimensionResourceService
     def highDimExporterRegistry
