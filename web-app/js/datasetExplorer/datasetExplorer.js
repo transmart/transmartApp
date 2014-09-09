@@ -692,65 +692,72 @@ Ext.onReady(function () {
             }
         );
 
-        resultsTabPanel.add(queryPanel);
+    resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
-        resultsTabPanel.add(dataAssociationPanel);
+    resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
 		resultsTabPanel.add(workspacePanel);
 
-        // DALLIANCE
-        // =======
-        Ext.Ajax.request ({
-            url: pageInfo.basePath+"/pluginDetector/checkPlugin",
-            method: 'POST',
-            success: function (result) {
-
-                var _this = this;
-
-                if (result.responseText === 'true') {
-
-                    // load script
-                    Ext.Ajax.request ({
-                        url: pageInfo.basePath+"/Dalliance/loadScripts",
-                        method: 'POST',
-                        success: function (result) {
-
-                            var resultJSON = JSON.parse(result.responseText);
-                            var filesArr = [];
-
-                            if (resultJSON.success && resultJSON.files.length > 0)	{
-                                for (var i = 0; i < resultJSON.files.length; i++) {
-
-                                    var aFile = resultJSON.files[i];
-                                    filesArr.push(aFile.path);
-                                }
-                                dynamicLoad.loadScriptsSequential(filesArr, startDalliance);
-                            }
-                        },
-                        failure: function() {
-                            console.error("Cannot load plugin scripts for " + _this.pluginName);
-                        }
-                    });
-                }
-            },
-            params: {
-                pluginName: 'dalliance-plugin'
-            }
-        });
-
-        function startDalliance() {
-            loadDalliance(resultsTabPanel);
-        }
-
-		if (GLOBAL.metacoreAnalyticsEnabled) {
-			resultsTabPanel.add(metacoreEnrichmentPanel);
+		function loadPlugin(pluginName, scriptsUrl, bootstrap) {
+			var def = jQuery.Deferred()
+			Ext.Ajax.request({
+				url: pageInfo.basePath + "/pluginDetector/checkPlugin",
+				method: 'POST',
+				success: function (result) {
+					var _this = this;
+					if (result.responseText === 'true') {
+						// load script
+						Ext.Ajax.request({
+							url: pageInfo.basePath + scriptsUrl,
+							method: 'POST',
+							success: function (result) {
+								var resultJSON = JSON.parse(result.responseText);
+								if (resultJSON.success && resultJSON.files.length > 0) {
+									var scripts = [];
+									for (var i = 0; i < resultJSON.files.length; i++) {
+										var aFile = resultJSON.files[i];
+										if (aFile.type == 'script') {
+											scripts.push(aFile.path);
+										} else if (aFile.type == 'stylesheet') {
+											dynamicLoad.loadCSS(aFile.path);
+										}
+									}
+									dynamicLoad.loadScriptsSequential(scripts, bootstrap);
+									def.resolve(true);
+								}
+							},
+							failure: function () {
+								console.error("Cannot load plugin scripts for " + _this.pluginName);
+								def.resolve(false);
+							}
+						});
+					}
+				},
+				params: {
+					pluginName: pluginName
+				}
+			});
+			return def;
 		}
 
-        if (GLOBAL.galaxyEnabled == 'true') {
-           resultsTabPanel.add(GalaxyPanel);
-        }
+		// DALLIANCE
+		// =======
+		loadPlugin('dalliance-plugin', "/Dalliance/loadScripts", function () {
+			loadDalliance(resultsTabPanel);
+		}).then(function () {
+			// Keep loading order to prevent tabs shuffling
+			if (GLOBAL.metacoreAnalyticsEnabled) {
+				loadPlugin('transmart-metacore-plugin', "/MetacoreEnrichment/loadScripts", function () {
+					loadMetaCoreEnrichment(resultsTabPanel);
+				});
+			}
+		});
+
+		if (GLOBAL.galaxyEnabled == 'true') {
+			resultsTabPanel.add(GalaxyPanel);
+		}
 		
 		southCenterPanel = new Ext.Panel(
 				{

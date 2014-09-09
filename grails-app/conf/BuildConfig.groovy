@@ -134,6 +134,7 @@ grails.project.dependency.resolution = {
             runtime ':blend4j-plugin:1.2.1-SNAPSHOT'
 
             test ':transmart-core-db-tests:1.2.1-SNAPSHOT'
+            //runtime ':transmart-metacore-plugin:1.2.1-SNAPSHOT'
         } else {
             dm.internalDependencies delegate
         }
