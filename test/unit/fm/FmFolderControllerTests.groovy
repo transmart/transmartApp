@@ -15,9 +15,11 @@ class FmFolderControllerTests {
     @Test
     void basicDownload() {
         String originalFilename = 'test original Name 丈.pdf'
+        Long fileSize = 2009
         def file = new FmFile(
                 displayName: 'test display name',
                 originalName: originalFilename,
+                fileSize: fileSize,
         )
         assertNotNull file.save()
         controller.fmFolderService = new FmFolderService()
@@ -35,6 +37,7 @@ class FmFolderControllerTests {
         assertThat response.headers('Content-disposition'), hasSize(1)
         assertThat response.header('Content-disposition').decodeURL(),
                 equalTo("attachment; filename*=UTF-8''$originalFilename".toString())
+        assertThat response.header('Content-length'), is(equalTo(fileSize as String))
         assertEquals response.text, 'foobar'
     }
 }

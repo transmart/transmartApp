@@ -1,5 +1,6 @@
 grails.project.dependency.resolution = {
     repositories {
+        mavenRepo 'https://repo.transmartfoundation.org/content/repositories/public/'
         mavenRepo 'https://repo.thehyve.nl/content/repositories/public/'
     }
 }

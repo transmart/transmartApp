@@ -222,6 +222,7 @@ log4j = {
             warn 'org.codehaus.groovy.grails.commons.spring'
             warn 'org.codehaus.groovy.grails.domain.GrailsDomainClassCleaner'
             warn 'org.codehaus.groovy.grails.plugins.DefaultGrailsPluginManager' //info to show plugin versions
+            warn 'org.codehaus.groovy.grails.orm.hibernate.cfg.GrailsDomainBinder' //info to show joined-subclass indo
 
             root {
                 info('stdout')

@@ -11,5 +11,6 @@ bin/
 *.ipr
 *.iws
 *.log
+*.sw[op]
 .DS_Store
 System.out

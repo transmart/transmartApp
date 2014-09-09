@@ -33,8 +33,12 @@ import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import org.transmart.searchapp.AccessLog
+import org.transmartproject.core.exceptions.InvalidRequestException
+import org.transmartproject.core.users.User
 
 import javax.annotation.Resource
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class ExportService {
 
@@ -45,7 +49,6 @@ class ExportService {
 	def jobResultsService
 	def asyncJobService
 	def quartzScheduler
-    def highDimensionResourceService
 
     @Resource(name = CurrentUserBeanProxyFactory.BEAN_BAME)
     def currentUser
@@ -79,13 +82,16 @@ class ExportService {
     }
 
     /**
-     * Converts the list of selected checkboxes, into a map
+     * Fixes up the data export request data.
+     * Format of individual values of selectedSubsetDataTypeFiles:
+     * {
+     *   subset: subset<1|2>,
+     *   dataTypeId: <data type>,
+     *   fileType: .<EXTENSION>,
+     *   gplId: <platform>
+     * }
      *
-     * Each selected checkbox has the format
-     *      <subset_id>_<datatype>_<exportformat>_<platform>
-     * where exportformat is a string, prepended with a dot
-     * (for compatibility reasons). That dot is removed from the
-     * string in this method
+     * This method than builds a pointlessly deeply nested map for you!
      *
      * @param selectedCheckboxList List with selected checkboxes
      * @return
@@ -93,13 +99,10 @@ class ExportService {
     protected Map getHighDimDataTypesAndFormats(selectedCheckboxList) {
         Map formats = [:]
 
-        selectedCheckboxList.each {
-            def checkbox = JSON.parse(it.toString())
-
-            // The third part is the export format. However,
-            // for compatibility reasons the format is prepended
-            // with a dot. That is not necessary anymore
-            def format = checkbox.fileType[1..-1]
+        selectedCheckboxList.collect {
+            JSON.parse(it.toString())
+        }.each { Map checkbox ->
+            def fileType = checkbox.fileType[1..-1]
 
             if (!formats.containsKey(checkbox.subset)) {
                 formats[checkbox.subset] = [:]
@@ -109,8 +112,12 @@ class ExportService {
                 formats[checkbox.subset][checkbox.dataTypeId] = [:]
             }
 
-            if (!formats[checkbox.subset][checkbox.dataTypeId].containsKey(format)) {
-                formats[checkbox.subset][checkbox.dataTypeId][format] = []
+            if (!formats[checkbox.subset][checkbox.dataTypeId].containsKey(fileType)) {
+                formats[checkbox.subset][checkbox.dataTypeId][fileType] = []
+            }
+
+            if (checkbox.gplId) {
+                formats[checkbox.subset][checkbox.dataTypeId][fileType] << checkbox.gplId
             }
         }
 
@@ -228,7 +235,7 @@ class ExportService {
 		jdm.put("jobName", params.jobName)
         jdm.put("result_instance_ids", resultInstanceIdHashMap)
         jdm.selection = params.selection
-        jdm.highDimDataTypes = getHighDimDataTypesAndFormats( checkboxList )
+        jdm.highDimDataTypes = getHighDimDataTypesAndFormats(checkboxList)
 		jdm.put("subsetSelectedPlatformsByFiles", getsubsetSelectedPlatformsByFiles(checkboxList))
 		jdm.put("checkboxList", checkboxList);
 		jdm.put("subsetSelectedFilesMap", getSubsetSelectedFilesMap(params.selectedSubsetDataTypeFiles))
@@ -280,41 +287,6 @@ class ExportService {
 			return
 		}
         createExportDataJob(userName, params, statusList)
-	}
-	
-	def getExportJobs(userName) {
-		JSONObject result = new JSONObject()
-		JSONArray rows = new JSONArray()
-        def maxJobs = Holders.config.com.recomdata.transmart.data.export.max.export.jobs.loaded
-		
-		maxJobs = maxJobs ? maxJobs : 0
-		
-		//TODO find out why the domain class AsyncJob was not getting imported. Is it because it is in the default package?
-		def c = AsyncJob.createCriteria()
-		def jobResults = c {
-			maxResults(maxJobs)
-			like("jobName", "${userName}%")
-			eq("jobType", "DataExport")
-			//ge("lastRunOn", new Date()-30)
-			order("id", "desc")
-		}
-		def m = [:]
-		jobResults.each	{
-			m = [:]
-			m["name"] = it.jobName
-			m["status"] = it.jobStatus
-			m["runTime"] = it.runTime
-			m["startDate"] = it.lastRunOn
-			m["viewerURL"] = it.viewerURL
-			m["querySummary"] = it.altViewerURL
-			rows.put(m)
-		}
-		
-		result.put("success", true)
-		result.put("totalCount", jobResults.size())
-		result.put("exportJobs", rows)
-		
-        result
 	}
 	
 	def downloadFile(params) {

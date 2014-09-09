@@ -1,4 +1,4 @@
-
+﻿
 // Global -----------------------
 var popupState = -1; // -1 - unknown; 0 - loading; 1 - loaded;
 var popupDocument = null;

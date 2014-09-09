@@ -32,14 +32,7 @@ class QueryToolControllerTests {
     void testRunQueryFromDefinition() {
         def queryDefinition = new QueryDefinition([])
         def testUsername = 'my_username'
-        def resultInstance = new QueryResult() {
-            Long id = -1
-            Long setSize = 10
-            QueryStatus status = QueryStatus.FINISHED
-            String errorMessage = null
-            Set patients = [] as Set
-            String username = testUsername
-        }
+        def resultInstance = new FakeQueryResult(username: testUsername)
 
         QueryDefinitionXmlConverter xmlService = mock(QueryDefinitionXmlConverter)
         xmlService.fromXml(anyOf(any(Reader), nullValue())).
@@ -71,4 +64,13 @@ class QueryToolControllerTests {
                 hasEntry('status', 'FINISHED'),
         )
     }
+}
+
+class FakeQueryResult implements QueryResult {
+    Long id = -1
+    Long setSize = 10
+    QueryStatus status = QueryStatus.FINISHED
+    String errorMessage = null
+    Set patients = [] as Set
+    String username
 }
