@@ -670,6 +670,28 @@ Ext.onReady(function () {
 				}
 		);
 
+        /**
+         * panel to display list of jobs belong to a user
+         * @type {Ext.Panel}
+         */
+        analysisJobsPanel = new Ext.Panel(
+            {
+                id : 'analysisJobsPanel',
+                title : 'Analysis Jobs',
+                region : 'center',
+                split : true,
+                height : 90,
+                layout : 'fit',
+                listeners :
+                {
+                    activate : function(p) {
+                        getJobsData(p)
+                    }
+                },
+                collapsible : true
+            }
+        );
+
         workspacePanel = new Ext.Panel(
             {
                 id : 'workspacePanel',
@@ -698,6 +720,7 @@ Ext.onReady(function () {
         resultsTabPanel.add(dataAssociationPanel);
 		resultsTabPanel.add(analysisDataExportPanel);
 		resultsTabPanel.add(analysisExportJobsPanel);
+		resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(workspacePanel);
 
         // DALLIANCE
