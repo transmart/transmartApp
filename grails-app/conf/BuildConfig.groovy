@@ -129,6 +129,7 @@ grails.project.dependency.resolution = {
             //// already included in biomart-domain
             //compile ':transmart-java:1.0-SNAPSHOT'
             runtime ':dalliance-plugin:0.2-SNAPSHOT'
+            //runtime ':transmart-metacore-plugin:1.2.1-SNAPSHOT'
             runtime ':transmart-mydas:0.1-SNAPSHOT'
             runtime ':transmart-rest-api:0.1-SNAPSHOT'
             runtime ':blend4j-plugin:1.2.1-SNAPSHOT'

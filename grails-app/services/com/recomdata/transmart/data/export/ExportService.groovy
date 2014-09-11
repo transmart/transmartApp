@@ -33,8 +33,12 @@ import org.quartz.JobDetail
 import org.quartz.SimpleTrigger
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import org.transmart.searchapp.AccessLog
+import org.transmartproject.core.exceptions.InvalidRequestException
+import org.transmartproject.core.users.User
 
 import javax.annotation.Resource
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class ExportService {
 
@@ -45,7 +49,6 @@ class ExportService {
 	def jobResultsService
 	def asyncJobService
 	def quartzScheduler
-    def highDimensionResourceService
 
     @Resource(name = CurrentUserBeanProxyFactory.BEAN_BAME)
     def currentUser
@@ -284,41 +287,6 @@ class ExportService {
 			return
 		}
         createExportDataJob(userName, params, statusList)
-	}
-	
-	def getExportJobs(userName) {
-		JSONObject result = new JSONObject()
-		JSONArray rows = new JSONArray()
-        def maxJobs = Holders.config.com.recomdata.transmart.data.export.max.export.jobs.loaded
-		
-		maxJobs = maxJobs ? maxJobs : 0
-		
-		//TODO find out why the domain class AsyncJob was not getting imported. Is it because it is in the default package?
-		def c = AsyncJob.createCriteria()
-		def jobResults = c {
-			maxResults(maxJobs)
-			like("jobName", "${userName}%")
-			eq("jobType", "DataExport")
-			//ge("lastRunOn", new Date()-30)
-			order("id", "desc")
-		}
-		def m = [:]
-		jobResults.each	{
-			m = [:]
-			m["name"] = it.jobName
-			m["status"] = it.jobStatus
-			m["runTime"] = it.runTime
-			m["startDate"] = it.lastRunOn
-			m["viewerURL"] = it.viewerURL
-			m["querySummary"] = it.altViewerURL
-			rows.put(m)
-		}
-		
-		result.put("success", true)
-		result.put("totalCount", jobResults.size())
-		result.put("exportJobs", rows)
-		
-        result
 	}
 	
 	def downloadFile(params) {

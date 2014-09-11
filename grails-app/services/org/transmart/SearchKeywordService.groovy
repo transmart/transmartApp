@@ -156,6 +156,7 @@ public class SearchKeywordService {
             }
 
             //TODO Special case for gene or SNP - rework to support multiple categories!
+            /* // commented below since dataCategory do no exist for search_keyword_term table
             if ("GENE_OR_SNP".equals(category)) {
                 //or {
                 //	eq("dataCategory", "GENE")
@@ -165,7 +166,8 @@ public class SearchKeywordService {
             } else if ("SNP".equals(category)) {
                 //like("keywordTerm", 'RS%')
                 eq("dataCategory", "SNP")
-            } else if ("ALL".compareToIgnoreCase(category) != 0) {
+            } else */ 
+            if ("ALL".compareToIgnoreCase(category) != 0) {
                 searchKeyword {
                     eq("dataCategory", category.toUpperCase())
                 }
@@ -207,7 +209,12 @@ public class SearchKeywordService {
             m.put("label", sk.searchKeyword.keyword)
             m.put("category", sk.searchKeyword.displayDataCategory)
             m.put("categoryId", sk.searchKeyword.dataCategory)
-            m.put("id", sk.searchKeyword.uniqueId)
+
+			if ("GENE_OR_SNP".equals(category) || ("SNP".equals(category))) {
+				m.put("id", sk.searchKeyword.id)
+			} else {
+				m.put("id", sk.searchKeyword.uniqueId)
+			}
 
             if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0) {
                 def synonyms = org.transmart.biomart.BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")

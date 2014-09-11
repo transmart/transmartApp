@@ -1,7 +1,7 @@
 import grails.util.Environment
 
 def envSwitch = { devValue, otherValue ->
-    Environment.current == Environment.TEST ? devValue : otherValue
+    Environment.current == Environment.DEVELOPMENT ? devValue : otherValue
 }
 
 modules = {
