@@ -111,7 +111,7 @@ grails.project.dependency.resolution = {
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
 
-        runtime ':resources:1.2.1'
+        runtime ':resources:1.2.7'
 
         if (!dm) {
             compile ':rdc-rmodules:1.2.1-SNAPSHOT'
@@ -132,6 +132,7 @@ grails.project.dependency.resolution = {
             runtime ':transmart-mydas:0.1-SNAPSHOT'
             runtime ':transmart-rest-api:0.1-SNAPSHOT'
             runtime ':blend4j-plugin:1.2.1-SNAPSHOT'
+            runtime ':transmart-metacore-plugin:1.2.1-SNAPSHOT'
 
             test ':transmart-core-db-tests:1.2.1-SNAPSHOT'
         } else {
