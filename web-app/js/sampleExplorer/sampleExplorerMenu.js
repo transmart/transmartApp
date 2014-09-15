@@ -20,7 +20,15 @@
 
 function createMainExplorerWindow() 
 {
-	centerMainPanel = new Ext.Panel({
+    northPanel = new Ext.Panel({
+        id : 'northPanel',
+        region : 'north',
+        split : false,
+        border : true,
+        contentEl : "header-div"
+    });
+
+    centerMainPanel = new Ext.Panel({
 		id : 'centerMainPanel',
 		region : 'center',
 		layout : 'border'
@@ -31,7 +39,7 @@ function createMainExplorerWindow()
 
 	viewport = new Ext.Viewport({
 		layout : 'border',
-		items : [centerMainPanel, createNorthPanel() ]
+		items : [centerMainPanel, northPanel]
 	});
 }
 
@@ -74,21 +82,6 @@ function createWestPanel()
 	westPanel.add(ontTabPanel);
 
 	return westPanel;
-}
-
-//Create the north most panel.
-function createNorthPanel()
-{
-    northPanel = new Ext.Panel({
-		id : 'northPanel',
-		region : 'north',
-		tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle,GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
-		split : false,
-		border : true,
-		contentEl : "header-div"
-	});	
-
-	return northPanel;
 }
 
 /*
@@ -235,7 +228,7 @@ function createCenterPanel()
 
 function createSearchBox()
 {
-
+    /*
 	var combo = new Ext.app.SearchComboBox({
 		id: "search-combobox",
 		renderTo: "search-text",
@@ -272,7 +265,7 @@ function createSearchBox()
         }
 	});
 	combo.focus();	
-	
+	*/
 	function searchOnClick() {
 		var combo = Ext.getCmp("search-combobox");
 		var param = combo.getSelectedParam();
@@ -286,7 +279,7 @@ function createSearchBox()
 		searchcombo.className += " searchcombobox-disabled";
 		searchcombo.style.width = "442px";						
 	}
-	
+	/*
 	var picklist = new Ext.app.PickList({
 		id: "categories",
 		cls: "categories-gray",
@@ -302,7 +295,7 @@ function createSearchBox()
 	        }
 		}
 	});	
-	
+	*/
 }
 
 function createExportSubMenu()

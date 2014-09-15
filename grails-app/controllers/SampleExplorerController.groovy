@@ -78,7 +78,7 @@ class SampleExplorerController {
     def showTopLevelListPage =
             {
                 //Call the solr service to get a hash that looks like category:[item:count]. We pass in an empty string because we want all the documents in the solr search.
-                def termMap = solrService.facetSearch("",verifyFieldList(), 'sampleExplorer')
+                def termMap = solrService.facetSearch("",verifyFieldList(), 'browse')
 
                 //Render the list of links in their own categories.
                 render(template:"searchTopLevel", model:[termsMap:termMap]);
@@ -101,7 +101,7 @@ class SampleExplorerController {
                 def solrFieldList = verifyGridFieldList();
 
                 //Call the solr service to get a hash that looks like category:[item:count].
-                def termMap = solrService.facetSearch(request.JSON.SearchJSON,solrFieldList, 'sampleExplorer')
+                def termMap = solrService.facetSearch(request.JSON.SearchJSON,solrFieldList, 'browse')
 
                 //Render the list of checkboxes and links based on the items in our search JSON.
                 render(template:"categorySearchWithCheckboxes", model:[termsMap:termMap,JSONData:request.JSON.SearchJSON]);

@@ -1,60 +1,52 @@
-<!--
-  tranSMART - translational medicine data mart
-  
-  Copyright 2008-2012 Janssen Research & Development, LLC.
-  
-  This product includes software developed at Janssen Research & Development, LLC.
-  
-  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
-  as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
-  1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
-  2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
-  
-  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
- 
--->
-
 <%@ page language="java" import="java.util.*"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
+    <!-- Force Internet Explorer 8 to override compatibility mode -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" >
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-    <title>Sample Explorer</title>
-
-    <g:javascript library="prototype"/>
+    <title>Sample Explorer :: ${grailsApplication.config.com.recomdata.appTitle}</title>
 
     <!-- Include Ext and app-specific scripts: -->
     <script type="text/javascript" src="${resource(dir:'js/sarissa', file:'sarissa.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/sarissa', file: 'sarissa_ieemu_xpath.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/javeline', file: 'javeline_xpath.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js', file:'ext/ext-all-debug.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery.min.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui-1.9.1.custom.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorerMenu.js')}"></script>
+
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+    </script>
+
+    <script type="text/javascript" src="${resource(dir:'js', file:'browserDetect.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'ext/adapter/ext/ext-base.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'myJobs.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/sampleExplorerMenu.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/sampleExplorer.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/sampleExplorer.utilities.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'ext-all.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'sampleExplorer.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'chartservlet.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
+    <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}">
+    <!--
+    <script type="text/javascript" src="${resource(dir:'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'picklist.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'i2b2common.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/HaploView.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/SNP.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/IGV.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'sampleExplorer/GWAS.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/ext-ux', file:'miframe.js')}"></script>
-    <link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'ext-all.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'sampleExplorer.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'chartservlet.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
-    <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
-    <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
+    -->
+
+    <r:layoutResources />
+    <%-- XXX: Use template --%>
+
 </head>
 
 <body>
@@ -72,8 +64,8 @@
         basePath :"${request.getContextPath()}"
     }
 
-    var sampleRequestType = "${sampleRequestType}"
-    var currentResultInstanceId = "${result_instance_id}"
+    var sampleRequestType = "${sampleRequestType}" || ""
+    var currentResultInstanceId = "${result_instance_id}" || ""
 
     /******************************************************************************/
     //Global Variables
@@ -114,7 +106,10 @@
 
 </script>
 
-<div id="header-div"><g:render template="/layouts/commonheader" model="['app':'sampleexplorer']" /></div>
+<div id="header-div" class="header-div">
+    <g:render template="/layouts/commonheader" model="['app':'sampleexplorer', 'utilitiesMenu':'true']" />
+</div>
+
 <div id="main"></div>
 <h3 id="test">Loading....</h3>
 <g:form name="exportdsform" controller="export" action="exportDataset"/>
@@ -140,6 +135,6 @@
 </script>
 <!-- ************************************** -->
 
-<r:layoutResources/>
+<r:layoutResources /><%-- XXX: Use template --%>
 </body>
 </html>
