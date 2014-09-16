@@ -178,7 +178,7 @@ if (!grails.util.Environment.isWarDeployed()) {
 
 codenarc.reports = {
     TransmartAppReport('html') {
-        outputFile = 'target/CodeNarc-transmartApp-Report.html'
+        outputFile = 'CodeNarc-transmartApp-Report.html'
         title = 'transmartApp Report'
     }
 }
