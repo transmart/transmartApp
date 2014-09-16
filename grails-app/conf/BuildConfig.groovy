@@ -113,6 +113,9 @@ grails.project.dependency.resolution = {
 
         runtime ':resources:1.2.1'
 
+        // support for static code analysis
+        compile ":codenarc:0.21"
+
         if (!dm) {
             compile ':rdc-rmodules:1.2.2-SNAPSHOT'
             runtime ':transmart-core:1.2.2-SNAPSHOT'
