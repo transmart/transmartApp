@@ -57,7 +57,7 @@ grails.project.dependency.resolution = {
 
         runtime 'org.javassist:javassist:3.16.1-GA'
 
-        compile 'org.transmartproject:transmart-core-api:1.2.1-SNAPSHOT'
+        compile 'org.transmartproject:transmart-core-api:1.2.2-SNAPSHOT'
 
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
@@ -114,28 +114,28 @@ grails.project.dependency.resolution = {
         runtime ':resources:1.2.1'
 
         if (!dm) {
-            compile ':rdc-rmodules:1.2.1-SNAPSHOT'
-            runtime ':transmart-core:1.2.1-SNAPSHOT'
-            compile ':transmart-gwas:1.2.1-SNAPSHOT'
+            compile ':rdc-rmodules:1.2.2-SNAPSHOT'
+            runtime ':transmart-core:1.2.2-SNAPSHOT'
+            compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
-            //compile ':transmart-legacy-db:1.2.1-SNAPSHOT'
+            //compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
-            //compile ':folder-management:1.2.1-SNAPSHOT'
+            //compile ':folder-management:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas, folder-management
-            //compile ':search-domain:1.2.1-SNAPSHOT'
+            //compile ':search-domain:1.2.2-SNAPSHOT'
             //// already included in search-domain, transmart-gwas,
             //                       folder-management
-            //compile ':biomart-domain:1.1-SNAPSHOT'
+            //compile ':biomart-domain:1.2.2-SNAPSHOT'
             //// already included in biomart-domain
-            //compile ':transmart-java:1.0-SNAPSHOT'
+            //compile ':transmart-java:1.2.2-SNAPSHOT'
             runtime ':dalliance-plugin:0.2-SNAPSHOT'
-            //runtime ':transmart-metacore-plugin:1.2.1-SNAPSHOT'
+            //runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
             runtime ':transmart-mydas:0.1-SNAPSHOT'
             runtime ':transmart-rest-api:0.1-SNAPSHOT'
-            runtime ':blend4j-plugin:1.2.1-SNAPSHOT'
-            runtime ':transmart-metacore-plugin:1.2.1-SNAPSHOT'
+            runtime ':blend4j-plugin:1.2.2-SNAPSHOT'
+            runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
 
-            test ':transmart-core-db-tests:1.2.1-SNAPSHOT'
+            test ':transmart-core-db-tests:1.2.2-SNAPSHOT'
         } else {
             dm.internalDependencies delegate
         }
