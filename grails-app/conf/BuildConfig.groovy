@@ -113,7 +113,7 @@ grails.project.dependency.resolution = {
 
         runtime ':resources:1.2.1'
 
-        // support for static code analysis
+        // support for static code analysis - see codenarc.reports property below
         compile ":codenarc:0.21"
 
         if (!dm) {
@@ -174,6 +174,13 @@ grails.war.resources = { stagingDir ->
 // Official bug number : GRAILS-11376
 if (!grails.util.Environment.isWarDeployed()) {
     grails.tomcat.nio = true
+}
+
+codenarc.reports = {
+    TransmartAppReport('html') {
+        outputFile = 'target/CodeNarc-transmartApp-Report.html'
+        title = 'transmartApp Report'
+    }
 }
 
 // vim: set et ts=4 sw=4:
