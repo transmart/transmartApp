@@ -1,0 +1,332 @@
+=== tranSMART Configuration ===
+
+```
+//{{{ SAML Configuration
+org.transmart.security.samlEnabled = true
+
+if (org.transmart.security.samlEnabled) {
+    // don't do assignment to grails.plugin.springsecurity.providerNames
+    // see GRAILS-11730
+    grails { plugin { springsecurity {
+        providerNames << 'samlAuthenticationProvider'
+    } } }
+    // again, because of GRAILS-11730
+    def ourPluginConfig
+    grails {
+        ourPluginConfig = plugin
+    }
+
+    org { transmart { security {
+        ssoEnabled = "true"
+
+        // URL to redirect to after successful authentication
+        successRedirectHandler.defaultTargetUrl = ourPluginConfig.springsecurity.successHandler.defaultTargetUrl
+        // URL to redirect to after successful logout
+        successLogoutHandler.defaultTargetUrl = ourPluginConfig.springsecurity.logout.afterLogoutUrl
+
+        saml {
+            /* {{{ Service provider details (we) */
+            sp {
+                // ID of the Service Provider
+                id = "gustavo-transmart"
+
+                // URL of the service provider. This should be autodected, but it isn't
+                url = "http://localhost:8080/transmart"
+
+                // Alias of the Service Provider
+                alias = "transmart"
+
+                // Alias of the Service Provider's signing key, see keystore details
+                signingKeyAlias = "saml-signing"
+                // Alias of the Service Provider's encryption key
+                encryptionKeyAlias = "saml-encryption"
+            }
+            /* }}} */
+
+            // Metadata file of the provider. We insist on keeping instead of just
+            // retrieving it from the provider on startup to prevent transmart from
+            // being unable to start due to provider being down. A copy will still be
+            // periodically fetched from the provider
+            idp.metadataFile = '/home/glopes/idp-local-metadata.xml'
+
+            /* {{{ Keystore details */
+            keystore {
+                // Generate with:
+                //  keytool -genkey -keyalg RSA -alias saml-{signing,encryption} \
+                //    -keystore transmart.jks -storepass changeit \
+                //    -validity 3602 -keysize 2048
+                // Location of the keystore. You can use other schemes, like classpath:resource/samlKeystore.jks
+                file = 'file:///home/glopes/transmart.jks'
+
+                // keystore's storepass
+                password="changeit"
+
+                // keystore's default key
+                defaultKey="saml-signing"
+
+                // Alias of the encryption key in the keystore
+                encryptionKey.alias="saml-encryption"
+                // Password of that the key with above alis in the keystore
+                encryptionKey.password="changeit"
+
+                // Alias of the signing key in the keystore
+                signingKey.alias="saml-signing"
+                // Password of that the key with above alis in the keystore
+                signingKey.password="changeit"
+            }
+            /* }}} */
+
+            /* {{{ Creation of new users */
+            createInexistentUsers = "true"
+            attribute.username    = "urn:custodix:ciam:1.0:principal:username"
+            attribute.firstName   = "urn:oid:2.5.4.42"
+            attribute.lastName    = "urn:oid:2.5.4.4"
+            attribute.email       = ""
+            attribute.federatedId = "personPrincipalName"
+            /* }}} */
+
+            //
+            // Except maybe for the binding, you probably won't want to change the rest:
+            //
+
+            // Suffix of the login filter, saml authentication is initiated when user browses to this url
+            entryPoint.filterProcesses = "/saml/login"
+            // SAML Binding to be used for above entry point url.
+            entryPoint.binding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+            // This property must be set otherwise the default binding is used which, in this configuration, is HTTP-ARTIFACT
+            entryPoint.defaultAssertionConsumerIndex = "1"
+
+            // Suffix of the Service Provider's metadata, this url needs to be configured on IDP
+            metadata.filterSuffix = "/saml/metadata"
+            // Id of the spring security's authentication manager
+            authenticationManager = "authenticationManager"
+            // Whether sessions should be invalidated after logout
+            logout.invalidateHttpSession = "true"
+            // Id of the spring security user service that should be called to fetch users.
+            saml.userService = "org.transmart.FederatedUserDetailsService"
+        }
+    } } }
+} //if (org.transmart.security.samlEnabled)
+
+// }}}
+```
+
+=== simpleSAMLphp configuration ===
+
+```
+diff --git a/cert/saml.crt b/cert/saml.crt
+new file mode 100644
+index 0000000..e88fa5c
+--- /dev/null
++++ b/cert/saml.crt
+@@ -0,0 +1,23 @@
++-----BEGIN CERTIFICATE-----
++MIIDyzCCArOgAwIBAgIJAPO3TOzZI7ofMA0GCSqGSIb3DQEBCwUAMHwxCzAJBgNV
++BAYTAk5MMRAwDgYDVQQIDAdVdHJlY2h0MRAwDgYDVQQHDAdVdHJlY2h0MREwDwYD
++VQQKDAhUaGUgSHl2ZTETMBEGA1UEAwwKc2FtbC5sb2NhbDEhMB8GCSqGSIb3DQEJ
++ARYSZ3VzdGF2b0B0aGVoeXZlLm5sMB4XDTE0MDkxNjE2MTY0OFoXDTI0MDkxNTE2
++MTY0OFowfDELMAkGA1UEBhMCTkwxEDAOBgNVBAgMB1V0cmVjaHQxEDAOBgNVBAcM
++B1V0cmVjaHQxETAPBgNVBAoMCFRoZSBIeXZlMRMwEQYDVQQDDApzYW1sLmxvY2Fs
++MSEwHwYJKoZIhvcNAQkBFhJndXN0YXZvQHRoZWh5dmUubmwwggEiMA0GCSqGSIb3
++DQEBAQUAA4IBDwAwggEKAoIBAQDuFK2yOu/awxOYdjBiDdHAEaesPzsddwzCSKjQ
++bu1r0g/Q/I/jwhh+zqCudpZWnLOKbR9GApJwrwP9KexIRFIZ+WuNYD5gmFDVK7IB
++HpNU/tNRChySOfQ28tht/rYZb4MseuogLW41L6ctF/LHV+frSnz5h/C5wvA+mz/p
++zKwjSVExCjHbamOd7riAtOC10b3hMYZBrA8ABEQkItlnKtSvU8jlL/ozkrCfUVw7
++oxkhZWrvoJgKXvVITEC0ZpsLX8MoskXAhOIKzI9CMzzTk/J+P/QJ5xAoNAppYD38
++QwoxZ0XgDgm1InoAWY/o0qZyIIbKAcWN7fz2Fj+yzAVbYe3RAgMBAAGjUDBOMB0G
++A1UdDgQWBBT1NRIyF96T5pYEDiizUvoKFf0kdTAfBgNVHSMEGDAWgBT1NRIyF96T
++5pYEDiizUvoKFf0kdTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQDc
++0d5DxUuxvwdYEJwvhKojQMQX9HVMIvKTM1/zXEr5lFHETArEffLHXFBeW20/QpRX
++EVDUkA21t6HQ2Qur3Mqwl5r+5gXwRH9jSRZnezJcm0DVNe/L3gg5nNnMyhKVCRFL
++PoYSARf4vE3gJ71gkoesUarXkY4Lf0E35XQAlux/LpIHroi0V831DQMqZjpAeODf
++vJz2A2ghOTW9FmDWDIqfEEa4DoeWQTiHkp8IcWVzgYZdEebkIMZ2L2w/8CSu8OHn
++yKFiyoIUtKO1KMTF8ERdoPZmh1hCCX12In3eN3Kj/weE6Ew+XPq7r7VRTyL/zXDX
++MFOfS29iH1PSUbGFiWVW
++-----END CERTIFICATE-----
+diff --git a/cert/saml.pem b/cert/saml.pem
+new file mode 100644
+index 0000000..c916745
+--- /dev/null
++++ b/cert/saml.pem
+@@ -0,0 +1,28 @@
++-----BEGIN PRIVATE KEY-----
++MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDuFK2yOu/awxOY
++djBiDdHAEaesPzsddwzCSKjQbu1r0g/Q/I/jwhh+zqCudpZWnLOKbR9GApJwrwP9
++KexIRFIZ+WuNYD5gmFDVK7IBHpNU/tNRChySOfQ28tht/rYZb4MseuogLW41L6ct
++F/LHV+frSnz5h/C5wvA+mz/pzKwjSVExCjHbamOd7riAtOC10b3hMYZBrA8ABEQk
++ItlnKtSvU8jlL/ozkrCfUVw7oxkhZWrvoJgKXvVITEC0ZpsLX8MoskXAhOIKzI9C
++MzzTk/J+P/QJ5xAoNAppYD38QwoxZ0XgDgm1InoAWY/o0qZyIIbKAcWN7fz2Fj+y
++zAVbYe3RAgMBAAECggEALiS33Zlqr32rqJsPmZGQG6fQVaQTswxF3snyXiOBxKn8
++AsdQpBYUZU9q+SVm0fahHa00qH8LHufs3/5mG0OSnhIndEk5DcO3tvk3ENx6NbkF
++/+jzzKuK17ONmxQI+zkPtWlFQ2NKvugzgJvppBU3j/Tp7/sW/wn3QksYwhm3K0dE
++zEwr4U7vhl+xws8aIzVl6bJpG1tLkZBHGxI/h4xVyAwAEa+6TJ/5wGR+PM86o98X
++9CBdX1hORY0m3TijxjVVD9Fl9VuKPzDJ5LJ5OndN/uGJ/LoObQ336ujBCKv8rXxC
++dBoZkBzqU4Agn3MFkAEQdgo7/mOVHOO2/bIvIQ1DuQKBgQD7eEKXFKTRwbnbOdVP
++6AkFF8m1m8TuUe88xU0cQn5uYUkemWeVo2wTcOeLh8lltfJgrMktErvwPshRo6HH
++sN2p1gLFM1B1HwtmWikFKZSvGOxKhL4RPe9kxyiTllwAWi2y/bORSrBGu2kHYwt9
++rpTCdiga91rKwuU4wgxabXFANwKBgQDyXqugeG+Izf5Iphrr0H59tmnlFtbnqpQR
++a6AyZ7Wafy6oka6YeTWujAFIRZ35foVNrD35GfInOMTIM1LFwKC/iFO5VMhoB2Kn
++kQGXx/naRGdvrARKrEP7g30eVlKinvm55UjnDwQ6wiEFpicnabnKOwvj5PvY6CkW
++toT2M3buNwKBgQDQ/FvS9SwYyngsMf8N/ldorSFMVZ0vNlatWYdBAh3Sm/VJgdHt
++MTiDW6SCeCGu7qv1HgO++r/H5FVUS7oKm/lLyPjabE/kVh2CPVGz4Z+YeQz+zRys
++dZ17UmxtY1soS8mI5IEUMU8YKW4a3nxRQgKNLeccqg8BTUF0jwf3KtcgtwKBgQDe
++GoVau6MyEdt5hcZb3SddWoF2L1Tm3Xls8VzPdByGpRAD5+TA0yqvdptiOHHJBflw
++sWvlT7KJ4Mrrz6SFlb15Z5uZ1akFM+djOU3lYpuDOnYzbsZMC8sMvHU3DNITNm4Q
++vZ3uJ+OvWODcBWQSCR/5w9xkjh2Aq1ej+cSkvYq6RwKBgQDCk+/wVLiMxwFLgIgi
++1cTuCzqeypquvnNFgYoIMknIi6CPBL/1XVDQQT4D/3sAszKvOyqozq8hN9FIgjik
++NGKmWhPGAlTd9QcbNgOsqaP9D/50C2yqO/YiYSd/juRcyrA2YuJ4sA0AedYVNPK2
++g0BbV6Z1aB0Od/907c1gslaK4g==
++-----END PRIVATE KEY-----
+diff --git a/config/authsources.php b/config/authsources.php
+index 95376b1..a3d4458 100644
+--- a/config/authsources.php
++++ b/config/authsources.php
+@@ -10,6 +10,17 @@ $config = array(
+ 		'core:AdminPassword',
+ 	),
+
++	'example-userpass' => array(
++		'exampleauth:UserPass',
++		'glopes:foobar' => array(
++			'uid' => array('glopes'),
++			'urn:custodix:ciam:1.0:principal:username' => 'glopes_z',
++			'personPrincipalName' => 'glopes_principal_name',
++			'urn:oid:2.5.4.42' => 'GUSTAVO',
++			'urn:oid:2.5.4.4' => 'Lopes',
++		),
++	),
++
+
+ 	// An authentication source which can authenticate against both SAML 2.0
+ 	// and Shibboleth 1.3 IdPs.
+diff --git a/config/config.php b/config/config.php
+index 1ffd1df..63925de 100644
+--- a/config/config.php
++++ b/config/config.php
+@@ -22,7 +22,7 @@ $config = array (
+ 	 * external url, no matter where you come from (direct access or via the
+ 	 * reverse proxy).
+ 	 */
+-	'baseurlpath'           => 'simplesaml/',
++	'baseurlpath'           => '/',
+ 	'certdir'               => 'cert/',
+ 	'loggingdir'            => 'log/',
+ 	'datadir'               => 'data/',
+@@ -76,7 +76,7 @@ $config = array (
+ 	 * metadata listing and diagnostics pages.
+ 	 * You can also put a hash here; run "bin/pwgen.php" to generate one.
+ 	 */
+-	'auth.adminpassword'		=> '123',
++	'auth.adminpassword'		=> 'foobar',
+ 	'admin.protectindexpage'	=> false,
+ 	'admin.protectmetadata'		=> false,
+
+@@ -88,15 +88,15 @@ $config = array (
+ 	 * A possible way to generate a random salt is by running the following command from a unix shell:
+ 	 * tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo
+ 	 */
+-	'secretsalt' => 'defaultsecretsalt',
++	'secretsalt' => 'ol2x7vll4nfmr09wpbk37jvezkxliyma',
+
+ 	/*
+ 	 * Some information about the technical persons running this installation.
+ 	 * The email address will be used as the recipient address for error reports, and
+ 	 * also as the technical contact in generated metadata.
+ 	 */
+-	'technicalcontact_name'     => 'Administrator',
+-	'technicalcontact_email'    => 'na@example.org',
++	'technicalcontact_name'     => 'Gustavo Lopes',
++	'technicalcontact_email'    => 'gustavo@thehyve.nl',
+
+ 	/*
+ 	 * The timezone of the server. This option should be set to the timezone you want
+@@ -105,7 +105,7 @@ $config = array (
+ 	 *
+ 	 * See this page for a list of valid timezones: http://php.net/manual/en/timezones.php
+ 	 */
+-	'timezone' => NULL,
++	'timezone' => 'Europe/Amsterdam',
+
+ 	/*
+ 	 * Logging.
+@@ -178,7 +178,7 @@ $config = array (
+ 	 * one of the functionalities below, but in some cases you could run multiple functionalities.
+ 	 * In example when you are setting up a federation bridge.
+ 	 */
+-	'enable.saml20-idp'		=> false,
++	'enable.saml20-idp'		=> true,
+ 	'enable.shib13-idp'		=> false,
+ 	'enable.adfs-idp'		=> false,
+ 	'enable.wsfed-sp'		=> false,
+diff --git a/metadata-templates/saml20-idp-hosted.php b/metadata-templates/saml20-idp-hosted.php
+index d2f1c97..8400d59 100644
+--- a/metadata-templates/saml20-idp-hosted.php
++++ b/metadata-templates/saml20-idp-hosted.php
+@@ -14,8 +14,8 @@ $metadata['__DYNAMIC:1__'] = array(
+ 	'host' => '__DEFAULT__',
+
+ 	/* X.509 key and certificate. Relative to the cert directory. */
+-	'privatekey' => 'server.pem',
+-	'certificate' => 'server.crt',
++	'privatekey' => 'saml.pem',
++	'certificate' => 'saml.crt',
+
+ 	/*
+ 	 * Authentication source to use. Must be one that is configured in
+diff --git a/metadata/saml20-idp-hosted.php b/metadata/saml20-idp-hosted.php
+index d2f1c97..d7c3d11 100644
+--- a/metadata/saml20-idp-hosted.php
++++ b/metadata/saml20-idp-hosted.php
+@@ -14,8 +14,8 @@ $metadata['__DYNAMIC:1__'] = array(
+ 	'host' => '__DEFAULT__',
+
+ 	/* X.509 key and certificate. Relative to the cert directory. */
+-	'privatekey' => 'server.pem',
+-	'certificate' => 'server.crt',
++	'privatekey' => 'saml.pem',
++	'certificate' => 'saml.crt',
+
+ 	/*
+ 	 * Authentication source to use. Must be one that is configured in
+@@ -24,6 +24,20 @@ $metadata['__DYNAMIC:1__'] = array(
+ 	'auth' => 'example-userpass',
+
+ 	/*
++	 * Enable HTTP-Artifact
++	 * See https://simplesamlphp.org/docs/stable/simplesamlphp-artifact-idp
++	 */
++	'saml20.sendartifact' => true,
++
++	/*
++	 * Support HTTP-POST instead of -Redirect, which is the default for
++	 * simplesamlphp
++	 */
++	'SingleSignOnServiceBinding' => array(
++		'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
++	),
++
++	/*
+ 	 * WARNING: SHA-1 is disallowed starting January the 1st, 2014.
+ 	 *
+ 	 * Uncomment the following option to start using SHA-256 for your signatures.
+diff --git a/metadata/saml20-sp-remote.php b/metadata/saml20-sp-remote.php
+index f2cff56..7b457ff 100644
+--- a/metadata/saml20-sp-remote.php
++++ b/metadata/saml20-sp-remote.php
+@@ -25,3 +25,12 @@ $metadata['google.com'] = array(
+ 	'simplesaml.nameidattribute' => 'uid',
+ 	'simplesaml.attributes' => FALSE,
+ );
++
++/* You can generate a more complete example, with better validation, by going to:
++ * http://localhost:8080/transmart/saml/metadata
++ * and copy pasting in the simpleSAMLphp metadata converter */
++$metadata['gustavo-transmart'] = array(
++	'name' => 'Test tranSMART instance',
++	'AssertionConsumerService' => 'http://localhost:8080/transmart/saml/SSO/alias/transmart',
++	'SingleLogoutService' => 'http://localhost:8080/transmart/saml/SingleLogout/alias/transmart',
++);
+diff --git a/modules/exampleauth/enable b/modules/exampleauth/enable
+new file mode 100644
+index 0000000..e69de29
+```
