@@ -116,4 +116,12 @@ beans = {
             return {}
         }
     }
+
+    if (!('clientCredentialsAuthenticationProvider' in
+            grailsApplication.config.grails.plugin.springsecurity.providerNames)) {
+        SpringSecurityOauth2ProviderGrailsPlugin.metaClass.getDoWithSpring = {->
+            logger.info "Skipped Oauth2 Grails plugin initialization"
+            return {}
+        }
+    }
 }
