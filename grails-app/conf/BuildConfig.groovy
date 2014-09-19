@@ -78,6 +78,18 @@ grails.project.dependency.resolution = {
         /* for GeneGo web services: */
         compile 'axis:axis:1.4'
 
+        /* for SAML authentication */
+        compile('org.springframework.security.extensions:spring-security-saml2-core:1.0.0.RELEASE') {
+            //excludes of spring securirty necessary because they are for an older version (3.1 branch)
+            //also remove xercesImpl because it breaks tomcat and is not otherwise needed
+            excludes 'spring-security-config', 'spring-security-core', 'spring-security-web', 'xercesImpl'
+        }
+        // spring security version should be in sync with that brought with
+        // grails-spring-security-core
+        runtime 'org.springframework.security:spring-security-config:3.2.3.RELEASE',
+                'org.springframework.security:spring-security-web:3.2.3.RELEASE', {
+            transitive = false
+        }
 
         test('junit:junit:4.11') {
             transitive = false /* don't bring hamcrest */
@@ -105,7 +117,7 @@ grails.project.dependency.resolution = {
         // Not compatible with spring security 3.2 yet
         //compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:2.0-RC2'
-        compile ':spring-security-core:2.0-RC2'
+        compile ':spring-security-core:2.0-RC4'
         compile ':spring-security-oauth2-provider:1.0.5.2'
 
         runtime ':prototype:1.0'
