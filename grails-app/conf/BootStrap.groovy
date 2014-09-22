@@ -27,14 +27,21 @@ class BootStrap {
 
     final static logger = LoggerFactory.getLogger(this)
 
-	def securityContextPersistenceFilter
+    def securityContextPersistenceFilter
 
     def grailsApplication
 
-	def init = { servletContext ->
-		securityContextPersistenceFilter.forceEagerSessionCreation = true
-		
-		SpringSecurityUtils.clientRegisterFilter('concurrentSessionFilter', SecurityFilterPosition.CONCURRENT_SESSION_FILTER)
+    def init = { servletContext ->
+        securityContextPersistenceFilter.forceEagerSessionCreation = true
+
+        SpringSecurityUtils.clientRegisterFilter('concurrentSessionFilter', SecurityFilterPosition.CONCURRENT_SESSION_FILTER)
+
+        if (grailsApplication.config.org.transmart.security.samlEnabled) {
+            SpringSecurityUtils.clientRegisterFilter(
+                    'metadataGeneratorFilter', SecurityFilterPosition.FIRST)
+            SpringSecurityUtils.clientRegisterFilter(
+                    'samlFilter', SecurityFilterPosition.BASIC_AUTH_FILTER)
+        }
 
         if (!grailsApplication.config.org.transmart.configFine.is(true)) {
             logger.error("Something wrong happened parsing the externalized " +

@@ -43,6 +43,10 @@ def logger = Logger.getLogger('com.recomdata.conf.resources')
 beans = {
     xmlns context:"http://www.springframework.org/schema/context"
 
+    if (grailsApplication.config.org.transmart.security.samlEnabled) {
+        importBeans('classpath:/spring/spring-security-saml.xml')
+    }
+
     /* core-api authorization wrapped beans */
     queriesResourceAuthorizationDecorator(QueriesResourceAuthorizationDecorator) {
             DefaultBeanConfiguration bean ->
