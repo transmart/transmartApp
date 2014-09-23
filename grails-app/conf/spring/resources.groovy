@@ -43,6 +43,10 @@ def logger = Logger.getLogger('com.recomdata.conf.resources')
 beans = {
     xmlns context:"http://www.springframework.org/schema/context"
 
+    if (grailsApplication.config.org.transmart.security.samlEnabled) {
+        importBeans('classpath:/spring/spring-security-saml.xml')
+    }
+
     /* core-api authorization wrapped beans */
     queriesResourceAuthorizationDecorator(QueriesResourceAuthorizationDecorator) {
             DefaultBeanConfiguration bean ->
@@ -113,6 +117,14 @@ beans = {
 //        }
         SpringSecurityLdapGrailsPlugin.metaClass.getDoWithSpring = {->
             logger.info "Skipped LDAP Grails plugin initialization"
+            return {}
+        }
+    }
+
+    if (!('clientCredentialsAuthenticationProvider' in
+            grailsApplication.config.grails.plugin.springsecurity.providerNames)) {
+        SpringSecurityOauth2ProviderGrailsPlugin.metaClass.getDoWithSpring = {->
+            logger.info "Skipped Oauth2 Grails plugin initialization"
             return {}
         }
     }
