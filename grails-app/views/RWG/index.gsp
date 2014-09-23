@@ -2,7 +2,7 @@
 <html>
     <head>
         <!-- Force Internet Explorer 8 to override compatibility mode -->
-        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" >
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" >
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
         <title>${grailsApplication.config.com.recomdata.appTitle}</title>
         
@@ -297,9 +297,11 @@
 
 	        	jQuery('#sidebar').resizable({
                     handles: 'e',
+                    width: 320,
                     maxWidth: 800,
-                    minWidth: 150,
+                    minWidth: 280,
                     resize: function(event, ui){
+                        console.log("PLOP");
                         var currentWidth = ui.size.width;
                         
                         // this accounts for padding in the panels + 
@@ -317,7 +319,9 @@
                         jQuery('#main').width(jQuery('body').width() - currentWidth - padding);
                         jQuery('#filter-browser').css('left', jQuery('#box-search').width() + 50);
 	                }
-              });
+                });
+
+                jQuery('#sidebar').trigger("resize");
 
 	        	var xpos = jQuery('#menuLinks').offset()['right'];
 
@@ -466,7 +470,7 @@
             <g:render template="/layouts/commonheader" model="['app':'rwg', 'utilitiesMenu':'true']" />
         </div>
 		 
-		<div id="sidebar" style="border-right:5px solid;border-color:#EDEEF6">
+		<div id="sidebar" style="width:320px; border-right:5px solid;border-color:#EDEEF6">
 			
 	        <tmpl:/RWG/boxSearch />
 									

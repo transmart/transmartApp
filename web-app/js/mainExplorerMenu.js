@@ -46,9 +46,10 @@ function createWestPanel()
         {
         	url: pageInfo.basePath+'/sampleExplorer/showMainSearchPage',
            	method:'POST'
-        },			
-		width : 230,
-		minwidth : 200,
+        },
+        width : 320,
+        maxwidth : 800,
+		minwidth : 280,
 		split : false,
 		border : true,
 		layout : 'border'

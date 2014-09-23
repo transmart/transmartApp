@@ -66,7 +66,7 @@
 <body>
 
 <div align="center" style="clear:both; margin-left:auto; margin-right:auto; margin-top:20px;text-align:center">
-<table style="width:auto; border:0px; text-align:center; margin:auto;" align="center">
+    <table style="width:auto; border:0px; text-align:center; margin:auto;" align="center">
         <tr>
             <td style="text-align:center;vertical-align:middle;margin-left:-40px;">
   			<g:link controller="RWG" action="index"><img src="${resource(dir:'images',file:grailsApplication.config.com.recomdata.largeLogo)}" alt="Transmart" /></g:link>
@@ -150,6 +150,17 @@
                 </div>
             </td>
         </tr>
-</table>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td style="text-align:center;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
+                <a id="etrikspowered" target="_blank" href="http://www.etriks.org" style="text-decoration: none;">
+                    <div>
+                        <span style="font-size:10px;display: inline-block;line-height: 35px; height: 35px;">Powered by&nbsp;</span>
+                        <img src="${resource(dir:'images', file: 'eTRIKS_logo.png')}" alt="eTRIKS" style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                    </div>
+                </a>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>

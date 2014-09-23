@@ -31,6 +31,7 @@
     <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'chartservlet.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir:'js/ext/resources/css', file:'xtheme-gray.css')}">
     <link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'datasetExplorer.css')}">
     <!--
     <script type="text/javascript" src="${resource(dir:'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'searchcombobox.js')}"></script>

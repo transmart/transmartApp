@@ -16,18 +16,6 @@
   
  
 --%>
-
-<div id="logocutout">
-	<g:if test="${'rwg' == app}">
-        <g:img file="logo.png"/>
-	</g:if>
-	<g:else>
-		<g:link controller="RWG" action="index">
-            <g:img file="logo.png"/>
-        </g:link>
-	</g:else>
-
-</div>
         
 <g:if test="${debug}">
 	<div id="search-explain" class="overlay">
@@ -38,9 +26,7 @@
 		   			
 <table class="menuDetail" width="100%" style="height: 28px; border-collapse: collapse">
 	<tr>
-		<th class="menuBar" style="width: 160px">
-			&nbsp;
-		</th>
+		<th class="menuBar" style="width: 20px">&nbsp;</th>
 		<th class="menuBar" style="width: 150px"><g:if test="${'rwg' == app || 'datasetExplorer' == app}"><select id="search-categories"></select></g:if></th>
 		<th class="menuBar" style="width: 160px"><g:if test="${'rwg' == app || 'datasetExplorer' == app}"><input id="search-ac"/></input></g:if></th>
 		<th class="menuBar" style="width: 110px">
@@ -77,11 +63,11 @@
 	   				<g:if test="${'genesignature'==app}"><th class="menuVisited">Gene&nbsp;Signature/Lists</th></g:if>
 		   			<g:else><th class="menuLink"><g:link controller="geneSignature">Gene&nbsp;Signature/Lists</g:link></th></g:else>
 
-	   				<g:if test="${'gwas'==app}"><th class="menuVisited">GWAS</th></g:if>
-		   			<g:else><th class="menuLink"><g:link controller="GWAS">GWAS</g:link></th></g:else>
+	   				%{--<g:if test="${'gwas'==app}"><th class="menuVisited">GWAS</th></g:if>--}%
+		   			%{--<g:else><th class="menuLink"><g:link controller="GWAS">GWAS</g:link></th></g:else>--}%
 
-	   				<g:if test="${'uploaddata'==app}"><th class="menuVisited">Upload Data</th></g:if>
-		   			<g:else><th class="menuLink"><g:link controller="uploadData">Upload Data</g:link></th></g:else>
+	   				%{--<g:if test="${'uploaddata'==app}"><th class="menuVisited">Upload Data</th></g:if>--}%
+		   			%{--<g:else><th class="menuLink"><g:link controller="uploadData">Upload Data</g:link></th></g:else>--}%
 
 		      		<sec:ifAnyGranted roles="ROLE_ADMIN">
 	   					<g:if test="${'accesslog'==app}"><th class="menuVisited">Admin</th></g:if>

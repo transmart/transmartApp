@@ -146,7 +146,7 @@ table.menuDetail th.menuVisited {
 }
 
 #box-search, #program-explorer {
-	margin: 26px 8px 8px 8px;
+	margin: 10px 8px 8px 8px;
 	border-radius: 8px;
 	border: #0000FF;
 	box-shadow: #DDD 11px 11px 8px -7px;
@@ -256,6 +256,7 @@ table.menuDetail th.menuVisited {
 }
 
 .greybutton {
+    color: #000055;
 	background-color: #F4F4F4;
 	border: 1px solid #DDD;
 	cursor: pointer;
@@ -402,7 +403,7 @@ table.menuDetail th.menuVisited {
 #sidebartoggle {
 	position:absolute;
 	left:0px;
-	top: 29px;
+	top: 3px;
 	z-index: 999;
 	background-image: url('../images/lefttab-left.png');
 	width: 22px;
