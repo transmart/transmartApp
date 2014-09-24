@@ -155,19 +155,16 @@ public class SearchKeywordService {
                 like("keywordTerm", term.toUpperCase() + '%')
             }
 
-            //TODO Special case for gene or SNP - rework to support multiple categories!
-            /* // commented below since dataCategory do no exist for search_keyword_term table
+
             if ("GENE_OR_SNP".equals(category)) {
-                //or {
-                //	eq("dataCategory", "GENE")
-                //	like("keywordTerm", 'RS%')
-                //}
-                'in'("dataCategory", ["GENE", "SNP"])
-            } else if ("SNP".equals(category)) {
-                //like("keywordTerm", 'RS%')
-                eq("dataCategory", "SNP")
-            } else */ 
-            if ("ALL".compareToIgnoreCase(category) != 0) {
+				searchKeyword {
+					or {
+							eq("dataCategory", "GENE")
+							eq("dataCategory", "SNP")
+					}
+				}
+            }
+            else if ("ALL".compareToIgnoreCase(category) != 0) {
                 searchKeyword {
                     eq("dataCategory", category.toUpperCase())
                 }
