@@ -364,11 +364,15 @@ class GenericJobExecutor implements Job {
                     newError = new RserveException(c, "There was an error running the R script for your job. Please contact an administrator.");
                 }
 
+                c.close();
+
                 throw newError;
 
             }
 
         }
+
+        c.close();
     }
 
     /**

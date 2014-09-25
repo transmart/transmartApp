@@ -517,6 +517,7 @@ public class GexDao {
 				String pivotDataCommand = "PivotGeneExprData.pivot('$inputFile.name')"
 				//Run the R command to pivot the data in the clinical.i2b2trans file.
 				REXP pivot = c.eval(pivotDataCommand)
+                c.close();
 			}
 		}
 	}

@@ -223,6 +223,8 @@ class SnpDataService {
 		//Run the R command to pivot the data in the clinical.i2b2trans file.
 		REXP pivot = c.eval(pivotDataCommand)
 		log.debug("Finished R transformations")
+
+        c.close();
 	}
 	
 	def private Map writeMAPFiles(studyDir, fileName, jobName, resultInstanceId) {

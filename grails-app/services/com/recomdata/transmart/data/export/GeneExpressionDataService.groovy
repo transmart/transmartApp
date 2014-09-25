@@ -738,6 +738,8 @@ class GeneExpressionDataService {
 				println("Attempting following R Command : " + "PivotGeneExprData.pivot('$inputFile.name', '$multipleStudies', '$study')".replace("\\","\\\\"))
 				
 				REXP pivot = c.eval(pivotDataCommand)
+
+                c.close();
 			}
 		}
 	}
@@ -1326,6 +1328,8 @@ class GeneExpressionDataService {
 			   println("Attempting following R Command : " + pivotDataCommand)
 			   
 			   REXP pivot = c.eval(pivotDataCommand)
+
+               c.close();
 		   }
 	   }
    }
