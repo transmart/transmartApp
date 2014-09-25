@@ -503,7 +503,7 @@ public class GexDao {
 			File inputFile = new File(inputFileLoc)
 			if (inputFile) {
 				String rOutputDirectory = inputFile.getParent()
-				RConnection c = new RConnection()
+				RConnection c = new RConnection(Holders.config.RModules.host, Holders.config.RModules.port)
 				
 				//Set the working directory to be our temporary location.
 				String workingDirectoryCommand = "setwd('${rOutputDirectory}')".replace("\\","\\\\")

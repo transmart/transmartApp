@@ -21,6 +21,7 @@
 package com.recomdata.transmart.data.export
 
 import com.recomdata.transmart.data.export.util.FileWriterUtil
+import grails.util.Holders
 import org.apache.commons.lang.StringUtils
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
@@ -711,7 +712,7 @@ class GeneExpressionDataService {
 			File inputFile = new File(inputFileLoc)
 			if (inputFile) {
 				String rOutputDirectory = inputFile.getParent()
-				RConnection c = new RConnection()
+				RConnection c = new RConnection(Holders.config.RModules.host, Holders.config.RModules.port)
 				
 				//Set the working directory to be our temporary location.
 				String workingDirectoryCommand = "setwd('${rOutputDirectory}')".replace("\\","\\\\")
@@ -1299,7 +1300,7 @@ class GeneExpressionDataService {
 		   File inputFile = new File(inputFileLoc)
 		   if (inputFile) {
 			   String rOutputDirectory = inputFile.getParent()
-			   RConnection c = new RConnection()
+			   RConnection c = new RConnection(Holders.config.RModules.host, Holders.config.RModules.port)
 			   
 			   //Set the working directory to be our temporary location.
 			   String workingDirectoryCommand = "setwd('${rOutputDirectory}')".replace("\\","\\\\")
