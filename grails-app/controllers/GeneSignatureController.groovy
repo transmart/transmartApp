@@ -384,7 +384,7 @@ class GeneSignatureController {
 
         } catch (FileSchemaException fse) {
             flash.message = fse.getMessage()
-            def existingValues = createExistingValues(3, wizard.geneSigInst, existingValues: existingValues)
+            def existingValues = createExistingValues(3, wizard.geneSigInst)
             render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
         } catch (RuntimeException re) {
             flash.message = "Runtime exception " + re.getClass().getName() + ":<br>" + re.getMessage()
