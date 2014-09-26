@@ -1,6 +1,4 @@
-@artifact.package
-@import grails.test.mixin.TestMixin
-@import grails.test.mixin.TestMixin
+@artifact.package@import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import spock.lang.Specification
 
