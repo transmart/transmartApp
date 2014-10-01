@@ -293,15 +293,12 @@
                     });
 	            });
 
-	        	resizeAccordion();
-
 	        	jQuery('#sidebar').resizable({
                     handles: 'e',
                     width: 320,
                     maxWidth: 800,
                     minWidth: 280,
                     resize: function(event, ui){
-                        console.log("PLOP");
                         var currentWidth = ui.size.width;
                         
                         // this accounts for padding in the panels + 
@@ -312,8 +309,8 @@
                         // you'll get some unstable behaviour
                         jQuery(this).width(currentWidth);
                         
-                        jQuery('#box-search').width(currentWidth - 20)
-                        jQuery('#program-explorer').width(currentWidth - 20)
+                        jQuery('#box-search').width(currentWidth - 15)
+                        jQuery('#program-explorer').width(currentWidth - 15)
                         // jQuery('#results-div').width(currentWidth -20)
                         // set the content panel width
                         jQuery('#main').width(jQuery('body').width() - currentWidth - padding);
@@ -332,13 +329,13 @@
 			});
 
 			function resizeAccordion() {
-				
+				console.log("PLOP");
 				var windowHeight = jQuery(window).height();
 	        	jQuery('#sidebar').height(jQuery(window).height()-30);
 	        	jQuery('#main').height(jQuery(window).height()-30);
 				var ypos = jQuery('#program-explorer').offset()['top'];
 	        	
-	        	var targetHeight = windowHeight - ypos - 60;
+	        	var targetHeight = windowHeight - ypos - 40;
 	        	jQuery('#results-div').height(targetHeight);
 	        	jQuery('#welcome').height(windowHeight - 90);
 	        	
@@ -348,8 +345,7 @@
 	        	else {
 	        		jQuery('#main').width("100%");
 	        	}
-	        	
-	        	
+
 	        	jQuery('#box-search').width(jQuery('#program-explorer').width());
 			}
 
@@ -474,7 +470,7 @@
 			
 	        <tmpl:/RWG/boxSearch />
 									
-				<div id="program-explorer" style="width: 290px">
+				<div id="program-explorer">
 		        <div id="title-program-div" class="ui-widget-header boxtitle">
 			         <h2 style="float:left" class="title">Program Explorer</h2>
 						</div>

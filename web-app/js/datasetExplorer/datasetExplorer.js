@@ -1036,7 +1036,7 @@ function onWindowResize() {
     jQuery('#centerMainPanel').css('top', jQuery('#header-div').height());
 
     var boxHeight = jQuery('#box-search').height();
-    jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 110);
+    jQuery('#navigateTermsPanel .x-panel-body').height(windowHeight - boxHeight - 90);
 
     jQuery('#analysisPanel .x-panel-body').height(jQuery(window).height() - 65);
 
@@ -4030,19 +4030,6 @@ function clearQuery() {
         resetQuery();
         clearDataAssociation();
     }
-}
-
-function toggleSidebar() {
-    var panel = Ext.getCmp('westPanel');
-    if (panel.hidden) {
-        panel.hidden = false;
-        panel.setVisible(true);
-    }
-    else {
-        panel.hidden = true;
-        panel.setVisible(false);
-    }
-    viewport.doLayout();
 }
 
 //check that an array a contains an object obj

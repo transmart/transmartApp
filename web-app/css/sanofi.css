@@ -112,14 +112,15 @@ table.menuDetail th.menuVisited {
 }
 
 #search-categories {
-    font-size: 10px;
-    height: 24px;
+    font-size: 99%;
+    height: 20px;
     width: 130px;
 }
 
 #search-ac {
-    padding-top: 3px;
-    width: 135px;
+    padding: 2px;
+    height: 14px;
+    width: 160px;
 }
 
 .ui-autocomplete .ui-menu-item a {
@@ -146,10 +147,14 @@ table.menuDetail th.menuVisited {
 }
 
 #box-search, #program-explorer {
-	margin: 10px 8px 8px 8px;
-	border-radius: 8px;
-	border: #0000FF;
-	box-shadow: #DDD 11px 11px 8px -7px;
+    margin: 10px 8px 8px 8px;
+    border-radius: 8px;
+    border: #0000FF;
+    box-shadow: #DDD 11px 11px 8px -7px;
+}
+
+#box-search {
+    margin-bottom: 0px;
 }
 
 #active-search-div

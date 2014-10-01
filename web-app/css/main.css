@@ -195,7 +195,7 @@ td, th {
 }
 
 th {
-	background: #fff url(../images/skin/shadow.jpg);
+	background: #fff url(../images/skin/shadow.jpg) bottom repeat-x;
     color: #666;
     font-size: 12px;
     font-weight: bold;
@@ -226,7 +226,7 @@ th.desc a {
 }
 
 .odd {
-    background: #e8e8e8;
+    background: #f4f4f4;
 }
 
 .even {
@@ -501,7 +501,8 @@ tr#gtb1odd1 {
 /* ---------------------------------------- End Generif */
 
 img {
-	border:
+	border:0;
+    outline: hidden;
 }
 
 a img {
@@ -842,6 +843,10 @@ select.jubselect {
 .dashboardBtn {
     background-image:url(../images/information.png ) !important;
     color:#ff0000;
+}
+
+.filter {
+    padding: 0px 10px 0px 10px;
 }
 
 .filtersBtn {

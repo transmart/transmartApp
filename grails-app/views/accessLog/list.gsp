@@ -26,10 +26,10 @@
     <body>
     <div class="body">
         <g:form name="form">
-        <table style="width:500px"><tr><td>
-        Start Date<input id="startdate" name="startdate" type="text" value="${startdate}"></td>
-        <td>End Date<input id="enddate" name="enddate" type="text" value="${enddate}"></td>
-        <td><br><g:actionSubmit class="filter" value="Filter" action="list" />&nbsp&nbsp&nbsp&nbsp<g:actionSubmit class="filter" value="Export to Excel" action="export" />
+        <table style="width: 700px;"><tr><td>
+        Start Date&nbsp;&nbsp;<input id="startdate" name="startdate" type="text" value="${startdate}"></td>
+        <td>End Date&nbsp;&nbsp;<input id="enddate" name="enddate" type="text" value="${enddate}"></td>
+        <td><g:actionSubmit class="filter" value="Filter" action="list" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<g:actionSubmit class="filter" value="Export to Excel" action="export" />
         </td></tr></table>
         </g:form>
             <h1>AccessLog List</h1>
@@ -39,32 +39,31 @@
                         <div class="list">
                 <table>
                     <thead>
-                        <tr>
+                        <tr style="height: 30px;">
                         
-                   	        <th><g:message code="accessLogInstance.accesstime" default="Access Time"/></th>
+                   	        <th style="vertical-align: middle;"><g:message code="accessLogInstance.accesstime" default="Access Time"/></th>
                    	             	   
                         
-                   	        <th><g:message code="accessLogInstance.username" default="User"/></th>
+                   	        <th style="vertical-align: middle;"><g:message code="accessLogInstance.username" default="User"/></th>
                    	   
                         
-                   	        <th><g:message code="accessLogInstance.event" default="Event"/></th>
+                   	        <th style="vertical-align: middle;"><g:message code="accessLogInstance.event" default="Event"/></th>
                    	   
                         
-                   	        <th><g:message code="accessLogInstance.eventmessage" default="Event Message"/></th>
+                   	        <th style="vertical-align: middle;"><g:message code="accessLogInstance.eventmessage" default="Event Message"/></th>
                    	             
                         
                         </tr>
                     </thead>
                     <tbody>
                     <g:each in="${accessLogInstanceList}" status="i" var="accessLogInstance">
-                        <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
+                        <tr class="${(i % 2) == 0 ? 'odd' : 'even'}" style="height: 30px;">
                         
-                        	<td>${fieldValue(bean:accessLogInstance, field:'accesstime')}</td>
-                            <td>${fieldValue(bean:accessLogInstance, field:'username')}</td>
-                        
-                            <td>${fieldValue(bean:accessLogInstance, field:'event')}</td>
-                        
-                            <td>${fieldValue(bean:accessLogInstance, field:'eventmessage')}</td>                        
+                        	<td style="width: 180px; vertical-align: top;">${fieldValue(bean:accessLogInstance, field:'accesstime')}</td>
+                            <td style="width: 100px; vertical-align: top;">${fieldValue(bean:accessLogInstance, field:'username')}</td>
+                            <td style="width: 200px; vertical-align: top;">${fieldValue(bean:accessLogInstance, field:'event')}</td>
+                            <td style="vertical-align: top;">${fieldValue(bean:accessLogInstance, field:'eventmessage')}</td>
+
                         </tr>
                     </g:each>
                     </tbody>

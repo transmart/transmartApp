@@ -582,8 +582,42 @@ function unselectFilterItem(id) {
 
 // ---
 
+function toggleSidebar() {
+    // This causes problem with ExtJS in case of rapid consecutive clicks.
+    element = jQuery('#sidebar')[0] || jQuery('#westPanel')[0];
+    element = '#' + element.id;
+    func = null;
+    if (typeof resizeAccordion == 'function') func = resizeAccordion;
+    else func = function () {
+        var panel = Ext.getCmp('westPanel');
+        if (panel != undefined) {
+            if (panel.hidden) {
+                panel.hidden = false;
+                panel.setVisible(true);
+            }
+            else {
+                panel.hidden = true;
+                panel.setVisible(false);
+            }
+            viewport.doLayout();
+        }
+    }
+    var sidebarIsVisible = (jQuery(element + ':visible').size() > 0);
+    console.log(sidebarIsVisible)
+    if (sidebarIsVisible) {
+        jQuery(element).fadeOut(500, func);
+        var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-left', '-right');
+        jQuery('#sidebartoggle').css('background-image', bgimg);
+    }
+    else {
+        jQuery(element).fadeIn();
+        if (func) func(); //Not a callback here - resize as soon as it starts appearing.
+        var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-right', '-left');
+        jQuery('#sidebartoggle').css('background-image', bgimg);
+    }
+}
+
 jQuery(document).ready(function() {
-	
 	jQuery('#sidebartoggle').click(function() {
 		toggleSidebar();
     });
