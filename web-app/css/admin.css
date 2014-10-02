@@ -142,3 +142,15 @@ width:300px;
     height:24px;
     z-index:100;
 }
+
+tr.odd .pluginPropertiesBox {
+    margin: 10px;
+    padding: 10px;
+    background-color: #ececec;
+}
+
+tr.even .pluginPropertiesBox {
+    margin: 10px;
+    padding: 10px;
+    background-color: #f3f3f3;
+}

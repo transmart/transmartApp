@@ -14,6 +14,7 @@ eventCreateWarStart = {warname, stagingDir ->
 }
 
 eventCompileStart = { kind ->
+    // We might want these info displayed into the console at compile time for the main application
     getEnvProperties().each { k,v ->
         println(k + ' : ' + v)
     }
@@ -37,6 +38,8 @@ def getEnvProperties() {
     properties['scm.version'] = getRevision()?.trim() ?: '-'
     properties['build.date'] = new Date().format('dd/MMM/yyyy; kk:mm:ss')
     properties['build.timezone'] = Calendar.getInstance().getTimeZone().getID()
+    properties['build.java'] = System.getProperty('java.version')
+    properties['build.groovy'] = GroovySystem.version
 
     //Add a selection of useful environment variables
     properties['env.os'] = environment['environment.OS'] ?: environment['environment.OSTYPE'] ?: '-'
@@ -44,6 +47,8 @@ def getEnvProperties() {
     properties['env.computer'] = environment['environment.COMPUTERNAME'] ?: environment['environment.HOSTNAME'] ?: '-'
     properties['env.proc.type'] = environment['environment.PROCESSOR_ARCHITECTURE'] ?: environment['environment.HOSTTYPE'] ?: '-'
     properties['env.proc.cores'] = environment['environment.NUMBER_OF_PROCESSORS'] ?: '-'
+
+    getPluginEnvProperties(properties)
 
     return properties
 }
@@ -127,5 +132,17 @@ def getEstimateRevisionFromGitFolder() {
         }
     } catch (ignore) {
         return null
+    }
+}
+
+def getPluginEnvProperties(properties) {
+    def pluginMeta
+    pluginSettings.getSupportedPluginInfos().each { p ->
+        pluginMeta = Metadata.getInstance(new File("${p.getPluginDir()}/application.properties")).getFromMap()
+        if (pluginMeta?.'scm.version' != null) {
+            pluginMeta.each { k, v ->
+                properties."plugin.${p.getName()}.${k}" = v
+            }
+        }
     }
 }

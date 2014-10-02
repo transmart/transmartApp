@@ -6,6 +6,7 @@ class BuildInfoController {
             'scm.version',
             'build.date',
             'build.timezone',
+            'build.java',
             'env.os',
             'env.username',
             'env.computer',
