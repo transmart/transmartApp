@@ -6,6 +6,7 @@ import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
 import org.transmartproject.core.dataquery.highdim.projections.Projection
+import org.transmartproject.db.dataquery.highdim.assayconstraints.PlatformConstraint
 import org.transmartproject.export.HighDimExporter
 
 class HighDimExportService {
@@ -20,7 +21,7 @@ class HighDimExportService {
         String jobName =                args.jobName
         String dataType =               args.dataType
         def resultInstanceId =          args.resultInstanceId
-        List<String> conceptPaths =     args.conceptPaths
+        Collection<String> gplIds =     args.gplIds
         String studyDir =               args.studyDir
         String format =                 args.format
 
@@ -38,10 +39,7 @@ class HighDimExportService {
                 AssayConstraint.PATIENT_SET_CONSTRAINT,
                 result_instance_id: resultInstanceId)
 
-        assayconstraints << dataTypeResource.createAssayConstraint(
-                AssayConstraint.DISJUNCTION_CONSTRAINT,
-                subconstraints:
-                        [(AssayConstraint.ONTOLOGY_TERM_CONSTRAINT): conceptPaths.collect {[concept_key: it]}])
+        assayconstraints << new PlatformConstraint(gplIds: gplIds)
 
         // Setup class to export the data
         HighDimExporter exporter = highDimExporterRegistry.getExporterForFormat( format )

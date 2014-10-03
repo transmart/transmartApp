@@ -124,26 +124,10 @@ class ExportService {
         formats
 	}
 	
-    def private Map getSubsetSelectedFilesMap(selectedCheckboxList) {
+    def private Map getSubsetSelectedFilesMap(List selectedCheckboxJsonList) {
 		def subsetSelectedFilesMap = [:]
 
-		//If only one was checked, we need to add that one to an array list.
-        if (selectedCheckboxList instanceof String) {
-            selectedCheckboxList = [selectedCheckboxList]
-        }
-        if (selectedCheckboxList == null) {
-            selectedCheckboxList = []
-		}
-		
-		//Remove duplicates. duplicates are coming in from the UI, better handle it here
-		//The same issue is handled in the UI now so the following code may not be necessary
-		def tempArray = [] as Set
-		tempArray.addAll(selectedCheckboxList)
-		selectedCheckboxList = tempArray.toList()
-		
-		//Prepare a map like ['subset1'
-		selectedCheckboxList.each { checkboxItem ->
-            checkboxItem = JSON.parse(checkboxItem.toString())
+        selectedCheckboxJsonList?.unique()?.each { checkboxItem ->
 			String currentSubset = null
 			if (checkboxItem.subset) {
 				//The first item is the subset name.
@@ -238,7 +222,13 @@ class ExportService {
         jdm.highDimDataTypes = getHighDimDataTypesAndFormats(checkboxList)
 		jdm.put("subsetSelectedPlatformsByFiles", getsubsetSelectedPlatformsByFiles(checkboxList))
 		jdm.put("checkboxList", checkboxList);
-		jdm.put("subsetSelectedFilesMap", getSubsetSelectedFilesMap(params.selectedSubsetDataTypeFiles))
+        def checkedPlatforms = [ params.selectedSubsetDataTypeFiles ].flatten().collect { JSON.parse(it) }
+		jdm.put("subsetSelectedFilesMap", getSubsetSelectedFilesMap(checkedPlatforms))
+        Map gplIdsMap = [:].withDefault { [:].withDefault { [] as Set } }
+        checkedPlatforms.each { json ->
+            gplIdsMap[json.subset][json.dataTypeId] << json.gplId
+        }
+		jdm.put("gplIdsMap", gplIdsMap)
 		jdm.put("resulttype", "DataExport")
 		jdm.put("studyAccessions", i2b2ExportHelperService.findStudyAccessions(resultInstanceIdHashMap.values().toArray()))
 		

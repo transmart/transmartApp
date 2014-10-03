@@ -133,7 +133,7 @@ class DataExportService {
                                     retVal = highDimExportService.exportHighDimData(jobName: jobDataMap.jobName,
                                             splitAttributeColumn: false,
                                             resultInstanceId: resultInstanceIdMap[subset],
-                                            conceptPaths: selection[subset][selectedFile].selector,
+                                            gplIds: jobDataMap.gplIdsMap[subset][selectedFile],
                                             dataType: selectedFile,
                                             format: format,
                                             studyDir: studyDir
