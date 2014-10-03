@@ -134,6 +134,7 @@ class DataExportService {
                                             splitAttributeColumn: false,
                                             resultInstanceId: resultInstanceIdMap[subset],
                                             gplIds: jobDataMap.gplIdsMap[subset][selectedFile],
+                                            conceptPaths: selection[subset][selectedFile].selector,
                                             dataType: selectedFile,
                                             format: format,
                                             studyDir: studyDir
