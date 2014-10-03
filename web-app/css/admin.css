@@ -146,7 +146,7 @@ width:300px;
 tr.odd .pluginPropertiesBox {
     margin: 10px;
     padding: 10px;
-    background-color: #ececec;
+    background-color: #dddddd;
 }
 
 tr.even .pluginPropertiesBox {
