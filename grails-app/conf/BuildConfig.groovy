@@ -129,7 +129,7 @@ grails.project.dependency.resolution = {
         compile ":codenarc:0.21"
 
         if (!dm) {
-            compile ':rdc-rmodules:1.2.2-eTI-SNAPSHOT'
+            compile ':rdc-rmodules:1.2.2-SNAPSHOT'
             runtime ':transmart-core:1.2.2-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
