@@ -20,11 +20,11 @@ class BuildInfoController {
         if (buildInfoConfig?.properties?.exclude){
             customProperties -= buildInfoConfig.properties.exclude
         }
-        if (buildInfoConfig?.properties?.add){
-            customProperties += buildInfoConfig.properties.add
+        if (buildInfoConfig?.properties?.include){
+            customProperties += buildInfoConfig.properties.include
         }
 
-        Map model = [buildInfoProperties: customProperties]
+        Map model = [buildInfoProperties: customProperties.sort()]
         render(view:'index', model:model)
     }
 }
