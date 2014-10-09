@@ -165,4 +165,15 @@ Secure Object Paths
 </div>
 </div>
 
-
+<div class='navbarBox'>
+    <div class="navcontainer1">
+        <h1 class="panelHeader">
+            Package
+        </h1>
+        <ul class="navlist">
+            <li>
+                <span class="adminMenuButton"><g:link class="list" controller="buildInfo" action="index">Build Information</g:link></span>
+            </li>
+        </ul>
+    </div>
+</div>
