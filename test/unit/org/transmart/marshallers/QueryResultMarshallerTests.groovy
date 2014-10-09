@@ -7,6 +7,7 @@ import org.junit.Test
 import org.transmartproject.core.querytool.QueryResult
 import org.transmartproject.core.querytool.QueryStatus
 
+import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 
 @TestMixin(GrailsUnitTestMixin)

@@ -20,6 +20,7 @@ import org.transmartproject.db.test.RuleBasedIntegrationTestMixin
 import org.transmartproject.db.user.AccessLevelTestData
 
 import static groovy.util.GroovyAssert.shouldFail
+import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 import static org.transmartproject.db.i2b2data.I2b2Data.createPatientTrialLinks
 import static org.transmartproject.db.i2b2data.I2b2Data.createTestPatients

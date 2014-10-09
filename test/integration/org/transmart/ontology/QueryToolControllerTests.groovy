@@ -10,6 +10,7 @@ import org.transmartproject.core.querytool.*
 import org.transmartproject.core.users.User
 import org.transmartproject.db.test.RuleBasedIntegrationTestMixin
 
+import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 
 @TestMixin(RuleBasedIntegrationTestMixin)
