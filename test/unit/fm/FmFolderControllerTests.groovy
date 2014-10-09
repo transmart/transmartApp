@@ -5,8 +5,9 @@ import grails.test.mixin.TestFor
 import org.apache.tools.ant.filters.StringInputStream
 import org.junit.Test
 
-import static org.hamcrest.Matchers.*
 import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.hasSize
 
 @TestFor(FmFolderController)
 @Mock(FmFile)
@@ -25,7 +26,7 @@ class FmFolderControllerTests {
         controller.fmFolderService = new FmFolderService()
         controller.fmFolderService.metaClass.getFile = { FmFile f ->
             def bogusFile = new File('bogus')
-            bogusFile.metaClass.newInputStream = {->
+            bogusFile.metaClass.newInputStream = { ->
                 new StringInputStream('foobar')
             }
             bogusFile

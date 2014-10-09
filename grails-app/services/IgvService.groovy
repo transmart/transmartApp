@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 import com.recomdata.export.IgvFiles
 import i2b2.*
 
@@ -40,7 +39,8 @@ class IgvService {
     void getIgvDataByPatient(String subjectIds1, String subjectIds2, String chroms, IgvFiles igvFiles) throws Exception {
         if (igvFiles == null) throw new Exception("The IgvFiles object is not instantiated");
 
-        List<Long>[] patientNumListArray = new List<Long>[2]; // For the patient numbers selected by users in subset 1 and subset 2
+        List<Long>[] patientNumListArray = new List<Long>[2];
+        // For the patient numbers selected by users in subset 1 and subset 2
         patientNumListArray[0] = getPatientNumListFromSubjectIdStr(subjectIds1);
         patientNumListArray[1] = getPatientNumListFromSubjectIdStr(subjectIds2);
 
@@ -107,7 +107,8 @@ class IgvService {
 
         SnpDatasetListByProbe allDataByProbe = new SnpDatasetListByProbe();
 
-        List<Long>[] patientNumListArray = new List<Long>[2]; // For the patient numbers selected by users in subset 1 and subset 2
+        List<Long>[] patientNumListArray = new List<Long>[2];
+        // For the patient numbers selected by users in subset 1 and subset 2
         patientNumListArray[0] = getPatientNumListFromSubjectIdStr(subjectIds1);
         allDataByProbe.patientNumList_1 = patientNumListArray[0];
         patientNumListArray[1] = getPatientNumListFromSubjectIdStr(subjectIds2);

@@ -455,7 +455,8 @@ class ChartController {
         pw.write("</td>");
         pw.write("<td><img src='" + graphURL7 + "' width=200 height=300 border=0 usemap='#" + filename7 + "'>");
         String rmodulesVersion = grailsApplication.mainContext.pluginManager.getGrailsPlugin('rdc-rmodules').version;
-        pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-$rmodulesVersion/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
+        pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-$rmodulesVersion/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>");
+        //Should be dynamic to plugin!
         pw.write("</td><td align='center'>");
         if (s2 && l2.size() > 0) {
             pw.write("<div class='smalltitle'><b>Subset 2</b></div>");
@@ -647,7 +648,7 @@ class ChartController {
         Set<String> uniqueConcepts = i2b2HelperService.getDistinctConceptSet(result_instance_id1, result_instance_id2);
 
         log.debug("Unique concepts: " + uniqueConcepts);
-		log.debug("keys: " + keys)
+        log.debug("keys: " + keys)
 
         for (int i = 0; i < keys.size(); i++) {
             log.trace("adding concept data for " + keys.get(i));
@@ -769,18 +770,18 @@ class ChartController {
 
     private void renderPatientCountInfoTable(String result_instance_id1, String result_instance_id2, PrintWriter pw) {
         try {
-			int count1 = 0
-			int count2 = 0
-			int countCross = 0
-			if (result_instance_id1) {
-				count1 = i2b2HelperService.getPatientSetSize(result_instance_id1)
-				if (result_instance_id2) {
-					countCross =  i2b2HelperService.getPatientSetIntersectionSize(result_instance_id1, result_instance_id2)
-				}
-			}
-			if (result_instance_id2) {
-				count2 = i2b2HelperService.getPatientSetSize(result_instance_id2)
-			}
+            int count1 = 0
+            int count2 = 0
+            int countCross = 0
+            if (result_instance_id1) {
+                count1 = i2b2HelperService.getPatientSetSize(result_instance_id1)
+                if (result_instance_id2) {
+                    countCross = i2b2HelperService.getPatientSetIntersectionSize(result_instance_id1, result_instance_id2)
+                }
+            }
+            if (result_instance_id2) {
+                count2 = i2b2HelperService.getPatientSetSize(result_instance_id2)
+            }
             pw.write("<table width='100%'><tr><td align='center'><div class='smalltitle'><b>Subject Totals</b></div>");
             pw.write("<table class='analysis'>");
             pw.write("<tr><th>Subset 1</th><th>Both</th><th>Subset 2</th></th>");
@@ -1067,7 +1068,7 @@ for (int i = 0; i < mapsize; i++)
 
         PiePlot plot = (PiePlot) chart.getPlot();
         Color[] colors = [Color.blue, Color.red,
-                Color.green, Color.yellow, Color.WHITE, Color.orange, Color.PINK, Color.darkGray];
+                          Color.green, Color.yellow, Color.WHITE, Color.orange, Color.PINK, Color.darkGray];
 
         /* Delegating the choice of color to an inner class */
         PieRenderer renderer = new PieRenderer(colors);
@@ -1285,7 +1286,8 @@ for (int i = 0; i < mapsize; i++)
                 ChartUtilities.writeImageMap(pw, filename, info, false);
                 pw.write("</td>");
                 String rmodulesVersion = grailsApplication.mainContext.pluginManager.getGrailsPlugin('rdc-rmodules').version;
-                pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-$rmodulesVersion/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>"); //Should be dynamic to plugin!
+                pw.write("<td valign='top'><div style='position:relative;left:-10px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-$rmodulesVersion/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>");
+                //Should be dynamic to plugin!
                 pw.write("<td>")
                 pw.write("<table><tr><td>");
                 if (s1 && results1.size() > 0) {
@@ -1376,7 +1378,9 @@ for (int i = 0; i < mapsize; i++)
             }
             log.debug("renderConceptAnalysisNew: finished rendering " + concept_key)
         }
-        catch (Exception e) { log.error(e); e.printStackTrace(); }
+        catch (Exception e) {
+            log.error(e); e.printStackTrace();
+        }
     }
 
     private void renderBoxAndWhiskerInfoTableNew(List<Number> values, String trial, StringWriter pw) {

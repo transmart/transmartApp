@@ -63,7 +63,7 @@ class CurrentUserBeanProxyFactory implements FactoryBean<User>, BeanFactoryAware
         true
     }
 
-    class CurrentUserBeanTargetSource  implements TargetSource {
+    class CurrentUserBeanTargetSource implements TargetSource {
 
         ConfigurableBeanFactory cbf
 
@@ -109,6 +109,6 @@ class CurrentUserBeanProxyFactory implements FactoryBean<User>, BeanFactoryAware
         //pf.addAdvice(new DelegatingIntroductionInterceptor(scopedObject))
         pf.addInterface(AopInfrastructureBean)
 
-        object  = pf.getProxy(cbf.getBeanClassLoader())
+        object = pf.getProxy(cbf.getBeanClassLoader())
     }
 }

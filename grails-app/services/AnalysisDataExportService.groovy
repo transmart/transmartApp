@@ -153,8 +153,10 @@ class AnalysisDataExportService {
 
         def values1 = []
         def values2 = []
-        def placeh2 = ["", "", "", "", "", "", "", "", "", "", "", ""]                        // Empty placeholder for analysis metadata
-        def placebm2 = ["", "", "", "", "", "", "", "", "", "", "", "", "", ""]        // Empty placeholder for biomarkers
+        def placeh2 = ["", "", "", "", "", "", "", "", "", "", "", ""]
+        // Empty placeholder for analysis metadata
+        def placebm2 = ["", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+        // Empty placeholder for biomarkers
 
         def experimentOrganisms = [:]
         String orgString = ""
@@ -167,7 +169,8 @@ class AnalysisDataExportService {
             values2.add([k.accession] + ["", "", "", "", "", "", "", "", ""] + [k.getCompoundNames()] + [k.getDiseaseNames()])
             orgString = ""
             v.each {
-                values2.add([""] + [it.calcDisplayTEAScore()] + it.analysis.getValues() + placebm2)   // First column is for accession number
+                values2.add([""] + [it.calcDisplayTEAScore()] + it.analysis.getValues() + placebm2)
+                // First column is for accession number
                 it.assayAnalysisValueList.each {
                     values2.add(placeh2 + it.bioMarker.getValues() + it.analysisData.getValues())
                     organism = it.bioMarker.organism
@@ -212,8 +215,10 @@ class AnalysisDataExportService {
 
         def values1 = []
         def values2 = []
-        def placeh2 = ["", "", "", "", "", "", "", "", "", "", "", ""]                        // Empty placeholder for analysis metadata
-        def placebm2 = ["", "", "", "", "", "", "", "", "", "", "", "", "", ""]            // Empty placeholder for biomarkers
+        def placeh2 = ["", "", "", "", "", "", "", "", "", "", "", ""]
+        // Empty placeholder for analysis metadata
+        def placebm2 = ["", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+        // Empty placeholder for biomarkers
 
         def expIDs = [] as Set
         String orgString = ""
@@ -265,14 +270,15 @@ class AnalysisDataExportService {
         def ExcelSheet sheet2 = null;
 
         def headers1 = ["Title", "Trial Number", "Owner", "Description", "Study Phase", "Study Type", "Study Design", "Blinding procedure",
-                "Duration of study (weeks)", "Completion date", "Inclusion Criteria", "Exclusion Criteria", "Dosing Regimen",
-                "Type of Control", "Gender restriction mfb", "Group assignment", "Primary endpoints", "Secondary endpoints",
-                "Route of administration", "Secondary ids", "Subjects", "Max age", "Min age", "Number of patients", "Number of sites", "Compounds", "Diseases", "Organisms"]
+                        "Duration of study (weeks)", "Completion date", "Inclusion Criteria", "Exclusion Criteria", "Dosing Regimen",
+                        "Type of Control", "Gender restriction mfb", "Group assignment", "Primary endpoints", "Secondary endpoints",
+                        "Route of administration", "Secondary ids", "Subjects", "Max age", "Min age", "Number of patients", "Number of sites", "Compounds", "Diseases", "Organisms"]
         def headers2 = ["Trial Number", "TEA Score", "Analysis Title", "Analysis Description", "p-Value Cut Off", "Fold Change Cut Off", "QA Criteria", "Analysis Platform", "Method", "Data type", "Compounds", "Diseases", "Bio Marker", "Description", "Organism", "ProbeSet", "Fold Change", "RValue", "p-Value", "TEA p-Value", "FDR p-Value", "Rho-Value", "Cut Value", "Results Value", "Numeric Value Code", "Numeric Value"]
 
         def values1 = []
         def values2 = []
-        def placeh2 = ["", "", "", "", "", "", "", "", "", "", "", ""]                // Empty placeholder for analysis metadata
+        def placeh2 = ["", "", "", "", "", "", "", "", "", "", "", ""]
+        // Empty placeholder for analysis metadata
         def placebm2 = ["", "", "", "", "", "", "", "", "", "", "", "", "", ""]   // Empty placeholder for biomarkers
 
         def trialOrganisms = [:]
@@ -287,7 +293,8 @@ class AnalysisDataExportService {
             orgString = ""
             log.info("Trial Number: " + k.trialNumber)
             v.each {
-                values2.add([""] + [it.calcDisplayTEAScore()] + it.analysis.getValues() + placebm2)   // First column is for accession number
+                values2.add([""] + [it.calcDisplayTEAScore()] + it.analysis.getValues() + placebm2)
+                // First column is for accession number
                 it.assayAnalysisValueList.each {
                     values2.add(placeh2 + it.bioMarker.getValues() + it.analysisData.getValues())
                     organism = it.bioMarker.organism
@@ -328,15 +335,17 @@ class AnalysisDataExportService {
         def ExcelSheet sheet2 = null;
 
         def headers1 = ["Title", "Trial Number", "Owner", "Description", "Study Phase", "Study Type", "Study Design", "Blinding procedure",
-                "Duration of study (weeks)", "Completion date", "Inclusion Criteria", "Exclusion Criteria", "Dosing Regimen",
-                "Type of Control", "Gender restriction mfb", "Group assignment", "Primary endpoints", "Secondary endpoints",
-                "Route of administration", "Secondary ids", "Subjects", "Max age", "Min age", "Number of patients", "Number of sites", "Compounds", "Diseases", "Organisms"]
+                        "Duration of study (weeks)", "Completion date", "Inclusion Criteria", "Exclusion Criteria", "Dosing Regimen",
+                        "Type of Control", "Gender restriction mfb", "Group assignment", "Primary endpoints", "Secondary endpoints",
+                        "Route of administration", "Secondary ids", "Subjects", "Max age", "Min age", "Number of patients", "Number of sites", "Compounds", "Diseases", "Organisms"]
         def headers2 = ["Accession Number", "TEA Score", "Analysis Title", "Analysis Description", "p-Value Cut Off", "Fold Change Cut Off", "QA Criteria", "Analysis Platform", "Method", "Data type", "Compounds", "Diseases", "Bio Marker", "Description", "Organism", "ProbeSet", "Fold Change", "RValue", "p-Value", "TEA p-Value", "FDR p-Value", "Rho-Value", "Cut Value", "Results Value", "Numeric Value Code", "Numeric Value"]
 
         def values1 = []
         def values2 = []
-        def placeh2 = ["", "", "", "", "", "", "", "", "", "", "", ""]                    // Empty placeholder for analysis metadata
-        def placebm2 = ["", "", "", "", "", "", "", "", "", "", "", "", "", ""]        // Empty placeholder for biomarkers
+        def placeh2 = ["", "", "", "", "", "", "", "", "", "", "", ""]
+        // Empty placeholder for analysis metadata
+        def placebm2 = ["", "", "", "", "", "", "", "", "", "", "", "", "", ""]
+        // Empty placeholder for biomarkers
 
         def trialIDs = [] as Set
         String orgString = ""

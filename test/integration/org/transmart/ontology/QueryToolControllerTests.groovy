@@ -6,15 +6,10 @@ import org.gmock.WithGMock
 import org.junit.Before
 import org.junit.Test
 import org.springframework.web.context.request.RequestContextHolder
-import org.transmartproject.core.querytool.QueriesResource
-import org.transmartproject.core.querytool.QueryDefinition
-import org.transmartproject.core.querytool.QueryDefinitionXmlConverter
-import org.transmartproject.core.querytool.QueryResult
-import org.transmartproject.core.querytool.QueryStatus
-import org.transmartproject.db.test.RuleBasedIntegrationTestMixin
+import org.transmartproject.core.querytool.*
 import org.transmartproject.core.users.User
+import org.transmartproject.db.test.RuleBasedIntegrationTestMixin
 
-import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 
 @TestMixin(RuleBasedIntegrationTestMixin)

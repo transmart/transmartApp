@@ -20,7 +20,6 @@ import org.transmartproject.db.test.RuleBasedIntegrationTestMixin
 import org.transmartproject.db.user.AccessLevelTestData
 
 import static groovy.util.GroovyAssert.shouldFail
-import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 import static org.transmartproject.db.i2b2data.I2b2Data.createPatientTrialLinks
 import static org.transmartproject.db.i2b2data.I2b2Data.createTestPatients
@@ -61,8 +60,8 @@ class DataExportControllerTests {
         List<PatientDimension> patients = createTestPatients(3, -100, trialName)
         List<PatientTrialCoreDb> patientTrials = createPatientTrialLinks(patients, trialName)
         new I2b2Data(
-                trialName:     trialName,
-                patients:      patients,
+                trialName: trialName,
+                patients: patients,
                 patientTrials: patientTrials)
     }
 
@@ -163,11 +162,11 @@ class DataExportControllerTests {
                     jobName
             dataExportController.response.reset()
             [
-                    result_instance_id1: study2QueryResult.id as String,
-                    analysis: 'DataExport',
-                    jobName: jobName,
+                    result_instance_id1        : study2QueryResult.id as String,
+                    analysis                   : 'DataExport',
+                    jobName                    : jobName,
                     selectedSubsetDataTypeFiles: '{subset: subset1, dataTypeId: CLINICAL, fileType: .TXT}',
-                    selection: '{"subset1":{"clinical":{"selector":[]}}}',
+                    selection                  : '{"subset1":{"clinical":{"selector":[]}}}',
             ].each { k, v -> dataExportController.params[k] = v }
             dataExportController.runDataExport()
         }

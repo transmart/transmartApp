@@ -166,7 +166,7 @@ public class SearchKeywordService {
             } else if ("SNP".equals(category)) {
                 //like("keywordTerm", 'RS%')
                 eq("dataCategory", "SNP")
-            } else */ 
+            } else */
             if ("ALL".compareToIgnoreCase(category) != 0) {
                 searchKeyword {
                     eq("dataCategory", category.toUpperCase())
@@ -210,11 +210,11 @@ public class SearchKeywordService {
             m.put("category", sk.searchKeyword.displayDataCategory)
             m.put("categoryId", sk.searchKeyword.dataCategory)
 
-			if ("GENE_OR_SNP".equals(category) || ("SNP".equals(category))) {
-				m.put("id", sk.searchKeyword.id)
-			} else {
-				m.put("id", sk.searchKeyword.uniqueId)
-			}
+            if ("GENE_OR_SNP".equals(category) || ("SNP".equals(category))) {
+                m.put("id", sk.searchKeyword.id)
+            } else {
+                m.put("id", sk.searchKeyword.uniqueId)
+            }
 
             if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0) {
                 def synonyms = org.transmart.biomart.BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")

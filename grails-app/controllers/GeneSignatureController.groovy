@@ -145,7 +145,8 @@ class GeneSignatureController {
         def geneSigInst = GeneSignature.get(params.id)
         def clone = geneSigInst.clone()
         clone.modifiedByAuthUser = user
-        if (clone.experimentTypeCellLine?.id == null) clone.experimentTypeCellLine = null     // this is hack, don't know how to get around this!
+        if (clone.experimentTypeCellLine?.id == null) clone.experimentTypeCellLine = null
+        // this is hack, don't know how to get around this!
         log.debug "experimentTypeCellLine: " + clone.experimentTypeCellLine + "; null? " + (clone.experimentTypeCellLine == null)
         // set onto session
         def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: clone, wizardType: WizardModelDetails.WIZ_TYPE_EDIT, editId: geneSigInst.id);
@@ -174,7 +175,8 @@ class GeneSignatureController {
         clone.lastUpdated = null;
         clone.versionNumber = null;
         clone.uniqueId = null;
-        if (clone.experimentTypeCellLine?.id == null) clone.experimentTypeCellLine = null     // this is hack, don't know how to get around this!
+        if (clone.experimentTypeCellLine?.id == null) clone.experimentTypeCellLine = null
+        // this is hack, don't know how to get around this!
 
         // set onto session
         def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: clone, wizardType: WizardModelDetails.WIZ_TYPE_CLONE, cloneId: geneSigInst.id);
@@ -196,7 +198,7 @@ class GeneSignatureController {
         flash.message = "GeneSignature '${gsInst.name}' was made public to everyone"
         redirect(action: list)
     }
-    
+
     /**
      * set the indicated gs private
      */
@@ -320,7 +322,7 @@ class GeneSignatureController {
         loadWizardItems(3, wizard)
         def existingValues = createExistingValues(3, wizard.geneSigInst)
 
-        render(view: "wizard3", model: [wizard: wizard, existingValues:existingValues])
+        render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
     }
 
     /**
@@ -359,7 +361,7 @@ class GeneSignatureController {
             } catch (FileSchemaException e) {
                 flash.message = e.getMessage()
                 def existingValues = createExistingValues(3, wizard.geneSigInst)
-                return render(view: "wizard3", model: [wizard: wizard,existingValues:existingValues])
+                return render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
             }
 
         } else {
@@ -389,7 +391,7 @@ class GeneSignatureController {
         } catch (RuntimeException re) {
             flash.message = "Runtime exception " + re.getClass().getName() + ":<br>" + re.getMessage()
             def existingValues = createExistingValues(3, wizard.geneSigInst)
-            render(view: "wizard3", model: [wizard: wizard,existingValues: existingValues])
+            render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
         }
     }
 
@@ -882,7 +884,7 @@ class GeneSignatureController {
         //if(!gs.isAttached()) wizard.geneSigInst = gs.merge()
         wizard.geneSigInst = gs.merge()
     }
-    
+
     def createExistingValues(int pageNum, GeneSignature gs) {
         Map existingValues = new HashMap()
         switch (pageNum) {
@@ -904,7 +906,7 @@ class GeneSignatureController {
                 existingValues.put('tissueTypeConceptCode.id', gs.tissueTypeConceptCode?.id ?: '')
                 existingValues.put('experimentTypeConceptCode.id', gs.experimentTypeConceptCode?.id ?: '')
                 break
-                
+
             case 3:
                 existingValues.put('normMethodConceptCode.id', gs.normMethodConceptCode?.id ?: '')
                 existingValues.put('normMethodConceptCode.bioConceptCode', gs.normMethodConceptCode?.bioConceptCode ?: '')

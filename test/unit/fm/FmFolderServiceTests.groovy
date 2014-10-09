@@ -20,7 +20,6 @@
 
 package fm
 
-import org.transmart.biomart.Experiment
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
@@ -28,6 +27,7 @@ import grails.test.mixin.support.GrailsUnitTestMixin
 import org.junit.Before
 import org.junit.Test
 import org.transmart.biomart.BioData
+import org.transmart.biomart.Experiment
 import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.Role
 
@@ -93,7 +93,7 @@ class FmFolderServiceTests {
         studyFolders = [study1, study2]
 
         def allFolders = [program1, study1, assay111,
-                folder121, study2, analysys122]
+                          folder121, study2, analysys122]
         allFolders*.description = 'description'
         allFolders*.save(failOnError: true)
         // setup authorization information for study1
@@ -162,7 +162,7 @@ class FmFolderServiceTests {
             ['EXP:PUBLIC': 'OWN'] // don't return a token for STUDY1 for this user; will be locked
         }
 
-        service.i2b2HelperService =  i2b2HelperServiceControll.createMock()
+        service.i2b2HelperService = i2b2HelperServiceControll.createMock()
 
         def foldersMap = service.getAccessLevelInfoForFolders(user, studyFolders)
 

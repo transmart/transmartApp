@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 import com.recomdata.search.DocumentHit
 import com.recomdata.search.DocumentQuery
 import grails.util.Holders

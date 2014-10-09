@@ -206,14 +206,14 @@ class LiteratureController {
         result = literatureQueryService.litJubOncAltSumData(searchFilter, params)
         def rows = []
         for (summary in result) {
-            def values = [dataType: summary.dataType,
-                    alterationType: summary.alterationType,
-                    totalFrequency: summary.totalFrequency,
-                    totalAffectedCases: summary.totalAffectedCases,
-                    summary: summary.summary,
-                    target: summary.target,
-                    variant: summary.variant,
-                    diseaseSite: summary.diseaseSite]
+            def values = [dataType          : summary.dataType,
+                          alterationType    : summary.alterationType,
+                          totalFrequency    : summary.totalFrequency,
+                          totalAffectedCases: summary.totalAffectedCases,
+                          summary           : summary.summary,
+                          target            : summary.target,
+                          variant           : summary.variant,
+                          diseaseSite       : summary.diseaseSite]
             rows.add(values)
         }
 
