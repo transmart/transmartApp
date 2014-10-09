@@ -757,9 +757,9 @@ class I2b2HelperService {
     def ExportTableNew addConceptDataToTable(ExportTableNew tablein, String concept_key, String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
+        String columnid = concept_key.encodeAsSHA1()
+        String columnname = getColumnNameFromKey(concept_key).replace(" ", "_")
         if (isLeafConceptKey(concept_key)) {
-            String columnid = concept_key.encodeAsSHA1()
-            String columnname = getColumnNameFromKey(concept_key).replace(" ", "_");
             /*add the column to the table if its not there*/
             if (tablein.getColumn("subject") == null) {
                 tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
@@ -847,10 +847,6 @@ class I2b2HelperService {
                 log.debug("Can not show data in gridview for foldernodes with mixed type of children")
                 return tablein
             }
-
-            // Find the concept names
-            String columnid = getShortNameFromKey(concept_key).replace(" ", "_").replace("...", "");
-            String columnname = getColumnNameFromKey(concept_key).replace(" ", "_");
 
             /*add the column to the table if its not there*/
             if (tablein.getColumn("subject") == null) {
