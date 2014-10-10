@@ -143,7 +143,6 @@ grails.project.dependency.resolution = {
             //// already included in biomart-domain
             //compile ':transmart-java:1.2.2-SNAPSHOT'
             runtime ':dalliance-plugin:0.2-SNAPSHOT'
-            //runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
             runtime ':transmart-mydas:0.1-SNAPSHOT'
             runtime ':transmart-rest-api:0.1-SNAPSHOT'
             runtime ':blend4j-plugin:1.2.2-SNAPSHOT'
@@ -172,6 +171,8 @@ dm?.with {
     configureInternalPlugin 'runtime', 'dalliance-plugin'
     configureInternalPlugin 'runtime', 'transmart-mydas'
     configureInternalPlugin 'runtime', 'transmart-rest-api'
+    configureInternalPlugin 'runtime', 'blend4j-plugin'
+    configureInternalPlugin 'runtime', 'transmart-metacore-plugin'
 }
 
 dm?.inlineInternalDependencies grails, grailsSettings
