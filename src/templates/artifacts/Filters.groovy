@@ -1,7 +1,7 @@
-@artifact.package@class @artifact.name@ {
+@ artifact.package @ class @artifact.name @ {
 
     def filters = {
-        all(controller:'*', action:'*') {
+        all(controller: '*', action: '*') {
             before = {
 
             }

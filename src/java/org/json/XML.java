@@ -1,22 +1,22 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  *
  ******************************************************************/
-  
+
 
 package org.json;
 
@@ -50,36 +50,55 @@ import java.util.Iterator;
 /**
  * This provides static methods to convert an XML text into a JSONObject,
  * and to covert a JSONObject into an XML text.
+ *
  * @author JSON.org
  * @version 3
  */
 public class XML {
 
-    /** The Character '&'. */
-    public static final Character AMP   = new Character('&');
+    /**
+     * The Character '&'.
+     */
+    public static final Character AMP = new Character('&');
 
-    /** The Character '''. */
-    public static final Character APOS  = new Character('\'');
+    /**
+     * The Character '''.
+     */
+    public static final Character APOS = new Character('\'');
 
-    /** The Character '!'. */
-    public static final Character BANG  = new Character('!');
+    /**
+     * The Character '!'.
+     */
+    public static final Character BANG = new Character('!');
 
-    /** The Character '='. */
-    public static final Character EQ    = new Character('=');
+    /**
+     * The Character '='.
+     */
+    public static final Character EQ = new Character('=');
 
-    /** The Character '>'. */
-    public static final Character GT    = new Character('>');
+    /**
+     * The Character '>'.
+     */
+    public static final Character GT = new Character('>');
 
-    /** The Character '<'. */
-    public static final Character LT    = new Character('<');
+    /**
+     * The Character '<'.
+     */
+    public static final Character LT = new Character('<');
 
-    /** The Character '?'. */
+    /**
+     * The Character '?'.
+     */
     public static final Character QUEST = new Character('?');
 
-    /** The Character '"'. */
-    public static final Character QUOT  = new Character('"');
+    /**
+     * The Character '"'.
+     */
+    public static final Character QUOT = new Character('"');
 
-    /** The Character '/'. */
+    /**
+     * The Character '/'.
+     */
     public static final Character SLASH = new Character('/');
 
     /**
@@ -90,6 +109,7 @@ public class XML {
      * &gt; <small>(greater than)</small> is replaced by &amp;gt;
      * &quot; <small>(double quote)</small> is replaced by &amp;quot;
      * </pre>
+     *
      * @param string The string to be escaped.
      * @return The escaped string.
      */
@@ -98,46 +118,48 @@ public class XML {
         for (int i = 0, len = string.length(); i < len; i++) {
             char c = string.charAt(i);
             switch (c) {
-            case '&':
-                sb.append("&amp;");
-                break;
-            case '<':
-                sb.append("&lt;");
-                break;
-            case '>':
-                sb.append("&gt;");
-                break;
-            case '"':
-                sb.append("&quot;");
-                break;
-            default:
-                sb.append(c);
+                case '&':
+                    sb.append("&amp;");
+                    break;
+                case '<':
+                    sb.append("&lt;");
+                    break;
+                case '>':
+                    sb.append("&gt;");
+                    break;
+                case '"':
+                    sb.append("&quot;");
+                    break;
+                default:
+                    sb.append(c);
             }
         }
         return sb.toString();
     }
-    
+
     /**
-     * Throw an exception if the string contains whitespace. 
+     * Throw an exception if the string contains whitespace.
      * Whitespace is not allowed in tagNames and attributes.
+     *
      * @param string
      * @throws JSONException
      */
     public static void noSpace(String string) throws JSONException {
-    	int i, length = string.length();
-    	if (length == 0) {
-    		throw new JSONException("Empty string.");
-    	}
-    	for (i = 0; i < length; i += 1) {
-		    if (Character.isWhitespace(string.charAt(i))) {
-		    	throw new JSONException("'" + string + 
-		    			"' contains a space character.");
-		    }
-		}
+        int i, length = string.length();
+        if (length == 0) {
+            throw new JSONException("Empty string.");
+        }
+        for (i = 0; i < length; i += 1) {
+            if (Character.isWhitespace(string.charAt(i))) {
+                throw new JSONException("'" + string +
+                        "' contains a space character.");
+            }
+        }
     }
 
     /**
      * Scan the content following the named tag, attaching it to the context.
+     *
      * @param x       The XMLTokener containing the source string.
      * @param context The JSONObject that will include the new material.
      * @param name    The tag name.
@@ -146,12 +168,12 @@ public class XML {
      */
     private static boolean parse(XMLTokener x, JSONObject context,
                                  String name) throws JSONException {
-        char       c;
-        int        i;
-        String     n;
+        char c;
+        int i;
+        String n;
         JSONObject o = null;
-        String     s;
-        Object     t;
+        String s;
+        Object t;
 
 // Test for and skip past these forms:
 //      <!-- ... -->
@@ -210,10 +232,10 @@ public class XML {
 
 // Close tag </
 
-        	t = x.nextToken();
+            t = x.nextToken();
             if (name == null) {
                 throw x.syntaxError("Mismatched close tag" + t);
-            }            
+            }
             if (!t.equals(name)) {
                 throw x.syntaxError("Mismatched " + name + " and " + t);
             }
@@ -228,10 +250,10 @@ public class XML {
 // Open tag <
 
         } else {
-            n = (String)t;
+            n = (String) t;
             t = null;
             o = new JSONObject();
-            for (;;) {
+            for (; ; ) {
                 if (t == null) {
                     t = x.nextToken();
                 }
@@ -239,7 +261,7 @@ public class XML {
 // attribute = value
 
                 if (t instanceof String) {
-                    s = (String)t;
+                    s = (String) t;
                     t = x.nextToken();
                     if (t == EQ) {
                         t = x.nextToken();
@@ -264,7 +286,7 @@ public class XML {
 // Content, between <...> and </...>
 
                 } else if (t == GT) {
-                    for (;;) {
+                    for (; ; ) {
                         t = x.nextContent();
                         if (t == null) {
                             if (n != null) {
@@ -272,7 +294,7 @@ public class XML {
                             }
                             return false;
                         } else if (t instanceof String) {
-                            s = (String)t;
+                            s = (String) t;
                             if (s.length() > 0) {
                                 o.accumulate("content", s);
                             }
@@ -284,7 +306,7 @@ public class XML {
                                 if (o.length() == 0) {
                                     context.accumulate(n, "");
                                 } else if (o.length() == 1 &&
-                                       o.opt("content") != null) {
+                                        o.opt("content") != null) {
                                     context.accumulate(n, o.opt("content"));
                                 } else {
                                     context.accumulate(n, o);
@@ -311,6 +333,7 @@ public class XML {
      * Sequences of similar elements are represented as JSONArrays. Content
      * text may be placed in a "content" member. Comments, prologs, DTDs, and
      * <code>&lt;[ [ ]]></code> are ignored.
+     *
      * @param string The source string.
      * @return A JSONObject containing the structured data from the XML string.
      * @throws JSONException
@@ -327,9 +350,10 @@ public class XML {
 
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
+     *
      * @param o A JSONObject.
-     * @return  A string.
-     * @throws  JSONException
+     * @return A string.
+     * @throws JSONException
      */
     public static String toString(Object o) throws JSONException {
         return toString(o, null);
@@ -338,7 +362,8 @@ public class XML {
 
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
-     * @param o A JSONObject.
+     *
+     * @param o       A JSONObject.
      * @param tagName The optional name of the enclosing tag.
      * @return A string.
      * @throws JSONException
@@ -346,14 +371,14 @@ public class XML {
     public static String toString(Object o, String tagName)
             throws JSONException {
         StringBuffer b = new StringBuffer();
-        int          i;
-        JSONArray    ja;
-        JSONObject   jo;
-        String       k;
-        Iterator     keys;
-        int          len;
-        String       s;
-        Object       v;
+        int i;
+        JSONArray ja;
+        JSONObject jo;
+        String k;
+        Iterator keys;
+        int len;
+        String s;
+        Object v;
         if (o instanceof JSONObject) {
 
 // Emit <tagName>
@@ -366,13 +391,13 @@ public class XML {
 
 // Loop thru the keys.
 
-            jo = (JSONObject)o;
+            jo = (JSONObject) o;
             keys = jo.keys();
             while (keys.hasNext()) {
                 k = keys.next().toString();
                 v = jo.get(k);
                 if (v instanceof String) {
-                    s = (String)v;
+                    s = (String) v;
                 } else {
                     s = null;
                 }
@@ -381,7 +406,7 @@ public class XML {
 
                 if (k.equals("content")) {
                     if (v instanceof JSONArray) {
-                        ja = (JSONArray)v;
+                        ja = (JSONArray) v;
                         len = ja.length();
                         for (i = 0; i < len; i += 1) {
                             if (i > 0) {
@@ -396,7 +421,7 @@ public class XML {
 // Emit an array of similar keys
 
                 } else if (v instanceof JSONArray) {
-                    ja = (JSONArray)v;
+                    ja = (JSONArray) v;
                     len = ja.length();
                     for (i = 0; i < len; i += 1) {
                         b.append(toString(ja.get(i), k));
@@ -426,18 +451,18 @@ public class XML {
 // where XML is lacking, synthesize an <array> element.
 
         } else if (o instanceof JSONArray) {
-            ja = (JSONArray)o;
+            ja = (JSONArray) o;
             len = ja.length();
             for (i = 0; i < len; ++i) {
                 b.append(toString(
-                    ja.opt(i), (tagName == null) ? "array" : tagName));
+                        ja.opt(i), (tagName == null) ? "array" : tagName));
             }
             return b.toString();
         } else {
             s = (o == null) ? "null" : escape(o.toString());
             return (tagName == null) ? "\"" + s + "\"" :
-                (s.length() == 0) ? "<" + tagName + "/>" :
-                "<" + tagName + ">" + s + "</" + tagName + ">";
+                    (s.length() == 0) ? "<" + tagName + "/>" :
+                            "<" + tagName + ">" + s + "</" + tagName + ">";
         }
     }
 }

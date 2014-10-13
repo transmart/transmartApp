@@ -46,10 +46,10 @@ class DatasetExplorerController {
         def qid2 = null;
         Boolean restorecomparison = false;
 
-        if(subsetId != null && subsetId != ""){
+        if (subsetId != null && subsetId != "") {
             Subset subset = Subset.get(subsetId);
-            if(subset != null){
-                restorecomparison=true;
+            if (subset != null) {
+                restorecomparison = true;
                 qid1 = subset.queryID1;
                 qid2 = subset.queryID2;
             }
@@ -86,23 +86,23 @@ class DatasetExplorerController {
         def tokens = i2b2HelperService.getSecureTokensCommaSeparated(user)
         def initialaccess = new JSON(i2b2HelperService.getAccess(i2b2HelperService.getRootPathsWithTokens(), user)).toString();
         log.trace("admin =" + admin)
-        render(view: "datasetExplorer", model: [pathToExpand: pathToExpand,
-                admin: admin,
-                tokens: tokens,
-                initialaccess: initialaccess,
-                restorecomparison: restorecomparison,
-                qid1: qid1,
-                qid2: qid2,
-                i2b2Domain: i2b2Domain,
-                i2b2ProjectID: i2b2ProjectID,
-                i2b2Username: i2b2Username,
-                i2b2Password: i2b2Password,
-                rwgSearchFilter: rwgSearchFilter,
-                rwgSearchOperators: rwgSearchOperators,
-                globalOperator: globalOperator,
-                rwgSearchCategory: searchCategory,
-                debug: params.debug,
-                dseOpenedNodes: dseOpenedNodes,
-                dseClosedNodes: dseClosedNodes])
+        render(view: "datasetExplorer", model: [pathToExpand      : pathToExpand,
+                                                admin             : admin,
+                                                tokens            : tokens,
+                                                initialaccess     : initialaccess,
+                                                restorecomparison : restorecomparison,
+                                                qid1              : qid1,
+                                                qid2              : qid2,
+                                                i2b2Domain        : i2b2Domain,
+                                                i2b2ProjectID     : i2b2ProjectID,
+                                                i2b2Username      : i2b2Username,
+                                                i2b2Password      : i2b2Password,
+                                                rwgSearchFilter   : rwgSearchFilter,
+                                                rwgSearchOperators: rwgSearchOperators,
+                                                globalOperator    : globalOperator,
+                                                rwgSearchCategory : searchCategory,
+                                                debug             : params.debug,
+                                                dseOpenedNodes    : dseOpenedNodes,
+                                                dseClosedNodes    : dseClosedNodes])
     }
 }

@@ -44,234 +44,234 @@ class SampleExplorerController {
      * If we hit just the index, we need to log an event and redirect to the list page.
      */
     def index =
-        {
-            //Create an event record for this access.
-            def al = new AccessLog(username: springSecurityService.getPrincipal().username, event: "SampleExplorer-Summary", eventmessage: "Sample Explorer summary page", accesstime: new Date())
-            al.save();
+            {
+                //Create an event record for this access.
+                def al = new AccessLog(username: springSecurityService.getPrincipal().username, event: "SampleExplorer-Summary", eventmessage: "Sample Explorer summary page", accesstime: new Date())
+                al.save();
 
-            redirect(action: 'list')
-        }
+                redirect(action: 'list')
+            }
 
     /**
      * Display all the summary links.
      */
     def list =
-        {
-            render(view: "sampleExplorer", model: [columnList: verifyFieldList().join(",")])
-        }
+            {
+                render(view: "sampleExplorer", model: [columnList: verifyFieldList().join(",")])
+            }
 
     /**
      * This shows the page that has different groups for each category, and the links to filter with.
      */
     def showTopLevelListPage =
-        {
-            //Grab the list of fields we will concern ourselves with.
-            String solrFieldList = verifyFieldList().join("|");
+            {
+                //Grab the list of fields we will concern ourselves with.
+                String solrFieldList = verifyFieldList().join("|");
 
-            //Call the solr service to get a hash that looks like category:[item:count]. We pass in an empty string because we want all the documents in the solr search.
-            def termMap = solrService.facetSearch("", solrFieldList)
+                //Call the solr service to get a hash that looks like category:[item:count]. We pass in an empty string because we want all the documents in the solr search.
+                def termMap = solrService.facetSearch("", solrFieldList)
 
-            //Render the list of links in their own categories.
-            render(template: "searchTopLevel", model: [termsMap: termMap]);
-        }
+                //Render the list of links in their own categories.
+                render(template: "searchTopLevel", model: [termsMap: termMap]);
+            }
 
     def showMainSearchPage =
-        {
-            //We need to pass in the top X news stories so we can draw them on the screen.
-            def newsUpdates = NewsUpdate.list(max: grailsApplication.config.com.recomdata.solr.maxNewsStories, sort: "updateDate", order: "desc")
+            {
+                //We need to pass in the top X news stories so we can draw them on the screen.
+                def newsUpdates = NewsUpdate.list(max: grailsApplication.config.com.recomdata.solr.maxNewsStories, sort: "updateDate", order: "desc")
 
-            render(template: "categorySearch", model: [newsUpdates: newsUpdates]);
-        }
+                render(template: "categorySearch", model: [newsUpdates: newsUpdates]);
+            }
 
     /**
      * Show the box to the west that has the category links with checkboxes.
      */
     def showWestPanelSearch =
-        {
-            //Grab the list of fields we will concern ourselves with.
-            String solrFieldList = verifyFieldList().join("|");
+            {
+                //Grab the list of fields we will concern ourselves with.
+                String solrFieldList = verifyFieldList().join("|");
 
-            //Call the solr service to get a hash that looks like category:[item:count].
-            def termMap = solrService.facetSearch(request.JSON.SearchJSON, solrFieldList)
+                //Call the solr service to get a hash that looks like category:[item:count].
+                def termMap = solrService.facetSearch(request.JSON.SearchJSON, solrFieldList)
 
-            //We need to recreate the hash with the item we selected on top so it doesn't get lost in the list collapse.
-            //Taking this out. Solr will return the highest count items first, so our selections shouldn't get pushed into the "More [+]" menu.
-            //termMap = solrService.floatTopValue(termMap,mainSearchTerm)
+                //We need to recreate the hash with the item we selected on top so it doesn't get lost in the list collapse.
+                //Taking this out. Solr will return the highest count items first, so our selections shouldn't get pushed into the "More [+]" menu.
+                //termMap = solrService.floatTopValue(termMap,mainSearchTerm)
 
-            //Render the list of checkboxes and links based on the items in our search JSON.
-            render(template: "categorySearchWithCheckboxes", model: [termsMap: termMap, JSONData: request.JSON.SearchJSON]);
-        }
+                //Render the list of checkboxes and links based on the items in our search JSON.
+                render(template: "categorySearchWithCheckboxes", model: [termsMap: termMap, JSONData: request.JSON.SearchJSON]);
+            }
 
     /**
      * This draws the simple HTML page that has the DIV that gets populated by the ExtJS datagrid.
      */
     def showDataSetResults =
-        {
-            render(template: "dataSetResults");
-        }
+            {
+                render(template: "dataSetResults");
+            }
 
     /**
      * This will pull a result set from Solr using a query based on the JSON data passed in. Returns results as JSON.
      */
     def getDataSetResults =
-        {
+            {
 
-            //Grab the string of columns we want in the results.
-            String solrResultColumns = verifyGridFieldList().join(",")
-            //Grab the string for the maximum number of result rows to return.
-            String solrMaxRows = grailsApplication.config.com.recomdata.solr.maxRows
+                //Grab the string of columns we want in the results.
+                String solrResultColumns = verifyGridFieldList().join(",")
+                //Grab the string for the maximum number of result rows to return.
+                String solrMaxRows = grailsApplication.config.com.recomdata.solr.maxRows
 
-            //In the JSON result there is a list of the columns we expect to get back.
-            String selectedResultColumns = request.JSON.SearchJSON.GridColumnList.join(",").replace("\"", "")
+                //In the JSON result there is a list of the columns we expect to get back.
+                String selectedResultColumns = request.JSON.SearchJSON.GridColumnList.join(",").replace("\"", "")
 
-            //This will be the hash to store our results.
-            def resultsHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON, selectedResultColumns)
+                //This will be the hash to store our results.
+                def resultsHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON, selectedResultColumns)
 
-            render resultsHash as JSON
-        }
+                render resultsHash as JSON
+            }
 
     /**
      * This method will return a JSON object representing the items that match the users search.
      */
     def loadSearch =
-        {
-            //Grab the categories from the form. They might be "All".
-            def category = params.query.substring(0, params.query.indexOf(":"))
+            {
+                //Grab the categories from the form. They might be "All".
+                def category = params.query.substring(0, params.query.indexOf(":"))
 
-            //If all categories are being searched, look in session to get the list.
-            if (category == "all") category = verifyFieldList().join(",");
+                //If all categories are being searched, look in session to get the list.
+                if (category == "all") category = verifyFieldList().join(",");
 
-            //Grab the value to search for.
-            def values = params.query.substring(params.query.indexOf(":") + 1)
+                //Grab the value to search for.
+                def values = params.query.substring(params.query.indexOf(":") + 1)
 
-            //Get the list of possible results.
-            def resultsHash = solrService.suggestTerms(category, values, grailsApplication.config.com.recomdata.solr.numberOfSuggestions.toString())
+                //Get the list of possible results.
+                def resultsHash = solrService.suggestTerms(category, values, grailsApplication.config.com.recomdata.solr.numberOfSuggestions.toString())
 
-            //Render the results as JSON.
-            render params.callback + "(" + (resultsHash as JSON) + ")"
-        }
+                //Render the results as JSON.
+                render params.callback + "(" + (resultsHash as JSON) + ")"
+            }
 
     /**
      * This method checks to make sure the list of fields we want to use are in session. If they aren't, it adds them to the session.
      */
     def verifyFieldList =
-        {
-            //This field list always has all the fields we want to display.
-            if (!session['fieldList']) session['fieldList'] = loadFieldList()
+            {
+                //This field list always has all the fields we want to display.
+                if (!session['fieldList']) session['fieldList'] = loadFieldList()
 
-            return session['fieldList']
-        }
+                return session['fieldList']
+            }
 
     /**
      * This method checks to make sure the list of fields we want to use are in session. If they aren't, it adds them to the session.
      */
     def verifyGridFieldList =
-        {
-            //This field list might get modified later and contains only the fields being display in the gridpanel.
-            if (!session['gridFieldList']) session['gridFieldList'] = loadFieldList()
+            {
+                //This field list might get modified later and contains only the fields being display in the gridpanel.
+                if (!session['gridFieldList']) session['gridFieldList'] = loadFieldList()
 
-            return session['gridFieldList']
-        }
+                return session['gridFieldList']
+            }
 
     /**
      * This will get the list of available fields from the Solr server.
      */
     def loadFieldList =
-        {
-            //Get the list of fields we don't want to display.
-            String solrFieldExclusion = grailsApplication.config.com.recomdata.solr.fieldExclusionList
+            {
+                //Get the list of fields we don't want to display.
+                String solrFieldExclusion = grailsApplication.config.com.recomdata.solr.fieldExclusionList
 
-            //Get the list of possible results.
-            def resultsList = solrService.getCategoryList(solrFieldExclusion)
+                //Get the list of possible results.
+                def resultsList = solrService.getCategoryList(solrFieldExclusion)
 
-            return resultsList
-        }
+                return resultsList
+            }
 
     /**
      * This returns a JSON object representing the available solr fields. Used mainly to populate picklists.
      */
     def loadCategories =
-        {
-            //Get the field list from session, or retrieve it from Solr.
-            def fieldList = verifyFieldList()
+            {
+                //Get the field list from session, or retrieve it from Solr.
+                def fieldList = verifyFieldList()
 
-            //Initialize the map with the all value.
-            def categoryMap = [rows: [["value": "all", "label": "all"]]]
+                //Initialize the map with the all value.
+                def categoryMap = [rows: [["value": "all", "label": "all"]]]
 
-            //We need to put the field list into a format that the pick list expects. Each field gets a label and value entry.
-            fieldList.each
-                    {
-                        def tempMap = [:]
+                //We need to put the field list into a format that the pick list expects. Each field gets a label and value entry.
+                fieldList.each
+                        {
+                            def tempMap = [:]
 
-                        tempMap['value'] = it.toString()
-                        tempMap['label'] = it.toString().toLowerCase().replace("_", " ")
+                            tempMap['value'] = it.toString()
+                            tempMap['label'] = it.toString().toLowerCase().replace("_", " ")
 
-                        categoryMap['rows'].add(tempMap)
-                    }
+                            categoryMap['rows'].add(tempMap)
+                        }
 
-            render params.callback + "(" + (categoryMap as JSON) + ")"
-        }
+                render params.callback + "(" + (categoryMap as JSON) + ")"
+            }
 
     /**
      * When we want to display the BioBank screen we need to requery Solr to get the list of ID's for the row we clicked on.
      */
     def bioBank =
-        {
+            {
 
-            //Get the list of Sample ID's based on the criteria in the JSON object.
-            def idList = solrService.getIDList(request.JSON.SearchJSON);
+                //Get the list of Sample ID's based on the criteria in the JSON object.
+                def idList = solrService.getIDList(request.JSON.SearchJSON);
 
-            //Get all the BioBank results for these IDs.
-            def sampleList = BioBankSample.getAll(idList);
+                //Get all the BioBank results for these IDs.
+                def sampleList = BioBankSample.getAll(idList);
 
-            //Render the BioBank data.
-            render(template: "BioBankList", model: [samples: sampleList]);
-        }
+                //Render the BioBank data.
+                render(template: "BioBankList", model: [samples: sampleList]);
+            }
 
     /**
      *
      * TPX2
      */
     def sampleValidateHeatMap =
-        {
-            //We need to first retrieve the list of Sample ID's for the dataset we have selected.
+            {
+                //We need to first retrieve the list of Sample ID's for the dataset we have selected.
 
-            //Get the list of Sample ID's based on the criteria in the JSON object.
-            //We need to get an ID list per subset. The JSON we recieved should be [1:[category:[]]]
-            def subsetList = request.JSON.SearchJSON
+                //Get the list of Sample ID's based on the criteria in the JSON object.
+                //We need to get an ID list per subset. The JSON we recieved should be [1:[category:[]]]
+                def subsetList = request.JSON.SearchJSON
 
-            //This is the hashmap we return as JSON.
-            HashMap result = [:]
+                //This is the hashmap we return as JSON.
+                HashMap result = [:]
 
-            //Loop for each subset.
-            subsetList.each
-                    {
-                        subset ->
+                //Loop for each subset.
+                subsetList.each
+                        {
+                            subset ->
 
-                            //Grab the Sample ID's in this subset.
-                            def idList = solrService.getIDList(subset.value);
+                                //Grab the Sample ID's in this subset.
+                                def idList = solrService.getIDList(subset.value);
 
-                            //Add the ID's to the result object.
-                            result[subset.key] = idList;
-                    }
+                                //Add the ID's to the result object.
+                                result[subset.key] = idList;
+                        }
 
-            result = result.sort { it.key }
+                result = result.sort { it.key }
 
-            HashMap sampleIdList = [:]
+                HashMap sampleIdList = [:]
 
-            sampleIdList["SampleIdList"] = result;
+                sampleIdList["SampleIdList"] = result;
 
-            render sampleIdList as JSON;
-        }
+                render sampleIdList as JSON;
+            }
 
     def snpDataService
 
     def testSNPData =
-        {
-            SnpData snpData = new SnpData()
+            {
+                SnpData snpData = new SnpData()
 
-            snpDataService.getSnpDataByResultInstanceAndGene("15804", "GSE14860", "GENE:662", null, snpData, "C:\\SVN\\repo1\\sanofi\\trunk\\biomart\\web-app\\plugins\\ANOVA\\test.txt", true, true)
-        }
+                snpDataService.getSnpDataByResultInstanceAndGene("15804", "GSE14860", "GENE:662", null, snpData, "C:\\SVN\\repo1\\sanofi\\trunk\\biomart\\web-app\\plugins\\ANOVA\\test.txt", true, true)
+            }
 
 
 }

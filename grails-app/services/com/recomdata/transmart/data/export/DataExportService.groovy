@@ -1,22 +1,22 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  *
  ******************************************************************/
-  
+
 
 package com.recomdata.transmart.data.export
 
@@ -32,48 +32,48 @@ class DataExportService {
 
     boolean transactional = true
 
-	def i2b2ExportHelperService
-	def grailsApplication
-	def clinicalDataService
-	def snpDataService
-	def geneExpressionDataService
+    def i2b2ExportHelperService
+    def grailsApplication
+    def clinicalDataService
+    def snpDataService
+    def geneExpressionDataService
     def ACGHDataService
     def RNASeqDataService
     def highDimExportService
     def highDimensionResourceService
-	def additionalDataService
-	def vcfDataService
+    def additionalDataService
+    def vcfDataService
     def dataSource
-	
-	@Transactional(readOnly = true)
+
+    @Transactional(readOnly = true)
     def exportData(jobDataMap) {
-		def checkboxList = jobDataMap.get('checkboxList')
-		if ((checkboxList.getClass().isArray() && checkboxList?.length == 0) ||
-			(checkboxList instanceof List && checkboxList?.isEmpty())) {
-			throw new Exception("Please select the data to Export.");
-		}
+        def checkboxList = jobDataMap.get('checkboxList')
+        if ((checkboxList.getClass().isArray() && checkboxList?.length == 0) ||
+                (checkboxList instanceof List && checkboxList?.isEmpty())) {
+            throw new Exception("Please select the data to Export.");
+        }
         def jobTmpDirectory = jobDataMap.jobTmpDirectory
         def resultInstanceIdMap = jobDataMap.result_instance_ids
         def subsetSelectedFilesMap = jobDataMap.subsetSelectedFilesMap
         def subsetSelectedPlatformsByFiles = jobDataMap.subsetSelectedPlatformsByFiles
         def highDimDataTypes = jobDataMap.highDimDataTypes
-        
+
         def mergeSubSet = jobDataMap.mergeSubset
-		//Hard-coded subsets to count 2
-		def subsets = ['subset1', 'subset2']
-		def study = null
-		def File studyDir = null
-		def filesDoneMap = [:]
+        //Hard-coded subsets to count 2
+        def subsets = ['subset1', 'subset2']
+        def study = null
+        def File studyDir = null
+        def filesDoneMap = [:]
         def selection = jobDataMap.selection ?
-            new JsonSlurper().parseText(jobDataMap.selection)
-            : [:]
-		
-		if (StringUtils.isEmpty(jobTmpDirectory)) {
-			jobTmpDirectory = grailsApplication.config.com.recomdata.transmart.data.export.jobTmpDirectory
-			if (StringUtils.isEmpty(jobTmpDirectory)) {
-				throw new Exception('Job temp directory needs to be specified')
-			}
-		}
+                new JsonSlurper().parseText(jobDataMap.selection)
+                : [:]
+
+        if (StringUtils.isEmpty(jobTmpDirectory)) {
+            jobTmpDirectory = grailsApplication.config.com.recomdata.transmart.data.export.jobTmpDirectory
+            if (StringUtils.isEmpty(jobTmpDirectory)) {
+                throw new Exception('Job temp directory needs to be specified')
+            }
+        }
 
         subsets.each { subset ->
             def columnFilter = selection[subset]?.clinical?.selector
@@ -319,10 +319,10 @@ class DataExportService {
                     }
 
                     if (jobDataMap.analysis == 'DataExport') {
-						
-						def resultInstanceId = resultInstanceIdMap[subset]
-												
-						def mapOfSampleCdsBySource = buildMapOfSampleCdsBySource(resultInstanceId)
+
+                        def resultInstanceId = resultInstanceIdMap[subset]
+
+                        def mapOfSampleCdsBySource = buildMapOfSampleCdsBySource(resultInstanceId)
 
                         def sampleCodesTable = new Sql(dataSource).rows("""
                                         SELECT DISTINCT
@@ -338,9 +338,9 @@ class DataExportService {
                                                 WHERE
                                                     result_instance_id = ? )
                                     """, resultInstanceId)
-						for (row in sampleCodesTable) {
-							row.SAMPLE_CDS = mapOfSampleCdsBySource[row.SOURCESYSTEM_CD]
-						}
+                        for (row in sampleCodesTable) {
+                            row.SAMPLE_CDS = mapOfSampleCdsBySource[row.SOURCESYSTEM_CD]
+                        }
                         sampleCodesTable = sampleCodesTable.collectEntries {
                             [it.SOURCESYSTEM_CD.split(':')[-1].trim(), it.SAMPLE_CDS]
                         }
@@ -398,9 +398,9 @@ class DataExportService {
 
     }
 
-	def buildMapOfSampleCdsBySource(resultInstanceId) {
-		def map = [:]
-		def sampleCodesTable = new Sql(dataSource).rows("""
+    def buildMapOfSampleCdsBySource(resultInstanceId) {
+        def map = [:]
+        def sampleCodesTable = new Sql(dataSource).rows("""
 			SELECT DISTINCT
                 p.SOURCESYSTEM_CD,
                 s.SAMPLE_CD
@@ -417,42 +417,41 @@ class DataExportService {
                     WHERE
                         result_instance_id = ? )
 			ORDER BY SOURCESYSTEM_CD, SAMPLE_CD
-			""",resultInstanceId
-		)
-		for (row in sampleCodesTable) {
-			def sourceSystemCd = row.SOURCESYSTEM_CD
-			if (!sourceSystemCd) continue
-			def sampleCd = row.SAMPLE_CD
-			if (!sampleCd) continue
-			def entry = map[sourceSystemCd]
-			if (!entry) {
-				entry = sampleCd
-			} else {
-				entry = entry + "," + sampleCd
-			}
-			map[sourceSystemCd] = entry
-		}
-		return map
-	}
-	
+			""", resultInstanceId
+        )
+        for (row in sampleCodesTable) {
+            def sourceSystemCd = row.SOURCESYSTEM_CD
+            if (!sourceSystemCd) continue
+            def sampleCd = row.SAMPLE_CD
+            if (!sampleCd) continue
+            def entry = map[sourceSystemCd]
+            if (!entry) {
+                entry = sampleCd
+            } else {
+                entry = entry + "," + sampleCd
+            }
+            map[sourceSystemCd] = entry
+        }
+        return map
+    }
+
     static clinicalDataFileName(String studyDir) {
 
         String dataTypeName = 'Clinical'
         String dataTypeFolder = null
 
         String dataTypeNameDir = (StringUtils.isNotEmpty(dataTypeName) && null != studyDir) ?
-                studyDir +'/'+ dataTypeName : null;
+                studyDir + '/' + dataTypeName : null;
         String dataTypeFolderDir = (StringUtils.isNotEmpty(dataTypeFolder) && null != dataTypeNameDir) ?
-                dataTypeNameDir +'/'+ dataTypeFolder : null;
+                dataTypeNameDir + '/' + dataTypeFolder : null;
 
         if (null != studyDir && null == dataTypeNameDir) {
             studyDir
         } else if (null != studyDir && null != dataTypeNameDir) {
             ((null == dataTypeFolderDir) ? dataTypeNameDir : dataTypeFolderDir)
-		}
-		
+        }
 
 
     }
-		
+
 }

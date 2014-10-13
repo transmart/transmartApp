@@ -60,7 +60,8 @@ class AnalysisTEABaseService {
         if (filter == null || filter.globalFilter.isTextOnly()) {
             return []
         }
-        def result = queryExpAnalysis(filter)//org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery(false, filter), paramMap==null?[:]:paramMap)
+        def result = queryExpAnalysis(filter)
+//org.transmart.biomart.BioAssayAnalysisData.executeQuery(createQuery(false, filter), paramMap==null?[:]:paramMap)
 
         List trialResult = []
         if (result != null)

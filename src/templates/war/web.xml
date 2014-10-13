@@ -81,7 +81,7 @@
         <servlet-name>GetGenePatternFile</servlet-name>
         <url-pattern>/analysis/getGenePatternFile</url-pattern>
     </servlet-mapping>
- 
+
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>

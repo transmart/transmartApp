@@ -1,7 +1,5 @@
 package org.transmartproject.export
 
-import grails.test.mixin.*
-
 import org.gmock.GMockController
 import org.transmartproject.core.dataquery.DataRow
 import org.transmartproject.core.dataquery.Patient
@@ -18,9 +16,9 @@ class MockTabularResultHelper {
 
     List<AssayColumn> createSampleAssays(int n) {
         (1..n).collect {
-            createMockAssay( it, "assay_${it}", "sample_code_${it}", 
+            createMockAssay(it, "assay_${it}", "sample_code_${it}",
                     "patient_${it}_subject_id", "sampletype_${it}",
-                    "timepoint_${it}", "tissuetype_${it}", "" + it * 10 )
+                    "timepoint_${it}", "tissuetype_${it}", "" + it * 10)
         }
     }
 
@@ -28,7 +26,7 @@ class MockTabularResultHelper {
                                List<Double> data,
                                String label) {
         createMockRow(
-                dot(assays, data, {a, b -> [ a, b ]})
+                dot(assays, data, { a, b -> [a, b] })
                         .collectEntries(Closure.IDENTITY),
                 label)
     }
@@ -56,20 +54,20 @@ class MockTabularResultHelper {
     }
 
     TabularResult<AssayColumn, DataRow> createMockTabularResult(Map params) {
-        List<AssayColumn> sampleAssays        = params.assays
+        List<AssayColumn> sampleAssays = params.assays
         Map<String, List<Object>> labelToData = params.data
-        String columnsDimensionLabel          = params.columnsLabel
-        String rowsDimensionLabel             = params.rowsLabel
+        String columnsDimensionLabel = params.columnsLabel
+        String rowsDimensionLabel = params.rowsLabel
 
         def iterator = labelToData.collect { String label, List<Number> data ->
             createRowForAssays(sampleAssays, data, label)
         }.iterator()
-                
+
         TabularResult highDimResult = mock TabularResult
         highDimResult.indicesList.returns(sampleAssays).stub()
         highDimResult.getRows().returns(iterator).stub()
         highDimResult.iterator().returns(iterator).stub()
-        
+
         if (columnsDimensionLabel) {
             highDimResult.columnsDimensionLabel.returns columnsDimensionLabel
         }
@@ -82,33 +80,41 @@ class MockTabularResultHelper {
 
 
     private AssayColumn createMockAssay(
-            Long id = null, String label = null, String sampleCode = null, 
+            Long id = null, String label = null, String sampleCode = null,
             String patientInTrialId = null, String sampleTypeLabel = null,
             String timepointLabel = null, String tissueTypeLabel = null,
-            String platformId = null 
-            ) {
+            String platformId = null
+    ) {
         [
-                getId:               { -> id },
-                getLabel:            { -> label },
-                getSampleCode:       { -> sampleCode },
+                getId              : { -> id },
+                getLabel           : { -> label },
+                getSampleCode      : { -> sampleCode },
                 getPatientInTrialId: { -> patientInTrialId },
-                getSampleType:       { -> [ 
-                        getLabel:       { -> sampleTypeLabel }
-                ] as SampleType },
-                getTimepoint:       { -> [ 
-                        getLabel:       { -> timepointLabel }
-                ] as Timepoint },
-                getTissueType:       { -> [ 
-                        getLabel:       { -> tissueTypeLabel }
-                ] as TissueType },
-                getPlatform:       { -> [ 
-                        getId:       { -> platformId }
-                ] as Platform },
-                equals:              { other -> delegate.is(other) },
-                toString:            { -> "assay for $patientInTrialId" as String }
+                getSampleType      : { ->
+                    [
+                            getLabel: { -> sampleTypeLabel }
+                    ] as SampleType
+                },
+                getTimepoint       : { ->
+                    [
+                            getLabel: { -> timepointLabel }
+                    ] as Timepoint
+                },
+                getTissueType      : { ->
+                    [
+                            getLabel: { -> tissueTypeLabel }
+                    ] as TissueType
+                },
+                getPlatform        : { ->
+                    [
+                            getId: { -> platformId }
+                    ] as Platform
+                },
+                equals             : { other -> delegate.is(other) },
+                toString           : { -> "assay for $patientInTrialId" as String }
         ] as AssayColumn
     }
-    
+
     private DataRow<AssayColumn, Object> createMockRow(Map<AssayColumn, Object> values,
                                                        String label) {
         DataRow row = mock(DataRow)

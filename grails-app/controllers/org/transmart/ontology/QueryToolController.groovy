@@ -23,7 +23,7 @@ class QueryToolController {
      */
     def runQueryFromDefinition() {
         QueryDefinition definition =
-            queryDefinitionXmlService.fromXml(request.reader)
+                queryDefinitionXmlService.fromXml(request.reader)
         String username = currentUser.username
 
         def result = queriesResourceAuthorizationDecorator.runQuery(

@@ -91,7 +91,7 @@ public class FederatedUserDetailsService implements SAMLUserDetailsService {
         AuthUser.withTransaction { TransactionStatus status ->
             String username = null,
                    realName = null,
-                   email    = null
+                   email = null
 
             if (attributeConfig.username) {
                 username = getAttr(credential, attributeConfig.username)

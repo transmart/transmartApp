@@ -51,15 +51,15 @@ class AsyncJobController {
      */
     def getjobbyname = {
 
-		println(params.jobName)
+        println(params.jobName)
 
-		def result = asyncJobService.getjobbyname(params.jobName)
+        def result = asyncJobService.getjobbyname(params.jobName)
 
-		response.setContentType("text/json")
-		response.outputStream << result?.toString()
-	}
+        response.setContentType("text/json")
+        response.outputStream << result?.toString()
+    }
 
-	/**
+    /**
      * Called to retrieve the job results (HTML) stored in the JOB_RESULTS field for Haploview and Survival Analysis
      */
     def getjobresults = {

@@ -85,7 +85,6 @@ class GeneExprAnalysisController {
     }
 
 
-
     def noResult = {
         render(view: 'noresult')
     }

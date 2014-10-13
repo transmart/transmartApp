@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.GeneSignature
 import org.transmart.searchapp.SearchKeyword

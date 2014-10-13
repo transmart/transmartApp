@@ -18,8 +18,6 @@
  ******************************************************************/
 
 
-
-
 package com.recomdata.transmart.plugin
 
 import grails.converters.JSON
