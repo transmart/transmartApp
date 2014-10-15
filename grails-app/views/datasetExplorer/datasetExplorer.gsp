@@ -58,6 +58,8 @@
     <script type="text/javascript" src="${resource(dir:'js', file:'utilitiesMenu.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'gridView.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorer.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'datasetExplorerLaunchers.js')}"></script>
+    <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'sampleQuery.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'rwgsearch.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js', file:'advancedWorkflowFunctions.js')}"></script>
     <script type="text/javascript" src="${resource(dir:'js/datasetExplorer', file:'highDimensionData.js')}"></script>
