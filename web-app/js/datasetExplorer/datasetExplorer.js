@@ -714,6 +714,19 @@ Ext.onReady(function () {
             }
         );
 
+        sampleExplorerPanel = new Ext.Panel(
+            {
+                id: "sampleExplorer",
+                title:"Sample Details",
+                layout: "fit",
+                listeners: {
+                    activate: function() {
+                        generatePatientSampleCohort(launchSampleBrowseWithCohort())
+                    }
+                }
+            }
+        )
+
         resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
@@ -722,6 +735,7 @@ Ext.onReady(function () {
 		resultsTabPanel.add(analysisExportJobsPanel);
 		resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(workspacePanel);
+        resultsTabPanel.add(sampleExplorerPanel);
 
         function loadResources(resources, bootstrap) {
             var scripts = [];
