@@ -7,6 +7,7 @@ import org.transmartproject.core.querytool.QueryDefinition
 import org.transmartproject.core.users.User
 
 import javax.annotation.Resource
+import org.transmartproject.core.dataquery.Patient
 
 class QueryToolController {
 
@@ -50,6 +51,19 @@ class QueryToolController {
         render(
                 contentType: 'application/xml',
                 text: queryDefinitionXmlService.toXml(queryDefinition))
+    }
+
+    def getPatients() {
+        Long id = params.long('result_id')
+        if (!id) {
+            throw new InvalidRequestException('result_id param not specified')
+        }
+
+        List<Long> result = queriesResourceAuthorizationDecorator.getQueryResultFromId(id).getPatients().collect({it.getId()})
+
+        render(
+                contentType: 'application/xml',
+                text: result.join(', '))
     }
 
 }
