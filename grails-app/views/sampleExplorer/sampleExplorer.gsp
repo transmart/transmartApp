@@ -89,7 +89,8 @@
         ContactUs: '${grailsApplication.config.com.recomdata.searchtool.contactUs}',
         basePath: pageInfo.basePath,
         AppTitle: '${grailsApplication.config.com.recomdata.searchtool.appTitle}',
-        resultsGridHeight : ${grailsApplication.config.sampleExplorer.resultsGridHeight},
+        resultsGridHeight : jQuery(window).height() - 120,
+        //resultsGridHeight : ${grailsApplication.config.sampleExplorer.resultsGridHeight},
         resultsGridWidth : '100%',
         BuildVersion: 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
         explorerType: 'sampleExplorer'
