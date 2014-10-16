@@ -51,7 +51,7 @@ class SampleService {
         grailsApplication.config.edu.harvard.transmart.sampleBreakdownMap.each{
             currentCountVariable ->
 
-                sampleSummary[currentCountVariable.value] = solrService.getFacetCountForField(currentCountVariable.key, result_instance_id, 'sampleExplorer')
+                sampleSummary[currentCountVariable.value] = solrService.getFacetCountForField(currentCountVariable.key, result_instance_id, 'sample')
 
                 log.debug("Finished count for field ${currentCountVariable.value} - ${currentCountVariable.key}")
                 log.debug(sampleSummary[currentCountVariable.value])

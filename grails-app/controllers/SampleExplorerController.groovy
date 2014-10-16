@@ -78,7 +78,7 @@ class SampleExplorerController {
     def showTopLevelListPage =
             {
                 //Call the solr service to get a hash that looks like category:[item:count]. We pass in an empty string because we want all the documents in the solr search.
-                def termMap = solrService.facetSearch("",verifyFieldList(), 'browse')
+                def termMap = solrService.facetSearch("",verifyFieldList(), 'sample')
 
                 //Render the list of links in their own categories.
                 render(template:"searchTopLevel", model:[termsMap:termMap]);
@@ -101,7 +101,7 @@ class SampleExplorerController {
                 def solrFieldList = verifyGridFieldList();
 
                 //Call the solr service to get a hash that looks like category:[item:count].
-                def termMap = solrService.facetSearch(request.JSON.SearchJSON,solrFieldList, 'browse')
+                def termMap = solrService.facetSearch(request.JSON.SearchJSON,solrFieldList, 'sample')
 
                 //Render the list of checkboxes and links based on the items in our search JSON.
                 render(template:"categorySearchWithCheckboxes", model:[termsMap:termMap,JSONData:request.JSON.SearchJSON]);
@@ -149,7 +149,7 @@ class SampleExplorerController {
                 }
 
                 //This will be the hash to store our results.
-                def resultsHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,selectedResultColumns, false, 'sampleExplorer')
+                def resultsHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,selectedResultColumns, false, 'sample')
 
                 render resultsHash as JSON
             }
@@ -169,7 +169,7 @@ class SampleExplorerController {
                 def values = params.query.substring(params.query.indexOf(":") + 1)
 
                 //Get the list of possible results.
-                def resultsHash = solrService.suggestTerms(category,values,grailsApplication.config.com.recomdata.solr.numberOfSuggestions.toString(), 'sampleExplorer')
+                def resultsHash = solrService.suggestTerms(category,values,grailsApplication.config.com.recomdata.solr.numberOfSuggestions.toString(), 'sample')
 
                 //Render the results as JSON.
                 render params.callback+"("+(resultsHash as JSON)+")"
@@ -214,7 +214,7 @@ class SampleExplorerController {
                 def columnPrettyNameMapping = loadFieldPrettyNameMapping()
 
                 //This will be the hash to store our results.
-                def resultsHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,fullColumnList.join(",").replace("\"",""), true, 'sampleExplorer')
+                def resultsHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,fullColumnList.join(",").replace("\"",""), true, 'sample')
 
                 //Render the BioBank data.
                 render(template:"BioBankList", model:[samples:resultsHash.results, columnPrettyNameMapping:columnPrettyNameMapping]);
@@ -236,10 +236,10 @@ class SampleExplorerController {
                             fullColumnList.push(it.dataIndex)
                         }
 
-                def allSamplesHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,fullColumnList.join(",").replace("\"",""), true, 'sampleExplorer')
+                def allSamplesHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,fullColumnList.join(",").replace("\"",""), true, 'sample')
 
                 //Get the distinct contact fields for this data.
-                def contactHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,"CONTACT", true, 'sampleExplorer')
+                def contactHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,"CONTACT", true, 'sample')
 
                 //We need to group the data by the contact field. Loop through the contact data outside, then the actual data inside.
                 contactHash.results.each {
@@ -296,7 +296,7 @@ class SampleExplorerController {
                             subset ->
 
                                 //Grab the Sample ID's in this subset.
-                                def idList = solrService.getIDList(subset.value, 'sampleExplorer');
+                                def idList = solrService.getIDList(subset.value, 'sample');
 
                                 //Add the ID's to the result object.
                                 result[subset.key] = idList;
