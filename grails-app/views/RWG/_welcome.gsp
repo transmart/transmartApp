@@ -1,7 +1,8 @@
 <center>
 <div class="welcome" style="margin: 40px; background: #F4F4F4; border: 1px solid #DDD; padding: 20px; width: 400px; text-align: center; border-top-left-radius: 20px; border-bottom-right-radius: 20px">
-
-<p><b>Welcome to tranSMART for ${grailsApplication.config.com.recomdata.projectName}</b></p>
+<g:set var="projectName" value="${grailsApplication.config?.com?.recomdata?.projectName}"/>
+<g:set var="providerName" value="${grailsApplication.config?.com?.recomdata?.providerName}"/>
+<p><b>Welcome to tranSMART <g:if test="${projectName}">for </g:if>${projectName}</b></p>
 
 <p>The <b>Browse</b> window lets you search and dive into the information contained in tranSMART,
 including Programs, Studies, Assays and the associated Analyses Results, Subject Level Data and Raw Files.
@@ -10,16 +11,22 @@ information, you must be logged in as an Administrator.
 </p>
 <p>The <b>Analyze</b> window lets you perform a number of analyses either on studies selected
 in the Browse window, or from the global search box located in the top ribbon of your screen.
-More information about the analyses you can perform is available in the “Help�? section of the "Utilities" menu.
+More information about the analyses you can perform is available in the “Help ? section of the "Utilities" menu.
 </p>
 <br><br>
-<a id="etrikspowered" target="_blank" href="http://www.etriks.org" style="text-decoration: none;">
     <div>
-        <img src="${resource(dir:'images', file: 'project_logo.png')}" alt="${grailsApplication.config.com.recomdata.projectName}" style="height:35px;vertical-align:middle;margin-bottom: 12px;">
-        <span style="font-size:20px;display: inline-block;line-height: 35px; height: 35px;">&nbsp;+&nbsp;</span>
-        <img src="${resource(dir:'images', file: 'eTRIKS_logo.png')}" alt="eTRIKS" style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+        <g:if test="${projectName}">
+            <img src="${resource(dir:'images', file: 'project_logo.png')}" alt="${projectName}" style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+        </g:if>
+        <g:if test="${projectName && providerName}">
+            <span style="font-size:20px;display: inline-block;line-height: 35px; height: 35px;">&nbsp;+&nbsp;</span>
+        </g:if>
+        <g:if test="${providerName}">
+            <a id="providerpowered" target="_blank" href="${grailsApplication.config?.com?.recomdata?.providerURL}" style="text-decoration: none;">
+            <img src="${resource(dir:'images', file: 'provider_logo.png')}" alt="${providerName}" style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+            </a>
+        </g:if>
     </div>
-</a>
 </div>
 
 
