@@ -720,7 +720,8 @@ Ext.onReady(function () {
                 title:"Sample Details",
                 layout: "fit",
                 listeners: {
-                    activate: function() {
+                    activate: function(p) {
+                        p.body.mask("Loading...", 'x-mask-loading');
                         generatePatientSampleCohort(launchSampleBrowseWithCohort)
                     }
                 }
