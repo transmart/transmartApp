@@ -91,11 +91,11 @@ public class HeatmapController {
         // Convert table object to JSON format
 
         //log.info (heatmap.rhotable==null)?"empty":"not empty"
-        return ["comtable": comtable,
-                "cortable": cortable,
-                "rbmtable": rbmtable,
-                "rhotable": rhotable,
-                "hmapwidth": hmapwidth,
+        return ["comtable"   : comtable,
+                "cortable"   : cortable,
+                "rbmtable"   : rbmtable,
+                "rhotable"   : rhotable,
+                "hmapwidth"  : hmapwidth,
                 "contentlist": allanalysis]
     }
 
@@ -411,7 +411,6 @@ public class HeatmapController {
         }
 
     }
-
 
 
     def createExcelSheet(table, name) {

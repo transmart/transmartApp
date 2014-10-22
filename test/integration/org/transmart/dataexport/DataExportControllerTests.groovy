@@ -61,8 +61,8 @@ class DataExportControllerTests {
         List<PatientDimension> patients = createTestPatients(3, -100, trialName)
         List<PatientTrialCoreDb> patientTrials = createPatientTrialLinks(patients, trialName)
         new I2b2Data(
-                trialName:     trialName,
-                patients:      patients,
+                trialName: trialName,
+                patients: patients,
                 patientTrials: patientTrials)
     }
 
@@ -163,11 +163,11 @@ class DataExportControllerTests {
                     jobName
             dataExportController.response.reset()
             [
-                    result_instance_id1: study2QueryResult.id as String,
-                    analysis: 'DataExport',
-                    jobName: jobName,
+                    result_instance_id1        : study2QueryResult.id as String,
+                    analysis                   : 'DataExport',
+                    jobName                    : jobName,
                     selectedSubsetDataTypeFiles: '{subset: subset1, dataTypeId: CLINICAL, fileType: .TXT}',
-                    selection: '{"subset1":{"clinical":{"selector":[]}}}',
+                    selection                  : '{"subset1":{"clinical":{"selector":[]}}}',
             ].each { k, v -> dataExportController.params[k] = v }
             dataExportController.runDataExport()
         }

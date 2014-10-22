@@ -1,11 +1,9 @@
 package com.recomdata.transmart.data.export
 
 import grails.converters.JSON
-import grails.test.mixin.*
+import grails.test.mixin.TestMixin
 import grails.test.mixin.services.ServiceUnitTestMixin
-import grails.test.mixin.support.*
 import grails.test.mixin.web.ControllerUnitTestMixin
-import org.junit.*
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import spock.lang.Specification
 
@@ -35,34 +33,34 @@ class ExportServiceXSpec extends Specification {
         given: "a set of selected checkboxes"
         def selectedCheckBoxList = [
                 [
-                        subset: 'subset1',
+                        subset    : 'subset1',
                         dataTypeId: 'mrna',
-                        fileType: '.TXT',
-                        gplId: 'GPL570',
+                        fileType  : '.TXT',
+                        gplId     : 'GPL570',
                 ],
                 [
-                        subset: 'subset1',
+                        subset    : 'subset1',
                         dataTypeId: 'mrna',
-                        fileType: '.TXT',
-                        gplId: 'GPL571',
+                        fileType  : '.TXT',
+                        gplId     : 'GPL571',
                 ],
                 [
-                        subset: 'subset1',
+                        subset    : 'subset1',
                         dataTypeId: 'mrna',
-                        fileType: '.XLS',
-                        gplId: 'GPL570',
+                        fileType  : '.XLS',
+                        gplId     : 'GPL570',
                 ],
                 [
-                        subset: 'subset1',
+                        subset    : 'subset1',
                         dataTypeId: 'mirna',
-                        fileType: '.TXT',
-                        gplId: 'GPL570',
+                        fileType  : '.TXT',
+                        gplId     : 'GPL570',
                 ],
                 [
-                        subset: 'subset2',
+                        subset    : 'subset2',
                         dataTypeId: 'mrna',
-                        fileType: '.TXT',
-                        gplId: 'GPL570',
+                        fileType  : '.TXT',
+                        gplId     : 'GPL570',
                 ],
         ].collect { (it as JSON).toString() }
 

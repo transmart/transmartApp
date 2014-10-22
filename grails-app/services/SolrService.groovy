@@ -18,9 +18,9 @@
  ******************************************************************/
 
 
-import org.jfree.util.Log;
-import PatientSampleCollection;
 import groovyx.net.http.HTTPBuilder
+import PatientSampleCollection
+import org.jfree.util.Log
 
 class SolrService {
     def grailsApplication

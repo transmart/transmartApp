@@ -18,13 +18,13 @@
  ******************************************************************/
 
 
-
 import com.recomdata.util.ExcelGenerator
 import com.recomdata.util.ExcelSheet
 import org.transmart.AccessLogFilter
 import org.transmart.searchapp.AccessLog
 
 import java.text.SimpleDateFormat;
+
 class AccessLogController {
 
     def searchService

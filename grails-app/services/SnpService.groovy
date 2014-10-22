@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 import com.recomdata.export.SnpViewerFiles
 import i2b2.*
 
@@ -377,7 +376,8 @@ class SnpService {
 
     Map<Long, Map<String, String>> getSNPDataByDatasetByChrom(String subjectIds, String chroms) throws Exception {
         if (subjectIds == null || subjectIds.trim().length() == 0) return null;
-        Map<Long, Map<String, String>> snpDataByDatasetByChrom = new HashMap<Long, Map<String, String>>();    // Map<[datasetId], Map<chrom, data>>
+        Map<Long, Map<String, String>> snpDataByDatasetByChrom = new HashMap<Long, Map<String, String>>();
+        // Map<[datasetId], Map<chrom, data>>
 
         groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 
@@ -730,7 +730,8 @@ class SnpService {
                         Long entrezId = entrezIdGeneMapEntry.getKey();
                         GeneWithSnp geneWithSnp = entrezIdGeneMapEntry.getValue();
                         GeneWithSnp geneWithSnpInMap = geneMap.get(entrezId);
-                        if (geneWithSnpInMap == null) {    // First time to have this entrezId, use the existing gene structure
+                        if (geneWithSnpInMap == null) {
+                            // First time to have this entrezId, use the existing gene structure
                             geneWithSnpInMap = geneWithSnp;
                             geneMap.put(entrezId, geneWithSnpInMap);
                         } else {    // The gene structure and associated snp list already exist
@@ -790,7 +791,8 @@ class SnpService {
                     GeneWithSnp gene = geneEntry.getValue();
                     SortedMap<Long, SnpInfo> snpMap = gene.snpMap;
                     String geneDisplay = gene.name;
-                    if (geneEntrezIdMap != null && geneEntrezIdMap.get(gene.entrezId) != null) {    // This gene is selected by user
+                    if (geneEntrezIdMap != null && geneEntrezIdMap.get(gene.entrezId) != null) {
+                        // This gene is selected by user
                         geneDisplay = "<font color='red'>" + gene.name + "</font>";
                     }
                     geneSnpPageBuf.append("<tr align='center' valign='top'><td rowspan='" + snpMap.size() + "'>" + geneDisplay + "</td>");
@@ -825,7 +827,8 @@ class SnpService {
         }
 
         if (snpNameList != null && snpNameList.size() != 0) {
-            Set<String> snpNotUsedNameSet = new HashSet<String>();    // Need to get the list of SNPs that do not have data
+            Set<String> snpNotUsedNameSet = new HashSet<String>();
+            // Need to get the list of SNPs that do not have data
             for (String snpName : snpNameList) {
                 if (snpUsedNameSet != null && snpUsedNameSet.size() != 0) {
                     if (snpUsedNameSet.contains(snpName) == false)

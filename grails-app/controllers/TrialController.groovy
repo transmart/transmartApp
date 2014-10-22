@@ -50,11 +50,11 @@ class TrialController {
         def studyDesigns = filterQueryService.studyDesignFilter("Clinical Trial");
 
         render(template: 'trialFilter', model: [studyPlatform: contentType,
-                diseases: diseases,
-                compounds: compounds,
-                phases: phases,
-                studyTypes: studyTypes,
-                studyDesigns: studyDesigns])
+                                                diseases     : diseases,
+                                                compounds    : compounds,
+                                                phases       : phases,
+                                                studyTypes   : studyTypes,
+                                                studyDesigns : studyDesigns])
     }
 
     def filterTrial = {
@@ -208,13 +208,13 @@ class TrialController {
         session.searchFilter.trialFilter.newFilter = false;
 
         def trials = [
-                [text: 'All Trials',
-                        id: 'EmptyTrial',
-                        leaf: false,
-                        uiProvider: 'Ext.tree.CheckboxUI',
-                        checked: rootcheck,
-                        qtip: 'All trials',
-                        children: ctriallist]
+                [text      : 'All Trials',
+                 id        : 'EmptyTrial',
+                 leaf      : false,
+                 uiProvider: 'Ext.tree.CheckboxUI',
+                 checked   : rootcheck,
+                 qtip      : 'All trials',
+                 children  : ctriallist]
         ]
         def v = trials as JSON
         render(v)

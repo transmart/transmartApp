@@ -18,7 +18,6 @@
  ******************************************************************/
 
 
-
 import com.recomdata.export.IgvFiles
 import com.recomdata.export.PlinkFiles
 import com.recomdata.export.SnpViewerFiles
@@ -105,59 +104,59 @@ class AnalysisController {
             i2b2HelperService.fillDefaultRbmpanelInHeatMapValidator(hv2, ci2, concepts2)
         }
 
-        def result = [defaultPlatforms: [
+        def result = [defaultPlatforms      : [
                 hv1.getFirstPlatform(),
                 hv2.getFirstPlatform()
         ],
-                defaultPlatformLabels: [
-                        hv1.getFirstPlatformLabel(),
-                        hv2.getFirstPlatformLabel()
-                ],
-                trials: [
-                        ci1.getAllTrials(),
-                        ci2.getAllTrials()
-                ],
-                defaultTimepoints: [
-                        hv1.getAllTimepoints(),
-                        hv2.getAllTimepoints()
-                ],
-                defaultTimepointLabels: [
-                        hv1.getAllTimepointLabels(),
-                        hv2.getAllTimepointLabels()
-                ],
-                defaultSamples: [
-                        hv1.getAllSamples(),
-                        hv2.getAllSamples()
-                ],
-                defaultSampleLabels: [
-                        hv1.getAllSampleLabels(),
-                        hv2.getAllSampleLabels()
-                ],
-                defaultGpls: [
-                        hv1.getAll('gpls'),
-                        hv2.getAll('gpls')
-                ],
-                defaultGplLabels: [
-                        hv1.getAll('gplLabels'),
-                        hv2.getAll('gplLabels')
-                ],
-                defaultTissues: [
-                        hv1.getAll('tissues'),
-                        hv2.getAll('tissues')
-                ],
-                defaultTissueLabels: [
-                        hv1.getAll('tissueLabels'),
-                        hv2.getAll('tissueLabels')
-                ],
-                defaultRbmpanels: [
-                        hv1.getAll('rbmpanels'),
-                        hv2.getAll('rbmpanels')
-                ],
-                defaultRbmpanelLabels: [
-                        hv1.getAll('rbmpanelsLabels'),
-                        hv2.getAll('rbmpanelsLabels')
-                ],
-                markerType: markerType];
+                      defaultPlatformLabels : [
+                              hv1.getFirstPlatformLabel(),
+                              hv2.getFirstPlatformLabel()
+                      ],
+                      trials                : [
+                              ci1.getAllTrials(),
+                              ci2.getAllTrials()
+                      ],
+                      defaultTimepoints     : [
+                              hv1.getAllTimepoints(),
+                              hv2.getAllTimepoints()
+                      ],
+                      defaultTimepointLabels: [
+                              hv1.getAllTimepointLabels(),
+                              hv2.getAllTimepointLabels()
+                      ],
+                      defaultSamples        : [
+                              hv1.getAllSamples(),
+                              hv2.getAllSamples()
+                      ],
+                      defaultSampleLabels   : [
+                              hv1.getAllSampleLabels(),
+                              hv2.getAllSampleLabels()
+                      ],
+                      defaultGpls           : [
+                              hv1.getAll('gpls'),
+                              hv2.getAll('gpls')
+                      ],
+                      defaultGplLabels      : [
+                              hv1.getAll('gplLabels'),
+                              hv2.getAll('gplLabels')
+                      ],
+                      defaultTissues        : [
+                              hv1.getAll('tissues'),
+                              hv2.getAll('tissues')
+                      ],
+                      defaultTissueLabels   : [
+                              hv1.getAll('tissueLabels'),
+                              hv2.getAll('tissueLabels')
+                      ],
+                      defaultRbmpanels      : [
+                              hv1.getAll('rbmpanels'),
+                              hv2.getAll('rbmpanels')
+                      ],
+                      defaultRbmpanelLabels : [
+                              hv1.getAll('rbmpanelsLabels'),
+                              hv2.getAll('rbmpanelsLabels')
+                      ],
+                      markerType            : markerType];
         //log.debug(result as JSON);
         render result as JSON;
     }
@@ -323,10 +322,10 @@ class AnalysisController {
             try {
                 result.put("jobNumber", jresult[1].getJobNumber());
                 viewerURL =
-                    grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL +
-                            "/gp/jobResults/" +
-                            jresult[1].getJobNumber() +
-                            "?openVisualizers=true";
+                        grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL +
+                                "/gp/jobResults/" +
+                                jresult[1].getJobNumber() +
+                                "?openVisualizers=true";
                 log.debug("URL for viewer: " + viewerURL)
                 result.put("viewerURL", viewerURL);
 
@@ -471,10 +470,10 @@ class AnalysisController {
             try {
                 result.put("jobNumber", jresult[1].getJobNumber());
                 viewerURL =
-                    grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL +
-                            "/gp/jobResults/" +
-                            jresult[1].getJobNumber() +
-                            "?openVisualizers=true";
+                        grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL +
+                                "/gp/jobResults/" +
+                                jresult[1].getJobNumber() +
+                                "?openVisualizers=true";
                 log.debug("URL for viewer: " + viewerURL)
                 result.put("viewerURL", viewerURL);
 
@@ -606,10 +605,10 @@ class AnalysisController {
             try {
                 result.put("jobNumber", jresult[1].getJobNumber());
                 viewerURL =
-                    grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL +
-                            "/gp/jobResults/" +
-                            jresult[1].getJobNumber() +
-                            "?openVisualizers=true";
+                        grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL +
+                                "/gp/jobResults/" +
+                                jresult[1].getJobNumber() +
+                                "?openVisualizers=true";
                 log.debug("URL for viewer: " + viewerURL)
                 result.put("viewerURL", viewerURL);
 
@@ -755,10 +754,10 @@ class AnalysisController {
             try {
                 result.put("jobNumber", jresult[1].getJobNumber());
                 viewerURL =
-                    grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL +
-                            "/gp/jobResults/" +
-                            jresult[1].getJobNumber() +
-                            "?openVisualizers=true";
+                        grailsApplication.config.com.recomdata.datasetExplorer.genePatternURL +
+                                "/gp/jobResults/" +
+                                jresult[1].getJobNumber() +
+                                "?openVisualizers=true";
                 log.debug("URL for viewer: " + viewerURL)
                 result.put("viewerURL", viewerURL);
 
@@ -774,7 +773,6 @@ class AnalysisController {
             session["workflowstatus"].setCompleted();
         }
     }
-
 
 
     def showPlink = {

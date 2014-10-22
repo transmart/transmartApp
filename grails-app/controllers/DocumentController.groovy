@@ -71,18 +71,18 @@ class DocumentController {
     def downloadFile = {
 
         def types = [
-                "doc": "application/msword",
+                "doc" : "application/msword",
                 "docx": "application/msword",
-                "htm": "text/html",
+                "htm" : "text/html",
                 "html": "text/html",
-                "pdf": "application/pdf",
-                "ppt": "application/ms-powerpoint",
+                "pdf" : "application/pdf",
+                "ppt" : "application/ms-powerpoint",
                 "pptx": "application/ms-powerpoint",
-                "rtf": "application/rtf",
-                "txt": "text/plain",
-                "xls": "application/ms-excel",
+                "rtf" : "application/rtf",
+                "txt" : "text/plain",
+                "xls" : "application/ms-excel",
                 "xlsx": "application/ms-excel",
-                "xml": "text/xml"
+                "xml" : "text/xml"
         ]
         def fileName = URLDecoder.decode(params.file)
         def file = new File(fileName)
