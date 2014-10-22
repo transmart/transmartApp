@@ -721,7 +721,7 @@ Ext.onReady(function () {
                 layout: "fit",
                 listeners: {
                     activate: function() {
-                        generatePatientSampleCohort(launchSampleBrowseWithCohort())
+                        generatePatientSampleCohort(launchSampleBrowseWithCohort)
                     }
                 }
             }
