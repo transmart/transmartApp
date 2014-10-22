@@ -42,8 +42,7 @@ class DataCountService {
 
     //For the given list of Subjects get counts of what kind of data we have for those cohorts.
     //We want to return a map that looks like {"PLINK": "102","RBM":"28"}
-    Map getDataCounts(Long rID, Long[] resultInstanceIds)
-    {
+    Map getDataCounts(Long rID, Long[] resultInstanceIds) {
         checkQueryResultAccess(*resultInstanceIds)
 
         //This is the map we build for each subset that contains the data type and count for that data type.
@@ -54,7 +53,6 @@ class DataCountService {
 
         subjectsQuery.append("SELECT DISTINCT patient_num FROM qt_patient_set_collection WHERE result_instance_id = ?")
                 .append(" AND patient_num IN (select patient_num from patient_dimension where sourcesystem_cd not like '%:S:%')")
-
 
         //Build the query we use to get the SNP data. patient_num should be unique across all studies.
         snpQuery.append("SELECT count(distinct snp.patient_num) FROM de_subject_snp_dataset snp WHERE snp.patient_num IN (")
@@ -71,14 +69,14 @@ class DataCountService {
     /**
      * Returns the number of patients within a given subset that has clinical data
      * @param resultInstanceId
-     * @return	The number of patients within the given subset that have clinical data
+     * @return The number of patients within the given subset that have clinical data
      */
-    Long getClinicalDataCount( Long resultInstanceId ) {
+    Long getClinicalDataCount(Long resultInstanceId) {
         // TODO: Convert this into using
-        if( !resultInstanceId )
+        if (!resultInstanceId)
             return 0
 
-        QueryResult queryResult = queriesResource.getQueryResultFromId( resultInstanceId )
+        QueryResult queryResult = queriesResource.getQueryResultFromId(resultInstanceId)
         queryResult.getSetSize()
     }
 

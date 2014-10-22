@@ -31,7 +31,7 @@ class SampleService {
     public void generateSampleCollection(String result_instance_id)
     {
         groovy.sql.Sql sql = new groovy.sql.Sql(dataSource)
-        sql.execute("INSERT INTO QT_PATIENT_SAMPLE_COLLECTION (SAMPLE_ID, PATIENT_ID, RESULT_INSTANCE_ID) SELECT DISTINCT DSSM.SAMPLE_ID, DSSM.patient_id, ? FROM QT_PATIENT_SET_COLLECTION QT INNER JOIN DE_SUBJECT_SAMPLE_MAPPING DSSM ON DSSM.PATIENT_ID = QT.PATIENT_NUM WHERE RESULT_INSTANCE_ID = ?", [result_instance_id, result_instance_id])
+        sql.execute("INSERT INTO QT_PATIENT_SAMPLE_COLLECTION (SAMPLE_ID, PATIENT_ID, RESULT_INSTANCE_ID) SELECT DISTINCT DSSM.SAMPLE_ID, DSSM.patient_id, ? FROM QT_PATIENT_SET_COLLECTION QT INNER JOIN DE_SUBJECT_SAMPLE_MAPPING DSSM ON DSSM.PATIENT_ID = QT.PATIENT_NUM WHERE RESULT_INSTANCE_ID = ?", [result_instance_id.toInteger(), result_instance_id.toInteger()])
     }
 
     public loadSampleStatisticsObject(String result_instance_id)
@@ -51,7 +51,7 @@ class SampleService {
         grailsApplication.config.edu.harvard.transmart.sampleBreakdownMap.each{
             currentCountVariable ->
 
-                sampleSummary[currentCountVariable.value] = solrService.getFacetCountForField(currentCountVariable.key, result_instance_id, 'sampleExplorer')
+                sampleSummary[currentCountVariable.value] = solrService.getFacetCountForField(currentCountVariable.key, result_instance_id, 'sample')
 
                 log.debug("Finished count for field ${currentCountVariable.value} - ${currentCountVariable.key}")
                 log.debug(sampleSummary[currentCountVariable.value])

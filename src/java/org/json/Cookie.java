@@ -1,22 +1,22 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  *
  ******************************************************************/
-  
+
 
 package org.json;
 
@@ -47,6 +47,7 @@ SOFTWARE.
 /**
  * Convert a web browser cookie specification to a JSONObject and back.
  * JSON and Cookies are both notations for name/value pairs.
+ *
  * @author JSON.org
  * @version 3
  */
@@ -61,20 +62,21 @@ public class Cookie {
      * only a convention, not a standard. Often, cookies are expected to have
      * encoded values. We encode '=' and ';' because we must. We encode '%' and
      * '+' because they are meta characters in URL encoding.
+     *
      * @param string The source string.
-     * @return       The escaped result.
+     * @return The escaped result.
      */
     public static String escape(String string) {
-        char         c;
-        String       s = string.trim();
+        char c;
+        String s = string.trim();
         StringBuffer sb = new StringBuffer();
-        int          len = s.length();
+        int len = s.length();
         for (int i = 0; i < len; i += 1) {
             c = s.charAt(i);
             if (c < ' ' || c == '+' || c == '%' || c == '=' || c == ';') {
                 sb.append('%');
-                sb.append(Character.forDigit((char)((c >>> 4) & 0x0f), 16));
-                sb.append(Character.forDigit((char)(c & 0x0f), 16));
+                sb.append(Character.forDigit((char) ((c >>> 4) & 0x0f), 16));
+                sb.append(Character.forDigit((char) (c & 0x0f), 16));
             } else {
                 sb.append(c);
             }
@@ -93,15 +95,16 @@ public class Cookie {
      * stored under the key "value". This method does not do checking or
      * validation of the parameters. It only converts the cookie string into
      * a JSONObject.
+     *
      * @param string The cookie specification string.
      * @return A JSONObject containing "name", "value", and possibly other
-     *  members.
+     * members.
      * @throws JSONException
      */
     public static JSONObject toJSONObject(String string) throws JSONException {
-        String         n;
-        JSONObject     o = new JSONObject();
-        Object         v;
+        String n;
+        JSONObject o = new JSONObject();
+        Object v;
         JSONTokener x = new JSONTokener(string);
         o.put("name", x.nextTo('='));
         x.next('=');
@@ -131,6 +134,7 @@ public class Cookie {
      * If the JSONObject contains "expires", "domain", "path", or "secure"
      * members, they will be appended to the cookie specification string.
      * All other members are ignored.
+     *
      * @param o A JSONObject
      * @return A cookie specification string
      * @throws JSONException
@@ -162,9 +166,10 @@ public class Cookie {
     /**
      * Convert <code>%</code><i>hh</i> sequences to single characters, and
      * convert plus to space.
+     *
      * @param s A string that may contain
-     *      <code>+</code>&nbsp;<small>(plus)</small> and
-     *      <code>%</code><i>hh</i> sequences.
+     *          <code>+</code>&nbsp;<small>(plus)</small> and
+     *          <code>%</code><i>hh</i> sequences.
      * @return The unescaped string.
      */
     public static String unescape(String s) {
@@ -178,7 +183,7 @@ public class Cookie {
                 int d = JSONTokener.dehexchar(s.charAt(i + 1));
                 int e = JSONTokener.dehexchar(s.charAt(i + 2));
                 if (d >= 0 && e >= 0) {
-                    c = (char)(d * 16 + e);
+                    c = (char) (d * 16 + e);
                     i += 2;
                 }
             }

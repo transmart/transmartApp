@@ -18,8 +18,6 @@
  ******************************************************************/
 
 
-
-
 import i2b2.Concept
 
 class ConceptService {
@@ -32,8 +30,8 @@ class ConceptService {
     public List<Concept> getChildrenConcepts(Concept concept) throws Exception {
         if (concept == null || concept.id == null || concept.getLevel() == null) return null;
         List<Concept> conceptList =
-            Concept.findAll("from Concept as c where c.fullName like :fullNameLike and level = :levelNew",
-                    [fullNameLike: concept.getFullName() + "%", levelNew: concept.getLevel().intValue() + 1]);
+                Concept.findAll("from Concept as c where c.fullName like :fullNameLike and level = :levelNew",
+                        [fullNameLike: concept.getFullName() + "%", levelNew: concept.getLevel().intValue() + 1]);
         return conceptList;
     }
 

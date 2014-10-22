@@ -1,22 +1,22 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  *
  ******************************************************************/
-  
+
 
 /**
  * JobResult.java
@@ -27,7 +27,7 @@
 
 package com.recomdata.util.genego;
 
-public class JobResult  implements java.io.Serializable {
+public class JobResult implements java.io.Serializable {
     private java.lang.String id;
 
     private java.lang.String name;
@@ -40,20 +40,20 @@ public class JobResult  implements java.io.Serializable {
     }
 
     public JobResult(
-           java.lang.String id,
-           java.lang.String name,
-           java.lang.String progress,
-           java.lang.String status) {
-           this.id = id;
-           this.name = name;
-           this.progress = progress;
-           this.status = status;
+            java.lang.String id,
+            java.lang.String name,
+            java.lang.String progress,
+            java.lang.String status) {
+        this.id = id;
+        this.name = name;
+        this.progress = progress;
+        this.status = status;
     }
 
 
     /**
      * Gets the id value for this JobResult.
-     * 
+     *
      * @return id
      */
     public java.lang.String getId() {
@@ -63,7 +63,7 @@ public class JobResult  implements java.io.Serializable {
 
     /**
      * Sets the id value for this JobResult.
-     * 
+     *
      * @param id
      */
     public void setId(java.lang.String id) {
@@ -73,7 +73,7 @@ public class JobResult  implements java.io.Serializable {
 
     /**
      * Gets the name value for this JobResult.
-     * 
+     *
      * @return name
      */
     public java.lang.String getName() {
@@ -83,7 +83,7 @@ public class JobResult  implements java.io.Serializable {
 
     /**
      * Sets the name value for this JobResult.
-     * 
+     *
      * @param name
      */
     public void setName(java.lang.String name) {
@@ -93,7 +93,7 @@ public class JobResult  implements java.io.Serializable {
 
     /**
      * Gets the progress value for this JobResult.
-     * 
+     *
      * @return progress
      */
     public java.lang.String getProgress() {
@@ -103,7 +103,7 @@ public class JobResult  implements java.io.Serializable {
 
     /**
      * Sets the progress value for this JobResult.
-     * 
+     *
      * @param progress
      */
     public void setProgress(java.lang.String progress) {
@@ -113,7 +113,7 @@ public class JobResult  implements java.io.Serializable {
 
     /**
      * Gets the status value for this JobResult.
-     * 
+     *
      * @return status
      */
     public java.lang.String getStatus() {
@@ -123,7 +123,7 @@ public class JobResult  implements java.io.Serializable {
 
     /**
      * Sets the status value for this JobResult.
-     * 
+     *
      * @param status
      */
     public void setStatus(java.lang.String status) {
@@ -131,6 +131,7 @@ public class JobResult  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof JobResult)) return false;
         JobResult other = (JobResult) obj;
@@ -141,24 +142,25 @@ public class JobResult  implements java.io.Serializable {
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.id==null && other.getId()==null) || 
-             (this.id!=null &&
-              this.id.equals(other.getId()))) &&
-            ((this.name==null && other.getName()==null) || 
-             (this.name!=null &&
-              this.name.equals(other.getName()))) &&
-            ((this.progress==null && other.getProgress()==null) || 
-             (this.progress!=null &&
-              this.progress.equals(other.getProgress()))) &&
-            ((this.status==null && other.getStatus()==null) || 
-             (this.status!=null &&
-              this.status.equals(other.getStatus())));
+        _equals = true &&
+                ((this.id == null && other.getId() == null) ||
+                        (this.id != null &&
+                                this.id.equals(other.getId()))) &&
+                ((this.name == null && other.getName() == null) ||
+                        (this.name != null &&
+                                this.name.equals(other.getName()))) &&
+                ((this.progress == null && other.getProgress() == null) ||
+                        (this.progress != null &&
+                                this.progress.equals(other.getProgress()))) &&
+                ((this.status == null && other.getStatus() == null) ||
+                        (this.status != null &&
+                                this.status.equals(other.getStatus())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -183,7 +185,7 @@ public class JobResult  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(JobResult.class, true);
+            new org.apache.axis.description.TypeDesc(JobResult.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("SOAP/MetaCore", "JobResult"));
@@ -224,24 +226,24 @@ public class JobResult  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
 }

@@ -50,7 +50,7 @@ class RWGController {
 
     def ajaxWelcome = {
         //add a unused model to be able to use the template
-        render (template: 'welcome', model: [page: "RWG"]);
+        render(template: 'welcome', model: [page: "RWG"]);
     }
 
     def searchLog = {
@@ -446,7 +446,6 @@ class RWGController {
                     }
                     numbersJSON = new JSONObject(numbers)
                 }
-
 
                 //retrieve folders id to expand as opened nodes
                 def nodesToExpand = session['rwgOpenedNodes']

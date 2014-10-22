@@ -17,13 +17,11 @@
  
 -->
 
-<div style="background-color:#EEEEEE;height:100%;margin-left: auto;margin-right: auto;">
+<div style="background-color:#EEEEEE;height:100%;margin-left: auto;margin-right: auto;overflow: hidden;">
 
     <div id="cohortInformation">
-        <g:if test="${includeCohortInformation == true}">
-            <g:render template="/statistics/sampleStatistics" model="[sampleSummary:sampleSummary]" />
-        </g:if>
-    </div>
+
+   </div>
 
     <div id="divDataSetResults">
 

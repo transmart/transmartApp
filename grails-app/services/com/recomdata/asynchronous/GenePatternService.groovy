@@ -826,7 +826,7 @@ class GenePatternService implements Job {
     }
 
     public JobResult[] igvViewer(IgvFiles igvFiles, String genomeVersion, String locus, String userName)
-    throws Exception {
+            throws Exception {
         // The file submitted through web service interface is not accessible to Java Applet-based viewer.
         // The work-around is to use non-change tasks like ConvertLineEndings to put the input dataset file as a result file, and then
         // use the URL of this result file as input file to the later tasks and viewers.

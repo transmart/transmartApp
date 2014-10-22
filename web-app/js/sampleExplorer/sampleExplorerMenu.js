@@ -155,8 +155,14 @@ function createCenterPanel()
 	);
 	
 	//This is the URL for our main "Comparison" tab.
-	var centerPanelURL = pageInfo.basePath+'/sampleExplorer/showTopLevelListPage';
-	
+    var centerPanelURL = false;
+    if (!(/[?&]result_instance_id=/.test(location.href)))
+        centerPanelURL = {
+            url: pageInfo.basePath+'/sampleExplorer/showTopLevelListPage',
+            method:'POST',
+            callback: createSearchBox
+        };
+
 	//This is our main "Comparison" tab.
 	queryPanel = new Ext.Panel(
 			{
@@ -166,12 +172,7 @@ function createCenterPanel()
 				height : 800,
 				autoScroll : true,
 				split : true,					
-		        autoLoad:
-		        {
-		        	url: centerPanelURL,
-		           	method:'POST',
-		           	callback: createSearchBox
-		        },	
+		        autoLoad: centerPanelURL,
 				collapsible : true,
 				titleCollapse : false,
 				animCollapse : false,

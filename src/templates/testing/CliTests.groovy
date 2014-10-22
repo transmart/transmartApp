@@ -1,6 +1,7 @@
-@artifact.package@import grails.test.AbstractCliTestCase
+@ artifact.package
+@ import grails.test.AbstractCliTestCase
 
-class @artifact.name@ extends AbstractCliTestCase {
+class @artifact.name @ extends AbstractCliTestCase {
     protected void setUp() {
         super.setUp()
     }
@@ -9,7 +10,7 @@ class @artifact.name@ extends AbstractCliTestCase {
         super.tearDown()
     }
 
-    void test@gant.class.name@() {
+    void test @gant.class.name @() {
 
         execute(["@gant.script.name@"])
 

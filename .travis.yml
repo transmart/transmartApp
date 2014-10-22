@@ -20,6 +20,9 @@ install:
     - maybe_make_inline_grails_dep $(travis_get_owner)/transmart-gwas-plugin transmart-gwas
     - maybe_make_inline_grails_dep $(travis_get_owner)/folder-management-plugin folder-management
     - maybe_make_inline_grails_dep $(travis_get_owner)/transmart-extensions transmart-extensions transmart-java search-domain biomart-domain
+    - maybe_make_inline_grails_dep $(travis_get_owner)/transmart-rest-api transmart-rest-api
+    - maybe_make_inline_grails_dep $(travis_get_owner)/blend4j-plugin blend4j-plugin
+    - maybe_make_inline_grails_dep $(travis_get_owner)/transmart-metacore-plugin transmart-metacore-plugin
 
 script:
     - grails refresh-dependencies --non-interactive

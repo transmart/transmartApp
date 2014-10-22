@@ -1,22 +1,22 @@
 /*************************************************************************
  * tranSMART - translational medicine data mart
- * 
+ *
  * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
+ *
  * This product includes software developed at Janssen Research & Development, LLC.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
  * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
  * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
  * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  *
  ******************************************************************/
-  
+
 
 /**
  * ExpStruct.java
@@ -27,7 +27,7 @@
 
 package com.recomdata.util.genego;
 
-public class ExpStruct  implements java.io.Serializable {
+public class ExpStruct implements java.io.Serializable {
     private java.lang.String id;
 
     private double value;
@@ -38,18 +38,18 @@ public class ExpStruct  implements java.io.Serializable {
     }
 
     public ExpStruct(
-           java.lang.String id,
-           double value,
-           double pvalue) {
-           this.id = id;
-           this.value = value;
-           this.pvalue = pvalue;
+            java.lang.String id,
+            double value,
+            double pvalue) {
+        this.id = id;
+        this.value = value;
+        this.pvalue = pvalue;
     }
 
 
     /**
      * Gets the id value for this ExpStruct.
-     * 
+     *
      * @return id
      */
     public java.lang.String getId() {
@@ -59,7 +59,7 @@ public class ExpStruct  implements java.io.Serializable {
 
     /**
      * Sets the id value for this ExpStruct.
-     * 
+     *
      * @param id
      */
     public void setId(java.lang.String id) {
@@ -69,7 +69,7 @@ public class ExpStruct  implements java.io.Serializable {
 
     /**
      * Gets the value value for this ExpStruct.
-     * 
+     *
      * @return value
      */
     public double getValue() {
@@ -79,7 +79,7 @@ public class ExpStruct  implements java.io.Serializable {
 
     /**
      * Sets the value value for this ExpStruct.
-     * 
+     *
      * @param value
      */
     public void setValue(double value) {
@@ -89,7 +89,7 @@ public class ExpStruct  implements java.io.Serializable {
 
     /**
      * Gets the pvalue value for this ExpStruct.
-     * 
+     *
      * @return pvalue
      */
     public double getPvalue() {
@@ -99,7 +99,7 @@ public class ExpStruct  implements java.io.Serializable {
 
     /**
      * Sets the pvalue value for this ExpStruct.
-     * 
+     *
      * @param pvalue
      */
     public void setPvalue(double pvalue) {
@@ -107,6 +107,7 @@ public class ExpStruct  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof ExpStruct)) return false;
         ExpStruct other = (ExpStruct) obj;
@@ -117,17 +118,18 @@ public class ExpStruct  implements java.io.Serializable {
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.id==null && other.getId()==null) || 
-             (this.id!=null &&
-              this.id.equals(other.getId()))) &&
-            this.value == other.getValue() &&
-            this.pvalue == other.getPvalue();
+        _equals = true &&
+                ((this.id == null && other.getId() == null) ||
+                        (this.id != null &&
+                                this.id.equals(other.getId()))) &&
+                this.value == other.getValue() &&
+                this.pvalue == other.getPvalue();
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -145,7 +147,7 @@ public class ExpStruct  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(ExpStruct.class, true);
+            new org.apache.axis.description.TypeDesc(ExpStruct.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("SOAP/MetaCore", "ExpStruct"));
@@ -180,24 +182,24 @@ public class ExpStruct  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
 }
