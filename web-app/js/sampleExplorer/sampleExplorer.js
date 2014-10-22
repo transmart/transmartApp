@@ -639,6 +639,11 @@ function gatherSampleContactInformation()
     //If the window is already open, close it.
     if(this.bioBankResults) bioBankResults.close();
 
+    if(jsonDataToPost.SearchJSON.Records.length <= 0) {
+        alert("You have not selected any sample. Please select your sample(s) first.");
+        return;
+    }
+
     //Load the biobank data window.
     bioBankResults = new Ext.Window
     ({
