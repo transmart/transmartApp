@@ -23,8 +23,6 @@ import org.transmart.searchapp.SecureAccessLevel;
  ******************************************************************/
 
 
-
-
 class AuthUserSecureAccessController {
 
     def index = { redirect(action: list, params: params) }

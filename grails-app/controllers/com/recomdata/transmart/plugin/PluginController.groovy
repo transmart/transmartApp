@@ -18,8 +18,6 @@
  ******************************************************************/
 
 
-
-
 package com.recomdata.transmart.plugin
 
 class PluginController {

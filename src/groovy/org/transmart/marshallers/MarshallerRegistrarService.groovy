@@ -28,27 +28,27 @@ public class MarshallerRegistrarService implements FactoryBean {
         log.info 'Registering marshallers'
 
         ClassPathBeanDefinitionScanner scanner = new
-                ClassPathBeanDefinitionScanner((BeanDefinitionRegistry)ctx, false) {
+                ClassPathBeanDefinitionScanner((BeanDefinitionRegistry) ctx, false) {
 
-            @Override
-            protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
-                Set<BeanDefinitionHolder> superValue = super.doScan(basePackages)
-                log.debug "Found marshallers: $superValue"
+                    @Override
+                    protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
+                        Set<BeanDefinitionHolder> superValue = super.doScan(basePackages)
+                        log.debug "Found marshallers: $superValue"
 
-                superValue.each { holder ->
-                    def bean = ctx.getBean(holder.beanName)
-                    JSON.registerObjectMarshaller(bean.targetType,
-                            bean.&convert)
+                        superValue.each { holder ->
+                            def bean = ctx.getBean(holder.beanName)
+                            JSON.registerObjectMarshaller(bean.targetType,
+                                    bean.&convert)
+                        }
+
+                        superValue
+                    }
                 }
-
-                superValue
-            }
-        }
         scanner.setResourcePattern(RESOURCE_PATTERN)
-        scanner.addIncludeFilter ({
+        scanner.addIncludeFilter({
             MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory ->
                 metadataReader.classMetadata.className.matches(".+Marshaller")
-            } as TypeFilter)
+        } as TypeFilter)
 
         scanner.scan(PACKAGE)
     }

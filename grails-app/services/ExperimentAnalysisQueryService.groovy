@@ -334,7 +334,8 @@ class ExperimentAnalysisQueryService {
 
         def mc = [
                 compare: { a, b ->
-                    a.equals(b) ? 0 : (((double) a.size()) / ((double) a.analysis.dataCount)) > (((double) b.size()) / ((double) b.analysis.dataCount)) ? -1 : 1 }
+                    a.equals(b) ? 0 : (((double) a.size()) / ((double) a.analysis.dataCount)) > (((double) b.size()) / ((double) b.analysis.dataCount)) ? -1 : 1
+                }
         ] as Comparator
 
         Collection allanalysis = analysisResultMap.values().sort(mc)

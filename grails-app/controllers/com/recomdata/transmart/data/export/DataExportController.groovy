@@ -21,7 +21,6 @@
 package com.recomdata.transmart.data.export
 
 import grails.converters.JSON
-import org.transmartproject.core.dataquery.Patient
 import org.transmartproject.core.exceptions.AccessDeniedException
 import org.transmartproject.core.exceptions.InvalidArgumentsException
 import org.transmartproject.core.ontology.Study
@@ -43,7 +42,7 @@ class DataExportController {
 
     private static final String ROLE_ADMIN = 'ROLE_ADMIN'
 
-    def index = { }
+    def index = {}
 
     //We need to gather a JSON Object to represent the different data types.
     def getMetaData() {
@@ -140,8 +139,8 @@ class DataExportController {
         // check that the user has export access in the studies of patients
         Set<Study> studies = (rids as List).
                 findAll().collect {
-                    queriesResourceAuthorizationDecorator.getQueryResultFromId it
-                }*.
+            queriesResourceAuthorizationDecorator.getQueryResultFromId it
+        }*.
                 patients.
                 inject { a, b -> a + b }. // merge two patient sets into one
                 inject([] as Set, { a, b -> a + b.trial }).

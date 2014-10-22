@@ -27,9 +27,9 @@ class UserLandingController {
         new AccessLog(username: springSecurityService.getPrincipal().username, event: "Disclaimer not accepted",
                 accesstime: new Date()).save()
         redirect(uri: '/logout')
-	}
+    }
 
     def checkHeartBeat = {
-        render(text:"OK")
+        render(text: "OK")
     }
 }

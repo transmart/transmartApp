@@ -35,8 +35,9 @@
     </bean>
     -->
 
-     <!-- Handler for successful logout -->
-    <bean id="successLogoutHandler" class="org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler">
+    <!-- Handler for successful logout -->
+    <bean id="successLogoutHandler"
+          class="org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler">
         <property name="defaultTargetUrl" value="${org.transmart.security.successLogoutHandler.defaultTargetUrl}"/>
     </bean>
 
@@ -49,8 +50,10 @@
         <constructor-arg type="java.lang.String" value="${org.transmart.security.saml.keystore.password}"/>
         <constructor-arg>
             <map>
-                <entry key="${org.transmart.security.saml.keystore.encryptionKey.alias}" value="${org.transmart.security.saml.keystore.encryptionKey.password}"/>
-                <entry key="${org.transmart.security.saml.keystore.signingKey.alias}" value="${org.transmart.security.saml.keystore.signingKey.password}"/>
+                <entry key="${org.transmart.security.saml.keystore.encryptionKey.alias}"
+                       value="${org.transmart.security.saml.keystore.encryptionKey.password}"/>
+                <entry key="${org.transmart.security.saml.keystore.signingKey.alias}"
+                       value="${org.transmart.security.saml.keystore.signingKey.password}"/>
             </map>
         </constructor-arg>
         <constructor-arg type="java.lang.String" value="${org.transmart.security.saml.keystore.defaultKey}"/>
@@ -58,12 +61,13 @@
 
     <!-- Entry point to initialize authentication -->
     <bean id="samlEntryPoint" class="org.springframework.security.saml.SAMLEntryPoint">
-        <property name="filterProcessesUrl" value="${org.transmart.security.saml.entryPoint.filterProcesses}" />
+        <property name="filterProcessesUrl" value="${org.transmart.security.saml.entryPoint.filterProcesses}"/>
         <property name="defaultProfileOptions">
             <bean class="org.springframework.security.saml.websso.WebSSOProfileOptions">
                 <property name="includeScoping" value="false"/>
-                <property name="binding" value="${org.transmart.security.saml.entryPoint.binding}" />
-                <property name="assertionConsumerIndex" value="${org.transmart.security.saml.entryPoint.defaultAssertionConsumerIndex}" />
+                <property name="binding" value="${org.transmart.security.saml.entryPoint.binding}"/>
+                <property name="assertionConsumerIndex"
+                          value="${org.transmart.security.saml.entryPoint.defaultAssertionConsumerIndex}"/>
             </bean>
         </property>
     </bean>
@@ -75,8 +79,8 @@
 
     <!-- SAML Authentication Provider responsible for validation of received SAML messages -->
     <bean id="samlAuthenticationProvider" class="org.springframework.security.saml.SAMLAuthenticationProvider">
-        <property name="userDetails" ref="samlUserService" />
-        <property name="forcePrincipalAsString" value="false" />
+        <property name="userDetails" ref="samlUserService"/>
+        <property name="forcePrincipalAsString" value="false"/>
     </bean>
 
     <!-- User provided class implementing SAMLUserDetailsService -->
@@ -239,10 +243,12 @@
     <bean class="org.springframework.security.saml.SAMLBootstrap"/>
 
     <!-- Initialization of the velocity engine -->
-    <bean id="velocityEngine" class="org.springframework.security.saml.util.VelocityFactory" factory-method="getEngine"/>
+    <bean id="velocityEngine" class="org.springframework.security.saml.util.VelocityFactory"
+          factory-method="getEngine"/>
 
     <!-- XML parser pool needed for OpenSAML parsing -->
-    <bean id="parserPool" class="org.opensaml.xml.parse.StaticBasicParserPool" scope="singleton" init-method="initialize"/>
+    <bean id="parserPool" class="org.opensaml.xml.parse.StaticBasicParserPool" scope="singleton"
+          init-method="initialize"/>
     <bean id="parserPoolHolder" class="org.springframework.security.saml.parser.ParserPoolHolder" scope="singleton"/>
 
 </beans>

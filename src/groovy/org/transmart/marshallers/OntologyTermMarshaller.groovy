@@ -9,16 +9,16 @@ class OntologyTermMarshaller {
 
     def convert(OntologyTerm term) {
         MetadataSelectQuerySpecification spec =
-            ((MetadataSelectQuerySpecification)term)
+                ((MetadataSelectQuerySpecification) term)
 
         return [
-                key                : term.key,
-                level              : term.level,
-                fullName           : term.fullName,
-                name               : term.name,
-                tooltip            : term.tooltip,
-                visualAttributes   : term.visualAttributes,
-                metadata           : term.metadata,
+                key               : term.key,
+                level             : term.level,
+                fullName          : term.fullName,
+                name              : term.name,
+                tooltip           : term.tooltip,
+                visualAttributes  : term.visualAttributes,
+                metadata          : term.metadata,
 
                 /* I'm not comfortable having this here; the web frontend
                  * should only be worried about adding and removing terms
@@ -26,8 +26,8 @@ class OntologyTermMarshaller {
                  * the terms map to patient sets.
                  * Unfortunately, that is not the way the frontend is setup
                  * right now, as right now it needs this data */
-                dimensionCode      : spec.dimensionCode,
-                dimensionTableName : spec.dimensionTableName,
+                dimensionCode     : spec.dimensionCode,
+                dimensionTableName: spec.dimensionTableName,
         ]
     }
 
