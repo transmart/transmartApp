@@ -153,12 +153,15 @@
         <tr><td>&nbsp;</td></tr>
         <tr>
             <td style="text-align:center;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
-                <a id="etrikspowered" target="_blank" href="http://www.etriks.org" style="text-decoration: none;">
-                    <div>
-                        <span style="font-size:10px;display: inline-block;line-height: 35px; height: 35px;">Powered by&nbsp;</span>
-                        <img src="${resource(dir:'images', file: 'eTRIKS_logo.png')}" alt="eTRIKS" style="height:35px;vertical-align:middle;margin-bottom: 12px;">
-                    </div>
-                </a>
+                <g:set var="providerName" value="${grailsApplication.config?.com?.recomdata?.providerName}"/>
+                <g:if test="${providerName}">
+                    <a id="providerpowered" target="_blank" href="${grailsApplication.config?.com?.recomdata?.providerURL}" style="text-decoration: none;">
+                        <div>
+                            <span style="font-size:10px;display: inline-block;line-height: 35px; height: 35px;">Powered by&nbsp;</span>
+                            <img src="${resource(dir:'images', file: 'provider_logo.png')}" alt="${providerName}" style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                        </div>
+                    </a>
+                </g:if>
             </td>
         </tr>
     </table>
