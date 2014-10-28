@@ -119,7 +119,7 @@ public class SearchHelpController {
     def listAllGeneSignatures = {
 
         // logged in user
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def bAdmin = user.isAdmin()
 
         // signatures user has search access

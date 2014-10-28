@@ -38,7 +38,7 @@ class CustomFilterController {
 
     def list = {
         if (!params.max) params.max = 10
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		def user = springSecurityService.getPrincipal()
         def customFilters = CustomFilter.findAllBySearchUserId(user.id)
         for (customFilter in customFilters) {
             def keywordMap = createKeywordMap(customFilter)
@@ -99,7 +99,7 @@ class CustomFilterController {
     }
 
     def create = {
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		def user = springSecurityService.getPrincipal()
         def filter = new CustomFilter()
         filter.properties.searchUserId = user.id
         filter.properties.privateFlag = 'N'
@@ -133,7 +133,7 @@ class CustomFilterController {
     }
 
     boolean canUpdate(customFilter) {
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         if (customFilter != null && customFilter.searchUserId == user.id) {
             return true
         }
@@ -141,7 +141,7 @@ class CustomFilterController {
     }
 
     boolean canSelect(customFilter) {
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         if (customFilter != null && (customFilter.privateFlag != 'Y' || customFilter.searchUserId == user.id)) {
             return true
         }

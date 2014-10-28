@@ -59,7 +59,7 @@ class SubsetController {
             subset.queryID2 = -1
         }
 
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
 
         subset.creatingUser = user.username
         subset.description = params["description"]

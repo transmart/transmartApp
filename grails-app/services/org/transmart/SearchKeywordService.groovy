@@ -147,7 +147,7 @@ public class SearchKeywordService {
     def findSearchKeywords(category, term, max) {
         log.info "Finding matches for ${term} in ${category}"
 
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
 
         def c = SearchKeywordTerm.createCriteria()
         def results = c.list {
@@ -306,7 +306,7 @@ public class SearchKeywordService {
     def findSearchKeywords(category, term) {
         log.info "Finding matches for ${term} in ${category}"
 
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
 
         def c = SearchKeywordTerm.createCriteria()
         def results = c.list {
