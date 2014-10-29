@@ -23,6 +23,7 @@ class HighDimExportService {
         def resultInstanceId = args.resultInstanceId
         List<String> conceptPaths = args.conceptPaths
         String studyDir = args.studyDir
+        Collection<String> gplIds = args.gplIds
         String format = args.format
 
 
