@@ -107,9 +107,13 @@ beans = {
 //            authenticationManager = ref('authenticationManager')
 //            failureHandler = ref('failureHandler')
 //        }
-        ldapUserDetailsMapper(com.recomdata.security.CustomUserDetailsContextMapper) {
-            dataSource = ref("dataSource")
+
+        ldapUserDetailsMapper(com.recomdata.security.LdapAuthUserDetailsMapper){
+            dataSource = ref('dataSource')
+            springSecurityService = ref('springSecurityService')
+            databasePortabilityService = ref('databasePortabilityService')
         }
+
     } else {
         // plugin is not functional at this point
 //        SpringSecurityKerberosGrailsPlugin.metaClass.getDoWithSpring = {->

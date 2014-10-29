@@ -146,7 +146,7 @@ class SecureObjectAccessController {
 
         SecureObjectAccessCommand fl ->
             def secureObjInstance
-            def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+            def user = springSecurityService.getPrincipal()
             def msg = new StringBuilder(" Grant new access permission: ");
 
             if (params.secureobjectid != null) {
@@ -181,7 +181,7 @@ class SecureObjectAccessController {
 
         SecureObjectAccessCommand fl ->
             def secureObjInstance
-            def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+            def user = springSecurityService.getPrincipal()
             def msg = new StringBuilder(" Revoke access permission: ");
 
             if (params.secureobjectid != null) {
@@ -265,7 +265,7 @@ class SecureObjectAccessController {
     }
 
     def addSecObjectsToPrincipal = { SecureObjectAccessCommand fl ->
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def msg = new StringBuilder(" Grant new access permission: ");
 
         def principalInstance = Principal.get(params.currentprincipalid);
@@ -291,7 +291,7 @@ class SecureObjectAccessController {
 
     def removeSecObjectsFromPrincipal = { SecureObjectAccessCommand fl ->
 
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def msg = new StringBuilder(" Revoke access permission: ");
 
         def principalInstance = Principal.get(params.currentprincipalid);
