@@ -76,21 +76,34 @@ class BootStrap {
         }
 
         def servletContext = grailsApplication.mainContext.servletContext
+        logger.error("Zero :: " + servletContext.contextPath)
 
         def tsAppRScriptsDir = servletContext.getRealPath('dataExportRScripts')
+        logger.error("First :: " + tsAppRScriptsDir)
         if (tsAppRScriptsDir) {
             tsAppRScriptsDir = new File(tsAppRScriptsDir)
+            logger.error("Second :: " + tsAppRScriptsDir?.absolutePath)
         }
         if (!tsAppRScriptsDir || !tsAppRScriptsDir.isDirectory()) {
             tsAppRScriptsDir = servletContext.getRealPath('.') +
                     '/../dataExportRScripts'
+            logger.error("Third :: " + tsAppRScriptsDir)
             if (tsAppRScriptsDir) {
                 tsAppRScriptsDir = new File(tsAppRScriptsDir)
+                logger.error("Fourth :: " + tsAppRScriptsDir?.absolutePath)
             }
+        }
+//        logger.error("Fifth :: ${appName}" )
+        logger.error("Fifth :: " + servletContext.contextPath)
+        if (!tsAppRScriptsDir || !tsAppRScriptsDir.isDirectory()) {
+            tsAppRScriptsDir = new File('webapps' + servletContext.contextPath, 'dataExportRScripts')
+            logger.error("Fifth :: " + tsAppRScriptsDir?.absolutePath)
         }
         if (!tsAppRScriptsDir || !tsAppRScriptsDir.isDirectory()) {
             tsAppRScriptsDir = new File('web-app', 'dataExportRScripts')
+            logger.error("Fifth :: " + tsAppRScriptsDir?.absolutePath)
         }
+        logger.error("Sixth :: " + tsAppRScriptsDir?.absolutePath)
         if (!tsAppRScriptsDir.isDirectory()) {
             throw new RuntimeException('Could not determine proper for ' +
                     'com.recomdata.transmart.data.export.rScriptDirectory')
@@ -118,6 +131,9 @@ class BootStrap {
             def pluginsDir = servletContext.getRealPath('plugins')
             if (pluginsDir) {
                 rdcModulesDir = new File(pluginsDir, "rdc-rmodules-$version")
+            }
+            if (!rdcModulesDir || !rdcModulesDir.isDirectory()) {
+                rdcModulesDir = new File('webapps' + servletContext.contextPath + '/plugins', "rdc-rmodules-$version")
             }
         }
         if (!rdcModulesDir) {

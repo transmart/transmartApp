@@ -587,8 +587,9 @@ function clearGrid()
 Ext.Ajax.request(
     	    {
     	        url: pageInfo.basePath+"/chart/clearGrid",
-    	        method: 'POST',                                       
-    	        //success: function(result, request){showConceptDistributionHistogramComplete(result);},
+    	        method: 'POST',
+                defaultHeaders: { 'Content-Type': 'text/plain' },
+                //success: function(result, request){showConceptDistributionHistogramComplete(result);},
     	        //failure: function(result, request){showConceptDistributionHistogramComplete(result);},
     	        timeout: '300000',
     	        params: Ext.urlEncode({charttype:"cleargrid"})
