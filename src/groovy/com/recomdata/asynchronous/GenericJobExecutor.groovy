@@ -306,7 +306,7 @@ class GenericJobExecutor implements Job {
         new File(rOutputDirectory).mkdir()
 
         //Establish a connection to R Server.
-        RConnection c = new RConnection(Holders.config.RModules.host, Holders.config.RModules.port);
+        RConnection c = new RConnection(Holders.config.RModules.host.toString(), Integer.parseInt(Holders.config.RModules.port));
 
         log.debug("Attempting following R Command : " + "setwd('${rOutputDirectory}')".replace("\\", "\\\\"))
 

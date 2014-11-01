@@ -735,6 +735,7 @@ class ChartController {
         log.debug("Setting export filename to null, since there is nothing to export")
         request.getSession().setAttribute("expdsfilename", null);
         PrintWriter pw = new PrintWriter(response.getOutputStream());
+        response.setContentType("text/plain");
         pw.write("grid cleared!");
         pw.flush();
     }
