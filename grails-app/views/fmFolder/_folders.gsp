@@ -1,4 +1,4 @@
-<%! import com.recomdata.util.* %>
+<%! import com.recomdata.util. * %>
 <%
     def ontologyService = grailsApplication.classLoader.loadClass('transmartapp.OntologyService').newInstance()
     def fmFolderService = grailsApplication.classLoader.loadClass('fm.FmFolderService').newInstance()
@@ -10,7 +10,8 @@
 <g:if test="folders == null">
     <g:set var="folders" value="${folderContentsAccessLevelMap?.keySet()}"/>
 </g:if>
-<g:set var="restrictedAccessMessage" value="Access to this node has been restricted. Please contact your administrator for access." />
+<g:set var="restrictedAccessMessage"
+       value="Access to this node has been restricted. Please contact your administrator for access."/>
 <script type="text/javascript">
     var resultNumber = '${resultNumber}';
 </script>
@@ -31,8 +32,9 @@
                         </g:if>
                         <span>
                             <g:if test="${folder.hasChildren()}">
-                                <g:set var="toggleJsFunc" value="${folderAccessLevel == 'LOCKED' ? "alert('$restrictedAccessMessage')"
-                                : "toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false', false, false, true);"}" />
+                                <g:set var="toggleJsFunc"
+                                       value="${folderAccessLevel == 'LOCKED' ? "alert('$restrictedAccessMessage')"
+                                               : "toggleDetailDiv('${folder.id}', folderContentsURL + '?id=${folder.id}&auto=false', false, false, true);"}"/>
 
                                 <a id="toggleDetail_${folder.id}" href="#"
                                    onclick="${toggleJsFunc}">
@@ -51,7 +53,8 @@
                                 </a>
                             </g:else>
                         </span>
-                        <g:set var="showDetailDialogJsFunc" value="${folderAccessLevel == 'LOCKED' ? "alert('$restrictedAccessMessage')" : "showDetailDialog(${folder.id});"}" />
+                        <g:set var="showDetailDialogJsFunc"
+                               value="${folderAccessLevel == 'LOCKED' ? "alert('$restrictedAccessMessage')" : "showDetailDialog(${folder.id});"}"/>
                         <a href="#" onclick="${showDetailDialogJsFunc}">
 
                             <g:set var="highclass" value=""/>

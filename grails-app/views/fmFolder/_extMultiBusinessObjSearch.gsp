@@ -6,7 +6,7 @@ jQuery(document).ready(function() {
 	jQuery("#" + escapedFieldName + "-input").autocomplete({
 		source: function( request, response ) {
 			jQuery.ajax({
-				url: '${createLink([action:searchAction,controller:searchController])}',
+				url: '${createLink([action: searchAction, controller: searchController])}',
 				data: {
 					term: request.term,
 				},
@@ -44,9 +44,10 @@ jQuery(document).ready(function() {
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
 		
-		var resulta = '<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b>&nbsp;';
-		if (item.synonyms != null) {
-			resulta += (item.synonyms + '</a>');
+		var resulta = '<a><span
+        class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b>&nbsp;';
+if (item.synonyms != null) {
+resulta += (item.synonyms + '</a>');
 		}
 		else {
 			resulta += '</a>';
@@ -77,35 +78,40 @@ jQuery(document).ready(function() {
 
 <%-- Visible input --%>
 <div style="width: 100%" id="genotypePlatform-tags" class="tagBox" name="genotypePlatform">
-	<g:each in="${genotypePlatforms}" var="value">
-		<span class="tag" id="genotypePlatform-tag-${value.key}" name="${value.key}">${value.value}</span>
-	</g:each>
+    <g:each in="${genotypePlatforms}" var="value">
+        <span class="tag" id="genotypePlatform-tag-${value.key}" name="${value.key}">${value.value}</span>
+    </g:each>
 </div>
-							
+
 <div style="background-color: #E4E4E4; float:left; padding: 8px; border-radius: 8px;">
-	<div style="float: left; line-height: 24px; font-style: italic; margin-right: 8px;">Add new: </div>
-	<input id="${fieldName}-input" style="float: left; width: 600px;"/>
+    <div style="float: left; line-height: 24px; font-style: italic; margin-right: 8px;">Add new:</div>
+    <input id="${fieldName}-input" style="float: left; width: 600px;"/>
 </div>
 
 <div style="float: left; margin-right: 8px">
-	<div class="textsmaller">Measurement</div>
-	<g:select style="width: 400px" name="measurement" noSelection="${['null':'Select...']}" from="${measurements}" onChange="loadPlatformTypes('genotypePlatform', 'SNP')"/>
+    <div class="textsmaller">Measurement</div>
+    <g:select style="width: 400px" name="measurement" noSelection="${['null': 'Select...']}" from="${measurements}"
+              onChange="loadPlatformTypes('genotypePlatform', 'SNP')"/>
 </div>
+
 <div style="float: left; margin-right: 8px">
-	<div class="textsmaller">Technology</div>
-	<g:select style="width: 400px" name="technology" noSelection="${['null':'Select...']}" from="${technology}" onChange="loadPlatformTypes('genotypePlatform', 'SNP')"/>
+    <div class="textsmaller">Technology</div>
+    <g:select style="width: 400px" name="technology" noSelection="${['null': 'Select...']}" from="${technology}"
+              onChange="loadPlatformTypes('genotypePlatform', 'SNP')"/>
 </div>
+
 <div style="float: left; margin-right: 8px">
-	<div class="textsmaller">Vendor</div>
-	<g:select style="width: 400px" name="vendor" noSelection="${['null':'Select...']}" from="${vendors}" onChange="loadPlatformTypes('genotypePlatform', 'SNP')"/>
+    <div class="textsmaller">Vendor</div>
+    <g:select style="width: 400px" name="vendor" noSelection="${['null': 'Select...']}" from="${vendors}"
+              onChange="loadPlatformTypes('genotypePlatform', 'SNP')"/>
 </div>
 
 <div style="float: left">
-	<div class="textsmaller">Platform</div>
-	<select style="width: 200px" name="genotypePlatformName" onchange="addPlatform('genotypePlatform')"/>
-	<select id="genotypePlatform" name="genotypePlatform" multiple="multiple" style="display: none;">
-		<g:each in="${platforms}" var="value">
-			<option selected="selected" value="${value.key}">${value.value}</option>
-		</g:each>
-	</select>
+    <div class="textsmaller">Platform</div>
+    <select style="width: 200px" name="genotypePlatformName" onchange="addPlatform('genotypePlatform')"/>
+    <select id="genotypePlatform" name="genotypePlatform" multiple="multiple" style="display: none;">
+        <g:each in="${platforms}" var="value">
+            <option selected="selected" value="${value.key}">${value.value}</option>
+        </g:each>
+    </select>
 </div>

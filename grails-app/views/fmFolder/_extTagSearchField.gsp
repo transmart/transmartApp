@@ -6,7 +6,7 @@ jQuery(document).ready(function() {
 	jQuery("#" + escapedFieldName + "-input").autocomplete({
 		source: function( request, response ) {
 			jQuery.ajax({
-				url: '${createLink([action:searchAction,controller:searchController])}',
+				url: '${createLink([action: searchAction, controller: searchController])}',
 				data: {
 					term: request.term,
 					codeTypeName: '${codeTypeName}'
@@ -44,9 +44,10 @@ jQuery(document).ready(function() {
 		}
 	}).data("autocomplete")._renderItem = function( ul, item ) {
 	
-		var resulta = '<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.keyword + '</b>&nbsp;';
-		if (item.synonyms != null) {
-			resulta += (item.synonyms + '</a>');
+		var resulta = '<a><span
+        class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.keyword + '</b>&nbsp;';
+if (item.synonyms != null) {
+resulta += (item.synonyms + '</a>');
 		}
 		else {
 			resulta += '</a>';
@@ -76,20 +77,20 @@ jQuery(document).ready(function() {
 </g:javascript>
 <%-- Tag box (visual display of tags) --%>
 <div id="${fieldName}-tags" class="tagBox" name="${fieldName}">
-	<g:each in="${values}" var="value">
-		<span class="tag" id="${fieldName}-tag-${value.uniqueId}" name="${value.uniqueId}">${value.codeName}</span>
-	</g:each>
+    <g:each in="${values}" var="value">
+        <span class="tag" id="${fieldName}-tag-${value.uniqueId}" name="${value.uniqueId}">${value.codeName}</span>
+    </g:each>
 </div>
 
 <%-- Hidden select field, keeps actual selected values --%>
 <select id="${fieldName}" name="${fieldName}" multiple="multiple" style="display: none;">
-	<g:each in="${values}" var="value">
-		<option selected="selected" value="${value.uniqueId}">${value.codeName}</option>
-	</g:each>
+    <g:each in="${values}" var="value">
+        <option selected="selected" value="${value.uniqueId}">${value.codeName}</option>
+    </g:each>
 </select>
 
 <%-- Visible input --%>
 <div style="background-color: #E4E4E4; float:left; padding: 8px; border-radius: 8px;">
-	<div style="float: left; line-height: 24px; font-style: italic; margin-right: 8px;">Add new: </div>
-	<input id="${fieldName}-input" style="float: left; width: 600px;"/>
+    <div style="float: left; line-height: 24px; font-style: italic; margin-right: 8px;">Add new:</div>
+    <input id="${fieldName}-input" style="float: left; width: 600px;"/>
 </div>

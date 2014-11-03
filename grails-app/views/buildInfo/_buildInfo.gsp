@@ -1,7 +1,8 @@
 <h1>Compilation context</h1>
 
 <g:if test="${!grails.util.Metadata.getCurrent().isWarDeployed()}">
-    <p><i>You are executing tranSMART from its source. These information will be available as soon as you deploy a compiled WAR archive.</i></p>
+    <p><i>You are executing tranSMART from its source. These information will be available as soon as you deploy a compiled WAR archive.</i>
+    </p>
 </g:if>
 <g:else>
     <table>
@@ -13,7 +14,7 @@
         </thead>
         <tbody>
         <g:each in="${buildInfoProperties}" status="i" var="prop">
-            <g:if test="${g.meta(name:prop)}">
+            <g:if test="${g.meta(name: prop)}">
                 <tr class="${(i % 2) == 0 ? 'odd' : 'even'}" style="height: 30px;">
                     <td><g:message code="${prop}"/></td><td><g:meta name="${prop}"/></td>
                 </tr>
