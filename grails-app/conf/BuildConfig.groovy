@@ -59,7 +59,7 @@ grails.project.dependency.resolution = {
 
         runtime 'org.javassist:javassist:3.16.1-GA'
 
-        compile 'org.transmartproject:transmart-core-api:1.2.2-SNAPSHOT'
+        compile 'org.transmartproject:transmart-core-api:1.2.2-hackathon-SNAPSHOT'
 
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
@@ -130,10 +130,11 @@ grails.project.dependency.resolution = {
 
         if (!dm) {
             compile ':rdc-rmodules:1.2.2-SNAPSHOT'
-            runtime ':transmart-core:1.2.2-SNAPSHOT'
+            runtime ':transmart-core:1.2.2-hackathon-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
             //compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
+            compile ':transmart-legacy-db:1.2.2-hackathon-SNAPSHOT' // does this cause problems?
             //// already included in transmart-gwas
             //compile ':folder-management:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas, folder-management
