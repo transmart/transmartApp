@@ -86,10 +86,10 @@
         Explorer: "SAMPLE",
         resulttype: 'applet',
         subsetTabs: 1,
-        HelpURL: '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}',
-        ContactUs: '${grailsApplication.config.com.recomdata.searchtool.contactUs}',
+        HelpURL: '${grailsApplication.config.com.recomdata.adminHelpURL}',
+        ContactUs: '${grailsApplication.config.com.recomdata.contactUs}',
         basePath: pageInfo.basePath,
-        AppTitle: '${grailsApplication.config.com.recomdata.searchtool.appTitle}',
+        AppTitle: '${grailsApplication.config.com.recomdata.appTitle}',
         resultsGridHeight: jQuery(window).height() - 120,
         //resultsGridHeight : ${grailsApplication.config.sampleExplorer.resultsGridHeight},
         resultsGridWidth: '100%',
@@ -135,7 +135,7 @@
 <!-- This implements the Help functionality -->
 <script type="text/javascript" src="${resource(dir: 'js', file: 'help/D2H_ctxt.js')}"></script>
 <script language="javascript">
-    helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+    helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 </script>
 <!-- ************************************** -->
 

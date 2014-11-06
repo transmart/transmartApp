@@ -192,7 +192,7 @@
     // this overrides the above
     Ext.Updater.defaults.timeout = 1800000;
 
-    var helpURL = '${grailsApplication.config.com.recomdata.searchtool.adminHelpURL}';
+    var helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 </script>
 
 <div id="header-div"><g:render template="/layouts/commonheader" model="['app': 'datasetExplorer']"/></div>

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
-    <title>${grailsApplication.config.com.recomdata.searchtool.appTitle}</title>
+    <title>${grailsApplication.config.com.recomdata.appTitle}</title>
 
     <!-- jQuery CSS for cupertino theme -->
     <link rel="stylesheet" href="${resource(dir: 'css/jquery/ui', file: 'jquery-ui-1.9.1.custom.css')}"></link>

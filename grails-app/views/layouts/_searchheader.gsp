@@ -3,7 +3,7 @@
         <table style="border:0px; align:left">
             <tr>
                 <td style="width: 125px; padding-right:0px; vertical-align:middle">
-                    <img src="${resource(dir: 'images', file: grailsApplication.config.com.recomdata.searchtool.smallLogo)}"
+                    <img src="${resource(dir: 'images', file: grailsApplication.config.com.recomdata.smallLogo)}"
                          alt="tranSMART" style="position: relative; top: 8px;"/>
                 </td>
                 <td style="width: 10px; vertical-align:middle;padding-left:0px; padding-right:0px;">
@@ -110,7 +110,7 @@
         <tr>
             <td style="vertical-align: middle;">
                 <g:link controller="search">
-                    <img src="${resource(dir: 'images', file: grailsApplication.config.com.recomdata.searchtool.smallLogo)}"
+                    <img src="${resource(dir: 'images', file: grailsApplication.config.com.recomdata.smallLogo)}"
                          alt="tranSMART"/>
                 </g:link>
             </td>
