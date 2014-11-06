@@ -188,7 +188,7 @@ class SnpDataService {
          * R script invocation starts here
          */
         log.debug("Invoking R for transformations")
-        RConnection c = new RConnection(Holders.config.RModules.host.toString(), Integer.parseInt(Holders.config.RModules.port))
+        RConnection c = new RConnection(Holders.config.RModules.host, Holders.config.RModules.port)
         //Set the working directory to be our temporary location.
         String workingDirectoryCommand = "setwd('${parentDir}')".replace("\\", "\\\\")
         //Run the R command to set the working directory to our temp directory.

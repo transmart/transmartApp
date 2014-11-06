@@ -122,14 +122,13 @@ grails.project.dependency.resolution = {
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
-
         runtime ':resources:1.2.1'
 
         // support for static code analysis - see codenarc.reports property below
         compile ":codenarc:0.21"
 
         if (!dm) {
-            compile ':rdc-rmodules:1.2.2-SNAPSHOT'
+            compile ':rdc-rmodules:1.2.2-eTI-SNAPSHOT'
             runtime ':transmart-core:1.2.2-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
