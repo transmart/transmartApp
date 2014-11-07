@@ -121,7 +121,6 @@ grails.project.dependency.resolution = {
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
-
         runtime ':resources:1.2.1'
 
         // support for static code analysis - see codenarc.reports property below
