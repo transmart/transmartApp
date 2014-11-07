@@ -65,10 +65,10 @@
 </div>
 <r:script>
     jQuery(function () {
-        jQuery("#startdate").datepicker();
+        jQuery("#startdate").datepicker({ dateFormat: 'dd/mm/yy' });
     });
     jQuery(function () {
-        jQuery("#enddate").datepicker();
+        jQuery("#enddate").datepicker({ dateFormat: 'dd/mm/yy' });
     });
 </r:script>
 </body>
