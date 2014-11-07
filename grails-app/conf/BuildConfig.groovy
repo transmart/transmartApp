@@ -46,7 +46,6 @@ grails.project.dependency.resolution = {
 
             mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
             mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
-            mavenRepo "http://repo.etriks.org/content/groups/public/"
         }
     } else {
         dm.configureRepositories delegate
@@ -128,7 +127,7 @@ grails.project.dependency.resolution = {
         compile ":codenarc:0.21"
 
         if (!dm) {
-            compile ':rdc-rmodules:1.2.2-eTI-SNAPSHOT'
+            compile ':rdc-rmodules:1.2.2-SNAPSHOT'
             runtime ':transmart-core:1.2.2-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
