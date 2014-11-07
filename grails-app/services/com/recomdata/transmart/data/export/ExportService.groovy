@@ -37,7 +37,7 @@ class ExportService {
         newJob.jobStatus = jobStatus
         newJob.save()
 
-        def jobName = userName + "-" + analysis + "-" + newJob.id
+        def jobName = userName.replaceAll(/[^0-9A-Za-z]*/, "") + "-" + analysis + "-" + newJob.id
         newJob.jobName = jobName
         newJob.altViewerURL = 'Test'
         newJob.save()
