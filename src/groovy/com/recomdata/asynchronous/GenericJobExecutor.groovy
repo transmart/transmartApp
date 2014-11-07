@@ -6,6 +6,7 @@ import com.recomdata.transmart.data.export.util.ZipUtil
 import grails.util.Holders
 import org.apache.commons.lang.StringUtils
 import org.quartz.Job
+import org.quartz.JobDetail
 import org.quartz.JobExecutionContext
 import org.rosuda.REngine.REXP
 import org.rosuda.REngine.Rserve.RConnection
@@ -69,16 +70,24 @@ class GenericJobExecutor implements Job {
     // --
 
     public void execute(JobExecutionContext jobExecutionContext) {
-        //We use the job detail class to get information about the job.
-        def jobDetail = jobExecutionContext.getJobDetail()
-
-        //Gather the jobs info.
-        jobName = jobDetail.getName()
-        jobDataMap = jobDetail.getJobDataMap()
+        def userInContext = jobExecutionContext.jobDetail.jobDataMap['userInContext']
 
         // put the user in context
         quartzSpringScope."${CurrentUserBeanProxyFactory.SUB_BEAN_QUARTZ}" =
-                jobDataMap["userInContext"]
+                userInContext
+
+        try {
+            doExecute(jobExecutionContext.jobDetail)
+        } finally {
+            // Thread will be reused, need to clear user in context
+            quartzSpringScope.clear()
+        }
+    }
+
+    private void doExecute(JobDetail jobDetail) {
+        //Gather the jobs info.
+        jobName = jobDetail.getName()
+        jobDataMap = jobDetail.getJobDataMap()
 
         //Initialize
         init();
