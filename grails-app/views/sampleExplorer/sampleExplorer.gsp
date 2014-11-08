@@ -9,9 +9,6 @@
     <title>Sample Explorer :: ${grailsApplication.config.com.recomdata.appTitle}</title>
 
     <!-- Include Ext and app-specific scripts: -->
-    <script type="text/javascript" src="${resource(dir: 'js/sarissa', file: 'sarissa.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js/sarissa', file: 'sarissa_ieemu_xpath.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js/javeline', file: 'javeline_xpath.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery.min.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery-ui-1.9.1.custom.min.js')}"></script>
 
