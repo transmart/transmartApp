@@ -62,7 +62,7 @@
                     <table>
                         <tr><td></td><td></td><td><input
                                 name="searchtext"
-                                id="searchtext"></input><button
+                                id="searchtext"><button
                                 class=""
                                 onclick="${remoteFunction(action:'searchUsersNotInGroup',update:[success:'groupmembers', failure:''], id:userGroupInstance?.id, params:'$(\'searchtext\').serialize()' )};
                                 return false;">Search Users</button>
