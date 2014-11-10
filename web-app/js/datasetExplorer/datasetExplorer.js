@@ -2259,7 +2259,7 @@ function runAllQueries(callback, panel) {
         if (panel) {
             panel.body.unmask();
 		}
-		Ext.Msg.alert('Subsets are empty xx', 'All subsets are empty xx. Please select subsets.');
+		Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
 	}
 
 	// setup the number of subsets that need running
