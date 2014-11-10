@@ -23,7 +23,7 @@ class SampleExplorerController {
                 def al = new AccessLog(username: springSecurityService.getPrincipal().username, event: "SampleExplorer-Summary", eventmessage: "Sample Explorer summary page", accesstime: new Date())
                 al.save();
 
-                redirect(action: 'list')
+                redirect(action: "list")
             }
 
     //We'll take a result_instance_id and dump all the sample IDs for those patients into another table.

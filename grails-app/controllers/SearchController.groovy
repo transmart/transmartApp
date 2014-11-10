@@ -296,16 +296,16 @@ public class SearchController {
             session.searchFilter = new SearchFilter()
             createUpdateSessionFilter(keyword)
             session.searchFilter.searchText = keyword.keyword
-            redirect(action: 'doSearch')
+            redirect(action: "doSearch")
         } else {
-            redirect(action: 'index')
+            redirect(action: "index")
         }
 
     }
 
     def newSearch = {
         session.searchFilter = new SearchFilter()
-        redirect(action: 'search', params: params)
+        redirect(action: "search", params: params)
     }
 
     def searchCustomFilter = {
@@ -339,16 +339,16 @@ public class SearchController {
                 }
             } else {
                 flash.message = "You are not authorized to view the custom filter with ID ${params.id}."
-                redirect(action: 'index')
+                redirect(action: "index")
             }
         } else {
             flash.message = "The custom filter with ID ${params.id} no longer exists."
-            redirect(action: 'index')
+            redirect(action: "index")
         }
         sfilter.searchText = ""
         session.searchFilter = sfilter
 
-        redirect(action: 'doSearch', params: [ts: new Date().getTime()])
+        redirect(action: "doSearch", params: [ts: new Date().getTime()])
 
     }
 
@@ -377,9 +377,9 @@ public class SearchController {
         }
         if (!gfilter.isEmpty()) {
             session.searchFilter = sfilter
-            redirect(action: 'doSearch')
+            redirect(action: "doSearch")
         } else {
-            redirect(action: 'index')
+            redirect(action: "index")
         }
 
     }
@@ -398,15 +398,15 @@ public class SearchController {
         }
         if (gfilter.isEmpty()) {
             session.searchFilter = new SearchFilter()
-            redirect(action: 'index')
+            redirect(action: "index")
         } else {
-            redirect(action: 'doSearch')
+            redirect(action: "doSearch")
         }
     }
 
     def searchHeaderSearch = {
         params.sourcepage = "search"
-        redirect(action: 'search', params: params)
+        redirect(action: "search", params: params)
     }
 
     def showDefaultFilter = {
