@@ -83,8 +83,11 @@
 <r:require module="session_timeout_nodep"/>
 <r:script>
     jQuery(document).ready(function() {
-		 var logoutURL = "${createLink([controller: 'login', action: 'forceAuth'])}";
-	    var heartbeatURL = "${createLink([controller: 'userLanding', action: 'checkHeartBeat'])}";
-	    addTimeoutDialog(heartbeatURL, logoutURL);
+	    addTimeoutDialog({
+	        sessionTimeout : ${grails.util.Holders.config.com.recomdata.sessionTimeout},
+            heartbeatURL : "${createLink([controller: 'userLanding', action: 'checkHeartBeat'])}",
+	        heartbeatLaps : ${grails.util.Holders.config.com.recomdata.heartbeatLaps},
+            logoutURL : "${createLink([controller: 'login', action: 'forceAuth'])}"
+	    });
    });
 </r:script>
