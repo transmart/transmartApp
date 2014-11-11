@@ -58,6 +58,8 @@ var g_d2hContextIds = new Array();
 
  g_d2hContextIds["1258"]="Modules/2/Documents/chapter3datasetexplorer.htm";
 
+ g_d2hContextIds["1437"]="Modules/2/Documents/chapter4sampleexplorer.htm";
+
  g_d2hContextIds["1259"]="Modules/2/Documents/chapter5genesignaturesandgenelists.htm";
 
  g_d2hContextIds["1446"]="Modules/2/Documents/chapter6othertasks.htm";
@@ -215,6 +217,8 @@ var g_d2hContextIds = new Array();
  g_d2hContextIds["1427"]="Modules/2/Documents/runningtheintegratedgenomicsviewer.htm";
 
  g_d2hContextIds["1360"]="Modules/2/Documents/runningthesnpviewer.htm";
+
+ g_d2hContextIds["1425"]="Modules/2/Documents/sampleexplorer.htm";
 
  g_d2hContextIds["1021"]="Modules/2/Documents/savingasearchfilterorsearchstring.htm";
 

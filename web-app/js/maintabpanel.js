@@ -1,23 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
-
 function createMainTabPanel() {
 
     // create toolbar
@@ -225,17 +205,6 @@ function createSearchTabs(toolbar) {
                 loadMask: true,
                 defaultSrc: pageData.genego.resultsUrl,
                 tabTip: pageData.genego.credentials
-            }
-            ,
-            {
-                id: "tab18",
-                iconCls: "cortellisTab",
-                title: "Cortellis",
-                listeners: {activate: activateTab},
-                xtype: "iframepanel",
-                closable: false,
-                loadMask: true,
-                defaultSrc: pageData.cortellis.resultsUrl
             }
             
         ]
@@ -562,7 +531,7 @@ function showFilters(button) {
         }
         layout.setActiveItem(1);
     } else {
-        layout.setActiveItem(2);
+        layout.setActiveItem(0);
     }
 
     var showFiltersButton = Ext.getCmp("filters-show-button");
@@ -650,10 +619,6 @@ function showStudyView(button){
     var activeitem = layout.activeItem;
     layout.setActiveItem(2);
     showContextSpecificHelp(activetab, button);
-    var showFiltersButton = Ext.getCmp("filters-show-button");
-    var hideFiltersButton = Ext.getCmp("filters-hide-button");
-    showFiltersButton.setVisible(true);
-    hideFiltersButton.setVisible(false);
 }
 
 function setButtonVisibility(id, visibility) {
@@ -784,6 +749,10 @@ function selectJubilantPanel(index) {
     layout.setActiveItem(index);
 }
 
+function onItemCheck(item, checked){
+    ;
+}
+
 function popupWindow(mylink, windowname) {
     if (!window.focus)
     return true;
@@ -908,4 +877,3 @@ function validateDocumentFilters() {
     }
     return true;
 }
-

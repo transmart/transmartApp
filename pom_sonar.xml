@@ -23,8 +23,10 @@
     <groupId>org.transmartproject</groupId>
     <artifactId>transmartApp</artifactId>
     <packaging>war</packaging>
-    <version>1.0</version><!-- but see profile ciUpdateVersion -->
-    <name>Transmart Application</name><!-- idem -->
+    <version>1.0</version>
+    <!-- but see profile ciUpdateVersion -->
+    <name>Transmart Application</name>
+    <!-- idem -->
     <build>
         <sourceDirectory>src/groovy</sourceDirectory>
         <plugins>
@@ -99,7 +101,7 @@
             <plugin>
                 <groupId>nl.thehyve</groupId>
                 <artifactId>change-project-properties-plugin</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0</version>
                 <configuration>
                     <properties>
                         <property>
@@ -122,8 +124,8 @@
     <properties>
         <sonar.language>grvy</sonar.language>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.surefire.reportsPath>target/test-reports</sonar.surefire.reportsPath>
-		<sonar.cobertura.reportPath>target/test-reports/cobertura/coverage.xml</sonar.cobertura.reportPath>
+        <sonar.surefire.reportsPath>target/test-reports</sonar.surefire.reportsPath>
+        <sonar.cobertura.reportPath>target/test-reports/cobertura/coverage.xml</sonar.cobertura.reportPath>
         <sonar.phase>generate-sources</sonar.phase>
     </properties>
 </project>

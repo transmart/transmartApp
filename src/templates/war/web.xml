@@ -5,10 +5,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-    <display-name>tranSMART :: @grails.app.name.version@</display-name>
-    <description>
-        tranSMART is a knowledge management platform that enables scientists to develop and refine research hypotheses by investigating correlations between genetic and phenotypic data, and assessing their analytical results in the context of published literature and other work.
-    </description>
+    <display-name>/@grails.project.key@</display-name>
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -59,6 +56,10 @@
         <servlet-name>grails</servlet-name>
         <servlet-class>org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
+        <init-param>
+            <param-name>dispatchOptionsRequest</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </servlet>
 
     <!-- The Groovy Server Pages servlet -->
@@ -72,8 +73,17 @@
         <url-pattern>*.gsp</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>GetGenePatternFile</servlet-name>
+        <servlet-class>com.recomdata.servlet.GetGenePatternFile</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>GetGenePatternFile</servlet-name>
+        <url-pattern>/analysis/getGenePatternFile</url-pattern>
+    </servlet-mapping>
+
     <session-config>
-        <!-- 30 minutes -->
         <session-timeout>30</session-timeout>
     </session-config>
 

@@ -1,180 +1,116 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
+import com.google.common.collect.ImmutableMap
+import org.apache.log4j.Logger
+import org.codehaus.groovy.grails.commons.spring.DefaultBeanConfiguration
+import org.springframework.beans.factory.config.CustomScopeConfigurer
+import org.springframework.security.core.session.SessionRegistryImpl
+import org.springframework.security.web.DefaultRedirectStrategy
+import org.springframework.security.web.access.AccessDeniedHandlerImpl
 
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+// plugin is not functional at this point
+//import org.springframework.security.extensions.kerberos.web.SpnegoAuthenticationProcessingFilter
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
-import org.springframework.security.core.session.SessionRegistryImpl
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.DefaultRedirectStrategy
+import org.transmart.authorization.CurrentUserBeanFactoryBean
+import org.transmart.authorization.CurrentUserBeanProxyFactory
+import org.transmart.authorization.QueriesResourceAuthorizationDecorator
+import org.transmart.marshallers.MarshallerRegistrarService
+import org.transmart.spring.QuartzSpringScope
+import org.transmartproject.core.users.User
+import org.transmartproject.export.HighDimExporter
 
-import com.recomdata.transmart.data.export.ClinicalDataService;
-import com.recomdata.transmart.data.export.PostgresClinicalDataService;
-import com.recomdata.transmart.data.export.PostgresDataCountService;
-import com.recomdata.transmart.data.export.PostgresExportService;
-import com.recomdata.transmart.data.export.PostgresGeneExpressionDataService;
-import com.recomdata.transmart.data.export.PostgresSnpDataService;
-
-import I2b2HelperService;
-import PostgresI2b2HelperService;
-
-import org.springframework.context.ApplicationContext
-import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.apache.commons.dbcp.BasicDataSource
-import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean
-import grails.spring.BeanBuilder
+def logger = Logger.getLogger('com.recomdata.conf.resources')
 
 beans = {
+    xmlns context: "http://www.springframework.org/schema/context"
 
-    println '\nConfiguring tranSMART Beans ...'
-
-    def conf = SpringSecurityUtils.securityConfig
-    String[] attributesToReturn = toStringArray(conf.ldap.authenticator.attributesToReturn)
-    String[] dnPatterns = toStringArray(conf.ldap.authenticator.dnPatterns)
-
-    ldapCustomAuthenticator(com.recomdata.security.LdapAuthUserAuthenticator, ref("contextSource")) {
-        userSearch = ref("ldapUserSearch")
-        if (attributesToReturn) {
-            userAttributes = attributesToReturn
-        }
-        if (dnPatterns) {
-            userDnPatterns = dnPatterns
-        }
-    }
-    ldapUserDetailsMapper(com.recomdata.security.LdapAuthUserDetailsMapper){
-        dataSource = ref('dataSource')
-        springSecurityService = ref('springSecurityService')
-    }
-    ldapAuthProvider(org.springframework.security.ldap.authentication.LdapAuthenticationProvider, ldapCustomAuthenticator, ref("ldapAuthoritiesPopulator")) {
-        userDetailsContextMapper = ldapUserDetailsMapper
-        hideUserNotFoundExceptions = Boolean.parseBoolean((String)conf.ldap.auth.hideUserNotFoundExceptions)
-        useAuthenticationRequestCredentials = Boolean.parseBoolean((String)conf.ldap.auth.useAuthPassword)
+    if (grailsApplication.config.org.transmart.security.samlEnabled) {
+        importBeans('classpath:/spring/spring-security-saml.xml')
     }
 
-	dataSourcePlaceHolder(com.recomdata.util.DataSourcePlaceHolder){
-		dataSource = ref('dataSource')
-	}
-	sessionRegistry(SessionRegistryImpl)
-	sessionAuthenticationStrategy(ConcurrentSessionControlStrategy, sessionRegistry) {
-		maximumSessions = 10
-	}
-	concurrentSessionFilter(ConcurrentSessionFilter){
-		sessionRegistry = sessionRegistry
-		expiredUrl = '/login'
-	}
-	userDetailsService(com.recomdata.security.AuthUserDetailsService)
-	redirectStrategy(DefaultRedirectStrategy)
-
-    springSecurityService(grails.plugins.springsecurity.SpringSecurityService){bean ->
-        authenticationTrustResolver = ref('authenticationTrustResolver')
-        grailsApplication = ref('grailsApplication')
-        passwordEncoder = ref('passwordEncoder')
-        objectDefinitionSource = ref('objectDefinitionSource')
-        userDetailsService = ref('userDetailsService')
-        userCache = ref('userCache')
+    /* core-api authorization wrapped beans */
+    queriesResourceAuthorizationDecorator(QueriesResourceAuthorizationDecorator) {
+        DefaultBeanConfiguration bean ->
+            bean.beanDefinition.autowireCandidate = false
     }
 
-    utilService(com.recomdata.transmart.util.UtilService)
-    fileDownloadService(com.recomdata.transmart.util.FileDownloadService)
+    quartzSpringScope(QuartzSpringScope)
+    quartzScopeConfigurer(CustomScopeConfigurer) {
+        scopes = ImmutableMap.of('quartz', ref('quartzSpringScope'))
+    }
 
-     bool isOracleConfigured = grailsApplication.config.dataSource.driverClassName ==~ /.*oracle.*/
+    "${CurrentUserBeanProxyFactory.BEAN_BAME}"(CurrentUserBeanProxyFactory)
+    "${CurrentUserBeanProxyFactory.SUB_BEAN_REQUEST}"(CurrentUserBeanFactoryBean) { bean ->
+        bean.scope = 'request'
+    }
+    "${CurrentUserBeanProxyFactory.SUB_BEAN_QUARTZ}"(User) { bean ->
+        // Spring never actually creates this bean
+        bean.scope = 'quartz'
+    }
 
-	if (isOracleConfigured)
-	{
-		log.debug("Oracle configured")
-	}
-	else
-	{
-	
-		// TODO -- NEEDS TO BE REVIEWED
+    legacyQueryResultAccessCheckRequestCache(
+            QueriesResourceAuthorizationDecorator.LegacyQueryResultAccessCheckRequestCache) { bean ->
+        bean.scope = 'request'
+    }
 
-		snpService(SnpService)
-		plinkService(PlinkService)
-		conceptService(ConceptService)
-		sampleInfoService(SampleInfoService)
-	
-		// --
-	
-		log.debug("Postgres configured")
-		
-		dataCountService(PostgresDataCountService){bean ->
-			dataSource = ref('dataSource')
-		}
-		geneExpressionDataService(PostgresGeneExpressionDataService){bean ->
-			dataSource = ref('dataSource')
-			grailsApplication = ref('grailsApplication')
-			i2b2HelperService = ref('i2b2HelperService')
-			springSecurityService = ref('springSecurityService')
-			fileDownloadService = ref ('fileDownloadService')
-			utilService = ref('utilService')
-		}
-		snpDataService(PostgresSnpDataService){bean ->
-			dataSource = ref('dataSource')
-			grailsApplication = ref('grailsApplication')
-			i2b2HelperService = ref('i2b2HelperService')
-			springSecurityService = ref('springSecurityService')
-			fileDownloadService = ref ('fileDownloadService')
-			utilService = ref('utilService')
-			snpService = ref('snpService')
-			plinkService = ref('plinkService')
-		}
-		clinicalDataService(PostgresClinicalDataService){bean ->
-			dataSource = ref('dataSource')
-			i2b2HelperService = ref('i2b2HelperService')
-			springSecurityService = ref('springSecurityService')
-			utilService = ref('utilService')
-		}
-		i2b2HelperService(PostgresI2b2HelperService){bean->
-			dataSource = ref('dataSource')
-			sessionFactory = ref('sessionFactory')
-			conceptService = ref('conceptService')
-			sampleInfoService = ref('conceptService')
-		}
+    context.'component-scan'('base-package': 'org.transmartproject.export') {
+        context.'include-filter'(
+                type: 'assignable',
+                expression: HighDimExporter.canonicalName)
+    }
 
-        geneSignatureService(PostgresGeneSignatureService){bean->
-            searchKeywordService = ref('searchKeywordService')
+    sessionRegistry(SessionRegistryImpl)
+    sessionAuthenticationStrategy(ConcurrentSessionControlStrategy, sessionRegistry) {
+        maximumSessions = 10
+    }
+    concurrentSessionFilter(ConcurrentSessionFilter) {
+        sessionRegistry = sessionRegistry
+        expiredUrl = '/login'
+    }
+
+    redirectStrategy(DefaultRedirectStrategy)
+    accessDeniedHandler(AccessDeniedHandlerImpl) {
+        errorPage = '/login'
+    }
+    failureHandler(SimpleUrlAuthenticationFailureHandler) {
+        defaultFailureUrl = '/login'
+    }
+
+    //overrides bean implementing GormUserDetailsService?
+    userDetailsService(com.recomdata.security.AuthUserDetailsService)
+
+    marshallerRegistrarService(MarshallerRegistrarService)
+
+    if (grailsApplication.config.org.transmart.security.spnegoEnabled) {
+        // plugin is not functional at this point
+//        SpnegoAuthenticationProcessingFilter(SpnegoAuthenticationProcessingFilter) {
+//            authenticationManager = ref('authenticationManager')
+//            failureHandler = ref('failureHandler')
+//        }
+
+        ldapUserDetailsMapper(com.recomdata.security.LdapAuthUserDetailsMapper) {
+            dataSource = ref('dataSource')
             springSecurityService = ref('springSecurityService')
-            sessionFactory = ref('sessionFactory')
+            databasePortabilityService = ref('databasePortabilityService')
         }
 
-		exportService(PostgresExportService){bean->
-			quartzScheduler = ref('quartzScheduler')
-			grailsApplication = ref('grailsApplication')
-			dataCountService = ref('dataCountService')
-			geneExpressionDataService = ref('geneExpressionDataService')
-			i2b2HelperService = ref('i2b2HelperService')
-			i2b2ExportHelperService = ref('i2b2ExportHelperService')
-			jobResultsService = ref('jobResultsService')
-			asyncJobService = ref('asyncJobService')
-			dataExportService = ref('dataExportService')
-		}
-	}
-
-    println '... finished configuring tranSMART Beans\n'
-}
-
-private String[] toStringArray(value) {
-    if (value == null) {
-        return null
+    } else {
+        // plugin is not functional at this point
+//        SpringSecurityKerberosGrailsPlugin.metaClass.getDoWithSpring = {->
+//            logger.info "Skipped Kerberos Grails plugin initialization"
+//            return {}
+//        }
+        SpringSecurityLdapGrailsPlugin.metaClass.getDoWithSpring = { ->
+            logger.info "Skipped LDAP Grails plugin initialization"
+            return {}
+        }
     }
-    if (value instanceof String) {
-        value = [value]
+
+    if (!('clientCredentialsAuthenticationProvider' in
+            grailsApplication.config.grails.plugin.springsecurity.providerNames)) {
+        SpringSecurityOauth2ProviderGrailsPlugin.metaClass.getDoWithSpring = { ->
+            logger.info "Skipped Oauth2 Grails plugin initialization"
+            return {}
+        }
     }
-    value as String[]
 }

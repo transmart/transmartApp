@@ -9,6 +9,7 @@
     <topic id="6" tId="184" url="Documents/performanceenhancements.htm" target="right"><![CDATA[Performance Enhancements]]><contextids /></topic>
     <topic id="7" tId="46" url="Documents/prerequisites.htm" target="right"><![CDATA[Pre-Requisites]]><contextids /></topic>
     <topic id="8" tId="56" url="Documents/resolveddefects.htm" target="right"><![CDATA[Resolved Defects]]><contextids /></topic>
+    <topic id="9" tId="175" url="Documents/sampleexplorer.htm" target="right"><![CDATA[Sample Explorer]]><contextids /></topic>
     <topic id="10" tId="176" url="Documents/snpviewerenhancements.htm" target="right"><![CDATA[SNPViewer Enhancements]]><contextids /></topic>
     <topic id="11" tId="45" url="Documents/transmartreleasenotes.htm" target="right" default="1"><![CDATA[tranSMART Release Notes]]><contextids /></topic>
     <topic id="12" tId="54" url="Documents/trialsandstudiesindatasetexplorer.htm" target="right"><![CDATA[Trials and Studies in Dataset Explorer]]><contextids><item id="999" /></contextids></topic>

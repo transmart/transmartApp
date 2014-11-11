@@ -1,30 +1,51 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
-
 STATE = {
 		Dragging: false,
 		Target: null,
 		QueryRequestCounter: 0
 }
 
-function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType)
+// list of supported platform
+// TODO : future refactoring should retrieve these values from gpl definitions in the database
+var HIGH_DIMENSIONAL_DATA = {
+    "mrna"          : {"platform" : "MRNA_AFFYMETRIX",  "type" : "Gene Expression"},
+    "mirna_qpcr"    : {"platform" : "MIRNA_QPCR",       "type" : "MIRNA_QPCR"},
+    "mirna_seq"     : {"platform" : "MIRNA_SEQ",        "type" : "MIRNA_SEQ"},
+    "rbm"           : {"platform" : "RBM",              "type" : "RBM"},
+    "proteomics"    : {"platform" : "PROTEIN",          "type" : "PROTEOMICS"},
+    "snp"           : {"platform" : "SNP",              "type" : "SNP"},
+    "rnaseq"        : {"platform" : "RNA_AFFYMETRIX",   "type" : "RNASEQ"},
+    "metabolite"    : {"platform" : "METABOLOMICS",     "type" : "METABOLOMICS"}
+};
+
+// Check if current platform is supported
+function isSupportedPlatform (currentPlatform) {
+    for (var key in HIGH_DIMENSIONAL_DATA) {
+        if (currentPlatform == HIGH_DIMENSIONAL_DATA[key].platform) return true;
+    }
+    return false;
+}
+
+// Check if current platform is RBM
+function isRBMPlatform (currentPlatform) {
+    return currentPlatform == HIGH_DIMENSIONAL_DATA["rbm"].platform ? true : false;
+}
+
+// toggle elements in the popup based on whether it is RBM or not
+function toggleRBMDisplayElements (ele, eleGpl, eleTissue, eleRbmpanel, platform) {
+    if (!isRBMPlatform(platform)) {
+        ele.dom.style.display='';
+        eleGpl.dom.style.display='';
+        eleTissue.dom.style.display='';
+        eleRbmpanel.dom.style.display='none'
+    } else {
+        ele.dom.style.display='none';
+        eleGpl.dom.style.display='none';
+        eleTissue.dom.style.display='none';
+        eleRbmpanel.dom.style.display='';
+    }
+}
+
+function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes)
 {
 	this.name=name;
 	this.key=key;
@@ -37,45 +58,52 @@ function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalu
 	this.oktousevalues=oktousevalues;
 	this.value=value;
 	this.nodeType = nodeType
+    this.visualattributes = visualattributes;
 }
 
 function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
 {
-	if(typeof(mode)==undefined || mode==null)
-		{this.mode="novalue"} //default to novalue
-	else{
-		this.mode=mode;
-		}
-		
-	if(typeof(operator)==undefined || operator==null)
-		{this.operator="LT"}
-	else{
-		this.operator=operator;
-		}
-	
-	if(typeof(highlowselect)==undefined || highlowselect==null)
-		{this.highlowselect="N"}
-	else{
-		this.highlowselect=highlowselect;
-		}
+    if (typeof(mode) == undefined || mode == null) {
+        this.mode = "novalue"
+    } //default to novalue
+    else {
+        this.mode = mode;
+    }
 
-	if(typeof(lowvalue)==undefined || lowvalue==null)
-		{this.lowvalue=""}
-	else{
-		this.lowvalue=lowvalue;
-		}
+    if (typeof(operator) == undefined || operator == null) {
+        this.operator = "LT"
+    }
+    else {
+        this.operator = operator;
+    }
 
-	if(typeof(highvalue)==undefined || highvalue==null)
-		{this.highvalue=""}
-	else{
-		this.highvalue=highvalue;
-		}
-		
-		if(typeof(units)==undefined || units==null)
-		{this.units=""}
-	else{
-		this.units=units;
-		}
+    if (typeof(highlowselect) == undefined || highlowselect == null) {
+        this.highlowselect = "N"
+    }
+    else {
+        this.highlowselect = highlowselect;
+    }
+
+    if (typeof(lowvalue) == undefined || lowvalue == null) {
+        this.lowvalue = ""
+    }
+    else {
+        this.lowvalue = lowvalue;
+    }
+
+    if (typeof(highvalue) == undefined || highvalue == null) {
+        this.highvalue = ""
+    }
+    else {
+        this.highvalue = highvalue;
+    }
+
+    if (typeof(units) == undefined || units == null) {
+        this.units = ""
+    }
+    else {
+        this.units = units;
+    }
 } 
 
 function convertNodeToConcept(node)
@@ -90,13 +118,14 @@ function convertNodeToConcept(node)
 	var comment=node.attributes.comment;
 	var normalunits=node.attributes.normalunits;
 	var oktousevalues=node.attributes.oktousevalues;
-	
+	var visualattributes=node.attributes.visualattributes;
+
 	//Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
 	var nodeType = node.attributes.iconCls
 	
 	if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
 	
-	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType);
+	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes);
 	return myConcept;
 }
 function createPanelItemNew(panel, concept)
@@ -119,6 +148,7 @@ function createPanelItemNew(panel, concept)
 	li.setAttribute('setvalueunits',concept.value.units);
 	li.setAttribute('oktousevalues',concept.oktousevalues);
 	li.setAttribute('setnodetype',concept.nodeType);
+	li.setAttribute('visualattributes',concept.visualattributes);
 	li.className="conceptUnselected";
 	
 	//Create a shortname
@@ -151,13 +181,19 @@ function createPanelItemNew(panel, concept)
 	new Ext.ToolTip({ target:li, html:concept.key, dismissDelay:10000 });
 	li.concept=concept;
 	//return the node
-	var subset=getSubsetFromPanel(panel);
-	invalidateSubset(subset);
+
+    // Invalidate only when something dropped to the subset panel
+    if (panel.id.indexOf("queryCriteriaDiv") > -1) {
+        var subset=getSubsetFromPanel(panel);
+        invalidateSubset(subset);
+    }
+
 	return li;
 }
+
 function getSubsetFromPanel(panel)
 {
-return panel.id.substr(16,1);
+    return panel.id.substr(16,1);
 }
 
 function createPanelItem(subset,panelNumber, level, name, key, tooltip, tablename, dimcode, comment, normalunits, oktousevalues,
@@ -425,6 +461,7 @@ function showSetValueDialog()
 {		
 		var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
 		setvaluewin.setHeight(200); //set height back to old closed
+		setvaluewin.setPosition(100, 100);
 		Ext.get("setvaluechartsPanel1").update("");
 		Ext.get("setvaluechartsPanel2").update("");
         setvaluewin.show(viewport);
@@ -435,12 +472,12 @@ function showSetValueDialog()
 				setCheckedValue(test, mode)
         		setValueMethodChanged(mode);
         	}
-        else //default to novalue
+        else //default to numeric
         {	
         	if(test.length>0)
         		{
-				setCheckedValue(test, "novalue");
-        		setValueMethodChanged("novalue");
+				setCheckedValue(test, "numeric"); //numeric
+        		setValueMethodChanged("numeric");
         		}
         	}
         
@@ -530,8 +567,9 @@ function clearGrid()
 Ext.Ajax.request(
     	    {
     	        url: pageInfo.basePath+"/chart/clearGrid",
-    	        method: 'POST',                                       
-    	        //success: function(result, request){showConceptDistributionHistogramComplete(result);},
+    	        method: 'POST',
+                defaultHeaders: { 'Content-Type': 'text/plain' },
+                //success: function(result, request){showConceptDistributionHistogramComplete(result);},
     	        //failure: function(result, request){showConceptDistributionHistogramComplete(result);},
     	        timeout: '300000',
     	        params: Ext.urlEncode({charttype:"cleargrid"})
@@ -609,7 +647,7 @@ function createPathwaySearchBox(searchInputEltName, divName){
   	var ds;
   	var resultTpl;
   	if (GLOBAL.searchType==='native'){
-  		ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';  
+  		ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';
   		ds =new Ext.data.Store({
 			proxy: new Ext.data.ScriptTagProxy({
 				url: ajaxurl}),
@@ -620,7 +658,7 @@ function createPathwaySearchBox(searchInputEltName, divName){
 					{name: 'uid'},
 					{name: 'source'},
 					{name: 'name'},
-					{name: 'type'},
+					{name: 'type'}
 			   	]
 			)
 		});
@@ -631,7 +669,7 @@ function createPathwaySearchBox(searchInputEltName, divName){
 	        '</div></tpl>'
 	    );
   	}else{
-  		ajaxurl=pageInfo.basePath+'/search/loadSearchAnalysis';
+  		ajaxurl=pageInfo.basePath+'/search/loadSearchPathways';
   		ds =new Ext.data.Store({
 			proxy: new Ext.data.ScriptTagProxy({
 				url: ajaxurl}),
@@ -810,7 +848,7 @@ function showPathwaySearchBox(selectedListEltName, pathwayAndIdEltName, searchIn
 	            	 selectedListElt.setSelectionRange(selectedListText.length, selectedListText.length);
 	             }
 	             
-	             //Put the gene display || transmart search_keyword id in selectedGenesAndIdSNPViewer hidden field, separated by |||
+	             //Put the gene display || transmart search_keywork id in selectedGenesAndIdSNPViewer hidden field, separated by |||
 	             var geneAndIdStr = selectedGeneStr + '||' + record.data.id;
 	             var geneAndIdElt = Ext.get(pathwayAndIdEltName);
 	             var geneAndIdListText = geneAndIdElt.dom.value;
@@ -904,7 +942,7 @@ function createPathwaySearchBoxRBM(ajaxurl, boxwidth){
 }
 
 function createPlatformSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix = 'platforms'; 
+	var applyToDivIdPrefix = 'platforms';
 	var applyToDivId = applyToDivIdPrefix + applyToDivIdx;
 	var ajaxurl;
 	var ds;
@@ -950,25 +988,8 @@ function createPlatformSearchBox(subsetId, applyToDivIdx){
 		var eleGpl=Ext.get('divgpl'+applyToDivIdx);
 		var eleTissue=Ext.get('divtissue'+applyToDivIdx);
 		var eleRbmpanel=Ext.get('divrbmpanel'+applyToDivIdx);
-		
-		if((GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='MRNA_AFFYMETRIX') || (GLOBAL.CurrentPlatforms[applyToDivIdx-1]=='SNP'))
-		{
-			ele.dom.style.display='';
-			eleGpl.dom.style.display='';
-			eleTissue.dom.style.display='';
-			eleRbmpanel.dom.style.display='none';
-		}
-		else
-		{
-			ele.dom.style.display='none';
-			eleGpl.dom.style.display='none';
-			eleTissue.dom.style.display='none';
-			eleRbmpanel.dom.style.display='';
-		}
-       
-		//Toggle the High Dimensional Data elements after reseting the High Dim variable.
-		if(GLOBAL.CurrentPlatforms[subsetId-1] == "SNP") GLOBAL.HighDimDataType = 'SNP'
-		if(GLOBAL.CurrentPlatforms[subsetId-1] == "MRNA_AFFYMETRIX") GLOBAL.HighDimDataType = 'Gene Expression'
+
+        toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[applyToDivIdx-1]);
 
 		toggleDataAssociationFields();
 		
@@ -1089,13 +1110,13 @@ function clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx){
  * @param applyToDivIdx
  * @return
  */
-function displayConditionally(applyToDivId, subsetId)
+function hideWhenRBM(applyToDivId, subsetId)
 {
-	if(GLOBAL.CurrentPlatforms[subsetId-1]!='MRNA_AFFYMETRIX' && GLOBAL.CurrentPlatforms[subsetId-1]!='SNP' && GLOBAL.CurrentPlatforms[subsetId-1]!=null)
-	{
-		var ele=Ext.get('div'+applyToDivId);
-		ele.dom.style.display='none';
-	}
+
+    if (isRBMPlatform(GLOBAL.CurrentPlatforms[subsetId-1])) {
+        var ele=Ext.get('div'+applyToDivId);
+        ele.dom.style.display='none';
+    }
 }
 
 /**
@@ -1104,8 +1125,8 @@ function displayConditionally(applyToDivId, subsetId)
  * @param applyToDivIdx
  * @return
  */
-function displayWhenRBM(applyToDivId, subsetId){
-	if(GLOBAL.CurrentPlatforms[subsetId-1]!='RBM'){
+function hideWhenNotRBM(applyToDivId, subsetId){
+	if(!isRBMPlatform(GLOBAL.CurrentPlatforms[subsetId-1])){
 		var ele=Ext.get('div'+applyToDivId);
 		ele.dom.style.display='none';
 	}
@@ -1152,7 +1173,7 @@ function createGplSearchBox(subsetId, applyToDivIdx){
 	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'gpl', GLOBAL.DefaultCohortInfo.defaultGplLabels[subsetId-1]);
 	    
 	   	//Display this select box only if Platform is MRNA or unselected.
-	    displayConditionally(applyToDivId, subsetId);
+	    hideWhenRBM(applyToDivId, subsetId);
 }
 
 function createRbmPanelSearchBox(subsetId, applyToDivIdx){
@@ -1196,7 +1217,7 @@ function createRbmPanelSearchBox(subsetId, applyToDivIdx){
 	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'rbmpanel', GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[subsetId-1]);
 
 	   	//Display this select box only if Platform is RBM.
-	    displayWhenRBM(applyToDivId, subsetId);
+	    hideWhenNotRBM(applyToDivId, subsetId);
 }
 
 function createTimePointsSearchBox(subsetId, applyToDivIdx){
@@ -1282,7 +1303,7 @@ function createSamplesSearchBox(subsetId, applyToDivIdx){
 	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'sample', GLOBAL.DefaultCohortInfo.defaultSampleLabels[subsetId-1]);
 	    
 	   	//Display this select box only if Platform is MRNA or unselected.
-	    displayConditionally(applyToDivId, subsetId);
+	    hideWhenRBM(applyToDivId, subsetId);
 }
 
 function createTissueSearchBox(subsetId, applyToDivIdx){
@@ -1326,7 +1347,7 @@ function createTissueSearchBox(subsetId, applyToDivIdx){
 	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'tissue', GLOBAL.DefaultCohortInfo.defaultTissueLabels[subsetId-1]);
 	    
 	   	//Display this select box only if Platform is MRNA or unselected.
-	    displayConditionally(applyToDivId, subsetId);
+	    hideWhenRBM(applyToDivId, subsetId);
 }
 
 Ext.ux.TransmartComboBox = Ext.extend(Ext.form.ComboBox, {
@@ -1576,38 +1597,21 @@ function resetCohortInfoValues(){
 	}
 	GLOBAL.CurrentRbmpanels[0]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[0];
 	GLOBAL.CurrentRbmpanels[1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[1];
-	
+
 	var ele=(Ext.get('divsample1')) ? Ext.get('divsample1') : Ext.get('divsample3');
 	var eleGpl=(Ext.get('divgpl1')) ? Ext.get('divgpl1') : Ext.get('divgpl3');
 	var eleTissue=(Ext.get('divtissue1')) ? Ext.get('divtissue1') : Ext.get('divtissue3');
 	var eleRbmpanel=(Ext.get('divrbmpanel1')) ? Ext.get('divrbmpanel1') : Ext.get('divrbmpanel3')
-	if(GLOBAL.CurrentPlatforms[0]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[0]=='SNP' || GLOBAL.CurrentPlatforms[0]==null){
-		ele.dom.style.display='';
-		eleGpl.dom.style.display='';
-		eleTissue.dom.style.display='';
-		eleRbmpanel.dom.style.display='none'
-	}else{
-		ele.dom.style.display='none';
-		eleGpl.dom.style.display='none';
-		eleTissue.dom.style.display='none';
-		eleRbmpanel.dom.style.display='';
-	}
+
+    toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[0]);
+
 	ele=(Ext.get('divsample2')) ? Ext.get('divsample2') : Ext.get('divsample4');
 	eleGpl=(Ext.get('divgpl2')) ? Ext.get('divgpl2') : Ext.get('divgpl4');
 	eleTissue=(Ext.get('divtissue2')) ? Ext.get('divtissue2') : Ext.get('divtissue4');
 	eleRbmpanel=(Ext.get('divrbmpanel2')) ? Ext.get('divrbmpanel2') : Ext.get('divrbmpanel4')
-	if(GLOBAL.CurrentPlatforms[1]=='MRNA_AFFYMETRIX' || GLOBAL.CurrentPlatforms[1]==null){
-		ele.dom.style.display='';
-		eleGpl.dom.style.display='';
-		eleTissue.dom.style.display='';
-		eleRbmpanel.dom.style.display='none';
-	}else{
-		ele.dom.style.display='none';
-		eleGpl.dom.style.display='none';
-		eleTissue.dom.style.display='none';
-		eleRbmpanel.dom.style.display='';
-	}
-	
+
+    toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[1]);
+
 	//Clear out the pathway/aggregation input.
 	document.getElementById("probesAggregation").checked=false;
 	document.getElementById("searchPathway").value = "";
@@ -1681,6 +1685,17 @@ if(!this.compareStepPathwaySelectionRBM)
 			}
 		}
                
+}
+
+function getQueryCdItem(el){
+    var item=el.getAttribute("conceptid");
+
+    var inOutCode = el.getAttribute("inoutcode");
+
+    //If there is visit information in the node, add it to the item we return.
+    if(inOutCode) item += "~" + inOutCode;
+
+    return item;
 }
 
 function getQuerySummary(subset)
@@ -1891,23 +1906,24 @@ window.location.href=pageInfo.basePath;
 
 function getTreeNodeFromJsonNode(concept)
 {
-    var Tree = Ext.tree;
-
-    var level				=	null;
-    var name				=	null;
-    var tablename			=	null;
-    var tooltip				=	null;
-    var key					=	null;
-    var dimcode				=	null;
-    var newnode				=	null;
-    var leaf				=	false;
-    var draggable			=	true;
-    var comment				=	null;
-    var normalunits			=	null;
-    var commentnode			=	null;
-    var normalunitsnode 	= 	null;
-    var oktousevaluesnode	= 	null;
-    var oktousevalues		=	null;
+		var Tree = Ext.tree;
+		
+ 		var level				=	null;
+ 		var name				=	null;
+ 		var tablename			=	null;
+ 		var tooltip				=	null;
+ 		var key					=	null;
+ 		var dimcode				=	null;
+ 		var newnode				=	null;
+ 		var leaf				=	false;
+ 		var draggable			=	true;
+ 		var comment				=	null;
+ 		var normalunits			=	null;
+ 		var commentnode			=	null;
+ 		var normalunitsnode 	= 	null;
+ 		var oktousevaluesnode	= 	null;
+ 		var oktousevalues		=	null;
+        var visualattributes    =   null;
 
     level				= concept.level;
     key					= concept.key;
@@ -1918,34 +1934,34 @@ function getTreeNodeFromJsonNode(concept)
     visualattributes	= concept.visualAttributes;
 
     comment				= ''; //XXX
-    normalunits			= concept.metadata
+    normalunits			= concept.metadata && concept.metadata.unitValues
                               ? concept.metadata.unitValues.normalUnits
                               : '';
     oktousevalues		=	concept.metadata
                               ? (concept.metadata.okToUseValues ? 'Y' : 'N')
                               : 'N'
-
-    //We need to replace the < signs with &lt;
-    name = name.replace(/</gi, "&lt;");
-
-    var iconCls = null;
-    var cls = null;
-    var tcls = null;
-
+	    
+	    //We need to replace the < signs with &lt;
+	    name = name.replace(/</gi,"&lt;");
+	    
+	    var iconCls	=	null;
+	    var cls		=	null;
+	    var tcls 	=	null;
+	    
     if (oktousevalues != "N") {
-        iconCls = "valueicon";
-    }
+	    	iconCls="valueicon";
+	    }
 
 
     if (visualattributes.indexOf('LEAF') != -1 ||
         visualattributes.indexOf('MULTIPLE') != -1) {
         leaf = true;
         /* otherwise false; see init */
-    }
+	    	}
     if (visualattributes.indexOf('CONTAINER') != -1) {
-        draggable = false;
+	    draggable=false;
         /* otherwise true; see init */
-    }
+	    }    
 
     if (visualattributes.indexOf('HIGH_DIMENSIONAL') != -1) {
         iconCls = 'hleaficon';
@@ -1953,36 +1969,56 @@ function getTreeNodeFromJsonNode(concept)
     } else if (visualattributes.indexOf('EDITABLE') != -1) {
         iconCls = 'eleaficon';
         tcls = 'eleafclass';
+	    }
+
+    if (visualattributes.indexOf('PROGRAM') != '-1') {
+        iconCls="programicon";
+    }
+
+    if (visualattributes.indexOf('STUDY') != '-1') {
+        iconCls="studyicon";
     }
 
 
-    //set whether expanded or not.
-    var autoExpand = false;
-    //var pathToExpand="\\\\Clinical Trials\\Clinical Trials\\C-2006-004\\Subjects\\Demographics\\Race\\";
-    if (GLOBAL.PathToExpand.indexOf(key) > -1)
-        autoExpand = true;
-
-    // set the root node
-
-    newnode = new Tree.AsyncTreeNode({
-        text          : name,
-        draggable     : draggable,
-        leaf          : leaf,
-        id            : key,
-        comment       : comment,
-        qtip          : tooltip,
-        iconCls       : iconCls,
-        cls           : tcls,
-        level         : level,  //extra attribute for storing level in hierarchy access through node.attributes.level
-        dimcode       : dimcode,
-        tablename     : tablename,
-        normalunits   : normalunits,
-        oktousevalues : oktousevalues,
-        expanded      : autoExpand
-    });
-    newnode.addListener('contextmenu', ontologyRightClick);
-    return newnode;
-}
+	    //set whether expanded or not.
+	    var autoExpand=false;
+		// Crude string check to bold this node if it's appeared as an actual search result (leaf)
+	    var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
+	    if (isSearchResult) {
+	    	tcls += ' searchResultNode';
+	    }
+	    //And another to highlight if it's the default passed-in path (only do this once)
+	    var isDefaultPath = (GLOBAL.DefaultPathToExpand.indexOf(key) > -1);
+	    if (isDefaultPath) {
+	    	tcls += ' defaultPathNode';
+	    }
+	    GLOBAL.DefaultPathToExpand = '';
+	    
+	    if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key + ",")==-1) autoExpand=true;
+		
+	    var expand=((contains(dseOpenedNodes, key)) || autoExpand) && (!contains(dseClosedNodes, key));
+	    
+	    // set the root node
+    	newnode = new Tree.AsyncTreeNode({
+            text: name,
+            draggable: draggable,
+            leaf: leaf,
+            id: key,
+            comment: comment,
+            qtip: tooltip,
+            iconCls:iconCls,
+            cls: tcls,
+            level: level,  //extra attribute for storing level in hierarchy access through node.attributes.level
+            dimcode: dimcode,
+            tablename: tablename,
+            normalunits: normalunits,
+            oktousevalues: oktousevalues,
+            expanded: expand,
+            visualattributes : visualattributes
+   		 });
+   		 newnode.addListener('contextmenu',ontologyRightClick);
+	return newnode;
+	}
 
 
 function getTreeNodeFromJSON(concept)
@@ -2055,26 +2091,9 @@ if(access!=undefined)
   		   }
 }
 
-
-
-function getValue(node, defaultvalue)
-{
- 	var result=defaultvalue;
-	if(node!=null && node!=undefined)
-		{
-		if(node.firstChild!=null && node.firstChild!=undefined)
-			{
-			result=node.firstChild.nodeValue;
-			}
-	}
-return result;
-}
-
-
 function showInfo(url) {
 	showInfoInner(url, 600, 500);
 }
-
 
 function showInfoInner(url, w, h)
 {
@@ -2141,5 +2160,3 @@ function showCriteriaGroup(i)
     e.style.display="";
 	if(i>3){Ext.get("subsetdivider").dom.rowSpan=i+1;}
 }
-
-

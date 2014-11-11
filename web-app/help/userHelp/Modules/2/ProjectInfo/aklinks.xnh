@@ -20,16 +20,16 @@
             <items>
                 <item role="group" name="iesecwarn" />
             </items>
-
+        </link>
         <link id="5705" window="">
             <items>
                 <item role="group" name="configtipsjavasecwarn" />
             </items>
-
+        </link>
         <link id="5710" window="">
             <items>
                 <item role="group" name="modules" />
             </items>
-
+        </link>
     </links>
 </root>

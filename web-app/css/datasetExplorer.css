@@ -10,69 +10,13 @@
     .queryGroupIncludeLong {text-align:left;width:230px; height:135px;padding:5px;background:white;font:8pt arial;white-space:nowrap;overflow:auto;border:1px solid black}
  	.queryGroupExclude {text-align:left;width:330px; height:35px;padding:5px;background:lightgrey;font:8pt arial;white-space:nowrap;overflow:auto;border:1px solid black}
 
-    .help-tree-panel, .help-resana-panel {
-        position: absolute !important;
-        right: 0 !important;
-        z-index: 100 !important;
-    }
-
-    .GVNullValues {
-        color:#d3d3d3;
-    }
-
-/* Top level menu */
-
-table.menuDetail {
-    padding: 0px 0px;
-    border: 0 none;
+.GVNullValues {
+    color:#d3d3d3;
 }
-
-table.menuDetail th {
-   	font-family: verdana, arial, helvetica, sans-serif;
-    font-size: 11px;     
-	line-height: 15px;
-    vertical-align: middle;
-    text-align: center;
-    white-space: nowrap;
-    background: #fafafa
-    url(../images/skin/shadow30.jpg);
-    font-weight: bold;
-    padding: 0px 0px;
-}
-
-table.menuDetail th.menuLink {
-	padding: 1px 15px;
-    color: #00c !important;
-    border-right: 1px solid #ccc;
-    text-decoration: none;
-}
-
-table.menuDetail th.menuLink a:link, th.menuLink a:visited {
-    color: #00c !important;
-	font-size: 11px;
-    text-decoration: none;	
-}
-
-table.menuDetail th.menuLink a:hover {
-    cursor: pointer;
-    color: #00c !important;
-	font-size: 11px;    
-	text-decoration: underline;
-}
-
-table.menuDetail th.menuVisited {
-	padding: 1px 15px;
-    color: white;    
-    background: #C8C8C8;
-    border: 1px inset gray;
-}
-
-/* end top level menu */
 
 div.topall {
 	padding-top:4px;
-    background-color: #fafafa);
-    background-image:url(../images/skin/shadow30.jpg);
+	background: #fafafa url(../images/skin/shadow30.jpg);
 font-family:verdana,arial,helvetica,sans-serif;
 font-size:12px;
 font-size-adjust:none;
@@ -110,8 +54,7 @@ a.toplink1{
 	color:#00c !important;
 	vertical-align:bottom;
 	font-weight: bold;
-    background-color: #fafafa);
-    background-image:url(../images/skin/shadow30.jpg);
+	background: #fafafa url(../images/skin/shadow30.jpg);
 	text-decoration:none;
 }
 a.toplink1:hover{
@@ -122,8 +65,10 @@ a.toplink1:hover{
 }
 
 .clearbutton{
-		background-image:url(../images/clear.png ) !important;
-	}
+    padding-left: 20px !important;
+    background-image:url(../images/small_cross.png ) !important;
+    background-position: 6px 50%;
+}
 .runbutton{
 	background-image:url(../images/runprog.png ) !important;
 	}
@@ -166,8 +111,7 @@ height:0;
 position:absolute;
 top:30px;
 width:100%;
-    background-color: #fafafa);
-    background-image:url(../images/skin/shadow30.jpg);
+ background: #fafafa url(../images/skin/shadow30.jpg);
 }
 
 
@@ -260,7 +204,7 @@ div.analysistitle {
 	color:#ff0000;	
 }
 	
-.x-tool-saveComparisonWindowHelpButton {
+.x-tool-sampleExplorerHelpButton {
 	background-image:url(../images/help/helpicon_gray.jpg ) !important;
 	color:#ff0000;	
 }
@@ -324,7 +268,75 @@ table.AnalysisResults td.blankCell{
 		border: 0px;
 	}
 
+/* workspace subset datatable style*/
+#subsets_length{
+    float: right;
+    margin-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
 
+#subsets_filter{
+    float: right;
+    margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#subsets_info{
+    float: left;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+#subsets_paginate{
+    float: right;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#subset_manager_name{
+    float: left;
+    margin: 10px;
+}
+
+.DataTables_sort_icon{
+    float: right;
+    display: inline-block;
+}
+
+/** workspace report datatable style **/
+
+#reports_length{
+    float: right;
+    margin-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#reports_filter{
+    float: right;
+    margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#reports_info{
+    float: left;
+    margin-left: 10px;
+    margin-top: 5px;
+}
+
+#reports_paginate{
+    float: right;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#report_manager_name{
+    float: left;
+    margin: 10px;
+}
 
 /* --------------------------------------------- */
 /* Analysis Results with sorting functionality. */
@@ -343,7 +355,7 @@ table.tablesorterAnalysisResults thead tr th, table.tablesorter tfoot tr th {
 	white-space: nowrap;	
 }
 table.tablesorterAnalysisResults thead tr .header {
-    background-image: url(../images/bg.gif);
+	background-image: url('../images/bg.gif');
 	background-repeat: no-repeat;
 	background-position: center right;
 	cursor: pointer;
@@ -440,3 +452,93 @@ content: counter(pages);
 	background-image: url("../images/help/tool-sprites-rdc.gif");
     background-position: 0 -300px;
 }
+
+.flatbutton {
+	background-repeat: no-repeat;
+	font-family: Arial, sans-serif;
+	font-size: 9pt;
+	padding: 4px 4px 4px 4px;
+	border: 1px solid #CCC;
+	cursor: pointer;
+	border-radius: 2px;
+}
+
+.flatbutton:hover {
+	background-color: #b2b2b2;
+	background-repeat: no-repeat;
+}
+
+/* Overrides for ext CSS */
+
+ul.x-tab-strip-top {
+	padding: 0;
+	background: none;
+    background-color:#FFF;
+}
+
+.x-tab-strip-top a.x-tab-right {
+	background: none;
+	background-image: none;
+}
+
+.x-tab-strip-top em.x-tab-left {
+	background: none;
+	background-image: none;
+	
+}
+
+.x-tab-strip-top .x-tab-strip-inner {
+	background: none;
+	background-image: none;
+}
+
+li.x-tab-strip-active {
+	background-image: url('../images/uiTabsArrow.png');
+	background-repeat: no-repeat;
+	background-position: 50% 10px;
+	height: 22px;
+}
+
+.x-tab-strip-active span.x-tab-strip-text {
+	color: #786;
+}
+
+.x-tab-strip span.x-tab-strip-text {
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	font-size: 8pt;
+}
+
+.x-tab-strip-top .x-tab-strip-active .x-tab-right {
+	margin-bottom: 0px;	
+}
+
+.x-tab-panel-header, .x-tab-panel-footer {
+	background: none;
+	background-image: none;
+	border: none;	
+}
+
+.x-panel-body {
+	border: none;
+}
+
+.x-tab-panel-body {
+	border: none;
+}
+
+#westPanel {
+	background-color: white;
+}
+
+.x-layout-split {
+	background-color: #EDEEF6;
+}
+
+/* Dreadful override - find out where query panel background color is actually set and replace this! */
+
+#queryPanel .x-panel-bwrap .x-panel-body {
+	background-color: white !important	
+}
+
+.x-grid3-row .conceptUnselected, .x-grid3-row .conceptSelected {padding: 0 0 5px 5px; font-size: .85em;}
+.data-export-filter-tip {color: #666; font-style: italic}

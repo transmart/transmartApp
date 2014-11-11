@@ -3,51 +3,6 @@ html * {
     /*padding: 0; SELECT NOT DISPLAYED CORRECTLY IN FIREFOX */
 }
 
-/* Top level menu */
-
-table.menuDetail {
-    padding: 0px 0px;
-    border: 0 none;
-}
-
-table.menuDetail th {
-   	font-family: verdana, arial, helvetica, sans-serif;
-    font-size: 11px;     
-	line-height: 15px;
-    vertical-align: middle;
-    text-align: center;
-    white-space: nowrap;
-    background: #fafafa url(../images/skin/shadow30.jpg);
-    font-weight: bold;
-    padding: 0px 0px;
-}
-
-table.menuDetail th.menuLink {
-	padding: 1px 15px;
-    color: #00c !important;
-    border-right: 1px solid #ccc;
-}
-
-table.menuDetail th.menuLink a:link, th.menuLink a:visited {
-    color: #00c !important;
-	font-size: 11px;
-}
-
-table.menuDetail th.menuLink a:hover {
-    cursor: pointer;
-	font-size: 11px;    
-	text-decoration: underline;
-}
-
-table.menuDetail th.menuVisited {
-	padding: 1px 15px;
-    color: white;    
-    background: #C8C8C8;
-    border: 1px inset gray;
-}
-
-/* end top level menu */
-
 
 /* GENERAL */
 
@@ -240,7 +195,7 @@ td, th {
 }
 
 th {
-	background: #fff url(../images/skin/shadow.jpg);
+	background: #fff url(../images/skin/shadow.jpg) bottom repeat-x;
     color: #666;
     font-size: 12px;
     font-weight: bold;
@@ -271,7 +226,7 @@ th.desc a {
 }
 
 .odd {
-    background: #e8e8e8;
+    background: #f4f4f4;
 }
 
 .even {
@@ -547,6 +502,7 @@ tr#gtb1odd1 {
 
 img {
 	border:0;
+    outline: hidden;
 }
 
 a img {
@@ -810,11 +766,6 @@ table.jubsummary td {
     color:#ff0000;
 }
 
-.cortellisTab {
-    background-image:url(../images/thomsonreuters.png ) !important;
-    color:#ff0000;
-}
-
 .expTab {
     background-image:url(../images/ebi.png ) !important;
     color:#ff0000;
@@ -851,6 +802,10 @@ select.jubselect {
 	background-image:url(../images/folder-minus.gif);
 }
 
+.feedbackbutton {
+	background-image:url(../images/feedback.png) !important;
+}
+
 /* ExtJS customizations */
 
 .ext-ie .x-form-text {
@@ -869,6 +824,7 @@ select.jubselect {
 }
 
 .x-panel-body {
+	overflow: auto;
 	border: 0px;
 }
 
@@ -887,6 +843,10 @@ select.jubselect {
 .dashboardBtn {
     background-image:url(../images/information.png ) !important;
     color:#ff0000;
+}
+
+.filter {
+    padding: 0px 10px 0px 10px;
 }
 
 .filtersBtn {
@@ -1073,3 +1033,4 @@ table.jobstatus {
     height:24px;
     z-index:100;
 }
+

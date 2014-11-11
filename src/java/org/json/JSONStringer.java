@@ -1,22 +1,5 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
+
+
 
 package org.json;
 
@@ -51,7 +34,7 @@ import java.io.StringWriter;
  * The texts produced strictly conform to JSON syntax rules. No whitespace is
  * added, so the results are ready for transmission or storage. Each instance of
  * JSONStringer can produce one JSON text.
- * <p>
+ * <p/>
  * A JSONStringer instance provides a <code>value</code> method for appending
  * values to the
  * text, and a <code>key</code>
@@ -67,12 +50,13 @@ import java.io.StringWriter;
  *     .endObject()
  *     .toString();</pre> which produces the string <pre>
  * {"JSON":"Hello, World!"}</pre>
- * <p>
+ * <p/>
  * The first method called must be <code>array</code> or <code>object</code>.
  * There are no methods for adding commas or colons. JSONStringer adds them for
  * you. Objects and arrays can be nested up to 20 levels deep.
- * <p>
+ * <p/>
  * This can sometimes be easier than using a JSONObject to build a string.
+ *
  * @author JSON.org
  * @version 3
  */
@@ -90,6 +74,7 @@ public class JSONStringer extends JSONWriter {
      * problem in the construction of the JSON text (such as the calls to
      * <code>array</code> were not properly balanced with calls to
      * <code>endArray</code>).
+     *
      * @return The JSON text.
      */
     public String toString() {

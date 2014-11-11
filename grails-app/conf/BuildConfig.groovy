@@ -1,95 +1,197 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
+def forkSettingsRun = [
+        minMemory: 1536,
+        maxMemory: 4096,
+        maxPerm  : 384,
+        debug    : false,
+]
+def forkSettingsOther = [
+        minMemory: 256,
+        maxMemory: 1024,
+        maxPerm  : 384,
+        debug    : false,
+]
 
-grails.project.class.dir = "target/classes"
-grails.project.test.class.dir = "target/test-classes"
-grails.project.test.reports.dir = "target/test-reports"
+grails.project.fork = [
+        test   : forkSettingsOther,
+        run    : forkSettingsRun,
+        war    : false,
+        console: forkSettingsOther]
 
-//grails.plugin.location.'rdc-modules' = "../Rmodules"
+grails.project.war.file = "target/${appName}.war"
 
-//grails.project.war.file = "target/${appName}-${appVersion}.war"
+/* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
+grails.servlet.version = "2.5"
+
+grails.project.dependency.resolver = 'maven'
+
+def dm, dmClass
+try {
+    dmClass = new GroovyClassLoader().parseClass(
+            new File('../transmart-dev/DependencyManagement.groovy'))
+} catch (Exception e) {
+}
+if (dmClass) {
+    dm = dmClass.newInstance()
+}
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
-    inherits("global") {
-        // uncomment to disable ehcache
-        // excludes 'ehcache'
-    }
+    inherits("global") {}
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
-    repositories {
-        grailsPlugins()
-        grailsHome()
-        grailsCentral()
 
-        mavenLocal()
-        mavenCentral()
-        mavenRepo([
-                name: 'repo.transmartfoundation.org-public',
-                root: 'https://repo.transmartfoundation.org/content/repositories/public/',
-        ])
+    if (!dm) {
+        repositories {
+            grailsCentral()
+            mavenCentral()
+
+            mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
+            mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
+        }
+    } else {
+        dm.configureRepositories delegate
     }
+
     dependencies {
-		runtime 'postgresql:postgresql:9.1-901.jdbc4'
-		compile 'antlr:antlr:2.7.7'
-        compile 'org.transmartproject:transmart-core-api:1.0-SNAPSHOT'
+        // you can remove whichever you're not using
+        runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
+        runtime 'com.oracle:ojdbc7:12.1.0.1'
+
+        runtime 'org.javassist:javassist:3.16.1-GA'
+
+        compile 'org.transmartproject:transmart-core-api:1.2.2-SNAPSHOT'
+
+        compile 'antlr:antlr:2.7.7'
+        compile 'net.sf.opencsv:opencsv:2.3'
+        compile "org.apache.lucene:lucene-core:2.4.0"
+        compile "org.apache.lucene:lucene-demos:2.4.0"
+        compile "org.apache.lucene:lucene-highlighter:2.4.0"
+        compile 'commons-net:commons-net:3.3' // used for ftp transfers
+        compile 'org.apache.commons:commons-math:2.2' //>2MB lib briefly used in ChartController
+        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.1', {
+            excludes 'groovy', 'nekohtml'
+        }
+        compile 'org.rosuda:Rserve:1.7.3'
+        compile 'com.google.guava:guava:14.0.1'
+
+        /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
+        compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
+
+        /* for GeneGo web services: */
+        compile 'axis:axis:1.4'
+
+        /* for SAML authentication */
+        compile('org.springframework.security.extensions:spring-security-saml2-core:1.0.0.RELEASE') {
+            //excludes of spring securirty necessary because they are for an older version (3.1 branch)
+            //also remove xercesImpl because it breaks tomcat and is not otherwise needed
+            excludes 'spring-security-config', 'spring-security-core', 'spring-security-web', 'xercesImpl'
+        }
+        // spring security version should be in sync with that brought with
+        // grails-spring-security-core
+        runtime 'org.springframework.security:spring-security-config:3.2.3.RELEASE',
+                'org.springframework.security:spring-security-web:3.2.3.RELEASE', {
+            transitive = false
+        }
+
+        test('junit:junit:4.11') {
+            transitive = false /* don't bring hamcrest */
+            export = false
+        }
+
+        test 'org.hamcrest:hamcrest-core:1.3',
+                'org.hamcrest:hamcrest-library:1.3'
+
+        test 'org.gmock:gmock:0.9.0-r435-hyve2', {
+            transitive = false
+        }
+
     }
+
     plugins {
-        compile ":hibernate:$grailsVersion"
-        compile ":quartz:1.0-RC2"
-        compile ":rdc-rmodules:0.3-SNAPSHOT"
-        compile ":spring-security-core:1.2.7.3"
-        compile ":spring-security-ldap:1.0.6"
-        compile ":resources:1.2"
-        build ":tomcat:$grailsVersion"
-        build ":build-info:1.1"
-		runtime ":prototype:1.0"
-        runtime ":transmart-core:1.0-SNAPSHOT"
+        build ':release:3.0.1'
+        build ':rest-client-builder:2.0.1'
+        build ':tomcat:7.0.52.1'
 
-        test ":code-coverage:1.2.6"
-    }
-}
+        compile ':hibernate:3.6.10.10'
+        compile ':quartz:1.0-RC2'
+        // Not compatible with spring security 3.2 yet
+        //compile ':spring-security-kerberos:0.1'
+        compile ':spring-security-ldap:2.0-RC2'
+        compile ':spring-security-core:2.0-RC4'
+        compile ':spring-security-oauth2-provider:1.0.5.2'
 
-/* For development, it's interesting to use the plugins in-place.
+        runtime ':prototype:1.0'
+        runtime ':jquery:1.7.1'
+        runtime ':resources:1.2.1'
 
- * This allows the developer to put the grails.plugin.location.* assignments
- * in an out-of-tree BuildConfig file if they want to.
- * Snippet from https://gist.github.com/acreeger/910438
- */
-def buildConfigFile = new File("${userHome}/.grails/${appName}Config/" +
-        "BuildConfig.groovy")
-if (buildConfigFile.exists()) {
-    println "Processing external build config at $buildConfigFile"
-    def slurpedBuildConfig = new ConfigSlurper().parse(buildConfigFile.toURL())
-    slurpedBuildConfig.grails.plugin.location.each { k, v ->
-        if (!new File(v).exists()) {
-            println "WARNING: Cannot load in-place plugin from ${v} as that " +
-                    "directory does not exist."
+        // support for static code analysis - see codenarc.reports property below
+        compile ":codenarc:0.21"
+
+        if (!dm) {
+            compile ':rdc-rmodules:1.2.2-SNAPSHOT'
+            runtime ':transmart-core:1.2.2-SNAPSHOT'
+            compile ':transmart-gwas:1.2.2-SNAPSHOT'
+            //// already included in transmart-gwas
+            //compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
+            //// already included in transmart-gwas
+            //compile ':folder-management:1.2.2-SNAPSHOT'
+            //// already included in transmart-gwas, folder-management
+            //compile ':search-domain:1.2.2-SNAPSHOT'
+            //// already included in search-domain, transmart-gwas,
+            //                       folder-management
+            //compile ':biomart-domain:1.2.2-SNAPSHOT'
+            //// already included in biomart-domain
+            //compile ':transmart-java:1.2.2-SNAPSHOT'
+            runtime ':dalliance-plugin:0.2-SNAPSHOT'
+            runtime ':transmart-mydas:0.1-SNAPSHOT'
+            runtime ':transmart-rest-api:0.1-SNAPSHOT'
+            runtime ':blend4j-plugin:1.2.2-SNAPSHOT'
+            runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
+
+            test ':transmart-core-db-tests:1.2.2-SNAPSHOT'
         } else {
-            println "Loading in-place plugin $k from $v"
-            grails.plugin.location."$k" = v
+            dm.internalDependencies delegate
         }
-        if (grailsSettings.projectPluginsDir?.exists()) {
-            grailsSettings.projectPluginsDir.eachDirMatch(~/${k}.*/) {dir ->
-                println "WARNING: Found a plugin directory at $dir that is a " +
-                        "possible conflict and may prevent grails from using " +
-                        "the in-place $k plugin."
-            }
-        }
+
+        // Doesn't work with forked tests yet
+        //test ":code-coverage:1.2.6"
     }
 }
+
+dm?.with {
+    configureInternalPlugin 'compile', 'rdc-rmodules'
+    configureInternalPlugin 'runtime', 'transmart-core'
+    configureInternalPlugin 'test', 'transmart-core-db-tests'
+    configureInternalPlugin 'compile', 'transmart-gwas'
+    configureInternalPlugin 'compile', 'transmart-java'
+    configureInternalPlugin 'compile', 'biomart-domain'
+    configureInternalPlugin 'compile', 'search-domain'
+    configureInternalPlugin 'compile', 'folder-management'
+    configureInternalPlugin 'compile', 'transmart-legacy-db'
+    configureInternalPlugin 'runtime', 'dalliance-plugin'
+    configureInternalPlugin 'runtime', 'transmart-mydas'
+    configureInternalPlugin 'runtime', 'transmart-rest-api'
+    configureInternalPlugin 'runtime', 'blend4j-plugin'
+    configureInternalPlugin 'runtime', 'transmart-metacore-plugin'
+}
+
+dm?.inlineInternalDependencies grails, grailsSettings
+
+grails.war.resources = { stagingDir ->
+    delete(file: "${stagingDir}/WEB-INF/lib/servlet-api-${grails.servlet.version}.jar")
+}
+
+// Use new NIO connector in order to support sendfile
+// This is a lovely thought, but with Tomcat running Grails 2.3.6+ NIO does not function in run-war mode
+// Official bug number : GRAILS-11376
+if (!grails.util.Environment.isWarDeployed()) {
+    grails.tomcat.nio = true
+}
+
+codenarc.reports = {
+    TransmartAppReport('html') {
+        outputFile = 'CodeNarc-transmartApp-Report.html'
+        title = 'transmartApp Report'
+    }
+}
+
+// vim: set et ts=4 sw=4:

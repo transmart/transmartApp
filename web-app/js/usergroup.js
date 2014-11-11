@@ -1,23 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
-
 function getSelectedAsCommaSeparatedList(ob)
  {
  var selected = new Array();
@@ -102,15 +82,20 @@ function getSelectedAsCommaSeparatedList(ob)
         //renderTo: 'search',
         itemSelector: 'div.search-item',
         onSelect: function(record){ // override default onSelect to do redirect
-         	//alert(record.data.uid);
              var sp=Ext.get("searchUsers");
              sp.dom.value=record.data.name;
              var h=Ext.get("currentprincipalid");
              h.dom.value=record.data.uid;
-             //alert(h.dom.value);
              search.collapse();
-             new Ajax.Updater({success:'permissions'}, pageInfo.basePath+'/secureObjectAccess/listAccessForPrincipal/'+record.data.uid,{asynchronous:true,evalScripts:true,parameters:$('searchtext').serialize()});
-             //compareSubsets();
+            jQuery.ajax({
+                url:          pageInfo.basePath + '/secureObjectAccess/listAccessForPrincipal',
+                asynchronous: true,
+                data: Recom.rc.serializeFormElements.call($('#accessform'),
+                        ['searchtext', 'currentprincipalid', 'accesslevelid']),
+                success: function (returnedData) {
+                    jQuery('#permissions').html(returnedData);
+                }
+            });
         }
     });
     search.on('focus', function(){
@@ -176,7 +161,14 @@ function getSelectedAsCommaSeparatedList(ob)
              h.dom.value=record.data.uid;
              //alert(h.dom.value);
              search.collapse();
-             new Ajax.Updater({success:'groups'}, pageInfo.basePath+'/userGroup/searchGroupsWithoutUser/'+record.data.uid,{asynchronous:true,evalScripts:true,parameters:$('searchtext').serialize()});
+             jQuery.ajax(	{	
+		 			url:pageInfo.basePath+'/userGroup/searchGroupsWithoutUser/'+record.data.uid,
+		 			asynchronous:true,
+	 				data:{searchtext:jQuery('#searchtext').val()},
+	 				success: function( returnedData ) {
+	 					jQuery( '#groups' ).html( returnedData );
+	 					}
+	 				});             
              //compareSubsets();
         }
     });
@@ -281,17 +273,6 @@ Ext.extend(Recom.rc.ComboBox, Ext.form.ComboBox, {
 		}
     });
 
-var originalRefresh=Ext.DataView.prototype.refresh;
-Ext.override(Ext.DataView, {
-
-	refresh: function(){
-	originalRefresh.call(this, arguments);
-	this.fireEvent("refresh", this);
-	}
-
-});
-
-
 function doHighlight(rootelement, searchTerm, highlightStartTag, highlightEndTag)
 {
 	var elements=Ext.query(".dohighlight");
@@ -312,3 +293,27 @@ function highlightTextNodes(element, searchTerm) {
 	  element.innerHTML =a;
 	}
 
+Recom.rc.serializeFormElements = function(elements, form /* jquery el or undef */) {
+    if (!form) {
+        form = jQuery(this).closest('form')
+        if (!form.length) {
+            // if form is not set, search in the whole document
+            form = jQuery(window.document);
+        }
+    }
+    var data = {};
+    elements.forEach(function(id) {
+        var jQueryEl = form.find('#' + id);
+        if (!jQueryEl.length) {
+            form = form.find('[name=' +  id + ']')
+            if (!jQueryEl.length) {
+                console.error('Could not find element with id or name \'' +
+                        id + '\' in form ' + form);
+            }
+        }
+
+        data[id] = jQueryEl.val();
+    })
+
+    return jQuery.param(data, true);
+}

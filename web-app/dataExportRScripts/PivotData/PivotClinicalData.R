@@ -32,8 +32,9 @@ input.dataFile, snpDataExists, multipleStudies, study
   print(snpDataExists)
   
 	#Read the input file.
+	# === for ABIRISK === WG, SE & VS @ eTRIKS_WP4_UL
 	dataFile <- data.frame(read.delim(input.dataFile))
-	
+
 	#Split the data by the CONCEPT_PATH.
 	splitData <- split(dataFile,dataFile$CONCEPT.PATH)
   foo <- unique(dataFile[c("PATIENT.ID")])
