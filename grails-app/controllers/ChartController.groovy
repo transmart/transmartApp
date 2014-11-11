@@ -257,7 +257,7 @@ class ChartController {
 
         String analysis_key = i2b2HelperService.getConceptKeyForAnalysis(concept_key);
         PrintWriter pw = new PrintWriter(response.getOutputStream());
-        pw.write("<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body><div class='analysis'>");
+        pw.write("<html><head><link rel='stylesheet' type='text/css' href='${resource(dir: 'css', file: 'chartservlet.css')}'></head><body><div class='analysis'>");
         //renderConceptAnalysis(analysis_key, result_instance_id1, result_instance_id2, pw, request);
         log.debug("in analysis controller about to run render concept: " + analysis_key + " result_instance_id1:" + result_instance_id1);
 
@@ -321,7 +321,7 @@ class ChartController {
         log.trace("s2:" + s2)
         PrintWriter pw = new PrintWriter(response.getOutputStream());
 
-        pw.write("<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body><div class='analysis'>");
+        pw.write("<html><head><link rel='stylesheet' type='text/css' href='${resource(dir: 'css', file: 'chartservlet.css')}'></head><body><div class='analysis'>");
         pw.write("<table width='100%'>");
         pw.write("<tr><td colspan='2' align='center'><div class='analysistitle' id='analysis_title'>Summary " +
                 "Statistics</div></td></tr>");
