@@ -20,7 +20,7 @@
 <g:if test="${debug}">
     <div id="search-explain" class="overlay">
         <b>Search Explainer</b>
-        <tt id="searchlog">&nbsp;</tt>
+        <span style="font-family:'Lucida Console', monospace" id="searchlog">&nbsp;</span>
     </div>
 </g:if>
 

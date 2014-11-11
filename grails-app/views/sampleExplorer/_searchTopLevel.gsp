@@ -2,7 +2,7 @@
     <br/>
     <br/>
     <br/>
-    <font style="font: 18px tahoma,verdana,helvetica;color:#800080;font-weight:bold;">Select a primary search filter</font>
+    <span style="font: 18px tahoma,verdana,helvetica;color:#800080;font-weight:bold;">Select a primary search filter</span>
     <hr style="width:30%;margin-left: auto;margin-right: auto;"/>
     <br/>
     <br/>
@@ -10,7 +10,7 @@
     <table style="margin-left: auto;margin-right: auto;width:75%; display:none;">
         <tr>
             <td style="height:15px;vertical-align:middle;">
-                <font style="font-size:150%">Search For Filter</font>
+                <span style="font-size:150%">Search For Filter</span>
             </td>
         </tr>
         <tr>
@@ -37,7 +37,7 @@
     <br/>
 
     <div style="margin-left: auto;margin-right: auto;width:75%;text-align:left;">
-        <font style="font-size:150%">Browse for filter</font>
+        <span style="font-size:150%">Browse for filter</span>
     </div>
 
     <br/>

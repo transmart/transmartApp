@@ -495,7 +495,7 @@ Ext.onReady(function () {
                 layout: 'fit',
                 listeners: {
                     activate: function (p) {
-                        if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysis_title')) {
+                        if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysisGridPanel')) {
                             runAllQueries(getSummaryGridData, p);
                             activateTab();
                             onWindowResize();
@@ -2568,7 +2568,6 @@ function getNodeForAnalysis(node) {
     else {
 		return node
 	}
-	;
 	// must be a concept folder so return me
 }
 

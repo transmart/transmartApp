@@ -22,18 +22,11 @@ ul.dynatree-container ul
 
 ul.dynatree-container li
 {
-	list-style-image: none;
-	list-style-position: outside;
-	list-style-type: none;
-	-moz-background-clip:border;
-	-moz-background-inline-policy: continuous;
+    list-style: none outside none;
+    -moz-background-clip:border-box;
 	-moz-background-origin: padding;
-	background-attachment: scroll;
-	background-color: transparent;
-	background-repeat: repeat-y;
-	background-image: url("vline.gif");
-	background-position: 0 0;
-	margin: 0;
+    background: transparent url("vline.gif") repeat-y scroll 0 0;
+    margin: 0;
 	padding: 1px 0 0 0;
 }
 /* Suppress lines for last child node */

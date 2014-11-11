@@ -1,5 +1,5 @@
 <%@ page language="java" import="java.util.*" %>
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
     <!-- Force Internet Explorer 8 to override compatibility mode -->

@@ -401,7 +401,7 @@ public class PEDFormat {
 
         while (rs.next()) {
             // extract CLOB instead of String
-            Clob cl = (Clob) rs.getClob(2);
+            Clob cl = rs.getClob(2);
             String snpVal = cl.getSubString(1, (int) cl.length());
             //ht.put(rs.getString(1), rs.getString(2));
             ht.put(rs.getString(1), snpVal);

@@ -20,7 +20,7 @@
     <g:each in="${experiments.entrySet()}" status="ti" var="experimentresult">
         <div class="${(ti % 2) == 0 ? 'result-trial-odd' : 'result-trial-even'}"
              id="TrialDet_${experimentresult.key.id}_anchor">
-            <table class="folderheader" name="${experimentresult.key.id}">
+            <table class="folderheader" id="${experimentresult.key.id}">
                 <tr>
                     <td class="foldertitle">
                         <a href="#"
@@ -51,7 +51,7 @@
                 </a>
             </span>
 
-            <div id="${experimentresult.key.id}_detail" name="${experimentresult.key.id}" class="detailexpand"></div>
+            <div id="${experimentresult.key.id}_detail" class="detailexpand"></div>
         </div>
     </g:each>
 </div>

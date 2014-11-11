@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <table id="subsets" style="width:100%;" class="detail">
     <thead>
     <tr>
