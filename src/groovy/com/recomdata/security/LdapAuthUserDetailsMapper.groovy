@@ -36,7 +36,7 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
 
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
 
-        username = username.toLowerCase()
+        username = username.replaceAll(/[^0-9A-Za-z]*/, "").toLowerCase()
         logger.debug("Mapping user details from context and databse with username: " + username);
 
         def roles

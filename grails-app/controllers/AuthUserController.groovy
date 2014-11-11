@@ -105,18 +105,41 @@ class AuthUserController {
     }
 
     private saveOrUpdate() {
+
         boolean create = params.id == null
-        AuthUser person = create ? new AuthUser() :
-                AuthUser.load(params.id as Long)
+        AuthUser person = create ? new AuthUser() : AuthUser.load(params.id as Long)
 
-        bindData person, params, [
-                include: [
-                        'enabled', 'username', 'userRealName', 'email',
-                        'description', 'emailShow', 'authorities']]
+        bindData person, params, [ include: [
+            'enabled', 'username', 'userRealName', 'email',
+            'description', 'emailShow', 'authorities'
+        ]]
 
-        if (params.passwd) {
-            person.passwd = springSecurityService.encodePassword(params.passwd)
+        // We have to make that check at the user creation since the RModules check over this.
+        // It could mess up with the security at archive retrieval.
+        // This is bad, but we have no choice at this point.
+        if (!(person.username ==~ /^[0-9A-Za-z-]+$/)) {
+            flash.message = 'Username can only contain alphanumerical charaters and hyphens (Sorry)'
+            return render(view: create ? 'create' : 'edit', model: buildPersonModel(person))
         }
+
+        if (params.passwd && !params.passwd.isEmpty() && !params.passwd.equals(person.getPersistentValue("passwd"))) {
+
+            def passwordStrength = grailsApplication.config.com.recomdata.passwordstrength ?: null
+            def strengthPattern = passwordStrength?.pattern ?: null
+            def strengthDescription = passwordStrength?.description ?: null
+
+
+            if (strengthPattern != null && !strengthPattern.matcher(params.passwd).matches()) {
+                flash.message = 'Password does not match complexity criteria. ' + (strengthDescription ?: "")
+                return render(view: create ? 'create' : 'edit', model: buildPersonModel(person))
+            }
+
+            person.passwd = springSecurityService.encodePassword(params.passwd)
+        } else  {
+            flash.message = 'Password must be provided';
+            return render(view: create ? 'create' : 'edit', model: buildPersonModel(person))
+        }
+
         person.name = person.userRealName
 
         /* the auditing should probably be done in the beforeUpdate() callback,
@@ -147,9 +170,8 @@ class AuthUserController {
                 redirect action: "show", id: person.id
             } else {
                 tx.setRollbackOnly()
-                flash.message = 'Cannot save user'
-                render view: create ? 'create' : 'edit',
-                        model: [authorityList: Role.list(), person: person]
+                flash.message = 'An error occured, cannot save user'
+                render view: create ? 'create' : 'edit', model: [authorityList: Role.list(), person: person]
             }
         }
     }
@@ -187,6 +209,6 @@ class AuthUserController {
         for (role in roles) {
             roleMap[(role)] = userRoleNames.contains(role.authority)
         }
-        return [person: person, roleMap: roleMap]
+        return [person: person, roleMap: roleMap, authorityList: Role.list()]
     }
 }
