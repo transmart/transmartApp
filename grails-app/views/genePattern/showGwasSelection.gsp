@@ -1,4 +1,4 @@
-<p><font color='red'>${warningMsg}</font></p>
+<p><span style="color: red; ">${warningMsg}</span></p>
 <table class="searchform">
     <tr><td style='white-space: nowrap'>SNP Datasets in Subset 1:</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>${snpDatasetNum_1}</td>
     </tr>

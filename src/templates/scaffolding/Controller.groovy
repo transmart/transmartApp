@@ -6,7 +6,7 @@ class $ {
 
 Controller {
 
-    def index = { redirect(action: list, params: params) }
+    def index = { redirect(action: "list", params: params) }
 
     // the delete, save and update actions only accept POST requests
     static allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
@@ -22,7 +22,7 @@ Controller {
 
         if (!$ { propertyName }) {
             flash.message = "${className} not found with id \${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [$ { propertyName }: $ { propertyName }]
         }
@@ -35,15 +35,15 @@ Controller {
             try {
                 $ { propertyName }.delete()
                 flash.message = "${className} \${params.id} deleted"
-                redirect(action: list)
+                redirect(action: "list")
             }
             catch (org.springframework.dao.DataIntegrityViolationException e) {
                 flash.message = "${className} \${params.id} could not be deleted"
-                redirect(action: show, id: params.id)
+                redirect(action: "show", id: params.id)
             }
         } else {
             flash.message = "${className} not found with id \${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         }
     }
 
@@ -53,7 +53,7 @@ Controller {
 
         if (!$ { propertyName }) {
             flash.message = "${className} not found with id \${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [$ { propertyName }: $ { propertyName }]
         }
@@ -78,13 +78,13 @@ Controller {
             $ { propertyName }.properties = params
             if (!$ { propertyName }.hasErrors() && $ { propertyName }.save()) {
                 flash.message = "${className} \${params.id} updated"
-                redirect(action: show, id: $ { propertyName }.id)
+                redirect(action: "show", id: $ { propertyName }.id)
             } else {
                 render(view: 'edit', model: [$ { propertyName }: $ { propertyName }])
             }
         } else {
             flash.message = "${className} not found with id \${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -100,7 +100,7 @@ Controller {
         { propertyName } = new $ { className }(params)
         if (!$ { propertyName }.hasErrors() && $ { propertyName }.save()) {
             flash.message = "${className} \${${propertyName}.id} created"
-            redirect(action: show, id: $ { propertyName }.id)
+            redirect(action: "show", id: $ { propertyName }.id)
         } else {
             render(view: 'create', model: [$ { propertyName }: $ { propertyName }])
         }

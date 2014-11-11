@@ -1,5 +1,5 @@
 /* Because we're working on IE8 */
-* { opacity: inherit; filter: inherit; }
+* { filter: inherit; }
 
 .uploadTable > tbody > tr > td {
 	padding: 8px;
@@ -195,7 +195,7 @@ tr.borderbottom td {
 
 #title-upload-target {
     height: 25px;
-    overflow: hide;
+    overflow: hidden;
     width: 299px;
 }
 

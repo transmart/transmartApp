@@ -7,7 +7,6 @@
     <!-- override main.css -->
     <style type="text/css">
     .detail td a {
-        background: '';
         padding-left: 10px;
         vertical-align: top;
     }

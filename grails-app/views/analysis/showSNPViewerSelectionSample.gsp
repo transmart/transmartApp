@@ -1,6 +1,6 @@
-<p><font color='red'>
+<p><span style="color: red; ">
     ${warningMsg}
-</font></p>
+</span></p>
 <table class="searchform">
 
     <g:each in="${snpDatasets}" status="i" var="snpSubset">

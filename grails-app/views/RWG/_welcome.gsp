@@ -1,6 +1,6 @@
-<center>
+<div>
     <div class="welcome"
-         style="margin: 40px; background: #F4F4F4; border: 1px solid #DDD; padding: 20px; width: 400px; text-align: center; border-top-left-radius: 20px; border-bottom-right-radius: 20px">
+         style="margin: 40px auto; background: #F4F4F4; border: 1px solid #DDD; padding: 20px; width: 400px; text-align: center; border-top-left-radius: 20px; border-bottom-right-radius: 20px">
         <g:set var="projectName" value="${grailsApplication.config?.com?.recomdata?.projectName}"/>
         <g:set var="providerName" value="${grailsApplication.config?.com?.recomdata?.providerName}"/>
         <p><b>Welcome to tranSMART <g:if test="${projectName}">for ${projectName}</g:if></b></p>
@@ -44,4 +44,4 @@
     </sec:ifAnyGranted>
 
     <br/><br/>
-</center>
+</div>

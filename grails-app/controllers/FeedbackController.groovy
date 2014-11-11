@@ -2,7 +2,7 @@ import org.transmart.searchapp.Feedback
 
 class FeedbackController {
 
-    def index = { redirect(action: list, params: params) }
+    def index = { redirect(action: "list", params: params) }
 
     // the delete, save and update actions only accept POST requests
     static allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
@@ -17,7 +17,7 @@ class FeedbackController {
 
         if (!feedback) {
             flash.message = "Feedback not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [feedback: feedback]
         }
@@ -28,10 +28,10 @@ class FeedbackController {
         if (feedback) {
             feedback.delete()
             flash.message = "Feedback ${params.id} deleted"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             flash.message = "Feedback not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         }
     }
 
@@ -40,7 +40,7 @@ class FeedbackController {
 
         if (!feedback) {
             flash.message = "Feedback not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [feedback: feedback]
         }
@@ -52,13 +52,13 @@ class FeedbackController {
             feedback.properties = params
             if (!feedback.hasErrors() && feedback.save()) {
                 flash.message = "Feedback ${params.id} updated"
-                redirect(action: show, id: feedback.id)
+                redirect(action: "show", id: feedback.id)
             } else {
                 render(view: 'edit', model: [feedback: feedback])
             }
         } else {
             flash.message = "Feedback not found with id ${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -72,7 +72,7 @@ class FeedbackController {
         def feedback = new Feedback(params)
         if (!feedback.hasErrors() && feedback.save()) {
             flash.message = "Feedback ${feedback.id} created"
-            redirect(action: show, id: feedback.id)
+            redirect(action: "show", id: feedback.id)
         } else {
             render(view: 'create', model: [feedback: feedback])
         }

@@ -75,7 +75,7 @@ public class SearchHelpController {
     }
 
     def listAllTrials = {
-        def all = SearchKeyword.executeQuery("SELECT s, e FROM SearchKeyword s, bio.Experiment e WHERE s.dataCategory='TRIAL' AND s.bioDataId=e.id ORDER BY s.keyword")
+        def all = SearchKeyword.executeQuery("SELECT s, e FROM SearchKeyword s, Experiment e WHERE s.dataCategory='TRIAL' AND s.bioDataId=e.id ORDER BY s.keyword")
         render(view: 'trialhelp', model: [trials: all])
     }
 
@@ -88,7 +88,7 @@ public class SearchHelpController {
     }
 
     def listAllCompounds = {
-        def all = SearchKeyword.executeQuery("SELECT s, c FROM SearchKeyword s, bio.Compound c WHERE s.dataCategory='COMPOUND' AND s.bioDataId=c.id ORDER BY s.keyword")
+        def all = SearchKeyword.executeQuery("SELECT s, c FROM SearchKeyword s, Compound c WHERE s.dataCategory='COMPOUND' AND s.bioDataId=c.id ORDER BY s.keyword")
         render(view: 'compoundhelp', model: [compounds: all])
     }
 

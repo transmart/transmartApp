@@ -35,6 +35,24 @@
     </div>
 </div>
 
+<div class='navbarBox'>
+    <div class="navcontainer1">
+        <h1 class="panelHeader">
+            Users
+        </h1>
+        <ul class="navlist">
+            <li>
+                <span class="adminMenuButton"><g:link class="list" controller="authUser"
+                                                      action="list">User List</g:link></span>
+            </li>
+            <li>
+                <span class="adminMenuButton"><g:link class="create" controller="authUser"
+                                                      action="create">Create User</g:link></span>
+            </li>
+        </ul>
+    </div>
+</div>
+
 <g:if test="${!!grailsApplication.getControllerClass('blend4j.plugin.GalaxyUserDetailsController')}">
     <g:if test="${grailsApplication.config.com.galaxy.blend4j.galaxyEnabled}">
         <div class="navbarBox">
@@ -56,24 +74,6 @@
         </div>
     </g:if>
 </g:if>
-
-<div class='navbarBox'>
-    <div class="navcontainer1">
-        <h1 class="panelHeader">
-            Users
-        </h1>
-        <ul class="navlist">
-            <li>
-                <span class="adminMenuButton"><g:link class="list" controller="authUser"
-                                                      action="list">User List</g:link></span>
-            </li>
-            <li>
-                <span class="adminMenuButton"><g:link class="create" controller="authUser"
-                                                      action="create">Create User</g:link></span>
-            </li>
-        </ul>
-    </div>
-</div>
 
 <div class='navbarBox'>
     <div class="navcontainer1">

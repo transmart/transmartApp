@@ -231,7 +231,7 @@ public class XmlHttpProxy {
             Iterator it = params.keySet().iterator();
             while (it.hasNext()) {
                 String key = (String) it.next();
-                transformer.setParameter(key, (String) params.get(key));
+                transformer.setParameter(key, params.get(key));
             }
             transformer.setOutputProperty("encoding", encoding);
             transformer.transform(new StreamSource(xmlIS), new StreamResult(result));

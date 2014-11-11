@@ -2,7 +2,7 @@ import org.transmart.searchapp.SecureObjectPath;
 
 class SecureObjectPathController {
 
-    def index = { redirect(action: list, params: params) }
+    def index = { redirect(action: "list", params: params) }
 
     // the delete, save and update actions only accept POST requests
     static allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
@@ -17,7 +17,7 @@ class SecureObjectPathController {
 
         if (!secureObjectPathInstance) {
             flash.message = "SecureObjectPath not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [secureObjectPathInstance: secureObjectPathInstance]
         }
@@ -29,15 +29,15 @@ class SecureObjectPathController {
             try {
                 secureObjectPathInstance.delete()
                 flash.message = "SecureObjectPath ${params.id} deleted"
-                redirect(action: list)
+                redirect(action: "list")
             }
             catch (org.springframework.dao.DataIntegrityViolationException e) {
                 flash.message = "SecureObjectPath ${params.id} could not be deleted"
-                redirect(action: show, id: params.id)
+                redirect(action: "show", id: params.id)
             }
         } else {
             flash.message = "SecureObjectPath not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         }
     }
 
@@ -46,7 +46,7 @@ class SecureObjectPathController {
 
         if (!secureObjectPathInstance) {
             flash.message = "SecureObjectPath not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [secureObjectPathInstance: secureObjectPathInstance]
         }
@@ -67,13 +67,13 @@ class SecureObjectPathController {
             secureObjectPathInstance.properties = params
             if (!secureObjectPathInstance.hasErrors() && secureObjectPathInstance.save()) {
                 flash.message = "SecureObjectPath ${params.id} updated"
-                redirect(action: show, id: secureObjectPathInstance.id)
+                redirect(action: "show", id: secureObjectPathInstance.id)
             } else {
                 render(view: 'edit', model: [secureObjectPathInstance: secureObjectPathInstance])
             }
         } else {
             flash.message = "SecureObjectPath not found with id ${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -87,7 +87,7 @@ class SecureObjectPathController {
         def secureObjectPathInstance = new SecureObjectPath(params)
         if (!secureObjectPathInstance.hasErrors() && secureObjectPathInstance.save()) {
             flash.message = "SecureObjectPath ${secureObjectPathInstance.id} created"
-            redirect(action: show, id: secureObjectPathInstance.id)
+            redirect(action: "show", id: secureObjectPathInstance.id)
         } else {
             render(view: 'create', model: [secureObjectPathInstance: secureObjectPathInstance])
         }

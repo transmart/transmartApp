@@ -1,6 +1,7 @@
 import annotation.AmTagItem
 import fm.FmFolderAssociation
 import grails.converters.JSON
+import i2b2.OntNode
 import org.transmart.biomart.Experiment
 import org.transmart.searchapp.AuthUser
 
@@ -71,8 +72,7 @@ class OntologyController {
 
     def showConceptDefinition =
             {
-                def conceptPath = i2b2HelperService.keyToPath(params.conceptKey);
-                def node = i2b2.OntNode.get(conceptPath);
+                def node = OntNode.get(params.conceptKey);
 
                 //Disabled check for trial - show all study metadata in the same way as the Browse view
                 //def testtag=new i2b2.OntNodeTag(tag:'test', tagtype:'testtype');

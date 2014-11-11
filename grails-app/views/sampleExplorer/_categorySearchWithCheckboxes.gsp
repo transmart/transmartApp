@@ -3,7 +3,7 @@
     <br/>
     <br/>
 
-    <font style="font: 14px tahoma,verdana,helvetica;color:#800080;font-weight:bold;">Search Filters</font>
+    <span style="font: 14px tahoma,verdana,helvetica;color:#800080;font-weight:bold;">Search Filters</span>
 
     <br/>
     <br/>

@@ -132,6 +132,13 @@ class BootStrap {
             c.RModules.port = 6311
             logger.info("RModules.port fixed to default")
         }
+
+        // Making sure we have default timeout and heartbeat values
+        // At this point we assume c.recomdata exists
+        if (!c.com.recomdata.containsKey("sessionTimeout"))
+            c.com.recomdata.sessionTimeout = 300
+        if (!c.com.recomdata.containsKey("heartbeatLaps"))
+            c.com.recomdata.heartbeatLaps = 30
     }
 
 
