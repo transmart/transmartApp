@@ -1,4 +1,4 @@
-<div>
+<div style="text-align: center;">
     <div class="welcome"
          style="margin: 40px auto; background: #F4F4F4; border: 1px solid #DDD; padding: 20px; width: 400px; text-align: center; border-top-left-radius: 20px; border-bottom-right-radius: 20px">
         <g:set var="projectName" value="${grailsApplication.config?.com?.recomdata?.projectName}"/>
@@ -37,7 +37,7 @@
 
 
     <sec:ifAnyGranted roles="ROLE_ADMIN">
-        <div style="padding: 0px 16px 16px 16px; border-radius: 8px; border: 1px solid #DDD; width: 20%">
+        <div style="margin: auto; padding: 0px 16px 16px 16px; border-radius: 8px; border: 1px solid #DDD; width: 20%">
             <h4>Admin Tools</h4>
             <span class="greybutton buttonicon addprogram">Add new program</span>
         </div>
