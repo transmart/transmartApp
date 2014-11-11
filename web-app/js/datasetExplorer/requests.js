@@ -253,7 +253,7 @@ function getCRCRequestItem(el){
                         <item_key>'+el.getAttribute("conceptid").replace("<", "&lt;").replace(">", "&gt;")+'</item_key>\
                         <tooltip>'+el.getAttribute("concepttooltip").replace("<", "&lt;").replace(">", "&gt;")+'</tooltip>\
                         <class>ENC</class>';
-                    
+
       if(el.getAttribute("setvaluemode")=='numeric')
       	{
             item=item+'<constrain_by_value>\
