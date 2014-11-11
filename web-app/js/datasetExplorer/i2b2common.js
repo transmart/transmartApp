@@ -2091,26 +2091,9 @@ if(access!=undefined)
   		   }
 }
 
-
-
-function getValue(node, defaultvalue)
-{
- 	var result=defaultvalue;
-	if(node!=null && node!=undefined)
-		{
-		if(node.firstChild!=null && node.firstChild!=undefined)
-			{
-			result=node.firstChild.nodeValue;
-			}
-	}
-return result;
-}
-
-
 function showInfo(url) {
 	showInfoInner(url, 600, 500);
 }
-
 
 function showInfoInner(url, w, h)
 {

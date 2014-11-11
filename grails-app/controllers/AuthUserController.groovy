@@ -16,7 +16,7 @@ class AuthUserController {
     static Map allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
 
     def index = {
-        redirect action: list, params: params
+        redirect action: "list", params: params
     }
 
     def list = {
@@ -33,7 +33,7 @@ class AuthUserController {
         def person = AuthUser.get(params.id)
         if (!person) {
             flash.message = "AuthUser not found with id $params.id"
-            redirect action: list
+            redirect action: "list"
             return
         }
         List roleNames = []
@@ -79,14 +79,14 @@ class AuthUserController {
         } else {
             flash.message = "User not found with id $params.id"
         }
-        redirect action: list
+        redirect action: "list"
     }
 
     def edit = {
         def person = AuthUser.get(params.id)
         if (!person) {
             flash.message = "AuthUser not found with id $params.id"
-            redirect action: list
+            redirect action: "list"
             return
         }
         return buildPersonModel(person)
@@ -144,7 +144,7 @@ class AuthUserController {
                         event: "User ${create ? 'Created' : 'Updated'}",
                         eventmessage: msg.toString(),
                         accesstime: new Date()).save()
-                redirect action: show, id: person.id
+                redirect action: "show", id: person.id
             } else {
                 tx.setRollbackOnly()
                 flash.message = 'Cannot save user'
@@ -157,7 +157,9 @@ class AuthUserController {
     /* the owning side of the many-to-many are the roles */
 
     private void manageRoles(AuthUser person) {
-        def oldRoles = person.authorities ?: Collections.emptySet()
+        def oldRoles = person.authorities.collect {
+            Role.findByAuthority(it.authority)
+        } ?: Collections.emptySet()
         def newRoles = params.findAll { String key, String value ->
             key.contains('ROLE') && value == 'on'
         }.collect {

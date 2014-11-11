@@ -247,7 +247,7 @@ table.menuDetail th.menuVisited {
 
 #title-filter{
   height:25px;
-  overflow: hide;  
+  overflow: hidden;
 }
 
 .title, #navigateTermsPanel .x-panel-header-text{
@@ -292,7 +292,7 @@ table.menuDetail th.menuVisited {
 .greybutton.deletefolder { background-image: url('../images/bin_closed.png'); }
 
 .greybutton.disabled {
-	cursor: normal;
+	cursor: default;
 	color: #AAA;
 }
 

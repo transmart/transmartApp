@@ -7,9 +7,11 @@
                 <span class='AnalysisHeader'>Result</span>
             </td>
         </tr>
-        <td colspan="2">
-            <hr/>
-        </td>
+        <tr>
+            <td colspan="2">
+                <hr/>
+            </td>
+        </tr>
         <tr>
             <td align="center">
                 <div class="buttons">

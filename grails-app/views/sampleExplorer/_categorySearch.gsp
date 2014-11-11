@@ -1,7 +1,7 @@
 <div style="background-color:white;height:100%;width:100%;">
     <br/>
     <br/>
-    <font style="font: 12px tahoma,verdana,helvetica;color:#800080;font-weight:bold;">Recent Updates (click update for more info)</font>
+    <span style="font: 12px tahoma,verdana,helvetica;color:#800080;font-weight:bold;">Recent Updates (click update for more info)</span>
     <br/>
     <hr/>
     <br/>

@@ -16,7 +16,7 @@ class RoleController {
     def springSecurityService
 
     def index = {
-        redirect action: list, params: params
+        redirect action: "list", params: params
     }
 
     /**
@@ -36,7 +36,7 @@ class RoleController {
         def authority = Role.get(params.id)
         if (!authority) {
             flash.message = "Role not found with id $params.id"
-            redirect action: list
+            redirect action: "list"
             return
         }
 
@@ -50,14 +50,14 @@ class RoleController {
         def authority = Role.get(params.id)
         if (!authority) {
             flash.message = "Role not found with id $params.id"
-            redirect action: list
+            redirect action: "list"
             return
         }
 
         springSecurityService.deleteRole(authority)
 
         flash.message = "Role $params.id deleted."
-        redirect action: list
+        redirect action: "list"
     }
 
     /**
@@ -67,7 +67,7 @@ class RoleController {
         def authority = Role.get(params.id)
         if (!authority) {
             flash.message = "Role not found with id $params.id"
-            redirect action: list
+            redirect action: "list"
             return
         }
 
@@ -82,7 +82,7 @@ class RoleController {
         def authority = Role.get(params.id)
         if (!authority) {
             flash.message = "Role not found with id $params.id"
-            redirect action: edit, id: params.id
+            redirect action: "edit", id: params.id
             return
         }
 
@@ -96,7 +96,7 @@ class RoleController {
 
         if (springSecurityService.updateRole(authority, params)) {
             springSecurityService.clearCachedRequestmaps()
-            redirect action: show, id: authority.id
+            redirect action: "show", id: authority.id
         } else {
             render view: 'edit', model: [authority: authority]
         }
@@ -133,7 +133,7 @@ class RoleController {
         }
 
         if (role.save()) {
-            redirect action: show, id: role.id
+            redirect action: "show", id: role.id
         } else {
             render view: 'create', model: [authority: role]
         }

@@ -495,7 +495,7 @@ Ext.onReady(function () {
                 layout: 'fit',
                 listeners: {
                     activate: function (p) {
-                        if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysis_title')) {
+                        if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysisGridPanel')) {
                             runAllQueries(getSummaryGridData, p);
                             activateTab();
                             onWindowResize();
@@ -1841,83 +1841,75 @@ function setupDragAndDrop() {
 	}
 }
 
+function getValue(node, defaultvalue)
+{
+    var result = defaultvalue;
+    if (node.size() > 0)
+        result = node.first().html()
+    return result;
+}
+
 function getPreviousQueryFromIDComplete(subset, result) {
     if (result.status != 200) {
         queryPanel.el.unmask();
         return;
     }
 
-    var doc = result.responseXML;
-
+    GLOBAL['florian'] = result.responseText;
     //resetQuery();  //if i do this now it wipes out the other subset i just loaded need to make it subset specific
 
-    var panels = doc.selectNodes("//panel");
+    jQuery(GLOBAL['florian']).find("panel").each(function (pi, pe) {
 
-    panel:
-    for (var p = 0; p < panels.length; p++) {
-            var panelnumber = p + 1
+        showCriteriaGroup(++pi);
 
-        showCriteriaGroup(panelnumber); //in case its hidden;
-        var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + panelnumber);
-        var invert = panels[p].selectSingleNode("invert").firstChild.nodeValue;
-        if (invert == "1") {
-            excludeGroup(null, subset, panelnumber);
-        } //set the invert for the panel
+        if (jQuery(pe).find("invert").first().html() == '1')
+            excludeGroup(null, subset, pi);
 
-        var items = panels[p].selectNodes("item")
-        for (var it = 0; it < items.length; it++) {
-            var item = items[it];
+        jQuery(pe).find("item").each(function (ii, ie) {
 
-            var key = item.selectSingleNode("item_key").firstChild.nodeValue;
+            var key = jQuery(ie).find("item_key").first().html()
 
             if (key == "\\\\Public Studies\\Public Studies\\SECURITY\\")
-                continue panel;
+                return false;
 
-            /*need all this information for reconstruction but not all is available*/
-            var valuetype = getValue(item.selectSingleNode("constrain_by_value/value_type"), "");
-            var mode;
-
-            if (valuetype == "FLAG") {
-                mode = "highlow";
-            }
-            else if (valuetype == "NUMBER") {
-                mode = "numeric";
-            }
-            else {
-                mode == "novalue";
-            }
-
-            var valuenode = item.selectSingleNode("contrain_by_value");
-            var oktousevalues;
-            if (valuenode != null && typeof(valuenode) != undefined) {
+            if (jQuery(ie).find("constrain_by_value").size() <= 0)
                 oktousevalues = "Y";
+
+            var mode
+            switch (getValue(jQuery(ie, "constrain_by_value value_type"), "")) {
+                case "FLAG":
+                    mode = "highlow";
+                    break;
+                case "NUMBER":
+                    mode = "highlow";
+                    break;
+                default:
+                    mode = "novalue";
             }
 
-            var operator = getValue(item.selectSingleNode("constrain_by_value/value_operator"), "");
-            var numvalue = getValue(item.selectSingleNode("constrain_by_value/value_constraint"), "");
-            var lowvalue;
+            var operator = getValue(jQuery(ie, "constrain_by_value value_operator"), "");
+            var numvalue = getValue(jQuery(ie, "constrain_by_value value_constraint"), "");
+            var lowvalue = numvalue;
             var highvalue;
+
             if (operator == "BETWEEN") {
                 lowvalue = numvalue.substring(0, numvalue.indexOf("and"));
                 highvalue = numvalue.substring(numvalue.indexOf("and") + 3);
             }
-            else {
-                lowvalue = numvalue;
-            }
-            var highlowselect = "";
-            if (mode == "highlow") {
-                highlowselect = numvalue;
-            }
 
+            var highlowselect = mode == "highlow" ? numvalue : ""
             var value = new Value(mode, operator, highlowselect, lowvalue, highvalue, '');
+
             /* the panel (probably) only needs the concept key and the
              * constraint, hence we not need to fill the rest of the parameters,
              * which is good because we don't have that information...
              */
-            var myConcept = new Concept('', key, -1, '', '', key, '', '', oktousevalues, value);
-            createPanelItemNew(panel, myConcept);
-        }
-    }
+
+            var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + pi)
+            var concept = new Concept('', key, -1, '', '', key, '', '', oktousevalues, value);
+            createPanelItemNew(panel, concept);
+        })
+    });
 
     queryPanel.el.unmask();
 }
@@ -2267,7 +2259,7 @@ function runAllQueries(callback, panel) {
         if (panel) {
             panel.body.unmask();
 		}
-		Ext.Msg.alert('Subsets are empty xx', 'All subsets are empty xx. Please select subsets.');
+		Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
 	}
 
 	// setup the number of subsets that need running
@@ -2576,7 +2568,6 @@ function getNodeForAnalysis(node) {
     else {
 		return node
 	}
-	;
 	// must be a concept folder so return me
 }
 

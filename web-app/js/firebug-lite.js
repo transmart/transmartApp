@@ -2155,7 +2155,7 @@ var getChromeDivTemplate=function(){return FirebugChrome.Skin.HTML
 };
 var getChromeTemplate=function(isPopup){var tpl=FirebugChrome.Skin;
 var r=[],i=-1;
-r[++i]='<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/DTD/strict.dtd">';
+r[++i]='<!DOCTYPE HTML>';
 r[++i]="<html><head><title>";
 r[++i]=Firebug.version;
 r[++i]="</title><style>html,body{margin:0;padding:0;overflow:hidden;}";

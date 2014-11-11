@@ -13,7 +13,7 @@
         <table class="detail">
             <tr>
             <td><a style="color:blue" href="${resource(dir: 'help', file: 'PublicTrainingTutorials-Basic.pdf')}">Basic Training Guide</a>
-	</td></tr>
+	</td></tr><tr>
         <td><a style="color:blue"
                href="${resource(dir: 'help', file: 'PublicTrainingTutorials-Advanced.pdf')}">Advanced Training Guide</a>
         </td></tr>
@@ -24,7 +24,7 @@
         <table class="detail">
         <tr>
         <td><a style="color:blue" href="${resource(dir: 'help', file: 'TransmartTrainingTutorials-Basic.pdf')}">Transmart Basic Training Guide</a>
-	</td></tr>
+	</td></tr><tr>
         <td><a style="color:blue"
                href="${resource(dir: 'help', file: 'TransmartTrainingTutorials-Advanced.pdf')}">Transmart Advanced Training Guide</a>
         </td></tr>

@@ -8,7 +8,7 @@ class SecureObjectAccessController {
 
 
     def index = {
-        redirect(action: list, params: params)
+        redirect(action: "list", params: params)
     }
 
     // the delete, save and update actions only accept POST requests
@@ -26,7 +26,7 @@ class SecureObjectAccessController {
 
         if (!secureObjectAccessInstance) {
             flash.message = "SecureObjectAccess not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [secureObjectAccessInstance: secureObjectAccessInstance]
         }
@@ -37,10 +37,10 @@ class SecureObjectAccessController {
         if (secureObjectAccessInstance) {
             secureObjectAccessInstance.delete()
             flash.message = "SecureObjectAccess ${params.id} deleted"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             flash.message = "SecureObjectAccess not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         }
     }
 
@@ -49,7 +49,7 @@ class SecureObjectAccessController {
 
         if (!secureObjectAccessInstance) {
             flash.message = "SecureObjectAccess not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [secureObjectAccessInstance: secureObjectAccessInstance]
         }
@@ -61,13 +61,13 @@ class SecureObjectAccessController {
             secureObjectAccessInstance.properties = params
             if (!secureObjectAccessInstance.hasErrors() && secureObjectAccessInstance.save()) {
                 flash.message = "SecureObjectAccess ${params.id} updated"
-                redirect(action: show, id: secureObjectAccessInstance.id)
+                redirect(action: "show", id: secureObjectAccessInstance.id)
             } else {
                 render(view: 'edit', model: [secureObjectAccessInstance: secureObjectAccessInstance])
             }
         } else {
             flash.message = "SecureObjectAccess not found with id ${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -81,7 +81,7 @@ class SecureObjectAccessController {
         def secureObjectAccessInstance = new SecureObjectAccess(params)
         if (!secureObjectAccessInstance.hasErrors() && secureObjectAccessInstance.save()) {
             flash.message = "SecureObjectAccess ${secureObjectAccessInstance.id} created"
-            redirect(action: show, id: secureObjectAccessInstance.id)
+            redirect(action: "show", id: secureObjectAccessInstance.id)
         } else {
             render(view: 'create', model: [secureObjectAccessInstance: secureObjectAccessInstance])
         }

@@ -52,7 +52,7 @@ class GeneSignatureController {
         //log.info "saving Gene Signature access log"
         al.save();
 
-        redirect(action: 'list')
+        redirect(action: "list")
     }
 
     /**
@@ -60,7 +60,7 @@ class GeneSignatureController {
      */
     def refreshSummary = {
         flash.message = null
-        redirect(action: 'list')
+        redirect(action: "list")
     }
 
     /**
@@ -111,7 +111,7 @@ class GeneSignatureController {
         def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: geneSigInst);
         session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
 
-        redirect(action: 'create1')
+        redirect(action: "create1")
     }
 
     /**
@@ -132,7 +132,7 @@ class GeneSignatureController {
         def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: clone, wizardType: WizardModelDetails.WIZ_TYPE_EDIT, editId: geneSigInst.id);
         session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
 
-        redirect(action: 'edit1')
+        redirect(action: "edit1")
     }
 
     /**
@@ -163,7 +163,7 @@ class GeneSignatureController {
         session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
 
         // reset items
-        redirect(action: 'create1')
+        redirect(action: "create1")
     }
 
     /**
@@ -176,7 +176,7 @@ class GeneSignatureController {
         geneSignatureService.makePublic(gsInst, true)
 
         flash.message = "GeneSignature '${gsInst.name}' was made public to everyone"
-        redirect(action: list)
+        redirect(action: "list")
     }
 
     /**
@@ -189,7 +189,7 @@ class GeneSignatureController {
         geneSignatureService.makePublic(gsInst, false)
 
         flash.message = "GeneSignature '${gsInst.name}' was made private"
-        redirect(action: list)
+        redirect(action: "list")
     }
 
     /**
@@ -202,7 +202,7 @@ class GeneSignatureController {
         geneSignatureService.delete(gsInst)
 
         flash.message = "GeneSignature '${gsInst.name}' was marked as deleted"
-        redirect(action: list)
+        redirect(action: "list")
     }
 
     /**
@@ -362,7 +362,7 @@ class GeneSignatureController {
 
             // send message to user
             flash.message = "GeneSignature '${gs.name}' was created on: ${gs.dateCreated}"
-            redirect(action: 'list')
+            redirect(action: "list")
 
         } catch (FileSchemaException fse) {
             flash.message = fse.getMessage()
@@ -432,7 +432,7 @@ class GeneSignatureController {
 
             // send message to user
             flash.message = "GeneSignature '${gsReal.name}' was updated on: ${gsReal.lastUpdated}"
-            redirect(action: 'list')
+            redirect(action: "list")
 
         } catch (FileSchemaException fse) {
             flash.message = fse.getMessage()
@@ -622,9 +622,9 @@ class GeneSignatureController {
                 }
             }
             log.debug " redirect params>> " + newParams
-            redirect(action: showEditItems, params: newParams)
+            redirect(action: "showEditItems", params: newParams)
         } else {
-            redirect(action: showEditItems, params: ["id": gs.id])
+            redirect(action: "showEditItems", params: ["id": gs.id])
         }
     }
 

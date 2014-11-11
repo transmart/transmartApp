@@ -16,7 +16,7 @@ class RequestmapController {
     static Map allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
 
     def index = {
-        redirect action: list, params: params
+        redirect action: "list", params: params
     }
 
     def list = {
@@ -30,7 +30,7 @@ class RequestmapController {
         def requestmap = Requestmap.get(params.id)
         if (!requestmap) {
             flash.message = "Requestmap not found with id $params.id"
-            redirect action: list
+            redirect action: "list"
             return
         }
         [requestmap: requestmap]
@@ -40,7 +40,7 @@ class RequestmapController {
         def requestmap = Requestmap.get(params.id)
         if (!requestmap) {
             flash.message = "Requestmap not found with id $params.id"
-            redirect action: list
+            redirect action: "list"
             return
         }
 
@@ -49,14 +49,14 @@ class RequestmapController {
         springSecurityService.clearCachedRequestmaps()
 
         flash.message = "Requestmap $params.id deleted."
-        redirect(action: list)
+        redirect(action: "list")
     }
 
     def edit = {
         def requestmap = Requestmap.get(params.id)
         if (!requestmap) {
             flash.message = "Requestmap not found with id $params.id"
-            redirect(action: list)
+            redirect(action: "list")
             return
         }
 
@@ -71,7 +71,7 @@ class RequestmapController {
         def requestmap = Requestmap.get(params.id)
         if (!requestmap) {
             flash.message = "Requestmap not found with id $params.id"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
             return
         }
 
@@ -86,7 +86,7 @@ class RequestmapController {
         requestmap.properties = params
         if (requestmap.save()) {
             springSecurityService.clearCachedRequestmaps()
-            redirect action: show, id: requestmap.id
+            redirect action: "show", id: requestmap.id
         } else {
             render view: 'edit', model: [requestmap: requestmap]
         }
@@ -103,7 +103,7 @@ class RequestmapController {
         def requestmap = new Requestmap(params)
         if (requestmap.save()) {
             springSecurityService.clearCachedRequestmaps()
-            redirect action: show, id: requestmap.id
+            redirect action: "show", id: requestmap.id
         } else {
             render view: 'create', model: [requestmap: requestmap]
         }

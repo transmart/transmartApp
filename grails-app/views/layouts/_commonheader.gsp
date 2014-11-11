@@ -1,26 +1,7 @@
-<%--
-  tranSMART - translational medicine data mart
-  
-  Copyright 2008-2012 Janssen Research & Development, LLC.
-  
-  This product includes software developed at Janssen Research & Development, LLC.
-  
-  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
-  as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
-  1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
-  2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
-  
-  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
- 
---%>
-
 <g:if test="${debug}">
     <div id="search-explain" class="overlay">
         <b>Search Explainer</b>
-        <tt id="searchlog">&nbsp;</tt>
+        <span style="font-family:'Lucida Console', monospace" id="searchlog">&nbsp;</span>
     </div>
 </g:if>
 
@@ -30,7 +11,7 @@
         <th class="menuBar" style="width: 150px"><g:if test="${'rwg' == app || 'datasetExplorer' == app}"><select
                 id="search-categories"></select></g:if></th>
         <th class="menuBar" style="width: 190px"><g:if test="${'rwg' == app || 'datasetExplorer' == app}"><input
-                id="search-ac"/></input></g:if></th>
+                id="search-ac"/></g:if></th>
         <th class="menuBar" style="width: 110px">
             <g:if test="${'rwg' == app}">
                 <div id="cartbutton" class="greybutton">
@@ -102,8 +83,11 @@
 <r:require module="session_timeout_nodep"/>
 <r:script>
     jQuery(document).ready(function() {
-		 var logoutURL = "${createLink([controller: 'login', action: 'forceAuth'])}";
-	    var heartbeatURL = "${createLink([controller: 'userLanding', action: 'checkHeartBeat'])}";
-	    addTimeoutDialog(heartbeatURL, logoutURL);
+	    addTimeoutDialog({
+	        sessionTimeout : ${grails.util.Holders.config.com.recomdata.sessionTimeout},
+            heartbeatURL : "${createLink([controller: 'userLanding', action: 'checkHeartBeat'])}",
+	        heartbeatLaps : ${grails.util.Holders.config.com.recomdata.heartbeatLaps},
+            logoutURL : "${createLink([controller: 'login', action: 'forceAuth'])}"
+	    });
    });
 </r:script>

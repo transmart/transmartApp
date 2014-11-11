@@ -32,14 +32,14 @@ class CustomFilterController {
         def customFilterInstance = CustomFilter.get(params.id)
         if (!customFilterInstance) {
             flash.message = "CustomFilter not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else if (!canUpdate(customFilterInstance)) {
             flash.message = "You are not authorized to delete the custom filter with ID ${params.id}."
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             customFilterInstance.delete()
             flash.message = "CustomFilter ${params.id} deleted"
-            redirect(action: list, params: [ts: new Date().getTime()])
+            redirect(action: "list", params: [ts: new Date().getTime()])
         }
     }
 
@@ -48,10 +48,10 @@ class CustomFilterController {
 
         if (!customFilterInstance) {
             flash.message = "CustomFilter not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else if (!canUpdate(customFilterInstance)) {
             flash.message = "You are not authorized to edit the custom filter with ID ${params.id}."
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             def keywordMap = createKeywordMap(customFilterInstance)
             def summary = createSummaryWithLinks(keywordMap)
@@ -68,13 +68,13 @@ class CustomFilterController {
             customFilterInstance.properties = params
             if (!customFilterInstance.hasErrors() && customFilterInstance.save()) {
                 flash.message = "CustomFilter ${params.id} updated"
-                redirect(action: list, params: [ts: new Date().getTime(), lastFilterID: params.id])
+                redirect(action: "list", params: [ts: new Date().getTime(), lastFilterID: params.id])
             } else {
                 render(view: 'edit', model: [customFilterInstance: customFilterInstance])
             }
         } else {
             flash.message = "CustomFilter not found with id ${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -106,7 +106,7 @@ class CustomFilterController {
         }
         if (!filter.hasErrors() && filter.save()) {
             flash.message = "CustomFilter ${filter.id} created"
-            redirect(action: list, params: [ts: new Date().getTime(), lastFilterID: filter.id])
+            redirect(action: "list", params: [ts: new Date().getTime(), lastFilterID: filter.id])
         } else {
             render(view: 'create', model: [customFilterInstance: filter])
         }

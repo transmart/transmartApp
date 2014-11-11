@@ -37,7 +37,7 @@ class LoginController {
         if (springSecurityService.isLoggedIn()) {
             redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
         } else {
-            redirect action: auth, params: params
+            redirect action: "auth", params: params
         }
     }
     def forceAuth = {
@@ -89,7 +89,7 @@ class LoginController {
         if (springSecurityService.isLoggedIn() &&
                 authenticationTrustResolver.isRememberMe(SCH.context?.authentication)) {
             // have cookie but the page is guarded with IS_AUTHENTICATED_FULLY
-            redirect action: full, params: params
+            redirect action: "full", params: params
         }
     }
 
@@ -138,7 +138,7 @@ class LoginController {
             }
         }
         flash.message = msg
-        redirect action: auth, params: params
+        redirect action: "auth", params: params
     }
 
     /** cache controls */

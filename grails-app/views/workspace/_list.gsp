@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <table id="subsets" style="width:100%;" class="detail">
     <thead>
     <tr>
@@ -71,11 +72,11 @@
                 <g:if test="${subset.id == selectedSubsetId}">
                     <input type="radio" id="applySubset${subset.id}" name="applySubset" value="${subset.id}"
                            onclick="applySubsets('${subset.id}', '${subset.study}')" checked="true"
-                           title="Apply Subset"></input>
+                           title="Apply Subset">
                 </g:if>
                 <g:else>
                     <input type="radio" id="applySubset${subset.id}" name="applySubset" value="${subset.id}"
-                           onclick="applySubsets('${subset.id}', '${subset.study}')" title="Apply Subset"></input>
+                           onclick="applySubsets('${subset.id}', '${subset.study}')" title="Apply Subset">
                 </g:else>
             </td>
 

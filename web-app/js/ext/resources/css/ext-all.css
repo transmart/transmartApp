@@ -185,7 +185,7 @@ textarea{resize:none;}
 .x-editor{visibility:hidden;padding:0;margin:0;}
 .x-editor .x-form-check-wrap,.x-editor .x-form-radio-wrap{background:#fff;padding:3px;}
 .x-editor .x-form-checkbox{height:13px;}
-.x-form-grow-sizer{font:normal 12px tahoma,arial,helvetica,sans-serif;left:-10000px;padding:8px 3px;position:absolute;visibility:hidden;top:-10000px;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;zoom:1;}
+.x-form-grow-sizer{font:normal 12px tahoma,arial,helvetica,sans-serif;left:-10000px;padding:8px 3px;position:absolute;visibility:hidden;top:-10000px;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;zoom:1;}
 .x-form-grow-sizer p{margin:0!important;border:0 none!important;padding:0!important;}
 .x-form-item{font:normal 12px tahoma,arial,helvetica,sans-serif;display:block;margin-bottom:4px;zoom:1;}
 .x-form-item label{display:block;float:left;width:100px;padding:3px;padding-left:0;clear:left;z-index:2;position:relative;}
@@ -209,7 +209,7 @@ textarea{resize:none;}
 .x-small-editor .x-form-field-wrap .x-form-trigger{height:19px;}
 .x-form-clear{clear:both;height:0;overflow:hidden;line-height:0;font-size:0;}
 .x-form-clear-left{clear:left;height:0;overflow:hidden;line-height:0;font-size:0;}
-.x-form-cb-label{width:'auto'!important;float:none!important;clear:none!important;display:inline!important;margin-left:4px;}
+.x-form-cb-label{width:auto!important;float:none!important;clear:none!important;display:inline!important;margin-left:4px;}
 .x-form-column{float:left;padding:0;margin:0;width:48%;overflow:hidden;zoom:1;}
 .x-form .x-form-btns-ct .x-btn{float:right;clear:none;}
 .x-form .x-form-btns-ct .x-form-btns td{border:0;padding:0;}

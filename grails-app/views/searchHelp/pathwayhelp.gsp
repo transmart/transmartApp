@@ -2,9 +2,9 @@
 <head>
     <title>${grailsApplication.config.com.recomdata.appTitle}</title>
     <link rel="stylesheet"
-          href="${resource(dir: 'js', file: 'ext/resources/css/ext-all.css')}"></link>
+          href="${resource(dir: 'js', file: 'ext/resources/css/ext-all.css')}">
     <link rel="stylesheet"
-          href="${resource(dir: 'js', file: 'ext/resources/css/xtheme-gray.css')}"></link>
+          href="${resource(dir: 'js', file: 'ext/resources/css/xtheme-gray.css')}">
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}"/>
     <g:javascript library="prototype"/>
     <script type="text/javascript"
