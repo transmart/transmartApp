@@ -3527,7 +3527,7 @@ function getSummaryGridData() {
 
     gridstore = new Ext.data.JsonStore(
         {
-            url : pageInfo.basePath+'/chart/basicGrid',
+            url : pageInfo.basePath+'/chart/analysisGrid',
             root : 'rows',
             fields : ['name', 'url']
         }
@@ -3537,7 +3537,6 @@ function getSummaryGridData() {
 
     var myparams = Ext.urlEncode(
         {
-            charttype : "basicgrid",
             concept_key : "",
             result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
             result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
