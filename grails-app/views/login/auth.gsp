@@ -64,10 +64,10 @@
 
 <body>
 
-<div align="center" style="clear:both; margin-left:auto; margin-right:auto; margin-top:20px;text-align:center">
+<div align="center" style="clear:both; margin-left:auto; margin-right:auto; text-align:center">
     <table style="width:auto; border:0px; text-align:center; margin:auto;" align="center">
         <tr>
-            <td style="text-align:center;vertical-align:middle;margin-left:-40px;">
+            <td style="text-align:center;vertical-align:middle;margin-left:-40px;padding-top:20px;">
                 <g:link controller="RWG" action="index"><img
                         src="${resource(dir: 'images', file: grailsApplication.config.com.recomdata.largeLogo)}"
                         alt="Transmart"/></g:link>
@@ -95,43 +95,49 @@
                                     <div class='login_message' style="color:red; font-size:12px;">${flash.message}</div>
                                 </g:if>
                                 <form action='${postUrl}' method='POST' id='loginForm' class='cssform'>
-                                    <table style="border:0px; text-align:center; width:340px">
+                                    <table style="border:0px; text-align:center; width:100%">
                                         <tr>
-                                            <td>
-                                                <label for='j_username' style="font-weight:bold">Login ID:</label>
+                                            <td style="width: 100px">
+                                                <label for='j_username' style="font-weight:bold">Username :</label>
                                             </td>
                                             <td style="white-space:nowrap;" NOWRAP>
                                                 <input type='text' class='text_' name='j_username' id='j_username'
-                                                       style="width:300px" autofocus/>
+                                                       style="width:100%" autofocus/>
                                                 <script>
                                                     if (!("autofocus" in document.createElement("input"))) {
                                                         document.getElementById("j_username").focus();
                                                     }
                                                 </script>
                                             </td>
-
                                         </tr>
                                         <tr>
                                             <td>
-                                                <label for='j_password' style="font-weight:bold">Password:</label>
+                                                <label for='j_password' style="font-weight:bold">Password :</label>
                                             </td>
                                             <td>
                                                 <input type='password' class='text_' name='j_password' id='j_password'
-                                                       style="width:300px"/>
+                                                       style="width:100%"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for='remember_me' style="font-weight:bold">Remember me :</label>
+                                            </td>
+                                            <td>
+                                                <input type='checkbox' class='chk' name='_spring_security_remember_me' id='remember_me' />
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan=2 style="text-align:center">
-                                                <input type='submit' id='loginButton' value='Login'/>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan=2 style="text-align:center">&nbsp;
+                                                <br>
+                                                <input type='submit' id='loginButton' value='Login' style="width:100%"/>
+                                                <br>
+                                                <br>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="2" style="font-size:10px;">
-                                                Not a user? Contact <a
+                                                Not a user ? Contact <a
                                                     href="mailto:${grailsApplication.config.com.recomdata.administrator}"
                                                     target="_blank"
                                                     style="text-decoration:underline;color:#0000FF">administrator</a> to request an account
