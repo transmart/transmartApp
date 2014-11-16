@@ -57,23 +57,20 @@ class BootStrap {
         }
 
         def servletContext = grailsApplication.mainContext.servletContext
-        def tsAppRScriptsDir = servletContext.getRealPath('dataExportRScripts')
-        if (tsAppRScriptsDir) {
-            tsAppRScriptsDir = new File(tsAppRScriptsDir)
+        def tsAppRScriptsDir
+
+        def basePath = ((String[])[
+            servletContext.getRealPath("/"),
+            servletContext.getRealPath("/") + "../",
+            servletContext.getResource("/")?.file,
+            "webapps${servletContext.contextPath}",
+            "web-app/"
+
+        ]).find { obj ->
+            obj && (tsAppRScriptsDir = new File(obj, 'dataExportRScripts')).isDirectory()
         }
+
         if (!tsAppRScriptsDir || !tsAppRScriptsDir.isDirectory()) {
-            tsAppRScriptsDir = servletContext.getRealPath('.') + '/../dataExportRScripts'
-            if (tsAppRScriptsDir) {
-                tsAppRScriptsDir = new File(tsAppRScriptsDir)
-            }
-        }
-        if (!tsAppRScriptsDir || !tsAppRScriptsDir.isDirectory()) {
-            tsAppRScriptsDir = new File('webapps' + servletContext.contextPath, 'dataExportRScripts')
-        }
-        if (!tsAppRScriptsDir || !tsAppRScriptsDir.isDirectory()) {
-            tsAppRScriptsDir = new File('web-app', 'dataExportRScripts')
-        }
-        if (!tsAppRScriptsDir.isDirectory()) {
             throw new RuntimeException('Could not determine proper for ' +
                     'com.recomdata.transmart.data.export.rScriptDirectory')
         }
@@ -89,7 +86,7 @@ class BootStrap {
                     "should not be explicitly set, value '$val' ignored")
         }
         File rdcModulesDir = GrailsPluginUtils.getPluginDirForName('rdc-rmodules')?.file
-        if (rdcModulesDir == null) {
+        if (!rdcModulesDir) {
             // it actually varies...
             rdcModulesDir = GrailsPluginUtils.getPluginDirForName('rdcRmodules')?.file
         }
@@ -97,13 +94,7 @@ class BootStrap {
             String version = grailsApplication.mainContext.pluginManager.allPlugins.find {
                 it.name == 'rdc-rmodules' || it.name == 'rdcRmodules'
             }.version
-            def pluginsDir = servletContext.getRealPath('plugins')
-            if (pluginsDir) {
-                rdcModulesDir = new File(pluginsDir, "rdc-rmodules-$version")
-            }
-            if (!rdcModulesDir || !rdcModulesDir.isDirectory()) {
-                rdcModulesDir = new File('webapps' + servletContext.contextPath + '/plugins', "rdc-rmodules-$version")
-            }
+            rdcModulesDir = new File("$basePath/plugins", "rdc-rmodules-${version}")
         }
         if (!rdcModulesDir) {
             throw new RuntimeException('Could not determine directory for ' +
