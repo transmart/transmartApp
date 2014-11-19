@@ -1,5 +1,5 @@
 <%@ page language="java" import="java.util.*" %>
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
     <!-- Force Internet Explorer 8 to override compatibility mode -->
@@ -29,6 +29,8 @@
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'chartservlet.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'js/ext/resources/css', file: 'xtheme-gray.css')}">
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css/jquery/ui', file: 'jquery-ui-1.9.1.custom.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css/jquery/skin', file: 'ui.dynatree.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'datasetExplorer.css')}">
     <!--
     <script type="text/javascript" src="${resource(dir: 'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>

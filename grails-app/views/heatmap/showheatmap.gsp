@@ -30,7 +30,7 @@
             <g:if test="${comtable != null}">
                 <td width='${(comtable == null || comtable == "") ? 1 : (hmapwidth)}%'
                     align="center"
-                    style="text-align: center; padding: 0 0 0 0; white-space: no-wrap;">
+                    style="text-align: center; padding: 0 0 0 0; white-space: nowrap;">
                     Gene Expression Comparison<br>
 
                     <div id="comHeatmapContainer"><img src="${resource(dir: 'images', file: 'loader-mid.gif')}"
@@ -41,7 +41,7 @@
             <g:if test="${cortable != null}">
                 <td width='${(cortable == null || cortable == "") ? 1 : (hmapwidth)}%'
                     align="center"
-                    style="text-align: center; padding: 0 0 0 0; white-space: no-wrap;">Gene
+                    style="text-align: center; padding: 0 0 0 0; white-space: nowrap;">Gene
                 Expression Correlation<br>
 
                     <div id="corHeatmapContainer"><img src="${resource(dir: 'images', file: 'loader-mid.gif')}"
@@ -50,7 +50,7 @@
             </g:if>
             <g:if test="${rbmtable != null}">
                 <td width='${(rbmtable == null || rbmtable == "") ? 1 : (hmapwidth)}%'
-                    style="text-align: center; padding: 0 0 0 0; white-space: no-wrap;">
+                    style="text-align: center; padding: 0 0 0 0; white-space: nowrap;">
                     RBM Comparison<br>
 
                     <div id="rbmHeatmapContainer"></div>
@@ -58,7 +58,7 @@
             </g:if>
             <g:if test="${rhotable != null}">
                 <td width='${(rhotable == null || rhotable == "") ? 1 : (hmapwidth)}%'
-                    style="text-align: center; padding: 0 0 0 0; white-space: no-wrap;">
+                    style="text-align: center; padding: 0 0 0 0; white-space: nowrap;">
                     RBM Spearman Correlation<br>
 
                     <div id="rhoHeatmapContainer"></div>

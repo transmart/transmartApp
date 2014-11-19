@@ -15,7 +15,7 @@ class BioAssayPlatformController {
 
         def platforms;
         if (params.type) {
-            platforms = BioAssayPlatform.executeQuery("SELECT bd.unique_id, p.name FROM BioAssayPlatform p, BioData bd WHERE p.id=bd.id and bd.bioDataType='BIO_ASSAY_PLATFORM' and p.vendor = :term AND p.platformType = :type", [term: params.vendor, type: params.type]);
+            platforms = BioAssayPlatform.executeQuery("SELECT bd.uniqueId, p.name FROM BioAssayPlatform p, BioData bd WHERE p.id=bd.id and bd.type='BIO_ASSAY_PLATFORM' and p.vendor = :term AND p.platformType = :type", [term: params.vendor, type: params.type]);
         } else {
             platforms = BioAssayPlatform.executeQuery("SELECT id, name, accession FROM BioAssayPlatform p WHERE p.vendor = :term", [term: params.vendor]);
         }

@@ -6,7 +6,7 @@ import org.json.JSONObject
 
 class PluginModuleController {
 
-    def index = { redirect(action: list, params: params) }
+    def index = { redirect(action: "list", params: params) }
 
     // the delete, save and update actions only accept POST requests
     static allowedMethods = [delete: 'POST', save: 'POST', update: 'POST', validateModuleParams: 'POST']
@@ -23,7 +23,7 @@ class PluginModuleController {
 
         if (!pluginModuleInstance) {
             flash.message = "PluginModule not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [pluginModuleInstance: pluginModuleInstance, 'paramsStr': pluginModuleInstance.getParamsStr()]
         }
@@ -35,15 +35,15 @@ class PluginModuleController {
             try {
                 pluginModuleInstance.delete()
                 flash.message = "PluginModule ${params.id} deleted"
-                redirect(action: list)
+                redirect(action: "list")
             }
             catch (org.springframework.dao.DataIntegrityViolationException e) {
                 flash.message = "PluginModule ${params.id} could not be deleted"
-                redirect(action: show, id: params.id)
+                redirect(action: "show", id: params.id)
             }
         } else {
             flash.message = "PluginModule not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         }
     }
 
@@ -52,7 +52,7 @@ class PluginModuleController {
 
         if (!pluginModuleInstance) {
             flash.message = "PluginModule not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [pluginModuleInstance: pluginModuleInstance, 'paramsStr': pluginModuleInstance.getParamsStr()]
         }
@@ -93,13 +93,13 @@ class PluginModuleController {
             }
             if (!pluginModuleInstance.hasErrors() && pluginModuleInstance.save()) {
                 flash.message = "PluginModule ${params.id} updated"
-                redirect(action: show, id: pluginModuleInstance.id)
+                redirect(action: "show", id: pluginModuleInstance.id)
             } else {
                 render(view: 'edit', model: [pluginModuleInstance: pluginModuleInstance, paramsStr: params.paramsStr])
             }
         } else {
             flash.message = "PluginModule not found with id ${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -114,7 +114,7 @@ class PluginModuleController {
         pluginModuleInstance.setParamsStr(params.paramsStr)
         if (!pluginModuleInstance.hasErrors() && pluginModuleInstance.save()) {
             flash.message = "PluginModule ${pluginModuleInstance.id} created"
-            redirect(action: show, id: pluginModuleInstance.id)
+            redirect(action: "show", id: pluginModuleInstance.id)
         } else {
             render(view: 'create', model: [pluginModuleInstance: pluginModuleInstance])
         }

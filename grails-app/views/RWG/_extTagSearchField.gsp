@@ -24,9 +24,7 @@ jQuery(document).ready(function() {
 	}).data("autocomplete")._renderItem = function( ul, item ) {
 		return jQuery('<li></li>')		
 		  .data("item.autocomplete", item )
-		 .append('<a><span
-        class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b> ' + item.synonyms + '
-</a>')
+		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b> ' + item.synonyms + '</a>')
 		  .appendTo(ul);
 	};
 });
@@ -40,9 +38,9 @@ jQuery(document).ready(function() {
 jQuery('.tag').live('click', function(e) { removeTag(jQuery(this).parent().attr('name'), jQuery(this).attr('name')); });
 </g:javascript>
 <%-- Tag box (visual display of tags) --%>
-<div id="${fieldName}-tags" class="tagBox" name="${fieldName}">
+<div id="${fieldName}-tags" class="tagBox">
     <g:each in="${values}" var="value">
-        <span class="tag" id="${fieldName}-tag-${value.key}" name="${value.key}">${value.value}</span>
+        <span class="tag" id="${fieldName}-tag-${value.key}">${value.value}</span>
     </g:each>
 </div>
 

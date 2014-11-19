@@ -1021,11 +1021,26 @@ select.multiselect {
     margin: 4px 0 4px 0;
 }
 
-.foldericon.add { border: none; background-color: none;  background-image: url('../images/exportfile.png'); }
-.foldericon.delete { border: none; background-color: none;  background-image: url('../images/bin_closed.png'); background-position: 0px 50%}
-.foldericon.addall { border: none; background-color: none;  background-image: url('../images/exportfolder.png'); }
-.foldericon.view {  border: none; background-color: none; background-image: url('../images/information8.png'); }
-.foldericon.viewfile {  border: none; background-color: none; background-image: url('../images/information8.png'); }
+.foldericon.add {
+    border: none;
+    background: transparent url('../images/exportfile.png');
+}
+.foldericon.delete {
+    border: none;
+    background: transparent url('../images/bin_closed.png') 0px 50%;
+}
+.foldericon.addall {
+    border: none;
+    background: transparent url('../images/exportfolder.png');
+}
+.foldericon.view {
+    border: none;
+    background: transparent url('../images/information8.png');
+}
+.foldericon.viewfile {
+    border: none;
+    background: transparent url('../images/information8.png');
+}
 
 /* Accordion/other UI overrides */
 

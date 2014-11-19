@@ -41,7 +41,7 @@
                         </a>
                     </span>
 
-                    <div id="${trialresult.key.trialNumber}_detail" name="${trialresult.key.trialNumber}"
+                    <div id="${trialresult.key.trialNumber}_detail"
                          class="detailexpand"></div>
                 </td></tr>
             </table>

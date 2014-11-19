@@ -124,8 +124,8 @@ function addSearchAutoComplete()	{
 			if (category == 'ALL') {category = 'text'; categoryText = 'Free Text';}
 			searchParam={id:val,display:categoryText,keyword:val,category:category};
 			addSearchTerm(searchParam);
+            jQuery('#search-ac').empty();
 			return false;
-			jQuery('#search-ac').empty();
 		}
 	});
 	return false;

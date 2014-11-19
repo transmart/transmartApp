@@ -3,7 +3,7 @@ package com.recomdata.transmart.plugin
 class PluginController {
     def pluginService
 
-    def index = { redirect(action: list, params: params) }
+    def index = { redirect(action: "list", params: params) }
 
     // the delete, save and update actions only accept POST requests
     static allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
@@ -26,7 +26,7 @@ class PluginController {
 
         if (!pluginInstance) {
             flash.message = "Plugin not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [pluginInstance: pluginInstance]
         }
@@ -38,15 +38,15 @@ class PluginController {
             try {
                 pluginInstance.delete()
                 flash.message = "Plugin ${params.id} deleted"
-                redirect(action: list)
+                redirect(action: "list")
             }
             catch (org.springframework.dao.DataIntegrityViolationException e) {
                 flash.message = "Plugin ${params.id} could not be deleted"
-                redirect(action: show, id: params.id)
+                redirect(action: "show", id: params.id)
             }
         } else {
             flash.message = "Plugin not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         }
     }
 
@@ -55,7 +55,7 @@ class PluginController {
 
         if (!pluginInstance) {
             flash.message = "Plugin not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [pluginInstance: pluginInstance]
         }
@@ -76,13 +76,13 @@ class PluginController {
             pluginInstance.properties = params
             if (!pluginInstance.hasErrors() && pluginInstance.save()) {
                 flash.message = "Plugin ${params.id} updated"
-                redirect(action: show, id: pluginInstance.id)
+                redirect(action: "show", id: pluginInstance.id)
             } else {
                 render(view: 'edit', model: [pluginInstance: pluginInstance])
             }
         } else {
             flash.message = "Plugin not found with id ${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -96,7 +96,7 @@ class PluginController {
         def pluginInstance = new Plugin(params)
         if (!pluginInstance.hasErrors() && pluginInstance.save()) {
             flash.message = "Plugin ${pluginInstance.id} created"
-            redirect(action: show, id: pluginInstance.id)
+            redirect(action: "show", id: pluginInstance.id)
         } else {
             render(view: 'create', model: [pluginInstance: pluginInstance])
         }

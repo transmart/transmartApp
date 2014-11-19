@@ -495,7 +495,7 @@ Ext.onReady(function () {
                 layout: 'fit',
                 listeners: {
                     activate: function (p) {
-                        if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysis_title')) {
+                        if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysisGridPanel')) {
                             runAllQueries(getSummaryGridData, p);
                             activateTab();
                             onWindowResize();
@@ -2259,7 +2259,7 @@ function runAllQueries(callback, panel) {
         if (panel) {
             panel.body.unmask();
 		}
-		Ext.Msg.alert('Subsets are empty xx', 'All subsets are empty xx. Please select subsets.');
+		Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
 	}
 
 	// setup the number of subsets that need running
@@ -2568,7 +2568,6 @@ function getNodeForAnalysis(node) {
     else {
 		return node
 	}
-	;
 	// must be a concept folder so return me
 }
 
@@ -3528,7 +3527,7 @@ function getSummaryGridData() {
 
     gridstore = new Ext.data.JsonStore(
         {
-            url : pageInfo.basePath+'/chart/basicGrid',
+            url : pageInfo.basePath+'/chart/analysisGrid',
             root : 'rows',
             fields : ['name', 'url']
         }
@@ -3538,7 +3537,6 @@ function getSummaryGridData() {
 
     var myparams = Ext.urlEncode(
         {
-            charttype : "basicgrid",
             concept_key : "",
             result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
             result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]

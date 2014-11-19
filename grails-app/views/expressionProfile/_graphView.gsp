@@ -4,13 +4,13 @@
     <table>
         <tr><td><img src="${epr.graphURL}"/></td></tr>
         <tr><td>&nbsp;</td></tr>
-        <tr><td><center>
+        <tr><td style="text-align: center;"><center>
             <g:set var="printURL" value="${createLink(action:'printChart') + '?' + epr.graphURL.substring(epr.graphURL.indexOf('filename='))}" />
             <a href="#" onclick="window.open('${printURL}','_boxplot','width=850,height=600,resizable=yes,scrollbars=yes,location=no,menubar=yes');">
                 <img src="${resource(dir:'images',file:'print.png')}" />
                 Print Chart
             </a>
-        </center></td></tr>
+        </td></tr>
     </table>
     <br>
 

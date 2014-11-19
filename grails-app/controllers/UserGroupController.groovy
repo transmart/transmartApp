@@ -12,7 +12,7 @@ class UserGroupController {
     def springSecurityService
 
 
-    def index = { redirect(action: 'list', params: params) }
+    def index = { redirect(action: "list", params: params) }
 
     // the delete, save and update actions only accept POST requests
     def allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
@@ -33,7 +33,7 @@ class UserGroupController {
 
         if (!userGroupInstance) {
             flash.message = "UserGroup not found with id ${params.id}"
-            redirect(action: 'list')
+            redirect(action: "list")
         } else {
             return [userGroupInstance: userGroupInstance]
         }
@@ -44,10 +44,10 @@ class UserGroupController {
         if (userGroupInstance) {
             userGroupInstance.delete()
             flash.message = "UserGroup ${params.id} deleted"
-            redirect(action: 'list')
+            redirect(action: "list")
         } else {
             flash.message = "UserGroup not found with id ${params.id}"
-            redirect(action: 'list')
+            redirect(action: "list")
         }
     }
 
@@ -56,7 +56,7 @@ class UserGroupController {
 
         if (!userGroupInstance) {
             flash.message = "UserGroup not found with id ${params.id}"
-            redirect(action: 'list')
+            redirect(action: "list")
         } else {
             return [userGroupInstance: userGroupInstance]
         }
@@ -68,13 +68,13 @@ class UserGroupController {
             userGroupInstance.properties = params
             if (!userGroupInstance.hasErrors() && userGroupInstance.save()) {
                 flash.message = "UserGroup ${params.id} updated"
-                redirect(action: 'show', id: userGroupInstance.id)
+                redirect(action: "show", id: userGroupInstance.id)
             } else {
                 render(view: 'edit', model: [userGroupInstance: userGroupInstance])
             }
         } else {
             flash.message = "UserGroup not found with id ${params.id}"
-            redirect(action: 'edit', id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -95,7 +95,7 @@ class UserGroupController {
                     eventmessage: msg,
                     accesstime: new Date()).save()
 
-            redirect action: 'show', id: userGroupInstance.id
+            redirect action: "show", id: userGroupInstance.id
         } catch (ValidationException validationException) {
             log.error validationException.localizedMessage, validationException
             render view: 'create', model: [userGroupInstance: userGroupInstance]

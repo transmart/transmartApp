@@ -9,7 +9,7 @@ class AccessLogController {
 
     def searchService
 
-    def index = { redirect(action: list, params: params) }
+    def index = { redirect(action: "list", params: params) }
 
     // the delete, save and update actions only accept POST requests
     static allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
@@ -124,7 +124,7 @@ class AccessLogController {
 
         if (!accessLogInstance) {
             flash.message = "AccessLog not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [accessLogInstance: accessLogInstance]
         }
@@ -135,10 +135,10 @@ class AccessLogController {
         if (accessLogInstance) {
             accessLogInstance.delete()
             flash.message = "AccessLog ${params.id} deleted"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             flash.message = "AccessLog not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         }
     }
 
@@ -147,7 +147,7 @@ class AccessLogController {
 
         if (!accessLogInstance) {
             flash.message = "AccessLog not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [accessLogInstance: accessLogInstance]
         }
@@ -159,13 +159,13 @@ class AccessLogController {
             accessLogInstance.properties = params
             if (!accessLogInstance.hasErrors() && accessLogInstance.save()) {
                 flash.message = "AccessLog ${params.id} updated"
-                redirect(action: show, id: accessLogInstance.id)
+                redirect(action: "show", id: accessLogInstance.id)
             } else {
                 render(view: 'edit', model: [accessLogInstance: accessLogInstance])
             }
         } else {
             flash.message = "AccessLog not found with id ${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -179,7 +179,7 @@ class AccessLogController {
         def accessLogInstance = new AccessLog(params)
         if (!accessLogInstance.hasErrors() && accessLogInstance.save()) {
             flash.message = "AccessLog ${accessLogInstance.id} created"
-            redirect(action: show, id: accessLogInstance.id)
+            redirect(action: "show", id: accessLogInstance.id)
         } else {
             render(view: 'create', model: [accessLogInstance: accessLogInstance])
         }

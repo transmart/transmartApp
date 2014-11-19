@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
 <!-- Force Internet Explorer 8 to override compatibility mode -->
 <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>${grailsApplication.config.com.recomdata.appTitle}</title>
 
 <!-- jQuery CSS for cupertino theme -->
