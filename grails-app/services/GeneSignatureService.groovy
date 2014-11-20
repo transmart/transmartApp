@@ -397,6 +397,13 @@ public class GeneSignatureService {
             gsItems.each { gs.addToGeneSigItems(it) }
         }
 
+        // set AuthUser
+        if (!gs.createdByAuthUser) {
+            gs.createdByAuthUser = springSecurityService.currentUser
+        } else {
+            gs.modifiedByAuthUser = springSecurityService.currentUser
+        }
+
         // save gs, items, and search link
         def savedInst = gs.save(flush: true)
         if (!savedInst) {
