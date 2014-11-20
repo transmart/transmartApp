@@ -399,6 +399,9 @@ public class GeneSignatureService {
 
         // save gs, items, and search link
         def savedInst = gs.save(flush: true)
+        if (!savedInst) {
+            return gs /* error saving */
+        }
         def nsave = savedInst;
         if (savedInst.uniqueId == null || savedInst.uniqueId == "") {
             // need to refresh this object
