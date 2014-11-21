@@ -355,6 +355,11 @@ class GeneSignatureController {
         // good to go, call save service
         try {
             gs = geneSignatureService.saveWizard(gs, file)
+            if (gs.hasErrors()) {
+                flash.message = 'Could not save Gene Signature'
+                render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
+                return
+            }
 
             // clean up session
             wizard = null
