@@ -6,6 +6,7 @@ import org.transmart.biomart.CellLine
 import org.transmart.biomart.Compound
 import org.transmart.biomart.ConceptCode
 import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.GeneSignature
 import org.transmart.searchapp.GeneSignatureFileSchema
 
@@ -124,7 +125,7 @@ class GeneSignatureController {
         // load gs instance
         def geneSigInst = GeneSignature.get(params.id)
         def clone = geneSigInst.clone()
-        clone.modifiedByAuthUser = user
+        clone.modifiedByAuthUser = AuthUser.findByUsername(user.username)
         if (clone.experimentTypeCellLine?.id == null) clone.experimentTypeCellLine = null
         // this is hack, don't know how to get around this!
         log.debug "experimentTypeCellLine: " + clone.experimentTypeCellLine + "; null? " + (clone.experimentTypeCellLine == null)
@@ -145,7 +146,7 @@ class GeneSignatureController {
         // load gs inst to clone
         def geneSigInst = GeneSignature.get(params.id)
         def clone = geneSigInst.clone()
-        clone.createdByAuthUser = user
+        clone.createdByAuthUser = AuthUser.findByUsername(user.username)
         clone.modifiedByAuthUser = null;
         clone.name = clone.name + " (clone)"
         clone.description = clone.description + " (clone)"
@@ -172,7 +173,7 @@ class GeneSignatureController {
     def makePublic = {
         def user = springSecurityService.getPrincipal()
         def gsInst = GeneSignature.get(params.id)
-        gsInst.modifiedByAuthUser = user
+        gsInst.modifiedByAuthUser = AuthUser.findByUsername(user.username)
         geneSignatureService.makePublic(gsInst, true)
 
         flash.message = "GeneSignature '${gsInst.name}' was made public to everyone"
@@ -185,7 +186,7 @@ class GeneSignatureController {
     def makePrivate = {
         def user = springSecurityService.getPrincipal()
         def gsInst = GeneSignature.get(params.id)
-        gsInst.modifiedByAuthUser = user
+        gsInst.modifiedByAuthUser = AuthUser.findByUsername(user.username)
         geneSignatureService.makePublic(gsInst, false)
 
         flash.message = "GeneSignature '${gsInst.name}' was made private"
@@ -198,7 +199,7 @@ class GeneSignatureController {
     def delete = {
         def user = springSecurityService.getPrincipal()
         def gsInst = GeneSignature.get(params.id)
-        gsInst.modifiedByAuthUser = user
+        gsInst.modifiedByAuthUser = AuthUser.findByUsername(user.username)
         geneSignatureService.delete(gsInst)
 
         flash.message = "GeneSignature '${gsInst.name}' was marked as deleted"
@@ -392,7 +393,7 @@ class GeneSignatureController {
         def gsReal = GeneSignature.get(wizard.editId)
         def origFile = gsReal.uploadFile
         clone.copyPropertiesTo(gsReal)
-        gsReal.modifiedByAuthUser = user
+        gsReal.modifiedByAuthUser = AuthUser.findByUsername(user.username)
         gsReal.uploadFile = origFile
 
         // refresh items if new file uploaded
