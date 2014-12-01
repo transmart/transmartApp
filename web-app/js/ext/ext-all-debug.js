@@ -23266,17 +23266,21 @@ Ext.extend(Ext.tree.TreeNode, Ext.data.Node, {
 
     
     select : function(){
-        this.getOwnerTree().getSelectionModel().select(this);
+        tree = this.getOwnerTree();
+        if (tree) tree.getSelectionModel().select(this);
     },
 
     
     unselect : function(){
-        this.getOwnerTree().getSelectionModel().unselect(this);
+        tree = this.getOwnerTree();
+        if (tree) tree.getSelectionModel().unselect(this);
     },
 
     
     isSelected : function(){
-        return this.getOwnerTree().getSelectionModel().isSelected(this);
+        tree = this.getOwnerTree();
+        if (tree) return tree.getSelectionModel().isSelected(this);
+        return false;
     },
 
     

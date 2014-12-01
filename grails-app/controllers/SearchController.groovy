@@ -1,22 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
-
 /**
  * $Id: SearchController.groovy 10098 2011-10-19 18:39:32Z mmcduffie $
  * @author $Author: mmcduffie $
@@ -29,7 +10,10 @@ import org.transmart.GlobalFilter
 import org.transmart.SearchFilter
 import org.transmart.SearchResult
 import org.transmart.biomart.BioDataExternalCode
-import org.transmart.searchapp.*
+import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.CustomFilter
+import org.transmart.searchapp.SearchKeyword
+import org.transmart.searchapp.SearchKeywordTerm
 
 public class SearchController {
     def sessionFactory
@@ -109,7 +93,7 @@ public class SearchController {
                 queryParams["category"] = category.toString().split(SEARCH_DELIMITER)
             }
             // this is generic way to access AuthUser
-            def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+            def user = springSecurityService.getPrincipal()
             // permission to view search keyword (Admin gets all)
             if (!user.isAdmin()) {
                 queryStr += " AND (t.ownerAuthUserId = :uid OR t.ownerAuthUserId IS NULL)"
@@ -190,7 +174,7 @@ public class SearchController {
         //	user=authenticateService.principal();   // Using Identity Vault and WWIDPrinicpal
         //}
 
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def uid = user.id;
 
         //	def queryStr = "SELECT distinct k FROM org.transmart.searchapp.SearchKeyword k left join k.externalCodes c WHERE k.dataCategory IN ('GENE', 'PATHWAY') AND (UPPER(k.keyword) LIKE '"+values+"%' OR (c.codeType='SYNONYM' AND UPPER(c.code) LIKE '"+values+"%')) ORDER BY LENGTH(k.keyword), k.keyword";
@@ -290,7 +274,7 @@ public class SearchController {
             session.searchFilter.datasource = "document"
         }
 
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def al = new AccessLog(username: user.username, event: "Search", eventmessage: session.searchFilter.marshal(), accesstime: new Date())
         al.save();
 
@@ -312,16 +296,16 @@ public class SearchController {
             session.searchFilter = new SearchFilter()
             createUpdateSessionFilter(keyword)
             session.searchFilter.searchText = keyword.keyword
-            redirect(action: 'doSearch')
+            redirect(action: "doSearch")
         } else {
-            redirect(action: 'index')
+            redirect(action: "index")
         }
 
     }
 
     def newSearch = {
         session.searchFilter = new SearchFilter()
-        redirect(action: 'search', params: params)
+        redirect(action: "search", params: params)
     }
 
     def searchCustomFilter = {
@@ -331,7 +315,7 @@ public class SearchController {
         def customFilter = CustomFilter.get(params.id)
 
         if (customFilter != null) {
-            def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+            def user = springSecurityService.getPrincipal()
             if (customFilter.privateFlag != 'Y' || customFilter.searchUserId == user.id) {
                 def uniqueIds = []
                 for (item in customFilter.items) {
@@ -355,16 +339,16 @@ public class SearchController {
                 }
             } else {
                 flash.message = "You are not authorized to view the custom filter with ID ${params.id}."
-                redirect(action: 'index')
+                redirect(action: "index")
             }
         } else {
             flash.message = "The custom filter with ID ${params.id} no longer exists."
-            redirect(action: 'index')
+            redirect(action: "index")
         }
         sfilter.searchText = ""
         session.searchFilter = sfilter
 
-        redirect(action: 'doSearch', params: [ts: new Date().getTime()])
+        redirect(action: "doSearch", params: [ts: new Date().getTime()])
 
     }
 
@@ -393,9 +377,9 @@ public class SearchController {
         }
         if (!gfilter.isEmpty()) {
             session.searchFilter = sfilter
-            redirect(action: 'doSearch')
+            redirect(action: "doSearch")
         } else {
-            redirect(action: 'index')
+            redirect(action: "index")
         }
 
     }
@@ -414,15 +398,15 @@ public class SearchController {
         }
         if (gfilter.isEmpty()) {
             session.searchFilter = new SearchFilter()
-            redirect(action: 'index')
+            redirect(action: "index")
         } else {
-            redirect(action: 'doSearch')
+            redirect(action: "doSearch")
         }
     }
 
     def searchHeaderSearch = {
         params.sourcepage = "search"
-        redirect(action: 'search', params: params)
+        redirect(action: "search", params: params)
     }
 
     def showDefaultFilter = {

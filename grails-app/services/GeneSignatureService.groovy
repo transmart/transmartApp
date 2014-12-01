@@ -204,7 +204,9 @@ public class GeneSignatureService {
 
                 } else if (fileSchemaName.toUpperCase() =~ /PROBESET /) {
                     // geneSymbol ==> probeset id
-                    marker = lookupProbesetBioAssociations(geneSymbol, gs.techPlatform.accession)
+                 // fixes -- 2014_10_31
+                    //marker = lookupProbesetBioAssociations(geneSymbol, gs.techPlatform.accession)
+                    marker = lookupProbesetBioAssociations_probeIds(geneSymbol, gs.techPlatform.accession) // fixes -- 2014_10_31
 
                     if (marker == null || marker.isEmpty()) {
                         log.warn("WARN: invalid probe set id: " + geneSymbol + " for platform " + gs.techPlatform.accession)
@@ -212,10 +214,25 @@ public class GeneSignatureService {
                         continue;
                     }
 
-                    def probesetId = marker.getAt(0);
+                    //def probesetId = marker.getAt(0);
+                // fixes -- 2014_10_31
+                    def probesetId = marker['probesetId']
+                    def geneId = marker['geneId']
+                        String bioDataUniqueId = "GENE:" + String.valueOf(geneId)
+                    def bioMarkerId = marker['bioMarkerId']
+
                     println(">> Probeset lookup: 1) probeset id: " + probesetId)
 
-                    GeneSignatureItem item = new GeneSignatureItem(probesetId: probesetId, foldChgMetric: foldChg);
+                // fixes -- 2014_10_31
+                    //GeneSignatureItem item = new GeneSignatureItem(probesetId: probesetId, foldChgMetric: foldChg);
+                    GeneSignatureItem item = new GeneSignatureItem(
+                            probesetId: probesetId,
+                            foldChgMetric: foldChg,
+                            bioDataUniqueId: bioDataUniqueId,
+                            bioMarker: bioMarkerId,
+                    );
+
+
                     gsItems.add(item);
                 } else {
                     marker = null
@@ -380,8 +397,18 @@ public class GeneSignatureService {
             gsItems.each { gs.addToGeneSigItems(it) }
         }
 
+        // set AuthUser
+        if (!gs.createdByAuthUser) {
+            gs.createdByAuthUser = springSecurityService.currentUser
+        } else {
+            gs.modifiedByAuthUser = springSecurityService.currentUser
+        }
+
         // save gs, items, and search link
         def savedInst = gs.save(flush: true)
+        if (!savedInst) {
+            return gs /* error saving */
+        }
         def nsave = savedInst;
         if (savedInst.uniqueId == null || savedInst.uniqueId == "") {
             // need to refresh this object
@@ -531,6 +558,46 @@ public class GeneSignatureService {
     }
 
     /**
+     * fixed for working with probe_Ids in gene signatures -- 2014.10.31
+     * match up the uploaded probeset id with our internal bio_assay_feature_group & bio_data_uid tables
+     */
+    def lookupProbesetBioAssociations_probeIds(String probeset, String platform) {
+        def query = new Query(mainTableAlias: "bf");
+
+        query.addTable("de.DeMrnaAnnotation a")
+        query.addTable("BioMarker b")
+        query.addSelect("a.gplId")
+        query.addSelect("a.probeId")
+        query.addSelect("a.geneId")
+        query.addSelect("a.probesetId")
+        query.addSelect("b.id")
+        query.addCondition("a.gplId='" + platform + "'")
+        query.addCondition("a.probeId ='" + probeset.replace(" ", "") + "'")
+        query.addCondition("CAST(a.geneId as string) = b.primaryExternalId")
+
+        /*String query =
+                "SELECT\n" +
+                        "\ta.gpl_id,\n" +
+                        "\ta.probe_id,\n" +
+                        "\ta.gene_id,\n" +
+                        "\tb.bio_marker_id\n" +
+                        "FROM\n" +
+                        "\tdeapp.de_mrna_annotation a\n" +
+                        "\t, biomart.bio_marker b ON cast(a.gene_id as varchar(200)) = b.primary_external_id\n" +
+                        "WHERE\n" +
+                        //"\tCAST(a.gene_id as string) = b.primary_external_id" +
+                        "\ta.probeset_id = '" + probeset.replace(" ", "") +"' "*/
+        ;
+        def qBuf = query.generateSQL();
+
+        def marker = de.DeMrnaAnnotation.executeQuery(qBuf).asList();
+
+        /////return marker;
+        def mm = marker[0]
+        return ['gplId':mm[0], 'probeId':mm[1], geneId:mm[2], probesetId:mm[3], bioMarkerId:mm[4]]
+    }
+
+    /**
      * gets a lit of permissioned gene signature records the user is allowed to view. The returned
      * items are list of domain objects
      */
@@ -567,11 +634,11 @@ public class GeneSignatureService {
         results.each { countMap.put(it.getAt(0), it) }
         */
 
-        def permCriteria = (bAdmin) ? "(1=1)" : "(gs.CREATED_BY_AUTH_USER_ID=" + userId + " or gs.PUBLIC_FLAG=${databasePortabilityService.databaseType == ORACLE ? '1' : 'true'})"
+        def permCriteria = (bAdmin) ? "(1=1)" : "(gs.CREATED_BY_AUTH_USER_ID=" + userId + " or gs.PUBLIC_FLAG=${databasePortabilityService.databaseType == ORACLE? '1' : 'true'})"
         StringBuffer nativeSQL = new StringBuffer();
         nativeSQL.append("select gsi.SEARCH_GENE_SIGNATURE_ID as id, count(*) Gene_Ct, sum(CASE WHEN gsi.FOLD_CHG_METRIC>0 THEN 1 ELSE 0 END) Up_Ct, sum(CASE WHEN gsi.FOLD_CHG_METRIC<0 THEN 1 ELSE 0 END) Down_Ct ");
         nativeSQL.append("from SEARCH_GENE_SIGNATURE_ITEM gsi join SEARCH_GENE_SIGNATURE gs on gsi.search_gene_signature_id=gs.search_gene_signature_id ");
-        nativeSQL.append("where " + permCriteria + " and gs.DELETED_FLAG=${databasePortabilityService.databaseType == ORACLE ? '0' : 'false'} ");
+        nativeSQL.append("where " + permCriteria + " and gs.DELETED_FLAG=${databasePortabilityService.databaseType == ORACLE? '0' : 'false'} ");
         nativeSQL.append("group by gsi.SEARCH_GENE_SIGNATURE_ID");
 
         // execute native sql on hibernate session

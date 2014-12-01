@@ -46,7 +46,6 @@ grails.project.dependency.resolution = {
 
             mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
             mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
-            mavenRepo "http://repo.etriks.org/content/groups/public/"
         }
     } else {
         dm.configureRepositories delegate
@@ -122,7 +121,6 @@ grails.project.dependency.resolution = {
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.7.1'
-
         runtime ':resources:1.2.1'
 
         // support for static code analysis - see codenarc.reports property below
@@ -146,7 +144,7 @@ grails.project.dependency.resolution = {
             //compile ':transmart-java:1.2.2-SNAPSHOT'
             runtime ':dalliance-plugin:0.2-SNAPSHOT'
             runtime ':transmart-mydas:0.1-SNAPSHOT'
-            runtime ':transmart-rest-api:0.1-SNAPSHOT'
+            runtime ':transmart-rest-api:1.2.2-SNAPSHOT'
             runtime ':blend4j-plugin:1.2.2-SNAPSHOT'
             runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
 

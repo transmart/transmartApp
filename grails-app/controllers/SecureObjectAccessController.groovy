@@ -1,23 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
-
-
 import command.SecureObjectAccessCommand
 import org.transmart.searchapp.*
 
@@ -28,7 +8,7 @@ class SecureObjectAccessController {
 
 
     def index = {
-        redirect(action: list, params: params)
+        redirect(action: "list", params: params)
     }
 
     // the delete, save and update actions only accept POST requests
@@ -46,7 +26,7 @@ class SecureObjectAccessController {
 
         if (!secureObjectAccessInstance) {
             flash.message = "SecureObjectAccess not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [secureObjectAccessInstance: secureObjectAccessInstance]
         }
@@ -57,10 +37,10 @@ class SecureObjectAccessController {
         if (secureObjectAccessInstance) {
             secureObjectAccessInstance.delete()
             flash.message = "SecureObjectAccess ${params.id} deleted"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             flash.message = "SecureObjectAccess not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         }
     }
 
@@ -69,7 +49,7 @@ class SecureObjectAccessController {
 
         if (!secureObjectAccessInstance) {
             flash.message = "SecureObjectAccess not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [secureObjectAccessInstance: secureObjectAccessInstance]
         }
@@ -81,13 +61,13 @@ class SecureObjectAccessController {
             secureObjectAccessInstance.properties = params
             if (!secureObjectAccessInstance.hasErrors() && secureObjectAccessInstance.save()) {
                 flash.message = "SecureObjectAccess ${params.id} updated"
-                redirect(action: show, id: secureObjectAccessInstance.id)
+                redirect(action: "show", id: secureObjectAccessInstance.id)
             } else {
                 render(view: 'edit', model: [secureObjectAccessInstance: secureObjectAccessInstance])
             }
         } else {
             flash.message = "SecureObjectAccess not found with id ${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -101,7 +81,7 @@ class SecureObjectAccessController {
         def secureObjectAccessInstance = new SecureObjectAccess(params)
         if (!secureObjectAccessInstance.hasErrors() && secureObjectAccessInstance.save()) {
             flash.message = "SecureObjectAccess ${secureObjectAccessInstance.id} created"
-            redirect(action: show, id: secureObjectAccessInstance.id)
+            redirect(action: "show", id: secureObjectAccessInstance.id)
         } else {
             render(view: 'create', model: [secureObjectAccessInstance: secureObjectAccessInstance])
         }
@@ -146,7 +126,7 @@ class SecureObjectAccessController {
 
         SecureObjectAccessCommand fl ->
             def secureObjInstance
-            def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+            def user = springSecurityService.getPrincipal()
             def msg = new StringBuilder(" Grant new access permission: ");
 
             if (params.secureobjectid != null) {
@@ -181,7 +161,7 @@ class SecureObjectAccessController {
 
         SecureObjectAccessCommand fl ->
             def secureObjInstance
-            def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+            def user = springSecurityService.getPrincipal()
             def msg = new StringBuilder(" Revoke access permission: ");
 
             if (params.secureobjectid != null) {
@@ -265,7 +245,7 @@ class SecureObjectAccessController {
     }
 
     def addSecObjectsToPrincipal = { SecureObjectAccessCommand fl ->
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def msg = new StringBuilder(" Grant new access permission: ");
 
         def principalInstance = Principal.get(params.currentprincipalid);
@@ -291,7 +271,7 @@ class SecureObjectAccessController {
 
     def removeSecObjectsFromPrincipal = { SecureObjectAccessCommand fl ->
 
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def msg = new StringBuilder(" Revoke access permission: ");
 
         def principalInstance = Principal.get(params.currentprincipalid);

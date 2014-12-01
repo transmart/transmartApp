@@ -5,9 +5,9 @@ jQuery(document).ready(function() {
 	jQuery("#" + escapedFieldName + "-input").autocomplete({
 		source: function(request, response) {
 		    jQuery.ajax({
-                url: '${createLink([action:searchAction,controller:searchController])}',
+                url: '${createLink([action: searchAction, controller: searchController])}',
 		        type: 'POST',
-		        data: {'term': request['term'], ${paramString?: "'prm':'prm'"}},
+		        data: {'term': request['term'], ${paramString ?: "'prm':'prm'"}},
                 success: function(responseText) { response(responseText) },
                 failure: function(xhr) { alert(xhr.responseText); response(responseText); }
 		    });

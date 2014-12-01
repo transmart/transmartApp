@@ -1,24 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
-
-
-import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.GeneSignature
 import org.transmart.searchapp.SearchKeyword
 
@@ -96,7 +75,7 @@ public class SearchHelpController {
     }
 
     def listAllTrials = {
-        def all = SearchKeyword.executeQuery("SELECT s, e FROM SearchKeyword s, bio.Experiment e WHERE s.dataCategory='TRIAL' AND s.bioDataId=e.id ORDER BY s.keyword")
+        def all = SearchKeyword.executeQuery("SELECT s, e FROM SearchKeyword s, Experiment e WHERE s.dataCategory='TRIAL' AND s.bioDataId=e.id ORDER BY s.keyword")
         render(view: 'trialhelp', model: [trials: all])
     }
 
@@ -109,7 +88,7 @@ public class SearchHelpController {
     }
 
     def listAllCompounds = {
-        def all = SearchKeyword.executeQuery("SELECT s, c FROM SearchKeyword s, bio.Compound c WHERE s.dataCategory='COMPOUND' AND s.bioDataId=c.id ORDER BY s.keyword")
+        def all = SearchKeyword.executeQuery("SELECT s, c FROM SearchKeyword s, Compound c WHERE s.dataCategory='COMPOUND' AND s.bioDataId=c.id ORDER BY s.keyword")
         render(view: 'compoundhelp', model: [compounds: all])
     }
 
@@ -119,7 +98,7 @@ public class SearchHelpController {
     def listAllGeneSignatures = {
 
         // logged in user
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def bAdmin = user.isAdmin()
 
         // signatures user has search access

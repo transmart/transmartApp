@@ -1,23 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
-
-
 import com.recomdata.genesignature.FileSchemaException
 import com.recomdata.genesignature.WizardModelDetails
 import com.recomdata.util.DomainObjectExcelHelper
@@ -42,6 +22,7 @@ class GeneSignatureController {
     // service injections
     def geneSignatureService
     def springSecurityService
+    def i2b2HelperService
 
     // concept code categories
     static def SOURCE_CATEGORY = "GENE_SIG_SOURCE"
@@ -72,7 +53,7 @@ class GeneSignatureController {
         //log.info "saving Gene Signature access log"
         al.save();
 
-        redirect(action: 'list')
+        redirect(action: "list")
     }
 
     /**
@@ -80,7 +61,7 @@ class GeneSignatureController {
      */
     def refreshSummary = {
         flash.message = null
-        redirect(action: 'list')
+        redirect(action: "list")
     }
 
     /**
@@ -91,7 +72,7 @@ class GeneSignatureController {
         session.setAttribute(WIZ_DETAILS_ATTRIBUTE, null)
 
         // logged in user
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def bAdmin = user.isAdmin()
         log.info "Admin? " + bAdmin
 
@@ -119,7 +100,7 @@ class GeneSignatureController {
      */
     def createWizard = {
         // initialize session model data
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
 
         // initialzize new gs inst
         def geneSigInst = new GeneSignature();
@@ -131,7 +112,7 @@ class GeneSignatureController {
         def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: geneSigInst);
         session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
 
-        redirect(action: 'create1')
+        redirect(action: "create1")
     }
 
     /**
@@ -139,12 +120,12 @@ class GeneSignatureController {
      */
     def editWizard = {
         // initialize session model data
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
 
         // load gs instance
         def geneSigInst = GeneSignature.get(params.id)
         def clone = geneSigInst.clone()
-        clone.modifiedByAuthUser = user
+        clone.modifiedByAuthUser = AuthUser.findByUsername(user.username)
         if (clone.experimentTypeCellLine?.id == null) clone.experimentTypeCellLine = null
         // this is hack, don't know how to get around this!
         log.debug "experimentTypeCellLine: " + clone.experimentTypeCellLine + "; null? " + (clone.experimentTypeCellLine == null)
@@ -152,7 +133,7 @@ class GeneSignatureController {
         def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: clone, wizardType: WizardModelDetails.WIZ_TYPE_EDIT, editId: geneSigInst.id);
         session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
 
-        redirect(action: 'edit1')
+        redirect(action: "edit1")
     }
 
     /**
@@ -160,12 +141,12 @@ class GeneSignatureController {
      */
     def cloneWizard = {
         // initialize session model data
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
 
         // load gs inst to clone
         def geneSigInst = GeneSignature.get(params.id)
         def clone = geneSigInst.clone()
-        clone.createdByAuthUser = user
+        clone.createdByAuthUser = AuthUser.findByUsername(user.username)
         clone.modifiedByAuthUser = null;
         clone.name = clone.name + " (clone)"
         clone.description = clone.description + " (clone)"
@@ -183,46 +164,46 @@ class GeneSignatureController {
         session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
 
         // reset items
-        redirect(action: 'create1')
+        redirect(action: "create1")
     }
 
     /**
      * set the indicated gs public for access by everyone
      */
     def makePublic = {
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def gsInst = GeneSignature.get(params.id)
-        gsInst.modifiedByAuthUser = user
+        gsInst.modifiedByAuthUser = AuthUser.findByUsername(user.username)
         geneSignatureService.makePublic(gsInst, true)
 
         flash.message = "GeneSignature '${gsInst.name}' was made public to everyone"
-        redirect(action: list)
+        redirect(action: "list")
     }
 
     /**
      * set the indicated gs private
      */
     def makePrivate = {
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def gsInst = GeneSignature.get(params.id)
-        gsInst.modifiedByAuthUser = user
+        gsInst.modifiedByAuthUser = AuthUser.findByUsername(user.username)
         geneSignatureService.makePublic(gsInst, false)
 
         flash.message = "GeneSignature '${gsInst.name}' was made private"
-        redirect(action: list)
+        redirect(action: "list")
     }
 
     /**
      * mark the indicated gs as deleted by setting deletedFlag as true
      */
     def delete = {
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def gsInst = GeneSignature.get(params.id)
-        gsInst.modifiedByAuthUser = user
+        gsInst.modifiedByAuthUser = AuthUser.findByUsername(user.username)
         geneSignatureService.delete(gsInst)
 
         flash.message = "GeneSignature '${gsInst.name}' was marked as deleted"
-        redirect(action: list)
+        redirect(action: "list")
     }
 
     /**
@@ -375,6 +356,11 @@ class GeneSignatureController {
         // good to go, call save service
         try {
             gs = geneSignatureService.saveWizard(gs, file)
+            if (gs.hasErrors()) {
+                flash.message = 'Could not save Gene Signature'
+                render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
+                return
+            }
 
             // clean up session
             wizard = null
@@ -382,7 +368,7 @@ class GeneSignatureController {
 
             // send message to user
             flash.message = "GeneSignature '${gs.name}' was created on: ${gs.dateCreated}"
-            redirect(action: 'list')
+            redirect(action: "list")
 
         } catch (FileSchemaException fse) {
             flash.message = fse.getMessage()
@@ -399,7 +385,7 @@ class GeneSignatureController {
      * update gene signature and the associated items (new file only)
      */
     def update = {
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
 
         // retrieve clone
         def wizard = session.getAttribute(WIZ_DETAILS_ATTRIBUTE)
@@ -412,7 +398,7 @@ class GeneSignatureController {
         def gsReal = GeneSignature.get(wizard.editId)
         def origFile = gsReal.uploadFile
         clone.copyPropertiesTo(gsReal)
-        gsReal.modifiedByAuthUser = user
+        gsReal.modifiedByAuthUser = AuthUser.findByUsername(user.username)
         gsReal.uploadFile = origFile
 
         // refresh items if new file uploaded
@@ -452,7 +438,7 @@ class GeneSignatureController {
 
             // send message to user
             flash.message = "GeneSignature '${gsReal.name}' was updated on: ${gsReal.lastUpdated}"
-            redirect(action: 'list')
+            redirect(action: "list")
 
         } catch (FileSchemaException fse) {
             flash.message = fse.getMessage()
@@ -642,9 +628,9 @@ class GeneSignatureController {
                 }
             }
             log.debug " redirect params>> " + newParams
-            redirect(action: showEditItems, params: newParams)
+            redirect(action: "showEditItems", params: newParams)
         } else {
-            redirect(action: showEditItems, params: ["id": gs.id])
+            redirect(action: "showEditItems", params: ["id": gs.id])
         }
     }
 

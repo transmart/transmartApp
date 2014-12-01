@@ -1,24 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
-
-
-import com.recomdata.snp.SnpData
 import grails.converters.JSON
 import org.transmart.searchapp.AccessLog
 
@@ -41,12 +20,11 @@ class SampleExplorerController {
     def index =
             {
                 //Create an event record for this access.
-                def al = new AccessLog(username: springSecurityService.getPrincipal().username, event:"SampleExplorer-Summary", eventmessage:"Sample Explorer summary page", accesstime:new Date())
+                def al = new AccessLog(username: springSecurityService.getPrincipal().username, event: "SampleExplorer-Summary", eventmessage: "Sample Explorer summary page", accesstime: new Date())
                 al.save();
 
-                redirect(action:'list')
+                redirect(action: "list")
             }
-
 
     //We'll take a result_instance_id and dump all the sample IDs for those patients into another table.
     def generateSampleCohort =
@@ -58,7 +36,7 @@ class SampleExplorerController {
     //Render the data grid screen based on the samples linked to the result_instance_id.
     def showCohortSamples =
             {
-                render(view: "sampleExplorer", model:[sampleRequestType:"cohort", columnData:verifyGridFieldList() as JSON, result_instance_id: params.result_instance_id]);
+                render(view: "sampleExplorer", model: [sampleRequestType: "cohort", columnData: verifyGridFieldList() as JSON, result_instance_id: params.result_instance_id]);
             }
 
     /**
@@ -69,7 +47,7 @@ class SampleExplorerController {
                 def columnMap = verifyGridFieldList();
 
 
-                render(view: "sampleExplorer", model:[sampleRequestType:"search", columnData:columnMap as JSON])
+                render(view: "sampleExplorer", model: [sampleRequestType: "search", columnData: columnMap as JSON])
             }
 
     /**
@@ -78,18 +56,18 @@ class SampleExplorerController {
     def showTopLevelListPage =
             {
                 //Call the solr service to get a hash that looks like category:[item:count]. We pass in an empty string because we want all the documents in the solr search.
-                def termMap = solrService.facetSearch("",verifyFieldList(), 'sample')
+                def termMap = solrService.facetSearch("", verifyFieldList(), 'sample')
 
                 //Render the list of links in their own categories.
-                render(template:"searchTopLevel", model:[termsMap:termMap]);
+                render(template: "searchTopLevel", model: [termsMap: termMap]);
             }
 
     def showMainSearchPage =
             {
                 //We need to pass in the top X news stories so we can draw them on the screen.
-                def newsUpdates = NewsUpdate.list(max:grailsApplication.config.com.recomdata.solr.maxNewsStories, sort:"updateDate", order:"desc")
+                def newsUpdates = NewsUpdate.list(max: grailsApplication.config.com.recomdata.solr.maxNewsStories, sort: "updateDate", order: "desc")
 
-                render(template:"categorySearch", model:[newsUpdates:newsUpdates]);
+                render(template: "categorySearch", model: [newsUpdates: newsUpdates]);
             }
 
     /**
@@ -101,10 +79,10 @@ class SampleExplorerController {
                 def solrFieldList = verifyGridFieldList();
 
                 //Call the solr service to get a hash that looks like category:[item:count].
-                def termMap = solrService.facetSearch(request.JSON.SearchJSON,solrFieldList, 'sample')
+                def termMap = solrService.facetSearch(request.JSON.SearchJSON, solrFieldList, 'sample')
 
                 //Render the list of checkboxes and links based on the items in our search JSON.
-                render(template:"categorySearchWithCheckboxes", model:[termsMap:termMap,JSONData:request.JSON.SearchJSON]);
+                render(template: "categorySearchWithCheckboxes", model: [termsMap: termMap, JSONData: request.JSON.SearchJSON]);
             }
 
     /**
@@ -116,13 +94,12 @@ class SampleExplorerController {
 
                 def sampleSummary = [:]
 
-                if(request.JSON?.showCohortInformation == "TRUE")
-                {
+                if (request.JSON?.showCohortInformation == "TRUE") {
                     sampleSummary = sampleService.loadSampleStatisticsObject(request.JSON?.result_instance_id)
                     includeCohortInformation = true
                 }
 
-                render(template:"dataSetResults", model:[includeCohortInformation : includeCohortInformation, sampleSummary : sampleSummary]);
+                render(template: "dataSetResults", model: [includeCohortInformation: includeCohortInformation, sampleSummary: sampleSummary]);
             }
 
     /**
@@ -135,21 +112,18 @@ class SampleExplorerController {
 
                 String selectedResultColumns = ""
 
-                if(request.JSON.PanelNumber)
-                {
+                if (request.JSON.PanelNumber) {
                     //In the JSON result there is a list of the columns we expect to get back.
-                    selectedResultColumns = request.JSON.SearchJSON["GridColumnList" + request.JSON.PanelNumber ].join(",").replace("\"","")
+                    selectedResultColumns = request.JSON.SearchJSON["GridColumnList" + request.JSON.PanelNumber].join(",").replace("\"", "")
 
                     selectedResultColumns = selectedResultColumns.replace("GridColumnList" + request.JSON.PanelNumber, "")
-                }
-                else
-                {
+                } else {
                     //In the JSON result there is a list of the columns we expect to get back.
-                    selectedResultColumns = request.JSON.SearchJSON.GridColumnList.join(",").replace("\"","")
+                    selectedResultColumns = request.JSON.SearchJSON.GridColumnList.join(",").replace("\"", "")
                 }
 
                 //This will be the hash to store our results.
-                def resultsHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,selectedResultColumns, false, 'sample')
+                def resultsHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON, selectedResultColumns, false, 'sample')
 
                 render resultsHash as JSON
             }
@@ -163,18 +137,17 @@ class SampleExplorerController {
                 def category = params.query.substring(0, params.query.indexOf(":"))
 
                 //If all categories are being searched, look in session to get the list.
-                if(category=="all") category = verifyFieldList().join(",");
+                if (category == "all") category = verifyFieldList().join(",");
 
                 //Grab the value to search for.
                 def values = params.query.substring(params.query.indexOf(":") + 1)
 
                 //Get the list of possible results.
-                def resultsHash = solrService.suggestTerms(category,values,grailsApplication.config.com.recomdata.solr.numberOfSuggestions.toString(), 'sample')
+                def resultsHash = solrService.suggestTerms(category, values, grailsApplication.config.com.recomdata.solr.numberOfSuggestions.toString(), 'sample')
 
                 //Render the results as JSON.
-                render params.callback+"("+(resultsHash as JSON)+")"
+                render params.callback + "(" + (resultsHash as JSON) + ")"
             }
-
 
     /**
      * This returns a JSON object representing the available solr fields. Used mainly to populate picklists.
@@ -185,7 +158,7 @@ class SampleExplorerController {
                 def fieldList = verifyFieldList()
 
                 //Initialize the map with the all value.
-                def categoryMap = [rows:[["value":"all","label":"all"]]]
+                def categoryMap = [rows: [["value": "all", "label": "all"]]]
 
                 //We need to put the field list into a format that the pick list expects. Each field gets a label and value entry.
                 fieldList.columns.each
@@ -198,7 +171,7 @@ class SampleExplorerController {
                             categoryMap['rows'].add(tempMap)
                         }
 
-                render params.callback+"("+(categoryMap as JSON)+")"
+                render params.callback + "(" + (categoryMap as JSON) + ")"
             }
 
     /**
@@ -209,25 +182,25 @@ class SampleExplorerController {
 
                 def fullColumnList = [];
 
-                loadEntireFieldList().columns.each{fullColumnList.push(it.dataIndex)}
+                loadEntireFieldList().columns.each { fullColumnList.push(it.dataIndex) }
 
                 def columnPrettyNameMapping = loadFieldPrettyNameMapping()
 
                 //This will be the hash to store our results.
-                def resultsHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,fullColumnList.join(",").replace("\"",""), true, 'sample')
+                def resultsHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON, fullColumnList.join(",").replace("\"", ""), true, 'sample')
 
                 //Render the BioBank data.
-                render(template:"BioBankList", model:[samples:resultsHash.results, columnPrettyNameMapping:columnPrettyNameMapping]);
+                render(template: "BioBankList", model: [samples: resultsHash.results, columnPrettyNameMapping: columnPrettyNameMapping]);
             }
 
     def sampleContactScreen =
             {
-                def fullDataGroupedByContact 	= [:]
-                def columnPrettyNameMapping 	= loadFieldPrettyNameMapping()
-                def contactSampleIdMap			= [:]
-                def idColumn 					= grailsApplication.config.sampleExplorer.idfield
+                def fullDataGroupedByContact = [:]
+                def columnPrettyNameMapping = loadFieldPrettyNameMapping()
+                def contactSampleIdMap = [:]
+                def idColumn = grailsApplication.config.sampleExplorer.idfield
 
-                if(!idColumn) throw new Exception("SOLR ID Field Configuration not set!")
+                if (!idColumn) throw new Exception("SOLR ID Field Configuration not set!")
 
                 //We need to pull all the columns for the data referenced in the Search JSON.
                 def fullColumnList = [];
@@ -236,37 +209,33 @@ class SampleExplorerController {
                             fullColumnList.push(it.dataIndex)
                         }
 
-                def allSamplesHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,fullColumnList.join(",").replace("\"",""), true, 'sample')
+                def allSamplesHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON, fullColumnList.join(",").replace("\"", ""), true, 'sample')
 
                 //Get the distinct contact fields for this data.
-                def contactHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON,"CONTACT", true, 'sample')
+                def contactHash = solrService.pullResultsBasedOnJson(request.JSON.SearchJSON, "CONTACT", true, 'sample')
 
                 //We need to group the data by the contact field. Loop through the contact data outside, then the actual data inside.
                 contactHash.results.each {
                     currentContact ->
 
-                        if(currentContact.CONTACT) {
+                        if (currentContact.CONTACT) {
                             fullDataGroupedByContact[currentContact.CONTACT] = [];
                             contactSampleIdMap[currentContact.CONTACT] = [];
-                        }
-                        else{
+                        } else {
                             currentContact.CONTACT = "NO_CONTACT";
-                            fullDataGroupedByContact["NO_CONTACT"] 	= [];
-                            contactSampleIdMap["NO_CONTACT"] 		= [];
+                            fullDataGroupedByContact["NO_CONTACT"] = [];
+                            contactSampleIdMap["NO_CONTACT"] = [];
                         }
 
                         //Now loop through the actual results and group our contacts under their respective contact hash entry.
                         allSamplesHash.results.each {
                             currentSample ->
 
-                                if(currentSample[idColumn] && (currentSample["CONTACT"] == currentContact.CONTACT))
-                                {
+                                if (currentSample[idColumn] && (currentSample["CONTACT"] == currentContact.CONTACT)) {
                                     contactSampleIdMap[currentContact.CONTACT].add(currentSample[idColumn])
 
                                     fullDataGroupedByContact[currentContact.CONTACT].add(currentSample)
-                                }
-                                else if(currentSample[idColumn] && !currentSample["CONTACT"])
-                                {
+                                } else if (currentSample[idColumn] && !currentSample["CONTACT"]) {
                                     contactSampleIdMap["NO_CONTACT"].add(currentSample[idColumn])
 
                                     fullDataGroupedByContact["NO_CONTACT"].add(currentSample)
@@ -276,7 +245,7 @@ class SampleExplorerController {
 
 
 
-                render(template:"sampleContactInfo", model:[allSamplesByContact:fullDataGroupedByContact, contactSampleIdMap:contactSampleIdMap, columnPrettyNameMapping:columnPrettyNameMapping])
+                render(template: "sampleContactInfo", model: [allSamplesByContact: fullDataGroupedByContact, contactSampleIdMap: contactSampleIdMap, columnPrettyNameMapping: columnPrettyNameMapping])
             }
 
     def sampleValidateAdvancedWorkflow =
@@ -302,7 +271,7 @@ class SampleExplorerController {
                                 result[subset.key] = idList;
                         }
 
-                result=result.sort{it.key}
+                result = result.sort { it.key }
 
                 HashMap sampleIdList = [:]
 
@@ -321,7 +290,6 @@ class SampleExplorerController {
 
                 return loadFieldList()
             }
-
 
     /**
      * This method checks to make sure the list of fields we want to use are in session. If they aren't, it adds them to the session.
@@ -342,15 +310,14 @@ class SampleExplorerController {
         //Pull the field map from the configuration file.
         def resultsList = grailsApplication.config.sampleExplorer.fieldMapping.clone()
 
-        if(!resultsList) throw new Exception("Field Mapping Configuration not set!")
+        if (!resultsList) throw new Exception("Field Mapping Configuration not set!")
 
         def columnConfigsToRemove = []
 
         resultsList.columns.each
                 {
                     currentColumn ->
-                        if(!currentColumn.mainTerm)
-                        {
+                        if (!currentColumn.mainTerm) {
                             columnConfigsToRemove.add(currentColumn)
                         }
                 }
@@ -368,15 +335,14 @@ class SampleExplorerController {
         //Pull the field map from the configuration file.
         def resultsList = grailsApplication.config.sampleExplorer.fieldMapping.clone()
 
-        if(!resultsList) throw new Exception("Field Mapping Configuration not set!")
+        if (!resultsList) throw new Exception("Field Mapping Configuration not set!")
 
         def columnConfigsToRemove = []
 
         resultsList.columns.each
                 {
                     currentColumn ->
-                        if(!currentColumn.showInGrid)
-                        {
+                        if (!currentColumn.showInGrid) {
                             columnConfigsToRemove.add(currentColumn)
                         }
                 }
@@ -391,7 +357,7 @@ class SampleExplorerController {
         //Pull the field map from the configuration file.
         def fullColumnList = grailsApplication.config.sampleExplorer.fieldMapping.clone()
 
-        if(!fullColumnList) throw new Exception("Field Mapping Configuration not set!")
+        if (!fullColumnList) throw new Exception("Field Mapping Configuration not set!")
 
         return fullColumnList
     }
@@ -400,7 +366,7 @@ class SampleExplorerController {
 
         def fullColumnMapping = grailsApplication.config.sampleExplorer.fieldMapping.clone()
 
-        if(!fullColumnMapping) throw new Exception("Field Mapping Configuration not set!")
+        if (!fullColumnMapping) throw new Exception("Field Mapping Configuration not set!")
 
         def returnHash = [:]
 

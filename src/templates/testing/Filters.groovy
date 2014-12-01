@@ -1,5 +1,6 @@
 @ artifact.package
 @ import grails.test.mixin.Mock
+@ import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @Mock(@artifact.testclass @ )
