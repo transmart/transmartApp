@@ -21,21 +21,20 @@
 <link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery/jqueryDatatable.css')}">
 
 <!-- jQuery JS libraries -->
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.min.js')}"></script>
-
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
-
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.cookie.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.dynatree.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.paging.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.loadmask.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.ajaxmanager.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.numeric.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.colorbox-min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.simplemodal.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.dataTables.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-migrate-1.2.1.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-ui-1.9.1.custom.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.cookie.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.dynatree.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.paging.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.loadmask.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.ajaxmanager.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.numeric.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.colorbox-min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.simplemodal.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.dataTables.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'facetedSearch/facetedSearchBrowse.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/ui.multiselect.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/ui.multiselect.js')}"></script>
 
 
 <!--Datatable styling and scripts-->
@@ -46,21 +45,11 @@
 <!--  SVG Export -->
 <%--<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  --%>
 
-<script type="text/javascript">
-    var $j = jQuery.noConflict();
-</script>
-<script type="text/javascript"
-        src="${resource(dir: 'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
-
-
 <!-- Our JS -->
 <script type="text/javascript" src="${resource(dir: 'js', file: 'rwg.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'rwgsearch.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'maintabpanel.js')}"></script>
 
-<!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
-<%-- <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-msie.min.js')}"></script> --%>
 
 <tmpl:/RWG/urls/>
 <script type="text/javascript" charset="utf-8">
@@ -69,6 +58,8 @@
     var sessionOperators = "${rwgSearchOperators}";
     var sessionSearchCategory = "${rwgSearchCategory}";
     var searchPage = "RWG";
+
+    var $j = window.$j = jQuery.noConflict();
 
     jQuery(document).ready(function () {
 
@@ -344,7 +335,6 @@
     });
 
     function resizeAccordion() {
-        console.log("PLOP");
         var windowHeight = jQuery(window).height();
         jQuery('#sidebar').height(jQuery(window).height() - 30);
         jQuery('#main').height(jQuery(window).height() - 30);

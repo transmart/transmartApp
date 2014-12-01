@@ -1,4 +1,4 @@
-<g:setProvider library="prototype"/>
+
 <%@ page import="org.springframework.web.util.JavaScriptUtils; org.transmart.searchapp.SecureObjectAccess" %>
 
 <html>
@@ -6,14 +6,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="layout" content="admin"/>
     <title>Manage Study Access</title>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
-    <script type="text/javascript">
-        var $j = jQuery.noConflict();
-    </script>
-    <g:setProvider library="prototype"/>
-    <g:javascript library="prototype"/>
+    <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-migrate-1.2.1.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-ui-1.9.1.custom.min.js')}"></script>
 
+    <script type="text/javascript" charset="utf-8">
+
+        var $j = window.$j = jQuery.noConflict();
+
+    </script>
     <style>
     p {
         width: 430px;

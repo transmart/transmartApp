@@ -13,7 +13,7 @@
         position: static !important;
     }
     </style>
-    <g:setProvider library="prototype"/>
+
 </head>
 
 <body>

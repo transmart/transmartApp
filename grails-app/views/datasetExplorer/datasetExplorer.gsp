@@ -17,24 +17,24 @@
     </g:if>
 
     <!-- Include Ext and app-specific scripts: -->
-    <script type="text/javascript" src="${resource(dir: 'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-migrate-1.2.1.min.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'ext/adapter/ext/ext-base.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery.min.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery-ui-1.9.1.custom.min.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery.tablesorter.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.cookie.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.dynatree.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.paging.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.loadmask.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.ajaxmanager.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.numeric.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.colorbox-min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.simplemodal.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.dataTables.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.cookie.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.dynatree.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.paging.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.loadmask.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.ajaxmanager.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.numeric.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.colorbox-min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.simplemodal.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.dataTables.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'facetedSearch/facetedSearchBrowse.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/ui.multiselect.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.validate.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/additional-methods.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/ui.multiselect.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.validate.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/additional-methods.min.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'ajax_queue.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'ext/ext-all.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/ext-ux', file: 'miframe.js')}"></script>
@@ -46,8 +46,7 @@
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'reports.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'workspace.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer/exportData', file: 'dataTab.js')}"></script>
-    <script type="text/javascript"
-            src="${resource(dir: 'js/datasetExplorer/exportData', file: 'exportJobsTab.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer/exportData', file: 'exportJobsTab.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'fixconsole.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'browserDetect.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/utils', file: 'json2.js')}"></script>
@@ -56,15 +55,13 @@
     <script type="text/javascript" src="${resource(dir: 'js', file: 'utilitiesMenu.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'gridView.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'datasetExplorer.js')}"></script>
-    <script type="text/javascript"
-            src="${resource(dir: 'js/datasetExplorer', file: 'datasetExplorerLaunchers.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'datasetExplorerLaunchers.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'sampleQuery.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'rwgsearch.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'advancedWorkflowFunctions.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'highDimensionData.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/Galaxy', file: 'galaxyExport.js')}"></script>
-    <script type="text/javascript"
-            src="//yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script>
+    <script type="text/javascript" src="//yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script>
 
     <tmpl:/RWG/urls/>
 
@@ -177,7 +174,6 @@
     var sessionOperators = "${rwgSearchOperators}";
     var sessionSearchCategory = "${rwgSearchCategory}";
     var searchPage = "datasetExplorer";
-    var $j = jQuery.noConflict();
     Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
     var dseOpenedNodes = "${dseOpenedNodes}";
     var dseClosedNodes = "${dseClosedNodes}";
@@ -188,6 +184,7 @@
     // this overrides the above
     Ext.Updater.defaults.timeout = 1800000;
 
+    var $j = window.$j = jQuery.noConflict();
     var helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 </script>
 
@@ -200,8 +197,9 @@
 <tmpl:/RWG/filterBrowser/>
 <div id="sidebartoggle">&nbsp;</div>
 
-<div id="noAnalyzeResults" style="display: none;">No subject-level results found.<br/><g:link controller="RWG"
-                                                                                              action="index">Switch to Browse view</g:link>
+<div id="noAnalyzeResults" style="display: none;">
+    No subject-level results found.<br/>
+    <g:link controller="RWG" action="index">Switch to Browse view</g:link>
 </div>
 
 <div id="filter-div" style="display: none;"></div>

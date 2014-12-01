@@ -11,7 +11,7 @@ modules = {
     }
 
     session_timeout {
-        dependsOn 'jquery', 'jqueryui', 'session_timeout_nodep'
+        dependsOn 'jqueryui', 'session_timeout_nodep'
     }
 
     session_timeout_nodep {
@@ -20,8 +20,8 @@ modules = {
          * after </head>. Therefore, we cannot include resources with
          * disposition 'head' at this point. Of course, jquery-ui better have
          * been included through some other mechanism. */
-        resource url: '/js/jQuery/jquery.idletimeout.js'
-        resource url: '/js/jQuery/jquery.idletimer.js'
+        resource url: '/js/jquery/jquery.idletimeout.js'
+        resource url: '/js/jquery/jquery.idletimer.js'
         resource url: '/js/sessiontimeout.js'
     }
 
@@ -36,7 +36,7 @@ modules = {
     jqueryui {
         dependsOn 'jquery'
 
-        resource url: '/js/jQuery/jquery-ui-1.8.17.custom.min.js'
+        resource url: '/js/jquery/jquery-ui-1.8.17.custom.min.js'
         resource url: '/css/jQueryUI/smoothness/jquery-ui-1.8.17.custom.css'
     }
 }

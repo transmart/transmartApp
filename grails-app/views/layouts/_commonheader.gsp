@@ -77,7 +77,6 @@
 <!-- Session timeout dialog -->
 <div id="timeout-div" title="Your session is about to expire!">
     <p>You will be logged off in <span id="timeout-countdown"></span> seconds.</p>
-
     <p>Do you want to continue your session?</p>
 </div>
 <r:require module="session_timeout_nodep"/>

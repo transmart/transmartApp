@@ -1,4 +1,4 @@
-<%--<script type="text/javascript" src="${resource(dir:'js', file:'jQuery/ui.multiselect.js')}"></script>--%>
+<%--<script type="text/javascript" src="${resource(dir:'js', file:'jquery/ui.multiselect.js')}"></script>--%>
 
 <script type="text/javascript">
     jQuery(function () {

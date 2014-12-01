@@ -18,9 +18,8 @@ table.studyBrowseTable > tbody > tr > td {
     font-size: 10px;
 }
 </style>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/ui.multiselect.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/ui.multiselect.js')}"></script>
 <script type="text/javascript">
-    $j = jQuery.noConflict();
     $j(document).ready(function () {
         $j(".studyBrowseRow").click(function () {
             $j('.studyBrowseRow').removeClass('selected');

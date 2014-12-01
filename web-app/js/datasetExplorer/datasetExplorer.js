@@ -40,7 +40,7 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
 				timeout: '600000',
 				params :  Ext.urlEncode({}),
                 success: function (result, request) {
-					var exp = result.responseText.evalJSON();
+					var exp = jQuery.parseJSON(result.responseText);
 					if (exp.success && exp.files.length > 0)	{
 						loadScripts(exp.files);
 					}
@@ -3176,7 +3176,7 @@ function runGwas(result, result_instance_id1, result_instance_id2, querySummary1
 }
 
 function validateheatmapComplete(result) {
-	var mobj=result.responseText.evalJSON();
+	var mobj=jQuery.parseJSON(result.responseText);
 	GLOBAL.DefaultCohortInfo=mobj;
 
 	showCompareStepPathwaySelection();
@@ -3500,7 +3500,7 @@ function getExportButtonSecurity() {
 }
 
 function getExportButtonSecurityComplete(result) {
-	var mobj=result.responseText.evalJSON();
+	var mobj=jQuery.parseJSON(result.responseText);
 	var canExport=mobj.canExport;
     if (canExport || GLOBAL.IsAdmin) {
 		Ext.getCmp("exportbutton").enable();
@@ -3991,7 +3991,7 @@ function saveComparison() {
 }
 
 function saveComparisonComplete(result) {
-	var mobj=result.responseText.evalJSON();
+	var mobj=jQuery.parseJSON(result.responseText);
 	
 	//If the window is already open, close it.
 	if(this.saveComparisonWindow) saveComparisonWindow.close();
