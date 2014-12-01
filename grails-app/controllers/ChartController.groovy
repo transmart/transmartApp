@@ -2,6 +2,7 @@ import com.recomdata.charting.PieRenderer
 import com.recomdata.export.ExportTableNew
 import com.recomdata.statistics.StatHelper
 import grails.converters.JSON
+import org.apache.commons.lang.ArrayUtils
 import org.apache.commons.math.stat.inference.TestUtils
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.ChartRenderingInfo
@@ -297,259 +298,95 @@ class ChartController {
      * Action to get the basic statistics for the subset comparison and render them
      */
     def basicStatistics = {
-        log.trace("*******************Called basicStatistics action in ChartController")
+
+        // This clears the current session concept grid
         request.getSession().setAttribute("gridtable", null);
-        log.trace("Clearing grid in basicstatistics")
-        def result_instance_id1 = params.result_instance_id1;
-        def result_instance_id2 = params.result_instance_id2;
-        def al = new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Basic Statistics", eventmessage: "RID1:" + result_instance_id1 + " RID2:" + result_instance_id2, accesstime: new java.util.Date())
-        log.trace(al.toString())
-        log.trace(al.username)
-        log.trace(al.event)
-        al.save()
-        log.trace("Result instance 1:" + result_instance_id1);
-        log.trace("Result instance 2:" + result_instance_id2);
-        def boolean s1 = true;
-        def boolean s2 = true;
-        if (result_instance_id1 == "" || result_instance_id1 == null) {
-            s1 = false;
-        }
-        if (result_instance_id2 == "" || result_instance_id2 == null) {
-            s2 = false;
-        }
-        log.trace("s1:" + s1)
-        log.trace("s2:" + s2)
-        PrintWriter pw = new PrintWriter(response.getOutputStream());
 
-        pw.write("<html><head><link rel='stylesheet' type='text/css' href='${resource(dir: 'css', file: 'chartservlet.css')}'></head><body><div class='analysis'>");
-        pw.write("<table width='100%'>");
-        pw.write("<tr><td colspan='2' align='center'><div class='analysistitle' id='analysis_title'>Summary " +
-                "Statistics</div></td></tr>");
-        pw.write("<tr><td width='50%' align='center'>");
-        if (s1) {
-            i2b2HelperService.renderQueryDefinition(result_instance_id1, "Query Summary for Subset 1", pw);
-        }
-        pw.write("</td><td align='center'>");
-        if (s2) {
-            i2b2HelperService.renderQueryDefinition(result_instance_id2, "Query Summary for Subset 2", pw);
-        }
-        pw.write("</tr>");
-        pw.write("<tr><td colspan='2' align='center'>");
-        renderPatientCountInfoTable(result_instance_id1, result_instance_id2, pw);
+        // We retrieve the result instance ids from the client
+        def result_instance_id1 = params.result_instance_id1 ?: null;
+        def result_instance_id2 = params.result_instance_id2 ?: null;
 
-        /*get the data*/
-        log.trace("Getting age data")
-        double[] values3 = s1 ?
-                i2b2HelperService.getPatientDemographicValueDataForSubset(
-                        "AGE_IN_YEARS_NUM", result_instance_id1) :
-                []
-        double[] values4 = s2 ?
-                i2b2HelperService.getPatientDemographicValueDataForSubset(
-                        "AGE_IN_YEARS_NUM", result_instance_id2) :
-                []
+        // Lets put a bit of 'audit' in here
+        new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Basic Statistics", eventmessage: "RID1:" + result_instance_id1 + " RID2:" + result_instance_id2, accesstime: new java.util.Date()).save()
 
-        log.trace("Rendering age histograms")
-        /*render the double histogram*/
-        HistogramDataset dataset3 = new HistogramDataset();
-        if (s1) {
-            dataset3.addSeries("Subset 1", values3, 10, StatHelper.min(values3), StatHelper.max(values3));
-        }
-        if (s2) {
-            dataset3.addSeries("Subset 2", values4, 10, StatHelper.min(values4), StatHelper.max(values4));
-        }
-        JFreeChart chart3 = ChartFactory.createHistogram(
-                "Histogram of Age",
-                null,
-                "Count",
-                dataset3,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-        chart3.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
-        XYPlot plot3 = (XYPlot) chart3.getPlot();
-        plot3.setForegroundAlpha(0.85f);
+        // We create our subset reference Map
+        def subsets = [
+            1: [ exists: !(result_instance_id1 == null || result_instance_id1 == ""), instance: result_instance_id1],
+            2: [ exists: !(result_instance_id2 == null || result_instance_id1 == ""), instance: result_instance_id2],
+            commons: [:]
+        ]
 
-        XYBarRenderer renderer3 = (XYBarRenderer) plot3.getRenderer();
-        renderer3.setDrawBarOutline(false);
-        // flat bars look best...
-        renderer3.setBarPainter(new StandardXYBarPainter());
-        renderer3.setShadowVisible(false);
+        // We intend to use some legacy functions that are used elsewhere
+        // We need to use a printer for this
+        StringWriter output = new StringWriter()
+        PrintWriter writer = new PrintWriter(output)
 
-        NumberAxis rangeAxis3 = (NumberAxis) plot3.getRangeAxis();
-        rangeAxis3.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-        NumberAxis domainAxis3 = (NumberAxis) plot3.getDomainAxis();
-        //domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-        ChartRenderingInfo info3 = new ChartRenderingInfo(new StandardEntityCollection());
-
-        String filename3 = ServletUtilities.saveChartAsJPEG(chart3, 245, 180, info3, request.getSession());
-        String graphURL3 = request.getContextPath() + "/chart/displayChart?filename=" + filename3;
-        pw.write("</td></tr><tr><td colspan=2 align='center'><table><tr>");
-        pw.write("<td><img src='" + graphURL3 + "' width=245 height=180 border=0 usemap='#" + filename3 + "'>");
-        ChartUtilities.writeImageMap(pw, filename3, info3, false);
-        pw.write("</td>");
-
-        /*Render the box plot*/
-        DefaultBoxAndWhiskerCategoryDataset dataset7 = new DefaultBoxAndWhiskerCategoryDataset();
-
-        ArrayList<Number> l1 = new ArrayList<Number>();
-        for (int i = 0; i < values3.length; i++) {
-            l1.add(values3[i]);
-        }
-        ArrayList<Number> l2 = new ArrayList<Number>();
-        for (int i = 0; i < values4.length; i++) {
-            l2.add(values4[i]);
-        }
-        BoxAndWhiskerItem boxitem1 = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(l1);
-        BoxAndWhiskerItem boxitem2 = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(l2);
-        if (s1 && l1.size() > 0) {
-            dataset7.add(boxitem1, "Series 1", "Subset 1");
-        }
-        if (s2 && l2.size() > 0) {
-            dataset7.add(boxitem2, "Series 2", "Subset 2");
+        // We want to automatically clear the output buffer as we go
+        output.metaClass.toStringAndFlush = {
+            def tmp = buf.toString()
+            buf.setLength(0)
+            tmp
         }
 
-        JFreeChart chart7 = ChartFactory.createBoxAndWhiskerChart(
-                "Comparison of Age", "", "Value", dataset7,
-                false);
-        chart7.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
-        CategoryPlot plot7 = (CategoryPlot) chart7.getPlot();
-        plot7.setDomainGridlinesVisible(true);
+        // We need to run some common statistics first
+        // This must be changed for multiple (>2) cohort selection
+        // We grab the intersection count for our two cohort
+        if (subsets[2].exists)
+            subsets.commons.patientIntersectionCount = i2b2HelperService.getPatientSetIntersectionSize(subsets[1].instance, subsets[2].instance)
 
-        NumberAxis rangeAxis7 = (NumberAxis) plot7.getRangeAxis();
-        BoxAndWhiskerRenderer rend7 = (BoxAndWhiskerRenderer) plot7.getRenderer();
-        rend7.setMaximumBarWidth(0.10);
-        //rangeAxis7.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        ChartRenderingInfo info7 = new ChartRenderingInfo(new StandardEntityCollection());
+        // Lets prepare our subset shared diagrams, we will fill them later
+        HistogramDataset ageHistoHandle = new HistogramDataset();
+        DefaultBoxAndWhiskerCategoryDataset agePlotHandle = new DefaultBoxAndWhiskerCategoryDataset();
 
-        String filename7 = ServletUtilities.saveChartAsJPEG(chart7, 200, 300, info7, request.getSession());
-        String graphURL7 = request.getContextPath() + "/chart/displayChart?filename=" + filename7;
-        pw.write("<td align='center'>");
-        if (s1 && l1.size() > 0) {
-            pw.write("<div class='smalltitle'><b>Subset 1</b></div>");
-            renderBoxAndWhiskerInfoTable(l1, pw);
-        }
-        pw.write("</td>");
-        pw.write("<td><img src='" + graphURL7 + "' width=200 height=300 border=0 usemap='#" + filename7 + "'>");
-        String rmodulesVersion = grailsApplication.mainContext.pluginManager.getGrailsPlugin('rdc-rmodules').version;
-        pw.write("<td valign='top'><div style='position:relative;left:-30px;'><a  href=\"javascript:showInfo('plugins/rdc-rmodules-$rmodulesVersion/help/boxplot.html');\"><img src=\"../images/information.png\"></a></div></td>");
-        //Should be dynamic to plugin!
-        pw.write("</td><td align='center'>");
-        if (s2 && l2.size() > 0) {
-            pw.write("<div class='smalltitle'><b>Subset 2</b></div>");
-            renderBoxAndWhiskerInfoTable(l2, pw);
-        }
-        ChartUtilities.writeImageMap(pw, filename7, info7, false);
-        pw.write("</td></tr></table>");
-        pw.write("</td></tr><tr><td width='50%' align='center'>");
+        // We also create a map to store image paths
+        def graphs = [:]
 
-        if (s1) {
-            HashMap<String, Integer> sexs1 = i2b2HelperService.getPatientDemographicDataForSubset("sex_cd", result_instance_id1);
-            JFreeChart chart = createConceptAnalysisPieChart(hashMapToPieDataset(sexs1, "Sex"), "Sex");
-            info7 = new ChartRenderingInfo(new StandardEntityCollection());
-            filename7 = ServletUtilities.saveChartAsJPEG(chart, 200, 200, info7, request.getSession());
-            graphURL7 = request.getContextPath() + "/chart/displayChart?filename=" + filename7;
-            pw.write("<img src='" + graphURL7 + "' width=200 height=200 border=0 usemap='#" + filename7 + "'>");
-            ChartUtilities.writeImageMap(pw, filename7, info7, false);
-            //pw.write("<b>Sex</b>");
-            renderCategoryResultsHashMap(sexs1, "Subset 1", i2b2HelperService.getPatientSetSize(result_instance_id1), pw);
+        subsets.findAll { n, p ->
+            p.exists
+        }.each { n, p ->
+
+            // First we get the Query Definition
+            i2b2HelperService.renderQueryDefinition(p.instance, "Query Summary for Subset ${n}", writer)
+            p.query = output.toStringAndFlush()
+
+            // Lets fetch the patient count
+            p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+
+            // Getting the age data
+            p.ageData = i2b2HelperService.getPatientDemographicValueDataForSubset("AGE_IN_YEARS_NUM", p.instance)
+            ageHistoHandle.addSeries("Subset $n", p.ageData, 10, StatHelper.min(p.ageData), StatHelper.max(p.ageData));
+            p.ageStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(Arrays.asList(ArrayUtils.toObject(p.ageData)))
+            agePlotHandle.add(p.ageStats, "Series $n", "Subset $n")
+
+            // Sex chart has to be generated for each subset
+            p.sexData = i2b2HelperService.getPatientDemographicDataForSubset("sex_cd", p.instance)
+            JFreeChart sexPieChart = createConceptAnalysisPieChart(hashMapToPieDataset(p.sexData, "Sex"), "Sex");
+            String sexPieFile = ServletUtilities.saveChartAsJPEG(sexPieChart, 300, 200, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession())
+            graphs."sexPie$n" = request.getContextPath() + "/chart/displayChart?filename=" + sexPieFile
+
+            // Same thing for Race chart
+            p.raceData = i2b2HelperService.getPatientDemographicDataForSubset("race_cd", p.instance)
+            JFreeChart racePieChart = createConceptAnalysisPieChart(hashMapToPieDataset(p.raceData, "Race"), "Race");
+            String racePieFile = ServletUtilities.saveChartAsJPEG(racePieChart, 300, 200, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession())
+            graphs."racePie$n" = request.getContextPath() + "/chart/displayChart?filename=" + racePieFile
+
         }
 
-        pw.write("</td><td width='50%' align='center'>");
-        if (s2) {
-            HashMap<String, Integer> sexs2 = i2b2HelperService.getPatientDemographicDataForSubset("sex_cd", result_instance_id2);
-            JFreeChart chart = createConceptAnalysisPieChart(hashMapToPieDataset(sexs2, "Sex"), "Sex");
-            info7 = new ChartRenderingInfo(new StandardEntityCollection());
-            filename7 = ServletUtilities.saveChartAsJPEG(chart, 200, 200, info7, request.getSession());
-            graphURL7 = request.getContextPath() + "/chart/displayChart?filename=" + filename7;
-            pw.write("<img src='" + graphURL7 + "' width=200 height=200 border=0 usemap='#" + filename7 + "'>");
-            ChartUtilities.writeImageMap(pw, filename7, info7, false);
-            //pw.write("<b>Sex</b>");
-            renderCategoryResultsHashMap(sexs2, "Subset 2", i2b2HelperService.getPatientSetSize(result_instance_id2), pw);
-        }
+        // Lets build our age diagrams now that we have all the points in
+        JFreeChart ageHistoChart = ChartFactory.createHistogram("Histogram of Age", null, "Count", ageHistoHandle, PlotOrientation.VERTICAL, true, true, false)
+        String ageHistoFile = ServletUtilities.saveChartAsJPEG(ageHistoChart, 245, 180, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession())
+        graphs.ageHisto = request.getContextPath() + "/chart/displayChart?filename=" + ageHistoFile
 
+        JFreeChart agePlotChart = ChartFactory.createBoxAndWhiskerChart("Comparison of Age", "", "Value", agePlotHandle, false)
+        String agePlotFile = ServletUtilities.saveChartAsJPEG(agePlotChart, 200, 300, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession())
+        graphs.agePlot = request.getContextPath() + "/chart/displayChart?filename=" + agePlotFile
 
-        HashMap<String, Integer> raceResults1;
-        HashMap<String, Integer> raceResults2;
+        // Time to delivery !
+        render(template: "summaryStatistics", model: [subsets: subsets, graphs: graphs])
+        return;
 
-        // get race statistics
-        if (s1) {
-            raceResults1 = i2b2HelperService.getPatientDemographicDataForSubset("race_cd", result_instance_id1);
-            log.debug("raceResults1: " + raceResults1)
-        }
-        if (s2) {
-            raceResults2 = i2b2HelperService.getPatientDemographicDataForSubset("race_cd", result_instance_id2);
-            log.debug("raceResults2: " + raceResults2)
-        }
+        renderCategoryResultsHashMap(sexs1, "Subset 1", i2b2HelperService.getPatientSetSize(result_instance_id1), pw);
 
-        HashMap<String, Integer> race1 = new HashMap<String, Integer>();
-        HashMap<String, Integer> race2 = new HashMap<String, Integer>();
-        // filter cases where there are zero subjects of a given race
-        if (s1) {
-            Iterator itr = raceResults1.keySet().iterator();
-            while (itr.hasNext()) {
-                String s = itr.next()
-                log.trace("examining: " + s + ", count:" + raceResults1.get(s))
-                if (raceResults1.get(s) != 0) {
-                    race1.put(s, raceResults1.get(s));
-                    race2.put(s, 0);
-                    log.trace("added to race1, race2")
-                }
-            }
-            log.trace("race1: " + race1)
-        }
-
-        if (s2) {
-            Iterator itr = raceResults2.keySet().iterator();
-            while (itr.hasNext()) {
-                String s = itr.next()
-                log.trace("examining " + s + ", count:" + raceResults2.get(s))
-                if (raceResults2.get(s) != 0) {
-                    race2.put(s, raceResults2.get(s));
-                    log.trace("added to race2")
-                    if (!race1.containsKey(s)) {
-                        race1.put(s, 0)
-                        log.trace("also added to race2")
-                    }
-                }
-            }
-            log.trace("race2: " + race2)
-        }
-
-        pw.write("</td></tr>");
-        pw.write("<tr><td width='50%' align='center'>");
-        if (s1) {
-            pw.write("<br>");
-            // HashMap<String, Integer> race1=i2b2HelperService.getPatientDemographicDataForSubset("race_cd", result_instance_id1);
-            JFreeChart chart = createConceptAnalysisPieChart(hashMapToPieDataset(race1, "Race"), "Race");
-            info7 = new ChartRenderingInfo(new StandardEntityCollection());
-            filename7 = ServletUtilities.saveChartAsJPEG(chart, 300, 200, info7, request.getSession());
-            graphURL7 = request.getContextPath() + "/chart/displayChart?filename=" + filename7;
-            pw.write("<img src='" + graphURL7 + "' width=300 height=200 border=0 usemap='#" + filename7 + "'>");
-            ChartUtilities.writeImageMap(pw, filename7, info7, false);
-            //pw.write("<b>Race</b>");
-            renderCategoryResultsHashMap(race1, "Subset 1", i2b2HelperService.getPatientSetSize(result_instance_id1), pw);
-        }
-
-        pw.write("</td><td width='50%' align='center'>");
-
-        if (s2) {
-            pw.write("<br>");
-            // HashMap<String, Integer> race2=i2b2HelperService.getPatientDemographicDataForSubset("race_cd", result_instance_id2);
-            JFreeChart chart = createConceptAnalysisPieChart(hashMapToPieDataset(race2, "Race"), "Race");
-            info7 = new ChartRenderingInfo(new StandardEntityCollection());
-            filename7 = ServletUtilities.saveChartAsJPEG(chart, 300, 200, info7, request.getSession());
-            graphURL7 = request.getContextPath() + "/chart/displayChart?filename=" + filename7;
-            pw.write("<img src='" + graphURL7 + "' width=300 height=200 border=0 usemap='#" + filename7 + "'>");
-            ChartUtilities.writeImageMap(pw, filename7, info7, false);
-            //pw.write("<b>Race</b>");
-            renderCategoryResultsHashMap(race2, "Subset 2", i2b2HelperService.getPatientSetSize(result_instance_id2), pw);
-        }
-
-        pw.write("</td></tr></table>");
 
         /*get all distinct  concepts for analysis from both subsets into hashmap*/
         List<String> keys = i2b2HelperService.getConceptKeysInSubsets(result_instance_id1, result_instance_id2);
@@ -684,48 +521,6 @@ class ChartController {
         ServletOutputStream servletoutputstream = response.getOutputStream();
         servletoutputstream.write(bytes);
         servletoutputstream.flush();
-    }
-
-    private void renderBoxAndWhiskerInfoTable(List<Number> values, PrintWriter pw) {
-        NumberFormat form;
-        form = DecimalFormat.getInstance();
-        form.setMaximumFractionDigits(2);
-        Number[] t = new Number[values.size()];
-        BoxAndWhiskerItem b = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(values);
-        pw.write("<table class='analysis'>");
-        pw.write("<tr><td><b>Mean:</b> " + form.format(b.getMean()) + "</td></tr>");
-        pw.write("<tr><td><b>Median:</b> " + form.format(b.getMedian()) + "</td></tr>");
-        pw.write("<tr><td><b>IQR:</b> " + form.format((b.getQ3().doubleValue() - b.getQ1().doubleValue())) + "</td></tr>");
-        pw.write("<tr><td><b>SD:</b> " + form.format(Statistics.getStdDev(values.toArray(t))) + "</td></tr>");
-        pw.write("<tr><td><b>Data Points:</b> " + values.size() + "</td></tr>");
-        pw.write("</table>");
-        return;
-    }
-
-    private void renderPatientCountInfoTable(String result_instance_id1, String result_instance_id2, PrintWriter pw) {
-        try {
-            int count1 = 0
-            int count2 = 0
-            int countCross = 0
-            if (result_instance_id1) {
-                count1 = i2b2HelperService.getPatientSetSize(result_instance_id1)
-                if (result_instance_id2) {
-                    countCross = i2b2HelperService.getPatientSetIntersectionSize(result_instance_id1, result_instance_id2)
-                }
-            }
-            if (result_instance_id2) {
-                count2 = i2b2HelperService.getPatientSetSize(result_instance_id2)
-            }
-            pw.write("<table width='100%'><tr><td align='center'><div class='smalltitle'><b>Subject Totals</b></div>");
-            pw.write("<table class='analysis'>");
-            pw.write("<tr><th>Subset 1</th><th>Both</th><th>Subset 2</th></th>");
-            pw.write("<tr><td>" + count1 + "</td><td>" + countCross + "</td><td>" + count2 + "</td></tr>");
-            pw.write("</table></td></tr></table>");
-        } catch (Exception e) {
-            log.error(e);
-        } finally {
-        }
-        return;
     }
 
     private void renderCategoryResultsHashMap(HashMap<String, Integer> results, String title, Integer totalsubjects, PrintWriter pw) {

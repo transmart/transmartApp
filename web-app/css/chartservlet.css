@@ -33,12 +33,14 @@ table.analysis td {
 }
 
 div.analysistitle {
+    padding-top: 30px;
 	font-size: 14pt;
 	font-weight: bold;
 	font-family:arial;
 }
 	
 div.smalltitle {
+    padding-top: 20px;
 	font-size: 10pt;
 	font-weight: bold;
 	font-family:arial;
