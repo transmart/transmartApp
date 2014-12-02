@@ -20,6 +20,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<r:require module="jquery-ui"/>
+	
 		<meta http-equiv="X-UA-Compatible" content="IE=8" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="shortcut icon" href="${resource(dir:'images',file:'searchtool.ico')}">
@@ -27,7 +29,6 @@
 		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/ext-all.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'js', file:'ext/resources/css/xtheme-gray.css')}"></link>
 		<link rel="stylesheet" href="${resource(dir:'css', file:'main.css')}"></link>
-		<link rel="stylesheet" href="${resource(dir:'css',file:'/jquery/cupertino/jquery-ui-1.8.18.custom.css')}"></link>   
         <link rel="stylesheet" href="${resource(dir:'css/jquery/skin', file:'ui.dynatree.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'rwg.css')}"></link>
         <link rel="stylesheet" href="${resource(dir:'css', file:'uploadData.css')}"></link>
@@ -42,7 +43,6 @@
 		
 		<g:javascript library="prototype" />
 <script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.8.3.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
 <script type="text/javascript">$j = jQuery.noConflict();</script>
 <script type="text/javascript" src="${resource(dir:'js', file:'uploadData.js')}"></script>
 <script type="text/javascript" charset="utf-8">

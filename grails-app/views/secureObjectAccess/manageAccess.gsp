@@ -22,11 +22,12 @@
 
 <html>
 <head>
+	<r:require module="jquery-ui"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="layout" content="admin" />
     <title>Manage Study Access</title>
     <script type="text/javascript"	src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
+    
     <script type="text/javascript">
         var $j = jQuery.noConflict();
     </script>

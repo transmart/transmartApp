@@ -7,7 +7,8 @@
         <title>${grailsApplication.config.com.recomdata.appTitle}</title>
         
         <!-- jQuery CSS for cupertino theme -->
-        <link rel="stylesheet" href="${resource(dir:'css/jquery/ui', file:'jquery-ui-1.9.1.custom.css')}">
+        <r:require module="jquery-ui"/>
+        
         <link rel="stylesheet" href="${resource(dir:'css/jquery/skin', file:'ui.dynatree.css')}">
         
         <!-- Our CSS -->
@@ -23,7 +24,7 @@
         <!-- jQuery JS libraries -->
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.min.js')}"></script>   
         
-        <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
+        
         
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.cookie.js')}"></script>   
         <script type="text/javascript" src="${resource(dir:'js', file:'jQuery/jquery.dynatree.min.js')}"></script>
