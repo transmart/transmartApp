@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="${resource(dir: 'js', file: 'ext/resources/css/ext-all.css')}"/>
     <link rel="stylesheet" href="${resource(dir: 'js', file: 'ext/resources/css/xtheme-gray.css')}"/>
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'genesignature.css')}"/>
-    <link rel="stylesheet" href="${resource(dir: 'css/jquery/ui', file: 'jquery-ui-1.9.1.custom.css')}">
+
+	<r:require module="jquery-ui"/>
 
     <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.migrate.js')}"></script>
 
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-ui-1.9.1.custom.min.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'ext/adapter/ext/ext-base.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'ext/ext-all.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'maintabpanel.js')}"></script>

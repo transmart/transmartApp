@@ -5,13 +5,13 @@
     <!-- Force Internet Explorer 8 to override compatibility mode -->
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
+	<r:require module="jquery-ui"/>
     <title>Sample Explorer :: ${grailsApplication.config.com.recomdata.appTitle}</title>
 
     <!-- Include Ext and app-specific scripts: -->
     <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.migrate.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery-ui-1.9.1.custom.min.js')}"></script>
+  
 
     <script type="text/javascript" src="${resource(dir: 'js', file: 'browserDetect.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'ext/adapter/ext/ext-base.js')}"></script>
@@ -23,7 +23,6 @@
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'sampleExplorer.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'chartservlet.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'main.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css/jquery/ui', file: 'jquery-ui-1.9.1.custom.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css/jquery/skin', file: 'ui.dynatree.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'datasetExplorer.css')}">
 

@@ -18,9 +18,11 @@
 
     <!-- Include jQuery, Ext and app-specific scripts: -->
     <g:javascript library="jquery" />
-
+    
     <r:require module="datasetExplorer" />
     <r:layoutResources/>
+
+
     <tmpl:/RWG/urls/>
 
     <script type="text/javascript">

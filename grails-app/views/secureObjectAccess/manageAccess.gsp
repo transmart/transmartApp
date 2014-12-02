@@ -8,7 +8,8 @@
     <title>Manage Study Access</title>
     <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.migrate.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-ui-1.9.1.custom.min.js')}"></script>
+    <g:javascript library="jquery" />
+    <r:require module="jquery-ui"/>
 
     <script type="text/javascript" charset="utf-8">
 
