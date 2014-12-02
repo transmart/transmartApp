@@ -31,6 +31,7 @@ modules = {
 
         resource url: '/js/ext/adapter/ext/ext-base.js', disposition: 'head'
         resource url: '/js/ext/' + envSwitch('ext-all-debug.js', 'ext-all.js'), disposition: 'head'
+        resource url: '/js/ext-ux/miframe.js', disposition: 'head'
     }
 
     jqueryui {
