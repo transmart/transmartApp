@@ -36,12 +36,12 @@ modules = {
     jqueryui {
         dependsOn 'jquery'
 
-        resource url: '/js/jquery/jquery-ui-1.8.17.custom.min.js'
+        resource url: '/js/jquery/jquery-ui-1.8.17.custom.min.js', disposition: 'head'
         resource url: '/css/jQueryUI/smoothness/jquery-ui-1.8.17.custom.css'
     }
     
     'jquery-plugins' {
-        dependsOn 'jquery'
+        dependsOn 'jquery', 'jqueryui'
 
         resource url: '/js/jquery/jquery.migrate.js', disposition: 'head'
         resource url: '/js/jquery/jquery.tablesorter.js', disposition: 'head'
@@ -57,7 +57,7 @@ modules = {
     }
 
     datasetExplorer {
-        dependsOn 'jquery', 'jquery-plugins', 'extjs'
+        dependsOn 'jquery', 'jqueryui', 'jquery-plugins', 'extjs'
 
         resource url: '/js/advancedWorkflowFunctions.js', disposition: 'head'
         resource url: '/js/ajax_queue.js', disposition: 'head'
@@ -81,7 +81,6 @@ modules = {
         resource url: '/js/datasetExplorer/exportData/exportJobsTab.js', disposition: 'head'
         resource url: '/js/facetedSearch/facetedSearchBrowse.js', disposition: 'head'
         resource url: '/js/galaxy/galaxyExport.js', disposition: 'head'
-        resource url: '/js/jquery/jquery-ui-1.9.1.custom.min.js', disposition: 'head'
         resource url: '/js/jquery/ui.multiselect.js', disposition: 'head'
         resource url: '/js/utils/dynamicLoad.js', disposition: 'head'
         resource url: '/js/utils/json2.js', disposition: 'head'
