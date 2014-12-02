@@ -10,7 +10,7 @@
 
     <!-- Include Ext and app-specific scripts: -->
     <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-migrate-1.2.1.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.migrate.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery-ui-1.9.1.custom.min.js')}"></script>
 
     <script type="text/javascript" src="${resource(dir: 'js', file: 'browserDetect.js')}"></script>
@@ -20,32 +20,20 @@
     <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/sampleExplorer.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/sampleExplorer.utilities.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'utilitiesMenu.js')}"></script>
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'js/ext/resources/css', file: 'ext-all.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'sampleExplorer.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'chartservlet.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'js/ext/resources/css', file: 'xtheme-gray.css')}">
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}">
+    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'main.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css/jquery/ui', file: 'jquery-ui-1.9.1.custom.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css/jquery/skin', file: 'ui.dynatree.css')}">
     <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'datasetExplorer.css')}">
-    <!--
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'searchcombobox.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'picklist.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'advancedWorkflowFunctions.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'i2b2common.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/HaploView.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/SNP.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/IGV.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/GWAS.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js/ext-ux', file: 'miframe.js')}"></script>
-    -->
 
-    <script type="text/javascript" charset="utf-8">
+    <r:script type="text/javascript" charset="utf-8">
 
         var $j = window.$j = jQuery.noConflict();
 
-    </script>
+    </r:script>
 
+    <g:layoutTitle/>
     <r:layoutResources/>
     <%-- XXX: Use template --%>
 
@@ -96,16 +84,6 @@
         BuildVersion: 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
         explorerType: 'sampleExplorer'
     };
-    // initialize browser version variables; see http://www.quirksmode.org/js/detect.html
-    BrowserDetect.init();
-    if (BrowserDetect.browser == "Explorer") {
-
-        if (BrowserDetect.version < 7) {
-            GLOBAL.resulttype = 'image';
-        }
-    }
-
-
 
 </script>
 
@@ -139,6 +117,7 @@
 </script>
 <!-- ************************************** -->
 
+<g:layoutBody/>
 <r:layoutResources/><%-- XXX: Use template --%>
 </body>
 </html>

@@ -22,16 +22,16 @@
 
 <!-- jQuery JS libraries -->
 <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-migrate-1.2.1.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.migrate.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-ui-1.9.1.custom.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.cookie.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.dynatree.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.paging.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.loadmask.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.dynatree.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.paging.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.loadmask.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.ajaxmanager.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.numeric.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.colorbox-min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.simplemodal.min.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.colorbox.js')}"></script>
+<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.simplemodal.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.dataTables.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'facetedSearch/facetedSearchBrowse.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/ui.multiselect.js')}"></script>

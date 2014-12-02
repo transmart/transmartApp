@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}"/>
 
     <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-migrate-1.2.1.min.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.migrate.js')}"></script>
     
     <script type="text/javascript" src="${resource(dir: 'js', file: 'ext/adapter/ext/ext-base.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'ext/ext-all.js')}"></script>
@@ -21,12 +21,12 @@
         var $j = window.$j = jQuery.noConflict();
 
     </script>
-    <g:layoutHead/>
+
     <r:layoutResources/>
 </head>
 
 <body>
-<g:layoutBody/>
+
 <r:layoutResources/>
 </body>
 </html>
