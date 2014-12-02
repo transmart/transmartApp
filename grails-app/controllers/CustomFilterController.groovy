@@ -1,28 +1,8 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
-
 /*
  * $Id: CustomFilterController.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
  */
 
 import org.transmart.GlobalFilter
-import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.CustomFilter
 import org.transmart.searchapp.CustomFilterItem
 import org.transmart.searchapp.SearchKeyword
@@ -38,7 +18,7 @@ class CustomFilterController {
 
     def list = {
         if (!params.max) params.max = 10
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def customFilters = CustomFilter.findAllBySearchUserId(user.id)
         for (customFilter in customFilters) {
             def keywordMap = createKeywordMap(customFilter)
@@ -52,14 +32,14 @@ class CustomFilterController {
         def customFilterInstance = CustomFilter.get(params.id)
         if (!customFilterInstance) {
             flash.message = "CustomFilter not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else if (!canUpdate(customFilterInstance)) {
             flash.message = "You are not authorized to delete the custom filter with ID ${params.id}."
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             customFilterInstance.delete()
             flash.message = "CustomFilter ${params.id} deleted"
-            redirect(action: list, params: [ts: new Date().getTime()])
+            redirect(action: "list", params: [ts: new Date().getTime()])
         }
     }
 
@@ -68,10 +48,10 @@ class CustomFilterController {
 
         if (!customFilterInstance) {
             flash.message = "CustomFilter not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else if (!canUpdate(customFilterInstance)) {
             flash.message = "You are not authorized to edit the custom filter with ID ${params.id}."
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             def keywordMap = createKeywordMap(customFilterInstance)
             def summary = createSummaryWithLinks(keywordMap)
@@ -88,18 +68,18 @@ class CustomFilterController {
             customFilterInstance.properties = params
             if (!customFilterInstance.hasErrors() && customFilterInstance.save()) {
                 flash.message = "CustomFilter ${params.id} updated"
-                redirect(action: list, params: [ts: new Date().getTime(), lastFilterID: params.id])
+                redirect(action: "list", params: [ts: new Date().getTime(), lastFilterID: params.id])
             } else {
                 render(view: 'edit', model: [customFilterInstance: customFilterInstance])
             }
         } else {
             flash.message = "CustomFilter not found with id ${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
     def create = {
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         def filter = new CustomFilter()
         filter.properties.searchUserId = user.id
         filter.properties.privateFlag = 'N'
@@ -126,14 +106,14 @@ class CustomFilterController {
         }
         if (!filter.hasErrors() && filter.save()) {
             flash.message = "CustomFilter ${filter.id} created"
-            redirect(action: list, params: [ts: new Date().getTime(), lastFilterID: filter.id])
+            redirect(action: "list", params: [ts: new Date().getTime(), lastFilterID: filter.id])
         } else {
             render(view: 'create', model: [customFilterInstance: filter])
         }
     }
 
     boolean canUpdate(customFilter) {
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         if (customFilter != null && customFilter.searchUserId == user.id) {
             return true
         }
@@ -141,7 +121,7 @@ class CustomFilterController {
     }
 
     boolean canSelect(customFilter) {
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
         if (customFilter != null && (customFilter.privateFlag != 'Y' || customFilter.searchUserId == user.id)) {
             return true
         }

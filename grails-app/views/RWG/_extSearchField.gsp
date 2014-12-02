@@ -3,7 +3,7 @@ jQuery(document).ready(function() {
 	
 	var escapedFieldName = '${fieldName}'.replace(".", "\\.");
 	jQuery("#" + escapedFieldName + "-input").autocomplete({
-		source: '${createLink([action:searchAction,controller:searchController,params:[category:'GENE']])}',
+		source: '${createLink([action: searchAction, controller: searchController, params: [category: 'GENE']])}',
 		minLength:0,
 		select: function(event, ui) {
 			var id = ui.item.id;
@@ -30,8 +30,8 @@ function changeField(field, valueField) {
 </g:javascript>
 <g:textField name="${fieldName}" style="display: none" value="${value}"/>
 <g:if test="${label}">
-	<input id="${fieldName}-input" style="width: ${width}px" value="${label}" disabled="disabled"/>
+    <input id="${fieldName}-input" style="width: ${width}px" value="${label}" disabled="disabled"/>
 </g:if>
 <g:else>
-	<input id="${fieldName}-input" style="width: ${width}px"/>
+    <input id="${fieldName}-input" style="width: ${width}px"/>
 </g:else>

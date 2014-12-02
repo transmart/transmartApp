@@ -3,29 +3,10 @@ import org.transmart.searchapp.AuthUserSecureAccess
 import org.transmart.searchapp.Role
 import org.transmart.searchapp.SecureAccessLevel;
 
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
-
 
 class AuthUserSecureAccessController {
 
-    def index = { redirect(action: list, params: params) }
+    def index = { redirect(action: "list", params: params) }
 
     // the delete, save and update actions only accept POST requests
     static allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
@@ -67,7 +48,7 @@ class AuthUserSecureAccessController {
 
         if (!authUserSecureAccessInstance) {
             flash.message = "AuthUserSecureAccess not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             return [authUserSecureAccessInstance: authUserSecureAccessInstance]
         }
@@ -79,15 +60,15 @@ class AuthUserSecureAccessController {
             try {
                 authUserSecureAccessInstance.delete()
                 flash.message = "AuthUserSecureAccess ${params.id} deleted"
-                redirect(action: list)
+                redirect(action: "list")
             }
             catch (org.springframework.dao.DataIntegrityViolationException e) {
                 flash.message = "AuthUserSecureAccess ${params.id} could not be deleted"
-                redirect(action: show, id: params.id)
+                redirect(action: "show", id: params.id)
             }
         } else {
             flash.message = "AuthUserSecureAccess not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         }
     }
 
@@ -96,7 +77,7 @@ class AuthUserSecureAccessController {
 
         if (!authUserSecureAccessInstance) {
             flash.message = "AuthUserSecureAccess not found with id ${params.id}"
-            redirect(action: list)
+            redirect(action: "list")
         } else {
             def id = authUserSecureAccessInstance.authUser.id
             return [authUserSecureAccessInstance: authUserSecureAccessInstance, accessLevelList: getAccessLevelList(id)]
@@ -118,13 +99,13 @@ class AuthUserSecureAccessController {
             authUserSecureAccessInstance.properties = params
             if (!authUserSecureAccessInstance.hasErrors() && authUserSecureAccessInstance.save()) {
                 flash.message = "AuthUserSecureAccess ${params.id} updated"
-                redirect(action: show, id: authUserSecureAccessInstance.id)
+                redirect(action: "show", id: authUserSecureAccessInstance.id)
             } else {
                 render(view: 'edit', model: [authUserSecureAccessInstance: authUserSecureAccessInstance])
             }
         } else {
             flash.message = "AuthUserSecureAccess not found with id ${params.id}"
-            redirect(action: edit, id: params.id)
+            redirect(action: "edit", id: params.id)
         }
     }
 
@@ -138,7 +119,7 @@ class AuthUserSecureAccessController {
         def authUserSecureAccessInstance = new AuthUserSecureAccess(params)
         if (!authUserSecureAccessInstance.hasErrors() && authUserSecureAccessInstance.save()) {
             flash.message = "AuthUserSecureAccess ${authUserSecureAccessInstance.id} created"
-            redirect(action: show, id: authUserSecureAccessInstance.id)
+            redirect(action: "show", id: authUserSecureAccessInstance.id)
         } else {
             render(view: 'create', model: [authUserSecureAccessInstance: authUserSecureAccessInstance])
         }

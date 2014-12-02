@@ -1,21 +1,4 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
+
 
 
 package com.rdc.snp.haploview;
@@ -265,7 +248,7 @@ public class PEDFormat {
 
       	  
       	  /* In order to make SNP name shorter, use position to replace SNP name
-      	   * in *.info file
+             * in *.info file
       	   *  
       	  query = " select t1.snp_data, t2.snp_data " +
       	  		  " from haploview_data t1, haploview_data t2 " +
@@ -418,7 +401,7 @@ public class PEDFormat {
 
         while (rs.next()) {
             // extract CLOB instead of String
-            Clob cl = (Clob) rs.getClob(2);
+            Clob cl = rs.getClob(2);
             String snpVal = cl.getSubString(1, (int) cl.length());
             //ht.put(rs.getString(1), rs.getString(2));
             ht.put(rs.getString(1), snpVal);

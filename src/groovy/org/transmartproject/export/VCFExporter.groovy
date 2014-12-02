@@ -228,7 +228,7 @@ class VCFExporter implements HighDimExporter {
         def convertedIndices = []
         ["allele1", "allele2"].each {
             if (assayData.containsKey(it)) {
-                int oldIndex = assayData[it]
+                def oldIndex = assayData[it]
 
                 if (oldIndex != null) {
                     String variant = originalVariants[oldIndex]

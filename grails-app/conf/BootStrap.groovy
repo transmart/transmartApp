@@ -1,22 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- *
- *
- ******************************************************************/
-
-
 import grails.plugin.springsecurity.SecurityFilterPosition
 import grails.plugin.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.exceptions.GrailsConfigurationException
@@ -76,17 +57,18 @@ class BootStrap {
         }
 
         def servletContext = grailsApplication.mainContext.servletContext
-
         def tsAppRScriptsDir = servletContext.getRealPath('dataExportRScripts')
         if (tsAppRScriptsDir) {
             tsAppRScriptsDir = new File(tsAppRScriptsDir)
         }
         if (!tsAppRScriptsDir || !tsAppRScriptsDir.isDirectory()) {
-            tsAppRScriptsDir = servletContext.getRealPath('.') +
-                    '/../dataExportRScripts'
+            tsAppRScriptsDir = servletContext.getRealPath('.') + '/../dataExportRScripts'
             if (tsAppRScriptsDir) {
                 tsAppRScriptsDir = new File(tsAppRScriptsDir)
             }
+        }
+        if (!tsAppRScriptsDir || !tsAppRScriptsDir.isDirectory()) {
+            tsAppRScriptsDir = new File('webapps' + servletContext.contextPath, 'dataExportRScripts')
         }
         if (!tsAppRScriptsDir || !tsAppRScriptsDir.isDirectory()) {
             tsAppRScriptsDir = new File('web-app', 'dataExportRScripts')
@@ -119,6 +101,9 @@ class BootStrap {
             if (pluginsDir) {
                 rdcModulesDir = new File(pluginsDir, "rdc-rmodules-$version")
             }
+            if (!rdcModulesDir || !rdcModulesDir.isDirectory()) {
+                rdcModulesDir = new File('webapps' + servletContext.contextPath + '/plugins', "rdc-rmodules-$version")
+            }
         }
         if (!rdcModulesDir) {
             throw new RuntimeException('Could not determine directory for ' +
@@ -137,6 +122,23 @@ class BootStrap {
 
         logger.info("RModules.pluginScriptDirectory = " +
                 "${c.RModules.pluginScriptDirectory}")
+
+        // At this point we assume c.RModules exists
+        if (!c.RModules.containsKey("host")) {
+            c.RModules.host = "127.0.0.1"
+            logger.info("RModules.host fixed to localhost")
+        }
+        if (!c.RModules.containsKey("port")){
+            c.RModules.port = 6311
+            logger.info("RModules.port fixed to default")
+        }
+
+        // Making sure we have default timeout and heartbeat values
+        // At this point we assume c.recomdata exists
+        if (!c.com.recomdata.containsKey("sessionTimeout"))
+            c.com.recomdata.sessionTimeout = 300
+        if (!c.com.recomdata.containsKey("heartbeatLaps"))
+            c.com.recomdata.heartbeatLaps = 30
     }
 
 
