@@ -40,7 +40,7 @@ modules = {
         resource url: '/js/jquery/jquery-ui-1.8.17.custom.min.js', disposition: 'head'
         resource url: '/css/jQueryUI/smoothness/jquery-ui-1.8.17.custom.css'
     }
-    
+
     'jquery-plugins' {
         dependsOn 'jquery', 'jqueryui'
 
@@ -71,8 +71,8 @@ modules = {
         resource url: '/js/datasetExplorer/ext-i2b2.js', disposition: 'head'
         resource url: '/js/datasetExplorer/gridView.js', disposition: 'head'
         resource url: '/js/datasetExplorer/highDimensionData.js', disposition: 'head'
-        resource url: '/js/datasetExplorer/highDimensionData.js', disposition: 'head'
         resource url: '/js/datasetExplorer/i2b2common.js', disposition: 'head'
+        resource url: '/js/datasetExplorer/querypanels.js', disposition: 'head'
         resource url: '/js/datasetExplorer/reports.js', disposition: 'head'
         resource url: '/js/datasetExplorer/requests.js', disposition: 'head'
         resource url: '/js/datasetExplorer/sampleQuery.js', disposition: 'head'
@@ -91,5 +91,6 @@ modules = {
         resource url: '/js/datasetExplorer/workflowValidationFunctions.js', disposition: 'head'
 
         resource url: '/css/datasetExplorer.css'
+        resource url: '/css/querypanels.css'
     }
 }

@@ -1,0 +1,101 @@
+#queryTable {
+    background-color: #eeeeee;
+    border-radius: 10px;
+    border: 1px solid #bbbbbb;
+    width: auto;
+}
+
+#queryTable .panelFob:last-child {
+    display: none;
+}
+
+.panelModel {
+    padding: 20px;
+    text-align: center;
+}
+
+.panelModel * {
+    box-sizing: border-box;
+}
+
+.panelBox {
+    width: 100%;
+    min-height: 100px;
+    position: relative;
+}
+
+.panelBoxBar, .panelBoxList {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.panelBoxBar {
+    padding: 5px;
+    background-color: #f0f0f0;
+    vertical-align: middle;
+}
+
+.panelBoxList {
+    min-height: 70px;
+    background-color: #ffffff;
+}
+
+.panelFob {
+    margin: 10px;
+    display: inline-block;
+    border-radius: 20px;
+    min-height: 40px;
+    min-width: 40px;
+    height: 40px;
+    width: 40px;
+    background-color: #A4ABE0;
+    color: #ffffff;
+    line-height: 40px;
+    text-align: center;
+    font-size: 16px;
+    font-variant: small-caps;
+    font-weight: bolder;
+    text-transform: lowercase;
+}
+
+/* We override the jQuery UI just here to keep cohorent */
+.panelBoxBar .ui-button-text {
+    padding: 0 !important;
+    line-height: inherit !important;
+}
+.panelBoxBar .ui-corner-left, .panelBoxBar .ui-corner-right {
+    background: none;
+    background-repeat: no-repeat !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 9pt !important;
+    padding: 5px !important;
+    border: 1px solid #CCC !important;
+    cursor: pointer !important;
+}
+
+.panelBoxBar .ui-corner-left {
+    border-top-left-radius: 2px !important;
+    border-bottom-left-radius: 2px !important;
+}
+.panelBoxBar .ui-corner-right {
+    border-top-right-radius: 2px !important;
+    border-bottom-right-radius: 2px !important;
+    border-left: none !important;
+}
+
+.panelBoxBar .ui-corner-left:hover, .panelBoxBar .ui-corner-right:hover {
+    background-color: #b2b2b2;
+}
+
+.panelBoxBar .ui-state-active {
+    background-color: #c2c2c2;
+}
+
+.panelRadio {
+    float: left;
+}
+
+.panelButtons {
+    float: right;
+}

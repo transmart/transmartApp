@@ -118,7 +118,7 @@ var mobj=result;
     var blah = node;
     node.beginUpdate();
     var children = node.childNodes;
-    var size2 = children.size()
+    var size2 = children.length
     for (var i = 0; i < size2; i++) {
         var key = children[i].attributes.id;
         var fullname = key.substr(key.indexOf("\\", 2), key.length);
