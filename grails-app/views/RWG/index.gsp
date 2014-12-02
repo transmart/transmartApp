@@ -5,9 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=Edge">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>${grailsApplication.config.com.recomdata.appTitle}</title>
-
-<!-- jQuery CSS for cupertino theme -->
-<link rel="stylesheet" href="${resource(dir: 'css/jquery/ui', file: 'jquery-ui-1.9.1.custom.css')}">
+<r:require module="jquery-ui"/>
 <link rel="stylesheet" href="${resource(dir: 'css/jquery/skin', file: 'ui.dynatree.css')}">
 
 <!-- Our CSS -->
@@ -23,7 +21,6 @@
 <!-- jQuery JS libraries -->
 <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.migrate.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery-ui-1.9.1.custom.min.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.cookie.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.dynatree.js')}"></script>
 <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.paging.js')}"></script>

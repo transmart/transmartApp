@@ -1,6 +1,6 @@
 modules = {
     admin {
-        dependsOn 'jqueryui', 'extjs', 'main_mod', 'session_timeout'
+        dependsOn 'jquery', 'jquery-ui', 'extjs', 'main_mod', 'session_timeout'
 
         resource url: '/css/admin.css'
 

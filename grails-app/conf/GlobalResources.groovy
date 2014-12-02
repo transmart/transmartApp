@@ -11,7 +11,7 @@ modules = {
     }
 
     session_timeout {
-        dependsOn 'jqueryui', 'session_timeout_nodep'
+        dependsOn 'jquery-ui', 'session_timeout_nodep'
     }
 
     session_timeout_nodep {
@@ -33,16 +33,16 @@ modules = {
         resource url: '/js/ext/' + envSwitch('ext-all-debug.js', 'ext-all.js'), disposition: 'head'
         resource url: '/js/ext-ux/miframe.js', disposition: 'head'
     }
-
-    jqueryui {
-        dependsOn 'jquery'
-
-        resource url: '/js/jquery/jquery-ui-1.8.17.custom.min.js', disposition: 'head'
-        resource url: '/css/jQueryUI/smoothness/jquery-ui-1.8.17.custom.css'
     }
-
+	
+    overrides {
+        'jquery-theme' {
+            resource id:'theme', url:'/css/jquery/ui/jquery-ui-1.9.1.custom.css'
+        }
+    }
+    
     'jquery-plugins' {
-        dependsOn 'jquery', 'jqueryui'
+        dependsOn 'jquery', 'jquery-ui'
 
         resource url: '/js/jquery/jquery.migrate.js', disposition: 'head'
         resource url: '/js/jquery/jquery.tablesorter.js', disposition: 'head'
@@ -58,7 +58,7 @@ modules = {
     }
 
     datasetExplorer {
-        dependsOn 'jquery', 'jqueryui', 'jquery-plugins', 'extjs'
+        dependsOn 'jquery', 'jquery-ui', 'jquery-plugins', 'extjs'
 
         resource url: '/js/advancedWorkflowFunctions.js', disposition: 'head'
         resource url: '/js/ajax_queue.js', disposition: 'head'

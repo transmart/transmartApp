@@ -119,7 +119,9 @@ grails.project.dependency.resolution = {
         compile ':spring-security-core:2.0-RC4'
         compile ':spring-security-oauth2-provider:1.0.5.2'
 
-        runtime ':jquery:1.11.1'
+        runtime ':prototype:1.0'
+        runtime ':jquery:1.7.1'
+        runtime ':jquery-ui:1.10.4'
         runtime ':resources:1.2.1'
 
         // support for static code analysis - see codenarc.reports property below
