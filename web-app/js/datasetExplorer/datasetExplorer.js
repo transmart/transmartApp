@@ -1566,6 +1566,23 @@ function setupOntTree(id_in, title_in) {
         }
     );
 
+	new Tree.TreeSorter(ontTree,
+            {
+                folderSort : true,
+                sortType: function(node) 
+                        {
+                            if(node.attributes.tablename == "MODIFIER_DIMENSION" )
+                            {
+                                return "A" + node.text
+                            }
+                            else
+                            {
+                                return "B" + node.text
+                            }
+                        }
+            }
+    );
+    
     ontTree.on('beforecollapsenode', function (node, deep, anim) {
             Ext.Ajax.request(
                 {
@@ -1620,7 +1637,7 @@ function setupOntTree(id_in, title_in) {
 
     // add a tree sorter in folder mode
     new Tree.TreeSorter(ontTree,
-	{
+    {
             folderSort: true
         }
     );
@@ -1791,32 +1808,43 @@ function setupDragAndDrop() {
 					var x=e.xy[0];
 					var y=e.xy[1];
 					var concept = null;
+
+                    //Modifiers that are dropped need to be handled differently from regular concepts. Modifiers are identified by the applied_path field.
+                    if(data.node.attributes.applied_path != null && data.node.attributes.applied_path != "@")
+                    {
+                         concept = createPanelItemNew(Ext.get("hiddenDragDiv"), convertNodeToConcept(data.node));
+                         selectConcept(concept);
+                         STATE.Dragging = true;
+                         STATE.Target = this.el;
+                         prepareDroppedModifier(data.node, this.el);
+                    }
+
                     if (data.node.attributes.oktousevalues != "Y") {
-						concept = createPanelItemNew(this.el, convertNodeToConcept(data.node));
-					}
+                              concept = createPanelItemNew(this.el, convertNodeToConcept(data.node));
+                         }
                     else {
-						concept = createPanelItemNew(Ext.get("hiddenDragDiv"), convertNodeToConcept(data.node));
-					}
-					// new hack to show setvalue box
-					selectConcept(concept);
+                              concept = createPanelItemNew(Ext.get("hiddenDragDiv"), convertNodeToConcept(data.node));
+                         }
+                         // new hack to show setvalue box
+                         selectConcept(concept);
                     if (data.node.attributes.oktousevalues == "Y") {
-						STATE.Dragging = true;
-						STATE.Target = this.el;
-						showSetValueDialog();
-					}
-					/*new code to show next row*/
-					var panelnumber = Number(this.id.substr(18));
-					showCriteriaGroup(panelnumber+1);
-					return true;
-				}
-			}
-		}
-	}
+                              STATE.Dragging = true;
+                              STATE.Target = this.el;
+                              showSetValueDialog();
+                         }
+                         /*new code to show next row*/
+                         var panelnumber = Number(this.id.substr(18));
+                         showCriteriaGroup(panelnumber+1);
+                         return true;
+                    }
+               }
+          }
+     }
 
-	/* Set up Drag and Drop for the analysis Panel */
-	var qcd = Ext.get(analysisPanel.body);
+     /* Set up Drag and Drop for the analysis Panel */
+     var qcd = Ext.get(analysisPanel.body);
 
-	dts = new Ext.dd.DropTarget(qcd,
+     dts = new Ext.dd.DropTarget(qcd,
 			{
             ddGroup: 'makeQuery'
 			}

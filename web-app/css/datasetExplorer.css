@@ -88,10 +88,9 @@ a.toplink1:hover{
 .valueicon{
 	background-image:url(../images/numeric.gif ) !important;
 	}
-.printbutton{
-	background-image:url(../images/printer.png ) !important;
-	}
-	
+.modifierfoldericon{background-image:url(../images/modifierfolder.png) !important;}
+.modifiericon{background-image:url(../images/ONT_MODIFIER_leaf.gif) !important;}
+.printbutton{background-image:url(../images/printer.png ) !important;}
 .savebutton{
 	background-image:url(../images/disk.png ) !important;
 	}	
@@ -542,3 +541,15 @@ li.x-tab-strip-active {
 
 .x-grid3-row .conceptUnselected, .x-grid3-row .conceptSelected {padding: 0 0 5px 5px; font-size: .85em;}
 .data-export-filter-tip {color: #666; font-style: italic}
+
+
+.no-close .ui-dialog-titlebar-close {display: none }
+
+.modifierValueDialog .ui-dialog-titlebar {
+	padding: 0.2em;
+}
+
+.modifierValueDialog .ui-dialog-content {
+	width: 500px;
+}
+
