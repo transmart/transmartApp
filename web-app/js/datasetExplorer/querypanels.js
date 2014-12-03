@@ -41,11 +41,23 @@ function setupQueryPanelClone(clone) {
         if (source.tree.id == "previousQueriesTree") {
             getPreviousQueryFromID(data.node.attributes.id);
             return true;
+            
         } else {
 
             var x=e.xy[0];
             var y=e.xy[1];
             var concept = null;
+
+            //Modifiers that are dropped need to be handled differently from regular concepts. Modifiers are identified by the applied_path field.
+            if(data.node.attributes.applied_path != null && data.node.attributes.applied_path != "@")
+            {
+                concept = createPanelItemNew(Ext.get("hiddenDragDiv"), convertNodeToConcept(data.node));
+                selectConcept(concept);
+                STATE.Dragging = true;
+                STATE.Target = this.el;
+                prepareDroppedModifier(data.node, this.el);
+            }
+
             if (data.node.attributes.oktousevalues != "Y") {
                 concept = createPanelItemNew(this.el, convertNodeToConcept(data.node));
             } else {

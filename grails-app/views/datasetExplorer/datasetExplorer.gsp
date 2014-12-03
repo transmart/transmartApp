@@ -125,6 +125,10 @@
 <tmpl:/RWG/boxSearch hide="true"/>
 <tmpl:/RWG/filterBrowser/>
 
+<div id="modifierValueDiv" title="Modifier Value Selection" style="display:none;">
+     <g:render template="/layouts/modifierValueForm" />
+</div>
+
 <div id="sidebartoggle">&nbsp;</div>
 
 <div id="noAnalyzeResults" style="display: none;">No subject-level results found.<br/>

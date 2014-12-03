@@ -33,12 +33,12 @@ modules = {
         resource url: '/js/ext/' + envSwitch('ext-all-debug.js', 'ext-all.js'), disposition: 'head'
         resource url: '/js/ext-ux/miframe.js', disposition: 'head'
     }
-
-    overrides {
-        'jquery-theme' {
-            resource id:'theme', url:'/css/jquery/ui/jquery-ui-1.9.1.custom.css'
-        }
-    }
+     
+     overrides {
+          'jquery-theme' {
+                         resource id:'theme', url:'/css/jquery/ui/jquery-ui-1.9.1.custom.css'
+                    }
+               }
     
     'jquery-plugins' {
         dependsOn 'jquery', 'jquery-ui'
@@ -58,7 +58,7 @@ modules = {
 
     datasetExplorer {
         dependsOn 'jquery', 'jquery-ui', 'jquery-plugins', 'extjs'
-
+ 
         resource url: '/js/advancedWorkflowFunctions.js', disposition: 'head'
         resource url: '/js/ajax_queue.js', disposition: 'head'
         resource url: '/js/fixconsole.js', disposition: 'head'
@@ -77,6 +77,7 @@ modules = {
         resource url: '/js/datasetExplorer/sampleQuery.js', disposition: 'head'
         resource url: '/js/datasetExplorer/workflowStatus.js', disposition: 'head'
         resource url: '/js/datasetExplorer/workspace.js', disposition: 'head'
+        resource url: '/js/datasetExplorer/modifiers.js', disposition: 'head'
         resource url: '/js/datasetExplorer/exportData/dataTab.js', disposition: 'head'
         resource url: '/js/datasetExplorer/exportData/exportJobsTab.js', disposition: 'head'
         resource url: '/js/facetedSearch/facetedSearchBrowse.js', disposition: 'head'

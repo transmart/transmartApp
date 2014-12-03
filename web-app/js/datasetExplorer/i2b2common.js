@@ -2063,3 +2063,55 @@ function showInfoInner(url, w, h)
     scripts: false
 });
 }
+
+	  
+function hideCriteriaGroups()
+{
+	var qp=Ext.get("queryPanel").dom.firstChild.firstChild;
+	qp.style.background="#eee";
+	Ext.get("subsetdivider").dom.rowSpan="4";
+for(i=GLOBAL.NumOfQueryCriteriaGroupsAtStart+1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
+	{
+    var e=document.getElementById("qcr"+i);
+    e.style.display="none";
+	}
+	
+}
+
+function showCriteriaGroup(i)
+{
+	var e=document.getElementById("qcr"+i);
+    e.style.display="";
+	if(i>3){Ext.get("subsetdivider").dom.rowSpan=i+1;}
+}
+
+function climbTreeBuildName(baseNode)
+{
+	var nodeNameString = "\\";
+	
+	while(baseNode.parentNode != null)
+	{
+		if(baseNode.attributes.qtip  && baseNode.attributes.qtip != "root") nodeNameString = "\\" + extractConceptLastNode(baseNode.attributes.qtip) + nodeNameString;
+		
+		baseNode = baseNode.parentNode;
+	}
+	
+	return nodeNameString;
+}
+
+function extractConceptLastNode(conceptPath)
+{
+	var splits=conceptPath.split("\\");
+
+	return splits[splits.length-2]
+}
+
+function toggleNodeDraggingState()
+{
+	if(STATE.Dragging==true)
+	{
+		STATE.Dragging=false;
+		moveSelectedConceptFromHoldingToTarget();
+	}
+	
+}

@@ -1566,6 +1566,23 @@ function setupOntTree(id_in, title_in) {
         }
     );
 
+	new Tree.TreeSorter(ontTree,
+            {
+                folderSort : true,
+                sortType: function(node) 
+                    {
+                        if(node.attributes.tablename == "MODIFIER_DIMENSION" )
+                        {
+                            return "A" + node.text
+                        }
+                        else
+                        {
+                            return "B" + node.text
+                        }
+                    }
+            }
+    );
+    
     ontTree.on('beforecollapsenode', function (node, deep, anim) {
             Ext.Ajax.request(
                 {
@@ -1620,7 +1637,7 @@ function setupOntTree(id_in, title_in) {
 
     // add a tree sorter in folder mode
     new Tree.TreeSorter(ontTree,
-	{
+    {
             folderSort: true
         }
     );
@@ -1770,53 +1787,11 @@ function getSubCategories(ontresponse) {
 }
 
 function setupDragAndDrop() {
-	/* Set up the drag and drop for the query panel */
-	// var dts = new Array();
-    for (var s = 1; s <= GLOBAL.NumOfSubsets; s++) {
-		for(var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups;
-             i++) {
-			var qcd = Ext.get("queryCriteriaDiv" + s.toString() + '_' + i.toString());
-			dts = new Ext.dd.DropTarget(qcd,
-					{
-				ddGroup : 'makeQuery'
-					}
-			);
 
-            dts.notifyDrop = function (source, e, data) {
-                if (source.tree.id == "previousQueriesTree") {
-					getPreviousQueryFromID(data.node.attributes.id);
-					return true;
-				}
-                else {
-					var x=e.xy[0];
-					var y=e.xy[1];
-					var concept = null;
-                    if (data.node.attributes.oktousevalues != "Y") {
-						concept = createPanelItemNew(this.el, convertNodeToConcept(data.node));
-					}
-                    else {
-						concept = createPanelItemNew(Ext.get("hiddenDragDiv"), convertNodeToConcept(data.node));
-					}
-					// new hack to show setvalue box
-					selectConcept(concept);
-                    if (data.node.attributes.oktousevalues == "Y") {
-						STATE.Dragging = true;
-						STATE.Target = this.el;
-						showSetValueDialog();
-					}
-					// new code to show next row
-					var panelnumber = Number(this.id.substr(18));
-					showCriteriaGroup(panelnumber+1);
-					return true;
-				}
-			}
-		}
-	}
+     /* Set up Drag and Drop for the analysis Panel */
+     var qcd = Ext.get(analysisPanel.body);
 
-	/* Set up Drag and Drop for the analysis Panel */
-	var qcd = Ext.get(analysisPanel.body);
-
-	dts = new Ext.dd.DropTarget(qcd,
+     dts = new Ext.dd.DropTarget(qcd,
 			{
             ddGroup: 'makeQuery'
 			}
