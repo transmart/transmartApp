@@ -19,6 +19,22 @@
     text-align: center;
 }
 
+#queryTable .queryEncounter {
+    font-size: 11px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#queryTable .queryEncounter input {
+    margin-left: 20px;
+    margin-right: 10px;
+    vertical-align: bottom;
+}
+
+#queryTable .queryEncounter label:hover {
+    cursor: pointer;
+}
+
 #panelModel, #queryTable td div:last-of-type .panelFob {
     display: none;
 }

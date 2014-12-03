@@ -64,8 +64,6 @@ function setupQueryPanelClone(clone) {
                 concept = createPanelItemNew(Ext.get("hiddenDragDiv"), convertNodeToConcept(data.node));
             }
 
-            // new hack to show setvalue box
-            selectConcept(concept);
             if (data.node.attributes.oktousevalues == "Y") {
                 STATE.Dragging = true;
                 STATE.Target = this.el;

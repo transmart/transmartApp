@@ -212,18 +212,14 @@ function createPanelItemNew(panel, concept)
 	li.concept=concept;
 	//return the node
 
-    // Invalidate only when something dropped to the subset panel
-    if (panel.id.indexOf("queryCriteriaDiv") > -1) {
-        var subset=getSubsetFromPanel(panel);
-        invalidateSubset(subset);
-    }
+    invalidateSubset(jQuery('#' + panel.id).attr('subset'));
 
 	return li;
 }
 
 function getSubsetFromPanel(panel)
 {
-    return panel.id.substr(16,1);
+    return jQuery('#' + panel.id).attr('id');
 }
 
 function getSetValueText(mode, operator, highlowselect, highvalue, lowvalue, units)
@@ -340,6 +336,7 @@ function conceptRightClick(event)
 	items: [{
 	text: 'Delete', handler: function(){
 										selectedDiv.removeChild(selectedConcept);
+                                        removeUselessPanels()
 										invalidateSubset(getSubsetFromPanel(selectedDiv));
 										
 										}
