@@ -69,7 +69,7 @@ function setupQueryPanelClone(clone) {
                 STATE.Target = this.el;
                 showSetValueDialog();
             }
-
+            clone.find(".panelBoxListPlaceholder").hide()
             appendQueryPanelInto(clone.attr('subset'))
             return true;
         }

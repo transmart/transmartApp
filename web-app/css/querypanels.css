@@ -54,9 +54,10 @@
     width: 100%;
     min-height: 100px;
     position: relative;
+    background-color: #ffffff;
 }
 
-.panelBoxBar, .panelBoxList {
+.panelBoxBar, .panelBoxListPlaceholder, .panelBoxList {
     position: absolute;
     top: 0;
     left: 0;
@@ -68,11 +69,36 @@
     vertical-align: middle;
 }
 
-.panelBoxList {
+.panelBoxListPlaceholder, .panelBoxList {
     height: 100%;
     padding-top: 38px;
-    background-color: #ffffff;
     text-align: left;
+    box-sizing: border-box;
+}
+
+.panelBoxListPlaceholder .wrap {
+    padding: 10px;
+    padding-top: 5px;
+    width: 100%;
+    height: 100%;
+}
+.panelBoxListPlaceholder .holder {
+    display: block;
+    border: 3px dashed #f0f0f0;
+    color: #f0f0f0;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 14px;
+    font-variant: small-caps;
+    font-weight: bolder;
+    text-transform: lowercase;
+    line-height: 40px;
+    width: 100%;
+    height: 100%;
+}
+.panelBoxListPlaceholder .holder:hover {
+    border: 3px dashed #00b050;
+    color: #00b050;
 }
 
 .panelFob {
