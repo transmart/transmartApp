@@ -149,7 +149,7 @@ function createPanelItemNew(panel, concept)
 	li.setAttribute('oktousevalues',concept.oktousevalues);
 	li.setAttribute('setnodetype',concept.nodeType);
 	li.setAttribute('visualattributes',concept.visualattributes);
-	li.className="conceptUnselected";
+	li.className="panelBoxListItem x-tree-node-collapsed";
 	
 	//Create a shortname
 	var splits=concept.key.split("\\");
@@ -171,10 +171,40 @@ function createPanelItemNew(panel, concept)
 	else
 		{
 		li.setAttribute('conceptsetvaluetext','');
-		}	
-	//Create the node
-	var text=document.createTextNode(shortname+" "+valuetext); //used to be name
-	li.appendChild(text);
+		}
+
+    //Find out the icon (this is a copy&paste from getTreeFromJSON
+    var iconCls = false
+
+    if (concept.oktousevalues != "N") {
+        iconCls = "valueicon";
+    }
+    if (concept.visualattributes.indexOf('LEAF') != -1 ||
+        concept.visualattributes.indexOf('MULTIPLE') != -1) {
+        // Yet another hack to get icon working seemlessly
+        li.className += " x-tree-node-leaf"
+    }
+    if (concept.visualattributes.indexOf('HIGH_DIMENSIONAL') != -1) {
+        iconCls = 'hleaficon';
+    }
+    if (concept.visualattributes.indexOf('EDITABLE') != -1) {
+        iconCls = 'eleaficon';
+    }
+    if (concept.visualattributes.indexOf('PROGRAM') != '-1') {
+        iconCls = "programicon";
+    }
+    if (concept.visualattributes.indexOf('STUDY') != '-1') {
+        iconCls = "studyicon";
+    }
+
+    //Create the node
+    var iconElem=document.createElement('span')
+    var textElem=document.createElement('span')
+    iconElem.className = "x-tree-node-icon " + (iconCls ? iconCls : '')
+    textElem.appendChild(document.createTextNode(shortname+" "+valuetext)); //used to be name
+    textElem.className = "concept-text"
+	li.appendChild(iconElem);
+	li.appendChild(textElem);
 	panel.appendChild(li);
 	Ext.get(li).addListener('click',conceptClick);
 	Ext.get(li).addListener('contextmenu',conceptRightClick);
@@ -195,73 +225,6 @@ function getSubsetFromPanel(panel)
 {
     return panel.id.substr(16,1);
 }
-
-function createPanelItem(subset,panelNumber, level, name, key, tooltip, tablename, dimcode, comment, normalunits, oktousevalues,
-	setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluelowvalue, setvaluehighvalue, setvalueunits)
-{
-var panel=document.getElementById("queryCriteriaDiv"+subset+"_"+panelNumber);
-var li=document.createElement('div'); //was li
-	//convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
-	li.setAttribute('conceptname',name);
-	li.setAttribute('conceptid', key);
-	li.setAttribute('conceptlevel',level);
-	li.setAttribute('concepttooltip', tooltip);
-	li.setAttribute('concepttablename',tablename);
-	li.setAttribute('conceptdimcode',dimcode);
-	li.setAttribute('conceptcomment', comment);
-	li.setAttribute('normalunits',normalunits);
-	if(typeof(setvaluemode)!="undefined")
-		li.setAttribute('setvaluemode',setvaluemode);
-	if(typeof(setvalueoperator)!="undefined")
-		li.setAttribute('setvalueoperator',setvalueoperator);
-	if(typeof(setvaluehighlowselect)!="undefined")
-		li.setAttribute('setvaluehighlowselect',setvaluehighlowselect);
-	if(typeof(setvaluehighvalue)!="undefined")
-		li.setAttribute('setvaluehighvalue',setvaluehighvalue);
-	if(typeof(setvaluelowvalue)!="undefined")
-		li.setAttribute('setvaluelowvalue',setvaluelowvalue);
-	if(typeof(setvalueunits)!="undefined")
-		li.setAttribute('setvalueunits',setvalueunits);
-	if(typeof(oktousevalues)!="undefined")
-		li.setAttribute('oktousevalues', oktousevalues);
-	li.className="conceptUnselected";
-	
-	//Create a shortname
-	var splits=tooltip.split("\\");
-	var shortname="";
-	if(splits.length>1)
-	{
-	shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-	}
-	else shortname=splits[splits.length-1];
-	li.setAttribute('conceptshortname',shortname);
-	
-	//Create a setvalue description
-	var valuetext="";
-	if(typeof(setvaluemode)!="undefined")
-		{
-		valuetext=getSetValueText(setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluehighvalue, setvaluelowvalue, setvalueunits);
-		li.setAttribute('conceptsetvaluetext',valuetext);
-		}
-	else
-		{
-		li.setAttribute('conceptsetvaluetext','');
-		}	
-	//Create the node
-	var text=document.createTextNode(shortname+" "+valuetext); //used to be name
-	li.appendChild(text);
-	panel.appendChild(li);
-	Ext.get(li).addListener('click',conceptClick);
-	Ext.get(li).addListener('contextmenu',conceptRightClick);
-	new Ext.ToolTip({ target:li, html:key, dismissDelay:10000 });
-	invalidateSubset(subset);
-	return li;
-}	
-
-
-
-
-
 
 function getSetValueText(mode, operator, highlowselect, highvalue, lowvalue, units)
 {
@@ -323,55 +286,15 @@ var text=" ";
 
 function resetQuery()
 {
-	for(var s=1;s<=GLOBAL.NumOfSubsets;s++)
-	{
-		for(var d=1;d<=GLOBAL.NumOfQueryCriteriaGroups;d++)
-		{
- 		clearGroup(s,d);
-		}
-	}
-	hideCriteriaGroups();
+    jQuery(".panelModel").each(function (){
+        clearQueryPanel(jQuery(this))
+    })
 }
 function resetSelected()
 {
-	for(var s=1;s<=GLOBAL.NumOfSubsets;s++)
-	{
-		for(var d=1;d<=GLOBAL.NumOfQueryCriteriaGroups;d++)
-		{
- 		clearSelected(s,d);
-		}
-	}
-}
-
-function clearSelected(subset, panel)
-{
-	var sdiv=Ext.get("queryCriteriaDiv"+subset+"_"+panel);
-	for(var i=0;i<sdiv.dom.childNodes.length;i++)
-	{
-  		sdiv.dom.childNodes[i].className="conceptUnselected";
-	}
-}
-
-
-
-
-
-function clearGroup(subset, panel)
-{
-	//clear button 
-	var el=document.getElementById("btnExcludeGroup"+subset+"_"+panel);
-	el.firstChild.nodeValue="Exclude";
-
-	//clar the div
-	var qc=Ext.get("queryCriteriaDiv"+subset+"_"+panel);
-	for(var i=qc.dom.childNodes.length-1;i>=0;i--)
-		{
-		var child=qc.dom.childNodes[i];
-		qc.dom.removeChild(child);
-		}	
-	//reset the class
-	qc.dom.className="queryGroupInclude";
-	invalidateSubset(subset);
+    jQuery(".panelBoxListItem").each(function (){
+        jQuery(this).removeClass("selected")
+    })
 }
 
 function excludeGroup(btn,subset, panel)
@@ -401,7 +324,7 @@ function selectConcept(concept)
 resetSelected(); //clear any selected concept in any panel in any subset
 selectedConcept=concept; //select this one
 selectedDiv=concept.parentNode;
-selectedConcept.className="conceptSelected";
+selectedConcept.className=selectedConcept.className+" selected";
 }
 
 function conceptRightClick(event)
@@ -1770,14 +1693,15 @@ function myNullCallback()
 
 function isSubsetEmpty(subset)
 {
-	for(var d=1;d<=GLOBAL.NumOfQueryCriteriaGroups;d++)
-	{
-		var queryDiv=Ext.get("queryCriteriaDiv"+subset+'_'+d);
-		if(queryDiv.dom.childNodes.length>0)
-		{ return false;}	
-	}
+    var flag = true
+    jQuery("#queryTable .panelModel").filter(function () {
+        return jQuery(this).attr('subset') == subset
+    }).each(function () {
+        if (jQuery(this).find(".panelBoxList").html().trim() != '' && flag)
+            flag = false
+    })
 		
-	return true;
+	return flag;
 }
 
 function showConceptDistributionHistogram(){
@@ -1969,7 +1893,7 @@ function getTreeNodeFromJsonNode(concept)
     } else if (visualattributes.indexOf('EDITABLE') != -1) {
         iconCls = 'eleaficon';
         tcls = 'eleafclass';
-	    }
+	}
 
     if (visualattributes.indexOf('PROGRAM') != '-1') {
         iconCls="programicon";

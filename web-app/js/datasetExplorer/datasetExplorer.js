@@ -1804,7 +1804,7 @@ function setupDragAndDrop() {
 						STATE.Target = this.el;
 						showSetValueDialog();
 					}
-					/*new code to show next row*/
+					// new code to show next row
 					var panelnumber = Number(this.id.substr(18));
 					showCriteriaGroup(panelnumber+1);
 					return true;
@@ -2292,17 +2292,17 @@ function runAllQueries(callback, panel) {
 
 /**
  * Get subset query that represent user's cohort selections
- * @param subsetId
+ * @param subset
  * @returns {string}
  */
-function getSubsetQuery (subsetId) {
+function getSubsetQuery (subset) {
     var _query = "";
-    for (var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups; i++) {
-        var qcd = Ext.get("queryCriteriaDiv" + subsetId + '_' + i.toString());
-        if(qcd.dom.childNodes.length>0) {
-            _query += getCRCRequestPanel(qcd.dom, i);
-        }
-    }
+    var _number = 0
+    jQuery("#queryTable .panelModel").filter(function () {
+        return jQuery(this).attr('subset') == subset
+    }).each(function () {
+        _query += getCRCRequestPanel(Ext.get(jQuery(this).find(".panelBoxList").attr('id')).dom, _number++)
+    })
 
     return _query;
 }
@@ -4030,7 +4030,7 @@ function ontFilterLoaded(el, success, response, options) {
 }
 
 function clearQuery() {
-    if (confirm("Are you sure you want to clear your current analysis?")) {
+    if (confirm("Are you sure you want to clear your current selections and analysis ?")) {
         clearAnalysisPanel();
         resetQuery();
         clearDataAssociation();

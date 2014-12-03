@@ -1,16 +1,32 @@
 #queryTable {
-    background-color: #eeeeee;
-    border-radius: 10px;
-    border: 1px solid #bbbbbb;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    border: 1px solid #dddddd;
     width: auto;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-bottom: 20px;
 }
 
-#queryTable .panelFob:last-child {
+#queryTable tr:last-of-type td {
+    vertical-align: top;
+}
+
+#queryTable tr:first-of-type td {
+    padding: 10px;
+    font-weight: bolder;
+    text-align: center;
+}
+
+#panelModel, #queryTable td div:last-of-type .panelFob {
     display: none;
 }
 
 .panelModel {
-    padding: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 340px;
     text-align: center;
 }
 
@@ -32,31 +48,60 @@
 }
 .panelBoxBar {
     padding: 5px;
-    background-color: #f0f0f0;
+    background-color: #e5e5e5;
     vertical-align: middle;
 }
 
 .panelBoxList {
-    min-height: 70px;
+    height: 100%;
+    padding-top: 38px;
     background-color: #ffffff;
+    text-align: left;
 }
 
 .panelFob {
     margin: 10px;
     display: inline-block;
-    border-radius: 20px;
-    min-height: 40px;
-    min-width: 40px;
-    height: 40px;
-    width: 40px;
+    border-radius: 15px;
+    min-height: 30px;
+    min-width: 30px;
+    height: 30px;
+    width: 30px;
     background-color: #A4ABE0;
     color: #ffffff;
-    line-height: 40px;
+    line-height: 30px;
     text-align: center;
-    font-size: 16px;
+    font-size: 14px;
     font-variant: small-caps;
     font-weight: bolder;
     text-transform: lowercase;
+}
+
+/* We wanna refined the original styling for the query info */
+.panelBoxListItem {
+    font-size: 11px !important;
+    height: 18px;
+    padding-left: 5px;
+    padding-right: 5px;
+    position: relative;
+}
+.panelBoxListItem.selected {
+    background-color: #d9e8fb;
+}
+.panelBoxListItem span {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+}
+.panelBoxListItem span.x-tree-node-icon {
+    width: 16px;
+    height: 18px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.panelBoxListItem span.concept-text {
+    padding-left: 20px;
+    line-height: 18px;
 }
 
 /* We override the jQuery UI just here to keep cohorent */
@@ -69,9 +114,11 @@
     background-repeat: no-repeat !important;
     font-family: Arial, sans-serif !important;
     font-size: 9pt !important;
-    padding: 5px !important;
+    font-weight: normal;
+    padding: 4px !important;
     border: 1px solid #CCC !important;
     cursor: pointer !important;
+    color: #bbbbbb !important;
 }
 
 .panelBoxBar .ui-corner-left {
@@ -86,10 +133,16 @@
 
 .panelBoxBar .ui-corner-left:hover, .panelBoxBar .ui-corner-right:hover {
     background-color: #b2b2b2;
+    color: #888888 !important;
 }
 
 .panelBoxBar .ui-state-active {
     background-color: #c2c2c2;
+    color: #000000 !important;
+}
+
+.panelBoxBar .ui-state-active:hover {
+    color: #000000 !important;
 }
 
 .panelRadio {

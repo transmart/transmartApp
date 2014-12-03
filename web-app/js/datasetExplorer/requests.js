@@ -204,17 +204,20 @@ function getCRCQueryRequest(subset, queryname)
         queryname = GLOBAL.Username+"'s Query at "+ d.toUTCString();
     }
 
+    var number = 0
     var query =
         '<ns4:query_definition xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\
           <query_name>'+queryname+'</query_name>\
           <specificity_scale>0</specificity_scale>';
 
-    for (var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups; i++) {
-        var qcd = Ext.get("queryCriteriaDiv" + subset + '_' + i.toString());
-        if(qcd.dom.childNodes.length>0) {
-            query = query + getCRCRequestPanel(qcd.dom, i);
-        }
-    }
+
+
+    jQuery("#queryTable .panelModel").filter(function () {
+        return jQuery(this).attr('subset') == subset
+    }).each(function () {
+        query += getCRCRequestPanel(Ext.get(jQuery(this).find(".panelBoxList").attr('id')).dom, number++)
+    })
+
     query = query + "</ns4:query_definition>";
 
     return query;
@@ -223,6 +226,8 @@ function getCRCQueryRequest(subset, queryname)
 //takes actual dom element
 function getCRCRequestPanel(qd, number) 
 {
+    if (qd.childNodes.length == 0)
+        return ''
 //set the invert
 var invert=0;
 if(qd.className=="queryGroupExclude")

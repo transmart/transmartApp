@@ -128,12 +128,4 @@ class SubsetController {
 
         render 'success'
     }
-
-    def showSubsetPanels = {
-
-        render(template: '/subset/subsetPanel')
-
-    }
-
-
 }

@@ -33,8 +33,7 @@ modules = {
         resource url: '/js/ext/' + envSwitch('ext-all-debug.js', 'ext-all.js'), disposition: 'head'
         resource url: '/js/ext-ux/miframe.js', disposition: 'head'
     }
-    }
-	
+
     overrides {
         'jquery-theme' {
             resource id:'theme', url:'/css/jquery/ui/jquery-ui-1.9.1.custom.css'
