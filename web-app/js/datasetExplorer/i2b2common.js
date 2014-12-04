@@ -1691,9 +1691,7 @@ function myNullCallback()
 function isSubsetEmpty(subset)
 {
     var flag = true
-    jQuery("#queryTable .panelModel").filter(function () {
-        return jQuery(this).attr('subset') == subset
-    }).each(function () {
+    jQuery(".panelModel[subset='" + subset + "']").each(function () {
         if (jQuery(this).find(".panelBoxList").html().trim() != '' && flag)
             flag = false
     })

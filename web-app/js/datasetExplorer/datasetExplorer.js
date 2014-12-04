@@ -1997,24 +1997,6 @@ function runAllQueries(callback, panel) {
 	}
 }
 
-
-/**
- * Get subset query that represent user's cohort selections
- * @param subset
- * @returns {string}
- */
-function getSubsetQuery (subset) {
-    var _query = "";
-    var _number = 0
-    jQuery("#queryTable .panelModel").filter(function () {
-        return jQuery(this).attr('subset') == subset
-    }).each(function () {
-        _query += getCRCRequestPanel(Ext.get(jQuery(this).find(".panelBoxList").attr('id')).dom, _number++)
-    })
-
-    return _query;
-}
-
 /**
  * Check if there're any changes in both subsets
  * @returns {boolean}
@@ -2043,7 +2025,7 @@ function runQuery(subset, callback) {
         // analysisPanel.body.update("<table border='1' width='100%' height='100%'><tr><td width='50%'><div id='analysisPanelSubset1'></div></td><td><div id='analysisPanelSubset2'></div></td></tr>");
     }
 
-    var query = getCRCQueryRequest(subset);
+    var query = getQuery(subset).html();
 
     // first subset
     queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
@@ -2105,14 +2087,6 @@ function runQueryComplete(result, subset, callback) {
 
     } else {
 
-        // getPDO_fromInputList is not implemented in core-db
-        //if (GLOBAL.Debug) {
-        //    alert(getCRCpdoRequest(patientsetid, 1, jsonRes.setSize));
-        //}
-
-        /* removed the pdo request call 12 / 17 / 2008 added the callback logic here instead */
-        // runQueryPDO(patientsetid, 1, jsonRes.setSize, subset, callback );
-
         if (STATE.QueryRequestCounter > 0) { // I'm in a chain of requests so decrement
             STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
         }
@@ -2121,27 +2095,6 @@ function runQueryComplete(result, subset, callback) {
         }
         /* I'm the last request outstanding in this chain*/
     }
-}
-
-
-function runQueryPDO(patientsetid, minpatient, maxpatient, subset, callback) {
-    var query = getCRCpdoRequest(patientsetid, minpatient, maxpatient, subset)
-    queryPanel.el.mask('Getting patient set ' + subset + '...', 'x-mask-loading');
-    Ext.Ajax.request(
-        {
-            url: pageInfo.basePath + "/proxy?url=" + GLOBAL.CRCUrl + "pdorequest",
-            method: 'POST',
-            xmlData: query,
-            success: function (result, request) {
-                runQueryPDOComplete(result, subset, callback);
-            },
-            failure: function (result, request) {
-                runQueryPDOComplete(result, subset, callback);
-            },
-            timeout: '600000'
-        }
-    );
-
 }
 
 function buildAnalysis(nodein) {
