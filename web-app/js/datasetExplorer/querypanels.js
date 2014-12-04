@@ -161,6 +161,11 @@ function getQuery(subset) {
         .append(jQuery("<specificity_scale />").html("0"))
         .append(getQueryPanels(subset))
 
+    if (jQuery('#queryEncounter_' + subset).attr('checked') == 'checked')
+        _query.append(jQuery('<query_timing />').html('SAMEVISIT'))
+    else
+        _query.append(jQuery('<query_timing />').html('ANY'))
+
     return _query
 }
 
@@ -175,7 +180,8 @@ function getQueryPanels(subset) {
 
     jQuery(".panelModel[subset='" + subset + "']").each(function () {
 
-        _panels = _panels.add(getQueryPanel(jQuery(this)))
+        if (jQuery(this).find(".panelBoxList").html().trim() != '')
+            _panels = _panels.add(getQueryPanel(jQuery(this)))
 
     })
 
@@ -215,6 +221,11 @@ function getQueryPanel(panel) {
         if (_to != '')
             _panel.append(jQuery("<panel_date_to />").html(_to + _offset))
     }
+
+    if (jQuery('#queryEncounter_' + panel.attr('subset')).attr('checked') == 'checked')
+        _panel.append(jQuery('<panel_timing />').html('SAMEVISIT'))
+    else
+        _panel.append(jQuery('<panel_timing />').html('ANY'))
 
     return _panel
 }
