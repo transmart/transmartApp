@@ -39,17 +39,20 @@ function appendQueryPanelInto(subset) {
  */
 function setupQueryPanelClone(clone) {
 
-    clone.find(".panelRadio").buttonset();
-    clone.find("button[id^=panelClear]").click(function() {
+    clone.find(".panelRadio").buttonset()
+    clone.find(".panelDate").button().click(function() {
+        if (jQuery(this).attr('checked') == 'checked')
+            jQuery(this).closest(".panelBox").addClass("withDates")
+        else
+            jQuery(this).closest(".panelBox").removeClass("withDates")
+    })
+    clone.find("input[id^='panelBoxDate']").datepicker({ dateFormat: 'yy-mm-dd' })
+    clone.find("button[id^='panelClear']").click(function() {
         clearQueryPanel(clone)
     })
 
     var exto = Ext.get(clone.find("div[id^='panelBoxList']").attr("id"))
-    var dtrg = new Ext.dd.DropTarget(exto,
-        {
-            ddGroup : 'makeQuery'
-        }
-    )
+    var dtrg = new Ext.dd.DropTarget(exto, { ddGroup : 'makeQuery' })
 
     dtrg.notifyEnter = function (source, e, data) {
         jQuery("#" + e.target.id).parent().find(".holder").addClass('overed')
@@ -195,11 +198,23 @@ function getQueryPanel(panel) {
     _number = _number.substring(_number.indexOf('_') + 1)
     _panel
         .append(jQuery("<panel_number />").html(_number))
-        .append(jQuery("<panel_date_from />").html(null))
-        .append(jQuery("<panel_date_to />").html(null))
         .append(jQuery("<invert />").html(_invert))
         .append(jQuery("<total_item_occurrences />").html(_occurrence))
         .append(getQueryPanelItems(panel))
+
+    if (panel.find(".panelDate").attr('checked') == 'checked') {
+
+        var _from = panel.find("input[id^='panelBoxDateFrom']").val().trim()
+        var _to = panel.find("input[id^='panelBoxDateTo']").val().trim()
+        var _offset = new Date().toString().match(/([-\+][0-9]+)\s/)[1]
+
+        _offset = 'T00:00:00.000' + _offset.slice(0, 3) + ':' +_offset.slice(3)
+
+        if (_from != '')
+            _panel.append(jQuery("<panel_date_from />").html(_from + _offset))
+        if (_to != '')
+            _panel.append(jQuery("<panel_date_to />").html(_to + _offset))
+    }
 
     return _panel
 }
