@@ -1401,6 +1401,14 @@ function setupOntTree(id_in, title_in) {
             ),
             enableDrag: true,
             ddGroup: 'makeQuery',
+            listeners: {
+                startdrag: function(e) {
+                    jQuery(".panelBoxListPlaceholder .holder").addClass('highlight')
+                },
+                enddrag: function(e) {
+                    jQuery(".panelBoxListPlaceholder .holder").removeClass('highlight')
+                }
+            },
             containerScroll: true,
             enableDrop: false,
             region: 'center',
@@ -1644,19 +1652,21 @@ function getSubCategories(ontresponse) {
 
 function setupDragAndDrop() {
 
-     /* Set up Drag and Drop for the analysis Panel */
-     var qcd = Ext.get(analysisPanel.body);
+    // Drage and drop for panels is setup in querypanel.js
 
-     dts = new Ext.dd.DropTarget(qcd,
-			{
+    /* Set up Drag and Drop for the analysis Panel */
+    var qcd = Ext.get(analysisPanel.body);
+
+    dts = new Ext.dd.DropTarget(qcd,
+        {
             ddGroup: 'makeQuery'
-			}
-	);
+        }
+    );
 
     dts.notifyDrop = function (source, e, data) {
-		buildAnalysis(data.node);
-		return true;
-	}
+        buildAnalysis(data.node);
+        return true;
+    }
 
 	/* set up drag and drop for grid */
 	var mcd = Ext.get(analysisGridPanel.body);

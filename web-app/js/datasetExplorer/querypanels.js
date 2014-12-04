@@ -36,6 +36,14 @@ function setupQueryPanelClone(clone) {
         }
     )
 
+    dtrg.notifyEnter = function (source, e, data) {
+        jQuery("#" + e.target.id).parent().find(".holder").addClass('overed')
+    }
+
+    dtrg.notifyOut = function (source, e, data) {
+        jQuery(".panelBoxListPlaceholder .holder").removeClass('overed')
+    }
+
     dtrg.notifyDrop = function (source, e, data) {
 
         if (source.tree.id == "previousQueriesTree") {
