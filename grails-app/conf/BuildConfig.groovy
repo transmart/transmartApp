@@ -71,7 +71,7 @@ grails.project.dependency.resolution = {
             excludes 'groovy', 'nekohtml'
         }
         compile 'org.rosuda:Rserve:1.7.3'
-        compile 'com.google.guava:guava:14.0.1'
+        compile 'com.google.guava:guava:18.0'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
         compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
