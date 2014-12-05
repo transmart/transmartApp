@@ -166,15 +166,7 @@ function createPanelItemNew(panel, concept)
     li.setAttribute('modifiedNodeLevel',concept.modifiedNode.level);    
     li.className="panelBoxListItem x-tree-node-collapsed";
     
-    //Create a shortname
-    var splits=concept.key.split("\\");
-    var shortname="";
-    if(splits.length>1)
-    {
-    shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-    }
-    else shortname=splits[splits.length-1];
-    li.setAttribute('conceptshortname',shortname);
+
     
     //Create a setvalue description
     var valuetext="";
@@ -215,11 +207,18 @@ function createPanelItemNew(panel, concept)
     if(concept.visualattributes.indexOf('MODIFIER_LEAF') != -1)
     {
         iconCls            = "modifiericon";
+        li.setAttribute('ismodifier',"Y");
+        
+        shortname = createShortNameFromPath(concept.modifiedNode.id);
+        
+        shortname += " [" + concept.name + "]"
     }
-    else if(concept.visualattributes.indexOf('MODIFIER_CONTAINER') != -1)
+    else
     {
-        iconCls            = "modifierfoldericon";
+        shortname = createShortNameFromPath(concept.key);
     }
+    
+    li.setAttribute('conceptshortname',shortname);
     
     //Create the node
     var iconElem=document.createElement('span')
@@ -302,6 +301,8 @@ var text=" ";
           }
     return text;
 }
+
+
 
 
 function resetQuery()
@@ -1725,26 +1726,7 @@ function isSubsetEmpty(subset)
 
 function showConceptDistributionHistogram(){
 var conceptnode=selectedConcept; 
-/*var cdhwindow=Ext.getCmp('cdhwindow');
-if(cdhwindow==null)
-{
-cdhwindow = new Ext.Window({
-                id: 'cdhwindow',
-                title: 'Histogram',
-            	layout:'fit',
-                width:250,
-                height:180,
-                closable: true,
-     			closeAction:'hide',  
-                plain: true,
-                modal: false,
-                border:false,
-                resizable: false
-            });
-}
-     cdhwindow.show();
-     cdhwindow.el.alignTo(setvaluewin.el, "tl-bl");
-     cdhwindow.body.update("");*/
+
      //*run the current query
      var concept_key=conceptnode.getAttribute('conceptid');
      Ext.Ajax.request(
@@ -1769,26 +1751,6 @@ Ext.get("setvaluechartsPanel1").update(result.responseText);
 
 function showConceptDistributionHistogramForSubset()
 {
-/*var cdhswindow=Ext.getCmp('cdhswindow');
-if(cdhswindow==null)
-{
-cdhswindow = new Ext.Window({
-                id: 'cdhswindow',
-                title: 'Histogram for Subset',
-            	layout:'fit',
-                width:250,
-                height:180,
-                closable: true,
-     			closeAction:'hide',  
-                plain: true,
-                modal: false,
-                border:false,
-                resizable: false
-            });
-}
-     cdhswindow.show();
-     cdhswindow.el.alignTo(setvaluewin.el, "tr-br");
-     cdhswindow.body.update("");*/
 
 var conceptnode=selectedConcept; 
 var concept_key=conceptnode.getAttribute('conceptid');
@@ -2075,7 +2037,7 @@ function climbTreeBuildName(baseNode)
 	
 	while(baseNode.parentNode != null)
 	{
-		if(baseNode.attributes.qtip  && baseNode.attributes.qtip != "root") nodeNameString = "\\" + extractConceptLastNode(baseNode.attributes.qtip) + nodeNameString;
+		if(baseNode.attributes.text  && baseNode.attributes.text != "root") nodeNameString = "\\" + baseNode.attributes.text + nodeNameString;
 		
 		baseNode = baseNode.parentNode;
 	}
@@ -2133,4 +2095,18 @@ function nodeType(method, object)
             return ""
         }
     }    
+}
+
+function createShortNameFromPath(pathToShorten)
+{
+	var splits=pathToShorten.split("\\");
+    var shortname="";
+    
+    if(splits.length>1)
+    {
+        shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
+    }
+    else shortname=splits[splits.length-1];  
+    
+    return shortname;
 }

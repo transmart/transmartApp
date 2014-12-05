@@ -331,9 +331,9 @@ function getQueryPanelItem(item) {
         var _constrainModifier = jQuery('<constrain_by_modifier />')
 
         _constrainModifier
-            .append(jQuery("<modifier_name />").html(item.attr('***')))
+            .append(jQuery("<modifier_name />").html(item.attr('conceptname')))
             .append(jQuery("<applied_path />").html(item.attr('applied_path')))
-            .append(jQuery("<modifier_key />").html(item.attr('***')))
+            .append(jQuery("<modifier_key />").html(item.attr('conceptid')))
             .append(_constrainValue)
 
         _item.append(_constrainModifier)
