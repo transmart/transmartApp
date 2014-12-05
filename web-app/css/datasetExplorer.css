@@ -88,6 +88,9 @@ a.toplink1:hover{
 .valueicon{
 	background-image:url(../images/numeric.gif ) !important;
 	}
+.foldernumericicon{
+	background-image:url(../images/folder_numeric.png ) !important;
+	}	
 .modifierfoldericon{background-image:url(../images/modifierfolder.png) !important;}
 .modifiericon{background-image:url(../images/ONT_MODIFIER_leaf.gif) !important;}
 .printbutton{background-image:url(../images/printer.png ) !important;}

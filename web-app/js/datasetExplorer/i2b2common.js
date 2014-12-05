@@ -213,7 +213,7 @@ function createPanelItemNew(panel, concept)
     }
     else
     {
-        shortname = createShortNameFromPath(concept.key);
+        shortname = concept.name;
     }
     li.setAttribute('conceptshortname',shortname);
     
@@ -221,7 +221,7 @@ function createPanelItemNew(panel, concept)
     var iconElem=document.createElement('span')
     var textElem=document.createElement('span')
     iconElem.className = "x-tree-node-icon " + (iconCls ? iconCls : '')
-    textElem.appendChild(document.createTextNode(concept.name+" "+valuetext)); //used to be name
+    textElem.appendChild(document.createTextNode(shortname+" "+valuetext)); //used to be name
     textElem.className = "concept-text"
     li.appendChild(iconElem);
     li.appendChild(textElem);
@@ -1870,6 +1870,11 @@ constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
     	modifierId 		= concept.key;    	
     }
 
+    if(oktousevalues != "N" && !leaf)
+    {
+    	iconCls="foldernumericicon";
+    }
+    
 	    //set whether expanded or not.
 	    var autoExpand=false;
 		// Crude string check to bold this node if it's appeared as an actual search result (leaf)
