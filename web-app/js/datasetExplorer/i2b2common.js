@@ -168,12 +168,7 @@ function createPanelItemNew(panel, concept)
     
     //Create a shortname
     var splits=concept.key.split("\\");
-    var shortname="";
-    if(splits.length>1)
-    {
-    shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-    }
-    else shortname=splits[splits.length-1];
+    var shortname=splits[splits.length-1] || splits[splits.length-2];
     li.setAttribute('conceptshortname',shortname);
     
     //Create a setvalue description

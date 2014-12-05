@@ -138,7 +138,7 @@ function adjustPanelSize()
     jQuery(".panelBox").each(function() {
 
         var _itemNumber = jQuery(".panelBoxListItem", jQuery(this)).size()
-        var _totalHeight = (_itemNumber + 1) * jQuery(".panelBoxListItem:first").outerHeight()
+        var _totalHeight = (_itemNumber + 0.5) * jQuery(".panelBoxListItem:first").outerHeight()
 
         _totalHeight += parseInt(jQuery(".panelBoxList", jQuery(this)).css('padding-top'))
         jQuery(this).css('height', _totalHeight)
