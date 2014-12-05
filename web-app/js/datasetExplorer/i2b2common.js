@@ -166,8 +166,6 @@ function createPanelItemNew(panel, concept)
     li.setAttribute('modifiedNodeLevel',concept.modifiedNode.level);    
     li.className="panelBoxListItem x-tree-node-collapsed";
     
-
-    
     //Create a setvalue description
     var valuetext="";
     if(typeof(concept.value.mode)!="undefined")
@@ -2100,13 +2098,6 @@ function nodeType(method, object)
 function createShortNameFromPath(pathToShorten)
 {
 	var splits=pathToShorten.split("\\");
-    var shortname="";
     
-    if(splits.length>1)
-    {
-        shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-    }
-    else shortname=splits[splits.length-1];  
-    
-    return shortname;
+    return splits[splits.length-1] || splits[splits.length-2];
 }
