@@ -82,11 +82,9 @@ function setupQueryPanelClone(clone) {
             }
             else
             {
-                if (data.node.attributes.oktousevalues != "Y")
-                    _concept = createPanelItemNew(this.el, convertNodeToConcept(data.node))
-                else
-                    _concept = createPanelItemNew(Ext.get("hiddenDragDiv"), convertNodeToConcept(data.node))
-    
+                _concept = createPanelItemNew(this.el, convertNodeToConcept(data.node))
+
+                selectConcept(_concept)
                 if (data.node.attributes.oktousevalues == "Y") {
                     STATE.Dragging = true;
                     STATE.Target = this.el;

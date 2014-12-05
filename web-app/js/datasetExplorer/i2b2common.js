@@ -340,10 +340,10 @@ selectConcept(this.dom);
 
 function selectConcept(concept)
 {
-resetSelected(); //clear any selected concept in any panel in any subset
-selectedConcept=concept; //select this one
-selectedDiv=concept.parentNode;
-selectedConcept.className=selectedConcept.className+" selected";
+    resetSelected(); //clear any selected concept in any panel in any subset
+    selectedConcept=concept; //select this one
+    selectedDiv=concept.parentNode;
+    selectedConcept.className=selectedConcept.className+" selected";
 }
 
 function conceptRightClick(event)
@@ -394,7 +394,7 @@ function setValue(conceptnode, setvaluemode, setvalueoperator, setvaluehighlowse
     conceptnode.setAttribute('conceptsetvaluetext',valuetext);
     var conceptshortname=conceptnode.getAttribute("conceptshortname");
     //alert(conceptshortname+" "+valuetext);
-    Ext.get(conceptnode.id).update(conceptshortname+" "+valuetext);
+    jQuery('#' + conceptnode.id + " .concept-text").html(conceptshortname + " " + valuetext)
     //conceptnode.update(conceptshortname+" "+valuetext);
     var subset=getSubsetFromPanel(conceptnode.parentNode);
     invalidateSubset(subset);
@@ -477,11 +477,9 @@ if(STATE.Dragging==true){
 
 function moveSelectedConceptFromHoldingToTarget()
 {
-    var node=selectedConcept;
-    STATE.Target.appendChild(node);
-    var subset=STATE.Target.id.substr(16,1);
+    var subset=jQuery('#' + selectedConcept.id).closest(".panelModel").attr("subset")
     invalidateSubset(subset);
-    STATE.Target=null;    
+    STATE.Target=null;
 }
 
 function invalidateSubset(subset)
@@ -709,7 +707,7 @@ function showPathwaySearchBox(selectedListEltName, pathwayAndIdEltName, searchIn
 					{name: 'uid'},
 					{name: 'source'},
 					{name: 'name'},
-					{name: 'type'},
+					{name: 'type'}
 			   	]
 			)
 		});

@@ -1010,6 +1010,8 @@ Ext.onReady(function () {
 						           {
 						        	   text : 'Cancel',
                             handler: function () {
+                                       jQuery('#' + selectedConcept.id).remove()
+                                       removeUselessPanels()
 						        	   setvaluewin.hide();
 						        	   }
 						           }
