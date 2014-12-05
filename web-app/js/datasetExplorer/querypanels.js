@@ -45,6 +45,8 @@ function setupQueryPanelClone(clone) {
             jQuery(this).closest(".panelBox").addClass("withDates")
         else
             jQuery(this).closest(".panelBox").removeClass("withDates")
+
+        adjustPanelSize()
     })
     clone.find("input[id^='panelBoxDate']").datepicker({ dateFormat: 'yy-mm-dd' })
     clone.find("button[id^='panelClear']").click(function() {
@@ -122,6 +124,24 @@ function removeUselessPanels()
             if (jQuery(this).html().trim() == '')
                 jQuery(this).closest(".panelModel").remove()
         })
+    })
+
+    adjustPanelSize()
+}
+
+/**
+ * Adjust the height of panels to fit items
+ * @returns {void}
+ */
+function adjustPanelSize()
+{
+    jQuery(".panelBox").each(function() {
+
+        var _itemNumber = jQuery(".panelBoxListItem", jQuery(this)).size()
+        var _totalHeight = (_itemNumber + 1) * jQuery(".panelBoxListItem:first").outerHeight()
+
+        _totalHeight += parseInt(jQuery(".panelBoxList", jQuery(this)).css('padding-top'))
+        jQuery(this).css('height', _totalHeight)
     })
 
 }
