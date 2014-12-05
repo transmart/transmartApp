@@ -267,37 +267,37 @@ var text=" ";
             switch (operator)
             {
             case "LT":
-              text=text+"<";
+              text=text+" < ";
               break
             case "LE":
-             text=text+"<=";
+             text=text+" <= ";
               break
             case "EQ":
-              text=text+"=";
+              text=text+" = ";
               break
             case "GT":
-              text=text+">";
+              text=text+" > ";
               break
             case "GE":
-             text=text+">=";
+             text=text+" >= ";
               break
              }
         text=text+lowvalue;
         }
         else 
         {
-         text=text+"between "+lowvalue+" and "+highvalue
+         text=text+" BETWEEN "+lowvalue+" AND "+highvalue
         }
       }
       else if(mode=='highlow')
           {
-      text=text+"High/Low-"+highlowselecttext;  
+      text=text+" "+highlowselecttext;
           }
       else 
           {
           text="";
           }
-    return text;
+    return text.trim().length > 0 ? '<em> :' + text + '</em>' : '';
 }
 
 

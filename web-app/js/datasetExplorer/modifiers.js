@@ -19,7 +19,7 @@ function prepareDroppedModifier(node, modifierElementId)
     
      if(draggedModifier.needsValuePopup)
      {
-         var concept = createPanelItemNew(Ext.get(modifierElementId), modifierAsConcept, true);
+         var concept = createPanelItemNew(Ext.get(modifierElementId), modifierAsConcept);
         selectConcept(concept);
         
         STATE.Dragging = true;

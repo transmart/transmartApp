@@ -208,6 +208,10 @@
     line-height: 18px;
 }
 
+.panelBoxListItem span.concept-text em {
+    color: hotpink !important;
+}
+
 /* We override the jQuery UI just here to keep cohorent */
 .panelBoxBar .ui-button-text {
     padding: 0 !important;

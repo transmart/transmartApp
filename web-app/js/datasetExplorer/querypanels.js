@@ -273,7 +273,7 @@ function getQueryPanelItem(item) {
     var _constrainValue = jQuery('<constrain_by_value />')
     var _value = ''
 
-    switch (item.attr('setvaluemode')) {
+    switch (item.attr('setvaluemode').toLowerCase()) {
         case 'numeric' :
 
             _value = item.attr('setvaluelowvalue')
@@ -281,35 +281,35 @@ function getQueryPanelItem(item) {
                 _value += ' AND ' + item.attr('setvaluehighvalue')
 
             _constrainValue
-                .append(jQuery("value_operator").html(item.attr('setvalueoperator')))
-                .append(jQuery("value_constraint").html(_value))
-                .append(jQuery("value_unit_of_measure").html(item.attr('setvalueunits')))
-                .append(jQuery("value_type").html("NUMBER"))
+                .append(jQuery("<value_operator />").html(item.attr('setvalueoperator')))
+                .append(jQuery("<value_constraint />").html(_value))
+                .append(jQuery("<value_unit_of_measure />").html(item.attr('setvalueunits')))
+                .append(jQuery("<value_type />").html("NUMBER"))
 
             break;
         case 'highlow' :
 
             _constrainValue
-                .append(jQuery("value_operator").html("EQ"))
-                .append(jQuery("value_constraint").html(item.attr('setvaluehighlowselect').substring(0, 1).toUpperCase()))
-                .append(jQuery("value_unit_of_measure").html(item.attr('setvalueunits')))
-                .append(jQuery("value_type").html("FLAG"))
+                .append(jQuery("<value_operator />").html("EQ"))
+                .append(jQuery("<value_constraint />").html(item.attr('setvaluehighlowselect').substring(0, 1).toUpperCase()))
+                .append(jQuery("<value_unit_of_measure />").html(item.attr('setvalueunits')))
+                .append(jQuery("<value_type />").html("FLAG"))
 
             break;
         case 'text' :
 
             _constrainValue
-                .append(jQuery("value_operator").html('LIKE[' + item.attr('setvalueoperator') + ']'))
-                .append(jQuery("value_constraint").html('<![CDATA[' + item.attr('***') + ']]>'))
-                .append(jQuery("value_type").html("TEXT"))
+                .append(jQuery("<value_operator />").html('LIKE[' + item.attr('setvalueoperator') + ']'))
+                .append(jQuery("<value_constraint />").html('<![CDATA[' + item.attr('***') + ']]>'))
+                .append(jQuery("<value_type />").html("TEXT"))
 
             break;
         case 'list' :
 
             _constrainValue
-                .append(jQuery("value_operator").html("IN"))
-                .append(jQuery("value_constraint").html(item.attr('***')))
-                .append(jQuery("value_type").html("TEXT"))
+                .append(jQuery("<value_operator />").html("IN"))
+                .append(jQuery("<value_constraint />").html(item.attr('***')))
+                .append(jQuery("<value_type />").html("TEXT"))
 
             break;
     }
