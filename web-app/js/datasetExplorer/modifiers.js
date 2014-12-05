@@ -1,69 +1,60 @@
 function extendTreeNodeForModifier(existingTreeNode, responseModifierObject)
 {
-    existingTreeNode.attributes.iconCls = (existingTreeNode.attributes.visualattributes.indexOf('LEAF') != -1) ? 'modifiericon' : 'modifierfoldericon';
-     
+    existingTreeNode.attributes.qualified_term_key = responseModifierObject.qualified_term_key;
     existingTreeNode.attributes.applied_path = responseModifierObject.applied_path;
     
     return existingTreeNode;
 }
 
-function prepareDroppedModifier(node, modifierElement)
+function prepareDroppedModifier(node, modifierElementId)
 {     
-     
-     GLOBAL.modifierConcept = node;
-     GLOBAL.modifierElement = modifierElement;
-     
-     var modifiedNode;
-     
-     //Check our parent, if it's a modifier container than check its parent to find out the node we are modifying.
-     if(node.parentNode.attributes.applied_path != null && node.parentNode.attributes.applied_path != "@")
+    //We keep track of the node this modifier modifies. This is needed to build the query later.
+    var modifiedNode = createModifiedNode(node);
+    var modifierAsConcept = convertNodeToConcept(node);
+    var draggedModifier = new modifierNode();
+    
+     modifierAsConcept.key = node.attributes.modifierId;     
+ 
+    draggedModifier.initializeFromNode(node)
+    
+     if(draggedModifier.needsValuePopup)
      {
-          modifiedNode = node.parentNode.parentNode;
+         var concept = createPanelItemNew(Ext.get("hiddenDragDiv"), modifierAsConcept);
+        selectConcept(concept);
+        
+        STATE.Dragging = true;
+        STATE.Target = modifierElement;         
+         
+        var newModifierPopupWindow = new modifierInfoScreen()
+        newModifierPopupWindow.generateDialog(draggedModifier);
      }
      else
      {
-          modifiedNode = node.parentNode;
+         var concept = createPanelItemNew(Ext.get(modifierElementId).dom, modifierAsConcept);
+         selectConcept(concept);
      }
-
-     GLOBAL.modifierConcept.attributes.modifiedNodePath      = modifiedNode.attributes.id;
-     GLOBAL.modifierConcept.attributes.modifiedNodeId      = climbTreeBuildName(modifiedNode);
-     GLOBAL.modifierConcept.attributes.modifiedNodeLevel = modifiedNode.attributes.level;     
      
-     
-     var getChildrenRequest = getONTRequestHeader();
-     getChildrenRequest += '<ns4:get_modifier_info blob="true" type="core" synonyms="true" hiddens="true">';
-     getChildrenRequest += "     <self>" + node.id.replace(/\\.?\\$/,"\\") + "</self>";
-     getChildrenRequest += "     <applied_path>" + node.attributes.applied_path + "</applied_path>";
-     getChildrenRequest += "</ns4:get_modifier_info>";
-     getChildrenRequest += getONTRequestFooter();     
-     
-     jQuery.ajax(
-               {
-                    url : pageInfo.basePath+"/concepts/getModifierInfo",
-                    type : 'POST',
-                    success : function(result, request){prepareDroppedModifierComplete(result)},
-                    failure : function(result, request){alert("Failure!")},
-                    contentType: "text/xml",
-                    processData : false,
-                    data : getChildrenRequest
-               });
-
 }
 
-function prepareDroppedModifierComplete(modifierDataInJSON)
+function createModifiedNode(node)
 {
-     var draggedModifier = new modifierNode();
-     
-     draggedModifier.initializeFromJSON(modifierDataInJSON);
+    var modifiedNode;
+    
+    //Check our parent, if it's a modifier container than check its parent to find out the node we are modifying.
+    if(node.parentNode.attributes.applied_path != null && node.parentNode.attributes.applied_path != "@")
+    {
+         modifiedNode = node.parentNode.parentNode;
+    }
+    else
+    {
+         modifiedNode = node.parentNode;
+    }
 
-     if(draggedModifier.needsValuePopup)
-     {
-          var newModifierPopupWindow = new modifierInfoScreen()
-          newModifierPopupWindow.generateDialog(draggedModifier);
-     }
-
-     return true;
-     
+    node.attributes.modifiedNodePath  = modifiedNode.attributes.id;
+    node.attributes.modifiedNodeId    = climbTreeBuildName(modifiedNode);
+    node.attributes.modifiedNodeLevel = modifiedNode.attributes.level;     
+    
+    return modifiedNode;
 }
 
 function modifierNode()
@@ -73,28 +64,28 @@ function modifierNode()
      
      this.modifierValuesHashmap = {};
 
-     this.initializeFromJSON = function(modifierJSON)
+     this.initializeFromNode = function(modifierNode)
      {          
-          this.oktousevalues = modifierJSON.oktousevalues;
+          this.oktousevalues = modifierNode.attributes.oktousevalues;
 
           //Get the Data Type field out of the XML so we know what to expect in the rest of the response.
-          this.modifierValueType = modifierJSON.datatype;
+          this.modifierValueType = modifierNode.constraint_data_type;
           
           if(this.oktousevalues != null && this.oktousevalues == "Y")
           {
                this.needsValuePopup = true;
-          }
-          
-          if(this.modifierValueType == 'Enum')
-          {
-               //If the Data Type is Enum we need to pull the list of values and draw a popup with a select list.
-               var modifierEnumValues = [""];
                
-               this.modifierValuesHashmap["TEST1"] = "TEST1";
-               this.modifierValuesHashmap["TEST2"] = "TEST2";
-               
+               if(this.modifierValueType == 'Enum') this.__initializeEnumValues();
           }
 
+     }
+     
+     this._initializeEnumValues = function()
+     {
+         //If the Data Type is Enum we need to pull the list of values and draw a popup with a select list.
+         var modifierEnumValues = [""];
+         
+         //this.modifierValuesHashmap["TEST1"] = "TEST1";
      }
 
 }
@@ -180,18 +171,10 @@ function modifierInfoScreen()
      //Build the Modifier select list.
      this.generateDialog = function(draggedModifier)
      {
-          
           this.draggedModifier = draggedModifier;
           
-          if(draggedModifier.modifierValueType == "Enum")
-          {
-               this._setupEnumInput(draggedModifier);
-          }
-          
-          if(draggedModifier.modifierValueType == "Float")
-          {
-               this._setupFloatInput();
-          }          
+          if(draggedModifier.modifierValueType == "Enum")  this._setupEnumInput(draggedModifier);
+          if(draggedModifier.modifierValueType == "Float") this._setupFloatInput();  
           
           this._createDialog();
      }
@@ -207,3 +190,4 @@ function applyValueText(conceptNode, valuetext, valueMode)
 
      Ext.get(conceptNode.id).update(conceptshortname+" "+valuetext);          
 }
+

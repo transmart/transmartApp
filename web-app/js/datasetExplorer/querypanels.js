@@ -76,24 +76,21 @@ function setupQueryPanelClone(clone) {
             // Modifiers are identified by the applied_path field.
             if(data.node.attributes.applied_path != null && data.node.attributes.applied_path != "@")
             {
-                _concept = createPanelItemNew(Ext.get("hiddenDragDiv"), convertNodeToConcept(data.node));
-                selectConcept(_concept);
-                STATE.Dragging = true;
-                STATE.Target = this.el;
                 prepareDroppedModifier(data.node, this.el);
             }
-
-            if (data.node.attributes.oktousevalues != "Y")
-                _concept = createPanelItemNew(this.el, convertNodeToConcept(data.node))
             else
-                _concept = createPanelItemNew(Ext.get("hiddenDragDiv"), convertNodeToConcept(data.node))
-
-            if (data.node.attributes.oktousevalues == "Y") {
-                STATE.Dragging = true;
-                STATE.Target = this.el;
-                showSetValueDialog();
+            {
+                if (data.node.attributes.oktousevalues != "Y")
+                    _concept = createPanelItemNew(this.el, convertNodeToConcept(data.node))
+                else
+                    _concept = createPanelItemNew(Ext.get("hiddenDragDiv"), convertNodeToConcept(data.node))
+    
+                if (data.node.attributes.oktousevalues == "Y") {
+                    STATE.Dragging = true;
+                    STATE.Target = this.el;
+                    showSetValueDialog();
+                }
             }
-
             // Mask the placeholder and add a new panel
             clone.find(".panelBoxListPlaceholder").hide()
             appendQueryPanelInto(clone.attr('subset'))

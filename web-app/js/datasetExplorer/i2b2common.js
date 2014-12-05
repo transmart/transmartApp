@@ -1,5 +1,5 @@
 STATE = {
-		Dragging: false,
+        Dragging: false,
 		Target: null,
 		QueryRequestCounter: 0
 }
@@ -45,7 +45,7 @@ function toggleRBMDisplayElements (ele, eleGpl, eleTissue, eleRbmpanel, platform
     }
 }
 
-function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes)
+function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes, applied_path, modifiedNode)
 {
 	this.name=name;
 	this.key=key;
@@ -59,6 +59,8 @@ function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalu
 	this.value=value;
 	this.nodeType = nodeType
     this.visualattributes = visualattributes;
+	this.applied_path    = applied_path || '@';
+	this.modifiedNode    = modifiedNode;
 }
 
 function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
@@ -108,70 +110,83 @@ function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
 
 function convertNodeToConcept(node)
 {
-	var value=new Value();
-	var level=node.attributes.level;
-	var name=node.text;
-	var key=node.id;
-	var tooltip=node.attributes.qtip;
-	var tablename=node.attributes.tablename;
-	var dimcode=node.attributes.dimcode;
-	var comment=node.attributes.comment;
-	var normalunits=node.attributes.normalunits;
-	var oktousevalues=node.attributes.oktousevalues;
-	var visualattributes=node.attributes.visualattributes;
+    var value=new Value();
+    var level=node.attributes.level;
+    var name=node.text;
+    var key=node.id;
+    var tooltip=node.attributes.qtip;
+    var tablename=node.attributes.tablename;
+    var dimcode=node.attributes.dimcode;
+    var comment=node.attributes.comment;
+    var normalunits=node.attributes.normalunits;
+    var oktousevalues=node.attributes.oktousevalues;
+    var visualattributes=node.attributes.visualattributes;
+    var applied_path=node.attributes.applied_path;
 
-	//Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
-	var nodeType = node.attributes.iconCls
-	
-	if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
-	
-	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes);
-	return myConcept;
+    //Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
+    var nodeType = node.attributes.iconCls
+
+    var modifiedNode = {};
+    
+    modifiedNode.path     = node.attributes.modifiedNodePath;
+    modifiedNode.id     = node.attributes.modifiedNodeId;
+    modifiedNode.level     = node.attributes.modifiedNodeLevel;
+    
+    modifiedNode = modifiedNode;
+    
+    if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
+    
+    var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes, applied_path, modifiedNode);
+    return myConcept;
 }
 function createPanelItemNew(panel, concept)
 {
-	var li=document.createElement('div'); //was li
-	//convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
-	li.setAttribute('conceptname',concept.name);
-	li.setAttribute('conceptid', concept.key);
-	li.setAttribute('conceptlevel',concept.level);
-	li.setAttribute('concepttooltip', concept.tooltip);
-	li.setAttribute('concepttablename',concept.tablename);
-	li.setAttribute('conceptdimcode',concept.dimcode);
-	li.setAttribute('conceptcomment', concept.comment);
-	li.setAttribute('normalunits',concept.normalunits);
-	li.setAttribute('setvaluemode',concept.value.mode);
-	li.setAttribute('setvalueoperator',concept.value.operator);
-	li.setAttribute('setvaluehighlowselect',concept.value.highlowselect);
-	li.setAttribute('setvaluehighvalue',concept.value.highvalue);
-	li.setAttribute('setvaluelowvalue',concept.value.lowvalue);
-	li.setAttribute('setvalueunits',concept.value.units);
-	li.setAttribute('oktousevalues',concept.oktousevalues);
-	li.setAttribute('setnodetype',concept.nodeType);
-	li.setAttribute('visualattributes',concept.visualattributes);
-	li.className="panelBoxListItem x-tree-node-collapsed";
-	
-	//Create a shortname
-	var splits=concept.key.split("\\");
-	var shortname="";
-	if(splits.length>1)
-	{
-	shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-	}
-	else shortname=splits[splits.length-1];
-	li.setAttribute('conceptshortname',shortname);
-	
-	//Create a setvalue description
-	var valuetext="";
-	if(typeof(concept.value.mode)!="undefined")
-		{
-		valuetext=getSetValueText(concept.value.mode, concept.value.operator, concept.value.highlowselect, concept.value.highvalue, concept.value.lowvalue, concept.value.units);
-		li.setAttribute('conceptsetvaluetext',valuetext);
-		}
-	else
-		{
-		li.setAttribute('conceptsetvaluetext','');
-		}
+    var li=document.createElement('div'); //was li
+    //convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
+    li.setAttribute('conceptname',concept.name);
+    li.setAttribute('conceptid', concept.key);
+    li.setAttribute('conceptlevel',concept.level);
+    li.setAttribute('concepttooltip', concept.tooltip);
+    li.setAttribute('concepttablename',concept.tablename);
+    li.setAttribute('conceptdimcode',concept.dimcode);
+    li.setAttribute('conceptcomment', concept.comment);
+    li.setAttribute('normalunits',concept.normalunits);
+    li.setAttribute('setvaluemode',concept.value.mode);
+    li.setAttribute('setvalueoperator',concept.value.operator);
+    li.setAttribute('setvaluehighlowselect',concept.value.highlowselect);
+    li.setAttribute('setvaluehighvalue',concept.value.highvalue);
+    li.setAttribute('setvaluelowvalue',concept.value.lowvalue);
+    li.setAttribute('setvalueunits',concept.value.units);
+    li.setAttribute('oktousevalues',concept.oktousevalues);
+    li.setAttribute('setnodetype',concept.nodeType);
+    li.setAttribute('visualattributes',concept.visualattributes);
+    li.setAttribute('applied_path',concept.applied_path);
+    li.setAttribute('modifiedNodePath',concept.modifiedNode.path);
+    li.setAttribute('modifiedNodeId',concept.modifiedNode.id);
+    li.setAttribute('modifiedNodeLevel',concept.modifiedNode.level);    
+    li.className="panelBoxListItem x-tree-node-collapsed";
+    
+    //Create a shortname
+    var splits=concept.key.split("\\");
+    var shortname="";
+    if(splits.length>1)
+    {
+    shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
+    }
+    else shortname=splits[splits.length-1];
+    li.setAttribute('conceptshortname',shortname);
+    
+    //Create a setvalue description
+    var valuetext="";
+    if(typeof(concept.value.mode)!="undefined")
+        {
+        valuetext=getSetValueText(concept.value.mode, concept.value.operator, concept.value.highlowselect, concept.value.highvalue, concept.value.lowvalue, concept.value.units);
+        li.setAttribute('conceptsetvaluetext',valuetext);
+        }
+    else
+        {
+        li.setAttribute('conceptsetvaluetext','');
+        }
 
     //Find out the icon (this is a copy&paste from getTreeFromJSON
     var iconCls = false
@@ -196,25 +211,34 @@ function createPanelItemNew(panel, concept)
     if (concept.visualattributes.indexOf('STUDY') != '-1') {
         iconCls = "studyicon";
     }
-
+    
+    if(concept.visualattributes.indexOf('MODIFIER_LEAF') != -1)
+    {
+        iconCls            = "modifiericon";
+    }
+    else if(concept.visualattributes.indexOf('MODIFIER_CONTAINER') != -1)
+    {
+        iconCls            = "modifierfoldericon";
+    }
+    
     //Create the node
     var iconElem=document.createElement('span')
     var textElem=document.createElement('span')
     iconElem.className = "x-tree-node-icon " + (iconCls ? iconCls : '')
     textElem.appendChild(document.createTextNode(shortname+" "+valuetext)); //used to be name
     textElem.className = "concept-text"
-	li.appendChild(iconElem);
-	li.appendChild(textElem);
-	panel.appendChild(li);
-	Ext.get(li).addListener('click',conceptClick);
-	Ext.get(li).addListener('contextmenu',conceptRightClick);
-	new Ext.ToolTip({ target:li, html:concept.key, dismissDelay:10000 });
-	li.concept=concept;
-	//return the node
+    li.appendChild(iconElem);
+    li.appendChild(textElem);
+    panel.appendChild(li);
+    Ext.get(li).addListener('click',conceptClick);
+    Ext.get(li).addListener('contextmenu',conceptRightClick);
+    new Ext.ToolTip({ target:li, html:concept.key, dismissDelay:10000 });
+    li.concept=concept;
+    //return the node
 
     invalidateSubset(jQuery('#' + panel.id).attr('subset'));
 
-	return li;
+    return li;
 }
 
 function getSubsetFromPanel(panel)
@@ -226,57 +250,57 @@ function getSetValueText(mode, operator, highlowselect, highvalue, lowvalue, uni
 {
 var highlowselecttext;
 switch(highlowselect)
-	{
-	case "H":
-		highlowselecttext="HIGH";
-		break;
-	case "L":
-		highlowselecttext="LOW";
-		break;
-	case "N":
-		highlowselecttext="NORMAL";
-		break;
-	}
-	
+    {
+    case "H":
+        highlowselecttext="HIGH";
+        break;
+    case "L":
+        highlowselecttext="LOW";
+        break;
+    case "N":
+        highlowselecttext="NORMAL";
+        break;
+    }
+    
 var text=" ";
-	if(mode=='numeric')
-		{
-		if(operator!='BETWEEN')
-		 {
-			switch (operator)
-			{
-			case "LT":
-			  text=text+"<";
-			  break
-			case "LE":
-			 text=text+"<=";
-			  break
-			case "EQ":
-			  text=text+"=";
-			  break
-			case "GT":
-			  text=text+">";
-			  break
-			case "GE":
-			 text=text+">=";
-			  break
-		 	}
-		text=text+lowvalue;
-		}
-		else 
-		{
-		 text=text+"between "+lowvalue+" and "+highvalue
-		}
-	  }
-	  else if(mode=='highlow')
-	  	{
-	  text=text+"High/Low-"+highlowselecttext;  
-	  	}
-	  else 
-	  	{
-	  	text="";
-	  	}
-	return text;
+    if(mode=='numeric')
+        {
+        if(operator!='BETWEEN')
+         {
+            switch (operator)
+            {
+            case "LT":
+              text=text+"<";
+              break
+            case "LE":
+             text=text+"<=";
+              break
+            case "EQ":
+              text=text+"=";
+              break
+            case "GT":
+              text=text+">";
+              break
+            case "GE":
+             text=text+">=";
+              break
+             }
+        text=text+lowvalue;
+        }
+        else 
+        {
+         text=text+"between "+lowvalue+" and "+highvalue
+        }
+      }
+      else if(mode=='highlow')
+          {
+      text=text+"High/Low-"+highlowselecttext;  
+          }
+      else 
+          {
+          text="";
+          }
+    return text;
 }
 
 
@@ -298,16 +322,16 @@ function excludeGroup(btn,subset, panel)
 var el=Ext.get("queryCriteriaDiv"+subset+"_"+panel);
 var button=Ext.get("btnExcludeGroup"+subset+"_"+panel).dom;
 if(el.dom.className=="queryGroupInclude")
-	{
-	el.dom.className="queryGroupExclude";
-	button.firstChild.nodeValue="Include";
-	}
-	else
-	{
-	el.dom.className="queryGroupInclude";
-	button.firstChild.nodeValue="Exclude";
-	}
-	invalidateSubset(subset);
+    {
+    el.dom.className="queryGroupExclude";
+    button.firstChild.nodeValue="Include";
+    }
+    else
+    {
+    el.dom.className="queryGroupInclude";
+    button.firstChild.nodeValue="Exclude";
+    }
+    invalidateSubset(subset);
 }
 
 function conceptClick(event)
@@ -325,119 +349,119 @@ selectedConcept.className=selectedConcept.className+" selected";
 
 function conceptRightClick(event)
 {
-	var conceptnode=this.dom;
-	selectConcept(conceptnode);
-	var conceptid=this.dom.attributes.concepttooltip.nodeValue; //change to id later
-	var comment=this.dom.attributes.conceptcomment.nodeValue;
+    var conceptnode=this.dom;
+    selectConcept(conceptnode);
+    var conceptid=this.dom.attributes.concepttooltip.nodeValue; //change to id later
+    var comment=this.dom.attributes.conceptcomment.nodeValue;
 
-	if (!this.contextMenuConcepts) {
-	this.contextMenuConcepts = new Ext.menu.Menu({
-	id: 'contextMenuConcepts',
-	items: [{
-	text: 'Delete', handler: function(){
-										selectedDiv.removeChild(selectedConcept);
+    if (!this.contextMenuConcepts) {
+    this.contextMenuConcepts = new Ext.menu.Menu({
+    id: 'contextMenuConcepts',
+    items: [{
+    text: 'Delete', handler: function(){
+                                        selectedDiv.removeChild(selectedConcept);
                                         removeUselessPanels()
-										invalidateSubset(getSubsetFromPanel(selectedDiv));
-										
-										}
-	},{id: 'setvaluemenu', text: 'Set Value', handler:function(){showSetValueDialog();}},
-	{
-	text: 'Show Definition', handler:function(){ showConceptInfoDialog(conceptid, conceptid, comment);}
-	}
-	]
-	}); 
-	}
-	var xy = event.getXY();
-	this.contextMenuConcepts.showAt(xy);
-	var m=Ext.getCmp('setvaluemenu');
-	if(this.dom.attributes.oktousevalues.nodeValue!='Y')
-		m.hide(); 
-		//alert('you cant set value');
-	else 
-		m.show();
-	return false;
+                                        invalidateSubset(getSubsetFromPanel(selectedDiv));
+                                        
+                                        }
+    },{id: 'setvaluemenu', text: 'Set Value', handler:function(){showSetValueDialog();}},
+    {
+    text: 'Show Definition', handler:function(){ showConceptInfoDialog(conceptid, conceptid, comment);}
+    }
+    ]
+    }); 
+    }
+    var xy = event.getXY();
+    this.contextMenuConcepts.showAt(xy);
+    var m=Ext.getCmp('setvaluemenu');
+    if(this.dom.attributes.oktousevalues.nodeValue!='Y')
+        m.hide(); 
+        //alert('you cant set value');
+    else 
+        m.show();
+    return false;
 }
 
 function setValue(conceptnode, setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluehighvalue, setvaluelowvalue, setvalueunits)
 {
-	conceptnode.setAttribute('setvaluemode',setvaluemode);
-	conceptnode.setAttribute('setvalueoperator',setvalueoperator);
-	conceptnode.setAttribute('setvaluehighlowselect',setvaluehighlowselect);
-	conceptnode.setAttribute('setvaluehighvalue',setvaluehighvalue);
-	conceptnode.setAttribute('setvaluelowvalue',setvaluelowvalue);
-	conceptnode.setAttribute('setvalueunits',setvalueunits);
-	var valuetext="";
-	valuetext=getSetValueText(setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluehighvalue, setvaluelowvalue, setvalueunits);
-	conceptnode.setAttribute('conceptsetvaluetext',valuetext);
-	var conceptshortname=conceptnode.getAttribute("conceptshortname");
-	//alert(conceptshortname+" "+valuetext);
-	Ext.get(conceptnode.id).update(conceptshortname+" "+valuetext);
-	//conceptnode.update(conceptshortname+" "+valuetext);
-	var subset=getSubsetFromPanel(conceptnode.parentNode);
-	invalidateSubset(subset);
+    conceptnode.setAttribute('setvaluemode',setvaluemode);
+    conceptnode.setAttribute('setvalueoperator',setvalueoperator);
+    conceptnode.setAttribute('setvaluehighlowselect',setvaluehighlowselect);
+    conceptnode.setAttribute('setvaluehighvalue',setvaluehighvalue);
+    conceptnode.setAttribute('setvaluelowvalue',setvaluelowvalue);
+    conceptnode.setAttribute('setvalueunits',setvalueunits);
+    var valuetext="";
+    valuetext=getSetValueText(setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluehighvalue, setvaluelowvalue, setvalueunits);
+    conceptnode.setAttribute('conceptsetvaluetext',valuetext);
+    var conceptshortname=conceptnode.getAttribute("conceptshortname");
+    //alert(conceptshortname+" "+valuetext);
+    Ext.get(conceptnode.id).update(conceptshortname+" "+valuetext);
+    //conceptnode.update(conceptshortname+" "+valuetext);
+    var subset=getSubsetFromPanel(conceptnode.parentNode);
+    invalidateSubset(subset);
 }
 
 function showSetValueDialog()
-{		
-		var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
-		setvaluewin.setHeight(200); //set height back to old closed
-		setvaluewin.setPosition(100, 100);
-		Ext.get("setvaluechartsPanel1").update("");
-		Ext.get("setvaluechartsPanel2").update("");
+{        
+        var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
+        setvaluewin.setHeight(200); //set height back to old closed
+        setvaluewin.setPosition(100, 100);
+        Ext.get("setvaluechartsPanel1").update("");
+        Ext.get("setvaluechartsPanel2").update("");
         setvaluewin.show(viewport);
         var mode=conceptnode.getAttribute('setvaluemode');
         var test=document.getElementsByName("setValueMethod");
         if(mode!=null)
-       		{
-				setCheckedValue(test, mode)
-        		setValueMethodChanged(mode);
-        	}
+               {
+                setCheckedValue(test, mode)
+                setValueMethodChanged(mode);
+            }
         else //default to numeric
-        {	
-        	if(test.length>0)
-        		{
-				setCheckedValue(test, "numeric"); //numeric
-        		setValueMethodChanged("numeric");
-        		}
-        	}
+        {    
+            if(test.length>0)
+                {
+                setCheckedValue(test, "numeric"); //numeric
+                setValueMethodChanged("numeric");
+                }
+            }
         
         var highvalue=conceptnode.getAttribute('setvaluehighvalue');
         if(highvalue!=null)
-        		document.getElementById("setValueHighValue").value=highvalue;
+                document.getElementById("setValueHighValue").value=highvalue;
         else
-        	document.getElementById("setValueHighValue").value="";
-        		
+            document.getElementById("setValueHighValue").value="";
+                
         var lowvalue=conceptnode.getAttribute('setvaluelowvalue');
         var blah=document.getElementById("setValueLowValue");
         if(lowvalue!=null)
-        		blah.value=lowvalue;
+                blah.value=lowvalue;
         else
-        	blah.value="";
-        		
+            blah.value="";
+                
         var units=conceptnode.getAttribute('setvalueunits');
         if(units!=null)
-        		document.getElementById("setValueUnits").value=units;
-        		
+                document.getElementById("setValueUnits").value=units;
+                
         var operator=conceptnode.getAttribute('setvalueoperator');
         if(operator!=null)
-        		{
-        		document.getElementById("setValueOperator").value=operator;
-        		setValueOperatorChanged(operator);
-        		}
-        		
+                {
+                document.getElementById("setValueOperator").value=operator;
+                setValueOperatorChanged(operator);
+                }
+                
         else
-        	{
-        		document.getElementById("setValueOperator").value="LT";
-        		setValueOperatorChanged("LT");
-        		}
+            {
+                document.getElementById("setValueOperator").value="LT";
+                setValueOperatorChanged("LT");
+                }
        
         var highlowselect=conceptnode.getAttribute('setvaluehighlowselect');
         if(highlowselect!=null)
-        		document.getElementById("setValueHighLowSelect").value=highlowselect;
-        		
-      	var unitsinput=document.getElementById("setValueUnits");
-      	var option = new Option(conceptnode.getAttribute('normalunits'),conceptnode.getAttribute('normalunits'));  
-      	unitsinput.options[0]=option;   
+                document.getElementById("setValueHighLowSelect").value=highlowselect;
+                
+          var unitsinput=document.getElementById("setValueUnits");
+          var option = new Option(conceptnode.getAttribute('normalunits'),conceptnode.getAttribute('normalunits'));  
+          unitsinput.options[0]=option;   
 }
 
 
@@ -447,27 +471,27 @@ function setValueDialogComplete(mode, operator, highlowselect, highvalue, lowval
 var conceptnode=selectedConcept;
 setValue(conceptnode, mode, operator, highlowselect, highvalue, lowvalue, units);
 if(STATE.Dragging==true){
-	STATE.Dragging=false;
-	moveSelectedConceptFromHoldingToTarget();
-	}
+    STATE.Dragging=false;
+    moveSelectedConceptFromHoldingToTarget();
+    }
 }
 
 function moveSelectedConceptFromHoldingToTarget()
 {
-	var node=selectedConcept;
-	STATE.Target.appendChild(node);
-	var subset=STATE.Target.id.substr(16,1);
-	invalidateSubset(subset);
-	STATE.Target=null;	
+    var node=selectedConcept;
+    STATE.Target.appendChild(node);
+    var subset=STATE.Target.id.substr(16,1);
+    invalidateSubset(subset);
+    STATE.Target=null;    
 }
 
 function invalidateSubset(subset)
 {
 if(GLOBAL.CurrentSubsetIDs[subset]!=null) //check if its already been invalidated so i dont call again (otherwise I clear ap and grid too many times)
-	{
-	GLOBAL.CurrentSubsetIDs[subset]=null; //invalidate the subset
-	clearAnalysisPanel();
-	}
+    {
+    GLOBAL.CurrentSubsetIDs[subset]=null; //invalidate the subset
+    clearAnalysisPanel();
+    }
 }
 
 function clearAnalysisPanel()
@@ -485,31 +509,31 @@ updateAnalysisPanel(cleartxt, false);
 function clearGrid()
 {
 Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/chart/clearGrid",
-    	        method: 'POST',
+            {
+                url: pageInfo.basePath+"/chart/clearGrid",
+                method: 'POST',
                 defaultHeaders: { 'Content-Type': 'text/plain' },
                 //success: function(result, request){showConceptDistributionHistogramComplete(result);},
-    	        //failure: function(result, request){showConceptDistributionHistogramComplete(result);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({charttype:"cleargrid"})
-    	    });
-    	    if(typeof(grid)!='undefined')
-    	    { 
-    	   	if(grid!=null){ 
-    	    	grid.destroy();
-    	    	grid=null;
-    	    }
-    	   }
+                //failure: function(result, request){showConceptDistributionHistogramComplete(result);},
+                timeout: '300000',
+                params: Ext.urlEncode({charttype:"cleargrid"})
+            });
+            if(typeof(grid)!='undefined')
+            { 
+               if(grid!=null){ 
+                grid.destroy();
+                grid=null;
+            }
+           }
 }
 
 function createNClusterSelector() {
-	alert("Heatmap type: " + GLOBAL.HeatmapType);
-	if (GLOBAL.HeatmapType == 'KMeans') {
-		GLOBAL.nClusters = 2;
-		var nclusters = new Ext.form.NumberField({
-			allowDecimals: false,
-			allowNegative: false,
+    alert("Heatmap type: " + GLOBAL.HeatmapType);
+    if (GLOBAL.HeatmapType == 'KMeans') {
+        GLOBAL.nClusters = 2;
+        var nclusters = new Ext.form.NumberField({
+            allowDecimals: false,
+    		allowNegative: false,
 			minValue: 1,
 			maxValue: 100,
 			name: "Number of clusters",
@@ -1843,7 +1867,10 @@ function getTreeNodeFromJsonNode(concept)
  		var oktousevaluesnode	= 	null;
  		var oktousevalues		=	null;
         var visualattributes    =   null;
-
+    	var applied_path		=	'@';
+ 		var modifierId			=	null;
+ 		var constraint_data_type =	null;
+ 		
     level				= concept.level;
     key					= concept.key;
     name				= concept.name;
@@ -1859,6 +1886,7 @@ function getTreeNodeFromJsonNode(concept)
     oktousevalues		=	concept.metadata
                               ? (concept.metadata.okToUseValues ? 'Y' : 'N')
                               : 'N'
+constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
 	    
 	    //We need to replace the < signs with &lt;
 	    name = name.replace(/</gi,"&lt;");
@@ -1898,6 +1926,21 @@ function getTreeNodeFromJsonNode(concept)
         iconCls="studyicon";
     }
 
+    if(visualattributes.indexOf('MODIFIER_LEAF') != -1)
+    {
+    	leaf			= true;
+    	iconCls			= "modifiericon";
+    	applied_path 	= concept.applied_path;
+    	modifierId 		= concept.key;
+    }
+    else if(visualattributes.indexOf('MODIFIER_CONTAINER') != -1)
+    {
+    	leaf			= false;
+    	draggable		= false;
+    	iconCls			= "modifierfoldericon";
+    	applied_path 	= concept.applied_path;
+    	modifierId 		= concept.key;    	
+    }
 
 	    //set whether expanded or not.
 	    var autoExpand=false;
@@ -1933,68 +1976,14 @@ function getTreeNodeFromJsonNode(concept)
             normalunits: normalunits,
             oktousevalues: oktousevalues,
             expanded: expand,
-            visualattributes : visualattributes
+            visualattributes : visualattributes,
+            applied_path: applied_path,
+       		modifierId: modifierId,
+       		constraint_data_type : constraint_data_type
    		 });
    		 newnode.addListener('contextmenu',ontologyRightClick);
 	return newnode;
 	}
-
-
-function getTreeNodeFromJSON(concept)
-{
-		var Tree = Ext.tree;
-         var level = concept.hlevel;
-         //alert(concept.id);
-         var key=concept.key
-         var name = concept.name;
-         var tooltip = concept.tooltip;
-         var dimcode = concept.dimcode;
-         var visualattributes = concept.visualattributes;
-         var tablename = concept.tablename;
-         var metadataxml=concept.metadataxml;
-         var oktousevalues=metadataxml.oktousevalues;
-         var normalunits=metadataxml.normalunits;
-         var access=concept.access;
-         var comment=concept.comment;
-         // get type of node
-         var nodetype = visualattributes.substr(0, 1);
-         var nodestatus = visualattributes.substr(1, 1);
-         // A = active I = inactive H = hidden
-         if(nodetype == 'F') // folder - dragable
-         {
-            leaf = false;
-            draggable = true;
-         }
-         else if(nodetype == 'C') // folder - dragable
-         {
-            leaf = false;
-            draggable = false;
-         }
-         else if(nodetype == 'L' || nodetype == 'M') // leaf - dragable
-         {
-            leaf = true;
-            draggable = true;
-         }
-         var newnode = new Tree.AsyncTreeNode(
-         {
-            text : name,
-            draggable : draggable,
-            leaf : leaf,
-            id : key,
-            qtip : tooltip,
-            level : level,  // extra attribute for storing level in hierarchy access through node.attributes.level
-            dimcode : dimcode,
-            tablename : tablename,
-            normalunits : normalunits,
-            oktousevalues: oktousevalues,
-            comment: comment
-         }
-         );
-  		   newnode.addListener('contextmenu',ontologyRightClick);
-  		   return newnode;
-  }
-
-
 
 function setTreeNodeSecurity(newnode, access)
 {
@@ -2091,22 +2080,57 @@ function climbTreeBuildName(baseNode)
 		baseNode = baseNode.parentNode;
 	}
 	
-	return nodeNameString;
+    return nodeNameString;
 }
 
 function extractConceptLastNode(conceptPath)
 {
-	var splits=conceptPath.split("\\");
+    var splits=conceptPath.split("\\");
 
-	return splits[splits.length-2]
+    return splits[splits.length-2]
 }
 
 function toggleNodeDraggingState()
 {
-	if(STATE.Dragging==true)
-	{
-		STATE.Dragging=false;
-		moveSelectedConceptFromHoldingToTarget();
-	}
-	
+    if(STATE.Dragging==true)
+    {
+        STATE.Dragging=false;
+        moveSelectedConceptFromHoldingToTarget();
+    }
+    
+}
+
+function nodeType(method, object)
+{
+    if(method=='visualattributes_modifier')
+    {
+        if(object.indexOf('MODIFIER_LEAF') != -1) 
+        {
+            return "LEAF"
+        }
+        else if(object.indexOf('MODIFIER_CONTAINER') != -1) 
+        {
+            return "CONTAINER"
+        }
+        else 
+        {
+            return ""
+        }
+    }
+    
+    if(method=='iconCls_modifier')
+    {
+        if(object == 'modifiericon') 
+        {
+            return "LEAF"
+        }
+        else if(object == 'modifierfoldericon') 
+        {
+            return "CONTAINER"
+        }
+        else 
+        {
+            return ""
+        }
+    }    
 }

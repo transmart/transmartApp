@@ -49,9 +49,9 @@
 
      <div id="divModifierFloat" style="text-align:left; padding: 20px;display:none;">
           
-          <input type="radio"  id="valueMethod_novalue" name="valueMethod" value="novalue" onclick="valueMethodChanged(this.value)">&nbsp;No Value
+          <input type="radio"  id="valueMethod_novalue" name="valueMethod" value="novalue" onclick="valueMethodChanged(this.value)">&nbsp;No Value <br />
           
-          <input type="radio" id="valueMethod_numeric" name="valueMethod" checked="checked" value="numeric" onclick="valueMethodChanged(this.value)">&nbsp;By Value
+          <input type="radio" id="valueMethod_numeric" name="valueMethod" checked="checked" value="numeric" onclick="valueMethodChanged(this.value)">&nbsp;By Value<br /><br/>
      
           <div id="divNumericMethod">
                <select id="valueOperator" onclick="valueOperatorChanged(this.value);">
@@ -61,7 +61,7 @@
                     <option value="BETWEEN">BETWEEN</option>
                     <option value="GT">GREATER THAN(>)</option>
                     <option value="GE">GREATER THAN OR EQUAL TO(>=)</option>
-               </select>
+               </select><br/><br/>
                
                <input type="text" size="5" name="lowValueModifier" id="lowValueModifier" value="" />
                <div id="divHighValueModifier" style="display:none">AND<input type="text" size="5" name="highValueModifier" id="highValueModifier" value="" /></div>
@@ -78,7 +78,7 @@
           </select>
      </div>
      
-     <br /><br />
+     <br />
      
      <input type='button' class="flatbutton" value='Apply Modifier' id="btnModifierValuesDone">
      
