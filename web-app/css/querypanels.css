@@ -190,15 +190,12 @@
     height: 18px;
     padding-left: 5px;
     padding-right: 5px;
-    position: relative;
 }
 .panelBoxListItem.selected {
     background-color: #d9e8fb;
 }
 .panelBoxListItem span {
     display: inline-block;
-    position: absolute;
-    top: 0;
 }
 .panelBoxListItem span.x-tree-node-icon {
     width: 16px;
@@ -207,7 +204,7 @@
     background-position: center;
 }
 .panelBoxListItem span.concept-text {
-    padding-left: 20px;
+    padding-left: 5px;
     line-height: 18px;
 }
 
