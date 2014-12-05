@@ -300,6 +300,22 @@ function getQueryPanelItem(item) {
                 .append(jQuery("value_type").html("FLAG"))
 
             break;
+        case 'text' :
+
+            _constrainValue
+                .append(jQuery("value_operator").html('LIKE[' + item.attr('setvalueoperator') + ']'))
+                .append(jQuery("value_constraint").html('<![CDATA[' + item.attr('***') + ']]>'))
+                .append(jQuery("value_type").html("TEXT"))
+
+            break;
+        case 'list' :
+
+            _constrainValue
+                .append(jQuery("value_operator").html("IN"))
+                .append(jQuery("value_constraint").html(item.attr('***')))
+                .append(jQuery("value_type").html("TEXT"))
+
+            break;
     }
 
     _item
@@ -309,7 +325,6 @@ function getQueryPanelItem(item) {
         .append(jQuery("<tooltip />").html(item.attr('concepttooltip').legacyI2B2Escape()))
         .append(jQuery("<hlevel />").html(item.attr('conceptlevel')))
         .append(jQuery("<class />").html("ENC"))
-        .append(_constrainValue)
 
     if (item.attr('ismodifier')) {
 
@@ -319,9 +334,12 @@ function getQueryPanelItem(item) {
             .append(jQuery("<modifier_name />").html(item.attr('***')))
             .append(jQuery("<applied_path />").html(item.attr('applied_path')))
             .append(jQuery("<modifier_key />").html(item.attr('***')))
+            .append(_constrainValue)
 
         _item.append(_constrainModifier)
-    }
+
+    } else
+        _item.append(_constrainValue)
 
     return _item
 }
