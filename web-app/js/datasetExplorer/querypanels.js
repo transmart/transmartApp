@@ -257,7 +257,7 @@ function getQueryPanelItems(panel) {
 function getQueryPanelItem(item) {
 
     var _item = jQuery("<item />")
-    var _constrain = jQuery('<constrain_by_value />')
+    var _constrainValue = jQuery('<constrain_by_value />')
     var _value = ''
 
     switch (item.attr('setvaluemode')) {
@@ -267,7 +267,7 @@ function getQueryPanelItem(item) {
             if (item.attr('setvalueoperator') == "BETWEEN")
                 _value += ' AND ' + item.attr('setvaluehighvalue')
 
-            _constrain
+            _constrainValue
                 .append(jQuery("value_operator").html(item.attr('setvalueoperator')))
                 .append(jQuery("value_constraint").html(_value))
                 .append(jQuery("value_unit_of_measure").html(item.attr('setvalueunits')))
@@ -276,7 +276,7 @@ function getQueryPanelItem(item) {
             break;
         case 'highlow' :
 
-            _constrain
+            _constrainValue
                 .append(jQuery("value_operator").html("EQ"))
                 .append(jQuery("value_constraint").html(item.attr('setvaluehighlowselect').substring(0, 1).toUpperCase()))
                 .append(jQuery("value_unit_of_measure").html(item.attr('setvalueunits')))
@@ -292,7 +292,19 @@ function getQueryPanelItem(item) {
         .append(jQuery("<tooltip />").html(item.attr('concepttooltip').legacyI2B2Escape()))
         .append(jQuery("<hlevel />").html(item.attr('conceptlevel')))
         .append(jQuery("<class />").html("ENC"))
-        .append(_constrain)
+        .append(_constrainValue)
+
+    if (item.attr('ismodifier')) {
+
+        var _constrainModifier = jQuery('<constrain_by_modifier />')
+
+        _constrainModifier
+            .append(jQuery("<modifier_name />").html(item.attr('***')))
+            .append(jQuery("<applied_path />").html(item.attr('applied_path')))
+            .append(jQuery("<modifier_key />").html(item.attr('***')))
+
+        _item.append(_constrainModifier)
+    }
 
     return _item
 }
