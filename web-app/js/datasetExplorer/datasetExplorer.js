@@ -2027,7 +2027,7 @@ function runQuery(subset, callback) {
         // analysisPanel.body.update("<table border='1' width='100%' height='100%'><tr><td width='50%'><div id='analysisPanelSubset1'></div></td><td><div id='analysisPanelSubset2'></div></td></tr>");
     }
 
-    var query = getQuery(subset).html();
+    var query = getQuery(subset)[0].outerHTML
 
     // first subset
     queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
