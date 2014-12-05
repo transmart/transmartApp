@@ -330,11 +330,13 @@ function getQueryPanelItem(item) {
             .append(jQuery("<modifier_name />").html(item.attr('conceptname')))
             .append(jQuery("<applied_path />").html(item.attr('applied_path')))
             .append(jQuery("<modifier_key />").html(item.attr('conceptid')))
-            .append(_constrainValue)
+
+        if (_constrainValue.size() > 0)
+            _constrainModifier.append(_constrainValue)
 
         _item.append(_constrainModifier)
 
-    } else
+    } else if (_constrainValue.size() > 0)
         _item.append(_constrainValue)
 
     return _item
