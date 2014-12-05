@@ -112,7 +112,7 @@ function convertNodeToConcept(node)
 {
     var value=new Value();
     var level=node.attributes.level;
-    var name=node.text;
+    var name=jQuery('<span>' + node.text + '</span>').find("em").remove().end().html().trim();
     var key=node.id;
     var tooltip=node.attributes.qtip;
     var tablename=node.attributes.tablename;
@@ -215,14 +215,13 @@ function createPanelItemNew(panel, concept)
     {
         shortname = createShortNameFromPath(concept.key);
     }
-    
     li.setAttribute('conceptshortname',shortname);
     
     //Create the node
     var iconElem=document.createElement('span')
     var textElem=document.createElement('span')
     iconElem.className = "x-tree-node-icon " + (iconCls ? iconCls : '')
-    textElem.appendChild(document.createTextNode(shortname+" "+valuetext)); //used to be name
+    textElem.appendChild(document.createTextNode(concept.name+" "+valuetext)); //used to be name
     textElem.className = "concept-text"
     li.appendChild(iconElem);
     li.appendChild(textElem);
@@ -392,10 +391,8 @@ function setValue(conceptnode, setvaluemode, setvalueoperator, setvaluehighlowse
     var valuetext="";
     valuetext=getSetValueText(setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluehighvalue, setvaluelowvalue, setvalueunits);
     conceptnode.setAttribute('conceptsetvaluetext',valuetext);
-    var conceptshortname=conceptnode.getAttribute("conceptshortname");
-    //alert(conceptshortname+" "+valuetext);
-    jQuery('#' + conceptnode.id + " .concept-text").html(conceptshortname + " " + valuetext)
-    //conceptnode.update(conceptshortname+" "+valuetext);
+    var conceptname=conceptnode.getAttribute("conceptname");
+    jQuery('#' + conceptnode.id + " .concept-text").html(conceptname + " " + valuetext)
     var subset=getSubsetFromPanel(conceptnode.parentNode);
     invalidateSubset(subset);
 }
@@ -1776,33 +1773,6 @@ function showConceptDistributionHistogramForSubsetComplete(result)
 /*Ext.getCmp("cdhswindow").body.update(result.responseText);*/
 setvaluewin.setHeight(390);
 Ext.get("setvaluechartsPanel2").update(result.responseText);
-}
-
-function getShortNameFromKey(concept_key)
-{
-//Create a shortname
-	var splits=concept_key.split("\\");
-	var shortname="";
-	if(splits.length>1)
-	{
-	shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-	}
-	else shortname=splits[splits.length-1];
-	return shortname;
-}
-
-function getCategoryFromKey(concept_key)
-{
-//Create a shortname
-	var splits=concept_key.split("\\");
-	var category="";
-	category=splits[2];
-	return category;
-}
-
-function doLogin()
-{
-window.location.href=pageInfo.basePath;
 }
 
 function getTreeNodeFromJsonNode(concept)

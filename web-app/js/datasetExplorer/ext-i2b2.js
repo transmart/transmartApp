@@ -149,7 +149,7 @@ function getChildConceptPatientCountsComplete(result, node) {
         var access = childaccess[fullname];
         var child = children[i];
         if (count != undefined) {
-            child.setText(child.text + " (" + count + ")");
+            child.setText(child.text + "<em> (" + count + ")</em>");
         }
 
         if ((access != undefined && access != 'Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
