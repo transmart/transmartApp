@@ -170,11 +170,9 @@ function getSubsetQuery (subset) {
 function getQuery(subset) {
 
     var _query = jQuery("<ns4:query_definition />")
-    var _name = arguments.length > 1 ? arguments[1] : GLOBAL.Username+"'s Query at "+ new Date().toUTCString();
 
     _query.attr('xmlns:ns4', 'http://www.i2b2.org/xsd/cell/crc/psm/1.1/')
     _query
-        .append(jQuery("<query_name />").html(_name))
         .append(jQuery("<specificity_scale />").html("0"))
         .append(getQueryPanels(subset))
 
