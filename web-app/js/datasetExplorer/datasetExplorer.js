@@ -1405,10 +1405,10 @@ function setupOntTree(id_in, title_in) {
             ddGroup: 'makeQuery',
             listeners: {
                 startdrag: function(e) {
-                    jQuery(".panelBoxListPlaceholder .holder").addClass('highlight')
+                    jQuery("#queryPanel .panelBoxListPlaceholder .holder").addClass('highlight')
                 },
                 enddrag: function(e) {
-                    jQuery(".panelBoxListPlaceholder .holder").removeClass('highlight')
+                    jQuery("#queryPanel .panelBoxListPlaceholder .holder").removeClass('highlight')
                 }
             },
             containerScroll: true,

@@ -132,6 +132,8 @@
     height: 100%;
 }
 .panelBoxListPlaceholder .holder {
+    animation: none;
+    -webkit-animation: none; /* Chrome, Safari, Opera */
     display: block;
     border: 3px dashed #c0c0c0;
     color: #c0c0c0;
