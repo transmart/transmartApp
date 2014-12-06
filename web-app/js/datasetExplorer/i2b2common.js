@@ -299,9 +299,6 @@ var text=" ";
     return text.trim().length > 0 ? '<em> :' + text + '</em>' : '';
 }
 
-
-
-
 function resetQuery()
 {
     jQuery(".panelModel").each(function (){
@@ -310,6 +307,7 @@ function resetQuery()
 }
 function resetSelected()
 {
+    selectedConcept = null
     jQuery(".panelBoxListItem").each(function (){
         jQuery(this).removeClass("selected")
     })
@@ -339,7 +337,13 @@ selectConcept(this.dom);
 
 function selectConcept(concept)
 {
-    resetSelected(); //clear any selected concept in any panel in any subset
+    if (jQuery('#' + concept.getAttribute('id')).hasClass("selected")) {
+        resetSelected()
+        selectedConcept = null
+        selectedDiv = null
+        return;
+    }
+    resetSelected()
     selectedConcept=concept; //select this one
     selectedDiv=concept.parentNode;
     selectedConcept.className=selectedConcept.className+" selected";
