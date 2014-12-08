@@ -339,15 +339,61 @@ function getQueryPanelItem(item) {
             .append(jQuery("<applied_path />").html(item.attr('applied_path')))
             .append(jQuery("<modifier_key />").html(item.attr('conceptid')))
 
-        if (_constrainValue.size() > 0)
+        if (_constrainValue.html().length)
             _constrainModifier.append(_constrainValue)
 
         _item.append(_constrainModifier)
 
-    } else if (_constrainValue.size() > 0)
+    } else if (_constrainValue.html().length)
         _item.append(_constrainValue)
 
     return _item
+}
+/**
+ * This returns a summary of the query as a string
+ * @param subset
+ * @returns {string}
+ */
+function getSubsetQuerySummary(subset) {
+
+    var _summary = "";
+    var _panels = getQueryPanels(subset)
+
+    _panels.each(function() {
+
+        var _e = jQuery(this)
+        var _item = ""
+
+        if (_summary.trim() != '')
+            _summary += " AND"
+
+        if (_e.find("invert").html() == '0')
+            _summary += " INCLUDE"
+        else
+            _summary += " DO NOT INCLUDE"
+
+        _e.find("item").each(function() {
+
+            if (_item.trim() != '' && _e.find("invert").html() == '0')
+                _item += " OR"
+            else if (_item.trim() != '')
+                _item += " NOR"
+
+            _item += " " + _e.find("tooltip").html()
+
+            if (_e.find("constrain_by_value").size()) {
+                _item += " CONSTRAINED"
+            }
+
+            if (_e.find("constrain_by_modifier").size()) {
+                _item += " MODIFIED"
+            }
+        })
+
+        _summary += " (" + _item + " )"
+    })
+
+    return _summary.trim()
 }
 
 /**

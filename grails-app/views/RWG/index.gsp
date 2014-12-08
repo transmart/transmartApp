@@ -4,51 +4,17 @@
 <!-- Force Internet Explorer 8 to override compatibility mode -->
 <meta http-equiv="X-UA-Compatible" content="IE=Edge">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
 <title>${grailsApplication.config.com.recomdata.appTitle}</title>
-<r:require module="jquery-ui"/>
-<link rel="stylesheet" href="${resource(dir: 'css/jquery/skin', file: 'ui.dynatree.css')}">
 
-<!-- Our CSS -->
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery.loadmask.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'rwg.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'colorbox.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery/simpleModal.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery/multiselect/ui.multiselect.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery/multiselect/common.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery/jqueryDatatable.css')}">
+<link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="shortcut icon" />
+<link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="icon" />
 
-<!-- jQuery JS libraries -->
-<script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.migrate.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.cookie.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.dynatree.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.paging.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.loadmask.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.ajaxmanager.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.numeric.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.colorbox.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.simplemodal.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.dataTables.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'facetedSearch/facetedSearchBrowse.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/ui.multiselect.js')}"></script>
-
-
-<!--Datatable styling and scripts-->
-<script type="text/javascript" src="${resource(dir: 'js/', file: 'jquery.dataTables.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js/', file: 'ColVis.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js/', file: 'ColReorderWithResize.js')}"></script>
-
-<!--  SVG Export -->
-<%--<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  --%>
-
-<!-- Our JS -->
-<script type="text/javascript" src="${resource(dir: 'js', file: 'rwg.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'rwgsearch.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'maintabpanel.js')}"></script>
-
-
+<g:javascript library="jquery" />
+<r:require module="browseTab" />
+<r:layoutResources/>
 <tmpl:/RWG/urls/>
+
 <script type="text/javascript" charset="utf-8">
     var mouse_inside_options_div = false;
     var sessionSearch = "${rwgSearchFilter}";
@@ -323,8 +289,6 @@
 
         jQuery('#sidebar').trigger("resize");
 
-        var xpos = jQuery('#menuLinks').offset()['right'];
-
     });
 
     jQuery(window).resize(function () {
@@ -458,8 +422,6 @@
     });
 </script>
 
-
-<r:layoutResources/><%-- XXX: Use template --%>
 </head>
 
 <body>

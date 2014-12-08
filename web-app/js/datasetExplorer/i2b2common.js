@@ -296,7 +296,7 @@ var text=" ";
           {
           text="";
           }
-    return text.trim().length > 0 ? '<em> :' + text + '</em>' : '';
+    return text.trim().length > 0 ? '<em> ' + text + '</em>' : '';
 }
 
 function resetQuery()
@@ -340,9 +340,8 @@ function selectConcept(concept)
 {
     if (jQuery('#' + concept.getAttribute('id')).hasClass("selected")) {
         resetSelected()
-        selectedConcept = null
-        selectedDiv = null
-        return;
+        if (arguments && arguments.length > 1 && !arguments[1])
+            return;
     }
     resetSelected()
     selectedConcept=concept; //select this one
@@ -353,7 +352,7 @@ function selectConcept(concept)
 function conceptRightClick(event)
 {
     var conceptnode=this.dom;
-    selectConcept(conceptnode);
+    selectConcept(conceptnode, true);
     var conceptid=this.dom.attributes.concepttooltip.nodeValue; //change to id later
     var comment=this.dom.attributes.conceptcomment.nodeValue;
 
@@ -403,7 +402,7 @@ function setValue(conceptnode, setvaluemode, setvalueoperator, setvaluehighlowse
 }
 
 function showSetValueDialog()
-{        
+{
         var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
         setvaluewin.setHeight(200); //set height back to old closed
         setvaluewin.setPosition(100, 100);
@@ -1630,70 +1629,6 @@ if(!this.compareStepPathwaySelectionRBM)
                
 }
 
-function getQueryCdItem(el){
-    var item=el.getAttribute("conceptid");
-
-    var inOutCode = el.getAttribute("inoutcode");
-
-    //If there is visit information in the node, add it to the item we return.
-    if(inOutCode) item += "~" + inOutCode;
-
-    return item;
-}
-
-function getQuerySummary(subset)
-{
-var query="";
-//Interate over the criteria groups
-for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
-	{
-		
-		var qcd=Ext.get("queryCriteriaDiv"+subset+'_'+i.toString());
-		if(qcd.dom.childNodes.length>0)
-		{
-			var panel=getQuerySummaryPanel(qcd.dom, i);
-			if(query!="" && panel!="")
-			{
-				query=query+"<br>AND<br>";
-			}
-			query=query+panel;
-		}
-	}
-return query;
-}
-
-//takes actual dom element
-function getQuerySummaryPanel(qd, number) 
-{
-var panel="";
-//set the invert
-var invert=0;
-if(qd.className=="queryGroupExclude")
-	invert=1;
-//set the occurs (later)
-var occurences=1;
-
-if(invert==1)
-	{
-	panel=panel+"<b>NOT (</b>";
-	}
-else
-	{
-	panel=panel+"<b>(</b>";
-	}
-for(var i=0;i<qd.childNodes.length;i++)
-{
-	if(i>0)
-		{
-		panel=panel+'<br><b>OR</b><br>';
-		}
-	var itemel=qd.childNodes[i];
-	panel=panel+getQuerySummaryItem(itemel);
-}
-return panel+"<b>)</b>";
-}
-                  
-
 function getQuerySummaryItem(el){
  	var item=el.getAttribute("conceptdimcode")+" "+
  			getSetValueText(
@@ -1704,11 +1639,6 @@ function getQuerySummaryItem(el){
 						el.getAttribute('setvaluelowvalue'),
 						el.getAttribute('setvalueunits'));
 return item;
-}
-
-function myNullCallback()
-{
- //alert('you have hit my callback');
 }
 
 function isSubsetEmpty(subset)

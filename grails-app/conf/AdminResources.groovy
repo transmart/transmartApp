@@ -1,5 +1,5 @@
 modules = {
-    admin {
+    adminTab {
         dependsOn 'jquery', 'jquery-ui', 'extjs', 'main_mod', 'session_timeout'
 
         resource url: '/css/admin.css'

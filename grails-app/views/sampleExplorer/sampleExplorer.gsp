@@ -5,26 +5,15 @@
     <!-- Force Internet Explorer 8 to override compatibility mode -->
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-	<r:require module="jquery-ui"/>
+
     <title>Sample Explorer :: ${grailsApplication.config.com.recomdata.appTitle}</title>
 
-    <!-- Include Ext and app-specific scripts: -->
-    <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.migrate.js')}"></script>
-  
+    <link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="shortcut icon" />
+    <link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="icon" />
 
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'browserDetect.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'ext/adapter/ext/ext-base.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'myJobs.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/sampleExplorerMenu.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/sampleExplorer.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/sampleExplorer.utilities.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'utilitiesMenu.js')}"></script>
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'sampleExplorer.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'chartservlet.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'main.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css/jquery/skin', file: 'ui.dynatree.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'datasetExplorer.css')}">
+    <g:javascript library="jquery" />
+    <r:require module="sampleTab" />
+    <r:layoutResources/>
 
     <r:script type="text/javascript" charset="utf-8">
 
@@ -32,14 +21,9 @@
 
     </r:script>
 
-    <g:layoutTitle/>
-    <r:layoutResources/>
-    <%-- XXX: Use template --%>
-
 </head>
 
 <body>
-
 <script type="text/javascript">
     Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -64,12 +48,12 @@
         resultDataSet: {},
         resultGridPanel: '',
         columnMap: ${columnData},
-        CurrentTimepoints: new Array(),
-        CurrentSamples: new Array(),
-        CurrentPlatforms: new Array(),
-        CurrentGpls: new Array(),
-        CurrentTissues: new Array(),
-        CurrentRbmpanels: new Array(),
+        CurrentTimepoints: [],
+        CurrentSamples: [],
+        CurrentPlatforms: [],
+        CurrentGpls: [],
+        CurrentTissues: [],
+        CurrentRbmpanels: [],
         Explorer: "SAMPLE",
         resulttype: 'applet',
         subsetTabs: 1,
@@ -116,7 +100,6 @@
 </script>
 <!-- ************************************** -->
 
-<g:layoutBody/>
-<r:layoutResources/><%-- XXX: Use template --%>
+<r:layoutResources/>
 </body>
 </html>

@@ -8,8 +8,8 @@
 
     <title>Dataset Explorer</title>
 
-    <link href="${resource(dir: 'images', file: 'i2b2_hive.ico')}" rel="shortcut icon">
-    <link href="${resource(dir: 'images', file: 'i2b2_hive.ico')}" rel="icon">
+    <link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="shortcut icon" />
+    <link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="icon" />
 
     <%-- We do not have a central template, so this only works in the database explorer for now --%>
     <g:if test="${['true', true]*.equals(grailsApplication.config.com.recomdata.debug.jsCallbacks).any()}">
@@ -18,7 +18,7 @@
 
     <!-- Include jQuery, Ext and app-specific scripts: -->
     <g:javascript library="jquery" />    
-    <r:require module="datasetExplorer" />
+    <r:require module="analyseTab" />
     <r:layoutResources/>
     <tmpl:/RWG/urls/>
 

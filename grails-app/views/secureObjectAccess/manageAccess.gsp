@@ -6,16 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="layout" content="admin"/>
     <title>Manage Study Access</title>
-    <script type="text/javascript" src="${resource(dir: 'js', file: "jquery/jquery-${org.codehaus.groovy.grails.plugins.jquery.JQueryConfig.SHIPPED_VERSION}.js", plugin: 'jquery')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'jquery/jquery.migrate.js')}"></script>
-    <g:javascript library="jquery" />
-    <r:require module="jquery-ui"/>
 
-    <script type="text/javascript" charset="utf-8">
-
-        var $j = window.$j = jQuery.noConflict();
-
-    </script>
     <style>
     p {
         width: 430px;

@@ -1010,8 +1010,10 @@ Ext.onReady(function () {
 						           {
 						        	   text : 'Cancel',
                             handler: function () {
-                                       jQuery('#' + selectedConcept.id).remove()
-                                       removeUselessPanels()
+                                if (STATE.Dragging) {
+                                    jQuery('#' + selectedConcept.id).remove()
+                                    removeUselessPanels()
+                                }
 						        	   setvaluewin.hide();
 						        	   }
 						           }
@@ -2264,7 +2266,7 @@ function showSurvivalAnalysis() {
 		method: 'POST',
 		success: function(result, request){
 			RunSurvivalAnalysis(result, GLOBAL.CurrentSubsetIDs[1], GLOBAL.CurrentSubsetIDs[2],
-					getQuerySummary(1), getQuerySummary(2));
+					getSubsetQuerySummary(1), getSubsetQuerySummary(2));
 		},
 		failure: function(result, request){
 			Ext.Msg.alert('Status', 'Unable to create the heatmap job.');

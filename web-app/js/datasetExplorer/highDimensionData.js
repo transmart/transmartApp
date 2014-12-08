@@ -417,7 +417,7 @@ function clearSummaryDisplay(divId){
 
 function multipleSubsets(){
 	var multipleSubsets=false; 
-	if(Ext.get('multipleSubsets') && (getQuerySummary(2)!="")){
+	if(Ext.get('multipleSubsets') && (getSubsetQuerySummary(2)!="")){
 		multipleSubsets = (Ext.get('multipleSubsets').dom.value=='true');
 	}
 	return multipleSubsets;
