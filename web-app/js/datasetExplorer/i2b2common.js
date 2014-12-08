@@ -332,7 +332,8 @@ if(el.dom.className=="queryGroupInclude")
 
 function conceptClick(event)
 {
-selectConcept(this.dom);
+    selectConcept(this.dom);
+    event.stopPropagation()
 }
 
 function selectConcept(concept)

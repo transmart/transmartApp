@@ -12,6 +12,10 @@ function prepareQueryPanels() {
         // We need to inflate the subset to use legacy functions
         appendQueryPanelInto(i + 1)
     }
+
+    jQuery("#queryPanel").click(function () {
+        resetSelected()
+    })
 }
 
 /**
@@ -51,6 +55,10 @@ function setupQueryPanelClone(clone) {
     clone.find("input[id^='panelBoxDate']").datepicker({ dateFormat: 'yy-mm-dd' })
     clone.find("button[id^='panelClear']").click(function() {
         clearQueryPanel(clone)
+    })
+
+    clone.find(".panelBoxList").click(function () {
+        resetSelected()
     })
 
     var exto = Ext.get(clone.find("div[id^='panelBoxList']").attr("id"))

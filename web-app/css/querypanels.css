@@ -192,6 +192,10 @@
     height: 18px;
     padding-left: 5px;
     padding-right: 5px;
+    cursor: pointer;
+}
+.panelBoxListItem:hover {
+    background-color: #eeeeee;
 }
 .panelBoxListItem.selected {
     background-color: #d9e8fb;
@@ -241,9 +245,14 @@
     border-left: none !important;
 }
 
-.panelBoxBar .ui-corner-left:hover, .panelBoxBar .ui-corner-right:hover {
-    background-color: #b2b2b2;
+.panelBoxBar .ui-corner-all:hover, .panelBoxBar .ui-corner-left:hover, .panelBoxBar .ui-corner-right:hover {
+    background-color: #bababa;
     color: #888888 !important;
+}
+
+.panelBoxBar .ui-state-active.ui-corner-all:hover, .panelBoxBar .ui-state-active.ui-corner-left:hover, .panelBoxBar .ui-state-active.ui-corner-right:hover {
+    background-color: #aaaaaa;
+    color: #888888;
 }
 
 .panelBoxBar .ui-state-active {
