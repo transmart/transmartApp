@@ -3,7 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="layout" content="admin"/>
     <title>Edit UserGroup</title>
-    <g:setProvider library="prototype"/>
+
 </head>
 
 <body>
