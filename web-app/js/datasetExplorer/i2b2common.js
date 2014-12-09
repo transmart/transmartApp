@@ -1853,83 +1853,6 @@ constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
 	return newnode;
 	}
 
-function setTreeNodeSecurity(newnode, access)
-{
-if(access!=undefined)
-  			{
-  			if(access=='Locked')
-  			{
-  			//newnode.setText(child.text+" <b>Locked</b>");
-  			newnode.attributes.access='locked';
-  			newnode.disable();
-  			newnode.on('beforeload', function(node){alert("Access to this node has been restricted. Please contact your administrator for access."); return false});		
-  			}
-  		   }
-}
-
-function showInfo(url) {
-	showInfoInner(url, 600, 500);
-}
-
-function showInfoInner(url, w, h)
-{
-	
-   if( ! this.infowin)
-   {
-       infowin = new Ext.Window(
-      {
-         id : 'infowin',
-         //title : title
-         layout : 'fit',
-         width : w,
-         height : h,
-         closable : false,
-         plain : true,
-         modal : true,
-         border : true,
-         autoScroll: true,
-         buttons : [
-         {
-            text : 'Close',
-            handler : function()
-            {
-               infowin.hide();
-            }
-         }
-         ],
-         resizable : false
-      }
-      );
-   }
-
-   infowin.show();
-   infowin.load({
-    url: pageInfo.basePath+"/"+url,
-    //params: {param1: "foo", param2: "bar"}, // or a URL encoded string
-    //callback: yourFunction,
-    //scope: yourObject, // optional scope for the callback
-    discardUrl: true,
-    nocache: true,
-    text: "Loading...",
-    timeout: 30,
-    scripts: false
-});
-}
-
-	  
-function hideCriteriaGroups()
-{
-	var qp=Ext.get("queryPanel").dom.firstChild.firstChild;
-	qp.style.background="#eee";
-	Ext.get("subsetdivider").dom.rowSpan="4";
-for(i=GLOBAL.NumOfQueryCriteriaGroupsAtStart+1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
-	{
-    var e=document.getElementById("qcr"+i);
-    e.style.display="none";
-	}
-	
-}
-
 function showCriteriaGroup(i)
 {
 	var e=document.getElementById("qcr"+i);
@@ -1951,12 +1874,6 @@ function climbTreeBuildName(baseNode)
     return nodeNameString;
 }
 
-function extractConceptLastNode(conceptPath)
-{
-    var splits=conceptPath.split("\\");
-
-    return splits[splits.length-2]
-}
 
 function toggleNodeDraggingState()
 {

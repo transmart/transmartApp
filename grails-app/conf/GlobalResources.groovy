@@ -72,7 +72,7 @@ modules = {
         resource url: 'js/rwgsearch.js', disposition: 'head'
         resource url: 'js/maintabpanel.js', disposition: 'head'
 
-//        resource url: 'css/main.css'
+        resource url: 'css/main.css'
         resource url: 'css/sanofi.css'
         resource url: 'css/rwg.css'
         resource url: 'css/colorbox.css'
@@ -109,9 +109,9 @@ modules = {
         // These might be able to be blended into the javascript object that controls the advanced workflow validation
         resource url: 'js/datasetExplorer/workflowValidationFunctions.js', disposition: 'head'
 
-        resource url: 'css/sanofi.css'
         resource url: 'css/datasetExplorer.css'
         resource url: 'css/querypanels.css'
+        resource url: 'css/sanofi.css'
     }
 
     sampleTab {
@@ -123,7 +123,7 @@ modules = {
         resource url: 'js/sampleExplorer/sampleExplorer.utilities.js', disposition: 'head'
         resource url: 'js/utilitiesMenu.js', disposition: 'head'
 
-//        resource url: 'css/main.css'
+        resource url: 'css/main.css'
         resource url: 'css/sanofi.css'
         resource url: 'css/sampleExplorer.css'
     }
@@ -134,7 +134,7 @@ modules = {
         resource url: 'js/maintabpanel.js', disposition: 'head'
         resource url: 'js/toggle.js', disposition: 'head'
 
-//        resource url: 'css/main.css'
+        resource url: 'css/main.css'
         resource url: 'css/sanofi.css'
         resource url: 'css/genesignature.css'
     }
