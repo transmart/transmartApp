@@ -2,6 +2,7 @@
  div.analysis {
 	font-family: arial;
 	font-size: 8pt;
+    padding-bottom: 50px;
 	}
 table.analysis {
 	border-width: 1px 1px 1px 1px;
@@ -33,12 +34,14 @@ table.analysis td {
 }
 
 div.analysistitle {
+    padding-top: 30px;
 	font-size: 14pt;
 	font-weight: bold;
 	font-family:arial;
 }
 	
 div.smalltitle {
+    padding-top: 20px;
 	font-size: 10pt;
 	font-weight: bold;
 	font-family:arial;
