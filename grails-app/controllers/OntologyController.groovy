@@ -70,39 +70,23 @@ class OntologyController {
                 log.trace(access as JSON)
             }
 
-    def showConceptDefinition =
-            {
-                def node = OntNode.get(params.conceptKey);
+    def showConceptDefinition = {
+        def conceptPath = i2b2HelperService.keyToPath(params.conceptKey)
+        def node = OntNode.get(conceptPath)
 
-                //Disabled check for trial - show all study metadata in the same way as the Browse view
-                //def testtag=new i2b2.OntNodeTag(tag:'test', tagtype:'testtype');
-                //node.addToTags(testtag);
-                //node.save();
-//		def trial=node.tags.find{ w -> w.tagtype =="Trial" }
-//		if(trial!=null)
-//		{
-//			def trialid=trial.tag;
-//			chain(controller:'trial', action:'trialDetailByTrialNumber', id:trialid)
-//		}
-                //Check for study by visual attributes
-                if (node.visualattributes.contains("S")) {
-                    def accession = node.sourcesystemcd
-                    def study = Experiment.findByAccession(accession?.toUpperCase())
-                    def folder
-                    if (study) {
-                        folder = FmFolderAssociation.findByObjectUid(study.getUniqueId().uniqueId)?.fmFolder
-                    } else {
-                        render(status: 200, text: "No study definition found for accession: " + accession)
-                        return
-                    }
+        //Check for study by visual attributes
+        if (node.visualattributes.contains("S")) {
+            def accession = node.sourcesystemcd
+            def study = Experiment.findByAccession(accession?.toUpperCase())
+            if (study) {
+                def folder = FmFolderAssociation.findByObjectUid(study.getUniqueId().uniqueId)?.fmFolder
+                def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
+                List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
 
-                    def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
-                    List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-
-                    render(template: 'showStudy', model: [folder: folder, bioDataObject: study, metaDataTagItems: metaDataTagItems])
-                } else {
-                    render(template: 'showDefinition', model: [tags: node.tags])
-                }
+                render(template: 'showStudy', model: [folder: folder, bioDataObject: study, metaDataTagItems: metaDataTagItems])
             }
+        }
+        render(template: 'showDefinition', model: [tags: node.tags])
+    }
 
 }
