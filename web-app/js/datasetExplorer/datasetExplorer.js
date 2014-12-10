@@ -559,17 +559,6 @@ Ext.onReady(function () {
                             var text = getAnalysisPanelContent();
                             printPreview(text);
                         }
-                    },
-                    {
-                        id : 'printanalysisbutton',
-                        text : 'Export to EWB',
-                        iconCls : 'exportbutton',
-                        handler : function() {
-                            // This is not particularly elegant, but we do not have much choice.
-                            // Other option is to send GLOBAL.CurrentSubsetIDs[] and rebuilt the page server side
-                            // TODO make it according to second option :)
-                            EWB.sendSummary(getAnalysisPanelContent())
-                        }
                     }
             ]
         });
