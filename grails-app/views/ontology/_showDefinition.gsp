@@ -1,6 +1,6 @@
 <g:if test="${tags.isEmpty()}">
     <table class="detail">
-        <tr><td>No metadata found.</td></tr>
+        <tr><td>No tags found.</td></tr>
     </table>
 </g:if>
 <g:else>
