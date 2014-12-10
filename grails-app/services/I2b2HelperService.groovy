@@ -100,6 +100,7 @@ class I2b2HelperService {
      */
     def String getShortNameFromKey(String concept_key) {
         String[] splits = concept_key.split("\\\\");
+        /*
         String concept_name = "";
         if (splits.length > 2) {
             concept_name = "...\\" + splits[splits.length - 3] + "\\" + splits[splits.length - 2] + "\\" + splits[splits.length - 1];
@@ -109,6 +110,8 @@ class I2b2HelperService {
             concept_name = splits[splits.length - 1]
         };
         return concept_name;
+        */
+        return splits[splits.length - 1]
     }
 
     /**

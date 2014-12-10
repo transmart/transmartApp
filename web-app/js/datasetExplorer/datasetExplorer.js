@@ -2634,12 +2634,12 @@ function buildAnalysisComplete(result) {
 
 function updateAnalysisPanel(html, insert) {
     if (insert) {
-		var body = analysisPanel.body;
-		body.insertHtml('afterBegin', html, false);
-		body.scrollTo('top', 0, false);
-	}
-    else {
-		analysisPanel.body.update(html, false, null);
+		var div = jQuery("#analysisPanel div.analysis")
+		var uniq = 'appenedItem_' + new Date().getTime()
+		div.append(jQuery(html).attr('id', uniq))
+		div.parent().scrollTop(jQuery('#' + uniq).prop('offsetTop'))
+	} else {
+		analysisPanel.body.update(html, false, null)
 	}
 }
 

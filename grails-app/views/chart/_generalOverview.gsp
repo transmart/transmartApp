@@ -22,16 +22,16 @@
     </tr>
     <tr>
         <td colspan="2" align="center">
-            <g:render template="ageComparison" model="${[subsets: subsets, graphs: graphs]}"/>
+            <g:render template="valueComparison" model="${[subsets: subsets, prefix: 'age']}"/>
         </td>
     </tr>
     <tr>
         %{-- This is hardcoded badness. Multiple (>2) cohort selection should work on that --}%
         <td width="50%" align="center">
-            <g:render template="subsetCharts" model="${[subset: subsets.entrySet().find {it.key == 1}, graphs: graphs]}"/>
+            <g:render template="subsetCharts" model="${[subset: subsets.entrySet().find {it.key == 1}]}"/>
         </td>
         <td width="50%" align="center">
-            <g:render template="subsetCharts" model="${[subset: subsets.entrySet().find {it.key == 2}, graphs: graphs]}"/>
+            <g:render template="subsetCharts" model="${[subset: subsets.entrySet().find {it.key == 2}]}"/>
         </td>
     </tr>
     </tbody>
