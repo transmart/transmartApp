@@ -1,10 +1,10 @@
 <%@ page import="org.apache.commons.lang.ArrayUtils; org.jfree.data.statistics.Statistics" %>
 <g:set var="prefix" value="${prefix ?: 'concept'}"/>
-<table width="80%" style="min-height: ${subsets?.commons?.minimalHeight ?: 0}px">
+<table width="80%">
     <tbody>
     <tr>
         <td width="30%" style="text-align: right">
-            <img src="${subsets?.commons?."${prefix}Histo"}" border="0" />
+            ${subsets?.commons?."${prefix}Histo" ?: ''}
         </td>
         <g:each in="${subsets}" var="s">
             <g:set var="p" value="${s?.value}"/>
@@ -28,7 +28,7 @@
             </g:if>
         </g:each>
         <td width="30%">
-            <img src="${subsets?.commons?."${prefix}Plot"}" border="0" />
+            ${subsets?.commons?."${prefix}Plot" ?: ''}
         </td>
     </tr>
     </tbody>

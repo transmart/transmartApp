@@ -32,6 +32,7 @@ import org.jfree.data.category.DefaultCategoryDataset
 import org.jfree.data.general.DefaultPieDataset
 import org.jfree.data.general.PieDataset
 import org.jfree.data.statistics.*
+import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 
@@ -331,32 +332,23 @@ class ChartController {
 
             // Getting the age data
             p.ageData = i2b2HelperService.getPatientDemographicValueDataForSubset("AGE_IN_YEARS_NUM", p.instance)
-            ageHistoHandle.addSeries("Subset $n", p.ageData, 10, StatHelper.min(p.ageData), StatHelper.max(p.ageData));
             p.ageStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(Arrays.asList(ArrayUtils.toObject(p.ageData)))
+            ageHistoHandle.addSeries("Subset $n", p.ageData, 10, StatHelper.min(p.ageData), StatHelper.max(p.ageData));
             agePlotHandle.add(p.ageStats, "Series $n", "Subset $n")
 
             // Sex chart has to be generated for each subset
             p.sexData = i2b2HelperService.getPatientDemographicDataForSubset("sex_cd", p.instance)
-            JFreeChart sexPieChart = createConceptAnalysisPieChart(hashMapToPieDataset(p.sexData, "Sex"), "Sex");
-            String sexPieFile = ServletUtilities.saveChartAsJPEG(sexPieChart, 300, 200, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession())
-            p.sexPie = request.getContextPath() + "/chart/displayChart?filename=" + sexPieFile
+            p.sexPie = getSVGChart(type: 'pie', data: p.sexData)
 
             // Same thing for Race chart
             p.raceData = i2b2HelperService.getPatientDemographicDataForSubset("race_cd", p.instance)
-            JFreeChart racePieChart = createConceptAnalysisPieChart(hashMapToPieDataset(p.raceData, "Race"), "Race");
-            String racePieFile = ServletUtilities.saveChartAsJPEG(racePieChart, 300, 200, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession())
-            p.racePie = request.getContextPath() + "/chart/displayChart?filename=" + racePieFile
+            p.racePie = getSVGChart(type: 'pie', data: p.raceData)
 
         }
 
         // Lets build our age diagrams now that we have all the points in
-        JFreeChart ageHistoChart = ChartFactory.createHistogram("Histogram of Age", null, "Count", ageHistoHandle, PlotOrientation.VERTICAL, true, true, false)
-        String ageHistoFile = ServletUtilities.saveChartAsJPEG(ageHistoChart, 245, 180, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession())
-        subsets.commons.ageHisto = request.getContextPath() + "/chart/displayChart?filename=" + ageHistoFile
-
-        JFreeChart agePlotChart = ChartFactory.createBoxAndWhiskerChart("Comparison of Age", "", "Value", agePlotHandle, false)
-        String agePlotFile = ServletUtilities.saveChartAsJPEG(agePlotChart, 200, 300, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession())
-        subsets.commons.agePlot = request.getContextPath() + "/chart/displayChart?filename=" + agePlotFile
+        subsets.commons.ageHisto = getSVGChart(type: 'histogram', data: ageHistoHandle)
+        subsets.commons.agePlot = getSVGChart(type: 'boxplot', data: agePlotHandle)
 
         // We also retrieve all concepts involved in the query
         def concepts = [:]
@@ -405,25 +397,14 @@ class ChartController {
 
                 // Getting the concept data
                 p.conceptData = (double [])i2b2HelperService.getConceptDistributionDataForValueConceptFromCode(result.commons.conceptCode, p.instance).toArray()
-                conceptHistoHandle.addSeries("Subset $n", p.conceptData, 10, StatHelper.min(p.conceptData), StatHelper.max(p.conceptData));
                 p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(Arrays.asList(ArrayUtils.toObject(p.conceptData)))
+                conceptHistoHandle.addSeries("Subset $n", p.conceptData, 10, StatHelper.min(p.conceptData), StatHelper.max(p.conceptData));
                 conceptPlotHandle.add(p.conceptStats, "Series $n", "Subset $n")
             }
 
             // Lets build our concept diagrams now that we have all the points in
-            JFreeChart conceptHistoChart = ChartFactory.createHistogram("", null, "Count", conceptHistoHandle, PlotOrientation.VERTICAL, true, true, false)
-            String conceptHistoFile = ServletUtilities.saveChartAsJPEG(conceptHistoChart, 245, 180, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession())
-            result.commons.conceptHisto = request.getContextPath() + "/chart/displayChart?filename=" + conceptHistoFile
-
-            JFreeChart conceptPlotChart = ChartFactory.createBoxAndWhiskerChart("", "", "Value", conceptPlotHandle, false)
-            String conceptPlotFile = ServletUtilities.saveChartAsJPEG(conceptPlotChart, 200, 300, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession())
-            result.commons.conceptPlot = request.getContextPath() + "/chart/displayChart?filename=" + conceptPlotFile
-
-            // TODO Remove when possible
-            // This is a little hack to set minimum height for panel focus due to image loading delay
-            // This should be set to the height of the tallest JChart
-            // This should be removed after implementation of SVG rendering
-            result.commons.minimalHeight = 300
+            subsets.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistoHandle)
+            subsets.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle)
 
         } else {
 
@@ -435,21 +416,53 @@ class ChartController {
 
                 // Getting the concept data
                 p.conceptData = i2b2HelperService.getConceptDistributionDataForConcept(concept, p.instance)
-                JFreeChart conceptBarChart = createConceptAnalysisBarChart(hashMapToCategoryDataset(p.conceptData, "Subset $n"), "Subset $n");
-                String conceptBarFile = ServletUtilities.saveChartAsJPEG(conceptBarChart, 400, p.conceptData.size() * 15 + 80, new ChartRenderingInfo(new StandardEntityCollection()), request.getSession());
-                p.conceptBar = request.getContextPath() + "/chart/displayChart?filename=" + conceptBarFile;
+                p.conceptBar = getSVGChart(type: 'bar', data: p.conceptData, size: [width: 400, height: p.conceptData.size() * 15 + 80])
 
-
-                // TODO Remove when possible
-                // This is a little hack to set minimum height for panel focus due to image loading delay
-                // This should be set to the height of the tallest JChart
-                // This should be removed after implementation of SVG rendering
-                def size = p.conceptData.size() * 15 + 80
-                result.commons.minimalHeight = size > result.commons.minimalHeight ? size : result.commons.minimalHeight
             }
         }
 
         return result
+    }
+
+    private def getSVGChart(Map args) {
+
+        // Retrieving function parameters
+        def type = args.type ?: null
+        def data = args.data ?: [:]
+        def size = args.size ?: [:]
+
+        def width = size?.width ?: 300
+        def height = size?.height ?: 300
+
+        SVGGraphics2D renderer = new SVGGraphics2D(width, height);
+
+        switch (type) {
+            case 'histogram':
+
+                JFreeChart chart = ChartFactory.createHistogram("", null, "Count", data, PlotOrientation.VERTICAL, true, true, false)
+                chart.draw(renderer, new Rectangle(0, 0, width, height), new ChartRenderingInfo(new StandardEntityCollection()));
+                break;
+
+            case 'boxplot':
+
+                JFreeChart chart = ChartFactory.createBoxAndWhiskerChart("", "", "Value", data, false)
+                chart.draw(renderer, new Rectangle(0, 0, width, height), new ChartRenderingInfo(new StandardEntityCollection()));
+                break;
+
+            case 'pie':
+
+                JFreeChart chart = createConceptAnalysisPieChart(hashMapToPieDataset(data, "Race"), "Race");
+                chart.draw(renderer, new Rectangle(0, 0, width, height), new ChartRenderingInfo(new StandardEntityCollection()));
+                break;
+
+            case 'bar':
+
+                JFreeChart chart = createConceptAnalysisBarChart(hashMapToCategoryDataset(data, "Subset"), "Subset");
+                chart.draw(renderer, new Rectangle(0, 0, width, height), new ChartRenderingInfo(new StandardEntityCollection()));
+                break;
+        }
+
+        renderer.getSVGDocument()
     }
 
     def analysisGrid = {
