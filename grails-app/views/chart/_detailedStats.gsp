@@ -1,6 +1,6 @@
 <g:set var="prefix" value="${prefix ?: 'concept'}"/>
 <g:if test="${subset.value."${prefix}Data"?.size()}">
-<table class="analysis" style="margin: auto">
+<table class="analysis" style="margin: auto; margin-top: 20px">
     <tbody>
     <tr>
         <th>Category
