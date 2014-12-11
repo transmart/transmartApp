@@ -1,4 +1,4 @@
-<table width="100%">
+<table width="100%" style="padding-top: 30px; padding-bottom: 30px; table-layout: fixed;">
     <tbody>
     <tr>
         <td colspan="2" align="center">
@@ -8,11 +8,15 @@
         </td>
     </tr>
     <tr>
-        <td width="50%" align="center" valign="top">
+        <td width="50%" align="center" valign="top" style="padding: 10px">
+            <br/><br/>
             ${subsets[1].query}
+            <br/><br/>
         </td>
-        <td align="center" valign="top">
+        <td width="50%" align="center" valign="top" style="padding: 10px">
+            <br/><br/>
             ${subsets[2].query}
+            <br/><br/>
         </td>
     </tr>
     <tr>
