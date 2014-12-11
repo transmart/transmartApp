@@ -8,10 +8,10 @@
         </td>
     </tr>
     <tr>
-        <td width="50%" align="center">
+        <td width="50%" align="center" valign="top">
             ${subsets[1].query}
         </td>
-        <td align="center">
+        <td align="center" valign="top">
             ${subsets[2].query}
         </td>
     </tr>
@@ -26,13 +26,10 @@
         </td>
     </tr>
     <tr>
-        %{-- This is hardcoded badness. Multiple (>2) cohort selection should work on that --}%
-        <td width="50%" align="center">
-            <g:render template="subsetCharts" model="${[subset: subsets.entrySet().find {it.key == 1}]}"/>
-        </td>
-        <td width="50%" align="center">
-            <g:render template="subsetCharts" model="${[subset: subsets.entrySet().find {it.key == 2}]}"/>
-        </td>
+        <g:render template="subsetCharts" model="${[subsets: subsets, prefix: 'sex']}"/>
+    </tr>
+    <tr>
+        <g:render template="subsetCharts" model="${[subsets: subsets, prefix: 'race']}"/>
     </tr>
     </tbody>
 </table>
