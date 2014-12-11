@@ -46,8 +46,7 @@
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'reports.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'workspace.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer/exportData', file: 'dataTab.js')}"></script>
-    <script type="text/javascript"
-            src="${resource(dir: 'js/datasetExplorer/exportData', file: 'exportJobsTab.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer/exportData', file: 'exportJobsTab.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'fixconsole.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'browserDetect.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/utils', file: 'json2.js')}"></script>
@@ -56,15 +55,13 @@
     <script type="text/javascript" src="${resource(dir: 'js', file: 'utilitiesMenu.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'gridView.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'datasetExplorer.js')}"></script>
-    <script type="text/javascript"
-            src="${resource(dir: 'js/datasetExplorer', file: 'datasetExplorerLaunchers.js')}"></script>
+    <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'datasetExplorerLaunchers.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'sampleQuery.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'rwgsearch.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js', file: 'advancedWorkflowFunctions.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'highDimensionData.js')}"></script>
     <script type="text/javascript" src="${resource(dir: 'js/Galaxy', file: 'galaxyExport.js')}"></script>
-    <script type="text/javascript"
-            src="//yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script>
+    <script type="text/javascript" src="//yui.yahooapis.com/combo?2.9.0/build/yahoo/yahoo-min.js&2.9.0/build/get/get-min.js"></script>
 
     <tmpl:/RWG/urls/>
 

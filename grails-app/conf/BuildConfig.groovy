@@ -67,7 +67,7 @@ grails.project.dependency.resolution = {
         compile "org.apache.lucene:lucene-highlighter:2.4.0"
         compile 'commons-net:commons-net:3.3' // used for ftp transfers
         compile 'org.apache.commons:commons-math:2.2' //>2MB lib briefly used in ChartController
-        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.1', {
+        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.6', {
             excludes 'groovy', 'nekohtml'
         }
         compile 'org.rosuda:Rserve:1.7.3'
