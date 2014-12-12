@@ -14,14 +14,17 @@ import org.jfree.chart.axis.NumberAxis
 import org.jfree.chart.entity.StandardEntityCollection
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator
 import org.jfree.chart.plot.CategoryPlot
 import org.jfree.chart.plot.PiePlot
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.plot.XYPlot
 import org.jfree.chart.renderer.category.BarRenderer
 import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer
+import org.jfree.chart.renderer.category.StandardBarPainter
 import org.jfree.chart.renderer.xy.StandardXYBarPainter
 import org.jfree.chart.renderer.xy.XYBarRenderer
+import org.jfree.chart.renderer.xy.XYItemRenderer
 import org.jfree.chart.servlet.ChartDeleter
 import org.jfree.chart.servlet.ServletUtilities
 import org.jfree.chart.title.TextTitle
@@ -29,10 +32,13 @@ import org.jfree.data.Range
 import org.jfree.data.RangeType
 import org.jfree.data.category.CategoryDataset
 import org.jfree.data.category.DefaultCategoryDataset
+import org.jfree.data.general.Dataset
 import org.jfree.data.general.DefaultPieDataset
 import org.jfree.data.general.PieDataset
 import org.jfree.data.statistics.*
 import org.jfree.graphics2d.svg.SVGGraphics2D
+import org.jfree.ui.RectangleEdge
+import org.jfree.ui.RectangleInsets
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 
@@ -316,8 +322,8 @@ class ChartController {
             subsets.commons.patientIntersectionCount = i2b2HelperService.getPatientSetIntersectionSize(subsets[1].instance, subsets[2].instance)
 
         // Lets prepare our subset shared diagrams, we will fill them later
-        HistogramDataset ageHistoHandle = new HistogramDataset();
-        DefaultBoxAndWhiskerCategoryDataset agePlotHandle = new DefaultBoxAndWhiskerCategoryDataset();
+        def ageHistogramHandle = [:]
+        def agePlotHandle = [:]
 
         subsets.findAll { n, p ->
             p.exists
@@ -331,23 +337,23 @@ class ChartController {
             p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
 
             // Getting the age data
-            p.ageData = i2b2HelperService.getPatientDemographicValueDataForSubset("AGE_IN_YEARS_NUM", p.instance)
-            p.ageStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(Arrays.asList(ArrayUtils.toObject(p.ageData)))
-            ageHistoHandle.addSeries("Subset $n", p.ageData, 10, StatHelper.min(p.ageData), StatHelper.max(p.ageData));
-            agePlotHandle.add(p.ageStats, "Series $n", "Subset $n")
+            p.ageData = i2b2HelperService.getPatientDemographicValueDataForSubset("AGE_IN_YEARS_NUM", p.instance).toList()
+            p.ageStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.ageData)
+            ageHistogramHandle["Subset $n"] = p.ageData
+            agePlotHandle["Subset $n"] = p.ageStats
 
             // Sex chart has to be generated for each subset
             p.sexData = i2b2HelperService.getPatientDemographicDataForSubset("sex_cd", p.instance)
-            p.sexPie = getSVGChart(type: 'pie', data: p.sexData)
+            p.sexPie = getSVGChart(type: 'pie', data: p.sexData, title: "Sex")
 
             // Same thing for Race chart
             p.raceData = i2b2HelperService.getPatientDemographicDataForSubset("race_cd", p.instance)
-            p.racePie = getSVGChart(type: 'pie', data: p.raceData)
+            p.racePie = getSVGChart(type: 'pie', data: p.raceData, title: "Race")
 
         }
 
         // Lets build our age diagrams now that we have all the points in
-        subsets.commons.ageHisto = getSVGChart(type: 'histogram', data: ageHistoHandle)
+        subsets.commons.ageHisto = getSVGChart(type: 'histogram', data: ageHistogramHandle)
         subsets.commons.agePlot = getSVGChart(type: 'boxplot', data: agePlotHandle)
 
         // We also retrieve all concepts involved in the query
@@ -388,23 +394,23 @@ class ChartController {
             result.commons.type = 'value'
 
             // Lets prepare our subset shared diagrams, we will fill them later
-            HistogramDataset conceptHistoHandle = new HistogramDataset();
-            DefaultBoxAndWhiskerCategoryDataset conceptPlotHandle = new DefaultBoxAndWhiskerCategoryDataset();
+            def conceptHistogramHandle = [:]
+            def conceptPlotHandle = [:];
 
             result.findAll { n, p ->
                 p.exists
             }.each { n, p ->
 
                 // Getting the concept data
-                p.conceptData = (double [])i2b2HelperService.getConceptDistributionDataForValueConceptFromCode(result.commons.conceptCode, p.instance).toArray()
-                p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(Arrays.asList(ArrayUtils.toObject(p.conceptData)))
-                conceptHistoHandle.addSeries("Subset $n", p.conceptData, 10, StatHelper.min(p.conceptData), StatHelper.max(p.conceptData));
-                conceptPlotHandle.add(p.conceptStats, "Series $n", "Subset $n")
+                p.conceptData = i2b2HelperService.getConceptDistributionDataForValueConceptFromCode(result.commons.conceptCode, p.instance).toList()
+                p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.conceptData)
+                conceptHistogramHandle["Subset $n"] = p.conceptData
+                conceptPlotHandle["Series $n"] = p.conceptStats
             }
 
             // Lets build our concept diagrams now that we have all the points in
-            subsets.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistoHandle)
-            subsets.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle)
+            result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle)
+            result.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle)
 
         } else {
 
@@ -430,38 +436,131 @@ class ChartController {
         def type = args.type ?: null
         def data = args.data ?: [:]
         def size = args.size ?: [:]
+        def title = args.title ?: ""
 
+        // We retrieve the dimension if provided
         def width = size?.width ?: 300
         def height = size?.height ?: 300
 
-        SVGGraphics2D renderer = new SVGGraphics2D(width, height);
+        // We initialize a couple of objects that we are going to need
+        Dataset set = null
+        JFreeChart chart = null
+        Color transparent = new Color(255, 255, 255, 0)
+        SVGGraphics2D renderer = new SVGGraphics2D(width, height)
 
+        // If not already defined, we add a method for defaulting parameters
+        if (!JFreeChart.metaClass.setChartParameters)
+            JFreeChart.metaClass.setChartParameters = {
+
+                padding = RectangleInsets.ZERO_INSETS
+                backgroundPaint = transparent
+                plot.outlineVisible = false
+                plot.noDataMessage = "No data available"
+                plot?.backgroundPaint = transparent
+
+                if (plot instanceof CategoryPlot || plot instanceof XYPlot) {
+
+                    plot?.domainGridlinePaint = Color.LIGHT_GRAY
+                    plot?.rangeGridlinePaint = Color.LIGHT_GRAY
+                    plot?.renderer?.setSeriesPaint(0, new Color(254, 220, 119, 150))
+                    plot?.renderer?.setSeriesPaint(1, new Color(110, 158, 200, 150))
+                    plot?.renderer?.setSeriesOutlinePaint(0, new Color(214, 152, 13))
+                    plot?.renderer?.setSeriesOutlinePaint(1, new Color(30, 113, 85))
+
+                    if (plot?.renderer instanceof BarRenderer) {
+
+                        plot?.renderer?.drawBarOutline = true
+                        plot?.renderer?.shadowsVisible = false
+                        plot?.renderer?.barPainter = new StandardBarPainter()
+                    }
+
+                    if (plot?.renderer instanceof XYBarRenderer) {
+
+                        plot?.renderer?.drawBarOutline = true
+                        plot?.renderer?.shadowsVisible = false
+                        plot?.renderer?.barPainter = new StandardXYBarPainter()
+                    }
+                }
+            }
+
+        // Depending on the type of chart we proceed
         switch (type) {
             case 'histogram':
 
-                JFreeChart chart = ChartFactory.createHistogram("", null, "Count", data, PlotOrientation.VERTICAL, true, true, false)
-                chart.draw(renderer, new Rectangle(0, 0, width, height), new ChartRenderingInfo(new StandardEntityCollection()));
+                def min = null
+                def max = null
+                set = new HistogramDataset()
+                data.each { k, v ->
+                    min = min != null ? (min > v.min() ? v.min() : min) : v.min()
+                    max = max != null ? (max < v.max() ? v.max() : max) : v.max()
+                }.each { k, v ->
+                    if (k) set.addSeries(k, (double [])v.toArray(), 10, min, max)
+                }
+
+                chart = ChartFactory.createHistogram(title, null, "", set, PlotOrientation.VERTICAL, true, true, false)
+                chart.setChartParameters()
+                chart.legend.visible = false
                 break;
 
             case 'boxplot':
 
-                JFreeChart chart = ChartFactory.createBoxAndWhiskerChart("", "", "Value", data, false)
-                chart.draw(renderer, new Rectangle(0, 0, width, height), new ChartRenderingInfo(new StandardEntityCollection()));
+                set = new DefaultBoxAndWhiskerCategoryDataset();
+                data.each { k, v ->
+                    if (k) set.add(v, k, k)
+                }
+
+                chart = ChartFactory.createBoxAndWhiskerChart(title, "", "", set, false)
+                chart.setChartParameters()
+                chart.plot.renderer.maximumBarWidth = 0.09
+
                 break;
 
             case 'pie':
 
-                JFreeChart chart = createConceptAnalysisPieChart(hashMapToPieDataset(data, "Race"), "Race");
-                chart.draw(renderer, new Rectangle(0, 0, width, height), new ChartRenderingInfo(new StandardEntityCollection()));
+                if (data.isEmpty()) return ''
+
+                set = new DefaultPieDataset();
+                data.each { k, v ->
+                    if (k) set.setValue(k, v)
+                }
+
+                chart = ChartFactory.createPieChart(title, set, false, false, false)
+                chart.setChartParameters()
+
+                chart.title.font.size = 13
+                chart.title.padding = new RectangleInsets(30, 0, 0, 0)
+                chart.plot.labelBackgroundPaint = new Color(230, 230, 230)
+                chart.plot.labelOutlinePaint = new Color(130, 130, 130)
+                chart.plot.labelShadowPaint = transparent
+                chart.plot.labelPadding = new RectangleInsets(5, 5, 5, 5)
+                chart.plot.maximumLabelWidth = 0.2
+                chart.plot.shadowPaint = transparent
+                chart.plot.interiorGap = 0
+                chart.plot.baseSectionOutlinePaint = new Color(213, 18, 42)
+
+                data.eachWithIndex { o, i ->
+                    chart.plot.setSectionPaint(o.key, new Color(213, 18, 42, (255 / (data.size() + 1) * (data.size() - i)).toInteger()))
+                }
+
                 break;
 
             case 'bar':
 
-                JFreeChart chart = createConceptAnalysisBarChart(hashMapToCategoryDataset(data, "Subset"), "Subset");
-                chart.draw(renderer, new Rectangle(0, 0, width, height), new ChartRenderingInfo(new StandardEntityCollection()));
+                set = new DefaultCategoryDataset();
+                data.each { k, v ->
+                    if (k) set.setValue(v, '', k)
+                }
+
+                chart = ChartFactory.createBarChart(title, "", "", set, PlotOrientation.HORIZONTAL, false, true, false)
+                chart.setChartParameters()
+
+                chart.plot.renderer.setSeriesPaint(0, new Color(128, 193, 119))
+                chart.plot.renderer.setSeriesOutlinePaint(0, new Color(84, 151, 12))
+
                 break;
         }
 
+        chart.draw(renderer, new Rectangle(0, 0, width, height), new ChartRenderingInfo(new StandardEntityCollection()));
         renderer.getSVGDocument()
     }
 
@@ -551,111 +650,5 @@ class ChartController {
         servletoutputstream.write(bytes);
         servletoutputstream.flush();
     }
-
-    private CategoryDataset hashMapToCategoryDataset(HashMap<String, Integer> results, String seriesname) {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        int mapsize = results.size();
-        Iterator keyValuePairs1 = results.entrySet().iterator();
-        for (int i = 0; i < mapsize; i++) {
-            Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) keyValuePairs1.next();
-            String key = entry.getKey();
-            Integer value = entry.getValue();
-            if (key != null) {
-                dataset.addValue(value, seriesname, key);
-            }
-        }
-        return dataset;
-    }
-
-    private PieDataset hashMapToPieDataset(HashMap<String, Integer> results, String seriesname) {
-        DefaultPieDataset dataset = new DefaultPieDataset();
-        int mapsize = results.size();
-        double total = 0;
-
-        Iterator keyValuePairs2 = results.entrySet().iterator();
-        for (int i = 0; i < mapsize; i++) {
-            Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) keyValuePairs2.next();
-            String key = entry.getKey();
-            Integer value = entry.getValue();
-            if (key != null) {
-                dataset.setValue(key, (double) (value/*/total*/));
-            }
-        }
-        return dataset;
-    }
-
-
-    private JFreeChart createConceptAnalysisBarChart(CategoryDataset dataset, String title) {
-        // create the chart...
-        JFreeChart chart = ChartFactory.createBarChart(
-                title,  // chart title
-                "",                  // domain axis label
-                "", // range axis label
-                dataset,                     // data
-                PlotOrientation.HORIZONTAL,  // orientation
-                false,                        // include legend
-                true,
-                false
-        );
-        /*chart.addSubtitle(new TextTitle(
-                "Source: http://www.homeoffice.gov.uk/rds/pdfs2/r188.pdf",
-                new Font("Dialog", Font.ITALIC, 10)));*/
-        chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
-        CategoryPlot plot = (CategoryPlot) chart.getPlot();
-
-        plot.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        renderer.setItemLabelAnchorOffset(9.0);
-        renderer.setBaseItemLabelsVisible(true);
-        renderer.setBaseItemLabelGenerator(
-                new StandardCategoryItemLabelGenerator());
-        renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator(
-                "{0}, {1} = {2}", new DecimalFormat("0")));
-        renderer.setDrawBarOutline(true);
-        renderer.setBaseOutlinePaint(Color.white);
-        renderer.setBaseOutlineStroke(new BasicStroke(0.5f));
-        CategoryAxis domainAxis = (CategoryAxis) plot.getDomainAxis();
-        domainAxis.setLabel("Concept");
-        domainAxis.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
-        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        Range r = rangeAxis.getRange();
-        Range s = new Range(0, r.getUpperBound() + r.getUpperBound() * 0.15);
-        rangeAxis.setRange(s);
-        rangeAxis.setRangeType(RangeType.POSITIVE);
-        rangeAxis.setLabel("Count of Observations");
-        rangeAxis.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
-        //ChartUtilities.applyCurrentTheme(chart);
-        return chart;
-    }
-
-    private JFreeChart createConceptAnalysisPieChart(PieDataset dataset, String title) {
-// create the chart...
-        JFreeChart chart = ChartFactory.createPieChart(
-                title,  // chart title
-                dataset,             // data
-                false,                // include legend
-                true,
-                false);
-        TextTitle mytitle = chart.getTitle();
-        mytitle.setToolTipText("A title tooltip!");
-        mytitle.setFont(new Font("SansSerif", Font.BOLD, 12));
-
-        PiePlot plot = (PiePlot) chart.getPlot();
-        Color[] colors = [Color.blue, Color.red,
-                          Color.green, Color.yellow, Color.WHITE, Color.orange, Color.PINK, Color.darkGray];
-
-        /* Delegating the choice of color to an inner class */
-        PieRenderer renderer = new PieRenderer(colors);
-        renderer.setColor(plot, dataset);
-        plot.setIgnoreNullValues(true);
-        plot.setIgnoreZeroValues(true);
-        plot.setLabelFont(new Font("SansSerif", Font.PLAIN, 10));
-        plot.setNoDataMessage("No data available");
-        plot.setCircular(true);
-        plot.setLabelGap(0.02);
-        return chart;
-    }
-
 }
 

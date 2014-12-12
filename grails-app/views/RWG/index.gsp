@@ -296,6 +296,7 @@
     });
 
     function resizeAccordion() {
+
         var windowHeight = jQuery(window).height();
         jQuery('#sidebar').height(jQuery(window).height() - 30);
         jQuery('#main').height(jQuery(window).height() - 30);
