@@ -221,8 +221,8 @@ DataExport.prototype.displayResult = function (records, options, success) {
 
         _selectedCohortData['dataTypeId'] = '';
         _selectedCohortData['dataTypeName'] = 'Selected Cohort';
-        _selectedCohortData['subset1'] = getQuerySummary(1);
-        _selectedCohortData['subset2'] = getQuerySummary(2);
+        _selectedCohortData['subset1'] = getSubsetQuerySummary(1);
+        _selectedCohortData['subset2'] = getSubsetQuerySummary(2);
 
         var _columns = _this.prepareColumnModel(_this.exportMetaDataStore, _selectedCohortData);
         var _newStore = _this.prepareNewStore(_this.exportMetaDataStore, _columns, _selectedCohortData);
@@ -442,8 +442,8 @@ DataExport.prototype.createDataExportJob = function (gridPanel) {
         },
         timeout: '1800000',
         params: {
-            querySummary1: getQuerySummary(1),
-            querySummary2: getQuerySummary(2),
+            querySummary1: getSubsetQuerySummary(1),
+            querySummary2: getSubsetQuerySummary(2),
             analysis: "DataExport"
         }
     });
