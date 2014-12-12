@@ -15,7 +15,12 @@
         <tr>
             <td>${point.key}</td>
             <td>${point.value}</td>
-            <td>${(point.value * 100 / total).doubleValue().round(2)} %</td>
+            <g:if test="${total != 0}">
+                <td>${(point.value * 100 / total).doubleValue().round(2)} %</td>
+            </g:if>
+            <g:else>
+                <td>-</td>
+            </g:else>
         </tr>
     </g:each>
     </tbody>
