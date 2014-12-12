@@ -442,6 +442,9 @@ class ChartController {
         def width = size?.width ?: 300
         def height = size?.height ?: 300
 
+        // If no data is being sent we return an empty string
+        if (data.isEmpty()) return ''
+
         // We initialize a couple of objects that we are going to need
         Dataset set = null
         JFreeChart chart = null
@@ -449,13 +452,12 @@ class ChartController {
         SVGGraphics2D renderer = new SVGGraphics2D(width, height)
 
         // If not already defined, we add a method for defaulting parameters
-        if (!JFreeChart.metaClass.setChartParameters)
+        if (!JFreeChart.metaClass.getMetaMethod("setChartParameters", []))
             JFreeChart.metaClass.setChartParameters = {
 
                 padding = RectangleInsets.ZERO_INSETS
                 backgroundPaint = transparent
                 plot.outlineVisible = false
-                plot.noDataMessage = "No data available"
                 plot?.backgroundPaint = transparent
 
                 if (plot instanceof CategoryPlot || plot instanceof XYPlot) {
@@ -516,8 +518,6 @@ class ChartController {
                 break;
 
             case 'pie':
-
-                if (data.isEmpty()) return ''
 
                 set = new DefaultPieDataset();
                 data.each { k, v ->
