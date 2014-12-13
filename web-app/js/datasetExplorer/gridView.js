@@ -260,7 +260,7 @@ function gridViewCellFormating(value)
 }
 
 function buildColumnModel(fields) {
-    var size = fields.size();
+    var size = fields.length;
     var con = new Array();
     for (var i = 0; i < size; i++) {
         var c = new Object();
