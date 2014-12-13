@@ -222,7 +222,8 @@ function getQueryPanel(panel) {
     var _invert = panel.find("input[name^=panelRadio]:checked").val()
     var _occurrence = 1
 
-    _number = _number.substring(_number.indexOf('_') + 1)
+    _number = _number ? _number.substring(_number.indexOf('_') + 1) : new Date().getTime()
+    _invert = _invert != undefined ? _invert : 0
     _panel
         .append(jQuery("<panel_number />").html(_number))
         .append(jQuery("<invert />").html(_invert))
