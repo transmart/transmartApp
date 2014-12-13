@@ -1,54 +1,37 @@
-import com.recomdata.charting.PieRenderer
 import com.recomdata.export.ExportTableNew
 import com.recomdata.statistics.StatHelper
 import grails.converters.JSON
-import org.apache.commons.lang.ArrayUtils
 import org.apache.commons.math.stat.inference.TestUtils
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.ChartRenderingInfo
 import org.jfree.chart.ChartUtilities
 import org.jfree.chart.JFreeChart
-import org.jfree.chart.axis.AxisLocation
-import org.jfree.chart.axis.CategoryAxis
 import org.jfree.chart.axis.NumberAxis
 import org.jfree.chart.entity.StandardEntityCollection
-import org.jfree.chart.labels.StandardCategoryItemLabelGenerator
-import org.jfree.chart.labels.StandardCategoryToolTipGenerator
-import org.jfree.chart.labels.StandardPieSectionLabelGenerator
 import org.jfree.chart.plot.CategoryPlot
-import org.jfree.chart.plot.PiePlot
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.plot.XYPlot
 import org.jfree.chart.renderer.category.BarRenderer
-import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer
 import org.jfree.chart.renderer.category.StandardBarPainter
 import org.jfree.chart.renderer.xy.StandardXYBarPainter
 import org.jfree.chart.renderer.xy.XYBarRenderer
-import org.jfree.chart.renderer.xy.XYItemRenderer
 import org.jfree.chart.servlet.ChartDeleter
 import org.jfree.chart.servlet.ServletUtilities
-import org.jfree.chart.title.TextTitle
-import org.jfree.data.Range
-import org.jfree.data.RangeType
-import org.jfree.data.category.CategoryDataset
 import org.jfree.data.category.DefaultCategoryDataset
 import org.jfree.data.general.Dataset
 import org.jfree.data.general.DefaultPieDataset
-import org.jfree.data.general.PieDataset
-import org.jfree.data.statistics.*
+import org.jfree.data.statistics.BoxAndWhiskerCalculator
+import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset
+import org.jfree.data.statistics.HistogramDataset
 import org.jfree.graphics2d.svg.SVGGraphics2D
-import org.jfree.ui.RectangleEdge
 import org.jfree.ui.RectangleInsets
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 
 import javax.servlet.ServletException
 import javax.servlet.ServletOutputStream
-import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import java.awt.*
-import java.text.DecimalFormat
-import java.text.NumberFormat
 import java.util.List
 
 //import edu.mit.wi.haploview.*;
@@ -412,6 +395,30 @@ class ChartController {
             result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle)
             result.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle)
 
+            // Lets calculate the T test if possible
+            if (result[2].exists) {
+
+                if (result[1].conceptData.toArray() == result[2].conceptData.toArray())
+                    result.commons.testmessage = 'No T-test calculated: these are the same subsets'
+                else if (result[1].conceptData.size() < 2 || result[2].conceptData.size() < 2)
+                    result.commons.testmessage = 'No T-test calculated: not enough data'
+                else {
+
+                    def double [] o = (double[])result[1].conceptData.toArray()
+                    def double [] t = (double[])result[2].conceptData.toArray()
+
+                    result.commons.tstat = TestUtils.t(o, t).round(5)
+                    result.commons.pvalue = TestUtils.tTest(o, t).round(5)
+                    result.commons.significance = TestUtils.tTest(o, t, 0.05)
+
+                    if (result.commons.significance)
+                        result.commons.testmessage = 'T-test demonstrated results are significant at a 95% confidence level'
+                    else
+                        result.commons.testmessage = 'T-test demonstrated results are <b>not</b> significant at a 95% confidence level'
+
+                }
+            }
+
         } else {
 
             result.commons.type = 'traditional'
@@ -424,6 +431,37 @@ class ChartController {
                 p.conceptData = i2b2HelperService.getConceptDistributionDataForConcept(concept, p.instance)
                 p.conceptBar = getSVGChart(type: 'bar', data: p.conceptData, size: [width: 400, height: p.conceptData.size() * 15 + 80])
 
+            }
+
+            // Lets calculate the χ² test if possible
+            if (result[2].exists) {
+
+                def junction = false
+
+                result[1].conceptData.each { k, v ->
+                    junction = junction ?: (v > 0 && result[2].conceptData[k] > 0)
+                }
+
+                if (!junction)
+                    result.commons.testmessage = 'No χ² test calculated: subsets are disjointed'
+                else if (result[1].conceptData == result[2].conceptData)
+                    result.commons.testmessage = 'No χ² test calculated: these are the same subsets'
+                else if (result[1].conceptData.size() != result[2].conceptData.size())
+                    result.commons.testmessage = 'No χ² test calculated: subsets have different sizes'
+                else {
+
+                    def long [][] counts = [result[1].conceptData.values(), result[2].conceptData.values()]
+
+                    result.commons.chisquare = TestUtils.chiSquare(counts).round(5)
+                    result.commons.pvalue = TestUtils.chiSquareTest(counts).round(5)
+                    result.commons.significance = TestUtils.chiSquareTest(counts, 0.05)
+
+                    if (result.commons.significance)
+                        result.commons.testmessage = 'χ² test demonstrated results are significant at a 95% confidence level'
+                    else
+                        result.commons.testmessage = 'χ² test demonstrated results are <b>not</b> significant at a 95% confidence level'
+
+                }
             }
         }
 
