@@ -2137,7 +2137,8 @@ function buildAnalysis(nodein) {
                 resultsTabPanel.body.unmask();
             },
             failure: function (result, request) {
-				buildAnalysisComplete(result);
+				alert("A problem arose while trying to retrieve the results")
+				resultsTabPanel.body.unmask();
 			}
 			}
 	);
