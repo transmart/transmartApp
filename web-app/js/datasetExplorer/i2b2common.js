@@ -299,35 +299,12 @@ var text=" ";
     return text.trim().length > 0 ? '<em> ' + text + '</em>' : '';
 }
 
-function resetQuery()
-{
-    jQuery(".panelModel").each(function (){
-        clearQueryPanel(jQuery(this))
-    })
-}
 function resetSelected()
 {
     selectedConcept = null
     jQuery(".panelBoxListItem").each(function (){
         jQuery(this).removeClass("selected")
     })
-}
-
-function excludeGroup(btn,subset, panel)
-{
-var el=Ext.get("queryCriteriaDiv"+subset+"_"+panel);
-var button=Ext.get("btnExcludeGroup"+subset+"_"+panel).dom;
-if(el.dom.className=="queryGroupInclude")
-    {
-    el.dom.className="queryGroupExclude";
-    button.firstChild.nodeValue="Include";
-    }
-    else
-    {
-    el.dom.className="queryGroupInclude";
-    button.firstChild.nodeValue="Exclude";
-    }
-    invalidateSubset(subset);
 }
 
 function conceptClick(event)
@@ -1852,13 +1829,6 @@ constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
    		 newnode.addListener('contextmenu',ontologyRightClick);
 	return newnode;
 	}
-
-function showCriteriaGroup(i)
-{
-	var e=document.getElementById("qcr"+i);
-    e.style.display="";
-	if(i>3){Ext.get("subsetdivider").dom.rowSpan=i+1;}
-}
 
 function climbTreeBuildName(baseNode)
 {

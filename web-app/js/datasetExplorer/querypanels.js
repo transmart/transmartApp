@@ -74,42 +74,45 @@ function setupQueryPanelClone(clone) {
 
     dtrg.notifyDrop = function (source, e, data) {
 
-        if (source.tree.id == "previousQueriesTree") {
-            getPreviousQueryFromID(data.node.attributes.id);
-            return true;
-        } else {
+        // This is legacy ExtJS code
+        var _concept = null;
 
-            // This is legacy ExtJS code
-            var _concept = null;
-
-            // Modifiers that are dropped need to be handled differently from regular concepts.
-            // Modifiers are identified by the applied_path field.
-            if(data.node.attributes.applied_path != null && data.node.attributes.applied_path != "@")
-            {
-                prepareDroppedModifier(data.node, this.el);
-            }
-            else
-            {
-                _concept = createPanelItemNew(this.el, convertNodeToConcept(data.node))
-
-                selectConcept(_concept)
-                if (data.node.attributes.oktousevalues == "Y") {
-                    STATE.Dragging = true;
-                    STATE.Target = this.el;
-                    showSetValueDialog();
-                }
-            }
-            // Mask the placeholder and add a new panel
-            clone.find(".panelBoxListPlaceholder").hide()
-            appendQueryPanelInto(clone.attr('subset'))
-
-            return true;
+        // Modifiers that are dropped need to be handled differently from regular concepts.
+        // Modifiers are identified by the applied_path field.
+        if(data.node.attributes.applied_path != null && data.node.attributes.applied_path != "@")
+        {
+            prepareDroppedModifier(data.node, this.el);
         }
+        else
+        {
+            selectConcept(createPanelItemNew(this.el, convertNodeToConcept(data.node)))
+            if (data.node.attributes.oktousevalues == "Y") {
+                STATE.Dragging = true;
+                STATE.Target = this.el;
+                showSetValueDialog();
+            }
+        }
+        // Mask the placeholder and add a new panel
+        clone.find(".panelBoxListPlaceholder").hide()
+        appendQueryPanelInto(clone.attr('subset'))
+
+        return true;
     }
 }
 
 /**
  * Empty all panels from their content
+ * @returns {void}
+ */
+function clearQueryPanels()
+{
+    jQuery(".panelModel").each(function (){
+        clearQueryPanel(jQuery(this))
+    })
+}
+
+/**
+ * Empty a panels from its content
  * @returns {void}
  */
 function clearQueryPanel(clone)
@@ -150,6 +153,187 @@ function adjustPanelSize()
         jQuery(this).css('height', _totalHeight)
     })
 
+}
+
+/**
+ * Get I2B2 XML representation and re-inject it into panels
+ * @param subsets
+ */
+function refillQueryPanels(subsets) {
+
+    // Legacy ExtJS call (The way this is handle can cause problems
+    queryPanel.el.mask('Rebuilding query ...', 'x-mask-loading');
+
+    var _finishChecker = []
+    var _failure = false
+
+    clearQueryPanels()
+
+    // Looping first to set the call number array
+    jQuery.each(subsets, function (subset, resultInstanceID) {
+        _finishChecker[subset] = false
+    })
+
+    // Looping through subsets
+    jQuery.each(subsets, function (subset, resultInstanceID) {
+
+        jQuery.post(pageInfo.basePath + "/queryTool/getQueryDefinitionFromResultId", { result_id : resultInstanceID }, function () {}, 'xml')
+            .success(function(data) {
+
+                var _query = jQuery(data)
+
+                jQuery(data).find("panel").each(function () {
+
+                    //This is dangerous, but time efficient
+                    var _panel = jQuery(this)
+                    var _panelDOM = jQuery(".panelModel", jQuery("#queryTable tr:last-of-type td")[parseInt(subset) - 1]).last()
+
+                    _panelDOM.find(".panelBoxListPlaceholder").hide()
+                    _panelDOM.find("input[name^=panelRadio]").attr("checked", _panel.find("invert").html() == "1" ? "checked" : "")
+                    _panel.find("item").each(function () {
+                        _panelDOM.find(".panelBoxList").append(getPanelItemFromConcept(getConceptFromQueryItem(this)))
+                    })
+
+                    appendQueryPanelInto(subset)
+                })
+
+                adjustPanelSize()
+            })
+            .fail(function() {
+                _failure = true
+            })
+            .always(function () {
+
+                var _checker = true
+
+                _finishChecker[subset] = true
+
+                jQuery.each(subsets, function (subset, resultInstanceID) {
+                    if (!_finishChecker[subset]) _checker = false
+                })
+
+                if (_checker) {
+                    queryPanel.el.unmask()
+                    if (_failure)
+                        alert("An error occurred while retrieving your query")
+                }
+            })
+    })
+}
+
+/**
+ * Create a concept object from and XML query item
+ * This is full of legacy crap
+ * @param item
+ * @returns {object}
+ */
+function getConceptFromQueryItem(item) {
+
+    var _item = jQuery(item)
+    var _concept = {}
+
+    _concept["conceptid"] = _item.find("item_key").html()
+    _concept["conceptname"] = createShortNameFromPath(_concept["conceptid"])
+    _concept["concepttooltip"] = _concept["conceptid"].substr(1, _concept["conceptid"].length)
+    _concept["conceptlevel"] = _item.find("hlevel").html()
+
+    // Default values for other attributes
+    _concept["concepttablename"] = ""
+    _concept["conceptdimcode"] = ""
+    _concept["conceptcomment"] = ""
+    _concept["normalunits"] = ""
+    _concept["setvaluemode"] = ""
+    _concept["setvalueoperator"] = ""
+    _concept["setvaluelowvalue"] = ""
+    _concept["setvaluehighvalue"] = ""
+    _concept["setvaluehighlowselect"] = ""
+    _concept["setvalueunits"] = ""
+    _concept["oktousevalues"] = ""
+    _concept["setnodetype"] = ""
+    _concept["visualattributes"] = ""
+    _concept["applied_path"] = "@"
+    _concept["modifiedNodePath"] = ""
+    _concept["modifiedNodeId"] = ""
+    _concept["modifiedNodeLevel"] = ""
+
+    _item.find("constrain_by_modifier").each(function () {
+        _concept["ismodifier"] = true
+        _concept["conceptname"] = _item.find("modifier_name").html()
+        _concept["applied_path"] = _item.find("applied_path").html()
+        _concept["conceptid"] = _item.find("modifier_key").html()
+    })
+
+    _item.find("constrain_by_value").each(function () {
+        switch (_item.find("value_type").html().toLowerCase()) {
+            case 'number' :
+                _concept["setvaluemode"] = "numeric"
+                _concept["setvalueunits"] = _item.find("value_type").html()
+
+                var _constrain = _item.find("value_constraint").html().split(" AND ")
+
+                if (_constrain.length > 1) {
+                    _concept["setvalueoperator"] = "BETWEEN"
+                    _concept["setvaluelowvalue"] = _constrain[0]
+                    _concept["setvaluehighvalue"] = _constrain[1]
+                } else
+                    _concept["setvaluelowvalue"] = _constrain[0]
+
+                break;
+            case 'flag' :
+                _concept["setvaluemode"] = "highlow"
+                _concept["setvalueunits"] = _item.find("value_type").html()
+                _concept["setvaluehighlowselect"] = _item.find("value_constraint").html()
+
+                break;
+            case 'text' :
+
+                var _operator = _item.find("setvalueoperator")
+
+                // TODO This should be replaced by a regular expression
+                _operator = _operator.substr(_operator.indexOf('['), _operator.indexOf(']' - 1))
+                _concept["setvalueoperator"] = _operator
+
+                if (_item.find("modifier_key").html() == "IN")
+                    _concept["setvaluemode"] = "list"
+                else
+                    _concept["setvaluemode"] = "text"
+
+                break;
+        }
+    })
+
+    jQuery.each(_concept, function(key, value) {
+        if (_concept[key] == undefined) _concept[key] = ""
+    })
+
+    return _concept
+}
+
+/**
+ * Create a DOM panel item from a concept object
+ * @param concept
+ * @returns {object}
+ */
+function getPanelItemFromConcept(concept) {
+
+    var _item = jQuery("<div />")
+
+    _item
+        .append(jQuery("<span />").addClass("x-tree-node-icon"))
+        .append(jQuery("<span />").addClass("concept-text").html(concept.conceptname))
+
+    jQuery.each(concept, function(key, value) {
+        _item.attr(key, value)
+    })
+
+    _item.addClass("panelBoxListItem")
+    _item.addClass("x-tree-node-collapsed")
+
+    // Some legacy hooks here
+    Ext.get(_item[0]).addListener('click',conceptClick);
+    Ext.get(_item[0]).addListener('contextmenu',conceptRightClick);
+
+    return _item
 }
 
 /**
@@ -324,7 +508,6 @@ function getQueryPanelItem(item) {
     }
 
     _item
-        .append(jQuery("<hlevel />").html(item.attr('conceptlevel')))
         .append(jQuery("<item_name />").html(item.attr('conceptname').legacyI2B2Escape()))
         .append(jQuery("<item_key />").html(item.attr('conceptid').legacyI2B2Escape()))
         .append(jQuery("<tooltip />").html(item.attr('concepttooltip').legacyI2B2Escape()))

@@ -464,6 +464,7 @@ a.x-grid3-hd-btn:hover{background-position:-14px center;}
 .ext-ie .x-tree-node-indent img,.ext-ie .x-tree-node-icon,.ext-ie .x-tree-ec-icon{vertical-align:middle!important;}
 .x-tree-node-expanded .x-tree-node-icon{background-image:url(../images/default/tree/folder-open.gif);}
 .x-tree-node-leaf .x-tree-node-icon{background-image:url(../images/default/tree/leaf.gif);}
+.x-tree-node-icon{background-image:url(../images/default/tree/leaf.gif) !important;}
 .x-tree-node-collapsed .x-tree-node-icon{background-image:url(../images/default/tree/folder.gif);}
 .ext-ie input.x-tree-node-cb{width:15px;height:15px;}
 input.x-tree-node-cb{margin-left:1px;}
