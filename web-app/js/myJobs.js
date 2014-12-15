@@ -131,7 +131,7 @@ function showJobStatusWindow(result, messages)	{
 		title: 'Job Status',
 		layout:'fit',
 		width:350,
-		height:400,
+		height:240,
 		closable: false,
 		plain: true,
 		modal: true,
@@ -161,17 +161,10 @@ function showJobStatusWindow(result, messages)	{
 		        		  jobWindow.close();
 		        	  }
             }
-        ],
-	   autoLoad: {
-		   url: pageInfo.basePath+'/asyncJob/showJobStatus',
-		   scripts: true,
-		   nocache:true,
-		   discardUrl:true,
-		   method:'POST',
-		   params: {jobName: jobName}
-	   }
+        ]
 	});
 	jobWindow.show(viewport);
+	jobWindow.body.dom.innerHTML = "<div class='x-mask-loading'><div>Loading ...</div></div>"
 }
 
 // Used to cancel a given job, this can be called from the Job Status window or the progress toolbar
