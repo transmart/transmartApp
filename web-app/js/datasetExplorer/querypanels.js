@@ -247,7 +247,7 @@ function getConceptFromQueryItem(item) {
     _concept["concepttablename"] = ""
     _concept["conceptdimcode"] = ""
     _concept["conceptcomment"] = ""
-    _concept["normalunits"] = ""
+    _concept["normalunits"] = "ratio"
     _concept["setvaluemode"] = ""
     _concept["setvalueoperator"] = ""
     _concept["setvaluelowvalue"] = ""
@@ -281,11 +281,14 @@ function getConceptFromQueryItem(item) {
                     _concept["setvalueoperator"] = "BETWEEN"
                     _concept["setvaluelowvalue"] = _constrain[0]
                     _concept["setvaluehighvalue"] = _constrain[1]
-                } else
+                } else {
+                    _concept["setvalueoperator"] = _item.find("value_operator").text()
                     _concept["setvaluelowvalue"] = _constrain[0]
+                }
 
                 break;
             case 'flag' :
+                _concept["setvalueoperator"] = _item.find("value_operator").text()
                 _concept["setvaluemode"] = "highlow"
                 _concept["setvalueunits"] = _item.find("value_type").text()
                 _concept["setvaluehighlowselect"] = _item.find("value_constraint").text()
@@ -293,7 +296,7 @@ function getConceptFromQueryItem(item) {
                 break;
             case 'text' :
 
-                var _operator = _item.find("setvalueoperator")
+                var _operator = _item.find("value_operator")
 
                 // TODO This should be replaced by a regular expression
                 _operator = _operator.substr(_operator.indexOf('['), _operator.indexOf(']' - 1))
@@ -324,6 +327,13 @@ function getPanelItemFromConcept(concept) {
 
     var _item = jQuery("<div />")
     var _iconClass = "unknown-concept-type"
+    var _valueText = getSetValueText(
+        concept["setvaluemode"],
+        concept["setvalueoperator"],
+        concept["setvaluehighlowselect"],
+        concept["setvaluehighvalue"],
+        concept["setvaluelowvalue"],
+        concept["setvalueunits"]).trim()
 
     // We try to infer the type when possible to match the icon
     if (concept["setvaluemode"] == "numeric")
@@ -331,9 +341,9 @@ function getPanelItemFromConcept(concept) {
     if (concept["ismodifier"])
         _iconClass = "modifiericon"
 
-            _item
+    _item
         .append(jQuery("<span />").addClass("x-tree-node-icon").addClass(_iconClass))
-        .append(jQuery("<span />").addClass("concept-text").html(concept.conceptname))
+        .append(jQuery("<span />").addClass("concept-text").html(concept.conceptname + _valueText))
 
     jQuery.each(concept, function(key, value) {
         _item.attr(key, value)
