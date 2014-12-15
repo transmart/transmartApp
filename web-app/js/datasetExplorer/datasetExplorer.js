@@ -3087,8 +3087,8 @@ function getAnalysisPanelContent() {
 }
 
 function printPreview(content) {
-    var stylesheet = "<html><head><link rel='stylesheet' type='text/css' href='../css/chartservlet.css'></head><body>";
-    var generator = window.open('', 'name', 'height=400,width=500, resizable=yes, scrollbars=yes');
+    var stylesheet = "<html><head><link rel='stylesheet' type='text/css' href='" + pageInfo.basePath + "/css/datasetExplorer.css'></head><body>";
+    var generator = window.open('', 'name', 'height=700,width=1100, resizable=yes, scrollbars=yes');
     var printbutton = "<input type='button' value=' Print this page 'onclick='window.print();return false;' />";
     //var savebutton = "<input type='button' value='Save'  onclick='document.execCommand(\"SaveAs\",null,\".html\")' />";
     generator.document.write(stylesheet + printbutton + content);

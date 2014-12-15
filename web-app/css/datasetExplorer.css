@@ -158,7 +158,10 @@ div.analysis {
 	font-family: arial;
 	font-size: 8pt;
 	padding-bottom: 50px;
-	}
+}
+div.analysis div {
+	font-size: 8pt;
+}
 table.analysis {
 	border-width: 1px 1px 1px 1px;
 	border-spacing: 4px;
@@ -167,6 +170,7 @@ table.analysis {
 	border-collapse: collapse;
 	background-color: white;
 	font-family: arial;
+	font-size: 8pt !important;
 }
 table.analysis th {
 	border-width: 1px 1px 1px 1px;
@@ -188,10 +192,14 @@ table.analysis td {
 }
 
 div.analysistitle {
-	font-size: 12pt;
+	font-size: 12pt !important;
 	font-weight: bold;
 	font-family:arial;
 	padding-bottom: 20px;
+}
+
+div.smalltitle {
+	padding-bottom: 5px !important;
 }
 
 
