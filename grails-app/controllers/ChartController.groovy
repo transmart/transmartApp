@@ -505,8 +505,8 @@ class ChartController {
                     plot?.renderer?.setSeriesPaint(0, new Color(254, 220, 119, 150))
                     plot?.renderer?.setSeriesPaint(1, new Color(110, 158, 200, 150))
                     plot?.renderer?.setSeriesOutlinePaint(0, new Color(214, 152, 13))
-                    plot?.renderer?.setSeriesOutlinePaint(1, new Color(30, 113, 85))
-
+                    plot?.renderer?.setSeriesOutlinePaint(1, new Color(17, 86, 146))
+    
                     if (plot?.renderer instanceof BarRenderer) {
 
                         plot?.renderer?.drawBarOutline = true
