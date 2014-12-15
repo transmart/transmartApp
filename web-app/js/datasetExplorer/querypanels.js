@@ -190,7 +190,7 @@ function refillQueryPanels(subsets) {
 
                     _panelDOM.find(".panelBoxListPlaceholder").hide()
 
-                    var _inversion = _panel.find("invert").html() == "1"
+                    var _inversion = _panel.find("invert").text() == "1"
 
                     if (_inversion)
                         _panelDOM.find("input[id^=panelExclude]").attr("checked", "checked")
@@ -238,10 +238,10 @@ function getConceptFromQueryItem(item) {
     var _item = jQuery(item)
     var _concept = {}
 
-    _concept["conceptid"] = _item.find("item_key").html()
+    _concept["conceptid"] = _item.find("item_key").text()
     _concept["conceptname"] = createShortNameFromPath(_concept["conceptid"])
     _concept["concepttooltip"] = _concept["conceptid"].substr(1, _concept["conceptid"].length)
-    _concept["conceptlevel"] = _item.find("hlevel").html()
+    _concept["conceptlevel"] = _item.find("hlevel").text()
 
     // Default values for other attributes
     _concept["concepttablename"] = ""
@@ -264,18 +264,18 @@ function getConceptFromQueryItem(item) {
 
     _item.find("constrain_by_modifier").each(function () {
         _concept["ismodifier"] = true
-        _concept["conceptname"] = _item.find("modifier_name").html()
-        _concept["applied_path"] = _item.find("applied_path").html()
-        _concept["conceptid"] = _item.find("modifier_key").html()
+        _concept["conceptname"] = _item.find("modifier_name").text()
+        _concept["applied_path"] = _item.find("applied_path").text()
+        _concept["conceptid"] = _item.find("modifier_key").text()
     })
 
     _item.find("constrain_by_value").each(function () {
-        switch (_item.find("value_type").html().toLowerCase()) {
+        switch (_item.find("value_type").text().toLowerCase()) {
             case 'number' :
                 _concept["setvaluemode"] = "numeric"
-                _concept["setvalueunits"] = _item.find("value_type").html()
+                _concept["setvalueunits"] = _item.find("value_type").text()
 
-                var _constrain = _item.find("value_constraint").html().split(" AND ")
+                var _constrain = _item.find("value_constraint").text().split(" AND ")
 
                 if (_constrain.length > 1) {
                     _concept["setvalueoperator"] = "BETWEEN"
@@ -287,8 +287,8 @@ function getConceptFromQueryItem(item) {
                 break;
             case 'flag' :
                 _concept["setvaluemode"] = "highlow"
-                _concept["setvalueunits"] = _item.find("value_type").html()
-                _concept["setvaluehighlowselect"] = _item.find("value_constraint").html()
+                _concept["setvalueunits"] = _item.find("value_type").text()
+                _concept["setvaluehighlowselect"] = _item.find("value_constraint").text()
 
                 break;
             case 'text' :
@@ -299,7 +299,7 @@ function getConceptFromQueryItem(item) {
                 _operator = _operator.substr(_operator.indexOf('['), _operator.indexOf(']' - 1))
                 _concept["setvalueoperator"] = _operator
 
-                if (_item.find("modifier_key").html() == "IN")
+                if (_item.find("modifier_key").text() == "IN")
                     _concept["setvaluemode"] = "list"
                 else
                     _concept["setvaluemode"] = "text"
