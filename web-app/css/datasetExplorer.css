@@ -555,3 +555,14 @@ li.x-tab-strip-active {
 	width: 500px;
 }
 
+#divjobstatus {
+	padding: 10px;
+}
+
+#divjobstatus td {
+	line-height: 18px;
+}
+
+#divjobstatus img {
+	max-height: 15px;
+}
