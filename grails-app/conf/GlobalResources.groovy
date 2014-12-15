@@ -59,7 +59,6 @@ modules = {
 
         resource url: 'css/jquery.loadmask.css'
         resource url: 'css/jquery/multiselect/ui.multiselect.css'
-        resource url: 'css/jquery/jqueryDatatable.css'
         resource url: 'css/jquery/skin/ui.dynatree.css'
     }
 
@@ -77,6 +76,7 @@ modules = {
         resource url: 'css/sanofi.css'
         resource url: 'css/rwg.css'
         resource url: 'css/colorbox.css'
+        resource url: 'css/jquery/jqueryDatatable.css'
     }
 
     analyseTab {
