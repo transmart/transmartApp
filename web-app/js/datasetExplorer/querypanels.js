@@ -319,7 +319,7 @@ function getPanelItemFromConcept(concept) {
     var _item = jQuery("<div />")
 
     _item
-        .append(jQuery("<span />").addClass("x-tree-node-icon"))
+        .append(jQuery("<span />").addClass("x-tree-node-icon").addClass("unknown-concept-type"))
         .append(jQuery("<span />").addClass("concept-text").html(concept.conceptname))
 
     jQuery.each(concept, function(key, value) {
