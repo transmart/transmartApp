@@ -206,20 +206,13 @@ function applySubsets(subsetId, study){
 				_obj[2] = data.queryId2
 			}
 
+			resultsTabPanel.setActiveTab("queryPanel");
 			refillQueryPanels(_obj)
 
 			// Refresh the global subset study variable.
             // TODO review this, it depends on a variable not anymore retrived
             // TODO see getChildren() in transmart-core
-			/*
-            GLOBAL.currentSubsetsStudy=study;
-            if (study == "")
-                ontTabPanel.setActiveTab("acrossTrialTreePanel");
-            else
-                ontTabPanel.setActiveTab("navigateTermsPanel");
-            */
-            resultsTabPanel.setActiveTab("queryPanel");
-			//Refresh the global workspace subset variable.
+
 			GLOBAL.selectedWorkspaceSubsetId=subsetId;
 		});
 	}
