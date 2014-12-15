@@ -20,6 +20,11 @@ class ConceptsController {
         render parent.children as JSON
     }
 
+    def getResource() {
+        def concept = params.get('concept_key')
+        render conceptsResourceService.getByKey(concept) as JSON
+    }
+
     def getModifierChildren() {
         def modifierKey = params.get('modifier_key')
         def appliedPath = params.get('applied_path')
