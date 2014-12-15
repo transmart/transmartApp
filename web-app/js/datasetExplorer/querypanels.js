@@ -189,7 +189,13 @@ function refillQueryPanels(subsets) {
                     var _panelDOM = jQuery(".panelModel", jQuery("#queryTable tr:last-of-type td")[parseInt(subset) - 1]).last()
 
                     _panelDOM.find(".panelBoxListPlaceholder").hide()
-                    _panelDOM.find("input[name^=panelRadio]").attr("checked", _panel.find("invert").html() == "1" ? "checked" : "")
+
+                    var _inversion = _panel.find("invert").html() == "1"
+
+                    if (_inversion)
+                        _panelDOM.find("input[id^=panelExclude]").attr("checked", "checked")
+                    _panelDOM.find(".panelRadio").buttonset("refresh")
+
                     _panel.find("item").each(function () {
                         _panelDOM.find(".panelBoxList").append(getPanelItemFromConcept(getConceptFromQueryItem(this)))
                     })
@@ -317,9 +323,16 @@ function getConceptFromQueryItem(item) {
 function getPanelItemFromConcept(concept) {
 
     var _item = jQuery("<div />")
+    var _iconClass = "unknown-concept-type"
 
-    _item
-        .append(jQuery("<span />").addClass("x-tree-node-icon").addClass("unknown-concept-type"))
+    // We try to infer the type when possible to match the icon
+    if (concept["setvaluemode"] == "numeric")
+        _iconClass = "valueicon"
+    if (concept["ismodifier"])
+        _iconClass = "modifiericon"
+
+            _item
+        .append(jQuery("<span />").addClass("x-tree-node-icon").addClass(_iconClass))
         .append(jQuery("<span />").addClass("concept-text").html(concept.conceptname))
 
     jQuery.each(concept, function(key, value) {
