@@ -54,6 +54,7 @@ modules = {
         resource url: 'js/jquery/jquery.colorbox.js', disposition: 'head'
         resource url: 'js/jquery/jquery.simplemodal.js', disposition: 'head'
         resource url: 'js/jquery/jquery.dataTables.js', disposition: 'head'
+        resource url: 'js/jquery/jquery.validate.js', disposition: 'head'
         resource url: 'js/jquery/ui.multiselect.js', disposition: 'head'
 
         resource url: 'css/jquery.loadmask.css'

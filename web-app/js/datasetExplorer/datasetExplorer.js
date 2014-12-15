@@ -1372,8 +1372,10 @@ function projectDialogComplete() {
     showSearchResults();
 
     if (GLOBAL.RestoreComparison) {
-        getPreviousQueryFromID(1, GLOBAL.RestoreQID1);
-        getPreviousQueryFromID(2, GLOBAL.RestoreQID2);
+        refillQueryPanels ({
+            1: GLOBAL.RestoreQID1,
+            2: GLOBAL.RestoreQID2
+        })
     }
     if ((!GLOBAL.Tokens.indexOf("EXPORT") > -1) && (!GLOBAL.IsAdmin)) {
         //Ext.getCmp("exportbutton").disable();
@@ -1692,71 +1694,6 @@ function getValue(node, defaultvalue)
     if (node.size() > 0)
         result = node.first().html()
     return result;
-}
-
-function getPreviousQueryFromIDComplete(subset, result) {
-    if (result.status != 200) {
-        queryPanel.el.unmask();
-        return;
-    }
-
-    GLOBAL['florian'] = result.responseText;
-    //resetQuery();  //if i do this now it wipes out the other subset i just loaded need to make it subset specific
-
-    jQuery(GLOBAL['florian']).find("panel").each(function (pi, pe) {
-
-        showCriteriaGroup(++pi);
-
-        if (jQuery(pe).find("invert").first().html() == '1')
-            excludeGroup(null, subset, pi);
-
-        jQuery(pe).find("item").each(function (ii, ie) {
-
-            var key = jQuery(ie).find("item_key").first().html()
-
-            if (key == "\\\\Public Studies\\Public Studies\\SECURITY\\")
-                return false;
-
-            if (jQuery(ie).find("constrain_by_value").size() <= 0)
-                oktousevalues = "Y";
-
-            var mode
-            switch (getValue(jQuery(ie, "constrain_by_value value_type"), "")) {
-                case "FLAG":
-                    mode = "highlow";
-                    break;
-                case "NUMBER":
-                    mode = "highlow";
-                    break;
-                default:
-                    mode = "novalue";
-            }
-
-            var operator = getValue(jQuery(ie, "constrain_by_value value_operator"), "");
-            var numvalue = getValue(jQuery(ie, "constrain_by_value value_constraint"), "");
-            var lowvalue = numvalue;
-            var highvalue;
-
-            if (operator == "BETWEEN") {
-                lowvalue = numvalue.substring(0, numvalue.indexOf("and"));
-                highvalue = numvalue.substring(numvalue.indexOf("and") + 3);
-            }
-
-            var highlowselect = mode == "highlow" ? numvalue : ""
-            var value = new Value(mode, operator, highlowselect, lowvalue, highvalue, '');
-
-            /* the panel (probably) only needs the concept key and the
-             * constraint, hence we not need to fill the rest of the parameters,
-             * which is good because we don't have that information...
-             */
-
-            var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + pi)
-            var concept = new Concept('', key, -1, '', '', key, '', '', oktousevalues, value);
-            createPanelItemNew(panel, concept);
-        })
-    });
-
-    queryPanel.el.unmask();
 }
 
 function ontologyRightClick(eventNode, event) {
@@ -3562,7 +3499,7 @@ function ontFilterLoaded(el, success, response, options) {
 function clearQuery() {
     if (confirm("Are you sure you want to clear your current selections and analysis ?")) {
         clearAnalysisPanel();
-        resetQuery();
+		clearQueryPanels();
         clearDataAssociation();
     }
 }

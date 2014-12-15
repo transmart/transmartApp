@@ -72,21 +72,3 @@ function getCategories()
   query=query+getONTRequestFooter();
   return query;
   }
-
-function getPreviousQueryFromID(subset, queryMasterID) {
-    queryPanel.el.mask('Rebuilding query...', 'x-mask-loading');
-    Ext.Ajax.request(
-        {
-            url: pageInfo.basePath + "/queryTool/getQueryDefinitionFromResultId",
-            params: {
-                result_id: queryMasterID
-            },
-            success: function (result, request) {
-                getPreviousQueryFromIDComplete(subset, result);
-            },
-            failure: function (result, request) {
-                getPreviousQueryFromIDComplete(subset, result);
-            },
-            timeout: '300000'
-        });
-}

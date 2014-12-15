@@ -42,6 +42,9 @@
 .x-tree-node-leaf .x-tree-node-icon{
 	background-image:url(../images/default/tree/leaf.gif);
 }
+.x-tree-node-icon{
+	background-image:url(../images/default/tree/leaf.gif) !important;
+}
 .x-tree-node-collapsed .x-tree-node-icon{
 	background-image:url(../images/default/tree/folder.gif);
 }
