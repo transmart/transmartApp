@@ -326,7 +326,6 @@ function getConceptFromQueryItem(item) {
 function getPanelItemFromConcept(concept) {
 
     var _item = jQuery("<div />")
-    var _iconClass = "unknown-concept-type"
     var _valueText = getSetValueText(
         concept["setvaluemode"],
         concept["setvalueoperator"],
@@ -336,13 +335,13 @@ function getPanelItemFromConcept(concept) {
         concept["setvalueunits"]).trim()
 
     // We try to infer the type when possible to match the icon
-    if (concept["setvaluemode"] == "numeric")
-        _iconClass = "valueicon"
-    if (concept["ismodifier"])
-        _iconClass = "modifiericon"
+    jQuery.get(pageInfo.basePath + "/concepts/getResource", { concept_key: concept["conceptid"] }, function() {}, 'json')
+        .success(function (data) {
+            jQuery("span:first", _item).addClass(getClassForNodeResource(data))
+        })
 
     _item
-        .append(jQuery("<span />").addClass("x-tree-node-icon").addClass(_iconClass))
+        .append(jQuery("<span />").addClass("x-tree-node-icon"))
         .append(jQuery("<span />").addClass("concept-text").html(concept.conceptname + _valueText))
 
     jQuery.each(concept, function(key, value) {
@@ -357,6 +356,41 @@ function getPanelItemFromConcept(concept) {
     Ext.get(_item[0]).addListener('contextmenu',conceptRightClick);
 
     return _item
+}
+
+/**
+ * Computes the right visual class for the given node
+ * @param node
+ * @returns {string}
+ */
+function getClassForNodeResource(node) {
+
+    var _visualAttributes = node.visualAttributes
+    var _OKToUseValue = false
+    var _iconClass = ""
+
+    if (node.metadata)
+        _OKToUseValue = node.metadata.okToUseValues
+
+    if (_OKToUseValue)
+        _iconClass = "valueicon";
+
+    jQuery.each(_visualAttributes, function (index, value) {
+        if (!_OKToUseValue && (value.toUpperCase() == "LEAF" || value.toUpperCase() == "MULTIPLE"))
+            _iconClass = "alphaicon";
+        if (value.toUpperCase() == "HIGH_DIMENSIONAL")
+            _iconClass = "hleaficon";
+        if (value.toUpperCase() == "EDITABLE")
+            _iconClass = "eleaficon";
+        if (value.toUpperCase() == "PROGRAM")
+            _iconClass = "programicon";
+        if (value.toUpperCase() == "STUDY")
+            _iconClass = "studyicon";
+        if(value.toUpperCase() == "MODIFIER_LEAF")
+            _iconClass = "modifiericon";
+    })
+
+    return _iconClass
 }
 
 /**
