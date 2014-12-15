@@ -87,7 +87,10 @@ a.toplink1:hover{
 	}
 .valueicon{
 	background-image:url(../images/numeric.gif ) !important;
-	}
+}
+.alphaicon{
+	background-image:url(../images/alpha.gif ) !important;
+}
 .foldernumericicon{
 	background-image:url(../images/folder_numeric.png ) !important;
 	}	
@@ -149,7 +152,7 @@ a.button span {
 
  .ext-ie .x-form-text {position:static !important;}
 
-.x-tree-node-leaf .x-tree-node-icon{background-image:url(../images/alpha.gif);}
+.x-tree-node-leaf .x-tree-node-icon{background-image:url(../images/nonaccessible.gif);}
 
 div.analysis {
 	font-family: arial;
@@ -565,4 +568,7 @@ li.x-tab-strip-active {
 
 #divjobstatus img {
 	max-height: 15px;
+}
+.unknown-concept-type {
+	background-image:url(../js/ext/resources/images/default/tree/leaf.gif) !important;
 }

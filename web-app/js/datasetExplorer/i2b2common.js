@@ -186,6 +186,8 @@ function createPanelItemNew(panel, concept)
     }
     if (concept.visualattributes.indexOf('LEAF') != -1 ||
         concept.visualattributes.indexOf('MULTIPLE') != -1) {
+        if (concept.oktousevalues == "N")
+            iconCls = "alphaicon";
         // Yet another hack to get icon working seemlessly
         li.className += " x-tree-node-leaf"
     }
@@ -1743,6 +1745,8 @@ constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
     if (visualattributes.indexOf('LEAF') != -1 ||
         visualattributes.indexOf('MULTIPLE') != -1) {
         leaf = true;
+        if (oktousevalues == "N")
+            iconCls="alphaicon";
         /* otherwise false; see init */
 	    	}
     if (visualattributes.indexOf('CONTAINER') != -1) {
