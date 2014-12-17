@@ -41,13 +41,11 @@
 
                     <g:if test="${grailsApplication.config.com.recomdata.hideSampleExplorer != 'true'}">
                         <g:if test="${'sampleexplorer' == app}"><th class="menuVisited">Sample Explorer</th></g:if>
-                        <g:else><th class="menuLink"><g:link
-                                controller="sampleExplorer">Sample Explorer</g:link></th></g:else>
+                        <g:else><th class="menuLink"><g:link controller="sampleExplorer">Sample Explorer</g:link></th></g:else>
                     </g:if>
 
                     <g:if test="${'genesignature' == app}"><th class="menuVisited">Gene&nbsp;Signature/Lists</th></g:if>
-                    <g:else><th class="menuLink"><g:link
-                            controller="geneSignature">Gene&nbsp;Signature/Lists</g:link></th></g:else>
+                    <g:else><th class="menuLink"><g:link controller="geneSignature">Gene&nbsp;Signature/Lists</g:link></th></g:else>
 
                     <g:if test="${'gwas' == app}"><th class="menuVisited">GWAS</th></g:if>
                     <g:else><th class="menuLink"><g:link controller="GWAS">GWAS</g:link></th></g:else>

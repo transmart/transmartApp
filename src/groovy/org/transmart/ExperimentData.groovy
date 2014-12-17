@@ -276,7 +276,7 @@ public class ExperimentData {
                     "WHERE a.probeset_id = b.probeset_id AND a.trial_name IN (" + trialNames + ") " +
                     "AND a.assay_id IN (" + assayIds + ")";
 
-            sql.eachRow(rawCountQuery, , { row -> goodPct = row[0] })
+            sql.eachRow(rawCountQuery, { row -> goodPct = row[0] })
 
             if (goodPct == 0) throw new Exception("No raw data for Comparative Marker Selection.");
         }
@@ -595,7 +595,7 @@ public class ExperimentData {
                     "WHERE a.probeset_id = b.probeset_id AND a.trial_name IN (" + trialNames + ") " +
                     "AND a.assay_id IN (" + assayIds + ")";
 
-            sql.eachRow(rawCountQuery, , { row -> goodPct = row[0] })
+            sql.eachRow(rawCountQuery, { row -> goodPct = row[0] })
 
             if (goodPct == 0) throw new Exception("No raw data for Comparative Marker Selection.");
         }
