@@ -424,7 +424,6 @@ padding: 1em;
 }
 
 #header {
-font: bold serif;
 position: absolute; top: 0; left: 0; 
 -fs-move-to-flow: "header";
 }
