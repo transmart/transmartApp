@@ -1,4 +1,4 @@
-<g:setProvider library="prototype"/>
+
 
 <td><g:select class="addremoveselect" name="userstoremove"
               from="${userGroupInstance?.members.sort { it.name.toUpperCase() }}"

@@ -221,8 +221,8 @@ DataExport.prototype.displayResult = function (records, options, success) {
 
         _selectedCohortData['dataTypeId'] = '';
         _selectedCohortData['dataTypeName'] = 'Selected Cohort';
-        _selectedCohortData['subset1'] = getQuerySummary(1);
-        _selectedCohortData['subset2'] = getQuerySummary(2);
+        _selectedCohortData['subset1'] = getSubsetQuerySummary(1);
+        _selectedCohortData['subset2'] = getSubsetQuerySummary(2);
 
         var _columns = _this.prepareColumnModel(_this.exportMetaDataStore, _selectedCohortData);
         var _newStore = _this.prepareNewStore(_this.exportMetaDataStore, _columns, _selectedCohortData);
@@ -293,14 +293,14 @@ DataExport.prototype.prepareOutString = function (files, subset, dataTypeId, met
     var dataCountExists = false;
     var _this = this;
 
-    files.each(function (file) {
+    jQuery.each(files, function (index, file) {
 
         if (!file.platforms) {
             if (!dataCountExists) dataCountExists = true;
             outStr += _this.createSelectBoxHtml(file, subset, dataTypeId)
         } else {
             if (file.platforms.length > 0) {
-                file.platforms.each(function (platform) {
+                jQuery.each(file.platforms, function (index, platform) {
                     if (platform.fileDataCount > 0) {
                         dataCountExists = true;
                         outStr += _this.createSelectBoxHtml(file, subset, dataTypeId, platform)
@@ -377,10 +377,10 @@ DataExport.prototype.prepareNewStore = function (store, columns, selectedCohortD
     var _get_export_data_tip = function (files) {
         var _str_data_type = 'low dimensional';
 
-        files.each(function (file) {
+        jQuery.each(files, function (index, file) {
             if (file.platforms) {
 
-                file.platforms.each(function (platform) {
+                jQuery.each(file.platforms, function (index, platform) {
                     if (platform.fileDataCount > 0) {
                         _str_data_type = 'high dimensional';
                     }
@@ -442,8 +442,8 @@ DataExport.prototype.createDataExportJob = function (gridPanel) {
         },
         timeout: '1800000',
         params: {
-            querySummary1: getQuerySummary(1),
-            querySummary2: getQuerySummary(2),
+            querySummary1: getSubsetQuerySummary(1),
+            querySummary2: getSubsetQuerySummary(2),
             analysis: "DataExport"
         }
     });

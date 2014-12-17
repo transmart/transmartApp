@@ -198,24 +198,21 @@ function applySubsets(subsetId, study){
 		overrideCurrentSubsets = confirm("This will override the criteria you have selected on the comparison tab.")
 	}
 	if(overrideCurrentSubsets){
+
 		jQuery.get(pageInfo.basePath + '/subset/getQueryIdsForSubset', {subsetId:subsetId}, function(data){
-			resetQuery();
-			getPreviousQueryFromID(1, data.queryId1);
-			if(data.queryId2!=-1){
-				getPreviousQueryFromID(2, data.queryId2);
+
+			var _obj = { 1: data.queryId1}
+			if (data.queryId2 != -1) {
+				_obj[2] = data.queryId2
 			}
+
+			resultsTabPanel.setActiveTab("queryPanel");
+			refillQueryPanels(_obj)
+
 			// Refresh the global subset study variable.
             // TODO review this, it depends on a variable not anymore retrived
             // TODO see getChildren() in transmart-core
-			/*
-            GLOBAL.currentSubsetsStudy=study;
-            if (study == "")
-                ontTabPanel.setActiveTab("acrossTrialTreePanel");
-            else
-                ontTabPanel.setActiveTab("navigateTermsPanel");
-            */
-            resultsTabPanel.setActiveTab("queryPanel");
-			//Refresh the global workspace subset variable.
+
 			GLOBAL.selectedWorkspaceSubsetId=subsetId;
 		});
 	}

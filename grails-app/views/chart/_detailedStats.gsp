@@ -1,6 +1,6 @@
 <g:set var="prefix" value="${prefix ?: 'concept'}"/>
 <g:if test="${subset.value."${prefix}Data"?.size()}">
-<table class="analysis" style="margin: auto">
+<table class="analysis" style="margin: auto; margin-top: 20px">
     <tbody>
     <tr>
         <th>Category
@@ -15,7 +15,12 @@
         <tr>
             <td>${point.key}</td>
             <td>${point.value}</td>
-            <td>${(point.value * 100 / total).doubleValue().round(2)} %</td>
+            <g:if test="${total != 0}">
+                <td>${(point.value * 100 / total).doubleValue().round(2)} %</td>
+            </g:if>
+            <g:else>
+                <td>-</td>
+            </g:else>
         </tr>
     </g:each>
     </tbody>

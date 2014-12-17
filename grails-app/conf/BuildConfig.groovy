@@ -58,7 +58,7 @@ grails.project.dependency.resolution = {
 
         runtime 'org.javassist:javassist:3.16.1-GA'
 
-        compile 'org.transmartproject:transmart-core-api:1.2.2-SNAPSHOT'
+        compile 'org.transmartproject:transmart-core-api:1.2.2-hackathon-SNAPSHOT'
 
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
@@ -67,11 +67,13 @@ grails.project.dependency.resolution = {
         compile "org.apache.lucene:lucene-highlighter:2.4.0"
         compile 'commons-net:commons-net:3.3' // used for ftp transfers
         compile 'org.apache.commons:commons-math:2.2' //>2MB lib briefly used in ChartController
-        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.6', {
-            excludes 'groovy', 'nekohtml'
+        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.1', {
+            excludes 'groovy', 'nekohtml', 'httpclient', 'httpcore'
         }
         compile 'org.rosuda:Rserve:1.7.3'
-        compile 'com.google.guava:guava:14.0.1'
+        compile 'com.google.guava:guava:18.0'
+        compile 'org.apache.httpcomponents:httpclient:4.3.6'
+        compile 'org.apache.httpcomponents:httpcore:4.3.3'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
         compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
@@ -120,7 +122,8 @@ grails.project.dependency.resolution = {
         compile ':spring-security-oauth2-provider:1.0.5.2'
 
         runtime ':prototype:1.0'
-        runtime ':jquery:1.7.1'
+        runtime ':jquery:1.11.1'
+        runtime ':jquery-ui:1.10.4'
         runtime ':resources:1.2.1'
 
         // support for static code analysis - see codenarc.reports property below
@@ -128,10 +131,12 @@ grails.project.dependency.resolution = {
 
         if (!dm) {
             compile ':rdc-rmodules:1.2.2-SNAPSHOT'
-            runtime ':transmart-core:1.2.2-SNAPSHOT'
+            runtime ':transmart-core:1.2.2-hackathon-SNAPSHOT'
+            runtime ':transmart-i2b2:1.0-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
             //compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
+            compile ':transmart-legacy-db:1.2.2-hackathon-SNAPSHOT' // does this cause problems?
             //// already included in transmart-gwas
             //compile ':folder-management:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas, folder-management
@@ -162,6 +167,7 @@ grails.plugin.location.'transmart-ewb' = "../transmart-ewb"
 dm?.with {
     configureInternalPlugin 'compile', 'rdc-rmodules'
     configureInternalPlugin 'runtime', 'transmart-core'
+    configureInternalPlugin 'runtime', 'transmart-i2b2'
     configureInternalPlugin 'test', 'transmart-core-db-tests'
     configureInternalPlugin 'compile', 'transmart-gwas'
     configureInternalPlugin 'compile', 'transmart-java'
