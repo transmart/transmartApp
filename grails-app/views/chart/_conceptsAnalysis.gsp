@@ -15,7 +15,7 @@
                         With a <i>p-value of ${concept.value?.commons.pvalue}</i> for a <i>χ² at ${concept.value?.commons.chisquare}</i>
                     </g:if>
                 </div>
-                <g:render template="${concept.value.commons.type}Comparison" model="${[subsets: concept.value]}"/>
+                <g:render template="/chart/${concept.value.commons.type}Comparison" model="${[subsets: concept.value]}"/>
             </g:if>
             </td>
         </tr>

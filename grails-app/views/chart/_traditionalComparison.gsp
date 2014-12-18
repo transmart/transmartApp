@@ -5,12 +5,12 @@
         %{-- This is hardcoded badness. Multiple (>2) cohort selection should work on that --}%
         <td width="50%">
             ${subsets[1]?.conceptBar ?: ''}
-            <g:render template="detailedStats" model="${[subset: subsets.entrySet().find {it.key == 1}]}"/>
+            <g:render template="/chart/detailedStats" model="${[subset: subsets.entrySet().find {it.key == 1}]}"/>
         </td>
         <td width="50%">
             <g:if test="${subsets[2].exists}">
                 ${subsets[2]?.conceptBar ?: ''}
-                <g:render template="detailedStats" model="${[subset: subsets.entrySet().find {it.key == 2}]}"/>
+                <g:render template="/chart/detailedStats" model="${[subset: subsets.entrySet().find {it.key == 2}]}"/>
             </g:if>
         </td>
     </tr>

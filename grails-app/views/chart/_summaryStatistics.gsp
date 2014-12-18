@@ -1,4 +1,4 @@
 <div class="analysis">
-    <g:render template="generalOverview" model="${[subsets: subsets]}"/>
-    <g:render template="conceptsAnalysis" model="${[concepts: concepts]}"/>
+    <g:render template="/chart/generalOverview" model="${[subsets: subsets]}"/>
+    <g:render template="/chart/conceptsAnalysis" model="${[concepts: concepts]}"/>
 </div>
