@@ -15,7 +15,7 @@
 
 <div style="text-align: center;">
     <button class="flatbutton" onclick="showSaveSubsetsDialog();">
-        Save Subset
+        Save Comparison
     </button>
     <button class="flatbutton clearbutton" onclick="clearQuery();">
         Clear All Panels and Analysis
@@ -46,6 +46,23 @@
         </div>
     </div>
     <span class="panelFob">AND</span>
+</div>
+
+<div style="width: 100%; text-align: center; padding: 20px 0 30px 0;">
+    <g:set var="projectName" value="${grailsApplication.config?.com?.recomdata?.projectName}"/>
+    <g:set var="providerName" value="${grailsApplication.config?.com?.recomdata?.providerName}"/>
+    <g:if test="${projectName}">
+        <img src="${resource(dir: 'images', file: 'project_logo.png')}" alt="${projectName}" style="height:35px;vertical-align:middle;margin-bottom: 12px;" />
+    </g:if>
+    <g:if test="${projectName && providerName}">
+        <span style="font-size:20px;display: inline-block;line-height: 35px; height: 35px;">&nbsp;+&nbsp;</span>
+    </g:if>
+    <g:if test="${providerName}">
+        <a id="providerpowered" target="_blank" href="${grailsApplication.config?.com?.recomdata?.providerURL}"
+           style="text-decoration: none;">
+            <img src="${resource(dir: 'images', file: 'provider_logo.png')}" alt="${providerName}" style="height:35px;vertical-align:middle;margin-bottom: 12px;" />
+        </a>
+    </g:if>
 </div>
 
 <div id="hiddenDragDiv" style="display:none"></div>

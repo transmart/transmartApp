@@ -391,7 +391,7 @@ Ext.onReady(function () {
                     autoScroll : true,
                     split : true,                    
             autoLoad: {
-                        url : pageInfo.basePath+'/panels/subsetPanel.html',
+                        url : pageInfo.basePath+'/datasetExplorer/getQueryPanelsLayout',
                         scripts : true,
                         nocache : true,
                         discardUrl : true,
