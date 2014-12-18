@@ -79,11 +79,12 @@ class OntologyController {
             def accession = node.sourcesystemcd
             def study = Experiment.findByAccession(accession?.toUpperCase())
             if (study) {
-                def folder = FmFolderAssociation.findByObjectUid(study.getUniqueId().uniqueId)?.fmFolder
-                def amTagTemplate = amTagTemplateService.getTemplate(folder.getUniqueId())
-                List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate.id)
-
-                render(template: 'showStudy', model: [folder: folder, bioDataObject: study, metaDataTagItems: metaDataTagItems])
+                def folder = FmFolderAssociation.findByObjectUid(study.uniqueId?.uniqueId)?.fmFolder
+                if (folder) {
+                    def amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
+                    List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate?.id)
+                    render(template: 'showStudy', model: [folder: folder, bioDataObject: study, metaDataTagItems: metaDataTagItems])
+                }
             }
         }
         render(template: 'showDefinition', model: [tags: node.tags])
