@@ -58,15 +58,6 @@
 
 						<tr class="prop">
 							<td valign="top" class="name">
-								<label for="password">Password:</label>
-							</td>
-							<td valign="top" class="value ${hasErrors(bean:importXnatConfiguration,field:'password','errors')}">
-								<input type="password" id="password" name="password" value="${fieldValue(bean:importXnatConfiguration,field:'password')}"/>
-							</td>
-						</tr>
-
-						<tr class="prop">
-							<td valign="top" class="name">
 								<label for="project">XNAT Projectname (id):</label>
 							</td>
 							<td valign="top" class="value ${hasErrors(bean:importXnatConfiguration,field:'project','errors')}">

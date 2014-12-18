@@ -41,11 +41,6 @@
 					</tr>
 
 					<tr class="prop">
-						<td valign="top" class="name">Password:</td>
-						<td valign="top" class="value">xxxxx</td>
-					</tr>
-
-					<tr class="prop">
 						<td valign="top" class="name">XNAT Projectname (id):</td>
 						<td valign="top" class="value">${importXnatConfiguration.project}</td>
 					</tr>
@@ -64,7 +59,7 @@
 					<input type="hidden" name="id" value="${importXnatConfiguration.id}" />
 					<span class="button"><g:actionSubmit class="edit" value="Edit" /></span>
 					<span class="button"><input type="submit" name="_action_Create_coupling" value="Edit coupling" class="edit" /></span>
-					<span class="button"><input type="submit" name="_action_Import_variables" value="Import data" class="save" /></span>
+					<span class="button"><input type="submit" name="_action_Import_wizard" value="Import data" class="save" /></span>
 					<span class="button"><g:actionSubmit class="delete" onclick="return confirm('Are you sure?');" value="Delete" /></span>
 				</g:form>
 			</div>

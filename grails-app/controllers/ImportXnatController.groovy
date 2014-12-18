@@ -145,20 +145,43 @@ class ImportXnatController {
 		}
 	}
 
-	def import_variables = {
-		export()
-
+	def import_wizard = {
 		def importXnatConfiguration = ImportXnatConfiguration.get(params.id)
-		def url = importXnatConfiguration.url
-		def username = importXnatConfiguration.username
-		def password = importXnatConfiguration.password
-		def project = importXnatConfiguration.project
-		def node = importXnatConfiguration.node
+		if (!importXnatConfiguration) {
+			flash.message = "Import XNAT Configuration not found with id $params.id"
+			redirect(action: list)
+			return
+		}
 
-		def process = "python /home/jenkins/foundation/transmart-data/samples/postgres/_scripts/xnattotransmartlink/downloadscript.py ${url} ${username} ${password} ${project} ${node}".execute(null, new File("/home/jenkins/foundation/transmart-data/samples/postgres/_scripts/xnattotransmartlink"))
-		process.waitFor()
-		flash.message = "${process.err.text}</br>${process.in.text}"
-		redirect(action: list)
+		[importXnatConfiguration: importXnatConfiguration]
+	}
+
+	def import_variables = {
+		def importXnatConfiguration = ImportXnatConfiguration.get(params.id)
+		
+		def password = params.password
+		if (password == "") {
+			flash.message = "Please enter XNAT password"
+			redirect action: import_wizard, id: importXnatConfiguration.id
+		} else {
+		
+			export()
+
+			def url = importXnatConfiguration.url
+			def username = importXnatConfiguration.username
+			def project = importXnatConfiguration.project
+			def node = importXnatConfiguration.node
+
+			def process = "python /home/jenkins/foundation/transmart-data/samples/postgres/_scripts/xnattotransmartlink/downloadscript.py ${url} ${username} ${password} ${project} ${node}".execute(null, new File("/home/jenkins/foundation/transmart-data/samples/postgres/_scripts/xnattotransmartlink"))
+			process.waitFor()
+			if (process.err.text == "") {
+				flash.message = "${process.in.text}"
+			} else {
+				flash.message = "${process.err.text}</br>${process.in.text}"
+			}				
+			redirect action: import_wizard, id: importXnatConfiguration.id
+		}
+
 		return
 	}
 
