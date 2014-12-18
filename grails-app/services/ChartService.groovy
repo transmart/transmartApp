@@ -361,6 +361,13 @@ class ChartService {
         }
 
         chart.draw(renderer, new Rectangle(0, 0, width, height), new ChartRenderingInfo(new StandardEntityCollection()));
-        renderer.getSVGDocument()
+
+        def result = renderer.getSVGDocument()
+
+        // We need to remove some of the perturbing DOM injected by JFreeChart
+        result = (result =~ /<\?xml(.*)\?>/).replaceAll("")
+        result = (result =~ /<!DOCTYPE(.*?)>/).replaceAll("")
+        result = (result =~ /xmlns(.*?)="(.*?)"(\s*)/).replaceAll("")
+        result
     }
 }
