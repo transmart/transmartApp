@@ -36,7 +36,7 @@ modules = {
      
     overrides {
         'jquery-theme' {
-            resource id:'theme', url:'css/jquery/ui/jquery-ui-1.9.1.custom.css'
+            resource id:'theme', url:'css/jquery/ui/jquery-ui.min.css'
         }
     }
     
