@@ -231,14 +231,14 @@ class ChartController {
     def analysis = {
 
         // Lets put a bit of 'audit' in here
-        new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Analysis by Concept", eventmessage: "RID1:" + params.result_instance_id1 + " RID2:" + params.result_instance_id2 + " Concept:" + concept, accesstime: new java.util.Date()).save()
+        new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Analysis by Concept", eventmessage: "RID1:" + params.result_instance_id1 + " RID2:" + params.result_instance_id2 + " Concept:" + params.concept_key, accesstime: new java.util.Date()).save()
 
         // We retrieve the result instance ids from the client
         def concept = params.concept_key ?: null
         def concepts = [:]
 
         // Collect concept information
-        concepts[concept] = getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: ChartService.getSubsetsFromRequest(params))
+        concepts[concept] = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: chartService.getSubsetsFromRequest(params))
 
         // Time to delivery !
         render(template: "conceptsAnalysis", model: [concepts: concepts])
