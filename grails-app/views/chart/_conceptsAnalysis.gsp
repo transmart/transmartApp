@@ -8,7 +8,7 @@
                 <div class="analysistitle">Analysis of ${concept.value.commons.conceptName}</div>
                 <div style="margin-top: -15px; padding-bottom: 10px;">
                     ${concept.value?.commons?.testmessage}<br/>
-                    <g:if test="${concept.value?.commons.pvalue == null || concept.value?.commons.tstat == null || concept.value?.commons.chisquare == null}">
+                    <g:if test="${concept.value?.commons.pvalue == null}">
                         Could not perform : unspecified error occurred
                     </g:if>
                     <g:elseif test="${concept.value?.commons.tstat != null && concept.value?.commons.tstat != Double.NaN}">
