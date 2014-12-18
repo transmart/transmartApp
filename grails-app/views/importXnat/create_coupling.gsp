@@ -55,7 +55,9 @@
 					<span class="button"><input type="submit" class="save" value="Download as XML" /></span>
 				</div>
 			</g:form>
+
 			<hr style="margin: 20 0 20 0px;"/>
+
 			<h2>Add variable</h2>
  			<g:form action="save_coupling">
 				<g:hiddenField name="id" value="${importXnatConfiguration.id}" />
@@ -98,6 +100,26 @@
 					<span class="button"><input class="save" type="submit" value="Create" /></span>
 				</div>
 			</g:form>
+
+			<hr style="margin: 20 0 20 0px;"/>
+
+			<h2>Help</h2>
+			<br />The screen manages the coupling of TranSMART nodes with the XNAT paths. Below is a short description per column:
+			<ul style="list-style-type:disc;padding-left:20px;">
+				<li>Name: the TranSMART nodename in its data structure.</li>
+				<li>Datatype: the XNAT accession type:
+				<ul style="list-style-type:disc;padding-left:20px;">
+						<li>Subject: data stored on the patient level and it is part of the datatype.</li>
+						<li>Session: data stored on the session (experiment) level and it is part of the datatype.</li>
+						<li>SubjectVariable: data stored on the patient level and it is a custom variable.</li>
+						<li>SessionVariable: data stored on the session (experiment) level and it is a custom variable.</li>
+					</ul>
+				</li>
+				<li>
+					XNAT (REST) URL: the REST api link to the attribute in XNAT. All possible links can be found here: <a target="_blank" href="https://wiki.xnat.org/display/XNAT/XNAT+REST+XML+Path+Shortcuts">XNAT REST XML Path Shortcuts</a><br />
+					Note that although an attribute in XNAT can be shown at the session level for convenience, it could be stored at the subject level. By looking at the links above each table in the REST api, it can be determined if it is subject or session data. 
+				</li>
+			</ul>
 		</div>
 	</body>
 </html>
