@@ -9,6 +9,7 @@ import groovy.xml.MarkupBuilder
 class ImportXnatController {
 
 	def springSecurityService
+	def grailsApplication
 
 	// the delete, save and update actions only accept POST requests
 	static Map allowedMethods = [delete: 'POST', save: 'POST', update: 'POST']
@@ -172,7 +173,7 @@ class ImportXnatController {
 			def project = importXnatConfiguration.project
 			def node = importXnatConfiguration.node
 
-			def process = "python /home/jenkins/foundation/transmart-data/samples/postgres/_scripts/xnattotransmartlink/downloadscript.py ${url} ${username} ${password} ${project} ${node}".execute(null, new File("/home/jenkins/foundation/transmart-data/samples/postgres/_scripts/xnattotransmartlink"))
+			def process = ("python " + getTransmartDataLocation() + "/samples/postgres/_scripts/xnattotransmartlink/downloadscript.py ${url} ${username} ${password} ${project} ${node}").execute(null, new File(getTransmartDataLocation() + "/samples/postgres/_scripts/xnattotransmartlink"))
 			process.waitFor()
 			if (process.err.text == "") {
 				flash.message = "${process.in.text}"
@@ -189,7 +190,7 @@ class ImportXnatController {
 		def importXnatConfiguration = ImportXnatConfiguration.get(params.id)
 		def importXnatVariableList = importXnatConfiguration.variables
 		def project = importXnatConfiguration.project
-		def xmlFile = "/home/jenkins/foundation/transmart-data/samples/postgres/_scripts/xnattotransmartlink/${project}.xml"
+		def xmlFile = (getTransmartDataLocation() + "/samples/postgres/_scripts/xnattotransmartlink/${project}.xml")
 		def writer = new FileWriter(new File(xmlFile))
 		def xml = new MarkupBuilder(writer)
 
@@ -215,12 +216,20 @@ class ImportXnatController {
 		def importXnatVariableList = importXnatConfiguration.variables
 		def project = importXnatConfiguration.project
 
-		def xmlFile = "/home/jenkins/foundation/transmart-data/samples/postgres/_scripts/xnattotransmartlink/${project}.xml"
+		def xmlFile = (getTransmartDataLocation() + "/samples/postgres/_scripts/xnattotransmartlink/${project}.xml")
 		def file = new File(xmlFile)
 		response.setContentType("application/xml;charset='utf8'")
 		response.setHeader("Content-disposition", "attachment;filename=${file.getName()}")
 		response.outputStream << file.newInputStream()
 		
 		render view: 'create_coupling', model: [importXnatVariable: importXnatVariable, importXnatConfiguration: importXnatConfiguration, importXnatVariableList: importXnatVariableList]
+	}
+
+	def getTransmartDataLocation = {
+		def dir = grailsApplication.config.org.transmart.data.location
+		if (dir.isEmpty()) {
+			dir = grailsAttributes.getApplicationContext().getResource("/").getFile().getParentFile().getParentFile().toString() + "/transmart-data"
+		}
+		return dir
 	}
 }
