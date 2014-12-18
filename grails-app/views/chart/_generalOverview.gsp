@@ -21,19 +21,19 @@
     </tr>
     <tr>
         <td colspan="2" align="center">
-            <g:render template="patientCount" model="${[subsets: subsets]}"/>
+            <g:render template="/chart/patientCount" model="${[subsets: subsets]}"/>
         </td>
     </tr>
     <tr>
         <td colspan="2" align="center">
-            <g:render template="valueComparison" model="${[subsets: subsets, prefix: 'age']}"/>
+            <g:render template="/chart/valueComparison" model="${[subsets: subsets, prefix: 'age']}"/>
         </td>
     </tr>
     <tr>
-        <g:render template="subsetCharts" model="${[subsets: subsets, prefix: 'sex']}"/>
+        <g:render template="/chart/subsetCharts" model="${[subsets: subsets, prefix: 'sex']}"/>
     </tr>
     <tr>
-        <g:render template="subsetCharts" model="${[subsets: subsets, prefix: 'race']}"/>
+        <g:render template="/chart/subsetCharts" model="${[subsets: subsets, prefix: 'race']}"/>
     </tr>
     </tbody>
 </table>
