@@ -172,8 +172,9 @@ class ImportXnatController {
 			def username = importXnatConfiguration.username
 			def project = importXnatConfiguration.project
 			def node = importXnatConfiguration.node
+			def kettledir = (getTransmartDataLocation() + "/env/data-integration/")
 
-			def process = ("python " + getTransmartDataLocation() + "/samples/postgres/_scripts/xnattotransmartlink/downloadscript.py ${url} ${username} ${password} ${project} ${node}").execute(null, new File(getTransmartDataLocation() + "/samples/postgres/_scripts/xnattotransmartlink"))
+			def process = ("python " + getTransmartDataLocation() + "/samples/postgres/_scripts/xnattotransmartlink/downloadscript.py ${url} ${username} ${password} ${project} ${node} ${kettledir}").execute(null, new File(getTransmartDataLocation() + "/samples/postgres/_scripts/xnattotransmartlink"))
 			process.waitFor()
 			if (process.err.text == "") {
 				flash.message = "${process.in.text}"
