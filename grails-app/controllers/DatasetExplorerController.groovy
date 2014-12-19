@@ -86,7 +86,7 @@ class DatasetExplorerController {
                                                 dseClosedNodes    : dseClosedNodes])
     }
 
-    def getQueryPanelsLayout = {
-        render(view: '_queryPanel')
+    def queryPanelsLayout = {
+        render(view: '_queryPanel', model: [])
     }
 }
