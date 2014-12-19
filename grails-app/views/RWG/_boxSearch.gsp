@@ -10,11 +10,9 @@
             <div id="globaloperator" class="andor ${globalOperator.toLowerCase()}">&nbsp;</div>
         </h2>
 
-        <h2 style="float:right; padding-right:5px;" class="title">
-            <a href="#" onclick="clearSearch();
-            return false;">Clear</a>
-        </h2>
-
+        <div id="clearbutton" class="greybutton filterbrowser">
+            <a href="#" onclick="clearSearch(); return false;">Clear</a>
+        </div>
         <div id="filterbutton" class="greybutton filterbrowser">
             <img src="${resource(dir: 'images', file: 'filter.png')}"/> Filter
         </div>
