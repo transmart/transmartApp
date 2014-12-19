@@ -153,11 +153,10 @@
 
 <div id="saveSubsetsDialog" style="display:none;font: 11px arial,tahoma,helvetica,sans-serif;font-weight:normal;">
     <form id="saveSubsetForm">
-        <br/><em>*</em>Description :
-        <input id='txtSubsetDescription' type='text' name='txtSubsetDescription' title="Subset Description"/>
-        <br/><em>*</em>Make Subset Public :
-        <input id='chkSubsetPublic' type='checkbox' value='Y' title="Subset Public"/>
-        <br/><br/>
+        <label for="txtSubsetDescription">Description :</label><br/>
+        <input id='txtSubsetDescription' type='text' name='txtSubsetDescription' title="Subset Description" style="margin-top: 5px; margin-bottom: 5px; width: 100%; height: 20px;"/><br/>
+        <label for="chkSubsetPublic" style="padding-top: 5px">Make Subset Public :</label>
+        <input id='chkSubsetPublic' type='checkbox' value='Y' title="Subset Public"/><br/><br/>
         <input class="submit" type="submit" value="Save Subsets"/>
     </form>
 </div>

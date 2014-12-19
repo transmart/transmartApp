@@ -26,8 +26,7 @@ function showSaveSubsetsDialog(){
 				txtSubsetDescription: "Required"
 			}
 	});
-	jQuery( "#saveSubsetsDialog" ).dialog({title: 'Save Subsets', modal:true});
-	jQuery( "#saveSubsetsDialog" ).dialog("open");
+	jQuery( "#saveSubsetsDialog" ).dialog({title: 'Save Subsets', modal:true}).dialog("open").find( "input[type=submit]" ).button();
 }
 
 function saveSubsets(subsetDescription, isSubsetPublic){
