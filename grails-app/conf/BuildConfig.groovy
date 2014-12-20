@@ -132,7 +132,6 @@ grails.project.dependency.resolution = {
         if (!dm) {
             compile ':rdc-rmodules:1.2.2-SNAPSHOT'
             runtime ':transmart-core:1.2.2-hackathon-SNAPSHOT'
-            runtime ':transmart-i2b2:1.0-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
             //compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
@@ -162,10 +161,11 @@ grails.project.dependency.resolution = {
     }
 }
 
+grails.plugin.location.'transmart-ewb' = "../transmart-ewb"
+
 dm?.with {
     configureInternalPlugin 'compile', 'rdc-rmodules'
     configureInternalPlugin 'runtime', 'transmart-core'
-    configureInternalPlugin 'runtime', 'transmart-i2b2'
     configureInternalPlugin 'test', 'transmart-core-db-tests'
     configureInternalPlugin 'compile', 'transmart-gwas'
     configureInternalPlugin 'compile', 'transmart-java'
