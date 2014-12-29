@@ -104,12 +104,7 @@ function showDataUploadForm() {
 	
 	ANALYSIS_TYPE = $j('#dataType').val();
 	var title = $j('#dataType option:selected').text();
-	if (IS_EDIT) {
-		$j('#dataFormTitle2').html('Edit ' + title + ' metadata')
-	}
-	else {
-		$j('#dataFormTitle2').html('Upload ' + title + ' Data')
-	}
+	$j('#dataFormTitle2').html('Upload ' + title + ' Data')
 	if (ANALYSIS_TYPE == 'EQTL') {
 		$j('#tagsLabel').html('Disease:');
 		$j('#platformLabel').html('Genotype Platform:');
@@ -463,11 +458,5 @@ jQuery(document).ready(function() {
 
         }
     });
-
-    if (IS_EDIT) {
-        jQuery('#uploadSidebar').hide();
-        jQuery('#uploadSidebarDisabled').show();
-    }
-
 });
 
