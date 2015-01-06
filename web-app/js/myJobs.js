@@ -4,7 +4,7 @@ function getJobsData(tab) {
             url: pageInfo.basePath + '/asyncJob/getjobs',
             root: 'jobs',
             totalProperty: 'totalCount',
-            fields: ['name', 'status', 'runTime', 'startDate', 'viewerURL', 'altViewerURL']
+            fields: ['name', 'type', 'status', 'runTime', 'startDate', 'viewerURL', 'altViewerURL']
         }
     );
     jobsstore.on('load', jobsstoreLoaded);
@@ -42,15 +42,15 @@ function jobsstoreLoaded() {
         listeners: {cellclick: function (grid, rowIndex, columnIndex, e) {
             var colHeader = grid.getColumnModel().getColumnHeader(columnIndex);
             if (colHeader == "Name") {
-                var viewerURL = grid.getStore().getAt(rowIndex).get('viewerURL');
-                var altViewerURL = grid.getStore().getAt(rowIndex).get('altViewerURL');
+                var record = grid.getStore().getAt(rowIndex);
+                var viewerURL = record.get('viewerURL');
+                var altViewerURL = record.get('altViewerURL');
                 if (altViewerURL == null) {
                     altViewerURL = "";
                 }
-                var status = grid.getStore().getAt(rowIndex).get('status');
-                var jobName = grid.getStore().getAt(rowIndex).get('name');
-                var jobNameArray = jobName.split("-");
-                var jobType = jobNameArray[1];
+                var jobName = record.get('name');
+                var jobType = record.get('type');
+                var status = record.get('status');
 
                 if (status == "Completed") {
                     // First, we check all of the general heatmaps that store a URL
