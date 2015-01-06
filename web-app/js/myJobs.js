@@ -17,12 +17,18 @@ function getJobsData(tab) {
 }
 
 function jobsstoreLoaded() {
-    var foo = jobsstore;
     var ojobs = Ext.getCmp('ajobsgrid');
     if (ojobs != null) {
         analysisJobsPanel.remove(ojobs);
     }
-    var jobs = new Ext.grid.GridPanel({
+
+    // Filter for job types that are retrievable
+    jobsstore.filterBy(function(record) {
+        var allowedTypes = ['aCGHSurvivalAnalysis', 'aCGHgroupTest', 'RNASeqgroupTest', 'acghFrequencyPlot'];
+        return allowedTypes.indexOf(record.json.type) >= 0;
+    });
+
+    var jobsGrid = new Ext.grid.GridPanel({
         store: jobsstore,
         id: 'ajobsgrid',
         columns: [
@@ -115,7 +121,7 @@ function jobsstoreLoaded() {
             }
         }]
     });
-    analysisJobsPanel.add(jobs);
+    analysisJobsPanel.add(jobsGrid);
     analysisJobsPanel.doLayout();
 }
 
