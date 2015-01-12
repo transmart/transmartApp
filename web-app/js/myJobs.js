@@ -129,8 +129,6 @@ function jobsstoreLoaded() {
 function showJobStatusWindow(result, messages) {
     var jobInfo = Ext.util.JSON.decode(result.responseText);
     var jobName = jobInfo.jobName;
-    var sb = Ext.getCmp('asyncjob-statusbar');
-    sb.setVisible(false); 	// Initially, hide the status bar unless the user selects to run in the background
 
     var jobWindow = new Ext.Window({
         id: 'showJobStatus',
@@ -148,7 +146,6 @@ function showJobStatusWindow(result, messages) {
                 text: 'Cancel Job',
                 handler: function () {
                     cancelJob(jobName);
-                    sb.setVisible(true);
                     if (messages && messages.cancelMsg) {
                         Ext.Msg.alert("Job Cancelled", messages.cancelMsg);
                         Ext.MessageBox.hide.defer(5000, this);
@@ -159,7 +156,6 @@ function showJobStatusWindow(result, messages) {
             {
                 text: 'Run in Background',
                 handler: function () {
-                    sb.setVisible(true);
                     if (messages && messages.backgroundMsg) {
                         Ext.Msg.alert("Job processing in background", messages.backgroundMsg);
                         Ext.MessageBox.hide.defer(5000, this);
@@ -167,7 +163,7 @@ function showJobStatusWindow(result, messages) {
                     jobWindow.close();
                 }
             }
-        ],
+        ]
     });
     jobWindow.show(viewport);
 	jobWindow.body.dom.innerHTML = "<div class='x-mask-loading'><div>Loading ...</div></div>"
@@ -187,24 +183,11 @@ function cancelJob(jobName) {
 
 // Called to check the heatmap job status 
 function checkJobStatus(jobName) {
-    var sb = Ext.getCmp('asyncjob-statusbar');
-    var cancBtn = Ext.getCmp('cancjob-button');
     var jWindow = Ext.getCmp('showJobStatus');
     var secCount = 0;
     var pollInterval = 3000;   // 4 second
     var singletonflag = 0; // make sure we don't invoke heatmap more than once on job completion
 
-    // Add the handler for the cancel button in the statusbar
-    cancBtn.setVisible(true);
-    cancBtn.setHandler(function () {
-        runner.stopAll();
-        sb.setStatus({
-            text: 'Job cancelled',
-            clear: true
-        });
-        cancBtn.setVisible(false);
-        cancelJob(jobName);
-    });
 
     var updateJobStatus = function () {
 
@@ -236,12 +219,6 @@ function checkJobStatus(jobName) {
                         }
                         Ext.Msg.alert('Please, Contact a tranSMART Administrator', 'Unable to complete: ' + exception);
                         runner.stopAll();
-
-                        sb.setStatus({
-                            text: "Status: Error",
-                            clear: true
-                        });
-                        cancBtn.setVisible(false);
                     } else if (status == 'Completed') {
                         singletonflag++;
 
@@ -251,11 +228,6 @@ function checkJobStatus(jobName) {
 
                         runner.stopAll();
 
-                        sb.setStatus({
-                            text: "Status: " + status,
-                            clear: true
-                        });
-                        cancBtn.setVisible(false);
                         if (singletonflag == 1) {
                             if (resultType == null) {
                                 // resultType is only used for special cases (surivival, haploview, snp, igv, plink)
@@ -294,27 +266,16 @@ function checkJobStatus(jobName) {
                             jWindow.close();
                         }
                         runner.stopAll();
-                        sb.setStatus({
-                            text: 'Job cancelled',
-                            clear: true
-                        });
-                        cancBtn.setVisible(false);
                     } else {
                         var secLabel = " seconds"
                         if (secCount == 1) {
                             secLabel = " second"
                         }
-                        sb.showBusy("Status: " + jobStatusInfo.jobStatus + ", running for " + String(secCount) + secLabel);
                     }
                 },
                 failure: function (result, request) {
                     Ext.Msg.alert('Failed', 'Could not complete the job, please contact an administrator');
                     runner.stopAll();
-                    sb.setStatus({
-                        text: "Status: Failed",
-                        clear: true
-                    });
-                    cancBtn.setVisible(false);
                 },
                 timeout: '300000',
                 params: {jobName: jobName
