@@ -84,17 +84,13 @@ class DataExportService {
                     // Construct a list of the URL objects we're running, submitted to the pool
                     selectedFilesList.each() { selectedFile ->
 
-                        if (StringUtils.equalsIgnoreCase(selectedFile, "CLINICAL.TXT")) {
+                        if (StringUtils.equalsIgnoreCase(selectedFile, "CLINICAL")) {
                             writeClinicalData = true
                         }
 
                         def List gplIds = subsetSelectedPlatformsByFiles?.get(subset)?.get(selectedFile)
                         def retVal = null
                         switch (selectedFile) {
-                            case "STUDY":
-                                break;
-                        // New high dimensional data
-                        // case "MRNA.TXT":
                             case highDimensionResourceService.knownTypes:
                                 //retVal = geneExpressionDataService.getData(studyList, studyDir, "mRNA.trans", jobDataMap.get("jobName"), resultInstanceIdMap[subset], pivotData, gplIds, null, null, null, null, false)
 
@@ -111,10 +107,8 @@ class DataExportService {
                                 highDimDataTypes[subset][selectedFile].keySet().each { format ->
                                     log.info "  Using format " + format
                                     retVal = highDimExportService.exportHighDimData(jobName: jobDataMap.jobName,
-                                            splitAttributeColumn: false,
                                             resultInstanceId: resultInstanceIdMap[subset],
-                                            gplIds: jobDataMap.gplIdsMap[subset][selectedFile],
-                                            conceptPaths: selection[subset][selectedFile].selector,
+                                            conceptKeys: selection[subset][selectedFile].selector,
                                             dataType: selectedFile,
                                             format: format,
                                             studyDir: studyDir
