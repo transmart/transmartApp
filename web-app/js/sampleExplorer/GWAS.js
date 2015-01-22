@@ -82,8 +82,8 @@ function showGwas() {
 			runGwas(result, 
 					GLOBAL.CurrentSubsetIDs[1], 
 					GLOBAL.CurrentSubsetIDs[2],
-					getQuerySummary(1), 
-					getQuerySummary(2));
+					getSubsetQuerySummary(1),
+					getSubsetQuerySummary(2));
 		},
 		failure: function(result, request){
 			Ext.Msg.alert('Status', 'Unable to create the heatmap job.');

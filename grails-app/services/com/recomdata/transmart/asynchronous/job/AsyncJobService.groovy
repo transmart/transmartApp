@@ -45,6 +45,7 @@ class AsyncJobService {
         for (jobResult in jobResults) {
             m = [:]
             m["name"] = jobResult.jobName
+            m["type"] = jobResult.jobType
             m["status"] = jobResult.jobStatus
             m["runTime"] = jobResult.jobStatusTime
             m["startDate"] = jobResult.lastRunOn

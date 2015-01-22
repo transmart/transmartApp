@@ -25,7 +25,10 @@
 
 .valueicon{
 	background-image:url(../images/numeric.gif ) !important;
-	}
+}
+.alphaicon{
+	background-image:url(../images/alpha.gif ) !important;
+}
 .printbutton{
 	background-image:url(../images/printer.png ) !important;
 	}

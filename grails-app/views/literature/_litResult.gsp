@@ -1,4 +1,4 @@
-<g:setProvider library="prototype"/>
+
 
 <!-- loading image -->
 <g:waitIndicator divId="jubresult_loading"/>

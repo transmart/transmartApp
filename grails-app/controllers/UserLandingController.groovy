@@ -6,16 +6,19 @@ class UserLandingController {
      */
     def springSecurityService
 
+    private String getUserLandingPath() {
+        grailsApplication.config.with {
+            com.recomdata.defaults.landing ?: ui.tabs.browse.hide ? '/datasetExplorer' : '/RWG'
+        }
+    }
+
     def index = {
         new AccessLog(username: springSecurityService.getPrincipal().username, event: "Login",
                 eventmessage: request.getHeader("user-agent"),
                 accesstime: new Date()).save()
         def skip_disclaimer = grailsApplication.config.com.recomdata?.skipdisclaimer ?: false;
         if (skip_disclaimer) {
-            if (grailsApplication.config.com.recomdata?.defaults?.containsKey("landing"))
-                redirect(uri: grailsApplication.config.com.recomdata.defaults.landing);
-            else
-                redirect(uri: '/RWG');
+            redirect(uri: userLandingPath)
         } else {
             redirect(uri: '/userLanding/disclaimer.gsp')
         }
@@ -23,7 +26,7 @@ class UserLandingController {
     def agree = {
         new AccessLog(username: springSecurityService.getPrincipal().username, event: "Disclaimer accepted",
                 accesstime: new Date()).save()
-        redirect(uri: '/RWG')
+        redirect(uri: userLandingPath)
     }
 
     def disagree = {
@@ -35,4 +38,5 @@ class UserLandingController {
     def checkHeartBeat = {
         render(text: "OK")
     }
+
 }

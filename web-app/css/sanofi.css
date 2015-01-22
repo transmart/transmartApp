@@ -178,6 +178,7 @@ table.menuDetail th.menuVisited {
 
 .boxtitle, #navigateTermsPanel .x-panel-header {
   height:27px;
+  line-height: 15px;
   overflow: hidden;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
@@ -299,9 +300,29 @@ table.menuDetail th.menuVisited {
 
 #filterbutton {
 	position: absolute;
-	right: 40px;
+	right: 50px;
 	bottom: 5px;
 	padding: 0px 4px;
+	height: 15px;
+	line-height: 15px;
+}
+
+#filterbutton img {
+	max-height: 10px;
+}
+
+#clearbutton {
+	position: absolute;
+	right: 10px;
+	bottom: 5px;
+	padding: 0px 4px;
+	height: 15px;
+	line-height: 15px;
+}
+
+#clearbutton a {
+	text-decoration: none;
+	color: #000055;
 }
 
 #cartbutton {

@@ -30,29 +30,40 @@
                    align="right"><!-- Use minimum possible width -->
                 <tr>
                     <th width="150">&nbsp;</th>
-                    <%--<g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
-                    <g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>--%>
+                    <%--See Config.groovy--%>
+                    <g:if test="${grailsApplication.config.ui.tabs.search.show}">
+                        <g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
+                        <g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>
+                    </g:if>
 
-                    <g:if test="${'rwg' == app}"><th class="menuVisited">Browse</th></g:if>
-                    <g:else><th class="menuLink"><g:link controller="RWG">Browse</g:link></th></g:else>
-
+                    <g:if test="${!grailsApplication.config.ui.tabs.browse.hide}">
+                        <g:if test="${'rwg' == app}"><th class="menuVisited">Browse</th></g:if>
+                        <g:else><th class="menuLink"><g:link controller="RWG">Browse</g:link></th></g:else>
+                    </g:if>
+                    <%--Analyze tab is always visible--%>
                     <g:if test="${'datasetExplorer' == app}"><th class="menuVisited">Analyze</th></g:if>
                     <g:else><th class="menuLink"><g:link controller="datasetExplorer">Analyze</g:link></th></g:else>
 
-                    <g:if test="${grailsApplication.config.com.recomdata.hideSampleExplorer != 'true'}">
+                    <g:if test="${!grailsApplication.config.ui.tabs.sampleExplorer.hide}">
                         <g:if test="${'sampleexplorer' == app}"><th class="menuVisited">Sample Explorer</th></g:if>
                         <g:else><th class="menuLink"><g:link controller="sampleExplorer">Sample Explorer</g:link></th></g:else>
                     </g:if>
 
-                    <g:if test="${'genesignature' == app}"><th class="menuVisited">Gene&nbsp;Signature/Lists</th></g:if>
-                    <g:else><th class="menuLink"><g:link controller="geneSignature">Gene&nbsp;Signature/Lists</g:link></th></g:else>
-<%--
-                    <g:if test="${'gwas' == app}"><th class="menuVisited">GWAS</th></g:if>
-                    <g:else><th class="menuLink"><g:link controller="GWAS">GWAS</g:link></th></g:else>
+                    <g:if test="${!grailsApplication.config.ui.tabs.geneSignature.hide}">
+                        <g:if test="${'genesignature' == app}"><th class="menuVisited">Gene&nbsp;Signature/Lists</th></g:if>
+                        <g:else><th class="menuLink"><g:link controller="geneSignature">Gene&nbsp;Signature/Lists</g:link></th></g:else>
+                    </g:if>
 
-                    <g:if test="${'uploaddata' == app}"><th class="menuVisited">Upload Data</th></g:if>
-                    <g:else><th class="menuLink"><g:link controller="uploadData">Upload Data</g:link></th></g:else>
---%>
+                    <g:if test="${!grailsApplication.config.ui.tabs.gwas.hide}">
+                        <g:if test="${'gwas' == app}"><th class="menuVisited">GWAS</th></g:if>
+                        <g:else><th class="menuLink"><g:link controller="GWAS">GWAS</g:link></th></g:else>
+                    </g:if>
+
+                    <g:if test="${!grailsApplication.config.ui.tabs.uploadData.hide}">
+                        <g:if test="${'uploaddata' == app}"><th class="menuVisited">Upload Data</th></g:if>
+                        <g:else><th class="menuLink"><g:link controller="uploadData">Upload Data</g:link></th></g:else>
+                    </g:if>
+
                     <sec:ifAnyGranted roles="ROLE_ADMIN">
                         <g:if test="${'accesslog' == app}"><th class="menuVisited">Admin</th></g:if>
                         <g:else><th class="menuLink"><g:link controller="accessLog">Admin</g:link></th></g:else>
@@ -66,19 +77,11 @@
     </tr>
 </table>
 
-<link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'sanofi.css')}">
-
-<script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery.idletimeout.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery.idletimer.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'sessiontimeout.js')}"></script>
-
 <!-- Session timeout dialog -->
-<div id="timeout-div" title="Your session is about to expire!">
+<div id="timeout-div" title="Your session is about to expire!" style="display: none;">
     <p>You will be logged off in <span id="timeout-countdown"></span> seconds.</p>
-
     <p>Do you want to continue your session?</p>
 </div>
-<r:require module="session_timeout_nodep"/>
 <r:script>
     jQuery(document).ready(function() {
 	    addTimeoutDialog({

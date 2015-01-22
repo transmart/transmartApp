@@ -87,11 +87,16 @@ a.toplink1:hover{
 	}
 .valueicon{
 	background-image:url(../images/numeric.gif ) !important;
-	}
-.printbutton{
-	background-image:url(../images/printer.png ) !important;
-	}
-	
+}
+.alphaicon{
+	background-image:url(../images/alpha.gif ) !important;
+}
+.foldernumericicon{
+	background-image:url(../images/folder_numeric.png ) !important;
+	}	
+.modifierfoldericon{background-image:url(../images/modifierfolder.png) !important;}
+.modifiericon{background-image:url(../images/ONT_MODIFIER_leaf.gif) !important;}
+.printbutton{background-image:url(../images/printer.png ) !important;}
 .savebutton{
 	background-image:url(../images/disk.png ) !important;
 	}	
@@ -147,13 +152,16 @@ a.button span {
 
  .ext-ie .x-form-text {position:static !important;}
 
-.x-tree-node-leaf .x-tree-node-icon{background-image:url(../images/alpha.gif);}
+.x-tree-node-leaf .x-tree-node-icon{background-image:url(../images/nonaccessible.gif);}
 
 div.analysis {
 	font-family: arial;
 	font-size: 8pt;
 	padding-bottom: 50px;
-	}
+}
+div.analysis div {
+	font-size: 8pt;
+}
 table.analysis {
 	border-width: 1px 1px 1px 1px;
 	border-spacing: 4px;
@@ -162,6 +170,7 @@ table.analysis {
 	border-collapse: collapse;
 	background-color: white;
 	font-family: arial;
+	font-size: 8pt !important;
 }
 table.analysis th {
 	border-width: 1px 1px 1px 1px;
@@ -183,17 +192,18 @@ table.analysis td {
 }
 
 div.analysistitle {
-	font-size: 12pt;
+	font-size: 12pt !important;
 	font-weight: bold;
 	font-family:arial;
 	padding-bottom: 20px;
 }
 
+div.smalltitle {
+	padding-bottom: 5px !important;
+}
+
 
 	.searchform {
-	font:12px tahoma, arial, helvetica, sans-serif;
-	}
-	.subsettable {
 	font:12px tahoma, arial, helvetica, sans-serif;
 	}
 .search-item {font:normal 11px tahoma, arial, helvetica, sans-serif;padding:3px 10px 3px 10px;border:1px solid #fff;border-bottom:1px solid #eeeeee;white-space:normal;color:#505050;}
@@ -414,7 +424,6 @@ padding: 1em;
 }
 
 #header {
-font: bold serif;
 position: absolute; top: 0; left: 0; 
 -fs-move-to-flow: "header";
 }
@@ -458,7 +467,7 @@ content: counter(pages);
 .flatbutton {
 	background-repeat: no-repeat;
 	font-family: Arial, sans-serif;
-	font-size: 9pt;
+	font-size: 12px;
 	padding: 4px 4px 4px 4px;
 	border: 1px solid #CCC;
 	cursor: pointer;
@@ -544,3 +553,26 @@ li.x-tab-strip-active {
 
 .x-grid3-row .conceptUnselected, .x-grid3-row .conceptSelected {padding: 0 0 5px 5px; font-size: .85em;}
 .data-export-filter-tip {color: #666; font-style: italic}
+
+
+.no-close .ui-dialog-titlebar-close {display: none }
+
+.modifierValueDialog .ui-dialog-titlebar {
+	padding: 0.2em;
+}
+
+.modifierValueDialog .ui-dialog-content {
+	width: 500px;
+}
+
+#divjobstatus {
+	padding: 10px;
+}
+
+#divjobstatus td {
+	line-height: 18px;
+}
+
+#divjobstatus img {
+	max-height: 15px;
+}

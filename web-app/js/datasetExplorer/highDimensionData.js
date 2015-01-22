@@ -81,7 +81,7 @@ function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
  * Determine if we are dealing with genotype or copy number
  */
 function determineHighDimVariableType(result){
-	var mobj=result.responseText.evalJSON();
+	var mobj=jQuery.parseJSON(result.responseText);
 	GLOBAL.HighDimDataType=mobj.markerType;
 }
 
@@ -93,7 +93,7 @@ function determineHighDimVariableType(result){
 function readCohortData(result, divId)
 {
 	//Get the JSON string we got from the server into a real JSON object.
-	var mobj=result.responseText.evalJSON();
+	var mobj=jQuery.parseJSON(result.responseText);
 
 	//If we failed to retrieve any test from the heatmap server call, we alert the user here. Otherwise, show the popup.
 	if(mobj.NoData && mobj.NoData == "true")
@@ -179,7 +179,8 @@ function runQueryForSubsetId(subset, callback, divId)
    callback();
    return;
    } */
-	var query = getCRCRequest(subset, "", divId);
+
+	var query = getQuery(subset).append(getQueryPanel(jQuery('#' + divId)))[0].outerHTML
 	// first subset
 	queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
 	Ext.Ajax.request(
@@ -234,55 +235,6 @@ function runQueryForSubsetidSingleSubset(callback, divId){
     {
         resultsPanel.setBody("<div style='height:400px;width500px;overflow:auto;'>" + Ext.util.Format.htmlEncode(query) + "</div>");
     }
-}
-
-function getCRCRequest(subset, queryname, divId){
-	if(queryname=="" || queryname==undefined){
-		var d=new Date();
-		queryname=GLOBAL.Username+"'s Query at "+ d.toUTCString();
-		}
-	var query= '<ns4:query_definition xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\
-	                <query_name>'+queryname+'</query_name>\
-	                <specificity_scale>0</specificity_scale>';
-	
-	var qcd=Ext.get(divId);
-	
-	if(qcd.dom.childNodes.length>0)
-	{
-		query=query+getCRCRequestPanel(qcd.dom, 1);
-	}
-	
-	for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
-	{
-		var qcd=Ext.get("queryCriteriaDiv"+subset+'_'+i.toString());
-		if(qcd.dom.childNodes.length>0)
-		{
-		query=query+getCRCRequestPanel(qcd.dom, i);
-		}
-	}
-	
-	query=query+"</ns4:query_definition>";
-	return query;
-}
-
-function getCRCRequestSingleSubset(divId, queryname){
-	if(queryname=="" || queryname==undefined){
-		var d=new Date();
-		queryname=GLOBAL.Username+"'s Query at "+ d.toUTCString();
-		}
-	var query= '<ns4:query_definition xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/">\
-	                <query_name>'+queryname+'</query_name>\
-	                <specificity_scale>0</specificity_scale>';
-	
-	var qcd=Ext.get(divId);
-	
-	if(qcd.dom.childNodes.length>0)
-	{
-		query=query+getCRCRequestPanel(qcd.dom, 1);
-	}
-	
-	query=query+"</ns4:query_definition>";
-	return query;
 }
 
 //**************End of functions to set global subset ids**************
@@ -417,7 +369,7 @@ function clearSummaryDisplay(divId){
 
 function multipleSubsets(){
 	var multipleSubsets=false; 
-	if(Ext.get('multipleSubsets') && (getQuerySummary(2)!="")){
+	if(Ext.get('multipleSubsets') && (getSubsetQuerySummary(2)!="")){
 		multipleSubsets = (Ext.get('multipleSubsets').dom.value=='true');
 	}
 	return multipleSubsets;

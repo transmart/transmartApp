@@ -176,6 +176,10 @@ input.x-tree-node-cb {
     cursor:pointer;
 }
 
+.x-tree-node-el em {
+    color: darkgrey !important;
+}
+
 .x-tree-node a, .x-dd-drag-ghost a{
 	text-decoration:none;
 	color:black;
