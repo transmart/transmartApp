@@ -293,8 +293,8 @@ class ChartService {
                 def max = null
                 set = new HistogramDataset()
                 data.each { k, v ->
-                    min = min != null ? (min > v.min() ? v.min() : min) : v.min()
-                    max = max != null ? (max < v.max() ? v.max() : max) : v.max()
+                    min = min != null ? (v.min() != null && min > v.min() ? v.min() : min) : v.min()
+                    max = max != null ? (v.max() != null && max < v.max() ? v.max() : max) : v.max()
                 }.each { k, v ->
                     if (k) set.addSeries(k, (double [])v.toArray(), 10, min, max)
                 }

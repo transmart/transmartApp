@@ -164,66 +164,34 @@ function refillQueryPanels(subsets) {
     // Legacy ExtJS call (The way this is handle can cause problems
     queryPanel.el.mask('Rebuilding query ...', 'x-mask-loading');
 
-    var _finishChecker = []
-    var _failure = false
-
     clearQueryPanels()
 
-    // Looping first to set the call number array
-    jQuery.each(subsets, function (subset, resultInstanceID) {
-        _finishChecker[subset] = false
-    })
-
     // Looping through subsets
-    jQuery.each(subsets, function (subset, resultInstanceID) {
+    jQuery.each(subsets, function (subset, query) {
 
-        jQuery.post(pageInfo.basePath + "/queryTool/getQueryDefinitionFromResultId", { result_id : resultInstanceID }, function () {}, 'xml')
-            .success(function(data) {
+        jQuery(query).find("panel").each(function () {
 
-                var _query = jQuery(data)
+            //This is dangerous, but time efficient
+            var _panel = jQuery(this)
+            var _panelDOM = jQuery(".panelModel", jQuery("#queryTable tr:last-of-type td")[parseInt(subset) - 1]).last()
 
-                jQuery(data).find("panel").each(function () {
+            _panelDOM.find(".panelBoxListPlaceholder").hide()
 
-                    //This is dangerous, but time efficient
-                    var _panel = jQuery(this)
-                    var _panelDOM = jQuery(".panelModel", jQuery("#queryTable tr:last-of-type td")[parseInt(subset) - 1]).last()
+            var _inversion = _panel.find("invert").text() == "1"
 
-                    _panelDOM.find(".panelBoxListPlaceholder").hide()
+            if (_inversion)
+                _panelDOM.find("input[id^=panelExclude]").attr("checked", "checked")
+            _panelDOM.find(".panelRadio").buttonset("refresh")
 
-                    var _inversion = _panel.find("invert").text() == "1"
-
-                    if (_inversion)
-                        _panelDOM.find("input[id^=panelExclude]").attr("checked", "checked")
-                    _panelDOM.find(".panelRadio").buttonset("refresh")
-
-                    _panel.find("item").each(function () {
-                        _panelDOM.find(".panelBoxList").append(getPanelItemFromConcept(getConceptFromQueryItem(this)))
-                    })
-
-                    appendQueryPanelInto(subset)
-                })
-
-                adjustPanelSize()
+            _panel.find("item").each(function () {
+                _panelDOM.find(".panelBoxList").append(getPanelItemFromConcept(getConceptFromQueryItem(this)))
             })
-            .fail(function() {
-                _failure = true
-            })
-            .always(function () {
 
-                var _checker = true
+            appendQueryPanelInto(subset)
+        })
 
-                _finishChecker[subset] = true
-
-                jQuery.each(subsets, function (subset, resultInstanceID) {
-                    if (!_finishChecker[subset]) _checker = false
-                })
-
-                if (_checker) {
-                    queryPanel.el.unmask()
-                    if (_failure)
-                        alert("An error occurred while retrieving your query")
-                }
-            })
+        queryPanel.el.unmask()
+        adjustPanelSize()
     })
 }
 
@@ -238,6 +206,7 @@ function getConceptFromQueryItem(item) {
     var _item = jQuery(item)
     var _concept = {}
 
+    console.log(_item)
     _concept["conceptid"] = _item.find("item_key").text()
     _concept["conceptname"] = createShortNameFromPath(_concept["conceptid"])
     _concept["concepttooltip"] = _concept["conceptid"].substr(1, _concept["conceptid"].length)
