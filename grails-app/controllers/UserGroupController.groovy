@@ -225,18 +225,13 @@ class UserGroupController {
     def removeUsersFromUserGroup =
             {
                 UserGroupCommand fl ->
-                    def userGroupInstance = UserGroup.get(params.id)
-                    if (!fl.hasErrors()) {
-                        println("no errors")
-                    }
                     fl.errors.allErrors.each {
-                        println it
+                        log.error(it)
                     }
-                    fl.userstoremove.collect { println("collecting:" + it.toLong()) };
-                    def usersToRemove = AuthUser.findAll("from AuthUser r where r.id in (:p)", [p: fl.userstoremove.collect {
-                        it.toLong()
-                    }]);
-                    if (userGroupInstance) {
+                    def userGroupInstance = UserGroup.get(params.id)
+                    def usersToRemoveIds = fl.userstoremove?.collect { it.toLong() }
+                    if (userGroupInstance && usersToRemoveIds) {
+                        def usersToRemove = AuthUser.findAll("from AuthUser r where r.id in (:p)", [p: usersToRemoveIds]);
                         if (params.version) {
                             def version = params.version.toLong()
                             if (userGroupInstance.version > version) {
@@ -256,7 +251,6 @@ class UserGroupController {
                             render(template: 'addremove', model: [userGroupInstance: userGroupInstance, usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext)])
                         }
                     } else {
-                        flash.message = "UserGroup not found with id ${params.id}"
                         render(template: 'addremove', model: [userGroupInstance: userGroupInstance, usersToAdd: searchForUsersNotInGroup(params.id.toLong(), fl.searchtext)])
                     }
             }
