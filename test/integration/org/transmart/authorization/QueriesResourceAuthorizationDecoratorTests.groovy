@@ -133,7 +133,7 @@ class QueriesResourceAuthorizationDecoratorTests {
                         getQueryResultFromId(queryResult.id), is(queryResult)
             }
         }
-     }
+    }
 
     @Test
     void testLegacyStatic() {
@@ -159,7 +159,7 @@ class QueriesResourceAuthorizationDecoratorTests {
         QueryResult queryResult
 
         mockCurrentUser userCreator.username, {
-             queryResult = queriesResourceAuthorizationDecorator.
+            queryResult = queriesResourceAuthorizationDecorator.
                     runQuery(study2SampleDefinition, userCreator.username)
         }
 

@@ -1,4 +1,4 @@
-@CHARSET "ISO-8859-1";
+@CHARSET "UTF-8";
   	.conceptSelected {background:#eee}
 	.conceptUnselected {background:white}
 	.demoTable td {padding: 3px; font: 10pt arial;}
@@ -65,8 +65,10 @@ a.toplink1:hover{
 }
 
 .clearbutton{
-		background-image:url(../images/small_cross.png ) !important;
-	}
+    padding-left: 20px !important;
+    background-image:url(../images/small_cross.png ) !important;
+    background-position: 6px 50%;
+}
 .runbutton{
 	background-image:url(../images/runprog.png ) !important;
 	}
@@ -453,19 +455,17 @@ content: counter(pages);
 
 .flatbutton {
 	background-repeat: no-repeat;
-	background-position: 2px 50%;
 	font-family: Arial, sans-serif;
 	font-size: 9pt;
-	padding: 4px 4px 4px 20px;
+	padding: 4px 4px 4px 4px;
 	border: 1px solid #CCC;
 	cursor: pointer;
 	border-radius: 2px;
 }
 
 .flatbutton:hover {
-	background: #F4F4F4;
+	background-color: #b2b2b2;
 	background-repeat: no-repeat;
-	background-position: 2px 50%;	
 }
 
 /* Overrides for ext CSS */
@@ -527,7 +527,7 @@ li.x-tab-strip-active {
 }
 
 #westPanel {
-	background-color: white;	
+	background-color: white;
 }
 
 .x-layout-split {

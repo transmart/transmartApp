@@ -1,26 +1,14 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
-
 function createMainExplorerWindow() 
 {
-	centerMainPanel = new Ext.Panel({
+    northPanel = new Ext.Panel({
+        id : 'northPanel',
+        region : 'north',
+        split : false,
+        border : true,
+        contentEl : "header-div"
+    });
+
+    centerMainPanel = new Ext.Panel({
 		id : 'centerMainPanel',
 		region : 'center',
 		layout : 'border'
@@ -31,7 +19,7 @@ function createMainExplorerWindow()
 
 	viewport = new Ext.Viewport({
 		layout : 'border',
-		items : [centerMainPanel, createNorthPanel() ]
+		items : [centerMainPanel, northPanel]
 	});
 }
 
@@ -74,21 +62,6 @@ function createWestPanel()
 	westPanel.add(ontTabPanel);
 
 	return westPanel;
-}
-
-//Create the north most panel.
-function createNorthPanel()
-{
-    northPanel = new Ext.Panel({
-		id : 'northPanel',
-		region : 'north',
-		tbar : createUtilitiesMenu(GLOBAL.HelpURL, GLOBAL.ContactUs, GLOBAL.AppTitle,GLOBAL.basePath, GLOBAL.BuildVersion, 'utilities-div'),
-		split : false,
-		border : true,
-		contentEl : "header-div"
-	});	
-
-	return northPanel;
 }
 
 /*
@@ -162,8 +135,14 @@ function createCenterPanel()
 	);
 	
 	//This is the URL for our main "Comparison" tab.
-	var centerPanelURL = pageInfo.basePath+'/sampleExplorer/showTopLevelListPage';
-	
+    var centerPanelURL = false;
+    if (!(/[?&]result_instance_id=/.test(location.href)))
+        centerPanelURL = {
+            url: pageInfo.basePath+'/sampleExplorer/showTopLevelListPage',
+            method:'POST',
+            callback: createSearchBox
+        };
+
 	//This is our main "Comparison" tab.
 	queryPanel = new Ext.Panel(
 			{
@@ -173,12 +152,7 @@ function createCenterPanel()
 				height : 800,
 				autoScroll : true,
 				split : true,					
-		        autoLoad:
-		        {
-		        	url: centerPanelURL,
-		           	method:'POST',
-		           	callback: createSearchBox
-		        },	
+		        autoLoad: centerPanelURL,
 				collapsible : true,
 				titleCollapse : false,
 				animCollapse : false,
@@ -235,7 +209,7 @@ function createCenterPanel()
 
 function createSearchBox()
 {
-
+    /*
 	var combo = new Ext.app.SearchComboBox({
 		id: "search-combobox",
 		renderTo: "search-text",
@@ -272,7 +246,7 @@ function createSearchBox()
         }
 	});
 	combo.focus();	
-	
+	*/
 	function searchOnClick() {
 		var combo = Ext.getCmp("search-combobox");
 		var param = combo.getSelectedParam();
@@ -286,7 +260,7 @@ function createSearchBox()
 		searchcombo.className += " searchcombobox-disabled";
 		searchcombo.style.width = "442px";						
 	}
-	
+	/*
 	var picklist = new Ext.app.PickList({
 		id: "categories",
 		cls: "categories-gray",
@@ -302,7 +276,7 @@ function createSearchBox()
 	        }
 		}
 	});	
-	
+	*/
 }
 
 function createExportSubMenu()

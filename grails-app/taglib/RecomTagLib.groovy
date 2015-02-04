@@ -5,7 +5,7 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
 class RecomTagLib {
-def diseaseService
+    def diseaseService
 
     def createFileLink = { attrs ->
 
@@ -335,21 +335,20 @@ def diseaseService
         out << "</th></tr></thead>"
     }
 
-    
-	def fieldDate = { attrs, body ->
-		
-		def bean = attrs["bean"]
-		def field = attrs["field"]
-		def format = attrs["format"]
-		
-		def date = bean."${field}"
-		if (date) {
-			out << (new SimpleDateFormat(format).format(date))
-		}
-		else {
-			out << "None"
-		}
-	}
+
+    def fieldDate = { attrs, body ->
+
+        def bean = attrs["bean"]
+        def field = attrs["field"]
+        def format = attrs["format"]
+
+        def date = bean."${field}"
+        if (date) {
+            out << (new SimpleDateFormat(format).format(date))
+        } else {
+            out << "None"
+        }
+    }
 
     def fieldBytes = { attrs, body ->
         def bean = attrs["bean"]
@@ -402,12 +401,10 @@ def diseaseService
         if (PluginManagerHolder.pluginManager.hasGrailsPlugin(name)) {
             if (yes) {
                 out << yes
-            }
-            else {
+            } else {
                 out << body()
             }
-        }
-        else if (no) {
+        } else if (no) {
             out << no
         }
     }

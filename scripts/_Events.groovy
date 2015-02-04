@@ -7,7 +7,7 @@ eventWebXmlStart = { webXmlFile ->
             value: "${grailsAppName}-${grailsAppVersion}")
 }
 
-eventCreateWarStart = {warname, stagingDir ->
+eventCreateWarStart = { warname, stagingDir ->
     event("BuildInfoAddPropertiesStart", [warname, stagingDir])
     writeProperties(getEnvProperties(), "${stagingDir}/WEB-INF/classes/application.properties")
     event("BuildInfoAddPropertiesEnd", [warname, stagingDir])
@@ -17,14 +17,14 @@ eventCompileStart = { kind ->
     // Unfortunately during "run-app", the application metadata file loaded is not the one of the staging directory
     // We do not want to modify the local metadata file do avoid SCM mess.
     // We might still want these info displayed into the console at compile time for the main application
-    getEnvProperties().each { k,v ->
+    getEnvProperties().each { k, v ->
         println(k + ' : ' + v)
     }
 }
 
 private void writeProperties(Map properties, String propertyFile) {
     Ant.propertyfile(file: propertyFile) {
-        properties.each { k,v->
+        properties.each { k, v ->
             entry(key: k, value: v)
         }
     }
@@ -32,7 +32,7 @@ private void writeProperties(Map properties, String propertyFile) {
 
 def getEnvProperties() {
     def environment = [:]
-    Ant.antProject.properties.findAll({k,v-> k.startsWith('environment')}).each { k,v->
+    Ant.antProject.properties.findAll({ k, v -> k.startsWith('environment') }).each { k, v ->
         environment[k] = v
     }
 
@@ -94,7 +94,7 @@ def getRevision() {
     // if Hudson/Jenkins env variable not found, try file system (for SVN)
     if (!scmVersion) {
         File entries = new File(basedir, '.svn/entries')
-        if (entries.exists() && entries.text.split('\n').length>3) {
+        if (entries.exists() && entries.text.split('\n').length > 3) {
             scmVersion = entries.text.split('\n')[3].trim()
         }
     }

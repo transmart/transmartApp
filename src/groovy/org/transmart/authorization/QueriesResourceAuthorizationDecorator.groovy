@@ -99,7 +99,7 @@ class QueriesResourceAuthorizationDecorator
          * same user across the whole request */
         if (RequestContextHolder.requestAttributes) {
             cache = Holders.applicationContext.
-                            legacyQueryResultAccessCheckRequestCache
+                    legacyQueryResultAccessCheckRequestCache
         }
 
         ids.each { long it ->

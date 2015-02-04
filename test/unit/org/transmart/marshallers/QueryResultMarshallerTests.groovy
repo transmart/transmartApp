@@ -23,12 +23,12 @@ class QueryResultMarshallerTests {
     @Test
     void basicTest() {
         def value = [
-                getId:           { -1L },
+                getId          : { -1L },
                 getResultTypeId: { 1L },
-                getSetSize:      { 77L },
-                getStatus:       { QueryStatus.FINISHED },
+                getSetSize     : { 77L },
+                getStatus      : { QueryStatus.FINISHED },
                 getErrorMessage: { 'error message' },
-                getUsername:     { 'bogus_user_name' }
+                getUsername    : { 'bogus_user_name' }
         ] as QueryResult
 
         def out = testee.convert(value)

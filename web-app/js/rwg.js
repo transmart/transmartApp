@@ -2648,21 +2648,6 @@ function updateAnalysisData(analysisId, full) {
 	});
 }
 
-function toggleSidebar() {
-	var sidebarIsVisible = (jQuery('#sidebar:visible').size() > 0);
-	if (sidebarIsVisible) {
-		jQuery('#sidebar').fadeOut(resizeAccordion);
-		var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-left', '-right');
-		jQuery('#sidebartoggle').css('background-image', bgimg);
-	}
-	else {
-		jQuery('#sidebar').fadeIn();
-		resizeAccordion(); //Not a callback here - resize as soon as it starts appearing.
-		var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-right', '-left');
-		jQuery('#sidebartoggle').css('background-image', bgimg);
-	}
-}
-
 //Globally prevent AJAX from being cached (mostly by IE)
 jQuery.ajaxSetup({
 	cache: false

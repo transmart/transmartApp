@@ -68,7 +68,7 @@ class RNASeqDataService {
         //+1 b/c 1st row has no header
         Long i = 1; //for the first row
 
-        for (Iterator<RegionRow> iterator = rnaseqRegionResult.rows; iterator.hasNext(); ) {
+        for (Iterator<RegionRow> iterator = rnaseqRegionResult.rows; iterator.hasNext();) {
             RegionRow row = (RegionRow) iterator.next()
 
             String[] line = templateArray.clone()
@@ -82,7 +82,7 @@ class RNASeqDataService {
             line[6] = row.cytoband
 
             int j = 7
-            PER_ASSAY_COLUMNS.each {k, Closure<RnaSeqValues> value ->
+            PER_ASSAY_COLUMNS.each { k, Closure<RnaSeqValues> value ->
                 assays.each { AssayColumn assay ->
                     line[j++] = value(row.getAt(assay)) as String
                 }
@@ -93,7 +93,7 @@ class RNASeqDataService {
     }
 
     private static final Map PER_ASSAY_COLUMNS = [
-            readcount:     { RnaSeqValues v -> v.getReadCount() },
+            readcount: { RnaSeqValues v -> v.getReadCount() },
     ]
 
     private String[] createHeader(List<AssayColumn> assays) {
@@ -106,7 +106,7 @@ class RNASeqDataService {
                 'cytoband',
         ];
 
-        PER_ASSAY_COLUMNS.keySet().each {String head ->
+        PER_ASSAY_COLUMNS.keySet().each { String head ->
             assays.each { AssayColumn assay ->
                 r << "${head}.${assay.patientInTrialId}".toString()
             }

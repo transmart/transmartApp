@@ -112,14 +112,15 @@ table.menuDetail th.menuVisited {
 }
 
 #search-categories {
-    font-size: 10px;
-    height: 24px;
+    font-size: 99%;
+    height: 20px;
     width: 130px;
 }
 
 #search-ac {
-    padding-top: 3px;
-    width: 135px;
+    padding: 2px;
+    height: 14px;
+    width: 160px;
 }
 
 .ui-autocomplete .ui-menu-item a {
@@ -146,10 +147,14 @@ table.menuDetail th.menuVisited {
 }
 
 #box-search, #program-explorer {
-	margin: 26px 8px 8px 8px;
-	border-radius: 8px;
-	border: #0000FF;
-	box-shadow: #DDD 11px 11px 8px -7px;
+    margin: 10px 8px 8px 8px;
+    border-radius: 8px;
+    border: #0000FF;
+    box-shadow: #DDD 11px 11px 8px -7px;
+}
+
+#box-search {
+    margin-bottom: 0px;
 }
 
 #active-search-div
@@ -242,7 +247,7 @@ table.menuDetail th.menuVisited {
 
 #title-filter{
   height:25px;
-  overflow: hide;  
+  overflow: hidden;
 }
 
 .title, #navigateTermsPanel .x-panel-header-text{
@@ -256,6 +261,7 @@ table.menuDetail th.menuVisited {
 }
 
 .greybutton {
+    color: #000055;
 	background-color: #F4F4F4;
 	border: 1px solid #DDD;
 	cursor: pointer;
@@ -286,7 +292,7 @@ table.menuDetail th.menuVisited {
 .greybutton.deletefolder { background-image: url('../images/bin_closed.png'); }
 
 .greybutton.disabled {
-	cursor: normal;
+	cursor: default;
 	color: #AAA;
 }
 
@@ -402,7 +408,7 @@ table.menuDetail th.menuVisited {
 #sidebartoggle {
 	position:absolute;
 	left:0px;
-	top: 29px;
+	top: 3px;
 	z-index: 999;
 	background-image: url('../images/lefttab-left.png');
 	width: 22px;

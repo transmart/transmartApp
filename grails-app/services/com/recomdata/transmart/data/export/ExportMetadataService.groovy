@@ -1,83 +1,59 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
- * 
- *
- ******************************************************************/
-  
-
 package com.recomdata.transmart.data.export
 
 import grails.util.Holders
-import org.transmartproject.core.dataquery.assay.Assay
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
+import org.transmartproject.core.ontology.OntologyTerm
 import org.transmartproject.export.HighDimExporter
 
+//TODO Remove duplicated code for both subset. Make code more generic for any number of subsets
 class ExportMetadataService {
 
     static transactional = false
 
-	def dataCountService
+    def dataCountService
     def highDimensionResourceService
     def highDimExporterRegistry
+    def queriesResourceService
 
-	def Map createJSONFileObject(fileType, dataFormat, fileDataCount, gplId, gplTitle) {
-		def file = [:]
-		if(dataFormat!=null){
-			file['dataFormat'] = dataFormat
-		}
-		if(fileType!=null){
-			file['fileType'] = fileType
-		}
-		if(fileDataCount!=null){
-			file['fileDataCount'] = fileDataCount
-		}
-		if(gplId!=null){
-			file['gplId']=gplId
-		}
-		if(gplTitle!=null){
-			file['gplTitle']=gplTitle
-		}
-		return file
-	}
+    def Map createJSONFileObject(fileType, dataFormat, patientsNumber) {
+        def file = [:]
+        if (dataFormat != null) {
+            file['dataFormat'] = dataFormat
+        }
+        if (fileType != null) {
+            file['fileType'] = fileType
+        }
+        if (patientsNumber != null) {
+            file['patientsNumber'] = patientsNumber
+        }
+        return file
+    }
 
     def getMetaData(Long resultInstanceId1, Long resultInstanceId2) {
-        def metadata = convertIntoMetaDataMap( 
-            getClinicalMetaData( resultInstanceId1, resultInstanceId2 ), 
-            getHighDimMetaData( resultInstanceId1, resultInstanceId2 ) 
+        def metadata = convertIntoMetaDataMap(
+                getClinicalMetaData(resultInstanceId1, resultInstanceId2),
+                getHighDimMetaData(resultInstanceId1, resultInstanceId2)
         )
 
         metadata.exportMetaData.addAll(
-            getLegacyHighDimensionMetaData(resultInstanceId1, resultInstanceId2)
+                getLegacyHighDimensionMetaData(resultInstanceId1, resultInstanceId2)
         )
-        
+
         metadata
     }
-    
 
-    def getClinicalMetaData(Long resultInstanceId1, Long resultInstanceId2 ) {
+
+    def getClinicalMetaData(Long resultInstanceId1, Long resultInstanceId2) {
         //The result instance id's are stored queries which we can use to get information from the i2b2 schema.
         log.debug('rID1 :: ' + resultInstanceId1 + ' :: rID2 :: ' + resultInstanceId1)
 
         //Retrieve the counts for each subset.
         [
-            subset1: resultInstanceId1 ? dataCountService.getClinicalDataCount( resultInstanceId1 ) : 0,    
-            subset2: resultInstanceId2 ? dataCountService.getClinicalDataCount( resultInstanceId2 ) : 0,    
+                subset1: resultInstanceId1 ? dataCountService.getClinicalDataCount(resultInstanceId1) : 0,
+                subset2: resultInstanceId2 ? dataCountService.getClinicalDataCount(resultInstanceId2) : 0,
         ]
     }
-    
+
     def getHighDimMetaData(Long resultInstanceId1, Long resultInstanceId2) {
         def (datatypes1, datatypes2) = [[:], [:]]
 
@@ -96,16 +72,33 @@ class ExportMetadataService {
 
             datatypes2 = highDimensionResourceService.getSubResourcesAssayMultiMap([dataTypeConstraint])
         }
-        
+
         // Determine the unique set of datatypes, for both subsets
-        def uniqueDatatypes = ( datatypes1.keySet() + datatypes2.keySet() ).unique()
-        
+        def uniqueDatatypes = (datatypes1.keySet() + datatypes2.keySet())
+                .sort { dt1, dt2 -> dt1.dataTypeDescription <=> dt2.dataTypeDescription }
+
         // Combine the two subsets, into a map based on datatypes
         def hdMetaData = uniqueDatatypes.collect { datatype ->
+            def ontologyTermKeys1 = []
+            if (resultInstanceId1) {
+                def queryResult = queriesResourceService.getQueryResultFromId(resultInstanceId1)
+                Set<OntologyTerm> ontologyTerms = datatype.getAllOntologyTermsForDataTypeBy(queryResult)
+                ontologyTermKeys1 = ontologyTerms.collect { it.key }
+            }
+
+            def ontologyTermKeys2 = []
+            if (resultInstanceId2) {
+                def queryResult = queriesResourceService.getQueryResultFromId(resultInstanceId2)
+                Set<OntologyTerm> ontologyTerms = datatype.getAllOntologyTermsForDataTypeBy(queryResult)
+                ontologyTermKeys2 = ontologyTerms.collect { it.key }
+            }
+
             [
-                datatype: datatype,
-                subset1: datatypes1[ datatype ],
-                subset2: datatypes2[ datatype ]
+                    datatype        : datatype,
+                    subset1         : datatypes1[datatype],
+                    subset1_hd_terms: ontologyTermKeys1,
+                    subset2         : datatypes2[datatype],
+                    subset2_hd_terms: ontologyTermKeys2,
             ]
         }
 
@@ -116,11 +109,12 @@ class ExportMetadataService {
      * This method was taken from the ExportService before high dimensional datatypes were exported through core-api.
      * SNP data is not yet implemented there. FIXME: implement SNP in core-db and remove this method
      */
+
     def getLegacyHighDimensionMetaData(Long resultInstanceId1, Long resultInstanceId2) {
         def dataTypesMap = Holders.config.com.recomdata.transmart.data.export.dataTypesMap
 
         //The result instance id's are stored queries which we can use to get information from the i2b2 schema.
-        def rIDs = [resultInstanceId1, resultInstanceId2].toArray( new Long[0] )
+        def rIDs = [resultInstanceId1, resultInstanceId2].toArray(new Long[0])
 
         def subsetLen = (resultInstanceId1 && resultInstanceId2) ? 2 : (resultInstanceId1 || resultInstanceId2) ? 1 : 0
         log.debug('rID1 :: ' + resultInstanceId1 + ' :: rID2 :: ' + resultInstanceId2)
@@ -151,16 +145,12 @@ class ExportMetadataService {
             for (i in 1..2) {
                 def files = []
                 if (key == 'SNP') {
-                    files.add(createJSONFileObject('.PED, .MAP & .CNV', 'Processed Data',
-                            finalMap["subset${i}"][key],
-                            null, null))
-                    files.add(createJSONFileObject('.CEL', 'Raw Data', finalMap["subset${i}"][key + '_CEL'], null,
-                            null))
+                    files.add(createJSONFileObject('.PED, .MAP & .CNV', 'Processed Data', finalMap["subset${i}"][key]))
+                    files.add(createJSONFileObject('.CEL', 'Raw Data', finalMap["subset${i}"][key + '_CEL']))
                 }
                 if ((null != finalMap["subset${i}"][key] && finalMap["subset${i}"][key] > 0))
                     dataTypeHasCounts = true;
 
-                dataType['metadataExists'] = true
                 dataType['subsetId' + i] = "subset" + i
                 dataType['subsetName' + i] = "Subset " + i
                 dataType['subset' + i] = files
@@ -170,71 +160,63 @@ class ExportMetadataService {
         }
 
         return rows
-    }    
-    
+    }
+
     /**
      * Converts information about clinical data and high dimensional data into a map
      * that can be handled by the frontend javascript
      * @param clinicalData
      * @param highDimensionalData
      * @see dataTab.js
-     * @see ExportService.getClinicalMetaData()
-     * @see ExportService.getHighDimMetaData()
-     * @return  Map with root key "exportMetaData", which in turn contains a list of 
+     * @see ExportService.getClinicalMetaData ( )
+     * @see ExportService.getHighDimMetaData ( )
+     * @return Map with root key "exportMetaData", which in turn contains a list of
      *              datatypes to export. Each item in the list is a map that has keys,
      *              as below:
      *                  subsetId1
      *                  subsetId2
      *                  subsetName1
      *                  subsetName2
-     *                  
+     *
      *                  dataTypeId
      *                  dataTypeName
      *                  isHighDimensional
-     *                  metadataExists
-     * 
+     *
      *                  subset1
      *                  subset2
      */
-    protected Map convertIntoMetaDataMap( clinicalData, highDimensionalData ) {
+    protected Map convertIntoMetaDataMap(clinicalData, highDimensionalData) {
         def clinicalOutput = [
-            subsetId1: "subset1",
-            subsetId2: "subset2",
-            subsetName1: "Subset 1",
-            subsetName2: "Subset 2",
-            
-            dataTypeId: "CLINICAL",
-            dataTypeName: "Clinical & Low Dimensional Biomarker Data",
-            isHighDimensional: false,
-            metadataExists: true,
-            
-            subset1: [
-                [
-                    fileType: ".TXT",
-                    dataFormat: "Data",
-                    fileDataCount: clinicalData.subset1
-                ]
-            ],
-            subset2:[
-                [
-                    fileType: ".TXT",
-                    dataFormat: "Data",
-                    fileDataCount: clinicalData.subset2
-                ]
-            ],
-        ] 
-        
+                subsetId1        : "subset1",
+                subsetId2        : "subset2",
+                subsetName1      : "Subset 1",
+                subsetName2      : "Subset 2",
+
+                dataTypeId       : "CLINICAL",
+                dataTypeName     : "Clinical & Low Dimensional Biomarker Data",
+                isHighDimensional: false,
+
+                subset1          : [
+                        exporters     : [[format: 'TSV', description: 'Tab separated file.']],
+                        patientsNumber: clinicalData.subset1
+                ],
+                subset2          : [
+                        exporters     : [[format: 'TSV', description: 'Tab separated file.']],
+                        patientsNumber: clinicalData.subset2
+                ],
+        ]
+
         // Return a map, suited for the frontend to handle
         [
-            exportMetaData: [ clinicalOutput ] + convertHighDimMetaData( highDimensionalData )
+                exportMetaData: [clinicalOutput] + convertHighDimMetaData(highDimensionalData)
         ]
     }
-    
+
     /**
      * Converts information about high dimensional data into a map
      * that can be handled by the frontend javascript
-     * @param highDimensionalData   A list with datatypes that can be exported 
-     * @return  A list of datatypes to export. Each item in the list is a map that has keys,
+     * @param highDimensionalData A list with datatypes that can be exported
+     * @return A list of datatypes to export. Each item in the list is a map that has keys,
      *              as below:
      *                  subsetId1
      *                  subsetId2
@@ -244,14 +226,13 @@ class ExportMetadataService {
      *                  dataTypeId
      *                  dataTypeName
      *                  isHighDimensional
-     *                  metadataExists
      *
      *                  subset1
      *                  subset2
      * @see dataTab.js
-     * @see ExportService.getHighDimMetaData()
+     * @see ExportService.getHighDimMetaData ( )
      */
-    protected def convertHighDimMetaData( highDimensionalData ) {
+    protected def convertHighDimMetaData(highDimensionalData) {
         // TODO: Support multiple export formats per datatype (e.g. raw data and processed data)
         // See ExportService.getMetaData @ 2e2d53d0cba6f6573bf7636de372b96f25312276 for information
         // on how it was specified previously, as well as on the types of data that were allowed
@@ -259,67 +240,35 @@ class ExportMetadataService {
         highDimensionalData.collect { highDimRow ->
             // Determine the types of files that can be exported for this 
             // datatype
-            Set<HighDimExporter> exporters = highDimExporterRegistry.getExportersForDataType( 
-                    highDimRow.datatype.dataTypeName );
-            
-            // Determine the data platforms that are present for a given subset
-            def platforms = [
-                "subset1": getPlatformsForSubjectSampleMappingList( highDimRow.subset1 ),
-                "subset2": getPlatformsForSubjectSampleMappingList( highDimRow.subset2 )
-            ]
-                
+            Set<HighDimExporter> exporters = highDimExporterRegistry.getExportersForDataType(
+                    highDimRow.datatype.dataTypeName);
+
             [
-                subsetId1: "subset1",
-                subsetId2: "subset2",
-                subsetName1: "Subset 1",
-                subsetName2: "Subset 2",
-                
-                dataTypeId: highDimRow.datatype.dataTypeName,
-                dataTypeName: highDimRow.datatype.dataTypeDescription,
-                isHighDimensional: true,
-                metadataExists: true,
-                
-                subset1: exporters.collect {
-                    [
-                        fileType: "." + it.format,
-                        dataTypeHasCounts: true,
-                        dataFormat: it.description,
-                        fileDataCount: highDimRow.subset1 ? highDimRow.subset1.size() : 0,
-                        platforms: platforms.subset1
+                    subsetId1        : "subset1",
+                    subsetId2        : "subset2",
+                    subsetName1      : "Subset 1",
+                    subsetName2      : "Subset 2",
+
+                    dataTypeId       : highDimRow.datatype.dataTypeName,
+                    dataTypeName     : highDimRow.datatype.dataTypeDescription,
+                    isHighDimensional: true,
+                    subset1          : [
+                            dataTypeHasCounts: true,
+                            exporters        : exporters.collect { [format: it.format, description: it.description] },
+                            patientsNumber   : highDimRow.subset1 ?
+                                    (highDimRow.subset1*.patientInTrialId).unique().size() : 0,
+                            ontologyTermKeys : highDimRow.subset1_hd_terms
+                    ],
+
+                    subset2          : [
+                            dataTypeHasCounts: true,
+                            exporters        : exporters.collect { [format: it.format, description: it.description] },
+                            patientsNumber   : highDimRow.subset2 ?
+                                    (highDimRow.subset2*.patientInTrialId).unique().size() : 0,
+                            ontologyTermKeys : highDimRow.subset2_hd_terms
                     ]
-                },
-                subset2: exporters.collect {
-                    [
-                        fileType: "." + it.format,
-                        dataTypeHasCounts: true,
-                        dataFormat: it.description,
-                        fileDataCount: highDimRow.subset2 ? highDimRow.subset2.size() : 0,
-                        platforms: platforms.subset2
-                    ]
-                }
             ]
         }
     }
-    
-    /**
-     * Returns a list of unique platforms for a given set of subject sample mappings 
-     * @param assayList
-     * @return  A list of unique platforms, each being a map with the keys
-     *              gplId
-     *              gplTitle
-     *              fileDataCount
-     */
-    private getPlatformsForSubjectSampleMappingList( Collection<Assay> assayList ) {
-        if( !assayList ) 
-            return []
-            
-        return assayList*.platform.unique().collect { platform ->
-            [
-                gplId: platform.id,
-                gplTitle: platform.title,
-                fileDataCount: assayList.findAll { assay -> assay.platform.id == platform.id }.size()
-            ]
-        }
-    }    
 
 }

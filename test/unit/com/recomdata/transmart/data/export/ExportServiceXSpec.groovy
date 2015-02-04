@@ -1,11 +1,9 @@
 package com.recomdata.transmart.data.export
 
 import grails.converters.JSON
-import grails.test.mixin.*
+import grails.test.mixin.TestMixin
 import grails.test.mixin.services.ServiceUnitTestMixin
-import grails.test.mixin.support.*
 import grails.test.mixin.web.ControllerUnitTestMixin
-import org.junit.*
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import spock.lang.Specification
 
@@ -35,34 +33,29 @@ class ExportServiceXSpec extends Specification {
         given: "a set of selected checkboxes"
         def selectedCheckBoxList = [
                 [
-                        subset: 'subset1',
+                        subset    : 'subset1',
                         dataTypeId: 'mrna',
-                        fileType: '.TXT',
-                        gplId: 'GPL570',
+                        fileType  : 'TXT',
                 ],
                 [
-                        subset: 'subset1',
+                        subset    : 'subset1',
                         dataTypeId: 'mrna',
-                        fileType: '.TXT',
-                        gplId: 'GPL571',
+                        fileType  : 'TXT',
                 ],
                 [
-                        subset: 'subset1',
+                        subset    : 'subset1',
                         dataTypeId: 'mrna',
-                        fileType: '.XLS',
-                        gplId: 'GPL570',
+                        fileType  : 'XLS',
                 ],
                 [
-                        subset: 'subset1',
+                        subset    : 'subset1',
                         dataTypeId: 'mirna',
-                        fileType: '.TXT',
-                        gplId: 'GPL570',
+                        fileType  : 'TXT',
                 ],
                 [
-                        subset: 'subset2',
+                        subset    : 'subset2',
                         dataTypeId: 'mrna',
-                        fileType: '.TXT',
-                        gplId: 'GPL570',
+                        fileType  : 'TXT',
                 ],
         ].collect { (it as JSON).toString() }
 
@@ -85,27 +78,14 @@ class ExportServiceXSpec extends Specification {
         formats.subset1.mrna.containsKey("TXT")
         formats.subset1.mrna.containsKey("XLS")
 
-        formats.subset1.mrna.TXT.size() == 2
-        formats.subset1.mrna.TXT.contains("GPL570")
-        formats.subset1.mrna.TXT.contains("GPL571")
-
-        formats.subset1.mrna.XLS.size() == 1
-        formats.subset1.mrna.XLS.contains("GPL570")
-
         formats.subset1.mirna.keySet().size() == 1
         formats.subset1.mirna.containsKey("TXT")
-
-        formats.subset1.mirna.TXT.size() == 1
-        formats.subset1.mirna.TXT.contains("GPL570")
 
         formats.subset2.keySet().size() == 1
         formats.subset2.containsKey("mrna")
 
         formats.subset2.mrna.keySet().size() == 1
         formats.subset2.mrna.containsKey("TXT")
-
-        formats.subset2.mrna.TXT.size() == 1
-        formats.subset2.mrna.TXT.contains("GPL570")
 
     }
 }

@@ -1,24 +1,4 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
-
-
-
+import PatientSampleCollection
 import groovyx.net.http.HTTPBuilder
 import org.jfree.util.Log
 
@@ -33,14 +13,14 @@ class SolrService {
      * @param fieldList "|" separated list of fields.
      * @return
      */
-    def facetSearch(JSONObject, String fieldList) {
+    def facetSearch(JSONObject, fieldMap, coreName) {
         String solrServerUrl = grailsApplication.config.com.recomdata.solr.baseURL
 
         //Get the solr Query based on the JSON object.
-        def solrQuery = generateSolrQueryFromJson(JSONObject)
+        def solrQuery = generateSolrQueryFromJson(JSONObject, false)
 
         //If the query is empty, change it to be 'return all results' in Solr language.
-        if (solrQuery == "()") solrQuery = "*:*";
+        if (solrQuery == "(())") solrQuery = "*:*";
 
         //Create the http object we will use to retrieve the faceted counts.
         def http = new HTTPBuilder(solrServerUrl)
@@ -48,16 +28,16 @@ class SolrService {
         //This holds the map till we can get it into the parent map.
         def tempMap = [:]
 
-        //This will be a map of {termType: {term (count)}} that we pass to the view.
+        //This will be a map of {termType: {term : (count)}} that we pass to the view.
         def termMap = [:]
 
         //For each of the categories, run a faceted search.
-        fieldList.tokenize("|").each()
+        fieldMap.columns.each()
                 {
                     currentTerm ->
 
                         //Facet the search on the field specified in the parameter.
-                        def html = http.get(path: '/solr/select/', query: ['q': solrQuery, 'facet': 'true', 'facet.field': currentTerm, 'facet.sort': 'index'])
+                        def html = http.get(path: '/solr/' + coreName + '/select/', query: ['q': solrQuery, 'facet': 'true', 'facet.field': currentTerm.dataIndex, 'facet.sort': 'index'])
                                 {
                                     resp, xml ->
 
@@ -82,7 +62,7 @@ class SolrService {
                                                                                             innermostlst ->
 
                                                                                                 //Find the node whose "name" is our term.
-                                                                                                if (innermostlst.@name == currentTerm) {
+                                                                                                if (innermostlst.@name == currentTerm.dataIndex) {
                                                                                                     innermostlst.int.each
                                                                                                             {
                                                                                                                 termItem ->
@@ -99,7 +79,9 @@ class SolrService {
                                 }
 
                         //The term hash goes under the current category.
-                        termMap[currentTerm] = tempMap
+                        termMap[currentTerm.dataIndex] = [:]
+                        termMap[currentTerm.dataIndex].counts = tempMap
+                        termMap[currentTerm.dataIndex].displayName = currentTerm.header
 
                         //Reinitialize the temporary map variable.
                         tempMap = [:]
@@ -150,29 +132,29 @@ class SolrService {
      * @param maxRows Solr requires that we specify the max rows we want returned. We should feed in a number much higher than the number of rows we ever expect.
      * @return
      */
-    def pullResultsBasedOnJson(JSONObject, String resultColumns) {
+    def pullResultsBasedOnJson(JSONObject, String resultColumns, Boolean enforceEmpty, coreName) {
         //Get the solr Query based on the JSON object.
         def solrQuery = ""
 
         //If we have the detailed records JSON, we use a different method to parse the JSON.
         if (JSONObject.Records) {
-            solrQuery = generateSolrQueryFromJsonDetailed(JSONObject)
+            solrQuery = generateSolrQueryFromJsonDetailed(JSONObject, enforceEmpty)
         } else {
-            solrQuery = generateSolrQueryFromJson(JSONObject)
+            solrQuery = generateSolrQueryFromJson(JSONObject, enforceEmpty)
         }
-        println(solrQuery)
+
         //Get the max rows and URL from the config file.
         String solrMaxRows = grailsApplication.config.com.recomdata.solr.maxRows
         String solrServerUrl = grailsApplication.config.com.recomdata.solr.baseURL
 
         //If the query is empty, abort here.
-        if (solrQuery == "()") return ['results': []];
+        if (solrQuery == "(())") return ['results': []];
 
         //Construct the rest of the query based on the columns we want back and the number of rows we want.
         solrQuery += "&fl=" + resultColumns + "&sort=id desc&rows=" + solrMaxRows
 
         //Throw our query into the debugger log in the event we ever need to analyze it.
-        log.debug("Printing solr Query to be run")
+        log.debug("pullResultsBasedOnJson - Printing solr Query to be run")
         log.debug(solrQuery)
 
         //Create the http object we will use to retrieve the data that meets our criteria.
@@ -184,7 +166,7 @@ class SolrService {
         def resultsHash = [:]
 
         //Find the results based on the solr query.
-        def html = http.get(path: '/solr/select/', query: ['q': solrQuery])
+        def html = http.get(path: '/solr/' + coreName + '/select/', query: ['q': solrQuery])
                 {
                     resp, xml ->
 
@@ -256,7 +238,7 @@ class SolrService {
      * @param termPrefix We search for values like this prefix.
      * @return We want the hash to look like ['Pathology:['SomeDisease':22,'SomeOtherDisease':33],'Tissue':['Skin':32]]
      */
-    def suggestTerms(String fieldList, String termPrefix, String numberOfSuggestions) {
+    def suggestTerms(String fieldList, String termPrefix, String numberOfSuggestions, coreName) {
         //Get the URL from the config file.
         String solrServerUrl = grailsApplication.config.com.recomdata.solr.baseURL
 
@@ -265,50 +247,52 @@ class SolrService {
 
         def resultMapList = ['rows': []]
 
-        //Facet the search on the field specified in the parameter.
-        def html = http.get(path: '/solr/terms', query: ['terms.regex': termPrefix.toString() + ".*", 'terms.fl': fieldList.tokenize(","), 'rows': numberOfSuggestions, 'terms.regex.flag': 'case_insensitive'])
-                {
-                    resp, xml ->
+        if (termPrefix != "") {
+            //Facet the search on the field specified in the parameter.
+            def html = http.get(path: '/solr/' + coreName + '/suggest', query: ['spellcheck.q': termPrefix, 'spellcheck.count': '10'])
+                    {
+                        resp, xml ->
 
-                        //We should probably do something with the status.
-                        if (resp.status != "200") Log.error("Response status from solr web service call: ${resp.status}")
+                            //We should probably do something with the status.
+                            if (resp.status != "200") Log.error("Response status from solr web service call: ${resp.status}")
 
-                        //For each lst we look for the "terms" one.
-                        xml.lst.each
-                                {
-                                    outerlst ->
+                            //For each lst we look for the "terms" one.
+                            xml.lst.each
+                                    {
+                                        outerlst ->
 
-                                        //If we are on the terms one, we cycle through the children.
-                                        if (outerlst.@name == 'terms') {
-                                            //For each of these lst tags with int children we need to create an entry in the result hash.
-                                            outerlst.lst.each
-                                                    {
-                                                        innerlst ->
+                                            //If we are on the terms one, we cycle through the children.
+                                            if (outerlst?.@name == 'spellcheck') {
+                                                //For each of these lst tags with int children we need to create an entry in the result hash.
+                                                outerlst.lst.lst.arr.each
+                                                        {
+                                                            innerlst ->
 
-                                                            //If this lst has children, add an entry to the result hash.
-                                                            innerlst.int.each
-                                                                    {
-                                                                        termItem ->
+                                                                //If this lst has children, add an entry to the result hash.
+                                                                innerlst.str.each
+                                                                        {
+                                                                            termItem ->
 
-                                                                            //Create a temporary hash to hold the mapped results.
-                                                                            def tempMap = [:]
+                                                                                //Create a temporary hash to hold the mapped results.
+                                                                                def tempMap = [:]
 
-                                                                            //To the temp map add entries for the category and display.
-                                                                            tempMap['id'] = innerlst.@name.toString() + "|" + termItem.@name.toString()
-                                                                            tempMap['source'] = ""
-                                                                            tempMap['keyword'] = termItem.@name.toString() + " (" + termItem.toString() + ")"
-                                                                            tempMap['synonyms'] = ""
-                                                                            tempMap['category'] = innerlst.@name.toString()
-                                                                            tempMap['display'] = innerlst.@name.toString().replace("_", " ")
+                                                                                //To the temp map add entries for the category and display.
+                                                                                tempMap['id'] = "STR|" + termItem.toString()
+                                                                                tempMap['source'] = ""
+                                                                                tempMap['keyword'] = termItem.toString()
+                                                                                tempMap['synonyms'] = ""
+                                                                                tempMap['category'] = "STR"
+                                                                                tempMap['display'] = "Term"
 
-                                                                            //Add the mapping to our master map.
-                                                                            resultMapList['rows'].add(tempMap)
-                                                                    }
+                                                                                //Add the mapping to our master map.
+                                                                                resultMapList['rows'].add(tempMap)
+                                                                        }
 
-                                                    }
-                                        }
-                                }
-                }
+                                                        }
+                                            }
+                                    }
+                    }
+        }
 
         return resultMapList
 
@@ -320,7 +304,7 @@ class SolrService {
      * @param JSONObject An object that looks like {"SearchJSON":{"Pathology":["Liver, Cancer of","Colorectal Cancer"]}}* @param maxRows Solr requires that we specify the max rows we want returned. We should feed in a number much higher than the number of rows we ever expect.
      * @return
      */
-    def getIDList(JSONObject) {
+    def getIDList(JSONObject, coreName) {
         //Get the max rows and URL from the config file.
         String solrMaxRows = grailsApplication.config.com.recomdata.solr.maxRows
         String solrServerUrl = grailsApplication.config.com.recomdata.solr.baseURL
@@ -330,13 +314,13 @@ class SolrService {
 
         //If we have the detailed records JSON, we use a different method to parse the JSON.
         if (JSONObject.Records) {
-            solrQuery = generateSolrQueryFromJsonDetailed(JSONObject)
+            solrQuery = generateSolrQueryFromJsonDetailed(JSONObject, false)
         } else {
-            solrQuery = generateSolrQueryFromJson(JSONObject)
+            solrQuery = generateSolrQueryFromJson(JSONObject, false)
         }
 
         //If the query is empty, abort here.
-        if (solrQuery == "()") return []
+        if (solrQuery == "(())") return []
 
         //Construct the rest of the query based on the columns we want back and the number of rows we want.
         solrQuery += "&fl=id&rows=" + solrMaxRows
@@ -348,11 +332,11 @@ class SolrService {
         def IdList = []
 
         //Throw our query into the debugger log in the event we ever need to analyze it.
-        log.debug("Printing solr Query to be run")
+        log.debug("getIDList - Printing solr Query to be run")
         log.debug(solrQuery)
 
         //Find the results based on the JSON object.
-        def html = http.get(path: '/solr/select/', query: ['q': solrQuery])
+        def html = http.get(path: '/solr/' + coreName + '/select/', query: ['q': solrQuery])
                 {
                     resp, xml ->
 
@@ -379,7 +363,7 @@ class SolrService {
     /**
      * Gets a list of all the available fields from Solr.
      */
-    def getCategoryList(String fieldExclusionList) {
+    def getCategoryList(String fieldExclusionList, coreName) {
         //Get the URL from the config file.
         String solrServerUrl = grailsApplication.config.com.recomdata.solr.baseURL
 
@@ -391,28 +375,18 @@ class SolrService {
         System.out.println(solrServerUrl);
         //System.err.println(solrServerUrl)
         //The luke request handler returns schema data.
-        def html = http.get(path: 'admin/luke/')
+        def html = http.get(path: '/solr/' + coreName + '/schema?wt=xml')
                 {
                     resp, xml ->
 
                         //For each lst we look for the "fields" node.
-                        xml.lst.each
+                        xml.schema.fields.each
                                 {
-                                    outerlst ->
-
-                                        //If we are on the "fields" node, we cycle through the children.
-                                        if (outerlst.@name == 'fields') {
-                                            //For each of these lst tags we grab the name attribute which represents a field name.
-                                            outerlst.lst.each
-                                                    {
-                                                        innerlst ->
-
-                                                            //We don't want to return the fields in the exclusion list.
-                                                            if (!(fieldExclusionList.contains(innerlst.@name.toString() + "|"))) {
-                                                                //Add the mapping to our master map.
-                                                                resultList.add(innerlst.@name.toString())
-                                                            }
-                                                    }
+                                    xmlField ->
+                                        //We don't want to return the fields in the exclusion list.
+                                        if (!(fieldExclusionList.contains(xmlField.name.toString() + "|"))) {
+                                            //Add the mapping to our master map.
+                                            resultList.add(xmlField.name.toString())
                                         }
                                 }
 
@@ -426,9 +400,12 @@ class SolrService {
      * @param JSONObject
      * @return
      */
-    private String generateSolrQueryFromJson(JSONObject) {
+    private String generateSolrQueryFromJson(JSONObject, enforceEmpty) {
         //Temp string to hold our Solr Query.
-        String solrQuery = "("
+        String solrQuery = "(("
+
+        def allColumnsInGrid;
+        def columnsInQuery = [];
 
         //We need to generate our query using the JSON object.
         JSONObject.each
@@ -436,10 +413,11 @@ class SolrService {
                     category ->
 
                         //Only add to the query if the category has values.
-                        if (category.value.size() > 0 && category.key.toString() != "count" && category.key.toString() != "GridColumnList") {
+                        if (category.value.size() > 0 && category.key.toString() != "count" && !category.key.toString().startsWith("GridColumnList") && !category.key.toString().startsWith("result_instance_id")) {
+                            columnsInQuery.push(category.key)
 
                             //We need to AND the groupings of categories together.
-                            if (solrQuery != "(") solrQuery += ") AND ("
+                            if (solrQuery != "((") solrQuery += ") AND ("
 
                             //This will tell us if we need to add an "OR" to the query.
                             boolean doWeNeedOr = false
@@ -462,11 +440,28 @@ class SolrService {
 
                                             doWeNeedOr = true
                                     }
+                        } else if (category.key.toString().startsWith("GridColumnList")) {
+                            allColumnsInGrid = category.value;
                         }
                 }
 
         //Close the solrQuery.
-        solrQuery += ")"
+        solrQuery += "))"
+
+        //After we've created the string we'll loop through the list of columns in the grid and see if we need to enforce empty values for columns not contained in the search object.
+        if (enforceEmpty) {
+            allColumnsInGrid[0].each {
+                currentColumn ->
+
+                    if (!columnsInQuery.contains(currentColumn) && currentColumn.toString() != "count") {
+                        solrQuery += " AND -$currentColumn:[* TO *] "
+                    }
+            }
+        }
+
+        if (JSONObject != "" && JSONObject.result_instance_id) {
+            solrQuery = idListForSampleSpecificQuery(solrQuery, PatientSampleCollection.findAllByResultInstanceId(JSONObject.result_instance_id)*.id)
+        }
 
         return solrQuery
 
@@ -477,19 +472,29 @@ class SolrService {
      * @param JSONObject This should look like "Records":[{"Pathology":"Rheumatoid Arthritis","Tissue":"Synovial Membrane","DataSet":"GSE13837","DataType":"Gene Expression","Source_Organism":"Homo Sapiens","Sample_Treatment":"Tumor Necrosis Factor","Subject_Treatment":"Not Applicable","BioBank":"No","Timepoint":"Hour 0","count":3}]
      * @return
      */
-    private String generateSolrQueryFromJsonDetailed(JSONObject) {
+    private String generateSolrQueryFromJsonDetailed(JSONObject, enforceEmpty) {
+        def allColumnsInGrid;
+        def columnsInQuery;
+
         //Temp string to hold our Solr Query.
-        String solrQuery = "("
+        String solrQuery = "(("
+
+        if (JSONObject.GridColumnList) {
+            allColumnsInGrid = JSONObject.GridColumnList;
+        }
 
         //We need to generate our query using the JSON object.
         JSONObject.Records.each
                 {
                     record ->
 
-                        //We need to OR the groupings of records together.
-                        if (solrQuery != "(") solrQuery += ") OR ("
+                        allColumnsInGrid;
+                        columnsInQuery = [];
 
-                        //This will tell us if we need to add an "AND" to the query.
+                        //We need to OR the groupings of records together.
+                        if (solrQuery != "((") solrQuery += ") OR ("
+
+                        //This will tell us if we need to add an "AND" to the solr query.
                         boolean doWeNeedAnd = false
 
                         //Each record has an entry for all the category attributes.
@@ -498,7 +503,8 @@ class SolrService {
                                     category ->
 
                                         //Only add to the query if the category has values.
-                                        if (category.value.size() > 0 && category.key.toString() != "count") {
+                                        if (category.value.size() > 0 && category.key.toString() != "count" && !category.key.toString().startsWith("GridColumnList") && !category.key.toString().startsWith("result_instance_id")) {
+                                            columnsInQuery.push(category.key)
 
                                             //If the query is not empty we need to add an "AND" clause.
                                             if (doWeNeedAnd) solrQuery += " AND "
@@ -515,17 +521,50 @@ class SolrService {
 
                                                             //For each category item we add something to the filter
                                                             solrQuery += category.key.toString() + ":\"" + categoryValue + "\""
-
                                                     }
 
                                             //Now that we have one category in the set, we need to add an AND in the future.
                                             doWeNeedAnd = true
                                         }
+
                                 }
+
+                        //After we've created the string we'll loop through the list of columns in the grid and see if we need to enforce empty values for columns not contained in the search object.
+                        if (enforceEmpty && allColumnsInGrid) {
+                            allColumnsInGrid.each {
+                                currentColumn ->
+
+                                    if (!columnsInQuery.contains(currentColumn) && currentColumn.toString() != "count") {
+                                        solrQuery += " AND -$currentColumn:[* TO *] "
+                                    }
+                            }
+                        }
                 }
 
         //Close the solrQuery.
-        solrQuery += ")"
+        solrQuery += "))"
+
+        if (JSONObject != "" && JSONObject.result_instance_id) {
+            solrQuery = idListForSampleSpecificQuery(solrQuery, PatientSampleCollection.findAllByResultInstanceId(JSONObject.result_instance_id)*.id)
+        }
+
+        return solrQuery
+
+    }
+
+    private idListForSampleSpecificQuery(solrQuery, idValuesForSpecificSampleQuery) {
+        if (idValuesForSpecificSampleQuery.size() == 0) {
+            solrQuery = " id:(0) "
+        } else {
+            if (solrQuery == "(())") {
+                solrQuery = " id:("
+            } else {
+                solrQuery += " AND id:("
+            }
+
+            solrQuery += idValuesForSpecificSampleQuery.join(" OR ")
+            solrQuery += ")"
+        }
 
         return solrQuery
 
@@ -572,5 +611,64 @@ class SolrService {
 
         return result
     }
+
+
+    def getFacetCountForField(columnToRetrieve, resultInstanceId, coreName) {
+        String solrServerUrl = grailsApplication.config.com.recomdata.solr.baseURL
+
+        def http = new HTTPBuilder(solrServerUrl)
+
+        def sampleIds = PatientSampleCollection.findAllByResultInstanceId(resultInstanceId)*.id
+        def itemCounter = 0
+
+        if (sampleIds.size() > 0) {
+            def solrQuery = "id:(" + sampleIds.join(" OR ") + ")"
+
+            log.debug("getFacetMapForField - ${columnToRetrieve} - Printing solr Query to be run")
+            log.debug(solrQuery)
+
+            //Facet the search on the field specified in the parameter.
+            def html = http.get(path: '/solr/' + coreName + '/select/', query: ['q': solrQuery, 'facet': 'true', 'rows': '0', 'facet.field': columnToRetrieve, 'facet.limit': '-1', 'facet.mincount': '1'])
+                    {
+                        resp, xml ->
+
+                            //We should probably do something with the status.
+                            if (resp.status != "200") Log.debug("Response status from solr web service call: ${resp.status}")
+
+                            //Loop through all the list items to find the one for "facet_counts".
+                            xml.lst.each
+                                    {
+                                        outerlst ->
+                                            //We only want the fact_counts node.
+                                            if (outerlst.@name == 'facet_counts') {
+                                                //Under this we only want the facet_fields node.
+                                                outerlst.lst.each
+                                                        {
+                                                            innerlst ->
+
+                                                                if (innerlst.@name == 'facet_fields') {
+                                                                    innerlst.lst.each
+                                                                            {
+                                                                                innermostItem ->
+
+                                                                                    innermostItem.int.each {
+                                                                                        countValue ->
+
+                                                                                            if (countValue.toString() != "0") {
+                                                                                                itemCounter += 1
+                                                                                            }
+                                                                                    }
+                                                                            }
+                                                                }
+                                                        }
+                                            }
+                                    }
+                    }
+        }
+
+        return itemCounter
+
+    }
+
 
 }

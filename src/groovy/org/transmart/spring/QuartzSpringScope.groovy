@@ -36,7 +36,7 @@ class QuartzSpringScope implements Scope {
         throw new IllegalStateException("No bean named '$name' " +
                 "has bean submitted to this scope. This scope does " +
                 "not create beans")
-     }
+    }
 
     @Override
     Object remove(String name) {

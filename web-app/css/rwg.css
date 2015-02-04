@@ -23,7 +23,6 @@ body {
 
 #sidebar {
 	float: left;
-	margin-left: 4px;
 }
 
 #main {
@@ -37,7 +36,6 @@ body {
 }
 
 #results-div{
-	margin-bottom:20px;
 	padding: 0px 8px 0px 0px;
 }
 
@@ -1023,11 +1021,26 @@ select.multiselect {
     margin: 4px 0 4px 0;
 }
 
-.foldericon.add { border: none; background-color: none;  background-image: url('../images/exportfile.png'); }
-.foldericon.delete { border: none; background-color: none;  background-image: url('../images/bin_closed.png'); background-position: 0px 50%}
-.foldericon.addall { border: none; background-color: none;  background-image: url('../images/exportfolder.png'); }
-.foldericon.view {  border: none; background-color: none; background-image: url('../images/information8.png'); }
-.foldericon.viewfile {  border: none; background-color: none; background-image: url('../images/information8.png'); }
+.foldericon.add {
+    border: none;
+    background: transparent url('../images/exportfile.png');
+}
+.foldericon.delete {
+    border: none;
+    background: transparent url('../images/bin_closed.png') 0px 50%;
+}
+.foldericon.addall {
+    border: none;
+    background: transparent url('../images/exportfolder.png');
+}
+.foldericon.view {
+    border: none;
+    background: transparent url('../images/information8.png');
+}
+.foldericon.viewfile {
+    border: none;
+    background: transparent url('../images/information8.png');
+}
 
 /* Accordion/other UI overrides */
 
@@ -1035,7 +1048,6 @@ select.multiselect {
 	margin-top: 16px;
 	border-radius: 8px;
 	border: #0000FF;
-	width: 290px;
 	margin-right: 10px;
 	
 }

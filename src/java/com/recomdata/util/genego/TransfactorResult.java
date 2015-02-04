@@ -1,22 +1,5 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
+
+
 
 /**
  * TransfactorResult.java
@@ -27,7 +10,7 @@
 
 package com.recomdata.util.genego;
 
-public class TransfactorResult  implements java.io.Serializable {
+public class TransfactorResult implements java.io.Serializable {
     private java.lang.String transfac;
 
     private java.lang.String target;
@@ -40,20 +23,20 @@ public class TransfactorResult  implements java.io.Serializable {
     }
 
     public TransfactorResult(
-           java.lang.String transfac,
-           java.lang.String target,
-           java.lang.String effect,
-           java.lang.String[] pubmeds) {
-           this.transfac = transfac;
-           this.target = target;
-           this.effect = effect;
-           this.pubmeds = pubmeds;
+            java.lang.String transfac,
+            java.lang.String target,
+            java.lang.String effect,
+            java.lang.String[] pubmeds) {
+        this.transfac = transfac;
+        this.target = target;
+        this.effect = effect;
+        this.pubmeds = pubmeds;
     }
 
 
     /**
      * Gets the transfac value for this TransfactorResult.
-     * 
+     *
      * @return transfac
      */
     public java.lang.String getTransfac() {
@@ -63,7 +46,7 @@ public class TransfactorResult  implements java.io.Serializable {
 
     /**
      * Sets the transfac value for this TransfactorResult.
-     * 
+     *
      * @param transfac
      */
     public void setTransfac(java.lang.String transfac) {
@@ -73,7 +56,7 @@ public class TransfactorResult  implements java.io.Serializable {
 
     /**
      * Gets the target value for this TransfactorResult.
-     * 
+     *
      * @return target
      */
     public java.lang.String getTarget() {
@@ -83,7 +66,7 @@ public class TransfactorResult  implements java.io.Serializable {
 
     /**
      * Sets the target value for this TransfactorResult.
-     * 
+     *
      * @param target
      */
     public void setTarget(java.lang.String target) {
@@ -93,7 +76,7 @@ public class TransfactorResult  implements java.io.Serializable {
 
     /**
      * Gets the effect value for this TransfactorResult.
-     * 
+     *
      * @return effect
      */
     public java.lang.String getEffect() {
@@ -103,7 +86,7 @@ public class TransfactorResult  implements java.io.Serializable {
 
     /**
      * Sets the effect value for this TransfactorResult.
-     * 
+     *
      * @param effect
      */
     public void setEffect(java.lang.String effect) {
@@ -113,7 +96,7 @@ public class TransfactorResult  implements java.io.Serializable {
 
     /**
      * Gets the pubmeds value for this TransfactorResult.
-     * 
+     *
      * @return pubmeds
      */
     public java.lang.String[] getPubmeds() {
@@ -123,7 +106,7 @@ public class TransfactorResult  implements java.io.Serializable {
 
     /**
      * Sets the pubmeds value for this TransfactorResult.
-     * 
+     *
      * @param pubmeds
      */
     public void setPubmeds(java.lang.String[] pubmeds) {
@@ -131,6 +114,7 @@ public class TransfactorResult  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof TransfactorResult)) return false;
         TransfactorResult other = (TransfactorResult) obj;
@@ -141,24 +125,25 @@ public class TransfactorResult  implements java.io.Serializable {
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.transfac==null && other.getTransfac()==null) || 
-             (this.transfac!=null &&
-              this.transfac.equals(other.getTransfac()))) &&
-            ((this.target==null && other.getTarget()==null) || 
-             (this.target!=null &&
-              this.target.equals(other.getTarget()))) &&
-            ((this.effect==null && other.getEffect()==null) || 
-             (this.effect!=null &&
-              this.effect.equals(other.getEffect()))) &&
-            ((this.pubmeds==null && other.getPubmeds()==null) || 
-             (this.pubmeds!=null &&
-              java.util.Arrays.equals(this.pubmeds, other.getPubmeds())));
+        _equals = true &&
+                ((this.transfac == null && other.getTransfac() == null) ||
+                        (this.transfac != null &&
+                                this.transfac.equals(other.getTransfac()))) &&
+                ((this.target == null && other.getTarget() == null) ||
+                        (this.target != null &&
+                                this.target.equals(other.getTarget()))) &&
+                ((this.effect == null && other.getEffect() == null) ||
+                        (this.effect != null &&
+                                this.effect.equals(other.getEffect()))) &&
+                ((this.pubmeds == null && other.getPubmeds() == null) ||
+                        (this.pubmeds != null &&
+                                java.util.Arrays.equals(this.pubmeds, other.getPubmeds())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -175,12 +160,12 @@ public class TransfactorResult  implements java.io.Serializable {
             _hashCode += getEffect().hashCode();
         }
         if (getPubmeds() != null) {
-            for (int i=0;
-                 i<java.lang.reflect.Array.getLength(getPubmeds());
+            for (int i = 0;
+                 i < java.lang.reflect.Array.getLength(getPubmeds());
                  i++) {
                 java.lang.Object obj = java.lang.reflect.Array.get(getPubmeds(), i);
                 if (obj != null &&
-                    !obj.getClass().isArray()) {
+                        !obj.getClass().isArray()) {
                     _hashCode += obj.hashCode();
                 }
             }
@@ -191,7 +176,7 @@ public class TransfactorResult  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(TransfactorResult.class, true);
+            new org.apache.axis.description.TypeDesc(TransfactorResult.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("SOAP/MetaCore", "TransfactorResult"));
@@ -232,24 +217,24 @@ public class TransfactorResult  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
 }

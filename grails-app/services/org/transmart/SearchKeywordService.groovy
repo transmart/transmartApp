@@ -3,29 +3,10 @@ package org.transmart
 import org.transmart.biomart.BioAssayPlatform
 import org.transmart.biomart.BioDataExternalCode
 import org.transmart.biomart.ConceptCode
-import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.GeneSignature
 import org.transmart.searchapp.SearchKeyword
 import org.transmart.searchapp.SearchKeywordTerm
 
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
- *
- *
- ******************************************************************/
 /**
  * @author $Author: mmcduffie $
  * $Id: SearchKeywordService.groovy 9178 2011-08-24 13:50:06Z mmcduffie $
@@ -147,7 +128,7 @@ public class SearchKeywordService {
     def findSearchKeywords(category, term, max) {
         log.info "Finding matches for ${term} in ${category}"
 
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
 
         def c = SearchKeywordTerm.createCriteria()
         def results = c.list {
@@ -155,16 +136,14 @@ public class SearchKeywordService {
                 like("keywordTerm", term.toUpperCase() + '%')
             }
 
-
             if ("GENE_OR_SNP".equals(category)) {
-				searchKeyword {
-					or {
-							eq("dataCategory", "GENE")
-							eq("dataCategory", "SNP")
-					}
-				}
-            }
-            else if ("ALL".compareToIgnoreCase(category) != 0) {
+                searchKeyword {
+                    or {
+                        eq("dataCategory", "GENE")
+                        eq("dataCategory", "SNP")
+                    }
+                }
+            } else if ("ALL".compareToIgnoreCase(category) != 0) {
                 searchKeyword {
                     eq("dataCategory", category.toUpperCase())
                 }
@@ -207,11 +186,11 @@ public class SearchKeywordService {
             m.put("category", sk.searchKeyword.displayDataCategory)
             m.put("categoryId", sk.searchKeyword.dataCategory)
 
-			if ("GENE_OR_SNP".equals(category) || ("SNP".equals(category))) {
-				m.put("id", sk.searchKeyword.id)
-			} else {
-				m.put("id", sk.searchKeyword.uniqueId)
-			}
+            if ("GENE_OR_SNP".equals(category) || ("SNP".equals(category))) {
+                m.put("id", sk.searchKeyword.id)
+            } else {
+                m.put("id", sk.searchKeyword.uniqueId)
+            }
 
             if ("TEXT".compareToIgnoreCase(sk.searchKeyword.dataCategory) != 0) {
                 def synonyms = org.transmart.biomart.BioDataExternalCode.findAllWhere(bioDataId: sk.searchKeyword.bioDataId, codeType: "SYNONYM")
@@ -307,7 +286,7 @@ public class SearchKeywordService {
     def findSearchKeywords(category, term) {
         log.info "Finding matches for ${term} in ${category}"
 
-        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        def user = springSecurityService.getPrincipal()
 
         def c = SearchKeywordTerm.createCriteria()
         def results = c.list {

@@ -61,8 +61,8 @@ class DataExportControllerTests {
         List<PatientDimension> patients = createTestPatients(3, -100, trialName)
         List<PatientTrialCoreDb> patientTrials = createPatientTrialLinks(patients, trialName)
         new I2b2Data(
-                trialName:     trialName,
-                patients:      patients,
+                trialName: trialName,
+                patients: patients,
                 patientTrials: patientTrials)
     }
 
@@ -90,11 +90,13 @@ class DataExportControllerTests {
                 contains(allOf(
                         hasEntry('dataTypeId', 'CLINICAL'),
                         hasEntry('isHighDimensional', false),
-                        hasEntry(is('subset1'), contains(allOf(
-                                hasEntry('fileType', '.TXT'),
-                                hasEntry('dataFormat', 'Data'),
-                                hasEntry(is('fileDataCount'), greaterThanOrEqualTo(3)),
-                        ))))))
+                        hasEntry(equalTo('subset1'), allOf(
+                                hasEntry(equalTo('exporters'), contains(allOf(
+                                        hasEntry('format', 'TSV'),
+                                        hasEntry('description', 'Tab separated file.'),
+                                ))),
+                                hasEntry(equalTo('patientsNumber'), equalTo(3)),
+                        )))))
     }
 
     @Test
@@ -163,11 +165,11 @@ class DataExportControllerTests {
                     jobName
             dataExportController.response.reset()
             [
-                    result_instance_id1: study2QueryResult.id as String,
-                    analysis: 'DataExport',
-                    jobName: jobName,
+                    result_instance_id1        : study2QueryResult.id as String,
+                    analysis                   : 'DataExport',
+                    jobName                    : jobName,
                     selectedSubsetDataTypeFiles: '{subset: subset1, dataTypeId: CLINICAL, fileType: .TXT}',
-                    selection: '{"subset1":{"clinical":{"selector":[]}}}',
+                    selection                  : '{"subset1":{"clinical":{"selector":[]}}}',
             ].each { k, v -> dataExportController.params[k] = v }
             dataExportController.runDataExport()
         }

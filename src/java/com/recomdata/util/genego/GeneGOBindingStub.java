@@ -1,22 +1,5 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
+
+
 
 /**
  * GeneGOBindingStub.java
@@ -33,7 +16,7 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
     private java.util.Vector cachedSerFactories = new java.util.Vector();
     private java.util.Vector cachedDeserFactories = new java.util.Vector();
 
-    static org.apache.axis.description.OperationDesc [] _operations;
+    static org.apache.axis.description.OperationDesc[] _operations;
 
     static {
         _operations = new org.apache.axis.description.OperationDesc[28];
@@ -42,7 +25,7 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
         _initOperationDesc3();
     }
 
-    private static void _initOperationDesc1(){
+    private static void _initOperationDesc1() {
         org.apache.axis.description.OperationDesc oper;
         org.apache.axis.description.ParameterDesc param;
         oper = new org.apache.axis.description.OperationDesc();
@@ -181,7 +164,7 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
     }
 
-    private static void _initOperationDesc2(){
+    private static void _initOperationDesc2() {
         org.apache.axis.description.OperationDesc oper;
         org.apache.axis.description.ParameterDesc param;
         oper = new org.apache.axis.description.OperationDesc();
@@ -312,7 +295,7 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
     }
 
-    private static void _initOperationDesc3(){
+    private static void _initOperationDesc3() {
         org.apache.axis.description.OperationDesc oper;
         org.apache.axis.description.ParameterDesc param;
         oper = new org.apache.axis.description.OperationDesc();
@@ -436,12 +419,12 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
     }
 
     public GeneGOBindingStub() throws org.apache.axis.AxisFault {
-         this(null);
+        this(null);
     }
 
     public GeneGOBindingStub(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
-         this(service);
-         super.cachedEndpoint = endpointURL;
+        this(service);
+        super.cachedEndpoint = endpointURL;
     }
 
     public GeneGOBindingStub(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {
@@ -450,204 +433,204 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
         } else {
             super.service = service;
         }
-        ((org.apache.axis.client.Service)super.service).setTypeMappingVersion("1.2");
-            java.lang.Class cls;
-            javax.xml.namespace.QName qName;
-            javax.xml.namespace.QName qName2;
-            java.lang.Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;
-            java.lang.Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;
-            java.lang.Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;
-            java.lang.Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;
-            java.lang.Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;
-            java.lang.Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;
-            java.lang.Class simplesf = org.apache.axis.encoding.ser.SimpleSerializerFactory.class;
-            java.lang.Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
-            java.lang.Class simplelistsf = org.apache.axis.encoding.ser.SimpleListSerializerFactory.class;
-            java.lang.Class simplelistdf = org.apache.axis.encoding.ser.SimpleListDeserializerFactory.class;
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfCompoundResult");
-            cachedSerQNames.add(qName);
-            cls = CompoundResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "CompoundResult");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        ((org.apache.axis.client.Service) super.service).setTypeMappingVersion("1.2");
+        java.lang.Class cls;
+        javax.xml.namespace.QName qName;
+        javax.xml.namespace.QName qName2;
+        java.lang.Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;
+        java.lang.Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;
+        java.lang.Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;
+        java.lang.Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;
+        java.lang.Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;
+        java.lang.Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;
+        java.lang.Class simplesf = org.apache.axis.encoding.ser.SimpleSerializerFactory.class;
+        java.lang.Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
+        java.lang.Class simplelistsf = org.apache.axis.encoding.ser.SimpleListSerializerFactory.class;
+        java.lang.Class simplelistdf = org.apache.axis.encoding.ser.SimpleListDeserializerFactory.class;
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfCompoundResult");
+        cachedSerQNames.add(qName);
+        cls = CompoundResult[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "CompoundResult");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfDrugResult");
-            cachedSerQNames.add(qName);
-            cls = DrugResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "DrugResult");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfDrugResult");
+        cachedSerQNames.add(qName);
+        cls = DrugResult[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "DrugResult");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfExpStruct");
-            cachedSerQNames.add(qName);
-            cls = ExpStruct[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ExpStruct");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfExpStruct");
+        cachedSerQNames.add(qName);
+        cls = ExpStruct[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ExpStruct");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfGeneGoProcessesResult");
-            cachedSerQNames.add(qName);
-            cls = GeneGoProcessesResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "GeneGoProcessesResult");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfGeneGoProcessesResult");
+        cachedSerQNames.add(qName);
+        cls = GeneGoProcessesResult[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "GeneGoProcessesResult");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfInteractionResult");
-            cachedSerQNames.add(qName);
-            cls = InteractionResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "InteractionResult");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfInteractionResult");
+        cachedSerQNames.add(qName);
+        cls = InteractionResult[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "InteractionResult");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfJobResult");
-            cachedSerQNames.add(qName);
-            cls = JobResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "JobResult");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfJobResult");
+        cachedSerQNames.add(qName);
+        cls = JobResult[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "JobResult");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfLicenseResult");
-            cachedSerQNames.add(qName);
-            cls = LicenseResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "LicenseResult");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfLicenseResult");
+        cachedSerQNames.add(qName);
+        cls = LicenseResult[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "LicenseResult");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfMapResult");
-            cachedSerQNames.add(qName);
-            cls = MapResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "MapResult");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfMapResult");
+        cachedSerQNames.add(qName);
+        cls = MapResult[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "MapResult");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfSearchResult");
-            cachedSerQNames.add(qName);
-            cls = SearchResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "SearchResult");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfSearchResult");
+        cachedSerQNames.add(qName);
+        cls = SearchResult[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "SearchResult");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfStoredNetworksListResult");
-            cachedSerQNames.add(qName);
-            cls = StoredNetworksListResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "StoredNetworksListResult");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfStoredNetworksListResult");
+        cachedSerQNames.add(qName);
+        cls = StoredNetworksListResult[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "StoredNetworksListResult");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfString");
-            cachedSerQNames.add(qName);
-            cls = java.lang.String[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfString");
+        cachedSerQNames.add(qName);
+        cls = java.lang.String[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfTransfactorResult");
-            cachedSerQNames.add(qName);
-            cls = TransfactorResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "TransfactorResult");
-            qName2 = null;
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ArrayOfTransfactorResult");
+        cachedSerQNames.add(qName);
+        cls = TransfactorResult[].class;
+        cachedSerClasses.add(cls);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "TransfactorResult");
+        qName2 = null;
+        cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
+        cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "CompoundResult");
-            cachedSerQNames.add(qName);
-            cls = CompoundResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "CompoundResult");
+        cachedSerQNames.add(qName);
+        cls = CompoundResult.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "DrugResult");
-            cachedSerQNames.add(qName);
-            cls = DrugResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "DrugResult");
+        cachedSerQNames.add(qName);
+        cls = DrugResult.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ExpStruct");
-            cachedSerQNames.add(qName);
-            cls = ExpStruct.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "ExpStruct");
+        cachedSerQNames.add(qName);
+        cls = ExpStruct.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "GeneGoProcessesResult");
-            cachedSerQNames.add(qName);
-            cls = GeneGoProcessesResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "GeneGoProcessesResult");
+        cachedSerQNames.add(qName);
+        cls = GeneGoProcessesResult.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "InteractionResult");
-            cachedSerQNames.add(qName);
-            cls = InteractionResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "InteractionResult");
+        cachedSerQNames.add(qName);
+        cls = InteractionResult.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "JobResult");
-            cachedSerQNames.add(qName);
-            cls = JobResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "JobResult");
+        cachedSerQNames.add(qName);
+        cls = JobResult.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "LicenseResult");
-            cachedSerQNames.add(qName);
-            cls = LicenseResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "LicenseResult");
+        cachedSerQNames.add(qName);
+        cls = LicenseResult.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "MapResult");
-            cachedSerQNames.add(qName);
-            cls = MapResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "MapResult");
+        cachedSerQNames.add(qName);
+        cls = MapResult.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "SearchResult");
-            cachedSerQNames.add(qName);
-            cls = SearchResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "SearchResult");
+        cachedSerQNames.add(qName);
+        cls = SearchResult.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "StoredNetworksListResult");
-            cachedSerQNames.add(qName);
-            cls = StoredNetworksListResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "StoredNetworksListResult");
+        cachedSerQNames.add(qName);
+        cls = StoredNetworksListResult.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
-            qName = new javax.xml.namespace.QName("SOAP/MetaCore", "TransfactorResult");
-            cachedSerQNames.add(qName);
-            cls = TransfactorResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
+        qName = new javax.xml.namespace.QName("SOAP/MetaCore", "TransfactorResult");
+        cachedSerQNames.add(qName);
+        cls = TransfactorResult.class;
+        cachedSerClasses.add(cls);
+        cachedSerFactories.add(beansf);
+        cachedDeserFactories.add(beandf);
 
     }
 
@@ -694,24 +677,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
                         java.lang.Object x = cachedSerFactories.get(i);
                         if (x instanceof Class) {
                             java.lang.Class sf = (java.lang.Class)
-                                 cachedSerFactories.get(i);
+                                    cachedSerFactories.get(i);
                             java.lang.Class df = (java.lang.Class)
-                                 cachedDeserFactories.get(i);
+                                    cachedDeserFactories.get(i);
                             _call.registerTypeMapping(cls, qName, sf, df, false);
-                        }
-                        else if (x instanceof javax.xml.rpc.encoding.SerializerFactory) {
+                        } else if (x instanceof javax.xml.rpc.encoding.SerializerFactory) {
                             org.apache.axis.encoding.SerializerFactory sf = (org.apache.axis.encoding.SerializerFactory)
-                                 cachedSerFactories.get(i);
+                                    cachedSerFactories.get(i);
                             org.apache.axis.encoding.DeserializerFactory df = (org.apache.axis.encoding.DeserializerFactory)
-                                 cachedDeserFactories.get(i);
+                                    cachedDeserFactories.get(i);
                             _call.registerTypeMapping(cls, qName, sf, df, false);
                         }
                     }
                 }
             }
             return _call;
-        }
-        catch (java.lang.Throwable _t) {
+        } catch (java.lang.Throwable _t) {
             throw new org.apache.axis.AxisFault("Failure trying to get the Call object", _t);
         }
     }
@@ -729,22 +710,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {login, password});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{login, password});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.String) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (java.lang.String) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public int logout(java.lang.String authKey) throws java.rmi.RemoteException {
@@ -760,22 +741,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Integer) _resp).intValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Integer) org.apache.axis.utils.JavaUtils.convert(_resp, int.class)).intValue();
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return ((java.lang.Integer) _resp).intValue();
+                } catch (java.lang.Exception _exception) {
+                    return ((java.lang.Integer) org.apache.axis.utils.JavaUtils.convert(_resp, int.class)).intValue();
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public java.lang.String getVersion(java.lang.String authKey) throws java.rmi.RemoteException {
@@ -791,22 +772,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.String) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (java.lang.String) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public SearchResult[] doRegulationSearch(java.lang.String authKey, java.lang.String str) throws java.rmi.RemoteException {
@@ -822,22 +803,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, str});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, str});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (SearchResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (SearchResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, SearchResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (SearchResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (SearchResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, SearchResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public JobResult[] getJobs(java.lang.String authKey) throws java.rmi.RemoteException {
@@ -853,22 +834,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (JobResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (JobResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, JobResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (JobResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (JobResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, JobResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public JobResult getJobStatus(java.lang.String authKey, java.lang.String jobID) throws java.rmi.RemoteException {
@@ -884,22 +865,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, jobID});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, jobID});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (JobResult) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (JobResult) org.apache.axis.utils.JavaUtils.convert(_resp, JobResult.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (JobResult) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (JobResult) org.apache.axis.utils.JavaUtils.convert(_resp, JobResult.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public int deleteJob(java.lang.String authKey, java.lang.String jobID) throws java.rmi.RemoteException {
@@ -915,22 +896,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, jobID});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, jobID});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Integer) _resp).intValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Integer) org.apache.axis.utils.JavaUtils.convert(_resp, int.class)).intValue();
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return ((java.lang.Integer) _resp).intValue();
+                } catch (java.lang.Exception _exception) {
+                    return ((java.lang.Integer) org.apache.axis.utils.JavaUtils.convert(_resp, int.class)).intValue();
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public java.lang.String importExp(java.lang.String authKey, java.lang.String idType, java.lang.String expName, ExpStruct[] expData, int folderID) throws java.rmi.RemoteException {
@@ -946,22 +927,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, idType, expName, expData, new java.lang.Integer(folderID)});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, idType, expName, expData, new java.lang.Integer(folderID)});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.String) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (java.lang.String) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public java.lang.String getGenePageURL(java.lang.String authKey, java.lang.String id, java.lang.String idType) throws java.rmi.RemoteException {
@@ -977,22 +958,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, id, idType});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, id, idType});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.String) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (java.lang.String) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public MapResult[] getMapsByObject(java.lang.String authKey, java.lang.String id, java.lang.String idType) throws java.rmi.RemoteException {
@@ -1008,22 +989,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, id, idType});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, id, idType});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (MapResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (MapResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, MapResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (MapResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (MapResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, MapResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public MapResult[] getMapsByObjects(java.lang.String authKey, java.lang.String[] ids, java.lang.String idType) throws java.rmi.RemoteException {
@@ -1039,22 +1020,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, ids, idType});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, ids, idType});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (MapResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (MapResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, MapResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (MapResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (MapResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, MapResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public java.lang.String getNetworkPageURL(java.lang.String authKey, java.lang.String id, java.lang.String idType) throws java.rmi.RemoteException {
@@ -1070,22 +1051,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, id, idType});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, id, idType});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.String) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (java.lang.String) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public java.lang.String getMainPageURL(java.lang.String authKey) throws java.rmi.RemoteException {
@@ -1101,22 +1082,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.String) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (java.lang.String) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public java.lang.String getPageURL(java.lang.String authKey, java.lang.String url) throws java.rmi.RemoteException {
@@ -1132,22 +1113,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, url});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, url});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.String) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (java.lang.String) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public java.lang.String getJobListPageURL(java.lang.String authKey) throws java.rmi.RemoteException {
@@ -1163,22 +1144,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.String) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (java.lang.String) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public LicenseResult[] getGrabbedLicenses(java.lang.String authKey) throws java.rmi.RemoteException {
@@ -1194,22 +1175,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (LicenseResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (LicenseResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, LicenseResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (LicenseResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (LicenseResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, LicenseResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public java.lang.String getBaseURL(java.lang.String authKey) throws java.rmi.RemoteException {
@@ -1225,22 +1206,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.String) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (java.lang.String) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public int deactivateAllExps(java.lang.String authKey) throws java.rmi.RemoteException {
@@ -1256,22 +1237,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Integer) _resp).intValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Integer) org.apache.axis.utils.JavaUtils.convert(_resp, int.class)).intValue();
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return ((java.lang.Integer) _resp).intValue();
+                } catch (java.lang.Exception _exception) {
+                    return ((java.lang.Integer) org.apache.axis.utils.JavaUtils.convert(_resp, int.class)).intValue();
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public int activateExpsByJob(java.lang.String authKey, java.lang.String jobID) throws java.rmi.RemoteException {
@@ -1287,22 +1268,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, jobID});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, jobID});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Integer) _resp).intValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Integer) org.apache.axis.utils.JavaUtils.convert(_resp, int.class)).intValue();
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return ((java.lang.Integer) _resp).intValue();
+                } catch (java.lang.Exception _exception) {
+                    return ((java.lang.Integer) org.apache.axis.utils.JavaUtils.convert(_resp, int.class)).intValue();
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public int createExpFolder(java.lang.String authKey, java.lang.String folderName, int parentFolderID) throws java.rmi.RemoteException {
@@ -1318,22 +1299,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, folderName, new java.lang.Integer(parentFolderID)});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, folderName, new java.lang.Integer(parentFolderID)});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Integer) _resp).intValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Integer) org.apache.axis.utils.JavaUtils.convert(_resp, int.class)).intValue();
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return ((java.lang.Integer) _resp).intValue();
+                } catch (java.lang.Exception _exception) {
+                    return ((java.lang.Integer) org.apache.axis.utils.JavaUtils.convert(_resp, int.class)).intValue();
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public StoredNetworksListResult[] getStoredNetworksList(java.lang.String authKey) throws java.rmi.RemoteException {
@@ -1349,22 +1330,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (StoredNetworksListResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (StoredNetworksListResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, StoredNetworksListResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (StoredNetworksListResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (StoredNetworksListResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, StoredNetworksListResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public java.lang.String getStoredNetworkXML(java.lang.String authKey, java.lang.String id) throws java.rmi.RemoteException {
@@ -1380,22 +1361,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, id});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, id});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (java.lang.String) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (java.lang.String) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public GeneGoProcessesResult[] getGenegoProcessesByGenes(java.lang.String authKey, java.lang.String[] ids, java.lang.String idType) throws java.rmi.RemoteException {
@@ -1411,22 +1392,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, ids, idType});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, ids, idType});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (GeneGoProcessesResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (GeneGoProcessesResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, GeneGoProcessesResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (GeneGoProcessesResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (GeneGoProcessesResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, GeneGoProcessesResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public InteractionResult[] getOutgoingRelationshipsByGenes(java.lang.String authKey, java.lang.String[] ids, java.lang.String idType) throws java.rmi.RemoteException {
@@ -1442,22 +1423,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, ids, idType});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, ids, idType});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (InteractionResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (InteractionResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, InteractionResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (InteractionResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (InteractionResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, InteractionResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public InteractionResult[] getIncomingRelationshipsByGenes(java.lang.String authKey, java.lang.String[] ids, java.lang.String idType) throws java.rmi.RemoteException {
@@ -1473,22 +1454,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, ids, idType});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, ids, idType});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (InteractionResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (InteractionResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, InteractionResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (InteractionResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (InteractionResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, InteractionResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public TransfactorResult[] getTransfactorsForGenes(java.lang.String authKey, java.lang.String[] ids, java.lang.String idType) throws java.rmi.RemoteException {
@@ -1504,22 +1485,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, ids, idType});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, ids, idType});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (TransfactorResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (TransfactorResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, TransfactorResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (TransfactorResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (TransfactorResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, TransfactorResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public DrugResult[] getTherapeuticDrugsForGenes(java.lang.String authKey, java.lang.String[] ids, java.lang.String idType) throws java.rmi.RemoteException {
@@ -1535,22 +1516,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, ids, idType});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, ids, idType});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (DrugResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (DrugResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, DrugResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (DrugResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (DrugResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, DrugResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
     public CompoundResult[] getSimilarEndogenousCompounds(java.lang.String authKey, java.lang.String geneId, java.lang.String geneIdType, java.lang.String chemId, java.lang.String chemIdType) throws java.rmi.RemoteException {
@@ -1566,22 +1547,22 @@ public class GeneGOBindingStub extends org.apache.axis.client.Stub implements Ge
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {authKey, geneId, geneIdType, chemId, chemIdType});
+        try {
+            java.lang.Object _resp = _call.invoke(new java.lang.Object[]{authKey, geneId, geneIdType, chemId, chemIdType});
 
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return (CompoundResult[]) _resp;
-            } catch (java.lang.Exception _exception) {
-                return (CompoundResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, CompoundResult[].class);
+            if (_resp instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException) _resp;
+            } else {
+                extractAttachments(_call);
+                try {
+                    return (CompoundResult[]) _resp;
+                } catch (java.lang.Exception _exception) {
+                    return (CompoundResult[]) org.apache.axis.utils.JavaUtils.convert(_resp, CompoundResult[].class);
+                }
             }
+        } catch (org.apache.axis.AxisFault axisFaultException) {
+            throw axisFaultException;
         }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
     }
 
 }

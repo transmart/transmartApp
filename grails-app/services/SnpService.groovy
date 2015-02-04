@@ -1,24 +1,3 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- *
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- *
- * This product includes software developed at Janssen Research & Development, LLC.
- *
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- ******************************************************************/
-
-
-
 import com.recomdata.export.SnpViewerFiles
 import i2b2.*
 
@@ -377,7 +356,8 @@ class SnpService {
 
     Map<Long, Map<String, String>> getSNPDataByDatasetByChrom(String subjectIds, String chroms) throws Exception {
         if (subjectIds == null || subjectIds.trim().length() == 0) return null;
-        Map<Long, Map<String, String>> snpDataByDatasetByChrom = new HashMap<Long, Map<String, String>>();    // Map<[datasetId], Map<chrom, data>>
+        Map<Long, Map<String, String>> snpDataByDatasetByChrom = new HashMap<Long, Map<String, String>>();
+        // Map<[datasetId], Map<chrom, data>>
 
         groovy.sql.Sql sql = new groovy.sql.Sql(dataSource);
 
@@ -730,7 +710,8 @@ class SnpService {
                         Long entrezId = entrezIdGeneMapEntry.getKey();
                         GeneWithSnp geneWithSnp = entrezIdGeneMapEntry.getValue();
                         GeneWithSnp geneWithSnpInMap = geneMap.get(entrezId);
-                        if (geneWithSnpInMap == null) {    // First time to have this entrezId, use the existing gene structure
+                        if (geneWithSnpInMap == null) {
+                            // First time to have this entrezId, use the existing gene structure
                             geneWithSnpInMap = geneWithSnp;
                             geneMap.put(entrezId, geneWithSnpInMap);
                         } else {    // The gene structure and associated snp list already exist
@@ -790,7 +771,8 @@ class SnpService {
                     GeneWithSnp gene = geneEntry.getValue();
                     SortedMap<Long, SnpInfo> snpMap = gene.snpMap;
                     String geneDisplay = gene.name;
-                    if (geneEntrezIdMap != null && geneEntrezIdMap.get(gene.entrezId) != null) {    // This gene is selected by user
+                    if (geneEntrezIdMap != null && geneEntrezIdMap.get(gene.entrezId) != null) {
+                        // This gene is selected by user
                         geneDisplay = "<font color='red'>" + gene.name + "</font>";
                     }
                     geneSnpPageBuf.append("<tr align='center' valign='top'><td rowspan='" + snpMap.size() + "'>" + geneDisplay + "</td>");
@@ -825,7 +807,8 @@ class SnpService {
         }
 
         if (snpNameList != null && snpNameList.size() != 0) {
-            Set<String> snpNotUsedNameSet = new HashSet<String>();    // Need to get the list of SNPs that do not have data
+            Set<String> snpNotUsedNameSet = new HashSet<String>();
+            // Need to get the list of SNPs that do not have data
             for (String snpName : snpNameList) {
                 if (snpUsedNameSet != null && snpUsedNameSet.size() != 0) {
                     if (snpUsedNameSet.contains(snpName) == false)

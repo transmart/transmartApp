@@ -66,7 +66,7 @@ class ACGHDataService {
         def templateArray = new String[header.size() + 1]
         //+1 b/c 1st row has no header
         Long i = 1; //for the first row
-        for (Iterator<RegionRow> iterator = regionResult.rows; iterator.hasNext(); ) {
+        for (Iterator<RegionRow> iterator = regionResult.rows; iterator.hasNext();) {
             RegionRow row = (RegionRow) iterator.next()
 
             String[] line = templateArray.clone()
@@ -79,7 +79,7 @@ class ACGHDataService {
             line[5] = row.cytoband
 
             int j = 6
-            PER_ASSAY_COLUMNS.each {k, Closure<AcghValues> value ->
+            PER_ASSAY_COLUMNS.each { k, Closure<AcghValues> value ->
                 assays.each { AssayColumn assay ->
                     line[j++] = value(row.getAt(assay)) as String
                 }
@@ -90,12 +90,12 @@ class ACGHDataService {
     }
 
     private static final Map PER_ASSAY_COLUMNS = [
-            chip:     { AcghValues v -> v.getChipCopyNumberValue() },
-            flag:     { AcghValues v -> v.getCopyNumberState().getIntValue() },
+            chip    : { AcghValues v -> v.getChipCopyNumberValue() },
+            flag    : { AcghValues v -> v.getCopyNumberState().getIntValue() },
             probloss: { AcghValues v -> v.getProbabilityOfLoss() },
             probnorm: { AcghValues v -> v.getProbabilityOfNormal() },
             probgain: { AcghValues v -> v.getProbabilityOfGain() },
-            probamp:  { AcghValues v -> v.getProbabilityOfAmplification() },
+            probamp : { AcghValues v -> v.getProbabilityOfAmplification() },
     ]
 
     private String[] createHeader(List<AssayColumn> assays) {
@@ -107,7 +107,7 @@ class ACGHDataService {
                 'cytoband',
         ];
 
-        PER_ASSAY_COLUMNS.keySet().each {String head ->
+        PER_ASSAY_COLUMNS.keySet().each { String head ->
             assays.each { AssayColumn assay ->
                 r << "${head}.${assay.patientInTrialId}".toString()
             }

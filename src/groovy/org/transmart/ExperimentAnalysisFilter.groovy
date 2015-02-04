@@ -1,23 +1,4 @@
 package org.transmart
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
 
 /**
  * @author $Author: mmcduffie $
@@ -28,57 +9,58 @@ package org.transmart
 
 public class ExperimentAnalysisFilter {
 
-	String dataSource
-	Long bioDiseaseId
-	String species
-	String expDesign
-	String expType
-	Long bioCompoundId
-	String tissueType
-	String cellLine
-	String expDescrKeyword
-	//String platformOrganism
-	//Double foldChange = 1.2
-	//Double pValue = 0.05
-	Double foldChange
-	Double pvalue
+    String dataSource
+    Long bioDiseaseId
+    String species
+    String expDesign
+    String expType
+    Long bioCompoundId
+    String tissueType
+    String cellLine
+    String expDescrKeyword
+    //String platformOrganism
+    //Double foldChange = 1.2
+    //Double pValue = 0.05
+    Double foldChange
+    Double pvalue
 
-	def isUsed(){
-		return validString(species) || validString(expDesign)||validString(expType)||validString(dataSource)||bioCompoundId!=null || bioDiseaseId!=null || foldChange!=null || pvalue!=null || validString(cellLine);
-	}
-	def filterFoldChange(){
-		return foldChange!=null && foldChange>0;
-	}
+    def isUsed() {
+        return validString(species) || validString(expDesign) || validString(expType) || validString(dataSource) || bioCompoundId != null || bioDiseaseId != null || foldChange != null || pvalue != null || validString(cellLine);
+    }
 
-	def filterPValue(){
-		return pvalue!=null && pvalue>0;
-	}
+    def filterFoldChange() {
+        return foldChange != null && foldChange > 0;
+    }
 
-	def filterDisease(){
-		return bioDiseaseId!=null && bioDiseaseId>0;
-	}
+    def filterPValue() {
+        return pvalue != null && pvalue > 0;
+    }
 
-	def filterCompound(){
-		return bioCompoundId!=null && bioCompoundId>0;
-	}
+    def filterDisease() {
+        return bioDiseaseId != null && bioDiseaseId > 0;
+    }
 
-	def filterSpecies(){
-		return validString(species);
-	}
+    def filterCompound() {
+        return bioCompoundId != null && bioCompoundId > 0;
+    }
 
-	def filterExpDesign(){
-		return validString(expDesign);
-	}
+    def filterSpecies() {
+        return validString(species);
+    }
 
-	def filterExpType(){
-		return validString(expType);
-	}
+    def filterExpDesign() {
+        return validString(expDesign);
+    }
 
-	def filterDataSource(){
-		return validString(dataSource)
-	}
+    def filterExpType() {
+        return validString(expType);
+    }
 
-	def validString(String s){
-		return s!=null && s.length()>0;
-	}
+    def filterDataSource() {
+        return validString(dataSource)
+    }
+
+    def validString(String s) {
+        return s != null && s.length() > 0;
+    }
 }

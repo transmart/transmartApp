@@ -1,4 +1,4 @@
-@CHARSET "ISO-8859-1";
+@CHARSET "UTF-8";
 
 
 .nextbutton{
@@ -6,8 +6,10 @@
 }
 
 .clearbutton{
-		background-image:url(../images/clear.png ) !important;
-	}
+    padding-left: 20px !important;
+    background-image:url(../images/clear.png ) !important;
+    background-position: 6px 50%;
+}
 .runbutton{
 	background-image:url(../images/runprog.png ) !important;
 	}

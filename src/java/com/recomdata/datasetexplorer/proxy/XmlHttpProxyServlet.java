@@ -1,22 +1,5 @@
-/*************************************************************************
- * tranSMART - translational medicine data mart
- * 
- * Copyright 2008-2012 Janssen Research & Development, LLC.
- * 
- * This product includes software developed at Janssen Research & Development, LLC.
- * 
- * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
- * as published by the Free Software  * Foundation, either version 3 of the License, or (at your option) any later version, along with the following terms:
- * 1.	You may convey a work based on this program in accordance with section 5, provided that you retain the above notices.
- * 2.	You may convey verbatim copies of this program code as you receive it, in any medium, provided that you retain the above notices.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- *
- ******************************************************************/
-  
+
+
 
 /* Copyright 2007 You may not modify, use, reproduce, or distribute this software except in compliance with the terms of the License at: 
  http://developer.sun.com/berkeley_license.html
@@ -43,8 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**  XmlHttpProxyServlet
- *   @author Greg Murray
+/**
+ * XmlHttpProxyServlet
+ *
+ * @author Greg Murray
  */
 public class XmlHttpProxyServlet extends HttpServlet {
 
@@ -61,15 +46,15 @@ public class XmlHttpProxyServlet extends HttpServlet {
     private JSONObject services = null;
     private String resourcesDir = "/resources/";
     private String classpathResourcesDir = "/META-INF/resources/";
-    
+
     public XmlHttpProxyServlet() {
         if (rDebug) {
             logger = getLogger();
         }
     }
-    
+
     public void init(ServletConfig config) throws ServletException {
-	    super.init(config);
+        super.init(config);
         ctx = config.getServletContext();
         // set the response content type
         if (ctx.getInitParameter("responseContentType") != null) {
@@ -85,8 +70,8 @@ public class XmlHttpProxyServlet extends HttpServlet {
         // allow for resources dir over-ride
         if (ctx.getInitParameter("jmaki-classpath-resources") != null) {
             classpathResourcesDir = ctx.getInitParameter("jmaki-classpath-resources");
-        }        
-        
+        }
+
         String requireSessionString = ctx.getInitParameter("requireSession");
         if (requireSessionString != null) {
             if ("false".equals(requireSessionString)) {
@@ -96,7 +81,7 @@ public class XmlHttpProxyServlet extends HttpServlet {
                 requireSession = true;
                 getLogger().severe("XmlHttpProxyServlet: intialization. Session requirement enabled.");
             }
-        }  
+        }
         String xdomainString = ctx.getInitParameter("allowXDomain");
         if (xdomainString != null) {
             if ("true".equals(xdomainString)) {
@@ -113,7 +98,7 @@ public class XmlHttpProxyServlet extends HttpServlet {
         if (proxyHost != null && proxyPortString != null) {
             int proxyPort = 8080;
             try {
-                proxyPort= new Integer(proxyPortString).intValue();
+                proxyPort = new Integer(proxyPortString).intValue();
                 xhp = new XmlHttpProxy(proxyHost, proxyPort);
             } catch (NumberFormatException nfe) {
                 getLogger().severe("XmlHttpProxyServlet: intialization error. The proxyPort must be a number");
@@ -122,8 +107,8 @@ public class XmlHttpProxyServlet extends HttpServlet {
         } else {
             xhp = new XmlHttpProxy();
         }
-	}
-    
+    }
+
     private void getServices(HttpServletResponse res) {
         InputStream is = null;
         try {
@@ -142,27 +127,27 @@ public class XmlHttpProxyServlet extends HttpServlet {
         }
         services = xhp.loadServices(is);
     }
-   
+
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
-       doProcess(req,res, false);
+        doProcess(req, res, false);
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) {
-       doProcess(req,res, true);
+        doProcess(req, res, true);
     }
-    
+
     public void doProcess(HttpServletRequest req, HttpServletResponse res, boolean isPost) {
         StringBuffer bodyContent = null;
         OutputStream out = null;
         PrintWriter writer = null;
-        String serviceKey = null; 
-    
+        String serviceKey = null;
+
         try {
             BufferedReader in = req.getReader();
             String line = null;
             while ((line = in.readLine()) != null) {
                 if (bodyContent == null) bodyContent = new StringBuffer();
-                bodyContent.append(line); 
+                bodyContent.append(line);
             }
         } catch (Exception e) {
         }
@@ -187,7 +172,7 @@ public class XmlHttpProxyServlet extends HttpServlet {
             String urlString = null;
             String xslURLString = null;
             String userName = null;
-            String password = null;            
+            String password = null;
             String format = "json";
             String callback = req.getParameter("callback");
             String urlParams = req.getParameter("urlparams");
@@ -196,7 +181,7 @@ public class XmlHttpProxyServlet extends HttpServlet {
             if (urlParams != null) {
                 urlParams = urlParams.replace(' ', '+');
             }
-            
+
             try {
                 if (services.has(serviceKey)) {
                     JSONObject service = services.getJSONObject(serviceKey);
@@ -206,9 +191,9 @@ public class XmlHttpProxyServlet extends HttpServlet {
                     }
                     String serviceURL = service.getString("url");
                     // build the URL
-                    if (urlParams != null && serviceURL.indexOf("?") == -1){
+                    if (urlParams != null && serviceURL.indexOf("?") == -1) {
                         serviceURL += "?";
-                    } else  if (urlParams != null) {
+                    } else if (urlParams != null) {
                         serviceURL += "&";
                     }
                     String apikey = "";
@@ -220,23 +205,22 @@ public class XmlHttpProxyServlet extends HttpServlet {
                     if (service.has("xslStyleSheet")) {
                         xslURLString = service.getString("xslStyleSheet");
                     }
-                }   
-                //code for passing the url directly through instead of using configuration file
-                else if(req.getParameter("url")!=null)
-                {	
-                     String serviceURL = req.getParameter("url");
-                     // build the URL
-                     if (urlParams != null && serviceURL.indexOf("?") == -1){
-                         serviceURL += "?";
-                     } else  if (urlParams != null) {
-                         serviceURL += "&";
-                     }
-                     urlString = serviceURL;
-                     if (urlParams != null) urlString += urlParams;
                 }
-                else {
+                //code for passing the url directly through instead of using configuration file
+                else if (req.getParameter("url") != null) {
+                    String serviceURL = req.getParameter("url");
+                    // build the URL
+                    if (urlParams != null && serviceURL.indexOf("?") == -1) {
+                        serviceURL += "?";
+                    } else if (urlParams != null) {
+                        serviceURL += "&";
+                    }
+                    urlString = serviceURL;
+                    if (urlParams != null) urlString += urlParams;
+                } else {
                     writer = res.getWriter();
-                    if (serviceKey == null) writer.write("XmlHttpProxyServlet Error: id parameter specifying serivce required.");
+                    if (serviceKey == null)
+                        writer.write("XmlHttpProxyServlet Error: id parameter specifying serivce required.");
                     else writer.write("XmlHttpProxyServlet Error : service for id '" + serviceKey + "' not  found.");
                     writer.flush();
                     return;
@@ -247,16 +231,16 @@ public class XmlHttpProxyServlet extends HttpServlet {
 
             Map paramsMap = new HashMap();
             paramsMap.put("format", format);
-			// do not allow for xdomain unless the context level setting is enabled.
+            // do not allow for xdomain unless the context level setting is enabled.
             if (callback != null && allowXDomain) {
                 paramsMap.put("callback", callback);
             }
             if (countString != null) {
                 paramsMap.put("count", countString);
-            }            
-            
+            }
+
             InputStream xslInputStream = null;
-            
+
             if (urlString == null) {
                 writer = res.getWriter();
                 writer.write("XmlHttpProxyServlet parameters:  id[Required] urlparams[Optional] format[Optional] callback[Optional]");
@@ -270,28 +254,29 @@ public class XmlHttpProxyServlet extends HttpServlet {
             if (xslURLString != null) {
                 // check the web root for the resource
                 URL xslURL = null;
-                xslURL = ctx.getResource(resourcesDir + "xsl/"+ xslURLString);
+                xslURL = ctx.getResource(resourcesDir + "xsl/" + xslURLString);
                 // if not in the web root check the classpath
                 if (xslURL == null) {
                     xslURL = XmlHttpProxyServlet.class.getResource(classpathResourcesDir + "xsl/" + xslURLString);
                 }
                 if (xslURL != null) {
-                    xslInputStream  = xslURL.openStream();
+                    xslInputStream = xslURL.openStream();
                 } else {
-                    String message = "Could not locate the XSL stylesheet provided for service id " +  serviceKey + ". Please check the XMLHttpProxy configuration.";
+                    String message = "Could not locate the XSL stylesheet provided for service id " + serviceKey + ". Please check the XMLHttpProxy configuration.";
                     getLogger().severe(message);
                     try {
                         out.write(message.getBytes());
                         out.flush();
                         return;
-                    } catch (java.io.IOException iox){
+                    } catch (java.io.IOException iox) {
                     }
                 }
             }
             if (!isPost) {
                 xhp.doGet(urlString, out, xslInputStream, paramsMap, userName, password);
-            } else {                
-                if (bodyContent == null) getLogger().info("XmlHttpProxyServlet attempting to post to url " + urlString + " with no body content");      
+            } else {
+                if (bodyContent == null)
+                    getLogger().info("XmlHttpProxyServlet attempting to post to url " + urlString + " with no body content");
                 xhp.doPost(urlString, out, xslInputStream, paramsMap, bodyContent.toString(), req.getContentType(), userName, password);
             }
         } catch (Exception iox) {
@@ -302,31 +287,31 @@ public class XmlHttpProxyServlet extends HttpServlet {
                 writer.write(iox.toString());
                 writer.flush();
             } catch (java.io.IOException ix) {
-                ix.printStackTrace();                
+                ix.printStackTrace();
             }
             return;
         } finally {
             try {
                 if (out != null) out.close();
                 if (writer != null) writer.close();
-            } catch (java.io.IOException iox){
+            } catch (java.io.IOException iox) {
             }
         }
     }
 
     /**
-    * Check to see if the configuration file has been updated so that it may be reloaded.
-    */
+     * Check to see if the configuration file has been updated so that it may be reloaded.
+     */
     private boolean configUpdated() {
         try {
             URL url = ctx.getResource(resourcesDir + XHP_CONFIG);
             URLConnection con;
-            if (url == null) return false ;
-            con = url.openConnection(); 
+            if (url == null) return false;
+            con = url.openConnection();
             long lastModified = con.getLastModified();
             long XHP_LAST_MODIFIEDModified = 0;
             if (ctx.getAttribute(XHP_LAST_MODIFIED) != null) {
-                XHP_LAST_MODIFIEDModified = ((Long)ctx.getAttribute(XHP_LAST_MODIFIED)).longValue();
+                XHP_LAST_MODIFIEDModified = ((Long) ctx.getAttribute(XHP_LAST_MODIFIED)).longValue();
             } else {
                 ctx.setAttribute(XHP_LAST_MODIFIED, new Long(lastModified));
                 return false;
@@ -340,14 +325,14 @@ public class XmlHttpProxyServlet extends HttpServlet {
         }
         return false;
     }
-         
+
     public Logger getLogger() {
         if (logger == null) {
             logger = Logger.getLogger("jmaki.services.xhp.Log");
         }
         return logger;
     }
-    
+
     private void logMessage(String message) {
         if (rDebug) {
             getLogger().info(message);
