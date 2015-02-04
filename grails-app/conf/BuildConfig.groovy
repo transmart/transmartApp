@@ -131,11 +131,10 @@ grails.project.dependency.resolution = {
 
         if (!dm) {
             compile ':rdc-rmodules:1.2.2-SNAPSHOT'
-            runtime ':transmart-core:1.2.2-hackathon-SNAPSHOT'
+            runtime ':transmart-core:1.2.2-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
-            //compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
-            compile ':transmart-legacy-db:1.2.2-hackathon-SNAPSHOT' // does this cause problems?
+            compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
             //compile ':folder-management:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas, folder-management
