@@ -198,6 +198,13 @@ org.transmart.security.spnegoEnabled = false
 // Bear in mind bug GRAILS-11376 with Tomcat NIO and Grails 2.3.6+
 grails.plugins.sendfile.tomcat = false
 
+grails.plugin.springsecurity.useSecurityEventListener = true
+
+bruteForceLoginLock {
+    allowedNumberOfAttempts = 3
+    lockTimeInMinutes = 10
+}
+
 log4j = {
     environments {
         test {
