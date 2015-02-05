@@ -26,6 +26,8 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
        autoinjection into services */
     @Resource
     def grailsApplication
+    @Resource
+    def bruteForceLoginLockService
 
     def conf = SpringSecurityUtils.securityConfig
 
@@ -94,7 +96,7 @@ class AuthUserDetailsService implements GrailsUserDetailsService {
         }
 
         new AuthUserDetails(user.username, user.passwd, user.enabled,
-                !user.accountExpired, !user.passwordExpired, !user.accountLocked,
+                true, true, !bruteForceLoginLockService.isLocked(user.username),
                 authorities ?: NO_ROLES, user.id, user.userRealName)
     }
 }
