@@ -143,7 +143,7 @@ class VCFExporter implements HighDimExporter {
 
         // Determine a list of original variants and new variants, to do translation
         List<String> originalVariants = [] + datarow.referenceAllele + datarow.alternativeAlleles
-        List<String> newVariants = datarow.cohortInfo.alleles
+        List<String> newVariants = [] + datarow.referenceAllele + datarow.cohortInfo.alternativeAlleles
 
         // Every line must always have a GT field in the format column
         // to follow the specification.
@@ -235,6 +235,8 @@ class VCFExporter implements HighDimExporter {
                     int newIndex = newVariants.indexOf(variant)
 
                     convertedIndices << newIndex
+                } else {
+                    convertedIndices << '.'
                 }
             }
         }
