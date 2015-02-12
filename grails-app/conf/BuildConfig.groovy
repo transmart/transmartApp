@@ -144,11 +144,11 @@ grails.project.dependency.resolution = {
             //compile ':biomart-domain:1.2.2-SNAPSHOT'
             //// already included in biomart-domain
             //compile ':transmart-java:1.2.2-SNAPSHOT'
-            runtime ':dalliance-plugin:0.2-SNAPSHOT'
-            runtime ':transmart-mydas:0.1-SNAPSHOT'
+//            runtime ':dalliance-plugin:0.2-SNAPSHOT'
+//            runtime ':transmart-mydas:0.1-SNAPSHOT'
             runtime ':transmart-rest-api:1.2.2-SNAPSHOT'
             runtime ':blend4j-plugin:1.2.2-SNAPSHOT'
-            runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
+//            runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
 
             test ':transmart-core-db-tests:1.2.2-SNAPSHOT'
         } else {
@@ -160,6 +160,8 @@ grails.project.dependency.resolution = {
     }
 }
 
+grails.plugin.location.'transmart-ewb' = "../transmart-ewb"
+
 dm?.with {
     configureInternalPlugin 'compile', 'rdc-rmodules'
     configureInternalPlugin 'runtime', 'transmart-core'
@@ -170,11 +172,11 @@ dm?.with {
     configureInternalPlugin 'compile', 'search-domain'
     configureInternalPlugin 'compile', 'folder-management'
     configureInternalPlugin 'compile', 'transmart-legacy-db'
-    configureInternalPlugin 'runtime', 'dalliance-plugin'
-    configureInternalPlugin 'runtime', 'transmart-mydas'
+//    configureInternalPlugin 'runtime', 'dalliance-plugin'
+//    configureInternalPlugin 'runtime', 'transmart-mydas'
     configureInternalPlugin 'runtime', 'transmart-rest-api'
     configureInternalPlugin 'runtime', 'blend4j-plugin'
-    configureInternalPlugin 'runtime', 'transmart-metacore-plugin'
+//    configureInternalPlugin 'runtime', 'transmart-metacore-plugin'
 }
 
 dm?.inlineInternalDependencies grails, grailsSettings

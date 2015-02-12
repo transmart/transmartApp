@@ -18,6 +18,9 @@ import org.transmart.marshallers.MarshallerRegistrarService
 import org.transmart.spring.QuartzSpringScope
 import org.transmartproject.core.users.User
 import org.transmartproject.export.HighDimExporter
+import org.transmartproject.security.AuthSuccessEventListener
+import org.transmartproject.security.BadCredentialsEventListener
+import org.transmartproject.security.BruteForceLoginLockService
 
 def logger = Logger.getLogger('com.recomdata.conf.resources')
 
@@ -113,4 +116,18 @@ beans = {
             return {}
         }
     }
+
+    bruteForceLoginLockService(BruteForceLoginLockService) {
+        allowedNumberOfAttempts = grailsApplication.config.bruteForceLoginLock.allowedNumberOfAttempts
+        lockTimeInMinutes = grailsApplication.config.bruteForceLoginLock.lockTimeInMinutes
+    }
+
+    authSuccessEventListener(AuthSuccessEventListener) {
+        bruteForceLoginLockService = ref('bruteForceLoginLockService')
+    }
+
+    badCredentialsEventListener(BadCredentialsEventListener) {
+        bruteForceLoginLockService = ref('bruteForceLoginLockService')
+    }
+
 }

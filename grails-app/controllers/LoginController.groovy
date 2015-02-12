@@ -8,10 +8,10 @@ import org.springframework.security.authentication.AccountExpiredException
 import org.springframework.security.authentication.CredentialsExpiredException
 import org.springframework.security.authentication.DisabledException
 import org.springframework.security.authentication.LockedException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.WebAttributes
 import org.transmart.searchapp.AccessLog
 
 /**
@@ -23,6 +23,7 @@ class LoginController {
      * Dependency injection for the authenticationTrustResolver.
      */
     def authenticationTrustResolver
+    def bruteForceLoginLockService
 
     /**
      * Dependency injection for the springSecurityService.
@@ -106,32 +107,41 @@ class LoginController {
      * Callback after a failed login. Redirects to the auth page with a warning message.
      */
     def authfail = {
-        def username = session[UsernamePasswordAuthenticationFilter.SPRING_SECURITY_LAST_USERNAME_KEY]
         String msg = ''
-        def exception = session[AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY]
+        def exception = session[WebAttributes.AUTHENTICATION_EXCEPTION]
+        String username = null
+        if (exception instanceof AuthenticationException) {
+            username = exception.authentication.name
+        }
         if (exception) {
             if (exception instanceof AccountExpiredException) {
-                msg = SpringSecurityUtils.securityConfig.errors.login.expired
+                msg = g.message(code: "springSecurity.errors.login.expired")
                 new AccessLog(username: username, event: "Account Expired",
                         eventmessage: msg,
                         accesstime: new Date()).save()
             } else if (exception instanceof CredentialsExpiredException) {
-                msg = SpringSecurityUtils.securityConfig.errors.login.passwordExpired
+                msg = g.message(code: "springSecurity.errors.login.passwordExpired")
                 new AccessLog(username: username, event: "Password Expired",
                         eventmessage: msg,
                         accesstime: new Date()).save()
             } else if (exception instanceof DisabledException) {
-                msg = SpringSecurityUtils.securityConfig.errors.login.disabled
+                msg = g.message(code: "springSecurity.errors.login.disabled")
                 new AccessLog(username: username, event: "Login Disabled",
                         eventmessage: msg,
                         accesstime: new Date()).save()
-            } else if (exception instanceof LockedException) {
-                msg = SpringSecurityUtils.securityConfig.errors.login.locked
+            } else if (exception instanceof LockedException
+                    //Extra condition to escape confusion with last login attempt that would be ignored anyway
+                    // because user would be locked at that time.
+                    //That's confusion caused by the fact that spring event listener for failed attempt is triggered
+                    // after user status (e.g. locked) is red by spring security.
+                    || username && bruteForceLoginLockService.remainedAttempts(username) <= 0) {
+                msg = g.message(code: "springSecurity.errors.login.locked",
+                        args: [ bruteForceLoginLockService.lockTimeInMinutes ])
                 new AccessLog(username: username, event: "Login Locked",
                         eventmessage: msg,
                         accesstime: new Date()).save()
             } else {
-                msg = SpringSecurityUtils.securityConfig.errors.login.fail
+                msg = g.message(code: "springSecurity.errors.login.fail")
                 new AccessLog(username: username, event: "Login Failed",
                         eventmessage: msg,
                         accesstime: new Date()).save()
