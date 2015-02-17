@@ -3,7 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="layout" content="admin"/>
     <title>Edit UserGroup</title>
-
+    <g:setProvider library="jquery"/>
 </head>
 
 <body>
@@ -64,7 +64,7 @@
                                 name="searchtext"
                                 id="searchtext"><button
                                 class=""
-                                onclick="${remoteFunction(action:'searchUsersNotInGroup',update:[success:'groupmembers', failure:''], id:userGroupInstance?.id, params:'$(\'searchtext\').serialize()' )};
+                                onclick="${remoteFunction(action:'searchUsersNotInGroup',update:[success:'groupmembers', failure:''], id:userGroupInstance?.id, params:'jQuery(\'#searchtext\').serialize()' )};
                                 return false;">Search Users</button>
                         </td>
                         <tr><td>Members of group:</td><td></td><td>Available users:</td>
