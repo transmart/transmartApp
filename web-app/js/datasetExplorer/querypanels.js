@@ -607,6 +607,15 @@ function getSubsetQuerySummary(subset) {
 }
 
 /**
+ * This returns a summary of the query as a string
+ * This is a legacy function hook for RModule
+ * TODO: This should be replaced following evolution of RModule
+ * @param subset
+ * @returns {string}
+ */
+function getQuerySummary(subset) { return getSubsetQuerySummary(subset) }
+
+/**
  * This exclusively encode squared brackets as legacy code describe
  * @returns {string}
  */

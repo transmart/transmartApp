@@ -132,9 +132,9 @@
 <div id="sidebartoggle">&nbsp;</div>
 
 <div id="noAnalyzeResults" style="display: none;">No subject-level results found.<br/>
-    <g:link controller="RWG" action="index">
-        Switch to Browse view
-    </g:link>
+    <g:if test="${!grailsApplication.config.ui.tabs.browse.hide}">
+        <g:link controller="RWG" action="index">Switch to Browse view</g:link>
+    </g:if>
 </div>
 
 <div id="filter-div" style="display: none;"></div>

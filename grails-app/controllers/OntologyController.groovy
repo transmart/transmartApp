@@ -1,9 +1,15 @@
 import annotation.AmTagItem
+import annotation.AmTagTemplate
+import fm.FmFolder
 import fm.FmFolderAssociation
 import grails.converters.JSON
-import i2b2.OntNode
+import i2b2.OntNodeTag
 import org.transmart.biomart.Experiment
 import org.transmart.searchapp.AuthUser
+import org.transmartproject.core.ontology.ConceptsResource
+import org.transmartproject.core.ontology.OntologyTerm
+import org.transmartproject.core.ontology.StudiesResource
+import org.transmartproject.core.ontology.Study
 
 class OntologyController {
 
@@ -13,6 +19,8 @@ class OntologyController {
     def ontologyService
     def amTagTemplateService
     def amTagItemService
+    ConceptsResource conceptsResourceService
+    StudiesResource studiesResourceService
 
     def showOntTagFilter = {
         def tagtypesc = []
@@ -71,23 +79,42 @@ class OntologyController {
             }
 
     def showConceptDefinition = {
-        def conceptPath = i2b2HelperService.keyToPath(params.conceptKey)
-        def node = OntNode.get(conceptPath)
+        OntologyTerm term = conceptsResourceService.getByKey(params.conceptKey)
+        Study study = term.study
 
-        //Check for study by visual attributes
-        if (node.visualattributes.contains("S")) {
-            def accession = node.sourcesystemcd
-            def study = Experiment.findByAccession(accession?.toUpperCase())
-            if (study) {
-                def folder = FmFolderAssociation.findByObjectUid(study.uniqueId?.uniqueId)?.fmFolder
-                if (folder) {
-                    def amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
-                    List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate?.id)
-                    render(template: 'showStudy', model: [folder: folder, bioDataObject: study, metaDataTagItems: metaDataTagItems])
-                }
+        Experiment experiment
+        FmFolder folder
+        if (study?.ontologyTerm == term) {
+            // is the top study term
+            experiment = Experiment.findByAccession(study.id.toUpperCase())
+            if (experiment) {
+                folder = FmFolderAssociation.findByObjectUid(experiment.uniqueId?.uniqueId)?.fmFolder
             }
         }
-        render(template: 'showDefinition', model: [tags: node.tags])
+
+        if (!folder) {
+            log.debug "Could not find folder association; will look for tags"
+
+            def tags = []
+            // this solution is suboptimcal. The best would be to check that
+            // the table is i2b2metadata.i2b2, but there is no API method
+            // exposing that
+            if (!term.key.startsWith('\\\\xtrials\\')) {
+                tags = OntNodeTag.findAll(
+                        'FROM OntNodeTag T WHERE T.ontnode.basecode = :code', [code: term.code])
+            }
+            render template: 'showDefinition', model: [tags: tags]
+        } else {
+            log.debug "Found experiment ($experiment) and folder association " +
+                    "($folder); will not attempt to look for tags"
+
+            AmTagTemplate amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
+            List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate?.id)
+            render template: 'showStudy',
+                    model: [folder: folder,
+                            bioDataObject: experiment,
+                            metaDataTagItems: metaDataTagItems]
+        }
     }
 
 }

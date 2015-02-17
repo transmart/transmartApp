@@ -13,7 +13,7 @@
         position: static !important;
     }
     </style>
-
+    <g:setProvider library="jquery"/>
 </head>
 
 <body>
@@ -42,7 +42,7 @@
                 return false;
             }
 
-        ${remoteFunction(action: 'searchGroupsWithoutUser', update: [success: 'groups', failure: ''], params: '$(\'searchtext\').serialize()+\'&id=\'+pid')};
+        ${remoteFunction(action: 'searchGroupsWithoutUser', update: [success: 'groups', failure: ''], params: 'jQuery(\'#searchtext\').serialize()+\'&id=\'+pid')};
             return false;
         }
     </r:script>
