@@ -732,11 +732,13 @@ Ext.onReady(function () {
 		resultsTabPanel.add(analysisPanel);
 		resultsTabPanel.add(analysisGridPanel);
         resultsTabPanel.add(dataAssociationPanel);
-		resultsTabPanel.add(analysisDataExportPanel);
-		resultsTabPanel.add(analysisExportJobsPanel);
-		resultsTabPanel.add(analysisJobsPanel);
-		resultsTabPanel.add(workspacePanel);
-        resultsTabPanel.add(sampleExplorerPanel);
+        resultsTabPanel.add(analysisDataExportPanel);
+        resultsTabPanel.add(analysisExportJobsPanel);
+        resultsTabPanel.add(analysisJobsPanel);
+        resultsTabPanel.add(workspacePanel);
+
+        if (GLOBAL.sampleExplorerEnabled)
+            resultsTabPanel.add(sampleExplorerPanel);
 
         function loadResources(resources, bootstrap) {
             var scripts = [];
