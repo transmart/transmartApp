@@ -3,10 +3,12 @@
         <td>Subset 1</td>
         <td>Subset 2</td>
     </tr>
+    <!-- TODO This must be reactivated when support for encounter is proposed
     <tr>
-        <td><div class="queryEncounter"><label for="queryEncounter_1"><input id="queryEncounter_1" type="checkbox"/>Only groups occuring within the same encounter</label></div></td>
-        <td><div class="queryEncounter"><label for="queryEncounter_2"><input id="queryEncounter_2" type="checkbox"/>Only groups occuring within the same encounter</label></div></td>
+        <td><div class="queryEncounter"><label for="queryEncounter_1"><input id="queryEncounter_1" type="checkbox"/>Only groups occurring within the same encounter</label></div></td>
+        <td><div class="queryEncounter"><label for="queryEncounter_2"><input id="queryEncounter_2" type="checkbox"/>Only groups occurring within the same encounter</label></div></td>
     </tr>
+    -->
     <tr>
         <td><!-- That's where our panels go --></td>
         <td><!-- That's where our panels go --></td>
@@ -40,7 +42,9 @@
                 <input type="radio" id="panelExclude_$n" name="panelRadio_$n" value="1"><label for="panelExclude_$n">Exclude</label>
             </span>
             <span class="panelButtons">
+                <!-- TODO This must be reactivated when support for dated query is proposed
                 <input type="checkbox" id="panelDate_$n" class="panelDate" /><label for="panelDate_$n" class="flatbutton">By Dates</label>
+                -->
                 <button id="panelClear_$n" class="flatbutton clearbutton">Clear Panel</button>
             </span>
         </div>
