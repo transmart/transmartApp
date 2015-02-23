@@ -1,5 +1,6 @@
 import command.UserGroupCommand
 import grails.converters.JSON
+import grails.transaction.Transactional
 import grails.validation.ValidationException
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
@@ -40,7 +41,8 @@ class UserGroupController {
         }
     }
 
-    def delete = {
+    @Transactional
+    def delete() {
         def userGroupInstance = UserGroup.get(params.id)
         if (userGroupInstance) {
             def accessList = SecureObjectAccess.findByPrincipal(userGroupInstance)
