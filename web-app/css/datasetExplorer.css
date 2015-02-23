@@ -94,9 +94,30 @@ a.toplink1:hover{
 	
 .savebutton{
 	background-image:url(../images/disk.png ) !important;
-	}	
-	
-.jleafclass 
+	}
+
+.progress-spinner {
+    background: url(../images/spinner.gif) 0px 0px / 16px 16px no-repeat transparent;
+    display:inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.progress-error {
+    background: url(../images/remove.png) 0px 0px / 16px 16px no-repeat transparent;
+    display:inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.progress-completed {
+    background: url(../images/green_check2.png) 0px 0px / 16px 16px no-repeat transparent;
+    display:inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.jleafclass
 	a span {
 
     color: #33cc33;
