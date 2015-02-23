@@ -4,6 +4,7 @@ import grails.validation.ValidationException
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.Principal
+import org.transmart.searchapp.SecureObjectAccess
 import org.transmart.searchapp.UserGroup
 
 class UserGroupController {
@@ -42,6 +43,8 @@ class UserGroupController {
     def delete = {
         def userGroupInstance = UserGroup.get(params.id)
         if (userGroupInstance) {
+            def accessList = SecureObjectAccess.findByPrincipal(userGroupInstance)
+            accessList.each { it.delete(flush: true) }
             userGroupInstance.delete()
             flash.message = "UserGroup ${params.id} deleted"
             redirect(action: "list")
