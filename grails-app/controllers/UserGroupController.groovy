@@ -45,7 +45,7 @@ class UserGroupController {
     def delete() {
         def userGroupInstance = UserGroup.get(params.id)
         if (userGroupInstance) {
-            def accessList = SecureObjectAccess.findByPrincipal(userGroupInstance)
+            def accessList = SecureObjectAccess.findAllByPrincipal(userGroupInstance)
             accessList.each { it.delete(flush: true) }
             userGroupInstance.delete()
             flash.message = "UserGroup ${params.id} deleted"
