@@ -95,6 +95,7 @@ beans = {
             dataSource = ref('dataSource')
             springSecurityService = ref('springSecurityService')
             databasePortabilityService = ref('databasePortabilityService')
+            bruteForceLoginLockService = ref('bruteForceLoginLockService')
         }
 
     } else {
