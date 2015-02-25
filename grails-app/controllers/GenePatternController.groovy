@@ -505,7 +505,7 @@ class GenePatternController {
         def con
 
         StringBuilder sb = new StringBuilder()
-        sb.append("<a  href=\"javascript:showInfo('help/happloview.html');\"><img src=\"../images/information.png\"></a>")
+        sb.append("<a  href=\"javascript:showInfo('help/happloview.html');\"><img src=\"${resource(dir:'images',file:'information.png')}\"></a>")
         sb.append("<b>Genes Selected: " + genes + "</b>")
         sb.append("<table><tr>")
 
@@ -581,7 +581,7 @@ class GenePatternController {
 
         //Add some links to the returned page.
         StringBuilder sb = new StringBuilder()
-        sb.append("<a  href=\"javascript:showInfo('help/happloview.html');\"><img src=\"../images/information.png\"></a>")
+        sb.append("<a  href=\"javascript:showInfo('help/happloview.html');\"><img src=\"${resource(dir:'images',file:'information.png')}\"></a>")
         sb.append("<b>Genes Selected: " + genes + "</b>")
         sb.append("<table><tr>")
 

@@ -189,7 +189,7 @@ public class GeneSignatureService {
                 if (fileSchemaName.toUpperCase() =~ /GENE /) {
                     marker = lookupBioAssociations(geneSymbol, organism)
                     if (marker == null || marker.size() == 0) {
-                        println("WARN: invalid gene sybmol: " + geneSymbol)
+                        println("WARN: invalid gene symbol: " + geneSymbol)
                         invalidSymbols.add(geneSymbol);
                         continue;
                     }
@@ -331,14 +331,14 @@ public class GeneSignatureService {
             symbol = iter.next()
             foldChgMetric = (valueMetrics != null) ? metricItems[i] : null;
             i++
-            log.info "[iter:" + i + "] trying to add gene sybmol: " + symbol + " with foldChgMetric: " + foldChgMetric
+            log.info "[iter:" + i + "] trying to add gene symbol: " + symbol + " with foldChgMetric: " + foldChgMetric
 
             // check for invalid symbols
             if (fileSchemaId != 3) marker = lookupBioAssociations(symbol, organism)
             if (fileSchemaId == 3) marker = lookupProbesetBioAssociations(symbol, gs.techPlatform.accession)
 
             if (marker == null || marker.size() == 0) {
-                println("WARN: invalid gene sybmol: " + symbol)
+                println("WARN: invalid gene symbol: " + symbol)
                 invalidSymbols.add(symbol)
                 continue
             }
@@ -492,7 +492,7 @@ public class GeneSignatureService {
     }
 
     /**
-     * match up the uploaded gene sybmol with our internal bio_marker & bio_data_uid tables
+     * match up the uploaded gene symbol with our internal bio_marker & bio_data_uid tables
      */
     def lookupBioAssociations(String geneSymbol, String organism) {
         def query = new Query(mainTableAlias: "bd");
