@@ -117,7 +117,7 @@ function jobsstoreLoaded() {
             tooltip: 'Click for Jobs help',
             iconCls: "contextHelpBtn",
             handler: function (event, toolEl, panel) {
-                D2H_ShowHelp("1456", helpURL, "wndExternal", CTXT_DISPLAY_FULLHELP);
+                D2H_ShowHelp("1476", helpURL, "wndExternal", CTXT_DISPLAY_FULLHELP);
             }
         }]
     });

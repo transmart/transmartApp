@@ -402,7 +402,8 @@ class RWGController {
             session['searchLog'] = searchLog
             //retrieve folders id to expand as opened nodes
             def nodesToExpand = session['rwgOpenedNodes']
-            render(template: '/fmFolder/folders', model: [folderContentsAccessLevelMap: fmFolderService.getFolderContentsWithAccessLevelInfo(user, null), nodesToExpand: nodesToExpand])
+            render(template: '/fmFolder/folders', plugin: 'folderManagement',
+                   model: [folderContentsAccessLevelMap: fmFolderService.getFolderContentsWithAccessLevelInfo(user, null), nodesToExpand: nodesToExpand])
             return
         }
         def al = new AccessLog(username: springSecurityService.getPrincipal().username, event: "Browse-Search", eventmessage: "", accesstime: new java.util.Date())
@@ -452,11 +453,11 @@ class RWGController {
                 def nodesToClose = session['rwgClosedNodes']
 
                 def folderContentsAccessLevelMap = fmFolderService.getFolderContentsWithAccessLevelInfo(user, null)
-                render(template: '/fmFolder/folders', model: [folderContentsAccessLevelMap: folderContentsAccessLevelMap, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: true, resultNumber: numbersJSON, nodesToExpand: nodesToExpand, nodesToClose: nodesToClose])
+                render(template: '/fmFolder/folders', plugin: 'folderManagement', model: [folderContentsAccessLevelMap: folderContentsAccessLevelMap, folderSearchString: folderSearchString, uniqueLeavesString: uniqueLeavesString, auto: true, resultNumber: numbersJSON, nodesToExpand: nodesToExpand, nodesToClose: nodesToClose])
             } else {
                 session['folderSearchList'] = [[], []]
                 def numbersJSON = new JSONObject(numbers)
-                render(template: '/fmFolder/noResults', model: [resultNumber: numbersJSON])
+                render(template: '/fmFolder/noResults', plugin: 'folderManagement', model: [resultNumber: numbersJSON])
             }
         } else {
             def pathLists = finalizePathLists(combinedResult.paths)
@@ -588,7 +589,7 @@ class RWGController {
 
     def getFileDetails = {
         def layout = formLayoutService.getLayout('file')
-        render(template: '/fmFolder/fileMetadata', model: [layout: layout, file: FmFile.get(params.id)])
+        render(template: '/fmFolder/fileMetadata', plugin: 'folderManagement', model: [layout: layout, file: FmFile.get(params.id)])
     }
 
     def solrQuery = {

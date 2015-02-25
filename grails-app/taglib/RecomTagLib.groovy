@@ -131,6 +131,11 @@ class RecomTagLib {
             out << tagValue.displayValue << "&nbsp;"
             out << "<img alt=\"external link\" src=\"" << resource(dir: 'images', file: 'linkext7.gif') << "\"/>"
             out << "</a>"
+        } else if (tagItem.codeTypeName != null && tagItem.codeTypeName.endsWith("_DOI")) {
+            out << "<a href=\"#\" onclick=\"var w=window.open('http://doi.org/" << tagValue.displayValue << "', '_blank'); w.focus(); return false;\">"
+            out << tagValue.displayValue << "&nbsp;"
+            out << "<img alt=\"external link\" src=\"" << resource(dir: 'images', file: 'linkext7.gif') << "\"/>"
+            out << "</a>"
         } else {
             out << tagValue.displayValue
         }

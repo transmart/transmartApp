@@ -472,7 +472,7 @@ public class SearchKeywordService {
     }
 
     /**
-     * create a new SearchKeyord for a GeneSignatute
+     * create a new SearchKeyword for a GeneSignatute
      */
     def createSearchKeywordFromGeneSig(GeneSignature gs, String domainKey) {
         println("INFO: creating SearchKeyword for GS: " + gs.name + "[" + domainKey + "]")
