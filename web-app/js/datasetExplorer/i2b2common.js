@@ -380,7 +380,7 @@ function setValue(conceptnode, setvaluemode, setvalueoperator, setvaluehighlowse
     invalidateSubset(subset);
 }
 
-function applySetValueDialog() {
+function applySetValueDialog(validation) {
 
     var mode = getSelected(document.getElementsByName("setValueMethod"))[0].value;
     var highvalue = document.getElementById("setValueHighValue").value;
@@ -390,25 +390,35 @@ function applySetValueDialog() {
     var highlowselect = document.getElementById("setValueHighLowSelect").value;
 
     // make sure that there is a value set
-    if (mode=="numeric" && operator == "BETWEEN" && (highvalue == "" || lowvalue== "")){
+    if (validation && mode=="numeric" && operator == "BETWEEN" && (highvalue == "" || lowvalue== "")){
         alert('You must specify a low and a high value.');
-    } else if (mode=="numeric" && lowvalue == "") {
+    } else if (validation && mode=="numeric" && lowvalue == "") {
         alert('You must specify a value.');
     } else {
-        setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units);
-    }
 
-    if (STATE.Dragging) {
-        jQuery('#' + selectedConcept.id).remove()
-        removeUselessPanels()
+        if (validation)
+            setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units);
+        else
+            setValueDialogComplete(setvaluewin.mode, setvaluewin.operator, setvaluewin.highlowselect, setvaluewin.highvalue, setvaluewin.lowvalue, setvaluewin.units);
+
+        if (STATE.Dragging) {
+            jQuery('#' + selectedConcept.id).remove()
+            removeUselessPanels()
+        }
+
+        setvaluewin.hide();
     }
-    setvaluewin.hide();
 }
 
 function showSetValueDialog()
 {
         var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
-        setvaluewin.setHeight(200); //set height back to old closed
+        setvaluewin.setHeight(180); //set height back to old closed
+
+        var top = jQuery("#resultsTabPanel").offset().top + jQuery("#resultsTabPanel").height() / 2 - setvaluewin.height / 1.5
+        var left = jQuery("#resultsTabPanel").offset().left + jQuery("#resultsTabPanel").width() / 2 - setvaluewin.width / 2
+
+        setvaluewin.setPosition(left, top);
         Ext.get("setvaluechartsPanel1").update("");
         Ext.get("setvaluechartsPanel2").update("");
         setvaluewin.show(viewport);
@@ -465,6 +475,13 @@ function showSetValueDialog()
           var unitsinput=document.getElementById("setValueUnits");
           var option = new Option(conceptnode.getAttribute('normalunits'),conceptnode.getAttribute('normalunits'));
           unitsinput.options[0]=option;
+
+    setvaluewin.mode = mode;
+    setvaluewin.operator = operator;
+    setvaluewin.highlowselect = highlowselect;
+    setvaluewin.highvalue = highvalue;
+    setvaluewin.lowvalue = lowvalue;
+    setvaluewin.units = units;
 
     setValueDialogComplete('novalue', operator, highlowselect, highvalue, lowvalue, units)
 }
@@ -1674,7 +1691,7 @@ function showConceptDistributionHistogram(){
 
 function showConceptDistributionHistogramComplete(result)
 {
-    setvaluewin.setHeight(390);
+    setvaluewin.setHeight(370);
 
     if (result == null)
         return Ext.get("setvaluechartsPanel1").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
@@ -1691,7 +1708,7 @@ function showConceptDistributionHistogramForSubset()
             url: pageInfo.basePath+"/chart/conceptDistributionForSubset",
             method: 'POST',
             success: function(result, request){showConceptDistributionHistogramForSubsetComplete(result);},
-            failure: function(result, request){showConceptDistrubutionHistogramForSubsetComplete(result);},
+            failure: function(result, request){showConceptDistributionHistogramForSubsetComplete(result);},
             timeout: '300000',
             params: Ext.urlEncode({concept_key: concept_key, result_instance_id1: GLOBAL.CurrentSubsetIDs[getSubsetFromPanel(selectedDiv)]})
         });
@@ -1699,7 +1716,7 @@ function showConceptDistributionHistogramForSubset()
 
 function showConceptDistributionHistogramForSubsetComplete(result)
 {
-    setvaluewin.setHeight(390);
+    setvaluewin.setHeight(370);
 
     if (result == null)
         return Ext.get("setvaluechartsPanel2").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");

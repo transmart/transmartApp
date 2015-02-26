@@ -897,7 +897,7 @@ Ext.onReady(function () {
                 {
                     id : 'setvaluePanel',
                     region : 'north',
-                    height : 140,
+                    height : 120,
                     width : 490,
                     split : false,
                 autoLoad: {
@@ -968,14 +968,14 @@ Ext.onReady(function () {
                         {
                             text : 'OK',
                             handler: function () {
-                                applySetValueDialog();
+                                applySetValueDialog(true);
                             }
                         }
                         ,
                         {
                             text : 'Cancel',
                             handler: function () {
-                                applySetValueDialog();
+                                applySetValueDialog(false);
                             }
                         }
                     ],
