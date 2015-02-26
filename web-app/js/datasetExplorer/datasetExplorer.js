@@ -948,6 +948,7 @@ Ext.onReady(function () {
                         {
                             text : 'Show Histogram',
                             handler: function () {
+                                showConceptDistributionHistogramComplete(null)
                                 showConceptDistributionHistogram();
                             }
                         }
@@ -957,6 +958,7 @@ Ext.onReady(function () {
                             handler: function () {
                                 var subset = getSubsetFromPanel(selectedDiv)
                                 if (!isSubsetEmpty(subset)) {
+                                    showConceptDistributionHistogramForSubsetComplete(null)
                                     runQuery(subset, showConceptDistributionHistogramForSubset);
                                 }
                                 else alert('Subset is empty!');
@@ -1920,7 +1922,9 @@ function runQuery(subset, callback) {
     var query = getQuery(subset)[0].outerHTML
 
     // first subset
-    queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
+    if (setvaluewin.hidden)
+        queryPanel.el.mask('Getting subset ' + subset + '...', 'x-mask-loading');
+
     Ext.Ajax.request(
         {
             url: pageInfo.basePath + "/queryTool/runQueryFromDefinition",

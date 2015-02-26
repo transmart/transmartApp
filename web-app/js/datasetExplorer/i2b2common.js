@@ -421,50 +421,50 @@ function showSetValueDialog()
                 setValueMethodChanged(mode);
             }
         else //default to numeric
-        {    
+        {
             if(test.length>0)
                 {
                 setCheckedValue(test, "numeric"); //numeric
                 setValueMethodChanged("numeric");
                 }
             }
-        
+
         var highvalue=conceptnode.getAttribute('setvaluehighvalue');
         if(highvalue!=null)
                 document.getElementById("setValueHighValue").value=highvalue;
         else
             document.getElementById("setValueHighValue").value="";
-                
+
         var lowvalue=conceptnode.getAttribute('setvaluelowvalue');
         var blah=document.getElementById("setValueLowValue");
         if(lowvalue!=null)
                 blah.value=lowvalue;
         else
             blah.value="";
-                
+
         var units=conceptnode.getAttribute('setvalueunits');
         if(units!=null)
                 document.getElementById("setValueUnits").value=units;
-                
+
         var operator=conceptnode.getAttribute('setvalueoperator');
         if(operator!=null)
                 {
                 document.getElementById("setValueOperator").value=operator;
                 setValueOperatorChanged(operator);
                 }
-                
+
         else
             {
                 document.getElementById("setValueOperator").value="LT";
                 setValueOperatorChanged("LT");
                 }
-       
+
         var highlowselect=conceptnode.getAttribute('setvaluehighlowselect');
         if(highlowselect!=null)
                 document.getElementById("setValueHighLowSelect").value=highlowselect;
-                
+
           var unitsinput=document.getElementById("setValueUnits");
-          var option = new Option(conceptnode.getAttribute('normalunits'),conceptnode.getAttribute('normalunits'));  
+          var option = new Option(conceptnode.getAttribute('normalunits'),conceptnode.getAttribute('normalunits'));
           unitsinput.options[0]=option;
 
     setValueDialogComplete('novalue', operator, highlowselect, highvalue, lowvalue, units)
@@ -1659,52 +1659,53 @@ function isSubsetEmpty(subset)
 }
 
 function showConceptDistributionHistogram(){
-var conceptnode=selectedConcept; 
 
-     //*run the current query
-     var concept_key=conceptnode.getAttribute('conceptid');
-     Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/chart/conceptDistribution",
-    	        method: 'POST',                                       
-    	        success: function(result, request){showConceptDistributionHistogramComplete(result);},
-    	        failure: function(result, request){showConceptDistributionHistogramComplete(result);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({charttype:"conceptdistribution",
-    	        		 			   concept_key: concept_key})
-    	    });   
+    var concept_key = selectedConcept.getAttribute('conceptid');
+
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath+"/chart/conceptDistribution",
+            method: 'POST',
+            success: function(result, request){showConceptDistributionHistogramComplete(result);},
+            failure: function(result, request){showConceptDistributionHistogramComplete(result);},
+            timeout: '300000',
+            params: Ext.urlEncode({concept_key: concept_key})
+        });
 }
 
 function showConceptDistributionHistogramComplete(result)
 {
-/*Ext.getCmp("cdhwindow").body.update(result.responseText);*/
-setvaluewin.setHeight(390);
-Ext.get("setvaluechartsPanel1").update(result.responseText);
-}
+    setvaluewin.setHeight(390);
 
+    if (result == null)
+        return Ext.get("setvaluechartsPanel1").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
+
+    Ext.get("setvaluechartsPanel1").update(result.responseText);
+}
 
 function showConceptDistributionHistogramForSubset()
 {
+    var concept_key = selectedConcept.getAttribute('conceptid');
 
-var concept_key=selectedConcept.getAttribute('conceptid');
-
-Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/chart/conceptDistributionForSubset",
-    	        method: 'POST',                                       
-    	        success: function(result, request){showConceptDistributionHistogramForSubsetComplete(result);},
-    	        failure: function(result, request){showConceptDistrubutionHistogramForSubsetComplete(result);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({ charttype: "conceptdistributionforsubset",
-    	        		  				concept_key: concept_key, 
-    	        		  				result_instance_id1: GLOBAL.CurrentSubsetIDs[getSubsetFromPanel(selectedDiv)]})
-    	    }); 
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath+"/chart/conceptDistributionForSubset",
+            method: 'POST',
+            success: function(result, request){showConceptDistributionHistogramForSubsetComplete(result);},
+            failure: function(result, request){showConceptDistrubutionHistogramForSubsetComplete(result);},
+            timeout: '300000',
+            params: Ext.urlEncode({concept_key: concept_key, result_instance_id1: GLOBAL.CurrentSubsetIDs[getSubsetFromPanel(selectedDiv)]})
+        });
 }
+
 function showConceptDistributionHistogramForSubsetComplete(result)
 {
-/*Ext.getCmp("cdhswindow").body.update(result.responseText);*/
-setvaluewin.setHeight(390);
-Ext.get("setvaluechartsPanel2").update(result.responseText);
+    setvaluewin.setHeight(390);
+
+    if (result == null)
+        return Ext.get("setvaluechartsPanel2").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
+
+    Ext.get("setvaluechartsPanel2").update(result.responseText);
 }
 
 function getTreeNodeFromJsonNode(concept)
