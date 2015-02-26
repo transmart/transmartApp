@@ -933,101 +933,71 @@ Ext.onReady(function () {
         // preload the setvalue dialog
         if (!this.setvaluewin) {
             setvaluewin = new Ext.Window(
-                    {
-                        id : 'setValueWindow',
-                        title : 'Set Value',
-                        layout : 'border',
-                        width : 500,
-                        height : 240,
-                        closable : false,
-                        plain : true,
-                        modal : true,
-                        border : false,
-                        items : [setvaluePanel , setvaluechartsPanel1, setvaluechartsPanel2],
-                        buttons : [
-                                   {
-                                       text : 'Show Histogram',
+                {
+                    id : 'setValueWindow',
+                    title : 'Set Value',
+                    layout : 'border',
+                    width : 500,
+                    height : 240,
+                    closable : false,
+                    plain : true,
+                    modal : true,
+                    border : false,
+                    items : [setvaluePanel , setvaluechartsPanel1, setvaluechartsPanel2],
+                    buttons : [
+                        {
+                            text : 'Show Histogram',
                             handler: function () {
-                                       showConceptDistributionHistogram();
-                                       }
-                                   }
-                                   ,
-                                   {
-                                       text : 'Show Histogram for subset',
+                                showConceptDistributionHistogram();
+                            }
+                        }
+                        ,
+                        {
+                            text : 'Show Histogram for subset',
                             handler: function () {
-                                       var subset;
-                                if (selectedConcept.parentNode.id == "hiddenDragDiv") {
-                                           subset = getSubsetFromPanel(STATE.Target);
-                                       }
-                                else {
-                                           subset = getSubsetFromPanel(selectedConcept.parentNode)
-                                       }
-
+                                var subset = getSubsetFromPanel(selectedDiv)
                                 if (!isSubsetEmpty(subset)) {
-                                           runQuery(subset, showConceptDistributionHistogramForSubset);
-                                       }
-                                       else alert('Subset is empty!');
-                                       }
-                                   }
-                                   ,
-                                   {
-                                       text : 'OK',
-                            handler: function () {
-                                       var mode = getSelected(document.getElementsByName("setValueMethod"))[0].value;
-                                       var highvalue = document.getElementById("setValueHighValue").value;
-                                       var lowvalue = document.getElementById("setValueLowValue").value;
-                                       var units = document.getElementById("setValueUnits").value;
-                                       var operator = document.getElementById("setValueOperator").value;
-                                       var highlowselect = document.getElementById("setValueHighLowSelect").value;
-
-                                       // make sure that there is a value set
-                                       if (mode=="numeric" && operator == "BETWEEN" && (highvalue == "" || lowvalue== "")){
-                                           alert('You must specify a low and a high value.');
-                                       } else if (mode=="numeric" && lowvalue == "") {
-                                           alert('You must specify a value.');
-                                       } else {
-                                           setvaluewin.hide();
-                                           setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units);
-                                       }
-                                       }
-                                   }
-                                   ,
-                                   {
-                                       text : 'Cancel',
-                            handler: function () {
-                                if (STATE.Dragging) {
-                                    jQuery('#' + selectedConcept.id).remove()
-                                    removeUselessPanels()
+                                    runQuery(subset, showConceptDistributionHistogramForSubset);
                                 }
-                                       setvaluewin.hide();
-                                       }
-                                   }
-                                   ],
-                                   resizable : false,
+                                else alert('Subset is empty!');
+                            }
+                        }
+                        ,
+                        {
+                            text : 'OK',
+                            handler: function () {
+                                applySetValueDialog();
+                            }
+                        }
+                        ,
+                        {
+                            text : 'Cancel',
+                            handler: function () {
+                                applySetValueDialog();
+                            }
+                        }
+                    ],
+                    resizable : false,
                     tools: [
                         {
-                                        id:'help',
-                                        qtip:'Click for context sensitive help',
-                                        handler: function(event, toolEl, panel){
-                                            D2H_ShowHelp("1239", helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-                                        }
+                            id:'help',
+                            qtip:'Click for context sensitive help',
+                            handler: function(event, toolEl, panel){
+                                D2H_ShowHelp("1239", helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                            }
                         }
                     ]
 
-                    }
+                }
             );
             setvaluewin.show();
             setvaluewin.hide();
         }
 
-
         showLoginDialog();
         var h=queryPanel.header;
 
         }
-
-
-
 );
 
 function onWindowResize() {

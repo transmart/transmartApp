@@ -241,7 +241,7 @@ function createPanelItemNew(panel, concept)
 
 function getSubsetFromPanel(panel)
 {
-    return jQuery('#' + panel.id).attr('id');
+    return jQuery('#' + panel.id).closest(".panelModel").attr('subset');
 }
 
 function getSetValueText(mode, operator, highlowselect, highvalue, lowvalue, units)
@@ -380,6 +380,31 @@ function setValue(conceptnode, setvaluemode, setvalueoperator, setvaluehighlowse
     invalidateSubset(subset);
 }
 
+function applySetValueDialog() {
+
+    var mode = getSelected(document.getElementsByName("setValueMethod"))[0].value;
+    var highvalue = document.getElementById("setValueHighValue").value;
+    var lowvalue = document.getElementById("setValueLowValue").value;
+    var units = document.getElementById("setValueUnits").value;
+    var operator = document.getElementById("setValueOperator").value;
+    var highlowselect = document.getElementById("setValueHighLowSelect").value;
+
+    // make sure that there is a value set
+    if (mode=="numeric" && operator == "BETWEEN" && (highvalue == "" || lowvalue== "")){
+        alert('You must specify a low and a high value.');
+    } else if (mode=="numeric" && lowvalue == "") {
+        alert('You must specify a value.');
+    } else {
+        setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units);
+    }
+
+    if (STATE.Dragging) {
+        jQuery('#' + selectedConcept.id).remove()
+        removeUselessPanels()
+    }
+    setvaluewin.hide();
+}
+
 function showSetValueDialog()
 {
         var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
@@ -440,7 +465,9 @@ function showSetValueDialog()
                 
           var unitsinput=document.getElementById("setValueUnits");
           var option = new Option(conceptnode.getAttribute('normalunits'),conceptnode.getAttribute('normalunits'));  
-          unitsinput.options[0]=option;   
+          unitsinput.options[0]=option;
+
+    setValueDialogComplete('novalue', operator, highlowselect, highvalue, lowvalue, units)
 }
 
 
@@ -1659,16 +1686,7 @@ Ext.get("setvaluechartsPanel1").update(result.responseText);
 function showConceptDistributionHistogramForSubset()
 {
 
-var conceptnode=selectedConcept; 
-var concept_key=conceptnode.getAttribute('conceptid');
-
-var subset;
-if(conceptnode.parentNode.id=="hiddenDragDiv") //was dragging so get target panel
-	{
-	 subset=getSubsetFromPanel(STATE.Target);
-	 }
-else{subset=getSubsetFromPanel(conceptnode.parentNode);} //wasn't dragging so get selected panel
-var result_instance_id1=GLOBAL.CurrentSubsetIDs[subset];
+var concept_key=selectedConcept.getAttribute('conceptid');
 
 Ext.Ajax.request(
     	    {
@@ -1679,7 +1697,7 @@ Ext.Ajax.request(
     	        timeout: '300000',
     	        params: Ext.urlEncode({ charttype: "conceptdistributionforsubset",
     	        		  				concept_key: concept_key, 
-    	        		  				result_instance_id1: result_instance_id1})
+    	        		  				result_instance_id1: GLOBAL.CurrentSubsetIDs[getSubsetFromPanel(selectedDiv)]})
     	    }); 
 }
 function showConceptDistributionHistogramForSubsetComplete(result)
