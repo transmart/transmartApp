@@ -121,6 +121,7 @@ class ChartService {
         // Retrieving function parameters
         def subsets = args.subsets ?: null
         def concept = args.concept ?: null
+        def chartSize = args.chartSize ?: null
 
         // We create our result holder and initiate it from subsets
         def result = [:]
@@ -154,8 +155,8 @@ class ChartService {
             }
 
             // Lets build our concept diagrams now that we have all the points in
-            result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle)
-            result.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle)
+            result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle, size: chartSize)
+            result.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle, size: chartSize)
 
             // Lets calculate the T test if possible
             if (result[2].exists) {
