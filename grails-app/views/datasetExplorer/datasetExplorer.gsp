@@ -157,8 +157,7 @@
             currentSubsetsStudy: '',
             isGridViewLoaded: false,
             galaxyEnabled: '${grailsApplication.config.com.galaxy.blend4j.galaxyEnabled}',
-            galaxyUrl: "${grailsApplication.config.com.galaxy.blend4j.galaxyURL}",
-            hideSampleDetailsTab: '${grailsApplication.config.ui.analyzetabs.sampleDetails.hide}'
+            galaxyUrl: "${grailsApplication.config.com.galaxy.blend4j.galaxyURL}"
         };
         // initialize browser version variables; see http://www.quirksmode.org/js/detect.html
         BrowserDetect.init();

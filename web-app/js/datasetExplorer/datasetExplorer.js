@@ -736,9 +736,7 @@ Ext.onReady(function () {
 		resultsTabPanel.add(analysisExportJobsPanel);
 		resultsTabPanel.add(analysisJobsPanel);
 		resultsTabPanel.add(workspacePanel);
-        if (GLOBAL.hideSampleDetailsTab != 'true') {
-            resultsTabPanel.add(sampleExplorerPanel);
-        }
+        resultsTabPanel.add(sampleExplorerPanel);
 
         function loadResources(resources, bootstrap) {
             var scripts = [];
