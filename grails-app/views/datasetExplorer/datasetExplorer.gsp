@@ -148,6 +148,7 @@
             SNPType: '',
             basePath: pageInfo.basePath,
             hideAcrossTrialsPanel: '${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
+            sampleExplorerEnabled: ${!grailsApplication.config.ui.tabs.sampleExplorer.hide},
             metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
             metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}',
             AnalysisHasBeenRun: false,
@@ -157,8 +158,7 @@
             currentSubsetsStudy: '',
             isGridViewLoaded: false,
             galaxyEnabled: '${grailsApplication.config.com.galaxy.blend4j.galaxyEnabled}',
-            galaxyUrl: "${grailsApplication.config.com.galaxy.blend4j.galaxyURL}",
-            hideSampleDetailsTab: '${grailsApplication.config.ui.analyzetabs.sampleDetails.hide}'
+            galaxyUrl: "${grailsApplication.config.com.galaxy.blend4j.galaxyURL}"
         };
         // initialize browser version variables; see http://www.quirksmode.org/js/detect.html
         BrowserDetect.init();
