@@ -1664,6 +1664,10 @@ function createTree(ontresponse) {
         if ((access != undefined && access != 'Locked') || GLOBAL.IsAdmin) {
             lockedNode = false;
         }
+        if (lockedNode && key.indexOf('\\\\xtrials\\') === 0) {
+            // across trial nodes should never be locked
+            lockedNode = false;
+        }
 
         if (GLOBAL.PathToExpand.indexOf(key) > -1 && GLOBAL.UniqueLeaves.indexOf(key + ",") == -1 && !lockedNode) {
             autoExpand = true;
