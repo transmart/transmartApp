@@ -12,8 +12,7 @@ class QueryToolController {
 
     def queryDefinitionXmlService
     def queriesResourceAuthorizationDecorator
-    @Resource(name = CurrentUserBeanProxyFactory.BEAN_BAME)
-    User currentUser
+    User currentUserBean
 
     /**
      * Creates a query definition and runs it. The input format is a subset
@@ -24,7 +23,7 @@ class QueryToolController {
     def runQueryFromDefinition() {
         QueryDefinition definition =
                 queryDefinitionXmlService.fromXml(request.reader)
-        String username = currentUser.username
+        String username = currentUserBean.username
 
         def result = queriesResourceAuthorizationDecorator.runQuery(
                 definition, username)
