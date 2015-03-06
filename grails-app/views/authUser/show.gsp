@@ -95,6 +95,12 @@
                     </ul>
                 </td>
             </tr>
+            <tr class="prop">
+                <td valign="top" class="name">Force user to change the password:</td>
+                <td valign="top" class="value">
+                    ${person.changePassword ? 'Yes' : 'No'}
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
