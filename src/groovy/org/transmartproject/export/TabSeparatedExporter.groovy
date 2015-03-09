@@ -66,7 +66,7 @@ class TabSeparatedExporter implements HighDimExporter {
         def startTime = System.currentTimeMillis()
 
         if (isCancelled()) {
-            return null
+            return
         }
 
         // Determine the fields to be exported, and the label they get

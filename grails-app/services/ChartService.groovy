@@ -27,6 +27,7 @@ import java.awt.*
 class ChartService {
 
     def i2b2HelperService
+    def omicsQueryService
 
     def getSubsetsFromRequest(params) {
 
@@ -94,8 +95,8 @@ class ChartService {
         }
 
         // Lets build our age diagrams now that we have all the points in
-        subsets.commons.ageHisto = getSVGChart(type: 'histogram', data: ageHistogramHandle)
-        subsets.commons.agePlot = getSVGChart(type: 'boxplot', data: agePlotHandle)
+        subsets.commons.ageHisto = getSVGChart(type: 'histogram', data: ageHistogramHandle, title: "Age")
+        subsets.commons.agePlot = getSVGChart(type: 'boxplot', data: agePlotHandle, title: "Age")
 
         subsets
     }
@@ -110,9 +111,25 @@ class ChartService {
         }.findAll() {
             it.indexOf("SECURITY") <= -1
         }.each {
-            concepts[it] = getConceptAnalysis(concept: it, subsets: subsets)
+            if (!i2b2HelperService.isHighDimensionalConceptKey(it)) {
+                concepts[it] = getConceptAnalysis(concept: it, subsets: subsets)
+            }
         }
 
+        concepts
+    }
+
+    def getHighDimensionalConceptsForSubsets(subsets) {
+        // We also retrieve all concepts involved in the query
+        def concepts = [:]
+        omicsQueryService.getHighDimensionalConceptSet(subsets[1].instance, subsets[2].instance).collect {
+            i2b2HelperService.getConceptKeyForAnalysis(it)
+        }.findAll() {
+            it.indexOf("SECURITY") <= -1
+        }.each {
+            def decoded_key = omicsQueryService.decodeHighDimConceptKey(it)
+            concepts[it] = getConceptAnalysis(concept: decoded_key.concept, subsets: subsets, gene_symbol: decoded_key.gene_symbol)
+        }
         concepts
     }
 
@@ -134,6 +151,7 @@ class ChartService {
         // We retrieve the basics
         result.commons.conceptCode = i2b2HelperService.getConceptCodeFromKey(concept);
         result.commons.conceptName = i2b2HelperService.getShortNameFromKey(concept);
+        result.commons.gene_symbol = args.gene_symbol ?: null
 
         if (i2b2HelperService.isValueConceptCode(result.commons.conceptCode)) {
 
@@ -181,8 +199,56 @@ class ChartService {
 
                 }
             }
+        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && result.commons.gene_symbol != null) {
 
-        } else {
+            result.commons.type = 'value'
+            result.commons.conceptName = result.commons.gene_symbol + " in " + result.commons.conceptName
+
+            // Lets prepare our subset shared diagrams, we will fill them later
+            def conceptHistogramHandle = [:]
+            def conceptPlotHandle = [:];
+
+            result.findAll { n, p ->
+                p.exists
+            }.each { n, p ->
+
+                // Getting the concept data
+                p.conceptData = omicsQueryService.getConceptDistributionDataForHighDimensionConceptFromCode(result.commons.conceptCode, p.instance, result.commons.gene_symbol).toList()
+                p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.conceptData)
+                conceptHistogramHandle["Subset $n"] = p.conceptData
+                conceptPlotHandle["Series $n"] = p.conceptStats
+            }
+
+            // Lets build our concept diagrams now that we have all the points in
+            result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle, size: chartSize)
+            result.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle, size: chartSize)
+
+            // Lets calculate the T test if possible
+            if (result[2].exists) {
+
+                if (result[1].conceptData.toArray() == result[2].conceptData.toArray())
+                    result.commons.testmessage = 'No T-test calculated: these are the same subsets'
+                else if (result[1].conceptData.size() < 2 || result[2].conceptData.size() < 2)
+                    result.commons.testmessage = 'No T-test calculated: not enough data'
+                else {
+
+                    def double [] o = (double[])result[1].conceptData.toArray()
+                    def double [] t = (double[])result[2].conceptData.toArray()
+
+                    result.commons.tstat = TestUtils.t(o, t).round(5)
+                    result.commons.pvalue = TestUtils.tTest(o, t).round(5)
+                    result.commons.significance = TestUtils.tTest(o, t, 0.05)
+
+                    if (result.commons.significance)
+                        result.commons.testmessage = 'T-test demonstrated results are significant at a 95% confidence level'
+                    else
+                        result.commons.testmessage = 'T-test demonstrated results are <b>not</b> significant at a 95% confidence level'
+
+                }
+            }
+
+        }
+        else {
 
             result.commons.type = 'traditional'
 
@@ -297,7 +363,7 @@ class ChartService {
                     min = min != null ? (v.min() != null && min > v.min() ? v.min() : min) : v.min()
                     max = max != null ? (v.max() != null && max < v.max() ? v.max() : max) : v.max()
                 }.each { k, v ->
-                    if (k) set.addSeries(k, (double [])v.toArray(), 10, min, max)
+                    if (k) set.addSeries(k, (double [])v.toArray(), 10, min ?: 0, max ?: 0)
                 }
 
                 chart = ChartFactory.createHistogram(title, null, "", set, PlotOrientation.VERTICAL, true, true, false)

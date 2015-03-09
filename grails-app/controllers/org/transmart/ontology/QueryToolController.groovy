@@ -1,10 +1,12 @@
 package org.transmart.ontology
 
 import grails.converters.JSON
+import org.codehaus.groovy.grails.web.json.JSONObject
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import org.transmartproject.core.exceptions.InvalidRequestException
 import org.transmartproject.core.querytool.QueryDefinition
 import org.transmartproject.core.users.User
+import org.apache.commons.io.IOUtils
 
 import javax.annotation.Resource
 
@@ -12,6 +14,8 @@ class QueryToolController {
 
     def queryDefinitionXmlService
     def queriesResourceAuthorizationDecorator
+    def i2b2HelperService
+    def omicsQueryService
     @Resource(name = CurrentUserBeanProxyFactory.BEAN_BAME)
     User currentUser
 
@@ -22,13 +26,23 @@ class QueryToolController {
      * The result is a JSON serialized QueryResult.
      */
     def runQueryFromDefinition() {
+        String request = IOUtils.toString(request.reader)
         QueryDefinition definition =
-                queryDefinitionXmlService.fromXml(request.reader)
+                queryDefinitionXmlService.fromXml(new StringReader(request))
+
         String username = currentUser.username
 
         def result = queriesResourceAuthorizationDecorator.runQuery(
                 definition, username)
-        render result as JSON
+
+
+
+        //render result as JSON
+
+        def omics_result = omicsQueryService.applyOmicsFilters(result.id, request, definition.name)
+        def newresult = JSON.parse((result as JSON).toString())
+        newresult.putAt("omics_filter_result", omics_result)
+        render newresult as JSON
     }
 
     /**

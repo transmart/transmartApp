@@ -498,6 +498,152 @@ if(STATE.Dragging==true){
     }
 }
 
+function applyOmicsFilterDialog(validation) {
+
+    var gene_symbol = document.getElementById("gene-searchbox").value;
+    if (validation && gene_symbol == "") {
+        alert("You must choose a gene.");
+        return;
+    }
+    var mode = getSelected(document.getElementsByName("setOmicsValueMethod"))[0].value;
+    var threshold = document.getElementById("setOmicsValueValue").value;
+    var operator = document.getElementById("setOmicsValueOperator").value;
+
+    // make sure that there is a value set
+    if (validation && mode=="relative" && !jQuery.isNumeric(threshold)) {
+        alert('You must specify a numeric value.');
+    } else if (validation && mode=="numeric" && (threshold < 0.0 || threshold > 100.0)) {
+        alert('You must specify a value between 0 and 100.');
+    } else {
+
+        if (validation)
+            omicsFilterDialogComplete(mode, threshold, operator, gene_symbol);
+
+        if (STATE.Dragging) {
+            jQuery('#' + selectedConcept.id).remove()
+            removeUselessPanels()
+        }
+
+        omicsfilterwin.hide();
+    }
+}
+
+function showOmicsFilterDialog(concept_key)
+{
+    jQuery("#setOmicsValueOperator").val("HI");
+    jQuery("#noValueOmicsMethod").attr("checked", true);
+    jQuery("#gene-searchbox").val("");
+    jQuery("#setOmicsValueValue").val("");
+    jQuery("#gene-searchbox").autocomplete("option", "source", "/transmart/omicsPlatformSearch/searchAutoComplete?concept_key=" + encodeURIComponent(concept_key));
+    omicsfilterwin.setHeight(180); //set height back to old closed
+    Ext.get("omicsfilterchartsPanel1").update("");
+    Ext.get("omicsfilterchartsPanel2").update("");
+    var top = jQuery("#resultsTabPanel").offset().top + jQuery("#resultsTabPanel").height() / 2 - setvaluewin.height / 1.5
+    var left = jQuery("#resultsTabPanel").offset().left + jQuery("#resultsTabPanel").width() / 2 - setvaluewin.width / 2
+
+    omicsfilterwin.setPosition(left, top);
+    omicsfilterwin.show(viewport);
+    setOmicsValueMethodChanged("novalue");
+}
+
+function omicsFilterDialogComplete(mode, threshold, operator, gene_symbol)
+{
+    var conceptnode = selectedConcept;
+    setOmicsFilterValue(conceptnode, mode, operator, threshold, gene_symbol);
+    if(STATE.Dragging==true){
+        STATE.Dragging=false;
+        moveSelectedConceptFromHoldingToTarget();
+    }
+}
+
+function setOmicsFilterValue(conceptnode, mode, operator, threshold, gene_symbol)
+{
+    conceptnode.setAttribute("setvaluemode","omics");
+    conceptnode.setAttribute("gene_symbol", gene_symbol);
+    conceptnode.setAttribute("omicsoperator", operator);
+    conceptnode.setAttribute("omicsvalue", threshold);
+
+    var valuetext="";
+    valuetext=getOmicsFilterValueText(mode, operator, threshold, gene_symbol);
+    conceptnode.setAttribute('conceptsetvaluetext',valuetext);
+    var conceptname=conceptnode.getAttribute("conceptname");
+    jQuery('#' + conceptnode.id + " .concept-text").html(conceptname + " " + valuetext)
+    var subset=getSubsetFromPanel(conceptnode.parentNode);
+    invalidateSubset(subset);
+}
+
+function getOmicsFilterValueText(mode, operator, value, gene_symbol)
+{
+    result = gene_symbol;
+    if (mode == "relative") {
+        var result = gene_symbol + " in ";
+        switch (operator) {
+            case "GT":
+                result = result + "top";
+                break;
+            case "LT":
+                result = result + "bottom";
+                break;
+        }
+        result = result + " " + value + "%";
+    }
+    return "<em>" + result + "</em>";
+}
+
+function showGeneSelectionDialog(concept_key) {
+    jQuery("#gene-selection-searchbox").val("");
+    jQuery("#gene-selection-searchbox").autocomplete("option", "source", "/transmart/omicsPlatformSearch/searchAutoComplete?concept_key=" + encodeURIComponent(concept_key));
+    jQuery("#gene-selection-concept-key").val(concept_key);
+
+    var top = jQuery("#resultsTabPanel").offset().top + jQuery("#resultsTabPanel").height() / 2 - setvaluewin.height / 1.5
+    var left = jQuery("#resultsTabPanel").offset().left + jQuery("#resultsTabPanel").width() / 2 - setvaluewin.width / 2
+
+    geneselectionwin.setPosition(left, top);
+    geneselectionwin.show(viewport);
+}
+
+function applyGeneSelectionDialog(validation) {
+
+    var gene_symbol = document.getElementById("gene-selection-searchbox").value;
+    var concept_key = document.getElementById("gene-selection-concept-key").value;
+    if (validation && gene_symbol == "") {
+        alert("You must choose a gene.");
+        return;
+    }
+
+    if (validation) {
+        resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
+        var genesymbol = document.getElementById("gene-selection-searchbox").value;
+        Ext.Ajax.request(
+            {
+                url : pageInfo.basePath+"/chart/analysis",
+                method : 'POST',
+                timeout: '600000',
+                params :  Ext.urlEncode(
+                    {
+                        charttype : "analysis",
+                        concept_key : concept_key,
+                        gene_symbol : genesymbol,
+                        result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                        result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+                    }
+                ), // or a URL encoded string
+                success: function (result, request) {
+                    buildAnalysisComplete(result);
+                    resultsTabPanel.body.unmask();
+                },
+                failure: function (result, request) {
+                    alert("A problem arose while trying to retrieve the results")
+                    resultsTabPanel.body.unmask();
+                }
+            }
+        );
+        getAnalysisGridData(concept_key, genesymbol);
+    }
+
+    geneselectionwin.hide();
+}
+
 function moveSelectedConceptFromHoldingToTarget()
 {
     var subset=jQuery('#' + selectedConcept.id).closest(".panelModel").attr("subset")
@@ -1722,6 +1868,57 @@ function showConceptDistributionHistogramForSubsetComplete(result)
         return Ext.get("setvaluechartsPanel2").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
 
     Ext.get("setvaluechartsPanel2").update(result.responseText);
+}
+
+function showConceptDistributionHistogramForOmicsFilter(gene_symbol){
+
+    var concept_key = selectedConcept.getAttribute('conceptid');
+
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath+"/chart/conceptDistribution",
+            method: 'POST',
+            success: function(result, request){showConceptDistributionHistogramForOmicsFilterComplete(result);},
+            failure: function(result, request){showConceptDistributionHistogramForOmicsFilterComplete(result);},
+            timeout: '300000',
+            params: Ext.urlEncode({concept_key: concept_key, gene_symbol: gene_symbol})
+        });
+}
+
+function showConceptDistributionHistogramForOmicsFilterComplete(result)
+{
+    omicsfilterwin.setHeight(370);
+
+    if (result == null)
+        return Ext.get("omicsfilterchartsPanel1").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
+
+    Ext.get("omicsfilterchartsPanel1").update(result.responseText);
+}
+
+function showConceptDistributionHistogramForOmicsFilterForSubset()
+{
+    var concept_key = selectedConcept.getAttribute('conceptid');
+    var gene_symbol = document.getElementById("gene-searchbox").value;
+
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath+"/chart/conceptDistributionForSubset",
+            method: 'POST',
+            success: function(result, request){showConceptDistributionHistogramForOmicsFilterForSubsetComplete(result);},
+            failure: function(result, request){showConceptDistributionHistogramForOmicsFilterForSubsetComplete(result);},
+            timeout: '300000',
+            params: Ext.urlEncode({concept_key: concept_key, gene_symbol: gene_symbol, result_instance_id1: GLOBAL.CurrentSubsetIDs[getSubsetFromPanel(selectedDiv)]})
+        });
+}
+
+function showConceptDistributionHistogramForOmicsFilterForSubsetComplete(result)
+{
+    omicsfilterwin.setHeight(370);
+
+    if (result == null)
+        return Ext.get("omicsfilterchartsPanel2").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
+
+    Ext.get("omicsfilterchartsPanel2").update(result.responseText);
 }
 
 function getTreeNodeFromJsonNode(concept)

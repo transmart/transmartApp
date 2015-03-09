@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Gene Selection Dialog</title>
+    <style>
+        .ui-autocomplete {
+            max-height: 100px;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+            /* add padding to account for vertical scrollbar */
+            padding-right: 20px;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+
+    jQuery(document).ready(function() {
+                addGeneSelectionSearchAutocomplete();
+            }
+    );
+
+    function addGeneSelectionSearchAutocomplete() {
+
+        jQuery("#gene-selection-searchbox").css({"max-height": "300px", "overflow-y": "auto", "overflow-x": "hidden", "padding-right": "20px"});
+        jQuery("#gene-selection-searchbox").autocomplete({
+            position:{my:"left top",at:"left bottom",collision:"none"},
+            appendTo:"#geneSelectionWindow",
+            source: '', // showOmicsFilterDialog() will set this
+            minLength:1,
+            select: function(event, ui) {
+                jQuery("gene-selection-searchbox").val(ui.item.label);
+            },
+            focus: function(event, ui) {
+                jQuery("gene-selection-searchbox").val(ui.item.label);
+            },
+            close: function(event, ui) {
+                if (ui.item) {
+                    jQuery("gene-selection-searchbox").val(ui.item.label);
+                }
+            }
+        }).data("uiAutocomplete")._renderItem = function( ul, item ) {
+            var resulta = '<a><span class="category-gene"><b>' + item.label + '</b>';
+            if (item.synonyms != null) {
+                resulta += (item.synonyms + '</a>');
+            }
+            else {
+                resulta += '</a>';
+            }
+
+            return jQuery('<li></li>')
+                    .data("item.autocomplete", item )
+                    .append(resulta)
+                    .appendTo(ul);
+        };
+    }
+
+</script>
+<div style="..." id="gene-selection-main">
+    <table style="font:9pt arial;width: 500px">
+        <tr><td>Select a gene for analysis: </td>
+            <td><label for="gene-selection-searchbox">Gene: </label><input type="text" id="gene-selection-searchbox" size="10"/></td>
+        </tr>
+    </table>
+    <input type="hidden" id="gene-selection-concept-key" style="display: none;"/>
+</div>
+</body>
+</html>

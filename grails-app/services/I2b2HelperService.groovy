@@ -43,6 +43,7 @@ class I2b2HelperService {
     def conceptService
     def conceptsResourceService
     def sampleInfoService
+    def omicsQueryService
 
     /**
      * Gets a distribution of information from the patient dimention table for value columns
@@ -158,7 +159,7 @@ class I2b2HelperService {
      */
     def String getConceptKeyForAnalysis(String concept_key_in) {
         if (isLeafConceptKey(concept_key_in)) {
-            if (isValueConceptKey(concept_key_in)) {
+            if (isValueConceptKey(concept_key_in) || isHighDimensionalConceptKey(concept_key_in)) {
                 return concept_key_in; //just use me cause im a value node
             } else {
                 return getParentConceptKey(concept_key_in)
@@ -206,6 +207,21 @@ class I2b2HelperService {
      */
     def Boolean isValueConceptKey(String concept_key) {
         return isValueConceptCode(getConceptCodeFromKey(concept_key));
+    }
+
+    /**
+     * Determines if a concept key is a high dimensional concept or not
+     * Will return true for keys of the form ...\Human Affymetrix ...\
+     * as well as ...\Human Affymetrix ...\TNF
+     */
+    def Boolean isHighDimensionalConceptKey(String concept_key) {
+        def code = getConceptCodeFromKey(concept_key)
+        if (code == "") {
+            // this is probably a high dimensional node with gene_symbol appended
+            def decoded_key = omicsQueryService.decodeHighDimConceptKey(concept_key)
+            code = getConceptCodeFromKey(decoded_key.concept)
+        }
+        return isHighDimensionalConceptCode(code)
     }
 
     /**
@@ -373,6 +389,31 @@ class I2b2HelperService {
         log.trace("METADATA XML:" + xml);
 
         res = nodeXmlRepresentsValueConcept(xml)
+        return res;
+    }
+
+    /**
+     * Determines if a concept code is a high-dimensional concept code by checking the visual
+     * style.
+     * TODO: when omics data have proper metadata, change this to check to metadata!
+     * @param concept_code the concept code to check
+     * @return true if i2b2metadata.i2b2.c_visualattributes equals "LAH" for the given concept code
+     */
+    def Boolean isHighDimensionalConceptCode(String concept_code) {
+        log.debug "Checking isHighDimensionalConceptCode for code:" + concept_code
+        Boolean res = false;
+        Sql sql = new Sql(dataSource);
+        String sqlt = "SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_BASECODE = ?";
+        sql.eachRow(sqlt, [concept_code], { row ->
+            if (row.c_visualattributes == "LAH") {
+                res = true;
+                log.debug("Positive for high dimensional node");
+            }
+            else {
+                log.debug("Negative for high dimensional node");
+            }
+        })
+
         return res;
     }
 
@@ -5565,6 +5606,10 @@ class I2b2HelperService {
             })
             return trials;
         }
+    }
+
+    def String getTrialNameByConceptKey(String key) {
+        return conceptsResourceService.getByKey(key).getStudy().getId()
     }
 }
 

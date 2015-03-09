@@ -31,6 +31,7 @@ class ChartController {
     def i2b2HelperService
     def springSecurityService
     def chartService
+    def omicsQueryService
 
 
     def displayChart = {
@@ -125,9 +126,12 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
+        // We retrieve the gene_symbol from the client, if it was passed
+        def gene_symbol = params.gene_symbol ?: null
+
         // Collect concept information
         // We need to force computation for an empty instance ID
-        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
+        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), gene_symbol: gene_symbol, subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
 
         PrintWriter pw = new PrintWriter(response.getOutputStream());
         pw.write(concept.commons.conceptHisto)
@@ -144,8 +148,11 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
+        // We retrieve the gene_symbol from the client, if it was passed
+        def gene_symbol = params.gene_symbol ?: null
+
         // Collect concept information
-        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: chartService.getSubsetsFromRequest(params), chartSize : [width : 245, height : 180])
+        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), gene_symbol: gene_symbol, subsets: chartService.getSubsetsFromRequest(params), chartSize : [width : 245, height : 180])
 
         PrintWriter pw = new PrintWriter(response.getOutputStream());
         pw.write(concept.commons.conceptHisto)
@@ -164,8 +171,11 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
+        // We retrieve the gene_symbol from the client, if it was passed
+        def gene_symbol = params.gene_symbol ?: null
+
         // Collect concept information
-        concepts[concept] = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: chartService.getSubsetsFromRequest(params))
+        concepts[concept] = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), gene_symbol: gene_symbol, subsets: chartService.getSubsetsFromRequest(params))
 
         // Time to delivery !
         render(template: "conceptsAnalysis", model: [concepts: concepts])
@@ -185,6 +195,7 @@ class ChartController {
         // We retrieve all our charts from our ChartService
         def subsets = chartService.computeChartsForSubsets(chartService.getSubsetsFromRequest(params))
         def concepts = chartService.getConceptsForSubsets(subsets)
+        concepts.putAll(chartService.getHighDimensionalConceptsForSubsets(subsets))
 
         // Time to delivery !
         render(template: "summaryStatistics", model: [subsets: subsets, concepts: concepts])
@@ -195,6 +206,7 @@ class ChartController {
         String concept_key = params.concept_key;
         def result_instance_id1 = params.result_instance_id1;
         def result_instance_id2 = params.result_instance_id2;
+        def gene_symbol = params.gene_symbol ?: null;
 
         /*which subsets are present? */
         boolean s1 = (result_instance_id1 == "" || result_instance_id1 == null) ? false : true;
@@ -219,33 +231,50 @@ class ChartController {
 
             for (int i = 0; i < keys.size(); i++) {
 
-                log.trace("adding concept data for " + keys.get(i));
-                if (s1) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id1);
-                if (s2) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id2);
+                if (!i2b2HelperService.isHighDimensionalConceptKey(keys.get(i))) {
+                    log.trace("adding concept data for " + keys.get(i));
+                    if (s1) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id1);
+                    if (s2) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id2);
+                }
+            }
+
+            uniqueConcepts = omicsQueryService.getHighDimensionalConceptSet(result_instance_id1, result_instance_id2)
+            uniqueConcepts.each {
+                def decoded_key = omicsQueryService.decodeHighDimConceptKey(it)
+                if (s1) omicsQueryService.addHighDimConceptDataToTable(table, decoded_key.concept, result_instance_id1, decoded_key.gene_symbol)
+                if (s2) omicsQueryService.addHighDimConceptDataToTable(table, decoded_key.concept, result_instance_id2, decoded_key.gene_symbol)
             }
         }
         PrintWriter pw = new PrintWriter(response.getOutputStream());
 
         if (concept_key && !concept_key.isEmpty()) {
 
-            String parentConcept = i2b2HelperService.lookupParentConcept(i2b2HelperService.keyToPath(concept_key));
-            Set<String> cconcepts = i2b2HelperService.lookupChildConcepts(parentConcept, result_instance_id1, result_instance_id2);
+            if (gene_symbol == null) {
+                String parentConcept = i2b2HelperService.lookupParentConcept(i2b2HelperService.keyToPath(concept_key));
+                Set<String> cconcepts = i2b2HelperService.lookupChildConcepts(parentConcept, result_instance_id1, result_instance_id2);
 
-            def conceptKeys = [];
-            def prefix = concept_key.substring(0, concept_key.indexOf("\\", 2));
+                def conceptKeys = [];
+                def prefix = concept_key.substring(0, concept_key.indexOf("\\", 2));
 
-            if (!cconcepts.isEmpty()) {
-                for (cc in cconcepts) {
-                    def ck = prefix + i2b2HelperService.getConceptPathFromCode(cc);
-                    conceptKeys.add(ck);
+                if (!cconcepts.isEmpty()) {
+                    for (cc in cconcepts) {
+                        def ck = prefix + i2b2HelperService.getConceptPathFromCode(cc);
+                        conceptKeys.add(ck);
+                    }
+                } else
+                    conceptKeys.add(concept_key);
+
+                for (ck in conceptKeys) {
+                    if (s1) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id1);
+                    if (s2) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id2);
                 }
-            } else
-                conceptKeys.add(concept_key);
-
-            for (ck in conceptKeys) {
-                if (s1) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id1);
-                if (s2) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id2);
             }
+
+            else {
+                if (s1) omicsQueryService.addHighDimConceptDataToTable(table, concept_key, result_instance_id1, gene_symbol)
+                if (s2) omicsQueryService.addHighDimConceptDataToTable(table, concept_key, result_instance_id2, gene_symbol)
+            }
+
         }
         pw.write(table.toJSONObject().toString(5));
         pw.flush();

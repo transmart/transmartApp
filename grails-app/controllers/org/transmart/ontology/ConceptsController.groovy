@@ -2,7 +2,7 @@ package org.transmart.ontology
 
 import grails.converters.JSON
 import org.transmartproject.core.exceptions.InvalidArgumentsException
-import org.transmartproject.core.ontology.BoundModifier
+//import org.transmartproject.core.ontology.BoundModifier
 
 import javax.naming.OperationNotSupportedException
 
@@ -35,14 +35,14 @@ class ConceptsController {
         }
 
         /* TODO: method needs to be added to the interface */
-        if (conceptsResourceService.respondsTo('getModifier')) {
+        /*if (conceptsResourceService.respondsTo('getModifier')) {
             BoundModifier modifier =
                     conceptsResourceService.getModifier(
                             modifierKey, appliedPath, qualifiedTermKey)
             render modifier.children as JSON
-        } else {
+        } else {*/
             throw new OperationNotSupportedException()
-        }
+        //}
     }
 
 }

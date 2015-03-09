@@ -91,6 +91,11 @@ function setupQueryPanelClone(clone) {
                 STATE.Target = this.el;
                 showSetValueDialog();
             }
+            else if (data.node.attributes.iconCls == "hleaficon") {
+                STATE.Dragging = true;
+                STATE.Target = this.el;
+                showOmicsFilterDialog(data.node.id);
+            }
         }
         // Mask the placeholder and add a new panel
         clone.find(".panelBoxListPlaceholder").hide()
@@ -531,6 +536,12 @@ function getQueryPanelItem(item) {
                 .append(jQuery("<value_type />").html("TEXT"))
 
             break;
+        case 'omics' :
+            _constrainValue = jQuery("<constrain_by_omics_value/>")
+            _constrainValue
+                .append(jQuery("<omics_value_operator />").html(item.attr('omicsoperator')))
+                .append(jQuery("<omics_value_constraint />").html(item.attr('omicsvalue')))
+                .append(jQuery("<gene_symbol/>").html(item.attr('gene_symbol')))
     }
 
     _item

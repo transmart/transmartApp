@@ -996,6 +996,153 @@ Ext.onReady(function () {
             setvaluewin.hide();
         }
 
+        // preload omics filter dialog
+
+        omicsfilterpanel = new Ext.Panel(
+            {
+                id : 'omicsfilterPanel',
+                region : 'north',
+                height : 80,
+                width : 490,
+                split : false,
+                autoLoad: {
+                    url : pageInfo.basePath+'/panels/omicsFilterDialog.html',
+                    scripts : true,
+                    nocache : true,
+                    discardUrl : true,
+                    method : 'POST'
+                }
+            }
+        );
+
+        omicsfilterchartsPanel1 = new Ext.Panel(
+            {
+                id : 'omicsfilterchartsPanel1',
+                region : 'center',
+                width : 245,
+                height : 180,
+                split : false
+            }
+        );
+
+        omicsfilterchartsPanel2 = new Ext.Panel(
+            {
+                id : 'omicsfilterchartsPanel2',
+                region : 'east',
+                width : 245,
+                height : 180,
+                split : false
+            }
+        );
+
+        if (!this.omicsfilterwin) {
+            omicsfilterwin = new Ext.Window(
+                {
+                    id: 'omicsFilterWindow',
+                    title: 'Omics-based filtering',
+                    layout: 'border',
+                    width: 500,
+                    height: 240,
+                    closable: false,
+                    plain: true,
+                    modal: true,
+                    border: false,
+                    items: [omicsfilterpanel, omicsfilterchartsPanel1, omicsfilterchartsPanel2],
+                    buttons: [
+                        {
+                            text : 'Show Histogram',
+                            handler: function () {
+                                var gene_symbol = document.getElementById("gene-searchbox").value;
+                                showConceptDistributionHistogramForOmicsFilterComplete(null)
+                                showConceptDistributionHistogramForOmicsFilter(gene_symbol);
+                            }
+                        }
+                        ,
+                        {
+                            text : 'Show Histogram for subset',
+                            handler: function () {
+                                var subset = getSubsetFromPanel(selectedDiv)
+                                if (!isSubsetEmpty(subset)) {
+                                    showConceptDistributionHistogramForOmicsFilterForSubsetComplete(null)
+                                    runQuery(subset, showConceptDistributionHistogramForOmicsFilterForSubset);
+                                }
+                                else alert('Subset is empty!');
+                            }
+                        }
+                        ,
+                        {
+                            text : 'OK',
+                            handler: function () {
+                                applyOmicsFilterDialog(true);
+                            }
+                        }
+                        ,
+                        {
+                            text : 'Cancel',
+                            handler: function () {
+                                applyOmicsFilterDialog(false);
+                            }
+                        }
+                    ],
+                    tools: []
+                });
+            omicsfilterwin.show();
+            omicsfilterwin.hide();
+        }
+
+        // load gene selection dialog (shown when dragging an omics node to the summary stats panel)
+        geneselectionPanel = new Ext.Panel(
+            {
+                id : 'geneselectionPanel',
+                region : 'center',
+                height : 80,
+                width : 490,
+                split : false,
+                autoLoad: {
+                    url : pageInfo.basePath+'/panels/selectGeneDialog.html',
+                    scripts : true,
+                    nocache : true,
+                    discardUrl : true,
+                    method : 'POST'
+                }
+            }
+        );
+
+        if (!this.geneselectionwin) {
+            geneselectionwin = new Ext.Window(
+                {
+                    id: 'geneSelectionWindow',
+                    title: 'Select Gene',
+                    layout: 'border',
+                    width: 500,
+                    height: 120,
+                    closable: false,
+                    plain: true,
+                    modal: true,
+                    border: false,
+                    items: [geneselectionPanel],
+                    buttons: [
+                        {
+                            text : 'OK',
+                            handler: function () {
+                                applyGeneSelectionDialog(true);
+                            }
+                        }
+                        ,
+                        {
+                            text : 'Cancel',
+                            handler: function () {
+                                applyGeneSelectionDialog(false);
+                            }
+                        }
+                    ],
+                    tools: []
+                });
+            geneselectionwin.show();
+            geneselectionwin.hide();
+        }
+
+
         showLoginDialog();
         var h=queryPanel.header;
 
@@ -2009,6 +2156,12 @@ function buildAnalysis(nodein) {
         return;
     }
 
+    var genesymbol = null;
+    if (node.attributes.iconCls == "hleaficon") {
+        showGeneSelectionDialog(node.attributes.id);
+        return;
+    }
+
     resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
 
     Ext.Ajax.request(
@@ -3013,28 +3166,33 @@ function storeLoaded() {
 }
 
 function getAnalysisGridData(concept_key) {
+    return getAnalysisGridData(concept_key, null);
+}
+
+function getAnalysisGridData(concept_key, genesymbol) {
     gridstore = new Ext.data.JsonStore(
-            {
-                url : pageInfo.basePath+'/chart/analysisGrid',
-                root : 'rows',
-                fields : ['name', 'url']
-            }
+        {
+            url : pageInfo.basePath+'/chart/analysisGrid',
+            root : 'rows',
+            fields : ['name', 'url']
+        }
     );
     gridstore.on('load', storeLoaded);
     var myparams = Ext.urlEncode(
-            {
-                charttype : "analysisgrid",
-                concept_key : concept_key,
-                result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-                result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
-            }
+        {
+            charttype : "analysisgrid",
+            concept_key : concept_key,
+            gene_symbol : genesymbol,
+            result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+            result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+        }
     );
     // or a URL encoded string */
 
     gridstore.load({
-                params : myparams
+        params : myparams
     });
-            }
+}
 
 function getAnalysisPanelContent() {
     var a = analysisPanel.body;
