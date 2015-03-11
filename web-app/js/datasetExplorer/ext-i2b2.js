@@ -129,7 +129,9 @@ var mobj=result;
             child.setText(child.text + " (" + count + ")");
         }
 
-        if ((access != undefined && access != 'Locked') || GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
+        if ((access != undefined && access != 'Locked') ||
+                key.indexOf('\\\\xtrials\\') === 0 || // across trials node should never be locked
+                GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
         {
             //leave node unlocked must have some read access
         }
