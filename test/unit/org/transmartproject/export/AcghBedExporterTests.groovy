@@ -74,7 +74,7 @@ class AcghBedExporterTests {
     @Test
     void "test custom color scheme"() {
 
-        exporter.bedExporterRgbColorScheme = [
+        exporter.acghBedExporterRgbColorScheme = [
                 //white
                 invalid      : [250, 250, 250],
                 //red

@@ -20,7 +20,7 @@ class AcghBedExporter implements HighDimExporter {
     HighDimExporterRegistry highDimExporterRegistry
 
     @Resource
-    Map bedExporterRgbColorScheme
+    Map acghBedExporterRgbColorScheme
 
     private static final Map<CopyNumberState, List<Integer>> FLAG_TO_RGB_DEFAULT_MAP = [
                 //white
@@ -39,8 +39,8 @@ class AcghBedExporter implements HighDimExporter {
         Map<Integer, String> result = [:]
         for (CopyNumberState cpNState : CopyNumberState.values()) {
             List<Integer> rgbValues = FLAG_TO_RGB_DEFAULT_MAP[cpNState]
-            if (bedExporterRgbColorScheme && bedExporterRgbColorScheme[cpNState.name().toLowerCase()]) {
-                rgbValues = bedExporterRgbColorScheme[cpNState.name().toLowerCase()]
+            if (acghBedExporterRgbColorScheme && acghBedExporterRgbColorScheme[cpNState.name().toLowerCase()]) {
+                rgbValues = acghBedExporterRgbColorScheme[cpNState.name().toLowerCase()]
             }
             result[cpNState.intValue] = rgbValues.join(',')
         }
