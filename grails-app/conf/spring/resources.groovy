@@ -130,4 +130,8 @@ beans = {
         bruteForceLoginLockService = ref('bruteForceLoginLockService')
     }
 
+    acghBedExporterRgbColorScheme(org.springframework.beans.factory.config.MapFactoryBean) {
+        sourceMap = grailsApplication.config.dataExport.bed.acgh.rgbColorScheme
+    }
+
 }

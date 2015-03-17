@@ -1,5 +1,6 @@
 package org.transmartproject.export
 
+import groovy.util.logging.Log4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.dataquery.DataRow
 import org.transmartproject.core.dataquery.TabularResult
@@ -11,6 +12,7 @@ import org.transmartproject.core.exceptions.NoSuchResourceException
 
 import javax.annotation.PostConstruct
 
+@Log4j
 class TabSeparatedExporter implements HighDimExporter {
     final static String SEPARATOR = "\t"
 
@@ -54,19 +56,19 @@ class TabSeparatedExporter implements HighDimExporter {
 
     @Override
     public void export(TabularResult tabularResult, Projection projection,
-                       OutputStream outputStream) {
-        export(tabularResult, projection, outputStream, { false })
+                       Closure<OutputStream> newOutputStream) {
+        export(tabularResult, projection, newOutputStream, { false })
     }
 
     @Override
     public void export(TabularResult tabularResult, Projection projection,
-                       OutputStream outputStream, Closure isCancelled) {
+                       Closure<OutputStream> newOutputStream, Closure<Boolean> isCancelled) {
 
         log.info("started exporting to $format ")
         def startTime = System.currentTimeMillis()
 
         if (isCancelled()) {
-            return null
+            return
         }
 
         // Determine the fields to be exported, and the label they get
@@ -77,7 +79,7 @@ class TabSeparatedExporter implements HighDimExporter {
             [it.key, getFieldTranslation(it.key).toUpperCase()]
         }
 
-        outputStream.withWriter("UTF-8") { writer ->
+        newOutputStream("data.${format.toLowerCase()}").withWriter("UTF-8") { writer ->
 
             // First write the header
             writeLine(writer, createHeader(dataKeys.values() + rowKeys.values()))
@@ -86,7 +88,6 @@ class TabSeparatedExporter implements HighDimExporter {
             List<AssayColumn> assayList = tabularResult.indicesList
 
             // Start looping 
-            writeloop:
             for (DataRow<AssayColumn, Map<String, String>> datarow : tabularResult) {
                 // Test periodically if the export is cancelled
                 if (isCancelled()) {

@@ -43,7 +43,7 @@ class HighDimExportService {
         }
         conceptKeys.eachWithIndex { String conceptPath, int index ->
             // Add constraints to filter the output
-            def file = exportForSingleNode(
+            List<File> files = exportForSingleNode(
                     conceptPath,
                     resultInstanceId,
                     args.studyDir,
@@ -52,15 +52,13 @@ class HighDimExportService {
                     index,
                     args.jobName)
 
-            if (file) {
-                fileNames << file.absolutePath
-            }
+            fileNames.addAll(files*.absolutePath)
         }
 
-        return fileNames
+        fileNames
     }
 
-    private File exportForSingleNode(String conceptPath, Long resultInstanceId, File studyDir, String format, String dataType, Integer index, String jobName) {
+    private List<File> exportForSingleNode(String conceptPath, Long resultInstanceId, File studyDir, String format, String dataType, Integer index, String jobName) {
 
         HighDimensionDataTypeResource dataTypeResource = highDimensionResourceService.getSubResourceForType(dataType)
 
@@ -79,23 +77,34 @@ class HighDimExportService {
         Projection projection = dataTypeResource.createProjection(exporter.projection)
 
         // Retrieve the data itself
-        TabularResult<AssayColumn, DataRow<Map<String, String>>> tabularResult =
+        TabularResult<AssayColumn, DataRow> tabularResult =
                 dataTypeResource.retrieveData(assayConstraints, [], projection)
 
-        File outputFile = new File(studyDir,
-                "${dataType}_${makeFileNameFromConceptPath(conceptPath)}_${index}.${format.toLowerCase()}")
+        List<File> outputFiles = []
 
         try {
-            outputFile.withOutputStream { outputStream ->
-                exporter.export tabularResult, projection, outputStream, { jobIsCancelled(jobName) }
-            }
+            exporter.export(
+                    tabularResult,
+                    projection,
+                    { String fileName ->
+                        //TODO Imrove naming for parent folder
+                        File parentFolder = new File(studyDir, "${dataType}_${makeFileNameFromConceptPath(conceptPath)}_${index}")
+                        parentFolder.mkdirs()
+                        File outputFile = new File(parentFolder, fileName)
+                        if (outputFile.exists()) {
+                            throw new RuntimeException("${outputFile} file already exists.")
+                        }
+                        outputFiles << outputFile
+                        outputFile.newOutputStream()
+                    },
+                    { jobIsCancelled(jobName) })
         } catch (RuntimeException e) {
             log.error('Data export to the file has thrown an exception', e)
         } finally {
             tabularResult.close()
         }
 
-        outputFile
+        outputFiles
     }
 
     private String makeFileNameFromConceptPath(String conceptPath) {
