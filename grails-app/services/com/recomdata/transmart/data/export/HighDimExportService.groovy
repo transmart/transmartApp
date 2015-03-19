@@ -6,6 +6,7 @@ import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
 import org.transmartproject.core.dataquery.highdim.projections.Projection
+import org.transmartproject.core.ontology.OntologyTerm
 import org.transmartproject.export.HighDimExporter
 
 class HighDimExportService {
@@ -13,6 +14,7 @@ class HighDimExportService {
     def highDimensionResourceService
     def highDimExporterRegistry
     def queriesResourceService
+    def conceptsResourceService
 
     // FIXME: jobResultsService lives in Rmodules, so this is probably not a dependency we should have here
     def jobResultsService
@@ -35,21 +37,24 @@ class HighDimExportService {
         }
 
         def fileNames = []
+
         HighDimensionDataTypeResource dataTypeResource = highDimensionResourceService.getSubResourceForType(args.dataType)
-        if (!conceptKeys) {
+        def ontologyTerms
+        if (conceptKeys) {
+            ontologyTerms = conceptKeys.collectAll { conceptsResourceService.getByKey it }
+        } else {
             def queryResult = queriesResourceService.getQueryResultFromId(resultInstanceId)
-            def ontologyTerms = dataTypeResource.getAllOntologyTermsForDataTypeBy(queryResult)
-            conceptKeys = ontologyTerms.collect { it.key }
+            ontologyTerms = dataTypeResource.getAllOntologyTermsForDataTypeBy(queryResult)
         }
-        conceptKeys.eachWithIndex { String conceptPath, int index ->
+
+        ontologyTerms.each { OntologyTerm term ->
             // Add constraints to filter the output
             List<File> files = exportForSingleNode(
-                    conceptPath,
+                    term,
                     resultInstanceId,
                     args.studyDir,
                     args.format,
                     args.dataType,
-                    index,
                     args.jobName)
 
             fileNames.addAll(files*.absolutePath)
@@ -58,7 +63,9 @@ class HighDimExportService {
         fileNames
     }
 
-    private List<File> exportForSingleNode(String conceptPath, Long resultInstanceId, File studyDir, String format, String dataType, Integer index, String jobName) {
+    List<File> exportForSingleNode(OntologyTerm term, Long resultInstanceId, File studyDir, String format, String dataType, String jobName) {
+
+        List<File> outputFiles = []
 
         HighDimensionDataTypeResource dataTypeResource = highDimensionResourceService.getSubResourceForType(dataType)
 
@@ -70,7 +77,7 @@ class HighDimExportService {
 
         assayConstraints << dataTypeResource.createAssayConstraint(
                 AssayConstraint.ONTOLOGY_TERM_CONSTRAINT,
-                concept_key: conceptPath)
+                concept_key: term.key)
 
         // Setup class to export the data
         HighDimExporter exporter = highDimExporterRegistry.getExporterForFormat(format)
@@ -80,20 +87,18 @@ class HighDimExportService {
         TabularResult<AssayColumn, DataRow> tabularResult =
                 dataTypeResource.retrieveData(assayConstraints, [], projection)
 
-        List<File> outputFiles = []
-
         try {
             exporter.export(
                     tabularResult,
                     projection,
-                    { String fileName ->
-                        //TODO Imrove naming for parent folder
-                        File parentFolder = new File(studyDir, "${dataType}_${makeFileNameFromConceptPath(conceptPath)}_${index}")
-                        parentFolder.mkdirs()
-                        File outputFile = new File(parentFolder, fileName)
+                    { String dataFileName, String dataFileExt ->
+                        File nodeDataFolder = new File(studyDir, getRelativeFolderPathForSingleNode(term))
+                        File outputFile = new File(nodeDataFolder,
+                                "${dataFileName}_${dataType}.${dataFileExt.toLowerCase()}")
                         if (outputFile.exists()) {
                             throw new RuntimeException("${outputFile} file already exists.")
                         }
+                        nodeDataFolder.mkdirs()
                         outputFiles << outputFile
                         outputFile.newOutputStream()
                     },
@@ -103,16 +108,24 @@ class HighDimExportService {
         } finally {
             tabularResult.close()
         }
-
         outputFiles
     }
 
-    private String makeFileNameFromConceptPath(String conceptPath) {
-        conceptPath
-                .split('\\\\')
-                .reverse()[0..1]
-                .join('_')
-                .replaceAll('[\\W_]+', '_')
+    static String getRelativeFolderPathForSingleNode(OntologyTerm term) {
+        def leafConceptFullName = term.fullName
+        String resultConceptPath = leafConceptFullName
+        def study = term.study
+        if (study) {
+            def studyConceptFullName = study.ontologyTerm.fullName
+            //use internal study folders only
+            resultConceptPath = leafConceptFullName.replace(studyConceptFullName, '')
+        }
+
+        resultConceptPath.split('\\\\').findAll().collect { String folderName ->
+            //Reversible way to encode a string to use as filename
+            //http://stackoverflow.com/questions/1184176/how-can-i-safely-encode-a-string-in-java-to-use-as-a-filename
+            URLEncoder.encode(folderName, 'UTF-8')
+        }.join(File.separator)
     }
 
     def boolean jobIsCancelled(jobName) {

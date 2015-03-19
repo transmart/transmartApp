@@ -118,7 +118,7 @@ class AcghBedExporter implements HighDimExporter {
                     if (writer == null) {
                         writer = new BufferedWriter(
                                     new OutputStreamWriter(
-                                            newOutputStream("${assay.sampleCode}_${assay.id}.${format.toLowerCase()}"), 'UTF-8'))
+                                            newOutputStream("${assay.sampleCode}_${assay.id}", format), 'UTF-8'))
                         writer << "track name=\"${assay.sampleCode}\" itemRgb=\"On\" genome_build=\"${datarow.platform.genomeReleaseId}\"\n"
                         streamsPerSample[assay.id] = writer
                     }
