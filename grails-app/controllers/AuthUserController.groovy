@@ -122,7 +122,7 @@ class AuthUserController {
             return render(view: create ? 'create' : 'edit', model: buildPersonModel(person))
         }
 
-        if (params.passwd && !params.passwd.isEmpty() && !params.passwd.equals(person.getPersistentValue("passwd"))) {
+        if (params.passwd && !params.passwd.isEmpty()) {
 
             def passwordStrength = grailsApplication.config.com.recomdata.passwordstrength ?: null
             def strengthPattern = passwordStrength?.pattern ?: null
@@ -135,7 +135,7 @@ class AuthUserController {
             }
 
             person.passwd = springSecurityService.encodePassword(params.passwd)
-        } else  {
+        } else if (create) {
             flash.message = 'Password must be provided';
             return render(view: create ? 'create' : 'edit', model: buildPersonModel(person))
         }
