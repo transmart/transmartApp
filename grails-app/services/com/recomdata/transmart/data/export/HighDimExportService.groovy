@@ -1,5 +1,6 @@
 package com.recomdata.transmart.data.export
 
+import i2b2.OntNodeTag
 import org.transmartproject.core.dataquery.DataRow
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
@@ -11,6 +12,7 @@ import org.transmartproject.export.HighDimExporter
 
 class HighDimExportService {
 
+    private static final TAGS_FILENAME = 'tags.txt'
     def highDimensionResourceService
     def highDimExporterRegistry
     def queriesResourceService
@@ -49,7 +51,7 @@ class HighDimExportService {
 
         ontologyTerms.each { OntologyTerm term ->
             // Add constraints to filter the output
-            List<File> files = exportForSingleNode(
+            List<File> files = exportDataForSingleNode(
                     term,
                     resultInstanceId,
                     args.studyDir,
@@ -57,13 +59,15 @@ class HighDimExportService {
                     args.dataType,
                     args.jobName)
 
+            exportTagsForSingleNode(term, args.studyDir)
+
             fileNames.addAll(files*.absolutePath)
         }
 
         fileNames
     }
 
-    List<File> exportForSingleNode(OntologyTerm term, Long resultInstanceId, File studyDir, String format, String dataType, String jobName) {
+    List<File> exportDataForSingleNode(OntologyTerm term, Long resultInstanceId, File studyDir, String format, String dataType, String jobName) {
 
         List<File> outputFiles = []
 
@@ -109,6 +113,23 @@ class HighDimExportService {
             tabularResult.close()
         }
         outputFiles
+    }
+
+    File exportTagsForSingleNode(OntologyTerm term, File studyDir) {
+        //TODO Replace this objects with new ones
+        def tags = OntNodeTag.createCriteria().list {
+            eq('ontnode.id', term.fullName)
+            order('relativePosition')
+        }
+
+        if (tags) {
+            def metaDataFolder = new File(studyDir, getRelativeFolderPathForSingleNode(term))
+            metaDataFolder.mkdirs()
+
+            def resultFile = new File(metaDataFolder, TAGS_FILENAME)
+            resultFile.text = tags.collect { "${it.tagtype}\t${it.tag}" }.join('\n')
+            resultFile
+        }
     }
 
     static String getRelativeFolderPathForSingleNode(OntologyTerm term) {
