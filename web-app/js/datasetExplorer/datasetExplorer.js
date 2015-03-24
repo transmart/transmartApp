@@ -2442,7 +2442,7 @@ function runQueryPDOComplete(result, subset, callback) {
     if (GLOBAL.Debug) {
         alert(result.responseText);
     }
-    ;
+
     queryPanel.el.unmask();
     var doc = result.responseXML;
     doc.setProperty("SelectionLanguage", "XPath");
@@ -2454,7 +2454,7 @@ function runQueryPDOComplete(result, subset, callback) {
     if (patientset == null) {
         return;
     }
-    ;
+
     createStatistics(patientset, subset);
     if (STATE.QueryRequestCounter > 0) // I'm in a chain of requests so decrement
     {
