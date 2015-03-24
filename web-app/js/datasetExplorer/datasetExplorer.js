@@ -136,7 +136,7 @@ Ext.onReady(function () {
                     {
 					text : 'Summary Statistics',
 					handler : function()	{
-						if((typeof(grid)!='undefined') && (grid!=null))	{
+						if(typeof(grid) != 'undefined' && grid != null)	{
 							exportGrid();
 						} else {
 							alert("Nothing to export");
@@ -242,7 +242,7 @@ Ext.onReady(function () {
 					        				showHaploviewGeneSelection();
 					        			});
 					        	 	} else	{
-					        	 		showHaploviewGeneSelection()
+					        	 		showHaploviewGeneSelection();
 					        	 	}
 					        	 	return;
 					        	}
@@ -983,9 +983,9 @@ Ext.onReady(function () {
 						        	   var highlowselect = document.getElementById("setValueHighLowSelect").value;
 
 						        	   // make sure that there is a value set
-						        	   if (mode=="numeric" && operator == "BETWEEN" && (highvalue == "" || lowvalue== "")){
+						        	   if (mode === "numeric" && operator === "BETWEEN" && (highvalue == "" || lowvalue == "")){
 						        		   alert('You must specify a low and a high value.');
-						        	   } else if (mode=="numeric" && lowvalue == "") {
+						        	   } else if (mode === "numeric" && lowvalue == "") {
 						        		   alert('You must specify a value.');
 						        	   } else {
 						        		   setvaluewin.hide();
