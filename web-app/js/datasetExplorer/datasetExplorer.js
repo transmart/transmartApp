@@ -142,10 +142,8 @@ Ext.onReady(function () {
 							alert("Nothing to export");
 						}
 					}
-				}
-				,
-				'-'
-				,
+				},
+				'-',
 				{
 					text : 'Gene Expression/RBM Datasets',
 					handler : function()	{
@@ -171,8 +169,7 @@ Ext.onReady(function () {
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
 					        	 disabled : GLOBAL.GPURL == "" 
-					         }
-					         ,
+					         },
 					         {
 					        	 text : 'Hierarchical Clustering',
 					        	 disabled : true,
@@ -183,8 +180,7 @@ Ext.onReady(function () {
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
 					        	 disabled : GLOBAL.GPURL == ""
-					         }
-					         ,
+					         },
 					         {
 					        	 text : 'K-Means Clustering',
 					        	 disabled : true,
@@ -195,8 +191,7 @@ Ext.onReady(function () {
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
 					        	 disabled : GLOBAL.GPURL == ""
-					         }
-					         ,
+					         },
 					         {
 					        	 text : 'Comparative Marker Selection (Heatmap)',
 					        	 disabled : true,
@@ -207,10 +202,8 @@ Ext.onReady(function () {
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
 					        	 disabled : GLOBAL.GPURL == ""
-					         }
-					         ,
-				        	 '-' 
-					         ,					         
+					         },
+				        	 '-',					         
 					         {
 					        	 text : 'Principal Component Analysis',
 					        	 disabled : true,
@@ -221,10 +214,8 @@ Ext.onReady(function () {
 					        	 	advancedWorkflowContextHelpId="1172";
 					        	 },
 					        	 disabled : GLOBAL.GPURL == ""
-					         }
-					         ,
-				        	 '-'
-				        	 ,
+					         },
+				        	 '-',
 					         {
 					        	 text : 'Survival Analysis',
                         handler: function () {
@@ -237,10 +228,8 @@ Ext.onReady(function () {
 					        	 	}
 					        	 },
 					        	 disabled : GLOBAL.GPURL == ""
-					         }
-					         ,
-				        	 '-'
-				        	 ,
+					         },
+				        	 '-',
 					         {
 					        	 text : 'Haploview',
 					        	 handler : function()	{
@@ -257,8 +246,7 @@ Ext.onReady(function () {
 					        	 	}
 					        	 	return;
 					        	}
-					        }
-					        ,
+					        },
 					        {
 					        	 text : 'SNPViewer',
 					        	 disabled : true,
@@ -277,8 +265,7 @@ Ext.onReady(function () {
 					        	 	return;
 					        	},
 					        	disabled : GLOBAL.GPURL == ""
-					        }
-					        ,
+					        },
 					        {
 					        	 text : 'Integrative Genome Viewer',
 					        	 disabled : true,
@@ -297,8 +284,7 @@ Ext.onReady(function () {
 					        	 	return;
 					        	},
 					        	disabled : GLOBAL.GPURL == ""
-					        }
-					        ,
+					        },
 					        {
 					        	 text : 'PLINK',
 					        	 disabled : true,
@@ -828,16 +814,14 @@ Ext.onReady(function () {
 					        	   }
 					        	   else showCompareStepPathwaySelection();
 					        	   }
-					           }
-					           ,
+					           },
 					           {
 					        	   text : 'Export',
 					        	   iconCls : 'exportbutton',
                         handler: function () {
 					        	   showExportStepSplitTimeSeries();
 					        	   }
-					           }
-					           ,
+					           },
 					           {
 					        	   text : 'Clear',
 					        	   iconCls : 'clearbutton',
@@ -970,8 +954,7 @@ Ext.onReady(function () {
                             handler: function () {
 						        	   showConceptDistributionHistogram();
 						        	   }
-						           }
-						           ,
+						           },
 						           {
 						        	   text : 'Show Histogram for subset',
                             handler: function () {
@@ -988,8 +971,7 @@ Ext.onReady(function () {
 						        	   }
 						        	   else alert('Subset is empty!');
 						        	   }
-						           }
-						           ,
+						           },
 						           {
 						        	   text : 'OK',
                             handler: function () {
@@ -1010,8 +992,7 @@ Ext.onReady(function () {
 						        		   setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units);
 						        	   }
 						        	   }
-						           }
-						           ,
+						           },
 						           {
 						        	   text : 'Cancel',
                             handler: function () {
@@ -1313,8 +1294,7 @@ function showLoginDialog() {
 			        	   loginform.el.mask('Logging in...', 'x-mask-loading');
 			        	   login(txtboxdomain.getValue(), txtboxusername.getValue(), txtboxpassword.getValue());
 			        	   }
-			           }
-			           ,
+			           },
 			           {
 			        	   text : 'Cancel',
 			        	   handler : closeBrowser
@@ -1436,8 +1416,7 @@ function showProjectDialog(projects) {
 			        	   projectwin.hide();
 			        	   projectDialogComplete(drdprojects.getValue());
 			        	   }
-			           }
-			           ,
+			           },
 			           {
 			        	   text : 'Cancel',
 			        	   handler : closeBrowser
@@ -1968,14 +1947,12 @@ function previousQueriesRightClick(eventNode, event) {
                         text: 'Rename', handler: function () {
 					        	 alert('rename!');
 					        	 }
-					         }
-					         ,
+					         },
 					         {
                         text: 'Delete', handler: function () {
 					        	 alert('delete!');
 					        	 }
-					         }
-					         ,
+					         },
 					         {
                         text: 'Query Summary', handler: function () {
 					        	 showQuerySummaryWindow(eventNode);
@@ -2138,8 +2115,7 @@ function showExportStepSplitTimeSeries() {
 					        	   exportStepSplitTimeSeries.hide();
 					        	   showExportStepDataSelection();
 					        	   }
-					           }
-					           ,
+					           },
 					           {
 					        	   text : 'Cancel',
                         handler: function () {
@@ -2182,8 +2158,7 @@ function showExportStepDataSelection() {
                         handler: function () {
 					        	   showExportDataSelectionAdvanced();
 					        	   }
-					           }
-					           ,
+					           },
 					           {
 					        	   id : 'exportStepDataSelectionNextButton',
 					        	   text : 'Get Data',
@@ -2191,8 +2166,7 @@ function showExportStepDataSelection() {
                         handler: function () {
 					        	   getExportData();
 					        	   }
-					           }
-					           ,
+					           },
 					           {
 					        	   text : 'Cancel',
                         handler: function () {
