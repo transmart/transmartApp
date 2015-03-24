@@ -4,7 +4,7 @@ String.prototype.trim = function() {
 };
 
 Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayout.Region.prototype.getCollapsedEl.createSequence(function () {
-        if ((this.position == 'north' || this.position == 'south') && !this.collapsedEl.titleEl) {
+        if ((this.position === 'north' || this.position === 'south') && !this.collapsedEl.titleEl) {
 		this.collapsedEl.titleEl = this.collapsedEl.createChild(
 				{
 					style : 'color:#15428b;font:11px/15px tahoma,arial,verdana,sans-serif;padding:2px 5px;', cn : this.panel.title
@@ -62,9 +62,9 @@ function loadScripts(scripts) {
 
         var file = scripts[i];
 
-        if (file.type == 'script') { // if javascript
+        if (file.type === 'script') { // if javascript
             $j.getScript(file.path);
-        } else if (file.type == 'css') { // if css
+        } else if (file.type === 'css') { // if css
             $j('head').append($j('<link rel="stylesheet" type="text/css" />').attr('href', file.path));
         } else {
             console.error("Unknown file type.");
@@ -723,16 +723,17 @@ Ext.onReady(function () {
         resultsTabPanel.add(analysisJobsPanel);
         resultsTabPanel.add(workspacePanel);
 
-        if (GLOBAL.sampleExplorerEnabled)
+        if (GLOBAL.sampleExplorerEnabled) {
             resultsTabPanel.add(sampleExplorerPanel);
+        }
 
         function loadResources(resources, bootstrap) {
             var scripts = [];
             for (var i = 0; i < resources.length; i++) {
                 var aFile = resources[i];
-                if (aFile.type == 'script') {
+                if (aFile.type === 'script') {
                     scripts.push(aFile.path);
-                } else if (aFile.type == 'stylesheet') {
+                } else if (aFile.type === 'stylesheet') {
                     dynamicLoad.loadCSS(aFile.path);
                 }
             }
@@ -809,10 +810,12 @@ Ext.onReady(function () {
 					        	   text : 'Compare',
                         handler: function () {
 					        	   var subsets = exportPanel.body.dom.childNodes;
-                            if (subsets.length != 2) {
+                            if (subsets.length !== 2) {
 					        		   alert("Must have two subsets!");
+					        	   } else { 
+					        	   		showCompareStepPathwaySelection(); 
+
 					        	   }
-					        	   else showCompareStepPathwaySelection();
 					        	   }
 					           },
 					           {
@@ -835,8 +838,9 @@ Ext.onReady(function () {
 		);
 
 		var treetitle = "Previous Queries";
-		if(GLOBAL.Config == 'jj')
+		if(GLOBAL.Config === 'jj') {
 			treetitle = "Subsets";
+		}
 
 		var Tree = Ext.tree;
 		prevTree = new Tree.TreePanel(
@@ -959,7 +963,7 @@ Ext.onReady(function () {
 						        	   text : 'Show Histogram for subset',
                             handler: function () {
 						        	   var subset;
-                                if (selectedConcept.parentNode.id == "hiddenDragDiv") {
+                                if (selectedConcept.parentNode.id === "hiddenDragDiv") {
 						        		   subset = getSubsetFromPanel(STATE.Target);
 						        	   }
                                 else {
@@ -969,7 +973,9 @@ Ext.onReady(function () {
                                 if (!isSubsetEmpty(subset)) {
 						        		   runQuery(subset, showConceptDistributionHistogramForSubset);
 						        	   }
-						        	   else alert('Subset is empty!');
+						        	   else { 
+						        	   		alert('Subset is empty!');
+						        		}
 						        	   }
 						           },
 						           {
@@ -1019,7 +1025,7 @@ Ext.onReady(function () {
 
 
 		showLoginDialog();
-		var h=queryPanel.header;
+		var h = queryPanel.header;
 
 		}
 
@@ -1184,7 +1190,7 @@ function createOntPanel() {
 				};
 
 		// shorthand
-		var Tree = Ext.tree;
+		Tree = Ext.tree;
 
 		ontFilterTree = new Tree.TreePanel(
 				{
@@ -1493,9 +1499,9 @@ function setActiveTab(){
 	//var activeTab='ontFilterPanel';
 	var activeTab='navigateTermsPanel';
 	if (GLOBAL.PathToExpand!==''){
-		if ((GLOBAL.PathToExpand.indexOf('Across Trials')>-1)&&(GLOBAL.hideAcrossTrialsPanel!='true')){
+		if (GLOBAL.PathToExpand.indexOf('Across Trials') > -1 && GLOBAL.hideAcrossTrialsPanel != 'true') {
 			activeTab='crossTrialsPanel';
-		}else{
+		} else {
 			activeTab='navigateTermsPanel';
 		}
 	}
@@ -1561,8 +1567,8 @@ function setupOntTree(id_in, title_in) {
     var firstExpandProgram = [];
     ontTree.on('beforeexpandnode', function (node, deep, anim) {
             var expand = true;
-            if (GLOBAL.PathToExpand !== undefined && GLOBAL.PathToExpand.indexOf(node.id) > -1 && node.parentNode.id == "treeRoot" && !contains(dseClosedNodes, node.id)) {
-                if (firstExpandProgram.indexOf(node.id) == -1) {
+            if (GLOBAL.PathToExpand !== undefined && GLOBAL.PathToExpand.indexOf(node.id) > -1 && node.parentNode.id === "treeRoot" && !contains(dseClosedNodes, node.id)) {
+                if (firstExpandProgram.indexOf(node.id) === -1) {
                     firstExpandProgram.push(node.id);
                     expand = false;
                 }
@@ -1640,7 +1646,7 @@ function createTree(ontresponse) {
 		var autoExpand=false;
 
         var lockedNode = true;
-        if ((access !== undefined && access != 'Locked') || GLOBAL.IsAdmin) {
+        if ((access !== undefined && access !== 'Locked') || GLOBAL.IsAdmin) {
             lockedNode = false;
         }
         if (lockedNode && key.indexOf('\\\\xtrials\\') === 0) {
@@ -1648,12 +1654,12 @@ function createTree(ontresponse) {
             lockedNode = false;
         }
 
-        if (GLOBAL.PathToExpand.indexOf(key) > -1 && GLOBAL.UniqueLeaves.indexOf(key + ",") == -1 && !lockedNode) {
+        if (GLOBAL.PathToExpand.indexOf(key) > -1 && GLOBAL.UniqueLeaves.indexOf(key + ",") === -1 && !lockedNode) {
             autoExpand = true;
         }
 
         //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
-        if (level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) == -1) {
+        if (level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) === -1) {
             continue;
         }
 
@@ -1720,7 +1726,7 @@ function getSubCategories(ontresponse) {
 		{
 			id:'contextHelp-button',
 			handler: function(event, toolEl, panel){
-			   	D2H_ShowHelp((id_in=="navigateTermsPanel")?"1066":"1091",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+			   	D2H_ShowHelp((id_in === "navigateTermsPanel") ? "1066": "1091",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
 			},
 		    iconCls: "contextHelpBtn"  
 		}
@@ -1767,7 +1773,7 @@ function setupDragAndDrop() {
 			);
 
             dts.notifyDrop = function (source, e, data) {
-                if (source.tree.id == "previousQueriesTree") {
+                if (source.tree.id === "previousQueriesTree") {
 					getPreviousQueryFromID(data.node.attributes.id);
 					return true;
 				}
@@ -1775,7 +1781,7 @@ function setupDragAndDrop() {
 					var x=e.xy[0];
 					var y=e.xy[1];
 					var concept = null;
-                    if (data.node.attributes.oktousevalues != "Y") {
+                    if (data.node.attributes.oktousevalues !== "Y") {
 						concept = createPanelItemNew(this.el, convertNodeToConcept(data.node));
 					}
                     else {
@@ -1783,7 +1789,7 @@ function setupDragAndDrop() {
 					}
 					// new hack to show setvalue box
 					selectConcept(concept);
-                    if (data.node.attributes.oktousevalues == "Y") {
+                    if (data.node.attributes.oktousevalues === "Y") {
 						STATE.Dragging = true;
 						STATE.Target = this.el;
 						showSetValueDialog();
@@ -1828,13 +1834,14 @@ function setupDragAndDrop() {
 function getValue(node, defaultvalue)
 {
     var result = defaultvalue;
-    if (node.size() > 0)
+    if (node.size() > 0) {
         result = node.first().html();
+    }
     return result;
 }
 
 function getPreviousQueryFromIDComplete(subset, result) {
-    if (result.status != 200) {
+    if (result.status !== 200) {
         queryPanel.el.unmask();
         return;
     }
@@ -1846,18 +1853,21 @@ function getPreviousQueryFromIDComplete(subset, result) {
 
         showCriteriaGroup(++pi);
 
-        if (jQuery(pe).find("invert").first().html() == '1')
+        if (jQuery(pe).find("invert").first().html() == '1') {
             excludeGroup(null, subset, pi);
+        }
 
         jQuery(pe).find("item").each(function (ii, ie) {
 
             var key = jQuery(ie).find("item_key").first().html();
 
-            if (key == "\\\\Public Studies\\Public Studies\\SECURITY\\")
+            if (key === "\\\\Public Studies\\Public Studies\\SECURITY\\") {
                 return false;
+            }
 
-            if (jQuery(ie).find("constrain_by_value").size() <= 0)
+            if (jQuery(ie).find("constrain_by_value").size() <= 0) {
                 oktousevalues = "Y";
+            }
 
             var mode;
             switch (getValue(jQuery(ie, "constrain_by_value value_type"), "")) {
@@ -1876,12 +1886,12 @@ function getPreviousQueryFromIDComplete(subset, result) {
             var lowvalue = numvalue;
             var highvalue;
 
-            if (operator == "BETWEEN") {
+            if (operator === "BETWEEN") {
                 lowvalue = numvalue.substring(0, numvalue.indexOf("and"));
                 highvalue = numvalue.substring(numvalue.indexOf("and") + 3);
             }
 
-            var highlowselect = mode == "highlow" ? numvalue : "";
+            var highlowselect = mode === "highlow" ? numvalue : "";
             var value = new Value(mode, operator, highlowselect, lowvalue, highvalue, '');
 
             /* the panel (probably) only needs the concept key and the
@@ -2304,7 +2314,9 @@ function isSubsetQueriesChanged (referenceQueries) {
             retVal = referenceQueries[i] != _newQuery ? true : false;
         }
 
-        if (retVal) break;
+        if (retVal) {
+        	break;
+        }
     }
     return retVal;
 }
@@ -2342,7 +2354,7 @@ function runQueryComplete(result, subset, callback) {
     var jsonRes = JSON.parse(result.responseText);
     var error;
 
-    if (result.status != 200) {
+    if (result.status !== 200) {
         error = jsonRes.message;
     } else if (jsonRes.errorMessage !== null) {
         error = jsonRes.errorMessage;
@@ -2479,14 +2491,16 @@ function createStatistics(patientset, subset) {
 
 			// do something with this param
 			// if its a sex add it to the sex variables
-            if (paramname == "sex_cd") {
-				if(paramvalue == "M")
+            if (paramname === "sex_cd") {
+				if(paramvalue === "M") {
 					totalmale ++ ;
-				if(paramvalue == "F")
+				}
+				if(paramvalue === "F") {
 					totalfemale ++ ;
+				}
 			}
 			// do something with it if its an age
-            if (paramname == "age_in_years_num") {
+            if (paramname === "age_in_years_num") {
                 if (paramvalue >= 0 && paramvalue <= 9) {
 					total0to9 ++ ;
 				}
@@ -2537,11 +2551,11 @@ function createStatistics(patientset, subset) {
 }
 function getNodeForAnalysis(node) {
 	// if im a value leaf return me
-    if (node.attributes.oktousevalues == "Y" && node.attributes.leaf == true) {
+    if (node.attributes.oktousevalues === "Y" && node.attributes.leaf == true) {
 		return node;
 	}
 	// if im a concept leaf then recurse with my parent node
-    else if (node.attributes.oktousevalues != "Y" && node.attributes.leaf == true) {
+    else if (node.attributes.oktousevalues !== "Y" && node.attributes.leaf == true) {
 		return getNodeForAnalysis(node.parentNode);
 	}
     else {
@@ -2679,10 +2693,8 @@ function contextMenuPressed(e) {
 function getSelected(opt) {
 	var selected = [];
 	var index = 0;
-	for (var intLoop = 0; intLoop < opt.length;
-         intLoop++) {
-		if ((opt[intLoop].selected) ||
-            (opt[intLoop].checked)) {
+	for (var intLoop = 0; intLoop < opt.length; intLoop++) {
+		if (opt[intLoop].selected || opt[intLoop].checked) {
 			index = selected.length;
 			selected[index] = {};
 			selected[index].value = opt[intLoop].value;
@@ -2695,8 +2707,7 @@ function getSelected(opt) {
 function outputSelected(opt) {
 	var sel = getSelected(opt);
 	var strSel = "";
-	for (var intLoop = 0; intLoop < sel.length;
-         intLoop++) {
+	for (var intLoop = 0; intLoop < sel.length; intLoop++) {
 		strSel += sel[intLoop].value + "\n";
 	}
 	alert("Selected Items:\n" + strSel);
