@@ -15,9 +15,7 @@ Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayou
 );
 
 var runner = new Ext.util.TaskRunner();
-
 var wfsWindow = null;
-
 
 function dataSelectionCheckboxChanged(ctl) {
     if (getSelected(ctl)[0] !== undefined) {
@@ -26,7 +24,6 @@ function dataSelectionCheckboxChanged(ctl) {
 }
 
 function setDataAssociationAvailableFlag(el, success, response, options) {
-	
 	if (!success) {
 		var dataAssociationPanel = Ext.getCmp('dataAssociationPanel');
 		var resultsTabPanel = Ext.getCmp('resultsTabPanel');
@@ -93,7 +90,6 @@ Ext.onReady(function () {
 
 	// this overrides the above
 	Ext.Updater.defaults.timeout = 1800000;
-
 
 	// create the main regions of the screen
 	westPanel = new Ext.Panel(
@@ -324,7 +320,6 @@ Ext.onReady(function () {
 				}
 		);
 
-
 		var tb2 = new Ext.Toolbar(
 				{
 					id : 'maintoolbar',
@@ -344,7 +339,6 @@ Ext.onReady(function () {
 					]
 				}
 		);
-
 
 		centerMainPanel = new Ext.Panel(
 				{
@@ -870,9 +864,7 @@ Ext.onReady(function () {
 				}
 		);
 
-
 		prevTree.setRootNode(prevTreeRoot);
-
 
 		/**********new prototype*********/
 
@@ -882,7 +874,6 @@ Ext.onReady(function () {
 		westPanel.add(createOntPanel());
 		centerMainPanel.add(westPanel);
 		centerMainPanel.add(centerPanel);
-
 
 		viewport = new Ext.Viewport(
 				{
@@ -1023,14 +1014,10 @@ Ext.onReady(function () {
 			setvaluewin.hide();
 		}
 
-
 		showLoginDialog();
 		var h = queryPanel.header;
 
 		}
-
-
-
 );
 
 function onWindowResize() {
@@ -1058,11 +1045,7 @@ function onWindowResize() {
 //	}
     jQuery('#subsets_wrapper').find('div.dataTables_scrollBody').css("height", calcWorkspaceDataTableHeight() + "px");
     jQuery('#reports_wrapper').find('div.dataTables_scrollBody').css("height", calcWorkspaceDataTableHeight() + "px");
-
 }
-
-
-
 
 /*
 This function will make a quick call to the server to check
@@ -1072,7 +1055,7 @@ heatmap options and loaded the gene expression data
 */
 function exportDataSets() {
 	Ext.get("exportdsform").dom.submit();
-				}
+}
 
 function hasMultipleTimeSeries() {
 	return true;
@@ -1103,7 +1086,6 @@ function createOntPanel() {
 			}
 	);
 
-
 	searchByNamePanel = new Ext.Panel(
 			{
 				title : 'Search by Names',
@@ -1117,9 +1099,6 @@ function createOntPanel() {
 				split : true
 			}
 	);
-
-
-
 
     // make the ontSearchByNamePanel
 	shtml='<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>' +
@@ -1231,7 +1210,7 @@ function createOntPanel() {
 
 		ontFilterTree.setRootNode(ontFilterTreeRoot);
 
-    setupOntTree('navigateTermsPanel', 'Navigate Terms');
+    	setupOntTree('navigateTermsPanel', 'Navigate Terms');
 
 		return ontTabPanel;
 }
@@ -1240,6 +1219,7 @@ function closeBrowser() {
 	window.open('http://www.i2b2.org', '_self', '');
 	window.close();
 }
+
 function showLoginDialog() {
 
 	loginwin = new Ext.Window(
@@ -1309,11 +1289,9 @@ function showLoginDialog() {
 			}
 	);
 
-
     if (GLOBAL.AutoLogin) {
 		login(GLOBAL.Domain, GLOBAL.Username, GLOBAL.Password);
-	}
-    else {
+	} else {
 		loginwin.add(loginform);
 		loginwin.show(viewport);
 
@@ -1326,7 +1304,6 @@ function showLoginDialog() {
 		);
 	}
 }
-
 
 function login(domain, username, password) {
 	GLOBAL.Domain = domain;
@@ -1361,7 +1338,6 @@ function showProjectDialog(projects) {
 		Ext.projects[c] = a;
 	}
 
-
 	projectwin = new Ext.Window(
 			{
 				id : 'projectWindow',
@@ -1384,7 +1360,6 @@ function showProjectDialog(projects) {
 				data : Ext.projects
 			}
 	);
-
 
 	var drdprojects = new Ext.form.ComboBox(
 			{
@@ -1434,7 +1409,6 @@ function showProjectDialog(projects) {
 	projectwin.add(projectform);
 	projectwin.show(viewport);
 }
-
 
 function projectDialogComplete() {
     jQuery('#box-search').prependTo(jQuery('#westPanel')).show();
@@ -1493,7 +1467,7 @@ function getPreviousQueriesComplete(response) {
 
 function getCategoriesComplete(ontresponse){
     getSubCategories(ontresponse);
-    }
+}
 
 function setActiveTab(){
 	//var activeTab='ontFilterPanel';
@@ -1704,11 +1678,10 @@ function createTree(ontresponse) {
         ontRoots.push(ontRoot);
 
 		/*****************************************/
-
 		}
 
     return ontRoots;
-		}
+}
 
 /*
  * the id_in drives which off these tabs is created
@@ -1753,7 +1726,6 @@ function getSubCategories(ontresponse) {
 	}
 
     onWindowResize();
-	
 }
 
 function setupDragAndDrop() {
@@ -1831,8 +1803,7 @@ function setupDragAndDrop() {
 	};
 }
 
-function getValue(node, defaultvalue)
-{
+function getValue(node, defaultvalue) {
     var result = defaultvalue;
     if (node.size() > 0) {
         result = node.first().html();
@@ -1928,7 +1899,6 @@ function createExportItem(name, setid) {
 	Ext.get(li).addListener('click', conceptClick);
 	Ext.get(li).addListener('contextmenu', conceptRightClick);
 }
-
 
 function ontologyRightClick(eventNode, event) {
     if (!this.contextMenuOntology) {
@@ -2093,10 +2063,10 @@ function showQuerySummaryWindow(source) {
     querySummaryPanel.body.update('<table border="1" height="100%" width="100%"><tr><td width="50%" valign="top" style="padding:10px;"><h2>Subset 1 Criteria</h2>' + q1 + '</td><td valign="top" style="padding:10px;"><h2>Subset 2 Criteria</h2>' + q2 + '</td></tr></table>');
 }
 
-
 function showConceptSearchPopUp(conceptid) {
 	popitup('http://www.google.com/search?q=' + conceptid);
 }
+
 function popitup(url) {
 	newwindow = window.open(url, 'name', 'height=500,width=500,toolbar=yes,scrollbars=yes, resizable=yes,');
     if (window.focus) {
@@ -2199,14 +2169,13 @@ function showExportStepDataSelection() {
 		);
 	}
 	exportStepDataSelection.show(viewport);
-
 }
-function getExportData() {
 
+function getExportData() {
 	exportStepDataSelection.getEl().mask("Getting Data...");
 	setTimeout('exportDataFinished()', 2000);
-
 }
+
 function showExportStepProgress() {
     if (!this.exportStepProgress) {
 		exportStepProgress = new Ext.Window(
@@ -2233,9 +2202,10 @@ function showExportStepProgress() {
 				}
 		);
 	}
-	exportStepProgress.show(viewport);
 
+	exportStepProgress.show(viewport);
 }
+
 function exportDataFinished() {
 	exportStepDataSelection.getEl().unmask();
 	exportStepDataSelection.hide();
@@ -2277,7 +2247,6 @@ function runAllQueries(callback, panel) {
 		}
 	}
 }
-
 
 /**
  * Get subset query that represent user's cohort selections
@@ -2406,7 +2375,6 @@ function runQueryComplete(result, subset, callback) {
     }
 }
 
-
 function runQueryPDO(patientsetid, minpatient, maxpatient, subset, callback) {
     var query = getCRCpdoRequest(patientsetid, minpatient, maxpatient, subset);
     queryPanel.el.mask('Getting patient set ' + subset + '...', 'x-mask-loading');
@@ -2424,7 +2392,6 @@ function runQueryPDO(patientsetid, minpatient, maxpatient, subset, callback) {
             timeout: '600000'
         }
     );
-
 }
 
 function runQueryPDOComplete(result, subset, callback) {
@@ -2549,6 +2516,7 @@ function createStatistics(patientset, subset) {
 		Ext.get("analysisPanelSubset" + subset).insertHtml("beforeEnd", statisticshtml);
 		// analysisPanel.body.update(statisticshtml);
 }
+
 function getNodeForAnalysis(node) {
 	// if im a value leaf return me
     if (node.attributes.oktousevalues === "Y" && node.attributes.leaf == true) {
@@ -2564,14 +2532,12 @@ function getNodeForAnalysis(node) {
 	// must be a concept folder so return me
 }
 
-
 function buildAnalysis(nodein) {
 	var node = nodein; // getNodeForAnalysis(nodein);
     if (isSubsetEmpty(1) && isSubsetEmpty(2)) {
 		alert('Empty subsets found, need a valid subset to analyze!');
 		return;
 	}
-
 
     if ((GLOBAL.CurrentSubsetIDs[1] == null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && !isSubsetEmpty(2))) {
         runAllQueries(function () {
@@ -2665,7 +2631,6 @@ function searchByNameComplete(response) {
 			}
 	);
 }
-
 
 function enterWasPressed(e) {
 	var pK;
@@ -2998,7 +2963,6 @@ function getIgv() {
 	showWorkflowStatusWindow();
 }
 
-
 function showPlinkSelection() {
 	
 	if((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] == null) ||
@@ -3070,8 +3034,8 @@ function showPlinkSelection() {
 	win.show(viewport);
 }
 
-
 function getPlink() {
+
 }
 
 function showGwasSelection() {
@@ -3216,6 +3180,7 @@ function compareSubsetsComplete(result, setname1, setname2) {
 	var html = "s1=" + setname1 + "<br>s2=" + setname2;
 	Ext.get("heatmapLegend").update(html);
 }
+
 function showNameQueryDialog() {
     if (!this.namequerywin) {
 		namequerywin = new Ext.Window(
@@ -3539,7 +3504,6 @@ function getSummaryGridData() {
             resultsTabPanel.body.unmask();
         }
     });
-
 }
 
 function storeLoaded() {
@@ -3602,7 +3566,7 @@ function getAnalysisGridData(concept_key) {
     gridstore.load({
 				params : myparams
     });
-			}
+}
 
 function getAnalysisPanelContent() {
 	var a = analysisPanel.body;
@@ -3711,6 +3675,7 @@ function searchByTagBefore() {
 	viewport.el.mask("Searching...")
 	return true;
 }
+
 function searchByTagComplete(response) {
 	// shorthand
 	var Tree = Ext.tree;
@@ -3764,7 +3729,6 @@ function searchByTagComplete(response) {
             //Get the categories with the new path to expand
             getCategories();
         }
-
     }
 }
 
@@ -3888,8 +3852,6 @@ function showWorkflowStatusWindow() {
   	}
  
   	runner.start(task);
-  	
-
 }
 
 function terminateWorkflow(){
@@ -3906,6 +3868,7 @@ function terminateWorkflow(){
 			}
 	);
 }
+
 function workflowStatusUpdate(result){
 	var response=eval("(" + result.responseText + ")");	
 	var inserthtml = response.statusHTML;
