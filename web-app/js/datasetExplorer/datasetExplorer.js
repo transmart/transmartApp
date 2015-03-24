@@ -1759,7 +1759,7 @@ function getSubCategories(ontresponse) {
         treeRoot.appendChild(newnode);
 			}
 
-    if (ontRoots.length == 0) { //This shouldn't happen!
+    if (ontRoots.length === 0) { //This shouldn't happen!
         jQuery('#noAnalyzeResults').show();
 			}
 
@@ -2410,7 +2410,7 @@ function runQueryComplete(result, subset, callback) {
         if (STATE.QueryRequestCounter > 0) { // I'm in a chain of requests so decrement
             STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
         }
-        if (STATE.QueryRequestCounter == 0) {
+        if (STATE.QueryRequestCounter === 0) {
             callback();
         }
         /* I'm the last request outstanding in this chain*/
@@ -2460,7 +2460,7 @@ function runQueryPDOComplete(result, subset, callback) {
     {
         STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
     }
-    if (STATE.QueryRequestCounter == 0) {
+    if (STATE.QueryRequestCounter === 0) {
         callback();
     }
     /* I'm the last request outstanding in this chain*/
