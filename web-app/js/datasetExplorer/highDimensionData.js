@@ -375,7 +375,7 @@ function createSelectionSummaryString(divId, idx, summaryString){
 	'<br> <b>Timepoint:</b> '+selectedTimepoint+
 	'<br>';
 	
-	return summaryString
+	return summaryString;
 }
 
 function clearHighDimDataSelections(divId){
@@ -452,7 +452,7 @@ function toggleDataAssociationFields(extEle){
 
 		if(isProbesAggregationSupported()){
 			document.getElementById("divProbesAggregation").style.display="";
-			document.getElementById("divProbesAggregation").checked=false
+			document.getElementById("divProbesAggregation").checked=false;
 		}
 	}
 	
@@ -507,8 +507,8 @@ function isProbesAggregationSupported(){
 function loadHighDimensionalParameters(formParams)
 {
 	//These will tell tranSMART what data types we need to retrieve.
-	var mrnaData = false
-	var snpData = false
+	var mrnaData = false;
+	var snpData = false;
 
 	//Gene expression filters.
 	var fullGEXSampleType 	= "";

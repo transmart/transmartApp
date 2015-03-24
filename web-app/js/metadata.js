@@ -8,7 +8,7 @@ function addPlatform(field) {
 
 	//If we have a non-null platform ID, prepare to add it
 	var platformId = typeField.val();
-	var platformName = $j(typeFieldName + " option:selected").text()
+	var platformName = $j(typeFieldName + " option:selected").text();
 	if (platformId == null || platformId == "null") { return; }
 	
 	//Stop if we already have this tag

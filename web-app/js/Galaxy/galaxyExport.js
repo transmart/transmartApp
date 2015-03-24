@@ -16,7 +16,7 @@ function galaxyjobsstoreLoaded()
 {
     var foo = galaxyjobsstore;
     var ojobs = Ext.getCmp('ajobsgrid');
-    if(ojobs!=null)
+    if(ojobs != null)
     {
         GalaxyPanel.remove(ojobs);
     }
@@ -80,7 +80,7 @@ function galaxyjobsstoreLoaded()
                                 }
                             });
                         }
-                    })
+                    });
                  }
                 else if (status != "Completed") {
                     Ext.Msg.alert("Job Processing", "The job is still processing, please wait");

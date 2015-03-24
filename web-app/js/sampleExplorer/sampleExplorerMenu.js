@@ -414,7 +414,4 @@ function createAdvancedSubMenu()
 			});
 
 	return advmenu;
-
 }
-
-

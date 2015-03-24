@@ -307,9 +307,9 @@ function checkJobStatus(jobName) {
                         });
                         cancBtn.setVisible(false);
                     } else {
-                        var secLabel = " seconds"
+                        var secLabel = " seconds";
                         if (secCount == 1) {
-                            secLabel = " second"
+                            secLabel = " second";
                         }
                         sb.showBusy("Status: " + jobStatusInfo.jobStatus + ", running for " + String(secCount) + secLabel);
                     }
@@ -328,12 +328,12 @@ function checkJobStatus(jobName) {
                 }
             }
         );
-    }
+    };
 
     var checkTask = {
         run: updateJobStatus,
         interval: pollInterval
-    }
+    };
     var runner = new Ext.util.TaskRunner();
     runner.start(checkTask);
 }

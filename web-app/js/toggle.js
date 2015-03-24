@@ -7,12 +7,12 @@ function showfilter(e) {
 	var on_e = document.getElementById(e+'on');
 	if(on_e == null)
 		on_e = document.getElementsByName(e+'on');
-	var box_e= document.getElementById(e+'box');
-	on_e.style.display="none";
-	box_e.style.display="block";
-	off_e.style.display="inline";
-	var result_e= document.getElementById(e+'result');
-	if(result_e!=null){
+	var box_e = document.getElementById(e+'box');
+	on_e.style.display = "none";
+	box_e.style.display = "block";
+	off_e.style.display = "inline";
+	var result_e = document.getElementById(e+'result');
+	if(result_e != null) {
 		result_e.style.display="none";
 	}
 }
@@ -22,13 +22,13 @@ function hidefilter(e){
 	var on_e = document.getElementById(e+'on');
 	if(on_e == null)
 		on_e = document.getElementsByName(e+'on');
-	var box_e= document.getElementById(e+'box');
-	var result_e= document.getElementById(e+'result');
-	on_e.style.display="inline";
-	box_e.style.display="none";
-	off_e.style.display="none";
-	if(result_e!=null){
-		result_e.style.display="block";
+	var box_e = document.getElementById(e+'box');
+	var result_e = document.getElementById(e+'result');
+	on_e.style.display = "inline";
+	box_e.style.display = "none";
+	off_e.style.display = "none";
+	if(result_e != null){
+		result_e.style.display = "block";
 	}
 }
 
@@ -43,7 +43,7 @@ function toggleVisible(eleId) {
 
 function toggleDetail(eleprefix){
 	var fclose = eleprefix+"_fclose";
-	var fopen =eleprefix+"_fopen";
+	var fopen = eleprefix+"_fopen";
 	var detail = eleprefix+"_detail";
 	toggleVisibility(fclose);
 	toggleVisibility(fopen);
@@ -52,12 +52,12 @@ function toggleDetail(eleprefix){
 
 function toggleVisibility(eleId) {
 	var me = document.getElementById(eleId);
-	if (me.style.visibility=="hidden") {
-		me.style.display="inline";
-		me.style.visibility="visible";
+	if (me.style.visibility == "hidden") {
+		me.style.display = "inline";
+		me.style.visibility = "visible";
 	} else {
-		me.style.visibility="hidden";
-		me.style.display="none";
+		me.style.visibility = "hidden";
+		me.style.display = "none";
 	}
 }
 
@@ -74,7 +74,7 @@ function divIsEmpty(eleId){
 
 // for input pages with a select box with an 'other' option that needs an input prompt
 function toggleOtherDiv(selectItem, otherDiv) {
-	var otherDiv = document.getElementById(otherDiv)
+	var otherDiv = document.getElementById(otherDiv);
 	
 	// hide/show other input
 	if(selectItem.value==1 || selectItem.value=='other') 

@@ -38,7 +38,7 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
         // shorthand
         var Tree = Ext.tree;
 
-        var concepts = Ext.decode(response.responseText)
+        var concepts = Ext.decode(response.responseText);
 
         var matchList = GLOBAL.PathToExpand.split(",");
         for (i = 0; i < concepts.length; i++) {
@@ -91,7 +91,7 @@ function getConceptPatientCountComplete(result, node) {
 function getChildConceptPatientCounts(node) {
 	
 var params =	Ext.urlEncode({charttype:"childconceptpatientcounts",
-		   concept_key: node.attributes.id})
+		   concept_key: node.attributes.id});
 
 // Ext AJAX has intermittent failure to pass parameters when many AJAX requests are made in a short space of time - switched to jQuery here
 jQuery.ajax({
@@ -118,7 +118,7 @@ var mobj=result;
     var blah = node;
     node.beginUpdate();
     var children = node.childNodes;
-    var size2 = children.size()
+    var size2 = children.size();
     for (var i = 0; i < size2; i++) {
         var key = children[i].attributes.id;
         var fullname = key.substr(key.indexOf("\\", 2), key.length);
@@ -142,7 +142,7 @@ var mobj=result;
             child.disable();
             child.on('beforeload', function (node) {
                 alert("Access to this node has been restricted. Please contact your administrator for access.");
-                return false
+                return false;
             });
         }
     }

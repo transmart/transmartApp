@@ -195,7 +195,7 @@ function hideQuery(){
 function applySubsets(subsetId, study){
 	var overrideCurrentSubsets = true;
 	if(!isSubsetEmpty(1) || !isSubsetEmpty(2)){
-		overrideCurrentSubsets = confirm("This will override the criteria you have selected on the comparison tab.")
+		overrideCurrentSubsets = confirm("This will override the criteria you have selected on the comparison tab.");
 	}
 	if(overrideCurrentSubsets){
 		jQuery.get(pageInfo.basePath + '/subset/getQueryIdsForSubset', {subsetId:subsetId}, function(data){
@@ -251,7 +251,7 @@ function togglePublicFlag(subsetId){
 			jQuery("#publicFlag"+subsetId).removeClass("ui-icon-unlocked");
 			jQuery("#publicFlag"+subsetId).addClass("ui-icon-locked");
 		}
-	}).fail(function() { alert("Server Error in toggling public flag"); })
+	}).fail(function() { alert("Server Error in toggling public flag"); });
 }
 
 function editDescription(subsetId){
@@ -264,5 +264,5 @@ function updateDescription(subsetId){
 	var description = jQuery("#editDescriptionBox"+subsetId).val();
 	jQuery.get(pageInfo.basePath + '/subset/updateDescription', {subsetId:subsetId, description:description}, function(data){
 		renderWorkspace();
-	})
+	});
 }

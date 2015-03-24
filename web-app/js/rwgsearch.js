@@ -38,8 +38,8 @@ function addSelectCategories()	{
 		}
 		
 		jQuery("#search-categories").html(jQuery("option", jQuery("#search-categories")).sort(function(a, b) { 
-	        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1 
-	    }))
+	        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+	    }));
 		
 		jQuery("#allCategory").after(jQuery("<option></option>").attr("value", "text").text("Free Text"));
 		
@@ -183,13 +183,13 @@ function showSearchTemplate()	{
 	var searchHTML = '';
 	var startATag = '&nbsp;<a id=\"';
 	var endATag = '\" class="term-remove" href="#" onclick="removeSearchTerm(this);">';
-	var imgTag = '<img alt="remove" src="' + crossImageURL + '"/></a>&nbsp;'
+	var imgTag = '<img alt="remove" src="' + crossImageURL + '"/></a>&nbsp;';
 	var firstItem = true;
 	var needsToggle = false;
 	var geneTerms = 0;
 	
 	var globalLogicOperator = "AND";
-	if (jQuery('#globaloperator').hasClass("or")) { globalLogicOperator = "OR" }
+	if (jQuery('#globaloperator').hasClass("or")) { globalLogicOperator = "OR"; }
 
 	// iterate through categories array and move all the "gene" categories together at the top 
 	var newCategories = new Array();
@@ -316,8 +316,8 @@ function showSearchResults(openInAnalyze, datasetExplorerPath)	{
 
 //Method to load the facet results in the search tree and populate search results panel
 function showFacetResults(openInAnalyze, datasetExplorerPath)	{
-	if(openInAnalyze==undefined){
-		openInAnalyze=false;
+	if(openInAnalyze == undefined){
+		openInAnalyze = false;
 	}
 	var globalLogicOperator = "AND";
 	if (jQuery('#globaloperator').hasClass("or")) { globalLogicOperator = "OR" }
@@ -362,7 +362,7 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
 		    //Get the operator for this category from the global arrays
 		    var operatorIndex = currentCategories.indexOf(fields[0]);
 		    var operator = currentSearchOperators[operatorIndex];
-		    if (operator == null) { operator = 'or' }
+		    if (operator == null) { operator = 'or'; }
 		    operators.push(operator);
 		    
 
@@ -497,7 +497,7 @@ function removeSearchTerm(ctrl)	{
 	});
 
 	// create flag to track if tree was updated
-	var treeUpdated = false
+	var treeUpdated = false;
 
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
 	if (!treeUpdated) {
@@ -544,7 +544,7 @@ function updateNodeIndividualFacetCount(node, count) {
 	        node.data.facetCount = count;
 	    }
 	    else  {
-	    	node.data.facetCount = node.data.initialFacetCount
+	    	node.data.facetCount = node.data.initialFacetCount;
 	    }
 	    node.data.title = node.data.termName + " (" + node.data.facetCount + ")";	
 	}
@@ -601,9 +601,9 @@ function toggleSidebar() {
             }
             viewport.doLayout();
         }
-    }
+    };
     var sidebarIsVisible = (jQuery(element + ':visible').size() > 0);
-    console.log(sidebarIsVisible)
+    console.log(sidebarIsVisible);
     if (sidebarIsVisible) {
         jQuery(element).fadeOut(500, func);
         var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-left', '-right');
@@ -767,10 +767,10 @@ jQuery(document).ready(function() {
     	else {
     		//For individual categories, alter this index of the current search operators, then redisplay
 		    if (jQuery(this).hasClass("or")) {
-		    	currentSearchOperators[jQuery(this).attr('name')] = 'and'
+		    	currentSearchOperators[jQuery(this).attr('name')] = 'and';
 		    }
 		    else {
-		    	currentSearchOperators[jQuery(this).attr('name')] = 'or'
+		    	currentSearchOperators[jQuery(this).attr('name')] = 'or';
 		    }
 		    showSearchTemplate();
 		    showSearchResults();
