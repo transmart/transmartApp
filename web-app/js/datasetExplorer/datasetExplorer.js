@@ -1751,12 +1751,15 @@ function getSubCategories(ontresponse) {
 }
 
 function setupDragAndDrop() {
+
+	var qcd;
+
 	/* Set up the drag and drop for the query panel */
 	// var dts = [];
     for (var s = 1; s <= GLOBAL.NumOfSubsets; s++) {
 		for(var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups;
              i++) {
-			var qcd = Ext.get("queryCriteriaDiv" + s.toString() + '_' + i.toString());
+			qcd = Ext.get("queryCriteriaDiv" + s.toString() + '_' + i.toString());
 			dts = new Ext.dd.DropTarget(qcd,
 					{
 				ddGroup : 'makeQuery'
@@ -1795,7 +1798,7 @@ function setupDragAndDrop() {
 	}
 
 	/* Set up Drag and Drop for the analysis Panel */
-	var qcd = Ext.get(analysisPanel.body);
+	qcd = Ext.get(analysisPanel.body);
 
 	dts = new Ext.dd.DropTarget(qcd,
 			{
