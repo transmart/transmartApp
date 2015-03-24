@@ -20,7 +20,7 @@ var wfsWindow = null;
 
 
 function dataSelectionCheckboxChanged(ctl) {
-    if (getSelected(ctl)[0] != undefined) {
+    if (getSelected(ctl)[0] !== undefined) {
 		Ext.getCmp("exportStepDataSelectionNextButton").enable();
 	}
 }
@@ -1582,7 +1582,7 @@ function setupOntTree(id_in, title_in) {
     var firstExpandProgram = [];
     ontTree.on('beforeexpandnode', function (node, deep, anim) {
             var expand = true;
-            if (GLOBAL.PathToExpand != undefined && GLOBAL.PathToExpand.indexOf(node.id) > -1 && node.parentNode.id == "treeRoot" && !contains(dseClosedNodes, node.id)) {
+            if (GLOBAL.PathToExpand !== undefined && GLOBAL.PathToExpand.indexOf(node.id) > -1 && node.parentNode.id == "treeRoot" && !contains(dseClosedNodes, node.id)) {
                 if (firstExpandProgram.indexOf(node.id) == -1) {
                     firstExpandProgram.push(node.id);
                     expand = false;
@@ -1661,7 +1661,7 @@ function createTree(ontresponse) {
 		var autoExpand=false;
 
         var lockedNode = true;
-        if ((access != undefined && access != 'Locked') || GLOBAL.IsAdmin) {
+        if ((access !== undefined && access != 'Locked') || GLOBAL.IsAdmin) {
             lockedNode = false;
         }
         if (lockedNode && key.indexOf('\\\\xtrials\\') === 0) {
@@ -1917,7 +1917,7 @@ function getPreviousQueryFromIDComplete(subset, result) {
 }
 
 function createExportItem(name, setid) {
-	if(GLOBAL.exportFirst == undefined) // clear out the body
+	if(GLOBAL.exportFirst === undefined) // clear out the body
 	{
 		exportPanel.body.update("");
 		GLOBAL.exportFirst = false;
@@ -2448,7 +2448,7 @@ function runQueryPDOComplete(result, subset, callback) {
     doc.setProperty("SelectionLanguage", "XPath");
     doc.setProperty("SelectionNamespaces", "xmlns:ns2='http://www.i2b2.org/xsd/hive/pdo/1.1/'");
     var patientset = result.responseXML.selectSingleNode("//ns2:patient_set");
-    if (patientset == undefined) {
+    if (patientset === undefined) {
         patientset = result.responseXML.selectSingleNode("//patient_set");
     }
     if (patientset == null) {
@@ -2641,7 +2641,7 @@ function searchByNameComplete(response) {
 	searchByNameTree.el.unmask();
 	var allkeys="";
 	var concepts = response.responseXML.selectNodes('//concept');
-    if (concepts != undefined) {
+    if (concepts !== undefined) {
         if (concepts.length < GLOBAL.MaxSearchResults) {
 			length = concepts.length;
 		}
@@ -2681,10 +2681,10 @@ function enterWasPressed(e) {
     if (e.which) {
 		pK = e.which;
 	}
-    if (pK == undefined && window.event) {
+    if (pK === undefined && window.event) {
 		pK = window.event.keyCode;
 	}
-    if (pK == undefined && e.getCharCode) {
+    if (pK === undefined && e.getCharCode) {
 		pK = e.getCharCode();
 	}
     if (pK == 13) {
