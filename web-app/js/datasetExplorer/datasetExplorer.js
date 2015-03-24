@@ -1,7 +1,7 @@
 
 String.prototype.trim = function() {
 	return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-}
+};
 
 Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayout.Region.prototype.getCollapsedEl.createSequence(function () {
         if ((this.position == 'north' || this.position == 'south') && !this.collapsedEl.titleEl) {
@@ -76,13 +76,13 @@ Ext.Panel.prototype.setBody = function (html) {
 	var el = this.getEl();
 	var domel = el.dom.lastChild.firstChild;
 	domel.innerHTML = html;
-}
+};
 
 Ext.Panel.prototype.getBody = function (html) {
 	var el = this.getEl();
 	var domel = el.dom.lastChild.firstChild;
 	return domel.innerHTML;
-}
+};
 
 Ext.onReady(function () {
 
@@ -121,7 +121,7 @@ Ext.onReady(function () {
 								iconCls : 'nextbutton',
 								disabled : false,
                         handler: function () {
-								window.location.href = "i2b2client.jsp"
+								window.location.href = "i2b2client.jsp";
 								}
 							}
 					)]
@@ -474,7 +474,7 @@ Ext.onReady(function () {
                 listeners :
                 {
                     activate : function(p) {
-                        getJobsDataForGalaxy(p)
+                        getJobsDataForGalaxy(p);
                     }
                 },
                 collapsible : true
@@ -628,7 +628,7 @@ Ext.onReady(function () {
 							GLOBAL.Analysis="dataAssociation";
 							renderCohortSummary();
                             onWindowResize();
-						}
+						};
 
                         if (isSubsetQueriesChanged(p.subsetQueries)) {
                             runAllQueries(_activateAdvancedWorkflow, p);
@@ -661,7 +661,7 @@ Ext.onReady(function () {
                 listeners: {
 						activate : function(p) {
                         p.body.mask("Loading...", 'x-mask-loading');
-                        getExportJobs(p)
+                        getExportJobs(p);
 						},
 						deactivate: function(){
 						}
@@ -685,7 +685,7 @@ Ext.onReady(function () {
                 listeners :
                 {
                     activate : function(p) {
-                        getJobsData(p)
+                        getJobsData(p);
                     }
                 },
                 collapsible : true
@@ -704,7 +704,7 @@ Ext.onReady(function () {
                 listeners :
                 {
                     activate : function(p) {
-                        renderWorkspace(p)
+                        renderWorkspace(p);
                     },
                     deactivate: function(){
 
@@ -722,11 +722,11 @@ Ext.onReady(function () {
                 listeners: {
                     activate: function(p) {
                         p.body.mask("Loading...", 'x-mask-loading');
-                        generatePatientSampleCohort(launchSampleBrowseWithCohort)
+                        generatePatientSampleCohort(launchSampleBrowseWithCohort);
                     }
                 }
             }
-        )
+        );
 
         resultsTabPanel.add(queryPanel);
 		resultsTabPanel.add(analysisPanel);
@@ -760,7 +760,7 @@ Ext.onReady(function () {
         function loadResourcesByUrl(url, bootstrap) {
             return jQuery.post(url, function(data) {
                 if (data.success) {
-                    loadResources(data.files, bootstrap)
+                    loadResources(data.files, bootstrap);
                 }
             }, "json").fail(function() {
                 console.error("Cannot load resources for " + url);
@@ -980,7 +980,7 @@ Ext.onReady(function () {
 						        		   subset = getSubsetFromPanel(STATE.Target);
 						        	   }
                                 else {
-						        		   subset = getSubsetFromPanel(selectedConcept.parentNode)
+						        		   subset = getSubsetFromPanel(selectedConcept.parentNode);
 						        	   }
 
                                 if (!isSubsetEmpty(subset)) {
@@ -1200,7 +1200,7 @@ function createOntPanel() {
 //		******************************************************************************
 		var showFn = function(node, e){
 			Ext.tree.TreePanel.superclass.onShow.call(this);
-				}
+				};
 
 		// shorthand
 		var Tree = Ext.tree;
@@ -1528,7 +1528,7 @@ function setupOntTree(id_in, title_in) {
 
     var showFn = function (node, e) {
         Ext.tree.TreePanel.superclass.onShow.call(this);
-    }
+    };
 
     var ontTree = new Tree.TreePanel(
         {
@@ -1553,13 +1553,13 @@ function setupOntTree(id_in, title_in) {
     );
 
     ontTree.on('startdrag', function (panel, node, event) {
-            Ext.ux.ManagedIFrame.Manager.showShims()
+            Ext.ux.ManagedIFrame.Manager.showShims();
 
         }
     );
 
     ontTree.on('enddrag', function (panel, node, event) {
-            Ext.ux.ManagedIFrame.Manager.hideShims()
+            Ext.ux.ManagedIFrame.Manager.hideShims();
 
         }
     );
@@ -1712,7 +1712,7 @@ function createTree(ontresponse) {
         if (lockedNode) {
             ontRoot.attributes.access = 'locked';
             ontRoot.on('beforeload', function (node) {
-                return false
+                return false;
             });
         }
 
@@ -1811,7 +1811,7 @@ function setupDragAndDrop() {
 					showCriteriaGroup(panelnumber+1);
 					return true;
 				}
-			}
+			};
 		}
 	}
 
@@ -1827,7 +1827,7 @@ function setupDragAndDrop() {
     dts.notifyDrop = function (source, e, data) {
 		buildAnalysis(data.node);
 		return true;
-	}
+	};
 
 	/* set up drag and drop for grid */
 	var mcd = Ext.get(analysisGridPanel.body);
@@ -1840,14 +1840,14 @@ function setupDragAndDrop() {
     dtg.notifyDrop = function (source, e, data) {
 		buildAnalysis(data.node);
 		return true;
-	}
+	};
 }
 
 function getValue(node, defaultvalue)
 {
     var result = defaultvalue;
     if (node.size() > 0)
-        result = node.first().html()
+        result = node.first().html();
     return result;
 }
 
@@ -1869,7 +1869,7 @@ function getPreviousQueryFromIDComplete(subset, result) {
 
         jQuery(pe).find("item").each(function (ii, ie) {
 
-            var key = jQuery(ie).find("item_key").first().html()
+            var key = jQuery(ie).find("item_key").first().html();
 
             if (key == "\\\\Public Studies\\Public Studies\\SECURITY\\")
                 return false;
@@ -1877,7 +1877,7 @@ function getPreviousQueryFromIDComplete(subset, result) {
             if (jQuery(ie).find("constrain_by_value").size() <= 0)
                 oktousevalues = "Y";
 
-            var mode
+            var mode;
             switch (getValue(jQuery(ie, "constrain_by_value value_type"), "")) {
                 case "FLAG":
                     mode = "highlow";
@@ -1899,7 +1899,7 @@ function getPreviousQueryFromIDComplete(subset, result) {
                 highvalue = numvalue.substring(numvalue.indexOf("and") + 3);
             }
 
-            var highlowselect = mode == "highlow" ? numvalue : ""
+            var highlowselect = mode == "highlow" ? numvalue : "";
             var value = new Value(mode, operator, highlowselect, lowvalue, highvalue, '');
 
             /* the panel (probably) only needs the concept key and the
@@ -1907,10 +1907,10 @@ function getPreviousQueryFromIDComplete(subset, result) {
              * which is good because we don't have that information...
              */
 
-            var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + pi)
+            var panel = document.getElementById("queryCriteriaDiv" + subset + "_" + pi);
             var concept = new Concept('', key, -1, '', '', key, '', '', oktousevalues, value);
             createPanelItemNew(panel, concept);
-        })
+        });
     });
 
     queryPanel.el.unmask();
@@ -2010,7 +2010,7 @@ function drillDown(rootNode){
 function showConceptInfoDialog(conceptKey, conceptid, conceptcomment) {
 
     if (!this.conceptinfowin) {
-		var link = '<a href="javascript:;"  onclick="return popitup(\'http://www.google.com/search?q='+conceptid+'\')">Search for more information...</a>'
+		var link = '<a href="javascript:;"  onclick="return popitup(\'http://www.google.com/search?q='+conceptid+'\')">Search for more information...</a>';
 		conceptinfowin = new Ext.Window(
 				{
 					id : 'showConceptInfoWindow',
@@ -2105,12 +2105,12 @@ function showQuerySummaryWindow(source) {
 
 
 function showConceptSearchPopUp(conceptid) {
-	popitup('http://www.google.com/search?q=' + conceptid)
+	popitup('http://www.google.com/search?q=' + conceptid);
 }
 function popitup(url) {
 	newwindow = window.open(url, 'name', 'height=500,width=500,toolbar=yes,scrollbars=yes, resizable=yes,');
     if (window.focus) {
-		newwindow.focus()
+		newwindow.focus();
 	}
 	return false;
 }
@@ -2217,7 +2217,7 @@ function showExportStepDataSelection() {
 function getExportData() {
 
 	exportStepDataSelection.getEl().mask("Getting Data...");
-	setTimeout('exportDataFinished()', 2000)
+	setTimeout('exportDataFinished()', 2000);
 
 }
 function showExportStepProgress() {
@@ -2419,7 +2419,7 @@ function runQueryComplete(result, subset, callback) {
 
 
 function runQueryPDO(patientsetid, minpatient, maxpatient, subset, callback) {
-    var query = getCRCpdoRequest(patientsetid, minpatient, maxpatient, subset)
+    var query = getCRCpdoRequest(patientsetid, minpatient, maxpatient, subset);
     queryPanel.el.mask('Getting patient set ' + subset + '...', 'x-mask-loading');
     Ext.Ajax.request(
         {
@@ -2440,7 +2440,7 @@ function runQueryPDO(patientsetid, minpatient, maxpatient, subset, callback) {
 
 function runQueryPDOComplete(result, subset, callback) {
     if (GLOBAL.Debug) {
-        alert(result.responseText)
+        alert(result.responseText);
     }
     ;
     queryPanel.el.unmask();
@@ -2452,7 +2452,7 @@ function runQueryPDOComplete(result, subset, callback) {
         patientset = result.responseXML.selectSingleNode("//patient_set");
     }
     if (patientset == null) {
-        return
+        return;
     }
     ;
     createStatistics(patientset, subset);
@@ -2568,14 +2568,14 @@ function getNodeForAnalysis(node) {
 		return getNodeForAnalysis(node.parentNode);
 	}
     else {
-		return node
+		return node;
 	}
 	// must be a concept folder so return me
 }
 
 
 function buildAnalysis(nodein) {
-	var node = nodein // getNodeForAnalysis(nodein);
+	var node = nodein; // getNodeForAnalysis(nodein);
     if (isSubsetEmpty(1) && isSubsetEmpty(2)) {
 		alert('Empty subsets found, need a valid subset to analyze!');
 		return;
@@ -2750,7 +2750,7 @@ function showSurvivalAnalysis() {
 }
 
 function genePatternReplacement() {
-	Ext.Msg.alert('Work In Progress', 'Gene Pattern replacement')
+	Ext.Msg.alert('Work In Progress', 'Gene Pattern replacement');
 }
 
 //Once, we get a job created by GPController, we run the survival analysis
