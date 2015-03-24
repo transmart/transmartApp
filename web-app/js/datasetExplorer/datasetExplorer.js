@@ -157,7 +157,6 @@ Ext.onReady(function () {
 					items: [
 					         {
 					        	 text: 'Heatmap',
-					        	 disabled: true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
                         handler: function () {
 					        	 	GLOBAL.HeatmapType = 'Compare';
@@ -168,7 +167,6 @@ Ext.onReady(function () {
 					         },
 					         {
 					        	 text: 'Hierarchical Clustering',
-					        	 disabled: true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
                         handler: function () {
 					        	 	GLOBAL.HeatmapType = 'Cluster';
@@ -179,7 +177,6 @@ Ext.onReady(function () {
 					         },
 					         {
 					        	 text: 'K-Means Clustering',
-					        	 disabled: true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
                         handler: function () {
 					        	 	GLOBAL.HeatmapType = 'KMeans';
@@ -190,7 +187,6 @@ Ext.onReady(function () {
 					         },
 					         {
 					        	 text: 'Comparative Marker Selection (Heatmap)',
-					        	 disabled: true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
                         handler: function () {
 					        	 	GLOBAL.HeatmapType = 'Select';
@@ -202,7 +198,6 @@ Ext.onReady(function () {
 				        	 '-',					         
 					         {
 					        	 text: 'Principal Component Analysis',
-					        	 disabled: true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
                         handler: function () {
 					        	 	GLOBAL.HeatmapType = 'PCA';
@@ -245,7 +240,6 @@ Ext.onReady(function () {
 					        },
 					        {
 					        	 text: 'SNPViewer',
-					        	 disabled: true,
 					        	 handler: function()	{
                             if (isSubsetEmpty(1) && isSubsetEmpty(2)) {
 					        			alert('Both dataset is empty. Please choose a valid dataset.');
@@ -264,7 +258,6 @@ Ext.onReady(function () {
 					        },
 					        {
 					        	 text: 'Integrative Genome Viewer',
-					        	 disabled: true,
 					        	 handler: function()	{
                             if (isSubsetEmpty(1) && isSubsetEmpty(2)) {
 					        			alert('Both dataset is empty. Please choose a valid dataset.');
