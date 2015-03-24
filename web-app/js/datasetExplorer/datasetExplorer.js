@@ -107,8 +107,8 @@ Ext.onReady(function () {
 				layout : 'border'
 			}
 	);
-	qphtml = "<div style='margin: 10px'>Query Criteria<br /><select size='8' id='queryCriteriaSelect1' style='width:400px; height:250px;'></select><br />\
-		< button onclick = 'resetQuery()' > Reset < / button > < br / > < div id = 'queryCriteriaDiv1' style = 'font:11pt;width:200px; height:250px; white-space:nowrap;overflow:auto;border:1px solid black' > < / div > < / div > "
+	qphtml = "<div style='margin: 10px'>Query Criteria<br /><select size='8' id='queryCriteriaSelect1' style='width:400px; height:250px;'></select><br />" +
+		     "< button onclick = 'resetQuery()' > Reset < / button > < br / > < div id = 'queryCriteriaDiv1' style = 'font:11pt;width:200px; height:250px; white-space:nowrap;overflow:auto;border:1px solid black' > < / div > < / div > ";
 
 		var tb = new Ext.Toolbar(
 				{
@@ -1135,9 +1135,9 @@ function createOntPanel() {
 
 
     // make the ontSearchByNamePanel
-	shtml='<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>\
-		<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td><td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15">&nbsp;</td>\
-		<td><button onclick="searchByName()">Find</button></td></tr><tr><td colspan="2">Select Ontology:<select id="searchByNameSelectOntology"></select></td></tr></table>';
+	shtml='<table style="font:10pt arial;"><tr><td><select id="searchByNameSelect"><option value="left">Starting with</option><option value="right">Ending with</option>' +
+		'<option value="contains" selected>Containing</option><option value="exact">Exact</option></select>&nbsp;&nbsp;</td><td><input id="searchByNameInput" onkeypress="if(enterWasPressed(event)){searchByName();}" type="text" size="15">&nbsp;</td>' +
+		'<td><button onclick="searchByName()">Find</button></td></tr><tr><td colspan="2">Select Ontology:<select id="searchByNameSelectOntology"></select></td></tr></table>';
 
 		searchByNameForm = new Ext.Panel(
 				{
@@ -2088,15 +2088,15 @@ function showQuerySummaryWindow(source) {
 		querysummarywin.add(querySummaryPanel);
 	}
 	querysummarywin.show(viewport);
-	var fakehtml = "<div style='padding:10px;font:12pt arial;width:100%;height:100%;'>\
-		< b > Criteria 1 < / b > < br > \
-		Trials\\CT0145T03 < br > \
-		< b > AND < br > \
-		Criteria 2 < / b > < br > \
-		Sex\\Female < br > \
-		< b > OR < / b > < br > \
-		TRIALS\\CT0145T03\\RBM\\Adjusted Values\\IL - 13 - & gt;\
-		.75 < br > "
+	var fakehtml = "<div style='padding:10px;font:12pt arial;width:100%;height:100%;'>" +
+		"< b > Criteria 1 < / b > < br > " +
+		"Trials\\CT0145T03 < br > " +
+		"< b > AND < br > " +
+		"Criteria 2 < / b > < br > " +
+		"Sex\\Female < br > " +
+		"< b > OR < / b > < br > " +
+		"TRIALS\\CT0145T03\\RBM\\Adjusted Values\\IL - 13 - & gt;" +
+		".75 < br > ";
 
 		var q1 = getQuerySummary(1);
 		var q2 = getQuerySummary(2);
@@ -2544,16 +2544,16 @@ function createStatistics(patientset, subset) {
 	// close patient loop
 
 	// make sex table
-	var statisticshtml = "<table><tr><td><table border='1' class='demoTable' style='border:1px solid black;margin:5px;'>\
-		< tr align = 'center' > < td colspan = '2' > < b > Sex distribution < / b > < / td > < / tr > \
-		< tr align = 'center' > < th > Males < / th > < th > Females < / th > < / tr > \
-		< tr align = 'center' > < td > "+totalmale+" < / td > < td > "+totalfemale+" < / td > < / tr > < / table > < / td > ";
+	var statisticshtml = "<table><tr><td><table border='1' class='demoTable' style='border:1px solid black;margin:5px;'>" +
+		"< tr align = 'center' > < td colspan = '2' > < b > Sex distribution < / b > < / td > < / tr > " +
+		"< tr align = 'center' > < th > Males < / th > < th > Females < / th > < / tr > " +
+		"< tr align = 'center' > < td > "+totalmale+" < / td > < td > "+totalfemale+" < / td > < / tr > < / table > < / td > ";
 		// make age table
-		statisticshtml = statisticshtml + "<td><table border='1' class='demoTable' style='border:1px solid black;margin:5px'><tr align='center'><td colspan='9'><b>Age distribution</b></td></tr>\
-		< tr align = 'center' > < th > 0 - 9 < / th > < th > 10 - 17 < / th > < th > 18 - 34 < / th > < th > 35 - 44 < / th > < th > 45 - 54 < / th > < th > 55 - 64 < / th > < th > 65 - 74 < / th > < th > 75 - 84 < / th > < th > & gt;\
-		84 < / th > < / tr > \
-		< tr align = 'center' > < td > "+total0to9+" < / td > < td > "+total10to17+" < / td > < td > "+total18to34+" < / td > < td > "+total35to44+" < / td > < td > "+total45to54+" < / td > < td > "+total55to64+" < / td > < td > "+total65to74+" < / td > < td > "+total75to84+" < / td > < td > "+totalgreaterthan84+" < / td > < / tr > \
-		< / table > < / td > < / tr > < / table > < br / > ";
+		statisticshtml = statisticshtml + "<td><table border='1' class='demoTable' style='border:1px solid black;margin:5px'><tr align='center'><td colspan='9'><b>Age distribution</b></td></tr>" +
+		"< tr align = 'center' > < th > 0 - 9 < / th > < th > 10 - 17 < / th > < th > 18 - 34 < / th > < th > 35 - 44 < / th > < th > 45 - 54 < / th > < th > 55 - 64 < / th > < th > 65 - 74 < / th > < th > 75 - 84 < / th > < th > & gt;" +
+		"84 < / th > < / tr > " +
+		"< tr align = 'center' > < td > "+total0to9+" < / td > < td > "+total10to17+" < / td > < td > "+total18to34+" < / td > < td > "+total35to44+" < / td > < td > "+total45to54+" < / td > < td > "+total55to64+" < / td > < td > "+total65to74+" < / td > < td > "+total75to84+" < / td > < td > "+totalgreaterthan84+" < / td > < / tr > " +
+		"< / table > < / td > < / tr > < / table > < br / > ";
 		// analysisPanel.body.insertHtml("beforeEnd", statisticshtml);
 		Ext.get("analysisPanelSubset" + subset).insertHtml("beforeEnd", statisticshtml);
 		// analysisPanel.body.update(statisticshtml);
