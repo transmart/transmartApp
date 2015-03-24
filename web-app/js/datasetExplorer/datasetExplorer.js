@@ -7,7 +7,7 @@ Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayou
         if ((this.position === 'north' || this.position === 'south') && !this.collapsedEl.titleEl) {
 		this.collapsedEl.titleEl = this.collapsedEl.createChild(
 				{
-					style : 'color:#15428b;font:11px/15px tahoma,arial,verdana,sans-serif;padding:2px 5px;', cn : this.panel.title
+					style: 'color:#15428b;font:11px/15px tahoma,arial,verdana,sans-serif;padding:2px 5px;', cn: this.panel.title
 				}
 		);
 	}
@@ -32,10 +32,10 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
 	} else {
 		Ext.Ajax.request(
 		{
-			url : pageInfo.basePath+"/dataAssociation/loadScripts",
-				method : 'GET',
+			url: pageInfo.basePath+"/dataAssociation/loadScripts",
+				method: 'GET',
 				timeout: '600000',
-				params :  Ext.urlEncode({}),
+				params:  Ext.urlEncode({}),
                 success: function (result, request) {
 					var exp = result.responseText.evalJSON();
 					if (exp.success && exp.files.length > 0)	{
@@ -94,13 +94,13 @@ Ext.onReady(function () {
 	// create the main regions of the screen
 	westPanel = new Ext.Panel(
 			{
-				id : 'westPanel',
-				region : 'west',
+				id: 'westPanel',
+				region: 'west',
                 width: 320,
-				minwidth : 280,
-				split : true,
-				border : true,
-				layout : 'border'
+				minwidth: 280,
+				split: true,
+				border: true,
+				layout: 'border'
 			}
 	);
 	qphtml = "<div style='margin: 10px'>Query Criteria<br /><select size='8' id='queryCriteriaSelect1' style='width:400px; height:250px;'></select><br />" +
@@ -108,14 +108,14 @@ Ext.onReady(function () {
 
 		var tb = new Ext.Toolbar(
 				{
-					id : 'maintoolbar',
-					title : 'maintoolbar',
-					items : [new Ext.Toolbar.Button(
+					id: 'maintoolbar',
+					title: 'maintoolbar',
+					items: [new Ext.Toolbar.Button(
 							{
-								id : 'changetool',
-								text : 'Switch to subset view',
-								iconCls : 'nextbutton',
-								disabled : false,
+								id: 'changetool',
+								text: 'Switch to subset view',
+								iconCls: 'nextbutton',
+								disabled: false,
                         handler: function () {
 								window.location.href = "i2b2client.jsp";
 								}
@@ -126,12 +126,12 @@ Ext.onReady(function () {
 
 		expmenu = new Ext.menu.Menu(
 			{
-				id : 'exportMenu',
+				id: 'exportMenu',
 				minWidth: 250,
                 items: [
                     {
-					text : 'Summary Statistics',
-					handler : function()	{
+					text: 'Summary Statistics',
+					handler: function()	{
 						if(typeof(grid) != 'undefined' && grid != null)	{
 							exportGrid();
 						} else {
@@ -141,8 +141,8 @@ Ext.onReady(function () {
 				},
 				'-',
 				{
-					text : 'Gene Expression/RBM Datasets',
-					handler : function()	{
+					text: 'Gene Expression/RBM Datasets',
+					handler: function()	{
 						exportDataSets();
 					}
 				}
@@ -152,68 +152,68 @@ Ext.onReady(function () {
 
 		advmenu = new Ext.menu.Menu(
 				{
-					id : 'advancedMenu',
+					id: 'advancedMenu',
 					minWidth: 250,
-					items : [
+					items: [
 					         {
-					        	 text : 'Heatmap',
-					        	 disabled : true,
+					        	 text: 'Heatmap',
+					        	 disabled: true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
                         handler: function () {
 					        	 	GLOBAL.HeatmapType = 'Compare';
 					        	 	validateHeatmap();
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
-					        	 disabled : GLOBAL.GPURL == "" 
+					        	 disabled: GLOBAL.GPURL == "" 
 					         },
 					         {
-					        	 text : 'Hierarchical Clustering',
-					        	 disabled : true,
+					        	 text: 'Hierarchical Clustering',
+					        	 disabled: true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
                         handler: function () {
 					        	 	GLOBAL.HeatmapType = 'Cluster';
 					        	 	validateHeatmap();
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
-					        	 disabled : GLOBAL.GPURL == ""
+					        	 disabled: GLOBAL.GPURL == ""
 					         },
 					         {
-					        	 text : 'K-Means Clustering',
-					        	 disabled : true,
+					        	 text: 'K-Means Clustering',
+					        	 disabled: true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
                         handler: function () {
 					        	 	GLOBAL.HeatmapType = 'KMeans';
 					        	 	validateHeatmap();
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
-					        	 disabled : GLOBAL.GPURL == ""
+					        	 disabled: GLOBAL.GPURL == ""
 					         },
 					         {
-					        	 text : 'Comparative Marker Selection (Heatmap)',
-					        	 disabled : true,
+					        	 text: 'Comparative Marker Selection (Heatmap)',
+					        	 disabled: true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
                         handler: function () {
 					        	 	GLOBAL.HeatmapType = 'Select';
 					        	 	validateHeatmap();
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
-					        	 disabled : GLOBAL.GPURL == ""
+					        	 disabled: GLOBAL.GPURL == ""
 					         },
 				        	 '-',					         
 					         {
-					        	 text : 'Principal Component Analysis',
-					        	 disabled : true,
+					        	 text: 'Principal Component Analysis',
+					        	 disabled: true,
 					        	 // when checked has a boolean value, it is assumed to be a CheckItem
                         handler: function () {
 					        	 	GLOBAL.HeatmapType = 'PCA';
 					        	 	validateHeatmap();
 					        	 	advancedWorkflowContextHelpId="1172";
 					        	 },
-					        	 disabled : GLOBAL.GPURL == ""
+					        	 disabled: GLOBAL.GPURL == ""
 					         },
 				        	 '-',
 					         {
-					        	 text : 'Survival Analysis',
+					        	 text: 'Survival Analysis',
                         handler: function () {
                             if (isSubsetEmpty(1) || isSubsetEmpty(2)) {
 					        			alert('Survival Analysis needs time point data from both subsets.');
@@ -223,12 +223,12 @@ Ext.onReady(function () {
 					        	 		showSurvivalAnalysis();
 					        	 	}
 					        	 },
-					        	 disabled : GLOBAL.GPURL == ""
+					        	 disabled: GLOBAL.GPURL == ""
 					         },
 				        	 '-',
 					         {
-					        	 text : 'Haploview',
-					        	 handler : function()	{
+					        	 text: 'Haploview',
+					        	 handler: function()	{
                             if (isSubsetEmpty(1) && isSubsetEmpty(2)) {
 					        			alert('Empty subsets found, need a valid subset to analyze!');
 					        		 	return;
@@ -244,9 +244,9 @@ Ext.onReady(function () {
 					        	}
 					        },
 					        {
-					        	 text : 'SNPViewer',
-					        	 disabled : true,
-					        	 handler : function()	{
+					        	 text: 'SNPViewer',
+					        	 disabled: true,
+					        	 handler: function()	{
                             if (isSubsetEmpty(1) && isSubsetEmpty(2)) {
 					        			alert('Both dataset is empty. Please choose a valid dataset.');
 					        		 	return;
@@ -260,12 +260,12 @@ Ext.onReady(function () {
 					        	 	}
 					        	 	return;
 					        	},
-					        	disabled : GLOBAL.GPURL == ""
+					        	disabled: GLOBAL.GPURL == ""
 					        },
 					        {
-					        	 text : 'Integrative Genome Viewer',
-					        	 disabled : true,
-					        	 handler : function()	{
+					        	 text: 'Integrative Genome Viewer',
+					        	 disabled: true,
+					        	 handler: function()	{
                             if (isSubsetEmpty(1) && isSubsetEmpty(2)) {
 					        			alert('Both dataset is empty. Please choose a valid dataset.');
 					        		 	return;
@@ -279,12 +279,12 @@ Ext.onReady(function () {
 					        	 	}
 					        	 	return;
 					        	},
-					        	disabled : GLOBAL.GPURL == ""
+					        	disabled: GLOBAL.GPURL == ""
 					        },
 					        {
-					        	 text : 'PLINK',
-					        	 disabled : true,
-					        	 handler : function()	{
+					        	 text: 'PLINK',
+					        	 disabled: true,
+					        	 handler: function()	{
                             if (isSubsetEmpty(1) && isSubsetEmpty(2)) {
 					        			alert('Both dataset is empty. Please choose a valid dataset.');
 					        		 	return;
@@ -300,8 +300,8 @@ Ext.onReady(function () {
 					        	}
 					        },
 					        {
-					        	 text : 'Genome-Wide Association Study',
-					        	 handler : function()	{
+					        	 text: 'Genome-Wide Association Study',
+					        	 handler: function()	{
                             if (isSubsetEmpty(1) || isSubsetEmpty(2)) {
 					        			alert('Genome-Wide Association Study needs control datasets (normal patients) in subset 1, and case datasets (disease patients) in subset 2.');
 					        		 	return;
@@ -322,15 +322,15 @@ Ext.onReady(function () {
 
 		var tb2 = new Ext.Toolbar(
 				{
-					id : 'maintoolbar',
-					title : 'maintoolbar',
+					id: 'maintoolbar',
+					title: 'maintoolbar',
                 items: [
 					new Ext.Toolbar.Button(
 							{
-								id : 'dataExplorerHelpButton',
-								iconCls : 'contextHelpBtn',
+								id: 'dataExplorerHelpButton',
+								iconCls: 'contextHelpBtn',
 								qtip: 'Click for Dataset Explorer Help',
-								disabled : false,
+								disabled: false,
                             handler: function () {
 								    D2H_ShowHelp("1258",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
 								}
@@ -342,21 +342,21 @@ Ext.onReady(function () {
 
 		centerMainPanel = new Ext.Panel(
 				{
-					id : 'centerMainPanel',
-					region : 'center',
-					// tbar : tb,
-					layout : 'border'
+					id: 'centerMainPanel',
+					region: 'center',
+					// tbar: tb,
+					layout: 'border'
 				}
 		);
 
 		centerPanel = new Ext.Panel(
 				{
-					id : 'centerPanel',
-					region : 'center',
-					width : 500,
-					minwidth : 150,
-					split : true,
-					border : true,
+					id: 'centerPanel',
+					region: 'center',
+					width: 500,
+					minwidth: 150,
+					split: true,
+					border: true,
                 layout: 'fit'
 				}
 		);
@@ -367,24 +367,24 @@ Ext.onReady(function () {
 
 		queryPanel = new Ext.Panel(
 				{
-					id : 'queryPanel',
-					title : 'Comparison',
-					region : 'north',
-					height : 340,
-					autoScroll : true,
-					split : true,					
+					id: 'queryPanel',
+					title: 'Comparison',
+					region: 'north',
+					height: 340,
+					autoScroll: true,
+					split: true,					
             autoLoad: {
-						url : pageInfo.basePath+'/panels/subsetPanel.html',
-						scripts : true,
-						nocache : true,
-						discardUrl : true,
-						method : 'POST'
+						url: pageInfo.basePath+'/panels/subsetPanel.html',
+						scripts: true,
+						nocache: true,
+						discardUrl: true,
+						method: 'POST'
 					},
-					collapsible : true,
-					titleCollapse : false,
-					animCollapse : false,
+					collapsible: true,
+					titleCollapse: false,
+					animCollapse: false,
             listeners: {
-						activate : function() {
+						activate: function() {
 							GLOBAL.Analysis="Advanced";
 						}
 					},
@@ -409,27 +409,27 @@ Ext.onReady(function () {
 
 		resultsPanel = new Ext.Panel(
 				{
-					id : 'resultsPanel',
-					title : 'Results',
-					region : 'center',
-					split : true,
-					height : 90
+					id: 'resultsPanel',
+					title: 'Results',
+					region: 'center',
+					split: true,
+					height: 90
 				}
 		);
 
 		resultsTabPanel = new Ext.TabPanel(
 				{
-					id : 'resultsTabPanel',
-					title : 'Analysis/Results',
-					region : 'center',
+					id: 'resultsTabPanel',
+					title: 'Analysis/Results',
+					region: 'center',
 
                 defaults: {
-					hideMode : 'display'
+					hideMode: 'display'
                 },
-				collapsible : false,
-				//height : 300,
-				deferredRender : false,
-				activeTab : 0,
+				collapsible: false,
+				//height: 300,
+				deferredRender: false,
+				activeTab: 0,
                 tools: [
                     {
                         id: 'help',
@@ -445,19 +445,19 @@ Ext.onReady(function () {
 
         GalaxyPanel = new Ext.Panel(
             {
-                id : 'GalaxyPanel',
-                title : 'Galaxy Export',
-                region : 'center',
-                split : true,
-                height : 90,
-                layout : 'fit',
-                listeners :
+                id: 'GalaxyPanel',
+                title: 'Galaxy Export',
+                region: 'center',
+                split: true,
+                height: 90,
+                layout: 'fit',
+                listeners:
                 {
-                    activate : function(p) {
+                    activate: function(p) {
                         getJobsDataForGalaxy(p);
                     }
                 },
-                collapsible : true
+                collapsible: true
             }
         );
 
@@ -467,11 +467,11 @@ Ext.onReady(function () {
 
 		analysisGridPanel = new Ext.Panel(
 				{
-					id : 'analysisGridPanel',
-					title : 'Grid View',
-					region : 'center',
-					split : true,
-					height : 90,
+					id: 'analysisGridPanel',
+					title: 'Grid View',
+					region: 'center',
+					split: true,
+					height: 90,
                 layout: 'fit',
                 listeners: {
                     activate: function (p) {
@@ -500,10 +500,10 @@ Ext.onReady(function () {
         // ******************
 
         analysisPanel = new Ext.Panel ({
-					id : 'analysisPanel',
+					id: 'analysisPanel',
                     title: 'Summary Statistics',
-					region : 'center',
-					fitToFrame : true,
+					region: 'center',
+					fitToFrame: true,
                     listeners: {
                         activate: function (p) {
                             if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysis_title')) {
@@ -522,20 +522,20 @@ Ext.onReady(function () {
                             }
                         }
                     },
-				autoScroll : true,
+				autoScroll: true,
                 html: '<div style="text-align:center;font:12pt arial;width:100%;height:100%;">' +
                 '<table style="width:100%;height:100%;"><tr><td align="center" valign="center">Drag concepts ' +
                 'to this panel to view a breakdown of the subset by that concept</td></tr></table></div>',
-				split : true,
-				closable : false,
-				height : 90,
-                tbar    : [
+				split: true,
+				closable: false,
+				height: 90,
+                tbar   : [
                 '->', // Fill
                 {
-                    id : 'printanalysisbutton',
-                    text : 'Print',
-                    iconCls : 'printbutton',
-                    handler : function() {
+                    id: 'printanalysisbutton',
+                    text: 'Print',
+                    iconCls: 'printbutton',
+                    handler: function() {
                         var text = getAnalysisPanelContent();
                         printPreview(text);
                     }
@@ -549,14 +549,14 @@ Ext.onReady(function () {
 
 		analysisDataExportPanel = new Ext.Panel(
 				{
-					id : 'analysisDataExportPanel',
-					title : 'Data Export',
-					region : 'center',
-					split : true,
-					height : 90,
-					layout : 'fit',
+					id: 'analysisDataExportPanel',
+					title: 'Data Export',
+					region: 'center',
+					split: true,
+					height: 90,
+					layout: 'fit',
                 listeners: {
-						activate : function(p) {
+						activate: function(p) {
                         if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('dataTypesGridPanel')) {
 							p.body.mask("Loading...", 'x-mask-loading');
 							runAllQueries(getDatadata, p);
@@ -569,7 +569,7 @@ Ext.onReady(function () {
                         }
 						}
 					},
-					collapsible : true						
+					collapsible: true						
 				}
 		);
 		
@@ -579,20 +579,20 @@ Ext.onReady(function () {
 
 		dataAssociationPanel = new Ext.Panel(
 				{
-					id : 'dataAssociationPanel',
-					title : 'Advanced Workflow',
-					region : 'center',
-					split : true,
-					height : 90,
-					layout : 'fit',
-					tbar : new Ext.Toolbar({
-						id : 'advancedWorkflowToolbar',
-						title : 'Advanced Workflow actions',
-						items : []
+					id: 'dataAssociationPanel',
+					title: 'Advanced Workflow',
+					region: 'center',
+					split: true,
+					height: 90,
+					layout: 'fit',
+					tbar: new Ext.Toolbar({
+						id: 'advancedWorkflowToolbar',
+						title: 'Advanced Workflow actions',
+						items: []
 						}),
-					autoScroll : true,
+					autoScroll: true,
                 autoLoad: {
-			        	url : pageInfo.basePath+'/dataAssociation/defaultPage',
+			        	url: pageInfo.basePath+'/dataAssociation/defaultPage',
 			           	method:'POST',
 			           	callback: setDataAssociationAvailableFlag,
 			           	evalScripts:true
@@ -622,7 +622,7 @@ Ext.onReady(function () {
 						}
 				}
 				},
-				collapsible : true
+				collapsible: true
 			}
 		);
 
@@ -634,19 +634,19 @@ Ext.onReady(function () {
 				{
                 id: 'analysisExportJobsPanel',
                 title: 'Export Jobs',
-					region : 'center',
-					split : true,
-					height : 90,
-					layout : 'fit',
+					region: 'center',
+					split: true,
+					height: 90,
+					layout: 'fit',
                 listeners: {
-						activate : function(p) {
+						activate: function(p) {
                         p.body.mask("Loading...", 'x-mask-loading');
                         getExportJobs(p);
 						},
 						deactivate: function(){
 						}
 					},
-					collapsible : true						
+					collapsible: true						
 				}
 		);
 
@@ -656,41 +656,41 @@ Ext.onReady(function () {
          */
         analysisJobsPanel = new Ext.Panel(
             {
-                id : 'analysisJobsPanel',
-                title : 'Analysis Jobs',
-                region : 'center',
-                split : true,
-                height : 90,
-                layout : 'fit',
-                listeners :
+                id: 'analysisJobsPanel',
+                title: 'Analysis Jobs',
+                region: 'center',
+                split: true,
+                height: 90,
+                layout: 'fit',
+                listeners:
                 {
-                    activate : function(p) {
+                    activate: function(p) {
                         getJobsData(p);
                     }
                 },
-                collapsible : true
+                collapsible: true
             }
         );
 
         workspacePanel = new Ext.Panel(
             {
-                id : 'workspacePanel',
-                title : 'Workspace',
-                region : 'center',
-                split : true,
-                height : 90,
-                layout : 'fit',
-                autoScroll : false,
-                listeners :
+                id: 'workspacePanel',
+                title: 'Workspace',
+                region: 'center',
+                split: true,
+                height: 90,
+                layout: 'fit',
+                autoScroll: false,
+                listeners:
                 {
-                    activate : function(p) {
+                    activate: function(p) {
                         renderWorkspace(p);
                     },
                     deactivate: function(){
 
                     }
                 },
-                collapsible : true
+                collapsible: true
             }
         );
 
@@ -782,26 +782,26 @@ Ext.onReady(function () {
 
 		southCenterPanel = new Ext.Panel(
 				{
-					id : 'southCenterPanel',
-					region : 'center',
-					layout : 'border',
-					split : true,
-					tbar : tb2
+					id: 'southCenterPanel',
+					region: 'center',
+					layout: 'border',
+					split: true,
+					tbar: tb2
 				}
 		);
 
 		exportPanel = new Ext.Panel(
 				{
-					id : 'exportPanel',
-					title : 'Compare/Export',
-					region : 'east',
-					html : '<div style="text-align:center;font:12pt arial;width:100%;height:100%;"><table style="width:100%;height:100%;"><tr><td align="center" valign="center">Drag subsets to this panel to compare and export them</td></tr></table></div>',
-					split : true,
-					width : 300,
-					height : 90,
-					buttons : [
+					id: 'exportPanel',
+					title: 'Compare/Export',
+					region: 'east',
+					html: '<div style="text-align:center;font:12pt arial;width:100%;height:100%;"><table style="width:100%;height:100%;"><tr><td align="center" valign="center">Drag subsets to this panel to compare and export them</td></tr></table></div>',
+					split: true,
+					width: 300,
+					height: 90,
+					buttons: [
 					           {
-					        	   text : 'Compare',
+					        	   text: 'Compare',
                         handler: function () {
 					        	   var subsets = exportPanel.body.dom.childNodes;
                             if (subsets.length !== 2) {
@@ -813,15 +813,15 @@ Ext.onReady(function () {
 					        	   }
 					           },
 					           {
-					        	   text : 'Export',
-					        	   iconCls : 'exportbutton',
+					        	   text: 'Export',
+					        	   iconCls: 'exportbutton',
                         handler: function () {
 					        	   showExportStepSplitTimeSeries();
 					        	   }
 					           },
 					           {
-					        	   text : 'Clear',
-					        	   iconCls : 'clearbutton',
+					        	   text: 'Clear',
+					        	   iconCls: 'clearbutton',
                         handler: function () {
 					        	   clearExportPanel();
 					        	   }
@@ -839,28 +839,28 @@ Ext.onReady(function () {
 		var Tree = Ext.tree;
 		prevTree = new Tree.TreePanel(
 				{
-					id : 'previousQueriesTree',
-					title : treetitle,
-					animate : false,
-					autoScroll : true,
-					enableDrag : true,
-					ddGroup : 'makeQuery',
-					containerScroll : true,
-					enableDrop : false,
-					region : 'south',
-					rootVisible : false,
-					expanded : true,
-					split : true,
-					height : 300
+					id: 'previousQueriesTree',
+					title: treetitle,
+					animate: false,
+					autoScroll: true,
+					enableDrag: true,
+					ddGroup: 'makeQuery',
+					containerScroll: true,
+					enableDrop: false,
+					region: 'south',
+					rootVisible: false,
+					expanded: true,
+					split: true,
+					height: 300
 				}
 		);
 
 		prevTreeRoot = new Tree.TreeNode(
 				{
-					text : 'root',
-					draggable : false,
-					id : 'prevroot',
-					qtip : 'root'
+					text: 'root',
+					draggable: false,
+					id: 'prevroot',
+					qtip: 'root'
 				}
 		);
 
@@ -877,7 +877,7 @@ Ext.onReady(function () {
 
 		viewport = new Ext.Viewport(
 				{
-					layout : 'border',
+					layout: 'border',
                 items: [centerMainPanel],
                 listeners: {
                     'afterLayout': {
@@ -894,38 +894,38 @@ Ext.onReady(function () {
 		// preload the setvalue dialog
 		setvaluePanel = new Ext.Panel(
 				{
-					id : 'setvaluePanel',
-					region : 'north',
-					height : 140,
-					width : 490,
-					split : false,
+					id: 'setvaluePanel',
+					region: 'north',
+					height: 140,
+					width: 490,
+					split: false,
                 autoLoad: {
-					url : pageInfo.basePath+'/panels/setValueDialog.html',
-					scripts : true,
-					nocache : true,
-					discardUrl : true,
-					method : 'POST'
+					url: pageInfo.basePath+'/panels/setValueDialog.html',
+					scripts: true,
+					nocache: true,
+					discardUrl: true,
+					method: 'POST'
 					}
 				}
 		);
 
 		setvaluechartsPanel1 = new Ext.Panel(
 				{
-					id : 'setvaluechartsPanel1',
-					region : 'center',
-					width : 245,
-					height : 180,
-					split : false
+					id: 'setvaluechartsPanel1',
+					region: 'center',
+					width: 245,
+					height: 180,
+					split: false
 				}
 		);
 
 		setvaluechartsPanel2 = new Ext.Panel(
 				{
-					id : 'setvaluechartsPanel2',
-					region : 'east',
-					width : 245,
-					height : 180,
-					split : false
+					id: 'setvaluechartsPanel2',
+					region: 'east',
+					width: 245,
+					height: 180,
+					split: false
 				}
 		);
 
@@ -933,25 +933,25 @@ Ext.onReady(function () {
         if (!this.setvaluewin) {
 			setvaluewin = new Ext.Window(
 					{
-						id : 'setValueWindow',
-						title : 'Set Value',
-						layout : 'border',
-						width : 500,
-						height : 240,
-						closable : false,
-						plain : true,
-						modal : true,
-						border : false,
-						items : [setvaluePanel , setvaluechartsPanel1, setvaluechartsPanel2],
-						buttons : [
+						id: 'setValueWindow',
+						title: 'Set Value',
+						layout: 'border',
+						width: 500,
+						height: 240,
+						closable: false,
+						plain: true,
+						modal: true,
+						border: false,
+						items: [setvaluePanel , setvaluechartsPanel1, setvaluechartsPanel2],
+						buttons: [
 						           {
-						        	   text : 'Show Histogram',
+						        	   text: 'Show Histogram',
                             handler: function () {
 						        	   showConceptDistributionHistogram();
 						        	   }
 						           },
 						           {
-						        	   text : 'Show Histogram for subset',
+						        	   text: 'Show Histogram for subset',
                             handler: function () {
 						        	   var subset;
                                 if (selectedConcept.parentNode.id === "hiddenDragDiv") {
@@ -970,7 +970,7 @@ Ext.onReady(function () {
 						        	   }
 						           },
 						           {
-						        	   text : 'OK',
+						        	   text: 'OK',
                             handler: function () {
 						        	   var mode = getSelected(document.getElementsByName("setValueMethod"))[0].value;
 						        	   var highvalue = document.getElementById("setValueHighValue").value;
@@ -991,13 +991,13 @@ Ext.onReady(function () {
 						        	   }
 						           },
 						           {
-						        	   text : 'Cancel',
+						        	   text: 'Cancel',
                             handler: function () {
 						        	   setvaluewin.hide();
 						        	   }
 						           }
 						           ],
-						           resizable : false,
+						           resizable: false,
                     tools: [
                         {
 										id:'help',
@@ -1065,38 +1065,38 @@ function createOntPanel() {
 	// make tab panel, search panel, ontTree and combine them
     ontTabPanel = new Ext.Panel(
 			{
-				id : 'ontPanel',
-				region : 'center',
+				id: 'ontPanel',
+				region: 'center',
             defaults: {
-				hideMode : 'offsets'
+				hideMode: 'offsets'
             },
-			collapsible : false,
-			height : 300,
+			collapsible: false,
+			height: 300,
             width: 250,
-			deferredRender : false,
+			deferredRender: false,
             split: true
 	        		}
 	);
 
 	ontSearchByCodePanel = new Ext.Panel(
 			{
-				id : 'searchByCodePanel',
-				title : 'Search by Codes',
-				region : 'center'
+				id: 'searchByCodePanel',
+				title: 'Search by Codes',
+				region: 'center'
 			}
 	);
 
 	searchByNamePanel = new Ext.Panel(
 			{
-				title : 'Search by Names',
-				id : 'searchByNamePanel',
-				region : 'center',
-				height : 500,
+				title: 'Search by Names',
+				id: 'searchByNamePanel',
+				region: 'center',
+				height: 500,
             width: 250,
-				border : true,
-				bodyStyle : 'background:lightgrey;',
-				layout : 'border',
-				split : true
+				border: true,
+				bodyStyle: 'background:lightgrey;',
+				layout: 'border',
+				split: true
 			}
 	);
 
@@ -1107,13 +1107,13 @@ function createOntPanel() {
 
 		searchByNameForm = new Ext.Panel(
 				{
-					id : 'searchByNameForm',
-					region : 'north',
-					bodyStyle : 'background:#eee;padding: 10px;',
-					html : shtml,
-					height : 70,
-					border : true,
-					split : false
+					id: 'searchByNameForm',
+					region: 'north',
+					bodyStyle: 'background:#eee;padding: 10px;',
+					html: shtml,
+					height: 70,
+					border: true,
+					split: false
 				}
 		);
 
@@ -1122,39 +1122,39 @@ function createOntPanel() {
 
 		searchByNameTree = new Tree.TreePanel(
 				{
-					id : 'searchByNameTree',
-					animate : false,
-					autoScroll : true,
-					loader : new Ext.ux.OntologyTreeLoader(
+					id: 'searchByNameTree',
+					animate: false,
+					autoScroll: true,
+					loader: new Ext.ux.OntologyTreeLoader(
 							{
-								dataUrl : 'none'
+								dataUrl: 'none'
 							}
 					),
-					enableDrag : true,
-					ddGroup : 'makeQuery',
-					containerScroll : true,
-					enableDrop : false,
-					region : 'center',
-					rootVisible : false,
-					expanded : true,
-					split : true,
-					border : true,
-					height : 400
+					enableDrag: true,
+					ddGroup: 'makeQuery',
+					containerScroll: true,
+					enableDrop: false,
+					region: 'center',
+					rootVisible: false,
+					expanded: true,
+					split: true,
+					border: true,
+					height: 400
 				}
 		);
 
 		searchByNameTreeRoot = new Tree.TreeNode(
 				{
-					text : 'root',
-					draggable : false,
-					id : 'root',
-					qtip : 'root'
+					text: 'root',
+					draggable: false,
+					id: 'root',
+					qtip: 'root'
 				}
 		);
 		// add a tree sorter in folder mode
 		new Tree.TreeSorter(searchByNameTree,
 				{
-			folderSort : true
+			folderSort: true
 				}
 		);
 
@@ -1173,38 +1173,38 @@ function createOntPanel() {
 
 		ontFilterTree = new Tree.TreePanel(
 				{
-					id : 'ontFilterTree',
-					animate : false,
-					autoScroll : true,
-					loader : new Ext.ux.OntologyTreeLoader(
+					id: 'ontFilterTree',
+					animate: false,
+					autoScroll: true,
+					loader: new Ext.ux.OntologyTreeLoader(
 							{
-								dataUrl : 'none'
+								dataUrl: 'none'
 							}
 					),
-					enableDrag : true,
-					ddGroup : 'makeQuery',
-					containerScroll : true,
-					enableDrop : false,
-					region : 'center',
-					rootVisible : false,
-					expanded : true,
-					border : true,
-					height : 400
+					enableDrag: true,
+					ddGroup: 'makeQuery',
+					containerScroll: true,
+					enableDrop: false,
+					region: 'center',
+					rootVisible: false,
+					expanded: true,
+					border: true,
+					height: 400
 				}
 		);
 
 		ontFilterTreeRoot = new Tree.TreeNode(
 				{
-					text : 'root',
-					draggable : false,
-					id : 'root',
-					qtip : 'root'
+					text: 'root',
+					draggable: false,
+					id: 'root',
+					qtip: 'root'
 				}
 		);
 		// add a tree sorter in folder mode
 		new Tree.TreeSorter(ontFilterTree,
 				{
-			folderSort : true
+			folderSort: true
 				}
 		);
 
@@ -1224,66 +1224,66 @@ function showLoginDialog() {
 
 	loginwin = new Ext.Window(
 			{
-				id : 'loginWindow',
-				title : 'Login',
-				layout : 'fit',
-				width : 350,
-				height : 140,
-				closable : false,
-				plain : true,
-				modal : true,
-				border : false,
-				resizable : false
+				id: 'loginWindow',
+				title: 'Login',
+				layout: 'fit',
+				width: 350,
+				height: 140,
+				closable: false,
+				plain: true,
+				modal: true,
+				border: false,
+				resizable: false
 			}
 	);
 
 	var txtboxdomain = new Ext.form.TextField(
 			{
-				fieldLabel : 'Domain',
-				id : 'txtFieldDomain',
-				name : 'domain'
+				fieldLabel: 'Domain',
+				id: 'txtFieldDomain',
+				name: 'domain'
 			}
 	);
 
 	var txtboxusername = new Ext.form.TextField(
 			{
-				fieldLabel : 'Username',
-				name : 'username'
+				fieldLabel: 'Username',
+				name: 'username'
 			}
 	);
 
 	txtboxpassword = new Ext.form.TextField(
 			{
-				fieldLabel : 'Password',
-				name : 'password',
-				inputType : 'password'
+				fieldLabel: 'Password',
+				name: 'password',
+				inputType: 'password'
 			}
 	);
 
 	loginform = new Ext.FormPanel(
 			{
-				id : 'loginForm',
-				labelWidth : 75,
-				frame : true,
-				region : 'center',
-				width : 350,
-				height : 130,
+				id: 'loginForm',
+				labelWidth: 75,
+				frame: true,
+				region: 'center',
+				width: 350,
+				height: 130,
             defaults: {
-				width : 230
+				width: 230
             },
-			defaultType : 'textfield',
-			items : [txtboxusername, txtboxpassword],
-			buttons : [
+			defaultType: 'textfield',
+			items: [txtboxusername, txtboxpassword],
+			buttons: [
 			           {
-			        	   text : 'Login',
+			        	   text: 'Login',
                     handler: function () {
 			        	   loginform.el.mask('Logging in...', 'x-mask-loading');
 			        	   login(txtboxdomain.getValue(), txtboxusername.getValue(), txtboxpassword.getValue());
 			        	   }
 			           },
 			           {
-			        	   text : 'Cancel',
-			        	   handler : closeBrowser
+			        	   text: 'Cancel',
+			        	   handler: closeBrowser
 			           }
 			           ]
 			}
@@ -1340,67 +1340,67 @@ function showProjectDialog(projects) {
 
 	projectwin = new Ext.Window(
 			{
-				id : 'projectWindow',
-				title : 'Projects',
-				layout : 'fit',
-				width : 350,
-				height : 140,
-				closable : false,
-				plain : true,
-				modal : true,
-				border : false,
-				resizable : false
+				id: 'projectWindow',
+				title: 'Projects',
+				layout: 'fit',
+				width: 350,
+				height: 140,
+				closable: false,
+				plain: true,
+				modal: true,
+				border: false,
+				resizable: false
 			}
 	);
 
 	// simple array store
 	var store = new Ext.data.SimpleStore(
 			{
-				fields : ['id', 'projects'],
-				data : Ext.projects
+				fields: ['id', 'projects'],
+				data: Ext.projects
 			}
 	);
 
 	var drdprojects = new Ext.form.ComboBox(
 			{
-				id : 'drdproject',
-				name : 'drdproject',
-				title : 'Projects',
-				store : store,
-				fieldLabel : 'Projects',
-				displayField : 'projects',
-				typeAhead : true,
-				mode : 'local',
-				triggerAction : 'all',
-				emptyText : 'Select a project...',
-				selectOnFocus : true
+				id: 'drdproject',
+				name: 'drdproject',
+				title: 'Projects',
+				store: store,
+				fieldLabel: 'Projects',
+				displayField: 'projects',
+				typeAhead: true,
+				mode: 'local',
+				triggerAction: 'all',
+				emptyText: 'Select a project...',
+				selectOnFocus: true
 			}
 	);
 
 	projectform = new Ext.FormPanel(
 			{
-				id : 'projectForm',
-				labelWidth : 75,
-				frame : true,
-				region : 'center',
-				width : 350,
-				height : 130,
+				id: 'projectForm',
+				labelWidth: 75,
+				frame: true,
+				region: 'center',
+				width: 350,
+				height: 130,
             defaults: {
-				width : 230
+				width: 230
             },
-			defaultType : 'textfield',
-			items : [drdprojects],
-			buttons : [
+			defaultType: 'textfield',
+			items: [drdprojects],
+			buttons: [
 			           {
-			        	   text : 'Select',
+			        	   text: 'Select',
                     handler: function () {
 			        	   projectwin.hide();
 			        	   projectDialogComplete(drdprojects.getValue());
 			        	   }
 			           },
 			           {
-			        	   text : 'Cancel',
-			        	   handler : closeBrowser
+			        	   text: 'Cancel',
+			        	   handler: closeBrowser
 			           }
 			           ]
 			}
@@ -1568,10 +1568,10 @@ function setupOntTree(id_in, title_in) {
 
     var treeRoot = new Tree.TreeNode(
         {
-            text      : 'root',
-            draggable : false,
+            text     : 'root',
+            draggable: false,
             id: 'treeRoot',
-            qtip      : 'root'
+            qtip     : 'root'
         }
     );
 
@@ -1658,10 +1658,10 @@ function createTree(ontresponse) {
 
 		var ontRoot = new Tree.AsyncTreeNode(
 				{
-					text : name,
-					draggable : false,
-					id : key,
-					qtip : tooltip,
+					text: name,
+					draggable: false,
+					id: key,
+					qtip: tooltip,
                 expanded: expand,
                 iconCls: iconCls,
                 cls: tcls
@@ -1740,7 +1740,7 @@ function setupDragAndDrop() {
 			qcd = Ext.get("queryCriteriaDiv" + s.toString() + '_' + i.toString());
 			dts = new Ext.dd.DropTarget(qcd,
 					{
-				ddGroup : 'makeQuery'
+				ddGroup: 'makeQuery'
 					}
 			);
 
@@ -1904,8 +1904,8 @@ function ontologyRightClick(eventNode, event) {
     if (!this.contextMenuOntology) {
 		this.contextMenuOntology = new Ext.menu.Menu(
 				{
-					id : 'contextMenuOntology',
-					items : [
+					id: 'contextMenuOntology',
+					items: [
 					         {
                         text: 'Show Definition', handler: function () {
 					        	 showConceptInfoDialog(eventNode.attributes.id, eventNode.attributes.text, eventNode.attributes.comment);
@@ -1924,8 +1924,8 @@ function previousQueriesRightClick(eventNode, event) {
     if (!this.contextMenuPreviousQueries) {
 		this.contextMenuPreviousQueries = new Ext.menu.Menu(
 				{
-					id : 'contextMenuPreviousQueries',
-					items : [
+					id: 'contextMenuPreviousQueries',
+					items: [
 					         {
                         text: 'Rename', handler: function () {
 					        	 alert('rename!');
@@ -1973,25 +1973,25 @@ function showConceptInfoDialog(conceptKey, conceptid, conceptcomment) {
 		var link = '<a href="javascript:;"  onclick="return popitup(\'http://www.google.com/search?q='+conceptid+'\')">Search for more information...</a>';
 		conceptinfowin = new Ext.Window(
 				{
-					id : 'showConceptInfoWindow',
-					title : 'Show Concept Definition-' + conceptid,
-					layout : 'fit',
-					width : 600,
-					height : 500,
-					closable : false,
-					plain : true,
-					modal : true,
-					border : false,
+					id: 'showConceptInfoWindow',
+					title: 'Show Concept Definition-' + conceptid,
+					layout: 'fit',
+					width: 600,
+					height: 500,
+					closable: false,
+					plain: true,
+					modal: true,
+					border: false,
 					autoScroll: true,
-					buttons : [
+					buttons: [
             {
-					        	   text : 'Close',
+					        	   text: 'Close',
                         handler: function () {
 					        	   conceptinfowin.hide();
 					        	   }
 					           }
 					           ],
-					           resizable : false
+					           resizable: false
 				}
 		);
 	}
@@ -2018,18 +2018,18 @@ function showQuerySummaryWindow(source) {
 
 		querysummarywin = new Ext.Window(
 				{
-					id : 'showQuerySummaryWindow',
-					title : 'Query Summary',
-					layout : 'fit',
+					id: 'showQuerySummaryWindow',
+					title: 'Query Summary',
+					layout: 'fit',
                 width: 500,
-					height : 500,
-					closable : false,
-					plain : true,
-					modal : true,
-					border : false,
-					buttons : [
+					height: 500,
+					closable: false,
+					plain: true,
+					modal: true,
+					border: false,
+					buttons: [
 					           {
-					        	   text : 'Done',
+					        	   text: 'Done',
                         handler: function () {
 					        	   querysummarywin.hide();
 					        	   }
@@ -2041,8 +2041,8 @@ function showQuerySummaryWindow(source) {
 
 		querySummaryPanel = new Ext.Panel(
 				{
-					id : 'querySummaryPanel',
-					region : 'center'
+					id: 'querySummaryPanel',
+					region: 'center'
 				}
 		);
 		querysummarywin.add(querySummaryPanel);
@@ -2080,39 +2080,39 @@ function showExportStepSplitTimeSeries() {
     if (!this.exportStepSplitTimeSeries) {
 		exportStepSplitTimeSeries = new Ext.Window(
 				{
-					id : 'exportStepSplitTimeSeriesWindow',
-					title : 'Export-Split Time Series',
-					layout : 'fit',
-					width : 400,
-					height : 200,
-					closable : false,
-					plain : true,
-					modal : true,
-					border : false,
-					buttons : [
+					id: 'exportStepSplitTimeSeriesWindow',
+					title: 'Export-Split Time Series',
+					layout: 'fit',
+					width: 400,
+					height: 200,
+					closable: false,
+					plain: true,
+					modal: true,
+					border: false,
+					buttons: [
 					           {
-					        	   id : 'exportStepSplitTimeSeriesNextButton',
-					        	   text : 'Next>',
-					        	   disabled : true,
+					        	   id: 'exportStepSplitTimeSeriesNextButton',
+					        	   text: 'Next>',
+					        	   disabled: true,
                         handler: function () {
 					        	   exportStepSplitTimeSeries.hide();
 					        	   showExportStepDataSelection();
 					        	   }
 					           },
 					           {
-					        	   text : 'Cancel',
+					        	   text: 'Cancel',
                         handler: function () {
 					        	   exportStepSplitTimeSeries.hide();
 					        	   }
 					           }
 					           ],
-					           resizable : false ,
+					           resizable: false ,
                 autoLoad: {
-					url : pageInfo.basePath+'/panels/exportStepSplitTimeSeries.html',
-					scripts : true,
-					nocache : true,
-					discardUrl : true,
-					method : 'POST'
+					url: pageInfo.basePath+'/panels/exportStepSplitTimeSeries.html',
+					scripts: true,
+					nocache: true,
+					discardUrl: true,
+					method: 'POST'
 					           }
 				}
 		);
@@ -2125,45 +2125,45 @@ function showExportStepDataSelection() {
     if (!this.exportStepDataSelection) {
 		exportStepDataSelection = new Ext.Window(
 				{
-					id : 'exportStepDataSelectionWindow',
-					title : 'Export-Data Selection',
-					layout : 'fit',
-					width : 400,
-					height : 400,
-					closable : false,
-					plain : true,
-					modal : true,
-					border : false,
-					buttons : [
+					id: 'exportStepDataSelectionWindow',
+					title: 'Export-Data Selection',
+					layout: 'fit',
+					width: 400,
+					height: 400,
+					closable: false,
+					plain: true,
+					modal: true,
+					border: false,
+					buttons: [
 					           {
-					        	   id : 'exportStepDataSelectionAdvancedButton',
-					        	   text : 'Advanced',
+					        	   id: 'exportStepDataSelectionAdvancedButton',
+					        	   text: 'Advanced',
                         handler: function () {
 					        	   showExportDataSelectionAdvanced();
 					        	   }
 					           },
 					           {
-					        	   id : 'exportStepDataSelectionNextButton',
-					        	   text : 'Get Data',
-					        	   disabled : true,
+					        	   id: 'exportStepDataSelectionNextButton',
+					        	   text: 'Get Data',
+					        	   disabled: true,
                         handler: function () {
 					        	   getExportData();
 					        	   }
 					           },
 					           {
-					        	   text : 'Cancel',
+					        	   text: 'Cancel',
                         handler: function () {
 					        	   exportStepDataSelection.hide();
 					        	   }
 					           }
 					           ],
-					           resizable : false,
+					           resizable: false,
                 autoLoad: {
-					url : pageInfo.basePath+'/panels/exportStepDataSelection.html',
-					scripts : true,
-					nocache : true,
-					discardUrl : true,
-					method : 'POST'
+					url: pageInfo.basePath+'/panels/exportStepDataSelection.html',
+					scripts: true,
+					nocache: true,
+					discardUrl: true,
+					method: 'POST'
 					           }
 				}
 		);
@@ -2180,25 +2180,25 @@ function showExportStepProgress() {
     if (!this.exportStepProgress) {
 		exportStepProgress = new Ext.Window(
 				{
-					id : 'exportStepProgress',
-					title : 'Export-Download File',
-					layout : 'fit',
-					html : '<br><div style="font:12pt arial;width:100%;height:100%;text-align:center;vertical-align:middle"><a href="export/export.xls">Download File</a></div>',
-					width : 400,
-					height : 200,
-					closable : false,
-					plain : true,
-					modal : true,
-					border : false,
-					buttons : [
+					id: 'exportStepProgress',
+					title: 'Export-Download File',
+					layout: 'fit',
+					html: '<br><div style="font:12pt arial;width:100%;height:100%;text-align:center;vertical-align:middle"><a href="export/export.xls">Download File</a></div>',
+					width: 400,
+					height: 200,
+					closable: false,
+					plain: true,
+					modal: true,
+					border: false,
+					buttons: [
 					           {
-					        	   text : 'Done',
+					        	   text: 'Done',
                         handler: function () {
 					        	   exportStepProgress.hide();
 					        	   }
 					           }
 					           ],
-					           resizable : false
+					           resizable: false
 				}
 		);
 	}
@@ -2551,15 +2551,15 @@ function buildAnalysis(nodein) {
 
 	Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/chart/analysis",
-				method : 'POST',
+				url: pageInfo.basePath+"/chart/analysis",
+				method: 'POST',
 				timeout: '600000',
-				params :  Ext.urlEncode(
+				params:  Ext.urlEncode(
 						{
-							charttype : "analysis",
-							concept_key : node.attributes.id,
-							result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-							result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+							charttype: "analysis",
+							concept_key: node.attributes.id,
+							result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
+							result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
 						}
 				), // or a URL encoded string
             success: function (result, request) {
@@ -2616,14 +2616,14 @@ function searchByNameComplete(response) {
 	}
 	Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/ontology/sectest",
-				method : 'POST',
+				url: pageInfo.basePath+"/ontology/sectest",
+				method: 'POST',
             success: function (result, request) {
             },
             failure: function (result, request) {
             },
-			timeout : '300000',
-			params : Ext.urlEncode(
+			timeout: '300000',
+			params: Ext.urlEncode(
 					{
 						keys: allkeys
 					}
@@ -3142,27 +3142,27 @@ function compareSubsetsComplete(result, setname1, setname2) {
     if (!this.heatmapDisplay) {
 		heatmapDisplay = new Ext.Window(
 				{
-					id : 'heatmapDisplayWindow',
-					title : 'Heatmap Comparison',
-					layout : 'fit',
-					width : 800,
-					height : 600,
-					closable : false,
-					plain : true,
-					modal : true,
-					border : false,
-					autoScroll : true,
-					buttons : [
+					id: 'heatmapDisplayWindow',
+					title: 'Heatmap Comparison',
+					layout: 'fit',
+					width: 800,
+					height: 600,
+					closable: false,
+					plain: true,
+					modal: true,
+					border: false,
+					autoScroll: true,
+					buttons: [
 					           {
-					        	   id : 'Done',
-					        	   text : 'OK',
+					        	   id: 'Done',
+					        	   text: 'OK',
                         handler: function () {
 					        	   heatmapDisplay.hide();
 					        	   }
 					           }
 					           ],
-					           resizable : true,
-					           html : '<div style="width:100%;height:100%;overflow:auto;"><div id="heatmapContainer"></div><br><div id="heatmapLegend"></div><div>'
+					           resizable: true,
+					           html: '<div style="width:100%;height:100%;overflow:auto;"><div id="heatmapContainer"></div><br><div id="heatmapLegend"></div><div>'
 				}
 		);
 	}
@@ -3174,7 +3174,7 @@ function compareSubsetsComplete(result, setname1, setname2) {
 	heatmap = new org.systemsbiology.visualization.BioHeatMap(document.getElementById('heatmapContainer'));
 	heatmap.draw(data,
 			{
-		cellHeight : 5, cellWidth : 5, fontHeight : 3
+		cellHeight: 5, cellWidth: 5, fontHeight: 3
 			}
 	);
 	var html = "s1=" + setname1 + "<br>s2=" + setname2;
@@ -3185,18 +3185,18 @@ function showNameQueryDialog() {
     if (!this.namequerywin) {
 		namequerywin = new Ext.Window(
 				{
-					id : 'namequeryWindow',
-					title : 'Name the Query',
-					layout : 'fit',
-					width : 500,
-					height : 150,
-					closable : false,
-					plain : true,
-					modal : true,
-					border : false,
-					buttons : [
+					id: 'namequeryWindow',
+					title: 'Name the Query',
+					layout: 'fit',
+					width: 500,
+					height: 150,
+					closable: false,
+					plain: true,
+					modal: true,
+					border: false,
+					buttons: [
 					           {
-					        	   text : 'OK',
+					        	   text: 'OK',
                         handler: function () {
 					        	   var newvalue = Ext.get("nameQueryDialogInput").getValue();
 					        	   // Ext.get("txtBoxQueryName").dom.value = newvalue;
@@ -3207,14 +3207,14 @@ function showNameQueryDialog() {
 					           }
 					           ,
 					           {
-					        	   text : 'Cancel',
+					        	   text: 'Cancel',
                         handler: function () {
 					        	   namequerywin.hide();
 					        	   }
 					           }
 					           ],
-					           resizable : false,
-					           html : '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50">'
+					           resizable: false,
+					           html: '<br>Query Name:&nbsp<input id="nameQueryDialogInput" type="text" size="50">'
 				}
 		);
 	}
@@ -3384,16 +3384,16 @@ function searchByName() {
 	searchByNameTree.render();
 	Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/proxy?url=" + GLOBAL.ONTUrl + "getNameInfo",
-				method : 'POST',
-				xmlData : query,
+				url: pageInfo.basePath+"/proxy?url=" + GLOBAL.ONTUrl + "getNameInfo",
+				method: 'POST',
+				xmlData: query,
             success: function (result, request) {
 				searchByNameComplete(result);
             },
             failure: function (result, request) {
 				searchByNameComplete(result);
             },
-			timeout : '300000'
+			timeout: '300000'
 			}
 	);
 }
@@ -3401,8 +3401,8 @@ function searchByName() {
 function getSummaryStatistics() {
 	Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/chart/basicStatistics",
-				method : 'POST',
+				url: pageInfo.basePath+"/chart/basicStatistics",
+				method: 'POST',
             success: function (result, request) {
 				getSummaryStatisticsComplete(result);
                 analysisPanel.body.unmask();
@@ -3412,13 +3412,13 @@ function getSummaryStatistics() {
                 console.error("Cannot get Summary Statistics");
                 analysisPanel.body.unmask();
             },
-			timeout : '300000',
-			params : Ext.urlEncode(
+			timeout: '300000',
+			params: Ext.urlEncode(
 					{
-						charttype : "basicstatistics",
-						concept_key : "",
-						result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-						result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+						charttype: "basicstatistics",
+						concept_key: "",
+						result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
+						result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
 					}
 			) // or a URL encoded string
 			}
@@ -3435,19 +3435,19 @@ function getSummaryStatisticsComplete(result, request) {
 function getExportButtonSecurity() {
 	Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/export/exportSecurityCheck",
-				method : 'POST',
+				url: pageInfo.basePath+"/export/exportSecurityCheck",
+				method: 'POST',
             success: function (result, request) {
 				getExportButtonSecurityComplete(result);
             },
             failure: function (result, request) {
 				getExportButtonSecurityComplete(result);
             },
-			timeout : '300000',
-			params : Ext.urlEncode(
+			timeout: '300000',
+			params: Ext.urlEncode(
 					{
-						result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-						result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+						result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
+						result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
 					}
 			) // or a URL encoded string
 			}
@@ -3482,9 +3482,9 @@ function getSummaryGridData() {
 
     gridstore = new Ext.data.JsonStore(
         {
-            url : pageInfo.basePath+'/chart/analysisGrid',
-            root : 'rows',
-            fields : ['name', 'url']
+            url: pageInfo.basePath+'/chart/analysisGrid',
+            root: 'rows',
+            fields: ['name', 'url']
         }
     );
 
@@ -3492,9 +3492,9 @@ function getSummaryGridData() {
 
     var myparams = Ext.urlEncode(
         {
-            concept_key : "",
-            result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-            result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+            concept_key: "",
+            result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
+            result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
         }
     );
 
@@ -3529,14 +3529,14 @@ function storeLoaded() {
         id: 'gridView',
         title: 'Grid View',
         viewConfig: {
-            forceFit : true
+            forceFit: true
         },
         bbar: new Ext.Toolbar({
             buttons: [exportButton]
         }),
         frame:true,
         layout: 'fit',
-				cm : cm,
+				cm: cm,
         store: gridstore
     });
 
@@ -3547,24 +3547,24 @@ function storeLoaded() {
 function getAnalysisGridData(concept_key) {
 	gridstore = new Ext.data.JsonStore(
 			{
-				url : pageInfo.basePath+'/chart/analysisGrid',
-				root : 'rows',
-				fields : ['name', 'url']
+				url: pageInfo.basePath+'/chart/analysisGrid',
+				root: 'rows',
+				fields: ['name', 'url']
 			}
 	);
 	gridstore.on('load', storeLoaded);
 	var myparams = Ext.urlEncode(
 			{
-				charttype : "analysisgrid",
-				concept_key : concept_key,
-				result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-				result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+				charttype: "analysisgrid",
+				concept_key: concept_key,
+				result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
+				result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
 			}
 	);
 	// or a URL encoded string */
 
     gridstore.load({
-				params : myparams
+				params: myparams
     });
 }
 
@@ -3834,14 +3834,14 @@ function showWorkflowStatusWindow() {
 	var updateStatus = function(){
 		Ext.Ajax.request(
 				{
-					url : pageInfo.basePath+"/asyncJob/checkWorkflowStatus",
-					method : 'POST',
+					url: pageInfo.basePath+"/asyncJob/checkWorkflowStatus",
+					method: 'POST',
                 success: function (result, request) {
 						workflowStatusUpdate(result);
                 },
                 failure: function (result, request) {
                 },
-				timeout : '300000'
+				timeout: '300000'
 				}
 		);
   	} 
@@ -3857,14 +3857,14 @@ function showWorkflowStatusWindow() {
 function terminateWorkflow(){
 	Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/asyncJob/cancelJob",
-				method : 'POST',
+				url: pageInfo.basePath+"/asyncJob/cancelJob",
+				method: 'POST',
             success: function (result, request) {
 					
             },
             failure: function (result, request) {
             },
-			timeout : '300000'
+			timeout: '300000'
 			}
 	);
 }
@@ -3923,19 +3923,19 @@ function saveComparison() {
 
 	Ext.Ajax.request(
 			{
-				url : pageInfo.basePath+"/comparison/save",
-				method : 'POST',
+				url: pageInfo.basePath+"/comparison/save",
+				method: 'POST',
             success: function (result, request) {
 				saveComparisonComplete(result);
             },
             failure: function (result, request) {
 				saveComparisonComplete(result);
             },
-			timeout : '600000',
-			params : Ext.urlEncode(
+			timeout: '600000',
+			params: Ext.urlEncode(
 					{
-						result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-						result_instance_id2 : GLOBAL.CurrentSubsetIDs[2],
+						result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
+						result_instance_id2: GLOBAL.CurrentSubsetIDs[2],
 						genes: GLOBAL.CurrentGenes
 					}
 			) // or a URL encoded string
@@ -3960,7 +3960,7 @@ function saveComparisonComplete(result) {
                   {
                 id: 'sampleExplorerHelpButton',
 						qtip: 'Click for Saved Camparison Window Help',
-						disabled : false,
+						disabled: false,
                 handler: function () {
 						    D2H_ShowHelp("1474",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
 						}
