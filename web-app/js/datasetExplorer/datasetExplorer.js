@@ -1039,11 +1039,11 @@ function onWindowResize() {
     jQuery('#analysisPanel .x-panel-body').height(jQuery(window).height() - 65);
 
     if (jQuery('#dataTypesGridPanel .x-panel-body').size() > 0) {
-        var exportPanelTop = jQuery('#dataTypesGridPanel .x-panel-body').offset()['top'];
+        var exportPanelTop = jQuery('#dataTypesGridPanel .x-panel-body').offset().top;
         jQuery('#dataTypesGridPanel .x-panel-body').height(jQuery(window).height() - exportPanelTop - 40);
     }
     if (jQuery('#resultsTabPanel .x-tab-panel-body').size() > 0) {
-        var panelTop = jQuery('#resultsTabPanel .x-tab-panel-body').offset()['top'];
+        var panelTop = jQuery('#resultsTabPanel .x-tab-panel-body').offset().top;
         jQuery('#resultsTabPanel .x-tab-panel-body').height(jQuery(window).height() - panelTop);
     }
 //	if (jQuery('#dataAssociationBody').size() > 0) {
