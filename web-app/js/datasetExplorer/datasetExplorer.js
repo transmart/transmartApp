@@ -1579,7 +1579,7 @@ function setupOntTree(id_in, title_in) {
             );
         }
     );
-    var firstExpandProgram = new Array();
+    var firstExpandProgram = [];
     ontTree.on('beforeexpandnode', function (node, deep, anim) {
             var expand = true;
             if (GLOBAL.PathToExpand != undefined && GLOBAL.PathToExpand.indexOf(node.id) > -1 && node.parentNode.id == "treeRoot" && !contains(dseClosedNodes, node.id)) {
@@ -1773,7 +1773,7 @@ function getSubCategories(ontresponse) {
 
 function setupDragAndDrop() {
 	/* Set up the drag and drop for the query panel */
-	// var dts = new Array();
+	// var dts = [];
     for (var s = 1; s <= GLOBAL.NumOfSubsets; s++) {
 		for(var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups;
              i++) {
@@ -2700,14 +2700,14 @@ function contextMenuPressed(e) {
 }
 
 function getSelected(opt) {
-	var selected = new Array();
+	var selected = [];
 	var index = 0;
 	for (var intLoop = 0; intLoop < opt.length;
          intLoop++) {
 		if ((opt[intLoop].selected) ||
             (opt[intLoop].checked)) {
 			index = selected.length;
-			selected[index] = new Object;
+			selected[index] = {};
 			selected[index].value = opt[intLoop].value;
 			selected[index].index = intLoop;
 		}
@@ -2805,7 +2805,7 @@ function showSNPViewerSelection() {
 		        		  return;
 		        	  }
 		        	  var ob=Ext.get('snpViewChroms').dom;
-		        	  var selected = new Array();
+		        	  var selected = [];
 		        	  for (var i = 0; i < ob.options.length; i++)
 		        		  if (ob.options[i].selected)
 		        			  selected.push(ob.options[i].value);
@@ -2922,7 +2922,7 @@ function showIgvSelection() {
 		        		  return;
 		        	  }
 		        	  var ob=Ext.get('igvChroms').dom;
-		        	  var selected = new Array();
+		        	  var selected = [];
 		        	  for (var i = 0; i < ob.options.length; i++)
 		        		  if (ob.options[i].selected)
 		        			  selected.push(ob.options[i].value);
@@ -3040,7 +3040,7 @@ function showPlinkSelection() {
 		        		  return;
 		        	  }
 		        	  var ob=Ext.get('plinkChroms').dom;
-		        	  var selected = new Array();
+		        	  var selected = [];
 		        	  for (var i = 0; i < ob.options.length; i++)
 		        		  if (ob.options[i].selected)
 		        			  selected.push(ob.options[i].value);
@@ -3115,7 +3115,7 @@ function showGwasSelection() {
 		        		  return;
 		        	  }
 		        	  var ob=Ext.get('gwasChroms').dom;
-		        	  var selected = new Array();
+		        	  var selected = [];
 		        	  for (var i = 0; i < ob.options.length; i++)
 		        		  if (ob.options[i].selected)
 		        			  selected.push(ob.options[i].value);
@@ -3801,7 +3801,7 @@ function showHaploviewGeneSelection() {
 		        		  return;
 		        	  }
 		        	  var ob=Ext.get('haploviewgenes').dom;
-		        	  var selected = new Array();
+		        	  var selected = [];
 		        	  for (var i = 0; i < ob.options.length; i++)
 		        		  if (ob.options[i].selected)
 		        			  selected.push(ob.options[i].value);
