@@ -12,6 +12,31 @@ html * {
     right: 0;
 }
 
+.tagBox {
+    clear: both;
+    width: 90%;
+    padding: 4px;
+}
+
+.tag {
+    background-color: #EEF;
+    border: 1px solid #AAF;
+    font-size: 8pt;
+    padding: 2px 2px 2px 16px;
+    margin: 2px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    line-height: 16pt;
+    cursor: pointer;
+    background-image: url('../images/clearsmall.png');
+    background-repeat: no-repeat;
+}
+
+.tag:hover {
+    background-color: #F0F0FF;
+    cursor: pointer;
+}
+
 body {
 	margin: 0;
 	padding:0;
