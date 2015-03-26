@@ -1305,7 +1305,7 @@ function projectDialogComplete() {
         getPreviousQueryFromID(1, GLOBAL.RestoreQID1);
         getPreviousQueryFromID(2, GLOBAL.RestoreQID2);
     }
-    if (!GLOBAL.Tokens.indexOf("EXPORT") > -1 && !GLOBAL.IsAdmin) {
+    if (GLOBAL.Tokens.indexOf("EXPORT") == -1 && !GLOBAL.IsAdmin) {
         //Ext.getCmp("exportbutton").disable();
     }
 }
