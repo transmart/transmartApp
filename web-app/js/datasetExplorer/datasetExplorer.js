@@ -312,7 +312,7 @@ Ext.onReady(function () {
                 qtip: 'Click for Dataset Explorer Help',
                 disabled: false,
                 handler: function () {
-                    D2H_ShowHelp("1258",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    D2H_ShowHelp("1258",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP);
                 }
             })
         ]
@@ -404,7 +404,7 @@ Ext.onReady(function () {
                 id: 'help',
                 qtip:'Click for Generate Summary Statistics help',
                 handler: function(event, toolEl, panel) {
-                    D2H_ShowHelp("1074",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    D2H_ShowHelp("1074",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP);
                 },
                 hidden:true
             }
@@ -934,7 +934,7 @@ Ext.onReady(function () {
                     id:'help',
                     qtip:'Click for context sensitive help',
                     handler: function(event, toolEl, panel) {
-                        D2H_ShowHelp("1239", helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                        D2H_ShowHelp("1239", helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP);
                     }
                 }
             ]
@@ -2195,7 +2195,7 @@ function runQueryComplete(result, subset, callback) {
         //}
 
         /* removed the pdo request call 12 / 17 / 2008 added the callback logic here instead */
-        // runQueryPDO(patientsetid, 1, jsonRes.setSize, subset, callback );
+        // runQueryPDO(patientsetid, 1, jsonRes.setSize, subset, callback);
 
         if (STATE.QueryRequestCounter > 0) { // I'm in a chain of requests so decrement
             STATE.QueryRequestCounter = --STATE.QueryRequestCounter;
@@ -2273,7 +2273,7 @@ function createStatistics(patientset, subset) {
     var totalgreaterthan84 = 0;
     var totalunrecorded = 0;
     var patients = patientset.selectNodes('patient');
-    for (var p = 0; p < patients.length; p ++ ) { // iterate every patient
+    for (var p = 0; p < patients.length; p++) { // iterate every patient
 
         var patient = patients[p];
         var params = patient.selectNodes('param');
@@ -2740,7 +2740,7 @@ function showIgvSelection() {
                 id: 'help',
                 qtip: 'Click for context sensitive help',
                 handler: function(event, toolEl, panel) {
-                    D2H_ShowHelp("1427",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    D2H_ShowHelp("1427",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP);
                 }
             }
         ]
@@ -2862,7 +2862,7 @@ function showPlinkSelection() {
                 qtip: 'Click for context sensitive help',
                 handler: function(event, toolEl, panel) {
                     // 1360 needs to be changed for PLINK
-                    D2H_ShowHelp("1360",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    D2H_ShowHelp("1360",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP);
                 }
             }
         ]
@@ -2939,7 +2939,7 @@ function showGwasSelection() {
                 qtip:'Click for context sensitive help',
                 handler: function(event, toolEl, panel) {
                     // 1360 needs to be changed for PLINK
-                    D2H_ShowHelp("1360",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    D2H_ShowHelp("1360",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP);
                 }
             }
         ]
@@ -3774,7 +3774,7 @@ function saveComparisonComplete(result) {
                 qtip: 'Click for Saved Camparison Window Help',
                 disabled: false,
                 handler: function () {
-                    D2H_ShowHelp("1474",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    D2H_ShowHelp("1474",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP);
                 }
             }
         ],
