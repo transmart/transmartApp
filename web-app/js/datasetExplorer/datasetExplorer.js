@@ -31,7 +31,7 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
             url: pageInfo.basePath+"/dataAssociation/loadScripts",
             method: 'GET',
             timeout: '600000',
-            params:  Ext.urlEncode({}),
+            params: Ext.urlEncode({}),
             success: function (result, request) {
                 var exp = result.responseText.evalJSON();
                 if (exp.success && exp.files.length > 0) {
@@ -1057,65 +1057,66 @@ function createOntPanel() {
         height: 400
     });
 
-        searchByNameTreeRoot = new Tree.TreeNode({
-            text: 'root',
-            draggable: false,
-            id: 'root',
-            qtip: 'root'
-        });
-        // add a tree sorter in folder mode
-        new Tree.TreeSorter(searchByNameTree, {
-            folderSort: true
-        });
+    searchByNameTreeRoot = new Tree.TreeNode({
+        text: 'root',
+        draggable: false,
+        id: 'root',
+        qtip: 'root'
+    });
+    // add a tree sorter in folder mode
+    new Tree.TreeSorter(searchByNameTree, {
+        folderSort: true
+    });
 
-        searchByNameTree.setRootNode(searchByNameTreeRoot);
-        searchByNamePanel.add(searchByNameForm);
-        searchByNamePanel.add(searchByNameTree);
-//      ******************************************************************************
-//      FILTER PANEL
-//      ******************************************************************************
-        var showFn = function(node, e) {
-            Ext.tree.TreePanel.superclass.onShow.call(this);
-        };
+    searchByNameTree.setRootNode(searchByNameTreeRoot);
+    searchByNamePanel.add(searchByNameForm);
+    searchByNamePanel.add(searchByNameTree);
 
-        // shorthand
-        Tree = Ext.tree;
+    //******************************************************************************
+    // FILTER PANEL
+    //******************************************************************************
+    var showFn = function(node, e) {
+        Ext.tree.TreePanel.superclass.onShow.call(this);
+    };
 
-        ontFilterTree = new Tree.TreePanel({
-            id: 'ontFilterTree',
-            animate: false,
-            autoScroll: true,
-            loader: new Ext.ux.OntologyTreeLoader({
-                dataUrl: 'none'
-            }),
-            enableDrag: true,
-            ddGroup: 'makeQuery',
-            containerScroll: true,
-            enableDrop: false,
-            region: 'center',
-            rootVisible: false,
-            expanded: true,
-            border: true,
-            height: 400
-        });
+    // shorthand
+    Tree = Ext.tree;
 
-        ontFilterTreeRoot = new Tree.TreeNode({
-            text: 'root',
-            draggable: false,
-            id: 'root',
-            qtip: 'root'
-        });
+    ontFilterTree = new Tree.TreePanel({
+        id: 'ontFilterTree',
+        animate: false,
+        autoScroll: true,
+        loader: new Ext.ux.OntologyTreeLoader({
+            dataUrl: 'none'
+        }),
+        enableDrag: true,
+        ddGroup: 'makeQuery',
+        containerScroll: true,
+        enableDrop: false,
+        region: 'center',
+        rootVisible: false,
+        expanded: true,
+        border: true,
+        height: 400
+    });
 
-        // add a tree sorter in folder mode
-        new Tree.TreeSorter(ontFilterTree, {
-            folderSort: true
-        });
+    ontFilterTreeRoot = new Tree.TreeNode({
+        text: 'root',
+        draggable: false,
+        id: 'root',
+        qtip: 'root'
+    });
 
-        ontFilterTree.setRootNode(ontFilterTreeRoot);
+    // add a tree sorter in folder mode
+    new Tree.TreeSorter(ontFilterTree, {
+        folderSort: true
+    });
 
-        setupOntTree('navigateTermsPanel', 'Navigate Terms');
+    ontFilterTree.setRootNode(ontFilterTreeRoot);
 
-        return ontTabPanel;
+    setupOntTree('navigateTermsPanel', 'Navigate Terms');
+
+    return ontTabPanel;
 }
 
 function closeBrowser() {
@@ -1305,7 +1306,7 @@ function projectDialogComplete() {
         getPreviousQueryFromID(1, GLOBAL.RestoreQID1);
         getPreviousQueryFromID(2, GLOBAL.RestoreQID2);
     }
-    if (GLOBAL.Tokens.indexOf("EXPORT") == -1 && !GLOBAL.IsAdmin) {
+    if (GLOBAL.Tokens.indexOf("EXPORT") === -1 && !GLOBAL.IsAdmin) {
         //Ext.getCmp("exportbutton").disable();
     }
 }
@@ -1394,7 +1395,7 @@ function setupOntTree(id_in, title_in) {
     });
 
     ontTree.on('enddrag', function (panel, node, event) {
-            Ext.ux.ManagedIFrame.Manager.hideShims();
+        Ext.ux.ManagedIFrame.Manager.hideShims();
     });
 
     ontTree.on('beforecollapsenode', function (node, deep, anim) {
@@ -1423,14 +1424,14 @@ function setupOntTree(id_in, title_in) {
 
         if (expand) {
             Ext.Ajax.request({
-                    url: addNodeDseURL + "?node=" + node.id,
-                    method: 'POST',
-                    success: function (result, request) {
-                    },
-                    failure: function (result, request) {
-                        console.log(result);
-                    },
-                    timeout: '600000'
+                url: addNodeDseURL + "?node=" + node.id,
+                method: 'POST',
+                success: function (result, request) {
+                },
+                failure: function (result, request) {
+                    console.log(result);
+                },
+                timeout: '600000'
             });
         }
     });
@@ -2300,31 +2301,31 @@ function createStatistics(patientset, subset) {
             // do something with it if its an age
             if (paramname === "age_in_years_num") {
                 if (paramvalue >= 0 && paramvalue <= 9) {
-                    total0to9 ++ ;
+                    total0to9++;
                 }
                 if (paramvalue >= 10 && paramvalue <= 17) {
-                    total10to17 ++ ;
+                    total10to17++;
                 }
                 if (paramvalue >= 18 && paramvalue <= 34) {
-                    total18to34 ++ ;
+                    total18to34++;
                 }
                 if (paramvalue >= 35 && paramvalue <= 44) {
-                    total35to44 ++ ;
+                    total35to44++;
                 }
                 if (paramvalue >= 45 && paramvalue <= 54) {
-                    total45to54 ++ ;
+                    total45to54++;
                 }
                 if (paramvalue >= 55 && paramvalue <= 64) {
-                    total55to64 ++ ;
+                    total55to64++;
                 }
                 if (paramvalue >= 65 && paramvalue <= 74) {
-                    total65to74 ++ ;
+                    total65to74++;
                 }
                 if (paramvalue >= 75 && paramvalue <= 84) {
-                    total75to84 ++ ;
+                    total75to84++;
                 }
                 if (paramvalue > 84) {
-                    totalgreaterthan84 ++ ;
+                    totalgreaterthan84++;
                 }
             }
         }
