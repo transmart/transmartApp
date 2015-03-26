@@ -219,12 +219,14 @@
 			<tr>
 				<td style="font-weight: bold;">Gene Symbol</td>
 				<td style="font-weight: bold;">Probeset ID</td>
+				<td style="font-weight: bold;">SNP</td>
 				<g:if test="${gs.foldChgMetricConceptCode?.bioConceptCode!='NOT_USED'}"><td style="font-weight: bold; white-space: nowrap;">Fold-Change Metric</td></g:if>
 			</tr>			
 			<g:each in="${gs.geneSigItems}">
 			<tr>
 				<td class="name">${it.geneSymbol.join("/")}</td>		
 				<td class="name">${it.probeset}</td>
+				<td class="name">${it.bioDataUniqueId.startsWith('SNP:')? it.bioDataUniqueId.substring(4) : ""}</td>
 				<g:if test="${gs.foldChgMetricConceptCode?.bioConceptCode!='NOT_USED'}">		
 					<g:if test="${gs.foldChgMetricConceptCode?.bioConceptCode=='TRINARY'}"><td class="name" style="text-align: right;"><g:formatNumber number="${it.foldChgMetric}" format="0"/></td></g:if>
 					<g:else><td class="name" style="text-align: right;"><g:formatNumber number="${it.foldChgMetric}" format="##0.###"/></td></g:else>
