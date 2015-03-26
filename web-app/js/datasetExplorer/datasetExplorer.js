@@ -1671,10 +1671,10 @@ function getPreviousQueryFromIDComplete(subset, result) {
         return;
     }
 
-    GLOBAL['florian'] = result.responseText;
+    GLOBAL.florian = result.responseText;
     //resetQuery();  //if i do this now it wipes out the other subset i just loaded need to make it subset specific
 
-    jQuery(GLOBAL['florian']).find("panel").each(function (pi, pe) {
+    jQuery(GLOBAL.florian).find("panel").each(function (pi, pe) {
 
         showCriteriaGroup(++pi);
 
@@ -2015,7 +2015,7 @@ function showExportStepDataSelection() {
 
 function getExportData() {
     exportStepDataSelection.getEl().mask("Getting Data...");
-    setTimeout('exportDataFinished()', 2000);
+    setTimeout('exportDataFinished();', 2000);
 }
 
 function showExportStepProgress() {
