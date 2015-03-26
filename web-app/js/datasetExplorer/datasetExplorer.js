@@ -1728,8 +1728,7 @@ function setupDragAndDrop() {
 	/* Set up the drag and drop for the query panel */
 	// var dts = [];
     for (var s = 1; s <= GLOBAL.NumOfSubsets; s++) {
-		for(var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups;
-             i++) {
+		for(var i = 1; i <= GLOBAL.NumOfQueryCriteriaGroups; i++) {
 			qcd = Ext.get("queryCriteriaDiv" + s.toString() + '_' + i.toString());
 			dts = new Ext.dd.DropTarget(qcd,
 					{
@@ -2759,8 +2758,7 @@ function showSNPViewerSelection() {
 		        	  getSNPViewer();
                     win.close();
 		          }
-            }
-            ,
+            },
             {
 		        	  text: 'Cancel',
 		        	  handler: function(){
@@ -2867,17 +2865,16 @@ function showIgvSelection() {
 		        		  win.close();
 		        		  return;
 		        	  }
-		        	  var ob=Ext.get('igvChroms').dom;
+		        	  var ob = Ext.get('igvChroms').dom;
 		        	  var selected = [];
 		        	  for (var i = 0; i < ob.options.length; i++)
 		        		  if (ob.options[i].selected)
 		        			  selected.push(ob.options[i].value);
-		        	  GLOBAL.CurrentChroms=selected.join(',');
+		        	  GLOBAL.CurrentChroms = selected.join(',');
 		        	  getIgv();
                     win.close();
 		          }
-            }
-            ,
+            },
             {
 		        	  text: 'Cancel',
 		        	  handler: function(){
@@ -2993,8 +2990,7 @@ function showPlinkSelection() {
 		        	  getPlink();
                     win.close();
 		          }
-            }
-            ,
+            },
             {
 		        	  text: 'Cancel',
 		        	  handler: function(){
@@ -3122,8 +3118,8 @@ function runGwas(result, result_instance_id1, result_instance_id2, querySummary1
 }
 
 function validateheatmapComplete(result) {
-	var mobj=result.responseText.evalJSON();
-	GLOBAL.DefaultCohortInfo=mobj;
+	var mobj = result.responseText.evalJSON();
+	GLOBAL.DefaultCohortInfo = mobj;
 
 	showCompareStepPathwaySelection();
 
@@ -3196,8 +3192,7 @@ function showNameQueryDialog() {
 					        	   runQuery2();
 					        	   namequerywin.hide();
 					        	   }
-					           }
-					           ,
+					           },
 					           {
 					        	   text: 'Cancel',
                         handler: function () {
@@ -3222,16 +3217,13 @@ function jsonToDataTable(jsontext) {
 
 	// convert to Google.DataTable
 	// column
-	for (var col = 0; col < table.cols.length;
-         col++) {
+	for (var col = 0; col < table.cols.length; col++) {
 		data.addColumn('string', table.cols[col].label);
 	}
 	// row
-	for (var row = 0; row < table.rows.length;
-         row++) {
+	for (var row = 0; row < table.rows.length; row++) {
 		data.addRow();
-		for (var col = 0; col < table.cols.length;
-             col++) {
+		for (var col = 0; col < table.cols.length; col++) {
 			data.setCell(row, col, table.rows[row][col].v);
 		}
 	}
@@ -3591,16 +3583,14 @@ function watchForSymbol(options) {
 	options.timeout = options.timeout || 10;
 	stopAt = (new Date()).getTime() + (options.timeout * 1000);
     new PeriodicalExecuter(function (pe) {
-            if (typeof window[options.symbol] != "undefined") {
+        if (typeof window[options.symbol] != "undefined") {
 			pe.stop();
 			options.onSuccess(options.symbol);
-		}
-            else if ((new Date()).getTime() > stopAt) {
+		} else if ((new Date()).getTime() > stopAt) {
 			pe.stop();
 			options.onTimeout(options.symbol);
 		}
-			}
-	, 0.25);
+	}, 0.25);
 }
 
 //Called to run the Haploviewer
@@ -3658,9 +3648,7 @@ function searchByTagBefore() {
 			return false;
 		}
 	}
-    for (c = treeRoot.childNodes.length - 1;
-	c >= 0;
-         c--) {
+    for (c = treeRoot.childNodes.length - 1; c >= 0; c--) {
         treeRoot.childNodes[c].remove();
 	}
     ontTree.render();
@@ -3700,8 +3688,7 @@ function searchByTagComplete(response) {
     if (concepts !== undefined) {
         if (concepts.length < GLOBAL.MaxSearchResults) {
 			length = concepts.length;
-		}
-        else {
+		} else {
 			length = GLOBAL.MaxSearchResults;
 		}
         for (var c = 0; c < length; c++) {
@@ -3716,8 +3703,7 @@ function searchByTagComplete(response) {
             jQuery('#noAnalyzeResults').show();
             Ext.getCmp('navigateTermsPanel').render();
             onWindowResize();
-}
-        else {
+		} else {
             //Get the categories with the new path to expand
             getCategories();
         }
@@ -3753,8 +3739,7 @@ function showHaploviewGeneSelection() {
 		        	  getHaploview();
                     win.close();
 		          }
-            }
-            ,
+            },
             {
 		        	  text: 'Cancel',
 		        	  handler: function(){
@@ -3862,7 +3847,7 @@ function terminateWorkflow(){
 }
 
 function workflowStatusUpdate(result){
-	var response=eval("(" + result.responseText + ")");	
+	var response = eval("(" + result.responseText + ")");	
 	var inserthtml = response.statusHTML;
 	var divele = Ext.fly("divwfstatus");
 	if (divele !== null){
@@ -3935,7 +3920,7 @@ function saveComparison() {
 }
 
 function saveComparisonComplete(result) {
-	var mobj=result.responseText.evalJSON();
+	var mobj = result.responseText.evalJSON();
 	
 	//If the window is already open, close it.
 	if(this.saveComparisonWindow) saveComparisonWindow.close();
