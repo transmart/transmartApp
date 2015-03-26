@@ -3652,7 +3652,7 @@ function searchByTagBefore() {
         treeRoot.childNodes[c].remove();
 	}
     ontTree.render();
-	viewport.el.mask("Searching...")
+	viewport.el.mask("Searching...");
 	return true;
 }
 
@@ -3821,12 +3821,12 @@ function showWorkflowStatusWindow() {
 				timeout: '300000'
 				}
 		);
-  	} 
+  	};
   	
   	var task = {
   	    run: updateStatus,
   	    interval: 4000 //4 second
-  	}
+  	};
  
   	runner.start(task);
 }
