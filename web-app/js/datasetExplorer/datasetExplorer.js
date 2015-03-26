@@ -1632,7 +1632,7 @@ function createTree(ontresponse) {
 
         var iconCls = "";
 
-        if (visualAttributes.indexOf('PROGRAM') != '-1') {
+        if (visualAttributes.indexOf('PROGRAM') !== -1) {
             iconCls="programicon";
         }
 
@@ -1816,7 +1816,7 @@ function getPreviousQueryFromIDComplete(subset, result) {
 
         showCriteriaGroup(++pi);
 
-        if (jQuery(pe).find("invert").first().html() == '1') {
+        if (jQuery(pe).find("invert").first().html() === '1') {
             excludeGroup(null, subset, pi);
         }
 
@@ -2272,7 +2272,7 @@ function isSubsetQueriesChanged (referenceQueries) {
         if (referenceQueries) {
             // check if reference query is the same as the new query
             // return true if it's changed.
-            retVal = referenceQueries[i] != _newQuery ? true : false;
+            retVal = referenceQueries[i] !== _newQuery ? true : false;
         }
 
         if (retVal) {
@@ -2635,7 +2635,7 @@ function enterWasPressed(e) {
     if (pK === undefined && e.getCharCode) {
         pK = e.getCharCode();
     }
-    if (pK == 13) {
+    if (pK === 13) {
         return true;
     }
     else return false;
@@ -3339,12 +3339,12 @@ function setCheckedValue(radioObj, newValue) {
         return;
     var radioLength = radioObj.length;
     if (radioLength === undefined) {
-        radioObj.checked = (radioObj.value == newValue.toString());
+        radioObj.checked = (radioObj.value === newValue.toString());
         return;
     }
     for (var i = 0; i < radioLength; i++) {
         radioObj[i].checked = false;
-        if (radioObj[i].value == newValue.toString()) {
+        if (radioObj[i].value === newValue.toString()) {
             radioObj[i].checked = true;
         }
     }
@@ -3583,7 +3583,7 @@ function watchForSymbol(options) {
     options.timeout = options.timeout || 10;
     stopAt = (new Date()).getTime() + (options.timeout * 1000);
     new PeriodicalExecuter(function (pe) {
-        if (typeof window[options.symbol] != "undefined") {
+        if (typeof window[options.symbol] !== undefined) {
             pe.stop();
             options.onSuccess(options.symbol);
         } else if ((new Date()).getTime() > stopAt) {
@@ -3643,7 +3643,7 @@ function searchByTagBefore() {
         return false;
     }
     if (a.length === 0 && tagtype.selectedIndex !== 0) {
-        if (tagterm.selectedIndex == -1) {
+        if (tagterm.selectedIndex === -1) {
             alert("Please select a search term.");
             return false;
         }
@@ -3854,7 +3854,7 @@ function workflowStatusUpdate(result){
         divele.update(inserthtml);
     }
     var status = response.wfstatus;
-    if (status =='completed') {
+    if (status === 'completed') {
         runner.stopAll();       
         if(divele !== null) {
             divele.update("");
@@ -3971,7 +3971,7 @@ function contains(a, obj) {
     var l = a.replace("[", "").replace("]", "").split(", ");
     var i = l.length;
     while (i--) {
-        if (l[i] == obj) {
+        if (l[i] === obj) {
             return true;
         }
     }
