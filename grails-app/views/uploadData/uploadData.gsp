@@ -92,7 +92,8 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                     Edit Metadata
                 </g:if>
                 <g:else>
-                    Upload Analysis Data
+                    <!-- Upload Analysis Data  -->
+                    Upload GWAS results
                 </g:else>
             </div>
             <div style="position: relative; text-align:right;">
@@ -242,9 +243,11 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                                     <i>Upload should be a tab-delimited plain text file</i>
                                 </td>
                             </tr>
-
+							<tr><td colspan="4">
+								<font color="Red">*</font>Required Field
+							</td></tr>
                             <tr class="borderbottom bordertop">
-                                <td id="tagsLabel">
+                                <td id="tagsLabel"><font color="Red">*</font>
                                     Phenotype:
                                 </td>
                                 <td colspan="3">
@@ -425,19 +428,20 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                             <span class="dynatree-no-connector">
 
                             </span>
-                            <a class="dynatree-title">Upload analysis data</a>
+<%--                            <a class="dynatree-title">Upload analysis data</a>--%>
+							<a class="dynatree-title">Upload GWAS results</a>
                         </span>
                     </li>
-                    %{--<li class="sidebarRadio" id="uploadFileRadio">--}%
-                        %{--<span class="dynatree-node dynatree-folder dynatree-exp-c dynatree-ico-cf">--}%
-                            %{--<span class="dynatree-no-connector"></span>--}%
-                            %{--<a class="dynatree-title">Upload file to Faceted Search</a>--}%
-                        %{--</span>--}%
-                    %{--</li>--}%
+                    <li class="sidebarRadio" id="uploadFileRadio">
+                        <span class="dynatree-node dynatree-folder dynatree-exp-c dynatree-ico-cf">
+                            <span class="dynatree-no-connector"></span>
+                            <a class="dynatree-title">Upload file to GWAS</a>
+                        </span>
+                    </li>
                     <li class="sidebarRadio" id="uploadFileDatasetExplorerRadio">
                         <span class="dynatree-node dynatree-folder dynatree-exp-c dynatree-ico-cf">
                             <span class="dynatree-no-connector"></span>
-                            <a class="dynatree-title">Upload file to Dataset Explorer</a>
+                            <a class="dynatree-title">Upload file to Analyze</a>
                         </span>
                     </li>
                 </ul>
