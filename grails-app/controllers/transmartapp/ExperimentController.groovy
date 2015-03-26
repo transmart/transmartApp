@@ -22,8 +22,12 @@ package transmartapp
 
 import grails.converters.JSON
 import org.transmart.biomart.Experiment
+import org.transmart.searchapp.*
 
 class ExperimentController {
+	
+	def SpringSecurityService;
+	def gwasWebService;
 
 	/**
 	 * Find the top 20 experiments with a case-insensitive LIKE
@@ -55,6 +59,8 @@ class ExperimentController {
 	def browseExperimentsSingleSelect = {
 
         def experiments
+		def user=AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+		def secObjs= getExperimentSecureStudyList()
 
         if (params.type) {
             experiments = Experiment.findAllByType(params.type)
@@ -65,8 +71,32 @@ class ExperimentController {
             experiments = getSortedList(experiments)
         }
 
+		experiments=experiments.findAll{!secObjs.containsKey(it.accession) || !gwasWebService.getGWASAccess(it.accession, user).equals("Locked") }
         render(template:'browseSingle',model:[experiments:experiments])
 	}
+	
+	/**
+	*
+	* Get list of secured (i.e. private) experiment.
+	*
+	*/
+
+	def getExperimentSecureStudyList(){  
+		
+		StringBuilder s = new StringBuilder();
+		s.append("SELECT so.bioDataUniqueId, so.bioDataId FROM SecureObject so Where so.dataType='Experiment'")
+		def t=[:];
+		//return access levels for the children of this path that have them
+		def results = SecureObject.executeQuery(s.toString());
+		for (row in results){
+			def token = row[0];
+			def dataid = row[1];
+			token=token.replaceFirst("EXP:","")
+			log.info(token+":"+dataid);
+			t.put(token,dataid);
+		}
+		return t;
+    }
 	
 	/**
 	 * This will render a UI where the user can pick an experiment from a list of all the experiments in the system. Selection of multiple studies is allowed.
