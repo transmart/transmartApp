@@ -42,7 +42,7 @@ class AcghBedExporterTests {
         List<ByteArrayOutputStream> outputStreams = []
 
         play {
-            exporter.export(tabularResult, projection, { name ->
+            exporter.export(tabularResult, projection, { name, ext ->
                 outputStreams << new ByteArrayOutputStream()
                 outputStreams[-1]
             })
@@ -92,7 +92,7 @@ class AcghBedExporterTests {
         List<ByteArrayOutputStream> outputStreams = []
 
         play {
-            exporter.export(tabularResult, projection, { name ->
+            exporter.export(tabularResult, projection, { name, ext ->
                 outputStreams << new ByteArrayOutputStream()
                 outputStreams[-1]
             })

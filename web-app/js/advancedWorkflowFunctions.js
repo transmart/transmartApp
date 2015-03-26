@@ -206,7 +206,7 @@ function finalAdvancedMenuValidationSample()
 				},
 				timeout: '1800000',
 				params: {jobType:  GLOBAL.HeatmapType}
-			})
+			});
 }
 
 //DatasetExplorer
@@ -302,7 +302,7 @@ function finalAdvancedMenuValidation()
 		}else if(pathwayEmpty){
 			alert('Please specify a pathway before continuing');
 		}else if(!numClustersValid){
-			alert('Number of clusters is invalid!')
+			alert('Number of clusters is invalid!');
 		}
 	}	
 

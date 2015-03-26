@@ -67,7 +67,7 @@ class HighDimExportServiceTests {
 
         assertThat files, allOf (
                 hasSize(1),
-                contains(endsWith('mrna_foo_i2b2_main_0/data.tsv')))
+                contains(endsWith('/foo/data_mrna.tsv')))
         def file = new File(files[0])
         assertTrue(file.exists())
         assertThat file.length(), greaterThan(0l)
@@ -84,7 +84,7 @@ class HighDimExportServiceTests {
 
         assertThat files, allOf (
                 hasSize(1),
-                contains(endsWith('mrna_foo_i2b2_main_0/data.tsv')))
+                contains(endsWith('/foo/data_mrna.tsv')))
         def file = new File(files[0])
         assertTrue(file.exists())
         assertThat file.length(), greaterThan(0l)

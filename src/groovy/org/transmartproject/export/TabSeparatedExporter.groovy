@@ -79,7 +79,7 @@ class TabSeparatedExporter implements HighDimExporter {
             [it.key, getFieldTranslation(it.key).toUpperCase()]
         }
 
-        newOutputStream("data.${format.toLowerCase()}").withWriter("UTF-8") { writer ->
+        newOutputStream("data", format).withWriter("UTF-8") { writer ->
 
             // First write the header
             writeLine(writer, createHeader(dataKeys.values() + rowKeys.values()))

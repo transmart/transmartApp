@@ -267,9 +267,9 @@ function checkJobStatus(jobName) {
                         }
                         runner.stopAll();
                     } else {
-                        var secLabel = " seconds"
+                        var secLabel = " seconds";
                         if (secCount == 1) {
-                            secLabel = " second"
+                            secLabel = " second";
                         }
                     }
                 },
@@ -282,12 +282,12 @@ function checkJobStatus(jobName) {
                 }
             }
         );
-    }
+    };
 
     var checkTask = {
         run: updateJobStatus,
         interval: pollInterval
-    }
+    };
     var runner = new Ext.util.TaskRunner();
     runner.start(checkTask);
 }

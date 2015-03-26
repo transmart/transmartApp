@@ -686,19 +686,15 @@ class I2b2HelperService {
     /**
      * Checks if a string represents a URL
      */
-    def Boolean isURL( String s ) {
-
-        Boolean isurl;
-
-        // Attempt to convert string into an URL.   
+    Boolean isURL(String s) {
+        Boolean isurl
+        // Attempt to convert string into an URL.
         try {
-            URL url = new URL(s);
-            isurl = true;
+            URL url = new URL(s)
+            isurl = true
         } catch (MalformedURLException e) {
             isurl = false
         }
-
-        return isurl;
     }
 
     /**

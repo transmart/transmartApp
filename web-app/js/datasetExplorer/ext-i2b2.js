@@ -3,13 +3,13 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
     requestData: function (node, callback) {
         if (this.fireEvent("beforeload", this, node, callback) !== false) {
             
-            node.isModifier = false
-            
-            if(nodeType('iconCls_modifier',node.attributes.iconCls) != "") node.isModifier = true
+            node.isModifier = false;
+            if (nodeType('iconCls_modifier',node.attributes.iconCls) != ""){
+                node.isModifier = true;
+            }
             
             //TODO: This is fugly.
-            if(!node.isModifier)
-            {
+            if(!node.isModifier) {
                 this.transId = Ext.Ajax.request({
                     method: 'GET',
                     url: pageInfo.basePath + "/concepts/getChildren",
@@ -21,9 +21,7 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
                     timeout: '120000' //2 minutes
                 });
                 
-            }
-            else
-            {
+            } else {
                 this.transId = Ext.Ajax.request({
                     method: 'GET',
                     url: pageInfo.basePath + "/concepts/getModifierChildren",
@@ -37,7 +35,6 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
                     timeout: '120000' //2 minutes
                 });                
             }
-            
         } else {
             // if the load is cancelled, make sure we notify
             // the node that we are done
@@ -61,19 +58,17 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
         // shorthand
         var Tree = Ext.tree;
 
-        var concepts = Ext.decode(response.responseText)
+        var concepts = Ext.decode(response.responseText);
 
         var matchList = GLOBAL.PathToExpand.split(",");
         for (i = 0; i < concepts.length; i++) {
             var c = getTreeNodeFromJsonNode(concepts[i]);
-            
             if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
-            
             //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
             if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {
                 //However, don't filter studies/top folders out if a higher-level match exists
                 var highLevelMatchFound = false;
-                for (var j = 0; j < matchList.size()-1; j++) { //-1 here - leave out last result (trailing comma)    
+                for (var j = 0; j < matchList.size()-1; j++) { //-1 here - leave out last result (trailing comma)	
                     if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
                         highLevelMatchFound = true;
                         break;
@@ -84,8 +79,7 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
                 }
             }
             
-            if(nodeType("visualattributes_modifier", c.attributes.visualattributes) != "")
-            {
+            if(nodeType("visualattributes_modifier", c.attributes.visualattributes) != "") {
                 c = extendTreeNodeForModifier(c, concepts[i]);
             }
             
@@ -119,29 +113,28 @@ function getConceptPatientCountComplete(result, node) {
 }
 
 function getChildConceptPatientCounts(node) {
-    
-var params =    Ext.urlEncode({charttype:"childconceptpatientcounts",
-           concept_key: node.attributes.id})
+	
+    var params = Ext.urlEncode({
+        charttype: "childconceptpatientcounts",
+        concept_key: node.attributes.id
+    });
 
-// Ext AJAX has intermittent failure to pass parameters when many AJAX requests are made in a short space of time - switched to jQuery here
-jQuery.ajax({
-            url: pageInfo.basePath + "/chart/childConceptPatientCounts",
-            method: 'POST',
-                success: function(result){getChildConceptPatientCountsComplete(result, node);},
-                data: {charttype: "childconceptpatientcounts", concept_key: node.attributes.id}
-        });
+    // Ext AJAX has intermittent failure to pass parameters when many AJAX requests are made in a short space of time - switched to jQuery here
+    jQuery.ajax({
+        url: pageInfo.basePath + "/chart/childConceptPatientCounts",
+        method: 'POST',
+        success: function(result){getChildConceptPatientCountsComplete(result, node);},
+        data: {charttype: "childconceptpatientcounts", concept_key: node.attributes.id}
+    });
 }
 
 function getChildConceptPatientCountsComplete(result, node) {
-    var mobj=result;
+    var mobj = result;
     var childaccess = mobj.accesslevels;
     var childcounts = mobj.counts;
-    var blah = node;
-    
     node.beginUpdate();
     var children = node.childNodes;
-    var size2 = children.length;
-    
+    var size2 = children.size();
     for (var i = 0; i < size2; i++) {
         var key = children[i].attributes.id;
         var fullname = key.substr(key.indexOf("\\", 2), key.length);
@@ -165,7 +158,7 @@ function getChildConceptPatientCountsComplete(result, node) {
             child.disable();
             child.on('beforeload', function (node) {
                 alert("Access to this node has been restricted. Please contact your administrator for access.");
-                return false
+                return false;
             });
         }
     }

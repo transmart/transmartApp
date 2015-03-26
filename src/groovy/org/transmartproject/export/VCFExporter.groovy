@@ -74,7 +74,7 @@ class VCFExporter implements HighDimExporter {
             return
         }
 
-        newOutputStream("data.${format.toLowerCase()}").withWriter("UTF-8") { writer ->
+        newOutputStream("data", format).withWriter("UTF-8") { writer ->
 
             // Write the headers
             headers.each {
