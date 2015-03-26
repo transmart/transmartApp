@@ -51,7 +51,7 @@ function setDataAssociationAvailableFlag(el, success, response, options) {
  */
 function loadScripts(scripts) {
     // loop through script array
-    for (var i = 0; i < scripts.length; i++) {
+    for (var i = 0, iLength = scripts.length; i < iLength; i++) {
 
         var file = scripts[i];
 
@@ -672,7 +672,7 @@ Ext.onReady(function () {
 
     function loadResources(resources, bootstrap) {
         var scripts = [];
-        for (var i = 0; i < resources.length; i++) {
+        for (var i = 0, iLength = resources.length; i < iLength; i++) {
             var aFile = resources[i];
             if (aFile.type === 'script') {
                 scripts.push(aFile.path);
@@ -1222,7 +1222,7 @@ function showProjectDialog(projects) {
     Ext.projects = [];
 
     // populate the array
-    for (c = 0; c < projects.length; c++) {
+    for (c = 0, cLength = projects.length; c < cLength; c++) {
         var p = projects[c].getAttribute("id");
         var a = [];
         a[0] = p;
@@ -1318,18 +1318,18 @@ function getPreviousQueriesComplete(response) {
         alert(response.responseText);
     }
     // clear the tree
-    for (c = prevTreeRoot.childNodes.length - 1; c >= 0; c--) {
+    for (var c = prevTreeRoot.childNodes.length - 1; c >= 0; c--) {
         prevTreeRoot.childNodes[c].remove();
     }
     // prevTree.render();
 
     var querymasters = response.responseXML.selectNodes('//query_master');
-    for (var c = 0; c < querymasters.length; c++) {
-        var querymasterid = querymasters[c].selectSingleNode('query_master_id').firstChild.nodeValue;
-        var name = querymasters[c].selectSingleNode('name').firstChild.nodeValue;
-        var userid = querymasters[c].selectSingleNode('user_id').firstChild.nodeValue;
-        var groupid = querymasters[c].selectSingleNode('group_id').firstChild.nodeValue;
-        var createdate = querymasters[c].selectSingleNode('create_date').firstChild.nodeValue;
+    for (var d = 0, dLength = querymasters.length; d < dLength; d++) {
+        var querymasterid = querymasters[d].selectSingleNode('query_master_id').firstChild.nodeValue;
+        var name = querymasters[d].selectSingleNode('name').firstChild.nodeValue;
+        var userid = querymasters[d].selectSingleNode('user_id').firstChild.nodeValue;
+        var groupid = querymasters[d].selectSingleNode('group_id').firstChild.nodeValue;
+        var createdate = querymasters[d].selectSingleNode('create_date').firstChild.nodeValue;
         // set the root node
         var prevNode = new Tree.TreeNode({
             text: name,
@@ -1469,7 +1469,7 @@ function createTree(ontresponse) {
         qtip: 'root'
     });
 
-    for (var c = 0; c < ontresponse.length; c++) {
+    for (var c = 0, cLength = ontresponse.length; c < cLength; c++) {
         var level = ontresponse[c].level;
         var key = ontresponse[c].key;
         var name = ontresponse[c].name;
@@ -1570,7 +1570,7 @@ function getSubCategories(ontresponse) {
 
     jQuery('#noAnalyzeResults').hide();
 
-    for (var c = 0; c < ontRoots.length; c++) {
+    for (var c = 0, cLength = ontRoots.length; c < cLength; c++) {
         var newnode = ontRoots[c];
         treeRoot.appendChild(newnode);
     }
@@ -1806,7 +1806,7 @@ function showNode(key) {
 }
 
 function drillDown(rootNode) {
-    for (var i = 0; i < rootNode.childNodes.length; i++) {
+    for (var i = 0, iLength = rootNode.childNodes.length; i < iLength; i++) {
         if (GLOBAL.PathToExpand.indexOf(rootNode.childNodes[i].id) > -1) {
             rootNode.childNodes[i].expand();
             rootNode.childNodes[i].ensureVisible();
@@ -2273,11 +2273,11 @@ function createStatistics(patientset, subset) {
     var totalgreaterthan84 = 0;
     var totalunrecorded = 0;
     var patients = patientset.selectNodes('patient');
-    for (var p = 0; p < patients.length; p++) { // iterate every patient
+    for (var p = 0, pLength = patients.length; p < pLength; p++) { // iterate every patient
 
         var patient = patients[p];
         var params = patient.selectNodes('param');
-        for (var n = 0; n < params.length; n++) {
+        for (var n = 0, nLength = params.length; n < nLength; n++) {
             var param = params[n];
             var paramname = param.getAttribute("name");
             var paramvalue;
@@ -2482,7 +2482,7 @@ function contextMenuPressed(e) {
 function getSelected(opt) {
     var selected = [];
     var index = 0;
-    for (var intLoop = 0; intLoop < opt.length; intLoop++) {
+    for (var intLoop = 0, oLength = opt.length; intLoop < oLength; intLoop++) {
         if (opt[intLoop].selected || opt[intLoop].checked) {
             index = selected.length;
             selected[index] = {};
@@ -2497,7 +2497,7 @@ function getSelected(opt) {
 function outputSelected(opt) {
     var sel = getSelected(opt);
     var strSel = "";
-    for (var intLoop = 0; intLoop < sel.length; intLoop++) {
+    for (var intLoop = 0, sLength = sel.length; intLoop < sLength; intLoop++) {
         strSel += sel[intLoop].value + "\n";
     }
     alert("Selected Items:\n" + strSel);
@@ -2583,10 +2583,10 @@ function showSNPViewerSelection() {
                     }
                     var ob = Ext.get('snpViewChroms').dom;
                     var selected = [];
-                    for (var i = 0; i < ob.options.length; i++) {
-                          if (ob.options[i].selected) {
-                              selected.push(ob.options[i].value);
-                          }
+                    for (var i = 0, iLength = ob.options.length; i < iLength; i++) {
+                        if (ob.options[i].selected) {
+                            selected.push(ob.options[i].value);
+                        }
                     }
 
                     GLOBAL.CurrentChroms = selected.join(',');
@@ -2705,7 +2705,7 @@ function showIgvSelection() {
 
                     var ob = Ext.get('igvChroms').dom;
                     var selected = [];
-                    for (var i = 0; i < ob.options.length; i++) {
+                    for (var i = 0, iLength = ob.options.length; i < iLength; i++) {
                         if (ob.options[i].selected) {
                             selected.push(ob.options[i].value);
                         }
@@ -2826,7 +2826,7 @@ function showPlinkSelection() {
                     }
                     var ob = Ext.get('plinkChroms').dom;
                     var selected = [];
-                    for (var i = 0; i < ob.options.length; i++) {
+                    for (var i = 0, iLength = ob.options.length; i < iLength; i++) {
                         if (ob.options[i].selected) {
                             selected.push(ob.options[i].value);
                         }
@@ -2904,7 +2904,7 @@ function showGwasSelection() {
                     }
                     var ob = Ext.get('gwasChroms').dom;
                     var selected = [];
-                    for (var i = 0; i < ob.options.length; i++) {
+                    for (var i = 0, iLength = ob.options.length; i < iLength; i++) {
                         if (ob.options[i].selected) {
                             selected.push(ob.options[i].value);
                         }
@@ -3065,14 +3065,14 @@ function jsonToDataTable(jsontext) {
 
     // convert to Google.DataTable
     // column
-    for (var col = 0; col < table.cols.length; col++) {
+    for (var col = 0, cLength = table.cols.length; col < cLength; col++) {
         data.addColumn('string', table.cols[col].label);
     }
     // row
-    for (var row = 0; row < table.rows.length; row++) {
+    for (var row = 0, rLength = table.rows.length; row < rLength; row++) {
         data.addRow();
-        for (var col = 0; col < table.cols.length; col++) {
-            data.setCell(row, col, table.rows[row][col].v);
+        for (var column = 0, colLength = table.cols.length; column < colLength; column++) {
+            data.setCell(row, column, table.rows[row][column].v);
         }
     }
 
@@ -3534,8 +3534,8 @@ function searchByTagComplete(response) {
             GLOBAL.PathToExpand += concepts[c] + ",";
         }
 
-        for (var c = 0; c < uniqueLeaves.length; c++) {
-            GLOBAL.UniqueLeaves += uniqueLeaves[c] + ",";
+        for (var d = 0, dLength = uniqueLeaves.length; d < dLength; d++) {
+            GLOBAL.UniqueLeaves += uniqueLeaves[d] + ",";
     }
 
         if (concepts.length === 0) {
@@ -3571,7 +3571,7 @@ function showHaploviewGeneSelection() {
                     }
                     var ob=Ext.get('haploviewgenes').dom;
                     var selected = [];
-                    for (var i = 0; i < ob.options.length; i++) {
+                    for (var i = 0, iLength = ob.options.length; i < iLength; i++) {
                         if (ob.options[i].selected) {
                             selected.push(ob.options[i].value);
                         }
