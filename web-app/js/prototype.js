@@ -19,7 +19,7 @@ var Prototype = {
             WebKit:         ua.indexOf('AppleWebKit/') > -1,
             Gecko:          ua.indexOf('Gecko') > -1 && ua.indexOf('KHTML') === -1,
             MobileSafari:   /Apple.*Mobile/.test(ua)
-        }
+        };
     })(),
 
     BrowserFeatures: {
@@ -54,7 +54,7 @@ var Prototype = {
 
     emptyFunction: function() { },
 
-    K: function(x) { return x }
+    K: function(x) { return x; }
 };
 
 if (Prototype.Browser.MobileSafari)
@@ -91,7 +91,7 @@ var Class = (function() {
         return true;
     })();
 
-    function subclass() {};
+    function subclass() {}
     function create() {
         var parent = null, properties = $A(arguments);
         if (Object.isFunction(properties[0]))
@@ -389,7 +389,7 @@ Object.extend(Function.prototype, (function() {
         return function() {
             var a = merge(args, arguments);
             return __method.apply(context, a);
-        }
+        };
     }
 
     function bindAsEventListener(context) {
@@ -397,7 +397,7 @@ Object.extend(Function.prototype, (function() {
         return function(event) {
             var a = update([event || window.event], args);
             return __method.apply(context, a);
-        }
+        };
     }
 
     function curry() {
@@ -406,7 +406,7 @@ Object.extend(Function.prototype, (function() {
         return function() {
             var a = merge(args, arguments);
             return __method.apply(this, a);
-        }
+        };
     }
 
     function delay(timeout) {
@@ -427,7 +427,7 @@ Object.extend(Function.prototype, (function() {
         return function() {
             var a = update([__method.bind(this)], arguments);
             return wrapper.apply(this, a);
-        }
+        };
     }
 
     function methodize() {
@@ -448,7 +448,7 @@ Object.extend(Function.prototype, (function() {
         defer:               defer,
         wrap:                wrap,
         methodize:           methodize
-    }
+    };
 })());
 
 
@@ -539,7 +539,7 @@ Object.extend(String.prototype, (function() {
     function prepareReplacement(replacement) {
         if (Object.isFunction(replacement)) return replacement;
         var template = new Template(replacement);
-        return function(match) { return template.evaluate(match) };
+        return function(match) { return template.evaluate(match); };
     }
 
     function gsub(pattern, replacement) {
@@ -609,7 +609,7 @@ Object.extend(String.prototype, (function() {
     }
 
     function evalScripts() {
-        return this.extractScripts().map(function(script) { return eval(script) });
+        return this.extractScripts().map(function(script) { return eval(script); });
     }
 
     function escapeHTML() {
@@ -1021,14 +1021,6 @@ var Enumerable = (function() {
         return '#<Enumerable:' + this.toArray().inspect() + '>';
     }
 
-
-
-
-
-
-
-
-
     return {
         each:       each,
         eachSlice:  eachSlice,
@@ -1142,7 +1134,7 @@ Array.from = $A;
 
     function intersect(array) {
         return this.uniq().findAll(function(item) {
-            return array.detect(function(value) { return item === value });
+            return array.detect(function(value) { return item === value; });
         });
     }
 
@@ -1212,16 +1204,17 @@ Array.from = $A;
 
     var CONCAT_ARGUMENTS_BUGGY = (function() {
         return [].concat(arguments)[0][0] !== 1;
-    })(1,2)
+    })(1,2);
 
     if (CONCAT_ARGUMENTS_BUGGY) arrayProto.concat = concat;
 
     if (!arrayProto.indexOf) arrayProto.indexOf = indexOf;
     if (!arrayProto.lastIndexOf) arrayProto.lastIndexOf = lastIndexOf;
 })();
+
 function $H(object) {
     return new Hash(object);
-};
+}
 
 var Hash = Class.create(Enumerable, (function() {
     function initialize(object) {
@@ -1425,9 +1418,9 @@ var ObjectRange = Class.create(Enumerable, (function() {
 var Ajax = {
     getTransport: function() {
         return Try.these(
-            function() {return new XMLHttpRequest()},
-            function() {return new ActiveXObject('Msxml2.XMLHTTP')},
-            function() {return new ActiveXObject('Microsoft.XMLHTTP')}
+            function() {return new XMLHttpRequest();},
+            function() {return new ActiveXObject('Msxml2.XMLHTTP');},
+            function() {return new ActiveXObject('Microsoft.XMLHTTP');}
         ) || false;
     },
 
@@ -1464,8 +1457,8 @@ Ajax.Responders = {
 Object.extend(Ajax.Responders, Enumerable);
 
 Ajax.Responders.register({
-    onCreate:   function() { Ajax.activeRequestCount++ },
-    onComplete: function() { Ajax.activeRequestCount-- }
+    onCreate:   function() { Ajax.activeRequestCount++; },
+    onComplete: function() { Ajax.activeRequestCount--; }
 });
 Ajax.Base = Class.create({
     initialize: function(options) {
@@ -1572,7 +1565,7 @@ Ajax.Request = Class.create(Ajax.Base, {
                 for (var i = 0, length = extras.length; i < length; i += 2)
                     headers[extras[i]] = extras[i+1];
             else
-                $H(extras).each(function(pair) { headers[pair.key] = pair.value });
+                $H(extras).each(function(pair) { headers[pair.key] = pair.value; });
         }
 
         for (var name in headers)
@@ -1588,7 +1581,7 @@ Ajax.Request = Class.create(Ajax.Base, {
         try {
             if (this.transport.status === 1223) return 204;
             return this.transport.status || 0;
-        } catch (e) { return 0 }
+        } catch (e) { return 0; }
     },
 
     respondToReadyState: function(readyState) {
@@ -1655,13 +1648,6 @@ Ajax.Request = Class.create(Ajax.Base, {
 Ajax.Request.Events =
     ['Uninitialized', 'Loading', 'Loaded', 'Interactive', 'Complete'];
 
-
-
-
-
-
-
-
 Ajax.Response = Class.create({
     initialize: function(request){
         this.request = request;
@@ -1691,7 +1677,7 @@ Ajax.Response = Class.create({
     getStatusText: function() {
         try {
             return this.transport.statusText || '';
-        } catch (e) { return '' }
+        } catch (e) { return ''; }
     },
 
     getHeader: Ajax.Request.prototype.getHeader,
@@ -1699,7 +1685,7 @@ Ajax.Response = Class.create({
     getAllHeaders: function() {
         try {
             return this.getAllResponseHeaders();
-        } catch (e) { return null }
+        } catch (e) { return null; }
     },
 
     getResponseHeader: function(name) {
@@ -1913,7 +1899,7 @@ Element._purgeElement = function(element) {
         element._prototypeUID = void 0;
         delete Element.Storage[uid];
     }
-}
+};
 
 Element.Methods = {
     visible: function(element) {
@@ -2031,14 +2017,14 @@ Element.Methods = {
                     }
                     Element._getContentFromAnonymousElement(tagName, content.stripScripts())
                         .each(function(node) {
-                            element.appendChild(node)
+                            element.appendChild(node);
                         });
                 } else if (LINK_ELEMENT_INNERHTML_BUGGY && Object.isString(content) && content.indexOf('<link') > -1) {
                     while (element.firstChild) {
                         element.removeChild(element.firstChild);
                     }
                     var nodes = Element._getContentFromAnonymousElement(tagName, content.stripScripts(), true);
-                    nodes.each(function(node) { element.appendChild(node) });
+                    nodes.each(function(node) { element.appendChild(node); });
                 }
                 else {
                     element.innerHTML = content.stripScripts();
@@ -2247,7 +2233,7 @@ Element.Methods = {
         element = $(element);
         var id = Element.readAttribute(element, 'id');
         if (id) return id;
-        do { id = 'anonymous_element_' + Element.idCounter++ } while ($(id));
+        do { id = 'anonymous_element_' + Element.idCounter++; } while ($(id));
         Element.writeAttribute(element, 'id', id);
         return id;
     },
@@ -2659,7 +2645,7 @@ else if (Prototype.Browser.IE) {
                     }
                 }
             }
-        }
+        };
     })();
 
     Element._attributeTranslations.write = {
@@ -2732,7 +2718,7 @@ else if (Prototype.Browser.IE) {
                 if (arguments.length == 1) return element.firstDescendant();
                 return Object.isNumber(expression) ? _descendants(element)[expression] :
                     Element.select(element, expression)[index || 0];
-            }
+            };
         })();
     }
 
@@ -2784,9 +2770,9 @@ if ('outerHTML' in document.documentElement) {
                 fragments = Element._getContentFromAnonymousElement(tagName, content.stripScripts());
             parent.removeChild(element);
             if (nextSibling)
-                fragments.each(function(node) { parent.insertBefore(node, nextSibling) });
+                fragments.each(function(node) { parent.insertBefore(node, nextSibling); });
             else
-                fragments.each(function(node) { parent.appendChild(node) });
+                fragments.each(function(node) { parent.appendChild(node); });
         }
         else element.outerHTML = content.stripScripts();
 

@@ -2,7 +2,7 @@ STATE = {
 		Dragging: false,
 		Target: null,
 		QueryRequestCounter: 0
-}
+};
 
 // list of supported platform
 // TODO : future refactoring should retrieve these values from gpl definitions in the database
@@ -36,7 +36,7 @@ function toggleRBMDisplayElements (ele, eleGpl, eleTissue, eleRbmpanel, platform
         ele.dom.style.display='';
         eleGpl.dom.style.display='';
         eleTissue.dom.style.display='';
-        eleRbmpanel.dom.style.display='none'
+        eleRbmpanel.dom.style.display='none';
     } else {
         ele.dom.style.display='none';
         eleGpl.dom.style.display='none';
@@ -57,49 +57,49 @@ function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalu
 	this.normalunits=normalunits;
 	this.oktousevalues=oktousevalues;
 	this.value=value;
-	this.nodeType = nodeType
+	this.nodeType = nodeType;
     this.visualattributes = visualattributes;
 }
 
 function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
 {
     if (typeof(mode) == undefined || mode == null) {
-        this.mode = "novalue"
+        this.mode = "novalue";
     } //default to novalue
     else {
         this.mode = mode;
     }
 
     if (typeof(operator) == undefined || operator == null) {
-        this.operator = "LT"
+        this.operator = "LT";
     }
     else {
         this.operator = operator;
     }
 
     if (typeof(highlowselect) == undefined || highlowselect == null) {
-        this.highlowselect = "N"
+        this.highlowselect = "N";
     }
     else {
         this.highlowselect = highlowselect;
     }
 
     if (typeof(lowvalue) == undefined || lowvalue == null) {
-        this.lowvalue = ""
+        this.lowvalue = "";
     }
     else {
         this.lowvalue = lowvalue;
     }
 
     if (typeof(highvalue) == undefined || highvalue == null) {
-        this.highvalue = ""
+        this.highvalue = "";
     }
     else {
         this.highvalue = highvalue;
     }
 
     if (typeof(units) == undefined || units == null) {
-        this.units = ""
+        this.units = "";
     }
     else {
         this.units = units;
@@ -121,7 +121,7 @@ function convertNodeToConcept(node)
 	var visualattributes=node.attributes.visualattributes;
 
 	//Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
-	var nodeType = node.attributes.iconCls
+	var nodeType = node.attributes.iconCls;
 	
 	if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
 	
@@ -258,11 +258,6 @@ var li=document.createElement('div'); //was li
 	return li;
 }	
 
-
-
-
-
-
 function getSetValueText(mode, operator, highlowselect, highvalue, lowvalue, units)
 {
 var highlowselecttext;
@@ -288,25 +283,25 @@ var text=" ";
 			{
 			case "LT":
 			  text=text+"<";
-			  break
+			  break;
 			case "LE":
 			 text=text+"<=";
-			  break
+			  break;
 			case "EQ":
 			  text=text+"=";
-			  break
+			  break;
 			case "GT":
 			  text=text+">";
-			  break
+			  break;
 			case "GE":
 			 text=text+">=";
-			  break
+			  break;
 		 	}
 		text=text+lowvalue;
 		}
 		else 
 		{
-		 text=text+"between "+lowvalue+" and "+highvalue
+		 text=text+"between "+lowvalue+" and "+highvalue;
 		}
 	  }
 	  else if(mode=='highlow')
@@ -469,7 +464,7 @@ function showSetValueDialog()
         var test=document.getElementsByName("setValueMethod");
         if(mode!=null)
        		{
-				setCheckedValue(test, mode)
+				setCheckedValue(test, mode);
         		setValueMethodChanged(mode);
         	}
         else //default to numeric
@@ -998,7 +993,7 @@ function createPlatformSearchBox(subsetId, applyToDivIdx){
 		if (!((!GLOBAL.CurrentPlatforms[0]) || (!GLOBAL.CurrentPlatforms[1]) || (GLOBAL.CurrentPlatforms[0]==GLOBAL.CurrentPlatforms[1]))){
 			alert('Platforms do not match');
 		}
-	}
+	};
 	GLOBAL.CurrentPlatforms[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[subsetId-1];
 	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'platform', GLOBAL.DefaultCohortInfo.defaultPlatformLabels[subsetId-1]);
 }
@@ -1085,7 +1080,7 @@ function createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, glob
 		globalArray[subsetId-1]=completeSelection;		
 		
 		clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx);
-	}
+	};
 	return onSelectFn;
 }
 
@@ -1387,7 +1382,7 @@ Ext.reg("transmartcombobox", Ext.ux.TransmartComboBox);
 
 function createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, boxwidth, mode_in, onSelectFn, displayField_in, value_in){
 	
-		if(!value_in || value_in=="") value_in = "ALL"
+		if(!value_in || value_in=="") value_in = "ALL";
 	
 	    var search = new Ext.ux.TransmartComboBox({
         store: ds,

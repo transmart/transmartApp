@@ -131,15 +131,15 @@ function openFolderAndShowChild(parent, child) {
 
 function showOverlay(overlayDiv, dataURL)	
 {
-	jQuery(overlayDiv).empty()
-	jQuery(overlayDiv).load(dataURL)	
+	jQuery(overlayDiv).empty();
+	jQuery(overlayDiv).load(dataURL);
 	jQuery('#sidebar-accordion').accordion("option", "active", 1);	
 	return false;
 }
 
 // Open and close the analysis for a given trial
 function toggleDetailDiv(trialNumber, dataURL, forceOpen, highlightFolder, manual)	{	
-	if(manual==undefined){ manual=false;}
+	if(manual == undefined){ manual=false;}
 	var imgExpand = "#imgExpand_"  + trialNumber;
 	var trialDetail = "#" + trialNumber + "_detail";
 	
@@ -304,7 +304,7 @@ function exportLinePlotData(analysisId, exportType)
 	
 	jQuery('#lineplotExportOpts_'+analysisId).hide(); //hide the menu box
 	
-	var url='';
+	var url = '';
 	
 	switch(exportType)
 	{
@@ -313,7 +313,7 @@ function exportLinePlotData(analysisId, exportType)
 	    
 	    var probesList = jQuery('body').data("activeLineplot:" + analysisId); //get the stored probe
 	    
-		url=getHeatmapDataForExportURL+'?id='+analysisId +'&probesList=' +probesList	
+		url = getHeatmapDataForExportURL+'?id='+analysisId +'&probesList=' +probesList;
 		
 		downloadURL(url);
 		
@@ -358,7 +358,7 @@ function exportBoxPlotData(analysisId, exportType)
 	    
 	    jQuery('#boxplotExportOpts_'+analysisId).hide(); //hide the menu box
 	    		
-		url=getHeatmapDataForExportURL+'?id='+analysisId +'&probesList=' +probesList	
+		url=getHeatmapDataForExportURL+'?id='+analysisId +'&probesList=' +probesList;
 		
 		downloadURL(url);
 		
@@ -424,7 +424,7 @@ function exportHeatmapData(analysisId, exportType)
 {
 	
 	
-	var url='';
+	var url = '';
 	
     jQuery('#heatmapExportOpts_'+analysisId).hide(); //hide the menu box
 
@@ -459,7 +459,7 @@ function exportHeatmapData(analysisId, exportType)
 		}
 		
 		
-		url=getHeatmapDataForExportURL+'?id='+analysisId +'&probesList=' +probesList	
+		url=getHeatmapDataForExportURL+'?id='+analysisId +'&probesList=' +probesList;
 		
 	break;
 	/* Removed option	
@@ -515,7 +515,7 @@ var downloadURL = function(url)
     iframe.src = url;   
 
     
-}
+};
 
 function analysisMenuEvent(id){
 	
@@ -900,7 +900,7 @@ function drawLinePlot(divId, linePlotJSON, analysisID, forExport)	{
 	margin = 55,
 	widthErrorBarBottomAndTopLines = 6,
 	radiusDot = 3,
-	h_legend=0;//used to draw the legend for export
+	h_legend = 0; //used to draw the legend for export
 
 	
 	if(forExport){
@@ -908,8 +908,8 @@ function drawLinePlot(divId, linePlotJSON, analysisID, forExport)	{
 	}
 	
 	
-	var x = pv.Scale.ordinal(statMapping, function(e){return e.id}).splitBanded(0, w, 1/2);
-	var y = pv.Scale.linear(yMin, yMax).range(0, h)			
+	var x = pv.Scale.ordinal(statMapping, function(e){return e.id;}).splitBanded(0, w, 1/2);
+	var y = pv.Scale.linear(yMin, yMax).range(0, h);
 	
 	var numCohorts = cohortArray.length;
 	
@@ -939,13 +939,13 @@ function drawLinePlot(divId, linePlotJSON, analysisID, forExport)	{
 
 	vis.add(pv.Label)
 	.data(statMapping)
-	.left(function(d){return x(d.id)})
+	.left(function(d){return x(d.id);})
 	.bottom(-20)
 	.textAlign("center")
 	.font("14px sans-serif")
 	.events("all")
-	.title(function(d){return d.desc})	
-	.text(function(d){return d.id + "(n=" + d.sampleCount + ")"});
+	.title(function(d){return d.desc;})	
+	.text(function(d){return d.id + "(n=" + d.sampleCount + ")";});
 	
 	/* Add the log2 label */
 	vis.add(pv.Label)
@@ -967,9 +967,9 @@ function drawLinePlot(divId, linePlotJSON, analysisID, forExport)	{
 	  
 		    /*Add link in title to gene info */
 	    .cursor("pointer")
-	    .event("mouseover", function(){ self.status = "Gene Information"})
-	    .event("mouseout", function(){ self.status = ""})
-	    .event("click", function(d) {self.location = "javascript:showGeneInfo('"+gene_id +"');"})
+	    .event("mouseover", function(){ self.status = "Gene Information";})
+	    .event("mouseout", function(){ self.status = "";})
+	    .event("click", function(d) { self.location = "javascript:showGeneInfo('" + gene_id + "');";})
 		.events("all")
 	    .title("View gene information")
 	    .text(getGeneforDisplay(analysisID, getActiveProbe(analysisID)));
@@ -988,33 +988,33 @@ function drawLinePlot(divId, linePlotJSON, analysisID, forExport)	{
     var line = 	vis.add(pv.Line)
     .data(statMapping)
 	.strokeStyle("#000000")
-    .bottom(function(d){return y(d.mean)})
-	.left(function(d){return x(d.id)});
+    .bottom(function(d){return y(d.mean);})
+	.left(function(d){return x(d.id);});
     
     // add dots at each point in line
     line.add(pv.Dot)
       .radius(radiusDot)
 	  .strokeStyle("#000000")
       .fillStyle("#000000")
-      .title(function(d){return d.meanFormatted + " +/- " + d.stdErrorFormatted});
+      .title(function(d){return d.meanFormatted + " +/- " + d.stdErrorFormatted;});
 
     // Add error bars
     // vertical line
     line.add(pv.Rule)
-      .left(function(d){return x(d.id)})
-      .bottom(function(d) {return y(d.mean - Math.abs(d.stdError))})
-      .top(function(d) {return y(yMax) - y(d.mean + Math.abs(d.stdError)) + h_legend}); 
+      .left(function(d){return x(d.id);})
+      .bottom(function(d) {return y(d.mean - Math.abs(d.stdError));})
+      .top(function(d) {return y(yMax) - y(d.mean + Math.abs(d.stdError)) + h_legend;}); 
     
 
     // bottom horizontal line
     line.add(pv.Rule)
-      .left(function(d){return x(d.id) - widthErrorBarBottomAndTopLines/2} )
-      .bottom(function(d) { return y(d.mean - d.stdError)})
+      .left(function(d){return x(d.id) - widthErrorBarBottomAndTopLines/2;} )
+      .bottom(function(d) { return y(d.mean - d.stdError);})
       .width(widthErrorBarBottomAndTopLines);
     // top horizontal line
     line.add(pv.Rule)
-      .left(function(d){return x(d.id) - widthErrorBarBottomAndTopLines/2} )
-      .bottom(function(d) { return y(d.mean + d.stdError)})
+      .left(function(d){return x(d.id) - widthErrorBarBottomAndTopLines/2;} )
+      .bottom(function(d) { return y(d.mean + d.stdError);})
       .width(widthErrorBarBottomAndTopLines);
     
 	/*add legend if export */
@@ -1024,28 +1024,28 @@ function drawLinePlot(divId, linePlotJSON, analysisID, forExport)	{
 	    var legend = vis.add(pv.Bar)
 	    	.data(statMapping)
 	    	.height(25)
-	    	.top(function(){return (this.index * 30)-20 })
+	    	.top(function(){return (this.index * 30)-20;})
 	    	.antialias(false)
 	    	.left(-30)
 	    	.strokeStyle("#000")
 	    	.lineWidth(1)
 	    	.width(30)
-	    	.fillStyle(function (d) {return cohortBGColors[d.cohortDisplayStyle]});
+	    	.fillStyle(function (d) {return cohortBGColors[d.cohortDisplayStyle];});
 
 	    legend.anchor("center").add(pv.Label)
     	.textStyle("#000")
     	.font("12px  sans-serif")
-    	.text(function(d){return d.id} );
+    	.text(function(d){return d.id;});
 	    
 	    vis.add(pv.Label)
 	    	.data(statMapping)
-	    .top(function(){return this.index * 30})
+	    .top(function(){return this.index * 30;})
 	    .antialias(false)
 	    .left(5)
     	.textStyle("#000")
     	.font("12px  sans-serif")
     //	.text(function(d){return d.desc});   	
-    	.text(function(){return cohortDesc[this.index+1].replace(/_/g, ', ')});
+    	.text(function(){return cohortDesc[this.index+1].replace(/_/g, ', ');});
 	}
 
 	
@@ -1170,7 +1170,7 @@ function changeRangeRadioBtn(graph, analysisID){
 		if(graph == 'boxplot'){
 			
 			//redrew the boxplot to set it back to default range
-			updateBoxPlot(analysisID)
+			updateBoxPlot(analysisID);
 			
 		}else if(graph == 'lineplot') {
 			
@@ -1323,7 +1323,7 @@ function drawBoxPlot(divId, boxPlotJSON, analysisID, forExport)	{
 	
 	var w = cohortArray.length * 140;//generate the width dynamically using the cohort count	
 	var  h = 300,  
-		x = pv.Scale.ordinal(statMapping, function(e){return e.id}).splitBanded(0, w, 1/2),
+		x = pv.Scale.ordinal(statMapping, function(e){return e.id;}).splitBanded(0, w, 1/2),
 		y = pv.Scale.linear(yMin, yMax).range(0, h-15),
 		s = x.range().band / 2;
 	
@@ -1355,9 +1355,9 @@ function drawBoxPlot(divId, boxPlotJSON, analysisID, forExport)	{
 		    .textAlign("center")
 	    	/*Add link in title to gene info */
 		    .cursor("pointer")
-		    .event("mouseover", function(){ self.status = "Gene Information"})
-		    .event("mouseout", function(){ self.status = ""})
-		    .event("click", function(d) {self.location = "javascript:showGeneInfo('"+gene_id +"');"})
+		    .event("mouseover", function(){ self.status = "Gene Information";})
+		    .event("mouseout", function(){ self.status = "";})
+		    .event("click", function(d) {self.location = "javascript:showGeneInfo('"+gene_id +"');";})
 			.events("all")   
 			.title("View gene information")
 			.text(title);
@@ -1396,20 +1396,20 @@ function drawBoxPlot(divId, boxPlotJSON, analysisID, forExport)	{
 		var points = vis.add(pv.Panel)
 		.def("showValues", false)
 		.data(statMapping)
-		.left(function(d){return x(d.id)})
+		.left(function(d){return x(d.id);})
 		.width(s * 2)
 		.events("all");
 
 		/* Add the experiment id label */
 		vis.add(pv.Label)
 		.data(statMapping)
-		.left(function(d){return x(d.id) + s})
+		.left(function(d){return x(d.id) + s;})
 		.bottom(-20)
 		.textAlign("center")
 		.font("14px sans-serif")
 		.events("all")
-		.title(function(d){return d.desc})
-		.text(function(d){return d.id + "(n=" + d.sampleCount + ")"});
+		.title(function(d){return d.desc;})
+		.text(function(d){return d.id + "(n=" + d.sampleCount + ")";});
 		
 		/*add legend if export */
 		if(forExport){
@@ -1418,28 +1418,28 @@ function drawBoxPlot(divId, boxPlotJSON, analysisID, forExport)	{
 		    var legend = vis.add(pv.Bar)
 		    	.data(statMapping)
 		    	.height(25)
-		    	.top(function(){return (this.index * 30)-20 })
+		    	.top(function(){return (this.index * 30)-20;})
 		    	.antialias(false)
 		    	.left(-30)
 		    	.strokeStyle("#000")
 		    	.lineWidth(1)
 		    	.width(30)
-		    	.fillStyle(function (d) {return cohortBGColors[d.cohortDisplayStyle]});
+		    	.fillStyle(function (d) {return cohortBGColors[d.cohortDisplayStyle];});
 
 		    legend.anchor("center").add(pv.Label)
 	    	.textStyle("#000")
 	    	.font("12px  sans-serif")
-	    	.text(function(d){return d.id} );
+	    	.text(function(d){return d.id;});
 		    
 		    vis.add(pv.Label)
 		    	.data(statMapping)
-		    .top(function(){return this.index * 30})
+		    .top(function(){return this.index * 30;})
 		    .antialias(false)
 		    .left(5)
 	    	.textStyle("#000")
 	    	.font("12px  sans-serif")
 	    //	.text(function(d){return d.desc});   	
-	    	.text(function(){return cohortDesc[this.index+1].replace(/_/g, ', ')});
+	    	.text(function(){return cohortDesc[this.index+1].replace(/_/g, ', ');});
 		}
 		
 		
@@ -1447,57 +1447,57 @@ function drawBoxPlot(divId, boxPlotJSON, analysisID, forExport)	{
 		/* Add the range line */
 		points.add(pv.Rule)
 		.left(s)
-		.bottom(function(d){return y(d.min)})
-		.height(function(d){return y(d.max) - y(d.min)});
+		.bottom(function(d){return y(d.min);})
+		.height(function(d){return y(d.max) - y(d.min);});
 
 		/* Add the min and max indicators */
 		var minLine = points.add(pv.Rule)
-			.data(function(d){return [d.min]})
+			.data(function(d){return [d.min];})
 			.bottom(y)
 			.left(s / 2)
 			.width(s)
 			.anchor("bottom").add(pv.Label)
-			.visible(function(){return this.parent.showValues()}) 
-			.text(function(d){return d.toFixed(2)});
+			.visible(function(){return this.parent.showValues();}) 
+			.text(function(d){return d.toFixed(2);});
 		
 		var maxLine = points.add(pv.Rule)
-			.data(function(d){return [d.max]})
+			.data(function(d){return [d.max];})
 			.bottom(y)
 			.left(s / 2)
 			.width(s)
 			.anchor("top").add(pv.Label)
-			.visible(function(){return this.parent.showValues()}) 
-			.text(function(d){return d.toFixed(2)});
+			.visible(function(){return this.parent.showValues();}) 
+			.text(function(d){return d.toFixed(2);});
 
 		/* Add the upper/lower quartile ranges */
 		var quartileBar = points.add(pv.Bar)
-			.fillStyle(function (d) {return cohortBGColors[d.cohortDisplayStyle]})
-			.bottom(function(d){return y(d.lq)})
-			.height(function(d){return y(d.uq) - y(d.lq)})
+			.fillStyle(function (d) {return cohortBGColors[d.cohortDisplayStyle];})
+			.bottom(function(d){return y(d.lq);})
+			.height(function(d){return y(d.uq) - y(d.lq);})
 			.strokeStyle("black")
 			.lineWidth(1)
-			.event("mouseover", function() {return this.parent.showValues(true)}) 
-			.event("mouseout", function() {return this.parent.showValues(false)})
+			.event("mouseover", function() {return this.parent.showValues(true);}) 
+			.event("mouseout", function() {return this.parent.showValues(false);})
 			.antialias(false);
 		
 		var lqLabel = quartileBar.add(pv.Label)
-			.visible(function(){return this.parent.showValues()})
-			.text(function(d){return d.lq.toFixed(2)})
+			.visible(function(){return this.parent.showValues();})
+			.text(function(d){return d.lq.toFixed(2);})
 			.textAlign("right")
 			.textBaseline("top");
 		
 		var uqLabel = quartileBar.anchor("top").add(pv.Label)		
-			.visible(function(){return this.parent.showValues()})
+			.visible(function(){return this.parent.showValues();})
 			.left(-15)
-			.text(function(d){return d.uq.toFixed(2)})
+			.text(function(d){return d.uq.toFixed(2);})
 			.textMargin(-10);
 		
 		/* Add the median line */
 		points.add(pv.Rule)
-		.bottom(function(d){ return y(d.median)})
+		.bottom(function(d){ return y(d.median);})
 		.anchor("right").add(pv.Label)
-		.visible(function(){return this.parent.showValues()})
-		.text(function(d){return d.median.toFixed(2)});
+		.visible(function(){return this.parent.showValues();})
+		.text(function(d){return d.median.toFixed(2);});
 
 		vis.render();
 
@@ -1509,7 +1509,7 @@ function drawBoxPlot(divId, boxPlotJSON, analysisID, forExport)	{
 // Show the heatmap visualization 
 function showVisualization(analysisID, changedPaging)	{	
 	
-	var analysisHeaderDiv = "#TrialDetail_" + analysisID + "_anchor"
+	var analysisHeaderDiv = "#TrialDetail_" + analysisID + "_anchor";
 	var divID = "#analysis_results_" + analysisID;
 	var divID2 = "analysis_results_" + analysisID;
 	var loadingDiv = "#analysis_holder_"+ analysisID;
@@ -1579,7 +1579,7 @@ function loadQQPlot(analysisID)
 // This function will load the analysis data into a GRAILS template.
 function loadAnalysisResultsGrid(analysisID, paramMap)
 {
-	paramMap.analysisId = analysisID
+	paramMap.analysisId = analysisID;
 	jQuery('#analysis_results_table_' + analysisID + '_wrapper').empty().addClass('ajaxloading');
 	jQuery.ajax( {
 	    "url": getAnalysisDataURL,
@@ -1640,8 +1640,8 @@ function drawHeatmap(divID, heatmapJSON, analysisID, forExport)	{
 	
 	// set up arrays to be used to populating drop down boxes for line/box plots
 	// do this first since we need this for determining max probe string length
-	var probesList = new Array() 
-	var selectList = new Array()
+	var probesList = new Array();
+	var selectList = new Array();
 	var hasFoldChange = false; //true if the data contains fold change values
     var hasTPvalue = false;
     var hasPvalue = false;

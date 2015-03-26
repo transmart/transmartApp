@@ -151,9 +151,9 @@ Ext.app.EditFiltersWindow = Ext.extend(Ext.Window, {
 				text: "Apply",
 				handler: function() {
 					var win = Ext.getCmp(this.windowId);
-					var params = Ext.urlEncode({ids: win.formatIds(), texts: win.formatTexts()})
+					var params = Ext.urlEncode({ids: win.formatIds(), texts: win.formatTexts()});
 					win.hide();
-					window.location = String.format(win.submitUrl + "?{0}", params)
+					window.location = String.format(win.submitUrl + "?{0}", params);
 				},
 		        windowId: this.initialConfig.id
 			}, {

@@ -24,28 +24,28 @@ function saveReport(newReport,reportName,reportDescription,reportPublic,parConce
 	//Validate the user input.
 	if(reportName == "")
 	{
-		Ext.Msg.alert('Missing Input','Please enter a report name.')
+		Ext.Msg.alert('Missing Input','Please enter a report name.');
 		return;
 	}
 	
 	//Verify the user isn't mixing studies.
-	var uniqueStudies = studiesList.unique()
+	var uniqueStudies = studiesList.unique();
 	
 	if(uniqueStudies.size() > 1)
 	{
-		Ext.Msg.alert('Mixed Studies','Please only select concepts from the same study.')
+		Ext.Msg.alert('Mixed Studies','Please only select concepts from the same study.');
 		return;
 	}	
 	
 	//Verify the user selected at least one study.
 	if(uniqueStudies.size() < 1)
 	{
-		Ext.Msg.alert('Missing Parameters','Please drag in a list of parameters to the results/analysis screen before saving a report.')
+		Ext.Msg.alert('Missing Parameters','Please drag in a list of parameters to the results/analysis screen before saving a report.');
 		return;
 	}		
 	
 	//Pull the unique study.
-	var uniqueStudy = uniqueStudies.unique()[0].split(":")[1]
+	var uniqueStudy = uniqueStudies.unique()[0].split(":")[1];
 	
 	jQuery.ajax({
 		  url: pageInfo.basePath + '/report/saveReport',
@@ -74,9 +74,9 @@ function runReportOrAnalysis(reportId, reportStudy, moduleName){
     }	
 	// If its a Summary Statistics report
 	if(moduleName  && moduleName == "Summary Statistics"){
-		generateReportFromId(reportId, reportStudy)
+		generateReportFromId(reportId, reportStudy);
 	}else {  //otherwise its a RModule
-		loadAdvWorkflowAnalysis(reportId,reportStudy,moduleName)
+		loadAdvWorkflowAnalysis(reportId,reportStudy,moduleName);
 	}
 }
 
@@ -122,7 +122,7 @@ function pullReportCodes(reportParams)
 	jQuery.ajax({
 		  url: pageInfo.basePath + '/report/retrieveReportCodes',
 		  success:function(returnedData){drawReports(returnedData, reportParams[1]);},
-		  failure:function(returnedData){resultsTabPanel.body.unmask();alert("There was an error retrieving your report.")},
+		  failure:function(returnedData){resultsTabPanel.body.unmask();alert("There was an error retrieving your report.");},
 		  data: {reportid:reportParams[0]}
 		});
 }
@@ -166,13 +166,11 @@ function buildAnalysisFromCode(nodeCode, lastCode, reportsStudy)
 	            failure : function(result, request)
 	            {
 	                buildAnalysisComplete(result);
-	                resultsTabPanel.body.unmask()
+	                resultsTabPanel.body.unmask();
 	            }
             }
     );
-
 }
-
 
 /**
  * If a subset is loaded, pull the codes for that report from the database and generate the statistics for each.
@@ -222,7 +220,7 @@ function updateReportName(reportId){
 	var name = jQuery("#editReportNameBox"+reportId).val();
 	jQuery.get(pageInfo.basePath + '/report/updateName', {reportId:reportId, name:name}, function(data){
 		renderWorkspace();
-	})
+	});
 }
 
 function toggleReportPublicFlag(reportId){
@@ -234,7 +232,7 @@ function toggleReportPublicFlag(reportId){
 			jQuery("#reportPublicFlag"+reportId).removeClass("ui-icon-unlocked");
 			jQuery("#reportPublicFlag"+reportId).addClass("ui-icon-locked");
 		}
-	}).fail(function() { alert("Server Error in toggling public flag"); })
+	}).fail(function() { alert("Server Error in toggling public flag"); });
 }
 
 function displayReportCodes(event, reportId){
@@ -250,12 +248,12 @@ function displayReportCodes(event, reportId){
 					  	reportCodes=reportCodes+"(";
 						reportCodes=reportCodes+returnedData[i];
 						reportCodes=reportCodes+")";
-						reportCodes=reportCodes+"<br>"
+						reportCodes=reportCodes+"<br>";
 				  }
 				jQuery(workspaceReportCodesDisplayDialog).dialog("option", {position:[posX+20, posY+60]});
 				jQuery(workspaceReportCodesDisplayDialog).data("displayData",reportCodes).dialog("open");
 			  },
-			  failure:function(returnedData){alert("There was an error retrieving your report.")},
+			  failure:function(returnedData){alert("There was an error retrieving your report.");},
 			  data: {reportid:reportId}
 			});
 	}, 500);
@@ -293,7 +291,7 @@ function loadAdvWorkflowAnalysis(reportId, reportStudy,moduleName)
 	jQuery.ajax({
 		  url: pageInfo.basePath + '/report/retrieveReportCodes',
 		  success:function(returnedData){openAnalysis(moduleName, returnedData, reportStudy);},
-		  failure:function(returnedData){resultsTabPanel.body.unmask();alert("There was an error retrieving your analysisParameters.")},
+		  failure:function(returnedData){resultsTabPanel.body.unmask();alert("There was an error retrieving your analysisParameters.");},
 		  data: {reportid:reportId}
 		});
 	
@@ -318,7 +316,6 @@ function loadAdvWorkflowAnalysis(reportId, reportStudy,moduleName)
 			 }, 3000); });
 	
 }
-
 
 function openAnalysis(moduleName, returnedData, reportStudy){
 	
