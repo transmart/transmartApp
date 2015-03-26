@@ -132,7 +132,7 @@ Ext.onReady(function () {
                     {
 					text: 'Summary Statistics',
 					handler: function()	{
-						if(typeof(grid) != 'undefined' && grid != null)	{
+						if(typeof(grid) != 'undefined' && grid !== null)	{
 							exportGrid();
 						} else {
 							alert("Nothing to export");
@@ -163,7 +163,7 @@ Ext.onReady(function () {
 					        	 	validateHeatmap();
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
-					        	 disabled: GLOBAL.GPURL == "" 
+					        	 disabled: GLOBAL.GPURL === ""
 					         },
 					         {
 					        	 text: 'Hierarchical Clustering',
@@ -173,7 +173,7 @@ Ext.onReady(function () {
 					        	 	validateHeatmap();
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
-					        	 disabled: GLOBAL.GPURL == ""
+					        	 disabled: GLOBAL.GPURL === ""
 					         },
 					         {
 					        	 text: 'K-Means Clustering',
@@ -183,7 +183,7 @@ Ext.onReady(function () {
 					        	 	validateHeatmap();
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
-					        	 disabled: GLOBAL.GPURL == ""
+					        	 disabled: GLOBAL.GPURL === ""
 					         },
 					         {
 					        	 text: 'Comparative Marker Selection (Heatmap)',
@@ -193,7 +193,7 @@ Ext.onReady(function () {
 					        	 	validateHeatmap();
 					        	 	advancedWorkflowContextHelpId="1085";
 					        	 },
-					        	 disabled: GLOBAL.GPURL == ""
+					        	 disabled: GLOBAL.GPURL === ""
 					         },
 				        	 '-',					         
 					         {
@@ -204,7 +204,7 @@ Ext.onReady(function () {
 					        	 	validateHeatmap();
 					        	 	advancedWorkflowContextHelpId="1172";
 					        	 },
-					        	 disabled: GLOBAL.GPURL == ""
+					        	 disabled: GLOBAL.GPURL === ""
 					         },
 				        	 '-',
 					         {
@@ -218,7 +218,7 @@ Ext.onReady(function () {
 					        	 		showSurvivalAnalysis();
 					        	 	}
 					        	 },
-					        	 disabled: GLOBAL.GPURL == ""
+					        	 disabled: GLOBAL.GPURL === ""
 					         },
 				        	 '-',
 					         {
@@ -228,7 +228,7 @@ Ext.onReady(function () {
 					        			alert('Empty subsets found, need a valid subset to analyze!');
 					        		 	return;
 					        	 	}
-                            if ((GLOBAL.CurrentSubsetIDs[1] == null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && !isSubsetEmpty(2))) {
+                            if ((GLOBAL.CurrentSubsetIDs[1] === null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] === null && !isSubsetEmpty(2))) {
 					        			runAllQueries(function()	{
 					        				showHaploviewGeneSelection();
 					        			});
@@ -245,7 +245,7 @@ Ext.onReady(function () {
 					        			alert('Both dataset is empty. Please choose a valid dataset.');
 					        		 	return;
 					        	 	}
-                            if ((GLOBAL.CurrentSubsetIDs[1] == null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && !isSubsetEmpty(2))) {
+                            if ((GLOBAL.CurrentSubsetIDs[1] === null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] === null && !isSubsetEmpty(2))) {
 					        			runAllQueries(function()	{
 					        				showSNPViewerSelection();
 					        			});
@@ -254,7 +254,7 @@ Ext.onReady(function () {
 					        	 	}
 					        	 	return;
 					        	},
-					        	disabled: GLOBAL.GPURL == ""
+					        	disabled: GLOBAL.GPURL === ""
 					        },
 					        {
 					        	 text: 'Integrative Genome Viewer',
@@ -263,7 +263,7 @@ Ext.onReady(function () {
 					        			alert('Both dataset is empty. Please choose a valid dataset.');
 					        		 	return;
 					        	 	}
-                            if ((GLOBAL.CurrentSubsetIDs[1] == null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && !isSubsetEmpty(2))) {
+                            if ((GLOBAL.CurrentSubsetIDs[1] === null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] === null && !isSubsetEmpty(2))) {
 					        			runAllQueries(function()	{
 					        				showIgvSelection();
 					        			});
@@ -272,7 +272,7 @@ Ext.onReady(function () {
 					        	 	}
 					        	 	return;
 					        	},
-					        	disabled: GLOBAL.GPURL == ""
+					        	disabled: GLOBAL.GPURL === ""
 					        },
 					        {
 					        	 text: 'PLINK',
@@ -282,7 +282,7 @@ Ext.onReady(function () {
 					        			alert('Both dataset is empty. Please choose a valid dataset.');
 					        		 	return;
 					        	 	}
-                            if ((GLOBAL.CurrentSubsetIDs[1] == null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && !isSubsetEmpty(2))) {
+                            if ((GLOBAL.CurrentSubsetIDs[1] === null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] === null && !isSubsetEmpty(2))) {
 					        			runAllQueries(function()	{
 					        				showPlinkSelection();
 					        			});
@@ -299,7 +299,7 @@ Ext.onReady(function () {
 					        			alert('Genome-Wide Association Study needs control datasets (normal patients) in subset 1, and case datasets (disease patients) in subset 2.');
 					        		 	return;
 					        	 	}
-                            if ((GLOBAL.CurrentSubsetIDs[1] == null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && !isSubsetEmpty(2))) {
+                            if ((GLOBAL.CurrentSubsetIDs[1] === null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] === null && !isSubsetEmpty(2))) {
 					        			runAllQueries(function()	{
 					        				showGwasSelection();
 					        			});
@@ -973,9 +973,9 @@ Ext.onReady(function () {
 						        	   var highlowselect = document.getElementById("setValueHighLowSelect").value;
 
 						        	   // make sure that there is a value set
-						        	   if (mode === "numeric" && operator === "BETWEEN" && (highvalue == "" || lowvalue == "")){
+						        	   if (mode === "numeric" && operator === "BETWEEN" && (highvalue === "" || lowvalue === "")){
 						        		   alert('You must specify a low and a high value.');
-						        	   } else if (mode === "numeric" && lowvalue == "") {
+						        	   } else if (mode === "numeric" && lowvalue === "") {
 						        		   alert('You must specify a value.');
 						        	   } else {
 						        		   setvaluewin.hide();
@@ -1586,7 +1586,7 @@ function createTree(ontresponse) {
     var Tree = Ext.tree;
     var ontRoots = [];
 
-    if (GLOBAL.DefaultPathToExpand != "") {
+    if (GLOBAL.DefaultPathToExpand !== "") {
         GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
     }
 
@@ -1626,7 +1626,7 @@ function createTree(ontresponse) {
         }
 
         //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
-        if (level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(key) === -1) {
+        if (level <= '1' && GLOBAL.PathToExpand !== '' && GLOBAL.PathToExpand.indexOf(key) === -1) {
             continue;
         }
 
@@ -2284,7 +2284,7 @@ function isSubsetQueriesChanged (referenceQueries) {
 }
 
 function runQuery(subset, callback) {
-    if (Ext.get('analysisPanelSubset1') == null) {
+    if (Ext.get('analysisPanelSubset1') === null) {
         // analysisPanel.body.update("<table border='1' width='100%' height='100%'><tr><td width='50%'><div id='analysisPanelSubset1'></div></td><td><div id='analysisPanelSubset2'></div></td></tr>");
     }
 
@@ -2400,7 +2400,7 @@ function runQueryPDOComplete(result, subset, callback) {
     if (patientset === undefined) {
         patientset = result.responseXML.selectSingleNode("//patient_set");
     }
-    if (patientset == null) {
+    if (patientset === null) {
         return;
     }
 
@@ -2512,11 +2512,11 @@ function createStatistics(patientset, subset) {
 
 function getNodeForAnalysis(node) {
 	// if im a value leaf return me
-    if (node.attributes.oktousevalues === "Y" && node.attributes.leaf == true) {
+    if (node.attributes.oktousevalues === "Y" && node.attributes.leaf === true) {
 		return node;
 	}
 	// if im a concept leaf then recurse with my parent node
-    else if (node.attributes.oktousevalues !== "Y" && node.attributes.leaf == true) {
+    else if (node.attributes.oktousevalues !== "Y" && node.attributes.leaf === true) {
 		return getNodeForAnalysis(node.parentNode);
 	}
     else {
@@ -2532,7 +2532,7 @@ function buildAnalysis(nodein) {
 		return;
 	}
 
-    if ((GLOBAL.CurrentSubsetIDs[1] == null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] == null && !isSubsetEmpty(2))) {
+    if ((GLOBAL.CurrentSubsetIDs[1] === null && !isSubsetEmpty(1)) || (GLOBAL.CurrentSubsetIDs[2] === null && !isSubsetEmpty(2))) {
         runAllQueries(function () {
 			buildAnalysis(node);
 				}
@@ -2601,7 +2601,7 @@ function searchByNameComplete(response) {
         for (var c = 0; c < length; c++) {
 			searchByNameTreeRoot.appendChild(getTreeNodeFromXMLNode(concepts[c]));
 			var key=concepts[c].selectSingleNode('key').firstChild.nodeValue;
-            if (allkeys != "") {
+            if (allkeys !== "") {
 				allkeys=allkeys+",";
 			}
 			allkeys=allkeys+key;
@@ -2675,7 +2675,7 @@ function outputSelected(opt) {
  * Function to run the survival analysis asynchronously
  */
 function showSurvivalAnalysis() {	
-    if ((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] == null) || (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] == null)) {
+    if ((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] === null) || (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] === null)) {
 		runAllQueries(showSurvivalAnalysis);
 		return;
 	}
@@ -2724,8 +2724,8 @@ function RunSurvivalAnalysis(result, result_instance_id1, result_instance_id2, q
 
 function showSNPViewerSelection() {
 	
-	if((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] == null) ||
-        (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] == null)) {
+	if((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] === null) ||
+        (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] === null)) {
 		runAllQueries(showSNPViewerSelection);
 		return;
 	}
@@ -2746,7 +2746,7 @@ function showSNPViewerSelection() {
 		        	  id: 'showSNPViewerSelectionOKButton',
 		        	  text: 'OK',
 		        	  handler: function(){
-                    if (Ext.get('snpViewChroms') == null) {
+                    if (Ext.get('snpViewChroms') === null) {
 		        		  win.close();
 		        		  return;
 		        	  }
@@ -2799,21 +2799,21 @@ function getSNPViewer() {
 	var selectedGenesElt = Ext.get("selectedGenesSNPViewer");
 	var selectedGenesEltValue = selectedGenesElt.dom.value;
 	var selectedGeneStr = "";
-	if (selectedGenesEltValue && selectedGenesEltValue.length != 0) {
+	if (selectedGenesEltValue && selectedGenesEltValue.length !== 0) {
 		selectedGeneStr = selectedGenesEltValue;
 	}
 	
 	var geneAndIdListElt = Ext.get("selectedGenesAndIdSNPViewer");
 	var geneAndIdListEltValue = geneAndIdListElt.dom.value;
 	var geneAndIdListStr = "";
-	if (geneAndIdListElt && geneAndIdListEltValue.length != 0) {
+	if (geneAndIdListElt && geneAndIdListEltValue.length !== 0) {
 		geneAndIdListStr = geneAndIdListEltValue;
 	}
 	
 	var selectedSNPsElt = Ext.get("selectedSNPs");
 	var selectedSNPsEltValue = selectedSNPsElt.dom.value;
 	var selectedSNPsStr = "";
-	if (selectedSNPsElt && selectedSNPsEltValue.length != 0) {
+	if (selectedSNPsElt && selectedSNPsEltValue.length !== 0) {
 		selectedSNPsStr = selectedSNPsEltValue;
 	}
 	//genePatternReplacement();
@@ -2841,8 +2841,8 @@ function getSNPViewer() {
 
 function showIgvSelection() {
 	
-	if((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] == null) ||
-        (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] == null)) {
+	if((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] === null) ||
+        (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] === null)) {
 		runAllQueries(showIgvSelection);
 		return;
 	}
@@ -2863,7 +2863,7 @@ function showIgvSelection() {
 		        	  id: 'showIgvSelectionOKButton',
 		        	  text: 'OK',
 		        	  handler: function(){
-                    if (Ext.get('igvChroms') == null) {
+                    if (Ext.get('igvChroms') === null) {
 		        		  win.close();
 		        		  return;
 		        	  }
@@ -2916,21 +2916,21 @@ function getIgv() {
 	var selectedGenesElt = Ext.get("selectedGenesIgv");
 	var selectedGenesEltValue = selectedGenesElt.dom.value;
 	var selectedGeneStr = "";
-	if (selectedGenesEltValue && selectedGenesEltValue.length != 0) {
+	if (selectedGenesEltValue && selectedGenesEltValue.length !== 0) {
 		selectedGeneStr = selectedGenesEltValue;
 	}
 	
 	var geneAndIdListElt = Ext.get("selectedGenesAndIdIgv");
 	var geneAndIdListEltValue = geneAndIdListElt.dom.value;
 	var geneAndIdListStr = "";
-	if (geneAndIdListElt && geneAndIdListEltValue.length != 0) {
+	if (geneAndIdListElt && geneAndIdListEltValue.length !== 0) {
 		geneAndIdListStr = geneAndIdListEltValue;
 	}
 	
 	var selectedSNPsElt = Ext.get("selectedSNPsIgv");
 	var selectedSNPsEltValue = selectedSNPsElt.dom.value;
 	var selectedSNPsStr = "";
-	if (selectedSNPsElt && selectedSNPsEltValue.length != 0) {
+	if (selectedSNPsElt && selectedSNPsEltValue.length !== 0) {
 		selectedSNPsStr = selectedSNPsEltValue;
 	}
 	
@@ -2958,8 +2958,8 @@ function getIgv() {
 
 function showPlinkSelection() {
 	
-	if((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] == null) ||
-        (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] == null)) {
+	if((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] === null) ||
+        (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] === null)) {
 		runAllQueries(showIgvSelection);
 		return;
 	}
@@ -2980,7 +2980,7 @@ function showPlinkSelection() {
 		        	  id: 'showPlinkSelectionOKButton',
 		        	  text: 'OK',
 		        	  handler: function(){
-                    if (Ext.get('plinkChroms') == null) {
+                    if (Ext.get('plinkChroms') === null) {
 		        		  win.close();
 		        		  return;
 		        	  }
@@ -3033,8 +3033,8 @@ function getPlink() {
 
 function showGwasSelection() {
 	
-	if((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] == null) ||
-        (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] == null)) {
+	if((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] === null) ||
+        (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] === null)) {
 		runAllQueries(showGwasSelection);
 		return;
 	}
@@ -3055,7 +3055,7 @@ function showGwasSelection() {
 		        	  id: 'showGwasSelectionOKButton',
 		        	  text: 'OK',
 		        	  handler: function(){
-                    if (Ext.get('gwasChroms') == null) {
+                    if (Ext.get('gwasChroms') === null) {
 		        		  win.close();
 		        		  return;
 		        	  }
@@ -3068,8 +3068,7 @@ function showGwasSelection() {
 		        	  showGwas();
                     win.close();
 		          }
-            }
-            ,
+            },
             {
 		        	  text: 'Cancel',
 		        	  handler: function(){
@@ -3106,7 +3105,7 @@ function showGwasSelection() {
  * Function to run the GWAS asynchronously
  */
 function showGwas() {	
-    if ((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] == null) || (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] == null)) {
+    if ((!isSubsetEmpty(1) && GLOBAL.CurrentSubsetIDs[1] === null) || (!isSubsetEmpty(2) && GLOBAL.CurrentSubsetIDs[2] === null)) {
 		runAllQueries(showGwas);
 		return;
 	}
@@ -3326,7 +3325,7 @@ function getCheckedValue(radioObj) {
 	if( ! radioObj)
 		return "";
 	var radioLength = radioObj.length;
-	if(radioLength == undefined)
+	if(radioLength === undefined)
 		if(radioObj.checked)
 			return radioObj.value;
 		else
@@ -3347,7 +3346,7 @@ function setCheckedValue(radioObj, newValue) {
 	if( ! radioObj)
 		return;
 	var radioLength = radioObj.length;
-    if (radioLength == undefined) {
+    if (radioLength === undefined) {
 		radioObj.checked = (radioObj.value == newValue.toString());
 		return;
 	}
@@ -3649,11 +3648,11 @@ function searchByTagBefore() {
 		alert("Please enter a longer search term.");
 		return false;
 	}
-    if (a.length == 0 && tagtype.selectedIndex == 0) {
+    if (a.length === 0 && tagtype.selectedIndex === 0) {
 		alert("Please select a search term.");
 		return false;
 	}
-    if (a.length == 0 && tagtype.selectedIndex != 0) {
+    if (a.length === 0 && tagtype.selectedIndex !== 0) {
         if (tagterm.selectedIndex == -1) {
 			alert("Please select a search term.");
 			return false;
@@ -3694,11 +3693,11 @@ function searchByTagComplete(response) {
     GLOBAL.PathToExpand = '';
     GLOBAL.UniqueLeaves = '';
 
-    if (GLOBAL.DefaultPathToExpand != "") {
+    if (GLOBAL.DefaultPathToExpand !== "") {
         GLOBAL.PathToExpand += GLOBAL.DefaultPathToExpand + ",";
     }
 
-    if (concepts != undefined) {
+    if (concepts !== undefined) {
         if (concepts.length < GLOBAL.MaxSearchResults) {
 			length = concepts.length;
 		}
@@ -3713,7 +3712,7 @@ function searchByTagComplete(response) {
             GLOBAL.UniqueLeaves += uniqueLeaves[c] + ",";
 	}
 
-        if (concepts.length == 0) {
+        if (concepts.length === 0) {
             jQuery('#noAnalyzeResults').show();
             Ext.getCmp('navigateTermsPanel').render();
             onWindowResize();
@@ -3741,7 +3740,7 @@ function showHaploviewGeneSelection() {
 		        	  id: 'haploviewGeneSelectionOKButton',
 		        	  text: 'OK',
 		        	  handler: function(){
-                    if (Ext.get('haploviewgenes') == null) {
+                    if (Ext.get('haploviewgenes') === null) {
 		        		  win.close();
 		        		  return;
 		        	  }
@@ -3866,16 +3865,16 @@ function workflowStatusUpdate(result){
 	var response=eval("(" + result.responseText + ")");	
 	var inserthtml = response.statusHTML;
 	var divele = Ext.fly("divwfstatus");
-	if(divele!=null){
+	if (divele !== null){
 		divele.update(inserthtml);
 	}
 	var status = response.wfstatus;
-	if(status =='completed'){
+	if (status =='completed') {
 		runner.stopAll();		
-		if(divele!=null){
+		if(divele !== null) {
 			divele.update("");
 		}		
-		if(wfsWindow!=null){
+		if(wfsWindow !== null) {
 			wfsWindow.close();
 			wfsWindow =null;
 		}		
@@ -3895,11 +3894,10 @@ function showWorkflowResult(result) {
 	var error = response.error;
 	var snpGeneAnnotationPage = response.snpGeneAnnotationPage;
 
-	if (error != undefined) {
+	if (error !== undefined) {
 		alert(error);
-	} 
-	else {
-		if (snpGeneAnnotationPage != undefined && snpGeneAnnotationPage.length != 0) {
+	} else {
+		if (snpGeneAnnotationPage !== undefined && snpGeneAnnotationPage.length !== 0) {
 			showSnpGeneAnnotationPage(snpGeneAnnotationPage);
 		}
 		runVisualizerFromSpan(viewerURL, altviewerURL);
@@ -3969,7 +3967,7 @@ function saveComparisonComplete(result) {
 }
 
 function ontFilterLoaded(el, success, response, options) {
-    if (GLOBAL.preloadStudy != "") {
+    if (GLOBAL.preloadStudy !== "") {
 			Ext.get("ontsearchterm").dom.value = GLOBAL.preloadStudy;
 			Ext.get("ontSearchButton").dom.click();
 		}
