@@ -1780,7 +1780,7 @@ function runQuery(subset, callback) {
 }
 
 function runQueryComplete(result, subset, callback) {
-    var jsonRes = JSON.parse(result.responseText);
+    var jsonRes = jQuery.parseJSON(result.responseText);
     var error;
 
     if (result.status !== 200) {

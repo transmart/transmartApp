@@ -130,14 +130,12 @@ function convertNodeToConcept(node)
     modifiedNode.path = node.attributes.modifiedNodePath;
     modifiedNode.id = node.attributes.modifiedNodeId;
     modifiedNode.level = node.attributes.modifiedNodeLevel;
-    modifiedNode = modifiedNode;
-    
+
     if(oktousevalues === "Y") {
        value.mode="novalue";
     }
-    
-    var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes);
-    return myConcept;
+
+    return new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes, applied_path, modifiedNode);
 }
 function createPanelItemNew(panel, concept)
 {
@@ -451,7 +449,8 @@ function showSetValueDialog()
         if (lowvalue != null) {
             blah.value=lowvalue;
         } else {
-            blah.value="";
+            blah.value = "";
+        }
 
         var units=conceptnode.getAttribute('setvalueunits');
         if(units!=null)
