@@ -1,9 +1,11 @@
 package com.recomdata.transmart.asynchronous.job
 
 import com.recomdata.transmart.domain.i2b2.AsyncJob
+import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
+import org.transmartproject.core.users.User
 
 class AsyncJobService {
 
@@ -12,6 +14,7 @@ class AsyncJobService {
     def quartzScheduler
     def springSecurityService
     def jobResultsService
+    def dataExportService
 
     /**
      * Method that will get the list of jobs to show in the jobs tab
@@ -106,7 +109,7 @@ class AsyncJobService {
      */
     def getjobresults(jobName) {
         JSONObject result = new JSONObject()
-        def jobResults = AsyncJob.findByJobName("${jobName}").results
+        def jobResults = AsyncJob.findByJobName(jobName).results
         result.put("jobResults", jobResults)
         return result
     }
@@ -145,6 +148,16 @@ class AsyncJobService {
         result.put("jobStatus", jobStatus)
 
         return result;
+    }
+
+    def updateJobInputs(final String jobName, final Map params) {
+        assert jobName
+        assert params
+
+        def job = AsyncJob.findByJobName(jobName)
+        assert "${jobName} job is not found.", job
+
+        job.jobInputsJson = new JSONObject(params).toString()
     }
 
     /**
@@ -262,4 +275,24 @@ class AsyncJobService {
 
         return retValue
     }
+
+    boolean isUserAllowedToExportResults(final User user, final String jobName) {
+        assert user
+        assert jobName
+
+        def job = AsyncJob.findByJobName(jobName)
+        assert "${jobName} is not found.", job
+
+        job.jobInputsJson
+        def jobInputsJsonObj = new JsonSlurper().parseText(job.jobInputsJson)
+
+        List<Long> resultInstanceIds = []
+        int subsetNumber = 1
+        while (jobInputsJsonObj['result_instance_id' + subsetNumber]) {
+            resultInstanceIds << (jobInputsJsonObj['result_instance_id' + subsetNumber] as Long)
+            subsetNumber += 1
+        }
+        dataExportService.isUserAllowedToExport(user, resultInstanceIds)
+    }
+
 }

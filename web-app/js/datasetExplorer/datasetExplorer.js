@@ -3311,9 +3311,7 @@ function getSummaryGridData() {
     }
 
     gridstore = new Ext.data.JsonStore({
-        url: pageInfo.basePath+'/chart/analysisGrid',
-        root: 'rows',
-        fields: ['name', 'url']
+        url: pageInfo.basePath+'/chart/analysisGrid'
     });
 
     gridstore.on('load', storeLoaded);
@@ -3332,18 +3330,7 @@ function getSummaryGridData() {
     });
 }
 
-function storeLoaded() {
-
-    var exportButton = new Ext.Button ({
-        text: 'Export to Excel',
-        listeners: {
-            click: function () {
-                window.location = 'data:application/vnd.ms-excel;base64,' +
-                    Base64.encode(grid.getExcelXml());
-            }
-        }
-    });
-
+function storeLoaded(jsonStore, rows, paramsObject) {
     var cm = buildColumnModel(gridstore.reader.meta.fields);
 
     grid = analysisGridPanel.getComponent('gridView');
@@ -3352,30 +3339,44 @@ function storeLoaded() {
         analysisGridPanel.remove(grid);
     }
 
+    var bbar = new Ext.Toolbar({ height: 25 });
+
+    if (paramsObject && paramsObject.params) {
+        jQuery.get(pageInfo.basePath + '/dataExport/isCurrentUserAllowedToExport?' + paramsObject.params, function(data) {
+            if (data.result) {
+                var exportButton = new Ext.Button ({
+                    text: 'Export to Excel',
+                    listeners: {
+                        click: function () {
+                            window.location = 'data:application/vnd.ms-excel;base64,' +
+                            Base64.encode(grid.getExcelXml());
+                        }
+                    }
+                });
+                bbar.add(exportButton);
+            }
+        });
+    }
+
     grid = new GridViewPanel({
         id: 'gridView',
         title: 'Grid View',
         viewConfig: {
             forceFit: true
         },
-        bbar: new Ext.Toolbar({
-            buttons: [exportButton]
-        }),
+        bbar: bbar,
         frame:true,
         layout: 'fit',
         cm: cm,
         store: gridstore
     });
-
     analysisGridPanel.add(grid);
     analysisGridPanel.doLayout();
 }
 
 function getAnalysisGridData(concept_key) {
     gridstore = new Ext.data.JsonStore({
-        url: pageInfo.basePath+'/chart/analysisGrid',
-        root: 'rows',
-        fields: ['name', 'url']
+        url: pageInfo.basePath+'/chart/analysisGrid'
     });
     gridstore.on('load', storeLoaded);
     var myparams = Ext.urlEncode({

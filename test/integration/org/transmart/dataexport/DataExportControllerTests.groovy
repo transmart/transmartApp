@@ -110,8 +110,8 @@ class DataExportControllerTests {
             }
         }
 
-        assertThat exception.message, containsString(
-                "user_${user.id} has no EXPORT permission on study STUDY_ID_2")
+        assertThat exception.message, startsWith(
+                "User user_${user.id} has no EXPORT permission on one of the result set")
     }
 
     @Test
@@ -144,8 +144,8 @@ class DataExportControllerTests {
             createNewJob accessLevelTestData.users[4]
         }
 
-        assertThat exception.message, containsString(
-                "has no EXPORT permission on study STUDY_ID_2")
+        assertThat exception.message, startsWith(
+                "User ${accessLevelTestData.users[4].username} has no EXPORT permission on one of the result set")
     }
 
     @Test
