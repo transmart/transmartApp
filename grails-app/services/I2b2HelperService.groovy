@@ -60,6 +60,8 @@ class I2b2HelperService {
         sql.eachRow(sqlt, [result_instance_id], { row ->
             values.add(row[0])
         });
+        // remove missing values from the distribution
+        values = values.findAll { it != null }
         double[] returnvalues = new double[values.size()];
         for (int i = 0; i < values.size(); i++) {
             returnvalues[i] = values.get(i);

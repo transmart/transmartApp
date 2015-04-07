@@ -346,6 +346,7 @@ function conceptRightClick(event)
                                         
                                         }
     },{id: 'setvaluemenu', text: 'Set Value', handler:function(){showSetValueDialog();}},
+      {id: 'omicsfiltermenu', text: 'Set Filter', handler:function() { showOmicsFilterDialog(selectedConcept.attributes.conceptid.nodeValue); }},
     {
     text: 'Show Definition', handler:function(){ showConceptInfoDialog(conceptid, conceptid, comment);}
     }
@@ -355,11 +356,13 @@ function conceptRightClick(event)
     var xy = event.getXY();
     this.contextMenuConcepts.showAt(xy);
     var m=Ext.getCmp('setvaluemenu');
-    if(this.dom.attributes.oktousevalues.nodeValue!='Y')
-        m.hide(); 
-        //alert('you cant set value');
-    else 
+    var o=Ext.getCmp('omicsfiltermenu');
+    m.hide();
+    o.hide();
+    if(this.dom.attributes.oktousevalues.nodeValue=='Y')
         m.show();
+    else if (this.dom.attributes.setnodetype.nodeValue == 'hleaficon')
+        o.show();
     return false;
 }
 
@@ -1870,8 +1873,9 @@ function showConceptDistributionHistogramForSubsetComplete(result)
     Ext.get("setvaluechartsPanel2").update(result.responseText);
 }
 
-function showConceptDistributionHistogramForOmicsFilter(gene_symbol){
-
+function showConceptDistributionHistogramForOmicsFilter()
+{
+    var gene_symbol = document.getElementById("gene-searchbox").value;
     var concept_key = selectedConcept.getAttribute('conceptid');
 
     Ext.Ajax.request(
@@ -1907,7 +1911,12 @@ function showConceptDistributionHistogramForOmicsFilterForSubset()
             success: function(result, request){showConceptDistributionHistogramForOmicsFilterForSubsetComplete(result);},
             failure: function(result, request){showConceptDistributionHistogramForOmicsFilterForSubsetComplete(result);},
             timeout: '300000',
-            params: Ext.urlEncode({concept_key: concept_key, gene_symbol: gene_symbol, result_instance_id1: GLOBAL.CurrentSubsetIDs[getSubsetFromPanel(selectedDiv)]})
+            params: Ext.urlEncode({concept_key: concept_key,
+                                   gene_symbol: gene_symbol,
+                                   result_instance_id1: " ", // hack: chartcontroller will see this as non-empty,
+                                                             // omicsqueryservice will see this as empty and show
+                                                             // distribution for complete study
+                                   result_instance_id2: GLOBAL.CurrentSubsetIDs[getSubsetFromPanel(selectedDiv)]})
         });
 }
 

@@ -1053,14 +1053,25 @@ Ext.onReady(function () {
                             text : 'Show Histogram',
                             handler: function () {
                                 var gene_symbol = document.getElementById("gene-searchbox").value;
+
+                                if (gene_symbol == "") {
+                                    alert("Please select a gene symbol first.");
+                                    return;
+                                }
                                 showConceptDistributionHistogramForOmicsFilterComplete(null)
-                                showConceptDistributionHistogramForOmicsFilter(gene_symbol);
+                                showConceptDistributionHistogramForOmicsFilter();
                             }
                         }
                         ,
                         {
                             text : 'Show Histogram for subset',
                             handler: function () {
+                                var gene_symbol = document.getElementById("gene-searchbox").value;
+
+                                if (gene_symbol == "") {
+                                    alert("Please select a gene symbol first.");
+                                    return;
+                                }
                                 var subset = getSubsetFromPanel(selectedDiv)
                                 if (!isSubsetEmpty(subset)) {
                                     showConceptDistributionHistogramForOmicsFilterForSubsetComplete(null)
