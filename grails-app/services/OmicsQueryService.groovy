@@ -246,7 +246,7 @@ class OmicsQueryService {
         log.info("Getting concept distribution data for high dimension concept code:" + concept_cd + " and result_instance_id: " +
                 result_instance_id + " and gene_symbol: " + gene_symbol)
         ArrayList<Double> values = new ArrayList<Double>();
-        if (result_instance_id == "") {
+        if (result_instance_id.trim() == "") {
             log.info("getConceptDistributionDataForHighDimensionConceptFromCode called with no result_istance_id")
             return getConceptDistributionDataForHighDimensionConcept(concept_cd, gene_symbol)
         }
