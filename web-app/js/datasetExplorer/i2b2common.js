@@ -2019,6 +2019,7 @@ function getTreeNodeFromJsonNode(concept)
 	    
 	    // set the root node
     	newnode = new Tree.AsyncTreeNode({
+    		accession: name,
             text: name,
             draggable: draggable,
             leaf: leaf,
@@ -2077,6 +2078,7 @@ function getTreeNodeFromJSON(concept)
          }
          var newnode = new Tree.AsyncTreeNode(
          {
+        	accession: name,
             text : name,
             draggable : draggable,
             leaf : leaf,
