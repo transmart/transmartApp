@@ -40,13 +40,13 @@ var assayCount = 3
 <div style="margin:10px;padding:10px;">
 <h3 class="rdc-h3">${experimentInstance?.title}</h3>
 <div style="line-height:14px;font-family:arial,​tahoma,​helvetica,​sans-serif; font-size: 12px;">
- <g:if test="${experimentInstance?.description.length() > 325000}">
+ <g:if test="${experimentInstance?.description != null && experimentInstance?.description.length() > 325000}">
                        ${(experimentInstance?.description).substring(0,324000)}&nbsp;&nbsp;
                        <a href=# >...See more</a>
                        </g:if>
-                       <g:else>
-                        ${experimentInstance?.description}
-                        </g:else></div>
+                       <g:elseif test="${experimentInstance?.description != null}">
+                       ${experimentInstance?.description}
+                       </g:elseif></div>
 <div style="height:20px;"></div>
 
 <div style="width:800px; border:2px solid #DDD; border-radius:8px;-moz-border-radius: 8px;">
