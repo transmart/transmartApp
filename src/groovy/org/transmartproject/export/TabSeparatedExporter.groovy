@@ -88,7 +88,7 @@ class TabSeparatedExporter implements HighDimExporter {
             List<AssayColumn> assayList = tabularResult.indicesList
 
             // Start looping 
-            for (DataRow<AssayColumn, Map<String, String>> datarow : tabularResult) {
+            for (DataRow<AssayColumn, Object> datarow : tabularResult) {
                 // Test periodically if the export is cancelled
                 if (isCancelled()) {
                     return null
@@ -96,7 +96,7 @@ class TabSeparatedExporter implements HighDimExporter {
 
                 for (AssayColumn assay : assayList) {
                     // Retrieve data for the current assay from the datarow
-                    Map<String, String> data = datarow[assay]
+                    def data = datarow[assay]
 
                     if (data == null) {
                         continue
