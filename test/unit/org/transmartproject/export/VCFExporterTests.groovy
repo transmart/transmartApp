@@ -47,7 +47,7 @@ class VCFExporterTests {
 
         play {
 
-            exporter.export(tabularResult, projection, outputStream, { true })
+            exporter.export(tabularResult, projection, { name, ext -> outputStream}, { true })
 
             // As the export is cancelled, 
             assert !outputStream.toString()
@@ -64,7 +64,7 @@ class VCFExporterTests {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
 
         play {
-            exporter.export(tabularResult, projection, outputStream)
+            exporter.export(tabularResult, projection, { name, ext -> outputStream })
 
             // Assert we have at least some text, in UTF-8 encoding
             String output = outputStream.toString("UTF-8")
@@ -112,7 +112,7 @@ class VCFExporterTests {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
 
         play {
-            exporter.export(tabularResult, projection, outputStream)
+            exporter.export(tabularResult, projection, { name, ext -> outputStream })
 
             // Assert we have at least some text, in UTF-8 encoding
             String output = outputStream.toString("UTF-8")

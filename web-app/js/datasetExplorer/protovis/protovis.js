@@ -821,7 +821,7 @@ pv.Format.time = function(type) {
         return t;
       }
     }
-  }
+  };
 
   return format;
 };
@@ -1446,7 +1446,7 @@ pv.max.index = function(array, f) {
     }
   }
   return maxi;
-}
+};
 
 /**
  * Returns the minimum value of the specified array of numbers. If the specified
@@ -1488,7 +1488,7 @@ pv.min.index = function(array, f) {
     }
   }
   return mini;
-}
+};
 
 /**
  * Returns the arithmetic mean, or average, of the specified array. If the
@@ -2429,7 +2429,7 @@ pv.Nest.prototype.entries = function() {
     for (var k in map) {
       var v = map[k];
       array.push({ key: k, values: (v instanceof Array) ? v : entries(v) });
-    };
+    }
     return array;
   }
 

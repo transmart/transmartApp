@@ -1,8 +1,8 @@
 STATE = {
-        Dragging: false,
-		Target: null,
-		QueryRequestCounter: 0
-}
+    Dragging: false,
+    Target: null,
+    QueryRequestCounter: 0
+};
 
 // list of supported platform
 // TODO : future refactoring should retrieve these values from gpl definitions in the database
@@ -36,7 +36,7 @@ function toggleRBMDisplayElements (ele, eleGpl, eleTissue, eleRbmpanel, platform
         ele.dom.style.display='';
         eleGpl.dom.style.display='';
         eleTissue.dom.style.display='';
-        eleRbmpanel.dom.style.display='none'
+        eleRbmpanel.dom.style.display='none';
     } else {
         ele.dom.style.display='none';
         eleGpl.dom.style.display='none';
@@ -47,61 +47,61 @@ function toggleRBMDisplayElements (ele, eleGpl, eleTissue, eleRbmpanel, platform
 
 function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes, applied_path, modifiedNode)
 {
-	this.name=name;
-	this.key=key;
-	this.level=level;
-	this.tooltip=tooltip;
-	this.tablename=tablename;
-	this.dimcode=dimcode;
-	this.comment=comment;
-	this.normalunits=normalunits;
-	this.oktousevalues=oktousevalues;
-	this.value=value;
-	this.nodeType = nodeType
+    this.name=name;
+    this.key=key;
+    this.level=level;
+    this.tooltip=tooltip;
+    this.tablename=tablename;
+    this.dimcode=dimcode;
+    this.comment=comment;
+    this.normalunits=normalunits;
+    this.oktousevalues=oktousevalues;
+    this.value=value;
+    this.nodeType = nodeType;
     this.visualattributes = visualattributes;
-	this.applied_path    = applied_path || '@';
-	this.modifiedNode    = modifiedNode;
+    this.applied_path    = applied_path || '@';
+    this.modifiedNode    = modifiedNode;
 }
 
 function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
 {
     if (typeof(mode) == undefined || mode == null) {
-        this.mode = "novalue"
+        this.mode = "novalue";
     } //default to novalue
     else {
         this.mode = mode;
     }
 
     if (typeof(operator) == undefined || operator == null) {
-        this.operator = "LT"
+        this.operator = "LT";
     }
     else {
         this.operator = operator;
     }
 
     if (typeof(highlowselect) == undefined || highlowselect == null) {
-        this.highlowselect = "N"
+        this.highlowselect = "N";
     }
     else {
         this.highlowselect = highlowselect;
     }
 
     if (typeof(lowvalue) == undefined || lowvalue == null) {
-        this.lowvalue = ""
+        this.lowvalue = "";
     }
     else {
         this.lowvalue = lowvalue;
     }
 
     if (typeof(highvalue) == undefined || highvalue == null) {
-        this.highvalue = ""
+        this.highvalue = "";
     }
     else {
         this.highvalue = highvalue;
     }
 
     if (typeof(units) == undefined || units == null) {
-        this.units = ""
+        this.units = "";
     }
     else {
         this.units = units;
@@ -110,34 +110,32 @@ function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
 
 function convertNodeToConcept(node)
 {
-    var value=new Value();
-    var level=node.attributes.level;
-    var name=jQuery('<span>' + node.text + '</span>').find("em").remove().end().html().trim();
-    var key=node.id;
-    var tooltip=node.attributes.qtip;
-    var tablename=node.attributes.tablename;
-    var dimcode=node.attributes.dimcode;
-    var comment=node.attributes.comment;
-    var normalunits=node.attributes.normalunits;
-    var oktousevalues=node.attributes.oktousevalues;
-    var visualattributes=node.attributes.visualattributes;
-    var applied_path=node.attributes.applied_path;
+    var value = new Value();
+    var level = node.attributes.level;
+    var name = jQuery('<span>' + node.text + '</span>').find("em").remove().end().html().trim();
+    var key = node.id;
+    var tooltip = node.attributes.qtip;
+    var tablename = node.attributes.tablename;
+    var dimcode = node.attributes.dimcode;
+    var comment = node.attributes.comment;
+    var normalunits = node.attributes.normalunits;
+    var oktousevalues = node.attributes.oktousevalues;
+    var visualattributes = node.attributes.visualattributes;
+    var applied_path = node.attributes.applied_path;
 
     //Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
-    var nodeType = node.attributes.iconCls
-
+    var nodeType = node.attributes.iconCls;
     var modifiedNode = {};
     
-    modifiedNode.path     = node.attributes.modifiedNodePath;
-    modifiedNode.id     = node.attributes.modifiedNodeId;
-    modifiedNode.level     = node.attributes.modifiedNodeLevel;
-    
-    modifiedNode = modifiedNode;
-    
-    if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
-    
-    var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes, applied_path, modifiedNode);
-    return myConcept;
+    modifiedNode.path = node.attributes.modifiedNodePath;
+    modifiedNode.id = node.attributes.modifiedNodeId;
+    modifiedNode.level = node.attributes.modifiedNodeLevel;
+
+    if(oktousevalues === "Y") {
+       value.mode="novalue";
+    }
+
+    return new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes, applied_path, modifiedNode);
 }
 function createPanelItemNew(panel, concept)
 {
@@ -337,20 +335,25 @@ function conceptRightClick(event)
 
     if (!this.contextMenuConcepts) {
     this.contextMenuConcepts = new Ext.menu.Menu({
-    id: 'contextMenuConcepts',
-    items: [{
-    text: 'Delete', handler: function(){
-                                        selectedDiv.removeChild(selectedConcept);
-                                        removeUselessPanels()
-                                        invalidateSubset(getSubsetFromPanel(selectedDiv));
-                                        
-                                        }
-    },{id: 'setvaluemenu', text: 'Set Value', handler:function(){showSetValueDialog();}},
-    {
-    text: 'Show Definition', handler:function(){ showConceptInfoDialog(conceptid, conceptid, comment);}
-    }
-    ]
-    }); 
+        id: 'contextMenuConcepts',
+        items: [{
+            text: 'Delete', handler: function() {
+                selectedDiv.removeChild(selectedConcept);
+                removeUselessPanels()
+                invalidateSubset(getSubsetFromPanel(selectedDiv));
+            }
+        },{
+            id: 'setvaluemenu',
+            text: 'Set Value',
+            handler:function() {
+                showSetValueDialog();
+            }
+        }, {
+            text: 'Show Definition',
+            handler: function() {
+                showConceptInfoDialog(conceptid, conceptid, comment);}
+            }]
+        }); 
     }
     var xy = event.getXY();
     this.contextMenuConcepts.showAt(xy);
@@ -424,32 +427,30 @@ function showSetValueDialog()
         setvaluewin.show(viewport);
         var mode=conceptnode.getAttribute('setvaluemode');
         var test=document.getElementsByName("setValueMethod");
-        if(mode!=null)
-               {
-                setCheckedValue(test, mode)
-                setValueMethodChanged(mode);
-            }
-        else //default to numeric
-        {
-            if(test.length>0)
-                {
+        if(mode!=null) {
+            setCheckedValue(test, mode);
+            setValueMethodChanged(mode);
+        } else {
+            if(test.length>0) {
                 setCheckedValue(test, "numeric"); //numeric
                 setValueMethodChanged("numeric");
-                }
             }
+        }
 
-        var highvalue=conceptnode.getAttribute('setvaluehighvalue');
-        if(highvalue!=null)
+        var highvalue = conceptnode.getAttribute('setvaluehighvalue');
+        if (highvalue != null) {
                 document.getElementById("setValueHighValue").value=highvalue;
-        else
+        } else {
             document.getElementById("setValueHighValue").value="";
+        }
 
         var lowvalue=conceptnode.getAttribute('setvaluelowvalue');
         var blah=document.getElementById("setValueLowValue");
-        if(lowvalue!=null)
-                blah.value=lowvalue;
-        else
-            blah.value="";
+        if (lowvalue != null) {
+            blah.value=lowvalue;
+        } else {
+            blah.value = "";
+        }
 
         var units=conceptnode.getAttribute('setvalueunits');
         if(units!=null)
@@ -553,115 +554,115 @@ function createNClusterSelector() {
         GLOBAL.nClusters = 2;
         var nclusters = new Ext.form.NumberField({
             allowDecimals: false,
-    		allowNegative: false,
-			minValue: 1,
-			maxValue: 100,
-			name: "Number of clusters",
-			value: 2,
-			applyTo: 'nClusters'
-		});
-		nclusters.on('change', 
-					 function(r) {
-						GLOBAL.nClusters = r.getValue();
-					 });
-		nclusters.show();
-		return nclusters;
-	}
+            allowNegative: false,
+            minValue: 1,
+            maxValue: 100,
+            name: "Number of clusters",
+            value: 2,
+            applyTo: 'nClusters'
+        });
+        nclusters.on('change', 
+                     function(r) {
+                        GLOBAL.nClusters = r.getValue();
+                     });
+        nclusters.show();
+        return nclusters;
+    }
 }
 
 function createNClustersBox(){
-	GLOBAL.nClusters = 2;
-	var nclusters = new Ext.form.NumberField({
-		allowDecimals: false,
-		allowNegative: false,
-		minValue: 1,
-		maxValue: 100,
-		name: "Number of clusters",
-		value: 2,
-		applyTo: 'nClusters',
-		validator: function(value)
-		{
-	        if(value < 1) 
-	        {
-	            return 'You must choose at least 1 cluster.';
-	        } 
-	        else if(value > 100)
-	        {
-	        	return 'You must choose less than 100 clusters.';
-	        }
-	        else 
-	        {
-	            return true;
-	        }
-	    }
-	});
-	nclusters.on('change', 
-			function(r) {
-		GLOBAL.nClusters = r.getValue();
-	});
-	nclusters.show();
-	
-  	if (GLOBAL.HeatmapType != 'KMeans') {
-		document.getElementById("divnclusters").style.display = "none";
-  	}
+    GLOBAL.nClusters = 2;
+    var nclusters = new Ext.form.NumberField({
+        allowDecimals: false,
+        allowNegative: false,
+        minValue: 1,
+        maxValue: 100,
+        name: "Number of clusters",
+        value: 2,
+        applyTo: 'nClusters',
+        validator: function(value)
+        {
+            if(value < 1) 
+            {
+                return 'You must choose at least 1 cluster.';
+            } 
+            else if(value > 100)
+            {
+                return 'You must choose less than 100 clusters.';
+            }
+            else 
+            {
+                return true;
+            }
+        }
+    });
+    nclusters.on('change', 
+            function(r) {
+        GLOBAL.nClusters = r.getValue();
+    });
+    nclusters.show();
+    
+      if (GLOBAL.HeatmapType != 'KMeans') {
+        document.getElementById("divnclusters").style.display = "none";
+      }
 }
 
 function createPathwaySearchBox(searchInputEltName, divName){
-  	var ajaxurl;
-  	var ds;
-  	var resultTpl;
-  	if (GLOBAL.searchType==='native'){
-  		ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'name'
-				},[
-					{name: 'uid'},
-					{name: 'source'},
-					{name: 'name'},
-					{name: 'type'}
-			   	]
-			)
-		});
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p width="430px" style="font: 11px verdana, arial, helvetica, sans-serif;"><span>{source}></span>&nbsp;<b>{name}</b></p>',
-	        '</div></tpl>'
-	    );
-  	}else{
-  		ajaxurl=pageInfo.basePath+'/search/loadSearchPathways';
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: "rows", id: "id"},
-				[
-				 	{name: "id"},
-				 	{name: "source"},
-				 	{name: "keyword"},
-				 	{name: "synonyms"},
-					{name: "category"},
-					{name: "display"}
-				]
-			)
-		});
-		
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for=".">',
-	    		'<div class="search-item">',
-	    			'<p>',
-	    				'<span class="category-{display:lowercase}">{display}&gt;{source}</span>&nbsp;',
-	    				'<b>{keyword}</b>&nbsp; {synonyms}',
-	    			'</p>',
-	    		'</div>',
-	    	'</tpl>'
-	    );
-  	}
+      var ajaxurl;
+      var ds;
+      var resultTpl;
+      if (GLOBAL.searchType==='native'){
+          ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'name'
+                },[
+                    {name: 'uid'},
+                    {name: 'source'},
+                    {name: 'name'},
+                    {name: 'type'}
+                   ]
+            )
+        });
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p width="430px" style="font: 11px verdana, arial, helvetica, sans-serif;"><span>{source}></span>&nbsp;<b>{name}</b></p>',
+            '</div></tpl>'
+        );
+      }else{
+          ajaxurl=pageInfo.basePath+'/search/loadSearchPathways';
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: "rows", id: "id"},
+                [
+                     {name: "id"},
+                     {name: "source"},
+                     {name: "keyword"},
+                     {name: "synonyms"},
+                    {name: "category"},
+                    {name: "display"}
+                ]
+            )
+        });
+        
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for=".">',
+                '<div class="search-item">',
+                    '<p>',
+                        '<span class="category-{display:lowercase}">{display}&gt;{source}</span>&nbsp;',
+                        '<b>{keyword}</b>&nbsp; {synonyms}',
+                    '</p>',
+                '</div>',
+            '</tpl>'
+        );
+      }
     var search = new Ext.form.ComboBox({
         store: ds,
         displayField:'title',
@@ -682,94 +683,94 @@ function createPathwaySearchBox(searchInputEltName, divName){
         //renderTo: 'search',
         itemSelector: 'div.search-item',
         onSelect: function(record){ // override default onSelect to do redirect
-         	//alert(record.data.naturalid);
-         	//compareStepPathwaySelection.hide();
+             //alert(record.data.naturalid);
+             //compareStepPathwaySelection.hide();
              var sp=Ext.get(searchInputEltName);
              if (GLOBAL.searchType==='native'){
-	             sp.dom.value=record.data.name;
-	             GLOBAL.CurrentPathway=record.data.uid;
-	             GLOBAL.CurrentPathwayName=record.data.name;
-    		}else{
-	             sp.dom.value=record.data.keyword;
-	             GLOBAL.CurrentPathway=record.data.id;
-	             GLOBAL.CurrentPathwayName=record.data.keyword;
-    		}
+                 sp.dom.value=record.data.name;
+                 GLOBAL.CurrentPathway=record.data.uid;
+                 GLOBAL.CurrentPathwayName=record.data.name;
+            }else{
+                 sp.dom.value=record.data.keyword;
+                 GLOBAL.CurrentPathway=record.data.id;
+                 GLOBAL.CurrentPathwayName=record.data.keyword;
+            }
              search.collapse();
-             //compareSubsets(); 	
+             //compareSubsets();     
         }
     });
     search.on('focus', function(){
-    								var sp=Ext.get(searchInputEltName);
-    								sp.dom.value="";	
-    								}, this);
+                                    var sp=Ext.get(searchInputEltName);
+                                    sp.dom.value="";    
+                                    }, this);
 
-  	if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') {
-  		//Clear the pathway variable so we don't submit a value.
-  		GLOBAL.CurrentPathway = '';
-  		
-  		//Remove the pathway box.
-		document.getElementById(divName).style.display = "none";
-  	}
+      if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') {
+          //Clear the pathway variable so we don't submit a value.
+          GLOBAL.CurrentPathway = '';
+          
+          //Remove the pathway box.
+        document.getElementById(divName).style.display = "none";
+      }
 }
 
 function showPathwaySearchBox(selectedListEltName, pathwayAndIdEltName, searchInputEltName, divName){
-  	var ajaxurl;
-  	var ds;
-  	var resultTpl;
-  	var extSearchItemName = divName + "-search-item";
-  	
-  	if (GLOBAL.searchType==='native'){
-  		ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'name'
-				},[
-					{name: 'uid'},
-					{name: 'source'},
-					{name: 'name'},
-					{name: 'type'}
-			   	]
-			)
-		});
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="' + extSearchItemName + '">',
-	            '<p width="430px" style="font: 11px verdana, arial, helvetica, sans-serif;"><span>{source}></span>&nbsp;<b>{name}</b></p>',
-	        '</div></tpl>'
-	    );
-  	}else{
-  		ajaxurl=pageInfo.basePath+'/search/loadSearchAnalysis';
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: "rows", id: "id"},
-				[
-				 	{name: "id"},
-				 	{name: "source"},
-				 	{name: "keyword"},
-				 	{name: "synonyms"},
-					{name: "category"},
-					{name: "display"}
-				]
-			)
-		});
-		
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        	'<tpl for=".">',
-	    		'<div class="' + divName + '-search-item">',
-	    			'<p>',
-	    				'<span class="category-{display:lowercase}">{display}&gt;{source}</span>&nbsp;',
-	    				'<b>{keyword}</b>&nbsp; {synonyms}',
-	    			'</p>',
-	    		'</div>',
-	    	'</tpl>'
-	    );
-  	}
+      var ajaxurl;
+      var ds;
+      var resultTpl;
+      var extSearchItemName = divName + "-search-item";
+      
+      if (GLOBAL.searchType==='native'){
+          ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'name'
+                },[
+                    {name: 'uid'},
+                    {name: 'source'},
+                    {name: 'name'},
+                    {name: 'type'}
+                   ]
+            )
+        });
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="' + extSearchItemName + '">',
+                '<p width="430px" style="font: 11px verdana, arial, helvetica, sans-serif;"><span>{source}></span>&nbsp;<b>{name}</b></p>',
+            '</div></tpl>'
+        );
+      }else{
+          ajaxurl=pageInfo.basePath+'/search/loadSearchAnalysis';
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: "rows", id: "id"},
+                [
+                     {name: "id"},
+                     {name: "source"},
+                     {name: "keyword"},
+                     {name: "synonyms"},
+                    {name: "category"},
+                    {name: "display"}
+                ]
+            )
+        });
+        
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+                '<tpl for=".">',
+                '<div class="' + divName + '-search-item">',
+                    '<p>',
+                        '<span class="category-{display:lowercase}">{display}&gt;{source}</span>&nbsp;',
+                        '<b>{keyword}</b>&nbsp; {synonyms}',
+                    '</p>',
+                '</div>',
+            '</tpl>'
+        );
+      }
     var search = new Ext.form.ComboBox({
         store: ds,
         displayField:'title',
@@ -788,69 +789,69 @@ function showPathwaySearchBox(selectedListEltName, pathwayAndIdEltName, searchIn
         onSelect: function(record){ // override default onSelect to do redirect
              var sp=Ext.get(searchInputEltName);
              if (GLOBAL.searchType==='native'){
-	             sp.dom.value=record.data.name;
-	             GLOBAL.CurrentPathway = record.data.uid;
-    		}else {
-	             var selectedGeneStr = record.data.display + '> ' + record.data.keyword;
-	             var selectedListElt = Ext.get(selectedListEltName);
-	             var selectedListText = selectedListElt.dom.value;
-	             if (selectedListText && selectedListText.length != 0) {
-	            	 selectedListText = selectedListText + ", " + selectedGeneStr;
-	             }
-	             else {
-	            	 selectedListText = selectedGeneStr;
-	             }
-	             selectedListElt.dom.value = selectedListText;
-	             // Set the cursor at the end of the text
-	             if (selectedListElt.createTextRange) {
-	            	 var rnage = selectedListElt.createTextRange();
-	            	 range.move("character", selectedListText.length);
-	            	 range.select();
-	             }
-	             else if (selectedListElt.selectionStart) {
-	            	 selectedListElt.focus();
-	            	 selectedListElt.setSelectionRange(selectedListText.length, selectedListText.length);
-	             }
-	             
-	             //Put the gene display || transmart search_keywork id in selectedGenesAndIdSNPViewer hidden field, separated by |||
-	             var geneAndIdStr = selectedGeneStr + '||' + record.data.id;
-	             var geneAndIdElt = Ext.get(pathwayAndIdEltName);
-	             var geneAndIdListText = geneAndIdElt.dom.value;
-	             if (geneAndIdListText && geneAndIdListText.length != 0) {
-	            	 geneAndIdListText = geneAndIdListText + "|||" + geneAndIdStr;
-	             }
-	             else {
-	            	 geneAndIdListText = geneAndIdStr;
-	             }
-	             geneAndIdElt.dom.value = geneAndIdListText;
-	             sp.dom.value="";	// Empty the search term input field, ready for user to type in next term.
-    		}
+                 sp.dom.value=record.data.name;
+                 GLOBAL.CurrentPathway = record.data.uid;
+            }else {
+                 var selectedGeneStr = record.data.display + '> ' + record.data.keyword;
+                 var selectedListElt = Ext.get(selectedListEltName);
+                 var selectedListText = selectedListElt.dom.value;
+                 if (selectedListText && selectedListText.length != 0) {
+                     selectedListText = selectedListText + ", " + selectedGeneStr;
+                 }
+                 else {
+                     selectedListText = selectedGeneStr;
+                 }
+                 selectedListElt.dom.value = selectedListText;
+                 // Set the cursor at the end of the text
+                 if (selectedListElt.createTextRange) {
+                     var rnage = selectedListElt.createTextRange();
+                     range.move("character", selectedListText.length);
+                     range.select();
+                 }
+                 else if (selectedListElt.selectionStart) {
+                     selectedListElt.focus();
+                     selectedListElt.setSelectionRange(selectedListText.length, selectedListText.length);
+                 }
+                 
+                 //Put the gene display || transmart search_keywork id in selectedGenesAndIdSNPViewer hidden field, separated by |||
+                 var geneAndIdStr = selectedGeneStr + '||' + record.data.id;
+                 var geneAndIdElt = Ext.get(pathwayAndIdEltName);
+                 var geneAndIdListText = geneAndIdElt.dom.value;
+                 if (geneAndIdListText && geneAndIdListText.length != 0) {
+                     geneAndIdListText = geneAndIdListText + "|||" + geneAndIdStr;
+                 }
+                 else {
+                     geneAndIdListText = geneAndIdStr;
+                 }
+                 geneAndIdElt.dom.value = geneAndIdListText;
+                 sp.dom.value="";    // Empty the search term input field, ready for user to type in next term.
+            }
              search.collapse();
         }
     });
     search.on('focus', function(){
-    								var sp=Ext.get(searchInputEltName);
-    								sp.dom.value="";	
-    								}, this);
+                                    var sp=Ext.get(searchInputEltName);
+                                    sp.dom.value="";    
+                                    }, this);
 }
 
 function createPathwaySearchBoxRBM(ajaxurl, boxwidth){
-	var ds =new Ext.data.Store({
-		proxy: new Ext.data.ScriptTagProxy({
-			url: ajaxurl}),
-		reader: new Ext.data.JsonReader({
-			root: 'rows',
-			id: 'name'
-			},[
-				{name: 'uid'},
-				{name: 'source'},
-				{name: 'name'},
-				{name: 'type'}
-		   	]
-		)
-	});
-	
-	// Custom rendering Template
+    var ds =new Ext.data.Store({
+        proxy: new Ext.data.ScriptTagProxy({
+            url: ajaxurl}),
+        reader: new Ext.data.JsonReader({
+            root: 'rows',
+            id: 'name'
+            },[
+                {name: 'uid'},
+                {name: 'source'},
+                {name: 'name'},
+                {name: 'type'}
+               ]
+        )
+    });
+    
+    // Custom rendering Template
     var resultTpl = new Ext.XTemplate(
         '<tpl for="."><div class="search-item">',
             '<p width="430px" style="font: 11px verdana, arial, helvetica, sans-serif;"><span>{source}></span>&nbsp;<b>{name}</b></p>',
@@ -859,21 +860,21 @@ function createPathwaySearchBoxRBM(ajaxurl, boxwidth){
     
     // add selector for k
 
-	GLOBAL.nClusters = 2;
-	var nclusters = new Ext.form.NumberField({
-		allowDecimals: false,
-		allowNegative: false,
-		minValue: 1,
-		maxValue: 100,
-		name: "Number of clusters",
-		value: 2,
-		applyTo: 'nClustersRBM'
-	});
-	nclusters.on('change', 
-			function(r) {
-		GLOBAL.nClusters = r.getValue();
-	});
-	nclusters.show();
+    GLOBAL.nClusters = 2;
+    var nclusters = new Ext.form.NumberField({
+        allowDecimals: false,
+        allowNegative: false,
+        minValue: 1,
+        maxValue: 100,
+        name: "Number of clusters",
+        value: 2,
+        applyTo: 'nClustersRBM'
+    });
+    nclusters.on('change', 
+            function(r) {
+        GLOBAL.nClusters = r.getValue();
+    });
+    nclusters.show();
     
     var search = new Ext.form.ComboBox({
         store: ds,
@@ -895,76 +896,76 @@ function createPathwaySearchBoxRBM(ajaxurl, boxwidth){
              var sp=Ext.get("searchPathwayRBM");
              sp.dom.value=record.data.name;
              GLOBAL.CurrentPathway=record.data.uid;
-             search.collapse();         	
+             search.collapse();             
         }
     });
-    search.on('focus', function()	{
-    	var sp=Ext.get("searchPathwayRBM");
-    	sp.dom.value="";	
+    search.on('focus', function()    {
+        var sp=Ext.get("searchPathwayRBM");
+        sp.dom.value="";    
     }, this);
     return search;
 }
 
 function createPlatformSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix = 'platforms';
-	var applyToDivId = applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-		ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'platform'
-				},[
-					{name: 'platform'},
-					{name: 'platformLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 1, TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
-       			}
-			}
-		});
+    var applyToDivIdPrefix = 'platforms';
+    var applyToDivId = applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+        ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'platform'
+                },[
+                    {name: 'platform'},
+                    {name: 'platformLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 1, TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
+                   }
+            }
+        });
 
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{platformLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	var onSelectFn=function(record)
-	{
-		var sp=Ext.get(applyToDivId);
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{platformLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+    var onSelectFn=function(record)
+    {
+        var sp=Ext.get(applyToDivId);
         sp.dom.value=record.data.platformLabel;
         GLOBAL.CurrentPlatforms[subsetId-1]=record.data.platform;
         
-	    var fields=['gpl'+applyToDivIdx, 'sample'+applyToDivIdx, 'tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx, 'rbmpanel'+applyToDivIdx];
-	    var globalValues=[GLOBAL.CurrentGpls, GLOBAL.CurrentSamples, GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints, GLOBAL.CurrentRbmpanels];
-	    
+        var fields=['gpl'+applyToDivIdx, 'sample'+applyToDivIdx, 'tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx, 'rbmpanel'+applyToDivIdx];
+        var globalValues=[GLOBAL.CurrentGpls, GLOBAL.CurrentSamples, GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints, GLOBAL.CurrentRbmpanels];
+        
         clearSelectionsOnSelect(fields, globalValues, applyToDivIdx);
         
-		var ele=Ext.get('divsample'+applyToDivIdx);
-		var eleGpl=Ext.get('divgpl'+applyToDivIdx);
-		var eleTissue=Ext.get('divtissue'+applyToDivIdx);
-		var eleRbmpanel=Ext.get('divrbmpanel'+applyToDivIdx);
+        var ele=Ext.get('divsample'+applyToDivIdx);
+        var eleGpl=Ext.get('divgpl'+applyToDivIdx);
+        var eleTissue=Ext.get('divtissue'+applyToDivIdx);
+        var eleRbmpanel=Ext.get('divrbmpanel'+applyToDivIdx);
 
         toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[applyToDivIdx-1]);
 
-		toggleDataAssociationFields();
-		
-		this.collapse();
-		
-		if (!((!GLOBAL.CurrentPlatforms[0]) || (!GLOBAL.CurrentPlatforms[1]) || (GLOBAL.CurrentPlatforms[0]==GLOBAL.CurrentPlatforms[1]))){
-			alert('Platforms do not match');
-		}
-	}
-	GLOBAL.CurrentPlatforms[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[subsetId-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'platform', GLOBAL.DefaultCohortInfo.defaultPlatformLabels[subsetId-1]);
+        toggleDataAssociationFields();
+        
+        this.collapse();
+        
+        if (!((!GLOBAL.CurrentPlatforms[0]) || (!GLOBAL.CurrentPlatforms[1]) || (GLOBAL.CurrentPlatforms[0]==GLOBAL.CurrentPlatforms[1]))){
+            alert('Platforms do not match');
+        }
+    };
+    GLOBAL.CurrentPlatforms[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[subsetId-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'platform', GLOBAL.DefaultCohortInfo.defaultPlatformLabels[subsetId-1]);
 }
 
 /**
@@ -978,79 +979,79 @@ function createPlatformSearchBox(subsetId, applyToDivIdx){
  * @return
  */
 function createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, globalArray, fields, globalValues){
-	//This is the function that gets created on select.
-	var onSelectFn = function(record)
-	{
-		//Form the name of the div.
-		var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-		
-		//Get the div object.
-		var sp=Ext.get(applyToDivId);
-		
-		//This is an array of values.
-		var completeSelection = globalArray[subsetId-1];
-		
-		//This is the divs current value.
-		var completeDisplaySelection = sp.dom.value;
-		
-		//This is the record we selected (Value).
-		var selectedValue = record.data[applyToDivIdPrefix];
-		
-		//This is the display value of the selected item.
-		var selectedDisplayValue = record.data[applyToDivIdPrefix+'Label'];
-			
-		//If we selected an item that isn't already in the global list, add it. Otherwise we remove that item.
-		if (completeSelection.indexOf(selectedValue)==-1)
-		{
-			//Mark the item as selected or not using the background color.
-			for (var i=0;i<this.innerList.dom.childNodes.length; i++)
-			{
-			  	if (this.store.data.items[i].id==selectedValue)
-			  	{
-			       	this.innerList.dom.childNodes[i].style.background='#DFE8F6';
-			       	break;
-			    }
-			}
-			
-			//As we select items we add them to the value/display strings.
-	    	if (completeSelection=='')
-	    	{
-	    		completeSelection=selectedValue;
-	    		completeDisplaySelection=selectedDisplayValue;
-	    	}else{
-	    		completeSelection=completeSelection+','+selectedValue;
-	    		completeDisplaySelection=completeDisplaySelection+','+selectedDisplayValue;
-	    	}
-	    	
-		}else{
-			
-			//Remove the item if we are deselecting it.
-			for (var i=0;i<this.innerList.dom.childNodes.length; i++){
-			  	if (this.store.data.items[i].id==selectedValue){
-			       	this.innerList.dom.childNodes[i].style.background='00000';
-			       	break;
-			       }
-			}
-			
-			if(completeSelection.indexOf(selectedValue+',')>-1){
-				completeSelection=completeSelection.replace(selectedValue+',','');
-				completeDisplaySelection=completeDisplaySelection.replace(selectedDisplayValue+',','');
-			}else if(completeSelection.indexOf(','+selectedValue)>-1){
-				completeSelection=completeSelection.replace(','+selectedValue,'');
-				completeDisplaySelection=completeDisplaySelection.replace(','+selectedDisplayValue,'');
-			}else{
-				completeSelection=completeSelection.replace(selectedValue,'');
-				completeDisplaySelection=completeDisplaySelection.replace(selectedDisplayValue,'');
-			}
-			
-		}
-		
-		sp.dom.value=completeDisplaySelection;
-		globalArray[subsetId-1]=completeSelection;		
-		
-		clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx);
-	}
-	return onSelectFn;
+    //This is the function that gets created on select.
+    var onSelectFn = function(record)
+    {
+        //Form the name of the div.
+        var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+        
+        //Get the div object.
+        var sp=Ext.get(applyToDivId);
+        
+        //This is an array of values.
+        var completeSelection = globalArray[subsetId-1];
+        
+        //This is the divs current value.
+        var completeDisplaySelection = sp.dom.value;
+        
+        //This is the record we selected (Value).
+        var selectedValue = record.data[applyToDivIdPrefix];
+        
+        //This is the display value of the selected item.
+        var selectedDisplayValue = record.data[applyToDivIdPrefix+'Label'];
+            
+        //If we selected an item that isn't already in the global list, add it. Otherwise we remove that item.
+        if (completeSelection.indexOf(selectedValue)==-1)
+        {
+            //Mark the item as selected or not using the background color.
+            for (var i=0;i<this.innerList.dom.childNodes.length; i++)
+            {
+                  if (this.store.data.items[i].id==selectedValue)
+                  {
+                       this.innerList.dom.childNodes[i].style.background='#DFE8F6';
+                       break;
+                }
+            }
+            
+            //As we select items we add them to the value/display strings.
+            if (completeSelection=='')
+            {
+                completeSelection=selectedValue;
+                completeDisplaySelection=selectedDisplayValue;
+            }else{
+                completeSelection=completeSelection+','+selectedValue;
+                completeDisplaySelection=completeDisplaySelection+','+selectedDisplayValue;
+            }
+            
+        }else{
+            
+            //Remove the item if we are deselecting it.
+            for (var i=0;i<this.innerList.dom.childNodes.length; i++){
+                  if (this.store.data.items[i].id==selectedValue){
+                       this.innerList.dom.childNodes[i].style.background='00000';
+                       break;
+                   }
+            }
+            
+            if(completeSelection.indexOf(selectedValue+',')>-1){
+                completeSelection=completeSelection.replace(selectedValue+',','');
+                completeDisplaySelection=completeDisplaySelection.replace(selectedDisplayValue+',','');
+            }else if(completeSelection.indexOf(','+selectedValue)>-1){
+                completeSelection=completeSelection.replace(','+selectedValue,'');
+                completeDisplaySelection=completeDisplaySelection.replace(','+selectedDisplayValue,'');
+            }else{
+                completeSelection=completeSelection.replace(selectedValue,'');
+                completeDisplaySelection=completeDisplaySelection.replace(selectedDisplayValue,'');
+            }
+            
+        }
+        
+        sp.dom.value=completeDisplaySelection;
+        globalArray[subsetId-1]=completeSelection;        
+        
+        clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx);
+    };
+    return onSelectFn;
 }
 
 /**
@@ -1061,11 +1062,11 @@ function createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, glob
  * @return
  */
 function clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx){
-	for (var i=0;i<fields.length;i++){
-	    sp=Ext.get(fields[i]);
-	    sp.dom.value='ALL';
-	    globalValues[i][subsetId-1]='';
-	}
+    for (var i=0;i<fields.length;i++){
+        sp=Ext.get(fields[i]);
+        sp.dom.value='ALL';
+        globalValues[i][subsetId-1]='';
+    }
 }
 
 /**
@@ -1090,270 +1091,270 @@ function hideWhenRBM(applyToDivId, subsetId)
  * @return
  */
 function hideWhenNotRBM(applyToDivId, subsetId){
-	if(!isRBMPlatform(GLOBAL.CurrentPlatforms[subsetId-1])){
-		var ele=Ext.get('div'+applyToDivId);
-		ele.dom.style.display='none';
-	}
+    if(!isRBMPlatform(GLOBAL.CurrentPlatforms[subsetId-1])){
+        var ele=Ext.get('div'+applyToDivId);
+        ele.dom.style.display='none';
+    }
 }
 
 function createGplSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix='gpl';
-	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-	  	ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'gpl'
-				},[
-					{name: 'gpl'},
-					{name: 'gplLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 5, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
-       			}
-			}
-		});
-		
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{gplLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	    //create onSelect handlers.
-	    var fields=['sample'+applyToDivIdx, 'tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx];
-	    var globalValues=[GLOBAL.CurrentSamples, GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentGpls, fields, globalValues);
-	    
-		GLOBAL.CurrentGpls[applyToDivIdx-1]=GLOBAL.DefaultCohortInfo.defaultGpls[applyToDivIdx-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'gpl', GLOBAL.DefaultCohortInfo.defaultGplLabels[subsetId-1]);
-	    
-	   	//Display this select box only if Platform is MRNA or unselected.
-	    hideWhenRBM(applyToDivId, subsetId);
+    var applyToDivIdPrefix='gpl';
+    var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+          ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'gpl'
+                },[
+                    {name: 'gpl'},
+                    {name: 'gplLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 5, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
+                   }
+            }
+        });
+        
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{gplLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+        //create onSelect handlers.
+        var fields=['sample'+applyToDivIdx, 'tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx];
+        var globalValues=[GLOBAL.CurrentSamples, GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints];
+        var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentGpls, fields, globalValues);
+        
+        GLOBAL.CurrentGpls[applyToDivIdx-1]=GLOBAL.DefaultCohortInfo.defaultGpls[applyToDivIdx-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'gpl', GLOBAL.DefaultCohortInfo.defaultGplLabels[subsetId-1]);
+        
+           //Display this select box only if Platform is MRNA or unselected.
+        hideWhenRBM(applyToDivId, subsetId);
 }
 
 function createRbmPanelSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix='rbmpanel';
-	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-	  	ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'rbmpanel'
-				},[
-					{name: 'rbmpanel'},
-					{name: 'rbmpanelLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 7, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
-       			}
-			}
-		});
-		
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{rbmpanelLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	    //create onSelect handlers.
-	    var fields=['timepoint'+applyToDivIdx];
-	    var globalValues=[GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentRbmpanels, fields, globalValues);
-	    
-		GLOBAL.CurrentRbmpanels[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[subsetId-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'rbmpanel', GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[subsetId-1]);
+    var applyToDivIdPrefix='rbmpanel';
+    var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+          ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'rbmpanel'
+                },[
+                    {name: 'rbmpanel'},
+                    {name: 'rbmpanelLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 7, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
+                   }
+            }
+        });
+        
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{rbmpanelLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+        //create onSelect handlers.
+        var fields=['timepoint'+applyToDivIdx];
+        var globalValues=[GLOBAL.CurrentTimepoints];
+        var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentRbmpanels, fields, globalValues);
+        
+        GLOBAL.CurrentRbmpanels[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[subsetId-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'rbmpanel', GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[subsetId-1]);
 
-	   	//Display this select box only if Platform is RBM.
-	    hideWhenNotRBM(applyToDivId, subsetId);
+           //Display this select box only if Platform is RBM.
+        hideWhenNotRBM(applyToDivId, subsetId);
 }
 
 function createTimePointsSearchBox(subsetId, applyToDivIdx){
-	
-	var applyToDivIdPrefix='timepoint';
-	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-	  	ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'timepoint'
-				},[
-					{name: 'timepoint'},
-					{name: 'timepointLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 3, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1],
-            		SAMPLES: GLOBAL.CurrentSamples[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], TISSUE: GLOBAL.CurrentTissues[subsetId-1], RBMPANEL: GLOBAL.CurrentRbmpanels[subsetId-1]};
-       			}
-			}
-		});
-		
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{timepointLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	    //create onSelect handlers.
-	    var fields=[];
-	    var globalValues=[];
-	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTimepoints, fields, globalValues);
-	    
-		GLOBAL.CurrentTimepoints[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[subsetId-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'timepoint', GLOBAL.DefaultCohortInfo.defaultTimepointLabels[subsetId-1]);
+    
+    var applyToDivIdPrefix='timepoint';
+    var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+          ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'timepoint'
+                },[
+                    {name: 'timepoint'},
+                    {name: 'timepointLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 3, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1],
+                    SAMPLES: GLOBAL.CurrentSamples[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], TISSUE: GLOBAL.CurrentTissues[subsetId-1], RBMPANEL: GLOBAL.CurrentRbmpanels[subsetId-1]};
+                   }
+            }
+        });
+        
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{timepointLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+        //create onSelect handlers.
+        var fields=[];
+        var globalValues=[];
+        var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTimepoints, fields, globalValues);
+        
+        GLOBAL.CurrentTimepoints[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[subsetId-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'timepoint', GLOBAL.DefaultCohortInfo.defaultTimepointLabels[subsetId-1]);
 }
 
 function createSamplesSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix='sample';
-	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-	  	ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'sample'
-				},[
-					{name: 'sample'},
-					{name: 'sampleLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 4, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
-       			}
-			}
-		});
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{sampleLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	    //create onSelect handlers.
-	    var fields=['tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx];
-	    var globalValues=[GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentSamples, fields, globalValues);
-		
-		GLOBAL.CurrentSamples[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultSamples[subsetId-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'sample', GLOBAL.DefaultCohortInfo.defaultSampleLabels[subsetId-1]);
-	    
-	   	//Display this select box only if Platform is MRNA or unselected.
-	    hideWhenRBM(applyToDivId, subsetId);
+    var applyToDivIdPrefix='sample';
+    var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+          ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'sample'
+                },[
+                    {name: 'sample'},
+                    {name: 'sampleLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 4, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
+                   }
+            }
+        });
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{sampleLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+        //create onSelect handlers.
+        var fields=['tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx];
+        var globalValues=[GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints];
+        var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentSamples, fields, globalValues);
+        
+        GLOBAL.CurrentSamples[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultSamples[subsetId-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'sample', GLOBAL.DefaultCohortInfo.defaultSampleLabels[subsetId-1]);
+        
+           //Display this select box only if Platform is MRNA or unselected.
+        hideWhenRBM(applyToDivId, subsetId);
 }
 
 function createTissueSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix='tissue';
-	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-	  	ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'tissue'
-				},[
-					{name: 'tissue'},
-					{name: 'tissueLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 6, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], 
-            				SAMPLE: GLOBAL.CurrentSamples[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
-       			}
-			}
-		});
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{tissueLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	    //create onSelect handlers.
-	    var fields=['timepoint'+applyToDivIdx];
-	    var globalValues=[GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTissues, fields, globalValues);
-	    
-		GLOBAL.CurrentTissues[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultTissues[subsetId-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'tissue', GLOBAL.DefaultCohortInfo.defaultTissueLabels[subsetId-1]);
-	    
-	   	//Display this select box only if Platform is MRNA or unselected.
-	    hideWhenRBM(applyToDivId, subsetId);
+    var applyToDivIdPrefix='tissue';
+    var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+          ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'tissue'
+                },[
+                    {name: 'tissue'},
+                    {name: 'tissueLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 6, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], 
+                            SAMPLE: GLOBAL.CurrentSamples[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
+                   }
+            }
+        });
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{tissueLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+        //create onSelect handlers.
+        var fields=['timepoint'+applyToDivIdx];
+        var globalValues=[GLOBAL.CurrentTimepoints];
+        var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTissues, fields, globalValues);
+        
+        GLOBAL.CurrentTissues[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultTissues[subsetId-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'tissue', GLOBAL.DefaultCohortInfo.defaultTissueLabels[subsetId-1]);
+        
+           //Display this select box only if Platform is MRNA or unselected.
+        hideWhenRBM(applyToDivId, subsetId);
 }
 
 Ext.ux.TransmartComboBox = Ext.extend(Ext.form.ComboBox, {
-	onLoad:function(){
-		Ext.ux.TransmartComboBox.superclass.onLoad.call(this);
-	    var completeSelection ='';
-	    if(this.name.indexOf('timepoint')>-1){
-	    	completeSelection=GLOBAL.CurrentTimepoints[this.name.substring(this.name.length-1)-1];
-	    }else if(this.name.indexOf('platform')>-1){
-	    	completeSelection=GLOBAL.CurrentPlatforms[this.name.substring(this.name.length-1)-1];
-	    }else if(this.name.indexOf('sample')>-1){
-	    	completeSelection=GLOBAL.CurrentSamples[this.name.substring(this.name.length-1)-1];
-	    }else if(this.name.indexOf('gpl')>-1){
-	    	completeSelection=GLOBAL.CurrentGpls[this.name.substring(this.name.length-1)-1];
-	    }else if(this.name.indexOf('tissue')>-1){
-	    	completeSelection=GLOBAL.CurrentTissues[this.name.substring(this.name.length-1)-1];
-	    }else if(this.name.indexOf('rbmpanel')>-1){
-	    	completeSelection=GLOBAL.CurrentRbmpanels[this.name.substring(this.name.length-1)-1];
-	    }
-	    if(completeSelection && (completeSelection!='')){
-	    	var selectionsArray = completeSelection.split(',');
-			for (var i=0;i<this.innerList.dom.childNodes.length; i++){
-				for(var j=0;j<selectionsArray.length; j++){
-				  	if (this.store.data.items[i].id==selectionsArray[j]){
-				       	this.innerList.dom.childNodes[i].style.background='#DFE8F6';
-				       	break;
-				    }else{
-				       	this.innerList.dom.childNodes[i].style.background='00000';
-				    }
-				}
-			}
-	    }
-	}
+    onLoad:function(){
+        Ext.ux.TransmartComboBox.superclass.onLoad.call(this);
+        var completeSelection ='';
+        if(this.name.indexOf('timepoint')>-1){
+            completeSelection=GLOBAL.CurrentTimepoints[this.name.substring(this.name.length-1)-1];
+        }else if(this.name.indexOf('platform')>-1){
+            completeSelection=GLOBAL.CurrentPlatforms[this.name.substring(this.name.length-1)-1];
+        }else if(this.name.indexOf('sample')>-1){
+            completeSelection=GLOBAL.CurrentSamples[this.name.substring(this.name.length-1)-1];
+        }else if(this.name.indexOf('gpl')>-1){
+            completeSelection=GLOBAL.CurrentGpls[this.name.substring(this.name.length-1)-1];
+        }else if(this.name.indexOf('tissue')>-1){
+            completeSelection=GLOBAL.CurrentTissues[this.name.substring(this.name.length-1)-1];
+        }else if(this.name.indexOf('rbmpanel')>-1){
+            completeSelection=GLOBAL.CurrentRbmpanels[this.name.substring(this.name.length-1)-1];
+        }
+        if(completeSelection && (completeSelection!='')){
+            var selectionsArray = completeSelection.split(',');
+            for (var i=0;i<this.innerList.dom.childNodes.length; i++){
+                for(var j=0;j<selectionsArray.length; j++){
+                      if (this.store.data.items[i].id==selectionsArray[j]){
+                           this.innerList.dom.childNodes[i].style.background='#DFE8F6';
+                           break;
+                    }else{
+                           this.innerList.dom.childNodes[i].style.background='00000';
+                    }
+                }
+            }
+        }
+    }
 });
 Ext.reg("transmartcombobox", Ext.ux.TransmartComboBox);
 
 
 function createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, boxwidth, mode_in, onSelectFn, displayField_in, value_in){
-	
-		if(!value_in || value_in=="") value_in = "ALL"
-	
-	    var search = new Ext.ux.TransmartComboBox({
+    
+        if(!value_in || value_in=="") value_in = "ALL";
+    
+        var search = new Ext.ux.TransmartComboBox({
         store: ds,
         displayField:displayField_in,
         typeAhead: true,
@@ -1374,32 +1375,32 @@ function createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds,
         editable: false,
         value: value_in,
         listeners: {
-        	beforequery: function(qe){
-            	delete qe.combo.lastQuery;
-        	}
+            beforequery: function(qe){
+                delete qe.combo.lastQuery;
+            }
         }
     });
 }
 
 function AlertSpecialKey(event, field){
-	//alert(event.getKey());
-	var key=event.getKey();
-	if(key=='13' ||  key=='undefined')
-		{
-		event.stopPropagation();
-		return false;
-		}
-		return true;
-	}
-	
+    //alert(event.getKey());
+    var key=event.getKey();
+    if(key=='13' ||  key=='undefined')
+        {
+        event.stopPropagation();
+        return false;
+        }
+        return true;
+    }
+    
 function showCompareStepPathwaySelection()
 {
-	if(!this.compareStepPathwaySelection)
-	{
-		compareStepPathwaySelection = new Ext.Window({
+    if(!this.compareStepPathwaySelection)
+    {
+        compareStepPathwaySelection = new Ext.Window({
                 id: 'compareStepPathwaySelectionWindow',
                 title: 'Compare Subsets-Pathway Selection',
-            	layout:'fit',
+                layout:'fit',
                 width:450,
                 height:370,
                 //autoHeight: true,
@@ -1409,187 +1410,187 @@ function showCompareStepPathwaySelection()
                 border:false,
                 //autoScroll: true,
                 buttons: [
-                		{
+                        {
                             id: 'compareStepPathwaySelectionOKButton',
                             text: 'Run Workflow',
                             handler: function(){       
-                            	
-                            	//If we come from the sample side we handle the code a little different.
-				   				if(GLOBAL.Explorer == "SAMPLE")
-			   					{
-				   					finalAdvancedMenuValidationSample();
-				   					return;
-			   					}
-				   				finalAdvancedMenuValidation();
+                                
+                                //If we come from the sample side we handle the code a little different.
+                                   if(GLOBAL.Explorer == "SAMPLE")
+                                   {
+                                       finalAdvancedMenuValidationSample();
+                                       return;
+                                   }
+                                   finalAdvancedMenuValidation();
 
                             }
                         },
-                		{
+                        {
                             id: 'dataAssociationApplyButton',
                             text: 'Apply Selections',
                             handler: function(){       
-			   					applyToForm();
-			   					return;
-			   				}
+                                   applyToForm();
+                                   return;
+                               }
                         },
                         {
                             text: 'Cancel',
                             handler: function() {
-                            	compareStepPathwaySelection.hide();
+                                compareStepPathwaySelection.hide();
                             }
                          }],
-	            resizable: false,
-	            autoLoad:
-	            {
-	            	url: pageInfo.basePath+'/panels/compareStepPathwaySelection.html',
-	            	scripts: true,
-	               	nocache:true, 
-	               	discardUrl:true,
-	               	method:'POST',
-	               	callback: toggleDataAssociationFields
-	            },
-		        tools:[{
-					id:'help',
-					qtip:'Click for context sensitive help',
-				    handler: function(event, toolEl, panel){
-				    	D2H_ShowHelp('1126', helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-				    }
-		        }]
+                resizable: false,
+                autoLoad:
+                {
+                    url: pageInfo.basePath+'/panels/compareStepPathwaySelection.html',
+                    scripts: true,
+                       nocache:true, 
+                       discardUrl:true,
+                       method:'POST',
+                       callback: toggleDataAssociationFields
+                },
+                tools:[{
+                    id:'help',
+                    qtip:'Click for context sensitive help',
+                    handler: function(event, toolEl, panel){
+                        D2H_ShowHelp('1126', helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    }
+                }]
             });
         }else{
-        	resetCohortInfoValues();
-        	toggleDataAssociationFields();
+            resetCohortInfoValues();
+            toggleDataAssociationFields();
         }
 
-		compareStepPathwaySelection.show(viewport); 
+        compareStepPathwaySelection.show(viewport); 
 
-		// toggle display of "k" selector for k-means clustering
-		if (document.getElementById("divnclusters") != null) {
-			if (GLOBAL.HeatmapType == 'KMeans') {
-				document.getElementById("divnclusters").style.display = "";
-			} else {
-				document.getElementById("divnclusters").style.display = "none";
-			}
-		} else if (document.getElementById("divnclusters1") != null) {
-			if (GLOBAL.HeatmapType == 'KMeans') {
-				document.getElementById("divnclusters1").style.display = "";
-			} else {
-				document.getElementById("divnclusters1").style.display = "none";
-			}
-		}
-		
-		// toggle display of Gene/Pathway selector
-		if (document.getElementById("divpathway") != null) {
-			if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') 
-			{
-				//Clear the pathway variable so we don't submit a value.
-				GLOBAL.CurrentPathway = '';
-				
-				//Hide the pathway box.
-				document.getElementById("divpathway").style.display = "none";
-			} else {
-				document.getElementById("divpathway").style.display = "";
-			}
-		} else if (document.getElementById("divpathway1") != null) {
-			if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') {
-				document.getElementById("divpathway1").style.display = "none";
-			} else {
-				document.getElementById("divpathway1").style.display = "";
-			}
-		}
+        // toggle display of "k" selector for k-means clustering
+        if (document.getElementById("divnclusters") != null) {
+            if (GLOBAL.HeatmapType == 'KMeans') {
+                document.getElementById("divnclusters").style.display = "";
+            } else {
+                document.getElementById("divnclusters").style.display = "none";
+            }
+        } else if (document.getElementById("divnclusters1") != null) {
+            if (GLOBAL.HeatmapType == 'KMeans') {
+                document.getElementById("divnclusters1").style.display = "";
+            } else {
+                document.getElementById("divnclusters1").style.display = "none";
+            }
+        }
+        
+        // toggle display of Gene/Pathway selector
+        if (document.getElementById("divpathway") != null) {
+            if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') 
+            {
+                //Clear the pathway variable so we don't submit a value.
+                GLOBAL.CurrentPathway = '';
+                
+                //Hide the pathway box.
+                document.getElementById("divpathway").style.display = "none";
+            } else {
+                document.getElementById("divpathway").style.display = "";
+            }
+        } else if (document.getElementById("divpathway1") != null) {
+            if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') {
+                document.getElementById("divpathway1").style.display = "none";
+            } else {
+                document.getElementById("divpathway1").style.display = "";
+            }
+        }
 }
 
 //this function has been modified to accomodate the fields in the new panel for data-export
 //There should be a better way of doing this instead of adding code for new fields like below ... what if there are new panels with similar fields :( 
 function resetCohortInfoValues(){
-	if (Ext.get('platforms1') && Ext.get('platforms2')) { 
-		Ext.get('platforms1').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
-		Ext.get('platforms2').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
-	} else if (Ext.get('platforms3') && Ext.get('platforms4')) { 
-		Ext.get('platforms3').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
-		Ext.get('platforms4').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
-	}
-	GLOBAL.CurrentPlatforms[0]=GLOBAL.DefaultCohortInfo.defaultPlatforms[0];
-	GLOBAL.CurrentPlatforms[1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[1];
+    if (Ext.get('platforms1') && Ext.get('platforms2')) { 
+        Ext.get('platforms1').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
+        Ext.get('platforms2').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
+    } else if (Ext.get('platforms3') && Ext.get('platforms4')) { 
+        Ext.get('platforms3').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
+        Ext.get('platforms4').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
+    }
+    GLOBAL.CurrentPlatforms[0]=GLOBAL.DefaultCohortInfo.defaultPlatforms[0];
+    GLOBAL.CurrentPlatforms[1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[1];
 
-	if (Ext.get('timepoint1') && Ext.get('timepoint2')) {
-		Ext.get('timepoint1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
-		Ext.get('timepoint2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
-	} else if (Ext.get('timepoint3') && Ext.get('timepoint4')) {
-		Ext.get('timepoint3').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
-		Ext.get('timepoint4').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
-	}
-	GLOBAL.CurrentTimepoints[0]=GLOBAL.DefaultCohortInfo.defaultTimepoints[0];
-	GLOBAL.CurrentTimepoints[1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[1];
-	
-	if (Ext.get('sample1') && Ext.get('sample2')) {
-		Ext.get('sample1').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
-		Ext.get('sample2').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
-	} else if (Ext.get('sample3') && Ext.get('sample4')) {
-		Ext.get('sample3').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
-		Ext.get('sample4').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
-	}
-	GLOBAL.CurrentSamples[0]=GLOBAL.DefaultCohortInfo.defaultSamples[0];
-	GLOBAL.CurrentSamples[1]=GLOBAL.DefaultCohortInfo.defaultSamples[1];
-	
-	if (Ext.get('gpl1') && Ext.get('gpl2')) {
-		Ext.get('gpl1').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
-		Ext.get('gpl2').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
-	} else if (Ext.get('gpl3') && Ext.get('gpl4')) {
-		Ext.get('gpl3').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
-		Ext.get('gpl4').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
-	}
-	GLOBAL.CurrentGpls[0]=GLOBAL.DefaultCohortInfo.defaultGpls[0];
-	GLOBAL.CurrentGpls[1]=GLOBAL.DefaultCohortInfo.defaultGpls[1];
-	
-	if (Ext.get('tissue1') && Ext.get('tissue2')) {
-		Ext.get('tissue1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
-		Ext.get('tissue2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
-	} else if (Ext.get('tissue3') && Ext.get('tissue4')) {
-		Ext.get('tissue3').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
-		Ext.get('tissue4').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
-	}
-	GLOBAL.CurrentTissues[0]=GLOBAL.DefaultCohortInfo.defaultTissues[0];
-	GLOBAL.CurrentTissues[1]=GLOBAL.DefaultCohortInfo.defaultTissues[1];
-	
-	if (Ext.get('rbmpanel1') && Ext.get('rbmpanel2')) {
-		Ext.get('rbmpanel1').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
-		Ext.get('rbmpanel2').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
-	} else if (Ext.get('rbmpanel3') && Ext.get('rbmpanel4')) {
-		Ext.get('rbmpanel3').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
-		Ext.get('rbmpanel4').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
-	}
-	GLOBAL.CurrentRbmpanels[0]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[0];
-	GLOBAL.CurrentRbmpanels[1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[1];
+    if (Ext.get('timepoint1') && Ext.get('timepoint2')) {
+        Ext.get('timepoint1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
+        Ext.get('timepoint2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
+    } else if (Ext.get('timepoint3') && Ext.get('timepoint4')) {
+        Ext.get('timepoint3').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
+        Ext.get('timepoint4').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
+    }
+    GLOBAL.CurrentTimepoints[0]=GLOBAL.DefaultCohortInfo.defaultTimepoints[0];
+    GLOBAL.CurrentTimepoints[1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[1];
+    
+    if (Ext.get('sample1') && Ext.get('sample2')) {
+        Ext.get('sample1').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
+        Ext.get('sample2').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
+    } else if (Ext.get('sample3') && Ext.get('sample4')) {
+        Ext.get('sample3').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
+        Ext.get('sample4').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
+    }
+    GLOBAL.CurrentSamples[0]=GLOBAL.DefaultCohortInfo.defaultSamples[0];
+    GLOBAL.CurrentSamples[1]=GLOBAL.DefaultCohortInfo.defaultSamples[1];
+    
+    if (Ext.get('gpl1') && Ext.get('gpl2')) {
+        Ext.get('gpl1').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
+        Ext.get('gpl2').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
+    } else if (Ext.get('gpl3') && Ext.get('gpl4')) {
+        Ext.get('gpl3').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
+        Ext.get('gpl4').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
+    }
+    GLOBAL.CurrentGpls[0]=GLOBAL.DefaultCohortInfo.defaultGpls[0];
+    GLOBAL.CurrentGpls[1]=GLOBAL.DefaultCohortInfo.defaultGpls[1];
+    
+    if (Ext.get('tissue1') && Ext.get('tissue2')) {
+        Ext.get('tissue1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
+        Ext.get('tissue2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
+    } else if (Ext.get('tissue3') && Ext.get('tissue4')) {
+        Ext.get('tissue3').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
+        Ext.get('tissue4').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
+    }
+    GLOBAL.CurrentTissues[0]=GLOBAL.DefaultCohortInfo.defaultTissues[0];
+    GLOBAL.CurrentTissues[1]=GLOBAL.DefaultCohortInfo.defaultTissues[1];
+    
+    if (Ext.get('rbmpanel1') && Ext.get('rbmpanel2')) {
+        Ext.get('rbmpanel1').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
+        Ext.get('rbmpanel2').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
+    } else if (Ext.get('rbmpanel3') && Ext.get('rbmpanel4')) {
+        Ext.get('rbmpanel3').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
+        Ext.get('rbmpanel4').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
+    }
+    GLOBAL.CurrentRbmpanels[0]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[0];
+    GLOBAL.CurrentRbmpanels[1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[1];
 
-	var ele=(Ext.get('divsample1')) ? Ext.get('divsample1') : Ext.get('divsample3');
-	var eleGpl=(Ext.get('divgpl1')) ? Ext.get('divgpl1') : Ext.get('divgpl3');
-	var eleTissue=(Ext.get('divtissue1')) ? Ext.get('divtissue1') : Ext.get('divtissue3');
-	var eleRbmpanel=(Ext.get('divrbmpanel1')) ? Ext.get('divrbmpanel1') : Ext.get('divrbmpanel3')
+    var ele=(Ext.get('divsample1')) ? Ext.get('divsample1') : Ext.get('divsample3');
+    var eleGpl=(Ext.get('divgpl1')) ? Ext.get('divgpl1') : Ext.get('divgpl3');
+    var eleTissue=(Ext.get('divtissue1')) ? Ext.get('divtissue1') : Ext.get('divtissue3');
+    var eleRbmpanel=(Ext.get('divrbmpanel1')) ? Ext.get('divrbmpanel1') : Ext.get('divrbmpanel3')
 
     toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[0]);
 
-	ele=(Ext.get('divsample2')) ? Ext.get('divsample2') : Ext.get('divsample4');
-	eleGpl=(Ext.get('divgpl2')) ? Ext.get('divgpl2') : Ext.get('divgpl4');
-	eleTissue=(Ext.get('divtissue2')) ? Ext.get('divtissue2') : Ext.get('divtissue4');
-	eleRbmpanel=(Ext.get('divrbmpanel2')) ? Ext.get('divrbmpanel2') : Ext.get('divrbmpanel4')
+    ele=(Ext.get('divsample2')) ? Ext.get('divsample2') : Ext.get('divsample4');
+    eleGpl=(Ext.get('divgpl2')) ? Ext.get('divgpl2') : Ext.get('divgpl4');
+    eleTissue=(Ext.get('divtissue2')) ? Ext.get('divtissue2') : Ext.get('divtissue4');
+    eleRbmpanel=(Ext.get('divrbmpanel2')) ? Ext.get('divrbmpanel2') : Ext.get('divrbmpanel4')
 
     toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[1]);
 
-	//Clear out the pathway/aggregation input.
-	document.getElementById("probesAggregation").checked=false;
-	document.getElementById("searchPathway").value = "";
-	
+    //Clear out the pathway/aggregation input.
+    document.getElementById("probesAggregation").checked=false;
+    document.getElementById("searchPathway").value = "";
+    
 }
 
 function showCompareStepPathwaySelectionRBM()
 {
 if(!this.compareStepPathwaySelectionRBM)
 {
-	compareStepPathwaySelectionRBM = new Ext.Window({
+    compareStepPathwaySelectionRBM = new Ext.Window({
                 id: 'compareStepPathwaySelectionWindowRBM',
                 title: 'Compare Subsets-Pathway Selection for RBM Platform',
-            	layout:'fit',
+                layout:'fit',
                 width:450,
                 height:370,
                 //autoHeight: true,
@@ -1599,31 +1600,31 @@ if(!this.compareStepPathwaySelectionRBM)
                 border:false,
                 //autoScroll: true,
                 buttons: [
-                		{
+                        {
                             id: 'compareStepPathwaySelectionOKButtonRBM',
                             text: 'OK',
-                            handler: function()	{							                                                  
-                            	compareStepPathwaySelectionRBM.hide();
-	                            var setid1 = GLOBAL.CurrentSubsetIDs[1];
-   	   							var setid2 = GLOBAL.CurrentSubsetIDs[2];
-   	   							var setname1 = "subset1";
-   								var setname2 = "subset2";
-   								var sp=Ext.get("searchPathwayRBM");
-   								if (sp.dom.disabled == true)	{
-   									GLOBAL.CurrentPathway="SHOWALLANALYTES";
-   								}   								
-                            	showHeatMap(setid1, setname1, setid2, setname2,
-   									GLOBAL.CurrentPathway, GLOBAL.CurrentDataType, 
-   									GLOBAL.HeatmapType, GLOBAL.resulttype, GLOBAL.nClusters);
-   								sp.dom.value = "";
-   							}
+                            handler: function()    {                                                                              
+                                compareStepPathwaySelectionRBM.hide();
+                                var setid1 = GLOBAL.CurrentSubsetIDs[1];
+                                      var setid2 = GLOBAL.CurrentSubsetIDs[2];
+                                      var setname1 = "subset1";
+                                   var setname2 = "subset2";
+                                   var sp=Ext.get("searchPathwayRBM");
+                                   if (sp.dom.disabled == true)    {
+                                       GLOBAL.CurrentPathway="SHOWALLANALYTES";
+                                   }                                   
+                                showHeatMap(setid1, setname1, setid2, setname2,
+                                       GLOBAL.CurrentPathway, GLOBAL.CurrentDataType, 
+                                       GLOBAL.HeatmapType, GLOBAL.resulttype, GLOBAL.nClusters);
+                                   sp.dom.value = "";
+                               }
                         }
                         ,{
                             text: 'Cancel',
                             handler: function() {
-                            	compareStepPathwaySelectionRBM.hide();
-                            	var sp=Ext.get("searchPathwayRBM");
-                            	sp.dom.value = "";
+                                compareStepPathwaySelectionRBM.hide();
+                                var sp=Ext.get("searchPathwayRBM");
+                                sp.dom.value = "";
                             }
                          }],
                 resizable: false,
@@ -1631,35 +1632,35 @@ if(!this.compareStepPathwaySelectionRBM)
             {
                url: pageInfo.basePath+'/panels/compareStepPathwaySelectionRBM.html',
                scripts: true,
-               	nocache:true, 
-			discardUrl:true,
-			method:'POST'
+                   nocache:true, 
+            discardUrl:true,
+            method:'POST'
             }
             });
         }
 
-		compareStepPathwaySelectionRBM.show(viewport); 
+        compareStepPathwaySelectionRBM.show(viewport); 
 
-		// toggle display of "k" selector for k-means clustering
-		if (document.getElementById("divnclustersRBM") != null) {
-			if (GLOBAL.HeatmapType == 'KMeans') {
-				document.getElementById("divnclustersRBM").style.display = "";
-			} else {
-				document.getElementById("divnclustersRBM").style.display = "none";
-			}
-		}
+        // toggle display of "k" selector for k-means clustering
+        if (document.getElementById("divnclustersRBM") != null) {
+            if (GLOBAL.HeatmapType == 'KMeans') {
+                document.getElementById("divnclustersRBM").style.display = "";
+            } else {
+                document.getElementById("divnclustersRBM").style.display = "none";
+            }
+        }
                
 }
 
 function getQuerySummaryItem(el){
- 	var item=el.getAttribute("conceptdimcode")+" "+
- 			getSetValueText(
-        				el.getAttribute('setvaluemode'),
-						el.getAttribute('setvalueoperator'),
-						el.getAttribute('setvaluehighlowselect'),
-						el.getAttribute('setvaluehighvalue'),
-						el.getAttribute('setvaluelowvalue'),
-						el.getAttribute('setvalueunits'));
+     var item=el.getAttribute("conceptdimcode")+" "+
+             getSetValueText(
+                        el.getAttribute('setvaluemode'),
+                        el.getAttribute('setvalueoperator'),
+                        el.getAttribute('setvaluehighlowselect'),
+                        el.getAttribute('setvaluehighvalue'),
+                        el.getAttribute('setvaluelowvalue'),
+                        el.getAttribute('setvalueunits'));
 return item;
 }
 
@@ -1670,8 +1671,8 @@ function isSubsetEmpty(subset)
         if (jQuery(this).find(".panelBoxList").html().trim() != '' && flag)
             flag = false
     })
-		
-	return flag;
+        
+    return flag;
 }
 
 function showConceptDistributionHistogram(){
@@ -1726,55 +1727,55 @@ function showConceptDistributionHistogramForSubsetComplete(result)
 
 function getTreeNodeFromJsonNode(concept)
 {
-		var Tree = Ext.tree;
-		
- 		var level				=	null;
- 		var name				=	null;
- 		var tablename			=	null;
- 		var tooltip				=	null;
- 		var key					=	null;
- 		var dimcode				=	null;
- 		var newnode				=	null;
- 		var leaf				=	false;
- 		var draggable			=	true;
- 		var comment				=	null;
- 		var normalunits			=	null;
- 		var commentnode			=	null;
- 		var normalunitsnode 	= 	null;
- 		var oktousevaluesnode	= 	null;
- 		var oktousevalues		=	null;
+        var Tree = Ext.tree;
+        
+         var level                =    null;
+         var name                =    null;
+         var tablename            =    null;
+         var tooltip                =    null;
+         var key                    =    null;
+         var dimcode                =    null;
+         var newnode                =    null;
+         var leaf                =    false;
+         var draggable            =    true;
+         var comment                =    null;
+         var normalunits            =    null;
+         var commentnode            =    null;
+         var normalunitsnode     =     null;
+         var oktousevaluesnode    =     null;
+         var oktousevalues        =    null;
         var visualattributes    =   null;
-    	var applied_path		=	'@';
- 		var modifierId			=	null;
- 		var constraint_data_type =	null;
- 		
-    level				= concept.level;
-    key					= concept.key;
-    name				= concept.name;
-    tooltip				= concept.tooltip;
-    dimcode				= concept.dimensionCode;
-    tablename			= concept.dimensionTableName;
-    visualattributes	= concept.visualAttributes;
+        var applied_path        =    '@';
+         var modifierId            =    null;
+         var constraint_data_type =    null;
+         
+    level                = concept.level;
+    key                    = concept.key;
+    name                = concept.name;
+    tooltip                = concept.tooltip;
+    dimcode                = concept.dimensionCode;
+    tablename            = concept.dimensionTableName;
+    visualattributes    = concept.visualAttributes;
 
-    comment				= ''; //XXX
-    normalunits			= concept.metadata && concept.metadata.unitValues
+    comment                = ''; //XXX
+    normalunits            = concept.metadata && concept.metadata.unitValues
                               ? concept.metadata.unitValues.normalUnits
                               : '';
-    oktousevalues		=	concept.metadata
+    oktousevalues        =    concept.metadata
                               ? (concept.metadata.okToUseValues ? 'Y' : 'N')
                               : 'N'
 constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
-	    
-	    //We need to replace the < signs with &lt;
-	    name = name.replace(/</gi,"&lt;");
-	    
-	    var iconCls	=	null;
-	    var cls		=	null;
-	    var tcls 	=	null;
-	    
+        
+        //We need to replace the < signs with &lt;
+        name = name.replace(/</gi,"&lt;");
+        
+        var iconCls    =    null;
+        var cls        =    null;
+        var tcls     =    null;
+        
     if (oktousevalues != "N") {
-	    	iconCls="valueicon";
-	    }
+            iconCls="valueicon";
+        }
 
 
     if (visualattributes.indexOf('LEAF') != -1 ||
@@ -1783,11 +1784,11 @@ constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
         if (oktousevalues == "N")
             iconCls="alphaicon";
         /* otherwise false; see init */
-	    	}
+            }
     if (visualattributes.indexOf('CONTAINER') != -1) {
-	    draggable=false;
+        draggable=false;
         /* otherwise true; see init */
-	    }    
+        }    
 
     if (visualattributes.indexOf('HIGH_DIMENSIONAL') != -1) {
         iconCls = 'hleaficon';
@@ -1795,7 +1796,7 @@ constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
     } else if (visualattributes.indexOf('EDITABLE') != -1) {
         iconCls = 'eleaficon';
         tcls = 'eleafclass';
-	}
+    }
 
     if (visualattributes.indexOf('PROGRAM') != '-1') {
         iconCls="programicon";
@@ -1807,45 +1808,45 @@ constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
 
     if(visualattributes.indexOf('MODIFIER_LEAF') != -1)
     {
-    	leaf			= true;
-    	iconCls			= "modifiericon";
-    	applied_path 	= concept.applied_path;
-    	modifierId 		= concept.key;
+        leaf            = true;
+        iconCls            = "modifiericon";
+        applied_path     = concept.applied_path;
+        modifierId         = concept.key;
     }
     else if(visualattributes.indexOf('MODIFIER_CONTAINER') != -1)
     {
-    	leaf			= false;
-    	draggable		= false;
-    	iconCls			= "modifierfoldericon";
-    	applied_path 	= concept.applied_path;
-    	modifierId 		= concept.key;    	
+        leaf            = false;
+        draggable        = false;
+        iconCls            = "modifierfoldericon";
+        applied_path     = concept.applied_path;
+        modifierId         = concept.key;        
     }
 
     if(oktousevalues != "N" && !leaf)
     {
-    	iconCls="foldernumericicon";
+        iconCls="foldernumericicon";
     }
     
-	    //set whether expanded or not.
-	    var autoExpand=false;
-		// Crude string check to bold this node if it's appeared as an actual search result (leaf)
-	    var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
-	    if (isSearchResult) {
-	    	tcls += ' searchResultNode';
-	    }
-	    //And another to highlight if it's the default passed-in path (only do this once)
-	    var isDefaultPath = (GLOBAL.DefaultPathToExpand.indexOf(key) > -1);
-	    if (isDefaultPath) {
-	    	tcls += ' defaultPathNode';
-	    }
-	    GLOBAL.DefaultPathToExpand = '';
-	    
-	    if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key + ",")==-1) autoExpand=true;
-		
-	    var expand=((contains(dseOpenedNodes, key)) || autoExpand) && (!contains(dseClosedNodes, key));
-	    
-	    // set the root node
-    	newnode = new Tree.AsyncTreeNode({
+        //set whether expanded or not.
+        var autoExpand=false;
+        // Crude string check to bold this node if it's appeared as an actual search result (leaf)
+        var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
+        if (isSearchResult) {
+            tcls += ' searchResultNode';
+        }
+        //And another to highlight if it's the default passed-in path (only do this once)
+        var isDefaultPath = (GLOBAL.DefaultPathToExpand.indexOf(key) > -1);
+        if (isDefaultPath) {
+            tcls += ' defaultPathNode';
+        }
+        GLOBAL.DefaultPathToExpand = '';
+        
+        if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key + ",")==-1) autoExpand=true;
+        
+        var expand=((contains(dseOpenedNodes, key)) || autoExpand) && (!contains(dseClosedNodes, key));
+        
+        // set the root node
+        newnode = new Tree.AsyncTreeNode({
             text: name,
             draggable: draggable,
             leaf: leaf,
@@ -1862,24 +1863,24 @@ constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
             expanded: expand,
             visualattributes : visualattributes,
             applied_path: applied_path,
-       		modifierId: modifierId,
-       		constraint_data_type : constraint_data_type
-   		 });
-   		 newnode.addListener('contextmenu',ontologyRightClick);
-	return newnode;
-	}
+               modifierId: modifierId,
+               constraint_data_type : constraint_data_type
+            });
+            newnode.addListener('contextmenu',ontologyRightClick);
+    return newnode;
+    }
 
 function climbTreeBuildName(baseNode)
 {
-	var nodeNameString = "\\";
-	
-	while(baseNode.parentNode != null)
-	{
-		if(baseNode.attributes.text  && baseNode.attributes.text != "root") nodeNameString = "\\" + baseNode.attributes.text + nodeNameString;
-		
-		baseNode = baseNode.parentNode;
-	}
-	
+    var nodeNameString = "\\";
+    
+    while(baseNode.parentNode != null)
+    {
+        if(baseNode.attributes.text  && baseNode.attributes.text != "root") nodeNameString = "\\" + baseNode.attributes.text + nodeNameString;
+        
+        baseNode = baseNode.parentNode;
+    }
+    
     return nodeNameString;
 }
 
@@ -1931,7 +1932,7 @@ function nodeType(method, object)
 
 function createShortNameFromPath(pathToShorten)
 {
-	var splits=pathToShorten.split("\\");
+    var splits=pathToShorten.split("\\");
     
     return splits[splits.length-1] || splits[splits.length-2];
 }

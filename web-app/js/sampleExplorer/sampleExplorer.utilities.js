@@ -3,7 +3,8 @@
  Recombinant */
 String.prototype.trim = function() {
     return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-}
+};
+
 Ext.layout.BorderLayout.Region.prototype.getCollapsedEl = Ext.layout.BorderLayout.Region.prototype.getCollapsedEl.createSequence(function()
     {
         if ((this.position == 'north' || this.position == 'south') && ! this.collapsedEl.titleEl)
@@ -25,14 +26,14 @@ Ext.Panel.prototype.setBody = function(html)
     var el = this.getEl();
     var domel = el.dom.lastChild.firstChild;
     domel.innerHTML = html;
-}
+};
 
 Ext.Panel.prototype.getBody = function(html)
 {
     var el = this.getEl();
     var domel = el.dom.lastChild.firstChild;
     return domel.innerHTML;
-}
+};
 
 Ext.onReady(function()
     {
@@ -134,14 +135,14 @@ function convertJsonValuesToLists(JsonToConvert)
         newJsonData[jsonItem].push(tempValue);
     }
 
-    return newJsonData
+    return newJsonData;
 }
 
 //If we have an array like [{blah:"blah"},{blah:"blah2"}] we want to convert it to [{blah:["blah","blah2"]}]
 function arrayOfJsonToJsonData(JsonToConvert)
 {
     //This will be the final object we return.
-    var finalJsonData = {}
+    var finalJsonData = {};
 
     //Loop through each of the sets of JSON data.
     for (JsonSet in JsonToConvert)
@@ -161,7 +162,7 @@ function arrayOfJsonToJsonData(JsonToConvert)
     //Now we need to distinct each of the JSON lists.
     for (jsonItem in finalJsonData)
     {
-        finalJsonData[jsonItem] = finalJsonData[jsonItem].unique()
+        finalJsonData[jsonItem] = finalJsonData[jsonItem].unique();
     }
 
     return finalJsonData;
@@ -189,11 +190,11 @@ Array.prototype.has=function(v){
         if (this[i]==v) return true;
     }
     return false;
-}
+};
 
 function initializeGlobalGridColumnList(panelNumber)
 {
-    var panelNumber = (panelNumber || "")
+    var panelNumber = (panelNumber || "");
 
     //Reinitialize our JSON and the array for this category.
     GLOBAL["SearchJSON" + panelNumber] = {};
@@ -226,8 +227,8 @@ function getFieldsListForReader()
     }
 
     //We always need a count field.
-    returnColumnMaps.push({name:'count'})
-    returnColumnMaps.push({name:'STUDY_ID'})
+    returnColumnMaps.push({name:'count'});
+    returnColumnMaps.push({name:'STUDY_ID'});
 
     return returnColumnMaps;
 }
@@ -246,8 +247,8 @@ function getFieldListForColModel()
         newColumnMaps.dataIndex = GLOBAL.columnMap.columns[loopCounter].dataIndex;
         newColumnMaps.width = GLOBAL.columnMap.columns[loopCounter].width || '5';
 
-        if(!GLOBAL.columnMap.columns[loopCounter].showInGrid) newColumnMaps.hidden = true
-        if(GLOBAL.columnMap.columns[loopCounter].dataIndex == "STUDY_ID") newColumnMaps.renderer = renderDSELink
+        if(!GLOBAL.columnMap.columns[loopCounter].showInGrid) newColumnMaps.hidden = true;
+        if(GLOBAL.columnMap.columns[loopCounter].dataIndex == "STUDY_ID") newColumnMaps.renderer = renderDSELink;
 
         returnColumnMaps.push(newColumnMaps);
 
@@ -256,11 +257,11 @@ function getFieldListForColModel()
     //Hacky, change this!
     if(GLOBAL.explorerType == "sampleExplorer")
     {
-        returnColumnMaps.push({header:'Aliquot Count',dataIndex:'count', width:'5', renderer: renderSampleLink})
+        returnColumnMaps.push({header:'Aliquot Count',dataIndex:'count', width:'5', renderer: renderSampleLink});
     }
     else
     {
-        returnColumnMaps.push({header:'Term Count',dataIndex:'count', width:'5'})
+        returnColumnMaps.push({header:'Term Count',dataIndex:'count', width:'5'});
     }
 
     return returnColumnMaps;

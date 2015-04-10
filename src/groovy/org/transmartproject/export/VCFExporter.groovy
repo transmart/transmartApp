@@ -1,6 +1,7 @@
 package org.transmartproject.export
 
 import grails.util.Metadata
+import groovy.util.logging.Log4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.dataquery.DataRow
 import org.transmartproject.core.dataquery.TabularResult
@@ -10,6 +11,7 @@ import org.transmartproject.core.dataquery.highdim.projections.Projection
 
 import javax.annotation.PostConstruct
 
+@Log4j
 class VCFExporter implements HighDimExporter {
     /**
      * List of info fields that can be exported without any change.
@@ -57,13 +59,13 @@ class VCFExporter implements HighDimExporter {
 
     @Override
     public void export(TabularResult tabularResult, Projection projection,
-                       OutputStream outputStream) {
-        export(tabularResult, projection, outputStream, { false })
+                       Closure<OutputStream> newOutputStream) {
+        export(tabularResult, projection, newOutputStream, { false })
     }
 
     @Override
     public void export(TabularResult tabularResult, Projection projection,
-                       OutputStream outputStream, Closure isCancelled) {
+                       Closure<OutputStream> newOutputStream, Closure<Boolean> isCancelled) {
 
         log.info("started exporting to $format ")
         def startTime = System.currentTimeMillis()
@@ -72,7 +74,7 @@ class VCFExporter implements HighDimExporter {
             return
         }
 
-        outputStream.withWriter("UTF-8") { writer ->
+        newOutputStream("data", format).withWriter("UTF-8") { writer ->
 
             // Write the headers
             headers.each {
@@ -86,7 +88,6 @@ class VCFExporter implements HighDimExporter {
             List<AssayColumn> assayList = tabularResult.indicesList
 
             // Start looping 
-            writeloop:
             for (DataRow datarow : tabularResult) {
                 // Test periodically if the export is cancelled
                 if (isCancelled()) {

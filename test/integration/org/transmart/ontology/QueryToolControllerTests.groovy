@@ -43,7 +43,7 @@ class QueryToolControllerTests {
 
         testee.queryDefinitionXmlService = xmlService
         testee.queriesResourceAuthorizationDecorator = queriesService
-        testee.currentUser = mockUser
+        testee.currentUserBean = mockUser
 
         play {
             testee.runQueryFromDefinition()

@@ -58,7 +58,7 @@ grails.project.dependency.resolution = {
 
         runtime 'org.javassist:javassist:3.16.1-GA'
 
-        compile 'org.transmartproject:transmart-core-api:1.2.2-hackathon-SNAPSHOT'
+        compile 'org.transmartproject:transmart-core-api:1.2.2-SNAPSHOT'
 
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
@@ -109,8 +109,8 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        build ':release:3.0.1'
-        build ':rest-client-builder:2.0.1'
+        build ':release:3.1.1'
+        build ':rest-client-builder:2.1.1'
         build ':tomcat:7.0.52.1'
 
         compile ':hibernate:3.6.10.10'

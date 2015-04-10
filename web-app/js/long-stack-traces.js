@@ -31,7 +31,7 @@
         return;
     }
 
-    Error.stackTraceLimit = 100
+    Error.stackTraceLimit = 100;
 
     var currentTraceError = null;
 
@@ -40,7 +40,7 @@
         return frames.split("\n").filter(function(frame) { return frame.indexOf(filename) < 0; }).join("\n");
     }
 
-    var originalPrepareStackTrace = Error.prepareStackTrace
+    var originalPrepareStackTrace = Error.prepareStackTrace;
     var newPrepareStackTrace = function(error, frames) {
         var result;
         result = filterInternalFrames(FormatStackTrace(error, frames));
@@ -55,7 +55,7 @@
             }
         }
         return result;
-    }
+    };
 
     Error.prepareStackTrace = newPrepareStackTrace;
 
@@ -69,7 +69,7 @@
             Error.prepareStackTrace = newPrepareStackTrace;
             return ret;
         }
-    })
+    });
 
     var has = Object.prototype.hasOwnProperty;
 
@@ -106,7 +106,7 @@
             }
             // call the original registration function with the modified arguments
             return fn.apply(this, arguments);
-        }
+        };
 
         // check that the registration function was indeed overwritten
         if (object[property] === fn)
@@ -145,7 +145,7 @@
                 // clear the trace so we can check that none is set above.
                 currentTraceError = null;
             }
-        }
+        };
     }
 
     if (typeof window !== "undefined") {
@@ -195,7 +195,7 @@
                     this.addEventListener("readystatechange", newCallback);
                 }
             }
-        }
+        };
         var _onreadystatechangeDescriptor = {
             value: null,
             writable: true,
@@ -210,8 +210,8 @@
             Object.defineProperty(actualThis, 'onreadystatechange', onreadystatechangeDescriptor);
             Object.defineProperty(actualThis, '_onreadystatechange', _onreadystatechangeDescriptor);
 
-            return actualThis
-        }
+            return actualThis;
+        };
         XMLHttpRequest.prototype = _XMLHttpRequest.prototype;
         Object.getOwnPropertyNames(_XMLHttpRequest).forEach(function(it) {
             if (it == 'prototype' || it == 'name' || it == 'length')
