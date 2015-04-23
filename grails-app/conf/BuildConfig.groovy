@@ -58,7 +58,7 @@ grails.project.dependency.resolution = {
 
         runtime 'org.javassist:javassist:3.16.1-GA'
 
-        compile 'org.transmartproject:transmart-core-api:1.2.2-SNAPSHOT'
+        compile 'org.transmartproject:transmart-core-api:1.2.4'
 
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
@@ -127,27 +127,27 @@ grails.project.dependency.resolution = {
         compile ":codenarc:0.21"
 
         if (!dm) {
-            compile ':rdc-rmodules:1.2.2-SNAPSHOT'
-            runtime ':transmart-core:1.2.2-SNAPSHOT'
-            compile ':transmart-gwas:1.2.2-SNAPSHOT'
+            compile ':rdc-rmodules:1.2.4'
+            runtime ':transmart-core:1.2.4'
+            compile ':transmart-gwas:1.2.4'
             //// already included in transmart-gwas
-            //compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
+            //compile ':transmart-legacy-db:1.2.4'
             //// already included in transmart-gwas
-            //compile ':folder-management:1.2.2-SNAPSHOT'
+            //compile ':folder-management:1.2.4'
             //// already included in transmart-gwas, folder-management
-            //compile ':search-domain:1.2.2-SNAPSHOT'
+            //compile ':search-domain:1.2.4'
             //// already included in search-domain, transmart-gwas,
             //                       folder-management
-            //compile ':biomart-domain:1.2.2-SNAPSHOT'
+            //compile ':biomart-domain:1.2.4'
             //// already included in biomart-domain
-            //compile ':transmart-java:1.2.2-SNAPSHOT'
+            //compile ':transmart-java:1.2.4'
             runtime ':dalliance-plugin:0.2-SNAPSHOT'
             runtime ':transmart-mydas:0.1-SNAPSHOT'
-            runtime ':transmart-rest-api:1.2.2-SNAPSHOT'
-            runtime ':blend4j-plugin:1.2.2-SNAPSHOT'
-            runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
+            runtime ':transmart-rest-api:1.2.4'
+            runtime ':blend4j-plugin:1.2.4'
+            runtime ':transmart-metacore-plugin:1.2.4'
 
-            test ':transmart-core-db-tests:1.2.2-SNAPSHOT'
+            test ':transmart-core-db-tests:1.2.4'
         } else {
             dm.internalDependencies delegate
         }
