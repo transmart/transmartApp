@@ -111,10 +111,10 @@ grails.project.dependency.resolution = {
     plugins {
         build ':release:3.1.1'
         build ':rest-client-builder:2.1.1'
-        build ':tomcat:7.0.52.1'
+        build ':tomcat:7.0.54'
 
         compile ':hibernate:3.6.10.19'
-        compile ':quartz:1.0.2'
+        compile ':quartz:1.0-RC2'
         // Not compatible with spring security 3.2 yet
         //compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:2.0-RC2'
@@ -134,7 +134,7 @@ grails.project.dependency.resolution = {
             runtime ':transmart-core:1.2.2-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
-            compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
+            //compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
             //compile ':folder-management:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas, folder-management
