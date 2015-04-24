@@ -113,8 +113,8 @@ grails.project.dependency.resolution = {
         build ':rest-client-builder:2.1.1'
         build ':tomcat:7.0.52.1'
 
-        compile ':hibernate:3.6.10.10'
-        compile ':quartz:1.0-RC2'
+        compile ':hibernate:3.6.10.19'
+        compile ':quartz:1.0.2'
         // Not compatible with spring security 3.2 yet
         //compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:2.0-RC2'
