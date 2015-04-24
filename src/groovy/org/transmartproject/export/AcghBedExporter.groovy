@@ -2,7 +2,6 @@ package org.transmartproject.export
 
 import groovy.util.logging.Log4j
 import org.springframework.beans.factory.annotation.Autowired
-import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.acgh.CopyNumberState
 import org.transmartproject.core.dataquery.highdim.projections.Projection
@@ -12,15 +11,15 @@ import javax.annotation.PostConstruct
 import javax.annotation.Resource
 
 @Log4j
-class AcghBedExporter implements HighDimExporter {
-
-    final static COLUMN_SEPARATOR = '\t'
+class AcghBedExporter extends AbstractChromosomalRegionBedExporter {
 
     @Autowired
     HighDimExporterRegistry highDimExporterRegistry
 
     @Resource
     Map acghBedExporterRgbColorScheme
+
+    Map<Integer, String> flagToRgbStringMap
 
     private static final Map<CopyNumberState, List<Integer>> FLAG_TO_RGB_DEFAULT_MAP = [
                 //white
@@ -49,8 +48,8 @@ class AcghBedExporter implements HighDimExporter {
 
     @PostConstruct
     void init() {
-        this.highDimExporterRegistry.registerHighDimensionExporter(
-                format, this)
+        this.flagToRgbStringMap = prepareFlagToRgbStringMap()
+        this.highDimExporterRegistry.registerHighDimensionExporter(format, this)
     }
 
     @Override
@@ -64,84 +63,27 @@ class AcghBedExporter implements HighDimExporter {
     }
 
     @Override
-    String getFormat() {
-        'BED'
-    }
+    protected calculateRow(RegionRowImpl datarow, AssayColumn assay) {
+        Map cell = datarow[assay]
+        int flag = cell['flag']
 
-    @Override
-    String getDescription() {
-        '''BED format provides a flexible way to define the data lines that are displayed in an annotation track.
-        See http://genome.ucsc.edu/FAQ/FAQformat.html#format1'''
-    }
-
-    @Override
-    void export(TabularResult data, Projection projection, Closure<OutputStream> newOutputStream) {
-        export(data, projection, newOutputStream, null)
-    }
-
-    @Override
-    void export(TabularResult tabularResult, Projection projection,
-                Closure<OutputStream> newOutputStream, Closure<Boolean> isCancelled) {
-        log.info("started exporting to $format ")
-        def startTime = System.currentTimeMillis()
-
-        if (isCancelled && isCancelled()) {
-            return
-        }
-
-        List<AssayColumn> assayList = tabularResult.indicesList
-        Map<Object, Writer> streamsPerSample = [:]
-        def flagToRgbMap = prepareFlagToRgbStringMap()
-
-        try {
-            for (RegionRowImpl datarow : tabularResult) {
-                if (isCancelled && isCancelled()) {
-                    return
-                }
-
-                //This ensures the bed file can be loaded into UCSC browser
-                String chromosome = datarow.chromosome
-                if (!chromosome.toLowerCase().startsWith('chr')) {
-                    chromosome = "chr${chromosome}"
-                }
-                //We do not use strand information
-                String strand = '.'
-                String label = datarow.bioMarker ?: datarow.name
-
-                for (AssayColumn assay : assayList) {
-                    if (isCancelled && isCancelled()) {
-                        return
-                    }
-                    Map cell = datarow[assay]
-                    int flag = cell['flag']
-                    Writer writer = streamsPerSample[assay.id]
-                    if (writer == null) {
-                        writer = new BufferedWriter(
-                                    new OutputStreamWriter(
-                                            newOutputStream("${assay.sampleCode}_${assay.id}", format), 'UTF-8'))
-                        writer << "track name=\"${assay.sampleCode}\" itemRgb=\"On\" genome_build=\"${datarow.platform.genomeReleaseId}\"\n"
-                        streamsPerSample[assay.id] = writer
-                    }
-                    writer << [
-                            chromosome,
-                            datarow.start,
-                            datarow.end,
-                            label,
-                            flag,
-                            strand,
-                            datarow.start,
-                            datarow.end,
-                            flagToRgbMap[flag]
-                        ].join(COLUMN_SEPARATOR) << '\n'
-                }
-            }
-        } finally {
-            streamsPerSample.values().each {
-                it.close()
-            }
-        }
-
-        log.info("Exporting data took ${System.currentTimeMillis() - startTime} ms")
+        [
+                datarow.chromosome,
+                datarow.start,
+                datarow.end,
+                //Name of the BED line
+                datarow.bioMarker ?: datarow.name,
+                //Score
+                flag,
+                //Strand. We do not use strand information
+                '.',
+                //Thick start
+                datarow.start,
+                //Thick end
+                datarow.end,
+                //Item RGB
+                flagToRgbStringMap[flag]
+        ]
     }
 
 }

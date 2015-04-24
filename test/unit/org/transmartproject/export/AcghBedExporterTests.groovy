@@ -31,7 +31,11 @@ class AcghBedExporterTests {
     void before() {
         mockTabularResultHelper = new MockTabularResultHelper()
         exporter = new AcghBedExporter()
+        exporter.highDimExporterRegistry = [
+                registerHighDimensionExporter: { format, exporter -> }
+        ] as HighDimExporterRegistry
         projection = mock(Projection)
+        exporter.init()
     }
 
     @Test
@@ -86,6 +90,8 @@ class AcghBedExporterTests {
                 //dark green
                 amplification: [0, 100, 0],
         ]
+
+        exporter.init()
 
         tabularResult = createMockAcghTabularResult()
 
