@@ -79,7 +79,7 @@ class VCFExporterTests {
 
             // Check different chromosomal positions
             assert lines[4].startsWith(
-                    ["1", "100", "rs0010", "G", "", "50", "PASS"].join("\t"))
+                    ["1", "100", "rs0010", "G", ".", "50", "PASS"].join("\t"))
             assert lines[4].endsWith(
                     ["GT:DP", "0/0:3", "0/0:7"].join("\t"))
 

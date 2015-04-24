@@ -30,6 +30,8 @@ class VCFExporter implements HighDimExporter {
             '1000G', // membership in 1000 Genomes
     ]
 
+    final static String EMPTY_VALUE = '.'
+
     @Autowired
     HighDimensionResource highDimensionResourceService
 
@@ -130,7 +132,7 @@ class VCFExporter implements HighDimExporter {
         data << datarow.position
         data << datarow.rsId
         data << datarow.cohortInfo.referenceAllele
-        data << datarow.cohortInfo.alternativeAlleles.join(',')
+        data << (datarow.cohortInfo.alternativeAlleles.join(',') ?: EMPTY_VALUE)
 
         // TODO: Determine whether these values still apply for the cohort selected
         data << datarow.quality
@@ -221,7 +223,7 @@ class VCFExporter implements HighDimExporter {
         Map<String, String> assayData = datarow[assay]
 
         if (assayData == null) {
-            return ["."]
+            return [EMPTY_VALUE]
         }
 
         // Convert the old indices (e.g. 1 and 0) to the
@@ -237,7 +239,7 @@ class VCFExporter implements HighDimExporter {
 
                     convertedIndices << newIndex
                 } else {
-                    convertedIndices << '.'
+                    convertedIndices << EMPTY_VALUE
                 }
             }
         }
@@ -250,7 +252,7 @@ class VCFExporter implements HighDimExporter {
             newData = originalData.tokenize(":")
         } else {
             // Generate data to state that we don't know
-            newData = ["."].times(formats.size())
+            newData = (1..formats.size()).collect { EMPTY_VALUE }
         }
 
         // Put the computed genotype into the originaldata
