@@ -67,13 +67,13 @@ grails.project.dependency.resolution = {
         compile "org.apache.lucene:lucene-highlighter:2.4.0"
         compile 'commons-net:commons-net:3.3' // used for ftp transfers
         compile 'org.apache.commons:commons-math:2.2' //>2MB lib briefly used in ChartController
-        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.1', {
+        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2', {
             excludes 'groovy', 'nekohtml', 'httpclient', 'httpcore'
         }
         compile 'org.rosuda:Rserve:1.7.3'
         compile 'com.google.guava:guava:18.0'
-        compile 'org.apache.httpcomponents:httpclient:4.3.6'
-        compile 'org.apache.httpcomponents:httpcore:4.3.3'
+        compile 'org.apache.httpcomponents:httpclient:4.4.1'
+        compile 'org.apache.httpcomponents:httpcore:4.4.1'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
         compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
