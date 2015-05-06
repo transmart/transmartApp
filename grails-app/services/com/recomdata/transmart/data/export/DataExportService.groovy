@@ -1,12 +1,11 @@
 package com.recomdata.transmart.data.export
 
-import com.google.common.base.CharMatcher
 import com.recomdata.snp.SnpData
 import com.recomdata.transmart.data.export.exception.DataNotFoundException
 import groovy.json.JsonSlurper
-import groovy.sql.Sql
 import org.apache.commons.lang.StringUtils
 import org.springframework.transaction.annotation.Transactional
+import org.transmartproject.core.ontology.OntologyTerm
 import org.transmartproject.core.ontology.Study
 import org.transmartproject.core.users.User
 
@@ -30,6 +29,7 @@ class DataExportService {
     def dataSource
     def queriesResourceAuthorizationDecorator
     def studiesResourceService
+    def conceptsResourceService
 
     @Transactional(readOnly = true)
     def exportData(jobDataMap) {
@@ -260,8 +260,13 @@ class DataExportService {
                     //Grab the item from the data map that tells us whether we need the concept contexts.
                     Boolean includeConceptContext = jobDataMap.get("includeContexts", false);
 
+                    List<OntologyTerm> filterTerms = columnFilter.collect {
+                        conceptsResourceService.getByKey it
+                    }
+                    List<OntologyTerm> filterLeafTerms = getAllLeafTerms(filterTerms)
+
                     //This is a list of concept codes that we use to filter the result instance id results.
-                    String[] conceptCodeList = jobDataMap.get("concept_cds");
+                    String[] conceptCodeList =  filterLeafTerms*.code
 
                     //This is list of concept codes that are parents to some child concepts. We need to expand these out in the service call.
                     List parentConceptCodeList = new ArrayList()
@@ -295,141 +300,23 @@ class DataExportService {
                             throw new DataNotFoundException("There are no patients that meet the criteria selected therefore no clinical data was returned.")
                         }
                     }
-
-                    if (jobDataMap.analysis == 'DataExport') {
-
-                        def resultInstanceId = resultInstanceIdMap[subset]
-
-                        def mapOfSampleCdsBySource = buildMapOfSampleCdsBySource(resultInstanceId)
-
-                        def sampleCodesTable = new Sql(dataSource).rows("""
-                                        SELECT DISTINCT
-                                            p.SOURCESYSTEM_CD
-                                        FROM
-                                            patient_dimension p
-                                        WHERE
-                                            p.PATIENT_NUM IN (
-                                                SELECT
-                                                    DISTINCT patient_num
-                                                FROM
-                                                    qt_patient_set_collection
-                                                WHERE
-                                                    result_instance_id = ? )
-                                    """, resultInstanceId)
-                        for (row in sampleCodesTable) {
-                            row.SAMPLE_CDS = mapOfSampleCdsBySource[row.SOURCESYSTEM_CD]
-                        }
-                        sampleCodesTable = sampleCodesTable.collectEntries {
-                            [it.SOURCESYSTEM_CD.split(':')[-1].trim(), it.SAMPLE_CDS]
-                        }
-                        // add the header to the mapping table
-                        sampleCodesTable['PATIENT ID'] = 'SAMPLE CODES'
-                        // example: columnFilter = [/\Subjects\Ethnicity/, /\Endpoints\Diagnosis/]
-                        studyList.each { studyName ->
-                            String directory
-                            String fileWritten = "clinical_i2b2trans.txt"
-                            if (studyList.size() > 1) {
-                                // yes, the output of the previous stage has a " _" in the name, with a space in it.
-                                fileWritten = studyName + ' _' + fileWritten
-
-                            }
-                            directory = clinicalDataFileName(studyDir.path)
-
-                            def reader = new File(directory, fileWritten)
-                            def writer = new File(directory, "newclinical")
-                            def writerstream = writer.newOutputStream()
-
-                            def filter = null
-
-                            reader.eachLine {
-                                def line = Arrays.asList(it.split('\t'))
-                                if (filter == null) {
-                                    if (columnFilter) {
-                                        filter = []
-                                        for (String columnName : columnFilter) {
-                                            columnName = CharMatcher.is('\\' as char).trimTrailingFrom(columnName)
-                                            String parentColumnName = columnName.replaceFirst(/\\[^\\]+$/, '')
-                                            def index = line.findIndexOf() {
-                                                columnName.endsWith(it) ||
-                                                        parentColumnName.endsWith(it)
-                                            }
-                                            if (index >= 1 && !(index in filter)) filter.add(index)
-                                        }
-                                    } else {
-                                        filter = 1..(line.size() - 1)
-                                    }
-                                }
-                                def patientId = line[0].trim()
-                                def joined = ((line[[0]] + [sampleCodesTable[patientId]] + line[filter])
-                                        .join('\t') + '\n')
-                                writerstream.write(joined.getBytes())
-                            }
-
-                            writerstream.close()
-
-                            writer.renameTo(directory + '/' + fileWritten)
-                        }
-                    }
                 }
             }
         }
 
     }
 
-    def buildMapOfSampleCdsBySource(resultInstanceId) {
-        def map = [:]
-        def sampleCodesTable = new Sql(dataSource).rows("""
-			SELECT DISTINCT
-                p.SOURCESYSTEM_CD,
-                s.SAMPLE_CD
-            FROM
-                patient_dimension p
-            LEFT JOIN
-                observation_fact s on s.patient_num = p.patient_num
-            WHERE
-                p.PATIENT_NUM IN (
-                    SELECT
-                        DISTINCT patient_num
-                    FROM
-                        qt_patient_set_collection
-                    WHERE
-                        result_instance_id = ? )
-			ORDER BY SOURCESYSTEM_CD, SAMPLE_CD
-			""", resultInstanceId
-        )
-        for (row in sampleCodesTable) {
-            def sourceSystemCd = row.SOURCESYSTEM_CD
-            if (!sourceSystemCd) continue
-            def sampleCd = row.SAMPLE_CD
-            if (!sampleCd) continue
-            def entry = map[sourceSystemCd]
-            if (!entry) {
-                entry = sampleCd
+    private List<OntologyTerm> getAllLeafTerms(List<OntologyTerm> terms) {
+        List<OntologyTerm> leafs = []
+        terms.each { OntologyTerm term ->
+            def children = term.children
+            if (children) {
+                leafs += getAllLeafTerms(children)
             } else {
-                entry = entry + "," + sampleCd
+                leafs << term
             }
-            map[sourceSystemCd] = entry
         }
-        return map
-    }
-
-    static clinicalDataFileName(String studyDir) {
-
-        String dataTypeName = 'Clinical'
-        String dataTypeFolder = null
-
-        String dataTypeNameDir = (StringUtils.isNotEmpty(dataTypeName) && null != studyDir) ?
-                studyDir + '/' + dataTypeName : null;
-        String dataTypeFolderDir = (StringUtils.isNotEmpty(dataTypeFolder) && null != dataTypeNameDir) ?
-                dataTypeNameDir + '/' + dataTypeFolder : null;
-
-        if (null != studyDir && null == dataTypeNameDir) {
-            studyDir
-        } else if (null != studyDir && null != dataTypeNameDir) {
-            ((null == dataTypeFolderDir) ? dataTypeNameDir : dataTypeFolderDir)
-        }
-
-
+        leafs
     }
 
     boolean isUserAllowedToExport(final User user, final List<Long> resultInstanceIds) {
