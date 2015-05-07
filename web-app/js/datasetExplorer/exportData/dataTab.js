@@ -59,6 +59,7 @@ CustomGridPanel.prototype.dropZonesChecker = function () {
                         }
                         //`this` is used inside function `dropOntoVariableSelection` function
                         target.dropOntoVariableSelection = dropOntoVariableSelection
+                        jQuery(target.el.dom).find('input[name=download_dt]').prop('checked', true);
                         return target.dropOntoVariableSelection(source, e, data);
                     };
                 };

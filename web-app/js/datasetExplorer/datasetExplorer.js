@@ -554,7 +554,7 @@ Ext.onReady(function () {
                     runAllQueries(_activateAdvancedWorkflow, p);
                 }
 
-                activateAdvancedWorkflow();
+                _activateAdvancedWorkflow();
             },
             'afterLayout': {
                 fn: function (el) {
@@ -815,7 +815,7 @@ Ext.onReady(function () {
     setvaluePanel = new Ext.Panel({
         id: 'setvaluePanel',
         region: 'north',
-        height: 140,
+        height: 120,
         width: 490,
         split: false,
         autoLoad: {
