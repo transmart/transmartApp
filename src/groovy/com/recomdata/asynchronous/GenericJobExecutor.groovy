@@ -4,6 +4,8 @@ import com.recomdata.transmart.data.export.exception.DataNotFoundException
 import com.recomdata.transmart.data.export.util.FTPUtil
 import com.recomdata.transmart.data.export.util.ZipUtil
 import grails.util.Holders
+import groovy.util.logging.Log4j
+import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
 import org.quartz.Job
 import org.quartz.JobDetail
@@ -22,6 +24,7 @@ import java.lang.reflect.UndeclaredThrowableException
  * @author MMcDuffie
  *
  */
+@Log4j
 class GenericJobExecutor implements Job {
 
     def ctx = Holders.grailsApplication.mainContext
@@ -95,6 +98,10 @@ class GenericJobExecutor implements Job {
         //Initialize the jobTmpDirectory which will be used during bundling in ZipUtil
         jobTmpDirectory = tempFolderDirectory + File.separator + "${jobName}" + File.separator
         jobTmpDirectory = jobTmpDirectory.replace("\\", "\\\\")
+        if (new File(jobTmpDirectory).exists()) {
+            log.warn("The job folder ${jobTmpDirectory} already exists. It's going to be overwritten.")
+            FileUtils.deleteDirectory(new File(jobTmpDirectory))
+        }
         jobTmpWorkingDirectory = jobTmpDirectory + "workingDirectory"
 
         //Try to make the working directory.
