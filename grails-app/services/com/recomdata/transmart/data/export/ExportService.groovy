@@ -23,9 +23,7 @@ class ExportService {
     def jobResultsService
     def asyncJobService
     def quartzScheduler
-
-    @Resource(name = CurrentUserBeanProxyFactory.BEAN_BAME)
-    def currentUser
+    def currentUserBean
 
 
     def createExportDataAsyncJob(params, userName) {
@@ -195,7 +193,7 @@ class ExportService {
         //This adds a step to the job to create a file link as the plugin output.
         jdm.put("renderSteps", ["FILELINK": ""]);
 
-        jdm.put("userInContext", currentUser.targetSource.target)
+        jdm.put("userInContext", currentUserBean.targetSource.target)
 
         def jobDetail = new JobDetail(params.jobName, params.analysis, GenericJobExecutor.class)
         jobDetail.setJobDataMap(jdm)

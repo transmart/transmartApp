@@ -6,7 +6,7 @@
 
 function DynamicLoad () {
     return this;
-};
+}
 
 DynamicLoad.prototype = {
 
@@ -30,7 +30,7 @@ DynamicLoad.prototype = {
      * @param uri
      */
     loadJS : function (url, callback) {
-        var script = document.createElement("script")
+        var script = document.createElement("script");
         script.type = "text/javascript";
 
         if (script.readyState){  //IE
@@ -71,7 +71,7 @@ DynamicLoad.prototype = {
                 if (this.readyState == 'complete' || this.readyState == 'loaded') {
                     scriptLoaded();
                 }
-            }
+            };
             script.onload = scriptLoaded;
             script.src = scriptsToLoad.shift(); // grab next script off front of array
             head.appendChild(script);

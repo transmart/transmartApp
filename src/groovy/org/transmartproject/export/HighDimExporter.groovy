@@ -38,7 +38,7 @@ interface HighDimExporter {
      * @param projection Projection that was used to retrieve the data
      * @param outputStream Stream to write the data to
      */
-    public void export(TabularResult data, Projection projection, OutputStream outputStream)
+    public void export(TabularResult data, Projection projection, Closure<OutputStream> newOutputStream)
 
     /**
      * Exports the data in the TabularResult to the outputStream given, 
@@ -49,6 +49,6 @@ interface HighDimExporter {
      * @param outputStream Stream to write the data to
      * @param isCancelled Closure that returns true iff the export is cancelled
      */
-    public void export(TabularResult data, Projection projection, OutputStream outputStream, Closure isCancelled)
+    public void export(TabularResult data, Projection projection, Closure<OutputStream> newOutputStream, Closure<Boolean> isCancelled)
 
 }

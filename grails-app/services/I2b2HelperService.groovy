@@ -24,6 +24,8 @@ import javax.xml.xpath.XPathFactory
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 
@@ -59,6 +61,8 @@ class I2b2HelperService {
         sql.eachRow(sqlt, [result_instance_id], { row ->
             values.add(row[0])
         });
+        // remove missing values from the distribution
+        values = values.findAll { it != null }
         double[] returnvalues = new double[values.size()];
         for (int i = 0; i < values.size(); i++) {
             returnvalues[i] = values.get(i);
@@ -239,10 +243,9 @@ class I2b2HelperService {
      * Gets the data associated with a value type concept from observation fact table
      * for display in a distribution histogram
      */
-    def getConceptDistributionDataForValueConcept(String concept_key) {
-        log.trace("Getting concept distribution data for value concept: " + concept_key);
+    def getConceptDistributionDataForValueConcept(String concept_cd) {
+        log.trace("Getting concept distribution data for value concept: " + concept_cd);
         Sql sql = new Sql(dataSource);
-        String concept_cd = getConceptCodeFromKey(concept_key);
         ArrayList<Double> values = new ArrayList<Double>();
         sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ?", [concept_cd], { row ->
             if (row.NVAL_NUM != null) {
@@ -258,48 +261,6 @@ class I2b2HelperService {
         return returnvalues;
     }
 
-    /**
-     *  Gets the data associated with a value type concept from observation fact table
-     * for display in a distribution histogram for a given subset
-     */
-    def getConceptDistributionDataForValueConcept(String concept_key, String result_instance_id) {
-        checkQueryResultAccess result_instance_id
-
-        log.debug("Getting concept distribution data for value concept:" + concept_key);
-        Sql sql = new Sql(dataSource);
-        String concept_cd = getConceptCodeFromKey(concept_key);
-        ArrayList<Double> values = new ArrayList<Double>();
-
-        log.debug("concept_cd: " + concept_cd);
-        log.debug("result_instance_id: " + result_instance_id);
-
-        log.debug("getConceptDistributionDataForValueConcept: preparing query");
-        //String sqlt=""""SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND PATIENT_NUM IN (select distinct patient_num
-        //        from qt_patient_set_collection where result_instance_id = ?)""";
-
-        String sqlt = "SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = '" +
-                concept_cd + "' AND PATIENT_NUM IN (select distinct patient_num " +
-                "from qt_patient_set_collection where result_instance_id = " + result_instance_id + ")";
-
-        log.debug("executing query: sqlt=" + sqlt);
-        try {
-            //sql.eachRow(sqlt, [concept_cd, result_instance_id], {row ->
-            sql.eachRow(sqlt, { row ->
-                if (row.NVAL_NUM != null) {
-                    values.add(row.NVAL_NUM);
-                }
-            });
-        } catch (Exception e) {
-            log.error("exception in getConceptDistributionDataForValueConcept: " + e.getMessage())
-        }
-        ArrayList<Double> returnvalues = new ArrayList<Double>(values.size());
-        for (int i = 0; i < values.size(); i++) {
-            returnvalues[i] = values.get(i);
-        }
-        log.debug("getConceptDistributionDataForValueConcept now finished");
-        return returnvalues;
-    }
-
     def getConceptDistributionDataForValueConceptFromCode(String concept_cd, String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
@@ -307,7 +268,7 @@ class I2b2HelperService {
         ArrayList<Double> returnvalues = new ArrayList<Double>(values.size());
         if (result_instance_id == "") {
             log.debug("getConceptDistributionDataForValueConceptFromCode called with no result_istance_id");
-            return returnvalues;
+            return getConceptDistributionDataForValueConcept(concept_cd);
         }
         log.trace("Getting concept distribution data for value concept code:" + concept_cd);
         Sql sql = new Sql(dataSource);
@@ -725,6 +686,20 @@ class I2b2HelperService {
     }
 
     /**
+     * Checks if a string represents a URL
+     */
+    Boolean isURL(String s) {
+        Boolean isurl
+        // Attempt to convert string into an URL.
+        try {
+            URL url = new URL(s)
+            isurl = true
+        } catch (MalformedURLException e) {
+            isurl = false
+        }
+    }
+
+    /**
      * Adds a column of data to the grid export table
      */
     def ExportTableNew addConceptDataToTable(ExportTableNew tablein, String concept_key, String result_instance_id) {
@@ -784,6 +759,10 @@ class I2b2HelperService {
                     String value = row.TVAL_CHAR
                     if (value == null) {
                         value = "Y";
+                    }
+                    if (isURL(value)) {
+                        /* Embed URL in a HTML Link */
+                        value = "<a href=\"" + value + "\" target=\"_blank\">" + value + "</a>";
                     }
                     if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
                         tablein.getRow(subject).put(columnid, value.toString());
@@ -859,6 +838,10 @@ class I2b2HelperService {
                 String value = row[1]
                 if (value == null) {
                     value = "Y";
+                }
+                if (isURL(value)) {
+                    /* Embed URL in a HTML Link */
+                    value = "<a href=\"" + value + "\" target=\"_blank\">" + value + "</a>"
                 }
                 if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
                     tablein.getRow(subject).put(columnid, value.toString());

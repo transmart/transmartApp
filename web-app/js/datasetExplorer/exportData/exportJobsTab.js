@@ -5,7 +5,7 @@ function getExportJobs(tab)
 		url : pageInfo.basePath+'/asyncJob/getjobs',
 		root : 'jobs',
 		totalProperty : 'totalCount',
-		fields : ['name', 'status', 'runTime', 'startDate', 'viewerURL', 'querySummary']
+		fields : ['name', 'status', 'runTime', 'startDate', 'viewerURL', 'altViewerURL']
 	});
 	exportjobsstore.on('load', exportjobsstoreLoaded);
 	var myparams = Ext.urlEncode({jobType: 'DataExport', disableCaching: true});
@@ -40,7 +40,6 @@ function exportjobsstoreLoaded()
 		        		  return changedName;
 		              }
 		          },
-		          //TODO possibly rename querySummary to altViewerURL
 		          {name:'altViewerURL', header: "Query Summary", width: 120, sortable: false, dataIndex: 'altViewerURL'},
 		          {name:'status', header: "Status", width: 60, sortable: true, dataIndex: 'status'},
 		          {name:'runTime', header: "Run Time", width: 80, sortable: true, dataIndex: 'runTime', hidden: true},

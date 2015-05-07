@@ -9,17 +9,17 @@ function getSelectedAsCommaSeparatedList(ob)
 
  		function sizeToFit(f)
 		{
-		   var d=f.contentDocument
+		   var d = f.contentDocument;
 		   if(d==null)
 		   {
-		    d=f.contentWindow.document
+		    d = f.contentWindow.document;
 		   }
-		   var cv=d.getElementById("CrystalViewer");
-		   if(cv==null){return}
-		   if(typeof(cv)!='undefined')
+		   var cv = d.getElementById("CrystalViewer");
+		   if(cv == null){return}
+		   if(typeof(cv) != 'undefined')
 		   {
-		   f.width=cv.clientWidth;
-		   f.height=cv.clientHeight;
+		   f.width = cv.clientWidth;
+		   f.height = cv.clientHeight;
 		  }
 	}
 
@@ -245,13 +245,6 @@ function createUserSearchBox3(ajaxurl, boxwidth){
     return search;
 }
 
-
-
-
-
-
-
-
 Ext.namespace('Recom.rc');
 Recom.rc.ComboBox = function(config) {
 
@@ -295,7 +288,7 @@ function highlightTextNodes(element, searchTerm) {
 
 Recom.rc.serializeFormElements = function(elements, form /* jquery el or undef */) {
     if (!form) {
-        form = jQuery(this).closest('form')
+        form = jQuery(this).closest('form');
         if (!form.length) {
             // if form is not set, search in the whole document
             form = jQuery(window.document);
@@ -305,7 +298,7 @@ Recom.rc.serializeFormElements = function(elements, form /* jquery el or undef *
     elements.forEach(function(id) {
         var jQueryEl = form.find('#' + id);
         if (!jQueryEl.length) {
-            form = form.find('[name=' +  id + ']')
+            form = form.find('[name=' +  id + ']');
             if (!jQueryEl.length) {
                 console.error('Could not find element with id or name \'' +
                         id + '\' in form ' + form);
@@ -313,7 +306,7 @@ Recom.rc.serializeFormElements = function(elements, form /* jquery el or undef *
         }
 
         data[id] = jQueryEl.val();
-    })
+    });
 
     return jQuery.param(data, true);
-}
+};

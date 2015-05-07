@@ -95,6 +95,7 @@ beans = {
             dataSource = ref('dataSource')
             springSecurityService = ref('springSecurityService')
             databasePortabilityService = ref('databasePortabilityService')
+            bruteForceLoginLockService = ref('bruteForceLoginLockService')
         }
 
     } else {
@@ -128,6 +129,10 @@ beans = {
 
     badCredentialsEventListener(BadCredentialsEventListener) {
         bruteForceLoginLockService = ref('bruteForceLoginLockService')
+    }
+
+    acghBedExporterRgbColorScheme(org.springframework.beans.factory.config.MapFactoryBean) {
+        sourceMap = grailsApplication.config.dataExport.bed.acgh.rgbColorScheme
     }
 
 }

@@ -399,7 +399,4 @@ function createAdvancedSubMenu()
 			});
 
 	return advmenu;
-
 }
-
-

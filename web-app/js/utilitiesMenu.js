@@ -14,7 +14,7 @@ function createUtilitiesMenu(helpURL, contact, appTitle, basePath, buildVer, css
     	'GNU General Public License for more details.<br/><br/>' +
 
     	'You should have received a copy of the GNU General Public License<br/>' +
-    	'along with this program.  If not, click <a href="http://www.gnu.org/licenses" target="_blank">here</a>'
+    	'along with this program.  If not, click <a href="http://www.gnu.org/licenses" target="_blank">here</a>';
     	
 	var utilityMenu = new Ext.menu.Menu(
 	{

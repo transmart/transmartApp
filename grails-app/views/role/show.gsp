@@ -59,7 +59,7 @@
                                 <td>${person.description?.encodeAsHTML()}</td>
                                 <td class="actionButtons">
                                     <span class="actionButton">
-                                        <g:link action="show" id="${person.id}">Detail</g:link>
+                                        <g:link controller="authUser" action="show" id="${person.id}">Detail</g:link>
                                     </span>
                                 </td>
                             </tr>

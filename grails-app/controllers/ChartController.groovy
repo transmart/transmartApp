@@ -118,111 +118,38 @@ class ChartController {
      */
     def conceptDistribution = {
 
-        String concept_key = params.concept_key;
-        def al = new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Set Value Concept Histogram", eventmessage: "Concept:" + concept_key, accesstime: new java.util.Date())
-        al.save()
-        def concept_cd = i2b2HelperService.getConceptCodeFromKey(concept_key);
-        def concept_name = i2b2HelperService.getShortNameFromKey(concept_key);
+        // Lets put a bit of 'audit' in here
+        new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Set Value Concept Histogram", eventmessage: "Concept:" + params.concept_key, accesstime: new java.util.Date()).save()
 
-        double[] values = i2b2HelperService.getConceptDistributionDataForValueConcept(concept_key);
-        HistogramDataset dataset = new HistogramDataset();
-        dataset.addSeries("H1", values, 10, StatHelper.min(values), StatHelper.max(values));
+        // We retrieve the result instance ids from the client
+        def concept = params.concept_key ?: null
+        def concepts = [:]
 
-        JFreeChart chart = ChartFactory.createHistogram(
-                "Histogram of " + concept_name + " for all",
-                null,
-                "Count",
-                dataset,
-                PlotOrientation.VERTICAL,
-                false,
-                true,
-                false
-        );
+        // Collect concept information
+        // We need to force computation for an empty instance ID
+        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
 
-        chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
-        XYPlot plot = (XYPlot) chart.getPlot();
-        plot.setForegroundAlpha(0.85f);
-
-        XYBarRenderer renderer = (XYBarRenderer) plot.getRenderer();
-
-        renderer.setDrawBarOutline(false);
-        // flat bars look best...
-        renderer.setBarPainter(new StandardXYBarPainter());
-        renderer.setShadowVisible(false);
-
-        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-        NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
-        //domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-        ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
         PrintWriter pw = new PrintWriter(response.getOutputStream());
-
-        String filename = ServletUtilities.saveChartAsJPEG(chart, 245, 180, info, request.getSession());
-        String graphURL = request.getContextPath() + "/chart/displayChart?filename=" + filename;
-
-        //  Write the image map to the PrintWriter
-        //pw.write("<html><body>");
-        pw.write("<img src='" + graphURL + "' width=245 height=180 border=0 usemap='#" + filename + "'>");
-        ChartUtilities.writeImageMap(pw, filename, info, false);
+        pw.write(concept.commons.conceptHisto)
         pw.flush();
     }
 
 
     def conceptDistributionForSubset = {
-        String concept_key = params.concept_key;
-        def al = new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Set Value Concept Histogram for subset", eventmessage: "Concept:" + concept_key, accesstime: new java.util.Date())
-        al.save()
-        def result_instance_id1 = params.result_instance_id1;
-        def result_instance_id2 = params.result_instance_id2;
-        def concept_cd = i2b2HelperService.getConceptCodeFromKey(concept_key);
-        def concept_name = i2b2HelperService.getShortNameFromKey(concept_key);
 
-        if (result_instance_id1 != "" && result_instance_id1 != null) {
-            double[] values2 = i2b2HelperService.getConceptDistributionDataForValueConcept(concept_key, result_instance_id1);
-            double[] values = i2b2HelperService.getConceptDistributionDataForValueConcept(concept_key);
-            HistogramDataset dataset2 = new HistogramDataset();
-            //changed following line from values2 min max to values to syncronize scales
-            dataset2.addSeries("H1", values2, 10, StatHelper.min(values), StatHelper.max(values));
-            dataset2.addSeries("H2", values, 10, StatHelper.min(values), StatHelper.max(values));
-            JFreeChart chart2 = ChartFactory.createHistogram(
-                    "Histogram of " + concept_name + " for subset",
-                    null,
-                    "Count",
-                    dataset2,
-                    PlotOrientation.VERTICAL,
-                    false,
-                    true,
-                    false
-            );
-            chart2.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
-            XYPlot plot2 = (XYPlot) chart2.getPlot();
-            plot2.setForegroundAlpha(0.85f);
+        // Lets put a bit of 'audit' in here
+        new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Set Value Concept Histogram for subset", eventmessage: "Concept:" + params.concept_key, accesstime: new java.util.Date()).save()
 
-            XYBarRenderer renderer2 = (XYBarRenderer) plot2.getRenderer();
-            renderer2.setDrawBarOutline(false);
-            renderer2.setSeriesVisible(1, false);
-            // flat bars look best...
-            renderer2.setBarPainter(new StandardXYBarPainter());
-            renderer2.setShadowVisible(false);
+        // We retrieve the result instance ids from the client
+        def concept = params.concept_key ?: null
+        def concepts = [:]
 
-            NumberAxis rangeAxis2 = (NumberAxis) plot2.getRangeAxis();
-            rangeAxis2.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        // Collect concept information
+        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: chartService.getSubsetsFromRequest(params), chartSize : [width : 245, height : 180])
 
-            NumberAxis domainAxis2 = (NumberAxis) plot2.getDomainAxis();
-            //domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-            ChartRenderingInfo info2 = new ChartRenderingInfo(new StandardEntityCollection());
-
-            String filename2 = ServletUtilities.saveChartAsJPEG(chart2, 245, 180, info2, request.getSession());
-            String graphURL2 = request.getContextPath() + "/chart/displayChart?filename=" + filename2;
-
-            PrintWriter pw = new PrintWriter(response.getOutputStream());
-            pw.write("<img src='" + graphURL2 + "' width=245 height=180 border=0 usemap='#" + filename2 + "'>");
-            ChartUtilities.writeImageMap(pw, filename2, info2, false);
-            pw.flush();
-        }
+        PrintWriter pw = new PrintWriter(response.getOutputStream());
+        pw.write(concept.commons.conceptHisto)
+        pw.flush();
     }
 
     /**
@@ -237,6 +164,9 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
+        // We add the key to our cache set
+        chartService.keyCache.add(concept)
+
         // Collect concept information
         concepts[concept] = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: chartService.getSubsetsFromRequest(params))
 
@@ -249,11 +179,14 @@ class ChartController {
      */
     def basicStatistics = {
 
-        // This clears the current session concept grid
-        request.getSession().setAttribute("gridtable", null);
-
         // Lets put a bit of 'audit' in here
         new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Basic Statistics", eventmessage: "RID1:" + params.result_instance_id1 + " RID2:" + params.result_instance_id2, accesstime: new java.util.Date()).save()
+
+        // We clear the keys in our cache set
+        chartService.keyCache.clear()
+
+        // This clears the current session grid view data table and key cache
+        request.session.setAttribute("gridtable", null);
 
         // We retrieve all our charts from our ChartService
         def subsets = chartService.computeChartsForSubsets(chartService.getSubsetsFromRequest(params))

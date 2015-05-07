@@ -11,6 +11,7 @@ import org.springframework.security.authentication.LockedException
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.web.WebAttributes
 import org.transmart.searchapp.AccessLog
 
@@ -64,22 +65,17 @@ class LoginController {
             log.info("proceeding with auto guest login")
             def guestuser = grailsApplication.config.com.recomdata.guestUserName;
 
-            UserDetails ud = userDetailsService.loadUserByUsername(guestuser)
-            if (ud != null) {
+            try {
+                UserDetails ud = userDetailsService.loadUserByUsername(guestuser)
                 log.debug("We have found user: ${ud.username}")
                 springSecurityService.reauthenticate(ud.username)
                 redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
-
-            } else {
+            }
+            catch (UsernameNotFoundException e) {
                 log.info("can not find the user:" + guestuser);
             }
         }
 
-        /*if (springSecurityService.isLoggedIn()) {
-			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
-		} else	{
-            render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
-        }*/
         render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
     }
 

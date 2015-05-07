@@ -14,6 +14,16 @@
     color:#d3d3d3;
 }
 
+.conceptDistributionPlaceholder {
+    display: block;
+    padding: 0 !important;
+    background-color: transparent !important;
+    background-position: center !important;
+    background-size: 10% !important;
+    width: 245px;
+    height: 180px;
+}
+
 div.topall {
 	padding-top:4px;
 	background: #fafafa url(../images/skin/shadow30.jpg);
@@ -99,9 +109,30 @@ a.toplink1:hover{
 .printbutton{background-image:url(../images/printer.png ) !important;}
 .savebutton{
 	background-image:url(../images/disk.png ) !important;
-	}	
-	
-.jleafclass 
+	}
+
+.progress-spinner {
+    background: url(../images/spinner.gif) 0px 0px / 16px 16px no-repeat transparent;
+    display:inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.progress-error {
+    background: url(../images/remove.png) 0px 0px / 16px 16px no-repeat transparent;
+    display:inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.progress-completed {
+    background: url(../images/green_check2.png) 0px 0px / 16px 16px no-repeat transparent;
+    display:inline-block;
+    height: 16px;
+    width: 16px;
+}
+
+.jleafclass
 	a span {
 
     color: #33cc33;
