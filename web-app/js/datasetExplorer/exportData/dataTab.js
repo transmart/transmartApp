@@ -426,6 +426,11 @@ DataExport.prototype.prepareNewStore = function (store, columns, selectedCohortD
  */
 DataExport.prototype.createDataExportJob = function (gridPanel) {
     var _this = this;
+    var subsetDataTypeFiles = jQuery("input[name=download_dt]:checked");
+    if (subsetDataTypeFiles.length < 1) {
+        alert('Please select the check boxes for the data types to export.');
+        return
+    }
     Ext.Ajax.request({
         url: pageInfo.basePath + "/dataExport/createnewjob",
         method: 'POST',
