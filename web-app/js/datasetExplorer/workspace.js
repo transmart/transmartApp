@@ -191,7 +191,7 @@ function hideQuery(){
 	jQuery(workspaceQueryDisplayDialog).dialog("close");
 }
 
-function applySubsets(subsetId, study){
+function applySubsets(subsetId){
 	var overrideCurrentSubsets = true;
 	if(!isSubsetEmpty(1) || !isSubsetEmpty(2)){
 		overrideCurrentSubsets = confirm("This will override the criteria you have selected on the comparison tab.");
