@@ -71,12 +71,12 @@
             <td style="padding:5px 20px 5px 30px;">
                 <g:if test="${subset.id == selectedSubsetId}">
                     <input type="radio" id="applySubset${subset.id}" name="applySubset" value="${subset.id}"
-                           onclick="applySubsets('${subset.id}', '${subset.study}')" checked="true"
+                           onclick="applySubsets('${subset.id}')" checked="true"
                            title="Apply Subset">
                 </g:if>
                 <g:else>
                     <input type="radio" id="applySubset${subset.id}" name="applySubset" value="${subset.id}"
-                           onclick="applySubsets('${subset.id}', '${subset.study}')" title="Apply Subset">
+                           onclick="applySubsets('${subset.id}')" title="Apply Subset">
                 </g:else>
             </td>
 
