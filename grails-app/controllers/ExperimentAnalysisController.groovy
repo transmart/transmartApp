@@ -10,6 +10,7 @@ import com.recomdata.export.ExportTableNew
 import com.recomdata.util.DomainObjectExcelHelper
 import com.recomdata.util.ElapseTimer
 import fm.FmFolder
+import fm.FmFolderAssociation
 import org.transmart.SearchResult
 import org.transmart.biomart.BioAssayAnalysis
 import org.transmart.biomart.Experiment
@@ -164,7 +165,7 @@ class ExperimentAnalysisController {
 
         def formLayout = formLayoutService.getLayout('study');
 
-        def parent = FmFolder.findByObjectUid(expid)
+        def parent = FmFolderAssociation.findByObjectUid(expid)
 
         log.info "Parent = " + parent
 
