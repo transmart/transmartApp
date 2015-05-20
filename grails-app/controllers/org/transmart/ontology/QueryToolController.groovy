@@ -35,10 +35,6 @@ class QueryToolController {
         def result = queriesResourceAuthorizationDecorator.runQuery(
                 definition, username)
 
-
-
-        //render result as JSON
-
         def omics_result = omicsQueryService.applyOmicsFilters(result.id, request, definition.name)
         def newresult = JSON.parse((result as JSON).toString())
         newresult.putAt("omics_filter_result", omics_result)
