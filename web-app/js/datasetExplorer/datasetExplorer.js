@@ -574,7 +574,7 @@ Ext.onReady(function () {
                     runAllQueries(_activateAdvancedWorkflow, p);
                 }
 
-                activateAdvancedWorkflow();
+                _activateAdvancedWorkflow();
             },
             'afterLayout': {
                 fn: function (el) {
