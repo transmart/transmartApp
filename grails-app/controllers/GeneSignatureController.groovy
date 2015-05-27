@@ -795,7 +795,8 @@ class GeneSignatureController {
 
             case 2:
                 // 'other' concept code item
-                def otherConceptItem = ConceptCode.get(169686)
+                def otherConceptCodeQuery = ConceptCode.where { codeTypeName == "OTHER" && bioConceptCode == "OTHER" }
+                def otherConceptItem = otherConceptCodeQuery.get()
 
                 // sources
                 wizard.sources = ConceptCode.findAllByCodeTypeName(SOURCE_CATEGORY, [sort: "bioConceptCode"])
@@ -832,7 +833,8 @@ class GeneSignatureController {
 
             case 3:
                 // 'other' concept code item
-                def otherConceptItem = ConceptCode.get(169686)
+                def otherConceptCodeQuery = ConceptCode.where { codeTypeName == "OTHER" && bioConceptCode == "OTHER" }
+                def otherConceptItem = otherConceptCodeQuery.get()
 
                 // normalization methods
                 wizard.normMethods = ConceptCode.findAllByCodeTypeName(NORM_METHOD_CATEGORY, [sort: "bioConceptCode"])
