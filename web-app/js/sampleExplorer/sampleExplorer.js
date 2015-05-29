@@ -133,7 +133,7 @@ function loadDataSetGrid()
         proxy: dataStoreProxy,
         reader: dataStoreReader,
         sortInfo:{field: 'count', direction: "ASC"}
-    })
+    });
 
 
     //Fix this. Out of patience for now.
@@ -291,7 +291,7 @@ function dataGridColumnRemoved(cm,columnIndex,hidden)
     }
     else
     {
-        GLOBAL.SearchJSON["GridColumnList"].push(columnNameFromHeader)
+        GLOBAL.SearchJSON["GridColumnList"].push(columnNameFromHeader);
     }
 
     //Reload the title to the grid.
@@ -348,7 +348,7 @@ function addSubset(panelNumber)
 
     //Create the DIV which holds the GridPanel.
     myEl = new Ext.Element(document.createElement('div'));
-    Ext.get('subsetpanel' + panelNumber).appendChild(myEl)
+    Ext.get('subsetpanel' + panelNumber).appendChild(myEl);
 
     //This is the URL that will return the data we want in JSON format.
     var dataStoreURL = pageInfo.basePath+'/' + GLOBAL.explorerType + '/getDataSetResults';
@@ -438,7 +438,7 @@ function addSubset(panelNumber)
                 //For each record we update the search JSON here.
                 function addRow(record, index, allItems)
                 {
-                    addRecordToJSONSearch(record,panelNumber)
+                    addRecordToJSONSearch(record,panelNumber);
                 }
 
                 // Loop through the selections
@@ -524,7 +524,7 @@ function toggleContactSampleSection(sampleTable)
 //This will clear out the current search and load the landing page again.
 function clearSearch()
 {
-    window.location=pageInfo.basePath+'/' + GLOBAL.explorerType + '/list'
+    window.location=pageInfo.basePath+'/' + GLOBAL.explorerType + '/list';
 }
 
 /**

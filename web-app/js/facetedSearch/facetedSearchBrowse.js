@@ -56,7 +56,7 @@ function generateBrowseWindow(nodeClicked)
 			hide: 'fade',
 			resizable: false,
 			buttons: {"Select" : filteringFunction}
-		})
+		});
 }
 
 //After the user clicks select on the popup we need to add the search terms to the filter.
@@ -73,10 +73,10 @@ function applyPopupFiltersStudy()
 		
 		addSearchTerm(searchParam);
 		
-	})
+	});
 	
 	//This destroys our popup window.
-	jQuery(this).dialog("destroy")
+	jQuery(this).dialog("destroy");
 }
 
 function applyPopupFiltersAnalyses()
@@ -92,10 +92,10 @@ function applyPopupFiltersAnalyses()
 		
 		addSearchTerm(searchParam);
 		
-	})
+	});
 	
 	//This destroys our popup window.
-	jQuery(this).dialog("destroy")
+	jQuery(this).dialog("destroy");
 }
 
 function applyPopupFiltersRegions()
@@ -113,7 +113,7 @@ function applyPopupFiltersRegions()
 		range = jQuery('#filterGeneRange').val();
 		basePairs = jQuery('#filterGeneBasePairs').val();
 		use = jQuery('#filterGeneUse').val();
-		searchString += "GENE;" + geneId
+		searchString += "GENE;" + geneId;
 		
 		text = "HG" + use + " " + geneName + " " + getRangeSymbol(range) + " " + basePairs;
 	}
@@ -143,7 +143,7 @@ function applyPopupFiltersRegions()
 	addSearchTerm(searchParam);
 	
 	//This destroys our popup window.
-	jQuery(this).dialog("destroy")
+	jQuery(this).dialog("destroy");
 }
 
 function getRangeSymbol(string) {
@@ -172,8 +172,8 @@ function applyPopupFiltersDataTypes()
 		
 		addSearchTerm(searchParam);
 		
-	})
+	});
 	
 	//This destroys our popup window.
-	jQuery(this).dialog("destroy")
+	jQuery(this).dialog("destroy");
 }

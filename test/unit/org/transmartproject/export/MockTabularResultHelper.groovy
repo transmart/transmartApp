@@ -23,7 +23,7 @@ class MockTabularResultHelper {
     }
 
     DataRow createRowForAssays(List<AssayColumn> assays,
-                               List<Double> data,
+                               List data,
                                String label) {
         createMockRow(
                 dot(assays, data, { a, b -> [a, b] })
@@ -59,7 +59,7 @@ class MockTabularResultHelper {
         String columnsDimensionLabel = params.columnsLabel
         String rowsDimensionLabel = params.rowsLabel
 
-        def iterator = labelToData.collect { String label, List<Number> data ->
+        def iterator = labelToData.collect { String label, List data ->
             createRowForAssays(sampleAssays, data, label)
         }.iterator()
 

@@ -43,19 +43,19 @@ JSONscriptRequest.prototype.buildScriptTag = function () {
     this.scriptObj.setAttribute("type", "text/javascript");
     this.scriptObj.setAttribute("src", this.fullUrl + this.noCacheIE);
     this.scriptObj.setAttribute("id", this.scriptId);
-}
+};
  
 // removeScriptTag method
 // 
 JSONscriptRequest.prototype.removeScriptTag = function () {
     // Destroy the script tag
     this.headLoc.removeChild(this.scriptObj);  
-}
+};
 
 // addScriptTag method
 //
 JSONscriptRequest.prototype.addScriptTag = function () {
     // Create the script tag
     this.headLoc.appendChild(this.scriptObj);
-}
+};
 

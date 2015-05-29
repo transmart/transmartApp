@@ -40,9 +40,9 @@ CustomGridPanel.prototype.dropZonesChecker = function () {
 
             // check if view already have rows represent the number of records
             for (var i = 1; i <= _this.records.length; i++) {
-                var recordData = _this.records[i - 1].data
+                var recordData = _this.records[i - 1].data;
                 var _rowEl = _this.getView().getRow(i);
-                rows.push(_rowEl)
+                rows.push(_rowEl);
                 var _dtgI = new Ext.dd.DropTarget(_rowEl, {ddGroup: 'makeQuery'});
                 var isWrongNode = function(rd, data) {
                     return rd.subset1.ontologyTermKeys
@@ -51,7 +51,7 @@ CustomGridPanel.prototype.dropZonesChecker = function () {
                         && rd.subset2.ontologyTermKeys.indexOf(data.node.id) < 0
                             //TODO We could check for folders
                         || (data.node.attributes.visualattributes.indexOf('HIGH_DIMENSIONAL') >= 0 && rd.dataTypeId == 'CLINICAL');
-                }
+                };
                 var getDropHandler = function(target, rd) {
                     return function (source, e, data) {
                         if (isWrongNode(rd, data)) {
@@ -59,9 +59,10 @@ CustomGridPanel.prototype.dropZonesChecker = function () {
                         }
                         //`this` is used inside function `dropOntoVariableSelection` function
                         target.dropOntoVariableSelection = dropOntoVariableSelection
+                        jQuery(target.el.dom).find('input[name=download_dt]').prop('checked', true);
                         return target.dropOntoVariableSelection(source, e, data);
-                    }
-                }
+                    };
+                };
                 _dtgI.notifyDrop = getDropHandler(_dtgI, recordData);
 
                 var getEnterHandler = function(target, rd) {
@@ -70,14 +71,14 @@ CustomGridPanel.prototype.dropZonesChecker = function () {
                             target.el.addClass(target.overClass);
                         }
                         return isWrongNode(rd, data) ? target.dropNotAllowed : target.dropAllowed;
-                    }
+                    };
                 };
                 _dtgI.notifyEnter = getEnterHandler(_dtgI, recordData);
 
                 var getOverHandler = function(target, rd) {
                     return function(dd, e, data) {
                         return isWrongNode(rd, data) ? target.dropNotAllowed : target.dropAllowed;
-                    }
+                    };
                 };
                 _dtgI.notifyOver = getOverHandler(_dtgI, recordData);
             }
@@ -90,14 +91,14 @@ CustomGridPanel.prototype.dropZonesChecker = function () {
         },
 
         interval: 500 // repeat every 0.5 seconds
-    }
+    };
 
     // Need to have a task runner since there's no other way to retrieve
     // row elements after they're rendered.
 
     var runner = new Ext.util.TaskRunner();  // define a runner
     runner.start(checkTask); // start the task
-}
+};
 
 /**********************************************************************************************************************/
 
@@ -144,29 +145,29 @@ var DataExport = function() {
         ret.proxy.addListener('loadexception', function(dummy, dummy2, response) {
             if (response.status != 200) {
                 var responseText,
-                    parsedResponseText
-                responseText = response.responseText
+                    parsedResponseText;
+                responseText = response.responseText;
                 try {
-                    parsedResponseText = JSON.parse(responseText)
+                    parsedResponseText = JSON.parse(responseText);
                     if (parsedResponseText.message) {
-                        responseText = parsedResponseText.message
+                        responseText = parsedResponseText.message;
                     }
                 } catch (syntaxError) {}
                 exportListFetchErrorHandler(response.status, responseText);
             }
         });
         return ret;
-    }
+    };
 
     var exportListFetchErrorHandler = function(status, text) {
         Ext.Msg.alert('Status', "Error fetching export metadata.<br/>Status " +
         status + "<br/>Message: " + text);
-    }
+    };
 
     // let's create export metadata json store
     this.exportMetaDataStore = _getExportMetadataStore();
 
-}
+};
 
 /**
  * Display data to be exported
@@ -203,7 +204,7 @@ DataExport.prototype.displayResult = function (records, options, success) {
                     )]
             }
         );
-    }
+    };
 
     /**
      * Get data types grid panel component
@@ -249,7 +250,7 @@ DataExport.prototype.displayResult = function (records, options, success) {
         });
 
         return _grid;
-    }
+    };
 
     // Display data when success and records contains data
     if (success && (_this.records.length > 0)) {
@@ -277,7 +278,7 @@ DataExport.prototype.displayResult = function (records, options, success) {
     }
     // unmask data export panel
     analysisDataExportPanel.body.unmask();
-}
+};
 
 /**
  *
@@ -315,7 +316,7 @@ DataExport.prototype.prepareColumnModel = function (store, selectedCohortData) {
     });
 
     return columns;
-}
+};
 
 /**
  *
@@ -330,10 +331,10 @@ DataExport.prototype.prepareOutString = function (file, subset, dataTypeId) {
     var _this = this;
 
     if (!dataCountExists) dataCountExists = true;
-    outStr += _this.createSelectBoxHtml(file, subset, dataTypeId)
+    outStr += _this.createSelectBoxHtml(file, subset, dataTypeId);
 
     return outStr;
-}
+};
 
 /**
  *
@@ -356,8 +357,8 @@ DataExport.prototype.createSelectBoxHtml = function (file, subset, dataTypeId) {
     }
     outStr += '</select><br/>';
 
-    return outStr
-}
+    return outStr;
+};
 
 /**
  *
@@ -385,7 +386,7 @@ DataExport.prototype.prepareNewStore = function (store, columns, selectedCohortD
 
         return " <br><span class='data-export-filter-tip'>(Drag and drop " + _str_data_type
             + " nodes here to filter the exported data.)</span>";
-    }
+    };
 
     store.each(function (row) {
         var this_data = [];
@@ -417,7 +418,7 @@ DataExport.prototype.prepareNewStore = function (store, columns, selectedCohortD
     myStore.loadData({subsets: data}, false);
 
     return myStore;
-}
+};
 
 /**
  * Create data export job
@@ -425,6 +426,11 @@ DataExport.prototype.prepareNewStore = function (store, columns, selectedCohortD
  */
 DataExport.prototype.createDataExportJob = function (gridPanel) {
     var _this = this;
+    var subsetDataTypeFiles = jQuery("input[name=download_dt]:checked");
+    if (subsetDataTypeFiles.length < 1) {
+        alert('Please select the check boxes for the data types to export.');
+        return
+    }
     Ext.Ajax.request({
         url: pageInfo.basePath + "/dataExport/createnewjob",
         method: 'POST',
@@ -442,7 +448,7 @@ DataExport.prototype.createDataExportJob = function (gridPanel) {
             analysis: "DataExport"
         }
     });
-}
+};
 
 /**
  * Get export parameters to be sent to the backend
@@ -471,7 +477,7 @@ DataExport.prototype.getExportParams = function (gridPanel, selectedFiles) {
             }
         }
         return _returnVal;
-    } //
+    }; //
 
     /**
      * Check if a particular data type is selected
@@ -483,7 +489,7 @@ DataExport.prototype.getExportParams = function (gridPanel, selectedFiles) {
     var _checkDataType = function (file, type) {
         var _typeRegex = new RegExp(type);
         return _typeRegex.test(file);
-    }
+    };
 
     /**
      * Get concept paths
@@ -501,7 +507,7 @@ DataExport.prototype.getExportParams = function (gridPanel, selectedFiles) {
 
         return _concept_path_arr;
 
-    } //
+    }; //
 
     if (gridPanel.records.length > 0) {
 
@@ -539,7 +545,7 @@ DataExport.prototype.getExportParams = function (gridPanel, selectedFiles) {
     }
 
     return params;
-}
+};
 
 /**
  * Run data export job
@@ -554,7 +560,7 @@ DataExport.prototype.runDataExportJob = function (result, gridPanel) {
         cancelMsg: "Your Job has been cancelled.",
         backgroundMsg: "Your job has been put into background process. Please check the job status in " +
         "the 'Export Jobs' tab."
-    }
+    };
 
     showJobStatusWindow(result, messages);
 
@@ -590,4 +596,4 @@ DataExport.prototype.runDataExportJob = function (result, gridPanel) {
         });
 
     checkJobStatus(jobName);
-}
+};

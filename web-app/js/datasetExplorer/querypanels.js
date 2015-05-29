@@ -37,6 +37,32 @@ function appendQueryPanelInto(subset) {
 }
 
 /**
+ * Adding supplementary item within a destination (subset or panelBoxList).
+ * @param destination : subset {numeric} or selector {string} or DOM reference {object} to add the item to
+ * @param concept : flatten concept object {object}
+ * @param invert : whether the set membership should be updated {boolean}
+ * @returns {void}
+ */
+function appendItemFromConceptInto(destination, concept, invert) {
+
+    var _panel = null
+
+    if (typeof destination == "number")
+        _panel = jQuery(jQuery("#queryTable tr:last-of-type td")[destination - 1]).find('div[id^=panelBoxList]').last()
+    else
+        _panel = jQuery(destination)
+
+    var _invert = typeof invert !== 'undefined' ? invert : false;
+    if (_invert)
+        _panel.parent().find('label[for^=panelExclude]').click()
+
+    _panel.parent().find('.panelBoxListPlaceholder').hide()
+    _panel.append(getPanelItemFromConcept(concept))
+
+    appendQueryPanelInto(_panel.closest('.panelModel').attr('subset'))
+}
+
+/**
  * This will hook our object to ExtJS
  * @param clone : jQuery instance of a clonned panel
  * @returns {void}
@@ -211,7 +237,6 @@ function getConceptFromQueryItem(item) {
     var _item = jQuery(item)
     var _concept = {}
 
-    console.log(_item)
     _concept["conceptid"] = _item.find("item_key").text()
     _concept["conceptname"] = createShortNameFromPath(_concept["conceptid"])
     _concept["concepttooltip"] = _concept["conceptid"].substr(1, _concept["conceptid"].length)

@@ -29,6 +29,8 @@ class ChartService {
     def i2b2HelperService
     def omicsQueryService
 
+    def public keyCache = []
+
     def getSubsetsFromRequest(params) {
 
         // We retrieve the result instance ids from the client
@@ -133,8 +135,7 @@ class ChartService {
         concepts
     }
 
-    private def getConceptAnalysis (Map args) {
-
+    def getConceptAnalysis (Map args) {
         // Retrieving function parameters
         def subsets = args.subsets ?: null
         def concept = args.concept ?: null

@@ -69,13 +69,13 @@ grails.project.dependency.resolution = {
         compile "org.apache.lucene:lucene-highlighter:2.4.0"
         compile 'commons-net:commons-net:3.3' // used for ftp transfers
         compile 'org.apache.commons:commons-math:2.2' //>2MB lib briefly used in ChartController
-        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.1', {
+        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2', {
             excludes 'groovy', 'nekohtml', 'httpclient', 'httpcore'
         }
         compile 'org.rosuda:Rserve:1.7.3'
         compile 'com.google.guava:guava:18.0'
-        compile 'org.apache.httpcomponents:httpclient:4.3.6'
-        compile 'org.apache.httpcomponents:httpcore:4.3.3'
+        compile 'org.apache.httpcomponents:httpclient:4.4.1'
+        compile 'org.apache.httpcomponents:httpcore:4.4.1'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
         compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
@@ -111,11 +111,11 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        build ':release:3.0.1'
-        build ':rest-client-builder:2.0.1'
-        build ':tomcat:7.0.52.1'
+        build ':release:3.1.1'
+        build ':rest-client-builder:2.1.1'
+        build ':tomcat:7.0.54'
 
-        compile ':hibernate:3.6.10.10'
+        compile ':hibernate:3.6.10.19'
         compile ':quartz:1.0-RC2'
         // Not compatible with spring security 3.2 yet
         //compile ':spring-security-kerberos:0.1'
@@ -136,7 +136,7 @@ grails.project.dependency.resolution = {
             //runtime ':transmart-core:1.2.2-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
-            compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
+            //compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
             //compile ':folder-management:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas, folder-management

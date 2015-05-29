@@ -3,22 +3,17 @@ package com.recomdata.transmart.data.export
 import grails.converters.JSON
 import org.transmartproject.core.exceptions.AccessDeniedException
 import org.transmartproject.core.exceptions.InvalidArgumentsException
-import org.transmartproject.core.ontology.Study
-import org.transmartproject.core.users.User
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-
-import static org.transmartproject.core.users.ProtectedOperation.WellKnownOperations.EXPORT
 
 class DataExportController {
 
     def exportService
     def exportMetadataService
     def springSecurityService
-    def queriesResourceAuthorizationDecorator
-    def studiesResourceService
     def currentUserBean
+    def dataExportService
 
     private static final String ROLE_ADMIN = 'ROLE_ADMIN'
 
@@ -26,11 +21,12 @@ class DataExportController {
 
     //We need to gather a JSON Object to represent the different data types.
     def getMetaData() {
-        checkParamResultInstanceIds()
+        List<Long> resultInstanceIds = parseResultInstanceIds()
+        checkRightsToExport(resultInstanceIds)
 
         render exportMetadataService.getMetaData(
-                params.long("result_instance_id1"),
-                params.long("result_instance_id2")) as JSON
+                resultInstanceIds[0],
+                resultInstanceIds[1]) as JSON
     }
 
     def downloadFileExists() {
@@ -79,7 +75,7 @@ class DataExportController {
      * Method that will run a data export and is called asynchronously from the datasetexplorer -> Data Export tab
      */
     def runDataExport() {
-        checkParamResultInstanceIds()
+        checkRightsToExport(parseResultInstanceIds())
 
         def jsonResult = exportService.exportData(params, springSecurityService.getPrincipal().username)
 
@@ -87,15 +83,33 @@ class DataExportController {
         response.outputStream << jsonResult.toString()
     }
 
-    private void checkParamResultInstanceIds() {
-        def resultInstanceId1 = params.long("result_instance_id1")
-        def resultInstanceId2 = params.long("result_instance_id2")
+    def isCurrentUserAllowedToExport() {
+        boolean isAllowed = dataExportService
+                .isUserAllowedToExport(currentUserBean, parseResultInstanceIds())
+        render([result: isAllowed] as JSON)
+    }
 
-        if (!resultInstanceId1 && !resultInstanceId2) {
+    private List<Long> parseResultInstanceIds() {
+        List<Long> result = []
+        int subsetNumber = 1
+        while (params.containsKey('result_instance_id' + subsetNumber)) {
+            result << params.long('result_instance_id' + subsetNumber)
+            subsetNumber += 1
+        }
+        result
+    }
+
+    private void checkRightsToExport(List<Long> resultInstanceIds) {
+        if (!resultInstanceIds) {
             throw new InvalidArgumentsException("No result instance id provided")
         }
 
-        checkResultInstanceIds resultInstanceId1, resultInstanceId2
+        if (!dataExportService
+                .isUserAllowedToExport(currentUserBean,
+                    resultInstanceIds)) {
+            throw new AccessDeniedException("User ${currentUserBean.username} has no EXPORT permission" +
+                    " on one of the result sets: ${resultInstanceIds}")
+        }
     }
 
     private checkJobAccess(String jobName) {
@@ -112,27 +126,6 @@ class DataExportController {
                     "that of the current user")
             throw new AccessDeniedException("Job $jobName was not started by " +
                     "this user")
-        }
-    }
-
-    private void checkResultInstanceIds(... rids) {
-        // check that the user has export access in the studies of patients
-        Set<Study> studies = (rids as List).
-                findAll().collect {
-            queriesResourceAuthorizationDecorator.getQueryResultFromId it
-        }*.
-                patients.
-                inject { a, b -> a + b }. // merge two patient sets into one
-                inject([] as Set, { a, b -> a + b.trial }).
-                collect { studiesResourceService.getStudyById it }
-
-        studies.each { study ->
-            assert currentUserBean instanceof User
-            if (!currentUserBean.canPerform(EXPORT, study)) {
-                throw new AccessDeniedException("User " +
-                        "$currentUserBean.username has no EXPORT permission on " +
-                        "study $study.id")
-            }
         }
     }
 

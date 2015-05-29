@@ -125,5 +125,3 @@ function getSNPViewer()
 	
 	showWorkflowStatusWindow();*/
 }
-
-

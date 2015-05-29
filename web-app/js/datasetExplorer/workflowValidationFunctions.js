@@ -161,7 +161,3 @@ function detectOneBinGroup(binning, numberOfBins, variableBoxName)
         return true;
     }
 }
-
-
-
-

@@ -24,6 +24,8 @@ import javax.xml.xpath.XPathFactory
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
+import java.net.URL;
+import java.net.MalformedURLException;
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 
@@ -725,6 +727,20 @@ class I2b2HelperService {
     }
 
     /**
+     * Checks if a string represents a URL
+     */
+    Boolean isURL(String s) {
+        Boolean isurl
+        // Attempt to convert string into an URL.
+        try {
+            URL url = new URL(s)
+            isurl = true
+        } catch (MalformedURLException e) {
+            isurl = false
+        }
+    }
+
+    /**
      * Adds a column of data to the grid export table
      */
     def ExportTableNew addConceptDataToTable(ExportTableNew tablein, String concept_key, String result_instance_id) {
@@ -784,6 +800,10 @@ class I2b2HelperService {
                     String value = row.TVAL_CHAR
                     if (value == null) {
                         value = "Y";
+                    }
+                    if (isURL(value)) {
+                        /* Embed URL in a HTML Link */
+                        value = "<a href=\"" + value + "\" target=\"_blank\">" + value + "</a>";
                     }
                     if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
                         tablein.getRow(subject).put(columnid, value.toString());
@@ -859,6 +879,10 @@ class I2b2HelperService {
                 String value = row[1]
                 if (value == null) {
                     value = "Y";
+                }
+                if (isURL(value)) {
+                    /* Embed URL in a HTML Link */
+                    value = "<a href=\"" + value + "\" target=\"_blank\">" + value + "</a>"
                 }
                 if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
                     tablein.getRow(subject).put(columnid, value.toString());

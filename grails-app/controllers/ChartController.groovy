@@ -174,6 +174,9 @@ class ChartController {
         // We retrieve the gene_symbol from the client, if it was passed
         def gene_symbol = params.gene_symbol ?: null
 
+        // We add the key to our cache set
+        chartService.keyCache.add(concept)
+
         // Collect concept information
         concepts[concept] = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), gene_symbol: gene_symbol, subsets: chartService.getSubsetsFromRequest(params))
 
@@ -186,11 +189,14 @@ class ChartController {
      */
     def basicStatistics = {
 
-        // This clears the current session concept grid
-        request.getSession().setAttribute("gridtable", null);
-
         // Lets put a bit of 'audit' in here
         new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Basic Statistics", eventmessage: "RID1:" + params.result_instance_id1 + " RID2:" + params.result_instance_id2, accesstime: new java.util.Date()).save()
+
+        // We clear the keys in our cache set
+        chartService.keyCache.clear()
+
+        // This clears the current session grid view data table and key cache
+        request.session.setAttribute("gridtable", null);
 
         // We retrieve all our charts from our ChartService
         def subsets = chartService.computeChartsForSubsets(chartService.getSubsetsFromRequest(params))

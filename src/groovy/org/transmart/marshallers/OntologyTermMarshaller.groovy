@@ -1,9 +1,8 @@
 package org.transmart.marshallers
 
-//import org.transmartproject.core.ontology.BoundModifier
 import org.transmartproject.core.ontology.OntologyTerm
-import org.transmartproject.db.ontology.MetadataSelectQuerySpecification
 
+//import org.transmartproject.core.ontology.BoundModifier
 class OntologyTermMarshaller {
 
     static targetType = OntologyTerm
@@ -27,8 +26,8 @@ class OntologyTermMarshaller {
                 dimensionCode     : term.dimensionCode,
                 dimensionTableName: term.dimensionTableName,
         ]
-/*
-        if (term instanceof BoundModifier) {
+
+/*        if (term instanceof BoundModifier) {
             ret['applied_path'] = term.appliedPath
             ret['qualified_term_key'] = term.qualifiedTerm.key
         }

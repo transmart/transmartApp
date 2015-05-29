@@ -1,6 +1,7 @@
 package org.transmartproject.export
 
 import grails.util.Metadata
+import groovy.util.logging.Log4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.dataquery.DataRow
 import org.transmartproject.core.dataquery.TabularResult
@@ -10,6 +11,7 @@ import org.transmartproject.core.dataquery.highdim.projections.Projection
 
 import javax.annotation.PostConstruct
 
+@Log4j
 class VCFExporter implements HighDimExporter {
     /**
      * List of info fields that can be exported without any change.
@@ -27,6 +29,8 @@ class VCFExporter implements HighDimExporter {
             'VALIDATED', // validated by follow-up experiment
             '1000G', // membership in 1000 Genomes
     ]
+
+    final static String EMPTY_VALUE = '.'
 
     @Autowired
     HighDimensionResource highDimensionResourceService
@@ -57,13 +61,13 @@ class VCFExporter implements HighDimExporter {
 
     @Override
     public void export(TabularResult tabularResult, Projection projection,
-                       OutputStream outputStream) {
-        export(tabularResult, projection, outputStream, { false })
+                       Closure<OutputStream> newOutputStream) {
+        export(tabularResult, projection, newOutputStream, { false })
     }
 
     @Override
     public void export(TabularResult tabularResult, Projection projection,
-                       OutputStream outputStream, Closure isCancelled) {
+                       Closure<OutputStream> newOutputStream, Closure<Boolean> isCancelled) {
 
         log.info("started exporting to $format ")
         def startTime = System.currentTimeMillis()
@@ -72,7 +76,7 @@ class VCFExporter implements HighDimExporter {
             return
         }
 
-        outputStream.withWriter("UTF-8") { writer ->
+        newOutputStream("data", format).withWriter("UTF-8") { writer ->
 
             // Write the headers
             headers.each {
@@ -86,7 +90,6 @@ class VCFExporter implements HighDimExporter {
             List<AssayColumn> assayList = tabularResult.indicesList
 
             // Start looping 
-            writeloop:
             for (DataRow datarow : tabularResult) {
                 // Test periodically if the export is cancelled
                 if (isCancelled()) {
@@ -129,7 +132,7 @@ class VCFExporter implements HighDimExporter {
         data << datarow.position
         data << datarow.rsId
         data << datarow.cohortInfo.referenceAllele
-        data << datarow.cohortInfo.alternativeAlleles.join(',')
+        data << (datarow.cohortInfo.alternativeAlleles.join(',') ?: EMPTY_VALUE)
 
         // TODO: Determine whether these values still apply for the cohort selected
         data << datarow.quality
@@ -220,7 +223,7 @@ class VCFExporter implements HighDimExporter {
         Map<String, String> assayData = datarow[assay]
 
         if (assayData == null) {
-            return ["."]
+            return [EMPTY_VALUE]
         }
 
         // Convert the old indices (e.g. 1 and 0) to the
@@ -236,7 +239,7 @@ class VCFExporter implements HighDimExporter {
 
                     convertedIndices << newIndex
                 } else {
-                    convertedIndices << '.'
+                    convertedIndices << EMPTY_VALUE
                 }
             }
         }
@@ -249,7 +252,7 @@ class VCFExporter implements HighDimExporter {
             newData = originalData.tokenize(":")
         } else {
             // Generate data to state that we don't know
-            newData = ["."].times(formats.size())
+            newData = (1..formats.size()).collect { EMPTY_VALUE }
         }
 
         // Put the computed genotype into the originaldata
