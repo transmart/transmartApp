@@ -14,8 +14,6 @@ class QueryToolController {
 
     def queryDefinitionXmlService
     def queriesResourceAuthorizationDecorator
-    def i2b2HelperService
-    def omicsQueryService
     @Resource(name = CurrentUserBeanProxyFactory.BEAN_BAME)
     User currentUser
 
@@ -26,7 +24,7 @@ class QueryToolController {
      * The result is a JSON serialized QueryResult.
      */
     def runQueryFromDefinition() {
-        String request = IOUtils.toString(request.reader)
+        /*String request = IOUtils.toString(request.reader)
         QueryDefinition definition =
                 queryDefinitionXmlService.fromXml(new StringReader(request))
 
@@ -38,7 +36,14 @@ class QueryToolController {
         def omics_result = omicsQueryService.applyOmicsFilters(result.id, request, definition.name)
         def newresult = JSON.parse((result as JSON).toString())
         newresult.putAt("omics_filter_result", omics_result)
-        render newresult as JSON
+        render newresult as JSON*/
+        QueryDefinition definition =
+                queryDefinitionXmlService.fromXml(request.reader)
+        String username = currentUser.username
+
+        def result = queriesResourceAuthorizationDecorator.runQuery(
+                definition, username)
+        render result as JSON
     }
 
     /**

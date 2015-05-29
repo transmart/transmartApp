@@ -34,7 +34,7 @@ class OmicsQueryService {
         def ordering = operator == "GT" ? "DESC" : "ASC"
         String sqlt = """select patient_id from
                         (
-                        select patient_id, (percent_rank() over (order by avgz """ + ordering + """)) * 100 as pr
+                        select patient_id, (percent_rank() over (order by avgz $ordering)) * 100 as pr
                         from
                         (
                         select c.patient_id, avg(zscore) avgz

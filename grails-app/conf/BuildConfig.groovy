@@ -2,7 +2,7 @@ def forkSettingsRun = [
         minMemory: 1536,
         maxMemory: 4096,
         maxPerm  : 384,
-        debug    : false,
+        debug    : true,
 ]
 def forkSettingsOther = [
         minMemory: 256,
@@ -34,6 +34,8 @@ if (dmClass) {
     dm = dmClass.newInstance()
 }
 
+grails.plugin.location.'transmart-core' = '../transmart-core-db'
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {}
@@ -41,11 +43,11 @@ grails.project.dependency.resolution = {
 
     if (!dm) {
         repositories {
-            grailsCentral()
-            mavenCentral()
+            //grailsCentral()
+            //mavenCentral()
 
             mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
-            mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
+            //mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
         }
     } else {
         dm.configureRepositories delegate
@@ -54,11 +56,11 @@ grails.project.dependency.resolution = {
     dependencies {
         // you can remove whichever you're not using
         runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
-        runtime 'com.oracle:ojdbc7:12.1.0.1'
+        //runtime 'com.oracle:ojdbc7:12.1.0.1'
 
         runtime 'org.javassist:javassist:3.16.1-GA'
 
-        compile 'org.transmartproject:transmart-core-api:1.2.2-hackathon-SNAPSHOT'
+        compile 'org.transmartproject:transmart-core-api:1.2.2-FEATURE-OMICS-DEV'
 
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
@@ -131,7 +133,7 @@ grails.project.dependency.resolution = {
 
         if (!dm) {
             compile ':rdc-rmodules:1.2.2-SNAPSHOT'
-            runtime ':transmart-core:1.2.2-SNAPSHOT'
+            //runtime ':transmart-core:1.2.2-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas
             compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
@@ -144,8 +146,8 @@ grails.project.dependency.resolution = {
             //compile ':biomart-domain:1.2.2-SNAPSHOT'
             //// already included in biomart-domain
             //compile ':transmart-java:1.2.2-SNAPSHOT'
-            runtime ':dalliance-plugin:0.2-SNAPSHOT'
-            runtime ':transmart-mydas:0.1-SNAPSHOT'
+            //runtime ':dalliance-plugin:0.2-SNAPSHOT'
+            //runtime ':transmart-mydas:0.1-SNAPSHOT'
             runtime ':transmart-rest-api:1.2.2-SNAPSHOT'
             runtime ':blend4j-plugin:1.2.2-SNAPSHOT'
             runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
