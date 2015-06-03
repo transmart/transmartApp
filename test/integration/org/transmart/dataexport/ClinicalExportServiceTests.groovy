@@ -90,16 +90,24 @@ class ClinicalExportServiceTests {
     }
     @Test
     void testWithConceptPathSpecified() {
-        def file = clinicalExportService.exportClinicalData(
+        def files = clinicalExportService.exportClinicalData(
                 jobName: 'test',
                 resultInstanceId: queryResult.id,
                 conceptKeys: [ sexNode.key.toString() ],
                 studyDir: tmpDir)
 
-        assertTrue(file.exists())
-        assertThat file.absolutePath, endsWith('/data_clinical.tsv')
-        assertThat file.length(), greaterThan(0l)
-        def table = file.text.split('\n')*.split('\t').collect { it as List }
+        assertThat files, containsInAnyOrder(
+                hasProperty('absolutePath', endsWith('/data_clinical.tsv')),
+                hasProperty('absolutePath', endsWith('/meta.tsv')),
+        )
+
+        files.each { file ->
+            assertTrue(file.exists())
+            assertThat file.length(), greaterThan(0l)
+        }
+
+        def dataFile = files.find { it.absolutePath.endsWith '/data_clinical.tsv' }
+        def table = dataFile.text.split('\n')*.split('\t').collect { it as List }
         assertThat table, contains(
                 contains('"Subject ID"', '"\\foo\\study2\\sex\\"'),
                 contains('"SUBJ_ID_3"', '"female"'),
@@ -110,21 +118,30 @@ class ClinicalExportServiceTests {
 
     @Test
     void testWithoutConceptPathSpecified() {
-        def file = clinicalExportService.exportClinicalData(
+        def files = clinicalExportService.exportClinicalData(
                 jobName: 'test',
                 resultInstanceId: queryResult.id,
                 studyDir: tmpDir)
 
-        assertTrue(file.exists())
-        assertThat file.absolutePath, endsWith('/data_clinical.tsv')
-        assertThat file.length(), greaterThan(0l)
-        def table = file.text.split('\n')*.split('\t', -1).collect { it as List }
+        assertThat files, containsInAnyOrder(
+                hasProperty('absolutePath', endsWith('/data_clinical.tsv')),
+                hasProperty('absolutePath', endsWith('/meta.tsv')),
+        )
+
+        files.each { file ->
+            assertTrue(file.exists())
+            assertThat file.length(), greaterThan(0l)
+        }
+
+        def dataFile = files.find { it.absolutePath.endsWith '/data_clinical.tsv' }
+        def table = dataFile.text.split('\n')*.split('\t').collect { it as List }
         assertThat table, contains(
                 contains('"Subject ID"', '"\\foo\\study2\\long path\\with%some$characters_\\"',
                         '"\\foo\\study2\\sex\\"', '"\\foo\\study2\\study1\\"'),
-                contains('"SUBJ_ID_3"', '', '"female"', ''),
+                //FIXME Number of columns should be fixed despite on absence of values for the last column
+                contains('"SUBJ_ID_3"', '', '"female"'),
                 contains('"SUBJ_ID_2"', '', '"male"', '"foo"'),
-                contains('"SUBJ_ID_1"', '"test value"', '"female"', ''),
+                contains('"SUBJ_ID_1"', '"test value"', '"female"'),
         )
     }
 

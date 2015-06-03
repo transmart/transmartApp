@@ -1,5 +1,6 @@
 package com.recomdata.transmart.data.export
 
+import au.com.bytecode.opencsv.CSVWriter
 import org.transmartproject.core.dataquery.DataRow
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
@@ -7,16 +8,20 @@ import org.transmartproject.core.dataquery.highdim.HighDimensionDataTypeResource
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.ontology.OntologyTerm
+import org.transmartproject.core.ontology.OntologyTermTag
 import org.transmartproject.export.HighDimExporter
 
 class HighDimExportService {
+
+    private static final META_FILE_NAME = 'meta.tsv'
+    private final static char COLUMN_SEPARATOR = '\t' as char
 
     def highDimensionResourceService
     def highDimExporterRegistry
     def queriesResourceService
     def conceptsResourceService
+    def ontologyTermTagsResourceService
 
-    // FIXME: jobResultsService lives in Rmodules, so this is probably not a dependency we should have here
     def jobResultsService
 
     /**
@@ -28,16 +33,17 @@ class HighDimExportService {
      * - args.dataType                - data format (e.g. "mrna", "acgh"; see HighDimensionDataTypeModule.getName())
      * - args.jobName                 - name of the current export job to check status whether we need to break export.
      */
-    def exportHighDimData(Map args) {
+    List<File> exportHighDimData(Map args) {
         Long resultInstanceId = args.resultInstanceId as Long
         List<String> conceptKeys = args.conceptKeys
         String jobName = args.jobName
+        File studyDir = args.studyDir
 
         if (jobResultsService.isJobCancelled(jobName)) {
             return null
         }
 
-        def fileNames = []
+        def files = []
 
         HighDimensionDataTypeResource dataTypeResource = highDimensionResourceService.getSubResourceForType(args.dataType)
         def ontologyTerms
@@ -50,18 +56,20 @@ class HighDimExportService {
 
         ontologyTerms.each { OntologyTerm term ->
             // Add constraints to filter the output
-            List<File> files = exportForSingleNode(
+            List<File> dataFiles = exportForSingleNode(
                     term,
                     resultInstanceId,
-                    args.studyDir,
+                    studyDir,
                     args.format,
                     args.dataType,
                     args.jobName)
 
-            fileNames.addAll(files*.absolutePath)
+            File tagFile = exportTagsForSingleNode(term, studyDir)
+
+            files.addAll(dataFiles + tagFile)
         }
 
-        fileNames
+        files
     }
 
     List<File> exportForSingleNode(OntologyTerm term, Long resultInstanceId, File studyDir, String format, String dataType, String jobName) {
@@ -110,6 +118,28 @@ class HighDimExportService {
             tabularResult.close()
         }
         outputFiles
+    }
+
+    File exportTagsForSingleNode(OntologyTerm term, File studyDir) {
+        def tagsMap = ontologyTermTagsResourceService.getTags([term] as Set, false)
+
+        if (tagsMap) {
+            def metaDataFolder = new File(studyDir, getRelativeFolderPathForSingleNode(term))
+            metaDataFolder.mkdirs()
+
+            def resultFile = new File(metaDataFolder, META_FILE_NAME)
+
+            resultFile.withWriter { Writer writer ->
+                CSVWriter csvWriter = new CSVWriter(writer, COLUMN_SEPARATOR)
+                tagsMap.each { OntologyTerm keyTerm, List<OntologyTermTag> valueTags ->
+                    valueTags.each { OntologyTermTag tag ->
+                        csvWriter.writeNext([tag.name, tag.description] as String[])
+                    }
+                }
+            }
+
+            resultFile
+        }
     }
 
     static String getRelativeFolderPathForSingleNode(OntologyTerm term) {
