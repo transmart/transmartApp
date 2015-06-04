@@ -126,12 +126,21 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
-        // We retrieve the gene_symbol from the client, if it was passed
-        def gene_symbol = params.gene_symbol ?: null
+        // We retrieve the omics parameters from the client, if they were passed
+        def omics_params = [:]
+        if (params.omics_value_type != null) {
+            omics_params.omics_value_type = params.omics_value_type
+            omics_params.omics_platform = params.omics_platform
+            omics_params.omics_projection_type = params.omics_projection_type
+            omics_params.omics_selector = params.omics_selector
+        }
+        else {
+            omics_params = null
+        }
 
         // Collect concept information
         // We need to force computation for an empty instance ID
-        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), gene_symbol: gene_symbol, subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
+        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
 
         PrintWriter pw = new PrintWriter(response.getOutputStream());
         pw.write(concept.commons.conceptHisto)
@@ -148,15 +157,51 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
-        // We retrieve the gene_symbol from the client, if it was passed
-        def gene_symbol = params.gene_symbol ?: null
+        // We retrieve the omics parameters from the client, if they were passed
+        def omics_params = [:]
+        if (params.omics_value_type != null) {
+            omics_params.omics_value_type = params.omics_value_type
+            omics_params.omics_projection_type = params.omics_projection_type
+            omics_params.omics_selector = params.omics_selector
+            omics_params.omics_platform = params.omics_platform
+        }
+        else {
+            omics_params = null
+        }
 
         // Collect concept information
-        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), gene_symbol: gene_symbol, subsets: chartService.getSubsetsFromRequest(params), chartSize : [width : 245, height : 180])
+        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: chartService.getSubsetsFromRequest(params), chartSize : [width : 245, height : 180])
 
         PrintWriter pw = new PrintWriter(response.getOutputStream());
         pw.write(concept.commons.conceptHisto)
         pw.flush();
+    }
+
+    def conceptDistributionValues = {
+        // Lets put a bit of 'audit' in here
+        new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Concept Values", eventmessage: "Concept:" + params.concept_key, accesstime: new java.util.Date()).save()
+
+        // We retrieve the result instance ids from the client
+        def concept = params.concept_key ?: null
+        def concepts = [:]
+
+        // We retrieve the omics parameters from the client, if they were passed
+        def omics_params = [:]
+        if (params.omics_value_type != null) {
+            omics_params.omics_value_type = params.omics_value_type
+            omics_params.omics_projection_type = params.omics_projection_type
+            omics_params.omics_selector = params.omics_selector
+            omics_params.omics_platform = params.omics_platform
+        }
+        else {
+            omics_params = null
+        }
+
+        // Collect concept information
+        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
+
+
+        render concept[1].conceptData as JSON
     }
 
     /**
@@ -171,14 +216,23 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
-        // We retrieve the gene_symbol from the client, if it was passed
-        def gene_symbol = params.gene_symbol ?: null
+        // We retrieve the omics parameters from the client, if they were passed
+        def omics_params = [:]
+        if (params.omics_value_type != null) {
+            omics_params.omics_value_type = params.omics_value_type
+            omics_params.omics_projection_type = params.omics_projection_type
+            omics_params.omics_selector = params.omics_selector
+            omics_params.omics_platform = params.omics_platform
+        }
+        else {
+            omics_params = null
+        }
 
         // We add the key to our cache set
         chartService.keyCache.add(concept)
 
         // Collect concept information
-        concepts[concept] = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), gene_symbol: gene_symbol, subsets: chartService.getSubsetsFromRequest(params))
+        concepts[concept] = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: chartService.getSubsetsFromRequest(params))
 
         // Time to delivery !
         render(template: "conceptsAnalysis", model: [concepts: concepts])
@@ -212,7 +266,9 @@ class ChartController {
         String concept_key = params.concept_key;
         def result_instance_id1 = params.result_instance_id1;
         def result_instance_id2 = params.result_instance_id2;
-        def gene_symbol = params.gene_symbol ?: null;
+        def omics_selector = params.omics_selector ?: null;
+        def omics_value_type = params.omics_value_type ?: null;
+        def omics_projection_type = params.omics_projection_type ?: null;
 
         /*which subsets are present? */
         boolean s1 = (result_instance_id1 == "" || result_instance_id1 == null) ? false : true;
@@ -244,18 +300,17 @@ class ChartController {
                 }
             }
 
-            uniqueConcepts = omicsQueryService.getHighDimensionalConceptSet(result_instance_id1, result_instance_id2)
-            uniqueConcepts.each {
-                def decoded_key = omicsQueryService.decodeHighDimConceptKey(it)
-                if (s1) omicsQueryService.addHighDimConceptDataToTable(table, decoded_key.concept, result_instance_id1, decoded_key.gene_symbol)
-                if (s2) omicsQueryService.addHighDimConceptDataToTable(table, decoded_key.concept, result_instance_id2, decoded_key.gene_symbol)
+            def highDimConcepts = omicsQueryService.getHighDimensionalConceptSet(result_instance_id1, result_instance_id2)
+            highDimConcepts.each {
+                if (s1) omicsQueryService.addHighDimConceptDataToTable(table, it, result_instance_id1)
+                if (s2) omicsQueryService.addHighDimConceptDataToTable(table, it, result_instance_id2)
             }
         }
         PrintWriter pw = new PrintWriter(response.getOutputStream());
 
         if (concept_key && !concept_key.isEmpty()) {
 
-            if (gene_symbol == null) {
+            if (omics_value_type == null) {
                 String parentConcept = i2b2HelperService.lookupParentConcept(i2b2HelperService.keyToPath(concept_key));
                 Set<String> cconcepts = i2b2HelperService.lookupChildConcepts(parentConcept, result_instance_id1, result_instance_id2);
 
@@ -277,8 +332,13 @@ class ChartController {
             }
 
             else {
-                if (s1) omicsQueryService.addHighDimConceptDataToTable(table, concept_key, result_instance_id1, gene_symbol)
-                if (s2) omicsQueryService.addHighDimConceptDataToTable(table, concept_key, result_instance_id2, gene_symbol)
+                def omics_params = [:]
+                omics_params.omics_value_type = omics_value_type
+                omics_params.omics_projection_type = omics_projection_type
+                omics_params.concept_key = concept_key
+                omics_params.omics_selector = omics_selector
+                if (s1) omicsQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id1)
+                if (s2) omicsQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id2)
             }
 
         }

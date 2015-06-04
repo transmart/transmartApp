@@ -120,7 +120,7 @@ function setupQueryPanelClone(clone) {
             else if (data.node.attributes.iconCls == "hleaficon") {
                 STATE.Dragging = true;
                 STATE.Target = this.el;
-                showOmicsFilterDialog(data.node.id);
+                highDimensionalConceptDropped(data.node, true);
             }
         }
         // Mask the placeholder and add a new panel
@@ -561,13 +561,14 @@ function getQueryPanelItem(item) {
                 .append(jQuery("<value_type />").html("TEXT"))
 
             break;
-        case 'omics' :
-            //_constrainValue = jQuery("<constrain_by_omics_value/>")
+        case 'omics_value' :
+            _constrainValue = jQuery("<constrain_by_omics_value/>")
             _constrainValue
-                .append(jQuery("<value_operator />").html(item.attr('omicsoperator')))
-                .append(jQuery("<value_constraint />").html(item.attr('omicsvalue')))
-                .append(jQuery("<value_type />").html("GENE_EXPRESSION"))
-                .append(jQuery("<gene_symbol />").html(item.attr('gene_symbol')))
+                .append(jQuery("<omics_value_operator />").html(item.attr('omicsoperator')))
+                .append(jQuery("<omics_value_constraint />").html(item.attr('omicsvalue')))
+                .append(jQuery("<omics_value_type />").html(item.attr('omicsvaluetype')))
+                .append(jQuery("<omics_selector />").html(item.attr('selector')))
+                .append(jQuery("<omics_projection_type />").html(item.attr('omicsprojection')))
     }
 
     _item

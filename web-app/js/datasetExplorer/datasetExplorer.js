@@ -922,15 +922,15 @@ Ext.onReady(function () {
 
         // preload omics filter dialog
 
-        omicsfilterpanel = new Ext.Panel(
+        geneexprfilterpanel = new Ext.Panel(
             {
-                id: 'omicsfilterPanel',
-                region: 'north',
+                id: 'genexprfilterPanel',
+                region: 'center',
                 height: 80,
-                width: 490,
+                width: 100,
                 split: false,
                 autoLoad: {
-                    url: pageInfo.basePath + '/panels/omicsFilterDialog.html',
+                    url: pageInfo.basePath + '/panels/geneExprFilterDialog.html',
                     scripts: true,
                     nocache: true,
                     discardUrl: true,
@@ -939,41 +939,31 @@ Ext.onReady(function () {
             }
         );
 
-        omicsfilterchartsPanel1 = new Ext.Panel(
+        geneexprfilterchartsPanel1 = new Ext.Panel(
             {
-                id: 'omicsfilterchartsPanel1',
-                region: 'center',
-                width: 245,
-                height: 180,
-                split: false
-            }
-        );
-
-        omicsfilterchartsPanel2 = new Ext.Panel(
-            {
-                id: 'omicsfilterchartsPanel2',
+                id: 'geneexprfilterchartsPanel1',
                 region: 'east',
-                width: 245,
-                height: 180,
+                width: 250,
+                height: 175,
                 split: false
             }
         );
 
-        if (!this.omicsfilterwin) {
-            omicsfilterwin = new Ext.Window(
+        if (!this.geneexprfilterwin) {
+            geneexprfilterwin = new Ext.Window(
                 {
-                    id: 'omicsFilterWindow',
-                    title: 'Omics-based filtering',
+                    id: 'geneExprFilterWindow',
+                    title: 'Gene expression level filtering',
                     layout: 'border',
-                    width: 500,
-                    height: 240,
+                    width: 270,
+                    height: 350,
                     closable: false,
                     plain: true,
                     modal: true,
                     border: false,
-                    items: [omicsfilterpanel, omicsfilterchartsPanel1, omicsfilterchartsPanel2],
+                    items: [geneexprfilterpanel],
                     buttons: [
-                        {
+                        /*{
                             text: 'Show Histogram',
                             handler: function () {
                                 var gene_symbol = document.getElementById("gene-searchbox").value;
@@ -982,8 +972,8 @@ Ext.onReady(function () {
                                     alert("Please select a gene symbol first.");
                                     return;
                                 }
-                                showConceptDistributionHistogramForOmicsFilterComplete(null)
-                                showConceptDistributionHistogramForOmicsFilter();
+                                showConceptDistributionHistogramForGeneExprFilterComplete(null)
+                                showConceptDistributionHistogramForGeneExprFilter();
                             }
                         }
                         ,
@@ -998,31 +988,31 @@ Ext.onReady(function () {
                                 }
                                 var subset = getSubsetFromPanel(selectedDiv)
                                 if (!isSubsetEmpty(subset)) {
-                                    showConceptDistributionHistogramForOmicsFilterForSubsetComplete(null)
-                                    runQuery(subset, showConceptDistributionHistogramForOmicsFilterForSubset);
+                                    showConceptDistributionHistogramForGeneExprFilterForSubsetComplete(null)
+                                    runQuery(subset, showConceptDistributionHistogramForGeneExprFilterForSubset);
                                 }
                                 else alert('Subset is empty!');
                             }
                         }
-                        ,
+                        ,*/
                         {
                             text: 'OK',
                             handler: function () {
-                                applyOmicsFilterDialog(true);
+                                applyGeneExprFilterDialog(true);
                             }
                         }
                         ,
                         {
                             text: 'Cancel',
                             handler: function () {
-                                applyOmicsFilterDialog(false);
+                                applyGeneExprFilterDialog(false);
                             }
                         }
                     ],
                     tools: []
                 });
-            omicsfilterwin.show();
-            omicsfilterwin.hide();
+            geneexprfilterwin.show();
+            geneexprfilterwin.hide();
         }
 
         // load gene selection dialog (shown when dragging an omics node to the summary stats panel)
@@ -1996,9 +1986,8 @@ function buildAnalysis(nodein) {
         return;
     }
 
-    var genesymbol = null;
     if (node.attributes.iconCls == "hleaficon") {
-        showGeneSelectionDialog(node.attributes.id);
+        highDimensionalConceptDropped(node, false);
         return;
     }
 
@@ -2019,7 +2008,7 @@ function buildAnalysis(nodein) {
             resultsTabPanel.body.unmask();
         },
         failure: function (result, request) {
-            alert("A problem arose while trying to retrieve the results")
+            alert("A problem arose while trying to retrieve the results");
             resultsTabPanel.body.unmask();
         }
     });
@@ -3003,7 +2992,7 @@ function getAnalysisGridData(concept_key) {
     return getAnalysisGridData(concept_key, null);
 }
 
-function getAnalysisGridData(concept_key, genesymbol) {
+function getAnalysisGridData(concept_key, omics_params) {
     gridstore = new Ext.data.JsonStore(
         {
             url : pageInfo.basePath+'/chart/analysisGrid',
@@ -3012,15 +3001,31 @@ function getAnalysisGridData(concept_key, genesymbol) {
         }
     );
     gridstore.on('load', storeLoaded);
-    var myparams = Ext.urlEncode(
-        {
-            charttype : "analysisgrid",
-            concept_key : concept_key,
-            gene_symbol : genesymbol,
-            result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-            result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
-        }
-    );
+
+    var myparams;
+
+    if (omics_params) {
+        myparams = Ext.urlEncode(
+            {
+                charttype : "analysisgrid",
+                concept_key : concept_key,
+                omics_selector : omics_params.omics_selector,
+                omics_value_type: omics_params.omics_value_type,
+                omics_projection_type: omics_params.omics_projection_type,
+                result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+            });
+    }
+    else {
+        myparams = Ext.urlEncode(
+            {
+                charttype : "analysisgrid",
+                concept_key : concept_key,
+                result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+            });
+    }
+
     // or a URL encoded string */
 
     gridstore.load({

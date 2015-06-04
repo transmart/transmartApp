@@ -220,11 +220,6 @@ class I2b2HelperService {
      */
     def Boolean isHighDimensionalConceptKey(String concept_key) {
         def code = getConceptCodeFromKey(concept_key)
-        if (code == "") {
-            // this is probably a high dimensional node with gene_symbol appended
-            def decoded_key = omicsQueryService.decodeHighDimConceptKey(concept_key)
-            code = getConceptCodeFromKey(decoded_key.concept)
-        }
         return isHighDimensionalConceptCode(code)
     }
 
@@ -404,17 +399,17 @@ class I2b2HelperService {
      * @return true if i2b2metadata.i2b2.c_visualattributes equals "LAH" for the given concept code
      */
     def Boolean isHighDimensionalConceptCode(String concept_code) {
-        log.debug "Checking isHighDimensionalConceptCode for code:" + concept_code
+        log.info "Checking isHighDimensionalConceptCode for code:" + concept_code
         Boolean res = false;
         Sql sql = new Sql(dataSource);
         String sqlt = "SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_BASECODE = ?";
         sql.eachRow(sqlt, [concept_code], { row ->
             if (row.c_visualattributes == "LAH") {
                 res = true;
-                log.debug("Positive for high dimensional node");
+                log.info("Positive for high dimensional node");
             }
             else {
-                log.debug("Negative for high dimensional node");
+                log.info("Negative for high dimensional node");
             }
         })
 

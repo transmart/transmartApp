@@ -23,19 +23,6 @@ class QueryToolController {
      * The result is a JSON serialized QueryResult.
      */
     def runQueryFromDefinition() {
-        /*String request = IOUtils.toString(request.reader)
-        QueryDefinition definition =
-                queryDefinitionXmlService.fromXml(new StringReader(request))
-
-        String username = currentUser.username
-
-        def result = queriesResourceAuthorizationDecorator.runQuery(
-                definition, username)
-
-        def omics_result = omicsQueryService.applyOmicsFilters(result.id, request, definition.name)
-        def newresult = JSON.parse((result as JSON).toString())
-        newresult.putAt("omics_filter_result", omics_result)
-        render newresult as JSON*/
         QueryDefinition definition =
                 queryDefinitionXmlService.fromXml(request.reader)
         String username = currentUserBean.username

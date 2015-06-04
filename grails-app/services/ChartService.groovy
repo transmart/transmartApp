@@ -124,13 +124,10 @@ class ChartService {
     def getHighDimensionalConceptsForSubsets(subsets) {
         // We also retrieve all concepts involved in the query
         def concepts = [:]
-        omicsQueryService.getHighDimensionalConceptSet(subsets[1].instance, subsets[2].instance).collect {
-            i2b2HelperService.getConceptKeyForAnalysis(it)
-        }.findAll() {
-            it.indexOf("SECURITY") <= -1
+        omicsQueryService.getHighDimensionalConceptSet(subsets[1].instance, subsets[2].instance).findAll() {
+            it.concept_key.indexOf("SECURITY") <= -1
         }.each {
-            def decoded_key = omicsQueryService.decodeHighDimConceptKey(it)
-            concepts[it] = getConceptAnalysis(concept: decoded_key.concept, subsets: subsets, gene_symbol: decoded_key.gene_symbol)
+            concepts[it.concept_key] = getConceptAnalysis(concept: it.concept_key, subsets: subsets, omics_params: it)
         }
         concepts
     }
@@ -152,7 +149,7 @@ class ChartService {
         // We retrieve the basics
         result.commons.conceptCode = i2b2HelperService.getConceptCodeFromKey(concept);
         result.commons.conceptName = i2b2HelperService.getShortNameFromKey(concept);
-        result.commons.gene_symbol = args.gene_symbol ?: null
+        result.commons.omics_params = args.omics_params ?: null
 
         if (i2b2HelperService.isValueConceptCode(result.commons.conceptCode)) {
 
@@ -200,10 +197,10 @@ class ChartService {
 
                 }
             }
-        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && result.commons.gene_symbol != null) {
+        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && result.commons.omics_params != null) {
 
             result.commons.type = 'value'
-            result.commons.conceptName = result.commons.gene_symbol + " in " + result.commons.conceptName
+            result.commons.conceptName = result.commons.omics_params.omics_selector + " in " + result.commons.conceptName
 
             // Lets prepare our subset shared diagrams, we will fill them later
             def conceptHistogramHandle = [:]
@@ -214,14 +211,14 @@ class ChartService {
             }.each { n, p ->
 
                 // Getting the concept data
-                p.conceptData = omicsQueryService.getConceptDistributionDataForHighDimensionConceptFromCode(result.commons.conceptCode, p.instance, result.commons.gene_symbol).toList()
+                p.conceptData = omicsQueryService.getConceptDistributionDataForHighDimensionConceptFromCode(result.commons.conceptCode, p.instance, result.commons.omics_params).toList()
                 p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.conceptData)
                 conceptHistogramHandle["Subset $n"] = p.conceptData
                 conceptPlotHandle["Series $n"] = p.conceptStats
             }
 
             // Lets build our concept diagrams now that we have all the points in
-            result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle, size: chartSize)
+            result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle, size: chartSize, xlabel: args.omics_params.omics_projection_type, ylabel: "")
             result.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle, size: chartSize)
 
             // Lets calculate the T test if possible
@@ -305,6 +302,8 @@ class ChartService {
         def data = args.data ?: [:]
         def size = args.size ?: [:]
         def title = args.title ?: ""
+        def xlabel = args.xlabel ?: ""
+        def ylabel = args.ylabel ?: ""
 
         // We retrieve the dimension if provided
         def width = size?.width ?: 300
@@ -367,7 +366,7 @@ class ChartService {
                     if (k) set.addSeries(k, (double [])v.toArray(), 10, min ?: 0, max ?: 0)
                 }
 
-                chart = ChartFactory.createHistogram(title, null, "", set, PlotOrientation.VERTICAL, true, true, false)
+                chart = ChartFactory.createHistogram(title, xlabel, ylabel, set, PlotOrientation.VERTICAL, true, true, false)
                 chart.setChartParameters()
                 chart.legend.visible = false
                 break;
@@ -379,7 +378,7 @@ class ChartService {
                     if (k) set.add(v, k, k)
                 }
 
-                chart = ChartFactory.createBoxAndWhiskerChart(title, "", "", set, false)
+                chart = ChartFactory.createBoxAndWhiskerChart(title, xlabel, ylabel, set, false)
                 chart.setChartParameters()
                 chart.plot.renderer.maximumBarWidth = 0.09
 
@@ -419,7 +418,7 @@ class ChartService {
                     if (k) set.setValue(v, '', k)
                 }
 
-                chart = ChartFactory.createBarChart(title, "", "", set, PlotOrientation.HORIZONTAL, false, true, false)
+                chart = ChartFactory.createBarChart(title, xlabel, ylabel, set, PlotOrientation.HORIZONTAL, false, true, false)
                 chart.setChartParameters()
 
                 chart.plot.renderer.setSeriesPaint(0, new Color(128, 193, 119))

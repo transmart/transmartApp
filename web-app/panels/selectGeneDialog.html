@@ -60,8 +60,11 @@
 </script>
 <div style="..." id="gene-selection-main">
     <table style="font:9pt arial;width: 500px">
-        <tr><td>Select a gene for analysis: </td>
-            <td><label for="gene-selection-searchbox">Gene: </label><input type="text" id="gene-selection-searchbox" size="10"/></td>
+        <tr><td>Select a gene for analysis</td></tr>
+        <tr><td><label for="gene-selection-searchbox">Gene: </label><input type="text" id="gene-selection-searchbox" size="4"/>
+            <input type="radio" name="gene-selection-projection" value="ZSCORE" checked>Z-Score
+            <input type="radio" name="gene-selection-projection" value="LOG_INTENSITY">Log</td>
+            </td>
         </tr>
     </table>
     <input type="hidden" id="gene-selection-concept-key" style="display: none;"/>

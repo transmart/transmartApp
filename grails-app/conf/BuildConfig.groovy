@@ -2,7 +2,7 @@ def forkSettingsRun = [
         minMemory: 1536,
         maxMemory: 4096,
         maxPerm  : 384,
-        debug    : true,
+        debug    : false,
 ]
 def forkSettingsOther = [
         minMemory: 256,
@@ -35,6 +35,7 @@ if (dmClass) {
 }
 
 grails.plugin.location.'transmart-core' = '../transmart-core-db'
+grails.plugin.location.'transmart-core-db-tests' = '../transmart-core-db/transmart-core-db-tests/'
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -152,7 +153,8 @@ grails.project.dependency.resolution = {
             runtime ':blend4j-plugin:1.2.2-SNAPSHOT'
             runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
 
-            test ':transmart-core-db-tests:1.2.2-SNAPSHOT'
+
+            //test ':transmart-core-db-tests:1.2.2-SNAPSHOT'
         } else {
             dm.internalDependencies delegate
         }
