@@ -134,14 +134,13 @@ class ClinicalExportServiceTests {
         }
 
         def dataFile = files.find { it.absolutePath.endsWith '/data_clinical.tsv' }
-        def table = dataFile.text.split('\n')*.split('\t').collect { it as List }
+        def table = dataFile.text.split('\n')*.split('\t', -1).collect { it as List }
         assertThat table, contains(
                 contains('"Subject ID"', '"\\foo\\study2\\long path\\with%some$characters_\\"',
                         '"\\foo\\study2\\sex\\"', '"\\foo\\study2\\study1\\"'),
-                //FIXME Number of columns should be fixed despite on absence of values for the last column
-                contains('"SUBJ_ID_3"', '', '"female"'),
+                contains('"SUBJ_ID_3"', '', '"female"', ''),
                 contains('"SUBJ_ID_2"', '', '"male"', '"foo"'),
-                contains('"SUBJ_ID_1"', '"test value"', '"female"'),
+                contains('"SUBJ_ID_1"', '"test value"', '"female"', ''),
         )
     }
 
