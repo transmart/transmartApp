@@ -38,6 +38,7 @@ class HighDimExportService {
         List<String> conceptKeys = args.conceptKeys
         String jobName = args.jobName
         File studyDir = args.studyDir
+        boolean exportMetaData = args.exportMetaData == null ? true : args.exportMetaData
 
         if (jobResultsService.isJobCancelled(jobName)) {
             return null
@@ -56,17 +57,21 @@ class HighDimExportService {
 
         ontologyTerms.each { OntologyTerm term ->
             // Add constraints to filter the output
-            List<File> dataFiles = exportForSingleNode(
-                    term,
-                    resultInstanceId,
-                    studyDir,
-                    args.format,
-                    args.dataType,
-                    args.jobName)
+            files.addAll(
+                    exportForSingleNode(
+                        term,
+                        resultInstanceId,
+                        studyDir,
+                        args.format,
+                        args.dataType,
+                        args.jobName))
 
-            File tagFile = exportTagsForSingleNode(term, studyDir)
-
-            files.addAll(dataFiles + tagFile)
+            if (exportMetaData) {
+                def tagsFile = exportTagsForSingleNode(term, studyDir)
+                if (tagsFile) {
+                    files.add(tagsFile)
+                }
+            }
         }
 
         files

@@ -64,7 +64,8 @@ class HighDimExportServiceTests {
                 conceptKeys: [ i2b2Node.key.toString() ],
                 dataType: 'mrna',
                 format: 'TSV',
-                studyDir: tmpDir)
+                studyDir: tmpDir,
+                exportMetaData: true)
 
         assertThat files, containsInAnyOrder(
                 hasProperty('absolutePath', endsWith('/bar/data_mrna.tsv')),
@@ -84,7 +85,8 @@ class HighDimExportServiceTests {
                 resultInstanceId: queryResult.id,
                 dataType: 'mrna',
                 format: 'TSV',
-                studyDir: tmpDir)
+                studyDir: tmpDir,
+                exportMetaData: true)
 
         assertThat files, containsInAnyOrder(
                 hasProperty('absolutePath', endsWith('/bar/data_mrna.tsv')),

@@ -18,7 +18,6 @@ import org.transmartproject.db.ontology.ConceptTestData
 import org.transmartproject.db.ontology.I2b2
 import org.transmartproject.db.test.RuleBasedIntegrationTestMixin
 
-import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
@@ -50,6 +49,14 @@ class ClinicalExportServiceTests {
         List<PatientDimension> patients = I2b2Data.createTestPatients(3, -100, trialId)
 
         conceptData = ConceptTestData.createDefault()
+        conceptData.tableAccesses << ConceptTestData
+                .createTableAccess(
+                    level: 0,
+                    fullName: '\\foo\\',
+                    name: 'foo',
+                    tableCode: 'foo',
+                    tableName: 'i2b2')
+
         List<I2b2> studyNodes = conceptData.i2b2List.findAll { it.cComment?.endsWith(trialId) }
 
         studyNode = studyNodes.find { it.name == 'study2' }
@@ -88,40 +95,40 @@ class ClinicalExportServiceTests {
 
         queryResult = queriesResourceService.runQuery(definition, 'test')
     }
+
     @Test
-    void testWithConceptPathSpecified() {
+    void testDataWithConceptPathSpecified() {
         def files = clinicalExportService.exportClinicalData(
                 jobName: 'test',
                 resultInstanceId: queryResult.id,
                 conceptKeys: [ sexNode.key.toString() ],
-                studyDir: tmpDir)
+                studyDir: tmpDir,
+                exportMetaData: false)
 
-        assertThat files, containsInAnyOrder(
+        assertThat files, contains(
                 hasProperty('absolutePath', endsWith('/data_clinical.tsv')),
-                hasProperty('absolutePath', endsWith('/meta.tsv')),
         )
 
-        files.each { file ->
-            assertTrue(file.exists())
-            assertThat file.length(), greaterThan(0l)
-        }
+        def dataFile = files[0]
 
-        def dataFile = files.find { it.absolutePath.endsWith '/data_clinical.tsv' }
-        def table = dataFile.text.split('\n')*.split('\t').collect { it as List }
-        assertThat table, contains(
+        def dataTable = dataFile.text.split('\n')*.split('\t').collect { it as List }
+        assertThat dataTable, contains(
                 contains('"Subject ID"', '"\\foo\\study2\\sex\\"'),
                 contains('"SUBJ_ID_3"', '"female"'),
                 contains('"SUBJ_ID_2"', '"male"'),
                 contains('"SUBJ_ID_1"', '"female"'),
         )
+
     }
 
     @Test
-    void testWithoutConceptPathSpecified() {
+    void testMetaWithConceptPathSpecified() {
         def files = clinicalExportService.exportClinicalData(
                 jobName: 'test',
                 resultInstanceId: queryResult.id,
-                studyDir: tmpDir)
+                conceptKeys: [ sexNode.key.toString() ],
+                studyDir: tmpDir,
+                exportMetaData: true)
 
         assertThat files, containsInAnyOrder(
                 hasProperty('absolutePath', endsWith('/data_clinical.tsv')),
@@ -132,6 +139,32 @@ class ClinicalExportServiceTests {
             assertTrue(file.exists())
             assertThat file.length(), greaterThan(0l)
         }
+
+        def metaFile = files.find { it.absolutePath.endsWith '/meta.tsv' }
+
+        def metaTable = metaFile.text.split('\n')*.split('\t').collect { it as List }
+        assertThat metaTable, contains(
+                contains('"Variable"', '"Attribute"', '"Description"'),
+                contains('"\\foo\\study2\\sex\\"', '"8 name 2"', '"8 description 2"'),
+                contains('"\\foo\\study2\\sex\\"', '"8 name 1"', '"8 description 1"'),
+                contains('"\\foo\\study2\\sex\\female\\"', '"10 name 2"', '"10 description 2"'),
+                contains('"\\foo\\study2\\sex\\female\\"', '"10 name 1"', '"10 description 1"'),
+                contains('"\\foo\\study2\\sex\\male\\"', '"9 name 2"', '"9 description 2"'),
+                contains('"\\foo\\study2\\sex\\male\\"', '"9 name 1"', '"9 description 1"'),
+        )
+    }
+
+    @Test
+    void testDataWithoutConceptPathSpecified() {
+        def files = clinicalExportService.exportClinicalData(
+                jobName: 'test',
+                resultInstanceId: queryResult.id,
+                studyDir: tmpDir,
+                exportMetaData: false)
+
+        assertThat files, contains(
+                hasProperty('absolutePath', endsWith('/data_clinical.tsv')),
+        )
 
         def dataFile = files.find { it.absolutePath.endsWith '/data_clinical.tsv' }
         def table = dataFile.text.split('\n')*.split('\t', -1).collect { it as List }
@@ -141,6 +174,43 @@ class ClinicalExportServiceTests {
                 contains('"SUBJ_ID_3"', '', '"female"', ''),
                 contains('"SUBJ_ID_2"', '', '"male"', '"foo"'),
                 contains('"SUBJ_ID_1"', '"test value"', '"female"', ''),
+        )
+
+    }
+
+    @Test
+    void testMetaWithoutConceptPathSpecified() {
+        def files = clinicalExportService.exportClinicalData(
+                jobName: 'test',
+                resultInstanceId: queryResult.id,
+                studyDir: tmpDir,
+                exportMetaData: true)
+
+        assertThat files, containsInAnyOrder(
+                hasProperty('absolutePath', endsWith('/data_clinical.tsv')),
+                hasProperty('absolutePath', endsWith('/meta.tsv')),
+        )
+
+        files.each { file ->
+            assertTrue(file.exists())
+            assertThat file.length(), greaterThan(0l)
+        }
+
+        def metaFile = files.find { it.absolutePath.endsWith '/meta.tsv' }
+
+        def metaTable = metaFile.text.split('\n')*.split('\t').collect { it as List }
+        assertThat metaTable, contains(
+                contains('"Variable"', '"Attribute"', '"Description"'),
+                contains('"\\foo\\study2\\long path\\with%some$characters_\\"', '"7 name 2"', '"7 description 2"'),
+                contains('"\\foo\\study2\\long path\\with%some$characters_\\"', '"7 name 1"', '"7 description 1"'),
+                contains('"\\foo\\study2\\sex\\"', '"8 name 2"', '"8 description 2"'),
+                contains('"\\foo\\study2\\sex\\"', '"8 name 1"', '"8 description 1"'),
+                contains('"\\foo\\study2\\sex\\female\\"', '"10 name 2"', '"10 description 2"'),
+                contains('"\\foo\\study2\\sex\\female\\"', '"10 name 1"', '"10 description 1"'),
+                contains('"\\foo\\study2\\sex\\male\\"', '"9 name 2"', '"9 description 2"'),
+                contains('"\\foo\\study2\\sex\\male\\"', '"9 name 1"', '"9 description 1"'),
+                contains('"\\foo\\study2\\study1\\"', '"4 name 2"', '"4 description 2"'),
+                contains('"\\foo\\study2\\study1\\"', '"4 name 1"', '"4 description 1"'),
         )
     }
 
