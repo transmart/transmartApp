@@ -1,6 +1,7 @@
 package org.transmart.dataexport
 
 import com.google.common.io.Files
+import com.recomdata.asynchronous.JobResultsService
 import grails.test.mixin.TestMixin
 import org.gmock.WithGMock
 import org.junit.Before
@@ -40,7 +41,7 @@ class HighDimExportServiceTests {
         testData = new MrnaTestData(conceptCode: i2b2Node.code, patients: studyTestData.i2b2Data.patients)
         testData.saveAll()
 
-        highDimExportService.jobResultsService = [test: [Status: 'In Progress']]
+        highDimExportService.jobResultsService = new JobResultsService(jobResults: [test: [Status: 'In Progress']])
 
         def definition = new QueryDefinition([
                 new Panel(

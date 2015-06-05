@@ -31,8 +31,9 @@ class HighDimExportService {
     def exportHighDimData(Map args) {
         Long resultInstanceId = args.resultInstanceId as Long
         List<String> conceptKeys = args.conceptKeys
+        String jobName = args.jobName
 
-        if (jobIsCancelled(args.jobName)) {
+        if (jobResultsService.isJobCancelled(jobName)) {
             return null
         }
 
@@ -102,7 +103,7 @@ class HighDimExportService {
                         outputFiles << outputFile
                         outputFile.newOutputStream()
                     },
-                    { jobIsCancelled(jobName) })
+                    { jobResultsService.isJobCancelled(jobName) })
         } catch (RuntimeException e) {
             log.error('Data export to the file has thrown an exception', e)
         } finally {
@@ -128,11 +129,4 @@ class HighDimExportService {
         }.join(File.separator)
     }
 
-    def boolean jobIsCancelled(jobName) {
-        if (jobResultsService[jobName]["Status"] == "Cancelled") {
-            log.warn("${jobName} has been cancelled")
-            return true
-        }
-        return false
-    }
 }
