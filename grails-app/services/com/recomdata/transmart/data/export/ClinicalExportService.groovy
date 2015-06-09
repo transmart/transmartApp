@@ -139,9 +139,7 @@ class ClinicalExportService {
     private Set<OntologyTerm> getOntologyTerms(List<ComposedVariable> variables) {
         variables.collectMany { ComposedVariable variable ->
             variable.innerClinicalVariables.collect {
-                def conceptFullName = new ConceptFullName(it.conceptPath)
-                def conceptKey = new ConceptKey(conceptFullName.parts[0], conceptFullName.toString())
-                conceptsResourceService.getByKey(conceptKey.toString())
+                conceptsResourceService.getByKey(it.key.toString())
             }
         } as Set
     }
