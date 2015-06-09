@@ -485,6 +485,7 @@
 <tmpl:createFolderOverlay/>
 <tmpl:createStudyOverlay/>
 <tmpl:createProgramOverlay/>
+<g:render template="/uploadFiles/uploadFilesOverlay" plugin="folderManagement"/>
 <div id="divBrowsePopups" style="width:800px; display: none;">
 
 </div>

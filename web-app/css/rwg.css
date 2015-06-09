@@ -1148,6 +1148,16 @@ select.multiselect {
 .foldericon.analysis { background-image: url('../images/foldertypes/analysis.png'); }
 
 
+.deletespanall {
+    border: none;
+    background: transparent url('../images/bin_closed.png') 0 50%;
+}
+
+.exportspanall {
+    border: none;
+    background: transparent url('../images/exportfolder.png') 0 0;
+}
+
 .fileicon {
 	padding: 3px 24px 0px 0px;
 	background-image: url('../images/filetypes/page_white.png');
