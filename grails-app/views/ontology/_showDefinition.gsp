@@ -1,15 +1,14 @@
-<g:if test="${tags.isEmpty()}">
-    <table class="detail">
-        <tr><td>No tags found.</td></tr>
-    </table>
+<style>
+    tr.prop > td.name {
+        width: 150px;
+    }
+</style>
+<g:if test="${subResourcesAssayMultiMap}">
+    <g:render template="highDimSummary" model="subResourcesAssayMultiMap"/>
 </g:if>
-<g:else>
-    <table class="detail" style="width: 515px;">
-        <g:each in="${tags}" var="tag">
-            <tr class="prop">
-                <td valign="top" class="name"><g:message code="${'tag' + tag.tagtype}" default="${tag.tagtype}"/>:</td>
-                <td valign="top" class="value">${fieldValue(bean: tag, field: 'tag')}</td>
-            </tr>
-        </g:each>
-    </table>
-</g:else>
+<g:if test="${tags}">
+    <g:render template="showTags" model="tags"/>
+</g:if>
+<g:if test="${browseStudyInfo}">
+    <g:render template="showBrowseStudyInfo" model="browseStudyInfo"/>
+</g:if>
