@@ -110,27 +110,29 @@ class OntologyController {
 
     private def getBrowseStudyInfo = { OntologyTerm term ->
         Study study = term.study
-
-        Experiment experiment
-        FmFolder folder
-        if (study?.ontologyTerm == term) {
-            // is the top study term
-            experiment = Experiment.findByAccession(study.id.toUpperCase())
-            if (experiment) {
-                folder = FmFolderAssociation.findByObjectUid(experiment.uniqueId?.uniqueId)?.fmFolder
-
-                if (folder) {
-                    log.debug "Found experiment ($experiment) and folder association " +
-                            "($folder); will not attempt to look for tags"
-
-                    AmTagTemplate amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
-                    List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate?.id)
-                    return [folder          : folder,
-                            bioDataObject   : experiment,
-                            metaDataTagItems: metaDataTagItems]
-                }
-            }
+        if (study?.ontologyTerm != term) {
+            return [:]
         }
+
+        Experiment experiment = Experiment.findByAccession(study.id.toUpperCase())
+        if (!experiment) {
+            log.debug("No experiment entry found for ${study.id} study.")
+            return [:]
+        }
+
+        FmFolder folder = FmFolderAssociation.findByObjectUid(experiment.uniqueId?.uniqueId)?.fmFolder
+        if (!folder) {
+            log.debug("No fm folder found for ${study.id} study.")
+            return [:]
+        }
+
+        AmTagTemplate amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
+        List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate?.id)
+        [
+                folder          : folder,
+                bioDataObject   : experiment,
+                metaDataTagItems: metaDataTagItems
+        ]
     }
 
 }
