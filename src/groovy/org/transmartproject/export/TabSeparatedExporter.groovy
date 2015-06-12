@@ -104,13 +104,7 @@ class TabSeparatedExporter implements HighDimExporter {
 
                     // Add values for default columns
                     List<String> line = [
-                            assay.patientInTrialId,
-                            assay.sampleType.label,
-                            assay.timepoint.label,
-                            assay.tissueType.label,
-                            assay.platform.id,
                             assay.id,
-                            assay.sampleCode
                     ]
 
                     // Return data for this specific assay
@@ -139,13 +133,7 @@ class TabSeparatedExporter implements HighDimExporter {
      */
     protected List<String> createHeader(List additionalHeaderFields) {
         [
-                "PATIENT ID",
-                "SAMPLE TYPE",
-                "TIMEPOINT",
-                "TISSUE TYPE",
-                "GPL ID",
-                "ASSAY ID",
-                "SAMPLE CODE"
+                "Assay ID",
         ] + (additionalHeaderFields ?: [])
     }
 

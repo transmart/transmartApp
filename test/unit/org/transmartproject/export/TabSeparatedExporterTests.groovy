@@ -114,26 +114,14 @@ class TabSeparatedExporterTests {
             assert lines.size() == 4
 
             // Check header line
-            assert lines[0] == [
-                    "PATIENT ID", "SAMPLE TYPE", "TIMEPOINT", "TISSUE TYPE", "GPL ID", "ASSAY ID", "SAMPLE CODE",
-                    "PROPERTY1", "PROPERTY2",
-                    "LABEL"].join(exporter.SEPARATOR)
+            assert lines[0] == ["Assay ID", "PROPERTY1", "PROPERTY2", "LABEL"].join(exporter.SEPARATOR)
 
             // Check the data lines. First line should contain 'null' for property2, as that one was not set
-            assert lines[1] == [
-                    "patient_1_subject_id", "sampletype_1", "timepoint_1", "tissuetype_1", "10", "1", "sample_code_1",
-                    "4", "null",
-                    "row1"].join(exporter.SEPARATOR)
+            assert lines[1] == ["1", "4", "null", "row1"].join(exporter.SEPARATOR)
 
-            assert lines[2] == [
-                    "patient_2_subject_id", "sampletype_2", "timepoint_2", "tissuetype_2", "20", "2", "sample_code_2",
-                    "2", "3",
-                    "row1"].join(exporter.SEPARATOR)
+            assert lines[2] == ["2", "2", "3", "row1"].join(exporter.SEPARATOR)
 
-            assert lines[3] == [
-                    "patient_1_subject_id", "sampletype_1", "timepoint_1", "tissuetype_1", "10", "1", "sample_code_1",
-                    "5", "10",
-                    "row2"].join(exporter.SEPARATOR)
+            assert lines[3] == ["1", "5", "10", "row2"].join(exporter.SEPARATOR)
 
         }
     }
