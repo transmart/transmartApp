@@ -2,6 +2,8 @@
 <%-- TODO This is a copy and paste from folderDetail - turn this into a template! --%>
 
 <g:if test="${metaDataTagItems && metaDataTagItems.size() > 0}">
+    <br/>
+    <h2><g:message code="show.browse.study.header" default="Browse information"/>:</h2>
     <table class="detail" style="width: 515px;">
         <tbody>
         <g:each in="${metaDataTagItems}" status="i" var="amTagItem">
