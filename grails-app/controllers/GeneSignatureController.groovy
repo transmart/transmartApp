@@ -795,7 +795,8 @@ class GeneSignatureController {
 
             case 2:
                 // 'other' concept code item
-                def otherConceptItem = ConceptCode.get(1)
+                def otherConceptCodeQuery = ConceptCode.where { codeTypeName == "OTHER" && bioConceptCode == "OTHER" }
+                def otherConceptItem = otherConceptCodeQuery.get()
 
                 // sources
                 wizard.sources = ConceptCode.findAllByCodeTypeName(SOURCE_CATEGORY, [sort: "bioConceptCode"])
@@ -832,19 +833,23 @@ class GeneSignatureController {
 
             case 3:
                 // 'other' concept code item
-                def otherConceptItem = ConceptCode.get(1)
+                def otherConceptCodeQuery = ConceptCode.where { codeTypeName == "OTHER" && bioConceptCode == "OTHER" }
+                def otherConceptItem = otherConceptCodeQuery.get()
 
                 // normalization methods
                 wizard.normMethods = ConceptCode.findAllByCodeTypeName(NORM_METHOD_CATEGORY, [sort: "bioConceptCode"])
-                wizard.normMethods.add(otherConceptItem);
+                if (otherConceptItem != null)
+                    wizard.normMethods.add(otherConceptItem);
 
                 // analytic categories
                 wizard.analyticTypes = ConceptCode.findAllByCodeTypeName(ANALYTIC_TYPE_CATEGORY, [sort: "bioConceptCode"])
-                wizard.analyticTypes.add(otherConceptItem)
+                if (otherConceptItem != null)
+                    wizard.analyticTypes.add(otherConceptItem)
 
                 // analysis methods
                 wizard.analysisMethods = ConceptCode.findAllByCodeTypeName(ANALYSIS_METHOD_CATEGORY, [sort: "bioConceptCode"])
-                wizard.analysisMethods.add(otherConceptItem);
+                if (otherConceptItem != null)
+                    wizard.analysisMethods.add(otherConceptItem);
 
                 // file schemas
                 wizard.schemas = GeneSignatureFileSchema.findAllBySupported(true, [sort: "name"])
