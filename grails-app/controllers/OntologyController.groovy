@@ -3,13 +3,17 @@ import annotation.AmTagTemplate
 import fm.FmFolder
 import fm.FmFolderAssociation
 import grails.converters.JSON
-import i2b2.OntNodeTag
 import org.transmart.biomart.Experiment
 import org.transmart.searchapp.AuthUser
+import org.transmartproject.core.dataquery.highdim.HighDimensionResource
+import org.transmartproject.core.dataquery.highdim.Platform
+import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
 import org.transmartproject.core.ontology.ConceptsResource
 import org.transmartproject.core.ontology.OntologyTerm
-import org.transmartproject.core.ontology.StudiesResource
+import org.transmartproject.core.ontology.OntologyTermTagsResource
 import org.transmartproject.core.ontology.Study
+
+import static org.transmartproject.core.ontology.OntologyTerm.VisualAttributes.HIGH_DIMENSIONAL
 
 class OntologyController {
 
@@ -20,7 +24,8 @@ class OntologyController {
     def amTagTemplateService
     def amTagItemService
     ConceptsResource conceptsResourceService
-    StudiesResource studiesResourceService
+    OntologyTermTagsResource ontologyTermTagsResourceService
+    HighDimensionResource highDimensionResourceService
 
     def showOntTagFilter = {
         def tagtypesc = []
@@ -79,42 +84,55 @@ class OntologyController {
             }
 
     def showConceptDefinition = {
+        def model = [:]
+
         OntologyTerm term = conceptsResourceService.getByKey(params.conceptKey)
+
+        //high dimensional information
+        if (term.visualAttributes.contains(HIGH_DIMENSIONAL)) {
+            def dataTypeConstraint = highDimensionResourceService.createAssayConstraint(
+                    AssayConstraint.ONTOLOGY_TERM_CONSTRAINT,
+                    concept_key: term.key)
+
+            model.subResourcesAssayMultiMap = highDimensionResourceService
+                    .getSubResourcesAssayMultiMap([dataTypeConstraint])
+        }
+
+        //browse tab tags
+        model.browseStudyInfo = getBrowseStudyInfo(term)
+
+        //ontology term tags
+        def tagsMap = ontologyTermTagsResourceService.getTags([ term ] as Set, false)
+        model.tags = tagsMap?.get(term)
+
+        render template: 'showDefinition', model: model
+    }
+
+    private def getBrowseStudyInfo = { OntologyTerm term ->
         Study study = term.study
-
-        Experiment experiment
-        FmFolder folder
-        if (study?.ontologyTerm == term) {
-            // is the top study term
-            experiment = Experiment.findByAccession(study.id.toUpperCase())
-            if (experiment) {
-                folder = FmFolderAssociation.findByObjectUid(experiment.uniqueId?.uniqueId)?.fmFolder
-            }
+        if (study?.ontologyTerm != term) {
+            return [:]
         }
 
+        Experiment experiment = Experiment.findByAccession(study.id.toUpperCase())
+        if (!experiment) {
+            log.debug("No experiment entry found for ${study.id} study.")
+            return [:]
+        }
+
+        FmFolder folder = FmFolderAssociation.findByObjectUid(experiment.uniqueId?.uniqueId)?.fmFolder
         if (!folder) {
-            log.debug "Could not find folder association; will look for tags"
-
-            def tags = []
-            // this solution is suboptimcal. The best would be to check that
-            // the table is i2b2metadata.i2b2, but there is no API method
-            // exposing that
-            if (!term.key.startsWith('\\\\xtrials\\')) {
-                tags = OntNodeTag.findAll(
-                        'FROM OntNodeTag T WHERE T.ontnode.basecode = :code', [code: term.code])
-            }
-            render template: 'showDefinition', model: [tags: tags]
-        } else {
-            log.debug "Found experiment ($experiment) and folder association " +
-                    "($folder); will not attempt to look for tags"
-
-            AmTagTemplate amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
-            List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate?.id)
-            render template: 'showStudy',
-                    model: [folder: folder,
-                            bioDataObject: experiment,
-                            metaDataTagItems: metaDataTagItems]
+            log.debug("No fm folder found for ${study.id} study.")
+            return [:]
         }
+
+        AmTagTemplate amTagTemplate = amTagTemplateService.getTemplate(folder.uniqueId)
+        List<AmTagItem> metaDataTagItems = amTagItemService.getDisplayItems(amTagTemplate?.id)
+        [
+                folder          : folder,
+                bioDataObject   : experiment,
+                metaDataTagItems: metaDataTagItems
+        ]
     }
 
 }
