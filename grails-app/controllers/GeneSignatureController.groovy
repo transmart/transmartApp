@@ -19,6 +19,9 @@ import javax.servlet.ServletOutputStream
  */
 class GeneSignatureController {
 
+    private static final String GENERIC_OTHER_BIO_CONCEPT_CODE = 'OTHER'
+    private static final String GENERIC_OTHER_CODE_TYPE_NAME = 'OTHER'
+
     // service injections
     def geneSignatureService
     def springSecurityService
@@ -794,13 +797,9 @@ class GeneSignatureController {
                 break;
 
             case 2:
-                // 'other' concept code item
-                def otherConceptItem = ConceptCode.get(1)
-
                 // sources
                 wizard.sources = ConceptCode.findAllByCodeTypeName(SOURCE_CATEGORY, [sort: "bioConceptCode"])
-                if (otherConceptItem != null)
-                    wizard.sources.add(otherConceptItem);
+                wizard.sources.add(genericOtherConceptCode)
                 //WizardModelDetails.addOtherItem(wizard.sources, "other")
 
                 // owners
@@ -831,20 +830,17 @@ class GeneSignatureController {
                 break;
 
             case 3:
-                // 'other' concept code item
-                def otherConceptItem = ConceptCode.get(1)
-
                 // normalization methods
                 wizard.normMethods = ConceptCode.findAllByCodeTypeName(NORM_METHOD_CATEGORY, [sort: "bioConceptCode"])
-                wizard.normMethods.add(otherConceptItem);
+                wizard.normMethods.add(genericOtherConceptCode)
 
                 // analytic categories
                 wizard.analyticTypes = ConceptCode.findAllByCodeTypeName(ANALYTIC_TYPE_CATEGORY, [sort: "bioConceptCode"])
-                wizard.analyticTypes.add(otherConceptItem)
+                wizard.analyticTypes.add(genericOtherConceptCode)
 
                 // analysis methods
                 wizard.analysisMethods = ConceptCode.findAllByCodeTypeName(ANALYSIS_METHOD_CATEGORY, [sort: "bioConceptCode"])
-                wizard.analysisMethods.add(otherConceptItem);
+                wizard.analysisMethods.add(genericOtherConceptCode)
 
                 // file schemas
                 wizard.schemas = GeneSignatureFileSchema.findAllBySupported(true, [sort: "name"])
@@ -859,6 +855,16 @@ class GeneSignatureController {
             default:
                 log.warn "invalid page requested!"
         }
+    }
+
+    private ConceptCode getGenericOtherConceptCode() {
+        def res = ConceptCode.findByBioConceptCodeAndCodeTypeName(
+                GENERIC_OTHER_BIO_CONCEPT_CODE,
+                GENERIC_OTHER_CODE_TYPE_NAME)
+        if (!res) {
+            throw new IllegalStateException('Database does not contain generic \'other\' concept')
+        }
+        res
     }
 
     /**
