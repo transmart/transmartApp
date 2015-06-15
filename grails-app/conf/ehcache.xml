@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="ehcache.xsd">
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false">
 
-    <diskStore path="java.io.tmpdir"/>
+<diskStore path="java.io.tmpdir"/>
 
     <cacheManagerEventListenerFactory class="" properties=""/>
 
@@ -15,104 +15,4 @@
             diskPersistent="false"
             />
 
-    <cache name="org.transmart.biomart.ContentReference"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.BioAssayCohort"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.CellLine"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.BioAssayAnalysisPlatform"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.searchapp.GeneSignatureFileSchema"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.Disease"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.BioAssayPlatform"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="com.recomdata.transmart.plugin.Plugin"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.BioAssayFeatureGroup"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.Experiment"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.BioAssayAnalysis"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.Taxonomy"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.Compound"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.BioAssayDataset"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.ConceptCode"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.Content"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.ContentRepository"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.hibernate.cache.UpdateTimestampsCache"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.Experiment.compounds"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.Experiment.files"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.Experiment.diseases"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.Experiment.organisms"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.transmart.biomart.BioAssayAnalysis.files"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="com.recomdata.transmart.plugin.Plugin.modules"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
-    <cache name="org.hibernate.cache.StandardQueryCache"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
 </ehcache>
