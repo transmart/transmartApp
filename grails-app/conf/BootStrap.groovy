@@ -12,8 +12,6 @@ class BootStrap {
 
     def grailsApplication
 
-    def OAuth2SyncService
-
     def init = { servletContext ->
         securityContextPersistenceFilter.forceEagerSessionCreation = true
 
@@ -45,11 +43,6 @@ class BootStrap {
 
         // force marshaller registrar initialization
         grailsApplication.mainContext.getBean 'marshallerRegistrarService'
-
-        if ('clientCredentialsAuthenticationProvider' in
-                grailsApplication.config.grails.plugin.springsecurity.providerNames) {
-            OAuth2SyncService.syncOAuth2Clients()
-        }
     }
 
     private void fixupConfig() {
