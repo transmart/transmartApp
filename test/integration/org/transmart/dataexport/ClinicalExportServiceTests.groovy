@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.*
 import static org.junit.Assert.assertThat
 import static org.junit.Assert.assertTrue
 import static org.transmartproject.db.TestDataHelper.save
+import static org.transmart.dataexport.FileContentTestUtils.parseSepValTable
 
 @TestMixin(RuleBasedIntegrationTestMixin)
 @WithGMock
@@ -111,12 +112,12 @@ class ClinicalExportServiceTests {
 
         def dataFile = files[0]
 
-        def dataTable = dataFile.text.split('\n')*.split('\t').collect { it as List }
+        def dataTable = parseSepValTable(dataFile)
         assertThat dataTable, contains(
-                contains('"Subject ID"', '"\\foo\\study2\\sex\\"'),
-                contains('"SUBJ_ID_3"', '"female"'),
-                contains('"SUBJ_ID_2"', '"male"'),
-                contains('"SUBJ_ID_1"', '"female"'),
+                contains('Subject ID', '\\foo\\study2\\sex\\'),
+                contains('SUBJ_ID_3', 'female'),
+                contains('SUBJ_ID_2', 'male'),
+                contains('SUBJ_ID_1', 'female'),
         )
 
     }
@@ -142,15 +143,15 @@ class ClinicalExportServiceTests {
 
         def metaFile = files.find { it.absolutePath.endsWith '/meta.tsv' }
 
-        def metaTable = metaFile.text.split('\n')*.split('\t').collect { it as List }
+        def metaTable = parseSepValTable(metaFile)
         assertThat metaTable, contains(
-                contains('"Variable"', '"Attribute"', '"Description"'),
-                contains('"\\foo\\study2\\sex\\"', '"8 name 2"', '"8 description 2"'),
-                contains('"\\foo\\study2\\sex\\"', '"8 name 1"', '"8 description 1"'),
-                contains('"\\foo\\study2\\sex\\female\\"', '"10 name 2"', '"10 description 2"'),
-                contains('"\\foo\\study2\\sex\\female\\"', '"10 name 1"', '"10 description 1"'),
-                contains('"\\foo\\study2\\sex\\male\\"', '"9 name 2"', '"9 description 2"'),
-                contains('"\\foo\\study2\\sex\\male\\"', '"9 name 1"', '"9 description 1"'),
+                contains('Variable', 'Attribute', 'Description'),
+                contains('\\foo\\study2\\sex\\', '8 name 2', '8 description 2'),
+                contains('\\foo\\study2\\sex\\', '8 name 1', '8 description 1'),
+                contains('\\foo\\study2\\sex\\female\\', '10 name 2', '10 description 2'),
+                contains('\\foo\\study2\\sex\\female\\', '10 name 1', '10 description 1'),
+                contains('\\foo\\study2\\sex\\male\\', '9 name 2', '9 description 2'),
+                contains('\\foo\\study2\\sex\\male\\', '9 name 1', '9 description 1'),
         )
     }
 
@@ -167,13 +168,13 @@ class ClinicalExportServiceTests {
         )
 
         def dataFile = files.find { it.absolutePath.endsWith '/data_clinical.tsv' }
-        def table = dataFile.text.split('\n')*.split('\t', -1).collect { it as List }
+        def table = parseSepValTable(dataFile)
         assertThat table, contains(
-                contains('"Subject ID"', '"\\foo\\study2\\long path\\with%some$characters_\\"',
-                        '"\\foo\\study2\\sex\\"', '"\\foo\\study2\\study1\\"'),
-                contains('"SUBJ_ID_3"', '', '"female"', ''),
-                contains('"SUBJ_ID_2"', '', '"male"', '"foo"'),
-                contains('"SUBJ_ID_1"', '"test value"', '"female"', ''),
+                contains('Subject ID', '\\foo\\study2\\long path\\with%some$characters_\\',
+                        '\\foo\\study2\\sex\\', '\\foo\\study2\\study1\\'),
+                contains('SUBJ_ID_3', '', 'female', ''),
+                contains('SUBJ_ID_2', '', 'male', 'foo'),
+                contains('SUBJ_ID_1', 'test value', 'female', ''),
         )
 
     }
@@ -198,19 +199,19 @@ class ClinicalExportServiceTests {
 
         def metaFile = files.find { it.absolutePath.endsWith '/meta.tsv' }
 
-        def metaTable = metaFile.text.split('\n')*.split('\t').collect { it as List }
+        def metaTable = parseSepValTable(metaFile)
         assertThat metaTable, contains(
-                contains('"Variable"', '"Attribute"', '"Description"'),
-                contains('"\\foo\\study2\\long path\\with%some$characters_\\"', '"7 name 2"', '"7 description 2"'),
-                contains('"\\foo\\study2\\long path\\with%some$characters_\\"', '"7 name 1"', '"7 description 1"'),
-                contains('"\\foo\\study2\\sex\\"', '"8 name 2"', '"8 description 2"'),
-                contains('"\\foo\\study2\\sex\\"', '"8 name 1"', '"8 description 1"'),
-                contains('"\\foo\\study2\\sex\\female\\"', '"10 name 2"', '"10 description 2"'),
-                contains('"\\foo\\study2\\sex\\female\\"', '"10 name 1"', '"10 description 1"'),
-                contains('"\\foo\\study2\\sex\\male\\"', '"9 name 2"', '"9 description 2"'),
-                contains('"\\foo\\study2\\sex\\male\\"', '"9 name 1"', '"9 description 1"'),
-                contains('"\\foo\\study2\\study1\\"', '"4 name 2"', '"4 description 2"'),
-                contains('"\\foo\\study2\\study1\\"', '"4 name 1"', '"4 description 1"'),
+                contains('Variable', 'Attribute', 'Description'),
+                contains('\\foo\\study2\\long path\\with%some$characters_\\', '7 name 2', '7 description 2'),
+                contains('\\foo\\study2\\long path\\with%some$characters_\\', '7 name 1', '7 description 1'),
+                contains('\\foo\\study2\\sex\\', '8 name 2', '8 description 2'),
+                contains('\\foo\\study2\\sex\\', '8 name 1', '8 description 1'),
+                contains('\\foo\\study2\\sex\\female\\', '10 name 2', '10 description 2'),
+                contains('\\foo\\study2\\sex\\female\\', '10 name 1', '10 description 1'),
+                contains('\\foo\\study2\\sex\\male\\', '9 name 2', '9 description 2'),
+                contains('\\foo\\study2\\sex\\male\\', '9 name 1', '9 description 1'),
+                contains('\\foo\\study2\\study1\\', '4 name 2', '4 description 2'),
+                contains('\\foo\\study2\\study1\\', '4 name 1', '4 description 1'),
         )
     }
 
