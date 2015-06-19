@@ -72,6 +72,7 @@ grails.project.dependency.resolution = {
         }
         compile 'org.rosuda:Rserve:1.7.3'
         compile 'com.google.guava:guava:14.0.1'
+        compile 'net.sf.ehcache:ehcache:2.9.0'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
         compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
@@ -112,6 +113,7 @@ grails.project.dependency.resolution = {
         build ':tomcat:7.0.52.1'
 
         compile ':hibernate:3.6.10.16'
+        compile ':cache-ehcache:1.0.5'
         compile ':quartz:1.0-RC2'
         // Not compatible with spring security 3.2 yet
         //compile ':spring-security-kerberos:0.1'

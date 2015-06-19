@@ -83,10 +83,6 @@
            maxElementsInMemory="10000"
            timeToIdleSeconds="300"
             />
-    <cache name="org.hibernate.cache.UpdateTimestampsCache"
-           maxElementsInMemory="10000"
-           timeToIdleSeconds="300"
-            />
     <cache name="org.transmart.biomart.Experiment.compounds"
            maxElementsInMemory="10000"
            timeToIdleSeconds="300"
@@ -111,6 +107,27 @@
            maxElementsInMemory="10000"
            timeToIdleSeconds="300"
             />
+    <cache name="org.transmart.biomart.BioAssayAnalysisExt" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="annotation.AmTagTemplateAssociation" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="fm.FmFile" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="annotation.AmTagDisplayValue" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="annotation.AmTagTemplate2" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="org.transmart.biomart.Observation" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="annotation.AmTagAssociation" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="annotation.AmTagItem" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="annotation.AmTagTemplate" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="org.transmartproject.db.accesscontrol.SecuredObjectAccessView" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="fm.FmFolderAssociation" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="annotation.AmTagValue" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="org.transmart.biomart.BioAssayAnalysis.diseases" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="org.transmart.biomart.BioAssayAnalysis.observations" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+    <cache name="org.transmart.biomart.BioAssayAnalysis.platforms" maxElementsInMemory="10000" timeToIdleSeconds="300" />
+
+    <cache name="org.hibernate.cache.UpdateTimestampsCache"
+           maxElementsInMemory="10000"
+           timeToIdleSeconds="300"
+            />
+
     <cache name="org.hibernate.cache.StandardQueryCache"
            maxElementsInMemory="10000"
            timeToIdleSeconds="300"
