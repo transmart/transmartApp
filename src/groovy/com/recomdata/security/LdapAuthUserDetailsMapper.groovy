@@ -25,7 +25,7 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
     def dataSource
     def springSecurityService
     def databasePortabilityService
-    def loginAttemptCacheService
+    def bruteForceLoginLockService
     def conf = SpringSecurityUtils.securityConfig
 
     private final Log logger = LogFactory.getLog(LdapAuthUserDetailsMapper.class);
@@ -122,7 +122,7 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
                     user.enabled,
                     true,
                     true,
-                    !loginAttemptCacheService.isLocked(user.username),
+                    !bruteForceLoginLockService.isLocked(user.username),
                     authority ?: AuthUserDetailsService.NO_ROLES,
                     user.id,
                     "LDAP '${user.userRealName}'")
