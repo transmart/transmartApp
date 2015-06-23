@@ -9,6 +9,7 @@ modules = {
         dependsOn 'jquery-ui'
         resource url: 'images/searchtool.ico'
         resource url: 'css/main.css'
+        resource url: 'css/sanofi.css'
     }
 
     session_timeout {
