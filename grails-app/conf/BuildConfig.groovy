@@ -72,6 +72,7 @@ grails.project.dependency.resolution = {
         }
         compile 'org.rosuda:Rserve:1.7.3'
         compile 'com.google.guava:guava:18.0'
+        compile 'net.sf.ehcache:ehcache:2.9.0'
         compile 'org.apache.httpcomponents:httpclient:4.4.1'
         compile 'org.apache.httpcomponents:httpcore:4.4.1'
 
@@ -114,12 +115,13 @@ grails.project.dependency.resolution = {
         build ':tomcat:7.0.54'
 
         compile ':hibernate:3.6.10.19'
+        compile ':cache-ehcache:1.0.5'
         compile ':quartz:1.0-RC2'
         // Not compatible with spring security 3.2 yet
         //compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:2.0-RC2'
-        compile ':spring-security-core:2.0-RC4'
-        compile ':spring-security-oauth2-provider:1.0.5.2'
+        compile ':spring-security-core:2.0-RC5'
+        compile ':spring-security-oauth2-provider:2.0-RC4'
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.11.1'

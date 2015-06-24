@@ -116,9 +116,16 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
             } else
                 authority = authorities
 
-            return new AuthUserDetails(user.username, user.passwd, user.enabled,
-                    true, true, !bruteForceLoginLockService.isLocked(user.username),
-                    authorities ?: AuthUserDetailsService.NO_ROLES, user.id, "LDAP '${user.userRealName}'")
+            return new AuthUserDetails(
+                    user.username,
+                    user.passwd,
+                    user.enabled,
+                    true,
+                    true,
+                    !bruteForceLoginLockService.isLocked(user.username),
+                    authority ?: AuthUserDetailsService.NO_ROLES,
+                    user.id,
+                    "LDAP '${user.userRealName}'")
         }
     }
 
