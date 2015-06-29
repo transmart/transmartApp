@@ -64,11 +64,7 @@ if (externalDataSource) {
 }
 grails.config.locations.each { console.info "Including configuration file [${it}] in configuration building." }
 
-/*
- *  The following lines are copied from the previous COnfig.groovy
- *
- */
-
+grails.mime.disable.accept.header.userAgents = []
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.types = [html         : [
         'text/html',
