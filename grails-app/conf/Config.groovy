@@ -214,6 +214,8 @@ log4j = {
             }
         }
     }
+
+    warn 'org.codehaus.groovy.grails.commons.cfg.ConfigurationHelper'
 }
 
 grails {
