@@ -15,21 +15,38 @@ class OmicsQueryService {
 
     def dataSource
     def i2b2HelperService
-    def conceptsResourceService
 
     def getConceptDistributionDataForHighDimensionConcept(String concept_cd, omics_params) {
         log.info("Getting concept distribution data for high dimension concept code: $concept_cd and omics params: $omics_params");
         ArrayList<Double> values = new ArrayList<Double>();
         Sql sql = new Sql(dataSource);
-        String sqlt = """select b.patient_id, avg($omics_params.omics_projection_type) as score from
+        String sqlt = ""
+        if (omics_params.omics_value_type.equals('GENE_EXPRESSION')) {
+            sqlt = """select b.patient_id, avg($omics_params.omics_projection_type) as score from
                                 (
                                     select * from deapp.de_subject_microarray_data
                                     where probeset_id in
                                     (
                                         select probeset_id from deapp.de_mrna_annotation
                                         where gene_symbol='$omics_params.omics_selector'
-                                    )
-                                    and assay_id in
+                                    )"""
+        }
+        else if (omics_params.omics_value_type.equals("RNASEQ_RCNT")) {
+            sqlt = """select b.patient_id, avg($omics_params.omics_projection_type) as score from
+                                (
+                                    select * from deapp.de_subject_rnaseq_data
+                                    where region_id in
+                                    (
+                                        select region_id from deapp.de_chromosomal_region
+                                        where gene_symbol='$omics_params.omics_selector'
+                                    ) """
+        }
+        else {
+            log.error "Concept distribution not yet supported for omics_params: $omics_params"
+            return values
+        }
+
+        sqlt += """and assay_id in
                                     (
                                         select assay_id from deapp.de_subject_sample_mapping where concept_code='$concept_cd'
                                     )
@@ -57,16 +74,33 @@ class OmicsQueryService {
             log.info("getConceptDistributionDataForHighDimensionConceptFromCode called with no result_istance_id")
             return getConceptDistributionDataForHighDimensionConcept(concept_cd, omics_params)
         }
+        String sqlt = ""
         Sql sql = new Sql(dataSource)
-        String sqlt = """select b.patient_id, avg($omics_params.omics_projection_type) as score from
+        if (omics_params.omics_value_type.equals('GENE_EXPRESSION')) {
+            sqlt = """select b.patient_id, avg($omics_params.omics_projection_type) as score from
                                 (
                                     select * from deapp.de_subject_microarray_data
                                     where probeset_id in
                                     (
                                         select probeset_id from deapp.de_mrna_annotation
                                         where gene_symbol='$omics_params.omics_selector'
-                                    )
-                                    and assay_id in
+                                    )"""
+        }
+        else if (omics_params.omics_value_type.equals("RNASEQ_RCNT")) {
+            sqlt = """select b.patient_id, avg($omics_params.omics_projection_type) as score from
+                                (
+                                    select * from deapp.de_subject_rnaseq_data
+                                    where region_id in
+                                    (
+                                        select region_id from deapp.de_chromosomal_region
+                                        where gene_symbol='$omics_params.omics_selector'
+                                    )"""
+        }
+        else {
+            log.error "Concept distribution not yet supported for omics_params: $omics_params"
+            return values
+        }
+        sqlt += """and assay_id in
                                     (
                                         select assay_id from deapp.de_subject_sample_mapping where patient_id in
                                         (
@@ -108,16 +142,71 @@ class OmicsQueryService {
         return results[0]
     }
 
-    def getSearchResultsForGene(String searchString, String gplid) {
-        def sqlt = """select distinct gene_symbol, gpl_id
+    /**
+     * Returns identifiers for a given platform that start with the given searchString
+     * For gene expression, chromosomal and rnaseq platforms, gene symbols are returned
+     * For proteomics platforms, uniprot_ids are returned
+     * For mirna_qpcr platforms, mirna_ids are returned
+     * @param searchString
+     * @param gplid
+     * @return
+     */
+    def getSearchResults(String searchString, String gplid) {
+        def markersqlt = "select  marker_type from deapp.de_gpl_info where lower(platform)=?"
+        Sql markersql = new Sql(dataSource)
+        List<String> markertypes = new ArrayList<String>()
+        markersql.eachRow(markersqlt, [gplid.toLowerCase()], { row ->
+            markertypes.add(row.marker_type)
+        })
+
+        if (markertypes.size() > 1) {
+            log.error "Search for markertype of platform $gplid returned ${markertypes.size()} results."
+        }
+        if (markertypes.size() == 0) {
+            log.error "Search for markertype of platform $gplid returned no results."
+            return new ArrayList<String>()
+        }
+
+        String markertype = markertypes.get(0)
+        String sqlt = ""
+
+        if (markertype.equals("Gene Expression")) {
+            sqlt = """select distinct gene_symbol as result, gpl_id
                       from deapp.de_mrna_annotation
                       where lower(gpl_id)=?
                       and lower(gene_symbol) like ?
                       order by gene_symbol"""
+        }
+        else if (markertype.equals("RNASEQ_RCNT") || markertype.equals("Chromosomal")) {
+            sqlt = """select distinct gene_symbol as result, gpl_id
+                      from deapp.de_chromosomal_region
+                      where lower(gpl_id)=?
+                      and lower(gene_symbol) like ?
+                      order by gene_symbol"""
+        }
+        else if (markertype.equals("PROTEOMICS")) {
+            sqlt = """select distinct uniprot_id as result, gpl_id
+                      from deapp.de_protein_annotation
+                      where lower(gpl_id)=?
+                      and lower(uniprot_id) like ?
+                      order by uniprot_id"""
+        }
+        else if (markertype.equals("MIRNA_QPCR")) {
+            sqlt = """select distinct mirna_id as result, gpl_id
+                      from deapp.de_qpcr_mirna_annotation
+                      where lower(gpl_id)=?
+                      and lower(mirna_id) like ?
+                      order by mirna_id"""
+        }
+        else {
+            log.error "Unsupported platform type queried: $markertype"
+            return []
+        }
+
         Sql sql = new Sql(dataSource)
         def results = []
         sql.eachRow(sqlt, [gplid.toLowerCase(), searchString.toLowerCase() + "%"], { row ->
-            results.add([label: row.gene_symbol])
+            results.add([label: row.result])
         })
         results
     }
@@ -261,13 +350,21 @@ class OmicsQueryService {
         return tablein;
     }
 
+    // returns a map describing the platform for the given concept_key
     def getPlatform(String concept_key) {
-        List<Patient> patientList = conceptsResourceService.getByKey(concept_key).getPatients()
-        if (patientList.isEmpty())
-            return null
-        Set<Assay> assayList = patientList[0].getAssays()
-        if (assayList.isEmpty())
-            return null
-        return assayList[0].getPlatform()
+        def concept_code = i2b2HelperService.getConceptCodeFromKey(concept_key)
+        String sqlt = """SELECT * FROM deapp.de_gpl_info WHERE platform = (
+                              SELECT gpl_id FROM deapp.de_subject_sample_mapping WHERE concept_code=$concept_code limit 1
+                          )"""
+        log.info sqlt
+        def sql = new Sql(dataSource)
+        def result = [:]
+        def row = sql.firstRow(sqlt)
+        log.info row
+        if (row) {
+            // transform to a regular map
+            row.keySet().each({ result.put(it, row[it]) })
+        }
+        result
     }
 }

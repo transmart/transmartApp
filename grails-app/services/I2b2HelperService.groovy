@@ -5128,6 +5128,10 @@ class I2b2HelperService {
                         }
 
                         Node key = (Node) xpath.evaluate("item_key", item, XPathConstants.NODE)
+
+                        String textContent = key.getTextContent()
+                        log.debug("Found item ${textContent}")
+
                         Node valueinfo = (Node) xpath.evaluate("constrain_by_value", item, XPathConstants.NODE)
                         String operator = "";
                         String constraints = "";
@@ -5135,10 +5139,40 @@ class I2b2HelperService {
                         if (valueinfo != null) {
                             operator = ((Node) xpath.evaluate("value_operator", valueinfo, XPathConstants.NODE)).getTextContent()
                             constraints = ((Node) xpath.evaluate("value_constraint", valueinfo, XPathConstants.NODE)).getTextContent()
+                            pw.write(textContent + " " + operator + " " + constraints)
                         }
-                        String textContent = key.getTextContent()
-                        log.debug("Found item ${textContent}")
-                        pw.write(textContent + " " + operator + " " + constraints)
+
+                        valueinfo = (Node) xpath.evaluate("constrain_by_omics_value", item, XPathConstants.NODE)
+                        operator = ""
+                        constraints = ""
+                        String value_type = ""
+                        String selector = ""
+                        String projection = ""
+                        if (valueinfo != null) {
+                            value_type = ((Node) xpath.evaluate("omics_value_type", valueinfo, XPathConstants.NODE)).getTextContent()
+                            operator = ((Node) xpath.evaluate("omics_value_operator", valueinfo, XPathConstants.NODE)).getTextContent()
+                            constraints = ((Node) xpath.evaluate("omics_value_constraint", valueinfo, XPathConstants.NODE)).getTextContent()
+                            selector = ((Node) xpath.evaluate("omics_selector", valueinfo, XPathConstants.NODE)).getTextContent()
+                            projection = ((Node) xpath.evaluate("omics_projection_type", valueinfo, XPathConstants.NODE)).getTextContent()
+                            pw.write(textContent + selector)
+                            if (value_type.equals("GENE_EXPRESSION") || value_type.equals("RNASEQ_RCNT")) {
+                                pw.write(" - " + projection + " " + operator + " ")
+                                if (operator.equals("BETWEEN")) {
+                                    String[] bounds = constraints.split(":")
+                                    if (bounds.length != 2) {
+                                        log.error "BETWEEN constraint type found with values not seperated by ':'"
+                                        pw.write(constraints)
+                                    }
+                                    else {
+                                        pw.write(bounds.join(" and "))
+                                    }
+                                }
+                                else {
+                                    pw.write(constraints)
+                                }
+                            }
+                        }
+
                     }
                     pw.write("<b>)</b>")
                 }

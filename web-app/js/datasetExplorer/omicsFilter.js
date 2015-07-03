@@ -30,11 +30,16 @@ function showOmicsFilterDialog(result, request) {
     }
     else {
         var platform = JSON.parse(result.responseText);
-        if (platform.markerType == 'Gene Expression') {
-            showGeneExprFilterDialog(platform);
+        switch (platform.marker_type) {
+            case 'Gene Expression':
+                showGeneExprFilterDialog(platform);
+                break;
+            case 'RNASEQ_RCNT':
+                showRnaseqRcntFilterDialog(platform);
+                break;
+            default:
+                alert("Support for " + platform.marker_type + " is not yet implemented!");
         }
-        else
-            alert("Support for " + platform.markerType + " is not yet implemented!");
     }
 }
 
@@ -44,24 +49,23 @@ function showOmicsSelectionDialog(result, request) {
     }
     else {
         var platform = JSON.parse(result.responseText);
-        if (platform.markerType == 'Gene Expression') {
-            showGeneSelectionDialog(platform);
+        switch (platform.marker_type) {
+            case 'Gene Expression':
+                showGeneSelectionDialog(platform);
+                break;
+            case 'RNASEQ_RCNT':
+                // showRnaseqRcntSelectionDialog(platform);
+                break;
+            default:
+                alert("Support for " + platform.marker_type + " is not yet implemented!");
         }
-        else
-            alert("Support for " + platform.markerType + " is not yet implemented!");
     }
 }
 
 function applyGeneExprFilterDialog(validation) {
 
-    var params = {
-        gene_symbol: jQuery("#gene-searchbox").val(),
-        threshold1: jQuery("#expression-amount-min").val(),
-        threshold2: jQuery("#expression-amount-max").val(),
-        operator: "BETWEEN",
-        projection_type: jQuery("input[name=gene-expression-projection]:checked").val()
-    }
-    if (validation && params.gene_symbol == "") {
+    var params = getGeneExprFilterParams();
+    if (validation && params.selector == "") {
         alert("You must choose a gene.");
         return;
     }
@@ -71,12 +75,12 @@ function applyGeneExprFilterDialog(validation) {
     geneExprSliderHighHandleRatio = 1;
 
     // make sure that there is a value set
-    if (validation && (!jQuery.isNumeric(params.threshold1) || !jQuery.isNumeric(params.threshold2))) {
+    if (validation && (!jQuery.isNumeric(jQuery("#expression-amount-min").val()) || !jQuery.isNumeric(jQuery("#expression-amount-max").val()))) {
         alert('You must specify a numeric value.');
     } else {
 
         if (validation)
-            geneExprFilterDialogComplete(params);
+            omicsFilterDialogComplete(params);
 
         if (STATE.Dragging) {
             jQuery('#' + selectedConcept.id).remove()
@@ -87,11 +91,40 @@ function applyGeneExprFilterDialog(validation) {
     }
 }
 
+function applyRnaseqRcntFilterDialog(validation) {
+
+    var params = getRnaseqRcntFilterParams();
+    if (validation && params.selector == "") {
+        alert("You must choose a gene.");
+        return;
+    }
+
+    rnaseqRcntFilterValues = [];
+    rnaseqRcntSliderLowHandleRatio = 0;
+    rnaseqRcntSliderHighHandleRatio = 1;
+
+    // make sure that there is a value set
+    if (validation && (!jQuery.isNumeric(jQuery("#rnaseq-rcnt-amount-min").val()) || !jQuery.isNumeric(jQuery("#rnaseq-rcnt-amount-max").val()))) {
+        alert('You must specify a numeric value.');
+    } else {
+
+        if (validation)
+            omicsFilterDialogComplete(params);
+
+        if (STATE.Dragging) {
+            jQuery('#' + selectedConcept.id).remove()
+            removeUselessPanels()
+        }
+
+        rnaseqrcntfilterwin.hide();
+    }
+}
+
 function showGeneExprFilterDialog(platform)
 {
     jQuery("#gene-searchbox").val("");
-    jQuery("#gene-expr-filter-gplid").text(platform.id);
-    jQuery("#gene-searchbox").autocomplete("option", "source", "/transmart/omicsPlatformSearch/searchAutoComplete?gplid=" + encodeURIComponent(platform.id));
+    jQuery("#gene-expr-filter-gplid").text(platform.platform);
+    jQuery("#gene-searchbox").autocomplete("option", "source", "/transmart/omicsPlatformSearch/searchAutoComplete?gplid=" + encodeURIComponent(platform.platform));
     geneexprfilterwin.setHeight(140); //set height back to old closed
     jQuery("[id^=gene-expression-slider-row]").css({'display': 'none'});
 
@@ -104,27 +137,44 @@ function showGeneExprFilterDialog(platform)
     jQuery("#gene-searchbox").focus();
 }
 
-function geneExprFilterDialogComplete(params)
+function showRnaseqRcntFilterDialog(platform)
+{
+    jQuery("#rnaseq-rcnt-searchbox").val("");
+    jQuery("#rnaseq-rcnt-filter-gplid").text(platform.platform);
+    jQuery("#rnaseq-rcnt-searchbox").autocomplete("option", "source", "/transmart/omicsPlatformSearch/searchAutoComplete?gplid=" + encodeURIComponent(platform.platform));
+    rnaseqrcntfilterwin.setHeight(140); //set height back to old closed
+    jQuery("[id^=rnaseq-rcnt-slider-row]").css({'display': 'none'});
+
+    document.getElementById("rnaseq-rcnt-filter-histogram").innerHTML = ""
+    var top = jQuery("#resultsTabPanel").offset().top + jQuery("#resultsTabPanel").height() / 2 - setvaluewin.height / 1.5;
+    var left = jQuery("#resultsTabPanel").offset().left + jQuery("#resultsTabPanel").width() / 2 - setvaluewin.width / 2;
+
+    rnaseqrcntfilterwin.setPosition(left, top);
+    rnaseqrcntfilterwin.show(viewport);
+    jQuery("#rnaseq-rcnt-searchbox").focus();
+}
+
+function omicsFilterDialogComplete(params)
 {
     var conceptnode = selectedConcept;
-    setGeneExprFilterValue(conceptnode, params);
+    setOmicsFilterValue(conceptnode, params);
     if(STATE.Dragging==true){
         STATE.Dragging=false;
         moveSelectedConceptFromHoldingToTarget();
     }
 }
 
-function setGeneExprFilterValue(conceptnode, params)
+function setOmicsFilterValue(conceptnode, params)
 {
     conceptnode.setAttribute("setvaluemode","omics_value");
-    conceptnode.setAttribute("selector", params.gene_symbol);
+    conceptnode.setAttribute("selector", params.selector);
     conceptnode.setAttribute("omicsoperator", params.operator);
-    conceptnode.setAttribute("omicsvalue", params.threshold1 + ':' + params.threshold2);
+    conceptnode.setAttribute("omicsvalue", params.value);
     conceptnode.setAttribute("omicsprojection", params.projection_type);
-    conceptnode.setAttribute("omicsvaluetype", "GENE_EXPRESSION");
+    conceptnode.setAttribute("omicsvaluetype", params.type);
 
     var valuetext="";
-    valuetext=getGeneExprFilterValueText(params);
+    valuetext=getOmicsFilterValueText(params);
     conceptnode.setAttribute('conceptsetvaluetext',valuetext);
     var conceptname=conceptnode.getAttribute("conceptname");
     jQuery('#' + conceptnode.id + " .concept-text").html(conceptname + " " + valuetext);
@@ -132,12 +182,42 @@ function setGeneExprFilterValue(conceptnode, params)
     invalidateSubset(subset);
 }
 
-function getGeneExprFilterValueText(params)
+function getOmicsFilterValueText(params)
 {
     var result = "";
-    switch (params.operator) {
-        case "BETWEEN":
-            result = params.threshold1 + " <= " + params.gene_symbol + " <= " + params.threshold2;
+
+    switch (params.type) {
+        case "GENE_EXPRESSION":
+            switch (params.operator) {
+                case "BETWEEN":
+                    var thresholds = params.value.split(":");
+                    if (thresholds.length != 2) {
+                        result = "";
+                    }
+                    else {
+                        result = thresholds[0] + " <= " + params.selector + " <= " + thresholds[1];
+                    }
+                    break;
+            }
+            break;
+        case "RNASEQ_RCNT":
+            switch (params.operator) {
+                case "BETWEEN":
+                    var thresholds = params.value.split(":");
+                    if (thresholds.length != 2) {
+                        result = "";
+                    }
+                    else {
+                        result = thresholds[0] + " <= " + params.selector + " <= " + thresholds[1];
+                    }
+                    break;
+            }
+            break;
+        case "PROTEOMICS":
+            break;
+        case "CHROMOSOMAL":
+            break;
+        case "MIRNA_QPCR":
             break;
     }
     return "<em>" + result + "</em>";
@@ -145,9 +225,20 @@ function getGeneExprFilterValueText(params)
 
 function showGeneSelectionDialog(platform) {
     jQuery("#gene-selection-searchbox").val("");
-    jQuery("#gene-selection-searchbox").autocomplete("option", "source", "/transmart/omicsPlatformSearch/searchAutoComplete?gplid=" + encodeURIComponent(platform.id));
+    jQuery("#gene-selection-searchbox").autocomplete("option", "source", "/transmart/omicsPlatformSearch/searchAutoComplete?gplid=" + encodeURIComponent(platform.platform));
     jQuery("#gene-selection-concept-key").val(platform.concept_key);
-    jQuery("[id^=gene-expression-slider-row]").css({'display': 'none'});
+
+    var top = jQuery("#resultsTabPanel").offset().top + jQuery("#resultsTabPanel").height() / 2 - setvaluewin.height / 1.5;
+    var left = jQuery("#resultsTabPanel").offset().left + jQuery("#resultsTabPanel").width() / 2 - setvaluewin.width / 2;
+
+    geneselectionwin.setPosition(left, top);
+    geneselectionwin.show(viewport);
+}
+
+function showGeneSelectionDialog(platform) {
+    jQuery("#gene-selection-searchbox").val("");
+    jQuery("#gene-selection-searchbox").autocomplete("option", "source", "/transmart/omicsPlatformSearch/searchAutoComplete?gplid=" + encodeURIComponent(platform.platform));
+    jQuery("#gene-selection-concept-key").val(platform.concept_key);
 
     var top = jQuery("#resultsTabPanel").offset().top + jQuery("#resultsTabPanel").height() / 2 - setvaluewin.height / 1.5;
     var left = jQuery("#resultsTabPanel").offset().left + jQuery("#resultsTabPanel").width() / 2 - setvaluewin.width / 2;
@@ -203,7 +294,7 @@ function applyGeneSelectionDialog(validation) {
     geneselectionwin.hide();
 }
 
-function showConceptDistributionHistogramForGeneExprFilter()
+function showConceptDistributionHistogramForOmicsFilter(filter_params)
 {
     var concept_key = selectedConcept.getAttribute('conceptid');
 
@@ -211,27 +302,27 @@ function showConceptDistributionHistogramForGeneExprFilter()
         {
             url: pageInfo.basePath+"/chart/conceptDistribution",
             method: 'POST',
-            success: function(result, request){showConceptDistributionHistogramForGeneExprFilterComplete(result);},
-            failure: function(result, request){showConceptDistributionHistogramForGeneExprFilterComplete(result);},
+            success: function(result, request){showConceptDistributionHistogramForOmicsFilterComplete(result, filter_params);},
+            failure: function(result, request){showConceptDistributionHistogramForOmicsFilterComplete(result, filter_params);},
             timeout: '300000',
             params: Ext.urlEncode({
                 concept_key: concept_key,
-                omics_selector: document.getElementById("gene-searchbox").value,
-                omics_platform: document.getElementById("gene-expr-filter-gplid").innerHTML,
-                omics_value_type: 'GENE_EXPRESSION',
-                omics_projection_type: jQuery("input[name=gene-expression-projection]:checked").val()})
+                omics_selector: filter_params.selector,
+                omics_platform: filter_params.platform,
+                omics_value_type: filter_params.type,
+                omics_projection_type: filter_params.projection_type})
         });
 }
 
-function showConceptDistributionHistogramForGeneExprFilterComplete(result)
+function showConceptDistributionHistogramForOmicsFilterComplete(result, filter_params)
 {
     var concept_key = selectedConcept.getAttribute('conceptid');
 
-    geneexprfilterwin.setHeight(370);
+    filter_params.window.setHeight(370);
 
     if (result == null) {
-        jQuery("[id^=gene-expression-slider-row]").css({'display': 'none'});
-        return document.getElementById("gene-expression-filter-histogram").innerHTML = "<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>";
+        filter_params.slider_rows.css({'display': 'none'});
+        return filter_params.hist_div.html("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
     }
 
     Ext.Ajax.request(
@@ -239,43 +330,25 @@ function showConceptDistributionHistogramForGeneExprFilterComplete(result)
             url: pageInfo.basePath + "/chart/conceptDistributionValues",
             method: 'GET',
             success: function(result, request) {
-                geneExprFilterValues = eval(result.responseText);
-                if (geneExprFilterValues.length > 0) {
-                    geneExprFilterValues.sort(function (a, b) {return a - b}); // sort numerically rather then string-based
-                    jQuery("[id^=gene-expression-slider-row]").css({'display': 'table-row'});
-                    jQuery("#gene-expression-range").slider('option',{'min': geneExprFilterValues[0] * geneExprSliderFactor, 'max': geneExprFilterValues[geneExprFilterValues.length - 1] * geneExprSliderFactor})
-                    jQuery("#gene-expression-range").slider('values', 0, (geneExprFilterValues[0] + geneExprSliderLowHandleRatio * (geneExprFilterValues[geneExprFilterValues.length - 1] - geneExprFilterValues[0])) * geneExprSliderFactor);
-                    jQuery("#gene-expression-range").slider('values', 1, (geneExprFilterValues[0] + geneExprSliderHighHandleRatio * (geneExprFilterValues[geneExprFilterValues.length - 1] - geneExprFilterValues[0])) * geneExprSliderFactor);
-                    geneExpFilterSliderUpdated();
-                }
-                else {
-                    jQuery("[id^=gene-expression-slider-row]").css({'display': 'none'});
-                    jQuery( "#expression-amount-min" ).val(0);
-                    jQuery( "#expression-amount-max" ).val(0);
-                    document.getElementById("gene-expression-filter-histogram").innerHTML = "No data is available for the given gene.";
-                    geneexprfilterwin.setHeight(140);
-                }
+                var values = eval(result.responseText);
+                filter_params.valuescallback(values);
             },
             failure: function(result, request) {
-                jQuery("#gene-expression-slider-row").css({'display': 'none'});
-                jQuery( "#expression-amount-min" ).val(0);
-                jQuery( "#expression-amount-max" ).val(0);
-                document.getElementById("gene-expression-filter-histogram").innerHTML = "An error occured while retrieving the histogram values: " + result.responseText;
+                filter_params.valuescallbackfailed(result);
             },
             timeout: '30000',
             params: Ext.urlEncode({
                 concept_key: concept_key,
-                omics_selector: document.getElementById("gene-searchbox").value,
-                omics_platform: document.getElementById("gene-expr-filter-gplid").innerHTML,
-                omics_value_type: 'GENE_EXPRESSION',
-                omics_projection_type: jQuery("input[name=gene-expression-projection]:checked").val()
-            })
+                omics_selector: filter_params.selector,
+                omics_platform: filter_params.platform,
+                omics_value_type: filter_params.type,
+                omics_projection_type: filter_params.projection_type})
         }
     );
 
-    document.getElementById("gene-expression-filter-histogram").innerHTML = result.responseText;
+    filter_params.hist_div.html(result.responseText);
 }
-
+/*
 function showConceptDistributionHistogramForGeneExprFilterForSubset()
 {
     var concept_key = selectedConcept.getAttribute('conceptid');
@@ -299,6 +372,7 @@ function showConceptDistributionHistogramForGeneExprFilterForSubset()
                 result_instance_id1: " ", // hack: chartcontroller will see this as non-empty,
                                           // omicsqueryservice will see this as empty and show
                                           // distribution for complete study
+                                          // this way, full and subset distributions will be overlayed
                 result_instance_id2: GLOBAL.CurrentSubsetIDs[getSubsetFromPanel(selectedDiv)]
             })
         });
@@ -308,8 +382,8 @@ function showConceptDistributionHistogramForGeneExprFilterForSubsetComplete(resu
 {
     geneexprfilterwin.setHeight(370);
 
-    /*if (result == null)
-     return Ext.get("geneexprfilterchartsPanel2").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
+    //if (result == null)
+    // return Ext.get("geneexprfilterchartsPanel2").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
 
-     Ext.get("geneexprfilterchartsPanel2").update(result.responseText);*/
-}
+    // Ext.get("geneexprfilterchartsPanel2").update(result.responseText);
+}*/

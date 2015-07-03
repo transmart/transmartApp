@@ -920,7 +920,7 @@ Ext.onReady(function () {
             ]
         });
 
-        // preload omics filter dialog
+        // preload geneexpr filter dialog
 
         geneexprfilterpanel = new Ext.Panel(
             {
@@ -963,38 +963,6 @@ Ext.onReady(function () {
                     border: false,
                     items: [geneexprfilterpanel],
                     buttons: [
-                        /*{
-                            text: 'Show Histogram',
-                            handler: function () {
-                                var gene_symbol = document.getElementById("gene-searchbox").value;
-
-                                if (gene_symbol == "") {
-                                    alert("Please select a gene symbol first.");
-                                    return;
-                                }
-                                showConceptDistributionHistogramForGeneExprFilterComplete(null)
-                                showConceptDistributionHistogramForGeneExprFilter();
-                            }
-                        }
-                        ,
-                        {
-                            text: 'Show Histogram for subset',
-                            handler: function () {
-                                var gene_symbol = document.getElementById("gene-searchbox").value;
-
-                                if (gene_symbol == "") {
-                                    alert("Please select a gene symbol first.");
-                                    return;
-                                }
-                                var subset = getSubsetFromPanel(selectedDiv)
-                                if (!isSubsetEmpty(subset)) {
-                                    showConceptDistributionHistogramForGeneExprFilterForSubsetComplete(null)
-                                    runQuery(subset, showConceptDistributionHistogramForGeneExprFilterForSubset);
-                                }
-                                else alert('Subset is empty!');
-                            }
-                        }
-                        ,*/
                         {
                             text: 'OK',
                             handler: function () {
@@ -1065,6 +1033,69 @@ Ext.onReady(function () {
                 });
             geneselectionwin.show();
             geneselectionwin.hide();
+        }
+
+        // preload rnaseq rcnt filter dialog
+
+        rnaseqrcntfilterpanel = new Ext.Panel(
+            {
+                id: 'rnaseqrcntfilterPanel',
+                region: 'center',
+                height: 80,
+                width: 100,
+                split: false,
+                autoLoad: {
+                    url: pageInfo.basePath + '/panels/rnaseqRcntFilterDialog.html',
+                    scripts: true,
+                    nocache: true,
+                    discardUrl: true,
+                    method: 'POST'
+                }
+            }
+        );
+
+        rnaseqrcntfilterchartsPanel1 = new Ext.Panel(
+            {
+                id: 'rnaseqrcntfilterchartsPanel1',
+                region: 'east',
+                width: 250,
+                height: 175,
+                split: false
+            }
+        );
+
+        if (!this.rnaseqrcntfilterwin) {
+            rnaseqrcntfilterwin = new Ext.Window(
+                {
+                    id: 'rnaseqRcntFilterWindow',
+                    title: 'RNASeq read count filtering',
+                    layout: 'border',
+                    width: 270,
+                    height: 350,
+                    closable: false,
+                    plain: true,
+                    modal: true,
+                    border: false,
+                    items: [rnaseqrcntfilterpanel],
+                    buttons: [
+                        {
+                            text: 'OK',
+                            handler: function () {
+                                applyRnaseqRcntFilterDialog(true);
+                            }
+                        }
+                        ,
+                        {
+                            text: 'Cancel',
+                            handler: function () {
+                                applyRnaseqRcntFilterDialog(false);
+                            }
+                        }
+                    ],
+                    tools: []
+                });
+            rnaseqrcntfilterwin.show();
+            rnaseqrcntfilterwin.hide();
         }
 
 

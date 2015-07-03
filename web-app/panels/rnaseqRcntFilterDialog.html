@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>RNASeq read count Filter Dialog</title>
+    <style>
+        .ui-autocomplete {
+            max-height: 100px;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+            /* add padding to account for vertical scrollbar */
+            padding-right: 20px;
+        }
+        .ui-slider {
+            width: 130px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+
+    var rnaseqRcntFilterValues;
+    var rnaseqRcntSliderFactor = 1;
+    // relative positions of low and high handle
+    var rnaseqRcntSliderLowHandleRatio = 0;
+    var rnaseqRcntSliderHighHandleRatio = 1;
+
+    jQuery(document).ready(function() {
+                addOmicsFilterRnaSearchAutocomplete();
+                addRnaseqRcntRangeSlider();
+                addRnaseqRcntMinMaxInputHandlers();
+            }
+    );
+
+    function addRnaseqRcntMinMaxInputHandlers() {
+        jQuery("#rnaseq-rcnt-amount-min").blur(function(event) {
+            var input = jQuery("#rnaseq-rcnt-amount-min");
+            var value = input.val();
+            if (!jQuery.isNumeric(value)) {
+                input.val(rnaseqRcntFilterValues[0]);
+            }
+            else if (value < rnaseqRcntFilterValues[0]) {
+                input.val(rnaseqRcntFilterValues[0]);
+            }
+            else if (value > jQuery("#rnaseq-rcnt-amount-max").val()) {
+                input.val(jQuery("#rnaseq-rcnt-amount-max").val());
+            }
+            jQuery("#rnaseq-rcnt-range").slider('values',0,input.val() * rnaseqRcntSliderFactor);
+            rnaseqRcntFilterSliderUpdated();
+        });
+
+        jQuery("#rnaseq-rcnt-amount-max").blur(function(event) {
+            var input = jQuery("#rnaseq-rcnt-amount-max");
+            var value = input.val();
+            if (!jQuery.isNumeric(value)) {
+                input.val(rnaseqRcntFilterValues[rnaseqRcntFilterValues.length - 1]);
+            }
+            else if (value > rnaseqRcntFilterValues[rnaseqRcntFilterValues.length - 1]) {
+                input.val(rnaseqRcntFilterValues[rnaseqRcntFilterValues.length - 1]);
+            }
+            else if (value < jQuery("#rnaseq-rcnt-amount-min").val()) {
+                input.val(jQuery("#rnaseq-rcnt-amount-min").val());
+            }
+            jQuery("#rnaseq-rcnt-range").slider('values',1,input.val() * rnaseqRcntSliderFactor);
+            rnaseqRcntFilterSliderUpdated();
+        });
+
+        // let the enter key blur the text fields, thus updating the slider and subject counts
+
+        jQuery("#rnaseq-rcnt-amount-min").keyup(function(e) {
+           if (e.which == 13) {
+               jQuery(this).blur();
+           }
+        });
+
+        jQuery("#rnaseq-rcnt-amount-max").keyup(function(e) {
+            if (e.which == 13) {
+                jQuery(this).blur();
+            }
+        });
+
+        // prevent enter key from closing the dialog
+        /*
+        jQuery("#expression-amount-min").keypress(function (e) {
+            return e.which != 13;
+        });
+
+
+
+        jQuery("#expression-amount-max").keypress(function (e) {
+            return e.which != 13;
+        });*/
+    }
+
+    function addRnaseqRcntRangeSlider() {
+        jQuery( "#rnaseq-rcnt-range" ).slider({
+            range: true,
+            min: -2500,
+            max: 2500,
+            values: [ -2500, 2500 ],
+            slide: function( event, ui ) {
+                rnaseqRcntFilterSliderUpdated();
+            }
+        });
+    }
+
+    function rnaseqRcntFilterSliderUpdated() {
+        var low = jQuery("#rnaseq-rcnt-range").slider('values', 0) / rnaseqRcntSliderFactor;
+        var high = jQuery("#rnaseq-rcnt-range").slider('values', 1) / rnaseqRcntSliderFactor;
+        jQuery("#rnaseq-rcnt-amount-min").val(low.toFixed(3));
+        jQuery("#rnaseq-rcnt-amount-max").val(high.toFixed(3));
+        jQuery( "#rnaseq-rcnt-filter-subjectcount").html(rnaseqRcntFilterValues.filter(function (el, idx, array) {return el >= low;})
+                        .filter(function(el, idx, array) {return el <= high;})
+                        .length)
+    }
+
+    function addOmicsFilterRnaSearchAutocomplete() {
+        var searchbox = jQuery("#rnaseq-rcnt-searchbox");
+        searchbox.css({"max-height": "300px", "overflow-y": "auto", "overflow-x": "hidden", "padding-right": "20px"});
+        searchbox.autocomplete({
+            position:{my:"left top",at:"left bottom",collision:"none"},
+            appendTo:"#rnaseqRcntFilterWindow",
+            source: '', // showOmicsFilterDialog() will set this, since we need to know the platform id
+            minLength:1,
+            select: function(event, ui) {
+                jQuery("#rnaseq-rcnt-searchbox").val(ui.item.label);
+                showConceptDistributionHistogramForOmicsFilterComplete(null, getRnaseqRcntFilterParams());
+                showConceptDistributionHistogramForOmicsFilter(getRnaseqRcntFilterParams());
+            },
+            focus: function(event, ui) {
+                jQuery("#rnaseq-rcnt-searchbox").val(ui.item.label);
+            },
+            close: function(event, ui) {
+                if (ui.item) {
+                    jQuery("#rnaseq-rcnt-searchbox").val(ui.item.label);
+                }
+            }
+        }).data("uiAutocomplete")._renderItem = function( ul, item ) {
+            var resulta = '<a><span class="category-gene"><b>' + item.label + '</b>';
+            if (item.synonyms != null) {
+                resulta += (item.synonyms + '</a>');
+            }
+            else {
+                resulta += '</a>';
+            }
+
+            return jQuery('<li></li>')
+                    .data("item.autocomplete", item )
+                    .append(resulta)
+                    .appendTo(ul);
+        };
+    }
+
+    function getRnaseqRcntFilterParams() {
+        var params = {
+            selector: jQuery("#rnaseq-rcnt-searchbox").val(),
+            value: jQuery("#rnaseq-rcnt-amount-min").val() + ":" + jQuery("#rnaseq-rcnt-amount-max").val(),
+            operator: "BETWEEN",
+            type: "RNASEQ_RCNT",
+            projection_type: "READCOUNT",
+            platform: jQuery("#rnaseq-rcnt-filter-gplid").html(),
+            hist_div: jQuery("#rnaseq-rcnt-filter-histogram"),
+            window: rnaseqrcntfilterwin,
+            slider_rows: jQuery("[id^=rnaseq-rcnt-slider-row]"),
+            valuescallback: rnaseqRcntConceptValuesObtained,
+            valuescallbackfailed: rnaseqRcntConceptValuesFailed
+        };
+        return params;
+    }
+
+    function rnaseqRcntConceptValuesObtained(values) {
+        rnaseqRcntFilterValues = values;
+        if (rnaseqRcntFilterValues.length > 0) {
+            rnaseqRcntFilterValues.sort(function (a, b) {return a - b}); // sort numerically rather then string-based
+            jQuery("[id^=rnaseq-rcnt-slider-row]").css({'display': 'table-row'});
+            jQuery("#rnaseq-rcnt-range").slider('option',{'min': rnaseqRcntFilterValues[0] * rnaseqRcntSliderFactor, 'max': rnaseqRcntFilterValues[rnaseqRcntFilterValues.length - 1] * rnaseqRcntSliderFactor})
+            jQuery("#rnaseq-rcnt-range").slider('values', 0, (rnaseqRcntFilterValues[0] + rnaseqRcntSliderLowHandleRatio * (rnaseqRcntFilterValues[rnaseqRcntFilterValues.length - 1] - rnaseqRcntFilterValues[0])) * rnaseqRcntSliderFactor);
+            jQuery("#rnaseq-rcnt-range").slider('values', 1, (rnaseqRcntFilterValues[0] + rnaseqRcntSliderHighHandleRatio * (rnaseqRcntFilterValues[rnaseqRcntFilterValues.length - 1] - rnaseqRcntFilterValues[0])) * rnaseqRcntSliderFactor);
+            rnaseqRcntFilterSliderUpdated();
+        }
+        else {
+            jQuery("[id^=rnaseq-rcnt-slider-row]").css({'display': 'none'});
+            jQuery( "#expression-amount-min" ).val(0);
+            jQuery( "#expression-amount-max" ).val(0);
+            document.getElementById("rnaseq-rcnt-filter-histogram").innerHTML = "No data is available for the given gene.";
+            geneexprfilterwin.setHeight(140);
+        }
+    }
+
+    function rnaseqRcntConceptValuesFailed(result) {
+        jQuery("#rnaseq-rcnt-slider-row").css({'display': 'none'});
+        jQuery( "#rnaseq-rcnt-amount-min" ).val(0);
+        jQuery( "#rnaseq-rcnt-amount-max" ).val(0);
+        document.getElementById("rnaseq-rcnt-filter-histogram").innerHTML = "An error occured while retrieving the histogram values: " + result.responseText;
+    }
+</script>
+<div style="..." id="rnaseq-rcnt-filter-main">
+    <table>
+        <tr><td colspan="3">Platform: <span id="rnaseq-rcnt-filter-gplid"></span></td></tr>
+        <tr><td colspan="3"><label for="rnaseq-rcnt-searchbox">Gene: </label><input type="text" id="rnaseq-rcnt-searchbox" size="5"/></td></tr>
+        <tr id="rnaseq-rcnt-slider-row1"><td colspan="3">Number of subjects selected: <span id="rnaseq-rcnt-filter-subjectcount">0</span></td></tr>
+        <tr id="rnaseq-rcnt-slider-row2"><td colspan="3">Select the range for expression values:</td></tr>
+        <tr id="rnaseq-rcnt-slider-row3" style="display: none;"><td><input type="text" size="2" id="rnaseq-rcnt-amount-min" style="color:#548cff; font-weight:bold;"></td>
+            <td><div id="rnaseq-rcnt-range"></div></td>
+            <td><input type="text" size="2" id="rnaseq-rcnt-amount-max" style="color:#548cff; font-weight:bold;"></td></tr>
+        <tr id="rnaseq-rcnt-slider-row4"><td colspan="3">Histogram:</td></tr>
+        <tr><td colspan="3"><div id="rnaseq-rcnt-filter-histogram"></div></td></tr>
+    </table>
+</div>
+</body>
+</html>

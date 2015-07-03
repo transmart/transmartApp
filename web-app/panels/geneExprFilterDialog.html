@@ -126,8 +126,8 @@
             minLength:1,
             select: function(event, ui) {
                 jQuery("#gene-searchbox").val(ui.item.label);
-                showConceptDistributionHistogramForGeneExprFilterComplete(null);
-                showConceptDistributionHistogramForGeneExprFilter();
+                showConceptDistributionHistogramForOmicsFilterComplete(null, getGeneExprFilterParams());
+                showConceptDistributionHistogramForOmicsFilter(getGeneExprFilterParams());
             },
             focus: function(event, ui) {
                 jQuery("#gene-searchbox").val(ui.item.label);
@@ -164,11 +164,53 @@
 
             geneExprSliderLowHandleRatio = (low - min) / (max - min);
             geneExprSliderHighHandleRatio = (high - min) / (max - min);
-            showConceptDistributionHistogramForGeneExprFilterComplete(null);
-            showConceptDistributionHistogramForGeneExprFilter();
+            showConceptDistributionHistogramForOmicsFilterComplete(null, getGeneExprFilterParams());
+            showConceptDistributionHistogramForOmicsFilter(getGeneExprFilterParams());
         }
     }
 
+    function getGeneExprFilterParams() {
+        var params = {
+            selector: jQuery("#gene-searchbox").val(),
+            value: jQuery("#expression-amount-min").val() + ":" + jQuery("#expression-amount-max").val(),
+            operator: "BETWEEN",
+            type: "GENE_EXPRESSION",
+            projection_type: jQuery("input[name=gene-expression-projection]:checked").val(),
+            platform: jQuery("#gene-expr-filter-gplid").html(),
+            hist_div: jQuery("#gene-expression-filter-histogram"),
+            window: geneexprfilterwin,
+            slider_rows: jQuery("[id^=gene-expression-slider-row]"),
+            valuescallback: geneExprConceptValuesObtained,
+            valuescallbackfailed: geneExprConceptValuesFailed
+        };
+        return params;
+    }
+
+    function geneExprConceptValuesObtained(values) {
+        geneExprFilterValues = values;
+        if (geneExprFilterValues.length > 0) {
+            geneExprFilterValues.sort(function (a, b) {return a - b}); // sort numerically rather then string-based
+            jQuery("[id^=gene-expression-slider-row]").css({'display': 'table-row'});
+            jQuery("#gene-expression-range").slider('option',{'min': geneExprFilterValues[0] * geneExprSliderFactor, 'max': geneExprFilterValues[geneExprFilterValues.length - 1] * geneExprSliderFactor})
+            jQuery("#gene-expression-range").slider('values', 0, (geneExprFilterValues[0] + geneExprSliderLowHandleRatio * (geneExprFilterValues[geneExprFilterValues.length - 1] - geneExprFilterValues[0])) * geneExprSliderFactor);
+            jQuery("#gene-expression-range").slider('values', 1, (geneExprFilterValues[0] + geneExprSliderHighHandleRatio * (geneExprFilterValues[geneExprFilterValues.length - 1] - geneExprFilterValues[0])) * geneExprSliderFactor);
+            geneExpFilterSliderUpdated();
+        }
+        else {
+            jQuery("[id^=gene-expression-slider-row]").css({'display': 'none'});
+            jQuery( "#expression-amount-min" ).val(0);
+            jQuery( "#expression-amount-max" ).val(0);
+            document.getElementById("gene-expression-filter-histogram").innerHTML = "No data is available for the given gene.";
+            geneexprfilterwin.setHeight(140);
+        }
+    }
+
+    function geneExprConceptValuesFailed(result) {
+        jQuery("#gene-expression-slider-row").css({'display': 'none'});
+        jQuery( "#expression-amount-min" ).val(0);
+        jQuery( "#expression-amount-max" ).val(0);
+        document.getElementById("gene-expression-filter-histogram").innerHTML = "An error occured while retrieving the histogram values: " + result.responseText;
+    }
 </script>
 <div style="..." id="gene-expr-filter-main">
     <table>

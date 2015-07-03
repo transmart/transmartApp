@@ -44,8 +44,8 @@ grails.project.dependency.resolution = {
 
     if (!dm) {
         repositories {
-            //grailsCentral()
-            //mavenCentral()
+            grailsCentral()
+            mavenCentral()
 
             mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
             //mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
@@ -133,7 +133,7 @@ grails.project.dependency.resolution = {
         compile ":codenarc:0.21"
 
         if (!dm) {
-            compile ':rdc-rmodules:1.2.2-SNAPSHOT'
+            compile ':rdc-rmodules:1.2.2'
             //runtime ':transmart-core:1.2.2-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
             //// already included in transmart-gwas

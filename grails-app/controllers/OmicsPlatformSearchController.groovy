@@ -15,7 +15,7 @@ class OmicsPlatformSearchController {
         if (params.gplid == "" || params.term == "") {
             return [] as JSON
         }
-        def result = omicsQueryService.getSearchResultsForGene(params.term, params.gplid)
+        def result = omicsQueryService.getSearchResults(params.term, params.gplid)
         render result as JSON
     }
 
@@ -24,9 +24,8 @@ class OmicsPlatformSearchController {
         def platform = omicsQueryService.getPlatform(concept)
         if (platform) {
             // let's add the requested concept key back in the response
-            def result = JSON.parse((platform as JSON).toString())
-            result.concept_key = concept
-            render result as JSON
+            platform.put('concept_key', concept)
+            render platform as JSON
         }
         else
             render JSONObject.NULL
