@@ -16,7 +16,7 @@
             <tbody>
 
             <tr class="prop">
-                <td valign="top" class="name">WWID:</td>
+                <td valign="top" class="name">ID:</td>
                 <td valign="top" class="value">${person.id}</td>
             </tr>
 
