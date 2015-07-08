@@ -5,10 +5,10 @@ import org.springframework.beans.factory.config.CustomScopeConfigurer
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.access.AccessDeniedHandlerImpl
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 
 // plugin is not functional at this point
 //import org.springframework.security.extensions.kerberos.web.SpnegoAuthenticationProcessingFilter
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
 import org.transmart.authorization.CurrentUserBeanFactoryBean
@@ -29,6 +29,18 @@ beans = {
 
     if (grailsApplication.config.org.transmart.security.samlEnabled) {
         importBeans('classpath:/spring/spring-security-saml.xml')
+        // Provider of default SAML Context. Moved to groovy to allow choose implementation
+        if (grailsApplication.config.org.transmart.security.saml.lb.serverName) {
+            contextProvider(org.springframework.security.saml.context.SAMLContextProviderLB) {
+                scheme(grailsApplication.config.org.transmart.security.saml.lb.scheme)
+                serverName(grailsApplication.config.org.transmart.security.saml.lb.serverName)
+                serverPort(grailsApplication.config.org.transmart.security.saml.lb.serverPort)
+                includeServerPortInRequestURL(grailsApplication.config.org.transmart.security.saml.lb.includeServerPortInRequestURL)
+                contextPath(grailsApplication.config.org.transmart.security.saml.lb.contextPath)
+            }
+        } else {
+            contextProvider(org.springframework.security.saml.context.SAMLContextProviderImpl)
+        }
     }
 
     /* core-api authorization wrapped beans */

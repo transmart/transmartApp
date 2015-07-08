@@ -138,9 +138,6 @@
         <!-- <property name="defaultIDP" value="http://localhost:8080/opensso"/> -->
     </bean>
 
-    <!-- Provider of default SAML Context -->
-    <bean id="contextProvider" class="org.springframework.security.saml.context.SAMLContextProviderImpl"/>
-
     <!-- Processing filter for WebSSO profile messages -->
     <bean id="samlWebSSOProcessingFilter" class="org.springframework.security.saml.SAMLProcessingFilter">
         <property name="authenticationManager" ref="${org.transmart.security.saml.authenticationManager}"/>
