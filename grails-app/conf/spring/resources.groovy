@@ -21,6 +21,7 @@ import org.transmartproject.export.HighDimExporter
 import org.transmartproject.security.AuthSuccessEventListener
 import org.transmartproject.security.BadCredentialsEventListener
 import org.transmartproject.security.BruteForceLoginLockService
+import org.transmartproject.security.SSLCertificateValidation
 
 def logger = Logger.getLogger('com.recomdata.conf.resources')
 
@@ -61,6 +62,21 @@ beans = {
                 type: 'assignable',
                 expression: HighDimExporter.canonicalName)
     }
+
+
+    // We need to inject the RestBuilder with its bean declaration because its *crappy* constructor
+    // would reinitialize the JSON marshaller we use later; rendering the application incompetent
+    // It is important this falls first !
+    if (!grailsApplication.config.org.transmart.security.sniValidation) {
+        logger.info "Disabling server name indication extension"
+        System.setProperty("jsse.enableSNIExtension", "false");
+    }
+    if (!grailsApplication.config.org.transmart.security.sslValidation) {
+        logger.info "Disabling hostname and certification verification"
+        SSLCertificateValidation.disable()
+    }
+    restBuilder(grails.plugins.rest.client.RestBuilder)
+
 
     sessionRegistry(SessionRegistryImpl)
     sessionAuthenticationStrategy(ConcurrentSessionControlStrategy, sessionRegistry) {

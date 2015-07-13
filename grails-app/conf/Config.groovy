@@ -189,6 +189,8 @@ com.recomdata.skipdisclaimer = true
 grails.spring.bean.packages = []
 
 org.transmart.security.spnegoEnabled = false
+org.transmart.security.sniValidation = true
+org.transmart.security.sslValidation = true
 
 // requires NIO connector though. If you use apache in front of tomcat in the
 // same server, you can set this to false and set .apache = true
