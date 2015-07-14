@@ -212,10 +212,6 @@ class ExportService {
         jobResultsService[params.jobName]["StatusList"] = statusList
         asyncJobService.updateStatus(params.jobName, statusList[0])
 
-        def al = new AccessLog(username: userName, event: "${params.analysis}, Job: ${params.jobName}",
-                eventmessage: "", accesstime: new java.util.Date())
-        al.save()
-
         //TODO get the required input parameters for the job and validate them
         def rID1 = RequestValidator.nullCheck(params.result_instance_id1)
         def rID2 = RequestValidator.nullCheck(params.result_instance_id2)

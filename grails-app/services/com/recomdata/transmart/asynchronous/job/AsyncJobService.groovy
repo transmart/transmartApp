@@ -1,10 +1,12 @@
 package com.recomdata.transmart.asynchronous.job
 
 import com.recomdata.transmart.domain.i2b2.AsyncJob
+import grails.transaction.Transactional
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.StringUtils
 import org.json.JSONArray
 import org.json.JSONObject
+import org.springframework.transaction.annotation.Propagation
 import org.transmartproject.core.users.User
 
 class AsyncJobService {
@@ -150,6 +152,7 @@ class AsyncJobService {
         return result;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     def updateJobInputs(final String jobName, final Map params) {
         assert jobName
         assert params
@@ -158,6 +161,7 @@ class AsyncJobService {
         assert "${jobName} job is not found.", job
 
         job.jobInputsJson = new JSONObject(params).toString()
+        job.save(flush: true)
     }
 
     /**

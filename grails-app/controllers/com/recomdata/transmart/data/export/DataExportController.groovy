@@ -1,6 +1,7 @@
 package com.recomdata.transmart.data.export
 
 import grails.converters.JSON
+import org.transmart.searchapp.AccessLog
 import org.transmartproject.core.exceptions.AccessDeniedException
 import org.transmartproject.core.exceptions.InvalidArgumentsException
 
@@ -77,7 +78,16 @@ class DataExportController {
     def runDataExport() {
         checkRightsToExport(parseResultInstanceIds())
 
-        def jsonResult = exportService.exportData(params, springSecurityService.getPrincipal().username)
+        def username = springSecurityService.getPrincipal().username
+
+        new AccessLog(
+                username: username,
+                event: 'Data Export',
+                eventmessage: "User: ${username}, IP: ${request.remoteAddr}, Details: ${params}",
+                accesstime: new Date())
+                .save()
+
+        def jsonResult = exportService.exportData(params, username)
 
         response.setContentType("text/json")
         response.outputStream << jsonResult.toString()
