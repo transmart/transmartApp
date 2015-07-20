@@ -240,8 +240,9 @@ class ExportMetadataService {
         highDimensionalData.collect { highDimRow ->
             // Determine the types of files that can be exported for this 
             // datatype
-            Set<HighDimExporter> exporters = highDimExporterRegistry.getExportersForDataType(
-                    highDimRow.datatype.dataTypeName);
+            def exporters = highDimExporterRegistry
+                    .findExporters(dataType: highDimRow.datatype.dataTypeName)
+                    .sort { it.format }
 
             [
                     subsetId1        : "subset1",
