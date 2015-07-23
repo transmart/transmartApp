@@ -124,7 +124,19 @@ class HighDimExportService {
                         concept_key: term.key)
         ]
 
-        HighDimExporter exporter = highDimExporterRegistry.getExporterForFormat(format)
+        Set<HighDimExporter> exporters = highDimExporterRegistry.findExporters(fileFormat: format,
+                dataType: dataTypeResource.dataTypeName)
+
+        if (!exporters) {
+            throw new RuntimeException("No exporter was found for ${dataTypeResource.dataTypeName} data type" +
+                    " and ${format} file format.")
+        } else if (exporters.size() > 1) {
+            log.warn("There are more then one exporter for ${dataTypeResource.dataTypeName} data type" +
+                    " and ${format} file format. Using first one: ${exporters?.getAt(0)}")
+        }
+
+        HighDimExporter exporter = exporters.getAt(0)
+
         Projection projection = dataTypeResource.createProjection(exporter.projection)
 
         if (log.debugEnabled) {
