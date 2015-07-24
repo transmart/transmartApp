@@ -24,7 +24,7 @@ function jobsstoreLoaded() {
 
     // Filter for job types that are retrievable
     jobsstore.filterBy(function(record) {
-        var allowedTypes = ['aCGHSurvivalAnalysis', 'aCGHgroupTest', 'RNASeqgroupTest', 'acghFrequencyPlot'];
+        var allowedTypes = ['aCGHSurvivalAnalysis', 'aCGHgroupTest', 'RNASeqgroupTest', 'acghFrequencyPlot', 'DgeRNASeq'];
         return allowedTypes.indexOf(record.json.type) >= 0;
     });
 
@@ -60,7 +60,8 @@ function jobsstoreLoaded() {
                         if (jobType == 'aCGHSurvivalAnalysis' ||
                             jobType == 'aCGHgroupTest' ||
                             jobType == 'RNASeqgroupTest' ||
-                            jobType == 'acghFrequencyPlot') {
+                            jobType == 'acghFrequencyPlot' ||
+                            jobType == 'DgeRNASeq') {
                             resultsTabPanel.setActiveTab('dataAssociationPanel');
                             loadAnalysisPage(jobType, true, jobName);
                             return;
