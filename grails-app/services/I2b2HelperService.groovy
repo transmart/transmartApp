@@ -783,7 +783,17 @@ class I2b2HelperService {
                     String subject = row.PATIENT_NUM
                     Double value = row.NVAL_NUM
                     if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
-                        tablein.getRow(subject).put(columnid, value.toString());
+                        /* Inspect if gridcell already contains a value.
+                         * Multiple values may be encountered for the same patient and concept,
+                         * if multiple observations are registered with different modifier_cd and/or encounter_num.
+                         */
+                        String strValue = value.toString()
+                        String gridcellValue = tablein.getRow(subject).get(columnid)
+                        if (gridcellValue != null && gridcellValue.length() > 0 && gridcellValue != "NULL") {
+                            /* Concatenate new value, i.s.o. overwriting it */
+                            strValue = gridcellValue + "," + strValue
+                        }
+                        tablein.getRow(subject).put(columnid, strValue);
                     } else
                     /*fill the row*/ {
                         ExportRowNew newrow = new ExportRowNew();
@@ -813,14 +823,24 @@ class I2b2HelperService {
                     if (isURL(value)) {
                         /* Embed URL in a HTML Link */
                         value = "<a href=\"" + value + "\" target=\"_blank\">" + value + "</a>";
-                    }
+                    }                    
                     if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
-                        tablein.getRow(subject).put(columnid, value.toString());
+
+                        /* Inspect if gridcell already contains a value.
+                         * Multiple values may be encountered for the same patient and concept,
+                         * if multiple observations are registered with different modifier_cd and/or encounter_num.
+                         */
+                        String gridcellValue = tablein.getRow(subject).get(columnid)
+                        if (gridcellValue != null && gridcellValue.length() > 0 && gridcellValue != "NULL") {
+                            /* Concatenate new value, i.s.o. overwriting it */
+                            value = gridcellValue + "," + value
+                        }
+                        tablein.getRow(subject).put(columnid, value);
                     } else
-                    /*fill the row*/ {
+                        /*fill the row*/ {
                         ExportRowNew newrow = new ExportRowNew();
                         newrow.put("subject", subject);
-                        newrow.put(columnid, value.toString());
+                        newrow.put(columnid, value);
                         tablein.putRow(subject, newrow);
                     }
                 });
@@ -894,11 +914,22 @@ class I2b2HelperService {
                     value = "<a href=\"" + value + "\" target=\"_blank\">" + value + "</a>"
                 }
                 if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
-                    tablein.getRow(subject).put(columnid, value.toString());
+
+                    /* Inspect if gridcell already contains a value.
+                     * Multiple values may be encountered if the folder does not represent a true categorical concept
+                     * (a single categorical value/observation for each subject, probably originating from a single column in the clinical data upload)
+                     * but has been composed from multiple categorical clinical data columns which were all mapped to the same concept
+                     */
+                    String gridcellValue = tablein.getRow(subject).get(columnid)
+                    if (gridcellValue != null && gridcellValue.length() > 0 && gridcellValue != "N") {
+                        /* Concatenate new value, i.s.o. overwriting it */
+                        value = gridcellValue + "," + value
+                    }
+                    tablein.getRow(subject).put(columnid, value);
                 } else /*fill the row*/ {
                     ExportRowNew newrow = new ExportRowNew();
                     newrow.put("subject", subject);
-                    newrow.put(columnid, value.toString());
+                    newrow.put(columnid, value);
                     tablein.putRow(subject, newrow);
                 }
             }
