@@ -662,6 +662,22 @@ class ChartController {
         request.getSession().setAttribute("gridtable", table);
     }
 
+    def reportGridTableExport() {
+
+        def username = springSecurityService.principal.username
+
+        ExportTableNew gridTable = request.session.gridtable
+
+        def exportedVariablesCsv = gridTable.columnMap.entrySet()
+                .collectAll { "${it.value.label} (id = ${it.key})" }.join(', ')
+
+        def exportedSubjectsCsv = gridTable.rows
+                .collectAll { it['subject'] }.join(', ')
+
+        log.info( "${username} (IP: ${request.remoteAddr}) just exported variables (${exportedVariablesCsv})" +
+                " measurements for the folowing subject ids: ${exportedSubjectsCsv}")
+    }
+
     def clearGrid = {
         log.debug("Clearing grid");
         request.getSession().setAttribute("gridtable", null);
